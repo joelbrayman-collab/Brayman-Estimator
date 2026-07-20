@@ -1,4 +1,5 @@
 from datetime import date
+from pathlib import Path
 
 import pytest
 
@@ -107,7 +108,7 @@ def template(app):
         company_email="hello@brayman.test",
         primary_color="#1f3a5f",
         accent_color="#c79a2b",
-        logo_path="images/brayman-logo.png",
+        logo_path="branding/brayman-construction-logo.png",
         default_intro_text="Thank you for the opportunity.",
         default_scope_intro="We will complete the listed scope.",
         default_clarifications="Permit fees by owner.",
@@ -228,13 +229,34 @@ def test_preview_logo_rendering_when_available(client, proposal):
     response = client.get(f"/proposals/{proposal.id}/preview")
     assert response.status_code == 200
     assert b'class="proposal-logo' in response.data
-    assert b"/static/images/brayman-logo.png" in response.data
+    assert b"/static/branding/brayman-construction-logo.png" in response.data
     assert b'alt="Brayman Construction Co."' in response.data
 
 
-def test_preview_omits_logo_when_missing(client, estimate, template):
+def test_preview_falls_back_to_default_logo_when_unconfigured(client, estimate, template):
     template.logo_path = None
     db.session.commit()
+
+    proposal = create_proposal(
+        estimate=estimate,
+        version=estimate.current_version,
+        template=template,
+        title="Default Logo Proposal",
+    )
+    response = client.get(f"/proposals/{proposal.id}/preview")
+    assert response.status_code == 200
+    assert b'class="proposal-logo' in response.data
+    assert b"/static/branding/brayman-construction-logo.png" in response.data
+
+
+def test_preview_omits_logo_when_all_missing(client, estimate, template, monkeypatch):
+    template.logo_path = "branding/does-not-exist.png"
+    db.session.commit()
+
+    monkeypatch.setattr(
+        "app.services.proposal_pdf.default_logo_filesystem_path",
+        lambda: Path("/tmp/missing-brayman-logo.png"),
+    )
 
     proposal = create_proposal(
         estimate=estimate,

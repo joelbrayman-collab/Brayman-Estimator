@@ -20,7 +20,10 @@
                 <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">← Back to proposal</a>
                 <span class="text-white-50">Read-only preview</span>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-light" onclick="window.print()">Print</button>
+            <div class="d-flex gap-2">
+                <a class="btn btn-sm btn-outline-light" href="{{ url_for('proposals.download_proposal_pdf', id=proposal.id) }}">Download PDF</a>
+                <button type="button" class="btn btn-sm btn-outline-light" onclick="window.print()">Print</button>
+            </div>
         </div>
     </div>
 

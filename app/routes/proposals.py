@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, redirect, render_template, request, send_file, url_for
 
 from app.models.proposal import (
     PROPOSAL_STATUSES,
@@ -8,6 +8,11 @@ from app.models.proposal import (
     ProposalLineItem,
     ProposalSection,
     ProposalTemplate,
+)
+from app.services.proposal_pdf import (
+    generate_proposal_pdf,
+    resolve_preview_logo_url,
+    sanitize_pdf_filename,
 )
 from app.services.proposals import (
     ProposalServiceError,
@@ -250,17 +255,6 @@ def create_proposal_route(estimate_id, version_id):
     )
 
 
-def _proposal_logo_url(logo_path):
-    if not logo_path:
-        return None
-    value = logo_path.strip()
-    if not value:
-        return None
-    if value.startswith(("http://", "https://", "/")):
-        return value
-    return url_for("static", filename=value)
-
-
 def _preview_section_rows(proposal):
     rows = []
     for section in proposal.sections:
@@ -316,8 +310,24 @@ def preview_proposal(id):
         "proposals/preview.html",
         proposal=proposal,
         template=template,
-        logo_url=_proposal_logo_url(template.logo_path if template else None),
+        logo_url=resolve_preview_logo_url(
+            template.logo_path if template else None,
+            url_for,
+        ),
         section_rows=_preview_section_rows(proposal),
+    )
+
+
+@proposals_bp.route("/proposals/<int:id>/pdf")
+def download_proposal_pdf(id):
+    proposal = Proposal.query.get_or_404(id)
+    pdf_buffer = generate_proposal_pdf(proposal)
+    filename = sanitize_pdf_filename(proposal)
+    return send_file(
+        pdf_buffer,
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=filename,
     )
 
 

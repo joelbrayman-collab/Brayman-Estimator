@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}{{ "Edit Proposal" if proposal else "New Proposal" }} | Brayman Estimator{% endblock %}
+{% block title %}{{ "Edit Proposal" if proposal else "New Proposal" }} | Brayman Construction Platform{% endblock %}
+
+{% block page_title %}Proposal{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Proposal</p>
+        <p class="eyebrow">Estimating</p>
         <h1>{{ "Edit Proposal" if proposal else "Create Proposal" }}</h1>
     </div>
 </div>

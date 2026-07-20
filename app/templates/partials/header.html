@@ -1,0 +1,27 @@
+{#
+  Header chrome lives in base.html so {% block page_title %} resolves correctly.
+  Keep this partial as the documented structure for the application shell.
+#}
+<header class="shell-header" role="banner">
+    <div class="header-left">
+        <button type="button" class="header-icon-btn mobile-nav-toggle" aria-label="Open navigation">
+            <i class="bi bi-list" aria-hidden="true"></i>
+        </button>
+        <h1 class="header-page-title">{{ page_title|default("Workspace") }}</h1>
+    </div>
+    <div class="header-actions" aria-label="Quick actions">
+        <button type="button" class="header-icon-btn" disabled aria-label="Search (coming soon)">
+            <i class="bi bi-search" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="header-icon-btn" disabled aria-label="Notifications (coming soon)">
+            <i class="bi bi-bell" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="header-icon-btn" disabled aria-label="Settings (coming soon)">
+            <i class="bi bi-gear" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="header-user-btn" disabled aria-label="User menu (coming soon)">
+            <span class="header-user-avatar" aria-hidden="true">B</span>
+            <span class="header-user-label">User</span>
+        </button>
+    </div>
+</header>

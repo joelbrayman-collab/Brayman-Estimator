@@ -28,6 +28,7 @@ def create_app(config=None):
     from app.routes.projects import projects_bp
     from app.routes.proposal_templates import proposal_templates_bp
     from app.routes.proposals import proposals_bp
+    from app.project_controls import project_controls_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(clients_bp)
@@ -37,5 +38,10 @@ def create_app(config=None):
     app.register_blueprint(estimates_bp)
     app.register_blueprint(proposal_templates_bp)
     app.register_blueprint(proposals_bp)
+    app.register_blueprint(project_controls_bp)
+
+    from app.shell import register_shell_context
+
+    register_shell_context(app)
 
     return app

@@ -1,49 +1,105 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard | Brayman Estimator{% endblock %}
+{% block title %}Dashboard | Brayman Construction Platform{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">Brayman Construction Co.</p>
-    <h1>Estimating Dashboard</h1>
-    <p>Create projects, build detailed estimates, and produce client-ready proposals.</p>
+<section class="dash-intro">
+    <div>
+        <p class="eyebrow">Brayman Construction Co.</p>
+        <h2 class="dash-heading">Executive overview</h2>
+        <p class="muted-copy">Track projects, estimates, and proposals across the Brayman Construction Platform.</p>
+    </div>
+    <div class="dash-intro-actions">
+        <a class="button" href="{{ url_for('estimates.create_estimate_route') }}">New estimate</a>
+        <a class="button-link" href="{{ url_for('proposals.list_proposals') }}">View proposals</a>
+    </div>
 </section>
 
-<section class="grid">
-    <article class="card">
-        <h2>Clients</h2>
-        <p>Manage customer information and project contacts.</p>
-        <strong>{{ client_count }} clients</strong>
-        <p><a class="button-link" href="{{ url_for('clients.create_client') }}">Add client</a></p>
+{% include "partials/dashboard_cards.html" %}
+
+<section class="dash-panels" aria-label="Recent activity">
+    <article class="panel">
+        <div class="panel-header">
+            <h2>Recent Estimates</h2>
+            <a href="{{ url_for('estimates.list_estimates') }}">All estimates</a>
+        </div>
+        {% if shell_recent_estimates %}
+        <ul class="activity-list">
+            {% for estimate in shell_recent_estimates %}
+            <li>
+                <a href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">
+                    <span class="activity-title">{{ estimate.title }}</span>
+                    <span class="activity-meta">{{ estimate.estimate_number }} · {{ estimate.status }}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No estimates yet</h3>
+            <p>Create an estimate from a project to start building pricing.</p>
+            <a class="button-link" href="{{ url_for('estimates.create_estimate_route') }}">Add estimate</a>
+        </div>
+        {% endif %}
     </article>
 
-    <article class="card">
-        <h2>Projects</h2>
-        <p>Track active, proposed, completed, and archived projects.</p>
-        <strong>{{ project_count }} projects</strong>
-        <p><a class="button-link" href="{{ url_for('projects.create_project') }}">Add project</a></p>
+    <article class="panel">
+        <div class="panel-header">
+            <h2>Recent Proposals</h2>
+            <a href="{{ url_for('proposals.list_proposals') }}">All proposals</a>
+        </div>
+        {% if shell_recent_proposals %}
+        <ul class="activity-list">
+            {% for proposal in shell_recent_proposals %}
+            <li>
+                <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">
+                    <span class="activity-title">{{ proposal.title }}</span>
+                    <span class="activity-meta">{{ proposal.proposal_number }} · {{ proposal.status }}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No proposals yet</h3>
+            <p>Generate a proposal from an estimate version when you are ready to issue.</p>
+            <a class="button-link" href="{{ url_for('proposals.list_proposals') }}">View proposals</a>
+        </div>
+        {% endif %}
     </article>
 
-    <article class="card">
-        <h2>Estimates</h2>
-        <p>Create estimate sections, line items, allowances, and markups.</p>
-        <strong>{{ estimate_count }} estimates</strong>
-        <p><a class="button-link" href="{{ url_for('estimates.create_estimate_route') }}">Add estimate</a></p>
-    </article>
-
-    <article class="card">
-        <h2>Proposals</h2>
-        <p>Turn estimate versions into client-ready proposal drafts.</p>
-        <strong>{{ proposal_count }} proposals</strong>
-        <p>{{ draft_proposal_count }} draft · {{ issued_proposal_count }} issued</p>
-        <p><a class="button-link" href="{{ url_for('proposals.list_proposals') }}">View proposals</a></p>
-    </article>
-
-    <article class="card">
-        <h2>Cost Library</h2>
-        <p>Maintain labour, material, equipment, and subcontractor pricing.</p>
-        <strong>{{ cost_item_count }} cost items</strong>
-        <p><a class="button-link" href="{{ url_for('cost_library.create_cost_item') }}">Add cost item</a></p>
+    <article class="panel panel-wide">
+        <div class="panel-header">
+            <h2>Recent Activity</h2>
+        </div>
+        {% if shell_recent_estimates or shell_recent_proposals %}
+        <ul class="activity-list">
+            {% for estimate in shell_recent_estimates[:3] %}
+            <li>
+                <a href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">
+                    <span class="activity-kind">Estimate</span>
+                    <span class="activity-title">{{ estimate.title }}</span>
+                    <span class="activity-meta">{{ estimate.estimate_number }} · updated {{ estimate.updated_at.strftime("%Y-%m-%d") }}</span>
+                </a>
+            </li>
+            {% endfor %}
+            {% for proposal in shell_recent_proposals[:3] %}
+            <li>
+                <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">
+                    <span class="activity-kind">Proposal</span>
+                    <span class="activity-title">{{ proposal.title }}</span>
+                    <span class="activity-meta">{{ proposal.proposal_number }} · updated {{ proposal.updated_at.strftime("%Y-%m-%d") }}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No recent activity</h3>
+            <p>Activity from estimates and proposals will appear here as you work.</p>
+        </div>
+        {% endif %}
     </article>
 </section>
 {% endblock %}

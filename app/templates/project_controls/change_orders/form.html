@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Edit Change Order" if change_order else "New Change Order" }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ "Edit Change Order" if change_order else "New Change Order" }}{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Project Controls</p>
+        <h1>{{ "Edit Change Order" if change_order else "New Change Order" }}</h1>
+    </div>
+</div>
+
+{% if estimate and version %}
+<section class="form-panel" style="margin-bottom: 20px;">
+    <div class="form-grid">
+        <div><p class="eyebrow">Estimate</p><p>{{ estimate.estimate_number }}</p></div>
+        <div><p class="eyebrow">Version</p><p>{{ version.display_label }}</p></div>
+        <div><p class="eyebrow">Project</p><p>{{ estimate.project.name }}</p></div>
+    </div>
+</section>
+{% endif %}
+
+<form method="post" class="form-panel">
+    <div class="form-grid">
+        <label>
+            Title *
+            <input type="text" name="title" value="{{ form.title }}" required>
+        </label>
+        {% if not estimate %}
+        <label>
+            Project *
+            <select name="project_id" required {% if change_order %}disabled{% endif %}>
+                {% for project in projects %}
+                <option value="{{ project.id }}" {% if form.project_id == project.id|string %}selected{% endif %}>{{ project.name }}</option>
+                {% endfor %}
+            </select>
+            {% if change_order %}<input type="hidden" name="project_id" value="{{ form.project_id }}">{% endif %}
+        </label>
+        {% else %}
+        <input type="hidden" name="project_id" value="{{ form.project_id }}">
+        {% endif %}
+        <label>
+            Status
+            <select name="status">
+                {% for status in statuses %}
+                <option value="{{ status }}" {% if form.status == status %}selected{% endif %}>{{ status }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Requested by
+            <input type="text" name="requested_by" value="{{ form.requested_by }}">
+        </label>
+        <label>
+            Requested date
+            <input type="date" name="requested_date" value="{{ form.requested_date }}">
+        </label>
+        <label>
+            Markup %
+            <input type="number" name="markup_percent" value="{{ form.markup_percent }}" step="0.01" min="0">
+        </label>
+        <label>
+            Tax %
+            <input type="number" name="tax_percent" value="{{ form.tax_percent }}" step="0.01" min="0">
+        </label>
+    </div>
+
+    <label>
+        Description
+        <textarea name="description" rows="4">{{ form.description }}</textarea>
+    </label>
+    <label>
+        Reason
+        <textarea name="reason" rows="3">{{ form.reason }}</textarea>
+    </label>
+    <label>
+        Notes
+        <textarea name="notes" rows="3">{{ form.notes }}</textarea>
+    </label>
+
+    {% if estimate and version and not change_order %}
+    <label>
+        <input type="checkbox" name="copy_estimate_lines">
+        Copy estimate version line items as a starting point
+    </label>
+    {% endif %}
+
+    <div class="form-actions">
+        <button type="submit">{{ "Save Change Order" if change_order else "Create Change Order" }}</button>
+        {% if change_order %}
+        <a href="{{ url_for('project_controls.view_change_order', id=change_order.id) }}">Cancel</a>
+        {% else %}
+        <a href="{{ url_for('project_controls.list_change_orders') }}">Cancel</a>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,193 @@
+:root {
+    --proposal-primary: #1f3a5f;
+    --proposal-accent: #c79a2b;
+}
+
+.proposal-preview-page {
+    background: #e9ecef;
+    min-height: 100vh;
+}
+
+.proposal-preview-toolbar {
+    background: #212529;
+    color: #fff;
+    padding: 0.75rem 0;
+}
+
+.proposal-preview-toolbar a {
+    color: #fff;
+    text-decoration: none;
+    margin-right: 1rem;
+}
+
+.proposal-preview-toolbar a:hover {
+    color: var(--proposal-accent);
+}
+
+.proposal-document {
+    --bs-primary: var(--proposal-primary);
+    background: #fff;
+    max-width: 900px;
+    margin: 1.5rem auto 3rem;
+    padding: 2.5rem 2.75rem;
+    box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.08);
+    color: #212529;
+}
+
+.proposal-document h1,
+.proposal-document h2,
+.proposal-document h3 {
+    color: var(--proposal-primary);
+}
+
+.proposal-document .accent-rule {
+    border: 0;
+    border-top: 3px solid var(--proposal-accent);
+    opacity: 1;
+    margin: 1rem 0 1.5rem;
+}
+
+.proposal-logo {
+    max-height: 72px;
+    max-width: 220px;
+    object-fit: contain;
+}
+
+.proposal-company-name {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--proposal-primary);
+    margin: 0;
+}
+
+.proposal-meta-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6c757d;
+    margin-bottom: 0.15rem;
+}
+
+.proposal-section-block {
+    margin-bottom: 1.75rem;
+}
+
+.proposal-section-block h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 2px solid var(--proposal-accent);
+}
+
+.proposal-section-block .prose {
+    white-space: pre-wrap;
+    margin-bottom: 0;
+}
+
+.proposal-pricing-table th {
+    background: var(--proposal-primary);
+    color: #fff;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.proposal-pricing-table td,
+.proposal-pricing-table th {
+    vertical-align: middle;
+}
+
+.proposal-section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--proposal-primary);
+    margin-bottom: 0.35rem;
+}
+
+.proposal-totals {
+    max-width: 360px;
+    margin-left: auto;
+}
+
+.proposal-totals .total-row {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--proposal-primary);
+    border-top: 2px solid var(--proposal-accent);
+    padding-top: 0.5rem;
+}
+
+.proposal-status-badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.4em 0.75em;
+    border-radius: 0.35rem;
+    display: inline-block;
+}
+
+.proposal-status-draft {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.proposal-status-ready {
+    background: #cfe2ff;
+    color: #084298;
+}
+
+.proposal-status-issued {
+    background: #cff4fc;
+    color: #055160;
+}
+
+.proposal-status-accepted {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.proposal-status-rejected {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.proposal-status-expired {
+    background: #fff3cd;
+    color: #664d03;
+}
+
+.proposal-status-cancelled {
+    background: #dee2e6;
+    color: #41464b;
+}
+
+.proposal-status-superseded {
+    background: #e2d9f3;
+    color: #432874;
+}
+
+@media (max-width: 767.98px) {
+    .proposal-document {
+        margin: 0.75rem;
+        padding: 1.25rem;
+    }
+}
+
+@media print {
+    .proposal-preview-page {
+        background: #fff;
+    }
+
+    .proposal-document {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    .proposal-preview-toolbar {
+        display: none !important;
+    }
+
+    a[href]::after {
+        content: none !important;
+    }
+}

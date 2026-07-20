@@ -18,8 +18,10 @@ from app.services.proposals import (
     create_proposal_template,
     get_active_templates,
     get_default_template,
+    recalculate_proposal,
     suggest_next_proposal_number,
     update_proposal,
+    update_proposal_line_item,
     update_proposal_status,
 )
 
@@ -35,6 +37,7 @@ __all__ = [
     "get_active_templates",
     "get_default_template",
     "lock_version",
+    "recalculate_proposal",
     "set_current_version",
     "set_version_status",
     "suggest_next_estimate_number",
@@ -43,5 +46,6 @@ __all__ = [
     "unlock_version",
     "update_estimate_version",
     "update_proposal",
+    "update_proposal_line_item",
     "update_proposal_status",
 ]

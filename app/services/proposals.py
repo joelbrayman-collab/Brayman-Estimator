@@ -4,7 +4,13 @@ import re
 
 from app import db
 from app.models.estimate import Estimate, EstimateVersion
-from app.models.proposal import PROPOSAL_STATUSES, Proposal, ProposalTemplate
+from app.models.proposal import (
+    PROPOSAL_STATUSES,
+    Proposal,
+    ProposalLineItem,
+    ProposalSection,
+    ProposalTemplate,
+)
 
 
 class ProposalServiceError(Exception):
@@ -210,6 +216,9 @@ def build_proposal_snapshot(estimate, version, template):
         "estimate_version_number": version.version_number,
         "estimate_version_label": version.version_label,
         "subtotal": Decimal(version.subtotal or 0),
+        "overhead_percent": Decimal(version.overhead_percent or 0),
+        "profit_percent": Decimal(version.profit_percent or 0),
+        "tax_percent": Decimal(version.tax_percent or 0),
         "overhead_amount": version.overhead_amount,
         "profit_amount": version.profit_amount,
         "tax_amount": version.tax_amount,
@@ -228,6 +237,123 @@ def build_proposal_snapshot(estimate, version, template):
         "show_tax": template.show_tax,
         "title": f"{estimate.title} — Proposal",
     }
+
+
+def _as_money(value):
+    return Decimal(value or 0).quantize(Decimal("0.01"))
+
+
+def _as_decimal(value, default="0"):
+    if value is None or value == "":
+        return Decimal(default)
+    return Decimal(value)
+
+
+def apply_proposal_line_calculations(line_item):
+    quantity = _as_decimal(line_item.quantity)
+    unit_cost = _as_decimal(line_item.unit_cost)
+    markup_percent = _as_decimal(line_item.markup_percent)
+
+    extended_cost = quantity * unit_cost
+    unit_price = unit_cost * (Decimal("1") + markup_percent / Decimal("100"))
+    extended_price = quantity * unit_price
+
+    line_item.extended_cost = _as_money(extended_cost)
+    line_item.unit_price = unit_price.quantize(Decimal("0.0001"))
+    line_item.extended_price = _as_money(extended_price)
+    return line_item
+
+
+def recalculate_proposal(proposal):
+    """Recalculate section and proposal totals from snapshot line items."""
+    sections = (
+        ProposalSection.query.filter_by(proposal_id=proposal.id)
+        .order_by(ProposalSection.sort_order.asc(), ProposalSection.id.asc())
+        .all()
+    )
+    subtotal = Decimal("0")
+    for section in sections:
+        line_items = (
+            ProposalLineItem.query.filter_by(proposal_section_id=section.id)
+            .order_by(
+                ProposalLineItem.sort_order.asc(),
+                ProposalLineItem.id.asc(),
+            )
+            .all()
+        )
+        section_total = Decimal("0")
+        for line_item in line_items:
+            apply_proposal_line_calculations(line_item)
+            section_total += Decimal(line_item.extended_price or 0)
+        section.subtotal = _as_money(section_total)
+        subtotal += section.subtotal
+
+    proposal.subtotal = _as_money(subtotal)
+    overhead_percent = _as_decimal(proposal.overhead_percent)
+    profit_percent = _as_decimal(proposal.profit_percent)
+    tax_percent = _as_decimal(proposal.tax_percent)
+
+    overhead_amount = _as_money(proposal.subtotal * overhead_percent / Decimal("100"))
+    profit_amount = _as_money(
+        (proposal.subtotal + overhead_amount) * profit_percent / Decimal("100")
+    )
+    tax_amount = _as_money(
+        (proposal.subtotal + overhead_amount + profit_amount)
+        * tax_percent
+        / Decimal("100")
+    )
+    proposal.overhead_amount = overhead_amount
+    proposal.profit_amount = profit_amount
+    proposal.tax_amount = tax_amount
+    proposal.total = _as_money(
+        proposal.subtotal + overhead_amount + profit_amount + tax_amount
+    )
+    return proposal
+
+
+def snapshot_estimate_version_content(proposal, version):
+    """Copy estimate sections/line items into independent proposal snapshots."""
+    for section in version.sections:
+        proposal_section = ProposalSection(
+            proposal_id=proposal.id,
+            sort_order=section.sort_order,
+            name=section.name,
+            description=section.description,
+            subtotal=_as_decimal(section.subtotal),
+        )
+        db.session.add(proposal_section)
+        db.session.flush()
+
+        for item in section.line_items:
+            quantity = _as_decimal(item.quantity)
+            waste = _as_decimal(item.waste_percent)
+            # Bake waste into unit_cost so later recalculation stays independent.
+            unit_cost = _as_decimal(item.unit_cost) * (
+                Decimal("1") + waste / Decimal("100")
+            )
+            markup = _as_decimal(item.markup_percent)
+            unit_price = unit_cost * (Decimal("1") + markup / Decimal("100"))
+
+            line_item = ProposalLineItem(
+                proposal_section_id=proposal_section.id,
+                sort_order=item.sort_order,
+                source_line_item_id=item.id,
+                item_type=item.line_type,
+                description=item.description,
+                quantity=quantity,
+                unit=item.unit,
+                unit_cost=unit_cost,
+                unit_price=unit_price,
+                markup_percent=markup,
+                extended_cost=_as_decimal(item.extended_cost),
+                extended_price=_as_decimal(item.sell_price),
+                notes=item.notes,
+            )
+            apply_proposal_line_calculations(line_item)
+            db.session.add(line_item)
+
+    db.session.flush()
+    recalculate_proposal(proposal)
 
 
 def create_proposal(
@@ -285,6 +411,9 @@ def create_proposal(
         estimate_version_number=snapshot["estimate_version_number"],
         estimate_version_label=snapshot.get("estimate_version_label"),
         subtotal=Decimal(snapshot["subtotal"] or 0),
+        overhead_percent=Decimal(snapshot.get("overhead_percent") or 0),
+        profit_percent=Decimal(snapshot.get("profit_percent") or 0),
+        tax_percent=Decimal(snapshot.get("tax_percent") or 0),
         overhead_amount=Decimal(snapshot["overhead_amount"] or 0),
         profit_amount=Decimal(snapshot["profit_amount"] or 0),
         tax_amount=Decimal(snapshot["tax_amount"] or 0),
@@ -305,8 +434,61 @@ def create_proposal(
         issued_at=datetime.utcnow() if status == "Issued" else None,
     )
     db.session.add(proposal)
+    db.session.flush()
+    snapshot_estimate_version_content(proposal, version)
     db.session.commit()
     return proposal
+
+
+def update_proposal_line_item(
+    line_item,
+    *,
+    description=None,
+    quantity=None,
+    unit=None,
+    unit_cost=None,
+    markup_percent=None,
+    notes=None,
+):
+    proposal = line_item.section.proposal
+
+    if description is not None:
+        description = description.strip()
+        if not description:
+            raise ProposalServiceError("Description is required.")
+        line_item.description = description
+
+    if unit is not None:
+        unit = unit.strip()
+        if not unit:
+            raise ProposalServiceError("Unit is required.")
+        line_item.unit = unit
+
+    if quantity is not None:
+        quantity = _as_decimal(quantity)
+        if quantity < 0:
+            raise ProposalServiceError("Quantity cannot be negative.")
+        line_item.quantity = quantity
+
+    if unit_cost is not None:
+        unit_cost = _as_decimal(unit_cost)
+        if unit_cost < 0:
+            raise ProposalServiceError("Unit cost cannot be negative.")
+        line_item.unit_cost = unit_cost
+
+    if markup_percent is not None:
+        markup_percent = _as_decimal(markup_percent)
+        if markup_percent < 0:
+            raise ProposalServiceError("Markup percent cannot be negative.")
+        line_item.markup_percent = markup_percent
+
+    if notes is not None:
+        line_item.notes = notes.strip() or None
+
+    apply_proposal_line_calculations(line_item)
+    recalculate_proposal(proposal)
+    db.session.commit()
+    return line_item
 
 
 def update_proposal(proposal, **fields):

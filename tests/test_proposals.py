@@ -239,7 +239,7 @@ def test_proposal_list_detail_and_dashboard(client, estimate, template):
 
     detail_response = client.get(f"/proposals/{proposal.id}")
     assert detail_response.status_code == 200
-    assert b"Financial Summary" in detail_response.data
+    assert b"Grand Total" in detail_response.data
     assert b"Standard Proposal" in detail_response.data
     assert b"EST-2026-9001" in detail_response.data
 

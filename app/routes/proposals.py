@@ -2,7 +2,13 @@ from datetime import datetime
 
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 
-from app.models.proposal import PROPOSAL_STATUSES, Proposal, ProposalTemplate
+from app.models.proposal import (
+    PROPOSAL_STATUSES,
+    Proposal,
+    ProposalLineItem,
+    ProposalSection,
+    ProposalTemplate,
+)
 from app.services.proposals import (
     ProposalServiceError,
     build_proposal_snapshot,
@@ -12,6 +18,7 @@ from app.services.proposals import (
     get_estimate_and_version,
     suggest_next_proposal_number,
     update_proposal,
+    update_proposal_line_item,
     update_proposal_status,
 )
 
@@ -243,10 +250,122 @@ def create_proposal_route(estimate_id, version_id):
     )
 
 
+def _proposal_logo_url(logo_path):
+    if not logo_path:
+        return None
+    value = logo_path.strip()
+    if not value:
+        return None
+    if value.startswith(("http://", "https://", "/")):
+        return value
+    return url_for("static", filename=value)
+
+
+def _preview_section_rows(proposal):
+    rows = []
+    for section in proposal.sections:
+        line_items = [
+            item
+            for item in section.line_items
+            if proposal.show_allowances or item.item_type != "Allowance"
+        ]
+        rows.append({"section": section, "line_items": line_items})
+    return rows
+
+
 @proposals_bp.route("/proposals/<int:id>")
 def view_proposal(id):
     proposal = Proposal.query.get_or_404(id)
-    return render_template("proposals/detail.html", proposal=proposal)
+    editing_item_id = request.args.get("edit_item", type=int)
+    item_edit_form = None
+
+    if editing_item_id is not None:
+        item = (
+            ProposalLineItem.query.join(ProposalSection)
+            .filter(
+                ProposalLineItem.id == editing_item_id,
+                ProposalSection.proposal_id == proposal.id,
+            )
+            .first()
+        )
+        if item is not None:
+            item_edit_form = {
+                "description": item.description,
+                "quantity": f"{item.quantity}",
+                "unit": item.unit,
+                "unit_cost": f"{item.unit_cost}",
+                "markup_percent": f"{item.markup_percent:.2f}",
+                "notes": item.notes or "",
+            }
+        else:
+            editing_item_id = None
+
+    return render_template(
+        "proposals/detail.html",
+        proposal=proposal,
+        editing_item_id=editing_item_id,
+        item_edit_form=item_edit_form,
+    )
+
+
+@proposals_bp.route("/proposals/<int:id>/preview")
+def preview_proposal(id):
+    proposal = Proposal.query.get_or_404(id)
+    template = proposal.proposal_template
+    return render_template(
+        "proposals/preview.html",
+        proposal=proposal,
+        template=template,
+        logo_url=_proposal_logo_url(template.logo_path if template else None),
+        section_rows=_preview_section_rows(proposal),
+    )
+
+
+@proposals_bp.route(
+    "/proposals/<int:id>/sections/<int:section_id>/items/<int:item_id>/edit",
+    methods=["POST"],
+)
+def edit_proposal_line_item(id, section_id, item_id):
+    proposal = Proposal.query.get_or_404(id)
+    section = ProposalSection.query.filter_by(
+        id=section_id,
+        proposal_id=proposal.id,
+    ).first_or_404()
+    item = ProposalLineItem.query.filter_by(
+        id=item_id,
+        proposal_section_id=section.id,
+    ).first_or_404()
+
+    form = {
+        "description": request.form.get("description", "").strip(),
+        "quantity": request.form.get("quantity", "").strip(),
+        "unit": request.form.get("unit", "").strip(),
+        "unit_cost": request.form.get("unit_cost", "").strip(),
+        "markup_percent": request.form.get("markup_percent", "").strip(),
+        "notes": request.form.get("notes", "").strip(),
+    }
+
+    try:
+        update_proposal_line_item(
+            item,
+            description=form["description"],
+            quantity=form["quantity"],
+            unit=form["unit"],
+            unit_cost=form["unit_cost"],
+            markup_percent=form["markup_percent"],
+            notes=form["notes"],
+        )
+    except ProposalServiceError as exc:
+        flash(str(exc), "error")
+        return render_template(
+            "proposals/detail.html",
+            proposal=proposal,
+            editing_item_id=item.id,
+            item_edit_form=form,
+        )
+
+    flash("Proposal line item updated.", "success")
+    return redirect(url_for("proposals.view_proposal", id=proposal.id))
 
 
 @proposals_bp.route("/proposals/<int:id>/edit", methods=["GET", "POST"])

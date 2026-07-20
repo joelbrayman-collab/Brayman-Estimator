@@ -113,8 +113,10 @@
         <button type="submit">{{ "Update Proposal" if proposal else "Save Proposal" }}</button>
         {% if proposal %}
         <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">Cancel</a>
-        {% else %}
+        {% elif estimate and version %}
         <a href="{{ url_for('estimates.view_version', id=estimate.id, version_id=version.id) }}">Cancel</a>
+        {% else %}
+        <a href="{{ url_for('proposals.list_proposals') }}">Cancel</a>
         {% endif %}
     </div>
 </form>

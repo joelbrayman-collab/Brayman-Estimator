@@ -64,13 +64,13 @@ class Proposal(db.Model):
     proposal_number = db.Column(db.String(50), unique=True, nullable=False)
     estimate_id = db.Column(
         db.Integer,
-        db.ForeignKey("estimates.id"),
-        nullable=False,
+        db.ForeignKey("estimates.id", ondelete="SET NULL"),
+        nullable=True,
     )
     estimate_version_id = db.Column(
         db.Integer,
-        db.ForeignKey("estimate_versions.id"),
-        nullable=False,
+        db.ForeignKey("estimate_versions.id", ondelete="SET NULL"),
+        nullable=True,
     )
     proposal_template_id = db.Column(
         db.Integer,
@@ -94,6 +94,21 @@ class Proposal(db.Model):
     estimate_version_label = db.Column(db.String(100))
 
     subtotal = db.Column(db.Numeric(14, 2), nullable=False, default=Decimal("0"))
+    overhead_percent = db.Column(
+        db.Numeric(8, 2),
+        nullable=False,
+        default=Decimal("0"),
+    )
+    profit_percent = db.Column(
+        db.Numeric(8, 2),
+        nullable=False,
+        default=Decimal("0"),
+    )
+    tax_percent = db.Column(
+        db.Numeric(8, 2),
+        nullable=False,
+        default=Decimal("0"),
+    )
     overhead_amount = db.Column(
         db.Numeric(14, 2),
         nullable=False,
@@ -137,6 +152,94 @@ class Proposal(db.Model):
         "ProposalTemplate",
         back_populates="proposals",
     )
+    sections = db.relationship(
+        "ProposalSection",
+        back_populates="proposal",
+        cascade="all, delete-orphan",
+        order_by="ProposalSection.sort_order, ProposalSection.id",
+    )
 
     def __repr__(self):
         return f"<Proposal {self.proposal_number}>"
+
+
+class ProposalSection(db.Model):
+    __tablename__ = "proposal_sections"
+
+    id = db.Column(db.Integer, primary_key=True)
+    proposal_id = db.Column(
+        db.Integer,
+        db.ForeignKey("proposals.id"),
+        nullable=False,
+    )
+    sort_order = db.Column(db.Integer, nullable=False, default=0)
+    name = db.Column(db.String(180), nullable=False)
+    description = db.Column(db.Text)
+    subtotal = db.Column(db.Numeric(14, 2), nullable=False, default=Decimal("0"))
+
+    proposal = db.relationship("Proposal", back_populates="sections")
+    line_items = db.relationship(
+        "ProposalLineItem",
+        back_populates="section",
+        cascade="all, delete-orphan",
+        order_by="ProposalLineItem.sort_order, ProposalLineItem.id",
+    )
+
+    def __repr__(self):
+        return f"<ProposalSection {self.name}>"
+
+
+class ProposalLineItem(db.Model):
+    __tablename__ = "proposal_line_items"
+
+    id = db.Column(db.Integer, primary_key=True)
+    proposal_section_id = db.Column(
+        db.Integer,
+        db.ForeignKey("proposal_sections.id"),
+        nullable=False,
+    )
+    sort_order = db.Column(db.Integer, nullable=False, default=0)
+    source_line_item_id = db.Column(
+        db.Integer,
+        db.ForeignKey("estimate_line_items.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    item_type = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+    quantity = db.Column(
+        db.Numeric(12, 4),
+        nullable=False,
+        default=Decimal("1"),
+    )
+    unit = db.Column(db.String(50), nullable=False)
+    unit_cost = db.Column(
+        db.Numeric(14, 4),
+        nullable=False,
+        default=Decimal("0"),
+    )
+    unit_price = db.Column(
+        db.Numeric(14, 4),
+        nullable=False,
+        default=Decimal("0"),
+    )
+    markup_percent = db.Column(
+        db.Numeric(8, 2),
+        nullable=False,
+        default=Decimal("0"),
+    )
+    extended_cost = db.Column(
+        db.Numeric(14, 2),
+        nullable=False,
+        default=Decimal("0"),
+    )
+    extended_price = db.Column(
+        db.Numeric(14, 2),
+        nullable=False,
+        default=Decimal("0"),
+    )
+    notes = db.Column(db.Text)
+
+    section = db.relationship("ProposalSection", back_populates="line_items")
+
+    def __repr__(self):
+        return f"<ProposalLineItem {self.description}>"

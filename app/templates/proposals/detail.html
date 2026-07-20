@@ -7,8 +7,12 @@
     <div>
         <p class="eyebrow">Proposal</p>
         <h1>{{ proposal.title }}</h1>
+        <p class="muted-copy">
+            Snapshot from Estimate Version v{{ proposal.estimate_version_number }}{% if proposal.estimate_version_label %} — {{ proposal.estimate_version_label }}{% endif %}
+        </p>
     </div>
     <div>
+        <a class="button" href="{{ url_for('proposals.preview_proposal', id=proposal.id) }}">Preview</a>
         <a class="button" href="{{ url_for('proposals.edit_proposal', id=proposal.id) }}">Edit Proposal</a>
         <a class="button-link" href="{{ url_for('proposals.list_proposals') }}">Back to list</a>
     </div>
@@ -75,7 +79,7 @@
 </section>
 
 <section class="form-panel" style="margin-bottom: 24px;">
-    <h2>Estimate</h2>
+    <h2>Estimate Snapshot</h2>
     <div class="form-grid">
         <div><p class="eyebrow">Estimate #</p><p>{{ proposal.estimate_number }}</p></div>
         <div>
@@ -85,24 +89,107 @@
                 {% if proposal.estimate_version_label %} — {{ proposal.estimate_version_label }}{% endif %}
             </p>
         </div>
+        {% if proposal.estimate_id and proposal.estimate_version_id %}
         <div>
-            <p class="eyebrow">Open version</p>
+            <p class="eyebrow">Source</p>
             <p>
                 <a href="{{ url_for('estimates.view_version', id=proposal.estimate_id, version_id=proposal.estimate_version_id) }}">
-                    View estimate version
+                    View live estimate version
                 </a>
             </p>
         </div>
+        {% endif %}
     </div>
 </section>
 
+{% for section in proposal.sections %}
+<section class="form-panel section-panel" style="margin-bottom: 24px;">
+    <div class="page-heading" style="margin-bottom: 12px;">
+        <div>
+            <p class="eyebrow">Section</p>
+            <h2>{{ section.name }}</h2>
+            {% if section.description %}<p class="muted-copy">{{ section.description }}</p>{% endif %}
+        </div>
+        <div>
+            <strong>Section total: ${{ "%.2f"|format(section.subtotal) }}</strong>
+        </div>
+    </div>
+
+    {% if section.line_items %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Unit Cost</th>
+                <th>Unit Price</th>
+                <th>Markup %</th>
+                <th>Extended Cost</th>
+                <th>Extended Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in section.line_items %}
+            <tr>
+                {% if editing_item_id is defined and editing_item_id == item.id and item_edit_form is defined %}
+                <td colspan="10">
+                    <form method="post" action="{{ url_for('proposals.edit_proposal_line_item', id=proposal.id, section_id=section.id, item_id=item.id) }}" class="form-panel">
+                        <div class="form-grid">
+                            <label>Description * <input type="text" name="description" value="{{ item_edit_form.description }}" required></label>
+                            <label>Quantity * <input type="number" name="quantity" value="{{ item_edit_form.quantity }}" step="0.0001" min="0" required></label>
+                            <label>Unit * <input type="text" name="unit" value="{{ item_edit_form.unit }}" required></label>
+                            <label>Unit cost * <input type="number" name="unit_cost" value="{{ item_edit_form.unit_cost }}" step="0.0001" min="0" required></label>
+                            <label>Markup % <input type="number" name="markup_percent" value="{{ item_edit_form.markup_percent }}" step="0.01" min="0"></label>
+                            <label>Notes <input type="text" name="notes" value="{{ item_edit_form.notes }}"></label>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit">Update Line Item</button>
+                            <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">Cancel</a>
+                        </div>
+                    </form>
+                </td>
+                {% else %}
+                <td>{{ item.item_type }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.unit }}</td>
+                <td>${{ "%.2f"|format(item.unit_cost) }}</td>
+                <td>${{ "%.2f"|format(item.unit_price) }}</td>
+                <td>{{ "%.2f"|format(item.markup_percent) }}</td>
+                <td>${{ "%.2f"|format(item.extended_cost) }}</td>
+                <td>${{ "%.2f"|format(item.extended_price) }}</td>
+                <td>
+                    <a class="button-link" href="{{ url_for('proposals.view_proposal', id=proposal.id, edit_item=item.id) }}">Edit</a>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <h2>No line items</h2>
+        <p>This snapshot section has no line items.</p>
+    </div>
+    {% endif %}
+</section>
+{% else %}
+<div class="empty-state" style="margin-bottom: 24px;">
+    <h2>No snapshot sections</h2>
+    <p>This proposal has no copied estimate sections.</p>
+</div>
+{% endfor %}
+
 <section class="form-panel pricing-summary">
-    <h2>Financial Summary</h2>
+    <h2>Grand Total</h2>
     <div class="form-grid">
         <div><p class="eyebrow">Subtotal</p><p>${{ "%.2f"|format(proposal.subtotal) }}</p></div>
-        <div><p class="eyebrow">Overhead</p><p>${{ "%.2f"|format(proposal.overhead_amount) }}</p></div>
-        <div><p class="eyebrow">Profit</p><p>${{ "%.2f"|format(proposal.profit_amount) }}</p></div>
-        <div><p class="eyebrow">Tax</p><p>${{ "%.2f"|format(proposal.tax_amount) }}</p></div>
+        <div><p class="eyebrow">Overhead ({{ "%.2f"|format(proposal.overhead_percent) }}%)</p><p>${{ "%.2f"|format(proposal.overhead_amount) }}</p></div>
+        <div><p class="eyebrow">Profit ({{ "%.2f"|format(proposal.profit_percent) }}%)</p><p>${{ "%.2f"|format(proposal.profit_amount) }}</p></div>
+        <div><p class="eyebrow">Tax ({{ "%.2f"|format(proposal.tax_percent) }}%)</p><p>${{ "%.2f"|format(proposal.tax_amount) }}</p></div>
         <div><p class="eyebrow">Total</p><p><strong>${{ "%.2f"|format(proposal.total) }}</strong></p></div>
     </div>
 </section>

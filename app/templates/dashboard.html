@@ -27,7 +27,8 @@
     <article class="card">
         <h2>Estimates</h2>
         <p>Create estimate sections, line items, allowances, and markups.</p>
-        <strong>0 estimates</strong>
+        <strong>{{ estimate_count }} estimates</strong>
+        <p><a class="button-link" href="{{ url_for('estimates.create_estimate_route') }}">Add estimate</a></p>
     </article>
 
     <article class="card">

@@ -1,6 +1,15 @@
 from app.models.assembly import Assembly, AssemblyItem
 from app.models.client import Client
 from app.models.cost_item import CostItem
+from app.models.estimate import Estimate, EstimateVersion
 from app.models.project import Project
 
-__all__ = ["Assembly", "AssemblyItem", "Client", "CostItem", "Project"]
+__all__ = [
+    "Assembly",
+    "AssemblyItem",
+    "Client",
+    "CostItem",
+    "Estimate",
+    "EstimateVersion",
+    "Project",
+]

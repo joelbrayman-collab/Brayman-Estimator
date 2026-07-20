@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Edit Estimate" if estimate else "New Estimate" }} | Brayman Estimator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Estimating</p>
+        <h1>{{ "Edit Estimate" if estimate else "New Estimate" }}</h1>
+    </div>
+</div>
+
+{% if projects %}
+<form method="post" class="form-panel">
+    <div class="form-grid">
+        <label>
+            Estimate number *
+            <input type="text" name="estimate_number" value="{{ form.estimate_number }}" required>
+            {% if not estimate %}
+            <small class="field-hint">Suggested format: EST-YYYY-NNNN. You can override this value.</small>
+            {% endif %}
+        </label>
+
+        <label>
+            Title *
+            <input type="text" name="title" value="{{ form.title }}" required>
+        </label>
+
+        <label>
+            Project *
+            <select name="project_id" required>
+                <option value="">Select a project</option>
+                {% for project in projects %}
+                <option value="{{ project.id }}" {% if form.project_id == project.id|string %}selected{% endif %}>
+                    {{ project.name }} — {{ project.client.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Estimate status *
+            <select name="status" required>
+                {% for status in statuses %}
+                <option value="{{ status }}" {% if form.status == status %}selected{% endif %}>{{ status }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+
+    {% if estimate and estimate.current_version and version_form is defined %}
+    <hr class="form-divider">
+    <h2>Current Version — {{ estimate.current_version.display_label }}</h2>
+
+    {% if estimate.current_version.is_locked %}
+    <p class="muted-copy">
+        <span class="status status-locked">Locked</span>
+        Estimate details can still be updated, but version values cannot be changed until this version is unlocked.
+    </p>
+    {% else %}
+    <div class="form-grid">
+        <label>
+            Version label
+            <input type="text" name="version_label" value="{{ version_form.version_label }}">
+        </label>
+
+        <label>
+            Version status
+            <select name="version_status">
+                {% for status in version_statuses %}
+                <option value="{{ status }}" {% if version_form.status == status %}selected{% endif %}>{{ status }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Subtotal
+            <input type="number" name="subtotal" value="{{ version_form.subtotal }}" step="0.01" min="0">
+        </label>
+
+        <label>
+            Overhead %
+            <input type="number" name="overhead_percent" value="{{ version_form.overhead_percent }}" step="0.01" min="0">
+        </label>
+
+        <label>
+            Profit %
+            <input type="number" name="profit_percent" value="{{ version_form.profit_percent }}" step="0.01" min="0">
+        </label>
+
+        <label>
+            Tax %
+            <input type="number" name="tax_percent" value="{{ version_form.tax_percent }}" step="0.01" min="0">
+        </label>
+
+        <label>
+            Total
+            <input type="number" name="total" value="{{ version_form.total }}" step="0.01" min="0">
+        </label>
+    </div>
+
+    <label>
+        Revision reason
+        <textarea name="revision_reason" rows="3">{{ version_form.revision_reason }}</textarea>
+    </label>
+    {% endif %}
+    {% endif %}
+
+    <div class="form-actions">
+        <button type="submit">{{ "Update Estimate" if estimate else "Save Estimate" }}</button>
+        {% if estimate %}
+        <a href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">Cancel</a>
+        {% else %}
+        <a href="{{ url_for('estimates.list_estimates') }}">Cancel</a>
+        {% endif %}
+    </div>
+</form>
+{% else %}
+<div class="empty-state">
+    <h2>A project is required</h2>
+    <p>Create a project before creating an estimate.</p>
+    <a class="button" href="{{ url_for('projects.create_project') }}">Create Project</a>
+</div>
+{% endif %}
+{% endblock %}

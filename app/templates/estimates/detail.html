@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}{{ estimate.estimate_number }} | Brayman Estimator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Estimate</p>
+        <h1>{{ estimate.title }}</h1>
+    </div>
+
+    <div>
+        <a class="button" href="{{ url_for('estimates.edit_estimate', id=estimate.id) }}">Edit Estimate</a>
+        <a class="button-link" href="{{ url_for('estimates.list_estimates') }}">Back to list</a>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Estimate #</p>
+            <p>{{ estimate.estimate_number }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Status</p>
+            <p><span class="status">{{ estimate.status }}</span></p>
+        </div>
+        <div>
+            <p class="eyebrow">Project</p>
+            <p>{{ estimate.project.name }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Client</p>
+            <p>{{ estimate.project.client.name }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Created</p>
+            <p>{{ estimate.created_at.strftime("%Y-%m-%d") }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Updated</p>
+            <p>{{ estimate.updated_at.strftime("%Y-%m-%d") }}</p>
+        </div>
+    </div>
+</section>
+
+{% if estimate.current_version %}
+<section class="form-panel version-current" style="margin-bottom: 24px;">
+    <div class="page-heading" style="margin-bottom: 12px;">
+        <div>
+            <p class="eyebrow">Current Version</p>
+            <h2>{{ estimate.current_version.display_label }}</h2>
+        </div>
+        <div>
+            <span class="status status-current">Current</span>
+            {% if estimate.current_version.is_locked %}
+            <span class="status status-locked">Locked</span>
+            {% else %}
+            <span class="status">Unlocked</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Status</p>
+            <p>{{ estimate.current_version.status }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Subtotal</p>
+            <p>${{ "%.2f"|format(estimate.current_version.subtotal) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Overhead</p>
+            <p>{{ "%.2f"|format(estimate.current_version.overhead_percent) }}%</p>
+        </div>
+        <div>
+            <p class="eyebrow">Profit</p>
+            <p>{{ "%.2f"|format(estimate.current_version.profit_percent) }}%</p>
+        </div>
+        <div>
+            <p class="eyebrow">Tax</p>
+            <p>{{ "%.2f"|format(estimate.current_version.tax_percent) }}%</p>
+        </div>
+        <div>
+            <p class="eyebrow">Total</p>
+            <p><strong>${{ "%.2f"|format(estimate.current_version.total) }}</strong></p>
+        </div>
+        <div>
+            <p class="eyebrow">Created</p>
+            <p>{{ estimate.current_version.created_at.strftime("%Y-%m-%d") }}</p>
+        </div>
+    </div>
+
+    {% if estimate.current_version.revision_reason %}
+    <p><strong>Revision reason:</strong> {{ estimate.current_version.revision_reason }}</p>
+    {% endif %}
+
+    <div class="form-actions">
+        <a class="button-link" href="{{ url_for('estimates.view_version', id=estimate.id, version_id=estimate.current_version.id) }}">View Version</a>
+        {% if estimate.current_version.is_locked %}
+        <form method="post" action="{{ url_for('estimates.unlock_estimate_version', id=estimate.id, version_id=estimate.current_version.id) }}" style="display: inline;">
+            <button type="submit">Unlock</button>
+        </form>
+        {% else %}
+        <form method="post" action="{{ url_for('estimates.lock_estimate_version', id=estimate.id, version_id=estimate.current_version.id) }}" style="display: inline;">
+            <button type="submit">Lock</button>
+        </form>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">History</p>
+        <h1>Versions</h1>
+    </div>
+</section>
+
+{% if estimate.versions %}
+<table class="data-table" style="margin-bottom: 24px;">
+    <thead>
+        <tr>
+            <th>Version</th>
+            <th>Status</th>
+            <th>Lock</th>
+            <th>Subtotal</th>
+            <th>Overhead</th>
+            <th>Profit</th>
+            <th>Tax</th>
+            <th>Total</th>
+            <th>Revision Reason</th>
+            <th>Created</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for version in estimate.versions %}
+        <tr class="{% if estimate.current_version_id == version.id %}version-current{% endif %}{% if version.is_locked %} version-locked{% endif %}">
+            <td>
+                <a href="{{ url_for('estimates.view_version', id=estimate.id, version_id=version.id) }}">{{ version.display_label }}</a>
+                {% if estimate.current_version_id == version.id %}
+                <span class="status status-current">Current</span>
+                {% endif %}
+            </td>
+            <td>{{ version.status }}</td>
+            <td>
+                {% if version.is_locked %}
+                <span class="status status-locked">Locked</span>
+                {% else %}
+                <span class="status">Unlocked</span>
+                {% endif %}
+            </td>
+            <td>${{ "%.2f"|format(version.subtotal) }}</td>
+            <td>{{ "%.2f"|format(version.overhead_percent) }}%</td>
+            <td>{{ "%.2f"|format(version.profit_percent) }}%</td>
+            <td>{{ "%.2f"|format(version.tax_percent) }}%</td>
+            <td>${{ "%.2f"|format(version.total) }}</td>
+            <td>{{ version.revision_reason or "—" }}</td>
+            <td>{{ version.created_at.strftime("%Y-%m-%d") }}</td>
+            <td>
+                <a class="button-link" href="{{ url_for('estimates.view_version', id=estimate.id, version_id=version.id) }}">View</a>
+                {% if estimate.current_version_id != version.id %}
+                <form method="post" action="{{ url_for('estimates.set_current', id=estimate.id, version_id=version.id) }}" style="display: inline;">
+                    <button type="submit">Set as Current</button>
+                </form>
+                {% endif %}
+                {% if version.is_locked %}
+                <form method="post" action="{{ url_for('estimates.unlock_estimate_version', id=estimate.id, version_id=version.id) }}" style="display: inline;">
+                    <button type="submit">Unlock</button>
+                </form>
+                {% else %}
+                <form method="post" action="{{ url_for('estimates.lock_estimate_version', id=estimate.id, version_id=version.id) }}" style="display: inline;">
+                    <button type="submit">Lock</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<section class="form-panel">
+    <h2>Create New Version</h2>
+    <p class="muted-copy">Clones the current version into the next sequential version without changing earlier versions.</p>
+
+    <form method="post" action="{{ url_for('estimates.create_version', id=estimate.id) }}">
+        <div class="form-grid">
+            <label>
+                Version label
+                <input type="text" name="version_label" value="{{ clone_form.version_label }}" placeholder="e.g. Issued for Tender">
+            </label>
+        </div>
+
+        <label>
+            Revision reason
+            <textarea name="revision_reason" rows="3" placeholder="Why is this revision being created?">{{ clone_form.revision_reason }}</textarea>
+        </label>
+
+        <div class="form-actions">
+            <button type="submit">Create New Version</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

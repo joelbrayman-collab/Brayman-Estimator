@@ -20,6 +20,11 @@ class Project(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     client = db.relationship("Client", back_populates="projects")
+    estimates = db.relationship(
+        "Estimate",
+        back_populates="project",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self):
         return f"<Project {self.name}>"

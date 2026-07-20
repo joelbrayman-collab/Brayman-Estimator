@@ -23,6 +23,7 @@ def create_app(config=None):
     from app.routes.assemblies import assemblies_bp
     from app.routes.clients import clients_bp
     from app.routes.cost_library import cost_library_bp
+    from app.routes.estimates import estimates_bp
     from app.routes.main import main_bp
     from app.routes.projects import projects_bp
 
@@ -31,5 +32,6 @@ def create_app(config=None):
     app.register_blueprint(projects_bp)
     app.register_blueprint(cost_library_bp)
     app.register_blueprint(assemblies_bp)
+    app.register_blueprint(estimates_bp)
 
     return app

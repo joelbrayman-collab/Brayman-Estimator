@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}{{ version.display_label }} | Brayman Estimator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">{{ estimate.estimate_number }}</p>
+        <h1>{{ version.display_label }}</h1>
+    </div>
+
+    <div>
+        <a class="button-link" href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">Back to estimate</a>
+    </div>
+</div>
+
+<section class="form-panel {% if estimate.current_version_id == version.id %}version-current{% endif %}{% if version.is_locked %} version-locked{% endif %}">
+    <div class="form-actions" style="margin-bottom: 20px;">
+        {% if estimate.current_version_id == version.id %}
+        <span class="status status-current">Current</span>
+        {% endif %}
+        {% if version.is_locked %}
+        <span class="status status-locked">Locked</span>
+        {% else %}
+        <span class="status">Unlocked</span>
+        {% endif %}
+    </div>
+
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Project</p>
+            <p>{{ estimate.project.name }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Client</p>
+            <p>{{ estimate.project.client.name }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Version Status</p>
+            <p>{{ version.status }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Subtotal</p>
+            <p>${{ "%.2f"|format(version.subtotal) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Overhead</p>
+            <p>{{ "%.2f"|format(version.overhead_percent) }}%</p>
+        </div>
+        <div>
+            <p class="eyebrow">Profit</p>
+            <p>{{ "%.2f"|format(version.profit_percent) }}%</p>
+        </div>
+        <div>
+            <p class="eyebrow">Tax</p>
+            <p>{{ "%.2f"|format(version.tax_percent) }}%</p>
+        </div>
+        <div>
+            <p class="eyebrow">Total</p>
+            <p><strong>${{ "%.2f"|format(version.total) }}</strong></p>
+        </div>
+        <div>
+            <p class="eyebrow">Created</p>
+            <p>{{ version.created_at.strftime("%Y-%m-%d %H:%M") }}</p>
+        </div>
+    </div>
+
+    {% if version.revision_reason %}
+    <p><strong>Revision reason:</strong> {{ version.revision_reason }}</p>
+    {% endif %}
+
+    <div class="form-actions">
+        {% if estimate.current_version_id != version.id %}
+        <form method="post" action="{{ url_for('estimates.set_current', id=estimate.id, version_id=version.id) }}">
+            <button type="submit">Set as Current</button>
+        </form>
+        {% endif %}
+        {% if version.is_locked %}
+        <form method="post" action="{{ url_for('estimates.unlock_estimate_version', id=estimate.id, version_id=version.id) }}">
+            <button type="submit">Unlock</button>
+        </form>
+        {% else %}
+        <form method="post" action="{{ url_for('estimates.lock_estimate_version', id=estimate.id, version_id=version.id) }}">
+            <button type="submit">Lock</button>
+        </form>
+        {% endif %}
+        <a class="button" href="{{ url_for('estimates.edit_estimate', id=estimate.id) }}">Edit Estimate</a>
+    </div>
+</section>
+{% endblock %}

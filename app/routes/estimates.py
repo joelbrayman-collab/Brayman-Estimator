@@ -3,7 +3,15 @@ from decimal import Decimal, InvalidOperation
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 
 from app import db
-from app.models import Estimate, EstimateVersion, Project
+from app.models import (
+    Assembly,
+    CostItem,
+    Estimate,
+    EstimateLineItem,
+    EstimateSection,
+    EstimateVersion,
+    Project,
+)
 from app.models.estimate import ESTIMATE_STATUSES, ESTIMATE_VERSION_STATUSES
 from app.services import (
     EstimateServiceError,
@@ -16,12 +24,33 @@ from app.services import (
     unlock_version,
     update_estimate_version,
 )
+from app.services.estimate_builder import (
+    add_assembly_line,
+    add_cost_item_line,
+    add_manual_line,
+    create_section,
+    delete_line_item,
+    delete_section,
+    reorder_line_item,
+    reorder_section,
+    update_line_item,
+    update_section,
+    update_version_pricing,
+)
 
 estimates_bp = Blueprint("estimates", __name__, url_prefix="/estimates")
 
 
 def _projects():
     return Project.query.order_by(Project.name.asc()).all()
+
+
+def _active_cost_items():
+    return CostItem.query.filter_by(is_active=True).order_by(CostItem.code.asc()).all()
+
+
+def _active_assemblies():
+    return Assembly.query.filter_by(is_active=True).order_by(Assembly.code.asc()).all()
 
 
 def _get_estimate_version(estimate_id, version_id):
@@ -33,6 +62,47 @@ def _get_estimate_version(estimate_id, version_id):
     if version is None:
         abort(404)
     return estimate, version
+
+
+def _get_section(estimate_id, version_id, section_id):
+    estimate, version = _get_estimate_version(estimate_id, version_id)
+    section = EstimateSection.query.filter_by(
+        id=section_id,
+        estimate_version_id=version.id,
+    ).first()
+    if section is None:
+        abort(404)
+    return estimate, version, section
+
+
+def _get_line_item(estimate_id, version_id, section_id, item_id):
+    estimate, version, section = _get_section(estimate_id, version_id, section_id)
+    item = EstimateLineItem.query.filter_by(
+        id=item_id,
+        estimate_section_id=section.id,
+    ).first()
+    if item is None:
+        abort(404)
+    return estimate, version, section, item
+
+
+def _builder_context(estimate, version, **extra):
+    context = {
+        "estimate": estimate,
+        "version": version,
+        "cost_items": _active_cost_items(),
+        "assemblies": _active_assemblies(),
+        "editable": not version.is_locked,
+    }
+    context.update(extra)
+    return context
+
+
+def _render_builder(estimate, version, **extra):
+    return render_template(
+        "estimates/version_detail.html",
+        **_builder_context(estimate, version, **extra),
+    )
 
 
 def _estimate_form_values(estimate=None, suggested_number=None):
@@ -79,11 +149,9 @@ def _version_edit_form_values(version=None):
             "version_label": request.form.get("version_label", "").strip(),
             "revision_reason": request.form.get("revision_reason", "").strip(),
             "status": request.form.get("version_status", "Draft").strip(),
-            "subtotal": request.form.get("subtotal", "0").strip(),
             "overhead_percent": request.form.get("overhead_percent", "0").strip(),
             "profit_percent": request.form.get("profit_percent", "0").strip(),
             "tax_percent": request.form.get("tax_percent", "0").strip(),
-            "total": request.form.get("total", "0").strip(),
         }
 
     if version is None:
@@ -91,28 +159,26 @@ def _version_edit_form_values(version=None):
             "version_label": "",
             "revision_reason": "",
             "status": "Draft",
-            "subtotal": "0.00",
             "overhead_percent": "0.00",
             "profit_percent": "0.00",
             "tax_percent": "0.00",
-            "total": "0.00",
         }
 
     return {
         "version_label": version.version_label or "",
         "revision_reason": version.revision_reason or "",
         "status": version.status,
-        "subtotal": f"{version.subtotal:.2f}",
         "overhead_percent": f"{version.overhead_percent:.2f}",
         "profit_percent": f"{version.profit_percent:.2f}",
         "tax_percent": f"{version.tax_percent:.2f}",
-        "total": f"{version.total:.2f}",
     }
 
 
-def _parse_decimal(value, label):
+def _parse_decimal(value, label, allow_empty=True):
     if value == "":
-        return Decimal("0"), None
+        if allow_empty:
+            return Decimal("0"), None
+        return None, f"{label} is required."
     try:
         return Decimal(value), None
     except InvalidOperation:
@@ -211,19 +277,18 @@ def edit_estimate(id):
         if form["status"] and form["status"] not in ESTIMATE_STATUSES:
             errors.append("Select a valid estimate status.")
 
-        # Current version financial edits (blocked when locked).
         parsed = {}
         if version is not None and not version.is_locked:
             for field, label in (
-                ("subtotal", "Subtotal"),
                 ("overhead_percent", "Overhead percent"),
                 ("profit_percent", "Profit percent"),
                 ("tax_percent", "Tax percent"),
-                ("total", "Total"),
             ):
                 value, error = _parse_decimal(version_form[field], label)
                 if error:
                     errors.append(error)
+                elif value < 0:
+                    errors.append(f"{label} cannot be negative.")
                 else:
                     parsed[field] = value
 
@@ -266,11 +331,9 @@ def edit_estimate(id):
                     version_label=version_form["version_label"],
                     revision_reason=version_form["revision_reason"],
                     status=version_form["status"],
-                    subtotal=parsed["subtotal"],
                     overhead_percent=parsed["overhead_percent"],
                     profit_percent=parsed["profit_percent"],
                     tax_percent=parsed["tax_percent"],
-                    total=parsed["total"],
                 )
             except EstimateServiceError as exc:
                 db.session.rollback()
@@ -336,10 +399,33 @@ def create_version(id):
 @estimates_bp.route("/<int:id>/versions/<int:version_id>")
 def view_version(id, version_id):
     estimate, version = _get_estimate_version(id, version_id)
-    return render_template(
-        "estimates/version_detail.html",
-        estimate=estimate,
-        version=version,
+    editing_item_id = request.args.get("edit_item", type=int)
+    item_edit_form = None
+
+    if editing_item_id is not None:
+        item = EstimateLineItem.query.get(editing_item_id)
+        if (
+            item is not None
+            and item.section.estimate_version_id == version.id
+        ):
+            item_edit_form = {
+                "code": item.code or "",
+                "description": item.description,
+                "quantity": f"{item.quantity}",
+                "unit": item.unit,
+                "unit_cost": f"{item.unit_cost}",
+                "waste_percent": f"{item.waste_percent:.2f}",
+                "markup_percent": f"{item.markup_percent:.2f}",
+                "notes": item.notes or "",
+            }
+        else:
+            editing_item_id = None
+
+    return _render_builder(
+        estimate,
+        version,
+        editing_item_id=editing_item_id,
+        item_edit_form=item_edit_form,
     )
 
 
@@ -368,7 +454,9 @@ def lock_estimate_version(id, version_id):
     estimate, version = _get_estimate_version(id, version_id)
     lock_version(version)
     flash(f"{version.display_label} locked.", "success")
-    return redirect(url_for("estimates.view_estimate", id=estimate.id))
+    return redirect(
+        url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+    )
 
 
 @estimates_bp.route(
@@ -379,4 +467,290 @@ def unlock_estimate_version(id, version_id):
     estimate, version = _get_estimate_version(id, version_id)
     unlock_version(version)
     flash(f"{version.display_label} unlocked.", "success")
-    return redirect(url_for("estimates.view_estimate", id=estimate.id))
+    return redirect(
+        url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+    )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/pricing",
+    methods=["POST"],
+)
+def update_pricing(id, version_id):
+    estimate, version = _get_estimate_version(id, version_id)
+    form = {
+        "overhead_percent": request.form.get("overhead_percent", "0").strip(),
+        "profit_percent": request.form.get("profit_percent", "0").strip(),
+        "tax_percent": request.form.get("tax_percent", "0").strip(),
+    }
+
+    try:
+        update_version_pricing(
+            version,
+            overhead_percent=form["overhead_percent"],
+            profit_percent=form["profit_percent"],
+            tax_percent=form["tax_percent"],
+        )
+    except EstimateServiceError as exc:
+        flash(str(exc), "error")
+        return _render_builder(estimate, version, pricing_form=form)
+
+    flash("Pricing percentages updated.", "success")
+    return redirect(
+        url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+    )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/sections/new",
+    methods=["POST"],
+)
+def create_section_route(id, version_id):
+    estimate, version = _get_estimate_version(id, version_id)
+    form = {
+        "name": request.form.get("name", "").strip(),
+        "description": request.form.get("description", "").strip(),
+    }
+
+    try:
+        create_section(
+            version,
+            name=form["name"],
+            description=form["description"],
+        )
+    except EstimateServiceError as exc:
+        flash(str(exc), "error")
+        return _render_builder(estimate, version, section_form=form)
+
+    flash("Section added.", "success")
+    return redirect(
+        url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+    )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/sections/<int:section_id>/edit",
+    methods=["POST"],
+)
+def edit_section_route(id, version_id, section_id):
+    estimate, version, section = _get_section(id, version_id, section_id)
+    form = {
+        "name": request.form.get("name", "").strip(),
+        "description": request.form.get("description", "").strip(),
+    }
+
+    try:
+        update_section(
+            section,
+            name=form["name"],
+            description=form["description"],
+        )
+    except EstimateServiceError as exc:
+        flash(str(exc), "error")
+        return _render_builder(
+            estimate,
+            version,
+            editing_section_id=section.id,
+            section_edit_form=form,
+        )
+
+    flash("Section updated.", "success")
+    return redirect(
+        url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+    )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/sections/<int:section_id>/delete",
+    methods=["POST"],
+)
+def delete_section_route(id, version_id, section_id):
+    estimate, version, section = _get_section(id, version_id, section_id)
+
+    try:
+        delete_section(section)
+    except EstimateServiceError as exc:
+        flash(str(exc), "error")
+        return redirect(
+            url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+        )
+
+    flash("Section deleted.", "success")
+    return redirect(
+        url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+    )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/sections/reorder",
+    methods=["POST"],
+)
+def reorder_sections_route(id, version_id):
+    estimate, version = _get_estimate_version(id, version_id)
+    section_id = request.form.get("section_id", type=int)
+    direction = request.form.get("direction", "").strip()
+    section = EstimateSection.query.filter_by(
+        id=section_id,
+        estimate_version_id=version.id,
+    ).first_or_404()
+
+    try:
+        reorder_section(section, direction)
+    except EstimateServiceError as exc:
+        flash(str(exc), "error")
+
+    return redirect(
+        url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+    )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/sections/<int:section_id>/items/new",
+    methods=["POST"],
+)
+def create_line_item_route(id, version_id, section_id):
+    estimate, version, section = _get_section(id, version_id, section_id)
+    line_type = request.form.get("line_type", "").strip()
+    form = {key: request.form.get(key, "").strip() for key in request.form.keys()}
+
+    try:
+        if line_type == "Cost Item":
+            add_cost_item_line(
+                section,
+                cost_item_id=request.form.get("cost_item_id", type=int),
+                quantity=form.get("quantity", "1"),
+                waste_percent=form.get("waste_percent", "0"),
+                notes=form.get("notes"),
+            )
+        elif line_type == "Assembly":
+            add_assembly_line(
+                section,
+                assembly_id=request.form.get("assembly_id", type=int),
+                quantity=form.get("quantity", "1"),
+                waste_percent=form.get("waste_percent", "0"),
+                notes=form.get("notes"),
+            )
+        elif line_type in ("Custom", "Allowance"):
+            add_manual_line(
+                section,
+                line_type=line_type,
+                description=form.get("description", ""),
+                quantity=form.get("quantity", "1"),
+                unit=form.get("unit", ""),
+                unit_cost=form.get("unit_cost", "0"),
+                waste_percent=form.get("waste_percent", "0"),
+                markup_percent=form.get("markup_percent", "0"),
+                code=form.get("code"),
+                notes=form.get("notes"),
+            )
+        else:
+            raise EstimateServiceError("Select a valid line type.")
+    except EstimateServiceError as exc:
+        flash(str(exc), "error")
+        return _render_builder(
+            estimate,
+            version,
+            line_form=form,
+            line_form_section_id=section.id,
+        )
+
+    flash("Line item added.", "success")
+    return redirect(
+        url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+    )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/sections/<int:section_id>/items/<int:item_id>/edit",
+    methods=["POST"],
+)
+def edit_line_item_route(id, version_id, section_id, item_id):
+    estimate, version, section, item = _get_line_item(
+        id,
+        version_id,
+        section_id,
+        item_id,
+    )
+    form = {
+        "code": request.form.get("code", "").strip(),
+        "description": request.form.get("description", "").strip(),
+        "quantity": request.form.get("quantity", "").strip(),
+        "unit": request.form.get("unit", "").strip(),
+        "unit_cost": request.form.get("unit_cost", "").strip(),
+        "waste_percent": request.form.get("waste_percent", "").strip(),
+        "markup_percent": request.form.get("markup_percent", "").strip(),
+        "notes": request.form.get("notes", "").strip(),
+    }
+
+    try:
+        update_line_item(
+            item,
+            code=form["code"],
+            description=form["description"],
+            quantity=form["quantity"],
+            unit=form["unit"],
+            unit_cost=form["unit_cost"],
+            waste_percent=form["waste_percent"],
+            markup_percent=form["markup_percent"],
+            notes=form["notes"],
+        )
+    except EstimateServiceError as exc:
+        flash(str(exc), "error")
+        return _render_builder(
+            estimate,
+            version,
+            editing_item_id=item.id,
+            item_edit_form=form,
+        )
+
+    flash("Line item updated.", "success")
+    return redirect(
+        url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+    )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/sections/<int:section_id>/items/<int:item_id>/delete",
+    methods=["POST"],
+)
+def delete_line_item_route(id, version_id, section_id, item_id):
+    estimate, version, section, item = _get_line_item(
+        id,
+        version_id,
+        section_id,
+        item_id,
+    )
+
+    try:
+        delete_line_item(item)
+    except EstimateServiceError as exc:
+        flash(str(exc), "error")
+    else:
+        flash("Line item deleted.", "success")
+
+    return redirect(
+        url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+    )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/sections/<int:section_id>/items/reorder",
+    methods=["POST"],
+)
+def reorder_line_items_route(id, version_id, section_id):
+    estimate, version, section = _get_section(id, version_id, section_id)
+    item_id = request.form.get("item_id", type=int)
+    direction = request.form.get("direction", "").strip()
+    item = EstimateLineItem.query.filter_by(
+        id=item_id,
+        estimate_section_id=section.id,
+    ).first_or_404()
+
+    try:
+        reorder_line_item(item, direction)
+    except EstimateServiceError as exc:
+        flash(str(exc), "error")
+
+    return redirect(
+        url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+    )

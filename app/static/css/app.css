@@ -277,6 +277,21 @@ textarea {
     font-weight: 700;
 }
 
+.section-panel h3 {
+    margin-top: 28px;
+    margin-bottom: 12px;
+}
+
+.line-item-forms form {
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.pricing-summary strong {
+    color: var(--gold);
+}
+
 @media (max-width: 760px) {
     .form-grid {
         grid-template-columns: 1fr;

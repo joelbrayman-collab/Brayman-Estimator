@@ -14,13 +14,13 @@
     </div>
 </div>
 
-<section class="form-panel {% if estimate.current_version_id == version.id %}version-current{% endif %}{% if version.is_locked %} version-locked{% endif %}">
+<section class="form-panel {% if estimate.current_version_id == version.id %}version-current{% endif %}{% if version.is_locked %} version-locked{% endif %}" style="margin-bottom: 24px;">
     <div class="form-actions" style="margin-bottom: 20px;">
         {% if estimate.current_version_id == version.id %}
         <span class="status status-current">Current</span>
         {% endif %}
         {% if version.is_locked %}
-        <span class="status status-locked">Locked</span>
+        <span class="status status-locked">Locked — read only</span>
         {% else %}
         <span class="status">Unlocked</span>
         {% endif %}
@@ -36,32 +36,12 @@
             <p>{{ estimate.project.client.name }}</p>
         </div>
         <div>
+            <p class="eyebrow">Estimate #</p>
+            <p>{{ estimate.estimate_number }}</p>
+        </div>
+        <div>
             <p class="eyebrow">Version Status</p>
             <p>{{ version.status }}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Subtotal</p>
-            <p>${{ "%.2f"|format(version.subtotal) }}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Overhead</p>
-            <p>{{ "%.2f"|format(version.overhead_percent) }}%</p>
-        </div>
-        <div>
-            <p class="eyebrow">Profit</p>
-            <p>{{ "%.2f"|format(version.profit_percent) }}%</p>
-        </div>
-        <div>
-            <p class="eyebrow">Tax</p>
-            <p>{{ "%.2f"|format(version.tax_percent) }}%</p>
-        </div>
-        <div>
-            <p class="eyebrow">Total</p>
-            <p><strong>${{ "%.2f"|format(version.total) }}</strong></p>
-        </div>
-        <div>
-            <p class="eyebrow">Created</p>
-            <p>{{ version.created_at.strftime("%Y-%m-%d %H:%M") }}</p>
         </div>
     </div>
 
@@ -87,4 +67,276 @@
         <a class="button" href="{{ url_for('estimates.edit_estimate', id=estimate.id) }}">Edit Estimate</a>
     </div>
 </section>
+
+<section class="form-panel pricing-summary" style="margin-bottom: 24px;">
+    <h2>Estimate Totals</h2>
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Subtotal</p>
+            <p><strong>${{ "%.2f"|format(version.subtotal) }}</strong></p>
+        </div>
+        <div>
+            <p class="eyebrow">Overhead ({{ "%.2f"|format(version.overhead_percent) }}%)</p>
+            <p>${{ "%.2f"|format(version.overhead_amount) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Profit ({{ "%.2f"|format(version.profit_percent) }}%)</p>
+            <p>${{ "%.2f"|format(version.profit_amount) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Tax ({{ "%.2f"|format(version.tax_percent) }}%)</p>
+            <p>${{ "%.2f"|format(version.tax_amount) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Grand Total</p>
+            <p><strong>${{ "%.2f"|format(version.total) }}</strong></p>
+        </div>
+    </div>
+
+    {% if editable %}
+    <form method="post" action="{{ url_for('estimates.update_pricing', id=estimate.id, version_id=version.id) }}" class="pricing-form">
+        <div class="form-grid">
+            <label>
+                Overhead %
+                <input type="number" name="overhead_percent" value="{% if pricing_form is defined %}{{ pricing_form.overhead_percent }}{% else %}{{ '%.2f'|format(version.overhead_percent) }}{% endif %}" step="0.01" min="0">
+            </label>
+            <label>
+                Profit %
+                <input type="number" name="profit_percent" value="{% if pricing_form is defined %}{{ pricing_form.profit_percent }}{% else %}{{ '%.2f'|format(version.profit_percent) }}{% endif %}" step="0.01" min="0">
+            </label>
+            <label>
+                Tax %
+                <input type="number" name="tax_percent" value="{% if pricing_form is defined %}{{ pricing_form.tax_percent }}{% else %}{{ '%.2f'|format(version.tax_percent) }}{% endif %}" step="0.01" min="0">
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Update Pricing</button>
+        </div>
+    </form>
+    {% endif %}
+</section>
+
+{% if editable %}
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Add Section</h2>
+    <form method="post" action="{{ url_for('estimates.create_section_route', id=estimate.id, version_id=version.id) }}">
+        <div class="form-grid">
+            <label>
+                Section name *
+                <input type="text" name="name" value="{{ section_form.name if section_form is defined else '' }}" required>
+            </label>
+            <label>
+                Description
+                <input type="text" name="description" value="{{ section_form.description if section_form is defined else '' }}">
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Add Section</button>
+        </div>
+    </form>
+</section>
+{% endif %}
+
+{% for section in version.sections %}
+<section class="form-panel section-panel" style="margin-bottom: 24px;">
+    <div class="page-heading" style="margin-bottom: 12px;">
+        <div>
+            <p class="eyebrow">Section</p>
+            <h2>{{ section.name }}</h2>
+            {% if section.description %}<p class="muted-copy">{{ section.description }}</p>{% endif %}
+        </div>
+        <div>
+            <strong>Subtotal: ${{ "%.2f"|format(section.subtotal) }}</strong>
+        </div>
+    </div>
+
+    {% if editable %}
+    <div class="form-actions" style="margin-bottom: 16px;">
+        <form method="post" action="{{ url_for('estimates.reorder_sections_route', id=estimate.id, version_id=version.id) }}" style="display:inline;">
+            <input type="hidden" name="section_id" value="{{ section.id }}">
+            <input type="hidden" name="direction" value="up">
+            <button type="submit">Move Up</button>
+        </form>
+        <form method="post" action="{{ url_for('estimates.reorder_sections_route', id=estimate.id, version_id=version.id) }}" style="display:inline;">
+            <input type="hidden" name="section_id" value="{{ section.id }}">
+            <input type="hidden" name="direction" value="down">
+            <button type="submit">Move Down</button>
+        </form>
+        <form method="post" action="{{ url_for('estimates.delete_section_route', id=estimate.id, version_id=version.id, section_id=section.id) }}" style="display:inline;" onsubmit="return confirm('Delete this section and its line items?');">
+            <button type="submit">Delete Section</button>
+        </form>
+    </div>
+
+    <form method="post" action="{{ url_for('estimates.edit_section_route', id=estimate.id, version_id=version.id, section_id=section.id) }}" class="inline-edit-form" style="margin-bottom: 18px;">
+        <div class="form-grid">
+            <label>
+                Edit name
+                <input type="text" name="name" value="{% if editing_section_id is defined and editing_section_id == section.id and section_edit_form is defined %}{{ section_edit_form.name }}{% else %}{{ section.name }}{% endif %}" required>
+            </label>
+            <label>
+                Edit description
+                <input type="text" name="description" value="{% if editing_section_id is defined and editing_section_id == section.id and section_edit_form is defined %}{{ section_edit_form.description }}{% else %}{{ section.description or '' }}{% endif %}">
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Save Section</button>
+        </div>
+    </form>
+    {% endif %}
+
+    {% if section.line_items %}
+    <table class="data-table" style="margin-bottom: 18px;">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Unit Cost</th>
+                <th>Waste %</th>
+                <th>Markup %</th>
+                <th>Extended</th>
+                <th>Sell</th>
+                {% if editable %}<th>Actions</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in section.line_items %}
+            <tr>
+                {% if editable and editing_item_id is defined and editing_item_id == item.id and item_edit_form is defined %}
+                <td colspan="{% if editable %}10{% else %}9{% endif %}">
+                    <form method="post" action="{{ url_for('estimates.edit_line_item_route', id=estimate.id, version_id=version.id, section_id=section.id, item_id=item.id) }}" class="form-panel">
+                        <div class="form-grid">
+                            <label>Code <input type="text" name="code" value="{{ item_edit_form.code }}"></label>
+                            <label>Description * <input type="text" name="description" value="{{ item_edit_form.description }}" required></label>
+                            <label>Quantity * <input type="number" name="quantity" value="{{ item_edit_form.quantity }}" step="0.0001" min="0" required></label>
+                            <label>Unit * <input type="text" name="unit" value="{{ item_edit_form.unit }}" required></label>
+                            <label>Unit cost * <input type="number" name="unit_cost" value="{{ item_edit_form.unit_cost }}" step="0.0001" min="0" required></label>
+                            <label>Waste % <input type="number" name="waste_percent" value="{{ item_edit_form.waste_percent }}" step="0.01" min="0"></label>
+                            <label>Markup % <input type="number" name="markup_percent" value="{{ item_edit_form.markup_percent }}" step="0.01" min="0"></label>
+                            <label>Notes <input type="text" name="notes" value="{{ item_edit_form.notes }}"></label>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit">Update Line Item</button>
+                            <a href="{{ url_for('estimates.view_version', id=estimate.id, version_id=version.id) }}">Cancel</a>
+                        </div>
+                    </form>
+                </td>
+                {% else %}
+                <td>{{ item.code or "—" }}</td>
+                <td>
+                    {{ item.description }}
+                    <div class="muted-copy">{{ item.line_type }}</div>
+                </td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.unit }}</td>
+                <td>${{ "%.2f"|format(item.unit_cost) }}</td>
+                <td>{{ "%.2f"|format(item.waste_percent) }}</td>
+                <td>{{ "%.2f"|format(item.markup_percent) }}</td>
+                <td>${{ "%.2f"|format(item.extended_cost) }}</td>
+                <td>${{ "%.2f"|format(item.sell_price) }}</td>
+                {% if editable %}
+                <td>
+                    <a class="button-link" href="{{ url_for('estimates.view_version', id=estimate.id, version_id=version.id) }}?edit_item={{ item.id }}">Edit</a>
+                    <form method="post" action="{{ url_for('estimates.reorder_line_items_route', id=estimate.id, version_id=version.id, section_id=section.id) }}" style="display:inline;">
+                        <input type="hidden" name="item_id" value="{{ item.id }}">
+                        <input type="hidden" name="direction" value="up">
+                        <button type="submit">Up</button>
+                    </form>
+                    <form method="post" action="{{ url_for('estimates.reorder_line_items_route', id=estimate.id, version_id=version.id, section_id=section.id) }}" style="display:inline;">
+                        <input type="hidden" name="item_id" value="{{ item.id }}">
+                        <input type="hidden" name="direction" value="down">
+                        <button type="submit">Down</button>
+                    </form>
+                    <form method="post" action="{{ url_for('estimates.delete_line_item_route', id=estimate.id, version_id=version.id, section_id=section.id, item_id=item.id) }}" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+                {% endif %}
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state" style="margin-bottom: 18px;">
+        <h2>No line items</h2>
+        <p>Add cost items, assemblies, custom lines, or allowances to this section.</p>
+    </div>
+    {% endif %}
+
+    {% if editable %}
+    <div class="line-item-forms">
+        <h3>Add Cost Item</h3>
+        <form method="post" action="{{ url_for('estimates.create_line_item_route', id=estimate.id, version_id=version.id, section_id=section.id) }}">
+            <input type="hidden" name="line_type" value="Cost Item">
+            <div class="form-grid">
+                <label>
+                    Cost item *
+                    <select name="cost_item_id" required>
+                        <option value="">Select cost item</option>
+                        {% for cost_item in cost_items %}
+                        <option value="{{ cost_item.id }}">{{ cost_item.code }} — {{ cost_item.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label>Quantity <input type="number" name="quantity" value="1" step="0.0001" min="0" required></label>
+                <label>Waste % <input type="number" name="waste_percent" value="0" step="0.01" min="0"></label>
+                <label>Notes <input type="text" name="notes"></label>
+            </div>
+            <div class="form-actions"><button type="submit">Add Cost Item</button></div>
+        </form>
+
+        <h3>Add Assembly</h3>
+        <form method="post" action="{{ url_for('estimates.create_line_item_route', id=estimate.id, version_id=version.id, section_id=section.id) }}">
+            <input type="hidden" name="line_type" value="Assembly">
+            <div class="form-grid">
+                <label>
+                    Assembly *
+                    <select name="assembly_id" required>
+                        <option value="">Select assembly</option>
+                        {% for assembly in assemblies %}
+                        <option value="{{ assembly.id }}">{{ assembly.code }} — {{ assembly.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label>Quantity <input type="number" name="quantity" value="1" step="0.0001" min="0" required></label>
+                <label>Waste % <input type="number" name="waste_percent" value="0" step="0.01" min="0"></label>
+                <label>Notes <input type="text" name="notes"></label>
+            </div>
+            <div class="form-actions"><button type="submit">Add Assembly</button></div>
+        </form>
+
+        <h3>Add Custom / Allowance</h3>
+        <form method="post" action="{{ url_for('estimates.create_line_item_route', id=estimate.id, version_id=version.id, section_id=section.id) }}">
+            <div class="form-grid">
+                <label>
+                    Line type *
+                    <select name="line_type" required>
+                        <option value="Custom">Custom</option>
+                        <option value="Allowance">Allowance</option>
+                    </select>
+                </label>
+                <label>Code <input type="text" name="code"></label>
+                <label>Description * <input type="text" name="description" required></label>
+                <label>Quantity * <input type="number" name="quantity" value="1" step="0.0001" min="0" required></label>
+                <label>Unit * <input type="text" name="unit" required></label>
+                <label>Unit cost * <input type="number" name="unit_cost" value="0" step="0.01" min="0" required></label>
+                <label>Waste % <input type="number" name="waste_percent" value="0" step="0.01" min="0"></label>
+                <label>Markup % <input type="number" name="markup_percent" value="0" step="0.01" min="0"></label>
+                <label>Notes <input type="text" name="notes"></label>
+            </div>
+            <div class="form-actions"><button type="submit">Add Line</button></div>
+        </form>
+    </div>
+    {% endif %}
+</section>
+{% else %}
+{% if not version.sections %}
+<div class="empty-state">
+    <h2>No sections yet</h2>
+    <p>{% if editable %}Add a section to begin building this estimate version.{% else %}This locked version has no sections.{% endif %}</p>
+</div>
+{% endif %}
+{% endfor %}
 {% endblock %}

@@ -5,7 +5,6 @@
             <i class="bi bi-building" aria-hidden="true"></i>
         </div>
         <p class="metric-value">{{ project_count }}</p>
-        <a class="metric-link" href="{{ url_for('projects.list_projects') }}">View projects</a>
     </article>
 
     <article class="metric-card">
@@ -14,7 +13,6 @@
             <i class="bi bi-people" aria-hidden="true"></i>
         </div>
         <p class="metric-value">{{ client_count }}</p>
-        <a class="metric-link" href="{{ url_for('clients.list_clients') }}">View clients</a>
     </article>
 
     <article class="metric-card">
@@ -23,7 +21,6 @@
             <i class="bi bi-calculator" aria-hidden="true"></i>
         </div>
         <p class="metric-value">{{ estimate_count }}</p>
-        <a class="metric-link" href="{{ url_for('estimates.list_estimates') }}">View estimates</a>
     </article>
 
     <article class="metric-card">
@@ -33,7 +30,6 @@
         </div>
         <p class="metric-value">{{ proposal_count }} proposals</p>
         <p class="metric-sub">{{ draft_proposal_count }} draft · {{ issued_proposal_count }} issued</p>
-        <a class="metric-link" href="{{ url_for('proposals.list_proposals') }}">View proposals</a>
     </article>
 
     <article class="metric-card">
@@ -42,7 +38,6 @@
             <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
         </div>
         <p class="metric-value">{{ open_change_order_count }}</p>
-        <a class="metric-link" href="{{ url_for('project_controls.list_change_orders') }}">View change orders</a>
     </article>
 
     <article class="metric-card">
@@ -51,7 +46,6 @@
             <i class="bi bi-hourglass-split" aria-hidden="true"></i>
         </div>
         <p class="metric-value">{{ pending_change_order_count }}</p>
-        <a class="metric-link" href="{{ url_for('project_controls.list_change_orders', status='Pending Approval') }}">Review pending</a>
     </article>
 
     <article class="metric-card">
@@ -60,7 +54,6 @@
             <i class="bi bi-check2-circle" aria-hidden="true"></i>
         </div>
         <p class="metric-value">{{ approved_change_orders_month }}</p>
-        <a class="metric-link" href="{{ url_for('project_controls.list_change_orders', status='Approved') }}">View approved</a>
     </article>
 
     <article class="metric-card">
@@ -69,6 +62,5 @@
             <i class="bi bi-currency-dollar" aria-hidden="true"></i>
         </div>
         <p class="metric-value">${{ "%.2f"|format(change_order_value) }}</p>
-        <a class="metric-link" href="{{ url_for('project_controls.list_change_orders') }}">View values</a>
     </article>
 </section>

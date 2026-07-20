@@ -14,7 +14,22 @@
     return window.matchMedia("(max-width: 900px)").matches;
   }
 
-  function setCollapsed(collapsed) {
+  function readStoredCollapsed() {
+    try {
+      const value = localStorage.getItem(storageKey);
+      if (value === "1") {
+        return true;
+      }
+      if (value === "0") {
+        return false;
+      }
+    } catch (err) {
+      /* ignore */
+    }
+    return null;
+  }
+
+  function setCollapsed(collapsed, persist) {
     body.dataset.sidebarCollapsed = collapsed ? "true" : "false";
     if (collapseBtn) {
       collapseBtn.setAttribute("aria-expanded", collapsed ? "false" : "true");
@@ -24,10 +39,12 @@
       );
       collapseBtn.title = collapsed ? "Expand sidebar" : "Collapse sidebar";
     }
-    try {
-      localStorage.setItem(storageKey, collapsed ? "1" : "0");
-    } catch (err) {
-      /* ignore */
+    if (persist !== false) {
+      try {
+        localStorage.setItem(storageKey, collapsed ? "1" : "0");
+      } catch (err) {
+        /* ignore */
+      }
     }
   }
 
@@ -47,20 +64,19 @@
 
   function initCollapsedState() {
     if (isMobile()) {
-      setCollapsed(false);
+      setCollapsed(false, false);
       setMobileOpen(false);
       return;
     }
-    let collapsed = false;
-    try {
-      collapsed = localStorage.getItem(storageKey) === "1";
-    } catch (err) {
-      collapsed = window.matchMedia("(max-width: 1200px)").matches;
+    const stored = readStoredCollapsed();
+    if (stored !== null) {
+      setCollapsed(stored, false);
+      return;
     }
-    if (window.matchMedia("(max-width: 1200px) and (min-width: 901px)").matches) {
-      collapsed = true;
-    }
-    setCollapsed(collapsed);
+    const defaultCollapsed = window.matchMedia(
+      "(max-width: 1200px) and (min-width: 901px)"
+    ).matches;
+    setCollapsed(defaultCollapsed, true);
   }
 
   if (collapseBtn) {
@@ -70,7 +86,7 @@
         return;
       }
       const next = body.dataset.sidebarCollapsed !== "true";
-      setCollapsed(next);
+      setCollapsed(next, true);
     });
   }
 

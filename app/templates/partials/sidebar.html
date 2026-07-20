@@ -2,12 +2,22 @@
     <div class="sidebar-brand">
         <a class="sidebar-brand-link" href="{{ url_for('main.dashboard') }}" aria-label="{{ product_name }} home">
             <img
-                class="sidebar-logo"
+                class="sidebar-logo sidebar-logo-full"
                 src="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}"
-                alt="Brayman Construction"
+                alt=""
                 width="160"
                 height="64"
             >
+            <img
+                class="sidebar-logo sidebar-logo-mark"
+                src="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}"
+                alt=""
+                width="40"
+                height="40"
+            >
+            <span class="sidebar-brand-copy">
+                <span class="sidebar-brand-name">Brayman Construction Platform</span>
+            </span>
         </a>
         <button
             type="button"
@@ -58,8 +68,4 @@
         </div>
         {% endfor %}
     </nav>
-
-    <div class="sidebar-footer">
-        <p class="sidebar-footer-text">{{ product_name }}</p>
-    </div>
 </aside>

@@ -7,12 +7,12 @@
 <section class="dash-intro">
     <div>
         <p class="eyebrow">Brayman Construction Co.</p>
-        <h2 class="dash-heading">Executive overview</h2>
-        <p class="muted-copy">Track projects, estimates, and proposals across the Brayman Construction Platform.</p>
+        <h2 class="dash-heading">Construction Dashboard</h2>
+        <p class="muted-copy">Operational snapshot of projects, estimating, proposals, and change orders.</p>
     </div>
     <div class="dash-intro-actions">
         <a class="button" href="{{ url_for('estimates.create_estimate_route') }}">New estimate</a>
-        <a class="button-link" href="{{ url_for('proposals.list_proposals') }}">View proposals</a>
+        <a class="button" href="{{ url_for('project_controls.create_change_order_route') }}">New change order</a>
     </div>
 </section>
 
@@ -22,7 +22,6 @@
     <article class="panel">
         <div class="panel-header">
             <h2>Recent Estimates</h2>
-            <a href="{{ url_for('estimates.list_estimates') }}">All estimates</a>
         </div>
         {% if shell_recent_estimates %}
         <ul class="activity-list">
@@ -39,7 +38,6 @@
         <div class="empty-state empty-state-compact">
             <h3>No estimates yet</h3>
             <p>Create an estimate from a project to start building pricing.</p>
-            <a class="button-link" href="{{ url_for('estimates.create_estimate_route') }}">Add estimate</a>
         </div>
         {% endif %}
     </article>
@@ -47,7 +45,6 @@
     <article class="panel">
         <div class="panel-header">
             <h2>Recent Proposals</h2>
-            <a href="{{ url_for('proposals.list_proposals') }}">All proposals</a>
         </div>
         {% if shell_recent_proposals %}
         <ul class="activity-list">
@@ -64,7 +61,6 @@
         <div class="empty-state empty-state-compact">
             <h3>No proposals yet</h3>
             <p>Generate a proposal from an estimate version when you are ready to issue.</p>
-            <a class="button-link" href="{{ url_for('proposals.list_proposals') }}">View proposals</a>
         </div>
         {% endif %}
     </article>

@@ -12,6 +12,11 @@ NAV_SECTIONS = (
                 "icon": "bi-speedometer2",
                 "enabled": True,
             },
+        ),
+    },
+    {
+        "title": "CRM",
+        "links": (
             {
                 "title": "Clients",
                 "endpoint": "clients.list_clients",
@@ -85,7 +90,7 @@ NAV_SECTIONS = (
         ),
     },
     {
-        "title": None,
+        "title": "Platform",
         "links": (
             {
                 "title": "Reports",

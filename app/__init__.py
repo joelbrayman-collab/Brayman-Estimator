@@ -1,6 +1,6 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -16,7 +16,13 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
+    from app import models
+    from app.routes.clients import clients_bp
     from app.routes.main import main_bp
+    from app.routes.projects import projects_bp
+
     app.register_blueprint(main_bp)
+    app.register_blueprint(clients_bp)
+    app.register_blueprint(projects_bp)
 
     return app

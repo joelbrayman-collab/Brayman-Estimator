@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Projects | Brayman Estimator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Construction</p>
+        <h1>Projects</h1>
+    </div>
+
+    <a class="button" href="{{ url_for('projects.create_project') }}">New Project</a>
+</div>
+
+{% if projects %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Project</th>
+            <th>Number</th>
+            <th>Client</th>
+            <th>Status</th>
+            <th>Address</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for project in projects %}
+        <tr>
+            <td>{{ project.name }}</td>
+            <td>{{ project.project_number or "—" }}</td>
+            <td>{{ project.client.name }}</td>
+            <td><span class="status">{{ project.status }}</span></td>
+            <td>{{ project.address or "—" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <h2>No projects yet</h2>
+    <p>Create a client first, then create the first construction project.</p>
+</div>
+{% endif %}
+{% endblock %}

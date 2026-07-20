@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}New Client | Brayman Estimator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">CRM</p>
+        <h1>New Client</h1>
+    </div>
+</div>
+
+<form method="post" class="form-panel">
+    <div class="form-grid">
+        <label>
+            Client name *
+            <input type="text" name="name" required>
+        </label>
+
+        <label>
+            Company
+            <input type="text" name="company">
+        </label>
+
+        <label>
+            Email
+            <input type="email" name="email">
+        </label>
+
+        <label>
+            Phone
+            <input type="text" name="phone">
+        </label>
+    </div>
+
+    <label>
+        Address
+        <input type="text" name="address">
+    </label>
+
+    <label>
+        Notes
+        <textarea name="notes" rows="5"></textarea>
+    </label>
+
+    <div class="form-actions">
+        <button type="submit">Save Client</button>
+        <a href="{{ url_for('clients.list_clients') }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

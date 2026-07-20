@@ -32,6 +32,14 @@
     </article>
 
     <article class="card">
+        <h2>Proposals</h2>
+        <p>Turn estimate versions into client-ready proposal drafts.</p>
+        <strong>{{ proposal_count }} proposals</strong>
+        <p>{{ draft_proposal_count }} draft · {{ issued_proposal_count }} issued</p>
+        <p><a class="button-link" href="{{ url_for('proposals.list_proposals') }}">View proposals</a></p>
+    </article>
+
+    <article class="card">
         <h2>Cost Library</h2>
         <p>Maintain labour, material, equipment, and subcontractor pricing.</p>
         <strong>{{ cost_item_count }} cost items</strong>

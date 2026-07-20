@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Proposals | Brayman Estimator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Proposals</p>
+        <h1>Proposals</h1>
+    </div>
+</div>
+
+{% if proposals %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Proposal Number</th>
+            <th>Title</th>
+            <th>Client</th>
+            <th>Project</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th>Created</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for proposal in proposals %}
+        <tr>
+            <td>
+                <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">{{ proposal.proposal_number }}</a>
+            </td>
+            <td>{{ proposal.title }}</td>
+            <td>{{ proposal.client_name }}</td>
+            <td>{{ proposal.project_name }}</td>
+            <td><span class="status">{{ proposal.status }}</span></td>
+            <td>${{ "%.2f"|format(proposal.total) }}</td>
+            <td>{{ proposal.created_at.strftime("%Y-%m-%d") }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <h2>No proposals yet</h2>
+    <p>Open an estimate version and choose Create Proposal to start.</p>
+</div>
+{% endif %}
+{% endblock %}

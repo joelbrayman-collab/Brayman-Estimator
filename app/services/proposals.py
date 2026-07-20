@@ -1,0 +1,414 @@
+from datetime import datetime
+from decimal import Decimal
+import re
+
+from app import db
+from app.models.estimate import Estimate, EstimateVersion
+from app.models.proposal import PROPOSAL_STATUSES, Proposal, ProposalTemplate
+
+
+class ProposalServiceError(Exception):
+    """Raised when a proposal operation cannot be completed."""
+
+
+def suggest_next_proposal_number(year=None):
+    """Return the next suggested proposal number in PROP-YYYY-NNNN format."""
+    year = year or datetime.utcnow().year
+    prefix = f"PROP-{year}-"
+    pattern = re.compile(rf"^PROP-{year}-(\d+)$", re.IGNORECASE)
+
+    max_sequence = 0
+    proposals = Proposal.query.filter(
+        Proposal.proposal_number.ilike(f"{prefix}%")
+    ).all()
+
+    for proposal in proposals:
+        match = pattern.match(proposal.proposal_number.strip())
+        if match:
+            max_sequence = max(max_sequence, int(match.group(1)))
+
+    return f"{prefix}{max_sequence + 1:04d}"
+
+
+def get_default_template():
+    return ProposalTemplate.query.filter_by(is_default=True, is_active=True).first()
+
+
+def get_active_templates():
+    return (
+        ProposalTemplate.query.filter_by(is_active=True)
+        .order_by(ProposalTemplate.name.asc())
+        .all()
+    )
+
+
+def _clear_other_defaults(exclude_id=None):
+    query = ProposalTemplate.query.filter_by(is_default=True)
+    if exclude_id is not None:
+        query = query.filter(ProposalTemplate.id != exclude_id)
+    for template in query.all():
+        template.is_default = False
+
+
+def create_proposal_template(**fields):
+    name = (fields.get("name") or "").strip()
+    if not name:
+        raise ProposalServiceError("Template name is required.")
+    if ProposalTemplate.query.filter_by(name=name).first():
+        raise ProposalServiceError(
+            f'A proposal template named "{name}" already exists.'
+        )
+
+    is_default = bool(fields.get("is_default"))
+    is_active = fields.get("is_active", True)
+    if is_default and not is_active:
+        raise ProposalServiceError("The default template must be active.")
+
+    if is_default:
+        _clear_other_defaults()
+
+    template = ProposalTemplate(
+        name=name,
+        description=(fields.get("description") or "").strip() or None,
+        company_name=(fields.get("company_name") or "").strip() or None,
+        company_address=(fields.get("company_address") or "").strip() or None,
+        company_phone=(fields.get("company_phone") or "").strip() or None,
+        company_email=(fields.get("company_email") or "").strip() or None,
+        company_website=(fields.get("company_website") or "").strip() or None,
+        logo_path=(fields.get("logo_path") or "").strip() or None,
+        primary_color=(fields.get("primary_color") or "").strip() or None,
+        accent_color=(fields.get("accent_color") or "").strip() or None,
+        default_intro_text=(fields.get("default_intro_text") or "").strip() or None,
+        default_scope_intro=(fields.get("default_scope_intro") or "").strip() or None,
+        default_exclusions=(fields.get("default_exclusions") or "").strip() or None,
+        default_clarifications=(
+            fields.get("default_clarifications") or ""
+        ).strip()
+        or None,
+        default_schedule_text=(
+            fields.get("default_schedule_text") or ""
+        ).strip()
+        or None,
+        default_payment_terms=(
+            fields.get("default_payment_terms") or ""
+        ).strip()
+        or None,
+        default_warranty_text=(
+            fields.get("default_warranty_text") or ""
+        ).strip()
+        or None,
+        default_acceptance_text=(
+            fields.get("default_acceptance_text") or ""
+        ).strip()
+        or None,
+        show_detailed_pricing=bool(fields.get("show_detailed_pricing", True)),
+        show_section_totals=bool(fields.get("show_section_totals", True)),
+        show_allowances=bool(fields.get("show_allowances", True)),
+        show_tax=bool(fields.get("show_tax", True)),
+        is_default=is_default,
+        is_active=bool(is_active),
+    )
+    db.session.add(template)
+    db.session.commit()
+    return template
+
+
+def update_proposal_template(template, **fields):
+    name = fields.get("name")
+    if name is not None:
+        name = name.strip()
+        if not name:
+            raise ProposalServiceError("Template name is required.")
+        duplicate = ProposalTemplate.query.filter(
+            ProposalTemplate.name == name,
+            ProposalTemplate.id != template.id,
+        ).first()
+        if duplicate:
+            raise ProposalServiceError(
+                f'A proposal template named "{name}" already exists.'
+            )
+        template.name = name
+
+    text_fields = (
+        "description",
+        "company_name",
+        "company_address",
+        "company_phone",
+        "company_email",
+        "company_website",
+        "logo_path",
+        "primary_color",
+        "accent_color",
+        "default_intro_text",
+        "default_scope_intro",
+        "default_exclusions",
+        "default_clarifications",
+        "default_schedule_text",
+        "default_payment_terms",
+        "default_warranty_text",
+        "default_acceptance_text",
+    )
+    for field in text_fields:
+        if field in fields:
+            value = (fields.get(field) or "").strip() or None
+            setattr(template, field, value)
+
+    for field in (
+        "show_detailed_pricing",
+        "show_section_totals",
+        "show_allowances",
+        "show_tax",
+        "is_active",
+        "is_default",
+    ):
+        if field in fields:
+            setattr(template, field, bool(fields[field]))
+
+    if template.is_default and not template.is_active:
+        raise ProposalServiceError("The default template must be active.")
+
+    if template.is_default:
+        _clear_other_defaults(exclude_id=template.id)
+
+    db.session.commit()
+    return template
+
+
+def set_default_template(template):
+    if not template.is_active:
+        raise ProposalServiceError("Cannot set an inactive template as default.")
+    _clear_other_defaults(exclude_id=template.id)
+    template.is_default = True
+    db.session.commit()
+    return template
+
+
+def toggle_template_active(template):
+    if template.is_active and template.is_default:
+        raise ProposalServiceError(
+            "Cannot deactivate the default template. Set another default first."
+        )
+    template.is_active = not template.is_active
+    db.session.commit()
+    return template
+
+
+def build_proposal_snapshot(estimate, version, template):
+    """Return snapshot dict from estimate/version/template without persisting."""
+    project = estimate.project
+    client = project.client
+
+    return {
+        "client_name": client.name,
+        "client_company": client.company,
+        "client_address": client.address,
+        "client_email": client.email,
+        "client_phone": client.phone,
+        "project_name": project.name,
+        "project_address": project.address,
+        "estimate_number": estimate.estimate_number,
+        "estimate_version_number": version.version_number,
+        "estimate_version_label": version.version_label,
+        "subtotal": Decimal(version.subtotal or 0),
+        "overhead_amount": version.overhead_amount,
+        "profit_amount": version.profit_amount,
+        "tax_amount": version.tax_amount,
+        "total": Decimal(version.total or 0),
+        "intro_text": template.default_intro_text,
+        "scope_intro": template.default_scope_intro,
+        "exclusions": template.default_exclusions,
+        "clarifications": template.default_clarifications,
+        "schedule_text": template.default_schedule_text,
+        "payment_terms": template.default_payment_terms,
+        "warranty_text": template.default_warranty_text,
+        "acceptance_text": template.default_acceptance_text,
+        "show_detailed_pricing": template.show_detailed_pricing,
+        "show_section_totals": template.show_section_totals,
+        "show_allowances": template.show_allowances,
+        "show_tax": template.show_tax,
+        "title": f"{estimate.title} — Proposal",
+    }
+
+
+def create_proposal(
+    *,
+    estimate,
+    version,
+    template,
+    title=None,
+    proposal_number=None,
+    status="Draft",
+    valid_until=None,
+    overrides=None,
+):
+    if version.estimate_id != estimate.id:
+        raise ProposalServiceError("Version does not belong to this estimate.")
+    if not template.is_active:
+        raise ProposalServiceError(
+            "Inactive proposal templates cannot be used for new proposals."
+        )
+
+    proposal_number = (proposal_number or suggest_next_proposal_number()).strip()
+    if not proposal_number:
+        raise ProposalServiceError("Proposal number is required.")
+    if Proposal.query.filter_by(proposal_number=proposal_number).first():
+        raise ProposalServiceError(
+            f'A proposal with number "{proposal_number}" already exists.'
+        )
+
+    snapshot = build_proposal_snapshot(estimate, version, template)
+    overrides = overrides or {}
+    snapshot.update({k: v for k, v in overrides.items() if v is not None})
+
+    title = (title or snapshot["title"] or "").strip()
+    if not title:
+        raise ProposalServiceError("Proposal title is required.")
+
+    if status not in PROPOSAL_STATUSES:
+        raise ProposalServiceError("Select a valid proposal status.")
+
+    proposal = Proposal(
+        proposal_number=proposal_number,
+        estimate_id=estimate.id,
+        estimate_version_id=version.id,
+        proposal_template_id=template.id,
+        title=title,
+        status=status,
+        client_name=snapshot["client_name"],
+        client_company=snapshot.get("client_company"),
+        client_address=snapshot.get("client_address"),
+        client_email=snapshot.get("client_email"),
+        client_phone=snapshot.get("client_phone"),
+        project_name=snapshot["project_name"],
+        project_address=snapshot.get("project_address"),
+        estimate_number=snapshot["estimate_number"],
+        estimate_version_number=snapshot["estimate_version_number"],
+        estimate_version_label=snapshot.get("estimate_version_label"),
+        subtotal=Decimal(snapshot["subtotal"] or 0),
+        overhead_amount=Decimal(snapshot["overhead_amount"] or 0),
+        profit_amount=Decimal(snapshot["profit_amount"] or 0),
+        tax_amount=Decimal(snapshot["tax_amount"] or 0),
+        total=Decimal(snapshot["total"] or 0),
+        intro_text=snapshot.get("intro_text"),
+        scope_intro=snapshot.get("scope_intro"),
+        exclusions=snapshot.get("exclusions"),
+        clarifications=snapshot.get("clarifications"),
+        schedule_text=snapshot.get("schedule_text"),
+        payment_terms=snapshot.get("payment_terms"),
+        warranty_text=snapshot.get("warranty_text"),
+        acceptance_text=snapshot.get("acceptance_text"),
+        show_detailed_pricing=bool(snapshot.get("show_detailed_pricing", True)),
+        show_section_totals=bool(snapshot.get("show_section_totals", True)),
+        show_allowances=bool(snapshot.get("show_allowances", True)),
+        show_tax=bool(snapshot.get("show_tax", True)),
+        valid_until=valid_until,
+        issued_at=datetime.utcnow() if status == "Issued" else None,
+    )
+    db.session.add(proposal)
+    db.session.commit()
+    return proposal
+
+
+def update_proposal(proposal, **fields):
+    if "title" in fields:
+        title = (fields["title"] or "").strip()
+        if not title:
+            raise ProposalServiceError("Proposal title is required.")
+        proposal.title = title
+
+    if "proposal_number" in fields:
+        number = (fields["proposal_number"] or "").strip()
+        if not number:
+            raise ProposalServiceError("Proposal number is required.")
+        duplicate = Proposal.query.filter(
+            Proposal.proposal_number == number,
+            Proposal.id != proposal.id,
+        ).first()
+        if duplicate:
+            raise ProposalServiceError(
+                f'A proposal with number "{number}" already exists.'
+            )
+        proposal.proposal_number = number
+
+    if "status" in fields:
+        status = fields["status"]
+        if status not in PROPOSAL_STATUSES:
+            raise ProposalServiceError("Select a valid proposal status.")
+        if status == "Issued" and proposal.status != "Issued":
+            proposal.issued_at = datetime.utcnow()
+        proposal.status = status
+
+    if "valid_until" in fields:
+        proposal.valid_until = fields["valid_until"]
+
+    if "proposal_template_id" in fields:
+        template = db.session.get(ProposalTemplate, fields["proposal_template_id"])
+        if template is None:
+            raise ProposalServiceError("Proposal template is required.")
+        # Allow keeping an inactive template already linked; only block switching
+        # to a newly selected inactive template.
+        if (
+            template.id != proposal.proposal_template_id
+            and not template.is_active
+        ):
+            raise ProposalServiceError(
+                "Inactive proposal templates cannot be selected."
+            )
+        proposal.proposal_template_id = template.id
+
+    text_fields = (
+        "client_name",
+        "client_company",
+        "client_address",
+        "client_email",
+        "client_phone",
+        "project_name",
+        "project_address",
+        "intro_text",
+        "scope_intro",
+        "exclusions",
+        "clarifications",
+        "schedule_text",
+        "payment_terms",
+        "warranty_text",
+        "acceptance_text",
+    )
+    for field in text_fields:
+        if field in fields:
+            value = fields[field]
+            if field in ("client_name", "project_name"):
+                value = (value or "").strip()
+                if not value:
+                    raise ProposalServiceError(
+                        f"{field.replace('_', ' ').title()} is required."
+                    )
+                setattr(proposal, field, value)
+            else:
+                setattr(proposal, field, (value or "").strip() or None)
+
+    for field in (
+        "show_detailed_pricing",
+        "show_section_totals",
+        "show_allowances",
+        "show_tax",
+    ):
+        if field in fields:
+            setattr(proposal, field, bool(fields[field]))
+
+    db.session.commit()
+    return proposal
+
+
+def update_proposal_status(proposal, status):
+    return update_proposal(proposal, status=status)
+
+
+def get_estimate_and_version(estimate_id, version_id):
+    estimate = db.session.get(Estimate, estimate_id)
+    if estimate is None:
+        return None, None
+    version = EstimateVersion.query.filter_by(
+        id=version_id,
+        estimate_id=estimate.id,
+    ).first()
+    return estimate, version

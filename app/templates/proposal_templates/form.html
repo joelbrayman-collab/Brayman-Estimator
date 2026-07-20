@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Edit Template" if template else "New Template" }} | Brayman Estimator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Proposals</p>
+        <h1>{{ "Edit Proposal Template" if template else "New Proposal Template" }}</h1>
+    </div>
+</div>
+
+<form method="post" class="form-panel">
+    <div class="form-grid">
+        <label>
+            Name *
+            <input type="text" name="name" value="{{ form.name }}" required>
+        </label>
+        <label>
+            Company name
+            <input type="text" name="company_name" value="{{ form.company_name }}">
+        </label>
+        <label>
+            Company phone
+            <input type="text" name="company_phone" value="{{ form.company_phone }}">
+        </label>
+        <label>
+            Company email
+            <input type="email" name="company_email" value="{{ form.company_email }}">
+        </label>
+        <label>
+            Company website
+            <input type="text" name="company_website" value="{{ form.company_website }}">
+        </label>
+        <label>
+            Logo path
+            <input type="text" name="logo_path" value="{{ form.logo_path }}">
+        </label>
+        <label>
+            Primary color
+            <input type="text" name="primary_color" value="{{ form.primary_color }}">
+        </label>
+        <label>
+            Accent color
+            <input type="text" name="accent_color" value="{{ form.accent_color }}">
+        </label>
+    </div>
+
+    <label>
+        Company address
+        <input type="text" name="company_address" value="{{ form.company_address }}">
+    </label>
+
+    <label>
+        Description
+        <textarea name="description" rows="3">{{ form.description }}</textarea>
+    </label>
+
+    <label>Default intro text<textarea name="default_intro_text" rows="4">{{ form.default_intro_text }}</textarea></label>
+    <label>Default scope intro<textarea name="default_scope_intro" rows="4">{{ form.default_scope_intro }}</textarea></label>
+    <label>Default exclusions<textarea name="default_exclusions" rows="4">{{ form.default_exclusions }}</textarea></label>
+    <label>Default clarifications<textarea name="default_clarifications" rows="4">{{ form.default_clarifications }}</textarea></label>
+    <label>Default schedule text<textarea name="default_schedule_text" rows="3">{{ form.default_schedule_text }}</textarea></label>
+    <label>Default payment terms<textarea name="default_payment_terms" rows="3">{{ form.default_payment_terms }}</textarea></label>
+    <label>Default warranty text<textarea name="default_warranty_text" rows="3">{{ form.default_warranty_text }}</textarea></label>
+    <label>Default acceptance text<textarea name="default_acceptance_text" rows="3">{{ form.default_acceptance_text }}</textarea></label>
+
+    <div class="form-grid">
+        <label><input type="checkbox" name="show_detailed_pricing" {% if form.show_detailed_pricing %}checked{% endif %}> Show detailed pricing</label>
+        <label><input type="checkbox" name="show_section_totals" {% if form.show_section_totals %}checked{% endif %}> Show section totals</label>
+        <label><input type="checkbox" name="show_allowances" {% if form.show_allowances %}checked{% endif %}> Show allowances</label>
+        <label><input type="checkbox" name="show_tax" {% if form.show_tax %}checked{% endif %}> Show tax</label>
+        <label><input type="checkbox" name="is_default" {% if form.is_default %}checked{% endif %}> Default template</label>
+        <label><input type="checkbox" name="is_active" {% if form.is_active %}checked{% endif %}> Active</label>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit">{{ "Update Template" if template else "Save Template" }}</button>
+        <a href="{{ url_for('proposal_templates.list_templates') }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

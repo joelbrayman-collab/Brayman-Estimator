@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Edit Assembly" if assembly else "New Assembly" }} | Brayman Estimator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Pricing</p>
+        <h1>{{ "Edit Assembly" if assembly else "New Assembly" }}</h1>
+    </div>
+</div>
+
+<form method="post" class="form-panel">
+    <div class="form-grid">
+        <label>
+            Code *
+            <input type="text" name="code" value="{{ form.code }}" required>
+        </label>
+
+        <label>
+            Assembly name *
+            <input type="text" name="name" value="{{ form.name }}" required>
+        </label>
+
+        <label>
+            Category *
+            <input type="text" name="category" value="{{ form.category }}" required>
+        </label>
+
+        <label>
+            Unit *
+            <input type="text" name="unit" value="{{ form.unit }}" required placeholder="e.g. each, m2, lf">
+        </label>
+
+        <label>
+            Default markup %
+            <input type="number" name="default_markup_percent" value="{{ form.default_markup_percent }}" step="0.01" min="0">
+        </label>
+    </div>
+
+    <label>
+        Description
+        <textarea name="description" rows="5">{{ form.description }}</textarea>
+    </label>
+
+    <div class="form-actions">
+        <button type="submit">{{ "Update Assembly" if assembly else "Save Assembly" }}</button>
+        {% if assembly %}
+        <a href="{{ url_for('assemblies.view_assembly', id=assembly.id) }}">Cancel</a>
+        {% else %}
+        <a href="{{ url_for('assemblies.list_assemblies') }}">Cancel</a>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}

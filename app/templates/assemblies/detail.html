@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}{{ assembly.code }} | Brayman Estimator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Assembly</p>
+        <h1>{{ assembly.name }}</h1>
+    </div>
+
+    <div>
+        <a class="button" href="{{ url_for('assemblies.edit_assembly', id=assembly.id) }}">Edit Assembly</a>
+        <a class="button-link" href="{{ url_for('assemblies.list_assemblies') }}">Back to list</a>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Code</p>
+            <p>{{ assembly.code }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Category</p>
+            <p>{{ assembly.category }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Unit</p>
+            <p>{{ assembly.unit }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Status</p>
+            <p><span class="status">{{ "Active" if assembly.is_active else "Inactive" }}</span></p>
+        </div>
+        <div>
+            <p class="eyebrow">Markup</p>
+            <p>{{ "%.2f"|format(assembly.default_markup_percent) }}%</p>
+        </div>
+        <div>
+            <p class="eyebrow">Base Unit Cost</p>
+            <p><strong>${{ "%.2f"|format(assembly.base_unit_cost) }}</strong></p>
+        </div>
+        <div>
+            <p class="eyebrow">Sell Unit Price</p>
+            <p><strong>${{ "%.2f"|format(assembly.sell_unit_price) }}</strong></p>
+        </div>
+    </div>
+
+    {% if assembly.description %}
+    <p>{{ assembly.description }}</p>
+    {% endif %}
+</section>
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Components</p>
+        <h1>Assembly Items</h1>
+    </div>
+</section>
+
+{% if assembly.assembly_items %}
+<table class="data-table" style="margin-bottom: 24px;">
+    <thead>
+        <tr>
+            <th>Sort</th>
+            <th>Code</th>
+            <th>Cost Item</th>
+            <th>Unit Cost</th>
+            <th>Qty</th>
+            <th>Waste %</th>
+            <th>Extended</th>
+            <th>Notes</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in assembly.assembly_items %}
+        <tr>
+            {% if editing_item_id == item.id %}
+            <td colspan="9">
+                <form method="post" action="{{ url_for('assemblies.edit_assembly_item', id=assembly.id, item_id=item.id) }}" class="form-panel">
+                    <p><strong>{{ item.cost_item.code }} — {{ item.cost_item.name }}</strong></p>
+                    <div class="form-grid">
+                        <label>
+                            Quantity *
+                            <input type="number" name="quantity" value="{{ edit_form.quantity }}" required step="0.0001" min="0">
+                        </label>
+                        <label>
+                            Waste %
+                            <input type="number" name="waste_percent" value="{{ edit_form.waste_percent }}" step="0.01" min="0">
+                        </label>
+                        <label>
+                            Sort order
+                            <input type="number" name="sort_order" value="{{ edit_form.sort_order }}" step="1">
+                        </label>
+                        <label>
+                            Notes
+                            <input type="text" name="notes" value="{{ edit_form.notes }}">
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit">Update Component</button>
+                        <a href="{{ url_for('assemblies.view_assembly', id=assembly.id) }}">Cancel</a>
+                    </div>
+                </form>
+            </td>
+            {% else %}
+            <td>{{ item.sort_order }}</td>
+            <td>{{ item.cost_item.code }}</td>
+            <td>{{ item.cost_item.name }}</td>
+            <td>${{ "%.2f"|format(item.cost_item.unit_cost) }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ "%.2f"|format(item.waste_percent) }}%</td>
+            <td>${{ "%.2f"|format(item.extended_cost) }}</td>
+            <td>{{ item.notes or "—" }}</td>
+            <td>
+                <a class="button-link" href="{{ url_for('assemblies.view_assembly', id=assembly.id, edit_item=item.id) }}">Edit</a>
+                <form method="post" action="{{ url_for('assemblies.delete_assembly_item', id=assembly.id, item_id=item.id) }}" style="display: inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state" style="margin-bottom: 24px;">
+    <h2>No components yet</h2>
+    <p>Add active cost library items to build this assembly’s unit cost.</p>
+</div>
+{% endif %}
+
+<section class="form-panel">
+    <h2>Add Component</h2>
+
+    {% if cost_items %}
+    <form method="post" action="{{ url_for('assemblies.add_assembly_item', id=assembly.id) }}">
+        <div class="form-grid">
+            <label>
+                Cost item *
+                <select name="cost_item_id" required>
+                    <option value="">Select a cost item</option>
+                    {% for cost_item in cost_items %}
+                    <option value="{{ cost_item.id }}" {% if add_form.cost_item_id == cost_item.id|string %}selected{% endif %}>
+                        {{ cost_item.code }} — {{ cost_item.name }} (${{ "%.2f"|format(cost_item.unit_cost) }}/{{ cost_item.unit }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label>
+                Quantity *
+                <input type="number" name="quantity" value="{{ add_form.quantity }}" required step="0.0001" min="0">
+            </label>
+
+            <label>
+                Waste %
+                <input type="number" name="waste_percent" value="{{ add_form.waste_percent }}" step="0.01" min="0">
+            </label>
+
+            <label>
+                Sort order
+                <input type="number" name="sort_order" value="{{ add_form.sort_order }}" step="1">
+            </label>
+        </div>
+
+        <label>
+            Notes
+            <input type="text" name="notes" value="{{ add_form.notes }}">
+        </label>
+
+        <div class="form-actions">
+            <button type="submit">Add Component</button>
+        </div>
+    </form>
+    {% else %}
+    <div class="empty-state">
+        <h2>No active cost items</h2>
+        <p>Create or activate cost library items before adding assembly components.</p>
+        <a class="button" href="{{ url_for('cost_library.create_cost_item') }}">Add Cost Item</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

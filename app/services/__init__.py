@@ -11,17 +11,47 @@ from app.services.estimates import (
     unlock_version,
     update_estimate_version,
 )
+from app.services.proposals import (
+    ProposalServiceError,
+    build_proposal_snapshot,
+    create_proposal,
+    create_proposal_template,
+    get_active_templates,
+    get_default_template,
+    recalculate_proposal,
+    suggest_next_proposal_number,
+    update_proposal,
+    update_proposal_line_item,
+    update_proposal_status,
+)
+from app.services.proposal_pdf import (
+    generate_proposal_pdf,
+    sanitize_pdf_filename,
+)
 
 __all__ = [
     "EstimateServiceError",
+    "ProposalServiceError",
+    "build_proposal_snapshot",
     "clone_current_version",
     "create_estimate",
+    "create_proposal",
+    "create_proposal_template",
     "ensure_version_editable",
+    "generate_proposal_pdf",
+    "get_active_templates",
+    "get_default_template",
     "lock_version",
+    "recalculate_proposal",
+    "sanitize_pdf_filename",
     "set_current_version",
     "set_version_status",
     "suggest_next_estimate_number",
+    "suggest_next_proposal_number",
     "toggle_estimate_archive",
     "unlock_version",
     "update_estimate_version",
+    "update_proposal",
+    "update_proposal_line_item",
+    "update_proposal_status",
 ]

@@ -26,6 +26,8 @@ def create_app(config=None):
     from app.routes.estimates import estimates_bp
     from app.routes.main import main_bp
     from app.routes.projects import projects_bp
+    from app.routes.proposal_templates import proposal_templates_bp
+    from app.routes.proposals import proposals_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(clients_bp)
@@ -33,5 +35,7 @@ def create_app(config=None):
     app.register_blueprint(cost_library_bp)
     app.register_blueprint(assemblies_bp)
     app.register_blueprint(estimates_bp)
+    app.register_blueprint(proposal_templates_bp)
+    app.register_blueprint(proposals_bp)
 
     return app

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Proposal Templates | Brayman Estimator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Proposals</p>
+        <h1>Proposal Templates</h1>
+    </div>
+    <a class="button" href="{{ url_for('proposal_templates.create_template') }}">New Template</a>
+</div>
+
+{% if templates %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Company</th>
+            <th>Default</th>
+            <th>Active</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for template in templates %}
+        <tr>
+            <td>{{ template.name }}</td>
+            <td>{{ template.company_name or "—" }}</td>
+            <td>
+                {% if template.is_default %}
+                <span class="status status-current">Default</span>
+                {% else %}
+                —
+                {% endif %}
+            </td>
+            <td>
+                <span class="status">{{ "Active" if template.is_active else "Inactive" }}</span>
+            </td>
+            <td>
+                <a class="button-link" href="{{ url_for('proposal_templates.edit_template', id=template.id) }}">Edit</a>
+                {% if not template.is_default %}
+                <form method="post" action="{{ url_for('proposal_templates.set_default', id=template.id) }}" style="display:inline;">
+                    <button type="submit">Set Default</button>
+                </form>
+                {% endif %}
+                <form method="post" action="{{ url_for('proposal_templates.toggle_active', id=template.id) }}" style="display:inline;">
+                    <button type="submit">{{ "Deactivate" if template.is_active else "Activate" }}</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <h2>No proposal templates yet</h2>
+    <p>Create a default template to start generating proposals from estimates.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Edit Proposal" if proposal else "New Proposal" }} | Brayman Estimator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Proposal</p>
+        <h1>{{ "Edit Proposal" if proposal else "Create Proposal" }}</h1>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Estimate</p>
+            <p>{{ form.estimate_number }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Version</p>
+            <p>v{{ form.estimate_version_number }}{% if form.estimate_version_label %} — {{ form.estimate_version_label }}{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Subtotal</p>
+            <p>${{ "%.2f"|format(form.subtotal) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Overhead</p>
+            <p>${{ "%.2f"|format(form.overhead_amount) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Profit</p>
+            <p>${{ "%.2f"|format(form.profit_amount) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Tax</p>
+            <p>${{ "%.2f"|format(form.tax_amount) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Total</p>
+            <p><strong>${{ "%.2f"|format(form.total) }}</strong></p>
+        </div>
+    </div>
+</section>
+
+<form method="post" class="form-panel">
+    <div class="form-grid">
+        <label>
+            Proposal number *
+            <input type="text" name="proposal_number" value="{{ form.proposal_number }}" required>
+        </label>
+        <label>
+            Title *
+            <input type="text" name="title" value="{{ form.title }}" required>
+        </label>
+        <label>
+            Template *
+            <select name="proposal_template_id" required>
+                {% for template in templates %}
+                <option value="{{ template.id }}" {% if form.proposal_template_id == template.id|string %}selected{% endif %}>
+                    {{ template.name }}{% if template.is_default %} (Default){% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Status *
+            <select name="status" required>
+                {% for status in statuses %}
+                <option value="{{ status }}" {% if form.status == status %}selected{% endif %}>{{ status }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Valid until
+            <input type="date" name="valid_until" value="{{ form.valid_until }}">
+        </label>
+    </div>
+
+    <h2>Client Snapshot</h2>
+    <div class="form-grid">
+        <label>Client name * <input type="text" name="client_name" value="{{ form.client_name }}" required></label>
+        <label>Company <input type="text" name="client_company" value="{{ form.client_company }}"></label>
+        <label>Email <input type="email" name="client_email" value="{{ form.client_email }}"></label>
+        <label>Phone <input type="text" name="client_phone" value="{{ form.client_phone }}"></label>
+    </div>
+    <label>Address <input type="text" name="client_address" value="{{ form.client_address }}"></label>
+
+    <h2>Project Snapshot</h2>
+    <div class="form-grid">
+        <label>Project name * <input type="text" name="project_name" value="{{ form.project_name }}" required></label>
+        <label>Project address <input type="text" name="project_address" value="{{ form.project_address }}"></label>
+    </div>
+
+    <h2>Proposal Text</h2>
+    <label>Intro text<textarea name="intro_text" rows="4">{{ form.intro_text }}</textarea></label>
+    <label>Scope intro<textarea name="scope_intro" rows="4">{{ form.scope_intro }}</textarea></label>
+    <label>Exclusions<textarea name="exclusions" rows="4">{{ form.exclusions }}</textarea></label>
+    <label>Clarifications<textarea name="clarifications" rows="4">{{ form.clarifications }}</textarea></label>
+    <label>Schedule text<textarea name="schedule_text" rows="3">{{ form.schedule_text }}</textarea></label>
+    <label>Payment terms<textarea name="payment_terms" rows="3">{{ form.payment_terms }}</textarea></label>
+    <label>Warranty text<textarea name="warranty_text" rows="3">{{ form.warranty_text }}</textarea></label>
+    <label>Acceptance text<textarea name="acceptance_text" rows="3">{{ form.acceptance_text }}</textarea></label>
+
+    <div class="form-grid">
+        <label><input type="checkbox" name="show_detailed_pricing" {% if form.show_detailed_pricing %}checked{% endif %}> Show detailed pricing</label>
+        <label><input type="checkbox" name="show_section_totals" {% if form.show_section_totals %}checked{% endif %}> Show section totals</label>
+        <label><input type="checkbox" name="show_allowances" {% if form.show_allowances %}checked{% endif %}> Show allowances</label>
+        <label><input type="checkbox" name="show_tax" {% if form.show_tax %}checked{% endif %}> Show tax</label>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit">{{ "Update Proposal" if proposal else "Save Proposal" }}</button>
+        {% if proposal %}
+        <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">Cancel</a>
+        {% elif estimate and version %}
+        <a href="{{ url_for('estimates.view_version', id=estimate.id, version_id=version.id) }}">Cancel</a>
+        {% else %}
+        <a href="{{ url_for('proposals.list_proposals') }}">Cancel</a>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}

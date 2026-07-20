@@ -8,6 +8,7 @@ from app.models.estimate import (
     EstimateVersion,
 )
 from app.models.project import Project
+from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
 
 __all__ = [
     "Assembly",
@@ -19,4 +20,8 @@ __all__ = [
     "EstimateSection",
     "EstimateVersion",
     "Project",
+    "Proposal",
+    "ProposalLineItem",
+    "ProposalSection",
+    "ProposalTemplate",
 ]

@@ -122,15 +122,13 @@ def test_new_version_clones_values_and_becomes_current(project):
     v1 = estimate.current_version
     update_estimate_version(
         v1,
-        subtotal=Decimal("1000.00"),
         overhead_percent=Decimal("10.00"),
         profit_percent=Decimal("15.00"),
         tax_percent=Decimal("5.00"),
-        total=Decimal("1265.00"),
     )
 
     v1_id = v1.id
-    v1_total = v1.total
+    v1_overhead = v1.overhead_percent
 
     v2 = clone_current_version(
         estimate,
@@ -141,16 +139,14 @@ def test_new_version_clones_values_and_becomes_current(project):
     assert v2.version_number == 2
     assert v2.version_label == "Issued for Tender"
     assert v2.revision_reason == "Client request"
-    assert v2.subtotal == Decimal("1000.00")
     assert v2.overhead_percent == Decimal("10.00")
     assert v2.profit_percent == Decimal("15.00")
     assert v2.tax_percent == Decimal("5.00")
-    assert v2.total == Decimal("1265.00")
     assert v2.status == "Draft"
     assert v2.is_locked is False
 
     earlier = db.session.get(EstimateVersion, v1_id)
-    assert earlier.total == v1_total
+    assert earlier.overhead_percent == v1_overhead
     assert earlier.version_label == "Initial Estimate"
     assert earlier.version_number == 1
 
@@ -184,7 +180,7 @@ def test_locked_version_cannot_be_edited(project):
     db.session.commit()
 
     with pytest.raises(EstimateServiceError, match="locked"):
-        update_estimate_version(version, total=Decimal("500.00"))
+        update_estimate_version(version, overhead_percent=Decimal("12.00"))
 
 
 def test_issued_version_locks_automatically(project):
@@ -264,7 +260,7 @@ def test_create_version_via_route(client, project):
     )
     update_estimate_version(
         estimate.current_version,
-        total=Decimal("250.00"),
+        overhead_percent=Decimal("8.00"),
     )
 
     response = client.post(

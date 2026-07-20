@@ -74,11 +74,6 @@
         </label>
 
         <label>
-            Subtotal
-            <input type="number" name="subtotal" value="{{ version_form.subtotal }}" step="0.01" min="0">
-        </label>
-
-        <label>
             Overhead %
             <input type="number" name="overhead_percent" value="{{ version_form.overhead_percent }}" step="0.01" min="0">
         </label>
@@ -92,17 +87,13 @@
             Tax %
             <input type="number" name="tax_percent" value="{{ version_form.tax_percent }}" step="0.01" min="0">
         </label>
-
-        <label>
-            Total
-            <input type="number" name="total" value="{{ version_form.total }}" step="0.01" min="0">
-        </label>
     </div>
 
     <label>
         Revision reason
         <textarea name="revision_reason" rows="3">{{ version_form.revision_reason }}</textarea>
     </label>
+    <p class="muted-copy">Subtotal and grand total are calculated from estimate sections and line items.</p>
     {% endif %}
     {% endif %}
 

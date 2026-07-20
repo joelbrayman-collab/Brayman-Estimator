@@ -88,7 +88,9 @@ def clone_current_version(
     version_label=None,
     revision_reason=None,
 ):
-    """Create the next version by copying values from the current version."""
+    """Create the next version by copying values and builder content."""
+    from app.services.estimate_builder import clone_sections_to_version
+
     current = estimate.current_version
     if current is None:
         raise EstimateServiceError(
@@ -118,6 +120,7 @@ def clone_current_version(
 
     db.session.add(new_version)
     db.session.flush()
+    clone_sections_to_version(current, new_version)
     estimate.current_version_id = new_version.id
     db.session.commit()
 
@@ -158,13 +161,13 @@ def update_estimate_version(
     version_label=None,
     revision_reason=None,
     status=None,
-    subtotal=None,
     overhead_percent=None,
     profit_percent=None,
     tax_percent=None,
-    total=None,
 ):
-    """Update version fields when the version is not locked."""
+    """Update version metadata/percentages and recalculate totals."""
+    from app.services.estimate_builder import recalculate_version
+
     ensure_version_editable(version)
 
     if version_label is not None:
@@ -175,17 +178,14 @@ def update_estimate_version(
         version.status = status
         if status in AUTO_LOCK_VERSION_STATUSES:
             version.is_locked = True
-    if subtotal is not None:
-        version.subtotal = Decimal(subtotal)
     if overhead_percent is not None:
         version.overhead_percent = Decimal(overhead_percent)
     if profit_percent is not None:
         version.profit_percent = Decimal(profit_percent)
     if tax_percent is not None:
         version.tax_percent = Decimal(tax_percent)
-    if total is not None:
-        version.total = Decimal(total)
 
+    recalculate_version(version)
     db.session.commit()
     return version
 

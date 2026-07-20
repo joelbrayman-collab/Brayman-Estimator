@@ -32,10 +32,23 @@
                 <h1 class="header-page-title">{% block page_title %}Workspace{% endblock %}</h1>
             </div>
 
-            <div class="header-actions" aria-label="Quick actions">
-                <button type="button" class="header-icon-btn" disabled aria-label="Search (coming soon)" title="Search (coming soon)">
+            <div class="header-search">
+                <button
+                    type="button"
+                    class="header-search-trigger"
+                    id="header-search-trigger"
+                    aria-haspopup="dialog"
+                    aria-controls="command-palette"
+                    aria-expanded="false"
+                    aria-label="Search clients, projects, estimates"
+                >
                     <i class="bi bi-search" aria-hidden="true"></i>
+                    <span class="header-search-placeholder">Search clients, projects, estimates...</span>
+                    <kbd class="header-search-shortcut" data-search-shortcut>⌘K</kbd>
                 </button>
+            </div>
+
+            <div class="header-actions" aria-label="Quick actions">
                 <button type="button" class="header-icon-btn" disabled aria-label="Notifications (coming soon)" title="Notifications (coming soon)">
                     <i class="bi bi-bell" aria-hidden="true"></i>
                 </button>
@@ -68,6 +81,8 @@
         </main>
     </div>
 
+    {% include "partials/command_palette.html" %}
     <script src="{{ url_for('static', filename='js/shell.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/command-palette.js') }}" defer></script>
 </body>
 </html>

@@ -25,6 +25,11 @@ class Project(db.Model):
         back_populates="project",
         cascade="all, delete-orphan",
     )
+    change_orders = db.relationship(
+        "ChangeOrder",
+        back_populates="project",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self):
         return f"<Project {self.name}>"

@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Construction</p>
+        <h1>{{ project.name }}</h1>
+        <p class="muted-copy">{{ project.project_number or "No project number" }} · {{ project.client.name }}</p>
+    </div>
+    <div>
+        <a class="button" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id) }}">New Change Order</a>
+        <a class="button-link" href="{{ url_for('projects.list_projects') }}">Back to projects</a>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 20px;">
+    <div class="form-grid">
+        <div><p class="eyebrow">Status</p><p><span class="status">{{ project.status }}</span></p></div>
+        <div><p class="eyebrow">Address</p><p>{{ project.address or "—" }}</p></div>
+        <div><p class="eyebrow">Client</p><p>{{ project.client.name }}</p></div>
+        <div><p class="eyebrow">Created</p><p>{{ project.created_at.strftime("%Y-%m-%d") }}</p></div>
+    </div>
+    {% if project.description %}
+    <p style="margin-top: 16px;">{{ project.description }}</p>
+    {% endif %}
+</section>
+
+<section class="dash-panels">
+    <article class="panel">
+        <div class="panel-header">
+            <h2>Related Estimates</h2>
+            <a href="{{ url_for('estimates.list_estimates') }}">All estimates</a>
+        </div>
+        {% if estimates %}
+        <ul class="activity-list">
+            {% for estimate in estimates %}
+            <li>
+                <a href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">
+                    <span class="activity-title">{{ estimate.title }}</span>
+                    <span class="activity-meta">{{ estimate.estimate_number }} · {{ estimate.status }}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No estimates</h3>
+            <p>Create an estimate for this project to begin pricing.</p>
+        </div>
+        {% endif %}
+    </article>
+
+    <article class="panel">
+        <div class="panel-header">
+            <h2>Related Proposals</h2>
+            <a href="{{ url_for('proposals.list_proposals') }}">All proposals</a>
+        </div>
+        {% if proposals %}
+        <ul class="activity-list">
+            {% for proposal in proposals %}
+            <li>
+                <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">
+                    <span class="activity-title">{{ proposal.title }}</span>
+                    <span class="activity-meta">{{ proposal.proposal_number }} · {{ proposal.status }}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No proposals</h3>
+            <p>Proposals created from this project’s estimates will appear here.</p>
+        </div>
+        {% endif %}
+    </article>
+
+    <article class="panel panel-wide">
+        <div class="panel-header">
+            <h2>Related Change Orders</h2>
+            <a href="{{ url_for('project_controls.list_change_orders', project_id=project.id) }}">All change orders</a>
+        </div>
+        {% if change_orders %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Value</th>
+                    <th>Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for co in change_orders %}
+                <tr>
+                    <td><a href="{{ url_for('project_controls.view_change_order', id=co.id) }}">{{ co.number }}</a></td>
+                    <td>{{ co.title }}</td>
+                    <td><span class="status">{{ co.status }}</span></td>
+                    <td>${{ "%.2f"|format(co.total) }}</td>
+                    <td>{{ co.updated_at.strftime("%Y-%m-%d") }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No change orders</h3>
+            <p>Track approved scope changes against this project.</p>
+            <a class="button-link" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id) }}">New Change Order</a>
+        </div>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

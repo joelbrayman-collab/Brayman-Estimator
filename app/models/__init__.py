@@ -9,10 +9,13 @@ from app.models.estimate import (
 )
 from app.models.project import Project
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
+from app.project_controls.models import ChangeOrder, ChangeOrderItem
 
 __all__ = [
     "Assembly",
     "AssemblyItem",
+    "ChangeOrder",
+    "ChangeOrderItem",
     "Client",
     "CostItem",
     "Estimate",

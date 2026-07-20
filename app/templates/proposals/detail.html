@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}{{ proposal.proposal_number }} | Brayman Estimator{% endblock %}
+{% block title %}{{ proposal.proposal_number }} | Brayman Construction Platform{% endblock %}
+
+{% block page_title %}Proposal{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Proposal</p>
+        <p class="eyebrow">Estimating</p>
         <h1>{{ proposal.title }}</h1>
         <p class="muted-copy">
             Snapshot from Estimate Version v{{ proposal.estimate_version_number }}{% if proposal.estimate_version_label %} — {{ proposal.estimate_version_label }}{% endif %}

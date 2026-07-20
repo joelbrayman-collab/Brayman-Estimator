@@ -1,0 +1,65 @@
+<aside class="shell-sidebar" id="shell-sidebar" aria-label="Primary">
+    <div class="sidebar-brand">
+        <a class="sidebar-brand-link" href="{{ url_for('main.dashboard') }}" aria-label="{{ product_name }} home">
+            <img
+                class="sidebar-logo"
+                src="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}"
+                alt="Brayman Construction"
+                width="160"
+                height="64"
+            >
+        </a>
+        <button
+            type="button"
+            class="sidebar-collapse-btn"
+            id="sidebar-collapse-btn"
+            aria-controls="shell-sidebar"
+            aria-expanded="true"
+            aria-label="Collapse sidebar"
+            title="Collapse sidebar"
+        >
+            <i class="bi bi-layout-sidebar-inset" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Application">
+        {% for section in nav_sections %}
+        <div class="sidebar-section">
+            {% if section.title %}
+            <p class="sidebar-section-label">{{ section.title }}</p>
+            {% endif %}
+            <ul class="sidebar-nav-list">
+                {% for item in section.links %}
+                <li>
+                    {% if item.enabled and item.endpoint %}
+                    <a
+                        class="sidebar-link{% if item.active %} is-active{% endif %}"
+                        href="{{ url_for(item.endpoint) }}"
+                        {% if item.active %}aria-current="page"{% endif %}
+                        title="{{ item.title }}"
+                    >
+                        <i class="bi {{ item.icon }}" aria-hidden="true"></i>
+                        <span class="sidebar-link-label">{{ item.title }}</span>
+                    </a>
+                    {% else %}
+                    <span
+                        class="sidebar-link is-disabled"
+                        title="{{ item.title }} (coming soon)"
+                        aria-disabled="true"
+                    >
+                        <i class="bi {{ item.icon }}" aria-hidden="true"></i>
+                        <span class="sidebar-link-label">{{ item.title }}</span>
+                        <span class="sidebar-soon">Soon</span>
+                    </span>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </nav>
+
+    <div class="sidebar-footer">
+        <p class="sidebar-footer-text">{{ product_name }}</p>
+    </div>
+</aside>

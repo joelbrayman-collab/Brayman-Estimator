@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Change Orders | Brayman Construction Platform{% endblock %}
+{% block page_title %}Change Orders{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Project Controls</p>
+        <h1>Change Orders</h1>
+    </div>
+    <a class="button" href="{{ url_for('project_controls.create_change_order_route') }}">New Change Order</a>
+</div>
+
+<section class="form-panel" style="margin-bottom: 20px;">
+    <form method="get" class="form-grid">
+        <label>
+            Search
+            <input type="search" name="q" value="{{ filters.q }}" placeholder="Number, title, project, description">
+        </label>
+        <label>
+            Project
+            <select name="project_id">
+                <option value="">All projects</option>
+                {% for project in projects %}
+                <option value="{{ project.id }}" {% if filters.project_id == project.id %}selected{% endif %}>{{ project.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Status
+            <select name="status">
+                <option value="">All statuses</option>
+                {% for status in statuses %}
+                <option value="{{ status }}" {% if filters.status == status %}selected{% endif %}>{{ status }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Updated from
+            <input type="date" name="date_from" value="{{ filters.date_from }}">
+        </label>
+        <label>
+            Updated to
+            <input type="date" name="date_to" value="{{ filters.date_to }}">
+        </label>
+        <div class="form-actions">
+            <button type="submit">Apply filters</button>
+            <a href="{{ url_for('project_controls.list_change_orders') }}">Clear</a>
+        </div>
+    </form>
+</section>
+
+{% if change_orders %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Number</th>
+            <th>Project</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Value</th>
+            <th>Updated</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for co in change_orders %}
+        <tr>
+            <td><a href="{{ url_for('project_controls.view_change_order', id=co.id) }}">{{ co.number }}</a></td>
+            <td><a href="{{ url_for('projects.view_project', id=co.project_id) }}">{{ co.project.name }}</a></td>
+            <td>{{ co.title }}</td>
+            <td><span class="status status-co-{{ co.status|lower|replace(' ', '-') }}">{{ co.status }}</span></td>
+            <td>${{ "%.2f"|format(co.total) }}</td>
+            <td>{{ co.updated_at.strftime("%Y-%m-%d") }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <h2>No change orders found</h2>
+    <p>Create a change order from a project or estimate version to track scope adjustments.</p>
+    <a class="button-link" href="{{ url_for('project_controls.create_change_order_route') }}">New Change Order</a>
+</div>
+{% endif %}
+{% endblock %}

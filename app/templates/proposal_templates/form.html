@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}{{ "Edit Template" if template else "New Template" }} | Brayman Estimator{% endblock %}
+{% block title %}{{ "Edit Template" if template else "New Template" }} | Brayman Construction Platform{% endblock %}
+
+{% block page_title %}Proposal Template{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Proposals</p>
+        <p class="eyebrow">Estimating</p>
         <h1>{{ "Edit Proposal Template" if template else "New Proposal Template" }}</h1>
     </div>
 </div>

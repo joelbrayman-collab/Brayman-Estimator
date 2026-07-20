@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}{{ change_order.number }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ change_order.number }}{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Project Controls</p>
+        <h1>{{ change_order.title }}</h1>
+        <p class="muted-copy">
+            {{ change_order.number }}
+            · <a href="{{ url_for('projects.view_project', id=change_order.project_id) }}">{{ change_order.project.name }}</a>
+            {% if change_order.estimate_version %}
+            · Estimate {{ change_order.estimate_version.estimate.estimate_number }} / {{ change_order.estimate_version.display_label }}
+            {% endif %}
+        </p>
+    </div>
+    <div>
+        <a class="button" href="{{ url_for('project_controls.download_change_order_pdf', id=change_order.id) }}">Download PDF</a>
+        <a class="button" href="{{ url_for('project_controls.edit_change_order', id=change_order.id) }}">Edit</a>
+        <a class="button-link" href="{{ url_for('project_controls.list_change_orders') }}">Back to list</a>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 20px;">
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Status</p>
+            <p><span class="status status-co-{{ change_order.status|lower|replace(' ', '-') }}">{{ change_order.status }}</span></p>
+        </div>
+        <div>
+            <p class="eyebrow">Value</p>
+            <p><strong>${{ "%.2f"|format(change_order.total) }}</strong></p>
+        </div>
+        <div>
+            <p class="eyebrow">Requested</p>
+            <p>{{ change_order.requested_date or "—" }}{% if change_order.requested_by %} · {{ change_order.requested_by }}{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Approved</p>
+            <p>{{ change_order.approved_date or "—" }}</p>
+        </div>
+    </div>
+    <form method="post" action="{{ url_for('project_controls.update_status', id=change_order.id) }}" class="form-actions">
+        <label>
+            Update status
+            <select name="status">
+                {% for status in statuses %}
+                <option value="{{ status }}" {% if change_order.status == status %}selected{% endif %}>{{ status }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <button type="submit">Save Status</button>
+    </form>
+</section>
+
+<nav class="co-tabs" aria-label="Change order sections">
+    <a class="co-tab{% if tab == 'overview' %} is-active{% endif %}" href="{{ url_for('project_controls.view_change_order', id=change_order.id, tab='overview') }}">Overview</a>
+    <a class="co-tab{% if tab == 'items' %} is-active{% endif %}" href="{{ url_for('project_controls.view_change_order', id=change_order.id, tab='items') }}">Items</a>
+    <a class="co-tab{% if tab == 'notes' %} is-active{% endif %}" href="{{ url_for('project_controls.view_change_order', id=change_order.id, tab='notes') }}">Notes</a>
+    <a class="co-tab{% if tab == 'history' %} is-active{% endif %}" href="{{ url_for('project_controls.view_change_order', id=change_order.id, tab='history') }}">History</a>
+</nav>
+
+{% if tab == 'overview' %}
+<section class="form-panel">
+    <h2>Overview</h2>
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Description</p>
+            <p>{{ change_order.description or "—" }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Reason</p>
+            <p>{{ change_order.reason or "—" }}</p>
+        </div>
+    </div>
+    <div class="pricing-summary" style="margin-top: 20px;">
+        <div class="form-grid">
+            <div><p class="eyebrow">Subtotal</p><p>${{ "%.2f"|format(change_order.subtotal) }}</p></div>
+            <div><p class="eyebrow">Markup ({{ "%.2f"|format(change_order.markup_percent) }}%)</p><p>${{ "%.2f"|format(change_order.markup) }}</p></div>
+            <div><p class="eyebrow">Tax ({{ "%.2f"|format(change_order.tax_percent) }}%)</p><p>${{ "%.2f"|format(change_order.tax) }}</p></div>
+            <div><p class="eyebrow">Grand Total</p><p><strong>${{ "%.2f"|format(change_order.total) }}</strong></p></div>
+        </div>
+    </div>
+</section>
+
+{% elif tab == 'items' %}
+<section class="form-panel">
+    <h2>Line Items</h2>
+    {% if change_order.items %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in change_order.items %}
+            <tr>
+                {% if editing_item_id == item.id and item_edit_form %}
+                <td colspan="6">
+                    <form method="post" action="{{ url_for('project_controls.edit_item', id=change_order.id, item_id=item.id) }}" class="form-panel">
+                        <div class="form-grid">
+                            <label>Description * <input type="text" name="description" value="{{ item_edit_form.description }}" required></label>
+                            <label>Quantity * <input type="number" name="quantity" value="{{ item_edit_form.quantity }}" step="0.0001" min="0" required></label>
+                            <label>Unit * <input type="text" name="unit" value="{{ item_edit_form.unit }}" required></label>
+                            <label>Unit price * <input type="number" name="unit_price" value="{{ item_edit_form.unit_price }}" step="0.0001" min="0" required></label>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit">Update Item</button>
+                            <a href="{{ url_for('project_controls.view_change_order', id=change_order.id, tab='items') }}">Cancel</a>
+                        </div>
+                    </form>
+                </td>
+                {% else %}
+                <td>{{ item.description }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.unit }}</td>
+                <td>${{ "%.2f"|format(item.unit_price) }}</td>
+                <td>${{ "%.2f"|format(item.total) }}</td>
+                <td>
+                    <a class="button-link" href="{{ url_for('project_controls.view_change_order', id=change_order.id, tab='items', edit_item=item.id) }}">Edit</a>
+                    <form method="post" action="{{ url_for('project_controls.delete_item', id=change_order.id, item_id=item.id) }}" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state empty-state-compact">
+        <h3>No line items yet</h3>
+        <p>Add priced scope changes below. Totals update automatically.</p>
+    </div>
+    {% endif %}
+
+    <h3 style="margin-top: 28px;">Add Line Item</h3>
+    <form method="post" action="{{ url_for('project_controls.add_item', id=change_order.id) }}">
+        <div class="form-grid">
+            <label>Description * <input type="text" name="description" required></label>
+            <label>Quantity * <input type="number" name="quantity" value="1" step="0.0001" min="0" required></label>
+            <label>Unit * <input type="text" name="unit" value="ea" required></label>
+            <label>Unit price * <input type="number" name="unit_price" value="0" step="0.0001" min="0" required></label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Add Item</button>
+        </div>
+    </form>
+
+    <div class="pricing-summary" style="margin-top: 24px;">
+        <div class="form-grid">
+            <div><p class="eyebrow">Subtotal</p><p>${{ "%.2f"|format(change_order.subtotal) }}</p></div>
+            <div><p class="eyebrow">Markup</p><p>${{ "%.2f"|format(change_order.markup) }}</p></div>
+            <div><p class="eyebrow">Tax</p><p>${{ "%.2f"|format(change_order.tax) }}</p></div>
+            <div><p class="eyebrow">Grand Total</p><p><strong>${{ "%.2f"|format(change_order.total) }}</strong></p></div>
+        </div>
+    </div>
+</section>
+
+{% elif tab == 'notes' %}
+<section class="form-panel">
+    <h2>Notes</h2>
+    <p>{{ change_order.notes or "No notes recorded for this change order." }}</p>
+    <div class="form-actions">
+        <a class="button" href="{{ url_for('project_controls.edit_change_order', id=change_order.id) }}">Edit notes</a>
+    </div>
+</section>
+
+{% else %}
+<section class="form-panel">
+    <h2>History</h2>
+    <div class="empty-state empty-state-compact">
+        <h3>History coming soon</h3>
+        <p>A detailed audit trail for status changes and edits will appear here in a future release.</p>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

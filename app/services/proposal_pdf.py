@@ -397,7 +397,7 @@ def generate_proposal_pdf(proposal) -> BytesIO:
         topMargin=0.7 * inch,
         bottomMargin=0.75 * inch,
         title=proposal.title or proposal.proposal_number,
-        author=(template.company_name if template else None) or "Brayman Estimator",
+        author=(template.company_name if template else None) or "Brayman Construction Platform",
     )
 
     story = []

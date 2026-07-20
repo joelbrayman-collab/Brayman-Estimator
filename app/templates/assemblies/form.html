@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}{{ "Edit Assembly" if assembly else "New Assembly" }} | Brayman Estimator{% endblock %}
+{% block title %}{{ "Edit Assembly" if assembly else "New Assembly" }} | Brayman Construction Platform{% endblock %}
+
+{% block page_title %}Assembly{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Pricing</p>
+        <p class="eyebrow">Estimating</p>
         <h1>{{ "Edit Assembly" if assembly else "New Assembly" }}</h1>
     </div>
 </div>

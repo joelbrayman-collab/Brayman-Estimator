@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Cost Library | Brayman Estimator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Pricing</p>
+        <h1>Cost Library</h1>
+    </div>
+
+    <a class="button" href="{{ url_for('cost_library.create_cost_item') }}">New Cost Item</a>
+</div>
+
+{% if cost_items %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Item Name</th>
+            <th>Category</th>
+            <th>Unit</th>
+            <th>Unit Cost</th>
+            <th>Markup</th>
+            <th>Supplier</th>
+            <th>Active</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in cost_items %}
+        <tr>
+            <td>{{ item.code }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.category }}</td>
+            <td>{{ item.unit }}</td>
+            <td>${{ "%.2f"|format(item.unit_cost) }}</td>
+            <td>{{ "%.2f"|format(item.default_markup_percent) }}%</td>
+            <td>{{ item.supplier or "—" }}</td>
+            <td>
+                <span class="status">{{ "Active" if item.is_active else "Inactive" }}</span>
+            </td>
+            <td>
+                <a class="button-link" href="{{ url_for('cost_library.edit_cost_item', id=item.id) }}">Edit</a>
+                <form method="post" action="{{ url_for('cost_library.toggle_cost_item_active', id=item.id) }}" style="display: inline;">
+                    <button type="submit">{{ "Deactivate" if item.is_active else "Activate" }}</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <h2>No cost items yet</h2>
+    <p>Add labour, material, equipment, and subcontractor pricing to the cost library.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -18,11 +18,13 @@ def create_app():
 
     from app import models
     from app.routes.clients import clients_bp
+    from app.routes.cost_library import cost_library_bp
     from app.routes.main import main_bp
     from app.routes.projects import projects_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(clients_bp)
     app.register_blueprint(projects_bp)
+    app.register_blueprint(cost_library_bp)
 
     return app

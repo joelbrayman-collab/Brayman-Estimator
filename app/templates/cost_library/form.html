@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Edit Cost Item" if cost_item else "New Cost Item" }} | Brayman Estimator{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Pricing</p>
+        <h1>{{ "Edit Cost Item" if cost_item else "New Cost Item" }}</h1>
+    </div>
+</div>
+
+<form method="post" class="form-panel">
+    <div class="form-grid">
+        <label>
+            Code *
+            <input type="text" name="code" value="{{ form.code }}" required>
+        </label>
+
+        <label>
+            Item name *
+            <input type="text" name="name" value="{{ form.name }}" required>
+        </label>
+
+        <label>
+            Category *
+            <select name="category" required>
+                <option value="">Select a category</option>
+                {% for category in categories %}
+                <option value="{{ category }}" {% if form.category == category %}selected{% endif %}>{{ category }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Unit *
+            <input type="text" name="unit" value="{{ form.unit }}" required placeholder="e.g. hr, m2, each">
+        </label>
+
+        <label>
+            Unit cost *
+            <input type="number" name="unit_cost" value="{{ form.unit_cost }}" required step="0.01" min="0">
+        </label>
+
+        <label>
+            Default markup %
+            <input type="number" name="default_markup_percent" value="{{ form.default_markup_percent }}" step="0.01" min="0">
+        </label>
+
+        <label>
+            Supplier
+            <input type="text" name="supplier" value="{{ form.supplier }}">
+        </label>
+    </div>
+
+    <label>
+        Description
+        <textarea name="description" rows="5">{{ form.description }}</textarea>
+    </label>
+
+    <div class="form-actions">
+        <button type="submit">{{ "Update Cost Item" if cost_item else "Save Cost Item" }}</button>
+        <a href="{{ url_for('cost_library.list_cost_items') }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

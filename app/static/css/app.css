@@ -16,7 +16,7 @@
     --sidebar-collapsed-width: 76px;
     --header-height: 64px;
     --shadow-soft: 0 1px 2px rgba(20, 20, 20, 0.04), 0 8px 24px rgba(20, 20, 20, 0.04);
-    font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 * {
@@ -32,7 +32,7 @@ body {
 body.app-shell {
     background: var(--workspace);
     color: var(--text);
-    font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     line-height: 1.45;
 }
 
@@ -510,29 +510,46 @@ body[data-sidebar-collapsed="true"] .sidebar-section-label {
 
 .dash-intro {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
     gap: 20px;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
 }
 
 .dash-heading {
-    margin: 6px 0 8px;
-    font-size: 1.75rem;
+    margin: 0 0 5px;
+    font-size: 1.55rem;
+    font-weight: 600;
     letter-spacing: -0.02em;
+}
+
+.dash-intro .muted-copy {
+    margin: 0;
+    font-size: 0.92rem;
 }
 
 .dash-intro-actions {
     display: flex;
-    gap: 12px;
+    gap: 8px;
     flex-wrap: wrap;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.dash-intro-actions .button {
+    min-height: 36px;
+    padding: 8px 13px;
+    border-radius: 8px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
 .dash-metrics {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 32px;
 }
 
 .metric-card,
@@ -547,11 +564,30 @@ body[data-sidebar-collapsed="true"] .sidebar-section-label {
 }
 
 .metric-card {
-    padding: 18px 18px 16px;
+    padding: 12px 13px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    min-height: 118px;
+    gap: 5px;
+    min-width: 0;
+    min-height: 82px;
+    border-color: #e6e2da;
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(20, 20, 20, 0.025);
+    text-decoration: none;
+}
+
+.metric-card-link {
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.metric-card-link:hover {
+    background: #fbfaf7;
+    border-color: #d8d1c5;
+}
+
+.metric-card-link:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
 }
 
 .metric-card-top {
@@ -563,41 +599,45 @@ body[data-sidebar-collapsed="true"] .sidebar-section-label {
 
 .metric-card-top i {
     color: var(--gold);
-    font-size: 1.15rem;
+    font-size: 0.95rem;
 }
 
 .metric-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    min-width: 0;
+    font-size: 0.76rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
 }
 
 .metric-value {
     margin: 0;
-    font-size: 1.85rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .metric-sub {
     margin: 0;
     color: var(--muted);
-    font-size: 0.9rem;
+    font-size: 0.72rem;
+    line-height: 1.2;
+    white-space: nowrap;
 }
 
-.dash-panels {
+.dash-sections {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    gap: 32px;
 }
 
-.panel {
-    padding: 18px 20px 12px;
-}
-
-.panel-wide {
-    grid-column: 1 / -1;
+.dashboard-section {
+    min-width: 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
 }
 
 .panel-header {
@@ -610,7 +650,8 @@ body[data-sidebar-collapsed="true"] .sidebar-section-label {
 
 .panel-header h2 {
     margin: 0;
-    font-size: 1.05rem;
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 .panel-header a {
@@ -647,23 +688,67 @@ body[data-sidebar-collapsed="true"] .sidebar-section-label {
 
 .activity-kind {
     font-size: 0.72rem;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--gold);
 }
 
 .activity-title {
-    font-weight: 600;
+    display: block;
+    font-weight: 500;
 }
 
 .activity-meta {
+    display: block;
     color: var(--muted);
-    font-size: 0.86rem;
+    font-size: 0.82rem;
+}
+
+.attention-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.attention-list li,
+.attention-list a {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.attention-list li {
+    padding: 12px 2px;
+}
+
+.attention-list li + li {
+    border-top: 1px solid var(--border);
+}
+
+.attention-list a {
+    width: 100%;
+    text-decoration: none;
+}
+
+.attention-list a:hover .activity-title {
+    color: #8f6d16;
+}
+
+.attention-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    border-radius: 7px;
+    color: #8f6d16;
+    background: #faf5e8;
 }
 
 .empty-state-compact {
-    padding: 22px 8px 18px;
+    padding: 18px 2px 12px;
     border: 0;
     box-shadow: none;
     background: transparent;
@@ -672,7 +757,8 @@ body[data-sidebar-collapsed="true"] .sidebar-section-label {
 
 .empty-state-compact h3 {
     margin: 0 0 6px;
-    font-size: 1rem;
+    font-size: 0.92rem;
+    font-weight: 500;
 }
 
 .empty-state-compact p {
@@ -953,7 +1039,7 @@ textarea {
 
 @media (max-width: 1200px) {
     .dash-metrics {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
@@ -1066,8 +1152,11 @@ textarea {
         flex-direction: column;
     }
 
-    .dash-metrics,
-    .dash-panels,
+    .dash-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dash-sections,
     .grid,
     .form-grid {
         grid-template-columns: 1fr;
@@ -1084,8 +1173,17 @@ textarea {
         font-size: 1.45rem;
     }
 
-    .metric-value {
-        font-size: 1.55rem;
+    .dash-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .dash-intro-actions {
+        width: 100%;
+    }
+
+    .dash-intro-actions .button {
+        flex: 1 1 auto;
+        text-align: center;
     }
 }
 

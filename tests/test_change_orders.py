@@ -275,7 +275,8 @@ def test_dashboard_change_order_widgets(client, project):
     assert response.status_code == 200
     assert b"Open Change Orders" in response.data
     assert b"Pending Approval" in response.data
-    assert b"Change Order Value" in response.data
+    assert b"Change Order Value" not in response.data
+    assert b"Approved This Month" not in response.data
 
 
 def test_missing_change_order_pdf_404(client):

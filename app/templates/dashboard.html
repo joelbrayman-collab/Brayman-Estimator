@@ -6,9 +6,8 @@
 {% block content %}
 <section class="dash-intro">
     <div>
-        <p class="eyebrow">Brayman Construction Co.</p>
         <h2 class="dash-heading">Construction Dashboard</h2>
-        <p class="muted-copy">Operational snapshot of projects, estimating, proposals, and change orders.</p>
+        <p class="muted-copy">A concise view of current work and items that need attention.</p>
     </div>
     <div class="dash-intro-actions">
         <a class="button" href="{{ url_for('estimates.create_estimate_route') }}">New estimate</a>
@@ -18,54 +17,8 @@
 
 {% include "partials/dashboard_cards.html" %}
 
-<section class="dash-panels" aria-label="Recent activity">
-    <article class="panel">
-        <div class="panel-header">
-            <h2>Recent Estimates</h2>
-        </div>
-        {% if shell_recent_estimates %}
-        <ul class="activity-list">
-            {% for estimate in shell_recent_estimates %}
-            <li>
-                <a href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">
-                    <span class="activity-title">{{ estimate.title }}</span>
-                    <span class="activity-meta">{{ estimate.estimate_number }} · {{ estimate.status }}</span>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <div class="empty-state empty-state-compact">
-            <h3>No estimates yet</h3>
-            <p>Create an estimate from a project to start building pricing.</p>
-        </div>
-        {% endif %}
-    </article>
-
-    <article class="panel">
-        <div class="panel-header">
-            <h2>Recent Proposals</h2>
-        </div>
-        {% if shell_recent_proposals %}
-        <ul class="activity-list">
-            {% for proposal in shell_recent_proposals %}
-            <li>
-                <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">
-                    <span class="activity-title">{{ proposal.title }}</span>
-                    <span class="activity-meta">{{ proposal.proposal_number }} · {{ proposal.status }}</span>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <div class="empty-state empty-state-compact">
-            <h3>No proposals yet</h3>
-            <p>Generate a proposal from an estimate version when you are ready to issue.</p>
-        </div>
-        {% endif %}
-    </article>
-
-    <article class="panel panel-wide">
+<section class="dash-sections" aria-label="Dashboard details">
+    <article class="dashboard-section">
         <div class="panel-header">
             <h2>Recent Activity</h2>
         </div>
@@ -93,7 +46,42 @@
         {% else %}
         <div class="empty-state empty-state-compact">
             <h3>No recent activity</h3>
-            <p>Activity from estimates and proposals will appear here as you work.</p>
+            <p>Estimate and proposal activity will appear here.</p>
+        </div>
+        {% endif %}
+    </article>
+
+    <article class="dashboard-section">
+        <div class="panel-header">
+            <h2>Requires Attention</h2>
+        </div>
+        {% if pending_change_order_count or draft_proposal_count %}
+        <ul class="attention-list">
+            {% if pending_change_order_count %}
+            <li>
+                <span class="attention-icon"><i class="bi bi-hourglass-split" aria-hidden="true"></i></span>
+                <span>
+                    <span class="activity-title">{{ pending_change_order_count }} change order{% if pending_change_order_count != 1 %}s{% endif %} pending approval</span>
+                    <span class="activity-meta">Review outstanding approvals in Project Controls.</span>
+                </span>
+            </li>
+            {% endif %}
+            {% if draft_proposal_count %}
+            <li>
+                <a href="{{ url_for('proposals.list_proposals') }}">
+                    <span class="attention-icon"><i class="bi bi-file-earmark-text" aria-hidden="true"></i></span>
+                    <span>
+                        <span class="activity-title">{{ draft_proposal_count }} draft proposal{% if draft_proposal_count != 1 %}s{% endif %}</span>
+                        <span class="activity-meta">Review drafts before they are issued.</span>
+                    </span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>Nothing requires attention</h3>
+            <p>Pending approvals and draft proposals will appear here.</p>
         </div>
         {% endif %}
     </article>

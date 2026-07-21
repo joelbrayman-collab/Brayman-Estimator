@@ -1,44 +1,44 @@
 <section class="dash-metrics" aria-label="Overview metrics">
-    <article class="metric-card">
+    <a class="metric-card metric-card-link" href="{{ url_for('projects.list_projects') }}">
         <div class="metric-card-top">
             <span class="metric-label">Projects</span>
             <i class="bi bi-building" aria-hidden="true"></i>
         </div>
         <p class="metric-value">{{ project_count }}</p>
-    </article>
+    </a>
 
-    <article class="metric-card">
+    <a class="metric-card metric-card-link" href="{{ url_for('clients.list_clients') }}">
         <div class="metric-card-top">
             <span class="metric-label">Clients</span>
             <i class="bi bi-people" aria-hidden="true"></i>
         </div>
         <p class="metric-value">{{ client_count }}</p>
-    </article>
+    </a>
 
-    <article class="metric-card">
+    <a class="metric-card metric-card-link" href="{{ url_for('estimates.list_estimates') }}">
         <div class="metric-card-top">
             <span class="metric-label">Open Estimates</span>
             <i class="bi bi-calculator" aria-hidden="true"></i>
         </div>
         <p class="metric-value">{{ estimate_count }}</p>
-    </article>
+    </a>
 
-    <article class="metric-card">
+    <a class="metric-card metric-card-link" href="{{ url_for('proposals.list_proposals') }}">
         <div class="metric-card-top">
             <span class="metric-label">Open Proposals</span>
             <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
         </div>
         <p class="metric-value">{{ proposal_count }} proposals</p>
         <p class="metric-sub">{{ draft_proposal_count }} draft · {{ issued_proposal_count }} issued</p>
-    </article>
+    </a>
 
-    <article class="metric-card">
+    <a class="metric-card metric-card-link" href="{{ url_for('project_controls.list_change_orders') }}">
         <div class="metric-card-top">
             <span class="metric-label">Open Change Orders</span>
             <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
         </div>
         <p class="metric-value">{{ open_change_order_count }}</p>
-    </article>
+    </a>
 
     <article class="metric-card">
         <div class="metric-card-top">
@@ -46,21 +46,5 @@
             <i class="bi bi-hourglass-split" aria-hidden="true"></i>
         </div>
         <p class="metric-value">{{ pending_change_order_count }}</p>
-    </article>
-
-    <article class="metric-card">
-        <div class="metric-card-top">
-            <span class="metric-label">Approved This Month</span>
-            <i class="bi bi-check2-circle" aria-hidden="true"></i>
-        </div>
-        <p class="metric-value">{{ approved_change_orders_month }}</p>
-    </article>
-
-    <article class="metric-card">
-        <div class="metric-card-top">
-            <span class="metric-label">Change Order Value</span>
-            <i class="bi bi-currency-dollar" aria-hidden="true"></i>
-        </div>
-        <p class="metric-value">${{ "%.2f"|format(change_order_value) }}</p>
     </article>
 </section>

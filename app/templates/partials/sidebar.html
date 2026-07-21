@@ -3,20 +3,20 @@
         <a class="sidebar-brand-link" href="{{ url_for('main.dashboard') }}" aria-label="{{ product_name }} home">
             <img
                 class="sidebar-logo sidebar-logo-full"
-                src="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}"
+                src="{{ url_for('static', filename='branding/brayman-construction-logo-dark.png') }}"
                 alt=""
-                width="160"
-                height="64"
+                width="1692"
+                height="736"
             >
             <img
                 class="sidebar-logo sidebar-logo-mark"
-                src="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}"
+                src="{{ url_for('static', filename='branding/brayman-construction-logo-dark.png') }}"
                 alt=""
-                width="40"
-                height="40"
+                width="1692"
+                height="736"
             >
             <span class="sidebar-brand-copy">
-                <span class="sidebar-brand-name">Brayman Construction Platform</span>
+                <span class="sidebar-brand-name">Construction Platform</span>
             </span>
         </a>
         <button
@@ -50,6 +50,9 @@
                     >
                         <i class="bi {{ item.icon }}" aria-hidden="true"></i>
                         <span class="sidebar-link-label">{{ item.title }}</span>
+                        {% if item.coming_soon %}
+                        <span class="sidebar-soon">Soon</span>
+                        {% endif %}
                     </a>
                     {% else %}
                     <span

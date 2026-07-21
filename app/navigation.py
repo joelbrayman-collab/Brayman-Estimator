@@ -7,9 +7,9 @@ NAV_SECTIONS = (
         "title": None,
         "links": (
             {
-                "title": "Dashboard",
+                "title": "Home",
                 "endpoint": "main.dashboard",
-                "icon": "bi-speedometer2",
+                "icon": "bi-house",
                 "enabled": True,
             },
         ),
@@ -69,6 +69,13 @@ NAV_SECTIONS = (
     {
         "title": "Project Controls",
         "links": (
+            {
+                "title": "Contracts",
+                "endpoint": "main.contracts",
+                "icon": "bi-file-earmark-check",
+                "enabled": True,
+                "coming_soon": True,
+            },
             {
                 "title": "Change Orders",
                 "endpoint": "project_controls.list_change_orders",

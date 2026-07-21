@@ -28,8 +28,8 @@
             <span class="metric-label">Open Proposals</span>
             <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
         </div>
-        <p class="metric-value">{{ proposal_count }} proposals</p>
-        <p class="metric-sub">{{ draft_proposal_count }} draft · {{ issued_proposal_count }} issued</p>
+        <p class="metric-value">{{ proposal_count }}</p>
+        <p class="metric-sub">{{ proposal_count }} proposals · {{ draft_proposal_count }} draft · {{ issued_proposal_count }} issued</p>
     </a>
 
     <a class="metric-card metric-card-link" href="{{ url_for('project_controls.list_change_orders') }}">

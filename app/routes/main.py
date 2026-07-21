@@ -38,3 +38,8 @@ def dashboard():
         approved_change_orders_month=approved_change_orders_month,
         change_order_value=change_order_value,
     )
+
+
+@main_bp.route("/contracts")
+def contracts():
+    return render_template("contracts.html")

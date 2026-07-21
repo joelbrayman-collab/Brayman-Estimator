@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard | Brayman Construction Platform{% endblock %}
-{% block page_title %}Dashboard{% endblock %}
+{% block title %}Home | Brayman Construction Platform{% endblock %}
+{% block page_title %}Home{% endblock %}
 
 {% block content %}
 <section class="dash-intro">
     <div>
-        <h2 class="dash-heading">Construction Dashboard</h2>
-        <p class="muted-copy">A concise view of current work and items that need attention.</p>
+        <h2 class="dash-heading">Home</h2>
+        <p class="muted-copy">Welcome back. Here's what's happening across your business today.</p>
     </div>
     <div class="dash-intro-actions">
         <a class="button" href="{{ url_for('estimates.create_estimate_route') }}">New estimate</a>
@@ -17,7 +17,7 @@
 
 {% include "partials/dashboard_cards.html" %}
 
-<section class="dash-sections" aria-label="Dashboard details">
+<section class="dash-sections" aria-label="Home details">
     <article class="dashboard-section">
         <div class="panel-header">
             <h2>Recent Activity</h2>

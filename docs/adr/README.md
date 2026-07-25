@@ -38,6 +38,8 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | [ADR-011](ADR-011-ai-confidence-threshold-policy.md) | AI Confidence Threshold Policy | Proposed |
 | [ADR-010](ADR-010-build-versus-buy-document-processing.md) | Build versus Buy for CAD and Document Processing | Proposed |
 | [ADR-012](ADR-012-plan-document-version-ownership.md) | Plan Document Version Ownership | Proposed |
+| [ADR-013](ADR-013-document-intelligence-layer-boundary.md) | Document Intelligence Layer Boundary | Proposed |
+| [ADR-014](ADR-014-sheet-identity-and-page-mapping.md) | Sheet Identity and Page Mapping | Proposed |
 
 ### Supplier (strategic)
 
@@ -45,6 +47,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 |-----|-------|--------|
 | [ADR-008](ADR-008-supplier-price-snapshotting.md) | Supplier Price Snapshotting | Proposed |
 
-Related Feature Gates: [FG-001 Proposals Module](../feature-gates/FG-001-proposals-module.md) · [FG-002 Plan Intelligence Phase A](../feature-gates/FG-002-plan-intelligence-phase-a.md).
+Related Feature Gates: [FG-001 Proposals Module](../feature-gates/FG-001-proposals-module.md) · [FG-002 Plan Intelligence Phase A](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003 Document Intelligence Readiness](../feature-gates/FG-003-document-intelligence-readiness.md).
 Strategic architecture: [../architecture/](../architecture/).
 M004 readiness: [../architecture/M004-plan-intelligence-readiness-report.md](../architecture/M004-plan-intelligence-readiness-report.md).
+M006 readiness: [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md).

@@ -25,16 +25,16 @@ Update this file at the end of every substantial session. Prefer facts verified 
 | Field | Value |
 |-------|--------|
 | **Date** | 2026-07-25 |
-| **Current branch** | `main` |
-| **HEAD** | `c59ec01` — Enforce immutability for accepted proposals |
-| **Working tree** | Dirty: M004 docs + M005 Phase A (ADR-012, FG-002, `app/plan_intelligence/`, migration, tests) — **no commit yet** |
-| **Latest completed product milestone** | Milestone 005 Phase A in working tree (pending commit); M003 last committed product code |
-| **Current focus** | Milestone 005 complete pending commit/review |
-| **Next strategic capability** | Plan Intelligence Phase B (Feature Gate required) |
-| **Test status** | Full suite: **97 passed**, 68 warnings (M005). Phase A: 8 passed. |
-| **Migration status** | Head `f9c1a2b3d4e5` (`plan_documents`) |
-| **Next recommended step** | Joel review → commit M004+M005 when directed; Feature-Gate Phase B before take-off code |
-| **Documents to read first** | [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md); [ADR-012](adr/ADR-012-plan-document-version-ownership.md); [modules/plan-intelligence.md](modules/plan-intelligence.md) |
+| **Current branch** | `milestone-005-plan-intelligence-phase-a` |
+| **HEAD** | `098647c` — Phase A PDF upload/storage |
+| **Working tree** | Dirty with Milestone 006 documentation only (no app/migration/test changes) — **no M006 commit yet** |
+| **Latest completed product milestone** | Milestone 005 Phase A (committed on branch) |
+| **Current focus** | Milestone 006 Document Intelligence architecture (docs complete pending commit) |
+| **Next strategic capability** | M007 Drawing Package & Revision (Feature Gate required) |
+| **Test status** | M005 full suite: **97 passed**, 68 warnings. M006 docs-only. |
+| **Migration status** | Head `f9c1a2b3d4e5` (unchanged by M006) |
+| **Next recommended step** | Joel reviews FG-003 / ADR-013 / ADR-014 / M006 readiness; commit docs; gate M007 before code |
+| **Documents to read first** | [FG-003](feature-gates/FG-003-document-intelligence-readiness.md); [document-intelligence.md](architecture/document-intelligence.md); [M006 readiness](architecture/M006-document-intelligence-readiness-report.md); ADR-013; ADR-014 |
 
 ### Commands to resume (Cursor Terminal)
 
@@ -42,8 +42,7 @@ Update this file at the end of every substantial session. Prefer facts verified 
 cd /Users/joelbrayman/Desktop/Brayman-Estimator
 git status
 git log -1 --oneline
-./venv/bin/python -m pytest -q
-flask db upgrade   # when applying plan_documents migration
+# Expect only docs/ changes for M006; no app/, migrations/, or tests/
 ```
 
 ---

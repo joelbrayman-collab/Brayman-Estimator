@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-07-25 — Milestone 006 Document Intelligence architecture
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-07-25 |
+| Branch | `milestone-005-plan-intelligence-phase-a` @ `098647c` |
+| Objective | Document Intelligence architecture + FG-003; no code |
+| Business decision | Insert DI layer between Phase A upload and take-off |
+| Architectural decision | FG-003 **PASS**; ADR-013 (DI inside Plan Intelligence); ADR-014 (sheet ≠ page); M005 supports additive DI |
+| Prompt template used | Milestone 006 architecture & Feature Gate prompt |
+| Approved Cursor prompt summary | Docs only; evaluate M005 compatibility; FG-003; ADRs only if required; no commits |
+| Files expected to change | docs only (FG, ADR, architecture, roadmap, milestones, state) |
+| Files prohibited from changing | app/, migrations/, tests/ |
+| Implementation result | FG-003 PASS; document-intelligence.md; M006 readiness report; ADR-013/014; governance updates |
+| Tests | Not run (docs-only milestone by design) |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes — M006 |
+| Constitutional issue raised | None |
+| Unresolved issues | Joel acceptance of ADR-013/014; M007 implementation authorization |
+| Next approved step | Joel review/commit docs; Feature Gate M007 when ready |
+| Next approved prompt | None |
+| Commit hash | Pending |
+
 ### 2026-07-25 — Milestone 005 FG-002 + Phase A PDF upload
 
 | Field | Content |

@@ -12,29 +12,29 @@ Keep short. Refresh often. Mark unverified facts explicitly.
 
 | Field | Value |
 |-------|--------|
-| Branch | `main` |
-| HEAD | `c59ec01` — Accepted proposal immutability (+ prior docs commits) |
+| Branch | `milestone-005-plan-intelligence-phase-a` |
+| HEAD | `098647c` — Phase A PDF upload/storage |
 | Pre-governance base | `7b8d5ca` |
-| Remote | Confirm with `git status -sb` |
-| Working tree | Uncommitted M004 docs + M005 Phase A code/docs (confirm `git status`) |
+| Remote | Confirm with `git status -sb` (branch may be unpushed) |
+| Working tree | May include uncommitted Milestone 006 documentation |
 | App | Flask factory `app.create_app` |
 | DB default | SQLite `brayman_estimator.db` under instance |
-| Governance | Active — Constitution, ADRs, Feature Gates, Plan Intelligence Phase A |
+| Governance | Active — FG-002 Phase A; FG-003 Document Intelligence architecture PASS |
 
 ## Implemented capabilities (evidenced)
 
 - Clients, Projects, Cost Items, Assemblies
 - Estimates with versions, sections, line items; locking for certain statuses
 - Proposal templates; snapshot proposals; preview; PDF
-- **Accepted proposal immutability** (service-layer guard)
+- Accepted proposal immutability
 - Change Orders (Project Controls)
 - **Plan Intelligence Phase A** — project-scoped PDF upload, private storage, list/detail/download/delete, searchable flag
 - Dashboard / branding / navigation
 
 ## Not implemented (strategic)
 
-- Plan Intelligence Phases B–G (sheet/scale/take-off/AI/estimate mapping)
-- Drawing Set / Revision workflow UI (ADR-012 docs only)
+- Document Intelligence code (packages, sheets, search) — **architecture only (M006)**
+- Plan Intelligence take-off / AI / OCR / CAD
 - Supplier catalogue / live pricing / procurement
 - Purchase Orders, Job Costing, Reports, AI Assistant, Settings (nav placeholders)
 
@@ -45,33 +45,33 @@ Keep short. Refresh often. Mark unverified facts explicitly.
 
 ## Tests
 
-- Full suite: `./venv/bin/python -m pytest -q` → **97 passed**, 68 warnings (M005)
-- Phase A: `tests/test_plan_upload.py` — 8 passed
+- Full suite at M005: **97 passed**, 68 warnings
+- M006: docs only — suite not required to re-run for this milestone
 
 ## Known risks
 
 - Hard-coded `SECRET_KEY`
 - Proposal estimate FK ON DELETE model/migration mismatch
-- Formal acceptance → project creation incomplete
-- Future AI take-off risks (mitigated by Proposed ADR-005/006/011)
-- Phase A hard-delete of plan files before archival policy exists (ADR-012)
+- Phase A hard-delete vs future archival (ADR-012) — debt for M007
+- Auth / multi-user still open
+- Future AI take-off risks (ADR-005/006/011 Proposed)
 
 ## Current milestone
 
-**Milestone 005 — FG-002 + Phase A PDF upload:** implemented in working tree; **pending Joel-directed commit**.
+**Milestone 006 — Document Intelligence architecture:** FG-003 **PASS**; docs complete; **no code**; pending Joel-directed commit.
 
 ## Recommended next steps
 
-1. Joel reviews/commits M004 + M005 work when ready.
-2. Apply migration `f9c1a2b3d4e5` on each environment.
-3. Feature-Gate Phase B before sheet/scale/manual take-off code.
+1. Joel reviews FG-003, ADR-013, ADR-014, M006 readiness report.
+2. Commit M006 docs when directed.
+3. Feature-Gate **M007** (Drawing Package & Revision) before any Document Intelligence code.
 
 ## Related
 
+- [feature-gates/FG-003-document-intelligence-readiness.md](feature-gates/FG-003-document-intelligence-readiness.md)
+- [architecture/document-intelligence.md](architecture/document-intelligence.md)
+- [architecture/M006-document-intelligence-readiness-report.md](architecture/M006-document-intelligence-readiness-report.md)
 - [modules/plan-intelligence.md](modules/plan-intelligence.md)
-- [feature-gates/FG-002-plan-intelligence-phase-a.md](feature-gates/FG-002-plan-intelligence-phase-a.md)
-- [adr/ADR-012-plan-document-version-ownership.md](adr/ADR-012-plan-document-version-ownership.md)
-- [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md)
 - [platform-roadmap.md](platform-roadmap.md)
 - [session-handoff.md](session-handoff.md)
 - [project-state-report.md](project-state-report.md)

@@ -31,22 +31,39 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Recorded milestones
 
+### Milestone 006 — Document Intelligence Architecture & Feature Gate
+
+| Field | Content |
+|-------|---------|
+| Milestone | Document Intelligence Architecture & Feature Gate |
+| Status | **Completed pending documentation commit** |
+| Branch | `milestone-005-plan-intelligence-phase-a` |
+| Base commit | `098647c` (Phase A present) |
+| Date | 2026-07-25 |
+| Objective | Design Document Intelligence between PDF upload and take-off; FG-003 readiness; required ADRs only; no code. |
+| Deliverables | FG-003 (**PASS**); `architecture/document-intelligence.md`; M006 readiness report; ADR-013; ADR-014; roadmap/milestones/state updates. |
+| Validation | Docs only; `git status` must show no app/migration/test changes for this milestone. |
+| Architectural findings | M005 flat `plan_documents` supports DI additively; no ownership rewrite; hard-delete and missing package/sheet tables are debt for M007–M008. |
+| Open decisions | Accept ADR-013/014; authorize M007 implementation gate; Drawing Package vs Drawing Set UI naming. |
+| Next milestone | M007 — Drawing Package & Revision Foundation (not authorized until Feature Gate / prompt) |
+| Commit | Pending |
+
 ### Milestone 005 — Plan Intelligence Feature Gate and Phase A PDF Upload
 
 | Field | Content |
 |-------|---------|
 | Milestone | Plan Intelligence Feature Gate and Phase A PDF Upload |
-| Status | **Completed pending commit** |
-| Branch | `main` |
+| Status | **Completed** (on feature branch; merge to `main` pending) |
+| Branch | `milestone-005-plan-intelligence-phase-a` |
 | Base commit | `c59ec01` |
 | Date | 2026-07-25 |
 | Objective | Complete FG-002; document ADR-012 (revision ownership); implement Phase A only — secure searchable PDF upload/storage foundation. |
 | Deliverables | ADR-012 (Proposed); FG-002 (Approved); `app/plan_intelligence/` (models/services/storage/routes); templates; migration `f9c1a2b3d4e5`; project detail link; `tests/test_plan_upload.py`; module/docs updates. |
 | Validation | Phase A tests 8 passed; full suite **97 passed**, 68 warnings. No OCR/CAD/AI/estimate insert/revision UI. |
 | Architectural findings | Flat `plan_documents` is intentionally interim; Drawing Set/Revision lifecycle owned by ADR-012 for later gates. Private storage under instance/`PLAN_UPLOAD_ROOT`. |
-| Open decisions | Accept ADR-012; Phase B Feature Gate; auth for uploads; retention/archival policy when take-offs exist. |
-| Next milestone | Feature Gate + implement Plan Intelligence Phase B (sheet/scale/manual measurement) — not authorized yet |
-| Commit | Pending |
+| Open decisions | Accept ADR-012; Document Intelligence M007+ gates; auth for uploads; retention/archival policy when take-offs exist. |
+| Next milestone | Milestone 006 — Document Intelligence architecture (then M007+ coded DI) |
+| Commit | `098647c` — *Implement Plan Intelligence Phase A PDF upload and storage.* |
 
 ### Milestone 004 — Plan Intelligence & Automated Take-Off Architecture
 

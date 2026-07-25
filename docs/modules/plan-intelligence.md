@@ -2,12 +2,12 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Phase A implemented** (PDF upload/storage); take-off / AI not started |
+| Status | **Phase A implemented** (PDF upload/storage); Document Intelligence architecture documented (M006); take-off / AI not started |
 | Updated | 2026-07-25 |
-| Code | `app/plan_intelligence/` |
-| Feature Gate | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) |
-| Architecture | [../architecture/plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) |
-| Readiness | [../architecture/M004-plan-intelligence-readiness-report.md](../architecture/M004-plan-intelligence-readiness-report.md) |
+| Code | `app/plan_intelligence/` (Phase A only) |
+| Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) |
+| Architecture | [../architecture/plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) · [../architecture/document-intelligence.md](../architecture/document-intelligence.md) |
+| Readiness | [../architecture/M004-plan-intelligence-readiness-report.md](../architecture/M004-plan-intelligence-readiness-report.md) · [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md) |
 
 ## Purpose
 
@@ -46,6 +46,19 @@ Proposal generation already exists. Plan Intelligence is the next major platform
 | Sheet classification, scale, take-off, AI, estimate insert | **Out of scope** |
 
 Routes live under `/projects/<id>/plans…`. Estimating, Proposals, OCR, CAD, AI, and supplier features are unchanged.
+
+## Document Intelligence (architecture — Milestone 006)
+
+Capability layer **inside** Plan Intelligence ([ADR-013](../adr/ADR-013-document-intelligence-layer-boundary.md)), between Phase A storage and take-off:
+
+| Concept | Status |
+|---------|--------|
+| Drawing Package / Revision | Architecture + ADR-012; **not implemented** |
+| Sheet index / discipline / sheet numbers | Architecture + ADR-014; **not implemented** |
+| Metadata extraction / search index | Architecture only; **not implemented** |
+| OCR / CAD / AI take-off hooks | Documented integration points only |
+
+See [document-intelligence.md](../architecture/document-intelligence.md) and [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) (**PASS**, implementation not authorized).
 
 ## Business goals
 
@@ -142,5 +155,7 @@ Drawing sets, revisions, sheets, viewports/scales, detected elements, measuremen
 | AI confidence threshold policy | [ADR-011](../adr/ADR-011-ai-confidence-threshold-policy.md) |
 | Build vs buy | [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) |
 | Plan document / revision ownership | [ADR-012](../adr/ADR-012-plan-document-version-ownership.md) |
+| Document Intelligence layer boundary | [ADR-013](../adr/ADR-013-document-intelligence-layer-boundary.md) |
+| Sheet identity vs PDF page mapping | [ADR-014](../adr/ADR-014-sheet-identity-and-page-mapping.md) |
 
-> Note: Milestone 004 Task 7 titles mapped onto existing ADR numbers where already assigned; **ADR-011** is confidence policy. **ADR-012** is Milestone 005 documentation for revision ownership (not implemented in Phase A UI). ADR-008 remains Supplier Price Snapshotting.
+> Note: Milestone 004 Task 7 titles mapped onto existing ADR numbers where already assigned; **ADR-011** is confidence policy. **ADR-012** is Milestone 005 documentation for revision ownership (not implemented in Phase A UI). **ADR-013/014** are Milestone 006 Document Intelligence decisions. ADR-008 remains Supplier Price Snapshotting.

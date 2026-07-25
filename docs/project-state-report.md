@@ -49,27 +49,27 @@ Distinguish from:
 |-------|---------|
 | Report date | 2026-07-25 |
 | Repository | Brayman-Estimator (The Estimator) |
-| Current branch | `main` |
-| Current commit | `c59ec01` (Accepted proposal immutability); M004+M005 uncommitted |
+| Current branch | `milestone-005-plan-intelligence-phase-a` |
+| Current commit | `098647c` (Phase A); M006 docs uncommitted |
 | Base commit (pre-governance) | `7b8d5ca` |
-| Latest completed milestone | Milestone 005 Phase A in working tree (pending commit). M003 last committed product code. M004 docs also pending commit. |
-| Current milestone | Milestone 005 — FG-002 + Phase A PDF Upload (**complete pending commit**) |
-| Product status | CRM + Estimating + Proposals (Accepted locked) + Change Orders + Plan Intelligence Phase A upload |
-| Architecture status | Plan Intelligence architecture (M004) + ADR-012 revision ownership (Proposed). Phase A storage implemented; take-off not started. |
+| Latest completed milestone | Milestone 005 Phase A (**committed on branch**). Milestone 006 architecture docs complete pending commit. |
+| Current milestone | Milestone 006 — Document Intelligence Architecture & Feature Gate (**docs complete; pending commit**) |
+| Product status | CRM + Estimating + Proposals (Accepted locked) + Change Orders + Plan Intelligence Phase A |
+| Architecture status | Document Intelligence designed (FG-003 **PASS**). Packages/sheets/search not implemented. Take-off/AI not started. |
 | Implemented capabilities | Clients, Projects, Cost Items, Assemblies, Estimates, Proposals (+ immutability), Change Orders, Plan PDF upload/storage |
-| Incomplete work | Phases B–G; Drawing Set/Revision UI; supplier catalogue; formal acceptance workflow |
-| Database and migration status | Alembic head `f9c1a2b3d4e5` (`plan_documents`). Apply per environment. |
-| Test status | Full suite: **97 passed**, 68 warnings. Phase A: 8 passed. |
-| Documentation status | ADR-012; FG-002; module/milestones/roadmap/state updates |
-| Security or technical risks | `SECRET_KEY`; FK ON DELETE mismatch; Phase A hard-delete vs future archival (ADR-012) |
-| Decisions made | FG-002 PASS for Phase A; ADR-012 documents future revision ownership without implementing it |
-| Decisions pending | Accept ADR-012; Phase B Feature Gate; confidence numeric values; auth; build-vs-buy |
-| Uncommitted work | M004 docs + M005 Phase A code/docs (confirm `git status`) |
-| Next approved milestone | **None** until Phase B Feature Gate |
+| Incomplete work | Document Intelligence code (M007–M009); scale/OCR hooks (M010); take-off; supplier catalogue |
+| Database and migration status | Alembic head `f9c1a2b3d4e5`. No M006 migration. |
+| Test status | Last full suite (M005): **97 passed**, 68 warnings. M006 docs-only. |
+| Documentation status | FG-003; document-intelligence architecture; ADR-013/014; M006 readiness report |
+| Security or technical risks | `SECRET_KEY`; Phase A hard-delete debt; auth open; AI mitigations Proposed |
+| Decisions made | FG-003 PASS; DI is Plan Intelligence layer (ADR-013); sheet identity ≠ page index (ADR-014); M005 supports DI additively |
+| Decisions pending | Accept ADR-013/014; M007 implementation gate; Drawing Package naming |
+| Uncommitted work | Milestone 006 documentation (confirm `git status`) |
+| Next approved milestone | **None for code** until M007 Feature Gate / prompt |
 | Exact resume commands | See below |
-| Documents to read first | [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md) → [ADR-012](adr/ADR-012-plan-document-version-ownership.md) → [modules/plan-intelligence.md](modules/plan-intelligence.md) |
-| Approved next Cursor prompt location or summary | **None** |
-| Commit status | Pending Joel-directed commit |
+| Documents to read first | [FG-003](feature-gates/FG-003-document-intelligence-readiness.md) → [document-intelligence.md](architecture/document-intelligence.md) → [M006 readiness](architecture/M006-document-intelligence-readiness-report.md) → ADR-013/014 |
+| Approved next Cursor prompt location or summary | **None** (M007 when Joel authorizes) |
+| Commit status | M006 docs pending Joel-directed commit |
 | Governance baseline | Complete |
 
 ### Resume commands (Cursor Terminal)
@@ -78,7 +78,6 @@ Distinguish from:
 cd /Users/joelbrayman/Desktop/Brayman-Estimator
 git status
 git log -1 --oneline
-./venv/bin/python -m pytest -q
 ```
 
-Next: Joel reviews M004+M005; commit when directed; Feature-Gate Phase B before take-off code.
+Next: Joel reviews M006; commit docs when directed; Feature-Gate M007 before Document Intelligence code.

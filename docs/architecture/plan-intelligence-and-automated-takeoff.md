@@ -2,12 +2,12 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Architecture documented (M004); Phase A upload implemented (M005)** — take-off / AI still future |
+| Status | **Architecture documented (M004); Phase A upload implemented (M005); Document Intelligence architecture (M006)** — take-off / AI still future |
 | Updated | 2026-07-25 |
 | Module | [../modules/plan-intelligence.md](../modules/plan-intelligence.md) |
-| Related | [platform-roadmap.md](../platform-roadmap.md) · ADR-005, ADR-006, ADR-007, ADR-009, ADR-010, ADR-011 |
+| Related | [platform-roadmap.md](../platform-roadmap.md) · [document-intelligence.md](document-intelligence.md) · ADR-005–007, 009–014 |
 
-**Current vs future:** The repository has **no** plan upload, OCR, take-off, CAD, or AI extraction code. Estimating and Proposals exist separately. This document is **intended architecture** only.
+**Current vs future:** Phase A PDF upload/storage exists under Plan Intelligence. Document Intelligence (packages, sheets, search) and take-off/OCR/CAD/AI are **not** implemented unless separately Feature-Gated. Estimating and Proposals exist separately. Mid-pipeline stages below remain **intended architecture** except where marked current.
 
 ---
 
@@ -39,9 +39,10 @@ Plan Intelligence **feeds** the estimate builder; it does not replace it.
 Upload
   → Document storage
   → Virus / type validation
+  → Document Intelligence (Drawing Package / Revision / Sheet index / metadata / search)  ← M006 architecture
   → OCR (if required)
-  → Drawing classification
-  → Revision detection
+  → Drawing classification (discipline)
+  → Revision detection / activation
   → Sheet indexing
   → Scale detection (+ human confirmation)
   → AI element recognition
@@ -52,6 +53,8 @@ Upload
   → Estimate generation (explicit human commit into EstimateVersion)
   → Proposal generation (existing Proposals module; out of Plan Intelligence ownership)
 ```
+
+Document Intelligence detail: [document-intelligence.md](document-intelligence.md). FG-003: [../feature-gates/FG-003-document-intelligence-readiness.md](../feature-gates/FG-003-document-intelligence-readiness.md).
 
 ### Stage details
 

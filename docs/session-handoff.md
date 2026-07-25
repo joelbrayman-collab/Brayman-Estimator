@@ -28,20 +28,16 @@ Update this file at the end of every substantial session. Prefer facts verified 
 |-------|--------|
 | **Date** | 2026-07-25 |
 | **Current branch** | `main` |
-| **HEAD (verified)** | `29d1ba9` — *Complete Estimator governance baseline and prompt library* |
-| **Remote divergence** | Ahead of `origin/main` by **1**; **not yet pushed** |
-| **Working tree** | Clean immediately after `29d1ba9`. After this milestone-record doc update: dirty until committed (confirm with `git status`). |
-| **Latest completed milestone** | Milestone 001 — Platform Governance Foundation (**Completed** at `29d1ba9`) |
-| **Current milestone** | Milestone 002 — Product Architecture Review and Next-Milestone Selection |
-| **Current implementation status** | App features on `main`: Clients, Projects, Cost Items, Assemblies, Estimates (versions/sections/lines), Proposals (templates, snapshots, preview, PDF), Change Orders. Nav placeholders disabled for Purchase Orders, Job Costing, Reports, AI Assistant, Settings. Governance system active. |
-| **Test status** | Last verified: `./venv/bin/python -m pytest -q` → **78 passed**, 43 warnings (2026-07-25). Not re-run for this documentation-only record update. |
-| **Migration status** | Alembic ScriptDirectory head observed: `e8b2c4d15a90`. Live DB `current`: **To be verified**. |
-| **Uncommitted work** | Milestone-record updates to governance docs (this task) — confirm with `git status` |
-| **Architectural decisions made** | Constitution v1.0; Rules 1–12; Feature Gate; Current vs Intended vs Future; governance baseline committed |
-| **Active risks** | Hard-coded SECRET_KEY; change-order audit trail UI incomplete; acceptance→project snapshot workflow not fully productized; live Alembic current unverified |
-| **Next recommended step** | Push `29d1ba9` when directed; then **planning and Feature-Gating** only — not product implementation |
-| **Exact commands to resume** | See below |
-| **Documents to read first** | [README.md](README.md) reading order; [platform-constitution.md](platform-constitution.md); [project-state-report.md](project-state-report.md); [current-state.md](current-state.md); this file; [platform-governance.md](platform-governance.md) |
+| **HEAD (at M002 start)** | `71e2754` — governance baseline recorded; tag `v0.1-governance-baseline` |
+| **Remote** | Was in sync with `origin/main` before M002 doc edits |
+| **Working tree** | Dirty with Milestone 002 documentation until committed |
+| **Latest completed milestone** | Milestone 001 Completed; Milestone 002 docs pending commit/Joel ADR approval |
+| **Current focus** | Product Architecture Review for Proposals — FG-001 + ADR-001–004 |
+| **Recommended next implementation** | Milestone 003 — Accepted Proposal Immutability (**not authorized** until Joel approves) |
+| **Test status** | Last verified: 78 passed, 43 warnings (not re-run for M002 docs) |
+| **Migration status** | Head `e8b2c4d15a90` |
+| **Next recommended step** | Joel reviews strategic pillars + ADRs 001–010; commit docs when directed; then Milestone 003 and/or Phase A Feature Gate — no implementation without approved prompt |
+| **Documents to read first** | [FG-001](feature-gates/FG-001-proposals-module.md); ADR-001–010; [architecture/](architecture/); [platform-roadmap.md](platform-roadmap.md) |
 
 ### Commands to resume (Cursor Terminal)
 
@@ -49,17 +45,9 @@ Update this file at the end of every substantial session. Prefer facts verified 
 cd /Users/joelbrayman/Desktop/Brayman-Estimator
 git status
 git log -1 --oneline
-git push origin main
 ```
 
-After push, next work is **Product Architecture Review and Feature Gate** for one product milestone — **not** implementation.
-
-Optional checks:
-
-```bash
-git branch -vv
-# FLASK_APP=app.py ./venv/bin/flask db current
-```
+After Joel approval of docs: commit when directed. **Do not** start Milestone 003 implementation without an approved Cursor prompt.
 
 ---
 

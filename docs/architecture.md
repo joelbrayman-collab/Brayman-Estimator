@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | Living architecture map |
 | Updated | 2026-07-25 |
-| Evidence baseline | `main` @ `7b8d5ca` (verified locally) |
+| Evidence baseline | `main` @ `71e2754` (governance); product features from prior merges |
 
 **Cite code paths for implemented claims.** Distinctions below are mandatory.
 
@@ -114,11 +114,13 @@ Navigation also shows **disabled** placeholders: Purchase Orders, Job Costing, R
 
 Aligns with [platform-vision.md](platform-vision.md) and [architecture-principles.md](architecture-principles.md):
 
-- Explicit module ownership documents (CRM, Estimating, Proposals, Projects, later Project Controls expansions)
+- Explicit module ownership documents (CRM, Estimating, Proposals, Projects, later Plan Intelligence, Supplier Catalogue, Project Controls expansions)
 - Immutable accepted-proposal snapshots feeding project creation (Rule 3–4)
 - Auditable financially significant actions (Rule 6)
 - Service boundaries for cross-module access (Rule 11)
 - Governance Feature Gate before net-new modules
+- Human-approved, source-traceable take-off before estimate insertion (ADR-005/006 — Proposed)
+- Supplier price snapshots on consumption (ADR-008 — Proposed)
 
 ---
 
@@ -126,10 +128,19 @@ Aligns with [platform-vision.md](platform-vision.md) and [architecture-principle
 
 Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
-- Scheduling, Purchasing, Job Costing, Invoicing
+### Differentiating pillars (architecture drafted; **not implemented**)
+
+- [Plan Intelligence and Automated Take-Off](architecture/plan-intelligence-and-automated-takeoff.md) — Phases A–G
+- [Supplier Catalogue, Inventory and Pricing](architecture/supplier-catalogue-inventory-pricing.md) — Phases E–F
+- Procurement / purchase-order preparation (nav placeholder only today)
+
+### Other future capabilities
+
+- Scheduling, Job Costing, Invoicing
 - QuickBooks / accounting integration
 - Historical estimating intelligence
 - Electronic signature / formal proposal acceptance workflows
 - Field reporting (daily reports, timesheets)
+- CAD ingestion (Phase G; PDF-first per ADR-009)
 
 Do **not** describe these as existing.

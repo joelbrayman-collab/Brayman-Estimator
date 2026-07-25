@@ -13,13 +13,13 @@ Keep short. Refresh often. Mark unverified facts explicitly.
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD (verified) | `29d1ba9` — *Complete Estimator governance baseline and prompt library* |
+| HEAD (at M002 start) | `71e2754` — governance baseline + milestone record; tag `v0.1-governance-baseline` |
 | Pre-governance base | `7b8d5ca` |
-| Remote | Local `main` **ahead of `origin/main` by 1**; commit **committed locally**, **not yet pushed** (verified 2026-07-25) |
-| Working tree | Clean immediately after `29d1ba9`; re-check `git status` after any doc updates |
+| Remote | In sync with `origin/main` at M002 start; M002 docs uncommitted until Joel directs commit |
+| Working tree | Dirty with Milestone 002 documentation (confirm `git status`) |
 | App | Flask factory `app.create_app` |
 | DB default | SQLite `brayman_estimator.db` under instance |
-| Governance | **Active** — Constitution, docs, AGENTS.md, Cursor rules, prompt library committed at `29d1ba9` (39 governance/documentation files; no app/migration/test changes in that commit) |
+| Governance | **Active** — FG-001 + ADR-001–004 drafted for Proposals |
 
 ## Implemented capabilities (evidenced)
 
@@ -51,32 +51,33 @@ From `app/navigation.py`: Purchase Orders, Job Costing, Reports, AI Assistant, S
 ## Migrations
 
 - Versions present through change orders (`e8b2c4d15a90` head observed via Alembic ScriptDirectory).
-- Live database revision: **To be verified**.
+- Live database revision: re-verify per environment (`flask db current`).
 
 ## Tests
 
 - Suite under `tests/`
 - Last verified: `./venv/bin/python -m pytest -q` → **78 passed**, 43 warnings (2026-07-25)
-- Not re-run for documentation-only milestone-record updates unless required
+- Not re-run for Milestone 002 documentation-only work
 
 ## Known risks
 
 - Development `SECRET_KEY` hard-coded in `app/__init__.py`
 - Change-order audit trail UI marked future in template
-- Proposal Accepted status exists; formal acceptance → project creation snapshot flow incomplete as product
-- Live Alembic `current` still unverified
+- **Accepted proposals remain editable** until Milestone 003 (ADR-002)
+- Proposal estimate FK `ON DELETE` model vs migration mismatch
+- Formal acceptance → project creation incomplete
 
 ## Current milestone
 
-**Milestone 001 — Platform Governance Foundation:** **Completed** at `29d1ba9`.
+**Milestone 002 — Product Architecture Review:** FG-001 + ADR-001–004 drafted (docs).
 
-**Next:** Milestone 002 — Product Architecture Review and Next-Milestone Selection (planning / Feature Gate — **not** implementation yet).
+**Recommended next implementation:** Milestone 003 — Accepted Proposal Immutability (awaiting Joel approval).
 
 ## Recommended next steps
 
-1. Push `29d1ba9` to `origin/main` when Joel directs.
-2. Product Architecture Review: compare implemented workflows to product vision; identify risks/gaps.
-3. Select and Feature-Gate **one** next product milestone (no specific product feature approved yet).
+1. Joel reviews [FG-001](feature-gates/FG-001-proposals-module.md) and ADR-001–004.
+2. Commit Milestone 002 documentation when directed.
+3. Approve and Feature-Gate Milestone 003 (immutability) before any code changes.
 
 ## Related
 
@@ -84,4 +85,5 @@ From `app/navigation.py`: Purchase Orders, Job Costing, Reports, AI Assistant, S
 - [project-state-report.md](project-state-report.md)
 - [milestones.md](milestones.md)
 - [platform-roadmap.md](platform-roadmap.md)
+- [feature-gates/FG-001-proposals-module.md](feature-gates/FG-001-proposals-module.md)
 - [architecture.md](architecture.md)

@@ -96,7 +96,7 @@ A release is not ready until [definition-of-done.md](definition-of-done.md) is s
 
 ## Feature Gate (required before implementation)
 
-Answer all of the following in the Cursor prompt or an attached requirements note:
+Answer all of the following in the Cursor prompt or an attached Feature Gate document under [`feature-gates/`](feature-gates/):
 
 1. What problem does this solve?
 2. Who is the user?
@@ -110,3 +110,5 @@ Answer all of the following in the Cursor prompt or an attached requirements not
 10. What documentation must be updated?
 11. Does it require an ADR?
 12. Does it require a database migration?
+
+Current Feature Gates: [feature-gates/README.md](feature-gates/README.md).

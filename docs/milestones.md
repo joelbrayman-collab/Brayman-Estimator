@@ -31,6 +31,40 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Recorded milestones
 
+### Milestone 003 — Accepted Proposal Immutability
+
+| Field | Content |
+|-------|---------|
+| Milestone | Accepted Proposal Immutability |
+| Status | **Completed pending commit** |
+| Branch | `main` |
+| Base commit | `71e2754` (plus uncommitted M002 docs in tree) |
+| Date | 2026-07-25 |
+| Objective | Enforce service-layer immutability for `Accepted` proposals across all mutation paths; keep detail/preview/PDF read-only available. |
+| Deliverables | `ensure_proposal_mutable` / `is_proposal_immutable` in `app/services/proposals.py`; route/UI read-only controls; `tests/test_proposal_immutability.py`; module/ADR updates. |
+| Validation | Full pytest after implementation (record exact results in completion report). No migration. |
+| Architectural findings | No section CRUD mutation API existed; line edit + update_proposal + recalculate + status were the mutation surfaces. |
+| Open decisions | Void/supersede/revision workflow (ADR-004); whether other terminal statuses should hard-lock. |
+| Next milestone | Formal acceptance workflow Feature Gate and/or Plan Intelligence Phase A Feature Gate (Joel sequencing). |
+| Commit | Pending |
+
+### Milestone 002 — Product Architecture Review and Next-Milestone Selection
+
+| Field | Content |
+|-------|---------|
+| Milestone | Product Architecture Review and Next-Milestone Selection |
+| Status | **Completed pending documentation commit** |
+| Branch | `main` |
+| Base commit | `71e2754` |
+| Date | 2026-07-25 |
+| Objective | Review Proposals module against roadmap; produce Feature Gate FG-001 and ADRs 001–004; recommend next implementation milestone without code changes. Extended same day with strategic Plan Intelligence / Supplier architecture, pillars, Phases A–G, ADR-005–010, and POC recommendation. |
+| Deliverables | `docs/feature-gates/FG-001-proposals-module.md`; ADR-001–004; `docs/architecture/plan-intelligence-and-automated-takeoff.md`; `docs/architecture/supplier-catalogue-inventory-pricing.md`; ADR-005–010; roadmap pillars; module stubs for Plan Intelligence and Supplier Catalogue; cross-links. |
+| Validation | Documentation-only; no application/migration/test file changes; internal doc links checked after edits. Full pytest not re-run (last verified: 78 passed, 43 warnings). |
+| Architectural findings | Proposal Builder foundation already exists. Highest Proposals gap: Accepted without immutability. Strategic differentiator: PDF-first Plan Intelligence → reviewed take-off → estimate → supplier pricing → proposal/PO. No plan upload or supplier catalogue in code today. |
+| Open decisions | Joel acceptance of ADRs 001–010; Milestone 003 vs Phase A POC sequencing; POC element confirmation. |
+| Next milestone | **Milestone 003 — Accepted Proposal Immutability** (near-term) and/or Feature Gate for **Plan Intelligence Phase A** (strategic) — neither implementation-authorized until Joel approves |
+| Commit | Pending |
+
 ### Milestone 001 — Platform Governance Foundation
 
 | Field | Content |
@@ -46,8 +80,8 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Modular Flask application; estimate versioning and locking exist; proposal snapshots exist; disabled navigation placeholders for future modules; `project_controls` package exists; hard-coded development `SECRET_KEY` requires later cleanup; accepted-proposal immutability needs targeted product review. |
 | Open decisions | Next product milestone (pending Product Architecture Review); authentication model; proposal acceptance → project creation; whether Project Controls needs a dedicated module document. |
 | Next milestone | Milestone 002 — Product Architecture Review and Next-Milestone Selection |
-| Commit | `29d1ba9` — *Complete Estimator governance baseline and prompt library* |
-| Remote at record time | Local `main` ahead of `origin/main` by **1**; **not yet pushed** (verified 2026-07-25) |
+| Commit | `29d1ba9` — *Complete Estimator governance baseline and prompt library* (record commit `71e2754` memorialized milestone) |
+| Remote at record time | Subsequently pushed; tag `v0.1-governance-baseline` published |
 
 ---
 

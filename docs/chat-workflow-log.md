@@ -42,6 +42,75 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-07-25 — Milestone 003 Accepted Proposal Immutability
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-07-25 |
+| Branch | `main` |
+| Objective | Block all mutations when proposal.status == Accepted; preserve view/preview/PDF |
+| Business decision | Accepted proposals never reopen/silently rewrite; void/supersede/revision deferred |
+| Architectural decision | Central `ensure_proposal_mutable`; recalculate guarded except create-time snapshot flag |
+| Prompt template used | Feature (Milestone 003 prompt) |
+| Approved Cursor prompt summary | Service guard + UI + tests; no migration; no acceptance workflow; no commit |
+| Files expected to change | `app/services/proposals.py`, routes/templates proposals, tests, minimal docs |
+| Files prohibited from changing | migrations, estimate builder, unrelated modules |
+| Implementation result | Guard implemented; UI read-only for Accepted; tests added |
+| Tests | `./venv/bin/python -m pytest -q` → **89 passed**, 53 warnings; focused immutability file 11 passed |
+| Project-state-report update | Milestone 003 recorded; full state refresh at commit |
+| Milestone entry update | Yes — Milestone 003 |
+| Constitutional issue raised | Closed for Accepted silent rewrite (Article 5 / Rule 3) |
+| Unresolved issues | Void/supersede workflow not built |
+| Next approved step | Joel review; commit when directed |
+| Next approved prompt | None until Joel Feature-Gates next milestone |
+| Commit hash | Pending |
+
+### 2026-07-25 — Strategic architecture: Plan Intelligence + Supplier pillars
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-07-25 |
+| Branch | `main` @ `71e2754` (+ uncommitted M002 docs) |
+| Objective | Update strategic roadmap pillars; create Plan Intelligence and Supplier architecture docs; Phases A–G; narrow POC; ADR-005–010 — documentation only |
+| Business decision | Long-term differentiator is plan→take-off→estimate→supplier pricing→proposal/PO with human review and citations; PDF-first |
+| Architectural decision | ADR-005–010 Proposed; Plan Intelligence and Supplier Catalogue as Future modules; no claim of existing integrations |
+| Prompt template used | Documentation / architecture |
+| Approved Cursor prompt summary | Docs only; no app/migrations/deps/commits; distinguish current vs future |
+| Files expected to change | `docs/platform-roadmap.md`, `docs/platform-vision.md`, `docs/architecture/**`, `docs/adr/ADR-005`–`010`, module stubs, indexes, milestones/state |
+| Files prohibited from changing | `app/**`, `migrations/**`, tests, requirements |
+| Implementation result | Architecture docs + ADRs + roadmap pillars created; no application code changed |
+| Tests | Full suite not re-run; last verified 78 passed, 43 warnings |
+| Project-state-report update | Yes |
+| Milestone entry update | Milestone 002 deliverables extended |
+| Constitutional issue raised | Reinforced no silent AI commercial overwrite (Articles 5–6) |
+| Unresolved issues | Joel ADR acceptance; M003 vs Phase A sequencing |
+| Next approved step | Joel review; commit docs when directed |
+| Next approved prompt | None for implementation |
+| Commit hash | Pending |
+
+### 2026-07-25 — Milestone 002 Product Architecture Review (Proposals FG + ADRs)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-07-25 |
+| Branch | `main` @ `71e2754` (start) |
+| Objective | Feature Gate FG-001 for Proposals; draft ADR-001–004; recommend next implementation milestone — documentation only |
+| Business decision | Treat existing Proposal Builder as complete foundation; prioritize Accepted immutability before acceptance workflow / project creation |
+| Architectural decision | ADRs Proposed: snapshot ownership (001); Accepted immutability (002); defer CRM FKs (003); acceptance workflow after immutability (004) |
+| Prompt template used | Documentation / architecture review (aligned with cursor-documentation-template / cursor-review-template) |
+| Approved Cursor prompt summary | Create FG + ADRs; update module/roadmap/milestones/state docs; no app/schema/migration/UI changes; no commit |
+| Files expected to change | `docs/feature-gates/**`, `docs/adr/ADR-001`–`004`, proposals module, indexes, milestones, roadmap, state/handoff/log |
+| Files prohibited from changing | `app/**`, `migrations/**`, tests, models, routes, templates, services |
+| Implementation result | FG-001 + ADR-001–004 created; cross-links updated; no application code changed |
+| Tests | Full suite **not re-run**. Last verified remains **78 passed**, 43 warnings |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes — Milestone 002 recorded (pending doc commit) |
+| Constitutional issue raised | Accepted proposals currently editable — Article 5 / Rule 3 gap (address in Milestone 003) |
+| Unresolved issues | Joel approval of ADRs; Milestone 003 prompt not yet written |
+| Next approved step | Joel review; commit M002 docs when directed |
+| Next approved prompt | **None** — Milestone 003 prompt pending Joel ADR acceptance |
+| Commit hash | Pending |
+
 ### 2026-07-25 — Record governance baseline milestone (post-commit)
 
 | Field | Content |

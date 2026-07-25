@@ -54,27 +54,25 @@ Populated only from verified repository facts. Unverified items marked according
 | Report date | 2026-07-25 |
 | Repository | Brayman-Estimator (The Estimator) |
 | Current branch | `main` |
-| Current commit | `29d1ba9` |
+| Current commit | `71e2754` (HEAD; governance baseline + milestone record; tag `v0.1-governance-baseline`) |
 | Base commit (pre-governance) | `7b8d5ca` |
-| Latest completed milestone | Milestone 001 — Platform Governance Foundation (**Completed**) |
-| Current milestone | Milestone 002 — Product Architecture Review and Next-Milestone Selection |
-| Product status | Core estimating/proposal/change-order capabilities present on `main`; future modules shown as disabled nav placeholders |
-| Architecture status | Modular Flask app; governance system **active**; Constitution v1.0 Active; Current / Intended / Future documented |
-| Implemented capabilities | Clients, Projects, Cost Items, Assemblies, Estimates, Proposals, Change Orders; estimate versioning and locking observed; proposal snapshots observed |
-| Incomplete work | Product Feature-Gated milestones not yet selected; live Alembic `current` not yet verified |
-| Database and migration status | Alembic ScriptDirectory head observed: `e8b2c4d15a90`. Live database current revision: **To be verified** |
-| Test status | Last verified: `./venv/bin/python -m pytest -q` → **78 passed**, 43 warnings (2026-07-25). Not re-run for this documentation-only milestone-record update. |
-| Documentation status | Governance baseline **complete** and committed locally at `29d1ba9` |
-| Security or technical risks | Hard-coded development `SECRET_KEY` is an open technical risk; accepted proposal immutability requires targeted review |
-| Decisions made | Repository is system of record; Feature Gate required; Rules 1–12 documented; Constitution Articles 1–12 Active; governance baseline committed |
-| Decisions pending | Next product milestone (after Product Architecture Review); authentication model; proposal acceptance → project creation; whether Project Controls needs a dedicated module document |
-| Uncommitted work | Milestone-record doc updates in progress (this task) — confirm with `git status` after edits |
-| Next approved milestone | Milestone 002 — Product Architecture Review and Next-Milestone Selection |
-| Exact resume commands | See below |
-| Documents to read first | `AGENTS.md` → `docs/platform-constitution.md` → this file → `docs/current-state.md` → (see `docs/README.md` order) |
-| Approved next Cursor prompt location or summary | **None** — not yet created; pending Product Architecture Review and Feature Gate |
-| Commit status | Governance baseline **committed locally** (`29d1ba9`). Remote: **ahead of `origin/main` by 1**; **not yet pushed**. Working tree: clean immediately after `29d1ba9` (verified); dirty only if this record-update is uncommitted. |
-| Governance baseline | **Complete** |
+| Latest completed milestone | Milestone 001 — Platform Governance Foundation (**Completed**). Milestone 002 docs drafted (**Completed pending documentation commit**). |
+| Current milestone | Milestone 002 wrap-up → await Joel ADR approval; then Milestone 003 planning |
+| Product status | Core estimating/proposal/change-order capabilities on `main`; Proposal Builder foundation exists; Accepted immutability not enforced |
+| Architecture status | Governance active; FG-001 + ADR-001–004 **Proposed** |
+| Implemented capabilities | Clients, Projects, Cost Items, Assemblies, Estimates, Proposals (templates, snapshot, preview, PDF), Change Orders |
+| Incomplete work | Accepted immutability; formal acceptance workflow; project-from-proposal; optional CRM FKs; live Alembic verify on other envs |
+| Database and migration status | Alembic head `e8b2c4d15a90`. Local `flask db current` previously observed at head; re-verify if environment changes. |
+| Test status | Last verified full suite: **78 passed**, 43 warnings. Not re-run for Milestone 002 docs-only work. |
+| Documentation status | FG-001, ADR-001–010, Plan Intelligence + Supplier architecture docs drafted (uncommitted until Joel requests commit) |
+| Security or technical risks | Hard-coded `SECRET_KEY`; Accepted proposals editable; future AI take-off risks mitigated by ADR-005/006 (Proposed) |
+| Decisions made | Recommend Milestone 003 immutability near-term; strategic PDF-first Plan Intelligence POC (door count); Phases A–G documented |
+| Decisions pending | Joel acceptance of ADRs 001–010; M003 vs Phase A order; POC element confirmation; build-vs-buy |
+| Uncommitted work | Milestone 002 + strategic architecture documentation — confirm with `git status` |
+| Next approved milestone | **None for implementation** until Joel approves. Recommended: Milestone 003 immutability and/or Feature Gate Phase A upload POC |
+| Approved next Cursor prompt location or summary | **None** |
+| Commit status | `main` synced with `origin/main` at start of M002 task (`71e2754`); M002 docs pending commit |
+| Governance baseline | **Complete** (pushed; tagged) |
 
 ### Resume commands (Cursor Terminal)
 
@@ -82,7 +80,6 @@ Populated only from verified repository facts. Unverified items marked according
 cd /Users/joelbrayman/Desktop/Brayman-Estimator
 git status
 git log -1 --oneline
-git push origin main
 ```
 
-After push: conduct Product Architecture Review and Feature-Gate **one** product milestone. **No product implementation** until that gate exists.
+Next: Joel reviews FG-001 / ADRs; commit docs when directed; then Feature-Gate Milestone 003 prompt — **no implementation** until approved.

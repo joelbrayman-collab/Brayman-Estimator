@@ -32,8 +32,9 @@ This folder is the **system of record** for platform vision, architecture, gover
 8. [`platform-roadmap.md`](platform-roadmap.md)
 9. Relevant module document under [`modules/`](modules/)
 10. Relevant ADRs under [`adr/`](adr/)
-11. [`session-handoff.md`](session-handoff.md)
-12. Relevant prompt template under [`prompts/`](prompts/)
+11. Relevant Feature Gate under [`feature-gates/`](feature-gates/)
+12. [`session-handoff.md`](session-handoff.md)
+13. Relevant prompt template under [`prompts/`](prompts/)
 
 Also read [`platform-governance.md`](platform-governance.md) and [`definition-of-done.md`](definition-of-done.md) before starting any feature.
 
@@ -48,6 +49,7 @@ Also read [`platform-governance.md`](platform-governance.md) and [`definition-of
 | [platform-vision.md](platform-vision.md) | What the product is / is not | Product intent (Joel-approved) |
 | [architecture-principles.md](architecture-principles.md) | Numbered durable platform rules | **Architectural** — changes require ADR + Joel |
 | [architecture.md](architecture.md) | Current vs intended vs future architecture | Factual for *current*; aspirational elsewhere |
+| [architecture/](architecture/) | Domain architecture (Plan Intelligence, Supplier, …) | Future unless marked Current |
 | [platform-governance.md](platform-governance.md) | Decision authority, Feature Gate, ownership | **Governing** |
 | [development-workflow.md](development-workflow.md) | Joel → ChatGPT → Cursor lifecycle | **Governing** for AI sessions |
 | [documentation-standards.md](documentation-standards.md) | How docs are written and updated | Governing for docs |
@@ -60,6 +62,7 @@ Also read [`platform-governance.md`](platform-governance.md) and [`definition-of
 | [chat-workflow-log.md](chat-workflow-log.md) | Memorialized decisions & Cursor outcomes | Continuity (append, do not overwrite) |
 | [aiRIA-lessons-adopted.md](aiRIA-lessons-adopted.md) | Transferable process lessons | Reference |
 | [adr/](adr/) | Architecture Decision Records | Decisions |
+| [feature-gates/](feature-gates/) | Feature Gate documents (pre-implementation) | **Governing** for scope |
 | [modules/](modules/) | Per-module ownership & boundaries | Ownership |
 
 ## Must update after every feature

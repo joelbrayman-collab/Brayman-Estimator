@@ -196,7 +196,7 @@ def test_project_scoping(client, app, project):
     assert client.get(f"/projects/{other.id}/plans/{doc.id}/download").status_code == 404
 
 
-def test_delete_removes_file(client, project):
+def test_delete_archives_document(client, project):
     pdf = _make_searchable_pdf_bytes()
     client.post(
         f"/projects/{project.id}/plans/upload",
@@ -211,8 +211,13 @@ def test_delete_removes_file(client, project):
         follow_redirects=True,
     )
     assert resp.status_code == 200
-    assert PlanDocument.query.count() == 0
-    assert not path.exists()
+    assert PlanDocument.query.count() == 1
+    db.session.refresh(doc)
+    assert doc.archived_at is not None
+    assert path.is_file()
+    # Archived docs hidden from default list
+    list_resp = client.get(f"/projects/{project.id}/plans")
+    assert b"gone.pdf" not in list_resp.data
 
 
 def test_project_detail_links_plans(client, project):

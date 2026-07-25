@@ -31,22 +31,39 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Recorded milestones
 
+### Milestone 007 — Document Indexing and Deterministic Metadata Extraction
+
+| Field | Content |
+|-------|---------|
+| Milestone | Document Indexing and Deterministic Metadata Extraction |
+| Status | **Completed pending commit** |
+| Branch | `milestone-007-document-indexing` |
+| Base | M005 Phase A + M006 architecture |
+| Date | 2026-07-25 |
+| Objective | First coded Document Intelligence phase: pages, deterministic/embedded-text extraction, provenance, archive, audit, relational search. |
+| Deliverables | Models/services for Package/Revision (minimal), Page, ProcessingAttempt/Result, audit; migration `a7c8e9f0b1d2`; UI list/search/reprocess/archive; `tests/test_plan_indexing.py`. |
+| Validation | Targeted plan tests + full suite **106 passed**, 110 warnings; `flask db upgrade` to `a7c8e9f0b1d2`; `git diff --check` clean. |
+| Architectural findings | Upload ownership unchanged; Estimating untouched; hard-delete blocked once audit/index exist; page ≠ sheet. |
+| Open decisions | Sheet Intelligence architecture + coded sheet review (next milestones); raw payload retention TTL; auth; project-detail archived filter. |
+| Next milestone | Sheet Intelligence architecture planning, then Feature-Gated sheet implementation |
+| Commit | Pending |
+
 ### Milestone 006 — Document Intelligence Architecture & Feature Gate
 
 | Field | Content |
 |-------|---------|
-| Milestone | Document Intelligence Architecture & Feature Gate |
-| Status | **Completed pending documentation commit** |
+| Milestone | Document Intelligence Architecture and Feature Gate |
+| Status | **Completed pending documentation commit** (refinement uncommitted if working tree dirty) |
 | Branch | `milestone-005-plan-intelligence-phase-a` |
-| Base commit | `098647c` (Phase A present) |
+| Base commit | `098647c` (Phase A); prior M006 pass `35413a1` |
 | Date | 2026-07-25 |
-| Objective | Design Document Intelligence between PDF upload and take-off; FG-003 readiness; required ADRs only; no code. |
-| Deliverables | FG-003 (**PASS**); `architecture/document-intelligence.md`; M006 readiness report; ADR-013; ADR-014; roadmap/milestones/state updates. |
-| Validation | Docs only; `git status` must show no app/migration/test changes for this milestone. |
-| Architectural findings | M005 flat `plan_documents` supports DI additively; no ownership rewrite; hard-delete and missing package/sheet tables are debt for M007–M008. |
-| Open decisions | Accept ADR-013/014; authorize M007 implementation gate; Drawing Package vs Drawing Set UI naming. |
-| Next milestone | M007 — Drawing Package & Revision Foundation (not authorized until Feature Gate / prompt) |
-| Commit | Pending |
+| Objective | Design Document Intelligence between PDF upload and take-off; FG-003 readiness with conditions; required ADRs only; no code. |
+| Deliverables | FG-003 (**CONDITIONAL PASS**); `architecture/document-intelligence.md`; M006 readiness report; ADR-013–016; roadmap/milestones/state updates. |
+| Validation | Docs only; no app/migration/test/dependency changes; link check; `git diff --check`. |
+| Architectural findings | M005 supports additive DI; Sheet ≠ Page; extraction provenance required; staged relational search; hard-delete/auth/audit are conditions not FAIL causes. |
+| Open decisions | Accept ADR-013–016; authorize M007 implementation gate after FG-003 conditions. |
+| Next milestone | M007 — Document indexing and deterministic metadata extraction (not authorized until Feature Gate / prompt) |
+| Commit | Prior docs at `35413a1`; refinement pending if uncommitted |
 
 ### Milestone 005 — Plan Intelligence Feature Gate and Phase A PDF Upload
 

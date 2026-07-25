@@ -5,7 +5,7 @@
 | Status | **Architecture documented (M004); Phase A upload implemented (M005); Document Intelligence architecture (M006)** — take-off / AI still future |
 | Updated | 2026-07-25 |
 | Module | [../modules/plan-intelligence.md](../modules/plan-intelligence.md) |
-| Related | [platform-roadmap.md](../platform-roadmap.md) · [document-intelligence.md](document-intelligence.md) · ADR-005–007, 009–014 |
+| Related | [platform-roadmap.md](../platform-roadmap.md) · [document-intelligence.md](document-intelligence.md) · ADR-005–007, 009–016 |
 
 **Current vs future:** Phase A PDF upload/storage exists under Plan Intelligence. Document Intelligence (packages, sheets, search) and take-off/OCR/CAD/AI are **not** implemented unless separately Feature-Gated. Estimating and Proposals exist separately. Mid-pipeline stages below remain **intended architecture** except where marked current.
 

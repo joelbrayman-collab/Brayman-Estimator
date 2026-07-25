@@ -1,9 +1,10 @@
-"""Plan Intelligence Phase A — upload and storage services."""
+"""Plan Intelligence services — upload, archive, search, indexing hooks."""
 
 from __future__ import annotations
 
 import hashlib
 import uuid
+from datetime import datetime
 from io import BytesIO
 from typing import Optional
 
@@ -14,7 +15,13 @@ from werkzeug.utils import secure_filename
 
 from app import db
 from app.models import Project
-from app.plan_intelligence.models import PlanDocument
+from app.plan_intelligence.audit import record_plan_audit
+from app.plan_intelligence.models import PlanDocument, PlanPage
+from app.plan_intelligence.packages import attach_document_to_default_revision
+from app.plan_intelligence.processing import (
+    ProcessingServiceError,
+    process_document_deterministic,
+)
 from app.plan_intelligence.storage import absolute_stored_path, project_upload_dir
 
 
@@ -40,7 +47,7 @@ def _validate_pdf_magic(data: bytes):
 
 
 def _detect_pdf_properties(data: bytes):
-    """Return (page_count, has_text_layer)."""
+    """Return (page_count, has_text_layer) for upload-time quick detect."""
     try:
         reader = PdfReader(BytesIO(data))
     except PdfReadError as exc:
@@ -61,12 +68,11 @@ def _detect_pdf_properties(data: bytes):
     return page_count, has_text
 
 
-def list_plan_documents(project_id: int):
-    return (
-        PlanDocument.query.filter_by(project_id=project_id)
-        .order_by(PlanDocument.created_at.desc())
-        .all()
-    )
+def list_plan_documents(project_id: int, *, include_archived: bool = False):
+    query = PlanDocument.query.filter_by(project_id=project_id)
+    if not include_archived:
+        query = query.filter(PlanDocument.archived_at.is_(None))
+    return query.order_by(PlanDocument.created_at.desc()).all()
 
 
 def get_plan_document(project_id: int, document_id: int):
@@ -121,9 +127,31 @@ def upload_plan_pdf(
         page_count=page_count,
         has_text_layer=has_text_layer,
         notes=(notes or "").strip() or None,
+        processing_status="pending",
     )
     db.session.add(document)
+    db.session.flush()
+
+    attach_document_to_default_revision(document)
+    record_plan_audit(
+        project_id=project.id,
+        plan_document_id=document.id,
+        event_type="upload",
+        detail={
+            "original_filename": original,
+            "sha256_hex": digest,
+            "byte_size": len(data),
+        },
+    )
     db.session.commit()
+
+    try:
+        process_document_deterministic(document, force=False)
+    except ProcessingServiceError:
+        # Upload succeeded; indexing failure is recorded on the document.
+        pass
+
+    db.session.refresh(document)
     return document
 
 
@@ -136,8 +164,43 @@ def open_plan_document_file(document: PlanDocument):
     return path
 
 
-def delete_plan_document(document: PlanDocument):
-    """Remove register row and file bytes (Phase A; no archival workflow yet)."""
+def archive_plan_document(document: PlanDocument):
+    """Soft-archive a document (preferred over hard delete)."""
+    if document.archived_at is None:
+        document.archived_at = datetime.utcnow()
+        record_plan_audit(
+            project_id=document.project_id,
+            plan_document_id=document.id,
+            event_type="archive",
+            detail={"archived_at": document.archived_at.isoformat()},
+        )
+        db.session.commit()
+    return document
+
+
+def delete_plan_document(document: PlanDocument, *, force_hard: bool = False):
+    """Archive the document.
+
+    Hard delete of plan file bytes is not offered once indexing/audit trails exist
+    (FG-003 / ADR-012 archive preference). The force_hard flag is retained for
+    compatibility but raises if any indexing or audit dependents exist.
+    """
+    if not force_hard:
+        return archive_plan_document(document)
+
+    has_attempts = bool(document.processing_attempts)
+    has_pages = bool(document.pages)
+    from app.plan_intelligence.models import PlanAuditEvent
+
+    has_audit = (
+        PlanAuditEvent.query.filter_by(plan_document_id=document.id).count() > 0
+    )
+    if has_attempts or has_pages or has_audit:
+        raise PlanIntelligenceServiceError(
+            "Hard delete is blocked because indexing or audit data exists. "
+            "Archive the document instead."
+        )
+
     path = absolute_stored_path(document.project_id, document.stored_filename)
     db.session.delete(document)
     db.session.commit()
@@ -147,3 +210,54 @@ def delete_plan_document(document: PlanDocument):
     except OSError:
         pass
     return True
+
+
+def search_plan_documents(
+    project_id: int,
+    *,
+    q: Optional[str] = None,
+    processing_status: Optional[str] = None,
+    has_text: Optional[bool] = None,
+    include_archived: bool = False,
+):
+    """Project-scoped relational search (ADR-016 Stage 1)."""
+    query = PlanDocument.query.filter_by(project_id=project_id)
+    if not include_archived:
+        query = query.filter(PlanDocument.archived_at.is_(None))
+    if processing_status:
+        query = query.filter_by(processing_status=processing_status.strip())
+    if has_text is True:
+        query = query.filter_by(has_text_layer=True)
+    elif has_text is False:
+        query = query.filter_by(has_text_layer=False)
+
+    term = (q or "").strip()
+    if term:
+        like = f"%{term}%"
+        page_doc_ids = (
+            db.session.query(PlanPage.plan_document_id)
+            .join(PlanDocument, PlanDocument.id == PlanPage.plan_document_id)
+            .filter(
+                PlanDocument.project_id == project_id,
+                PlanPage.extracted_text.ilike(like),
+            )
+            .distinct()
+        )
+        query = query.filter(
+            db.or_(
+                PlanDocument.original_filename.ilike(like),
+                PlanDocument.pdf_title.ilike(like),
+                PlanDocument.pdf_author.ilike(like),
+                PlanDocument.id.in_(page_doc_ids),
+            )
+        )
+
+    return query.order_by(PlanDocument.created_at.desc()).all()
+
+
+def reprocess_plan_document(document: PlanDocument, *, force: bool = True):
+    """Re-run deterministic indexing. force=True creates a new attempt/result."""
+    try:
+        return process_document_deterministic(document, force=force)
+    except ProcessingServiceError as exc:
+        raise PlanIntelligenceServiceError(str(exc)) from exc

@@ -49,27 +49,21 @@ Distinguish from:
 |-------|---------|
 | Report date | 2026-07-25 |
 | Repository | Brayman-Estimator (The Estimator) |
-| Current branch | `milestone-005-plan-intelligence-phase-a` |
-| Current commit | `098647c` (Phase A); M006 docs uncommitted |
+| Current branch | `milestone-007-document-indexing` |
+| Current commit | Confirm `git log -1` (Phase A `098647c`; M006 architecture `35413a1`) |
 | Base commit (pre-governance) | `7b8d5ca` |
-| Latest completed milestone | Milestone 005 Phase A (**committed on branch**). Milestone 006 architecture docs complete pending commit. |
-| Current milestone | Milestone 006 — Document Intelligence Architecture & Feature Gate (**docs complete; pending commit**) |
-| Product status | CRM + Estimating + Proposals (Accepted locked) + Change Orders + Plan Intelligence Phase A |
-| Architecture status | Document Intelligence designed (FG-003 **PASS**). Packages/sheets/search not implemented. Take-off/AI not started. |
-| Implemented capabilities | Clients, Projects, Cost Items, Assemblies, Estimates, Proposals (+ immutability), Change Orders, Plan PDF upload/storage |
-| Incomplete work | Document Intelligence code (M007–M009); scale/OCR hooks (M010); take-off; supplier catalogue |
-| Database and migration status | Alembic head `f9c1a2b3d4e5`. No M006 migration. |
-| Test status | Last full suite (M005): **97 passed**, 68 warnings. M006 docs-only. |
-| Documentation status | FG-003; document-intelligence architecture; ADR-013/014; M006 readiness report |
-| Security or technical risks | `SECRET_KEY`; Phase A hard-delete debt; auth open; AI mitigations Proposed |
-| Decisions made | FG-003 PASS; DI is Plan Intelligence layer (ADR-013); sheet identity ≠ page index (ADR-014); M005 supports DI additively |
-| Decisions pending | Accept ADR-013/014; M007 implementation gate; Drawing Package naming |
-| Uncommitted work | Milestone 006 documentation (confirm `git status`) |
-| Next approved milestone | **None for code** until M007 Feature Gate / prompt |
-| Exact resume commands | See below |
-| Documents to read first | [FG-003](feature-gates/FG-003-document-intelligence-readiness.md) → [document-intelligence.md](architecture/document-intelligence.md) → [M006 readiness](architecture/M006-document-intelligence-readiness-report.md) → ADR-013/014 |
-| Approved next Cursor prompt location or summary | **None** (M007 when Joel authorizes) |
-| Commit status | M006 docs pending Joel-directed commit |
+| Latest completed milestone | M005 Phase A committed; M006 architecture committed; **M007 indexing complete pending commit** |
+| Current milestone | Milestone 007 — Document Indexing and Deterministic Metadata Extraction |
+| Architecture status | Document Intelligence indexing implemented (pages/processing/audit/search). Sheet entities / human sheet review **not** implemented. |
+| Incomplete work | Sheet Intelligence architecture commit; coded sheet review; scale; AI POC; estimate mapping; auth; project-detail archived filter |
+| Documentation status | M007 module/architecture/ADR-015–016 aligned with code; Sheet Intelligence docs may exist unstaged |
+| Decisions made | Archive-over-delete; immutable raw payloads; append-only audit; relational search first (ADR-016); Page ≠ Sheet (ADR-014) |
+| Decisions pending | Sheet review ADRs / architecture acceptance; sheet Feature Gate; raw payload retention TTL |
+| Uncommitted work | Confirm `git status` — separate M007 vs Sheet Intelligence staging |
+| Next approved milestone | **None for sheet code** until architecture accepted and Feature-Gated |
+| Documents to read first | [plan-intelligence.md](modules/plan-intelligence.md) → [document-intelligence.md](architecture/document-intelligence.md) → ADR-015/016 |
+| Approved next Cursor prompt location or summary | **None** for sheet implementation until Joel authorizes |
+| Commit status | M007 pending; no commit/push from cleanup prompt |
 | Governance baseline | Complete |
 
 ### Resume commands (Cursor Terminal)
@@ -80,4 +74,4 @@ git status
 git log -1 --oneline
 ```
 
-Next: Joel reviews M006; commit docs when directed; Feature-Gate M007 before Document Intelligence code.
+Next: commit M007 when directed; then Sheet Intelligence architecture docs; Feature-Gate sheet code before implementation.

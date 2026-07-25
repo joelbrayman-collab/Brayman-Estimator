@@ -8,7 +8,7 @@
     <div>
         <p class="eyebrow">Plan Intelligence</p>
         <h1>Plan Documents</h1>
-        <p class="muted-copy">{{ project.name }} · Phase A upload and storage</p>
+        <p class="muted-copy">{{ project.name }} · Document Intelligence indexing</p>
     </div>
     <div>
         <a class="button" href="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}">Upload PDF</a>
@@ -16,14 +16,47 @@
     </div>
 </div>
 
+<section class="form-panel" style="margin-bottom: 20px;">
+    <form method="get" class="form-grid">
+        <label>
+            Search
+            <input type="text" name="q" value="{{ q or '' }}" placeholder="Filename, title, or page text">
+        </label>
+        <label>
+            Processing status
+            <select name="processing_status">
+                <option value="">Any</option>
+                {% for status in ['pending', 'running', 'succeeded', 'failed'] %}
+                <option value="{{ status }}" {% if processing_status == status %}selected{% endif %}>{{ status }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Embedded text
+            <select name="has_text">
+                <option value="">Any</option>
+                <option value="1" {% if has_text == '1' %}selected{% endif %}>Yes</option>
+                <option value="0" {% if has_text == '0' %}selected{% endif %}>No</option>
+            </select>
+        </label>
+        <label>
+            <input type="checkbox" name="show_archived" value="1" {% if show_archived %}checked{% endif %}>
+            Show archived
+        </label>
+        <div class="form-actions">
+            <button type="submit">Filter</button>
+        </div>
+    </form>
+</section>
+
 {% if documents %}
 <table class="data-table">
     <thead>
         <tr>
             <th>Filename</th>
             <th>Pages</th>
-            <th>Searchable</th>
-            <th>Size</th>
+            <th>Text</th>
+            <th>Status</th>
             <th>Uploaded</th>
             <th></th>
         </tr>
@@ -35,10 +68,11 @@
                 <a href="{{ url_for('plan_intelligence.view_plan', project_id=project.id, document_id=document.id) }}">
                     {{ document.original_filename }}
                 </a>
+                {% if document.is_archived %}<span class="muted-copy"> (archived)</span>{% endif %}
             </td>
             <td>{{ document.page_count if document.page_count is not none else "—" }}</td>
             <td>{{ "Yes" if document.has_text_layer else "No" }}</td>
-            <td>{{ (document.byte_size / 1024) | round(1) }} KB</td>
+            <td><span class="status">{{ document.processing_status }}</span></td>
             <td>{{ document.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
             <td>
                 <a class="button-link" href="{{ url_for('plan_intelligence.download_plan', project_id=project.id, document_id=document.id) }}">Download</a>
@@ -50,7 +84,7 @@
 {% else %}
 <div class="empty-state">
     <h2>No plan documents</h2>
-    <p>Upload a searchable PDF plan set to begin Plan Intelligence Phase A storage.</p>
+    <p>Upload a searchable PDF plan set to begin indexing.</p>
     <a class="button" href="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}">Upload PDF</a>
 </div>
 {% endif %}

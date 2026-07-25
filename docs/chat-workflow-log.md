@@ -42,6 +42,24 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-07-25 — Milestone 008 Sheet Intelligence architecture
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-07-25 |
+| Branch | `milestone-008-sheet-intelligence` |
+| Objective | Architecture for Sheets from indexed Pages; register docs in indexes/state; **no code** |
+| Business decision | Design Sheet Intelligence before any sheet tables/UI |
+| Architectural decision | ADR-017 suggestion accept/reject/edit; ADR-018 uniqueness/supersession; first coded sheets require a later Feature Gate; scale/AI POC later |
+| Files expected to change | docs only (ADR-017/018, sheet-intelligence.md, M008 readiness, indexes, roadmap, state) |
+| Files prohibited from changing | app/, migrations/, tests/ |
+| Implementation result | Architecture + readiness docs integrated; Sheets remain unimplemented |
+| Tests | Docs validation only (`git diff --check`, link check) |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes — M008 |
+| Next approved step | Joel review; Feature Gate coded sheets when ready |
+| Commit hash | **None** (prompt forbids commits) |
+
 ### 2026-07-25 — Milestone 007 Document Indexing
 
 | Field | Content |
@@ -54,9 +72,9 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Files expected to change | `app/plan_intelligence/**`, models, templates, migration `a7c8e9f0b1d2`, `tests/test_plan_indexing.py`, M007 docs/ADRs |
 | Files prohibited from changing | Estimating commercial writes; Sheet entity implementation; OCR/CAD/AI take-off |
 | Implementation result | Indexing models/services/UI/migration/tests; Estimating untouched |
-| Tests | Plan indexing + upload tests; full suite (record at validation) |
-| Next approved step | Commit M007 when directed; Sheet Intelligence architecture docs separate |
-| Commit hash | **None** (cleanup prompt forbids commits) |
+| Tests | Plan indexing + upload tests; full suite **106 passed** |
+| Next approved step | Sheet Intelligence architecture (M008 docs) |
+| Commit hash | `cbefe7a` |
 
 ### 2026-07-25 — Milestone 006 Document Intelligence refinement (CONDITIONAL PASS)
 

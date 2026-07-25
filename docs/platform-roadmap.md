@@ -15,7 +15,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 |--------|--------------|----------------------|
 | Core CRM and project records | **Current** (Clients, Projects) | [modules/crm.md](modules/crm.md), [modules/projects.md](modules/projects.md) |
 | Estimating and assemblies | **Current** | [modules/estimating.md](modules/estimating.md) |
-| Plan Intelligence | **Partial** — Phase A upload (M005); Document Intelligence indexing (M007); Sheets / take-off future | [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md) · [architecture/document-intelligence.md](architecture/document-intelligence.md) · [modules/plan-intelligence.md](modules/plan-intelligence.md) · [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](feature-gates/FG-003-document-intelligence-readiness.md) |
+| Plan Intelligence | **Partial** — Phase A upload (M005); Document Intelligence indexing (M007); Sheet Intelligence architecture (M008 docs); sheet/take-off code future | [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md) · [architecture/document-intelligence.md](architecture/document-intelligence.md) · [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) · [modules/plan-intelligence.md](modules/plan-intelligence.md) · [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](feature-gates/FG-003-document-intelligence-readiness.md) |
 | Automated Quantity Take-Off | **Future** | Same Plan Intelligence docs |
 | Human Review and Source Traceability | **Future** (ADR-005/006/011) | Embedded in Plan Intelligence |
 | Supplier Catalogue Management | **Future** (only free-text `CostItem.supplier` today) | [architecture/supplier-catalogue-inventory-pricing.md](architecture/supplier-catalogue-inventory-pricing.md) |
@@ -26,7 +26,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** Plan → reviewed take-off → estimate → supplier-priced procurement → proposal, with citations and no silent commercial overwrite.
 
-**Next strategic platform capability:** **Sheet Intelligence** — architecture planning, then Feature-Gated implementation of Sheets + human metadata review. M007 indexing is implemented (pending commit).
+**Next strategic platform capability:** Feature-Gated **Sheet classification and human metadata review** (coded). M008 Sheet Intelligence architecture is docs/readiness only — **not implemented**.
 
 
 ---
@@ -48,7 +48,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 - Change Orders (Project Controls module)
 - App shell branding and navigation structure
 - Plan Intelligence Phase A — project-scoped searchable PDF upload/storage (Milestone 005)
-- Plan Intelligence Document Indexing — pages, processing provenance, archive, relational search (Milestone 007; pending commit)
+- Plan Intelligence Document Indexing — pages, processing provenance, archive, relational search (Milestone 007; `cbefe7a`)
 
 **Governance:**
 
@@ -57,14 +57,16 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 - Milestone 003 Accepted Proposal Immutability (`c59ec01`)
 - Milestone 004 Plan Intelligence architecture documentation
 - Milestone 005 FG-002 Approved + ADR-012 Proposed + Phase A implementation
-- Milestone 006 Document Intelligence architecture + FG-003 (`35413a1`) + ADR-013/014; ADR-015/016 accompany M007
+- Milestone 006 Document Intelligence architecture + FG-003 (`35413a1`) + ADR-013/014; ADR-015/016 with M007
+- Milestone 008 Sheet Intelligence architecture + ADR-017/018 (docs only; pending commit)
 
 ---
 
 ## Current (near-term product governance)
 
-- **Milestone 007 — Document indexing:** implemented in working tree; pending commit
-- Next: **Sheet Intelligence** architecture (docs) then Feature-Gated sheet implementation
+- **Milestone 008 — Sheet Intelligence architecture:** docs/readiness complete in working tree; **no sheet code authorized**
+- Next coded candidate: Sheet classification + human metadata review (Feature Gate / prompt required)
+- Then scale / manual measure → AI quantity POC under later gates
 - Estimate mapping remains outside near-term sheet work
 
 ---
@@ -75,7 +77,8 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 |-------|------|--------|------------|
 | **A** | PDF plan upload and storage | Project-scoped upload, secure storage, document register | **Done (M005)** |
 | **DI** | Document Intelligence | Pages, packages/revisions, metadata, search | **M006 architecture; M007 code** |
-| **B** | Sheet classification, scale confirmation, manual measurement | Sheets + human review; then scale/measure; citations | DI pages (M007); Sheet architecture then code |
+| **SI** | Sheet Intelligence | Sheets, discipline, review workflow, page maps | **M008 architecture**; coded sheets Feature-Gated next |
+| **B** | Scale confirmation, manual measurement | Human-scale confirm; count/length/area; citations | SI coded sheets first |
 | **C** | AI-assisted extraction (narrow trade/assembly) | One assembly vocabulary; confidence scores | Phase B; ADR-005, ADR-010 |
 | **D** | Reviewed quantities → estimate assemblies | Explicit map + human approve into `EstimateVersion` | Phase C; ADR-006, ADR-007 |
 | **E** | Supplier catalogue and price-file import | CSV/manual quotes; contractor prices; effective dates | ADR-008; Feature Gate |
@@ -105,8 +108,8 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Next recommended milestones
 
-1. Commit Milestone 007 indexing when directed.
-2. Complete / commit Sheet Intelligence architecture (docs only).
+1. Commit Milestone 008 Sheet Intelligence architecture when directed.
+2. Joel accepts/amends ADR-017/018 and M008 readiness.
 3. Feature-Gate and implement Sheet classification + human metadata review.
 4. Scale / manual measure, then AI quantity POC under later gates.
 5. Estimate mapping / revision comparison under separate gates.

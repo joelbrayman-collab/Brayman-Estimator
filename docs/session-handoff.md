@@ -25,14 +25,14 @@ Update this file at the end of every substantial session. Prefer facts verified 
 | Field | Value |
 |-------|--------|
 | **Date** | 2026-07-25 |
-| **Current branch** | `milestone-007-document-indexing` |
-| **HEAD** | Confirm `git log -1` |
-| **Working tree** | Stage M007 app/migration/tests + M007 docs; leave Sheet Intelligence architecture files unstaged for a later commit |
-| **Current focus** | Milestone 007 Document Indexing (complete pending commit) |
-| **Next strategic capability** | Sheet Intelligence architecture (docs), then Feature-Gated sheet implementation |
-| **Migration status** | Head intended `a7c8e9f0b1d2` |
-| **Next recommended step** | Commit M007 when directed; do not implement Sheets yet |
-| **Documents to read first** | [plan-intelligence.md](modules/plan-intelligence.md); [document-intelligence.md](architecture/document-intelligence.md); ADR-015; ADR-016 |
+| **Current branch** | `milestone-008-sheet-intelligence` |
+| **HEAD** | Confirm `git log -1` (M007 `cbefe7a`) |
+| **Working tree** | Four M008 architecture files + index/state updates — docs only; pending commit |
+| **Current focus** | Milestone 008 Sheet Intelligence architecture (**docs/readiness only**) |
+| **Next strategic capability** | Feature-Gated Sheet classification & human metadata review (not authorized) |
+| **Migration status** | Head intended `a7c8e9f0b1d2` (unchanged by M008) |
+| **Next recommended step** | Commit M008 docs when directed; do **not** implement Sheets yet |
+| **Documents to read first** | [sheet-intelligence.md](architecture/sheet-intelligence.md); [M008 readiness](architecture/M008-sheet-intelligence-readiness-report.md); [ADR-017](adr/ADR-017-sheet-metadata-suggestion-and-review-workflow.md); [ADR-018](adr/ADR-018-sheet-uniqueness-duplicates-and-supersession.md) |
 
 ### Commands to resume (Cursor Terminal)
 
@@ -40,8 +40,8 @@ Update this file at the end of every substantial session. Prefer facts verified 
 cd /Users/joelbrayman/Desktop/Brayman-Estimator
 git status
 git log -1 --oneline
-# M007: app/plan_intelligence, migration a7c8e9f0b1d2, tests/test_plan_indexing.py
-# Sheet Intelligence ADRs/architecture: leave unstaged until M008 docs commit
+# M008: docs only — sheet-intelligence.md, M008 readiness, ADR-017, ADR-018
+# No app/, migrations/, or tests/ changes for this milestone
 ```
 
 ---

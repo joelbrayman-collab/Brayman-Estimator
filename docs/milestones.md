@@ -31,12 +31,29 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Recorded milestones
 
+### Milestone 008 — Sheet Intelligence Architecture Planning
+
+| Field | Content |
+|-------|---------|
+| Milestone | Sheet Intelligence Architecture Planning |
+| Status | **Completed pending documentation commit** |
+| Branch | `milestone-008-sheet-intelligence` |
+| Base | M007 indexing (`cbefe7a`) |
+| Date | 2026-07-25 |
+| Objective | Design Sheet entity model, page mapping, human review, duplicates/supersession; ADRs only if warranted; **no application code**. |
+| Deliverables | [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md); [M008 readiness report](architecture/M008-sheet-intelligence-readiness-report.md); [ADR-017](adr/ADR-017-sheet-metadata-suggestion-and-review-workflow.md); [ADR-018](adr/ADR-018-sheet-uniqueness-duplicates-and-supersession.md); index/roadmap/state updates. |
+| Validation | Docs only; no app/migration/test changes for this milestone. |
+| Architectural findings | M007 Pages/Revisions are a sufficient foundation; suggestions ≠ system of record; uniqueness is per Revision; first *coded* sheet work is a later Feature-Gated milestone (recommended M009). |
+| Open decisions | Accept ADR-017/018; authorize coded sheet Feature Gate. |
+| Next milestone | Feature-Gated Sheet classification and human metadata review (not authorized yet) |
+| Commit | Pending |
+
 ### Milestone 007 — Document Indexing and Deterministic Metadata Extraction
 
 | Field | Content |
 |-------|---------|
 | Milestone | Document Indexing and Deterministic Metadata Extraction |
-| Status | **Completed pending commit** |
+| Status | **Completed** (on feature branch; merge to `main` pending) |
 | Branch | `milestone-007-document-indexing` |
 | Base | M005 Phase A + M006 architecture |
 | Date | 2026-07-25 |
@@ -45,8 +62,8 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Validation | Targeted plan tests + full suite **106 passed**, 110 warnings; `flask db upgrade` to `a7c8e9f0b1d2`; `git diff --check` clean. |
 | Architectural findings | Upload ownership unchanged; Estimating untouched; hard-delete blocked once audit/index exist; page ≠ sheet. |
 | Open decisions | Sheet Intelligence architecture + coded sheet review (next milestones); raw payload retention TTL; auth; project-detail archived filter. |
-| Next milestone | Sheet Intelligence architecture planning, then Feature-Gated sheet implementation |
-| Commit | Pending |
+| Next milestone | Milestone 008 — Sheet Intelligence architecture planning |
+| Commit | `cbefe7a` — *Implement Document Intelligence indexing for plan pages, processing, and search.* |
 
 ### Milestone 006 — Document Intelligence Architecture & Feature Gate
 

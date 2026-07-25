@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{{ document.original_filename }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Plan Document{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Plan Intelligence</p>
+        <h1>{{ document.original_filename }}</h1>
+        <p class="muted-copy">{{ project.name }}</p>
+    </div>
+    <div>
+        <a class="button" href="{{ url_for('plan_intelligence.download_plan', project_id=project.id, document_id=document.id) }}">Download</a>
+        <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Back to plans</a>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <div class="form-grid">
+        <div><p class="eyebrow">Searchable text layer</p><p>{{ "Yes" if document.has_text_layer else "No" }}</p></div>
+        <div><p class="eyebrow">Pages</p><p>{{ document.page_count if document.page_count is not none else "—" }}</p></div>
+        <div><p class="eyebrow">Size</p><p>{{ (document.byte_size / 1024) | round(1) }} KB</p></div>
+        <div><p class="eyebrow">Content type</p><p>{{ document.content_type }}</p></div>
+        <div><p class="eyebrow">SHA-256</p><p style="word-break: break-all;">{{ document.sha256_hex }}</p></div>
+        <div><p class="eyebrow">Uploaded</p><p>{{ document.created_at.strftime("%Y-%m-%d %H:%M") }}</p></div>
+    </div>
+    {% if document.notes %}
+    <p style="margin-top: 16px;"><strong>Notes:</strong> {{ document.notes }}</p>
+    {% endif %}
+    <p class="muted-copy" style="margin-top: 16px;">
+        Drawing set / revision ownership is defined in ADR-012 and is not managed in Phase A UI.
+    </p>
+</section>
+
+<section class="form-panel">
+    <h2>Delete</h2>
+    <p class="muted-copy">Phase A allows removal of an uploaded file. Archival rules for linked take-offs come later.</p>
+    <form method="post" action="{{ url_for('plan_intelligence.delete_plan', project_id=project.id, document_id=document.id) }}" onsubmit="return confirm('Delete this plan document?');">
+        <button type="submit">Delete document</button>
+    </form>
+</section>
+{% endblock %}

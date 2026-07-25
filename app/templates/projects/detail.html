@@ -11,6 +11,7 @@
         <p class="muted-copy">{{ project.project_number or "No project number" }} · {{ project.client.name }}</p>
     </div>
     <div>
+        <a class="button" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Plan Documents</a>
         <a class="button" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id) }}">New Change Order</a>
         <a class="button-link" href="{{ url_for('projects.list_projects') }}">Back to projects</a>
     </div>
@@ -29,6 +30,31 @@
 </section>
 
 <section class="dash-panels">
+    <article class="panel">
+        <div class="panel-header">
+            <h2>Plan Documents</h2>
+            <a href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">All plans</a>
+        </div>
+        {% if project.plan_documents %}
+        <ul class="activity-list">
+            {% for document in project.plan_documents|sort(attribute='created_at', reverse=true) %}
+            <li>
+                <a href="{{ url_for('plan_intelligence.view_plan', project_id=project.id, document_id=document.id) }}">
+                    <span class="activity-title">{{ document.original_filename }}</span>
+                    <span class="activity-meta">{{ "Searchable" if document.has_text_layer else "No text layer" }} · {{ document.created_at.strftime("%Y-%m-%d") }}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No plan documents</h3>
+            <p>Upload searchable PDF plan sets for this project (Phase A storage).</p>
+            <a class="button-link" href="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}">Upload PDF</a>
+        </div>
+        {% endif %}
+    </article>
+
     <article class="panel">
         <div class="panel-header">
             <h2>Related Estimates</h2>

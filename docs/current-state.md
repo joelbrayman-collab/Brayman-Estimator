@@ -12,78 +12,66 @@ Keep short. Refresh often. Mark unverified facts explicitly.
 
 | Field | Value |
 |-------|--------|
-| Branch | `main` |
-| HEAD (at M002 start) | `71e2754` — governance baseline + milestone record; tag `v0.1-governance-baseline` |
+| Branch | `milestone-005-plan-intelligence-phase-a` |
+| HEAD | `098647c` — Phase A PDF upload/storage |
 | Pre-governance base | `7b8d5ca` |
-| Remote | In sync with `origin/main` at M002 start; M002 docs uncommitted until Joel directs commit |
-| Working tree | Dirty with Milestone 002 documentation (confirm `git status`) |
+| Remote | Confirm with `git status -sb` (branch may be unpushed) |
+| Working tree | May include uncommitted Milestone 006 documentation |
 | App | Flask factory `app.create_app` |
 | DB default | SQLite `brayman_estimator.db` under instance |
-| Governance | **Active** — FG-001 + ADR-001–004 drafted for Proposals |
+| Governance | Active — FG-002 Phase A; FG-003 Document Intelligence architecture PASS |
 
 ## Implemented capabilities (evidenced)
 
-- Clients CRUD (`app/routes/clients.py`, `Client` model)
-- Projects CRUD linked to clients (`app/routes/projects.py`, `Project` model)
-- Cost Items library (`app/routes/cost_library.py`)
-- Assemblies + assembly items (`app/routes/assemblies.py`)
+- Clients, Projects, Cost Items, Assemblies
 - Estimates with versions, sections, line items; locking for certain statuses
-- Proposal templates; proposals with snapshot sections/lines; browser preview; PDF generation
-- Change Orders under Project Controls package
-- Dashboard summarizing recent activity
-- Branding assets / app shell navigation
+- Proposal templates; snapshot proposals; preview; PDF
+- Accepted proposal immutability
+- Change Orders (Project Controls)
+- **Plan Intelligence Phase A** — project-scoped PDF upload, private storage, list/detail/download/delete, searchable flag
+- Dashboard / branding / navigation
 
-## Incomplete / placeholder (nav disabled)
+## Not implemented (strategic)
 
-From `app/navigation.py`: Purchase Orders, Job Costing, Reports, AI Assistant, Settings — **not implemented** as live endpoints.
-
-## Local branches visible
-
-| Branch | Note |
-|--------|------|
-| `main` | Current |
-| `cursor/project-controls-change-orders` | Merged via PR #3 |
-| `cursor/proposal-templates-pdf-generation` | Historical |
-| `cursor/estimate-sections-line-items` | Historical |
-| `cursor/sidebar-navigation-refinement` | Historical |
-| `cursor/constructos-branding-engine` | Local checkpoint |
+- Document Intelligence code (packages, sheets, search) — **architecture only (M006)**
+- Plan Intelligence take-off / AI / OCR / CAD
+- Supplier catalogue / live pricing / procurement
+- Purchase Orders, Job Costing, Reports, AI Assistant, Settings (nav placeholders)
 
 ## Migrations
 
-- Versions present through change orders (`e8b2c4d15a90` head observed via Alembic ScriptDirectory).
-- Live database revision: re-verify per environment (`flask db current`).
+- Alembic head: `f9c1a2b3d4e5` (`plan_documents`)
+- Live DB revision: re-verify / upgrade per environment
 
 ## Tests
 
-- Suite under `tests/`
-- Last verified: `./venv/bin/python -m pytest -q` → **78 passed**, 43 warnings (2026-07-25)
-- Not re-run for Milestone 002 documentation-only work
+- Full suite at M005: **97 passed**, 68 warnings
+- M006: docs only — suite not required to re-run for this milestone
 
 ## Known risks
 
-- Development `SECRET_KEY` hard-coded in `app/__init__.py`
-- Change-order audit trail UI marked future in template
-- **Accepted proposals remain editable** until Milestone 003 (ADR-002)
-- Proposal estimate FK `ON DELETE` model vs migration mismatch
-- Formal acceptance → project creation incomplete
+- Hard-coded `SECRET_KEY`
+- Proposal estimate FK ON DELETE model/migration mismatch
+- Phase A hard-delete vs future archival (ADR-012) — debt for M007
+- Auth / multi-user still open
+- Future AI take-off risks (ADR-005/006/011 Proposed)
 
 ## Current milestone
 
-**Milestone 002 — Product Architecture Review:** FG-001 + ADR-001–004 drafted (docs).
-
-**Recommended next implementation:** Milestone 003 — Accepted Proposal Immutability (awaiting Joel approval).
+**Milestone 006 — Document Intelligence architecture:** FG-003 **PASS**; docs complete; **no code**; pending Joel-directed commit.
 
 ## Recommended next steps
 
-1. Joel reviews [FG-001](feature-gates/FG-001-proposals-module.md) and ADR-001–004.
-2. Commit Milestone 002 documentation when directed.
-3. Approve and Feature-Gate Milestone 003 (immutability) before any code changes.
+1. Joel reviews FG-003, ADR-013, ADR-014, M006 readiness report.
+2. Commit M006 docs when directed.
+3. Feature-Gate **M007** (Drawing Package & Revision) before any Document Intelligence code.
 
 ## Related
 
+- [feature-gates/FG-003-document-intelligence-readiness.md](feature-gates/FG-003-document-intelligence-readiness.md)
+- [architecture/document-intelligence.md](architecture/document-intelligence.md)
+- [architecture/M006-document-intelligence-readiness-report.md](architecture/M006-document-intelligence-readiness-report.md)
+- [modules/plan-intelligence.md](modules/plan-intelligence.md)
+- [platform-roadmap.md](platform-roadmap.md)
 - [session-handoff.md](session-handoff.md)
 - [project-state-report.md](project-state-report.md)
-- [milestones.md](milestones.md)
-- [platform-roadmap.md](platform-roadmap.md)
-- [feature-gates/FG-001-proposals-module.md](feature-gates/FG-001-proposals-module.md)
-- [architecture.md](architecture.md)

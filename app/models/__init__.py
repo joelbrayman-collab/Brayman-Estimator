@@ -10,6 +10,7 @@ from app.models.estimate import (
 from app.models.project import Project
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
 from app.project_controls.models import ChangeOrder, ChangeOrderItem
+from app.plan_intelligence.models import PlanDocument
 
 __all__ = [
     "Assembly",
@@ -22,6 +23,7 @@ __all__ = [
     "EstimateLineItem",
     "EstimateSection",
     "EstimateVersion",
+    "PlanDocument",
     "Project",
     "Proposal",
     "ProposalLineItem",

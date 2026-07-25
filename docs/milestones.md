@@ -31,22 +31,73 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Recorded milestones
 
+### Milestone 006 — Document Intelligence Architecture & Feature Gate
+
+| Field | Content |
+|-------|---------|
+| Milestone | Document Intelligence Architecture & Feature Gate |
+| Status | **Completed pending documentation commit** |
+| Branch | `milestone-005-plan-intelligence-phase-a` |
+| Base commit | `098647c` (Phase A present) |
+| Date | 2026-07-25 |
+| Objective | Design Document Intelligence between PDF upload and take-off; FG-003 readiness; required ADRs only; no code. |
+| Deliverables | FG-003 (**PASS**); `architecture/document-intelligence.md`; M006 readiness report; ADR-013; ADR-014; roadmap/milestones/state updates. |
+| Validation | Docs only; `git status` must show no app/migration/test changes for this milestone. |
+| Architectural findings | M005 flat `plan_documents` supports DI additively; no ownership rewrite; hard-delete and missing package/sheet tables are debt for M007–M008. |
+| Open decisions | Accept ADR-013/014; authorize M007 implementation gate; Drawing Package vs Drawing Set UI naming. |
+| Next milestone | M007 — Drawing Package & Revision Foundation (not authorized until Feature Gate / prompt) |
+| Commit | Pending |
+
+### Milestone 005 — Plan Intelligence Feature Gate and Phase A PDF Upload
+
+| Field | Content |
+|-------|---------|
+| Milestone | Plan Intelligence Feature Gate and Phase A PDF Upload |
+| Status | **Completed** (on feature branch; merge to `main` pending) |
+| Branch | `milestone-005-plan-intelligence-phase-a` |
+| Base commit | `c59ec01` |
+| Date | 2026-07-25 |
+| Objective | Complete FG-002; document ADR-012 (revision ownership); implement Phase A only — secure searchable PDF upload/storage foundation. |
+| Deliverables | ADR-012 (Proposed); FG-002 (Approved); `app/plan_intelligence/` (models/services/storage/routes); templates; migration `f9c1a2b3d4e5`; project detail link; `tests/test_plan_upload.py`; module/docs updates. |
+| Validation | Phase A tests 8 passed; full suite **97 passed**, 68 warnings. No OCR/CAD/AI/estimate insert/revision UI. |
+| Architectural findings | Flat `plan_documents` is intentionally interim; Drawing Set/Revision lifecycle owned by ADR-012 for later gates. Private storage under instance/`PLAN_UPLOAD_ROOT`. |
+| Open decisions | Accept ADR-012; Document Intelligence M007+ gates; auth for uploads; retention/archival policy when take-offs exist. |
+| Next milestone | Milestone 006 — Document Intelligence architecture (then M007+ coded DI) |
+| Commit | `098647c` — *Implement Plan Intelligence Phase A PDF upload and storage.* |
+
+### Milestone 004 — Plan Intelligence & Automated Take-Off Architecture
+
+| Field | Content |
+|-------|---------|
+| Milestone | Plan Intelligence & Automated Take-Off Architecture |
+| Status | **Completed pending documentation commit** |
+| Branch | `main` |
+| Base commit | `c59ec01` |
+| Date | 2026-07-25 |
+| Objective | Design implementation-ready Plan Intelligence architecture: pipeline, conceptual model, human review, source traceability, estimate mapping, ADRs, narrow POC — documentation only. |
+| Deliverables | Expanded `modules/plan-intelligence.md`; full `architecture/plan-intelligence-and-automated-takeoff.md`; readiness report; ADR-005/006 updates; ADR-011 confidence policy; roadmap/milestones/state updates. |
+| Validation | Docs only; no app/migration/test/dependency changes; link check after edits. |
+| Architectural findings | Differentiator is plan→take-off→estimate→proposal; PDF-first; human approval mandatory; citations first-class; estimate builder not redesigned. |
+| Open decisions | POC element confirmation; confidence numeric thresholds; auth for reviewer; Phase A Feature Gate timing; build-vs-buy. |
+| Next milestone | Feature Gate + implement Plan Intelligence Phase A (PDF upload/storage) |
+| Commit | Pending |
+
 ### Milestone 003 — Accepted Proposal Immutability
 
 | Field | Content |
 |-------|---------|
 | Milestone | Accepted Proposal Immutability |
-| Status | **Completed pending commit** |
+| Status | **Completed** |
 | Branch | `main` |
-| Base commit | `71e2754` (plus uncommitted M002 docs in tree) |
+| Base commit | `71e2754` / docs at `9137052` |
 | Date | 2026-07-25 |
 | Objective | Enforce service-layer immutability for `Accepted` proposals across all mutation paths; keep detail/preview/PDF read-only available. |
-| Deliverables | `ensure_proposal_mutable` / `is_proposal_immutable` in `app/services/proposals.py`; route/UI read-only controls; `tests/test_proposal_immutability.py`; module/ADR updates. |
-| Validation | Full pytest after implementation (record exact results in completion report). No migration. |
-| Architectural findings | No section CRUD mutation API existed; line edit + update_proposal + recalculate + status were the mutation surfaces. |
-| Open decisions | Void/supersede/revision workflow (ADR-004); whether other terminal statuses should hard-lock. |
-| Next milestone | Formal acceptance workflow Feature Gate and/or Plan Intelligence Phase A Feature Gate (Joel sequencing). |
-| Commit | Pending |
+| Deliverables | `ensure_proposal_mutable` / `is_proposal_immutable`; route/UI read-only controls; `tests/test_proposal_immutability.py`. |
+| Validation | Full pytest: **89 passed**, 53 warnings (at implementation). No migration. |
+| Architectural findings | No section CRUD mutation API; line edit + update_proposal + recalculate + status were mutation surfaces. |
+| Open decisions | Void/supersede/revision workflow (ADR-004). |
+| Next milestone | Milestone 004 — Plan Intelligence architecture |
+| Commit | `c59ec01` — *Enforce immutability for accepted proposals* |
 
 ### Milestone 002 — Product Architecture Review and Next-Milestone Selection
 

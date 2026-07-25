@@ -9,8 +9,8 @@ Domain architecture documents describe **intended** systems. They are not claims
 
 | Document | Status |
 |----------|--------|
-| [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) | Future + Phase A current (M004/M005) |
-| [document-intelligence.md](document-intelligence.md) | Future (M006 architecture) |
+| [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) | Future + Phase A / M007 page indexing current |
+| [document-intelligence.md](document-intelligence.md) | Architecture (M006); upload/pages/processing **Current** (M007) |
 | [M004-plan-intelligence-readiness-report.md](M004-plan-intelligence-readiness-report.md) | Milestone 004 report |
 | [M006-document-intelligence-readiness-report.md](M006-document-intelligence-readiness-report.md) | Milestone 006 report |
 | [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) | Future |

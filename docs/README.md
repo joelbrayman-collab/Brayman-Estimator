@@ -51,7 +51,7 @@ Also read [`platform-governance.md`](platform-governance.md) and [`definition-of
 | [architecture.md](architecture.md) | Current vs intended vs future architecture | Factual for *current*; aspirational elsewhere |
 | [architecture/](architecture/) | Domain architecture (Plan Intelligence, Supplier, …) | Future unless marked Current |
 | [architecture/M004-plan-intelligence-readiness-report.md](architecture/M004-plan-intelligence-readiness-report.md) | Milestone 004 readiness report | Historical / operational |
-| [architecture/document-intelligence.md](architecture/document-intelligence.md) | Document Intelligence (packages, sheets, search) | Future (M006) |
+| [architecture/document-intelligence.md](architecture/document-intelligence.md) | Document Intelligence (packages, pages, search) | Architecture (M006); partial Current (M007) |
 | [architecture/M006-document-intelligence-readiness-report.md](architecture/M006-document-intelligence-readiness-report.md) | Milestone 006 readiness report | Historical / operational |
 | [platform-governance.md](platform-governance.md) | Decision authority, Feature Gate, ownership | **Governing** |
 | [development-workflow.md](development-workflow.md) | Joel → ChatGPT → Cursor lifecycle | **Governing** for AI sessions |

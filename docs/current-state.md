@@ -6,72 +6,42 @@
 | Updated | 2026-07-25 |
 | Evidence | Local repository inspection |
 
-Keep short. Refresh often. Mark unverified facts explicitly.
-
 ## Baseline
 
 | Field | Value |
 |-------|--------|
-| Branch | `milestone-005-plan-intelligence-phase-a` |
-| HEAD | `098647c` — Phase A PDF upload/storage |
-| Pre-governance base | `7b8d5ca` |
-| Remote | Confirm with `git status -sb` (branch may be unpushed) |
-| Working tree | May include uncommitted Milestone 006 documentation |
-| App | Flask factory `app.create_app` |
-| DB default | SQLite `brayman_estimator.db` under instance |
-| Governance | Active — FG-002 Phase A; FG-003 Document Intelligence architecture PASS |
+| Branch | `milestone-007-document-indexing` |
+| HEAD | Confirm `git log -1` (expect M006 `35413a1` until M007 commit) |
+| Working tree | M007 implementation pending commit; Sheet Intelligence architecture docs may remain unstaged |
+| Governance | FG-003 CONDITIONAL PASS; M007 indexing implemented in working tree |
 
-## Implemented capabilities (evidenced)
+## Implemented (evidenced in code / working tree)
 
-- Clients, Projects, Cost Items, Assemblies
-- Estimates with versions, sections, line items; locking for certain statuses
-- Proposal templates; snapshot proposals; preview; PDF
-- Accepted proposal immutability
-- Change Orders (Project Controls)
-- **Plan Intelligence Phase A** — project-scoped PDF upload, private storage, list/detail/download/delete, searchable flag
-- Dashboard / branding / navigation
+- CRM, Estimating, Proposals (+ Accepted immutability), Change Orders
+- Plan Intelligence Phase A upload/storage (M005)
+- **M007 indexing** — pages, processing attempts/results, immutable raw payloads, audit events, archive-over-delete, relational search, minimal package/revision — pending commit
 
-## Not implemented (strategic)
+## Proposed architecture (not implemented)
 
-- Document Intelligence code (packages, sheets, search) — **architecture only (M006)**
-- Plan Intelligence take-off / AI / OCR / CAD
-- Supplier catalogue / live pricing / procurement
-- Purchase Orders, Job Costing, Reports, AI Assistant, Settings (nav placeholders)
+- **Sheet Intelligence** (future docs milestone): Sheet entities, discipline metadata, sheet numbers/titles, metadata suggestions, accept/reject review, non-1:1 Page↔Sheet mapping — **not implemented**; do not treat as live product behaviour
+- Scale / manual measure / AI take-off / estimate mapping
 
 ## Migrations
 
-- Alembic head: `f9c1a2b3d4e5` (`plan_documents`)
-- Live DB revision: re-verify / upgrade per environment
-
-## Tests
-
-- Full suite at M005: **97 passed**, 68 warnings
-- M006: docs only — suite not required to re-run for this milestone
-
-## Known risks
-
-- Hard-coded `SECRET_KEY`
-- Proposal estimate FK ON DELETE model/migration mismatch
-- Phase A hard-delete vs future archival (ADR-012) — debt for M007
-- Auth / multi-user still open
-- Future AI take-off risks (ADR-005/006/011 Proposed)
+- Alembic head intended: `a7c8e9f0b1d2` (M007) — re-verify per environment
 
 ## Current milestone
 
-**Milestone 006 — Document Intelligence architecture:** FG-003 **PASS**; docs complete; **no code**; pending Joel-directed commit.
+**Milestone 007 — Document Indexing** (implemented; pending commit).
 
 ## Recommended next steps
 
-1. Joel reviews FG-003, ADR-013, ADR-014, M006 readiness report.
-2. Commit M006 docs when directed.
-3. Feature-Gate **M007** (Drawing Package & Revision) before any Document Intelligence code.
+1. Commit Milestone 007 when directed.
+2. Complete / commit Sheet Intelligence architecture documentation (proposed only).
+3. Feature-Gate coded Sheet classification + human metadata review before any sheet tables/UI.
 
 ## Related
 
-- [feature-gates/FG-003-document-intelligence-readiness.md](feature-gates/FG-003-document-intelligence-readiness.md)
-- [architecture/document-intelligence.md](architecture/document-intelligence.md)
-- [architecture/M006-document-intelligence-readiness-report.md](architecture/M006-document-intelligence-readiness-report.md)
 - [modules/plan-intelligence.md](modules/plan-intelligence.md)
-- [platform-roadmap.md](platform-roadmap.md)
-- [session-handoff.md](session-handoff.md)
-- [project-state-report.md](project-state-report.md)
+- [architecture/document-intelligence.md](architecture/document-intelligence.md)
+- [FG-003](feature-gates/FG-003-document-intelligence-readiness.md)

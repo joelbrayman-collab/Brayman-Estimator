@@ -44,7 +44,7 @@ Sheets are historical records under a Revision. Page mappings are Plan Intellige
 
 ## Migration Impact
 
-Deferred to a Feature-Gated implementation milestone (recommended M008). Additive `plan_sheets` (name illustrative) only.
+Deferred to a Feature-Gated implementation milestone after Document Indexing (M007). Additive `plan_sheets` (name illustrative) only.
 
 ## Testing Impact
 

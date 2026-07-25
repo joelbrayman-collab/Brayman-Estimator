@@ -2,143 +2,182 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Milestone | 006 — Document Intelligence Architecture & Feature Gate |
+| Milestone | 006 — Document Intelligence Architecture and Feature Gate |
 | Date | 2026-07-25 |
-| Branch context | `milestone-005-plan-intelligence-phase-a` @ `098647c` (Phase A present) |
+| Branch context | `milestone-005-plan-intelligence-phase-a` |
 | Scope | Documentation and planning **only** |
-| FG-003 | **PASS** (architecture readiness; implementation not authorized) |
-| Code / migrations / tests / commits | **None** (this milestone) |
+| FG-003 | **CONDITIONAL PASS** (implementation not authorized) |
+| Code / migrations / tests / dependencies / commits / pushes | **None** for this refinement pass |
 
 ---
 
-## 1. Executive recommendation
+## 1. Executive readiness summary
 
-**Proceed.** Milestone 005 Phase A is a sufficient foundation for a Document Intelligence layer **without** rewriting upload ownership, private storage, or Estimating.
+**Recommendation: proceed with architecture; do not implement yet.**
 
-Authorize **architecture and sequencing now**; authorize **code only** via later Feature-Gated milestones (**M007–M010** below).
+M005 Phase A (private PDF storage + `plan_documents`) is a **compatible foundation** for Document Intelligence. No rewrite of upload ownership or Estimating is required. Gaps in audit, archival, and authorization are **material**, so FG-003 is a **CONDITIONAL PASS**, not an unconditional license to code.
 
-Do **not** start OCR, CAD, AI take-off, or estimate insertion under this milestone’s label.
-
----
-
-## 2. M005 compatibility finding
-
-| Question | Answer |
-|----------|--------|
-| Does flat `plan_documents` support Document Intelligence? | **Yes**, as the **file register** referenced by additive Package / Revision / Sheet / search tables. |
-| Architectural rewrite required? | **No.** |
-| Primary gaps? | No package/revision/sheet model yet; Phase A **hard-delete**; thin audit; no search index. |
-
-These gaps are **expected Phase A limitations**, already anticipated by ADR-012. They are implementation debt for M007+, not FG-003 failures.
+Authorize **M007** only after FG-003 conditions are met and a dedicated implementation Feature Gate / Cursor prompt is approved.
 
 ---
 
-## 3. Deliverables (M006)
+## 2. FG-003 result and conditions
 
-| Deliverable | Path | Status |
-|-------------|------|--------|
-| FG-003 | `docs/feature-gates/FG-003-document-intelligence-readiness.md` | **PASS** |
-| Architecture | `docs/architecture/document-intelligence.md` | Done |
-| ADR-013 | Layer boundary (Plan Intelligence owns DI) | Proposed |
-| ADR-014 | Sheet identity vs PDF page mapping | Proposed |
-| This report | `docs/architecture/M006-document-intelligence-readiness-report.md` | Done |
-| Roadmap / milestones / state updates | `docs/*` | Done |
+**Result: CONDITIONAL PASS**
 
-ADRs **not** created (already covered or premature): search-engine vendor choice; OCR engine choice; CAD format priority (ADR-009/010); confidence numerics (ADR-011).
+Architecture is sound; M005 supports additive DI. Implementation remains blocked until:
 
----
+1. Joel accepts/amends ADR-013–016 (and ADR-012 lifecycle).
+2. Archive-over-hard-delete is in first coded DI scope.
+3. Append-only audit events are in first coded DI scope.
+4. First code stays in M007 bounds (no OCR/CAD/AI quantities/estimate insert).
+5. Sheet ≠ Page enforced when Sheets appear.
+6. Extraction confidence never mutates estimates.
+7. Search follows staged relational strategy (ADR-016).
+8. Project-scoped queries remain mandatory.
+9. Migrations additive only.
+10. Separate M007 implementation authorization exists (FG-003 alone insufficient).
 
-## 4. Risks
-
-| Risk | Severity | Mitigation |
-|------|----------|------------|
-| Implementers treat flat uploads as final package model | High | ADR-012/013 + architecture naming; M007 creates Package/Revision before take-off |
-| Phase A hard-delete destroys history after sheets/take-offs exist | High | Archive-first policy in M007; restrict delete when dependents exist |
-| Sheet identity = page index only | High | ADR-014; M008 indexing UX |
-| Document Intelligence becomes a second module / ownership split | Medium | ADR-013 |
-| Premature OCR/AI spend | Medium | ADR-009/010; keep M009 text-layer-first; OCR hooks only in M010 |
-| Auth missing → cross-project document exposure | Medium | Platform auth milestone; keep project scoping in every query |
-| Search scope creep (embeddings / global corpus) | Low–Med | Phased search in architecture; separate gate for AI search |
+Full scorecard: [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md).
 
 ---
 
-## 5. Technical debt (from Phase A into DI)
+## 3. M005 compatibility (inspected, not altered)
 
-| Debt | Impact | Retire in |
-|------|--------|-----------|
-| Hard-delete of `plan_documents` | Breaks ADR-012 archival preference | M007 |
-| No append-only plan audit events | Weak compliance trail | M007 |
-| No Drawing Package / Revision | Cannot safely supersede sets | M007 |
-| No Sheet records | Citations cannot stabilize | M008 |
-| Text-layer detect only (no harvest/index) | Weak findability | M009 |
-| Instance-local filesystem only | Scale/ops limit | Later ops milestone (not blocking POC) |
-
----
-
-## 6. Future migration requirements
-
-All migrations must be **additive** and Feature-Gated:
-
-1. **M007:** `drawing_packages`, `drawing_revisions`, revision↔document membership; optional `archived_at` / soft-delete flags; `plan_audit_events` (or equivalent).
-2. **M008:** `plan_sheets` (+ page mapping columns/tables); discipline codes.
-3. **M009:** extract job/result tables; FTS/search mirror table or index.
-4. **M010:** scale fields on sheets; OCR job/result tables; optional derivative artifact storage **without** overwriting originals.
-
-No destructive reshape of `plan_documents` is required. Optional later backfill: wrap existing orphan PlanDocuments into a default Package/Revision per project.
+| Area | Finding |
+|------|---------|
+| Model | Thin `PlanDocument` suitable as file register |
+| Storage | Private project-keyed paths; traversal guards |
+| Routes | Upload/list/detail/download/delete — adequate attachment points |
+| Ownership | Plan Intelligence package; Estimating untouched |
+| Debt | Hard-delete; no audit table; no package/page/sheet |
 
 ---
 
-## 7. Implementation order — M007 through M010
+## 4. ADR decisions and numbering
 
-| Milestone | Name | Objective | Depends on | Explicit non-goals |
-|-----------|------|-----------|------------|-------------------|
-| **M007** | Drawing Package & Revision Foundation | Packages, revisions (active/superseded), attach Phase A documents, archive-over-delete, basic audit events | FG for M007; ADR-012/013 | Sheets UI; OCR; take-off; estimate insert |
-| **M008** | Sheet Indexing | Create/edit Sheets; discipline; sheet numbers/names; page mapping (ADR-014) | M007 | Full-text search cluster; AI; scale tools |
-| **M009** | Metadata Extraction & Search | Text-layer harvest; metadata suggestions; project-scoped search/filter index | M008 | OCR engine (unless tiny gated spike); embeddings; CAD |
-| **M010** | Scale Foundation & OCR Hooks | Human scale confirmation fields; OCR job interfaces / storage hooks; readiness for manual measurement milestone | M009; ADR-010 review | Full OCR productization; AI element recognition; estimate mapping |
+| ADR | Title | Why required |
+|-----|-------|----------------|
+| **013** (existing) | Document Intelligence layer boundary | Prevents second module / ownership split |
+| **014** (existing) | Sheet identity and page mapping | Sheet ≠ PDF page |
+| **015** (**new**) | Extracted metadata ownership and provenance | Raw results, attempt versioning, human SoR, confidence limits |
+| **016** (**new**) | Document Intelligence search strategy | Relational → FTS → external only with need |
 
-**After M010:** return to roadmap Phase B remainder / Phase C (manual measurement tools → AI extraction) under new gates — Document Intelligence will then be the stable substrate.
+Not created: OCR engine choice, CAD format pick, embedding search, confidence numerics (ADR-011), estimate mapping (ADR-006).
 
-**Mapping to roadmap Phases A–G:**
-
-| Roadmap phase | Milestone coverage |
-|---------------|-------------------|
-| A Upload | M005 (done) |
-| Document Intelligence (new explicit mid-layer) | M006 (docs) → M007–M009 (code) |
-| B Sheet/scale/manual measure | M008–M010 (partial) + follow-on coded milestone for measurement tools |
-| C AI extraction | After M010 + ADR-011 thresholds |
-| D Estimate mapping | Later (ADR-006) |
-| E–F Supplier | Separate program |
-| G CAD | ADR-009 separate gate |
+Next free ADR numbers after ADR-016 belong to subsequent architecture milestones (e.g. Sheet Intelligence suggestion/review ADRs) — not required for M007 indexing code.
 
 ---
 
-## 8. FG-003 scorecard (summary)
+## 5. Recommended M007–M010 sequence
 
-**PASS** on ownership, metadata model, sheet indexing design, discipline, sheet numbering, revision metadata, phased search, AI compatibility, scalability path, performance approach, and security posture—with **known debt** on audit/delete and **open** platform auth.
+Aligned with repository evidence (ADR-012/014/015) and the milestone prompt’s preferred shape. Estimate mapping and revision-comparison *products* remain **outside** M007–M010.
 
-**Implementation not authorized** by FG-003.
+### M007 — Document indexing and deterministic metadata extraction
+
+| | |
+|--|--|
+| **Objective** | Make uploaded PDFs page-addressable and extract deterministic/embedded-text metadata with provenance. |
+| **Scope** | `Page` records; processing attempts/results + raw payload; text harvest; relational searchable fields; **minimal** Drawing Package + Revision membership (incl. default backfill for existing uploads); archive-over-delete; audit events. |
+| **Exclusions** | Sheet classification UX; OCR engine; CAD; AI quantities; scale tools; estimate insert; external search. |
+| **Dependencies** | FG-003 conditions; ADR-012/013/015/016; M005. |
+| **Migrations** | Additive: packages, revisions, membership, pages, processing tables, audit; soft-archive fields. |
+| **Tests** | Page indexing; extraction success/fail leaves file intact; reprocess retains prior raw; project scoping; archive vs delete; no Estimating side effects. |
+| **Completion** | Every new upload yields pages + processable metadata trail; orphans backfillable; hard-delete constrained when policy requires. |
+
+### M008 — Sheet classification and human metadata review *(implementation; after architecture docs)*
+
+| | |
+|--|--|
+| **Objective** | Establish logical Sheets with human-reviewed identifiers, titles, discipline, drawing status. |
+| **Scope** | Sheet entities; page↔sheet mapping (incl. non-1:1 cases); suggestion apply/reject; human corrections as SoR; sheet filters. |
+| **Exclusions** | Scale calibration; measurement tools; AI quantity extraction; estimate mapping. |
+| **Dependencies** | M007; Sheet Intelligence architecture acceptance; dedicated Feature Gate. |
+| **Migrations** | Additive sheets / sheet_pages; discipline/status fields. |
+| **Tests** | Sheet ≠ page; uniqueness warnings; human correction not clobbered by reprocess; filters. |
+| **Completion** | Reviewer can produce a trusted sheet index for an Active Revision. |
+| **Note** | A separate docs-only Sheet Intelligence architecture milestone may precede this coded work; numbering on the roadmap may insert architecture before coded sheets. |
+
+### M009 — Scale calibration and manual measurement foundation
+
+| | |
+|--|--|
+| **Objective** | Enable human scale confirmation and basic manual measure primitives on Sheets. |
+| **Scope** | Scale fields; calibration UX; count/length/area foundation (citations-ready regions); no silent estimate write. |
+| **Exclusions** | AI extraction; estimate insertion; CAD; full OCR product. |
+| **Dependencies** | M008; ADR-005 citation shape readiness. |
+| **Migrations** | Additive scale/viewport/measurement draft tables as needed. |
+| **Tests** | Scale required before measurement eligibility; measurements cite sheet/page/region; Estimating unchanged. |
+| **Completion** | Estimator can manually produce cited measurements on a reviewed sheet. |
+
+### M010 — AI-assisted quantity extraction proof of concept
+
+| | |
+|--|--|
+| **Objective** | Narrow POC: AI proposes quantities for a single agreed element (e.g. interior doors) with confidence + human review. |
+| **Scope** | Candidate generation; confidence display (ADR-011); accept/adjust/reject; take-off package draft; **no** estimate insert. |
+| **Exclusions** | Estimate mapping (separate gate); multi-trade expansion; supplier; CAD-first. |
+| **Dependencies** | M009; ADR-005/006/011; ADR-010 review as needed. |
+| **Migrations** | Additive candidate/review tables. |
+| **Tests** | No estimate mutation; citations present; rejected candidates excluded; confidence cannot auto-insert. |
+| **Completion** | Joel-agreed POC element reviewed end-to-end without touching Estimating writes. |
 
 ---
 
-## 9. Suggested Joel decisions
+## 6. Risks and technical debt
 
-1. Accept or amend ADR-013 and ADR-014 (and remaining Proposed Plan Intelligence ADRs as ready).
-2. Approve sequencing M007 → M010 as above (or reorder with written rationale).
-3. Issue an implementation Feature Gate / Cursor prompt for **M007 only** when ready to write code.
-4. Confirm product term **Drawing Package** (vs ADR-012 “Drawing Set”) for UI copy.
+### Risks
+
+| Risk | Type | Mitigation |
+|------|------|------------|
+| Flat uploads treated as final model | Architectural | ADR-012/013; M007 minimal package |
+| Hard-delete after dependents | Data integrity | Archive-first condition |
+| Page mistaken for Sheet | Data integrity | ADR-014; M008 |
+| Confidence → commercial action | Architectural / financial | ADR-006/011/015 |
+| Auth gap / cross-project leakage | Security | Project filters; platform auth later |
+| Extraction accuracy / bad sheet numbers | Extraction | Human review M008; preserve raw |
+| Premature external search / OCR spend | Operational | ADR-016; hooks only |
+| Revision sprawl / duplicate sheets | Revision mgmt | Active/superseded rules; uniqueness warnings |
+| Large raw payload growth | Performance / ops | Retention policy later |
+| Migration ordering mistakes | Migration | Additive-only; Feature Gates per milestone |
+
+### M005 technical debt relevant to DI
+
+Hard-delete · no audit events · no package/revision/page/sheet · text detection only (no harvest) · instance-local filesystem · no auth
+
+### Deferred decisions / assumptions
+
+Exact sheet uniqueness rules · page index 0 vs 1 · retention TTL for raw payloads · object storage timing · POC element confirmation for M010 · numeric confidence thresholds (ADR-011)
 
 ---
 
-## 10. Definition of Done checklist
+## 7. Future migration requirements (summary)
 
-| Item | Done |
-|------|------|
-| FG-003 completed | ✓ |
-| Architecture updated | ✓ |
-| Roadmap updated if necessary | ✓ |
-| Required ADRs added (013, 014 only) | ✓ |
-| No application code | ✓ |
-| No migrations | ✓ |
-| No tests | ✓ |
-| No commits | ✓ (this milestone’s instruction) |
+Additive only across M007–M010 as listed above. Optional backfill: wrap existing `plan_documents` into default Drawing Package + Revision. **No** destructive reshape of `plan_documents`.
+
+---
+
+## 8. Documentation synchronization
+
+Updated/created: FG-003; document-intelligence.md; this report; ADR-015; ADR-016; indexes; module; roadmap; milestones; current-state; project-state; session-handoff; chat-workflow-log; docs README as needed.
+
+---
+
+## 9. Definition of Done checklist
+
+| Item | Status |
+|------|--------|
+| FG-003 PASS / CONDITIONAL PASS / FAIL | ✓ CONDITIONAL PASS |
+| DI architecture documented | ✓ |
+| M005 vs future distinguished | ✓ |
+| Package/Document/Page/Sheet/Revision/Discipline ownership | ✓ |
+| Metadata/processing boundaries | ✓ |
+| Search strategy | ✓ ADR-016 |
+| OCR/CAD/AI boundaries | ✓ |
+| Genuine ADRs only | ✓ 015, 016 added; 013/014 retained |
+| Risks, debt, migrations | ✓ |
+| M007–M010 sequence | ✓ |
+| State/roadmap synced | ✓ |
+| Links validated | ✓ 341 internal links, 0 broken |
+| `git diff --check` clean | ✓ |
+| No app / migrations / tests / deps / commit / push | ✓ |

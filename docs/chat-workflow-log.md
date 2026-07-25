@@ -42,6 +42,44 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-07-25 — Milestone 007 Document Indexing
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-07-25 |
+| Branch | `milestone-007-document-indexing` |
+| Objective | Implement Document Indexing: pages, deterministic/embedded-text extraction, provenance, archive, audit, relational search |
+| Business decision | First coded DI phase after FG-003 CONDITIONAL PASS conditions |
+| Architectural decision | Page ≠ Sheet; immutable raw payloads; archive-over-delete; relational search (ADR-016 Stage 1); ADR-015 provenance |
+| Files expected to change | `app/plan_intelligence/**`, models, templates, migration `a7c8e9f0b1d2`, `tests/test_plan_indexing.py`, M007 docs/ADRs |
+| Files prohibited from changing | Estimating commercial writes; Sheet entity implementation; OCR/CAD/AI take-off |
+| Implementation result | Indexing models/services/UI/migration/tests; Estimating untouched |
+| Tests | Plan indexing + upload tests; full suite (record at validation) |
+| Next approved step | Commit M007 when directed; Sheet Intelligence architecture docs separate |
+| Commit hash | **None** (cleanup prompt forbids commits) |
+
+### 2026-07-25 — Milestone 006 Document Intelligence refinement (CONDITIONAL PASS)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-07-25 |
+| Branch | `milestone-005-plan-intelligence-phase-a` |
+| Objective | Expand M006 to full prompt: CONDITIONAL PASS, Page/Sheet edge cases, processing provenance, staged search, revised M007–M010 |
+| Business decision | Do not authorize DI code on FG-003 alone; require explicit conditions |
+| Architectural decision | FG-003 **CONDITIONAL PASS**; ADR-015 provenance; ADR-016 staged search; M007=indexing/extraction; sheet review / scale / AI POC = later Feature-Gated milestones |
+| Prompt template used | Milestone 006 Document Intelligence Architecture and Feature Gate (expanded) |
+| Files expected to change | docs only |
+| Files prohibited from changing | app/, migrations/, tests/, dependency files |
+| Implementation result | Docs refined; no code |
+| Tests | Docs validation only (status, diff --check, link check) |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Joel acceptance of conditions + ADR-013–016 |
+| Next approved step | M007 Feature Gate when conditions satisfied |
+| Next approved prompt | None |
+| Commit hash | **None** (prompt forbids commits/pushes) |
+
 ### 2026-07-25 — Milestone 006 Document Intelligence architecture
 
 | Field | Content |

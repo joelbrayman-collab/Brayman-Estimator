@@ -2,9 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Phase A implemented** (PDF upload/storage); Document Intelligence architecture documented (M006); take-off / AI not started |
+| Status | **Phase A + M007 indexing implemented**; Sheet review / take-off / AI not started |
 | Updated | 2026-07-25 |
-| Code | `app/plan_intelligence/` (Phase A only) |
+| Code | `app/plan_intelligence/` |
 | Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) |
 | Architecture | [../architecture/plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) · [../architecture/document-intelligence.md](../architecture/document-intelligence.md) |
 | Readiness | [../architecture/M004-plan-intelligence-readiness-report.md](../architecture/M004-plan-intelligence-readiness-report.md) · [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md) |
@@ -33,32 +33,40 @@ Project Cost Tracking
 
 Proposal generation already exists. Plan Intelligence is the next major platform capability.
 
-## Current implementation (Phase A — Milestone 005)
+## Current implementation (Phase A + Milestone 007)
 
 | Capability | Status |
 |------------|--------|
-| Project-scoped PDF upload | **Done** |
-| Private filesystem storage (`instance/plan_uploads/` or `PLAN_UPLOAD_ROOT`) | **Done** |
-| Metadata register (`plan_documents`) | **Done** |
-| List / detail / download / delete | **Done** |
-| Searchable text-layer detection (`has_text_layer`) | **Done** |
-| Drawing Set / Revision workflow | **Not implemented** (see ADR-012) |
-| Sheet classification, scale, take-off, AI, estimate insert | **Out of scope** |
+| Project-scoped PDF upload | **Done** (M005) |
+| Private filesystem storage | **Done** (M005) |
+| Metadata register (`plan_documents`) | **Done** (M005) |
+| List / detail / download | **Done** |
+| Archive-over-delete | **Done** (M007) |
+| Default Drawing Package + active Revision membership | **Done** (M007 minimal) |
+| Page indexing (0-based) | **Done** (M007) |
+| Deterministic PDF metadata + embedded text | **Done** (M007) |
+| ProcessingAttempt / ProcessingResult + raw payload | **Done** (M007) |
+| Idempotent reprocessing | **Done** (M007) |
+| Append-only plan audit events | **Done** (M007) |
+| Project-scoped relational search/filter | **Done** (M007) |
+| Sheet classification / human review | **Not implemented** (proposed Sheet Intelligence architecture — separate milestone) |
+| OCR / CAD / AI take-off | **Out of scope** until Feature-Gated |
 
 Routes live under `/projects/<id>/plans…`. Estimating, Proposals, OCR, CAD, AI, and supplier features are unchanged.
 
-## Document Intelligence (architecture — Milestone 006)
+## Document Intelligence (architecture — Milestone 006; partial code in M007)
 
 Capability layer **inside** Plan Intelligence ([ADR-013](../adr/ADR-013-document-intelligence-layer-boundary.md)), between Phase A storage and take-off:
 
 | Concept | Status |
 |---------|--------|
-| Drawing Package / Revision | Architecture + ADR-012; **not implemented** |
-| Sheet index / discipline / sheet numbers | Architecture + ADR-014; **not implemented** |
-| Metadata extraction / search index | Architecture only; **not implemented** |
+| Drawing Package / Revision (minimal default) | **Implemented** (M007) |
+| Page indexing / deterministic extraction | **Implemented** (M007) |
+| Processing provenance + relational search | **Implemented** (M007); ADR-015 / ADR-016 |
+| Sheet index / discipline / human review | **Not implemented** (ADR-014 defines Sheet ≠ Page) |
 | OCR / CAD / AI take-off hooks | Documented integration points only |
 
-See [document-intelligence.md](../architecture/document-intelligence.md) and [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) (**PASS**, implementation not authorized).
+See [document-intelligence.md](../architecture/document-intelligence.md) and [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md).
 
 ## Business goals
 
@@ -72,65 +80,33 @@ See [document-intelligence.md](../architecture/document-intelligence.md) and [FG
 
 | Input | Near-term | Later |
 |-------|-----------|-------|
-| Searchable PDF | **Phase A** | — |
-| Scanned PDF | Stored in Phase A (flagged non-searchable); OCR later | OCR path |
-| Architectural plans | Phase A storage | Take-off POC |
-| Structural drawings | Later | Expanded vocabulary |
-| Civil drawings | Later | — |
-| Site plans | Later | — |
-| Reflected ceiling plans | Later | — |
-| Schedules (door, finish, etc.) | Later / optional cross-check | — |
-| Specification documents | Parallel later track | Quantity rules may cite specs |
-
-## Future support (not Phase A)
-
-- DWG / DXF
-- IFC / BIM models
-- Broader multi-trade automated take-off
-
-(PDF-first strategy: [ADR-009](../adr/ADR-009-pdf-first-versus-cad-first.md).)
+| Searchable PDF | **Phase A + M007** | — |
+| Scanned PDF | Stored (flagged non-searchable); OCR later | OCR path |
+| Architectural plans | Storage + page index | Take-off POC |
+| Structural / civil / other | Later | Expanded vocabulary |
 
 ## Non-goals (until separately Feature-Gated)
 
 - Redesigning the estimate builder
 - Silent auto-insert of AI quantities into estimates
 - CAD-first platform strategy
-- Supplier catalogue / live pricing / procurement (separate pillars)
+- Supplier catalogue / live pricing / procurement
 - Full OCR optimisation
-- Replacing Proposals or Project Controls modules
 - Speculative AI pricing
-- Drawing Set / Revision management UI (documented in [ADR-012](../adr/ADR-012-plan-document-version-ownership.md) only)
-
-## Success metrics (architecture / product)
-
-| Metric | Intent |
-|--------|--------|
-| Traceability coverage | % of approved quantities with complete source citations |
-| Review completion | Approved take-off packages vs abandoned |
-| Insertion discipline | Zero silent estimate inserts (tests + audit) |
-| Revision safety | Prior take-off versions unchanged after new plan upload |
-| POC accuracy | Human-verified door count (or chosen element) within agreed tolerance |
-
-## Risks
-
-| Risk | Mitigation |
-|------|------------|
-| False AI quantities | Confidence thresholds (ADR-011); mandatory human approval (ADR-006) |
-| Wrong scale | Manual scale confirmation before estimate eligibility |
-| Scope explosion | Narrow POC; one discipline; one element |
-| Ownership confusion | Plan Intelligence owns take-off; Estimating owns estimate lines (ADR-007) |
-| Vendor lock-in | Build-vs-buy ADR-010; Estimator-owned citation records |
-| Flat uploads mistaken for final model | ADR-012 documents Drawing Set / Revision ownership before that UI exists |
 
 ## Owned data
 
-### Phase A (current)
+### Current (M005 + M007)
 
-- `PlanDocument` metadata + stored PDF bytes (project-scoped)
+- `PlanDocument` metadata + stored PDF bytes
+- Minimal `DrawingPackage` / `DrawingRevision` membership
+- `PlanPage` index + extracted text
+- `ProcessingAttempt` / `ProcessingResult` (incl. raw payload)
+- `PlanAuditEvent`
 
 ### Intended (later)
 
-Drawing sets, revisions, sheets, viewports/scales, detected elements, measurements, quantities, reviews, approvals, confidence scores, corrections, audit history, mapping proposals (not committed estimate lines).
+Sheets, disciplines, take-off quantities, reviews, approvals, mapping proposals (not committed estimate lines).
 
 ## Referenced data
 
@@ -157,5 +133,7 @@ Drawing sets, revisions, sheets, viewports/scales, detected elements, measuremen
 | Plan document / revision ownership | [ADR-012](../adr/ADR-012-plan-document-version-ownership.md) |
 | Document Intelligence layer boundary | [ADR-013](../adr/ADR-013-document-intelligence-layer-boundary.md) |
 | Sheet identity vs PDF page mapping | [ADR-014](../adr/ADR-014-sheet-identity-and-page-mapping.md) |
+| Extracted metadata ownership / provenance | [ADR-015](../adr/ADR-015-extracted-metadata-ownership-and-provenance.md) |
+| Document Intelligence search strategy | [ADR-016](../adr/ADR-016-document-intelligence-search-strategy.md) |
 
-> Note: Milestone 004 Task 7 titles mapped onto existing ADR numbers where already assigned; **ADR-011** is confidence policy. **ADR-012** is Milestone 005 documentation for revision ownership (not implemented in Phase A UI). **ADR-013/014** are Milestone 006 Document Intelligence decisions. ADR-008 remains Supplier Price Snapshotting.
+> ADR-008 remains Supplier Price Snapshotting. Sheet-review ADRs (if any) belong to the Sheet Intelligence architecture milestone, not M007 code.

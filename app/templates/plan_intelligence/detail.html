@@ -8,7 +8,7 @@
     <div>
         <p class="eyebrow">Plan Intelligence</p>
         <h1>{{ document.original_filename }}</h1>
-        <p class="muted-copy">{{ project.name }}</p>
+        <p class="muted-copy">{{ project.name }}{% if document.is_archived %} · Archived{% endif %}</p>
     </div>
     <div>
         <a class="button" href="{{ url_for('plan_intelligence.download_plan', project_id=project.id, document_id=document.id) }}">Download</a>
@@ -18,10 +18,12 @@
 
 <section class="form-panel" style="margin-bottom: 24px;">
     <div class="form-grid">
-        <div><p class="eyebrow">Searchable text layer</p><p>{{ "Yes" if document.has_text_layer else "No" }}</p></div>
+        <div><p class="eyebrow">Processing status</p><p><span class="status">{{ document.processing_status }}</span></p></div>
+        <div><p class="eyebrow">Embedded text</p><p>{{ "Yes" if document.has_text_layer else "No" }}</p></div>
         <div><p class="eyebrow">Pages</p><p>{{ document.page_count if document.page_count is not none else "—" }}</p></div>
         <div><p class="eyebrow">Size</p><p>{{ (document.byte_size / 1024) | round(1) }} KB</p></div>
-        <div><p class="eyebrow">Content type</p><p>{{ document.content_type }}</p></div>
+        <div><p class="eyebrow">PDF title</p><p>{{ document.pdf_title or "—" }}</p></div>
+        <div><p class="eyebrow">PDF author</p><p>{{ document.pdf_author or "—" }}</p></div>
         <div><p class="eyebrow">SHA-256</p><p style="word-break: break-all;">{{ document.sha256_hex }}</p></div>
         <div><p class="eyebrow">Uploaded</p><p>{{ document.created_at.strftime("%Y-%m-%d %H:%M") }}</p></div>
     </div>
@@ -29,15 +31,100 @@
     <p style="margin-top: 16px;"><strong>Notes:</strong> {{ document.notes }}</p>
     {% endif %}
     <p class="muted-copy" style="margin-top: 16px;">
-        Drawing set / revision ownership is defined in ADR-012 and is not managed in Phase A UI.
+        Pages are PDF pagination units (0-based). Logical Sheets are deferred to Milestone 008 (ADR-014).
     </p>
+    <div class="form-actions" style="margin-top: 16px;">
+        <form method="post" action="{{ url_for('plan_intelligence.reprocess_plan', project_id=project.id, document_id=document.id) }}" style="display:inline;">
+            <button type="submit">Reprocess (idempotent)</button>
+        </form>
+        <form method="post" action="{{ url_for('plan_intelligence.reprocess_plan', project_id=project.id, document_id=document.id) }}" style="display:inline;">
+            <input type="hidden" name="force" value="1">
+            <button type="submit">Force reprocess</button>
+        </form>
+    </div>
 </section>
 
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Pages</h2>
+    {% if pages %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Index</th>
+                <th>Text</th>
+                <th>Blank</th>
+                <th>Preview</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for page in pages %}
+            <tr>
+                <td>{{ page.page_index }}</td>
+                <td>{{ "Yes" if page.has_text else "No" }}</td>
+                <td>{{ "Yes" if page.is_blank else "No" }}</td>
+                <td class="muted-copy">{{ (page.extracted_text or "")[:120] }}{% if page.extracted_text and page.extracted_text|length > 120 %}…{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="muted-copy">No page index yet. Run processing.</p>
+    {% endif %}
+</section>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Processing attempts</h2>
+    {% if attempts %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Extractor</th>
+                <th>Status</th>
+                <th>Started</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attempt in attempts %}
+            <tr>
+                <td>{{ attempt.id }}</td>
+                <td>{{ attempt.extractor_name }} {{ attempt.extractor_version }}</td>
+                <td>{{ attempt.status }}</td>
+                <td>{{ attempt.started_at.strftime("%Y-%m-%d %H:%M") if attempt.started_at else "—" }}</td>
+                <td>{% if attempt.result %}#{{ attempt.result.id }} (raw preserved){% else %}—{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="muted-copy">No processing attempts.</p>
+    {% endif %}
+</section>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Audit events</h2>
+    {% if audit_events %}
+    <ul class="activity-list">
+        {% for event in audit_events %}
+        <li>
+            <span class="activity-title">{{ event.event_type }}</span>
+            <span class="activity-meta">{{ event.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="muted-copy">No audit events.</p>
+    {% endif %}
+</section>
+
+{% if not document.is_archived %}
 <section class="form-panel">
-    <h2>Delete</h2>
-    <p class="muted-copy">Phase A allows removal of an uploaded file. Archival rules for linked take-offs come later.</p>
-    <form method="post" action="{{ url_for('plan_intelligence.delete_plan', project_id=project.id, document_id=document.id) }}" onsubmit="return confirm('Delete this plan document?');">
-        <button type="submit">Delete document</button>
+    <h2>Archive</h2>
+    <p class="muted-copy">Documents are archived rather than hard-deleted once indexing data exists (ADR-012 / FG-003).</p>
+    <form method="post" action="{{ url_for('plan_intelligence.delete_plan', project_id=project.id, document_id=document.id) }}" onsubmit="return confirm('Archive this plan document?');">
+        <button type="submit">Archive document</button>
     </form>
 </section>
+{% endif %}
 {% endblock %}

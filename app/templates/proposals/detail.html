@@ -12,11 +12,16 @@
         <p class="muted-copy">
             Snapshot from Estimate Version v{{ proposal.estimate_version_number }}{% if proposal.estimate_version_label %} — {{ proposal.estimate_version_label }}{% endif %}
         </p>
+        {% if proposal_immutable %}
+        <p class="muted-copy"><strong>Accepted — locked.</strong> This proposal cannot be edited. Preview and PDF remain available.</p>
+        {% endif %}
     </div>
     <div>
         <a class="button" href="{{ url_for('proposals.preview_proposal', id=proposal.id) }}">Preview</a>
         <a class="button" href="{{ url_for('proposals.download_proposal_pdf', id=proposal.id) }}">Download PDF</a>
+        {% if not proposal_immutable %}
         <a class="button" href="{{ url_for('proposals.edit_proposal', id=proposal.id) }}">Edit Proposal</a>
+        {% endif %}
         <a class="button-link" href="{{ url_for('proposals.list_proposals') }}">Back to list</a>
     </div>
 </div>
@@ -49,6 +54,7 @@
         </div>
     </div>
 
+    {% if not proposal_immutable %}
     <form method="post" action="{{ url_for('proposals.update_status', id=proposal.id) }}" class="form-actions">
         <label>
             Update status
@@ -60,6 +66,7 @@
         </label>
         <button type="submit">Save Status</button>
     </form>
+    {% endif %}
 </section>
 
 <section class="form-panel" style="margin-bottom: 24px;">
@@ -131,13 +138,15 @@
                 <th>Markup %</th>
                 <th>Extended Cost</th>
                 <th>Extended Price</th>
+                {% if not proposal_immutable %}
                 <th>Actions</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for item in section.line_items %}
             <tr>
-                {% if editing_item_id is defined and editing_item_id == item.id and item_edit_form is defined %}
+                {% if not proposal_immutable and editing_item_id is defined and editing_item_id == item.id and item_edit_form is defined %}
                 <td colspan="10">
                     <form method="post" action="{{ url_for('proposals.edit_proposal_line_item', id=proposal.id, section_id=section.id, item_id=item.id) }}" class="form-panel">
                         <div class="form-grid">
@@ -164,9 +173,11 @@
                 <td>{{ "%.2f"|format(item.markup_percent) }}</td>
                 <td>${{ "%.2f"|format(item.extended_cost) }}</td>
                 <td>${{ "%.2f"|format(item.extended_price) }}</td>
+                {% if not proposal_immutable %}
                 <td>
                     <a class="button-link" href="{{ url_for('proposals.view_proposal', id=proposal.id, edit_item=item.id) }}">Edit</a>
                 </td>
+                {% endif %}
                 {% endif %}
             </tr>
             {% endfor %}

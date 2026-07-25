@@ -21,6 +21,7 @@ from app.services.proposals import (
     get_active_templates,
     get_default_template,
     get_estimate_and_version,
+    is_proposal_immutable,
     suggest_next_proposal_number,
     update_proposal,
     update_proposal_line_item,
@@ -272,8 +273,9 @@ def view_proposal(id):
     proposal = Proposal.query.get_or_404(id)
     editing_item_id = request.args.get("edit_item", type=int)
     item_edit_form = None
+    immutable = is_proposal_immutable(proposal)
 
-    if editing_item_id is not None:
+    if editing_item_id is not None and not immutable:
         item = (
             ProposalLineItem.query.join(ProposalSection)
             .filter(
@@ -293,12 +295,15 @@ def view_proposal(id):
             }
         else:
             editing_item_id = None
+    else:
+        editing_item_id = None
 
     return render_template(
         "proposals/detail.html",
         proposal=proposal,
         editing_item_id=editing_item_id,
         item_edit_form=item_edit_form,
+        proposal_immutable=immutable,
     )
 
 
@@ -370,8 +375,9 @@ def edit_proposal_line_item(id, section_id, item_id):
         return render_template(
             "proposals/detail.html",
             proposal=proposal,
-            editing_item_id=item.id,
-            item_edit_form=form,
+            editing_item_id=item.id if not is_proposal_immutable(proposal) else None,
+            item_edit_form=form if not is_proposal_immutable(proposal) else None,
+            proposal_immutable=is_proposal_immutable(proposal),
         )
 
     flash("Proposal line item updated.", "success")
@@ -381,6 +387,13 @@ def edit_proposal_line_item(id, section_id, item_id):
 @proposals_bp.route("/proposals/<int:id>/edit", methods=["GET", "POST"])
 def edit_proposal(id):
     proposal = Proposal.query.get_or_404(id)
+    if is_proposal_immutable(proposal):
+        flash(
+            "This proposal is Accepted and is locked. It cannot be edited.",
+            "error",
+        )
+        return redirect(url_for("proposals.view_proposal", id=proposal.id))
+
     templates = get_active_templates()
     if proposal.proposal_template not in templates:
         templates = list(templates) + [proposal.proposal_template]

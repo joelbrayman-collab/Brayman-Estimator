@@ -17,6 +17,25 @@ class ProposalServiceError(Exception):
     """Raised when a proposal operation cannot be completed."""
 
 
+ACCEPTED_PROPOSAL_LOCKED_MESSAGE = (
+    "This proposal is Accepted and is locked. It cannot be edited or "
+    "have its status changed. Corrections require a future void, "
+    "supersede, or revision workflow that preserves this snapshot."
+)
+
+
+def is_proposal_immutable(proposal):
+    """Return True when the proposal must not be mutated."""
+    return proposal is not None and proposal.status == "Accepted"
+
+
+def ensure_proposal_mutable(proposal):
+    """Raise if the proposal is Accepted and therefore immutable."""
+    if is_proposal_immutable(proposal):
+        raise ProposalServiceError(ACCEPTED_PROPOSAL_LOCKED_MESSAGE)
+    return proposal
+
+
 def suggest_next_proposal_number(year=None):
     """Return the next suggested proposal number in PROP-YYYY-NNNN format."""
     year = year or datetime.utcnow().year
@@ -264,8 +283,14 @@ def apply_proposal_line_calculations(line_item):
     return line_item
 
 
-def recalculate_proposal(proposal):
-    """Recalculate section and proposal totals from snapshot line items."""
+def recalculate_proposal(proposal, *, allow_when_accepted=False):
+    """Recalculate section and proposal totals from snapshot line items.
+
+    ``allow_when_accepted`` is only for the initial create-time snapshot path,
+    which may persist a proposal that is already marked Accepted.
+    """
+    if not allow_when_accepted:
+        ensure_proposal_mutable(proposal)
     sections = (
         ProposalSection.query.filter_by(proposal_id=proposal.id)
         .order_by(ProposalSection.sort_order.asc(), ProposalSection.id.asc())
@@ -353,7 +378,8 @@ def snapshot_estimate_version_content(proposal, version):
             db.session.add(line_item)
 
     db.session.flush()
-    recalculate_proposal(proposal)
+    # Create-time snapshot may run while status is already Accepted.
+    recalculate_proposal(proposal, allow_when_accepted=True)
 
 
 def create_proposal(
@@ -451,6 +477,7 @@ def update_proposal_line_item(
     notes=None,
 ):
     proposal = line_item.section.proposal
+    ensure_proposal_mutable(proposal)
 
     if description is not None:
         description = description.strip()
@@ -492,6 +519,15 @@ def update_proposal_line_item(
 
 
 def update_proposal(proposal, **fields):
+    """Update proposal fields. Accepted proposals cannot be mutated.
+
+    Status policy for this milestone:
+    - Non-Accepted proposals may transition to any value in PROPOSAL_STATUSES
+      (including Accepted) via existing callers.
+    - Accepted proposals cannot change status or any other field.
+    """
+    ensure_proposal_mutable(proposal)
+
     if "title" in fields:
         title = (fields["title"] or "").strip()
         if not title:

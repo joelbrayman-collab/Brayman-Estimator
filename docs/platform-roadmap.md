@@ -9,7 +9,9 @@ Use repository evidence for **Completed**. Everything else is proposed until imp
 
 ## Completed
 
-(Evidenced on `main` as of `7b8d5ca`)
+(Evidenced on `main`)
+
+**Product (as of `7b8d5ca` and later merges on main):**
 
 - Clients and Projects foundation
 - Cost Items library
@@ -22,11 +24,9 @@ Use repository evidence for **Completed**. Everything else is proposed until imp
 - Change Orders (Project Controls module)
 - App shell branding and navigation structure
 
-## Current Governance Sprint
+**Governance (completed at `29d1ba9`):**
 
-*(Remains Current until the governance baseline is committed — do not move to Completed prematurely.)*
-
-- Platform governance documentation foundation
+- Platform Governance Foundation (Milestone 001)
 - Architecture principles Rules 1–12
 - Module ownership docs (CRM, Estimating, Proposals, Projects)
 - ADR template
@@ -37,11 +37,20 @@ Use repository evidence for **Completed**. Everything else is proposed until imp
 - Milestone History
 - Prompt Library
 - Project State Report
-- Governance baseline commit
+- Governance baseline commit (`29d1ba9` — *Complete Estimator governance baseline and prompt library*; 39 governance/documentation files; no app/migration/test changes)
+
+## Current
+
+- **Product Architecture Review**
+- Review implemented workflows against product vision
+- Identify risks and gaps
+- Select and Feature-Gate **one** next product milestone
+
+*(No specific product feature is approved for implementation until Feature Gate is completed.)*
 
 ## Next Recommended Milestone
 
-**Joel to choose one** Feature-Gated item after governance approval. Candidates (not ordered):
+**Joel to choose one** Feature-Gated item after Product Architecture Review. Candidates (not ordered; **not approved**):
 
 - Formalize proposal acceptance workflow + immutability enforcement review
 - Project creation from accepted proposal snapshot (Rule 4)
@@ -84,7 +93,8 @@ Use repository evidence for **Completed**. Everything else is proposed until imp
 ## Decisions Required (Joel)
 
 1. Confirm provisional platform sequence in [platform-vision.md](platform-vision.md).
-2. Prioritize next product milestone after governance commit.
+2. Prioritize next product milestone after Product Architecture Review.
 3. Auth model / multi-user requirements.
 4. Whether Change Orders “audit trail” is next Project Controls priority.
 5. Production hosting and secret management approach.
+6. Push `29d1ba9` to `origin/main` when ready.

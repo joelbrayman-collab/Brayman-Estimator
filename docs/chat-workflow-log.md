@@ -42,28 +42,51 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-07-25 — Record governance baseline milestone (post-commit)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-07-25 |
+| Branch | `main` @ `29d1ba9` |
+| Objective | Update governance records to mark Milestone 001 Completed and refresh project state before push — documentation only |
+| Business decision | Memorialise commit `29d1ba9` as completed Governance Baseline before remote publish |
+| Architectural decision | None (record-keeping only; no policy change) |
+| Prompt template used | Documentation / milestone-record update |
+| Approved Cursor prompt summary | Update milestones, project-state-report, current-state, session-handoff, chat-workflow-log, platform-roadmap only; do not commit or push |
+| Files expected to change | Listed governance docs only |
+| Files prohibited from changing | `app/**`, `migrations/**`, tests, models, routes, templates, services, repositories |
+| Implementation result | Milestone 001 marked Completed; roadmap governance sprint moved to Completed; next milestone set to Product Architecture Review |
+| Tests | Full suite **not re-run** (docs-only). Last verified remains **78 passed**, 43 warnings |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes — Milestone 001 → Completed @ `29d1ba9` |
+| Constitutional issue raised | None |
+| Unresolved issues | Not yet pushed to `origin/main`; live Alembic current still To be verified |
+| Next approved step | Push `29d1ba9`; then Product Architecture Review and Feature-Gate one product milestone |
+| Next approved prompt | **Not yet created** — pending Product Architecture Review |
+| Commit hash | Record update itself uncommitted; baseline commit referenced: `29d1ba9` |
+
 ### 2026-07-25 — Governance Baseline Completion (Constitution, milestones, prompts, state report)
 
 | Field | Content |
 |-------|---------|
 | Date | 2026-07-25 |
-| Branch | `main` @ `7b8d5ca` (base; work uncommitted) |
+| Branch | `main` (base `7b8d5ca`; committed as `29d1ba9`) |
 | Objective | Complete governance foundation: Platform Constitution, Milestone History, Prompt Library, Project State Report, and cross-references — documentation only |
 | Business decision | Further reduce chat-history dependence; make Joel → ChatGPT → Cursor cycles recoverable and repeatable |
 | Architectural decision | Constitution is highest-order law; milestones append-only; project-state-report is milestone-level state; prompts are templates not scope licenses |
-| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) (task specified; template aligned) |
-| Approved Cursor prompt summary | Create constitution, milestones, prompts/*, project-state-report; update listed cross-ref docs and Cursor rules; no application/migration/test changes; do not commit |
-| Files expected to change | `docs/platform-constitution.md`, `docs/milestones.md`, `docs/prompts/**`, `docs/project-state-report.md`, and listed governance cross-refs / AGENTS.md / selected `.cursor/rules` |
+| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | Create constitution, milestones, prompts/*, project-state-report; update listed cross-ref docs and Cursor rules; no application/migration/test changes |
+| Files expected to change | Governance/documentation paths only |
 | Files prohibited from changing | `app/**`, `migrations/**`, models, routes, templates, services, repositories, tests, business logic |
-| Implementation result | Constitution, milestones, prompt library, project-state-report, and cross-refs created/updated; no application/migration/test code changed; validation passed (see Tests) |
-| Tests | `./venv/bin/python -m pytest -q` → **78 passed**, 43 warnings (2026-07-25); `git diff --check` clean; 171 internal doc links checked, 0 broken |
-| Project-state-report update | Yes — Part A template + Part B baseline |
-| Milestone entry update | Yes — Milestone 001 recorded (Completed pending baseline commit) |
-| Constitutional issue raised | None (establishing Constitution v1.0) |
-| Unresolved issues | Live alembic `current` still To be verified; governance baseline commit still pending Joel approval |
-| Next approved step | Validate docs/tests; Joel review; then commit governance baseline |
-| Next approved prompt | None for product implementation until baseline commit + Feature Gate |
-| Commit hash | Pending |
+| Implementation result | Governance baseline delivered and committed: **39** files, docs/rules/AGENTS/README only; **no** app/migration/test changes |
+| Tests / validation | `./venv/bin/python -m pytest -q` → **78 passed**, 43 warnings; `git diff --check` clean; **171** internal links checked, **0** broken |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes — later marked Completed at `29d1ba9` |
+| Constitutional issue raised | None (established Constitution v1.0) |
+| Unresolved issues | Live alembic `current` To be verified; push to origin pending |
+| Next approved step | Record milestone completion in docs; then `git push origin main` when Joel directs |
+| Next approved prompt | **Not yet created** — pending Product Architecture Review |
+| Commit hash | `29d1ba9` — *Complete Estimator governance baseline and prompt library* |
 
 ### 2026-07-25 — Platform Governance Foundation
 
@@ -78,12 +101,12 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Approved Cursor prompt summary | Create `docs/**`, `.cursor/rules/**`, `AGENTS.md`; inspect repo; do not touch models/migrations/routes/business logic except README links if needed |
 | Files expected to change | `docs/**`, `.cursor/rules/**`, `AGENTS.md`, root `README.md` (pointer) |
 | Files prohibited from changing | Application code under `app/` (except none intended), `migrations/versions/**`, schemas, tests behaviour |
-| Implementation result | Governance document tree created; module docs grounded in code; Cursor rules added |
+| Implementation result | Governance document tree created; module docs grounded in code; Cursor rules added; later included in `29d1ba9` |
 | Tests | `./venv/bin/python -m pytest -q` → **78 passed**, 43 warnings (2026-07-25) |
 | Project-state-report update | Added in follow-on baseline completion task |
-| Milestone entry update | Recorded as Milestone 001 in follow-on task |
+| Milestone entry update | Recorded as Milestone 001 |
 | Constitutional issue raised | N/A at time of sprint |
-| Unresolved issues | Live alembic `current` vs heads needs Flask-Migrate verification; authz depth unverified; M024-style product readiness for Estimator not yet run |
-| Next approved step | Governance baseline completion (Constitution, prompts, state report), then Joel-approved commit |
-| Next approved prompt | Documentation baseline completion prompt |
-| Commit hash | To be filled after Joel-approved commit |
+| Unresolved issues | Live alembic `current` vs heads needs Flask-Migrate verification; authz depth unverified |
+| Next approved step | Completed via baseline commit `29d1ba9` |
+| Next approved prompt | Superseded by Product Architecture Review (not yet created) |
+| Commit hash | `29d1ba9` (governance baseline commit includes this work) |

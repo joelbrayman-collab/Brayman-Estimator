@@ -36,17 +36,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Field | Content |
 |-------|---------|
 | Milestone | Platform Governance Foundation |
-| Status | **Completed pending baseline commit** |
+| Status | **Completed** |
 | Branch | `main` |
 | Base commit | `7b8d5ca` |
 | Date | 2026-07-25 |
 | Objective | Establish repository-based governance, architecture documentation, development workflow, module ownership, Cursor rules, handoff process, and definition of done. |
-| Deliverables | `docs/` governance tree (vision, architecture, principles, governance, workflow, standards, DoD, roadmap, current-state, session-handoff, chat-workflow-log, AiRIA lessons); `docs/modules/*`; `docs/adr` template; `AGENTS.md`; `.cursor/rules/*`; root `README.md` pointer. Follow-on baseline adds Constitution, milestone history, prompt library, project state report. |
-| Validation | Prior governance sprint: **78 tests passed**, 43 warnings; `git diff --check` passed; no broken internal doc links; no application, migration, or test files changed. Re-verify after this baseline completion task. |
+| Deliverables | `docs/` governance tree (vision, architecture, principles, governance, workflow, standards, DoD, roadmap, current-state, session-handoff, chat-workflow-log, AiRIA lessons); `docs/modules/*`; `docs/adr` template; `AGENTS.md`; `.cursor/rules/*`; root `README.md` pointer; Constitution; milestone history; prompt library; project state report. Commit **`29d1ba9`** included **39** governance/documentation files only; **no** application, migration, or test files changed. |
+| Validation | **78 tests passed**, 43 warnings; `git diff --check` clean; **171** internal links checked, **0** broken; no application, migration, or test files changed. |
 | Architectural findings | Modular Flask application; estimate versioning and locking exist; proposal snapshots exist; disabled navigation placeholders for future modules; `project_controls` package exists; hard-coded development `SECRET_KEY` requires later cleanup; accepted-proposal immutability needs targeted product review. |
-| Open decisions | Next product milestone; authentication model; proposal acceptance → project creation; whether Project Controls needs a dedicated module document. |
-| Next milestone | Governance Baseline Completion and Commit |
-| Commit | Pending |
+| Open decisions | Next product milestone (pending Product Architecture Review); authentication model; proposal acceptance → project creation; whether Project Controls needs a dedicated module document. |
+| Next milestone | Milestone 002 — Product Architecture Review and Next-Milestone Selection |
+| Commit | `29d1ba9` — *Complete Estimator governance baseline and prompt library* |
+| Remote at record time | Local `main` ahead of `origin/main` by **1**; **not yet pushed** (verified 2026-07-25) |
 
 ---
 

@@ -13,10 +13,13 @@ Keep short. Refresh often. Mark unverified facts explicitly.
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD (sprint start) | `7b8d5ca` |
-| Remote | `origin/main` (was in sync at sprint start) |
+| HEAD (verified) | `29d1ba9` — *Complete Estimator governance baseline and prompt library* |
+| Pre-governance base | `7b8d5ca` |
+| Remote | Local `main` **ahead of `origin/main` by 1**; commit **committed locally**, **not yet pushed** (verified 2026-07-25) |
+| Working tree | Clean immediately after `29d1ba9`; re-check `git status` after any doc updates |
 | App | Flask factory `app.create_app` |
 | DB default | SQLite `brayman_estimator.db` under instance |
+| Governance | **Active** — Constitution, docs, AGENTS.md, Cursor rules, prompt library committed at `29d1ba9` (39 governance/documentation files; no app/migration/test changes in that commit) |
 
 ## Implemented capabilities (evidenced)
 
@@ -53,28 +56,32 @@ From `app/navigation.py`: Purchase Orders, Job Costing, Reports, AI Assistant, S
 ## Tests
 
 - Suite under `tests/`
-- `./venv/bin/python -m pytest -q` → **78 passed**, 43 warnings (2026-07-25)
-- Re-run and record after each sprint.
+- Last verified: `./venv/bin/python -m pytest -q` → **78 passed**, 43 warnings (2026-07-25)
+- Not re-run for documentation-only milestone-record updates unless required
 
 ## Known risks
 
 - Development `SECRET_KEY` hard-coded in `app/__init__.py`
 - Change-order audit trail UI marked future in template
 - Proposal Accepted status exists; formal acceptance → project creation snapshot flow incomplete as product
-- Governance docs are new — process adoption still required
+- Live Alembic `current` still unverified
 
 ## Current milestone
 
-**Platform Governance Foundation** (documentation only).
+**Milestone 001 — Platform Governance Foundation:** **Completed** at `29d1ba9`.
 
-## Recommended next governance step
+**Next:** Milestone 002 — Product Architecture Review and Next-Milestone Selection (planning / Feature Gate — **not** implementation yet).
 
-1. Review and approve this foundation.
-2. Commit with message: `Add Estimator platform governance foundation`
-3. Run Feature Gate for the next **single** product milestone (Joel priority).
+## Recommended next steps
+
+1. Push `29d1ba9` to `origin/main` when Joel directs.
+2. Product Architecture Review: compare implemented workflows to product vision; identify risks/gaps.
+3. Select and Feature-Gate **one** next product milestone (no specific product feature approved yet).
 
 ## Related
 
 - [session-handoff.md](session-handoff.md)
+- [project-state-report.md](project-state-report.md)
+- [milestones.md](milestones.md)
 - [platform-roadmap.md](platform-roadmap.md)
 - [architecture.md](architecture.md)

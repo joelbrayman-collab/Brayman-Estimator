@@ -47,38 +47,42 @@ Copy into Part B (or a dated archive section) when refreshing.
 
 # PART B — Current Baseline Report
 
-Populated only from verified repository facts and the prior governance implementation report. Unverified items marked accordingly.
+Populated only from verified repository facts. Unverified items marked accordingly.
 
 | Field | Content |
 |-------|---------|
 | Report date | 2026-07-25 |
 | Repository | Brayman-Estimator (The Estimator) |
 | Current branch | `main` |
-| Base commit | `7b8d5ca` |
-| Latest completed milestone | Milestone 001 — Platform Governance Foundation (**Completed pending baseline commit**) |
-| Current milestone | Governance Baseline Completion and Commit |
+| Current commit | `29d1ba9` |
+| Base commit (pre-governance) | `7b8d5ca` |
+| Latest completed milestone | Milestone 001 — Platform Governance Foundation (**Completed**) |
+| Current milestone | Milestone 002 — Product Architecture Review and Next-Milestone Selection |
 | Product status | Core estimating/proposal/change-order capabilities present on `main`; future modules shown as disabled nav placeholders |
-| Architecture status | Modular Flask app; governance docs distinguish Current / Intended / Future; Constitution v1.0 Active |
+| Architecture status | Modular Flask app; governance system **active**; Constitution v1.0 Active; Current / Intended / Future documented |
 | Implemented capabilities | Clients, Projects, Cost Items, Assemblies, Estimates, Proposals, Change Orders; estimate versioning and locking observed; proposal snapshots observed |
-| Incomplete work | Governance foundation implemented but **not yet committed**; product Feature-Gated milestones not yet selected |
+| Incomplete work | Product Feature-Gated milestones not yet selected; live Alembic `current` not yet verified |
 | Database and migration status | Alembic ScriptDirectory head observed: `e8b2c4d15a90`. Live database current revision: **To be verified** |
-| Test status | `./venv/bin/python -m pytest -q` → **78 passed**, 43 warnings (2026-07-25, after baseline documentation edits) |
-| Documentation status | Governance docs, AGENTS.md, Cursor rules present; Constitution, milestones, prompt library, this report added in baseline completion |
+| Test status | Last verified: `./venv/bin/python -m pytest -q` → **78 passed**, 43 warnings (2026-07-25). Not re-run for this documentation-only milestone-record update. |
+| Documentation status | Governance baseline **complete** and committed locally at `29d1ba9` |
 | Security or technical risks | Hard-coded development `SECRET_KEY` is an open technical risk; accepted proposal immutability requires targeted review |
-| Decisions made | Repository is system of record; Feature Gate required; Rules 1–12 documented; Constitution Articles 1–12 Active |
-| Decisions pending | Next product milestone; authentication model; proposal acceptance → project creation; whether Project Controls needs a dedicated module document |
-| Uncommitted work | Governance documentation / AGENTS.md / `.cursor/rules` / README pointer (confirm with `git status`) |
-| Next approved milestone | Review, **commit governance baseline**, then Feature-Gate **one** product milestone |
+| Decisions made | Repository is system of record; Feature Gate required; Rules 1–12 documented; Constitution Articles 1–12 Active; governance baseline committed |
+| Decisions pending | Next product milestone (after Product Architecture Review); authentication model; proposal acceptance → project creation; whether Project Controls needs a dedicated module document |
+| Uncommitted work | Milestone-record doc updates in progress (this task) — confirm with `git status` after edits |
+| Next approved milestone | Milestone 002 — Product Architecture Review and Next-Milestone Selection |
 | Exact resume commands | See below |
 | Documents to read first | `AGENTS.md` → `docs/platform-constitution.md` → this file → `docs/current-state.md` → (see `docs/README.md` order) |
-| Approved next Cursor prompt location or summary | None approved for product implementation until baseline commit and Feature Gate for the next milestone |
-| Commit status | Pending Joel approval |
+| Approved next Cursor prompt location or summary | **None** — not yet created; pending Product Architecture Review and Feature Gate |
+| Commit status | Governance baseline **committed locally** (`29d1ba9`). Remote: **ahead of `origin/main` by 1**; **not yet pushed**. Working tree: clean immediately after `29d1ba9` (verified); dirty only if this record-update is uncommitted. |
+| Governance baseline | **Complete** |
 
 ### Resume commands (Cursor Terminal)
 
 ```bash
 cd /Users/joelbrayman/Desktop/Brayman-Estimator
 git status
-git rev-parse HEAD
-./venv/bin/python -m pytest -q
+git log -1 --oneline
+git push origin main
 ```
+
+After push: conduct Product Architecture Review and Feature-Gate **one** product milestone. **No product implementation** until that gate exists.

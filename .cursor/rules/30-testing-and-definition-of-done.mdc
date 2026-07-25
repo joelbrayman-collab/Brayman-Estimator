@@ -1,0 +1,12 @@
+---
+description: Testing and definition of done
+alwaysApply: true
+---
+
+# Testing and definition of done
+
+- Standards: `docs/testing-standards.md`. Completion: `docs/definition-of-done.md`.
+- Run focused tests and the full suite (`./venv/bin/python -m pytest -q`) before claiming done.
+- Never claim tests passed unless they were actually run successfully.
+- Migrations require explicit approval and review (`docs/architecture-principles.md` Rule 7). Do not generate Alembic revisions casually.
+- A feature is incomplete until tests, docs, roadmap, current-state, chat-workflow-log, and session-handoff updates are done (as applicable).

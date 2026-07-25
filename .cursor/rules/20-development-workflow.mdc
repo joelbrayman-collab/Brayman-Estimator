@@ -1,0 +1,14 @@
+---
+description: Joel → ChatGPT → Cursor development workflow
+alwaysApply: true
+---
+
+# Development workflow
+
+- Lifecycle: `docs/development-workflow.md`.
+- Use a template from `docs/prompts/` for Cursor work; record the **approved prompt summary** in `docs/chat-workflow-log.md`.
+- Inspect the repository before editing (`git status`, relevant files).
+- Implement only the approved Cursor prompt scope.
+- Stop and report when requirements conflict, migrations appear unapproved, or ownership is unclear.
+- Use **Cursor Terminal** for git/pytest/Flask inside this repo; say the terminal name explicitly when documenting commands.
+- After implementation: report files changed, assumptions, risks, and exact test results for ChatGPT review before commit.

@@ -1,0 +1,13 @@
+---
+description: Architecture principles and module ownership
+alwaysApply: true
+---
+
+# Architecture and ownership
+
+- Follow `docs/architecture-principles.md` (Rules 1–12). Changing them requires an ADR and Joel approval.
+- Respect module ownership in `docs/modules/`. Do not take ownership of another module’s records.
+- Distinguish Current vs Intended vs Future in `docs/architecture.md`. Do not claim unimplemented features exist.
+- Accepted proposals / historical commercial records: version or supersede—do not silently overwrite.
+- Cross-module access must use documented service/repository boundaries.
+- Do not change existing functionality incidentally while working on an unrelated feature.

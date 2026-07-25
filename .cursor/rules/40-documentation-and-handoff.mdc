@@ -1,0 +1,16 @@
+---
+description: Documentation and session handoff requirements
+alwaysApply: true
+---
+
+# Documentation and handoff
+
+- Update `docs/current-state.md` and `docs/session-handoff.md` after substantial work.
+- Update `docs/project-state-report.md` at milestone completion (and major interruptions).
+- Maintain append-only `docs/milestones.md` when milestones complete.
+- Distinguish: session-handoff (immediate resume) vs project-state-report (milestone state) vs milestones (history).
+- Append entries to `docs/chat-workflow-log.md` (do not overwrite history).
+- Update module docs and `docs/platform-roadmap.md` when status changes.
+- Create ADRs from `docs/adr/ADR-000-template.md` when required by governance.
+- Cite code paths when documenting implemented architecture.
+- Mark unverified facts as “To be verified”—never invent migration heads, test counts, or feature completeness.

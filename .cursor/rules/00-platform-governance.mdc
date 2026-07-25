@@ -1,0 +1,14 @@
+---
+description: Platform governance authority for The Estimator
+alwaysApply: true
+---
+
+# Platform governance
+
+- Repository documentation under `docs/` is the system of record. Chat history is not.
+- `docs/platform-constitution.md` has **highest authority** among governance documents.
+- Read `AGENTS.md` and `docs/README.md` before implementing features.
+- Joel owns product vision and approvals. ChatGPT designs and reviews. Cursor implements approved scope only.
+- Every feature needs Feature Gate answers in `docs/platform-governance.md` before code changes.
+- Do not expand scope without approval. Do not invent construction business rules.
+- Prefer small, bounded changes. No unrelated refactors.

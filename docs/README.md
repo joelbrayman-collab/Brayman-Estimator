@@ -50,6 +50,7 @@ Also read [`platform-governance.md`](platform-governance.md) and [`definition-of
 | [architecture-principles.md](architecture-principles.md) | Numbered durable platform rules | **Architectural** — changes require ADR + Joel |
 | [architecture.md](architecture.md) | Current vs intended vs future architecture | Factual for *current*; aspirational elsewhere |
 | [architecture/](architecture/) | Domain architecture (Plan Intelligence, Supplier, …) | Future unless marked Current |
+| [architecture/M004-plan-intelligence-readiness-report.md](architecture/M004-plan-intelligence-readiness-report.md) | Milestone 004 readiness report | Historical / operational |
 | [platform-governance.md](platform-governance.md) | Decision authority, Feature Gate, ownership | **Governing** |
 | [development-workflow.md](development-workflow.md) | Joel → ChatGPT → Cursor lifecycle | **Governing** for AI sessions |
 | [documentation-standards.md](documentation-standards.md) | How docs are written and updated | Governing for docs |

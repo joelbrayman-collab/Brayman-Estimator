@@ -15,16 +15,19 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 |--------|--------------|----------------------|
 | Core CRM and project records | **Current** (Clients, Projects) | [modules/crm.md](modules/crm.md), [modules/projects.md](modules/projects.md) |
 | Estimating and assemblies | **Current** | [modules/estimating.md](modules/estimating.md) |
-| Plan Intelligence | **Future** | [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md) |
-| Automated Quantity Take-Off | **Future** | Same Plan Intelligence doc |
-| Human Review and Source Traceability | **Future** (required by ADR-005/006) | Embedded in Plan Intelligence |
+| Plan Intelligence | **Partial** — Phase A PDF upload/storage (M005); take-off future | [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md) · [modules/plan-intelligence.md](modules/plan-intelligence.md) · [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md) |
+| Automated Quantity Take-Off | **Future** | Same Plan Intelligence docs |
+| Human Review and Source Traceability | **Future** (ADR-005/006/011) | Embedded in Plan Intelligence |
 | Supplier Catalogue Management | **Future** (only free-text `CostItem.supplier` today) | [architecture/supplier-catalogue-inventory-pricing.md](architecture/supplier-catalogue-inventory-pricing.md) |
 | Supplier Inventory and Pricing Integrations | **Future** | Supplier architecture; Phase F |
 | Procurement and Purchase-Order Preparation | **Future** (nav placeholder only) | Supplier + Projects/Procurement boundary |
-| Proposal and PDF Output | **Current** (engine + snapshot + PDF) | [modules/proposals.md](modules/proposals.md); immutability hardening pending |
+| Proposal and PDF Output | **Current** (snapshot + PDF; Accepted immutability enforced) | [modules/proposals.md](modules/proposals.md) |
 | Project Controls and Actual-Cost Feedback | **Partial** (Change Orders current; job cost future) | [modules/projects.md](modules/projects.md) |
 
 **Differentiator (long-term):** Plan → reviewed take-off → estimate → supplier-priced procurement → proposal, with citations and no silent commercial overwrite.
+
+**Next strategic platform capability:** **Plan Intelligence Phase B** (sheet/scale/manual measurement) — Feature Gate required. Phase A upload/storage is implemented (pending commit).
+
 
 ---
 
@@ -44,20 +47,23 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 - Proposal PDF generation (branding/logo support)
 - Change Orders (Project Controls module)
 - App shell branding and navigation structure
+- Plan Intelligence Phase A — project-scoped searchable PDF upload/storage (Milestone 005; pending commit)
 
 **Governance:**
 
 - Platform Governance Foundation (Milestone 001) + baseline tag `v0.1-governance-baseline`
-- Milestone 002 Proposals Feature Gate FG-001 + ADR-001–004 (docs; see working tree / commit when directed)
-- Strategic architecture docs for Plan Intelligence and Supplier Catalogue (this update; docs only)
+- Milestone 002 Proposals Feature Gate FG-001 + ADR-001–004 (+ strategic ADRs / architecture docs)
+- Milestone 003 Accepted Proposal Immutability (`c59ec01`)
+- Milestone 004 Plan Intelligence architecture documentation (pending commit)
+- Milestone 005 FG-002 Approved + ADR-012 Proposed (pending commit)
 
 ---
 
 ## Current (near-term product governance)
 
-- Milestone 003 — Accepted Proposal Immutability: **implemented** (service guard + UI + tests; pending commit)
-- Milestone 002 / strategic architecture documentation still uncommitted in working tree
-- Strategic Plan Intelligence / Supplier programs remain architecture-only until Feature-Gated
+- **Milestone 005 — Phase A PDF upload:** implemented in working tree; pending Joel-directed commit
+- Next implementation candidate: Feature Gate **Plan Intelligence Phase B** (sheet/scale/manual measurement) — not authorized yet
+- Drawing Set / Revision UI deferred (ADR-012 documentation only)
 
 ---
 
@@ -65,7 +71,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 | Phase | Name | Intent | Depends on |
 |-------|------|--------|------------|
-| **A** | PDF plan upload and storage | Project-scoped upload, secure storage, document register | ADR-007, ADR-009, ADR-010 (light); Feature Gate |
+| **A** | PDF plan upload and storage | Project-scoped upload, secure storage, document register | **Done (M005)** — FG-002; ADR-012 docs |
 | **B** | Sheet classification, scale confirmation, manual measurement | Human-scale confirm; count/length/area tools; citations | Phase A |
 | **C** | AI-assisted extraction (narrow trade/assembly) | One assembly vocabulary; confidence scores | Phase B; ADR-005, ADR-010 |
 | **D** | Reviewed quantities → estimate assemblies | Explicit map + human approve into `EstimateVersion` | Phase C; ADR-006, ADR-007 |
@@ -96,10 +102,10 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Next recommended milestones
 
-1. **Joel:** Accept/amend ADR-001–004 (Proposals) and ADR-005–010 (strategic).
-2. **Milestone 003 — Accepted Proposal Immutability** (near-term product hardening).
-3. **Feature Gate — Plan Intelligence Phase A POC** (docs + prompt), then implement Phase A only.
-4. Later: Phases B→D; separately Feature-Gate Phase E supplier CSV import.
+1. **Joel:** Review/commit M004 docs + M005 Phase A; accept/amend ADR-012 and related Plan Intelligence ADRs as needed.
+2. **Feature Gate — Plan Intelligence Phase B** (sheet/scale/manual measurement), then implement Phase B.
+3. Phase C→D per roadmap; Supplier Phase E as a separate program when ready.
+4. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate.
 
 ---
 

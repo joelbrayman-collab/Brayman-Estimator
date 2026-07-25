@@ -12,6 +12,7 @@ def create_app(config=None):
     app.config["SECRET_KEY"] = "development-secret-key"
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///brayman_estimator.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["PLAN_UPLOAD_MAX_BYTES"] = 25 * 1024 * 1024
 
     if config:
         app.config.update(config)
@@ -29,6 +30,7 @@ def create_app(config=None):
     from app.routes.proposal_templates import proposal_templates_bp
     from app.routes.proposals import proposals_bp
     from app.project_controls import project_controls_bp
+    from app.plan_intelligence import plan_intelligence_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(clients_bp)
@@ -39,6 +41,7 @@ def create_app(config=None):
     app.register_blueprint(proposal_templates_bp)
     app.register_blueprint(proposals_bp)
     app.register_blueprint(project_controls_bp)
+    app.register_blueprint(plan_intelligence_bp)
 
     from app.shell import register_shell_context
 

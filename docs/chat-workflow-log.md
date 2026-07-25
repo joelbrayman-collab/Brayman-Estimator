@@ -42,6 +42,52 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-07-25 — Milestone 005 FG-002 + Phase A PDF upload
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-07-25 |
+| Branch | `main` @ `c59ec01` (uncommitted M004+M005) |
+| Objective | ADR-012; FG-002 pass; Phase A PDF upload/storage only |
+| Business decision | Authorize Phase A foundation; defer revision UI |
+| Architectural decision | ADR-012 Proposed (drawing set/revision ownership); flat `plan_documents` interim |
+| Prompt template used | Milestone 005 implementation prompt |
+| Approved Cursor prompt summary | FG-002 + Phase A; no OCR/CAD/AI/estimate insert; no commits |
+| Files expected to change | plan_intelligence package; templates; migration; tests; governance docs |
+| Files prohibited from changing | Estimating redesign; Proposals immutability; unrelated modules |
+| Implementation result | FG-002 Approved; ADR-012 docs; Phase A routes/services/storage/migration/tests |
+| Tests | `pytest tests/test_plan_upload.py` — 8 passed; full suite `./venv/bin/python -m pytest -q` → **97 passed**, 68 warnings |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes — M005 |
+| Constitutional issue raised | None |
+| Unresolved issues | Commit pending; ADR-012 acceptance; Phase B gate |
+| Next approved step | Joel review/commit; Feature Gate Phase B when ready |
+| Next approved prompt | None |
+| Commit hash | Pending |
+
+### 2026-07-25 — Milestone 004 Plan Intelligence architecture
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-07-25 |
+| Branch | `main` @ `c59ec01` |
+| Objective | Architecture/docs for Plan Intelligence pipeline, model, review, traceability, estimate mapping, ADRs, POC — no code |
+| Business decision | Plan Intelligence is the next strategic differentiator (plans → take-off → estimate → proposal) |
+| Architectural decision | PDF-first; human approval mandatory; citations first-class; confidence thresholds via ADR-011; feed estimate builder without redesign |
+| Prompt template used | Documentation / architecture |
+| Approved Cursor prompt summary | Docs only; no app/migrations/tests/deps/commits |
+| Files expected to change | `docs/modules/plan-intelligence.md`, `docs/architecture/**`, ADRs, roadmap/milestones/state |
+| Files prohibited from changing | `app/**`, `migrations/**`, `tests/**`, `requirements.txt` |
+| Implementation result | Architecture expanded; module rewritten; readiness report; ADR-011 added; ADR-005/006 updated |
+| Tests | Not re-run (docs-only). Last verified: 89 passed, 53 warnings |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes — Milestone 004 |
+| Constitutional issue raised | Reinforced no silent AI commercial insert |
+| Unresolved issues | ADR acceptance; Phase A Feature Gate; numeric confidence values |
+| Next approved step | Joel review; commit M004 docs when directed |
+| Next approved prompt | None until Phase A Feature Gate |
+| Commit hash | Pending |
+
 ### 2026-07-25 — Milestone 003 Accepted Proposal Immutability
 
 | Field | Content |

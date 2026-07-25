@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Plan PDF | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Upload Plan PDF{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Plan Intelligence</p>
+        <h1>Upload Plan PDF</h1>
+        <p class="muted-copy">{{ project.name }} · PDF only · searchable preferred</p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Back to plans</a>
+    </div>
+</div>
+
+<section class="form-panel">
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-grid">
+            <label>
+                Plan PDF *
+                <input type="file" name="plan_file" accept=".pdf,application/pdf" required>
+            </label>
+            <label>
+                Notes
+                <input type="text" name="notes" value="{{ notes or '' }}" maxlength="500">
+            </label>
+        </div>
+        <p class="muted-copy">
+            Phase A stores the file privately for this project. OCR, CAD, AI take-off, and revision
+            workflows are not included in this milestone.
+        </p>
+        <div class="form-actions">
+            <button type="submit">Upload</button>
+            <a href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

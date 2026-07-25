@@ -12,5 +12,6 @@ Feature Gate documents answer the twelve governance questions in [platform-gover
 | ID | Title | Status |
 |----|-------|--------|
 | [FG-001](FG-001-proposals-module.md) | Proposals Module — Product Architecture Review | Draft for Joel approval |
+| [FG-002](FG-002-plan-intelligence-phase-a.md) | Plan Intelligence Phase A (PDF Upload & Storage) | **Approved for Phase A** (Milestone 005) |
 
 Implementation is not authorized by a Feature Gate until Joel approves the gate and the corresponding Cursor prompt.

@@ -18,7 +18,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 ## Index
 
-### Proposals (Milestone 002)
+### Proposals (Milestone 002–003)
 
 | ADR | Title | Status |
 |-----|-------|--------|
@@ -27,16 +27,24 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | [ADR-003](ADR-003-optional-crm-foreign-keys.md) | Optional CRM Foreign Keys on Proposals | Proposed |
 | [ADR-004](ADR-004-proposal-acceptance-workflow.md) | Proposal Acceptance Workflow | Proposed |
 
-### Plan Intelligence / Take-Off / Supplier (strategic)
+### Plan Intelligence / Take-Off (Milestone 004–005)
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-005](ADR-005-ai-takeoff-traceability.md) | AI-Generated Take-Off Traceability | Proposed |
+| [ADR-005](ADR-005-ai-takeoff-traceability.md) | AI Take-Off Source Traceability | Proposed |
 | [ADR-006](ADR-006-human-approval-before-estimate-insertion.md) | Human Approval Before Estimate Insertion | Proposed |
 | [ADR-007](ADR-007-plan-and-estimate-version-ownership.md) | Plan and Estimate Version Ownership | Proposed |
-| [ADR-008](ADR-008-supplier-price-snapshotting.md) | Supplier Price Snapshotting | Proposed |
 | [ADR-009](ADR-009-pdf-first-versus-cad-first.md) | PDF-First versus CAD-First Ingestion | Proposed |
+| [ADR-011](ADR-011-ai-confidence-threshold-policy.md) | AI Confidence Threshold Policy | Proposed |
 | [ADR-010](ADR-010-build-versus-buy-document-processing.md) | Build versus Buy for CAD and Document Processing | Proposed |
+| [ADR-012](ADR-012-plan-document-version-ownership.md) | Plan Document Version Ownership | Proposed |
 
-Related Feature Gate: [FG-001 Proposals Module](../feature-gates/FG-001-proposals-module.md).
+### Supplier (strategic)
+
+| ADR | Title | Status |
+|-----|-------|--------|
+| [ADR-008](ADR-008-supplier-price-snapshotting.md) | Supplier Price Snapshotting | Proposed |
+
+Related Feature Gates: [FG-001 Proposals Module](../feature-gates/FG-001-proposals-module.md) · [FG-002 Plan Intelligence Phase A](../feature-gates/FG-002-plan-intelligence-phase-a.md).
 Strategic architecture: [../architecture/](../architecture/).
+M004 readiness: [../architecture/M004-plan-intelligence-readiness-report.md](../architecture/M004-plan-intelligence-readiness-report.md).

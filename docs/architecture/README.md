@@ -9,9 +9,11 @@ Domain architecture documents describe **intended** systems. They are not claims
 
 | Document | Status |
 |----------|--------|
-| [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) | Future |
+| [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) | Future (M004 architecture) |
+| [M004-plan-intelligence-readiness-report.md](M004-plan-intelligence-readiness-report.md) | Milestone 004 report |
 | [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) | Future |
 
-Platform map: [../architecture.md](../architecture.md).  
-Principles: [../architecture-principles.md](../architecture-principles.md).  
+Platform map: [../architecture.md](../architecture.md).
+Principles: [../architecture-principles.md](../architecture-principles.md).
 Roadmap: [../platform-roadmap.md](../platform-roadmap.md).
+Module: [../modules/plan-intelligence.md](../modules/plan-intelligence.md).

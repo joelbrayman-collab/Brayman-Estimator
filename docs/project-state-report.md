@@ -5,18 +5,16 @@
 | Status | Authoritative milestone-level state |
 | Updated | 2026-07-25 |
 
-Update this report at every **completed milestone** and major interruption point.  
+Update this report at every **completed milestone** and major interruption point.
 Distinguish from:
 
-- [session-handoff.md](session-handoff.md) — immediate session continuation  
-- [milestones.md](milestones.md) — historical milestone record  
-- [current-state.md](current-state.md) — detailed verified product/repo snapshot  
+- [session-handoff.md](session-handoff.md) — immediate session continuation
+- [milestones.md](milestones.md) — historical milestone record
+- [current-state.md](current-state.md) — detailed verified product/repo snapshot
 
 ---
 
 # PART A — Standard Project State Report Template
-
-Copy into Part B (or a dated archive section) when refreshing.
 
 | Field | Content |
 |-------|---------|
@@ -47,32 +45,32 @@ Copy into Part B (or a dated archive section) when refreshing.
 
 # PART B — Current Baseline Report
 
-Populated only from verified repository facts. Unverified items marked accordingly.
-
 | Field | Content |
 |-------|---------|
 | Report date | 2026-07-25 |
 | Repository | Brayman-Estimator (The Estimator) |
 | Current branch | `main` |
-| Current commit | `71e2754` (HEAD; governance baseline + milestone record; tag `v0.1-governance-baseline`) |
+| Current commit | `c59ec01` (Accepted proposal immutability); M004+M005 uncommitted |
 | Base commit (pre-governance) | `7b8d5ca` |
-| Latest completed milestone | Milestone 001 — Platform Governance Foundation (**Completed**). Milestone 002 docs drafted (**Completed pending documentation commit**). |
-| Current milestone | Milestone 002 wrap-up → await Joel ADR approval; then Milestone 003 planning |
-| Product status | Core estimating/proposal/change-order capabilities on `main`; Proposal Builder foundation exists; Accepted immutability not enforced |
-| Architecture status | Governance active; FG-001 + ADR-001–004 **Proposed** |
-| Implemented capabilities | Clients, Projects, Cost Items, Assemblies, Estimates, Proposals (templates, snapshot, preview, PDF), Change Orders |
-| Incomplete work | Accepted immutability; formal acceptance workflow; project-from-proposal; optional CRM FKs; live Alembic verify on other envs |
-| Database and migration status | Alembic head `e8b2c4d15a90`. Local `flask db current` previously observed at head; re-verify if environment changes. |
-| Test status | Last verified full suite: **78 passed**, 43 warnings. Not re-run for Milestone 002 docs-only work. |
-| Documentation status | FG-001, ADR-001–010, Plan Intelligence + Supplier architecture docs drafted (uncommitted until Joel requests commit) |
-| Security or technical risks | Hard-coded `SECRET_KEY`; Accepted proposals editable; future AI take-off risks mitigated by ADR-005/006 (Proposed) |
-| Decisions made | Recommend Milestone 003 immutability near-term; strategic PDF-first Plan Intelligence POC (door count); Phases A–G documented |
-| Decisions pending | Joel acceptance of ADRs 001–010; M003 vs Phase A order; POC element confirmation; build-vs-buy |
-| Uncommitted work | Milestone 002 + strategic architecture documentation — confirm with `git status` |
-| Next approved milestone | **None for implementation** until Joel approves. Recommended: Milestone 003 immutability and/or Feature Gate Phase A upload POC |
+| Latest completed milestone | Milestone 005 Phase A in working tree (pending commit). M003 last committed product code. M004 docs also pending commit. |
+| Current milestone | Milestone 005 — FG-002 + Phase A PDF Upload (**complete pending commit**) |
+| Product status | CRM + Estimating + Proposals (Accepted locked) + Change Orders + Plan Intelligence Phase A upload |
+| Architecture status | Plan Intelligence architecture (M004) + ADR-012 revision ownership (Proposed). Phase A storage implemented; take-off not started. |
+| Implemented capabilities | Clients, Projects, Cost Items, Assemblies, Estimates, Proposals (+ immutability), Change Orders, Plan PDF upload/storage |
+| Incomplete work | Phases B–G; Drawing Set/Revision UI; supplier catalogue; formal acceptance workflow |
+| Database and migration status | Alembic head `f9c1a2b3d4e5` (`plan_documents`). Apply per environment. |
+| Test status | Full suite: **97 passed**, 68 warnings. Phase A: 8 passed. |
+| Documentation status | ADR-012; FG-002; module/milestones/roadmap/state updates |
+| Security or technical risks | `SECRET_KEY`; FK ON DELETE mismatch; Phase A hard-delete vs future archival (ADR-012) |
+| Decisions made | FG-002 PASS for Phase A; ADR-012 documents future revision ownership without implementing it |
+| Decisions pending | Accept ADR-012; Phase B Feature Gate; confidence numeric values; auth; build-vs-buy |
+| Uncommitted work | M004 docs + M005 Phase A code/docs (confirm `git status`) |
+| Next approved milestone | **None** until Phase B Feature Gate |
+| Exact resume commands | See below |
+| Documents to read first | [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md) → [ADR-012](adr/ADR-012-plan-document-version-ownership.md) → [modules/plan-intelligence.md](modules/plan-intelligence.md) |
 | Approved next Cursor prompt location or summary | **None** |
-| Commit status | `main` synced with `origin/main` at start of M002 task (`71e2754`); M002 docs pending commit |
-| Governance baseline | **Complete** (pushed; tagged) |
+| Commit status | Pending Joel-directed commit |
+| Governance baseline | Complete |
 
 ### Resume commands (Cursor Terminal)
 
@@ -80,6 +78,7 @@ Populated only from verified repository facts. Unverified items marked according
 cd /Users/joelbrayman/Desktop/Brayman-Estimator
 git status
 git log -1 --oneline
+./venv/bin/python -m pytest -q
 ```
 
-Next: Joel reviews FG-001 / ADRs; commit docs when directed; then Feature-Gate Milestone 003 prompt — **no implementation** until approved.
+Next: Joel reviews M004+M005; commit when directed; Feature-Gate Phase B before take-off code.

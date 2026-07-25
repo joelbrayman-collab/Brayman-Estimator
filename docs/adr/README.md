@@ -27,7 +27,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | [ADR-003](ADR-003-optional-crm-foreign-keys.md) | Optional CRM Foreign Keys on Proposals | Proposed |
 | [ADR-004](ADR-004-proposal-acceptance-workflow.md) | Proposal Acceptance Workflow | Proposed |
 
-### Plan Intelligence / Take-Off (Milestone 004–007)
+### Plan Intelligence / Document Intelligence (Milestone 004–007)
 
 | ADR | Title | Status |
 |-----|-------|--------|
@@ -43,6 +43,13 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | [ADR-015](ADR-015-extracted-metadata-ownership-and-provenance.md) | Extracted Metadata Ownership and Provenance | Proposed |
 | [ADR-016](ADR-016-document-intelligence-search-strategy.md) | Document Intelligence Search Strategy | Proposed |
 
+### Sheet Intelligence (Milestone 008 — architecture only)
+
+| ADR | Title | Status |
+|-----|-------|--------|
+| [ADR-017](ADR-017-sheet-metadata-suggestion-and-review-workflow.md) | Sheet Metadata Suggestion and Review Workflow | Proposed |
+| [ADR-018](ADR-018-sheet-uniqueness-duplicates-and-supersession.md) | Sheet Uniqueness, Duplicates, and Supersession | Proposed |
+
 ### Supplier (strategic)
 
 | ADR | Title | Status |
@@ -53,5 +60,6 @@ Related Feature Gates: [FG-001 Proposals Module](../feature-gates/FG-001-proposa
 Strategic architecture: [../architecture/](../architecture/).
 M004 readiness: [../architecture/M004-plan-intelligence-readiness-report.md](../architecture/M004-plan-intelligence-readiness-report.md).
 M006 readiness: [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md).
+M008 readiness: [../architecture/M008-sheet-intelligence-readiness-report.md](../architecture/M008-sheet-intelligence-readiness-report.md).
 
-> Sheet Intelligence ADRs (017+) are maintained with the Sheet Intelligence architecture milestone and are not required for M007 indexing.
+> ADR-017/018 are **architecture decisions only**. They do not authorize sheet tables, UI, or migrations until a Feature-Gated implementation milestone.

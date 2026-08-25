@@ -136,8 +136,9 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
 ### Other future capabilities
 
+- **Project document package** (internal breakdown, customer estimate, QuickBooks export, Ontario contract + warranty) — [architecture/project-document-package.md](architecture/project-document-package.md)
 - Scheduling, Job Costing, Invoicing
-- QuickBooks / accounting integration
+- QuickBooks / accounting integration — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - Historical estimating intelligence
 - Electronic signature / formal proposal acceptance workflows
 - Field reporting (daily reports, timesheets)

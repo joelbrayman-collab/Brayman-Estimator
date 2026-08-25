@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-25 |
 | Policy | **Append-only** |
 
 ## Purpose

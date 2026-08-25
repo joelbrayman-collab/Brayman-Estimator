@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-25 |
 
 ## Purpose
 
@@ -42,6 +42,27 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-25 — Governance reconciliation (authoritative record, document package, pricing, legal gate)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-25 |
+| Branch | `main` @ local `ed36838`; `origin/main` @ `ee9b4b2` |
+| Objective | Documentation-only governance reconciliation; preserve post-M008 state sync; record August 25 product/governance requirements |
+| Business decision | One authoritative estimate record; four core outputs; pricing reference rule ($65/hr, 15% gross margin); no silent placeholders; 3415 Roger Stevens UAT reference case |
+| Architectural decision | QuickBooks pipeline boundary (no API); Legal Content Gate for Ontario contract/warranty; context drift mandatory stop; PRESERVE → SEARCH → VERIFY → EXECUTE |
+| Prompt template used | August 25, 2026 governance reconciliation prompt (documentation-only) |
+| Approved Cursor prompt summary | Docs only; preserve six pre-existing state-sync modifications; no app/migrations/tests/deps; no commit/push |
+| Files expected to change | `docs/` governance and state files only |
+| Files prohibited from changing | app/, migrations/, tests/, dependencies |
+| Implementation result | Extended state docs; new pricing policy, document package, QuickBooks architecture, legal template governance, UAT reference case |
+| Tests | Not run (documentation-only by design) |
+| Project-state-report update | Yes |
+| Milestone entry update | No new coded milestone |
+| Unresolved issues | Commit when Joel directs; HEAD != origin/main until push/reconcile |
+| Next approved step | Joel review; commit docs; ADR-017/018; Feature Gate before coded Sheets |
+| Commit hash | **None** (prompt forbids commit) |
+
 ### 2026-07-25 — Repository state sync after M005–M008 merge to main
 
 | Field | Content |
@@ -53,9 +74,9 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Architectural decision | Unchanged — Sheet Intelligence remains architecture/readiness only |
 | Files expected to change | `docs/current-state.md`, `project-state-report.md`, `session-handoff.md`, `platform-roadmap.md`, `milestones.md`, `chat-workflow-log.md` |
 | Files prohibited from changing | app/, migrations/, tests/ |
-| Implementation result | Docs updated to `main` @ `ee9b4b2`; clean working tree expected after commit of this sync |
+| Implementation result | Docs updated to reflect M005–M008 merged on `origin/main`; preserved in local commit `ed36838` |
 | Next approved step | Joel ADR-017/018 review; Feature Gate before sheet implementation |
-| Commit hash | Pending (docs sync) |
+| Commit hash | Local `ed36838` (not pushed); **not** `ee9b4b2` alone |
 
 ### 2026-07-25 — Milestone 008 Sheet Intelligence architecture
 

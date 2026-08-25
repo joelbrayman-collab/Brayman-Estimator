@@ -3,12 +3,12 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current** (core implemented) |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-25 |
 | Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`; `app/services/estimates.py`, `estimate_builder.py` |
 
 ## Purpose
 
-Build and version construction estimates from cost libraries and assemblies, scoped to a project.
+Build and version construction estimates from cost libraries and assemblies, scoped to a project. The Estimator must maintain the **authoritative project/estimate record** from which governed outputs derive ([project-document-package.md](../architecture/project-document-package.md)).
 
 ## Responsibilities
 
@@ -44,6 +44,8 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 ## Planned capabilities
 
+- Internal Detailed Cost Breakdown output — **Future** ([project-document-package.md](../architecture/project-document-package.md))
+- Governed pricing policy application — **Future** ([pricing-policy.md](../pricing-policy.md))
 - Historical estimating intelligence — **Future**
 - Deeper productivity tooling — Feature Gate required
 

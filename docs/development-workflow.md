@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-25 |
 
 ## Lifecycle
 
@@ -43,8 +43,13 @@ Start from [prompts/](prompts/). Every implementation prompt should include:
 - Existing functionality would be broken or changed incidentally
 - Tests cannot be run and the reason is unclear
 - Ambiguous construction business rule (Joel decision needed)
+- **Context drift** — see [platform-governance.md](platform-governance.md#context-drift-and-handoff-mandatory-stop)
 
 **Do not guess product policy.**
+
+## Resume after pause
+
+Use the governed resume procedure in [session-handoff.md](session-handoff.md). Compare `HEAD` to `origin/main` before any sync; **do not automatically pull**.
 
 ## Terminal usage
 

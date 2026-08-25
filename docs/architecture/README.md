@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-25 |
 
 Domain architecture documents describe **intended** systems. They are not claims of current implementation unless explicitly marked Current.
 
@@ -12,6 +12,8 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) | Future + Phase A / M007 page indexing current |
 | [document-intelligence.md](document-intelligence.md) | Architecture (M006); upload/pages/processing **Current** (M007) |
 | [sheet-intelligence.md](sheet-intelligence.md) | **Architecture only (M008)** — Sheets / review not implemented |
+| [project-document-package.md](project-document-package.md) | **Intended** — authoritative record + four outputs (not implemented) |
+| [quickbooks-integration.md](quickbooks-integration.md) | **Future** — export pipeline boundary (not implemented) |
 | [M004-plan-intelligence-readiness-report.md](M004-plan-intelligence-readiness-report.md) | Milestone 004 report |
 | [M006-document-intelligence-readiness-report.md](M006-document-intelligence-readiness-report.md) | Milestone 006 report |
 | [M008-sheet-intelligence-readiness-report.md](M008-sheet-intelligence-readiness-report.md) | Milestone 008 readiness (architecture) |

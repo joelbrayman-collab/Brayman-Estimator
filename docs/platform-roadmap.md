@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Planning |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-25 |
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
@@ -22,6 +22,9 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 | Supplier Inventory and Pricing Integrations | **Future** | Supplier architecture; Phase F |
 | Procurement and Purchase-Order Preparation | **Future** (nav placeholder only) | Supplier + Projects/Procurement boundary |
 | Proposal and PDF Output | **Current** (snapshot + PDF; Accepted immutability enforced) | [modules/proposals.md](modules/proposals.md) |
+| Project document package (4 outputs) | **Future** (governance recorded 2026-08-25) | [architecture/project-document-package.md](architecture/project-document-package.md) · [pricing-policy.md](pricing-policy.md) |
+| QuickBooks estimate export | **Future** (pipeline boundary documented; no API) | [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md) |
+| Ontario construction contract + warranty | **Future** (Legal Content Gate; no templates registered) | [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md) |
 | Project Controls and Actual-Cost Feedback | **Partial** (Change Orders current; job cost future) | [modules/projects.md](modules/projects.md) |
 
 **Differentiator (long-term):** Plan → reviewed take-off → estimate → supplier-priced procurement → proposal, with citations and no silent commercial overwrite.
@@ -65,9 +68,11 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-- **`main` at `ee9b4b2`** — M005–M008 merged; working tree expected clean
+- **`origin/main` at `ee9b4b2`** — M005–M008 merged; local HEAD may be `ed36838` (unpushed docs checkpoint)
+- **Documentation-only governance reconciliation in progress** (August 2026) — not a coded milestone
 - **No coded milestone in progress**
 - Next coded candidate: Sheet classification + human metadata review (Feature Gate / prompt required) — **not started**
+- Document package, QuickBooks API, contract/warranty generation — **not started** (governance recorded only)
 - Then scale / manual measure → AI quantity POC under later gates
 - Estimate mapping remains outside near-term sheet work
 
@@ -129,9 +134,10 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 - Formal proposal acceptance workflow; e-signature
 - Project creation from accepted proposal; budgets
+- **Four-output document package** (internal breakdown, customer estimate, QuickBooks export, Ontario contract + warranty) — [architecture/project-document-package.md](architecture/project-document-package.md)
 - Scheduling, daily reports, timesheets
 - Purchasing / POs (beyond prep)
-- Job costing, invoicing, QuickBooks
+- Job costing, invoicing, QuickBooks — see [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - Historical estimating intelligence; reports; settings
 - Full Plan Intelligence Phases C–G and Supplier Phases E–F as above
 

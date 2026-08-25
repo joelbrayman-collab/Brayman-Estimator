@@ -3,11 +3,19 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-25 |
 
 ## Highest-order authority
 
 The [Platform Constitution](platform-constitution.md) is the highest-order governance document. Process and Feature Gate rules here implement it; do not repeat the full Constitution.
+
+## Governance operating rule
+
+**PRESERVE → SEARCH → VERIFY → EXECUTE**
+
+- **Existing before new** — search and extend governed documents before creating duplicates.
+- **Approved baseline + authorized delta only** — do not implement beyond explicit approval.
+- **Preserve** legitimate in-progress documentation and uncommitted state-sync work unless explicitly directed otherwise.
 
 Related mandatory records:
 
@@ -91,6 +99,51 @@ A release is not ready until [definition-of-done.md](definition-of-done.md) is s
 - Using chat memory as the only record of a decision
 - Expanding scope mid-implementation without approval
 - Editing application code during a documentation-only task
+
+---
+
+## Context drift and handoff (mandatory stop)
+
+Stop substantive implementation and create or refresh a **verified handoff** when any of the following occur:
+
+- Authoritative baseline cannot be identified
+- Approval state is uncertain
+- Provenance cannot be established
+- Proposed and approved states are being confused
+- Previously superseded assumptions reappear
+- Existing work is being recreated without verification
+- Two substantive user corrections occur because of continuity/context loss
+- The system cannot confidently state: baseline, authorized delta, protected state, latest approval, current implementation status, and next action
+
+**No substantive implementation continues until authoritative state is restored.**
+
+Update [session-handoff.md](session-handoff.md), [current-state.md](current-state.md), and [chat-workflow-log.md](chat-workflow-log.md) when stopping for drift.
+
+### Resume procedure (no automatic pull)
+
+```bash
+git status
+git branch --show-current
+git log -1 --oneline
+git rev-parse HEAD
+git rev-parse origin/main
+```
+
+Then determine whether synchronization is safe. Do **not** automatically `git pull`.
+
+---
+
+## August 2026 product requirements (governance record)
+
+Recorded 2026-08-25 — **documentation only; not implemented**:
+
+| Topic | Document |
+|-------|----------|
+| Authoritative estimate record + four-output package | [architecture/project-document-package.md](architecture/project-document-package.md) |
+| Pricing policy ($65/hr; 15% gross margin) | [pricing-policy.md](pricing-policy.md) |
+| QuickBooks pipeline (no API) | [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md) |
+| Ontario contract + warranty / Legal Content Gate | [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md) |
+| UAT reference case (3415 Roger Stevens Road) | [testing/uat-reference-cases.md](testing/uat-reference-cases.md) |
 
 ---
 

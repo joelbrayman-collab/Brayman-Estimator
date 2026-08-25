@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative documentation map |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-25 |
 | Product | The Estimator (Brayman Estimator) |
 
 ## Purpose
@@ -53,12 +53,17 @@ Also read [`platform-governance.md`](platform-governance.md) and [`definition-of
 | [architecture/M004-plan-intelligence-readiness-report.md](architecture/M004-plan-intelligence-readiness-report.md) | Milestone 004 readiness report | Historical / operational |
 | [architecture/document-intelligence.md](architecture/document-intelligence.md) | Document Intelligence (packages, pages, search) | Architecture (M006); partial Current (M007) |
 | [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) | Sheet Intelligence (sheet entities, review) | **Architecture only (M008)** — not implemented |
+| [architecture/project-document-package.md](architecture/project-document-package.md) | Authoritative record + four core outputs | **Intended** — not implemented |
+| [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md) | QuickBooks export pipeline boundary | **Future** — not implemented |
 | [architecture/M006-document-intelligence-readiness-report.md](architecture/M006-document-intelligence-readiness-report.md) | Milestone 006 readiness report | Historical / operational |
 | [architecture/M008-sheet-intelligence-readiness-report.md](architecture/M008-sheet-intelligence-readiness-report.md) | Milestone 008 readiness report | Historical / operational |
-| [platform-governance.md](platform-governance.md) | Decision authority, Feature Gate, ownership | **Governing** |
+| [platform-governance.md](platform-governance.md) | Decision authority, Feature Gate, ownership, drift stop | **Governing** |
+| [pricing-policy.md](pricing-policy.md) | Labour rate, gross margin, placeholder rules | **Governing** (product policy) |
+| [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md) | Ontario contract + warranty template governance; Legal Content Gate | **Governing** |
 | [development-workflow.md](development-workflow.md) | Joel → ChatGPT → Cursor lifecycle | **Governing** for AI sessions |
 | [documentation-standards.md](documentation-standards.md) | How docs are written and updated | Governing for docs |
 | [testing-standards.md](testing-standards.md) | Test expectations | Governing for QA |
+| [testing/uat-reference-cases.md](testing/uat-reference-cases.md) | UAT reference projects (e.g. 3415 Roger Stevens) | Governing for UAT |
 | [git-workflow.md](git-workflow.md) | Branching, commits, migration safety | Governing for git |
 | [definition-of-done.md](definition-of-done.md) | Completion checklist | **Governing** |
 | [platform-roadmap.md](platform-roadmap.md) | Completed / current / future / deferred | Planning (keep current) |

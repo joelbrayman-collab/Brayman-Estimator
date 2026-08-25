@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Governing for QA |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-25 |
 
 ## Expectations
 
@@ -15,6 +15,7 @@
 | Negative tests | Invalid input, forbidden status transitions, inactive templates, etc. |
 | Authorization tests | When authz exists—claim only after verifying Flask-Login / role behaviour |
 | Immutable-record tests | Locked estimate versions; proposal snapshot independence (already present pattern) |
+| UAT reference cases | Reconcile outputs against [uat-reference-cases.md](testing/uat-reference-cases.md) when document-package features are implemented |
 | Audit-trail tests | When audit tables/events exist |
 
 ## Reporting
@@ -33,4 +34,5 @@
 ## Related
 
 - [definition-of-done.md](definition-of-done.md)
+- [testing/uat-reference-cases.md](testing/uat-reference-cases.md)
 - Existing suite: `tests/` (78 tests collected as of 2026-07-25)

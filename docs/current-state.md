@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-25 |
 | Evidence | Local repository inspection |
 
 ## Baseline
@@ -11,9 +11,10 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD | `ee9b4b2` (Merge PR #6 — Milestone 008 Sheet Intelligence) |
-| Working tree | Clean |
-| Governance | FG-003 CONDITIONAL PASS; M005–M008 merged to `main` |
+| Remote `origin/main` | `ee9b4b2` (Merge PR #6 — Milestone 008 Sheet Intelligence) |
+| Local HEAD | `ed36838` (local docs checkpoint — post-M008 state sync; **not pushed**) |
+| Working tree | Documentation-only governance reconciliation in progress; six pre-existing state-sync modifications preserved at `ed36838`; additional August 25 governance docs uncommitted |
+| Governance | FG-003 CONDITIONAL PASS; M005–M008 merged to `origin/main`; August 25 product/governance requirements recorded (docs only) |
 
 ## Implemented (evidenced in code on `main`)
 
@@ -36,11 +37,21 @@
 
 M005–M008 are **merged to `main`**. No coded milestone is in progress. Sheets remain **unimplemented**.
 
+## August 25, 2026 governance (recorded — not implemented)
+
+- **Authoritative estimate record** + **four-output document package** — [architecture/project-document-package.md](architecture/project-document-package.md)
+- **Pricing policy** ($65/hr labour direct; 15% gross margin) — [pricing-policy.md](pricing-policy.md)
+- **QuickBooks pipeline boundary** (no API) — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
+- **Ontario contract + warranty / Legal Content Gate** — [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md)
+- **UAT reference case** (3415 Roger Stevens Road) — [testing/uat-reference-cases.md](testing/uat-reference-cases.md)
+- **Context drift / rollover rule** — [platform-governance.md](platform-governance.md#context-drift-and-handoff-mandatory-stop)
+
 ## Recommended next steps
 
 1. Joel reviews/accepts ADR-017/018 and [M008 readiness](architecture/M008-sheet-intelligence-readiness-report.md).
-2. Feature-Gate **Sheet classification and human metadata review** before any sheet tables/UI (recommended next coded milestone; not started).
-3. Do not begin M009 (or equivalent) until authorized.
+2. Commit preserved post-M008 sync + August 25 governance reconciliation when directed (**not committed in this session**).
+3. Feature-Gate **Sheet classification and human metadata review** before any sheet tables/UI (recommended next coded milestone; **not started**).
+4. Do not begin coded Sheet work, QuickBooks API, contract generation, or warranty generation until explicitly Feature-Gated.
 
 ## Related
 

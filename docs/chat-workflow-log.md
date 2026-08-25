@@ -42,6 +42,21 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-07-25 — Repository state sync after M005–M008 merge to main
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-07-25 |
+| Branch | `main` @ `ee9b4b2` |
+| Objective | Synchronize state/roadmap/milestone docs with merged Git reality |
+| Business decision | Record M005–M008 as merged; do not start coded Sheets |
+| Architectural decision | Unchanged — Sheet Intelligence remains architecture/readiness only |
+| Files expected to change | `docs/current-state.md`, `project-state-report.md`, `session-handoff.md`, `platform-roadmap.md`, `milestones.md`, `chat-workflow-log.md` |
+| Files prohibited from changing | app/, migrations/, tests/ |
+| Implementation result | Docs updated to `main` @ `ee9b4b2`; clean working tree expected after commit of this sync |
+| Next approved step | Joel ADR-017/018 review; Feature Gate before sheet implementation |
+| Commit hash | Pending (docs sync) |
+
 ### 2026-07-25 — Milestone 008 Sheet Intelligence architecture
 
 | Field | Content |
@@ -57,8 +72,8 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Tests | Docs validation only (`git diff --check`, link check) |
 | Project-state-report update | Yes |
 | Milestone entry update | Yes — M008 |
-| Next approved step | Joel review; Feature Gate coded sheets when ready |
-| Commit hash | **None** (prompt forbids commits) |
+| Next approved step | Merged to `main` via PR #6 |
+| Commit hash | `8c74e31` (merged in `ee9b4b2`) |
 
 ### 2026-07-25 — Milestone 007 Document Indexing
 
@@ -73,8 +88,8 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Files prohibited from changing | Estimating commercial writes; Sheet entity implementation; OCR/CAD/AI take-off |
 | Implementation result | Indexing models/services/UI/migration/tests; Estimating untouched |
 | Tests | Plan indexing + upload tests; full suite **106 passed** |
-| Next approved step | Sheet Intelligence architecture (M008 docs) |
-| Commit hash | `cbefe7a` |
+| Next approved step | Merged to `main` via PR #5 |
+| Commit hash | `cbefe7a` (merged in `eb00123`) |
 
 ### 2026-07-25 — Milestone 006 Document Intelligence refinement (CONDITIONAL PASS)
 

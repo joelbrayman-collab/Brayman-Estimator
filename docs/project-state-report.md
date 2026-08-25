@@ -49,29 +49,33 @@ Distinguish from:
 |-------|---------|
 | Report date | 2026-07-25 |
 | Repository | Brayman-Estimator (The Estimator) |
-| Current branch | `milestone-008-sheet-intelligence` |
-| Current commit | Confirm `git log -1` (M007 indexing `cbefe7a`) |
+| Current branch | `main` |
+| Current commit | `ee9b4b2` (M008 merge via PR #6; includes M005–M007) |
 | Base commit (pre-governance) | `7b8d5ca` |
-| Latest completed milestone | M007 Document Indexing (`cbefe7a`); **M008 architecture pending docs commit** |
-| Current milestone | Milestone 008 — Sheet Intelligence Architecture Planning (**docs / readiness only**) |
-| Architecture status | Sheet Intelligence designed (ADR-017/018 + sheet-intelligence.md). Sheets / suggestion review UI **not** implemented. |
+| Latest completed milestone | M008 Sheet Intelligence architecture (`8c74e31`; merged in `ee9b4b2`) |
+| Current milestone | None in progress — awaiting Feature Gate for coded Sheets |
+| Product status | Operational on `main`: CRM, Estimating, Proposals, Change Orders, Plan upload (M005), Document Indexing (M007) |
+| Architecture status | DI architecture (M006) + Sheet Intelligence architecture (M008) on `main`. Sheets / review UI **not** implemented. |
+| Implemented capabilities | Phase A PDF upload/storage; page indexing; processing provenance; archive-over-delete; relational search |
 | Incomplete work | Coded sheet review (Feature Gate required); scale; AI POC; estimate mapping; auth; project-detail archived filter |
-| Documentation status | sheet-intelligence.md; M008 readiness; ADR-017/018; indexes updated |
-| Decisions made | Suggestion accept/reject/edit workflow (ADR-017); uniqueness/supersession (ADR-018); M007 foundation sufficient for Sheets |
+| Database and migration status | Intended Alembic head `a7c8e9f0b1d2` (M007) |
+| Documentation status | Indexes and Sheet Intelligence docs merged; state docs synchronized to `ee9b4b2` |
+| Decisions made | ADR-017 suggestion workflow; ADR-018 uniqueness/supersession; Page ≠ Sheet (ADR-014); archive-over-delete |
 | Decisions pending | Accept ADR-017/018; authorize coded-sheet Feature Gate |
-| Uncommitted work | Confirm `git status` — M008 docs + index/state updates |
+| Uncommitted work | None expected after this sync (confirm `git status`) |
 | Next approved milestone | **None for sheet code** until Feature-Gated |
 | Documents to read first | [sheet-intelligence.md](architecture/sheet-intelligence.md) → [M008 readiness](architecture/M008-sheet-intelligence-readiness-report.md) → [ADR-017](adr/ADR-017-sheet-metadata-suggestion-and-review-workflow.md) / [ADR-018](adr/ADR-018-sheet-uniqueness-duplicates-and-supersession.md) |
-| Approved next Cursor prompt location or summary | **None** for sheet implementation until Joel authorizes |
-| Commit status | M008 pending; no commit/push from this prompt |
+| Approved next Cursor prompt location or summary | **None** until Joel authorizes Feature Gate for sheet implementation |
+| Commit status | M005–M008 merged to `main` (`ee9b4b2`) |
 | Governance baseline | Complete |
 
 ### Resume commands (Cursor Terminal)
 
 ```bash
 cd /Users/joelbrayman/Desktop/Brayman-Estimator
+git checkout main && git pull
 git status
 git log -1 --oneline
 ```
 
-Next: commit M008 architecture docs when directed; Feature-Gate sheet code before any implementation.
+Next: Joel reviews ADR-017/018; Feature-Gate sheet code before any implementation. Do not begin M009 until authorized.

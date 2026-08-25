@@ -10,36 +10,37 @@
 
 | Field | Value |
 |-------|--------|
-| Branch | `milestone-008-sheet-intelligence` |
-| HEAD | Confirm `git log -1` (expect M007 `cbefe7a`) |
-| Working tree | M008 architecture docs pending commit — confirm `git status` |
-| Governance | FG-003 CONDITIONAL PASS; M007 indexing committed; M008 Sheet Intelligence **architecture only** |
+| Branch | `main` |
+| HEAD | `ee9b4b2` (Merge PR #6 — Milestone 008 Sheet Intelligence) |
+| Working tree | Clean |
+| Governance | FG-003 CONDITIONAL PASS; M005–M008 merged to `main` |
 
-## Implemented (evidenced in code)
+## Implemented (evidenced in code on `main`)
 
 - CRM, Estimating, Proposals (+ Accepted immutability), Change Orders
-- Plan Intelligence Phase A upload/storage (M005)
-- **M007 indexing** — pages, processing attempts/results, immutable raw payloads, audit events, archive-over-delete, relational search, minimal package/revision (`cbefe7a`)
+- Plan Intelligence Phase A upload/storage (M005; `098647c`)
+- **Document Indexing (M007; `cbefe7a`)** — pages, processing attempts/results, immutable raw payloads, audit events, archive-over-delete, relational search, minimal package/revision; migration `a7c8e9f0b1d2`
 
-## Proposed architecture (not implemented)
+## Architecture / readiness only (not implemented)
 
-- **Sheet Intelligence (M008 docs):** Sheet entities, discipline metadata, sheet numbers/titles, metadata suggestions, accept/reject review, non-1:1 Page↔Sheet mapping — **architecture/readiness only**; **no sheet code**
+- **Document Intelligence architecture (M006)** — FG-003, `document-intelligence.md`, ADR-013–016
+- **Sheet Intelligence (M008; `8c74e31`)** — Sheet entities, discipline, suggestions, accept/reject review, non-1:1 Page↔Sheet mapping — **docs only; no sheet code**
 - Scale / manual measure / AI take-off / estimate mapping
 
 ## Migrations
 
 - Alembic head intended: `a7c8e9f0b1d2` (M007) — re-verify per environment
-- M008 introduces **no** migrations
+- M008 introduced **no** migrations
 
-## Current milestone
+## Current milestone status
 
-**Milestone 008 — Sheet Intelligence Architecture Planning** (docs only; pending commit). Sheets are **not** implemented.
+M005–M008 are **merged to `main`**. No coded milestone is in progress. Sheets remain **unimplemented**.
 
 ## Recommended next steps
 
-1. Commit Milestone 008 architecture documentation when directed.
-2. Joel reviews ADR-017/018 + [M008 readiness](architecture/M008-sheet-intelligence-readiness-report.md).
-3. Feature-Gate coded Sheet classification + human metadata review before any sheet tables/UI.
+1. Joel reviews/accepts ADR-017/018 and [M008 readiness](architecture/M008-sheet-intelligence-readiness-report.md).
+2. Feature-Gate **Sheet classification and human metadata review** before any sheet tables/UI (recommended next coded milestone; not started).
+3. Do not begin M009 (or equivalent) until authorized.
 
 ## Related
 

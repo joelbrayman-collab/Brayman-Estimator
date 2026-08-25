@@ -25,23 +25,25 @@ Update this file at the end of every substantial session. Prefer facts verified 
 | Field | Value |
 |-------|--------|
 | **Date** | 2026-07-25 |
-| **Current branch** | `milestone-008-sheet-intelligence` |
-| **HEAD** | Confirm `git log -1` (M007 `cbefe7a`) |
-| **Working tree** | Four M008 architecture files + index/state updates — docs only; pending commit |
-| **Current focus** | Milestone 008 Sheet Intelligence architecture (**docs/readiness only**) |
-| **Next strategic capability** | Feature-Gated Sheet classification & human metadata review (not authorized) |
-| **Migration status** | Head intended `a7c8e9f0b1d2` (unchanged by M008) |
-| **Next recommended step** | Commit M008 docs when directed; do **not** implement Sheets yet |
+| **Current branch** | `main` |
+| **HEAD** | `ee9b4b2` |
+| **Working tree** | Clean |
+| **Current focus** | Post-merge sync — M005–M008 on `main`; no coded work in progress |
+| **Next strategic capability** | Feature-Gated Sheet classification & human metadata review (**not authorized**) |
+| **Migration status** | Head intended `a7c8e9f0b1d2` |
+| **Next recommended step** | Joel ADR-017/018 acceptance; Feature Gate before any sheet implementation |
 | **Documents to read first** | [sheet-intelligence.md](architecture/sheet-intelligence.md); [M008 readiness](architecture/M008-sheet-intelligence-readiness-report.md); [ADR-017](adr/ADR-017-sheet-metadata-suggestion-and-review-workflow.md); [ADR-018](adr/ADR-018-sheet-uniqueness-duplicates-and-supersession.md) |
 
 ### Commands to resume (Cursor Terminal)
 
 ```bash
 cd /Users/joelbrayman/Desktop/Brayman-Estimator
+git checkout main
+git pull
 git status
 git log -1 --oneline
-# M008: docs only — sheet-intelligence.md, M008 readiness, ADR-017, ADR-018
-# No app/, migrations/, or tests/ changes for this milestone
+# Expect ee9b4b2 on clean main
+# Do not start sheet implementation without Feature Gate
 ```
 
 ---

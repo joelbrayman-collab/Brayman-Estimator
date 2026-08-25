@@ -26,7 +26,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** Plan → reviewed take-off → estimate → supplier-priced procurement → proposal, with citations and no silent commercial overwrite.
 
-**Next strategic platform capability:** Feature-Gated **Sheet classification and human metadata review** (coded). M008 Sheet Intelligence architecture is docs/readiness only — **not implemented**.
+**Next strategic platform capability:** Feature-Gated **Sheet classification and human metadata review** (coded). M008 Sheet Intelligence architecture is on `main` as docs/readiness only — **not implemented**.
 
 
 ---
@@ -47,7 +47,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 - Proposal PDF generation (branding/logo support)
 - Change Orders (Project Controls module)
 - App shell branding and navigation structure
-- Plan Intelligence Phase A — project-scoped searchable PDF upload/storage (Milestone 005)
+- Plan Intelligence Phase A — project-scoped searchable PDF upload/storage (Milestone 005; `098647c`)
 - Plan Intelligence Document Indexing — pages, processing provenance, archive, relational search (Milestone 007; `cbefe7a`)
 
 **Governance:**
@@ -56,16 +56,18 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 - Milestone 002 Proposals Feature Gate FG-001 + ADR-001–004 (+ strategic ADRs / architecture docs)
 - Milestone 003 Accepted Proposal Immutability (`c59ec01`)
 - Milestone 004 Plan Intelligence architecture documentation
-- Milestone 005 FG-002 Approved + ADR-012 Proposed + Phase A implementation
-- Milestone 006 Document Intelligence architecture + FG-003 (`35413a1`) + ADR-013/014; ADR-015/016 with M007
-- Milestone 008 Sheet Intelligence architecture + ADR-017/018 (docs only; pending commit)
+- Milestone 005 FG-002 Approved + ADR-012 Proposed + Phase A (`098647c`; PR #4 → `db1a8da`)
+- Milestone 006 Document Intelligence architecture + FG-003 (`35413a1`; PR #4) + ADR-013/014; ADR-015/016 with M007
+- Milestone 007 Document Indexing (`cbefe7a`; PR #5 → `eb00123`)
+- Milestone 008 Sheet Intelligence architecture + ADR-017/018 (`8c74e31`; PR #6 → `ee9b4b2`) — **docs only**
 
 ---
 
 ## Current (near-term product governance)
 
-- **Milestone 008 — Sheet Intelligence architecture:** docs/readiness complete in working tree; **no sheet code authorized**
-- Next coded candidate: Sheet classification + human metadata review (Feature Gate / prompt required)
+- **`main` at `ee9b4b2`** — M005–M008 merged; working tree expected clean
+- **No coded milestone in progress**
+- Next coded candidate: Sheet classification + human metadata review (Feature Gate / prompt required) — **not started**
 - Then scale / manual measure → AI quantity POC under later gates
 - Estimate mapping remains outside near-term sheet work
 
@@ -108,12 +110,11 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Next recommended milestones
 
-1. Commit Milestone 008 Sheet Intelligence architecture when directed.
-2. Joel accepts/amends ADR-017/018 and M008 readiness.
-3. Feature-Gate and implement Sheet classification + human metadata review.
-4. Scale / manual measure, then AI quantity POC under later gates.
-5. Estimate mapping / revision comparison under separate gates.
-6. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate.
+1. Joel accepts/amends ADR-017/018 and M008 readiness.
+2. Feature-Gate and implement Sheet classification + human metadata review (recommended next coded milestone; **not started**).
+3. Scale / manual measure, then AI quantity POC under later gates.
+4. Estimate mapping / revision comparison under separate gates.
+5. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate.
 
 ---
 

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Planning |
-| Updated | 2026-08-25 |
+| Updated | 2026-08-26 |
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
@@ -68,8 +68,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-- **`origin/main` at `ee9b4b2`** — M005–M008 merged; local HEAD may be `ed36838` (unpushed docs checkpoint)
-- **Documentation-only governance reconciliation in progress** (August 2026) — not a coded milestone
+- **`main` / `origin/main` at `0fdf0d4`** — M005–M008 merged; August 2026 governance reconciliation committed and pushed; working tree clean
 - **No coded milestone in progress**
 - Next coded candidate: Sheet classification + human metadata review (Feature Gate / prompt required) — **not started**
 - Document package, QuickBooks API, contract/warranty generation — **not started** (governance recorded only)

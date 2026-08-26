@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-08-25 |
+| Updated | 2026-08-26 |
 
 ## Purpose
 
@@ -42,33 +42,61 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-26 — Governance closure after commit 0fdf0d4
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-26 |
+| Branch | `main` @ `0fdf0d4` (= `origin/main`) |
+| Objective | Documentation-only state correction: clear stale transient journal facts after August reconciliation was committed and pushed |
+| Business decision | No new product requirements; correct current pins only |
+| Architectural decision | Unchanged |
+| Approved Cursor prompt summary | Docs-only closure; commit/push allowed if validation passes and only governed docs change |
+| Files expected to change | State/journal docs (`current-state`, `session-handoff`, `project-state-report`, `platform-roadmap`, `chat-workflow-log`) |
+| Files prohibited from changing | app/, migrations/, tests/, dependencies; architecture/pricing/legal/UAT substance |
+| Implementation result | Transient pins updated to HEAD = origin/main = `0fdf0d4`; clean working tree recorded |
+| Next approved step | ADR-017/018; Feature Gate before coded Sheets (**not started**) |
+| Commit hash | This closure commit (recorded after push) |
+
+### 2026-08-25 — Subsequent commit/push of August governance reconciliation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-25 |
+| Branch | `main` |
+| Objective | Record actual outcome after Joel-directed commit-and-push (separate from the original no-commit reconciliation prompt) |
+| Historical note | The original August 25 reconciliation prompt instructed **documentation only** and **no commit/push at that stage**. Commit/push occurred **subsequently**, not under that original prompt. |
+| Outcome | Local checkpoint `ed36838` pushed; governance reconciliation committed as `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* (18 documentation files); `HEAD` = `origin/main` = `0fdf0d4`; working tree clean after that push |
+| Files prohibited from changing | app/, migrations/, tests/ (unchanged) |
+| Commit hash | `0fdf0d4` |
+
 ### 2026-08-25 — Governance reconciliation (authoritative record, document package, pricing, legal gate)
 
 | Field | Content |
 |-------|---------|
 | Date | 2026-08-25 |
-| Branch | `main` @ local `ed36838`; `origin/main` @ `ee9b4b2` |
+| Branch | At work time: `main` @ local `ed36838`; `origin/main` then `ee9b4b2` |
 | Objective | Documentation-only governance reconciliation; preserve post-M008 state sync; record August 25 product/governance requirements |
 | Business decision | One authoritative estimate record; four core outputs; pricing reference rule ($65/hr, 15% gross margin); no silent placeholders; 3415 Roger Stevens UAT reference case |
 | Architectural decision | QuickBooks pipeline boundary (no API); Legal Content Gate for Ontario contract/warranty; context drift mandatory stop; PRESERVE → SEARCH → VERIFY → EXECUTE |
 | Prompt template used | August 25, 2026 governance reconciliation prompt (documentation-only) |
-| Approved Cursor prompt summary | Docs only; preserve six pre-existing state-sync modifications; no app/migrations/tests/deps; no commit/push |
+| Approved Cursor prompt summary | Docs only; preserve six pre-existing state-sync modifications; no app/migrations/tests/deps; **original prompt forbade commit/push at that stage** |
 | Files expected to change | `docs/` governance and state files only |
 | Files prohibited from changing | app/, migrations/, tests/, dependencies |
-| Implementation result | Extended state docs; new pricing policy, document package, QuickBooks architecture, legal template governance, UAT reference case |
+| Implementation result | Extended state docs; new pricing policy, document package, QuickBooks architecture, legal template governance, UAT reference case (working tree dirty until subsequent commit) |
 | Tests | Not run (documentation-only by design) |
 | Project-state-report update | Yes |
 | Milestone entry update | No new coded milestone |
-| Unresolved issues | Commit when Joel directs; HEAD != origin/main until push/reconcile |
-| Next approved step | Joel review; commit docs; ADR-017/018; Feature Gate before coded Sheets |
-| Commit hash | **None** (prompt forbids commit) |
+| Subsequent outcome | Commit/push was **not** authorized by this prompt; occurred later under a separate Joel-directed commit-and-push → `0fdf0d4` (see entry above) |
+| Next approved step | Joel review; then separate commit authorization; ADR-017/018; Feature Gate before coded Sheets |
+| Commit hash | None under this prompt (forbade commit); subsequent `0fdf0d4` |
 
 ### 2026-07-25 — Repository state sync after M005–M008 merge to main
 
 | Field | Content |
 |-------|---------|
 | Date | 2026-07-25 |
-| Branch | `main` @ `ee9b4b2` |
+| Branch | `main` @ `ee9b4b2` (then tip of `origin/main`) |
 | Objective | Synchronize state/roadmap/milestone docs with merged Git reality |
 | Business decision | Record M005–M008 as merged; do not start coded Sheets |
 | Architectural decision | Unchanged — Sheet Intelligence remains architecture/readiness only |
@@ -76,7 +104,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Files prohibited from changing | app/, migrations/, tests/ |
 | Implementation result | Docs updated to reflect M005–M008 merged on `origin/main`; preserved in local commit `ed36838` |
 | Next approved step | Joel ADR-017/018 review; Feature Gate before sheet implementation |
-| Commit hash | Local `ed36838` (not pushed); **not** `ee9b4b2` alone |
+| Commit hash | `ed36838` (local checkpoint; subsequently pushed with `0fdf0d4`) |
 
 ### 2026-07-25 — Milestone 008 Sheet Intelligence architecture
 

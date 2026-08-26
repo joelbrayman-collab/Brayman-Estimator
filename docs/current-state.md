@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-08-25 |
+| Updated | 2026-08-26 |
 | Evidence | Local repository inspection |
 
 ## Baseline
@@ -11,10 +11,10 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| Remote `origin/main` | `ee9b4b2` (Merge PR #6 — Milestone 008 Sheet Intelligence) |
-| Local HEAD | `ed36838` (local docs checkpoint — post-M008 state sync; **not pushed**) |
-| Working tree | Documentation-only governance reconciliation in progress; six pre-existing state-sync modifications preserved at `ed36838`; additional August 25 governance docs uncommitted |
-| Governance | FG-003 CONDITIONAL PASS; M005–M008 merged to `origin/main`; August 25 product/governance requirements recorded (docs only) |
+| HEAD | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
+| Remote `origin/main` | `0fdf0d4` (parity with HEAD) |
+| Working tree | Clean |
+| Governance | FG-003 CONDITIONAL PASS; M005–M008 on `main`; August 25 product/governance requirements recorded and committed (docs only; product features not implemented) |
 
 ## Implemented (evidenced in code on `main`)
 
@@ -49,9 +49,8 @@ M005–M008 are **merged to `main`**. No coded milestone is in progress. Sheets 
 ## Recommended next steps
 
 1. Joel reviews/accepts ADR-017/018 and [M008 readiness](architecture/M008-sheet-intelligence-readiness-report.md).
-2. Commit preserved post-M008 sync + August 25 governance reconciliation when directed (**not committed in this session**).
-3. Feature-Gate **Sheet classification and human metadata review** before any sheet tables/UI (recommended next coded milestone; **not started**).
-4. Do not begin coded Sheet work, QuickBooks API, contract generation, or warranty generation until explicitly Feature-Gated.
+2. Feature-Gate **Sheet classification and human metadata review** before any sheet tables/UI (recommended next coded milestone; **not started**).
+3. Do not begin coded Sheet work, QuickBooks API, contract generation, or warranty generation until explicitly Feature-Gated.
 
 ## Related
 

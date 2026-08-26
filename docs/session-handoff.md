@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity |
-| Updated | 2026-08-25 |
+| Updated | 2026-08-26 |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
 
 ## Distinctions (do not substitute)
@@ -24,15 +24,15 @@ Update this file at the end of every substantial session. Prefer facts verified 
 
 | Field | Value |
 |-------|--------|
-| **Date** | 2026-08-25 |
+| **Date** | 2026-08-26 |
 | **Current branch** | `main` |
-| **Local HEAD** | `ed36838` (local docs checkpoint; **not pushed**) |
-| **Remote `origin/main`** | `ee9b4b2` |
-| **Working tree** | Documentation-only governance reconciliation in progress; six pre-existing state-sync modifications preserved at `ed36838`; August 25 governance docs uncommitted |
-| **Current focus** | August 25 governance reconciliation (docs only); M005–M008 merged on `origin/main`; no coded milestone authorized |
+| **HEAD** | `0fdf0d4` |
+| **Remote `origin/main`** | `0fdf0d4` |
+| **Working tree** | Clean |
+| **Current focus** | Post-governance-closure — August 25 requirements committed; M005–M008 on `main`; no coded milestone authorized |
 | **Next strategic capability** | Feature-Gated Sheet classification & human metadata review (**not authorized**) |
 | **Migration status** | Head intended `a7c8e9f0b1d2` |
-| **Next recommended step** | Joel review of August 25 governance docs; commit when directed; ADR-017/018 acceptance; Feature Gate before any sheet implementation |
+| **Next recommended step** | Joel ADR-017/018 acceptance; Feature Gate before any sheet implementation |
 | **Documents to read first** | [project-document-package.md](architecture/project-document-package.md); [pricing-policy.md](pricing-policy.md); [legal-content-and-templates.md](governance/legal-content-and-templates.md); [sheet-intelligence.md](architecture/sheet-intelligence.md); [M008 readiness](architecture/M008-sheet-intelligence-readiness-report.md) |
 
 ### Commands to resume (Cursor Terminal)

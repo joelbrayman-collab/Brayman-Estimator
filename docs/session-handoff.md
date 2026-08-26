@@ -26,10 +26,11 @@ Update this file at the end of every substantial session. Prefer facts verified 
 |-------|--------|
 | **Date** | 2026-08-26 |
 | **Current branch** | `main` |
-| **HEAD** | `0fdf0d4` |
-| **Remote `origin/main`** | `0fdf0d4` |
+| **HEAD / `origin/main`** | Confirm with `git rev-parse` (expect parity; tip at or after `ee100ac`) |
+| **August reconciliation** | `0fdf0d4` |
+| **State closure** | `ee100ac` |
 | **Working tree** | Clean |
-| **Current focus** | Post-governance-closure — August 25 requirements committed; M005–M008 on `main`; no coded milestone authorized |
+| **Current focus** | Post-governance-closure — August reconciliation `0fdf0d4` + state closure `ee100ac`; M005–M008 on `main`; no coded milestone authorized |
 | **Next strategic capability** | Feature-Gated Sheet classification & human metadata review (**not authorized**) |
 | **Migration status** | Head intended `a7c8e9f0b1d2` |
 | **Next recommended step** | Joel ADR-017/018 acceptance; Feature Gate before any sheet implementation |

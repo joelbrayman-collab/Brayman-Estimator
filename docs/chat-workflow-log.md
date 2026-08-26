@@ -47,16 +47,16 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Field | Content |
 |-------|---------|
 | Date | 2026-08-26 |
-| Branch | `main` @ `0fdf0d4` (= `origin/main`) |
+| Branch | `main` (tip at or after `ee100ac` = `origin/main`; confirm with `git rev-parse`) |
 | Objective | Documentation-only state correction: clear stale transient journal facts after August reconciliation was committed and pushed |
 | Business decision | No new product requirements; correct current pins only |
 | Architectural decision | Unchanged |
 | Approved Cursor prompt summary | Docs-only closure; commit/push allowed if validation passes and only governed docs change |
 | Files expected to change | State/journal docs (`current-state`, `session-handoff`, `project-state-report`, `platform-roadmap`, `chat-workflow-log`) |
 | Files prohibited from changing | app/, migrations/, tests/, dependencies; architecture/pricing/legal/UAT substance |
-| Implementation result | Transient pins updated to HEAD = origin/main = `0fdf0d4`; clean working tree recorded |
+| Implementation result | Transient pins cleared; August reconciliation recorded as `0fdf0d4`; state closure tip `ee100ac` (plus any pin-alignment follow-up on `main`) |
 | Next approved step | ADR-017/018; Feature Gate before coded Sheets (**not started**) |
-| Commit hash | This closure commit (recorded after push) |
+| Commit hash | `ee100ac` (initial closure); confirm tip with `git rev-parse` |
 
 ### 2026-08-25 — Subsequent commit/push of August governance reconciliation
 

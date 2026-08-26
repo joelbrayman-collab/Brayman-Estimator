@@ -68,7 +68,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-- **`main` / `origin/main` at `0fdf0d4`** — M005–M008 merged; August 2026 governance reconciliation committed and pushed; working tree clean
+- **`main` / `origin/main`** — confirm with `git rev-parse` (expect parity; tip at or after `ee100ac`). August reconciliation `0fdf0d4`; state closure `ee100ac`; M005–M008 merged; working tree clean
 - **No coded milestone in progress**
 - Next coded candidate: Sheet classification + human metadata review (Feature Gate / prompt required) — **not started**
 - Document package, QuickBooks API, contract/warranty generation — **not started** (governance recorded only)

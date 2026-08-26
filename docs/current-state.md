@@ -11,10 +11,11 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
-| Remote `origin/main` | `0fdf0d4` (parity with HEAD) |
-| Working tree | Clean |
-| Governance | FG-003 CONDITIONAL PASS; M005–M008 on `main`; August 25 product/governance requirements recorded and committed (docs only; product features not implemented) |
+| HEAD / `origin/main` | Confirm with `git rev-parse` (expect parity; tip at or after state closure `ee100ac`) |
+| August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
+| State closure | `ee100ac` — *docs: close August governance reconciliation state* |
+| Working tree | Clean (confirm `git status`) |
+| Governance | FG-003 CONDITIONAL PASS; M005–M008 on `main`; August 25 product/governance requirements in `0fdf0d4`; transient state closed in `ee100ac` (docs only; product features not implemented) |
 
 ## Implemented (evidenced in code on `main`)
 

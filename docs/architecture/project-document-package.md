@@ -18,7 +18,7 @@ The Brayman Estimator must maintain **one authoritative project/estimate record*
 |-------------|------|
 | Single source | All project outputs derive from the same authoritative record |
 | Propagation | A governed input change must propagate consistently to affected outputs |
-| Versioning | Approved commercial states use explicit versioning/supersession — no silent overwrite ([Constitution Article 5](platform-constitution.md)) |
+| Versioning | Approved commercial states use explicit versioning/supersession — no silent overwrite ([Constitution Article 5](../platform-constitution.md)) |
 | Placeholders | TBD / ALLOWANCE / PLACEHOLDER remain explicit until resolved ([pricing policy](../pricing-policy.md)) |
 
 **Current implementation note:** Estimate versions, proposal snapshots, and PDF output exist today. The full four-output package, Ontario contract generation, warranty attachment, and QuickBooks export pipeline are **Future / not implemented**.

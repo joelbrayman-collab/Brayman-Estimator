@@ -55,6 +55,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 - Plan Intelligence Phase A — project-scoped searchable PDF upload/storage (Milestone 005; `098647c`)
 - Plan Intelligence Document Indexing — pages, processing provenance, archive, relational search (Milestone 007; `cbefe7a`)
 - Plan Intelligence Sheet Classification — sheet entity, page mapping, suggestions, human review workflow, uniqueness validation (Milestone 009; migration `b8d9f0a1c2e3`)
+- Plan Intelligence Scale Calibration & Measurement Tools — 2-point calibration, presets, viewports, NTS, linear, polyline, area/perimeter, count measurements, normalized coordinates, PDF.js (Milestone 010; migration `c9e0f1a2b3d4`)
 
 **Governance:**
 
@@ -69,15 +70,15 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 - Milestone 009 Sheet Classification / Human Metadata Review (`5dc4b09`, migration `b8d9f0a1c2e3`)
 - **CAR-001** CalibAi product & architecture reconciliation (2026-08-28) — **docs/governance only**; not a product milestone number
 - **Review Turnover Protocol** adopted (`39ae8fe`) + reconciliation repair (`ed3e51f`)
-- **FG-005** M010 Scale Calibration Feature Gate Approved + ADR-026/027 Proposed — **docs only** (code not started)
+- **FG-005** M010 Scale Calibration Feature Gate Approved + ADR-026/027 Accepted + M010 Implemented & Verified (migration `c9e0f1a2b3d4`)
 
 ---
 
 ## Current (near-term product governance)
 
-- **`main` / `origin/main`** — confirm with `git rev-parse`. CAR-001 adopted; M005–M009 merged and verified.
+- **`main` / `origin/main`** — confirm with `git rev-parse`. CAR-001 adopted; M005–M010 merged and verified.
 - **Review Turnover Protocol** adopted (2026-08-28) — `Review Turnover` governing.
-- **M010 Scale Calibration Feature Gate (FG-005)** approved (2026-08-28) — implementation awaiting dedicated Cursor prompt.
+- **M010 Scale Calibration & Measurement Tools** implemented and verified (2026-08-28).
 - CalibAi V1 direction (not authorized as a single implementation): PLAN → PRICE → CONTRACT baseline → BUILD field capture → basic MONITOR — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)
 - Document package, QuickBooks API, contract/warranty generation — **not started** (governance recorded only)
 - Estimate mapping remains outside near-term sheet work
@@ -90,17 +91,18 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 
 0. CAR-001 architecture alignment + Review Turnover Protocol — **Adopted**
 1. **M009** Sheet classification / human review — **Completed & Verified** (`5dc4b09`, migration `b8d9f0a1c2e3`)
-2. **M010** Scale Calibration / Measurement Tools — **FG-005 Approved** (implementation prompt next)
-3. Project Hub UX
-4. Pricing-policy application (requires [ADR-025](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) acceptance)
-5. Internal Detailed Cost Breakdown + Customer Estimate consistency
-6. Authentication / actor identity + shared API foundation
-7. BUILD Field Capture V1
-8. Field Web / Today + Capture + plan access
-9. MONITOR basic estimated-vs-actual
-10. LEARN historical intelligence / review-gated learning (ADR-024)
-11. Contract/warranty when Legal Content Gate is satisfied
-12. QuickBooks when separately Feature-Gated
+2. **M010** Scale Calibration / Measurement Tools — **Completed & Verified** (migration `c9e0f1a2b3d4`)
+3. **M011** AI Take-off / Quantity Extraction Foundation (requires FG)
+4. Project Hub UX
+5. Pricing-policy application (requires [ADR-025](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) acceptance)
+6. Internal Detailed Cost Breakdown + Customer Estimate consistency
+7. Authentication / actor identity + shared API foundation
+8. BUILD Field Capture V1
+9. Field Web / Today + Capture + plan access
+10. MONITOR basic estimated-vs-actual
+11. LEARN historical intelligence / review-gated learning (ADR-024)
+12. Contract/warranty when Legal Content Gate is satisfied
+13. QuickBooks when separately Feature-Gated
 
 **Auth dependency:** Items **6–7 require item 5**. This sequence is **not** reordered to put auth before M009. Office M009 may proceed on the current unauthenticated app; field capture must not.
 

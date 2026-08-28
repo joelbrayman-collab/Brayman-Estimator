@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-027: PDF Rendering and Normalized Document Coordinate System |
-| Status | **Proposed** (governed by Joel approval / Feature Gate FG-005) |
+| Status | **Accepted** (2026-08-28; Joel Brayman; M010 Feature Gate FG-005) |
 | Date | 2026-08-28 |
 | Related | [ADR-005](ADR-005-ai-takeoff-traceability.md) · [ADR-010](ADR-010-build-versus-buy-document-processing.md) · [ADR-014](ADR-014-sheet-identity-and-page-mapping.md) · [ADR-026](ADR-026-scale-ownership-and-calibration-provenance.md) · [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) · [sheet-intelligence.md](../architecture/sheet-intelligence.md) |
 
@@ -85,5 +85,5 @@ Frontend and backend tests must verify coordinate invariance across zoom levels,
 
 | Role | Name | Date |
 |------|------|------|
-| Product Owner | Joel Brayman | Pending |
-| Architecture Review | Proposed for M010 Feature Gate FG-005 | 2026-08-28 |
+| Product Owner | Joel Brayman | 2026-08-28 |
+| Architecture Review | FG-005 M010 Implementation | 2026-08-28 |

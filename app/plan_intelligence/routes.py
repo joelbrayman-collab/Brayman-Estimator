@@ -4,6 +4,7 @@ from flask import (
     Blueprint,
     abort,
     flash,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -49,6 +50,22 @@ from app.plan_intelligence.sheets import (
     unmap_page_from_sheet,
     validate_revision_sheet_index,
     void_sheet,
+)
+from app.plan_intelligence.scale_measurement import (
+    CALIBRATION_STATUSES,
+    CALIBRATION_TYPES,
+    LINEAR_UNITS,
+    MEASUREMENT_TYPES,
+    PRESET_SCALES,
+    confirm_calibration,
+    create_measurement,
+    create_preset_calibration,
+    create_two_point_calibration,
+    list_calibrations_for_sheet,
+    list_measurements_for_sheet,
+    mark_sheet_nts,
+    void_calibration,
+    void_measurement,
 )
 
 plan_intelligence_bp = Blueprint(
@@ -647,3 +664,355 @@ def unmap_page_action(project_id, sheet_id):
             sheet_id=sheet.id,
         )
     )
+
+
+# =========================================================================
+# Milestone 010 — Scale Calibration & Measurement Routes
+# =========================================================================
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/sheets/<int:sheet_id>/measure"
+)
+def measure_sheet(project_id, sheet_id):
+    """Interactive measurement and scale calibration workspace for a Sheet (M010)."""
+    project = Project.query.get_or_404(project_id)
+    sheet = get_sheet_or_404(project.id, sheet_id)
+    revision = sheet.revision
+
+    calibrations = list_calibrations_for_sheet(project.id, sheet.id)
+    measurements = list_measurements_for_sheet(project.id, sheet.id)
+
+    # First mapped document/page for viewing
+    first_map = sheet.page_mappings[0] if sheet.page_mappings else None
+
+    # Determine active confirmed calibration
+    active_cal = None
+    for c in calibrations:
+        if c.is_confirmed and c.calibration_type != "viewport_region":
+            active_cal = c
+            break
+
+    return render_template(
+        "plan_intelligence/sheet_measure.html",
+        project=project,
+        revision=revision,
+        sheet=sheet,
+        first_map=first_map,
+        calibrations=calibrations,
+        active_cal=active_cal,
+        measurements=measurements,
+        preset_scales=PRESET_SCALES,
+        linear_units=LINEAR_UNITS,
+        measurement_types=MEASUREMENT_TYPES,
+    )
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/sheets/<int:sheet_id>/measurements/data"
+)
+def sheet_measurement_data(project_id, sheet_id):
+    """JSON API returning current calibrations and measurements for client rendering."""
+    project = Project.query.get_or_404(project_id)
+    sheet = get_sheet_or_404(project.id, sheet_id)
+
+    calibrations = list_calibrations_for_sheet(project.id, sheet.id)
+    measurements = list_measurements_for_sheet(project.id, sheet.id)
+
+    cal_data = [
+        {
+            "id": c.id,
+            "calibration_type": c.calibration_type,
+            "status": c.calibration_status,
+            "source_type": c.source_type,
+            "label": c.label,
+            "region_box": c.region_box,
+            "point_a": {"x": c.point_a_x, "y": c.point_a_y} if c.point_a_x is not None else None,
+            "point_b": {"x": c.point_b_x, "y": c.point_b_y} if c.point_b_x is not None else None,
+            "known_distance": c.known_distance_value,
+            "known_unit": c.known_distance_unit,
+            "scale_ratio": c.scale_ratio,
+            "page_index": c.page_index,
+            "is_confirmed": c.is_confirmed,
+            "is_nts": c.is_nts,
+        }
+        for c in calibrations
+    ]
+
+    meas_data = [
+        {
+            "id": m.id,
+            "measurement_type": m.measurement_type,
+            "label": m.label,
+            "geometry_data": m.geometry_data,
+            "computed_value": m.computed_value,
+            "display_unit": m.display_unit,
+            "perimeter_value": m.perimeter_value,
+            "calibration_id": m.scale_calibration_id,
+            "page_index": m.page_index,
+            "status": m.status,
+            "created_at": m.created_at.strftime("%Y-%m-%d %H:%M") if m.created_at else "",
+        }
+        for m in measurements
+    ]
+
+    return jsonify(
+        {
+            "sheet_id": sheet.id,
+            "sheet_number": sheet.number,
+            "calibrations": cal_data,
+            "measurements": meas_data,
+        }
+    )
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/sheets/<int:sheet_id>/calibrations/two-point",
+    methods=["POST"],
+)
+def create_two_point_calibration_action(project_id, sheet_id):
+    """Create a 2-point scale calibration."""
+    project = Project.query.get_or_404(project_id)
+    sheet = get_sheet_or_404(project.id, sheet_id)
+
+    is_json = request.is_json
+    data = request.get_json() if is_json else request.form
+
+    doc_id = int(data.get("plan_document_id", sheet.page_mappings[0].plan_document_id if sheet.page_mappings else 0))
+    page_idx = int(data.get("page_index", sheet.page_mappings[0].page_index if sheet.page_mappings else 0))
+    known_dist = str(data.get("known_distance", "")).strip()
+    label = data.get("label", "").strip() or None
+    is_viewport = bool(data.get("is_viewport", False))
+    auto_confirm = bool(data.get("auto_confirm", False) or request.form.get("auto_confirm"))
+
+    if is_json:
+        p1 = data.get("point_a", {})
+        p2 = data.get("point_b", {})
+        region_box = data.get("region_box")
+    else:
+        p1 = {"x": float(data.get("point_a_x", 0)), "y": float(data.get("point_a_y", 0))}
+        p2 = {"x": float(data.get("point_b_x", 0)), "y": float(data.get("point_b_y", 0))}
+        r_x1 = data.get("region_x1")
+        if r_x1 is not None and str(r_x1).strip():
+            region_box = {
+                "x1": float(data.get("region_x1")),
+                "y1": float(data.get("region_y1")),
+                "x2": float(data.get("region_x2")),
+                "y2": float(data.get("region_y2")),
+            }
+        else:
+            region_box = None
+
+    cal_type = "viewport_region" if is_viewport else "sheet_default"
+
+    try:
+        cal = create_two_point_calibration(
+            project_id=project.id,
+            sheet_id=sheet.id,
+            plan_document_id=doc_id,
+            page_index=page_idx,
+            point_a=p1,
+            point_b=p2,
+            known_distance_str=known_dist,
+            label=label,
+            calibration_type=cal_type,
+            region_box=region_box,
+            auto_confirm=auto_confirm,
+        )
+        if is_json:
+            return jsonify({"success": True, "calibration_id": cal.id, "ratio": cal.scale_ratio, "status": cal.calibration_status})
+        flash("Scale calibration created.", "success")
+    except PlanIntelligenceServiceError as exc:
+        if is_json:
+            return jsonify({"success": False, "error": str(exc)}), 400
+        flash(str(exc), "error")
+
+    return redirect(url_for("plan_intelligence.measure_sheet", project_id=project.id, sheet_id=sheet.id))
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/sheets/<int:sheet_id>/calibrations/preset",
+    methods=["POST"],
+)
+def create_preset_calibration_action(project_id, sheet_id):
+    """Create a preset scale ratio calibration."""
+    project = Project.query.get_or_404(project_id)
+    sheet = get_sheet_or_404(project.id, sheet_id)
+
+    is_json = request.is_json
+    data = request.get_json() if is_json else request.form
+
+    doc_id = int(data.get("plan_document_id", sheet.page_mappings[0].plan_document_id if sheet.page_mappings else 0))
+    page_idx = int(data.get("page_index", sheet.page_mappings[0].page_index if sheet.page_mappings else 0))
+    preset_key = str(data.get("preset_key", "")).strip()
+    page_width_pts = float(data.get("page_width_points", 2592.0))
+    auto_confirm = bool(data.get("auto_confirm", False) or request.form.get("auto_confirm"))
+
+    try:
+        cal = create_preset_calibration(
+            project_id=project.id,
+            sheet_id=sheet.id,
+            plan_document_id=doc_id,
+            page_index=page_idx,
+            preset_key=preset_key,
+            page_width_points=page_width_pts,
+            auto_confirm=auto_confirm,
+        )
+        if is_json:
+            return jsonify({"success": True, "calibration_id": cal.id, "ratio": cal.scale_ratio, "status": cal.calibration_status})
+        flash(f"Preset scale '{preset_key}' applied.", "success")
+    except PlanIntelligenceServiceError as exc:
+        if is_json:
+            return jsonify({"success": False, "error": str(exc)}), 400
+        flash(str(exc), "error")
+
+    return redirect(url_for("plan_intelligence.measure_sheet", project_id=project.id, sheet_id=sheet.id))
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/sheets/<int:sheet_id>/calibrations/<int:calibration_id>/confirm",
+    methods=["POST"],
+)
+def confirm_calibration_action(project_id, sheet_id, calibration_id):
+    """Explicit human confirmation action for a calibration."""
+    project = Project.query.get_or_404(project_id)
+    try:
+        cal = confirm_calibration(project.id, sheet_id, calibration_id)
+        if request.is_json:
+            return jsonify({"success": True, "calibration_id": cal.id, "status": "confirmed"})
+        flash("Calibration confirmed.", "success")
+    except PlanIntelligenceServiceError as exc:
+        if request.is_json:
+            return jsonify({"success": False, "error": str(exc)}), 400
+        flash(str(exc), "error")
+
+    return redirect(url_for("plan_intelligence.measure_sheet", project_id=project.id, sheet_id=sheet_id))
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/sheets/<int:sheet_id>/calibrations/<int:calibration_id>/void",
+    methods=["POST"],
+)
+def void_calibration_action(project_id, sheet_id, calibration_id):
+    """Void a calibration record."""
+    project = Project.query.get_or_404(project_id)
+    try:
+        cal = void_calibration(project.id, sheet_id, calibration_id)
+        if request.is_json:
+            return jsonify({"success": True, "calibration_id": cal.id, "status": "void"})
+        flash("Calibration voided.", "success")
+    except PlanIntelligenceServiceError as exc:
+        if request.is_json:
+            return jsonify({"success": False, "error": str(exc)}), 400
+        flash(str(exc), "error")
+
+    return redirect(url_for("plan_intelligence.measure_sheet", project_id=project.id, sheet_id=sheet_id))
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/sheets/<int:sheet_id>/calibrations/nts",
+    methods=["POST"],
+)
+def mark_sheet_nts_action(project_id, sheet_id):
+    """Flag sheet as Not To Scale (NTS)."""
+    project = Project.query.get_or_404(project_id)
+    sheet = get_sheet_or_404(project.id, sheet_id)
+    doc_id = sheet.page_mappings[0].plan_document_id if sheet.page_mappings else 0
+    page_idx = sheet.page_mappings[0].page_index if sheet.page_mappings else 0
+    notes = request.form.get("notes") or (request.get_json().get("notes") if request.is_json else None)
+
+    try:
+        cal = mark_sheet_nts(project.id, sheet.id, doc_id, page_idx, notes=notes)
+        if request.is_json:
+            return jsonify({"success": True, "calibration_id": cal.id, "status": "nts"})
+        flash("Sheet flagged as Not To Scale (NTS).", "info")
+    except PlanIntelligenceServiceError as exc:
+        if request.is_json:
+            return jsonify({"success": False, "error": str(exc)}), 400
+        flash(str(exc), "error")
+
+    return redirect(url_for("plan_intelligence.measure_sheet", project_id=project.id, sheet_id=sheet.id))
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/sheets/<int:sheet_id>/measurements",
+    methods=["POST"],
+)
+def create_measurement_action(project_id, sheet_id):
+    """Save a manual measurement."""
+    project = Project.query.get_or_404(project_id)
+    sheet = get_sheet_or_404(project.id, sheet_id)
+
+    is_json = request.is_json
+    data = request.get_json() if is_json else request.form
+
+    doc_id = int(data.get("plan_document_id", sheet.page_mappings[0].plan_document_id if sheet.page_mappings else 0))
+    page_idx = int(data.get("page_index", sheet.page_mappings[0].page_index if sheet.page_mappings else 0))
+    meas_type = str(data.get("measurement_type", "")).strip()
+    label = data.get("label", "").strip() or None
+    notes = data.get("notes", "").strip() or None
+    explicit_cal_id = data.get("calibration_id")
+    if explicit_cal_id is not None and str(explicit_cal_id).strip():
+        explicit_cal_id = int(explicit_cal_id)
+    else:
+        explicit_cal_id = None
+
+    if is_json:
+        geometry_data = data.get("geometry_data", [])
+    else:
+        import json
+        geom_str = data.get("geometry_data_json", "[]")
+        try:
+            geometry_data = json.loads(geom_str)
+        except Exception:
+            geometry_data = []
+
+    try:
+        meas = create_measurement(
+            project_id=project.id,
+            sheet_id=sheet.id,
+            plan_document_id=doc_id,
+            page_index=page_idx,
+            measurement_type=meas_type,
+            geometry_data=geometry_data,
+            label=label,
+            notes=notes,
+            explicit_calibration_id=explicit_cal_id,
+        )
+        if is_json:
+            return jsonify(
+                {
+                    "success": True,
+                    "measurement_id": meas.id,
+                    "computed_value": meas.computed_value,
+                    "display_unit": meas.display_unit,
+                    "perimeter_value": meas.perimeter_value,
+                }
+            )
+        flash(f"Measurement '{meas.label}' saved: {meas.computed_value} {meas.display_unit}", "success")
+    except PlanIntelligenceServiceError as exc:
+        if is_json:
+            return jsonify({"success": False, "error": str(exc)}), 400
+        flash(str(exc), "error")
+
+    return redirect(url_for("plan_intelligence.measure_sheet", project_id=project.id, sheet_id=sheet.id))
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/sheets/<int:sheet_id>/measurements/<int:measurement_id>/void",
+    methods=["POST"],
+)
+def void_measurement_action(project_id, sheet_id, measurement_id):
+    """Void a saved measurement."""
+    project = Project.query.get_or_404(project_id)
+    try:
+        meas = void_measurement(project.id, sheet_id, measurement_id)
+        if request.is_json:
+            return jsonify({"success": True, "measurement_id": meas.id, "status": "void"})
+        flash(f"Measurement '{meas.label}' voided.", "info")
+    except PlanIntelligenceServiceError as exc:
+        if request.is_json:
+            return jsonify({"success": False, "error": str(exc)}), 400
+        flash(str(exc), "error")
+
+    return redirect(url_for("plan_intelligence.measure_sheet", project_id=project.id, sheet_id=sheet_id))

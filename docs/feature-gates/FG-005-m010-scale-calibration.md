@@ -9,7 +9,7 @@
 | Approved baseline | `main` @ `13ac5fd` (Review Turnover Reconciliation); intended Alembic head `b8d9f0a1c2e3` (M009) |
 | Architecture | [sheet-intelligence.md](../architecture/sheet-intelligence.md) · [plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) |
 | Module doc | [modules/plan-intelligence.md](../modules/plan-intelligence.md) |
-| Related ADRs | [ADR-026](../adr/ADR-026-scale-ownership-and-calibration-provenance.md) **Proposed** · [ADR-027](../adr/ADR-027-pdf-rendering-and-normalized-coordinate-system.md) **Proposed** · [ADR-014](../adr/ADR-014-sheet-identity-and-page-mapping.md) · [ADR-015](../adr/ADR-015-extracted-metadata-ownership-and-provenance.md) · [ADR-017](../adr/ADR-017-sheet-metadata-suggestion-and-review-workflow.md) · [ADR-018](../adr/ADR-018-sheet-uniqueness-duplicates-and-supersession.md) |
+| Related ADRs | [ADR-026](../adr/ADR-026-scale-ownership-and-calibration-provenance.md) **Accepted** · [ADR-027](../adr/ADR-027-pdf-rendering-and-normalized-coordinate-system.md) **Accepted** · [ADR-014](../adr/ADR-014-sheet-identity-and-page-mapping.md) · [ADR-015](../adr/ADR-015-extracted-metadata-ownership-and-provenance.md) · [ADR-017](../adr/ADR-017-sheet-metadata-suggestion-and-review-workflow.md) · [ADR-018](../adr/ADR-018-sheet-uniqueness-duplicates-and-supersession.md) |
 | CAR | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 
 ---
@@ -19,10 +19,8 @@
 | Layer | State |
 |-------|--------|
 | Architecture (M010) | **APPROVED** (Measurement & Calibration architecture defined) |
-| Feature Gate (this document) | **APPROVED** (2026-08-28, Joel via this prompt) |
-| Implementation | **NOT STARTED** (Awaits dedicated Cursor implementation prompt) |
-
-Implementation is not authorized until Joel provides the dedicated M010 implementation prompt. No calibration/measurement tables, migrations, routes, services, templates, or tests are to be written under this governance prompt.
+| Feature Gate (this document) | **APPROVED** (2026-08-28, Joel via prompt) |
+| Implementation | **IMPLEMENTED & VERIFIED** (2026-08-28; migration `c9e0f1a2b3d4`; 19 focused tests, 140 total pytest passed) |
 
 ---
 

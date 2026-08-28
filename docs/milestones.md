@@ -71,6 +71,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Recorded milestones
 
+### Milestone 010 — Scale Calibration / Measurement Tools
+
+| Field | Content |
+|-------|---------|
+| Milestone | Scale Calibration / Measurement Tools |
+| Status | **Completed & Verified** (implemented on `main`) |
+| Branch | `main` |
+| Base | `8f7969c` |
+| Date | 2026-08-28 |
+| Objective | Implement drawing scale calibration (2-point calibration, presets, viewport regions, NTS) and manual measurement tools (linear, polyline, polygon area Shoelace / perimeter, count) with normalized coordinate stability, PDF.js viewer, and fail-closed human authority under Plan Intelligence. |
+| Deliverables | Models (`PlanScaleCalibration`, `PlanMeasurement`); migration `c9e0f1a2b3d4`; service layer `app/plan_intelligence/scale_measurement.py`; measurement route and template (`sheet_measure.html`, `sheet-measurement.js`); 19 focused tests in `tests/test_scale_measurement.py`. |
+| Validation | 140/140 tests pass; migration applies cleanly; project/revision/sheet isolation verified; source doc/page immutability verified; estimating/proposals unaffected. |
+| Architectural findings | Extracted scale strings never auto-confirm; measurements require confirmed calibration; multi-scale viewports scope measurement scales deterministically; geometry persisted in normalized document coordinates `[0.0, 1.0]`. |
+| Open decisions | None for M010. Automated quantity take-off deferred to M011+. |
+| Next milestone | M011 — AI Take-off / Quantity Extraction Foundation (requires dedicated Feature Gate) |
+| Commit | Pending M010 implementation commit |
+
 ### Milestone 009 — Sheet Classification / Human Metadata Review
 
 | Field | Content |

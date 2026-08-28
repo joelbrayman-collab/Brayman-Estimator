@@ -283,6 +283,18 @@ class PlanSheet(db.Model):
         cascade="all, delete-orphan",
         order_by="PlanSheetSuggestion.created_at.desc()",
     )
+    scale_calibrations = db.relationship(
+        "PlanScaleCalibration",
+        back_populates="sheet",
+        cascade="all, delete-orphan",
+        order_by="PlanScaleCalibration.created_at.desc()",
+    )
+    measurements = db.relationship(
+        "PlanMeasurement",
+        back_populates="sheet",
+        cascade="all, delete-orphan",
+        order_by="PlanMeasurement.created_at.desc()",
+    )
 
     @property
     def is_void(self) -> bool:
@@ -359,4 +371,117 @@ class PlanSheetSuggestion(db.Model):
         return (
             f"<PlanSheetSuggestion {self.id} sheet={self.sheet_id} "
             f"status={self.status} num={self.suggested_number}>"
+        )
+
+
+class PlanScaleCalibration(db.Model):
+    """Drawing scale calibration record scoped to a PlanSheet (M010 / ADR-026)."""
+
+    __tablename__ = "plan_scale_calibrations"
+
+    id = db.Column(db.Integer, primary_key=True)
+    sheet_id = db.Column(
+        db.Integer, db.ForeignKey("plan_sheets.id"), nullable=False, index=True
+    )
+    plan_document_id = db.Column(
+        db.Integer, db.ForeignKey("plan_documents.id"), nullable=False
+    )
+    page_index = db.Column(db.Integer, nullable=False, default=0)
+    calibration_type = db.Column(
+        db.String(50), nullable=False, default="sheet_default"
+    )  # sheet_default, viewport_region, graphic_bar, dimension_string, preset_ratio
+    calibration_status = db.Column(
+        db.String(50), nullable=False, default="draft"
+    )  # draft, confirmed, void, nts
+    source_type = db.Column(
+        db.String(50), nullable=False, default="two_point"
+    )  # two_point, preset_ratio, suggestion
+    label = db.Column(db.String(100), nullable=True)
+    region_box = db.Column(db.JSON, nullable=True)  # {"x1": float, "y1": float, "x2": float, "y2": float}
+    point_a_x = db.Column(db.Float, nullable=True)
+    point_a_y = db.Column(db.Float, nullable=True)
+    point_b_x = db.Column(db.Float, nullable=True)
+    point_b_y = db.Column(db.Float, nullable=True)
+    measured_points_distance = db.Column(db.Float, nullable=True)
+    known_distance_value = db.Column(db.Float, nullable=True)
+    known_distance_unit = db.Column(db.String(20), nullable=False, default="ft")
+    scale_ratio = db.Column(db.Float, nullable=False, default=1.0)  # real-world units per normalized document unit
+    notes = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+    )
+    confirmed_at = db.Column(db.DateTime, nullable=True)
+
+    sheet = db.relationship("PlanSheet", back_populates="scale_calibrations")
+    document = db.relationship("PlanDocument")
+    measurements = db.relationship(
+        "PlanMeasurement",
+        back_populates="calibration",
+        cascade="all, delete-orphan",
+        order_by="PlanMeasurement.created_at.desc()",
+    )
+
+    @property
+    def is_confirmed(self) -> bool:
+        return self.calibration_status == "confirmed"
+
+    @property
+    def is_nts(self) -> bool:
+        return self.calibration_status == "nts"
+
+    @property
+    def is_void(self) -> bool:
+        return self.calibration_status == "void"
+
+    def __repr__(self):
+        return (
+            f"<PlanScaleCalibration {self.id} sheet={self.sheet_id} "
+            f"type={self.calibration_type} status={self.calibration_status} ratio={self.scale_ratio}>"
+        )
+
+
+class PlanMeasurement(db.Model):
+    """Manual plan measurement on a calibrated sheet (M010 / ADR-027)."""
+
+    __tablename__ = "plan_measurements"
+
+    id = db.Column(db.Integer, primary_key=True)
+    sheet_id = db.Column(
+        db.Integer, db.ForeignKey("plan_sheets.id"), nullable=False, index=True
+    )
+    plan_document_id = db.Column(
+        db.Integer, db.ForeignKey("plan_documents.id"), nullable=False
+    )
+    page_index = db.Column(db.Integer, nullable=False, default=0)
+    scale_calibration_id = db.Column(
+        db.Integer, db.ForeignKey("plan_scale_calibrations.id"), nullable=True
+    )
+    measurement_type = db.Column(
+        db.String(50), nullable=False
+    )  # linear, polyline, area, count
+    label = db.Column(db.String(255), nullable=True)
+    geometry_data = db.Column(db.JSON, nullable=False)  # [{"x": float, "y": float}, ...]
+    computed_value = db.Column(db.Float, nullable=False)
+    display_unit = db.Column(db.String(20), nullable=False)  # ft, sq_ft, m, sq_m, in, mm, count
+    perimeter_value = db.Column(db.Float, nullable=True)
+    status = db.Column(db.String(50), nullable=False, default="active")  # active, void
+    notes = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+    )
+
+    sheet = db.relationship("PlanSheet", back_populates="measurements")
+    document = db.relationship("PlanDocument")
+    calibration = db.relationship("PlanScaleCalibration", back_populates="measurements")
+
+    @property
+    def is_void(self) -> bool:
+        return self.status == "void"
+
+    def __repr__(self):
+        return (
+            f"<PlanMeasurement {self.id} sheet={self.sheet_id} "
+            f"type={self.measurement_type} val={self.computed_value} {self.display_unit}>"
         )

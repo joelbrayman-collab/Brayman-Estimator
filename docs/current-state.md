@@ -22,22 +22,23 @@
 - CRM, Estimating, Proposals (+ Accepted immutability), Change Orders
 - Plan Intelligence Phase A upload/storage (M005; `098647c`)
 - **Document Indexing (M007; `cbefe7a`)** — pages, processing attempts/results, immutable raw payloads, audit events, archive-over-delete, relational search, minimal package/revision; migration `a7c8e9f0b1d2`
-- **Sheet Intelligence / Classification (M009)** — `plan_sheets`, `plan_sheet_pages`, `plan_sheet_suggestions`, `sheet_id` on audit events; service layer for human review (accept, edit, reject, manual create, void); revision sheet index validation & finalization; office review UI; migration `b8d9f0a1c2e3`; 121 total tests passing
+- **Sheet Intelligence / Classification (M009)** — `plan_sheets`, `plan_sheet_pages`, `plan_sheet_suggestions`, `sheet_id` on audit events; service layer for human review (accept, edit, reject, manual create, void); revision sheet index validation & finalization; office review UI; migration `b8d9f0a1c2e3`
+- **Scale Calibration / Measurement Tools (M010)** — `plan_scale_calibrations`, `plan_measurements`; 2-point calibration, preset ratios, viewport/region calibrations, NTS flagging; manual linear, polyline, area (Shoelace) / perimeter, and count measurements; normalized document coordinate transforms; interactive PDF.js viewer; migration `c9e0f1a2b3d4`; 140 total tests passing
 
 ## Architecture / readiness only (not implemented)
 
 - **Document Intelligence architecture (M006)** — FG-003, `document-intelligence.md`, ADR-013–016
-- Scale / manual measure (M010) / AI take-off (M011+) / estimate mapping
+- AI take-off / quantity extraction (M011+) / estimate mapping
 - CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract
 
 ## Migrations
 
-- Alembic head: `b8d9f0a1c2e3` (M009 Sheet Intelligence)
-- Upgraded cleanly from `a7c8e9f0b1d2` (M007)
+- Alembic head: `c9e0f1a2b3d4` (M010 Scale Calibration and Measurement)
+- Upgraded cleanly from `b8d9f0a1c2e3` (M009)
 
 ## Current milestone status
 
-M005–M009 are **implemented and verified**. Next approved milestone is **M010 — Scale Calibration / Measurement Tools** ([FG-005](feature-gates/FG-005-m010-scale-calibration.md) approved; implementation not started).
+M005–M010 are **implemented and verified**. Next candidate milestone is **M011 — AI Take-off / Quantity Extraction Foundation** (requires dedicated Feature Gate).
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -51,8 +52,8 @@ M005–M009 are **implemented and verified**. Next approved milestone is **M010 
 
 ## Recommended next steps
 
-1. Dedicated **M010 implementation Cursor prompt** citing [FG-005](feature-gates/FG-005-m010-scale-calibration.md). **Do not start scale/measurement code until that prompt.**
-2. Joel accepts ADR-021 (MONITOR baseline), ADR-025 (pricing formula), ADR-026 (scale ownership), and ADR-027 (coordinate system) when ready.
+1. Feature Gate and architecture for **M011 — AI Take-off / Quantity Extraction Foundation**.
+2. Joel accepts ADR-021 (MONITOR baseline) and ADR-025 (pricing formula) when ready.
 3. Do not begin QuickBooks API, contract generation, BUILD capture, or field clients until separately Feature-Gated.
 
 ## Related

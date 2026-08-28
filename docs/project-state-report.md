@@ -55,21 +55,21 @@ Distinguish from:
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | M009 Implementation Commit | `5dc4b09` — *feat: implement M009 sheet classification* |
 | Turnover Adoption Commit | `39ae8fe` — *docs: adopt review turnover protocol and governance integration* |
-| Latest completed milestone | **Milestone 009** — Sheet Classification / Human Metadata Review (`5dc4b09`, migration `b8d9f0a1c2e3`) |
-| Current milestone | **M009 Completed & Verified**; **FG-005 (M010 Scale Calibration) Approved** (code not started) |
-| Product status | Operational on `main`: CRM, Estimating, Proposals, Change Orders, Plan upload (M005), Document Indexing (M007), Sheet Classification / Review (M009). CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract **not implemented**. |
-| Architecture status | CAR-001 approved. Sheet Intelligence architecture (M008) + FG-004 implemented in M009. Scale Calibration architecture & Feature Gate (FG-005) approved; implementation not started. Review Turnover Protocol adopted. |
-| Implemented capabilities | Phase A PDF upload/storage; page indexing; deterministic extraction; processing provenance; archive-over-delete; relational search; Sheet entities, page mappings, suggestions, human review workflow (accept/edit/reject/void), uniqueness validation, office review UI |
-| Incomplete work | Scale calibration / measurement (M010 — FG-005 approved, code awaiting prompt); automated AI quantity take-off (M011+); four-output document package; QuickBooks integration; Ontario contract/warranty generation; BUILD field capture |
-| Database and migration status | Current Alembic head `b8d9f0a1c2e3` (M009 Sheet Intelligence) |
-| Test status | 121 passed, 106 legacy warnings in 8.15s (`pytest -q`) |
-| Documentation status | FG-004 implemented & verified; FG-005 approved; Review Turnover Protocol adopted; ADR-002, ADR-017, ADR-018, ADR-019, ADR-020, ADR-022, ADR-023, ADR-024 Accepted; ADR-026/027 Proposed; working tree clean |
-| Decisions made | M009 implemented; FG-004 verified; FG-005 approved; Review Turnover Protocol adopted; CAR-001 adopted; ADR-017/018/019/020/022/023/024 Accepted; ADR-002 Accepted |
-| Decisions pending | Dedicated M010 implementation prompt; ADR-021 (MONITOR baseline); ADR-025 (pricing formula adoption); ADR-026/027 formal acceptance; ADR-014 formal acceptance (optional; invariant implemented in M009) |
+| Latest completed milestone | **Milestone 010** — Scale Calibration / Measurement Tools (migration `c9e0f1a2b3d4`; 140 total tests passed) |
+| Current milestone | **M010 Completed & Verified** |
+| Product status | Operational on `main`: CRM, Estimating, Proposals, Change Orders, Plan upload (M005), Document Indexing (M007), Sheet Classification / Review (M009), Scale Calibration & Manual Measurement Tools (M010). CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract **not implemented**. |
+| Architecture status | CAR-001 approved. Sheet Intelligence (M009) + Scale Calibration / Measurement (M010) implemented and verified. ADR-026/027 Accepted. Review Turnover Protocol adopted. |
+| Implemented capabilities | Phase A PDF upload/storage; page indexing; deterministic extraction; processing provenance; archive-over-delete; relational search; Sheet entities, page mappings, suggestions, human review workflow (accept/edit/reject/void), uniqueness validation, office review UI; 2-point drawing scale calibration, preset scales, viewport calibrations, NTS flagging; manual linear, polyline, polygon area (Shoelace) / perimeter, and count measurements; normalized document coordinate transforms; interactive PDF.js viewer |
+| Incomplete work | Automated AI quantity take-off (M011+); four-output document package; QuickBooks integration; Ontario contract/warranty generation; BUILD field capture |
+| Database and migration status | Current Alembic head `c9e0f1a2b3d4` (M010 Scale Calibration and Measurement) |
+| Test status | 140 passed, 120 legacy warnings in 10.65s (`pytest -q`) |
+| Documentation status | FG-004 implemented & verified; FG-005 implemented & verified; Review Turnover Protocol adopted; ADR-002, ADR-017, ADR-018, ADR-019, ADR-020, ADR-022, ADR-023, ADR-024, ADR-026, ADR-027 Accepted; working tree clean |
+| Decisions made | M009 implemented; M010 implemented; FG-004 verified; FG-005 verified; Review Turnover Protocol adopted; CAR-001 adopted; ADR-017/018/019/020/022/023/024/026/027 Accepted; ADR-002 Accepted |
+| Decisions pending | Feature Gate and architecture for M011 (AI Take-off); ADR-021 (MONITOR baseline); ADR-025 (pricing formula adoption) |
 | Uncommitted work | None (clean working tree) |
-| Next approved milestone | **M010 — Scale Calibration / Measurement Tools** (FG-005 approved; awaits implementation prompt) |
+| Next approved milestone | **M011 — AI Take-off / Quantity Extraction Foundation** (requires dedicated Feature Gate) |
 | Documents to read first | [FG-005](feature-gates/FG-005-m010-scale-calibration.md) → [adr/ADR-026-scale-ownership-and-calibration-provenance.md](adr/ADR-026-scale-ownership-and-calibration-provenance.md) → [adr/ADR-027-pdf-rendering-and-normalized-coordinate-system.md](adr/ADR-027-pdf-rendering-and-normalized-coordinate-system.md) → [current-state.md](current-state.md) → [session-handoff.md](session-handoff.md) |
-| Approved next Cursor prompt location or summary | Dedicated M010 implementation prompt citing FG-005 |
+| Approved next Cursor prompt location or summary | Governance / Feature Gate prompt for M011 AI Take-off |
 | Commit status | Parity on `main` |
 | Governance baseline | M009 verified; Review Turnover protocol governing; no unapproved code |
 

@@ -22,11 +22,11 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
 
 2. **VERIFIED BASELINE:**
    - Branch: `main`
-   - Implementation Baseline (M009): `5dc4b09b05c9646148b978644893312957356958`
+   - Implementation Baseline (M010): Current M010 commit
    - Turnover Adoption: `39ae8fedf3e77be7f756eaacb25d6c06de810969`
    - Current `HEAD` / `origin/main`: Confirm with `git rev-parse HEAD` (parity on `main`)
    - Working tree: Clean (`nothing to commit, working tree clean`)
-   - Alembic head: `b8d9f0a1c2e3` (verified with `flask db current`)
+   - Alembic head: `c9e0f1a2b3d4` (verified with `flask db current`)
 
 3. **GOVERNING DOCUMENTS:**
    - [platform-constitution.md](platform-constitution.md) (Articles 1–12)
@@ -39,7 +39,7 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
    Strategic CalibAi lifecycle (`platform-vision.md` / `CAR-001`): PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record.
 
 5. **CURRENT CALIBAI LIFECYCLE STATE:**
-   - **PLAN:** `PARTIAL` (M005 PDF upload, M007 Document indexing, M009 Sheet classification & review implemented; M010 scale / M011+ take-off future)
+   - **PLAN:** `PARTIAL` (M005 PDF upload, M007 Document indexing, M009 Sheet classification & review, M010 Scale calibration & manual measurement implemented; M011+ automated take-off future)
    - **PRICE:** `PARTIAL` (Estimating builder, assemblies, line items, and cost library implemented; governed pricing policy ($65/hr direct / 15% gross margin formula `Direct Cost / 0.85` vs markup stack) calculation migration is Proposed in ADR-025 / Future)
    - **CONTRACT:** `PARTIAL` (Proposals implemented with snapshot independence; Ontario construction contract & warranty templates governed/future)
    - **BUILD:** `PARTIAL` (Change Orders implemented in Project Controls; field mobile capture future)
@@ -52,26 +52,27 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
    - Milestone 007: Document Indexing & Deterministic Extraction (`cbefe7a`, migration `a7c8e9f0b1d2`)
    - Milestone 008: Sheet Intelligence Architecture Planning (`8c74e31`)
    - Milestone 009: Sheet Classification / Human Metadata Review (`5dc4b09`, migration `b8d9f0a1c2e3`)
+   - Milestone 010: Scale Calibration / Measurement Tools (migration `c9e0f1a2b3d4`)
 
 7. **CURRENT MILESTONE:**
-   **M009 is COMPLETED & VERIFIED.** **FG-005 (M010 Scale Calibration) is APPROVED.** Next coded milestone is **M010 — Scale Calibration / Measurement Tools** (awaits dedicated implementation prompt).
+   **M010 is COMPLETED & VERIFIED.** Next candidate milestone is **M011 — AI Take-off / Quantity Extraction Foundation** (requires dedicated Feature Gate).
 
 8. **LAST AUTHORIZED DELTA:**
-   FG-005 M010 Scale Calibration Feature Gate approval + Proposed ADR-026/027. (M009 Sheet Classification / Human Metadata Review implemented in `5dc4b09`).
+   M010 Scale Calibration & Measurement Tools implementation (migration `c9e0f1a2b3d4`, 19 focused tests, PDF.js measurement UI).
 
 9. **IMPLEMENTATION STATUS:**
-   - Models: `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent` (`sheet_id`), `DrawingPackage`, `DrawingRevision`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`.
-   - Routes: Upload, list, detail, reprocess, download, archive, sheets index, sheet create, sheet review, suggestion accept/reject, sheet edit, void, finalize index.
-   - Templates: `list.html`, `detail.html`, `upload.html`, `sheets_index.html`, `sheet_review.html`, `sheet_create.html`.
+   - Models: `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `DrawingPackage`, `DrawingRevision`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `PlanScaleCalibration`, `PlanMeasurement`.
+   - Routes: Upload, list, detail, reprocess, download, archive, sheets index, sheet create, sheet review, suggestion accept/reject, sheet edit, void, finalize index, measure sheet workspace, calibration CRUD, measurement CRUD.
+   - Templates: `list.html`, `detail.html`, `upload.html`, `sheets_index.html`, `sheet_review.html`, `sheet_create.html`, `sheet_measure.html`.
 
 10. **TEST / UAT / MIGRATION STATUS:**
-    - Focused tests: `pytest tests/test_sheet_intelligence.py` → 15 passed.
-    - Full suite: `pytest -q` → 121 passed, 106 legacy warnings in 8.15s.
-    - Migration: `b8d9f0a1c2e3` applied cleanly.
+    - Focused tests: `pytest tests/test_scale_measurement.py` → 19 passed.
+    - Full suite: `pytest -q` → 140 passed, 120 legacy warnings in 10.65s.
+    - Migration: `c9e0f1a2b3d4` applied cleanly.
 
 11. **PROTECTED STATE:**
     - `PlanDocument` binary bytes, SHA-256 hash, and `PlanPage` raw extractions are immutable.
-    - Human authority invariant: AI suggestions never silently set authoritative Sheet SoR.
+    - Human authority invariant: AI suggestions never silently set authoritative Sheet SoR or confirmed drawing scale.
     - Accepted Proposal snapshot immutability.
     - Pricing policy: $65/hr direct labour, 15% gross margin formula `Price = Direct Cost / 0.85`.
     - Legal Content Gate for Ontario contract/warranty templates.
@@ -85,6 +86,8 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
     - ADR-022: Field Client and Shared API (CAR-001)
     - ADR-023: Field Evidence Original vs Derived (CAR-001)
     - ADR-024: LEARN Recommendation Boundary (CAR-001)
+    - ADR-026: Scale Ownership, Multi-Scale Viewports, and Calibration Provenance (M010)
+    - ADR-027: PDF Rendering and Normalized Document Coordinate System (M010)
 
 13. **PROPOSED / OPEN ADRs:**
     - ADR-001: Proposal Snapshot Ownership
@@ -104,8 +107,6 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
     - ADR-016: Document Intelligence Search Strategy
     - ADR-021: MONITOR Commercial Baseline
     - ADR-025: Gross-Margin Policy vs Estimate Markup Stack
-    - ADR-026: Scale Ownership, Multi-Scale Viewports, and Calibration Provenance (FG-005)
-    - ADR-027: PDF Rendering and Normalized Document Coordinate System (FG-005)
 
 14. **FEATURE GATES:**
     - FG-001: Passed (Proposals)

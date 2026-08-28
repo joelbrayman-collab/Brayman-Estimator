@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-28 — Implement Milestone 010 (Scale Calibration & Manual Measurement Tools)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Implement M010 Scale Calibration and Manual Measurement Tools strictly per FG-005: durable scale calibration and measurement models, additive migration, service layer, human confirmation workflow, normalized document coordinates, interactive PDF.js viewer, and focused test suite. |
+| Business decision | Estimators can calibrate physical scale on reviewed drawing sheets using 2-point reference dimensions or standard architectural/metric presets, define multi-scale viewports, and take manual linear, polyline, polygon area (Shoelace) / perimeter, and count measurements with coordinate stability. |
+| Architectural decision | Additive models `PlanScaleCalibration` and `PlanMeasurement` under `PlanSheet` (scoped to `DrawingRevision`). ADR-026 and ADR-027 marked Accepted. Normalized document coordinate system (`[0.0, 1.0]`) rendered via Mozilla PDF.js in Flask templates with interactive SVG/Canvas overlay. Human confirmation required; uncalibrated/NTS fails closed. Additive migration `c9e0f1a2b3d4`. |
+| Prompt template used | Approved custom Cursor implementation prompt (FG-005 Approved) |
+| Approved Cursor prompt summary | Anti-drift preflight; mark ADR-026/027 Accepted; verify Alembic head `b8d9f0a1c2e3`; implement models, migration `c9e0f1a2b3d4`, services (`scale_measurement.py`), routes, viewer template (`sheet_measure.html`), controller (`sheet-measurement.js`); 19 focused tests in `tests/test_scale_measurement.py`; full test suite; documentation update; commit and push. |
+| Files expected to change | `app/plan_intelligence/models.py`, `app/plan_intelligence/routes.py`, `app/plan_intelligence/scale_measurement.py`, `app/templates/plan_intelligence/**`, `app/static/js/**`, `migrations/versions/c9e0f1a2b3d4_add_scale_measurement_m010.py`, `tests/test_scale_measurement.py`, documentation. |
+| Files prohibited from changing | Estimating commercial calculations, Proposals, Change Orders, CRM, Auth, Contracts, QuickBooks. |
+| Implementation result | Full M010 implementation completed and verified. 19 focused tests pass. Full test suite (140 tests) pass. |
+| Tests | `pytest tests/test_scale_measurement.py -v` (19 passed), `pytest -q` (140 passed) |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes — Milestone 010 |
+| Constitutional issue raised | None. Human authority strictly enforced (no auto-confirmation of scale). |
+| Unresolved issues | None for M010. Automated quantity take-off deferred to M011+. |
+| Next approved step | Feature Gate and architecture for M011 — AI Take-off / Quantity Extraction Foundation. |
+| Next approved prompt | M011 Feature Gate prompt |
+| Commit hash | Pending M010 implementation commit |
+
 ### 2026-08-28 — Prepare and Approve M010 Scale Calibration Feature Gate (FG-005)
 
 | Field | Content |

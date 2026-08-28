@@ -97,17 +97,22 @@ See [document-intelligence.md](../architecture/document-intelligence.md) and [FG
 
 ## Owned data
 
-### Current (M005 + M007)
+### Current (M005 + M007 + M009 + M010)
 
 - `PlanDocument` metadata + stored PDF bytes
-- Minimal `DrawingPackage` / `DrawingRevision` membership
+- `DrawingPackage` / `DrawingRevision` membership
 - `PlanPage` index + extracted text
 - `ProcessingAttempt` / `ProcessingResult` (incl. raw payload)
-- `PlanAuditEvent`
+- `PlanAuditEvent` (append-only)
+- `PlanSheet` (SoR sheet records scoped to DrawingRevision)
+- `PlanSheetPage` (Page-to-Sheet mapping)
+- `PlanSheetSuggestion` (First-class metadata suggestion workflow)
+- `PlanScaleCalibration` (Drawing scale calibration, 2-point, presets, viewports, NTS; M010)
+- `PlanMeasurement` (Manual linear, polyline, area/perimeter, count measurements; M010)
 
 ### Intended (later)
 
-Sheets, disciplines, take-off quantities, reviews, approvals, mapping proposals (not committed estimate lines).
+Automated take-off quantities, AI take-off suggestion engine (M011+), mapping proposals (not committed estimate lines).
 
 ## Referenced data
 

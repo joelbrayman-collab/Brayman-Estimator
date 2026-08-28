@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}Measure & Calibrate Sheet {{ sheet.number or sheet.id }} | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Sheet Scale Calibration & Measurement{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Plan Intelligence · Revision {{ revision.label }} · Sheet {{ sheet.number or "—" }}</p>
+        <h1>{{ sheet.number or "Draft Sheet" }}: {{ sheet.title or "Untitled Sheet" }}</h1>
+        <p class="muted-copy">{{ project.name }} · Discipline: {{ sheet.discipline_code }} · Status: <span class="status">{{ sheet.review_status }}</span></p>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center;">
+        <a class="button-link" href="{{ url_for('plan_intelligence.review_sheet', project_id=project.id, sheet_id=sheet.id) }}">Sheet Review</a>
+        <a class="button-link" href="{{ url_for('plan_intelligence.revision_sheets', project_id=project.id, revision_id=revision.id) }}">Sheet Index</a>
+    </div>
+</div>
+
+<div class="measure-workspace" style="display: grid; grid-template-columns: 1fr 380px; gap: 20px; align-items: start; margin-bottom: 30px;">
+    
+    <!-- Viewer Column -->
+    <div style="background: #1e293b; border-radius: 8px; border: 1px solid #334155; overflow: hidden; display: flex; flex-direction: column;">
+        <!-- Viewer Toolbar -->
+        <div style="background: #0f172a; padding: 10px 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; color: #f8fafc; font-size: 0.88rem; gap: 10px;">
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button type="button" id="btn-zoom-in" class="button-small" style="background: #334155; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">+</button>
+                <button type="button" id="btn-zoom-out" class="button-small" style="background: #334155; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">-</button>
+                <button type="button" id="btn-zoom-fit" class="button-small" style="background: #334155; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">Fit</button>
+                <button type="button" id="btn-zoom-100" class="button-small" style="background: #334155; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">100%</button>
+                <span id="zoom-level-text" style="margin-left: 6px; color: #94a3b8;">100%</span>
+            </div>
+
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <span style="color: #94a3b8;">Tool:</span>
+                <select id="tool-select" style="background: #1e293b; color: #fff; border: 1px solid #475569; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">
+                    <option value="pan">Pan / Navigate</option>
+                    <option value="two_point_cal">Calibrate (2-Point)</option>
+                    <option value="viewport_cal">Create Viewport Region</option>
+                    <option value="linear">Linear Distance</option>
+                    <option value="polyline">Polyline Length</option>
+                    <option value="area">Area & Perimeter</option>
+                    <option value="count">Count Point</option>
+                </select>
+            </div>
+
+            <div>
+                {% if active_cal %}
+                    <span class="status" style="background: #065f46; color: #d1fae5;">Scale: {{ active_cal.label or (active_cal.known_distance_value ~ ' ' ~ active_cal.known_distance_unit) }}</span>
+                {% elif sheet.scale_calibrations and sheet.scale_calibrations[0].is_nts %}
+                    <span class="status" style="background: #7f1d1d; color: #fee2e2;">NTS (Not To Scale)</span>
+                {% else %}
+                    <span class="status" style="background: #78350f; color: #fef3c7;">Uncalibrated</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Canvas Container -->
+        <div id="viewer-container" style="position: relative; width: 100%; height: 720px; overflow: auto; background: #0b0f19; cursor: grab; display: flex; justify-content: center; align-items: center;">
+            <div id="drawing-stage" style="position: relative; transform-origin: top left; display: inline-block;">
+                <!-- PDF Canvas Layer -->
+                <canvas id="pdf-canvas" style="display: block; box-shadow: 0 4px 20px rgba(0,0,0,0.5);"></canvas>
+                <!-- SVG / Vector Overlay Layer -->
+                <svg id="measurement-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: auto;"></svg>
+            </div>
+            <div id="viewer-loading" style="position: absolute; color: #94a3b8; font-size: 1rem;">Loading plan sheet drawing...</div>
+        </div>
+
+        <!-- Active Interaction Status Bar -->
+        <div style="background: #0f172a; padding: 8px 16px; border-top: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #cbd5e1;">
+            <span id="interaction-hint">Select a tool or click to pan.</span>
+            <span id="cursor-coords" style="color: #64748b;">X: 0.000, Y: 0.000 (norm)</span>
+        </div>
+    </div>
+
+    <!-- Sidebar Column: Calibration & Measurement Management -->
+    <div>
+        <!-- Scale Calibration Panel -->
+        <section class="form-panel" style="margin-bottom: 20px; padding: 16px;">
+            <h2 style="font-size: 1.1rem; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                Scale Calibration
+                <span class="status" style="font-size: 0.75rem;">ADR-026</span>
+            </h2>
+
+            <!-- Calibration Mode Tabs -->
+            <div style="display: flex; gap: 6px; margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+                <button type="button" class="tab-btn active" id="tab-2pt" style="font-size: 0.82rem; padding: 4px 8px; border: 1px solid #cbd5e1; background: #fff; border-radius: 4px; cursor: pointer;">2-Point Calibrate</button>
+                <button type="button" class="tab-btn" id="tab-preset" style="font-size: 0.82rem; padding: 4px 8px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 4px; cursor: pointer;">Preset</button>
+                <button type="button" class="tab-btn" id="tab-nts" style="font-size: 0.82rem; padding: 4px 8px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 4px; cursor: pointer;">NTS</button>
+            </div>
+
+            <!-- 2-Point Calibration Form -->
+            <div id="panel-2pt">
+                <form id="form-two-point-cal" method="post" action="{{ url_for('plan_intelligence.create_two_point_calibration_action', project_id=project.id, sheet_id=sheet.id) }}">
+                    {% if first_map %}
+                        <input type="hidden" name="plan_document_id" value="{{ first_map.plan_document_id }}">
+                        <input type="hidden" name="page_index" value="{{ first_map.page_index }}">
+                    {% endif %}
+                    <input type="hidden" id="cal-p1-x" name="point_a_x" value="">
+                    <input type="hidden" id="cal-p1-y" name="point_a_y" value="">
+                    <input type="hidden" id="cal-p2-x" name="point_b_x" value="">
+                    <input type="hidden" id="cal-p2-y" name="point_b_y" value="">
+                    
+                    <p class="muted-copy" style="font-size: 0.8rem; margin-bottom: 10px;">Click 2 points on drawing, enter the known dimension, and confirm.</p>
+                    
+                    <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                        <input type="text" id="cal-distance-input" name="known_distance" placeholder="e.g. 24' 6&quot; or 7500 mm" style="flex: 1; padding: 6px 10px; font-size: 0.9rem;" required>
+                    </div>
+
+                    <div style="margin-bottom: 10px;">
+                        <input type="text" name="label" placeholder="Scale label (e.g. 1/4&quot; = 1'-0&quot;)" style="width: 100%; padding: 6px 10px; font-size: 0.85rem;">
+                    </div>
+
+                    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
+                        <label style="font-size: 0.82rem; cursor: pointer;">
+                            <input type="checkbox" name="auto_confirm" value="1" checked> Confirm immediately
+                        </label>
+                    </div>
+
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" id="btn-start-2pt-cal" class="button" style="font-size: 0.85rem; padding: 6px 12px;">Pick 2 Points</button>
+                        <button type="submit" id="btn-save-2pt-cal" class="button" style="font-size: 0.85rem; padding: 6px 12px; background: #059669;" disabled>Save Calibration</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Preset Calibration Form -->
+            <div id="panel-preset" style="display: none;">
+                <form method="post" action="{{ url_for('plan_intelligence.create_preset_calibration_action', project_id=project.id, sheet_id=sheet.id) }}">
+                    {% if first_map %}
+                        <input type="hidden" name="plan_document_id" value="{{ first_map.plan_document_id }}">
+                        <input type="hidden" name="page_index" value="{{ first_map.page_index }}">
+                    {% endif %}
+                    <p class="muted-copy" style="font-size: 0.8rem; margin-bottom: 10px;">Select standard architectural or metric scale ratio:</p>
+                    
+                    <div style="margin-bottom: 10px;">
+                        <select name="preset_key" style="width: 100%; padding: 6px 10px; font-size: 0.88rem;">
+                            {% for pkey, pval in preset_scales.items() %}
+                            <option value="{{ pkey }}">{{ pval.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
+                        <label style="font-size: 0.82rem; cursor: pointer;">
+                            <input type="checkbox" name="auto_confirm" value="1" checked> Confirm immediately
+                        </label>
+                    </div>
+
+                    <button type="submit" class="button" style="font-size: 0.85rem; padding: 6px 12px;">Apply Preset Scale</button>
+                </form>
+            </div>
+
+            <!-- NTS Form -->
+            <div id="panel-nts" style="display: none;">
+                <form method="post" action="{{ url_for('plan_intelligence.mark_sheet_nts_action', project_id=project.id, sheet_id=sheet.id) }}">
+                    <p class="muted-copy" style="font-size: 0.8rem; margin-bottom: 10px;">Flag this sheet as Not To Scale (NTS). Measurement creation will fail closed.</p>
+                    <button type="submit" class="button-link" style="color: #dc2626; font-size: 0.85rem;">Mark as NTS</button>
+                </form>
+            </div>
+
+            <!-- Calibrations List -->
+            {% if calibrations %}
+            <div style="margin-top: 16px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
+                <p class="eyebrow" style="margin-bottom: 6px;">Calibrations on Sheet</p>
+                <ul class="activity-list" style="font-size: 0.82rem;">
+                    {% for c in calibrations %}
+                    <li style="padding: 6px 0; border-bottom: 1px solid #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>{{ c.label or c.calibration_type }}</strong>
+                            <span class="status" style="font-size: 0.7rem; padding: 1px 5px; margin-left: 4px;">{{ c.calibration_status }}</span>
+                            {% if c.known_distance_value %}
+                            <span class="muted-copy" style="display: block;">Ref: {{ c.known_distance_value }} {{ c.known_distance_unit }}</span>
+                            {% endif %}
+                        </div>
+                        <div style="display: flex; gap: 6px;">
+                            {% if not c.is_confirmed and not c.is_void %}
+                            <form method="post" action="{{ url_for('plan_intelligence.confirm_calibration_action', project_id=project.id, sheet_id=sheet.id, calibration_id=c.id) }}" style="display:inline;">
+                                <button type="submit" style="background: none; border: none; color: #059669; cursor: pointer; font-size: 0.78rem;">Confirm</button>
+                            </form>
+                            {% endif %}
+                            {% if not c.is_void %}
+                            <form method="post" action="{{ url_for('plan_intelligence.void_calibration_action', project_id=project.id, sheet_id=sheet.id, calibration_id=c.id) }}" style="display:inline;">
+                                <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-size: 0.78rem;">Void</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- Active Measurement Panel -->
+        <section class="form-panel" style="margin-bottom: 20px; padding: 16px;">
+            <h2 style="font-size: 1.1rem; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                Active Measurement
+                <span class="status" style="font-size: 0.75rem;">ADR-027</span>
+            </h2>
+
+            <div id="live-measurement-display" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin-bottom: 14px;">
+                <p class="eyebrow" style="margin-bottom: 4px;">Live Value</p>
+                <div id="live-value-text" style="font-size: 1.3rem; font-weight: 600; color: #0f172a;">—</div>
+                <div id="live-subvalue-text" style="font-size: 0.8rem; color: #64748b; margin-top: 2px;"></div>
+            </div>
+
+            <form id="form-save-measurement" method="post" action="{{ url_for('plan_intelligence.create_measurement_action', project_id=project.id, sheet_id=sheet.id) }}">
+                {% if first_map %}
+                    <input type="hidden" name="plan_document_id" value="{{ first_map.plan_document_id }}">
+                    <input type="hidden" name="page_index" value="{{ first_map.page_index }}">
+                {% endif %}
+                <input type="hidden" id="meas-type-input" name="measurement_type" value="linear">
+                <input type="hidden" id="meas-geometry-input" name="geometry_data_json" value="[]">
+
+                <div style="margin-bottom: 10px;">
+                    <input type="text" id="meas-label-input" name="label" placeholder="Measurement label (e.g. North Wall)" style="width: 100%; padding: 6px 10px; font-size: 0.88rem;">
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                    <button type="submit" id="btn-save-measurement" class="button" style="font-size: 0.85rem; padding: 6px 12px; flex: 1;" disabled>Save Measurement</button>
+                    <button type="button" id="btn-clear-measurement" class="button-link" style="font-size: 0.85rem; padding: 6px 10px;">Clear</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Saved Measurements List -->
+        <section class="form-panel" style="padding: 16px;">
+            <h2 style="font-size: 1.1rem; margin-bottom: 12px;">Saved Measurements ({{ measurements|length }})</h2>
+
+            {% if measurements %}
+            <ul class="activity-list" style="font-size: 0.85rem;">
+                {% for m in measurements %}
+                <li style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <strong>{{ m.label or (m.measurement_type|title) }}</strong>
+                        <div style="color: #047857; font-weight: 600; margin-top: 2px;">
+                            {{ m.computed_value }} {{ m.display_unit }}
+                            {% if m.perimeter_value %}
+                            <span class="muted-copy" style="font-weight: normal; font-size: 0.78rem;">(Perimeter: {{ m.perimeter_value }} ft)</span>
+                            {% endif %}
+                        </div>
+                        <span class="muted-copy" style="font-size: 0.75rem;">Type: {{ m.measurement_type }}</span>
+                    </div>
+                    <form method="post" action="{{ url_for('plan_intelligence.void_measurement_action', project_id=project.id, sheet_id=sheet.id, measurement_id=m.id) }}">
+                        <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-size: 0.78rem;">Void</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="muted-copy" style="font-size: 0.85rem;">No saved measurements on this sheet yet.</p>
+            {% endif %}
+        </section>
+    </div>
+</div>
+
+<!-- PDF.js CDN Scripts & Controller -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+    window.PLAN_CONFIG = {
+        sheetId: {{ sheet.id }},
+        projectId: {{ project.id }},
+        pdfUrl: "{% if first_map %}{{ url_for('plan_intelligence.download_plan', project_id=project.id, document_id=first_map.plan_document_id) }}{% else %}null{% endif %}",
+        pageIndex: {% if first_map %}{{ first_map.page_index }}{% else %}0{% endif %},
+        activeCalRatio: {% if active_cal %}{{ active_cal.scale_ratio }}{% else %}null{% endif %},
+        activeCalUnit: "{% if active_cal %}{{ active_cal.known_distance_unit }}{% else %}ft{% endif %}",
+        isNts: {% if sheet.scale_calibrations and sheet.scale_calibrations[0].is_nts %}true{% else %}false{% endif %}
+    };
+</script>
+<script src="{{ url_for('static', filename='js/sheet-measurement.js') }}"></script>
+{% endblock %}

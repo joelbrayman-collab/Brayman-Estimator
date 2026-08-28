@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-026: Scale Ownership, Multi-Scale Viewports, and Calibration Provenance |
-| Status | **Proposed** (governed by Joel approval / Feature Gate FG-005) |
+| Status | **Accepted** (2026-08-28; Joel Brayman; M010 Feature Gate FG-005) |
 | Date | 2026-08-28 |
 | Related | [ADR-014](ADR-014-sheet-identity-and-page-mapping.md) · [ADR-015](ADR-015-extracted-metadata-ownership-and-provenance.md) · [ADR-017](ADR-017-sheet-metadata-suggestion-and-review-workflow.md) · [ADR-018](ADR-018-sheet-uniqueness-duplicates-and-supersession.md) · [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) · [sheet-intelligence.md](../architecture/sheet-intelligence.md) |
 
@@ -79,5 +79,5 @@ Tests must verify: 2-point calibration derivation, human confirmation requiremen
 
 | Role | Name | Date |
 |------|------|------|
-| Product Owner | Joel Brayman | Pending |
-| Architecture Review | Proposed for M010 Feature Gate FG-005 | 2026-08-28 |
+| Product Owner | Joel Brayman | 2026-08-28 |
+| Architecture Review | FG-005 M010 Implementation | 2026-08-28 |

@@ -12,7 +12,7 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [CAR-001-calibai-product-architecture-reconciliation.md](CAR-001-calibai-product-architecture-reconciliation.md) | **Approved architectural direction** (2026-08-28); implementation not authorized |
 | [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) | Future + Phase A / M007 page indexing current |
 | [document-intelligence.md](document-intelligence.md) | Architecture (M006); upload/pages/processing **Current** (M007) |
-| [sheet-intelligence.md](sheet-intelligence.md) | **Architecture only (M008)** — Sheets / review not implemented |
+| [sheet-intelligence.md](sheet-intelligence.md) | **Architecture (M008) + FG-004 approved** — Sheets / review **not implemented** |
 | [project-document-package.md](project-document-package.md) | **Intended** — authoritative record + four outputs (not implemented) |
 | [quickbooks-integration.md](quickbooks-integration.md) | **Future** — export pipeline boundary (not implemented) |
 | [M004-plan-intelligence-readiness-report.md](M004-plan-intelligence-readiness-report.md) | Milestone 004 report |

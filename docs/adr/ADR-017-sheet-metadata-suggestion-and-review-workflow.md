@@ -3,8 +3,9 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-017: Sheet Metadata Suggestion and Review Workflow |
-| Status | **Proposed** |
+| Status | **Accepted** |
 | Date | 2026-07-25 |
+| Accepted | 2026-08-28 (Joel Brayman; M009 Feature Gate FG-004) |
 | Related | [ADR-014](ADR-014-sheet-identity-and-page-mapping.md) · [ADR-015](ADR-015-extracted-metadata-ownership-and-provenance.md) · [ADR-011](ADR-011-ai-confidence-threshold-policy.md) · [sheet-intelligence.md](../architecture/sheet-intelligence.md) |
 
 ## Context
@@ -14,8 +15,6 @@ M007 can harvest embedded text and deterministic PDF metadata. Turning that into
 ADR-015 states human SoR and confidence limits generally; Sheet Intelligence needs a durable product rule for **suggest → accept / reject / edit**.
 
 ## Decision
-
-*(Proposed)*
 
 1. Sheet metadata suggestions are first-class records (or equivalent) with proposed fields, optional confidence, source processing attempt, and state: `open`, `accepted`, `rejected`.
 2. Creating or updating a **reviewed** Sheet’s SoR fields (number, title, discipline, drawing status) requires an explicit human action: Accept, Edit+Save, or manual create — never silent auto-apply from confidence thresholds.
@@ -45,7 +44,7 @@ Suggestions are Plan Intelligence historical/proposal records; Sheet SoR is Plan
 
 ## Migration Impact
 
-Deferred to Feature-Gated Sheet implementation (recommended **M009**). Additive suggestion/sheet tables.
+Additive suggestion/sheet tables under Feature-Gated **M009** ([FG-004](../feature-gates/FG-004-m009-sheet-classification.md)). Not created by the Feature Gate governance prompt.
 
 ## Testing Impact
 
@@ -59,6 +58,6 @@ Sheet Intelligence architecture; M008 readiness; roadmap sequencing.
 
 | Role | Name | Date |
 |------|------|------|
-| Joel | | |
-| ChatGPT review | | |
-| Cursor implementation note | Docs only in M008 | |
+| Joel | Joel Brayman | 2026-08-28 |
+| ChatGPT review | Consistent with M008 / CAR-001; accepted without redesign | 2026-08-28 |
+| Cursor implementation note | Status Accepted; no product code in FG-004 governance prompt | 2026-08-28 |

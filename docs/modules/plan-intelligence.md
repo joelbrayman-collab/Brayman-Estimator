@@ -3,10 +3,10 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Phase A + M007 indexing implemented**; Sheet review / take-off / AI not started |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-28 |
 | Code | `app/plan_intelligence/` |
-| Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) |
-| Architecture | [../architecture/plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) · [../architecture/document-intelligence.md](../architecture/document-intelligence.md) |
+| Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) |
+| Architecture | [../architecture/plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) · [../architecture/document-intelligence.md](../architecture/document-intelligence.md) · [../architecture/sheet-intelligence.md](../architecture/sheet-intelligence.md) |
 | Readiness | [../architecture/M004-plan-intelligence-readiness-report.md](../architecture/M004-plan-intelligence-readiness-report.md) · [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md) |
 
 ## Purpose
@@ -49,7 +49,7 @@ Proposal generation already exists. Plan Intelligence is the next major platform
 | Idempotent reprocessing | **Done** (M007) |
 | Append-only plan audit events | **Done** (M007) |
 | Project-scoped relational search/filter | **Done** (M007) |
-| Sheet classification / human review | **Not implemented** (proposed Sheet Intelligence architecture — separate milestone) |
+| Sheet classification / human review | **Not implemented** — architecture M008; [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) **approved**; implementation prompt not started |
 | OCR / CAD / AI take-off | **Out of scope** until Feature-Gated |
 
 Routes live under `/projects/<id>/plans…`. Estimating, Proposals, OCR, CAD, AI, and supplier features are unchanged.
@@ -63,7 +63,7 @@ Capability layer **inside** Plan Intelligence ([ADR-013](../adr/ADR-013-document
 | Drawing Package / Revision (minimal default) | **Implemented** (M007) |
 | Page indexing / deterministic extraction | **Implemented** (M007) |
 | Processing provenance + relational search | **Implemented** (M007); ADR-015 / ADR-016 |
-| Sheet index / discipline / human review | **Not implemented** (ADR-014 defines Sheet ≠ Page) |
+| Sheet index / discipline / human review | **Not implemented** — FG-004 approved; M009 code not started |
 | OCR / CAD / AI take-off hooks | Documented integration points only |
 
 See [document-intelligence.md](../architecture/document-intelligence.md) and [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md).

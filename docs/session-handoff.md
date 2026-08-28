@@ -26,15 +26,15 @@ Update this file at the end of every substantial session. Prefer facts verified 
 |-------|--------|
 | **Date** | 2026-08-28 |
 | **Current branch** | `main` |
-| **HEAD / `origin/main`** | Confirm with `git rev-parse` after this session's CAR-001 docs commit |
+| **HEAD / `origin/main`** | Confirm with `git rev-parse` after this session's FG-004 docs commit |
 | **August reconciliation** | `0fdf0d4` |
 | **State closure** | `ee100ac` |
-| **Working tree** | Expected clean after CAR-001 docs commit |
-| **Current focus** | CAR-001 CalibAi architecture adopted (docs only). M005–M008 on `main`. **M009 Sheet code not begun.** |
-| **Next strategic capability** | Feature-Gated **M009** Sheet classification & human metadata review (**not authorized**) |
-| **Migration status** | Head intended `a7c8e9f0b1d2` |
-| **Next recommended step** | Joel Feature-Gates M009; separately accept ADR-021/025 when ready |
-| **Documents to read first** | [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md); [platform-vision.md](platform-vision.md); [continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md); [sheet-intelligence.md](architecture/sheet-intelligence.md) |
+| **Working tree** | Expected clean after FG-004 docs commit |
+| **Current focus** | [FG-004](feature-gates/FG-004-m009-sheet-classification.md) **approved**. ADR-017/018 **Accepted**. **M009 Sheet code not begun.** |
+| **Next strategic capability** | M009 implementation (separate Cursor prompt citing FG-004) |
+| **Migration status** | Head intended `a7c8e9f0b1d2` until M009 implementation |
+| **Next recommended step** | Joel-authorized **M009 implementation prompt**; do not start sheet tables/UI in this session |
+| **Documents to read first** | [FG-004](feature-gates/FG-004-m009-sheet-classification.md); [sheet-intelligence.md](architecture/sheet-intelligence.md); [ADR-017](adr/ADR-017-sheet-metadata-suggestion-and-review-workflow.md); [ADR-018](adr/ADR-018-sheet-uniqueness-duplicates-and-supersession.md) |
 
 ### Commands to resume (Cursor Terminal)
 
@@ -46,7 +46,7 @@ git log -1 --oneline
 git rev-parse HEAD
 git rev-parse origin/main
 # Compare HEAD to origin/main before any sync action — do not automatically pull
-# Do not start sheet implementation without Feature Gate
+# Do not start sheet implementation without the M009 implementation Cursor prompt (FG-004 is not that prompt)
 ```
 
 ---

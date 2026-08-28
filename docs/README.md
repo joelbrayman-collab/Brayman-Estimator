@@ -53,7 +53,7 @@ Also read [`platform-governance.md`](platform-governance.md), [`governance/conti
 | [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md) | CalibAi product/architecture reconciliation | **Approved direction** — not implementation |
 | [architecture/M004-plan-intelligence-readiness-report.md](architecture/M004-plan-intelligence-readiness-report.md) | Milestone 004 readiness report | Historical / operational |
 | [architecture/document-intelligence.md](architecture/document-intelligence.md) | Document Intelligence (packages, pages, search) | Architecture (M006); partial Current (M007) |
-| [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) | Sheet Intelligence (sheet entities, review) | **Architecture only (M008)** — not implemented |
+| [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) | Sheet Intelligence (sheet entities, review) | **Architecture (M008); FG-004 approved; not implemented** |
 | [architecture/project-document-package.md](architecture/project-document-package.md) | Authoritative record + four core outputs | **Intended** — not implemented |
 | [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md) | QuickBooks export pipeline boundary | **Future** — not implemented |
 | [architecture/M006-document-intelligence-readiness-report.md](architecture/M006-document-intelligence-readiness-report.md) | Milestone 006 readiness report | Historical / operational |

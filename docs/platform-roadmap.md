@@ -29,7 +29,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next coded milestone:** **M009** — Feature-Gated **Sheet classification and human metadata review**. **Not started.** CAR-001 does not authorize M009 code.
+**Next coded milestone:** **M009** — Sheet classification and human metadata review. [FG-004](feature-gates/FG-004-m009-sheet-classification.md) **approved**. **Implementation not started.**
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -73,7 +73,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 - **`main` / `origin/main`** — confirm with `git rev-parse`. CAR-001 adopted 2026-08-28; M005–M008 merged; **M009 not started**
 - **No coded milestone in progress**
-- Next coded candidate: **M009** Sheet classification + human metadata review (Feature Gate / prompt required)
+- Next coded candidate: **M009** Sheet classification + human metadata review — [FG-004](feature-gates/FG-004-m009-sheet-classification.md) **approved**; implementation prompt **not started**
 - CalibAi V1 direction (not authorized as a single implementation): PLAN → PRICE → CONTRACT baseline → BUILD field capture → basic MONITOR — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)
 - Document package, QuickBooks API, contract/warranty generation — **not started** (governance recorded only)
 - Estimate mapping remains outside near-term sheet work
@@ -85,7 +85,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 Each item still needs its own Feature Gate / approved Cursor prompt.
 
 0. CAR-001 architecture alignment — **this adoption**
-1. **M009** Sheet classification / human review
+1. **M009** Sheet classification / human review — [FG-004](feature-gates/FG-004-m009-sheet-classification.md) approved; **implementation prompt next**
 2. Project Hub UX
 3. Pricing-policy application (requires [ADR-025](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) acceptance)
 4. Internal Detailed Cost Breakdown + Customer Estimate consistency
@@ -140,8 +140,8 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Next recommended milestones
 
-1. Feature-Gate and implement **M009** Sheet classification + human metadata review (**not started**; CAR-001 does not authorize it).
-2. Joel accepts/amends ADR-017/018 (still Proposed) and ADR-021 / ADR-025 (Proposed) when those decisions are ready.
+1. Dedicated **M009 implementation Cursor prompt** citing [FG-004](feature-gates/FG-004-m009-sheet-classification.md) (**code not started**).
+2. Joel accepts/amends ADR-021 / ADR-025 (Proposed) when those decisions are ready. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004.
 3. Subsequent CalibAi sequence items 2–11 on the roadmap, each separately gated.
 4. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate.
 

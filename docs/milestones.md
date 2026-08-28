@@ -45,6 +45,17 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | M009 | **Unchanged** — M009 remains coded Sheet classification. CAR-001 is not M009. M009 code **not begun**. |
 | Next | Feature-Gate M009 when authorized; accept ADR-021/025 when ready |
 
+### FG-004 — M009 Sheet Classification Feature Gate
+
+| Field | Content |
+|-------|---------|
+| ID | FG-004 |
+| Status | **FEATURE GATE APPROVED** — M009 implementation **not started** |
+| Date | 2026-08-28 |
+| Objective | Authorize M009 scope/invariants/tests/migration permission for a later implementation prompt. No sheet code in this record. |
+| Deliverables | [FG-004](feature-gates/FG-004-m009-sheet-classification.md); ADR-017/018 **Accepted** without redesign |
+| M009 code | **Not begun** |
+
 ---
 
 ## Recorded milestones

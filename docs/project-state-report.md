@@ -55,21 +55,21 @@ Distinguish from:
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | Base commit (pre-governance) | `7b8d5ca` |
 | Latest completed milestone | M008 Sheet Intelligence architecture (`8c74e31`; merged via PR #6 → `ee9b4b2`) |
-| Current milestone | None in progress — next coded candidate remains **M009** Sheets (not authorized by CAR-001) |
+| Current milestone | **M009** — [FG-004](feature-gates/FG-004-m009-sheet-classification.md) **approved**; implementation **not started** |
 | Product status | Operational on `main`: CRM, Estimating, Proposals, Change Orders, Plan upload (M005), Document Indexing (M007). CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract **not implemented**. |
-| Architecture status | CAR-001 approved 2026-08-28 (docs). DI architecture (M006) + Sheet Intelligence architecture (M008) on `main`. Sheets / review UI **not** implemented. |
+| Architecture status | CAR-001 approved. Sheet Intelligence architecture (M008) + FG-004 approved. Sheets / review UI **not** implemented. |
 | Implemented capabilities | Phase A PDF upload/storage; page indexing; processing provenance; archive-over-delete; relational search |
-| Incomplete work | Coded sheet review (Feature Gate required); scale; AI POC; estimate mapping; auth; project-detail archived filter; document package outputs; QuickBooks integration; contract/warranty generation |
+| Incomplete work | M009 sheet review (FG-004 approved, code not started); scale; AI POC; estimate mapping; auth; project-detail archived filter; document package outputs; QuickBooks integration; contract/warranty generation |
 | Database and migration status | Intended Alembic head `a7c8e9f0b1d2` (M007) |
-| Documentation status | CAR-001 CalibAi architecture adoption 2026-08-28 (docs/governance); Continuity & Anti-Drift Protocol adopted; August reconciliation `0fdf0d4`; working tree expected clean after this docs commit |
-| Decisions made | CAR-001 (Project hub, preserve Flask platform, BUILD vs COs, field first-class, API-before-native, field evidence provenance, LEARN boundary); ADR-019/020/022/023/024 **Accepted**; Continuity protocol; August 25 package/pricing/legal/QB docs; ADR-002 Accepted |
-| Decisions pending | ADR-021 MONITOR baseline; ADR-025 pricing formula; ADR-017/018; M009 Feature Gate; legal template register; QuickBooks Feature Gate |
+| Documentation status | FG-004 approved; ADR-017/018 Accepted 2026-08-28 (docs); CAR-001 adopted; working tree expected clean after this docs commit |
+| Decisions made | FG-004 approved; ADR-017/018 **Accepted**; CAR-001; ADR-019/020/022/023/024 **Accepted**; ADR-002 Accepted |
+| Decisions pending | M009 **implementation prompt**; ADR-021; ADR-025; ADR-014 formal acceptance (optional; invariant required by FG-004); legal template register; QuickBooks Feature Gate |
 | Uncommitted work | None after this documentation commit |
-| Next approved milestone | **M009** Sheets — **not authorized** until Feature-Gated |
-| Documents to read first | [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md) → [platform-vision.md](platform-vision.md) → [sheet-intelligence.md](architecture/sheet-intelligence.md) |
-| Approved next Cursor prompt location or summary | **None** until Joel authorizes Feature Gate for M009 |
-| Commit status | Confirm `HEAD` = `origin/main` after CAR-001 docs commit |
-| Governance baseline | CAR-001 architectural direction approved; implementation not authorized |
+| Next approved milestone | **M009** — implementation **not started** (await Cursor implementation prompt citing FG-004) |
+| Documents to read first | [FG-004](feature-gates/FG-004-m009-sheet-classification.md) → [sheet-intelligence.md](architecture/sheet-intelligence.md) → [ADR-017](adr/ADR-017-sheet-metadata-suggestion-and-review-workflow.md) · [ADR-018](adr/ADR-018-sheet-uniqueness-duplicates-and-supersession.md) |
+| Approved next Cursor prompt location or summary | **M009 implementation prompt** citing FG-004 (not this Gate). None other approved. |
+| Commit status | Confirm `HEAD` = `origin/main` after FG-004 docs commit |
+| Governance baseline | FG-004 approved; M009 code not authorized until implementation prompt |
 
 ### Resume commands (Cursor Terminal)
 
@@ -83,4 +83,4 @@ git rev-parse origin/main
 # Determine whether synchronization is safe — do not automatically pull
 ```
 
-Next: Feature-Gate **M009** (Sheets) before any sheet implementation. CAR-001 does not authorize product code.
+Next: Dedicated **M009 implementation Cursor prompt** citing FG-004. Do not write sheet code until that prompt.

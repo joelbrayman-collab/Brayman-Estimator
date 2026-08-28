@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-28 — Approve M009 Sheet Feature Gate (FG-004)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Governance only: accept ADR-017/018 if consistent; create/approve FG-004 for M009. No product code. |
+| Business decision | M009 = Sheet classification / human metadata review. FG-004 approved. Implementation awaits a dedicated Cursor prompt. |
+| Architectural decision | ADR-017/018 **Accepted** without redesign. Page ≠ Sheet, human SoR, Plan Intelligence ownership, Project hub. ADR-014 document remains Proposed. |
+| Prompt template used | Approved custom Cursor prompt (documentation-only) |
+| Approved Cursor prompt summary | Preflight; existing-before-new; accept 017/018 or STOP; write FG-004; integrate docs; validate; commit; push; stop. Do not begin M009 code. |
+| Files expected to change | Feature Gate, ADRs 017/018 status, indexes, state/handoff/log/roadmap/module docs |
+| Files prohibited from changing | `app/`, `migrations/`, `tests/`, models/schemas |
+| Implementation result | FG-004 created and approved. ADR-017/018 Accepted. M009 code not begun. |
+| Tests | Docs-only: `git diff --check`; link check. No pytest invented. |
+| Project-state-report update | Yes |
+| Milestone entry update | FG-004 architecture/authorization record appended; M008 not rewritten |
+| Constitutional issue raised | None |
+| Unresolved issues | ADR-014 formal status; SQLite uniqueness mechanism (either allowed); M009 implementation prompt |
+| Next approved step | Dedicated **M009 implementation Cursor prompt** citing FG-004 |
+| Next approved prompt | M009 implementation (not this Gate) |
+| Commit hash | This adoption commit (see stopping report SHA) |
+
 ### 2026-08-28 — CAR-001 CalibAi architecture & product vision adoption
 
 | Field | Content |

@@ -57,13 +57,13 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
 7. **CURRENT MILESTONE / RESEARCH PHASE:**
    - **M010 is COMPLETED & VERIFIED.**
    - **Historical Estimate Ingestion — Phase A (Source Audit & Architecture) is COMPLETED (Research Draft).**
-   - **Phase B Historical Estimate Ingestion Engine is BLOCKED** pending review and approval of **CalibAi Organization & Calibration Architecture — Phase A**.
+   - **Organization & Calibration Architecture — Phase A is COMPLETED (Architecture Specification).**
+   - **Phase B Historical Estimate Ingestion Engine (FG-006), Labour Engine (Phase B), and Calibrated Pricing Engine are BLOCKED** pending review and approval of Phase A Architecture.
    - Next candidate implementation milestone: M011 (AI Take-off / Quantity Extraction) or Phase B Ingestion (each requires dedicated Feature Gate).
 
 8. **LAST AUTHORIZED DELTA:**
-   - Phase A Read-only Historical Source Audit: 20 external workbooks audited, SHA-256 manifest created (`docs/architecture/historical-estimates-source-manifest.md`), ingestion architecture specified (`docs/architecture/historical-estimate-ingestion-architecture.md`), 5-workbook pilot extraction completed.
-   - 0 lines of application, migration, or UI code modified. Source files 100% byte-for-byte immutable.
-   M010 Scale Calibration & Measurement Tools implementation (migration `c9e0f1a2b3d4`, 19 focused tests, PDF.js measurement UI).
+   - Phase A Organization & Calibration Architecture: Comprehensive specification created (`docs/architecture/organization-and-calibration-architecture.md`) defining 3-tier commercial model, canonical `Organization` entity (`ORG-001` Brayman Construction Inc.), data ownership matrix, 7-tier evidence hierarchy, 7-level canonical rate resolution cascade, 7-parameter Project Commercial Decision Gate, multi-tenant data isolation, technology-neutral historical learning, and read-only existing application impact audit.
+   - 0 lines of application, migration, or UI code modified. 0 changes to source workbooks. 140/140 tests passing.
 
 9. **IMPLEMENTATION STATUS:**
    - Models: `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `DrawingPackage`, `DrawingRevision`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `PlanScaleCalibration`, `PlanMeasurement`.

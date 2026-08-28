@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-28 — CalibAi / Brayman Estimator: Organization & Calibration Architecture — Phase A
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Establish organization-aware commercial architecture required before CalibAi can implement organization-specific pricing, labour calibration, historical ingestion, or commercial learning. |
+| Business decision | Governing Principle: CalibAi owns the engine and methodology; each customer organization owns its commercial intelligence; Brayman Construction is the first development/UAT organization (Org 001), not the universal CalibAi pricing model. |
+| Architectural decision | Defined 3-tier commercial architecture (CalibAi Core vs Baseline Library vs Organization Calibration Model); specified canonical `Organization` entity; built Data Ownership Matrix; established 7-tier Evidence Hierarchy (`ORG-APPROVED`, `CURRENT`, `ORG-ACTUAL`, `ORG-HISTORICAL`, `BASELINE`, `PROVISIONAL`, `MANUAL`) with ORG-APPROVED as active operating standard and ORG-ACTUAL as empirical calibration evidence proposing review candidates; defined 7-phase Calibration Lifecycle and version immutability; specified 7-level Rate Resolution Cascade; defined 7-parameter Project Commercial Decision Gate with provenance and reason requirements; separated Direct Cost Economics from Commercial Pricing Strategy; defined multi-tenant isolation; prohibited cross-organization benchmarking; generalized analytical learning to technology-neutral methods; audited existing application models and routes (zero impact in Phase A; additive migration path for Phase B). |
+| Prompt template used | `docs/prompts/cursor-architecture-template.md` (Architecture & Governance Specification) |
+| Approved Cursor prompt summary | Execute 28-point Organization & Calibration Architecture Phase A: verify repo state; read governed state; specify CalibAi Core vs Baseline vs Org Model, canonical Organization, Data Ownership Matrix, Evidence Hierarchy, Calibration Lifecycle & Versioning, Rate Resolution Cascade, Commercial Decision Gate, Provenance, Reason Requirements, Pricing Posture, Execution Risk, Historical Learning, Tenant Isolation, Benchmarking Prohibition, Ingestion/Labour/Pricing Reconciliations, Branding, Integrations, UAT Org 001, Read-Only Impact Audit; generate `docs/architecture/organization-and-calibration-architecture.md`; update docs; enforce Phase B blocking condition; run test suite (140 passed); output stopping report. |
+| Files expected to change | `docs/architecture/organization-and-calibration-architecture.md` (created), `docs/README.md` (updated), `docs/chat-workflow-log.md` (updated), `docs/current-state.md` (updated), `docs/session-handoff.md` (updated) |
+| Files prohibited from changing | `app/`, `migrations/`, `tests/`, dependencies, source workbooks in `~/Desktop/CalibAi Historical Estimates` |
+| Implementation result | Completed comprehensive 25-section architecture specification (`docs/architecture/organization-and-calibration-architecture.md`), updated README, current-state, session-handoff, and chat-workflow-log. 0 lines of app/migration/test code modified. |
+| Tests | `git diff --check` (clean), `./venv/bin/python -m pytest -q` (140 passed) |
+| Project-state-report update | Not required (Phase A is architectural specification stage) |
+| Milestone entry update | Not required |
+| Constitutional issue raised | Confirmed customer commercial data ownership, multi-tenant isolation, and strict prohibition on cross-organization benchmarking without legal governance. Decoupled physical direct cost economics from commercial pricing strategy. |
+| Unresolved issues | None for Phase A. Phase B Ingestion (FG-006), Labour Engine (Phase B), and Calibrated Pricing Engine remain BLOCKED pending review and approval of this Phase A architecture. |
+| Next approved step | Submit Phase A Organization & Calibration Architecture package for Joel / ChatGPT governance review. |
+| Next approved prompt | FG-006 Historical Ingestion Engine (Phase B) Feature Gate prompt. |
+| Commit hash | Working tree uncommitted (pending governance review per instructions) |
+
 ### 2026-08-28 — Historical Estimate Ingestion — Phase A (Source Audit & Ingestion Architecture)
 
 | Field | Content |
@@ -61,9 +84,9 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Milestone entry update | Not required |
 | Constitutional issue raised | Identified pricing methodology gap between historical cost-plus markup and governing 15% true gross margin policy (`pricing-policy.md` / `ADR-025`). Confirmed CalibAi Core vs Customer Organization separation. |
 | Unresolved issues | None for Phase A. Phase B is explicitly blocked pending review and approval of CalibAi Organization & Calibration Architecture — Phase A. |
-| Next approved step | Submit Phase A audit & architecture package for Joel / ChatGPT governance review. Execute Organization & Calibration Architecture Phase A before any Phase B implementation. |
+| Next approved step | Execute Organization & Calibration Architecture Phase A before any Phase B implementation. |
 | Next approved prompt | Organization & Calibration Architecture — Phase A prompt. |
-| Commit hash | Working tree uncommitted (pending governance review per instructions) |
+| Commit hash | `3461d2eb791d6382eab71e43d15f6b54b62a9192` (`3461d2e`) |
 
 ### 2026-08-28 — Implement Milestone 010 (Scale Calibration & Manual Measurement Tools)
 

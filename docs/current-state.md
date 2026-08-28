@@ -29,6 +29,7 @@
 
 - **Document Intelligence architecture (M006)** — FG-003, `document-intelligence.md`, ADR-013–016
 - **Historical Estimate Ingestion Architecture (Phase A Complete)** — Read-only audit of 20 historical workbooks, source manifest (`docs/architecture/historical-estimates-source-manifest.md`), ingestion architecture specification (`docs/architecture/historical-estimate-ingestion-architecture.md`), 5-workbook pilot extraction, pricing-method analysis. Implementation/DB deferred to Phase B.
+- **Organization & Calibration Architecture (Phase A Complete)** — Comprehensive specification (`docs/architecture/organization-and-calibration-architecture.md`) defining CalibAi Core vs Baseline Library vs Organization Calibration Model, canonical `Organization` entity (`ORG-001` Brayman Construction Inc.), 7-tier evidence hierarchy, 7-level canonical rate resolution cascade, 7-parameter Project Commercial Decision Gate, multi-tenant isolation, technology-neutral learning, and read-only impact audit. Phase B ingestion (FG-006), Labour Engine, and calibrated pricing remain blocked pending review.
 - AI take-off / quantity extraction (M011+) / estimate mapping
 - CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract
 

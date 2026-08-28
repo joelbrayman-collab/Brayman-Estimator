@@ -55,21 +55,21 @@ Distinguish from:
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | Base commit (pre-governance) | `7b8d5ca` |
 | Latest completed milestone | M008 Sheet Intelligence architecture (`8c74e31`; merged via PR #6 → `ee9b4b2`) |
-| Current milestone | None in progress — awaiting Feature Gate for coded Sheets |
-| Product status | Operational on `main`: CRM, Estimating, Proposals, Change Orders, Plan upload (M005), Document Indexing (M007). Four-output document package, QuickBooks API, Ontario contract/warranty generation **not implemented**. |
-| Architecture status | DI architecture (M006) + Sheet Intelligence architecture (M008) on `main`. August 2026: authoritative record + document package + QuickBooks boundary + legal template governance **documented only** (committed in `0fdf0d4`). Sheets / review UI **not** implemented. |
+| Current milestone | None in progress — next coded candidate remains **M009** Sheets (not authorized by CAR-001) |
+| Product status | Operational on `main`: CRM, Estimating, Proposals, Change Orders, Plan upload (M005), Document Indexing (M007). CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract **not implemented**. |
+| Architecture status | CAR-001 approved 2026-08-28 (docs). DI architecture (M006) + Sheet Intelligence architecture (M008) on `main`. Sheets / review UI **not** implemented. |
 | Implemented capabilities | Phase A PDF upload/storage; page indexing; processing provenance; archive-over-delete; relational search |
 | Incomplete work | Coded sheet review (Feature Gate required); scale; AI POC; estimate mapping; auth; project-detail archived filter; document package outputs; QuickBooks integration; contract/warranty generation |
 | Database and migration status | Intended Alembic head `a7c8e9f0b1d2` (M007) |
-| Documentation status | Post-M008 sync (`ed36838`) and August 25 governance reconciliation (`0fdf0d4`) committed and pushed; transient state closed in `ee100ac`; Continuity & Anti-Drift Protocol adopted 2026-08-28; working tree expected clean after that docs commit |
-| Decisions made | ADR-017 suggestion workflow; ADR-018 uniqueness/supersession; Page ≠ Sheet (ADR-014); archive-over-delete; August 25 authoritative record + four-output package; pricing policy reference rule; Legal Content Gate; context drift mandatory stop; Continuity & Anti-Drift Protocol (2026-08-28) |
-| Decisions pending | Accept ADR-017/018; authorize coded-sheet Feature Gate; legal template register implementation; QuickBooks Feature Gate |
+| Documentation status | CAR-001 CalibAi architecture adoption 2026-08-28 (docs/governance); Continuity & Anti-Drift Protocol adopted; August reconciliation `0fdf0d4`; working tree expected clean after this docs commit |
+| Decisions made | CAR-001 (Project hub, preserve Flask platform, BUILD vs COs, field first-class, API-before-native, field evidence provenance, LEARN boundary); ADR-019/020/022/023/024 **Accepted**; Continuity protocol; August 25 package/pricing/legal/QB docs; ADR-002 Accepted |
+| Decisions pending | ADR-021 MONITOR baseline; ADR-025 pricing formula; ADR-017/018; M009 Feature Gate; legal template register; QuickBooks Feature Gate |
 | Uncommitted work | None after this documentation commit |
-| Next approved milestone | **None for sheet code** until Feature-Gated |
-| Documents to read first | [project-document-package.md](architecture/project-document-package.md) → [pricing-policy.md](pricing-policy.md) → [legal-content-and-templates.md](governance/legal-content-and-templates.md) → [sheet-intelligence.md](architecture/sheet-intelligence.md) |
-| Approved next Cursor prompt location or summary | **None** until Joel authorizes Feature Gate for sheet implementation |
-| Commit status | August reconciliation `0fdf0d4`; state closure `ee100ac`; confirm `HEAD` = `origin/main` with `git rev-parse` (M008 merge ancestry via `ee9b4b2`; prior checkpoint `ed36838`) |
-| Governance baseline | Complete for recorded decisions; implementation not authorized |
+| Next approved milestone | **M009** Sheets — **not authorized** until Feature-Gated |
+| Documents to read first | [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md) → [platform-vision.md](platform-vision.md) → [sheet-intelligence.md](architecture/sheet-intelligence.md) |
+| Approved next Cursor prompt location or summary | **None** until Joel authorizes Feature Gate for M009 |
+| Commit status | Confirm `HEAD` = `origin/main` after CAR-001 docs commit |
+| Governance baseline | CAR-001 architectural direction approved; implementation not authorized |
 
 ### Resume commands (Cursor Terminal)
 
@@ -83,4 +83,4 @@ git rev-parse origin/main
 # Determine whether synchronization is safe — do not automatically pull
 ```
 
-Next: Joel reviews ADR-017/018; Feature-Gate sheet code before any implementation. Do not begin M009 until authorized.
+Next: Feature-Gate **M009** (Sheets) before any sheet implementation. CAR-001 does not authorize product code.

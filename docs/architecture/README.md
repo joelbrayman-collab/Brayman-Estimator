@@ -3,12 +3,13 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-08-25 |
+| Updated | 2026-08-28 |
 
 Domain architecture documents describe **intended** systems. They are not claims of current implementation unless explicitly marked Current.
 
 | Document | Status |
 |----------|--------|
+| [CAR-001-calibai-product-architecture-reconciliation.md](CAR-001-calibai-product-architecture-reconciliation.md) | **Approved architectural direction** (2026-08-28); implementation not authorized |
 | [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) | Future + Phase A / M007 page indexing current |
 | [document-intelligence.md](document-intelligence.md) | Architecture (M006); upload/pages/processing **Current** (M007) |
 | [sheet-intelligence.md](sheet-intelligence.md) | **Architecture only (M008)** — Sheets / review not implemented |

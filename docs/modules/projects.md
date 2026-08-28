@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current** (project records + change orders package) |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-28 |
 | Code | `app/models/project.py`, `app/routes/projects.py`; Project Controls: `app/project_controls/` |
 
 ## Purpose
@@ -31,6 +31,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 - Owning proposal snapshot documents (Proposals)
 - Owning cost library master data (Estimating)
 - Full ERP/accounting
+- Field-execution records (proposed **BUILD** module — [build.md](build.md); [ADR-020](../adr/ADR-020-build-module-boundary.md))
 
 ## Current implementation
 
@@ -54,11 +55,13 @@ Represent construction projects tied to clients; host estimating work; begin pro
 
 - Project requires Client
 - Financially significant change-order approvals should become auditable (Rule 6) — gap acknowledged
+- `Project` is the CalibAi lifecycle hub ([ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted**)
+- BUILD references Change Orders; it does not replace them ([ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted**)
 
 ## Open decisions
 
 - Whether Project Controls becomes its own top-level module doc
-- Budget baseline source of truth after acceptance
+- Budget / MONITOR baseline source of truth after acceptance ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Proposed**)
 
 ## Relevant tests
 
@@ -67,4 +70,6 @@ Represent construction projects tied to clients; host estimating work; begin pro
 
 ## Relevant ADRs
 
-- None yet
+- [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted**
+- [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted**
+- [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Proposed**

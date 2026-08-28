@@ -147,6 +147,8 @@ Recorded 2026-08-25 — **documentation only; not implemented**:
 | Ontario contract + warranty / Legal Content Gate | [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md) |
 | UAT reference case (3415 Roger Stevens Road) | [testing/uat-reference-cases.md](testing/uat-reference-cases.md) |
 
+**CAR-001** (2026-08-28): CalibAi architectural direction — [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md). Does not authorize product code. M009 remains coded Sheets.
+
 ---
 
 ## Feature Gate (required before implementation)

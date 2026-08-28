@@ -46,10 +46,11 @@ Also read [`platform-governance.md`](platform-governance.md), [`governance/conti
 | [project-state-report.md](project-state-report.md) | Milestone-level state + template | Operational (mandatory at milestones) |
 | [milestones.md](milestones.md) | Append-only milestone history | Historical |
 | [prompts/](prompts/) | Reusable Cursor prompt templates | Templates |
-| [platform-vision.md](platform-vision.md) | What the product is / is not | Product intent (Joel-approved) |
+| [platform-vision.md](platform-vision.md) | CalibAi vision + current Estimator core | Product intent (Joel-approved CAR-001) |
 | [architecture-principles.md](architecture-principles.md) | Numbered durable platform rules | **Architectural** — changes require ADR + Joel |
 | [architecture.md](architecture.md) | Current vs intended vs future architecture | Factual for *current*; aspirational elsewhere |
 | [architecture/](architecture/) | Domain architecture (Plan Intelligence, Supplier, …) | Future unless marked Current |
+| [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md) | CalibAi product/architecture reconciliation | **Approved direction** — not implementation |
 | [architecture/M004-plan-intelligence-readiness-report.md](architecture/M004-plan-intelligence-readiness-report.md) | Milestone 004 readiness report | Historical / operational |
 | [architecture/document-intelligence.md](architecture/document-intelligence.md) | Document Intelligence (packages, pages, search) | Architecture (M006); partial Current (M007) |
 | [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) | Sheet Intelligence (sheet entities, review) | **Architecture only (M008)** — not implemented |

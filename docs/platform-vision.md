@@ -2,15 +2,28 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | Provisional product vision |
-| Updated | 2026-07-25 |
-| Approval | Requires ongoing Joel confirmation |
+| Status | **Joel-approved CalibAi direction** (2026-08-28); repository product name remains The Estimator |
+| Updated | 2026-08-28 |
+| Approval | CalibAi vision and lifecycle: Joel Brayman via CAR-001. Repository/product rename is a **separate** future approval. |
+| Record | [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 
-## What The Estimator is
+## CalibAi
 
-The Estimator is a **construction estimating and commercial operations platform** for Brayman (working title: Brayman Estimator). It helps contractors move from client relationship and project leads through structured estimating, client proposals, and into project controls—with a long-term path toward **plan-intelligent quantity take-off**, **supplier-priced procurement**, job costing, and historical estimating intelligence.
+CalibAi is a **construction intelligence platform** connecting **PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN** through **one authoritative project record**.
 
-It is intended to be **attorney-quality in discipline** (documented, auditable, recoverable) while serving **construction business users**: estimators, project managers, principals, and office staff.
+**Positioning:** Construction intelligence. Calibrated.
+
+**Learning principle:** Every project makes the next project smarter.
+
+CalibAi provides complementary **office** and **field** experiences over the same authoritative project record, the same business rules, and the same service layer. Field/iPhone use is a first-class product requirement ([ADR-022](adr/ADR-022-field-client-and-shared-api.md)).
+
+The existing `Project` entity remains the lifecycle hub ([ADR-019](adr/ADR-019-calibai-lifecycle-and-project-hub.md)). CalibAi extends this repository’s implemented commercial core; it does not rename the repository in CAR-001.
+
+## What The Estimator is (current product in this repository)
+
+The Estimator is a **construction estimating and commercial operations platform** for Brayman (working title: Brayman Estimator). It is the **current office commercial core** of CalibAi: client relationship and project leads through structured estimating, client proposals, and project controls—with a path toward **plan-intelligent quantity take-off**, **supplier-priced procurement**, job costing, field capture, monitoring, and historical intelligence.
+
+It is intended to be **attorney-quality in discipline** (documented, auditable, recoverable) while serving **construction business users**: estimators, project managers, principals, office staff, and (CalibAi) field crews using the same project record.
 
 ## Problems it is intended to solve
 
@@ -28,12 +41,13 @@ It is intended to be **attorney-quality in discipline** (documented, auditable, 
 - Project managers / project controls staff
 - Company principals reviewing proposals and change orders
 - Office / CRM operators maintaining clients and projects
+- Field crews and supervisors (CalibAi field experience — first-class; not implemented)
 - (Future) Take-off reviewers validating AI/manual quantities
 - (Future) Purchasing staff preparing supplier POs
 
-## Long-term platform direction (provisional)
+## Long-term platform direction
 
-This sequence is **provisional** and must be confirmed against Joel’s priorities. It is **not** a claim that later stages exist in code.
+CAR-001 records the approved CalibAi sequencing direction on [platform-roadmap.md](platform-roadmap.md). The lists below remain the existing commercial/operations path. They are **not** a claim that later stages exist in code.
 
 ### Foundational commercial path (partially current)
 
@@ -56,19 +70,17 @@ This sequence is **provisional** and must be confirmed against Joel’s prioriti
 
 See [architecture.md](architecture.md) for **current** vs intended vs future, [platform-roadmap.md](platform-roadmap.md) for pillars and Phases A–G, and domain architecture under [architecture/](architecture/).
 
-## What it is not (without an approved architectural decision)
+## Governance boundaries (without a further approved decision)
 
-Without Joel approval and an ADR where required, The Estimator is **not**:
+Without Joel approval and an ADR where required, the platform does not expand into a general ERP, a full accounting system (QuickBooks remains external unless integration is approved), or a CAD-first drafting tool (PDF-first take-off is the proposed path — ADR-009).
 
-- A general ERP replacement
-- A full accounting system (QuickBooks remains external unless integration is approved)
-- A field-only mobile product
-- An AI system that silently invents prices, scopes, quantities, or contracts
-- A platform that silently overwrites historical estimates, proposals, take-offs, or financial records
-- A CAD-first drafting tool (PDF-first take-off is the proposed path — ADR-009)
+AI does not silently invent prices, scopes, quantities, or contracts. Historical estimates, proposals, take-offs, and financial records are versioned or superseded, not silently overwritten.
+
+CalibAi office and field experiences are **complementary**. The product is an office-and-field construction intelligence platform, not a field-only app.
 
 ## Related documents
 
+- [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md)
 - [architecture-principles.md](architecture-principles.md)
 - [platform-roadmap.md](platform-roadmap.md)
 - [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md)

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** (current reference rule) |
-| Updated | 2026-08-25 |
+| Updated | 2026-08-28 |
 | Authority | Joel-approved product policy — not invented by implementation |
 
 ## Purpose
@@ -30,6 +30,8 @@ Selling Price = Direct Cost / 0.85
 ```
 
 **Important:** 15% gross margin is **distinct from** a 15% markup on cost.
+
+**CAR-001 discrepancy (recorded, not resolved):** Current estimate builder code uses line **markup percent** plus version **overhead percent** and **profit percent**. That stack is **not mathematically equivalent** to this gross-margin formula. See [ADR-025](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) (**Proposed**). Do not change calculation code until that ADR is accepted and Feature-Gated. LEARN must not silently rewrite this policy ([ADR-024](adr/ADR-024-learn-recommendation-boundary.md)).
 
 ### Tax (HST)
 

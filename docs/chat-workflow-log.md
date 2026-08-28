@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-28 — CAR-001 CalibAi architecture & product vision adoption
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Documentation/governance only: adopt CAR-001 approved CalibAi vision and architecture. No product code. Do not begin M009. |
+| Business decision | CalibAi vision (PLAN→PRICE→CONTRACT→BUILD→MONITOR→LEARN); office+field complementary; V1 direction; sequence recorded as roadmap only. Repository not renamed. |
+| Architectural decision | ADR-019/020/022/023/024 **Accepted** (direction). ADR-021 and ADR-025 **Proposed**. Project remains hub. BUILD ≠ Change Orders. API-before-native. Field evidence original vs derived. LEARN cannot mutate pricing/cost library. M009 remains coded Sheets; CAR-001 is not M009. |
+| Prompt template used | Approved custom Cursor prompt (documentation-only; equivalent constraints to cursor-documentation-template) |
+| Approved Cursor prompt summary | Preflight; existing-before-new; create CAR-001 record; update vision; ADRs; V1/sequence/pricing record; minimum drift fixes; validate; commit; push; stop. |
+| Files expected to change | Docs, ADRs, modules, roadmap, state/handoff/log only |
+| Files prohibited from changing | `app/`, `migrations/`, `tests/`, models/schemas, product rename |
+| Implementation result | CAR-001 recorded. Vision updated. ADRs 019–025 created. M009 code not begun. |
+| Tests | Docs-only: `git diff --check`; link check; no pytest invented |
+| Project-state-report update | Yes |
+| Milestone entry update | CAR-001 architecture record appended; M008/M009 numbers not rewritten |
+| Constitutional issue raised | None. Constitution not amended. |
+| Unresolved issues | ADR-021, ADR-025, ADR-017/018; M009 Feature Gate |
+| Next approved step | Stop. Next coded work is Feature-Gated **M009** when Joel authorizes it. |
+| Next approved prompt | None |
+| Commit hash | This adoption commit (see stopping report SHA) |
+
 ### 2026-08-28 — Adopt CalibAi Continuity & Anti-Drift Protocol
 
 | Field | Content |

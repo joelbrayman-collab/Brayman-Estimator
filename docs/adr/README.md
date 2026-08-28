@@ -3,11 +3,17 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-28 |
 
 ## When an ADR is required
 
 See [platform-governance.md](../platform-governance.md). In short: principles changes, ownership transfers, schema policy, immutability/audit/financial controls, integrations, or material roadmap deviations.
+
+## Status discipline
+
+**Proposed** is not **Accepted**. Citing a Proposed ADR in a module, Feature Gate, or roadmap does not change its status. Implementation still requires Feature Gate + accepted decisions where the ADR itself requires acceptance.
+
+**Accepted in this repository today:** ADR-002 (M003); ADR-019, ADR-020, ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction). ADR-017/018 remain **Proposed** (Sheet architecture; they do not authorize M009 code).
 
 ## Process
 
@@ -55,6 +61,20 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | ADR | Title | Status |
 |-----|-------|--------|
 | [ADR-008](ADR-008-supplier-price-snapshotting.md) | Supplier Price Snapshotting | Proposed |
+
+### CalibAi / CAR-001 (2026-08-28)
+
+| ADR | Title | Status |
+|-----|-------|--------|
+| [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) | CalibAi Lifecycle and Project Hub | **Accepted** (direction; no schema change) |
+| [ADR-020](ADR-020-build-module-boundary.md) | BUILD Module Boundary vs Project Controls | **Accepted** (boundary; not implemented) |
+| [ADR-021](ADR-021-monitor-commercial-baseline.md) | MONITOR Commercial Baseline | **Proposed** |
+| [ADR-022](ADR-022-field-client-and-shared-api.md) | Field Client and Shared API | **Accepted** (direction; no API/mobile code) |
+| [ADR-023](ADR-023-field-evidence-provenance.md) | Field Evidence Original vs Derived | **Accepted** (rules; no voice/photo code) |
+| [ADR-024](ADR-024-learn-recommendation-boundary.md) | LEARN Recommendation Boundary | **Accepted** (boundary; no ML) |
+| [ADR-025](ADR-025-pricing-policy-versus-estimate-markup-stack.md) | Gross-Margin Policy vs Markup Stack | **Proposed** |
+
+CAR-001 record: [../architecture/CAR-001-calibai-product-architecture-reconciliation.md](../architecture/CAR-001-calibai-product-architecture-reconciliation.md).
 
 Related Feature Gates: [FG-001 Proposals Module](../feature-gates/FG-001-proposals-module.md) · [FG-002 Plan Intelligence Phase A](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003 Document Intelligence Readiness](../feature-gates/FG-003-document-intelligence-readiness.md).
 Strategic architecture: [../architecture/](../architecture/).

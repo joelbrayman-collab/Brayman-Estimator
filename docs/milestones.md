@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-08-25 |
+| Updated | 2026-08-28 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -15,6 +15,7 @@ Record completed and in-progress platform milestones so progress is recoverable 
 - Format: `Milestone NNN` with zero-padded integers (`001`, `002`, …)
 - Title: short human name
 - Separate **planned** milestones (roadmap) from **recorded** entries here
+- Architecture reconciliations use **CAR-NNN** and are **not** milestone numbers. Do not reuse M009 for CAR-001.
 
 ## Required fields (each entry)
 
@@ -26,6 +27,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 2. Completed entries are **not rewritten** except to correct factual errors (note the correction).
 3. Distinguish **Planned** (may live primarily on the roadmap) from **Completed / Recorded** here.
 4. “Completed pending baseline commit” means deliverables exist in the working tree awaiting Joel-approved commit.
+
+---
+
+## Architecture records (non-milestone)
+
+### CAR-001 — CalibAi Product & Architecture Reconciliation
+
+| Field | Content |
+|-------|---------|
+| ID | CAR-001 |
+| Status | **APPROVED ARCHITECTURAL DIRECTION** — implementation not authorized by CAR-001 |
+| Date | 2026-08-28 |
+| Objective | Read-only reconciliation of the existing platform to CalibAi PLAN→PRICE→CONTRACT→BUILD→MONITOR→LEARN; adopt approved vision and core architecture in docs. |
+| Deliverables | [CAR-001 record](architecture/CAR-001-calibai-product-architecture-reconciliation.md); vision/roadmap updates; ADR-019–025; BUILD module stub |
+| Validation | Docs/governance only; no app/migration/test/schema changes |
+| M009 | **Unchanged** — M009 remains coded Sheet classification. CAR-001 is not M009. M009 code **not begun**. |
+| Next | Feature-Gate M009 when authorized; accept ADR-021/025 when ready |
 
 ---
 

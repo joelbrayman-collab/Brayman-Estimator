@@ -1,0 +1,45 @@
+# Module — BUILD
+
+| Attribute | Value |
+|-----------|--------|
+| Status | **Proposed / Intended** — **not implemented** |
+| Updated | 2026-08-28 |
+| Code | None |
+| ADR | [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** (boundary only) |
+| CAR | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
+
+## Purpose
+
+Own **field-execution records** for a Project so CalibAi can connect BUILD to the same authoritative project record used for PLAN / PRICE / CONTRACT.
+
+## Intended owned records (when Feature-Gated)
+
+Daily execution, crews, labour capture, subcontractor activity, material use, deliveries, equipment, progress, schedule/task updates, RFIs/issues, field notes, photos, inspections, field documentation.
+
+## Referenced data (intended)
+
+- `projects` (lifecycle hub — [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md))
+- Change Orders (Project Controls) — **reference only**
+- Plan Intelligence documents/sheets — **reference only**
+- Estimating lines/tasks — **reference only**; actuals must not rewrite approved estimates ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md), [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md))
+
+## Prohibited responsibilities
+
+- Owning Change Order commercial lifecycle (Project Controls)
+- Owning estimates, cost library, or proposals
+- Owning plan PDF binaries (Plan Intelligence)
+- Silent AI write of labour/material/progress without human confirmation ([ADR-023](../adr/ADR-023-field-evidence-provenance.md))
+
+## Current implementation
+
+**None.** No BUILD models, routes, or UI.
+
+## Dependencies
+
+- Authentication / actor identity before field capture ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md))
+- Feature Gate + approved Cursor prompt before any code
+
+## Related
+
+- [modules/projects.md](projects.md) (Change Orders)
+- [modules/plan-intelligence.md](plan-intelligence.md)

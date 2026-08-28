@@ -3,10 +3,10 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Living architecture map |
-| Updated | 2026-07-25 |
-| Evidence baseline | `main` @ `71e2754` (governance); product features from prior merges |
+| Updated | 2026-08-28 |
+| Evidence baseline | `main` @ CAR-001 adoption (see git); Plan Intelligence Current claims evidenced in `app/plan_intelligence/` and migration `a7c8e9f0b1d2` |
 
-**Cite code paths for implemented claims.** Distinctions below are mandatory.
+**Cite code paths for implemented claims.** Distinctions below are mandatory. CalibAi lifecycle architecture: [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md).
 
 ---
 
@@ -36,6 +36,7 @@ From [`app/__init__.py`](../app/__init__.py):
 | `proposal_templates_bp` | `app/routes/proposal_templates.py` |
 | `proposals_bp` | `app/routes/proposals.py` |
 | `project_controls_bp` | `app/project_controls/` |
+| `plan_intelligence_bp` | `app/plan_intelligence/` |
 
 Shell context: [`app/shell.py`](../app/shell.py). Navigation SSOT: [`app/navigation.py`](../app/navigation.py).
 
@@ -52,6 +53,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Estimating | `Estimate`, `EstimateVersion`, `EstimateSection`, `EstimateLineItem` | `app/models/estimate.py` |
 | Proposals | `ProposalTemplate`, `Proposal`, `ProposalSection`, `ProposalLineItem` | `app/models/proposal.py` |
 | Project controls | `ChangeOrder`, `ChangeOrderItem` | `app/project_controls/models.py` |
+| Plan Intelligence | `DrawingPackage`, `DrawingRevision`, `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent` | `app/plan_intelligence/models.py` |
 
 Notable behaviours evidenced in code/tests:
 
@@ -59,6 +61,7 @@ Notable behaviours evidenced in code/tests:
 - Proposals built as **snapshots** from estimate versions (`build_proposal_snapshot` exported from `app/services/`); tests in `tests/test_proposal_snapshots.py` assert independence from later estimate edits.
 - Proposal statuses include `Accepted` among others (`PROPOSAL_STATUSES` in `app/models/proposal.py`).
 - Change Orders package under `app/project_controls/` with its own routes/services/repository/pdf.
+- Plan Intelligence Phase A upload/storage (M005) and Document Indexing (M007): pages, processing provenance, archive-over-delete, relational search (`app/plan_intelligence/`; tests `tests/test_plan_upload.py`, `tests/test_plan_indexing.py`). **Sheets are not implemented** (M008 architecture only).
 
 ### Services / repositories
 
@@ -66,34 +69,37 @@ Notable behaviours evidenced in code/tests:
 |-------|-------|
 | Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py` |
 | Project controls | `app/project_controls/services.py`, `repository.py`, `pdf.py` |
+| Plan Intelligence | `app/plan_intelligence/services.py`, `processing.py`, `extraction.py`, `storage.py`, `packages.py`, `audit.py` |
 | Generic repositories package | `app/repositories/` (present; inspect before assuming usage) |
 
 ### Templates & static assets
 
-- Templates: `app/templates/` (clients, projects, estimates, proposals, proposal_templates, assemblies, cost_library, project_controls, dashboard, base, partials)
+- Templates: `app/templates/` (clients, projects, estimates, proposals, proposal_templates, assemblies, cost_library, project_controls, plan_intelligence, dashboard, base, partials)
 - Static: `app/static/` (css, js, branding)
 
 ### Migrations
 
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
-- Version scripts in `migrations/versions/` (clients/projects, cost items, assemblies, estimates/versions, sections/lines, proposals/templates, proposal snapshot sections, change orders)
-- ScriptDirectory heads observed locally: **`e8b2c4d15a90`** (change orders). Live DB alembic `current` should be verified with Flask-Migrate in an app context before relying on it.
+- Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
+- Intended Alembic head: **`a7c8e9f0b1d2`** (M007). Live DB `flask db current` should be verified per environment before relying on it.
 
 ### Tests
 
 - Location: [`tests/`](../tests/)
 - Collected locally: **78 tests** (`pytest --collect-only`, 2026-07-25)
-- Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders
+- Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders, plan upload, plan indexing
 
 ### Current module relationships (simplified)
 
 ```text
 Client ──< Project ──< Estimate ──< EstimateVersion ──< Sections/Lines
-                         │                │
-                         │                └──> Proposal (snapshot) ── Sections/Lines
-                         │
-                         └── ChangeOrder (optional estimate_version FK)
+              │            │                │
+              │            │                └──> Proposal (snapshot) ── Sections/Lines
+              │            │
+              │            └── ChangeOrder (optional estimate_version FK)
+              │
+              └── PlanDocument / DrawingPackage (Plan Intelligence; M005–M007)
 ```
 
 Navigation also shows **disabled** placeholders: Purchase Orders, Job Costing, Reports, AI Assistant, Settings (`app/navigation.py`).
@@ -104,7 +110,7 @@ Navigation also shows **disabled** placeholders: Purchase Orders, Job Costing, R
 - No prior `docs/` governance (this foundation addresses that).
 - Change Order detail template notes future audit trail UI (`app/templates/project_controls/change_orders/detail.html`).
 - Hard-coded `SECRET_KEY` in `create_app` (development default) — production secret handling is an open operational concern.
-- Flask-Login is in requirements; depth of authz usage is **to be verified** before claiming multi-user security.
+- Flask-Login is in `requirements.txt` and **unused** in `app/` as of CAR-001 (no User model, no LoginManager). Multi-user security is **not implemented**.
 - Proposal “Accepted” status exists; full acceptance → project budget snapshot workflow is **not** documented as complete product (see Intended).
 - CRM is effectively Clients + Projects, not a full CRM suite.
 
@@ -112,9 +118,10 @@ Navigation also shows **disabled** placeholders: Purchase Orders, Job Costing, R
 
 ## Intended Architecture
 
-Aligns with [platform-vision.md](platform-vision.md) and [architecture-principles.md](architecture-principles.md):
+Aligns with [platform-vision.md](platform-vision.md), [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md), and [architecture-principles.md](architecture-principles.md):
 
-- Explicit module ownership documents (CRM, Estimating, Proposals, Projects, later Plan Intelligence, Supplier Catalogue, Project Controls expansions)
+- `Project` remains the CalibAi lifecycle hub ([ADR-019](adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted**)
+- Explicit module ownership documents (CRM, Estimating, Proposals, Projects, Plan Intelligence, proposed BUILD, Supplier Catalogue, Project Controls expansions)
 - Immutable accepted-proposal snapshots feeding project creation (Rule 3–4)
 - Auditable financially significant actions (Rule 6)
 - Service boundaries for cross-module access (Rule 11)
@@ -136,12 +143,13 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
 ### Other future capabilities
 
+- **BUILD / MONITOR / LEARN** — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md); BUILD boundary [ADR-020](adr/ADR-020-build-module-boundary.md) (**Accepted**, not implemented)
+- **Field / shared API** — [ADR-022](adr/ADR-022-field-client-and-shared-api.md) (**Accepted** direction; not implemented)
 - **Project document package** (internal breakdown, customer estimate, QuickBooks export, Ontario contract + warranty) — [architecture/project-document-package.md](architecture/project-document-package.md)
 - Scheduling, Job Costing, Invoicing
 - QuickBooks / accounting integration — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
-- Historical estimating intelligence
+- Historical estimating intelligence (LEARN; [ADR-024](adr/ADR-024-learn-recommendation-boundary.md))
 - Electronic signature / formal proposal acceptance workflows
-- Field reporting (daily reports, timesheets)
 - CAD ingestion (Phase G; PDF-first per ADR-009)
 
 Do **not** describe these as existing.

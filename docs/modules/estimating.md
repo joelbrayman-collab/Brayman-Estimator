@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current** (core implemented) |
-| Updated | 2026-08-25 |
+| Updated | 2026-08-28 |
 | Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`; `app/services/estimates.py`, `estimate_builder.py` |
 
 ## Purpose
@@ -45,7 +45,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 ## Planned capabilities
 
 - Internal Detailed Cost Breakdown output — **Future** ([project-document-package.md](../architecture/project-document-package.md))
-- Governed pricing policy application — **Future** ([pricing-policy.md](../pricing-policy.md))
+- Governed pricing policy application — **open** ([pricing-policy.md](../pricing-policy.md); [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Proposed** — markup/overhead/profit stack in code is **not** equivalent to 15% gross margin; do not change calculations until accepted + Feature-Gated)
 - Historical estimating intelligence — **Future**
 - Deeper productivity tooling — Feature Gate required
 
@@ -63,6 +63,8 @@ Build and version construction estimates from cost libraries and assemblies, sco
 ## Open decisions
 
 - When estimate header status vs version status diverge—canonical source of truth for “accepted bid”
+- MONITOR estimated baseline selection ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Proposed**)
+- How (or whether) to migrate estimate markup/overhead/profit to the governing gross-margin formula ([ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Proposed**)
 
 ## Relevant tests
 
@@ -72,4 +74,6 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 ## Relevant ADRs
 
-- None yet
+- [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Proposed**
+- [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Proposed**
+- [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** (LEARN must not mutate cost library / approved estimates)

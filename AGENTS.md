@@ -12,7 +12,7 @@
 2. Read `docs/platform-constitution.md` (highest-order rules).
 3. Read `docs/project-state-report.md` for current **milestone-level** state.
 4. Read `docs/current-state.md` and `docs/session-handoff.md` (handoff is for immediate resume — **not** a substitute for milestone state).
-5. Read `docs/architecture-principles.md`, `docs/platform-governance.md`, and `docs/governance/continuity-and-anti-drift.md`.
+5. Read `docs/architecture-principles.md`, `docs/platform-governance.md`, `docs/governance/continuity-and-anti-drift.md`, and `docs/governance/review-turnover-protocol.md`.
 6. Read `docs/architecture.md` and the relevant `docs/modules/*.md`.
 7. Use a template from `docs/prompts/` for the approved Cursor prompt.
 8. Inspect the repository (`git status`, relevant code paths) **before** changing files.

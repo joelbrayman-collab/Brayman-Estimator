@@ -163,6 +163,14 @@ it must stop substantive work and create/update a repository-backed stopping sta
 
 No implementation may depend upon preserving one long chat session.
 
+### Operational procedure: Review Turnover
+
+The formal mechanism for executing a governed rollover is the **[Review Turnover Protocol](review-turnover-protocol.md)**, triggered by the exact phrase:
+
+`Review Turnover`
+
+This procedure reconciles the active conversation's material deltas against repository documents, audits drift, verifies protected baselines, and generates a fresh-chat startup prompt. Upon a `TURNOVER PASS`, the active conversation is considered expendable.
+
 ---
 
 ## Rollover package

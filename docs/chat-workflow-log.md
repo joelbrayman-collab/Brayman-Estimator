@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-28 — Adopt Review Turnover Protocol
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Adopt the comprehensive repository-backed Review Turnover Protocol triggered by the exact phrase `Review Turnover` for safe chat rollover and anti-drift reconciliation. |
+| Business decision | Enable deterministic, repository-backed session turnover so any long/stale conversation can be discarded and a fresh session started from repository evidence alone. |
+| Architectural decision | Review Turnover Protocol (`docs/governance/review-turnover-protocol.md`) adopted as governing. Chat is expendable upon `TURNOVER PASS`. `docs/session-handoff.md` integrated with 22-point standard turnover package. |
+| Prompt template used | Approved custom Cursor prompt (governance-only) |
+| Approved Cursor prompt summary | Anti-drift preflight; existing-before-new search; create `docs/governance/review-turnover-protocol.md`; integrate governance docs (`AGENTS.md`, `README.md`, `continuity-and-anti-drift.md`, `platform-governance.md`, `development-workflow.md`, `session-handoff.md`, `current-state.md`); validate; commit; push. |
+| Files expected to change | Governance and documentation files only |
+| Files prohibited from changing | `app/`, `migrations/`, `tests/`, models/schemas |
+| Implementation result | Protocol adopted. All governance references updated. 22-point turnover package and startup prompt integrated in session handoff. |
+| Tests | `git diff --check`, `pytest -q` (121 passed) |
+| Project-state-report update | Yes |
+| Milestone entry update | Not required (governance update, not a new coded milestone) |
+| Constitutional issue raised | None |
+| Unresolved issues | None |
+| Next approved step | Prepare Feature Gate for M010 Scale Calibration / Measurement Tools |
+| Next approved prompt | M010 Feature Gate |
+| Commit hash | Pending |
+
 ### 2026-08-28 — Implement M009 Sheet Classification / Human Metadata Review
 
 | Field | Content |

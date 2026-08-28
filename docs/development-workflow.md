@@ -47,9 +47,9 @@ Start from [prompts/](prompts/). Every implementation prompt should include:
 
 **Do not guess product policy.**
 
-## Resume after pause
+## Resume after pause / Review Turnover
 
-Use the governed resume procedure in [session-handoff.md](session-handoff.md). Compare `HEAD` to `origin/main` before any sync; **do not automatically pull**.
+Use the governed resume procedure in [session-handoff.md](session-handoff.md) or the formal rollover procedure in [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) (`Review Turnover`). Compare `HEAD` to `origin/main` before any sync; **do not automatically pull**.
 
 ## Terminal usage
 
@@ -64,6 +64,7 @@ To prevent cross-project context confusion (e.g. between Brayman-Estimator and A
 - [platform-constitution.md](platform-constitution.md)
 - [platform-governance.md](platform-governance.md)
 - [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md)
+- [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md)
 - [definition-of-done.md](definition-of-done.md)
 - [prompts/](prompts/)
 - [project-state-report.md](project-state-report.md)

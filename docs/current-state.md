@@ -15,7 +15,7 @@
 | August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | Working tree | Clean (confirm `git status`) |
-| Governance | FG-004 **approved**; M009 **implemented & verified**; CAR-001 CalibAi architecture adopted 2026-08-28 |
+| Governance | FG-004 **approved**; M009 **implemented & verified**; CAR-001 CalibAi architecture adopted 2026-08-28; Review Turnover Protocol adopted 2026-08-28 |
 
 ## Implemented (evidenced in code on `main`)
 

@@ -104,7 +104,7 @@ A release is not ready until [definition-of-done.md](definition-of-done.md) is s
 
 ## Context drift and handoff (mandatory stop)
 
-Detailed governing protocol: [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md). The summary rules in this section remain in force and are not superseded.
+Detailed governing protocol: [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md) and [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md). The summary rules in this section remain in force and are not superseded.
 
 Stop substantive implementation and create or refresh a **verified handoff** when any of the following occur:
 
@@ -116,10 +116,11 @@ Stop substantive implementation and create or refresh a **verified handoff** whe
 - Existing work is being recreated without verification
 - Two substantive user corrections occur because of continuity/context loss
 - The system cannot confidently state: baseline, authorized delta, protected state, latest approval, current implementation status, and next action
+- The user invokes the exact phrase `Review Turnover`
 
 **No substantive implementation continues until authoritative state is restored.**
 
-Update [session-handoff.md](session-handoff.md), [current-state.md](current-state.md), and [chat-workflow-log.md](chat-workflow-log.md) when stopping for drift.
+Update [session-handoff.md](session-handoff.md), [current-state.md](current-state.md), and [chat-workflow-log.md](chat-workflow-log.md) when stopping for drift or executing a Review Turnover.
 
 ### Resume procedure (no automatic pull)
 

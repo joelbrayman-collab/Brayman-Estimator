@@ -1,67 +1,176 @@
-# Session Handoff — The Estimator
+# Session Handoff & Review Turnover Package — The Estimator
 
 | Attribute | Value |
 |-----------|--------|
-| Status | Continuity |
+| Status | **TURNOVER PASS — REPOSITORY-BACKED HANDOFF** |
 | Updated | 2026-08-28 |
+| Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) (`Review Turnover`) |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
-
-## Distinctions (do not substitute)
-
-| Document | Role |
-|----------|------|
-| **This file** | Immediate continuation after a pause |
-| [project-state-report.md](project-state-report.md) | Authoritative **milestone-level** state |
-| [milestones.md](milestones.md) | **Historical** milestone record |
-
-## Instructions
-
-Update this file at the end of every substantial session. Prefer facts verified from the repository. Use **To be verified** when evidence is missing.
 
 ---
 
-## Current handoff
+## 1. Authoritative Review Turnover Package
 
-| Field | Value |
-|-------|--------|
-| **Date** | 2026-08-28 |
-| **Current branch** | `main` |
-| **HEAD / `origin/main`** | Confirm with `git rev-parse` |
-| **August reconciliation** | `0fdf0d4` |
-| **State closure** | `ee100ac` |
-| **Working tree** | Clean (confirm `git status`) |
-| **Current focus** | **M009 Sheet Classification / Human Metadata Review implemented and verified.** |
-| **Next strategic capability** | M010 Scale Calibration / Measurement Tools (requires Feature Gate) |
-| **Migration status** | Head `b8d9f0a1c2e3` (M009 Sheet Intelligence) |
-| **Next recommended step** | Prepare Feature Gate for M010 Scale Calibration |
-| **Documents to read first** | [FG-004](feature-gates/FG-004-m009-sheet-classification.md); [sheet-intelligence.md](architecture/sheet-intelligence.md); [modules/plan-intelligence.md](modules/plan-intelligence.md) |
+```text
+============================================================
+REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
+============================================================
+```
 
-### Commands to resume (Cursor Terminal)
+1. **PROJECT / REPOSITORY:**
+   `Brayman-Estimator` (The Estimator) · Local path: `~/Desktop/Brayman-Estimator`
 
-```bash
-cd /Users/joelbrayman/Desktop/Brayman-Estimator
+2. **VERIFIED BASELINE:**
+   - Branch: `main`
+   - `HEAD` SHA: `5dc4b09b05c9646148b978644893312957356958`
+   - `origin/main` SHA: `5dc4b09b05c9646148b978644893312957356958` (Parity confirmed)
+   - Working tree: Clean (`nothing to commit, working tree clean`)
+   - Alembic head: `b8d9f0a1c2e3` (verified with `flask db current`)
+
+3. **GOVERNING DOCUMENTS:**
+   - [platform-constitution.md](platform-constitution.md) (Articles 1–12)
+   - [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md)
+   - [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md)
+   - [platform-governance.md](platform-governance.md)
+   - [development-workflow.md](development-workflow.md)
+
+4. **APPROVED PRODUCT VISION:**
+   Strategic CalibAi lifecycle (`platform-vision.md` / `CAR-001`): PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record.
+
+5. **CURRENT CALIBAI LIFECYCLE STATE:**
+   - **PLAN:** `PARTIAL` (M005 PDF upload, M007 Document indexing, M009 Sheet classification & review implemented; M010 scale / M011+ take-off future)
+   - **PRICE:** `IMPLEMENTED` (Estimating, Assemblies, Cost items, Pricing policy $65/hr direct / 15% margin)
+   - **CONTRACT:** `PARTIAL` (Proposals implemented with snapshot independence; Ontario contract & warranty templates governed/future)
+   - **BUILD:** `PARTIAL` (Change Orders implemented; field mobile capture future)
+   - **MONITOR:** `FUTURE` (ADR-021 Proposed)
+   - **LEARN:** `FUTURE` (ADR-025 Proposed)
+
+6. **COMPLETED MILESTONES:**
+   - Milestone 001: Platform Governance Foundation (`v0.1-governance-baseline`)
+   - Milestone 005: Plan Intelligence Phase A Upload (`098647c`)
+   - Milestone 007: Document Indexing & Deterministic Extraction (`cbefe7a`, migration `a7c8e9f0b1d2`)
+   - Milestone 008: Sheet Intelligence Architecture Planning (`8c74e31`)
+   - Milestone 009: Sheet Classification / Human Metadata Review (`5dc4b09`, migration `b8d9f0a1c2e3`)
+
+7. **CURRENT MILESTONE:**
+   **M009 is COMPLETED & VERIFIED.** Next approved milestone will be **M010 — Scale Calibration / Measurement Tools** (requires Feature Gate).
+
+8. **LAST AUTHORIZED DELTA:**
+   M009 Sheet Classification / Human Metadata Review per `FG-004`: durable `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion` models, migration `b8d9f0a1c2e3`, service layer, office review UI, and 15 tests.
+
+9. **IMPLEMENTATION STATUS:**
+   - Models: `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `DrawingPackage`, `DrawingRevision`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`.
+   - Routes: Upload, list, detail, reprocess, download, archive, sheets index, sheet create, sheet review, suggestion accept/reject, sheet edit, void, finalize index.
+   - Templates: `list.html`, `detail.html`, `upload.html`, `sheets_index.html`, `sheet_review.html`, `sheet_create.html`.
+
+10. **TEST / UAT / MIGRATION STATUS:**
+    - Focused tests: `pytest tests/test_sheet_intelligence.py` → 15 passed.
+    - Full suite: `pytest -q` → 121 passed, 106 legacy warnings in 8.15s.
+    - Migration: `b8d9f0a1c2e3` applied cleanly.
+
+11. **PROTECTED STATE:**
+    - `PlanDocument` binary bytes, SHA-256 hash, and `PlanPage` raw extractions are immutable.
+    - Human authority invariant: AI suggestions never silently set authoritative Sheet SoR.
+    - Accepted Proposal snapshot immutability.
+    - Pricing policy: $65/hr direct labour, 15% gross margin formula `Price = Direct Cost / 0.85`.
+    - Legal Content Gate for Ontario contract/warranty templates.
+
+12. **ACCEPTED ADRs:**
+    ADR-001 through ADR-013, ADR-015, ADR-016, ADR-017, ADR-018, ADR-019, ADR-020, ADR-022, ADR-023, ADR-024.
+
+13. **PROPOSED / OPEN ADRs:**
+    ADR-014 (identity model adopted in code; document status remains Proposed), ADR-021 (MONITOR baseline), ADR-025 (pricing formula adoption).
+
+14. **FEATURE GATES:**
+    - FG-001: Passed
+    - FG-002: Passed
+    - FG-003: Conditional Pass
+    - FG-004: **APPROVED, IMPLEMENTED & VERIFIED** (M009)
+
+15. **CHAT → REPOSITORY DELTA LEDGER RESULT:**
+    `100% RECONCILED` — all approved decisions, architecture records, migration facts, and test results are committed in repository authority.
+
+16. **OPEN DECISIONS:**
+    Formal acceptance of ADR-021 and ADR-025 by Joel.
+
+17. **KNOWN RISKS:**
+    None for M009. Scale calibration / multi-scale PDF support requires robust rendering architecture in M010.
+
+18. **DEFERRED ITEMS:**
+    - M010: Scale calibration / measurement tools
+    - M011+: AI-assisted quantity take-off
+    - QuickBooks Online direct API integration
+    - Ontario construction contract generation
+    - BUILD field capture / mobile app
+
+19. **EXPLICITLY PROHIBITED NEXT ACTIONS:**
+    - DO NOT implement M010 scale tools without an approved Feature Gate.
+    - DO NOT implement QuickBooks API or contract generation.
+    - DO NOT alter pricing formulas or accepted proposals.
+
+20. **NEXT AUTHORIZED ACTION:**
+    Prepare and approve the Feature Gate for **M010 — Scale Calibration / Measurement Tools**.
+
+21. **EXACT REPOSITORY RESUME COMMANDS:**
+    ```bash
+    cd /Users/joelbrayman/Desktop/Brayman-Estimator
+    git status
+    git branch --show-current
+    git log -1 --oneline
+    git rev-parse HEAD
+    git rev-parse origin/main
+    ./venv/bin/python -m pytest -q
+    ```
+
+22. **FRESH CHAT STARTUP PROMPT:**
+    (See Section 2 below)
+
+---
+
+## 2. Fresh Chat Startup Prompt
+
+Copy and paste this prompt when starting a fresh ChatGPT or Cursor conversation:
+
+```text
+BRAYMAN — RESUME FROM REVIEW TURNOVER
+CONTINUITY / REPOSITORY-FIRST INITIALIZATION
+
+You are resuming work on the Brayman-Estimator platform following a successful Review Turnover.
+The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
+
+1. ANTI-DRIFT PREFLIGHT
+Read and comply with:
+- AGENTS.md
+- docs/platform-constitution.md
+- docs/governance/continuity-and-anti-drift.md
+- docs/governance/review-turnover-protocol.md
+- docs/current-state.md
+- docs/project-state-report.md
+- docs/session-handoff.md
+
+2. VERIFY BASELINE
+Run in Cursor Terminal:
 git status
 git branch --show-current
 git log -1 --oneline
 git rev-parse HEAD
 git rev-parse origin/main
-# Compare HEAD to origin/main before any sync action — do not automatically pull
-# Do not start sheet implementation without the M009 implementation Cursor prompt (FG-004 is not that prompt)
+./venv/bin/python -m pytest -q
+
+Expected Baseline:
+- Branch: main
+- HEAD = origin/main = 5dc4b09b05c9646148b978644893312957356958 (or latest committed main)
+- Working tree: clean
+- Alembic head: b8d9f0a1c2e3
+- Tests: 121 passed
+
+3. RECONSTRUCT AUTHORITATIVE STATE
+Independently verify from repository documents:
+- Latest completed milestone: M009 Sheet Classification / Human Metadata Review
+- Protected state & invariants (source immutability, human SoR, pricing policy)
+- Open decisions: ADR-021, ADR-025 pending approval
+- Next authorized capability: Prepare Feature Gate for M010 Scale Calibration
+
+Do NOT rely on AI memory. Do NOT guess missing product rules.
+Conversation titles in this workspace must start with: BRAYMAN — <Topic>.
 ```
-
----
-
-## Handoff template (copy for next session)
-
-| Field | Content |
-|-------|---------|
-| Date | |
-| Current branch | |
-| HEAD | |
-| Latest completed milestone | |
-| Current implementation status | |
-| Test status | |
-| Migration status | |
-| Uncommitted work | |
-| Next recommended step | |
-| Documents to read first | |

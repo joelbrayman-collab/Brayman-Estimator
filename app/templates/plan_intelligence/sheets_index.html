@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Sheet Index | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Sheet Index{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Plan Intelligence · Revision {{ revision.label }}</p>
+        <h1>Drawing Sheets</h1>
+        <p class="muted-copy">{{ project.name }} · Package: {{ revision.package.name }}</p>
+    </div>
+    <div>
+        <form method="post" action="{{ url_for('plan_intelligence.generate_all_sheets_action', project_id=project.id, revision_id=revision.id) }}" style="display:inline;">
+            <button type="submit" class="button">Scan / Suggest Sheets</button>
+        </form>
+        <a class="button" href="{{ url_for('plan_intelligence.new_sheet', project_id=project.id, revision_id=revision.id) }}">New Sheet</a>
+        <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Plan Documents</a>
+    </div>
+</div>
+
+{% if validation.errors %}
+<div class="alert alert-error" style="margin-bottom: 20px;">
+    <strong>Sheet Index Validation Blockers:</strong>
+    <ul style="margin: 8px 0 0 20px;">
+        {% for err in validation.errors %}
+        <li>{{ err }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% elif validation.warnings %}
+<div class="alert alert-info" style="margin-bottom: 20px;">
+    <strong>Notice:</strong>
+    <ul style="margin: 8px 0 0 20px;">
+        {% for warn in validation.warnings %}
+        <li>{{ warn }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% else %}
+<div class="alert alert-success" style="margin-bottom: 20px;">
+    <strong>Sheet Index Ready:</strong> All sheet numbers are unique and assigned in this revision.
+</div>
+{% endif %}
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div>
+            <h2>Revision Sheets ({{ sheets|length }})</h2>
+            <p class="muted-copy">Sheets are logical construction drawings scoped to Revision {{ revision.label }} (ADR-014 / ADR-018).</p>
+        </div>
+        <div>
+            <form method="post" action="{{ url_for('plan_intelligence.finalize_sheet_index_action', project_id=project.id, revision_id=revision.id) }}" style="display:inline;">
+                <button type="submit" {% if not validation.is_valid %}disabled title="Resolve validation blockers first"{% endif %}>Finalize Sheet Index</button>
+            </form>
+        </div>
+    </div>
+
+    {% if sheets %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Sheet Number</th>
+                <th>Title</th>
+                <th>Discipline</th>
+                <th>Review Status</th>
+                <th>Drawing Status</th>
+                <th>Mapped Pages</th>
+                <th>Suggestions</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in sheets %}
+            <tr {% if s.is_void %}style="opacity: 0.6;"{% endif %}>
+                <td>
+                    <a href="{{ url_for('plan_intelligence.review_sheet', project_id=project.id, sheet_id=s.id) }}">
+                        <strong>{{ s.number or "— (Draft / Blank)" }}</strong>
+                    </a>
+                </td>
+                <td>{{ s.title or "—" }}</td>
+                <td><span class="status">{{ s.discipline_code }}</span></td>
+                <td><span class="status">{{ s.review_status }}</span></td>
+                <td>{{ s.drawing_status }}</td>
+                <td>
+                    {% if s.page_mappings %}
+                        {% for m in s.page_mappings %}
+                            <span title="{{ m.document.original_filename }}">p.{{ m.page_index + 1 }}</span>{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <span class="muted-copy">None</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% set open_sug = s.suggestions | selectattr("is_open") | list %}
+                    {% if open_sug %}
+                        <span style="color: #b45309; font-weight: 500;">{{ open_sug|length }} Open</span>
+                    {% else %}
+                        <span class="muted-copy">—</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a class="button-link" href="{{ url_for('plan_intelligence.review_sheet', project_id=project.id, sheet_id=s.id) }}">Review</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state empty-state-compact">
+        <h3>No sheets created</h3>
+        <p>You can automatically generate draft sheets from uploaded pages or create sheets manually.</p>
+        <form method="post" action="{{ url_for('plan_intelligence.generate_all_sheets_action', project_id=project.id, revision_id=revision.id) }}" style="display:inline; margin-top: 12px;">
+            <button type="submit" class="button">Scan / Suggest Sheets</button>
+        </form>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

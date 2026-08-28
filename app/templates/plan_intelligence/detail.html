@@ -11,6 +11,7 @@
         <p class="muted-copy">{{ project.name }}{% if document.is_archived %} · Archived{% endif %}</p>
     </div>
     <div>
+        <a class="button" href="{{ url_for('plan_intelligence.revision_sheets', project_id=project.id, revision_id=revision.id) }}">Sheet Index</a>
         <a class="button" href="{{ url_for('plan_intelligence.download_plan', project_id=project.id, document_id=document.id) }}">Download</a>
         <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Back to plans</a>
     </div>

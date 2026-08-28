@@ -26,15 +26,15 @@ Update this file at the end of every substantial session. Prefer facts verified 
 |-------|--------|
 | **Date** | 2026-08-28 |
 | **Current branch** | `main` |
-| **HEAD / `origin/main`** | Confirm with `git rev-parse` after this session's FG-004 docs commit |
+| **HEAD / `origin/main`** | Confirm with `git rev-parse` |
 | **August reconciliation** | `0fdf0d4` |
 | **State closure** | `ee100ac` |
-| **Working tree** | Expected clean after FG-004 docs commit |
-| **Current focus** | [FG-004](feature-gates/FG-004-m009-sheet-classification.md) **approved**. ADR-017/018 **Accepted**. **M009 Sheet code not begun.** |
-| **Next strategic capability** | M009 implementation (separate Cursor prompt citing FG-004) |
-| **Migration status** | Head intended `a7c8e9f0b1d2` until M009 implementation |
-| **Next recommended step** | Joel-authorized **M009 implementation prompt**; do not start sheet tables/UI in this session |
-| **Documents to read first** | [FG-004](feature-gates/FG-004-m009-sheet-classification.md); [sheet-intelligence.md](architecture/sheet-intelligence.md); [ADR-017](adr/ADR-017-sheet-metadata-suggestion-and-review-workflow.md); [ADR-018](adr/ADR-018-sheet-uniqueness-duplicates-and-supersession.md) |
+| **Working tree** | Clean (confirm `git status`) |
+| **Current focus** | **M009 Sheet Classification / Human Metadata Review implemented and verified.** |
+| **Next strategic capability** | M010 Scale Calibration / Measurement Tools (requires Feature Gate) |
+| **Migration status** | Head `b8d9f0a1c2e3` (M009 Sheet Intelligence) |
+| **Next recommended step** | Prepare Feature Gate for M010 Scale Calibration |
+| **Documents to read first** | [FG-004](feature-gates/FG-004-m009-sheet-classification.md); [sheet-intelligence.md](architecture/sheet-intelligence.md); [modules/plan-intelligence.md](modules/plan-intelligence.md) |
 
 ### Commands to resume (Cursor Terminal)
 

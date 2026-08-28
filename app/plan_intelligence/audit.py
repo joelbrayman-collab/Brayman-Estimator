@@ -14,6 +14,7 @@ def record_plan_audit(
     project_id: int,
     event_type: str,
     plan_document_id: Optional[int] = None,
+    sheet_id: Optional[int] = None,
     detail: Optional[Any] = None,
     commit: bool = False,
 ):
@@ -28,6 +29,7 @@ def record_plan_audit(
     event = PlanAuditEvent(
         project_id=project_id,
         plan_document_id=plan_document_id,
+        sheet_id=sheet_id,
         event_type=event_type,
         detail=detail_text,
     )

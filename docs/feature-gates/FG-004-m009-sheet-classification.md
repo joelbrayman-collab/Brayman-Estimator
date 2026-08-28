@@ -18,11 +18,9 @@
 |-------|--------|
 | Architecture (M008) | **APPROVED** (Sheet Intelligence architecture on `main`) |
 | Feature Gate (this document) | **APPROVED** (2026-08-28, Joel via this prompt) |
-| Implementation | **NOT YET STARTED** — not authorized by this governance prompt |
+| Implementation | **IMPLEMENTED & VERIFIED** (2026-08-28; M009 coded, tested, and migrated) |
 
-M009 code, migrations, routes, UI, and tests begin **only** after a subsequent **approved Cursor implementation prompt** that cites FG-004.
-
-This Feature Gate does **not** create schema, migrations, or application files.
+M009 schema (`plan_sheets`, `plan_sheet_pages`, `plan_sheet_suggestions`, and `plan_audit_events.sheet_id`), services, human review UI, and 15 focused tests are implemented and verified. Migration `b8d9f0a1c2e3` applied cleanly.
 
 ---
 

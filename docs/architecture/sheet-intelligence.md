@@ -2,14 +2,14 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Architecture approved (M008)** · **FG-004 approved** · **not implemented** |
+| Status | **Architecture approved (M008)** · **FG-004 approved** · **Implemented (M009)** |
 | Updated | 2026-08-28 |
 | Module | [../modules/plan-intelligence.md](../modules/plan-intelligence.md) |
 | Depends on | M007 Page indexing + Drawing Package/Revision (minimal) |
 | Related | [document-intelligence.md](document-intelligence.md) · [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) · ADR-012 · ADR-014 · ADR-015 · ADR-017 · ADR-018 |
 | Readiness | [M008-sheet-intelligence-readiness-report.md](M008-sheet-intelligence-readiness-report.md) |
 
-**Honesty rule:** M007 implements Pages, Packages/Revisions (minimal), processing, audit, and relational search. **Sheets are not implemented.** FG-004 authorizes a later M009 implementation prompt; this document remains the field catalog. Do not invent fields beyond this file and Accepted ADR-017/018.
+**Honesty rule:** M007 implements Pages, Packages/Revisions (minimal), processing, audit, and relational search. **M009 implements Sheets, page mapping, suggestions, and human review workflow.** Migration: `b8d9f0a1c2e3`. Scale is deferred to M010; take-off to M011.
 
 ---
 

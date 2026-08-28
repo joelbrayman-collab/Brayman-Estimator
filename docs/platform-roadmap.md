@@ -15,7 +15,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 |--------|--------------|----------------------|
 | Core CRM and project records | **Current** (Clients, Projects) | [modules/crm.md](modules/crm.md), [modules/projects.md](modules/projects.md) |
 | Estimating and assemblies | **Current** | [modules/estimating.md](modules/estimating.md) |
-| Plan Intelligence | **Partial** — Phase A upload (M005); Document Intelligence indexing (M007); Sheet Intelligence architecture (M008 docs); sheet/take-off code future | [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md) · [architecture/document-intelligence.md](architecture/document-intelligence.md) · [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) · [modules/plan-intelligence.md](modules/plan-intelligence.md) · [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](feature-gates/FG-003-document-intelligence-readiness.md) |
+| Plan Intelligence | **Partial** — Phase A upload (M005); Document Intelligence indexing (M007); Sheet Intelligence & human review (M009); Scale (M010) / take-off (M011+) future | [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md) · [architecture/document-intelligence.md](architecture/document-intelligence.md) · [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) · [modules/plan-intelligence.md](modules/plan-intelligence.md) · [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](feature-gates/FG-004-m009-sheet-classification.md) |
 | Automated Quantity Take-Off | **Future** | Same Plan Intelligence docs |
 | Human Review and Source Traceability | **Future** (ADR-005/006/011) | Embedded in Plan Intelligence |
 | Supplier Catalogue Management | **Future** (only free-text `CostItem.supplier` today) | [architecture/supplier-catalogue-inventory-pricing.md](architecture/supplier-catalogue-inventory-pricing.md) |
@@ -29,7 +29,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next coded milestone:** **M009** — Sheet classification and human metadata review. [FG-004](feature-gates/FG-004-m009-sheet-classification.md) **approved**. **Implementation not started.**
+**Next coded milestone:** **M010** — Scale Calibration / Measurement Tools. Requires dedicated Feature Gate.
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -54,6 +54,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 - App shell branding and navigation structure
 - Plan Intelligence Phase A — project-scoped searchable PDF upload/storage (Milestone 005; `098647c`)
 - Plan Intelligence Document Indexing — pages, processing provenance, archive, relational search (Milestone 007; `cbefe7a`)
+- Plan Intelligence Sheet Classification — sheet entity, page mapping, suggestions, human review workflow, uniqueness validation (Milestone 009; migration `b8d9f0a1c2e3`)
 
 **Governance:**
 

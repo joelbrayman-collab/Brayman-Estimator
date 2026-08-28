@@ -60,6 +60,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Recorded milestones
 
+### Milestone 009 — Sheet Classification / Human Metadata Review
+
+| Field | Content |
+|-------|---------|
+| Milestone | Sheet Classification / Human Metadata Review |
+| Status | **Completed & Verified** |
+| Branch | `main` |
+| Base | `da0d38a` |
+| Date | 2026-08-28 |
+| Objective | Implement durable Sheet entities, non-1:1 Page↔Sheet mapping, first-class suggestions, human review workflow (accept/edit/reject/void), revision uniqueness/finalization validation, and office review UI under Plan Intelligence. |
+| Deliverables | Models (`PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `sheet_id` audit FK); migration `b8d9f0a1c2e3`; service layer `app/plan_intelligence/sheets.py`; office review routes and templates (`sheets_index.html`, `sheet_review.html`, `sheet_create.html`); 15 focused tests in `tests/test_sheet_intelligence.py`. |
+| Validation | 121/121 tests pass; migration applies cleanly; project/revision isolation verified; source doc/page immutability verified; estimating/proposals unaffected. |
+| Architectural findings | Suggestion presence never auto-accepts SoR; human action required; uniqueness scoped to DrawingRevision; superseded revision sheets remain immutable. |
+| Open decisions | None for M009. Scale calibration / measurement tools deferred to M010. |
+| Next milestone | M010 — Scale Calibration / Measurement Tools (requires Feature Gate) |
+| Commit | Pending |
+
 ### Milestone 008 — Sheet Intelligence Architecture Planning
 
 | Field | Content |

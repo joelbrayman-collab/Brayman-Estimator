@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Review Sheet {{ sheet.number or sheet.id }} | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Sheet Review{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Plan Intelligence · Revision {{ revision.label }}</p>
+        <h1>Sheet: {{ sheet.number or "— (Draft / Blank)" }}</h1>
+        <p class="muted-copy">{{ project.name }} · Status: <span class="status">{{ sheet.review_status }}</span></p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('plan_intelligence.revision_sheets', project_id=project.id, revision_id=revision.id) }}">Back to Sheet Index</a>
+    </div>
+</div>
+
+<div class="two-column-layout" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+    <!-- Left Column: Open Suggestions & Mapped Pages -->
+    <div>
+        <section class="form-panel" style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h2>Metadata Suggestions (ADR-017)</h2>
+                <form method="post" action="{{ url_for('plan_intelligence.generate_sheet_suggestions_action', project_id=project.id, sheet_id=sheet.id) }}">
+                    <button type="submit" class="button">Re-extract</button>
+                </form>
+            </div>
+
+            {% if open_suggestions %}
+                {% for sug in open_suggestions %}
+                <div style="border: 1px solid #e2e8f0; border-radius: 6px; padding: 16px; margin-bottom: 16px; background-color: #f8fafc;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                        <span class="status" style="background: #fef3c7; color: #92400e;">Open Suggestion</span>
+                        {% if sug.confidence %}
+                        <span class="muted-copy">Confidence: {{ (sug.confidence * 100)|round }}%</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                        <div>
+                            <p class="eyebrow">Suggested Number</p>
+                            <p><strong>{{ sug.suggested_number or "—" }}</strong></p>
+                        </div>
+                        <div>
+                            <p class="eyebrow">Suggested Discipline</p>
+                            <p><strong>{{ sug.suggested_discipline_code or "—" }}</strong></p>
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <p class="eyebrow">Suggested Title</p>
+                            <p><strong>{{ sug.suggested_title or "—" }}</strong></p>
+                        </div>
+                    </div>
+
+                    <form method="post" action="{{ url_for('plan_intelligence.accept_suggestion_action', project_id=project.id, sheet_id=sheet.id, suggestion_id=sug.id) }}" style="display: flex; gap: 12px; align-items: center;">
+                        <input type="hidden" name="override_number" value="{{ sug.suggested_number or '' }}">
+                        <input type="hidden" name="override_title" value="{{ sug.suggested_title or '' }}">
+                        <input type="hidden" name="override_discipline_code" value="{{ sug.suggested_discipline_code or 'OTHER' }}">
+                        <button type="submit" class="button">Accept Suggestion</button>
+                    </form>
+
+                    <form method="post" action="{{ url_for('plan_intelligence.reject_suggestion_action', project_id=project.id, sheet_id=sheet.id, suggestion_id=sug.id) }}" style="margin-top: 8px;">
+                        <button type="submit" class="button-link" style="color: #b91c1c;">Reject</button>
+                    </form>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="muted-copy">No open suggestions for this sheet. Human review fields below are authoritative SoR.</p>
+            {% endif %}
+
+            {% if past_suggestions %}
+            <details style="margin-top: 16px;">
+                <summary style="cursor: pointer; font-size: 0.9rem; color: #64748b;">View Suggestion History ({{ past_suggestions|length }})</summary>
+                <ul class="activity-list" style="margin-top: 12px;">
+                    {% for ps in past_suggestions %}
+                    <li>
+                        <span class="activity-title">{{ ps.suggested_number or "—" }} · {{ ps.suggested_discipline_code }} · {{ ps.suggested_title or "—" }}</span>
+                        <span class="activity-meta">Status: {{ ps.status }} · {{ ps.created_at.strftime("%Y-%m-%d %H:%M") }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </details>
+            {% endif %}
+        </section>
+
+        <section class="form-panel">
+            <h2>Mapped Source Pages</h2>
+            <p class="muted-copy" style="margin-bottom: 16px;">A Sheet may map to one or more PDF Pages (0-based indexing) — ADR-014.</p>
+
+            {% if sheet.page_mappings %}
+            <table class="data-table" style="margin-bottom: 16px;">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Document</th>
+                        <th>Page #</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in sheet.page_mappings %}
+                    <tr>
+                        <td>{{ m.order_index + 1 }}</td>
+                        <td>
+                            <a href="{{ url_for('plan_intelligence.view_plan', project_id=project.id, document_id=m.plan_document_id) }}">
+                                {{ m.document.original_filename }}
+                            </a>
+                        </td>
+                        <td>Page {{ m.page_index + 1 }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('plan_intelligence.unmap_page_action', project_id=project.id, sheet_id=sheet.id) }}" style="display:inline;">
+                                <input type="hidden" name="plan_document_id" value="{{ m.plan_document_id }}">
+                                <input type="hidden" name="page_index" value="{{ m.page_index }}">
+                                <button type="submit" class="button-link" style="color: #b91c1c;">Unmap</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="muted-copy">No PDF pages currently mapped to this sheet.</p>
+            {% endif %}
+
+            <details style="margin-top: 16px;">
+                <summary style="cursor: pointer; font-weight: 500;">+ Map Additional Page</summary>
+                <form method="post" action="{{ url_for('plan_intelligence.map_page_action', project_id=project.id, sheet_id=sheet.id) }}" style="margin-top: 12px;" class="form-grid">
+                    <label>
+                        Plan Document
+                        <select name="plan_document_id" required>
+                            {% for doc in documents %}
+                            <option value="{{ doc.id }}">{{ doc.original_filename }} ({{ doc.page_count or '?' }} pages)</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>
+                        Page Index (0-based, e.g. 0 for Page 1)
+                        <input type="number" name="page_index" min="0" value="0" required>
+                    </label>
+                    <div class="form-actions">
+                        <button type="submit">Map Page</button>
+                    </div>
+                </form>
+            </details>
+        </section>
+    </div>
+
+    <!-- Right Column: Authoritative Sheet SoR Edit Form -->
+    <div>
+        <section class="form-panel" style="margin-bottom: 24px;">
+            <h2>Authoritative Sheet Metadata (SoR)</h2>
+            <p class="muted-copy" style="margin-bottom: 16px;">Human-entered metadata is authoritative. Modifying and saving sets review status to Reviewed.</p>
+
+            <form method="post" action="{{ url_for('plan_intelligence.edit_sheet_action', project_id=project.id, sheet_id=sheet.id) }}" class="form-grid">
+                <label>
+                    Sheet Number
+                    <input type="text" name="number" value="{{ sheet.number or '' }}" placeholder="e.g. A-101">
+                </label>
+
+                <label>
+                    Discipline Code
+                    <select name="discipline_code" required>
+                        {% for code in discipline_codes %}
+                        <option value="{{ code }}" {% if sheet.discipline_code == code %}selected{% endif %}>{{ code }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label style="grid-column: span 2;">
+                    Sheet Title
+                    <input type="text" name="title" value="{{ sheet.title or '' }}" placeholder="e.g. Ground Floor Plan">
+                </label>
+
+                <label>
+                    Review Status
+                    <select name="review_status">
+                        {% for status in review_statuses %}
+                        <option value="{{ status }}" {% if sheet.review_status == status %}selected{% endif %}>{{ status }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label>
+                    Drawing Status
+                    <select name="drawing_status">
+                        {% for dstatus in drawing_statuses %}
+                        <option value="{{ dstatus }}" {% if sheet.drawing_status == dstatus %}selected{% endif %}>{{ dstatus }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <div class="form-actions" style="grid-column: span 2; display: flex; justify-content: space-between;">
+                    <button type="submit">Save & Review</button>
+                </div>
+            </form>
+
+            <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                <form method="post" action="{{ url_for('plan_intelligence.void_sheet_action', project_id=project.id, sheet_id=sheet.id) }}" onsubmit="return confirm('Void this sheet? It will be excluded from take-off.');">
+                    <button type="submit" class="button-link" style="color: #b91c1c;">Void Sheet</button>
+                </form>
+            </div>
+        </section>
+
+        {% if audit_events %}
+        <section class="form-panel">
+            <h2>Sheet Audit Trail</h2>
+            <ul class="activity-list">
+                {% for ev in audit_events %}
+                <li>
+                    <span class="activity-title">{{ ev.event_type }}</span>
+                    <span class="activity-meta">{{ ev.created_at.strftime("%Y-%m-%d %H:%M:%S") }}{% if ev.detail %} · {{ ev.detail }}{% endif %}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

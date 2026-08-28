@@ -54,10 +54,10 @@ Distinguish from:
 | August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | Base commit (pre-governance) | `7b8d5ca` |
-| Latest completed milestone | M008 Sheet Intelligence architecture (`8c74e31`; merged via PR #6 → `ee9b4b2`) |
-| Current milestone | **M009** — [FG-004](feature-gates/FG-004-m009-sheet-classification.md) **approved**; implementation **not started** |
-| Product status | Operational on `main`: CRM, Estimating, Proposals, Change Orders, Plan upload (M005), Document Indexing (M007). CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract **not implemented**. |
-| Architecture status | CAR-001 approved. Sheet Intelligence architecture (M008) + FG-004 approved. Sheets / review UI **not** implemented. |
+| Latest completed milestone | M009 Sheet Classification / Human Metadata Review (`plan_sheets`, migration `b8d9f0a1c2e3`) |
+| Current milestone | **M009** — Complete and verified (121 tests passing) |
+| Product status | Operational on `main`: CRM, Estimating, Proposals, Change Orders, Plan upload (M005), Document Indexing (M007), Sheet Classification / Review (M009). CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract **not implemented**. |
+| Architecture status | CAR-001 approved. Sheet Intelligence architecture (M008) + FG-004 implemented in M009. Scale (M010) / take-off (M011+) deferred. |
 | Implemented capabilities | Phase A PDF upload/storage; page indexing; processing provenance; archive-over-delete; relational search |
 | Incomplete work | M009 sheet review (FG-004 approved, code not started); scale; AI POC; estimate mapping; auth; project-detail archived filter; document package outputs; QuickBooks integration; contract/warranty generation |
 | Database and migration status | Intended Alembic head `a7c8e9f0b1d2` (M007) |

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Create Sheet | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Create Sheet{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Plan Intelligence · Revision {{ revision.label }}</p>
+        <h1>Create Drawing Sheet</h1>
+        <p class="muted-copy">{{ project.name }} · Package: {{ revision.package.name }}</p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('plan_intelligence.revision_sheets', project_id=project.id, revision_id=revision.id) }}">Back to Sheet Index</a>
+    </div>
+</div>
+
+<section class="form-panel" style="max-width: 650px;">
+    <h2>Sheet Metadata</h2>
+    <p class="muted-copy" style="margin-bottom: 20px;">Manual sheet creation allows creating a Sheet without requiring an automated suggestion (ADR-017).</p>
+
+    <form method="post" class="form-grid">
+        <label>
+            Sheet Number
+            <input type="text" name="number" placeholder="e.g. A-101">
+        </label>
+
+        <label>
+            Discipline Code
+            <select name="discipline_code" required>
+                {% for code in discipline_codes %}
+                <option value="{{ code }}" {% if code == 'ARCH' %}selected{% endif %}>{{ code }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label style="grid-column: span 2;">
+            Sheet Title
+            <input type="text" name="title" placeholder="e.g. Architectural Floor Plan">
+        </label>
+
+        {% if documents %}
+        <label>
+            Initial Plan Document (optional)
+            <select name="plan_document_id">
+                <option value="">-- None / Map Later --</option>
+                {% for doc in documents %}
+                <option value="{{ doc.id }}" {% if pre_document_id == doc.id %}selected{% endif %}>{{ doc.original_filename }} ({{ doc.page_count or '?' }} pages)</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Initial Page Index (0-based)
+            <input type="number" name="page_index" min="0" value="{{ pre_page_index if pre_page_index is not none else 0 }}">
+        </label>
+        {% endif %}
+
+        <div class="form-actions" style="grid-column: span 2;">
+            <button type="submit">Create Sheet</button>
+            <a class="button-link" href="{{ url_for('plan_intelligence.revision_sheets', project_id=project.id, revision_id=revision.id) }}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

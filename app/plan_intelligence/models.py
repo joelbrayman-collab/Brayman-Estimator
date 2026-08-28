@@ -70,6 +70,12 @@ class DrawingRevision(db.Model):
         secondary=drawing_revision_documents,
         back_populates="revisions",
     )
+    sheets = db.relationship(
+        "PlanSheet",
+        back_populates="revision",
+        cascade="all, delete-orphan",
+        order_by="PlanSheet.number",
+    )
 
     def __repr__(self):
         return f"<DrawingRevision {self.id} {self.label}>"
@@ -232,9 +238,125 @@ class PlanAuditEvent(db.Model):
     plan_document_id = db.Column(
         db.Integer, db.ForeignKey("plan_documents.id"), nullable=True
     )
+    sheet_id = db.Column(
+        db.Integer, db.ForeignKey("plan_sheets.id"), nullable=True
+    )
     event_type = db.Column(db.String(80), nullable=False)
     detail = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
+    sheet = db.relationship("PlanSheet", foreign_keys=[sheet_id])
+
     def __repr__(self):
         return f"<PlanAuditEvent {self.id} {self.event_type}>"
+
+
+class PlanSheet(db.Model):
+    """Construction drawing sheet within a Drawing Revision (M008 / ADR-014 / ADR-018)."""
+
+    __tablename__ = "plan_sheets"
+
+    id = db.Column(db.Integer, primary_key=True)
+    drawing_revision_id = db.Column(
+        db.Integer, db.ForeignKey("drawing_revisions.id"), nullable=False
+    )
+    number = db.Column(db.String(100), nullable=True)
+    title = db.Column(db.String(255), nullable=True)
+    discipline_code = db.Column(db.String(40), nullable=False, default="OTHER")
+    drawing_status = db.Column(db.String(50), nullable=False, default="unreviewed")
+    review_status = db.Column(db.String(50), nullable=False, default="draft")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+    )
+
+    revision = db.relationship("DrawingRevision", back_populates="sheets")
+    page_mappings = db.relationship(
+        "PlanSheetPage",
+        back_populates="sheet",
+        cascade="all, delete-orphan",
+        order_by="PlanSheetPage.order_index",
+    )
+    suggestions = db.relationship(
+        "PlanSheetSuggestion",
+        back_populates="sheet",
+        cascade="all, delete-orphan",
+        order_by="PlanSheetSuggestion.created_at.desc()",
+    )
+
+    @property
+    def is_void(self) -> bool:
+        return self.review_status == "void" or self.drawing_status == "void"
+
+    def __repr__(self):
+        return f"<PlanSheet {self.id} rev={self.drawing_revision_id} num={self.number}>"
+
+
+class PlanSheetPage(db.Model):
+    """Mapping between a PlanSheet and source PlanPage (0-based page_index)."""
+
+    __tablename__ = "plan_sheet_pages"
+    __table_args__ = (
+        db.UniqueConstraint(
+            "sheet_id",
+            "plan_document_id",
+            "page_index",
+            name="uq_plan_sheet_doc_page",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    sheet_id = db.Column(
+        db.Integer, db.ForeignKey("plan_sheets.id"), nullable=False
+    )
+    plan_document_id = db.Column(
+        db.Integer, db.ForeignKey("plan_documents.id"), nullable=False
+    )
+    page_index = db.Column(db.Integer, nullable=False)
+    order_index = db.Column(db.Integer, nullable=False, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    sheet = db.relationship("PlanSheet", back_populates="page_mappings")
+    document = db.relationship("PlanDocument")
+
+    def __repr__(self):
+        return (
+            f"<PlanSheetPage sheet={self.sheet_id} doc={self.plan_document_id} "
+            f"page={self.page_index} order={self.order_index}>"
+        )
+
+
+class PlanSheetSuggestion(db.Model):
+    """First-class sheet metadata suggestion (ADR-017)."""
+
+    __tablename__ = "plan_sheet_suggestions"
+
+    id = db.Column(db.Integer, primary_key=True)
+    sheet_id = db.Column(
+        db.Integer, db.ForeignKey("plan_sheets.id"), nullable=False
+    )
+    source_attempt_id = db.Column(
+        db.Integer,
+        db.ForeignKey("plan_processing_attempts.id"),
+        nullable=True,
+    )
+    suggested_number = db.Column(db.String(100), nullable=True)
+    suggested_title = db.Column(db.String(255), nullable=True)
+    suggested_discipline_code = db.Column(db.String(40), nullable=True)
+    confidence = db.Column(db.Float, nullable=True)
+    status = db.Column(db.String(40), nullable=False, default="open")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    decided_at = db.Column(db.DateTime, nullable=True)
+
+    sheet = db.relationship("PlanSheet", back_populates="suggestions")
+    source_attempt = db.relationship("ProcessingAttempt")
+
+    @property
+    def is_open(self) -> bool:
+        return self.status == "open"
+
+    def __repr__(self):
+        return (
+            f"<PlanSheetSuggestion {self.id} sheet={self.sheet_id} "
+            f"status={self.status} num={self.suggested_number}>"
+        )

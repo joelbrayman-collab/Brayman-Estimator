@@ -11,32 +11,33 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | Confirm with `git rev-parse` (expect parity; tip at or after state closure `ee100ac`) |
+| HEAD / `origin/main` | Confirm with `git rev-parse` |
 | August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | Working tree | Clean (confirm `git status`) |
-| Governance | FG-004 **approved** (M009 implementation not started); FG-003 CONDITIONAL PASS; M005–M008 on `main`; CAR-001 CalibAi architecture adopted 2026-08-28 |
+| Governance | FG-004 **approved**; M009 **implemented & verified**; CAR-001 CalibAi architecture adopted 2026-08-28 |
 
 ## Implemented (evidenced in code on `main`)
 
 - CRM, Estimating, Proposals (+ Accepted immutability), Change Orders
 - Plan Intelligence Phase A upload/storage (M005; `098647c`)
 - **Document Indexing (M007; `cbefe7a`)** — pages, processing attempts/results, immutable raw payloads, audit events, archive-over-delete, relational search, minimal package/revision; migration `a7c8e9f0b1d2`
+- **Sheet Intelligence / Classification (M009)** — `plan_sheets`, `plan_sheet_pages`, `plan_sheet_suggestions`, `sheet_id` on audit events; service layer for human review (accept, edit, reject, manual create, void); revision sheet index validation & finalization; office review UI; migration `b8d9f0a1c2e3`; 121 total tests passing
 
 ## Architecture / readiness only (not implemented)
 
 - **Document Intelligence architecture (M006)** — FG-003, `document-intelligence.md`, ADR-013–016
-- **Sheet Intelligence (M008; `8c74e31`)** — architecture on `main`; [FG-004](feature-gates/FG-004-m009-sheet-classification.md) **approved**; **no sheet code**
-- Scale / manual measure / AI take-off / estimate mapping
+- Scale / manual measure (M010) / AI take-off (M011+) / estimate mapping
+- CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract
 
 ## Migrations
 
-- Alembic head intended: `a7c8e9f0b1d2` (M007) — re-verify per environment
-- M008 introduced **no** migrations
+- Alembic head: `b8d9f0a1c2e3` (M009 Sheet Intelligence)
+- Upgraded cleanly from `a7c8e9f0b1d2` (M007)
 
 ## Current milestone status
 
-M005–M008 are **merged to `main`**. [FG-004](feature-gates/FG-004-m009-sheet-classification.md) is **approved**. M009 implementation has **not started**. Sheets remain **unimplemented**.
+M005–M009 are **implemented and verified**. Next approved milestone is **M010 — Scale Calibration / Measurement Tools** (requires separate Feature Gate).
 
 ## August 25, 2026 governance (recorded — not implemented)
 

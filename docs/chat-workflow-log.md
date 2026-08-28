@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-28 — Implement M009 Sheet Classification / Human Metadata Review
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Implement authorized M009 scope per FG-004: Sheet models, page mappings, suggestions, human review workflow (accept/edit/reject/void), uniqueness validation, migration, and office review UI. |
+| Business decision | Estimators can classify PDF pages into logical drawing Sheets, review suggestions with human authority, manage non-1:1 page mappings, and validate/finalize revision sheet indices before downstream scale/take-off. |
+| Architectural decision | Additive schema `plan_sheets`, `plan_sheet_pages`, `plan_sheet_suggestions`, and `sheet_id` on audit events. Suggestions never silently set SoR. Uniqueness scoped to `DrawingRevision`. Page ≠ Sheet preserved; source documents and pages immutable. |
+| Prompt template used | Approved custom Cursor implementation prompt for M009 (FG-004 approved) |
+| Approved Cursor prompt summary | Anti-drift preflight; verify Alembic head; implement authorized models, migration `b8d9f0a1c2e3`, service layer, office UI, tests, and documentation; run test suite; commit and push. |
+| Files expected to change | `app/plan_intelligence/*`, `migrations/versions/*`, `tests/test_sheet_intelligence.py`, `app/templates/plan_intelligence/*`, governance/module docs |
+| Files prohibited from changing | Estimating, proposals, change orders, CRM, pricing calculation, auth, field/mobile |
+| Implementation result | M009 fully implemented. Migration `b8d9f0a1c2e3` applied cleanly. All 15 focused tests and 121 total suite tests pass. |
+| Tests | `pytest tests/test_sheet_intelligence.py -q` (15 passed); `pytest -q` (121 passed) |
+| Project-state-report update | Yes |
+| Milestone entry update | Milestone 009 appended |
+| Constitutional issue raised | None |
+| Unresolved issues | None for M009 |
+| Next approved step | Prepare Feature Gate for M010 Scale Calibration / Measurement Tools |
+| Next approved prompt | M010 Feature Gate |
+| Commit hash | Pending |
+
 ### 2026-08-28 — Approve M009 Sheet Feature Gate (FG-004)
 
 | Field | Content |

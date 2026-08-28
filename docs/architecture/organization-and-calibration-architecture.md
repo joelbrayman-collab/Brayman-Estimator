@@ -671,16 +671,17 @@ A comprehensive code audit of the entire existing codebase was conducted to conf
 
 ---
 
-## 24. Blocking Conditions & Next Steps
+## 24. Implementation Status & Next Steps
 
-### Governed Blocking Condition:
-> **`FG-006` (Historical Estimate Ingestion Engine — Phase B), the Labour Engine (Phase B), and the Organization-Calibrated Pricing Engine remain BLOCKED until this Organization & Calibration Architecture (Phase A) is reviewed and approved by Joel Brayman and ChatGPT.**
+### Governed Implementation Status:
+- **Phase A Architecture:** Reviewed and Approved (2026-08-28).
+- **Milestone 011 / FG-007 (Organization Foundation & Project Commercial Context):** Implemented and verified on `main` (`cb38d93`, migration `d0a1b2c3d4e5`).
+- **FG-006 (Historical Estimate Ingestion Engine — Phase B):** Implemented and verified on `main` (`690d755`, migration `e1b2c3d4e5f6`).
 
-### Sequence of Next Authorized Milestones:
-1. **Governance Review:** Formal review and sign-off on Phase A Architecture.
-2. **Feature Gate Preparation:** Prepare `FG-006` for Historical Estimate Ingestion Engine (Phase B — Deterministic Ingestion & Database Persistence).
-3. **Labour Engine Architecture & Feature Gate:** Formalize Phase B Labour Engine specification.
-4. **ADR-025 Resolution:** Formally resolve estimate builder markup stack vs true gross margin formula.
+### Governed Next Step:
+- **Next Candidate Milestone:** Labour Engine Phase B architecture / Feature Gate preparation.
+- **Status:** **NOT STARTED — REQUIRES SEPARATE GOVERNANCE AUTHORIZATION**.
+- **Blocked / Not Started:** Labour Engine Phase B, Organization-Calibrated Pricing Engine, ML-based commercial learning, cross-org benchmarking.
 
 ---
 

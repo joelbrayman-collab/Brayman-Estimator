@@ -5,7 +5,7 @@
 | Document Type | Architectural Research & Ingestion Design Specification |
 | Milestone / Program | Historical Estimate Ingestion — Phase A (Source Audit & Architecture) |
 | Authoritative Context | `platform-constitution.md`, `architecture-principles.md`, `pricing-policy.md`, `ADR-024`, `ADR-025` |
-| Status | Governance Review Draft (No Production Ingestion / Read-Only Audit) |
+| Status | **PHASE A COMPLETE · PHASE B IMPLEMENTED & VERIFIED** (FG-006; migration `e1b2c3d4e5f6`; 170 total tests passed, 11 dedicated historical ingestion tests) |
 | Date | 2026-08-28 |
 
 ---
@@ -324,13 +324,20 @@ All commercial layers are stored with distinct source-cell provenance, guarantee
 
 ---
 
-## 11. Phase B Prerequisite & Blocking Condition
+## 11. Phase B Prerequisite & Implementation Status
 
-### Blocking Condition:
-`FG-006 — Historical Estimate Ingestion Engine (Phase B — Deterministic Ingestion & Database Persistence)` is **BLOCKED** pending review and approval of **CalibAi Organization & Calibration Architecture — Phase A**.
+### Historical Blocking Condition & Satisfaction:
+The prerequisite conditions for `FG-006 — Historical Estimate Ingestion Engine (Phase B — Deterministic Ingestion & Database Persistence)` were **SATISFIED** upon completion and verification of **Milestone 011 / FG-007 (Organization Foundation & Project Commercial Context)** under ADR-028:
+1. Canonical `Organization` entity and multi-tenant data ownership rules were implemented and verified.
+2. Tenant isolation requirements were defined and enforced via `get_current_organization_id()`.
+3. Calibration-model ownership boundaries were established.
+4. Rate-resolution hierarchy and commercial context provenance were formalized.
 
-Historical Ingestion Phase B may **not** create database tables, persistence models, or ingestion services until:
-1. Canonical `Organization` entity and multi-tenant data ownership rules are accepted.
-2. Tenant isolation requirements are defined.
-3. Calibration-model ownership and versioning rules are finalized.
-4. Rate-resolution hierarchy is formalized.
+### Phase B Implementation:
+Following satisfaction of prerequisites, **FG-006 Phase B was implemented, verified, committed, and pushed** on `main` at `690d755d9901e04eb783198f4b89071fbeaf472a`:
+- Additive database migration: `e1b2c3d4e5f6`
+- 20 / 20 historical workbooks ingested into `ORG-001` with 20/20 exact SHA-256 integrity verification
+- Pure Python OpenXML reader executing zero macros
+- Template Families A–E classified and normalized with cell-level provenance
+- Full test baseline: 170 passed (11 dedicated historical ingestion tests)
+- Subsequent systems (Labour Engine Phase B, Organization-Calibrated Pricing Engine) remain **BLOCKED / NOT STARTED** pending separate governance authorization.

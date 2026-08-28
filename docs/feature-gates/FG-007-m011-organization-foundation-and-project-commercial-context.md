@@ -19,7 +19,7 @@
 |---|---|
 | Architecture (Phase A) | **APPROVED** (`f660b54`, 2026-08-28) |
 | Feature Gate (this document) | **APPROVED** (`01b3be4`, 2026-08-28) |
-| Implementation | **IMPLEMENTED & VERIFIED** (157/157 tests passing; awaiting governance commit) |
+| Implementation | **IMPLEMENTED & VERIFIED** (159/159 tests passing; committed on `main` at `cb38d93`, migration `d0a1b2c3d4e5`) |
 
 ---
 
@@ -147,4 +147,5 @@ The migration is a **controlled additive migration designed to minimize applicat
 
 ## Blocking Conditions
 
-> **FG-006 (Historical Estimate Ingestion Engine — Phase B), the Labour Engine (Phase B), and the Organization-Calibrated Pricing Engine remain BLOCKED until this M011 milestone is implemented and verified.**
+> **Historical Status:** M011 was successfully implemented and verified (`cb38d93`, migration `d0a1b2c3d4e5`), satisfying the prerequisite for FG-006 (Historical Estimate Ingestion Engine — Phase B), which has also been implemented and verified (`690d755`, migration `e1b2c3d4e5f6`).
+> **Current Status:** The Labour Engine (Phase B) and the Organization-Calibrated Pricing Engine remain **BLOCKED / NOT STARTED** pending separate governance authorization.

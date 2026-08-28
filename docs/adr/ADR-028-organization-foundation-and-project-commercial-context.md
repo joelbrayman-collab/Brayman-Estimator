@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Title | ADR-028: Organization Foundation, Multi-Tenant Boundary, and Project Commercial Context |
-| Status | **Proposed** (governing M011 Feature Gate FG-007) |
+| Status | **Accepted** (governing M011 Feature Gate FG-007; implemented in M011) |
 | Date | 2026-08-28 |
 | Related | [FG-007](../feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md) · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) · [ADR-002](ADR-002-accepted-proposal-immutability.md) |
 
@@ -92,8 +92,8 @@ Additive migration `_add_organization_and_commercial_context_m011.py`:
 
 ## Approval
 
-| Role | Name | Date |
-|---|---|---|
-| Joel | Joel Brayman | Pending Review |
-| ChatGPT review | Feature Gate FG-007 Prepared | 2026-08-28 |
-| Cursor implementation note | Documentation & Feature Gate Preparation only | 2026-08-28 |
+| Role | Name | Status | Date |
+|---|---|---|---|
+| Joel | Joel Brayman | Approved | 2026-08-28 |
+| ChatGPT review | Feature Gate FG-007 Approved & Implemented | Approved | 2026-08-28 |
+| Implementation note | Implemented & Verified in M011 (`cb38d93`, migration `d0a1b2c3d4e5`) | Complete | 2026-08-28 |

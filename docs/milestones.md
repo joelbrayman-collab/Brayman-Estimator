@@ -40,8 +40,8 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Status | **FEATURE GATE APPROVED, IMPLEMENTED & VERIFIED** |
 | Date | 2026-08-28 |
 | Objective | Authorize and implement deterministic, organization-aware ingestion of historical estimate workbooks into CalibAi's governed evidence model. Ingest the 20 Brayman source workbooks into ORG-001 private intelligence. |
-| Deliverables | [FG-006](feature-gates/FG-006-historical-estimate-ingestion-phase-b.md); pure Python OpenXML parser (no macro execution), Template classifier (Families A–E), Family adapters, canonical persistence models (`HistoricalSourceWorkbook`, `HistoricalEstimate`, `HistoricalSourceObservation`, `HistoricalCostLineItem`, `HistoricalLabourItem`, `HistoricalSubcontractItem`, `HistoricalDataQualityFlag`, `HistoricalEstimateReviewDecision`), evidence review service/UI (`/historical-estimates/`), additive migration `e1b2c3d4e5f6`, 10 dedicated tests |
-| FG-006 code | Implemented & Verified (169/169 tests passing; 20/20 source SHA-256 hashes verified; awaiting governance audit / commit) |
+| Deliverables | [FG-006](feature-gates/FG-006-historical-estimate-ingestion-phase-b.md); pure Python OpenXML parser (no macro execution), Template classifier (Families A–E), Family adapters, canonical persistence models (`HistoricalSourceWorkbook`, `HistoricalEstimate`, `HistoricalSourceObservation`, `HistoricalCostLineItem`, `HistoricalLabourItem`, `HistoricalSubcontractItem`, `HistoricalDataQualityFlag`, `HistoricalEstimateReviewDecision`), evidence review service/UI (`/historical-estimates/`), additive migration `e1b2c3d4e5f6`, 11 dedicated tests |
+| FG-006 code | Implemented & Verified (170/170 tests passing, 11 dedicated historical ingestion tests; 20/20 source SHA-256 hashes verified exact; committed and pushed on `main` at `690d755d9901e04eb783198f4b89071fbeaf472a`) |
 
 ### FG-007 — M011 Organization Foundation & Project Commercial Context Feature Gate
 
@@ -51,8 +51,8 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Status | **FEATURE GATE APPROVED, IMPLEMENTED & VERIFIED** |
 | Date | 2026-08-28 |
 | Objective | Authorize M011 scope/invariants/tests/migration permission for Organization entity, direct root model ownership, versioned Project Commercial Context, tenant query scoping, and immutable EstimateVersion references. |
-| Deliverables | [FG-007](feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md); [ADR-028](adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted**; M011 models, services, project form/edit UI, additive migration `d0a1b2c3d4e5`, 17 tests |
-| M011 code | Implemented & Verified (157/157 tests passing; awaiting governance audit / commit) |
+| Deliverables | [FG-007](feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md); [ADR-028](adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted**; M011 models, services, project form/edit UI, additive migration `d0a1b2c3d4e5`, 19 tests |
+| M011 code | Implemented & Verified (159/159 tests passing; committed and pushed on `main` at `cb38d93`) |
 
 ### CAR-001 — CalibAi Product & Architecture Reconciliation
 
@@ -72,11 +72,11 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Field | Content |
 |-------|---------|
 | ID | FG-005 |
-| Status | **FEATURE GATE APPROVED** — M010 implementation **not started** |
+| Status | **FEATURE GATE APPROVED, IMPLEMENTED & VERIFIED** |
 | Date | 2026-08-28 |
-| Objective | Authorize M010 scope/invariants/tests/migration permission for drawing scale calibration and manual measurement tools. No scale code in this record. |
-| Deliverables | [FG-005](feature-gates/FG-005-m010-scale-calibration.md); [ADR-026](adr/ADR-026-scale-ownership-and-calibration-provenance.md) Proposed; [ADR-027](adr/ADR-027-pdf-rendering-and-normalized-coordinate-system.md) Proposed |
-| M010 code | **Not begun** |
+| Objective | Authorize M010 scope/invariants/tests/migration permission for drawing scale calibration and manual measurement tools. Implemented in M010 (`6b969fe`, migration `c9e0f1a2b3d4`). |
+| Deliverables | [FG-005](feature-gates/FG-005-m010-scale-calibration.md); [ADR-026](adr/ADR-026-scale-ownership-and-calibration-provenance.md) Accepted; [ADR-027](adr/ADR-027-pdf-rendering-and-normalized-coordinate-system.md) Accepted |
+| M010 code | Implemented & Verified (`6b969fe`, migration `c9e0f1a2b3d4`) |
 
 ### FG-004 — M009 Sheet Classification Feature Gate
 
@@ -93,22 +93,39 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Recorded milestones
 
+### Feature Gate 006 — Historical Estimate Ingestion Engine Phase B
+
+| Field | Content |
+|-------|---------|
+| Milestone | Historical Estimate Ingestion Engine Phase B (FG-006) |
+| Status | **Completed & Verified** (implemented, verified, committed, and pushed on `main`) |
+| Branch | `main` |
+| Base | `cb38d93` |
+| Date | 2026-08-28 |
+| Objective | Authorize and implement deterministic, organization-aware ingestion of historical estimate workbooks into CalibAi's governed evidence model. Ingest the 20 Brayman source workbooks into ORG-001 private intelligence with full source-cell provenance and human review workflow. |
+| Deliverables | [FG-006](feature-gates/FG-006-historical-estimate-ingestion-phase-b.md); pure Python OpenXML parser (no macro execution), Template classifier (Families A–E), Family adapters, canonical persistence models (`HistoricalSourceWorkbook`, `HistoricalEstimate`, `HistoricalSourceObservation`, `HistoricalCostLineItem`, `HistoricalLabourItem`, `HistoricalSubcontractItem`, `HistoricalDataQualityFlag`, `HistoricalEstimateReviewDecision`), evidence review service/UI (`/historical-estimates/`), additive migration `e1b2c3d4e5f6`, 11 dedicated tests in `tests/test_historical_ingestion.py`. |
+| Validation | 170/170 full test suite pass; 11/11 dedicated historical ingestion tests pass; 20/20 source workbook SHA-256 hashes verified exact before and after ingestion; ORG-001 private intelligence isolation verified; zero mutation to active estimating tables. |
+| Architectural findings | Pure-Python OpenXML reader executes zero macros; cell provenance preserves exact formula and displayed text; cost-plus markup preserved as historical fact without converting to modern gross margin; contingency separated from markup. |
+| Open decisions | None for FG-006. Ingestion is complete and sealed. Labour Engine Phase B and Pricing Engine remain blocked / not started. |
+| Next milestone | Next candidate: Labour Engine Phase B architecture / Feature Gate preparation (STATUS: NOT STARTED; REQUIRES SEPARATE GOVERNANCE AUTHORIZATION). |
+| Commit | `690d755` — *feat: implement FG-006 historical estimate ingestion engine phase b* |
+
 ### Milestone 011 — Organization Foundation & Project Commercial Context
 
 | Field | Content |
 |-------|---------|
 | Milestone | Organization Foundation & Project Commercial Context |
-| Status | **Completed & Verified** (implemented, awaiting governance commit) |
+| Status | **Completed & Verified** (implemented and committed on `main`) |
 | Branch | `main` |
 | Base | `01b3be4` |
 | Date | 2026-08-28 |
 | Objective | Implement canonical `Organization` model, Brayman `ORG-001` seed and deterministic backfill, direct ownership FKs on root models (`Client`, `Project`, `CostItem`, `Assembly`, `ProposalTemplate`), tenant-safe query isolation with fail-closed 404s, versioned `ProjectCommercialContext` with 7 mandatory decision parameters, policy-driven justification engine, Commercial Decision Gate in project creation and editing UI, immutable `EstimateVersion.commercial_context_id` references, and controlled additive migration `d0a1b2c3d4e5`. |
-| Deliverables | Models (`Organization`, `ProjectCommercialContext`); migration `d0a1b2c3d4e5`; services `app/services/organizations.py`, `app/services/commercial_context.py`; updated routes and templates for projects, clients, cost library, assemblies, proposal templates, estimates, proposals, plan intelligence, project controls; 17 focused tests in `tests/test_organization_foundation.py`. |
-| Validation | 157/157 full test suite passes; migration applies cleanly with complete legacy data preservation and deterministic backfill; tenant query isolation verified; policy-driven justification verified; historical estimate version context immutability verified. |
+| Deliverables | Models (`Organization`, `ProjectCommercialContext`); migration `d0a1b2c3d4e5`; services `app/services/organizations.py`, `app/services/commercial_context.py`; updated routes and templates for projects, clients, cost library, assemblies, proposal templates, estimates, proposals, plan intelligence, project controls; 19 focused tests in `tests/test_organization_foundation.py`. |
+| Validation | 159/159 full test suite passes; migration applies cleanly with complete legacy data preservation and deterministic backfill; tenant query isolation verified; policy-driven justification verified; historical estimate version context immutability verified. |
 | Architectural findings | Single-tenant context helper `get_current_organization_id()` provides complete query scoping without prematurely implementing auth/RBAC; composite unique constraints preserve cross-tenant code reusability; commercial context captures assumptions without affecting pricing math. |
-| Open decisions | None for M011. Phase B Historical Ingestion (FG-006) and Labour Engine Phase B unblocked for preparation. |
-| Next milestone | FG-006 — Historical Estimate Ingestion Phase B / Labour Engine Phase B |
-| Commit | Pending governance review |
+| Open decisions | None for M011. Organization foundation and Project Commercial Context active. |
+| Next milestone | FG-006 — Historical Estimate Ingestion Engine Phase B |
+| Commit | `cb38d93` — *feat: implement M011 organization foundation and commercial context* |
 
 ### Milestone 010 — Scale Calibration / Measurement Tools
 
@@ -123,8 +140,8 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Deliverables | Models (`PlanScaleCalibration`, `PlanMeasurement`); migration `c9e0f1a2b3d4`; service layer `app/plan_intelligence/scale_measurement.py`; measurement route and template (`sheet_measure.html`, `sheet-measurement.js`); 19 focused tests in `tests/test_scale_measurement.py`. |
 | Validation | 140/140 tests pass; migration applies cleanly; project/revision/sheet isolation verified; source doc/page immutability verified; estimating/proposals unaffected. |
 | Architectural findings | Extracted scale strings never auto-confirm; measurements require confirmed calibration; multi-scale viewports scope measurement scales deterministically; geometry persisted in normalized document coordinates `[0.0, 1.0]`. |
-| Open decisions | None for M010. Automated quantity take-off deferred to M011+. |
-| Next milestone | M011 — AI Take-off / Quantity Extraction Foundation (requires dedicated Feature Gate) |
+| Open decisions | None for M010. Drawing scale calibration and manual measurement tools active. |
+| Next milestone | Milestone 011 — Organization Foundation & Project Commercial Context (FG-007) |
 | Commit | `6b969fe` — *feat: implement M010 scale calibration* |
 
 ### Milestone 009 — Sheet Classification / Human Metadata Review

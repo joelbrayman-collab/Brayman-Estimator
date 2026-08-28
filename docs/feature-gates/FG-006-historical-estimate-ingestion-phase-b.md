@@ -7,7 +7,8 @@
 | Target Milestone | Milestone 006 / Historical Ingestion Phase B |
 | Governance Basis | `platform-constitution.md`, `architecture-principles.md`, `pricing-policy.md`, `ADR-024`, `ADR-025`, `ADR-028` |
 | Prerequisite Gates | `FG-007` (M011 Organization Foundation & Project Commercial Context) **Satisfied** |
-| Status | **APPROVED FOR IMPLEMENTATION** |
+| Status | **APPROVED, IMPLEMENTED & VERIFIED** |
+| Implementation Baseline | Migration `e1b2c3d4e5f6`; 170 passed (11 dedicated historical ingestion tests); 20/20 source SHA-256 hashes exact; committed on `main` at `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | Date | 2026-08-28 |
 
 ---

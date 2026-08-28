@@ -11,10 +11,10 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | Confirm with `git rev-parse` |
+| HEAD / `origin/main` | `690d755d9901e04eb783198f4b89071fbeaf472a` (exact parity on `origin/main`) |
 | August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
-| Working tree | Clean (confirm `git status`) |
+| Working tree | Clean |
 | Governance | FG-004, FG-005, FG-006 (Historical Estimate Ingestion Phase B), FG-007 (M011 Organization Foundation) **approved & implemented**; CAR-001 CalibAi architecture adopted 2026-08-28; Review Turnover Protocol adopted 2026-08-28 |
 
 ## Implemented (evidenced in code on `main`)
@@ -41,7 +41,11 @@
 
 ## Current milestone status
 
-M005–M011 and **FG-006 Historical Estimate Ingestion Engine Phase B** are **implemented and verified**. Next candidate milestone is **Labour Engine Phase B** or **Organization-Calibrated Pricing Engine**.
+M005–M011 and **FG-006 Historical Estimate Ingestion Engine Phase B** are **implemented, verified, committed, and pushed** on `main` at `690d755d9901e04eb783198f4b89071fbeaf472a`.
+
+- **Current active milestone:** None active / turnover state.
+- **Next governed candidate:** Labour Engine Phase B architecture / Feature Gate preparation (STATUS: NOT STARTED; REQUIRES SEPARATE GOVERNANCE AUTHORIZATION).
+- **Blocked / Not Started:** Labour Engine Phase B, Organization-Calibrated Pricing Engine, cross-org learning, source workbook mutation, pricing formula modifications.
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -55,9 +59,9 @@ M005–M011 and **FG-006 Historical Estimate Ingestion Engine Phase B** are **im
 
 ## Recommended next steps
 
-1. Review and commit M011 implementation package.
-2. Prepare Feature Gate FG-006 for Historical Ingestion Phase B (database ingestion of audited 20 historical workbooks).
-3. Prepare Labour Engine Phase B architecture and pricing cascade.
+1. Maintain governed turnover state; do not start coding or schema changes without an approved Feature Gate.
+2. Next governed candidate: Prepare Labour Engine Phase B architecture and Feature Gate (NOT STARTED; requires separate governance authorization).
+3. Preserve all protected state (20/20 immutable source workbooks outside Git, tenant query boundaries, cell provenance, immutable proposal/estimate snapshots).
 
 ## Related
 

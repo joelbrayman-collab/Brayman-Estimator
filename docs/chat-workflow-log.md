@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-28 — Post-FG-006 Governance & Turnover State Reconciliation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Comprehensive documentation-only state reconciliation post-FG-006. Audit repository docs, remove stale references to uncommitted states / obsolete test baselines / old Alembic heads, align current-state, session-handoff, project-state-report, roadmap, milestones, feature gates, and ADRs with authoritative commit `690d755d9901e04eb783198f4b89071fbeaf472a`. |
+| Business decision | Documentation is the governing system of record. All operational and roadmap documents must truthfully reflect the completion of M011 and FG-006 and the protected/blocked status of future calibration modules. |
+| Architectural decision | Reconciled all documentation across `docs/` to canonical truth: HEAD/origin `690d755d9901e04eb783198f4b89071fbeaf472a`, Alembic head `e1b2c3d4e5f6`, 170 tests passing (11 dedicated historical ingestion tests), 20/20 source workbooks SHA-256 verified, ORG-001 private evidence, commercial evidence anchors (Mike Pratt, Julia Harish, Allen Jacques), and explicit next candidate status (Labour Engine Phase B — NOT STARTED; REQUIRES SEPARATE GOVERNANCE AUTHORIZATION). Zero code, migration, or schema changes. |
+| Prompt template used | Approved custom Cursor prompt (Post-FG-006 Governance & Turnover Reconciliation) |
+| Approved Cursor prompt summary | Documentation-only state reconciliation: verify repo state (HEAD `690d755`, Alembic `e1b2c3d4e5f6`, 170 tests); audit and correct stale references across docs/; update current-state, session-handoff, project-state-report, roadmap, milestones, FG-006/FG-007, ADR-028, architecture docs; validate docs-only diff; run pytest baseline; output comprehensive stopping report. |
+| Files expected to change | `docs/current-state.md`, `docs/session-handoff.md`, `docs/project-state-report.md`, `docs/milestones.md`, `docs/platform-roadmap.md`, `docs/feature-gates/README.md`, `docs/feature-gates/FG-006-historical-estimate-ingestion-phase-b.md`, `docs/feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md`, `docs/adr/ADR-028-organization-foundation-and-project-commercial-context.md`, `docs/architecture/historical-estimate-ingestion-architecture.md`, `docs/architecture/historical-estimates-source-manifest.md`, `docs/architecture/organization-and-calibration-architecture.md`, `docs/README.md`, `docs/chat-workflow-log.md` |
+| Files prohibited from changing | `app/*`, `migrations/*`, `tests/*`, dependencies, database records, historical source workbooks |
+| Implementation result | Documentation fully reconciled and aligned across the entire repository. Working tree contains only documentation changes. |
+| Tests | `./venv/bin/python -m pytest -q` → **170 passed**, 64 legacy warnings |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | None. Repository in clean turnover state. |
+| Next approved step | Ready for final turnover commit and handoff. |
+| Next approved prompt | None approved (turnover state). Next candidate: Labour Engine Phase B architecture / Feature Gate preparation (NOT STARTED). |
+| Commit hash | Reconciled against `690d755d9901e04eb783198f4b89071fbeaf472a` |
+
 ### 2026-08-28 — FG-006 Implementation: Historical Estimate Ingestion Engine Phase B
 
 | Field | Content |
@@ -63,7 +86,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | None |
 | Next approved step | Governance review and commit authorization for FG-006. |
 | Next approved prompt | FG-006 Commit Authorization |
-| Commit hash | Pending review |
+| Commit hash | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 
 ### 2026-08-28 — M011 Final Implementation Reconciliation: Legacy Commercial Context Correction
 

@@ -15,7 +15,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 |--------|--------------|----------------------|
 | Core CRM and project records | **Current** (Clients, Projects) | [modules/crm.md](modules/crm.md), [modules/projects.md](modules/projects.md) |
 | Estimating and assemblies | **Current** | [modules/estimating.md](modules/estimating.md) |
-| Plan Intelligence | **Partial** — Phase A upload (M005); Document Intelligence indexing (M007); Sheet Intelligence & human review (M009); Scale (M010) / take-off (M011+) future | [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md) · [architecture/document-intelligence.md](architecture/document-intelligence.md) · [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) · [modules/plan-intelligence.md](modules/plan-intelligence.md) · [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](feature-gates/FG-004-m009-sheet-classification.md) |
+| Plan Intelligence | **Partial** — Phase A upload (M005); Document Intelligence indexing (M007); Sheet Intelligence & human review (M009); Scale (M010) / take-off (M012+) future | [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md) · [architecture/document-intelligence.md](architecture/document-intelligence.md) · [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) · [modules/plan-intelligence.md](modules/plan-intelligence.md) · [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](feature-gates/FG-004-m009-sheet-classification.md) |
 | Automated Quantity Take-Off | **Future** | Same Plan Intelligence docs |
 | Human Review and Source Traceability | **Future** (ADR-005/006/011) | Embedded in Plan Intelligence |
 | Supplier Catalogue Management | **Future** (only free-text `CostItem.supplier` today) | [architecture/supplier-catalogue-inventory-pricing.md](architecture/supplier-catalogue-inventory-pricing.md) |
@@ -29,7 +29,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next coded milestone:** **M010** — Scale Calibration / Measurement Tools. Requires dedicated Feature Gate.
+**Next candidate milestone:** **Labour Engine Phase B architecture / Feature Gate preparation** (STATUS: NOT STARTED; REQUIRES SEPARATE GOVERNANCE AUTHORIZATION).
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -73,14 +73,18 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 - **CAR-001** CalibAi product & architecture reconciliation (2026-08-28) — **docs/governance only**; not a product milestone number
 - **Review Turnover Protocol** adopted (`39ae8fe`) + reconciliation repair (`ed3e51f`)
 - **FG-005** M010 Scale Calibration Feature Gate Approved + ADR-026/027 Accepted + M010 Implemented & Verified (migration `c9e0f1a2b3d4`)
+- **FG-007** M011 Organization Foundation & Project Commercial Context Approved + ADR-028 Accepted + M011 Implemented & Verified (migration `d0a1b2c3d4e5`)
+- **FG-006** Historical Estimate Ingestion Engine Phase B Approved + Implemented & Verified (migration `e1b2c3d4e5f6`)
 
 ---
 
 ## Current (near-term product governance)
 
-- **`main` / `origin/main`** — confirm with `git rev-parse`. CAR-001 adopted; M005–M010 merged and verified.
+- **`main` / `origin/main`** — `690d755d9901e04eb783198f4b89071fbeaf472a` (exact parity on `origin/main`). CAR-001 adopted; M005–M011 and FG-006 merged and verified.
 - **Review Turnover Protocol** adopted (2026-08-28) — `Review Turnover` governing.
 - **M010 Scale Calibration & Measurement Tools** implemented and verified (2026-08-28).
+- **M011 Organization Foundation & Project Commercial Context** implemented and verified (2026-08-28).
+- **FG-006 Historical Estimate Ingestion Engine Phase B** implemented and verified (2026-08-28).
 - CalibAi V1 direction (not authorized as a single implementation): PLAN → PRICE → CONTRACT baseline → BUILD field capture → basic MONITOR — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)
 - Document package, QuickBooks API, contract/warranty generation — **not started** (governance recorded only)
 - Estimate mapping remains outside near-term sheet work
@@ -94,19 +98,21 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 0. CAR-001 architecture alignment + Review Turnover Protocol — **Adopted**
 1. **M009** Sheet classification / human review — **Completed & Verified** (`5dc4b09`, migration `b8d9f0a1c2e3`)
 2. **M010** Scale Calibration / Measurement Tools — **Completed & Verified** (migration `c9e0f1a2b3d4`)
-3. **M011** Organization Foundation & Project Commercial Context — **Feature Gate Prepared (FG-007 / ADR-028)**; awaits approval
-4. **M012** Historical Estimate Ingestion Engine Phase B (FG-006) / Labour Engine Phase B
-5. **M013** AI Take-off / Quantity Extraction Foundation
-6. Project Hub UX
-7. Pricing-policy application (requires [ADR-025](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) acceptance)
-6. Internal Detailed Cost Breakdown + Customer Estimate consistency
-7. Authentication / actor identity + shared API foundation
-8. BUILD Field Capture V1
-9. Field Web / Today + Capture + plan access
-10. MONITOR basic estimated-vs-actual
-11. LEARN historical intelligence / review-gated learning (ADR-024)
-12. Contract/warranty when Legal Content Gate is satisfied
-13. QuickBooks when separately Feature-Gated
+3. **M011** Organization Foundation & Project Commercial Context — **Completed & Verified** (FG-007 / ADR-028; migration `d0a1b2c3d4e5`)
+4. **FG-006** Historical Estimate Ingestion Engine Phase B — **Completed & Verified** (migration `e1b2c3d4e5f6`)
+5. **Next candidate:** Labour Engine Phase B architecture / Feature Gate preparation (STATUS: NOT STARTED; REQUIRES SEPARATE GOVERNANCE AUTHORIZATION)
+6. Organization-Calibrated Pricing Engine (STATUS: NOT STARTED; REQUIRES SEPARATE GOVERNANCE AUTHORIZATION)
+7. AI Take-off / Quantity Extraction Foundation
+8. Project Hub UX
+9. Pricing-policy application (requires [ADR-025](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) acceptance)
+10. Internal Detailed Cost Breakdown + Customer Estimate consistency
+11. Authentication / actor identity + shared API foundation
+12. BUILD Field Capture V1
+13. Field Web / Today + Capture + plan access
+14. MONITOR basic estimated-vs-actual
+15. LEARN historical intelligence / review-gated learning (ADR-024)
+16. Contract/warranty when Legal Content Gate is satisfied
+17. QuickBooks when separately Feature-Gated
 
 **Auth dependency:** Items **6–7 require item 5**. This sequence is **not** reordered to put auth before M009. Office M009 may proceed on the current unauthenticated app; field capture must not.
 

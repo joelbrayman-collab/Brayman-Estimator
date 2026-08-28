@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |---|---|
-| Phase | Historical Estimate Ingestion — Phase A |
+| Phase | Historical Estimate Ingestion — Phase A (Source Audit) & Phase B (Database Ingestion Complete) |
 | Source Directory | `~/Desktop/CalibAi Historical Estimates` (External to Git) |
 | Total Source Workbooks | 20 |
 | Inspection Timestamp | 2026-08-28 |
-| Integrity Status | READ-ONLY AUDIT COMPLETE · SHA-256 VERIFIED |
+| Integrity Status | READ-ONLY AUDIT & DETERMINISTIC INGESTION COMPLETE · 20/20 SHA-256 VERIFIED |
 | Security Classification | Commercially Sensitive External Evidence (Source files not committed to Git) |
 
 ## Source Provenance Inventory

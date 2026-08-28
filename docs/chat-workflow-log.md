@@ -63,7 +63,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | None |
 | Next approved step | Prepare Feature Gate for M010 Scale Calibration / Measurement Tools |
 | Next approved prompt | M010 Feature Gate |
-| Commit hash | Pending |
+| Commit hash | `ed3e51f` |
 
 ### 2026-08-28 — Adopt Review Turnover Protocol
 

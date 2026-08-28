@@ -56,6 +56,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 - Plan Intelligence Document Indexing — pages, processing provenance, archive, relational search (Milestone 007; `cbefe7a`)
 - Plan Intelligence Sheet Classification — sheet entity, page mapping, suggestions, human review workflow, uniqueness validation (Milestone 009; migration `b8d9f0a1c2e3`)
 - Plan Intelligence Scale Calibration & Measurement Tools — 2-point calibration, presets, viewports, NTS, linear, polyline, area/perimeter, count measurements, normalized coordinates, PDF.js (Milestone 010; migration `c9e0f1a2b3d4`)
+- Organization Foundation & Project Commercial Context — `Organization` model, `ORG-001` seed/backfill, root entity ownership, tenant query scoping, versioned `ProjectCommercialContext` with 7 mandatory parameters, policy-driven justification, immutable `EstimateVersion` references (Milestone 011; migration `d0a1b2c3d4e5`)
 
 **Governance:**
 

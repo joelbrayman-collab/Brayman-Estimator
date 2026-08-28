@@ -2,6 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from app import db
+from app.services.organizations import get_current_organization_id
 
 PROPOSAL_STATUSES = (
     "Draft",
@@ -17,9 +18,23 @@ PROPOSAL_STATUSES = (
 
 class ProposalTemplate(db.Model):
     __tablename__ = "proposal_templates"
+    __table_args__ = (
+        db.UniqueConstraint(
+            "organization_id",
+            "name",
+            name="uq_proposal_templates_org_name",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(150), unique=True, nullable=False)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id"),
+        nullable=False,
+        default=get_current_organization_id,
+        index=True,
+    )
+    name = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text)
     company_name = db.Column(db.String(180))
     company_address = db.Column(db.String(255))
@@ -51,6 +66,7 @@ class ProposalTemplate(db.Model):
         nullable=False,
     )
 
+    organization = db.relationship("Organization", back_populates="proposal_templates")
     proposals = db.relationship("Proposal", back_populates="proposal_template")
 
     def __repr__(self):

@@ -42,7 +42,51 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
-### 2026-08-28 — Feature Gate Preparation: M011 Organization Foundation & Project Commercial Context (FG-007)
+### 2026-08-28 — M011 Final Implementation Reconciliation: Legacy Commercial Context Correction
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Correct M011 legacy commercial context backfill semantics to prevent fabricating historical commercial decisions. Ensure pre-M011 records explicitly reflect `Legacy / Unknown` across all 7 parameters, reject `Legacy / Unknown` for new projects, display human-readable legacy notices in UI, preserve old estimate version pinning to legacy-unknown context, and verify with dedicated tests and migration validation. |
+| Business decision | Pre-M011 commercial decisions were not recorded historically. Assigning arbitrary default values (e.g. Specialty, Fair Market, Self-Perform) would contaminate future CalibAi calibration/analytics. Explicit `Legacy / Unknown` semantics guarantees CalibAi will never falsely infer historical pricing posture, risk, or delivery model from pre-M011 projects. |
+| Architectural decision | (1) Updated Alembic migration `d0a1b2c3d4e5` to backfill `project_commercial_contexts` with `Legacy / Unknown` for all 7 decision fields and explicit change summary/provenance; (2) Added `is_legacy_unknown` property on `ProjectCommercialContext`; (3) Enforced that `Legacy / Unknown` is rejected in `validate_commercial_context_data` on new project creation or ordinary editing; (4) Updated project detail and context edit UI templates to render a clean "Legacy project — commercial context not recorded" notice; (5) Preserved immutable reference of historical `EstimateVersion` records to the legacy-unknown v1 context even if the project is subsequently updated to v2; (6) Added dedicated tests in `tests/test_organization_foundation.py`. |
+| Prompt template used | Approved custom Cursor prompt (Bounded M011 Correction) |
+| Approved Cursor prompt summary | Correct legacy commercial context backfill semantics: update migration d0a1b2c3d4e5 to use explicit `Legacy / Unknown`; enforce option validation rejecting legacy-unknown on new projects; update project templates for legacy notice; add tests proving legacy unknown creation, option rejection, and estimate version pinning; re-run migration validation and pytest suite; update docs; output stopping report. Do not commit. Do not push. |
+| Files expected to change | `migrations/versions/d0a1b2c3d4e5_add_organization_foundation_m011.py`, `app/models/project.py`, `app/services/commercial_context.py`, `app/templates/projects/detail.html`, `app/templates/projects/edit_context.html`, `tests/test_organization_foundation.py`, `docs/current-state.md`, `docs/session-handoff.md`, `docs/chat-workflow-log.md` |
+| Files prohibited from changing | Protected Plan Intelligence geometry, accepted proposals, pricing formulas, historical workbooks |
+| Implementation result | Completed legacy commercial context correction. 19/19 dedicated M011 tests pass; 159/159 full suite tests pass. Upgrade/downgrade migration cycle verified. |
+| Tests | `./venv/bin/python -m pytest tests/test_organization_foundation.py -v` → **19 passed**; `./venv/bin/python -m pytest -q` → **159 passed** |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None. Protects future learning/calibration from contaminated historical assumptions. |
+| Unresolved issues | None for M011. Ready for governance audit and commit. |
+| Next approved step | Submit stopping report for Joel / ChatGPT review prior to governance commit. |
+| Next approved prompt | Pending governance commit. |
+| Commit hash | Pending governance audit (do not commit / do not push) |
+
+### 2026-08-28 — Milestone 011 Implementation: Organization Foundation & Project Commercial Context (FG-007 / ADR-028)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Bounded product implementation of M011 authorized by FG-007 / ADR-028. Minimum organization-aware foundation, Brayman ORG-001 seed/backfill, direct ownership, tenant query scoping, versioned Project Commercial Context, immutable EstimateVersion references, policy-driven justification, and test suite. |
+| Business decision | Establishes the canonical Organization entity (`ORG-001` Brayman Construction Inc.), backfills existing single-tenant data, and requires explicit 7-parameter commercial decision assumptions at project creation. Pricing calculations and multipliers remain completely unaffected in M011. |
+| Architectural decision | Implemented per ADR-028: (1) `Organization` model in `app/models/organization.py`, (2) Direct `organization_id` FK on `Client`, `Project`, `CostItem`, `Assembly`, `ProposalTemplate`, (3) Composite uniqueness constraints (`organization_id` + `code`/`name`), (4) Single-tenant context helper `get_current_organization_id()` defaulting to `ORG-001`, (5) Tenant-safe fail-closed query isolation on all root and child entities, (6) Versioned `ProjectCommercialContext` with atomic V1 creation and immutable historical versions, (7) Policy-driven justification engine (`ORGANIZATION_REASON_POLICIES`), (8) Mandatory 7-parameter commercial decision gate in Project form and context update UI, (9) Immutable `EstimateVersion.commercial_context_id` capture, (10) Controlled additive Alembic migration `d0a1b2c3d4e5` with deterministic legacy backfill. |
+| Prompt template used | `docs/prompts/cursor-feature-template.md` (Bounded Product Implementation) |
+| Approved Cursor prompt summary | Execute M011 implementation: verify repo pins; read governing docs; implement Organization model; add direct ownership FKs; implement context helper and query isolation; implement ProjectCommercialContext model, controlled option sets, policy-driven justification; update Project creation/editing routes/templates; capture EstimateVersion context; create additive Alembic migration `d0a1b2c3d4e5` with ORG-001 seed and deterministic backfill; author `tests/test_organization_foundation.py`; verify full test suite; update governed docs; output stopping report. Do not commit. Do not push. |
+| Files expected to change | `app/models/organization.py` (created), `app/models/project.py`, `app/models/client.py`, `app/models/cost_item.py`, `app/models/assembly.py`, `app/models/proposal.py`, `app/models/estimate.py`, `app/models/__init__.py`, `app/services/organizations.py` (created), `app/services/commercial_context.py` (created), `app/services/proposals.py`, `app/services/estimates.py`, `app/routes/projects.py`, `app/routes/clients.py`, `app/routes/cost_library.py`, `app/routes/assemblies.py`, `app/routes/proposal_templates.py`, `app/routes/estimates.py`, `app/routes/proposals.py`, `app/project_controls/repository.py`, `app/project_controls/routes.py`, `app/plan_intelligence/routes.py`, `app/templates/projects/form.html`, `app/templates/projects/detail.html`, `app/templates/projects/edit_context.html` (created), `migrations/versions/d0a1b2c3d4e5_add_organization_foundation_m011.py` (created), `tests/test_organization_foundation.py` (created), docs/ |
+| Files prohibited from changing | Protected Plan Intelligence coordinate system/geometry, accepted proposal immutability, existing pricing formulas/gross margins, source historical workbooks |
+| Implementation result | Completed full M011 implementation. All models, routes, services, templates, migrations, and test suites delivered cleanly. |
+| Tests | `./venv/bin/python -m pytest -q` → **157 passed**, 61 warnings in 11.45s |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (M011 added to milestones) |
+| Constitutional issue raised | Guaranteed customer commercial data isolation, historical assumption immutability, and policy-driven justification flexibility without modifying core pricing math. |
+| Unresolved issues | None for M011. Ready for governance audit. |
+| Next approved step | Submit implementation stopping report for Joel / ChatGPT review prior to governance commit. |
+| Next approved prompt | FG-006 Historical Ingestion Phase B or Labour Engine Phase B prompt (after commit). |
+| Commit hash | Pending governance audit (do not commit / do not push per instructions) |
 
 | Field | Content |
 |-------|---------|

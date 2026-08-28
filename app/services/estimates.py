@@ -8,6 +8,8 @@ from app.models.estimate import (
     Estimate,
     EstimateVersion,
 )
+from app.models.project import Project
+from app.services.organizations import get_current_organization_id
 
 
 class EstimateServiceError(Exception):
@@ -39,6 +41,7 @@ def create_estimate(
     estimate_number,
     title,
     status="Draft",
+    organization_id=None,
 ):
     """Create an estimate and its initial Version 1 in one transaction."""
     estimate_number = (estimate_number or "").strip()
@@ -50,13 +53,25 @@ def create_estimate(
         raise EstimateServiceError("Estimate title is required.")
     if not project_id:
         raise EstimateServiceError("Project is required.")
+
+    org_id = organization_id or get_current_organization_id()
+    project = Project.query.filter_by(id=project_id, organization_id=org_id).first()
+    if not project:
+        raise EstimateServiceError(f"Project {project_id} not found in current organization.")
+
     if Estimate.query.filter_by(estimate_number=estimate_number).first():
         raise EstimateServiceError(
             f'An estimate with number "{estimate_number}" already exists.'
         )
 
+    context_id = (
+        project.current_commercial_context.id
+        if project.current_commercial_context
+        else None
+    )
+
     estimate = Estimate(
-        project_id=project_id,
+        project_id=project.id,
         estimate_number=estimate_number,
         title=title,
         status=status or "Draft",
@@ -64,6 +79,7 @@ def create_estimate(
     version = EstimateVersion(
         version_number=1,
         version_label="Initial Estimate",
+        commercial_context_id=context_id,
         status="Draft",
         subtotal=Decimal("0"),
         overhead_percent=Decimal("0"),
@@ -104,11 +120,18 @@ def clone_current_version(
         or 0
     ) + 1
 
+    context_id = (
+        estimate.project.current_commercial_context.id
+        if (estimate.project and estimate.project.current_commercial_context)
+        else current.commercial_context_id
+    )
+
     new_version = EstimateVersion(
         estimate_id=estimate.id,
         version_number=next_number,
         version_label=(version_label or "").strip() or None,
         revision_reason=(revision_reason or "").strip() or None,
+        commercial_context_id=context_id,
         status="Draft",
         subtotal=Decimal(current.subtotal or 0),
         overhead_percent=Decimal(current.overhead_percent or 0),

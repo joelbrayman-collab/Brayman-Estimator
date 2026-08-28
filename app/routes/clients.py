@@ -2,13 +2,15 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app import db
 from app.models import Client
+from app.services.organizations import get_current_organization_id
 
 clients_bp = Blueprint("clients", __name__, url_prefix="/clients")
 
 
 @clients_bp.route("/")
 def list_clients():
-    clients = Client.query.order_by(Client.name.asc()).all()
+    org_id = get_current_organization_id()
+    clients = Client.query.filter_by(organization_id=org_id).order_by(Client.name.asc()).all()
     return render_template("clients/list.html", clients=clients)
 
 
@@ -22,6 +24,7 @@ def create_client():
             return render_template("clients/form.html")
 
         client = Client(
+            organization_id=get_current_organization_id(),
             name=name,
             company=request.form.get("company", "").strip(),
             email=request.form.get("email", "").strip(),

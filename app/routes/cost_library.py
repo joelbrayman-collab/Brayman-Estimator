@@ -5,6 +5,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from app import db
 from app.models import CostItem
 from app.models.cost_item import COST_ITEM_CATEGORIES
+from app.services.organizations import get_current_organization_id
 
 cost_library_bp = Blueprint("cost_library", __name__, url_prefix="/cost-library")
 
@@ -59,7 +60,8 @@ def _parse_decimal(value, field_label):
 
 
 def _code_exists(code, exclude_id=None):
-    query = CostItem.query.filter_by(code=code)
+    org_id = get_current_organization_id()
+    query = CostItem.query.filter_by(organization_id=org_id, code=code)
     if exclude_id is not None:
         query = query.filter(CostItem.id != exclude_id)
     return query.first() is not None
@@ -96,7 +98,8 @@ def _validate_cost_item_form(form, exclude_id=None):
 
 @cost_library_bp.route("/")
 def list_cost_items():
-    cost_items = CostItem.query.order_by(CostItem.code.asc()).all()
+    org_id = get_current_organization_id()
+    cost_items = CostItem.query.filter_by(organization_id=org_id).order_by(CostItem.code.asc()).all()
     return render_template("cost_library/list.html", cost_items=cost_items)
 
 
@@ -118,6 +121,7 @@ def create_cost_item():
             )
 
         cost_item = CostItem(
+            organization_id=get_current_organization_id(),
             code=form["code"],
             name=form["name"],
             category=form["category"],
@@ -145,7 +149,8 @@ def create_cost_item():
 
 @cost_library_bp.route("/<int:id>/edit", methods=["GET", "POST"])
 def edit_cost_item(id):
-    cost_item = CostItem.query.get_or_404(id)
+    org_id = get_current_organization_id()
+    cost_item = CostItem.query.filter_by(id=id, organization_id=org_id).first_or_404()
     form = _form_values(cost_item)
 
     if request.method == "POST":
@@ -188,7 +193,8 @@ def edit_cost_item(id):
 
 @cost_library_bp.route("/<int:id>/toggle-active", methods=["POST"])
 def toggle_cost_item_active(id):
-    cost_item = CostItem.query.get_or_404(id)
+    org_id = get_current_organization_id()
+    cost_item = CostItem.query.filter_by(id=id, organization_id=org_id).first_or_404()
     cost_item.is_active = not cost_item.is_active
     db.session.commit()
 

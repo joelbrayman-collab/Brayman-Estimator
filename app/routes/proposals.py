@@ -2,6 +2,9 @@ from datetime import datetime
 
 from flask import Blueprint, abort, flash, redirect, render_template, request, send_file, url_for
 
+from app import db
+from app.models.estimate import Estimate
+from app.models.project import Project
 from app.models.proposal import (
     PROPOSAL_STATUSES,
     Proposal,
@@ -9,6 +12,7 @@ from app.models.proposal import (
     ProposalSection,
     ProposalTemplate,
 )
+from app.services.organizations import get_current_organization_id
 from app.services.proposal_pdf import (
     generate_proposal_pdf,
     resolve_preview_logo_url,
@@ -148,10 +152,34 @@ def _proposal_form_from_model(proposal):
     }
 
 
+def _get_scoped_proposal_or_404(id):
+    org_id = get_current_organization_id()
+    proposal = Proposal.query.get_or_404(id)
+    if proposal.estimate and proposal.estimate.project:
+        if proposal.estimate.project.organization_id != org_id:
+            abort(404)
+    elif proposal.proposal_template and proposal.proposal_template.organization_id != org_id:
+        abort(404)
+    return proposal
+
+
 @proposals_bp.route("/proposals/")
 @proposals_bp.route("/proposals")
 def list_proposals():
-    proposals = Proposal.query.order_by(Proposal.created_at.desc()).all()
+    org_id = get_current_organization_id()
+    proposals = (
+        Proposal.query.outerjoin(Estimate, Proposal.estimate_id == Estimate.id)
+        .outerjoin(Project, Estimate.project_id == Project.id)
+        .outerjoin(ProposalTemplate, Proposal.proposal_template_id == ProposalTemplate.id)
+        .filter(
+            db.or_(
+                Project.organization_id == org_id,
+                ProposalTemplate.organization_id == org_id,
+            )
+        )
+        .order_by(Proposal.created_at.desc())
+        .all()
+    )
     return render_template("proposals/list.html", proposals=proposals)
 
 
@@ -270,7 +298,7 @@ def _preview_section_rows(proposal):
 
 @proposals_bp.route("/proposals/<int:id>")
 def view_proposal(id):
-    proposal = Proposal.query.get_or_404(id)
+    proposal = _get_scoped_proposal_or_404(id)
     editing_item_id = request.args.get("edit_item", type=int)
     item_edit_form = None
     immutable = is_proposal_immutable(proposal)
@@ -309,7 +337,7 @@ def view_proposal(id):
 
 @proposals_bp.route("/proposals/<int:id>/preview")
 def preview_proposal(id):
-    proposal = Proposal.query.get_or_404(id)
+    proposal = _get_scoped_proposal_or_404(id)
     template = proposal.proposal_template
     return render_template(
         "proposals/preview.html",
@@ -325,7 +353,7 @@ def preview_proposal(id):
 
 @proposals_bp.route("/proposals/<int:id>/pdf")
 def download_proposal_pdf(id):
-    proposal = Proposal.query.get_or_404(id)
+    proposal = _get_scoped_proposal_or_404(id)
     pdf_buffer = generate_proposal_pdf(proposal)
     filename = sanitize_pdf_filename(proposal)
     return send_file(
@@ -341,7 +369,7 @@ def download_proposal_pdf(id):
     methods=["POST"],
 )
 def edit_proposal_line_item(id, section_id, item_id):
-    proposal = Proposal.query.get_or_404(id)
+    proposal = _get_scoped_proposal_or_404(id)
     section = ProposalSection.query.filter_by(
         id=section_id,
         proposal_id=proposal.id,
@@ -386,7 +414,7 @@ def edit_proposal_line_item(id, section_id, item_id):
 
 @proposals_bp.route("/proposals/<int:id>/edit", methods=["GET", "POST"])
 def edit_proposal(id):
-    proposal = Proposal.query.get_or_404(id)
+    proposal = _get_scoped_proposal_or_404(id)
     if is_proposal_immutable(proposal):
         flash(
             "This proposal is Accepted and is locked. It cannot be edited.",
@@ -472,7 +500,7 @@ def edit_proposal(id):
 
 @proposals_bp.route("/proposals/<int:id>/status", methods=["POST"])
 def update_status(id):
-    proposal = Proposal.query.get_or_404(id)
+    proposal = _get_scoped_proposal_or_404(id)
     status = request.form.get("status", "").strip()
     try:
         update_proposal_status(proposal, status)

@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app import db
+from app.services.organizations import get_current_organization_id
 
 COST_ITEM_CATEGORIES = (
     "Labour",
@@ -14,9 +15,23 @@ COST_ITEM_CATEGORIES = (
 
 class CostItem(db.Model):
     __tablename__ = "cost_items"
+    __table_args__ = (
+        db.UniqueConstraint(
+            "organization_id",
+            "code",
+            name="uq_cost_items_org_code",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(50), unique=True, nullable=False)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id"),
+        nullable=False,
+        default=get_current_organization_id,
+        index=True,
+    )
+    code = db.Column(db.String(50), nullable=False)
     name = db.Column(db.String(180), nullable=False)
     category = db.Column(db.String(50), nullable=False)
     unit = db.Column(db.String(50), nullable=False)
@@ -36,6 +51,8 @@ class CostItem(db.Model):
         onupdate=datetime.utcnow,
         nullable=False,
     )
+
+    organization = db.relationship("Organization", back_populates="cost_items")
 
     def __repr__(self):
         return f"<CostItem {self.code}>"

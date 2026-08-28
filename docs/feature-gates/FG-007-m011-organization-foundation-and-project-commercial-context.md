@@ -18,8 +18,8 @@
 | Layer | State |
 |---|---|
 | Architecture (Phase A) | **APPROVED** (`f660b54`, 2026-08-28) |
-| Feature Gate (this document) | **PREPARED / RECOMMENDED FOR APPROVAL** (Joel / ChatGPT review) |
-| Implementation | **NOT AUTHORIZED / BLOCKED** (Awaits explicit Joel M011 implementation prompt) |
+| Feature Gate (this document) | **APPROVED** (`01b3be4`, 2026-08-28) |
+| Implementation | **IMPLEMENTED & VERIFIED** (157/157 tests passing; awaiting governance commit) |
 
 ---
 
@@ -140,7 +140,7 @@ The migration is a **controlled additive migration designed to minimize applicat
 1. **Phase 1 (Additive Tables):** Create `organizations` and `project_commercial_contexts` tables.
 2. **Phase 2 (Seed):** Insert `ORG-001` (Brayman Construction Inc.).
 3. **Phase 3 (Nullable Columns):** Add nullable `organization_id` to `clients`, `projects`, `cost_items`, `assemblies`, `proposal_templates`; add nullable `commercial_context_id` to `estimate_versions`.
-4. **Phase 4 (Backfill):** Execute SQL `UPDATE ... SET organization_id = 'ORG-001' WHERE organization_id IS NULL`; generate default `ProjectCommercialContext` records for existing projects and link active estimate versions.
+4. **Phase 4 (Backfill with Explicit Legacy / Unknown Semantics):** Execute SQL `UPDATE ... SET organization_id = 'ORG-001' WHERE organization_id IS NULL`; generate `ProjectCommercialContext` records for existing pre-M011 projects with explicit `Legacy / Unknown` across all 7 parameters (`is_legacy_unknown=True`), and link active estimate versions. Pre-M011 commercial decisions are unrecorded; CalibAi must never infer historical pricing posture, risk, site/schedule conditions, stage, delivery model, or project type from pre-M011 legacy records.
 5. **Phase 5 (Constraints & Indexes):** Alter `organization_id` columns to `nullable=False`; add foreign key constraints and performance indexes.
 
 ---

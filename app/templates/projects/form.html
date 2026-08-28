@@ -14,6 +14,7 @@
 
 {% if clients %}
 <form method="post" class="form-panel">
+    <h3>Project Details</h3>
     <div class="form-grid">
         <label>
             Project name *
@@ -56,10 +57,85 @@
 
     <label>
         Description
-        <textarea name="description" rows="5"></textarea>
+        <textarea name="description" rows="3"></textarea>
     </label>
 
-    <div class="form-actions">
+    <h3 style="margin-top: 24px;">Commercial Decision Gate (Mandatory Context)</h3>
+    <p class="muted-copy" style="margin-bottom: 16px;">
+        Define commercial posture and operational parameters before estimating. These assumptions are versioned and preserved with all estimates.
+    </p>
+
+    <div class="form-grid">
+        <label>
+            Project Type *
+            <select name="project_type" required>
+                {% for opt in project_types %}
+                <option value="{{ opt }}" {% if opt == "New Build" %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Pricing Posture *
+            <select name="pricing_posture" required>
+                {% for opt in pricing_postures %}
+                <option value="{{ opt }}" {% if opt == "Competitive" %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Execution Risk *
+            <select name="execution_risk" required>
+                {% for opt in execution_risks %}
+                <option value="{{ opt }}" {% if opt == "Normal" %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Schedule Condition *
+            <select name="schedule_condition" required>
+                {% for opt in schedule_conditions %}
+                <option value="{{ opt }}" {% if opt == "Normal" %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Site Condition *
+            <select name="site_condition" required>
+                {% for opt in site_conditions %}
+                <option value="{{ opt }}" {% if opt == "Normal" %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Estimate Stage *
+            <select name="estimate_stage" required>
+                {% for opt in estimate_stages %}
+                <option value="{{ opt }}" {% if opt == "Preliminary" %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Delivery Model *
+            <select name="delivery_model" required>
+                {% for opt in delivery_models %}
+                <option value="{{ opt }}" {% if opt == "Self-Perform" %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+
+    <label style="margin-top: 12px;">
+        Justification Reason (Mandatory if exceptional posture/risk selected by organization policy)
+        <textarea name="justification_reason" rows="2" placeholder="Required for Premium posture, High execution risk, etc."></textarea>
+    </label>
+
+    <div class="form-actions" style="margin-top: 20px;">
         <button type="submit">Save Project</button>
         <a href="{{ url_for('projects.list_projects') }}">Cancel</a>
     </div>

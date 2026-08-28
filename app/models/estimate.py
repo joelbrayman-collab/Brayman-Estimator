@@ -103,6 +103,12 @@ class EstimateVersion(db.Model):
         db.ForeignKey("estimates.id"),
         nullable=False,
     )
+    commercial_context_id = db.Column(
+        db.Integer,
+        db.ForeignKey("project_commercial_contexts.id"),
+        nullable=True,
+        index=True,
+    )
     version_number = db.Column(db.Integer, nullable=False)
     version_label = db.Column(db.String(100))
     revision_reason = db.Column(db.Text)
@@ -137,6 +143,10 @@ class EstimateVersion(db.Model):
         "Estimate",
         back_populates="versions",
         foreign_keys=[estimate_id],
+    )
+    commercial_context = db.relationship(
+        "ProjectCommercialContext",
+        back_populates="estimate_versions",
     )
     sections = db.relationship(
         "EstimateSection",

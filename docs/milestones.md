@@ -32,6 +32,17 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### FG-007 — M011 Organization Foundation & Project Commercial Context Feature Gate
+
+| Field | Content |
+|-------|---------|
+| ID | FG-007 |
+| Status | **FEATURE GATE APPROVED, IMPLEMENTED & VERIFIED** |
+| Date | 2026-08-28 |
+| Objective | Authorize M011 scope/invariants/tests/migration permission for Organization entity, direct root model ownership, versioned Project Commercial Context, tenant query scoping, and immutable EstimateVersion references. |
+| Deliverables | [FG-007](feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md); [ADR-028](adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted**; M011 models, services, project form/edit UI, additive migration `d0a1b2c3d4e5`, 17 tests |
+| M011 code | Implemented & Verified (157/157 tests passing; awaiting governance audit / commit) |
+
 ### CAR-001 — CalibAi Product & Architecture Reconciliation
 
 | Field | Content |
@@ -70,6 +81,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 ---
 
 ## Recorded milestones
+
+### Milestone 011 — Organization Foundation & Project Commercial Context
+
+| Field | Content |
+|-------|---------|
+| Milestone | Organization Foundation & Project Commercial Context |
+| Status | **Completed & Verified** (implemented, awaiting governance commit) |
+| Branch | `main` |
+| Base | `01b3be4` |
+| Date | 2026-08-28 |
+| Objective | Implement canonical `Organization` model, Brayman `ORG-001` seed and deterministic backfill, direct ownership FKs on root models (`Client`, `Project`, `CostItem`, `Assembly`, `ProposalTemplate`), tenant-safe query isolation with fail-closed 404s, versioned `ProjectCommercialContext` with 7 mandatory decision parameters, policy-driven justification engine, Commercial Decision Gate in project creation and editing UI, immutable `EstimateVersion.commercial_context_id` references, and controlled additive migration `d0a1b2c3d4e5`. |
+| Deliverables | Models (`Organization`, `ProjectCommercialContext`); migration `d0a1b2c3d4e5`; services `app/services/organizations.py`, `app/services/commercial_context.py`; updated routes and templates for projects, clients, cost library, assemblies, proposal templates, estimates, proposals, plan intelligence, project controls; 17 focused tests in `tests/test_organization_foundation.py`. |
+| Validation | 157/157 full test suite passes; migration applies cleanly with complete legacy data preservation and deterministic backfill; tenant query isolation verified; policy-driven justification verified; historical estimate version context immutability verified. |
+| Architectural findings | Single-tenant context helper `get_current_organization_id()` provides complete query scoping without prematurely implementing auth/RBAC; composite unique constraints preserve cross-tenant code reusability; commercial context captures assumptions without affecting pricing math. |
+| Open decisions | None for M011. Phase B Historical Ingestion (FG-006) and Labour Engine Phase B unblocked for preparation. |
+| Next milestone | FG-006 — Historical Estimate Ingestion Phase B / Labour Engine Phase B |
+| Commit | Pending governance review |
 
 ### Milestone 010 — Scale Calibration / Measurement Tools
 

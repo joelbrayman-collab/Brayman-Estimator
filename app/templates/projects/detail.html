@@ -29,6 +29,43 @@
     {% endif %}
 </section>
 
+{% set ctx = project.current_commercial_context %}
+<section class="form-panel" style="margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="margin: 0;">Commercial Decision Gate Context (Active v{{ ctx.version_number if ctx else 1 }})</h3>
+        <a class="button-link" href="{{ url_for('projects.edit_commercial_context', id=project.id) }}">Update Context</a>
+    </div>
+    {% if ctx %}
+        {% if ctx.is_legacy_unknown %}
+        <div style="background: #fdf6e2; border-left: 4px solid #c79a2b; padding: 12px 16px; border-radius: 4px; margin-bottom: 12px;">
+            <p style="margin: 0; font-weight: 600; color: #8a6d3b;">Legacy project — commercial context not recorded</p>
+            <p class="muted-copy" style="margin: 4px 0 0 0; font-size: 0.9em;">
+                This project was created prior to the Commercial Decision Gate (M011). Assumptions were not recorded historically and will not be inferred. If this project becomes active, click "Update Context" to record explicit commercial parameters.
+            </p>
+        </div>
+        {% else %}
+        <div class="form-grid">
+            <div><p class="eyebrow">Project Type</p><p><strong>{{ ctx.project_type }}</strong></p></div>
+            <div><p class="eyebrow">Pricing Posture</p><p><strong>{{ ctx.pricing_posture }}</strong></p></div>
+            <div><p class="eyebrow">Execution Risk</p><p><strong>{{ ctx.execution_risk }}</strong></p></div>
+            <div><p class="eyebrow">Schedule Condition</p><p><strong>{{ ctx.schedule_condition }}</strong></p></div>
+            <div><p class="eyebrow">Site Condition</p><p><strong>{{ ctx.site_condition }}</strong></p></div>
+            <div><p class="eyebrow">Estimate Stage</p><p><strong>{{ ctx.estimate_stage }}</strong></p></div>
+            <div><p class="eyebrow">Delivery Model</p><p><strong>{{ ctx.delivery_model }}</strong></p></div>
+            <div><p class="eyebrow">Captured By</p><p>{{ ctx.created_by or "System" }} ({{ ctx.created_at.strftime("%Y-%m-%d") }})</p></div>
+        </div>
+        {% endif %}
+        {% if ctx.justification_reason %}
+        <p style="margin-top: 12px;"><strong>Justification:</strong> <em>{{ ctx.justification_reason }}</em></p>
+        {% endif %}
+        {% if ctx.change_summary and not ctx.is_legacy_unknown %}
+        <p class="muted-copy" style="margin-top: 4px; font-size: 0.85em;">{{ ctx.change_summary }}</p>
+        {% endif %}
+    {% else %}
+        <p class="muted-copy">No commercial context recorded.</p>
+    {% endif %}
+</section>
+
 <section class="dash-panels">
     <article class="panel">
         <div class="panel-header">
@@ -120,13 +157,13 @@
                 </tr>
             </thead>
             <tbody>
-                {% for co in change_orders %}
+                {% for change_order in change_orders %}
                 <tr>
-                    <td><a href="{{ url_for('project_controls.view_change_order', id=co.id) }}">{{ co.number }}</a></td>
-                    <td>{{ co.title }}</td>
-                    <td><span class="status">{{ co.status }}</span></td>
-                    <td>${{ "%.2f"|format(co.total) }}</td>
-                    <td>{{ co.updated_at.strftime("%Y-%m-%d") }}</td>
+                    <td><a href="{{ url_for('project_controls.view_change_order', id=change_order.id) }}">{{ change_order.number }}</a></td>
+                    <td>{{ change_order.title }}</td>
+                    <td><span class="status">{{ change_order.status }}</span></td>
+                    <td>${{ "%.2f"|format(change_order.total) }}</td>
+                    <td>{{ change_order.updated_at.strftime("%Y-%m-%d") }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -134,8 +171,7 @@
         {% else %}
         <div class="empty-state empty-state-compact">
             <h3>No change orders</h3>
-            <p>Track approved scope changes against this project.</p>
-            <a class="button-link" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id) }}">New Change Order</a>
+            <p>Project change orders will be listed here.</p>
         </div>
         {% endif %}
     </article>

@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app.models.proposal import ProposalTemplate
+from app.services.organizations import get_current_organization_id
 from app.services.proposals import (
     ProposalServiceError,
     create_proposal_template,
@@ -120,7 +121,12 @@ def _template_form_values(template=None):
 @proposal_templates_bp.route("/")
 @proposal_templates_bp.route("")
 def list_templates():
-    templates = ProposalTemplate.query.order_by(ProposalTemplate.name.asc()).all()
+    org_id = get_current_organization_id()
+    templates = (
+        ProposalTemplate.query.filter_by(organization_id=org_id)
+        .order_by(ProposalTemplate.name.asc())
+        .all()
+    )
     return render_template(
         "proposal_templates/list.html",
         templates=templates,
@@ -133,6 +139,7 @@ def create_template():
 
     if request.method == "POST":
         try:
+            form["organization_id"] = get_current_organization_id()
             create_proposal_template(**form)
         except ProposalServiceError as exc:
             flash(str(exc), "error")
@@ -154,7 +161,8 @@ def create_template():
 
 @proposal_templates_bp.route("/<int:id>/edit", methods=["GET", "POST"])
 def edit_template(id):
-    template = ProposalTemplate.query.get_or_404(id)
+    org_id = get_current_organization_id()
+    template = ProposalTemplate.query.filter_by(id=id, organization_id=org_id).first_or_404()
     form = _template_form_values(template)
 
     if request.method == "POST":
@@ -180,7 +188,8 @@ def edit_template(id):
 
 @proposal_templates_bp.route("/<int:id>/set-default", methods=["POST"])
 def set_default(id):
-    template = ProposalTemplate.query.get_or_404(id)
+    org_id = get_current_organization_id()
+    template = ProposalTemplate.query.filter_by(id=id, organization_id=org_id).first_or_404()
     try:
         set_default_template(template)
     except ProposalServiceError as exc:
@@ -192,7 +201,8 @@ def set_default(id):
 
 @proposal_templates_bp.route("/<int:id>/toggle-active", methods=["POST"])
 def toggle_active(id):
-    template = ProposalTemplate.query.get_or_404(id)
+    org_id = get_current_organization_id()
+    template = ProposalTemplate.query.filter_by(id=id, organization_id=org_id).first_or_404()
     try:
         toggle_template_active(template)
     except ProposalServiceError as exc:

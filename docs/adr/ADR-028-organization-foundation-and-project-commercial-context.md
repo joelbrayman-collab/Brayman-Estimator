@@ -78,7 +78,7 @@ Additive migration `_add_organization_and_commercial_context_m011.py`:
 1. Create `organizations` table.
 2. Insert `ORG-001` seed row.
 3. Add nullable `organization_id` and `commercial_context_id` columns.
-4. Backfill existing records to `ORG-001` and create initial project commercial context records.
+4. Backfill existing records to `ORG-001` and create initial project commercial context records with explicit `Legacy / Unknown` semantics for all 7 parameters. Pre-M011 commercial decisions are unrecorded; CalibAi must never infer historical pricing posture, risk, site/schedule conditions, stage, delivery model, or project type from pre-M011 legacy records.
 5. Set `nullable=False` on `organization_id` root columns and add foreign key constraints and indexes.
 
 ---

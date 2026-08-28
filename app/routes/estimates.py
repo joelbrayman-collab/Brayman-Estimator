@@ -37,24 +37,37 @@ from app.services.estimate_builder import (
     update_section,
     update_version_pricing,
 )
+from app.services.organizations import get_current_organization_id
 
 estimates_bp = Blueprint("estimates", __name__, url_prefix="/estimates")
 
 
+def _get_scoped_estimate_or_404(id):
+    org_id = get_current_organization_id()
+    return (
+        Estimate.query.join(Project)
+        .filter(Estimate.id == id, Project.organization_id == org_id)
+        .first_or_404()
+    )
+
+
 def _projects():
-    return Project.query.order_by(Project.name.asc()).all()
+    org_id = get_current_organization_id()
+    return Project.query.filter_by(organization_id=org_id).order_by(Project.name.asc()).all()
 
 
 def _active_cost_items():
-    return CostItem.query.filter_by(is_active=True).order_by(CostItem.code.asc()).all()
+    org_id = get_current_organization_id()
+    return CostItem.query.filter_by(organization_id=org_id, is_active=True).order_by(CostItem.code.asc()).all()
 
 
 def _active_assemblies():
-    return Assembly.query.filter_by(is_active=True).order_by(Assembly.code.asc()).all()
+    org_id = get_current_organization_id()
+    return Assembly.query.filter_by(organization_id=org_id, is_active=True).order_by(Assembly.code.asc()).all()
 
 
 def _get_estimate_version(estimate_id, version_id):
-    estimate = Estimate.query.get_or_404(estimate_id)
+    estimate = _get_scoped_estimate_or_404(estimate_id)
     version = EstimateVersion.query.filter_by(
         id=version_id,
         estimate_id=estimate.id,
@@ -187,7 +200,13 @@ def _parse_decimal(value, label, allow_empty=True):
 
 @estimates_bp.route("/")
 def list_estimates():
-    estimates = Estimate.query.order_by(Estimate.updated_at.desc()).all()
+    org_id = get_current_organization_id()
+    estimates = (
+        Estimate.query.join(Project)
+        .filter(Project.organization_id == org_id)
+        .order_by(Estimate.updated_at.desc())
+        .all()
+    )
     return render_template("estimates/list.html", estimates=estimates)
 
 
@@ -238,7 +257,7 @@ def create_estimate_route():
 
 @estimates_bp.route("/<int:id>")
 def view_estimate(id):
-    estimate = Estimate.query.get_or_404(id)
+    estimate = _get_scoped_estimate_or_404(id)
     return render_template(
         "estimates/detail.html",
         estimate=estimate,
@@ -248,7 +267,7 @@ def view_estimate(id):
 
 @estimates_bp.route("/<int:id>/edit", methods=["GET", "POST"])
 def edit_estimate(id):
-    estimate = Estimate.query.get_or_404(id)
+    estimate = _get_scoped_estimate_or_404(id)
     projects = _projects()
     form = _estimate_form_values(estimate)
     version = estimate.current_version
@@ -366,7 +385,7 @@ def edit_estimate(id):
 
 @estimates_bp.route("/<int:id>/toggle-archive", methods=["POST"])
 def toggle_archive(id):
-    estimate = Estimate.query.get_or_404(id)
+    estimate = _get_scoped_estimate_or_404(id)
     toggle_estimate_archive(estimate)
     state = "archived" if estimate.status == "Archived" else "restored from archive"
     flash(f'Estimate "{estimate.estimate_number}" {state}.', "success")
@@ -375,7 +394,7 @@ def toggle_archive(id):
 
 @estimates_bp.route("/<int:id>/versions/new", methods=["POST"])
 def create_version(id):
-    estimate = Estimate.query.get_or_404(id)
+    estimate = _get_scoped_estimate_or_404(id)
     form = _version_clone_form_values()
 
     try:

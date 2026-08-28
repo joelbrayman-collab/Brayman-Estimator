@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Commercial Context | {{ project.name }}{% endblock %}
+{% block page_title %}Commercial Decision Gate{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Project Commercial Context</p>
+        <h1>{{ project.name }}</h1>
+        <p class="muted-copy">Active Version: v{{ current_context.version_number if current_context else 1 }}</p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
+    </div>
+</div>
+
+<form method="post" class="form-panel">
+    <h3>Commercial Decision Gate (Version Update)</h3>
+    <p class="muted-copy" style="margin-bottom: 16px;">
+        Updating commercial context creates a new immutable version. Historical estimates remain pinned to their original context snapshot.
+    </p>
+
+    {% if current_context and current_context.is_legacy_unknown %}
+    <div style="background: #fdf6e2; border-left: 4px solid #c79a2b; padding: 12px 16px; border-radius: 4px; margin-bottom: 16px;">
+        <p style="margin: 0; font-weight: 600; color: #8a6d3b;">Legacy Project Notice</p>
+        <p class="muted-copy" style="margin: 4px 0 0 0; font-size: 0.9em;">
+            This project currently has no recorded historical commercial decisions. Saving this form will create <strong>Version 2</strong> with your explicit commercial parameters.
+        </p>
+    </div>
+    {% endif %}
+
+    <div class="form-grid">
+        <label>
+            Project Type *
+            <select name="project_type" required>
+                {% for opt in project_types %}
+                <option value="{{ opt }}" {% if current_context and current_context.project_type == opt %}selected{% elif not current_context or current_context.is_legacy_unknown and opt == 'New Build' %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Pricing Posture *
+            <select name="pricing_posture" required>
+                {% for opt in pricing_postures %}
+                <option value="{{ opt }}" {% if current_context and current_context.pricing_posture == opt %}selected{% elif not current_context or current_context.is_legacy_unknown and opt == 'Competitive' %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Execution Risk *
+            <select name="execution_risk" required>
+                {% for opt in execution_risks %}
+                <option value="{{ opt }}" {% if current_context and current_context.execution_risk == opt %}selected{% elif not current_context or current_context.is_legacy_unknown and opt == 'Normal' %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Schedule Condition *
+            <select name="schedule_condition" required>
+                {% for opt in schedule_conditions %}
+                <option value="{{ opt }}" {% if current_context and current_context.schedule_condition == opt %}selected{% elif not current_context or current_context.is_legacy_unknown and opt == 'Normal' %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Site Condition *
+            <select name="site_condition" required>
+                {% for opt in site_conditions %}
+                <option value="{{ opt }}" {% if current_context and current_context.site_condition == opt %}selected{% elif not current_context or current_context.is_legacy_unknown and opt == 'Normal' %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Estimate Stage *
+            <select name="estimate_stage" required>
+                {% for opt in estimate_stages %}
+                <option value="{{ opt }}" {% if current_context and current_context.estimate_stage == opt %}selected{% elif not current_context or current_context.is_legacy_unknown and opt == 'Preliminary' %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Delivery Model *
+            <select name="delivery_model" required>
+                {% for opt in delivery_models %}
+                <option value="{{ opt }}" {% if current_context and current_context.delivery_model == opt %}selected{% elif not current_context or current_context.is_legacy_unknown and opt == 'Self-Perform' %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+
+    <label style="margin-top: 12px;">
+        Justification Reason (Mandatory if exceptional posture/risk selected by organization policy)
+        <textarea name="justification_reason" rows="2" placeholder="Provide justification if setting exceptional posture or risk">{{ current_context.justification_reason if current_context and not current_context.is_legacy_unknown else '' }}</textarea>
+    </label>
+
+    <label style="margin-top: 12px;">
+        Change Summary
+        <input type="text" name="change_summary" placeholder="e.g., Updated risk profile following site inspection">
+    </label>
+
+    <div class="form-actions" style="margin-top: 20px;">
+        <button type="submit">Save New Context Version</button>
+        <a href="{{ url_for('projects.view_project', id=project.id) }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

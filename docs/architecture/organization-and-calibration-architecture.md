@@ -361,11 +361,7 @@ Every project created in CalibAi must pass through the **Commercial Decision Gat
 To prevent commercial drift and ambiguity:
 
 1. **Snapshot on Versioning:** The Project Commercial Profile is locked at the creation of each `EstimateVersion`. If an estimator changes the Pricing Posture from `STANDARD_COMPETITIVE` to `AGGRESSIVE_BID`, the change does not alter past estimate versions; it spawns a new `EstimateVersion` with full provenance.
-2. **Actor Attribution:** Every modification to the Project Commercial Profile records:
-   - `modified_by_user_id` (Actor PK)
-   - `modified_at` (UTC Timestamp)
-   - `prior_profile_json` vs `new_profile_json`
-   - `justification_note`
+3. **Pre-M011 Legacy Project Invariant:** Projects created prior to the introduction of the Commercial Decision Gate (Milestone 011) do not have historical records for these commercial decisions. In migration and backfill, all pre-M011 projects receive an explicit `Legacy / Unknown` context (`is_legacy_unknown = True`) across all seven decision parameters. CalibAi must **never** infer or manufacture historical Pricing Posture, Execution Risk, Schedule, Site Condition, Estimate Stage, Delivery Model, or Project Type from pre-M011 records. Future calibration and learning engines must explicitly treat legacy unrecorded context as unrecorded/unknown.
 
 ---
 

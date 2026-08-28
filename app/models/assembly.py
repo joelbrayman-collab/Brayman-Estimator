@@ -2,13 +2,28 @@ from datetime import datetime
 from decimal import Decimal
 
 from app import db
+from app.services.organizations import get_current_organization_id
 
 
 class Assembly(db.Model):
     __tablename__ = "assemblies"
+    __table_args__ = (
+        db.UniqueConstraint(
+            "organization_id",
+            "code",
+            name="uq_assemblies_org_code",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(50), unique=True, nullable=False)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id"),
+        nullable=False,
+        default=get_current_organization_id,
+        index=True,
+    )
+    code = db.Column(db.String(50), nullable=False)
     name = db.Column(db.String(180), nullable=False)
     category = db.Column(db.String(50), nullable=False)
     unit = db.Column(db.String(50), nullable=False)
@@ -27,6 +42,7 @@ class Assembly(db.Model):
         nullable=False,
     )
 
+    organization = db.relationship("Organization", back_populates="assemblies")
     assembly_items = db.relationship(
         "AssemblyItem",
         back_populates="assembly",

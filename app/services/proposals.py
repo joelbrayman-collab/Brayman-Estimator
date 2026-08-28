@@ -11,6 +11,7 @@ from app.models.proposal import (
     ProposalSection,
     ProposalTemplate,
 )
+from app.services.organizations import get_current_organization_id
 
 
 class ProposalServiceError(Exception):
@@ -55,20 +56,23 @@ def suggest_next_proposal_number(year=None):
     return f"{prefix}{max_sequence + 1:04d}"
 
 
-def get_default_template():
-    return ProposalTemplate.query.filter_by(is_default=True, is_active=True).first()
+def get_default_template(organization_id=None):
+    org_id = organization_id or get_current_organization_id()
+    return ProposalTemplate.query.filter_by(organization_id=org_id, is_default=True, is_active=True).first()
 
 
-def get_active_templates():
+def get_active_templates(organization_id=None):
+    org_id = organization_id or get_current_organization_id()
     return (
-        ProposalTemplate.query.filter_by(is_active=True)
+        ProposalTemplate.query.filter_by(organization_id=org_id, is_active=True)
         .order_by(ProposalTemplate.name.asc())
         .all()
     )
 
 
-def _clear_other_defaults(exclude_id=None):
-    query = ProposalTemplate.query.filter_by(is_default=True)
+def _clear_other_defaults(organization_id=None, exclude_id=None):
+    org_id = organization_id or get_current_organization_id()
+    query = ProposalTemplate.query.filter_by(organization_id=org_id, is_default=True)
     if exclude_id is not None:
         query = query.filter(ProposalTemplate.id != exclude_id)
     for template in query.all():
@@ -76,10 +80,11 @@ def _clear_other_defaults(exclude_id=None):
 
 
 def create_proposal_template(**fields):
+    org_id = fields.get("organization_id") or get_current_organization_id()
     name = (fields.get("name") or "").strip()
     if not name:
         raise ProposalServiceError("Template name is required.")
-    if ProposalTemplate.query.filter_by(name=name).first():
+    if ProposalTemplate.query.filter_by(organization_id=org_id, name=name).first():
         raise ProposalServiceError(
             f'A proposal template named "{name}" already exists.'
         )
@@ -90,9 +95,10 @@ def create_proposal_template(**fields):
         raise ProposalServiceError("The default template must be active.")
 
     if is_default:
-        _clear_other_defaults()
+        _clear_other_defaults(organization_id=org_id)
 
     template = ProposalTemplate(
+        organization_id=org_id,
         name=name,
         description=(fields.get("description") or "").strip() or None,
         company_name=(fields.get("company_name") or "").strip() or None,
@@ -145,6 +151,7 @@ def update_proposal_template(template, **fields):
         if not name:
             raise ProposalServiceError("Template name is required.")
         duplicate = ProposalTemplate.query.filter(
+            ProposalTemplate.organization_id == template.organization_id,
             ProposalTemplate.name == name,
             ProposalTemplate.id != template.id,
         ).first()
@@ -193,7 +200,7 @@ def update_proposal_template(template, **fields):
         raise ProposalServiceError("The default template must be active.")
 
     if template.is_default:
-        _clear_other_defaults(exclude_id=template.id)
+        _clear_other_defaults(organization_id=template.organization_id, exclude_id=template.id)
 
     db.session.commit()
     return template
@@ -202,7 +209,7 @@ def update_proposal_template(template, **fields):
 def set_default_template(template):
     if not template.is_active:
         raise ProposalServiceError("Cannot set an inactive template as default.")
-    _clear_other_defaults(exclude_id=template.id)
+    _clear_other_defaults(organization_id=template.organization_id, exclude_id=template.id)
     template.is_default = True
     db.session.commit()
     return template
@@ -621,8 +628,13 @@ def update_proposal_status(proposal, status):
     return update_proposal(proposal, status=status)
 
 
-def get_estimate_and_version(estimate_id, version_id):
-    estimate = db.session.get(Estimate, estimate_id)
+def get_estimate_and_version(estimate_id, version_id, organization_id=None):
+    org_id = organization_id or get_current_organization_id()
+    estimate = (
+        Estimate.query.join(Estimate.project)
+        .filter(Estimate.id == estimate_id, Estimate.project.has(organization_id=org_id))
+        .first()
+    )
     if estimate is None:
         return None, None
     version = EstimateVersion.query.filter_by(

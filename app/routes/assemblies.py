@@ -4,6 +4,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app import db
 from app.models import Assembly, AssemblyItem, CostItem
+from app.services.organizations import get_current_organization_id
 
 assemblies_bp = Blueprint("assemblies", __name__, url_prefix="/assemblies")
 
@@ -92,7 +93,8 @@ def _component_form_values(assembly_item=None):
 
 
 def _code_exists(code, exclude_id=None):
-    query = Assembly.query.filter_by(code=code)
+    org_id = get_current_organization_id()
+    query = Assembly.query.filter_by(organization_id=org_id, code=code)
     if exclude_id is not None:
         query = query.filter(Assembly.id != exclude_id)
     return query.first() is not None
@@ -124,6 +126,7 @@ def _validate_assembly_form(form, exclude_id=None):
 def _validate_component_form(form, require_cost_item=True):
     errors = []
     cost_item = None
+    org_id = get_current_organization_id()
 
     if require_cost_item:
         if not form["cost_item_id"]:
@@ -136,6 +139,7 @@ def _validate_component_form(form, require_cost_item=True):
             else:
                 cost_item = CostItem.query.filter_by(
                     id=cost_item_id,
+                    organization_id=org_id,
                     is_active=True,
                 ).first()
                 if cost_item is None:
@@ -158,12 +162,14 @@ def _validate_component_form(form, require_cost_item=True):
 
 
 def _active_cost_items():
-    return CostItem.query.filter_by(is_active=True).order_by(CostItem.code.asc()).all()
+    org_id = get_current_organization_id()
+    return CostItem.query.filter_by(organization_id=org_id, is_active=True).order_by(CostItem.code.asc()).all()
 
 
 @assemblies_bp.route("/")
 def list_assemblies():
-    assemblies = Assembly.query.order_by(Assembly.code.asc()).all()
+    org_id = get_current_organization_id()
+    assemblies = Assembly.query.filter_by(organization_id=org_id).order_by(Assembly.code.asc()).all()
     return render_template("assemblies/list.html", assemblies=assemblies)
 
 
@@ -184,6 +190,7 @@ def create_assembly():
             )
 
         assembly = Assembly(
+            organization_id=get_current_organization_id(),
             code=form["code"],
             name=form["name"],
             category=form["category"],
@@ -208,7 +215,8 @@ def create_assembly():
 
 @assemblies_bp.route("/<int:id>")
 def view_assembly(id):
-    assembly = Assembly.query.get_or_404(id)
+    org_id = get_current_organization_id()
+    assembly = Assembly.query.filter_by(id=id, organization_id=org_id).first_or_404()
     editing_item_id = request.args.get("edit_item", type=int)
     edit_form = None
 
@@ -234,7 +242,8 @@ def view_assembly(id):
 
 @assemblies_bp.route("/<int:id>/edit", methods=["GET", "POST"])
 def edit_assembly(id):
-    assembly = Assembly.query.get_or_404(id)
+    org_id = get_current_organization_id()
+    assembly = Assembly.query.filter_by(id=id, organization_id=org_id).first_or_404()
     form = _assembly_form_values(assembly)
 
     if request.method == "POST":
@@ -270,7 +279,8 @@ def edit_assembly(id):
 
 @assemblies_bp.route("/<int:id>/toggle-active", methods=["POST"])
 def toggle_assembly_active(id):
-    assembly = Assembly.query.get_or_404(id)
+    org_id = get_current_organization_id()
+    assembly = Assembly.query.filter_by(id=id, organization_id=org_id).first_or_404()
     assembly.is_active = not assembly.is_active
     db.session.commit()
 
@@ -281,7 +291,8 @@ def toggle_assembly_active(id):
 
 @assemblies_bp.route("/<int:id>/items/add", methods=["POST"])
 def add_assembly_item(id):
-    assembly = Assembly.query.get_or_404(id)
+    org_id = get_current_organization_id()
+    assembly = Assembly.query.filter_by(id=id, organization_id=org_id).first_or_404()
     form = _component_form_values()
     errors, cost_item, quantity, waste, sort_order = _validate_component_form(form)
 
@@ -315,14 +326,14 @@ def add_assembly_item(id):
 
 @assemblies_bp.route("/<int:id>/items/<int:item_id>/edit", methods=["POST"])
 def edit_assembly_item(id, item_id):
-    assembly = Assembly.query.get_or_404(id)
+    org_id = get_current_organization_id()
+    assembly = Assembly.query.filter_by(id=id, organization_id=org_id).first_or_404()
     assembly_item = AssemblyItem.query.filter_by(
         id=item_id,
         assembly_id=assembly.id,
     ).first_or_404()
 
     form = _component_form_values()
-    # Keep the existing cost item; only quantity/waste/notes/sort are edited.
     form["cost_item_id"] = str(assembly_item.cost_item_id)
     errors, _cost_item, quantity, waste, sort_order = _validate_component_form(
         form,
@@ -354,7 +365,8 @@ def edit_assembly_item(id, item_id):
 
 @assemblies_bp.route("/<int:id>/items/<int:item_id>/delete", methods=["POST"])
 def delete_assembly_item(id, item_id):
-    assembly = Assembly.query.get_or_404(id)
+    org_id = get_current_organization_id()
+    assembly = Assembly.query.filter_by(id=id, organization_id=org_id).first_or_404()
     assembly_item = AssemblyItem.query.filter_by(
         id=item_id,
         assembly_id=assembly.id,

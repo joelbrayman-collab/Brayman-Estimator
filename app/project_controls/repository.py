@@ -11,10 +11,15 @@ from app.project_controls.models import (
     ChangeOrder,
     ChangeOrderItem,
 )
+from app.services.organizations import get_current_organization_id
 
 
-def get_change_order(change_order_id):
-    return db.session.get(ChangeOrder, change_order_id)
+def get_change_order(change_order_id, organization_id=None):
+    org_id = organization_id or get_current_organization_id()
+    co = db.session.get(ChangeOrder, change_order_id)
+    if co and co.project and co.project.organization_id != org_id:
+        return None
+    return co
 
 
 def get_change_order_item(item_id):
@@ -28,8 +33,10 @@ def list_change_orders(
     date_from=None,
     date_to=None,
     search=None,
+    organization_id=None,
 ):
-    query = ChangeOrder.query.outerjoin(Project)
+    org_id = organization_id or get_current_organization_id()
+    query = ChangeOrder.query.join(Project).filter(Project.organization_id == org_id)
 
     if project_id:
         query = query.filter(ChangeOrder.project_id == project_id)

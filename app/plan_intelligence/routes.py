@@ -21,6 +21,7 @@ from app.plan_intelligence.models import (
     PlanSheetSuggestion,
     ProcessingAttempt,
 )
+from app.services.organizations import get_current_organization_id
 from app.plan_intelligence.packages import ensure_default_revision
 from app.plan_intelligence.services import (
     PlanIntelligenceServiceError,
@@ -75,9 +76,14 @@ plan_intelligence_bp = Blueprint(
 )
 
 
+def _get_project_or_404(project_id):
+    org_id = get_current_organization_id()
+    return Project.query.filter_by(id=project_id, organization_id=org_id).first_or_404()
+
+
 @plan_intelligence_bp.route("/projects/<int:project_id>/plans")
 def list_plans(project_id):
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     include_archived = request.args.get("show_archived") == "1"
     q = request.args.get("q", "").strip()
     processing_status = request.args.get("processing_status", "").strip() or None
@@ -120,7 +126,7 @@ def list_plans(project_id):
     methods=["GET", "POST"],
 )
 def upload_plan(project_id):
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     if request.method == "POST":
         notes = request.form.get("notes", "")
         file_storage = request.files.get("plan_file")
@@ -167,7 +173,7 @@ def upload_plan(project_id):
     "/projects/<int:project_id>/plans/<int:document_id>"
 )
 def view_plan(project_id, document_id):
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     document = get_plan_document(project.id, document_id)
     if document is None:
         abort(404)
@@ -199,7 +205,7 @@ def view_plan(project_id, document_id):
     "/projects/<int:project_id>/plans/<int:document_id>/download"
 )
 def download_plan(project_id, document_id):
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     document = get_plan_document(project.id, document_id)
     if document is None:
         abort(404)
@@ -223,7 +229,7 @@ def download_plan(project_id, document_id):
     methods=["POST"],
 )
 def reprocess_plan(project_id, document_id):
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     document = get_plan_document(project.id, document_id)
     if document is None:
         abort(404)
@@ -258,7 +264,7 @@ def reprocess_plan(project_id, document_id):
 )
 def delete_plan(project_id, document_id):
     """Archive the document (hard delete blocked when indexing data exists)."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     document = get_plan_document(project.id, document_id)
     if document is None:
         abort(404)
@@ -284,7 +290,7 @@ def delete_plan(project_id, document_id):
 @plan_intelligence_bp.route("/projects/<int:project_id>/plans/sheets")
 def project_sheets(project_id):
     """Shortcut redirect to default revision sheets."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     revision = ensure_default_revision(project)
     return redirect(
         url_for(
@@ -300,7 +306,7 @@ def project_sheets(project_id):
 )
 def revision_sheets(project_id, revision_id):
     """Sheet index and validation overview for a specific DrawingRevision."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     revision = DrawingRevision.query.filter_by(id=revision_id).first_or_404()
     if revision.package.project_id != project.id:
         abort(404)
@@ -323,7 +329,7 @@ def revision_sheets(project_id, revision_id):
 )
 def new_sheet(project_id, revision_id):
     """Manual Sheet creation."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     revision = DrawingRevision.query.filter_by(id=revision_id).first_or_404()
     if revision.package.project_id != project.id:
         abort(404)
@@ -377,7 +383,7 @@ def new_sheet(project_id, revision_id):
 )
 def review_sheet(project_id, sheet_id):
     """Review screen for an individual Sheet (Accept/Edit/Reject suggestions, page maps)."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
     revision = sheet.revision
     documents = list_plan_documents(project.id, include_archived=False)
@@ -413,7 +419,7 @@ def review_sheet(project_id, sheet_id):
 )
 def edit_sheet_action(project_id, sheet_id):
     """Human Edit+Save action (ADR-017)."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
 
     number = request.form.get("number", "").strip()
@@ -450,7 +456,7 @@ def edit_sheet_action(project_id, sheet_id):
 )
 def void_sheet_action(project_id, sheet_id):
     """Void a sheet."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
 
     void_sheet(sheet)
@@ -470,7 +476,7 @@ def void_sheet_action(project_id, sheet_id):
 )
 def accept_suggestion_action(project_id, sheet_id, suggestion_id):
     """Human Accept suggestion action (ADR-017)."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
     suggestion = PlanSheetSuggestion.query.filter_by(
         id=suggestion_id, sheet_id=sheet.id
@@ -506,7 +512,7 @@ def accept_suggestion_action(project_id, sheet_id, suggestion_id):
 )
 def reject_suggestion_action(project_id, sheet_id, suggestion_id):
     """Human Reject suggestion action (ADR-017)."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
     suggestion = PlanSheetSuggestion.query.filter_by(
         id=suggestion_id, sheet_id=sheet.id
@@ -533,7 +539,7 @@ def reject_suggestion_action(project_id, sheet_id, suggestion_id):
 )
 def generate_sheet_suggestions_action(project_id, sheet_id):
     """Generate or re-run suggestion extraction for a sheet."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
 
     suggestion = generate_suggestions_for_sheet(sheet, force=True)
@@ -560,7 +566,7 @@ def generate_sheet_suggestions_action(project_id, sheet_id):
 )
 def generate_all_sheets_action(project_id, revision_id):
     """Ensure all pages have a draft/suggested sheet in this revision."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     revision = DrawingRevision.query.filter_by(id=revision_id).first_or_404()
     if revision.package.project_id != project.id:
         abort(404)
@@ -586,7 +592,7 @@ def generate_all_sheets_action(project_id, revision_id):
 )
 def finalize_sheet_index_action(project_id, revision_id):
     """Finalize/mark sheet index complete (ADR-018). Fails closed on errors."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     revision = DrawingRevision.query.filter_by(id=revision_id).first_or_404()
     if revision.package.project_id != project.id:
         abort(404)
@@ -615,7 +621,7 @@ def finalize_sheet_index_action(project_id, revision_id):
 )
 def map_page_action(project_id, sheet_id):
     """Add a page mapping to a sheet."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
 
     doc_id = request.form.get("plan_document_id", type=int)
@@ -645,7 +651,7 @@ def map_page_action(project_id, sheet_id):
 )
 def unmap_page_action(project_id, sheet_id):
     """Remove a page mapping from a sheet."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
 
     doc_id = request.form.get("plan_document_id", type=int)
@@ -676,7 +682,7 @@ def unmap_page_action(project_id, sheet_id):
 )
 def measure_sheet(project_id, sheet_id):
     """Interactive measurement and scale calibration workspace for a Sheet (M010)."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
     revision = sheet.revision
 
@@ -713,7 +719,7 @@ def measure_sheet(project_id, sheet_id):
 )
 def sheet_measurement_data(project_id, sheet_id):
     """JSON API returning current calibrations and measurements for client rendering."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
 
     calibrations = list_calibrations_for_sheet(project.id, sheet.id)
@@ -772,7 +778,7 @@ def sheet_measurement_data(project_id, sheet_id):
 )
 def create_two_point_calibration_action(project_id, sheet_id):
     """Create a 2-point scale calibration."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
 
     is_json = request.is_json
@@ -836,7 +842,7 @@ def create_two_point_calibration_action(project_id, sheet_id):
 )
 def create_preset_calibration_action(project_id, sheet_id):
     """Create a preset scale ratio calibration."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
 
     is_json = request.is_json
@@ -875,7 +881,7 @@ def create_preset_calibration_action(project_id, sheet_id):
 )
 def confirm_calibration_action(project_id, sheet_id, calibration_id):
     """Explicit human confirmation action for a calibration."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     try:
         cal = confirm_calibration(project.id, sheet_id, calibration_id)
         if request.is_json:
@@ -895,7 +901,7 @@ def confirm_calibration_action(project_id, sheet_id, calibration_id):
 )
 def void_calibration_action(project_id, sheet_id, calibration_id):
     """Void a calibration record."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     try:
         cal = void_calibration(project.id, sheet_id, calibration_id)
         if request.is_json:
@@ -915,7 +921,7 @@ def void_calibration_action(project_id, sheet_id, calibration_id):
 )
 def mark_sheet_nts_action(project_id, sheet_id):
     """Flag sheet as Not To Scale (NTS)."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
     doc_id = sheet.page_mappings[0].plan_document_id if sheet.page_mappings else 0
     page_idx = sheet.page_mappings[0].page_index if sheet.page_mappings else 0
@@ -940,7 +946,7 @@ def mark_sheet_nts_action(project_id, sheet_id):
 )
 def create_measurement_action(project_id, sheet_id):
     """Save a manual measurement."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     sheet = get_sheet_or_404(project.id, sheet_id)
 
     is_json = request.is_json
@@ -1004,7 +1010,7 @@ def create_measurement_action(project_id, sheet_id):
 )
 def void_measurement_action(project_id, sheet_id, measurement_id):
     """Void a saved measurement."""
-    project = Project.query.get_or_404(project_id)
+    project = _get_project_or_404(project_id)
     try:
         meas = void_measurement(project.id, sheet_id, measurement_id)
         if request.is_json:

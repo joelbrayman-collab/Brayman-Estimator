@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Reference |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-28 |
 | Source | Lessons listed in the Estimator governance foundation prompt (authoritative for this document). This repository does **not** contain the AiRIA codebase; no claim is made that AiRIA was inspected here. |
 
 ## Transferable lessons
@@ -37,8 +37,10 @@
 | Explicit migration review | [architecture-principles.md](architecture-principles.md) Rule 7 · [git-workflow.md](git-workflow.md) |
 | Current-state document | [current-state.md](current-state.md) |
 | Agent operating guide | [../AGENTS.md](../AGENTS.md) |
+| Continuity & anti-drift protocol | [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md) |
 
 ## Related
 
 - [platform-governance.md](platform-governance.md)
 - [development-workflow.md](development-workflow.md)
+- [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md)

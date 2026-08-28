@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-08-26 |
+| Updated | 2026-08-28 |
 
 ## Purpose
 
@@ -41,6 +41,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-08-28 — Adopt CalibAi Continuity & Anti-Drift Protocol
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Governance-only: formally adopt the approved CalibAi Continuity & Anti-Drift Protocol before any product/architecture reconciliation |
+| Business decision | Joel approved adoption of the protocol; AI memory is never authoritative project state; repository remains the system of record |
+| Architectural decision | None. Protocol supplements Constitution Article 1 and existing context-drift stop; Constitution not amended. Product/repository not renamed. |
+| Prompt template used | Approved custom Cursor prompt (documentation-only constraints equivalent to [cursor-documentation-template.md](prompts/cursor-documentation-template.md)) |
+| Approved Cursor prompt summary | Reconstruct state; existing-before-new search; create `docs/governance/continuity-and-anti-drift.md`; minimum governance integration; validate; commit; push if permitted; stop. No product code, schema, migrations, or M009. |
+| Files expected to change | New protocol doc; minimum references in AGENTS.md, docs/README.md, platform-governance, development-workflow, current-state, project-state-report, chat-workflow-log, aiRIA-lessons-adopted, session-handoff |
+| Files prohibited from changing | `app/`, `migrations/`, `tests/`, models/schemas, product features; Constitution; product/repository rename |
+| Implementation result | Protocol created as APPROVED/GOVERNING. Existing drift rules preserved. Constitution not amended. M009 not begun. |
+| Tests | Docs-only: `git diff --check`; link resolution; confirm no application/schema/migration changes. No pytest invented. Exact results in stopping report. |
+| Project-state-report update | Yes — protocol adoption recorded |
+| Milestone entry update | No — not a product milestone |
+| Constitutional issue raised | None. Protocol supplements Article 1; Constitution left unchanged. |
+| Unresolved issues | Product/architecture reconciliation not started (separate authorization required) |
+| Next approved step | Stop. Do not begin M009. Next: Joel-authorized CalibAi product/architecture reconciliation (separate prompt). |
+| Next approved prompt | None |
+| Commit hash | This adoption commit (see stopping report SHA) |
 
 ### 2026-08-26 — Governance closure after commit 0fdf0d4
 

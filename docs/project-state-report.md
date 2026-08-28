@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative milestone-level state |
-| Updated | 2026-08-26 |
+| Updated | 2026-08-28 |
 
 Update this report at every **completed milestone** and major interruption point.
 Distinguish from:
@@ -47,7 +47,7 @@ Distinguish from:
 
 | Field | Content |
 |-------|---------|
-| Report date | 2026-08-26 |
+| Report date | 2026-08-28 |
 | Repository | Brayman-Estimator (The Estimator) |
 | Current branch | `main` |
 | Current commit / `origin/main` | Confirm with `git rev-parse` (expect parity; tip at or after state closure `ee100ac`) |
@@ -61,10 +61,10 @@ Distinguish from:
 | Implemented capabilities | Phase A PDF upload/storage; page indexing; processing provenance; archive-over-delete; relational search |
 | Incomplete work | Coded sheet review (Feature Gate required); scale; AI POC; estimate mapping; auth; project-detail archived filter; document package outputs; QuickBooks integration; contract/warranty generation |
 | Database and migration status | Intended Alembic head `a7c8e9f0b1d2` (M007) |
-| Documentation status | Post-M008 sync (`ed36838`) and August 25 governance reconciliation (`0fdf0d4`) committed and pushed; transient state closed in `ee100ac`; working tree clean |
-| Decisions made | ADR-017 suggestion workflow; ADR-018 uniqueness/supersession; Page ≠ Sheet (ADR-014); archive-over-delete; August 25 authoritative record + four-output package; pricing policy reference rule; Legal Content Gate; context drift mandatory stop |
+| Documentation status | Post-M008 sync (`ed36838`) and August 25 governance reconciliation (`0fdf0d4`) committed and pushed; transient state closed in `ee100ac`; Continuity & Anti-Drift Protocol adopted 2026-08-28; working tree expected clean after that docs commit |
+| Decisions made | ADR-017 suggestion workflow; ADR-018 uniqueness/supersession; Page ≠ Sheet (ADR-014); archive-over-delete; August 25 authoritative record + four-output package; pricing policy reference rule; Legal Content Gate; context drift mandatory stop; Continuity & Anti-Drift Protocol (2026-08-28) |
 | Decisions pending | Accept ADR-017/018; authorize coded-sheet Feature Gate; legal template register implementation; QuickBooks Feature Gate |
-| Uncommitted work | None (clean working tree after governance closure) |
+| Uncommitted work | None after this documentation commit |
 | Next approved milestone | **None for sheet code** until Feature-Gated |
 | Documents to read first | [project-document-package.md](architecture/project-document-package.md) → [pricing-policy.md](pricing-policy.md) → [legal-content-and-templates.md](governance/legal-content-and-templates.md) → [sheet-intelligence.md](architecture/sheet-intelligence.md) |
 | Approved next Cursor prompt location or summary | **None** until Joel authorizes Feature Gate for sheet implementation |

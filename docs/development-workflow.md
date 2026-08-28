@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-08-25 |
+| Updated | 2026-08-28 |
 
 ## Lifecycle
 
@@ -43,7 +43,7 @@ Start from [prompts/](prompts/). Every implementation prompt should include:
 - Existing functionality would be broken or changed incidentally
 - Tests cannot be run and the reason is unclear
 - Ambiguous construction business rule (Joel decision needed)
-- **Context drift** — see [platform-governance.md](platform-governance.md#context-drift-and-handoff-mandatory-stop)
+- **Context drift** — see [platform-governance.md](platform-governance.md#context-drift-and-handoff-mandatory-stop) and [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md)
 
 **Do not guess product policy.**
 
@@ -59,6 +59,7 @@ Prefer **Cursor Terminal** for git, pytest, Flask, and documentation commands in
 
 - [platform-constitution.md](platform-constitution.md)
 - [platform-governance.md](platform-governance.md)
+- [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md)
 - [definition-of-done.md](definition-of-done.md)
 - [prompts/](prompts/)
 - [project-state-report.md](project-state-report.md)

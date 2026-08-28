@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-08-26 |
+| Updated | 2026-08-28 |
 | Evidence | Local repository inspection |
 
 ## Baseline
@@ -15,7 +15,7 @@
 | August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | Working tree | Clean (confirm `git status`) |
-| Governance | FG-003 CONDITIONAL PASS; M005–M008 on `main`; August 25 product/governance requirements in `0fdf0d4`; transient state closed in `ee100ac` (docs only; product features not implemented) |
+| Governance | FG-003 CONDITIONAL PASS; M005–M008 on `main`; August 25 product/governance requirements in `0fdf0d4`; transient state closed in `ee100ac`; Continuity & Anti-Drift Protocol adopted 2026-08-28 (docs only; product features not implemented) |
 
 ## Implemented (evidenced in code on `main`)
 
@@ -45,7 +45,7 @@ M005–M008 are **merged to `main`**. No coded milestone is in progress. Sheets 
 - **QuickBooks pipeline boundary** (no API) — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - **Ontario contract + warranty / Legal Content Gate** — [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md)
 - **UAT reference case** (3415 Roger Stevens Road) — [testing/uat-reference-cases.md](testing/uat-reference-cases.md)
-- **Context drift / rollover rule** — [platform-governance.md](platform-governance.md#context-drift-and-handoff-mandatory-stop)
+- **Context drift / rollover rule** — [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md) (adopted 2026-08-28); summary also in [platform-governance.md](platform-governance.md#context-drift-and-handoff-mandatory-stop)
 
 ## Recommended next steps
 

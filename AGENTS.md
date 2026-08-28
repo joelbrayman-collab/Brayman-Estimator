@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Governing for AI agents (Cursor, etc.) |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-28 |
 | Product | The Estimator |
 
 ## Before you edit
@@ -12,7 +12,7 @@
 2. Read `docs/platform-constitution.md` (highest-order rules).
 3. Read `docs/project-state-report.md` for current **milestone-level** state.
 4. Read `docs/current-state.md` and `docs/session-handoff.md` (handoff is for immediate resume — **not** a substitute for milestone state).
-5. Read `docs/architecture-principles.md` and `docs/platform-governance.md`.
+5. Read `docs/architecture-principles.md`, `docs/platform-governance.md`, and `docs/governance/continuity-and-anti-drift.md`.
 6. Read `docs/architecture.md` and the relevant `docs/modules/*.md`.
 7. Use a template from `docs/prompts/` for the approved Cursor prompt.
 8. Inspect the repository (`git status`, relevant code paths) **before** changing files.
@@ -33,6 +33,7 @@ Authoritative index: [`docs/README.md`](docs/README.md).
 - **Stop** when requirements conflict or are missing—do not guess.
 - **Never claim** work or test results that were not performed.
 - Chat history is not the system of record; repository docs are.
+- Follow the [Continuity & Anti-Drift Protocol](docs/governance/continuity-and-anti-drift.md). AI memory is never authoritative project state.
 
 ## Workflow
 

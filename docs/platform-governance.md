@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-08-25 |
+| Updated | 2026-08-28 |
 
 ## Highest-order authority
 
@@ -103,6 +103,8 @@ A release is not ready until [definition-of-done.md](definition-of-done.md) is s
 ---
 
 ## Context drift and handoff (mandatory stop)
+
+Detailed governing protocol: [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md). The summary rules in this section remain in force and are not superseded.
 
 Stop substantive implementation and create or refresh a **verified handoff** when any of the following occur:
 

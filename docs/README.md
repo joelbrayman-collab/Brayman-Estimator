@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative documentation map |
-| Updated | 2026-08-25 |
+| Updated | 2026-08-28 |
 | Product | The Estimator (Brayman Estimator) |
 
 ## Purpose
@@ -36,7 +36,7 @@ This folder is the **system of record** for platform vision, architecture, gover
 12. [`session-handoff.md`](session-handoff.md)
 13. Relevant prompt template under [`prompts/`](prompts/)
 
-Also read [`platform-governance.md`](platform-governance.md) and [`definition-of-done.md`](definition-of-done.md) before starting any feature.
+Also read [`platform-governance.md`](platform-governance.md), [`governance/continuity-and-anti-drift.md`](governance/continuity-and-anti-drift.md), and [`definition-of-done.md`](definition-of-done.md) before starting any feature.
 
 ## Document catalog
 
@@ -58,6 +58,7 @@ Also read [`platform-governance.md`](platform-governance.md) and [`definition-of
 | [architecture/M006-document-intelligence-readiness-report.md](architecture/M006-document-intelligence-readiness-report.md) | Milestone 006 readiness report | Historical / operational |
 | [architecture/M008-sheet-intelligence-readiness-report.md](architecture/M008-sheet-intelligence-readiness-report.md) | Milestone 008 readiness report | Historical / operational |
 | [platform-governance.md](platform-governance.md) | Decision authority, Feature Gate, ownership, drift stop | **Governing** |
+| [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md) | Continuity, anti-drift, preflight, rollover, protected assets | **Governing** |
 | [pricing-policy.md](pricing-policy.md) | Labour rate, gross margin, placeholder rules | **Governing** (product policy) |
 | [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md) | Ontario contract + warranty template governance; Legal Content Gate | **Governing** |
 | [development-workflow.md](development-workflow.md) | Joel → ChatGPT → Cursor lifecycle | **Governing** for AI sessions |

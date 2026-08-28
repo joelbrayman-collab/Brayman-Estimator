@@ -30,7 +30,8 @@
 - **Document Intelligence architecture (M006)** — FG-003, `document-intelligence.md`, ADR-013–016
 - **Historical Estimate Ingestion Architecture (Phase A Complete)** — Read-only audit of 20 historical workbooks, source manifest (`docs/architecture/historical-estimates-source-manifest.md`), ingestion architecture specification (`docs/architecture/historical-estimate-ingestion-architecture.md`), 5-workbook pilot extraction, pricing-method analysis. Implementation/DB deferred to Phase B.
 - **Organization & Calibration Architecture (Phase A Complete)** — Comprehensive specification (`docs/architecture/organization-and-calibration-architecture.md`) defining CalibAi Core vs Baseline Library vs Organization Calibration Model, canonical `Organization` entity (`ORG-001` Brayman Construction Inc.), 7-tier evidence hierarchy, 7-level canonical rate resolution cascade, 7-parameter Project Commercial Decision Gate, multi-tenant isolation, technology-neutral learning, and read-only impact audit. Phase B ingestion (FG-006), Labour Engine, and calibrated pricing remain blocked pending review.
-- AI take-off / quantity extraction (M011+) / estimate mapping
+- **Organization Foundation & Project Commercial Context (M011 Feature Gate Prepared)** — Feature Gate FG-007 (`docs/feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md`) and ADR-028 (`docs/adr/ADR-028-organization-foundation-and-project-commercial-context.md`) prepared. Scope: `Organization` entity (`ORG-001` Brayman Construction Inc. backfill), root entity ownership graph (`clients`, `projects`, `cost_items`, `assemblies`, `proposal_templates`), versioned `ProjectCommercialContext` (7 parameters), estimate frozen context references, and tenant query scoping. Implementation NOT authorized / blocked awaiting Joel approval.
+- AI take-off / quantity extraction (M012+) / estimate mapping
 - CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract
 
 ## Migrations
@@ -40,7 +41,7 @@
 
 ## Current milestone status
 
-M005–M010 are **implemented and verified**. Next candidate milestone is **M011 — AI Take-off / Quantity Extraction Foundation** (requires dedicated Feature Gate).
+M005–M010 are **implemented and verified**. Next candidate implementation milestone is **M011 — Organization Foundation & Project Commercial Context** (FG-007 prepared; awaits approval).
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -54,9 +55,10 @@ M005–M010 are **implemented and verified**. Next candidate milestone is **M011
 
 ## Recommended next steps
 
-1. Feature Gate and architecture for **M011 — AI Take-off / Quantity Extraction Foundation**.
-2. Joel accepts ADR-021 (MONITOR baseline) and ADR-025 (pricing formula) when ready.
-3. Do not begin QuickBooks API, contract generation, BUILD capture, or field clients until separately Feature-Gated.
+1. Governance review and approval of **FG-007 (M011 Organization Foundation & Project Commercial Context)** and ADR-028.
+2. Upon approval, execute M011 implementation prompt (controlled additive migration, model ownership, commercial context gate, tenant query scoping, 140+ tests).
+3. With M011 complete, unblock and prepare Historical Ingestion Phase B (FG-006) and Labour Engine Phase B.
+4. Joel accepts ADR-021 (MONITOR baseline) and ADR-025 (pricing formula) when ready.
 
 ## Related
 

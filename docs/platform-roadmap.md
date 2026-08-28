@@ -92,9 +92,11 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 0. CAR-001 architecture alignment + Review Turnover Protocol — **Adopted**
 1. **M009** Sheet classification / human review — **Completed & Verified** (`5dc4b09`, migration `b8d9f0a1c2e3`)
 2. **M010** Scale Calibration / Measurement Tools — **Completed & Verified** (migration `c9e0f1a2b3d4`)
-3. **M011** AI Take-off / Quantity Extraction Foundation (requires FG)
-4. Project Hub UX
-5. Pricing-policy application (requires [ADR-025](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) acceptance)
+3. **M011** Organization Foundation & Project Commercial Context — **Feature Gate Prepared (FG-007 / ADR-028)**; awaits approval
+4. **M012** Historical Estimate Ingestion Engine Phase B (FG-006) / Labour Engine Phase B
+5. **M013** AI Take-off / Quantity Extraction Foundation
+6. Project Hub UX
+7. Pricing-policy application (requires [ADR-025](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) acceptance)
 6. Internal Detailed Cost Breakdown + Customer Estimate consistency
 7. Authentication / actor identity + shared API foundation
 8. BUILD Field Capture V1

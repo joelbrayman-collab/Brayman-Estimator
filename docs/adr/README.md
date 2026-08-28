@@ -81,6 +81,12 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | [ADR-024](ADR-024-learn-recommendation-boundary.md) | LEARN Recommendation Boundary | **Accepted** (boundary; no ML) |
 | [ADR-025](ADR-025-pricing-policy-versus-estimate-markup-stack.md) | Gross-Margin Policy vs Markup Stack | **Proposed** |
 
+### Organization & Calibration Architecture (Milestone 011)
+
+| ADR | Title | Status |
+|-----|-------|--------|
+| [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) | Organization Foundation, Multi-Tenant Boundary, and Project Commercial Context | **Proposed** (governing FG-007 / M011) |
+
 CAR-001 record: [../architecture/CAR-001-calibai-product-architecture-reconciliation.md](../architecture/CAR-001-calibai-product-architecture-reconciliation.md).
 
 Related Feature Gates: [FG-001 Proposals Module](../feature-gates/FG-001-proposals-module.md) · [FG-002 Plan Intelligence Phase A](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003 Document Intelligence Readiness](../feature-gates/FG-003-document-intelligence-readiness.md).

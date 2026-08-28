@@ -58,12 +58,13 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
    - **M010 is COMPLETED & VERIFIED.**
    - **Historical Estimate Ingestion — Phase A (Source Audit & Architecture) is COMPLETED (Research Draft).**
    - **Organization & Calibration Architecture — Phase A is COMPLETED (Architecture Specification).**
-   - **Phase B Historical Estimate Ingestion Engine (FG-006), Labour Engine (Phase B), and Calibrated Pricing Engine are BLOCKED** pending review and approval of Phase A Architecture.
-   - Next candidate implementation milestone: M011 (AI Take-off / Quantity Extraction) or Phase B Ingestion (each requires dedicated Feature Gate).
+   - **M011 — Organization Foundation & Project Commercial Context: FEATURE GATE (FG-007) & ADR-028 PREPARED.** Implementation NOT authorized / blocked awaiting Joel approval.
+   - **Phase B Historical Estimate Ingestion Engine (FG-006), Labour Engine (Phase B), and Calibrated Pricing Engine remain BLOCKED** pending M011 foundation implementation.
 
 8. **LAST AUTHORIZED DELTA:**
-   - Phase A Organization & Calibration Architecture: Comprehensive specification created (`docs/architecture/organization-and-calibration-architecture.md`) defining 3-tier commercial model, canonical `Organization` entity (`ORG-001` Brayman Construction Inc.), data ownership matrix, 7-tier evidence hierarchy, 7-level canonical rate resolution cascade, 7-parameter Project Commercial Decision Gate, multi-tenant data isolation, technology-neutral historical learning, and read-only existing application impact audit.
-   - 0 lines of application, migration, or UI code modified. 0 changes to source workbooks. 140/140 tests passing.
+   - Feature Gate FG-007 (`docs/feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md`) and ADR-028 (`docs/adr/ADR-028-organization-foundation-and-project-commercial-context.md`) created.
+   - M011 implementation scope defined: Minimal `Organization` entity (`ORG-001` Brayman Construction seed/backfill), ownership graph (direct FK on `clients`, `projects`, `cost_items`, `assemblies`, `proposal_templates`), versioned `ProjectCommercialContext` (7 parameters), estimate frozen context references, tenant query scoping. Controlled additive migration objective and policy-driven justification requirement established.
+   - 0 lines of application, migration, or UI code modified. 0 database changes. 140/140 tests passing.
 
 9. **IMPLEMENTATION STATUS:**
    - Models: `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `DrawingPackage`, `DrawingRevision`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `PlanScaleCalibration`, `PlanMeasurement`.
@@ -95,6 +96,7 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
     - ADR-027: PDF Rendering and Normalized Document Coordinate System (M010)
 
 13. **PROPOSED / OPEN ADRs:**
+    - ADR-028: Organization Foundation, Multi-Tenant Boundary, and Project Commercial Context (M011 / FG-007)
     - ADR-001: Proposal Snapshot Ownership
     - ADR-003: Optional CRM Foreign Keys on Proposals
     - ADR-004: Proposal Acceptance Workflow
@@ -118,7 +120,9 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
     - FG-002: Passed (Plan Intelligence Phase A)
     - FG-003: Conditional Pass (Document Intelligence Readiness)
     - FG-004: **APPROVED, IMPLEMENTED & VERIFIED** (M009 Sheet Classification)
-    - FG-005: **APPROVED** — implementation **not started** (M010 Scale Calibration)
+    - FG-005: **APPROVED, IMPLEMENTED & VERIFIED** (M010 Scale Calibration; migration `c9e0f1a2b3d4`)
+    - FG-006: Historical Estimate Ingestion Engine Phase B (BLOCKED pending M011)
+    - FG-007: **PREPARED / RECOMMENDED FOR APPROVAL** (M011 Organization Foundation & Commercial Context; implementation blocked)
 
 15. **CHAT → REPOSITORY DELTA LEDGER RESULT:**
     `100% RECONCILED` — all approved decisions, architecture records, migration facts, and test results are committed in repository authority.

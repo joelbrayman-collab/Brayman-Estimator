@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-28 — Feature Gate Preparation: M011 Organization Foundation & Project Commercial Context (FG-007)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Prepare the first implementation Feature Gate (FG-007) and ADR-028 for the minimum organization-aware foundation and Project Creation Commercial Decision Gate required before Phase B Ingestion (FG-006), Labour Engine, and Calibrated Pricing Engine. |
+| Business decision | Authorizes conceptual scope for `Organization` entity (`ORG-001` Brayman Construction seed/backfill), direct vs inherited ownership graph, versioned `ProjectCommercialContext` with 7 mandatory commercial decision parameters, decision provenance, and frozen estimate version context references. |
+| Architectural decision | Defined ADR-028 and Feature Gate FG-007: (1) Minimal `Organization` entity, (2) Direct FK on root models (`Client`, `Project`, `CostItem`, `Assembly`, `ProposalTemplate`), (3) Inherited ownership through `Project` for child models (`Estimate`, `Proposal`, `ChangeOrder`, `PlanDocument`), (4) Dedicated versioned `ProjectCommercialContext` entity with policy-driven justification requirements, (5) Immutable `commercial_context_id` FK on `EstimateVersion`, (6) Service-level organization query scoping (`get_current_organization_id()`), (7) Controlled additive migration and backfill plan to `ORG-001` with minimal interruption objective. |
+| Prompt template used | `docs/prompts/cursor-documentation-template.md` (Feature Gate Preparation) |
+| Approved Cursor prompt summary | Execute 25-point Feature Gate Preparation: verify repo state; read governed state; specify M011 scope, Organization entity V1, ownership graph, tenant isolation V1, Brayman backfill strategy, Project Commercial Context V1, option sets, provenance model, estimate frozen context reference, pricing posture and execution risk invariants, estimate stage semantics, app impact audit, migration risks & mitigations, security baseline, test plan, UAT plan, ADR-028, and FG-007; update docs; confirm Phase B ingestion (FG-006), Labour Engine, and Pricing Engine remain blocked; run validation; output stopping report. |
+| Files expected to change | `docs/feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md` (created), `docs/adr/ADR-028-organization-foundation-and-project-commercial-context.md` (created), `docs/feature-gates/README.md` (updated), `docs/adr/README.md` (updated), `docs/chat-workflow-log.md` (updated), `docs/current-state.md` (updated), `docs/session-handoff.md` (updated) |
+| Files prohibited from changing | `app/`, `migrations/`, `tests/`, dependencies, database schema, UI, source workbooks in `~/Desktop/CalibAi Historical Estimates` |
+| Implementation result | Prepared comprehensive Feature Gate FG-007, authored ADR-028, updated indexes and governance tracking documents. 0 lines of product code modified. 0 migrations created. |
+| Tests | `git diff --check` (clean), `git status --short` (clean docs only) |
+| Project-state-report update | Not required (Feature Gate preparation stage) |
+| Milestone entry update | Not required |
+| Constitutional issue raised | Guaranteed complete historical provenance for all estimate pricing assumptions and isolated customer commercial data. Prevented Brayman-specific rates from becoming CalibAi core platform defaults. |
+| Unresolved issues | None for Feature Gate preparation. M011 implementation is NOT authorized and awaits explicit Joel / ChatGPT approval. Phase B Ingestion (FG-006), Labour Engine, and Calibrated Pricing Engine remain BLOCKED. |
+| Next approved step | Submit FG-007 and ADR-028 for Joel Brayman / ChatGPT governance review and implementation authorization. |
+| Next approved prompt | M011 Implementation Prompt (if approved). |
+| Commit hash | Working tree uncommitted (pending governance review per instructions) |
+
 ### 2026-08-28 — CalibAi / Brayman Estimator: Organization & Calibration Architecture — Phase A
 
 | Field | Content |

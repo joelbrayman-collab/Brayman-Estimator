@@ -96,11 +96,11 @@ A Review Turnover must verify and document:
 ### C. Product Lifecycle State (CalibAi Reconciliation)
 Reconstruct and classify every lifecycle domain:
 - **PLAN**: (e.g. Plan Intelligence Phase A, Document Indexing M007, Sheet Intelligence M009, Scale M010, Take-off M011+)
-- **PRICE**: (Estimating, Assemblies, Cost Library, Pricing Policy $65/hr / 15% margin)
+- **PRICE**: (Estimating builder and cost items implemented; governed pricing-policy calculation migration Proposed in ADR-025 / Future)
 - **CONTRACT**: (Proposals current; Ontario Construction Contract & Warranty templates Future/Governed)
 - **BUILD**: (Project Controls change orders partial; Field capture / mobile Future)
 - **MONITOR**: (Actual-cost feedback; ADR-021 Proposed)
-- **LEARN**: (Historical cost analysis; ADR-025 Proposed)
+- **LEARN**: (Recommendation boundary ADR-024 Accepted; ML/recommendation implementation Future)
 
 Classify each domain status strictly from repository evidence:
 `IMPLEMENTED`, `PARTIAL`, `ARCHITECTURE ONLY`, `APPROVED / NOT STARTED`, `IN PROGRESS`, `BLOCKED`, `FUTURE`, or `SUPERSEDED`.
@@ -167,7 +167,7 @@ Before declaring a turnover complete, the agent must explicitly ask and answer:
 ### A. Protected State Review
 The turnover package must explicitly enumerate all protected assets and invariants:
 - **Constitutional Articles 1–12**
-- **Accepted ADRs** (e.g. ADR-012, ADR-013, ADR-014, ADR-015, ADR-017, ADR-018, ADR-019, ADR-020, ADR-022, ADR-023, ADR-024)
+- **Accepted ADRs** (ADR-002, ADR-017, ADR-018, ADR-019, ADR-020, ADR-022, ADR-023, ADR-024)
 - **Source Immutability**: `PlanDocument` binary bytes, SHA-256 hashes, and `PlanPage` raw extractions are immutable.
 - **Human Authority**: AI suggestions never silently set authoritative SoR fields.
 - **Accepted Proposal Immutability**: Accepted commercial proposals are sealed.

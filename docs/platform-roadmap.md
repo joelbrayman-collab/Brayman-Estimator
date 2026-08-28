@@ -72,9 +72,9 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-- **`main` / `origin/main`** — confirm with `git rev-parse`. CAR-001 adopted 2026-08-28; M005–M008 merged; **M009 not started**
-- **No coded milestone in progress**
-- Next coded candidate: **M009** Sheet classification + human metadata review — [FG-004](feature-gates/FG-004-m009-sheet-classification.md) **approved**; implementation prompt **not started**
+- **`main` / `origin/main`** — confirm with `git rev-parse`. CAR-001 adopted; M005–M009 merged and verified.
+- **Review Turnover Protocol** adopted (2026-08-28) — `Review Turnover` governing.
+- Next coded candidate: **M010** Scale Calibration / Measurement Tools — requires dedicated Feature Gate.
 - CalibAi V1 direction (not authorized as a single implementation): PLAN → PRICE → CONTRACT baseline → BUILD field capture → basic MONITOR — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)
 - Document package, QuickBooks API, contract/warranty generation — **not started** (governance recorded only)
 - Estimate mapping remains outside near-term sheet work
@@ -85,18 +85,19 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 Each item still needs its own Feature Gate / approved Cursor prompt.
 
-0. CAR-001 architecture alignment — **this adoption**
-1. **M009** Sheet classification / human review — [FG-004](feature-gates/FG-004-m009-sheet-classification.md) approved; **implementation prompt next**
-2. Project Hub UX
-3. Pricing-policy application (requires [ADR-025](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) acceptance)
-4. Internal Detailed Cost Breakdown + Customer Estimate consistency
-5. Authentication / actor identity + shared API foundation
-6. BUILD Field Capture V1
-7. Field Web / Today + Capture + plan access
-8. MONITOR basic estimated-vs-actual
-9. LEARN historical intelligence / review-gated learning
-10. Contract/warranty when Legal Content Gate is satisfied
-11. QuickBooks when separately Feature-Gated
+0. CAR-001 architecture alignment + Review Turnover Protocol — **Adopted**
+1. **M009** Sheet classification / human review — **Completed & Verified** (`5dc4b09`, migration `b8d9f0a1c2e3`)
+2. **M010** Scale Calibration / Measurement Tools — **Next Candidate** (requires Feature Gate)
+3. Project Hub UX
+4. Pricing-policy application (requires [ADR-025](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) acceptance)
+5. Internal Detailed Cost Breakdown + Customer Estimate consistency
+6. Authentication / actor identity + shared API foundation
+7. BUILD Field Capture V1
+8. Field Web / Today + Capture + plan access
+9. MONITOR basic estimated-vs-actual
+10. LEARN historical intelligence / review-gated learning (ADR-024)
+11. Contract/warranty when Legal Content Gate is satisfied
+12. QuickBooks when separately Feature-Gated
 
 **Auth dependency:** Items **6–7 require item 5**. This sequence is **not** reordered to put auth before M009. Office M009 may proceed on the current unauthenticated app; field capture must not.
 

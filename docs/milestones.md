@@ -50,11 +50,11 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Field | Content |
 |-------|---------|
 | ID | FG-004 |
-| Status | **FEATURE GATE APPROVED** — M009 implementation **not started** |
+| Status | **FEATURE GATE APPROVED, IMPLEMENTED & VERIFIED** |
 | Date | 2026-08-28 |
-| Objective | Authorize M009 scope/invariants/tests/migration permission for a later implementation prompt. No sheet code in this record. |
-| Deliverables | [FG-004](feature-gates/FG-004-m009-sheet-classification.md); ADR-017/018 **Accepted** without redesign |
-| M009 code | **Not begun** |
+| Objective | Authorize M009 scope/invariants/tests/migration permission. Implemented in M009 (`5dc4b09`, migration `b8d9f0a1c2e3`). |
+| Deliverables | [FG-004](feature-gates/FG-004-m009-sheet-classification.md); ADR-017/018 **Accepted**; M009 models, services, review UI, 15 tests |
+| M009 code | Implemented & Verified |
 
 ---
 
@@ -75,7 +75,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Suggestion presence never auto-accepts SoR; human action required; uniqueness scoped to DrawingRevision; superseded revision sheets remain immutable. |
 | Open decisions | None for M009. Scale calibration / measurement tools deferred to M010. |
 | Next milestone | M010 — Scale Calibration / Measurement Tools (requires Feature Gate) |
-| Commit | Pending |
+| Commit | `5dc4b09` — *feat: implement M009 sheet classification* |
 
 ### Milestone 008 — Sheet Intelligence Architecture Planning
 

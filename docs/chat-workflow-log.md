@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-28 — Review Turnover Reconciliation Repair
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Repair Review Turnover package and governance documents: reconcile accepted ADR list (ADR-002, 017, 018, 019, 020, 022, 023, 024), classify PRICE as PARTIAL (pricing policy calculation migration Proposed in ADR-025), correct LEARN reference to ADR-024, align baseline pins (`5dc4b09` implementation, `39ae8fe` turnover adoption), and remove stale pre-implementation notes. |
+| Business decision | Maintain rigorous anti-drift discipline so that repository documents remain 100% authoritative and internally consistent. |
+| Architectural decision | No product code or schema changes. ADR statuses, lifecycle classifications, and baseline pins reconciled to exact repository truth. |
+| Prompt template used | Approved custom Cursor prompt (documentation/governance repair) |
+| Approved Cursor prompt summary | Preflight; audit 22-point turnover package; repair ADR list, lifecycle states, LEARN boundary, and baseline pins across `session-handoff.md`, `review-turnover-protocol.md`, `current-state.md`, `project-state-report.md`, `platform-roadmap.md`, and `milestones.md`; validate; commit; push. |
+| Files expected to change | Documentation and governance files only |
+| Files prohibited from changing | `app/`, `migrations/`, `tests/`, models/schemas |
+| Implementation result | All four known defects and remaining documentation inconsistencies reconciled. Completeness test passed. |
+| Tests | `git diff --check`, `pytest -q` (121 passed) |
+| Project-state-report update | Yes (Part B fully updated) |
+| Milestone entry update | Yes (`milestones.md` FG-004 and M009 updated) |
+| Constitutional issue raised | None |
+| Unresolved issues | None |
+| Next approved step | Prepare Feature Gate for M010 Scale Calibration / Measurement Tools |
+| Next approved prompt | M010 Feature Gate |
+| Commit hash | Pending |
+
 ### 2026-08-28 — Adopt Review Turnover Protocol
 
 | Field | Content |
@@ -63,7 +86,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | None |
 | Next approved step | Prepare Feature Gate for M010 Scale Calibration / Measurement Tools |
 | Next approved prompt | M010 Feature Gate |
-| Commit hash | Pending |
+| Commit hash | `39ae8fe` |
 
 ### 2026-08-28 — Implement M009 Sheet Classification / Human Metadata Review
 
@@ -86,7 +109,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | None for M009 |
 | Next approved step | Prepare Feature Gate for M010 Scale Calibration / Measurement Tools |
 | Next approved prompt | M010 Feature Gate |
-| Commit hash | Pending |
+| Commit hash | `5dc4b09` |
 
 ### 2026-08-28 — Approve M009 Sheet Feature Gate (FG-004)
 

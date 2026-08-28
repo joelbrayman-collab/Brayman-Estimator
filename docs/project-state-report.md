@@ -50,26 +50,28 @@ Distinguish from:
 | Report date | 2026-08-28 |
 | Repository | Brayman-Estimator (The Estimator) |
 | Current branch | `main` |
-| Current commit / `origin/main` | Confirm with `git rev-parse` (expect parity; tip at or after state closure `ee100ac`) |
+| Current commit / `origin/main` | Confirm with `git rev-parse` (expect parity on `main`) |
 | August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
-| Base commit (pre-governance) | `7b8d5ca` |
-| Latest completed milestone | M009 Sheet Classification / Human Metadata Review (`plan_sheets`, migration `b8d9f0a1c2e3`) |
-| Current milestone | **M009** — Complete and verified (121 tests passing) |
+| M009 Implementation Commit | `5dc4b09` — *feat: implement M009 sheet classification* |
+| Turnover Adoption Commit | `39ae8fe` — *docs: adopt review turnover protocol and governance integration* |
+| Latest completed milestone | **Milestone 009** — Sheet Classification / Human Metadata Review (`5dc4b09`, migration `b8d9f0a1c2e3`) |
+| Current milestone | **M009 Completed & Verified**; M010 Scale Calibration not yet started |
 | Product status | Operational on `main`: CRM, Estimating, Proposals, Change Orders, Plan upload (M005), Document Indexing (M007), Sheet Classification / Review (M009). CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract **not implemented**. |
-| Architecture status | CAR-001 approved. Sheet Intelligence architecture (M008) + FG-004 implemented in M009. Scale (M010) / take-off (M011+) deferred. |
-| Implemented capabilities | Phase A PDF upload/storage; page indexing; processing provenance; archive-over-delete; relational search |
-| Incomplete work | M009 sheet review (FG-004 approved, code not started); scale; AI POC; estimate mapping; auth; project-detail archived filter; document package outputs; QuickBooks integration; contract/warranty generation |
-| Database and migration status | Intended Alembic head `a7c8e9f0b1d2` (M007) |
-| Documentation status | FG-004 approved; ADR-017/018 Accepted 2026-08-28 (docs); CAR-001 adopted; working tree expected clean after this docs commit |
-| Decisions made | FG-004 approved; ADR-017/018 **Accepted**; CAR-001; ADR-019/020/022/023/024 **Accepted**; ADR-002 Accepted |
-| Decisions pending | M009 **implementation prompt**; ADR-021; ADR-025; ADR-014 formal acceptance (optional; invariant required by FG-004); legal template register; QuickBooks Feature Gate |
-| Uncommitted work | None after this documentation commit |
-| Next approved milestone | **M009** — implementation **not started** (await Cursor implementation prompt citing FG-004) |
-| Documents to read first | [FG-004](feature-gates/FG-004-m009-sheet-classification.md) → [sheet-intelligence.md](architecture/sheet-intelligence.md) → [ADR-017](adr/ADR-017-sheet-metadata-suggestion-and-review-workflow.md) · [ADR-018](adr/ADR-018-sheet-uniqueness-duplicates-and-supersession.md) |
-| Approved next Cursor prompt location or summary | **M009 implementation prompt** citing FG-004 (not this Gate). None other approved. |
-| Commit status | Confirm `HEAD` = `origin/main` after FG-004 docs commit |
-| Governance baseline | FG-004 approved; M009 code not authorized until implementation prompt |
+| Architecture status | CAR-001 approved. Sheet Intelligence architecture (M008) + FG-004 implemented in M009. Scale (M010) / take-off (M011+) deferred. Review Turnover Protocol adopted. |
+| Implemented capabilities | Phase A PDF upload/storage; page indexing; deterministic extraction; processing provenance; archive-over-delete; relational search; Sheet entities, page mappings, suggestions, human review workflow (accept/edit/reject/void), uniqueness validation, office review UI |
+| Incomplete work | Scale calibration / measurement (M010); automated AI quantity take-off (M011+); four-output document package; QuickBooks integration; Ontario contract/warranty generation; BUILD field capture |
+| Database and migration status | Current Alembic head `b8d9f0a1c2e3` (M009 Sheet Intelligence) |
+| Test status | 121 passed, 106 legacy warnings in 8.15s (`pytest -q`) |
+| Documentation status | FG-004 implemented & verified; Review Turnover Protocol adopted; ADR-002, ADR-017, ADR-018, ADR-019, ADR-020, ADR-022, ADR-023, ADR-024 Accepted; working tree clean |
+| Decisions made | M009 implemented; FG-004 verified; Review Turnover Protocol adopted; CAR-001 adopted; ADR-017/018/019/020/022/023/024 Accepted; ADR-002 Accepted |
+| Decisions pending | ADR-021 (MONITOR baseline); ADR-025 (pricing formula adoption); ADR-014 formal acceptance (optional; invariant implemented in M009); M010 Feature Gate |
+| Uncommitted work | None (clean working tree) |
+| Next approved milestone | **M010 — Scale Calibration / Measurement Tools** (requires Feature Gate) |
+| Documents to read first | [current-state.md](current-state.md) → [session-handoff.md](session-handoff.md) → [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) → [modules/plan-intelligence.md](modules/plan-intelligence.md) |
+| Approved next Cursor prompt location or summary | Prepare Feature Gate for M010 Scale Calibration |
+| Commit status | Parity on `main` |
+| Governance baseline | M009 verified; Review Turnover protocol governing; no unapproved code |
 
 ### Resume commands (Cursor Terminal)
 
@@ -80,7 +82,5 @@ git branch --show-current
 git log -1 --oneline
 git rev-parse HEAD
 git rev-parse origin/main
-# Determine whether synchronization is safe — do not automatically pull
+./venv/bin/python -m pytest -q
 ```
-
-Next: Dedicated **M009 implementation Cursor prompt** citing FG-004. Do not write sheet code until that prompt.

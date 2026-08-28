@@ -22,8 +22,9 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
 
 2. **VERIFIED BASELINE:**
    - Branch: `main`
-   - `HEAD` SHA: `5dc4b09b05c9646148b978644893312957356958`
-   - `origin/main` SHA: `5dc4b09b05c9646148b978644893312957356958` (Parity confirmed)
+   - Implementation Baseline (M009): `5dc4b09b05c9646148b978644893312957356958`
+   - Turnover Adoption: `39ae8fedf3e77be7f756eaacb25d6c06de810969`
+   - Current `HEAD` / `origin/main`: Confirm with `git rev-parse HEAD` (parity on `main`)
    - Working tree: Clean (`nothing to commit, working tree clean`)
    - Alembic head: `b8d9f0a1c2e3` (verified with `flask db current`)
 
@@ -39,11 +40,11 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
 
 5. **CURRENT CALIBAI LIFECYCLE STATE:**
    - **PLAN:** `PARTIAL` (M005 PDF upload, M007 Document indexing, M009 Sheet classification & review implemented; M010 scale / M011+ take-off future)
-   - **PRICE:** `IMPLEMENTED` (Estimating, Assemblies, Cost items, Pricing policy $65/hr direct / 15% margin)
-   - **CONTRACT:** `PARTIAL` (Proposals implemented with snapshot independence; Ontario contract & warranty templates governed/future)
-   - **BUILD:** `PARTIAL` (Change Orders implemented; field mobile capture future)
+   - **PRICE:** `PARTIAL` (Estimating builder, assemblies, line items, and cost library implemented; governed pricing policy ($65/hr direct / 15% gross margin formula `Direct Cost / 0.85` vs markup stack) calculation migration is Proposed in ADR-025 / Future)
+   - **CONTRACT:** `PARTIAL` (Proposals implemented with snapshot independence; Ontario construction contract & warranty templates governed/future)
+   - **BUILD:** `PARTIAL` (Change Orders implemented in Project Controls; field mobile capture future)
    - **MONITOR:** `FUTURE` (ADR-021 Proposed)
-   - **LEARN:** `FUTURE` (ADR-025 Proposed)
+   - **LEARN:** `FUTURE` (ADR-024 Accepted recommendation boundary; ML/recommendation implementation future)
 
 6. **COMPLETED MILESTONES:**
    - Milestone 001: Platform Governance Foundation (`v0.1-governance-baseline`)
@@ -56,10 +57,10 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
    **M009 is COMPLETED & VERIFIED.** Next approved milestone will be **M010 — Scale Calibration / Measurement Tools** (requires Feature Gate).
 
 8. **LAST AUTHORIZED DELTA:**
-   M009 Sheet Classification / Human Metadata Review per `FG-004`: durable `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion` models, migration `b8d9f0a1c2e3`, service layer, office review UI, and 15 tests.
+   M009 Sheet Classification / Human Metadata Review per `FG-004` + Review Turnover Protocol adoption.
 
 9. **IMPLEMENTATION STATUS:**
-   - Models: `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `DrawingPackage`, `DrawingRevision`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`.
+   - Models: `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent` (`sheet_id`), `DrawingPackage`, `DrawingRevision`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`.
    - Routes: Upload, list, detail, reprocess, download, archive, sheets index, sheet create, sheet review, suggestion accept/reject, sheet edit, void, finalize index.
    - Templates: `list.html`, `detail.html`, `upload.html`, `sheets_index.html`, `sheet_review.html`, `sheet_create.html`.
 
@@ -76,16 +77,39 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
     - Legal Content Gate for Ontario contract/warranty templates.
 
 12. **ACCEPTED ADRs:**
-    ADR-001 through ADR-013, ADR-015, ADR-016, ADR-017, ADR-018, ADR-019, ADR-020, ADR-022, ADR-023, ADR-024.
+    - ADR-002: Accepted Proposal Immutability (M003)
+    - ADR-017: Sheet Metadata Suggestion and Review Workflow (M008/FG-004/M009)
+    - ADR-018: Sheet Uniqueness, Duplicates, and Supersession (M008/FG-004/M009)
+    - ADR-019: CalibAi Lifecycle and Project Hub (CAR-001)
+    - ADR-020: BUILD Module Boundary vs Project Controls (CAR-001)
+    - ADR-022: Field Client and Shared API (CAR-001)
+    - ADR-023: Field Evidence Original vs Derived (CAR-001)
+    - ADR-024: LEARN Recommendation Boundary (CAR-001)
 
 13. **PROPOSED / OPEN ADRs:**
-    ADR-014 (identity model adopted in code; document status remains Proposed), ADR-021 (MONITOR baseline), ADR-025 (pricing formula adoption).
+    - ADR-001: Proposal Snapshot Ownership
+    - ADR-003: Optional CRM Foreign Keys on Proposals
+    - ADR-004: Proposal Acceptance Workflow
+    - ADR-005: AI Take-Off Source Traceability
+    - ADR-006: Human Approval Before Estimate Insertion
+    - ADR-007: Plan and Estimate Version Ownership
+    - ADR-008: Supplier Price Snapshotting
+    - ADR-009: PDF-First versus CAD-First Ingestion
+    - ADR-010: Build versus Buy for CAD and Document Processing
+    - ADR-011: AI Confidence Threshold Policy
+    - ADR-012: Plan Document Version Ownership
+    - ADR-013: Document Intelligence Layer Boundary
+    - ADR-014: Sheet Identity and Page Mapping (identity model adopted in code; document status remains Proposed)
+    - ADR-015: Extracted Metadata Ownership and Provenance
+    - ADR-016: Document Intelligence Search Strategy
+    - ADR-021: MONITOR Commercial Baseline
+    - ADR-025: Gross-Margin Policy vs Estimate Markup Stack
 
 14. **FEATURE GATES:**
-    - FG-001: Passed
-    - FG-002: Passed
-    - FG-003: Conditional Pass
-    - FG-004: **APPROVED, IMPLEMENTED & VERIFIED** (M009)
+    - FG-001: Passed (Proposals)
+    - FG-002: Passed (Plan Intelligence Phase A)
+    - FG-003: Conditional Pass (Document Intelligence Readiness)
+    - FG-004: **APPROVED, IMPLEMENTED & VERIFIED** (M009 Sheet Classification)
 
 15. **CHAT → REPOSITORY DELTA LEDGER RESULT:**
     `100% RECONCILED` — all approved decisions, architecture records, migration facts, and test results are committed in repository authority.
@@ -94,7 +118,7 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
     Formal acceptance of ADR-021 and ADR-025 by Joel.
 
 17. **KNOWN RISKS:**
-    None for M009. Scale calibration / multi-scale PDF support requires robust rendering architecture in M010.
+    None for M009. Scale calibration in M010 requires robust multi-scale drawing rendering architecture.
 
 18. **DEFERRED ITEMS:**
     - M010: Scale calibration / measurement tools
@@ -159,7 +183,7 @@ git rev-parse origin/main
 
 Expected Baseline:
 - Branch: main
-- HEAD = origin/main = 5dc4b09b05c9646148b978644893312957356958 (or latest committed main)
+- HEAD = origin/main (confirm parity via git rev-parse)
 - Working tree: clean
 - Alembic head: b8d9f0a1c2e3
 - Tests: 121 passed
@@ -168,6 +192,7 @@ Expected Baseline:
 Independently verify from repository documents:
 - Latest completed milestone: M009 Sheet Classification / Human Metadata Review
 - Protected state & invariants (source immutability, human SoR, pricing policy)
+- Accepted ADRs: ADR-002, ADR-017, ADR-018, ADR-019, ADR-020, ADR-022, ADR-023, ADR-024
 - Open decisions: ADR-021, ADR-025 pending approval
 - Next authorized capability: Prepare Feature Gate for M010 Scale Calibration
 

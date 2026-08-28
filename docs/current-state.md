@@ -51,8 +51,8 @@ M005–M009 are **implemented and verified**. Next approved milestone is **M010 
 
 ## Recommended next steps
 
-1. Dedicated **M009 implementation Cursor prompt** citing [FG-004](feature-gates/FG-004-m009-sheet-classification.md). **Do not start sheet code until that prompt.**
-2. Joel accepts ADR-021 (MONITOR baseline) and ADR-025 (pricing formula) when ready. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004.
+1. Prepare and approve the **Feature Gate for M010 — Scale Calibration / Measurement Tools**.
+2. Joel accepts ADR-021 (MONITOR baseline) and ADR-025 (pricing formula) when ready. ADR-014 remains Proposed as a document; Page ≠ Sheet is implemented and verified.
 3. Do not begin QuickBooks API, contract generation, BUILD capture, or field clients until separately Feature-Gated.
 
 ## Related

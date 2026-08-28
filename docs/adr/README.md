@@ -13,7 +13,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 **Proposed** is not **Accepted**. Citing a Proposed ADR in a module, Feature Gate, or roadmap does not change its status. Implementation still requires Feature Gate + accepted decisions where the ADR itself requires acceptance.
 
-**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; M009 Feature Gate FG-004; **implementation not started**); ADR-019, ADR-020, ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction).
+**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction).
 
 ## Process
 
@@ -53,8 +53,8 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-017](ADR-017-sheet-metadata-suggestion-and-review-workflow.md) | Sheet Metadata Suggestion and Review Workflow | **Accepted** (2026-08-28; FG-004; no sheet code yet) |
-| [ADR-018](ADR-018-sheet-uniqueness-duplicates-and-supersession.md) | Sheet Uniqueness, Duplicates, and Supersession | **Accepted** (2026-08-28; FG-004; no sheet code yet) |
+| [ADR-017](ADR-017-sheet-metadata-suggestion-and-review-workflow.md) | Sheet Metadata Suggestion and Review Workflow | **Accepted** (2026-08-28; FG-004; implemented in M009) |
+| [ADR-018](ADR-018-sheet-uniqueness-duplicates-and-supersession.md) | Sheet Uniqueness, Duplicates, and Supersession | **Accepted** (2026-08-28; FG-004; implemented in M009) |
 
 ### Supplier (strategic)
 
@@ -82,4 +82,4 @@ M004 readiness: [../architecture/M004-plan-intelligence-readiness-report.md](../
 M006 readiness: [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md).
 M008 readiness: [../architecture/M008-sheet-intelligence-readiness-report.md](../architecture/M008-sheet-intelligence-readiness-report.md).
 
-> ADR-017/018 are **Accepted**. They still do **not** start M009 code. Implementation requires [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) **plus** a dedicated Cursor implementation prompt.
+> ADR-017/018 are **Accepted** and implemented in [M009](../feature-gates/FG-004-m009-sheet-classification.md). Next milestone (M010 Scale Calibration) requires its own dedicated Feature Gate.

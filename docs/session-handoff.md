@@ -54,10 +54,15 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
    - Milestone 009: Sheet Classification / Human Metadata Review (`5dc4b09`, migration `b8d9f0a1c2e3`)
    - Milestone 010: Scale Calibration / Measurement Tools (migration `c9e0f1a2b3d4`)
 
-7. **CURRENT MILESTONE:**
-   **M010 is COMPLETED & VERIFIED.** Next candidate milestone is **M011 — AI Take-off / Quantity Extraction Foundation** (requires dedicated Feature Gate).
+7. **CURRENT MILESTONE / RESEARCH PHASE:**
+   - **M010 is COMPLETED & VERIFIED.**
+   - **Historical Estimate Ingestion — Phase A (Source Audit & Architecture) is COMPLETED (Research Draft).**
+   - **Phase B Historical Estimate Ingestion Engine is BLOCKED** pending review and approval of **CalibAi Organization & Calibration Architecture — Phase A**.
+   - Next candidate implementation milestone: M011 (AI Take-off / Quantity Extraction) or Phase B Ingestion (each requires dedicated Feature Gate).
 
 8. **LAST AUTHORIZED DELTA:**
+   - Phase A Read-only Historical Source Audit: 20 external workbooks audited, SHA-256 manifest created (`docs/architecture/historical-estimates-source-manifest.md`), ingestion architecture specified (`docs/architecture/historical-estimate-ingestion-architecture.md`), 5-workbook pilot extraction completed.
+   - 0 lines of application, migration, or UI code modified. Source files 100% byte-for-byte immutable.
    M010 Scale Calibration & Measurement Tools implementation (migration `c9e0f1a2b3d4`, 19 focused tests, PDF.js measurement UI).
 
 9. **IMPLEMENTATION STATUS:**

@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-28 — Historical Estimate Ingestion — Phase A (Source Audit & Ingestion Architecture)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Perform read-only source data audit, profiling, and ingestion architecture design across 20 historical Brayman estimating workbooks located outside Git repository |
+| Business decision | Historical estimates are commercial evidence of past pricing and estimating patterns, not automatic pricing truth or proof of profitability. Raw customer workbooks remain external and immutable. |
+| Architectural decision | Categorized 20 workbooks into 5 template families (Family A: 9, Family B: 5, Family C: 1, Family D: 1, Family E: 4). Discovered historical workbooks use Cost-Plus Markup (10-15%) rather than true Gross Margin. Defined organization-neutral cell-level provenance model, 8-tier data quality / contradiction model, 6-tier historical evidence hierarchy, and canonical normalized schema design with Organization ownership. |
+| Prompt template used | `docs/prompts/cursor-architecture-template.md` (Read-only audit & architecture) |
+| Approved Cursor prompt summary | Read-only inspect `~/Desktop/CalibAi Historical Estimates`; calculate SHA-256 hashes; profile structure & content; detect pricing methods; design cell-level provenance, contradiction model, evidence hierarchy, and normalized schema; run pilot extraction on 5 workbooks; produce manifest and architecture specification; verify source files unchanged; do not commit. |
+| Files expected to change | `docs/architecture/historical-estimates-source-manifest.md` (created), `docs/architecture/historical-estimate-ingestion-architecture.md` (created), `docs/chat-workflow-log.md` (updated), `docs/current-state.md` (updated), `docs/session-handoff.md` (updated) |
+| Files prohibited from changing | `app/`, `migrations/`, `tests/`, dependencies, source workbooks in `~/Desktop/CalibAi Historical Estimates` |
+| Implementation result | Completed full 20-workbook forensic audit, generated source provenance manifest, created comprehensive ingestion architecture specification, conducted 5-workbook pilot extraction, verified 100% source byte immutability. No code, migrations, or UI modified. |
+| Tests | Python verification scripts for OpenXML zip parsing, SHA-256 integrity, cell extraction; `./venv/bin/python -m pytest -q` (140 passed) |
+| Project-state-report update | Not required (Phase A is research / architecture stage) |
+| Milestone entry update | Not required |
+| Constitutional issue raised | Identified pricing methodology gap between historical cost-plus markup and governing 15% true gross margin policy (`pricing-policy.md` / `ADR-025`). Confirmed CalibAi Core vs Customer Organization separation. |
+| Unresolved issues | None for Phase A. Phase B is explicitly blocked pending review and approval of CalibAi Organization & Calibration Architecture — Phase A. |
+| Next approved step | Submit Phase A audit & architecture package for Joel / ChatGPT governance review. Execute Organization & Calibration Architecture Phase A before any Phase B implementation. |
+| Next approved prompt | Organization & Calibration Architecture — Phase A prompt. |
+| Commit hash | Working tree uncommitted (pending governance review per instructions) |
+
 ### 2026-08-28 — Implement Milestone 010 (Scale Calibration & Manual Measurement Tools)
 
 | Field | Content |

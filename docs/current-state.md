@@ -28,6 +28,7 @@
 ## Architecture / readiness only (not implemented)
 
 - **Document Intelligence architecture (M006)** — FG-003, `document-intelligence.md`, ADR-013–016
+- **Historical Estimate Ingestion Architecture (Phase A Complete)** — Read-only audit of 20 historical workbooks, source manifest (`docs/architecture/historical-estimates-source-manifest.md`), ingestion architecture specification (`docs/architecture/historical-estimate-ingestion-architecture.md`), 5-workbook pilot extraction, pricing-method analysis. Implementation/DB deferred to Phase B.
 - AI take-off / quantity extraction (M011+) / estimate mapping
 - CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract
 

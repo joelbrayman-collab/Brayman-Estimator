@@ -58,6 +58,8 @@ Also read [`platform-governance.md`](platform-governance.md), [`governance/conti
 | [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md) | QuickBooks export pipeline boundary | **Future** — not implemented |
 | [architecture/M006-document-intelligence-readiness-report.md](architecture/M006-document-intelligence-readiness-report.md) | Milestone 006 readiness report | Historical / operational |
 | [architecture/M008-sheet-intelligence-readiness-report.md](architecture/M008-sheet-intelligence-readiness-report.md) | Milestone 008 readiness report | Historical / operational |
+| [architecture/historical-estimates-source-manifest.md](architecture/historical-estimates-source-manifest.md) | Historical estimate source provenance manifest | **Operational / Metadata (Phase A)** |
+| [architecture/historical-estimate-ingestion-architecture.md](architecture/historical-estimate-ingestion-architecture.md) | Historical estimate ingestion architecture & audit | **Architecture / Research (Phase A)** |
 | [platform-governance.md](platform-governance.md) | Decision authority, Feature Gate, ownership, drift stop | **Governing** |
 | [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md) | Continuity, anti-drift, preflight, rollover, protected assets | **Governing** |
 | [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) | Review Turnover procedure, delta ledger, fresh chat startup | **Governing** |

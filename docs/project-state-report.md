@@ -55,9 +55,9 @@ Distinguish from:
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | M009 Implementation Commit | `5dc4b09` — *feat: implement M009 sheet classification* |
 | Turnover Adoption Commit | `39ae8fe` — *docs: adopt review turnover protocol and governance integration* |
-| Latest completed milestone | **Milestone 010** — Scale Calibration / Measurement Tools (migration `c9e0f1a2b3d4`; 140 total tests passed) |
-| Current milestone | **M010 Completed & Verified** |
-| Product status | Operational on `main`: CRM, Estimating, Proposals, Change Orders, Plan upload (M005), Document Indexing (M007), Sheet Classification / Review (M009), Scale Calibration & Manual Measurement Tools (M010). CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract **not implemented**. |
+| Latest completed milestone | **FG-006** — Historical Estimate Ingestion Engine Phase B (migration `e1b2c3d4e5f6`; 170 total tests passed) |
+| Current milestone | **FG-006 Completed & Verified (Awaiting Governance Commit)** |
+| Product status | Operational on `main`: CRM, Estimating, Proposals, Change Orders, Plan upload (M005), Document Indexing (M007), Sheet Classification / Review (M009), Scale Calibration & Manual Measurement Tools (M010), Organization Foundation & Project Commercial Context (M011), Historical Estimate Ingestion Engine Phase B (FG-006). CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract / Labour Engine / Pricing Engine **not implemented**. |
 | Architecture status | CAR-001 approved. Sheet Intelligence (M009) + Scale Calibration / Measurement (M010) implemented and verified. ADR-026/027 Accepted. Review Turnover Protocol adopted. |
 | Implemented capabilities | Phase A PDF upload/storage; page indexing; deterministic extraction; processing provenance; archive-over-delete; relational search; Sheet entities, page mappings, suggestions, human review workflow (accept/edit/reject/void), uniqueness validation, office review UI; 2-point drawing scale calibration, preset scales, viewport calibrations, NTS flagging; manual linear, polyline, polygon area (Shoelace) / perimeter, and count measurements; normalized document coordinate transforms; interactive PDF.js viewer |
 | Incomplete work | Automated AI quantity take-off (M011+); four-output document package; QuickBooks integration; Ontario contract/warranty generation; BUILD field capture |

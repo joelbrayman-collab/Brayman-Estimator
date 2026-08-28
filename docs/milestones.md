@@ -32,6 +32,17 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### FG-006 — Historical Estimate Ingestion Engine Phase B Feature Gate
+
+| Field | Content |
+|-------|---------|
+| ID | FG-006 |
+| Status | **FEATURE GATE APPROVED, IMPLEMENTED & VERIFIED** |
+| Date | 2026-08-28 |
+| Objective | Authorize and implement deterministic, organization-aware ingestion of historical estimate workbooks into CalibAi's governed evidence model. Ingest the 20 Brayman source workbooks into ORG-001 private intelligence. |
+| Deliverables | [FG-006](feature-gates/FG-006-historical-estimate-ingestion-phase-b.md); pure Python OpenXML parser (no macro execution), Template classifier (Families A–E), Family adapters, canonical persistence models (`HistoricalSourceWorkbook`, `HistoricalEstimate`, `HistoricalSourceObservation`, `HistoricalCostLineItem`, `HistoricalLabourItem`, `HistoricalSubcontractItem`, `HistoricalDataQualityFlag`, `HistoricalEstimateReviewDecision`), evidence review service/UI (`/historical-estimates/`), additive migration `e1b2c3d4e5f6`, 10 dedicated tests |
+| FG-006 code | Implemented & Verified (169/169 tests passing; 20/20 source SHA-256 hashes verified; awaiting governance audit / commit) |
+
 ### FG-007 — M011 Organization Foundation & Project Commercial Context Feature Gate
 
 | Field | Content |

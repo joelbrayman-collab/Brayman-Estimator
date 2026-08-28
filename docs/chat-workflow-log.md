@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-28 — FG-006 Implementation: Historical Estimate Ingestion Engine Phase B
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Implement deterministic, organization-aware ingestion of historical estimate workbooks into CalibAi's governed evidence model (FG-006 Phase B). Ingest the 20 Brayman source workbooks into ORG-001 private intelligence. |
+| Business decision | Historical workbooks contain private commercial evidence for future calibration. Ingestion must extract facts deterministically with source-cell provenance without executing macros, altering source files, or converting historical data into approved pricing/labour rates automatically. |
+| Architectural decision | (1) Implemented pure Python OpenXML reader (`app/services/historical_ingestion/openxml_reader.py`) reading spreadsheet XML directly without executing macros or VBA; (2) Implemented deterministic template classifier (`template_classifier.py`) categorizing all 20 workbooks into Families A–E (9 Slab, 5 ICF, 1 Multi-trade, 1 Build, 4 Ad-hoc); (3) Implemented versioned family adapters (`family_a.py` through `family_e.py`); (4) Created canonical normalized models (`HistoricalSourceWorkbook`, `HistoricalEstimate`, `HistoricalSourceObservation`, `HistoricalCostLineItem`, `HistoricalLabourItem`, `HistoricalSubcontractItem`, `HistoricalDataQualityFlag`, `HistoricalEstimateReviewDecision`); (5) Enforced organization isolation on all tables (`ORG-001`); (6) Created additive Alembic migration `e1b2c3d4e5f6`; (7) Implemented evidence review service and UI routes/templates (`/historical-estimates/`); (8) Verified 20/20 SHA-256 source file integrity before and after ingestion; (9) Implemented 10 dedicated tests in `tests/test_historical_ingestion.py`. |
+| Prompt template used | Approved custom Cursor prompt (FG-006 Historical Estimate Ingestion Engine Phase B) |
+| Approved Cursor prompt summary | Implement deterministic OpenXML reader, template classifier, family adapters, canonical models, additive migration, human review UI, isolation tests, pilot regression anchors, and controlled UAT ingestion of 20 Brayman workbooks into ORG-001. Stop and report. Do not commit. Do not push. |
+| Files expected to change | `app/models/historical_estimates.py`, `app/models/__init__.py`, `app/services/historical_ingestion/*`, `app/services/historical_review.py`, `app/routes/historical_estimates.py`, `app/templates/historical_estimates/*`, `app/navigation.py`, `migrations/versions/e1b2c3d4e5f6_add_historical_estimate_ingestion_fg006.py`, `tests/test_historical_ingestion.py`, `docs/*` |
+| Files prohibited from changing | Protected Plan Intelligence geometry, accepted proposals, current pricing policy, source historical workbooks (`~/Desktop/CalibAi Historical Estimates`), Labour Engine Phase B (blocked), Pricing Engine (blocked) |
+| Implementation result | Completed FG-006 implementation and controlled ingestion. 20 source workbooks ingested into ORG-001 (661 cost items, 120 labour items, 7 subcontract items, 664 source observations, 19 quality flags). 10/10 dedicated tests pass; 169/169 full suite tests pass. 20/20 source SHA-256 hashes verified exact. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_historical_ingestion.py` → **11 passed**; `./venv/bin/python -m pytest -q` → **170 passed** |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | None |
+| Next approved step | Governance review and commit authorization for FG-006. |
+| Next approved prompt | FG-006 Commit Authorization |
+| Commit hash | Pending review |
+
 ### 2026-08-28 — M011 Final Implementation Reconciliation: Legacy Commercial Context Correction
 
 | Field | Content |

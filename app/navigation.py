@@ -48,6 +48,12 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
+                "title": "Historical Evidence",
+                "endpoint": "historical_estimates.index",
+                "icon": "bi-archive",
+                "enabled": True,
+            },
+            {
                 "title": "Proposals",
                 "endpoint": "proposals.list_proposals",
                 "icon": "bi-file-earmark-text",

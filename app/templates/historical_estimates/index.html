@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Historical Estimate Evidence — Brayman Construction Platform{% endblock %}
+{% block page_title %}Historical Estimate Evidence{% endblock %}
+
+{% block content %}
+<div class="content-container" style="max-width: 1200px; margin: 0 auto; padding: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">Historical Source Workbooks & Estimates</h2>
+            <p class="muted-copy" style="margin: 4px 0 0 0; font-size: 0.95rem;">
+                Organization-scoped historical estimate evidence (ORG-001 Brayman Construction). Ingested under FG-006 Phase B.
+            </p>
+        </div>
+        <div style="background: #eef2ff; color: #3730a3; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.85rem;">
+            Evidence Ingestion Engine Phase B
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="padding: 12px 16px; margin-bottom: 20px; border-radius: 6px; {% if category == 'success' %}background: #e6f4ea; color: #137333;{% else %}background: #fce8e6; color: #c5221f;{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card" style="background: #fff; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; background: #f9fafb; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 600; color: #374151;">Ingested Evidence Records ({{ estimates|length }})</span>
+            <span style="font-size: 0.85rem; color: #6b7280;">Tenant: ORG-001 Private Intelligence</span>
+        </div>
+
+        {% if not estimates %}
+        <div style="padding: 48px; text-align: center; color: #6b7280;">
+            <i class="bi bi-inbox" style="font-size: 2.5rem; display: block; margin-bottom: 12px;"></i>
+            <p style="margin: 0; font-size: 1.1rem; font-weight: 500;">No historical estimate records ingested yet.</p>
+            <p style="margin: 4px 0 0 0; font-size: 0.9rem;">Run governed workbook ingestion to populate ORG-001 historical evidence.</p>
+        </div>
+        {% else %}
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                <thead>
+                    <tr style="border-bottom: 1px solid #e5e7eb; background: #fafafa; color: #4b5563;">
+                        <th style="padding: 12px 16px; font-weight: 600;">Source ID</th>
+                        <th style="padding: 12px 16px; font-weight: 600;">Project / Client</th>
+                        <th style="padding: 12px 16px; font-weight: 600;">Family</th>
+                        <th style="padding: 12px 16px; font-weight: 600;">Tier</th>
+                        <th style="padding: 12px 16px; font-weight: 600;">Pricing Method</th>
+                        <th style="padding: 12px 16px; font-weight: 600; text-align: right;">Direct Cost</th>
+                        <th style="padding: 12px 16px; font-weight: 600; text-align: right;">Selling Price</th>
+                        <th style="padding: 12px 16px; font-weight: 600; text-align: center;">Status</th>
+                        <th style="padding: 12px 16px; font-weight: 600; text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for est in estimates %}
+                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                        <td style="padding: 12px 16px; font-family: monospace; font-weight: 600; color: #111827;">
+                            {{ est.source_workbook.source_id }}
+                        </td>
+                        <td style="padding: 12px 16px;">
+                            <div style="font-weight: 600; color: #111827;">{{ est.project_name or est.client_name or "Untitled Historical Project" }}</div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">{{ est.source_workbook.original_filename }}</div>
+                        </td>
+                        <td style="padding: 12px 16px;">
+                            <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; background: #e0f2fe; color: #0369a1;">
+                                {{ est.template_family }}
+                            </span>
+                        </td>
+                        <td style="padding: 12px 16px;">
+                            <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; {% if est.evidence_tier == 'TIER_A' %}background: #dcfce7; color: #15803d;{% elif est.evidence_tier == 'TIER_B' %}background: #fef9c3; color: #a16207;{% elif est.evidence_tier == 'TIER_C' %}background: #f3e8ff; color: #7e22ce;{% else %}background: #f3f4f6; color: #4b5563;{% endif %}">
+                                {{ est.evidence_tier }}
+                            </span>
+                        </td>
+                        <td style="padding: 12px 16px; font-size: 0.8rem; color: #4b5563;">
+                            {{ est.pricing_method }}
+                        </td>
+                        <td style="padding: 12px 16px; text-align: right; font-family: monospace;">
+                            {% if est.direct_cost_total %}${{ "{:,.2f}".format(est.direct_cost_total) }}{% else %}—{% endif %}
+                        </td>
+                        <td style="padding: 12px 16px; text-align: right; font-family: monospace; font-weight: 600; color: #111827;">
+                            {% if est.selling_price_before_tax %}${{ "{:,.2f}".format(est.selling_price_before_tax) }}{% else %}—{% endif %}
+                        </td>
+                        <td style="padding: 12px 16px; text-align: center;">
+                            <span style="display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; {% if est.review_status == 'ACCEPTED_AS_EVIDENCE' %}background: #dcfce7; color: #15803d;{% elif est.review_status == 'REVIEW_REQUIRED' %}background: #fee2e2; color: #b91c1c;{% elif est.review_status == 'EXTRACTED' %}background: #fef3c7; color: #b45309;{% else %}background: #f3f4f6; color: #4b5563;{% endif %}">
+                                {{ est.review_status }}
+                            </span>
+                        </td>
+                        <td style="padding: 12px 16px; text-align: right;">
+                            <a href="{{ url_for('historical_estimates.detail', estimate_id=est.id) }}" class="btn-primary" style="display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; text-decoration: none; background: #2563eb; color: #fff; font-weight: 500;">
+                                Inspect Provenance
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -308,10 +308,19 @@ Five representative workbooks were extracted read-only during the Phase A audit:
 | `HIST-EST-0002` | Allen Jacques - TES copy.xlsm | Allen Jacques / 3415 Roger Stevens | $30,976.00 | Cost-Plus Markup | 15.0% ($4,646.40) | $35,622.40 | $4,630.91 | $40,253.31 | `House TES!H45:H49` |
 | `HIST-EST-0003` | Bob Milne copy.xlsm | Bob Milne / 1082 Boucher Cres | $124,520.08 | Cost-Plus Markup (Multi-stage) | 12.0% ($16,187.61) | $140,707.69 | $18,291.99 | $158,999.68 | `Worksheet FOUNDATION!I147:I149` |
 | `HIST-EST-0008` | Copy of Julia Harish RENO.xlsx | Julia Harish / Reno | $85,152.40 | Cost-Plus Markup | 15.0% ($12,772.86) | $97,925.26 | $12,730.28 | $110,655.54 | `Sheet1!C58:C63` |
-| `HIST-EST-0014` | Mike Pratt FULL ICF 2 V2 copy 2.xlsm | Mike Pratt / 2562 Church St | $547,405.80 | Category Tiered Markup | 12.5% ($73,419.11) | $620,824.91 | $80,707.24 | $701,532.15 | `SUMMARY!C37:C38` |
+| `HIST-EST-0014` | Mike Pratt FULL ICF 2 V2 copy 2.xlsm | Mike Pratt / 2562 Church St | $534,436.10 (Direct Scopes) | Category Tiered Markup | 12.5% GC Work ($60,492.01) + 5% Contingency ($25,896.80) | $620,824.91 | $80,707.24 | $701,532.15 | `SUMMARY!C10:C37` |
 | `HIST-EST-0001` | Alberton Garage Cost copy.xlsx | Alberton Garage | $33,146.74 | Cost-Plus Markup | 15.0% ($4,972.01) | $38,118.75 | $4,955.44 | $43,074.19 | `Sheet1!G11:I11` |
 
-*Extraction Verification:* All pilot extraction values reconciled with 100% mathematical precision back to the exact source worksheet cells without modifying any underlying source files.
+*Extraction Verification & Reconciliation Note:*
+- `HIST-EST-0008` (Julia Harish): Direct Cost is $85,152.40 (`Sheet1!C58`), 15% Margin is $12,772.86 (`Sheet1!C59`), and 5% Contingency is $4,257.62 (`Sheet1!C60`). The pre-tax selling price is $97,925.26 (`C58 + C59`), HST 13% is $12,730.28, and Total is $110,655.54. Contingency ($4,257.62) is retained as an internal reserve (`CONTINGENCY_NOT_INCLUDED_IN_SELL_PRICE`) and does not roll into the customer selling price.
+- `HIST-EST-0014` (Mike Pratt): In Phase A pilot notes, this was recorded as $547,405.80 direct cost / $73,419.11 markup under an unverified manual audit interpretation. In Phase B deterministic ingestion, the exact cell formulas on the `SUMMARY` sheet govern:
+  * Trade scope lines (`SUMMARY!C10:C34`): $534,436.10 (`direct_cost_total`)
+  * GC Work / Markup at 12.5% (`SUMMARY!C35` = `SUM(C9:C32)*B35`): $60,492.01 (`markup_total`)
+  * Change Order / Contingency at 5.0% (`SUMMARY!C36` = `SUM(C10:C33)*B36`): $25,896.80 (`contingency_total`, included in pre-tax selling price via `SUMMARY!C37`)
+  * Selling Price Before Tax (`SUMMARY!C37` = `SUM(C10:C36)`): $620,824.91 (`selling_price_before_tax`)
+  * HST 13%: $80,707.24 (`tax_amount`)
+  * Grand Total: $701,532.15 (`total_price`)
+All commercial layers are stored with distinct source-cell provenance, guaranteeing that contingency is not conflated with markup. Phase A's $547,405.80 / $73,419.11 values are documented as manual / unresolved historical audit figures superseded by deterministic OpenXML extraction.
 
 ---
 

@@ -15,7 +15,7 @@
 | August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | Working tree | Clean (confirm `git status`) |
-| Governance | FG-004, FG-005, FG-007 (M011 Organization Foundation) **approved & implemented**; CAR-001 CalibAi architecture adopted 2026-08-28; Review Turnover Protocol adopted 2026-08-28 |
+| Governance | FG-004, FG-005, FG-006 (Historical Estimate Ingestion Phase B), FG-007 (M011 Organization Foundation) **approved & implemented**; CAR-001 CalibAi architecture adopted 2026-08-28; Review Turnover Protocol adopted 2026-08-28 |
 
 ## Implemented (evidenced in code on `main`)
 
@@ -25,23 +25,23 @@
 - **Sheet Intelligence / Classification (M009)** — `plan_sheets`, `plan_sheet_pages`, `plan_sheet_suggestions`, `sheet_id` on audit events; service layer for human review (accept, edit, reject, manual create, void); revision sheet index validation & finalization; office review UI; migration `b8d9f0a1c2e3`
 - **Scale Calibration / Measurement Tools (M010)** — `plan_scale_calibrations`, `plan_measurements`; 2-point calibration, preset ratios, viewport/region calibrations, NTS flagging; manual linear, polyline, area (Shoelace) / perimeter, and count measurements; normalized document coordinate transforms; interactive PDF.js viewer; migration `c9e0f1a2b3d4`
 - **Organization Foundation & Project Commercial Context (M011 / FG-007)** — `Organization` model (`ORG-001` Brayman Construction Inc. seeded/backfilled), direct root entity ownership (`clients`, `projects`, `cost_items`, `assemblies`, `proposal_templates`), inherited graph ownership, tenant query isolation with fail-closed 404s, versioned `ProjectCommercialContext` with 7 mandatory decision parameters, policy-driven justification engine, atomic project creation + commercial decision gate, explicit `Legacy / Unknown` migration semantics for pre-M011 projects (preventing fabricated commercial assumptions), project context versioning UI, immutable `EstimateVersion.commercial_context_id` references; migration `d0a1b2c3d4e5`; 159 total tests passing
+- **Historical Estimate Ingestion Engine Phase B (FG-006)** — Deterministic OpenXML parser (pure Python, zero macro execution), template-family classifier (Families A–E), versioned family extraction adapters, canonical normalized persistence models (`HistoricalSourceWorkbook`, `HistoricalEstimate`, `HistoricalSourceObservation`, `HistoricalCostLineItem`, `HistoricalLabourItem`, `HistoricalSubcontractItem`, `HistoricalDataQualityFlag`, `HistoricalEstimateReviewDecision`), organization isolation (ORG-001 private intelligence), source-cell provenance tracking, idempotent re-ingestion, human review workflow and UI (`/historical-estimates/`), controlled UAT ingestion of 20 Brayman source workbooks (20/20 exact SHA-256 matches); migration `e1b2c3d4e5f6`; 170 total tests passing (11 dedicated historical ingestion tests)
 
 ## Architecture / readiness only (not implemented)
 
-- **Document Intelligence architecture (M006)** — FG-003, `document-intelligence.md`, ADR-013–016
-- **Historical Estimate Ingestion Architecture (Phase A Complete)** — Read-only audit of 20 historical workbooks, source manifest (`docs/architecture/historical-estimates-source-manifest.md`), ingestion architecture specification (`docs/architecture/historical-estimate-ingestion-architecture.md`), 5-workbook pilot extraction, pricing-method analysis. Implementation/DB deferred to Phase B (FG-006).
-- **Organization & Calibration Architecture (Phase A Complete)** — Comprehensive specification (`docs/architecture/organization-and-calibration-architecture.md`) defining CalibAi Core vs Baseline Library vs Organization Calibration Model, 7-tier evidence hierarchy, 7-level canonical rate resolution cascade, 7-parameter Project Commercial Decision Gate, multi-tenant isolation, technology-neutral learning, and read-only impact audit. Phase B ingestion (FG-006), Labour Engine, and calibrated pricing remain blocked pending review.
+- **Labour Engine Phase B & Calibration Model** — Blocked pending separate governance gate.
+- **Organization-Calibrated Pricing Engine** — Blocked pending separate governance gate.
 - AI take-off / quantity extraction (M012+) / estimate mapping
 - CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract
 
 ## Migrations
 
-- Alembic head: `d0a1b2c3d4e5` (M011 Organization Foundation & Project Commercial Context)
-- Upgraded cleanly from `c9e0f1a2b3d4` (M010)
+- Alembic head: `e1b2c3d4e5f6` (FG-006 Historical Estimate Ingestion Engine Phase B)
+- Upgraded cleanly from `d0a1b2c3d4e5` (M011)
 
 ## Current milestone status
 
-M005–M011 are **implemented and verified**. Next candidate milestone is **FG-006 — Historical Estimate Ingestion Phase B** or **Labour Engine Phase B**.
+M005–M011 and **FG-006 Historical Estimate Ingestion Engine Phase B** are **implemented and verified**. Next candidate milestone is **Labour Engine Phase B** or **Organization-Calibrated Pricing Engine**.
 
 ## August 25, 2026 governance (recorded — not implemented)
 

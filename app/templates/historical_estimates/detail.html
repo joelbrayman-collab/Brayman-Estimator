@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}{{ estimate.project_name or estimate.client_name }} — Historical Evidence Detail{% endblock %}
+{% block page_title %}Historical Evidence Detail{% endblock %}
+
+{% block content %}
+<div class="content-container" style="max-width: 1200px; margin: 0 auto; padding: 24px;">
+    <div style="margin-bottom: 16px;">
+        <a href="{{ url_for('historical_estimates.index') }}" style="color: #4b5563; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
+            <i class="bi bi-arrow-left"></i> Back to Historical Evidence
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="padding: 12px 16px; margin-bottom: 20px; border-radius: 6px; {% if category == 'success' %}background: #e6f4ea; color: #137333;{% else %}background: #fce8e6; color: #c5221f;{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Header Card -->
+    <div class="card" style="background: #fff; border-radius: 8px; border: 1px solid #e5e7eb; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                    <span style="font-family: monospace; font-weight: 700; color: #4f46e5; background: #eef2ff; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">
+                        {{ estimate.source_workbook.source_id }}
+                    </span>
+                    <span style="font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: #e0f2fe; color: #0369a1;">
+                        {{ estimate.template_family }}
+                    </span>
+                    <span style="font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: #fef3c7; color: #b45309;">
+                        {{ estimate.review_status }}
+                    </span>
+                </div>
+                <h1 style="margin: 0; font-size: 1.6rem; font-weight: 700; color: #111827;">{{ estimate.project_name or estimate.client_name }}</h1>
+                <p class="muted-copy" style="margin: 4px 0 0 0; font-size: 0.95rem; color: #6b7280;">
+                    Source File: <strong>{{ estimate.source_workbook.original_filename }}</strong> (SHA-256: <code>{{ estimate.source_workbook.sha256[:12] }}...</code>)
+                </p>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 0.85rem; color: #6b7280;">Extracted Total (Pre-Tax)</div>
+                <div style="font-size: 1.8rem; font-weight: 700; color: #111827; font-family: monospace;">
+                    {% if estimate.selling_price_before_tax %}${{ "{:,.2f}".format(estimate.selling_price_before_tax) }}{% else %}—{% endif %}
+                </div>
+                <div style="font-size: 0.85rem; color: #6b7280;">
+                    Direct Cost: {% if estimate.direct_cost_total %}${{ "{:,.2f}".format(estimate.direct_cost_total) }}{% else %}—{% endif %} | Markup: {% if estimate.markup_total %}${{ "{:,.2f}".format(estimate.markup_total) }}{% else %}—{% endif %}{% if estimate.contingency_total %} | Contingency: ${{ "{:,.2f}".format(estimate.contingency_total) }}{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quality Warnings if any -->
+    {% if estimate.source_workbook.quality_flags %}
+    <div style="margin-bottom: 24px;">
+        <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: #991b1b;">
+            <i class="bi bi-exclamation-triangle-fill"></i> Data Quality Warnings & Observations ({{ estimate.source_workbook.quality_flags|length }})
+        </h3>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            {% for flag in estimate.source_workbook.quality_flags %}
+            <div style="background: #fff; border-left: 4px solid {% if flag.severity == 'CRITICAL' %}#ef4444{% elif flag.severity == 'WARNING' %}#f59e0b{% else %}#3b82f6{% endif %}; border-radius: 4px; padding: 12px 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                <div style="display: flex; justify-content: space-between;">
+                    <strong style="font-size: 0.9rem; color: #111827;">{{ flag.flag_type }}</strong>
+                    {% if flag.cell_coordinate %}<span style="font-family: monospace; font-size: 0.8rem; color: #6b7280;">{{ flag.sheet_name }}!{{ flag.cell_coordinate }}</span>{% endif %}
+                </div>
+                <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: #4b5563;">{{ flag.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Commercial Extraction Summary & Review Decision Form Grid -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
+        <!-- Extracted Commercial Parameters -->
+        <div class="card" style="background: #fff; border-radius: 8px; border: 1px solid #e5e7eb; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 600; margin-top: 0; margin-bottom: 16px;">Extracted Commercial Facts</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 0.9rem;">
+                <div>
+                    <span style="color: #6b7280; display: block; font-size: 0.8rem;">Client Name</span>
+                    <strong style="color: #111827;">{{ estimate.client_name or "—" }}</strong>
+                </div>
+                <div>
+                    <span style="color: #6b7280; display: block; font-size: 0.8rem;">Project Address</span>
+                    <strong style="color: #111827;">{{ estimate.project_address or "—" }}</strong>
+                </div>
+                <div>
+                    <span style="color: #6b7280; display: block; font-size: 0.8rem;">Pricing Method</span>
+                    <strong style="color: #111827;">{{ estimate.pricing_method }}</strong>
+                </div>
+                <div>
+                    <span style="color: #6b7280; display: block; font-size: 0.8rem;">Extracted Margin / Markup %</span>
+                    <strong style="color: #111827;">{% if estimate.margin_percent %}{{ (estimate.margin_percent * 100)|round(2) }}%{% else %}—{% endif %}</strong>
+                </div>
+                <div>
+                    <span style="color: #6b7280; display: block; font-size: 0.8rem;">Total Pre-Tax</span>
+                    <strong style="color: #111827; font-family: monospace;">{% if estimate.selling_price_before_tax %}${{ "{:,.2f}".format(estimate.selling_price_before_tax) }}{% else %}—{% endif %}</strong>
+                </div>
+                <div>
+                    <span style="color: #6b7280; display: block; font-size: 0.8rem;">HST / Tax Amount</span>
+                    <strong style="color: #111827; font-family: monospace;">{% if estimate.tax_amount %}${{ "{:,.2f}".format(estimate.tax_amount) }}{% else %}—{% endif %}</strong>
+                </div>
+                <div>
+                    <span style="color: #6b7280; display: block; font-size: 0.8rem;">Total With Tax</span>
+                    <strong style="color: #111827; font-family: monospace;">{% if estimate.total_price %}${{ "{:,.2f}".format(estimate.total_price) }}{% else %}—{% endif %}</strong>
+                </div>
+                <div>
+                    <span style="color: #6b7280; display: block; font-size: 0.8rem;">Extraction Confidence</span>
+                    <strong style="color: #111827;">{{ (estimate.extraction_confidence * 100)|round(0) }}%</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Human Review Form -->
+        <div class="card" style="background: #fff; border-radius: 8px; border: 1px solid #e5e7eb; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 600; margin-top: 0; margin-bottom: 16px;">Evidence Review Decision</h3>
+            <form action="{{ url_for('historical_estimates.post_review', estimate_id=estimate.id) }}" method="POST">
+                <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 4px;">Review Status</label>
+                    <select name="review_status" style="width: 100%; padding: 6px 10px; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.9rem;">
+                        {% for st in review_statuses %}
+                        <option value="{{ st }}" {% if estimate.review_status == st %}selected{% endif %}>{{ st }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 4px;">Evidence Tier</label>
+                    <select name="evidence_tier" style="width: 100%; padding: 6px 10px; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.9rem;">
+                        {% for tier in evidence_tiers %}
+                        <option value="{{ tier }}" {% if estimate.evidence_tier == tier %}selected{% endif %}>{{ tier }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 4px;">Reviewer Name</label>
+                    <input type="text" name="reviewed_by" value="Joel Brayman" required style="width: 100%; padding: 6px 10px; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.9rem;">
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 4px;">Review Notes</label>
+                    <textarea name="review_notes" rows="3" placeholder="Add verification or audit notes..." style="width: 100%; padding: 6px 10px; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.85rem;"></textarea>
+                </div>
+
+                <button type="submit" style="width: 100%; padding: 8px 16px; border-radius: 4px; background: #2563eb; color: #fff; font-weight: 600; border: none; cursor: pointer;">
+                    Record Review Decision
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Normalized Line Items Tabs / Sections -->
+    <div class="card" style="background: #fff; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px;">
+        <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+            <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">Normalized Line Items ({{ estimate.cost_items|length }} Materials, {{ estimate.labour_items|length }} Labour, {{ estimate.subcontract_items|length }} Subcontract)</h3>
+        </div>
+
+        {% if estimate.cost_items %}
+        <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb;">
+            <h4 style="margin: 0 0 12px 0; font-size: 0.95rem; font-weight: 600; color: #374151;">Material & Cost Line Items</h4>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                <thead>
+                    <tr style="border-bottom: 1px solid #e5e7eb; color: #6b7280; text-align: left;">
+                        <th style="padding: 6px 8px;">Description</th>
+                        <th style="padding: 6px 8px;">Category / Division</th>
+                        <th style="padding: 6px 8px; text-align: right;">Qty</th>
+                        <th style="padding: 6px 8px;">Unit</th>
+                        <th style="padding: 6px 8px; text-align: right;">Unit Cost</th>
+                        <th style="padding: 6px 8px; text-align: right;">Extended Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in estimate.cost_items %}
+                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                        <td style="padding: 6px 8px; font-weight: 500;">{{ item.description }}</td>
+                        <td style="padding: 6px 8px; color: #6b7280;">{{ item.category or item.division or "—" }}</td>
+                        <td style="padding: 6px 8px; text-align: right; font-family: monospace;">{{ item.quantity or "—" }}</td>
+                        <td style="padding: 6px 8px;">{{ item.unit or "—" }}</td>
+                        <td style="padding: 6px 8px; text-align: right; font-family: monospace;">{% if item.unit_cost %}${{ "{:,.2f}".format(item.unit_cost) }}{% else %}—{% endif %}</td>
+                        <td style="padding: 6px 8px; text-align: right; font-family: monospace; font-weight: 600;">{% if item.extended_cost %}${{ "{:,.2f}".format(item.extended_cost) }}{% else %}—{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {% if estimate.labour_items %}
+        <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb;">
+            <h4 style="margin: 0 0 12px 0; font-size: 0.95rem; font-weight: 600; color: #374151;">Historical Labour Items</h4>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                <thead>
+                    <tr style="border-bottom: 1px solid #e5e7eb; color: #6b7280; text-align: left;">
+                        <th style="padding: 6px 8px;">Task Description</th>
+                        <th style="padding: 6px 8px; text-align: right;">Crew</th>
+                        <th style="padding: 6px 8px; text-align: right;">Days</th>
+                        <th style="padding: 6px 8px; text-align: right;">Total Hours</th>
+                        <th style="padding: 6px 8px; text-align: right;">Rate</th>
+                        <th style="padding: 6px 8px; text-align: right;">Extended Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in estimate.labour_items %}
+                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                        <td style="padding: 6px 8px; font-weight: 500;">{{ item.task_description }}</td>
+                        <td style="padding: 6px 8px; text-align: right; font-family: monospace;">{{ item.crew_size or "—" }}</td>
+                        <td style="padding: 6px 8px; text-align: right; font-family: monospace;">{{ item.duration_days or "—" }}</td>
+                        <td style="padding: 6px 8px; text-align: right; font-family: monospace;">{{ item.total_man_hours or "—" }}</td>
+                        <td style="padding: 6px 8px; text-align: right; font-family: monospace;">{% if item.hourly_rate %}${{ "{:,.2f}".format(item.hourly_rate) }}{% else %}—{% endif %}</td>
+                        <td style="padding: 6px 8px; text-align: right; font-family: monospace; font-weight: 600;">{% if item.extended_labour_cost %}${{ "{:,.2f}".format(item.extended_labour_cost) }}{% else %}—{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {% if estimate.subcontract_items %}
+        <div style="padding: 16px 20px;">
+            <h4 style="margin: 0 0 12px 0; font-size: 0.95rem; font-weight: 600; color: #374151;">Subcontract & Package Records</h4>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                <thead>
+                    <tr style="border-bottom: 1px solid #e5e7eb; color: #6b7280; text-align: left;">
+                        <th style="padding: 6px 8px;">Trade Category</th>
+                        <th style="padding: 6px 8px;">Scope Description</th>
+                        <th style="padding: 6px 8px;">Subcontractor</th>
+                        <th style="padding: 6px 8px; text-align: right;">Direct Quote / Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in estimate.subcontract_items %}
+                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                        <td style="padding: 6px 8px; font-weight: 600;">{{ item.trade_category }}</td>
+                        <td style="padding: 6px 8px;">{{ item.scope_description }}</td>
+                        <td style="padding: 6px 8px; color: #6b7280;">{{ item.subcontractor_name or "—" }}</td>
+                        <td style="padding: 6px 8px; text-align: right; font-family: monospace; font-weight: 600;">{% if item.direct_cost %}${{ "{:,.2f}".format(item.direct_cost) }}{% else %}—{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Source Observations Provenance Table -->
+    <div class="card" style="background: #fff; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+            <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">Source-Cell Provenance Observations ({{ estimate.source_workbook.observations|length }})</h3>
+            <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: #6b7280;">
+                Full lineage from source workbook worksheets and cells to normalized CalibAi entities.
+            </p>
+        </div>
+        <div style="max-height: 400px; overflow-y: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+                <thead>
+                    <tr style="border-bottom: 1px solid #e5e7eb; background: #fafafa; color: #6b7280; text-align: left; position: sticky; top: 0;">
+                        <th style="padding: 8px 12px;">Sheet</th>
+                        <th style="padding: 8px 12px;">Cell</th>
+                        <th style="padding: 8px 12px;">Raw Value</th>
+                        <th style="padding: 8px 12px;">Raw Formula</th>
+                        <th style="padding: 8px 12px;">Normalized Entity</th>
+                        <th style="padding: 8px 12px;">Field</th>
+                        <th style="padding: 8px 12px;">Rule</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obs in estimate.source_workbook.observations %}
+                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                        <td style="padding: 6px 12px; font-weight: 500;">{{ obs.sheet_name }}</td>
+                        <td style="padding: 6px 12px; font-family: monospace; font-weight: 600; color: #2563eb;">{{ obs.cell_coordinate }}</td>
+                        <td style="padding: 6px 12px; font-family: monospace;">{{ obs.raw_value or obs.display_value or "—" }}</td>
+                        <td style="padding: 6px 12px; font-family: monospace; color: #7c3aed;">{{ obs.raw_formula or "—" }}</td>
+                        <td style="padding: 6px 12px; color: #374151;">{{ obs.normalized_entity_type }}</td>
+                        <td style="padding: 6px 12px; font-weight: 600; color: #111827;">{{ obs.normalized_field }}</td>
+                        <td style="padding: 6px 12px; color: #6b7280;">{{ obs.extraction_rule_id }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

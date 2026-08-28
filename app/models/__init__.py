@@ -10,6 +10,16 @@ from app.models.estimate import (
 from app.models.organization import Organization
 from app.models.project import Project, ProjectCommercialContext
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
+from app.models.historical_estimates import (
+    HistoricalCostLineItem,
+    HistoricalDataQualityFlag,
+    HistoricalEstimate,
+    HistoricalEstimateReviewDecision,
+    HistoricalLabourItem,
+    HistoricalSourceObservation,
+    HistoricalSourceWorkbook,
+    HistoricalSubcontractItem,
+)
 from app.project_controls.models import ChangeOrder, ChangeOrderItem
 from app.plan_intelligence.models import (
     DrawingPackage,
@@ -34,6 +44,14 @@ __all__ = [
     "EstimateLineItem",
     "EstimateSection",
     "EstimateVersion",
+    "HistoricalCostLineItem",
+    "HistoricalDataQualityFlag",
+    "HistoricalEstimate",
+    "HistoricalEstimateReviewDecision",
+    "HistoricalLabourItem",
+    "HistoricalSourceObservation",
+    "HistoricalSourceWorkbook",
+    "HistoricalSubcontractItem",
     "Organization",
     "PlanAuditEvent",
     "PlanDocument",

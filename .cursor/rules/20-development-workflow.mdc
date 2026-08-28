@@ -11,4 +11,5 @@ alwaysApply: true
 - Implement only the approved Cursor prompt scope.
 - Stop and report when requirements conflict, migrations appear unapproved, or ownership is unclear.
 - Use **Cursor Terminal** for git/pytest/Flask inside this repo; say the terminal name explicitly when documenting commands.
+- Chat conversation titles in this workspace must always start with `BRAYMAN — <Topic>` to prevent cross-project context mixing with other workspaces (e.g. AiRIA).
 - After implementation: report files changed, assumptions, risks, and exact test results for ChatGPT review before commit.

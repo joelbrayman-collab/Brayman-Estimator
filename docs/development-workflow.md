@@ -55,6 +55,10 @@ Use the governed resume procedure in [session-handoff.md](session-handoff.md). C
 
 Prefer **Cursor Terminal** for git, pytest, Flask, and documentation commands inside this repository. Use **Mac Terminal** only for OS-level tasks outside the repo. Always name the terminal explicitly when giving commands.
 
+## Chat conversation naming
+
+To prevent cross-project context confusion (e.g. between Brayman-Estimator and AiRIA), all chat conversation titles in this workspace must start with `BRAYMAN — <Topic>`.
+
 ## Related
 
 - [platform-constitution.md](platform-constitution.md)

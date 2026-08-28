@@ -22,7 +22,7 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
 
 2. **VERIFIED BASELINE:**
    - Branch: `main`
-   - Implementation Baseline (M010): Current M010 commit
+   - Implementation Baseline (M010): `6b969fe`
    - Turnover Adoption: `39ae8fedf3e77be7f756eaacb25d6c06de810969`
    - Current `HEAD` / `origin/main`: Confirm with `git rev-parse HEAD` (parity on `main`)
    - Working tree: Clean (`nothing to commit, working tree clean`)

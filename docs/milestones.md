@@ -86,7 +86,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Extracted scale strings never auto-confirm; measurements require confirmed calibration; multi-scale viewports scope measurement scales deterministically; geometry persisted in normalized document coordinates `[0.0, 1.0]`. |
 | Open decisions | None for M010. Automated quantity take-off deferred to M011+. |
 | Next milestone | M011 — AI Take-off / Quantity Extraction Foundation (requires dedicated Feature Gate) |
-| Commit | Pending M010 implementation commit |
+| Commit | `6b969fe` — *feat: implement M010 scale calibration* |
 
 ### Milestone 009 — Sheet Classification / Human Metadata Review
 

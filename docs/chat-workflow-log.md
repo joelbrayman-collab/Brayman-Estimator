@@ -63,7 +63,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | None for M010. Automated quantity take-off deferred to M011+. |
 | Next approved step | Feature Gate and architecture for M011 — AI Take-off / Quantity Extraction Foundation. |
 | Next approved prompt | M011 Feature Gate prompt |
-| Commit hash | Pending M010 implementation commit |
+| Commit hash | `6b969fe` — *feat: implement M010 scale calibration* |
 
 ### 2026-08-28 — Prepare and Approve M010 Scale Calibration Feature Gate (FG-005)
 

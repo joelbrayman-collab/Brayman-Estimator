@@ -15,7 +15,7 @@
 | August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | Working tree | Clean (confirm `git status`) |
-| Governance | FG-004 **approved**; M009 **implemented & verified**; CAR-001 CalibAi architecture adopted 2026-08-28; Review Turnover Protocol adopted 2026-08-28 |
+| Governance | FG-004 **approved & implemented**; FG-005 (M010 Scale Calibration) **approved**; CAR-001 CalibAi architecture adopted 2026-08-28; Review Turnover Protocol adopted 2026-08-28 |
 
 ## Implemented (evidenced in code on `main`)
 
@@ -37,7 +37,7 @@
 
 ## Current milestone status
 
-M005–M009 are **implemented and verified**. Next approved milestone is **M010 — Scale Calibration / Measurement Tools** (requires separate Feature Gate).
+M005–M009 are **implemented and verified**. Next approved milestone is **M010 — Scale Calibration / Measurement Tools** ([FG-005](feature-gates/FG-005-m010-scale-calibration.md) approved; implementation not started).
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -51,16 +51,16 @@ M005–M009 are **implemented and verified**. Next approved milestone is **M010 
 
 ## Recommended next steps
 
-1. Prepare and approve the **Feature Gate for M010 — Scale Calibration / Measurement Tools**.
-2. Joel accepts ADR-021 (MONITOR baseline) and ADR-025 (pricing formula) when ready. ADR-014 remains Proposed as a document; Page ≠ Sheet is implemented and verified.
+1. Dedicated **M010 implementation Cursor prompt** citing [FG-005](feature-gates/FG-005-m010-scale-calibration.md). **Do not start scale/measurement code until that prompt.**
+2. Joel accepts ADR-021 (MONITOR baseline), ADR-025 (pricing formula), ADR-026 (scale ownership), and ADR-027 (coordinate system) when ready.
 3. Do not begin QuickBooks API, contract generation, BUILD capture, or field clients until separately Feature-Gated.
 
 ## Related
 
 - [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md)
-- [FG-004](feature-gates/FG-004-m009-sheet-classification.md)
+- [FG-004](feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](feature-gates/FG-005-m010-scale-calibration.md)
 - [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md)
-- [architecture/M008-sheet-intelligence-readiness-report.md](architecture/M008-sheet-intelligence-readiness-report.md)
-- [ADR-017](adr/ADR-017-sheet-metadata-suggestion-and-review-workflow.md) · [ADR-018](adr/ADR-018-sheet-uniqueness-duplicates-and-supersession.md)
+- [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md)
+- [ADR-017](adr/ADR-017-sheet-metadata-suggestion-and-review-workflow.md) · [ADR-018](adr/ADR-018-sheet-uniqueness-duplicates-and-supersession.md) · [ADR-026](adr/ADR-026-scale-ownership-and-calibration-provenance.md) · [ADR-027](adr/ADR-027-pdf-rendering-and-normalized-coordinate-system.md)
 - [modules/plan-intelligence.md](modules/plan-intelligence.md)
 - [architecture/document-intelligence.md](architecture/document-intelligence.md)

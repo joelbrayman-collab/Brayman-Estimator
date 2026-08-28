@@ -56,6 +56,13 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | [ADR-017](ADR-017-sheet-metadata-suggestion-and-review-workflow.md) | Sheet Metadata Suggestion and Review Workflow | **Accepted** (2026-08-28; FG-004; implemented in M009) |
 | [ADR-018](ADR-018-sheet-uniqueness-duplicates-and-supersession.md) | Sheet Uniqueness, Duplicates, and Supersession | **Accepted** (2026-08-28; FG-004; implemented in M009) |
 
+### Scale Calibration & Measurement (Milestone 010)
+
+| ADR | Title | Status |
+|-----|-------|--------|
+| [ADR-026](ADR-026-scale-ownership-and-calibration-provenance.md) | Scale Ownership, Multi-Scale Viewports, and Calibration Provenance | **Proposed** (FG-005) |
+| [ADR-027](ADR-027-pdf-rendering-and-normalized-coordinate-system.md) | PDF Rendering and Normalized Document Coordinate System | **Proposed** (FG-005) |
+
 ### Supplier (strategic)
 
 | ADR | Title | Status |
@@ -82,4 +89,4 @@ M004 readiness: [../architecture/M004-plan-intelligence-readiness-report.md](../
 M006 readiness: [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md).
 M008 readiness: [../architecture/M008-sheet-intelligence-readiness-report.md](../architecture/M008-sheet-intelligence-readiness-report.md).
 
-> ADR-017/018 are **Accepted** and implemented in [M009](../feature-gates/FG-004-m009-sheet-classification.md). Next milestone (M010 Scale Calibration) requires its own dedicated Feature Gate.
+> ADR-017/018 are **Accepted** and implemented in [M009](../feature-gates/FG-004-m009-sheet-classification.md). M010 Scale Calibration is governed by [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) with Proposed ADR-026 and ADR-027. Implementation requires a dedicated implementation prompt.

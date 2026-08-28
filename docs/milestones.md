@@ -45,6 +45,17 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | M009 | **Unchanged** — M009 remains coded Sheet classification. CAR-001 is not M009. M009 code **not begun**. |
 | Next | Feature-Gate M009 when authorized; accept ADR-021/025 when ready |
 
+### FG-005 — M010 Scale Calibration Feature Gate
+
+| Field | Content |
+|-------|---------|
+| ID | FG-005 |
+| Status | **FEATURE GATE APPROVED** — M010 implementation **not started** |
+| Date | 2026-08-28 |
+| Objective | Authorize M010 scope/invariants/tests/migration permission for drawing scale calibration and manual measurement tools. No scale code in this record. |
+| Deliverables | [FG-005](feature-gates/FG-005-m010-scale-calibration.md); [ADR-026](adr/ADR-026-scale-ownership-and-calibration-provenance.md) Proposed; [ADR-027](adr/ADR-027-pdf-rendering-and-normalized-coordinate-system.md) Proposed |
+| M010 code | **Not begun** |
+
 ### FG-004 — M009 Sheet Classification Feature Gate
 
 | Field | Content |
@@ -74,7 +85,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Validation | 121/121 tests pass; migration applies cleanly; project/revision isolation verified; source doc/page immutability verified; estimating/proposals unaffected. |
 | Architectural findings | Suggestion presence never auto-accepts SoR; human action required; uniqueness scoped to DrawingRevision; superseded revision sheets remain immutable. |
 | Open decisions | None for M009. Scale calibration / measurement tools deferred to M010. |
-| Next milestone | M010 — Scale Calibration / Measurement Tools (requires Feature Gate) |
+| Next milestone | M010 — Scale Calibration / Measurement Tools (FG-005 Approved; awaits implementation prompt) |
 | Commit | `5dc4b09` — *feat: implement M009 sheet classification* |
 
 ### Milestone 008 — Sheet Intelligence Architecture Planning

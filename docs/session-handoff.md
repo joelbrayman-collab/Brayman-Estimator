@@ -54,10 +54,10 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
    - Milestone 009: Sheet Classification / Human Metadata Review (`5dc4b09`, migration `b8d9f0a1c2e3`)
 
 7. **CURRENT MILESTONE:**
-   **M009 is COMPLETED & VERIFIED.** Next approved milestone will be **M010 — Scale Calibration / Measurement Tools** (requires Feature Gate).
+   **M009 is COMPLETED & VERIFIED.** **FG-005 (M010 Scale Calibration) is APPROVED.** Next coded milestone is **M010 — Scale Calibration / Measurement Tools** (awaits dedicated implementation prompt).
 
 8. **LAST AUTHORIZED DELTA:**
-   M009 Sheet Classification / Human Metadata Review per `FG-004` + Review Turnover Protocol adoption.
+   FG-005 M010 Scale Calibration Feature Gate approval + Proposed ADR-026/027. (M009 Sheet Classification / Human Metadata Review implemented in `5dc4b09`).
 
 9. **IMPLEMENTATION STATUS:**
    - Models: `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent` (`sheet_id`), `DrawingPackage`, `DrawingRevision`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`.
@@ -104,36 +104,39 @@ REVIEW TURNOVER PACKAGE — BRAYMAN ESTIMATOR
     - ADR-016: Document Intelligence Search Strategy
     - ADR-021: MONITOR Commercial Baseline
     - ADR-025: Gross-Margin Policy vs Estimate Markup Stack
+    - ADR-026: Scale Ownership, Multi-Scale Viewports, and Calibration Provenance (FG-005)
+    - ADR-027: PDF Rendering and Normalized Document Coordinate System (FG-005)
 
 14. **FEATURE GATES:**
     - FG-001: Passed (Proposals)
     - FG-002: Passed (Plan Intelligence Phase A)
     - FG-003: Conditional Pass (Document Intelligence Readiness)
     - FG-004: **APPROVED, IMPLEMENTED & VERIFIED** (M009 Sheet Classification)
+    - FG-005: **APPROVED** — implementation **not started** (M010 Scale Calibration)
 
 15. **CHAT → REPOSITORY DELTA LEDGER RESULT:**
     `100% RECONCILED` — all approved decisions, architecture records, migration facts, and test results are committed in repository authority.
 
 16. **OPEN DECISIONS:**
-    Formal acceptance of ADR-021 and ADR-025 by Joel.
+    Formal acceptance of ADR-021, ADR-025, ADR-026, and ADR-027 by Joel.
 
 17. **KNOWN RISKS:**
     None for M009. Scale calibration in M010 requires robust multi-scale drawing rendering architecture.
 
 18. **DEFERRED ITEMS:**
-    - M010: Scale calibration / measurement tools
+    - M010: Scale calibration / measurement tools (FG-005 approved, code awaiting prompt)
     - M011+: AI-assisted quantity take-off
     - QuickBooks Online direct API integration
     - Ontario construction contract generation
     - BUILD field capture / mobile app
 
 19. **EXPLICITLY PROHIBITED NEXT ACTIONS:**
-    - DO NOT implement M010 scale tools without an approved Feature Gate.
+    - DO NOT implement M010 scale tools without an approved implementation prompt.
     - DO NOT implement QuickBooks API or contract generation.
     - DO NOT alter pricing formulas or accepted proposals.
 
 20. **NEXT AUTHORIZED ACTION:**
-    Prepare and approve the Feature Gate for **M010 — Scale Calibration / Measurement Tools**.
+    Dedicated **M010 implementation Cursor prompt** citing `FG-005`.
 
 21. **EXACT REPOSITORY RESUME COMMANDS:**
     ```bash
@@ -193,8 +196,8 @@ Independently verify from repository documents:
 - Latest completed milestone: M009 Sheet Classification / Human Metadata Review
 - Protected state & invariants (source immutability, human SoR, pricing policy)
 - Accepted ADRs: ADR-002, ADR-017, ADR-018, ADR-019, ADR-020, ADR-022, ADR-023, ADR-024
-- Open decisions: ADR-021, ADR-025 pending approval
-- Next authorized capability: Prepare Feature Gate for M010 Scale Calibration
+- Open decisions: ADR-021, ADR-025, ADR-026, ADR-027 pending approval
+- Next authorized capability: Dedicated M010 implementation prompt citing FG-005
 
 Do NOT rely on AI memory. Do NOT guess missing product rules.
 Conversation titles in this workspace must start with: BRAYMAN — <Topic>.

@@ -66,7 +66,10 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 - Milestone 006 Document Intelligence architecture + FG-003 (`35413a1`; PR #4) + ADR-013/014; ADR-015/016 with M007
 - Milestone 007 Document Indexing (`cbefe7a`; PR #5 → `eb00123`)
 - Milestone 008 Sheet Intelligence architecture + ADR-017/018 (`8c74e31`; PR #6 → `ee9b4b2`) — **docs only**
+- Milestone 009 Sheet Classification / Human Metadata Review (`5dc4b09`, migration `b8d9f0a1c2e3`)
 - **CAR-001** CalibAi product & architecture reconciliation (2026-08-28) — **docs/governance only**; not a product milestone number
+- **Review Turnover Protocol** adopted (`39ae8fe`) + reconciliation repair (`ed3e51f`)
+- **FG-005** M010 Scale Calibration Feature Gate Approved + ADR-026/027 Proposed — **docs only** (code not started)
 
 ---
 
@@ -74,7 +77,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 - **`main` / `origin/main`** — confirm with `git rev-parse`. CAR-001 adopted; M005–M009 merged and verified.
 - **Review Turnover Protocol** adopted (2026-08-28) — `Review Turnover` governing.
-- Next coded candidate: **M010** Scale Calibration / Measurement Tools — requires dedicated Feature Gate.
+- **M010 Scale Calibration Feature Gate (FG-005)** approved (2026-08-28) — implementation awaiting dedicated Cursor prompt.
 - CalibAi V1 direction (not authorized as a single implementation): PLAN → PRICE → CONTRACT baseline → BUILD field capture → basic MONITOR — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)
 - Document package, QuickBooks API, contract/warranty generation — **not started** (governance recorded only)
 - Estimate mapping remains outside near-term sheet work
@@ -87,7 +90,7 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 
 0. CAR-001 architecture alignment + Review Turnover Protocol — **Adopted**
 1. **M009** Sheet classification / human review — **Completed & Verified** (`5dc4b09`, migration `b8d9f0a1c2e3`)
-2. **M010** Scale Calibration / Measurement Tools — **Next Candidate** (requires Feature Gate)
+2. **M010** Scale Calibration / Measurement Tools — **FG-005 Approved** (implementation prompt next)
 3. Project Hub UX
 4. Pricing-policy application (requires [ADR-025](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) acceptance)
 5. Internal Detailed Cost Breakdown + Customer Estimate consistency

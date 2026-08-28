@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-28 — Prepare and Approve M010 Scale Calibration Feature Gate (FG-005)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-28 |
+| Branch | `main` |
+| Objective | Prepare the formal Feature Gate FG-005 and architecture records for M010 — Scale Calibration / Measurement Tools. No product code, schema changes, or migrations. |
+| Business decision | Estimators can calibrate physical scale on reviewed drawing sheets using 2-point reference dimensions or standard ratios, define multi-scale viewports, and take manual linear, polyline, area, and count measurements with coordinate stability. |
+| Architectural decision | Additive models `PlanScaleCalibration` and `PlanMeasurement` under `PlanSheet` (scoped to `DrawingRevision`). Normalized document coordinate system (`0.0 to 1.0` / 72 DPI PDF points) rendered via Mozilla PDF.js in Flask templates with interactive SVG/Canvas overlay. Human authority required for confirmation; uncalibrated/NTS fails closed. Proposed ADR-026 (Scale Ownership & Multi-Scale Provenance) and ADR-027 (PDF Rendering & Normalized Coordinate System). |
+| Prompt template used | Approved custom Cursor prompt (documentation/governance) |
+| Approved Cursor prompt summary | Anti-drift preflight; existing-before-new search; create `docs/feature-gates/FG-005-m010-scale-calibration.md`, `docs/adr/ADR-026-scale-ownership-and-calibration-provenance.md`, `docs/adr/ADR-027-pdf-rendering-and-normalized-coordinate-system.md`; update indexes, roadmap, milestones, state, handoff, and log; validate; commit; push. |
+| Files expected to change | Documentation and governance files only |
+| Files prohibited from changing | `app/`, `migrations/`, `tests/`, models/schemas |
+| Implementation result | FG-005 prepared and approved; ADR-026 and ADR-027 proposed; governance indexes and state reports updated. M010 code not begun. |
+| Tests | `git diff --check`, `pytest -q` (121 passed) |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (`milestones.md` FG-005 added) |
+| Constitutional issue raised | None |
+| Unresolved issues | None for FG-005 |
+| Next approved step | Dedicated M010 implementation Cursor prompt citing FG-005 |
+| Next approved prompt | M010 implementation prompt |
+| Commit hash | Pending |
+
 ### 2026-08-28 — Review Turnover Reconciliation Repair
 
 | Field | Content |

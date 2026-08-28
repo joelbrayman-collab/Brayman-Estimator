@@ -63,7 +63,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | None for FG-005 |
 | Next approved step | Dedicated M010 implementation Cursor prompt citing FG-005 |
 | Next approved prompt | M010 implementation prompt |
-| Commit hash | Pending |
+| Commit hash | `f8da43c` |
 
 ### 2026-08-28 — Review Turnover Reconciliation Repair
 

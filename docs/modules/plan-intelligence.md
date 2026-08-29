@@ -2,10 +2,10 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Phase A + M007 indexing + M009 Sheet classification + M010 scale/measurement implemented**; **M012 / FG-010 APPROVED FOR IMPLEMENTATION — NOT IMPLEMENTED** |
+| Status | **Phase A + M007 indexing + M009 Sheet classification + M010 scale/measurement implemented**; **M012 / FG-010 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED — NOT YET LIVE-MIGRATED** |
 | Updated | 2026-08-29 |
 | Code | `app/plan_intelligence/` |
-| Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) · [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **APPROVED FOR IMPLEMENTATION — NOT IMPLEMENTED** |
+| Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) · [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED — NOT YET LIVE-MIGRATED** |
 | Architecture | [../architecture/plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) · [../architecture/document-intelligence.md](../architecture/document-intelligence.md) · [../architecture/sheet-intelligence.md](../architecture/sheet-intelligence.md) · [../architecture/ai-takeoff-quantity-extraction-foundation.md](../architecture/ai-takeoff-quantity-extraction-foundation.md) |
 | Readiness | [../architecture/M004-plan-intelligence-readiness-report.md](../architecture/M004-plan-intelligence-readiness-report.md) · [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md) · [../architecture/M008-sheet-intelligence-readiness-report.md](../architecture/M008-sheet-intelligence-readiness-report.md) |
 
@@ -50,8 +50,9 @@ Proposal generation already exists. Plan Intelligence is the next major platform
 | Append-only plan audit events | **Done** (M007 + M009 `sheet_id`) |
 | Project-scoped relational search/filter | **Done** (M007) |
 | Sheet classification / human review | **Done** (M009; `plan_sheets`, `plan_sheet_pages`, `plan_sheet_suggestions`, human accept/edit/reject, uniqueness validation) |
-| Scale calibration / measurement | **Done** (M010; [FG-005](../feature-gates/FG-005-m010-scale-calibration.md); ADR-026/027; migration `c9e0f1a2b3d4`) |
-| OCR / CAD / AI take-off | **Out of scope of current code.** M012 / [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **APPROVED FOR IMPLEMENTATION**, not started. Real external AI provider **not authorized**. **COUNT** must not require dimensional scale; linear/polyline/area/perimeter remain fail-closed without valid calibration. |
+| Scale calibration / measurement | **Done** (M010; [FG-005](../feature-gates/FG-005-m010-scale-calibration.md); ADR-026/027; migration `c9e0f1a2b3d4`). COUNT does **not** require dimensional scale. |
+| AI take-off foundation | **Done (committed / pushed / not live-migrated)** (M012 / [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md); mock extractor only; migration `b4c5d6e7f8a9`). Real external AI provider **not authorized**. Phase D mapping **not started**. Browser/live UAT **not yet performed**. |
+| OCR / CAD | **Out of scope of current code.** |
 
 Routes live under `/projects/<id>/plans…`. Estimating, Proposals, OCR, CAD, AI, and supplier features are unchanged.
 
@@ -65,7 +66,7 @@ Capability layer **inside** Plan Intelligence ([ADR-013](../adr/ADR-013-document
 | Page indexing / deterministic extraction | **Implemented** (M007) |
 | Processing provenance + relational search | **Implemented** (M007); ADR-015 / ADR-016 |
 | Sheet index / discipline / human review | **Implemented** (M009; ADR-014, ADR-017, ADR-018) |
-| OCR / CAD / AI take-off hooks | Documented integration points only |
+| OCR / CAD | Documented integration points only; not implemented |
 
 See [document-intelligence.md](../architecture/document-intelligence.md) and [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md).
 

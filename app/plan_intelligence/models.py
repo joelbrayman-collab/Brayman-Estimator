@@ -241,6 +241,15 @@ class PlanAuditEvent(db.Model):
     sheet_id = db.Column(
         db.Integer, db.ForeignKey("plan_sheets.id"), nullable=True
     )
+    extraction_run_id = db.Column(
+        db.Integer, db.ForeignKey("takeoff_extraction_runs.id"), nullable=True
+    )
+    takeoff_candidate_id = db.Column(
+        db.Integer, db.ForeignKey("takeoff_candidates.id"), nullable=True
+    )
+    takeoff_package_id = db.Column(
+        db.Integer, db.ForeignKey("takeoff_packages.id"), nullable=True
+    )
     event_type = db.Column(db.String(80), nullable=False)
     detail = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
@@ -485,3 +494,232 @@ class PlanMeasurement(db.Model):
             f"<PlanMeasurement {self.id} sheet={self.sheet_id} "
             f"type={self.measurement_type} val={self.computed_value} {self.display_unit}>"
         )
+
+
+# =========================================================================
+# FG-010 / M012 — AI Take-off (provider-neutral foundation)
+# =========================================================================
+
+TAKEOFF_RUN_STATUSES = (
+    "queued",
+    "running",
+    "succeeded",
+    "failed",
+    "cancelled",
+)
+TAKEOFF_CANDIDATE_STATUSES = (
+    "suggested",
+    "accepted",
+    "adjusted",
+    "rejected",
+    "duplicate",
+    "not_applicable",
+)
+TAKEOFF_PACKAGE_STATUSES = ("draft", "approved", "superseded")
+TAKEOFF_CONFIDENCE_BANDS = ("LOW", "MEDIUM", "HIGH")
+TAKEOFF_ELEMENT_INTERIOR_DOOR = "INTERIOR_DOOR_OPENING"
+
+
+class TakeoffExtractionRun(db.Model):
+    """Versioned AI/mock quantity extraction attempt (ADR-031)."""
+
+    __tablename__ = "takeoff_extraction_runs"
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50), db.ForeignKey("organizations.id"), nullable=False, index=True
+    )
+    project_id = db.Column(
+        db.Integer, db.ForeignKey("projects.id"), nullable=False, index=True
+    )
+    plan_document_id = db.Column(
+        db.Integer, db.ForeignKey("plan_documents.id"), nullable=False
+    )
+    drawing_revision_id = db.Column(
+        db.Integer, db.ForeignKey("drawing_revisions.id"), nullable=False
+    )
+    element_type = db.Column(db.String(80), nullable=False)
+    eligible_scope = db.Column(db.JSON, nullable=False)
+    extraction_method = db.Column(db.String(80), nullable=False)
+    provider = db.Column(db.String(80), nullable=False)
+    model_name = db.Column(db.String(120), nullable=False)
+    model_version = db.Column(db.String(40), nullable=False)
+    config_hash = db.Column(db.String(64), nullable=False)
+    status = db.Column(db.String(40), nullable=False, default="queued")
+    error_summary = db.Column(db.Text)
+    candidate_count = db.Column(db.Integer, nullable=False, default=0)
+    started_at = db.Column(db.DateTime)
+    finished_at = db.Column(db.DateTime)
+    created_by = db.Column(db.String(150), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    document = db.relationship("PlanDocument")
+    revision = db.relationship("DrawingRevision")
+    candidates = db.relationship(
+        "TakeoffCandidate",
+        back_populates="run",
+        cascade="all, delete-orphan",
+        order_by="TakeoffCandidate.id",
+    )
+
+    def __repr__(self):
+        return f"<TakeoffExtractionRun {self.id} {self.status} {self.element_type}>"
+
+
+class TakeoffCandidate(db.Model):
+    """Reviewable take-off candidate with source citation (ADR-005 / ADR-031)."""
+
+    __tablename__ = "takeoff_candidates"
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50), db.ForeignKey("organizations.id"), nullable=False, index=True
+    )
+    project_id = db.Column(
+        db.Integer, db.ForeignKey("projects.id"), nullable=False, index=True
+    )
+    takeoff_run_id = db.Column(
+        db.Integer, db.ForeignKey("takeoff_extraction_runs.id"), nullable=False, index=True
+    )
+    plan_document_id = db.Column(
+        db.Integer, db.ForeignKey("plan_documents.id"), nullable=False
+    )
+    drawing_revision_id = db.Column(
+        db.Integer, db.ForeignKey("drawing_revisions.id"), nullable=False
+    )
+    plan_page_id = db.Column(
+        db.Integer, db.ForeignKey("plan_pages.id"), nullable=False
+    )
+    plan_sheet_id = db.Column(
+        db.Integer, db.ForeignKey("plan_sheets.id"), nullable=True
+    )
+    element_type = db.Column(db.String(80), nullable=False)
+    quantity_contribution = db.Column(db.Float, nullable=False, default=1.0)
+    geometry_data = db.Column(db.JSON, nullable=False)
+    confidence_numeric = db.Column(db.Float, nullable=False)
+    confidence_band = db.Column(db.String(20), nullable=False)
+    source_evidence = db.Column(db.Text)
+    status = db.Column(db.String(40), nullable=False, default="suggested")
+    reviewed_quantity = db.Column(db.Float, nullable=True)
+    reviewed_geometry = db.Column(db.JSON, nullable=True)
+    reviewed_by = db.Column(db.String(150), nullable=True)
+    reviewed_at = db.Column(db.DateTime, nullable=True)
+    review_reason = db.Column(db.Text, nullable=True)
+    canonical_candidate_id = db.Column(
+        db.Integer, db.ForeignKey("takeoff_candidates.id"), nullable=True
+    )
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    run = db.relationship("TakeoffExtractionRun", back_populates="candidates")
+    page = db.relationship("PlanPage")
+    sheet = db.relationship("PlanSheet")
+    canonical = db.relationship(
+        "TakeoffCandidate", remote_side="TakeoffCandidate.id", uselist=False
+    )
+
+    def __repr__(self):
+        return f"<TakeoffCandidate {self.id} {self.element_type} {self.status}>"
+
+
+class TakeoffPackage(db.Model):
+    """Versioned reviewed take-off package; approved rows are immutable."""
+
+    __tablename__ = "takeoff_packages"
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50), db.ForeignKey("organizations.id"), nullable=False, index=True
+    )
+    project_id = db.Column(
+        db.Integer, db.ForeignKey("projects.id"), nullable=False, index=True
+    )
+    drawing_revision_id = db.Column(
+        db.Integer, db.ForeignKey("drawing_revisions.id"), nullable=False
+    )
+    takeoff_run_id = db.Column(
+        db.Integer, db.ForeignKey("takeoff_extraction_runs.id"), nullable=False
+    )
+    element_type = db.Column(db.String(80), nullable=False)
+    version_number = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(40), nullable=False, default="draft")
+    approved_total = db.Column(db.Float, nullable=True)
+    approved_unit = db.Column(db.String(20), nullable=False, default="count")
+    approved_by = db.Column(db.String(150), nullable=True)
+    approved_at = db.Column(db.DateTime, nullable=True)
+    superseded_by_id = db.Column(
+        db.Integer, db.ForeignKey("takeoff_packages.id"), nullable=True
+    )
+    notes = db.Column(db.Text)
+    provenance = db.Column(db.JSON, nullable=True)
+    created_by = db.Column(db.String(150), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            "organization_id",
+            "project_id",
+            "drawing_revision_id",
+            "element_type",
+            "version_number",
+            name="uq_takeoff_packages_org_proj_rev_elem_ver",
+        ),
+    )
+
+    revision = db.relationship("DrawingRevision")
+    run = db.relationship("TakeoffExtractionRun")
+    items = db.relationship(
+        "TakeoffPackageItem",
+        back_populates="package",
+        cascade="all, delete-orphan",
+        order_by="TakeoffPackageItem.id",
+    )
+
+    def __repr__(self):
+        return f"<TakeoffPackage {self.id} v{self.version_number} {self.status}>"
+
+
+class TakeoffPackageItem(db.Model):
+    """Frozen snapshot of a reviewed candidate on a take-off package."""
+
+    __tablename__ = "takeoff_package_items"
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50), db.ForeignKey("organizations.id"), nullable=False, index=True
+    )
+    project_id = db.Column(
+        db.Integer, db.ForeignKey("projects.id"), nullable=False
+    )
+    takeoff_package_id = db.Column(
+        db.Integer, db.ForeignKey("takeoff_packages.id"), nullable=False, index=True
+    )
+    takeoff_candidate_id = db.Column(
+        db.Integer, db.ForeignKey("takeoff_candidates.id"), nullable=False
+    )
+    takeoff_run_id = db.Column(
+        db.Integer, db.ForeignKey("takeoff_extraction_runs.id"), nullable=False
+    )
+    plan_document_id = db.Column(db.Integer, nullable=False)
+    drawing_revision_id = db.Column(db.Integer, nullable=False)
+    plan_page_id = db.Column(db.Integer, nullable=False)
+    plan_sheet_id = db.Column(db.Integer, nullable=True)
+    page_index = db.Column(db.Integer, nullable=False)
+    sheet_number = db.Column(db.String(100), nullable=True)
+    sheet_name = db.Column(db.String(255), nullable=True)
+    element_type = db.Column(db.String(80), nullable=False)
+    review_status = db.Column(db.String(40), nullable=False)
+    quantity_contribution = db.Column(db.Float, nullable=False)
+    reviewed_quantity = db.Column(db.Float, nullable=False)
+    geometry_data = db.Column(db.JSON, nullable=False)
+    confidence_numeric = db.Column(db.Float, nullable=True)
+    confidence_band = db.Column(db.String(20), nullable=True)
+    source_evidence = db.Column(db.Text)
+    reviewed_by = db.Column(db.String(150), nullable=True)
+    review_reason = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    package = db.relationship("TakeoffPackage", back_populates="items")
+    candidate = db.relationship("TakeoffCandidate")
+
+    def __repr__(self):
+        return f"<TakeoffPackageItem {self.id} pkg={self.takeoff_package_id}>"

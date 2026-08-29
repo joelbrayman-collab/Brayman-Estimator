@@ -52,6 +52,16 @@ from app.plan_intelligence.sheets import (
     validate_revision_sheet_index,
     void_sheet,
 )
+from app.plan_intelligence.takeoff import (
+    approve_package,
+    create_draft_package,
+    get_package_or_404,
+    get_run_or_404,
+    list_packages_for_project,
+    list_runs_for_project,
+    review_candidate,
+    start_extraction_run,
+)
 from app.plan_intelligence.scale_measurement import (
     CALIBRATION_STATUSES,
     CALIBRATION_TYPES,
@@ -1022,3 +1032,197 @@ def void_measurement_action(project_id, sheet_id, measurement_id):
         flash(str(exc), "error")
 
     return redirect(url_for("plan_intelligence.measure_sheet", project_id=project.id, sheet_id=sheet_id))
+
+
+@plan_intelligence_bp.route("/projects/<int:project_id>/plans/takeoff")
+def takeoff_index(project_id):
+    """List take-off runs and packages for a project."""
+    project = _get_project_or_404(project_id)
+    org_id = get_current_organization_id()
+    revision = ensure_default_revision(project)
+    runs = list_runs_for_project(org_id, project.id)
+    packages = list_packages_for_project(org_id, project.id)
+    documents = [d for d in list_plan_documents(project.id) if not d.is_archived]
+    return render_template(
+        "plan_intelligence/takeoff_index.html",
+        project=project,
+        revision=revision,
+        runs=runs,
+        packages=packages,
+        documents=documents,
+    )
+
+
+@plan_intelligence_bp.route("/projects/<int:project_id>/plans/takeoff/runs", methods=["POST"])
+def takeoff_start_run(project_id):
+    """Start a provider-neutral mock extraction run."""
+    project = _get_project_or_404(project_id)
+    org_id = get_current_organization_id()
+    try:
+        document_id = int(request.form.get("plan_document_id") or 0)
+        revision_id = int(request.form.get("drawing_revision_id") or 0)
+        created_by = request.form.get("created_by", "").strip()
+        sheet_raw = request.form.get("sheet_ids", "").strip()
+        sheet_ids = None
+        if sheet_raw:
+            sheet_ids = [int(s) for s in sheet_raw.split(",") if s.strip()]
+        run = start_extraction_run(
+            organization_id=org_id,
+            project_id=project.id,
+            plan_document_id=document_id,
+            drawing_revision_id=revision_id,
+            created_by=created_by,
+            sheet_ids=sheet_ids,
+        )
+        flash(f"Take-off run #{run.id} {run.status} ({run.candidate_count} candidates).", "success")
+        return redirect(
+            url_for("plan_intelligence.takeoff_run_detail", project_id=project.id, run_id=run.id)
+        )
+    except (TypeError, ValueError):
+        flash("Invalid take-off run request.", "error")
+    except PlanIntelligenceServiceError as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("plan_intelligence.takeoff_index", project_id=project.id))
+
+
+@plan_intelligence_bp.route("/projects/<int:project_id>/plans/takeoff/runs/<int:run_id>")
+def takeoff_run_detail(project_id, run_id):
+    project = _get_project_or_404(project_id)
+    org_id = get_current_organization_id()
+    try:
+        run = get_run_or_404(org_id, run_id)
+    except PlanIntelligenceServiceError:
+        abort(404)
+    if run.project_id != project.id:
+        abort(404)
+    return render_template(
+        "plan_intelligence/takeoff_run.html",
+        project=project,
+        run=run,
+        candidates=run.candidates,
+    )
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/takeoff/candidates/<int:candidate_id>/review",
+    methods=["POST"],
+)
+def takeoff_review_candidate(project_id, candidate_id):
+    project = _get_project_or_404(project_id)
+    org_id = get_current_organization_id()
+    try:
+        reviewed_qty = request.form.get("reviewed_quantity", "").strip()
+        qty = float(reviewed_qty) if reviewed_qty else None
+        geom = None
+        if request.form.get("x1"):
+            geom = {
+                "x1": request.form.get("x1"),
+                "y1": request.form.get("y1"),
+                "x2": request.form.get("x2"),
+                "y2": request.form.get("y2"),
+            }
+        canonical = request.form.get("canonical_candidate_id", "").strip()
+        cand = review_candidate(
+            organization_id=org_id,
+            candidate_id=candidate_id,
+            action=request.form.get("action", ""),
+            reviewed_by=request.form.get("reviewed_by", ""),
+            review_reason=request.form.get("review_reason") or None,
+            reviewed_quantity=qty,
+            reviewed_geometry=geom,
+            canonical_candidate_id=int(canonical) if canonical else None,
+        )
+        flash(f"Candidate #{cand.id} marked {cand.status}.", "success")
+        return redirect(
+            url_for(
+                "plan_intelligence.takeoff_run_detail",
+                project_id=project.id,
+                run_id=cand.takeoff_run_id,
+            )
+        )
+    except PlanIntelligenceServiceError as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("plan_intelligence.takeoff_index", project_id=project.id))
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/takeoff/runs/<int:run_id>/packages",
+    methods=["POST"],
+)
+def takeoff_create_package(project_id, run_id):
+    project = _get_project_or_404(project_id)
+    org_id = get_current_organization_id()
+    try:
+        package = create_draft_package(
+            organization_id=org_id,
+            run_id=run_id,
+            created_by=request.form.get("created_by", ""),
+            notes=request.form.get("notes") or None,
+        )
+        flash(f"Draft take-off package v{package.version_number} created.", "success")
+        return redirect(
+            url_for(
+                "plan_intelligence.takeoff_package_detail",
+                project_id=project.id,
+                package_id=package.id,
+            )
+        )
+    except PlanIntelligenceServiceError as exc:
+        flash(str(exc), "error")
+        return redirect(
+            url_for("plan_intelligence.takeoff_run_detail", project_id=project.id, run_id=run_id)
+        )
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/takeoff/packages/<int:package_id>"
+)
+def takeoff_package_detail(project_id, package_id):
+    project = _get_project_or_404(project_id)
+    org_id = get_current_organization_id()
+    try:
+        package = get_package_or_404(org_id, package_id)
+    except PlanIntelligenceServiceError:
+        abort(404)
+    if package.project_id != project.id:
+        abort(404)
+    return render_template(
+        "plan_intelligence/takeoff_package.html",
+        project=project,
+        package=package,
+    )
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/takeoff/packages/<int:package_id>/approve",
+    methods=["POST"],
+)
+def takeoff_approve_package(project_id, package_id):
+    project = _get_project_or_404(project_id)
+    org_id = get_current_organization_id()
+    try:
+        package = approve_package(
+            organization_id=org_id,
+            package_id=package_id,
+            approved_by=request.form.get("approved_by", ""),
+        )
+        flash(
+            f"Take-off package v{package.version_number} approved. Total {package.approved_total} {package.approved_unit}.",
+            "success",
+        )
+        return redirect(
+            url_for(
+                "plan_intelligence.takeoff_package_detail",
+                project_id=project.id,
+                package_id=package.id,
+            )
+        )
+    except PlanIntelligenceServiceError as exc:
+        flash(str(exc), "error")
+        return redirect(
+            url_for(
+                "plan_intelligence.takeoff_package_detail",
+                project_id=project.id,
+                package_id=package_id,
+            )
+        )

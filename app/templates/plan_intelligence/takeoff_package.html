@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Take-off package #{{ package.id }} | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Take-off Package{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Plan Intelligence · Take-off package</p>
+        <h1>Package #{{ package.id }} v{{ package.version_number }}</h1>
+        <p class="muted-copy">{{ project.name }} · Status: <span class="status">{{ package.status }}</span> · {{ package.element_type }}</p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('plan_intelligence.takeoff_index', project_id=project.id) }}">Back to take-off</a>
+        <a class="button-link" href="{{ url_for('plan_intelligence.takeoff_run_detail', project_id=project.id, run_id=package.takeoff_run_id) }}">Source run</a>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <div class="form-grid">
+        <div><p class="eyebrow">Approved total</p><p><strong>{{ package.approved_total }} {{ package.approved_unit }}</strong></p></div>
+        <div><p class="eyebrow">Drawing revision</p><p>{{ package.drawing_revision_id }}</p></div>
+        <div><p class="eyebrow">Created by</p><p>{{ package.created_by }}</p></div>
+        <div><p class="eyebrow">Approved by</p><p>{{ package.approved_by or "—" }}</p></div>
+        <div><p class="eyebrow">Approved at</p><p>{% if package.approved_at %}{{ package.approved_at.strftime("%Y-%m-%d %H:%M") }}{% else %}—{% endif %}</p></div>
+        <div><p class="eyebrow">Superseded by</p><p>{{ package.superseded_by_id or "—" }}</p></div>
+    </div>
+    {% if package.provenance %}
+    <p class="muted-copy" style="margin-top: 16px; word-break: break-all;">
+        Provenance: run {{ package.provenance.get('run_id') }} · {{ package.provenance.get('provider') }} · {{ package.provenance.get('model_name') }} {{ package.provenance.get('model_version') }} · config {{ package.provenance.get('config_hash') }}
+    </p>
+    {% endif %}
+    {% if package.status in ('approved', 'superseded') %}
+    <p class="muted-copy" style="margin-top: 12px;">This package is immutable. New evidence requires a new draft version.</p>
+    {% endif %}
+</section>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Frozen package items</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Candidate</th>
+                <th>Sheet / page</th>
+                <th>Review</th>
+                <th>Qty</th>
+                <th>Confidence</th>
+                <th>Reviewer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in package.items %}
+            <tr>
+                <td>#{{ item.id }}</td>
+                <td>#{{ item.takeoff_candidate_id }} / run {{ item.takeoff_run_id }}</td>
+                <td>{{ item.sheet_number or item.plan_sheet_id or "—" }} · page {{ item.page_index }}</td>
+                <td>{{ item.review_status }}</td>
+                <td>{{ item.reviewed_quantity }}</td>
+                <td>{{ item.confidence_numeric }} ({{ item.confidence_band }})</td>
+                <td>{{ item.reviewed_by or "—" }}</td>
+            </tr>
+            <tr>
+                <td colspan="7" class="muted-copy">
+                    {{ item.source_evidence }}
+                    · bbox {{ item.geometry_data }}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" class="muted-copy">No frozen accepted/adjusted items.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+{% if package.status == 'draft' %}
+<section class="form-panel">
+    <h2>Approve package</h2>
+    <p class="muted-copy">Human actor required. AI/system actor cannot approve. Does not insert estimate lines.</p>
+    <form method="post" action="{{ url_for('plan_intelligence.takeoff_approve_package', project_id=project.id, package_id=package.id) }}" class="form-grid">
+        <label>
+            Approver actor
+            <input type="text" name="approved_by" value="office-reviewer" required>
+        </label>
+        <div class="form-actions">
+            <button type="submit">Approve immutable package</button>
+        </div>
+    </form>
+</section>
+{% endif %}
+{% endblock %}

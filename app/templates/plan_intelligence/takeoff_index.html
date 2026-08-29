@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}AI Take-off | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}AI Take-off{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Plan Intelligence · Revision {{ revision.label }}</p>
+        <h1>AI Take-off Review</h1>
+        <p class="muted-copy">{{ project.name }} · Interior door count POC · Mock extractor only · No estimate insertion</p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Plan Documents</a>
+        <a class="button-link" href="{{ url_for('plan_intelligence.revision_sheets', project_id=project.id, revision_id=revision.id) }}">Sheet Index</a>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Start eligible extraction run</h2>
+    <p class="muted-copy">Requires a searchable architectural PDF already uploaded and mapped. Real external AI providers are not authorized.</p>
+    <form method="post" action="{{ url_for('plan_intelligence.takeoff_start_run', project_id=project.id) }}" class="form-grid">
+        <label>
+            Plan document
+            <select name="plan_document_id" required>
+                <option value="">Select document</option>
+                {% for document in documents %}
+                <option value="{{ document.id }}">{{ document.original_filename }}{% if document.has_text_layer %} (searchable){% else %} (no text layer){% endif %}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Drawing revision id
+            <input type="number" name="drawing_revision_id" value="{{ revision.id }}" required>
+        </label>
+        <label>
+            Actor (required, not authenticated identity)
+            <input type="text" name="created_by" value="office-reviewer" required>
+        </label>
+        <label>
+            Optional sheet ids (comma-separated, max 2)
+            <input type="text" name="sheet_ids" placeholder="leave blank for eligible ARCH sheets">
+        </label>
+        <div class="form-actions">
+            <button type="submit">Start mock take-off run</button>
+        </div>
+    </form>
+</section>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Extraction runs</h2>
+    {% if runs %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Run</th>
+                <th>Status</th>
+                <th>Element</th>
+                <th>Provider</th>
+                <th>Candidates</th>
+                <th>Created</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for run in runs %}
+            <tr>
+                <td>#{{ run.id }}</td>
+                <td><span class="status">{{ run.status }}</span></td>
+                <td>{{ run.element_type }}</td>
+                <td>{{ run.provider }} / {{ run.model_name }} {{ run.model_version }}</td>
+                <td>{{ run.candidate_count }}</td>
+                <td>{{ run.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                <td>
+                    <a class="button-link" href="{{ url_for('plan_intelligence.takeoff_run_detail', project_id=project.id, run_id=run.id) }}">Review</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="muted-copy">No take-off runs yet.</p>
+    {% endif %}
+</section>
+
+<section class="form-panel">
+    <h2>Take-off packages</h2>
+    {% if packages %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Package</th>
+                <th>Status</th>
+                <th>Version</th>
+                <th>Total</th>
+                <th>Approved by</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for package in packages %}
+            <tr>
+                <td>#{{ package.id }}</td>
+                <td><span class="status">{{ package.status }}</span></td>
+                <td>v{{ package.version_number }}</td>
+                <td>{{ package.approved_total }} {{ package.approved_unit }}</td>
+                <td>{{ package.approved_by or "—" }}</td>
+                <td>
+                    <a class="button-link" href="{{ url_for('plan_intelligence.takeoff_package_detail', project_id=project.id, package_id=package.id) }}">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="muted-copy">No take-off packages yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

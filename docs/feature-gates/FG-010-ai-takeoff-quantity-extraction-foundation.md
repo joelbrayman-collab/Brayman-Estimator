@@ -7,11 +7,11 @@
 | Target Milestone | **M012** |
 | Module | Plan Intelligence |
 | Date | 2026-08-29 |
-| Status | **APPROVED FOR IMPLEMENTATION** — **NOT IMPLEMENTED** |
-| Architecture | [ai-takeoff-quantity-extraction-foundation.md](../architecture/ai-takeoff-quantity-extraction-foundation.md) **Approved** |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **NOT YET LIVE-MIGRATED** |
+| Architecture | [ai-takeoff-quantity-extraction-foundation.md](../architecture/ai-takeoff-quantity-extraction-foundation.md) **Approved** — foundation implemented |
 | Related ADRs | [ADR-031](../adr/ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md) **Accepted** · [ADR-005](../adr/ADR-005-ai-takeoff-traceability.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](../adr/ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-009](../adr/ADR-009-pdf-first-versus-cad-first.md) **Accepted** · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** · [ADR-011](../adr/ADR-011-ai-confidence-threshold-policy.md) **Accepted** · [ADR-012](../adr/ADR-012-plan-document-version-ownership.md) · [ADR-026](../adr/ADR-026-scale-ownership-and-calibration-provenance.md) **Accepted** · [ADR-027](../adr/ADR-027-pdf-rendering-and-normalized-coordinate-system.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** |
 | Prerequisites | M005–M010 implemented; FG-007 org isolation; FG-008 **CLOSED / OPERATIONAL FOR UAT**; FG-009 **CLOSED / OPERATIONAL FOR UAT** |
-| Approved baseline | Governance approval 2026-08-29. Parent HEAD at approval: `bc37463a15dbb3a97e6250686ba5b0a4d78f1955`. Alembic current/head `a3b4c5d6e7f8`. **Implementation not started.** |
+| Approved baseline | Governance approval 2026-08-29 (`5bd6c772a093e9ca3ad506e17f0629eabe86f53c`). Implementation 2026-08-29: additive migration `b4c5d6e7f8a9` (graph head; **not** applied to live development/UAT). Live `flask db current` remains `a3b4c5d6e7f8`. |
 
 ---
 
@@ -20,13 +20,14 @@
 | Layer | State |
 |-------|--------|
 | Architecture | **Approved** (2026-08-29) |
-| Feature Gate (this document) | **APPROVED FOR IMPLEMENTATION** |
+| Feature Gate (this document) | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **NOT YET LIVE-MIGRATED** |
 | ADR-031 / 005 / 006 / 007 / 009 / 011 | **Accepted** |
 | ADR-010 | **Proposed** (real external AI provider **not authorized**) |
-| Implementation | **NOT IMPLEMENTED.** Requires a **separate** bounded implementation prompt. No product code, no migration in this governance pass. |
+| Implementation | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED.** Provider-neutral foundation in `app/plan_intelligence/` (`takeoff.py`, `takeoff_extractors.py`, models, office UI). Additive migration `b4c5d6e7f8a9` is the Alembic graph head and **has not been applied** to the live development/UAT database. Dedicated tests `tests/test_takeoff.py`. Browser/live UAT **not yet performed**. |
 | Real external AI provider | **NOT AUTHORIZED** |
+| Phase D estimate mapping | **NOT STARTED** |
 
-This gate does **not** implement OCR, CAD, multi-trade extraction, automatic estimate insertion, Labour Engine or Pricing Engine changes, BUILD/MONITOR/LEARN, QuickBooks, or contracts.
+This gate implemented the provider-neutral M012 foundation. It does **not** implement OCR, CAD, multi-trade extraction, automatic estimate insertion, Labour Engine or Pricing Engine changes, BUILD/MONITOR/LEARN, QuickBooks, or contracts. Real external AI provider integration remains **not authorized**.
 
 ---
 
@@ -121,11 +122,11 @@ ADR-027 `[0,1]×[0,1]` only. Same convention as `PlanMeasurement.geometry_data`.
 
 **COUNT is dimensionless.** A count candidate / reviewed count must **not** require scale merely to count discrete objects.
 
-Future FG-010 implementation **may** permit `measurement_type = count` without confirmed dimensional calibration. This applies **only** to count.
+`measurement_type = count` does **not** require confirmed dimensional calibration. This applies **only** to count.
 
 It must **not** weaken M010 rules for `linear`, `polyline`, `area`, or perimeter. Those dimensional measurements must continue to fail closed unless the governing scale/viewport calibration is valid.
 
-Current M010 code reportedly requires confirmed non-NTS scale even for COUNT. That is a **narrow authorized correction** in the later implementation prompt. **Do not change code in this governance pass.**
+Current M010 COUNT validation **no longer** requires confirmed dimensional calibration (`app/plan_intelligence/scale_measurement.py` `create_measurement`). Linear / polyline / area / perimeter remain fail-closed without valid confirmed non-NTS calibration.
 
 ---
 
@@ -207,21 +208,19 @@ External provider handling of plan bytes/text is **not authorized** by this gate
 
 ## Migration expectations
 
-When an **implementation prompt** is issued: one additive Alembic revision. No casual generation in this governance pass. No live migrate authorization here.
+One additive Alembic revision `b4c5d6e7f8a9` (revises `a3b4c5d6e7f8`). Tables: `takeoff_extraction_runs`, `takeoff_candidates`, `takeoff_packages`, `takeoff_package_items`; nullable FKs on `plan_audit_events`. Upgrade/downgrade verified on a temp SQLite database. **Live development/UAT `flask db upgrade` is not authorized** by this implementation pass.
 
 ---
 
-## Tests (implementation later)
+## Tests
 
-Org isolation; searchable PDF; architectural sheet; run versioning; provenance; bbox; confidence; accept/adjust/reject/duplicate; reviewer; package immutability; rerun; revision separation; count determinism; no estimate insert; no pricing/labour mutation; cross-org fail-closed; `tests/test_plan_upload.py`, `test_plan_indexing.py`, `test_sheet_intelligence.py`, `test_scale_measurement.py`; FG-008; FG-009; full suite.
-
-**This pass:** existing suites only (no new tests).
+Covered in `tests/test_takeoff.py` (18) plus COUNT-without-scale additions in `tests/test_scale_measurement.py`. Regression: Plan Intelligence upload/indexing/sheets/scale; FG-008 Labour **25**; FG-009 Pricing **33**; historical ingestion **11**; full suite **251**.
 
 ---
 
 ## UAT (later)
 
-Synthetic searchable architectural PDF. Do not create UAT data now. Do not casually send customer production plans to an external model.
+Synthetic searchable architectural PDF. Do not apply live migration or create live UAT take-off data in this pass. Do not send customer production plans to an external model.
 
 ---
 
@@ -243,22 +242,20 @@ See **Out** plus FG-009 UI leftover-stack-percent cleanup (separate maintenance)
 
 ---
 
-## Acceptance criteria (for a future implementation prompt)
+## Acceptance criteria
 
-1. Named extraction run; rerun does not mutate approved packages.
-2. Interior-door candidates cited to sheet/page/norm-bbox.
-3. Human accept/adjust/reject/duplicate; no silent accept.
-4. Approved package immutable; deterministic reviewed total.
-5. COUNT V1 works without requiring scale; M010 dimensional fail-closed unchanged.
-6. Zero silent estimate/labour/pricing writes.
-7. Cross-org fail-closed.
-8. Provider fields vendor-agnostic.
-9. Docs/tests/DoD for that implementation prompt.
+1. Named extraction run; rerun does not mutate approved packages. **Met.**
+2. Interior-door candidates cited to sheet/page/norm-bbox. **Met** (deterministic mock).
+3. Human accept/adjust/reject/duplicate; no silent accept. **Met.**
+4. Approved package immutable; deterministic reviewed total. **Met** (fixture total 3).
+5. COUNT V1 works without requiring scale; M010 dimensional fail-closed unchanged. **Met.**
+6. Zero silent estimate/labour/pricing writes. **Met.**
+7. Cross-org fail-closed. **Met.**
+8. Provider fields vendor-agnostic. **Met** (`calibai-mock` only).
+9. Docs/tests for this implementation prompt. **Met.** Live migrate remains a separate authorization.
 
 ---
 
-## Blocking conditions (implementation)
+## Implementation close
 
-Product implementation remains **blocked** until a **separate** bounded FG-010 implementation Cursor prompt is issued.
-
-This governance pass does **not** authorize product code, migration, or real external AI provider integration.
+Foundation is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** and **NOT YET LIVE-MIGRATED**. Browser/live UAT **not yet performed**. Real external AI provider remains **not authorized**. Phase D estimate mapping is **not started**. Next governed action: apply `b4c5d6e7f8a9` to live development/UAT under a separate authorization and perform bounded synthetic browser/UAT smoke.

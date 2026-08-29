@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Take-off run #{{ run.id }} | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Take-off Run{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Plan Intelligence · Extraction run</p>
+        <h1>Run #{{ run.id }} · {{ run.element_type }}</h1>
+        <p class="muted-copy">{{ project.name }} · Status: <span class="status">{{ run.status }}</span> · Provider: {{ run.provider }} · Model: {{ run.model_name }} {{ run.model_version }}</p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('plan_intelligence.takeoff_index', project_id=project.id) }}">Back to take-off</a>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <div class="form-grid">
+        <div><p class="eyebrow">Document</p><p>{{ run.plan_document_id }}</p></div>
+        <div><p class="eyebrow">Revision</p><p>{{ run.drawing_revision_id }}</p></div>
+        <div><p class="eyebrow">Method</p><p>{{ run.extraction_method }}</p></div>
+        <div><p class="eyebrow">Config hash</p><p style="word-break: break-all;">{{ run.config_hash }}</p></div>
+        <div><p class="eyebrow">Created by</p><p>{{ run.created_by }}</p></div>
+        <div><p class="eyebrow">Candidates</p><p>{{ run.candidate_count }}</p></div>
+    </div>
+    {% if run.error_summary %}
+    <p class="muted-copy" style="margin-top: 12px;"><strong>Error:</strong> {{ run.error_summary }}</p>
+    {% endif %}
+</section>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Normalized bbox overlay (ADR-027 [0,1]×[0,1])</h2>
+    <p class="muted-copy">Local schematic only. Plan bytes are not sent to an external provider.</p>
+    <div style="position: relative; width: 360px; height: 480px; background: #0b0f19; border: 1px solid #334155; margin-top: 12px;">
+        {% for cand in candidates %}
+        {% set g = cand.reviewed_geometry or cand.geometry_data %}
+        <div title="Candidate #{{ cand.id }} {{ cand.status }}"
+             style="position:absolute; left: {{ (g.x1 * 100)|round(2) }}%; top: {{ (g.y1 * 100)|round(2) }}%; width: {{ ((g.x2 - g.x1) * 100)|round(2) }}%; height: {{ ((g.y2 - g.y1) * 100)|round(2) }}%; border: 2px solid {% if cand.status == 'accepted' %}#22c55e{% elif cand.status == 'adjusted' %}#38bdf8{% elif cand.status == 'duplicate' %}#a855f7{% elif cand.status == 'rejected' or cand.status == 'not_applicable' %}#ef4444{% else %}#fbbf24{% endif %}; background: rgba(251,191,36,0.12);"></div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Candidates</h2>
+    {% for cand in candidates %}
+    <div style="border: 1px solid #e2e8f0; border-radius: 6px; padding: 16px; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; gap: 12px;">
+            <strong>Candidate #{{ cand.id }}</strong>
+            <span class="status">{{ cand.status }}</span>
+        </div>
+        <p class="muted-copy">
+            Sheet {{ cand.plan_sheet_id or "—" }} · Page {{ cand.plan_page_id }} · Qty {{ cand.quantity_contribution }}
+            · Confidence {{ cand.confidence_numeric }} ({{ cand.confidence_band }})
+        </p>
+        <p>{{ cand.source_evidence }}</p>
+        <p class="muted-copy">
+            BBox x1={{ cand.geometry_data.x1 }} y1={{ cand.geometry_data.y1 }} x2={{ cand.geometry_data.x2 }} y2={{ cand.geometry_data.y2 }}
+            {% if cand.canonical_candidate_id %} · Canonical #{{ cand.canonical_candidate_id }}{% endif %}
+        </p>
+        <form method="post" action="{{ url_for('plan_intelligence.takeoff_review_candidate', project_id=project.id, candidate_id=cand.id) }}" class="form-grid" style="margin-top: 12px;">
+            <label>
+                Actor
+                <input type="text" name="reviewed_by" value="office-reviewer" required>
+            </label>
+            <label>
+                Action
+                <select name="action" required>
+                    <option value="accept">Accept</option>
+                    <option value="adjust">Adjust</option>
+                    <option value="reject">Reject</option>
+                    <option value="duplicate">Mark duplicate</option>
+                    <option value="not_applicable">Not applicable</option>
+                </select>
+            </label>
+            <label>
+                Reviewed quantity (adjust)
+                <input type="number" step="0.01" name="reviewed_quantity" placeholder="optional">
+            </label>
+            <label>
+                Canonical candidate id (duplicate)
+                <input type="number" name="canonical_candidate_id" placeholder="optional">
+            </label>
+            <label>
+                Reason (required for adjust/duplicate)
+                <input type="text" name="review_reason">
+            </label>
+            <div class="form-actions">
+                <button type="submit">Apply review</button>
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <p class="muted-copy">No candidates.</p>
+    {% endfor %}
+</section>
+
+<section class="form-panel">
+    <h2>Create draft take-off package</h2>
+    <p class="muted-copy">Approval is a separate human action. Suggested candidates block approval. This does not write estimates, labour, or pricing.</p>
+    <form method="post" action="{{ url_for('plan_intelligence.takeoff_create_package', project_id=project.id, run_id=run.id) }}" class="form-grid">
+        <label>
+            Actor
+            <input type="text" name="created_by" value="office-reviewer" required>
+        </label>
+        <label>
+            Notes
+            <input type="text" name="notes">
+        </label>
+        <div class="form-actions">
+            <button type="submit">Create draft package</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

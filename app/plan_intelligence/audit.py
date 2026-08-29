@@ -15,6 +15,9 @@ def record_plan_audit(
     event_type: str,
     plan_document_id: Optional[int] = None,
     sheet_id: Optional[int] = None,
+    extraction_run_id: Optional[int] = None,
+    takeoff_candidate_id: Optional[int] = None,
+    takeoff_package_id: Optional[int] = None,
     detail: Optional[Any] = None,
     commit: bool = False,
 ):
@@ -30,6 +33,9 @@ def record_plan_audit(
         project_id=project_id,
         plan_document_id=plan_document_id,
         sheet_id=sheet_id,
+        extraction_run_id=extraction_run_id,
+        takeoff_candidate_id=takeoff_candidate_id,
+        takeoff_package_id=takeoff_package_id,
         event_type=event_type,
         detail=detail_text,
     )

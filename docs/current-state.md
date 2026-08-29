@@ -11,11 +11,11 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | Parent `bc37463a15dbb3a97e6250686ba5b0a4d78f1955`. This pass: FG-010 approval documentation commit on `main`. FG-009 implementation `8e11179fb5abb42a68805fe011e84c15e866ea04`. Live DB migrated to `a3b4c5d6e7f8`. |
+| HEAD / `origin/main` | FG-010 implementation commit on `main` (record SHA after push). Parent governance `5bd6c772a093e9ca3ad506e17f0629eabe86f53c`. FG-009 implementation `8e11179fb5abb42a68805fe011e84c15e866ea04`. Live DB current `a3b4c5d6e7f8`. Alembic **graph** head `b4c5d6e7f8a9`. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
-| Working tree at last verified inspect | FG-010 **APPROVED FOR IMPLEMENTATION** / **NOT IMPLEMENTED** (docs commit). FG-009 **CLOSED**. |
-| Governance | FG-004–FG-009 approved and implemented where noted; **FG-008 CLOSED — OPERATIONAL FOR UAT**; **FG-009 CLOSED / OPERATIONAL FOR UAT**; **FG-010 APPROVED FOR IMPLEMENTATION** — **NOT IMPLEMENTED**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
+| Working tree at last verified inspect | FG-010 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** / **NOT YET LIVE-MIGRATED**. FG-009 **CLOSED**. |
+| Governance | FG-004–FG-009 approved and implemented where noted; **FG-008 CLOSED — OPERATIONAL FOR UAT**; **FG-009 CLOSED / OPERATIONAL FOR UAT**; **FG-010 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED — NOT YET LIVE-MIGRATED**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
 
 ## Implemented (evidenced in code)
 
@@ -28,25 +28,25 @@
 - **Historical Estimate Ingestion Engine Phase B (FG-006)** — OpenXML parser, Families A–E, historical evidence models including `HistoricalLabourItem` (120 ORG-001 rows), review UI `/historical-estimates/`; migration `e1b2c3d4e5f6`
 - **Labour Engine Phase B (FG-008)** — org-owned `LabourTask`, human-reviewed mappings (including **REVOKED**), versioned `ProductionRateStandard` and `DirectLabourCostRateStandard`, `LabourCalibrationCandidate` lifecycle, explainable resolution, immutable `EstimateLabourSnapshot`, office UI `/labour-engine/`; additive migration `f2c3d4e5f6a7`. **Implemented, verified, committed, pushed, live-migrated, UAT-smoke-verified.** Foundation **operational for UAT**.
 - **Organization-Calibrated Pricing Engine (FG-009)** — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. **FG-009 FOUNDATION OPERATIONAL FOR UAT.** Versioned `OrganizationPricingPolicy`, immutable `EstimatePricingSnapshot` (locked versions), named methods `TRUE_GROSS_MARGIN` / `COST_PLUS_MARKUP` / `COST_PLUS_MARKUP_STACK`, policy resolution, pricing audit, ORG-001 seed (org-scoped 15% TRUE_GM, CA-ON 13% HST; not CalibAi defaults; optional overhead/profit/contingency layers `UNSPECIFIED`, distinct from org-approved `NOT_APPLIED`), office UI `/pricing-engine/`, Change Order snapshot inheritance **and method application**. Additive migration `a3b4c5d6e7f8` applied live (`f2c3d4e5f6a7` → `a3b4c5d6e7f8`). Versions without a snapshot still use the legacy stack. New estimates are not auto-converted to true GM. Labour-snapshot Direct Labour Cost is **not** included in the estimate basis by default.
+- **AI Take-off / Quantity Extraction Foundation (M012 / FG-010)** — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** / **NOT YET LIVE-MIGRATED**. Browser/live UAT **not yet performed**. `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem`; provider-neutral mock extractor only; COUNT without scale; PlanAuditEvent extensions; office UI `/projects/<id>/plans/takeoff`. Additive migration `b4c5d6e7f8a9` (graph head; live current remains `a3b4c5d6e7f8`). Real external AI provider **not authorized**. Phase D estimate mapping **not started**.
 
 ## Architecture / readiness only (not implemented)
 
-- AI take-off / quantity extraction (**M012 / FG-010 APPROVED FOR IMPLEMENTATION — not implemented**; real external AI provider **not authorized**) / estimate mapping (Phase D later)
+- Real external AI provider / OCR / CAD / multi-trade extraction / estimate mapping (Phase D later)
 - CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract
 - Crew Template catalog, payroll burden, `LabourActualObservation` persistence
 
 ## Migrations
 
-- Alembic **graph** head: `a3b4c5d6e7f8` (FG-009)
-- Live development/UAT `flask db current`: `a3b4c5d6e7f8` (one head)
+- Alembic **graph** head: `b4c5d6e7f8a9` (FG-010)
+- Live development/UAT `flask db current`: `a3b4c5d6e7f8` (FG-009) — **FG-010 not applied live**
 
 ## Current milestone status
 
-M005–M011, **FG-006**, and **FG-008** remain **implemented, verified, committed, and pushed** on `main`.
+M005–M011, **FG-006**, **FG-008**, and **FG-009** remain **implemented, verified, committed, and pushed** on `main`.
 
-- **Current coded work:** FG-009 Organization-Calibrated Pricing Engine — **CLOSED / OPERATIONAL FOR UAT**.
-- **Current governance work:** [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) / M012 — **APPROVED FOR IMPLEMENTATION** / **NOT IMPLEMENTED**. Requires a separate implementation prompt. Real external AI provider **not authorized**.
-- **Blocked / Not Started (product):** AI take-off implementation; four-output package; QuickBooks; contracts; Project Hub; BUILD/MONITOR/LEARN; historical evidence repair.
+- **Current coded work:** M012 / FG-010 AI Take-off foundation — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** / **NOT YET LIVE-MIGRATED**.
+- **Blocked / Not Started (product):** Phase D estimate mapping; four-output package; QuickBooks; contracts; Project Hub; BUILD/MONITOR/LEARN; historical evidence repair; real external AI provider.
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -60,10 +60,11 @@ M005–M011, **FG-006**, and **FG-008** remain **implemented, verified, committe
 
 ## Recommended next steps
 
-1. Issue a **separate** bounded FG-010 implementation prompt (provider-neutral). **Do not implement in this pass.** Real external AI provider remains **not authorized**.
+1. Separate authorization to apply migration `b4c5d6e7f8a9` to the live development/UAT database and perform bounded synthetic browser/UAT smoke verification.
 2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% ORG-001 policy text; optional layers remain `UNSPECIFIED`).
 3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under AI take-off or Pricing Engine.
-4. Synthetic FG-009 UAT residue remains in the live development/UAT DB (labeled `FG-009 UAT *`); do not treat it as customer work. FG-009 leftover Estimate Totals header percents remain separate UI maintenance debt.
+4. Do not enable a real external AI provider. Do not start Phase D estimate mapping.
+5. Synthetic FG-009 UAT residue remains in the live development/UAT DB (labeled `FG-009 UAT *`); do not treat it as customer work. FG-009 leftover Estimate Totals header percents remain separate UI maintenance debt.
 
 ## Related
 

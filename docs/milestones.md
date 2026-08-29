@@ -32,6 +32,30 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### M012 / FG-010 — Implementation commit and push
+
+| Field | Content |
+|-------|---------|
+| ID | M012 / FG-010 |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **NOT YET LIVE-MIGRATED** |
+| Date | 2026-08-29 |
+| Objective | Commit and push the reviewed provider-neutral AI take-off foundation. Live migrate not authorized. |
+| Deliverables | One implementation commit on `main` including models/services/UI, migration `b4c5d6e7f8a9`, tests, and docs. |
+| Validation | Dedicated **18 passed**; Plan Intelligence combined **56 passed**; Pricing **33**; Labour **25**; historical **11**; full suite **251**. Live current remains `a3b4c5d6e7f8`. Browser/live UAT **not yet performed**. |
+| Next | Separate authorization to apply `b4c5d6e7f8a9` live and perform bounded synthetic browser/UAT smoke. Do not enable a real external AI provider. Do not start Phase D. |
+
+### M012 / FG-010 — Foundation implementation (uncommitted)
+
+| Field | Content |
+|-------|---------|
+| ID | M012 / FG-010 |
+| Status | **IMPLEMENTED / VERIFIED** — **NOT YET LIVE-MIGRATED** — **uncommitted** |
+| Date | 2026-08-29 |
+| Objective | Implement the provider-neutral AI take-off foundation: extraction runs, candidates, human review, immutable packages, mock extractor, COUNT-without-scale, org isolation, PlanAuditEvent extensions, office UI. |
+| Deliverables | Models/services/routes/templates; additive migration `b4c5d6e7f8a9`; `tests/test_takeoff.py`; COUNT regression in `tests/test_scale_measurement.py`; docs reconciliation. |
+| Validation | Dedicated **18 passed**; Plan Intelligence combined **56 passed**; Pricing **33**; Labour **25**; historical **11**; full suite **251**. Temp DB upgrade/downgrade `a3b4c5d6e7f8` ↔ `b4c5d6e7f8a9`. Live current remains `a3b4c5d6e7f8`. |
+| Next | Governance review. **Do not commit, push, or live-migrate** until separately authorized. Do not enable a real external AI provider. Do not start Phase D. |
+
 ### M012 / FG-010 — Governance approval (documentation)
 
 | Field | Content |

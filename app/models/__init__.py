@@ -43,6 +43,10 @@ from app.plan_intelligence.models import (
     PlanPage,
     ProcessingAttempt,
     ProcessingResult,
+    TakeoffCandidate,
+    TakeoffExtractionRun,
+    TakeoffPackage,
+    TakeoffPackageItem,
 )
 
 __all__ = [
@@ -82,6 +86,10 @@ __all__ = [
     "PlanPage",
     "ProcessingAttempt",
     "ProcessingResult",
+    "TakeoffCandidate",
+    "TakeoffExtractionRun",
+    "TakeoffPackage",
+    "TakeoffPackageItem",
     "Project",
     "ProjectCommercialContext",
     "Proposal",

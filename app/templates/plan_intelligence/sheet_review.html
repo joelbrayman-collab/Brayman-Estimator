@@ -12,6 +12,7 @@
     </div>
     <div style="display: flex; gap: 10px; align-items: center;">
         <a class="button" href="{{ url_for('plan_intelligence.measure_sheet', project_id=project.id, sheet_id=sheet.id) }}" style="background: #0284c7; color: #fff;">Measure & Calibrate</a>
+        <a class="button" href="{{ url_for('plan_intelligence.takeoff_index', project_id=project.id) }}">AI Take-off</a>
         <a class="button-link" href="{{ url_for('plan_intelligence.revision_sheets', project_id=project.id, revision_id=revision.id) }}">Back to Sheet Index</a>
     </div>
 </div>

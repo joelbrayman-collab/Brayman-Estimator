@@ -42,6 +42,52 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-29 — FG-010 / M012 implementation commit and push
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Final audit, commit, and push the reviewed FG-010 foundation. No live migrate. No external AI. No Phase D. |
+| Business decision | PASS — approved for commit. Live database migration remains unauthorized. |
+| Architectural decision | One implementation commit. Graph head `b4c5d6e7f8a9`. Live current remains `a3b4c5d6e7f8`. ADR-010 remains Proposed. |
+| Prompt template used | FG-010 FINAL AUDIT + IMPLEMENTATION COMMIT / PUSH AUTHORIZATION |
+| Approved Cursor prompt summary | VERIFY → AUDIT → TEST → STAGE → COMMIT → PUSH → STOP. Do not flask db upgrade. |
+| Files expected to change | Reviewed FG-010 product + docs + migration `b4c5d6e7f8a9`. |
+| Files prohibited from changing | Labour/Pricing commercial logic; historical workbooks; Accepted proposals; live DB schema. |
+| Implementation result | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** / **NOT YET LIVE-MIGRATED**. External provider calls: **ZERO**. Estimate/labour/pricing writes: **ZERO**. |
+| Tests | Dedicated take-off **18**; Plan Intelligence combined **56**; Pricing **33**; Labour **25**; Historical **11**; full suite **251**. `git diff --check` clean. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None |
+| Unresolved issues | Live DB still `a3b4c5d6e7f8`. Browser/live UAT not yet performed. No cancel-run operation (accepted for synchronous POC). |
+| Next approved step | Separate live-migrate + UAT smoke authorization. |
+| Next approved prompt | Apply `b4c5d6e7f8a9` to live development/UAT and bounded synthetic browser/UAT smoke. |
+| Commit hash | (this commit) |
+
+### 2026-08-29 — FG-010 / M012 foundation implementation (uncommitted)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Implement FG-010 provider-neutral AI take-off foundation. No live migrate. No commit. No external AI. No Phase D. |
+| Business decision | Interior-door COUNT POC via deterministic mock. Package approval is PLAN evidence only. COUNT does not require scale. |
+| Architectural decision | First-class `TakeoffExtractionRun` / `TakeoffCandidate` / `TakeoffPackage` / `TakeoffPackageItem`. ADR-027 coordinates only. PlanAuditEvent extended. Org-scoped rows. Mock extractor `calibai-mock`. |
+| Prompt template used | FG-010 BOUNDED IMPLEMENTATION AUTHORIZATION |
+| Approved Cursor prompt summary | PRESERVE → VERIFY → IMPLEMENT FOUNDATION → TEST → REPORT → STOP. NO COMMIT. NO PUSH. NO LIVE MIGRATION. NO EXTERNAL AI. NO PHASE D. |
+| Files expected to change | Plan Intelligence models/services/routes/templates; one additive migration; dedicated tests; governed docs. |
+| Files prohibited from changing | Labour Engine / Pricing Engine commercial logic; EstimateVersion writes; historical workbooks; Accepted proposals. |
+| Implementation result | **IMPLEMENTED / VERIFIED** / **NOT YET LIVE-MIGRATED**. External provider calls: **ZERO**. Estimate/labour/pricing writes: **ZERO**. |
+| Tests | Dedicated take-off **18 passed**; Plan Intelligence combined **56 passed**; Pricing **33**; Labour **25**; Historical **11**; full suite **251**. `git diff --check` clean. Temp migration `a3b4c5d6e7f8` → `b4c5d6e7f8a9` → `a3b4c5d6e7f8`. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None. ADR-006: package approval does not insert estimate lines. |
+| Unresolved issues | Uncommitted working tree. Live DB still `a3b4c5d6e7f8`. |
+| Next approved step | Joel/ChatGPT governance review. |
+| Next approved prompt | Separate commit/push authorization if review PASSes. Do not live-migrate in that prompt unless explicitly authorized. |
+| Commit hash | **None** (this pass forbids commit) |
+
 ### 2026-08-29 — FG-010 governance approval (documentation commit)
 
 | Field | Content |

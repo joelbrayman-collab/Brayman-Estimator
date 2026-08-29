@@ -2,14 +2,14 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Architecture documented (M004); Phase A–M010 implemented in code; M012 / FG-010 APPROVED FOR IMPLEMENTATION — NOT IMPLEMENTED** |
+| Status | **Architecture documented (M004); Phase A–M010 implemented in code; M012 / FG-010 IMPLEMENTED / VERIFIED — NOT YET LIVE-MIGRATED** |
 | Updated | 2026-08-29 |
 | Module | [../modules/plan-intelligence.md](../modules/plan-intelligence.md) |
 | Related | [platform-roadmap.md](../platform-roadmap.md) · [document-intelligence.md](document-intelligence.md) · [ai-takeoff-quantity-extraction-foundation.md](ai-takeoff-quantity-extraction-foundation.md) · ADR-005–007, 009–016, 026–027, 031 |
 
-**Current vs future:** Phase A PDF upload/storage, Document Intelligence indexing, sheets, and M010 scale/measurement exist under Plan Intelligence. **AI quantity extraction is not implemented.** FG-010 is **APPROVED FOR IMPLEMENTATION** (provider-neutral foundation). Real external AI provider is **not authorized**. OCR/CAD remain future. Estimating and Proposals exist separately.
+**Current vs future:** Phase A PDF upload/storage, Document Intelligence indexing, sheets, and M010 scale/measurement exist under Plan Intelligence. **AI quantity extraction foundation is implemented** (mock extractor; not live-migrated). Real external AI provider is **not authorized**. OCR/CAD remain future. Estimating and Proposals exist separately.
 
-**COUNT / scale (FG-010 authorized correction):** COUNT is dimensionless. Implementation may permit count without confirmed dimensional calibration. Linear / polyline / area / perimeter must continue to fail closed without valid scale. Do not change code until the implementation prompt.
+**COUNT / scale (FG-010):** COUNT is dimensionless. `measurement_type = count` does not require confirmed dimensional calibration. Linear / polyline / area / perimeter continue to fail closed without valid scale.
 
 Narrow M012 design: [ai-takeoff-quantity-extraction-foundation.md](ai-takeoff-quantity-extraction-foundation.md).
 

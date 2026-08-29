@@ -381,6 +381,90 @@ def test_count_measurement(app, base_setup):
         assert meas.display_unit == "count"
 
 
+def test_count_measurement_succeeds_without_scale(app, base_setup):
+    """FG-010: COUNT is dimensionless and must not require confirmed calibration."""
+    with app.app_context():
+        pts = [{"x": 0.1, "y": 0.1}, {"x": 0.2, "y": 0.2}, {"x": 0.3, "y": 0.3}]
+        meas = create_measurement(
+            project_id=base_setup["project_id"],
+            sheet_id=base_setup["sheet_id"],
+            plan_document_id=base_setup["document_id"],
+            page_index=0,
+            measurement_type="count",
+            geometry_data=pts,
+        )
+        assert meas.computed_value == 3.0
+        assert meas.display_unit == "count"
+        assert meas.scale_calibration_id is None
+
+
+def test_linear_measurement_fails_without_scale(app, base_setup):
+    with app.app_context():
+        with pytest.raises(PlanIntelligenceServiceError, match="not calibrated"):
+            create_measurement(
+                project_id=base_setup["project_id"],
+                sheet_id=base_setup["sheet_id"],
+                plan_document_id=base_setup["document_id"],
+                page_index=0,
+                measurement_type="linear",
+                geometry_data=[{"x": 0.1, "y": 0.1}, {"x": 0.4, "y": 0.1}],
+            )
+
+
+def test_polyline_measurement_fails_without_scale(app, base_setup):
+    with app.app_context():
+        with pytest.raises(PlanIntelligenceServiceError, match="not calibrated"):
+            create_measurement(
+                project_id=base_setup["project_id"],
+                sheet_id=base_setup["sheet_id"],
+                plan_document_id=base_setup["document_id"],
+                page_index=0,
+                measurement_type="polyline",
+                geometry_data=[
+                    {"x": 0.1, "y": 0.1},
+                    {"x": 0.2, "y": 0.2},
+                    {"x": 0.3, "y": 0.1},
+                ],
+            )
+
+
+def test_area_measurement_fails_without_scale(app, base_setup):
+    with app.app_context():
+        with pytest.raises(PlanIntelligenceServiceError, match="not calibrated"):
+            create_measurement(
+                project_id=base_setup["project_id"],
+                sheet_id=base_setup["sheet_id"],
+                plan_document_id=base_setup["document_id"],
+                page_index=0,
+                measurement_type="area",
+                geometry_data=[
+                    {"x": 0.1, "y": 0.1},
+                    {"x": 0.4, "y": 0.1},
+                    {"x": 0.4, "y": 0.4},
+                ],
+            )
+
+
+def test_perimeter_remains_scale_governed_without_calibration(app, base_setup):
+    """Perimeter is an area-derived dimensional output and must stay scale-governed."""
+    with app.app_context():
+        with pytest.raises(PlanIntelligenceServiceError, match="not calibrated"):
+            create_measurement(
+                project_id=base_setup["project_id"],
+                sheet_id=base_setup["sheet_id"],
+                plan_document_id=base_setup["document_id"],
+                page_index=0,
+                measurement_type="area",
+                geometry_data=[
+                    {"x": 0.1, "y": 0.1},
+                    {"x": 0.5, "y": 0.1},
+                    {"x": 0.5, "y": 0.4},
+                    {"x": 0.1, "y": 0.4},
+                ],
+            )
+        assert PlanMeasurement.query.filter_by(measurement_type="area").count() == 0
+
+
 def test_normalized_coordinate_zoom_invariance():
     # If canvas display size changes (e.g. 1000px vs 2000px vs 500px), normalized coordinates remain [0.2, 0.4]
     p1 = {"x": 0.2, "y": 0.4}

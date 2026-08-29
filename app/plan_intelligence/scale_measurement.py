@@ -598,7 +598,43 @@ def create_measurement(
         if not (0.0 <= float(pt["x"]) <= 1.0 and 0.0 <= float(pt["y"]) <= 1.0):
             raise PlanIntelligenceServiceError("Point coordinates must be normalized within [0.0, 1.0].")
 
-    # Determine calibration
+    # COUNT is dimensionless (FG-010 / ADR-031). Do not require scale/NTS calibration.
+    if measurement_type == "count":
+        computed_value = float(len(geometry_data))
+        display_unit = "count"
+        measurement = PlanMeasurement(
+            sheet_id=sheet.id,
+            plan_document_id=plan_document_id,
+            page_index=page_index,
+            scale_calibration_id=None,
+            measurement_type=measurement_type,
+            label=label or f"Manual {measurement_type.title()} #{len(sheet.measurements) + 1}",
+            geometry_data=geometry_data,
+            computed_value=computed_value,
+            display_unit=display_unit,
+            perimeter_value=None,
+            status="active",
+            notes=notes,
+        )
+        db.session.add(measurement)
+        db.session.flush()
+        record_plan_audit(
+            project_id=project_id,
+            event_type="measurement_created",
+            plan_document_id=plan_document_id,
+            sheet_id=sheet.id,
+            detail={
+                "measurement_id": measurement.id,
+                "type": measurement_type,
+                "computed_value": computed_value,
+                "unit": display_unit,
+                "calibration_id": None,
+            },
+            commit=True,
+        )
+        return measurement
+
+    # Determine calibration (dimensional types only)
     cal: Optional[PlanScaleCalibration] = None
     if explicit_calibration_id is not None:
         cal = PlanScaleCalibration.query.filter_by(
@@ -648,9 +684,8 @@ def create_measurement(
         # Area unit
         display_unit = f"sq_{unit}" if not unit.startswith("sq_") else unit
 
-    elif measurement_type == "count":
-        computed_value = float(len(geometry_data))
-        display_unit = "count"
+    else:
+        raise PlanIntelligenceServiceError(f"Unsupported dimensional measurement type: '{measurement_type}'")
 
     measurement = PlanMeasurement(
         sheet_id=sheet.id,

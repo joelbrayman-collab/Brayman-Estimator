@@ -2,16 +2,16 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Approved architecture** — FG-010 **APPROVED FOR IMPLEMENTATION** — **NOT IMPLEMENTED** |
+| Status | **IMPLEMENTED / VERIFIED** — FG-010 foundation in code; Alembic graph head `b4c5d6e7f8a9` **NOT YET LIVE-MIGRATED** |
 | Date | 2026-08-29 |
-| Milestone | **M012** (verified: last numbered coded milestone is M011) |
-| Feature Gate | [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **APPROVED FOR IMPLEMENTATION** — **NOT IMPLEMENTED** |
+| Milestone | **M012** (foundation implemented; Phase D mapping not started) |
+| Feature Gate | [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED** — **NOT YET LIVE-MIGRATED** |
 | Module | [Plan Intelligence](../modules/plan-intelligence.md) (take-off is **not** a separate module) |
 | Related ADRs | [ADR-005](../adr/ADR-005-ai-takeoff-traceability.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](../adr/ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-009](../adr/ADR-009-pdf-first-versus-cad-first.md) **Accepted** · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** · [ADR-011](../adr/ADR-011-ai-confidence-threshold-policy.md) **Accepted** · [ADR-012](../adr/ADR-012-plan-document-version-ownership.md) **Proposed** (revision immutability practiced in M007+) · [ADR-026](../adr/ADR-026-scale-ownership-and-calibration-provenance.md) **Accepted** · [ADR-027](../adr/ADR-027-pdf-rendering-and-normalized-coordinate-system.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** · [ADR-031](../adr/ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md) **Accepted** |
 | Prerequisites | M005–M010 Plan Intelligence **implemented**; FG-007/M011 org isolation **implemented**; FG-008 Labour Engine **CLOSED / OPERATIONAL FOR UAT**; FG-009 Pricing Engine **CLOSED / OPERATIONAL FOR UAT** |
-| Product code | **None in this pass.** Intended later under `app/plan_intelligence/` additive models/services/UI. |
+| Product code | `app/plan_intelligence/models.py` (`TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem`); `app/plan_intelligence/takeoff.py`; `app/plan_intelligence/takeoff_extractors.py` (deterministic mock only); office routes/templates. Migration `migrations/versions/b4c5d6e7f8a9_add_ai_takeoff_foundation_fg010.py`. |
 
-This document is **approved architecture**. It does **not** itself implement product code, migrations, or real external AI provider integration. A **separate** bounded implementation prompt is required.
+This document is **approved architecture** plus a **verified foundation implementation**. It does **not** authorize a real external AI provider or Phase D estimate mapping.
 
 ---
 
@@ -47,15 +47,18 @@ This foundation must **not** silently cross into PRICE. FG-009 remains the selli
 | Sheet identity, human metadata review | `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`; `REVIEW_STATUSES` draft/suggested/reviewed/void |
 | Scale calibration + manual measurement | `PlanScaleCalibration`, `PlanMeasurement`; PDF.js 3.11.174 |
 | Normalized coordinates `[0,1]×[0,1]` | ADR-027; `geometry_data` JSON; overlay in `app/static/js/sheet-measurement.js` |
-| Manual measurement types | `linear`, `polyline`, `area` (+ `perimeter_value` on area), `count` |
-| Append-only plan audit | `PlanAuditEvent` via `app/plan_intelligence/audit.py` |
+| Manual measurement types | `linear`, `polyline`, `area` (+ `perimeter_value` on area), `count` (COUNT does **not** require scale) |
+| Append-only plan audit | `PlanAuditEvent` via `app/plan_intelligence/audit.py` (additive take-off FKs) |
 | Org isolation at project route | `_get_project_or_404` requires `organization_id == current org` |
+| Take-off extraction runs / candidates / packages | `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem`; `app/plan_intelligence/takeoff.py` |
+| Provider-neutral extractor | `app/plan_intelligence/takeoff_extractors.py` — **deterministic mock only** (`calibai-mock`) |
+| Office take-off UI | `/projects/<id>/plans/takeoff` |
 
-**Not implemented:** AI quantity candidates, extraction runs, take-off packages, estimate mapping from take-off, OCR, CAD.
+**Not implemented:** real external AI provider; OCR; CAD; estimate mapping from take-off (Phase D); Labour/Pricing Engine consumption of take-off packages.
 
-### Intended (this architecture / FG-010)
+### Implemented (this architecture / FG-010)
 
-Phase **C** only: searchable architectural PDF → interior-door **count** candidates → human review → immutable approved take-off package. **Implementation not started.** Real external AI provider **not authorized**.
+Phase **C** foundation: searchable architectural PDF → interior-door **count** candidates (mock) → human review → immutable approved take-off package. Real external AI provider **not authorized**. Live DB **not** migrated to `b4c5d6e7f8a9`.
 
 ### Future (separate gates)
 
@@ -420,15 +423,13 @@ Additive tables under Plan Intelligence, names indicative:
 
 Nullable FKs on `plan_audit_events` for those ids.
 
-**No migration in this governance pass.** Additive migration only when a separate implementation prompt authorizes it.
+**No live migration in this implementation pass.** Additive migration `b4c5d6e7f8a9` exists in the working tree and is the Alembic graph head. Live `flask db current` remains `a3b4c5d6e7f8`.
 
 ---
 
-## 26. Test readiness (implementation later)
+## 26. Test readiness
 
-Organization isolation; searchable-PDF eligibility; architectural-sheet eligibility; run versioning; candidate provenance; normalized bbox; confidence persistence; accept/adjust/reject/duplicate; reviewer identity; approved package immutability; rerun non-mutation; revision separation; count determinism; no estimate insert; no Pricing Engine mutation; no Labour Engine mutation; cross-org fail-closed; Plan Intelligence / M010 / FG-008 / FG-009 / full-suite regression.
-
-**No new tests in this architecture pass.**
+Covered in `tests/test_takeoff.py` and COUNT-without-scale tests in `tests/test_scale_measurement.py`, plus Plan Intelligence / FG-008 / FG-009 / full-suite regression.
 
 ---
 
@@ -437,10 +438,11 @@ Organization isolation; searchable-PDF eligibility; architectural-sheet eligibil
 | Layer | State |
 |-------|--------|
 | This architecture | **Approved** (2026-08-29) |
-| FG-010 | **APPROVED FOR IMPLEMENTATION** — **NOT IMPLEMENTED** |
+| FG-010 | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **NOT YET LIVE-MIGRATED** |
 | ADR-031 / 005 / 006 / 007 / 009 / 011 | **Accepted** |
 | ADR-010 | **Proposed** — PDF.js historical FG-005 fact; remaining buy decisions deferred; **real external AI provider not authorized** |
-| Product code | **Not implemented** |
+| Product code | **Implemented** (mock extractor only; committed/pushed) |
 | Real external AI provider | **NOT AUTHORIZED** |
+| Phase D estimate mapping | **NOT STARTED** |
 
-**Next action:** Issue a **separate** bounded FG-010 implementation prompt for the provider-neutral AI Take-off foundation. **Do not implement in this governance pass.** Do not enable a real external AI provider.
+**Next action:** Separate authorization to apply `b4c5d6e7f8a9` to live development/UAT and perform bounded synthetic browser/UAT smoke. Do not enable a real external AI provider. Do not start Phase D.

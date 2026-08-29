@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-08-28 |
+| Updated | 2026-08-29 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -31,6 +31,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 ---
 
 ## Architecture records (non-milestone)
+
+### FG-008 — Labour Engine Phase B Feature Gate preparation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-008 |
+| Status | **FEATURE GATE APPROVED FOR IMPLEMENTATION** — not implemented; separate execution prompt required |
+| Date | 2026-08-29 |
+| Objective | Define organization-owned labour methodology: canonical tasks, versioned production and direct-labour-cost standards, calibration candidate lifecycle, resolution, conditions, estimate snapshots, tenant isolation. |
+| Deliverables | [FG-008](feature-gates/FG-008-labour-engine-phase-b.md); [labour-engine-phase-b-architecture.md](architecture/labour-engine-phase-b-architecture.md); [ADR-029](adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted**; [modules/labour-engine.md](modules/labour-engine.md) |
+| Implementation | **Not started.** Architecture approved. No product code, schema, or migration in this record. |
+| Next | Bounded FG-008 **implementation** Cursor prompt (separately authorized) |
 
 ### FG-006 — Historical Estimate Ingestion Engine Phase B Feature Gate
 
@@ -64,7 +76,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Objective | Read-only reconciliation of the existing platform to CalibAi PLAN→PRICE→CONTRACT→BUILD→MONITOR→LEARN; adopt approved vision and core architecture in docs. |
 | Deliverables | [CAR-001 record](architecture/CAR-001-calibai-product-architecture-reconciliation.md); vision/roadmap updates; ADR-019–025; BUILD module stub |
 | Validation | Docs/governance only; no app/migration/test/schema changes |
-| M009 | **Unchanged** — M009 remains coded Sheet classification. CAR-001 is not M009. M009 code **not begun**. |
+| M009 | **Unchanged at CAR-001 time** — M009 remained coded Sheet classification; CAR-001 is not M009. M009 code was **not begun** when CAR-001 was adopted. **Correction (2026-08-29):** M009 was later implemented under FG-004 (`5dc4b09`, migration `b8d9f0a1c2e3`). |
 | Next | Feature-Gate M009 when authorized; accept ADR-021/025 when ready |
 
 ### FG-005 — M010 Scale Calibration Feature Gate
@@ -106,8 +118,8 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Deliverables | [FG-006](feature-gates/FG-006-historical-estimate-ingestion-phase-b.md); pure Python OpenXML parser (no macro execution), Template classifier (Families A–E), Family adapters, canonical persistence models (`HistoricalSourceWorkbook`, `HistoricalEstimate`, `HistoricalSourceObservation`, `HistoricalCostLineItem`, `HistoricalLabourItem`, `HistoricalSubcontractItem`, `HistoricalDataQualityFlag`, `HistoricalEstimateReviewDecision`), evidence review service/UI (`/historical-estimates/`), additive migration `e1b2c3d4e5f6`, 11 dedicated tests in `tests/test_historical_ingestion.py`. |
 | Validation | 170/170 full test suite pass; 11/11 dedicated historical ingestion tests pass; 20/20 source workbook SHA-256 hashes verified exact before and after ingestion; ORG-001 private intelligence isolation verified; zero mutation to active estimating tables. |
 | Architectural findings | Pure-Python OpenXML reader executes zero macros; cell provenance preserves exact formula and displayed text; cost-plus markup preserved as historical fact without converting to modern gross margin; contingency separated from markup. |
-| Open decisions | None for FG-006. Ingestion is complete and sealed. Labour Engine Phase B and Pricing Engine remain blocked / not started. |
-| Next milestone | Next candidate: Labour Engine Phase B architecture / Feature Gate preparation (STATUS: NOT STARTED; REQUIRES SEPARATE GOVERNANCE AUTHORIZATION). |
+| Open decisions | None for FG-006. Ingestion is complete and sealed. Pricing Engine remains blocked / not started. |
+| Next milestone | **FG-008** Labour Engine Phase B — architecture **APPROVED FOR IMPLEMENTATION** (2026-08-29). Implementation not started. |
 | Commit | `690d755` — *feat: implement FG-006 historical estimate ingestion engine phase b* |
 
 ### Milestone 011 — Organization Foundation & Project Commercial Context

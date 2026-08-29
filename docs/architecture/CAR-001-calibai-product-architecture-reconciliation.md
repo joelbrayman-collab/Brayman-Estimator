@@ -17,9 +17,11 @@ The 2026-08-28 read-only reconciliation was mistakenly labeled M009 in a ChatGPT
 | Record | Meaning |
 |--------|---------|
 | **CAR-001** | This architecture/product reconciliation (docs/governance) |
-| **M009** | Remains **coded Sheet classification / Sheet Intelligence implementation**, per the existing roadmap. **Not begun.** |
+| **M009** | Remains **coded Sheet classification / Sheet Intelligence implementation**, per the existing roadmap. At CAR-001 adoption this code was **not begun**. |
 
 Do not renumber historical milestones.
+
+**Subsequent status (2026-08-28, after CAR-001 — not authorized by CAR-001):** M009 was implemented and verified under [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) (`5dc4b09`, migration `b8d9f0a1c2e3`). M010, M011, and FG-006 followed under their own gates. CAR-001 itself remains docs/governance direction only.
 
 ## What CAR-001 was
 

@@ -340,4 +340,4 @@ Following satisfaction of prerequisites, **FG-006 Phase B was implemented, verif
 - Pure Python OpenXML reader executing zero macros
 - Template Families A–E classified and normalized with cell-level provenance
 - Full test baseline: 170 passed (11 dedicated historical ingestion tests)
-- Subsequent systems (Labour Engine Phase B, Organization-Calibrated Pricing Engine) remain **BLOCKED / NOT STARTED** pending separate governance authorization.
+- Subsequent systems: Labour Engine Phase B architecture **approved** ([FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) — **APPROVED FOR IMPLEMENTATION**; **not implemented**); Organization-Calibrated Pricing Engine remains **BLOCKED / NOT STARTED**.

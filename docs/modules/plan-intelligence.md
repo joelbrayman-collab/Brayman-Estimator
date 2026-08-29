@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Phase A + M007 indexing + M009 Sheet classification implemented**; Scale / take-off / AI not started |
+| Status | **Phase A + M007 indexing + M009 Sheet classification + M010 scale/measurement implemented**; AI take-off not started |
 | Updated | 2026-08-28 |
 | Code | `app/plan_intelligence/` |
 | Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) |
@@ -50,7 +50,7 @@ Proposal generation already exists. Plan Intelligence is the next major platform
 | Append-only plan audit events | **Done** (M007 + M009 `sheet_id`) |
 | Project-scoped relational search/filter | **Done** (M007) |
 | Sheet classification / human review | **Done** (M009; `plan_sheets`, `plan_sheet_pages`, `plan_sheet_suggestions`, human accept/edit/reject, uniqueness validation) |
-| Scale calibration / measurement | **Feature Gate Approved** (M010; [FG-005](../feature-gates/FG-005-m010-scale-calibration.md); ADR-026/027; code not started) |
+| Scale calibration / measurement | **Done** (M010; [FG-005](../feature-gates/FG-005-m010-scale-calibration.md); ADR-026/027; migration `c9e0f1a2b3d4`) |
 | OCR / CAD / AI take-off | **Out of scope** until Feature-Gated |
 
 Routes live under `/projects/<id>/plans…`. Estimating, Proposals, OCR, CAD, AI, and supplier features are unchanged.

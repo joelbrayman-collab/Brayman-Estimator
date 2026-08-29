@@ -8,7 +8,7 @@
 | Date | 2026-08-28 |
 | Approved baseline | `main` @ `f660b54` (docs: complete organization and calibration architecture Phase A); Alembic head `c9e0f1a2b3d4` (M010) |
 | Architecture | [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) |
-| Related ADRs | [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Proposed (governing FG-007 / M011)** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) |
+| Related ADRs | [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted (governing FG-007 / M011; implemented)** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) |
 | CAR | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 
 ---
@@ -148,4 +148,4 @@ The migration is a **controlled additive migration designed to minimize applicat
 ## Blocking Conditions
 
 > **Historical Status:** M011 was successfully implemented and verified (`cb38d93`, migration `d0a1b2c3d4e5`), satisfying the prerequisite for FG-006 (Historical Estimate Ingestion Engine — Phase B), which has also been implemented and verified (`690d755`, migration `e1b2c3d4e5f6`).
-> **Current Status:** The Labour Engine (Phase B) and the Organization-Calibrated Pricing Engine remain **BLOCKED / NOT STARTED** pending separate governance authorization.
+> **Current Status:** [FG-008](FG-008-labour-engine-phase-b.md) Labour Engine Phase B architecture is **APPROVED FOR IMPLEMENTATION** (implementation **has not started**; separate execution prompt required). The Organization-Calibrated Pricing Engine remains **BLOCKED / NOT STARTED**.

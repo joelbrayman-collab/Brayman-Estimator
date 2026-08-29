@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-08-28 |
+| Updated | 2026-08-29 |
 
 ## Purpose
 
@@ -41,6 +41,52 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-08-29 — FG-008 architecture approved; ADR-029 Accepted; documentation commit
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Record Joel/ChatGPT approval of FG-008 architecture and ADR-029. Commit documentation only. **No product implementation.** |
+| Business decision | FG-008 architecture **APPROVED FOR IMPLEMENTATION**. ADR-029 **Accepted**. Implementation **has not started** and requires a separate execution prompt. |
+| Architectural decision | Unchanged from the reviewed stopping report: canonical LabourTask; human mapping; versioned production vs direct labour cost rates; no silent multipliers; historical rows immutable evidence; calibration candidate lifecycle; tenant fail-closed; Labour Engine stops at direct labour cost. |
+| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | Finalize FG-008 / ADR-029 governance status; confirm docs consistency; test; **one** docs commit; push `origin/main`. No app/, migrations/, or implementation tests. |
+| Files expected to change | `docs/` only |
+| Files prohibited from changing | Application code, models, migrations, routes, templates, services, tests, historical workbooks, pricing-policy rate/formula values |
+| Implementation result | Governance statuses updated. Labour Engine **not implemented**. |
+| Tests | See this session’s stopping report (full suite + historical ingestion). |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (FG-008 architecture record status) |
+| Constitutional issue raised | None |
+| Unresolved issues | Implementation prompt not issued; historical rate-quality defects remain unrepaired by design. |
+| Next approved step | Bounded FG-008 implementation prompt (not issued in this pass). |
+| Next approved prompt | **None.** |
+| Commit hash | *(this approval commit)* |
+
+### 2026-08-29 — FG-008 Labour Engine Phase B architecture / Feature Gate preparation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Prepare FG-008 Labour Engine Phase B / Organization Labour Calibration Foundation: architecture, Feature Gate, ADR-029, stale-doc corrections. **No product implementation.** |
+| Business decision | CalibAi owns methodology; each organization owns labour intelligence. ORG-001 $65/hr and 15% true gross margin are Brayman policy, not platform defaults. Historical labour remains evidence. No hidden hour multipliers. Crew catalog and burden modeling deferred. |
+| Architectural decision | Canonical org-owned Labour Tasks with human-reviewed mappings; versioned Production Rate Standard separate from Direct Labour Cost Rate Standard; Calibration Candidate state machine; explainable resolution; estimate labour snapshots; actuals architecture defined but persistence deferred; ADR-029 **Proposed**; org architecture §18 automatic condition multiplier **not authorized** for labour. |
+| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | Joel authorized FG-008 **preparation only** (analysis, architecture, Feature Gate, ADR, stale SHA/ADR-028/M009 doc cleanup). Explicitly **not** product code, migration, schema, routes, UI, live engine, pricing change, historical source mutation, commit, or push. |
+| Files expected to change | Docs/governance under `docs/` only |
+| Files prohibited from changing | Application code, models, migrations, routes, templates, services, tests, historical workbooks, `pricing-policy.md` rate/formula values |
+| Implementation result | Documentation prepared. FG-008 **not approved**. Labour Engine **not implemented**. |
+| Tests | Before edits: `./venv/bin/python -m pytest -q` → **170 passed**, 64 warnings (27.26s); `./venv/bin/python -m pytest -q tests/test_historical_ingestion.py` → **11 passed** (10.15s). After docs: same commands → **170 passed**, 64 warnings (29.54s); **11 passed** (12.79s). |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (architecture record FG-008; CAR-001 M009 subsequent-status correction) |
+| Constitutional issue raised | None. Articles 5–6, 9, 11 respected (no schema; no invented policy; historical records not rewritten). |
+| Unresolved issues | Joel approval of FG-008/ADR-029; ORG-001 canonical task seed; actuals persistence timing; historical rate-quality defects remain as evidence (not repaired). |
+| Next approved step | **None for implementation.** Review FG-008. |
+| Next approved prompt | **None.** |
+| Commit hash | *(uncommitted documentation pass — Joel has not directed commit)* |
 
 ### 2026-08-28 — Post-FG-006 Governance & Turnover State Reconciliation
 

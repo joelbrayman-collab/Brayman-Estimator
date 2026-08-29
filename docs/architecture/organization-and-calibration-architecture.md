@@ -556,6 +556,8 @@ The future CalibAi Labour Engine (Phase B) integrates seamlessly with the Organi
 └────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
+**Constraint (FG-008 / ADR-029, 2026-08-29):** Automatic commercial-profile multipliers on labour hours (including the `+15%` Tight Urban Staging example in step 2 above) are **not authorized**. Project conditions may select a matching ORG-APPROVED production standard or require an explicit documented adjustment. Pricing Posture and Execution Risk must not silently scale true hours. See [labour-engine-phase-b-architecture.md](labour-engine-phase-b-architecture.md).
+
 ---
 
 ## 19. Pricing Policy & Formula Reconciliation
@@ -679,9 +681,8 @@ A comprehensive code audit of the entire existing codebase was conducted to conf
 - **FG-006 (Historical Estimate Ingestion Engine — Phase B):** Implemented and verified on `main` (`690d755`, migration `e1b2c3d4e5f6`).
 
 ### Governed Next Step:
-- **Next Candidate Milestone:** Labour Engine Phase B architecture / Feature Gate preparation.
-- **Status:** **NOT STARTED — REQUIRES SEPARATE GOVERNANCE AUTHORIZATION**.
-- **Blocked / Not Started:** Labour Engine Phase B, Organization-Calibrated Pricing Engine, ML-based commercial learning, cross-org benchmarking.
+- **Next:** [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) Labour Engine Phase B — **APPROVED FOR IMPLEMENTATION** (2026-08-29). **Implementation has not started.** Requires a separate execution prompt.
+- **Blocked / Not Started:** Labour Engine Phase B **implementation**, Organization-Calibrated Pricing Engine, ML-based commercial learning, cross-org benchmarking.
 
 ---
 
@@ -695,4 +696,5 @@ A comprehensive code audit of the entire existing codebase was conducted to conf
 - [`project-document-package.md`](project-document-package.md) — Authoritative estimate record & four core outputs
 - [`quickbooks-integration.md`](quickbooks-integration.md) — QuickBooks export pipeline boundary
 - [`CAR-001-calibai-product-architecture-reconciliation.md`](CAR-001-calibai-product-architecture-reconciliation.md) — CalibAi lifecycle reconciliation
+- [labour-engine-phase-b-architecture.md](labour-engine-phase-b-architecture.md) — Labour Engine Phase B architecture (prepared; not implemented)
 - [`testing/uat-reference-cases.md`](../testing/uat-reference-cases.md) — 3415 Roger Stevens Road UAT reference case

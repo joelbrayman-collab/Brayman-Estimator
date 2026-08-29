@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative documentation map |
-| Updated | 2026-08-28 |
+| Updated | 2026-08-29 |
 | Product | The Estimator (Brayman Estimator) |
 
 ## Purpose
@@ -61,9 +61,12 @@ Also read [`platform-governance.md`](platform-governance.md), [`governance/conti
 | [architecture/historical-estimates-source-manifest.md](architecture/historical-estimates-source-manifest.md) | Historical estimate source provenance manifest | **Operational / Metadata (Phase A)** |
 | [architecture/historical-estimate-ingestion-architecture.md](architecture/historical-estimate-ingestion-architecture.md) | Historical estimate ingestion architecture & audit | **Architecture & Ingestion Specification (Phase A & B Complete)** |
 | [architecture/organization-and-calibration-architecture.md](architecture/organization-and-calibration-architecture.md) | Organization & calibration architecture | **Architecture / Governance (Phase A Complete)** |
+| [architecture/labour-engine-phase-b-architecture.md](architecture/labour-engine-phase-b-architecture.md) | Labour Engine Phase B architecture & readiness | **Approved architecture — not implemented** |
 | [feature-gates/FG-006-historical-estimate-ingestion-phase-b.md](feature-gates/FG-006-historical-estimate-ingestion-phase-b.md) | Historical estimate ingestion Phase B Feature Gate | **Feature Gate (FG-006 Approved & Implemented)** |
 | [feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md](feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md) | M011 Organization Foundation & Project Commercial Context Feature Gate | **Feature Gate (M011 Approved & Implemented)** |
+| [feature-gates/FG-008-labour-engine-phase-b.md](feature-gates/FG-008-labour-engine-phase-b.md) | Labour Engine Phase B Feature Gate | **APPROVED FOR IMPLEMENTATION — not implemented** |
 | [adr/ADR-028-organization-foundation-and-project-commercial-context.md](adr/ADR-028-organization-foundation-and-project-commercial-context.md) | Organization Foundation, Multi-Tenant Boundary, and Project Commercial Context ADR | **Architecture Decision (ADR-028 Accepted)** |
+| [adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md](adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) | Canonical Labour Task, Production Standard, Calibration Lifecycle | **Accepted** (FG-008 architecture; not implemented) |
 | [platform-governance.md](platform-governance.md) | Decision authority, Feature Gate, ownership, drift stop | **Governing** |
 | [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md) | Continuity, anti-drift, preflight, rollover, protected assets | **Governing** |
 | [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) | Review Turnover procedure, delta ledger, fresh chat startup | **Governing** |

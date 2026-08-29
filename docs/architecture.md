@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Living architecture map |
-| Updated | 2026-08-28 |
+| Updated | 2026-08-29 |
 | Evidence baseline | `main` @ CAR-001 adoption (see git); Plan Intelligence Current claims evidenced in `app/plan_intelligence/` and migration `a7c8e9f0b1d2` |
 
 **Cite code paths for implemented claims.** Distinctions below are mandatory. CalibAi lifecycle architecture: [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md).
@@ -61,7 +61,7 @@ Notable behaviours evidenced in code/tests:
 - Proposals built as **snapshots** from estimate versions (`build_proposal_snapshot` exported from `app/services/`); tests in `tests/test_proposal_snapshots.py` assert independence from later estimate edits.
 - Proposal statuses include `Accepted` among others (`PROPOSAL_STATUSES` in `app/models/proposal.py`).
 - Change Orders package under `app/project_controls/` with its own routes/services/repository/pdf.
-- Plan Intelligence Phase A upload/storage (M005) and Document Indexing (M007): pages, processing provenance, archive-over-delete, relational search (`app/plan_intelligence/`; tests `tests/test_plan_upload.py`, `tests/test_plan_indexing.py`). **Sheets are not implemented** (M008 architecture only).
+- Plan Intelligence Phase A upload/storage (M005) and Document Indexing (M007): pages, processing provenance, archive-over-delete, relational search (`app/plan_intelligence/`; tests `tests/test_plan_upload.py`, `tests/test_plan_indexing.py`). Sheets **implemented** (M009). Scale/measurement **implemented** (M010).
 
 ### Services / repositories
 
@@ -82,7 +82,7 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Intended Alembic head: **`a7c8e9f0b1d2`** (M007). Live DB `flask db current` should be verified per environment before relying on it.
+- Intended Alembic head: **`e1b2c3d4e5f6`** (FG-006). Live DB `flask db current` should be verified per environment before relying on it.
 
 ### Tests
 
@@ -149,6 +149,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 - Scheduling, Job Costing, Invoicing
 - QuickBooks / accounting integration — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - Historical estimating intelligence (LEARN; [ADR-024](adr/ADR-024-learn-recommendation-boundary.md))
+- **Labour Engine Phase B** — [labour-engine-phase-b-architecture.md](architecture/labour-engine-phase-b-architecture.md); [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **APPROVED FOR IMPLEMENTATION**, **not implemented**
 - Electronic signature / formal proposal acceptance workflows
 - CAD ingestion (Phase G; PDF-first per ADR-009)
 

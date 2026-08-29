@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Planning |
-| Updated | 2026-08-28 |
+| Updated | 2026-08-29 |
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
@@ -15,7 +15,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 |--------|--------------|----------------------|
 | Core CRM and project records | **Current** (Clients, Projects) | [modules/crm.md](modules/crm.md), [modules/projects.md](modules/projects.md) |
 | Estimating and assemblies | **Current** | [modules/estimating.md](modules/estimating.md) |
-| Plan Intelligence | **Partial** — Phase A upload (M005); Document Intelligence indexing (M007); Sheet Intelligence & human review (M009); Scale (M010) / take-off (M012+) future | [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md) · [architecture/document-intelligence.md](architecture/document-intelligence.md) · [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) · [modules/plan-intelligence.md](modules/plan-intelligence.md) · [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](feature-gates/FG-004-m009-sheet-classification.md) |
+| Plan Intelligence | **Partial** — Phase A upload (M005); Document Intelligence indexing (M007); Sheet Intelligence & human review (M009); Scale & measurement (M010); take-off (M012+) future | [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md) · [architecture/document-intelligence.md](architecture/document-intelligence.md) · [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) · [modules/plan-intelligence.md](modules/plan-intelligence.md) · [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](feature-gates/FG-005-m010-scale-calibration.md) |
 | Automated Quantity Take-Off | **Future** | Same Plan Intelligence docs |
 | Human Review and Source Traceability | **Future** (ADR-005/006/011) | Embedded in Plan Intelligence |
 | Supplier Catalogue Management | **Future** (only free-text `CostItem.supplier` today) | [architecture/supplier-catalogue-inventory-pricing.md](architecture/supplier-catalogue-inventory-pricing.md) |
@@ -29,7 +29,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next candidate milestone:** **Labour Engine Phase B architecture / Feature Gate preparation** (STATUS: NOT STARTED; REQUIRES SEPARATE GOVERNANCE AUTHORIZATION).
+**Next candidate milestone:** **FG-008 Labour Engine Phase B implementation** — architecture **APPROVED FOR IMPLEMENTATION** (2026-08-29). **NOT STARTED.** Requires a separate execution prompt.
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -80,7 +80,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-- **`main` / `origin/main`** — `690d755d9901e04eb783198f4b89071fbeaf472a` (exact parity on `origin/main`). CAR-001 adopted; M005–M011 and FG-006 merged and verified.
+- **`main` / `origin/main`** — parent baseline `e2bf33c9377c3990052ae4a3c5f695c8df5d041c`. CAR-001 adopted; M005–M011 and FG-006 merged and verified. FG-008 Labour Engine Phase B architecture is **APPROVED FOR IMPLEMENTATION** — **not implemented**.
 - **Review Turnover Protocol** adopted (2026-08-28) — `Review Turnover` governing.
 - **M010 Scale Calibration & Measurement Tools** implemented and verified (2026-08-28).
 - **M011 Organization Foundation & Project Commercial Context** implemented and verified (2026-08-28).
@@ -100,7 +100,7 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 2. **M010** Scale Calibration / Measurement Tools — **Completed & Verified** (migration `c9e0f1a2b3d4`)
 3. **M011** Organization Foundation & Project Commercial Context — **Completed & Verified** (FG-007 / ADR-028; migration `d0a1b2c3d4e5`)
 4. **FG-006** Historical Estimate Ingestion Engine Phase B — **Completed & Verified** (migration `e1b2c3d4e5f6`)
-5. **Next candidate:** Labour Engine Phase B architecture / Feature Gate preparation (STATUS: NOT STARTED; REQUIRES SEPARATE GOVERNANCE AUTHORIZATION)
+5. **Next candidate:** **FG-008** Labour Engine Phase B **implementation** — architecture **APPROVED FOR IMPLEMENTATION**; ADR-029 **Accepted**. **Not started.** Separate execution prompt required.
 6. Organization-Calibrated Pricing Engine (STATUS: NOT STARTED; REQUIRES SEPARATE GOVERNANCE AUTHORIZATION)
 7. AI Take-off / Quantity Extraction Foundation
 8. Project Hub UX
@@ -157,9 +157,9 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Next recommended milestones
 
-1. Dedicated **M009 implementation Cursor prompt** citing [FG-004](feature-gates/FG-004-m009-sheet-classification.md) (**code not started**).
-2. Joel accepts/amends ADR-021 / ADR-025 (Proposed) when those decisions are ready. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004.
-3. Subsequent CalibAi sequence items 2–11 on the roadmap, each separately gated.
+1. Issue a bounded [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **implementation** Cursor prompt. Architecture is approved; code has **not** started.
+2. Joel accepts/amends ADR-021 / ADR-025 (Proposed) when those decisions are ready. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
+3. Subsequent CalibAi sequence items after Labour Engine, each separately gated.
 4. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate.
 
 ---

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-08-28 |
+| Updated | 2026-08-29 |
 
 ## Highest-order authority
 
@@ -148,7 +148,7 @@ Recorded 2026-08-25 — **documentation only; not implemented**:
 | Ontario contract + warranty / Legal Content Gate | [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md) |
 | UAT reference case (3415 Roger Stevens Road) | [testing/uat-reference-cases.md](testing/uat-reference-cases.md) |
 
-**CAR-001** (2026-08-28): CalibAi architectural direction — [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md). Does not authorize product code. M009 remains coded Sheets.
+**CAR-001** (2026-08-28): CalibAi architectural direction — [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md). Does not authorize product code. M009 is coded Sheets (implemented later under FG-004; not by CAR-001).
 
 ---
 
@@ -169,4 +169,4 @@ Answer all of the following in the Cursor prompt or an attached Feature Gate doc
 11. Does it require an ADR?
 12. Does it require a database migration?
 
-Current Feature Gates: [feature-gates/README.md](feature-gates/README.md) (FG-004 M009 Sheet classification **approved**; implementation not started).
+Current Feature Gates: [feature-gates/README.md](feature-gates/README.md) (FG-004 through FG-007 approved and implemented; **FG-008 Labour Engine Phase B APPROVED FOR IMPLEMENTATION — not implemented**; separate execution prompt required).

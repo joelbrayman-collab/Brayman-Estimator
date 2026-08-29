@@ -169,4 +169,4 @@ Answer all of the following in the Cursor prompt or an attached Feature Gate doc
 11. Does it require an ADR?
 12. Does it require a database migration?
 
-Current Feature Gates: [feature-gates/README.md](feature-gates/README.md) (FG-004 through FG-008 approved and implemented; **FG-008 live development/UAT current and head** `f2c3d4e5f6a7`; **FG-009 APPROVED FOR IMPLEMENTATION — not implemented**).
+Current Feature Gates: [feature-gates/README.md](feature-gates/README.md) (FG-004 through FG-008 approved and implemented; **FG-008 live development/UAT current** `f2c3d4e5f6a7`; **FG-009 IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** — graph head `a3b4c5d6e7f8`; live DB not migrated).

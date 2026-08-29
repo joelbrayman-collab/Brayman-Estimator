@@ -100,12 +100,32 @@ def _get_line_item(estimate_id, version_id, section_id, item_id):
 
 
 def _builder_context(estimate, version, **extra):
+    from app.models.organization import Organization
+    from app.models.pricing_engine import EstimatePricingSnapshot, OrganizationPricingPolicy
+
+    snapshot = EstimatePricingSnapshot.query.filter_by(
+        estimate_version_id=version.id,
+        organization_id=estimate.project.organization_id,
+    ).first()
+    org_id = get_current_organization_id()
+    approved_policies = []
+    if Organization.query.get(org_id) is not None:
+        approved_policies = (
+            OrganizationPricingPolicy.query.filter_by(
+                organization_id=org_id,
+                approval_status="ORG_APPROVED",
+            )
+            .order_by(OrganizationPricingPolicy.policy_code.asc())
+            .all()
+        )
     context = {
         "estimate": estimate,
         "version": version,
         "cost_items": _active_cost_items(),
         "assemblies": _active_assemblies(),
         "editable": not version.is_locked,
+        "pricing_snapshot": snapshot,
+        "approved_pricing_policies": approved_policies,
     }
     context.update(extra)
     return context
@@ -515,6 +535,42 @@ def update_pricing(id, version_id):
         return _render_builder(estimate, version, pricing_form=form)
 
     flash("Pricing percentages updated.", "success")
+    return redirect(
+        url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+    )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/apply-org-pricing",
+    methods=["POST"],
+)
+def apply_org_pricing(id, version_id):
+    estimate, version = _get_estimate_version(id, version_id)
+    actor = request.form.get("approved_by", "").strip() or "Joel Brayman"
+    override_id = request.form.get("pricing_policy_override_id", type=int)
+    reason = request.form.get("pricing_override_reason", "").strip()
+    try:
+        from app.services.pricing_engine import (
+            PricingEngineError,
+            apply_resolved_pricing_to_version,
+            set_estimate_pricing_override,
+        )
+
+        if override_id:
+            set_estimate_pricing_override(
+                version, override_id, actor=actor, reason=reason
+            )
+        apply_resolved_pricing_to_version(version, actor=actor)
+        db.session.commit()
+        flash("Organization pricing policy applied to this version.", "success")
+    except Exception as exc:
+        from app.services.pricing_engine import PricingEngineError
+
+        db.session.rollback()
+        if isinstance(exc, (PricingEngineError, EstimateServiceError)):
+            flash(str(exc), "error")
+        else:
+            raise
     return redirect(
         url_for("estimates.view_version", id=estimate.id, version_id=version.id)
     )

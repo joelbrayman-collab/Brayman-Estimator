@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}New Pricing Policy | Brayman Construction Platform{% endblock %}
+{% block page_title %}New Pricing Policy{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Pricing Engine</p>
+        <h1>Create draft policy</h1>
+        <p>DRAFT until a human approves. Target GM and markup rates are fractions (0.15 = 15%).</p>
+    </div>
+</div>
+
+<form method="post" class="form-panel">
+    <div class="form-grid">
+        <label>
+            Policy code *
+            <input type="text" name="policy_code" required>
+        </label>
+        <label>
+            Method *
+            <select name="method" required>
+                {% for m in methods %}
+                <option value="{{ m }}">{{ m }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Target gross margin (fraction)
+            <input type="text" name="target_gross_margin" placeholder="0.15">
+        </label>
+        <label>
+            Markup rate (fraction)
+            <input type="text" name="markup_rate" placeholder="0.15">
+        </label>
+        <label>
+            Stack overhead %
+            <input type="text" name="stack_overhead_percent">
+        </label>
+        <label>
+            Stack profit %
+            <input type="text" name="stack_profit_percent">
+        </label>
+        <label>
+            Overhead treatment
+            <select name="overhead_treatment">
+                {% for t in overhead_treatments %}
+                <option value="{{ t }}">{{ t }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Profit treatment
+            <select name="profit_treatment">
+                {% for t in profit_treatments %}
+                <option value="{{ t }}">{{ t }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Contingency source / purpose
+            <input type="text" name="contingency_source">
+        </label>
+        <label>
+            Contingency visibility
+            <select name="contingency_visibility">
+                {% for v in visibilities %}
+                <option value="{{ v }}">{{ v }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Contingency pricing treatment
+            <select name="contingency_pricing_treatment">
+                <option value="">—</option>
+                {% for t in treatments %}
+                <option value="{{ t }}">{{ t }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Contingency rate (fraction)
+            <input type="text" name="contingency_rate" placeholder="0.05">
+        </label>
+        <label>
+            Tax jurisdiction
+            <input type="text" name="tax_jurisdiction" placeholder="CA-ON">
+        </label>
+        <label>
+            Tax %
+            <input type="text" name="tax_percent" placeholder="13">
+        </label>
+        <label>
+            Approved / created by
+            <input type="text" name="approved_by" value="Joel Brayman">
+        </label>
+    </div>
+    <label>
+        Provenance
+        <textarea name="provenance" rows="3"></textarea>
+    </label>
+    <div class="form-actions">
+        <button type="submit">Create draft</button>
+        <a class="button-link" href="{{ url_for('pricing_engine.index') }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

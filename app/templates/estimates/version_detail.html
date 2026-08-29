@@ -97,7 +97,7 @@
         </div>
     </div>
 
-    {% if editable %}
+    {% if editable and (not pricing_snapshot or pricing_snapshot.method == "COST_PLUS_MARKUP_STACK") %}
     <form method="post" action="{{ url_for('estimates.update_pricing', id=estimate.id, version_id=version.id) }}" class="pricing-form">
         <div class="form-grid">
             <label>
@@ -115,6 +115,93 @@
         </div>
         <div class="form-actions">
             <button type="submit">Update Pricing</button>
+        </div>
+    </form>
+    {% endif %}
+</section>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Pricing Engine</h2>
+    {% if pricing_snapshot %}
+    <p>
+        Method <strong>{{ pricing_snapshot.method }}</strong>
+        {% if pricing_snapshot.method == "COST_PLUS_MARKUP_STACK" %}
+        — legacy named stack
+        {% elif pricing_snapshot.method == "TRUE_GROSS_MARGIN" %}
+        — true gross margin (not markup)
+        {% endif %}
+        · Source {{ pricing_snapshot.resolution_source }}
+        {% if pricing_snapshot.requires_review %} · requires review{% endif %}
+    </p>
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Direct cost basis (internal)</p>
+            <p>${{ "%.2f"|format(pricing_snapshot.direct_cost_basis) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Target GM (fraction)</p>
+            <p>{{ pricing_snapshot.target_gross_margin if pricing_snapshot.target_gross_margin is not none else "—" }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Markup rate (fraction)</p>
+            <p>{{ pricing_snapshot.markup_rate if pricing_snapshot.markup_rate is not none else "—" }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Pre-tax selling price</p>
+            <p><strong>${{ "%.2f"|format(pricing_snapshot.pre_tax_selling_price) }}</strong></p>
+        </div>
+        <div>
+            <p class="eyebrow">Tax</p>
+            <p>${{ "%.2f"|format(pricing_snapshot.tax_amount) }} ({{ "%.2f"|format(pricing_snapshot.tax_percent) }}%)</p>
+        </div>
+        <div>
+            <p class="eyebrow">Customer total</p>
+            <p><strong>${{ "%.2f"|format(pricing_snapshot.customer_total) }}</strong></p>
+        </div>
+        <div>
+            <p class="eyebrow">Pricing posture (record only)</p>
+            <p>{{ pricing_snapshot.pricing_posture or "—" }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Execution risk (record only)</p>
+            <p>{{ pricing_snapshot.execution_risk or "—" }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Contingency</p>
+            <p>{{ pricing_snapshot.contingency_visibility }}{% if pricing_snapshot.contingency_pricing_treatment %} / {{ pricing_snapshot.contingency_pricing_treatment }}{% endif %}</p>
+        </div>
+    </div>
+    <p>
+        <a class="button-link" href="{{ url_for('pricing_engine.snapshot_detail', snapshot_id=pricing_snapshot.id) }}">Open snapshot</a>
+    </p>
+    {% else %}
+    <p>No EstimatePricingSnapshot. This version uses the live <strong>COST_PLUS_MARKUP_STACK</strong> (legacy) calculation. Totals are not backfilled to true GM.</p>
+    {% endif %}
+
+    {% if editable %}
+    <form method="post" action="{{ url_for('estimates.apply_org_pricing', id=estimate.id, version_id=version.id) }}" class="form-panel">
+        <p>Apply the resolved organization pricing policy to this draft version. Human actor required. Does not convert other estimates.</p>
+        <div class="form-grid">
+            <label>
+                Human actor
+                <input type="text" name="approved_by" value="Joel Brayman" required>
+            </label>
+            <label>
+                Optional ORG-APPROVED override
+                <select name="pricing_policy_override_id">
+                    <option value="">Use resolved org / context policy</option>
+                    {% for policy in approved_pricing_policies %}
+                    <option value="{{ policy.id }}">{{ policy.policy_code }} v{{ policy.version_number }} — {{ policy.method }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Override reason (required if override selected)
+                <input type="text" name="pricing_override_reason">
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Apply org pricing policy</button>
         </div>
     </form>
     {% endif %}

@@ -29,7 +29,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next candidate milestone:** Organization-Calibrated Pricing Engine — [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **APPROVED FOR IMPLEMENTATION** (not implemented). FG-008 Labour Engine Phase B is **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (Alembic current/head `f2c3d4e5f6a7`; foundation operational for UAT).
+**Next candidate milestone:** After FG-009 live migrate — remaining CalibAi sequence (four-output consistency, AI take-off, etc.), each separately gated. FG-009 is **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** (Alembic graph head `a3b4c5d6e7f8`; live current still `f2c3d4e5f6a7`). FG-008 Labour Engine Phase B remains **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**.
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -80,7 +80,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-- **`main` / `origin/main`** — FG-008 post-UAT integrity `ff5d856d52433832c8b3099cb5a17ba72fb73db3` (implementation `0569f25e7ff496ab637d52437d48cf815522afa1`; parent `820f54afc179279d2435ad3a426b3037548bb45e`). CAR-001 adopted; M005–M011, FG-006, and FG-008 merged and verified. Live Alembic current/head `f2c3d4e5f6a7`. FG-009 architecture **prepared only**.
+- **`main` / `origin/main`** — FG-009 implementation commit. FG-008 live Alembic current `f2c3d4e5f6a7`. FG-009 **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** (graph head `a3b4c5d6e7f8`).
 - **Review Turnover Protocol** adopted (2026-08-28) — `Review Turnover` governing.
 - **M010 Scale Calibration & Measurement Tools** implemented and verified (2026-08-28).
 - **M011 Organization Foundation & Project Commercial Context** implemented and verified (2026-08-28).
@@ -101,7 +101,7 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 3. **M011** Organization Foundation & Project Commercial Context — **Completed & Verified** (FG-007 / ADR-028; migration `d0a1b2c3d4e5`)
 4. **FG-006** Historical Estimate Ingestion Engine Phase B — **Completed & Verified** (migration `e1b2c3d4e5f6`)
 5. **FG-008** Labour Engine Phase B — **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**; ADR-029 **Accepted**. Alembic current/head `f2c3d4e5f6a7`. Foundation operational for UAT (not a populated operating catalog; not selling-price integration).
-6. Organization-Calibrated Pricing Engine — [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **APPROVED FOR IMPLEMENTATION** (code **NOT STARTED**). Requires a separate execution prompt. ADR-025 **Accepted**; ADR-030 **Accepted**.
+6. Organization-Calibrated Pricing Engine — [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED**. ADR-025 **Accepted**; ADR-030 **Accepted**.
 7. AI Take-off / Quantity Extraction Foundation
 8. Project Hub UX
 9. Internal Detailed Cost Breakdown + Customer Estimate consistency (depends on Pricing Engine snapshot architecture; four-output **product** remains Future)
@@ -156,9 +156,9 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Next recommended milestones
 
-1. Issue a bounded [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **implementation** Cursor prompt. Architecture, Feature Gate, ADR-025, and ADR-030 are **approved**; code has **not** started.
+1. Separately authorize live development/UAT migration `f2c3d4e5f6a7` → `a3b4c5d6e7f8` and Pricing Engine UAT smoke. **Do not start AI take-off.**
 2. Joel accepts/amends ADR-021 when that decision is ready. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
-3. Subsequent CalibAi sequence items after Pricing Engine, each separately gated.
+3. Subsequent CalibAi sequence items after Pricing Engine is live-migrated, each separately gated.
 4. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate.
 
 ---

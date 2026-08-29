@@ -10,6 +10,11 @@ from app.models.estimate import (
 from app.models.organization import Organization
 from app.models.project import Project, ProjectCommercialContext
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
+from app.models.pricing_engine import (
+    EstimatePricingSnapshot,
+    OrganizationPricingPolicy,
+    PricingAuditEvent,
+)
 from app.models.labour_engine import (
     DirectLabourCostRateStandard,
     EstimateLabourSnapshot,
@@ -51,6 +56,7 @@ __all__ = [
     "DrawingRevision",
     "Estimate",
     "EstimateLineItem",
+    "EstimatePricingSnapshot",
     "EstimateSection",
     "EstimateVersion",
     "HistoricalCostLineItem",
@@ -69,6 +75,8 @@ __all__ = [
     "LabourTaskMapping",
     "ProductionRateStandard",
     "Organization",
+    "OrganizationPricingPolicy",
+    "PricingAuditEvent",
     "PlanAuditEvent",
     "PlanDocument",
     "PlanPage",

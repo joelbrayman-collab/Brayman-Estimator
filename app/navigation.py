@@ -60,6 +60,12 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
+                "title": "Pricing Engine",
+                "endpoint": "pricing_engine.index",
+                "icon": "bi-percent",
+                "enabled": True,
+            },
+            {
                 "title": "Proposals",
                 "endpoint": "proposals.list_proposals",
                 "icon": "bi-file-earmark-text",

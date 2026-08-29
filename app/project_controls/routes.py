@@ -202,7 +202,11 @@ def create_from_estimate_version(estimate_id, version_id):
                 requested_date=_parse_date(request.form.get("requested_date")),
                 estimate_version=version,
                 markup_percent=request.form.get("markup_percent")
-                or version.overhead_percent
+                or (
+                    0
+                    if getattr(version, "pricing_snapshot", None)
+                    else version.overhead_percent
+                )
                 or 0,
                 tax_percent=request.form.get("tax_percent") or version.tax_percent or 0,
                 notes=request.form.get("notes", ""),
@@ -227,6 +231,7 @@ def create_from_estimate_version(estimate_id, version_id):
             url_for("project_controls.view_change_order", id=change_order.id)
         )
 
+    snapshot = getattr(version, "pricing_snapshot", None)
     form = {
         "title": f"Change Order — {estimate.estimate_number} {version.display_label}",
         "description": version.revision_reason or estimate.title or "",
@@ -235,8 +240,10 @@ def create_from_estimate_version(estimate_id, version_id):
         "requested_by": "",
         "requested_date": datetime.utcnow().date().isoformat(),
         "project_id": str(project.id),
-        "markup_percent": f"{version.overhead_percent:.2f}",
-        "tax_percent": f"{version.tax_percent:.2f}",
+        "markup_percent": (
+            "0.00" if snapshot else f"{version.overhead_percent:.2f}"
+        ),
+        "tax_percent": f"{(snapshot.tax_percent if snapshot else version.tax_percent):.2f}",
         "notes": "",
         "copy_estimate_lines": "",
     }

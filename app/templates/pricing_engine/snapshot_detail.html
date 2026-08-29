@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Estimate Pricing Snapshot | Brayman Construction Platform{% endblock %}
+{% block page_title %}Estimate Pricing Snapshot{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Pricing Engine · internal</p>
+        <h1>Snapshot {{ snapshot.id }}</h1>
+        <p>Method {{ snapshot.method }} · Source {{ snapshot.resolution_source }}{% if snapshot.requires_review %} · requires review{% endif %}</p>
+    </div>
+</div>
+
+<table class="data-table">
+    <tbody>
+        <tr><th>Organization</th><td>{{ snapshot.organization_id }}</td></tr>
+        <tr><th>Estimate version</th><td>{{ snapshot.estimate_version_id }}</td></tr>
+        <tr><th>Policy</th><td>{{ snapshot.policy_code or "—" }} v{{ snapshot.policy_version_number or "—" }}</td></tr>
+        <tr><th>Method</th><td>{{ snapshot.method }}</td></tr>
+        <tr><th>Direct cost basis</th><td>${{ "%.2f"|format(snapshot.direct_cost_basis) }}</td></tr>
+        <tr><th>Target GM</th><td>{{ snapshot.target_gross_margin if snapshot.target_gross_margin is not none else "—" }}</td></tr>
+        <tr><th>Markup rate</th><td>{{ snapshot.markup_rate if snapshot.markup_rate is not none else "—" }}</td></tr>
+        <tr><th>Contingency visibility</th><td>{{ snapshot.contingency_visibility }}</td></tr>
+        <tr><th>Contingency pricing treatment</th><td>{{ snapshot.contingency_pricing_treatment or "—" }}</td></tr>
+        <tr><th>Contingency amount</th><td>${{ "%.2f"|format(snapshot.contingency_amount) }}</td></tr>
+        <tr><th>Overhead treatment</th><td>{{ snapshot.overhead_treatment }}</td></tr>
+        <tr><th>Profit treatment</th><td>{{ snapshot.profit_treatment }}</td></tr>
+        <tr><th>Pricing posture (record only)</th><td>{{ snapshot.pricing_posture or "—" }}</td></tr>
+        <tr><th>Execution risk (record only)</th><td>{{ snapshot.execution_risk or "—" }}</td></tr>
+        <tr><th>Tax jurisdiction</th><td>{{ snapshot.tax_jurisdiction or "—" }}</td></tr>
+        <tr><th>Tax %</th><td>{{ "%.2f"|format(snapshot.tax_percent) }}</td></tr>
+        <tr><th>Pre-tax selling price</th><td>${{ "%.2f"|format(snapshot.pre_tax_selling_price) }}</td></tr>
+        <tr><th>Tax amount</th><td>${{ "%.2f"|format(snapshot.tax_amount) }}</td></tr>
+        <tr><th>Customer total</th><td>${{ "%.2f"|format(snapshot.customer_total) }}</td></tr>
+        <tr><th>Override reason</th><td>{{ snapshot.override_reason or "—" }}</td></tr>
+        <tr><th>Provenance</th><td>{{ snapshot.provenance or "—" }}</td></tr>
+    </tbody>
+</table>
+{% endblock %}

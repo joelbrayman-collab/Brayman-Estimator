@@ -32,6 +32,42 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### FG-009 — Implementation commit
+
+| Field | Content |
+|-------|---------|
+| ID | FG-009 (not a numbered product milestone) |
+| Status | **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** |
+| Date | 2026-08-29 |
+| Objective | Commit and push the reviewed Organization-Calibrated Pricing Engine foundation. Live migrate not authorized. |
+| Deliverables | Pricing Engine models/services/UI; additive migration `a3b4c5d6e7f8`; CO method inheritance; ORG-001 seed with `UNSPECIFIED` optional layers; dedicated tests. |
+| Validation | Dedicated **33 passed**; Labour Engine **25 passed**; historical ingestion **11 passed**; full suite **228 passed**. Live DB remains `f2c3d4e5f6a7`. |
+| Next | Separate authorization to apply `a3b4c5d6e7f8` to live development/UAT and UAT-smoke. |
+
+### FG-009 — Pre-commit bounded correction (CO method + ORG-001 seed)
+
+| Field | Content |
+|-------|---------|
+| ID | FG-009 (not a numbered product milestone) |
+| Status | **BOUNDED CORRECTION IN WORKING TREE** — tests passed; **not committed**; live DB **not migrated** |
+| Date | 2026-08-29 |
+| Objective | Close two pre-commit governance defects: FG-009-aware Change Orders apply inherited pricing METHOD; ORG-001 optional layers seed as `UNSPECIFIED` (distinct from org-approved `NOT_APPLIED`). |
+| Deliverables | `price_change_order_from_snapshot`; CO recalculate/copy-lines; in-place correction of uncommitted `a3b4c5d6e7f8` seed; regression tests. No new migration. |
+| Validation | Dedicated **33 passed**; Labour Engine **25 passed**; historical ingestion **11 passed**; full suite **228 passed**. Legacy estimate totals not rewritten. Historical Change Orders not rewritten. HistoricalLabourItem facts unchanged. |
+| Next | Joel / ChatGPT governance review. **Do not commit / push / live-migrate** until authorized. |
+
+### FG-009 — Organization-Calibrated Pricing Engine implementation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-009 (not a numbered product milestone) |
+| Status | **IMPLEMENTED IN WORKING TREE** — tests passed; **not committed**; live DB **not migrated** |
+| Date | 2026-08-29 |
+| Objective | Implement organization-owned versioned pricing policies, named methods, deterministic resolution, immutable estimate pricing snapshots, ORG-001 seed, legacy stack compatibility, Change Order snapshot inheritance, tenant isolation. |
+| Deliverables | `app/models/pricing_engine.py`; `app/services/pricing_engine.py`; `/pricing-engine/` office UI; additive migration `a3b4c5d6e7f8`; `tests/test_pricing_engine.py` (26 passed) |
+| Validation | Dedicated **26 passed**; Labour Engine **25 passed**; historical ingestion **11 passed**; full suite **221 passed**. Legacy estimate totals not rewritten. Historical Change Orders not rewritten. HistoricalLabourItem facts unchanged. |
+| Next | Joel / ChatGPT governance review. **Do not commit / push / live-migrate** until authorized. |
+
 ### FG-009 — Organization-Calibrated Pricing Engine architecture / Feature Gate preparation
 
 | Field | Content |

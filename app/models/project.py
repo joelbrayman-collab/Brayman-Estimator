@@ -36,12 +36,19 @@ class ProjectCommercialContext(db.Model):
     change_summary = db.Column(db.Text)
     created_by = db.Column(db.String(150))
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    pricing_policy_id = db.Column(
+        db.Integer,
+        db.ForeignKey("organization_pricing_policies.id"),
+        nullable=True,
+        index=True,
+    )
 
     project = db.relationship("Project", back_populates="commercial_contexts")
     estimate_versions = db.relationship(
         "EstimateVersion",
         back_populates="commercial_context",
     )
+    pricing_policy = db.relationship("OrganizationPricingPolicy")
 
     @property
     def is_legacy_unknown(self):

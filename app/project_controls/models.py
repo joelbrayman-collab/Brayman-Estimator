@@ -64,9 +64,18 @@ class ChangeOrder(db.Model):
     tax = db.Column(db.Numeric(14, 2), nullable=False, default=Decimal("0"))
     total = db.Column(db.Numeric(14, 2), nullable=False, default=Decimal("0"))
     notes = db.Column(db.Text)
+    pricing_snapshot_id = db.Column(
+        db.Integer,
+        db.ForeignKey("estimate_pricing_snapshots.id"),
+        nullable=True,
+        index=True,
+    )
+    pricing_override_reason = db.Column(db.Text, nullable=True)
+    pricing_override_by = db.Column(db.String(150), nullable=True)
 
     project = db.relationship("Project", back_populates="change_orders")
     estimate_version = db.relationship("EstimateVersion", backref="change_orders")
+    pricing_snapshot = db.relationship("EstimatePricingSnapshot")
     items = db.relationship(
         "ChangeOrderItem",
         back_populates="change_order",

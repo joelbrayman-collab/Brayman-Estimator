@@ -48,6 +48,19 @@ def recalculate_change_order(change_order):
         subtotal += as_money(item.total)
 
     change_order.subtotal = as_money(subtotal)
+    if change_order.pricing_snapshot_id:
+        from app.services.pricing_engine import (
+            PricingEngineError,
+            price_change_order_from_snapshot,
+        )
+
+        try:
+            price_change_order_from_snapshot(change_order)
+        except PricingEngineError as exc:
+            raise ChangeOrderServiceError(str(exc)) from exc
+        change_order.updated_at = datetime.utcnow()
+        return change_order
+
     markup_percent = as_decimal(change_order.markup_percent or 0)
     tax_percent = as_decimal(change_order.tax_percent or 0)
     if markup_percent < 0 or tax_percent < 0:
@@ -111,12 +124,31 @@ def create_change_order(
     repo.add_change_order(change_order)
     db.session.flush()
 
+    if estimate_version is not None:
+        from app.services.pricing_engine import (
+            PricingEngineError,
+            inherit_snapshot_for_change_order,
+        )
+
+        try:
+            inherit_snapshot_for_change_order(
+                change_order, estimate_version, actor=requested_by
+            )
+        except PricingEngineError as exc:
+            raise ChangeOrderServiceError(str(exc)) from exc
+
     if copy_estimate_lines and estimate_version is not None:
+        use_direct_cost = change_order.pricing_snapshot_id is not None
         sort_order = 0
         for section in estimate_version.sections:
             for line in section.line_items:
                 quantity = as_decimal(line.quantity)
-                if quantity == 0:
+                if use_direct_cost:
+                    if quantity == 0:
+                        unit_price = as_decimal(line.extended_cost)
+                    else:
+                        unit_price = as_decimal(line.extended_cost) / quantity
+                elif quantity == 0:
                     unit_price = as_decimal(line.sell_price)
                 else:
                     unit_price = as_decimal(line.sell_price) / quantity

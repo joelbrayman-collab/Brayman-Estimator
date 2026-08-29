@@ -7,11 +7,11 @@
 | Target Milestone | Organization-Calibrated Pricing Engine (not a numbered M0xx until implementation is authorized) |
 | Module | Pricing Engine (Estimating consumes snapshotted selling-price results; Proposals/Change Orders reuse the same policy snapshot) |
 | Date | 2026-08-29 |
-| Status | **APPROVED FOR IMPLEMENTATION** — **NOT IMPLEMENTED** |
+| Status | **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** |
 | Architecture | [organization-calibrated-pricing-engine-architecture.md](../architecture/organization-calibrated-pricing-engine-architecture.md) **Approved** |
 | Related ADRs | [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** |
 | Prerequisites | FG-007 / M011 **implemented**; FG-008 **implemented**; FG-006 **implemented** (evidence only) |
-| Approved baseline | `main` @ `ff5d856d52433832c8b3099cb5a17ba72fb73db3` (docs-commit of this approval will advance HEAD; product code unchanged) |
+| Approved baseline | Governance commit `41bfb2e032c0386fc785b733ea5789fae9e248ef`. Implementation is this FG-009 commit on `main`. Live DB **not** migrated. |
 
 ---
 
@@ -22,9 +22,10 @@
 | Architecture / readiness | **APPROVED** (2026-08-29; Joel and ChatGPT; contingency clarification adopted) |
 | Feature Gate (this document) | **APPROVED FOR IMPLEMENTATION** |
 | ADR-025 / ADR-030 | **Accepted** |
-| Implementation | **HAS NOT YET STARTED.** No product code. No migration. Requires a separate bounded execution prompt. |
+| Implementation | **IMPLEMENTED / VERIFIED** (2026-08-29) including bounded CO-method and `UNSPECIFIED`-seed corrections. Additive migration `a3b4c5d6e7f8`. Dedicated tests **33 passed**. Full suite **228 passed**. **NOT YET LIVE-MIGRATED.** Live development/UAT `flask db current` remains `f2c3d4e5f6a7`. |
+| New estimates | Do **not** auto-switch to `TRUE_GROSS_MARGIN`. Snapshot is created only via explicit human `apply_resolved_pricing_to_version` / office “Apply org pricing policy”. Versions without a snapshot continue to use live `COST_PLUS_MARKUP_STACK`. |
 
-This gate does **not** implement selling-price application, four-output generation, QuickBooks, contracts, or Labour Engine expansion.
+This gate does **not** implement four-output generation, QuickBooks, contracts, or Labour Engine expansion. Labour Engine Direct Labour Cost may be consumed read-only; default apply path does **not** add labour-snapshot cost into the estimate basis (`include_labour_snapshot_direct_cost=False`) so CostItem labour lines are not double-counted.
 
 ---
 
@@ -39,7 +40,7 @@ Without this engine:
 - Change Orders already use a **different** formula from estimates, so commercial inconsistency will worsen.
 - Four governed outputs cannot stay consistent with one authoritative commercial policy.
 
-This gate defines the engine, named methods, Direct Cost boundary, snapshots, and resolution. Joel approved this gate **2026-08-29**. Cursor must **not** change calculation code until a **separate** implementation prompt is issued.
+This gate defines the engine, named methods, Direct Cost boundary, snapshots, and resolution. Joel approved this gate **2026-08-29**. Implementation was authorized by a separate bounded execution prompt (this pass).
 
 ---
 
@@ -91,7 +92,7 @@ profit        = (subtotal + overhead) × profit_percent/100
 tax           = (subtotal + overhead + profit) × tax_percent/100
 ```
 
-Customer-priced contingency is **not** universally an addend outside the margin basis. Visibility (`INTERNAL_RESERVE` | `CUSTOMER_PRICED` | `NOT_APPLIED`) is separate from pricing treatment (`INCLUDED_IN_MARGIN_BASIS` | `ADDED_AFTER_BASE_PRICING`). Tax remains after pre-tax customer selling price.
+Customer-priced contingency is **not** universally an addend outside the margin basis. Visibility (`UNSPECIFIED` | `INTERNAL_RESERVE` | `CUSTOMER_PRICED` | `NOT_APPLIED`) is separate from pricing treatment (`INCLUDED_IN_MARGIN_BASIS` | `ADDED_AFTER_BASE_PRICING`). `UNSPECIFIED` means no layer has been selected yet; `NOT_APPLIED` is an org-approved decision. Tax remains after pre-tax customer selling price.
 
 ---
 
@@ -119,7 +120,7 @@ ORG-001 intended default after implementation: `TRUE_GROSS_MARGIN` at 15%. Not a
 
 **Overhead and contingency:** policy-defined. Do not silently force them into or outside Direct Cost.
 
-**Contingency:** separate **source/purpose** from **customer visibility** (`INTERNAL_RESERVE` | `CUSTOMER_PRICED` | `NOT_APPLIED`) and, when customer-priced, **pricing treatment** (`INCLUDED_IN_MARGIN_BASIS` | `ADDED_AFTER_BASE_PRICING`). The engine must know whether contingency participates in the pricing formula. Not a hidden third rate. Historical examples are not universal policy.
+**Contingency:** separate **source/purpose** from **customer visibility** (`UNSPECIFIED` | `INTERNAL_RESERVE` | `CUSTOMER_PRICED` | `NOT_APPLIED`) and, when customer-priced, **pricing treatment** (`INCLUDED_IN_MARGIN_BASIS` | `ADDED_AFTER_BASE_PRICING`). The engine must know whether contingency participates in the pricing formula. Not a hidden third rate. Historical examples are not universal policy. `UNSPECIFIED` is not an approved `NOT_APPLIED` decision.
 
 ---
 
@@ -173,7 +174,9 @@ Versioned `OrganizationPricingPolicy` + immutable `EstimatePricingSnapshot` on `
 
 ## Change Order behavior
 
-Inherit the linked estimate version’s pricing snapshot. Separately approved override only. Do not keep the accidental `overhead_percent`→CO markup default as the governed rule. **Do not recalculate or rewrite historical Change Orders.**
+FG-009-aware Change Orders (those with `EstimatePricingSnapshot`) **inherit and apply the linked EstimateVersion’s pricing METHOD**, not a flattened markup percent. `TRUE_GROSS_MARGIN` uses Direct / (1 − GM). `COST_PLUS_MARKUP` uses Direct × (1 + rate). `COST_PLUS_MARKUP_STACK` reuses `legacy_stack_pre_tax`. Copied lines use **direct/extended cost**, not sell price. Override requires a human actor, non-empty reason, and preserves method identity. Cross-org snapshot attach fails closed.
+
+Do not keep the accidental `overhead_percent`→CO markup default as the governed rule. Change Orders **without** a snapshot remain legacy (`subtotal + markup + tax`). **Do not recalculate or rewrite historical Change Orders.**
 
 ---
 
@@ -211,13 +214,15 @@ Do not recalculate locked/issued/accepted estimates. Do not mutate FG-006 histor
 
 ## Migration expectations
 
-**Not authorized until a separate implementation prompt.** That prompt may add additive tables (policy + snapshot) under Rule 7 review. Existing percent columns remain until an approved mapping. No casual Alembic in this governance pass.
+Additive Alembic revision `a3b4c5d6e7f8` revises `f2c3d4e5f6a7`. It adds `organization_pricing_policies`, `estimate_pricing_snapshots`, `pricing_audit_events`, and nullable FKs on `project_commercial_contexts`, `estimate_versions`, and `change_orders`. It does **not** recompute existing estimate totals. ORG-001 seed (`ORG-001-TRUE-GM-15`, `TRUE_GROSS_MARGIN` 15%, CA-ON HST 13%) runs only if `ORG-001` exists. Overhead, profit, and contingency treatments seed as **`UNSPECIFIED`** (not yet governed). That is **distinct from** an org-approved `NOT_APPLIED` decision. Live development/UAT database has **not** been upgraded. The migration was corrected in place before commit; no second revision.
 
 ---
 
-## Test expectations (future implementation — do not implement now)
+## Test expectations (implementation)
 
-True GM math; markup math; margin-vs-markup distinction; zero/invalid margin fail-closed; organization isolation; policy versioning; policy resolution order; estimate snapshot immutability; contingency visibility **and** `INCLUDED_IN_MARGIN_BASIS` vs `ADDED_AFTER_BASE_PRICING`; tax ordering; Pricing Posture non-effect on quantities/hours/cost facts; Execution Risk non-effect on those facts; Change Order policy consistency; historical Change Order non-rewrite; legacy estimate compatibility (no silent recalc); Labour Engine boundary (consume cost only); historical-ingestion non-regression; proposal immutability; full-suite regression.
+Covered by `tests/test_pricing_engine.py` (33 passed after pre-commit bounded correction) plus labour-engine, historical-ingestion, and full-suite regression.
+
+True GM math; markup math; margin-vs-markup distinction; zero/invalid margin fail-closed; organization isolation; policy versioning; policy resolution order; estimate snapshot immutability; contingency visibility **and** `INCLUDED_IN_MARGIN_BASIS` vs `ADDED_AFTER_BASE_PRICING`; tax ordering; Pricing Posture non-effect on quantities/hours/cost facts; Execution Risk non-effect on those facts; Change Order policy consistency; historical Change Order non-rewrite; legacy estimate compatibility (no silent recalc); Labour Engine boundary (consume cost only); historical-ingestion non-regression; proposal immutability; full-suite regression; Alembic upgrade/downgrade without rewriting totals.
 
 ---
 
@@ -238,16 +243,16 @@ Product implementation in this gate; AI take-off; supplier integrations; BUILD /
 
 ---
 
-## Scope (implementation — only after a later execution prompt)
+## Scope (implementation)
 
-In-scope **after** a bounded implementation prompt (gate already approved):
+In-scope work completed in this working tree:
 
-- Organization-owned versioned pricing policies  
-- Named methods `TRUE_GROSS_MARGIN`, `COST_PLUS_MARKUP`, `COST_PLUS_MARKUP_STACK`  
-- Deterministic resolution + estimate pricing snapshot  
-- Change Order inheritance of snapshot  
-- Tests listed above  
-- Docs updates for implemented state  
+- Organization-owned versioned pricing policies
+- Named methods `TRUE_GROSS_MARGIN`, `COST_PLUS_MARKUP`, `COST_PLUS_MARKUP_STACK`
+- Deterministic resolution + estimate pricing snapshot
+- Change Order inheritance of snapshot **and application of the inherited pricing method**
+- Tests listed above
+- Docs updates for implemented state (live DB not migrated)
 
 ---
 
@@ -258,26 +263,28 @@ In-scope **after** a bounded implementation prompt (gate already approved):
 | 1 | What problem does this solve? | Live code implements a compounding markup/overhead/profit stack that is not 15% true GM; Change Orders use a third formula; org policy cannot be versioned or snapshotted; Brayman economics risk becoming universal. |
 | 2 | Who is the user? | Office estimators and a chief estimator / approver of organization pricing policy. Not field workers. |
 | 3 | Which module owns it? | **Pricing Engine** (new). Estimating owns estimate lines and remains the calculation host. Proposals own customer snapshots. Project Controls own Change Order lifecycle but **must reuse** the pricing snapshot. |
-| 4 | What data does it own? | `OrganizationPricingPolicy` (conceptual), `EstimatePricingSnapshot` (conceptual), resolution/audit of pricing application. |
-| 5 | What data does it reference? | `Organization`, `ProjectCommercialContext`, `EstimateVersion`, line extended costs / Labour Engine direct labour cost, historical evidence (read-only). |
-| 6 | What may implementation change? | Additive policy/snapshot schema (when migration approved), estimate/CO/proposal calculation **paths** to named methods, tests, docs. Must not rewrite locked totals. |
+| 4 | What data does it own? | `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent`. |
+| 5 | What data does it reference? | `Organization`, `ProjectCommercialContext`, `EstimateVersion`, line extended costs / Labour Engine direct labour cost (read-only), historical evidence (read-only). |
+| 6 | What may implementation change? | Additive policy/snapshot schema, estimate/CO/proposal calculation **paths** to named methods, tests, docs. Must not rewrite locked totals. |
 | 7 | What must implementation not change? | Historical workbooks/facts; Accepted proposal immutability rules; Plan Intelligence; Labour production math; cross-org data; silent conversion of 15% GM into 15% markup. |
 | 8 | What are the acceptance criteria? | See below. |
 | 9 | What tests are required? | See **Test expectations**. Dedicated suite plus historical ingestion + labour engine + full suite non-regression. |
 | 10 | What documentation must be updated? | This gate; pricing architecture; ADR-025/030 status when accepted; pricing-policy.md; estimating/pricing-engine modules; current-state; session-handoff; roadmap; chat-workflow-log. |
 | 11 | Does it require an ADR? | **Yes** — ADR-025 (methods) **Accepted**; ADR-030 (policy records, snapshots, contingency treatment, CO inheritance) **Accepted**. |
-| 12 | Does it require a database migration? | **Yes, when implementation is authorized.** Additive. **Not** in this architecture pass. |
+| 12 | Does it require a database migration? | **Yes.** Additive `a3b4c5d6e7f8`. Live DB **not** upgraded in this pass. |
 
 ---
 
-## Acceptance criteria (for a future implementation prompt)
+## Acceptance criteria (implementation)
+
+Met in working-tree tests; governance review and commit still required. Live DB not migrated.
 
 1. Named methods are explicit; 15% GM ≠ 15% markup in tests.  
 2. ORG-001 can use `TRUE_GROSS_MARGIN` without forcing other orgs to inherit it.  
 3. Legacy versions remain `COST_PLUS_MARKUP_STACK` and are not silently recalculated.  
 4. Estimate pricing snapshot is immutable for locked versions.  
-5. FG-009-aware Change Orders inherit the linked snapshot unless an approved override exists. Historical Change Orders are not rewritten.  
-6. Pricing Posture and Execution Risk never multiply hours/qty/supplier/direct labour facts.  
+5. FG-009-aware Change Orders inherit the linked snapshot **and apply its pricing method** unless an approved override exists. Historical Change Orders are not rewritten. Optional overhead/profit/contingency layers may remain `UNSPECIFIED` (distinct from org-approved `NOT_APPLIED`).
+6. Pricing Posture and Execution Risk never multiply hours/qty/supplier/direct labour facts.
 7. Tax is after pre-tax customer selling price; tax rate is org/jurisdiction.  
 8. Contingency source/visibility/pricing treatment is explicit; `CUSTOMER_PRICED` is not assumed to sit outside the margin basis.  
 9. Labour Engine boundary preserved.  

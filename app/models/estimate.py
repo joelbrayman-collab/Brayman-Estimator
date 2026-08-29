@@ -109,6 +109,14 @@ class EstimateVersion(db.Model):
         nullable=True,
         index=True,
     )
+    pricing_policy_override_id = db.Column(
+        db.Integer,
+        db.ForeignKey("organization_pricing_policies.id"),
+        nullable=True,
+        index=True,
+    )
+    pricing_override_reason = db.Column(db.Text, nullable=True)
+    pricing_override_by = db.Column(db.String(150), nullable=True)
     version_number = db.Column(db.Integer, nullable=False)
     version_label = db.Column(db.String(100))
     revision_reason = db.Column(db.Text)
@@ -147,6 +155,10 @@ class EstimateVersion(db.Model):
     commercial_context = db.relationship(
         "ProjectCommercialContext",
         back_populates="estimate_versions",
+    )
+    pricing_policy_override = db.relationship(
+        "OrganizationPricingPolicy",
+        foreign_keys=[pricing_policy_override_id],
     )
     sections = db.relationship(
         "EstimateSection",

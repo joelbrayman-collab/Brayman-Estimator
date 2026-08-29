@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}{{ policy.policy_code }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Pricing Policy{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Pricing Engine · {{ policy.organization_id }}</p>
+        <h1>{{ policy.policy_code }} v{{ policy.version_number }}</h1>
+        <p>{{ policy.method }} · {{ policy.approval_status }}{% if policy.is_default %} · Organization default{% endif %}</p>
+    </div>
+    <a class="button-link" href="{{ url_for('pricing_engine.index') }}">All policies</a>
+</div>
+
+<table class="data-table">
+    <tbody>
+        <tr><th>Method</th><td>{{ policy.method }}</td></tr>
+        <tr><th>Target GM (fraction)</th><td>{{ policy.target_gross_margin if policy.target_gross_margin is not none else "—" }}</td></tr>
+        <tr><th>Markup rate (fraction)</th><td>{{ policy.markup_rate if policy.markup_rate is not none else "—" }}</td></tr>
+        <tr><th>Stack overhead %</th><td>{{ policy.stack_overhead_percent if policy.stack_overhead_percent is not none else "—" }}</td></tr>
+        <tr><th>Stack profit %</th><td>{{ policy.stack_profit_percent if policy.stack_profit_percent is not none else "—" }}</td></tr>
+        <tr><th>Overhead treatment</th><td>{{ policy.overhead_treatment }}</td></tr>
+        <tr><th>Profit treatment</th><td>{{ policy.profit_treatment }}</td></tr>
+        <tr><th>Contingency source</th><td>{{ policy.contingency_source or "—" }}</td></tr>
+        <tr><th>Contingency visibility</th><td>{{ policy.contingency_visibility }}</td></tr>
+        <tr><th>Contingency pricing treatment</th><td>{{ policy.contingency_pricing_treatment or "—" }}</td></tr>
+        <tr><th>Contingency rate</th><td>{{ policy.contingency_rate if policy.contingency_rate is not none else "—" }}</td></tr>
+        <tr><th>Tax jurisdiction</th><td>{{ policy.tax_jurisdiction or "—" }}</td></tr>
+        <tr><th>Tax %</th><td>{{ policy.tax_percent if policy.tax_percent is not none else "—" }}</td></tr>
+        <tr><th>Effective from</th><td>{{ policy.effective_from or "—" }}</td></tr>
+        <tr><th>Effective to</th><td>{{ policy.effective_to or "—" }}</td></tr>
+        <tr><th>Provenance</th><td>{{ policy.provenance or "—" }}</td></tr>
+        <tr><th>Approved</th><td>{{ policy.approved_at or "—" }} by {{ policy.approved_by or "—" }}</td></tr>
+    </tbody>
+</table>
+
+<form method="post" class="form-panel">
+    <label>
+        Human actor
+        <input type="text" name="approved_by" value="Joel Brayman" required>
+    </label>
+    <div class="form-actions">
+        {% if policy.approval_status in ("DRAFT", "WITHDRAWN") %}
+        <button type="submit" formaction="{{ url_for('pricing_engine.approve_policy', policy_id=policy.id) }}">Approve (human)</button>
+        {% endif %}
+        {% if policy.approval_status == "ORG_APPROVED" %}
+        <button type="submit" formaction="{{ url_for('pricing_engine.set_default', policy_id=policy.id) }}">Set as org default</button>
+        <button type="submit" formaction="{{ url_for('pricing_engine.supersede_policy', policy_id=policy.id) }}">Supersede (new draft version)</button>
+        {% endif %}
+        {% if policy.approval_status != "SUPERSEDED" %}
+        <button type="submit" formaction="{{ url_for('pricing_engine.withdraw_policy', policy_id=policy.id) }}">Withdraw</button>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}

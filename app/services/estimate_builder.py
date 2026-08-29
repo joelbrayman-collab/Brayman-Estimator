@@ -64,14 +64,25 @@ def recalculate_section(section):
 
 
 def recalculate_version(version):
+    from app.models.pricing_engine import EstimatePricingSnapshot
+    from app.services.pricing_engine import refresh_version_from_snapshot
+
     sections = (
         EstimateSection.query.filter_by(estimate_version_id=version.id)
         .order_by(EstimateSection.sort_order.asc(), EstimateSection.id.asc())
         .all()
     )
-    subtotal = Decimal("0")
     for section in sections:
         recalculate_section(section)
+
+    snapshot = EstimatePricingSnapshot.query.filter_by(
+        estimate_version_id=version.id
+    ).first()
+    if snapshot is not None:
+        return refresh_version_from_snapshot(version)
+
+    subtotal = Decimal("0")
+    for section in sections:
         subtotal += Decimal(section.subtotal or 0)
 
     version.subtotal = as_money(subtotal)

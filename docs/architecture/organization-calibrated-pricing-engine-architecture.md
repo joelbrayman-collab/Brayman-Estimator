@@ -2,12 +2,12 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Architecture approved** — **implementation not started** |
+| Status | **Architecture approved** — **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** |
 | Date | 2026-08-29 |
-| Feature Gate | [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **APPROVED FOR IMPLEMENTATION** (not implemented) |
+| Feature Gate | [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** |
 | Related ADRs | [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** |
 | Prerequisites | FG-007 / M011 **implemented**; FG-008 **implemented** (Labour Engine operational for UAT); FG-006 **implemented** (historical evidence only) |
-| Product code | **None in this pass.** No migration. No selling-price change. |
+| Product code | `app/models/pricing_engine.py`, `app/services/pricing_engine.py`, `app/routes/pricing_engine.py`, additive estimate/CO pointers, migration `a3b4c5d6e7f8`. Live selling-price path: snapshot if present, else legacy stack. |
 
 ---
 
@@ -21,7 +21,7 @@ Each customer organization owns its **commercial intelligence** (target margin, 
 
 **Brayman Construction is `ORG-001`.** Brayman commercial policy is not the universal CalibAi pricing model.
 
-This document is **approved architecture**. It does **not** authorize product implementation until a separate FG-009 execution prompt.
+This document is **approved architecture**. Implementation is **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED**. Live development/UAT database remains at `f2c3d4e5f6a7`.
 
 ---
 
@@ -181,9 +181,12 @@ Separate:
 
 1. **Source / purpose** — why the reserve exists (org-defined; not a silent quantity/hour/cost multiplier).
 2. **Customer visibility**
+   - `UNSPECIFIED` — no additional layer has been selected yet (not a commercial decision)
    - `INTERNAL_RESERVE` — tracked internally; **not** customer priced
    - `CUSTOMER_PRICED` — included in the customer commercial amount
-   - `NOT_APPLIED`
+   - `NOT_APPLIED` — organization **approved** that the layer is not applied
+
+`UNSPECIFIED` and `NOT_APPLIED` must not be collapsed. Absence of a decision is not an approved `NOT_APPLIED` policy. Base `TRUE_GROSS_MARGIN` still calculates when optional layers are unspecified.
 3. **Pricing treatment** (required when `CUSTOMER_PRICED`)
    - `INCLUDED_IN_MARGIN_BASIS` — participates in the named method’s basis **before** GM or markup
    - `ADDED_AFTER_BASE_PRICING` — added **after** the named method computes base pre-tax selling price
@@ -323,7 +326,9 @@ Not a silent hour or cost multiplier (FG-008 already forbids `execution_risk_fac
 | Historical Change Orders | **Do not recalculate or rewrite.** Legacy COs remain historical facts |
 | Formula | Must not invent a third economics accidentally |
 
-Current CO math (`markup on already-sold copied lines`, defaulting markup from `overhead_percent`) is a **known inconsistency**. Implementation must close it. This pass does not change code.
+Current CO math (`markup on already-sold copied lines`, defaulting markup from `overhead_percent`) is a **known inconsistency** for **legacy** Change Orders without a snapshot.
+
+**Implementation (working tree):** FG-009-aware Change Orders attach the linked `EstimatePricingSnapshot` and **apply the snapshotted method** via `price_change_order_from_snapshot` (`app/services/pricing_engine.py`). Historical Change Orders without a snapshot keep the legacy formula and are not rewritten.
 
 ---
 
@@ -407,9 +412,9 @@ Product pricing implementation; ADR-025 code changes; AI take-off; supplier inte
 | Layer | State |
 |-------|--------|
 | Architecture (this document) | **Approved** (2026-08-29) |
-| FG-009 | **APPROVED FOR IMPLEMENTATION** — **not implemented** |
+| FG-009 | **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** |
 | ADR-025 | **Accepted** |
 | ADR-030 | **Accepted** (contingency source vs pricing treatment explicit) |
-| Product code | Unchanged |
+| Product code | Implemented (`a3b4c5d6e7f8`); Alembic graph head `a3b4c5d6e7f8`; live `flask db current` `f2c3d4e5f6a7` |
 
-**Next action:** a **separate** bounded FG-009 implementation Cursor prompt. Do not implement from this document alone.
+**Next action:** Separate authorization to apply `a3b4c5d6e7f8` to live development/UAT and perform Pricing Engine UAT smoke. **Do not migrate live DB** from the implementation commit.

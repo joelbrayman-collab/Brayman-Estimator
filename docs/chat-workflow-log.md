@@ -42,6 +42,98 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-29 — FG-009 implementation commit and push
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Commit and push the reviewed FG-009 foundation. Do not apply live migration. |
+| Business decision | Governance PASS — approved for commit. ADR-025 **Accepted**. ADR-030 **Accepted**. Live migrate not authorized by this prompt. |
+| Architectural decision | One implementation commit. Graph head `a3b4c5d6e7f8`. Live current remains `f2c3d4e5f6a7`. |
+| Prompt template used | Commit + push authorization (this session). |
+| Approved Cursor prompt summary | PRESERVE → AUDIT → TEST → COMMIT → PUSH → VERIFY → STOP. Do not flask db upgrade. Do not start AI take-off. |
+| Files expected to change | Reviewed FG-009 product + docs + migration `a3b4c5d6e7f8`. |
+| Files prohibited from changing | Historical workbooks; Labour Engine production logic; live DB. |
+| Implementation result | Committed and pushed. Live DB not migrated. |
+| Tests | Pricing **33**; Labour **25**; Historical **11**; full suite **228**. `git diff --check` clean. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate not authorized. ORG-001 optional layers remain `UNSPECIFIED`. |
+| Next approved step | Separate live-migrate + UAT-smoke authorization. |
+| Next approved prompt | Apply `a3b4c5d6e7f8` to live development/UAT only when separately authorized. |
+| Commit hash | Recorded after push (`git log -1`) |
+
+### 2026-08-29 — FG-009 final pre-commit implementation review
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Preserve the uncommitted FG-009 tree; reconstruct from code; review against FG-009 / ADR-025 / ADR-030; resolve only remaining genuine FG-009 blockers; re-test; report. No commit, push, or live migrate. |
+| Business decision | No new commercial values. ORG-001 15% TRUE_GM and 13% HST remain org-scoped. Optional layers remain `UNSPECIFIED`. |
+| Architectural decision | Review found **no remaining FG-009 blockers**. Prior bounded correction already applies inherited CO methods via `price_change_order_from_snapshot` and seeds optional layers as `UNSPECIFIED`. `CALIBAI_BASELINE` is a resolution-source constant only; live fail-closed path is `PROVISIONAL_LEGACY_STACK`. Unlinked COs without snapshot remain legacy. ADR-025 and ADR-030 remain **Accepted**. |
+| Prompt template used | Final pre-commit implementation review authorization (this session). |
+| Approved Cursor prompt summary | PRESERVE → RECONSTRUCT → CORRECT ONLY FG-009 BLOCKERS → TEST → REPORT → STOP. Do not reimplement. Do not reset/stash. Do not commit/push. Do not apply live migration. |
+| Files expected to change | Docs only if needed to record this review. Product code only if a genuine blocker remained. |
+| Files prohibited from changing | Historical workbooks; FG-006 facts; Labour Engine production/calibration; Accepted proposals; live DB; new Alembic revision; AI take-off / BUILD / MONITOR / LEARN. |
+| Implementation result | **No product-code change this pass.** Existing dirty FG-009 tree preserved. Review complete. Not committed. Live DB not migrated. |
+| Tests | `tests/test_pricing_engine.py` **33 passed**; `tests/test_labour_engine.py` **25 passed**; `tests/test_historical_ingestion.py` **11 passed**; full suite **228 passed**. `git diff --check` clean. |
+| Project-state-report update | Counts already current; this review confirms them. |
+| Milestone entry update | No new milestone. |
+| Constitutional issue raised | None |
+| Unresolved issues | Commit/push/live-migrate not authorized. ORG-001 overhead/profit/contingency remain `UNSPECIFIED`. Labour-snapshot cost not in estimate basis by default. |
+| Next approved step | Joel / ChatGPT governance review of this stopping report. **Do not commit. Do not push. Do not migrate live DB.** |
+| Next approved prompt | None until review. Then commit (if approved), then a separate live-migrate prompt. |
+| Commit hash | **None** (this pass) |
+
+### 2026-08-29 — FG-009 pre-commit bounded correction (CO method + ORG-001 seed)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Correct two governance issues in the uncommitted FG-009 tree before commit: (1) FG-009-aware Change Orders must apply inherited pricing METHOD; (2) ORG-001 optional layers must seed as `UNSPECIFIED`, not `NOT_APPLIED`. |
+| Business decision | `NOT_APPLIED` is an org-approved commercial decision. Ungoverned overhead/profit/contingency remain `UNSPECIFIED`. TRUE_GM 15% and HST 13% unchanged. FG-009-aware COs apply method identity; legacy COs without snapshot unchanged. |
+| Architectural decision | Reuse Pricing Engine `compute_named_method_pre_tax` / `legacy_stack_pre_tax` / `apply_tax_after_pre_tax` from Project Controls via `price_change_order_from_snapshot`. Do not invent a second engine. Copy snapshotted CO lines as direct/extended cost. Correct uncommitted migration `a3b4c5d6e7f8` in place; no new revision. ADR-025 and ADR-030 remain **Accepted**. |
+| Prompt template used | Bounded pre-commit correction authorization (this session). |
+| Approved Cursor prompt summary | PRE-COMMIT BOUNDED CORRECTION PASS only. Do not reimplement FG-009. Do not reset/stash/discard. Do not commit/push. Do not apply live migration. |
+| Files expected to change | Pricing Engine models/services; Project Controls recalculate/copy-lines; uncommitted migration seed; tests; FG-009/module/handoff docs. |
+| Files prohibited from changing | Historical workbooks; FG-006 facts; Labour Engine production/calibration; Accepted proposals; live DB; new Alembic revision. |
+| Implementation result | **Complete in working tree.** Not committed. Live DB not migrated. Existing FG-009 implementation preserved. |
+| Tests | `tests/test_pricing_engine.py` **33 passed**; `tests/test_labour_engine.py` **25 passed**; `tests/test_historical_ingestion.py` **11 passed**; full suite **228 passed**. `git diff --check` clean. Alembic `f2c3d4e5f6a7` → `a3b4c5d6e7f8` → downgrade in dedicated test. |
+| Project-state-report update | Yes |
+| Milestone entry update | Append-only correction record |
+| Constitutional issue raised | None |
+| Unresolved issues | Commit/push/live-migrate not authorized. ORG-001 overhead/profit/contingency remain `UNSPECIFIED`. Labour-snapshot cost not included in estimate basis by default. |
+| Next approved step | Joel / ChatGPT governance review of the bounded-correction stopping report. **Do not commit. Do not push. Do not migrate live DB.** |
+| Next approved prompt | None until review. Then commit (if approved), then a separate live-migrate prompt. |
+| Commit hash | **None** (this pass) |
+
+### 2026-08-29 — FG-009 Organization-Calibrated Pricing Engine implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Implement FG-009 only: versioned org pricing policies, named methods, resolution, immutable estimate snapshots, ORG-001 seed, legacy compatibility, Change Order inheritance, tenant isolation, dedicated tests. |
+| Business decision | CalibAi owns methods; orgs own rates. ORG-001 15% true GM and 13% HST are org-scoped, not platform defaults. New estimates are not auto-converted. Contingency/overhead for ORG-001 remain `NOT_APPLIED` (not invented). |
+| Architectural decision | Route estimate recalc through snapshot if present else legacy stack. Do not delete legacy logic. Labour snapshot Direct Labour Cost is consume-only and not added to the estimate basis by default. Pricing Posture / Execution Risk snapshot-only. |
+| Prompt template used | Bounded FG-009 implementation authorization (this session). |
+| Approved Cursor prompt summary | Implement FG-009 Organization-Calibrated Pricing Engine foundation only. One additive migration. Do not commit/push. Do not migrate live DB. Do not expand into four-output, QuickBooks, contracts, Labour Engine expansion, historical evidence repair, ML, or BUILD/MONITOR/LEARN. |
+| Files expected to change | Pricing Engine models/services/routes/templates; estimate builder routing; CO inheritance; migration `a3b4c5d6e7f8`; `tests/test_pricing_engine.py`; FG-009/docs status. |
+| Files prohibited from changing | Historical workbooks; FG-006 facts; accepted proposal immutability rules; Labour Engine production/calibration logic (except read-only consume); live DB. |
+| Implementation result | **Complete in working tree.** Not committed. Live DB not migrated. |
+| Tests | `tests/test_pricing_engine.py` **26 passed**; `tests/test_labour_engine.py` **25 passed**; `tests/test_historical_ingestion.py` **11 passed**; full suite **221 passed**. `git diff --check` clean. |
+| Project-state-report update | Yes |
+| Milestone entry update | Architecture record (implementation; not a numbered milestone) |
+| Constitutional issue raised | None |
+| Unresolved issues | Commit/push/live-migrate not authorized. ORG-001 contingency treatment remains `NOT_APPLIED`. Labour-snapshot cost not included in estimate basis by default. |
+| Next approved step | Joel / ChatGPT governance review. **Do not commit. Do not push. Do not migrate live DB.** |
+| Next approved prompt | None until review. Then commit (if approved), then a separate live-migrate prompt. |
+| Commit hash | **None** (this pass) |
+
 ### 2026-08-29 — FG-009 governance approval / documentation commit
 
 | Field | Content |

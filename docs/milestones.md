@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### FG-009 — Organization-Calibrated Pricing Engine architecture / Feature Gate preparation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-009 (not a product milestone; **APPROVED FOR IMPLEMENTATION**; **not implemented**) |
+| Status | **ARCHITECTURE AND FEATURE GATE APPROVED** (2026-08-29) |
+| Date | 2026-08-29 |
+| Objective | Audit live pricing math; reconcile ORG-001 true-GM policy vs markup stack; accept ADR-025/030; approve FG-009; adopt contingency source vs pricing-treatment clarification. |
+| Deliverables | Architecture report; FG-009; ADR-025 **Accepted**; ADR-030 **Accepted**; module stub; index/handoff updates. **No product code. No migration.** |
+| Validation | Labour Engine tests, historical ingestion tests, full suite, `git diff --check` (see stopping report / chat-workflow-log). |
+| Next | Issue a separately authorized bounded FG-009 **implementation** prompt. Do **not** implement from the architecture documents alone. |
+
 ### FG-008 — Post-UAT integrity stabilization
 
 | Field | Content |

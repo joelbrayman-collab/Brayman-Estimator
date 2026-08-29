@@ -13,7 +13,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 **Proposed** is not **Accepted**. Citing a Proposed ADR in a module, Feature Gate, or roadmap does not change its status. Implementation still requires Feature Gate + accepted decisions where the ADR itself requires acceptance.
 
-**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**, Alembic `f2c3d4e5f6a7`).
+**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**, Alembic `f2c3d4e5f6a7`); **ADR-025** (named pricing methods); **ADR-030** (org pricing policy + estimate pricing snapshot). FG-009 is **APPROVED FOR IMPLEMENTATION** and **not implemented**.
 
 ## Process
 
@@ -79,7 +79,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | [ADR-022](ADR-022-field-client-and-shared-api.md) | Field Client and Shared API | **Accepted** (direction; no API/mobile code) |
 | [ADR-023](ADR-023-field-evidence-provenance.md) | Field Evidence Original vs Derived | **Accepted** (rules; no voice/photo code) |
 | [ADR-024](ADR-024-learn-recommendation-boundary.md) | LEARN Recommendation Boundary | **Accepted** (boundary; no ML) |
-| [ADR-025](ADR-025-pricing-policy-versus-estimate-markup-stack.md) | Gross-Margin Policy vs Markup Stack | **Proposed** |
+| [ADR-025](ADR-025-pricing-policy-versus-estimate-markup-stack.md) | Gross-Margin Policy vs Markup Stack | **Accepted** (2026-08-29; dual named methods; FG-009 not implemented) |
 
 ### Organization & Calibration Architecture (Milestone 011)
 
@@ -87,11 +87,17 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 |-----|-------|--------|
 | [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) | Organization Foundation, Multi-Tenant Boundary, and Project Commercial Context | **Accepted** (2026-08-28; FG-007; implemented in M011) |
 
-### Labour Engine (Phase B — architecture approved; implementation not started)
+### Labour Engine (Phase B — implemented)
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) | Canonical Labour Task, Versioned Production Standard, and Evidence-to-Approval Calibration Lifecycle | **Accepted** (2026-08-29; governing FG-008; implementation not started) |
+| [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) | Canonical Labour Task, Versioned Production Standard, and Evidence-to-Approval Calibration Lifecycle | **Accepted** (2026-08-29; governing FG-008; **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**, Alembic `f2c3d4e5f6a7`) |
+
+### Pricing Engine (architecture approved — implementation not started)
+
+| ADR | Title | Status |
+|-----|-------|--------|
+| [ADR-030](ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) | Organization-Owned Versioned Pricing Policy and Estimate Pricing Snapshot | **Accepted** (2026-08-29; governing FG-009 persistence/resolution/contingency treatment; **not implemented**) |
 
 CAR-001 record: [../architecture/CAR-001-calibai-product-architecture-reconciliation.md](../architecture/CAR-001-calibai-product-architecture-reconciliation.md).
 
@@ -101,4 +107,4 @@ M004 readiness: [../architecture/M004-plan-intelligence-readiness-report.md](../
 M006 readiness: [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md).
 M008 readiness: [../architecture/M008-sheet-intelligence-readiness-report.md](../architecture/M008-sheet-intelligence-readiness-report.md).
 
-> ADR-017/018 are **Accepted** and implemented in [M009](../feature-gates/FG-004-m009-sheet-classification.md). ADR-026/027 are **Accepted** and implemented in [M010](../feature-gates/FG-005-m010-scale-calibration.md). ADR-028 is **Accepted** and implemented in [M011](../feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md). ADR-029 is **Accepted** with [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**. AI take-off (M012+) requires its own dedicated Feature Gate.
+> ADR-017/018 are **Accepted** and implemented in [M009](../feature-gates/FG-004-m009-sheet-classification.md). ADR-026/027 are **Accepted** and implemented in [M010](../feature-gates/FG-005-m010-scale-calibration.md). ADR-028 is **Accepted** and implemented in [M011](../feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md). ADR-029 is **Accepted** with [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**. [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) is **APPROVED FOR IMPLEMENTATION** (ADR-025 **Accepted**; ADR-030 **Accepted**; **not implemented**). AI take-off (M012+) requires its own dedicated Feature Gate.

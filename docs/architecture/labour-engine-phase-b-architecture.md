@@ -30,7 +30,7 @@ This document defines how CalibAi will manage organization-owned labour methodol
 - project-condition productivity treatment
 - provenance, human approval, tenant isolation, and estimate immutability
 
-**Current (implemented):** Historical labour is persisted as **ORG-HISTORICAL evidence** only (`HistoricalLabourItem` via FG-006). Active estimating still uses `CostItem` rows (including category `Labour`) as lump `unit_cost` lines. **FG-008 Labour Engine Phase B** adds organization-owned canonical tasks, human-reviewed mappings, versioned production and direct labour cost rate standards, calibration candidates, explainable resolution, and immutable `EstimateLabourSnapshot` rows. Legacy estimates without snapshots continue to load unchanged. Selling-price math is unchanged (ADR-025 remains Proposed).
+**Current (implemented):** Historical labour is persisted as **ORG-HISTORICAL evidence** only (`HistoricalLabourItem` via FG-006). Active estimating still uses `CostItem` rows (including category `Labour`) as lump `unit_cost` lines. **FG-008 Labour Engine Phase B** adds organization-owned canonical tasks, human-reviewed mappings, versioned production and direct labour cost rate standards, calibration candidates, explainable resolution, and immutable `EstimateLabourSnapshot` rows. Legacy estimates without snapshots continue to load unchanged. Selling-price math is unchanged (ADR-025 **Accepted**; FG-009 **not implemented**).
 
 **Intended (FG-008 coded slice, implemented & verified):** An organization-scoped Labour Engine that computes:
 
@@ -115,7 +115,7 @@ Family adapters classify labour by **keyword heuristics** (`labour`, `form`, `po
 - Evidence classes and calibration lifecycle: [organization-and-calibration-architecture.md](organization-and-calibration-architecture.md) §§5–8
 - Pricing Posture must not alter true hours/quantities/wage: same document §12; [FG-007](../feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md) invariant 1
 - LEARN must not silently mutate standards: [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted**
-- Selling-price formula vs estimate markup stack remains **unresolved**: [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Proposed**
+- Selling-price formula vs estimate markup stack: [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted**; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **APPROVED FOR IMPLEMENTATION**, **not implemented**
 - Organization isolation: [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted**; `get_current_organization_id()` fail-closed queries
 
 **Constraint on org architecture §18:** that section’s example of applying a **silent** `+15%` commercial-profile multiplier to production hours is **not authorized for the Labour Engine**. It conflicts with §12 and FG-007. FG-008 / ADR-029 govern labour-hour treatment: no hidden labour multiplier from Pricing Posture or Execution Risk. See §11.
@@ -190,7 +190,7 @@ Keep these concepts distinct:
 - Direct labour cost rate: **$65 CAD / man-hour**
 - Target selling formula: **Selling Price = Direct Cost / 0.85** (15% true gross margin)
 
-FG-008 **must not change** that policy. FG-008 **must not** implement selling-price migration (ADR-025 remains Proposed). The Labour Engine stops at **direct labour cost**.
+FG-008 **must not change** that policy. FG-008 **must not** implement selling-price migration (ADR-025 **Accepted**; application is FG-009). The Labour Engine stops at **direct labour cost**.
 
 **No hidden multipliers:** Pricing Posture, Execution Risk, and “commercial profile” must not silently scale true hours, production rates, or direct labour cost.
 
@@ -522,7 +522,7 @@ See [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) and `tests/test_l
 1. Initial ORG-001 canonical **task catalog contents** (human-authored seed vs empty catalog + mapping only). Empty catalog shipped; office UI can create tasks. No Brayman task names hard-coded as CalibAi core.
 2. Whether the first implementation prompt includes **office-only manual actuals** or defers all actuals persistence (this architecture recommends **defer**).
 3. Exact condition vocabulary vs existing M011 `site_condition` / `schedule_condition` string sets (align, do not invent a second competing enum without a mapping table).
-4. ADR-025 remains Proposed; Labour Engine must not “fix” selling price.
+4. ADR-025 is **Accepted**; Labour Engine must not “fix” selling price (FG-009).
 5. Historical `hourly_rate = 0.13` and material-as-labour rows: mapping/review only; **no FG-006 data repair** unless separately gated.
 
 ---

@@ -42,6 +42,52 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-29 — FG-009 governance approval / documentation commit
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Finalize FG-009 architecture approval, accept ADR-025 and ADR-030, adopt contingency source vs pricing-treatment clarification, commit and push docs only. No product implementation. |
+| Business decision | Joel/ChatGPT: FG-009 architecture approved (subject to contingency clarification); Feature Gate **APPROVED FOR IMPLEMENTATION**; ADR-025 **AMEND AND ACCEPT**; ADR-030 **ACCEPT**. Implementation **not authorized**. |
+| Architectural decision | Contingency **source/purpose** distinct from **visibility** (`INTERNAL_RESERVE` / `CUSTOMER_PRICED` / `NOT_APPLIED`) and from **pricing treatment** (`INCLUDED_IN_MARGIN_BASIS` / `ADDED_AFTER_BASE_PRICING`). Overhead not equated with GM. TRUE_GROSS_MARGIN must not hide COST_PLUS_MARKUP_STACK. FG-009-aware COs inherit estimate snapshot; historical COs not rewritten. |
+| Prompt template used | `docs/prompts/cursor-documentation-template.md` (authorized governance-finalization prompt, this session). |
+| Approved Cursor prompt summary | Docs/governance only: accept ADRs, approve FG-009, contingency clarification, tests, commit, push. No product code, no migration, no pricing calculation change. |
+| Files expected to change | `docs/**` FG-009 / ADR-025 / ADR-030 / indexes / handoff. |
+| Files prohibited from changing | Product code, migrations, tests (except running them). |
+| Implementation result | **Docs/governance only.** Live estimate formula unchanged. |
+| Tests | `tests/test_labour_engine.py`; `tests/test_historical_ingestion.py`; full suite; `git diff --check` — exact counts in stopping report. |
+| Project-state-report update | Yes — FG-009 approved for implementation; not a coded milestone |
+| Milestone entry update | Architecture record updated (not a product milestone) |
+| Constitutional issue raised | None |
+| Unresolved issues | Selling-price code still the legacy stack until a separate implementation prompt. |
+| Next approved step | Issue a separately authorized bounded FG-009 **implementation** prompt. |
+| Next approved prompt | FG-009 implementation (not this pass). |
+| Commit hash | (this commit) |
+
+### 2026-08-29 — Organization-Calibrated Pricing Engine architecture / ADR-025 / FG-009 preparation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | READ → AUDIT → RECONCILE → ARCHITECT → PREPARE → STOP. No product implementation. Prepare FG-009 Organization-Calibrated Pricing Engine; resolve ADR-025 recommendation; correct stale FG-008 docs. |
+| Business decision | CalibAi owns methodology; each org owns commercial intelligence. ORG-001 15% **true gross margin** (`Direct / 0.85`) is not 15% markup and is not a CalibAi universal default. Historical “15% margin” labels are evidence, not auto-policy. |
+| Architectural decision | **AMEND AND ACCEPT** ADR-025 recommended: named methods `TRUE_GROSS_MARGIN`, `COST_PLUS_MARKUP`, `COST_PLUS_MARKUP_STACK` (preserve live stack as explicit method; do not globally replace; do not map 15% GM onto 15% markup). ADR-030 Proposed for org policy records + estimate pricing snapshots + CO inheritance. File statuses remain **Proposed**. FG-009 **PREPARED FOR GOVERNANCE APPROVAL**. |
+| Prompt template used | `docs/prompts/cursor-documentation-template.md` (authorized architecture / Feature Gate prompt, this session). |
+| Approved Cursor prompt summary | Audit pricing code; reconcile vs `pricing-policy.md`; define org-calibrated engine; prepare next FG; amend ADR-025; no product code; no migration; no commit; no push. |
+| Files expected to change | `docs/architecture/organization-calibrated-pricing-engine-architecture.md`, `docs/feature-gates/FG-009-*`, `docs/adr/ADR-025-*`, `docs/adr/ADR-030-*`, `docs/modules/pricing-engine.md`, indexes, current-state, session-handoff, roadmap, chat-workflow-log, milestones architecture record. |
+| Files prohibited from changing | Product code, migrations, tests (except running them), historical workbooks, selling-price implementation. |
+| Implementation result | **Docs/architecture only.** Live estimate formula unchanged. |
+| Tests | `tests/test_labour_engine.py`; `tests/test_historical_ingestion.py`; full suite; `git diff --check` — exact counts in stopping report. |
+| Project-state-report update | Yes — FG-009 prepared; not a coded milestone |
+| Milestone entry update | Architecture record only (not a product milestone) |
+| Constitutional issue raised | None new. Article 5 (immutability) and org-owned commercial intelligence constrain implementation. |
+| Unresolved issues | FG-009 / ADR-025 / ADR-030 not accepted by Joel. Live CO math still inconsistent with estimates (architecture records the defect; code unchanged). |
+| Next approved step | Joel / ChatGPT governance review. **Do not implement. Do not commit unless requested.** |
+| Next approved prompt | None for implementation. |
+| Commit hash | **None** (this pass) |
+
 ### 2026-08-29 — FG-008 post-UAT integrity stabilization
 
 | Field | Content |

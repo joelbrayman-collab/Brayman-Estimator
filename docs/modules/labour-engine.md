@@ -64,7 +64,7 @@ Office UI at `/labour-engine/`. ORG-001 $65 CAD/man-hour Direct Labour Cost Rate
 - Actuals persistence deferred
 - Crew Template catalog deferred
 - Burden modeling deferred
-- ADR-025 remains **Proposed**
+- ADR-025 remains **Accepted**; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) is approved for implementation, **not implemented**. Labour Engine must not “fix” selling price.
 
 ## Relevant tests
 
@@ -75,4 +75,4 @@ Office UI at `/labour-engine/`. ORG-001 $65 CAD/man-hour Direct Labour Cost Rate
 - ADR-029 **Accepted**
 - ADR-024 **Accepted** (LEARN boundary)
 - ADR-028 **Accepted** (organization isolation)
-- ADR-025 **Proposed** (do not change estimate selling-price math here)
+- ADR-025 **Accepted** (do not change estimate selling-price math in the Labour Engine)

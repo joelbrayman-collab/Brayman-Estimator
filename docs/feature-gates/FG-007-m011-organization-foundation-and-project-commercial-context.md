@@ -148,4 +148,4 @@ The migration is a **controlled additive migration designed to minimize applicat
 ## Blocking Conditions
 
 > **Historical Status:** M011 was successfully implemented and verified (`cb38d93`, migration `d0a1b2c3d4e5`), satisfying the prerequisite for FG-006 (Historical Estimate Ingestion Engine — Phase B), which has also been implemented and verified (`690d755`, migration `e1b2c3d4e5f6`).
-> **Current Status:** [FG-008](FG-008-labour-engine-phase-b.md) Labour Engine Phase B architecture is **APPROVED FOR IMPLEMENTATION** (implementation **has not started**; separate execution prompt required). The Organization-Calibrated Pricing Engine remains **BLOCKED / NOT STARTED**.
+> **Current Status:** [FG-008](FG-008-labour-engine-phase-b.md) Labour Engine Phase B is **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (Alembic `f2c3d4e5f6a7`; foundation operational for UAT). [FG-009](FG-009-organization-calibrated-pricing-engine.md) Organization-Calibrated Pricing Engine is **APPROVED FOR IMPLEMENTATION** — **not implemented**.

@@ -58,7 +58,7 @@ CalibAi provides complementary **office** and **field** experiences over the sam
 | LEARN is review-gated and must not mutate pricing policy / cost library / approved estimates / historical actuals | [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** |
 | Field is first-class; Flask services → API → field web → native later if warranted | [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** |
 | Original field evidence separate from derived structured records | [ADR-023](../adr/ADR-023-field-evidence-provenance.md) **Accepted** |
-| Pricing markup stack vs 15% gross-margin policy — discrepancy recorded, not resolved | [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Proposed** |
+| Pricing markup stack vs 15% gross-margin policy — named methods accepted; not implemented | [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **APPROVED FOR IMPLEMENTATION** |
 
 Replacement of existing modules or schemas requires **separate explicit approval**.
 
@@ -81,7 +81,7 @@ Each coded slice still requires its own Feature Gate and approved Cursor prompt.
 0. CAR-001 architecture alignment (this record)
 1. **M009** Sheet classification / human review
 2. Project Hub UX
-3. Pricing-policy application (after ADR-025)
+3. Pricing-policy application (after ADR-025) — **now tracked as [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md)** (approved for implementation 2026-08-29; **not implemented**). This CAR-001 list is historical sequence direction, not implementation authority.
 4. Internal Detailed Cost Breakdown + Customer Estimate consistency
 5. Authentication / actor identity + shared API foundation
 6. BUILD Field Capture V1

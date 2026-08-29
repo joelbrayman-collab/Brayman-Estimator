@@ -9,7 +9,7 @@
 | Date | 2026-08-29 |
 | Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE DEVELOPMENT/UAT MIGRATION APPLIED / UAT-SMOKE-VERIFIED** |
 | Architecture | [labour-engine-phase-b-architecture.md](../architecture/labour-engine-phase-b-architecture.md) **Approved** |
-| Related ADRs | [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Proposed** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** |
+| Related ADRs | [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** |
 | Prerequisites | FG-007 / M011 **implemented**; FG-006 **implemented** |
 | Approved baseline | `main` @ `820f54afc179279d2435ad3a426b3037548bb45e` |
 | Product code | **Implemented & verified.** Migration `f2c3d4e5f6a7` (graph head and live `flask db current`). Tests: `tests/test_labour_engine.py` (**25 passed**). Live development/UAT database upgraded 2026-08-29. Post-UAT integrity stabilization 2026-08-29 (REVOKED mappings; archived tasks excluded from rule suggestion; unknown orgs cannot persist labour audit). |
@@ -27,7 +27,7 @@
 
 Code paths: `app/models/labour_engine.py`, `app/services/labour_engine.py`, `app/routes/labour_engine.py`, `app/templates/labour_engine/`, `migrations/versions/f2c3d4e5f6a7_add_labour_engine_fg008.py`, `tests/test_labour_engine.py`. Office UI: `/labour-engine/`.
 
-This gate does **not** implement pricing-engine selling-price application, payroll, actuals persistence, or a Crew Template catalog. ADR-025 remains **Proposed**.
+This gate does **not** implement pricing-engine selling-price application, payroll, actuals persistence, or a Crew Template catalog. ADR-025 is **Accepted**. [FG-009](FG-009-organization-calibrated-pricing-engine.md) is **APPROVED FOR IMPLEMENTATION** and is **not** part of FG-008.
 
 ---
 
@@ -86,7 +86,7 @@ MAN-HOURS × DIRECT LABOUR COST RATE = DIRECT LABOUR COST
 CREW SIZE × HOURS PER DAY × DURATION = MAN-HOURS   (planning expression; not a second truth)
 ```
 
-Selling price remains `Direct Cost / 0.85` as **ORG-001 policy text**. Code application of that formula remains blocked on ADR-025. Pricing Posture must not manipulate true hours, production rates, direct labour cost, material quantities, or supplier amounts.
+Selling price remains `Direct Cost / 0.85` as **ORG-001 policy text**. Code application of that formula is [FG-009](FG-009-organization-calibrated-pricing-engine.md) (**APPROVED FOR IMPLEMENTATION**, not implemented). Pricing Posture must not manipulate true hours, production rates, direct labour cost, material quantities, or supplier amounts.
 
 ---
 
@@ -295,7 +295,7 @@ Covered by `tests/test_labour_engine.py` (22 passed) plus full-suite and histori
 | Item | State |
 |------|--------|
 | FG-008 implementation | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED.** Foundation operational for UAT. |
-| Organization-Calibrated Pricing Engine | **BLOCKED / NOT STARTED** |
-| Labour Engine live use in selling-price outputs | **BLOCKED** on a separate Pricing Engine gate + ADR-025 for margin formula |
+| Organization-Calibrated Pricing Engine | [FG-009](FG-009-organization-calibrated-pricing-engine.md) **APPROVED FOR IMPLEMENTATION** — **NOT STARTED** |
+| Labour Engine live use in selling-price outputs | **BLOCKED** until FG-009 implementation |
 
-**Next authorized action:** Do **not** start the next milestone from this document. Pricing Engine, ADR-025, AI take-off, BUILD/MONITOR/LEARN, historical evidence repair, additional labour features, and cross-org learning remain separately gated.
+**Next authorized action:** Do **not** implement FG-009 from this document. Issue a separate bounded FG-009 implementation prompt. AI take-off, BUILD/MONITOR/LEARN, historical evidence repair, additional labour features, and cross-org learning remain separately gated.

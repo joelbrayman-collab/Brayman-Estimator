@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** (current reference rule) |
-| Updated | 2026-08-28 |
+| Updated | 2026-08-29 |
 | Authority | Joel-approved product policy — not invented by implementation |
 
 ## Purpose
@@ -31,7 +31,9 @@ Selling Price = Direct Cost / 0.85
 
 **Important:** 15% gross margin is **distinct from** a 15% markup on cost.
 
-**CAR-001 discrepancy (recorded, not resolved):** Current estimate builder code uses line **markup percent** plus version **overhead percent** and **profit percent**. That stack is **not mathematically equivalent** to this gross-margin formula. See [ADR-025](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) (**Proposed**). Do not change calculation code until that ADR is accepted and Feature-Gated. LEARN must not silently rewrite this policy ([ADR-024](adr/ADR-024-learn-recommendation-boundary.md)).
+**CAR-001 / FG-009 discrepancy (recorded; architecture approved, not implemented):** Current estimate builder code uses line **markup percent** plus version **overhead percent** and **profit percent**. That stack is **not mathematically equivalent** to this gross-margin formula. See [ADR-025](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) (**Accepted** — named methods; do not map 15% GM onto 15% markup). [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) is **APPROVED FOR IMPLEMENTATION** — not implemented. Do not change calculation code until a separate FG-009 implementation prompt is issued. LEARN must not silently rewrite this policy ([ADR-024](adr/ADR-024-learn-recommendation-boundary.md)).
+
+This document records **ORG-001** (Brayman Construction) policy. It is not the universal CalibAi pricing model.
 
 ### Tax (HST)
 
@@ -69,5 +71,8 @@ All governed project outputs derive from one [authoritative project/estimate rec
 ## Related documents
 
 - [architecture/project-document-package.md](architecture/project-document-package.md)
+- [architecture/organization-calibrated-pricing-engine-architecture.md](architecture/organization-calibrated-pricing-engine-architecture.md)
+- [feature-gates/FG-009-organization-calibrated-pricing-engine.md](feature-gates/FG-009-organization-calibrated-pricing-engine.md)
 - [modules/estimating.md](modules/estimating.md)
+- [modules/pricing-engine.md](modules/pricing-engine.md)
 - [testing/uat-reference-cases.md](testing/uat-reference-cases.md)

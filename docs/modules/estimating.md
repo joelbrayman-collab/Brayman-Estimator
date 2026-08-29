@@ -45,7 +45,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 ## Planned capabilities
 
 - Internal Detailed Cost Breakdown output — **Future** ([project-document-package.md](../architecture/project-document-package.md))
-- Governed pricing policy application — **open** ([pricing-policy.md](../pricing-policy.md); [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Proposed** — markup/overhead/profit stack in code is **not** equivalent to 15% gross margin; do not change calculations until accepted + Feature-Gated)
+- Governed pricing policy application — **approved, not implemented** ([pricing-policy.md](../pricing-policy.md); [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** — markup/overhead/profit stack in code is **not** equivalent to 15% gross margin; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **APPROVED FOR IMPLEMENTATION**; do not change calculations until a separate implementation prompt)
 - Historical estimating intelligence — **Future**
 - Deeper productivity tooling — [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) Labour Engine Phase B **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (operational for UAT); Estimating does not own canonical tasks or production standards
 
@@ -64,7 +64,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 - When estimate header status vs version status diverge—canonical source of truth for “accepted bid”
 - MONITOR estimated baseline selection ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Proposed**)
-- How (or whether) to migrate estimate markup/overhead/profit to the governing gross-margin formula ([ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Proposed**)
+- How (or whether) to migrate estimate markup/overhead/profit to the governing gross-margin formula ([ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** — dual named methods; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) approved, not implemented)
 
 ## Relevant tests
 
@@ -74,6 +74,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 ## Relevant ADRs
 
-- [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Proposed**
+- [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted**
+- [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted**
 - [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Proposed**
 - [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** (LEARN must not mutate cost library / approved estimates)

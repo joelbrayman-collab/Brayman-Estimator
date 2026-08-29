@@ -11,11 +11,11 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | `0569f25e7ff496ab637d52437d48cf815522afa1` (FG-008 implementation). Parent: `820f54afc179279d2435ad3a426b3037548bb45e`. |
+| HEAD / `origin/main` | `ff5d856d52433832c8b3099cb5a17ba72fb73db3` (FG-008 post-UAT integrity). Implementation: `0569f25e7ff496ab637d52437d48cf815522afa1`. Parent: `820f54afc179279d2435ad3a426b3037548bb45e`. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | Docs reconcile after FG-006 | `e2bf33c` — *docs: reconcile post-FG-006 governance turnover state* |
-| Working tree at last verified inspect | FG-008 post-UAT integrity stabilization (this pass) |
-| Governance | FG-004, FG-005, FG-006, FG-007 **approved & implemented**; **FG-008 CLOSED — OPERATIONAL FOR UAT** (live-migrated, UAT-smoke-verified, post-UAT integrity stabilization completed); CAR-001 adopted; Review Turnover Protocol adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Proposed** |
+| Working tree at last verified inspect | FG-009 governance approval / documentation commit (this pass) — **docs only; no product code** |
+| Governance | FG-004, FG-005, FG-006, FG-007 **approved & implemented**; **FG-008 CLOSED — OPERATIONAL FOR UAT**; **FG-009 APPROVED FOR IMPLEMENTATION** (not implemented); CAR-001 adopted; Review Turnover Protocol adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
 
 ## Implemented (evidenced in code)
 
@@ -30,7 +30,7 @@
 
 ## Architecture / readiness only (not implemented)
 
-- **Organization-Calibrated Pricing Engine** — Blocked pending separate governance gate. ADR-025 remains **Proposed**.
+- **Organization-Calibrated Pricing Engine** — [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **APPROVED FOR IMPLEMENTATION** (not implemented). Architecture: [organization-calibrated-pricing-engine-architecture.md](architecture/organization-calibrated-pricing-engine-architecture.md). ADR-025 **Accepted**; ADR-030 **Accepted**.
 - AI take-off / quantity extraction (M012+) / estimate mapping
 - CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract
 - Crew Template catalog, payroll burden, `LabourActualObservation` persistence
@@ -44,8 +44,9 @@
 
 M005–M011 and **FG-006** remain **implemented, verified, committed, and pushed** on `main`.
 
-- **Current coded work:** FG-008 Labour Engine Phase B — **CLOSED — OPERATIONAL FOR UAT** (post-UAT integrity stabilization completed). Not a new milestone.
-- **Blocked / Not Started (code):** Organization-Calibrated Pricing Engine, cross-org learning, source workbook mutation, pricing formula modifications (ADR-025 still Proposed).
+- **Current coded work:** FG-008 Labour Engine Phase B — **CLOSED — OPERATIONAL FOR UAT**. Not a new milestone.
+- **Architecture this pass:** FG-009 Organization-Calibrated Pricing Engine — **APPROVED FOR IMPLEMENTATION**; **not implemented**.
+- **Blocked / Not Started (code):** Organization-Calibrated Pricing Engine implementation (separate execution prompt required), cross-org learning, source workbook mutation.
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -59,13 +60,16 @@ M005–M011 and **FG-006** remain **implemented, verified, committed, and pushed
 
 ## Recommended next steps
 
-1. **STOP.** Do not start the next milestone from this snapshot.
-2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% policy text).
-3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under FG-008.
-4. Do not start Pricing Engine / ADR-025 until separately gated.
+1. Issue a **separately authorized bounded FG-009 implementation prompt**. Do not implement from this snapshot.
+2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% ORG-001 policy text).
+3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under Pricing Engine.
 
 ## Related
 
+- [feature-gates/FG-009-organization-calibrated-pricing-engine.md](feature-gates/FG-009-organization-calibrated-pricing-engine.md)
+- [architecture/organization-calibrated-pricing-engine-architecture.md](architecture/organization-calibrated-pricing-engine-architecture.md)
+- [adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md)
+- [adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md](adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md)
 - [feature-gates/FG-008-labour-engine-phase-b.md](feature-gates/FG-008-labour-engine-phase-b.md)
 - [architecture/labour-engine-phase-b-architecture.md](architecture/labour-engine-phase-b-architecture.md)
 - [adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md](adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md)

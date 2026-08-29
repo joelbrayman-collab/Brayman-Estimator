@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Direct Labour Cost Rates | Brayman Construction Platform{% endblock %}
+{% block page_title %}Direct Labour Cost Rate Standards{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Labour Engine</p>
+        <h1>Direct Labour Cost Rate Standards</h1>
+        <p>Currency per man-hour. Separate from production rate. ORG-001 $65 is organization policy, not a platform default.</p>
+    </div>
+    <a class="button-link" href="{{ url_for('labour_engine.index') }}">Labour Engine home</a>
+</div>
+
+{% if cost_rates %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Version</th>
+            <th>Rate</th>
+            <th>Currency</th>
+            <th>Class</th>
+            <th>Approval</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for standard in cost_rates %}
+        <tr>
+            <td>v{{ standard.version_number }}</td>
+            <td>{{ standard.rate_per_man_hour }}</td>
+            <td>{{ standard.currency }}</td>
+            <td>{{ standard.evidence_class }}</td>
+            <td>{{ standard.approval_status }}</td>
+            <td><a class="button-link" href="{{ url_for('labour_engine.cost_rate_detail', rate_id=standard.id) }}">View</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <h2>No direct labour cost rate for this organization</h2>
+    <p>Promote a Calibration Candidate to create an ORG-APPROVED rate. Other organizations do not inherit ORG-001 $65.</p>
+</div>
+{% endif %}
+{% endblock %}

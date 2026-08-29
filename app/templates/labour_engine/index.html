@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Labour Engine | Brayman Construction Platform{% endblock %}
+{% block page_title %}Labour Engine{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Estimating</p>
+        <h1>Labour Engine</h1>
+        <p>Organization {{ organization_id }} — Phase B foundation (FG-008). Direct labour cost only. No selling-price change.</p>
+    </div>
+</div>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Area</th>
+            <th>Count</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Canonical Labour Tasks</td>
+            <td>{{ tasks|length }}</td>
+            <td><a class="button-link" href="{{ url_for('labour_engine.list_tasks') }}">Open</a></td>
+        </tr>
+        <tr>
+            <td>Mappings</td>
+            <td>{{ mappings|length }} listed</td>
+            <td><a class="button-link" href="{{ url_for('labour_engine.list_mappings') }}">Review</a></td>
+        </tr>
+        <tr>
+            <td>Unmapped historical labour rows</td>
+            <td>{{ unmapped_count }}</td>
+            <td><a class="button-link" href="{{ url_for('labour_engine.list_mappings') }}">Map</a></td>
+        </tr>
+        <tr>
+            <td>Production Rate Standards</td>
+            <td>{{ standards|length }} listed</td>
+            <td><a class="button-link" href="{{ url_for('labour_engine.list_standards') }}">Open</a></td>
+        </tr>
+        <tr>
+            <td>Direct Labour Cost Rate Standards</td>
+            <td>{{ cost_rates|length }}</td>
+            <td><a class="button-link" href="{{ url_for('labour_engine.list_cost_rates') }}">Open</a></td>
+        </tr>
+        <tr>
+            <td>Calibration Candidates</td>
+            <td>{{ candidates|length }} listed</td>
+            <td><a class="button-link" href="{{ url_for('labour_engine.list_candidates') }}">Review</a></td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}

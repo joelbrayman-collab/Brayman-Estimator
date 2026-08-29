@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Candidate {{ candidate.id }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Calibration Candidate{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Labour Engine</p>
+        <h1>Candidate {{ candidate.id }} — {{ candidate.state }}</h1>
+        <p>{{ candidate.standard_kind }} · {{ candidate.evidence_class }} · Org {{ candidate.organization_id }}</p>
+    </div>
+    <a class="button-link" href="{{ url_for('labour_engine.list_candidates') }}">Back</a>
+</div>
+
+<table class="data-table">
+    <tbody>
+        <tr><th>Task</th><td>{{ candidate.labour_task.task_code if candidate.labour_task else "—" }}</td></tr>
+        <tr><th>Proposed production rate</th><td>{{ candidate.proposed_production_rate or "—" }} {{ candidate.proposed_production_unit or "" }}</td></tr>
+        <tr><th>Proposed direct labour cost rate</th><td>{{ candidate.proposed_direct_labour_cost_rate or "—" }} {{ candidate.proposed_currency or "" }}</td></tr>
+        <tr><th>Conditions</th><td>{{ candidate.applicable_conditions or "—" }}</td></tr>
+        <tr><th>Analysis</th><td>{{ candidate.analysis_summary or "—" }}</td></tr>
+        <tr><th>Evidence refs</th><td>{{ candidate.supporting_evidence_refs or "—" }}</td></tr>
+        <tr><th>Promoted production standard</th><td>{{ candidate.promoted_production_standard_id or "—" }}</td></tr>
+        <tr><th>Promoted cost-rate standard</th><td>{{ candidate.promoted_direct_labour_rate_id or "—" }}</td></tr>
+        <tr><th>Reviewed by</th><td>{{ candidate.reviewed_by or "—" }} at {{ candidate.reviewed_at or "—" }}</td></tr>
+        <tr><th>Notes</th><td>{{ candidate.review_notes or "—" }}</td></tr>
+    </tbody>
+</table>
+
+{% if candidate.state in ("DRAFT", "PROPOSED", "IN_REVIEW") %}
+<form method="post" action="{{ url_for('labour_engine.candidate_transition', candidate_id=candidate.id) }}" class="form-panel">
+    <h2>Human transition</h2>
+    <label>
+        New state
+        <select name="new_state" required>
+            {% if candidate.state == "DRAFT" %}
+            <option value="PROPOSED">PROPOSED</option>
+            <option value="WITHDRAWN">WITHDRAWN</option>
+            {% elif candidate.state == "PROPOSED" %}
+            <option value="IN_REVIEW">IN_REVIEW</option>
+            <option value="WITHDRAWN">WITHDRAWN</option>
+            {% elif candidate.state == "IN_REVIEW" %}
+            <option value="APPROVED">APPROVED</option>
+            <option value="REJECTED">REJECTED</option>
+            <option value="WITHDRAWN">WITHDRAWN</option>
+            {% endif %}
+        </select>
+    </label>
+    <label>
+        Reviewer *
+        <input type="text" name="reviewed_by" value="Joel Brayman" required>
+    </label>
+    <label>
+        Notes
+        <textarea name="review_notes" rows="3"></textarea>
+    </label>
+    <div class="form-actions">
+        <button type="submit">Apply transition</button>
+    </div>
+</form>
+{% endif %}
+{% endblock %}

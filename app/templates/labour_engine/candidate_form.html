@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}New Calibration Candidate | Brayman Construction Platform{% endblock %}
+{% block page_title %}Calibration Candidate{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Labour Engine</p>
+        <h1>New calibration candidate</h1>
+        <p>Starts in DRAFT. Not an operating standard.</p>
+    </div>
+</div>
+
+<form method="post" class="form-panel">
+    <div class="form-grid">
+        <label>
+            Standard kind *
+            <select name="standard_kind" required>
+                {% for kind in kinds %}
+                <option value="{{ kind }}">{{ kind }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Labour Task
+            <select name="labour_task_id">
+                <option value="">None (cost-rate only)</option>
+                {% for task in tasks %}
+                <option value="{{ task.id }}">{{ task.task_code }} — {{ task.canonical_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Proposed production rate
+            <input type="number" name="proposed_production_rate" step="0.000001" min="0">
+        </label>
+        <label>
+            Proposed production unit
+            <input type="text" name="proposed_production_unit">
+        </label>
+        <label>
+            Proposed direct labour cost rate
+            <input type="number" name="proposed_direct_labour_cost_rate" step="0.0001" min="0">
+        </label>
+        <label>
+            Currency
+            <input type="text" name="proposed_currency" value="CAD">
+        </label>
+        <label>
+            Applicable conditions
+            <input type="text" name="applicable_conditions">
+        </label>
+        <label>
+            Evidence class
+            <select name="evidence_class">
+                {% for cls in evidence_classes %}
+                <option value="{{ cls }}" {% if cls == "ORG-HISTORICAL" %}selected{% endif %}>{{ cls }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Reviewer
+            <input type="text" name="reviewed_by" value="Joel Brayman">
+        </label>
+    </div>
+    <label>
+        Analysis summary
+        <textarea name="analysis_summary" rows="3"></textarea>
+    </label>
+    <label>
+        Supporting evidence refs
+        <textarea name="supporting_evidence_refs" rows="2"></textarea>
+    </label>
+    <div class="form-actions">
+        <button type="submit">Save draft candidate</button>
+        <a href="{{ url_for('labour_engine.list_candidates') }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

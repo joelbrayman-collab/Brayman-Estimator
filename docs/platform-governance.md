@@ -169,4 +169,4 @@ Answer all of the following in the Cursor prompt or an attached Feature Gate doc
 11. Does it require an ADR?
 12. Does it require a database migration?
 
-Current Feature Gates: [feature-gates/README.md](feature-gates/README.md) (FG-004 through FG-007 approved and implemented; **FG-008 Labour Engine Phase B APPROVED FOR IMPLEMENTATION — not implemented**; separate execution prompt required).
+Current Feature Gates: [feature-gates/README.md](feature-gates/README.md) (FG-004 through FG-008 approved and implemented; **FG-008 live database not yet upgraded** to `f2c3d4e5f6a7`).

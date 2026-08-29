@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}{{ task.task_code }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Labour Task{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Labour Engine</p>
+        <h1>{{ task.task_code }} — {{ task.canonical_name }}</h1>
+        <p>Status {{ task.status }} · Source {{ task.source }} · Org {{ task.organization_id }}</p>
+    </div>
+    {% if task.status != "ARCHIVED" %}
+    <a class="button" href="{{ url_for('labour_engine.edit_task', task_id=task.id) }}">Edit</a>
+    {% endif %}
+</div>
+
+<table class="data-table">
+    <tbody>
+        <tr><th>Trade</th><td>{{ task.trade or "—" }}</td></tr>
+        <tr><th>Category</th><td>{{ task.category or "—" }}</td></tr>
+        <tr><th>Production unit</th><td>{{ task.production_unit }}</td></tr>
+        <tr><th>Unit of measure</th><td>{{ task.unit_of_measure }}</td></tr>
+        <tr><th>Description</th><td>{{ task.description or "—" }}</td></tr>
+        <tr><th>Provenance</th><td>{{ task.provenance or "—" }}</td></tr>
+        <tr><th>Created</th><td>{{ task.created_at }} by {{ task.created_by or "—" }}</td></tr>
+    </tbody>
+</table>
+
+{% if task.status != "ARCHIVED" %}
+<form method="post" action="{{ url_for('labour_engine.archive_task', task_id=task.id) }}" class="form-panel">
+    <input type="hidden" name="reviewed_by" value="Joel Brayman">
+    <button type="submit">Archive task</button>
+</form>
+{% endif %}
+
+<h2>Production Rate Standards</h2>
+{% if standards %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Version</th>
+            <th>Rate</th>
+            <th>Conditions</th>
+            <th>Class</th>
+            <th>Approval</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for standard in standards %}
+        <tr>
+            <td>v{{ standard.version_number }}</td>
+            <td>{{ standard.production_rate }}</td>
+            <td>{{ standard.applicable_conditions or "—" }}</td>
+            <td>{{ standard.evidence_class }}</td>
+            <td>{{ standard.approval_status }}</td>
+            <td><a class="button-link" href="{{ url_for('labour_engine.standard_detail', standard_id=standard.id) }}">View</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No production rate standards for this task.</p>
+{% endif %}
+{% endblock %}

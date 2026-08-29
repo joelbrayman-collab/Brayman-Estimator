@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Mapping {{ mapping.id }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Labour Mapping{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Labour Engine</p>
+        <h1>Mapping {{ mapping.id }}</h1>
+        <p>Status {{ mapping.review_status }} · Suggested by {{ mapping.suggested_by }} · Org {{ mapping.organization_id }}</p>
+    </div>
+    <a class="button-link" href="{{ url_for('labour_engine.list_mappings') }}">Back to mappings</a>
+</div>
+
+<table class="data-table">
+    <tbody>
+        <tr><th>Source string</th><td>{{ mapping.source_string }}</td></tr>
+        <tr><th>Canonical task</th><td>{{ mapping.labour_task.task_code if mapping.labour_task else "—" }}</td></tr>
+        <tr><th>Historical labour item</th><td>{{ mapping.historical_labour_item_id or "—" }}</td></tr>
+        <tr><th>Confidence</th><td>{{ mapping.mapping_confidence if mapping.mapping_confidence is not none else "—" }}</td></tr>
+        <tr><th>Reviewed by</th><td>{{ mapping.reviewed_by or "—" }} at {{ mapping.reviewed_at or "—" }}</td></tr>
+        <tr><th>Notes</th><td>{{ mapping.review_notes or "—" }}</td></tr>
+        <tr><th>Provenance</th><td>{{ mapping.provenance or "—" }}</td></tr>
+    </tbody>
+</table>
+
+{% if mapping.historical_labour_item %}
+<h2>Source evidence (immutable)</h2>
+<table class="data-table">
+    <tbody>
+        <tr><th>task_description</th><td>{{ mapping.historical_labour_item.task_description }}</td></tr>
+        <tr><th>crew_size</th><td>{{ mapping.historical_labour_item.crew_size }}</td></tr>
+        <tr><th>duration_days</th><td>{{ mapping.historical_labour_item.duration_days }}</td></tr>
+        <tr><th>hours_per_day</th><td>{{ mapping.historical_labour_item.hours_per_day }}</td></tr>
+        <tr><th>total_man_hours</th><td>{{ mapping.historical_labour_item.total_man_hours }}</td></tr>
+        <tr><th>hourly_rate</th><td>{{ mapping.historical_labour_item.hourly_rate }}</td></tr>
+        <tr><th>extended_labour_cost</th><td>{{ mapping.historical_labour_item.extended_labour_cost }}</td></tr>
+        <tr><th>formula_pattern</th><td>{{ mapping.historical_labour_item.formula_pattern }}</td></tr>
+    </tbody>
+</table>
+{% endif %}
+
+{% if mapping.review_status == "SUGGESTED" %}
+<form method="post" action="{{ url_for('labour_engine.accept_mapping', mapping_id=mapping.id) }}" class="form-panel">
+    <h2>Human review</h2>
+    <label>
+        Canonical task
+        <select name="labour_task_id">
+            <option value="">Keep suggested task</option>
+            {% for task in tasks %}
+            <option value="{{ task.id }}" {% if mapping.labour_task_id == task.id %}selected{% endif %}>{{ task.task_code }} — {{ task.canonical_name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>
+        Reviewer
+        <input type="text" name="reviewed_by" value="Joel Brayman" required>
+    </label>
+    <label>
+        Notes
+        <textarea name="review_notes" rows="3"></textarea>
+    </label>
+    <div class="form-actions">
+        <button type="submit">Accept mapping</button>
+    </div>
+</form>
+<form method="post" action="{{ url_for('labour_engine.reject_mapping', mapping_id=mapping.id) }}" class="form-panel">
+    <input type="hidden" name="reviewed_by" value="Joel Brayman">
+    <label>Reject notes <textarea name="review_notes" rows="2"></textarea></label>
+    <button type="submit">Reject mapping</button>
+</form>
+<form method="post" action="{{ url_for('labour_engine.not_labour_mapping', mapping_id=mapping.id) }}" class="form-panel">
+    <input type="hidden" name="reviewed_by" value="Joel Brayman">
+    <label>NOT_LABOUR notes <textarea name="review_notes" rows="2"></textarea></label>
+    <button type="submit">Mark NOT_LABOUR</button>
+</form>
+{% endif %}
+{% endblock %}

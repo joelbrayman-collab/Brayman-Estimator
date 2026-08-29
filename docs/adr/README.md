@@ -13,7 +13,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 **Proposed** is not **Accepted**. Citing a Proposed ADR in a module, Feature Gate, or roadmap does not change its status. Implementation still requires Feature Gate + accepted decisions where the ADR itself requires acceptance.
 
-**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **not implemented**).
+**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **IMPLEMENTED / VERIFIED**, live DB not migrated).
 
 ## Process
 
@@ -101,4 +101,4 @@ M004 readiness: [../architecture/M004-plan-intelligence-readiness-report.md](../
 M006 readiness: [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md).
 M008 readiness: [../architecture/M008-sheet-intelligence-readiness-report.md](../architecture/M008-sheet-intelligence-readiness-report.md).
 
-> ADR-017/018 are **Accepted** and implemented in [M009](../feature-gates/FG-004-m009-sheet-classification.md). ADR-026/027 are **Accepted** and implemented in [M010](../feature-gates/FG-005-m010-scale-calibration.md). ADR-028 is **Accepted** and implemented in [M011](../feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md). ADR-029 is **Accepted** with [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **APPROVED FOR IMPLEMENTATION** (Labour Engine Phase B — **not implemented**). AI take-off (M012+) requires its own dedicated Feature Gate.
+> ADR-017/018 are **Accepted** and implemented in [M009](../feature-gates/FG-004-m009-sheet-classification.md). ADR-026/027 are **Accepted** and implemented in [M010](../feature-gates/FG-005-m010-scale-calibration.md). ADR-028 is **Accepted** and implemented in [M011](../feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md). ADR-029 is **Accepted** with [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED** (live DB not migrated). AI take-off (M012+) requires its own dedicated Feature Gate.

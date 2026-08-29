@@ -2,13 +2,13 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **APPROVED** architecture — **not implemented** |
+| Status | **IMPLEMENTED / VERIFIED** — live database **not yet upgraded** to `f2c3d4e5f6a7` |
 | Date | 2026-08-29 |
-| Feature Gate | [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **APPROVED FOR IMPLEMENTATION** (implementation has **not** started) |
+| Feature Gate | [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED** |
 | ADR | [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** |
-| Baseline | `main` parent `e2bf33c9377c3990052ae4a3c5f695c8df5d041c`; Alembic `e1b2c3d4e5f6` |
+| Baseline | Implementation from `main` @ `820f54afc179279d2435ad3a426b3037548bb45e`; Alembic revision `f2c3d4e5f6a7` (revises `e1b2c3d4e5f6`) |
 | Product | The Estimator / CalibAi |
-| Implementation | **Not started.** Requires a separate execution prompt. |
+| Implementation | **Implemented & verified.** Live database not upgraded in the implementation/commit pass. |
 
 ---
 
@@ -30,9 +30,9 @@ This document defines how CalibAi will manage organization-owned labour methodol
 - project-condition productivity treatment
 - provenance, human approval, tenant isolation, and estimate immutability
 
-**Current (implemented):** Historical labour is persisted as **ORG-HISTORICAL evidence** only (`HistoricalLabourItem` via FG-006). Active estimating uses `CostItem` rows (including category `Labour`) as lump `unit_cost` lines. There is **no** canonical labour task catalog, **no** versioned production standard, **no** labour calibration candidate, and **no** labour-assumption snapshot on `EstimateVersion`.
+**Current (implemented):** Historical labour is persisted as **ORG-HISTORICAL evidence** only (`HistoricalLabourItem` via FG-006). Active estimating still uses `CostItem` rows (including category `Labour`) as lump `unit_cost` lines. **FG-008 Labour Engine Phase B** adds organization-owned canonical tasks, human-reviewed mappings, versioned production and direct labour cost rate standards, calibration candidates, explainable resolution, and immutable `EstimateLabourSnapshot` rows. Legacy estimates without snapshots continue to load unchanged. Selling-price math is unchanged (ADR-025 remains Proposed).
 
-**Intended (FG-008 architecture approved; implementation not started):** An organization-scoped Labour Engine that computes:
+**Intended (FG-008 coded slice, implemented & verified):** An organization-scoped Labour Engine that computes:
 
 ```text
 QUANTITY × PRODUCTION RATE = MAN-HOURS
@@ -196,13 +196,13 @@ FG-008 **must not change** that policy. FG-008 **must not** implement selling-pr
 
 ---
 
-## 6. Canonical Labour Task architecture (intended)
+## 6. Canonical Labour Task architecture
 
 Historical strings are **not** equivalent until a human accepts a mapping.
 
-### 6.1 `LabourTask` (organization-owned)
+Implemented in `app/models/labour_engine.py` (`labour_tasks`, `labour_task_mappings`).
 
-Conceptual fields (schema not implemented):
+### 6.1 `LabourTask` (organization-owned)
 
 | Field | Intent |
 |-------|--------|
@@ -482,42 +482,44 @@ Labour Engine must not take ownership of `cost_items`, proposal snapshots, or pr
 
 ---
 
-## 19. Migration expectations (future implementation only)
+## 19. Migration
 
-A later approved implementation prompt would require **one additive Alembic migration** (new tables/FKs). This architecture pass **must not** create it.
+One additive Alembic revision: `f2c3d4e5f6a7` (revises `e1b2c3d4e5f6`).
 
-Rollback: drop additive tables; no rewrite of `historical_labour_items`, `estimate_versions` commercial context, or proposal snapshots.
+Rollback: drop additive Labour Engine tables; no rewrite of `historical_labour_items`, `estimate_versions` commercial context, or proposal snapshots.
 
 Legacy: pre-FG-008 estimates have no labour snapshot; they remain lump-cost lines. Do not backfill invented production rates.
 
+Live `flask db current` remains `e1b2c3d4e5f6` until a separately authorized upgrade. The migration graph head is `f2c3d4e5f6a7`.
+
 ---
 
-## 20. Implementation boundaries (architecture approved; coded slice requires a separate execution prompt)
+## 20. Implementation boundaries (FG-008 coded)
 
-**In scope (coded slice, still requires a separate implementation prompt):**
+**In scope (implemented & verified):**
 
-- Org-owned Labour Task catalog + mapping review UI
+- Org-owned Labour Task catalog + mapping review UI (`/labour-engine/`)
 - Versioned Production Rate Standard + Direct Labour Cost Rate Standard
 - Calibration Candidate workflow
-- Explainable resolution service + estimate labour snapshot on new/repriced versions that opt into the engine
-- Organization isolation and audit
-- Tests in FG-008
+- Explainable resolution service + estimate labour snapshot (opt-in; not auto-wired into selling-price lines)
+- Organization isolation and `LabourAuditEvent`
+- Tests in `tests/test_labour_engine.py`
 
-**Out of scope:**
+**Out of scope (unchanged):**
 
 AI take-off / M012+, mobile field time capture, payroll integration, QuickBooks API, pricing-engine implementation, ADR-025 calculation change, cross-org benchmarking, autonomous learning, ML training, supplier/material/subcontract calibration, Ontario contract/warranty, full BUILD/MONITOR/LEARN, Crew Template catalog, burden modeling, product/repository rename.
 
 ---
 
-## 21. Test expectations (future implementation; not written in this pass)
+## 21. Tests
 
-See [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) test plan: org isolation; task ownership; production-rate math; unit correctness; historical mapping; provenance; rate resolution; candidate lifecycle; approval control; estimate immutability; estimated-vs-actual formulas when actuals exist; override audit; legacy compatibility; **pricing-math non-regression**; **historical-ingestion non-regression**.
+See [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) and `tests/test_labour_engine.py`. Dedicated suite **22 passed**. Full suite **192 passed**. Historical ingestion **11 passed**.
 
 ---
 
 ## 22. Unresolved items (Joel / ChatGPT)
 
-1. Initial ORG-001 canonical task catalog contents (human-authored seed vs empty catalog + mapping only).
+1. Initial ORG-001 canonical **task catalog contents** (human-authored seed vs empty catalog + mapping only). Empty catalog shipped; office UI can create tasks. No Brayman task names hard-coded as CalibAi core.
 2. Whether the first implementation prompt includes **office-only manual actuals** or defers all actuals persistence (this architecture recommends **defer**).
 3. Exact condition vocabulary vs existing M011 `site_condition` / `schedule_condition` string sets (align, do not invent a second competing enum without a mapping table).
 4. ADR-025 remains Proposed; Labour Engine must not “fix” selling price.

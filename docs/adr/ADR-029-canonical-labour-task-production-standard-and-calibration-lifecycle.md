@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-029: Canonical Labour Task, Versioned Production Standard, and Evidence-to-Approval Calibration Lifecycle |
-| Status | **Accepted** (architectural direction; FG-008 implementation **not started**) |
+| Status | **Accepted** (FG-008 **IMPLEMENTED / VERIFIED**; live DB not migrated) |
 | Date | 2026-08-29 |
 | Related | [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) · [labour-engine-phase-b-architecture.md](../architecture/labour-engine-phase-b-architecture.md) · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [ADR-024](ADR-024-learn-recommendation-boundary.md) · [ADR-025](ADR-025-pricing-policy-versus-estimate-markup-stack.md) · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) · [ADR-002](ADR-002-accepted-proposal-immutability.md) · [ADR-017](ADR-017-sheet-metadata-suggestion-and-review-workflow.md) |
 
@@ -77,15 +77,15 @@ New organization-owned records (intended). Historical labour rows remain ingesti
 
 ## Migration Impact
 
-**Deferred** until a separate FG-008 **implementation** prompt. Additive tables only. No casual Alembic in this approval pass.
+**Implemented** in FG-008 as additive revision `f2c3d4e5f6a7`. No rewrite of historical labour or commercial context.
 
 ## Testing Impact
 
-**Deferred** to implementation. Must include org isolation, mapping review, production-rate math, resolution audit, candidate promotion, estimate snapshot immutability, and non-regression of pricing math and historical ingestion.
+Covered by `tests/test_labour_engine.py` (org isolation, mapping review, production-rate math, resolution audit, candidate promotion, estimate snapshot immutability, pricing and historical-ingestion non-regression).
 
 ## Documentation Impact
 
-[labour-engine-phase-b-architecture.md](../architecture/labour-engine-phase-b-architecture.md); [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **APPROVED FOR IMPLEMENTATION** (not implemented); [modules/labour-engine.md](../modules/labour-engine.md); ADR index; Feature Gate index; current-state / handoff / roadmap.
+[labour-engine-phase-b-architecture.md](../architecture/labour-engine-phase-b-architecture.md); [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED**; [modules/labour-engine.md](../modules/labour-engine.md); ADR index; Feature Gate index; current-state / handoff / roadmap.
 
 ## Approval
 
@@ -93,4 +93,5 @@ New organization-owned records (intended). Historical labour rows remain ingesti
 |------|------|------|
 | Joel | Joel Brayman | 2026-08-29 |
 | ChatGPT review | Stopping report reviewed; architecture accepted | 2026-08-29 |
-| Cursor implementation note | Docs/governance only; FG-008 **not implemented**; no product code | 2026-08-29 |
+| Cursor implementation note (architecture approval) | Docs/governance only; FG-008 **not implemented** in that commit | 2026-08-29 |
+| Cursor implementation note (FG-008 coded slice) | Implemented & verified; committed/pushed; live DB **not** upgraded | 2026-08-29 |

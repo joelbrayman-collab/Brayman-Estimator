@@ -4,16 +4,15 @@
 |-----------|--------|
 | Feature Gate ID | `FG-008` |
 | Feature Name | Labour Engine Phase B — Organization Labour Calibration Foundation |
-| Target Milestone | Labour Engine Phase B (not a reused M00x number) |
-| Module | Labour Engine (new; Estimating consumes later) |
+| Target Milestone | Labour Engine Phase B |
+| Module | Labour Engine (Estimating consumes direct labour cost later) |
 | Date | 2026-08-29 |
-| Status | **APPROVED FOR IMPLEMENTATION** |
-| Implementation | **HAS NOT YET STARTED.** Requires a **separate execution prompt.** |
+| Status | **IMPLEMENTED / VERIFIED** — live database **not yet upgraded** to `f2c3d4e5f6a7` |
 | Architecture | [labour-engine-phase-b-architecture.md](../architecture/labour-engine-phase-b-architecture.md) **Approved** |
 | Related ADRs | [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Proposed** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** |
 | Prerequisites | FG-007 / M011 **implemented**; FG-006 **implemented** |
-| Approved baseline | `main` @ `e2bf33c9377c3990052ae4a3c5f695c8df5d041c` (parent of this approval commit); Alembic `e1b2c3d4e5f6` |
-| Product code | **None. Not implemented.** |
+| Approved baseline | `main` @ `820f54afc179279d2435ad3a426b3037548bb45e` |
+| Product code | **Implemented & verified.** Migration `f2c3d4e5f6a7` (graph head). Tests: `tests/test_labour_engine.py` (**22 passed**). Live `flask db current` remains `e1b2c3d4e5f6` until a separate upgrade authorization. |
 
 ---
 
@@ -22,17 +21,13 @@
 | Layer | State |
 |-------|--------|
 | Architecture / readiness | **APPROVED** (2026-08-29; Joel and ChatGPT) |
-| Feature Gate (this document) | **APPROVED FOR IMPLEMENTATION** |
+| Feature Gate (this document) | **IMPLEMENTED / VERIFIED** |
 | ADR-029 | **Accepted** |
-| Implementation | **HAS NOT YET STARTED. NOT IMPLEMENTED.** |
+| Implementation | **Implemented & verified.** Live Alembic current remains `e1b2c3d4e5f6` until a separate upgrade. Migration graph head: `f2c3d4e5f6a7`. |
 
-**IMPLEMENTATION HAS NOT YET STARTED.**
+Code paths: `app/models/labour_engine.py`, `app/services/labour_engine.py`, `app/routes/labour_engine.py`, `app/templates/labour_engine/`, `migrations/versions/f2c3d4e5f6a7_add_labour_engine_fg008.py`, `tests/test_labour_engine.py`. Office UI: `/labour-engine/`.
 
-**IMPLEMENTATION REQUIRES A SEPARATE EXECUTION PROMPT.**
-
-Architecture and Feature Gate approval does **not** authorize models, migrations, routes, services, UI, or product tests. A later bounded Cursor implementation prompt is required.
-
-This document is **not** marked Implemented. The Labour Engine is **not** complete.
+This gate does **not** implement pricing-engine selling-price application, payroll, actuals persistence, or a Crew Template catalog. ADR-025 remains **Proposed**.
 
 ---
 
@@ -42,7 +37,7 @@ CalibAi must own labour **methodology** (how hours and direct labour cost are co
 
 Without this foundation, historical labour evidence (120 ORG-001 rows) cannot be used safely: free-text tasks would be silently merged, Brayman’s $65/hr would become a universal default, and actuals or old bids could overwrite operating standards.
 
-This gate defines that foundation. It does **not** implement a live labour engine, change pricing policy, or mutate historical source workbooks.
+This gate defines that foundation. FG-008 is **implemented and verified**. It does **not** change pricing policy or mutate historical source workbooks. The live development/UAT database has **not** been upgraded to `f2c3d4e5f6a7`.
 
 ---
 
@@ -102,19 +97,21 @@ Selling price remains `Direct Cost / 0.85` as **ORG-001 policy text**. Code appl
 | 1 | What problem does this solve? | The platform has historical labour **evidence** but no organization-owned canonical tasks, versioned production standards, calibration approval path, or estimate labour snapshots. Without them, calibration would either be impossible or would silently corrupt standards and estimates. |
 | 2 | Who is the user? | Office estimators and (later) a chief estimator / approver reviewing mappings and calibration candidates. Not field workers in this gate. |
 | 3 | Which module owns it? | **Labour Engine** (new module). Estimating consumes direct labour cost later. Historical ingestion keeps ownership of `HistoricalLabourItem`. |
-| 4 | What data does it own? | Intended: `LabourTask`, `LabourTaskMapping`, `ProductionRateStandard`, `DirectLabourCostRateStandard`, `LabourCalibrationCandidate`, estimate labour snapshots (names conceptual). |
+| 4 | What data does it own? | `LabourTask`, `LabourTaskMapping`, `ProductionRateStandard`, `DirectLabourCostRateStandard`, `LabourCalibrationCandidate`, `EstimateLabourSnapshot`, `LabourAuditEvent` |
 | 5 | What data does it reference? | `Organization`, `HistoricalLabourItem` / observations / review decisions, `Project`, `ProjectCommercialContext`, `EstimateVersion`. Future: actuals from BUILD/MONITOR. |
-| 6 | What may implementation change? | **Nothing until a separate implementation prompt.** Then: additive models/migration, labour review UI, resolution service, tests, docs. May **add** snapshot FKs on new/repriced estimate versions that opt in. |
+| 6 | What may implementation change? | Additive models/migration, labour review UI, resolution service, tests, docs. May **add** snapshot rows on estimate versions that opt in. Must not change selling-price calculation. |
 | 7 | What must implementation not change? | Historical source workbooks; `HistoricalLabourItem` source facts; Plan Intelligence geometry; Accepted proposal snapshots; M011 commercial context math; estimate markup/overhead/profit solver (ADR-025); $65 / 15% policy text; pricing posture behaviour; cross-org data. |
-| 8 | What are the acceptance criteria? | See **Acceptance criteria** below. Governance approval pass: architecture + this gate **APPROVED FOR IMPLEMENTATION** + ADR-029 **Accepted**; **zero** product code until a separate execution prompt. |
-| 9 | What tests are required? | See **Test plan**. Product tests are **not** written in this architecture pass. |
-| 10 | What documentation must be updated? | This gate; labour architecture; ADR-029; module stub; FG/ADR indexes; current-state; session-handoff; project-state-report; milestones (architecture record); roadmap; chat-workflow-log; README as needed. |
+| 8 | What are the acceptance criteria? | See **Acceptance criteria** below. Implementation pass: tests in `tests/test_labour_engine.py` plus full-suite and historical-ingestion non-regression. |
+| 9 | What tests are required? | See **Test plan**. Dedicated suite implemented (`tests/test_labour_engine.py`, 22 passed). |
+| 10 | What documentation must be updated? | This gate; labour architecture; module stub; current-state; session-handoff; project-state-report; milestones; roadmap; chat-workflow-log. ADR-025 status unchanged. |
 | 11 | Does it require an ADR? | **Yes** — [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted**. |
-| 12 | Does it require a database migration? | **Yes, for a future implementation prompt only.** Additive. **This preparation must not create a migration.** |
+| 12 | Does it require a database migration? | **Yes.** Additive revision `f2c3d4e5f6a7`. |
 
 ---
 
-## Canonical entities (conceptual — do not implement here)
+## Canonical entities
+
+Implemented in `app/models/labour_engine.py`.
 
 | Entity | Ownership | Role |
 |--------|-----------|------|
@@ -210,15 +207,15 @@ Unauthenticated office app is a **known existing risk** (same class as M009). FG
 
 ---
 
-## Migration expectations (future)
+## Migration
 
-Additive tables and FKs only. Rollback drops additive objects. No rewrite of historical labour or commercial context. Legacy estimates without snapshots remain lump-cost lines; do not invent backfilled production rates.
+Additive revision `f2c3d4e5f6a7` (revises `e1b2c3d4e5f6`). Rollback drops additive objects. No rewrite of historical labour or commercial context. Legacy estimates without snapshots remain lump-cost lines.
 
 ---
 
 ## Implementation boundaries
 
-This document **approves architecture** and **approves the Feature Gate for a later implementation**. It does **not** start implementation. A separate execution prompt must list allowed files, prohibited files, tests, and stop conditions. Until that prompt: no models, migrations, routes, services, UI, or live engine.
+FG-008 stops at **direct labour cost**. It does not change selling-price calculation, markup stack, overhead, profit, or Pricing Posture. No Crew Template catalog. No `LabourActualObservation` persistence.
 
 ---
 
@@ -245,15 +242,15 @@ Alembic downgrade of the additive revision; application ignores unused snapshot 
 5. No product code, migration, schema, route, service, or UI changes.  
 6. Full pytest and historical ingestion suite still pass.
 
-### Future implementation (requires a separate execution prompt)
+### Implementation pass (this coded slice)
 
-1. Org isolation tests fail-closed.  
-2. Mappings cannot auto-accept.  
-3. Production-rate math matches the identities above.  
-4. Candidate approval creates a new standard version; prior versions and historical rows unchanged.  
-5. Locked estimate labour snapshots immutable.  
-6. Pricing math and historical ingestion suites non-regress.  
-7. $65 policy document unchanged.
+1. Org isolation tests fail-closed.
+2. Mappings cannot auto-accept.
+3. Production-rate math matches the identities above.
+4. Candidate approval creates a new standard version; prior versions and historical rows unchanged.
+5. Estimate labour snapshots immutable; later standard supersession does not alter snapshots.
+6. Pricing math and historical ingestion suites non-regress.
+7. $65 policy document unchanged; ORG-001 $65 does not leak to other organizations.
 
 ---
 
@@ -270,7 +267,9 @@ Alembic downgrade of the additive revision; application ignores unused snapshot 
 
 ---
 
-## Test plan (future implementation — do not write product tests now)
+## Test plan
+
+Covered by `tests/test_labour_engine.py` (22 passed) plus full-suite and historical-ingestion non-regression.
 
 1. Organization isolation of all labour entities  
 2. Labour Task ownership and org-scoped unique codes  

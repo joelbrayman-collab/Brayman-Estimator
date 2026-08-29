@@ -10,6 +10,15 @@ from app.models.estimate import (
 from app.models.organization import Organization
 from app.models.project import Project, ProjectCommercialContext
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
+from app.models.labour_engine import (
+    DirectLabourCostRateStandard,
+    EstimateLabourSnapshot,
+    LabourAuditEvent,
+    LabourCalibrationCandidate,
+    LabourTask,
+    LabourTaskMapping,
+    ProductionRateStandard,
+)
 from app.models.historical_estimates import (
     HistoricalCostLineItem,
     HistoricalDataQualityFlag,
@@ -52,6 +61,13 @@ __all__ = [
     "HistoricalSourceObservation",
     "HistoricalSourceWorkbook",
     "HistoricalSubcontractItem",
+    "DirectLabourCostRateStandard",
+    "EstimateLabourSnapshot",
+    "LabourAuditEvent",
+    "LabourCalibrationCandidate",
+    "LabourTask",
+    "LabourTaskMapping",
+    "ProductionRateStandard",
     "Organization",
     "PlanAuditEvent",
     "PlanDocument",

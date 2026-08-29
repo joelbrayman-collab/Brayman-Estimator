@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Edit Labour Task" if task else "New Labour Task" }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Labour Task{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Labour Engine</p>
+        <h1>{{ "Edit Labour Task" if task else "New Labour Task" }}</h1>
+    </div>
+</div>
+
+<form method="post" class="form-panel">
+    <div class="form-grid">
+        <label>
+            Task code *
+            <input type="text" name="task_code" value="{{ task.task_code if task else '' }}" {% if task %}readonly{% else %}required{% endif %}>
+        </label>
+        <label>
+            Canonical name *
+            <input type="text" name="canonical_name" value="{{ task.canonical_name if task else '' }}" required>
+        </label>
+        <label>
+            Trade
+            <input type="text" name="trade" value="{{ task.trade if task and task.trade else '' }}">
+        </label>
+        <label>
+            Category
+            <input type="text" name="category" value="{{ task.category if task and task.category else '' }}">
+        </label>
+        <label>
+            Production unit *
+            <input type="text" name="production_unit" value="{{ task.production_unit if task else '' }}" required>
+        </label>
+        <label>
+            Unit of measure *
+            <input type="text" name="unit_of_measure" value="{{ task.unit_of_measure if task else '' }}" required>
+        </label>
+        <label>
+            Reviewer
+            <input type="text" name="reviewed_by" value="Joel Brayman">
+        </label>
+    </div>
+    <label>
+        Description
+        <textarea name="description" rows="3">{{ task.description if task and task.description else '' }}</textarea>
+    </label>
+    <label>
+        Provenance
+        <textarea name="provenance" rows="3">{{ task.provenance if task and task.provenance else '' }}</textarea>
+    </label>
+    <div class="form-actions">
+        <button type="submit">{{ "Update Labour Task" if task else "Save Labour Task" }}</button>
+        <a href="{{ url_for('labour_engine.list_tasks') }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

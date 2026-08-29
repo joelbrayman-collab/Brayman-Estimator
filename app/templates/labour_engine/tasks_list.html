@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Labour Tasks | Brayman Construction Platform{% endblock %}
+{% block page_title %}Labour Tasks{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Labour Engine</p>
+        <h1>Canonical Labour Tasks</h1>
+    </div>
+    <a class="button" href="{{ url_for('labour_engine.create_task') }}">New Labour Task</a>
+</div>
+
+<p>
+    <a class="button-link" href="{{ url_for('labour_engine.index') }}">Labour Engine home</a>
+    {% if include_archived %}
+    · <a class="button-link" href="{{ url_for('labour_engine.list_tasks') }}">Hide archived</a>
+    {% else %}
+    · <a class="button-link" href="{{ url_for('labour_engine.list_tasks', archived=1) }}">Show archived</a>
+    {% endif %}
+</p>
+
+{% if tasks %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Trade</th>
+            <th>Unit</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.task_code }}</td>
+            <td>{{ task.canonical_name }}</td>
+            <td>{{ task.trade or "—" }}</td>
+            <td>{{ task.unit_of_measure }}</td>
+            <td><span class="status">{{ task.status }}</span></td>
+            <td><a class="button-link" href="{{ url_for('labour_engine.task_detail', task_id=task.id) }}">View</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <h2>No labour tasks yet</h2>
+    <p>Create organization-owned canonical tasks. Do not hard-code a global construction catalog.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -54,6 +54,12 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
+                "title": "Labour Engine",
+                "endpoint": "labour_engine.index",
+                "icon": "bi-stopwatch",
+                "enabled": True,
+            },
+            {
                 "title": "Proposals",
                 "endpoint": "proposals.list_proposals",
                 "icon": "bi-file-earmark-text",

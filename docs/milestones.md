@@ -32,12 +32,24 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### FG-008 — Labour Engine Phase B implementation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-008 |
+| Status | **IMPLEMENTED / VERIFIED** — committed and pushed; live DB **not** upgraded to `f2c3d4e5f6a7` |
+| Date | 2026-08-29 |
+| Objective | Implement organization-owned labour methodology: canonical tasks, human-reviewed mappings, versioned production and direct-labour-cost standards, calibration candidate lifecycle, resolution, estimate snapshots, tenant isolation. |
+| Deliverables | Models `app/models/labour_engine.py`; services `app/services/labour_engine.py`; office UI `/labour-engine/`; additive migration `f2c3d4e5f6a7`; `tests/test_labour_engine.py` (22 passed) |
+| Validation | Full suite **192 passed**; historical ingestion **11 passed**; dedicated FG-008 **22 passed**. HistoricalLabourItem facts unchanged. Estimate selling-price math unchanged. |
+| Next | Separate authorization to apply `f2c3d4e5f6a7` to the live development/UAT database and smoke-verify |
+
 ### FG-008 — Labour Engine Phase B Feature Gate preparation
 
 | Field | Content |
 |-------|---------|
 | ID | FG-008 |
-| Status | **FEATURE GATE APPROVED FOR IMPLEMENTATION** — not implemented; separate execution prompt required |
+| Status | **FEATURE GATE APPROVED FOR IMPLEMENTATION** — architecture record (implementation is a later entry) |
 | Date | 2026-08-29 |
 | Objective | Define organization-owned labour methodology: canonical tasks, versioned production and direct-labour-cost standards, calibration candidate lifecycle, resolution, conditions, estimate snapshots, tenant isolation. |
 | Deliverables | [FG-008](feature-gates/FG-008-labour-engine-phase-b.md); [labour-engine-phase-b-architecture.md](architecture/labour-engine-phase-b-architecture.md); [ADR-029](adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted**; [modules/labour-engine.md](modules/labour-engine.md) |

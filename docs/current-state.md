@@ -11,13 +11,13 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | FG-008 architecture **approval** commit on `main` (parent `e2bf33c9377c3990052ae4a3c5f695c8df5d041c`). Confirm with `git rev-parse HEAD` after push. |
+| HEAD / `origin/main` | FG-008 implementation commit on `main`. Confirm with `git rev-parse HEAD`. Parent of this commit: `820f54afc179279d2435ad3a426b3037548bb45e`. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | Docs reconcile after FG-006 | `e2bf33c` — *docs: reconcile post-FG-006 governance turnover state* |
-| Working tree at last verified inspect | Documentation-only approval commit (see stopping report) |
-| Governance | FG-004, FG-005, FG-006, FG-007 **approved & implemented**; **FG-008 APPROVED FOR IMPLEMENTATION (not implemented)**; CAR-001 adopted; Review Turnover Protocol adopted; ADR-028 **Accepted**; ADR-029 **Accepted** |
+| Working tree at last verified inspect | Clean after FG-008 commit/push (this pass) |
+| Governance | FG-004, FG-005, FG-006, FG-007 **approved & implemented**; **FG-008 IMPLEMENTED / VERIFIED** (live DB **not** upgraded); CAR-001 adopted; Review Turnover Protocol adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Proposed** |
 
-## Implemented (evidenced in code on `main`)
+## Implemented (evidenced in code)
 
 - CRM, Estimating, Proposals (+ Accepted immutability), Change Orders
 - Plan Intelligence Phase A upload/storage (M005; `098647c`)
@@ -26,26 +26,26 @@
 - **Scale Calibration / Measurement Tools (M010)** — `plan_scale_calibrations`, `plan_measurements`; PDF.js viewer; migration `c9e0f1a2b3d4`
 - **Organization Foundation & Project Commercial Context (M011 / FG-007)** — `Organization` (`ORG-001`), tenant isolation, versioned `ProjectCommercialContext`, immutable `EstimateVersion.commercial_context_id`; migration `d0a1b2c3d4e5`
 - **Historical Estimate Ingestion Engine Phase B (FG-006)** — OpenXML parser, Families A–E, historical evidence models including `HistoricalLabourItem` (120 ORG-001 rows), review UI `/historical-estimates/`; migration `e1b2c3d4e5f6`
+- **Labour Engine Phase B (FG-008)** — org-owned `LabourTask`, human-reviewed mappings, versioned `ProductionRateStandard` and `DirectLabourCostRateStandard`, `LabourCalibrationCandidate` lifecycle, explainable resolution, immutable `EstimateLabourSnapshot`, office UI `/labour-engine/`; additive migration `f2c3d4e5f6a7`. **Implemented & verified. Live DB not upgraded** (`flask db current` remains `e1b2c3d4e5f6`).
 
 ## Architecture / readiness only (not implemented)
 
-- **Labour Engine Phase B & Calibration Model** — **FG-008 APPROVED FOR IMPLEMENTATION** (2026-08-29). **Implementation has not started.** Architecture: [architecture/labour-engine-phase-b-architecture.md](architecture/labour-engine-phase-b-architecture.md). Separate execution prompt required.
-- **Organization-Calibrated Pricing Engine** — Blocked pending separate governance gate.
+- **Organization-Calibrated Pricing Engine** — Blocked pending separate governance gate. ADR-025 remains **Proposed**.
 - AI take-off / quantity extraction (M012+) / estimate mapping
 - CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract
+- Crew Template catalog, payroll burden, `LabourActualObservation` persistence
 
 ## Migrations
 
-- Alembic head: `e1b2c3d4e5f6` (FG-006 Historical Estimate Ingestion Engine Phase B)
-- Unchanged by FG-008 **approval** (no schema in this pass)
+- Alembic **graph** head: `f2c3d4e5f6a7` (FG-008)
+- Live `flask db current` at last inspect: `e1b2c3d4e5f6` (upgrade not applied in this pass)
 
 ## Current milestone status
 
-M005–M011 and **FG-006** remain **implemented, verified, committed, and pushed** on `main` (code tip `690d755`; docs parent `e2bf33c`).
+M005–M011 and **FG-006** remain **implemented, verified, committed, and pushed** on `main`.
 
-- **Current active coded milestone:** None.
-- **Current governance work:** FG-008 Labour Engine Phase B architecture **APPROVED FOR IMPLEMENTATION**. Implementation **has not started**.
-- **Blocked / Not Started (code):** Labour Engine Phase B implementation, Organization-Calibrated Pricing Engine, cross-org learning, source workbook mutation, pricing formula modifications (ADR-025 still Proposed).
+- **Current coded work:** FG-008 Labour Engine Phase B — **IMPLEMENTED / VERIFIED** on `main`. Live DB **not** migrated.
+- **Blocked / Not Started (code):** Organization-Calibrated Pricing Engine, cross-org learning, source workbook mutation, pricing formula modifications (ADR-025 still Proposed).
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -59,9 +59,10 @@ M005–M011 and **FG-006** remain **implemented, verified, committed, and pushed
 
 ## Recommended next steps
 
-1. Issue a bounded FG-008 **implementation** Cursor prompt. Do not start Labour Engine code from the Feature Gate document alone.
+1. Separate governance authorization to apply Alembic upgrade `f2c3d4e5f6a7` to the live development/UAT database and perform post-migration smoke verification.
 2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% policy text).
 3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under FG-008.
+4. Do not start Pricing Engine / ADR-025 until separately gated.
 
 ## Related
 

@@ -47,7 +47,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - Internal Detailed Cost Breakdown output — **Future** ([project-document-package.md](../architecture/project-document-package.md))
 - Governed pricing policy application — **open** ([pricing-policy.md](../pricing-policy.md); [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Proposed** — markup/overhead/profit stack in code is **not** equivalent to 15% gross margin; do not change calculations until accepted + Feature-Gated)
 - Historical estimating intelligence — **Future**
-- Deeper productivity tooling — [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) Labour Engine Phase B **APPROVED FOR IMPLEMENTATION** (not implemented); Estimating does not own canonical tasks or production standards
+- Deeper productivity tooling — [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) Labour Engine Phase B **IMPLEMENTED / VERIFIED**; Estimating does not own canonical tasks or production standards
 
 ## Dependencies
 

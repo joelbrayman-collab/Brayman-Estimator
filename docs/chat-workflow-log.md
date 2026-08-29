@@ -42,6 +42,52 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-29 — FG-008 Labour Engine Phase B commit and push
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Final audit, commit, and push of the reviewed FG-008 Labour Engine Phase B implementation. **Do not upgrade the live database.** |
+| Business decision | FG-008 implementation stopping report **PASS — ACCEPTED FOR COMMIT**. Labour Engine stops at direct labour cost. ADR-025 remains **Proposed**. |
+| Architectural decision | Unchanged from implementation: org-owned LabourTask; human mapping; versioned production vs direct labour cost rates; no silent multipliers; historical rows immutable; calibration candidate lifecycle; tenant fail-closed. |
+| Prompt template used | Bounded FG-008 commit/push authorization (this session) |
+| Approved Cursor prompt summary | Audit uncommitted FG-008; re-run 22/11/192 tests; commit one implementation+docs commit; push `origin/main`; leave live Alembic at `e1b2c3d4e5f6`. |
+| Files expected to change | FG-008 product files, wiring, migration `f2c3d4e5f6a7`, dedicated tests, governed docs |
+| Files prohibited from changing | Historical workbooks; HistoricalLabourItem facts; Plan Intelligence; proposals; pricing-policy values; estimate selling-price formula; ADR-025 status; live DB |
+| Implementation result | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED.** Live DB **not** migrated. |
+| Tests | `tests/test_labour_engine.py` → **22 passed**; `tests/test_historical_ingestion.py` → **11 passed**; full suite → **192 passed**; `git diff --check` clean |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live Alembic upgrade `f2c3d4e5f6a7` not applied (expected). ORG-001 canonical task catalog remains empty by design. |
+| Next approved step | Separate authorization to apply `f2c3d4e5f6a7` to live development/UAT DB and smoke-verify. |
+| Next approved prompt | **None.** Do not start another milestone. |
+| Commit hash | *(this FG-008 implementation commit)* |
+
+### 2026-08-29 — FG-008 Labour Engine Phase B implementation (not committed)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Implement FG-008 Labour Engine Phase B foundation only. Return a stopping report. **Do not commit or push.** |
+| Business decision | FG-008 **APPROVED FOR IMPLEMENTATION** (ADR-029 **Accepted**). CalibAi owns methodology; each organization owns labour intelligence. Labour Engine stops at direct labour cost. |
+| Architectural decision | Org-owned LabourTask; human mapping (no auto-accept); versioned ProductionRateStandard separate from DirectLabourCostRateStandard; Calibration Candidate state machine; explainable resolution; immutable EstimateLabourSnapshot; ORG-001 $65 seeded as org policy only; no silent multipliers. |
+| Prompt template used | Bounded FG-008 implementation authorization (this session) |
+| Approved Cursor prompt summary | Implement FG-008 only from `820f54afc179279d2435ad3a426b3037548bb45e`. Additive models/migration/services/office UI/tests. No pricing-engine, ADR-025, AI take-off, BUILD/MONITOR, payroll, QuickBooks, contracts, cross-org learning. Do not commit or push. |
+| Files expected to change | Labour Engine models/services/routes/templates; one Alembic revision; dedicated tests; governed docs after tests pass |
+| Files prohibited from changing | Historical workbooks; HistoricalLabourItem facts; Plan Intelligence; Accepted proposals; M011 versioning; pricing-policy values; estimate selling-price formula; ADR-025 status |
+| Implementation result | Implemented in working tree. Stopping report issued. **Not committed.** |
+| Tests | `./venv/bin/python -m pytest -q tests/test_labour_engine.py` → **22 passed**, 55 warnings; `./venv/bin/python -m pytest -q tests/test_historical_ingestion.py` → **11 passed**; `./venv/bin/python -m pytest -q` → **192 passed**, 119 warnings |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (FG-008 implementation pending commit) |
+| Constitutional issue raised | None |
+| Unresolved issues | Commit/push not authorized; live Alembic upgrade not applied; ORG-001 canonical task catalog remains empty by design |
+| Next approved step | Governance review of stopping report. Commit/push only if separately authorized. |
+| Next approved prompt | **None.** |
+| Commit hash | *(uncommitted — prompt forbade commit)* |
+
 ### 2026-08-29 — FG-008 architecture approved; ADR-029 Accepted; documentation commit
 
 | Field | Content |

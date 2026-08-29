@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Production Rate Standards | Brayman Construction Platform{% endblock %}
+{% block page_title %}Production Rate Standards{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Labour Engine</p>
+        <h1>Production Rate Standards</h1>
+        <p>Hours per production unit. Not a direct labour cost rate. ORG-APPROVED versions are created only by candidate approval.</p>
+    </div>
+    <a class="button" href="{{ url_for('labour_engine.create_standard') }}">New draft standard</a>
+</div>
+
+<p><a class="button-link" href="{{ url_for('labour_engine.index') }}">Labour Engine home</a></p>
+
+{% if standards %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Task</th>
+            <th>Version</th>
+            <th>Rate</th>
+            <th>Unit</th>
+            <th>Conditions</th>
+            <th>Class</th>
+            <th>Approval</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for standard in standards %}
+        <tr>
+            <td>{{ standard.labour_task.task_code }}</td>
+            <td>v{{ standard.version_number }}</td>
+            <td>{{ standard.production_rate }}</td>
+            <td>{{ standard.unit_of_measure }}</td>
+            <td>{{ standard.applicable_conditions or "—" }}</td>
+            <td>{{ standard.evidence_class }}</td>
+            <td>{{ standard.approval_status }}</td>
+            <td><a class="button-link" href="{{ url_for('labour_engine.standard_detail', standard_id=standard.id) }}">View</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <h2>No production rate standards</h2>
+    <p>Create a draft, then promote through a Calibration Candidate. Historical evidence does not auto-promote.</p>
+</div>
+{% endif %}
+{% endblock %}

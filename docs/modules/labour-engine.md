@@ -2,12 +2,12 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Intended** — architecture **approved**; **not implemented** |
+| Status | **Current** — FG-008 Phase B foundation **IMPLEMENTED / VERIFIED** (live DB not yet migrated) |
 | Updated | 2026-08-29 |
-| Feature Gate | [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **APPROVED FOR IMPLEMENTATION** (implementation has **not** started) |
+| Feature Gate | [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED** |
 | Architecture | [../architecture/labour-engine-phase-b-architecture.md](../architecture/labour-engine-phase-b-architecture.md) |
 | ADR | [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** |
-| Code | **None** |
+| Code | `app/models/labour_engine.py`, `app/services/labour_engine.py`, `app/routes/labour_engine.py`, `app/templates/labour_engine/`, migration `f2c3d4e5f6a7` |
 
 ## Purpose
 
@@ -15,7 +15,7 @@ Own CalibAi labour **methodology** for an organization: canonical tasks, version
 
 CalibAi owns the engine. Each organization owns its labour intelligence. ORG-001 (Brayman) is not the universal model.
 
-## Responsibilities (intended)
+## Responsibilities
 
 - Canonical Labour Task catalog (org-owned)
 - Human-reviewed source-string mappings
@@ -24,10 +24,11 @@ CalibAi owns the engine. Each organization owns its labour intelligence. ORG-001
 - Calibration candidate review
 - Explainable rate resolution
 - Estimate labour-assumption snapshots
+- Append-only `LabourAuditEvent`
 
-## Owned data (intended; not in schema yet)
+## Owned data
 
-Conceptual: `LabourTask`, `LabourTaskMapping`, `ProductionRateStandard`, `DirectLabourCostRateStandard`, `LabourCalibrationCandidate`, estimate labour snapshots.
+`LabourTask`, `LabourTaskMapping`, `ProductionRateStandard`, `DirectLabourCostRateStandard`, `LabourCalibrationCandidate`, `EstimateLabourSnapshot`, `LabourAuditEvent`.
 
 ## Referenced data
 
@@ -46,7 +47,7 @@ Conceptual: `LabourTask`, `LabourTaskMapping`, `ProductionRateStandard`, `Direct
 
 ## Current implementation
 
-**None.** Labour in production today is: (1) FG-006 historical evidence rows; (2) Estimating `CostItem` category `Labour` lump unit costs.
+Office UI at `/labour-engine/`. ORG-001 $65 CAD/man-hour Direct Labour Cost Rate Standard v1 is seeded as organization policy (`docs/pricing-policy.md` provenance); other organizations do not inherit it. Historical labour remains FG-006 evidence. Estimating `CostItem` category `Labour` lump unit costs remain valid for legacy estimates. Snapshots are opt-in and are **not** wired into selling-price calculation.
 
 ## Invariants
 
@@ -59,14 +60,15 @@ Conceptual: `LabourTask`, `LabourTaskMapping`, `ProductionRateStandard`, `Direct
 
 ## Open decisions
 
-- FG-008 and ADR-029: architecture **approved**; implementation **not started** (separate execution prompt required)
-- Actuals persistence deferred (recommended)
+- ORG-001 canonical task catalog contents (empty catalog shipped; office create/mapping)
+- Actuals persistence deferred
 - Crew Template catalog deferred
 - Burden modeling deferred
+- ADR-025 remains **Proposed**
 
 ## Relevant tests
 
-None yet. Future tests are listed in FG-008.
+`tests/test_labour_engine.py` (22 passed as of 2026-08-29 implementation pass).
 
 ## Relevant ADRs
 

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Calibration Candidates | Brayman Construction Platform{% endblock %}
+{% block page_title %}Calibration Candidates{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Labour Engine</p>
+        <h1>Calibration Candidates</h1>
+        <p>AI cannot approve. Approval writes a new ORG-APPROVED standard version.</p>
+    </div>
+    <a class="button" href="{{ url_for('labour_engine.create_candidate') }}">New candidate</a>
+</div>
+
+<p>
+    <a class="button-link" href="{{ url_for('labour_engine.index') }}">Labour Engine home</a> ·
+    Filter:
+    <a href="{{ url_for('labour_engine.list_candidates') }}">All</a> ·
+    <a href="{{ url_for('labour_engine.list_candidates', state='DRAFT') }}">Draft</a> ·
+    <a href="{{ url_for('labour_engine.list_candidates', state='PROPOSED') }}">Proposed</a> ·
+    <a href="{{ url_for('labour_engine.list_candidates', state='IN_REVIEW') }}">In review</a> ·
+    <a href="{{ url_for('labour_engine.list_candidates', state='APPROVED') }}">Approved</a>
+</p>
+
+{% if candidates %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Kind</th>
+            <th>Task</th>
+            <th>State</th>
+            <th>Evidence</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for candidate in candidates %}
+        <tr>
+            <td>{{ candidate.id }}</td>
+            <td>{{ candidate.standard_kind }}</td>
+            <td>{{ candidate.labour_task.task_code if candidate.labour_task else "—" }}</td>
+            <td>{{ candidate.state }}</td>
+            <td>{{ candidate.evidence_class }}</td>
+            <td><a class="button-link" href="{{ url_for('labour_engine.candidate_detail', candidate_id=candidate.id) }}">Review</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <h2>No calibration candidates</h2>
+    <p>Historical evidence does not become an operating standard until a human approves a candidate.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Production Rate Standard v{{ standard.version_number }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Production Rate Standard{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Labour Engine</p>
+        <h1>{{ standard.labour_task.task_code }} v{{ standard.version_number }}</h1>
+        <p>{{ standard.evidence_class }} · {{ standard.approval_status }} · Org {{ standard.organization_id }}</p>
+    </div>
+    <a class="button-link" href="{{ url_for('labour_engine.list_standards') }}">Back</a>
+</div>
+
+<table class="data-table">
+    <tbody>
+        <tr><th>Production rate</th><td>{{ standard.production_rate }} {{ standard.man_hour_basis }}</td></tr>
+        <tr><th>Unit</th><td>{{ standard.production_unit }} / {{ standard.unit_of_measure }}</td></tr>
+        <tr><th>Conditions</th><td>{{ standard.applicable_conditions or "—" }}</td></tr>
+        <tr><th>Crew size assumption</th><td>{{ standard.crew_size_assumption or "—" }}</td></tr>
+        <tr><th>Hours/day assumption</th><td>{{ standard.hours_per_day_assumption or "—" }}</td></tr>
+        <tr><th>Effective</th><td>{{ standard.effective_from or "—" }} → {{ standard.effective_to or "—" }}</td></tr>
+        <tr><th>Approved by</th><td>{{ standard.approved_by or "—" }} at {{ standard.approved_at or "—" }}</td></tr>
+        <tr><th>Superseded by</th><td>{{ standard.superseded_by_id or "—" }}</td></tr>
+        <tr><th>Provenance</th><td>{{ standard.provenance or "—" }}</td></tr>
+    </tbody>
+</table>
+{% endblock %}

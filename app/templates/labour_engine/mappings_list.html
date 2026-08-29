@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Labour Mappings | Brayman Construction Platform{% endblock %}
+{% block page_title %}Labour Task Mappings{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Labour Engine</p>
+        <h1>Historical labour mappings</h1>
+        <p>Suggestions are never auto-accepted. Historical source rows are not rewritten.</p>
+    </div>
+    <a class="button-link" href="{{ url_for('labour_engine.index') }}">Labour Engine home</a>
+</div>
+
+<p>
+    Filter:
+    <a href="{{ url_for('labour_engine.list_mappings') }}">All</a> ·
+    <a href="{{ url_for('labour_engine.list_mappings', status='SUGGESTED') }}">Suggested</a> ·
+    <a href="{{ url_for('labour_engine.list_mappings', status='ACCEPTED') }}">Accepted</a> ·
+    <a href="{{ url_for('labour_engine.list_mappings', status='REJECTED') }}">Rejected</a> ·
+    <a href="{{ url_for('labour_engine.list_mappings', status='NOT_LABOUR') }}">Not labour</a>
+</p>
+
+<h2>Unmapped historical labour items</h2>
+{% if unmapped %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Source string</th>
+            <th>Hours</th>
+            <th>Stored hourly rate</th>
+            <th>Suggest mapping</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in unmapped %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.task_description }}</td>
+            <td>{{ item.total_man_hours or "—" }}</td>
+            <td>{{ item.hourly_rate or "—" }}</td>
+            <td>
+                <form method="post" action="{{ url_for('labour_engine.suggest_mapping') }}">
+                    <input type="hidden" name="historical_labour_item_id" value="{{ item.id }}">
+                    <input type="hidden" name="reviewed_by" value="Joel Brayman">
+                    <select name="labour_task_id">
+                        <option value="">Rule / no task yet</option>
+                        {% for task in tasks %}
+                        <option value="{{ task.id }}">{{ task.task_code }} — {{ task.canonical_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Suggest</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No unmapped historical labour items in this organization.</p>
+{% endif %}
+
+<h2>Mapping records</h2>
+{% if mappings %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Source string</th>
+            <th>Task</th>
+            <th>Status</th>
+            <th>Suggested by</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mapping in mappings %}
+        <tr>
+            <td>{{ mapping.id }}</td>
+            <td>{{ mapping.source_string }}</td>
+            <td>{{ mapping.labour_task.task_code if mapping.labour_task else "—" }}</td>
+            <td>{{ mapping.review_status }}</td>
+            <td>{{ mapping.suggested_by }}</td>
+            <td><a class="button-link" href="{{ url_for('labour_engine.mapping_detail', mapping_id=mapping.id) }}">Review</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No mapping records{{ " for this filter" if status_filter else "" }}.</p>
+{% endif %}
+{% endblock %}

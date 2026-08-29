@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-007: Plan and Estimate Version Ownership |
-| Status | **Proposed** |
+| Status | **Accepted** (2026-08-29; FG-010 / M012) |
 | Date | 2026-07-25 |
 | Related | [plan-intelligence architecture](../architecture/plan-intelligence-and-automated-takeoff.md) · Rule 1–2 |
 
@@ -13,7 +13,7 @@ Plan sets, take-off packages, and estimate versions evolve independently. Owners
 
 ## Decision
 
-*(Proposed)*
+*(Accepted — 2026-08-29 with FG-010.)*
 
 1. **Plan Intelligence** owns plan documents, sheets, measurements, take-off versions, and citations.
 2. **Estimating** owns estimates, estimate versions, sections, and line items (existing).
@@ -53,6 +53,12 @@ Module stubs; architecture docs.
 
 | Role | Name | Date |
 |------|------|------|
-| Joel | | |
-| ChatGPT review | | |
-| Cursor implementation note | No implementation in this documentation sprint | |
+| Joel | Approved with FG-010 | 2026-08-29 |
+| ChatGPT review | Approved with FG-010 | 2026-08-29 |
+| Cursor implementation note | Docs/governance only (2026-08-29). Product implementation not authorized by this acceptance. |
+
+---
+
+## 2026-08-29 acceptance (FG-010 / M012)
+
+For M012, the versioned reviewed take-off artifact is the approved **`TakeoffPackage`**. `EstimateVersion` remains a separate PRICE-side version. Neither floats when the other changes. New drawing revision → new extraction run and (if approved) a new package; prior approved packages remain immutable history.

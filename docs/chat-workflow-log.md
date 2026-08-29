@@ -42,6 +42,46 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-29 — FG-010 governance approval (documentation commit)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Approve FG-010 for implementation; Accept ADR-005/006/007/009/011/031; keep ADR-010 Proposed; record COUNT-without-scale and provider-not-authorized conditions; docs-only commit/push. |
+| Business decision | M012 POC remains searchable PDF, `INTERIOR_DOOR_OPENING` COUNT. Package approval is not EstimateVersion insertion. |
+| Architectural decision | COUNT is dimensionless (narrow authorized M010 count/scale correction in a later implementation prompt). Real external AI provider **not authorized**. Dimensional measurements remain fail-closed. |
+| Prompt template used | FG-010 GOVERNANCE APPROVAL + DOCUMENTATION COMMIT |
+| Approved Cursor prompt summary | APPROVE → RECONCILE → REGRESS → COMMIT → PUSH → STOP. NO PRODUCT CODE. NO MIGRATION. NO PROVIDER INTEGRATION. |
+| Files expected to change | Governed docs only. |
+| Files prohibited from changing | `app/`; `migrations/`; `tests/`; historical workbooks; Labour Engine / Pricing Engine product logic. |
+| Implementation result | FG-010 **APPROVED FOR IMPLEMENTATION** / **NOT IMPLEMENTED**. Product code **NONE**. |
+| Tests | Plan Intelligence combined **51**; Pricing **33**; Labour **25**; Historical **11**; full suite **228**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None. ADR-006 clarification: human take-off approval does not authorize estimate insert in M012. |
+| Next approved prompt | Separate bounded FG-010 implementation prompt. Do not implement in this pass. |
+
+### 2026-08-29 — FG-010 / M012 AI Take-off architecture and Feature Gate preparation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Architecture / ADR reconciliation / Feature Gate preparation for AI Take-off / Quantity Extraction Foundation. No product implementation. |
+| Business decision | Next coded candidate after FG-009 closure is M012 interior-door **count** from searchable architectural PDFs, with mandatory human review. Mapping into Estimating is **out of this gate**. |
+| Architectural decision | Plan Intelligence owns take-off. First-class extraction run, candidate, and immutable package (ADR-031 **Proposed**). Reuse ADR-027 coordinates. Do not overload `PlanMeasurement`. COUNT V1 must not require scale. New take-off rows carry `organization_id`. |
+| Prompt template used | AI TAKE-OFF / QUANTITY EXTRACTION FOUNDATION — ARCHITECTURE / ADR RECONCILIATION / FEATURE GATE PREPARATION |
+| Approved Cursor prompt summary | READ → AUDIT → RECONCILE → ARCHITECT → PREPARE → STOP. NO PRODUCT IMPLEMENTATION. NO COMMIT. NO PUSH. |
+| Files expected to change | Governed docs only. |
+| Files prohibited from changing | `app/`; `migrations/`; historical workbooks; Labour Engine / Pricing Engine product logic; Accepted proposals. |
+| Implementation result | Docs package prepared. FG-010 **PREPARED FOR GOVERNANCE APPROVAL**. Product code **NONE**. Migration **NONE**. |
+| Tests | Plan Intelligence combined **51**; Pricing **33**; Labour **25**; Historical **11**; full suite **228**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append architecture-prepared record) |
+| Constitutional issue raised | None blocking. Recommend Accept ADR-005/006/007/009/011 with FG-010; do not bulk-accept ADR-010. |
+| Next approved prompt | None. Governance review of FG-010 + ADR-031. Do not implement AI take-off. |
+
 ### 2026-08-29 — FG-009 live development/UAT migration and UAT smoke
 
 | Field | Content |

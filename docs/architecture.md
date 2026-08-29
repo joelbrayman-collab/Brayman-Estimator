@@ -55,7 +55,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Estimating | `Estimate`, `EstimateVersion`, `EstimateSection`, `EstimateLineItem` | `app/models/estimate.py` |
 | Proposals | `ProposalTemplate`, `Proposal`, `ProposalSection`, `ProposalLineItem` | `app/models/proposal.py` |
 | Project controls | `ChangeOrder`, `ChangeOrderItem` | `app/project_controls/models.py` |
-| Plan Intelligence | `DrawingPackage`, `DrawingRevision`, `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent` | `app/plan_intelligence/models.py` |
+| Plan Intelligence | `DrawingPackage`, `DrawingRevision`, `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `PlanScaleCalibration`, `PlanMeasurement` | `app/plan_intelligence/models.py` |
 | Labour Engine | `LabourTask`, `LabourTaskMapping`, `ProductionRateStandard`, `DirectLabourCostRateStandard`, `LabourCalibrationCandidate`, `EstimateLabourSnapshot`, `LabourAuditEvent` | `app/models/labour_engine.py` |
 | Pricing Engine | `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent` | `app/models/pricing_engine.py` |
 
@@ -65,7 +65,7 @@ Notable behaviours evidenced in code/tests:
 - Proposals built as **snapshots** from estimate versions (`build_proposal_snapshot` exported from `app/services/`); tests in `tests/test_proposal_snapshots.py` assert independence from later estimate edits.
 - Proposal statuses include `Accepted` among others (`PROPOSAL_STATUSES` in `app/models/proposal.py`).
 - Change Orders package under `app/project_controls/` with its own routes/services/repository/pdf.
-- Plan Intelligence Phase A upload/storage (M005) and Document Indexing (M007): pages, processing provenance, archive-over-delete, relational search (`app/plan_intelligence/`; tests `tests/test_plan_upload.py`, `tests/test_plan_indexing.py`). Sheets **implemented** (M009). Scale/measurement **implemented** (M010).
+- Plan Intelligence Phase A upload/storage (M005) and Document Indexing (M007): pages, processing provenance, archive-over-delete, relational search (`app/plan_intelligence/`; tests `tests/test_plan_upload.py`, `tests/test_plan_indexing.py`). Sheets **implemented** (M009). Scale/measurement **implemented** (M010). **AI quantity extraction is not implemented** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **APPROVED FOR IMPLEMENTATION**).
 
 ### Services / repositories
 
@@ -86,13 +86,13 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic graph head and live development/UAT current: **`f2c3d4e5f6a7`** (FG-008). Verify `flask db current` per environment before relying on it.
+- Alembic graph head and live development/UAT current: **`a3b4c5d6e7f8`** (FG-009). Verify `flask db current` per environment before relying on it.
 
 ### Tests
 
 - Location: [`tests/`](../tests/)
-- Collected locally: **78 tests** (`pytest --collect-only`, 2026-07-25)
-- Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders, plan upload, plan indexing
+- Collected locally: **228 passed** (`./venv/bin/python -m pytest -q`, 2026-08-29)
+- Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders, plan upload/indexing/sheets/scale, labour engine, pricing engine, historical ingestion
 
 ### Current module relationships (simplified)
 
@@ -103,7 +103,7 @@ Client ──< Project ──< Estimate ──< EstimateVersion ──< Sections
               │            │
               │            └── ChangeOrder (optional estimate_version FK)
               │
-              └── PlanDocument / DrawingPackage (Plan Intelligence; M005–M007)
+              └── PlanDocument / DrawingPackage / sheets / measurements (Plan Intelligence; M005–M010; AI take-off not implemented)
 ```
 
 Navigation also shows **disabled** placeholders: Purchase Orders, Job Costing, Reports, AI Assistant, Settings (`app/navigation.py`).
@@ -130,7 +130,7 @@ Aligns with [platform-vision.md](platform-vision.md), [CAR-001](architecture/CAR
 - Auditable financially significant actions (Rule 6)
 - Service boundaries for cross-module access (Rule 11)
 - Governance Feature Gate before net-new modules
-- Human-approved, source-traceable take-off before estimate insertion (ADR-005/006 — Proposed)
+- Human-approved, source-traceable take-off before estimate insertion (ADR-005/006 **Accepted**; [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **APPROVED FOR IMPLEMENTATION** — **NOT IMPLEMENTED**; mapping deferred to Phase D)
 - Supplier price snapshots on consumption (ADR-008 — Proposed)
 
 ---
@@ -139,10 +139,10 @@ Aligns with [platform-vision.md](platform-vision.md), [CAR-001](architecture/CAR
 
 Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
-### Differentiating pillars (architecture drafted; **not implemented**)
+### Differentiating pillars
 
-- [Plan Intelligence and Automated Take-Off](architecture/plan-intelligence-and-automated-takeoff.md) — Phases A–G
-- [Supplier Catalogue, Inventory and Pricing](architecture/supplier-catalogue-inventory-pricing.md) — Phases E–F
+- [Plan Intelligence and Automated Take-Off](architecture/plan-intelligence-and-automated-takeoff.md) — Phases A–M010 **Current**; Phase **C** AI take-off architecture **approved** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **APPROVED FOR IMPLEMENTATION** — **NOT IMPLEMENTED**); Phases D–G future
+- [Supplier Catalogue, Inventory and Pricing](architecture/supplier-catalogue-inventory-pricing.md) — Phases E–F **Future**
 - Procurement / purchase-order preparation (nav placeholder only today)
 
 ### Other future capabilities
@@ -156,7 +156,8 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 - **Labour Engine Phase B** — [labour-engine-phase-b-architecture.md](architecture/labour-engine-phase-b-architecture.md); [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (foundation operational for UAT). Selling-price application remains out of scope of FG-008.
 - **Organization-Calibrated Pricing Engine** — [organization-calibrated-pricing-engine-architecture.md](architecture/organization-calibrated-pricing-engine-architecture.md); [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. ADR-025 **Accepted**; ADR-030 **Accepted**. Foundation operational for UAT. Labour-snapshot Direct Labour Cost is not included in the estimate basis by default. Optional ORG-001 overhead/profit/contingency layers remain `UNSPECIFIED`.
 
-These two engines are **Current** (foundation). Do **not** describe the remaining items in this Future list as existing:
+Labour Engine and Pricing Engine foundations are **Current**. AI take-off remains **approved for implementation, not implemented**. Do **not** describe the remaining items in this Future list as existing:
 
 - Electronic signature / formal proposal acceptance workflows
 - CAD ingestion (Phase G; PDF-first per ADR-009)
+- Estimate mapping from approved take-off packages (Phase D; not FG-010)

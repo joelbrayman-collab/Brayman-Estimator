@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Phase A + M007 indexing + M009 Sheet classification + M010 scale/measurement implemented**; AI take-off not started |
-| Updated | 2026-08-28 |
+| Status | **Phase A + M007 indexing + M009 Sheet classification + M010 scale/measurement implemented**; **M012 / FG-010 APPROVED FOR IMPLEMENTATION — NOT IMPLEMENTED** |
+| Updated | 2026-08-29 |
 | Code | `app/plan_intelligence/` |
-| Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) |
-| Architecture | [../architecture/plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) · [../architecture/document-intelligence.md](../architecture/document-intelligence.md) · [../architecture/sheet-intelligence.md](../architecture/sheet-intelligence.md) |
+| Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) · [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **APPROVED FOR IMPLEMENTATION — NOT IMPLEMENTED** |
+| Architecture | [../architecture/plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) · [../architecture/document-intelligence.md](../architecture/document-intelligence.md) · [../architecture/sheet-intelligence.md](../architecture/sheet-intelligence.md) · [../architecture/ai-takeoff-quantity-extraction-foundation.md](../architecture/ai-takeoff-quantity-extraction-foundation.md) |
 | Readiness | [../architecture/M004-plan-intelligence-readiness-report.md](../architecture/M004-plan-intelligence-readiness-report.md) · [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md) · [../architecture/M008-sheet-intelligence-readiness-report.md](../architecture/M008-sheet-intelligence-readiness-report.md) |
 
 ## Purpose
@@ -51,7 +51,7 @@ Proposal generation already exists. Plan Intelligence is the next major platform
 | Project-scoped relational search/filter | **Done** (M007) |
 | Sheet classification / human review | **Done** (M009; `plan_sheets`, `plan_sheet_pages`, `plan_sheet_suggestions`, human accept/edit/reject, uniqueness validation) |
 | Scale calibration / measurement | **Done** (M010; [FG-005](../feature-gates/FG-005-m010-scale-calibration.md); ADR-026/027; migration `c9e0f1a2b3d4`) |
-| OCR / CAD / AI take-off | **Out of scope** until Feature-Gated |
+| OCR / CAD / AI take-off | **Out of scope of current code.** M012 / [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **APPROVED FOR IMPLEMENTATION**, not started. Real external AI provider **not authorized**. **COUNT** must not require dimensional scale; linear/polyline/area/perimeter remain fail-closed without valid calibration. |
 
 Routes live under `/projects/<id>/plans…`. Estimating, Proposals, OCR, CAD, AI, and supplier features are unchanged.
 
@@ -83,7 +83,7 @@ See [document-intelligence.md](../architecture/document-intelligence.md) and [FG
 |-------|-----------|-------|
 | Searchable PDF | **Phase A + M007** | — |
 | Scanned PDF | Stored (flagged non-searchable); OCR later | OCR path |
-| Architectural plans | Storage + page index | Take-off POC |
+| Architectural plans | Storage + page index + sheets + measure | AI take-off POC (FG-010 prepared; not implemented) |
 | Structural / civil / other | Later | Expanded vocabulary |
 
 ## Non-goals (until separately Feature-Gated)
@@ -112,7 +112,7 @@ See [document-intelligence.md](../architecture/document-intelligence.md) and [FG
 
 ### Intended (later)
 
-Automated take-off quantities, AI take-off suggestion engine (M011+), mapping proposals (not committed estimate lines).
+Automated take-off quantities / extraction runs / approved packages (**M012 / FG-010 architecture prepared** — not implemented); mapping proposals (Phase D — not this gate).
 
 ## Referenced data
 
@@ -130,16 +130,16 @@ Automated take-off quantities, AI take-off suggestion engine (M011+), mapping pr
 
 | Need | ADR |
 |------|-----|
-| Source traceability | [ADR-005](../adr/ADR-005-ai-takeoff-traceability.md) |
-| Human approval before estimate insert | [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) |
-| Plan vs estimate version ownership | [ADR-007](../adr/ADR-007-plan-and-estimate-version-ownership.md) |
-| PDF-first vs CAD-first | [ADR-009](../adr/ADR-009-pdf-first-versus-cad-first.md) |
-| AI confidence threshold policy | [ADR-011](../adr/ADR-011-ai-confidence-threshold-policy.md) |
-| Build vs buy | [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) |
+| Source traceability | [ADR-005](../adr/ADR-005-ai-takeoff-traceability.md) **Accepted** |
+| Human approval before estimate insert | [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** (does **not** authorize EstimateVersion insert in M012) |
+| Plan vs estimate version ownership | [ADR-007](../adr/ADR-007-plan-and-estimate-version-ownership.md) **Accepted** |
+| PDF-first vs CAD-first | [ADR-009](../adr/ADR-009-pdf-first-versus-cad-first.md) **Accepted** |
+| AI confidence threshold policy | [ADR-011](../adr/ADR-011-ai-confidence-threshold-policy.md) **Accepted** (advisory; no silent auto-approve) |
+| Build vs buy | [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (real external AI provider **not authorized**) |
 | Plan document / revision ownership | [ADR-012](../adr/ADR-012-plan-document-version-ownership.md) |
 | Document Intelligence layer boundary | [ADR-013](../adr/ADR-013-document-intelligence-layer-boundary.md) |
 | Sheet identity vs PDF page mapping | [ADR-014](../adr/ADR-014-sheet-identity-and-page-mapping.md) |
 | Extracted metadata ownership / provenance | [ADR-015](../adr/ADR-015-extracted-metadata-ownership-and-provenance.md) |
-| Document Intelligence search strategy | [ADR-016](../adr/ADR-016-document-intelligence-search-strategy.md) |
+| Versioned extraction run / package / candidate | [ADR-031](../adr/ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md) **Accepted** (FG-010) |
 
 > ADR-008 remains Supplier Price Snapshotting. Sheet-review ADRs (if any) belong to the Sheet Intelligence architecture milestone, not M007 code.

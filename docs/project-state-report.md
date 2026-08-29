@@ -50,30 +50,30 @@ Distinguish from:
 | Report date | 2026-08-29 |
 | Repository | Brayman-Estimator (The Estimator) |
 | Current branch | `main` |
-| Current commit / `origin/main` | Implementation `8e11179fb5abb42a68805fe011e84c15e866ea04`; docs reconcile is the live-migrate verification commit |
+| Current commit / `origin/main` | `bc37463a15dbb3a97e6250686ba5b0a4d78f1955` (docs: FG-009 live-migrate verification). FG-009 implementation `8e11179fb5abb42a68805fe011e84c15e866ea04`. |
 | August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | M011 Implementation Commit | `cb38d93` — *feat: implement M011 organization foundation and commercial context* |
 | FG-006 Implementation Commit | `690d755` — *feat: implement FG-006 historical estimate ingestion engine phase b* |
 | Docs reconcile after FG-006 | `e2bf33c` — *docs: reconcile post-FG-006 governance turnover state* |
 | Latest completed **coded** milestone on `main` | **FG-009** — Organization-Calibrated Pricing Engine foundation (migration `a3b4c5d6e7f8`; live development/UAT current `a3b4c5d6e7f8`). FG-008 remains **CLOSED — OPERATIONAL FOR UAT**. |
-| Current milestone | FG-009 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. FG-008 remains **CLOSED — OPERATIONAL FOR UAT**. |
-| Product status | Operational on `main`: CRM, Estimating, Proposals, Change Orders, Plan M005–M010, M011, FG-006 historical ingestion, Labour Engine Phase B foundation, FG-009 Pricing Engine foundation (**OPERATIONAL FOR UAT**). CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract **not implemented**. |
-| Architecture status | CAR-001 approved. M011 / FG-007 / ADR-028 + FG-006 implemented. FG-008 **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**. ADR-029 **Accepted**. FG-009 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. ADR-025 **Accepted**; ADR-030 **Accepted**. Review Turnover Protocol governing. |
-| Implemented capabilities | Prior coded baseline plus FG-008 Labour Engine plus FG-009 Pricing Engine (policies, snapshots, named methods, resolution, CO method inheritance, `/pricing-engine/` UI). Historical labour evidence: 120 `HistoricalLabourItem` rows, ORG-001 — **unchanged**. |
-| Incomplete work | AI take-off (M012+); four-output package; QuickBooks; Ontario contract/warranty; BUILD field capture; Project Hub. |
-| Database and migration status | Graph head and live development/UAT `flask db current`: `a3b4c5d6e7f8` (one head). |
-| Test status | **228 passed** (`./venv/bin/python -m pytest -q`); **11 passed** (`tests/test_historical_ingestion.py`); **25 passed** (`tests/test_labour_engine.py`); **33 passed** (`tests/test_pricing_engine.py`) |
-| Documentation status | FG-009 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; ADR-025 **Accepted**; ADR-030 **Accepted**; FG-008 **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**. |
-| Decisions made | Named methods explicit; 15% GM ≠ 15% markup; ORG-001 seed org-scoped; optional overhead/profit/contingency layers `UNSPECIFIED` until separately governed (distinct from org-approved `NOT_APPLIED`); FG-009-aware COs apply inherited pricing method; new estimates not auto-converted; labour snapshot cost not added to estimate basis by default; Pricing Posture / Execution Risk snapshot-only. |
-| Decisions pending | ORG-001 overhead/profit/contingency treatments beyond `UNSPECIFIED`; labour-snapshot inclusion in Direct Cost basis without double-count. |
-| Uncommitted work | None expected after the docs-only live-migrate verification commit. |
-| Next approved milestone | **NONE.** Next governed action is FG-009 closure review, then prepare the next Feature Gate for AI Take-off / Quantity Extraction Foundation. |
-| Next candidate milestone | AI Take-off / Quantity Extraction Foundation — **not started**. Requires its own Feature Gate. |
-| Documents to read first | [current-state.md](current-state.md) → [session-handoff.md](session-handoff.md) → [feature-gates/FG-009-organization-calibrated-pricing-engine.md](feature-gates/FG-009-organization-calibrated-pricing-engine.md) → [architecture/organization-calibrated-pricing-engine-architecture.md](architecture/organization-calibrated-pricing-engine-architecture.md) |
-| Approved next Cursor prompt location or summary | **STOP.** FG-009 closure review, then prepare AI Take-off Feature Gate. Do not start AI take-off. |
-| Commit status | FG-009 implementation `8e11179` on `main`; live DB migrated; docs reconcile records UAT smoke. |
-| Governance baseline | FG-006 verified on `main`; FG-008 implemented, verified, live-migrated; FG-009 implemented, verified, committed, pushed, live-migrated, UAT-smoke-verified |
+| Current milestone | **M012 / FG-010 APPROVED FOR IMPLEMENTATION** — **NOT IMPLEMENTED**. FG-009 remains **CLOSED / OPERATIONAL FOR UAT**. |
+| Product status | Operational on `main`: CRM, Estimating, Proposals, Change Orders, Plan M005–M010, M011, FG-006 historical ingestion, Labour Engine Phase B foundation, FG-009 Pricing Engine foundation (**OPERATIONAL FOR UAT**). AI take-off **not implemented**. CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract **not implemented**. |
+| Architecture status | CAR-001 approved. FG-008 **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**. FG-009 **CLOSED / OPERATIONAL FOR UAT**. FG-010 **APPROVED FOR IMPLEMENTATION**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. Real external AI provider **not authorized**. |
+| Implemented capabilities | Prior coded baseline plus FG-008 Labour Engine plus FG-009 Pricing Engine. Historical labour evidence: 120 `HistoricalLabourItem` rows, ORG-001 — **unchanged**. No AI take-off tables. |
+| Incomplete work | AI take-off **implementation** (M012 / FG-010); Phase D estimate mapping; four-output package; QuickBooks; Ontario contract/warranty; BUILD field capture; Project Hub. |
+| Database and migration status | Graph head and live development/UAT `flask db current`: `a3b4c5d6e7f8` (one head). **No new migration in this pass.** |
+| Test status | Plan Intelligence combined **51 passed**; Pricing **33**; Labour **25**; historical ingestion **11**; full suite **228** |
+| Documentation status | FG-010 **APPROVED FOR IMPLEMENTATION** / **NOT IMPLEMENTED**; ADR-005/006/007/009/011/031 **Accepted**; ADR-010 **Proposed**. |
+| Decisions made (this governance pass) | FG-010 approved; COUNT is dimensionless; mapping out of M012; real external AI provider not authorized. |
+| Decisions pending | FG-010 implementation prompt; real AI provider; confidence UI cut-points; Phase D mapping gate. FG-009 carry-forward: ORG-001 optional layers `UNSPECIFIED`; labour-snapshot Direct Labour Cost not in estimate basis by default. |
+| Uncommitted work | None expected after the FG-010 approval docs commit. |
+| Next approved milestone | **NONE coded.** Next governed action is a **separate bounded FG-010 implementation prompt**. |
+| Next candidate milestone | **M012 / FG-010** implementation (provider-neutral). |
+| Documents to read first | [current-state.md](current-state.md) → [session-handoff.md](session-handoff.md) → [feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) → [architecture/ai-takeoff-quantity-extraction-foundation.md](architecture/ai-takeoff-quantity-extraction-foundation.md) → [adr/ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md](adr/ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md) |
+| Approved next Cursor prompt location or summary | **STOP.** Issue a separate bounded FG-010 implementation prompt. Do not implement in this pass. Do not enable a real external AI provider. |
+| Commit status | Parent `bc37463`. This pass is the FG-010 approval documentation commit. |
+| Governance baseline | FG-008 and FG-009 closed/operational for UAT; FG-010 approved for implementation only |
 
 ### Resume commands (Cursor Terminal)
 

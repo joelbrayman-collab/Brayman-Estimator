@@ -11,11 +11,11 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | FG-009 implementation `8e11179fb5abb42a68805fe011e84c15e866ea04` (governance parent `41bfb2e`). Live DB migrated to `a3b4c5d6e7f8`. |
+| HEAD / `origin/main` | Parent `bc37463a15dbb3a97e6250686ba5b0a4d78f1955`. This pass: FG-010 approval documentation commit on `main`. FG-009 implementation `8e11179fb5abb42a68805fe011e84c15e866ea04`. Live DB migrated to `a3b4c5d6e7f8`. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
-| Working tree at last verified inspect | FG-009 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
-| Governance | FG-004, FG-005, FG-006, FG-007 **approved & implemented**; **FG-008 CLOSED — OPERATIONAL FOR UAT**; **FG-009 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. CAR-001 adopted; Review Turnover Protocol adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
+| Working tree at last verified inspect | FG-010 **APPROVED FOR IMPLEMENTATION** / **NOT IMPLEMENTED** (docs commit). FG-009 **CLOSED**. |
+| Governance | FG-004–FG-009 approved and implemented where noted; **FG-008 CLOSED — OPERATIONAL FOR UAT**; **FG-009 CLOSED / OPERATIONAL FOR UAT**; **FG-010 APPROVED FOR IMPLEMENTATION** — **NOT IMPLEMENTED**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
 
 ## Implemented (evidenced in code)
 
@@ -31,7 +31,7 @@
 
 ## Architecture / readiness only (not implemented)
 
-- AI take-off / quantity extraction (M012+) / estimate mapping
+- AI take-off / quantity extraction (**M012 / FG-010 APPROVED FOR IMPLEMENTATION — not implemented**; real external AI provider **not authorized**) / estimate mapping (Phase D later)
 - CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract
 - Crew Template catalog, payroll burden, `LabourActualObservation` persistence
 
@@ -44,8 +44,9 @@
 
 M005–M011, **FG-006**, and **FG-008** remain **implemented, verified, committed, and pushed** on `main`.
 
-- **Current coded work:** FG-009 Organization-Calibrated Pricing Engine — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. Foundation **operational for UAT**.
-- **Blocked / Not Started:** four-output package; QuickBooks; contracts; AI take-off; Project Hub; BUILD/MONITOR/LEARN; historical evidence repair.
+- **Current coded work:** FG-009 Organization-Calibrated Pricing Engine — **CLOSED / OPERATIONAL FOR UAT**.
+- **Current governance work:** [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) / M012 — **APPROVED FOR IMPLEMENTATION** / **NOT IMPLEMENTED**. Requires a separate implementation prompt. Real external AI provider **not authorized**.
+- **Blocked / Not Started (product):** AI take-off implementation; four-output package; QuickBooks; contracts; Project Hub; BUILD/MONITOR/LEARN; historical evidence repair.
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -59,13 +60,16 @@ M005–M011, **FG-006**, and **FG-008** remain **implemented, verified, committe
 
 ## Recommended next steps
 
-1. FG-009 closure review, then prepare the next Feature Gate for AI Take-off / Quantity Extraction Foundation. **Do not start AI take-off in this pass.**
+1. Issue a **separate** bounded FG-010 implementation prompt (provider-neutral). **Do not implement in this pass.** Real external AI provider remains **not authorized**.
 2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% ORG-001 policy text; optional layers remain `UNSPECIFIED`).
-3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under Pricing Engine.
-4. Synthetic FG-009 UAT residue remains in the live development/UAT DB (labeled `FG-009 UAT *`); do not treat it as customer work.
+3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under AI take-off or Pricing Engine.
+4. Synthetic FG-009 UAT residue remains in the live development/UAT DB (labeled `FG-009 UAT *`); do not treat it as customer work. FG-009 leftover Estimate Totals header percents remain separate UI maintenance debt.
 
 ## Related
 
+- [feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md)
+- [architecture/ai-takeoff-quantity-extraction-foundation.md](architecture/ai-takeoff-quantity-extraction-foundation.md)
+- [adr/ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md](adr/ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md)
 - [feature-gates/FG-009-organization-calibrated-pricing-engine.md](feature-gates/FG-009-organization-calibrated-pricing-engine.md)
 - [architecture/organization-calibrated-pricing-engine-architecture.md](architecture/organization-calibrated-pricing-engine-architecture.md)
 - [adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md](adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md)

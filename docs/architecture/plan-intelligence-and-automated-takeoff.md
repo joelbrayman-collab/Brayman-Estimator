@@ -2,12 +2,16 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Architecture documented (M004); Phase A upload implemented (M005); Document Intelligence architecture (M006)** — take-off / AI still future |
-| Updated | 2026-07-25 |
+| Status | **Architecture documented (M004); Phase A–M010 implemented in code; M012 / FG-010 APPROVED FOR IMPLEMENTATION — NOT IMPLEMENTED** |
+| Updated | 2026-08-29 |
 | Module | [../modules/plan-intelligence.md](../modules/plan-intelligence.md) |
-| Related | [platform-roadmap.md](../platform-roadmap.md) · [document-intelligence.md](document-intelligence.md) · ADR-005–007, 009–016 |
+| Related | [platform-roadmap.md](../platform-roadmap.md) · [document-intelligence.md](document-intelligence.md) · [ai-takeoff-quantity-extraction-foundation.md](ai-takeoff-quantity-extraction-foundation.md) · ADR-005–007, 009–016, 026–027, 031 |
 
-**Current vs future:** Phase A PDF upload/storage exists under Plan Intelligence. Document Intelligence (packages, sheets, search) and take-off/OCR/CAD/AI are **not** implemented unless separately Feature-Gated. Estimating and Proposals exist separately. Mid-pipeline stages below remain **intended architecture** except where marked current.
+**Current vs future:** Phase A PDF upload/storage, Document Intelligence indexing, sheets, and M010 scale/measurement exist under Plan Intelligence. **AI quantity extraction is not implemented.** FG-010 is **APPROVED FOR IMPLEMENTATION** (provider-neutral foundation). Real external AI provider is **not authorized**. OCR/CAD remain future. Estimating and Proposals exist separately.
+
+**COUNT / scale (FG-010 authorized correction):** COUNT is dimensionless. Implementation may permit count without confirmed dimensional calibration. Linear / polyline / area / perimeter must continue to fail closed without valid scale. Do not change code until the implementation prompt.
+
+Narrow M012 design: [ai-takeoff-quantity-extraction-foundation.md](ai-takeoff-quantity-extraction-foundation.md).
 
 ---
 
@@ -165,7 +169,7 @@ Document Intelligence detail: [document-intelligence.md](document-intelligence.m
 | **Inputs** | Geometry + confirmed scale + method code |
 | **Outputs** | `Quantity` candidates (count, LF, SF, CY, …) |
 | **Responsibilities** | Deterministic math from inputs; store formula/method |
-| **Failure** | Mark quantity invalid if scale missing |
+| **Failure** | Mark **dimensional** quantity invalid if scale missing. **COUNT is dimensionless** and must not require scale merely to count objects (FG-010 / ADR-031). |
 | **Audit** | Inputs hash; computed value |
 
 #### Human review

@@ -3,9 +3,9 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-005: AI Take-Off Source Traceability |
-| Status | **Proposed** |
+| Status | **Accepted** (2026-08-29; FG-010 / M012) |
 | Date | 2026-07-25 |
-| Related | [plan-intelligence architecture](../architecture/plan-intelligence-and-automated-takeoff.md) · Milestone 004 |
+| Related | [plan-intelligence architecture](../architecture/plan-intelligence-and-automated-takeoff.md) · [ADR-031](ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md) · [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) · Milestone 004 |
 
 ## Context
 
@@ -13,7 +13,7 @@ AI-assisted and manual take-off quantities must remain commercially and legally 
 
 ## Decision
 
-*(Proposed)*
+*(Accepted — 2026-08-29 with FG-010.)*
 
 1. Every take-off quantity persists a **citation bundle**: uploaded file id, drawing set, revision, sheet number/name, page index, region geometry, extraction method, AI model/version (if AI), confidence, reviewer, approval timestamp, and correction history.
 2. Citations are **first-class data**, not optional comments or log-only events.
@@ -53,6 +53,12 @@ Plan Intelligence architecture §5; module doc; Milestone 004 readiness report.
 
 | Role | Name | Date |
 |------|------|------|
-| Joel | | |
-| ChatGPT review | | |
-| Cursor implementation note | No implementation in Milestone 004 (docs only) | |
+| Joel | Approved with FG-010 | 2026-08-29 |
+| ChatGPT review | Approved with FG-010 | 2026-08-29 |
+| Cursor implementation note | Docs/governance only (2026-08-29). Product implementation not authorized by this acceptance. |
+
+---
+
+## 2026-08-29 acceptance (FG-010 / M012)
+
+M012 citations attach to `TakeoffExtractionRun`, `TakeoffCandidate`, and `TakeoffPackage` / `TakeoffPackageItem`. Geometry uses ADR-027 normalized `[0,1]`. Future estimate-line citation linkage remains **Phase D**. This ADR does **not** imply M012 creates estimate lines.

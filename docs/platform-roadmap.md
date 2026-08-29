@@ -15,9 +15,9 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 |--------|--------------|----------------------|
 | Core CRM and project records | **Current** (Clients, Projects) | [modules/crm.md](modules/crm.md), [modules/projects.md](modules/projects.md) |
 | Estimating and assemblies | **Current** | [modules/estimating.md](modules/estimating.md) |
-| Plan Intelligence | **Partial** — Phase A upload (M005); Document Intelligence indexing (M007); Sheet Intelligence & human review (M009); Scale & measurement (M010); take-off (M012+) future | [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md) · [architecture/document-intelligence.md](architecture/document-intelligence.md) · [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) · [modules/plan-intelligence.md](modules/plan-intelligence.md) · [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](feature-gates/FG-005-m010-scale-calibration.md) |
-| Automated Quantity Take-Off | **Future** | Same Plan Intelligence docs |
-| Human Review and Source Traceability | **Future** (ADR-005/006/011) | Embedded in Plan Intelligence |
+| Plan Intelligence | **Partial** — Phase A upload (M005); Document Intelligence indexing (M007); Sheet Intelligence & human review (M009); Scale & measurement (M010); take-off **M012 / FG-010 APPROVED FOR IMPLEMENTATION — not implemented** | [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md) · [architecture/ai-takeoff-quantity-extraction-foundation.md](architecture/ai-takeoff-quantity-extraction-foundation.md) · [architecture/document-intelligence.md](architecture/document-intelligence.md) · [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) · [modules/plan-intelligence.md](modules/plan-intelligence.md) · [FG-002](feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](feature-gates/FG-005-m010-scale-calibration.md) · [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) |
+| Automated Quantity Take-Off | **Approved, not implemented** — M012 / [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **APPROVED FOR IMPLEMENTATION** | Same Plan Intelligence docs · [architecture/ai-takeoff-quantity-extraction-foundation.md](architecture/ai-takeoff-quantity-extraction-foundation.md) |
+| Human Review and Source Traceability | **Partial** — sheet review (M009) and measurement citations (M010) **Current**; AI candidate review **approved, not implemented** (FG-010) | ADR-005/006/011 **Accepted**; ADR-031 **Accepted** |
 | Supplier Catalogue Management | **Future** (only free-text `CostItem.supplier` today) | [architecture/supplier-catalogue-inventory-pricing.md](architecture/supplier-catalogue-inventory-pricing.md) |
 | Supplier Inventory and Pricing Integrations | **Future** | Supplier architecture; Phase F |
 | Procurement and Purchase-Order Preparation | **Future** (nav placeholder only) | Supplier + Projects/Procurement boundary |
@@ -29,7 +29,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next candidate milestone:** FG-009 closure review, then prepare the next Feature Gate for AI Take-off / Quantity Extraction Foundation (not started). FG-009 is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (Alembic current/head `a3b4c5d6e7f8`; **FG-009 FOUNDATION OPERATIONAL FOR UAT**). FG-008 Labour Engine Phase B remains **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**.
+**Next candidate milestone:** [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) / **M012** is **APPROVED FOR IMPLEMENTATION** / **NOT IMPLEMENTED**. Next governed action is a **separate bounded implementation prompt** (provider-neutral; real external AI provider **not authorized**). After M012 is implemented: Project Hub UX, then estimate-output consistency, then BUILD/MONITOR/LEARN, each separately gated. FG-009 remains **CLOSED / OPERATIONAL FOR UAT**. FG-008 remains **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**.
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -102,7 +102,7 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 4. **FG-006** Historical Estimate Ingestion Engine Phase B — **Completed & Verified** (migration `e1b2c3d4e5f6`)
 5. **FG-008** Labour Engine Phase B — **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**; ADR-029 **Accepted**. Alembic current/head `f2c3d4e5f6a7`. Foundation operational for UAT (not a populated operating catalog; not selling-price integration).
 6. Organization-Calibrated Pricing Engine — [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. ADR-025 **Accepted**; ADR-030 **Accepted**. Foundation operational for UAT.
-7. AI Take-off / Quantity Extraction Foundation
+7. AI Take-off / Quantity Extraction Foundation — [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **APPROVED FOR IMPLEMENTATION** (M012; ADR-031 **Accepted**; **not implemented**; real external AI provider **not authorized**)
 8. Project Hub UX
 9. Internal Detailed Cost Breakdown + Customer Estimate consistency (depends on Pricing Engine snapshot architecture; four-output **product** remains Future)
 10. Authentication / actor identity + shared API foundation
@@ -125,9 +125,9 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 |-------|------|--------|------------|
 | **A** | PDF plan upload and storage | Project-scoped upload, secure storage, document register | **Done (M005)** |
 | **DI** | Document Intelligence | Pages, packages/revisions, metadata, search | **M006 architecture; M007 code** |
-| **SI** | Sheet Intelligence | Sheets, discipline, review workflow, page maps | **M008 architecture**; coded sheets Feature-Gated next |
-| **B** | Scale confirmation, manual measurement | Human-scale confirm; count/length/area; citations | SI coded sheets first |
-| **C** | AI-assisted extraction (narrow trade/assembly) | One assembly vocabulary; confidence scores | Phase B; ADR-005, ADR-010 |
+| **SI** | Sheet Intelligence | Sheets, discipline, review workflow, page maps | **Done (M009)** |
+| **B** | Scale confirmation, manual measurement | Human-scale confirm; count/length/area; citations | **Done (M010)** |
+| **C** | AI-assisted extraction (narrow trade/assembly) | One assembly vocabulary; confidence scores | **FG-010 / M012 APPROVED FOR IMPLEMENTATION** — not implemented |
 | **D** | Reviewed quantities → estimate assemblies | Explicit map + human approve into `EstimateVersion` | Phase C; ADR-006, ADR-007 |
 | **E** | Supplier catalogue and price-file import | CSV/manual quotes; contractor prices; effective dates | ADR-008; Feature Gate |
 | **F** | Live supplier inventory and pricing | API/EDI adapters; stale handling; PO prep start | Phase E |
@@ -147,18 +147,18 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 | **Measurable element** | **Interior door openings — count** (optional stretch: door schedule cross-check if present) |
 | **Human-review workflow** | AI or manual count candidates → reviewer accepts/adjusts/rejects per door → approve take-off package → **no** estimate insert until explicit map action (ADR-006) |
 | **Source traceability** | Each count cites file, page, sheet id/name, region bbox; method + confidence stored (ADR-005) |
-| **Success criteria** | (1) Upload/store/retrieve PDF; (2) classify/confirm sheet + scale; (3) produce reviewed door count with citations; (4) optional map into **one** draft estimate assembly/line with human approve; (5) re-upload does not mutate prior take-off version |
-| **Explicit non-goals** | Scanned OCR; structural/civil; CAD; supplier APIs; multi-trade extraction; auto-insert to locked estimates; proposal changes; PO generation |
+| **Success criteria** | Governed in [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md): searchable PDF; architectural sheet; extraction run; cited interior-door candidates; human accept/adjust/reject/duplicate; immutable approved package; **no** silent estimate insert (Phase D later) |
+| **Explicit non-goals** | Scanned OCR; structural/civil; CAD; supplier APIs; multi-trade extraction; auto-insert to estimates; proposal changes; PO generation; Labour Engine / Pricing Engine writes |
 
-**Safest first slice:** implement **Phase A only** as the first coded milestone after Feature Gate (upload/storage/register), then Phase B manual count for doors **before** enabling AI (Phase C).
+**Historical note:** Phase A (M005) and Phase B (M010) are **implemented**. FG-010 / Phase C is **approved for implementation**, not started. Real external AI provider is **not authorized**. COUNT is dimensionless (must not require scale); dimensional measurements remain fail-closed.
 
 ---
 
 ## Next recommended milestones
 
-1. Separately authorize live development/UAT migration `f2c3d4e5f6a7` → `a3b4c5d6e7f8` and Pricing Engine UAT smoke. **Do not start AI take-off.**
+1. Issue a **separate** bounded FG-010 implementation prompt (provider-neutral foundation). **Do not implement in this governance pass.** Real external AI provider remains **not authorized**.
 2. Joel accepts/amends ADR-021 when that decision is ready. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
-3. Subsequent CalibAi sequence items after Pricing Engine is live-migrated, each separately gated.
+3. Subsequent CalibAi sequence after M012 is implemented: Project Hub UX, then estimate-output consistency, each separately gated.
 4. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate.
 
 ---
@@ -179,7 +179,7 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 - Purchasing / POs (beyond prep)
 - Job costing, invoicing, QuickBooks — see [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - Historical estimating intelligence; reports; settings
-- Full Plan Intelligence Phases C–G and Supplier Phases E–F as above
+- Full Plan Intelligence Phases C–G (C = FG-010 if approved) and Supplier Phases E–F as above
 
 ## Deferred
 
@@ -190,9 +190,9 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Decisions Required (Joel)
 
-1. Confirm strategic pillars and Phases A–G priority vs Milestone 003 immutability sequencing.
-2. Accept/amend ADR-005–010.
-3. Confirm POC element (interior door count) or substitute one assembly.
-4. Auth model; production hosting/secrets.
-5. Build-vs-buy preferences for PDF viewer / OCR (ADR-010).
+1. Issue a **separate** bounded FG-010 implementation prompt. Real external AI provider remains **not authorized**.
+2. ADR-010 remains **Proposed** (OCR/CAD/provider).
+3. Confirm POC element remains `INTERIOR_DOOR_OPENING` count.
+4. Auth model; production hosting/secrets (unchanged platform debt).
+5. Before a real AI provider: separate governed decision (identity, data sent, retention, training, privacy, credentials, failure, cost).
 6. Whether supplier CSV (Phase E) may start before take-off Phase D.

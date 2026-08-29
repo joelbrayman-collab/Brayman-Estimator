@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-006: Human Approval Before Estimate Insertion |
-| Status | **Proposed** |
+| Status | **Accepted** (2026-08-29; FG-010 / M012) |
 | Date | 2026-07-25 |
 | Related | [plan-intelligence architecture](../architecture/plan-intelligence-and-automated-takeoff.md) · Rule 9 · Milestone 004 |
 
@@ -13,7 +13,7 @@ Automated take-off must not silently create or modify estimate sections/lines. C
 
 ## Decision
 
-*(Proposed)*
+*(Accepted — 2026-08-29 with FG-010.)*
 
 1. No take-off quantity may create, update, or delete `Estimate` / `EstimateVersion` / section / line records without an **explicit human approval** action in the product UI/API.
 2. Batch approve is allowed only as an explicit user command listing the items being approved.
@@ -53,6 +53,14 @@ Plan Intelligence architecture §4 and §6; module non-goals.
 
 | Role | Name | Date |
 |------|------|------|
-| Joel | | |
-| ChatGPT review | | |
-| Cursor implementation note | No implementation in Milestone 004 (docs only) | |
+| Joel | Approved with FG-010 | 2026-08-29 |
+| ChatGPT review | Approved with FG-010 | 2026-08-29 |
+| Cursor implementation note | Docs/governance only (2026-08-29). Product implementation not authorized by this acceptance. |
+
+---
+
+## 2026-08-29 acceptance clarification (FG-010 / M012)
+
+This ADR establishes the **human-authority boundary**. Human approval of reviewed take-off evidence (candidate or package) does **NOT** authorize `EstimateVersion` insertion in M012.
+
+FG-010 stops before estimate insertion. A later Feature Gate is required for PLAN → Estimate mapping. Confidence is not authorization.

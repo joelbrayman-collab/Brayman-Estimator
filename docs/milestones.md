@@ -32,6 +32,30 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### M012 / FG-010 — Governance approval (documentation)
+
+| Field | Content |
+|-------|---------|
+| ID | M012 / FG-010 |
+| Status | **APPROVED FOR IMPLEMENTATION** — **NOT IMPLEMENTED** |
+| Date | 2026-08-29 |
+| Objective | Record Joel/ChatGPT approval of FG-010 and accept ADR-005/006/007/009/011/031. Keep ADR-010 Proposed. COUNT-without-scale clarification. Real external AI provider not authorized. |
+| Deliverables | Status reconciliation across FG-010, ADRs, architecture, indexes, handoff. Docs-only commit. |
+| Validation | Plan Intelligence combined **51 passed**; Pricing **33**; Labour **25**; historical **11**; full suite **228**. Product/migration files unchanged. |
+| Next | Separate bounded FG-010 implementation prompt (provider-neutral). **Do not implement in this pass.** |
+
+### M012 / FG-010 — AI Take-off architecture and Feature Gate preparation
+
+| Field | Content |
+|-------|---------|
+| ID | M012 / FG-010 (architecture only; not implemented) |
+| Status | **PREPARED FOR GOVERNANCE APPROVAL** — **NOT APPROVED** — **NOT IMPLEMENTED** |
+| Date | 2026-08-29 |
+| Objective | Reconcile Plan Intelligence ADRs; define extraction-run / candidate / package architecture; prepare FG-010. No product code. |
+| Deliverables | Take-off architecture; FG-010; ADR-031 **Proposed**; ADR-005–011 reconciliation notes; indexes/handoff. |
+| Validation | Plan Intelligence combined **51 passed**; Pricing **33**; Labour **25**; historical **11**; full suite **228**. `git diff --check` expected clean after this pass. Product/migration files unchanged. |
+| Next | Joel / ChatGPT review. **Do not implement AI take-off** until FG-010 is approved and a separate implementation prompt is issued. |
+
 ### FG-009 — Live development/UAT migration and smoke verification
 
 | Field | Content |

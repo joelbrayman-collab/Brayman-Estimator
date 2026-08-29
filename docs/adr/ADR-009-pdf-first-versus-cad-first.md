@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-009: PDF-First versus CAD-First Ingestion |
-| Status | **Proposed** |
+| Status | **Accepted** (2026-08-29; FG-010 / M012) |
 | Date | 2026-07-25 |
 | Related | [plan-intelligence architecture](../architecture/plan-intelligence-and-automated-takeoff.md) |
 
@@ -13,7 +13,7 @@ Builders receive PDF plan sets routinely; DWG/DXF capability is valuable but cos
 
 ## Decision
 
-*(Proposed)* **PDF-first.** Phases A–F target PDF (searchable first, scanned later). **CAD (DWG/DXF) is Phase G** and requires a separate Feature Gate after PDF take-off is proven. Do not block PDF POC on CAD viewers or native CAD parsers.
+*(Accepted — 2026-08-29 with FG-010.)* **PDF-first.** Phases A–F target PDF (searchable first, scanned later). **CAD (DWG/DXF) is Phase G** and requires a separate Feature Gate after PDF take-off is proven. Do not block PDF POC on CAD viewers or native CAD parsers.
 
 ## Alternatives Considered
 
@@ -48,6 +48,12 @@ Roadmap Phases A–G; Plan Intelligence architecture.
 
 | Role | Name | Date |
 |------|------|------|
-| Joel | | |
-| ChatGPT review | | |
-| Cursor implementation note | No implementation in this documentation sprint | |
+| Joel | Approved with FG-010 | 2026-08-29 |
+| ChatGPT review | Approved with FG-010 | 2026-08-29 |
+| Cursor implementation note | Docs/governance only (2026-08-29). Product implementation not authorized by this acceptance. |
+
+---
+
+## 2026-08-29 acceptance (FG-010 / M012)
+
+M012 is **searchable PDF first**. CAD (DWG/DXF) remains deferred (Phase G; separate Feature Gate). This does **not** prohibit CAD forever.

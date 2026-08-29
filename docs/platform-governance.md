@@ -169,4 +169,4 @@ Answer all of the following in the Cursor prompt or an attached Feature Gate doc
 11. Does it require an ADR?
 12. Does it require a database migration?
 
-Current Feature Gates: [feature-gates/README.md](feature-gates/README.md) (FG-004 through FG-008 approved and implemented; **FG-009 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** — Alembic current/head `a3b4c5d6e7f8`; foundation operational for UAT).
+Current Feature Gates: [feature-gates/README.md](feature-gates/README.md) (FG-004 through FG-009 approved and implemented where noted; **FG-009 CLOSED / OPERATIONAL FOR UAT**; **FG-010 APPROVED FOR IMPLEMENTATION** — **NOT IMPLEMENTED**; real external AI provider **not authorized**).

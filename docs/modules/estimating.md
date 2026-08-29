@@ -45,7 +45,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 ## Planned capabilities
 
 - Internal Detailed Cost Breakdown output — **Future** ([project-document-package.md](../architecture/project-document-package.md))
-- Governed pricing policy application — **implemented** ([pricing-policy.md](../pricing-policy.md); [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted**; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED**; versions without a snapshot still use markup/overhead/profit stack)
+- Governed pricing policy application — **implemented / operational for UAT** ([pricing-policy.md](../pricing-policy.md); [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted**; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; versions without a snapshot still use markup/overhead/profit stack)
 - Historical estimating intelligence — **Future**
 - Deeper productivity tooling — [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) Labour Engine Phase B **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (operational for UAT); Estimating does not own canonical tasks or production standards
 
@@ -64,7 +64,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 - When estimate header status vs version status diverge—canonical source of truth for “accepted bid”
 - MONITOR estimated baseline selection ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Proposed**)
-- How (or whether) to migrate estimate markup/overhead/profit to the governing gross-margin formula ([ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** — dual named methods; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED**; existing versions without snapshots remain `COST_PLUS_MARKUP_STACK` and are not backfilled)
+- How (or whether) to migrate estimate markup/overhead/profit to the governing gross-margin formula ([ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** — dual named methods; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; existing versions without snapshots remain `COST_PLUS_MARKUP_STACK` and are not backfilled)
 
 ## Relevant tests
 

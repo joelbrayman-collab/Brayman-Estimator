@@ -7,11 +7,11 @@
 | Target Milestone | Organization-Calibrated Pricing Engine (not a numbered M0xx until implementation is authorized) |
 | Module | Pricing Engine (Estimating consumes snapshotted selling-price results; Proposals/Change Orders reuse the same policy snapshot) |
 | Date | 2026-08-29 |
-| Status | **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | Architecture | [organization-calibrated-pricing-engine-architecture.md](../architecture/organization-calibrated-pricing-engine-architecture.md) **Approved** |
 | Related ADRs | [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** |
 | Prerequisites | FG-007 / M011 **implemented**; FG-008 **implemented**; FG-006 **implemented** (evidence only) |
-| Approved baseline | Governance commit `41bfb2e032c0386fc785b733ea5789fae9e248ef`. Implementation is this FG-009 commit on `main`. Live DB **not** migrated. |
+| Approved baseline | Governance commit `41bfb2e032c0386fc785b733ea5789fae9e248ef`. Implementation commit `8e11179fb5abb42a68805fe011e84c15e866ea04`. Live development/UAT migrated to `a3b4c5d6e7f8`. |
 
 ---
 
@@ -22,7 +22,7 @@
 | Architecture / readiness | **APPROVED** (2026-08-29; Joel and ChatGPT; contingency clarification adopted) |
 | Feature Gate (this document) | **APPROVED FOR IMPLEMENTATION** |
 | ADR-025 / ADR-030 | **Accepted** |
-| Implementation | **IMPLEMENTED / VERIFIED** (2026-08-29) including bounded CO-method and `UNSPECIFIED`-seed corrections. Additive migration `a3b4c5d6e7f8`. Dedicated tests **33 passed**. Full suite **228 passed**. **NOT YET LIVE-MIGRATED.** Live development/UAT `flask db current` remains `f2c3d4e5f6a7`. |
+| Implementation | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (2026-08-29). Additive migration `a3b4c5d6e7f8` applied live (`f2c3d4e5f6a7` → `a3b4c5d6e7f8`). Dedicated tests **33 passed**. Full suite **228 passed**. Foundation **operational for UAT**. ORG-001 optional overhead/profit/contingency layers remain `UNSPECIFIED`. Labour-snapshot Direct Labour Cost is not included in the estimate basis by default. |
 | New estimates | Do **not** auto-switch to `TRUE_GROSS_MARGIN`. Snapshot is created only via explicit human `apply_resolved_pricing_to_version` / office “Apply org pricing policy”. Versions without a snapshot continue to use live `COST_PLUS_MARKUP_STACK`. |
 
 This gate does **not** implement four-output generation, QuickBooks, contracts, or Labour Engine expansion. Labour Engine Direct Labour Cost may be consumed read-only; default apply path does **not** add labour-snapshot cost into the estimate basis (`include_labour_snapshot_direct_cost=False`) so CostItem labour lines are not double-counted.
@@ -214,7 +214,7 @@ Do not recalculate locked/issued/accepted estimates. Do not mutate FG-006 histor
 
 ## Migration expectations
 
-Additive Alembic revision `a3b4c5d6e7f8` revises `f2c3d4e5f6a7`. It adds `organization_pricing_policies`, `estimate_pricing_snapshots`, `pricing_audit_events`, and nullable FKs on `project_commercial_contexts`, `estimate_versions`, and `change_orders`. It does **not** recompute existing estimate totals. ORG-001 seed (`ORG-001-TRUE-GM-15`, `TRUE_GROSS_MARGIN` 15%, CA-ON HST 13%) runs only if `ORG-001` exists. Overhead, profit, and contingency treatments seed as **`UNSPECIFIED`** (not yet governed). That is **distinct from** an org-approved `NOT_APPLIED` decision. Live development/UAT database has **not** been upgraded. The migration was corrected in place before commit; no second revision.
+Additive Alembic revision `a3b4c5d6e7f8` revises `f2c3d4e5f6a7`. It adds `organization_pricing_policies`, `estimate_pricing_snapshots`, `pricing_audit_events`, and nullable FKs on `project_commercial_contexts`, `estimate_versions`, and `change_orders`. It does **not** recompute existing estimate totals. ORG-001 seed (`ORG-001-TRUE-GM-15`, `TRUE_GROSS_MARGIN` 15%, CA-ON HST 13%) runs only if `ORG-001` exists. Overhead, profit, and contingency treatments seed as **`UNSPECIFIED`** (not yet governed). That is **distinct from** an org-approved `NOT_APPLIED` decision. Live development/UAT database was upgraded 2026-08-29 (`f2c3d4e5f6a7` → `a3b4c5d6e7f8`). The migration was corrected in place before commit; no second revision.
 
 ---
 
@@ -252,7 +252,7 @@ In-scope work completed in this working tree:
 - Deterministic resolution + estimate pricing snapshot
 - Change Order inheritance of snapshot **and application of the inherited pricing method**
 - Tests listed above
-- Docs updates for implemented state (live DB not migrated)
+- Docs updates for implemented state; live development/UAT later migrated and UAT-smoke-verified (`a3b4c5d6e7f8`)
 
 ---
 
@@ -271,13 +271,13 @@ In-scope work completed in this working tree:
 | 9 | What tests are required? | See **Test expectations**. Dedicated suite plus historical ingestion + labour engine + full suite non-regression. |
 | 10 | What documentation must be updated? | This gate; pricing architecture; ADR-025/030 status when accepted; pricing-policy.md; estimating/pricing-engine modules; current-state; session-handoff; roadmap; chat-workflow-log. |
 | 11 | Does it require an ADR? | **Yes** — ADR-025 (methods) **Accepted**; ADR-030 (policy records, snapshots, contingency treatment, CO inheritance) **Accepted**. |
-| 12 | Does it require a database migration? | **Yes.** Additive `a3b4c5d6e7f8`. Live DB **not** upgraded in this pass. |
+| 12 | Does it require a database migration? | **Yes.** Additive `a3b4c5d6e7f8`. Applied to live development/UAT 2026-08-29. |
 
 ---
 
 ## Acceptance criteria (implementation)
 
-Met in working-tree tests; governance review and commit still required. Live DB not migrated.
+Met in dedicated tests and live development/UAT smoke (2026-08-29). Foundation operational for UAT.
 
 1. Named methods are explicit; 15% GM ≠ 15% markup in tests.  
 2. ORG-001 can use `TRUE_GROSS_MARGIN` without forcing other orgs to inherit it.  
@@ -297,6 +297,6 @@ Met in working-tree tests; governance review and commit still required. Live DB 
 
 Architecture, Feature Gate, ADR-025, and ADR-030 are **approved** (2026-08-29).
 
-Implementation remains **blocked** until a **separate** bounded Cursor execution prompt is issued.
+Implementation is **complete for FG-009 foundation**: **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**.
 
-This documentation/governance pass does **not** authorize product code, migration, or selling-price change.
+**Next governed action:** FG-009 closure review, then prepare the next Feature Gate for AI Take-off / Quantity Extraction Foundation. This gate does **not** authorize AI take-off, Project Hub, four-output product, QuickBooks, contracts, or BUILD/MONITOR/LEARN.

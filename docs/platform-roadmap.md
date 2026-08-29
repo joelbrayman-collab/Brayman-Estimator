@@ -29,7 +29,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next candidate milestone:** After FG-009 live migrate — remaining CalibAi sequence (four-output consistency, AI take-off, etc.), each separately gated. FG-009 is **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** (Alembic graph head `a3b4c5d6e7f8`; live current still `f2c3d4e5f6a7`). FG-008 Labour Engine Phase B remains **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**.
+**Next candidate milestone:** FG-009 closure review, then prepare the next Feature Gate for AI Take-off / Quantity Extraction Foundation (not started). FG-009 is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (Alembic current/head `a3b4c5d6e7f8`; **FG-009 FOUNDATION OPERATIONAL FOR UAT**). FG-008 Labour Engine Phase B remains **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**.
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -80,7 +80,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-- **`main` / `origin/main`** — FG-009 implementation commit. FG-008 live Alembic current `f2c3d4e5f6a7`. FG-009 **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** (graph head `a3b4c5d6e7f8`).
+- **`main` / `origin/main`** — FG-009 implementation `8e11179`. Alembic current/head `a3b4c5d6e7f8`. FG-009 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**.
 - **Review Turnover Protocol** adopted (2026-08-28) — `Review Turnover` governing.
 - **M010 Scale Calibration & Measurement Tools** implemented and verified (2026-08-28).
 - **M011 Organization Foundation & Project Commercial Context** implemented and verified (2026-08-28).
@@ -101,7 +101,7 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 3. **M011** Organization Foundation & Project Commercial Context — **Completed & Verified** (FG-007 / ADR-028; migration `d0a1b2c3d4e5`)
 4. **FG-006** Historical Estimate Ingestion Engine Phase B — **Completed & Verified** (migration `e1b2c3d4e5f6`)
 5. **FG-008** Labour Engine Phase B — **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**; ADR-029 **Accepted**. Alembic current/head `f2c3d4e5f6a7`. Foundation operational for UAT (not a populated operating catalog; not selling-price integration).
-6. Organization-Calibrated Pricing Engine — [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED**. ADR-025 **Accepted**; ADR-030 **Accepted**.
+6. Organization-Calibrated Pricing Engine — [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. ADR-025 **Accepted**; ADR-030 **Accepted**. Foundation operational for UAT.
 7. AI Take-off / Quantity Extraction Foundation
 8. Project Hub UX
 9. Internal Detailed Cost Breakdown + Customer Estimate consistency (depends on Pricing Engine snapshot architecture; four-output **product** remains Future)

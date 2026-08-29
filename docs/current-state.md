@@ -11,11 +11,11 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | FG-009 implementation commit on `main` (governance parent `41bfb2e`). Live DB **not** migrated. |
+| HEAD / `origin/main` | FG-009 implementation `8e11179fb5abb42a68805fe011e84c15e866ea04` (governance parent `41bfb2e`). Live DB migrated to `a3b4c5d6e7f8`. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
-| Working tree at last verified inspect | FG-009 **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** |
-| Governance | FG-004, FG-005, FG-006, FG-007 **approved & implemented**; **FG-008 CLOSED — OPERATIONAL FOR UAT**; **FG-009 IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED**. CAR-001 adopted; Review Turnover Protocol adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
+| Working tree at last verified inspect | FG-009 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
+| Governance | FG-004, FG-005, FG-006, FG-007 **approved & implemented**; **FG-008 CLOSED — OPERATIONAL FOR UAT**; **FG-009 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. CAR-001 adopted; Review Turnover Protocol adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
 
 ## Implemented (evidenced in code)
 
@@ -27,7 +27,7 @@
 - **Organization Foundation & Project Commercial Context (M011 / FG-007)** — `Organization` (`ORG-001`), tenant isolation, versioned `ProjectCommercialContext`, immutable `EstimateVersion.commercial_context_id`; migration `d0a1b2c3d4e5`
 - **Historical Estimate Ingestion Engine Phase B (FG-006)** — OpenXML parser, Families A–E, historical evidence models including `HistoricalLabourItem` (120 ORG-001 rows), review UI `/historical-estimates/`; migration `e1b2c3d4e5f6`
 - **Labour Engine Phase B (FG-008)** — org-owned `LabourTask`, human-reviewed mappings (including **REVOKED**), versioned `ProductionRateStandard` and `DirectLabourCostRateStandard`, `LabourCalibrationCandidate` lifecycle, explainable resolution, immutable `EstimateLabourSnapshot`, office UI `/labour-engine/`; additive migration `f2c3d4e5f6a7`. **Implemented, verified, committed, pushed, live-migrated, UAT-smoke-verified.** Foundation **operational for UAT**.
-- **Organization-Calibrated Pricing Engine (FG-009)** — **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED**. Versioned `OrganizationPricingPolicy`, immutable `EstimatePricingSnapshot` (locked versions), named methods `TRUE_GROSS_MARGIN` / `COST_PLUS_MARKUP` / `COST_PLUS_MARKUP_STACK`, policy resolution, pricing audit, ORG-001 seed (org-scoped 15% TRUE_GM, CA-ON 13% HST; not CalibAi defaults; optional overhead/profit/contingency layers `UNSPECIFIED`, distinct from org-approved `NOT_APPLIED`), office UI `/pricing-engine/`, Change Order snapshot inheritance **and method application**. Additive migration `a3b4c5d6e7f8`. Live DB remains `f2c3d4e5f6a7`. Versions without a snapshot still use the legacy stack. New estimates are not auto-converted to true GM.
+- **Organization-Calibrated Pricing Engine (FG-009)** — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. **FG-009 FOUNDATION OPERATIONAL FOR UAT.** Versioned `OrganizationPricingPolicy`, immutable `EstimatePricingSnapshot` (locked versions), named methods `TRUE_GROSS_MARGIN` / `COST_PLUS_MARKUP` / `COST_PLUS_MARKUP_STACK`, policy resolution, pricing audit, ORG-001 seed (org-scoped 15% TRUE_GM, CA-ON 13% HST; not CalibAi defaults; optional overhead/profit/contingency layers `UNSPECIFIED`, distinct from org-approved `NOT_APPLIED`), office UI `/pricing-engine/`, Change Order snapshot inheritance **and method application**. Additive migration `a3b4c5d6e7f8` applied live (`f2c3d4e5f6a7` → `a3b4c5d6e7f8`). Versions without a snapshot still use the legacy stack. New estimates are not auto-converted to true GM. Labour-snapshot Direct Labour Cost is **not** included in the estimate basis by default.
 
 ## Architecture / readiness only (not implemented)
 
@@ -38,14 +38,14 @@
 ## Migrations
 
 - Alembic **graph** head: `a3b4c5d6e7f8` (FG-009)
-- Live development/UAT `flask db current`: `f2c3d4e5f6a7` (**not** upgraded)
+- Live development/UAT `flask db current`: `a3b4c5d6e7f8` (one head)
 
 ## Current milestone status
 
 M005–M011, **FG-006**, and **FG-008** remain **implemented, verified, committed, and pushed** on `main`.
 
-- **Current coded work:** FG-009 Organization-Calibrated Pricing Engine — **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED**.
-- **Blocked / Not Started:** live DB migration for FG-009; four-output package; QuickBooks; contracts; AI take-off; BUILD/MONITOR/LEARN; historical evidence repair.
+- **Current coded work:** FG-009 Organization-Calibrated Pricing Engine — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. Foundation **operational for UAT**.
+- **Blocked / Not Started:** four-output package; QuickBooks; contracts; AI take-off; Project Hub; BUILD/MONITOR/LEARN; historical evidence repair.
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -59,10 +59,10 @@ M005–M011, **FG-006**, and **FG-008** remain **implemented, verified, committe
 
 ## Recommended next steps
 
-1. Separately authorize live development/UAT migration `f2c3d4e5f6a7` → `a3b4c5d6e7f8` and Pricing Engine UAT smoke verification.
-2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% ORG-001 policy text).
+1. FG-009 closure review, then prepare the next Feature Gate for AI Take-off / Quantity Extraction Foundation. **Do not start AI take-off in this pass.**
+2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% ORG-001 policy text; optional layers remain `UNSPECIFIED`).
 3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under Pricing Engine.
-4. Do not start AI take-off or another milestone until live migrate is authorized and closed.
+4. Synthetic FG-009 UAT residue remains in the live development/UAT DB (labeled `FG-009 UAT *`); do not treat it as customer work.
 
 ## Related
 

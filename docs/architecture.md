@@ -37,6 +37,8 @@ From [`app/__init__.py`](../app/__init__.py):
 | `proposals_bp` | `app/routes/proposals.py` |
 | `project_controls_bp` | `app/project_controls/` |
 | `plan_intelligence_bp` | `app/plan_intelligence/` |
+| `labour_engine_bp` | `app/routes/labour_engine.py` |
+| `pricing_engine_bp` | `app/routes/pricing_engine.py` |
 
 Shell context: [`app/shell.py`](../app/shell.py). Navigation SSOT: [`app/navigation.py`](../app/navigation.py).
 
@@ -54,6 +56,8 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Proposals | `ProposalTemplate`, `Proposal`, `ProposalSection`, `ProposalLineItem` | `app/models/proposal.py` |
 | Project controls | `ChangeOrder`, `ChangeOrderItem` | `app/project_controls/models.py` |
 | Plan Intelligence | `DrawingPackage`, `DrawingRevision`, `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent` | `app/plan_intelligence/models.py` |
+| Labour Engine | `LabourTask`, `LabourTaskMapping`, `ProductionRateStandard`, `DirectLabourCostRateStandard`, `LabourCalibrationCandidate`, `EstimateLabourSnapshot`, `LabourAuditEvent` | `app/models/labour_engine.py` |
+| Pricing Engine | `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent` | `app/models/pricing_engine.py` |
 
 Notable behaviours evidenced in code/tests:
 
@@ -150,8 +154,9 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 - QuickBooks / accounting integration — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - Historical estimating intelligence (LEARN; [ADR-024](adr/ADR-024-learn-recommendation-boundary.md))
 - **Labour Engine Phase B** — [labour-engine-phase-b-architecture.md](architecture/labour-engine-phase-b-architecture.md); [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (foundation operational for UAT). Selling-price application remains out of scope of FG-008.
-- **Organization-Calibrated Pricing Engine** — [organization-calibrated-pricing-engine-architecture.md](architecture/organization-calibrated-pricing-engine-architecture.md); [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED**. ADR-025 **Accepted**; ADR-030 **Accepted**.
+- **Organization-Calibrated Pricing Engine** — [organization-calibrated-pricing-engine-architecture.md](architecture/organization-calibrated-pricing-engine-architecture.md); [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. ADR-025 **Accepted**; ADR-030 **Accepted**. Foundation operational for UAT. Labour-snapshot Direct Labour Cost is not included in the estimate basis by default. Optional ORG-001 overhead/profit/contingency layers remain `UNSPECIFIED`.
+
+These two engines are **Current** (foundation). Do **not** describe the remaining items in this Future list as existing:
+
 - Electronic signature / formal proposal acceptance workflows
 - CAD ingestion (Phase G; PDF-first per ADR-009)
-
-Do **not** describe these as existing.

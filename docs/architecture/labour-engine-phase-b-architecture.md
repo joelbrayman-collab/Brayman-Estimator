@@ -8,7 +8,7 @@
 | ADR | [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** |
 | Baseline | Implementation from `main` @ `820f54afc179279d2435ad3a426b3037548bb45e`; Alembic revision `f2c3d4e5f6a7` (revises `e1b2c3d4e5f6`) |
 | Product | The Estimator / CalibAi |
-| Implementation | **Implemented & verified.** Live development/UAT `flask db current` = `f2c3d4e5f6a7` (applied 2026-08-29). |
+| Implementation | **Implemented & verified.** FG-008 revision `f2c3d4e5f6a7` applied 2026-08-29. Live development/UAT later moved to FG-009 `a3b4c5d6e7f8` (2026-08-29). Labour Engine foundation remains operational for UAT. |
 
 ---
 
@@ -490,7 +490,7 @@ Rollback: drop additive Labour Engine tables; no rewrite of `historical_labour_i
 
 Legacy: pre-FG-008 estimates have no labour snapshot; they remain lump-cost lines. Do not backfill invented production rates.
 
-Live development/UAT `flask db current` and the migration graph head are both `f2c3d4e5f6a7`. This does **not** populate an operating production-rate catalog or enable selling-price integration.
+Live development/UAT Alembic current/head later became `a3b4c5d6e7f8` (FG-009). FG-008 tables remain in place. This does **not** populate an operating production-rate catalog. FG-009 selling-price integration consumes Direct Labour Cost read-only and does **not** include labour-snapshot cost in the estimate basis by default.
 
 ---
 

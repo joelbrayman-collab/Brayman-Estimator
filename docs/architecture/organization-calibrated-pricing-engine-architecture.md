@@ -2,9 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Architecture approved** — **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** |
+| Status | **Architecture approved** — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | Date | 2026-08-29 |
-| Feature Gate | [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** |
+| Feature Gate | [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | Related ADRs | [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** |
 | Prerequisites | FG-007 / M011 **implemented**; FG-008 **implemented** (Labour Engine operational for UAT); FG-006 **implemented** (historical evidence only) |
 | Product code | `app/models/pricing_engine.py`, `app/services/pricing_engine.py`, `app/routes/pricing_engine.py`, additive estimate/CO pointers, migration `a3b4c5d6e7f8`. Live selling-price path: snapshot if present, else legacy stack. |
@@ -21,7 +21,7 @@ Each customer organization owns its **commercial intelligence** (target margin, 
 
 **Brayman Construction is `ORG-001`.** Brayman commercial policy is not the universal CalibAi pricing model.
 
-This document is **approved architecture**. Implementation is **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED**. Live development/UAT database remains at `f2c3d4e5f6a7`.
+This document is **approved architecture**. Implementation is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. Live development/UAT Alembic current/head is `a3b4c5d6e7f8`. Foundation operational for UAT.
 
 ---
 
@@ -412,9 +412,9 @@ Product pricing implementation; ADR-025 code changes; AI take-off; supplier inte
 | Layer | State |
 |-------|--------|
 | Architecture (this document) | **Approved** (2026-08-29) |
-| FG-009 | **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** |
+| FG-009 | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | ADR-025 | **Accepted** |
 | ADR-030 | **Accepted** (contingency source vs pricing treatment explicit) |
-| Product code | Implemented (`a3b4c5d6e7f8`); Alembic graph head `a3b4c5d6e7f8`; live `flask db current` `f2c3d4e5f6a7` |
+| Product code | Implemented (`a3b4c5d6e7f8`); Alembic current/head `a3b4c5d6e7f8` |
 
-**Next action:** Separate authorization to apply `a3b4c5d6e7f8` to live development/UAT and perform Pricing Engine UAT smoke. **Do not migrate live DB** from the implementation commit.
+**Next action:** FG-009 closure review, then prepare the next Feature Gate for AI Take-off / Quantity Extraction Foundation. **Do not start AI take-off from this architecture document.**

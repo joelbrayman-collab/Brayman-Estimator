@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-29 — FG-009 live development/UAT migration and UAT smoke
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Final preflight; apply committed FG-009 migration `a3b4c5d6e7f8`; verify seed/schema; bounded Pricing Engine UAT smoke; regression; docs reconciliation. STOP. |
+| Business decision | Live migrate authorized for development/UAT only. ORG-001 15% TRUE_GM and 13% HST remain org-scoped. Optional layers remain `UNSPECIFIED`. No second organization created. Synthetic UAT labels only. |
+| Architectural decision | No new product code. No new migration. No AI take-off. Labour-snapshot Direct Labour Cost remains excluded from estimate basis by default. |
+| Prompt template used | Live development/UAT migration + Pricing Engine smoke verification (this session). |
+| Approved Cursor prompt summary | PRESERVE → VERIFY → MIGRATE → SMOKE → REGRESSION → RECONCILE → STOP. `flask db upgrade` explicitly authorized. Do not start AI take-off. |
+| Files expected to change | Governed docs only (plus live SQLite schema/seed/UAT rows). |
+| Files prohibited from changing | Product code; committed migration file; historical workbooks; Labour Engine production logic; Accepted proposals; customer-facing proposal templates. |
+| Implementation result | Migration `f2c3d4e5f6a7` → `a3b4c5d6e7f8` succeeded. UAT smoke passed. Docs reconciled. |
+| Tests | Pricing **33**; Labour **25**; Historical **11**; full suite **228**. `git diff --check` clean. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None |
+| Unresolved issues | Synthetic FG-009 UAT residue remains (Draft estimates / WITHDRAWN markup policy / COs). ORG-001 optional layers remain `UNSPECIFIED`. |
+| Next approved step | FG-009 closure review, then prepare the next Feature Gate for AI Take-off / Quantity Extraction Foundation. |
+| Next approved prompt | None in this pass. Do not start AI take-off. |
+| Commit hash | Docs-only reconcile (record after push) |
+
 ### 2026-08-29 — FG-009 implementation commit and push
 
 | Field | Content |

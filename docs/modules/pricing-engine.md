@@ -2,9 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-009 FOUNDATION IMPLEMENTED** — **NOT YET LIVE-MIGRATED** |
+| Status | **FG-009 FOUNDATION OPERATIONAL FOR UAT** |
 | Updated | 2026-08-29 |
-| Feature Gate | [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / NOT YET LIVE-MIGRATED** |
+| Feature Gate | [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | Architecture | [../architecture/organization-calibrated-pricing-engine-architecture.md](../architecture/organization-calibrated-pricing-engine-architecture.md) |
 | ADRs | [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** |
 | Code | `app/models/pricing_engine.py`, `app/services/pricing_engine.py`, `app/routes/pricing_engine.py`, `/pricing-engine/` office UI. Migration `a3b4c5d6e7f8`. |
@@ -56,7 +56,7 @@ CalibAi owns the engine. Each organization owns its commercial intelligence. ORG
 - ORG-001 seed (migration, if `ORG-001` exists): `TRUE_GROSS_MARGIN` 15%, Ontario HST 13% (`CA-ON`). Overhead, profit, and contingency treatments are **`UNSPECIFIED`** (not yet governed; not inferred from historical workbooks). `UNSPECIFIED` is distinct from an org-approved `NOT_APPLIED` decision. Not a CalibAi default.
 - Pricing Posture and Execution Risk are recorded on the snapshot only.
 - FG-009-aware Change Orders inherit the linked snapshot **and apply its pricing METHOD** (`TRUE_GROSS_MARGIN`, `COST_PLUS_MARKUP`, or `COST_PLUS_MARKUP_STACK`). Historical Change Orders without a snapshot retain legacy markup-on-subtotal behavior.
-- Live development/UAT database has **not** been migrated (`flask db current` remains `f2c3d4e5f6a7`). Graph head is `a3b4c5d6e7f8`.
+- Live development/UAT `flask db current` / graph head: `a3b4c5d6e7f8`.
 
 ## Invariants (architecture)
 
@@ -69,7 +69,6 @@ CalibAi owns the engine. Each organization owns its commercial intelligence. ORG
 
 - ORG-001 overhead, profit, and contingency treatments remain `UNSPECIFIED` until a human-approved org policy change (not hard-coded from historical examples; not silently recorded as `NOT_APPLIED`)
 - When (if) labour-snapshot Direct Labour Cost should be included in the estimate basis without double-counting CostItem labour lines
-- Live DB upgrade timing (governance)
 
 ## Relevant tests
 

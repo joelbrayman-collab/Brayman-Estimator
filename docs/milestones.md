@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### FG-009 — Live development/UAT migration and smoke verification
+
+| Field | Content |
+|-------|---------|
+| ID | FG-009 (not a numbered product milestone) |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
+| Date | 2026-08-29 |
+| Objective | Apply committed migration `a3b4c5d6e7f8` to live development/UAT and perform bounded Pricing Engine UAT smoke. No new product features. |
+| Deliverables | Live Alembic current/head `a3b4c5d6e7f8`; ORG-001 seed verified (`UNSPECIFIED` optional layers); synthetic UAT TRUE_GM / markup / legacy / CO / override / snapshot immutability; docs reconciliation. |
+| Validation | Dedicated **33 passed**; Labour Engine **25 passed**; historical ingestion **11 passed**; full suite **228 passed**. HistoricalLabourItem remained 120. Source workbooks untouched. |
+| Next | FG-009 closure review, then prepare the next Feature Gate for AI Take-off / Quantity Extraction Foundation. **Do not start AI take-off.** |
+
 ### FG-009 — Implementation commit
 
 | Field | Content |

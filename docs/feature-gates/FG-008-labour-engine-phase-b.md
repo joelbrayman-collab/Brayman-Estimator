@@ -7,12 +7,12 @@
 | Target Milestone | Labour Engine Phase B |
 | Module | Labour Engine (Estimating consumes direct labour cost later) |
 | Date | 2026-08-29 |
-| Status | **IMPLEMENTED / VERIFIED** — live database **not yet upgraded** to `f2c3d4e5f6a7` |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE DEVELOPMENT/UAT MIGRATION APPLIED / UAT-SMOKE-VERIFIED** |
 | Architecture | [labour-engine-phase-b-architecture.md](../architecture/labour-engine-phase-b-architecture.md) **Approved** |
 | Related ADRs | [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Proposed** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** |
 | Prerequisites | FG-007 / M011 **implemented**; FG-006 **implemented** |
 | Approved baseline | `main` @ `820f54afc179279d2435ad3a426b3037548bb45e` |
-| Product code | **Implemented & verified.** Migration `f2c3d4e5f6a7` (graph head). Tests: `tests/test_labour_engine.py` (**22 passed**). Live `flask db current` remains `e1b2c3d4e5f6` until a separate upgrade authorization. |
+| Product code | **Implemented & verified.** Migration `f2c3d4e5f6a7` (graph head and live `flask db current`). Tests: `tests/test_labour_engine.py` (**22 passed**). Live development/UAT database upgraded 2026-08-29. |
 
 ---
 
@@ -23,7 +23,7 @@
 | Architecture / readiness | **APPROVED** (2026-08-29; Joel and ChatGPT) |
 | Feature Gate (this document) | **IMPLEMENTED / VERIFIED** |
 | ADR-029 | **Accepted** |
-| Implementation | **Implemented & verified.** Live Alembic current remains `e1b2c3d4e5f6` until a separate upgrade. Migration graph head: `f2c3d4e5f6a7`. |
+| Implementation | **Implemented & verified.** Live Alembic current and graph head: `f2c3d4e5f6a7`. Foundation **operational for UAT**. |
 
 Code paths: `app/models/labour_engine.py`, `app/services/labour_engine.py`, `app/routes/labour_engine.py`, `app/templates/labour_engine/`, `migrations/versions/f2c3d4e5f6a7_add_labour_engine_fg008.py`, `tests/test_labour_engine.py`. Office UI: `/labour-engine/`.
 
@@ -37,7 +37,7 @@ CalibAi must own labour **methodology** (how hours and direct labour cost are co
 
 Without this foundation, historical labour evidence (120 ORG-001 rows) cannot be used safely: free-text tasks would be silently merged, Brayman’s $65/hr would become a universal default, and actuals or old bids could overwrite operating standards.
 
-This gate defines that foundation. FG-008 is **implemented and verified**. It does **not** change pricing policy or mutate historical source workbooks. The live development/UAT database has **not** been upgraded to `f2c3d4e5f6a7`.
+This gate defines that foundation. FG-008 is **implemented, verified, committed, pushed, and live-migrated** on the development/UAT database. It does **not** change pricing policy or mutate historical source workbooks. This does **not** mean the production-rate catalog is populated, historical mappings are approved, actuals are implemented, or selling-price integration is enabled.
 
 ---
 
@@ -294,8 +294,8 @@ Covered by `tests/test_labour_engine.py` (22 passed) plus full-suite and histori
 
 | Item | State |
 |------|--------|
-| FG-008 implementation | **NOT STARTED.** Gate **approved**. Execution **blocked** until a separate bounded implementation prompt is issued. |
+| FG-008 implementation | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED.** Foundation operational for UAT. |
 | Organization-Calibrated Pricing Engine | **BLOCKED / NOT STARTED** |
-| Labour Engine live use in selling-price outputs | **BLOCKED** on FG-008 **implementation** + ADR-025 for margin formula |
+| Labour Engine live use in selling-price outputs | **BLOCKED** on a separate Pricing Engine gate + ADR-025 for margin formula |
 
-**Next authorized action:** Issue a separately authorized bounded FG-008 **implementation** Cursor prompt. **Do not implement from this document alone.**
+**Next authorized action:** Do **not** start the next milestone from this document. Pricing Engine, ADR-025, AI take-off, BUILD/MONITOR/LEARN, historical evidence repair, additional labour features, and cross-org learning remain separately gated.

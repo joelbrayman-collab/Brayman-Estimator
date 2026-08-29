@@ -29,7 +29,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next candidate milestone:** Organization-Calibrated Pricing Engine — **NOT STARTED / BLOCKED**; requires a separate governance gate. FG-008 Labour Engine Phase B is **IMPLEMENTED / VERIFIED** (live DB not yet upgraded to `f2c3d4e5f6a7`).
+**Next candidate milestone:** Organization-Calibrated Pricing Engine — **NOT STARTED / BLOCKED**; requires a separate governance gate. FG-008 Labour Engine Phase B is **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (Alembic current/head `f2c3d4e5f6a7`; foundation operational for UAT).
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -80,7 +80,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-- **`main` / `origin/main`** — FG-008 implementation commit (parent `820f54afc179279d2435ad3a426b3037548bb45e`). CAR-001 adopted; M005–M011, FG-006, and FG-008 merged and verified. Live Alembic current remains `e1b2c3d4e5f6`.
+- **`main` / `origin/main`** — FG-008 implementation commit `0569f25e7ff496ab637d52437d48cf815522afa1` (parent `820f54afc179279d2435ad3a426b3037548bb45e`). CAR-001 adopted; M005–M011, FG-006, and FG-008 merged and verified. Live Alembic current/head `f2c3d4e5f6a7`.
 - **Review Turnover Protocol** adopted (2026-08-28) — `Review Turnover` governing.
 - **M010 Scale Calibration & Measurement Tools** implemented and verified (2026-08-28).
 - **M011 Organization Foundation & Project Commercial Context** implemented and verified (2026-08-28).
@@ -100,7 +100,7 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 2. **M010** Scale Calibration / Measurement Tools — **Completed & Verified** (migration `c9e0f1a2b3d4`)
 3. **M011** Organization Foundation & Project Commercial Context — **Completed & Verified** (FG-007 / ADR-028; migration `d0a1b2c3d4e5`)
 4. **FG-006** Historical Estimate Ingestion Engine Phase B — **Completed & Verified** (migration `e1b2c3d4e5f6`)
-5. **FG-008** Labour Engine Phase B — **IMPLEMENTED / VERIFIED**; ADR-029 **Accepted**. Migration `f2c3d4e5f6a7` (live DB not upgraded).
+5. **FG-008** Labour Engine Phase B — **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**; ADR-029 **Accepted**. Alembic current/head `f2c3d4e5f6a7`. Foundation operational for UAT (not a populated operating catalog; not selling-price integration).
 6. Organization-Calibrated Pricing Engine (STATUS: NOT STARTED; REQUIRES SEPARATE GOVERNANCE AUTHORIZATION)
 7. AI Take-off / Quantity Extraction Foundation
 8. Project Hub UX

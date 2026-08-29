@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-029: Canonical Labour Task, Versioned Production Standard, and Evidence-to-Approval Calibration Lifecycle |
-| Status | **Accepted** (FG-008 **IMPLEMENTED / VERIFIED**; live DB not migrated) |
+| Status | **Accepted** (FG-008 **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**; Alembic `f2c3d4e5f6a7`) |
 | Date | 2026-08-29 |
 | Related | [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) · [labour-engine-phase-b-architecture.md](../architecture/labour-engine-phase-b-architecture.md) · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [ADR-024](ADR-024-learn-recommendation-boundary.md) · [ADR-025](ADR-025-pricing-policy-versus-estimate-markup-stack.md) · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) · [ADR-002](ADR-002-accepted-proposal-immutability.md) · [ADR-017](ADR-017-sheet-metadata-suggestion-and-review-workflow.md) |
 

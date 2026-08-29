@@ -32,17 +32,30 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### FG-008 — Live development/UAT migration and smoke verification
+
+| Field | Content |
+|-------|---------|
+| ID | FG-008 |
+| Status | **LIVE DEVELOPMENT/UAT MIGRATION APPLIED / UAT-SMOKE-VERIFIED** |
+| Date | 2026-08-29 |
+| Objective | Apply committed migration `f2c3d4e5f6a7` to the live development/UAT database and bound-smoke-verify Labour Engine without new schema, product code, or historical evidence repair. |
+| Deliverables | Alembic upgrade `e1b2c3d4e5f6` → `f2c3d4e5f6a7`; seven FG-008 tables present; ORG-001 $65 DirectLabourCostRateStandard seed; historical counts unchanged (20/20/120); office `/labour-engine/` smoke; post-upgrade 22/11/192 tests |
+| Validation | Live `flask db current` = head = `f2c3d4e5f6a7`. HistoricalLabourItem count 120 unchanged. `hourly_rate=0.13` cluster still 43. Zero historical record mutation. Full suite **192 passed**. |
+| Next | **STOP.** Do not start Pricing Engine / ADR-025 or another milestone. |
+| Commit | Product code unchanged at `0569f25`. Docs-only reconciliation: *docs: record FG-008 live migration verification* |
+
 ### FG-008 — Labour Engine Phase B implementation
 
 | Field | Content |
 |-------|---------|
 | ID | FG-008 |
-| Status | **IMPLEMENTED / VERIFIED** — committed and pushed; live DB **not** upgraded to `f2c3d4e5f6a7` |
+| Status | **IMPLEMENTED / VERIFIED** — committed and pushed at `0569f25`; live DB subsequently upgraded (see entry above) |
 | Date | 2026-08-29 |
 | Objective | Implement organization-owned labour methodology: canonical tasks, human-reviewed mappings, versioned production and direct-labour-cost standards, calibration candidate lifecycle, resolution, estimate snapshots, tenant isolation. |
 | Deliverables | Models `app/models/labour_engine.py`; services `app/services/labour_engine.py`; office UI `/labour-engine/`; additive migration `f2c3d4e5f6a7`; `tests/test_labour_engine.py` (22 passed) |
 | Validation | Full suite **192 passed**; historical ingestion **11 passed**; dedicated FG-008 **22 passed**. HistoricalLabourItem facts unchanged. Estimate selling-price math unchanged. |
-| Next | Separate authorization to apply `f2c3d4e5f6a7` to the live development/UAT database and smoke-verify |
+| Next | Live migrate applied 2026-08-29 (see entry above) |
 
 ### FG-008 — Labour Engine Phase B Feature Gate preparation
 

@@ -696,5 +696,5 @@ A comprehensive code audit of the entire existing codebase was conducted to conf
 - [`project-document-package.md`](project-document-package.md) — Authoritative estimate record & four core outputs
 - [`quickbooks-integration.md`](quickbooks-integration.md) — QuickBooks export pipeline boundary
 - [`CAR-001-calibai-product-architecture-reconciliation.md`](CAR-001-calibai-product-architecture-reconciliation.md) — CalibAi lifecycle reconciliation
-- [labour-engine-phase-b-architecture.md](labour-engine-phase-b-architecture.md) — Labour Engine Phase B architecture (FG-008 IMPLEMENTED / VERIFIED; live DB not migrated)
+- [labour-engine-phase-b-architecture.md](labour-engine-phase-b-architecture.md) — Labour Engine Phase B architecture (FG-008 IMPLEMENTED / VERIFIED / LIVE-MIGRATED; Alembic `f2c3d4e5f6a7`)
 - [`testing/uat-reference-cases.md`](../testing/uat-reference-cases.md) — 3415 Roger Stevens Road UAT reference case

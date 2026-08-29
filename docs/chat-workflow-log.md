@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-29 — FG-008 live development/UAT migration and UAT smoke
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Apply committed FG-008 migration `f2c3d4e5f6a7` to live development/UAT; verify schema/seed/historical integrity; bounded Labour Engine smoke; regression tests; docs-only reconciliation. |
+| Business decision | Live migrate authorized. No new schema, no product code, no historical evidence repair, no Pricing Engine. |
+| Architectural decision | `flask db upgrade` `e1b2c3d4e5f6` → `f2c3d4e5f6a7`. ORG-001 $65 CAD/man-hour seed confirmed org-specific. Historical counts unchanged (20 workbooks, 20 estimates, 120 labour items). Foundation operational for UAT only. |
+| Prompt template used | Authorized live-migration + smoke verification prompt (this session). |
+| Approved Cursor prompt summary | Final preflight; apply `f2c3d4e5f6a7`; verify tables/seed/history; UI/service smoke; 22/11/192 tests; docs-only if live-migrated state must be recorded; commit/push docs-only; STOP. |
+| Files expected to change | `docs/*` migration-state reconciliation only. No product code. No new migration. |
+| Files prohibited from changing | `app/**`, `migrations/**`, `tests/**`, historical evidence, `docs/pricing-policy.md` |
+| Implementation result | Upgrade succeeded. Seven FG-008 tables present. Live current/head `f2c3d4e5f6a7`. UAT smoke performed. Leftover synthetic UAT records identified (archived task `UAT-FG008-001`; mapping 1 ACCEPTED to that UAT task; DRAFT 999.000001 production standard; WITHDRAWN candidate). |
+| Tests | `./venv/bin/python -m pytest -q tests/test_labour_engine.py` → **22 passed**; `./venv/bin/python -m pytest -q tests/test_historical_ingestion.py` → **11 passed**; `./venv/bin/python -m pytest -q` → **192 passed**, 119 warnings (pre- and post-upgrade). |
+| Project-state-report update | Yes — live current/head `f2c3d4e5f6a7` |
+| Milestone entry update | Yes — append live-migration record |
+| Constitutional issue raised | None |
+| Unresolved issues | No live estimate versions for snapshot UAT (0 estimates); snapshot path covered by automated tests. Accidental ACCEPTED mapping of historical item 1 to UAT task during smoke (source row unchanged). One `LabourAuditEvent` with `organization_id=ORG-999` from a nonexistent-org resolution probe (no Organization row created). |
+| Next approved step | **STOP.** Do not start the next milestone. |
+| Next approved prompt | None |
+| Commit hash | Product code `0569f25e7ff496ab637d52437d48cf815522afa1`; docs-only reconciliation this session |
+
 ### 2026-08-29 — FG-008 Labour Engine Phase B commit and push
 
 | Field | Content |

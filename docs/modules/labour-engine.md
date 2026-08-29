@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Current** — FG-008 Phase B foundation **IMPLEMENTED / VERIFIED** (live DB not yet migrated) |
+| Status | **Current** — FG-008 Phase B foundation **OPERATIONAL FOR UAT** (live development/UAT migrated to `f2c3d4e5f6a7`) |
 | Updated | 2026-08-29 |
 | Feature Gate | [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED** |
 | Architecture | [../architecture/labour-engine-phase-b-architecture.md](../architecture/labour-engine-phase-b-architecture.md) |
@@ -68,7 +68,7 @@ Office UI at `/labour-engine/`. ORG-001 $65 CAD/man-hour Direct Labour Cost Rate
 
 ## Relevant tests
 
-`tests/test_labour_engine.py` (22 passed as of 2026-08-29 implementation pass).
+`tests/test_labour_engine.py` (22 passed as of 2026-08-29 live-migration verification).
 
 ## Relevant ADRs
 

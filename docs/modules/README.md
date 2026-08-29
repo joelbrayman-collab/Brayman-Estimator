@@ -12,7 +12,7 @@
 | Proposals | [proposals.md](proposals.md) | Templates, proposals, snapshot, PDF |
 | Projects | [projects.md](projects.md) | Projects entity; change orders under Project Controls package |
 | Plan Intelligence | [plan-intelligence.md](plan-intelligence.md) | Phase A upload (M005) + Document Indexing (M007) + Sheets (M009) + Scale/measurement (M010) |
-| Labour Engine | [labour-engine.md](labour-engine.md) | FG-008 Phase B foundation (`app/models/labour_engine.py`, `/labour-engine/`) — **IMPLEMENTED / VERIFIED**; live DB not migrated |
+| Labour Engine | [labour-engine.md](labour-engine.md) | FG-008 Phase B foundation (`app/models/labour_engine.py`, `/labour-engine/`) — **OPERATIONAL FOR UAT**; live current/head `f2c3d4e5f6a7` |
 | BUILD | [build.md](build.md) | **None** — Proposed (ADR-020); not implemented |
 | Supplier Catalogue | [supplier-catalogue.md](supplier-catalogue.md) | **None** — Future (only `CostItem.supplier` text today) |
 

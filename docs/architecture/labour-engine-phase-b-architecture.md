@@ -2,13 +2,13 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IMPLEMENTED / VERIFIED** — live database **not yet upgraded** to `f2c3d4e5f6a7` |
+| Status | **IMPLEMENTED / VERIFIED** — live development/UAT database migrated to `f2c3d4e5f6a7`; foundation **operational for UAT** |
 | Date | 2026-08-29 |
 | Feature Gate | [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED** |
 | ADR | [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** |
 | Baseline | Implementation from `main` @ `820f54afc179279d2435ad3a426b3037548bb45e`; Alembic revision `f2c3d4e5f6a7` (revises `e1b2c3d4e5f6`) |
 | Product | The Estimator / CalibAi |
-| Implementation | **Implemented & verified.** Live database not upgraded in the implementation/commit pass. |
+| Implementation | **Implemented & verified.** Live development/UAT `flask db current` = `f2c3d4e5f6a7` (applied 2026-08-29). |
 
 ---
 
@@ -490,7 +490,7 @@ Rollback: drop additive Labour Engine tables; no rewrite of `historical_labour_i
 
 Legacy: pre-FG-008 estimates have no labour snapshot; they remain lump-cost lines. Do not backfill invented production rates.
 
-Live `flask db current` remains `e1b2c3d4e5f6` until a separately authorized upgrade. The migration graph head is `f2c3d4e5f6a7`.
+Live development/UAT `flask db current` and the migration graph head are both `f2c3d4e5f6a7`. This does **not** populate an operating production-rate catalog or enable selling-price integration.
 
 ---
 

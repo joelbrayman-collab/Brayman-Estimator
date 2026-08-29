@@ -82,7 +82,7 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Intended Alembic head: **`e1b2c3d4e5f6`** (FG-006). Live DB `flask db current` should be verified per environment before relying on it.
+- Alembic graph head and live development/UAT current: **`f2c3d4e5f6a7`** (FG-008). Verify `flask db current` per environment before relying on it.
 
 ### Tests
 
@@ -149,7 +149,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 - Scheduling, Job Costing, Invoicing
 - QuickBooks / accounting integration — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - Historical estimating intelligence (LEARN; [ADR-024](adr/ADR-024-learn-recommendation-boundary.md))
-- **Labour Engine Phase B** — [labour-engine-phase-b-architecture.md](architecture/labour-engine-phase-b-architecture.md); [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED** (live DB not migrated). Selling-price application remains out of scope (ADR-025 **Proposed**).
+- **Labour Engine Phase B** — [labour-engine-phase-b-architecture.md](architecture/labour-engine-phase-b-architecture.md); [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (foundation operational for UAT). Selling-price application remains out of scope (ADR-025 **Proposed**).
 - Electronic signature / formal proposal acceptance workflows
 - CAD ingestion (Phase G; PDF-first per ADR-009)
 

@@ -27,6 +27,7 @@ from app.models.labour_engine import (
     LabourTaskMapping,
     ProductionRateStandard,
 )
+from app.models.organization import Organization
 from app.services.organizations import (
     DEFAULT_ORGANIZATION_ID,
     get_current_organization_id,
@@ -109,6 +110,39 @@ def _org_id(organization_id: Optional[str] = None) -> str:
     return organization_id or get_current_organization_id()
 
 
+def _organization_exists(org_id: str) -> bool:
+    if not org_id:
+        return False
+    return Organization.query.get(org_id) is not None
+
+
+def _unknown_organization_resolution(
+    org_id: str, kind: str
+) -> "LabourResolutionResult":
+    """Fail-closed result for a nonexistent organization. Never persists audit."""
+    if kind == "DIRECT_LABOUR_COST_RATE":
+        reason = (
+            "Organization not found; fail-closed. No standard resolved. "
+            "ORG-001 $65 is not a platform default."
+        )
+    else:
+        reason = (
+            "Organization not found; fail-closed. No production standard resolved."
+        )
+    return LabourResolutionResult(
+        organization_id=org_id,
+        kind=kind,
+        source_class="PROVISIONAL",
+        source_record_type=None,
+        source_record_id=None,
+        standard_version=None,
+        effective_from=datetime.utcnow(),
+        reason_selected=reason,
+        override_reason=None,
+        requires_review=True,
+    )
+
+
 def record_labour_audit(
     event_type: str,
     entity_type: str,
@@ -117,8 +151,13 @@ def record_labour_audit(
     detail: Optional[str] = None,
     organization_id: Optional[str] = None,
 ) -> LabourAuditEvent:
+    org_id = _org_id(organization_id)
+    if not _organization_exists(org_id):
+        raise LabourEngineError(
+            f"Cannot persist labour audit for unknown organization '{org_id}'."
+        )
     event = LabourAuditEvent(
-        organization_id=_org_id(organization_id),
+        organization_id=org_id,
         event_type=event_type,
         entity_type=entity_type,
         entity_id=entity_id,
@@ -395,10 +434,14 @@ def list_unmapped_historical_labour_items(organization_id: Optional[str] = None)
 def _matching_accepted_task_id(org_id: str, source_string: str) -> Optional[int]:
     needle = source_string.strip().lower()
     accepted = (
-        LabourTaskMapping.query.filter_by(
-            organization_id=org_id, review_status="ACCEPTED"
+        LabourTaskMapping.query.join(
+            LabourTask, LabourTask.id == LabourTaskMapping.labour_task_id
         )
-        .filter(LabourTaskMapping.labour_task_id.isnot(None))
+        .filter(
+            LabourTaskMapping.organization_id == org_id,
+            LabourTaskMapping.review_status == "ACCEPTED",
+            LabourTask.status == "ACTIVE",
+        )
         .all()
     )
     for mapping in accepted:
@@ -502,6 +545,10 @@ def accept_labour_task_mapping(
     if not task_id:
         raise LabourEngineError("An accepted mapping requires a canonical Labour Task.")
     task = get_labour_task_or_404(task_id, mapping.organization_id)
+    if task.status != "ACTIVE":
+        raise LabourEngineError(
+            "An accepted mapping requires an ACTIVE canonical Labour Task."
+        )
     mapping.labour_task_id = task.id
     mapping.review_status = "ACCEPTED"
     mapping.reviewed_by = actor
@@ -539,6 +586,41 @@ def reject_labour_task_mapping(
         mapping.id,
         actor=actor,
         detail=f'Rejected mapping "{mapping.source_string}"',
+        organization_id=mapping.organization_id,
+    )
+    db.session.commit()
+    return mapping
+
+
+def revoke_accepted_labour_task_mapping(
+    mapping_id: int,
+    *,
+    reviewed_by: str,
+    review_notes: str,
+    organization_id: Optional[str] = None,
+) -> LabourTaskMapping:
+    """Human-governed revocation of an ACCEPTED mapping. Does not rewrite source evidence."""
+    mapping = get_labour_task_mapping_or_404(mapping_id, organization_id)
+    if mapping.review_status != "ACCEPTED":
+        raise LabourEngineError("Only ACCEPTED mappings can be revoked.")
+    actor = _require_human_actor(reviewed_by)
+    reason = (review_notes or "").strip()
+    if not reason:
+        raise LabourEngineError("Revoking an accepted mapping requires a reason.")
+    prior_task_code = mapping.labour_task.task_code if mapping.labour_task else None
+    mapping.review_status = "REVOKED"
+    mapping.reviewed_by = actor
+    mapping.reviewed_at = datetime.utcnow()
+    mapping.review_notes = reason
+    record_labour_audit(
+        "mapping.revoke",
+        "LabourTaskMapping",
+        mapping.id,
+        actor=actor,
+        detail=(
+            f'Revoked accepted mapping "{mapping.source_string}" '
+            f"(was -> {prior_task_code or 'none'}). {reason}"
+        ),
         organization_id=mapping.organization_id,
     )
     db.session.commit()
@@ -682,6 +764,34 @@ def create_production_rate_standard(
             f"rate={rate} class={evidence_class}"
         ),
         organization_id=org_id,
+    )
+    db.session.commit()
+    return standard
+
+
+def withdraw_production_rate_standard(
+    standard_id: int,
+    *,
+    actor: str,
+    review_notes: str,
+    organization_id: Optional[str] = None,
+) -> ProductionRateStandard:
+    """Withdraw a DRAFT production rate standard. Does not delete the row."""
+    standard = get_production_rate_standard_or_404(standard_id, organization_id)
+    if standard.approval_status != "DRAFT":
+        raise LabourEngineError("Only DRAFT production rate standards can be withdrawn.")
+    human = _require_human_actor(actor)
+    reason = (review_notes or "").strip()
+    if not reason:
+        raise LabourEngineError("Withdrawing a production rate standard requires a reason.")
+    standard.approval_status = "WITHDRAWN"
+    record_labour_audit(
+        "production_rate_standard.withdraw",
+        "ProductionRateStandard",
+        standard.id,
+        actor=human,
+        detail=f"Withdrew DRAFT v{standard.version_number}: {reason}",
+        organization_id=standard.organization_id,
     )
     db.session.commit()
     return standard
@@ -1241,6 +1351,8 @@ def resolve_production_rate(
 ) -> LabourResolutionResult:
     _reject_silent_multipliers(kwargs)
     org_id = _org_id(organization_id)
+    if not _organization_exists(org_id):
+        return _unknown_organization_resolution(org_id, "PRODUCTION_RATE")
     task = get_labour_task_or_404(labour_task_id, org_id)
     conditions = _normalize_conditions(applicable_conditions)
     as_of = as_of or datetime.utcnow()
@@ -1306,6 +1418,11 @@ def resolve_production_rate(
                     applicable_conditions=conditions,
                     evidence_class="BASELINE",
                 )
+                .filter(
+                    ProductionRateStandard.approval_status.notin_(
+                        ("WITHDRAWN", "SUPERSEDED")
+                    )
+                )
                 .order_by(ProductionRateStandard.version_number.desc())
                 .first()
             )
@@ -1334,6 +1451,11 @@ def resolve_production_rate(
                         labour_task_id=task.id,
                         applicable_conditions=conditions,
                         evidence_class="PROVISIONAL",
+                    )
+                    .filter(
+                        ProductionRateStandard.approval_status.notin_(
+                            ("WITHDRAWN", "SUPERSEDED")
+                        )
                     )
                     .order_by(ProductionRateStandard.version_number.desc())
                     .first()
@@ -1463,6 +1585,8 @@ def resolve_direct_labour_cost_rate(
 ) -> LabourResolutionResult:
     _reject_silent_multipliers(kwargs)
     org_id = _org_id(organization_id)
+    if not _organization_exists(org_id):
+        return _unknown_organization_resolution(org_id, "DIRECT_LABOUR_COST_RATE")
     as_of = as_of or datetime.utcnow()
 
     if override_rate is not None and override_rate != "":
@@ -1533,6 +1657,11 @@ def resolve_direct_labour_cost_rate(
                 DirectLabourCostRateStandard.query.filter_by(
                     organization_id=org_id, evidence_class="BASELINE"
                 )
+                .filter(
+                    DirectLabourCostRateStandard.approval_status.notin_(
+                        ("WITHDRAWN", "SUPERSEDED")
+                    )
+                )
                 .order_by(DirectLabourCostRateStandard.version_number.desc())
                 .first()
             )
@@ -1555,6 +1684,11 @@ def resolve_direct_labour_cost_rate(
                 provisional = (
                     DirectLabourCostRateStandard.query.filter_by(
                         organization_id=org_id, evidence_class="PROVISIONAL"
+                    )
+                    .filter(
+                        DirectLabourCostRateStandard.approval_status.notin_(
+                            ("WITHDRAWN", "SUPERSEDED")
+                        )
                     )
                     .order_by(DirectLabourCostRateStandard.version_number.desc())
                     .first()

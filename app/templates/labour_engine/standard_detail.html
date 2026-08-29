@@ -26,4 +26,22 @@
         <tr><th>Provenance</th><td>{{ standard.provenance or "—" }}</td></tr>
     </tbody>
 </table>
+
+{% if standard.approval_status == "DRAFT" %}
+<form method="post" action="{{ url_for('labour_engine.withdraw_standard', standard_id=standard.id) }}" class="form-panel">
+    <h2>Withdraw draft</h2>
+    <p>Withdrawn drafts are not operating standards.</p>
+    <label>
+        Reviewer *
+        <input type="text" name="reviewed_by" value="Joel Brayman" required>
+    </label>
+    <label>
+        Reason *
+        <textarea name="review_notes" rows="3" required></textarea>
+    </label>
+    <div class="form-actions">
+        <button type="submit">Withdraw draft standard</button>
+    </div>
+</form>
+{% endif %}
 {% endblock %}

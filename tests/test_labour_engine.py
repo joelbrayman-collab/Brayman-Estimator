@@ -39,6 +39,7 @@ from app.services.estimates import create_estimate
 from app.services.labour_engine import (
     LabourEngineError,
     accept_labour_task_mapping,
+    archive_labour_task,
     calculate_direct_labour_cost,
     calculate_man_hours,
     calculate_planning_man_hours,
@@ -50,12 +51,16 @@ from app.services.labour_engine import (
     get_labour_task_or_404,
     historical_labour_item_facts,
     list_labour_tasks,
+    list_unmapped_historical_labour_items,
     mark_mapping_not_labour,
+    record_labour_audit,
     reject_labour_task_mapping,
     resolve_direct_labour_cost_rate,
     resolve_production_rate,
+    revoke_accepted_labour_task_mapping,
     suggest_labour_task_mapping,
     transition_calibration_candidate,
+    withdraw_production_rate_standard,
 )
 from app.services.organizations import (
     DEFAULT_ORGANIZATION_ID,
@@ -308,6 +313,100 @@ def test_mapping_rule_suggestion_from_accepted_string_still_suggested(app):
     assert second.review_status == "SUGGESTED"
     assert second.suggested_by == "RULE"
     assert second.labour_task_id == task.id
+
+
+def test_accepted_mapping_to_archived_task_does_not_rule_suggest(app):
+    task = _task(code="LT-UAT-ARCH")
+    first = suggest_labour_task_mapping(
+        source_string="Alberton Garage Labour",
+        labour_task_id=task.id,
+        actor="Joel Brayman",
+    )
+    accept_labour_task_mapping(first.id, reviewed_by="Joel Brayman")
+    archive_labour_task(task.id, actor="Joel Brayman")
+    second = suggest_labour_task_mapping(
+        source_string="Alberton Garage Labour", actor="Joel Brayman"
+    )
+    assert second.review_status == "SUGGESTED"
+    assert second.suggested_by == "HUMAN"
+    assert second.labour_task_id is None
+
+
+def test_revoked_mapping_does_not_rule_suggest_and_requires_human_reason(app):
+    task = _task(code="LT-REVOKE")
+    item = _historical_labour_item(description="Alberton Garage Labour", suffix="rev")
+    facts = historical_labour_item_facts(item)
+    first = suggest_labour_task_mapping(
+        source_string=item.task_description,
+        historical_labour_item_id=item.id,
+        labour_task_id=task.id,
+        actor="Joel Brayman",
+    )
+    accept_labour_task_mapping(first.id, reviewed_by="Joel Brayman")
+    with pytest.raises(LabourEngineError, match="requires a reason"):
+        revoke_accepted_labour_task_mapping(
+            first.id, reviewed_by="Joel Brayman", review_notes="   "
+        )
+    with pytest.raises(LabourEngineError, match="human actor"):
+        revoke_accepted_labour_task_mapping(
+            first.id, reviewed_by="", review_notes="UAT cleanup"
+        )
+    with pytest.raises(LabourEngineError, match="AI cannot"):
+        revoke_accepted_labour_task_mapping(
+            first.id, reviewed_by="AI", review_notes="UAT cleanup"
+        )
+    revoked = revoke_accepted_labour_task_mapping(
+        first.id,
+        reviewed_by="Joel Brayman",
+        review_notes="FG-008 UAT integrity: accidental accept of synthetic mapping.",
+    )
+    assert revoked.review_status == "REVOKED"
+    assert revoked.reviewed_by == "Joel Brayman"
+    assert revoked.reviewed_at is not None
+    assert "accidental accept" in (revoked.review_notes or "").lower() or "UAT" in (
+        revoked.review_notes or ""
+    )
+    db.session.refresh(item)
+    assert historical_labour_item_facts(item) == facts
+    unmapped_ids = {row.id for row in list_unmapped_historical_labour_items()}
+    assert item.id in unmapped_ids
+    second = suggest_labour_task_mapping(
+        source_string=item.task_description, actor="Joel Brayman"
+    )
+    assert second.review_status == "SUGGESTED"
+    assert second.suggested_by == "HUMAN"
+    assert second.labour_task_id is None
+    assert any(
+        row.event_type == "mapping.revoke" for row in LabourAuditEvent.query.all()
+    )
+
+
+def test_unknown_organization_resolution_fail_closed_does_not_persist_audit(app):
+    before = LabourAuditEvent.query.filter_by(organization_id="ORG-999").count()
+    result = resolve_direct_labour_cost_rate(
+        organization_id="ORG-999", persist_audit=True
+    )
+    assert result.organization_id == "ORG-999"
+    assert result.rate_per_man_hour is None
+    assert result.requires_review is True
+    assert result.source_class == "PROVISIONAL"
+    assert "fail-closed" in result.reason_selected.lower()
+    assert "not a platform default" in result.reason_selected
+    assert Organization.query.get("ORG-999") is None
+    assert LabourAuditEvent.query.filter_by(organization_id="ORG-999").count() == before
+    org1 = resolve_direct_labour_cost_rate(
+        organization_id="ORG-001", persist_audit=True
+    )
+    assert org1.rate_per_man_hour == Decimal("65.0000")
+    assert org1.source_class == "ORG-APPROVED"
+    assert LabourAuditEvent.query.filter_by(organization_id="ORG-001").count() >= 1
+    with pytest.raises(LabourEngineError, match="unknown organization"):
+        record_labour_audit(
+            "probe.invalid",
+            "LabourResolution",
+            None,
+            organization_id="ORG-999",
+        )
 
 
 # ---------------------------------------------------------------------------

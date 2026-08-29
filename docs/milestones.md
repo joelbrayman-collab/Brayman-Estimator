@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### FG-008 — Post-UAT integrity stabilization
+
+| Field | Content |
+|-------|---------|
+| ID | FG-008 (not a new milestone) |
+| Status | **UAT INTEGRITY STABILIZATION COMPLETED** |
+| Date | 2026-08-29 |
+| Objective | Close two live-UAT integrity gaps: accidental ACCEPTED mapping to archived UAT task; labour audit persisted for nonexistent `ORG-999`. |
+| Deliverables | `REVOKED` mapping lifecycle; rule suggestion joins ACTIVE tasks only; `record_labour_audit` / resolution fail-closed for unknown organizations; live mapping 1 `REVOKED`; synthetic PRS 1 `WITHDRAWN`; original ORG-999 audit preserved plus ORG-001 reconciliation event |
+| Validation | Dedicated **25 passed**; historical **11 passed**; full suite **195 passed**. HistoricalLabourItem id 1 unchanged. No migration. Alembic `f2c3d4e5f6a7`. |
+| Next | **STOP.** Do not start Pricing Engine or another milestone. |
+
 ### FG-008 — Live development/UAT migration and smoke verification
 
 | Field | Content |

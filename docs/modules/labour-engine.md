@@ -18,7 +18,7 @@ CalibAi owns the engine. Each organization owns its labour intelligence. ORG-001
 ## Responsibilities
 
 - Canonical Labour Task catalog (org-owned)
-- Human-reviewed source-string mappings
+- Human-reviewed source-string mappings (`ACCEPTED` may be **REVOKED** by a human with a reason; `ARCHIVED` tasks cannot drive rule suggestions)
 - Versioned production-rate standards
 - Versioned direct labour cost rate standards (not selling price)
 - Calibration candidate review
@@ -47,7 +47,7 @@ CalibAi owns the engine. Each organization owns its labour intelligence. ORG-001
 
 ## Current implementation
 
-Office UI at `/labour-engine/`. ORG-001 $65 CAD/man-hour Direct Labour Cost Rate Standard v1 is seeded as organization policy (`docs/pricing-policy.md` provenance); other organizations do not inherit it. Historical labour remains FG-006 evidence. Estimating `CostItem` category `Labour` lump unit costs remain valid for legacy estimates. Snapshots are opt-in and are **not** wired into selling-price calculation.
+Office UI at `/labour-engine/`. ORG-001 $65 CAD/man-hour Direct Labour Cost Rate Standard v1 is seeded as organization policy (`docs/pricing-policy.md` provenance); other organizations do not inherit it. Unknown organizations receive fail-closed resolution and cannot persist `LabourAuditEvent`. Historical labour remains FG-006 evidence. Estimating `CostItem` category `Labour` lump unit costs remain valid for legacy estimates. Snapshots are opt-in and are **not** wired into selling-price calculation.
 
 ## Invariants
 
@@ -68,7 +68,7 @@ Office UI at `/labour-engine/`. ORG-001 $65 CAD/man-hour Direct Labour Cost Rate
 
 ## Relevant tests
 
-`tests/test_labour_engine.py` (22 passed as of 2026-08-29 live-migration verification).
+`tests/test_labour_engine.py` (25 passed as of 2026-08-29 post-UAT integrity stabilization).
 
 ## Relevant ADRs
 

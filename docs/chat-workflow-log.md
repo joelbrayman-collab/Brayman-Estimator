@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-29 — FG-008 post-UAT integrity stabilization
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-29 |
+| Branch | `main` |
+| Objective | Close two FG-008 live-UAT integrity issues: accidental ACCEPTED mapping; labour audit for nonexistent ORG-999. Not a new milestone. |
+| Business decision | Preserve historical evidence and append-only audit. Revoke (do not silently rewrite) the accidental accept. Do not create Organization ORG-999. |
+| Architectural decision | Added `REVOKED` mapping status (String(20), no migration). Rule suggestions join `LabourTask.status == ACTIVE`. `record_labour_audit` refuses unknown orgs. Unknown-org resolution returns fail-closed without persisting audit. Existing ORG-999 audit row preserved; ORG-001 reconciliation event recorded. DRAFT synthetic production standard withdrawn via existing `WITHDRAWN` approval status. |
+| Prompt template used | Authorized post-UAT integrity stabilization prompt (this session). |
+| Approved Cursor prompt summary | Inspect mapping/audit architecture; add REVOKED if narrowest; exclude archived tasks from rule suggestion; prevent unknown-org audit persist; reconcile live UAT mapping 1; tests; docs; commit/push if clean; STOP. |
+| Files expected to change | `app/models/labour_engine.py`, `app/services/labour_engine.py`, `app/routes/labour_engine.py`, `app/templates/labour_engine/*`, `tests/test_labour_engine.py`, `docs/*` |
+| Files prohibited from changing | Historical workbooks/facts, pricing-policy, estimate selling-price, ADR-025, Plan Intelligence, Accepted Proposals, migrations |
+| Implementation result | Mapping 1 `REVOKED`. HistoricalLabourItem 1 unchanged. Archived-task rule-suggestion blocked. Unknown-org resolution does not persist audit. ORG-999 audit id 16 preserved; reconciliation event 23 under ORG-001. PRS 1 `WITHDRAWN`. |
+| Tests | `tests/test_labour_engine.py` → **25 passed**; `tests/test_historical_ingestion.py` → **11 passed**; full suite → **195 passed**, 293 warnings |
+| Project-state-report update | Yes — test counts; not a new milestone |
+| Milestone entry update | Architecture record only (not a product milestone) |
+| Constitutional issue raised | None |
+| Unresolved issues | SQLite did not enforce FK on the preserved ORG-999 audit row; documented as historical UAT anomaly. Mapping 4 created then REJECTED during live verification probe. |
+| Next approved step | **STOP.** |
+| Next approved prompt | None |
+| Commit hash | (this commit) |
+
 ### 2026-08-29 — FG-008 live development/UAT migration and UAT smoke
 
 | Field | Content |

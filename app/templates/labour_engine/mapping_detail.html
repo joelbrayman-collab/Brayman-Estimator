@@ -76,4 +76,21 @@
     <button type="submit">Mark NOT_LABOUR</button>
 </form>
 {% endif %}
+{% if mapping.review_status == "ACCEPTED" %}
+<form method="post" action="{{ url_for('labour_engine.revoke_mapping', mapping_id=mapping.id) }}" class="form-panel">
+    <h2>Revoke accepted mapping</h2>
+    <p>Revocation is a human-governed lifecycle action. Historical source evidence is not rewritten.</p>
+    <label>
+        Reviewer *
+        <input type="text" name="reviewed_by" value="Joel Brayman" required>
+    </label>
+    <label>
+        Reason *
+        <textarea name="review_notes" rows="3" required></textarea>
+    </label>
+    <div class="form-actions">
+        <button type="submit">Revoke mapping</button>
+    </div>
+</form>
+{% endif %}
 {% endblock %}

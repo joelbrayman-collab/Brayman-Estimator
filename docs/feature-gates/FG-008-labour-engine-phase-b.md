@@ -12,7 +12,7 @@
 | Related ADRs | [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Proposed** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** |
 | Prerequisites | FG-007 / M011 **implemented**; FG-006 **implemented** |
 | Approved baseline | `main` @ `820f54afc179279d2435ad3a426b3037548bb45e` |
-| Product code | **Implemented & verified.** Migration `f2c3d4e5f6a7` (graph head and live `flask db current`). Tests: `tests/test_labour_engine.py` (**22 passed**). Live development/UAT database upgraded 2026-08-29. |
+| Product code | **Implemented & verified.** Migration `f2c3d4e5f6a7` (graph head and live `flask db current`). Tests: `tests/test_labour_engine.py` (**25 passed**). Live development/UAT database upgraded 2026-08-29. Post-UAT integrity stabilization 2026-08-29 (REVOKED mappings; archived tasks excluded from rule suggestion; unknown orgs cannot persist labour audit). |
 
 ---
 

@@ -27,6 +27,8 @@ from app.services.labour_engine import (
     suggest_labour_task_mapping,
     transition_calibration_candidate,
     update_labour_task,
+    withdraw_production_rate_standard,
+    revoke_accepted_labour_task_mapping,
 )
 from app.services.organizations import get_current_organization_id
 
@@ -245,6 +247,20 @@ def not_labour_mapping(mapping_id):
     return redirect(url_for("labour_engine.mapping_detail", mapping_id=mapping_id))
 
 
+@labour_engine_bp.route("/mappings/<int:mapping_id>/revoke", methods=["POST"])
+def revoke_mapping(mapping_id):
+    try:
+        revoke_accepted_labour_task_mapping(
+            mapping_id,
+            reviewed_by=_actor(),
+            review_notes=request.form.get("review_notes", ""),
+        )
+        flash("Accepted mapping revoked. Historical source row unchanged.", "success")
+    except LabourEngineError as exc:
+        flash(str(exc), "danger")
+    return redirect(url_for("labour_engine.mapping_detail", mapping_id=mapping_id))
+
+
 # ----- Production rate standards -----
 
 
@@ -299,6 +315,20 @@ def standard_detail(standard_id):
     except LabourEngineError:
         abort(404)
     return render_template("labour_engine/standard_detail.html", standard=standard)
+
+
+@labour_engine_bp.route("/standards/<int:standard_id>/withdraw", methods=["POST"])
+def withdraw_standard(standard_id):
+    try:
+        withdraw_production_rate_standard(
+            standard_id,
+            actor=_actor(),
+            review_notes=request.form.get("review_notes", ""),
+        )
+        flash("Draft production rate standard withdrawn.", "success")
+    except LabourEngineError as exc:
+        flash(str(exc), "danger")
+    return redirect(url_for("labour_engine.standard_detail", standard_id=standard_id))
 
 
 # ----- Direct labour cost rates -----

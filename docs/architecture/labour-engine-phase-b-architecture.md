@@ -230,7 +230,7 @@ CalibAi may ship **optional baseline task dictionaries** as BASELINE reference. 
 | `labour_task_id` | Target canonical task (nullable until accepted) |
 | `historical_labour_item_id` | Optional specific evidence row |
 | `mapping_confidence` | Suggestion quality (0–1); never write-authority |
-| `review_status` | `SUGGESTED` / `ACCEPTED` / `REJECTED` / `NOT_LABOUR` |
+| `review_status` | `SUGGESTED` / `ACCEPTED` / `REJECTED` / `NOT_LABOUR` / `REVOKED` |
 | `suggested_by` | `AI` / `RULE` / `HUMAN` |
 | `reviewed_by` / `reviewed_at` / `review_notes` | Mandatory on accept/reject |
 | `audit` | Immutable suggestion history; new row on remapping (do not silently overwrite accepted maps) |
@@ -513,7 +513,7 @@ AI take-off / M012+, mobile field time capture, payroll integration, QuickBooks 
 
 ## 21. Tests
 
-See [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) and `tests/test_labour_engine.py`. Dedicated suite **22 passed**. Full suite **192 passed**. Historical ingestion **11 passed**.
+See [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) and `tests/test_labour_engine.py`. Dedicated suite **25 passed**. Full suite **195 passed**. Historical ingestion **11 passed**.
 
 ---
 

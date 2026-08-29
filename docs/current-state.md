@@ -14,8 +14,8 @@
 | HEAD / `origin/main` | `0569f25e7ff496ab637d52437d48cf815522afa1` (FG-008 implementation). Parent: `820f54afc179279d2435ad3a426b3037548bb45e`. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | Docs reconcile after FG-006 | `e2bf33c` — *docs: reconcile post-FG-006 governance turnover state* |
-| Working tree at last verified inspect | Docs-only live-migration reconciliation after upgrade (this pass) |
-| Governance | FG-004, FG-005, FG-006, FG-007 **approved & implemented**; **FG-008 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; CAR-001 adopted; Review Turnover Protocol adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Proposed** |
+| Working tree at last verified inspect | FG-008 post-UAT integrity stabilization (this pass) |
+| Governance | FG-004, FG-005, FG-006, FG-007 **approved & implemented**; **FG-008 CLOSED — OPERATIONAL FOR UAT** (live-migrated, UAT-smoke-verified, post-UAT integrity stabilization completed); CAR-001 adopted; Review Turnover Protocol adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Proposed** |
 
 ## Implemented (evidenced in code)
 
@@ -26,7 +26,7 @@
 - **Scale Calibration / Measurement Tools (M010)** — `plan_scale_calibrations`, `plan_measurements`; PDF.js viewer; migration `c9e0f1a2b3d4`
 - **Organization Foundation & Project Commercial Context (M011 / FG-007)** — `Organization` (`ORG-001`), tenant isolation, versioned `ProjectCommercialContext`, immutable `EstimateVersion.commercial_context_id`; migration `d0a1b2c3d4e5`
 - **Historical Estimate Ingestion Engine Phase B (FG-006)** — OpenXML parser, Families A–E, historical evidence models including `HistoricalLabourItem` (120 ORG-001 rows), review UI `/historical-estimates/`; migration `e1b2c3d4e5f6`
-- **Labour Engine Phase B (FG-008)** — org-owned `LabourTask`, human-reviewed mappings, versioned `ProductionRateStandard` and `DirectLabourCostRateStandard`, `LabourCalibrationCandidate` lifecycle, explainable resolution, immutable `EstimateLabourSnapshot`, office UI `/labour-engine/`; additive migration `f2c3d4e5f6a7`. **Implemented, verified, committed, pushed, live-migrated on development/UAT, UAT-smoke-verified.** Foundation **operational for UAT**. This does **not** mean Pricing Engine, a populated production-rate catalog, approved historical mappings, actuals, or selling-price integration.
+- **Labour Engine Phase B (FG-008)** — org-owned `LabourTask`, human-reviewed mappings (including **REVOKED** for previously accepted mappings), versioned `ProductionRateStandard` and `DirectLabourCostRateStandard`, `LabourCalibrationCandidate` lifecycle, explainable resolution, immutable `EstimateLabourSnapshot`, office UI `/labour-engine/`; additive migration `f2c3d4e5f6a7`. **Implemented, verified, committed, pushed, live-migrated, UAT-smoke-verified, post-UAT integrity stabilized.** Foundation **operational for UAT**. Archived tasks cannot drive mapping rule suggestions. Unknown organizations cannot persist `LabourAuditEvent`. Historical evidence unchanged. This does **not** mean Pricing Engine, a populated production-rate catalog, approved historical mappings, actuals, or selling-price integration.
 
 ## Architecture / readiness only (not implemented)
 
@@ -44,7 +44,7 @@
 
 M005–M011 and **FG-006** remain **implemented, verified, committed, and pushed** on `main`.
 
-- **Current coded work:** FG-008 Labour Engine Phase B — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. Foundation **operational for UAT**.
+- **Current coded work:** FG-008 Labour Engine Phase B — **CLOSED — OPERATIONAL FOR UAT** (post-UAT integrity stabilization completed). Not a new milestone.
 - **Blocked / Not Started (code):** Organization-Calibrated Pricing Engine, cross-org learning, source workbook mutation, pricing formula modifications (ADR-025 still Proposed).
 
 ## August 25, 2026 governance (recorded — not implemented)

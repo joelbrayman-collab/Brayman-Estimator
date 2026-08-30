@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-016 Ontario / Ottawa Permit Intelligence POC closed (live migration + Pratt UAT)
+
+| Field | Content |
+|-------|---------|
+| ID | [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
+| Branch | `main` |
+| Objective | Apply `f8a9b0c1d2e3` to development/UAT; bounded live office Pratt Permit Intelligence UAT; HTML/PDF verify; close the gate. |
+| Deliverables | Live current=head `f8a9b0c1d2e3`. Pratt UAT project id 9 port 5009. Analyses v1–v3. HTML/PDF same snapshot. Source inventory reconciles to 10 live APPROVED rules. |
+| Validation | Dedicated **37 passed**. Relevant regressions **357 passed**. Full suite **401 passed**. No product-code change. No product/rule/source defect. |
+| Next | STOP. Do not begin national permit expansion, Phase D, branding, Change Order documents, supplier integration, or external AI / runtime web. |
+
 ### 2026-08-30 — FG-016 Ontario / Ottawa Permit Intelligence POC implemented (live migration pending)
 
 | Field | Content |

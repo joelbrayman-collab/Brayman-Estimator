@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-016 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Permit Intelligence** owns Pass 2 analysis, findings, and the substantive Permit & Approvals Report. **Projects** owns project-tied location, jurisdiction resolution, Permit Profile relationship, Hub presentation, and the report snapshot relationship. **Permit Rules Library** is a **platform governed source** ([ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md)). Plan Intelligence remains plan/site-plan owner (**read-through only**). |
 | Date | 2026-08-30 |
-| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** / **LIVE MIGRATION PENDING**. **Not CLOSED.** |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
 | Architecture | [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [permit-rules-library.md](../architecture/permit-rules-library.md) · [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) · [modules/permit-intelligence.md](../modules/permit-intelligence.md) · [modules/projects.md](../modules/projects.md) |
 | Related ADRs | [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** · [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) **Accepted** · [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-005](../adr/ADR-005-ai-takeoff-traceability.md) **Accepted** · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | [FG-015](FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. ADR-037/038/039 **Accepted**. Live current = head `e7f8a9b0c1d2`. Full suite **364 passed**. |
@@ -19,15 +19,15 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** / **LIVE MIGRATION PENDING**. **Not CLOSED.** |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT** |
 | Implementation | **IMPLEMENTED** — bounded Ontario / Ottawa coach-house POC. |
-| Schema / Alembic | Graph head **`f8a9b0c1d2e3`**. Live development/UAT current remains **`e7f8a9b0c1d2`**. **Do not live-migrate in this pass.** |
+| Schema / Alembic | Live current = graph head **`f8a9b0c1d2e3`**. One head. Applied `e7f8a9b0c1d2` → `f8a9b0c1d2e3`. |
 | Permit Rules Library | **10 APPROVED** bounded rules (`OTT-CH-001`–`OTT-CH-010`). Provenance: [permit-rules-ontario-ottawa-sources.md](../architecture/permit-rules-ontario-ottawa-sources.md). |
 | Substantive Permit Intelligence / Pass 2 | **IMPLEMENTED** (deterministic evaluation, facts, immutable snapshots, HTML report, neutral CalibAi PDF). |
-| Mike Pratt project in product data | **NOT CREATED** in live development/UAT. UAT reference only. Isolated tests use a synthetic labeled project. |
+| Mike Pratt project in product data | **CREATED** as labeled live UAT/reference project **id 9** (`FG016-UAT-PRATT`) on port **5009**. Advisory only. Not a permit determination. |
 | Live web / geocoder / external AI | **NOT AUTHORIZED** at product runtime. |
 
-This gate makes Permit Intelligence **genuinely useful** for **one bounded jurisdiction / reference case**. It is a **POC**, not a national permit library.
+This gate is **CLOSED / OPERATIONAL FOR UAT**. Live current = head `f8a9b0c1d2e3`. Pratt office UAT **PASSED** on port **5009**.
 
 Success is a **useful advisory Permit & Approvals Report**. Success is **not** PERMIT READY, PERMIT APPROVED, or ZONING COMPLIANT.
 
@@ -490,6 +490,28 @@ Synthetic / labeled records. Pratt reference project **only** as labeled UAT whe
 
 ---
 
+## Live migration + Pratt office UAT (2026-08-30)
+
+Applied `e7f8a9b0c1d2` → `f8a9b0c1d2e3`. Current = head = `f8a9b0c1d2e3`. One head. 10 APPROVED rules with source/provenance/effective dating. No additional national corpus. No runtime web.
+
+Office app: **port 5009** (fresh process).
+
+Labeled Pratt UAT project **id 9** (`FG016-UAT-PRATT`, client id 5). Location id **6** complete. PermitProfile id **8** `PRELIMINARY_FOUNDATION` v1. City of Ottawa `CA-ON-OTTAWA`. Permit context Additional dwelling/coach house. PRELIMINARY / FOUNDATION ONLY.
+
+Plan evidence: signed Precision Home Design set `Pratt-04-01-2026-Signed.pdf` (PlanDocument id **3**; DrawingRevision **A** id 2), dated April 1, 2026, BCIN Jeremy McMullen 22021. Sheets used: A5 GROUND FLOOR PLAN (footprint), A7/A8 ELEVATIONS (height from grade to mid-point of roof), A12 SITE PLAN (same-lot, approximate setbacks, bounded submission items). A11 BUILDING SECTION shows FINISHED GRADE line only — not a grading plan.
+
+Current facts (13 current; fact id 2 superseded): same_lot true; footprint **121.35 m²** from A5 overall exterior 52'-3" × 25'-0"; height **6.096 m** from labeled 20'-0"; setback **3.048 m AMBIGUOUS** (±10' on A12); site-plan identity A12; property lines / building location / driveway shown; lot area / easements / overhead / well-septic **not labeled**; grading plan **not shown**. Lot area (ha), municipal vs private servicing, and building-permit application **not invented**.
+
+Analyses: id **1** v1 (2026-08-30 21:36, stale), id **2** v2 (21:38, stale), id **3** v3 current. Each 10 findings: PASS 1 / VERIFY 3 / MISSING_INFORMATION 4 / POTENTIAL_NON_CONFORMANCE 1 / ADDITIONAL_APPROVAL_LIKELY 1. v1 findings remain pinned to original fact id 2 citation. HTML `/projects/9/permit-report` and PDF `/projects/9/permit-report.pdf` match the same snapshot (CalibAi layout; no Brayman proposal logo). Hub: report available; last analysis 2026-08-30 21:38; plan/site identified; attention 9; recheck no after v3.
+
+Unsupported synthetics preserved: project **10** Toronto Commercial → `RULE_COVERAGE_NOT_AVAILABLE` (jurisdiction unresolved; Ottawa rules not applied). Project **11** North Gower Garage/accessory → `RULE_COVERAGE_NOT_AVAILABLE` (Ottawa resolved; corpus does not cover other Ottawa types). No Ottawa fallback.
+
+No Estimate / Proposal / TakeoffPackage / contract mutation. No runtime web / external AI. Product code **unchanged** in this pass.
+
+Dedicated FG-016 **37 passed**. Relevant regressions **357 passed**. Full suite **401 passed**.
+
+---
+
 ## Explicit non-goals
 
 National rules library; runtime web scrape / municipal APIs / geocoder; external or regulatory AI; AI-approved rules; ChatGPT conclusions as product facts; comprehensive OBC / fire / energy / structural engine; Phase D; automatic estimate insertion; contract-clause generation; Organization Brand Profile; Change Order documents; BUILD permit numbers / inspections; municipal submissions; hard commercial blocking; background rule monitoring; cadastral/GIS; a second jurisdiction resolver; pre-deciding Pratt PASS/fail.
@@ -498,8 +520,8 @@ National rules library; runtime web scrape / municipal APIs / geocoder; external
 
 ## Implementation authorization
 
-This document **authorizes** the bounded FG-016 product implementation, including one additive Alembic revision **in a later implementation prompt**.
+This document **authorized** the bounded FG-016 product implementation, including one additive Alembic revision `f8a9b0c1d2e3`.
 
-**This governance pass does not implement.** Do not populate the library now. Do not create the Pratt project now. Do not enable live web lookup or external AI.
+**Live migration + Pratt office UAT is complete.** Current = head = `f8a9b0c1d2e3`. Pratt UAT project **id 9** on port **5009**. Status **CLOSED / OPERATIONAL FOR UAT**.
 
-**Next governed action:** FG-016 **implementation** under a separate Cursor prompt.
+**Next governed action:** STOP. Do not begin national permit expansion. Do not begin Phase D. Do not begin Organization Branding. Do not begin Change Order document work. Do not begin supplier integration. Do not enable external AI / runtime web lookup.

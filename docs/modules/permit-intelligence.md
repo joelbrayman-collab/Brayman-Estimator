@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Pass 1 foundation Current (FG-015)** — **CLOSED / OPERATIONAL FOR UAT**. Pass 2 **[FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE MIGRATION PENDING**. Architecture **Accepted** (ADR-037/038/039). |
+| Status | **Pass 1 foundation Current (FG-015)** — **CLOSED / OPERATIONAL FOR UAT**. Pass 2 **[FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** (ADR-037/038/039). |
 | Updated | 2026-08-30 |
 | Code | Pass 1: `app/models/project.py` (`PermitProfile`, `ProjectLocation`), `app/services/permit_foundation.py`. Pass 2: `app/models/permit_intelligence.py`, `app/services/permit_intelligence.py`, `app/services/permit_report_pdf.py`, Hub panel in `app/templates/projects/detail.html`, report at `/projects/<id>/permit-report`. Platform rules: `permit_rules`. |
 | Architecture | [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [permit-rules-library.md](../architecture/permit-rules-library.md) · [permit-rules-ontario-ottawa-sources.md](../architecture/permit-rules-ontario-ottawa-sources.md) · [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) |
-| Feature Gate | [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE MIGRATION PENDING** (not CLOSED). |
+| Feature Gate | [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. |
 
 ## Purpose
 
@@ -57,7 +57,7 @@ FG-015 Pass 1 remains `PRELIMINARY_FOUNDATION`. FG-016 Pass 2 is a **separate** 
 ## Dependencies
 
 - [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) for location / jurisdiction / preliminary profile (**CLOSED / OPERATIONAL FOR UAT**)
-- [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) for bounded curated Ontario / Ottawa rules + Mike Pratt POC (**IMPLEMENTED / LIVE MIGRATION PENDING**)
+- [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) for bounded curated Ontario / Ottawa rules + Mike Pratt POC (**CLOSED / OPERATIONAL FOR UAT**)
 
 ## Related
 

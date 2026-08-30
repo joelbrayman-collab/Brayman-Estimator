@@ -112,7 +112,7 @@ Generated **only from an APPROVED estimate**.
 
 ## Additional governed project document (FUTURE / NOT IMPLEMENTED)
 
-**Status:** Pass 2 report **IMPLEMENTED / LIVE MIGRATION PENDING** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)). Architecture **Accepted** (ADR-037/038/039). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (preliminary profile foundation). Canonical: [permit-and-approvals-report.md](permit-and-approvals-report.md) · [permit-rules-library.md](permit-rules-library.md).
+**Status:** Pass 2 report **CLOSED / OPERATIONAL FOR UAT** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)). Architecture **Accepted** (ADR-037/038/039). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (preliminary profile foundation). Canonical: [permit-and-approvals-report.md](permit-and-approvals-report.md) · [permit-rules-library.md](permit-rules-library.md).
 
 The **Permit & Approvals Report** is a **core project document** (advisory preflight). It is **not** a fifth estimate-derived commercial output, **not** a Change Order, and **not** a substitute for the AHJ.
 

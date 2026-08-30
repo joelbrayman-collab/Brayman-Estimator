@@ -372,7 +372,7 @@ Synthetic / labeled UAT records only. **Do not** seed Pratt conclusions or creat
 
 Permit Rules Library; Ottawa/Ontario zoning or building-code engine; live web lookup / geocoding / municipal APIs; external or regulatory AI; automatic zoning or permit conclusions; municipal submissions; Pass 2 Permit & Approvals Report; Plan Intelligence integration; Phase D; estimate insertion; contract generation; Organization Brand Profile; Change Order documents; BUILD operational permits; national jurisdiction library; cadastral/GIS; creating the Mike Pratt project; parsing historical `Project.address`.
 
-**Recommended second Permit Gate:** [FG-016](FG-016-ontario-ottawa-permit-intelligence-poc.md) **IMPLEMENTED / LIVE MIGRATION PENDING**.
+**Recommended second Permit Gate:** [FG-016](FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**.
 
 ---
 

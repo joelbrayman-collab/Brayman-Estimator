@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-016 live migration + Mike Pratt office UAT close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ starting `1294db4f51bae5be68541c77b8721c7ab4d58496` |
+| Objective | Apply FG-016 migration to development/UAT; bounded live Pratt Permit Intelligence UAT; HTML/PDF verify; close FG-016 if evidence passes. |
+| Business decision | Advisory only. PASS never means AHJ approval. Pratt is labeled UAT/reference. Do not repair product/rule/source defects under this prompt. |
+| Architectural decision | Apply existing `f8a9b0c1d2e3` only. Do not create another migration. Do not change product code unless a defect is found (none found). |
+| Prompt template used | Live-migrate + UAT prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — FG-016 LIVE MIGRATION + MIKE PRATT OFFICE UAT. Apply e7f8a9b0c1d2 → f8a9b0c1d2e3. Pratt UAT from signed plans. HTML/PDF. Tests. Docs. Close only if all evidence passes. |
+| Files expected to change | Governed docs only (plus live DB UAT residue). |
+| Files prohibited from changing | Product code unless a defect is discovered; Alembic revisions; approved rule seed. |
+| Implementation result | Migration applied. Current=head=`f8a9b0c1d2e3`. Pratt project 9 port 5009. Analyses v1–v3. 10 findings. HTML/PDF consistent. Unsupported coverage projects 10–11. No product-code change. FG-016 **CLOSED / OPERATIONAL FOR UAT**. |
+| Tests | Dedicated FG-016 **37 passed**. Relevant regressions **357 passed**. Full suite **401 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append close; do not rewrite implementation entry) |
+| Constitutional issue raised | None |
+| Unresolved issues | None for FG-016 closure. National expansion / Phase D / branding / Change Order documents / supplier / external AI remain unauthorized. |
+| Next approved step | **STOP.** Do not begin national permit expansion, Phase D, Organization Branding, Change Order documents, supplier integration, or external AI / runtime web. |
+| Next approved prompt | None authorized. |
+| Commit hash | (this close commit) |
+
 ### 2026-08-30 — FG-016 Ontario / Ottawa Permit Intelligence POC implementation
 
 | Field | Content |

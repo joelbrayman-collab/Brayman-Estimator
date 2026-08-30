@@ -2,16 +2,16 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IMPLEMENTED** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)) / **LIVE MIGRATION PENDING**. Architecture **Accepted** ([ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md)). |
+| Status | **CLOSED / OPERATIONAL FOR UAT** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)). Architecture **Accepted** ([ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md)). |
 | Date | 2026-08-30 |
 | Product | The Estimator / CalibAi |
 | Canonical Feature Gate | [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) |
 | Source inventory | [permit-rules-ontario-ottawa-sources.md](permit-rules-ontario-ottawa-sources.md) |
 | Related | [permit-and-approvals-report.md](permit-and-approvals-report.md) · [jurisdiction-resolution.md](jurisdiction-resolution.md) · [legal-content-and-templates.md](../governance/legal-content-and-templates.md) |
 | Code | `app/models/permit_intelligence.py` (`PermitRule`, `PERMIT_RULE_SEED`) · `app/services/permit_intelligence.py` |
-| Schema | Graph head `f8a9b0c1d2e3`. Live current remains `e7f8a9b0c1d2`. |
+| Schema | Live current = graph head `f8a9b0c1d2e3`. |
 
-**Current vs intended:** V1 tables and **10 APPROVED** bounded Ontario / City of Ottawa / coach-house rules exist in the repository seed and additive migration. They are **not** live-migrated onto the development/UAT database in the FG-016 implementation pass. This is **not** a national legal CMS. It is **not** the Contract / Warranty Legal Content Gate.
+**Current vs intended:** V1 tables and **10 APPROVED** bounded Ontario / City of Ottawa / coach-house rules are live on the development/UAT database (`f8a9b0c1d2e3`). This is **not** a national legal CMS. It is **not** the Contract / Warranty Legal Content Gate.
 
 ---
 
@@ -82,4 +82,5 @@ Populated families: permit application, same-lot applicability, dual-compliance 
 - Runtime web lookup
 - A national library
 - Reuse of contract/warranty templates as zoning/permit rules
-- Live-migrating `f8a9b0c1d2e3` in the FG-016 implementation pass
+- Creating a second Alembic head
+- National expansion without a later Feature Gate

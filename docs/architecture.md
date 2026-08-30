@@ -91,7 +91,7 @@ Notable behaviours evidenced in code/tests:
 ### Tests
 
 - Location: [`tests/`](../tests/)
-- Collected locally: last governed full suite **364 passed** (`./venv/bin/python -m pytest -q`, 2026-08-30 FG-015 close). Tests **not rerun** for FG-016 docs-only governance.
+- Collected locally: last governed full suite **401 passed** (`./venv/bin/python -m pytest -q`, 2026-08-30 FG-016 close).
 - Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders, project hub, plan upload/indexing/sheets/scale/take-off, labour engine, pricing engine, historical ingestion, organization foundation
 
 ### Current module relationships (simplified)
@@ -109,7 +109,7 @@ Client ──< Project ──< Estimate ──< EstimateVersion ──< Sections
 - Navigation also shows **disabled** placeholders: Purchase Orders, Job Costing, Reports, AI Assistant, Settings (`app/navigation.py`).
 - **Project Hub UX (FG-011):** `/projects/<id>` (`app/routes/projects.py` `view_project`, `app/services/project_hub.py`, `app/templates/projects/detail.html`) reads stored facts and links into owning modules. No durable hub entity.
 - **Estimate-output consistency (FG-012):** Estimating-owned internal breakdown (`app/services/estimate_output.py`, `GET /estimates/<id>/versions/<version_id>/internal-breakdown`). Named-method Proposal totals copy frozen `EstimatePricingSnapshot`. Customer PDF omits Overhead/Profit rows. No new entity or schema.
-- **Permit Foundation (FG-015):** `ProjectLocation`, platform jurisdiction definitions/aliases, versioned preliminary `PermitProfile`, Hub PLAN **PERMIT & APPROVALS** foundation panel (`app/services/jurisdiction.py`, `app/services/permit_foundation.py`). Live current = `e7f8a9b0c1d2`. Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **IMPLEMENTED / LIVE MIGRATION PENDING** (graph head `f8a9b0c1d2e3`).
+- **Permit Foundation (FG-015):** `ProjectLocation`, platform jurisdiction definitions/aliases, versioned preliminary `PermitProfile`, Hub PLAN **PERMIT & APPROVALS** foundation panel (`app/services/jurisdiction.py`, `app/services/permit_foundation.py`). Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** (live current = head `f8a9b0c1d2e3`).
 
 ### Known architectural risks / incomplete boundaries
 
@@ -137,7 +137,7 @@ Aligns with [platform-vision.md](platform-vision.md), [CAR-001](architecture/CAR
 - Governance Feature Gate before net-new modules
 - Human-approved, source-traceable take-off before estimate insertion (ADR-005/006 **Accepted**; [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; mapping deferred to Phase D)
 - One project-location / jurisdiction-resolution architecture ([ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted**; [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**)
-- Permit Intelligence as a project capability; Permit & Approvals Report as its governed snapshot ([ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted**; Pass 1 [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**; Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **IMPLEMENTED / LIVE MIGRATION PENDING**)
+- Permit Intelligence as a project capability; Permit & Approvals Report as its governed snapshot ([ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted**; Pass 1 [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**; Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**)
 - Supplier price snapshots on consumption (ADR-008 — Proposed)
 
 ---
@@ -158,7 +158,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
 - **BUILD / MONITOR / LEARN** — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md); BUILD boundary [ADR-020](adr/ADR-020-build-module-boundary.md) (**Accepted**, not implemented); MONITOR baseline [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) (**Accepted**, not implemented; Project Gross Margin)
 - **Field / shared API** — [ADR-022](adr/ADR-022-field-client-and-shared-api.md) (**Accepted** direction; not implemented)
-- **Project document package** — outputs **1–2** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. Outputs **3–4** remain **Future**. **Permit Intelligence** Pass 1 **CLOSED / OPERATIONAL FOR UAT** ([FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md)); Pass 2 **IMPLEMENTED / LIVE MIGRATION PENDING** ([FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md); ADR-037/038/039). Permit & Approvals Report is a **core project document**, not a fifth estimate output and not a Change Order. **Organization Brand Profile** and **Change Order document family** remain **FUTURE / NOT IMPLEMENTED**.
+- **Project document package** — outputs **1–2** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. Outputs **3–4** remain **Future**. **Permit Intelligence** Pass 1 **CLOSED / OPERATIONAL FOR UAT** ([FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md)); Pass 2 **CLOSED / OPERATIONAL FOR UAT** ([FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md); ADR-037/038/039). Permit & Approvals Report is a **core project document**, not a fifth estimate output and not a Change Order. **Organization Brand Profile** and **Change Order document family** remain **FUTURE / NOT IMPLEMENTED**.
 - Scheduling, Job Costing, Invoicing
 - QuickBooks / accounting integration — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - Historical estimating intelligence (LEARN; [ADR-024](adr/ADR-024-learn-recommendation-boundary.md))
@@ -172,6 +172,6 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 - CAD ingestion (Phase G; PDF-first per ADR-009)
 - Estimate mapping from approved take-off packages (Phase D; not FG-010). Material Catalogue identity **precedes** Phase D implementation.
 - Material Catalogue implementation (lumber/sheets identity + CostItem link) — [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**
-- Permit Intelligence / Permit & Approvals Report / jurisdiction resolver — architecture **Accepted** (ADR-037/038/039); Pass 1 [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**; Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **APPROVED FOR IMPLEMENTATION** / **NOT IMPLEMENTED** (no live lookup / external AI; rules library still empty) — [permit-and-approvals-report.md](architecture/permit-and-approvals-report.md) · [permit-rules-library.md](architecture/permit-rules-library.md) · [jurisdiction-resolution.md](architecture/jurisdiction-resolution.md)
+- Permit Intelligence / Permit & Approvals Report / jurisdiction resolver — architecture **Accepted** (ADR-037/038/039); Pass 1 [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**; Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** (no live lookup / external AI; 10 APPROVED Ottawa coach-house rules live) — [permit-and-approvals-report.md](architecture/permit-and-approvals-report.md) · [permit-rules-library.md](architecture/permit-rules-library.md) · [jurisdiction-resolution.md](architecture/jurisdiction-resolution.md)
 - Organization Brand Profile / org-owned logo upload / brand snapshot — [organization-brand-profile.md](architecture/organization-brand-profile.md) **FUTURE / NOT IMPLEMENTED**
 - Change Order governed document family / client email / field UX — [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (do not create a second Change Order entity)

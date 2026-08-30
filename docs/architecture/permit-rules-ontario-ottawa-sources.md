@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IMPLEMENTED** in repository seed / **LIVE MIGRATION PENDING** |
+| Status | **LIVE** — 10 APPROVED rules on development/UAT (`f8a9b0c1d2e3`) |
 | Date | 2026-08-30 |
 | Coverage | Ontario / City of Ottawa / Additional dwelling/coach house / North Gower reference |
 | Canonical seed | `app/models/permit_intelligence.py` (`PERMIT_RULE_SEED`) |
-| Migration | `f8a9b0c1d2e3` (graph head; **not** applied to live development/UAT) |
+| Migration | `f8a9b0c1d2e3` applied live (`e7f8a9b0c1d2` → `f8a9b0c1d2e3`; current = head) |
 | Reviewer | `FG-016-GOVERNANCE-SEED` (deterministic development/governance review; **not** AI approval) |
 | Effective from | 2026-03-11 (City of Ottawa dual-compliance date for applications deemed complete on or after that day) |
 

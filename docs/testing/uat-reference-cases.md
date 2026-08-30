@@ -9,7 +9,7 @@
 
 Record real or representative projects used to validate estimator outputs, reconciliation, and the four-output document package ([project-document-package.md](../architecture/project-document-package.md)). Reference cases are **not** final pricing authority — they exercise workflow and consistency.
 
-The **Permit & Approvals Report** is a governed project document ([permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md)). FG-016 implemented the bounded office HTML/PDF snapshot. It is **not** one of the four estimate outputs. Do not treat ChatGPT or other preliminary research as an AHJ determination. Live Pratt office UAT remains **pending** until live migration.
+The **Permit & Approvals Report** is a governed project document ([permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md)). FG-016 office HTML/PDF snapshot is **CLOSED / OPERATIONAL FOR UAT**. It is **not** one of the four estimate outputs. Do not treat ChatGPT or other preliminary research as an AHJ determination. Pratt live office UAT **PASSED** on port **5009** (project id 9).
 
 ## Reference case — 3415 Roger Stevens Road (Detached Garage)
 
@@ -70,10 +70,10 @@ These were created during the reference exercise and must ultimately be **regene
 |-------|--------|
 | Project | Mike Pratt Coach House |
 | Address | 2562 Church Street, North Gower, Ontario |
-| Status | **FG-016 UAT reference** — not an in-app project in the governance pass; not a permit determination |
+| Status | **FG-016 UAT reference** — live labeled project **id 9** (`FG016-UAT-PRATT`) on port **5009**. Advisory only. Not a permit determination. |
 | Recorded | 2026-08-30 |
 | Canonical pin | [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) · [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [permit-rules-library.md](../architecture/permit-rules-library.md) · [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) |
-| Architecture | ADR-037 / ADR-038 / ADR-039 **Accepted**. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (foundation). [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE MIGRATION PENDING**. Live Pratt office UAT **not** performed in the implementation pass. |
+| Architecture | ADR-037 / ADR-038 / ADR-039 **Accepted**. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (foundation). [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. Live Pratt office UAT **PASSED** on port **5009**. |
 
 This case is the **permit-preflight** reference. The 3415 Roger Stevens Road case remains the commercial/document-package UAT reference.
 
@@ -81,7 +81,7 @@ Use the existing signed plan set and site plan as reference evidence. Do **not**
 
 Preliminary review (outside this repository, **not** governed evidence) has already shown useful preflight questions, including coach-house footprint, building height, setbacks, private servicing/septic, rural grading-plan requirements, and zoning/site-plan submission completeness.
 
-**Do not treat that preliminary ChatGPT research as an authoritative project permit determination.** Architecture is **governed** (ADR-037/038/039 **Accepted**). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **CLOSED / OPERATIONAL FOR UAT** and does **not** create this project. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) does **not** create this project in live development/UAT. Isolated tests use a synthetic labeled coach-house project.
+**Do not treat that preliminary ChatGPT research as an authoritative project permit determination.** Architecture is **governed** (ADR-037/038/039 **Accepted**). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) created this labeled live UAT project **id 9**. Isolated tests also use a synthetic labeled coach-house project.
 
 This case remains the **FG-016 UAT reference**. It is **not** a universal rule.
 

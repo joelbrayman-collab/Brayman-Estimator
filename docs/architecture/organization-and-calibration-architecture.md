@@ -127,7 +127,7 @@ The `Organization` entity is the top-level commercial and administrative contain
 - `Organization` 1 : N `SourceWorkbookManifest` (Historical workbooks belong to Org)
 - `Organization` 1 : N `NormalizedHistoricalEstimate` (Ingested commercial data belongs to Org)
 - `Organization` 1 : N `OrganizationCalibrationModel` (Versioned calibration intelligence)
-- `Organization` 1 : N `CostItem` / `Assembly` (Private organization cost catalogue)
+- `Organization` 1 : N `CostItem` / `Assembly` (Private organization **costing** catalogue — not CalibAi material identity; see [material-catalogue-architecture.md](material-catalogue-architecture.md))
 - `Organization` 1 : N `ProposalTemplate` (Private contract / proposal document formats)
 
 ---
@@ -152,7 +152,7 @@ Every entity in the CalibAi platform is explicitly categorized across three owne
 | **Commercial Estimating** | `EstimateSection`, `EstimateLineItem` | **Organization-Owned** | Direct costs and pricing private to Org |
 | **Commercial Estimating** | `Proposal`, `ProposalLineItem` | **Organization-Owned** | Customer pricing and terms private to Org |
 | **Project Controls** | `ChangeOrder`, `ChangeOrderItem` | **Organization-Owned** | Contract revisions private to Org |
-| **Cost Intelligence** | `CostItem`, `Assembly`, `AssemblyItem` | **Baseline w/ Org Override** | Cloned to Org catalogue upon customization |
+| **Cost Intelligence** | `CostItem`, `Assembly`, `AssemblyItem` | **Organization-Owned** (Current: M011 `organization_id`) | Org costing catalogue. CalibAi Material Catalogue is **separate platform vocabulary** ([material-catalogue-architecture.md](material-catalogue-architecture.md); Intended, not implemented). Do not treat CostItem as canonical material identity. |
 | **Historical Ingestion** | `SourceWorkbookManifest` | **Organization-Owned** | Ingested workbook files/manifests private to Org |
 | **Historical Ingestion** | `SourceCellObservation` | **Organization-Owned** | Cell-level traces private to Org |
 | **Historical Ingestion** | `NormalizedHistoricalEstimate` | **Organization-Owned** | Ingested project history private to Org |

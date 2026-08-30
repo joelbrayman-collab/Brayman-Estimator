@@ -6,7 +6,7 @@
 | Updated | 2026-08-30 |
 | Code | `app/plan_intelligence/` |
 | Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) · [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
-| Architecture | [../architecture/plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) · [../architecture/document-intelligence.md](../architecture/document-intelligence.md) · [../architecture/sheet-intelligence.md](../architecture/sheet-intelligence.md) · [../architecture/ai-takeoff-quantity-extraction-foundation.md](../architecture/ai-takeoff-quantity-extraction-foundation.md) |
+| Architecture | [../architecture/plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) · [../architecture/document-intelligence.md](../architecture/document-intelligence.md) · [../architecture/sheet-intelligence.md](../architecture/sheet-intelligence.md) · [../architecture/ai-takeoff-quantity-extraction-foundation.md](../architecture/ai-takeoff-quantity-extraction-foundation.md) · [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) (Phase D sequencing; take-off stays quantity-only) |
 | Readiness | [../architecture/M004-plan-intelligence-readiness-report.md](../architecture/M004-plan-intelligence-readiness-report.md) · [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md) · [../architecture/M008-sheet-intelligence-readiness-report.md](../architecture/M008-sheet-intelligence-readiness-report.md) |
 
 ## Purpose
@@ -93,6 +93,8 @@ See [document-intelligence.md](../architecture/document-intelligence.md) and [FG
 - Silent auto-insert of AI quantities into estimates
 - CAD-first platform strategy
 - Supplier catalogue / live pricing / procurement
+- CostItem or SKU ownership on `TakeoffPackageItem` (take-off remains quantity/citation/element evidence)
+- Implementing Phase D before Material Catalogue identity exists
 - Full OCR optimisation
 - Speculative AI pricing
 
@@ -113,7 +115,7 @@ See [document-intelligence.md](../architecture/document-intelligence.md) and [FG
 
 ### Intended (later)
 
-Automated take-off quantities / extraction runs / approved packages (**M012 / FG-010 architecture prepared** — not implemented); mapping proposals (Phase D — not this gate).
+Automated take-off quantities / extraction runs / approved packages (**M012 / FG-010 Current** — operational for UAT); mapping proposals (Phase D — **not started**; Material Catalogue identity precedes Phase D).
 
 ## Referenced data
 

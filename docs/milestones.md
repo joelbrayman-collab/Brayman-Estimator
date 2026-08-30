@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — Material Catalogue architecture (docs)
+
+| Field | Content |
+|-------|---------|
+| ID | Material Catalogue architecture (not a numbered M0xx; not a Feature Gate) |
+| Status | **Intended architecture documented** (not implemented) |
+| Date | 2026-08-30 |
+| Objective | Lock CalibAi-seeded material identity vs org CostItem vs supplier catalogue vs mapping; living vs identity; first FG identity-only. |
+| Deliverables | [material-catalogue-architecture.md](architecture/material-catalogue-architecture.md); supplier-doc ownership reconciliation; living intelligence (price increase + promotion) recorded. No ADR. No Feature Gate. No product code. |
+| Validation | Docs-only; `git diff --check`. Tests not required this pass. |
+| Next | **Material Catalogue ADRs** when authorized. Do not implement. Do not open a Feature Gate yet. Do not accept ADR-008 in the identity pass. Do not start Phase D or supplier POC. |
+
 ### 2026-08-30 — FG-013 live-migration reconciliation + UAT closure
 
 | Field | Content |

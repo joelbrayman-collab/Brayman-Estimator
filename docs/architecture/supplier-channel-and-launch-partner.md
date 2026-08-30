@@ -4,12 +4,12 @@
 |-----------|--------|
 | Status | **Future architecture** (direction accepted; **not implemented**) |
 | Updated | 2026-08-30 |
-| Related | [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) · [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) · [platform-roadmap.md](../platform-roadmap.md) Phases E–F |
+| Related | [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) · [material-catalogue-architecture.md](material-catalogue-architecture.md) · [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) · [platform-roadmap.md](../platform-roadmap.md) Phases E–F |
 | Implementation | **Not authorized** by this document. No supplier-integration Feature Gate is opened here. |
 
 **Current vs future:** Today the app has only an optional free-text `CostItem.supplier` string. There is **no** supplier entity, catalogue, inventory API, EDI, purchase-order module, channel-partner record, or Darcy/BMR commercial participation. Nothing below is claimed as implemented.
 
-This document is the **supplier-channel** architecture. Catalogue, inventory, pricing, and snapshot mechanics remain in [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md). Do not collapse channel partnership into a catalogue SKU or a single PreferredSupplier field.
+This document is the **supplier-channel** architecture. **What the project requires** is [material-catalogue-architecture.md](material-catalogue-architecture.md). Catalogue SKU, inventory, pricing, and snapshot mechanics remain in [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md). Do not collapse channel partnership into a catalogue SKU, a canonical material, or a single PreferredSupplier field.
 
 ---
 
@@ -49,7 +49,7 @@ CALIBAI
 |-------|---------------------------|
 | **Brayman Construction** (`ORG-001`) | Contractor-side real-world workflow |
 | **Darcy / BMR Winchester** | Supplier-side real-world workflow; launch / reference / channel-development partner |
-| **CalibAi** | Platform connecting plan → reviewed take-off → catalogue → mapping → price/inventory → delivery → fulfillment |
+| **CalibAi** | Platform connecting plan → reviewed take-off → **CalibAi Material Catalogue** → supplier mapping → price/inventory → delivery → fulfillment |
 
 Together they can **prove** (when a later Feature Gate authorizes a POC — not this pass):
 
@@ -63,7 +63,7 @@ PLAN
 → PICK / LOAD / FULFILLMENT
 ```
 
-This chain is **intended capability**. Plan Intelligence take-off foundation exists separately. Supplier catalogue, mapping, live price/inventory, delivery, and fulfillment **do not exist** in the repository today.
+That creates potential two-way channel value (intended; not implemented): contractor material demand → supplier; supplier commercial opportunity (price increases, promotions, specials, clearance, volume offers) → contractor estimating / procurement. Living evidence must not silently rewrite locked estimates. See [material-catalogue-architecture.md](material-catalogue-architecture.md) §17–§18.
 
 ---
 

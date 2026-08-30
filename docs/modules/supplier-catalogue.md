@@ -5,22 +5,23 @@
 | Status | **Future** — not implemented |
 | Updated | 2026-08-30 |
 | Code | None (only free-text `CostItem.supplier` exists in Estimating today) |
-| Architecture | [../architecture/supplier-catalogue-inventory-pricing.md](../architecture/supplier-catalogue-inventory-pricing.md) · [../architecture/supplier-channel-and-launch-partner.md](../architecture/supplier-channel-and-launch-partner.md) |
+| Architecture | [../architecture/supplier-catalogue-inventory-pricing.md](../architecture/supplier-catalogue-inventory-pricing.md) · [../architecture/supplier-channel-and-launch-partner.md](../architecture/supplier-channel-and-launch-partner.md) · [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) |
 
 ## Purpose
 
-Manage suppliers, catalogues, price lists, imports, and future live pricing/inventory sync; provide snapshottable prices to Estimating and future procurement. Remain **supplier-neutral**: multiple competing suppliers are required; BMR Winchester is a contemplated **launch/reference** partner, not an exclusive supplier ([ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md)).
+Manage suppliers, **supplier** catalogues (what the dealer sells), price lists, imports, and future live pricing/inventory sync; map those products **to** CalibAi Material Catalogue identity ([material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md)). Remain **supplier-neutral**: multiple competing suppliers are required; BMR Winchester is a contemplated **launch/reference** partner, not an exclusive supplier and not the CalibAi vocabulary ([ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md)).
 
 ## Owned data (intended)
 
-Suppliers, branches, catalogue products, price lists, import/sync jobs. Later: contractor–supplier **procurement accounts** (relationship A) and CalibAi **channel partnerships** (relationship B) as distinct records — not a single PreferredSupplier field.
+Suppliers, branches, **supplier** catalogue products (SKU/pack/price), import/sync jobs. Later: contractor–supplier **procurement accounts** (relationship A) and CalibAi **channel partnerships** (relationship B) as distinct records — not a single PreferredSupplier field. This module does **not** own CalibAi canonical material identity.
 
 ## Referenced data
 
-Internal cost items/assemblies via explicit mapping; Projects for PO prep (future).
+CalibAi canonical materials (Material Catalogue); internal cost items/assemblies via explicit mapping for costing; Projects for PO prep (future).
 
 ## Prohibited responsibilities
 
+- Owning CalibAi canonical material identity / taxonomy (Material Catalogue)
 - Owning estimate or proposal commercial snapshots
 - Silently refreshing prices on locked/accepted records
 - Granting supplier / national / category exclusivity

@@ -11,10 +11,12 @@
 
 Build and version construction estimates from cost libraries and assemblies, scoped to a project. The Estimator must maintain the **authoritative project/estimate record** from which governed outputs derive ([project-document-package.md](../architecture/project-document-package.md)).
 
+`CostItem` is the **organization costing record**. It is **not** CalibAi material identity. Canonical materials (what the project requires) are defined in [material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) (**Intended**; not implemented).
+
 ## Responsibilities
 
-- Cost item library
-- Assemblies and assembly items
+- Cost item library (org costing; Material-category items may later link to a canonical material)
+- Assemblies and assembly items (commercial composition; may remain one rolled-up estimate line)
 - Estimates and estimate versions
 - Sections and line items
 - Version status / locking for issued-like statuses
@@ -32,6 +34,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 ## Prohibited responsibilities
 
+- Owning CalibAi canonical material identity / taxonomy ([material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md))
 - Final client-facing proposal layout/PDF ownership (Proposals module). [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) requires Proposals customer totals to match this module’s authoritative `EstimateVersion` / pricing snapshot; Estimating still does not own the PDF.
 - Project change order lifecycle ownership (Project Controls / Projects)
 - Accounting integrations
@@ -48,6 +51,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 ## Planned capabilities
 
+- Future Material-category `CostItem` → canonical material link; assembly components resolvable to canonical materials; fulfillment uses **exploded** material quantities even when the commercial line stays rolled-up ([material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md)). Not implemented.
 - QuickBooks and Ontario contract/warranty remain **Future**.
 - Historical estimating intelligence — **Future**
 
@@ -81,4 +85,5 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted**
 - [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR not implemented)
 - [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** (LEARN must not mutate cost library / approved estimates)
+- [material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) **Intended** (CostItem is not CalibAi identity; living supplier evidence is not the identity row)
 - [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** — Estimating owns internal breakdown; Proposal remains the customer-facing estimate

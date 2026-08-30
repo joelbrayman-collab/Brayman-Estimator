@@ -50,7 +50,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 |--------|--------|------|
 | CRM-ish | `Client` | `app/models/client.py` |
 | Projects | `Project` | `app/models/project.py` |
-| Cost library | `CostItem` | `app/models/cost_item.py` |
+| Cost library | `CostItem` | `app/models/cost_item.py` — org costing record; **not** CalibAi material identity ([material-catalogue-architecture.md](architecture/material-catalogue-architecture.md) Intended) |
 | Assemblies | `Assembly`, `AssemblyItem` | `app/models/assembly.py` |
 | Estimating | `Estimate`, `EstimateVersion`, `EstimateSection`, `EstimateLineItem` | `app/models/estimate.py` |
 | Proposals | `ProposalTemplate`, `Proposal`, `ProposalSection`, `ProposalLineItem` | `app/models/proposal.py` |
@@ -146,7 +146,8 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 ### Differentiating pillars
 
 - [Plan Intelligence and Automated Take-Off](architecture/plan-intelligence-and-automated-takeoff.md) — Phases A–M010 **Current**; Phase **C** AI take-off foundation **operational for UAT** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**); Phases D–G future
-- [Supplier Catalogue, Inventory and Pricing](architecture/supplier-catalogue-inventory-pricing.md) — Phases E–F **Future**
+- [Material Catalogue](architecture/material-catalogue-architecture.md) — **Intended** (documented 2026-08-30; **not implemented**). CalibAi-seeded identity (what the project requires). Living supplier evidence (price/promotion/inventory) is **not** the identity row. `CostItem` is **not** canonical material. No Feature Gate yet.
+- [Supplier Catalogue, Inventory and Pricing](architecture/supplier-catalogue-inventory-pricing.md) — Phases E–F **Future** (what a supplier sells; maps **to** Material Catalogue; does **not** own CalibAi identity)
 - [Supplier Channel and Launch-Partner Model](architecture/supplier-channel-and-launch-partner.md) — **Future**; [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (Winchester launch/reference, supplier-neutral, dual relationships; **not implemented**)
 - Procurement / purchase-order preparation (nav placeholder only today)
 
@@ -166,4 +167,5 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 
 - Electronic signature / formal proposal acceptance workflows
 - CAD ingestion (Phase G; PDF-first per ADR-009)
-- Estimate mapping from approved take-off packages (Phase D; not FG-010)
+- Estimate mapping from approved take-off packages (Phase D; not FG-010). Material Catalogue identity **precedes** Phase D implementation.
+- Material Catalogue implementation (lumber/sheets identity + CostItem link) — architecture documented; Feature Gate **not** opened

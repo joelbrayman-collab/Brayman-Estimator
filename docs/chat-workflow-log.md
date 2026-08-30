@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — Material Catalogue architecture governance
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `450cd39dea24c3e41d32defa39e9e74c00ae7c6d` (start) |
+| Objective | Document Material Catalogue architecture: CalibAi-seeded identity; CostItem not identity; living supplier evidence distinct from identity; first FG identity-only. No ADR, Feature Gate, or product code. |
+| Business decision | Joel: CalibAi-seeded vocabulary; identity-only first gate; Material Catalogue before Phase D; rolled-up commercial Assembly vs exploded fulfillment; Material Cost Standard deferred; ADR-008 deferred; living catalogue (price increases + promotions) with immutable snapshots. |
+| Architectural decision | Canonical material ≠ CostItem ≠ supplier SKU. Material Catalogue UX capability ≠ canonical table. Living evidence is effective-dated, not `CURRENT_PRICE` only. |
+| Prompt template used | Bounded Material Catalogue architecture governance (documentation) |
+| Approved Cursor prompt summary | DOCUMENTATION / ARCHITECTURE GOVERNANCE ONLY. Create material-catalogue-architecture.md. Reconcile supplier docs. No FG, ADR, migration, or product code. Add living material intelligence (Joel decision). |
+| Files expected to change | Architecture, module, and status docs |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; product code; Feature Gates; new ADRs |
+| Implementation result | Architecture document created; supplier ownership wording reconciled; living intelligence recorded. |
+| Tests | Not rerun (docs-only; no product-code change). Last recorded full suite **310 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Architecture record appended |
+| Constitutional issue raised | None |
+| Unresolved issues | ADRs not yet written. Feature Gate not opened. ADR-008 remains Proposed. |
+| Next approved step | **Material Catalogue ADRs** when Joel authorizes. Do not implement. Do not open a Feature Gate yet. |
+| Next approved prompt | Material Catalogue ADRs (docs). Do not accept ADR-008 unless that prompt authorizes it. |
+| Commit hash | (this commit) |
+
 ### 2026-08-30 — FG-013 migration reconciliation + UAT closure
 
 | Field | Content |

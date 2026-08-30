@@ -8,7 +8,7 @@
 | Module | Doc | Code evidence (current) |
 |--------|-----|-------------------------|
 | CRM | [crm.md](crm.md) | Clients (+ project linkage) |
-| Estimating | [estimating.md](estimating.md) | Cost items, assemblies, estimates; [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (internal breakdown owner) |
+| Estimating | [estimating.md](estimating.md) | Cost items, assemblies, estimates; [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (internal breakdown owner). CostItem is **not** CalibAi material identity. |
 | Proposals | [proposals.md](proposals.md) | Templates, proposals, snapshot, PDF (customer-facing estimate; FG-012 consistency **CLOSED / OPERATIONAL FOR UAT**) |
 | Projects | [projects.md](projects.md) | Projects entity; change orders under Project Controls package; `/projects/<id>` Project Hub ([FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**) |
 | Plan Intelligence | [plan-intelligence.md](plan-intelligence.md) | Phase A upload (M005) + Document Indexing (M007) + Sheets (M009) + Scale/measurement (M010) + **M012 / FG-010 take-off foundation OPERATIONAL FOR UAT** |
@@ -17,7 +17,8 @@
 | BUILD | [build.md](build.md) | **None** — Proposed (ADR-020); not implemented |
 | MONITOR | [monitor.md](monitor.md) | **None** — Proposed (ADR-021 **Accepted** baseline; not implemented) |
 | Historical ingestion | [../architecture/historical-estimate-ingestion-architecture.md](../architecture/historical-estimate-ingestion-architecture.md) · [FG-006](../feature-gates/FG-006-historical-estimate-ingestion-phase-b.md) · [FG-013](../feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) | FG-006 engine **Current**; office upload UX **CLOSED / OPERATIONAL FOR UAT** ([ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md); revision `c5d6e7f8a9b0`) |
-| Supplier Catalogue | [supplier-catalogue.md](supplier-catalogue.md) | **None** — Future (only `CostItem.supplier` text today). Channel: [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (not implemented) |
+| Material Catalogue | [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) | **None** — Intended architecture only (CalibAi-seeded identity; not implemented; no Feature Gate) |
+| Supplier Catalogue | [supplier-catalogue.md](supplier-catalogue.md) | **None** — Future (only `CostItem.supplier` text today). Channel: [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (not implemented). Does **not** own CalibAi material identity. |
 
 Project Controls (Change Orders) is documented under Projects for ownership clarity until a dedicated module doc is approved. BUILD references Change Orders; it does not own them ([ADR-020](../adr/ADR-020-build-module-boundary.md)). MONITOR is a comparison/read layer; it does not own estimates, proposals, Change Orders, or actuals ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**).
 

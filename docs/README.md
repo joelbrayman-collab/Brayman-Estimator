@@ -50,6 +50,7 @@ Also read [`platform-governance.md`](platform-governance.md), [`governance/conti
 | [architecture-principles.md](architecture-principles.md) | Numbered durable platform rules | **Architectural** — changes require ADR + Joel |
 | [architecture.md](architecture.md) | Current vs intended vs future architecture | Factual for *current*; aspirational elsewhere |
 | [architecture/](architecture/) | Domain architecture (Plan Intelligence, Supplier, …) | Future unless marked Current |
+| [architecture/material-catalogue-architecture.md](architecture/material-catalogue-architecture.md) | CalibAi Material Catalogue (what the project requires; CostItem is not identity) | **Intended** — documented 2026-08-30; **not implemented**; no Feature Gate |
 | [architecture/supplier-channel-and-launch-partner.md](architecture/supplier-channel-and-launch-partner.md) | Supplier channel, Winchester launch/reference, dual relationships | **Future** — [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (not implemented) |
 | [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md) | CalibAi product/architecture reconciliation | **Approved direction** — not implementation |
 | [architecture/M004-plan-intelligence-readiness-report.md](architecture/M004-plan-intelligence-readiness-report.md) | Milestone 004 readiness report | Historical / operational |

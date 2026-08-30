@@ -14,7 +14,7 @@
 | HEAD / `origin/main` | Verify `git log -1` after this docs commit. Product implementation: FG-013 `974136bb2ac7d2f61acf71b53f81a2ae55f132b1`. ADR-033 docs `0c36adb6d98ec2c1af88fa98cf61c00aa14f0eb3`. Alembic **current = head = `c5d6e7f8a9b0`**. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
-| Working tree at last verified inspect | **FG-013 CLOSED / OPERATIONAL FOR UAT.** ADR-032 **Accepted**. **ADR-033 Accepted** (supplier channel; not implemented). **ADR-021 Accepted** (MONITOR not implemented). **FG-012 CLOSED / OPERATIONAL FOR UAT.** FG-011 / FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. |
+| Working tree at last verified inspect | **FG-013 CLOSED / OPERATIONAL FOR UAT.** Material Catalogue architecture **documented** (not implemented). ADR-032 **Accepted**. **ADR-033 Accepted** (supplier channel; not implemented). **ADR-021 Accepted** (MONITOR not implemented). **FG-012 CLOSED / OPERATIONAL FOR UAT.** FG-011 / FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. |
 | Governance | FG-004–FG-013 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013 CLOSED / OPERATIONAL FOR UAT**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) live current=head `c5d6e7f8a9b0` (**VERIFIED APPLIED**; not by the reconciliation pass). [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (supplier channel; not implemented). ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. ADR-019 **Accepted**. **ADR-021 Accepted** (MONITOR baseline / Project Gross Margin; MONITOR not implemented). Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
 
 ## Implemented (evidenced in code)
@@ -36,6 +36,7 @@
 ## Architecture / readiness only (not implemented)
 
 - Real external AI provider / OCR / CAD / multi-trade extraction / estimate mapping (Phase D later)
+- **Material Catalogue** — [architecture/material-catalogue-architecture.md](architecture/material-catalogue-architecture.md) **Intended** (CalibAi-seeded identity; living supplier evidence is not the identity row; **not implemented**)
 - CalibAi V1 / BUILD / field / four-output **outputs 3–4** / QuickBooks API / Ontario contract
 - Supplier catalogue / Winchester POC / Darcy channel economics ([ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** direction; **not implemented**)
 - Crew Template catalog, payroll burden, `LabourActualObservation` persistence
@@ -51,8 +52,8 @@
 
 M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **implemented, verified, committed, and pushed** on `main`.
 
-- **Current coded work:** [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **CLOSED / OPERATIONAL FOR UAT**. ADR-032 **Accepted**. ADR-033 **Accepted** (docs only). ADR-021 **Accepted** (docs only). FG-012 remains **CLOSED / OPERATIONAL FOR UAT.**
-- **Blocked / Not Started (product):** Material Catalogue architecture (next docs candidate); Phase D estimate mapping; four-output package outputs 3–4; QuickBooks; contracts; BUILD field capture; MONITOR implementation; LEARN; industry benchmarking; historical evidence repair; real external AI provider; office authentication; supplier/Winchester POC.
+- **Current coded work:** [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **CLOSED / OPERATIONAL FOR UAT**. [Material Catalogue architecture](architecture/material-catalogue-architecture.md) **Intended** (docs; not implemented; no Feature Gate). ADR-032 **Accepted**. ADR-033 **Accepted** (docs only). ADR-021 **Accepted** (docs only). FG-012 remains **CLOSED / OPERATIONAL FOR UAT.**
+- **Blocked / Not Started (product):** Material Catalogue **ADRs** then Feature Gate; Phase D estimate mapping; four-output package outputs 3–4; QuickBooks; contracts; BUILD field capture; MONITOR implementation; LEARN; industry benchmarking; historical evidence repair; real external AI provider; office authentication; supplier/Winchester POC.
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -66,7 +67,7 @@ M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **
 
 ## Recommended next steps
 
-1. **STOP.** [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **CLOSED / OPERATIONAL FOR UAT**. Do **not** run `flask db upgrade` again (`current` is already `c5d6e7f8a9b0`). Next docs candidate: **Material Catalogue architecture**. Do not implement MONITOR, Phase D, supplier integration, or Winchester POC.
+1. **STOP.** Material Catalogue **architecture is documented**. Next governed docs: **Material Catalogue ADRs** (not implementation, not Feature Gate). Do **not** run `flask db upgrade`. Do not implement MONITOR, Phase D, supplier integration, or Winchester POC. Do not accept ADR-008 in this identity pass.
 2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% ORG-001 policy text; optional layers remain `UNSPECIFIED`).
 3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under Estimate-output consistency, Project Hub, AI take-off, or Pricing Engine.
 4. Do not enable a real external AI provider. Do not start Phase D estimate mapping. Do not start auth, BUILD/MONITOR/LEARN implementation, QuickBooks, or contract/warranty work. Accepting ADR-021 does **not** authorize a MONITOR Feature Gate. Accepting ADR-033 does **not** authorize a supplier Feature Gate, Winchester POC, or Darcy commercial terms.
@@ -75,6 +76,7 @@ M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **
 
 ## Related
 
+- [architecture/material-catalogue-architecture.md](architecture/material-catalogue-architecture.md)
 - [adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md)
 - [architecture/supplier-channel-and-launch-partner.md](architecture/supplier-channel-and-launch-partner.md)
 - [adr/ADR-032-app-managed-historical-workbook-storage.md](adr/ADR-032-app-managed-historical-workbook-storage.md)

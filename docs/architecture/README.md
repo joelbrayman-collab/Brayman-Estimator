@@ -18,7 +18,8 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [M004-plan-intelligence-readiness-report.md](M004-plan-intelligence-readiness-report.md) | Milestone 004 report |
 | [M006-document-intelligence-readiness-report.md](M006-document-intelligence-readiness-report.md) | Milestone 006 report |
 | [M008-sheet-intelligence-readiness-report.md](M008-sheet-intelligence-readiness-report.md) | Milestone 008 readiness (architecture) |
-| [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) | Future |
+| [material-catalogue-architecture.md](material-catalogue-architecture.md) | **Intended** (2026-08-30) — CalibAi-seeded identity; **not implemented**; no Feature Gate |
+| [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) | Future — supplier SKU/price/inventory; maps to Material Catalogue; does **not** own CalibAi identity |
 | [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) | **Future** — [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (direction only; not implemented) |
 
 Platform map: [../architecture.md](../architecture.md).

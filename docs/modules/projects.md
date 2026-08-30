@@ -2,9 +2,10 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Current** (project records + change orders package) |
-| Updated | 2026-08-28 |
+| Status | **Current** (project records + change orders package). [FG-011](../feature-gates/FG-011-project-hub-ux.md) Project Hub UX **APPROVED FOR IMPLEMENTATION** — **IMPLEMENTATION NOT STARTED** |
+| Updated | 2026-08-30 |
 | Code | `app/models/project.py`, `app/routes/projects.py`; Project Controls: `app/project_controls/` |
+| Feature Gate | [FG-011](../feature-gates/FG-011-project-hub-ux.md) **APPROVED FOR IMPLEMENTATION** (implementation not started) |
 
 ## Purpose
 
@@ -15,6 +16,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 - Project CRUD (name, number, address, status, description, client)
 - Parent for estimates
 - Change Orders lifecycle (draft → approval statuses) via `project_controls` package
+- De facto project hub at `/projects/<id>` (identity, commercial context, plan filenames, related estimates/proposals/change orders). [FG-011](../feature-gates/FG-011-project-hub-ux.md) authorizes evolving this surface into an explicit lifecycle hub UX — **not started**
 
 ## Owned data
 
@@ -30,6 +32,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 
 - Owning proposal snapshot documents (Proposals)
 - Owning cost library master data (Estimating)
+- Owning Plan Intelligence / take-off / labour catalog / pricing-policy records (read/link only under FG-011)
 - Full ERP/accounting
 - Field-execution records (proposed **BUILD** module — [build.md](build.md); [ADR-020](../adr/ADR-020-build-module-boundary.md))
 
@@ -41,7 +44,8 @@ Represent construction projects tied to clients; host estimating work; begin pro
 
 ## Planned capabilities
 
-- Project creation from accepted proposal snapshot (Rule 4) — **Future / Next candidate**
+- **Project Hub UX** ([FG-011](../feature-gates/FG-011-project-hub-ux.md)) — **APPROVED FOR IMPLEMENTATION**; **not started**. Evolve `/projects/<id>` only. No new module, entity, or schema.
+- Project creation from accepted proposal snapshot (Rule 4) — **Future** (not FG-011)
 - Project budgets, scheduling, purchasing, job costing, invoicing — **Future**
 - Change order audit trail UI — noted as future in template
 

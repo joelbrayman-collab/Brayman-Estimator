@@ -124,7 +124,7 @@ Navigation also shows **disabled** placeholders: Purchase Orders, Job Costing, R
 
 Aligns with [platform-vision.md](platform-vision.md), [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md), and [architecture-principles.md](architecture-principles.md):
 
-- `Project` remains the CalibAi lifecycle hub ([ADR-019](adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted**)
+- `Project` remains the CalibAi lifecycle hub ([ADR-019](adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted**). Existing `/projects/<id>` is the de facto hub. [FG-011](feature-gates/FG-011-project-hub-ux.md) **APPROVED FOR IMPLEMENTATION** — **IMPLEMENTATION NOT STARTED**: evolve that page as a read/link UX layer; no new module, entity, or schema.
 - Explicit module ownership documents (CRM, Estimating, Proposals, Projects, Plan Intelligence, proposed BUILD, Supplier Catalogue, Project Controls expansions)
 - Immutable accepted-proposal snapshots feeding project creation (Rule 3–4)
 - Auditable financially significant actions (Rule 6)

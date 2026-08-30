@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-011 Project Hub UX governance approval
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `49c490852fa5b129da7bd32fc7e446539140f30b` (start) |
+| Objective | Memorialize Joel-approved FG-011 Project Hub UX. Documentation only. Do not implement. |
+| Business decision | Evolve existing `/projects/<id>`. Projects owns the hub UX. No new module, Job entity, schema, or ADR. No M0xx. |
+| Architectural decision | ADR-019 remains the hub-entity decision. Hub reads/links only. Conservative pricing/labour presentation. Phase D and external AI remain unauthorized. Dashboard org-unscoped counts out of scope. |
+| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | FG-011 GOVERNANCE APPROVAL. Docs only. APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED. |
+| Files expected to change | Governed docs listed in the prompt |
+| Files prohibited from changing | `app/**`, `migrations/**`, tests, configuration |
+| Implementation result | FG-011 created. Indexes and current-state/handoff/roadmap updated. No product code. |
+| Tests / validation | `git diff --check`. Product tests not re-run (docs-only). Prior full suite **251 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | No (no new M0xx) |
+| Constitutional issue raised | None |
+| Unresolved issues | Implementation not started. Phase D unauthorized. ADR-010 Proposed. Office auth not implemented. |
+| Next approved step | Separate bounded FG-011 **implementation** Cursor prompt. Do not implement in this pass. |
+| Next approved prompt | FG-011 implementation (not this commit) |
+| Commit hash | (this docs commit) |
+
 ### 2026-08-30 — 29 Aug day-end reconciliation / Review Turnover
 
 | Field | Content |

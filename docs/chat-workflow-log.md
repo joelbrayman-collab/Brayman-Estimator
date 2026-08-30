@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-015 live migration + office UAT close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ starting HEAD `f5606a106aaeeb19928d5e1b020c60ba4ef6fcec` |
+| Objective | Apply existing FG-015 revision `e7f8a9b0c1d2` to the development/UAT database; bounded office UAT; rerun tests; close FG-015 if all evidence passes. |
+| Business decision | Foundation remains advisory PRELIMINARY / FOUNDATION ONLY. No zoning conclusions. No PASS. No Pratt project. No Permit Rules Library. |
+| Architectural decision | Live current = head `e7f8a9b0c1d2`. Existing `Project.address` preserved. No forced backfill. Snapshot immutability and recheck confirmed live. |
+| Prompt template used | Cursor live-migrate / office UAT prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — FG-015 LIVE MIGRATION + OFFICE UAT. Apply only `e7f8a9b0c1d2`. Do not implement Gate 2. Do not populate Permit Rules. Do not enable live web lookup, geocoding, or external AI. Stop on product defect; do not repair. |
+| Files expected to change | Governed docs only (after successful UAT). |
+| Files prohibited from changing | Product code; new migrations; Permit Rules; Pratt seed |
+| Implementation result | Live upgrade `d6e7f8a9b0c1` → `e7f8a9b0c1d2`. Office UAT **PASSED** on port **5008**. FG-015 **CLOSED / OPERATIONAL FOR UAT**. Product-code changes: none. |
+| Tests | Dedicated FG-015 **19 passed**. Relevant regressions **338 passed**. Full suite **364 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Permit Rules Library not populated. Pass 2 / Gate 2 / Pratt POC not started. |
+| Next approved step | Later **Ontario / Ottawa Permit Rules + Mike Pratt POC** Feature Gate (**not created**). Do not populate rules. Do not start Gate 2. |
+| Next approved prompt | Gate 2 Feature Gate governance (not this chat). |
+| Commit hash | (this docs-close commit) |
+
 ### 2026-08-30 — FG-015 Permit Foundation V1 implementation
 
 | Field | Content |

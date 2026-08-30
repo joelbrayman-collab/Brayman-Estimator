@@ -5,7 +5,7 @@
 | Status | **Current** (project records + change orders package). [FG-011](../feature-gates/FG-011-project-hub-ux.md) Project Hub UX **CLOSED / OPERATIONAL FOR UAT** |
 | Updated | 2026-08-30 |
 | Code | `app/models/project.py`, `app/routes/projects.py`, `app/services/project_hub.py`; Project Controls: `app/project_controls/` |
-| Feature Gate | [FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING** |
+| Feature Gate | [FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** |
 
 ## Purpose
 
@@ -16,7 +16,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 - Project CRUD (name, number, address, status, description, client)
 - Parent for estimates
 - Change Orders lifecycle (draft → approval statuses) via `project_controls` package
-- Project Hub UX at `/projects/<id>` ([FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**): identity, versioned commercial context, PLAN / PRICE / CONTRACT stored facts and links, existing Change Orders under BUILD; MONITOR / LEARN / field BUILD labeled Future. Read-only assembly in `app/services/project_hub.py`. No durable hub entity. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) PLAN **PERMIT & APPROVALS** foundation state (complete/incomplete, resolved/unresolved, preliminary/not generated) — **implemented**; live migration pending; no fake findings; no PASS.
+- Project Hub UX at `/projects/<id>` ([FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**): identity, versioned commercial context, PLAN / PRICE / CONTRACT stored facts and links, existing Change Orders under BUILD; MONITOR / LEARN / field BUILD labeled Future. Read-only assembly in `app/services/project_hub.py`. No durable hub entity. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) PLAN **PERMIT & APPROVALS** foundation state (complete/incomplete, resolved/unresolved, preliminary/not generated) — **CLOSED / OPERATIONAL FOR UAT**; no fake findings; no PASS.
 
 ## Owned data
 
@@ -39,7 +39,7 @@ Platform-shared (not org-owned): `jurisdiction_definitions`, `jurisdiction_alias
 - Owning Plan Intelligence / take-off / labour catalog / pricing-policy records (read/link only under FG-011)
 - Full ERP/accounting
 - Field-execution records (proposed **BUILD** module — [build.md](build.md); [ADR-020](../adr/ADR-020-build-module-boundary.md))
-- Permit Intelligence / jurisdictional legal library / live regulatory lookup / in-product web lookup / automatic permit approval conclusions / municipal submissions — **not authorized as Pass 2**. Foundation **implemented, live migration pending**: [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md). Architecture **Accepted**: [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md). Projects owns project location, project-tied resolution, and the profile/snapshot relationship.
+- Permit Intelligence / jurisdictional legal library / live regulatory lookup / in-product web lookup / automatic permit approval conclusions / municipal submissions — **not authorized as Pass 2**. Foundation **CLOSED / OPERATIONAL FOR UAT**: [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md). Architecture **Accepted**: [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md). Projects owns project location, project-tied resolution, and the profile/snapshot relationship.
 - Organization Brand Profile / org-owned logo storage — **not authorized**. Pin only: [organization-brand-profile.md](../architecture/organization-brand-profile.md).
 - Change Order document-family rewrite, client email, field-native UX, or a second Change Order entity — **not authorized**. Pin only: [change-order-document-family.md](../architecture/change-order-document-family.md). Existing Change Order business record remains authoritative.
 
@@ -55,7 +55,7 @@ Platform-shared (not org-owned): `jurisdiction_definitions`, `jurisdiction_alias
 - Project creation from accepted proposal snapshot (Rule 4) — **Future** (not FG-011)
 - Project budgets, scheduling, purchasing, job costing, invoicing — **Future**
 - Change order audit trail UI — noted as future in template
-- Project location / jurisdiction resolver / preliminary Permit Profile — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING** ([FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md)). Preserve `Project.address`. No Permit Rules Library. Not CLOSED.
+- Project location / jurisdiction resolver / preliminary Permit Profile — **CLOSED / OPERATIONAL FOR UAT** ([FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md)). Preserve `Project.address`. No Permit Rules Library.
 - Project Permit Intelligence Pass 2 / Permit & Approvals Report analysis — **FUTURE / NOT IMPLEMENTED**; architecture **Accepted** ([permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md); ADR-037/038/039). Not FG-015.
 - Change Order governed document family / preview-generate-email / field UX — **FUTURE / NOT IMPLEMENTED** pin ([change-order-document-family.md](../architecture/change-order-document-family.md)); not a Feature Gate; do not create a second Change Order entity
 

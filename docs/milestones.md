@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-015 Permit Foundation V1 live-migrated and closed
+
+| Field | Content |
+|-------|---------|
+| ID | [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
+| Date | 2026-08-30 |
+| Objective | Apply `e7f8a9b0c1d2` live; bounded office UAT; close the gate. |
+| Deliverables | Live current = head `e7f8a9b0c1d2`. Office UAT on port **5008**. Docs close. No product-code change. |
+| Validation | Dedicated FG-015 **19 passed**. Relevant regressions **338 passed**. Full suite **364 passed**. Browser UAT PASSED. |
+| Next | Later **Ontario / Ottawa Permit Rules + Mike Pratt POC** Feature Gate (**not created**). Do not populate the Permit Rules Library. |
+
 ### 2026-08-30 — FG-015 Permit Foundation V1 implemented (live migration pending)
 
 | Field | Content |

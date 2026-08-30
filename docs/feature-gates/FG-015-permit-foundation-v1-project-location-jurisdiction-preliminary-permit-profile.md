@@ -7,10 +7,10 @@
 | Target Milestone | **None.** FG-015 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Projects** owns project location, project-tied jurisdiction resolution, and the project Permit Profile / snapshot relationship. **Permit Intelligence** owns the future analysis capability (Pass 2 is **out of this gate**). Permit Rules Library remains [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md). |
 | Date | 2026-08-30 |
-| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING**. Not CLOSED. |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
 | Architecture | [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) · [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [modules/projects.md](../modules/projects.md) · [modules/permit-intelligence.md](../modules/permit-intelligence.md) |
 | Related ADRs | [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** · [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) **Accepted** · [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
-| Prerequisites | FG-014 **CLOSED / OPERATIONAL FOR UAT**. ADR-037/038/039 **Accepted**. Live current = head `d6e7f8a9b0c1`. |
+| Prerequisites | FG-014 **CLOSED / OPERATIONAL FOR UAT**. ADR-037/038/039 **Accepted**. Live current = head `e7f8a9b0c1d2`. |
 | Approved baseline | Gate-approval HEAD `5474c47189f67645cc6a636cdfa054cf3c6660f9`. Alembic current = head `d6e7f8a9b0c1`. Full suite **345 passed**. |
 
 ---
@@ -19,9 +19,9 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING**. **Not CLOSED.** |
-| Implementation | **Done in product code.** Throwaway migration verified. Live office UAT **not** claimed (live DB still at `d6e7f8a9b0c1`). |
-| Schema / Alembic | Additive revision **`e7f8a9b0c1d2`**. Graph head = `e7f8a9b0c1d2`. Live current remains **`d6e7f8a9b0c1`**. **Do not live-migrate in this pass.** |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT** |
+| Implementation | **Done in product code.** Live migration applied. Office UAT **PASSED** on port **5008**. |
+| Schema / Alembic | Additive revision **`e7f8a9b0c1d2`**. Live current = graph head = **`e7f8a9b0c1d2`**. One head. |
 | Permit Rules Library | **NOT IN THIS GATE** — not created, not populated |
 | Live web / geocoder / external AI | **NOT AUTHORIZED** — none in this implementation |
 | Mike Pratt project / permit analysis | **NOT IN THIS GATE** |
@@ -309,7 +309,7 @@ Platform jurisdiction definitions **may** be shared (like canonical materials). 
 | Item | Status |
 |------|--------|
 | SCHEMA CHANGE | **Done.** Additive `project_locations`, `jurisdiction_definitions`, `jurisdiction_aliases`, `permit_profiles` |
-| MIGRATION | **`e7f8a9b0c1d2`** created and throwaway-tested. **Not applied live.** Live current remains `d6e7f8a9b0c1`. |
+| MIGRATION | **`e7f8a9b0c1d2`** applied live (`d6e7f8a9b0c1` → `e7f8a9b0c1d2`). Live current = head. |
 | Backfill | **NO** — existing rows stay valid; address preserved; no forced profiles |
 
 ---
@@ -380,8 +380,10 @@ Permit Rules Library; Ottawa/Ontario zoning or building-code engine; live web lo
 
 This document **authorized** the bounded FG-015 product implementation, including one additive Alembic revision.
 
-**Implemented (this pass):** `ProjectLocation` 1:1; platform Canada / Ontario / City of Ottawa seed + aliases; deterministic resolver; permit context class; new-project auto location + preliminary profile; existing-project location review; versioned immutable preliminary snapshots; Project Hub PLAN foundation panel.
+**Implemented:** `ProjectLocation` 1:1; platform Canada / Ontario / City of Ottawa seed + aliases; deterministic resolver; permit context class; new-project auto location + preliminary profile; existing-project location review; versioned immutable preliminary snapshots; Project Hub PLAN foundation panel.
 
-**Not done:** live `flask db upgrade`; gate CLOSE; Permit Rules Library; Pass 2 analysis; Pratt project; Phase D; live office UAT on the development/UAT database.
+**Live migration + office UAT (2026-08-30):** `flask db upgrade` applied `d6e7f8a9b0c1` → `e7f8a9b0c1d2`. Fresh Flask on port **5008**. Complete / incomplete / unknown-municipality / North Gower alias / existing-project transition / explicit location review / permit-context / snapshot immutability / recheck / Hub / isolation / advisory copy **PASSED**. Dedicated FG-015 **19 passed**. Relevant regressions **338 passed**. Full suite **364 passed**. No product-code defect. No product-code change this pass.
 
-**Next governed action:** live-migrate FG-015 under a **separate** prompt. Do not populate Ottawa/Ontario permit rules.
+**Not done (still out of this gate):** Permit Rules Library; Pass 2 analysis; Pratt project; Phase D; live web lookup / geocoder / external AI; Gate 2.
+
+**Next governed action:** later **Ontario / Ottawa Permit Rules + Mike Pratt POC** Feature Gate (**not created**). Do not populate permit rules. Do not start Gate 2 / Pratt POC until that gate exists.

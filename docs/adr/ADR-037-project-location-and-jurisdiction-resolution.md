@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-037: Project Location and Jurisdiction Resolution Ownership |
-| Status | **Accepted** (FG-015 civic location + resolver implemented in code; **live migration pending**) |
+| Status | **Accepted** (FG-015 civic location + resolver **CLOSED / OPERATIONAL FOR UAT**; live current=head `e7f8a9b0c1d2`) |
 | Date | 2026-08-30 |
 | Related | [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) · [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-038](ADR-038-permit-intelligence-authority-and-rules-library.md) · [ADR-039](ADR-039-permit-report-snapshot-immutability-and-workflow.md) |
 
@@ -96,4 +96,4 @@ None in this pass.
 |------|------|------|
 | Joel | Joel Brayman | 2026-08-30 |
 | ChatGPT review | Permit Intelligence architecture governance pass | 2026-08-30 |
-| Cursor implementation note | FG-015 foundation implemented (`e7f8a9b0c1d2`); live migration pending | 2026-08-30 |
+| Cursor implementation note | FG-015 foundation implemented (`e7f8a9b0c1d2`); live-migrated and **CLOSED / OPERATIONAL FOR UAT** | 2026-08-30 |

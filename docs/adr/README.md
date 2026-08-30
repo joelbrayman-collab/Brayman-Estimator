@@ -120,13 +120,13 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 |-----|-------|--------|
 | [ADR-032](ADR-032-app-managed-historical-workbook-storage.md) | App-Managed Immutable Historical Workbook Storage / Source Custody | **Accepted** (2026-08-30; FG-013 **CLOSED / OPERATIONAL FOR UAT**; revision `c5d6e7f8a9b0` live current=head; legacy Desktop corpus not moved) |
 
-### Permit Intelligence (architecture accepted; FG-015 approved, not started)
+### Permit Intelligence (architecture accepted; FG-015 closed)
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-037](ADR-037-project-location-and-jurisdiction-resolution.md) | Project Location and Jurisdiction Resolution Ownership | **Accepted** (2026-08-30; FG-015 civic location + resolver implemented; **live migration pending**) |
-| [ADR-038](ADR-038-permit-intelligence-authority-and-rules-library.md) | Permit Intelligence Authority and Permit Rules Library Provenance | **Accepted** (2026-08-30; FG-015 Pass 1 foundation implemented; rules library **not** populated; **live migration pending**) |
-| [ADR-039](ADR-039-permit-report-snapshot-immutability-and-workflow.md) | Permit Report Snapshot Immutability and Workflow Effect | **Accepted** (2026-08-30; FG-015 preliminary snapshot implemented; substantive report not implemented; **live migration pending**) |
+| [ADR-037](ADR-037-project-location-and-jurisdiction-resolution.md) | Project Location and Jurisdiction Resolution Ownership | **Accepted** (2026-08-30; FG-015 civic location + resolver **CLOSED / OPERATIONAL FOR UAT**; live current=head `e7f8a9b0c1d2`) |
+| [ADR-038](ADR-038-permit-intelligence-authority-and-rules-library.md) | Permit Intelligence Authority and Permit Rules Library Provenance | **Accepted** (2026-08-30; FG-015 Pass 1 foundation **CLOSED / OPERATIONAL FOR UAT**; rules library **not** populated) |
+| [ADR-039](ADR-039-permit-report-snapshot-immutability-and-workflow.md) | Permit Report Snapshot Immutability and Workflow Effect | **Accepted** (2026-08-30; FG-015 preliminary snapshot **CLOSED / OPERATIONAL FOR UAT**; substantive report not implemented) |
 
 CAR-001 record: [../architecture/CAR-001-calibai-product-architecture-reconciliation.md](../architecture/CAR-001-calibai-product-architecture-reconciliation.md).
 

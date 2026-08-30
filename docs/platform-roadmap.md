@@ -22,14 +22,14 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 | Supplier Inventory and Pricing Integrations | **Future** | Supplier architecture; Phase F; heterogeneous adapters (do not assume one BMR/national model) |
 | Procurement and Purchase-Order Preparation | **Future** (nav placeholder only) | Supplier + Projects/Procurement boundary; contractor↔supplier relationship **A** distinct from CalibAi channel relationship **B** |
 | Proposal and PDF Output | **Current** (snapshot + PDF; Accepted immutability; FG-012 named-method consistency) | [modules/proposals.md](modules/proposals.md) · [FG-012](feature-gates/FG-012-estimate-output-consistency.md) |
-| Project document package (4 outputs) | **Partial** — outputs 1–2 **CLOSED / OPERATIONAL FOR UAT** ([FG-012](feature-gates/FG-012-estimate-output-consistency.md)); outputs 3–4 Future. **Permit Foundation V1** [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING**. Pass 2 Permit Intelligence **NOT IMPLEMENTED**. **Organization Brand Profile** and **Change Order document family** are **FUTURE / NOT IMPLEMENTED**. | [architecture/project-document-package.md](architecture/project-document-package.md) · [architecture/permit-and-approvals-report.md](architecture/permit-and-approvals-report.md) · [architecture/jurisdiction-resolution.md](architecture/jurisdiction-resolution.md) · [architecture/organization-brand-profile.md](architecture/organization-brand-profile.md) · [architecture/change-order-document-family.md](architecture/change-order-document-family.md) · [pricing-policy.md](pricing-policy.md) |
+| Project document package (4 outputs) | **Partial** — outputs 1–2 **CLOSED / OPERATIONAL FOR UAT** ([FG-012](feature-gates/FG-012-estimate-output-consistency.md)); outputs 3–4 Future. **Permit Foundation V1** [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. Pass 2 Permit Intelligence **NOT IMPLEMENTED**. **Organization Brand Profile** and **Change Order document family** are **FUTURE / NOT IMPLEMENTED**. | [architecture/project-document-package.md](architecture/project-document-package.md) · [architecture/permit-and-approvals-report.md](architecture/permit-and-approvals-report.md) · [architecture/jurisdiction-resolution.md](architecture/jurisdiction-resolution.md) · [architecture/organization-brand-profile.md](architecture/organization-brand-profile.md) · [architecture/change-order-document-family.md](architecture/change-order-document-family.md) · [pricing-policy.md](pricing-policy.md) |
 | QuickBooks estimate export | **Future** (pipeline boundary documented; no API) | [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md) |
 | Ontario construction contract + warranty | **Future** (Legal Content Gate; no templates registered) | [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md) |
 | Project Controls and Actual-Cost Feedback | **Partial** (Change Orders current; job cost future) | [modules/projects.md](modules/projects.md) |
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next candidate milestone:** [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING** (not CLOSED). [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. Graph head `e7f8a9b0c1d2`. Live current `d6e7f8a9b0c1`. Do **not** populate the Permit Rules Library. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**. [ADR-008](adr/ADR-008-supplier-price-snapshotting.md) **Proposed**. FG-010 Phase D is **NOT STARTED**. **Organization Brand Profile** and **Change Order document family** remain **FUTURE / NOT IMPLEMENTED**.
+**Next candidate milestone:** later **Ontario / Ottawa Permit Rules + Mike Pratt POC** (gate **not created**). [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. Live current = head `e7f8a9b0c1d2`. Do **not** populate the Permit Rules Library. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**. [ADR-008](adr/ADR-008-supplier-price-snapshotting.md) **Proposed**. FG-010 Phase D is **NOT STARTED**. **Organization Brand Profile** and **Change Order document family** remain **FUTURE / NOT IMPLEMENTED**.
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -87,7 +87,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 - **FG-006 Historical Estimate Ingestion Engine Phase B** implemented and verified (2026-08-28).
 - CalibAi V1 direction (not authorized as a single implementation): PLAN → PRICE → CONTRACT baseline → BUILD field capture → basic MONITOR — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)
 - Document package outputs 3–4, QuickBooks API, contract/warranty generation — **not started** (governance recorded only). Outputs 1–2: [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**.
-- Permit Intelligence — architecture **Accepted** (ADR-037/038/039); Pass 2 **NOT IMPLEMENTED**; [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING** ([permit-and-approvals-report.md](architecture/permit-and-approvals-report.md)).
+- Permit Intelligence — architecture **Accepted** (ADR-037/038/039); Pass 2 **NOT IMPLEMENTED**; [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** ([permit-and-approvals-report.md](architecture/permit-and-approvals-report.md)).
 - Organization Brand Profile — **FUTURE / NOT IMPLEMENTED** pin ([organization-brand-profile.md](architecture/organization-brand-profile.md)); not a Feature Gate; does not reorder the roadmap.
 - Change Order document family — **FUTURE / NOT IMPLEMENTED** pin ([change-order-document-family.md](architecture/change-order-document-family.md)); not a Feature Gate; existing Change Order record remains authoritative.
 - Estimate mapping remains outside near-term sheet work
@@ -159,7 +159,7 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Next recommended milestones
 
-1. **FG-015 live migration** under a separate prompt. [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING**. Do **not** populate the Permit Rules Library. Do **not** implement MONITOR, Phase D, supplier/Winchester POC, or bulk supplier onboarding. Do not accept ADR-008.
+1. Later **Ontario / Ottawa Permit Rules + Mike Pratt POC** Feature Gate (**not created**). [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **CLOSED / OPERATIONAL FOR UAT**. Do **not** populate the Permit Rules Library. Do **not** implement MONITOR, Phase D, supplier/Winchester POC, or bulk supplier onboarding. Do not accept ADR-008.
 2. Phase D reviewed quantity → estimate mapping remains **NOT STARTED / NOT AUTHORIZED**.
 3. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
 4. Subsequent CalibAi sequence: auth, BUILD, field web, MONITOR implementation, LEARN — each separately gated. ADR-021 does not move MONITOR ahead of auth/BUILD.
@@ -177,7 +177,7 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 ## Future (provisional product)
 
 - Formal proposal acceptance workflow; e-signature
-- [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) Permit Foundation V1 — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING**; later **Ontario / Ottawa Permit Rules + Mike Pratt POC** (not created) — [permit-and-approvals-report.md](architecture/permit-and-approvals-report.md)
+- [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) Permit Foundation V1 — **CLOSED / OPERATIONAL FOR UAT**; later **Ontario / Ottawa Permit Rules + Mike Pratt POC** (not created) — [permit-and-approvals-report.md](architecture/permit-and-approvals-report.md)
 - Organization Brand Profile / org-owned logo / brand snapshot — **FUTURE / NOT IMPLEMENTED** pin ([organization-brand-profile.md](architecture/organization-brand-profile.md))
 - Change Order governed document family / client email / field UX — **FUTURE / NOT IMPLEMENTED** pin ([change-order-document-family.md](architecture/change-order-document-family.md)); do not create a second Change Order entity
 - Project creation from accepted proposal; budgets
@@ -197,7 +197,7 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Decisions Required (Joel)
 
-1. Authorize the **FG-014 live-migrate + office UAT** prompt. Do **not** implement supplier integration, bulk supplier onboarding, or a Winchester POC. Do not accept ADR-008.
+1. Authorize the later **Ontario / Ottawa Permit Rules + Mike Pratt** Feature Gate when ready. Do **not** populate rules, implement supplier integration, bulk supplier onboarding, or a Winchester POC. Do not accept ADR-008.
 2. ADR-010 remains **Proposed** (OCR/CAD/provider). Real external AI provider remains **not authorized**.
 3. Confirm POC element remains `INTERIOR_DOOR_OPENING` count.
 4. Auth model; production hosting/secrets (unchanged platform debt).

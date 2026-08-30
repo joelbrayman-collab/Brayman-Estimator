@@ -2,15 +2,15 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Current (FG-015 civic foundation)** — **LIVE MIGRATION PENDING**. Architecture **Accepted** ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md)). Rural/legal UX unused. Pass 2 / geocoder **not** implemented. |
+| Status | **Current (FG-015 civic foundation)** — **CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md)). Rural/legal UX unused. Pass 2 / geocoder **not** implemented. |
 | Date | 2026-08-30 |
 | Product | The Estimator / CalibAi |
 | Canonical ADR | [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** |
 | Related | [permit-and-approvals-report.md](permit-and-approvals-report.md) · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) · [modules/projects.md](../modules/projects.md) |
 | Code | `app/models/jurisdiction.py` · `app/models/project.py` (`ProjectLocation`) · `app/services/jurisdiction.py` · `app/services/permit_foundation.py` |
-| Schema | Alembic graph head `e7f8a9b0c1d2`. Live current remains `d6e7f8a9b0c1` until a live-migrate prompt. |
+| Schema | Alembic live current = head `e7f8a9b0c1d2`. |
 
-**Current vs future:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) implemented bounded civic `ProjectLocation` (1:1 with `Project`), platform Canada / Ontario / City of Ottawa definitions plus aliases (`Ottawa`, `City of Ottawa`, `North Gower`), and a deterministic resolver. `Project.address` remains free text and is not parsed or overwritten. `Organization.tax_jurisdiction` remains tax policy, not AHJ identity. No geocoder, municipal API, or AI. Live office DB **does not yet** have this schema.
+**Current vs future:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) implemented bounded civic `ProjectLocation` (1:1 with `Project`), platform Canada / Ontario / City of Ottawa definitions plus aliases (`Ottawa`, `City of Ottawa`, `North Gower`), and a deterministic resolver. `Project.address` remains free text and is not parsed or overwritten. `Organization.tax_jurisdiction` remains tax policy, not AHJ identity. No geocoder, municipal API, or AI. Live current = head `e7f8a9b0c1d2`.
 
 ---
 

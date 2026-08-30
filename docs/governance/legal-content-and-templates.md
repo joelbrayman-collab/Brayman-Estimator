@@ -48,7 +48,7 @@ Warranty language is **governed content**.
 
 ## Not this gate — Permit Intelligence / Permit Rules Library
 
-**Status:** Permit Rules Library remains **FUTURE / NOT IMPLEMENTED**. Architecture **Accepted**: [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING** does **not** populate this library.
+**Status:** Permit Rules Library remains **FUTURE / NOT IMPLEMENTED**. Architecture **Accepted**: [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** does **not** populate this library.
 
 This Legal Content Gate governs **Ontario construction contract and warranty templates**. It does **not** own municipal/provincial/state zoning, permit, servicing, or AHJ requirement sources. The Permit Rules Library is a **separate** governed source.
 

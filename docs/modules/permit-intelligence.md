@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Pass 1 foundation Current (FG-015)** — **LIVE MIGRATION PENDING**. Pass 2 **not implemented**. Architecture **Accepted** (ADR-037/038/039). |
+| Status | **Pass 1 foundation Current (FG-015)** — **CLOSED / OPERATIONAL FOR UAT**. Pass 2 **not implemented**. Architecture **Accepted** (ADR-037/038/039). |
 | Updated | 2026-08-30 |
 | Code | Pass 1 records are **Projects-owned**: `app/models/project.py` (`PermitProfile`, `ProjectLocation`), `app/services/permit_foundation.py`, Hub panel in `app/templates/projects/detail.html`. Platform definitions: `app/models/jurisdiction.py`, `app/services/jurisdiction.py`. No Pass 2 analysis module. |
 | Architecture | [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) |
-| Feature Gate | [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING** (foundation only; Pass 2 not this gate). **Not CLOSED.** |
+| Feature Gate | [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (foundation only; Pass 2 not this gate). |
 
 ## Purpose
 
@@ -47,11 +47,11 @@ FG-015 Pass 1 foundation only:
 - Plan/site review = `NOT_PERFORMED`; substantive analysis = `NOT_AVAILABLE`
 - No findings, no PASS, no zoning conclusions
 - No Permit Rules Library tables or seed
-- Live schema apply **pending** (`e7f8a9b0c1d2` is graph head; live current `d6e7f8a9b0c1`)
+- Live current = head `e7f8a9b0c1d2`
 
 ## Dependencies
 
-- [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) for location / jurisdiction / preliminary profile (**implemented; live migration pending**)
+- [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) for location / jurisdiction / preliminary profile (**CLOSED / OPERATIONAL FOR UAT**)
 - Later Feature Gate for bounded curated rules before a useful Pass 2 report
 - Organization Brand Profile only when rendering customer-facing PDFs (not required for analysis)
 

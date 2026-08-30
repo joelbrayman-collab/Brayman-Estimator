@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-039: Permit Report Snapshot Immutability and Workflow Effect |
-| Status | **Accepted** (FG-015 versioned preliminary snapshot implemented in code; substantive Permit Report **not** implemented; **live migration pending**) |
+| Status | **Accepted** (FG-015 versioned preliminary snapshot **CLOSED / OPERATIONAL FOR UAT**; substantive Permit Report **not** implemented) |
 | Date | 2026-08-30 |
 | Related | [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [project-document-package.md](../architecture/project-document-package.md) · [ADR-002](ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-005](ADR-005-ai-takeoff-traceability.md) **Accepted** · [ADR-006](ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-038](ADR-038-permit-intelligence-authority-and-rules-library.md) · [organization-brand-profile.md](../architecture/organization-brand-profile.md) · [change-order-document-family.md](../architecture/change-order-document-family.md) |
 
@@ -130,4 +130,4 @@ None in this pass.
 |------|------|------|
 | Joel | Joel Brayman | 2026-08-30 |
 | ChatGPT review | Permit Intelligence architecture governance pass | 2026-08-30 |
-| Cursor implementation note | FG-015 versioned preliminary snapshot implemented; substantive report / Gate 2 not implemented; live migration pending | 2026-08-30 |
+| Cursor implementation note | FG-015 versioned preliminary snapshot **CLOSED / OPERATIONAL FOR UAT**; substantive report / Gate 2 not implemented | 2026-08-30 |

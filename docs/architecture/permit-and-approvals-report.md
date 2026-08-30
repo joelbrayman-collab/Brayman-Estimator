@@ -2,13 +2,13 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Pass 2 FUTURE / NOT IMPLEMENTED.** Pass 1 foundation **Current (FG-015)** — **LIVE MIGRATION PENDING**. Architecture **Accepted** ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) |
+| Status | **Pass 2 FUTURE / NOT IMPLEMENTED.** Pass 1 foundation **Current (FG-015)** — **CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) |
 | Date | 2026-08-30 |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |
 | Related | [jurisdiction-resolution.md](jurisdiction-resolution.md) · [project-document-package.md](project-document-package.md) · [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) · [modules/projects.md](../modules/projects.md) · [modules/permit-intelligence.md](../modules/permit-intelligence.md) · [organization-brand-profile.md](organization-brand-profile.md) · [change-order-document-family.md](change-order-document-family.md) |
 
-**Current vs future:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) implemented Pass 1 foundation (structured location, deterministic jurisdiction resolution, versioned preliminary Permit Profile, Hub PLAN presentation). There is still **no** Permit Intelligence analysis engine, substantive Permit & Approvals Report, Permit Rules Library, live regulatory lookup, or PASS findings. [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) remains **CLOSED / OPERATIONAL FOR UAT**. Live migration of `e7f8a9b0c1d2` is **pending**.
+**Current vs future:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) implemented Pass 1 foundation (structured location, deterministic jurisdiction resolution, versioned preliminary Permit Profile, Hub PLAN presentation). There is still **no** Permit Intelligence analysis engine, substantive Permit & Approvals Report, Permit Rules Library, live regulatory lookup, or PASS findings. [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) remains **CLOSED / OPERATIONAL FOR UAT**. Live current = head `e7f8a9b0c1d2`.
 
 ---
 
@@ -175,7 +175,7 @@ These are topic headings, not a claim that every topic applies to every project.
 
 ## Recommended Feature Gates
 
-**First:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING** — structured Project location; jurisdiction resolver foundation; project-tied preliminary Permit Profile; advisory labeling; snapshot/provenance foundation. **Not CLOSED.**
+**First:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** — structured Project location; jurisdiction resolver foundation; project-tied preliminary Permit Profile; advisory labeling; snapshot/provenance foundation.
 
 Explicitly **not** in FG-015: national rules library; live web lookup; external AI; automatic zoning conclusions; municipal submissions; comprehensive Building Code engine; Phase D; automatic estimate insertion; contract generation; Permit Rules Library population.
 

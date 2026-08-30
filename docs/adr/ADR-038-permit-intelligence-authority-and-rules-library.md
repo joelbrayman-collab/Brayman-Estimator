@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-038: Permit Intelligence Authority and Permit Rules Library Provenance |
-| Status | **Accepted** (FG-015 Pass 1 foundation implemented in code; Permit Rules Library **not** populated; **live migration pending**) |
+| Status | **Accepted** (FG-015 Pass 1 foundation **CLOSED / OPERATIONAL FOR UAT**; Permit Rules Library **not** populated) |
 | Date | 2026-08-30 |
 | Related | [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) · [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [ADR-006](ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-010](ADR-010-build-versus-buy-document-processing.md) **Proposed** · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [ADR-037](ADR-037-project-location-and-jurisdiction-resolution.md) · [ADR-039](ADR-039-permit-report-snapshot-immutability-and-workflow.md) |
 
@@ -122,4 +122,4 @@ None in this pass.
 |------|------|------|
 | Joel | Joel Brayman | 2026-08-30 |
 | ChatGPT review | Permit Intelligence architecture governance pass | 2026-08-30 |
-| Cursor implementation note | FG-015 preliminary profile implemented; Pass 2 / rules library not implemented; live migration pending | 2026-08-30 |
+| Cursor implementation note | FG-015 preliminary profile **CLOSED / OPERATIONAL FOR UAT**; Pass 2 / rules library not implemented | 2026-08-30 |

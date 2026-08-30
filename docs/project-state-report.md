@@ -50,7 +50,7 @@ Distinguish from:
 | Report date | 2026-08-30 |
 | Repository | Brayman-Estimator (The Estimator) |
 | Current branch | `main` |
-| Current commit / `origin/main` | FG-016 implementation on `main` (starting HEAD `4310c574b0c5dd2f047b402acfab77c7a32a57ab`). FG-015 implementation `e6462a9ee8688b6599ab1a7b0e91232e8d53db3a`. |
+| Current commit / `origin/main` | FG-016 implementation `a709829d32d94ab2baf36f142ad0095254ba3d3a` (starting HEAD `4310c574b0c5dd2f047b402acfab77c7a32a57ab`). FG-015 implementation `e6462a9ee8688b6599ab1a7b0e91232e8d53db3a`. |
 | August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | M011 Implementation Commit | `cb38d93` — *feat: implement M011 organization foundation and commercial context* |
@@ -72,7 +72,7 @@ Distinguish from:
 | Next candidate milestone | **FG-016 live migration + office Pratt UAT**. Supplier Catalogue onboarding/mapping remains **not authorized**. Phase D mapping remains **NOT STARTED / NOT AUTHORIZED**. MONITOR implementation remains **not authorized**. |
 | Documents to read first | [current-state.md](current-state.md) → [session-handoff.md](session-handoff.md) → [feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) → [architecture/permit-rules-ontario-ottawa-sources.md](architecture/permit-rules-ontario-ottawa-sources.md) |
 | Approved next Cursor prompt location or summary | **FG-016 live migration + office Pratt UAT**. Do not live-migrate in this implementation pass. Do not accept ADR-008. Do not start Phase D, supplier POC, branding, or Change Order documents. |
-| Commit status | FG-016 product implementation on `main`. Live current remains `e7f8a9b0c1d2`. Graph head `f8a9b0c1d2e3`. FG-016 **IMPLEMENTED / LIVE MIGRATION PENDING**. |
+| Commit status | FG-016 product implementation `a709829d32d94ab2baf36f142ad0095254ba3d3a` on `main`. Live current remains `e7f8a9b0c1d2`. Graph head `f8a9b0c1d2e3`. FG-016 **IMPLEMENTED / LIVE MIGRATION PENDING**. |
 | Governance baseline | FG-016 IMPLEMENTED / LIVE MIGRATION PENDING; FG-015 CLOSED / OPERATIONAL FOR UAT; FG-014 CLOSED / OPERATIONAL FOR UAT; live current e7f8a9b0c1d2; graph head f8a9b0c1d2e3; FG-013 CLOSED / OPERATIONAL FOR UAT; ADR-034/035/036 Accepted; ADR-037/038/039 Accepted; ADR-032 Accepted; ADR-033 Accepted; ADR-008 Proposed; ADR-021 Accepted; FG-008–FG-012 closed/operational for UAT; Phase D not started; MONITOR not implemented; Organization Brand Profile FUTURE only; Change Order document family FUTURE only |
 
 ### Resume commands (Cursor Terminal)

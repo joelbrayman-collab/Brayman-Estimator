@@ -63,7 +63,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Live migration pending. Live office Pratt UAT pending. FG-016 not CLOSED. |
 | Next approved step | **FG-016 live migration + office Pratt UAT**. This pass **STOPS**. |
 | Next approved prompt | FG-016 live migration + office Pratt UAT (not this chat). |
-| Commit hash | (this implementation commit) |
+| Commit hash | `a709829d32d94ab2baf36f142ad0095254ba3d3a` |
 
 ### 2026-08-30 — FG-016 Ontario / Ottawa Permit Intelligence POC Feature Gate governance
 

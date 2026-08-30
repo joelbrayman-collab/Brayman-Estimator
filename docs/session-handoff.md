@@ -24,6 +24,7 @@ Authority order for the next session: repository governance → current-state re
 
 - Branch: `main`
 - Starting HEAD for this FG-016 implementation pass: `4310c574b0c5dd2f047b402acfab77c7a32a57ab`
+- FG-016 implementation commit: `a709829d32d94ab2baf36f142ad0095254ba3d3a` (`feat: implement FG-016 Ontario Ottawa Permit Intelligence POC`)
 - Alembic graph head: **`f8a9b0c1d2e3`**. Live `flask db current`: **`e7f8a9b0c1d2`**. One head. **Not live-migrated.**
 - Tests (2026-08-30 FG-014 live-migrate/UAT): dedicated material catalogue **28**; regressions **278**; full suite **338 passed**.
 - Tests (2026-08-30 FG-014 flash repair): dedicated material catalogue **35**; full suite **345 passed**.

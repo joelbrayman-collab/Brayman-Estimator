@@ -63,7 +63,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Live migration pending. Office Hub UAT pending live schema. Ontario / Ottawa + Mike Pratt gate not created. |
 | Next approved step | **FG-015 live migration** under a later Cursor prompt. Do not populate the Permit Rules Library. |
 | Next approved prompt | FG-015 live-migrate (not this chat). |
-| Commit hash | (this implementation commit) |
+| Commit hash | `e6462a9ee8688b6599ab1a7b0e91232e8d53db3a` |
 
 ### 2026-08-30 — FG-015 Permit Foundation V1 Feature Gate governance
 

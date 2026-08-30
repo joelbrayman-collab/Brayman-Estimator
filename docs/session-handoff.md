@@ -23,12 +23,13 @@ Authority order for the next session: repository governance → current-state re
 ## 2. VERIFIED BASELINE
 
 - Branch: `main`
-- Starting HEAD / `origin/main` for this implementation pass: `5f75da617d837add01bacf8f74b40d647f30a067`
+- Starting HEAD for this implementation pass: `5f75da617d837add01bacf8f74b40d647f30a067`
+- Implementation commit: `e6462a9ee8688b6599ab1a7b0e91232e8d53db3a` (`feat: implement FG-015 Permit Foundation V1`)
 - Alembic graph head: **`e7f8a9b0c1d2`**. Live `flask db current`: **`d6e7f8a9b0c1`** (**not upgraded this pass**). One head.
 - Tests (2026-08-30 FG-014 live-migrate/UAT): dedicated material catalogue **28**; regressions **278**; full suite **338 passed**.
 - Tests (2026-08-30 FG-014 flash repair): dedicated material catalogue **35**; full suite **345 passed**.
 - Office re-UAT (2026-08-30, port **5007**): **PASSED**. Tests not rerun. Preserved 35 / 29 / 345.
-- Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010) → `c5d6e7f8a9b0` (FG-013; previously live-applied) → `d6e7f8a9b0c1` (FG-014; now live-applied)
+- Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010) → `c5d6e7f8a9b0` (FG-013; previously live-applied) → `d6e7f8a9b0c1` (FG-014; live-applied) → `e7f8a9b0c1d2` (FG-015; graph head; **not live-applied**)
 - Tests (2026-08-30 FG-013 close): dedicated historical upload **27**; historical ingestion **11**; labour **25**; pricing **33**; full suite **310 passed**.
 - Working tree: clean after this docs commit/push
 - Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**.

@@ -50,7 +50,7 @@ Distinguish from:
 | Report date | 2026-08-30 |
 | Repository | Brayman-Estimator (The Estimator) |
 | Current branch | `main` |
-| Current commit / `origin/main` | FG-015 implementation commit after this pass. Starting HEAD `5f75da617d837add01bacf8f74b40d647f30a067`. |
+| Current commit / `origin/main` | Implementation `e6462a9ee8688b6599ab1a7b0e91232e8d53db3a`. Starting HEAD `5f75da617d837add01bacf8f74b40d647f30a067`. |
 | August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | M011 Implementation Commit | `cb38d93` — *feat: implement M011 organization foundation and commercial context* |
@@ -72,7 +72,7 @@ Distinguish from:
 | Next candidate milestone | After FG-015 closes: later **Ontario / Ottawa Permit Rules + Mike Pratt POC** (not created). Supplier Catalogue onboarding/mapping remains **not authorized**. Phase D mapping remains **NOT STARTED / NOT AUTHORIZED**. MONITOR implementation remains **not authorized**. |
 | Documents to read first | [current-state.md](current-state.md) → [session-handoff.md](session-handoff.md) → [feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) → [architecture/jurisdiction-resolution.md](architecture/jurisdiction-resolution.md) |
 | Approved next Cursor prompt location or summary | **FG-015 live migration** (later prompt). Do **not** populate rules. Do not accept ADR-008. Do not start Phase D, supplier POC, branding, Pratt POC, or Change Order documents. |
-| Commit status | FG-015 implementation this commit. Graph head `e7f8a9b0c1d2`. Live current `d6e7f8a9b0c1`. **Not CLOSED.** |
+| Commit status | Implementation `e6462a9ee8688b6599ab1a7b0e91232e8d53db3a`. Graph head `e7f8a9b0c1d2`. Live current `d6e7f8a9b0c1`. **Not CLOSED.** |
 | Governance baseline | FG-015 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE MIGRATION PENDING; FG-014 CLOSED / OPERATIONAL FOR UAT; graph head e7f8a9b0c1d2; live current d6e7f8a9b0c1; FG-013 CLOSED / OPERATIONAL FOR UAT; ADR-034/035/036 Accepted; ADR-037/038/039 Accepted; ADR-032 Accepted; ADR-033 Accepted; ADR-008 Proposed; ADR-021 Accepted; FG-008–FG-012 closed/operational for UAT; Phase D not started; MONITOR not implemented; Organization Brand Profile FUTURE only; Change Order document family FUTURE only |
 
 ### Resume commands (Cursor Terminal)

@@ -11,7 +11,7 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | Verify `git log -1` after this implementation commit. Product: FG-015 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING**. Alembic graph head **`e7f8a9b0c1d2`**. Live current **`d6e7f8a9b0c1`**. |
+| HEAD / `origin/main` | `e6462a9ee8688b6599ab1a7b0e91232e8d53db3a` (`feat: implement FG-015 Permit Foundation V1`). Product: FG-015 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING**. Alembic graph head **`e7f8a9b0c1d2`**. Live current **`d6e7f8a9b0c1`**. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
 | Working tree at last verified inspect | **FG-015 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED — LIVE MIGRATION PENDING.** Graph head `e7f8a9b0c1d2`. Live current `d6e7f8a9b0c1`. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. Permit Intelligence ADR-037/038/039 **Accepted**. FG-013 **CLOSED / OPERATIONAL FOR UAT.** ADR-034/035/036 **Accepted**. ADR-032 **Accepted**. **ADR-033 Accepted**. **ADR-008 Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Organization Brand Profile is **FUTURE / NOT IMPLEMENTED**. Change Order document family is **FUTURE / NOT IMPLEMENTED**. |

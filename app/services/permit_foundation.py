@@ -198,6 +198,9 @@ def establish_project_location_and_profile(
         version_number=next_version,
         generated_by=generated_by,
     )
+    from app.services.permit_intelligence import mark_current_analysis_recheck
+
+    mark_current_analysis_recheck(project)
     if commit:
         db.session.commit()
     else:

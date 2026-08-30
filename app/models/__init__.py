@@ -3,6 +3,12 @@ from app.models.client import Client
 from app.models.canonical_material import CanonicalMaterial
 from app.models.cost_item import CostItem
 from app.models.jurisdiction import JurisdictionAlias, JurisdictionDefinition
+from app.models.permit_intelligence import (
+    PermitAnalysis,
+    PermitFinding,
+    PermitRule,
+    ProjectPermitFact,
+)
 from app.models.project import PermitProfile, Project, ProjectCommercialContext, ProjectLocation
 from app.models.estimate import (
     Estimate,
@@ -97,7 +103,11 @@ __all__ = [
     "TakeoffExtractionRun",
     "TakeoffPackage",
     "TakeoffPackageItem",
+    "PermitAnalysis",
+    "PermitFinding",
     "PermitProfile",
+    "PermitRule",
+    "ProjectPermitFact",
     "Project",
     "ProjectCommercialContext",
     "ProjectLocation",

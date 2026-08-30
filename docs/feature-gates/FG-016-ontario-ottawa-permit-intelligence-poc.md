@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-016 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Permit Intelligence** owns Pass 2 analysis, findings, and the substantive Permit & Approvals Report. **Projects** owns project-tied location, jurisdiction resolution, Permit Profile relationship, Hub presentation, and the report snapshot relationship. **Permit Rules Library** is a **platform governed source** ([ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md)). Plan Intelligence remains plan/site-plan owner (**read-through only**). |
 | Date | 2026-08-30 |
-| Status | **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** / **LIVE MIGRATION PENDING**. **Not CLOSED.** |
 | Architecture | [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [permit-rules-library.md](../architecture/permit-rules-library.md) · [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) · [modules/permit-intelligence.md](../modules/permit-intelligence.md) · [modules/projects.md](../modules/projects.md) |
 | Related ADRs | [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** · [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) **Accepted** · [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-005](../adr/ADR-005-ai-takeoff-traceability.md) **Accepted** · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | [FG-015](FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. ADR-037/038/039 **Accepted**. Live current = head `e7f8a9b0c1d2`. Full suite **364 passed**. |
@@ -19,12 +19,12 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **APPROVED FOR IMPLEMENTATION** |
-| Implementation | **NOT STARTED.** This pass is documentation only. |
-| Schema / Alembic | **Authorized later** — one bounded additive revision in the implementation prompt. **Do not create it now.** |
-| Permit Rules Library | **EMPTY / NOT IMPLEMENTED** — population is **in this gate** under human review. Not populated in this governance pass. |
-| Substantive Permit Intelligence / Pass 2 | **NOT IMPLEMENTED** — authorized by this gate; not started. |
-| Mike Pratt project in product data | **NOT CREATED** this pass. UAT reference only until implementation UAT. |
+| Feature Gate (this document) | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** / **LIVE MIGRATION PENDING**. **Not CLOSED.** |
+| Implementation | **IMPLEMENTED** — bounded Ontario / Ottawa coach-house POC. |
+| Schema / Alembic | Graph head **`f8a9b0c1d2e3`**. Live development/UAT current remains **`e7f8a9b0c1d2`**. **Do not live-migrate in this pass.** |
+| Permit Rules Library | **10 APPROVED** bounded rules (`OTT-CH-001`–`OTT-CH-010`). Provenance: [permit-rules-ontario-ottawa-sources.md](../architecture/permit-rules-ontario-ottawa-sources.md). |
+| Substantive Permit Intelligence / Pass 2 | **IMPLEMENTED** (deterministic evaluation, facts, immutable snapshots, HTML report, neutral CalibAi PDF). |
+| Mike Pratt project in product data | **NOT CREATED** in live development/UAT. UAT reference only. Isolated tests use a synthetic labeled project. |
 | Live web / geocoder / external AI | **NOT AUTHORIZED** at product runtime. |
 
 This gate makes Permit Intelligence **genuinely useful** for **one bounded jurisdiction / reference case**. It is a **POC**, not a national permit library.

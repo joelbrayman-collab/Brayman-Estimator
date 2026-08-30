@@ -2,13 +2,13 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Pass 2 APPROVED FOR IMPLEMENTATION** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)) / **NOT IMPLEMENTED.** Pass 1 foundation **Current (FG-015)** — **CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) |
+| Status | **Pass 2 IMPLEMENTED** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)) / **LIVE MIGRATION PENDING**. Pass 1 foundation **Current (FG-015)** — **CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) |
 | Date | 2026-08-30 |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |
 | Related | [jurisdiction-resolution.md](jurisdiction-resolution.md) · [project-document-package.md](project-document-package.md) · [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) · [modules/projects.md](../modules/projects.md) · [modules/permit-intelligence.md](../modules/permit-intelligence.md) · [organization-brand-profile.md](organization-brand-profile.md) · [change-order-document-family.md](change-order-document-family.md) |
 
-**Current vs future:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) implemented Pass 1 foundation (structured location, deterministic jurisdiction resolution, versioned preliminary Permit Profile, Hub PLAN presentation). [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** (Pass 2 POC). There is still **no** Permit Intelligence analysis engine, substantive Permit & Approvals Report, or populated Permit Rules Library in product. [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) remains **CLOSED / OPERATIONAL FOR UAT**. Live current = head `e7f8a9b0c1d2`.
+**Current vs future:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) implemented Pass 1 foundation. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE MIGRATION PENDING** (Pass 2 POC: bounded rules, facts, deterministic evaluation, immutable `permit_analyses` snapshots, office HTML report, neutral CalibAi PDF). FG-015 preliminary profiles remain `PRELIMINARY_FOUNDATION`. Live current remains `e7f8a9b0c1d2`. Graph head `f8a9b0c1d2e3`.
 
 ---
 
@@ -73,7 +73,7 @@ Architect globally. Implement later in bounded jurisdictions.
 
 Do **not** hard-code Ottawa as the universal architecture. Do **not** attempt a national library in the first product gate.
 
-The Church Street case is the **FG-016 UAT reference** — not an in-app project in this governance pass and not a permit determination. Preliminary review outside this repository is **not** governed evidence. 3415 Roger Stevens Road remains the commercial/document-package UAT reference ([testing/uat-reference-cases.md](../testing/uat-reference-cases.md)).
+The Church Street case is the **FG-016 UAT reference** — not created in live development/UAT under the implementation pass. Isolated tests use a synthetic labeled project. Preliminary review outside this repository is **not** governed evidence. 3415 Roger Stevens Road remains the commercial/document-package UAT reference ([testing/uat-reference-cases.md](../testing/uat-reference-cases.md)).
 
 ---
 
@@ -176,7 +176,7 @@ These are topic headings, not a claim that every topic applies to every project.
 
 Explicitly **not** in FG-015: national rules library; live web lookup; external AI; automatic zoning conclusions; municipal submissions; comprehensive Building Code engine; Phase D; automatic estimate insertion; contract generation; Permit Rules Library population.
 
-**Second:** [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** — Ontario / Ottawa Permit Intelligence POC: bounded curated rules + Mike Pratt reference. No product code in the governance pass.
+**Second:** [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE MIGRATION PENDING** — Ontario / Ottawa Permit Intelligence POC. Next: live migration + office Pratt UAT. Do **not** mark CLOSED until that pass.
 
 ---
 

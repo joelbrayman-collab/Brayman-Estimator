@@ -521,11 +521,15 @@ def test_project_hub_displays_foundation_states_and_no_substantive_findings(
     )
 
 
-def test_no_permit_rules_library_or_plan_or_estimate_mutation(app):
+def test_fg015_establish_does_not_mutate_plans_estimates_or_create_pass2(app):
+    from app.models.permit_intelligence import PermitAnalysis, ProjectPermitFact
+
     project = _make_existing_project()
     plan_count = PlanDocument.query.count()
     takeoff_count = TakeoffPackage.query.count()
     estimate_count = Estimate.query.count()
+    fact_count = ProjectPermitFact.query.count()
+    analysis_count = PermitAnalysis.query.count()
     establish_project_location_and_profile(
         project.id,
         OTTAWA_LOCATION,
@@ -536,14 +540,14 @@ def test_no_permit_rules_library_or_plan_or_estimate_mutation(app):
     assert PlanDocument.query.count() == plan_count
     assert TakeoffPackage.query.count() == takeoff_count
     assert Estimate.query.count() == estimate_count
+    assert ProjectPermitFact.query.count() == fact_count
+    assert PermitAnalysis.query.count() == analysis_count
     names = set(sa.inspect(db.engine).get_table_names())
-    assert "permit_rules" not in names
     assert "permit_rule_library" not in names
     assert "zoning_rules" not in names
     assert not hasattr(JurisdictionDefinition, "setback")
     from app import models as models_pkg
 
-    assert not hasattr(models_pkg, "PermitRule")
     assert not hasattr(models_pkg, "ZoningRule")
 
 

@@ -82,10 +82,19 @@
         <div class="panel-header">
             <h2>Permit &amp; Approvals</h2>
             <a href="{{ url_for('projects.edit_project_location', id=project.id) }}">Review location</a>
+            ·
+            <a href="{{ url_for('projects.view_permit_report', id=project.id) }}">Permit report</a>
         </div>
         {% set pf = hub.permit_foundation %}
-        <p class="eyebrow">PRELIMINARY / FOUNDATION ONLY</p>
-        <p class="muted-copy">Foundation state only. This is not zoning compliant, permit ready, permit approved, building-code compliant, or AHJ reviewed. PASS is not shown.</p>
+        {% set pi = hub.permit_intelligence %}
+        <p class="eyebrow">PRELIMINARY / FOUNDATION ONLY{% if pi.report_available %} · ADVISORY ONLY{% endif %}</p>
+        <p class="muted-copy">This is not zoning compliant, permit ready, permit approved, building-code compliant, or AHJ reviewed. PASS never means AHJ approval.</p>
+        {% if pi.recheck_required %}
+        <p class="muted-copy"><strong>RECHECK REQUIRED</strong> — location, plan/site, facts, or rules have changed since the last report.</p>
+        {% endif %}
+        {% if pi.attention_count and pi.attention_count > 0 %}
+        <p class="muted-copy"><strong>Commercial warning (acknowledgement only):</strong> {{ pi.attention_count }} finding(s) require attention before treating a final proposal or contract as unconstrained. This does not block proposals or contracts.</p>
+        {% endif %}
         <div class="form-grid" style="margin-top: 12px;">
             <div>
                 <p class="eyebrow">Location</p>
@@ -113,11 +122,23 @@
             </div>
             <div>
                 <p class="eyebrow">Plan/site analysis</p>
-                <p>not performed</p>
+                <p>{% if pi.plan_site_basis %}identified{% else %}not performed{% endif %}</p>
             </div>
             <div>
                 <p class="eyebrow">Substantive Permit Report</p>
-                <p>not available</p>
+                <p>{% if pi.report_available %}available{% else %}not available{% endif %}</p>
+            </div>
+            <div>
+                <p class="eyebrow">Last analysis</p>
+                <p>{% if pi.last_analysis_at %}{{ pi.last_analysis_at.strftime("%Y-%m-%d %H:%M") }}{% else %}none{% endif %}</p>
+            </div>
+            <div>
+                <p class="eyebrow">Findings requiring attention</p>
+                <p>{{ pi.attention_count }}</p>
+            </div>
+            <div>
+                <p class="eyebrow">Recheck required</p>
+                <p>{% if pi.recheck_required %}yes{% else %}no{% endif %}</p>
             </div>
         </div>
         {% if pf.profile %}

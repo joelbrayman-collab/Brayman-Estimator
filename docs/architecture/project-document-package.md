@@ -112,13 +112,13 @@ Generated **only from an APPROVED estimate**.
 
 ## Additional governed project document (FUTURE / NOT IMPLEMENTED)
 
-**Status:** Pass 2 report **APPROVED FOR IMPLEMENTATION** / **NOT IMPLEMENTED** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)). Architecture **Accepted** (ADR-037/038/039). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (preliminary profile foundation). Canonical: [permit-and-approvals-report.md](permit-and-approvals-report.md) · [permit-rules-library.md](permit-rules-library.md).
+**Status:** Pass 2 report **IMPLEMENTED / LIVE MIGRATION PENDING** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)). Architecture **Accepted** (ADR-037/038/039). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (preliminary profile foundation). Canonical: [permit-and-approvals-report.md](permit-and-approvals-report.md) · [permit-rules-library.md](permit-rules-library.md).
 
 The **Permit & Approvals Report** is a **core project document** (advisory preflight). It is **not** a fifth estimate-derived commercial output, **not** a Change Order, and **not** a substitute for the AHJ.
 
 Issued reports are immutable snapshots. Recheck produces a new version ([ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)).
 
-This section does **not** implement Pass 2 analysis, live lookup, or external AI. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) authorizes the later bounded POC. It does **not** change FG-012 outputs 1–2 or authorize outputs 3–4.
+This section does **not** authorize live lookup or external AI. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) implemented the bounded POC. It does **not** change FG-012 outputs 1–2 or authorize outputs 3–4.
 
 ## Core package vs transaction-document families (FUTURE / NOT IMPLEMENTED)
 

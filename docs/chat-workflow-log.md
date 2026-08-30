@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-016 Ontario / Ottawa Permit Intelligence POC implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ starting `4310c574b0c5dd2f047b402acfab77c7a32a57ab` |
+| Objective | Implement FG-016 bounded Ontario / Ottawa coach-house Permit Intelligence POC. |
+| Business decision | Advisory only. PASS never means AHJ approval. Pratt is UAT reference, not live-seeded. Dual-compliance numeric checks VERIFY unless conservative ceiling exceeded. |
+| Architectural decision | Reuse FG-015 resolver. Platform `permit_rules` (no org CRUD). Project facts vs legal conclusions. Deterministic evaluation. Immutable `permit_analyses`. HTML report + existing ReportLab PDF. One additive migration `f8a9b0c1d2e3` **not** live-applied. No new ADR. |
+| Prompt template used | Implementation prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — IMPLEMENT FG-016 ONTARIO / OTTAWA PERMIT INTELLIGENCE POC. Authoritative-source research; APPROVED seed; one additive migration; facts; snapshots; HTML report; PDF if existing stack; dedicated/regression/full-suite tests. Do not live-migrate. Do not enable runtime web or external AI. |
+| Files expected to change | `app/` permit models/services/routes/templates; `migrations/versions/f8a9b0c1d2e3_*`; `tests/test_permit_intelligence_fg016.py`; governed docs |
+| Files prohibited from changing | Live development/UAT DB; Estimate/Proposal/Contract economics; Plan Intelligence write paths; Brand Profile |
+| Implementation result | Implemented. Graph head `f8a9b0c1d2e3`. Live current remains `e7f8a9b0c1d2`. 10 APPROVED rules. Neutral CalibAi PDF of the same snapshot. |
+| Tests | Dedicated FG-016 **37 passed**. Full suite **401 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migration pending. Live office Pratt UAT pending. FG-016 not CLOSED. |
+| Next approved step | **FG-016 live migration + office Pratt UAT**. This pass **STOPS**. |
+| Next approved prompt | FG-016 live migration + office Pratt UAT (not this chat). |
+| Commit hash | (this implementation commit) |
+
 ### 2026-08-30 — FG-016 Ontario / Ottawa Permit Intelligence POC Feature Gate governance
 
 | Field | Content |

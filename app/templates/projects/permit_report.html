@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Permit & Approvals Report | {{ project.name }}{% endblock %}
+{% block page_title %}Permit &amp; Approvals Report{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">ADVISORY ONLY</p>
+        <h1>{{ project.name }}</h1>
+        <p class="muted-copy">Bounded Ontario / City of Ottawa coach-house preflight. PASS never means AHJ, zoning, or permit approval.</p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
+        {% if analysis %}
+        <a class="button-link" href="{{ url_for('projects.download_permit_report_pdf', id=project.id) }}">Download PDF</a>
+        {% endif %}
+    </div>
+</div>
+
+{% if pi.recheck_required %}
+<div class="form-panel" style="margin-bottom: 16px;">
+    <p class="eyebrow">RECHECK REQUIRED</p>
+    <p>Inputs have changed since this snapshot. Generate a new report. This version is not rewritten.</p>
+</div>
+{% endif %}
+
+{% if pi.attention_count and pi.attention_count > 0 %}
+<div class="form-panel" style="margin-bottom: 16px;">
+    <p class="eyebrow">Commercial warning — acknowledgement only</p>
+    <p>{{ pi.attention_count }} finding(s) require attention before treating a final customer proposal or contract as unconstrained. This does not block proposals or contracts and does not generate contract language.</p>
+</div>
+{% endif %}
+
+<div class="form-panel" style="margin-bottom: 16px;">
+    <h3>Project / location / jurisdiction</h3>
+    {% if analysis %}
+    <p>Location: {{ analysis.street_snapshot or '—' }}{% if analysis.municipality_snapshot %}, {{ analysis.municipality_snapshot }}{% endif %} {{ analysis.province_state_snapshot or '' }} {{ analysis.country_snapshot or '' }}</p>
+    <p>Jurisdiction: {{ analysis.resolved_jurisdiction_name or '—' }} ({{ analysis.resolved_jurisdiction_code or 'unresolved' }})</p>
+    <p>Permit context: {{ analysis.permit_context_class or '—' }}</p>
+    <p>Coverage: {{ analysis.coverage_status }}</p>
+    <p>Plan / site basis: {{ analysis.plan_revision_label or analysis.plan_document_names or analysis.site_plan_identity or 'not identified' }}</p>
+    <p>Report version {{ analysis.version_number }} · generated {{ analysis.generated_at.strftime("%Y-%m-%d %H:%M") }}</p>
+    {% else %}
+    <p>Location: —</p>
+    <p>Jurisdiction: unresolved</p>
+    <p>Permit context: —</p>
+    <p>Coverage: no report</p>
+    <p>Plan / site basis: not identified</p>
+    {% endif %}
+    <p class="muted-copy">{{ advisory }}</p>
+</div>
+
+<form method="post" action="{{ url_for('projects.run_permit_analysis', id=project.id) }}" class="form-panel" style="margin-bottom: 16px;">
+    <p class="eyebrow">Generate analysis</p>
+    <p class="muted-copy">Creates a new immutable snapshot from approved currently-effective rules and reviewed project facts. Does not rewrite prior reports.</p>
+    <button type="submit">Run Permit analysis</button>
+</form>
+
+<form method="post" action="{{ url_for('projects.add_permit_fact', id=project.id) }}" class="form-panel" style="margin-bottom: 16px;">
+    <h3>Record a reviewed project fact</h3>
+    <p class="muted-copy">Facts are what the plans/site show. Do not record legal conclusions (permit approved, zoning compliant).</p>
+    <div class="form-grid">
+        <label>
+            Fact type
+            <input type="text" name="fact_type" required placeholder="building_footprint_m2">
+        </label>
+        <label>
+            Numeric value
+            <input type="text" name="value_numeric" placeholder="optional">
+        </label>
+        <label>
+            Text value
+            <input type="text" name="value_text" placeholder="true / false / identity">
+        </label>
+        <label>
+            Unit
+            <input type="text" name="unit" placeholder="m2 / m / ha">
+        </label>
+        <label>
+            Source type
+            <input type="text" name="source_type" value="MANUAL_REVIEWED">
+        </label>
+        <label>
+            Source / plan citation
+            <input type="text" name="page_sheet_citation" placeholder="Site plan A1">
+        </label>
+        <label>
+            Review status
+            <select name="review_status">
+                <option value="REVIEWED">REVIEWED</option>
+                <option value="AMBIGUOUS">AMBIGUOUS</option>
+                <option value="UNREVIEWED">UNREVIEWED</option>
+            </select>
+        </label>
+        <label>
+            Source label
+            <input type="text" name="source_label" placeholder="Reviewed site plan">
+        </label>
+    </div>
+    <button type="submit">Save fact</button>
+</form>
+
+{% if analysis %}
+<section class="form-panel" style="margin-bottom: 16px;">
+    <h3>Checks / findings</h3>
+    {% for finding in analysis.findings %}
+    <article style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #ddd;">
+        <p class="eyebrow">{{ finding.topic }} · {{ finding.status.replace('_', ' ') }}{% if finding.potential_cost_implication %} · POTENTIAL COST / SCOPE IMPLICATION{% endif %}</p>
+        {% if finding.requirement_snapshot %}
+        <p><strong>Governed requirement:</strong> {{ finding.requirement_snapshot }}</p>
+        {% endif %}
+        <p><strong>Project evidence:</strong> {{ finding.evidence_snapshot }}</p>
+        <p>{{ finding.explanation }}</p>
+        <p><strong>Recommended action:</strong> {{ finding.recommended_action }}</p>
+        {% if finding.citation_snapshot %}
+        <p class="muted-copy">{{ finding.citation_snapshot }}</p>
+        {% endif %}
+    </article>
+    {% endfor %}
+</section>
+
+<section class="form-panel" style="margin-bottom: 16px;">
+    <h3>Missing / verify items</h3>
+    {% for finding in analysis.findings %}
+        {% if finding.status in ['MISSING_INFORMATION', 'VERIFY'] %}
+        <p><strong>{{ finding.topic }}</strong> — {{ finding.status.replace('_', ' ') }}: {{ finding.explanation }}</p>
+        {% endif %}
+    {% endfor %}
+</section>
+
+<section class="form-panel">
+    <h3>Recommended next actions</h3>
+    {% for finding in analysis.findings %}
+        {% if finding.status != 'PASS' and finding.status != 'NOT_APPLICABLE' %}
+        <p>{{ finding.topic }}: {{ finding.recommended_action }}</p>
+        {% endif %}
+    {% endfor %}
+    <p class="muted-copy">{{ advisory }}</p>
+</section>
+{% else %}
+<p class="muted-copy">No substantive Permit Report yet. Record reviewed facts and run analysis.</p>
+{% endif %}
+{% endblock %}

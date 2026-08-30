@@ -1,7 +1,8 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, send_file, url_for
 
 from app import db
 from app.models import Client, Project
+from app.models.permit_intelligence import ADVISORY_AUTHORITY_LANGUAGE
 from app.models.project import DEFAULT_PERMIT_CONTEXT_CLASS, PERMIT_CONTEXT_CLASSES
 from app.services.commercial_context import (
     DELIVERY_MODELS,
@@ -21,6 +22,14 @@ from app.services.permit_foundation import (
     establish_project_location_and_profile,
     location_payload_from_form,
 )
+from app.services.permit_intelligence import (
+    PermitIntelligenceError,
+    assemble_permit_intelligence_state,
+    current_analysis,
+    record_project_permit_fact,
+    run_permit_analysis as execute_permit_analysis,
+)
+from app.services.permit_report_pdf import generate_permit_report_pdf
 from app.services.project_hub import assemble_project_hub
 
 projects_bp = Blueprint("projects", __name__, url_prefix="/projects")
@@ -228,4 +237,86 @@ def edit_project_location(id):
         location=location,
         profile=profile,
         **options,
+    )
+
+
+@projects_bp.route("/<int:id>/permit-report", methods=["GET"])
+def view_permit_report(id):
+    org_id = get_current_organization_id()
+    project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
+    analysis = current_analysis(project)
+    return render_template(
+        "projects/permit_report.html",
+        project=project,
+        analysis=analysis,
+        pi=assemble_permit_intelligence_state(project),
+        advisory=ADVISORY_AUTHORITY_LANGUAGE,
+    )
+
+
+@projects_bp.route("/<int:id>/permit-report/run", methods=["POST"])
+def run_permit_analysis(id):
+    org_id = get_current_organization_id()
+    project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
+    try:
+        execute_permit_analysis(
+            project.id,
+            organization_id=org_id,
+            generated_by="Estimator",
+            commit=True,
+        )
+        flash("Permit analysis snapshot created. Prior versions were not rewritten.", "success")
+    except PermitIntelligenceError as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("projects.view_permit_report", id=project.id))
+
+
+@projects_bp.route("/<int:id>/permit-facts", methods=["POST"])
+def add_permit_fact(id):
+    org_id = get_current_organization_id()
+    project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
+    raw_numeric = (request.form.get("value_numeric") or "").strip()
+    value_numeric = None
+    if raw_numeric:
+        try:
+            value_numeric = float(raw_numeric)
+        except ValueError:
+            flash("Numeric value must be a number.", "error")
+            return redirect(url_for("projects.view_permit_report", id=project.id))
+    try:
+        record_project_permit_fact(
+            project.id,
+            organization_id=org_id,
+            fact_type=(request.form.get("fact_type") or "").strip(),
+            value_text=(request.form.get("value_text") or "").strip() or None,
+            value_numeric=value_numeric,
+            unit=(request.form.get("unit") or "").strip() or None,
+            source_type=(request.form.get("source_type") or "MANUAL_REVIEWED").strip(),
+            source_label=(request.form.get("source_label") or "").strip() or None,
+            page_sheet_citation=(request.form.get("page_sheet_citation") or "").strip()
+            or None,
+            review_status=(request.form.get("review_status") or "REVIEWED").strip(),
+            reviewed_by="Estimator",
+            commit=True,
+        )
+        flash("Reviewed project fact recorded.", "success")
+    except PermitIntelligenceError as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("projects.view_permit_report", id=project.id))
+
+
+@projects_bp.route("/<int:id>/permit-report.pdf", methods=["GET"])
+def download_permit_report_pdf(id):
+    org_id = get_current_organization_id()
+    project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
+    analysis = current_analysis(project)
+    if analysis is None:
+        flash("No Permit Report snapshot exists yet.", "error")
+        return redirect(url_for("projects.view_permit_report", id=project.id))
+    pdf = generate_permit_report_pdf(analysis)
+    return send_file(
+        pdf,
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=f"permit-approvals-report-v{analysis.version_number}.pdf",
     )

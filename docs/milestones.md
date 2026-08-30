@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-016 Ontario / Ottawa Permit Intelligence POC implemented (live migration pending)
+
+| Field | Content |
+|-------|---------|
+| ID | [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE MIGRATION PENDING** (not CLOSED) |
+| Branch | `main` |
+| Objective | Bounded Ontario / Ottawa coach-house Permit Intelligence POC with governed rules, facts, deterministic evaluation, immutable snapshots, office HTML report, and neutral CalibAi PDF. |
+| Deliverables | `permit_rules` / facts / analyses / findings; migration `f8a9b0c1d2e3`; `/projects/<id>/permit-report`; Hub PLAN extension; source inventory. |
+| Validation | Dedicated **37 passed**. Full suite **401 passed**. Throwaway upgrade/downgrade verified. Live current remains `e7f8a9b0c1d2`. |
+| Next | FG-016 live migration + office Pratt UAT. |
+
 ### 2026-08-30 — FG-016 Ontario / Ottawa Permit Intelligence POC approved for implementation
 
 | Field | Content |

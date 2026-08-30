@@ -48,7 +48,7 @@ Warranty language is **governed content**.
 
 ## Not this gate — Permit Intelligence / Permit Rules Library
 
-**Status:** Permit Rules Library remains **EMPTY / NOT IMPLEMENTED**. Architecture **Accepted**: [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md). Canonical V1 pin: [permit-rules-library.md](../architecture/permit-rules-library.md). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** does **not** populate this library. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** authorizes later bounded Ontario / Ottawa population — **not this governance pass**.
+**Status:** Permit Rules Library is a **separate** governed source from this Legal Content Gate. Architecture **Accepted**: [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md). Canonical V1 pin: [permit-rules-library.md](../architecture/permit-rules-library.md). [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **IMPLEMENTED / LIVE MIGRATION PENDING** populated a bounded Ontario / Ottawa coach-house corpus. This gate still does **not** own municipal/provincial zoning or permit rules.
 
 This Legal Content Gate governs **Ontario construction contract and warranty templates**. It does **not** own municipal/provincial/state zoning, permit, servicing, or AHJ requirement sources. The Permit Rules Library is a **separate** governed source.
 

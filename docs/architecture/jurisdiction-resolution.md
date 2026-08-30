@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Current (FG-015 civic foundation)** — **CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md)). Rural/legal UX unused. Pass 2 / geocoder **not** implemented. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) reuses this resolver (**APPROVED FOR IMPLEMENTATION** / **NOT STARTED**). |
+| Status | **Current (FG-015 civic foundation)** — **CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md)). Rural/legal UX unused. Pass 2 / geocoder **not** a second resolver. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **reuses this resolver** (**IMPLEMENTED / LIVE MIGRATION PENDING**). |
 | Date | 2026-08-30 |
 | Product | The Estimator / CalibAi |
 | Canonical ADR | [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** |
@@ -10,7 +10,7 @@
 | Code | `app/models/jurisdiction.py` · `app/models/project.py` (`ProjectLocation`) · `app/services/jurisdiction.py` · `app/services/permit_foundation.py` |
 | Schema | Alembic live current = head `e7f8a9b0c1d2`. |
 
-**Current vs future:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) implemented bounded civic `ProjectLocation` (1:1 with `Project`), platform Canada / Ontario / City of Ottawa definitions plus aliases (`Ottawa`, `City of Ottawa`, `North Gower`), and a deterministic resolver. `Project.address` remains free text and is not parsed or overwritten. `Organization.tax_jurisdiction` remains tax policy, not AHJ identity. No geocoder, municipal API, or AI. Live current = head `e7f8a9b0c1d2`. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **reuses this resolver** (APPROVED FOR IMPLEMENTATION / NOT STARTED). Unknown/unimplemented jurisdictions fail closed to **RULE COVERAGE NOT AVAILABLE**. Do not hard-code Ottawa as universal architecture.
+**Current vs future:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) implemented bounded civic `ProjectLocation` (1:1 with `Project`), platform Canada / Ontario / City of Ottawa definitions plus aliases (`Ottawa`, `City of Ottawa`, `North Gower`), and a deterministic resolver. `Project.address` remains free text and is not parsed or overwritten. `Organization.tax_jurisdiction` remains tax policy, not AHJ identity. No geocoder, municipal API, or AI. Live current = head `e7f8a9b0c1d2`. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **reuses this resolver** (IMPLEMENTED / LIVE MIGRATION PENDING). Unknown/unimplemented jurisdictions fail closed to **RULE COVERAGE NOT AVAILABLE**. Do not hard-code Ottawa as universal architecture.
 
 ---
 

@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-038: Permit Intelligence Authority and Permit Rules Library Provenance |
-| Status | **Accepted** (FG-015 Pass 1 foundation **CLOSED / OPERATIONAL FOR UAT**; [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**; Permit Rules Library **not** populated) |
+| Status | **Accepted** (FG-015 Pass 1 foundation **CLOSED / OPERATIONAL FOR UAT**; [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **IMPLEMENTED / LIVE MIGRATION PENDING**; Permit Rules Library **10 APPROVED** bounded Ottawa coach-house rules) |
 | Date | 2026-08-30 |
 | Related | [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [permit-rules-library.md](../architecture/permit-rules-library.md) · [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) · [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [ADR-006](ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-010](ADR-010-build-versus-buy-document-processing.md) **Proposed** · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [ADR-037](ADR-037-project-location-and-jurisdiction-resolution.md) · [ADR-039](ADR-039-permit-report-snapshot-immutability-and-workflow.md) |
 
@@ -122,4 +122,4 @@ None in this pass.
 |------|------|------|
 | Joel | Joel Brayman | 2026-08-30 |
 | ChatGPT review | Permit Intelligence architecture governance pass | 2026-08-30 |
-| Cursor implementation note | FG-015 preliminary profile **CLOSED / OPERATIONAL FOR UAT**; FG-016 Pass 2 / rules library **APPROVED FOR IMPLEMENTATION** / **NOT STARTED** | 2026-08-30 |
+| Cursor implementation note | FG-015 preliminary profile **CLOSED / OPERATIONAL FOR UAT**; FG-016 Pass 2 / rules library **IMPLEMENTED / LIVE MIGRATION PENDING** (`f8a9b0c1d2e3`; 10 APPROVED rules) | 2026-08-30 |

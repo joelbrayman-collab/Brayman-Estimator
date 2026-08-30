@@ -110,7 +110,7 @@ Generated **only from an APPROVED estimate**.
 
 **No contract is final merely because it was generated.**
 
-## Additional governed project document (FUTURE / NOT IMPLEMENTED)
+## Additional governed project document (Permit & Approvals Report)
 
 **Status:** Pass 2 report **CLOSED / OPERATIONAL FOR UAT** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)). Architecture **Accepted** (ADR-037/038/039). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (preliminary profile foundation). Canonical: [permit-and-approvals-report.md](permit-and-approvals-report.md) · [permit-rules-library.md](permit-rules-library.md).
 
@@ -152,7 +152,7 @@ When a governed field changes in the authoritative record (scope, price, allowan
 | Internal detailed breakdown | **Estimating** — [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** |
 | QuickBooks export | Future integration boundary — [quickbooks-integration.md](quickbooks-integration.md) |
 | Ontario contract + warranty package | Governed templates — [legal-content-and-templates.md](../governance/legal-content-and-templates.md) |
-| Permit & Approvals Report | **FUTURE / NOT IMPLEMENTED** — architecture **Accepted** ([ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) — [permit-and-approvals-report.md](permit-and-approvals-report.md) |
+| Permit & Approvals Report | **CLOSED / OPERATIONAL FOR UAT** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md); [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) — [permit-and-approvals-report.md](permit-and-approvals-report.md). Bounded Ontario / Ottawa coach-house POC. Not a national library. |
 | Organization Brand Profile | **FUTURE / NOT IMPLEMENTED** pin — [organization-brand-profile.md](organization-brand-profile.md) (single branding source; not implemented) |
 | Change Order document family | **FUTURE / NOT IMPLEMENTED** pin — [change-order-document-family.md](change-order-document-family.md). Existing Change Order record remains authoritative. Project Controls / Projects. |
 

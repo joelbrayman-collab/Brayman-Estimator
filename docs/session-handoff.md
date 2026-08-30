@@ -2,12 +2,14 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-016 CLOSED / OPERATIONAL FOR UAT**. FG-015 **CLOSED / OPERATIONAL FOR UAT**. Live current = head `f8a9b0c1d2e3`. Pratt UAT project **id 9** port **5009**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. Permit Intelligence ADR-037/038/039 **Accepted**. FG-013 **CLOSED / OPERATIONAL FOR UAT**. Material Catalogue ADR-034/035/036 **Accepted**. ADR-032 **Accepted**. **ADR-033 Accepted**. **ADR-008 Proposed**. Organization Brand Profile **FUTURE / NOT IMPLEMENTED**. Change Order document family **FUTURE / NOT IMPLEMENTED**. |
+| Status | **POST-FG-016 TURNOVER.** FG-016 **CLOSED / OPERATIONAL FOR UAT**. HEAD `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`. Live current = head `f8a9b0c1d2e3`. Pratt UAT project **id 9** port **5009**. FG-013–FG-015 **CLOSED / OPERATIONAL FOR UAT**. **STOP — no next product gate authorized.** Organization Brand Profile reconnaissance is a **candidate only** (not authorized). ADR-008 / ADR-010 **Proposed**. |
 | Updated | 2026-08-30 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
 
 Authority order for the next session: repository governance → current-state records → accepted ADRs / Feature Gates → implementation/migration/test evidence → conversation memory only as supplementary context.
+
+**ALL-CHAT TURNOVER:** After this package is committed, every active CalibAi development chat may be abandoned. A new chat has **zero reliable conversation memory**. Chat history is supplemental only. No new chat may continue from a pasted old Cursor prompt without first running the required repository preflight/review.
 
 **PRESERVE → SEARCH → VERIFY → EXECUTE.** Existing before new. No unauthorized redesign. No arbitrary policy invention. No context-drift changes. ChatGPT / Cursor memory is never corporate memory.
 
@@ -23,16 +25,13 @@ Authority order for the next session: repository governance → current-state re
 ## 2. VERIFIED BASELINE
 
 - Branch: `main`
-- Starting HEAD for this FG-016 live-migrate/UAT pass: `1294db4f51bae5be68541c77b8721c7ab4d58496`
+- Current HEAD / `origin/main`: post-FG-016 turnover (this docs commit). FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`.
 - FG-016 implementation commit: `a709829d32d94ab2baf36f142ad0095254ba3d3a` (`feat: implement FG-016 Ontario Ottawa Permit Intelligence POC`)
 - Alembic graph head: **`f8a9b0c1d2e3`**. Live `flask db current`: **`f8a9b0c1d2e3`**. One head. Applied `e7f8a9b0c1d2` → `f8a9b0c1d2e3`.
-- Tests (2026-08-30 FG-014 live-migrate/UAT): dedicated material catalogue **28**; regressions **278**; full suite **338 passed**.
-- Tests (2026-08-30 FG-014 flash repair): dedicated material catalogue **35**; full suite **345 passed**.
-- Office re-UAT (2026-08-30, port **5007**): **PASSED**. Tests not rerun. Preserved 35 / 29 / 345.
-- Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010) → `c5d6e7f8a9b0` (FG-013; previously live-applied) → `d6e7f8a9b0c1` (FG-014; live-applied) → `e7f8a9b0c1d2` (FG-015; **live-applied**)
-- Tests (2026-08-30 FG-013 close): dedicated historical upload **27**; historical ingestion **11**; labour **25**; pricing **33**; full suite **310 passed**.
-- Working tree: clean after this docs commit/push
-- Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**.
+- Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010) → `c5d6e7f8a9b0` (FG-013) → `d6e7f8a9b0c1` (FG-014) → `e7f8a9b0c1d2` (FG-015) → **`f8a9b0c1d2e3` (FG-016; live current = head)**
+- Governed full suite: **401 passed**. Dedicated: FG-016 **37**; FG-015 **19**; FG-014 **35**; FG-013 **27**; FG-012 **19**; Project Hub **13**; take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**.
+- Working tree: clean at FG-016 close (this turnover pass is docs-only)
+- Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**. Runtime permit web lookup **NOT AUTHORIZED**.
 
 ### 29 Aug commit chain (all ancestors of `main`)
 
@@ -96,9 +95,11 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-This session: **FG-016 live migration + Mike Pratt office UAT**. Status **CLOSED / OPERATIONAL FOR UAT**. Applied `e7f8a9b0c1d2` → `f8a9b0c1d2e3`. Pratt project **id 9** on port **5009**. Product-code changes: none. No runtime web. No external AI.
+This session: **post-FG-016 full documentation / governance turnover**. Docs only. No product code. No Feature Gate. No ADR. No migration. No database mutation. FG-016 remains **CLOSED / OPERATIONAL FOR UAT**. **STOP.**
 
-Prior: **FG-016 product implementation**. Status **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE MIGRATION PENDING**. Not CLOSED. One additive migration `f8a9b0c1d2e3` **not** applied live. Pratt not created in live UAT.
+Prior: **FG-016 live migration + Mike Pratt office UAT**. Status **CLOSED / OPERATIONAL FOR UAT**. Applied `e7f8a9b0c1d2` → `f8a9b0c1d2e3`. Pratt project **id 9** on port **5009**. Product-code changes: none. Close commit `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`.
+
+Prior: **FG-016 product implementation**. Status was **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE MIGRATION PENDING** at that time. Implementation `a709829d32d94ab2baf36f142ad0095254ba3d3a`. Superseded by live-migrate/UAT close.
 
 Prior: **FG-016 Feature Gate governance**. Status **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. Docs only.
 
@@ -158,7 +159,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
-29 Aug conversational decisions for FG-008 / FG-009 / FG-010 architecture, implementation, live migrate, UAT, and integrity stabilization are in Git (pins above) and governed docs. 30 Aug FG-012 is closed; ADR-021 **Accepted**. ADR-033 **Accepted**. FG-013 closed. This pass **approves FG-014** (docs only; implementation not started) and pins **future bulk supplier onboarding** (not implemented; not a Supplier Feature Gate). Supplier integration is **not started**.
+29 Aug–30 Aug FG-008 through FG-016 architecture, implementation, live migrate, UAT, and closure are in Git and governed docs. This turnover pass reconciles present-tense SHAs, Alembic current=head `f8a9b0c1d2e3`, Pratt UAT evidence, future pins, and the STOP authorization. Chat history is not the system of record.
 
 **Completeness test:** Is any material approved fact only in this chat? **NO** after this documentation update.
 
@@ -176,7 +177,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **CLOSED / OPERATIONAL FOR UAT**. **LOCKED:** one user action may load many workbooks; no durable `UploadBatch`. Do **not** `flask db upgrade` again.
 - [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (docs only). BMR / Winchester / Darcy are **not exclusive**. Winchester is launch/reference. Contractor procurement (A) ≠ CalibAi channel (B). Darcy commercial terms **unset**. Supplier Feature Gate **not authorized**. Governed **bulk supplier onboarding** is **FUTURE / NOT IMPLEMENTED** (not one-product-at-a-time; does not expand FG-014).
 - **Permit Intelligence** Pass 2 is **CLOSED / OPERATIONAL FOR UAT**. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** ([ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)). [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (foundation). Advisory preflight. AHJ remains final. **PASS** means no issue identified against governed checks performed — never AHJ approved. No live lookup. No external AI. Mike Pratt Coach House at 2562 Church Street, North Gower, Ontario is the **FG-016 UAT reference** — live project **id 9** (`FG016-UAT-PRATT`) on port **5009**.
-- **Organization Brand Profile** is **FUTURE / NOT IMPLEMENTED** ([organization-brand-profile.md](architecture/organization-brand-profile.md)). Not logo storage. Not a Feature Gate. Current `Organization` identity fields and `ProposalTemplate.logo_path` / static Brayman asset are **not** the Brand Profile.
+- **Organization Brand Profile** is **FUTURE / NOT IMPLEMENTED** ([organization-brand-profile.md](architecture/organization-brand-profile.md)). Not logo storage. Not a Feature Gate. Current `Organization` identity fields and `ProposalTemplate.logo_path` / static Brayman asset are **not** the Brand Profile. Architecture reconnaissance discussed with Joel is a **candidate only** — **NOT AUTHORIZED** by this turnover.
 - **Change Order document family** is **FUTURE / NOT IMPLEMENTED** ([change-order-document-family.md](architecture/change-order-document-family.md)). Existing Change Order record remains authoritative. Do not create a second entity. Not email. Not field UX.
 
 ## 17. KNOWN RISKS / UNRESOLVED PRODUCT ITEMS
@@ -203,7 +204,7 @@ Do not start Phase D. Do not enable an external AI provider. Do not start auth, 
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** STOP. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) is **CLOSED / OPERATIONAL FOR UAT**. Do not begin national permit expansion. Do not begin Phase D. Do not begin Organization Branding. Do not begin Change Order document work. Do not begin supplier integration. Do not enable external AI / runtime web lookup.
+**Next governed action:** **STOP.** No next product Feature Gate is authorized. Organization Brand Profile architecture reconnaissance is a **candidate** discussed with Joel — **NOT AUTHORIZED** by this turnover, **NOT IMPLEMENTED**, no Feature Gate. Do not start it automatically. Do not begin national permit expansion, Phase D, Change Order document work, supplier integration, or external AI / runtime web lookup.
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -235,28 +236,37 @@ Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **cur
 
 ## 22. FRESH CHAT STARTUP PROMPT
 
-Paste into a new ChatGPT or Cursor conversation:
+Canonical location for the next conversation. Paste into a **new** ChatGPT or Cursor chat. Do **not** continue from an old prompt without preflight.
 
 ```text
-BRAYMAN — RESUME FROM REVIEW TURNOVER
-CONTINUITY / REPOSITORY-FIRST INITIALIZATION
+BRAYMAN — CONTINUE CALIBAI DEVELOPMENT — POST FG-016 TURNOVER
 
-You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**, [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**, and FG-013 **CLOSED / OPERATIONAL FOR UAT**. Permit Intelligence **ADR-037 / ADR-038 / ADR-039 Accepted**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted**. Canonical materials are CalibAi-seeded; CostItem is not identity; living supplier evidence is not the identity row. ADR-008 remains Proposed. Organization Brand Profile is **FUTURE / NOT IMPLEMENTED**. Change Order document family is **FUTURE / NOT IMPLEMENTED**.
-The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
-The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
-ChatGPT memory is not corporate memory.
+You are starting a FRESH conversation on the Brayman-Estimator (CalibAi / The Estimator) platform.
+
+The prior development chats have been discarded. You have ZERO reliable conversation memory.
+Chat history is supplemental only. The repository is the ONE SOURCE OF TRUTH.
+ChatGPT / Cursor memory is never corporate memory.
 
 Conversation titles in this workspace must start with: BRAYMAN — <Topic>.
 
-1. ANTI-DRIFT PREFLIGHT
+DO NOT start Organization Branding.
+DO NOT start Change Order document work.
+DO NOT start Phase D.
+DO NOT start supplier integration.
+DO NOT enable external AI or runtime web lookup.
+DO NOT assume the next Feature Gate.
+DO NOT implement product code until Joel authorizes a later prompt.
+
+1. REVIEW REPOSITORY GOVERNANCE FIRST
 Read and comply with:
 - AGENTS.md
 - docs/platform-constitution.md
 - docs/governance/continuity-and-anti-drift.md
 - docs/governance/review-turnover-protocol.md
+- docs/platform-governance.md
+- docs/session-handoff.md
 - docs/current-state.md
 - docs/project-state-report.md
-- docs/session-handoff.md
 - docs/platform-roadmap.md
 - docs/feature-gates/README.md
 - docs/adr/README.md
@@ -268,6 +278,7 @@ git branch --show-current
 git log -1 --oneline
 git rev-parse HEAD
 git rev-parse origin/main
+git diff --check
 ./venv/bin/flask db current
 ./venv/bin/flask db heads
 
@@ -278,38 +289,24 @@ Confirm:
 - Alembic current = f8a9b0c1d2e3
 - Alembic heads = f8a9b0c1d2e3 (one graph head)
 
-3. CONFIRM TEST BASELINE (if you will change product code later)
-./venv/bin/python -m pytest -q
-Expected: 401 passed
+3. IDENTIFY CURRENT STOP STATE
+Independently reconstruct from the repository:
+- FG-008 through FG-016 CLOSED / OPERATIONAL FOR UAT
+- Live current = head f8a9b0c1d2e3
+- Full suite governed baseline 401 passed
+- Pratt UAT project id 9 / FG016-UAT-PRATT / analysis v3 / advisory only
+- No next product Feature Gate is authorized
+- Organization Brand Profile reconnaissance is a candidate only — NOT AUTHORIZED, NOT IMPLEMENTED, no Feature Gate
+- ADR-008 and ADR-010 remain Proposed
+- Phase D NOT STARTED / NOT AUTHORIZED
+- Real external AI NOT AUTHORIZED
+- Runtime permit web lookup NOT AUTHORIZED
 
-4. RECONSTRUCT AUTHORITATIVE STATE FROM THE REPO
-Independently reconstruct:
-- FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT
-- FG-013 CLOSED / OPERATIONAL FOR UAT (revision `c5d6e7f8a9b0` in chain; live current=head is now `d6e7f8a9b0c1`)
-- FG-014 CLOSED / OPERATIONAL FOR UAT (live current=head d6e7f8a9b0c1; catalogue-link flash repaired; office re-UAT PASSED on port 5007)
-- FG-015 CLOSED / OPERATIONAL FOR UAT (Permit Foundation V1; live current e7f8a9b0c1d2 at close; now superseded by FG-016)
-- FG-016 CLOSED / OPERATIONAL FOR UAT (Ontario / Ottawa Permit Intelligence POC; live current=head f8a9b0c1d2e3; Pratt UAT project 9 port 5009)
-- Material Catalogue ADR-034 / ADR-035 / ADR-036 **Accepted**
-- Next: **STOP.** Do not begin national permit expansion, Phase D, branding, Change Order documents, supplier integration, or external AI / runtime web.
-- ADR-032 Accepted (app-managed immutable historical workbook custody; legacy Desktop corpus not moved)
-- ADR-021 Accepted (composed frozen MONITOR baseline; Project Gross Margin; MONITOR not implemented; no Feature Gate)
-- FG-012 internal breakdown + named-method Proposal consistency (Estimating owner; existing Proposal is the customer-facing estimate; outputs 1–2 only; SCHEMA NO)
-- M012 AI take-off foundation OPERATIONAL FOR UAT
-- FG-011 Project Hub UX CLOSED / OPERATIONAL FOR UAT (evolve /projects/<id> only; no schema)
-- Protected ORG-001 labour $65 CAD/man-hour; pricing TRUE_GROSS_MARGIN 15% (Direct Cost / 0.85); Ontario HST 13%; optional OH/profit UNSPECIFIED
-- ADR-010 Proposed; real external AI NOT AUTHORIZED
-- Phase D NOT STARTED
-- Synthetic FG-008 / FG-009 / FG-010 UAT residue is labeled and must not be treated as customer operating data
+4. RETURN A CONCISE CURRENT STATE REVIEW
+Then WAIT for Joel to authorize the next architecture or product task.
 
 Do NOT rely on AI memory. Do NOT guess missing product rules.
-Do NOT start Phase D. Do NOT enable external AI.
-Do NOT start auth, BUILD / MONITOR / LEARN implementation, QuickBooks, or contract/warranty work.
-Do NOT treat ADR-021 as a MONITOR Feature Gate.
-Do NOT flask db upgrade again (FG-015 live current=head e7f8a9b0c1d2).
-Do NOT begin supplier integration, bulk supplier onboarding, or Winchester POC.
-Do NOT accept ADR-008.
-Do NOT populate the Permit Rules Library in this governance pass. Do NOT implement live regulatory AI or in-product web lookup. Do NOT implement FG-016 product code in this chat.
-Do NOT implement Organization Brand Profile, logo storage, Change Order document-family rewrite, client email, or a second Change Order entity.
+Do NOT flask db upgrade. Do NOT create a migration. Do NOT create a Feature Gate or ADR unless Joel authorizes a later docs-only prompt.
 
 PRESERVE → SEARCH → VERIFY → EXECUTE.
 Existing before new. No unauthorized redesign. No arbitrary policy invention.
@@ -317,13 +314,15 @@ Existing before new. No unauthorized redesign. No arbitrary policy invention.
 
 ---
 
-## Live development/UAT database snapshot (read-only, 2026-08-30)
+## Live development/UAT database snapshot (read-only, 2026-08-30 post FG-016 UAT)
+
+FG-015-era counts (clients 4 / projects 8) are **superseded**. Verified read-only after Pratt UAT:
 
 | Table | Count |
 |-------|------:|
 | organizations | 2 |
-| clients | 4 |
-| projects | 8 |
+| clients | 5 |
+| projects | 11 |
 | estimates | 5 |
 | estimate_versions | 5 |
 | estimate_line_items | 4 |
@@ -347,24 +346,29 @@ Existing before new. No unauthorized redesign. No arbitrary policy invention.
 | organization_pricing_policies | 2 |
 | estimate_pricing_snapshots | 3 |
 | pricing_audit_events | 20 |
-| drawing_packages | 1 |
-| drawing_revisions | 1 |
-| plan_documents | 2 |
-| plan_pages | 2 |
+| drawing_packages | 2 |
+| plan_documents | 3 |
+| drawing_revisions | 2 |
+| plan_pages | 14 |
 | plan_sheets | 1 |
 | plan_sheet_pages | 1 |
 | plan_sheet_suggestions | 0 |
 | plan_scale_calibrations | 0 |
 | plan_measurements | 1 |
-| plan_audit_events | 41 |
+| plan_audit_events | 45 |
 | takeoff_extraction_runs | 3 |
 | takeoff_candidates | 12 |
 | takeoff_packages | 1 |
 | takeoff_package_items | 3 |
 | jurisdiction_definitions | 3 |
 | jurisdiction_aliases | 7 |
-| project_locations | 5 |
-| permit_profiles | 7 |
+| project_locations | 8 |
+| permit_profiles | 10 |
+| permit_rules | 10 |
+| project_permit_facts | 14 |
+| permit_analyses | 5 |
+| permit_findings | 32 |
+| canonical_materials | 27 |
 
 **ORG-001 operating policies (verified):** DLCRS id 1 = **$65 CAD/man-hour**, `APPROVED`. Default pricing policy id 1 = **TRUE_GROSS_MARGIN** 15%, tax CA-ON **13%**, `ORG_APPROVED`, `is_default=1`. Overhead/profit treatments **UNSPECIFIED**. Contingency visibility **UNSPECIFIED**; `contingency_source` / `contingency_pricing_treatment` unset.
 
@@ -416,7 +420,9 @@ Customer project `Estimator Project` (client Michelle Steele) was not used as FG
 - Location id 6: 2562 Church Street, North Gower, Ontario, Canada — LOCATION COMPLETE; City of Ottawa `CA-ON-OTTAWA`
 - PermitProfile id 8: PRELIMINARY_FOUNDATION v1; permit context Additional dwelling/coach house; PRELIMINARY / FOUNDATION ONLY
 - PlanDocument id 3 `Pratt-04-01-2026-Signed.pdf`; DrawingRevision A id 2
-- Current facts: 13 current (fact 2 superseded); analyses ids 1–3 (v1/v2 stale; v3 current); 10 findings each (PASS 1 / VERIFY 3 / MISSING_INFORMATION 4 / POTENTIAL_NON_CONFORMANCE 1 / ADDITIONAL_APPROVAL_LIKELY 1)
+- Current facts: 13 current (fact 2 superseded); analyses ids 1–3 (v1/v2 stale; **v3 current**); 10 findings each
+- Finding-status summary (v3): **PASS 1** (OTT-CH-002 same-lot applicability only) · **VERIFY 3** (OTT-CH-003 dual-compliance; OTT-CH-006 height 6.096 m vs 6.1 m ceiling; OTT-CH-007 ambiguous setback) · **MISSING_INFORMATION 4** (OTT-CH-004 servicing/lot area; OTT-CH-008 septic class; OTT-CH-009 grading; OTT-CH-010 bounded site-plan completeness) · **POTENTIAL_NON_CONFORMANCE 1** (OTT-CH-005 footprint 121.35 m² vs 95 m² ceiling — **advisory only**; not a municipal refusal or variance determination) · **ADDITIONAL_APPROVAL_LIKELY 1** (OTT-CH-001 building-permit application evidence absent) · **NOT_APPLICABLE 0**
+- Do **not** convert advisory findings into AHJ / zoning / variance determinations.
 - Unsupported synthetics: project 10 Toronto Commercial analysis 4 `RULE_COVERAGE_NOT_AVAILABLE`; project 11 North Gower Garage/accessory analysis 5 `RULE_COVERAGE_NOT_AVAILABLE`
 - HTML `/projects/9/permit-report`; PDF `/projects/9/permit-report.pdf`. Advisory only. Not a permit determination.
 
@@ -446,4 +452,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: FG-016 **CLOSED / OPERATIONAL FOR UAT**; FG-015 **CLOSED / OPERATIONAL FOR UAT**; FG-014 **CLOSED / OPERATIONAL FOR UAT**; live current = head `f8a9b0c1d2e3`; FG-013 **CLOSED / OPERATIONAL FOR UAT**; Permit Intelligence ADR-037/038/039 **Accepted**; next development boundary is **STOP** (no national permit expansion, Phase D, branding, Change Order documents, supplier integration, or external AI / runtime web). Phase D unauthorized. Organization Brand Profile **FUTURE / NOT IMPLEMENTED**. Change Order document family **FUTURE / NOT IMPLEMENTED**.
+A–J: FG-016 **CLOSED / OPERATIONAL FOR UAT** (`fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`); FG-015–FG-013 **CLOSED / OPERATIONAL FOR UAT**; live current = head `f8a9b0c1d2e3`; Permit Intelligence ADR-037/038/039 **Accepted**; **STOP — no next product gate authorized**. Organization Brand Profile reconnaissance is a **candidate only** (not authorized). Phase D unauthorized. Organization Brand Profile **FUTURE / NOT IMPLEMENTED**. Change Order document family **FUTURE / NOT IMPLEMENTED**.

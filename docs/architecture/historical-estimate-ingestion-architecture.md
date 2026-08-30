@@ -347,4 +347,4 @@ Following satisfaction of prerequisites, **FG-006 Phase B was implemented, verif
 - Pure Python OpenXML reader executing zero macros
 - Template Families A–E classified and normalized with cell-level provenance
 - Full test baseline: 170 passed (11 dedicated historical ingestion tests)
-- Subsequent systems: Labour Engine Phase B **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** ([FG-008](../feature-gates/FG-008-labour-engine-phase-b.md); Alembic `f2c3d4e5f6a7`); Organization-Calibrated Pricing Engine [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **APPROVED FOR IMPLEMENTATION** (not implemented).
+- Subsequent systems: Labour Engine Phase B **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** ([FG-008](../feature-gates/FG-008-labour-engine-phase-b.md); Alembic `f2c3d4e5f6a7`); Organization-Calibrated Pricing Engine [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED / OPERATIONAL FOR UAT**.

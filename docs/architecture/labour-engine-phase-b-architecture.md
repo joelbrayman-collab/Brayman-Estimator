@@ -115,7 +115,7 @@ Family adapters classify labour by **keyword heuristics** (`labour`, `form`, `po
 - Evidence classes and calibration lifecycle: [organization-and-calibration-architecture.md](organization-and-calibration-architecture.md) §§5–8
 - Pricing Posture must not alter true hours/quantities/wage: same document §12; [FG-007](../feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md) invariant 1
 - LEARN must not silently mutate standards: [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted**
-- Selling-price formula vs estimate markup stack: [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted**; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **APPROVED FOR IMPLEMENTATION**, **not implemented**
+- Selling-price formula vs estimate markup stack: [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted**; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED / OPERATIONAL FOR UAT**
 - Organization isolation: [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted**; `get_current_organization_id()` fail-closed queries
 
 **Constraint on org architecture §18:** that section’s example of applying a **silent** `+15%` commercial-profile multiplier to production hours is **not authorized for the Labour Engine**. It conflicts with §12 and FG-007. FG-008 / ADR-029 govern labour-hour treatment: no hidden labour multiplier from Pricing Posture or Execution Risk. See §11.

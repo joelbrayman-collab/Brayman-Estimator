@@ -685,8 +685,8 @@ A comprehensive code audit of the entire existing codebase was conducted to conf
 
 ### Governed Next Step:
 - **FG-008** Labour Engine Phase B — **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (2026-08-29; Alembic `f2c3d4e5f6a7`). Foundation operational for UAT.
-- **Next candidate:** [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) Organization-Calibrated Pricing Engine — **APPROVED FOR IMPLEMENTATION** (not implemented). Architecture: [organization-calibrated-pricing-engine-architecture.md](organization-calibrated-pricing-engine-architecture.md).
-- **Blocked / Not Started (code):** Organization-Calibrated Pricing Engine implementation, ML-based commercial learning, cross-org benchmarking.
+- **Next candidate:** [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) Organization-Calibrated Pricing Engine — **CLOSED / OPERATIONAL FOR UAT**. Architecture: [organization-calibrated-pricing-engine-architecture.md](organization-calibrated-pricing-engine-architecture.md).
+- **Blocked / Not Started (code):** ML-based commercial learning, cross-org benchmarking.
 
 ---
 
@@ -701,5 +701,5 @@ A comprehensive code audit of the entire existing codebase was conducted to conf
 - [`quickbooks-integration.md`](quickbooks-integration.md) — QuickBooks export pipeline boundary
 - [`CAR-001-calibai-product-architecture-reconciliation.md`](CAR-001-calibai-product-architecture-reconciliation.md) — CalibAi lifecycle reconciliation
 - [labour-engine-phase-b-architecture.md](labour-engine-phase-b-architecture.md) — Labour Engine Phase B architecture (FG-008 IMPLEMENTED / VERIFIED / LIVE-MIGRATED; Alembic `f2c3d4e5f6a7`)
-- [organization-calibrated-pricing-engine-architecture.md](organization-calibrated-pricing-engine-architecture.md) — Pricing Engine architecture (FG-009 **APPROVED FOR IMPLEMENTATION**, not implemented)
+- [organization-calibrated-pricing-engine-architecture.md](organization-calibrated-pricing-engine-architecture.md) — Pricing Engine architecture (FG-009 **CLOSED / OPERATIONAL FOR UAT**)
 - [`testing/uat-reference-cases.md`](../testing/uat-reference-cases.md) — 3415 Roger Stevens Road UAT reference case

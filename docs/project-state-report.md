@@ -50,7 +50,7 @@ Distinguish from:
 | Report date | 2026-08-30 |
 | Repository | Brayman-Estimator (The Estimator) |
 | Current branch | `main` |
-| Current commit / `origin/main` | FG-016 close (this docs commit). Implementation `a709829d32d94ab2baf36f142ad0095254ba3d3a`. FG-015 implementation `e6462a9ee8688b6599ab1a7b0e91232e8d53db3a`. |
+| Current commit / `origin/main` | Post-FG-016 turnover (this docs commit). FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`. Implementation `a709829d32d94ab2baf36f142ad0095254ba3d3a`. |
 | August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | M011 Implementation Commit | `cb38d93` — *feat: implement M011 organization foundation and commercial context* |
@@ -67,12 +67,12 @@ Distinguish from:
 | Documentation status | [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. FG-013 **CLOSED / OPERATIONAL FOR UAT**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted**. **ADR-037 / ADR-038 / ADR-039 Accepted**. ADR-032 **Accepted**. **ADR-033 Accepted**. ADR-021 **Accepted** (docs only). FG-012 **CLOSED / OPERATIONAL FOR UAT**. ADR-008 / ADR-010 **Proposed**. Organization Brand Profile pinned FUTURE only. Change Order document family pinned FUTURE only. |
 | Decisions made (this FG-016 live-migrate/UAT pass) | Applied `e7f8a9b0c1d2` → `f8a9b0c1d2e3`. Pratt UAT project 9 on port 5009 from signed Precision Home Design set dated April 1 2026. Findings from APPROVED rules + reviewed facts only. HTML/PDF same snapshot. Immutability verified (v1 pinned; v3 current). No product-code change. No AHJ approval claimed. |
 | Decisions pending | Next Feature Gate not authorized. Real AI provider; Phase D mapping gate. FG-009 carry-forward unchanged. Darcy commercial terms unset. Supplier Feature Gate **not authorized**. |
-| Uncommitted work | None expected after this implementation commit/push. |
-| Next approved milestone | **STOP.** Do not begin national permit expansion, Phase D, Organization Branding, Change Order documents, supplier integration, or external AI / runtime web. |
-| Next candidate milestone | Not authorized. Supplier Catalogue onboarding/mapping remains **not authorized**. Phase D mapping remains **NOT STARTED / NOT AUTHORIZED**. MONITOR implementation remains **not authorized**. |
-| Documents to read first | [current-state.md](current-state.md) → [session-handoff.md](session-handoff.md) → [feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) → [architecture/permit-rules-ontario-ottawa-sources.md](architecture/permit-rules-ontario-ottawa-sources.md) |
-| Approved next Cursor prompt location or summary | **STOP.** Do not begin national permit expansion. Do not accept ADR-008. Do not start Phase D, supplier POC, branding, or Change Order documents. |
-| Commit status | FG-016 close (this docs commit) on `main`. Live current = head `f8a9b0c1d2e3`. FG-016 **CLOSED / OPERATIONAL FOR UAT**. Implementation ancestor `a709829d32d94ab2baf36f142ad0095254ba3d3a`. |
+| Uncommitted work | None after FG-016 close. This turnover pass is documentation-only. |
+| Next approved milestone | **STOP.** No next product Feature Gate is authorized. Organization Brand Profile reconnaissance is a **candidate only** — not authorized by this turnover. |
+| Next candidate milestone | **Not authorized.** Organization Brand Profile architecture reconnaissance is the leading candidate discussed with Joel; it is **not** the next approved product milestone. Phase D, supplier onboarding, Change Order documents, MONITOR, and national permit expansion remain separately governed and unauthorized. |
+| Documents to read first | [session-handoff.md](session-handoff.md) → [current-state.md](current-state.md) → [project-state-report.md](project-state-report.md) → [feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) |
+| Approved next Cursor prompt location or summary | **STOP.** Paste the fresh-chat prompt in [session-handoff.md](session-handoff.md) §22. Do not start Organization Branding, Phase D, supplier POC, or Change Order documents. |
+| Commit status | Post-FG-016 turnover (this docs commit) on `main`. FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`. Live current = head `f8a9b0c1d2e3`. FG-016 **CLOSED / OPERATIONAL FOR UAT**. Implementation ancestor `a709829d32d94ab2baf36f142ad0095254ba3d3a`. |
 | Governance baseline | FG-016 CLOSED / OPERATIONAL FOR UAT; FG-015 CLOSED / OPERATIONAL FOR UAT; FG-014 CLOSED / OPERATIONAL FOR UAT; live current=head f8a9b0c1d2e3; FG-013 CLOSED / OPERATIONAL FOR UAT; ADR-034/035/036 Accepted; ADR-037/038/039 Accepted; ADR-032 Accepted; ADR-033 Accepted; ADR-008 Proposed; ADR-021 Accepted; FG-008–FG-012 closed/operational for UAT; Phase D not started; MONITOR not implemented; Organization Brand Profile FUTURE only; Change Order document family FUTURE only |
 
 ### Resume commands (Cursor Terminal)

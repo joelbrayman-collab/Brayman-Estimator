@@ -77,7 +77,18 @@ These were created during the reference exercise and must ultimately be **regene
 
 This case is the **permit-preflight** reference. The 3415 Roger Stevens Road case remains the commercial/document-package UAT reference.
 
-Use the existing signed plan set and site plan as reference evidence. Do **not** seed conversational ChatGPT conclusions as product facts. Do **not** claim municipal approval. Do **not** pre-decide findings.
+Live analysis **v3** (project id 9) finding-status summary — advisory only; **not** a municipal determination:
+
+| Status | Count | Governed meaning in this UAT |
+|--------|------:|------------------------------|
+| PASS | 1 | OTT-CH-002 same-lot applicability only. **PASS** means no issue identified against that governed check — never zoning/AHJ/permit approved. |
+| VERIFY | 3 | OTT-CH-003 dual-compliance; OTT-CH-006 height 6.096 m vs 6.1 m ceiling; OTT-CH-007 ambiguous setback |
+| MISSING_INFORMATION | 4 | OTT-CH-004 servicing/lot area; OTT-CH-008 septic class; OTT-CH-009 grading; OTT-CH-010 bounded site-plan completeness |
+| POTENTIAL_NON_CONFORMANCE | 1 | OTT-CH-005 footprint 121.35 m² vs 95 m² ceiling — **advisory only**. Do not state the project fails zoning or requires a variance unless separately governed evidence supports that. |
+| ADDITIONAL_APPROVAL_LIKELY | 1 | OTT-CH-001 building-permit application evidence absent |
+| NOT_APPLICABLE | 0 | — |
+
+Use the existing signed plan set and site plan as reference evidence. Do **not** seed conversational ChatGPT conclusions as product facts. Do **not** claim municipal approval.
 
 Preliminary review (outside this repository, **not** governed evidence) has already shown useful preflight questions, including coach-house footprint, building height, setbacks, private servicing/septic, rural grading-plan requirements, and zoning/site-plan submission completeness.
 

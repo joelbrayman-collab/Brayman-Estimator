@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — Post-FG-016 full documentation / governance turnover
+
+| Field | Content |
+|-------|---------|
+| ID | Review Turnover (docs only) |
+| Status | **TURNOVER RECONCILED** — FG-016 remains **CLOSED / OPERATIONAL FOR UAT** |
+| Branch | `main` |
+| Objective | Durably represent approved CalibAi decisions; eliminate stale present-tense language; rebuild session-handoff for zero-memory fresh chats. |
+| Deliverables | SHA pin `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`; Alembic current=head `f8a9b0c1d2e3`; Pratt UAT evidence; STOP authorization; fresh-chat prompt in session-handoff §22. |
+| Validation | Docs only. `git diff --check`. No `app/` / `tests/` / `migrations/`. Tests not rerun. |
+| Next | **STOP.** No next product gate authorized. Organization Brand Profile reconnaissance is a candidate only. |
+
 ### 2026-08-30 — FG-016 Ontario / Ottawa Permit Intelligence POC closed (live migration + Pratt UAT)
 
 | Field | Content |

@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — Post-FG-016 full documentation / governance turnover
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a` |
+| Objective | Reconcile all approved CalibAi decisions into the repository; eliminate stale current-state language; rebuild the session turnover package; prepare one fresh-chat resume prompt. Docs only. |
+| Business decision | Repository is the durable system of record. All active chat context may roll over. No next product gate authorized. Organization Brand Profile reconnaissance remains a **candidate only** (not authorized; not started). |
+| Architectural decision | No Feature Gate. No ADR. No migration. No database mutation. No product code. Historical append-only entries retain dated historical state. |
+| Prompt template used | Documentation / Review Turnover (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — FULL PROJECT DOCUMENTATION RECONCILIATION AND ALL-CHAT TURNOVER PACKAGE. Docs only. Do not implement. Do not start the next product task. |
+| Files expected to change | Governed docs / indexes / handoff / log only |
+| Files prohibited from changing | `app/` · `tests/` · `migrations/` · live DB · runtime config · seed data |
+| Implementation result | Turnover reconciled. FG-016 remains **CLOSED / OPERATIONAL FOR UAT**. HEAD pin `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`. Live current=head `f8a9b0c1d2e3`. Fresh-chat prompt in `docs/session-handoff.md` §22. |
+| Tests | Not rerun (docs-only; no unexplained discrepancy vs governed 401). |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append turnover record; do not rewrite historical entries) |
+| Constitutional issue raised | None |
+| Unresolved issues | No next product work authorized. Candidate Organization Brand Profile reconnaissance unstarted. |
+| Next approved step | **STOP.** New chats must run repository preflight first. Wait for Joel to authorize the next architecture/product task. |
+| Next approved prompt | Fresh-chat prompt in `docs/session-handoff.md` §22. Does **not** start Organization Branding. |
+| Commit hash | (this turnover commit) |
+
 ### 2026-08-30 — FG-016 live migration + Mike Pratt office UAT close
 
 | Field | Content |
@@ -63,7 +86,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | None for FG-016 closure. National expansion / Phase D / branding / Change Order documents / supplier / external AI remain unauthorized. |
 | Next approved step | **STOP.** Do not begin national permit expansion, Phase D, Organization Branding, Change Order documents, supplier integration, or external AI / runtime web. |
 | Next approved prompt | None authorized. |
-| Commit hash | (this close commit) |
+| Commit hash | `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a` |
 
 ### 2026-08-30 — FG-016 Ontario / Ottawa Permit Intelligence POC implementation
 

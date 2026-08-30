@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-013 final governance + ADR-032 accepted
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `fc9fed32a7e2f18730a5778c1d09ab5597fe9b74` (start) |
+| Objective | Complete FG-013 governance: storage/custody ADR, remaining gate answers, mark APPROVED FOR IMPLEMENTATION. Docs only. |
+| Business decision | Productized historical uploads use app-managed private durable storage. Office upload before auth. Self-serve onboarding requires auth. Unknown layouts quarantine. TIER_A = estimate associated with a completed project, not ORG-ACTUAL. No auto standards. |
+| Architectural decision | ADR-032 **Accepted**. Two custody regimes. Durable per-file upload attempts. **No** durable UploadBatch. SCHEMA YES additive; MIGRATION YES one bounded revision — **not created this pass**. |
+| Prompt template used | Bounded FG-013 complete governance (documentation) |
+| Approved Cursor prompt summary | COMPLETE FG-013 GOVERNANCE — HISTORICAL UPLOAD STORAGE / CUSTODY ADR + FINAL GATE APPROVAL. Do not implement. Do not create the migration. |
+| Files expected to change | FG-013; ADR-032; ADR/feature-gate indexes; historical-ingestion and organization/calibration architecture; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log; milestones; docs indexes |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; product code; Alembic revisions |
+| Implementation result | FG-013 **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. ADR-032 **Accepted**. Locked multi-file/folder UX preserved. No product code. No migration. |
+| Tests | Docs-only pass. Last recorded full suite remains **283 passed**. Not re-run (no product code). `git diff --check`. |
+| Project-state-report update | Yes |
+| Milestone entry update | Architecture record appended |
+| Constitutional issue raised | None |
+| Unresolved issues | FG-013 **implementation** not started. Migration not created. |
+| Next approved step | **STOP PRODUCT CODE.** Wait for a separate FG-013 **implementation** prompt that explicitly authorizes the additive migration. |
+| Next approved prompt | None unless Joel issues FG-013 implementation. |
+| Commit hash | (this commit) |
+
 ### 2026-08-30 — FG-013 multi-file / folder upload UX locked
 
 | Field | Content |

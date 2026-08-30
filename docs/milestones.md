@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-013 historical-upload governance + ADR-032 source custody
+
+| Field | Content |
+|-------|---------|
+| ID | FG-013 + ADR-032 (not a numbered M0xx) |
+| Status | FG-013 **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. ADR-032 **Accepted**. |
+| Date | 2026-08-30 |
+| Objective | Complete FG-013 gate answers and accept app-managed immutable historical workbook custody without implementing uploads. |
+| Deliverables | FG-013 approved; ADR-032 Accepted (legacy Desktop corpus leave-in-place; productized uploads app-managed); durable per-file attempts; no UploadBatch; additive schema/migration authorized for a later implementation prompt only. Docs only. |
+| Validation | Docs-only; `git diff --check`. No product tests required this pass. Alembic current/head `b4c5d6e7f8a9`. |
+| Next | Separate FG-013 **implementation** prompt (must explicitly authorize the one bounded additive Alembic revision). Do not implement from this governance commit. |
+
 ### 2026-08-30 — ADR-021 MONITOR Commercial Baseline / Project Gross Margin
 
 | Field | Content |

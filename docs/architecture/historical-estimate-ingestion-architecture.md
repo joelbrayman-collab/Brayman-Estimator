@@ -295,6 +295,13 @@ The normalized relational model separates **immutable raw source observations** 
    - Anonymized, controlled unit-test fixtures.
    - Ingestion algorithm code.
 3. **Future Production Storage Boundary:** When Phase B implements database persistence, ingested historical estimates must reside in protected database tables subject to strict workspace and tenant isolation, with role-based access control prohibiting unauthorized export of customer pricing history.
+
+**Subsequent custody (2026-08-30 — [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) Accepted; [FG-013](../feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) approved for implementation, not started):**
+
+- **Legacy controlled corpus** (`~/Desktop/CalibAi Historical Estimates` and existing FG-006 `source_file_path` pointers): **leave in place.** Do not move, recopy, delete, rewrite, or path-mutate those files to conform to productized storage. They remain **outside Git**.
+- **Productized FG-013 uploads:** app-managed private durable storage (pattern equivalent to `instance/historical_uploads/<organization_id>/<controlled-content-name>`). Immutable bytes; SHA-256 identity; original filename as metadata only; archive/supersede rather than silent delete. User filenames are not trusted paths.
+- Durable **per-file** upload-attempt/outcome records are authorized under FG-013. A durable `UploadBatch` is **not**.
+- TIER_A on historical estimate review means an **estimate associated with a completed project**. It is **not** ORG-ACTUAL project-performance evidence.
 4. **Cross-Organization Benchmarking:** Not authorized. CalibAi may not pool customer data across organizations without explicit governance, legal review, and customer authorization.
 
 ---

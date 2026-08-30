@@ -4,41 +4,50 @@
 |-----------|--------|
 | Feature Gate ID | `FG-013` |
 | Feature Name | Contractor Calibration Onboarding / Historical Estimate Upload UX |
-| Status | **DRAFT FOR JOEL REVIEW** — **IMPLEMENTATION NOT AUTHORIZED** |
-| Prerequisite | [FG-006](FG-006-historical-estimate-ingestion-phase-b.md) **APPROVED, IMPLEMENTED & VERIFIED** |
-| Related | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR not in this gate) · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) |
+| Target Milestone | **None.** FG-013 is the governing identifier. Do not assign a new M0xx number. |
+| Module | Historical ingestion / review (FG-006 engine). Labour Engine and Pricing Engine are **not** owners. |
 | Date | 2026-08-30 |
-| Implementation | **Not started.** Do not implement uploads, schema, or authentication under this draft. |
-
-## Purpose
-
-Productize an office **UPLOAD PREVIOUS ESTIMATES** workflow on the existing FG-006 ingestion/review engine. Historical evidence must never silently become ORG-APPROVED standards.
-
-This document is **not** a complete approved Feature Gate. Remaining twelve-question answers, schema/ADR decisions, and implementation authority remain **open** except where a subsection is marked **LOCKED**.
+| Status | **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** |
+| Architecture | Productize office upload UX on FG-006. App-managed immutable workbook custody ([ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**). Durable per-file upload attempts. **No** durable `UploadBatch`. |
+| Related ADRs | [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR **out of scope**) · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** (do not auto-write) · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** (do not auto-write) |
+| Prerequisites | [FG-006](FG-006-historical-estimate-ingestion-phase-b.md) **APPROVED, IMPLEMENTED & VERIFIED**. FG-008–FG-012 **CLOSED / OPERATIONAL FOR UAT**. |
+| Approved baseline | `main` @ `fc9fed32a7e2f18730a5778c1d09ab5597fe9b74`. Alembic current/head `b4c5d6e7f8a9`. Last recorded full suite **283 passed**. |
 
 ---
 
-## LOCKED — Multi-file / folder upload (2026-08-30)
+## Status
 
-Joel decision. This invariant is **binding** on any later FG-013 approval or implementation prompt. It does **not** authorize implementation by itself.
+| Layer | State |
+|-------|--------|
+| Feature Gate (this document) | **APPROVED FOR IMPLEMENTATION** |
+| Implementation | **NOT STARTED** |
+| Schema / Alembic | **YES** additive — **one bounded revision expected at implementation**. **Not created in this governance pass.** |
+| Storage ADR | [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** |
+| Durable `UploadBatch` | **NO** |
 
-### Product rule
+This gate authorizes a later **bounded implementation prompt** only. It does **not** implement uploads, create a migration, authorize authentication, Phase D, external AI, QuickBooks, MONITOR, LEARN, actuals, profitability, or industry benchmarking.
 
-The contractor / office user must **not** be required to upload historical estimates one at a time.
+---
 
-FG-013 must support a **single user action** for loading multiple historical estimates.
+## Purpose
 
-### Required UX
+Office users must be able to **UPLOAD PREVIOUS ESTIMATES** (about 20–25 representative recent files as **guidance**, not a quota) so the organization accumulates **ORG-HISTORICAL** evidence for later calibration review.
 
-- Select **multiple** supported estimate workbooks at once.
-- Drag-and-drop **multiple** supported estimate workbooks at once.
-- Where supported by the browser / client implementation, allow selection or drag-and-drop of a **folder** containing estimate workbooks and process the supported files within it **individually**.
-- If the browser / client cannot offer folder pick or folder drop, fall back to multi-file select and multi-file drop. Folder support is required **where the client can provide it**; lack of folder APIs must not force a one-file-at-a-time workflow.
-- Guidance may recommend approximately **20–25** representative recent estimates. There is **no** fixed file-count requirement. Do not require exactly 25.
+Upload success is **HISTORICAL EVIDENCE LOADED** / **CALIBRATION REVIEW READY**. It is **not** COST MODEL COMPLETE and must **not** silently create ORG-APPROVED standards.
 
-### Processing model
+---
 
-Each workbook remains an **independent evidence / transaction unit**.
+## LOCKED — Multi-file / folder upload
+
+**Do not weaken.** Users must **not** be required to upload estimates one at a time.
+
+One user action may load many workbooks through:
+
+- multi-select
+- multi-file drag-and-drop
+- folder select/drop **where the browser/client supports it** (then process supported files individually)
+
+If folder APIs are unavailable, fall back to multi-file select and drop. Lack of folder APIs must not force a one-file-at-a-time workflow.
 
 ```text
 ONE USER UPLOAD ACTION
@@ -47,54 +56,193 @@ ONE USER UPLOAD ACTION
   → COMBINED USER RESULTS SUMMARY
 ```
 
-A failed, unsupported, duplicate, or quarantined workbook must **not** prevent the remaining valid workbooks from being processed.
+Each workbook remains an **independent transaction / evidence unit**. A failed, duplicate, unsupported, or quarantined file must **not** prevent processing of the other valid files.
 
-### Durable batch vs UX (do not conflate)
+Recommended count: approximately **20–25** representative recent estimates. **No mandatory count.** Do not require exactly 25.
 
-| Decision | Meaning |
-|----------|---------|
-| **NO durable `UploadBatch`** | Database architecture: do not create a batch table merely to support multi-file or folder UX. |
-| **YES multi-file / folder UX** | Product UX: one user action may submit many workbooks. |
+| UX | Database |
+|----|----------|
+| Multi-file / folder: **YES** | Durable `UploadBatch`: **NO** |
 
-`NO DURABLE UploadBatch` refers **only** to database architecture. It does **not** mean files must be uploaded individually. Do **not** create a durable `UploadBatch` merely to support multi-file or folder UX.
-
-Request-scoped (or equivalent ephemeral) combined results are sufficient for the summary. Per-file durable records remain `HistoricalSourceWorkbook` / `HistoricalEstimate` (and any later additive attempt rows, if separately approved).
-
-### Non-goals of this locked section
-
-- Does not authorize FG-013 implementation.
-- Does not decide schema / migration / storage ADR.
-- Does not authorize authentication, self-serve multi-org onboarding, industry benchmarking, actuals, MONITOR, LEARN, or Phase D.
-- Does not require a durable batch entity.
+Do **not** create a durable `UploadBatch` merely because many files are chosen in one action. Combined results may be request-scoped. Durable facts are **per file**.
 
 ---
 
-## Feature Gate answers (PROPOSED — not approved except the locked UX above)
+## Feature Gate answers
 
-The 2026-08-30 architecture assessment recommended office upload on FG-006, quarantine for unknown layouts, no auto calibration-candidate creation, and office upload before auth / self-serve after auth. Those recommendations are **not** converted into approved gate answers by this draft except the locked multi-file / folder UX.
-
-| # | Question | Draft answer (proposed) |
-|---|----------|-------------------------|
+| # | Question | Answer |
+|---|----------|--------|
 | 1 | What problem does this solve? | Office users cannot load a representative historical corpus without admin/dev `ingest_workbook_file` against an external folder. |
-| 2 | Who is the user? | Office estimator / Joel on the unauthenticated office app (self-serve contractor onboarding requires auth later). |
-| 3 | Which module owns it? | Historical ingestion / review (`app/routes/historical_estimates.py`, FG-006 models/services). Labour Engine and Pricing Engine are not owners. |
-| 4 | What data does it own? | No new commercial SoR. Reuses FG-006 historical evidence. App-managed source bytes TBD. |
-| 5 | What data does it reference? | `organizations`; FG-006 historical tables; must not write labour/pricing standards. |
-| 6 | What may it change? | Office upload UX; per-file ingest loop; results summary. Schema only if a later approved prompt says so. |
-| 7 | What must it not change? | FG-006 adapters as the ingestion engine (extend, do not duplicate); MONITOR; LEARN auto-writes; FG-008/009 standards; Phase D; auth. |
-| 8 | What are the acceptance criteria? | Include the **LOCKED** multi-file / folder UX. Remaining criteria TBD when Joel approves the gate. |
-| 9 | What tests are required? | Multi-file mixed outcomes; folder expansion where testable; one failure does not block others. Details TBD at approval. |
-| 10 | What documentation must be updated? | This gate; current-state; session-handoff; chat-workflow-log; historical ingestion docs as needed. |
-| 11 | Does it require an ADR? | **Proposed YES** (app-managed byte custody vs FG-006 Desktop folder). Not created. Not approved by this draft. |
-| 12 | Does it require a database migration? | **UNDETERMINED.** No durable `UploadBatch`. Failed-attempt durability TBD. **No migration in this documentation pass.** |
+| 2 | Who is the user? | Office estimator / Joel on the **current unauthenticated office app**. Self-serve contractor onboarding is **not** this gate. |
+| 3 | Which module owns it? | Historical ingestion / review (`app/routes/historical_estimates.py`, FG-006 models/services). Labour Engine and Pricing Engine must not gain ownership of uploads. |
+| 4 | What data does it own? | Productized workbook bytes (ADR-032); additive **per-file upload-attempt/outcome** records; existing FG-006 historical evidence when ingest succeeds. |
+| 5 | What data does it reference? | `organizations`; FG-006 historical tables. Must not write labour/pricing/material/subcontract **standards**. |
+| 6 | What may implementation change? | Office upload UX; per-file ingest; app-managed storage; additive schema + **one** approved migration under the **implementation** prompt; review UI TIER_A wording; dedicated tests; governed docs. |
+| 7 | What must it not change? | Legacy Desktop corpus paths/files; FG-006 adapter families as the parse engine (extend, do not duplicate); MONITOR/LEARN/BUILD actuals; FG-008/009 approved standards; Phase D; auth product; Git contents of customer bytes. |
+| 8 | Acceptance criteria? | See **Acceptance criteria** below. |
+| 9 | Tests required? | Dedicated upload/attempt/isolation/security tests; mixed multi-file outcomes; idempotent SHA; regressions (historical, labour, pricing); full suite before closure. |
+| 10 | Documentation? | This gate; ADR-032; historical-ingestion architecture; feature-gate and ADR indexes; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log. |
+| 11 | ADR required? | **Yes** — [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. |
+| 12 | Migration? | **YES — one bounded additive revision**, created **only** when the FG-013 **implementation** prompt explicitly authorizes it. **Not in this governance pass.** No destructive historical-data migration. No `UploadBatch` table. |
 
 ---
 
-## Explicit non-goals (until a later approved implementation prompt)
+## Approved architecture
 
-- Implement uploads or folder picking in product code
-- Create `UploadBatch` or any schema/migration
-- Create a storage ADR
-- Authentication / self-serve onboarding
-- Industry benchmarking, actuals, profitability, MONITOR, LEARN, Phase D
-- Auto-approve organization standards from uploaded files
+### Source custody ([ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md))
+
+Productized uploads use **app-managed private durable storage**. Pattern equivalent to:
+
+```text
+instance/historical_uploads/<organization_id>/<controlled-content-name>
+```
+
+Exact naming is implementation detail. User filenames are metadata only — **not** trusted paths.
+
+Bytes: outside Git; org-scoped; SHA-256 identity; original filename metadata; no silent overwrite/replace; recoverable from durable metadata; archive/supersede rather than silent delete.
+
+**Legacy ORG-001 Desktop corpus:** do **not** move, recopy, delete, rewrite, or path-mutate.
+
+### Durable per-file upload attempts
+
+Approve the **smallest** additive structure needed so that “this file was received and then ingested / duplicate / unsupported / quarantined / failed” is durable provenance.
+
+Potential facts (do not over-design; do not store secrets or uncontrolled exception dumps):
+
+- organization
+- original filename, extension, byte size
+- SHA-256 where computed
+- received timestamp
+- actor string under the current office model
+- outcome/status
+- validation/failure reason
+- `HistoricalSourceWorkbook` reference when applicable
+- retained-storage reference where applicable
+- minimal archive state if required
+
+Each file owns its attempt/outcome. **No** durable batch parent.
+
+### Schema / migration (implementation prompt only)
+
+| Authorization | This pass | Later implementation prompt |
+|---------------|-----------|------------------------------|
+| SCHEMA CHANGE | **YES — additive only** | Implement |
+| MIGRATION | **YES — one bounded additive revision expected** | **Must explicitly authorize** creating it |
+| This governance pass | **Must not** create the migration | — |
+
+Optional additive columns on `HistoricalSourceWorkbook` (stored name, archive) only if necessary for custody/archive. No destructive rewrite of existing 20 ingested rows.
+
+### Formats
+
+**V1 input:** `.xlsx` and `.xlsm` that are **valid OpenXML** only.
+
+Do **not** support `.xls`, CSV, PDF, or other formats under FG-013.
+
+Macros and formulas must **not** execute (retain FG-006 XML reader behaviour).
+
+### Unknown layout — quarantine
+
+**UNKNOWN / LOW-CONFIDENCE contractor workbook → QUARANTINE / REVIEW REQUIRED.**
+
+Do **not** silently present generic Family E extraction as a confident successful parse. Valid OpenXML bytes may be preserved even when extraction is uncertain. No AI spreadsheet interpretation. No generalized mapper in FG-013. Known FG-006 adapters remain available for matching families.
+
+### Security / size
+
+Configurable per-file maximum: **25 MB** (bind to app config, analogous to plan upload).
+
+Implementation must bind:
+
+- extension allowlist
+- OpenXML/ZIP structure validation (`xl/workbook.xml` or equivalent)
+- compressed/uncompressed ZIP safety limits
+- no macro execution; no formula execution
+- safe filenames; path-traversal prevention
+- `Content-Type` not trusted alone
+- SHA-256 before authoritative custody
+- private storage; organization isolation; fail-closed cross-org
+- per-file failure isolation
+- idempotent duplicate SHA (same org + hash + ingestion version)
+
+### Office before auth
+
+**Controlled office historical upload: AUTHORIZED TO PROCEED BEFORE AUTHENTICATION** under the existing office operating model.
+
+This does **not** authorize contractor signup, public upload, self-service multi-tenant onboarding, or user accounts.
+
+**SELF-SERVICE CONTRACTOR ONBOARDING: REQUIRES AUTHENTICATION.**
+
+### Archive / delete
+
+Raw evidence must not be silently overwritten or deleted after custody. Prefer **ARCHIVE / SUPERSEDE**. Do not alter the legacy Desktop corpus.
+
+### TIER_A terminology
+
+Do **not** use “Actual completed job” in a way that confuses ORG-HISTORICAL with ORG-ACTUAL.
+
+Approved meaning:
+
+> **TIER_A** = estimate associated with a completed project
+> **TIER_A historical estimate evidence IS NOT ORG-ACTUAL project-performance evidence.**
+
+UI wording may follow repository style; a concise equivalent is: **Estimate associated with a completed project**. Implementation must update review labels (including the FG-006 review form) accordingly. **Do not change that label in this governance pass** (product code prohibited here).
+
+### Human review
+
+Preserve FG-006 review. Upload success does **not** bypass review.
+
+**ACCEPTED AS EVIDENCE** = accepted **ORG-HISTORICAL** evidence, **not** an approved operating standard.
+
+### Calibration candidates — exclude
+
+FG-013 **ends at reviewed historical evidence**. Do **not** automatically create `LabourCalibrationCandidate`, `ProductionRateStandard`, `DirectLabourCostRateStandard`, `OrganizationPricingPolicy`, or material/subcontract standards.
+
+### User language
+
+Approve: **UPLOAD PREVIOUS ESTIMATES**, **HISTORICAL EVIDENCE LOADED**, **CALIBRATION REVIEW READY**, **ACCEPTED AS EVIDENCE**.
+
+Do **not** claim **COST MODEL COMPLETE** merely because files were uploaded.
+
+### Material / subcontract / pricing
+
+Historical material and subcontract rows remain **evidence only**. No calibration engines in FG-013.
+
+Historical pricing/markup remains historical. Do **not** convert it into current `OrganizationPricingPolicy` or silently apply `TRUE_GROSS_MARGIN`.
+
+### Out of scope
+
+Industry benchmarking; ORG-ACTUAL; BUILD actuals; Project Gross Margin; MONITOR; LEARN; Phase D (**NOT AUTHORIZED**); external AI (**NOT AUTHORIZED**); QuickBooks.
+
+### Tenant
+
+All attempts, source workbooks, normalized evidence, and reviews are organization-scoped. Cross-org access **fails closed**. No customer-data pooling.
+
+---
+
+## Acceptance criteria
+
+Implementation is incomplete until:
+
+1. Multi-file and (where supported) folder UX; no one-at-a-time requirement; no mandatory file count.
+2. App-managed immutable storage per ADR-032; legacy Desktop corpus untouched.
+3. Durable per-file upload outcomes; **no** `UploadBatch`.
+4. Additive schema + **one** implementation-authorized Alembic revision only.
+5. `.xlsx` / `.xlsm` valid OpenXML only; unknown layout quarantined; no fake Family E confidence.
+6. 25 MB configurable limit; ZIP/OpenXML security; no macro/formula execution.
+7. Org isolation; per-file transaction/failure isolation; idempotent duplicate SHA.
+8. Human review preserved; no standards auto-created.
+9. TIER_A wording clarified as above.
+10. Archive/supersession; no silent delete of custodied bytes.
+11. No auth/self-service product; no benchmarking; no actuals/profitability; no Phase D/external AI.
+12. Dedicated tests, listed regressions, and **full suite** before claiming closure.
+
+---
+
+## Explicit non-goals
+
+- Implement in **this** documentation pass
+- Create the migration in this pass
+- Durable `UploadBatch`
+- Moving the 20-file Desktop corpus
+- Auto-approval of organization standards
+- Self-serve multi-org onboarding / User model
+- Industry norms, MONITOR, LEARN, BUILD actuals, QuickBooks, Phase D, real external AI

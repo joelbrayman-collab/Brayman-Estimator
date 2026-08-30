@@ -501,7 +501,9 @@ CalibAi enforces strict logical and physical data isolation across all customer 
 
 ## 17. Historical Ingestion Reconciliation (Phase A / Phase B Mapping)
 
-The 20 historical Brayman estimating workbooks audited in Phase A (`docs/architecture/historical-estimate-ingestion-architecture.md`) are reconciled into the Organization Calibration Architecture as follows:
+The 20 historical Brayman estimating workbooks audited in Phase A (`docs/architecture/historical-estimate-ingestion-architecture.md`) are reconciled into the Organization Calibration Architecture as follows.
+
+**Subsequent custody (2026-08-30 — [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) Accepted; [FG-013](../feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) approved for implementation, not started):** This 20-workbook ORG-001 Desktop corpus is the **legacy controlled corpus**. Do **not** move, recopy, delete, rewrite, or path-mutate it to conform to productized storage. Future office uploads use a **separate** app-managed custody path. FG-013 ends at reviewed **ORG-HISTORICAL** evidence and must **not** auto-create calibration candidates or ORG-APPROVED standards. TIER_A historical estimate review means an estimate associated with a completed project; it is **not** `ORG-ACTUAL`.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐

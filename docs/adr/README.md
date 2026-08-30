@@ -13,7 +13,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 **Proposed** is not **Accepted**. Citing a Proposed ADR in a module, Feature Gate, or roadmap does not change its status. Implementation still requires Feature Gate + accepted decisions where the ADR itself requires acceptance.
 
-**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, **ADR-021** (MONITOR composed commercial baseline and Project Gross Margin; **not implemented**), ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **CLOSED / OPERATIONAL FOR UAT**); **ADR-025** (named pricing methods); **ADR-030** (org pricing policy + estimate pricing snapshot); **ADR-005, ADR-006, ADR-007, ADR-009, ADR-011, ADR-031** (FG-010 / M012 take-off foundation **CLOSED / OPERATIONAL FOR UAT**). FG-008 / FG-009 / FG-010 / FG-011 / FG-012 are **CLOSED / OPERATIONAL FOR UAT**. **ADR-010 remains Proposed** (real external AI provider not authorized).
+**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, **ADR-021** (MONITOR composed commercial baseline and Project Gross Margin; **not implemented**), ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **CLOSED / OPERATIONAL FOR UAT**); **ADR-025** (named pricing methods); **ADR-030** (org pricing policy + estimate pricing snapshot); **ADR-005, ADR-006, ADR-007, ADR-009, ADR-011, ADR-031** (FG-010 / M012 take-off foundation **CLOSED / OPERATIONAL FOR UAT**); **ADR-032** (app-managed historical workbook custody; FG-013 **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**). FG-008 / FG-009 / FG-010 / FG-011 / FG-012 are **CLOSED / OPERATIONAL FOR UAT**. **ADR-010 remains Proposed** (real external AI provider not authorized).
 
 ## Process
 
@@ -104,6 +104,12 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | ADR | Title | Status |
 |-----|-------|--------|
 | [ADR-030](ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) | Organization-Owned Versioned Pricing Policy and Estimate Pricing Snapshot | **Accepted** (2026-08-29; governing FG-009 persistence/resolution/contingency treatment; **CLOSED / OPERATIONAL FOR UAT**; revision `a3b4c5d6e7f8` in chain; live head `b4c5d6e7f8a9`) |
+
+### Historical ingestion / calibration onboarding
+
+| ADR | Title | Status |
+|-----|-------|--------|
+| [ADR-032](ADR-032-app-managed-historical-workbook-storage.md) | App-Managed Immutable Historical Workbook Storage / Source Custody | **Accepted** (2026-08-30; governing FG-013 productized upload custody; **implementation not started**; legacy Desktop corpus not moved) |
 
 CAR-001 record: [../architecture/CAR-001-calibai-product-architecture-reconciliation.md](../architecture/CAR-001-calibai-product-architecture-reconciliation.md).
 

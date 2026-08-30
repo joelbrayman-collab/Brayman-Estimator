@@ -11,11 +11,11 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | This FG-013 draft documentation commit (verify `git log -1` after push). Prior: ADR-021 `d41c4d92ee009cdc6679b140ecd44789362077f6`. Product: FG-012 `0b403d6aa51381d3763cf3dc9d5d96e096d5ab93`. Live DB current/head `b4c5d6e7f8a9`. |
+| HEAD / `origin/main` | This FG-013 governance approval commit (verify `git log -1` after push). Prior draft: `fc9fed32a7e2f18730a5778c1d09ab5597fe9b74`. ADR-021 `d41c4d92ee009cdc6679b140ecd44789362077f6`. Product: FG-012 `0b403d6aa51381d3763cf3dc9d5d96e096d5ab93`. Live DB current/head `b4c5d6e7f8a9`. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
-| Working tree at last verified inspect | **FG-013 DRAFT FOR JOEL REVIEW** (implementation not authorized). **ADR-021 Accepted** (MONITOR not implemented). **FG-012 CLOSED / OPERATIONAL FOR UAT.** FG-011 / FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. M012 **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT**. |
-| Governance | FG-004–FG-012 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **DRAFT FOR JOEL REVIEW** (implementation not authorized; multi-file/folder UX locked). ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. ADR-019 **Accepted**. **ADR-021 Accepted** (MONITOR baseline / Project Gross Margin; MONITOR not implemented). Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
+| Working tree at last verified inspect | **FG-013 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED.** ADR-032 **Accepted**. **ADR-021 Accepted** (MONITOR not implemented). **FG-012 CLOSED / OPERATIONAL FOR UAT.** FG-011 / FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. M012 **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT**. |
+| Governance | FG-004–FG-012 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. ADR-019 **Accepted**. **ADR-021 Accepted** (MONITOR baseline / Project Gross Margin; MONITOR not implemented). Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
 
 ## Implemented (evidenced in code)
 
@@ -38,7 +38,7 @@
 - CalibAi V1 / BUILD / field / four-output **outputs 3–4** / QuickBooks API / Ontario contract
 - Crew Template catalog, payroll burden, `LabourActualObservation` persistence
 - MONITOR implementation (ADR-021 **Accepted**; not coded)
-- Historical-upload onboarding UX ([FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **DRAFT**; multi-file/folder UX locked; not implemented)
+- Historical-upload onboarding UX ([FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**; [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**)
 - Industry benchmarking
 
 ## Migrations
@@ -50,7 +50,7 @@
 
 M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **implemented, verified, committed, and pushed** on `main`.
 
-- **Current coded work:** none. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **DRAFT FOR JOEL REVIEW** (implementation not authorized). ADR-021 **Accepted** (docs only). FG-012 estimate-output consistency remains **CLOSED / OPERATIONAL FOR UAT.** FG-011 Project Hub UX remains **CLOSED / OPERATIONAL FOR UAT.**
+- **Current coded work:** none. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. ADR-032 **Accepted**. ADR-021 **Accepted** (docs only). FG-012 estimate-output consistency remains **CLOSED / OPERATIONAL FOR UAT.** FG-011 Project Hub UX remains **CLOSED / OPERATIONAL FOR UAT.**
 - **Blocked / Not Started (product):** Phase D estimate mapping; four-output package outputs 3–4; QuickBooks; contracts; BUILD field capture; MONITOR implementation; LEARN; FG-013 historical-upload **implementation**; industry benchmarking; historical evidence repair; real external AI provider; office authentication.
 
 ## August 25, 2026 governance (recorded — not implemented)
@@ -65,7 +65,7 @@ M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **
 
 ## Recommended next steps
 
-1. **STOP DEVELOPMENT.** FG-012 is **CLOSED / OPERATIONAL FOR UAT**. [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) is **Accepted** (docs only). [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **DRAFT FOR JOEL REVIEW** — do **not** implement uploads. Do not implement MONITOR. Do not start Phase D.
+1. **STOP DEVELOPMENT.** [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. Do **not** implement uploads until a separate FG-013 **implementation** prompt. Do not create the authorized migration in a docs-only session. Do not implement MONITOR. Do not start Phase D.
 2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% ORG-001 policy text; optional layers remain `UNSPECIFIED`).
 3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under Estimate-output consistency, Project Hub, AI take-off, or Pricing Engine.
 4. Do not enable a real external AI provider. Do not start Phase D estimate mapping. Do not start auth, BUILD/MONITOR/LEARN implementation, QuickBooks, or contract/warranty work. Accepting ADR-021 does **not** authorize a MONITOR Feature Gate.
@@ -74,6 +74,7 @@ M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **
 
 ## Related
 
+- [adr/ADR-032-app-managed-historical-workbook-storage.md](adr/ADR-032-app-managed-historical-workbook-storage.md)
 - [feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md)
 - [feature-gates/FG-012-estimate-output-consistency.md](feature-gates/FG-012-estimate-output-consistency.md)
 - [adr/ADR-021-monitor-commercial-baseline.md](adr/ADR-021-monitor-commercial-baseline.md)

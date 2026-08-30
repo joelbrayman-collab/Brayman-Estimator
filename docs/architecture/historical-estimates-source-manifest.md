@@ -8,6 +8,7 @@
 | Inspection Timestamp | 2026-08-28 |
 | Integrity Status | READ-ONLY AUDIT & DETERMINISTIC INGESTION COMPLETE · 20/20 SHA-256 VERIFIED |
 | Security Classification | Commercially Sensitive External Evidence (Source files not committed to Git) |
+| Legacy corpus lock | **Protected.** [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md): do **not** move, recopy, delete, rewrite, or path-mutate these 20 files. Productized FG-013 uploads use a separate app-managed path. |
 
 ## Source Provenance Inventory
 

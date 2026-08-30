@@ -272,7 +272,7 @@ Optional later “review location” action may create the first ProjectLocation
 
 ## Mike Pratt reference
 
-Mike Pratt Coach House, 2562 Church Street, North Gower, Ontario is the **future** Gate 2 reference case.
+Mike Pratt Coach House, 2562 Church Street, North Gower, Ontario is the **[FG-016](FG-016-ontario-ottawa-permit-intelligence-poc.md)** reference case (approved, not created in product data by FG-015).
 
 This gate must **not**: create that project in the database; perform permit analysis; seed Pratt-specific conclusions.
 
@@ -372,7 +372,7 @@ Synthetic / labeled UAT records only. **Do not** seed Pratt conclusions or creat
 
 Permit Rules Library; Ottawa/Ontario zoning or building-code engine; live web lookup / geocoding / municipal APIs; external or regulatory AI; automatic zoning or permit conclusions; municipal submissions; Pass 2 Permit & Approvals Report; Plan Intelligence integration; Phase D; estimate insertion; contract generation; Organization Brand Profile; Change Order documents; BUILD operational permits; national jurisdiction library; cadastral/GIS; creating the Mike Pratt project; parsing historical `Project.address`.
 
-**Recommended second Permit Gate (not created):** Ontario / Ottawa Permit Rules + Mike Pratt POC.
+**Recommended second Permit Gate:** [FG-016](FG-016-ontario-ottawa-permit-intelligence-poc.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**.
 
 ---
 
@@ -384,6 +384,6 @@ This document **authorized** the bounded FG-015 product implementation, includin
 
 **Live migration + office UAT (2026-08-30):** `flask db upgrade` applied `d6e7f8a9b0c1` → `e7f8a9b0c1d2`. Fresh Flask on port **5008**. Complete / incomplete / unknown-municipality / North Gower alias / existing-project transition / explicit location review / permit-context / snapshot immutability / recheck / Hub / isolation / advisory copy **PASSED**. Dedicated FG-015 **19 passed**. Relevant regressions **338 passed**. Full suite **364 passed**. No product-code defect. No product-code change this pass.
 
-**Not done (still out of this gate):** Permit Rules Library; Pass 2 analysis; Pratt project; Phase D; live web lookup / geocoder / external AI; Gate 2.
+**Not done (still out of this gate):** Permit Rules Library; Pass 2 analysis; Pratt project; Phase D; live web lookup / geocoder / external AI. Those belong to [FG-016](FG-016-ontario-ottawa-permit-intelligence-poc.md) or later gates.
 
-**Next governed action:** later **Ontario / Ottawa Permit Rules + Mike Pratt POC** Feature Gate (**not created**). Do not populate permit rules. Do not start Gate 2 / Pratt POC until that gate exists.
+**Next governed action:** [FG-016](FG-016-ontario-ottawa-permit-intelligence-poc.md) is **APPROVED FOR IMPLEMENTATION**. Do not implement FG-016 in the FG-015 close record. Do not populate permit rules until the FG-016 implementation prompt.

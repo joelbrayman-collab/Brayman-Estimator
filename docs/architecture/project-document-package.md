@@ -112,13 +112,13 @@ Generated **only from an APPROVED estimate**.
 
 ## Additional governed project document (FUTURE / NOT IMPLEMENTED)
 
-**Status:** Pass 2 report **FUTURE / NOT IMPLEMENTED**. Architecture **Accepted** (ADR-037/038/039). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (preliminary profile foundation only). Canonical: [permit-and-approvals-report.md](permit-and-approvals-report.md).
+**Status:** Pass 2 report **APPROVED FOR IMPLEMENTATION** / **NOT IMPLEMENTED** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)). Architecture **Accepted** (ADR-037/038/039). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (preliminary profile foundation). Canonical: [permit-and-approvals-report.md](permit-and-approvals-report.md) · [permit-rules-library.md](permit-rules-library.md).
 
 The **Permit & Approvals Report** is a **core project document** (advisory preflight). It is **not** a fifth estimate-derived commercial output, **not** a Change Order, and **not** a substitute for the AHJ.
 
 Issued reports are immutable snapshots. Recheck produces a new version ([ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)).
 
-This section does **not** authorize Pass 2 analysis, live lookup, or external AI. It does **not** change FG-012 outputs 1–2 or authorize outputs 3–4.
+This section does **not** implement Pass 2 analysis, live lookup, or external AI. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) authorizes the later bounded POC. It does **not** change FG-012 outputs 1–2 or authorize outputs 3–4.
 
 ## Core package vs transaction-document families (FUTURE / NOT IMPLEMENTED)
 
@@ -133,7 +133,7 @@ Do **not** force Change Order into a numbered “Document #7”. Do **not** crea
 
 Organization branding for all generated documents (core and transaction families) is pinned on [organization-brand-profile.md](organization-brand-profile.md). Do not create independent logo/header settings per module.
 
-These pins do **not** authorize Brand Profile implementation, Change Order PDF rewrite, or email. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) does **not** authorize a Pass 2 Permit Report or product code in this governance pass. They do **not** reopen FG-012 or FG-014.
+These pins do **not** authorize Brand Profile implementation, Change Order PDF rewrite, or email. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) authorizes a **neutral CalibAi** Permit Report layout without Brand Profile; do **not** add a second Permit-logo system. They do **not** reopen FG-012, FG-014, or FG-015.
 
 ## Input change propagation
 

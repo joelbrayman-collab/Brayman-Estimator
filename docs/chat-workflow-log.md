@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-016 Ontario / Ottawa Permit Intelligence POC Feature Gate governance
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `8c70ede72e37b5b0fe0910b70c34fca5d9c733ad` |
+| Objective | Create and approve FG-016 Ontario / Ottawa Permit Intelligence POC. Docs only. Do not implement. |
+| Business decision | Bounded Ontario / City of Ottawa / coach-house POC. Advisory only. PASS never means AHJ approval. Pratt is UAT reference, not a seeded conclusion. |
+| Architectural decision | [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. Reuse FG-015 resolver. Smallest Permit Rules Library V1. Rule vs project fact. Deterministic evaluation. No new ADR (ADR-037/038/039). One later additive migration. No runtime scrape. No external AI. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — ONTARIO / OTTAWA PERMIT INTELLIGENCE POC FEATURE GATE GOVERNANCE. Documentation only. Do not implement. Do not create a migration. Do not populate the Permit Rules Library. Do not create the Mike Pratt project. Do not enable external AI or runtime web scraping. |
+| Files expected to change | FG-016 + permit-rules architecture + indexes + module/status/handoff/log/roadmap |
+| Files prohibited from changing | `app/` · `tests/` · `migrations/` · live DB |
+| Implementation result | FG-016 created and approved. No product-code change. |
+| Tests | Not rerun (docs only; no behaviour change). Prior full suite **364 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Implementation not started. Library empty. Pratt project not in product data. |
+| Next approved step | **FG-016 implementation** under a later Cursor prompt. This pass **STOPS**. |
+| Next approved prompt | FG-016 implementation (not this chat). |
+| Commit hash | (this docs-approval commit) |
+
 ### 2026-08-30 — FG-015 live migration + office UAT close
 
 | Field | Content |

@@ -64,31 +64,35 @@ These were created during the reference exercise and must ultimately be **regene
 - QuickBooks output reflects approved customer estimate only
 - Contract generation requires approved estimate + governed warranty attachment
 
-## Future architecture / UAT reference — Mike Pratt Coach House (Permit & Approvals Report)
+## FG-016 UAT reference — Mike Pratt Coach House (Permit & Approvals Report)
 
 | Field | Value |
 |-------|--------|
 | Project | Mike Pratt Coach House |
 | Address | 2562 Church Street, North Gower, Ontario |
-| Status | **Future architecture / UAT reference only** — not an in-app project; not a permit determination |
+| Status | **FG-016 UAT reference** — not an in-app project in the governance pass; not a permit determination |
 | Recorded | 2026-08-30 |
-| Canonical pin | [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) |
-| Architecture | ADR-037 / ADR-038 / ADR-039 **Accepted**. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (foundation only). Pass 2 / Pratt analysis **not** this gate. |
+| Canonical pin | [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) · [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [permit-rules-library.md](../architecture/permit-rules-library.md) · [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) |
+| Architecture | ADR-037 / ADR-038 / ADR-039 **Accepted**. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (foundation). [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. |
 
 This case is the **permit-preflight** reference. The 3415 Roger Stevens Road case remains the commercial/document-package UAT reference.
 
+Use the existing signed plan set and site plan as reference evidence. Do **not** seed conversational ChatGPT conclusions as product facts. Do **not** claim municipal approval. Do **not** pre-decide findings.
+
 Preliminary review (outside this repository, **not** governed evidence) has already shown useful preflight questions, including coach-house footprint, building height, setbacks, private servicing/septic, rural grading-plan requirements, and zoning/site-plan submission completeness.
 
-**Do not treat that preliminary ChatGPT research as an authoritative project permit determination.** Architecture is **governed** (ADR-037/038/039 **Accepted**). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **CLOSED / OPERATIONAL FOR UAT** and does **not** create this project, seed Pratt conclusions, or perform Pass 2 analysis.
+**Do not treat that preliminary ChatGPT research as an authoritative project permit determination.** Architecture is **governed** (ADR-037/038/039 **Accepted**). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **CLOSED / OPERATIONAL FOR UAT** and does **not** create this project. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) does **not** create this project in the governance pass.
 
-This case remains a **future Gate 2 architecture / UAT reference only**.
+This case remains the **FG-016 UAT reference**. It is **not** a universal rule.
 
 ## Related
 
 - [pricing-policy.md](../pricing-policy.md)
 - [architecture/project-document-package.md](../architecture/project-document-package.md)
 - [architecture/permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md)
+- [architecture/permit-rules-library.md](../architecture/permit-rules-library.md)
 - [architecture/jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md)
+- [feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)
 - [adr/ADR-037-project-location-and-jurisdiction-resolution.md](../adr/ADR-037-project-location-and-jurisdiction-resolution.md)
 - [adr/ADR-038-permit-intelligence-authority-and-rules-library.md](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md)
 - [adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)

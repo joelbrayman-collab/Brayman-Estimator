@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-016 Ontario / Ottawa Permit Intelligence POC approved for implementation
+
+| Field | Content |
+|-------|---------|
+| ID | [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) |
+| Status | **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** |
+| Date | 2026-08-30 |
+| Objective | Approve bounded Ontario / Ottawa Permit Intelligence POC (governed rules + Mike Pratt reference). Docs only. |
+| Deliverables | FG-016; [permit-rules-library.md](architecture/permit-rules-library.md); indexes; architecture/module/status/handoff/log/roadmap updates. No product code. No migration. |
+| Validation | Docs only. `git diff --check`. No `app/` / `tests/` / `migrations/`. Alembic current=head `e7f8a9b0c1d2`. FG-015 remains **CLOSED / OPERATIONAL FOR UAT**. |
+| Next | **FG-016 implementation** under a later Cursor prompt. Do not populate rules in this pass. Do not create the Pratt project now. |
+
 ### 2026-08-30 — FG-015 Permit Foundation V1 live-migrated and closed
 
 | Field | Content |

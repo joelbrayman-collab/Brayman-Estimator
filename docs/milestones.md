@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — Organization Brand Profile + Change Order document family pin
+
+| Field | Content |
+|-------|---------|
+| ID | [organization-brand-profile.md](architecture/organization-brand-profile.md) · [change-order-document-family.md](architecture/change-order-document-family.md) |
+| Status | **FUTURE / NOT IMPLEMENTED** |
+| Date | 2026-08-30 |
+| Objective | Pin future organization branding and Change Order document-family requirements without implementation. |
+| Deliverables | Canonical architecture pins; indexes; status/handoff/log updates. No product code. No Feature Gate. No ADR. |
+| Validation | Docs only. Existing Change Order record remains authoritative. FG-014 remains **CLOSED / OPERATIONAL FOR UAT**. Roadmap next action unchanged. |
+| Next | **Permit Intelligence Engine architecture reconnaissance** (not implementation). Do not implement these pins. |
+
 ### 2026-08-30 — FG-014 closed / operational for UAT
 
 | Field | Content |

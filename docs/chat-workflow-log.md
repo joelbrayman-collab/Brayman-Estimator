@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — Organization Brand Profile + Change Order document family pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `dc1bfc07fccec103bfebc0a9f22a789d93cce26c` |
+| Objective | Pin future Organization Brand Profile and Change Order document-family requirements. Docs only. |
+| Business decision | Branding is configured once per organization, not per module. Change Order remains the existing business record and becomes a repeating transaction-document family. Issued documents must preserve branding actually used. |
+| Architectural decision | **FUTURE / NOT IMPLEMENTED.** No Feature Gate. No ADR. No schema. Do not create a second Change Order entity. Do not reorder the roadmap. FG-014 remains closed. Next governed action remains Permit Intelligence reconnaissance. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | FUTURE ORGANIZATION BRANDING + CHANGE ORDER DOCUMENT REQUIREMENTS PIN. Architecture pin only. Do not implement. Do not interrupt FG-014. |
+| Files expected to change | Architecture pins + indexes + status/handoff/log/milestones/roadmap |
+| Files prohibited from changing | `app/` · `tests/` · `migrations/` · FG-014 product status |
+| Implementation result | Two canonical pins recorded. No product-code change. |
+| Tests | Not rerun. No product-code change. Preserved full suite **345 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (architecture record) |
+| Constitutional issue raised | None |
+| Unresolved issues | Later: whether branding is a small platform prerequisite Feature Gate; how CO snapshot → email → acceptance evidence is gated. |
+| Next approved step | **Permit Intelligence Engine architecture reconnaissance** (not implementation). |
+| Next approved prompt | Architecture reconnaissance only. Do not implement Permit Intelligence, branding, or Change Order documents. |
+| Commit hash | (this pin docs commit) |
+
 ### 2026-08-30 — FG-014 office re-UAT and closure
 
 | Field | Content |

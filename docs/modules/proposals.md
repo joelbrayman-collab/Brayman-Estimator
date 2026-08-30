@@ -39,6 +39,7 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 - Project budget ledger (Projects / future Job Costing)
 - Electronic signature providers (Future)
 - Inventing CRM Company/User entities without Feature Gate
+- Owning the Organization Brand Profile (future platform branding pin — [organization-brand-profile.md](../architecture/organization-brand-profile.md)). Per-template `logo_path` is **not** the intended long-term source of truth.
 
 ## Current implementation (accurate as of Milestone 002 review)
 
@@ -55,6 +56,7 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 - Project creation from acceptance snapshot — later; Projects boundary (Rule 4)
 - Electronic signature — **Future**
 - Optional CRM FKs — deferred (ADR-003)
+- Organization Brand Profile as document branding source — **FUTURE / NOT IMPLEMENTED** pin ([organization-brand-profile.md](../architecture/organization-brand-profile.md)); not a Feature Gate
 
 ## Dependencies
 

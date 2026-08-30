@@ -8,6 +8,7 @@
 | Status | **ARCHITECTURAL SPECIFICATION & GOVERNANCE RECORD** (Phase A Complete — No Application Code / No Schema Migrations) |
 | Date | 2026-08-28 |
 | Development Tenant | Organization 001 — Brayman Construction Inc. |
+| Related future pin | [organization-brand-profile.md](organization-brand-profile.md) **FUTURE / NOT IMPLEMENTED** — not this document's `branding_config` JSON; that column is **not implemented** |
 
 ---
 
@@ -114,7 +115,7 @@ The `Organization` entity is the top-level commercial and administrative contain
 │ `default_target_margin`        │ Numeric(5,4)    │ Default commercial margin fraction (e.g. `0.1500`)  │
 │ `default_tax_rate`             │ Numeric(5,4)    │ Default sales tax fraction (e.g. `0.1300` for HST)  │
 │ `active_calibration_model_id`  │ UUID / String   │ Pointer to currently active Calibration Model       │
-│ `branding_config`              │ JSON            │ Logo URLs, letterhead, primary colors, address info │
+│ `branding_config`              │ JSON            │ **Intended / not implemented.** Future branding is pinned on [organization-brand-profile.md](organization-brand-profile.md). Do not implement this JSON from that pin. |
 │ `integration_config`           │ JSON            │ QuickBooks tenant ID, cloud storage paths           │
 │ `created_at`                   │ DateTime        │ UTC creation timestamp                              │
 │ `updated_at`                   │ DateTime        │ UTC update timestamp                                │

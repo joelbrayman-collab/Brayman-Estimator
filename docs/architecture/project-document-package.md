@@ -122,6 +122,21 @@ This pin does **not** authorize Permit Intelligence, jurisdictional legal-librar
 
 This section does **not** change FG-012 outputs 1–2 or authorize outputs 3–4.
 
+## Core package vs transaction-document families (FUTURE / NOT IMPLEMENTED)
+
+**Status:** **FUTURE / NOT IMPLEMENTED.** Requirement pins only.
+
+| Kind | Canonical record |
+|------|------------------|
+| Core project document / package outputs | This document (outputs 1–4) plus additional pinned documents such as the Permit & Approvals Report |
+| Project transaction document families | Repeating per-project documents. Change Orders belong here because a project may have many. Canonical: [change-order-document-family.md](change-order-document-family.md) |
+
+Do **not** force Change Order into a numbered “Document #7”. Do **not** create a second Change Order entity. The existing Change Order business record remains authoritative.
+
+Organization branding for all generated documents (core and transaction families) is pinned on [organization-brand-profile.md](organization-brand-profile.md). Do not create independent logo/header settings per module.
+
+These pins do **not** authorize schema, Brand Profile implementation, Change Order PDF rewrite, email, Feature Gate, or ADR. They do **not** reopen FG-012 or FG-014.
+
 ## Input change propagation
 
 When a governed field changes in the authoritative record (scope, price, allowance, exclusion, tax treatment, commercial term):
@@ -140,6 +155,8 @@ When a governed field changes in the authoritative record (scope, price, allowan
 | QuickBooks export | Future integration boundary — [quickbooks-integration.md](quickbooks-integration.md) |
 | Ontario contract + warranty package | Governed templates — [legal-content-and-templates.md](../governance/legal-content-and-templates.md) |
 | Permit & Approvals Report | **FUTURE / NOT IMPLEMENTED** pin — [permit-and-approvals-report.md](permit-and-approvals-report.md) |
+| Organization Brand Profile | **FUTURE / NOT IMPLEMENTED** pin — [organization-brand-profile.md](organization-brand-profile.md) (single branding source; not implemented) |
+| Change Order document family | **FUTURE / NOT IMPLEMENTED** pin — [change-order-document-family.md](change-order-document-family.md). Existing Change Order record remains authoritative. Project Controls / Projects. |
 
 ## Related
 
@@ -149,4 +166,6 @@ When a governed field changes in the authoritative record (scope, price, allowan
 - [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md)
 - [testing/uat-reference-cases.md](../testing/uat-reference-cases.md)
 - [permit-and-approvals-report.md](permit-and-approvals-report.md) — **FUTURE / NOT IMPLEMENTED** additional project document (advisory preflight; not outputs 1–4)
+- [organization-brand-profile.md](organization-brand-profile.md) — **FUTURE / NOT IMPLEMENTED** Organization Brand Profile
+- [change-order-document-family.md](change-order-document-family.md) — **FUTURE / NOT IMPLEMENTED** Change Order transaction-document family (not a numbered core output)
 - [platform-vision.md](../platform-vision.md)

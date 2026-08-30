@@ -203,3 +203,4 @@ Do **not** create a Permit Intelligence module, legal-library register, or schem
 - [testing/uat-reference-cases.md](../testing/uat-reference-cases.md)
 - [modules/projects.md](../modules/projects.md)
 - [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md)
+- [organization-brand-profile.md](organization-brand-profile.md) — **FUTURE / NOT IMPLEMENTED** branding source for later generated reports

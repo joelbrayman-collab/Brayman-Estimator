@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-08-29 |
+| Updated | 2026-08-30 |
 
 ## Highest-order authority
 
@@ -169,4 +169,4 @@ Answer all of the following in the Cursor prompt or an attached Feature Gate doc
 11. Does it require an ADR?
 12. Does it require a database migration?
 
-Current Feature Gates: [feature-gates/README.md](feature-gates/README.md) (FG-004 through FG-009 approved and implemented where noted; **FG-009 CLOSED / OPERATIONAL FOR UAT**; **FG-010 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **NOT YET LIVE-MIGRATED**; real external AI provider **not authorized**).
+Current Feature Gates: [feature-gates/README.md](feature-gates/README.md) (FG-004 through FG-009 approved and implemented where noted; **FG-009 CLOSED / OPERATIONAL FOR UAT**; **FG-010 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; real external AI provider **not authorized**).

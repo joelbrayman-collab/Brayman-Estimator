@@ -417,4 +417,4 @@ Product pricing implementation; ADR-025 code changes; AI take-off; supplier inte
 | ADR-030 | **Accepted** (contingency source vs pricing treatment explicit) |
 | Product code | Implemented (`a3b4c5d6e7f8`); Alembic current/head `a3b4c5d6e7f8` |
 
-**Next action:** FG-009 remains **CLOSED**. [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) is **IMPLEMENTED / VERIFIED** / **NOT YET LIVE-MIGRATED**. Do not reopen FG-009 from this architecture document.
+**Next action:** FG-009 remains **CLOSED**. [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. Do not reopen FG-009 from this architecture document.

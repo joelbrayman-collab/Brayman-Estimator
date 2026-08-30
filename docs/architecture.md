@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Living architecture map |
-| Updated | 2026-08-29 |
+| Updated | 2026-08-30 |
 | Evidence baseline | `main` @ CAR-001 adoption (see git); Plan Intelligence Current claims evidenced in `app/plan_intelligence/` and migration `a7c8e9f0b1d2` |
 
 **Cite code paths for implemented claims.** Distinctions below are mandatory. CalibAi lifecycle architecture: [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md).
@@ -65,7 +65,7 @@ Notable behaviours evidenced in code/tests:
 - Proposals built as **snapshots** from estimate versions (`build_proposal_snapshot` exported from `app/services/`); tests in `tests/test_proposal_snapshots.py` assert independence from later estimate edits.
 - Proposal statuses include `Accepted` among others (`PROPOSAL_STATUSES` in `app/models/proposal.py`).
 - Change Orders package under `app/project_controls/` with its own routes/services/repository/pdf.
-- Plan Intelligence Phase A upload/storage (M005) and Document Indexing (M007): pages, processing provenance, archive-over-delete, relational search (`app/plan_intelligence/`; tests `tests/test_plan_upload.py`, `tests/test_plan_indexing.py`). Sheets **implemented** (M009). Scale/measurement **implemented** (M010). **AI quantity extraction foundation is implemented** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED** / **NOT YET LIVE-MIGRATED**; mock extractor only).
+- Plan Intelligence Phase A upload/storage (M005) and Document Indexing (M007): pages, processing provenance, archive-over-delete, relational search (`app/plan_intelligence/`; tests `tests/test_plan_upload.py`, `tests/test_plan_indexing.py`). Sheets **implemented** (M009). Scale/measurement **implemented** (M010). **AI quantity extraction foundation is operational for UAT** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; mock extractor only).
 
 ### Services / repositories
 
@@ -130,7 +130,7 @@ Aligns with [platform-vision.md](platform-vision.md), [CAR-001](architecture/CAR
 - Auditable financially significant actions (Rule 6)
 - Service boundaries for cross-module access (Rule 11)
 - Governance Feature Gate before net-new modules
-- Human-approved, source-traceable take-off before estimate insertion (ADR-005/006 **Accepted**; [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED** / **NOT YET LIVE-MIGRATED**; mapping deferred to Phase D)
+- Human-approved, source-traceable take-off before estimate insertion (ADR-005/006 **Accepted**; [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; mapping deferred to Phase D)
 - Supplier price snapshots on consumption (ADR-008 — Proposed)
 
 ---
@@ -141,7 +141,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
 ### Differentiating pillars
 
-- [Plan Intelligence and Automated Take-Off](architecture/plan-intelligence-and-automated-takeoff.md) — Phases A–M010 **Current**; Phase **C** AI take-off foundation **implemented** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED** / **NOT YET LIVE-MIGRATED**); Phases D–G future
+- [Plan Intelligence and Automated Take-Off](architecture/plan-intelligence-and-automated-takeoff.md) — Phases A–M010 **Current**; Phase **C** AI take-off foundation **operational for UAT** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**); Phases D–G future
 - [Supplier Catalogue, Inventory and Pricing](architecture/supplier-catalogue-inventory-pricing.md) — Phases E–F **Future**
 - Procurement / purchase-order preparation (nav placeholder only today)
 
@@ -156,7 +156,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 - **Labour Engine Phase B** — [labour-engine-phase-b-architecture.md](architecture/labour-engine-phase-b-architecture.md); [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (foundation operational for UAT). Selling-price application remains out of scope of FG-008.
 - **Organization-Calibrated Pricing Engine** — [organization-calibrated-pricing-engine-architecture.md](architecture/organization-calibrated-pricing-engine-architecture.md); [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. ADR-025 **Accepted**; ADR-030 **Accepted**. Foundation operational for UAT. Labour-snapshot Direct Labour Cost is not included in the estimate basis by default. Optional ORG-001 overhead/profit/contingency layers remain `UNSPECIFIED`.
 
-Labour Engine and Pricing Engine foundations are **Current**. AI take-off foundation is **implemented, not live-migrated**. Do **not** describe the remaining items in this Future list as existing:
+Labour Engine and Pricing Engine foundations are **Current**. AI take-off foundation is **operational for UAT**. Do **not** describe the remaining items in this Future list as existing:
 
 - Electronic signature / formal proposal acceptance workflows
 - CAD ingestion (Phase G; PDF-first per ADR-009)

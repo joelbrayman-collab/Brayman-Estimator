@@ -7,11 +7,11 @@
 | Target Milestone | **M012** |
 | Module | Plan Intelligence |
 | Date | 2026-08-29 |
-| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **NOT YET LIVE-MIGRATED** |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | Architecture | [ai-takeoff-quantity-extraction-foundation.md](../architecture/ai-takeoff-quantity-extraction-foundation.md) **Approved** — foundation implemented |
 | Related ADRs | [ADR-031](../adr/ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md) **Accepted** · [ADR-005](../adr/ADR-005-ai-takeoff-traceability.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](../adr/ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-009](../adr/ADR-009-pdf-first-versus-cad-first.md) **Accepted** · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** · [ADR-011](../adr/ADR-011-ai-confidence-threshold-policy.md) **Accepted** · [ADR-012](../adr/ADR-012-plan-document-version-ownership.md) · [ADR-026](../adr/ADR-026-scale-ownership-and-calibration-provenance.md) **Accepted** · [ADR-027](../adr/ADR-027-pdf-rendering-and-normalized-coordinate-system.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** |
 | Prerequisites | M005–M010 implemented; FG-007 org isolation; FG-008 **CLOSED / OPERATIONAL FOR UAT**; FG-009 **CLOSED / OPERATIONAL FOR UAT** |
-| Approved baseline | Governance approval 2026-08-29 (`5bd6c772a093e9ca3ad506e17f0629eabe86f53c`). Implementation 2026-08-29: additive migration `b4c5d6e7f8a9` (graph head; **not** applied to live development/UAT). Live `flask db current` remains `a3b4c5d6e7f8`. |
+| Approved baseline | Governance approval 2026-08-29 (`5bd6c772a093e9ca3ad506e17f0629eabe86f53c`). Implementation 2026-08-29: `9665295ace673a46a8c645ed0598e5e91d41931c`. Additive migration `b4c5d6e7f8a9` applied live 2026-08-30 (`a3b4c5d6e7f8` → `b4c5d6e7f8a9`). |
 
 ---
 
@@ -20,10 +20,10 @@
 | Layer | State |
 |-------|--------|
 | Architecture | **Approved** (2026-08-29) |
-| Feature Gate (this document) | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **NOT YET LIVE-MIGRATED** |
+| Feature Gate (this document) | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | ADR-031 / 005 / 006 / 007 / 009 / 011 | **Accepted** |
 | ADR-010 | **Proposed** (real external AI provider **not authorized**) |
-| Implementation | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED.** Provider-neutral foundation in `app/plan_intelligence/` (`takeoff.py`, `takeoff_extractors.py`, models, office UI). Additive migration `b4c5d6e7f8a9` is the Alembic graph head and **has not been applied** to the live development/UAT database. Dedicated tests `tests/test_takeoff.py`. Browser/live UAT **not yet performed**. |
+| Implementation | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED.** Provider-neutral foundation in `app/plan_intelligence/` (`takeoff.py`, `takeoff_extractors.py`, models, office UI). Additive migration `b4c5d6e7f8a9` is the Alembic graph head **and** live development/UAT current. Dedicated tests `tests/test_takeoff.py`. Synthetic browser/UAT smoke **performed**. |
 | Real external AI provider | **NOT AUTHORIZED** |
 | Phase D estimate mapping | **NOT STARTED** |
 
@@ -258,4 +258,4 @@ See **Out** plus FG-009 UI leftover-stack-percent cleanup (separate maintenance)
 
 ## Implementation close
 
-Foundation is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** and **NOT YET LIVE-MIGRATED**. Browser/live UAT **not yet performed**. Real external AI provider remains **not authorized**. Phase D estimate mapping is **not started**. Next governed action: apply `b4c5d6e7f8a9` to live development/UAT under a separate authorization and perform bounded synthetic browser/UAT smoke.
+Foundation is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. M012 is **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT**. Live Alembic current/head `b4c5d6e7f8a9`. Real external AI provider remains **not authorized**. Phase D estimate mapping is **not started**. COUNT is dimensionless (no scale required). Dimensional measurement remains scale-governed. Synthetic UAT residue is labeled `FG-010 UAT` and left in place. **STOP DEVELOPMENT.** Next governed action: Day-End Reconciliation / Review Turnover audit. Do not start Phase D. Do not enable an external AI provider. Do not start another milestone.

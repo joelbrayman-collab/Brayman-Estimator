@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Ownership map |
-| Updated | 2026-08-29 |
+| Updated | 2026-08-30 |
 
 | Module | Doc | Code evidence (current) |
 |--------|-----|-------------------------|
@@ -11,7 +11,7 @@
 | Estimating | [estimating.md](estimating.md) | Cost items, assemblies, estimates |
 | Proposals | [proposals.md](proposals.md) | Templates, proposals, snapshot, PDF |
 | Projects | [projects.md](projects.md) | Projects entity; change orders under Project Controls package |
-| Plan Intelligence | [plan-intelligence.md](plan-intelligence.md) | Phase A upload (M005) + Document Indexing (M007) + Sheets (M009) + Scale/measurement (M010) + **M012 / FG-010 take-off foundation IMPLEMENTED / VERIFIED / COMMITTED / PUSHED — NOT YET LIVE-MIGRATED** |
+| Plan Intelligence | [plan-intelligence.md](plan-intelligence.md) | Phase A upload (M005) + Document Indexing (M007) + Sheets (M009) + Scale/measurement (M010) + **M012 / FG-010 take-off foundation OPERATIONAL FOR UAT** |
 | Labour Engine | [labour-engine.md](labour-engine.md) | FG-008 Phase B foundation (`app/models/labour_engine.py`, `/labour-engine/`) — **OPERATIONAL FOR UAT**; live current/head `f2c3d4e5f6a7` |
 | Pricing Engine | [pricing-engine.md](pricing-engine.md) | FG-009 foundation **OPERATIONAL FOR UAT**: `app/models/pricing_engine.py`, `/pricing-engine/`; Alembic current/head `a3b4c5d6e7f8`. Versions without snapshots still use `estimate_builder.py` stack |
 | BUILD | [build.md](build.md) | **None** — Proposed (ADR-020); not implemented |

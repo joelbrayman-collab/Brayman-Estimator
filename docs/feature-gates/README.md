@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-08-29 |
+| Updated | 2026-08-30 |
 
 Feature Gate documents answer the twelve governance questions in [platform-governance.md](../platform-governance.md) for a specific module or milestone **before** Cursor implementation.
 
@@ -20,8 +20,8 @@ Feature Gate documents answer the twelve governance questions in [platform-gover
 | [FG-007](FG-007-m011-organization-foundation-and-project-commercial-context.md) | M011 Organization Foundation & Project Commercial Context | **APPROVED, IMPLEMENTED & VERIFIED** (Milestone 011; `cb38d93`, migration `d0a1b2c3d4e5`) |
 | [FG-008](FG-008-labour-engine-phase-b.md) | Labour Engine Phase B / Organization Labour Calibration Foundation | **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (2026-08-29; Alembic current/head `f2c3d4e5f6a7`) |
 | [FG-009](FG-009-organization-calibrated-pricing-engine.md) | Organization-Calibrated Pricing Engine | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (2026-08-29; Alembic current/head `a3b4c5d6e7f8`) |
-| [FG-010](FG-010-ai-takeoff-quantity-extraction-foundation.md) | AI Take-off / Quantity Extraction Foundation (M012) | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **NOT YET LIVE-MIGRATED** (2026-08-29; Alembic graph head `b4c5d6e7f8a9`; live current remains `a3b4c5d6e7f8`) |
+| [FG-010](FG-010-ai-takeoff-quantity-extraction-foundation.md) | AI Take-off / Quantity Extraction Foundation (M012) | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (2026-08-30; Alembic current/head `b4c5d6e7f8a9`) |
 
 Implementation is not authorized by a Feature Gate until Joel approves the gate and the corresponding Cursor prompt.
 
-**CAR-001** aligns strategic CalibAi lifecycle architecture. **FG-004** authorized M009 (implemented & verified). **FG-005** authorized M010 Scale Calibration & Measurement Tools (implemented & verified). **FG-007** authorized M011 Organization Foundation & Project Commercial Context (implemented & verified). **FG-006** authorized Historical Estimate Ingestion Engine Phase B (implemented & verified). **FG-008** Labour Engine Phase B is **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (foundation operational for UAT; FG-008 revision `f2c3d4e5f6a7`). **FG-009** Organization-Calibrated Pricing Engine is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (Alembic live current `a3b4c5d6e7f8`; foundation operational for UAT). **FG-010** AI Take-off / Quantity Extraction Foundation is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** / **NOT YET LIVE-MIGRATED** (graph head `b4c5d6e7f8a9`; real external AI provider not authorized).
+**CAR-001** aligns strategic CalibAi lifecycle architecture. **FG-004** authorized M009 (implemented & verified). **FG-005** authorized M010 Scale Calibration & Measurement Tools (implemented & verified). **FG-007** authorized M011 Organization Foundation & Project Commercial Context (implemented & verified). **FG-006** authorized Historical Estimate Ingestion Engine Phase B (implemented & verified). **FG-008** Labour Engine Phase B is **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (foundation operational for UAT; FG-008 revision `f2c3d4e5f6a7`). **FG-009** Organization-Calibrated Pricing Engine is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (Alembic revision `a3b4c5d6e7f8`; foundation operational for UAT). **FG-010** AI Take-off / Quantity Extraction Foundation is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (Alembic current/head `b4c5d6e7f8a9`; real external AI provider not authorized).

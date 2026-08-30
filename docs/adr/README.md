@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-08-29 |
+| Updated | 2026-08-30 |
 
 ## When an ADR is required
 
@@ -13,7 +13,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 **Proposed** is not **Accepted**. Citing a Proposed ADR in a module, Feature Gate, or roadmap does not change its status. Implementation still requires Feature Gate + accepted decisions where the ADR itself requires acceptance.
 
-**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**); **ADR-025** (named pricing methods); **ADR-030** (org pricing policy + estimate pricing snapshot); **ADR-005, ADR-006, ADR-007, ADR-009, ADR-011, ADR-031** (FG-010 / M012 take-off foundation **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** / **NOT YET LIVE-MIGRATED**). FG-009 is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. FG-010 is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** / **NOT YET LIVE-MIGRATED**. **ADR-010 remains Proposed** (real external AI provider not authorized).
+**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**); **ADR-025** (named pricing methods); **ADR-030** (org pricing policy + estimate pricing snapshot); **ADR-005, ADR-006, ADR-007, ADR-009, ADR-011, ADR-031** (FG-010 / M012 take-off foundation **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**). FG-009 is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. FG-010 is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. **ADR-010 remains Proposed** (real external AI provider not authorized).
 
 ## Process
 
@@ -67,7 +67,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-031](ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md) | Versioned Extraction Run, Reviewed Take-off Package, and Candidate Provenance | **Accepted** (2026-08-29; FG-010 / M012; **not implemented**; real external AI provider **not authorized**) |
+| [ADR-031](ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md) | Versioned Extraction Run, Reviewed Take-off Package, and Candidate Provenance | **Accepted** (2026-08-29; FG-010 / M012 **LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; real external AI provider **not authorized**) |
 
 ### Supplier (strategic)
 
@@ -113,4 +113,4 @@ M004 readiness: [../architecture/M004-plan-intelligence-readiness-report.md](../
 M006 readiness: [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md).
 M008 readiness: [../architecture/M008-sheet-intelligence-readiness-report.md](../architecture/M008-sheet-intelligence-readiness-report.md).
 
-> ADR-017/018 are **Accepted** and implemented in [M009](../feature-gates/FG-004-m009-sheet-classification.md). ADR-026/027 are **Accepted** and implemented in [M010](../feature-gates/FG-005-m010-scale-calibration.md). ADR-028 is **Accepted** and implemented in [M011](../feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md). ADR-029 is **Accepted** with [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**. [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (ADR-025 **Accepted**; ADR-030 **Accepted**). [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) / M012 is **IMPLEMENTED / VERIFIED** / **NOT YET LIVE-MIGRATED** (ADR-005/006/007/009/011/031 **Accepted**; ADR-010 **Proposed**; real external AI provider **not authorized**).
+> ADR-017/018 are **Accepted** and implemented in [M009](../feature-gates/FG-004-m009-sheet-classification.md). ADR-026/027 are **Accepted** and implemented in [M010](../feature-gates/FG-005-m010-scale-calibration.md). ADR-028 is **Accepted** and implemented in [M011](../feature-gates/FG-007-m011-organization-foundation-and-project-commercial-context.md). ADR-029 is **Accepted** with [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**. [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (ADR-025 **Accepted**; ADR-030 **Accepted**). [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) / M012 is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (ADR-005/006/007/009/011/031 **Accepted**; ADR-010 **Proposed**; real external AI provider **not authorized**).

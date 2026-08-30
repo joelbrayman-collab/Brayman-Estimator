@@ -23,7 +23,9 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-08-28, after CAR-001 — not authorized by CAR-001):** M009 was implemented and verified under [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) (`5dc4b09`, migration `b8d9f0a1c2e3`). M010, M011, FG-006, FG-008, and FG-009 followed under their own gates. CAR-001 itself remains docs/governance direction only.
 
-**Subsequent status (2026-08-29 — not authorized by CAR-001):** [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) / M012 is **IMPLEMENTED / VERIFIED** / **NOT YET LIVE-MIGRATED**. Real external AI provider **not authorized**. PLAN remains partial; PRICE remains FG-008/FG-009 operational for UAT.
+**Subsequent status (2026-08-29 — not authorized by CAR-001):** [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) / M012 was implemented, committed, and pushed (`9665295`). Real external AI provider **not authorized**. PLAN remained partial; PRICE remained FG-008/FG-009 operational for UAT.
+
+**Subsequent status (2026-08-30 — not authorized by CAR-001):** FG-010 / M012 is **LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (`b4c5d6e7f8a9`). **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT.** Real external AI provider **not authorized**. Phase D **not started**.
 
 ## What CAR-001 was
 

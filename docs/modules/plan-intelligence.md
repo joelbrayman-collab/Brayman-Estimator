@@ -2,10 +2,10 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Phase A + M007 indexing + M009 Sheet classification + M010 scale/measurement implemented**; **M012 / FG-010 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED — NOT YET LIVE-MIGRATED** |
-| Updated | 2026-08-29 |
+| Status | **Phase A + M007 indexing + M009 Sheet classification + M010 scale/measurement implemented**; **M012 / FG-010 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
+| Updated | 2026-08-30 |
 | Code | `app/plan_intelligence/` |
-| Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) · [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED — NOT YET LIVE-MIGRATED** |
+| Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) · [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | Architecture | [../architecture/plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) · [../architecture/document-intelligence.md](../architecture/document-intelligence.md) · [../architecture/sheet-intelligence.md](../architecture/sheet-intelligence.md) · [../architecture/ai-takeoff-quantity-extraction-foundation.md](../architecture/ai-takeoff-quantity-extraction-foundation.md) |
 | Readiness | [../architecture/M004-plan-intelligence-readiness-report.md](../architecture/M004-plan-intelligence-readiness-report.md) · [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md) · [../architecture/M008-sheet-intelligence-readiness-report.md](../architecture/M008-sheet-intelligence-readiness-report.md) |
 
@@ -51,7 +51,7 @@ Proposal generation already exists. Plan Intelligence is the next major platform
 | Project-scoped relational search/filter | **Done** (M007) |
 | Sheet classification / human review | **Done** (M009; `plan_sheets`, `plan_sheet_pages`, `plan_sheet_suggestions`, human accept/edit/reject, uniqueness validation) |
 | Scale calibration / measurement | **Done** (M010; [FG-005](../feature-gates/FG-005-m010-scale-calibration.md); ADR-026/027; migration `c9e0f1a2b3d4`). COUNT does **not** require dimensional scale. |
-| AI take-off foundation | **Done (committed / pushed / not live-migrated)** (M012 / [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md); mock extractor only; migration `b4c5d6e7f8a9`). Real external AI provider **not authorized**. Phase D mapping **not started**. Browser/live UAT **not yet performed**. |
+| AI take-off foundation | **Done (operational for UAT)** (M012 / [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md); mock extractor only; migration `b4c5d6e7f8a9` live). Real external AI provider **not authorized**. Phase D mapping **not started**. |
 | OCR / CAD | **Out of scope of current code.** |
 
 Routes live under `/projects/<id>/plans…`. Estimating, Proposals, OCR, CAD, AI, and supplier features are unchanged.

@@ -2,10 +2,10 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IMPLEMENTED / VERIFIED** — FG-010 foundation in code; Alembic graph head `b4c5d6e7f8a9` **NOT YET LIVE-MIGRATED** |
-| Date | 2026-08-29 |
-| Milestone | **M012** (foundation implemented; Phase D mapping not started) |
-| Feature Gate | [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED** — **NOT YET LIVE-MIGRATED** |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** — FG-010 foundation in code; Alembic current/head `b4c5d6e7f8a9` |
+| Date | 2026-08-30 |
+| Milestone | **M012** (foundation operational for UAT; Phase D mapping not started) |
+| Feature Gate | [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | Module | [Plan Intelligence](../modules/plan-intelligence.md) (take-off is **not** a separate module) |
 | Related ADRs | [ADR-005](../adr/ADR-005-ai-takeoff-traceability.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](../adr/ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-009](../adr/ADR-009-pdf-first-versus-cad-first.md) **Accepted** · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** · [ADR-011](../adr/ADR-011-ai-confidence-threshold-policy.md) **Accepted** · [ADR-012](../adr/ADR-012-plan-document-version-ownership.md) **Proposed** (revision immutability practiced in M007+) · [ADR-026](../adr/ADR-026-scale-ownership-and-calibration-provenance.md) **Accepted** · [ADR-027](../adr/ADR-027-pdf-rendering-and-normalized-coordinate-system.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** · [ADR-031](../adr/ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md) **Accepted** |
 | Prerequisites | M005–M010 Plan Intelligence **implemented**; FG-007/M011 org isolation **implemented**; FG-008 Labour Engine **CLOSED / OPERATIONAL FOR UAT**; FG-009 Pricing Engine **CLOSED / OPERATIONAL FOR UAT** |
@@ -438,11 +438,11 @@ Covered in `tests/test_takeoff.py` and COUNT-without-scale tests in `tests/test_
 | Layer | State |
 |-------|--------|
 | This architecture | **Approved** (2026-08-29) |
-| FG-010 | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **NOT YET LIVE-MIGRATED** |
+| FG-010 | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | ADR-031 / 005 / 006 / 007 / 009 / 011 | **Accepted** |
 | ADR-010 | **Proposed** — PDF.js historical FG-005 fact; remaining buy decisions deferred; **real external AI provider not authorized** |
-| Product code | **Implemented** (mock extractor only; committed/pushed) |
+| Product code | **Implemented** (mock extractor only; live-migrated; UAT-smoke-verified) |
 | Real external AI provider | **NOT AUTHORIZED** |
 | Phase D estimate mapping | **NOT STARTED** |
 
-**Next action:** Separate authorization to apply `b4c5d6e7f8a9` to live development/UAT and perform bounded synthetic browser/UAT smoke. Do not enable a real external AI provider. Do not start Phase D.
+**Next action:** **STOP DEVELOPMENT.** Day-End Reconciliation / Review Turnover audit before any further development. Do not enable a real external AI provider. Do not start Phase D.

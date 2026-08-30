@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-08-29 |
+| Updated | 2026-08-30 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -31,6 +31,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 ---
 
 ## Architecture records (non-milestone)
+
+### M012 / FG-010 — Live migration and synthetic UAT smoke
+
+| Field | Content |
+|-------|---------|
+| ID | M012 / FG-010 |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
+| Date | 2026-08-30 |
+| Objective | Apply additive migration `b4c5d6e7f8a9` to live development/UAT and perform bounded synthetic browser/UAT smoke. |
+| Deliverables | Live Alembic current/head `b4c5d6e7f8a9`; synthetic FG-010 UAT project/docs/runs/package; COUNT-without-scale and dimensional fail-closed; docs reconciliation. |
+| Validation | Dedicated **18 passed**; Plan Intelligence combined **56 passed**; Pricing **33**; Labour **25**; historical **11**; full suite **251**. Estimate/Labour/Pricing deltas **ZERO**. External provider calls **ZERO**. Browser smoke on `/projects/3/plans/takeoff`. |
+| Next | **STOP DEVELOPMENT.** Day-End Reconciliation / Review Turnover audit. Do not enable a real external AI provider. Do not start Phase D. Do not start another milestone. |
 
 ### M012 / FG-010 — Implementation commit and push
 

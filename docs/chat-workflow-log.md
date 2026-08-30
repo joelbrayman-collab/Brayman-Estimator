@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-08-29 |
+| Updated | 2026-08-30 |
 
 ## Purpose
 
@@ -41,6 +41,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-08-30 — FG-010 / M012 live migration and synthetic UAT smoke
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` |
+| Objective | Apply `b4c5d6e7f8a9` to live development/UAT and perform bounded synthetic browser/UAT smoke. No external AI. No Phase D. No new milestone. |
+| Business decision | Live migration authorized. Synthetic UAT only. Leave labeled FG-010 UAT residue. |
+| Architectural decision | COUNT remains dimensionless. Dimensional measurement remains scale-governed. ADR-010 remains Proposed. |
+| Prompt template used | FG-010 LIVE DEVELOPMENT/UAT MIGRATION + SYNTHETIC SMOKE VERIFICATION |
+| Approved Cursor prompt summary | PRE-FLIGHT → TEST GATE → SNAPSHOT → UPGRADE → SCHEMA/INTEGRITY → SYNTHETIC UAT → BROWSER SMOKE → REGRESSION → DOCS RECONCILE → COMMIT/PUSH → STOP. |
+| Files expected to change | Governed docs only after live migrate. |
+| Files prohibited from changing | Product code; committed migration; historical/commercial records; Labour/Pricing logic. |
+| Implementation result | Live current/head `b4c5d6e7f8a9`. Synthetic searchable run produced 4 mock candidates; 3 accepted + 1 duplicate; approved package total 3; immutable; rerun distinct; COUNT without scale succeeded; linear/polyline/area fail-closed; Estimate/Labour/Pricing deltas **ZERO**; external calls **ZERO**. Browser smoke: take-off index, run submit (run 3), candidate review, approved package UI. |
+| Tests | Pre and post: take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**; full **251**. `git diff --check` clean. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None |
+| Unresolved issues | Cancel-run operation missing (accepted). ARCH-only eligibility. Actor-string reviewer identity until auth. Real provider undecided. Phase D mapping future. Synthetic FG-009 and FG-010 residue left labeled. |
+| Next approved step | **STOP DEVELOPMENT.** Day-End Reconciliation / Review Turnover audit. |
+| Next approved prompt | Single clean-turnover prompt for complete end-of-day audit and tomorrow-start package. |
+| Commit hash | (this docs reconciliation commit; implementation `9665295ace673a46a8c645ed0598e5e91d41931c`) |
 
 ### 2026-08-29 — FG-010 / M012 implementation commit and push
 

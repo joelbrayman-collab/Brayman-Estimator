@@ -8,7 +8,7 @@
 | Canonical ADR | [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** |
 | Related | [permit-and-approvals-report.md](permit-and-approvals-report.md) · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) · [modules/projects.md](../modules/projects.md) |
 
-**Current vs future:** Live `Project.address` is free text. `Organization.tax_jurisdiction` is a tax label, not municipal/AHJ identity. Nothing below is implemented. Accepting ADR-037 does **not** authorize schema, a Feature Gate, live geocoding, or incomplete-location enforcement.
+**Current vs future:** Live `Project.address` is free text. `Organization.tax_jurisdiction` is a tax label, not municipal/AHJ identity. Nothing below is implemented. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. Accepting ADR-037 does **not** by itself implement schema. FG-015 does **not** authorize live geocoding or incomplete-location enforcement as a project-create blocker.
 
 ---
 
@@ -79,8 +79,9 @@ Do **not** hard-code Ottawa as the universal architecture. Do **not** attempt a 
 
 ## This architecture does not authorize
 
-- schema or migration
-- Feature Gate
 - live web lookup / geocoding service
-- incomplete-location enforcement
-- Permit Intelligence implementation ([permit-and-approvals-report.md](permit-and-approvals-report.md))
+- incomplete-location as a blocker to creating a Project
+- Permit Rules Library / Pass 2 analysis ([permit-and-approvals-report.md](permit-and-approvals-report.md))
+- national municipality library
+
+V1 implementation shape is governed by [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md): bounded ProjectLocation 1:1 parented to `projects`; preserve `Project.address`; LOCATION COMPLETE vs INCOMPLETE; JURISDICTION RESOLVED only from sufficient governed facts; no universal Ottawa default.

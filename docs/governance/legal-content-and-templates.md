@@ -48,19 +48,18 @@ Warranty language is **governed content**.
 
 ## Not this gate — Permit Intelligence / Permit Rules Library
 
-**Status:** **FUTURE / NOT IMPLEMENTED.** Architecture **Accepted**: [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md). Canonical: [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md).
+**Status:** Permit Rules Library remains **FUTURE / NOT IMPLEMENTED**. Architecture **Accepted**: [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **APPROVED FOR IMPLEMENTATION** / **NOT STARTED** does **not** populate this library.
 
 This Legal Content Gate governs **Ontario construction contract and warranty templates**. It does **not** own municipal/provincial/state zoning, permit, servicing, or AHJ requirement sources. The Permit Rules Library is a **separate** governed source.
 
-Accepting ADR-037/038/039 does **not** authorize:
+FG-015 and ADR-037/038/039 do **not** authorize:
 
-- Permit Intelligence implementation
 - jurisdictional rules-library population
 - live regulatory AI
 - in-product web lookup
 - automatic permit approval conclusions
 - municipal submissions
-- schema, migration, or a Feature Gate
+- contract/warranty template work
 
 Do not treat ChatGPT or other tool research as an authoritative permit determination. Preliminary research on the Mike Pratt Coach House reference case is **not** governed legal content. AI cannot mark regulatory content approved.
 

@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-015 Permit Foundation V1 Feature Gate governance
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `5474c47189f67645cc6a636cdfa054cf3c6660f9` |
+| Objective | Create and approve FG-015 Permit Foundation V1. Docs only. Do not implement. |
+| Business decision | Foundation infrastructure only. CalibAi remains advisory. No zoning conclusions. No PASS. Ontario civic address supported; existing free-text address preserved; no ambiguous backfill. |
+| Architectural decision | [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **APPROVED FOR IMPLEMENTATION** / **NOT STARTED**. Bounded ProjectLocation 1:1 parented to `projects` (ADR-037). Permit context class separate from commercial `PROJECT_TYPES` (no auto-map). Versioned preliminary profile snapshot (ADR-039). No new ADR. No rules library. No live lookup. No Pratt project. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | PERMIT FOUNDATION V1 FEATURE GATE GOVERNANCE. Documentation only. Do not implement. Do not create a migration. Do not modify product code. Do not populate the Permit Rules Library. Do not perform live web lookup. Do not enable external AI. |
+| Files expected to change | FG-015 + indexes + architecture/module/status/handoff/log/milestones/roadmap |
+| Files prohibited from changing | `app/` · `tests/` · `migrations/` · live DB |
+| Implementation result | FG-015 created and approved. No product-code change. |
+| Tests | Not rerun. No product-code change. Preserved full suite **345 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (architecture / Feature Gate record) |
+| Constitutional issue raised | None |
+| Unresolved issues | Ontario / Ottawa + Mike Pratt gate not created. Finding enums deferred to Gate 2. |
+| Next approved step | **FG-015 implementation** under a later Cursor prompt. This pass **STOPS**. |
+| Next approved prompt | FG-015 implementation (not this chat). |
+| Commit hash | (this Feature Gate docs commit) |
+
 ### 2026-08-30 — Permit Intelligence architecture governance / ADR decision pass
 
 | Field | Content |

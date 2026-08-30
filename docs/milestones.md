@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-015 Permit Foundation V1 approved for implementation
+
+| Field | Content |
+|-------|---------|
+| ID | [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) |
+| Status | **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** |
+| Date | 2026-08-30 |
+| Objective | Approve Permit Foundation V1 (structured location, jurisdiction resolver foundation, preliminary Permit Profile). Docs only. |
+| Deliverables | FG-015; indexes; architecture/module/status/handoff/log/roadmap updates. No product code. No migration. |
+| Validation | Docs only. `git diff --check`. No `app/` / `tests/` / `migrations/`. Alembic current=head `d6e7f8a9b0c1`. FG-014 remains **CLOSED / OPERATIONAL FOR UAT**. |
+| Next | **FG-015 implementation** under a later Cursor prompt. Do not populate the Permit Rules Library. |
+
 ### 2026-08-30 — Permit Intelligence architecture governed (ADR-037 / ADR-038 / ADR-039)
 
 | Field | Content |

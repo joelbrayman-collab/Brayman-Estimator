@@ -8,7 +8,7 @@
 | Canonical record | This document |
 | Related | [jurisdiction-resolution.md](jurisdiction-resolution.md) · [project-document-package.md](project-document-package.md) · [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) · [modules/projects.md](../modules/projects.md) · [modules/permit-intelligence.md](../modules/permit-intelligence.md) · [organization-brand-profile.md](organization-brand-profile.md) · [change-order-document-family.md](change-order-document-family.md) |
 
-**Current vs future:** The office app has **no** Permit Intelligence engine, Permit & Approvals Report, Permit Rules Library, live regulatory lookup, or permit-report schema. Nothing below is implemented. [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) remains **CLOSED / OPERATIONAL FOR UAT**. Accepting ADR-037/038/039 does **not** authorize a Feature Gate, schema, live web lookup, or external AI.
+**Current vs future:** The office app has **no** Permit Intelligence engine, Permit & Approvals Report, Permit Rules Library, live regulatory lookup, or permit-report schema. Nothing below is implemented. [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) remains **CLOSED / OPERATIONAL FOR UAT**. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** (foundation only — not Pass 2 analysis).
 
 ---
 
@@ -173,23 +173,21 @@ These are topic headings, not a claim that every topic applies to every project.
 
 ---
 
-## Recommended future Feature Gates (not created)
+## Recommended Feature Gates
 
-**First (not opened):** Permit Foundation V1 — structured Project location; jurisdiction resolver; project-tied preliminary Permit Profile; advisory authority labeling; report/provenance foundation.
+**First:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** — structured Project location; jurisdiction resolver foundation; project-tied preliminary Permit Profile; advisory labeling; snapshot/provenance foundation.
 
-Explicitly **not** in that first gate: national rules library; live web lookup; external AI; automatic zoning conclusions; municipal submissions; comprehensive Building Code engine; Phase D; automatic estimate insertion; contract generation.
+Explicitly **not** in FG-015: national rules library; live web lookup; external AI; automatic zoning conclusions; municipal submissions; comprehensive Building Code engine; Phase D; automatic estimate insertion; contract generation; Permit Rules Library population.
 
 **Second (not opened):** Ontario / Ottawa Permit Rules + Mike Pratt POC — a genuinely useful governed Permit & Approvals Report against a **bounded curated** rule set.
 
-No Feature Gate is created by this document.
-
 ---
 
-## This architecture does not authorize
+## This architecture does not authorize (beyond FG-015)
 
-- Permit Intelligence implementation
-- schema / migration
-- Feature Gate
+[FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) authorizes **foundation only**. This document still does **not** authorize:
+
+- Pass 2 Permit Intelligence analysis / Permit Rules Library population
 - live web lookup / external AI
 - automatic zoning or permit conclusions
 - municipal submissions

@@ -2,10 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Proposed / Intended** — **not implemented**. Architecture **Accepted** ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) |
+| Status | **Proposed / Intended** — **not implemented**. Architecture **Accepted** (ADR-037/038/039). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** (foundation only). |
 | Updated | 2026-08-30 |
 | Code | None |
 | Architecture | [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) |
+| Feature Gate | [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **APPROVED FOR IMPLEMENTATION** / **NOT STARTED** (foundation only; Pass 2 not this gate) |
 
 ## Purpose
 
@@ -44,8 +45,8 @@ Permit Rules Library records are **platform-governed sources**, not organization
 
 ## Dependencies
 
-- Feature Gate + approved Cursor prompt before any code
-- Bounded curated rules before a useful Pass 2 report
+- [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) for location / jurisdiction / preliminary profile (**approved; not started**)
+- Later Feature Gate for bounded curated rules before a useful Pass 2 report
 - Organization Brand Profile only when rendering customer-facing PDFs (not required for analysis)
 
 ## Related

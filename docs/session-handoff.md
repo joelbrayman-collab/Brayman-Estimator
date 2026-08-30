@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-014 CLOSED / OPERATIONAL FOR UAT**. Live current=head `d6e7f8a9b0c1`. Permit Intelligence ADR-037/038/039 **Accepted** / **NOT IMPLEMENTED** (no Feature Gate). FG-013 **CLOSED / OPERATIONAL FOR UAT**. Material Catalogue ADR-034/035/036 **Accepted**. ADR-032 **Accepted**. **ADR-033 Accepted**. **ADR-008 Proposed**. Organization Brand Profile **FUTURE / NOT IMPLEMENTED**. Change Order document family **FUTURE / NOT IMPLEMENTED**. |
+| Status | **FG-015 APPROVED FOR IMPLEMENTATION** / **NOT STARTED**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. Live current=head `d6e7f8a9b0c1`. Permit Intelligence ADR-037/038/039 **Accepted**. FG-013 **CLOSED / OPERATIONAL FOR UAT**. Material Catalogue ADR-034/035/036 **Accepted**. ADR-032 **Accepted**. **ADR-033 Accepted**. **ADR-008 Proposed**. Organization Brand Profile **FUTURE / NOT IMPLEMENTED**. Change Order document family **FUTURE / NOT IMPLEMENTED**. |
 | Updated | 2026-08-30 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -69,7 +69,7 @@ No additional 29 Aug CalibAi commits exist on `main`. FG-010 live-migrate docs a
 
 Read first: `AGENTS.md`; [platform-constitution.md](platform-constitution.md); [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md); [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md); [platform-governance.md](platform-governance.md); this file; [current-state.md](current-state.md); [project-state-report.md](project-state-report.md); [platform-roadmap.md](platform-roadmap.md); [feature-gates/README.md](feature-gates/README.md); [adr/README.md](adr/README.md).
 
-FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** files: **CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** (Permit Intelligence **not implemented**). [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (architecture only). ADR-010 **Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Do not bulk-accept remaining Proposed ADRs. Organization Brand Profile is a **future pin only**. Change Order document family is a **future pin only**.
+FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** files: **CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **APPROVED FOR IMPLEMENTATION** / **NOT STARTED**. [ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (architecture only). ADR-010 **Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Do not bulk-accept remaining Proposed ADRs. Organization Brand Profile is a **future pin only**. Change Order document family is a **future pin only**.
 
 ## 4. APPROVED PRODUCT VISION
 
@@ -92,11 +92,11 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**FG-014 CLOSED / OPERATIONAL FOR UAT.** Live current = head `d6e7f8a9b0c1`. FG-013 remains **CLOSED / OPERATIONAL FOR UAT**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted**. Permit Intelligence **ADR-037 / ADR-038 / ADR-039 Accepted** / **NOT IMPLEMENTED**.
+**FG-015 APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. Live current = head `d6e7f8a9b0c1`. FG-014 remains **CLOSED / OPERATIONAL FOR UAT**. FG-013 remains **CLOSED / OPERATIONAL FOR UAT**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted**. Permit Intelligence **ADR-037 / ADR-038 / ADR-039 Accepted**.
 
 ## 8. LAST AUTHORIZED DELTA
 
-This session: **Permit Intelligence architecture governance**. ADR-037 / ADR-038 / ADR-039 **Accepted**. No Feature Gate. No product code. FG-014 remains **CLOSED / OPERATIONAL FOR UAT**.
+This session: **FG-015 Permit Foundation V1 Feature Gate governance**. Status **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. No product code. No migration. FG-014 remains **CLOSED / OPERATIONAL FOR UAT**.
 
 Prior: FG-014 office re-UAT and closure. Port **5007**. Dedicated tests **35**; full suite **345** (not rerun). ADR-008 remains Proposed.
 
@@ -165,7 +165,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - Labour-snapshot Direct Labour Cost not included in estimate basis by default (ADR-021 records the GM comparability issue; does not correct it)
 - [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **CLOSED / OPERATIONAL FOR UAT**. **LOCKED:** one user action may load many workbooks; no durable `UploadBatch`. Do **not** `flask db upgrade` again.
 - [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (docs only). BMR / Winchester / Darcy are **not exclusive**. Winchester is launch/reference. Contractor procurement (A) ≠ CalibAi channel (B). Darcy commercial terms **unset**. Supplier Feature Gate **not authorized**. Governed **bulk supplier onboarding** is **FUTURE / NOT IMPLEMENTED** (not one-product-at-a-time; does not expand FG-014).
-- **Permit Intelligence** is **FUTURE / NOT IMPLEMENTED**. Architecture **Accepted** ([ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)). Advisory preflight. AHJ remains final. **PASS** means no issue identified against governed checks performed — never AHJ approved. No Feature Gate. No live lookup. Mike Pratt Coach House at 2562 Church Street, North Gower, Ontario is a **future architecture/UAT reference** only.
+- **Permit Intelligence** Pass 2 remains **FUTURE / NOT IMPLEMENTED**. Architecture **Accepted** ([ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)). [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **APPROVED FOR IMPLEMENTATION** / **NOT STARTED** (foundation only). Advisory preflight. AHJ remains final. **PASS** means no issue identified against governed checks performed — never AHJ approved. No live lookup. No rules library in FG-015. Mike Pratt Coach House at 2562 Church Street, North Gower, Ontario is a **future Gate 2 architecture/UAT reference** only.
 - **Organization Brand Profile** is **FUTURE / NOT IMPLEMENTED** ([organization-brand-profile.md](architecture/organization-brand-profile.md)). Not logo storage. Not a Feature Gate. Current `Organization` identity fields and `ProposalTemplate.logo_path` / static Brayman asset are **not** the Brand Profile.
 - **Change Order document family** is **FUTURE / NOT IMPLEMENTED** ([change-order-document-family.md](architecture/change-order-document-family.md)). Existing Change Order record remains authoritative. Do not create a second entity. Not email. Not field UX.
 
@@ -185,15 +185,15 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 18. DEFERRED ITEMS
 
-Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; auth; Permit & Approvals Report; Organization Brand Profile; Change Order document family.
+Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; auth; Permit Rules Library / Pass 2 report; Organization Brand Profile; Change Order document family.
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN **implementation**, QuickBooks, or contract/warranty work. Do **not** run `flask db upgrade` again (live current already `d6e7f8a9b0c1`). Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not implement bulk supplier onboarding. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013 / FG-014. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history. Do not implement supplier pricing. Do not accept ADR-008. Do not treat ADR-037/038/039 acceptance as a Permit Feature Gate or implementation authorization. Do not implement Permit Intelligence, live regulatory AI, in-product web lookup, automatic permit conclusions, or municipal submissions. Do not implement Organization Brand Profile, logo storage, Change Order document-family rewrite, client email, or a second Change Order entity.
+Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN **implementation**, QuickBooks, or contract/warranty work. Do **not** run `flask db upgrade` again (live current already `d6e7f8a9b0c1`) until a live-migrate prompt. Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not implement bulk supplier onboarding. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013 / FG-014. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history. Do not implement supplier pricing. Do not accept ADR-008. Do not populate the Permit Rules Library. Do not implement live regulatory AI, in-product web lookup, automatic permit conclusions, or municipal submissions. Do not implement Organization Brand Profile, logo storage, Change Order document-family rewrite, client email, or a second Change Order entity. Do not implement FG-015 in this governance chat.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP.** Permit Intelligence architecture is **governed** (ADR-037/038/039 **Accepted**) and **not implemented**. Recommended first future Feature Gate **Permit Foundation V1** is **not created**. Do **not** implement Permit Intelligence. Do **not** `flask db upgrade` again. Do not start Phase D. Do not start supplier/Winchester POC. Do not accept ADR-008. Do not implement Organization Brand Profile or the Change Order document family.
+**Next governed action:** **FG-015 implementation** under a later approved Cursor prompt. This governance pass **STOPS**. Do **not** implement FG-015 here. Do **not** populate the Permit Rules Library. Do **not** `flask db upgrade` again until a live-migrate prompt. Do not start Phase D. Do not start supplier/Winchester POC. Do not accept ADR-008. Do not implement Organization Brand Profile or the Change Order document family.
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -231,7 +231,7 @@ Paste into a new ChatGPT or Cursor conversation:
 BRAYMAN — RESUME FROM REVIEW TURNOVER
 CONTINUITY / REPOSITORY-FIRST INITIALIZATION
 
-You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT** and FG-013 **CLOSED / OPERATIONAL FOR UAT**. Permit Intelligence **ADR-037 / ADR-038 / ADR-039 Accepted** and **NOT IMPLEMENTED**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted**. Canonical materials are CalibAi-seeded; CostItem is not identity; living supplier evidence is not the identity row. ADR-008 remains Proposed. Organization Brand Profile is **FUTURE / NOT IMPLEMENTED**. Change Order document family is **FUTURE / NOT IMPLEMENTED**.
+You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **APPROVED FOR IMPLEMENTATION** / **NOT STARTED**, [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**, and FG-013 **CLOSED / OPERATIONAL FOR UAT**. Permit Intelligence **ADR-037 / ADR-038 / ADR-039 Accepted**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted**. Canonical materials are CalibAi-seeded; CostItem is not identity; living supplier evidence is not the identity row. ADR-008 remains Proposed. Organization Brand Profile is **FUTURE / NOT IMPLEMENTED**. Change Order document family is **FUTURE / NOT IMPLEMENTED**.
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 ChatGPT memory is not corporate memory.
@@ -277,8 +277,9 @@ Independently reconstruct:
 - FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT
 - FG-013 CLOSED / OPERATIONAL FOR UAT (revision `c5d6e7f8a9b0` in chain; live current=head is now `d6e7f8a9b0c1`)
 - FG-014 CLOSED / OPERATIONAL FOR UAT (live current=head d6e7f8a9b0c1; catalogue-link flash repaired; office re-UAT PASSED on port 5007)
+- FG-015 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED (Permit Foundation V1; no rules library; no live lookup)
 - Material Catalogue ADR-034 / ADR-035 / ADR-036 **Accepted**
-- Next: **STOP.** Permit Intelligence architecture **Accepted** (ADR-037/038/039) and **not implemented**. Permit Foundation V1 Feature Gate **not created**. Do not flask db upgrade again. Do not accept ADR-008. Do not implement Permit Intelligence, Organization Brand Profile, or the Change Order document family.
+- Next: **FG-015 implementation** under a later Cursor prompt. Do not implement in a docs-only chat. Do not flask db upgrade again until live-migrate. Do not accept ADR-008. Do not populate Permit Rules Library. Do not implement Organization Brand Profile or the Change Order document family.
 - ADR-032 Accepted (app-managed immutable historical workbook custody; legacy Desktop corpus not moved)
 - ADR-021 Accepted (composed frozen MONITOR baseline; Project Gross Margin; MONITOR not implemented; no Feature Gate)
 - FG-012 internal breakdown + named-method Proposal consistency (Estimating owner; existing Proposal is the customer-facing estimate; outputs 1–2 only; SCHEMA NO)
@@ -296,7 +297,7 @@ Do NOT treat ADR-021 as a MONITOR Feature Gate.
 Do NOT flask db upgrade again (FG-014 live current=head d6e7f8a9b0c1).
 Do NOT begin supplier integration, bulk supplier onboarding, or Winchester POC.
 Do NOT accept ADR-008.
-Do NOT implement Permit Intelligence. Do NOT create a Permit Feature Gate. Do NOT implement live regulatory AI or in-product web lookup.
+Do NOT implement FG-015 in a docs-only chat. Do NOT populate the Permit Rules Library. Do NOT implement live regulatory AI or in-product web lookup.
 Do NOT implement Organization Brand Profile, logo storage, Change Order document-family rewrite, client email, or a second Change Order entity.
 
 PRESERVE → SEARCH → VERIFY → EXECUTE.
@@ -407,4 +408,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: FG-014 **CLOSED / OPERATIONAL FOR UAT**; live current=head `d6e7f8a9b0c1`; FG-013 **CLOSED / OPERATIONAL FOR UAT**; Permit Intelligence ADR-037/038/039 **Accepted** / **NOT IMPLEMENTED**; next development boundary is **STOP** (Permit Foundation V1 **not created**). Phase D unauthorized. Organization Brand Profile **FUTURE / NOT IMPLEMENTED**. Change Order document family **FUTURE / NOT IMPLEMENTED**. Do not `flask db upgrade` again.
+A–J: FG-015 **APPROVED FOR IMPLEMENTATION** / **NOT STARTED**; FG-014 **CLOSED / OPERATIONAL FOR UAT**; live current=head `d6e7f8a9b0c1`; FG-013 **CLOSED / OPERATIONAL FOR UAT**; Permit Intelligence ADR-037/038/039 **Accepted**; next development boundary is **FG-015 implementation** (later prompt; not this governance pass). Phase D unauthorized. Organization Brand Profile **FUTURE / NOT IMPLEMENTED**. Change Order document family **FUTURE / NOT IMPLEMENTED**. Do not `flask db upgrade` again until live-migrate.

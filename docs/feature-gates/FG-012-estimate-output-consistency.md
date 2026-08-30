@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-012 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Estimating** (owner), with a bounded **Proposals** dependency because the existing Proposal is the customer-facing estimate |
 | Date | 2026-08-30 |
-| Status | **APPROVED FOR IMPLEMENTATION** · **IMPLEMENTATION NOT STARTED** |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
 | Architecture | Existing `Estimate` / `EstimateVersion` / lines / `EstimatePricingSnapshot` (when present) remain the authoritative commercial source. No new estimate entity. No new document module. |
 | Related ADRs | [ADR-001](../adr/ADR-001-proposal-snapshot-ownership.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** |
 | Prerequisites | FG-008 / FG-009 / FG-010 / FG-011 **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 9 read-only architecture assessment accepted 2026-08-30. |
@@ -20,10 +20,10 @@
 | Layer | State |
 |-------|--------|
 | Architecture (read-only assessment 2026-08-30) | **Accepted by Joel** with the decisions recorded in this gate |
-| Feature Gate (this document) | **APPROVED FOR IMPLEMENTATION** |
-| Implementation | **NOT STARTED** |
-| Schema / Alembic | **NO** change authorized |
-| New ADR | **None** for this bounded scope |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT** |
+| Implementation | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** |
+| Schema / Alembic | **NO** change (unchanged at `b4c5d6e7f8a9`) |
+| New ADR | **None** |
 | New module / customer-estimate entity | **None** |
 
 This gate authorizes **outputs 1 and 2 only** of the future four-output package: an Estimating-owned internal detailed cost breakdown, and commercial consistency of the **existing Proposal** preview/PDF as the customer-facing estimate. It does **not** authorize QuickBooks, Ontario contract/warranty, a four-output renderer, Phase D, external AI, BUILD/MONITOR/LEARN, actual-cost capture, profitability, industry benchmarking, or contractor onboarding.
@@ -312,8 +312,14 @@ If implementation discovers a need for schema, a new owning module, a new custom
 
 ## Closure
 
-This governance pass records Joel-approved scope only.
+Implementation 2026-08-30:
 
-**FG-012 — APPROVED FOR IMPLEMENTATION. IMPLEMENTATION NOT STARTED.**
+- Internal: `GET /estimates/<id>/versions/<version_id>/internal-breakdown` (`app/services/estimate_output.py`, `app/templates/estimates/internal_breakdown.html`)
+- Customer: existing Proposal; named-method totals copy frozen `EstimatePricingSnapshot` (no markup/OH/profit restack); customer PDF Subtotal / Tax / Grand Total only
+- Estimate Totals (version + estimate detail) show named method when a snapshot governs
+- Dedicated tests `tests/test_estimate_output_consistency.py` **19 passed**; full suite **283 passed**
+- Bounded synthetic UAT on labeled FG-009 residue + `PROP-FG012-UAT-GM` (Draft)
 
-**Next governed action:** a separate bounded FG-012 **implementation** Cursor prompt. Do not implement from this document alone. Do not start Phase D, external AI, QuickBooks, or contract/warranty.
+**PASS — FG-012 CLOSED / OPERATIONAL FOR UAT.**
+
+**Next governed action:** **STOP DEVELOPMENT.** Do not begin another Feature Gate. Phase D **NOT STARTED / NOT AUTHORIZED**. External AI **NOT AUTHORIZED**.

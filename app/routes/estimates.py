@@ -37,6 +37,10 @@ from app.services.estimate_builder import (
     update_section,
     update_version_pricing,
 )
+from app.services.estimate_output import (
+    assemble_internal_cost_breakdown,
+    named_method_governs,
+)
 from app.services.organizations import get_current_organization_id
 
 estimates_bp = Blueprint("estimates", __name__, url_prefix="/estimates")
@@ -125,6 +129,7 @@ def _builder_context(estimate, version, **extra):
         "assemblies": _active_assemblies(),
         "editable": not version.is_locked,
         "pricing_snapshot": snapshot,
+        "named_method_governs": named_method_governs(snapshot),
         "approved_pricing_policies": approved_policies,
     }
     context.update(extra)
@@ -278,10 +283,15 @@ def create_estimate_route():
 @estimates_bp.route("/<int:id>")
 def view_estimate(id):
     estimate = _get_scoped_estimate_or_404(id)
+    current = estimate.current_version
+    current_snapshot = current.pricing_snapshot if current is not None else None
     return render_template(
         "estimates/detail.html",
         estimate=estimate,
         clone_form=_version_clone_form_values(),
+        named_method_governs=named_method_governs,
+        current_named_method_governs=named_method_governs(current_snapshot),
+        current_pricing_snapshot=current_snapshot,
     )
 
 
@@ -425,14 +435,26 @@ def create_version(id):
         )
     except EstimateServiceError as exc:
         flash(str(exc), "error")
+        current = estimate.current_version
+        current_snapshot = current.pricing_snapshot if current is not None else None
         return render_template(
             "estimates/detail.html",
             estimate=estimate,
             clone_form=form,
+            named_method_governs=named_method_governs,
+            current_named_method_governs=named_method_governs(current_snapshot),
+            current_pricing_snapshot=current_snapshot,
         )
 
     flash(f"Created {version.display_label} and set it as current.", "success")
     return redirect(url_for("estimates.view_estimate", id=estimate.id))
+
+
+@estimates_bp.route("/<int:id>/versions/<int:version_id>/internal-breakdown")
+def internal_cost_breakdown(id, version_id):
+    estimate, version = _get_estimate_version(id, version_id)
+    view = assemble_internal_cost_breakdown(estimate, version)
+    return render_template("estimates/internal_breakdown.html", **view)
 
 
 @estimates_bp.route("/<int:id>/versions/<int:version_id>")

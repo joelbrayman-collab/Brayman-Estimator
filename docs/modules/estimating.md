@@ -4,8 +4,8 @@
 |-----------|--------|
 | Status | **Current** (core implemented) |
 | Updated | 2026-08-30 |
-| Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`; `app/services/estimates.py`, `estimate_builder.py` |
-| Feature Gate | [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** (internal breakdown + customer consistency) |
+| Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`; `app/services/estimates.py`, `estimate_builder.py`, `estimate_output.py` |
+| Feature Gate | [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (internal breakdown + customer consistency) |
 
 ## Purpose
 
@@ -42,13 +42,14 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - `AUTO_LOCK_VERSION_STATUSES` locks versions when Issued/Accepted/Rejected/Superseded
 - Builder service supports structured line construction
 - UI under Estimating nav section
+- Internal Detailed Cost Breakdown — **implemented / operational for UAT** ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**). Office view at `GET /estimates/<id>/versions/<version_id>/internal-breakdown`. Direct Cost = Σ `extended_cost`. Labour snapshots display-only, labeled not in selling-price basis.
+- Governed pricing policy application — **implemented / operational for UAT** ([pricing-policy.md](../pricing-policy.md); [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted**; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; versions without a snapshot still use markup/overhead/profit stack)
+- Deeper productivity tooling — [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) Labour Engine Phase B **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (operational for UAT); Estimating does not own canonical tasks or production standards
 
 ## Planned capabilities
 
-- Internal Detailed Cost Breakdown output — [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** (Estimating-owned office view/document of one `EstimateVersion`; Direct Cost = Σ `extended_cost`; labour snapshots display-only, not in selling-price basis). QuickBooks and Ontario contract/warranty remain **Future**.
-- Governed pricing policy application — **implemented / operational for UAT** ([pricing-policy.md](../pricing-policy.md); [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted**; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; versions without a snapshot still use markup/overhead/profit stack)
+- QuickBooks and Ontario contract/warranty remain **Future**.
 - Historical estimating intelligence — **Future**
-- Deeper productivity tooling — [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) Labour Engine Phase B **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (operational for UAT); Estimating does not own canonical tasks or production standards
 
 ## Dependencies
 
@@ -72,6 +73,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - `tests/test_estimates.py`
 - `tests/test_estimate_builder.py`
 - `tests/test_assemblies.py`
+- `tests/test_estimate_output_consistency.py` (FG-012)
 
 ## Relevant ADRs
 
@@ -79,4 +81,4 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted**
 - [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Proposed**
 - [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** (LEARN must not mutate cost library / approved estimates)
-- [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** — Estimating owns internal breakdown; Proposal remains the customer-facing estimate
+- [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** — Estimating owns internal breakdown; Proposal remains the customer-facing estimate

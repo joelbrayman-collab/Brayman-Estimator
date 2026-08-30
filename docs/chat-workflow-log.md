@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-012 Estimate-Output Consistency implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `17c2951cf586e15321756349ccd05d9133b719f3` (start) |
+| Objective | Implement approved FG-012 Internal Detailed Cost Breakdown + Customer Estimate Consistency only. |
+| Business decision | Estimating owns the internal breakdown. Existing Proposal remains the customer-facing estimate. Named-method totals copy frozen EstimatePricingSnapshot. Labour snapshots display-only, not in selling-price basis. No TBD/PLACEHOLDER schema. |
+| Architectural decision | No new estimate entity, document module, or ADR. Preserve TRUE_GROSS_MARGIN / COST_PLUS_MARKUP / COST_PLUS_MARKUP_STACK / legacy no-snapshot. SCHEMA NO. MIGRATION NO. |
+| Prompt template used | Bounded FG-012 implementation prompt (Feature Gate implementation) |
+| Approved Cursor prompt summary | IMPLEMENT FG-012 INTERNAL DETAILED COST BREAKDOWN + CUSTOMER ESTIMATE CONSISTENCY. SCHEMA CHANGE NO. MIGRATION NO. No Phase D. No external AI. |
+| Files expected to change | Estimating routes/templates/CSS; `app/services/estimate_output.py`; `app/services/proposals.py`; `app/services/proposal_pdf.py`; dedicated tests; governed docs |
+| Files prohibited from changing | `migrations/**`, models/schemas, Phase D, auth, Dashboard counts |
+| Implementation result | Internal breakdown route; named-method proposal totals; customer PDF OH/Profit leak closed; Estimate Totals method presentation; dedicated 19 tests; full suite 283. |
+| Tests | Dedicated `tests/test_estimate_output_consistency.py` **19 passed**; listed regressions **183 passed**; full suite `./venv/bin/python -m pytest -q` **283 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (architecture record; no new M0xx) |
+| Constitutional issue raised | None |
+| Unresolved issues | Office proposal create/detail still lists Overhead/Profit amounts (zero for named methods). Live UAT estimates have no Allowance/labour snapshot rows (covered by tests). Phase D unauthorized. ADR-010 Proposed. Office auth not implemented. TBD/PLACEHOLDER durable state deferred. |
+| Next approved step | **STOP DEVELOPMENT.** Do not begin another Feature Gate. |
+| Next approved prompt | None. Phase D remains unauthorized. |
+| Commit hash | (this implementation commit) |
+
 ### 2026-08-30 — FG-012 Estimate-Output Consistency governance approval
 
 | Field | Content |

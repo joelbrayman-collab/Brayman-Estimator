@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Internal Detailed Cost Breakdown | {{ estimate.estimate_number }}{% endblock %}
+{% block page_title %}Internal Detailed Cost Breakdown{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Internal only — not customer-facing</p>
+        <h1>Internal Detailed Cost Breakdown</h1>
+    </div>
+    <div class="form-actions">
+        <a class="button-link" href="{{ url_for('estimates.view_version', id=estimate.id, version_id=version.id) }}">Back to version</a>
+        <button type="button" class="button" onclick="window.print()">Print</button>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Source identity</h2>
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Project</p>
+            <p>{{ project.name }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Estimate</p>
+            <p>{{ estimate.estimate_number }} — {{ estimate.title }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">EstimateVersion</p>
+            <p>id {{ version.id }} · {{ version.display_label }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Authoritative pricing method</p>
+            <p><strong>{{ method }}</strong></p>
+        </div>
+        {% if pricing_snapshot %}
+        <div>
+            <p class="eyebrow">EstimatePricingSnapshot</p>
+            <p>id {{ pricing_snapshot.id }}</p>
+        </div>
+        {% else %}
+        <div>
+            <p class="eyebrow">EstimatePricingSnapshot</p>
+            <p>None — legacy COST_PLUS_MARKUP_STACK</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Direct Cost reconciliation</h2>
+    <p>Internal Direct Cost = sum of line <code>extended_cost</code> (waste already included). Labour Engine snapshots are not included.</p>
+    <p><strong>Direct Cost total: ${{ "%.2f"|format(direct_cost) }}</strong></p>
+</section>
+
+{% for section in sections %}
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>{{ section.name }}</h2>
+    {% if section.description %}
+    <p class="muted-copy">{{ section.description }}</p>
+    {% endif %}
+    {% if section.lines %}
+    <div class="table-wrap">
+        <table class="data-table internal-breakdown-table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th class="num">Qty</th>
+                    <th>Unit</th>
+                    <th class="num">Unit cost</th>
+                    <th class="num">Waste %</th>
+                    <th class="num">Extended / Direct cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for line in section.lines %}
+                <tr>
+                    <td>
+                        {{ line.description }}
+                        {% if line.is_allowance %}
+                        <span class="status">Allowance</span>
+                        {% endif %}
+                        {% if line.notes %}
+                        <div class="muted-copy">{{ line.notes }}</div>
+                        {% endif %}
+                    </td>
+                    <td>{{ line.line_type }}</td>
+                    <td>{{ line.category or "—" }}</td>
+                    <td class="num">{{ line.quantity }}</td>
+                    <td>{{ line.unit }}</td>
+                    <td class="num">${{ "%.2f"|format(line.unit_cost) }}</td>
+                    <td class="num">{{ "%.2f"|format(line.waste_percent) }}</td>
+                    <td class="num">${{ "%.2f"|format(line.extended_cost) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p>Section Direct Cost: ${{ "%.2f"|format(section.direct_cost) }}</p>
+    {% else %}
+    <p class="muted-copy">No line items in this section.</p>
+    {% endif %}
+</section>
+{% endfor %}
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Selling-price authority</h2>
+    {% if named_method_governs %}
+    <p>Named method <strong>{{ method }}</strong> on EstimatePricingSnapshot id {{ pricing_snapshot.id }} is authoritative. Legacy Overhead / Profit stack labels do not govern this version.</p>
+    {% if method == "TRUE_GROSS_MARGIN" %}
+    <p>True gross margin (not markup). Target GM fraction: {{ target_gross_margin if target_gross_margin is not none else "—" }}</p>
+    {% elif method == "COST_PLUS_MARKUP" %}
+    <p>Cost-plus markup rate (fraction): {{ markup_rate if markup_rate is not none else "—" }}</p>
+    {% endif %}
+    {% elif pricing_snapshot %}
+    <p>Snapshot method <strong>{{ method }}</strong> (legacy named stack). Version Overhead / Profit / Tax percents apply.</p>
+    {% else %}
+    <p>No pricing snapshot. Live <strong>COST_PLUS_MARKUP_STACK</strong> (legacy) calculation.</p>
+    {% endif %}
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Direct Cost</p>
+            <p><strong>${{ "%.2f"|format(direct_cost) }}</strong></p>
+        </div>
+        <div>
+            <p class="eyebrow">Pre-tax selling price</p>
+            <p><strong>${{ "%.2f"|format(pre_tax_selling_price) }}</strong></p>
+        </div>
+        <div>
+            <p class="eyebrow">Tax</p>
+            <p>${{ "%.2f"|format(tax_amount) }} ({{ "%.2f"|format(tax_percent) }}%)</p>
+        </div>
+        <div>
+            <p class="eyebrow">Customer total</p>
+            <p><strong>${{ "%.2f"|format(customer_total) }}</strong></p>
+        </div>
+    </div>
+</section>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Labour Engine snapshot</h2>
+    <p><strong>LABOUR ENGINE SNAPSHOT — NOT INCLUDED IN SELLING-PRICE BASIS</strong></p>
+    <p>These hours and costs are related evidence only. They do not increase Direct Cost or selling price.</p>
+    {% if labour_snapshots %}
+    <div class="table-wrap">
+        <table class="data-table internal-breakdown-table">
+            <thead>
+                <tr>
+                    <th>Snapshot id</th>
+                    <th class="num">Man-hours</th>
+                    <th class="num">Direct labour cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in labour_snapshots %}
+                <tr>
+                    <td>{{ row.id }}</td>
+                    <td class="num">{{ row.calculated_man_hours }}</td>
+                    <td class="num">${{ "%.2f"|format(row.direct_labour_cost) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p>Labour snapshot hours (not in basis): {{ labour_total_hours }} · Direct labour cost (not in basis): ${{ "%.2f"|format(labour_total_cost) }}</p>
+    {% else %}
+    <p class="muted-copy">No EstimateLabourSnapshot on this version.</p>
+    {% endif %}
+</section>
+{% endblock %}

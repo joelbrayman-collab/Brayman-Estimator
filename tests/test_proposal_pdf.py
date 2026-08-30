@@ -186,8 +186,8 @@ def test_pdf_multi_section_generation(proposal):
     assert "Formwork" in text
     assert "Grand Total" in text
     assert "Subtotal" in text
-    assert "Overhead" in text
-    assert "Profit" in text
+    assert "Overhead" not in text
+    assert "Profit" not in text
 
 
 def test_pdf_detailed_pricing_visible_when_enabled(proposal):

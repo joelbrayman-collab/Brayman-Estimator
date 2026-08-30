@@ -604,14 +604,6 @@ def generate_proposal_pdf(proposal) -> BytesIO:
 
     totals_data = [
         ["Subtotal", _money(proposal.subtotal)],
-        [
-            f"Overhead ({_percent(proposal.overhead_percent)})",
-            _money(proposal.overhead_amount),
-        ],
-        [
-            f"Profit ({_percent(proposal.profit_percent)})",
-            _money(proposal.profit_amount),
-        ],
     ]
     if proposal.show_tax:
         totals_data.append(

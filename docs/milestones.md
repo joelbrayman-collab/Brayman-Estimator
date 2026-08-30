@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-012 Internal Detailed Cost Breakdown + Customer Estimate Consistency
+
+| Field | Content |
+|-------|---------|
+| ID | FG-012 (not a numbered M0xx) |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
+| Date | 2026-08-30 |
+| Objective | Internal Detailed Cost Breakdown + customer Proposal consistency from the same EstimateVersion / pricing snapshot. |
+| Deliverables | Estimating-owned internal breakdown; named-method Proposal totals from frozen snapshot; customer PDF without Overhead/Profit rows; Estimate Totals method presentation; dedicated tests; docs. No schema/migration/ADR. |
+| Validation | Dedicated FG-012 **19 passed**; full suite **283 passed**. Browser UAT on labeled FG-009 residue + `PROP-FG012-UAT-GM`. Alembic current/head `b4c5d6e7f8a9`. |
+| Next | **STOP DEVELOPMENT.** Phase D **NOT STARTED / NOT AUTHORIZED**. Do not begin another Feature Gate. |
+
 ### 2026-08-30 — FG-011 Project Hub UX
 
 | Field | Content |

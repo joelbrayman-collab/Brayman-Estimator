@@ -66,6 +66,7 @@
             <button type="submit">Lock</button>
         </form>
         {% endif %}
+        <a class="button" href="{{ url_for('estimates.internal_cost_breakdown', id=estimate.id, version_id=version.id) }}">Internal Detailed Cost Breakdown</a>
         <a class="button" href="{{ url_for('proposals.create_proposal_route', estimate_id=estimate.id, version_id=version.id) }}">Create Proposal</a>
         <a class="button" href="{{ url_for('project_controls.create_from_estimate_version', estimate_id=estimate.id, version_id=version.id) }}">Create Change Order</a>
         <a class="button" href="{{ url_for('estimates.edit_estimate', id=estimate.id) }}">Edit Estimate</a>
@@ -74,6 +75,32 @@
 
 <section class="form-panel pricing-summary" style="margin-bottom: 24px;">
     <h2>Estimate Totals</h2>
+    {% if named_method_governs %}
+    <p>Authoritative method: <strong>{{ pricing_snapshot.method }}</strong> (EstimatePricingSnapshot id {{ pricing_snapshot.id }}). Legacy Overhead / Profit percentage labels do not govern this calculation.</p>
+    {% if pricing_snapshot.method == "TRUE_GROSS_MARGIN" %}
+    <p>True gross margin — not markup. Target GM fraction: {{ pricing_snapshot.target_gross_margin if pricing_snapshot.target_gross_margin is not none else "—" }}</p>
+    {% elif pricing_snapshot.method == "COST_PLUS_MARKUP" %}
+    <p>Cost-plus markup rate (fraction): {{ pricing_snapshot.markup_rate if pricing_snapshot.markup_rate is not none else "—" }}</p>
+    {% endif %}
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Direct cost basis</p>
+            <p><strong>${{ "%.2f"|format(pricing_snapshot.direct_cost_basis) }}</strong></p>
+        </div>
+        <div>
+            <p class="eyebrow">Pre-tax selling price</p>
+            <p><strong>${{ "%.2f"|format(pricing_snapshot.pre_tax_selling_price) }}</strong></p>
+        </div>
+        <div>
+            <p class="eyebrow">Tax ({{ "%.2f"|format(pricing_snapshot.tax_percent) }}%)</p>
+            <p>${{ "%.2f"|format(pricing_snapshot.tax_amount) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Customer total</p>
+            <p><strong>${{ "%.2f"|format(pricing_snapshot.customer_total) }}</strong></p>
+        </div>
+    </div>
+    {% else %}
     <div class="form-grid">
         <div>
             <p class="eyebrow">Subtotal</p>
@@ -96,6 +123,7 @@
             <p><strong>${{ "%.2f"|format(version.total) }}</strong></p>
         </div>
     </div>
+    {% endif %}
 
     {% if editable and (not pricing_snapshot or pricing_snapshot.method == "COST_PLUS_MARKUP_STACK") %}
     <form method="post" action="{{ url_for('estimates.update_pricing', id=estimate.id, version_id=version.id) }}" class="pricing-form">

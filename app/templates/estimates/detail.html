@@ -68,6 +68,24 @@
             <p class="eyebrow">Status</p>
             <p>{{ estimate.current_version.status }}</p>
         </div>
+        {% if current_named_method_governs %}
+        <div>
+            <p class="eyebrow">Authoritative method</p>
+            <p><strong>{{ current_pricing_snapshot.method }}</strong></p>
+        </div>
+        <div>
+            <p class="eyebrow">Pre-tax selling price</p>
+            <p>${{ "%.2f"|format(current_pricing_snapshot.pre_tax_selling_price) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Tax</p>
+            <p>{{ "%.2f"|format(current_pricing_snapshot.tax_percent) }}%</p>
+        </div>
+        <div>
+            <p class="eyebrow">Customer total</p>
+            <p><strong>${{ "%.2f"|format(current_pricing_snapshot.customer_total) }}</strong></p>
+        </div>
+        {% else %}
         <div>
             <p class="eyebrow">Subtotal</p>
             <p>${{ "%.2f"|format(estimate.current_version.subtotal) }}</p>
@@ -88,6 +106,7 @@
             <p class="eyebrow">Total</p>
             <p><strong>${{ "%.2f"|format(estimate.current_version.total) }}</strong></p>
         </div>
+        {% endif %}
         <div>
             <p class="eyebrow">Created</p>
             <p>{{ estimate.current_version.created_at.strftime("%Y-%m-%d") }}</p>
@@ -127,7 +146,8 @@
             <th>Version</th>
             <th>Status</th>
             <th>Lock</th>
-            <th>Subtotal</th>
+            <th>Method</th>
+            <th>Subtotal / Pre-tax</th>
             <th>Overhead</th>
             <th>Profit</th>
             <th>Tax</th>
@@ -154,11 +174,21 @@
                 <span class="status">Unlocked</span>
                 {% endif %}
             </td>
+            {% if named_method_governs(version.pricing_snapshot) %}
+            <td>{{ version.pricing_snapshot.method }}</td>
+            <td>${{ "%.2f"|format(version.pricing_snapshot.pre_tax_selling_price) }}</td>
+            <td>—</td>
+            <td>—</td>
+            <td>{{ "%.2f"|format(version.pricing_snapshot.tax_percent) }}%</td>
+            <td>${{ "%.2f"|format(version.pricing_snapshot.customer_total) }}</td>
+            {% else %}
+            <td>{{ version.pricing_snapshot.method if version.pricing_snapshot else "COST_PLUS_MARKUP_STACK" }}</td>
             <td>${{ "%.2f"|format(version.subtotal) }}</td>
             <td>{{ "%.2f"|format(version.overhead_percent) }}%</td>
             <td>{{ "%.2f"|format(version.profit_percent) }}%</td>
             <td>{{ "%.2f"|format(version.tax_percent) }}%</td>
             <td>${{ "%.2f"|format(version.total) }}</td>
+            {% endif %}
             <td>{{ version.revision_reason or "—" }}</td>
             <td>{{ version.created_at.strftime("%Y-%m-%d") }}</td>
             <td>

@@ -11,11 +11,11 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | Last product commit FG-011 `2733e2f3b68b7320f08f093875e272532cd78885`. FG-012 is **docs-only governance** until implementation. Implementation pins: FG-008 `0569f25e7ff496ab637d52437d48cf815522afa1`; FG-009 `8e11179fb5abb42a68805fe011e84c15e866ea04`; FG-010 `9665295ace673a46a8c645ed0598e5e91d41931c`. Live DB current/head `b4c5d6e7f8a9`. |
+| HEAD / `origin/main` | Last product commit is this FG-012 implementation (verify `git log -1` after push). Prior: FG-011 `2733e2f3b68b7320f08f093875e272532cd78885`. Implementation pins: FG-008 `0569f25e7ff496ab637d52437d48cf815522afa1`; FG-009 `8e11179fb5abb42a68805fe011e84c15e866ea04`; FG-010 `9665295ace673a46a8c645ed0598e5e91d41931c`. Live DB current/head `b4c5d6e7f8a9`. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
-| Working tree at last verified inspect | **FG-012 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED.** FG-011 **CLOSED / OPERATIONAL FOR UAT.** FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. M012 **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT**. |
-| Governance | FG-004–FG-011 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 CLOSED / OPERATIONAL FOR UAT**. **FG-012 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. ADR-019 **Accepted**. Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
+| Working tree at last verified inspect | **FG-012 CLOSED / OPERATIONAL FOR UAT.** FG-011 / FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. M012 **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT**. |
+| Governance | FG-004–FG-012 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. ADR-019 **Accepted**. Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
 
 ## Implemented (evidenced in code)
 
@@ -29,13 +29,13 @@
 - **Labour Engine Phase B (FG-008)** — org-owned `LabourTask`, human-reviewed mappings (including **REVOKED**), versioned `ProductionRateStandard` and `DirectLabourCostRateStandard`, `LabourCalibrationCandidate` lifecycle, explainable resolution, immutable `EstimateLabourSnapshot`, office UI `/labour-engine/`; additive migration `f2c3d4e5f6a7`. **Implemented, verified, committed, pushed, live-migrated, UAT-smoke-verified.** Foundation **operational for UAT**.
 - **Organization-Calibrated Pricing Engine (FG-009)** — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. **FG-009 FOUNDATION OPERATIONAL FOR UAT.** Versioned `OrganizationPricingPolicy`, immutable `EstimatePricingSnapshot` (locked versions), named methods `TRUE_GROSS_MARGIN` / `COST_PLUS_MARKUP` / `COST_PLUS_MARKUP_STACK`, policy resolution, pricing audit, ORG-001 seed (org-scoped 15% TRUE_GM, CA-ON 13% HST; not CalibAi defaults; optional overhead/profit/contingency layers `UNSPECIFIED`, distinct from org-approved `NOT_APPLIED`), office UI `/pricing-engine/`, Change Order snapshot inheritance **and method application**. Additive migration `a3b4c5d6e7f8` applied live (`f2c3d4e5f6a7` → `a3b4c5d6e7f8`). Versions without a snapshot still use the legacy stack. New estimates are not auto-converted to true GM. Labour-snapshot Direct Labour Cost is **not** included in the estimate basis by default.
 - **AI Take-off / Quantity Extraction Foundation (M012 / FG-010)** — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT.** `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem`; provider-neutral mock extractor only; COUNT without scale; PlanAuditEvent extensions; office UI `/projects/<id>/plans/takeoff`. Additive migration `b4c5d6e7f8a9` applied live (`a3b4c5d6e7f8` → `b4c5d6e7f8a9`). Real external AI provider **not authorized**. Phase D estimate mapping **not started**.
-- **Project Hub UX (FG-011)** — **IMPLEMENTED / VERIFIED**. `/projects/<id>` is the office-estimator Project Hub: PLAN / PRICE / CONTRACT stored facts and links; BUILD = existing Change Orders; field BUILD / MONITOR / LEARN labeled Future. Read-only `app/services/project_hub.py`. No schema, migration, new module, or ADR. Dedicated tests **13 passed**. Full suite **264 passed**. Bounded browser smoke on labeled FG-009 / FG-010 UAT projects (`/projects/2`, `/projects/3`).
+- **Project Hub UX (FG-011)** — **IMPLEMENTED / VERIFIED**. `/projects/<id>` is the office-estimator Project Hub: PLAN / PRICE / CONTRACT stored facts and links; BUILD = existing Change Orders; field BUILD / MONITOR / LEARN labeled Future. Read-only `app/services/project_hub.py`. No schema, migration, new module, or ADR. Dedicated tests **13 passed**.
+- **Estimate-output consistency (FG-012)** — **IMPLEMENTED / VERIFIED**. Internal Detailed Cost Breakdown at `/estimates/<id>/versions/<version_id>/internal-breakdown`. Named-method Proposal totals copy frozen `EstimatePricingSnapshot` (`TRUE_GROSS_MARGIN` / `COST_PLUS_MARKUP`); no-snapshot versions retain `COST_PLUS_MARKUP_STACK`. Customer PDF omits Overhead/Profit rows. Estimate Totals show the governing method when a snapshot is authoritative. No schema, migration, new module, or ADR. Dedicated tests **19 passed**. Full suite **283 passed**. Bounded browser UAT on labeled FG-009 residue + `PROP-FG012-UAT-GM`.
 
 ## Architecture / readiness only (not implemented)
 
 - Real external AI provider / OCR / CAD / multi-trade extraction / estimate mapping (Phase D later)
 - CalibAi V1 / BUILD / field / four-output **outputs 3–4** / QuickBooks API / Ontario contract
-- FG-012 product implementation (internal breakdown + Proposal consistency) — **authorized, not started**
 - Crew Template catalog, payroll burden, `LabourActualObservation` persistence
 
 ## Migrations
@@ -47,8 +47,7 @@
 
 M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **implemented, verified, committed, and pushed** on `main`.
 
-- **Current coded work:** FG-011 Project Hub UX — **CLOSED / OPERATIONAL FOR UAT.**
-- **Approved, not started:** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) Estimate-output consistency (roadmap item 9) — **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. No schema. No new entity. Existing Proposal is the customer-facing estimate.
+- **Current coded work:** FG-012 estimate-output consistency — **CLOSED / OPERATIONAL FOR UAT.** FG-011 Project Hub UX remains **CLOSED / OPERATIONAL FOR UAT.**
 - **Blocked / Not Started (product):** Phase D estimate mapping; four-output package outputs 3–4; QuickBooks; contracts; BUILD field capture; MONITOR; LEARN; historical evidence repair; real external AI provider; office authentication.
 
 ## August 25, 2026 governance (recorded — not implemented)
@@ -63,12 +62,12 @@ M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **
 
 ## Recommended next steps
 
-1. **FG-012** is **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. Next product work is a separate bounded FG-012 **implementation** Cursor prompt. Do not implement from this snapshot. Do not start Phase D.
+1. **STOP DEVELOPMENT.** FG-012 is **CLOSED / OPERATIONAL FOR UAT**. Do not begin another Feature Gate. Do not start Phase D.
 2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% ORG-001 policy text; optional layers remain `UNSPECIFIED`).
 3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under Estimate-output consistency, Project Hub, AI take-off, or Pricing Engine.
 4. Do not enable a real external AI provider. Do not start Phase D estimate mapping. Do not start auth, BUILD/MONITOR/LEARN, QuickBooks, or contract/warranty work.
 5. Dashboard org-unscoped counts remain **out of scope**.
-6. Synthetic residue remains in the live development/UAT DB (FG-008 labour UAT artifacts; FG-009 `FG-009 UAT *`; FG-010 client/project/docs/runs/package). Leave labeled; do not invent cleanup. Estimate Totals header percents and customer-PDF Overhead/Profit leak are **in scope for FG-012 implementation** (not this docs pass).
+6. Synthetic residue remains in the live development/UAT DB (FG-008 labour UAT artifacts; FG-009 `FG-009 UAT *`; FG-010 client/project/docs/runs/package; FG-012 labeled template `FG-012 UAT Template` and Draft proposal `PROP-FG012-UAT-GM`). Leave labeled; do not invent cleanup. Office proposal create/detail still lists Overhead/Profit amounts (zero when named method governs); customer preview/PDF do not.
 
 ## Related
 

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-012 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. FG-011 / FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. M012 operational for UAT. |
+| Status | **FG-012 CLOSED / OPERATIONAL FOR UAT**. FG-011 / FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. M012 operational for UAT. |
 | Updated | 2026-08-30 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -23,12 +23,12 @@ Authority order for the next session: repository governance → current-state re
 ## 2. VERIFIED BASELINE
 
 - Branch: `main`
-- Starting HEAD / `origin/main` for this governance pass: `2733e2f3b68b7320f08f093875e272532cd78885` (`feat: implement FG-011 Project Hub UX`)
-- This FG-012 docs commit is current after push — verify with `git log -1`
+- Starting HEAD / `origin/main` for this implementation pass: `17c2951cf586e15321756349ccd05d9133b719f3` (`docs: approve FG-012 estimate-output consistency`)
+- This FG-012 implementation commit is current after push — verify with `git log -1`
 - Alembic graph head and live `flask db current`: **`b4c5d6e7f8a9`** (one head)
 - Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010)
-- Tests (2026-08-30 FG-011, last recorded): dedicated Project Hub **13**; take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**; full suite **264 passed**. Product tests **not re-run** for this docs-only FG-012 governance pass.
-- Working tree: clean after this docs commit/push
+- Tests (2026-08-30 FG-012): dedicated estimate-output consistency **19**; Project Hub **13**; take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**; full suite **283 passed**.
+- Working tree: clean after this implementation commit/push
 - Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**.
 
 ### 29 Aug commit chain (all ancestors of `main`)
@@ -66,7 +66,7 @@ No additional 29 Aug CalibAi commits exist on `main`. FG-010 live-migrate docs a
 
 Read first: `AGENTS.md`; [platform-constitution.md](platform-constitution.md); [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md); [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md); [platform-governance.md](platform-governance.md); this file; [current-state.md](current-state.md); [project-state-report.md](project-state-report.md); [platform-roadmap.md](platform-roadmap.md); [feature-gates/README.md](feature-gates/README.md); [adr/README.md](adr/README.md).
 
-FG-008 / FG-009 / FG-010 / FG-011 files: **CLOSED / OPERATIONAL FOR UAT**. FG-012: **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. ADR-010 **Proposed**. Do not bulk-accept Proposed ADRs.
+FG-008 / FG-009 / FG-010 / FG-011 / FG-012 files: **CLOSED / OPERATIONAL FOR UAT**. ADR-010 **Proposed**. Do not bulk-accept Proposed ADRs.
 
 ## 4. APPROVED PRODUCT VISION
 
@@ -77,8 +77,8 @@ PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project`. No
 - **ORGANIZATION:** implemented (M011)
 - **HISTORICAL EVIDENCE:** Phase B implemented (FG-006)
 - **PLAN:** partial — M005–M010 implemented; **M012 / FG-010 foundation CLOSED / OPERATIONAL FOR UAT**; Phase D mapping **NOT STARTED**
-- **PRICE:** partial — builder + commercial gate; Labour Engine Phase B **CLOSED / OPERATIONAL FOR UAT**; Pricing Engine **CLOSED / OPERATIONAL FOR UAT**; FG-012 internal breakdown + Proposal consistency **approved, not started**
-- **CONTRACT:** partial (proposals are the customer-facing estimate; FG-012 will reconcile snapshot totals; Ontario templates future)
+- **PRICE:** partial — builder + commercial gate; Labour Engine Phase B **CLOSED / OPERATIONAL FOR UAT**; Pricing Engine **CLOSED / OPERATIONAL FOR UAT**; FG-012 internal breakdown + Proposal consistency **CLOSED / OPERATIONAL FOR UAT**
+- **CONTRACT:** partial (proposals are the customer-facing estimate; FG-012 reconciles snapshot totals; Ontario templates future)
 - **BUILD:** partial (change orders; field capture future)
 - **MONITOR:** future (ADR-021 Proposed)
 - **LEARN:** future (ADR-024 boundary accepted; no ML)
@@ -89,11 +89,11 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**No coded milestone in progress.** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. [FG-011](feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**. M012 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**.
+**No coded milestone in progress.** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-011](feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**. M012 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**.
 
 ## 8. LAST AUTHORIZED DELTA
 
-FG-012 Estimate-Output Consistency **governance approved**. Docs only. No product code. No schema. No migration. No ADR. No implementation.
+FG-012 Estimate-Output Consistency **implemented**. Internal breakdown; named-method Proposal totals; customer PDF without Overhead/Profit rows; Estimate Totals method presentation. No schema. No migration. No ADR.
 
 ## 9. IMPLEMENTATION STATUS
 
@@ -101,19 +101,20 @@ FG-012 Estimate-Output Consistency **governance approved**. Docs only. No produc
 - Pricing Engine: `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent`. Methods `TRUE_GROSS_MARGIN` / `COST_PLUS_MARKUP` / `COST_PLUS_MARKUP_STACK`. Office `/pricing-engine/`.
 - Take-off: `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem`. Provider-neutral architecture; **`calibai-mock` only**. Office `/projects/<id>/plans/takeoff`. Initial element `INTERIOR_DOOR_OPENING`. COUNT dimensionless (no scale). Linear / polyline / area / perimeter remain scale-governed. Approved package immutable. No automatic estimate insertion.
 - Project Hub: `/projects/<id>` (`app/services/project_hub.py`) reads stored facts and links. PLAN / PRICE / CONTRACT operational from stored records; BUILD = existing Change Orders; field BUILD / MONITOR / LEARN Future labels only.
+- FG-012: `app/services/estimate_output.py`; `GET /estimates/<id>/versions/<version_id>/internal-breakdown`; named-method proposal snapshot totals from frozen `EstimatePricingSnapshot`; customer PDF Subtotal / Tax / Grand Total.
 
 ## 10. TEST / UAT / MIGRATION STATUS
 
 - Live current = head = `b4c5d6e7f8a9`. No pending committed migration. No second Alembic head.
-- Dedicated: Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
-- Full suite: **264 passed**.
-- Bounded browser smoke: labeled FG-009 UAT `/projects/2` and FG-010 UAT `/projects/3` on local Flask port 5002. No customer operating data created.
-- Synthetic UAT for FG-008 / FG-009 / FG-010 is in the live development/UAT DB (labeled; not deleted).
+- Dedicated: FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
+- Full suite: **283 passed**.
+- Bounded browser UAT: labeled FG-009 UAT estimates on local Flask port 5003; Draft `PROP-FG012-UAT-GM`. No customer operating data created.
+- Synthetic UAT for FG-008 / FG-009 / FG-010 / FG-012 is in the live development/UAT DB (labeled; not deleted).
 
 ## 11. PROTECTED STATE
 
 - Constitution Articles 1–12
-- Accepted proposal immutability; zero Accepted proposals in live DB (`proposals` count **0**)
+- Accepted proposal immutability; live DB has labeled Draft `PROP-FG012-UAT-GM` (not Accepted)
 - PlanDocument bytes / SHA-256 immutability; historical workbook content and hashes outside Git (`~/Desktop/CalibAi Historical Estimates`) — **not modified** this cycle
 - `HistoricalLabourItem` source facts **not rewritten** (120 rows; 43 with stored `hourly_rate = 0.13` remain evidence defects)
 - Human review is authoritative; AI confidence advisory only
@@ -135,8 +136,7 @@ FG-012 Estimate-Output Consistency **governance approved**. Docs only. No produc
 - **FG-002:** Approved for Phase A (M005 implemented)
 - **FG-003:** CONDITIONAL PASS — architecture only
 - **FG-004 / FG-005 / FG-006 / FG-007:** APPROVED, IMPLEMENTED & VERIFIED
-- **FG-008 / FG-009 / FG-010 / FG-011:** **CLOSED / OPERATIONAL FOR UAT**
-- **FG-012:** **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**
+- **FG-008 / FG-009 / FG-010 / FG-011 / FG-012:** **CLOSED / OPERATIONAL FOR UAT**
 - No later gate approved or started.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
@@ -150,7 +150,7 @@ FG-012 Estimate-Output Consistency **governance approved**. Docs only. No produc
 - Real external AI provider / ADR-010 (not authorized)
 - Phase D reviewed quantity → estimate mapping (not started; requires its own gate)
 - Project Hub UX (roadmap item 8; **CLOSED / OPERATIONAL FOR UAT**)
-- Estimate-output consistency (roadmap item 9 / FG-012; **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**)
+- Estimate-output consistency (roadmap item 9 / FG-012; **CLOSED / OPERATIONAL FOR UAT**)
 - Actor-string reviewer identity until authentication
 - ARCH-only take-off eligibility
 - Cancelled extraction-run status modeled; no cancel operation
@@ -162,7 +162,9 @@ FG-012 Estimate-Output Consistency **governance approved**. Docs only. No produc
 
 **FG-008 (evidence defects — do not repair as product bugs):** 0.13 hourly-rate cluster (43/120); material SKUs classified as labour; historical crew/duration inconsistencies.
 
-**FG-009:** Estimate Totals header in `app/templates/estimates/version_detail.html` still renders `version.overhead_percent` / `profit_percent` / `tax_percent` even when a pricing snapshot is authoritative. Customer PDF can print Overhead/Profit rows. **In scope for FG-012 implementation** (not this docs pass). Synthetic UAT residue. Optional layers unspecified as above.
+**FG-009 carry-forward:** Optional layers unspecified as above. Labour-snapshot Direct Labour Cost not in estimate basis by default.
+
+**FG-012 residual:** Office proposal create/detail still lists Overhead/Profit amounts (zero when named method governs). Customer preview/PDF do not. Live FG-009 UAT estimates have no Allowance lines and no labour snapshots; dedicated tests cover those cases. Synthetic UAT residue including `PROP-FG012-UAT-GM`.
 
 **FG-010:** 6 `takeoff.candidate.accept` PlanAuditEvent rows vs 4 accepted candidate rows (duplicate submit residue; do not invent a cleanup). Leftover suggested candidates on runs 2–3.
 
@@ -176,13 +178,11 @@ Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualOb
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not implement FG-012 from this handoff without a separate approved implementation prompt. Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN, QuickBooks, or contract/warranty work. Do not reopen FG-008 / FG-009 / FG-010 / FG-011. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, schema, or Alembic revision. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not delete synthetic UAT or append-only audit history.
+Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN, QuickBooks, or contract/warranty work. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, schema, or Alembic revision. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not delete synthetic UAT or append-only audit history.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**FG-012** is **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. Next product work is a **separate bounded FG-012 implementation Cursor prompt**. Do not implement in this governance pass. Do not start Phase D.
-
-[FG-012](feature-gates/FG-012-estimate-output-consistency.md): Estimating owns the internal breakdown. Existing Proposal is the customer-facing estimate. Outputs 1–2 only. No schema. No new ADR.
+**STOP DEVELOPMENT.** FG-012 is **CLOSED / OPERATIONAL FOR UAT**. Do not begin another Feature Gate. Do not start Phase D.
 
 **Separate candidate (not this gate):** FG-010 Phase D reviewed quantity → estimate mapping. Status: **NOT STARTED / NOT AUTHORIZED**.
 
@@ -201,6 +201,7 @@ git rev-parse origin/main
 git diff --check
 ./venv/bin/flask db current
 ./venv/bin/flask db heads
+./venv/bin/python -m pytest -q tests/test_estimate_output_consistency.py
 ./venv/bin/python -m pytest -q tests/test_project_hub.py
 ./venv/bin/python -m pytest -q tests/test_takeoff.py
 ./venv/bin/python -m pytest -q tests/test_plan_upload.py tests/test_plan_indexing.py tests/test_sheet_intelligence.py tests/test_scale_measurement.py
@@ -210,7 +211,7 @@ git diff --check
 ./venv/bin/python -m pytest -q
 ```
 
-Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic current/head `b4c5d6e7f8a9`; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **264 passed**.
+Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic current/head `b4c5d6e7f8a9`; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **283 passed**.
 
 ## 22. FRESH CHAT STARTUP PROMPT
 
@@ -220,7 +221,7 @@ Paste into a new ChatGPT or Cursor conversation:
 BRAYMAN — RESUME FROM REVIEW TURNOVER
 CONTINUITY / REPOSITORY-FIRST INITIALIZATION
 
-You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following FG-012 Estimate-Output Consistency **governance approval**.
+You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following FG-012 Estimate-Output Consistency **implementation**.
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 ChatGPT memory is not corporate memory.
@@ -258,12 +259,12 @@ Confirm:
 
 3. CONFIRM TEST BASELINE (if you will change product code later)
 ./venv/bin/python -m pytest -q
-Expected: 264 passed
+Expected: 283 passed
 
 4. RECONSTRUCT AUTHORITATIVE STATE FROM THE REPO
 Independently reconstruct:
-- FG-008 / FG-009 / FG-010 / FG-011 CLOSED / OPERATIONAL FOR UAT
-- FG-012 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED (Estimating owner; existing Proposal is the customer-facing estimate; outputs 1–2 only; SCHEMA NO; no new ADR)
+- FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT
+- FG-012 internal breakdown + named-method Proposal consistency (Estimating owner; existing Proposal is the customer-facing estimate; outputs 1–2 only; SCHEMA NO; no new ADR)
 - M012 AI take-off foundation OPERATIONAL FOR UAT
 - FG-011 Project Hub UX CLOSED / OPERATIONAL FOR UAT (evolve /projects/<id> only; no schema)
 - Protected ORG-001 labour $65 CAD/man-hour; pricing TRUE_GROSS_MARGIN 15% (Direct Cost / 0.85); Ontario HST 13%; optional OH/profit UNSPECIFIED
@@ -272,9 +273,9 @@ Independently reconstruct:
 - Synthetic FG-008 / FG-009 / FG-010 UAT residue is labeled and must not be treated as customer operating data
 
 Do NOT rely on AI memory. Do NOT guess missing product rules.
-Do NOT implement FG-012 without a separate approved implementation prompt.
 Do NOT start Phase D. Do NOT enable external AI.
 Do NOT start auth, BUILD / MONITOR / LEARN, QuickBooks, or contract/warranty work.
+Do NOT begin another Feature Gate.
 
 PRESERVE → SEARCH → VERIFY → EXECUTE.
 Existing before new. No unauthorized redesign. No arbitrary policy invention.
@@ -292,7 +293,8 @@ Existing before new. No unauthorized redesign. No arbitrary policy invention.
 | estimates | 5 |
 | estimate_versions | 5 |
 | estimate_line_items | 4 |
-| proposals | 0 |
+| proposal_templates | 1 |
+| proposals | 1 |
 | change_orders | 3 |
 | historical_source_workbooks | 20 |
 | historical_estimates | 20 |
@@ -358,6 +360,11 @@ Customer project `Estimator Project` (client Michelle Steele) was not used as FG
 - COUNT measurement 1, no scale calibration
 - PlanAuditEvent take-off history retained (`takeoff.candidate.accept` count **6** vs **4** accepted candidate rows)
 
+**FG-012 — LABELED / NON-OPERATING**
+
+- Proposal template `FG-012 UAT Template` (id 1, default)
+- Draft proposal `PROP-FG012-UAT-GM` (id 1) from `EST-FG009-UAT-GM` — **not Accepted**
+
 No UAT residue is real customer operating data. No archive/delete lifecycle exists yet (**NEEDS FUTURE LIFECYCLE SUPPORT**). Default ORG-001 $65 / 15% GM policies are **OPERATING POLICY**.
 
 ### Stranded artifacts
@@ -366,4 +373,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: product-code changes from the 29 Aug cycle are committed and pushed; migrations committed and applied to development/UAT; governance/ADR/Feature Gate statuses are in the repo; unresolved items and UAT results are recorded; next development boundary is **STOP** / next candidate unauthorized.
+A–J: FG-012 product-code and docs are in this commit; Alembic unchanged at `b4c5d6e7f8a9`; next development boundary is **STOP**. Phase D unauthorized.

@@ -169,4 +169,4 @@ Answer all of the following in the Cursor prompt or an attached Feature Gate doc
 11. Does it require an ADR?
 12. Does it require a database migration?
 
-Current Feature Gates: [feature-gates/README.md](feature-gates/README.md) (FG-004 through FG-012 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT**; [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **IMPLEMENTED / VERIFIED · LIVE MIGRATION PENDING**; real external AI provider **not authorized**; Phase D **not started**).
+Current Feature Gates: [feature-gates/README.md](feature-gates/README.md) (FG-004 through FG-012 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT**; [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **IMPLEMENTED / VERIFIED · LIVE MIGRATION PENDING**; [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (supplier channel; **not** a Feature Gate; supplier integration **not started**); real external AI provider **not authorized**; Phase D **not started**).

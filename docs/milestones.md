@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — ADR-033 supplier neutrality / Winchester launch-partner channel
+
+| Field | Content |
+|-------|---------|
+| ID | ADR-033 (not a numbered M0xx; not a Feature Gate) |
+| Status | **Accepted** (governance / architecture only) |
+| Date | 2026-08-30 |
+| Objective | Lock supplier-channel rules before any Winchester / supplier-integration POC: neutrality, no exclusivity, dual relationships, launch-partner (not distribution lock-in), Darcy originated-value participation without terms. |
+| Deliverables | ADR-033 Accepted; [supplier-channel-and-launch-partner.md](architecture/supplier-channel-and-launch-partner.md). No product code. No Feature Gate. No percentages. |
+| Validation | Docs-only; `git diff --check`. No product tests required this pass. |
+| Next | **Do not start supplier integration.** FG-013 live-migrate + UAT remains the next **product** action when separately authorized. Darcy commercial terms unset. |
+
 ### 2026-08-30 — FG-013 historical-upload implementation
 
 | Field | Content |

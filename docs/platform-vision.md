@@ -44,6 +44,7 @@ It is intended to be **attorney-quality in discipline** (documented, auditable, 
 - Field crews and supervisors (CalibAi field experience — first-class; not implemented)
 - (Future) Take-off reviewers validating AI/manual quantities
 - (Future) Purchasing staff preparing supplier POs
+- (Future) Supplier-channel launch/reference partners (not exclusive; [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md))
 
 ## Long-term platform direction
 
@@ -85,4 +86,6 @@ CalibAi office and field experiences are **complementary**. The product is an of
 - [platform-roadmap.md](platform-roadmap.md)
 - [architecture/plan-intelligence-and-automated-takeoff.md](architecture/plan-intelligence-and-automated-takeoff.md)
 - [architecture/supplier-catalogue-inventory-pricing.md](architecture/supplier-catalogue-inventory-pricing.md)
+- [architecture/supplier-channel-and-launch-partner.md](architecture/supplier-channel-and-launch-partner.md)
+- [adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md)
 - [modules/](modules/)

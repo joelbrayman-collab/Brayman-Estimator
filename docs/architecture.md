@@ -147,6 +147,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
 - [Plan Intelligence and Automated Take-Off](architecture/plan-intelligence-and-automated-takeoff.md) — Phases A–M010 **Current**; Phase **C** AI take-off foundation **operational for UAT** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**); Phases D–G future
 - [Supplier Catalogue, Inventory and Pricing](architecture/supplier-catalogue-inventory-pricing.md) — Phases E–F **Future**
+- [Supplier Channel and Launch-Partner Model](architecture/supplier-channel-and-launch-partner.md) — **Future**; [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (Winchester launch/reference, supplier-neutral, dual relationships; **not implemented**)
 - Procurement / purchase-order preparation (nav placeholder only today)
 
 ### Other future capabilities

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-08-28 |
+| Updated | 2026-08-30 |
 
 Domain architecture documents describe **intended** systems. They are not claims of current implementation unless explicitly marked Current.
 
@@ -19,6 +19,7 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [M006-document-intelligence-readiness-report.md](M006-document-intelligence-readiness-report.md) | Milestone 006 report |
 | [M008-sheet-intelligence-readiness-report.md](M008-sheet-intelligence-readiness-report.md) | Milestone 008 readiness (architecture) |
 | [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) | Future |
+| [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) | **Future** — [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (direction only; not implemented) |
 
 Platform map: [../architecture.md](../architecture.md).
 Principles: [../architecture-principles.md](../architecture-principles.md).

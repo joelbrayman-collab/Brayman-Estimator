@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-013 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED · LIVE MIGRATION PENDING**. ADR-032 **Accepted**. FG-012 CLOSED / OPERATIONAL FOR UAT. ADR-021 **Accepted** (MONITOR not implemented). FG-011 / FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. |
+| Status | **FG-013 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED · LIVE MIGRATION PENDING**. ADR-032 **Accepted**. **ADR-033 Accepted** (supplier channel; not implemented). FG-012 CLOSED / OPERATIONAL FOR UAT. ADR-021 **Accepted** (MONITOR not implemented). FG-011 / FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. |
 | Updated | 2026-08-30 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -93,7 +93,9 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-FG-013 office **UPLOAD PREVIOUS ESTIMATES** implemented: multi-file/folder UX, ADR-032 app-managed custody, durable per-file `HistoricalUploadAttempt`, unknown-layout quarantine, TIER_A wording. Additive revision `c5d6e7f8a9b0`. **No** `UploadBatch`. Live migrate **not** applied. Dedicated tests 27; full suite 310 passed.
+This session: **ADR-033 Accepted** — supplier-neutral Winchester launch/reference channel architecture. Docs only. No supplier Feature Gate. No POC. No Darcy percentages.
+
+Prior coded work: FG-013 office **UPLOAD PREVIOUS ESTIMATES** implemented: multi-file/folder UX, ADR-032 app-managed custody, durable per-file `HistoricalUploadAttempt`, unknown-layout quarantine, TIER_A wording. Additive revision `c5d6e7f8a9b0`. **No** `UploadBatch`. Live migrate **not** applied. Dedicated tests 27; full suite 310 passed.
 
 ## 9. IMPLEMENTATION STATUS
 
@@ -124,7 +126,7 @@ FG-013 office **UPLOAD PREVIOUS ESTIMATES** implemented: multi-file/folder UX, A
 
 ## 12. ACCEPTED ADRs
 
-002, 005, 006, 007, 009, 011, 017, 018, 019, 020, **021**, 022, 023, 024, 025, 026, 027, 028, 029, 030, 031, **032**.
+002, 005, 006, 007, 009, 011, 017, 018, 019, 020, **021**, 022, 023, 024, 025, 026, 027, 028, 029, 030, 031, **032**, **033**.
 
 ## 13. PROPOSED / OPEN ADRs
 
@@ -142,9 +144,9 @@ FG-013 office **UPLOAD PREVIOUS ESTIMATES** implemented: multi-file/folder UX, A
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
-29 Aug conversational decisions for FG-008 / FG-009 / FG-010 architecture, implementation, live migrate, UAT, and integrity stabilization are in Git (pins above) and governed docs. 30 Aug FG-012 is closed; ADR-021 **Accepted**. This pass **approves FG-013 for implementation** and **accepts ADR-032**. Implementation, schema, and migration are **not started**.
+29 Aug conversational decisions for FG-008 / FG-009 / FG-010 architecture, implementation, live migrate, UAT, and integrity stabilization are in Git (pins above) and governed docs. 30 Aug FG-012 is closed; ADR-021 **Accepted**. FG-013 is implemented with live migrate pending. This pass **accepts ADR-033** (supplier-neutral Winchester launch/reference channel). Supplier integration is **not started**.
 
-**Completeness test:** Is any material approved fact only in this chat? **NO — verified through Turnover Delta Ledger reconciliation** after this documentation update.
+**Completeness test:** Is any material approved fact only in this chat? **NO** after this documentation update.
 
 ## 16. OPEN DECISIONS
 
@@ -158,6 +160,7 @@ FG-013 office **UPLOAD PREVIOUS ESTIMATES** implemented: multi-file/folder UX, A
 - ORG-001 optional overhead/profit treatments `UNSPECIFIED`; contingency visibility `UNSPECIFIED`; `contingency_source` / `contingency_pricing_treatment` unset (NULL) — distinct from org-approved `NOT_APPLIED`
 - Labour-snapshot Direct Labour Cost not included in estimate basis by default (ADR-021 records the GM comparability issue; does not correct it)
 - [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **IMPLEMENTED / VERIFIED** with **LIVE MIGRATION PENDING**. **LOCKED:** one user action may load many workbooks; no durable `UploadBatch`. Next **ops** action is a live-migrate prompt. Authentication / BUILD remains a separate candidate. MONITOR Feature Gate not authorized by ADR-021.
+- [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (docs only). BMR / Winchester / Darcy are **not exclusive**. Winchester is launch/reference. Contractor procurement (A) ≠ CalibAi channel (B). Darcy commercial terms **unset**. Supplier Feature Gate **not authorized**.
 
 ## 17. KNOWN RISKS / UNRESOLVED PRODUCT ITEMS
 
@@ -175,15 +178,15 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 18. DEFERRED ITEMS
 
-Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; FG-013 **live migrate + UAT**; industry benchmarking; auth.
+Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; FG-013 **live migrate + UAT**; supplier / Winchester POC; Darcy channel economics; industry benchmarking; auth.
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN **implementation**, QuickBooks, or contract/warranty work. Do **not** `flask db upgrade` the FG-013 revision without a live-migrate prompt. Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history.
+Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN **implementation**, QuickBooks, or contract/warranty work. Do **not** `flask db upgrade` the FG-013 revision without a live-migrate prompt. Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** Separate FG-013 **live-migrate + UAT smoke** prompt (`flask db upgrade` `b4c5d6e7f8a9` → `c5d6e7f8a9b0`). Do not upgrade from this implementation commit. MONITOR remains **not implemented**. Do not start Phase D.
+**Next governed action:** Separate FG-013 **live-migrate + UAT smoke** prompt (`flask db upgrade` `b4c5d6e7f8a9` → `c5d6e7f8a9b0`). Do not upgrade from this implementation commit. MONITOR remains **not implemented**. Do not start Phase D. **Do not start supplier integration / Winchester POC.** ADR-033 is architecture only.
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 

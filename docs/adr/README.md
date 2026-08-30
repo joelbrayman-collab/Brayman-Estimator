@@ -13,7 +13,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 **Proposed** is not **Accepted**. Citing a Proposed ADR in a module, Feature Gate, or roadmap does not change its status. Implementation still requires Feature Gate + accepted decisions where the ADR itself requires acceptance.
 
-**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, **ADR-021** (MONITOR composed commercial baseline and Project Gross Margin; **not implemented**), ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **CLOSED / OPERATIONAL FOR UAT**); **ADR-025** (named pricing methods); **ADR-030** (org pricing policy + estimate pricing snapshot); **ADR-005, ADR-006, ADR-007, ADR-009, ADR-011, ADR-031** (FG-010 / M012 take-off foundation **CLOSED / OPERATIONAL FOR UAT**); **ADR-032** (app-managed historical workbook custody; FG-013 **IMPLEMENTED / VERIFIED · LIVE MIGRATION PENDING**). FG-008 / FG-009 / FG-010 / FG-011 / FG-012 are **CLOSED / OPERATIONAL FOR UAT**. **ADR-010 remains Proposed** (real external AI provider not authorized).
+**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, **ADR-021** (MONITOR composed commercial baseline and Project Gross Margin; **not implemented**), ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **CLOSED / OPERATIONAL FOR UAT**); **ADR-025** (named pricing methods); **ADR-030** (org pricing policy + estimate pricing snapshot); **ADR-005, ADR-006, ADR-007, ADR-009, ADR-011, ADR-031** (FG-010 / M012 take-off foundation **CLOSED / OPERATIONAL FOR UAT**); **ADR-032** (app-managed historical workbook custody; FG-013 **IMPLEMENTED / VERIFIED · LIVE MIGRATION PENDING**); **ADR-033** (supplier neutrality and Winchester launch-partner channel; **not implemented**). FG-008 / FG-009 / FG-010 / FG-011 / FG-012 are **CLOSED / OPERATIONAL FOR UAT**. **ADR-010 remains Proposed** (real external AI provider not authorized).
 
 ## Process
 
@@ -74,6 +74,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | ADR | Title | Status |
 |-----|-------|--------|
 | [ADR-008](ADR-008-supplier-price-snapshotting.md) | Supplier Price Snapshotting | Proposed |
+| [ADR-033](ADR-033-supplier-neutrality-and-launch-partner-channel.md) | Supplier Neutrality, Dual Relationships, and Winchester Launch-Partner Channel | **Accepted** (2026-08-30; architecture only; supplier integration **not implemented**) |
 
 ### CalibAi / CAR-001 (2026-08-28)
 

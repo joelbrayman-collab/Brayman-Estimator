@@ -50,6 +50,7 @@ Also read [`platform-governance.md`](platform-governance.md), [`governance/conti
 | [architecture-principles.md](architecture-principles.md) | Numbered durable platform rules | **Architectural** — changes require ADR + Joel |
 | [architecture.md](architecture.md) | Current vs intended vs future architecture | Factual for *current*; aspirational elsewhere |
 | [architecture/](architecture/) | Domain architecture (Plan Intelligence, Supplier, …) | Future unless marked Current |
+| [architecture/supplier-channel-and-launch-partner.md](architecture/supplier-channel-and-launch-partner.md) | Supplier channel, Winchester launch/reference, dual relationships | **Future** — [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (not implemented) |
 | [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md) | CalibAi product/architecture reconciliation | **Approved direction** — not implementation |
 | [architecture/M004-plan-intelligence-readiness-report.md](architecture/M004-plan-intelligence-readiness-report.md) | Milestone 004 readiness report | Historical / operational |
 | [architecture/document-intelligence.md](architecture/document-intelligence.md) | Document Intelligence (packages, pages, search) | Architecture (M006); partial Current (M007) |
@@ -68,6 +69,7 @@ Also read [`platform-governance.md`](platform-governance.md), [`governance/conti
 | [architecture/ai-takeoff-quantity-extraction-foundation.md](architecture/ai-takeoff-quantity-extraction-foundation.md) | AI Take-off / Quantity Extraction Foundation architecture | **Approved** — FG-010 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | [feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) | Contractor Calibration Onboarding / Historical Estimate Upload UX | **IMPLEMENTED / VERIFIED · LIVE MIGRATION PENDING** |
 | [adr/ADR-032-app-managed-historical-workbook-storage.md](adr/ADR-032-app-managed-historical-workbook-storage.md) | App-managed immutable historical workbook storage / source custody | **Accepted** (implementation not started) |
+| [adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) | Supplier neutrality and Winchester launch-partner channel | **Accepted** (architecture only; not implemented) |
 | [feature-gates/FG-012-estimate-output-consistency.md](feature-gates/FG-012-estimate-output-consistency.md) | Internal Detailed Cost Breakdown + Customer Estimate Consistency | **CLOSED / OPERATIONAL FOR UAT** |
 | [feature-gates/FG-011-project-hub-ux.md](feature-gates/FG-011-project-hub-ux.md) | Project Hub UX Feature Gate | **CLOSED / OPERATIONAL FOR UAT** |
 | [adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md](adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) | Canonical Labour Task, Production Standard, Calibration Lifecycle | **Accepted** |

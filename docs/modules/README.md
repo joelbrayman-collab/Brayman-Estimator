@@ -17,7 +17,7 @@
 | BUILD | [build.md](build.md) | **None** — Proposed (ADR-020); not implemented |
 | MONITOR | [monitor.md](monitor.md) | **None** — Proposed (ADR-021 **Accepted** baseline; not implemented) |
 | Historical ingestion | [../architecture/historical-estimate-ingestion-architecture.md](../architecture/historical-estimate-ingestion-architecture.md) · [FG-006](../feature-gates/FG-006-historical-estimate-ingestion-phase-b.md) · [FG-013](../feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) | FG-006 engine **Current**; office upload UX **IMPLEMENTED / VERIFIED · LIVE MIGRATION PENDING** ([ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md); revision `c5d6e7f8a9b0`) |
-| Supplier Catalogue | [supplier-catalogue.md](supplier-catalogue.md) | **None** — Future (only `CostItem.supplier` text today) |
+| Supplier Catalogue | [supplier-catalogue.md](supplier-catalogue.md) | **None** — Future (only `CostItem.supplier` text today). Channel: [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (not implemented) |
 
 Project Controls (Change Orders) is documented under Projects for ownership clarity until a dedicated module doc is approved. BUILD references Change Orders; it does not own them ([ADR-020](../adr/ADR-020-build-module-boundary.md)). MONITOR is a comparison/read layer; it does not own estimates, proposals, Change Orders, or actuals ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**).
 

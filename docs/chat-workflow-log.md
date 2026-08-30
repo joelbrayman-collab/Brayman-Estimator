@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — ADR-033 supplier channel / Winchester launch-partner architecture
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` |
+| Objective | Add supplier-channel architecture: Darcy / BMR Winchester as launch/reference partner, not exclusive; dual contractor-procurement vs CalibAi-channel relationships; Darcy originated-value participation categories without terms. |
+| Business decision | BMR, BMR Winchester, and Darcy are **not exclusive**. Winchester = design/launch partner, first reference deployment, supplier-channel BD partner. Reward Darcy for value created / business originated; do not surrender CalibAi’s broader supplier market. Channel expansion to other BMR dealers, BMR corporate, other suppliers, and potentially nationals (e.g. Home Depot class) must not assume one integration model. |
+| Architectural decision | **ADR-033 Accepted** (docs only). Relationship **A** (contractor ↔ supplier procurement) distinct from **B** (CalibAi ↔ supplier channel). Do not collapse into PreferredSupplier. Anticipate national/enterprise capabilities; do not overbuild Winchester POC. Reference evidence families recorded for later measurement. No channel economics or analytics in a future POC. No Feature Gate. No product code. |
+| Prompt template used | Bounded architecture documentation (Joel commercial clarification) |
+| Approved Cursor prompt summary | ADD TO SUPPLIER CHANNEL ARCHITECTURE — DARCY / BMR WINCHESTER LAUNCH-PARTNER MODEL. Docs only. No exclusivity. No percentages. Do not implement supplier POC. |
+| Files expected to change | Supplier channel architecture; ADR-033; indexes; catalogue/module/roadmap/vision/CAR-001; current-state; session-handoff; chat-workflow-log; milestones; project-state-report |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; product code; Alembic revisions; FG-013 product implementation |
+| Implementation result | Architecture recorded. ADR-033 **Accepted**. Winchester/supplier integration **not implemented**. Darcy terms **unset**. |
+| Tests | Docs-only pass. No product-code tests required. `git diff --check`. |
+| Project-state-report update | Yes (architecture status only) |
+| Milestone entry update | Architecture record appended (not a coded milestone) |
+| Constitutional issue raised | None |
+| Unresolved issues | Darcy commercial terms. Supplier Feature Gate not opened. Heterogeneous adapter designs deferred to later gates. |
+| Next approved step | Do **not** start supplier integration. Next **product** action remains FG-013 live-migrate + UAT when separately authorized. |
+| Next approved prompt | None for supplier/Winchester POC. FG-013 live-migrate only if Joel authorizes that prompt. |
+| Commit hash | (this commit, if/when committed) |
+
 ### 2026-08-30 — FG-013 historical upload implementation
 
 | Field | Content |

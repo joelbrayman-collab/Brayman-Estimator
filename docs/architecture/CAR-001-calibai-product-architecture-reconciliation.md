@@ -25,7 +25,7 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-08-29 — not authorized by CAR-001):** [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) / M012 was implemented, committed, and pushed (`9665295`). Real external AI provider **not authorized**. PLAN remained partial; PRICE remained FG-008/FG-009 operational for UAT.
 
-**Subsequent status (2026-08-30 — not authorized by CAR-001):** FG-010 / M012 is **LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (`b4c5d6e7f8a9`). **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT.** Real external AI provider **not authorized**. Phase D **not started**. [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR composed baseline and Project Gross Margin; MONITOR **not implemented**).
+**Subsequent status (2026-08-30 — not authorized by CAR-001):** FG-010 / M012 is **LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (`b4c5d6e7f8a9`). **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT.** Real external AI provider **not authorized**. Phase D **not started**. [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR composed baseline and Project Gross Margin; MONITOR **not implemented**). [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (supplier-neutral Winchester launch/reference channel; supplier integration **not implemented**; no Feature Gate).
 
 ## What CAR-001 was
 

@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-013 historical-upload implementation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-013 (not a numbered M0xx) |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED · LIVE MIGRATION PENDING** |
+| Date | 2026-08-30 |
+| Objective | Productize office UPLOAD PREVIOUS ESTIMATES on FG-006 with ADR-032 custody. |
+| Deliverables | Multi-file/folder UX; `HistoricalUploadAttempt`; app-managed storage; unknown-layout quarantine; TIER_A wording; revision `c5d6e7f8a9b0`; dedicated tests. No UploadBatch. Legacy Desktop corpus untouched. |
+| Validation | Dedicated FG-013 **27 passed**; full suite **310 passed**. Temp-SQLite upgrade/downgrade verified. Live `flask db current` remains `b4c5d6e7f8a9`. Browser UAT not performed. |
+| Next | Separate live-migrate + UAT smoke prompt. Do not upgrade from this commit. |
+
 ### 2026-08-30 — FG-013 historical-upload governance + ADR-032 source custody
 
 | Field | Content |

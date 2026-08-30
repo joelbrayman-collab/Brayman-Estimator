@@ -68,6 +68,7 @@ def ingest_workbook_file(
     source_id: Optional[str] = None,
     ingestion_version: str = "v1",
     commit: bool = True,
+    original_filename: Optional[str] = None,
 ) -> HistoricalSourceWorkbook:
     """Ingest a historical estimate workbook file deterministically and idempotently."""
     org_id = organization_id or get_current_organization_id()
@@ -80,7 +81,7 @@ def ingest_workbook_file(
 
     sha256 = hashlib.sha256(file_bytes).hexdigest()
     byte_size = len(file_bytes)
-    filename = os.path.basename(file_path)
+    filename = original_filename or os.path.basename(file_path)
     ext = os.path.splitext(filename)[1].lower()
     mtime = datetime.utcfromtimestamp(os.path.getmtime(file_path))
 
@@ -95,7 +96,7 @@ def ingest_workbook_file(
         return existing
 
     # 2. Parse OpenXML workbook safely (no macro execution)
-    wb_data = read_openxml_workbook(file_path)
+    wb_data = read_openxml_workbook(file_path, original_filename=filename)
 
     # 3. Classify Template Family
     family_code, confidence, class_reason = classify_template_family(wb_data)

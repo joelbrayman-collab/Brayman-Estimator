@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-013 historical upload implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `f52f06c4adbd04055485e49124da59222a8f7768` (start) |
+| Objective | Implement FG-013 office UPLOAD PREVIOUS ESTIMATES, ADR-032 custody, one additive migration. |
+| Business decision | Multi-file/folder UX; per-file outcomes; quarantine unknown layouts; TIER_A wording; no auto standards. |
+| Architectural decision | `HistoricalUploadAttempt` only (no UploadBatch). Storage `instance/historical_uploads/<org>/<sha256>.<ext>`. Revision `c5d6e7f8a9b0`. Live migrate not applied. |
+| Prompt template used | Bounded FG-013 implementation |
+| Approved Cursor prompt summary | IMPLEMENT FG-013 — CONTRACTOR CALIBRATION ONBOARDING / HISTORICAL ESTIMATE UPLOAD UX. One additive Alembic revision authorized. Do not live-migrate unless established workflow requires a separate prompt — do not apply live. |
+| Files expected to change | Models, routes, templates, ingestion/upload services, migration, tests, governed docs |
+| Files prohibited from changing | Legacy Desktop corpus; labour/pricing standards writes; Phase D; auth |
+| Implementation result | Implemented. Dedicated tests 27 passed. Full suite 310 passed. Live DB current remains `b4c5d6e7f8a9`. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_historical_upload_fg013.py` → 27 passed. `./venv/bin/python -m pytest -q` → 310 passed. Temp-DB upgrade/downgrade of `c5d6e7f8a9b0` verified. Live `flask db upgrade` **not** run. |
+| Project-state-report update | Yes |
+| Milestone entry update | Architecture/implementation record appended |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate + browser UAT pending. Folder-select not exercised in a live browser this pass. |
+| Next approved step | Separate live-migrate + UAT smoke prompt. |
+| Next approved prompt | Live-migrate `c5d6e7f8a9b0` only when Joel authorizes. |
+| Commit hash | (this commit) |
+
 ### 2026-08-30 — FG-013 final governance + ADR-032 accepted
 
 | Field | Content |

@@ -7,13 +7,13 @@
 <div class="content-container" style="max-width: 1200px; margin: 0 auto; padding: 24px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <div>
-            <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">Historical Source Workbooks & Estimates</h2>
+            <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">UPLOAD PREVIOUS ESTIMATES</h2>
             <p class="muted-copy" style="margin: 4px 0 0 0; font-size: 0.95rem;">
-                Organization-scoped historical estimate evidence (ORG-001 Brayman Construction). Ingested under FG-006 Phase B.
+                Load about 20–25 representative recent estimates in one action. Upload success is historical evidence loaded — not a completed cost model.
             </p>
         </div>
         <div style="background: #eef2ff; color: #3730a3; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.85rem;">
-            Evidence Ingestion Engine Phase B
+            Historical evidence · calibration review ready
         </div>
     </div>
 
@@ -27,17 +27,92 @@
         {% endif %}
     {% endwith %}
 
+    <div class="card" style="background: #fff; border-radius: 8px; border: 1px solid #e5e7eb; padding: 20px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 600;">Upload previous estimates</h3>
+        <p style="margin: 0 0 16px 0; font-size: 0.9rem; color: #6b7280;">
+            Select many workbooks, drag and drop files, or choose a folder where this browser supports it.
+            Each file is validated on its own. Supported: <strong>.xlsx</strong> and <strong>.xlsm</strong> (valid OpenXML). Macros and formulas are not executed.
+        </p>
+        <form id="historical-upload-form" action="{{ url_for('historical_estimates.upload') }}" method="POST" enctype="multipart/form-data">
+            <div id="historical-dropzone" style="border: 2px dashed #c7d2fe; border-radius: 8px; padding: 24px; text-align: center; background: #f8fafc; margin-bottom: 16px;">
+                <p style="margin: 0 0 12px 0; font-weight: 600; color: #3730a3;">Drop workbooks or a folder here</p>
+                <p style="margin: 0 0 16px 0; font-size: 0.85rem; color: #6b7280;">One action may include many files. No mandatory count.</p>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <label style="display: inline-block; padding: 8px 16px; border-radius: 6px; background: #2563eb; color: #fff; font-weight: 600; cursor: pointer;">
+                        Select files
+                        <input id="workbook-files" type="file" name="workbooks" accept=".xlsx,.xlsm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12" multiple style="display: none;">
+                    </label>
+                    <label style="display: inline-block; padding: 8px 16px; border-radius: 6px; background: #fff; color: #3730a3; font-weight: 600; cursor: pointer; border: 1px solid #c7d2fe;">
+                        Select folder
+                        <input id="workbook-folder" type="file" name="workbooks" multiple webkitdirectory directory style="display: none;">
+                    </label>
+                </div>
+                <p id="historical-file-count" style="margin: 12px 0 0 0; font-size: 0.85rem; color: #4b5563;">No files selected yet.</p>
+            </div>
+            <button type="submit" style="padding: 10px 18px; border-radius: 6px; background: #1d4ed8; color: #fff; font-weight: 600; border: none; cursor: pointer;">
+                Upload previous estimates
+            </button>
+        </form>
+    </div>
+
+    {% if upload_summary %}
+    <div class="card" style="background: #fff; border-radius: 8px; border: 1px solid #e5e7eb; padding: 20px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <h3 style="margin: 0 0 12px 0; font-size: 1.1rem; font-weight: 600;">Upload results</h3>
+        <p style="margin: 0 0 12px 0; font-size: 0.9rem; color: #374151;">
+            FILES RECEIVED: <strong>{{ upload_summary.files_received }}</strong>
+            · HISTORICAL EVIDENCE LOADED: <strong>{{ upload_summary.ingested_count }}</strong>
+            · DUPLICATES: <strong>{{ upload_summary.duplicate_count }}</strong>
+            · REVIEW REQUIRED: <strong>{{ upload_summary.quarantined_count }}</strong>
+            · UNSUPPORTED: <strong>{{ upload_summary.unsupported_count }}</strong>
+            · FAILED: <strong>{{ upload_summary.failed_count }}</strong>
+        </p>
+        <p style="margin: 0 0 16px 0; font-size: 0.85rem; color: #6b7280;">
+            Uploading files does not complete the cost model. Accepted as evidence is historical evidence, not an approved operating standard.
+        </p>
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+            <thead>
+                <tr style="border-bottom: 1px solid #e5e7eb; text-align: left; color: #4b5563;">
+                    <th style="padding: 8px 10px;">File</th>
+                    <th style="padding: 8px 10px;">Outcome</th>
+                    <th style="padding: 8px 10px;">Notes</th>
+                    <th style="padding: 8px 10px; text-align: right;">Review</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in upload_summary.results %}
+                <tr style="border-bottom: 1px solid #f3f4f6;">
+                    <td style="padding: 8px 10px; font-weight: 600;">{{ row.original_filename }}</td>
+                    <td style="padding: 8px 10px;">
+                        {% if row.outcome == 'INGESTED' %}HISTORICAL EVIDENCE LOADED
+                        {% elif row.outcome == 'DUPLICATE' %}DUPLICATE
+                        {% elif row.outcome == 'QUARANTINED' %}REVIEW REQUIRED
+                        {% elif row.outcome == 'UNSUPPORTED' %}UNSUPPORTED
+                        {% else %}FAILED{% endif %}
+                    </td>
+                    <td style="padding: 8px 10px; color: #4b5563;">{{ row.message }}</td>
+                    <td style="padding: 8px 10px; text-align: right;">
+                        {% if row.estimate_id %}
+                        <a href="{{ url_for('historical_estimates.detail', estimate_id=row.estimate_id) }}" style="color: #2563eb; font-weight: 600; text-decoration: none;">Open review</a>
+                        {% else %}—{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
     <div class="card" style="background: #fff; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
         <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; background: #f9fafb; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 600; color: #374151;">Ingested Evidence Records ({{ estimates|length }})</span>
-            <span style="font-size: 0.85rem; color: #6b7280;">Tenant: ORG-001 Private Intelligence</span>
+            <span style="font-weight: 600; color: #374151;">Historical evidence records ({{ estimates|length }})</span>
+            <span style="font-size: 0.85rem; color: #6b7280;">Organization-scoped · ORG-HISTORICAL</span>
         </div>
 
         {% if not estimates %}
         <div style="padding: 48px; text-align: center; color: #6b7280;">
             <i class="bi bi-inbox" style="font-size: 2.5rem; display: block; margin-bottom: 12px;"></i>
-            <p style="margin: 0; font-size: 1.1rem; font-weight: 500;">No historical estimate records ingested yet.</p>
-            <p style="margin: 4px 0 0 0; font-size: 0.9rem;">Run governed workbook ingestion to populate ORG-001 historical evidence.</p>
+            <p style="margin: 0; font-size: 1.1rem; font-weight: 500;">No historical estimate records yet.</p>
+            <p style="margin: 4px 0 0 0; font-size: 0.9rem;">Upload previous estimates above to load historical evidence for review.</p>
         </div>
         {% else %}
         <div style="overflow-x: auto;">
@@ -72,7 +147,7 @@
                         </td>
                         <td style="padding: 12px 16px;">
                             <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; {% if est.evidence_tier == 'TIER_A' %}background: #dcfce7; color: #15803d;{% elif est.evidence_tier == 'TIER_B' %}background: #fef9c3; color: #a16207;{% elif est.evidence_tier == 'TIER_C' %}background: #f3e8ff; color: #7e22ce;{% else %}background: #f3f4f6; color: #4b5563;{% endif %}">
-                                {{ est.evidence_tier }}
+                                {{ est.evidence_tier }}{% if evidence_tier_labels %} — {{ evidence_tier_labels.get(est.evidence_tier, '') }}{% endif %}
                             </span>
                         </td>
                         <td style="padding: 12px 16px; font-size: 0.8rem; color: #4b5563;">
@@ -86,7 +161,7 @@
                         </td>
                         <td style="padding: 12px 16px; text-align: center;">
                             <span style="display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; {% if est.review_status == 'ACCEPTED_AS_EVIDENCE' %}background: #dcfce7; color: #15803d;{% elif est.review_status == 'REVIEW_REQUIRED' %}background: #fee2e2; color: #b91c1c;{% elif est.review_status == 'EXTRACTED' %}background: #fef3c7; color: #b45309;{% else %}background: #f3f4f6; color: #4b5563;{% endif %}">
-                                {{ est.review_status }}
+                                {{ review_status_labels.get(est.review_status, est.review_status) if review_status_labels else est.review_status }}
                             </span>
                         </td>
                         <td style="padding: 12px 16px; text-align: right;">
@@ -102,4 +177,95 @@
         {% endif %}
     </div>
 </div>
+<script>
+(function () {
+    var fileInput = document.getElementById("workbook-files");
+    var folderInput = document.getElementById("workbook-folder");
+    var form = document.getElementById("historical-upload-form");
+    var dropzone = document.getElementById("historical-dropzone");
+    var countEl = document.getElementById("historical-file-count");
+    if (!fileInput || !form || !dropzone) return;
+
+    function setCount(n) {
+        if (!countEl) return;
+        countEl.textContent = n ? (n + " file" + (n === 1 ? "" : "s") + " selected.") : "No files selected yet.";
+    }
+
+    function extOk(name) {
+        var lower = (name || "").toLowerCase();
+        return lower.endsWith(".xlsx") || lower.endsWith(".xlsm");
+    }
+
+    fileInput.addEventListener("change", function () {
+        setCount(fileInput.files ? fileInput.files.length : 0);
+    });
+    if (folderInput) {
+        folderInput.addEventListener("change", function () {
+            setCount(folderInput.files ? folderInput.files.length : 0);
+        });
+    }
+
+    function assignFiles(fileList) {
+        var dt = new DataTransfer();
+        for (var i = 0; i < fileList.length; i++) {
+            if (extOk(fileList[i].name)) dt.items.add(fileList[i]);
+        }
+        fileInput.files = dt.files;
+        setCount(fileInput.files.length);
+    }
+
+    function collectEntry(entry, acc, done) {
+        if (entry.isFile) {
+            entry.file(function (file) { acc.push(file); done(); }, function () { done(); });
+        } else if (entry.isDirectory && entry.createReader) {
+            var reader = entry.createReader();
+            reader.readEntries(function (entries) {
+                if (!entries.length) { done(); return; }
+                var pending = entries.length;
+                entries.forEach(function (child) {
+                    collectEntry(child, acc, function () {
+                        pending -= 1;
+                        if (pending === 0) done();
+                    });
+                });
+            }, function () { done(); });
+        } else {
+            done();
+        }
+    }
+
+    ["dragenter", "dragover"].forEach(function (evt) {
+        dropzone.addEventListener(evt, function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.style.background = "#eef2ff";
+        });
+    });
+    ["dragleave", "drop"].forEach(function (evt) {
+        dropzone.addEventListener(evt, function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.style.background = "#f8fafc";
+        });
+    });
+    dropzone.addEventListener("drop", function (e) {
+        var items = e.dataTransfer && e.dataTransfer.items;
+        if (items && items.length && items[0].webkitGetAsEntry) {
+            var acc = [];
+            var pending = items.length;
+            if (!pending) return;
+            for (var i = 0; i < items.length; i++) {
+                var entry = items[i].webkitGetAsEntry();
+                if (!entry) { pending -= 1; continue; }
+                collectEntry(entry, acc, function () {
+                    pending -= 1;
+                    if (pending <= 0) assignFiles(acc);
+                });
+            }
+            return;
+        }
+        if (e.dataTransfer && e.dataTransfer.files) assignFiles(e.dataTransfer.files);
+    });
+})();
+</script>
 {% endblock %}

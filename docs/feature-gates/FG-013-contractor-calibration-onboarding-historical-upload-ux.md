@@ -7,11 +7,11 @@
 | Target Milestone | **None.** FG-013 is the governing identifier. Do not assign a new M0xx number. |
 | Module | Historical ingestion / review (FG-006 engine). Labour Engine and Pricing Engine are **not** owners. |
 | Date | 2026-08-30 |
-| Status | **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** · **LIVE MIGRATION PENDING** |
 | Architecture | Productize office upload UX on FG-006. App-managed immutable workbook custody ([ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**). Durable per-file upload attempts. **No** durable `UploadBatch`. |
 | Related ADRs | [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR **out of scope**) · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** (do not auto-write) · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** (do not auto-write) |
 | Prerequisites | [FG-006](FG-006-historical-estimate-ingestion-phase-b.md) **APPROVED, IMPLEMENTED & VERIFIED**. FG-008–FG-012 **CLOSED / OPERATIONAL FOR UAT**. |
-| Approved baseline | `main` @ `fc9fed32a7e2f18730a5778c1d09ab5597fe9b74`. Alembic current/head `b4c5d6e7f8a9`. Last recorded full suite **283 passed**. |
+| Approved baseline | `main` @ `f52f06c4adbd04055485e49124da59222a8f7768`. Alembic graph head after this implementation: `c5d6e7f8a9b0`. Live development/UAT `flask db current` remains `b4c5d6e7f8a9` until a separate live-migrate prompt. Last recorded full suite **310 passed**. |
 
 ---
 
@@ -19,13 +19,13 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **APPROVED FOR IMPLEMENTATION** |
-| Implementation | **NOT STARTED** |
-| Schema / Alembic | **YES** additive — **one bounded revision expected at implementation**. **Not created in this governance pass.** |
-| Storage ADR | [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** |
+| Feature Gate (this document) | **IMPLEMENTED / VERIFIED** (code on `main` after this commit) |
+| Implementation | **DONE** — office multi-file upload, ADR-032 custody, per-file attempts. **LIVE MIGRATION PENDING.** Browser UAT **not performed** (table not on live DB). |
+| Schema / Alembic | Additive revision **`c5d6e7f8a9b0`** (`historical_upload_attempts`). Upgrade/downgrade verified on throwaway SQLite. **Not applied** to development/UAT `instance/brayman_estimator.db`. |
+| Storage ADR | [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** (productized path implemented; legacy Desktop corpus untouched) |
 | Durable `UploadBatch` | **NO** |
 
-This gate authorizes a later **bounded implementation prompt** only. It does **not** implement uploads, create a migration, authorize authentication, Phase D, external AI, QuickBooks, MONITOR, LEARN, actuals, profitability, or industry benchmarking.
+This implementation does **not** authorize authentication, Phase D, external AI, QuickBooks, MONITOR, LEARN, actuals, profitability, industry benchmarking, or live `flask db upgrade` until a separate live-migrate prompt.
 
 ---
 
@@ -83,7 +83,7 @@ Do **not** create a durable `UploadBatch` merely because many files are chosen i
 | 9 | Tests required? | Dedicated upload/attempt/isolation/security tests; mixed multi-file outcomes; idempotent SHA; regressions (historical, labour, pricing); full suite before closure. |
 | 10 | Documentation? | This gate; ADR-032; historical-ingestion architecture; feature-gate and ADR indexes; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log. |
 | 11 | ADR required? | **Yes** — [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. |
-| 12 | Migration? | **YES — one bounded additive revision**, created **only** when the FG-013 **implementation** prompt explicitly authorizes it. **Not in this governance pass.** No destructive historical-data migration. No `UploadBatch` table. |
+| 12 | Migration? | **YES — one bounded additive revision `c5d6e7f8a9b0`.** Live apply **pending**. No destructive historical-data migration. No `UploadBatch` table. |
 
 ---
 
@@ -122,15 +122,17 @@ Potential facts (do not over-design; do not store secrets or uncontrolled except
 
 Each file owns its attempt/outcome. **No** durable batch parent.
 
-### Schema / migration (implementation prompt only)
+### Schema / migration (implemented; live apply pending)
 
-| Authorization | This pass | Later implementation prompt |
-|---------------|-----------|------------------------------|
-| SCHEMA CHANGE | **YES — additive only** | Implement |
-| MIGRATION | **YES — one bounded additive revision expected** | **Must explicitly authorize** creating it |
-| This governance pass | **Must not** create the migration | — |
+| Authorization | Governance pass | Implementation pass |
+|---------------|-----------------|---------------------|
+| SCHEMA CHANGE | YES — additive only | **`historical_upload_attempts`** |
+| MIGRATION | YES — one bounded additive revision | **`c5d6e7f8a9b0`** (down_revision `b4c5d6e7f8a9`) |
+| Live development/UAT apply | Must not | **PENDING** separate live-migrate prompt |
 
-Optional additive columns on `HistoricalSourceWorkbook` (stored name, archive) only if necessary for custody/archive. No destructive rewrite of existing 20 ingested rows.
+Optional additive columns on `HistoricalSourceWorkbook` were **not** required. Storage path lives on the attempt and on `HistoricalSourceWorkbook.source_file_path` for ingested/quarantined productized files. No destructive rewrite of existing 20 ingested rows.
+
+Implemented surfaces: `app/services/historical_ingestion/upload.py`, `app/services/historical_ingestion/storage.py`, `app/services/historical_ingestion/upload_validation.py`, `POST /historical-estimates/upload`, `app/models/historical_estimates.py` (`HistoricalUploadAttempt`).
 
 ### Formats
 
@@ -239,8 +241,8 @@ Implementation is incomplete until:
 
 ## Explicit non-goals
 
-- Implement in **this** documentation pass
-- Create the migration in this pass
+- Implement in the 2026-08-30 **governance** pass (completed separately)
+- Create the migration in the governance pass (created in this **implementation** pass as `c5d6e7f8a9b0`; live apply still separate)
 - Durable `UploadBatch`
 - Moving the 20-file Desktop corpus
 - Auto-approval of organization standards

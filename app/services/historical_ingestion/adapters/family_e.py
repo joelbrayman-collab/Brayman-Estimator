@@ -12,6 +12,20 @@ from app.services.historical_ingestion.adapters.base import (
     ExtractionResult,
 )
 
+# Known FG-006 Family E layouts (filename markers). Generic fallback is not a confident parse.
+KNOWN_FAMILY_E_FILENAME_MARKERS = (
+    "alberton garage",
+    "brown floor",
+    "julia harish",
+    "serge",
+)
+
+
+def is_known_family_e_filename(filename: str) -> bool:
+    """Return True when the original filename matches a governed Family E layout."""
+    fname = (filename or "").rsplit("/", 1)[-1].rsplit("\\", 1)[-1].lower()
+    return any(marker in fname for marker in KNOWN_FAMILY_E_FILENAME_MARKERS)
+
 
 class FamilyEAdapter(BaseTemplateAdapter):
     """Adapter for Ad-Hoc / Standalone flat sheet workbooks."""

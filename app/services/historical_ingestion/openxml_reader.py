@@ -79,7 +79,7 @@ class WorkbookData:
         return self.sheets.get(name)
 
 
-def read_openxml_workbook(file_path: str) -> WorkbookData:
+def read_openxml_workbook(file_path: str, original_filename: Optional[str] = None) -> WorkbookData:
     """Deterministically read an OpenXML .xlsx or .xlsm file without executing code."""
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Source workbook not found at: {file_path}")
@@ -89,7 +89,7 @@ def read_openxml_workbook(file_path: str) -> WorkbookData:
 
     sha256 = hashlib.sha256(file_bytes).hexdigest()
     byte_size = len(file_bytes)
-    filename = os.path.basename(file_path)
+    filename = original_filename or os.path.basename(file_path)
     has_macros = filename.lower().endswith(".xlsm")
 
     with zipfile.ZipFile(file_path, "r") as z:

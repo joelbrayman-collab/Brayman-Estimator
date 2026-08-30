@@ -366,3 +366,66 @@ class HistoricalEstimateReviewDecision(db.Model):
 
     def __repr__(self):
         return f"<HistoricalEstimateReviewDecision est={self.historical_estimate_id} status={self.review_status}>"
+
+
+# FG-013 per-file upload outcomes (no durable UploadBatch).
+UPLOAD_OUTCOME_INGESTED = "INGESTED"
+UPLOAD_OUTCOME_DUPLICATE = "DUPLICATE"
+UPLOAD_OUTCOME_UNSUPPORTED = "UNSUPPORTED"
+UPLOAD_OUTCOME_QUARANTINED = "QUARANTINED"
+UPLOAD_OUTCOME_FAILED = "FAILED"
+
+VALID_UPLOAD_OUTCOMES = (
+    UPLOAD_OUTCOME_INGESTED,
+    UPLOAD_OUTCOME_DUPLICATE,
+    UPLOAD_OUTCOME_UNSUPPORTED,
+    UPLOAD_OUTCOME_QUARANTINED,
+    UPLOAD_OUTCOME_FAILED,
+)
+
+UPLOAD_ARCHIVE_ACTIVE = "ACTIVE"
+UPLOAD_ARCHIVE_ARCHIVED = "ARCHIVED"
+
+VALID_UPLOAD_ARCHIVE_STATUSES = (UPLOAD_ARCHIVE_ACTIVE, UPLOAD_ARCHIVE_ARCHIVED)
+
+
+class HistoricalUploadAttempt(db.Model):
+    """Durable per-file historical workbook upload attempt / outcome (FG-013)."""
+
+    __tablename__ = "historical_upload_attempts"
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id"),
+        nullable=False,
+        default=get_current_organization_id,
+        index=True,
+    )
+    original_filename = db.Column(db.String(255), nullable=False)
+    extension = db.Column(db.String(10), nullable=True)
+    byte_size = db.Column(db.Integer, nullable=True)
+    sha256 = db.Column(db.String(64), nullable=True, index=True)
+    received_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    actor = db.Column(db.String(150), nullable=False)
+    outcome = db.Column(db.String(40), nullable=False, index=True)
+    failure_reason = db.Column(db.String(2000), nullable=True)
+    source_workbook_id = db.Column(
+        db.Integer,
+        db.ForeignKey("historical_source_workbooks.id"),
+        nullable=True,
+        index=True,
+    )
+    stored_relative_path = db.Column(db.String(500), nullable=True)
+    archive_status = db.Column(
+        db.String(20), nullable=False, default=UPLOAD_ARCHIVE_ACTIVE
+    )
+
+    organization = db.relationship("Organization")
+    source_workbook = db.relationship("HistoricalSourceWorkbook")
+
+    def __repr__(self):
+        return (
+            f"<HistoricalUploadAttempt {self.id} {self.original_filename} "
+            f"outcome={self.outcome}>"
+        )

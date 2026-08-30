@@ -3,6 +3,8 @@
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 
 from app.services.historical_review import (
+    EVIDENCE_TIER_LABELS,
+    REVIEW_STATUS_LABELS,
     VALID_EVIDENCE_TIERS,
     VALID_REVIEW_STATUSES,
     HistoricalReviewError,
@@ -10,6 +12,9 @@ from app.services.historical_review import (
     list_historical_estimates,
     list_historical_workbooks,
     record_review_decision,
+)
+from app.services.historical_ingestion.upload import (
+    process_upload_files,
 )
 
 bp = Blueprint("historical_estimates", __name__, url_prefix="/historical-estimates")
@@ -23,6 +28,27 @@ def index():
         "historical_estimates/index.html",
         workbooks=workbooks,
         estimates=estimates,
+        upload_summary=None,
+        evidence_tier_labels=EVIDENCE_TIER_LABELS,
+        review_status_labels=REVIEW_STATUS_LABELS,
+    )
+
+
+@bp.route("/upload", methods=["POST"])
+def upload():
+    files = request.files.getlist("workbooks")
+    summary = process_upload_files(files)
+    workbooks = list_historical_workbooks()
+    estimates = list_historical_estimates()
+    if summary.files_received == 0:
+        flash("No files were received. Select one or more .xlsx / .xlsm workbooks.", "danger")
+    return render_template(
+        "historical_estimates/index.html",
+        workbooks=workbooks,
+        estimates=estimates,
+        upload_summary=summary,
+        evidence_tier_labels=EVIDENCE_TIER_LABELS,
+        review_status_labels=REVIEW_STATUS_LABELS,
     )
 
 
@@ -38,6 +64,8 @@ def detail(estimate_id: int):
         estimate=estimate,
         review_statuses=VALID_REVIEW_STATUSES,
         evidence_tiers=VALID_EVIDENCE_TIERS,
+        evidence_tier_labels=EVIDENCE_TIER_LABELS,
+        review_status_labels=REVIEW_STATUS_LABELS,
     )
 
 

@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-032: App-Managed Immutable Historical Workbook Storage / Source Custody |
-| Status | **Accepted** (governance; implementation under [FG-013](../feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **not started**) |
+| Status | **Accepted** (productized custody implemented under [FG-013](../feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md); **live migration pending**) |
 | Date | 2026-08-30 |
 | Related | [FG-006](../feature-gates/FG-006-historical-estimate-ingestion-phase-b.md) · [FG-013](../feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) · [historical-estimate-ingestion-architecture.md](../architecture/historical-estimate-ingestion-architecture.md) |
 
@@ -86,7 +86,7 @@ Productized bytes are organization-owned source evidence (ORG-HISTORICAL lineage
 
 ## Migration Impact
 
-**Deferred** to the FG-013 **implementation** prompt. Additive schema for stored-name / archive fields and upload-attempt rows is authorized by FG-013; **this ADR does not create a migration.**
+Additive table `historical_upload_attempts` in revision **`c5d6e7f8a9b0`**. Upgrade/downgrade verified on throwaway SQLite. **Live development/UAT `flask db upgrade` is not authorized** by the FG-013 implementation pass.
 
 ## Testing Impact
 
@@ -102,4 +102,4 @@ This ADR; FG-013; historical-ingestion architecture; ADR index; current-state; s
 |------|------|------|
 | Joel | Joel Brayman | 2026-08-30 |
 | ChatGPT review | FG-013 complete governance pass | 2026-08-30 |
-| Cursor implementation note | Documentation / governance only. FG-013 **not implemented**. No schema, migration, or product code. | 2026-08-30 |
+| Cursor implementation note | FG-013 implemented in product code. Revision `c5d6e7f8a9b0`. Live migrate **not** applied in the implementation pass. | 2026-08-30 |

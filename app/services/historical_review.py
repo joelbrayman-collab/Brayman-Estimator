@@ -20,12 +20,29 @@ VALID_REVIEW_STATUSES = (
 )
 
 VALID_EVIDENCE_TIERS = (
-    "TIER_A",  # Actual completed job
-    "TIER_B",  # Contracted / accepted estimate
-    "TIER_C",  # Quoted / acceptance unconfirmed
-    "TIER_D",  # Draft / working estimate
-    "TIER_E",  # Template / unknown / non-evidence
+    "TIER_A",
+    "TIER_B",
+    "TIER_C",
+    "TIER_D",
+    "TIER_E",
 )
+
+EVIDENCE_TIER_LABELS = {
+    "TIER_A": "Estimate associated with a completed project",
+    "TIER_B": "Contracted / accepted estimate",
+    "TIER_C": "Quoted / acceptance unconfirmed",
+    "TIER_D": "Draft / working estimate",
+    "TIER_E": "Template / unknown / non-evidence",
+}
+
+REVIEW_STATUS_LABELS = {
+    "EXTRACTED": "EXTRACTED",
+    "REVIEW_REQUIRED": "REVIEW REQUIRED",
+    "REVIEWED": "REVIEWED",
+    "ACCEPTED_AS_EVIDENCE": "ACCEPTED AS EVIDENCE",
+    "REJECTED": "REJECTED",
+    "SUPERSEDED": "SUPERSEDED",
+}
 
 
 class HistoricalReviewError(ValueError):

@@ -33,6 +33,7 @@ from app.models.historical_estimates import (
     HistoricalSourceObservation,
     HistoricalSourceWorkbook,
     HistoricalSubcontractItem,
+    HistoricalUploadAttempt,
 )
 from app.project_controls.models import ChangeOrder, ChangeOrderItem
 from app.plan_intelligence.models import (
@@ -71,6 +72,7 @@ __all__ = [
     "HistoricalSourceObservation",
     "HistoricalSourceWorkbook",
     "HistoricalSubcontractItem",
+    "HistoricalUploadAttempt",
     "DirectLabourCostRateStandard",
     "EstimateLabourSnapshot",
     "LabourAuditEvent",

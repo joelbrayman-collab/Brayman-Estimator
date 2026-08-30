@@ -11,11 +11,11 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | This FG-013 governance approval commit (verify `git log -1` after push). Prior draft: `fc9fed32a7e2f18730a5778c1d09ab5597fe9b74`. ADR-021 `d41c4d92ee009cdc6679b140ecd44789362077f6`. Product: FG-012 `0b403d6aa51381d3763cf3dc9d5d96e096d5ab93`. Live DB current/head `b4c5d6e7f8a9`. |
+| HEAD / `origin/main` | This FG-013 implementation commit (verify `git log -1` after push). Prior governance: `f52f06c4adbd04055485e49124da59222a8f7768`. Product: FG-012 `0b403d6aa51381d3763cf3dc9d5d96e096d5ab93`. Alembic **graph** head `c5d6e7f8a9b0`. Live DB **current** remains `b4c5d6e7f8a9` (**LIVE MIGRATION PENDING**). |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
-| Working tree at last verified inspect | **FG-013 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED.** ADR-032 **Accepted**. **ADR-021 Accepted** (MONITOR not implemented). **FG-012 CLOSED / OPERATIONAL FOR UAT.** FG-011 / FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. M012 **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT**. |
-| Governance | FG-004–FG-012 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. ADR-019 **Accepted**. **ADR-021 Accepted** (MONITOR baseline / Project Gross Margin; MONITOR not implemented). Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
+| Working tree at last verified inspect | **FG-013 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED · LIVE MIGRATION PENDING.** ADR-032 **Accepted** (productized custody coded). **ADR-021 Accepted** (MONITOR not implemented). **FG-012 CLOSED / OPERATIONAL FOR UAT.** FG-011 / FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. |
+| Governance | FG-004–FG-012 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **IMPLEMENTED / VERIFIED** with **LIVE MIGRATION PENDING** (revision `c5d6e7f8a9b0`). [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. ADR-019 **Accepted**. **ADR-021 Accepted** (MONITOR baseline / Project Gross Margin; MONITOR not implemented). Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
 
 ## Implemented (evidenced in code)
 
@@ -30,7 +30,8 @@
 - **Organization-Calibrated Pricing Engine (FG-009)** — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. **FG-009 FOUNDATION OPERATIONAL FOR UAT.** Versioned `OrganizationPricingPolicy`, immutable `EstimatePricingSnapshot` (locked versions), named methods `TRUE_GROSS_MARGIN` / `COST_PLUS_MARKUP` / `COST_PLUS_MARKUP_STACK`, policy resolution, pricing audit, ORG-001 seed (org-scoped 15% TRUE_GM, CA-ON 13% HST; not CalibAi defaults; optional overhead/profit/contingency layers `UNSPECIFIED`, distinct from org-approved `NOT_APPLIED`), office UI `/pricing-engine/`, Change Order snapshot inheritance **and method application**. Additive migration `a3b4c5d6e7f8` applied live (`f2c3d4e5f6a7` → `a3b4c5d6e7f8`). Versions without a snapshot still use the legacy stack. New estimates are not auto-converted to true GM. Labour-snapshot Direct Labour Cost is **not** included in the estimate basis by default.
 - **AI Take-off / Quantity Extraction Foundation (M012 / FG-010)** — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT.** `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem`; provider-neutral mock extractor only; COUNT without scale; PlanAuditEvent extensions; office UI `/projects/<id>/plans/takeoff`. Additive migration `b4c5d6e7f8a9` applied live (`a3b4c5d6e7f8` → `b4c5d6e7f8a9`). Real external AI provider **not authorized**. Phase D estimate mapping **not started**.
 - **Project Hub UX (FG-011)** — **IMPLEMENTED / VERIFIED**. `/projects/<id>` is the office-estimator Project Hub: PLAN / PRICE / CONTRACT stored facts and links; BUILD = existing Change Orders; field BUILD / MONITOR / LEARN labeled Future. Read-only `app/services/project_hub.py`. No schema, migration, new module, or ADR. Dedicated tests **13 passed**.
-- **Estimate-output consistency (FG-012)** — **IMPLEMENTED / VERIFIED**. Internal Detailed Cost Breakdown at `/estimates/<id>/versions/<version_id>/internal-breakdown`. Named-method Proposal totals copy frozen `EstimatePricingSnapshot` (`TRUE_GROSS_MARGIN` / `COST_PLUS_MARKUP`); no-snapshot versions retain `COST_PLUS_MARKUP_STACK`. Customer PDF omits Overhead/Profit rows. Estimate Totals show the governing method when a snapshot is authoritative. No schema, migration, new module, or ADR. Dedicated tests **19 passed**. Full suite **283 passed**. Bounded browser UAT on labeled FG-009 residue + `PROP-FG012-UAT-GM`.
+- **Estimate-output consistency (FG-012)** — **IMPLEMENTED / VERIFIED**. Internal Detailed Cost Breakdown at `/estimates/<id>/versions/<version_id>/internal-breakdown`. Named-method Proposal totals copy frozen `EstimatePricingSnapshot` (`TRUE_GROSS_MARGIN` / `COST_PLUS_MARKUP`); no-snapshot versions retain `COST_PLUS_MARKUP_STACK`. Customer PDF omits Overhead/Profit rows. Estimate Totals show the governing method when a snapshot is authoritative. No schema, migration, new module, or ADR. Dedicated tests **19 passed**. Full suite **283 passed** at FG-012 close; **310 passed** after FG-013.
+- **Historical upload onboarding (FG-013)** — **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED**. **LIVE MIGRATION PENDING.** Office **UPLOAD PREVIOUS ESTIMATES** at `/historical-estimates/` (multi-file / folder where supported). Per-file `HistoricalUploadAttempt`. App-managed storage `instance/historical_uploads/<org>/<sha256>.<ext>`. Unknown layouts quarantined. Additive revision `c5d6e7f8a9b0`. Dedicated tests **27 passed**. No durable `UploadBatch`. Legacy Desktop corpus untouched. Live `flask db current` still `b4c5d6e7f8a9`.
 
 ## Architecture / readiness only (not implemented)
 
@@ -38,20 +39,20 @@
 - CalibAi V1 / BUILD / field / four-output **outputs 3–4** / QuickBooks API / Ontario contract
 - Crew Template catalog, payroll burden, `LabourActualObservation` persistence
 - MONITOR implementation (ADR-021 **Accepted**; not coded)
-- Historical-upload onboarding UX ([FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**; [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**)
+- Historical-upload onboarding UX ([FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **IMPLEMENTED / VERIFIED**; **LIVE MIGRATION PENDING**; [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**)
 - Industry benchmarking
 
 ## Migrations
 
-- Alembic **graph** head: `b4c5d6e7f8a9` (FG-010)
-- Live development/UAT `flask db current`: `b4c5d6e7f8a9` (one head)
+- Alembic **graph** head: `c5d6e7f8a9b0` (FG-013)
+- Live development/UAT `flask db current`: `b4c5d6e7f8a9` (**LIVE MIGRATION PENDING**)
 
 ## Current milestone status
 
 M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **implemented, verified, committed, and pushed** on `main`.
 
-- **Current coded work:** none. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. ADR-032 **Accepted**. ADR-021 **Accepted** (docs only). FG-012 estimate-output consistency remains **CLOSED / OPERATIONAL FOR UAT.** FG-011 Project Hub UX remains **CLOSED / OPERATIONAL FOR UAT.**
-- **Blocked / Not Started (product):** Phase D estimate mapping; four-output package outputs 3–4; QuickBooks; contracts; BUILD field capture; MONITOR implementation; LEARN; FG-013 historical-upload **implementation**; industry benchmarking; historical evidence repair; real external AI provider; office authentication.
+- **Current coded work:** [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **IMPLEMENTED / VERIFIED**; **LIVE MIGRATION PENDING**. ADR-032 **Accepted**. ADR-021 **Accepted** (docs only). FG-012 remains **CLOSED / OPERATIONAL FOR UAT.**
+- **Blocked / Not Started (product):** FG-013 **live migrate + UAT smoke**; Phase D estimate mapping; four-output package outputs 3–4; QuickBooks; contracts; BUILD field capture; MONITOR implementation; LEARN; industry benchmarking; historical evidence repair; real external AI provider; office authentication.
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -65,7 +66,7 @@ M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **
 
 ## Recommended next steps
 
-1. **STOP DEVELOPMENT.** [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. Do **not** implement uploads until a separate FG-013 **implementation** prompt. Do not create the authorized migration in a docs-only session. Do not implement MONITOR. Do not start Phase D.
+1. **STOP before live migrate.** [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED**. Do **not** run `flask db upgrade` on the development/UAT DB until a separate live-migrate prompt. Do not implement MONITOR. Do not start Phase D.
 2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% ORG-001 policy text; optional layers remain `UNSPECIFIED`).
 3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under Estimate-output consistency, Project Hub, AI take-off, or Pricing Engine.
 4. Do not enable a real external AI provider. Do not start Phase D estimate mapping. Do not start auth, BUILD/MONITOR/LEARN implementation, QuickBooks, or contract/warranty work. Accepting ADR-021 does **not** authorize a MONITOR Feature Gate.

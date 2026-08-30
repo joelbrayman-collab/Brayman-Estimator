@@ -29,7 +29,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next candidate milestone:** **NONE in code until an FG-013 implementation prompt.** [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) is **Accepted**. [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) is **Accepted** (MONITOR **not implemented**). [FG-012](feature-gates/FG-012-estimate-output-consistency.md) is **CLOSED / OPERATIONAL FOR UAT**. FG-010 Phase D (reviewed quantity → estimate mapping) is **NOT STARTED**. Real external AI provider **not authorized**. FG-008 / FG-009 / FG-010 / FG-011 / FG-012 remain **CLOSED / OPERATIONAL FOR UAT**.
+**Next candidate milestone:** **FG-013 live-migrate + UAT smoke** when separately authorized. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED · LIVE MIGRATION PENDING**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) is **Accepted**. Graph head `c5d6e7f8a9b0`; live current `b4c5d6e7f8a9`. [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) is **Accepted** (MONITOR **not implemented**). [FG-012](feature-gates/FG-012-estimate-output-consistency.md) is **CLOSED / OPERATIONAL FOR UAT**. FG-010 Phase D is **NOT STARTED**. Real external AI provider **not authorized**.
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -156,11 +156,11 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Next recommended milestones
 
-1. **STOP PRODUCT CODE until an FG-013 implementation prompt.** [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) is **Accepted**. Do not create the authorized migration in a docs-only session. Do not implement MONITOR. Do not begin a MONITOR Feature Gate. Do not start Phase D.
+1. **STOP before live migrate.** [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **IMPLEMENTED / VERIFIED**. Do not `flask db upgrade` until a separate live-migrate prompt. Do not implement MONITOR. Do not start Phase D.
 2. Phase D reviewed quantity → estimate mapping remains **NOT STARTED / NOT AUTHORIZED**.
 3. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
 4. Subsequent CalibAi sequence: auth, BUILD, field web, MONITOR implementation, LEARN — each separately gated. ADR-021 does not move MONITOR ahead of auth/BUILD.
-5. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate. Real external AI provider remains **not authorized**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) office historical-upload UX is **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED** (multi-file / folder UX locked; no durable UploadBatch; additive schema/migration only when the implementation prompt authorizes it). Industry benchmarking remains future, separately gated.
+5. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate. Real external AI provider remains **not authorized**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) office historical-upload UX is **IMPLEMENTED / VERIFIED · LIVE MIGRATION PENDING** (revision `c5d6e7f8a9b0`; no durable UploadBatch). Industry benchmarking remains future, separately gated.
 
 ---
 
@@ -191,7 +191,7 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Decisions Required (Joel)
 
-1. Issue a **separate** bounded FG-013 **implementation** prompt if office historical upload should be coded next. That prompt must explicitly authorize the one additive Alembic revision. Do not implement from the FG-013 governance commit.
+1. Issue a **separate** FG-013 **live-migrate + UAT smoke** prompt (`flask db upgrade` `b4c5d6e7f8a9` → `c5d6e7f8a9b0`). Do not upgrade from the implementation commit.
 2. ADR-010 remains **Proposed** (OCR/CAD/provider). Real external AI provider remains **not authorized**.
 3. Confirm POC element remains `INTERIOR_DOOR_OPENING` count.
 4. Auth model; production hosting/secrets (unchanged platform debt).

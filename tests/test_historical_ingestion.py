@@ -337,7 +337,7 @@ def test_ui_historical_routes(client, source_dir):
     # List page
     res_list = client.get("/historical-estimates/")
     assert res_list.status_code == 200
-    assert b"Historical Source Workbooks & Estimates" in res_list.data
+    assert b"UPLOAD PREVIOUS ESTIMATES" in res_list.data
     assert b"Alberton Garage" in res_list.data
 
     # Detail page

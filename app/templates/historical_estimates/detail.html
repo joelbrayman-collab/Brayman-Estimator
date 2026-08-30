@@ -33,7 +33,7 @@
                         {{ estimate.template_family }}
                     </span>
                     <span style="font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: #fef3c7; color: #b45309;">
-                        {{ estimate.review_status }}
+                        {{ review_status_labels.get(estimate.review_status, estimate.review_status) if review_status_labels else estimate.review_status }}
                     </span>
                 </div>
                 <h1 style="margin: 0; font-size: 1.6rem; font-weight: 700; color: #111827;">{{ estimate.project_name or estimate.client_name }}</h1>
@@ -122,7 +122,7 @@
                     <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 4px;">Review Status</label>
                     <select name="review_status" style="width: 100%; padding: 6px 10px; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.9rem;">
                         {% for st in review_statuses %}
-                        <option value="{{ st }}" {% if estimate.review_status == st %}selected{% endif %}>{{ st }}</option>
+                        <option value="{{ st }}" {% if estimate.review_status == st %}selected{% endif %}>{{ review_status_labels.get(st, st) if review_status_labels else st }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -131,7 +131,7 @@
                     <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 4px;">Evidence Tier</label>
                     <select name="evidence_tier" style="width: 100%; padding: 6px 10px; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.9rem;">
                         {% for tier in evidence_tiers %}
-                        <option value="{{ tier }}" {% if estimate.evidence_tier == tier %}selected{% endif %}>{{ tier }}</option>
+                        <option value="{{ tier }}" {% if estimate.evidence_tier == tier %}selected{% endif %}>{{ tier }} — {{ evidence_tier_labels.get(tier, '') if evidence_tier_labels else '' }}</option>
                         {% endfor %}
                     </select>
                 </div>

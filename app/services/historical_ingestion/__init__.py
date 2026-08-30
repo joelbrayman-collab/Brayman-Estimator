@@ -15,6 +15,10 @@ from app.services.historical_ingestion.template_classifier import (
     FAMILY_E,
     classify_template_family,
 )
+from app.services.historical_ingestion.upload import (
+    process_one_workbook,
+    process_upload_files,
+)
 
 __all__ = [
     "FAMILY_A",
@@ -25,5 +29,7 @@ __all__ = [
     "WorkbookData",
     "classify_template_family",
     "ingest_workbook_file",
+    "process_one_workbook",
+    "process_upload_files",
     "read_openxml_workbook",
 ]

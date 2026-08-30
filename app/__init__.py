@@ -13,6 +13,11 @@ def create_app(config=None):
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///brayman_estimator.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["PLAN_UPLOAD_MAX_BYTES"] = 25 * 1024 * 1024
+    app.config["HISTORICAL_UPLOAD_MAX_BYTES"] = 25 * 1024 * 1024
+    app.config["HISTORICAL_UPLOAD_ZIP_MAX_UNCOMPRESSED"] = 80 * 1024 * 1024
+    app.config["HISTORICAL_UPLOAD_ZIP_MAX_MEMBER"] = 40 * 1024 * 1024
+    app.config["HISTORICAL_UPLOAD_ZIP_MAX_FILES"] = 200
+    app.config["HISTORICAL_UPLOAD_ACTOR"] = "Joel Brayman"
 
     if config:
         app.config.update(config)

@@ -35,6 +35,16 @@ Selling Price = Direct Cost / 0.85
 
 This document records **ORG-001** (Brayman Construction) policy. It is not the universal CalibAi pricing model.
 
+### Project Gross Margin (MONITOR — governed, not implemented)
+
+The initial authoritative CalibAi **project** profitability metric is **PROJECT GROSS MARGIN** ([ADR-021](adr/ADR-021-monitor-commercial-baseline.md) **Accepted**). **NET PROFIT** is not the official project metric until overhead / burden / G&A allocation is separately governed.
+
+Tax remains **outside** gross-margin arithmetic. MONITOR (not implemented) must compare **pre-tax** estimated Direct Cost and pre-tax selling price / authorized revenue. Do not use tax-collected amounts as revenue or margin.
+
+This is distinct from the live-estimate method above: estimate selling price uses the named pricing method on Direct Cost. Project Gross Margin later compares a **frozen composed baseline** (locked `EstimateVersion` + `EstimatePricingSnapshot` when present + Accepted Proposal + approved Change Order deltas) to verified actual Direct Cost. Draft estimates and Draft Proposal restacks are not the committed baseline.
+
+QuickBooks is not required for Project Gross Margin. Industry benchmarks are not inputs to it.
+
 ### Tax (HST)
 
 HST is **separate** from the pre-tax selling price. Apply HST after pre-tax selling price according to the applicable tax treatment for the output (internal vs customer-facing vs QuickBooks).
@@ -75,4 +85,5 @@ All governed project outputs derive from one [authoritative project/estimate rec
 - [feature-gates/FG-009-organization-calibrated-pricing-engine.md](feature-gates/FG-009-organization-calibrated-pricing-engine.md)
 - [modules/estimating.md](modules/estimating.md)
 - [modules/pricing-engine.md](modules/pricing-engine.md)
+- [adr/ADR-021-monitor-commercial-baseline.md](adr/ADR-021-monitor-commercial-baseline.md)
 - [testing/uat-reference-cases.md](testing/uat-reference-cases.md)

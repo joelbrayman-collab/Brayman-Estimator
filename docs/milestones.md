@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — ADR-021 MONITOR Commercial Baseline / Project Gross Margin
+
+| Field | Content |
+|-------|---------|
+| ID | ADR-021 (not a numbered M0xx; not a Feature Gate) |
+| Status | **Accepted** (governance only) |
+| Date | 2026-08-30 |
+| Objective | Lock MONITOR estimated baseline and Project Gross Margin semantics before any MONITOR / profitability code. |
+| Deliverables | ADR-021 Accepted: composed frozen baseline; Project Gross Margin (not net profit); floating-draft prohibition; MONITOR comparison/read ownership; actuals/BUILD/LEARN/benchmarking not implemented. Docs only. |
+| Validation | Docs-only; `git diff --check`. No product tests required. Alembic current/head `b4c5d6e7f8a9`. |
+| Next | **STOP DEVELOPMENT.** Do not implement MONITOR. Do not create a MONITOR Feature Gate. Phase D **NOT STARTED / NOT AUTHORIZED**. |
+
 ### 2026-08-30 — FG-012 Internal Detailed Cost Breakdown + Customer Estimate Consistency
 
 | Field | Content |

@@ -29,7 +29,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next candidate milestone:** **NONE authorized.** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) is **CLOSED / OPERATIONAL FOR UAT**. FG-010 Phase D (reviewed quantity → estimate mapping) is **NOT STARTED**. Real external AI provider **not authorized**. FG-008 / FG-009 / FG-010 / FG-011 / FG-012 remain **CLOSED / OPERATIONAL FOR UAT**.
+**Next candidate milestone:** **NONE authorized.** [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) is **Accepted** (MONITOR **not implemented**). [FG-012](feature-gates/FG-012-estimate-output-consistency.md) is **CLOSED / OPERATIONAL FOR UAT**. FG-010 Phase D (reviewed quantity → estimate mapping) is **NOT STARTED**. Real external AI provider **not authorized**. FG-008 / FG-009 / FG-010 / FG-011 / FG-012 remain **CLOSED / OPERATIONAL FOR UAT**.
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -80,7 +80,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-- **`main` / `origin/main`** — FG-012 implementation (verify `git log -1`). Alembic current/head `b4c5d6e7f8a9`. FG-008 / FG-009 / FG-010 / FG-011 / FG-012 **CLOSED / OPERATIONAL FOR UAT**.
+- **`main` / `origin/main`** — ADR-021 governance (verify `git log -1`). Alembic current/head `b4c5d6e7f8a9`. FG-008 / FG-009 / FG-010 / FG-011 / FG-012 **CLOSED / OPERATIONAL FOR UAT**. ADR-021 **Accepted** (MONITOR not implemented).
 - **Review Turnover Protocol** adopted (2026-08-28) — `Review Turnover` governing.
 - **M010 Scale Calibration & Measurement Tools** implemented and verified (2026-08-28).
 - **M011 Organization Foundation & Project Commercial Context** implemented and verified (2026-08-28).
@@ -108,7 +108,7 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 10. Authentication / actor identity + shared API foundation
 11. BUILD Field Capture V1
 12. Field Web / Today + Capture + plan access
-13. MONITOR basic estimated-vs-actual
+13. MONITOR basic estimated-vs-actual ([ADR-021](adr/ADR-021-monitor-commercial-baseline.md) **Accepted**; composed frozen baseline; Project Gross Margin; **not implemented**; Feature Gate **not authorized** by ADR-021)
 14. LEARN historical intelligence / review-gated learning (ADR-024)
 15. Contract/warranty when Legal Content Gate is satisfied
 16. QuickBooks when separately Feature-Gated
@@ -156,11 +156,11 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Next recommended milestones
 
-1. **STOP DEVELOPMENT.** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) is **CLOSED / OPERATIONAL FOR UAT**. Do not begin another Feature Gate. Do not start Phase D.
+1. **STOP DEVELOPMENT.** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) is **CLOSED / OPERATIONAL FOR UAT**. [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) is **Accepted**. Do not implement MONITOR. Do not begin a MONITOR Feature Gate. Do not start Phase D.
 2. Phase D reviewed quantity → estimate mapping remains **NOT STARTED / NOT AUTHORIZED**.
-3. Joel accepts/amends ADR-021 when that decision is ready. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
-4. Subsequent CalibAi sequence: auth, each separately gated.
-5. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate. Real external AI provider remains **not authorized**.
+3. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
+4. Subsequent CalibAi sequence: auth, BUILD, field web, MONITOR implementation, LEARN — each separately gated. ADR-021 does not move MONITOR ahead of auth/BUILD.
+5. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate. Real external AI provider remains **not authorized**. Historical-upload onboarding and industry benchmarking remain future, separately gated; not authorized here.
 
 ---
 

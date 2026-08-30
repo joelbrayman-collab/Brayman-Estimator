@@ -65,7 +65,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 ## Open decisions
 
 - When estimate header status vs version status diverge—canonical source of truth for “accepted bid”
-- MONITOR estimated baseline selection ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Proposed**)
+- MONITOR implementation remains **not started**. Estimated baseline for later MONITOR is the locked `EstimateVersion` plus `EstimatePricingSnapshot` when present ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**). Draft versions must not be the committed baseline.
 - How (or whether) to migrate estimate markup/overhead/profit to the governing gross-margin formula ([ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** — dual named methods; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; existing versions without snapshots remain `COST_PLUS_MARKUP_STACK` and are not backfilled)
 
 ## Relevant tests
@@ -79,6 +79,6 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 - [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted**
 - [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted**
-- [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Proposed**
+- [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR not implemented)
 - [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** (LEARN must not mutate cost library / approved estimates)
 - [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** — Estimating owns internal breakdown; Proposal remains the customer-facing estimate

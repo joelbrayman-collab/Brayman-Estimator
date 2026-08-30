@@ -99,7 +99,7 @@ Reconstruct and classify every lifecycle domain:
 - **PRICE**: (Estimating builder + Labour Engine FG-008 + Pricing Engine FG-009 **OPERATIONAL FOR UAT**; ADR-025/030 **Accepted**)
 - **CONTRACT**: (Proposals current; Ontario Construction Contract & Warranty templates Future/Governed)
 - **BUILD**: (Project Controls change orders partial; Field capture / mobile Future)
-- **MONITOR**: (Actual-cost feedback; ADR-021 Proposed)
+- **MONITOR**: (Comparison / read layer; [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**; implementation Future / not started)
 - **LEARN**: (Recommendation boundary ADR-024 Accepted; ML/recommendation implementation Future)
 
 Classify each domain status strictly from repository evidence:
@@ -167,7 +167,7 @@ Before declaring a turnover complete, the agent must explicitly ask and answer:
 ### A. Protected State Review
 The turnover package must explicitly enumerate all protected assets and invariants:
 - **Constitutional Articles 1–12**
-- **Accepted ADRs** (ADR-002, ADR-017, ADR-018, ADR-019, ADR-020, ADR-022, ADR-023, ADR-024)
+- **Accepted ADRs** (ADR-002, ADR-017, ADR-018, ADR-019, ADR-020, ADR-021, ADR-022, ADR-023, ADR-024)
 - **Source Immutability**: `PlanDocument` binary bytes, SHA-256 hashes, and `PlanPage` raw extractions are immutable.
 - **Human Authority**: AI suggestions never silently set authoritative SoR fields.
 - **Accepted Proposal Immutability**: Accepted commercial proposals are sealed.
@@ -177,7 +177,7 @@ The turnover package must explicitly enumerate all protected assets and invarian
 
 ### B. Open Decisions & Deferred Items
 Clearly distinguish:
-- **OPEN DECISION**: Unresolved choices awaiting Joel approval (e.g. ADR-021 MONITOR baseline, real external AI provider / ADR-010).
+- **OPEN DECISION**: Unresolved choices awaiting Joel approval (e.g. real external AI provider / ADR-010).
 - **APPROVED DECISION**: Formally authorized by Joel.
 - **DEFERRED ITEM**: Intentionally postponed to a later milestone (e.g. Phase D estimate mapping, Project Hub UX, QuickBooks API, field/mobile apps).
 

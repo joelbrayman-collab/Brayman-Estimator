@@ -72,6 +72,7 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 - Exact void / supersede / revision workflow (out of Milestone 003)
 - Acceptance preconditions (Issued vs Ready vs any)
 - Whether `accepted_at` column is required
+- MONITOR implementation remains **not started**. The Accepted Proposal is the immutable customer-commitment layer of the composed MONITOR baseline ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**). Draft Proposal restacks must not be used as the committed baseline.
 
 ## Relevant tests
 
@@ -88,3 +89,4 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 - [ADR-002 Accepted Proposal Immutability](../adr/ADR-002-accepted-proposal-immutability.md) — **Accepted / implemented (Milestone 003)**
 - [ADR-003 Optional CRM Foreign Keys](../adr/ADR-003-optional-crm-foreign-keys.md) — Accepted as defer
 - [ADR-004 Proposal Acceptance Workflow](../adr/ADR-004-proposal-acceptance-workflow.md) — Accepted direction; workflow not built in M003
+- [ADR-021 MONITOR Commercial Baseline](../adr/ADR-021-monitor-commercial-baseline.md) — **Accepted** (Accepted Proposal is the customer-commitment pin; MONITOR not implemented)

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current** — FG-008 Phase B foundation **CLOSED / OPERATIONAL FOR UAT** (revision `f2c3d4e5f6a7` in chain; live head `b4c5d6e7f8a9`) |
-| Updated | 2026-08-29 |
+| Updated | 2026-08-30 |
 | Feature Gate | [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **CLOSED / OPERATIONAL FOR UAT** |
 | Architecture | [../architecture/labour-engine-phase-b-architecture.md](../architecture/labour-engine-phase-b-architecture.md) |
 | ADR | [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** |
@@ -42,7 +42,7 @@ CalibAi owns the engine. Each organization owns its labour intelligence. ORG-001
 - Owning historical source workbooks or rewriting `HistoricalLabourItem` facts
 - Owning cost library masters (`cost_items`) or proposal snapshots
 - Changing [pricing-policy.md](../pricing-policy.md) or implementing ADR-025 selling-price migration
-- Field time capture (BUILD) or MONITOR actuals persistence (until those gates)
+- Field time capture (BUILD). MONITOR compares estimated vs actual and does not own actuals ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**; `LabourActualObservation` remains unimplemented)
 - Cross-organization labour pooling
 
 ## Current implementation

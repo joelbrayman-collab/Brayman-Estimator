@@ -23,7 +23,7 @@ The Brayman Estimator must maintain **one authoritative project/estimate record*
 
 **Current implementation note:** Estimate versions, proposal snapshots, and PDF output exist today. [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) (**CLOSED / OPERATIONAL FOR UAT**) governs consistency of outputs **1 and 2** from the existing `Estimate` / `EstimateVersion` / lines / `EstimatePricingSnapshot` (when present). Internal breakdown: `GET /estimates/<id>/versions/<version_id>/internal-breakdown`. The existing **Proposal** preview/PDF **is** the customer-facing estimate. Ontario contract generation, warranty attachment, and QuickBooks export remain **Future / not implemented**. Do not build a four-output renderer under a later gate without authorization.
 
-**Source-contract principle:** every governed output must identify and derive from the authoritative `EstimateVersion` and, when present, its `EstimatePricingSnapshot`. Historical customer documents must not silently float with later estimate edits.
+**Source-contract principle:** every governed output must identify and derive from the authoritative `EstimateVersion` and, when present, its `EstimatePricingSnapshot`. Historical customer documents must not silently float with later estimate edits. Later MONITOR / Project Gross Margin uses that same frozen pin plus the Accepted Proposal and approved Change Order deltas ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**); MONITOR is **not implemented**.
 
 ## Core document package (four outputs)
 

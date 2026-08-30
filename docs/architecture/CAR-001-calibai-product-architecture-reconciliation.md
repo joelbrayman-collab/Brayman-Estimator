@@ -25,7 +25,7 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-08-29 — not authorized by CAR-001):** [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) / M012 was implemented, committed, and pushed (`9665295`). Real external AI provider **not authorized**. PLAN remained partial; PRICE remained FG-008/FG-009 operational for UAT.
 
-**Subsequent status (2026-08-30 — not authorized by CAR-001):** FG-010 / M012 is **LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (`b4c5d6e7f8a9`). **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT.** Real external AI provider **not authorized**. Phase D **not started**.
+**Subsequent status (2026-08-30 — not authorized by CAR-001):** FG-010 / M012 is **LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (`b4c5d6e7f8a9`). **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT.** Real external AI provider **not authorized**. Phase D **not started**. [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR composed baseline and Project Gross Margin; MONITOR **not implemented**).
 
 ## What CAR-001 was
 
@@ -58,7 +58,7 @@ CalibAi provides complementary **office** and **field** experiences over the sam
 | `Project` remains the lifecycle hub; no parallel CalibAi Job entity | [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** |
 | Preserve and extend the existing Flask platform (CRM, Projects, Estimating, Proposals, COs, Plan/Document/Sheet Intelligence architecture) | ADR-019 |
 | BUILD is a new owning module; Change Orders stay with Project Controls | [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** |
-| MONITOR compares estimated ↔ actual ↔ forecast; exact baseline still open | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Proposed** |
+| MONITOR compares estimated ↔ actual ↔ forecast; frozen composed baseline; Project Gross Margin | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (2026-08-30; MONITOR **not implemented**) |
 | LEARN is review-gated and must not mutate pricing policy / cost library / approved estimates / historical actuals | [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** |
 | Field is first-class; Flask services → API → field web → native later if warranted | [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** |
 | Original field evidence separate from derived structured records | [ADR-023](../adr/ADR-023-field-evidence-provenance.md) **Accepted** |
@@ -103,4 +103,5 @@ Each coded slice still requires its own Feature Gate and approved Cursor prompt.
 - [platform-roadmap.md](../platform-roadmap.md)
 - [architecture.md](../architecture.md)
 - [modules/build.md](../modules/build.md)
+- [modules/monitor.md](../modules/monitor.md)
 - [continuity-and-anti-drift.md](../governance/continuity-and-anti-drift.md)

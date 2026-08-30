@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-012 CLOSED / OPERATIONAL FOR UAT**. FG-011 / FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. M012 operational for UAT. |
+| Status | **FG-012 CLOSED / OPERATIONAL FOR UAT**. ADR-021 **Accepted** (MONITOR not implemented). FG-011 / FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. M012 operational for UAT. |
 | Updated | 2026-08-30 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -23,8 +23,8 @@ Authority order for the next session: repository governance → current-state re
 ## 2. VERIFIED BASELINE
 
 - Branch: `main`
-- Starting HEAD / `origin/main` for this implementation pass: `17c2951cf586e15321756349ccd05d9133b719f3` (`docs: approve FG-012 estimate-output consistency`)
-- This FG-012 implementation commit is current after push — verify with `git log -1`
+- Starting HEAD / `origin/main` for this governance pass: `0b403d6aa51381d3763cf3dc9d5d96e096d5ab93` (`feat: implement FG-012 estimate-output consistency`)
+- This ADR-021 documentation commit is current after push — verify with `git log -1`
 - Alembic graph head and live `flask db current`: **`b4c5d6e7f8a9`** (one head)
 - Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010)
 - Tests (2026-08-30 FG-012): dedicated estimate-output consistency **19**; Project Hub **13**; take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**; full suite **283 passed**.
@@ -66,7 +66,7 @@ No additional 29 Aug CalibAi commits exist on `main`. FG-010 live-migrate docs a
 
 Read first: `AGENTS.md`; [platform-constitution.md](platform-constitution.md); [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md); [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md); [platform-governance.md](platform-governance.md); this file; [current-state.md](current-state.md); [project-state-report.md](project-state-report.md); [platform-roadmap.md](platform-roadmap.md); [feature-gates/README.md](feature-gates/README.md); [adr/README.md](adr/README.md).
 
-FG-008 / FG-009 / FG-010 / FG-011 / FG-012 files: **CLOSED / OPERATIONAL FOR UAT**. ADR-010 **Proposed**. Do not bulk-accept Proposed ADRs.
+FG-008 / FG-009 / FG-010 / FG-011 / FG-012 files: **CLOSED / OPERATIONAL FOR UAT**. ADR-010 **Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Do not bulk-accept remaining Proposed ADRs.
 
 ## 4. APPROVED PRODUCT VISION
 
@@ -80,7 +80,7 @@ PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project`. No
 - **PRICE:** partial — builder + commercial gate; Labour Engine Phase B **CLOSED / OPERATIONAL FOR UAT**; Pricing Engine **CLOSED / OPERATIONAL FOR UAT**; FG-012 internal breakdown + Proposal consistency **CLOSED / OPERATIONAL FOR UAT**
 - **CONTRACT:** partial (proposals are the customer-facing estimate; FG-012 reconciles snapshot totals; Ontario templates future)
 - **BUILD:** partial (change orders; field capture future)
-- **MONITOR:** future (ADR-021 Proposed)
+- **MONITOR:** future implementation (ADR-021 **Accepted**; composed frozen baseline; Project Gross Margin; not coded)
 - **LEARN:** future (ADR-024 boundary accepted; no ML)
 
 ## 6. COMPLETED CODED MILESTONES
@@ -89,11 +89,11 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**No coded milestone in progress.** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-011](feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**. M012 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**.
+**No coded milestone in progress.** [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (docs only). [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-011](feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**. M012 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**.
 
 ## 8. LAST AUTHORIZED DELTA
 
-FG-012 Estimate-Output Consistency **implemented**. Internal breakdown; named-method Proposal totals; customer PDF without Overhead/Profit rows; Estimate Totals method presentation. No schema. No migration. No ADR.
+ADR-021 MONITOR composed commercial baseline and Project Gross Margin **Accepted**. Documentation / governance only. MONITOR, BUILD actuals, profitability UI, industry benchmarking, and historical-upload onboarding remain **not implemented**. No schema. No migration. No Feature Gate.
 
 ## 9. IMPLEMENTATION STATUS
 
@@ -124,11 +124,11 @@ FG-012 Estimate-Output Consistency **implemented**. Internal breakdown; named-me
 
 ## 12. ACCEPTED ADRs
 
-002, 005, 006, 007, 009, 011, 017, 018, 019, 020, 022, 023, 024, 025, 026, 027, 028, 029, 030, 031.
+002, 005, 006, 007, 009, 011, 017, 018, 019, 020, **021**, 022, 023, 024, 025, 026, 027, 028, 029, 030, 031.
 
 ## 13. PROPOSED / OPEN ADRs
 
-001, 003, 004, 008, **010**, 012–016, 021. **ADR-010 remains Proposed** (OCR, CAD, real external AI provider). Do not bulk-accept.
+001, 003, 004, 008, **010**, 012–016. **ADR-010 remains Proposed** (OCR, CAD, real external AI provider). Do not bulk-accept.
 
 ## 14. FEATURE GATES
 
@@ -141,7 +141,7 @@ FG-012 Estimate-Output Consistency **implemented**. Internal breakdown; named-me
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
-29 Aug conversational decisions for FG-008 / FG-009 / FG-010 architecture, implementation, live migrate, UAT, and integrity stabilization are in Git (pins above) and governed docs. This turnover memorializes: 22-point handoff, live DB snapshot, residue classification, stale current-state Alembic/test/next-action contradictions, next candidate **not authorized**, anti-drift authority order.
+29 Aug conversational decisions for FG-008 / FG-009 / FG-010 architecture, implementation, live migrate, UAT, and integrity stabilization are in Git (pins above) and governed docs. 30 Aug FG-012 is closed. This turnover memorializes ADR-021 **Accepted**: Project Gross Margin; composed frozen baseline; MONITOR not implemented; no Feature Gate.
 
 **Completeness test:** Is any material approved fact only in this chat? **NO — verified through Turnover Delta Ledger reconciliation** after this docs commit.
 
@@ -155,8 +155,8 @@ FG-012 Estimate-Output Consistency **implemented**. Internal breakdown; named-me
 - ARCH-only take-off eligibility
 - Cancelled extraction-run status modeled; no cancel operation
 - ORG-001 optional overhead/profit treatments `UNSPECIFIED`; contingency visibility `UNSPECIFIED`; `contingency_source` / `contingency_pricing_treatment` unset (NULL) — distinct from org-approved `NOT_APPLIED`
-- Labour-snapshot Direct Labour Cost not included in estimate basis by default
-- ADR-021 MONITOR baseline
+- Labour-snapshot Direct Labour Cost not included in estimate basis by default (ADR-021 records the GM comparability issue; does not correct it)
+- Next **product** gate not authorized (historical-upload onboarding vs authentication/BUILD remains Joel’s choice; MONITOR Feature Gate not authorized by ADR-021)
 
 ## 17. KNOWN RISKS / UNRESOLVED PRODUCT ITEMS
 
@@ -174,17 +174,17 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 18. DEFERRED ITEMS
 
-Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN implementation; auth.
+Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; historical-upload onboarding; industry benchmarking; auth.
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN, QuickBooks, or contract/warranty work. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, schema, or Alembic revision. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not delete synthetic UAT or append-only audit history.
+Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN **implementation**, QuickBooks, or contract/warranty work. Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, schema, or Alembic revision. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not delete synthetic UAT or append-only audit history.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**STOP DEVELOPMENT.** FG-012 is **CLOSED / OPERATIONAL FOR UAT**. Do not begin another Feature Gate. Do not start Phase D.
+**STOP DEVELOPMENT.** [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) is **Accepted**. MONITOR remains **not implemented**. Do not begin a MONITOR Feature Gate. Do not start Phase D.
 
-**Separate candidate (not this gate):** FG-010 Phase D reviewed quantity → estimate mapping. Status: **NOT STARTED / NOT AUTHORIZED**.
+**Separate candidates (not authorized):** office historical-upload onboarding; authentication / BUILD field capture; MONITOR implementation. Joel chooses the next product gate.
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -221,7 +221,7 @@ Paste into a new ChatGPT or Cursor conversation:
 BRAYMAN — RESUME FROM REVIEW TURNOVER
 CONTINUITY / REPOSITORY-FIRST INITIALIZATION
 
-You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following FG-012 Estimate-Output Consistency **implementation**.
+You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following ADR-021 MONITOR baseline / Project Gross Margin **acceptance** (documentation only).
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 ChatGPT memory is not corporate memory.
@@ -264,7 +264,8 @@ Expected: 283 passed
 4. RECONSTRUCT AUTHORITATIVE STATE FROM THE REPO
 Independently reconstruct:
 - FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT
-- FG-012 internal breakdown + named-method Proposal consistency (Estimating owner; existing Proposal is the customer-facing estimate; outputs 1–2 only; SCHEMA NO; no new ADR)
+- ADR-021 Accepted (composed frozen MONITOR baseline; Project Gross Margin; MONITOR not implemented; no Feature Gate)
+- FG-012 internal breakdown + named-method Proposal consistency (Estimating owner; existing Proposal is the customer-facing estimate; outputs 1–2 only; SCHEMA NO)
 - M012 AI take-off foundation OPERATIONAL FOR UAT
 - FG-011 Project Hub UX CLOSED / OPERATIONAL FOR UAT (evolve /projects/<id> only; no schema)
 - Protected ORG-001 labour $65 CAD/man-hour; pricing TRUE_GROSS_MARGIN 15% (Direct Cost / 0.85); Ontario HST 13%; optional OH/profit UNSPECIFIED
@@ -274,7 +275,8 @@ Independently reconstruct:
 
 Do NOT rely on AI memory. Do NOT guess missing product rules.
 Do NOT start Phase D. Do NOT enable external AI.
-Do NOT start auth, BUILD / MONITOR / LEARN, QuickBooks, or contract/warranty work.
+Do NOT start auth, BUILD / MONITOR / LEARN implementation, QuickBooks, or contract/warranty work.
+Do NOT treat ADR-021 as a MONITOR Feature Gate.
 Do NOT begin another Feature Gate.
 
 PRESERVE → SEARCH → VERIFY → EXECUTE.

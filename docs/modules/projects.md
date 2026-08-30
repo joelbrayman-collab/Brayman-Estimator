@@ -65,7 +65,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 ## Open decisions
 
 - Whether Project Controls becomes its own top-level module doc
-- Budget / MONITOR baseline source of truth after acceptance ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Proposed**)
+- MONITOR implementation remains **not started**. Baseline governance is [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (composed frozen baseline; Project Gross Margin). Actuals and MONITOR UI are not implemented.
 
 ## Relevant tests
 
@@ -77,4 +77,4 @@ Represent construction projects tied to clients; host estimating work; begin pro
 
 - [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted**
 - [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted**
-- [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Proposed**
+- [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR not implemented)

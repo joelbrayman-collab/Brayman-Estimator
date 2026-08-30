@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Proposed / Intended** — **not implemented** |
-| Updated | 2026-08-28 |
+| Updated | 2026-08-30 |
 | Code | None |
 | ADR | [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** (boundary only) |
 | CAR | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
@@ -21,7 +21,7 @@ Daily execution, crews, labour capture, subcontractor activity, material use, de
 - `projects` (lifecycle hub — [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md))
 - Change Orders (Project Controls) — **reference only**
 - Plan Intelligence documents/sheets — **reference only**
-- Estimating lines/tasks — **reference only**; actuals must not rewrite approved estimates ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md), [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md))
+- Estimating lines/tasks — **reference only**; actuals must not rewrite approved estimates ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**, [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md))
 
 ## Prohibited responsibilities
 
@@ -43,3 +43,4 @@ Daily execution, crews, labour capture, subcontractor activity, material use, de
 
 - [modules/projects.md](projects.md) (Change Orders)
 - [modules/plan-intelligence.md](plan-intelligence.md)
+- [modules/monitor.md](monitor.md) (comparison layer; does not own BUILD actuals)

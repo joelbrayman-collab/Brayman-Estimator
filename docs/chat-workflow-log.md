@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — ADR-021 MONITOR baseline / Project Gross Margin acceptance
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `0b403d6aa51381d3763cf3dc9d5d96e096d5ab93` (start) |
+| Objective | Accept ADR-021: MONITOR composed commercial baseline and Project Gross Margin. Governance / documentation only. |
+| Business decision | Authoritative project metric is PROJECT GROSS MARGIN, not net profit. Frozen composed baseline: locked EstimateVersion + EstimatePricingSnapshot when present + Accepted Proposal + approved CO deltas as separate layers. Draft estimates/proposals must not be the committed baseline. |
+| Architectural decision | MONITOR is a Project-centered comparison/read layer. Actuals owned by BUILD / later domains. Industry benchmarks not profitability truth. QuickBooks not mandatory. Phase D independent. No schema. No Feature Gate. MONITOR not implemented. |
+| Prompt template used | Bounded ADR-021 governance pass (documentation) |
+| Approved Cursor prompt summary | ADR-021 MONITOR BASELINE / PROJECT GROSS MARGIN GOVERNANCE PASS. Docs only. Do not implement MONITOR, BUILD actuals, profitability, benchmarking, or historical-upload onboarding. |
+| Files expected to change | ADR-021 and supporting governed docs |
+| Files prohibited from changing | `app/**`, `tests/**`, `migrations/**`, database, runtime configuration |
+| Implementation result | ADR-021 set to Accepted. Module note `docs/modules/monitor.md` (not implemented). Supporting docs reconciled. |
+| Tests | Docs-only; `git diff --check`. Product suite not re-run. Last recorded full suite **283 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (architecture record; no new M0xx) |
+| Constitutional issue raised | None |
+| Unresolved issues | CO estimated-cost delta not stored; no governed credits; labour-snapshot vs actual labour GM comparability; next product gate not authorized. ADR-010 Proposed. Phase D unauthorized. |
+| Next approved step | **STOP DEVELOPMENT.** Do not implement MONITOR. Do not create a Feature Gate. |
+| Next approved prompt | None. Joel chooses whether the next product gate is office historical-upload onboarding or authentication/BUILD. |
+| Commit hash | (this documentation commit) |
+
 ### 2026-08-30 — FG-012 Estimate-Output Consistency implementation
 
 | Field | Content |

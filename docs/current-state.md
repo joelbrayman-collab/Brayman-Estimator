@@ -11,11 +11,11 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | Last product commit is this FG-012 implementation (verify `git log -1` after push). Prior: FG-011 `2733e2f3b68b7320f08f093875e272532cd78885`. Implementation pins: FG-008 `0569f25e7ff496ab637d52437d48cf815522afa1`; FG-009 `8e11179fb5abb42a68805fe011e84c15e866ea04`; FG-010 `9665295ace673a46a8c645ed0598e5e91d41931c`. Live DB current/head `b4c5d6e7f8a9`. |
+| HEAD / `origin/main` | This ADR-021 governance commit (verify `git log -1` after push). Prior product: FG-012 `0b403d6aa51381d3763cf3dc9d5d96e096d5ab93`. Implementation pins: FG-008 `0569f25e7ff496ab637d52437d48cf815522afa1`; FG-009 `8e11179fb5abb42a68805fe011e84c15e866ea04`; FG-010 `9665295ace673a46a8c645ed0598e5e91d41931c`. Live DB current/head `b4c5d6e7f8a9`. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
-| Working tree at last verified inspect | **FG-012 CLOSED / OPERATIONAL FOR UAT.** FG-011 / FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. M012 **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT**. |
-| Governance | FG-004–FG-012 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. ADR-019 **Accepted**. Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
+| Working tree at last verified inspect | **ADR-021 Accepted** (MONITOR not implemented). **FG-012 CLOSED / OPERATIONAL FOR UAT.** FG-011 / FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. M012 **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT**. |
+| Governance | FG-004–FG-012 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. ADR-019 **Accepted**. **ADR-021 Accepted** (MONITOR baseline / Project Gross Margin; MONITOR not implemented). Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
 
 ## Implemented (evidenced in code)
 
@@ -37,6 +37,8 @@
 - Real external AI provider / OCR / CAD / multi-trade extraction / estimate mapping (Phase D later)
 - CalibAi V1 / BUILD / field / four-output **outputs 3–4** / QuickBooks API / Ontario contract
 - Crew Template catalog, payroll burden, `LabourActualObservation` persistence
+- MONITOR implementation (ADR-021 **Accepted**; not coded)
+- Historical-upload onboarding UX; industry benchmarking
 
 ## Migrations
 
@@ -47,8 +49,8 @@
 
 M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **implemented, verified, committed, and pushed** on `main`.
 
-- **Current coded work:** FG-012 estimate-output consistency — **CLOSED / OPERATIONAL FOR UAT.** FG-011 Project Hub UX remains **CLOSED / OPERATIONAL FOR UAT.**
-- **Blocked / Not Started (product):** Phase D estimate mapping; four-output package outputs 3–4; QuickBooks; contracts; BUILD field capture; MONITOR; LEARN; historical evidence repair; real external AI provider; office authentication.
+- **Current coded work:** none. ADR-021 **Accepted** (docs only). FG-012 estimate-output consistency remains **CLOSED / OPERATIONAL FOR UAT.** FG-011 Project Hub UX remains **CLOSED / OPERATIONAL FOR UAT.**
+- **Blocked / Not Started (product):** Phase D estimate mapping; four-output package outputs 3–4; QuickBooks; contracts; BUILD field capture; MONITOR implementation; LEARN; historical-upload onboarding; industry benchmarking; historical evidence repair; real external AI provider; office authentication.
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -62,16 +64,18 @@ M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **
 
 ## Recommended next steps
 
-1. **STOP DEVELOPMENT.** FG-012 is **CLOSED / OPERATIONAL FOR UAT**. Do not begin another Feature Gate. Do not start Phase D.
+1. **STOP DEVELOPMENT.** FG-012 is **CLOSED / OPERATIONAL FOR UAT**. [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) is **Accepted** (docs only). Do not implement MONITOR. Do not begin another Feature Gate. Do not start Phase D.
 2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% ORG-001 policy text; optional layers remain `UNSPECIFIED`).
 3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under Estimate-output consistency, Project Hub, AI take-off, or Pricing Engine.
-4. Do not enable a real external AI provider. Do not start Phase D estimate mapping. Do not start auth, BUILD/MONITOR/LEARN, QuickBooks, or contract/warranty work.
+4. Do not enable a real external AI provider. Do not start Phase D estimate mapping. Do not start auth, BUILD/MONITOR/LEARN implementation, QuickBooks, or contract/warranty work. Accepting ADR-021 does **not** authorize a MONITOR Feature Gate.
 5. Dashboard org-unscoped counts remain **out of scope**.
 6. Synthetic residue remains in the live development/UAT DB (FG-008 labour UAT artifacts; FG-009 `FG-009 UAT *`; FG-010 client/project/docs/runs/package; FG-012 labeled template `FG-012 UAT Template` and Draft proposal `PROP-FG012-UAT-GM`). Leave labeled; do not invent cleanup. Office proposal create/detail still lists Overhead/Profit amounts (zero when named method governs); customer preview/PDF do not.
 
 ## Related
 
 - [feature-gates/FG-012-estimate-output-consistency.md](feature-gates/FG-012-estimate-output-consistency.md)
+- [adr/ADR-021-monitor-commercial-baseline.md](adr/ADR-021-monitor-commercial-baseline.md)
+- [modules/monitor.md](modules/monitor.md)
 - [feature-gates/FG-011-project-hub-ux.md](feature-gates/FG-011-project-hub-ux.md)
 - [feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md)
 - [architecture/ai-takeoff-quantity-extraction-foundation.md](architecture/ai-takeoff-quantity-extraction-foundation.md)

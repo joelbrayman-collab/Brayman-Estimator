@@ -15,9 +15,10 @@
 | Labour Engine | [labour-engine.md](labour-engine.md) | FG-008 Phase B foundation (`app/models/labour_engine.py`, `/labour-engine/`) — **CLOSED / OPERATIONAL FOR UAT**; revision `f2c3d4e5f6a7` in chain; live head `b4c5d6e7f8a9` |
 | Pricing Engine | [pricing-engine.md](pricing-engine.md) | FG-009 foundation **CLOSED / OPERATIONAL FOR UAT**: `app/models/pricing_engine.py`, `/pricing-engine/`; revision `a3b4c5d6e7f8` in chain; live head `b4c5d6e7f8a9`. Versions without snapshots still use `estimate_builder.py` stack |
 | BUILD | [build.md](build.md) | **None** — Proposed (ADR-020); not implemented |
+| MONITOR | [monitor.md](monitor.md) | **None** — Proposed (ADR-021 **Accepted** baseline; not implemented) |
 | Supplier Catalogue | [supplier-catalogue.md](supplier-catalogue.md) | **None** — Future (only `CostItem.supplier` text today) |
 
-Project Controls (Change Orders) is documented under Projects for ownership clarity until a dedicated module doc is approved. BUILD references Change Orders; it does not own them ([ADR-020](../adr/ADR-020-build-module-boundary.md)).
+Project Controls (Change Orders) is documented under Projects for ownership clarity until a dedicated module doc is approved. BUILD references Change Orders; it does not own them ([ADR-020](../adr/ADR-020-build-module-boundary.md)). MONITOR is a comparison/read layer; it does not own estimates, proposals, Change Orders, or actuals ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**).
 
 CalibAi lifecycle: [../architecture/CAR-001-calibai-product-architecture-reconciliation.md](../architecture/CAR-001-calibai-product-architecture-reconciliation.md).
 Domain architecture: [../architecture/](../architecture/).

@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-011 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Projects** |
 | Date | 2026-08-30 |
-| Status | **APPROVED FOR IMPLEMENTATION** — **IMPLEMENTATION NOT STARTED** |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
 | Architecture | Evolve existing `/projects/<id>` project detail. [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** (`Project` remains the lifecycle hub). No new ADR for this scope. |
 | Related ADRs | [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** · [ADR-031](../adr/ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md) **Accepted** · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** |
 | Prerequisites | M005–M012 / FG-006–FG-010 as recorded. FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. |
@@ -20,13 +20,13 @@
 | Layer | State |
 |-------|--------|
 | Architecture (read-only assessment 2026-08-30) | **Accepted by Joel** as the basis for this gate |
-| Feature Gate (this document) | **APPROVED FOR IMPLEMENTATION** |
-| Implementation | **NOT STARTED** (no product code in this governance pass) |
-| Schema / Alembic | **NO** change authorized |
-| New ADR | **Not required** for this scope |
-| New module / Job entity | **Prohibited** |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT** |
+| Implementation | **IMPLEMENTED / VERIFIED** — `app/routes/projects.py`, `app/templates/projects/detail.html`, read-only `app/services/project_hub.py`, `tests/test_project_hub.py` |
+| Schema / Alembic | **NO** change |
+| New ADR | **None** |
+| New module / Job entity | **None** |
 
-This gate authorizes a **Projects UX / navigation layer** only. It does **not** authorize Phase D, external AI, authentication, BUILD field capture, MONITOR, LEARN, QuickBooks, contracts, or four-output product.
+This gate authorized a **Projects UX / navigation layer** only. It does **not** authorize Phase D, external AI, authentication, BUILD field capture, MONITOR, LEARN, QuickBooks, contracts, or four-output product. Those remain unauthorized.
 
 ---
 
@@ -170,10 +170,12 @@ Phase D; real external AI; authentication / User model; BUILD field capture; MON
 
 If implementation discovers a need for schema, a new owning module, a durable hub entity, project-health methodology, ownership transfer, or a new architectural invariant: **STOP**. Do not migrate. Return for ADR / governance review.
 
-**Next governed action after this document:** a **separate** bounded FG-011 **implementation** Cursor prompt. This governance pass does **not** implement product code.
+**Implementation (2026-08-30):** `/projects/<id>` is the Project Hub. PLAN / PRICE / CONTRACT read stored facts and link to owning modules. BUILD surfaces existing Change Orders; field BUILD / MONITOR / LEARN / QuickBooks / four-output / Ontario contract/warranty / real external AI are labeled Future. Dedicated tests **13 passed**. Full suite **264 passed**. No schema, migration, ADR, Phase D, or external AI.
 
 ---
 
-## Blocking conditions
+## Closure
 
-Architecture assessment accepted (2026-08-30). This Feature Gate is **APPROVED FOR IMPLEMENTATION**. Product code remains **NOT STARTED** until Joel authorizes an implementation prompt.
+Acceptance criteria 1–18 are satisfied. FG-011 is **CLOSED / OPERATIONAL FOR UAT**.
+
+**Next governed action:** STOP. Do not start Phase D or another Feature Gate from this closure. Roadmap item 9 (estimate-output consistency) remains separately gated.

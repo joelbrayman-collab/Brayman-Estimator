@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-011 Project Hub UX
+
+| Field | Content |
+|-------|---------|
+| ID | FG-011 (not a numbered M0xx) |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
+| Date | 2026-08-30 |
+| Objective | Evolve `/projects/<id>` into the office-estimator Project Hub. |
+| Deliverables | Read-only hub assembly; lifecycle IA PLAN → PRICE → CONTRACT → BUILD with Future MONITOR/LEARN; dedicated tests; docs reconciliation. No schema/migration/ADR. |
+| Validation | Dedicated Project Hub **13 passed**; full suite **264 passed**. Browser smoke on labeled FG-009 `/projects/2` and FG-010 `/projects/3`. Alembic current/head `b4c5d6e7f8a9`. |
+| Next | **STOP DEVELOPMENT.** Phase D **NOT STARTED / NOT AUTHORIZED**. Estimate-output consistency remains separately gated. |
+
 ### 29 Aug 2026 — Day-end reconciliation / Review Turnover
 
 | Field | Content |

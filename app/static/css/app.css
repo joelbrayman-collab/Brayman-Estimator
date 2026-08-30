@@ -952,6 +952,69 @@ textarea {
     }
 }
 
+.hub-lifecycle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 12px;
+}
+
+.hub-lifecycle-step {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--white);
+    color: var(--text);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.hub-lifecycle-step:hover {
+    color: #8f6d16;
+    border-color: var(--gold-soft);
+}
+
+.hub-lifecycle-step.is-future {
+    background: transparent;
+    color: var(--muted);
+    border-style: dashed;
+}
+
+.hub-lifecycle-note {
+    margin: 0 0 20px;
+    font-size: 0.9rem;
+}
+
+.hub-section-label {
+    margin: 8px 0 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+}
+
+.hub-future-note {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    background: var(--cream);
+}
+
+.hub-future-note p {
+    margin: 0;
+}
+
+.hub-future-note p + p {
+    margin-top: 6px;
+}
+
 @media (max-width: 640px) {
     .dash-heading {
         font-size: 1.45rem;

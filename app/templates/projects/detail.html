@@ -6,7 +6,7 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Construction</p>
+        <p class="eyebrow">Project Hub</p>
         <h1>{{ project.name }}</h1>
         <p class="muted-copy">{{ project.project_number or "No project number" }} · {{ project.client.name }}</p>
     </div>
@@ -16,6 +16,16 @@
         <a class="button-link" href="{{ url_for('projects.list_projects') }}">Back to projects</a>
     </div>
 </div>
+
+<nav class="hub-lifecycle" aria-label="CalibAi lifecycle">
+    <a class="hub-lifecycle-step" href="#hub-plan">PLAN</a>
+    <a class="hub-lifecycle-step" href="#hub-price">PRICE</a>
+    <a class="hub-lifecycle-step" href="#hub-contract">CONTRACT</a>
+    <a class="hub-lifecycle-step" href="#hub-build">BUILD</a>
+    <span class="hub-lifecycle-step is-future">MONITOR · Future</span>
+    <span class="hub-lifecycle-step is-future">LEARN · Future</span>
+</nav>
+<p class="muted-copy hub-lifecycle-note">Operational sections use stored records from owning modules. MONITOR, LEARN, field BUILD, QuickBooks, the four-output package, and Ontario contract/warranty are Future and are not operational here.</p>
 
 <section class="form-panel" style="margin-bottom: 20px;">
     <div class="form-grid">
@@ -66,15 +76,16 @@
     {% endif %}
 </section>
 
+<p class="hub-section-label" id="hub-plan">PLAN</p>
 <section class="dash-panels">
     <article class="panel">
         <div class="panel-header">
             <h2>Plan Documents</h2>
             <a href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">All plans</a>
         </div>
-        {% if project.plan_documents %}
+        {% if hub.plan_documents %}
         <ul class="activity-list">
-            {% for document in project.plan_documents|sort(attribute='created_at', reverse=true) %}
+            {% for document in hub.plan_documents %}
             <li>
                 <a href="{{ url_for('plan_intelligence.view_plan', project_id=project.id, document_id=document.id) }}">
                     <span class="activity-title">{{ document.original_filename }}</span>
@@ -94,40 +105,147 @@
 
     <article class="panel">
         <div class="panel-header">
-            <h2>Related Estimates</h2>
-            <a href="{{ url_for('estimates.list_estimates') }}">All estimates</a>
+            <h2>Sheets</h2>
+            {% if hub.active_revision %}
+            <a href="{{ url_for('plan_intelligence.revision_sheets', project_id=project.id, revision_id=hub.active_revision.id) }}">Sheet index</a>
+            {% endif %}
         </div>
-        {% if estimates %}
+        {% if hub.sheet_count %}
+        <p>{{ hub.sheet_count }} sheet{{ "s" if hub.sheet_count != 1 else "" }} on revision {{ hub.active_revision.label }}.</p>
         <ul class="activity-list">
-            {% for estimate in estimates %}
+            {% for sheet in hub.sheets[:6] %}
             <li>
-                <a href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">
-                    <span class="activity-title">{{ estimate.title }}</span>
-                    <span class="activity-meta">{{ estimate.estimate_number }} · {{ estimate.status }}</span>
-                </a>
+                <span class="activity-title">{{ sheet.number or "Unnumbered" }}{% if sheet.title %} — {{ sheet.title }}{% endif %}</span>
+                <span class="activity-meta">Review {{ sheet.review_status }} · Drawing {{ sheet.drawing_status }}</span>
             </li>
             {% endfor %}
         </ul>
         {% else %}
         <div class="empty-state empty-state-compact">
-            <h3>No estimates</h3>
-            <p>Create an estimate for this project to begin pricing.</p>
+            <h3>No sheets recorded</h3>
+            <p>Sheet classification lives in Plan Intelligence. This hub does not create a drawing package.</p>
+            <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Open plan documents</a>
         </div>
         {% endif %}
     </article>
 
     <article class="panel">
         <div class="panel-header">
+            <h2>Scale / measurement</h2>
+            {% if hub.measure_sheet %}
+            <a href="{{ url_for('plan_intelligence.measure_sheet', project_id=project.id, sheet_id=hub.measure_sheet.id) }}">Measure sheet</a>
+            {% endif %}
+        </div>
+        <p>{{ hub.calibration_count }} stored calibration{{ "s" if hub.calibration_count != 1 else "" }} · {{ hub.measurement_count }} stored measurement{{ "s" if hub.measurement_count != 1 else "" }}.</p>
+        <p class="muted-copy">Scale tools remain in Plan Intelligence. Counts are stored facts only.</p>
+    </article>
+
+    <article class="panel">
+        <div class="panel-header">
+            <h2>Take-off</h2>
+            <a href="{{ url_for('plan_intelligence.takeoff_index', project_id=project.id) }}">Take-off workspace</a>
+        </div>
+        {% if hub.latest_takeoff_run %}
+        <p>Latest run #{{ hub.latest_takeoff_run.id }}: <span class="status">{{ hub.latest_takeoff_run.status }}</span> · {{ hub.latest_takeoff_run.element_type }} · {{ hub.latest_takeoff_run.provider }}</p>
+        {% else %}
+        <p class="muted-copy">No extraction runs stored for this project.</p>
+        {% endif %}
+        {% if hub.approved_takeoff_packages %}
+        <p>{{ hub.approved_takeoff_packages|length }} approved package{{ "s" if hub.approved_takeoff_packages|length != 1 else "" }}.</p>
+        <ul class="activity-list">
+            {% for package in hub.approved_takeoff_packages[:4] %}
+            <li>
+                <a href="{{ url_for('plan_intelligence.takeoff_package_detail', project_id=project.id, package_id=package.id) }}">
+                    <span class="activity-title">{{ package.element_type }} v{{ package.version_number }}</span>
+                    <span class="activity-meta">{{ package.status }}{% if package.approved_total is not none %} · stored total {{ package.approved_total }} {{ package.approved_unit }}{% endif %}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% elif hub.takeoff_packages %}
+        <p>{{ hub.takeoff_packages|length }} package{{ "s" if hub.takeoff_packages|length != 1 else "" }} stored; none approved.</p>
+        {% else %}
+        <p class="muted-copy">No take-off packages stored.</p>
+        {% endif %}
+        <p class="muted-copy">Approved take-off packages do not insert estimate lines. Quantity mapping into estimates is not started (Phase D).</p>
+    </article>
+</section>
+
+<p class="hub-section-label" id="hub-price">PRICE</p>
+<section class="dash-panels">
+    <article class="panel panel-wide">
+        <div class="panel-header">
+            <h2>Related Estimates</h2>
+            <a href="{{ url_for('estimates.list_estimates') }}">All estimates</a>
+        </div>
+        <p class="muted-copy">Snapshot presence and stored pricing method only. This hub does not recompute selling price, margin, or labour cost.</p>
+        {% if hub.estimate_rows %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Estimate</th>
+                    <th>Status</th>
+                    <th>Current version</th>
+                    <th>Pricing snapshot</th>
+                    <th>Labour snapshot</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in hub.estimate_rows %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('estimates.view_estimate', id=row.estimate.id) }}">{{ row.estimate.title }}</a>
+                        <div class="muted-copy">{{ row.estimate.estimate_number }}</div>
+                    </td>
+                    <td><span class="status">{{ row.estimate.status }}</span></td>
+                    <td>
+                        {% if row.current_version %}
+                        <a href="{{ url_for('estimates.view_version', id=row.estimate.id, version_id=row.current_version.id) }}">v{{ row.current_version.version_number }}</a>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row.pricing_snapshot_present %}
+                        Present · {{ row.pricing_method }}
+                        {% else %}
+                        Not present
+                        {% endif %}
+                    </td>
+                    <td>{{ "Present" if row.labour_snapshot_present else "Not present" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No estimates</h3>
+            <p>Create an estimate for this project to begin pricing.</p>
+            <a class="button-link" href="{{ url_for('estimates.create_estimate_route') }}">New estimate</a>
+        </div>
+        {% endif %}
+        <p class="muted-copy" style="margin-top: 12px;">
+            Organization methodology: <a href="{{ url_for('pricing_engine.index') }}">Pricing Engine</a> ·
+            <a href="{{ url_for('labour_engine.index') }}">Labour Engine</a>
+            (catalogues, not this project’s operating data).
+        </p>
+    </article>
+</section>
+
+<p class="hub-section-label" id="hub-contract">CONTRACT</p>
+<section class="dash-panels">
+    <article class="panel panel-wide">
+        <div class="panel-header">
             <h2>Related Proposals</h2>
             <a href="{{ url_for('proposals.list_proposals') }}">All proposals</a>
         </div>
-        {% if proposals %}
+        {% if hub.proposals %}
         <ul class="activity-list">
-            {% for proposal in proposals %}
+            {% for proposal in hub.proposals %}
             <li>
                 <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">
                     <span class="activity-title">{{ proposal.title }}</span>
-                    <span class="activity-meta">{{ proposal.proposal_number }} · {{ proposal.status }}</span>
+                    <span class="activity-meta">{{ proposal.proposal_number }} · {{ proposal.status }}{% if proposal.status == "Accepted" %} · immutable{% endif %}</span>
                 </a>
             </li>
             {% endfor %}
@@ -138,14 +256,18 @@
             <p>Proposals created from this project’s estimates will appear here.</p>
         </div>
         {% endif %}
+        <p class="muted-copy">Accepted proposals remain immutable. Proposal acceptance workflow is not implemented on this hub.</p>
     </article>
+</section>
 
+<p class="hub-section-label" id="hub-build">BUILD</p>
+<section class="dash-panels">
     <article class="panel panel-wide">
         <div class="panel-header">
             <h2>Related Change Orders</h2>
             <a href="{{ url_for('project_controls.list_change_orders', project_id=project.id) }}">All change orders</a>
         </div>
-        {% if change_orders %}
+        {% if hub.change_orders %}
         <table class="data-table">
             <thead>
                 <tr>
@@ -157,7 +279,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for change_order in change_orders %}
+                {% for change_order in hub.change_orders %}
                 <tr>
                     <td><a href="{{ url_for('project_controls.view_change_order', id=change_order.id) }}">{{ change_order.number }}</a></td>
                     <td>{{ change_order.title }}</td>
@@ -174,6 +296,27 @@
             <p>Project change orders will be listed here.</p>
         </div>
         {% endif %}
+        <div class="hub-future-note">
+            <p class="eyebrow">Future</p>
+            <p>Field BUILD (site capture, daily reports, field execution) is not operational. Existing Change Orders above remain the operational BUILD record.</p>
+        </div>
     </article>
 </section>
+
+<p class="hub-section-label" id="hub-monitor">MONITOR</p>
+<div class="hub-future-note">
+    <p class="eyebrow">Future</p>
+    <p>MONITOR is not operational. This hub does not show estimated-versus-actual, forecasts, or project-health metrics.</p>
+</div>
+
+<p class="hub-section-label" id="hub-learn">LEARN</p>
+<div class="hub-future-note">
+    <p class="eyebrow">Future</p>
+    <p>LEARN is not operational. This hub does not generate AI recommendations or treat historical labour evidence as this project’s operating data.</p>
+</div>
+
+<div class="hub-future-note" style="margin-top: 16px;">
+    <p class="eyebrow">Future — not operational on this hub</p>
+    <p>QuickBooks export, the four-output document package, Ontario contract and warranty, and real external AI are Future. They are not available as controls here.</p>
+</div>
 {% endblock %}

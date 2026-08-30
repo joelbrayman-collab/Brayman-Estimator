@@ -10,7 +10,7 @@
 | CRM | [crm.md](crm.md) | Clients (+ project linkage) |
 | Estimating | [estimating.md](estimating.md) | Cost items, assemblies, estimates |
 | Proposals | [proposals.md](proposals.md) | Templates, proposals, snapshot, PDF |
-| Projects | [projects.md](projects.md) | Projects entity; change orders under Project Controls package; `/projects/<id>` de facto hub. [FG-011](../feature-gates/FG-011-project-hub-ux.md) **APPROVED FOR IMPLEMENTATION** — **not started** |
+| Projects | [projects.md](projects.md) | Projects entity; change orders under Project Controls package; `/projects/<id>` Project Hub ([FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**) |
 | Plan Intelligence | [plan-intelligence.md](plan-intelligence.md) | Phase A upload (M005) + Document Indexing (M007) + Sheets (M009) + Scale/measurement (M010) + **M012 / FG-010 take-off foundation OPERATIONAL FOR UAT** |
 | Labour Engine | [labour-engine.md](labour-engine.md) | FG-008 Phase B foundation (`app/models/labour_engine.py`, `/labour-engine/`) — **CLOSED / OPERATIONAL FOR UAT**; revision `f2c3d4e5f6a7` in chain; live head `b4c5d6e7f8a9` |
 | Pricing Engine | [pricing-engine.md](pricing-engine.md) | FG-009 foundation **CLOSED / OPERATIONAL FOR UAT**: `app/models/pricing_engine.py`, `/pricing-engine/`; revision `a3b4c5d6e7f8` in chain; live head `b4c5d6e7f8a9`. Versions without snapshots still use `estimate_builder.py` stack |

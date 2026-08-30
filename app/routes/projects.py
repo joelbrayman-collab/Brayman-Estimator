@@ -1,8 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app import db
-from app.models import Client, Project, Proposal
-from app.project_controls import repository as change_order_repo
+from app.models import Client, Project
 from app.services.commercial_context import (
     DELIVERY_MODELS,
     ESTIMATE_STAGES,
@@ -16,6 +15,7 @@ from app.services.commercial_context import (
     update_commercial_context,
 )
 from app.services.organizations import get_current_organization_id
+from app.services.project_hub import assemble_project_hub
 
 projects_bp = Blueprint("projects", __name__, url_prefix="/projects")
 
@@ -43,27 +43,14 @@ def list_projects():
 def view_project(id):
     org_id = get_current_organization_id()
     project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
-    estimates = sorted(
-        project.estimates,
-        key=lambda row: row.updated_at,
-        reverse=True,
-    )
-    proposals = (
-        Proposal.query.filter(
-            Proposal.estimate_id.in_([e.id for e in estimates] or [-1])
-        )
-        .order_by(Proposal.updated_at.desc())
-        .all()
-        if estimates
-        else []
-    )
-    change_orders = change_order_repo.list_change_orders_for_project(project.id)
+    hub = assemble_project_hub(project, org_id)
     return render_template(
         "projects/detail.html",
         project=project,
-        estimates=estimates,
-        proposals=proposals,
-        change_orders=change_orders,
+        hub=hub,
+        estimates=hub["estimates"],
+        proposals=hub["proposals"],
+        change_orders=hub["change_orders"],
     )
 
 

@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-011 Project Hub UX implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `225731a2208e16fea8558a048e8c34f0f4879549` (start) |
+| Objective | Implement approved FG-011 Project Hub UX by evolving `/projects/<id>` only. |
+| Business decision | Projects owns the hub UX. Hub reads and links stored facts. No new module, Job entity, schema, or ADR. |
+| Architectural decision | PLAN / PRICE / CONTRACT from stored records; BUILD = existing Change Orders; field BUILD / MONITOR / LEARN / QuickBooks / four-output / Ontario contract / real AI labeled Future. Conservative pricing/labour presence only. Phase D unauthorized. Dashboard counts out of scope. |
+| Prompt template used | Bounded FG-011 implementation prompt (Feature Gate implementation) |
+| Approved Cursor prompt summary | IMPLEMENT FG-011 PROJECT HUB UX. Evolve existing project detail. SCHEMA CHANGE NO. MIGRATION NO. No Phase D. No external AI. |
+| Files expected to change | `app/routes/projects.py`, `app/templates/projects/detail.html`, optional CSS/helper, dedicated tests, governed docs |
+| Files prohibited from changing | `migrations/**`, models/schemas, take-off/pricing/labour write paths, Dashboard counts, auth |
+| Implementation result | Project Hub on `/projects/<id>` with read-only `app/services/project_hub.py`. Dedicated tests added. Browser smoke on labeled FG-009/FG-010 UAT projects. |
+| Tests / validation | Dedicated Project Hub **13 passed**. Full suite **264 passed**. `git diff --check` clean. Alembic current/head unchanged `b4c5d6e7f8a9`. |
+| Project-state-report update | Yes |
+| Milestone entry update | Architecture record only (no new M0xx) |
+| Constitutional issue raised | None |
+| Unresolved issues | Phase D unauthorized. ADR-010 Proposed. Office auth not implemented. Dashboard org-unscoped counts remain out of scope. FG-010 UAT project still has no commercial context recorded. |
+| Next approved step | **STOP.** Do not start Phase D or another Feature Gate. |
+| Next approved prompt | None. Next product work requires a new Feature Gate. |
+| Commit hash | (this implementation commit) |
+
 ### 2026-08-30 — FG-011 Project Hub UX governance approval
 
 | Field | Content |

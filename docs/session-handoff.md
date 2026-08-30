@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-011 APPROVED FOR IMPLEMENTATION** — **IMPLEMENTATION NOT STARTED**. FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. M012 operational for UAT. |
+| Status | **FG-011 CLOSED / OPERATIONAL FOR UAT**. FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. M012 operational for UAT. |
 | Updated | 2026-08-30 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -23,12 +23,12 @@ Authority order for the next session: repository governance → current-state re
 ## 2. VERIFIED BASELINE
 
 - Branch: `main`
-- Starting HEAD / `origin/main` for this governance pass: `49c490852fa5b129da7bd32fc7e446539140f30b` (`docs: reconcile 29 Aug development turnover`)
-- This FG-011 docs commit is current after push — verify with `git log -1`
+- Starting HEAD / `origin/main` for this implementation pass: `225731a2208e16fea8558a048e8c34f0f4879549` (`docs: approve FG-011 Project Hub UX`)
+- This FG-011 implementation commit is current after push — verify with `git log -1`
 - Alembic graph head and live `flask db current`: **`b4c5d6e7f8a9`** (one head)
 - Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010)
-- Tests (2026-08-30 turnover): take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**; full suite **251 passed**
-- Working tree: clean after this docs-only commit/push
+- Tests (2026-08-30 FG-011): dedicated Project Hub **13**; take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**; full suite **264 passed**
+- Working tree: clean after this implementation commit/push
 - Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**.
 
 ### 29 Aug commit chain (all ancestors of `main`)
@@ -89,23 +89,25 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**No coded milestone in progress.** [FG-011](feature-gates/FG-011-project-hub-ux.md) **APPROVED FOR IMPLEMENTATION** — **IMPLEMENTATION NOT STARTED**. M012 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**.
+**No coded milestone in progress.** [FG-011](feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**. M012 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**.
 
 ## 8. LAST AUTHORIZED DELTA
 
-FG-011 Project Hub UX **governance / documentation only**. No product-code changes. No schema. No migration. No new ADR. No Phase D. No external AI.
+FG-011 Project Hub UX **implemented**. Evolve `/projects/<id>` only. Read-only hub assembly. No schema. No migration. No new ADR. No Phase D. No external AI.
 
 ## 9. IMPLEMENTATION STATUS
 
 - Labour Engine: `LabourTask`, `LabourTaskMapping`, `ProductionRateStandard`, `DirectLabourCostRateStandard`, `LabourCalibrationCandidate`, `EstimateLabourSnapshot`, `LabourAuditEvent`. Office `/labour-engine/`.
 - Pricing Engine: `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent`. Methods `TRUE_GROSS_MARGIN` / `COST_PLUS_MARKUP` / `COST_PLUS_MARKUP_STACK`. Office `/pricing-engine/`.
 - Take-off: `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem`. Provider-neutral architecture; **`calibai-mock` only**. Office `/projects/<id>/plans/takeoff`. Initial element `INTERIOR_DOOR_OPENING`. COUNT dimensionless (no scale). Linear / polyline / area / perimeter remain scale-governed. Approved package immutable. No automatic estimate insertion.
+- Project Hub: `/projects/<id>` (`app/services/project_hub.py`) reads stored facts and links. PLAN / PRICE / CONTRACT operational from stored records; BUILD = existing Change Orders; field BUILD / MONITOR / LEARN Future labels only.
 
 ## 10. TEST / UAT / MIGRATION STATUS
 
 - Live current = head = `b4c5d6e7f8a9`. No pending committed migration. No second Alembic head.
-- Dedicated: take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
-- Full suite: **251 passed**.
+- Dedicated: Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
+- Full suite: **264 passed**.
+- Bounded browser smoke: labeled FG-009 UAT `/projects/2` and FG-010 UAT `/projects/3` on local Flask port 5002. No customer operating data created.
 - Synthetic UAT for FG-008 / FG-009 / FG-010 is in the live development/UAT DB (labeled; not deleted).
 
 ## 11. PROTECTED STATE
@@ -133,8 +135,7 @@ FG-011 Project Hub UX **governance / documentation only**. No product-code chang
 - **FG-002:** Approved for Phase A (M005 implemented)
 - **FG-003:** CONDITIONAL PASS — architecture only
 - **FG-004 / FG-005 / FG-006 / FG-007:** APPROVED, IMPLEMENTED & VERIFIED
-- **FG-008 / FG-009 / FG-010:** **CLOSED / OPERATIONAL FOR UAT**
-- **FG-011:** **APPROVED FOR IMPLEMENTATION** — **IMPLEMENTATION NOT STARTED**
+- **FG-008 / FG-009 / FG-010 / FG-011:** **CLOSED / OPERATIONAL FOR UAT**
 - No later gate approved or started.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
@@ -147,7 +148,7 @@ FG-011 Project Hub UX **governance / documentation only**. No product-code chang
 
 - Real external AI provider / ADR-010 (not authorized)
 - Phase D reviewed quantity → estimate mapping (not started; requires its own gate)
-- Project Hub UX (roadmap item 8; not started; requires its own gate)
+- Project Hub UX (roadmap item 8; **CLOSED / OPERATIONAL FOR UAT**)
 - Actor-string reviewer identity until authentication
 - ARCH-only take-off eligibility
 - Cancelled extraction-run status modeled; no cancel operation
@@ -173,15 +174,15 @@ Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualOb
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not implement FG-011 from this handoff without a **separate implementation prompt**. Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN, QuickBooks, or contract/warranty work. Do not reopen FG-008 / FG-009 / FG-010. Do not insert estimate lines from take-off. Do not create a new Hub module, Job entity, schema, or Alembic revision. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not delete synthetic UAT or append-only audit history.
+Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN, QuickBooks, or contract/warranty work. Do not reopen FG-008 / FG-009 / FG-010 / FG-011. Do not insert estimate lines from take-off. Do not create a new Hub module, Job entity, schema, or Alembic revision. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not delete synthetic UAT or append-only audit history.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Prepare / await a bounded FG-011 implementation Cursor prompt.** Product code is **NOT STARTED**.
+**STOP.** FG-011 is **CLOSED / OPERATIONAL FOR UAT**. Do not start Phase D or another Feature Gate.
 
-[FG-011](feature-gates/FG-011-project-hub-ux.md) is **APPROVED FOR IMPLEMENTATION**. Evolve `/projects/<id>` only. Projects owns the UX. No new module. No schema.
+[FG-011](feature-gates/FG-011-project-hub-ux.md) evolved `/projects/<id>` only. Projects owns the UX. No new module. No schema.
 
-**Separate candidate (not this gate):** FG-010 Phase D reviewed quantity → estimate mapping. Status: **NOT STARTED / NOT AUTHORIZED**.
+**Separate candidate (not this gate):** FG-010 Phase D reviewed quantity → estimate mapping. Status: **NOT STARTED / NOT AUTHORIZED**. Next separately gated product candidate is estimate-output consistency (roadmap item 9).
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -198,6 +199,7 @@ git rev-parse origin/main
 git diff --check
 ./venv/bin/flask db current
 ./venv/bin/flask db heads
+./venv/bin/python -m pytest -q tests/test_project_hub.py
 ./venv/bin/python -m pytest -q tests/test_takeoff.py
 ./venv/bin/python -m pytest -q tests/test_plan_upload.py tests/test_plan_indexing.py tests/test_sheet_intelligence.py tests/test_scale_measurement.py
 ./venv/bin/python -m pytest -q tests/test_pricing_engine.py
@@ -206,7 +208,7 @@ git diff --check
 ./venv/bin/python -m pytest -q
 ```
 
-Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic current/head `b4c5d6e7f8a9`; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **251 passed**.
+Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic current/head `b4c5d6e7f8a9`; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **264 passed**.
 
 ## 22. FRESH CHAT STARTUP PROMPT
 
@@ -216,7 +218,8 @@ Paste into a new ChatGPT or Cursor conversation:
 BRAYMAN — RESUME FROM REVIEW TURNOVER
 CONTINUITY / REPOSITORY-FIRST INITIALIZATION
 
-You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following a successful 29 Aug 2026 Review Turnover.
+You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following FG-011 Project Hub UX closure.
+The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 ChatGPT memory is not corporate memory.
 
@@ -253,13 +256,13 @@ Confirm:
 
 3. CONFIRM TEST BASELINE (if you will change product code later)
 ./venv/bin/python -m pytest -q
-Expected: 251 passed
+Expected: 264 passed
 
 4. RECONSTRUCT AUTHORITATIVE STATE FROM THE REPO
 Independently reconstruct:
-- FG-008 / FG-009 / FG-010 CLOSED / OPERATIONAL FOR UAT
+- FG-008 / FG-009 / FG-010 / FG-011 CLOSED / OPERATIONAL FOR UAT
 - M012 AI take-off foundation OPERATIONAL FOR UAT
-- FG-011 Project Hub UX APPROVED FOR IMPLEMENTATION — IMPLEMENTATION NOT STARTED (evolve /projects/<id> only; no schema)
+- FG-011 Project Hub UX CLOSED / OPERATIONAL FOR UAT (evolve /projects/<id> only; no schema)
 - Protected ORG-001 labour $65 CAD/man-hour; pricing TRUE_GROSS_MARGIN 15% (Direct Cost / 0.85); Ontario HST 13%; optional OH/profit UNSPECIFIED
 - ADR-010 Proposed; real external AI NOT AUTHORIZED
 - Phase D NOT STARTED
@@ -268,7 +271,7 @@ Independently reconstruct:
 Do NOT rely on AI memory. Do NOT guess missing product rules.
 Do NOT start Phase D. Do NOT enable external AI.
 Do NOT start auth, BUILD / MONITOR / LEARN, QuickBooks, or contract/warranty work.
-Do NOT implement FG-011 without a separate approved implementation prompt.
+Do NOT start another Feature Gate from this handoff.
 
 PRESERVE → SEARCH → VERIFY → EXECUTE.
 Existing before new. No unauthorized redesign. No arbitrary policy invention.

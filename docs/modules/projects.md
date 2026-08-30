@@ -2,10 +2,10 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Current** (project records + change orders package). [FG-011](../feature-gates/FG-011-project-hub-ux.md) Project Hub UX **APPROVED FOR IMPLEMENTATION** — **IMPLEMENTATION NOT STARTED** |
+| Status | **Current** (project records + change orders package). [FG-011](../feature-gates/FG-011-project-hub-ux.md) Project Hub UX **CLOSED / OPERATIONAL FOR UAT** |
 | Updated | 2026-08-30 |
-| Code | `app/models/project.py`, `app/routes/projects.py`; Project Controls: `app/project_controls/` |
-| Feature Gate | [FG-011](../feature-gates/FG-011-project-hub-ux.md) **APPROVED FOR IMPLEMENTATION** (implementation not started) |
+| Code | `app/models/project.py`, `app/routes/projects.py`, `app/services/project_hub.py`; Project Controls: `app/project_controls/` |
+| Feature Gate | [FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT** |
 
 ## Purpose
 
@@ -16,7 +16,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 - Project CRUD (name, number, address, status, description, client)
 - Parent for estimates
 - Change Orders lifecycle (draft → approval statuses) via `project_controls` package
-- De facto project hub at `/projects/<id>` (identity, commercial context, plan filenames, related estimates/proposals/change orders). [FG-011](../feature-gates/FG-011-project-hub-ux.md) authorizes evolving this surface into an explicit lifecycle hub UX — **not started**
+- Project Hub UX at `/projects/<id>` ([FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**): identity, versioned commercial context, PLAN / PRICE / CONTRACT stored facts and links, existing Change Orders under BUILD; MONITOR / LEARN / field BUILD labeled Future. Read-only assembly in `app/services/project_hub.py`. No durable hub entity.
 
 ## Owned data
 
@@ -44,7 +44,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 
 ## Planned capabilities
 
-- **Project Hub UX** ([FG-011](../feature-gates/FG-011-project-hub-ux.md)) — **APPROVED FOR IMPLEMENTATION**; **not started**. Evolve `/projects/<id>` only. No new module, entity, or schema.
+- Project Hub UX — **Current** ([FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**)
 - Project creation from accepted proposal snapshot (Rule 4) — **Future** (not FG-011)
 - Project budgets, scheduling, purchasing, job costing, invoicing — **Future**
 - Change order audit trail UI — noted as future in template
@@ -69,6 +69,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 
 ## Relevant tests
 
+- `tests/test_project_hub.py`
 - `tests/test_change_orders.py`
 - Project fixtures embedded across estimate/proposal tests
 

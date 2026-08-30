@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-032: App-Managed Immutable Historical Workbook Storage / Source Custody |
-| Status | **Accepted** (productized custody implemented under [FG-013](../feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md); **live migration pending**) |
+| Status | **Accepted** (productized custody implemented under [FG-013](../feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **CLOSED / OPERATIONAL FOR UAT**) |
 | Date | 2026-08-30 |
 | Related | [FG-006](../feature-gates/FG-006-historical-estimate-ingestion-phase-b.md) · [FG-013](../feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) · [historical-estimate-ingestion-architecture.md](../architecture/historical-estimate-ingestion-architecture.md) |
 
@@ -86,7 +86,7 @@ Productized bytes are organization-owned source evidence (ORG-HISTORICAL lineage
 
 ## Migration Impact
 
-Additive table `historical_upload_attempts` in revision **`c5d6e7f8a9b0`**. Upgrade/downgrade verified on throwaway SQLite. **Live development/UAT `flask db upgrade` is not authorized** by the FG-013 implementation pass.
+Additive table `historical_upload_attempts` in revision **`c5d6e7f8a9b0`**. Live development/UAT **current = head = `c5d6e7f8a9b0`**. Migration **VERIFIED APPLIED** before the 2026-08-30 reconciliation/UAT pass (prior interrupted live-migrate work). That reconciliation pass did **not** run `flask db upgrade`.
 
 ## Testing Impact
 
@@ -102,4 +102,4 @@ This ADR; FG-013; historical-ingestion architecture; ADR index; current-state; s
 |------|------|------|
 | Joel | Joel Brayman | 2026-08-30 |
 | ChatGPT review | FG-013 complete governance pass | 2026-08-30 |
-| Cursor implementation note | FG-013 implemented in product code. Revision `c5d6e7f8a9b0`. Live migrate **not** applied in the implementation pass. | 2026-08-30 |
+| Cursor implementation note | FG-013 implemented. Revision `c5d6e7f8a9b0` **verified applied** on live development/UAT (not by the reconciliation/UAT docs pass). | 2026-08-30 |

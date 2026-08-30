@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-013 migration reconciliation + UAT closure
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `0c36adb6d98ec2c1af88fa98cf61c00aa14f0eb3` (start) |
+| Objective | Verify live DB already at `c5d6e7f8a9b0`; complete bounded FG-013 UAT; close gate. Do not re-run `flask db upgrade`. |
+| Business decision | Preserve interrupted-session migration provenance. Folder/OS-drag native pickers not faked as browser PASS. |
+| Architectural decision | FG-013 **CLOSED / OPERATIONAL FOR UAT**. Migration **VERIFIED APPLIED** before this pass. No product-code change. |
+| Prompt template used | Bounded FG-013 migration-state reconciliation + UAT closure |
+| Approved Cursor prompt summary | Independently verify DB; do not upgrade if current=head; UAT + tests; docs; close only if evidence supports. |
+| Files expected to change | FG-013 and governed status docs |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; product code; Alembic revisions; Desktop corpus |
+| Implementation result | UAT multi-file/mixed/duplicate/review/storage/quarantine/known-family/TIER_A/mutation/org passed. Folder/OS-drag not live-browser verified. Tests 27/11/25/33/310. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_historical_upload_fg013.py` → 27 passed. historical 11; labour 25; pricing 33; full suite **310 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Architecture record appended |
+| Constitutional issue raised | None |
+| Unresolved issues | Native folder picker and OS drag/drop not live-browser verified. |
+| Next approved step | **Material Catalogue architecture** (docs) when Joel authorizes. Do not `flask db upgrade`. Do not start supplier POC. |
+| Next approved prompt | Material Catalogue architecture documentation. |
+| Commit hash | (this commit) |
+
 ### 2026-08-30 — ADR-033 supplier channel / Winchester launch-partner architecture
 
 | Field | Content |

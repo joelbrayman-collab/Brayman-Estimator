@@ -7,11 +7,11 @@
 | Target Milestone | **None.** FG-013 is the governing identifier. Do not assign a new M0xx number. |
 | Module | Historical ingestion / review (FG-006 engine). Labour Engine and Pricing Engine are **not** owners. |
 | Date | 2026-08-30 |
-| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** · **LIVE MIGRATION PENDING** |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
 | Architecture | Productize office upload UX on FG-006. App-managed immutable workbook custody ([ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**). Durable per-file upload attempts. **No** durable `UploadBatch`. |
 | Related ADRs | [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR **out of scope**) · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** (do not auto-write) · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** (do not auto-write) |
 | Prerequisites | [FG-006](FG-006-historical-estimate-ingestion-phase-b.md) **APPROVED, IMPLEMENTED & VERIFIED**. FG-008–FG-012 **CLOSED / OPERATIONAL FOR UAT**. |
-| Approved baseline | `main` @ `f52f06c4adbd04055485e49124da59222a8f7768`. Alembic graph head after this implementation: `c5d6e7f8a9b0`. Live development/UAT `flask db current` remains `b4c5d6e7f8a9` until a separate live-migrate prompt. Last recorded full suite **310 passed**. |
+| Approved baseline | Product: `974136bb2ac7d2f61acf71b53f81a2ae55f132b1`. Alembic **current = head = `c5d6e7f8a9b0`**. Last recorded full suite **310 passed**. |
 
 ---
 
@@ -19,13 +19,13 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / VERIFIED** (code on `main` after this commit) |
-| Implementation | **DONE** — office multi-file upload, ADR-032 custody, per-file attempts. **LIVE MIGRATION PENDING.** Browser UAT **not performed** (table not on live DB). |
-| Schema / Alembic | Additive revision **`c5d6e7f8a9b0`** (`historical_upload_attempts`). Upgrade/downgrade verified on throwaway SQLite. **Not applied** to development/UAT `instance/brayman_estimator.db`. |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT** |
+| Implementation | **DONE** — office multi-file upload, ADR-032 custody, per-file attempts. Browser multi-file UAT **passed**. |
+| Schema / Alembic | Additive revision **`c5d6e7f8a9b0`** (`historical_upload_attempts`). **Live current = head = `c5d6e7f8a9b0`.** Migration **VERIFIED APPLIED**; **not** applied by the 2026-08-30 reconciliation/UAT pass. |
 | Storage ADR | [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** (productized path implemented; legacy Desktop corpus untouched) |
 | Durable `UploadBatch` | **NO** |
 
-This implementation does **not** authorize authentication, Phase D, external AI, QuickBooks, MONITOR, LEARN, actuals, profitability, industry benchmarking, or live `flask db upgrade` until a separate live-migrate prompt.
+This gate does **not** authorize authentication, Phase D, external AI, QuickBooks, MONITOR, LEARN, actuals, profitability, industry benchmarking, supplier integration, or a second `flask db upgrade`.
 
 ---
 
@@ -83,7 +83,7 @@ Do **not** create a durable `UploadBatch` merely because many files are chosen i
 | 9 | Tests required? | Dedicated upload/attempt/isolation/security tests; mixed multi-file outcomes; idempotent SHA; regressions (historical, labour, pricing); full suite before closure. |
 | 10 | Documentation? | This gate; ADR-032; historical-ingestion architecture; feature-gate and ADR indexes; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log. |
 | 11 | ADR required? | **Yes** — [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. |
-| 12 | Migration? | **YES — one bounded additive revision `c5d6e7f8a9b0`.** Live apply **pending**. No destructive historical-data migration. No `UploadBatch` table. |
+| 12 | Migration? | **YES — one bounded additive revision `c5d6e7f8a9b0`.** Live apply **VERIFIED APPLIED** (provenance: prior interrupted live-migrate/UAT work; **not** this reconciliation pass). No destructive historical-data migration. No `UploadBatch` table. |
 
 ---
 
@@ -122,13 +122,13 @@ Potential facts (do not over-design; do not store secrets or uncontrolled except
 
 Each file owns its attempt/outcome. **No** durable batch parent.
 
-### Schema / migration (implemented; live apply pending)
+### Schema / migration (implemented; live **VERIFIED APPLIED**)
 
-| Authorization | Governance pass | Implementation pass |
-|---------------|-----------------|---------------------|
-| SCHEMA CHANGE | YES — additive only | **`historical_upload_attempts`** |
-| MIGRATION | YES — one bounded additive revision | **`c5d6e7f8a9b0`** (down_revision `b4c5d6e7f8a9`) |
-| Live development/UAT apply | Must not | **PENDING** separate live-migrate prompt |
+| Authorization | Governance pass | Implementation pass | Reconciliation / UAT pass |
+|---------------|-----------------|---------------------|---------------------------|
+| SCHEMA CHANGE | YES — additive only | **`historical_upload_attempts`** | Unchanged |
+| MIGRATION | YES — one bounded additive revision | **`c5d6e7f8a9b0`** (down_revision `b4c5d6e7f8a9`) | **Not re-run** |
+| Live development/UAT apply | Must not | Not applied in implementation commit | **Already present** before reconciliation; verified `current = head = c5d6e7f8a9b0` |
 
 Optional additive columns on `HistoricalSourceWorkbook` were **not** required. Storage path lives on the attempt and on `HistoricalSourceWorkbook.source_file_path` for ingested/quarantined productized files. No destructive rewrite of existing 20 ingested rows.
 
@@ -242,9 +242,56 @@ Implementation is incomplete until:
 ## Explicit non-goals
 
 - Implement in the 2026-08-30 **governance** pass (completed separately)
-- Create the migration in the governance pass (created in this **implementation** pass as `c5d6e7f8a9b0`; live apply still separate)
+- Create the migration in the governance pass (created in the **implementation** pass as `c5d6e7f8a9b0`; live apply verified later, not by the implementation commit)
 - Durable `UploadBatch`
 - Moving the 20-file Desktop corpus
 - Auto-approval of organization standards
 - Self-serve multi-org onboarding / User model
 - Industry norms, MONITOR, LEARN, BUILD actuals, QuickBooks, Phase D, real external AI
+
+---
+
+## Live migration provenance (2026-08-30 reconciliation)
+
+**Do not claim the reconciliation/UAT pass performed `flask db upgrade`.**
+
+| Fact | Record |
+|------|--------|
+| Revision | `c5d6e7f8a9b0` |
+| Down revision | `b4c5d6e7f8a9` |
+| Live current / head | `c5d6e7f8a9b0` / `c5d6e7f8a9b0` (one head) |
+| When applied | **Already present** in the live development/UAT DB **before** the 2026-08-30 migration-state reconciliation session |
+| Exact prior operator/timestamp | **Unknown** — prior FG-013 live-migrate/UAT work was interrupted |
+| This reconciliation pass | **Did not** run `flask db upgrade` |
+| Durable statement | **MIGRATION VERIFIED APPLIED.** Provenance: prior interrupted FG-013 live-migrate/UAT work. **Not applied by this reconciliation pass.** |
+
+Table `historical_upload_attempts` exists with expected columns and indexes. No `upload_batches` table.
+
+## Browser / UAT evidence (2026-08-30)
+
+Local Flask **port 5004**. Labeled synthetic files only (`instance/fg013_uat_artifacts/`, gitignored). Protected Desktop corpus **untouched** (20/20 SHA-256 match).
+
+| Criterion | Result |
+|-----------|--------|
+| Multi-file (one action) | **PASS** — 6 files in one `POST /historical-estimates/upload` |
+| Combined summary | **PASS** — FILES RECEIVED 6 · LOADED 3 · DUPLICATES 0 · REVIEW REQUIRED 1 · UNSUPPORTED 1 · FAILED 1 |
+| Drag/drop OS files | **NOT LIVE-BROWSER VERIFIED** — automation cannot drive OS file drag; dropzone handlers exist in `index.html` |
+| Folder select/drop | **NOT LIVE-BROWSER VERIFIED — IMPLEMENTATION/AUTOMATED COVERAGE ONLY** (`webkitdirectory` present; native folder picker not driven) |
+| Mixed outcomes / isolation | **PASS** — one bad file did not stop others; no durable `UploadBatch` |
+| Duplicate / idempotency | **PASS** — re-upload identical SHA → DUPLICATE; still one workbook for that SHA; stored bytes unchanged |
+| Storage / ADR-032 | **PASS** — `instance/historical_uploads/ORG-001/<sha256>.xlsx|.xlsm`; outside Git; original filename metadata |
+| Unknown layout | **PASS** — `FG-013-UAT-unknown-adhoc.xlsx` QUARANTINED / REVIEW REQUIRED; UI: “Automated extraction is not reliable” |
+| Known family | **PASS** — Family A synthetic `.xlsx`/`.xlsm` HISTORICAL EVIDENCE LOADED |
+| Review / TIER_A | **PASS** — ACCEPTED AS EVIDENCE option; **TIER_A — Estimate associated with a completed project**; copy distinguishes evidence vs approved standard |
+| Standard-mutation | **PASS** — labour candidates/standards and pricing policies unchanged (1 / 1 / 1 / 2) |
+| Org isolation | **PASS** — live residue `ORG-001` only; dedicated tests fail-closed for ORG-002 |
+| Security smoke | **PASS** — `.csv` UNSUPPORTED; malformed OpenXML FAILED; ZIP/size/path primarily covered by dedicated tests |
+
+### Synthetic UAT residue (leave labeled)
+
+- Attempts 1–7 on `historical_upload_attempts` (outcomes INGESTED ×3, QUARANTINED, UNSUPPORTED, FAILED, DUPLICATE)
+- Productized workbooks/estimates ids **21–24** (`FG-013-UAT-recognized-slab.xlsx`, `-b.xlsx`, `.xlsm`, `unknown-adhoc.xlsx`)
+- Stored files under `instance/historical_uploads/ORG-001/`
+- Labeled generators under `instance/fg013_uat_artifacts/` (not Git)
+
+Legacy 20 Desktop workbooks / 20 path rows / 120 labour items **unchanged**.

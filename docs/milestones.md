@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-013 live-migration reconciliation + UAT closure
+
+| Field | Content |
+|-------|---------|
+| ID | FG-013 (not a numbered M0xx) |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
+| Date | 2026-08-30 |
+| Objective | Verify already-applied `c5d6e7f8a9b0`, complete bounded browser/UAT, close the gate without re-running `flask db upgrade`. |
+| Deliverables | Provenance: migration **VERIFIED APPLIED** before this pass (prior interrupted live-migrate). Multi-file mixed/duplicate/review UAT on port 5004. Folder/OS-drag not live-browser verified. Tests 27/11/25/33/**310**. Docs only. |
+| Validation | Dedicated FG-013 **27 passed**; full suite **310 passed**. Live current=head `c5d6e7f8a9b0`. Legacy 20-file corpus SHA match. |
+| Next | **Material Catalogue architecture** (docs) when authorized. Do not `flask db upgrade`. Do not start supplier POC, Phase D, MONITOR. |
+
 ### 2026-08-30 — ADR-033 supplier neutrality / Winchester launch-partner channel
 
 | Field | Content |

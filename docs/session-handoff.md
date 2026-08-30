@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-013 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED · LIVE MIGRATION PENDING**. ADR-032 **Accepted**. **ADR-033 Accepted** (supplier channel; not implemented). FG-012 CLOSED / OPERATIONAL FOR UAT. ADR-021 **Accepted** (MONITOR not implemented). FG-011 / FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. |
+| Status | **FG-013 CLOSED / OPERATIONAL FOR UAT**. ADR-032 **Accepted**. **ADR-033 Accepted** (supplier channel; not implemented). FG-012 CLOSED / OPERATIONAL FOR UAT. ADR-021 **Accepted** (MONITOR not implemented). FG-011 / FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. |
 | Updated | 2026-08-30 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -23,11 +23,11 @@ Authority order for the next session: repository governance → current-state re
 ## 2. VERIFIED BASELINE
 
 - Branch: `main`
-- Starting HEAD / `origin/main` for this implementation pass: `f52f06c4adbd04055485e49124da59222a8f7768` (`docs: approve FG-013 historical upload onboarding`)
-- This FG-013 implementation commit is current after push — verify with `git log -1`
-- Alembic graph head: **`c5d6e7f8a9b0`**. Live `flask db current`: **`b4c5d6e7f8a9`** (**LIVE MIGRATION PENDING**, one graph head)
-- Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010) → `c5d6e7f8a9b0` (FG-013; **not live-applied**)
-- Tests (2026-08-30 FG-013): dedicated historical upload **27**; historical ingestion **11**; FG-012 **19**; Project Hub **13**; full suite **310 passed**.
+- Reconciliation/UAT start HEAD / `origin/main`: `0c36adb6d98ec2c1af88fa98cf61c00aa14f0eb3` (`docs: adopt supplier-neutral launch-partner architecture`)
+- FG-013 product implementation: `974136bb2ac7d2f61acf71b53f81a2ae55f132b1`. This closure-docs commit is current after push — verify with `git log -1`
+- Alembic graph head: **`c5d6e7f8a9b0`**. Live `flask db current`: **`c5d6e7f8a9b0`** (**VERIFIED APPLIED**; one graph head). Migration was **not** run by the reconciliation/UAT pass.
+- Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010) → `c5d6e7f8a9b0` (FG-013; live-applied before reconciliation)
+- Tests (2026-08-30 FG-013 close): dedicated historical upload **27**; historical ingestion **11**; labour **25**; pricing **33**; full suite **310 passed**.
 - Working tree: clean after this implementation commit/push
 - Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**.
 
@@ -66,7 +66,7 @@ No additional 29 Aug CalibAi commits exist on `main`. FG-010 live-migrate docs a
 
 Read first: `AGENTS.md`; [platform-constitution.md](platform-constitution.md); [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md); [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md); [platform-governance.md](platform-governance.md); this file; [current-state.md](current-state.md); [project-state-report.md](project-state-report.md); [platform-roadmap.md](platform-roadmap.md); [feature-gates/README.md](feature-gates/README.md); [adr/README.md](adr/README.md).
 
-FG-008 / FG-009 / FG-010 / FG-011 / FG-012 files: **CLOSED / OPERATIONAL FOR UAT**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED · LIVE MIGRATION PENDING**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. ADR-010 **Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Do not bulk-accept remaining Proposed ADRs.
+FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** files: **CLOSED / OPERATIONAL FOR UAT**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (architecture only). ADR-010 **Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Do not bulk-accept remaining Proposed ADRs.
 
 ## 4. APPROVED PRODUCT VISION
 
@@ -89,13 +89,13 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**FG-013 implemented; live migration not applied.** [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **IMPLEMENTED / VERIFIED**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. Live `flask db current` remains `b4c5d6e7f8a9`. [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**.
+**FG-013 CLOSED / OPERATIONAL FOR UAT.** Live current=head `c5d6e7f8a9b0`. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**.
 
 ## 8. LAST AUTHORIZED DELTA
 
-This session: **ADR-033 Accepted** — supplier-neutral Winchester launch/reference channel architecture. Docs only. No supplier Feature Gate. No POC. No Darcy percentages.
+This session: FG-013 **migration-state reconciliation + UAT closure**. Live DB was **already** at `c5d6e7f8a9b0` (prior interrupted live-migrate). This pass did **not** run `flask db upgrade`. Browser multi-file/mixed/duplicate/review UAT on port **5004**. Folder/OS-drag **not live-browser verified**. Tests 27 / 11 / 25 / 33 / **310**. Docs close FG-013.
 
-Prior coded work: FG-013 office **UPLOAD PREVIOUS ESTIMATES** implemented: multi-file/folder UX, ADR-032 app-managed custody, durable per-file `HistoricalUploadAttempt`, unknown-layout quarantine, TIER_A wording. Additive revision `c5d6e7f8a9b0`. **No** `UploadBatch`. Live migrate **not** applied. Dedicated tests 27; full suite 310 passed.
+Prior: **ADR-033 Accepted** — supplier-neutral Winchester launch/reference channel architecture. Docs only.
 
 ## 9. IMPLEMENTATION STATUS
 
@@ -107,10 +107,10 @@ Prior coded work: FG-013 office **UPLOAD PREVIOUS ESTIMATES** implemented: multi
 
 ## 10. TEST / UAT / MIGRATION STATUS
 
-- Live current = `b4c5d6e7f8a9`. Graph head = `c5d6e7f8a9b0`. **LIVE MIGRATION PENDING.** One Alembic head.
+- Live current = `c5d6e7f8a9b0`. Graph head = `c5d6e7f8a9b0`. **VERIFIED APPLIED.** One Alembic head. This pass did **not** upgrade.
 - Dedicated: FG-013 upload 27; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
 - Full suite: **310 passed**.
-- Bounded browser UAT: labeled FG-009 UAT estimates on local Flask port 5003; Draft `PROP-FG012-UAT-GM`. No customer operating data created.
+- Bounded browser UAT: Flask **5004**; labeled `FG-013-UAT-*` mixed six-file + duplicate. No customer operating data.
 - Synthetic UAT for FG-008 / FG-009 / FG-010 / FG-012 is in the live development/UAT DB (labeled; not deleted).
 
 ## 11. PROTECTED STATE
@@ -139,12 +139,12 @@ Prior coded work: FG-013 office **UPLOAD PREVIOUS ESTIMATES** implemented: multi
 - **FG-003:** CONDITIONAL PASS — architecture only
 - **FG-004 / FG-005 / FG-006 / FG-007:** APPROVED, IMPLEMENTED & VERIFIED
 - **FG-008 / FG-009 / FG-010 / FG-011 / FG-012:** **CLOSED / OPERATIONAL FOR UAT**
-- **FG-013:** **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED · LIVE MIGRATION PENDING**. Multi-file / folder UX **LOCKED**. ADR-032 **Accepted**. No durable `UploadBatch`. Revision `c5d6e7f8a9b0`.
+- **FG-013:** **CLOSED / OPERATIONAL FOR UAT**. Multi-file UX **LOCKED**. Folder/OS-drag native pickers **not live-browser verified**. ADR-032 **Accepted**. No durable `UploadBatch`. Revision `c5d6e7f8a9b0` live current=head.
 - No later gate approved for implementation.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
-29 Aug conversational decisions for FG-008 / FG-009 / FG-010 architecture, implementation, live migrate, UAT, and integrity stabilization are in Git (pins above) and governed docs. 30 Aug FG-012 is closed; ADR-021 **Accepted**. FG-013 is implemented with live migrate pending. This pass **accepts ADR-033** (supplier-neutral Winchester launch/reference channel). Supplier integration is **not started**.
+29 Aug conversational decisions for FG-008 / FG-009 / FG-010 architecture, implementation, live migrate, UAT, and integrity stabilization are in Git (pins above) and governed docs. 30 Aug FG-012 is closed; ADR-021 **Accepted**. ADR-033 **Accepted**. This pass **closes FG-013** after verifying live current=`c5d6e7f8a9b0` (applied before this pass) and bounded UAT. Supplier integration is **not started**.
 
 **Completeness test:** Is any material approved fact only in this chat? **NO** after this documentation update.
 
@@ -159,7 +159,7 @@ Prior coded work: FG-013 office **UPLOAD PREVIOUS ESTIMATES** implemented: multi
 - Cancelled extraction-run status modeled; no cancel operation
 - ORG-001 optional overhead/profit treatments `UNSPECIFIED`; contingency visibility `UNSPECIFIED`; `contingency_source` / `contingency_pricing_treatment` unset (NULL) — distinct from org-approved `NOT_APPLIED`
 - Labour-snapshot Direct Labour Cost not included in estimate basis by default (ADR-021 records the GM comparability issue; does not correct it)
-- [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **IMPLEMENTED / VERIFIED** with **LIVE MIGRATION PENDING**. **LOCKED:** one user action may load many workbooks; no durable `UploadBatch`. Next **ops** action is a live-migrate prompt. Authentication / BUILD remains a separate candidate. MONITOR Feature Gate not authorized by ADR-021.
+- [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **CLOSED / OPERATIONAL FOR UAT**. **LOCKED:** one user action may load many workbooks; no durable `UploadBatch`. Do **not** `flask db upgrade` again.
 - [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (docs only). BMR / Winchester / Darcy are **not exclusive**. Winchester is launch/reference. Contractor procurement (A) ≠ CalibAi channel (B). Darcy commercial terms **unset**. Supplier Feature Gate **not authorized**.
 
 ## 17. KNOWN RISKS / UNRESOLVED PRODUCT ITEMS
@@ -178,15 +178,15 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 18. DEFERRED ITEMS
 
-Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; FG-013 **live migrate + UAT**; supplier / Winchester POC; Darcy channel economics; industry benchmarking; auth.
+Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; supplier / Winchester POC; Darcy channel economics; industry benchmarking; auth; Material Catalogue **architecture** (next docs candidate).
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN **implementation**, QuickBooks, or contract/warranty work. Do **not** `flask db upgrade` the FG-013 revision without a live-migrate prompt. Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history.
+Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN **implementation**, QuickBooks, or contract/warranty work. Do **not** run `flask db upgrade` again (FG-013 already at `c5d6e7f8a9b0`). Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** Separate FG-013 **live-migrate + UAT smoke** prompt (`flask db upgrade` `b4c5d6e7f8a9` → `c5d6e7f8a9b0`). Do not upgrade from this implementation commit. MONITOR remains **not implemented**. Do not start Phase D. **Do not start supplier integration / Winchester POC.** ADR-033 is architecture only.
+**Next governed action:** **Material Catalogue architecture** (documentation) when separately authorized. Do **not** `flask db upgrade`. MONITOR remains **not implemented**. Do not start Phase D. **Do not start supplier integration / Winchester POC.** ADR-033 is architecture only.
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -214,7 +214,7 @@ git diff --check
 ./venv/bin/python -m pytest -q
 ```
 
-Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic graph head `c5d6e7f8a9b0`; live current `b4c5d6e7f8a9` until live-migrate; FG-013 27; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **310 passed**.
+Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic graph head **and** live current `c5d6e7f8a9b0`; FG-013 27; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **310 passed**. Do **not** `flask db upgrade`.
 
 ## 22. FRESH CHAT STARTUP PROMPT
 
@@ -224,7 +224,7 @@ Paste into a new ChatGPT or Cursor conversation:
 BRAYMAN — RESUME FROM REVIEW TURNOVER
 CONTINUITY / REPOSITORY-FIRST INITIALIZATION
 
-You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following FG-013 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** with **LIVE MIGRATION PENDING** (revision `c5d6e7f8a9b0` not applied to the live development/UAT DB).
+You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following FG-013 **CLOSED / OPERATIONAL FOR UAT** (revision `c5d6e7f8a9b0` live current=head; migration applied before the reconciliation pass, not by it).
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 ChatGPT memory is not corporate memory.
@@ -267,7 +267,7 @@ Expected: 310 passed
 4. RECONSTRUCT AUTHORITATIVE STATE FROM THE REPO
 Independently reconstruct:
 - FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT
-- FG-013 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED; LIVE MIGRATION PENDING (graph head c5d6e7f8a9b0; live current b4c5d6e7f8a9)
+- FG-013 CLOSED / OPERATIONAL FOR UAT (graph head and live current c5d6e7f8a9b0; migration verified applied before reconciliation; that pass did not upgrade)
 - ADR-032 Accepted (app-managed immutable historical workbook custody; legacy Desktop corpus not moved)
 - ADR-021 Accepted (composed frozen MONITOR baseline; Project Gross Margin; MONITOR not implemented; no Feature Gate)
 - FG-012 internal breakdown + named-method Proposal consistency (Estimating owner; existing Proposal is the customer-facing estimate; outputs 1–2 only; SCHEMA NO)
@@ -282,7 +282,7 @@ Do NOT rely on AI memory. Do NOT guess missing product rules.
 Do NOT start Phase D. Do NOT enable external AI.
 Do NOT start auth, BUILD / MONITOR / LEARN implementation, QuickBooks, or contract/warranty work.
 Do NOT treat ADR-021 as a MONITOR Feature Gate.
-Do NOT flask db upgrade FG-013 unless the current prompt is an explicit live-migrate authorization.
+Do NOT flask db upgrade FG-013 again (already at c5d6e7f8a9b0).
 Do NOT begin another Feature Gate.
 
 PRESERVE → SEARCH → VERIFY → EXECUTE.
@@ -373,6 +373,12 @@ Customer project `Estimator Project` (client Michelle Steele) was not used as FG
 - Proposal template `FG-012 UAT Template` (id 1, default)
 - Draft proposal `PROP-FG012-UAT-GM` (id 1) from `EST-FG009-UAT-GM` — **not Accepted**
 
+**FG-013 — LABELED / NON-OPERATING**
+
+- Workbooks/estimates ids 21–24: `FG-013-UAT-recognized-slab.xlsx`, `-b.xlsx`, `.xlsm`, `unknown-adhoc.xlsx`
+- Upload attempts 1–7 (INGESTED ×3, QUARANTINED, UNSUPPORTED, FAILED, DUPLICATE)
+- Stored bytes under `instance/historical_uploads/ORG-001/<sha256>.xlsx|.xlsm`
+
 No UAT residue is real customer operating data. No archive/delete lifecycle exists yet (**NEEDS FUTURE LIFECYCLE SUPPORT**). Default ORG-001 $65 / 15% GM policies are **OPERATING POLICY**.
 
 ### Stranded artifacts
@@ -381,4 +387,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: FG-012 product-code and docs are in this commit; Alembic unchanged at `b4c5d6e7f8a9`; next development boundary is **STOP**. Phase D unauthorized.
+A–J: FG-013 **CLOSED / OPERATIONAL FOR UAT**; Alembic current=head `c5d6e7f8a9b0`; next development boundary is **STOP** then **Material Catalogue architecture** (docs). Phase D unauthorized. Do not `flask db upgrade` again.

@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-014 office re-UAT and closure
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `1a2e34cf9e8062a8c2a5e086e174d845f3f27417` |
+| Objective | Short office browser re-UAT of the repaired Material Catalogue link/unlink workflow. Close FG-014 if all checks pass. Docs only. |
+| Business decision | Gate closes only after office re-UAT of valid link/unlink, empty-select, non-Material fail-closed flashes, cross-org fail-closed, and catalogue page regression. |
+| Architectural decision | No product-code change. Permit Intelligence remains FUTURE. No schema, ADR, or Feature Gate for permits. |
+| Prompt template used | [cursor-bugfix-template.md](prompts/cursor-bugfix-template.md) (UAT/closure) |
+| Approved Cursor prompt summary | FG-014 FINAL OFFICE RE-UAT / CLOSURE. Start repaired app on a fresh port. Do not use 5005. If new defect, STOP. If pass, close FG-014 as CLOSED / OPERATIONAL FOR UAT. Docs-only commit/push. Then STOP. |
+| Files expected to change | FG-014 + status/handoff/log/milestones/roadmap |
+| Files prohibited from changing | `app/` · `tests/` · `migrations/` unless a new defect (then stop) |
+| Implementation result | All re-UAT checks passed on port **5007**. No new defect. FG-014 **CLOSED / OPERATIONAL FOR UAT**. |
+| Tests | Not rerun. Preserved: dedicated **35 passed**; relevant regressions **29 passed**; full suite **345 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | None for FG-014. Permit Intelligence reconnaissance not started. |
+| Next approved step | **Permit Intelligence Engine architecture reconnaissance** (not implementation). |
+| Next approved prompt | Architecture reconnaissance only. Do not implement Permit Intelligence. |
+| Commit hash | (this closure docs commit) |
+
 ### 2026-08-30 — FG-014 catalogue-link flash repair
 
 | Field | Content |

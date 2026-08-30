@@ -19,7 +19,7 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [M004-plan-intelligence-readiness-report.md](M004-plan-intelligence-readiness-report.md) | Milestone 004 report |
 | [M006-document-intelligence-readiness-report.md](M006-document-intelligence-readiness-report.md) | Milestone 006 report |
 | [M008-sheet-intelligence-readiness-report.md](M008-sheet-intelligence-readiness-report.md) | Milestone 008 readiness (architecture) |
-| [material-catalogue-architecture.md](material-catalogue-architecture.md) | **Partial Current** — [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **LIVE-MIGRATED / FLASH REPAIR APPLIED — OFFICE RE-UAT REMAINING**; ADR-034/035/036 **Accepted** |
+| [material-catalogue-architecture.md](material-catalogue-architecture.md) | **Partial Current** — [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**; ADR-034/035/036 **Accepted** |
 | [architecture/supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) | Future — supplier SKU/price/inventory; maps to Material Catalogue; **bulk onboarding pin FUTURE / NOT IMPLEMENTED**; does **not** own CalibAi identity |
 | [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) | **Future** — [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (direction only; not implemented) |
 

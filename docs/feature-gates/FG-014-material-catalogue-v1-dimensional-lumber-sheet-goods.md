@@ -7,11 +7,11 @@
 | Target Milestone | **None.** FG-014 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Material Catalogue** (canonical identity). Estimating retains `CostItem` / `Assembly` / `EstimateLineItem`. |
 | Date | 2026-08-30 |
-| Status | **LIVE-MIGRATED / FLASH REPAIR APPLIED — OFFICE RE-UAT REMAINING** |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
 | Architecture | [material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) |
 | Related ADRs | [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) **Accepted** · [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) **Accepted** · [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** · [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) |
 | Prerequisites | FG-013 **CLOSED / OPERATIONAL FOR UAT**. ADR-034/035/036 **Accepted**. |
-| Approved baseline | Gate-approval HEAD `273803b75b6bcbe6ae56fbf3274cd4a2dafcec36`. Implementation `976cc4a4942ae346b9843a77126f89969bba2b6e`. Live-migrate/UAT starting HEAD `a100caa`. Live current = head **`d6e7f8a9b0c1`**. Flash-repair starting HEAD `3e671f20a561b4c70bc837486f59f93a150f7fee`. Dedicated FG-014 **35 passed**. Full suite **345 passed**. |
+| Approved baseline | Gate-approval HEAD `273803b75b6bcbe6ae56fbf3274cd4a2dafcec36`. Implementation `976cc4a4942ae346b9843a77126f89969bba2b6e`. Live-migrate/UAT starting HEAD `a100caa`. Live current = head **`d6e7f8a9b0c1`**. Flash repair `1a2e34cf9e8062a8c2a5e086e174d845f3f27417`. Dedicated FG-014 **35 passed**. Full suite **345 passed**. Office re-UAT port **5007**. |
 
 ---
 
@@ -19,10 +19,10 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **LIVE-MIGRATED / FLASH REPAIR APPLIED — OFFICE RE-UAT REMAINING** |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT** |
 | Implementation | **DONE** in product code. Office UX `/material-catalogue/`. Catalogue-link flash repaired 2026-08-30. |
-| Schema / Alembic | **Live current = head = `d6e7f8a9b0c1`** (applied 2026-08-30). One graph head. Unchanged by the flash repair. |
-| Browser / office UAT | **RE-UAT REMAINING** — product-code flash repair + dedicated tests applied. Short office re-UAT of the catalogue link error path is required before gate close. |
+| Schema / Alembic | **Live current = head = `d6e7f8a9b0c1`** (applied 2026-08-30). One graph head. Unchanged by the flash repair or this re-UAT. |
+| Browser / office UAT | **PASSED** — repaired office app on port **5007** (2026-08-30). |
 | Living supplier pricing / promotions / inventory | **OUT OF SCOPE** (unchanged) |
 | Phase D / MaterialRequirement / supplier SKU | **OUT OF SCOPE** (unchanged) |
 
@@ -30,7 +30,7 @@ This gate does **not** authorize supplier integration, bulk supplier catalogue o
 
 ### Live-migrate / UAT finding (2026-08-30)
 
-**Do not close FG-014** until the office catalogue link error path is repaired and re-UAT'd.
+**Historical finding (superseded by flash repair + office re-UAT):** FG-014 was not closed until the office catalogue link error path was repaired and re-UAT'd.
 
 | Field | Content |
 |-------|---------|
@@ -47,7 +47,7 @@ Ordinary org UX still cannot create/edit/delete canonical identity. Material lin
 
 ### Flash repair (2026-08-30)
 
-**Do not close FG-014** until a short office re-UAT of the catalogue link error path is recorded.
+**Historical finding (superseded by office re-UAT / closure):** FG-014 was not closed until a short office re-UAT of the catalogue link error path was recorded.
 
 | Field | Content |
 |-------|---------|
@@ -55,7 +55,24 @@ Ordinary org UX still cannot create/edit/delete canonical identity. Material lin
 | Repair | Catch `MaterialCatalogueError` first; keep `(TypeError, ValueError)` only for non-integer / empty `cost_item_id`. Unlink exception order was already correct and was not changed. Link/unlink success semantics, org isolation, Material-only enforcement, and read-only canonical identity are unchanged. |
 | Tests | Dedicated FG-014 **35 passed** (was 28). Full suite **345 passed** (was 338). |
 | Live POST check | `POST /material-catalogue/7/link` with Labour `FG014-UAT-LAB` (id 5) on port **5006** (repaired code) returned 302 with session flash `Labour cost items cannot link to a canonical material.` `canonical_material_id` remained `NULL`. |
-| Next | Office re-UAT of non-Material / cross-org flashes on the office app, then close the gate. Do not start Permit Intelligence or another Feature Gate. |
+| Next at the time | Office re-UAT of non-Material / cross-org flashes on the office app, then close the gate. Completed 2026-08-30 on port **5007**. |
+
+### Office re-UAT / closure (2026-08-30)
+
+Port **5007**, repaired HEAD `1a2e34c`. Product code **not** changed this pass. Tests not rerun (already-governed 35 / 29 / 345). Labeled `FG014-UAT-*` data only.
+
+| Check | Result |
+|-------|--------|
+| Valid Material link | `FG014-UAT-MAT` (id 4) → `CAL-LUM-2X6-12` (id 7). Flash `Linked cost item "FG014-UAT-MAT" to this canonical material.` `canonical_material_id = 7`. Org `ORG-001` only. Costing unchanged (`ea` / `12.50` / markup `10.00`). |
+| Unlink | Flash `Unlinked cost item "FG014-UAT-MAT".` `canonical_material_id` returned to `NULL`. Canonical identity unchanged. Costing unchanged. |
+| Empty select | Native HTML `required` blocks submit (`Please select an item in the list.`). Office-session POST with empty `cost_item_id` flashes `Select a Material cost item to link.` No mutation. |
+| Labour fail-closed | `POST .../link` id 5 → `Labour cost items cannot link to a canonical material.` `canonical_material_id` stayed `NULL`. |
+| Additional non-Material | Equipment id 6 → `Equipment cost items cannot link to a canonical material.` No link. |
+| Cross-org fail-closed | id 10 → `Cost item not found in current organization.` No link. No `DO-NOT-LEAK-SUPPLIER-TEXT` / `999.99` on ORG-001 page. Isolation GET `/cost-library/10/edit` **404**. |
+| Catalogue list | `/material-catalogue/` and `?q=2X6` (4 lumber rows; OSB excluded). Copy: no live supplier prices. `/material-catalogue/new`, `/7/edit`, `/7/delete` **404**. No MaterialRequirement / Phase D. |
+| Restore | Re-linked `FG014-UAT-MAT` to material 7 after the unlink UAT so labeled residue matches prior live-migrate state. |
+
+**CLOSED / OPERATIONAL FOR UAT.** Do not start Permit Intelligence, supplier onboarding, Winchester/BMR, Phase D, or ADR-008 from this closure.
 
 ---
 

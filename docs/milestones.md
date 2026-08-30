@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-014 closed / operational for UAT
+
+| Field | Content |
+|-------|---------|
+| ID | [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
+| Date | 2026-08-30 |
+| Objective | Office re-UAT of repaired catalogue-link flashes and close the gate. |
+| Deliverables | Port **5007** re-UAT evidence recorded on the Feature Gate. Status docs reconciled. No product-code change. |
+| Validation | Valid link/unlink, empty-select, Labour/Equipment fail-closed, cross-org fail-closed, catalogue list/search, identity read-only, isolation GET 404. Tests not rerun (35 / 29 / 345 preserved). |
+| Next | **Permit Intelligence Engine architecture reconnaissance** (not implementation). |
+
 ### 2026-08-30 — FG-014 catalogue-link flash repair
 
 | Field | Content |

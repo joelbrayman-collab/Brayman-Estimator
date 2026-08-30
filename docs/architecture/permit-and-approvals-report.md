@@ -8,7 +8,7 @@
 | Canonical record | This document |
 | Related | [project-document-package.md](project-document-package.md) · [testing/uat-reference-cases.md](../testing/uat-reference-cases.md) · [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) · [modules/projects.md](../modules/projects.md) |
 
-**Current vs future:** The office app has **no** Permit & Approvals Report, Permit Intelligence, jurisdictional legal library, live regulatory lookup, or permit-report schema. Nothing below is implemented. This pin does **not** change [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) (**LIVE-MIGRATED / FLASH REPAIR APPLIED — OFFICE RE-UAT REMAINING**). Next governed work is FG-014 office re-UAT, then close.
+**Current vs future:** The office app has **no** Permit & Approvals Report, Permit Intelligence, jurisdictional legal library, live regulatory lookup, or permit-report schema. Nothing below is implemented. This pin does **not** change [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) (**CLOSED / OPERATIONAL FOR UAT**). Next governed work is a separate Permit Intelligence architecture reconnaissance — not implementation.
 
 ---
 

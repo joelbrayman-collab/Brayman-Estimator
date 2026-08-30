@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — Accept ADR-040 / Approve FG-017 / implementation reconnaissance
+
+| Field | Content |
+|-------|---------|
+| ID | Governance approval + reconnaissance (docs only) |
+| Status | [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED**; Brand Profile **NOT IMPLEMENTED** |
+| Branch | `main` |
+| Objective | Accept ADR-040, approve FG-017, record exact implementation plan. No product code. |
+| Deliverables | Status updates; FG-017 reconnaissance section (schema, freeze, storage, tests). No `app/` / `tests/` / `migrations/`. |
+| Validation | Docs only. `git diff --check`. Tests not rerun. |
+| Next | **STOP.** Separate FG-017 implementation prompt required. |
+
 ### 2026-08-30 — Organization Brand Profile ADR + Feature Gate governance draft
 
 | Field | Content |

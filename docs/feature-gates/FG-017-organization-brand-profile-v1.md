@@ -5,13 +5,13 @@
 | Feature Gate ID | `FG-017` |
 | Feature Name | Organization Brand Profile V1 — Identity, Logo Custody, and Proposal Brand Snapshot |
 | Target Milestone | **None.** FG-017 is the governing identifier. Do not assign a new M0xx number. |
-| Module | **Organization subsystem** owns Brand Profile and logo custody ([ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md); proposed [ADR-040](../adr/ADR-040-organization-brand-profile.md)). **Proposals** is the first consumer and owns the proposal issued-document brand snapshot ([modules/proposals.md](../modules/proposals.md)). |
+| Module | **Organization subsystem** owns Brand Profile and logo custody ([ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md); [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**). **Proposals** is the first consumer and owns the proposal issued-document brand snapshot ([modules/proposals.md](../modules/proposals.md)). |
 | Date | 2026-08-30 |
-| Status | **DRAFT FOR JOEL REVIEW / NOT APPROVED.** Does **not** authorize implementation, schema, migration, or product code. |
+| Status | **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED.** Does **not** by itself authorize product code. A separate implementation prompt is required. Do **not** create the migration in this reconnaissance pass. |
 | Architecture | [organization-brand-profile.md](../architecture/organization-brand-profile.md) · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [project-document-package.md](../architecture/project-document-package.md) · [modules/proposals.md](../modules/proposals.md) |
-| Related ADRs | [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Proposed / for Joel review** (must be **Accepted** before implementation) · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-001](../adr/ADR-001-proposal-snapshot-ownership.md) **Proposed** (do **not** accept as a side effect) · [ADR-004](../adr/ADR-004-proposal-acceptance-workflow.md) **Proposed** (do **not** accept) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
-| Prerequisites | FG-016 **CLOSED / OPERATIONAL FOR UAT**. Live current = head `f8a9b0c1d2e3`. Architecture reconnaissance accepted 2026-08-30. **ADR-040 must be Accepted and this gate Approved before any implementation prompt.** |
-| Approved baseline | **None.** This draft is not an implementation baseline. |
+| Related ADRs | [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-001](../adr/ADR-001-proposal-snapshot-ownership.md) **Proposed** (do **not** accept as a side effect) · [ADR-004](../adr/ADR-004-proposal-acceptance-workflow.md) **Proposed** (do **not** accept) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
+| Prerequisites | FG-016 **CLOSED / OPERATIONAL FOR UAT**. Live current = head `f8a9b0c1d2e3`. ADR-040 **Accepted**. Implementation reconnaissance recorded below. |
+| Approved baseline | Approval docs commit on `main` (this reconnaissance). Alembic current = head `f8a9b0c1d2e3`. Full suite governed baseline **401 passed** (not rerun for this docs pass). |
 
 ---
 
@@ -19,17 +19,17 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **DRAFT FOR JOEL REVIEW / NOT APPROVED** |
-| ADR-040 | **Proposed / for Joel review** — **not Accepted** |
-| Implementation | **NOT AUTHORIZED** — not started |
-| Schema / Alembic | **NOT AUTHORIZED** — no revision in this drafting pass. A later approved implementation would require **one** bounded additive revision. |
-| Logo storage | **NOT AUTHORIZED** |
-| Proposal renderer | **NOT AUTHORIZED** to change |
+| Feature Gate (this document) | **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED** |
+| ADR-040 | **Accepted** |
+| Implementation | **NOT STARTED** — wait for a separate implementation prompt |
+| Schema / Alembic | **NOT CREATED** — designed revision `a9b0c1d2e3f4`; do not write it in this pass |
+| Logo storage | **NOT CREATED** |
+| Proposal renderer | **UNCHANGED** until implementation |
 | Change Order / Permit / Contract / QuickBooks | **NOT IN THIS GATE** |
 
-This gate, if later Approved, would establish **organization-owned contractor branding** and stop Issued/Accepted Proposal documents from floating with later template/logo changes. It is **not** a document-family rewrite, not Permit Intelligence, and not an app-shell redesign.
+This gate establishes **organization-owned contractor branding** and stops Issued/Accepted Proposal documents from floating with later template/logo changes. It is **not** a document-family rewrite, not Permit Intelligence, and not an app-shell redesign.
 
-Drafting this file does **not** approve it. Committing this file does **not** approve it.
+Approving this file does **not** implement Brand Profile. The implementation prompt is a later authorization.
 
 ---
 
@@ -45,7 +45,7 @@ ORGANIZATION
 → IMMUTABLE DOCUMENT IDENTITY
 ```
 
-Office success (only after later approval + implementation): an organization can set contractor name/address/contact/logo once; new Proposal drafts use that profile; Issued/Accepted Proposal preview/PDF keep the branding they were issued with even if the organization later changes its logo or address.
+Office success (only after a later implementation prompt): an organization can set contractor name/address/contact/logo once via Settings; new Proposal drafts use that profile; Issued/Accepted Proposal preview/PDF keep the branding they were issued with even if the organization later changes its logo or address.
 
 Success is **BRAND PROFILE V1 FOR PROPOSAL**, not branded Change Orders, not branded Permit Reports, and not CalibAi chrome redesign.
 
@@ -60,13 +60,13 @@ Success is **BRAND PROFILE V1 FOR PROPOSAL**, not branded Change Orders, not bra
 | 3 | Which module owns it? | **Organization subsystem** owns Brand Profile + logo custody. **Proposals** consumes it and owns the proposal brand snapshot. Later consumers are named below; they are **not** implemented here. |
 | 4 | What data does it own? | Organization-scoped Brand Profile (versioned identity/contact/colours + logo custody metadata and bytes). Proposal issued-document brand snapshot (Proposals-owned). Not `ProposalTemplate` clauses. Not Permit analysis. Not Change Order items. |
 | 5 | What data does it reference? | `organizations` (tenant). `proposals` / `proposal_templates` (consume / stop using live company+logo for Issued/Accepted render). Logo bytes in private instance storage. |
-| 6 | What may a later implementation change? | Organization Brand Profile models/services/office settings UX; logo upload/custody; Proposal preview/PDF to read Brand Profile (drafts) and snapshots (Issued/Accepted); one additive migration; dedicated tests; governed docs. **Only after this gate is Approved and an implementation prompt is issued.** |
-| 7 | What must it not change? | CalibAi app-shell chrome; Permit analysis / FG-016 HTML/PDF remaining CalibAi-neutral; Change Order PDF/email/document family; Estimating lines/pricing; Internal Detailed Cost Breakdown branding; Plan Intelligence; labour/pricing engines; Material Catalogue; historical evidence; BUILD/MONITOR/LEARN; auth; QuickBooks; contracts; `branding_config` JSON; legal identifier invention; existing Issued/Accepted **commercial** snapshot fields except adding brand snapshot. |
-| 8 | Acceptance criteria? | See **Acceptance criteria** below. They apply only to a later approved implementation. |
-| 9 | Tests required? | See **Proposed tests**. None in this drafting pass. |
-| 10 | Documentation? | This gate; ADR-040; Brand Profile pin; proposals module; indexes; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log. Implementation docs only after approval. |
-| 11 | ADR required? | **Yes — ADR-040.** Must be **Accepted** before implementation. This drafting pass leaves it **Proposed**. If implementation exposes an uncovered conflict: **STOP** — do not invent another ADR inside the implementation prompt. |
-| 12 | Migration? | **YES — later, one bounded additive revision** in a separately authorized implementation prompt only. No destructive rewrite. Do **not** create the migration in this governance pass. Do **not** run `flask db upgrade` for this capability now. |
+| 6 | What may implementation change? | Organization Brand Profile models/services/office Settings UX; logo upload/custody; Proposal preview/PDF to read Brand Profile (unfrozen) and snapshots (frozen); **one** additive migration `a9b0c1d2e3f4` under the **implementation** prompt; dedicated tests; governed docs. **Only after a separate implementation prompt.** |
+| 7 | What must it not change? | CalibAi app-shell chrome (sidebar logo/favicon/titles remain as they are, except enabling the existing Settings nav item); Permit analysis / FG-016 HTML/PDF remaining CalibAi-neutral; Change Order PDF/email/document family; Estimating lines/pricing; Internal Detailed Cost Breakdown; Plan Intelligence; labour/pricing engines; Material Catalogue; historical evidence; BUILD/MONITOR/LEARN; auth; QuickBooks; contracts; `branding_config` JSON; legal identifier invention; existing Issued/Accepted **commercial** snapshot fields except adding a brand snapshot. |
+| 8 | Acceptance criteria? | See **Acceptance criteria** below. |
+| 9 | Tests required? | See **Dedicated tests** and **Regression suite** in the implementation reconnaissance. None written in this pass. |
+| 10 | Documentation? | This gate; ADR-040; Brand Profile pin; proposals module; indexes; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log. |
+| 11 | ADR required? | **Yes — ADR-040, now Accepted.** If implementation exposes an uncovered conflict: **STOP** — do not invent another ADR inside the implementation prompt. |
+| 12 | Migration? | **YES — one bounded additive revision `a9b0c1d2e3f4`** in the implementation prompt only. No destructive rewrite. **Do not create it in this reconnaissance pass.** Do **not** run `flask db upgrade` now. |
 
 ---
 
@@ -96,12 +96,12 @@ Keep this gate deliberately small. If later Approved, implementation may include
 1. **Organization-scoped Brand Profile** — versioned contractor identity for document rendering (legal name, customer-facing name, address, phone, email, website; optional document colours currently on `ProposalTemplate`).
 2. **Governed logo custody** — org-owned, app-managed private storage, validated files, controlled naming, replace via explicit action, prior bytes retained for snapshots. No remote URL-following.
 3. **Tenant isolation** — Brand Profile, logo bytes, and snapshots never leak across organizations.
-4. **Immutable issued-document branding snapshot architecture** — freeze identity+logo+colours on first transition to Proposal `Issued` or `Accepted`; re-render from snapshot thereafter.
+4. **Immutable issued-document branding snapshot architecture** — freeze at first **Issued**; if Accepted is reached with no Issued snapshot, freeze at Accepted; re-render from snapshot thereafter.
 5. **Proposal as first active consumer** — Draft/Ready preview/PDF use **current** Brand Profile, not live `ProposalTemplate` company/logo fields and not a floating static Brayman default.
 6. **Stop historical float** — Issued/Accepted proposals no longer depend on live mutable company identity/logo. Existing Issued/Accepted rows receive a **one-time** snapshot at implementation so they stop floating.
 7. **ProposalTemplate** — keep clauses/layout; stop using template company/logo/colour columns for Proposal rendering. Do not drop those columns in this gate (additive only).
 8. **ORG-001 seed** — create a CURRENT Brand Profile from existing Organization identity. Logo seed may copy the current static Brayman asset into org custody as a transitional default; Git static is not the long-term SoR.
-9. **Office settings UX** sufficient to view/edit/activate Brand Profile and upload a logo on the unauthenticated office app. Exact route is an implementation detail; do not redesign the whole settings product.
+9. **Office Settings UX** — enable the existing sidebar Settings item; Brand Profile form at `/settings/...`. Do not create a new top-level module.
 10. **Tests and documentation** as below.
 11. **One additive Alembic revision** only if the **implementation** prompt authorizes it.
 
@@ -121,7 +121,7 @@ Architecture must not block, and must not independently brand, these later surfa
 | Warranty | Same as Contract. **Not implemented.** |
 | QuickBooks-facing exports | Consume Brand Profile where appropriate later. **Not implemented.** |
 | Procurement / project reports | Consume Brand Profile later. **Not implemented.** |
-| Internal Detailed Cost Breakdown | Not a first-gate consumer. Joel decision still open. **Not implemented.** |
+| Internal Detailed Cost Breakdown | **OUT OF SCOPE for FG-017.** No decision is made here about later internal-document branding. |
 
 ---
 
@@ -152,82 +152,307 @@ Architecture must not block, and must not independently brand, these later surfa
 
 ## Acceptance criteria
 
-**These criteria apply only after Joel Approves this gate, Accepts ADR-040, and authorizes an implementation prompt.** They are **not** claimed complete by this draft.
+Apply only after a separate **implementation** prompt. Not claimed complete by this reconnaissance.
 
-1. ADR-040 is **Accepted** and this Feature Gate is **Approved** before code changes.
-2. Each organization has at most one **CURRENT** Brand Profile; replacement supersedes rather than silently mutates.
-3. Brand Profile stores the governed identity/contact fields required for Proposal document rendering, plus logo identity. No invented legal identifiers.
+1. ADR-040 is **Accepted** (done) and this Feature Gate is **Approved** (done) before product code.
+2. Each organization has at most one **CURRENT** Brand Profile; save/replace creates a new version (CURRENT-on-save; no Draft state).
+3. Brand Profile stores governed identity/contact fields plus logo identity. No invented legal identifiers.
 4. Logo upload is org-scoped, privately stored, validated, not in Git, not resolved via remote URL.
 5. Organization A cannot read or render Organization B’s Brand Profile or logo.
-6. Draft/Ready Proposal preview and PDF render contractor identity/logo from the **current** Brand Profile, not from live `ProposalTemplate` company/logo fields and not from a floating static default once a current profile exists.
-7. On first transition to Issued or Accepted, the proposal stores an immutable brand snapshot; later Brand Profile or logo changes do not alter that proposal’s preview/PDF identity.
-8. Issued → Accepted does not refresh branding from the live profile.
-9. Existing Issued/Accepted proposals present at implementation receive a one-time snapshot and then no longer float.
-10. `ProposalTemplate` remains usable for clauses/layout; identity/logo/colours are not the rendering source.
+6. Unfrozen Proposal preview/PDF (no snapshot yet: typically Draft/Ready) render from the **current** Brand Profile, not from live `ProposalTemplate` company/logo fields and not from a floating static Brayman default once a current profile exists.
+7. Freeze at first **Issued**. If Accepted is reached with no Issued snapshot, freeze at **Accepted**. Later Brand Profile or logo changes do not alter that proposal’s preview/PDF identity.
+8. Issued → Accepted preserves the identical snapshot.
+9. Existing Issued/Accepted proposals present at implementation receive a one-time snapshot and then no longer float; commercial fields/totals/acceptance are untouched.
+10. `ProposalTemplate` remains usable for clauses/layout; identity/logo/colours are not the FG-017 rendering source; columns are not dropped.
 11. Change Order PDF behaviour is **unchanged**.
 12. Permit HTML/PDF remain **neutral CalibAi**; analysis snapshots unchanged.
-13. App-shell sidebar/favicon/titles **unchanged**.
-14. One additive migration only; Alembic remains one graph head; no `flask db upgrade` in the governance/draft pass.
+13. App-shell sidebar logo/favicon/titles **unchanged** except enabling the existing Settings nav item to Brand Profile.
+14. One additive migration `a9b0c1d2e3f4`; Alembic remains one graph head.
 15. Dedicated tests plus full suite pass before implementation close.
 16. Governed docs distinguish Current vs Intended; do not claim other document families were branded.
 
 ---
 
-## Proposed tests
+## Approved implementation reconnaissance (2026-08-30)
 
-**None in this drafting pass.** A later implementation prompt must add dedicated tests that prove at least:
+**Status:** design only. **Do not implement from this section.** Exact plan for the later implementation prompt.
 
-- Brand Profile create / activate / supersede (no in-place CURRENT mutation)
-- Logo upload validation (type/size/path); rejection of remote URLs and traversal
-- Bytes not committed to Git; org-prefixed private storage
-- Cross-org isolation (profile, logo, snapshot)
-- Draft/Ready Proposal uses current Brand Profile
-- Issued snapshot freeze; subsequent profile/logo change does not change Issued/Accepted render
-- Accepted commercial immutability ([ADR-002](../adr/ADR-002-accepted-proposal-immutability.md)) still holds
-- Existing Issued/Accepted rows no longer float after one-time snapshot
-- Change Order PDF still uses its current (pre-family) renderer — **regression, not a rewrite**
-- Permit HTML/PDF remain CalibAi-neutral — **regression**
-- App-shell chrome unchanged — **regression**
-- Full suite `./venv/bin/python -m pytest -q` before close
+### A. Existing Organization model
 
-Do not claim these tests exist until they are written and run.
+[`app/models/organization.py`](../../app/models/organization.py): `id`, `legal_name`, `display_name`, `primary_address`, `default_region`, `currency`, `tax_jurisdiction`, `is_active`, timestamps. No phone, email, website, logo, or branding JSON.
+
+[`app/services/organizations.py`](../../app/services/organizations.py): `DEFAULT_ORGANIZATION_ID = "ORG-001"`; `get_current_organization_id()`; `ensure_default_organization()`.
+
+Live DB (read-only, 2026-08-30): `ORG-001` Brayman Construction Inc. / Brayman Construction / 411 St. John Street, Merrickville, Ontario K0G 1N0; `ORG-FG014-UAT` isolation org. Do **not** copy the Brayman static logo into the isolation org.
+
+### B. Existing Proposal / ProposalTemplate
+
+[`app/models/proposal.py`](../../app/models/proposal.py)
+
+`PROPOSAL_STATUSES`: Draft, Ready, Issued, Accepted, Rejected, Expired, Cancelled, Superseded.
+
+`ProposalTemplate` (org-scoped): `company_name`, `company_address`, `company_phone`, `company_email`, `company_website`, `logo_path`, `primary_color`, `accent_color`, plus clause/layout flags. **Keep all columns.**
+
+`Proposal` has commercial/client/project snapshots and `issued_at`. **No** brand snapshot today. `issued_at` is set only when status is Issued at create or on transition **to** Issued ([`app/services/proposals.py`](../../app/services/proposals.py) `create_proposal` / `update_proposal`). Create-as-Accepted does **not** set `issued_at`.
+
+[ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) locks **Accepted** only (`ensure_proposal_mutable`). **Issued remains commercially mutable.** Brand freeze is a **separate** immutability layer.
+
+### C. Current Proposal preview / PDF paths
+
+- Preview: [`app/routes/proposals.py`](../../app/routes/proposals.py) `preview_proposal` → [`app/templates/proposals/preview.html`](../../app/templates/proposals/preview.html) using `template.company_*`, colours, and `resolve_preview_logo_url(template.logo_path)`.
+- PDF: [`app/services/proposal_pdf.py`](../../app/services/proposal_pdf.py) `generate_proposal_pdf` reads live template company lines and `resolve_logo_filesystem_path(template.logo_path)`.
+
+**Governed FG-017 path must stop using those live template fields.**
+
+### D. Status transition points (freeze hooks)
+
+| Event | Code | Freeze |
+|-------|------|--------|
+| Create with status Issued | `create_proposal` | Freeze in the same transaction after insert |
+| Create with status Accepted | `create_proposal` (`issued_at` stays null) | Freeze at Accepted |
+| `update_proposal` / `update_proposal_status` first transition **to Issued** | `update_proposal` status branch (~line 631) | Freeze |
+| Transition **to Accepted** with no snapshot | same | Freeze at Accepted |
+| Issued → Accepted with snapshot present | same | **Do not** rewrite snapshot |
+| POST `/proposals/<id>/status` | `update_status` | via `update_proposal_status` |
+
+Do not freeze Draft/Ready. Do not freeze commercial `ensure_proposal_mutable` (Accepted-only).
+
+**Sticky snapshot rule:** if a snapshot row exists, preview/PDF **always** use it (even if status later returns to Draft — existing code allows Issued → Draft). Do **not** delete the snapshot. Do **not** invent an Issued commercial lock.
+
+### E. Current logo resolution
+
+[`app/services/proposal_pdf.py`](../../app/services/proposal_pdf.py):
+
+- `DEFAULT_LOGO_STATIC_PATH = "branding/brayman-construction-logo.png"`
+- `MAX_LOGO_BYTES = 5 * 1024 * 1024`
+- `SUPPORTED_LOGO_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif"}`
+- PDF: never follows remote URLs; static-folder relative paths only
+- Preview `resolve_preview_logo_url`: **does** return `http://` / `https://` and absolute `/` paths — **must not** be used for Brand Profile
+
+Change Order PDF ([`app/project_controls/pdf.py`](../../app/project_controls/pdf.py)) hardcodes the same static asset — **do not change**.
+
+Template form `logo_path` is a free-text field, not an upload.
+
+### F. Existing private storage to reuse
+
+Reuse the **ADR-032 / FG-013** pattern in [`app/services/historical_ingestion/storage.py`](../../app/services/historical_ingestion/storage.py): org-segment regex, SHA-256 filename, no overwrite of mismatched bytes, `instance/` (already gitignored), resolve with traversal checks.
+
+Do **not** store logos under `instance/historical_uploads/` or `instance/plan_uploads/` (wrong custody). New root: `instance/brand_logos/<organization_id>/<sha256><ext>`.
+
+Plan PDF download ([`app/plan_intelligence/routes.py`](../../app/plan_intelligence/routes.py) `send_file`) is the pattern for a tenant-scoped logo response.
+
+No Pillow in `requirements.txt`. Do **not** add it. Validate suffix + size + magic bytes.
+
+### G. Proposed Brand Profile schema
+
+Table `organization_brand_profiles`:
+
+| Column | Type | Notes |
+|--------|------|--------|
+| `id` | Integer PK | |
+| `organization_id` | String(50) NOT NULL FK `organizations.id` | indexed |
+| `version_number` | Integer NOT NULL | per-org, starting at 1 |
+| `status` | String(20) NOT NULL | `CURRENT` \| `SUPERSEDED` only — **no DRAFT** |
+| `legal_name` | String(255) NOT NULL | |
+| `customer_facing_name` | String(255) NOT NULL | |
+| `address` | String(255) | nullable |
+| `phone` | String(50) | nullable |
+| `email` | String(150) | nullable |
+| `website` | String(180) | nullable |
+| `primary_color` | String(20) | nullable; renderer default `#1f3a5f` if null |
+| `accent_color` | String(20) | nullable; renderer default `#c79a2b` if null |
+| `logo_sha256` | String(64) | nullable |
+| `logo_extension` | String(8) | e.g. `.png` |
+| `logo_byte_size` | Integer | |
+| `logo_original_filename` | String(255) | untrusted metadata |
+| `superseded_by_id` | Integer FK self | nullable |
+| `created_at` | DateTime NOT NULL | |
+| `created_by` | String(150) NOT NULL | actor-string (`HISTORICAL_UPLOAD_ACTOR` convention) |
+
+Constraints:
+
+- UNIQUE (`organization_id`, `version_number`)
+- CHECK `status IN ('CURRENT', 'SUPERSEDED')`
+- Partial UNIQUE index: one CURRENT per `organization_id` (`WHERE status = 'CURRENT'`) — SQLite supports this
+- CURRENT-on-save: INSERT new row CURRENT, set prior CURRENT to SUPERSEDED + `superseded_by_id`. **No in-place UPDATE of identity/logo columns on CURRENT.**
+
+Do **not** add `branding_config` JSON. Do **not** add legal/corporate identifier columns.
+
+### H. Logo custody
+
+| Concern | Design |
+|---------|--------|
+| Root | `instance/brand_logos/` (`BRAND_LOGO_ROOT` config override, same style as `HISTORICAL_UPLOAD_ROOT`) |
+| Path | `<org_id>/<sha256><ext>` — org segment `[A-Za-z0-9._-]{1,50}` |
+| Formats | `.png`, `.jpg`, `.jpeg`, `.gif` — **existing** `SUPPORTED_LOGO_SUFFIXES` |
+| Size | **5 MiB** — existing `MAX_LOGO_BYTES` |
+| Magic | PNG `\x89PNG`, JPEG `\xff\xd8\xff`, GIF `GIF87a`/`GIF89a` |
+| Remote URL | reject |
+| Traversal | reject `..`, absolute paths, extra segments |
+| Replace | new version + new/same sha object; **never** overwrite bytes if existing sha file content differs |
+| Git | `instance/` already ignored |
+| Serve | org-scoped `send_file`; current logo vs snapshot logo as separate lookups |
+| ORG-001 seed | copy `app/static/branding/brayman-construction-logo.png` into custody as transitional default |
+| Other orgs | **do not** copy the Brayman static logo |
+
+### I. Proposal Brand Snapshot
+
+Table `proposal_brand_snapshots` (1:1, Proposals-owned):
+
+| Column | Type | Notes |
+|--------|------|--------|
+| `id` | Integer PK | |
+| `proposal_id` | Integer NOT NULL UNIQUE FK `proposals.id` | |
+| `organization_id` | String(50) NOT NULL FK `organizations.id` | isolation |
+| `source_brand_profile_id` | Integer FK `organization_brand_profiles.id` | provenance; nullable if seed had no profile (should not happen after ensure) |
+| `freeze_trigger` | String(32) NOT NULL | `ISSUED` \| `ACCEPTED` \| `MIGRATION_BACKFILL` |
+| denormalized identity | same strings/colours as profile | **copied**, not live |
+| logo identity | sha256, extension, byte_size, original_filename | bytes remain on disk |
+| `frozen_at` | DateTime NOT NULL | |
+| `frozen_by` | String(150) NOT NULL | |
+
+Enforcement: service refuses UPDATE/DELETE of a snapshot row once inserted. Rendering: snapshot if present, else CURRENT Brand Profile for the proposal’s org. Never `ProposalTemplate` company/logo/colours. Never static Brayman as a floating fallback for a non-seeded org.
+
+Do **not** add snapshot columns onto `proposals` commercial fields.
+
+### J. Existing Issued/Accepted proposals (live DB, read-only)
+
+Verified `instance/brayman_estimator.db` 2026-08-30, no mutation:
+
+| Status | Count |
+|--------|------:|
+| Draft | 1 (`PROP-FG012-UAT-GM` id 1) |
+| Issued | **0** |
+| Accepted | **0** |
+
+Template id 1 (`FG-012 UAT Template`, ORG-001): `company_name` = `Brayman Construction Inc. (FG-012 UAT)`; address/phone/email/website/logo_path/colours **NULL**.
+
+**Backfill algorithm (implementation/migration data step, not this pass):** for every proposal with status Issued or Accepted and no snapshot: copy the **CURRENT** Brand Profile of that proposal’s organization (via template.organization_id / project.organization_id). `freeze_trigger = MIGRATION_BACKFILL`. Do not read live `ProposalTemplate` company fields as SoR (they are being retired). Do not alter commercial columns. Tests will create Issued/Accepted rows and must prove the same algorithm.
+
+Draft `PROP-FG012-UAT-GM` is **not** snapshotted.
+
+### K. Migration plan (do not create now)
+
+- File: `migrations/versions/a9b0c1d2e3f4_add_organization_brand_profile_fg017.py`
+- `revision = "a9b0c1d2e3f4"`
+- `down_revision = "f8a9b0c1d2e3"`
+- Additive: create the two tables + indexes + checks
+- **Schema only** in Alembic (no logo byte copy in SQL)
+- Application `ensure_brand_profiles_for_existing_organizations()` after upgrade: version 1 CURRENT per org from `Organization.legal_name` / `display_name` / `primary_address`; ORG-001 logo copy into custody in the **same insert**
+- Then backfill snapshots for any Issued/Accepted proposals
+- Downgrade: drop the two tables only; do not delete `instance/brand_logos` bytes from Alembic (document leftover files)
+- Do **not** drop `proposal_templates` identity columns
+- Do **not** run `flask db upgrade` in this reconnaissance
+
+### L. Implementation files (later prompt)
+
+New:
+
+- `app/models/brand_profile.py`
+- `app/services/brand_profile.py`
+- `app/services/brand_logo_storage.py`
+- `app/routes/settings.py` (or equivalent under existing Settings; url prefix `/settings`)
+- `app/templates/settings/brand_profile.html`
+- `tests/test_brand_profile_fg017.py`
+- `migrations/versions/a9b0c1d2e3f4_add_organization_brand_profile_fg017.py`
+
+Change:
+
+- `app/models/__init__.py`
+- `app/models/organization.py` (relationship only)
+- `app/__init__.py` (register settings blueprint; `BRAND_LOGO_MAX_BYTES` / `BRAND_LOGO_ROOT`)
+- `app/navigation.py` (enable existing Settings item → settings brand endpoint; **no** new top-level Brand Profile item)
+- `app/services/proposals.py` (freeze hooks in `create_proposal` / `update_proposal`)
+- `app/services/proposal_pdf.py` (render from snapshot or CURRENT profile)
+- `app/routes/proposals.py` (preview logo URL from brand service)
+- `app/templates/proposals/preview.html` (identity from brand context, not template company_*)
+- `app/services/organizations.py` if ensure is colocated
+- governed docs after implementation
+
+Do **not** change: `app/project_controls/pdf.py`, permit HTML/PDF, `app/templates/partials/sidebar.html` logo/favicon, `app/templates/base.html` favicon, Internal breakdown templates, `ProposalTemplate` columns.
+
+### M. Dedicated tests
+
+`tests/test_brand_profile_fg017.py` must prove:
+
+- CURRENT-on-save supersession; no DRAFT; no in-place CURRENT mutation
+- one CURRENT per org
+- logo validation (type/size/magic); reject remote URL, traversal, cross-org path
+- bytes under `instance/brand_logos/<org>/`; not in Git
+- ORG-001 seed identity + transitional logo; isolation org **without** Brayman logo leak
+- Draft/Ready render uses CURRENT profile, not template `company_name` / `logo_path`
+- first Issued freezes; later profile/logo change does not change Issued PDF/preview
+- Draft → Accepted with no Issued snapshot freezes at Accepted
+- Issued → Accepted keeps identical snapshot
+- Accepted commercial immutability still holds
+- backfill helper for Issued/Accepted does not change totals/status/lines
+- snapshot present ⇒ render from snapshot even if status later set to Draft
+- Change Order PDF still contains existing product-name/static-logo behaviour
+- Permit HTML/PDF remain CalibAi-neutral (existing fixtures)
+
+### N. Regression suite
+
+Run focused then full:
+
+- `tests/test_proposal_immutability.py`
+- `tests/test_proposal_preview.py` (will need Brand Profile instead of template company assertions)
+- `tests/test_proposal_pdf.py` (same)
+- `tests/test_proposals.py`
+- `tests/test_proposal_snapshots.py`
+- `tests/test_change_orders.py`
+- `tests/test_permit_intelligence_fg016.py` (or current FG-016 filename)
+- `./venv/bin/python -m pytest -q`
+
+### O. Security / isolation
+
+- Org-prefix storage and query filters
+- No remote logo fetch (close preview HTTP(S) path for this renderer)
+- Path traversal rejection
+- Untrusted original filename
+- Snapshot/logo routes 404 across orgs
+- Do not serve Git static Brayman as fallback for a foreign org
+
+### P. Rollback / failure
+
+- Alembic downgrade drops tables only
+- Failed logo upload does not mutate CURRENT
+- Failed freeze aborts the status transaction (no Issued without snapshot)
+- Duplicate sha store is idempotent if bytes match; refuse if they do not
+
+### Q. Conflicts with existing code
+
+1. Preview `resolve_preview_logo_url` allows http(s) — do not use it for FG-017.
+2. Issued is commercially mutable; brand snapshot is not — two layers.
+3. Issued → Draft is currently allowed — snapshot stays sticky.
+4. Tests assert template `Brayman Construction Co.` in preview/PDF — those tests must move to Brand Profile fields.
+5. Settings nav item exists but `enabled: False` / `endpoint: None` — enable it; do not add a new sidebar module.
+6. Header Settings button is a separate disabled control — **leave it** (not a new settings product).
+
+### R. Unresolved (stop rather than invent)
+
+1. Whether a later gate brands Internal Detailed Cost Breakdown — **out of FG-017**.
+2. Whether Issued → Draft should be prohibited — **not decided**; sticky snapshot is the FG-017 rule.
+3. Whether template form should hide retired company/logo fields — keep fields for compatibility; optional notice only if it stays a small copy change.
+4. Legal identifiers remain out.
+5. Colour hex validation strictness beyond “string(20) + existing renderer parse” — reuse `_parse_color` in `proposal_pdf.py`; do not invent a new colour system.
+
+No repository constraint requires a Draft Brand Profile state.
+
+### S. Recommended implementation sequence
+
+1. Additive migration `a9b0c1d2e3f4` (schema only).
+2. Models + logo storage + brand_profile service + ensure-seed.
+3. Freeze hooks in `create_proposal` / `update_proposal`.
+4. Preview + PDF consume snapshot-or-current.
+5. Enable Settings nav + Brand Profile office form + logo upload + org-scoped logo route.
+6. Dedicated tests, then regressions, then full suite.
+7. Docs close. **Do not** live-migrate unless a later prompt says so.
 
 ---
 
-## Schema / migration (later implementation only)
+## Explicit stop conditions for the implementation prompt
 
-**This drafting pass: no migration, no models, no `flask db upgrade`.**
-
-If later Approved, expect **one** additive revision covering approximately:
-
-- organization-owned Brand Profile (versioned) and/or logo custody metadata
-- private logo object identity (hash/key), not Git paths as SoR
-- Proposal issued-document brand snapshot (structured fields + logo identity)
-
-Do not drop `ProposalTemplate` columns. Do not implement `branding_config` JSON. Do not add Brand Profile columns onto Permit analysis tables. Exact names are **not** approved by this draft.
-
----
-
-## Documentation (this drafting pass)
-
-Record that ADR-040 is **Proposed** and FG-017 is **DRAFT / NOT APPROVED**. Do not describe Brand Profile as implemented or authorized for product work.
-
----
-
-## Unresolved Joel decisions (do not invent)
-
-1. Accept ADR-040 and Approve FG-017, or request changes.
-2. Whether Internal Detailed Cost Breakdown should later consume Brand Profile (out of this gate either way until decided).
-3. Whether Draft-before-CURRENT is required or CURRENT-on-save is enough.
-4. Exact office navigation for Brand Profile settings.
-5. Whether Issued-but-not-Accepted is the first freeze point (this draft: **yes**, first of Issued or Accepted).
-6. Legal/corporate identifiers remain **out** unless Joel later authorizes them.
-
----
-
-## Explicit stop conditions for a later implementation prompt
-
-Stop and report if: ADR-040 is still Proposed; this gate is still not Approved; a second Alembic head appears; Permit/CO/app-shell work is requested inside the branding prompt; legal identifiers are invented; `branding_config` JSON is about to be added; remote URL logos are proposed.
+Stop and report if: a second Alembic head appears; Permit/CO/app-shell logo work is requested; legal identifiers are invented; `branding_config` JSON is about to be added; remote URL logos are proposed; Draft Brand Profile state is about to be added; Internal breakdown branding is pulled in; template identity columns are dropped.
 
 ---
 
@@ -235,6 +460,6 @@ Stop and report if: ADR-040 is still Proposed; this gate is still not Approved; 
 
 | Role | Name | Date |
 |------|------|------|
-| Joel | | **Pending** — **NOT APPROVED** |
-| ChatGPT review | | **Pending** |
-| Cursor implementation note | Docs-only draft. **No product implementation.** | 2026-08-30 |
+| Joel | Joel Brayman | 2026-08-30 |
+| ChatGPT review | Accept ADR-040 / Approve FG-017 / implementation reconnaissance | 2026-08-30 |
+| Cursor implementation note | Docs-only approval + reconnaissance. **IMPLEMENTATION NOT STARTED.** | 2026-08-30 |

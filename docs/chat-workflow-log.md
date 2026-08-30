@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — Accept ADR-040 / Approve FG-017 / FG-017 implementation reconnaissance
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `ee6a695eab8a3dcd4c02b663671990d124ec313d` (starting HEAD) |
+| Objective | Accept ADR-040; approve FG-017; produce exact implementation plan. Docs only. |
+| Business decision | CURRENT-on-save (no Draft Brand Profile). Freeze at first Issued; Accepted-without-Issued freezes at Accepted. Settings nav, not a new module. Internal breakdown out of FG-017. |
+| Architectural decision | ADR-040 **Accepted**. FG-017 **APPROVED / IMPLEMENTATION NOT STARTED**. Designed revision `a9b0c1d2e3f4` not created. No `branding_config` JSON. |
+| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — ACCEPT ADR-040 / APPROVE FG-017 — IMPLEMENTATION RECONNAISSANCE ONLY. |
+| Files expected to change | Governance docs / FG-017 reconnaissance only |
+| Files prohibited from changing | `app/` · `tests/` · `migrations/` · live DB · logos |
+| Implementation result | Approval recorded. Exact plan on FG-017. **IMPLEMENTATION NOT STARTED.** |
+| Tests | Not rerun (docs-only). `git diff --check`. Live DB read-only: 0 Issued / 0 Accepted proposals. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append; do not rewrite the prior draft record) |
+| Constitutional issue raised | Issued brand freeze is separate from ADR-002 Accepted commercial lock. |
+| Unresolved issues | Implementation prompt not issued. Issued→Draft sticky-snapshot vs status lock not separately gated. |
+| Next approved step | **STOP.** Wait for FG-017 implementation authorization. |
+| Next approved prompt | Fresh-chat prompt in `docs/session-handoff.md` §22. Does **not** start implementation. |
+| Commit hash | (this docs commit) |
+
 ### 2026-08-30 — Organization Brand Profile ADR + Feature Gate governance draft
 
 | Field | Content |

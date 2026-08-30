@@ -3,9 +3,9 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-040: Organization Brand Profile, Logo Custody, and Issued-Document Brand Snapshots |
-| Status | **Proposed / for Joel review** — **not Accepted**. Does **not** authorize implementation, schema, migration, or product code. |
+| Status | **Accepted** (2026-08-30; governing [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**). Does **not** by itself authorize product code, schema, or migration — those require a separate FG-017 implementation prompt. |
 | Date | 2026-08-30 |
-| Related | [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED** · [organization-brand-profile.md](../architecture/organization-brand-profile.md) · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [project-document-package.md](../architecture/project-document-package.md) · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-002](ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-039](ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-032](ADR-032-app-managed-historical-workbook-storage.md) **Accepted** · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [modules/proposals.md](../modules/proposals.md) · [change-order-document-family.md](../architecture/change-order-document-family.md) · [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · Constitution Article 5 |
+| Related | [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED** · [organization-brand-profile.md](../architecture/organization-brand-profile.md) · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [project-document-package.md](../architecture/project-document-package.md) · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-002](ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-039](ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-032](ADR-032-app-managed-historical-workbook-storage.md) **Accepted** · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [modules/proposals.md](../modules/proposals.md) · [change-order-document-family.md](../architecture/change-order-document-family.md) · [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · Constitution Article 5 |
 
 ---
 
@@ -33,7 +33,15 @@ Constitution Article 5 and architecture Rule 3 forbid silent overwrite of accept
 
 ## Decision
 
-**Proposed.** Joel has not accepted this ADR. Implementation still requires Joel to Accept this ADR **and** Approve [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md), then a separate implementation prompt.
+**Accepted** 2026-08-30. Product implementation still requires a separate [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) implementation prompt. This ADR does **not** create a migration.
+
+Joel / ChatGPT locked the following FG-017 rules at acceptance:
+
+- **CURRENT-on-save.** No separate Draft Brand Profile state.
+- **Freeze at first ISSUED.** If a proposal reaches ACCEPTED with no Issued snapshot, freeze at ACCEPTED. Once frozen, never refresh; ISSUED → ACCEPTED keeps the identical snapshot.
+- **App-shell chrome out.** Internal Detailed Cost Breakdown consumption **out** of FG-017.
+- **Settings navigation:** use the existing Settings / organization architecture; do not add a new top-level module.
+- **Legal identifiers out.** Do not implement `branding_config` JSON.
 
 ### 1. Organization relationship
 
@@ -110,9 +118,9 @@ Brand Profile is versioned. A later implementation must record at least:
 - created_at / created_by (actor-string until auth exists)
 - supersession relationship to the prior current version
 
-**Approval / activation state (proposed):** one **CURRENT** Brand Profile per organization. Replacement creates a new version and marks the prior version **SUPERSEDED**. Draft-before-activate is allowed if useful; silent mutation of CURRENT in place is **prohibited**.
+**Approval / activation state:** one **CURRENT** Brand Profile per organization. V1 is **CURRENT-on-save**: saving identity or replacing a logo creates a **new** version that is immediately CURRENT; the prior CURRENT becomes **SUPERSEDED**. There is **no** Draft Brand Profile state. Silent in-place mutation of a CURRENT row is **prohibited** (new version + supersession instead).
 
-There is no separate “Brand Profile approval board.” Explicit organization action to activate or replace is the approval event.
+There is no separate “Brand Profile approval board.” Saving is the activation event.
 
 ### 8. Immutable issued-document branding snapshots
 
@@ -132,14 +140,12 @@ Issued / Accepted customer-facing documents must preserve the branding **actuall
 
 **Proposal (first consumer):**
 
-- `Draft` / `Ready` proposals may render from the **current** Brand Profile.
-- On first transition to **Issued** or **Accepted**, freeze an immutable branding snapshot on that proposal (identity fields + logo identity/bytes reference + colours actually used).
-- Subsequent preview/PDF of Issued or Accepted proposals **must** use that snapshot, never live Brand Profile, never live `ProposalTemplate` company/logo fields, never the static Brayman default as a floating fallback.
-- A later Issued → Accepted transition must **not** refresh branding from the live profile.
-
-Existing Issued/Accepted proposals that have no snapshot today **must** receive a one-time snapshot at implementation so they stop floating. Do not leave them bound to live template/logo.
-
-This extends [ADR-002](ADR-002-accepted-proposal-immutability.md) to document identity. It does not reopen ADR-002’s commercial-line rules and does not implement ADR-004 (void/supersede/revision workflow).
+- `Draft` / `Ready` proposals with **no** brand snapshot render from the **current** Brand Profile.
+- Freeze the Proposal Brand Snapshot when the proposal **first reaches Issued**.
+- If a workflow reaches **Accepted** without an Issued snapshot, freeze at Accepted.
+- Once frozen: never refresh from the live Brand Profile; Issued → Accepted must preserve the **identical** snapshot; later Brand Profile or logo changes must not alter that proposal’s preview/PDF identity.
+- Existing Issued/Accepted proposals receive a one-time snapshot at implementation so they stop floating. That operation must not alter commercial lines, estimate/pricing snapshots, totals, acceptance state, or [ADR-002](ADR-002-accepted-proposal-immutability.md) commercial immutability.
+- `ProposalTemplate` company/logo/colour columns are **not** dropped; they cease to be the authoritative identity source for the FG-017 Proposal rendering path.
 
 ### 9. ProposalTemplate relationship
 
@@ -220,7 +226,7 @@ This ADR does **not** authorize or decide:
 - `branding_config` JSON
 - CalibAi app-shell redesign or logo redesign
 - invented legal/corporate identifiers
-- Internal Detailed Cost Breakdown branding (Joel decision still open; not a first consumer)
+- Internal Detailed Cost Breakdown branding (**out of FG-017**; no decision made here about later internal-document branding)
 
 ---
 
@@ -264,21 +270,21 @@ This ADR does **not** authorize or decide:
 
 ## Migration Impact
 
-**Deferred.** None in this drafting pass.
+**None in this acceptance pass.** No revision is created here.
 
-A later **approved** FG-017 implementation would require **one** bounded additive Alembic revision (Brand Profile + logo custody metadata + Proposal brand snapshot). Exact tables/columns are not designed here. No migration may be created from this ADR.
+[FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) implementation (separately authorized) requires **one** bounded additive Alembic revision. Designed revision id **`a9b0c1d2e3f4`** (down_revision `f8a9b0c1d2e3`). Exact schema is recorded on FG-017. Do not create that revision from this ADR.
 
 ---
 
 ## Testing Impact
 
-None until an approved implementation prompt. Proposed tests live on [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md).
+None until an FG-017 implementation prompt. Dedicated tests are listed on FG-017.
 
 ---
 
 ## Documentation Impact
 
-This ADR; FG-017 draft; Brand Profile pin; ADR/FG indexes; proposals module (consumer note); current-state / session-handoff / roadmap / chat-workflow-log — recording **Proposed / Draft**, not implemented.
+This ADR; FG-017; Brand Profile pin; indexes; current-state / session-handoff / roadmap / chat-workflow-log.
 
 ---
 
@@ -286,6 +292,6 @@ This ADR; FG-017 draft; Brand Profile pin; ADR/FG indexes; proposals module (con
 
 | Role | Name | Date |
 |------|------|------|
-| Joel | | **Pending** — do not treat as Accepted |
-| ChatGPT review | | **Pending** |
-| Cursor implementation note | Docs-only draft. **No product implementation.** | 2026-08-30 |
+| Joel | Joel Brayman | 2026-08-30 |
+| ChatGPT review | Accept ADR-040 / Approve FG-017 / implementation reconnaissance | 2026-08-30 |
+| Cursor implementation note | Docs-only acceptance. **No product implementation.** Reconnaissance recorded on FG-017. | 2026-08-30 |

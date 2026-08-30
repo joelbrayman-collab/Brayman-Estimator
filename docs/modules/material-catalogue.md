@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Live-migrated / UAT closure blocked** ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md)) |
+| Status | **Live-migrated / flash repair applied — office re-UAT remaining** ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md)) |
 | Updated | 2026-08-30 |
 | Code | `app/models/canonical_material.py`, `app/services/material_catalogue.py`, `app/routes/material_catalogue.py`, `/material-catalogue/` |
 | Architecture | [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) |

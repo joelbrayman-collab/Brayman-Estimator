@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-014 catalogue-link flash repair
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `3e671f20a561b4c70bc837486f59f93a150f7fee` (repair start; permit pin `5931696` committed first) |
+| Objective | Repair only the FG-014 catalogue-link flash/message defect. Do not broaden Material Catalogue architecture. |
+| Business decision | Improper catalogue link must fail closed **and** tell the caller the service reason. Empty select may still say `Select a Material cost item to link.` |
+| Architectural decision | `MaterialCatalogueError` subclasses `ValueError`. Catch it before `(TypeError, ValueError)` in `link_cost_item`. Unlink already used the correct order. No schema, identity, CostItem ownership, supplier, Phase D, or Permit Intelligence change. |
+| Prompt template used | [cursor-bugfix-template.md](prompts/cursor-bugfix-template.md) |
+| Approved Cursor prompt summary | FG-014 CATALOGUE-LINK FLASH REPAIR. Reproduce, smallest root cause, repair flash only, add regression test, run dedicated/regression/full suite, reconcile FG-014 docs, commit and push. Permit pin remains FUTURE. Then STOP. |
+| Files expected to change | `app/routes/material_catalogue.py` · `tests/test_material_catalogue_fg014.py` · FG-014 / status docs |
+| Files prohibited from changing | migrations · canonical identity model · CostItem ownership · supplier/Phase D/Permit Intelligence · ADR-008 |
+| Implementation result | Exception order repaired. Dedicated **35 passed**. Full suite **345 passed**. Live POST on 5006 flashed the Labour service reason. FG-014 not closed (office re-UAT remaining). |
+| Tests | `./venv/bin/python -m pytest -q tests/test_material_catalogue_fg014.py` → **35 passed**. Assemblies/estimates/estimate_builder **29 passed**. Full suite **345 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes — architecture record (non-milestone) |
+| Constitutional issue raised | None |
+| Unresolved issues | Short office re-UAT of catalogue-link error flashes before FG-014 close. |
+| Next approved step | **FG-014 office re-UAT of catalogue-link flashes, then close**. |
+| Next approved prompt | Office re-UAT / gate-close prompt. Do not implement Permit Intelligence. |
+| Commit hash | (this repair commit) |
+
 ### 2026-08-30 — FUTURE pin: Project Permit & Approvals Report
 
 | Field | Content |

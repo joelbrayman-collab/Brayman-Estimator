@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-014 catalogue-link flash repair
+
+| Field | Content |
+|-------|---------|
+| ID | [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) |
+| Status | **LIVE-MIGRATED / FLASH REPAIR APPLIED — OFFICE RE-UAT REMAINING** |
+| Date | 2026-08-30 |
+| Objective | Repair misleading catalogue-link flash for non-Material / cross-org POSTs without changing link semantics. |
+| Deliverables | `link_cost_item` catches `MaterialCatalogueError` first. Regression tests for Labour/Equipment/Subcontractor/Allowance/Other, cross-org, and empty select. Status docs reconciled. |
+| Validation | Dedicated **35 passed**. Assemblies/estimates/estimate_builder **29 passed**. Full suite **345 passed**. Live POST `/material-catalogue/7/link` Labour id 5 flashed the service reason; data remained unlinked. |
+| Next | **Office re-UAT of catalogue-link error flashes, then close FG-014**. Do not implement Permit Intelligence. |
+
 ### 2026-08-30 — Permit & Approvals Report requirement pin
 
 | Field | Content |

@@ -7,11 +7,11 @@
 | Target Milestone | **None.** FG-014 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Material Catalogue** (canonical identity). Estimating retains `CostItem` / `Assembly` / `EstimateLineItem`. |
 | Date | 2026-08-30 |
-| Status | **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED** |
+| Status | **LIVE-MIGRATED / FLASH REPAIR APPLIED — OFFICE RE-UAT REMAINING** |
 | Architecture | [material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) |
 | Related ADRs | [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) **Accepted** · [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) **Accepted** · [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** · [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) |
 | Prerequisites | FG-013 **CLOSED / OPERATIONAL FOR UAT**. ADR-034/035/036 **Accepted**. |
-| Approved baseline | Gate-approval HEAD `273803b75b6bcbe6ae56fbf3274cd4a2dafcec36`. Implementation `976cc4a4942ae346b9843a77126f89969bba2b6e`. Live-migrate/UAT starting HEAD `a100caa`. Live current = head **`d6e7f8a9b0c1`**. Dedicated FG-014 **28 passed**. Full suite **338 passed**. |
+| Approved baseline | Gate-approval HEAD `273803b75b6bcbe6ae56fbf3274cd4a2dafcec36`. Implementation `976cc4a4942ae346b9843a77126f89969bba2b6e`. Live-migrate/UAT starting HEAD `a100caa`. Live current = head **`d6e7f8a9b0c1`**. Flash-repair starting HEAD `3e671f20a561b4c70bc837486f59f93a150f7fee`. Dedicated FG-014 **35 passed**. Full suite **345 passed**. |
 
 ---
 
@@ -19,10 +19,10 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED** |
-| Implementation | **DONE** in product code. Office UX `/material-catalogue/`. |
-| Schema / Alembic | **Live current = head = `d6e7f8a9b0c1`** (applied 2026-08-30). One graph head. |
-| Browser / office UAT | **BLOCKED** — catalogue link POST reports a misleading flash for non-Material / cross-org IDs. Data still fail-closed (no link written). Product code was **not** repaired under the live-migrate prompt. |
+| Feature Gate (this document) | **LIVE-MIGRATED / FLASH REPAIR APPLIED — OFFICE RE-UAT REMAINING** |
+| Implementation | **DONE** in product code. Office UX `/material-catalogue/`. Catalogue-link flash repaired 2026-08-30. |
+| Schema / Alembic | **Live current = head = `d6e7f8a9b0c1`** (applied 2026-08-30). One graph head. Unchanged by the flash repair. |
+| Browser / office UAT | **RE-UAT REMAINING** — product-code flash repair + dedicated tests applied. Short office re-UAT of the catalogue link error path is required before gate close. |
 | Living supplier pricing / promotions / inventory | **OUT OF SCOPE** (unchanged) |
 | Phase D / MaterialRequirement / supplier SKU | **OUT OF SCOPE** (unchanged) |
 
@@ -44,6 +44,18 @@ This gate does **not** authorize supplier integration, bulk supplier catalogue o
 Ordinary org UX still cannot create/edit/delete canonical identity. Material link/unlink of `FG014-UAT-MAT` worked. Isolation GET `/cost-library/10/edit` is **404**. Seed 27 rows. No supplier/Phase D leakage.
 
 **Code:** `app/models/canonical_material.py`, `app/services/material_catalogue.py`, `app/routes/material_catalogue.py`, optional `CostItem.canonical_material_id` in `app/models/cost_item.py`, revision `migrations/versions/d6e7f8a9b0c1_add_material_catalogue_identity_fg014.py`. Platform seed is 27 lumber/sheet rows keyed by `CAL-*` codes.
+
+### Flash repair (2026-08-30)
+
+**Do not close FG-014** until a short office re-UAT of the catalogue link error path is recorded.
+
+| Field | Content |
+|-------|---------|
+| Root cause | Confirmed: `MaterialCatalogueError` subclasses `ValueError`. `link_cost_item` caught `(TypeError, ValueError)` **before** `MaterialCatalogueError`, so service reasons were replaced by `Select a Material cost item to link.` |
+| Repair | Catch `MaterialCatalogueError` first; keep `(TypeError, ValueError)` only for non-integer / empty `cost_item_id`. Unlink exception order was already correct and was not changed. Link/unlink success semantics, org isolation, Material-only enforcement, and read-only canonical identity are unchanged. |
+| Tests | Dedicated FG-014 **35 passed** (was 28). Full suite **345 passed** (was 338). |
+| Live POST check | `POST /material-catalogue/7/link` with Labour `FG014-UAT-LAB` (id 5) on port **5006** (repaired code) returned 302 with session flash `Labour cost items cannot link to a canonical material.` `canonical_material_id` remained `NULL`. |
+| Next | Office re-UAT of non-Material / cross-org flashes on the office app, then close the gate. Do not start Permit Intelligence or another Feature Gate. |
 
 ---
 

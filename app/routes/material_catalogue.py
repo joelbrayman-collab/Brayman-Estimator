@@ -94,12 +94,12 @@ def link_cost_item(material_id):
             f'Linked cost item "{item.code}" to this canonical material.',
             "success",
         )
-    except (TypeError, ValueError):
-        flash("Select a Material cost item to link.", "error")
     except MaterialCatalogueError as exc:
         flash(str(exc), "error")
         if str(exc) == "Canonical material not found.":
             abort(404)
+    except (TypeError, ValueError):
+        flash("Select a Material cost item to link.", "error")
     return redirect(url_for("material_catalogue.material_detail", material_id=material_id))
 
 

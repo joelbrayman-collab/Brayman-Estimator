@@ -338,6 +338,8 @@ def test_link_unlink_ux(app, client):
     db.session.refresh(item)
     assert item.canonical_material_id == material.id
     assert b"MAT-LINK" in resp.data
+    html = resp.get_data(as_text=True)
+    assert "Linked cost item" in html
     resp = client.post(
         f"/material-catalogue/{material.id}/unlink",
         data={"cost_item_id": str(item.id)},
@@ -346,6 +348,56 @@ def test_link_unlink_ux(app, client):
     assert resp.status_code == 200
     db.session.refresh(item)
     assert item.canonical_material_id is None
+    assert "Unlinked cost item" in resp.get_data(as_text=True)
+
+
+@pytest.mark.parametrize(
+    "category",
+    ["Labour", "Equipment", "Subcontractor", "Allowance", "Other"],
+)
+def test_catalogue_link_flash_uses_service_reason_for_non_material(app, client, category):
+    """Office catalogue POST must flash the service reason, not the empty-select message."""
+    material = get_canonical_material_by_code("CAL-LUM-2X6-12")
+    item = _cost_item(category=category, code=f"{category[:3].upper()}-FLASH")
+    resp = client.post(
+        f"/material-catalogue/{material.id}/link",
+        data={"cost_item_id": str(item.id)},
+        follow_redirects=True,
+    )
+    html = resp.get_data(as_text=True)
+    assert resp.status_code == 200
+    assert f"{category} cost items cannot link to a canonical material." in html
+    assert "Select a Material cost item to link." not in html
+    db.session.refresh(item)
+    assert item.canonical_material_id is None
+
+
+def test_catalogue_link_flash_uses_service_reason_for_cross_org(app, org_b, client):
+    material = get_canonical_material_by_code("CAL-LUM-2X4-12")
+    other = _cost_item(org_id="ORG-002", code="MAT-X-FLASH")
+    resp = client.post(
+        f"/material-catalogue/{material.id}/link",
+        data={"cost_item_id": str(other.id)},
+        follow_redirects=True,
+    )
+    html = resp.get_data(as_text=True)
+    assert resp.status_code == 200
+    assert "Cost item not found in current organization." in html
+    assert "Select a Material cost item to link." not in html
+    db.session.refresh(other)
+    assert other.canonical_material_id is None
+
+
+def test_catalogue_link_empty_selection_keeps_select_flash(app, client):
+    material = get_canonical_material_by_code("CAL-LUM-2X6-12")
+    resp = client.post(
+        f"/material-catalogue/{material.id}/link",
+        data={"cost_item_id": ""},
+        follow_redirects=True,
+    )
+    html = resp.get_data(as_text=True)
+    assert resp.status_code == 200
+    assert "Select a Material cost item to link." in html
 
 
 def test_new_link_rejects_discontinued_without_destroying_existing(app):

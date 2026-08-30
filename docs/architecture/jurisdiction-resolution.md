@@ -2,13 +2,15 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FUTURE / NOT IMPLEMENTED** — architecture **Accepted** ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md)) |
+| Status | **Current (FG-015 civic foundation)** — **LIVE MIGRATION PENDING**. Architecture **Accepted** ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md)). Rural/legal UX unused. Pass 2 / geocoder **not** implemented. |
 | Date | 2026-08-30 |
 | Product | The Estimator / CalibAi |
 | Canonical ADR | [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** |
 | Related | [permit-and-approvals-report.md](permit-and-approvals-report.md) · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) · [modules/projects.md](../modules/projects.md) |
+| Code | `app/models/jurisdiction.py` · `app/models/project.py` (`ProjectLocation`) · `app/services/jurisdiction.py` · `app/services/permit_foundation.py` |
+| Schema | Alembic graph head `e7f8a9b0c1d2`. Live current remains `d6e7f8a9b0c1` until a live-migrate prompt. |
 
-**Current vs future:** Live `Project.address` is free text. `Organization.tax_jurisdiction` is a tax label, not municipal/AHJ identity. Nothing below is implemented. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. Accepting ADR-037 does **not** by itself implement schema. FG-015 does **not** authorize live geocoding or incomplete-location enforcement as a project-create blocker.
+**Current vs future:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) implemented bounded civic `ProjectLocation` (1:1 with `Project`), platform Canada / Ontario / City of Ottawa definitions plus aliases (`Ottawa`, `City of Ottawa`, `North Gower`), and a deterministic resolver. `Project.address` remains free text and is not parsed or overwritten. `Organization.tax_jurisdiction` remains tax policy, not AHJ identity. No geocoder, municipal API, or AI. Live office DB **does not yet** have this schema.
 
 ---
 
@@ -26,18 +28,11 @@ There is **one** reusable jurisdiction-resolution architecture. Do not create in
 
 Distinct from `ProjectCommercialContext` estimating posture ([ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md)).
 
-Normal case: **civic address**.
+**V1 civic fields:** street, municipality, province/state, postal/ZIP (optional), country.
 
-Also anticipate:
+**LOCATION COMPLETE** when street, municipality, province/state, and country are present. Postal is not required. Otherwise **LOCATION INCOMPLETE**. Incomplete projects may still be created.
 
-- vacant / rural parcel
-- legal description
-- parcel identifier
-- municipality
-- province / state
-- country
-
-A legitimate early project may be **LOCATION INCOMPLETE**. Do not implement enforcement yet.
+Nullable columns exist for later rural/legal/parcel support (`location_kind`, `legal_description`, `parcel_identifier`, `future_civic_address`). V1 UX is civic only. No GIS.
 
 ---
 
@@ -51,29 +46,13 @@ PROJECT LOCATION
 → APPLICABLE AHJ(S)
 ```
 
-Future consumers (none implemented):
+V1 resolution is **deterministic** from stored civic fields matched to platform `jurisdiction_definitions` / `jurisdiction_aliases` (`app/services/jurisdiction.py` `resolve_jurisdiction`).
 
-- Permit Intelligence
-- jurisdictional contracts
-- tax
-- code / compliance
-- supplier geography
+**JURISDICTION RESOLVED** only when country, province/state, and municipality are present **and** match a governed node/alias. Otherwise **JURISDICTION UNRESOLVED**. Street/postal are not required for resolution. There is **no** universal Ottawa fallback. Unmatched text (including other Ontario municipalities) stays unresolved.
 
-Current `Organization.tax_jurisdiction` remains tax policy. Later tax may **consume** this resolver; it must not fork a second AHJ model.
+Seeded V1 nodes: Canada (`CA`) → Ontario (`CA-ON`) → City of Ottawa (`CA-ON-OTTAWA`). Aliases include Canada/CA, Ontario/ON, Ottawa, City of Ottawa, North Gower. Not a national library.
 
----
-
-## Implementation strategy
-
-Architect **globally / jurisdictionally**. Implement later in **bounded** jurisdictions.
-
-| Layer | First reference (not universal default) |
-|-------|----------------------------------------|
-| Country / province | Canada / Ontario |
-| Municipality | City of Ottawa / North Gower |
-| Project | Mike Pratt Coach House, 2562 Church Street, North Gower, Ontario |
-
-Do **not** hard-code Ottawa as the universal architecture. Do **not** attempt a national library in the first product gate.
+Current `Organization.tax_jurisdiction` remains tax policy and is **not** consulted.
 
 ---
 
@@ -83,5 +62,5 @@ Do **not** hard-code Ottawa as the universal architecture. Do **not** attempt a 
 - incomplete-location as a blocker to creating a Project
 - Permit Rules Library / Pass 2 analysis ([permit-and-approvals-report.md](permit-and-approvals-report.md))
 - national municipality library
-
-V1 implementation shape is governed by [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md): bounded ProjectLocation 1:1 parented to `projects`; preserve `Project.address`; LOCATION COMPLETE vs INCOMPLETE; JURISDICTION RESOLVED only from sufficient governed facts; no universal Ottawa default.
+- office CRUD for platform jurisdiction definitions
+- parsing historical `Project.address`

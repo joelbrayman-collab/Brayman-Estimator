@@ -54,10 +54,51 @@
         Project address
         <input type="text" name="address">
     </label>
+    <p class="muted-copy">Free-text project address is preserved as-is. It is not parsed into structured location.</p>
 
     <label>
         Description
         <textarea name="description" rows="3"></textarea>
+    </label>
+
+    <h3 style="margin-top: 24px;">Structured project location</h3>
+    <p class="muted-copy" style="margin-bottom: 16px;">
+        Civic fields used for location completeness and jurisdiction resolution. Incomplete location is allowed. Postal / ZIP is optional. Municipality is not guessed from free-text address.
+    </p>
+    <div class="form-grid">
+        <label>
+            Street / civic address
+            <input type="text" name="street">
+        </label>
+        <label>
+            Municipality
+            <input type="text" name="municipality">
+        </label>
+        <label>
+            Province / state
+            <input type="text" name="province_state">
+        </label>
+        <label>
+            Postal / ZIP (optional)
+            <input type="text" name="postal_zip">
+        </label>
+        <label>
+            Country
+            <input type="text" name="country">
+        </label>
+    </div>
+
+    <h3 style="margin-top: 24px;">Permit context class</h3>
+    <p class="muted-copy" style="margin-bottom: 16px;">
+        Permit Foundation classification only. This is not the commercial Project Type below and is not a zoning or use determination.
+    </p>
+    <label>
+        Permit context class
+        <select name="permit_context_class">
+            {% for opt in permit_context_classes %}
+            <option value="{{ opt }}" {% if opt == default_permit_context_class %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+        </select>
     </label>
 
     <h3 style="margin-top: 24px;">Commercial Decision Gate (Mandatory Context)</h3>

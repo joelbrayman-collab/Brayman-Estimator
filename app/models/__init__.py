@@ -2,6 +2,8 @@ from app.models.assembly import Assembly, AssemblyItem
 from app.models.client import Client
 from app.models.canonical_material import CanonicalMaterial
 from app.models.cost_item import CostItem
+from app.models.jurisdiction import JurisdictionAlias, JurisdictionDefinition
+from app.models.project import PermitProfile, Project, ProjectCommercialContext, ProjectLocation
 from app.models.estimate import (
     Estimate,
     EstimateLineItem,
@@ -9,7 +11,6 @@ from app.models.estimate import (
     EstimateVersion,
 )
 from app.models.organization import Organization
-from app.models.project import Project, ProjectCommercialContext
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
 from app.models.pricing_engine import (
     EstimatePricingSnapshot,
@@ -75,6 +76,8 @@ __all__ = [
     "HistoricalSourceWorkbook",
     "HistoricalSubcontractItem",
     "HistoricalUploadAttempt",
+    "JurisdictionAlias",
+    "JurisdictionDefinition",
     "DirectLabourCostRateStandard",
     "EstimateLabourSnapshot",
     "LabourAuditEvent",
@@ -94,8 +97,10 @@ __all__ = [
     "TakeoffExtractionRun",
     "TakeoffPackage",
     "TakeoffPackageItem",
+    "PermitProfile",
     "Project",
     "ProjectCommercialContext",
+    "ProjectLocation",
     "Proposal",
     "ProposalLineItem",
     "ProposalSection",

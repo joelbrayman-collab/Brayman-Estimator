@@ -112,7 +112,7 @@ Generated **only from an APPROVED estimate**.
 
 ## Additional governed project document (FUTURE / NOT IMPLEMENTED)
 
-**Status:** Pass 2 report **FUTURE / NOT IMPLEMENTED**. Architecture **Accepted** (ADR-037/038/039). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **APPROVED FOR IMPLEMENTATION** / **NOT STARTED** (preliminary profile foundation only). Canonical: [permit-and-approvals-report.md](permit-and-approvals-report.md).
+**Status:** Pass 2 report **FUTURE / NOT IMPLEMENTED**. Architecture **Accepted** (ADR-037/038/039). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING** (preliminary profile foundation only; not CLOSED). Canonical: [permit-and-approvals-report.md](permit-and-approvals-report.md).
 
 The **Permit & Approvals Report** is a **core project document** (advisory preflight). It is **not** a fifth estimate-derived commercial output, **not** a Change Order, and **not** a substitute for the AHJ.
 

@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-015 Permit Foundation V1 implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ starting HEAD `5f75da617d837add01bacf8f74b40d647f30a067` |
+| Objective | Implement FG-015 Permit Foundation V1: ProjectLocation, jurisdiction resolver, preliminary Permit Profile, Project Hub foundation state. One additive Alembic revision. Do not live-migrate. |
+| Business decision | Foundation only. Advisory PRELIMINARY / FOUNDATION ONLY. No zoning conclusions. No PASS. Preserve `Project.address`. No Pratt project. |
+| Architectural decision | Projects owns `ProjectLocation` and `PermitProfile`. Platform-shared jurisdiction definitions. Permit context class distinct from commercial `PROJECT_TYPES`. Versioned immutable snapshots. Recheck/stale on location or permit-context change. |
+| Prompt template used | Cursor implementation prompt (this chat). |
+| Approved Cursor prompt summary | IMPLEMENT FG-015 PERMIT FOUNDATION V1. One additive migration. Do not apply to live development/UAT DB. Do not populate Permit Rules. Do not enable live web lookup or external AI. |
+| Files expected to change | Models, services, routes, templates, tests, one Alembic revision, governed docs |
+| Files prohibited from changing | Live DB; Plan Intelligence analysis; Estimating lines; Permit Rules Library; branding/CO/BUILD |
+| Implementation result | Product implemented. Throwaway upgrade/downgrade verified. Live current left at `d6e7f8a9b0c1`. Graph head `e7f8a9b0c1d2`. Not CLOSED. |
+| Tests | Dedicated FG-015 **19 passed**. Relevant regressions **338 passed**. Full suite **364 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migration pending. Office Hub UAT pending live schema. Ontario / Ottawa + Mike Pratt gate not created. |
+| Next approved step | **FG-015 live migration** under a later Cursor prompt. Do not populate the Permit Rules Library. |
+| Next approved prompt | FG-015 live-migrate (not this chat). |
+| Commit hash | (this implementation commit) |
+
 ### 2026-08-30 — FG-015 Permit Foundation V1 Feature Gate governance
 
 | Field | Content |

@@ -73,13 +73,13 @@ These were created during the reference exercise and must ultimately be **regene
 | Status | **Future architecture / UAT reference only** — not an in-app project; not a permit determination |
 | Recorded | 2026-08-30 |
 | Canonical pin | [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) |
-| Architecture | ADR-037 / ADR-038 / ADR-039 **Accepted**. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **APPROVED FOR IMPLEMENTATION** / **NOT STARTED** (foundation only). Pass 2 / Pratt analysis **not** this gate. |
+| Architecture | ADR-037 / ADR-038 / ADR-039 **Accepted**. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING** (foundation only; not CLOSED). Pass 2 / Pratt analysis **not** this gate. |
 
 This case is the **permit-preflight** reference. The 3415 Roger Stevens Road case remains the commercial/document-package UAT reference.
 
 Preliminary review (outside this repository, **not** governed evidence) has already shown useful preflight questions, including coach-house footprint, building height, setbacks, private servicing/septic, rural grading-plan requirements, and zoning/site-plan submission completeness.
 
-**Do not treat that preliminary ChatGPT research as an authoritative project permit determination.** Architecture is **governed** (ADR-037/038/039 **Accepted**). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **APPROVED FOR IMPLEMENTATION** / **NOT STARTED** and does **not** create this project, seed Pratt conclusions, or perform Pass 2 analysis.
+**Do not treat that preliminary ChatGPT research as an authoritative project permit determination.** Architecture is **governed** (ADR-037/038/039 **Accepted**). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING** and does **not** create this project, seed Pratt conclusions, or perform Pass 2 analysis.
 
 This case remains a **future Gate 2 architecture / UAT reference only**.
 

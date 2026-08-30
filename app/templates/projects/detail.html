@@ -80,6 +80,62 @@
 <section class="dash-panels">
     <article class="panel">
         <div class="panel-header">
+            <h2>Permit &amp; Approvals</h2>
+            <a href="{{ url_for('projects.edit_project_location', id=project.id) }}">Review location</a>
+        </div>
+        {% set pf = hub.permit_foundation %}
+        <p class="eyebrow">PRELIMINARY / FOUNDATION ONLY</p>
+        <p class="muted-copy">Foundation state only. This is not zoning compliant, permit ready, permit approved, building-code compliant, or AHJ reviewed. PASS is not shown.</p>
+        <div class="form-grid" style="margin-top: 12px;">
+            <div>
+                <p class="eyebrow">Location</p>
+                <p>
+                    {% if pf.location_completeness == "LOCATION_COMPLETE" %}
+                    complete
+                    {% else %}
+                    incomplete
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <p class="eyebrow">Jurisdiction</p>
+                <p>
+                    {% if pf.jurisdiction_status == "JURISDICTION_RESOLVED" %}
+                    resolved
+                    {% else %}
+                    unresolved
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <p class="eyebrow">Permit Profile</p>
+                <p>{{ "preliminary" if pf.profile_state == "preliminary" else "not generated" }}</p>
+            </div>
+            <div>
+                <p class="eyebrow">Plan/site analysis</p>
+                <p>not performed</p>
+            </div>
+            <div>
+                <p class="eyebrow">Substantive Permit Report</p>
+                <p>not available</p>
+            </div>
+        </div>
+        {% if pf.profile %}
+        <p class="muted-copy" style="margin-top: 12px;">
+            Permit context: {{ pf.profile.permit_context_class }}
+            {% if pf.profile.resolved_jurisdiction_name %}
+            · Recorded AHJ identity: {{ pf.profile.resolved_jurisdiction_name }}
+            {% endif %}
+        </p>
+        {% else %}
+        <p class="muted-copy" style="margin-top: 12px;">
+            Existing projects keep free-text address until structured location is reviewed. No jurisdiction is invented.
+        </p>
+        {% endif %}
+    </article>
+
+    <article class="panel">
+        <div class="panel-header">
             <h2>Plan Documents</h2>
             <a href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">All plans</a>
         </div>

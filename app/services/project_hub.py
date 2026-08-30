@@ -22,6 +22,7 @@ from app.plan_intelligence.models import (
 from app.plan_intelligence.services import list_plan_documents
 from app.plan_intelligence.takeoff import list_packages_for_project, list_runs_for_project
 from app.project_controls import repository as change_order_repo
+from app.services.permit_foundation import assemble_permit_foundation_state
 
 
 def assemble_project_hub(project, organization_id: str) -> dict:
@@ -102,6 +103,7 @@ def assemble_project_hub(project, organization_id: str) -> dict:
     ]
 
     return {
+        "permit_foundation": assemble_permit_foundation_state(project),
         "estimates": estimates,
         "estimate_rows": estimate_rows,
         "proposals": proposals,

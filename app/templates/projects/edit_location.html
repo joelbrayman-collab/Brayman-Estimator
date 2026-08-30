@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Project Location | {{ project.name }}{% endblock %}
+{% block page_title %}Structured Location{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Permit Foundation</p>
+        <h1>{{ project.name }}</h1>
+        <p class="muted-copy">Review structured location and permit context class. Free-text project address is not parsed or overwritten.</p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
+    </div>
+</div>
+
+<div class="form-panel" style="margin-bottom: 16px;">
+    <p class="eyebrow">PRELIMINARY / FOUNDATION ONLY</p>
+    <p>This workflow records location and jurisdiction foundation state. It does not mean zoning compliant, permit ready, permit approved, building-code compliant, or AHJ reviewed.</p>
+    <p class="muted-copy">Stored project address: {{ project.address or "—" }}</p>
+</div>
+
+<form method="post" class="form-panel">
+    <h3>Structured project location</h3>
+    <p class="muted-copy" style="margin-bottom: 16px;">
+        Civic fields only. Incomplete location is allowed. Postal / ZIP is optional. A material change supersedes the current preliminary profile without rewriting the prior snapshot.
+    </p>
+    <div class="form-grid">
+        <label>
+            Street / civic address
+            <input type="text" name="street" value="{{ location.street or '' if location else '' }}">
+        </label>
+        <label>
+            Municipality
+            <input type="text" name="municipality" value="{{ location.municipality or '' if location else '' }}">
+        </label>
+        <label>
+            Province / state
+            <input type="text" name="province_state" value="{{ location.province_state or '' if location else '' }}">
+        </label>
+        <label>
+            Postal / ZIP (optional)
+            <input type="text" name="postal_zip" value="{{ location.postal_zip or '' if location else '' }}">
+        </label>
+        <label>
+            Country
+            <input type="text" name="country" value="{{ location.country or '' if location else '' }}">
+        </label>
+    </div>
+
+    <h3 style="margin-top: 24px;">Permit context class</h3>
+    <p class="muted-copy" style="margin-bottom: 16px;">
+        Distinct from commercial Project Type. Not a zoning or use determination.
+    </p>
+    {% set current_permit_context = profile.permit_context_class if profile else default_permit_context_class %}
+    <label>
+        Permit context class
+        <select name="permit_context_class">
+            {% for opt in permit_context_classes %}
+            <option value="{{ opt }}" {% if opt == current_permit_context %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <div class="form-actions" style="margin-top: 20px;">
+        <button type="submit">Save location and preliminary profile</button>
+        <a href="{{ url_for('projects.view_project', id=project.id) }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

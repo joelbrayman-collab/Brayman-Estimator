@@ -2,6 +2,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app import db
 from app.models import Client, Project
+from app.models.project import DEFAULT_PERMIT_CONTEXT_CLASS, PERMIT_CONTEXT_CLASSES
 from app.services.commercial_context import (
     DELIVERY_MODELS,
     ESTIMATE_STAGES,
@@ -15,6 +16,11 @@ from app.services.commercial_context import (
     update_commercial_context,
 )
 from app.services.organizations import get_current_organization_id
+from app.services.permit_foundation import (
+    PermitFoundationError,
+    establish_project_location_and_profile,
+    location_payload_from_form,
+)
 from app.services.project_hub import assemble_project_hub
 
 projects_bp = Blueprint("projects", __name__, url_prefix="/projects")
@@ -29,6 +35,8 @@ def _context_options():
         "site_conditions": SITE_CONDITIONS,
         "estimate_stages": ESTIMATE_STAGES,
         "delivery_models": DELIVERY_MODELS,
+        "permit_context_classes": PERMIT_CONTEXT_CLASSES,
+        "default_permit_context_class": DEFAULT_PERMIT_CONTEXT_CLASS,
     }
 
 
@@ -99,11 +107,20 @@ def create_project():
             db.session.add(project)
             db.session.flush()
 
+            created_by = request.form.get("created_by", "Estimator").strip() or "Estimator"
             create_initial_commercial_context(
                 project_id=project.id,
                 data=context_data,
-                created_by=request.form.get("created_by", "Estimator").strip() or "Estimator",
+                created_by=created_by,
                 organization_id=org_id,
+                commit=False,
+            )
+            establish_project_location_and_profile(
+                project.id,
+                location_payload_from_form(request.form),
+                request.form.get("permit_context_class"),
+                organization_id=org_id,
+                generated_by=created_by,
                 commit=False,
             )
 
@@ -111,7 +128,7 @@ def create_project():
             flash("Project created successfully with commercial decision context.", "success")
             return redirect(url_for("projects.view_project", id=project.id))
 
-        except CommercialContextValidationError as e:
+        except (CommercialContextValidationError, PermitFoundationError) as e:
             db.session.rollback()
             flash(str(e), "error")
             return render_template("projects/form.html", clients=clients, **options)
@@ -167,5 +184,48 @@ def edit_commercial_context(id):
         "projects/edit_context.html",
         project=project,
         current_context=current_context,
+        **options,
+    )
+
+
+@projects_bp.route("/<int:id>/location/edit", methods=["GET", "POST"])
+def edit_project_location(id):
+    org_id = get_current_organization_id()
+    project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
+    options = _context_options()
+    location = project.location
+    profile = project.current_permit_profile
+
+    if request.method == "POST":
+        try:
+            establish_project_location_and_profile(
+                project.id,
+                location_payload_from_form(request.form),
+                request.form.get("permit_context_class"),
+                organization_id=org_id,
+                generated_by=request.form.get("updated_by", "Estimator").strip()
+                or "Estimator",
+                commit=True,
+            )
+            flash(
+                "Structured location and preliminary permit profile updated.",
+                "success",
+            )
+            return redirect(url_for("projects.view_project", id=project.id))
+        except PermitFoundationError as e:
+            flash(str(e), "error")
+            return render_template(
+                "projects/edit_location.html",
+                project=project,
+                location=location,
+                profile=profile,
+                **options,
+            )
+
+    return render_template(
+        "projects/edit_location.html",
+        project=project,
+        location=location,
+        profile=profile,
         **options,
     )

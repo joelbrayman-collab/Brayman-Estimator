@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-015 Permit Foundation V1 implemented (live migration pending)
+
+| Field | Content |
+|-------|---------|
+| ID | [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED** — **LIVE MIGRATION PENDING** (not CLOSED) |
+| Date | 2026-08-30 |
+| Objective | Implement bounded Permit Foundation V1. One additive Alembic revision. Do not live-migrate. |
+| Deliverables | `ProjectLocation`; platform jurisdiction seed + aliases; deterministic resolver; versioned preliminary `PermitProfile`; Hub PLAN panel; location edit workflow; dedicated tests; docs. Revision `e7f8a9b0c1d2`. |
+| Validation | Dedicated FG-015 **19 passed**. Full suite **364 passed**. Throwaway upgrade/downgrade on isolated DB. Live `flask db current` remains `d6e7f8a9b0c1`. |
+| Next | **FG-015 live migration** under a later Cursor prompt. Do not populate the Permit Rules Library. Do not CLOSE yet. |
+
 ### 2026-08-30 — FG-015 Permit Foundation V1 approved for implementation
 
 | Field | Content |

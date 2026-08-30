@@ -152,7 +152,10 @@ See roadmap Phases **E** (catalogue / price-file import) and **F** (live invento
 ## Related ADRs
 
 - [material-catalogue-architecture.md](material-catalogue-architecture.md) — CalibAi material identity (what the project requires)
-- [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) — Supplier price snapshotting (**Proposed**; not part of Material Catalogue V1)
+- [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) **Accepted** — canonical identity (not implemented)
+- [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) **Accepted** — UOM / waste / requirement boundary
+- [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** — evidence classes and mapping; live pricing **not** authorized
+- [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) — Supplier price snapshotting (**Proposed**; required or successor before operational price/promotion consumption)
 - [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) — Supplier neutrality and Winchester launch-partner channel (**Accepted**; not implemented)
 - [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) — Channel, launch partner, dual relationships
 - [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) — Build vs buy (shared concerns for integration platforms)  

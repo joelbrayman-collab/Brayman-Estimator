@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — Material Catalogue ADR-034 / ADR-035 / ADR-036
+
+| Field | Content |
+|-------|---------|
+| ID | ADR-034, ADR-035, ADR-036 (not a numbered M0xx; not a Feature Gate) |
+| Status | **Accepted** (governance / architecture only; not implemented) |
+| Date | 2026-08-30 |
+| Objective | Accept canonical identity, quantity/UOM/requirement boundary, and commercial-evidence/mapping ADRs. |
+| Deliverables | Three Accepted ADRs. ADR-008 remains Proposed. No Feature Gate. No product code. |
+| Validation | Docs-only; `git diff --check`. Tests not required this pass. |
+| Next | **Material Catalogue Feature Gate** (identity-only lumber/sheets) when authorized. Do not implement in this record. Do not start Phase D or supplier POC. |
+
 ### 2026-08-30 — Material Catalogue architecture (docs)
 
 | Field | Content |
@@ -42,7 +54,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Objective | Lock CalibAi-seeded material identity vs org CostItem vs supplier catalogue vs mapping; living vs identity; first FG identity-only. |
 | Deliverables | [material-catalogue-architecture.md](architecture/material-catalogue-architecture.md); supplier-doc ownership reconciliation; living intelligence (price increase + promotion) recorded. No ADR. No Feature Gate. No product code. |
 | Validation | Docs-only; `git diff --check`. Tests not required this pass. |
-| Next | **Material Catalogue ADRs** when authorized. Do not implement. Do not open a Feature Gate yet. Do not accept ADR-008 in the identity pass. Do not start Phase D or supplier POC. |
+| Next | **Material Catalogue Feature Gate** when authorized. Do not implement. Do not accept ADR-008 in the identity pass. Do not start Phase D or supplier POC. |
 
 ### 2026-08-30 — FG-013 live-migration reconciliation + UAT closure
 

@@ -13,7 +13,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 **Proposed** is not **Accepted**. Citing a Proposed ADR in a module, Feature Gate, or roadmap does not change its status. Implementation still requires Feature Gate + accepted decisions where the ADR itself requires acceptance.
 
-**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, **ADR-021** (MONITOR composed commercial baseline and Project Gross Margin; **not implemented**), ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **CLOSED / OPERATIONAL FOR UAT**); **ADR-025** (named pricing methods); **ADR-030** (org pricing policy + estimate pricing snapshot); **ADR-005, ADR-006, ADR-007, ADR-009, ADR-011, ADR-031** (FG-010 / M012 take-off foundation **CLOSED / OPERATIONAL FOR UAT**); **ADR-032** (app-managed historical workbook custody; FG-013 **CLOSED / OPERATIONAL FOR UAT**); **ADR-033** (supplier neutrality and Winchester launch-partner channel; **not implemented**). FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** are **CLOSED / OPERATIONAL FOR UAT**. **ADR-010 remains Proposed** (real external AI provider not authorized).
+**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, **ADR-021** (MONITOR composed commercial baseline and Project Gross Margin; **not implemented**), ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **CLOSED / OPERATIONAL FOR UAT**); **ADR-025** (named pricing methods); **ADR-030** (org pricing policy + estimate pricing snapshot); **ADR-005, ADR-006, ADR-007, ADR-009, ADR-011, ADR-031** (FG-010 / M012 take-off foundation **CLOSED / OPERATIONAL FOR UAT**); **ADR-032** (app-managed historical workbook custody; FG-013 **CLOSED / OPERATIONAL FOR UAT**); **ADR-033** (supplier neutrality and Winchester launch-partner channel; **not implemented**); **ADR-034, ADR-035, ADR-036** (Material Catalogue identity, quantity/UOM/requirement boundary, commercial evidence and mapping; **not implemented**; no Feature Gate). FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** are **CLOSED / OPERATIONAL FOR UAT**. **ADR-008 remains Proposed** (supplier price snapshotting; not accepted with Material Catalogue identity). **ADR-010 remains Proposed** (real external AI provider not authorized).
 
 ## Process
 
@@ -75,6 +75,14 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 |-----|-------|--------|
 | [ADR-008](ADR-008-supplier-price-snapshotting.md) | Supplier Price Snapshotting | Proposed |
 | [ADR-033](ADR-033-supplier-neutrality-and-launch-partner-channel.md) | Supplier Neutrality, Dual Relationships, and Winchester Launch-Partner Channel | **Accepted** (2026-08-30; architecture only; supplier integration **not implemented**) |
+
+### Material Catalogue (architecture accepted; not implemented)
+
+| ADR | Title | Status |
+|-----|-------|--------|
+| [ADR-034](ADR-034-canonical-material-identity-and-ownership.md) | CalibAi Canonical Material Identity and Ownership | **Accepted** (2026-08-30; architecture only; no Feature Gate; not implemented) |
+| [ADR-035](ADR-035-material-quantity-uom-and-requirement-boundary.md) | Material Quantity, UOM, and Requirement Boundary | **Accepted** (2026-08-30; architecture only; MaterialRequirement and Phase D **not** authorized) |
+| [ADR-036](ADR-036-material-commercial-evidence-and-supplier-mapping.md) | Material Commercial Evidence Classes and Supplier-Neutral Mapping | **Accepted** (2026-08-30; architecture only; live supplier pricing **not** authorized; ADR-008 remains Proposed) |
 
 ### CalibAi / CAR-001 (2026-08-28)
 

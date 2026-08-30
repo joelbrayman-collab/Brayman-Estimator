@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — Material Catalogue ADR-034 / ADR-035 / ADR-036 accepted
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `b53d9e7150e43b173bad3c26eee8e829529773e5` (start) |
+| Objective | Accept three Material Catalogue ADRs. Do not create a Feature Gate. Do not accept ADR-008. |
+| Business decision | Joel: CalibAi-seeded identity; UOM vs pack; living evidence classes; promotions as effective-dated facts; identity V1 before Phase D. |
+| Architectural decision | ADR-034 / ADR-035 / ADR-036 **Accepted**. ADR-008 remains **Proposed**. MaterialRequirement and Phase D not authorized. |
+| Prompt template used | Bounded Material Catalogue ADR governance |
+| Approved Cursor prompt summary | DOCUMENTATION / ADR GOVERNANCE ONLY. Create exactly three ADRs. Do not implement. Do not create a Feature Gate. Do not accept ADR-008. |
+| Files expected to change | Three ADRs; indexes; architecture cross-refs; status docs |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; Feature Gates; ADR-008 status |
+| Implementation result | ADR-034, ADR-035, ADR-036 Accepted. No Feature Gate. |
+| Tests | Not rerun (docs-only). Last recorded full suite **310 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Architecture record appended |
+| Constitutional issue raised | None |
+| Unresolved issues | Feature Gate not opened. ADR-008 remains Proposed. |
+| Next approved step | **Material Catalogue Feature Gate** (docs) when Joel authorizes. Do not implement until that gate is approved. |
+| Next approved prompt | Material Catalogue V1 Feature Gate (identity-only lumber/sheets). Do not accept ADR-008. |
+| Commit hash | (this commit) |
+
 ### 2026-08-30 — Material Catalogue architecture governance
 
 | Field | Content |

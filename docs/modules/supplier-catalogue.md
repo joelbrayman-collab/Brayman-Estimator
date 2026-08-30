@@ -29,4 +29,4 @@ CalibAi canonical materials (Material Catalogue); internal cost items/assemblies
 
 ## Relevant ADRs
 
-ADR-008, ADR-010 (Proposed). **ADR-033 Accepted** (architecture only; not implemented).
+ADR-008, ADR-010 (Proposed). **ADR-033, ADR-034, ADR-035, ADR-036 Accepted** (architecture only; not implemented). This module does not own CalibAi identity.

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-013 CLOSED / OPERATIONAL FOR UAT**. Material Catalogue architecture **documented** (not implemented; no Feature Gate). ADR-032 **Accepted**. **ADR-033 Accepted** (supplier channel; not implemented). FG-012 CLOSED / OPERATIONAL FOR UAT. ADR-021 **Accepted** (MONITOR not implemented). FG-011 / FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. |
+| Status | **FG-013 CLOSED / OPERATIONAL FOR UAT**. Material Catalogue [ADR-034](adr/ADR-034-canonical-material-identity-and-ownership.md) / [ADR-035](adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) / [ADR-036](adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** (not implemented; no Feature Gate). ADR-032 **Accepted**. **ADR-033 Accepted**. **ADR-008 Proposed**. FG-012 CLOSED / OPERATIONAL FOR UAT. ADR-021 **Accepted** (MONITOR not implemented). FG-011 / FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. |
 | Updated | 2026-08-30 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -23,8 +23,8 @@ Authority order for the next session: repository governance → current-state re
 ## 2. VERIFIED BASELINE
 
 - Branch: `main`
-- Starting HEAD / `origin/main` for this architecture-docs pass: `450cd39dea24c3e41d32defa39e9e74c00ae7c6d` (`docs: close FG-013 live migration and UAT`)
-- This Material Catalogue architecture-docs commit is current after push — verify with `git log -1`
+- Starting HEAD / `origin/main` for this ADR pass: `b53d9e7150e43b173bad3c26eee8e829529773e5` (`docs: record Material Catalogue architecture`)
+- This Material Catalogue ADR-docs commit is current after push — verify with `git log -1`
 - Alembic graph head: **`c5d6e7f8a9b0`**. Live `flask db current`: **`c5d6e7f8a9b0`** (**VERIFIED APPLIED**; one graph head). Migration was **not** run by the reconciliation/UAT pass.
 - Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010) → `c5d6e7f8a9b0` (FG-013; live-applied before reconciliation)
 - Tests (2026-08-30 FG-013 close): dedicated historical upload **27**; historical ingestion **11**; labour **25**; pricing **33**; full suite **310 passed**.
@@ -89,13 +89,13 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**FG-013 CLOSED / OPERATIONAL FOR UAT.** Live current=head `c5d6e7f8a9b0`. [Material Catalogue architecture](architecture/material-catalogue-architecture.md) **documented** (not implemented). [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**.
+**FG-013 CLOSED / OPERATIONAL FOR UAT.** Live current=head `c5d6e7f8a9b0`. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted** (not implemented; no Feature Gate). [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**.
 
 ## 8. LAST AUTHORIZED DELTA
 
-This session: **Material Catalogue architecture governance** (docs only). Canonical materials are CalibAi-seeded; CostItem is not identity; living supplier evidence (prices, promotions, inventory) is not the identity row; first FG identity-only; Phase D after identity; ADRs next. No Feature Gate. No product code. Tests not rerun.
+This session: **Material Catalogue ADR-034 / ADR-035 / ADR-036 Accepted** (docs only). Identity vs CostItem; UOM/waste/exploded fulfillment; living evidence and mapping. ADR-008 remains Proposed. No Feature Gate. No product code.
 
-Prior: FG-013 **migration-state reconciliation + UAT closure**. Live DB was **already** at `c5d6e7f8a9b0`. **ADR-033 Accepted**.
+Prior: Material Catalogue architecture documented (`b53d9e7`). FG-013 closed. ADR-033 Accepted.
 
 ## 9. IMPLEMENTATION STATUS
 
@@ -178,15 +178,15 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 18. DEFERRED ITEMS
 
-Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; supplier / Winchester POC; Darcy channel economics; industry benchmarking; auth; Material Catalogue **ADRs** then Feature Gate (architecture documented; not implemented).
+Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; supplier / Winchester POC; Darcy channel economics; industry benchmarking; auth; Material Catalogue **Feature Gate** (ADRs Accepted; not implemented).
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN **implementation**, QuickBooks, or contract/warranty work. Do **not** run `flask db upgrade` again (FG-013 already at `c5d6e7f8a9b0`). Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history. Do not implement Material Catalogue. Do not create a Material Catalogue Feature Gate until ADRs are accepted. Do not accept ADR-008 in the identity pass.
+Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN **implementation**, QuickBooks, or contract/warranty work. Do **not** run `flask db upgrade` again (FG-013 already at `c5d6e7f8a9b0`). Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history. Do not implement Material Catalogue. Do not implement supplier pricing. Do not accept ADR-008 in the identity gate.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **Material Catalogue ADRs** (documentation) when separately authorized. Architecture: [material-catalogue-architecture.md](architecture/material-catalogue-architecture.md). Do **not** implement. Do **not** open a Feature Gate yet. Do **not** `flask db upgrade`. Do not start Phase D. **Do not start supplier integration / Winchester POC.** Do not accept ADR-008 in the identity pass.
+**Next governed action:** **Material Catalogue Feature Gate** (documentation) when separately authorized — identity-only lumber/sheets. Do **not** implement first. Do **not** `flask db upgrade`. Do not start Phase D. **Do not start supplier integration / Winchester POC.** Do not accept ADR-008 in the identity gate.
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -224,7 +224,7 @@ Paste into a new ChatGPT or Cursor conversation:
 BRAYMAN — RESUME FROM REVIEW TURNOVER
 CONTINUITY / REPOSITORY-FIRST INITIALIZATION
 
-You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following FG-013 **CLOSED / OPERATIONAL FOR UAT** and Material Catalogue **architecture documented** (not implemented; no Feature Gate). Canonical materials are CalibAi-seeded; CostItem is not identity; living supplier evidence is not the identity row.
+You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following FG-013 **CLOSED / OPERATIONAL FOR UAT** and Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted** (architecture only; not implemented; no Feature Gate). Canonical materials are CalibAi-seeded; CostItem is not identity; living supplier evidence is not the identity row. ADR-008 remains Proposed.
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 ChatGPT memory is not corporate memory.
@@ -268,8 +268,8 @@ Expected: 310 passed
 Independently reconstruct:
 - FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT
 - FG-013 CLOSED / OPERATIONAL FOR UAT (graph head and live current c5d6e7f8a9b0; migration verified applied before reconciliation; that pass did not upgrade)
-- Material Catalogue architecture documented (docs/architecture/material-catalogue-architecture.md): CalibAi-seeded identity; CostItem is not identity; living supplier evidence is not the identity row; not implemented; no Feature Gate
-- Next docs: Material Catalogue ADRs (not implementation). Do not accept ADR-008 in the identity pass.
+- Material Catalogue ADR-034 / ADR-035 / ADR-036 **Accepted** (architecture only; not implemented; no Feature Gate)
+- Next docs: Material Catalogue Feature Gate (identity-only lumber/sheets). Do not implement until that gate. Do not accept ADR-008 in the identity pass.
 - ADR-032 Accepted (app-managed immutable historical workbook custody; legacy Desktop corpus not moved)
 - ADR-021 Accepted (composed frozen MONITOR baseline; Project Gross Margin; MONITOR not implemented; no Feature Gate)
 - FG-012 internal breakdown + named-method Proposal consistency (Estimating owner; existing Proposal is the customer-facing estimate; outputs 1–2 only; SCHEMA NO)
@@ -285,8 +285,9 @@ Do NOT start Phase D. Do NOT enable external AI.
 Do NOT start auth, BUILD / MONITOR / LEARN implementation, QuickBooks, or contract/warranty work.
 Do NOT treat ADR-021 as a MONITOR Feature Gate.
 Do NOT flask db upgrade FG-013 again (already at c5d6e7f8a9b0).
-Do NOT implement Material Catalogue or open its Feature Gate until ADRs are accepted.
+Do NOT implement Material Catalogue until its Feature Gate is approved.
 Do NOT begin supplier integration or Winchester POC.
+Do NOT accept ADR-008 in the identity gate.
 
 PRESERVE → SEARCH → VERIFY → EXECUTE.
 Existing before new. No unauthorized redesign. No arbitrary policy invention.
@@ -390,4 +391,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: FG-013 **CLOSED / OPERATIONAL FOR UAT**; Alembic current=head `c5d6e7f8a9b0`; Material Catalogue **architecture documented**; next development boundary is **STOP** then **Material Catalogue ADRs**. Phase D unauthorized. Do not `flask db upgrade` again.
+A–J: FG-013 **CLOSED / OPERATIONAL FOR UAT**; Alembic current=head `c5d6e7f8a9b0`; Material Catalogue **ADR-034/035/036 Accepted**; next development boundary is **STOP** then **Material Catalogue Feature Gate** (docs). Phase D unauthorized. Do not `flask db upgrade` again.

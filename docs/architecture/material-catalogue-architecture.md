@@ -5,8 +5,8 @@
 | Status | **Intended architecture** (documented; **not implemented**) |
 | Date | 2026-08-30 |
 | Product | The Estimator / CalibAi |
-| Implementation | **Not authorized** by this document. No Feature Gate. No ADR in this pass. No schema, migration, or product code. |
-| Related | [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** (labour analogy) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (deferred) · [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) · [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) · [modules/estimating.md](../modules/estimating.md) · [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) |
+| Implementation | **Not authorized** by this document. No Feature Gate. No schema, migration, or product code. Governing ADRs: [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md), [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md), [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**. |
+| Related | [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) **Accepted** · [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) **Accepted** · [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** · [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** (labour analogy) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (not accepted with identity) · [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) · [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) · [modules/estimating.md](../modules/estimating.md) · [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) |
 
 **Current vs intended vs future:** Today Estimating owns org-scoped `CostItem` and `Assembly` (`app/models/cost_item.py`, `app/models/assembly.py`). There is **no** Material Catalogue table, **no** canonical material identity, **no** `MaterialRequirement`, and **no** supplier SKU entity. Nothing below is claimed as implemented.
 
@@ -424,7 +424,7 @@ Likely first POC: dimensional lumber + sheet goods.
 ## 21. Recommended sequence (documentation only)
 
 1. FG-013 **CLOSED / OPERATIONAL FOR UAT** — done
-2. Material Catalogue architecture (this document) then **ADRs** (next governed docs)
+2. Material Catalogue architecture + **ADR-034 / ADR-035 / ADR-036 Accepted** — done (not implemented)
 3. Material Catalogue Feature Gate + bounded lumber/sheets implementation
 4. Phase D
 5. Supplier Catalogue / Winchester reference demo
@@ -435,14 +435,15 @@ Do not start supplier CSV (Phase E) before CalibAi material identity exists, or 
 
 ---
 
-## 22. ADR candidates (record only — do not create in this pass)
+## 22. Governing ADRs
 
-1. Canonical material ownership (CalibAi-seeded) and CostItem boundary
-2. Supplier-neutral material ↔ SKU mapping
-3. Material-cost evidence hierarchy
-4. Requirement UOM vs supplier-pack conversion ownership
-5. MaterialRequirement boundary between take-off and estimate / fulfillment
-6. ADR-008 (or successor) supplier pricing / promotional snapshot disposition — **required before operational supplier price/promotion consumption**; not part of identity V1 unless separately authorized
+| ADR | Governs |
+|-----|---------|
+| [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) **Accepted** | CalibAi-seeded identity; CostItem remains costing; GENERIC/SPECIFIED; lumber+sheets V1 domain |
+| [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) **Accepted** | Requirement UOM vs pack UOM; waste; rolled-up vs exploded; MaterialRequirement anticipated not authorized; Phase D after identity |
+| [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** | Evidence classes; multi-supplier mapping; living intelligence; promotions; substitutions; Material Cost Standard deferred; ADR-008 remains Proposed |
+
+[ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) remains binding for supplier neutrality. [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) remains **Proposed**.
 
 ---
 

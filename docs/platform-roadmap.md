@@ -29,7 +29,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next candidate milestone:** **Material Catalogue ADRs** (docs) when separately authorized. Architecture: [material-catalogue-architecture.md](architecture/material-catalogue-architecture.md) (**Intended**; not implemented; no Feature Gate). [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **CLOSED / OPERATIONAL FOR UAT**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) is **Accepted**. Live current=head `c5d6e7f8a9b0`. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (architecture only). [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) is **Accepted** (MONITOR **not implemented**). [FG-012](feature-gates/FG-012-estimate-output-consistency.md) is **CLOSED / OPERATIONAL FOR UAT**. FG-010 Phase D is **NOT STARTED**. Real external AI provider **not authorized**. Do **not** start supplier integration.
+**Next candidate milestone:** **Material Catalogue Feature Gate** (docs) when separately authorized — identity-only lumber/sheets; do not implement until approved. Architecture: [material-catalogue-architecture.md](architecture/material-catalogue-architecture.md). [ADR-034](adr/ADR-034-canonical-material-identity-and-ownership.md) / [ADR-035](adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) / [ADR-036](adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **CLOSED / OPERATIONAL FOR UAT**. Live current=head `c5d6e7f8a9b0`. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**. [ADR-008](adr/ADR-008-supplier-price-snapshotting.md) **Proposed**. FG-010 Phase D is **NOT STARTED**. Do **not** start supplier integration.
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -156,7 +156,7 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Next recommended milestones
 
-1. **STOP.** Material Catalogue **architecture is documented**. Next: **Material Catalogue ADRs** when authorized. Do **not** `flask db upgrade`. Do not implement MONITOR. Do not start Phase D. Do not start supplier/Winchester POC. Do not open a Material Catalogue Feature Gate until ADRs are accepted.
+1. **STOP.** Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted**. Next: **Material Catalogue Feature Gate** (identity-only lumber/sheets) when authorized. Do **not** implement until that gate. Do **not** `flask db upgrade`. Do not implement MONITOR. Do not start Phase D. Do not start supplier/Winchester POC. Do not accept ADR-008 in the identity gate.
 2. Phase D reviewed quantity → estimate mapping remains **NOT STARTED / NOT AUTHORIZED**.
 3. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
 4. Subsequent CalibAi sequence: auth, BUILD, field web, MONITOR implementation, LEARN — each separately gated. ADR-021 does not move MONITOR ahead of auth/BUILD.
@@ -191,7 +191,7 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Decisions Required (Joel)
 
-1. Authorize **Material Catalogue ADRs** (docs only) when ready. Architecture already recorded. Do **not** implement. Do **not** `flask db upgrade`. Do not start supplier integration or a Winchester POC. Do not accept ADR-008 in the identity pass.
+1. Authorize the **Material Catalogue Feature Gate** (docs; identity-only lumber/sheets). Do **not** implement in the gate-writing prompt unless that prompt says so. Do **not** `flask db upgrade`. Do not start supplier integration or a Winchester POC. Do not accept ADR-008 in the identity pass.
 2. ADR-010 remains **Proposed** (OCR/CAD/provider). Real external AI provider remains **not authorized**.
 3. Confirm POC element remains `INTERIOR_DOOR_OPENING` count.
 4. Auth model; production hosting/secrets (unchanged platform debt).

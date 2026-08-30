@@ -85,5 +85,5 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted**
 - [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR not implemented)
 - [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** (LEARN must not mutate cost library / approved estimates)
-- [material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) **Intended** (CostItem is not CalibAi identity; living supplier evidence is not the identity row)
+- [material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) **Intended** ([ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) / [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) / [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**; CostItem is not CalibAi identity; living supplier evidence is not the identity row)
 - [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** — Estimating owns internal breakdown; Proposal remains the customer-facing estimate

@@ -5,7 +5,7 @@
 | Title | ADR-008: Supplier Price Snapshotting |
 | Status | **Proposed** |
 | Date | 2026-07-25 |
-| Related | [supplier architecture](../architecture/supplier-catalogue-inventory-pricing.md) · [supplier channel](../architecture/supplier-channel-and-launch-partner.md) · [ADR-033](ADR-033-supplier-neutrality-and-launch-partner-channel.md) · Rules 3 & 5 |
+| Related | [supplier architecture](../architecture/supplier-catalogue-inventory-pricing.md) · [supplier channel](../architecture/supplier-channel-and-launch-partner.md) · [ADR-033](ADR-033-supplier-neutrality-and-launch-partner-channel.md) · [ADR-036](ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** (evidence classes; does **not** accept this ADR) · Rules 3 & 5 |
 
 ## Context
 

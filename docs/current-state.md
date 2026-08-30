@@ -11,7 +11,7 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | Verify `git log -1` after this implementation commit. Product: FG-014 **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED**. Alembic **graph head `d6e7f8a9b0c1`**; live **current `c5d6e7f8a9b0`**. |
+| HEAD / `origin/main` | `976cc4a4942ae346b9843a77126f89969bba2b6e` (`feat: implement FG-014 material catalogue identity`). Product: FG-014 **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED**. Alembic **graph head `d6e7f8a9b0c1`**; live **current `c5d6e7f8a9b0`**. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
 | Working tree at last verified inspect | **FG-014 IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED.** FG-013 **CLOSED / OPERATIONAL FOR UAT.** ADR-034/035/036 **Accepted**. ADR-032 **Accepted**. **ADR-033 Accepted**. **ADR-008 Proposed**. **ADR-021 Accepted** (MONITOR not implemented). **FG-012 CLOSED / OPERATIONAL FOR UAT.** FG-011 / FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. Bulk supplier onboarding is **FUTURE / NOT IMPLEMENTED**. |

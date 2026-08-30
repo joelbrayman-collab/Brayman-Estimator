@@ -63,7 +63,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Live migrate and office UAT not done. ADR-008 remains Proposed. |
 | Next approved step | **FG-014 live-migrate + office UAT** when Joel authorizes. |
 | Next approved prompt | Bounded live-migrate + UAT. Do not start supplier ingest. |
-| Commit hash | (this commit) |
+| Commit hash | `976cc4a4942ae346b9843a77126f89969bba2b6e` |
 
 ### 2026-08-30 — FG-014 Material Catalogue V1 Feature Gate + future supplier-onboarding pin
 

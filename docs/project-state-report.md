@@ -50,7 +50,7 @@ Distinguish from:
 | Report date | 2026-08-30 |
 | Repository | Brayman-Estimator (The Estimator) |
 | Current branch | `main` |
-| Current commit / `origin/main` | This FG-014 implementation commit (verify `git log -1` after push). Started from `273803b75b6bcbe6ae56fbf3274cd4a2dafcec36`. |
+| Current commit / `origin/main` | `976cc4a4942ae346b9843a77126f89969bba2b6e`. Started from `273803b75b6bcbe6ae56fbf3274cd4a2dafcec36`. |
 | August governance reconciliation | `0fdf0d4` — *Document August 2026 governance reconciliation and product requirements.* |
 | State closure | `ee100ac` — *docs: close August governance reconciliation state* |
 | M011 Implementation Commit | `cb38d93` — *feat: implement M011 organization foundation and commercial context* |

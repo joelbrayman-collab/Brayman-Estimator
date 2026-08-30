@@ -24,11 +24,11 @@ Authority order for the next session: repository governance → current-state re
 
 - Branch: `main`
 - Starting HEAD / `origin/main` for this implementation pass: `273803b75b6bcbe6ae56fbf3274cd4a2dafcec36` (`docs: approve Material Catalogue V1 feature gate`)
-- This FG-014 implementation commit is current after push — verify with `git log -1`
-- Alembic graph head: **`d6e7f8a9b0c1`**. Live `flask db current`: **`c5d6e7f8a9b0`** (implementation pass did **not** upgrade).
+- Implementation commit: `976cc4a4942ae346b9843a77126f89969bba2b6e` (`feat: implement FG-014 material catalogue identity`)
+- Alembic graph head: **`d6e7f8a9b0c1`** (FG-014; **not** live-applied). Live `flask db current`: **`c5d6e7f8a9b0`** (FG-013; still the live development/UAT current).
 - Tests (2026-08-30 FG-014 implementation): dedicated material catalogue **28**; full suite **338 passed**.
-- Alembic graph head: **`c5d6e7f8a9b0`**. Live `flask db current`: **`c5d6e7f8a9b0`** (**VERIFIED APPLIED**; one graph head). Migration was **not** run by the reconciliation/UAT pass.
-- Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010) → `c5d6e7f8a9b0` (FG-013; live-applied before reconciliation)
+- Prior FG-013 close: live current and graph head were both `c5d6e7f8a9b0` (**VERIFIED APPLIED**). That live current is unchanged.
+- Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010) → `c5d6e7f8a9b0` (FG-013; live-applied) → `d6e7f8a9b0c1` (FG-014; graph head only)
 - Tests (2026-08-30 FG-013 close): dedicated historical upload **27**; historical ingestion **11**; labour **25**; pricing **33**; full suite **310 passed**.
 - Working tree: clean after this implementation commit/push
 - Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**.

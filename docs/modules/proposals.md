@@ -5,7 +5,7 @@
 | Status | **Current** (engine + snapshot + PDF; Accepted immutability **enforced**) |
 | Updated | 2026-08-30 |
 | Code | `app/models/proposal.py`; `app/routes/proposals.py`, `proposal_templates.py`; `app/services/proposals.py`, `proposal_pdf.py` |
-| Feature Gate | [FG-001](../feature-gates/FG-001-proposals-module.md) (module baseline) · [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (customer-output consistency) |
+| Feature Gate | [FG-001](../feature-gates/FG-001-proposals-module.md) (module baseline) · [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (customer-output consistency) · [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED** (Brand Profile consumer; **not implemented**) |
 
 ## Purpose
 
@@ -39,7 +39,7 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 - Project budget ledger (Projects / future Job Costing)
 - Electronic signature providers (Future)
 - Inventing CRM Company/User entities without Feature Gate
-- Owning the Organization Brand Profile (future platform branding pin — [organization-brand-profile.md](../architecture/organization-brand-profile.md)). Per-template `logo_path` is **not** the intended long-term source of truth.
+- Owning the Organization Brand Profile ([ADR-040](../adr/ADR-040-organization-brand-profile.md) **Proposed**; [organization-brand-profile.md](../architecture/organization-brand-profile.md)). Per-template `logo_path` is **not** the intended long-term source of truth. [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) is **NOT APPROVED** and **not implemented**.
 
 ## Current implementation (accurate as of Milestone 002 review)
 
@@ -56,7 +56,7 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 - Project creation from acceptance snapshot — later; Projects boundary (Rule 4)
 - Electronic signature — **Future**
 - Optional CRM FKs — deferred (ADR-003)
-- Organization Brand Profile as document branding source — **FUTURE / NOT IMPLEMENTED** pin ([organization-brand-profile.md](../architecture/organization-brand-profile.md)); not a Feature Gate
+- Organization Brand Profile as document branding source — [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Proposed**; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **DRAFT / NOT APPROVED**; **NOT IMPLEMENTED**. Pin: [organization-brand-profile.md](../architecture/organization-brand-profile.md).
 
 ## Dependencies
 

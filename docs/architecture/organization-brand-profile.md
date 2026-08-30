@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FUTURE / NOT IMPLEMENTED** — requirement pin only |
+| Status | **FUTURE / NOT IMPLEMENTED** — requirement pin. [ADR-040](../adr/ADR-040-organization-brand-profile.md) is **Proposed / for Joel review**. [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) is **DRAFT FOR JOEL REVIEW / NOT APPROVED**. Neither is product authorization. |
 | Date | 2026-08-30 |
 | Product | The Estimator / CalibAi |
-| Canonical record | This document |
-| Related | [change-order-document-family.md](change-order-document-family.md) · [project-document-package.md](project-document-package.md) · [permit-and-approvals-report.md](permit-and-approvals-report.md) · [organization-and-calibration-architecture.md](organization-and-calibration-architecture.md) · [modules/proposals.md](../modules/proposals.md) · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) |
+| Canonical record | This document (requirement). Architecture decision: [ADR-040](../adr/ADR-040-organization-brand-profile.md) (**Proposed**). First Feature Gate: [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) (**NOT APPROVED**). |
+| Related | [ADR-040](../adr/ADR-040-organization-brand-profile.md) · [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) · [change-order-document-family.md](change-order-document-family.md) · [project-document-package.md](project-document-package.md) · [permit-and-approvals-report.md](permit-and-approvals-report.md) · [organization-and-calibration-architecture.md](organization-and-calibration-architecture.md) · [modules/proposals.md](../modules/proposals.md) · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) |
 
 **Current vs future:** The live `Organization` row has `legal_name`, `display_name`, and `primary_address` ([`app/models/organization.py`](../../app/models/organization.py)). There is **no** Organization Brand Profile entity, **no** organization-owned logo upload, and **no** app-managed private logo store. Today, customer PDFs use a **static** Brayman Construction asset (`app/static/branding/brayman-construction-logo.png`) and optional per-template `ProposalTemplate.logo_path`. Nothing below is implemented. This pin does **not** reopen [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) (**CLOSED / OPERATIONAL FOR UAT**). Brand Profile is **not** a prerequisite for Permit Foundation V1 ([FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**) or for [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) (**CLOSED / OPERATIONAL FOR UAT**). FG-016 Permit Report PDF uses a **neutral CalibAi** layout — do not use the static Brayman proposal logo and do not create a separate Permit-logo configuration. Later customer-facing permit PDFs consume this **one** Brand Profile.
 
@@ -36,11 +36,11 @@ The contractor should configure branding during **onboarding / settings**, not b
 - ADR-008 acceptance
 - BUILD expansion
 - MONITOR / LEARN
-- Feature Gate
-- ADR
+- product implementation of Brand Profile
+- treating [ADR-040](../adr/ADR-040-organization-brand-profile.md) or [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) drafts as Accepted / Approved
 - migration
 
-A later repository-first architecture assessment must decide whether branding becomes a small **platform prerequisite Feature Gate** before further customer-facing document generation. This pin does not make that decision.
+A later repository-first architecture assessment produced [ADR-040](../adr/ADR-040-organization-brand-profile.md) (**Proposed**) and [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) (**DRAFT / NOT APPROVED**). Those drafts do **not** implement this pin. Joel has **not** Accepted the ADR or Approved the Feature Gate. This pin still does **not** authorize product work.
 
 ---
 
@@ -177,3 +177,5 @@ ORGANIZATION SETUP
 - [modules/proposals.md](../modules/proposals.md)
 - [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md)
 - [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md)
+- [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Proposed / for Joel review**
+- [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED**

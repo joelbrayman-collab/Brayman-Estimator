@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — Organization Brand Profile ADR + Feature Gate governance draft
+
+| Field | Content |
+|-------|---------|
+| ID | Governance draft (docs only) |
+| Status | **DRAFTED FOR JOEL REVIEW** — [ADR-040](adr/ADR-040-organization-brand-profile.md) **Proposed**; [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) **DRAFT / NOT APPROVED**; Brand Profile **NOT IMPLEMENTED** |
+| Branch | `main` |
+| Objective | Draft Organization Brand Profile architecture decision and first bounded Feature Gate from the accepted reconnaissance. Docs only. |
+| Deliverables | ADR-040 Proposed; FG-017 Draft; index/status updates. No `app/` / `tests/` / `migrations/`. No live migrate. |
+| Validation | Docs only. `git diff --check`. Tests not rerun. |
+| Next | **STOP.** Wait for Joel / ChatGPT review. Do not implement Brand Profile. |
+
 ### 2026-08-30 — Post-FG-016 full documentation / governance turnover
 
 | Field | Content |

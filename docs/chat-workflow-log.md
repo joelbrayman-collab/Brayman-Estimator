@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — Organization Brand Profile ADR + Feature Gate governance draft
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `e03f9f88ebf65ded120448a1aba8f16347b18056` (starting HEAD) |
+| Objective | Docs-only draft of Organization Brand Profile ADR and first Feature Gate from the accepted architecture reconnaissance. |
+| Business decision | Brand Profile is the proposed single source for contractor identity on generated org/customer documents. Proposal is the first consumer. App-shell chrome stays out. Issued/Accepted documents must snapshot branding. CO and Permit are accounted for, not implemented. |
+| Architectural decision | [ADR-040](adr/ADR-040-organization-brand-profile.md) **Proposed / for Joel review** (not Accepted). [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED**. No implementation. No migration. Do not implement `branding_config` JSON. |
+| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — ORGANIZATION BRAND PROFILE — ADR + FEATURE GATE GOVERNANCE DRAFT. Docs only. Do not implement product code. |
+| Files expected to change | ADR-040; FG-017; indexes and status docs only |
+| Files prohibited from changing | `app/` · `tests/` · `migrations/` · live DB · logos/assets · customer documents |
+| Implementation result | Drafts written. Capability remains **NOT IMPLEMENTED**. Gate remains **NOT APPROVED**. |
+| Tests | Not rerun (docs-only; no unexplained discrepancy vs governed 401). `git diff --check`. |
+| Project-state-report update | Yes (draft exists; not implementation) |
+| Milestone entry update | Yes (append architecture-record; do not rewrite historical entries) |
+| Constitutional issue raised | Issued-document brand snapshot extends Article 5 / ADR-002 spirit to document identity (proposed, not accepted). |
+| Unresolved issues | Joel must Accept/revise ADR-040 and Approve/revise FG-017. Internal breakdown branding still open. Legal identifiers still out. |
+| Next approved step | **STOP.** Wait for Joel / ChatGPT review. Do not implement Brand Profile. |
+| Next approved prompt | Fresh-chat prompt in `docs/session-handoff.md` §22. Does **not** start implementation. |
+| Commit hash | (this docs commit, if committed) |
+
 ### 2026-08-30 — Post-FG-016 full documentation / governance turnover
 
 | Field | Content |

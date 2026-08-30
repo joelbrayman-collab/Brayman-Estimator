@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-014 Material Catalogue V1 Feature Gate + future supplier-onboarding pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `130b3fd35114014f0635d9a70e7cb3096647d480` (start) |
+| Objective | Documentation-only Feature Gate for Material Catalogue V1. Pin future bulk supplier onboarding. Do not implement either. |
+| Business decision | Joel: approve FG-014 identity-only lumber/sheets. Suppliers must later onboard by governed bulk ingest (not one-product-at-a-time); INITIAL mapping vs ONGOING sync. That pin is FUTURE ONLY and does not expand V1. |
+| Architectural decision | FG-014 **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. Owner: Material Catalogue (identity); Estimating (CostItem). Seed in the same additive Alembic revision as the table (implementation prompt). Ordinary org users must not mutate platform identity. ADR-008 remains Proposed. No Supplier Feature Gate. |
+| Prompt template used | Bounded Material Catalogue V1 Feature Gate governance + future supplier-onboarding pin |
+| Approved Cursor prompt summary | FEATURE GATE GOVERNANCE / DOCUMENTATION ONLY. Create FG-014. Do not implement. Do not migrate. Do not accept ADR-008. Record bulk supplier onboarding as FUTURE / NOT IMPLEMENTED without expanding V1. |
+| Files expected to change | Feature Gate, indexes, architecture/module/status docs |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; product code; ADR-008 status |
+| Implementation result | FG-014 approved, not started. Bulk supplier onboarding pinned in supplier architecture. No product code. |
+| Tests | Not rerun (docs-only). Last recorded full suite **310 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Architecture record appended |
+| Constitutional issue raised | None |
+| Unresolved issues | Implementation not started. ADR-008 remains Proposed. Supplier Feature Gate not authorized. |
+| Next approved step | **FG-014 implementation prompt** when Joel authorizes. Do not implement after this docs commit. |
+| Next approved prompt | Bounded FG-014 implementation (identity + seed + CostItem FK + office UX). Do not start supplier ingest. |
+| Commit hash | (this commit) |
+
 ### 2026-08-30 — Material Catalogue ADR-034 / ADR-035 / ADR-036 accepted
 
 | Field | Content |

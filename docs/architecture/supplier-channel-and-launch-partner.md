@@ -255,6 +255,7 @@ Do **not** invent those numbers now. Do **not** claim the workflow is deployed.
 | Concern | Owner (intended) |
 |---------|------------------|
 | Catalogue, SKU, price lists, inventory sync, adapters | Proposed **Supplier Catalogue** module |
+| Governed bulk supplier onboarding (file/feed/SFTP/API/EDI) | Proposed **Supplier Catalogue** — **FUTURE / NOT IMPLEMENTED**; not one-product-at-a-time; not FG-014 |
 | Contractor–supplier procurement account and project sharing (relationship A) | Supplier Catalogue / future Procurement — **not** Estimating’s free-text field |
 | CalibAi channel partnership and originator participation (relationship B) | Supplier Catalogue channel records, or a later explicitly owned Channel concern — **not** a cost-item flag |
 | Estimate lines and cost items | **Estimating** (consumes price snapshots; does not own supplier identity) |
@@ -272,6 +273,7 @@ Cross-module access must use documented service boundaries (architecture-princip
 |--------------------------|--------------------------------------|
 | Architecture direction and ADR-033 | Supplier-integration code, schema, or migration |
 | Winchester as launch/reference **intent** | A Winchester Feature Gate or POC start |
+| Later bulk catalogue onboarding **requirement pin** | Bulk ingest, supplier schema, live pricing/inventory, or a Supplier Feature Gate |
 | Heterogeneous adapters later | Assuming one BMR/Home Depot/Winchester model |
 | Later assessment of Darcy participation **categories** | Percentages, invoices, partner contracts, or payout code |
 | Later evidence measurement design | Analytics, dashboards, or channel-economics implementation |

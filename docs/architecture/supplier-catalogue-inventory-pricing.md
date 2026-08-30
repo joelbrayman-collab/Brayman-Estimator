@@ -5,7 +5,7 @@
 | Status | **Future architecture** (not implemented) |
 | Updated | 2026-07-25 |
 | Module (proposed) | Supplier Catalogue / Procurement Pricing |
-| Related | [platform-roadmap.md](../platform-roadmap.md) · [architecture.md](../architecture.md) · [material-catalogue-architecture.md](material-catalogue-architecture.md) · [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) · ADR-008 · **ADR-033** · ADR-010 |
+| Related | [platform-roadmap.md](../platform-roadmap.md) · [architecture.md](../architecture.md) · [material-catalogue-architecture.md](material-catalogue-architecture.md) · [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) · ADR-008 · **ADR-033** · ADR-010 · [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) (Material Catalogue identity only; **does not** authorize this module) |
 
 **Current vs future:** Today the app has only an optional free-text `supplier` string on `CostItem` (`app/models/cost_item.py`). There is **no** supplier entity, catalogue, inventory API, EDI, price file import, or purchase-order module (Purchase Orders remain a **disabled nav placeholder**). Nothing below is claimed as implemented.
 
@@ -31,6 +31,50 @@ CalibAi **material identity** is **not** owned here. See [material-catalogue-arc
 - Supplier product records (supplier description, category as the **dealer** classifies it, trade).
 - Manufacturer SKU and supplier SKU (may differ).
 - Explicit mapping from **CalibAi canonical material** (and, for costing, organization `CostItem` / assembly components) to supplier products. Estimating owns cost items; Material Catalogue owns CalibAi identity; Supplier module owns catalogue rows.
+
+## Governed bulk supplier onboarding (FUTURE / NOT IMPLEMENTED)
+
+**Status:** **FUTURE / NOT IMPLEMENTED.** Requirement pin only. Preserve for a later Supplier Catalogue architecture/governance pass.
+
+This pin does **not**:
+
+- expand [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) Material Catalogue V1
+- authorize supplier schema
+- authorize supplier catalogue ingestion
+- authorize BMR integration or POC
+- authorize live pricing / inventory
+- authorize a Supplier Feature Gate
+
+CalibAi must eventually provide **governed bulk** Supplier Catalogue onboarding. A supplier must **not** be required to enter catalogue products one at a time.
+
+Future supported onboarding mechanisms may include:
+
+- bulk catalogue file/export
+- scheduled feed
+- SFTP or equivalent
+- API / ERP / POS integration
+- EDI or other enterprise integration where justified
+
+Supplier onboarding lifecycle:
+
+```text
+SOURCE
+→ BULK INGEST
+→ SUPPLIER PRODUCTS
+→ MAP TO CALIBAI CANONICAL MATERIALS
+→ HUMAN REVIEW / EXCEPTIONS
+→ ACTIVE SUPPLIER CATALOGUE
+→ CONTINUING SYNCHRONIZATION
+```
+
+Initial onboarding and later synchronization are distinct:
+
+| Mode | Purpose |
+|------|---------|
+| **INITIAL** | Establish supplier products and **reviewed** canonical mappings. |
+| **ONGOING** | Synchronize prices, promotions, inventory, availability, and product lifecycle changes **without** unnecessarily remapping unchanged products. |
+
+Canonical identity remains CalibAi-owned ([material-catalogue-architecture.md](material-catalogue-architecture.md)). Bulk ingest creates **supplier products**, then maps them **to** canonical materials. It must not invent CalibAi identity from a dealer file.
 
 ## Units of measure and conversions
 
@@ -72,14 +116,17 @@ CalibAi **material identity** is **not** owned here. See [material-catalogue-arc
 
 ## Integration modes
 
+**FUTURE.** Catalogue onboarding must be **governed bulk ingest**, not one-product-at-a-time data entry. See **Governed bulk supplier onboarding** above. This table is not implementation authority.
+
 | Mode | Phase | Notes |
 |------|-------|-------|
-| CSV / spreadsheet import | Phase E | First practical supplier path |
-| Manual quote import | Phase E | Paste/upload quote → mapped lines |
-| API integrations | Phase F | Supplier-specific adapters |
+| CSV / spreadsheet import | Phase E | First practical **bulk** supplier path |
+| Manual quote import | Phase E | Paste/upload quote → mapped lines (quotes, not full catalogue onboarding) |
+| Scheduled feed / SFTP or equivalent | Phase E–F | Continuing synchronization after initial onboarding |
+| API / ERP / POS integrations | Phase F | Supplier-specific adapters |
 | EDI | Phase F+ | Higher complexity; Feature Gate required |
 
-**Do not claim any live supplier integration exists in the repository.**
+**Do not claim any live supplier integration exists in the repository.** This pin does **not** authorize a Supplier Feature Gate.
 
 Supplier **channel** rules (neutrality, no exclusivity, Winchester as launch/reference not lock-in, contractor procurement vs CalibAi channel partnership, Darcy originated-value participation without terms) live in [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) and [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md). Catalogue adapters must remain **multi-supplier**. Do not collapse channel partnership into a PreferredSupplier field. Do not hard-code BMR Winchester as the only supplier. National/enterprise capabilities (multi-branch, DC inventory, ERP/EDI, supplier roles) must remain **possible later** without being built into a first Winchester POC.
 

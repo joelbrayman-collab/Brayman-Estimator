@@ -19,6 +19,12 @@ Suppliers, branches, **supplier** catalogue products (SKU/pack/price), import/sy
 
 CalibAi canonical materials (Material Catalogue); internal cost items/assemblies via explicit mapping for costing; Projects for PO prep (future).
 
+## Future requirement pin (not implemented)
+
+**Governed bulk supplier onboarding** is required later: a supplier must not enter catalogue products one at a time. Lifecycle: SOURCE → BULK INGEST → SUPPLIER PRODUCTS → MAP TO CALIBAI CANONICAL MATERIALS → HUMAN REVIEW / EXCEPTIONS → ACTIVE SUPPLIER CATALOGUE → CONTINUING SYNCHRONIZATION. Initial onboarding (products + reviewed mappings) is distinct from ongoing sync (prices, promotions, inventory, availability, lifecycle) without unnecessarily remapping unchanged products.
+
+This pin does **not** expand [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md), authorize supplier schema/ingestion, BMR/POC, live pricing/inventory, or a Supplier Feature Gate. Canonical record: [supplier-catalogue-inventory-pricing.md](../architecture/supplier-catalogue-inventory-pricing.md).
+
 ## Prohibited responsibilities
 
 - Owning CalibAi canonical material identity / taxonomy (Material Catalogue)
@@ -26,6 +32,7 @@ CalibAi canonical materials (Material Catalogue); internal cost items/assemblies
 - Silently refreshing prices on locked/accepted records
 - Granting supplier / national / category exclusivity
 - Implementing Darcy channel economics or Winchester POC analytics without a Feature Gate
+- Implementing bulk supplier onboarding, catalogue ingest, or live sync without a later Supplier Feature Gate
 
 ## Relevant ADRs
 

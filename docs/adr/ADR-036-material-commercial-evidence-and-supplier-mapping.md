@@ -54,6 +54,8 @@ When a later Feature Gate authorizes supplier catalogue work, supplier-owned fac
 
 Conversion/rounding from requirement UOM to pack UOM lives on the **mapping**, not on identity ([ADR-035](ADR-035-material-quantity-uom-and-requirement-boundary.md)).
 
+**Future pin (not this ADR, not FG-014):** when Supplier Catalogue is later gated, onboarding must be **governed bulk ingest** (not one-product-at-a-time), then map to CalibAi canonical materials with human review/exceptions, then continuing sync distinct from initial mapping. Canonical wording: [supplier-catalogue-inventory-pricing.md](../architecture/supplier-catalogue-inventory-pricing.md). This ADR does **not** authorize that work.
+
 ### 4. Living material intelligence
 
 ```text

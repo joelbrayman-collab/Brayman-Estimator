@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-014 Material Catalogue V1 Feature Gate approved
+
+| Field | Content |
+|-------|---------|
+| ID | [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) (not a numbered M0xx) |
+| Status | **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED** |
+| Date | 2026-08-30 |
+| Objective | Authorize bounded CalibAi Material Catalogue identity V1 (dimensional lumber + sheet goods) + optional Material CostItem link + office catalogue UX. |
+| Deliverables | Feature Gate FG-014; module stub; indexes; status docs. **Future pin:** governed bulk supplier onboarding (not implemented; does not expand FG-014; no Supplier Feature Gate). |
+| Validation | Docs-only; `git diff --check`. No `app/` / `tests/` / `migrations/`. Tests not required this pass. Last recorded full suite **310 passed**. |
+| Next | Separate **FG-014 implementation prompt**. Do not implement in this record. Do not start Phase D, supplier POC, or bulk supplier onboarding. Do not accept ADR-008. |
+
 ### 2026-08-30 — Material Catalogue ADR-034 / ADR-035 / ADR-036
 
 | Field | Content |

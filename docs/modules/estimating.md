@@ -51,7 +51,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 ## Planned capabilities
 
-- Future Material-category `CostItem` → canonical material link; assembly components resolvable to canonical materials; fulfillment uses **exploded** material quantities even when the commercial line stays rolled-up ([material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md)). Not implemented.
+- Future Material-category `CostItem` → canonical material link ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**); assembly components resolvable to canonical materials later; fulfillment uses **exploded** material quantities even when the commercial line stays rolled-up ([material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md)). Identity V1 does not explode Assemblies.
 - QuickBooks and Ontario contract/warranty remain **Future**.
 - Historical estimating intelligence — **Future**
 

@@ -78,7 +78,7 @@ Do not model all construction materials in V1.
 
 Accepting this ADR does **not** authorize product code, schema, migration, a Feature Gate, MaterialRequirement, Phase D, supplier SKUs, pricing, promotions, inventory, or Winchester demo.
 
-Recommended later first Feature Gate (not created here): **Material Catalogue V1 — dimensional lumber + sheet goods** (canonical identity + Material-category CostItem link + office identity UX only).
+Recommended later first Feature Gate: [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED** — identity + CostItem link + office UX only.
 
 ## Alternatives Considered
 
@@ -107,11 +107,11 @@ Canonical identity is CalibAi-seeded. Organization costing remains org-partition
 
 ## Migration Impact
 
-**Deferred** until a Material Catalogue Feature Gate. Additive only. Do not rewrite historical cost lines into materials. Do not backfill identity from `CostItem.supplier`.
+**Deferred** until [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **implementation** prompt (one bounded additive revision). Additive only. Do not rewrite historical cost lines into materials. Do not backfill identity from `CostItem.supplier`. Do not create the migration in the Feature Gate governance pass.
 
 ## Testing Impact
 
-None this pass. Future Feature Gate must prove: CostItem unchanged for non-Material categories; identity has no unit_cost/SKU/price; org isolation of CostItem links.
+None this pass. [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) implementation must prove: CostItem unchanged for non-Material categories; identity has no unit_cost/SKU/price; org isolation of CostItem links.
 
 ## Documentation Impact
 

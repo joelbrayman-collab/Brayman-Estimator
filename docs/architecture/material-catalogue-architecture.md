@@ -5,7 +5,7 @@
 | Status | **Intended architecture** (documented; **not implemented**) |
 | Date | 2026-08-30 |
 | Product | The Estimator / CalibAi |
-| Implementation | **Not authorized** by this document. No Feature Gate. No schema, migration, or product code. Governing ADRs: [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md), [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md), [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**. |
+| Implementation | [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED** (identity + CostItem link + office UX only). This architecture document does **not** implement product code. Governing ADRs: [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md), [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md), [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**. |
 | Related | [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) **Accepted** · [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) **Accepted** · [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** · [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** (labour analogy) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (not accepted with identity) · [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) · [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) · [modules/estimating.md](../modules/estimating.md) · [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) |
 
 **Current vs intended vs future:** Today Estimating owns org-scoped `CostItem` and `Assembly` (`app/models/cost_item.py`, `app/models/assembly.py`). There is **no** Material Catalogue table, **no** canonical material identity, **no** `MaterialRequirement`, and **no** supplier SKU entity. Nothing below is claimed as implemented.
@@ -71,7 +71,7 @@ Do **not** remove or repurpose `CostItem`.
 
 This follows the same boundary already accepted for labour: [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) rejected treating CostItem Labour as the production-rate engine. Lump `unit_cost`, org markup, and free-text supplier cannot serve as CalibAi material identity, multi-supplier mapping target, or platform vocabulary.
 
-**Future link (not implemented):** a Material-category `CostItem` may reference **one** canonical material. Labour, Equipment, Subcontractor, Allowance, and Other CostItems do **not** require that link. Do not put canonical identity fields onto arbitrary CostItems.
+**Authorized for later FG-014 implementation (not started):** a Material-category `CostItem` may reference **one** canonical material. Labour, Equipment, Subcontractor, Allowance, and Other CostItems do **not** require that link. Do not put canonical identity fields onto arbitrary CostItems.
 
 ---
 
@@ -401,9 +401,13 @@ Construction-stage grouping (Foundation, Floor, Framing, Roof, Dry-In, Interior)
 
 Material Catalogue is **not** Industry Benchmarking, **not** LEARN, **not** BUILD actuals, and **not** the Jurisdictional Contract & Compliance Library. Applicability may later *reference* code/climate/spec; it must not own legal content.
 
+**Future pin (not this architecture pass, not FG-014):** governed **bulk** Supplier Catalogue onboarding (file/export, scheduled feed, SFTP, API/ERP/POS, EDI where justified). A supplier must not enter products one at a time. Initial mapping is reviewed; ongoing sync must not unnecessarily remap unchanged products. Canonical record: [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md). **FUTURE / NOT IMPLEMENTED.** Does not authorize supplier schema, ingest, BMR, live pricing, or a Supplier Feature Gate.
+
 ---
 
-## 20. Recommended first Feature Gate (do not create yet)
+## 20. Recommended first Feature Gate
+
+[FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**.
 
 **MATERIAL IDENTITY + ORGANIZATION COSTITEM LINK + OFFICE CATALOGUE UX**
 
@@ -412,6 +416,7 @@ Likely first POC: dimensional lumber + sheet goods.
 **Explicit non-goals of that first gate:**
 
 - supplier SKU models, BMR/Winchester demo, supplier API
+- **bulk supplier catalogue onboarding / ingest / sync** (future pin only — see [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md); not a Supplier Feature Gate)
 - inventory, supplier pricing, promotional / sale-price feeds
 - procurement, PO, fulfillment
 - Phase D, MaterialRequirement
@@ -425,13 +430,15 @@ Likely first POC: dimensional lumber + sheet goods.
 
 1. FG-013 **CLOSED / OPERATIONAL FOR UAT** — done
 2. Material Catalogue architecture + **ADR-034 / ADR-035 / ADR-036 Accepted** — done (not implemented)
-3. Material Catalogue Feature Gate + bounded lumber/sheets implementation
-4. Phase D
-5. Supplier Catalogue / Winchester reference demo
-6. Supplier pricing / inventory / fulfillment
-7. Authentication / BUILD / MONITOR / LEARN / Procurement / QuickBooks / legal library — each separately gated
+3. Material Catalogue Feature Gate **FG-014 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED** (identity-only lumber/sheets) — done (this pass)
+4. FG-014 **implementation** (not started; separate prompt)
+5. Phase D
+6. Later **Supplier Catalogue architecture/governance** (includes governed **bulk** onboarding pin; not one-SKU-at-a-time; **not** authorized here)
+7. Supplier Catalogue / Winchester reference demo (only after its own Feature Gate)
+8. Supplier pricing / inventory / fulfillment
+9. Authentication / BUILD / MONITOR / LEARN / Procurement / QuickBooks / legal library — each separately gated
 
-Do not start supplier CSV (Phase E) before CalibAi material identity exists, or a dealer catalogue becomes the vocabulary.
+Do not start supplier CSV (Phase E) or bulk supplier ingest before CalibAi material identity exists, or a dealer catalogue becomes the vocabulary. [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) does **not** authorize supplier onboarding.
 
 ---
 
@@ -453,6 +460,7 @@ Do not start supplier CSV (Phase E) before CalibAi material identity exists, or 
 |---------|--------|
 | Canonical material definitions / taxonomy / UOM vocabulary | **Material Catalogue identity** (new domain; not Estimating; not Supplier) |
 | Living price / promotion / inventory / SKU evidence | **Supplier Catalogue** (future) |
+| Bulk supplier catalogue onboarding / sync | **Supplier Catalogue** (future pin; not FG-014; not authorized) |
 | CostItem, Assembly, estimate lines | **Estimating** (current) |
 | Take-off packages / items | **Plan Intelligence** (current) |
 | PO / delivery package | **Projects / Procurement** (future) |

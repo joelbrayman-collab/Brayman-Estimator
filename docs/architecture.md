@@ -55,7 +55,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Estimating | `Estimate`, `EstimateVersion`, `EstimateSection`, `EstimateLineItem` | `app/models/estimate.py` |
 | Proposals | `ProposalTemplate`, `Proposal`, `ProposalSection`, `ProposalLineItem` | `app/models/proposal.py` |
 | Project controls | `ChangeOrder`, `ChangeOrderItem` | `app/project_controls/models.py` |
-| Plan Intelligence | `DrawingPackage`, `DrawingRevision`, `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `PlanScaleCalibration`, `PlanMeasurement` | `app/plan_intelligence/models.py` |
+| Plan Intelligence | `DrawingPackage`, `DrawingRevision`, `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `PlanScaleCalibration`, `PlanMeasurement`, `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem` | `app/plan_intelligence/models.py` |
 | Labour Engine | `LabourTask`, `LabourTaskMapping`, `ProductionRateStandard`, `DirectLabourCostRateStandard`, `LabourCalibrationCandidate`, `EstimateLabourSnapshot`, `LabourAuditEvent` | `app/models/labour_engine.py` |
 | Pricing Engine | `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent` | `app/models/pricing_engine.py` |
 
@@ -65,7 +65,7 @@ Notable behaviours evidenced in code/tests:
 - Proposals built as **snapshots** from estimate versions (`build_proposal_snapshot` exported from `app/services/`); tests in `tests/test_proposal_snapshots.py` assert independence from later estimate edits.
 - Proposal statuses include `Accepted` among others (`PROPOSAL_STATUSES` in `app/models/proposal.py`).
 - Change Orders package under `app/project_controls/` with its own routes/services/repository/pdf.
-- Plan Intelligence Phase A upload/storage (M005) and Document Indexing (M007): pages, processing provenance, archive-over-delete, relational search (`app/plan_intelligence/`; tests `tests/test_plan_upload.py`, `tests/test_plan_indexing.py`). Sheets **implemented** (M009). Scale/measurement **implemented** (M010). **AI quantity extraction foundation is operational for UAT** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; mock extractor only).
+- Plan Intelligence Phase A upload/storage (M005) and Document Indexing (M007): pages, processing provenance, archive-over-delete, relational search (`app/plan_intelligence/`; tests `tests/test_plan_upload.py`, `tests/test_plan_indexing.py`). Sheets **implemented** (M009). Scale/measurement **implemented** (M010). **AI quantity extraction foundation is CLOSED / OPERATIONAL FOR UAT** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md); mock extractor only).
 
 ### Services / repositories
 
@@ -73,12 +73,12 @@ Notable behaviours evidenced in code/tests:
 |-------|-------|
 | Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py` |
 | Project controls | `app/project_controls/services.py`, `repository.py`, `pdf.py` |
-| Plan Intelligence | `app/plan_intelligence/services.py`, `processing.py`, `extraction.py`, `storage.py`, `packages.py`, `audit.py` |
+| Plan Intelligence | `app/plan_intelligence/services.py`, `processing.py`, `extraction.py`, `storage.py`, `packages.py`, `audit.py`, `takeoff.py`, `takeoff_extractors.py` |
 | Generic repositories package | `app/repositories/` (present; inspect before assuming usage) |
 
 ### Templates & static assets
 
-- Templates: `app/templates/` (clients, projects, estimates, proposals, proposal_templates, assemblies, cost_library, project_controls, plan_intelligence, dashboard, base, partials)
+- Templates: `app/templates/` (clients, projects, estimates, proposals, proposal_templates, assemblies, cost_library, project_controls, plan_intelligence including take-off, labour_engine, pricing_engine, dashboard, base, partials)
 - Static: `app/static/` (css, js, branding)
 
 ### Migrations
@@ -86,13 +86,13 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic graph head and live development/UAT current: **`a3b4c5d6e7f8`** (FG-009). Verify `flask db current` per environment before relying on it.
+- Alembic graph head and live development/UAT current: **`b4c5d6e7f8a9`** (FG-010). Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010). Verify `flask db current` per environment before relying on it.
 
 ### Tests
 
 - Location: [`tests/`](../tests/)
-- Collected locally: **228 passed** (`./venv/bin/python -m pytest -q`, 2026-08-29)
-- Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders, plan upload/indexing/sheets/scale, labour engine, pricing engine, historical ingestion
+- Collected locally: **251 passed** (`./venv/bin/python -m pytest -q`, 2026-08-30)
+- Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders, plan upload/indexing/sheets/scale/take-off, labour engine, pricing engine, historical ingestion, organization foundation
 
 ### Current module relationships (simplified)
 

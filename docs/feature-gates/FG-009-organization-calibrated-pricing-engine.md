@@ -7,11 +7,11 @@
 | Target Milestone | Organization-Calibrated Pricing Engine (not a numbered M0xx until implementation is authorized) |
 | Module | Pricing Engine (Estimating consumes snapshotted selling-price results; Proposals/Change Orders reuse the same policy snapshot) |
 | Date | 2026-08-29 |
-| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
 | Architecture | [organization-calibrated-pricing-engine-architecture.md](../architecture/organization-calibrated-pricing-engine-architecture.md) **Approved** |
 | Related ADRs | [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** |
 | Prerequisites | FG-007 / M011 **implemented**; FG-008 **implemented**; FG-006 **implemented** (evidence only) |
-| Approved baseline | Governance commit `41bfb2e032c0386fc785b733ea5789fae9e248ef`. Implementation commit `8e11179fb5abb42a68805fe011e84c15e866ea04`. Live development/UAT migrated to `a3b4c5d6e7f8`. |
+| Approved baseline | Governance commit `41bfb2e032c0386fc785b733ea5789fae9e248ef`. Implementation commit `8e11179fb5abb42a68805fe011e84c15e866ea04`. FG-009 revision `a3b4c5d6e7f8` applied live 2026-08-29 (now in chain; live head `b4c5d6e7f8a9`). |
 
 ---
 
@@ -20,9 +20,9 @@
 | Layer | State |
 |-------|--------|
 | Architecture / readiness | **APPROVED** (2026-08-29; Joel and ChatGPT; contingency clarification adopted) |
-| Feature Gate (this document) | **APPROVED FOR IMPLEMENTATION** |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT** |
 | ADR-025 / ADR-030 | **Accepted** |
-| Implementation | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (2026-08-29). Additive migration `a3b4c5d6e7f8` applied live (`f2c3d4e5f6a7` → `a3b4c5d6e7f8`). Dedicated tests **33 passed**. Full suite **228 passed**. Foundation **operational for UAT**. ORG-001 optional overhead/profit/contingency layers remain `UNSPECIFIED`. Labour-snapshot Direct Labour Cost is not included in the estimate basis by default. |
+| Implementation | **CLOSED / OPERATIONAL FOR UAT** (2026-08-29). Additive migration `a3b4c5d6e7f8` applied live (`f2c3d4e5f6a7` → `a3b4c5d6e7f8`; later head `b4c5d6e7f8a9`). Dedicated tests **33 passed**. Full suite at FG-009 implementation was **228**; current baseline **251**. ORG-001 optional overhead/profit/contingency layers remain `UNSPECIFIED`. Labour-snapshot Direct Labour Cost is not included in the estimate basis by default. |
 | New estimates | Do **not** auto-switch to `TRUE_GROSS_MARGIN`. Snapshot is created only via explicit human `apply_resolved_pricing_to_version` / office “Apply org pricing policy”. Versions without a snapshot continue to use live `COST_PLUS_MARKUP_STACK`. |
 
 This gate does **not** implement four-output generation, QuickBooks, contracts, or Labour Engine expansion. Labour Engine Direct Labour Cost may be consumed read-only; default apply path does **not** add labour-snapshot cost into the estimate basis (`include_labour_snapshot_direct_cost=False`) so CostItem labour lines are not double-counted.
@@ -297,6 +297,6 @@ Met in dedicated tests and live development/UAT smoke (2026-08-29). Foundation o
 
 Architecture, Feature Gate, ADR-025, and ADR-030 are **approved** (2026-08-29).
 
-Implementation is **complete for FG-009 foundation**: **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**.
+Implementation is **complete for FG-009 foundation**: **CLOSED / OPERATIONAL FOR UAT**.
 
-**Next governed action:** FG-009 closure review, then prepare the next Feature Gate for AI Take-off / Quantity Extraction Foundation. This gate does **not** authorize AI take-off, Project Hub, four-output product, QuickBooks, contracts, or BUILD/MONITOR/LEARN.
+**Next governed action:** Do not reopen FG-009. Next roadmap candidate is **Project Hub UX** — **NOT STARTED / NOT AUTHORIZED**. This gate does **not** authorize AI take-off Phase D, Project Hub, four-output product, QuickBooks, contracts, or BUILD/MONITOR/LEARN.

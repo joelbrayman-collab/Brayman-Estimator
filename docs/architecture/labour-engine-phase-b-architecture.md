@@ -490,7 +490,7 @@ Rollback: drop additive Labour Engine tables; no rewrite of `historical_labour_i
 
 Legacy: pre-FG-008 estimates have no labour snapshot; they remain lump-cost lines. Do not backfill invented production rates.
 
-Live development/UAT Alembic current/head later became `a3b4c5d6e7f8` (FG-009). FG-008 tables remain in place. This does **not** populate an operating production-rate catalog. FG-009 selling-price integration consumes Direct Labour Cost read-only and does **not** include labour-snapshot cost in the estimate basis by default.
+Live development/UAT Alembic current/head later became `b4c5d6e7f8a9` (FG-010). FG-008 revision `f2c3d4e5f6a7` remains in the chain. This does **not** populate an operating production-rate catalog. FG-009 selling-price integration consumes Direct Labour Cost read-only and does **not** include labour-snapshot cost in the estimate basis by default.
 
 ---
 

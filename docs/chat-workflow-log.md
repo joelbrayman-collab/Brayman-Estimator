@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — 29 Aug day-end reconciliation / Review Turnover
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` (start `316cc9f11c141d806737bb7caebdb7c37c5bda9b`) |
+| Objective | Full 29 Aug repository / database / documentation / storage / Review Turnover audit. No product features. No Phase D. No external AI. |
+| Business decision | Close FG-008 / FG-009 / FG-010 as **CLOSED / OPERATIONAL FOR UAT**. Leave synthetic UAT residue labeled. Next candidate (Project Hub UX) **NOT AUTHORIZED**. |
+| Architectural decision | ADR-010 remains **Proposed**. Live Alembic current/head remains `b4c5d6e7f8a9`. No migrations created or altered. |
+| Prompt template used | Review Turnover Protocol 22-point package + 29 Aug day-end reconciliation prompt |
+| Approved Cursor prompt summary | READ → VERIFY → RECONCILE → TEST → DOCUMENT → COMMIT → PUSH → VERIFY → TURN OVER → STOP. Docs only. |
+| Files expected to change | Governed docs only |
+| Files prohibited from changing | `app/**` product code; `migrations/**`; tests; historical/commercial source files |
+| Implementation result | Pre-flight matched start pins. All listed 29 Aug SHAs are ancestors of `main`. Origin parity. No untracked files. Linear Alembic chain to `b4c5d6e7f8a9`. Live DB snapshot recorded. Stale current-state Alembic/test/next-action language corrected. Complete 22-point `session-handoff.md` including Fresh Chat Startup Prompt. |
+| Tests | take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**; full **251**. `git diff --check` clean. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None |
+| Unresolved issues | Historical 0.13 labour-rate cluster; material-as-labour labels; crew/duration inconsistencies; ORG-001 optional layers unspecified; labour-snapshot cost not in estimate basis by default; Estimate Totals header leftover percents (UI debt); take-off cancel not implemented; ARCH-only eligibility; actor-string identity; ADR-010 Proposed; Phase D not started; office auth not implemented; synthetic UAT residue left labeled. |
+| Next approved step | **STOP DEVELOPMENT.** Fresh session uses `docs/session-handoff.md` §22. |
+| Next approved prompt | None. Next candidate Project Hub UX requires a new Feature Gate. |
+| Commit hash | (this docs reconciliation commit) |
+
 ### 2026-08-30 — FG-010 / M012 live migration and synthetic UAT smoke
 
 | Field | Content |

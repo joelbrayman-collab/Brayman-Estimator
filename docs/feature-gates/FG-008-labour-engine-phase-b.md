@@ -7,12 +7,12 @@
 | Target Milestone | Labour Engine Phase B |
 | Module | Labour Engine (Estimating consumes direct labour cost later) |
 | Date | 2026-08-29 |
-| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE DEVELOPMENT/UAT MIGRATION APPLIED / UAT-SMOKE-VERIFIED** |
+| Status | **CLOSED / OPERATIONAL FOR UAT** (2026-08-29; Joel and ChatGPT; live-migrated; integrity-stabilized) |
 | Architecture | [labour-engine-phase-b-architecture.md](../architecture/labour-engine-phase-b-architecture.md) **Approved** |
 | Related ADRs | [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** |
 | Prerequisites | FG-007 / M011 **implemented**; FG-006 **implemented** |
 | Approved baseline | `main` @ `820f54afc179279d2435ad3a426b3037548bb45e` |
-| Product code | **Implemented & verified.** Migration `f2c3d4e5f6a7` (graph head and live `flask db current`). Tests: `tests/test_labour_engine.py` (**25 passed**). Live development/UAT database upgraded 2026-08-29. Post-UAT integrity stabilization 2026-08-29 (REVOKED mappings; archived tasks excluded from rule suggestion; unknown orgs cannot persist labour audit). |
+| Product code | **Implemented & verified.** Migration `f2c3d4e5f6a7` (in Alembic chain; live graph head is later `b4c5d6e7f8a9`). Tests: `tests/test_labour_engine.py` (**25 passed**). Live development/UAT database upgraded 2026-08-29. Post-UAT integrity stabilization 2026-08-29 (REVOKED mappings; archived tasks excluded from rule suggestion; unknown orgs cannot persist labour audit). |
 
 ---
 
@@ -23,11 +23,11 @@
 | Architecture / readiness | **APPROVED** (2026-08-29; Joel and ChatGPT) |
 | Feature Gate (this document) | **IMPLEMENTED / VERIFIED** |
 | ADR-029 | **Accepted** |
-| Implementation | **Implemented & verified.** Live Alembic current and graph head: `f2c3d4e5f6a7`. Foundation **operational for UAT**. |
+| Implementation | **Implemented & verified.** FG-008 revision `f2c3d4e5f6a7` is in the live Alembic chain. Live current/head: `b4c5d6e7f8a9`. Foundation **CLOSED / OPERATIONAL FOR UAT**. |
 
 Code paths: `app/models/labour_engine.py`, `app/services/labour_engine.py`, `app/routes/labour_engine.py`, `app/templates/labour_engine/`, `migrations/versions/f2c3d4e5f6a7_add_labour_engine_fg008.py`, `tests/test_labour_engine.py`. Office UI: `/labour-engine/`.
 
-This gate does **not** implement pricing-engine selling-price application, payroll, actuals persistence, or a Crew Template catalog. ADR-025 is **Accepted**. [FG-009](FG-009-organization-calibrated-pricing-engine.md) is **APPROVED FOR IMPLEMENTATION** and is **not** part of FG-008.
+This gate does **not** implement pricing-engine selling-price application, payroll, actuals persistence, or a Crew Template catalog. ADR-025 is **Accepted**. Subsequent status: [FG-009](FG-009-organization-calibrated-pricing-engine.md) and [FG-010](FG-010-ai-takeoff-quantity-extraction-foundation.md) are **CLOSED / OPERATIONAL FOR UAT** and are not part of this gate's original scope.
 
 ---
 

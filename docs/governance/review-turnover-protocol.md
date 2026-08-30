@@ -95,8 +95,8 @@ A Review Turnover must verify and document:
 
 ### C. Product Lifecycle State (CalibAi Reconciliation)
 Reconstruct and classify every lifecycle domain:
-- **PLAN**: (e.g. Plan Intelligence Phase A, Document Indexing M007, Sheet Intelligence M009, Scale M010, Take-off M011+)
-- **PRICE**: (Estimating builder and cost items implemented; governed pricing-policy calculation migration Proposed in ADR-025 / Future)
+- **PLAN**: (e.g. Plan Intelligence Phase A, Document Indexing M007, Sheet Intelligence M009, Scale M010, Take-off M012 foundation operational for UAT; Phase D mapping not started)
+- **PRICE**: (Estimating builder + Labour Engine FG-008 + Pricing Engine FG-009 **OPERATIONAL FOR UAT**; ADR-025/030 **Accepted**)
 - **CONTRACT**: (Proposals current; Ontario Construction Contract & Warranty templates Future/Governed)
 - **BUILD**: (Project Controls change orders partial; Field capture / mobile Future)
 - **MONITOR**: (Actual-cost feedback; ADR-021 Proposed)
@@ -177,9 +177,9 @@ The turnover package must explicitly enumerate all protected assets and invarian
 
 ### B. Open Decisions & Deferred Items
 Clearly distinguish:
-- **OPEN DECISION**: Unresolved choices awaiting Joel approval (e.g. ADR-021 MONITOR baseline, ADR-025 pricing formula adoption).
+- **OPEN DECISION**: Unresolved choices awaiting Joel approval (e.g. ADR-021 MONITOR baseline, real external AI provider / ADR-010).
 - **APPROVED DECISION**: Formally authorized by Joel.
-- **DEFERRED ITEM**: Intentionally postponed to a later milestone (e.g. Scale calibration in M010, AI take-off in M011+, QuickBooks API, field/mobile apps).
+- **DEFERRED ITEM**: Intentionally postponed to a later milestone (e.g. Phase D estimate mapping, Project Hub UX, QuickBooks API, field/mobile apps).
 
 ---
 

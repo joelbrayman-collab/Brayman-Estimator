@@ -13,7 +13,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 **Proposed** is not **Accepted**. Citing a Proposed ADR in a module, Feature Gate, or roadmap does not change its status. Implementation still requires Feature Gate + accepted decisions where the ADR itself requires acceptance.
 
-**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**); **ADR-025** (named pricing methods); **ADR-030** (org pricing policy + estimate pricing snapshot); **ADR-005, ADR-006, ADR-007, ADR-009, ADR-011, ADR-031** (FG-010 / M012 take-off foundation **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**). FG-009 is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. FG-010 is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. **ADR-010 remains Proposed** (real external AI provider not authorized).
+**Accepted in this repository today:** ADR-002 (M003); ADR-017, ADR-018 (Sheet workflow/uniqueness; implemented in M009); ADR-019, ADR-020, ADR-022, ADR-023, ADR-024 (CAR-001 architectural direction); ADR-026, ADR-027 (Scale calibration and coordinate architecture; implemented in M010); ADR-028 (Organization foundation and commercial context; implemented in M011); ADR-029 (Canonical labour task / production standard / calibration lifecycle; architecture accepted; FG-008 **CLOSED / OPERATIONAL FOR UAT**); **ADR-025** (named pricing methods); **ADR-030** (org pricing policy + estimate pricing snapshot); **ADR-005, ADR-006, ADR-007, ADR-009, ADR-011, ADR-031** (FG-010 / M012 take-off foundation **CLOSED / OPERATIONAL FOR UAT**). FG-008 / FG-009 / FG-010 are **CLOSED / OPERATIONAL FOR UAT**. **ADR-010 remains Proposed** (real external AI provider not authorized).
 
 ## Process
 
@@ -63,7 +63,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | [ADR-026](ADR-026-scale-ownership-and-calibration-provenance.md) | Scale Ownership, Multi-Scale Viewports, and Calibration Provenance | **Accepted** (2026-08-28; FG-005; implemented in M010) |
 | [ADR-027](ADR-027-pdf-rendering-and-normalized-coordinate-system.md) | PDF Rendering and Normalized Document Coordinate System | **Accepted** (2026-08-28; FG-005; implemented in M010) |
 
-### AI Take-off / Quantity Extraction (Milestone 012 — approved, not implemented)
+### AI Take-off / Quantity Extraction (Milestone 012 — operational for UAT)
 
 | ADR | Title | Status |
 |-----|-------|--------|
@@ -97,13 +97,13 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) | Canonical Labour Task, Versioned Production Standard, and Evidence-to-Approval Calibration Lifecycle | **Accepted** (2026-08-29; governing FG-008; **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**, Alembic `f2c3d4e5f6a7`) |
+| [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) | Canonical Labour Task, Versioned Production Standard, and Evidence-to-Approval Calibration Lifecycle | **Accepted** (2026-08-29; governing FG-008; **CLOSED / OPERATIONAL FOR UAT**; revision `f2c3d4e5f6a7` in chain; live head `b4c5d6e7f8a9`) |
 
 ### Pricing Engine (FG-009 foundation operational for UAT)
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-030](ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) | Organization-Owned Versioned Pricing Policy and Estimate Pricing Snapshot | **Accepted** (2026-08-29; governing FG-009 persistence/resolution/contingency treatment; **IMPLEMENTED / VERIFIED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**, Alembic `a3b4c5d6e7f8`) |
+| [ADR-030](ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) | Organization-Owned Versioned Pricing Policy and Estimate Pricing Snapshot | **Accepted** (2026-08-29; governing FG-009 persistence/resolution/contingency treatment; **CLOSED / OPERATIONAL FOR UAT**; revision `a3b4c5d6e7f8` in chain; live head `b4c5d6e7f8a9`) |
 
 CAR-001 record: [../architecture/CAR-001-calibai-product-architecture-reconciliation.md](../architecture/CAR-001-calibai-product-architecture-reconciliation.md).
 

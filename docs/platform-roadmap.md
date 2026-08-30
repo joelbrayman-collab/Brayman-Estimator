@@ -29,7 +29,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next candidate milestone:** [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) / **M012** foundation is **OPERATIONAL FOR UAT**. **STOP DEVELOPMENT** pending Day-End Reconciliation. Real external AI provider **not authorized**. Phase D estimate mapping **not started**. After turnover: Project Hub UX, then estimate-output consistency, then BUILD/MONITOR/LEARN, each separately gated. FG-009 remains **CLOSED / OPERATIONAL FOR UAT**. FG-008 remains **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**.
+**Next candidate milestone:** **NOT STARTED / NOT AUTHORIZED.** Roadmap item 8 is **Project Hub UX**. Separately, FG-010 Phase D (reviewed quantity → estimate mapping) is **NOT STARTED**. Each requires its own architecture / Feature Gate. Real external AI provider **not authorized**. FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**.
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -80,7 +80,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-- **`main` / `origin/main`** — FG-010 implementation `9665295`. Alembic current/head `b4c5d6e7f8a9`. FG-009 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. FG-010 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**.
+- **`main` / `origin/main`** — FG-010 implementation `9665295`. Alembic current/head `b4c5d6e7f8a9`. FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**.
 - **Review Turnover Protocol** adopted (2026-08-28) — `Review Turnover` governing.
 - **M010 Scale Calibration & Measurement Tools** implemented and verified (2026-08-28).
 - **M011 Organization Foundation & Project Commercial Context** implemented and verified (2026-08-28).
@@ -100,10 +100,10 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 2. **M010** Scale Calibration / Measurement Tools — **Completed & Verified** (migration `c9e0f1a2b3d4`)
 3. **M011** Organization Foundation & Project Commercial Context — **Completed & Verified** (FG-007 / ADR-028; migration `d0a1b2c3d4e5`)
 4. **FG-006** Historical Estimate Ingestion Engine Phase B — **Completed & Verified** (migration `e1b2c3d4e5f6`)
-5. **FG-008** Labour Engine Phase B — **IMPLEMENTED / VERIFIED / LIVE-MIGRATED**; ADR-029 **Accepted**. Alembic current/head `f2c3d4e5f6a7`. Foundation operational for UAT (not a populated operating catalog; not selling-price integration).
-6. Organization-Calibrated Pricing Engine — [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. ADR-025 **Accepted**; ADR-030 **Accepted**. Foundation operational for UAT.
-7. AI Take-off / Quantity Extraction Foundation — [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (M012; ADR-031 **Accepted**; real external AI provider **not authorized**)
-8. Project Hub UX
+5. **FG-008** Labour Engine Phase B — **CLOSED / OPERATIONAL FOR UAT**; ADR-029 **Accepted**. Revision `f2c3d4e5f6a7` in chain (live head `b4c5d6e7f8a9`). Foundation operational for UAT (not a populated operating catalog; not selling-price integration).
+6. Organization-Calibrated Pricing Engine — [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED / OPERATIONAL FOR UAT**. ADR-025 **Accepted**; ADR-030 **Accepted**. Revision `a3b4c5d6e7f8` in chain.
+7. AI Take-off / Quantity Extraction Foundation — [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **CLOSED / OPERATIONAL FOR UAT** (M012; ADR-031 **Accepted**; real external AI provider **not authorized**; live head `b4c5d6e7f8a9`)
+8. Project Hub UX — **NOT STARTED / NOT AUTHORIZED**
 9. Internal Detailed Cost Breakdown + Customer Estimate consistency (depends on Pricing Engine snapshot architecture; four-output **product** remains Future)
 10. Authentication / actor identity + shared API foundation
 11. BUILD Field Capture V1
@@ -127,7 +127,7 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 | **DI** | Document Intelligence | Pages, packages/revisions, metadata, search | **M006 architecture; M007 code** |
 | **SI** | Sheet Intelligence | Sheets, discipline, review workflow, page maps | **Done (M009)** |
 | **B** | Scale confirmation, manual measurement | Human-scale confirm; count/length/area; citations | **Done (M010)** |
-| **C** | AI-assisted extraction (narrow trade/assembly) | One assembly vocabulary; confidence scores | **FG-010 / M012 APPROVED FOR IMPLEMENTATION** — not implemented |
+| **C** | AI-assisted extraction (narrow trade/assembly) | One assembly vocabulary; confidence scores | **FG-010 / M012 CLOSED / OPERATIONAL FOR UAT** (mock extractor; real external AI not authorized) |
 | **D** | Reviewed quantities → estimate assemblies | Explicit map + human approve into `EstimateVersion` | Phase C; ADR-006, ADR-007 |
 | **E** | Supplier catalogue and price-file import | CSV/manual quotes; contractor prices; effective dates | ADR-008; Feature Gate |
 | **F** | Live supplier inventory and pricing | API/EDI adapters; stale handling; PO prep start | Phase E |
@@ -150,16 +150,17 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 | **Success criteria** | Governed in [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md): searchable PDF; architectural sheet; extraction run; cited interior-door candidates; human accept/adjust/reject/duplicate; immutable approved package; **no** silent estimate insert (Phase D later) |
 | **Explicit non-goals** | Scanned OCR; structural/civil; CAD; supplier APIs; multi-trade extraction; auto-insert to estimates; proposal changes; PO generation; Labour Engine / Pricing Engine writes |
 
-**Historical note:** Phase A (M005) and Phase B (M010) are **implemented**. FG-010 / Phase C is **approved for implementation**, not started. Real external AI provider is **not authorized**. COUNT is dimensionless (must not require scale); dimensional measurements remain fail-closed.
+**Historical note:** Phase A (M005) and Phase B (M010) are **implemented**. FG-010 / Phase C foundation is **CLOSED / OPERATIONAL FOR UAT** (mock extractor only). Real external AI provider is **not authorized**. COUNT is dimensionless (must not require scale); dimensional measurements remain fail-closed. Phase D mapping is **NOT STARTED**.
 
 ---
 
 ## Next recommended milestones
 
-1. Issue a **separate** bounded FG-010 implementation prompt (provider-neutral foundation). **Do not implement in this governance pass.** Real external AI provider remains **not authorized**.
-2. Joel accepts/amends ADR-021 when that decision is ready. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
-3. Subsequent CalibAi sequence after M012 is implemented: Project Hub UX, then estimate-output consistency, each separately gated.
-4. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate.
+1. **STOP DEVELOPMENT** until a new Feature Gate / architecture approval exists. FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**.
+2. Next **candidate** (not authorized): **Project Hub UX** (sequencing item 8). Separately, Phase D reviewed quantity → estimate mapping remains **NOT STARTED / NOT AUTHORIZED**.
+3. Joel accepts/amends ADR-021 when that decision is ready. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
+4. Subsequent CalibAi sequence after M012: Project Hub UX, then estimate-output consistency, each separately gated.
+5. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate. Real external AI provider remains **not authorized**.
 
 ---
 

@@ -21,7 +21,7 @@ Each customer organization owns its **commercial intelligence** (target margin, 
 
 **Brayman Construction is `ORG-001`.** Brayman commercial policy is not the universal CalibAi pricing model.
 
-This document is **approved architecture**. Implementation is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. Live development/UAT Alembic current/head is `a3b4c5d6e7f8`. Foundation operational for UAT.
+This document is **approved architecture**. Implementation is **CLOSED / OPERATIONAL FOR UAT**. FG-009 revision `a3b4c5d6e7f8` is in the live Alembic chain. Live development/UAT current/head is `b4c5d6e7f8a9`.
 
 ---
 
@@ -415,6 +415,6 @@ Product pricing implementation; ADR-025 code changes; AI take-off; supplier inte
 | FG-009 | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | ADR-025 | **Accepted** |
 | ADR-030 | **Accepted** (contingency source vs pricing treatment explicit) |
-| Product code | Implemented (`a3b4c5d6e7f8`); Alembic current/head `a3b4c5d6e7f8` |
+| Product code | Implemented (FG-009 revision `a3b4c5d6e7f8` in Alembic chain; live graph head `b4c5d6e7f8a9`) |
 
 **Next action:** FG-009 remains **CLOSED**. [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) is **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. Do not reopen FG-009 from this architecture document.

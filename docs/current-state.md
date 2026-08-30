@@ -11,11 +11,11 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | FG-010 implementation `9665295ace673a46a8c645ed0598e5e91d41931c` (parent `5bd6c772a093e9ca3ad506e17f0629eabe86f53c`). Docs reconciliation commit follows live-migrate/UAT. FG-009 implementation `8e11179fb5abb42a68805fe011e84c15e866ea04`. Live DB current/head `b4c5d6e7f8a9`. |
+| HEAD / `origin/main` | 29 Aug cycle closed on `main`. FG-010 live-migration docs `316cc9f11c141d806737bb7caebdb7c37c5bda9b`. This turnover commit is current after push. Implementation pins: FG-008 `0569f25e7ff496ab637d52437d48cf815522afa1`; FG-009 `8e11179fb5abb42a68805fe011e84c15e866ea04`; FG-010 `9665295ace673a46a8c645ed0598e5e91d41931c`. Live DB current/head `b4c5d6e7f8a9`. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
-| Working tree at last verified inspect | FG-010 **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. FG-009 **CLOSED**. |
-| Governance | FG-004–FG-009 approved and implemented where noted; **FG-008 CLOSED — OPERATIONAL FOR UAT**; **FG-009 CLOSED / OPERATIONAL FOR UAT**; **FG-010 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
+| Working tree at last verified inspect | **29 Aug 2026 cycle CLOSED.** FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. M012 **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT**. |
+| Governance | FG-004–FG-010 approved and implemented where noted; **FG-008 / FG-009 / FG-010 CLOSED / OPERATIONAL FOR UAT**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
 
 ## Implemented (evidenced in code)
 
@@ -60,11 +60,12 @@ M005–M011, **FG-006**, **FG-008**, and **FG-009** remain **implemented, verifi
 
 ## Recommended next steps
 
-1. **STOP DEVELOPMENT.** Run full Day-End Reconciliation / Repository / Documentation / Storage / Review Turnover audit before any further development.
+1. **STOP DEVELOPMENT.** 29 Aug 2026 day-end reconciliation is **complete**. Do not start a new Feature Gate or milestone from this snapshot.
 2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% ORG-001 policy text; optional layers remain `UNSPECIFIED`).
 3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under AI take-off or Pricing Engine.
-4. Do not enable a real external AI provider. Do not start Phase D estimate mapping. Do not start another milestone.
-5. Synthetic residue remains in the live development/UAT DB: FG-009 (`FG-009 UAT *`) and FG-010 (project `FG-010 UAT` / client `FG-010 UAT Client`; searchable `FG-010-UAT-A-101.pdf`; ineligible `FG-010-UAT-no-text.pdf`; runs 1–3 `calibai-mock`; approved package #1 total 3; COUNT measurement #1; leftover suggested candidates on runs 2–3). Leave labeled; do not invent cleanup. FG-009 leftover Estimate Totals header percents remain separate UI maintenance debt.
+4. Do not enable a real external AI provider. Do not start Phase D estimate mapping. Do not start Project Hub, auth, BUILD/MONITOR/LEARN, QuickBooks, or contract/warranty work.
+5. Next **candidate** (roadmap item 8): **Project Hub UX** — **NOT STARTED / NOT AUTHORIZED**. Separately, FG-010 Phase D (reviewed quantity → estimate mapping) is **NOT STARTED / NOT AUTHORIZED**. Each requires architecture / Feature Gate. No implementation authorization in this turnover.
+6. Synthetic residue remains in the live development/UAT DB (FG-008 labour UAT artifacts; FG-009 `FG-009 UAT *`; FG-010 client/project/docs/runs/package). Leave labeled; do not invent cleanup. FG-009 leftover Estimate Totals header percents remain separate UI maintenance debt.
 
 ## Related
 

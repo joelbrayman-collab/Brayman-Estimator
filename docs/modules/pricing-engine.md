@@ -2,9 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-009 FOUNDATION OPERATIONAL FOR UAT** |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
 | Updated | 2026-08-29 |
-| Feature Gate | [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
+| Feature Gate | [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED / OPERATIONAL FOR UAT** |
 | Architecture | [../architecture/organization-calibrated-pricing-engine-architecture.md](../architecture/organization-calibrated-pricing-engine-architecture.md) |
 | ADRs | [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** |
 | Code | `app/models/pricing_engine.py`, `app/services/pricing_engine.py`, `app/routes/pricing_engine.py`, `/pricing-engine/` office UI. Migration `a3b4c5d6e7f8`. |
@@ -72,7 +72,7 @@ CalibAi owns the engine. Each organization owns its commercial intelligence. ORG
 
 ## Relevant tests
 
-`tests/test_pricing_engine.py` (33 passed after pre-commit bounded correction). Also `tests/test_estimate_builder.py`, `tests/test_historical_ingestion.py`, `tests/test_labour_engine.py`, full suite (228 passed).
+`tests/test_pricing_engine.py` (33 passed). Also `tests/test_estimate_builder.py`, `tests/test_historical_ingestion.py`, `tests/test_labour_engine.py`. Current full suite baseline **251 passed**.
 
 ## Relevant ADRs
 

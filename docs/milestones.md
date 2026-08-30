@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 29 Aug 2026 — Day-end reconciliation / Review Turnover
+
+| Field | Content |
+|-------|---------|
+| ID | Review Turnover (not a product milestone) |
+| Status | **COMPLETE / DURABLE / CLEAN TURNOVER** |
+| Date | 2026-08-30 |
+| Objective | Prove 29 Aug FG-008 / FG-009 / FG-010 work is durable, consistent, pushed, migrated, documented, and reconstructable without chat memory. |
+| Deliverables | 22-point `session-handoff.md`; live DB snapshot; residue classification; stale current-state corrections; this journal entry. |
+| Validation | Dedicated take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**; full suite **251**. Alembic current/head `b4c5d6e7f8a9`. |
+| Next | **STOP DEVELOPMENT.** Next candidate: Project Hub UX — **NOT STARTED / NOT AUTHORIZED**. Phase D **NOT STARTED / NOT AUTHORIZED**. |
+
 ### M012 / FG-010 — Live migration and synthetic UAT smoke
 
 | Field | Content |

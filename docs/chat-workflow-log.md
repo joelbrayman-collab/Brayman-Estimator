@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — Permit Intelligence architecture governance / ADR decision pass
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `3d91dda43a513bb0c72c57a3c5da70ee326a026b` |
+| Objective | Memorialize accepted Permit Intelligence architecture. Docs / ADRs only. Do not implement. Do not create a Feature Gate. |
+| Business decision | CalibAi is advisory preflight. AHJ remains final. **PASS** means no issue identified against governed checks performed — never permit/zoning/AHJ approved. Ontario-first; first municipal case City of Ottawa / North Gower; Mike Pratt Coach House at 2562 Church Street is a future UAT reference only. |
+| Architectural decision | **Accepted:** [ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) project location + one jurisdiction resolver; [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) Permit Intelligence engine, Permit Rules Library (separate from Legal Content Gate), two-pass model, Plan Intelligence read-through, no auto estimate insert, no contract generation, BUILD post-issuance boundary; [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) report snapshot/immutability, recheck/stale, finding/workflow policy (no product enums), core project document (not a Change Order). Brand Profile is not a prerequisite for analysis. Recommended future gates **Permit Foundation V1** then **Ontario / Ottawa Permit Rules + Mike Pratt POC** recorded only — **not created**. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | PERMIT INTELLIGENCE ARCHITECTURE GOVERNANCE / ADR DECISION PASS. Documentation only. Do not implement. Do not create a Feature Gate. Do not create a migration. Do not modify product code. Do not enable live web lookup or external AI. |
+| Files expected to change | ADRs 037–039 + architecture/governance/status/handoff/log/milestones/roadmap indexes |
+| Files prohibited from changing | `app/` · `tests/` · `migrations/` · Feature Gate files (none created) · live DB |
+| Implementation result | Three ADRs **Accepted**. Architecture docs created/reconciled. No product-code change. No Feature Gate. |
+| Tests | Not rerun. No product-code change. Preserved full suite **345 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (architecture record) |
+| Constitutional issue raised | None |
+| Unresolved issues | Finding-severity product enums deferred. Permit Foundation V1 Feature Gate not created. Branding / Change Order document gates remain later. |
+| Next approved step | **STOP.** Architecture governed. Do not implement Permit Intelligence. Do not create a Permit Feature Gate. |
+| Next approved prompt | None. Later Joel/ChatGPT may authorize Permit Foundation V1 as a Feature Gate (not this pass). |
+| Commit hash | (this architecture-governance docs commit) |
+
 ### 2026-08-30 — Organization Brand Profile + Change Order document family pin
 
 | Field | Content |

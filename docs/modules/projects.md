@@ -35,7 +35,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 - Owning Plan Intelligence / take-off / labour catalog / pricing-policy records (read/link only under FG-011)
 - Full ERP/accounting
 - Field-execution records (proposed **BUILD** module — [build.md](build.md); [ADR-020](../adr/ADR-020-build-module-boundary.md))
-- Permit Intelligence / jurisdictional legal library / live regulatory lookup / in-product web lookup / automatic permit approval conclusions / municipal submissions — **not authorized**. The Project Permit & Approvals Report is a **FUTURE / NOT IMPLEMENTED** pin only ([permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md)). Projects is the tentative future owner of the project-tied snapshot; that ownership is **not confirmed as implemented** and must be verified in a later reconnaissance. This pin does not expand FG-011.
+- Permit Intelligence / jurisdictional legal library / live regulatory lookup / in-product web lookup / automatic permit approval conclusions / municipal submissions — **not authorized for implementation**. Architecture **Accepted**: [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md). Projects owns project location and the project-tied report snapshot. No Feature Gate. No schema.
 - Organization Brand Profile / org-owned logo storage — **not authorized**. Pin only: [organization-brand-profile.md](../architecture/organization-brand-profile.md).
 - Change Order document-family rewrite, client email, field-native UX, or a second Change Order entity — **not authorized**. Pin only: [change-order-document-family.md](../architecture/change-order-document-family.md). Existing Change Order business record remains authoritative.
 
@@ -51,7 +51,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 - Project creation from accepted proposal snapshot (Rule 4) — **Future** (not FG-011)
 - Project budgets, scheduling, purchasing, job costing, invoicing — **Future**
 - Change order audit trail UI — noted as future in template
-- Project Permit & Approvals Report — **FUTURE / NOT IMPLEMENTED** pin ([permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md)); not a Feature Gate
+- Project Permit Intelligence / Permit & Approvals Report — **FUTURE / NOT IMPLEMENTED**; architecture **Accepted** ([permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md); ADR-037/038/039). No Feature Gate.
 - Change Order governed document family / preview-generate-email / field UX — **FUTURE / NOT IMPLEMENTED** pin ([change-order-document-family.md](../architecture/change-order-document-family.md)); not a Feature Gate; do not create a second Change Order entity
 
 ## Dependencies

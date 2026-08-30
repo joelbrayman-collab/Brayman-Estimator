@@ -135,6 +135,8 @@ Aligns with [platform-vision.md](platform-vision.md), [CAR-001](architecture/CAR
 - Service boundaries for cross-module access (Rule 11)
 - Governance Feature Gate before net-new modules
 - Human-approved, source-traceable take-off before estimate insertion (ADR-005/006 **Accepted**; [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; mapping deferred to Phase D)
+- One project-location / jurisdiction-resolution architecture ([ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted**; **not implemented**)
+- Permit Intelligence as a project capability; Permit & Approvals Report as its governed snapshot ([ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted**; **not implemented**; no Feature Gate)
 - Supplier price snapshots on consumption (ADR-008 — Proposed)
 
 ---
@@ -155,7 +157,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
 - **BUILD / MONITOR / LEARN** — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md); BUILD boundary [ADR-020](adr/ADR-020-build-module-boundary.md) (**Accepted**, not implemented); MONITOR baseline [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) (**Accepted**, not implemented; Project Gross Margin)
 - **Field / shared API** — [ADR-022](adr/ADR-022-field-client-and-shared-api.md) (**Accepted** direction; not implemented)
-- **Project document package** — outputs **1–2** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. Outputs **3–4** (QuickBooks export, Ontario contract + warranty) remain **Future** — [architecture/project-document-package.md](architecture/project-document-package.md). **Permit & Approvals Report** is an additional governed project document, **FUTURE / NOT IMPLEMENTED** — [architecture/permit-and-approvals-report.md](architecture/permit-and-approvals-report.md) (advisory preflight; not a fifth estimate output; not Permit Intelligence / legal-library / live regulatory lookup). **Organization Brand Profile** and **Change Order document family** are **FUTURE / NOT IMPLEMENTED** pins — [organization-brand-profile.md](architecture/organization-brand-profile.md) · [change-order-document-family.md](architecture/change-order-document-family.md) (not a numbered core output; existing Change Order record remains authoritative)
+- **Project document package** — outputs **1–2** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. Outputs **3–4** remain **Future**. **Permit Intelligence** architecture **Accepted** / **NOT IMPLEMENTED** ([ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)); Permit & Approvals Report is a **core project document**, not a fifth estimate output and not a Change Order. **Organization Brand Profile** and **Change Order document family** remain **FUTURE / NOT IMPLEMENTED**.
 - Scheduling, Job Costing, Invoicing
 - QuickBooks / accounting integration — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - Historical estimating intelligence (LEARN; [ADR-024](adr/ADR-024-learn-recommendation-boundary.md))
@@ -169,6 +171,6 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 - CAD ingestion (Phase G; PDF-first per ADR-009)
 - Estimate mapping from approved take-off packages (Phase D; not FG-010). Material Catalogue identity **precedes** Phase D implementation.
 - Material Catalogue implementation (lumber/sheets identity + CostItem link) — [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**
-- Permit & Approvals Report / Permit Intelligence / jurisdictional legal-library / live regulatory lookup — [permit-and-approvals-report.md](architecture/permit-and-approvals-report.md) **FUTURE / NOT IMPLEMENTED**
+- Permit Intelligence / Permit & Approvals Report / jurisdiction resolver — architecture **Accepted** (ADR-037/038/039); **NOT IMPLEMENTED**; no Feature Gate; no live lookup / external AI — [permit-and-approvals-report.md](architecture/permit-and-approvals-report.md) · [jurisdiction-resolution.md](architecture/jurisdiction-resolution.md)
 - Organization Brand Profile / org-owned logo upload / brand snapshot — [organization-brand-profile.md](architecture/organization-brand-profile.md) **FUTURE / NOT IMPLEMENTED**
 - Change Order governed document family / client email / field UX — [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (do not create a second Change Order entity)

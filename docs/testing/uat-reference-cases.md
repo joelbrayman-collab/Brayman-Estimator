@@ -72,19 +72,24 @@ These were created during the reference exercise and must ultimately be **regene
 | Address | 2562 Church Street, North Gower, Ontario |
 | Status | **Future architecture / UAT reference only** — not an in-app project; not a permit determination |
 | Recorded | 2026-08-30 |
-| Canonical pin | [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) |
+| Canonical pin | [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) · [jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md) |
+| Architecture | ADR-037 / ADR-038 / ADR-039 **Accepted** (2026-08-30). Capability **not implemented**. No Feature Gate. |
 
 This case is the **permit-preflight** reference. The 3415 Roger Stevens Road case remains the commercial/document-package UAT reference.
 
 Preliminary review (outside this repository, **not** governed evidence) has already shown useful preflight questions, including coach-house footprint, building height, setbacks, private servicing/septic, rural grading-plan requirements, and zoning/site-plan submission completeness.
 
-**Do not treat that preliminary ChatGPT research as an authoritative project permit determination.** A separate repository-first architecture reconnaissance must verify and govern this capability before implementation.
+**Do not treat that preliminary ChatGPT research as an authoritative project permit determination.** Architecture is now **governed** (ADR-037/038/039 **Accepted**) and **not implemented**. Those ADRs do **not** authorize a Feature Gate, schema, live lookup, external AI, or automatic zoning/permit conclusions.
 
-This pin does **not** authorize Permit Intelligence, jurisdictional legal-library implementation, live regulatory AI, in-product web lookup, automatic approval conclusions, municipal submissions, schema, migration, ADR, or a Feature Gate.
+This case remains a **future architecture / UAT reference only**. It is not an in-app project and not a permit determination.
 
 ## Related
 
 - [pricing-policy.md](../pricing-policy.md)
 - [architecture/project-document-package.md](../architecture/project-document-package.md)
 - [architecture/permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md)
+- [architecture/jurisdiction-resolution.md](../architecture/jurisdiction-resolution.md)
+- [adr/ADR-037-project-location-and-jurisdiction-resolution.md](../adr/ADR-037-project-location-and-jurisdiction-resolution.md)
+- [adr/ADR-038-permit-intelligence-authority-and-rules-library.md](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md)
+- [adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)
 - [testing-standards.md](../testing-standards.md)

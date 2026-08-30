@@ -13,8 +13,9 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) | Future + Phase A / M007 page indexing current |
 | [document-intelligence.md](document-intelligence.md) | Architecture (M006); upload/pages/processing **Current** (M007) |
 | [sheet-intelligence.md](sheet-intelligence.md) | **Architecture (M008) + FG-004 approved** — Sheets / review **not implemented** |
-| [project-document-package.md](project-document-package.md) | **Intended** — authoritative record + four outputs (1–2 Current under FG-012; 3–4 Future); additional Permit & Approvals Report pin **FUTURE / NOT IMPLEMENTED**; Change Order is a **transaction-document family** pin, not a numbered core output |
-| [permit-and-approvals-report.md](permit-and-approvals-report.md) | **FUTURE / NOT IMPLEMENTED** — advisory project permit-preflight document pin; not a Feature Gate; not legal-library implementation |
+| [project-document-package.md](project-document-package.md) | **Intended** — authoritative record + four outputs (1–2 Current under FG-012; 3–4 Future); Permit & Approvals Report is a **core project document** (ADR-039 **Accepted** / **NOT IMPLEMENTED**); Change Order is a **transaction-document family** pin, not a numbered core output |
+| [permit-and-approvals-report.md](permit-and-approvals-report.md) | **FUTURE / NOT IMPLEMENTED** — Permit Intelligence + Permit & Approvals Report; ADR-037/038/039 **Accepted**; not a Feature Gate |
+| [jurisdiction-resolution.md](jurisdiction-resolution.md) | **FUTURE / NOT IMPLEMENTED** — project location + reusable jurisdiction resolver; [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** |
 | [organization-brand-profile.md](organization-brand-profile.md) | **FUTURE / NOT IMPLEMENTED** — Organization Brand Profile / logo / brand snapshot pin; not a Feature Gate |
 | [change-order-document-family.md](change-order-document-family.md) | **FUTURE / NOT IMPLEMENTED** — governed Change Order document family + email pin; existing Change Order record remains authoritative; not a Feature Gate |
 | [quickbooks-integration.md](quickbooks-integration.md) | **Future** — export pipeline boundary (not implemented) |

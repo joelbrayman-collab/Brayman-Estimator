@@ -97,6 +97,7 @@ See [document-intelligence.md](../architecture/document-intelligence.md) and [FG
 - Implementing Phase D before Material Catalogue identity exists
 - Full OCR optimisation
 - Speculative AI pricing
+- Permit Intelligence implementation (read-through of reviewed plan/site facts is **future**; [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) **Accepted**; does not authorize Phase D or mutating take-off evidence)
 
 ## Owned data
 

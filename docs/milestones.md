@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — Permit Intelligence architecture governed (ADR-037 / ADR-038 / ADR-039)
+
+| Field | Content |
+|-------|---------|
+| ID | [ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) · [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) · [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) |
+| Status | **Accepted** / **NOT IMPLEMENTED** |
+| Date | 2026-08-30 |
+| Objective | Memorialize Permit Intelligence architecture after reconnaissance review. Docs/ADRs only. |
+| Deliverables | Three Accepted ADRs; jurisdiction-resolution architecture; Permit Intelligence module stub; report/engine architecture; indexes and status docs. No product code. No Feature Gate. No migration. |
+| Validation | Docs only. `git diff --check`. No `app/` / `tests/` / `migrations/`. FG-014 remains **CLOSED / OPERATIONAL FOR UAT**. Alembic current=head `d6e7f8a9b0c1`. |
+| Next | **STOP.** Recommended first future gate **Permit Foundation V1** is **not created**. Do not implement Permit Intelligence. |
+
 ### 2026-08-30 — Organization Brand Profile + Change Order document family pin
 
 | Field | Content |

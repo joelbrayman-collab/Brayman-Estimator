@@ -112,15 +112,13 @@ Generated **only from an APPROVED estimate**.
 
 ## Additional governed project document (FUTURE / NOT IMPLEMENTED)
 
-**Status:** **FUTURE / NOT IMPLEMENTED.** Requirement pin only. Canonical record: [permit-and-approvals-report.md](permit-and-approvals-report.md).
+**Status:** **FUTURE / NOT IMPLEMENTED.** Architecture **Accepted** ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)). Canonical: [permit-and-approvals-report.md](permit-and-approvals-report.md).
 
-CalibAi must eventually retain a **Project Permit & Approvals Report** with the project's other authoritative/generated documents. It is an **advisory preflight**, not a fifth estimate-derived commercial output, and **not** a substitute for the AHJ or other regulated professionals.
+The **Permit & Approvals Report** is a **core project document** (advisory preflight). It is **not** a fifth estimate-derived commercial output, **not** a Change Order, and **not** a substitute for the AHJ.
 
-The report must be tied to project, address/jurisdiction, plan version, site-plan version, governing-rule source/version/effective date, generation date, and evidence/provenance. Later plan or by-law changes must not silently rewrite an earlier report.
+Issued reports are immutable snapshots. Recheck produces a new version ([ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)).
 
-This pin does **not** authorize Permit Intelligence, jurisdictional legal-library implementation, live regulatory AI, in-product web lookup, automatic approval conclusions, municipal submissions, schema, migration, ADR, or a Feature Gate.
-
-This section does **not** change FG-012 outputs 1–2 or authorize outputs 3–4.
+This section does **not** authorize implementation, schema, a Feature Gate, live lookup, or external AI. It does **not** change FG-012 outputs 1–2 or authorize outputs 3–4.
 
 ## Core package vs transaction-document families (FUTURE / NOT IMPLEMENTED)
 
@@ -135,7 +133,7 @@ Do **not** force Change Order into a numbered “Document #7”. Do **not** crea
 
 Organization branding for all generated documents (core and transaction families) is pinned on [organization-brand-profile.md](organization-brand-profile.md). Do not create independent logo/header settings per module.
 
-These pins do **not** authorize schema, Brand Profile implementation, Change Order PDF rewrite, email, Feature Gate, or ADR. They do **not** reopen FG-012 or FG-014.
+These pins do **not** authorize Brand Profile implementation, Change Order PDF rewrite, or email. Permit Intelligence ADRs **Accepted** do **not** authorize a Permit Feature Gate or product code. They do **not** reopen FG-012 or FG-014.
 
 ## Input change propagation
 
@@ -154,7 +152,7 @@ When a governed field changes in the authoritative record (scope, price, allowan
 | Internal detailed breakdown | **Estimating** — [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** |
 | QuickBooks export | Future integration boundary — [quickbooks-integration.md](quickbooks-integration.md) |
 | Ontario contract + warranty package | Governed templates — [legal-content-and-templates.md](../governance/legal-content-and-templates.md) |
-| Permit & Approvals Report | **FUTURE / NOT IMPLEMENTED** pin — [permit-and-approvals-report.md](permit-and-approvals-report.md) |
+| Permit & Approvals Report | **FUTURE / NOT IMPLEMENTED** — architecture **Accepted** ([ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) — [permit-and-approvals-report.md](permit-and-approvals-report.md) |
 | Organization Brand Profile | **FUTURE / NOT IMPLEMENTED** pin — [organization-brand-profile.md](organization-brand-profile.md) (single branding source; not implemented) |
 | Change Order document family | **FUTURE / NOT IMPLEMENTED** pin — [change-order-document-family.md](change-order-document-family.md). Existing Change Order record remains authoritative. Project Controls / Projects. |
 

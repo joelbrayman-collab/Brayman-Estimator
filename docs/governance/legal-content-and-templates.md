@@ -46,22 +46,23 @@ Warranty language is **governed content**.
 
 **Register status:** No production warranty templates registered in repository as of 2026-08-25.
 
-## Not this pin — Permit & Approvals Report
+## Not this gate — Permit Intelligence / Permit Rules Library
 
-**Status:** **FUTURE / NOT IMPLEMENTED.** Canonical record: [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md).
+**Status:** **FUTURE / NOT IMPLEMENTED.** Architecture **Accepted**: [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md). Canonical: [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md).
 
-This Legal Content Gate governs **Ontario construction contract and warranty templates**. It does **not** own municipal/provincial/state zoning, permit, servicing, or AHJ requirement sources.
+This Legal Content Gate governs **Ontario construction contract and warranty templates**. It does **not** own municipal/provincial/state zoning, permit, servicing, or AHJ requirement sources. The Permit Rules Library is a **separate** governed source.
 
-The Permit & Approvals Report pin does **not** authorize:
+Accepting ADR-037/038/039 does **not** authorize:
 
-- jurisdictional legal-library implementation
+- Permit Intelligence implementation
+- jurisdictional rules-library population
 - live regulatory AI
 - in-product web lookup
 - automatic permit approval conclusions
 - municipal submissions
-- schema, migration, ADR, or a Feature Gate
+- schema, migration, or a Feature Gate
 
-Do not treat ChatGPT or other tool research as an authoritative permit determination. Preliminary research on the Mike Pratt Coach House reference case is **not** governed legal content.
+Do not treat ChatGPT or other tool research as an authoritative permit determination. Preliminary research on the Mike Pratt Coach House reference case is **not** governed legal content. AI cannot mark regulatory content approved.
 
 ## Contract and warranty progression states
 

@@ -38,6 +38,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - Final client-facing proposal layout/PDF ownership (Proposals module). [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) requires Proposals customer totals to match this module’s authoritative `EstimateVersion` / pricing snapshot; Estimating still does not own the PDF.
 - Project change order lifecycle ownership (Project Controls / Projects)
 - Accounting integrations
+- Auto-creating `EstimateLineItem` rows from Permit Intelligence findings ([ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md); [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md)). Permit Intelligence may later **identify** cost implications; human-controlled propose-allowance is **not authorized** this pass.
 
 ## Current implementation
 

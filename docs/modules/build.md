@@ -14,7 +14,7 @@ Own **field-execution records** for a Project so CalibAi can connect BUILD to th
 
 ## Intended owned records (when Feature-Gated)
 
-Daily execution, crews, labour capture, subcontractor activity, material use, deliveries, equipment, progress, schedule/task updates, RFIs/issues, field notes, photos, inspections, field documentation.
+Daily execution, crews, labour capture, subcontractor activity, material use, deliveries, equipment, progress, schedule/task updates, RFIs/issues, field notes, photos, inspections, field documentation. After permit **issuance**, BUILD may own operational evidence such as permit number, issued date, inspections, occupancy/final status — not the preflight analysis.
 
 ## Referenced data (intended)
 
@@ -29,6 +29,7 @@ Daily execution, crews, labour capture, subcontractor activity, material use, de
 - Owning estimates, cost library, or proposals
 - Owning plan PDF binaries (Plan Intelligence)
 - Silent AI write of labour/material/progress without human confirmation ([ADR-023](../adr/ADR-023-field-evidence-provenance.md))
+- Owning Permit Intelligence preflight analysis ([permit-intelligence.md](permit-intelligence.md); [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md)). BUILD may later own **post-issuance** permit/inspection operational evidence only.
 
 ## Current implementation
 

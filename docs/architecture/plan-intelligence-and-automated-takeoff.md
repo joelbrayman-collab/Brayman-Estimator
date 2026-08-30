@@ -5,7 +5,7 @@
 | Status | **Architecture documented (M004); Phase A–M010 implemented in code; M012 / FG-010 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | Updated | 2026-08-30 |
 | Module | [../modules/plan-intelligence.md](../modules/plan-intelligence.md) |
-| Related | [platform-roadmap.md](../platform-roadmap.md) · [document-intelligence.md](document-intelligence.md) · [ai-takeoff-quantity-extraction-foundation.md](ai-takeoff-quantity-extraction-foundation.md) · [permit-and-approvals-report.md](permit-and-approvals-report.md) (**FUTURE / NOT IMPLEMENTED** pin; plan/site-plan versions are intended evidence, not a permit engine) · ADR-005–007, 009–016, 026–027, 031 |
+| Related | [platform-roadmap.md](../platform-roadmap.md) · [document-intelligence.md](document-intelligence.md) · [ai-takeoff-quantity-extraction-foundation.md](ai-takeoff-quantity-extraction-foundation.md) · [permit-and-approvals-report.md](permit-and-approvals-report.md) (**FUTURE / NOT IMPLEMENTED**; [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) **Accepted** — Permit Intelligence may later **read through** reviewed plan/site facts; it must not mutate take-off evidence or authorize Phase D) · ADR-005–007, 009–016, 026–027, 031 |
 
 **Current vs future:** Phase A PDF upload/storage, Document Intelligence indexing, sheets, and M010 scale/measurement exist under Plan Intelligence. **AI quantity extraction foundation is operational for UAT** (mock extractor; live-migrated). Real external AI provider is **not authorized**. OCR/CAD remain future. Estimating and Proposals exist separately.
 

@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-014 live-migrated; office UAT closure blocked
+
+| Field | Content |
+|-------|---------|
+| ID | [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) |
+| Status | **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED** |
+| Date | 2026-08-30 |
+| Objective | Apply `d6e7f8a9b0c1` and office UAT. Close only if UAT passes. |
+| Deliverables | Live current = head = `d6e7f8a9b0c1`. Seed verified. Office UAT mostly passed. Closure blocked by catalogue link flash defect. Product code not repaired. |
+| Validation | Dedicated **28**. Regressions **278**. Full suite **338**. Browser UAT on port 5005. |
+| Next | Bounded defect repair for `link_cost_item` exception order, then re-UAT. Do not re-migrate. Do not start supplier ingest. |
+
 ### 2026-08-30 — FG-014 Material Catalogue V1 implemented (not live-migrated)
 
 | Field | Content |

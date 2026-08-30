@@ -11,11 +11,11 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | `976cc4a4942ae346b9843a77126f89969bba2b6e` (`feat: implement FG-014 material catalogue identity`). Product: FG-014 **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED**. Alembic **graph head `d6e7f8a9b0c1`**; live **current `c5d6e7f8a9b0`**. |
+| HEAD / `origin/main` | Verify `git log -1` after this docs commit. Product: FG-014 **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED**. Alembic **current = head = `d6e7f8a9b0c1`**. Implementation `976cc4a4942ae346b9843a77126f89969bba2b6e`. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
-| Working tree at last verified inspect | **FG-014 IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED.** FG-013 **CLOSED / OPERATIONAL FOR UAT.** ADR-034/035/036 **Accepted**. ADR-032 **Accepted**. **ADR-033 Accepted**. **ADR-008 Proposed**. **ADR-021 Accepted** (MONITOR not implemented). **FG-012 CLOSED / OPERATIONAL FOR UAT.** FG-011 / FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. Bulk supplier onboarding is **FUTURE / NOT IMPLEMENTED**. |
-| Governance | FG-004–FG-014 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013 CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED** (revision `d6e7f8a9b0c1`). [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) live current=`c5d6e7f8a9b0`. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. ADR-019 **Accepted**. **ADR-021 Accepted**. Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted**; ADR-034/035/036 **Accepted** |
+| Working tree at last verified inspect | **FG-014 LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED.** Live current=head `d6e7f8a9b0c1`. FG-013 **CLOSED / OPERATIONAL FOR UAT.** ADR-034/035/036 **Accepted**. ADR-032 **Accepted**. **ADR-033 Accepted**. **ADR-008 Proposed**. **ADR-021 Accepted** (MONITOR not implemented). **FG-012 CLOSED / OPERATIONAL FOR UAT.** FG-011 / FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. Bulk supplier onboarding is **FUTURE / NOT IMPLEMENTED**. |
+| Governance | FG-004–FG-014 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013 CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED** (live current=head `d6e7f8a9b0c1`). [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) remains closed. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. ADR-019 **Accepted**. **ADR-021 Accepted**. Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted**; ADR-034/035/036 **Accepted** |
 
 ## Implemented (evidenced in code)
 
@@ -32,12 +32,12 @@
 - **Project Hub UX (FG-011)** — **IMPLEMENTED / VERIFIED**. `/projects/<id>` is the office-estimator Project Hub: PLAN / PRICE / CONTRACT stored facts and links; BUILD = existing Change Orders; field BUILD / MONITOR / LEARN labeled Future. Read-only `app/services/project_hub.py`. No schema, migration, new module, or ADR. Dedicated tests **13 passed**.
 - **Estimate-output consistency (FG-012)** — **IMPLEMENTED / VERIFIED**. Internal Detailed Cost Breakdown at `/estimates/<id>/versions/<version_id>/internal-breakdown`. Named-method Proposal totals copy frozen `EstimatePricingSnapshot` (`TRUE_GROSS_MARGIN` / `COST_PLUS_MARKUP`); no-snapshot versions retain `COST_PLUS_MARKUP_STACK`. Customer PDF omits Overhead/Profit rows. Estimate Totals show the governing method when a snapshot is authoritative. No schema, migration, new module, or ADR. Dedicated tests **19 passed**. Full suite **283 passed** at FG-012 close; **310 passed** after FG-013.
 - **Historical upload onboarding (FG-013)** — **CLOSED / OPERATIONAL FOR UAT.** Office **UPLOAD PREVIOUS ESTIMATES** at `/historical-estimates/` (multi-file; folder where the browser supports it). Per-file `HistoricalUploadAttempt`. App-managed storage `instance/historical_uploads/<org>/<sha256>.<ext>`. Unknown layouts quarantined. Additive revision `c5d6e7f8a9b0` **verified applied** (provenance: prior interrupted live-migrate work; reconciliation pass did **not** upgrade). Dedicated tests **27 passed**. Full suite **310 passed**. No durable `UploadBatch`. Legacy Desktop corpus untouched.
-- **Material Catalogue V1 (FG-014)** — **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED.** Platform `canonical_materials` (27 lumber/sheet seed rows); optional Material `CostItem.canonical_material_id`; office `/material-catalogue/` (search/filter, read-only identity, human link/unlink). Revision `d6e7f8a9b0c1` is graph head; live current remains `c5d6e7f8a9b0`. Dedicated tests **28 passed**. Full suite **338 passed**. No supplier pricing/SKU/inventory. No live office UAT until migrate.
+- **Material Catalogue V1 (FG-014)** — **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED.** Platform `canonical_materials` (27 lumber/sheet seed rows) **applied live**; optional Material `CostItem.canonical_material_id`; office `/material-catalogue/`. Live current = head `d6e7f8a9b0c1`. Dedicated tests **28 passed**. Full suite **338 passed**. Office UAT on port **5005** passed list/search/filter/detail/Material link-unlink/isolation GET 404/assembly read-through. **Blocked:** catalogue `POST .../link` non-Material/cross-org flash is misleading (`Select a Material cost item to link.`) though data stay unlinked. Product code not repaired this pass. No supplier pricing/SKU/inventory.
 
 ## Architecture / readiness only (not implemented)
 
 - Real external AI provider / OCR / CAD / multi-trade extraction / estimate mapping (Phase D later)
-- **Material Catalogue** — [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED** (`/material-catalogue/`; revision `d6e7f8a9b0c1`; live current `c5d6e7f8a9b0`). [ADR-034](adr/ADR-034-canonical-material-identity-and-ownership.md) / [ADR-035](adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) / [ADR-036](adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**. Living supplier evidence **not** implemented. ADR-008 remains Proposed.
+- **Material Catalogue** — [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED** (`/material-catalogue/`; live current=head `d6e7f8a9b0c1`). [ADR-034](adr/ADR-034-canonical-material-identity-and-ownership.md) / [ADR-035](adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) / [ADR-036](adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**. Living supplier evidence **not** implemented. ADR-008 remains Proposed.
 - CalibAi V1 / BUILD / field / four-output **outputs 3–4** / QuickBooks API / Ontario contract
 - Supplier catalogue / Winchester POC / Darcy channel economics ([ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** direction; **not implemented**). **Governed bulk supplier onboarding** is **FUTURE / NOT IMPLEMENTED** (not one-product-at-a-time; not a Supplier Feature Gate; not FG-014).
 - Crew Template catalog, payroll burden, `LabourActualObservation` persistence
@@ -47,14 +47,14 @@
 ## Migrations
 
 - Alembic **graph** head: `d6e7f8a9b0c1` (FG-014)
-- Live development/UAT `flask db current`: `c5d6e7f8a9b0` (**not upgraded** by the FG-014 implementation pass)
+- Live development/UAT `flask db current`: `d6e7f8a9b0c1` (**verified applied** 2026-08-30)
 
 ## Current milestone status
 
 M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **implemented, verified, committed, and pushed** on `main`.
 
-- **Current coded work:** [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **CLOSED / OPERATIONAL FOR UAT**.
-- **Blocked / Not Started (product):** FG-014 **live-migrate + office UAT**; Phase D estimate mapping; four-output package outputs 3–4; QuickBooks; contracts; BUILD field capture; MONITOR implementation; LEARN; industry benchmarking; historical evidence repair; real external AI provider; office authentication; supplier/Winchester POC; bulk supplier onboarding.
+- **Current coded work:** [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **CLOSED / OPERATIONAL FOR UAT**.
+- **Blocked / Not Started (product):** FG-014 **catalogue link flash defect repair + re-UAT**; Phase D estimate mapping; four-output package outputs 3–4; QuickBooks; contracts; BUILD field capture; MONITOR implementation; LEARN; industry benchmarking; historical evidence repair; real external AI provider; office authentication; supplier/Winchester POC; bulk supplier onboarding.
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -68,12 +68,12 @@ M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **
 
 ## Recommended next steps
 
-1. **STOP.** [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED**. Next: **bounded live-migrate + office UAT prompt**. Do **not** run `flask db upgrade` until that prompt. Do not implement MONITOR, Phase D, supplier integration, bulk supplier onboarding, or Winchester POC. Do not accept ADR-008.
+1. **STOP.** [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED**. Next: **bounded catalogue-link flash repair + re-UAT**. Do **not** run `flask db upgrade` again. Do not implement MONITOR, Phase D, supplier integration, bulk supplier onboarding, or Winchester POC. Do not accept ADR-008.
 2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% ORG-001 policy text; optional layers remain `UNSPECIFIED`).
 3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under Estimate-output consistency, Project Hub, AI take-off, or Pricing Engine.
 4. Do not enable a real external AI provider. Do not start Phase D estimate mapping. Do not start auth, BUILD/MONITOR/LEARN implementation, QuickBooks, or contract/warranty work. Accepting ADR-021 does **not** authorize a MONITOR Feature Gate. Accepting ADR-033 does **not** authorize a supplier Feature Gate, Winchester POC, or Darcy commercial terms.
 5. Dashboard org-unscoped counts remain **out of scope**.
-6. Synthetic residue remains in the live development/UAT DB (FG-008 labour UAT artifacts; FG-009 `FG-009 UAT *`; FG-010 client/project/docs/runs/package; FG-012 labeled template `FG-012 UAT Template` and Draft proposal `PROP-FG012-UAT-GM`; **FG-013** labeled `FG-013-UAT-*` workbooks/estimates 21–24 and upload attempts 1–7). Leave labeled; do not invent cleanup. Office proposal create/detail still lists Overhead/Profit amounts (zero when named method governs); customer preview/PDF do not.
+6. Synthetic residue remains in the live development/UAT DB (FG-008 labour UAT artifacts; FG-009 `FG-009 UAT *`; FG-010 client/project/docs/runs/package; FG-012 labeled template `FG-012 UAT Template` and Draft proposal `PROP-FG012-UAT-GM`; **FG-013** labeled `FG-013-UAT-*` workbooks/estimates 21–24 and upload attempts 1–7; **FG-014** CostItems `FG014-UAT-*`, org `ORG-FG014-UAT`, assembly `FG014-UAT-ASM`). Leave labeled; do not invent cleanup. Office proposal create/detail still lists Overhead/Profit amounts (zero when named method governs); customer preview/PDF do not.
 
 ## Related
 

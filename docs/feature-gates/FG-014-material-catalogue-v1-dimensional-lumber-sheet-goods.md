@@ -7,11 +7,11 @@
 | Target Milestone | **None.** FG-014 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Material Catalogue** (canonical identity). Estimating retains `CostItem` / `Assembly` / `EstimateLineItem`. |
 | Date | 2026-08-30 |
-| Status | **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED** |
+| Status | **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED** |
 | Architecture | [material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) |
 | Related ADRs | [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) **Accepted** · [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) **Accepted** · [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** · [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) |
-| Prerequisites | FG-013 **CLOSED / OPERATIONAL FOR UAT**. ADR-034/035/036 **Accepted**. Alembic current = head `c5d6e7f8a9b0`. |
-| Approved baseline | Gate-approval HEAD `273803b75b6bcbe6ae56fbf3274cd4a2dafcec36`. Implementation `976cc4a4942ae346b9843a77126f89969bba2b6e`. Full suite **338 passed**. Graph head `d6e7f8a9b0c1`. Live current `c5d6e7f8a9b0`. |
+| Prerequisites | FG-013 **CLOSED / OPERATIONAL FOR UAT**. ADR-034/035/036 **Accepted**. |
+| Approved baseline | Gate-approval HEAD `273803b75b6bcbe6ae56fbf3274cd4a2dafcec36`. Implementation `976cc4a4942ae346b9843a77126f89969bba2b6e`. Live-migrate/UAT starting HEAD `a100caa`. Live current = head **`d6e7f8a9b0c1`**. Dedicated FG-014 **28 passed**. Full suite **338 passed**. |
 
 ---
 
@@ -19,13 +19,29 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / VERIFIED** |
-| Implementation | **DONE** in product code. Office UX `/material-catalogue/`. **Not live-migrated.** |
-| Schema / Alembic | Graph head **`d6e7f8a9b0c1`**. Live development/UAT current **`c5d6e7f8a9b0`**. Do not apply until a separate live-migrate/UAT prompt. |
+| Feature Gate (this document) | **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED** |
+| Implementation | **DONE** in product code. Office UX `/material-catalogue/`. |
+| Schema / Alembic | **Live current = head = `d6e7f8a9b0c1`** (applied 2026-08-30). One graph head. |
+| Browser / office UAT | **BLOCKED** — catalogue link POST reports a misleading flash for non-Material / cross-org IDs. Data still fail-closed (no link written). Product code was **not** repaired under the live-migrate prompt. |
 | Living supplier pricing / promotions / inventory | **OUT OF SCOPE** (unchanged) |
 | Phase D / MaterialRequirement / supplier SKU | **OUT OF SCOPE** (unchanged) |
 
-This gate does **not** authorize supplier integration, bulk supplier catalogue onboarding, Winchester POC, ADR-008 acceptance, Phase D, procurement, ORG-ACTUAL, LEARN, or applying `d6e7f8a9b0c1` to the live development/UAT database under the implementation prompt.
+This gate does **not** authorize supplier integration, bulk supplier catalogue onboarding, Winchester POC, ADR-008 acceptance, Phase D, procurement, ORG-ACTUAL, or LEARN.
+
+### Live-migrate / UAT finding (2026-08-30)
+
+**Do not close FG-014** until the office catalogue link error path is repaired and re-UAT'd.
+
+| Field | Content |
+|-------|---------|
+| Reproduction | `POST /material-catalogue/7/link` with `cost_item_id` of Labour `FG014-UAT-LAB` (id 5), Equipment 6, Subcontractor 7, Allowance 8, Other 9, or cross-org Material 10 |
+| Expected | Fail closed **and** flash the service reason, e.g. `Labour cost items cannot link to a canonical material.` / `Cost item not found in current organization.` |
+| Actual | Fail closed on data (`canonical_material_id` remains `NULL`) but flash is `Select a Material cost item to link.` |
+| Acceptance criterion | AC 7 (improper link rejected / caller told) plus prompt rule: do not silently mishandle invalid values |
+| Likely cause (do not repair here) | `MaterialCatalogueError` subclasses `ValueError`. `link_cost_item` catches `(TypeError, ValueError)` **before** `MaterialCatalogueError`, so the specific message is swallowed. Cost Library edit of Labour with a canonical id **does** show the correct `cannot link` flash. |
+| Service / tests | `link_material_cost_item` still raises `MaterialCatalogueError` (`cannot link`). Dedicated tests **28 passed**. Full suite **338 passed**. |
+
+Ordinary org UX still cannot create/edit/delete canonical identity. Material link/unlink of `FG014-UAT-MAT` worked. Isolation GET `/cost-library/10/edit` is **404**. Seed 27 rows. No supplier/Phase D leakage.
 
 **Code:** `app/models/canonical_material.py`, `app/services/material_catalogue.py`, `app/routes/material_catalogue.py`, optional `CostItem.canonical_material_id` in `app/models/cost_item.py`, revision `migrations/versions/d6e7f8a9b0c1_add_material_catalogue_identity_fg014.py`. Platform seed is 27 lumber/sheet rows keyed by `CAL-*` codes.
 

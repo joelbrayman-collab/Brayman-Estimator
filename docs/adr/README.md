@@ -80,7 +80,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-034](ADR-034-canonical-material-identity-and-ownership.md) | CalibAi Canonical Material Identity and Ownership | **Accepted** (2026-08-30; [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED**) |
+| [ADR-034](ADR-034-canonical-material-identity-and-ownership.md) | CalibAi Canonical Material Identity and Ownership | **Accepted** (2026-08-30; [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED**) |
 | [ADR-035](ADR-035-material-quantity-uom-and-requirement-boundary.md) | Material Quantity, UOM, and Requirement Boundary | **Accepted** (2026-08-30; architecture only; MaterialRequirement and Phase D **not** authorized) |
 | [ADR-036](ADR-036-material-commercial-evidence-and-supplier-mapping.md) | Material Commercial Evidence Classes and Supplier-Neutral Mapping | **Accepted** (2026-08-30; architecture only; live supplier pricing **not** authorized; ADR-008 remains Proposed) |
 

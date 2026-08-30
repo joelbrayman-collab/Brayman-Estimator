@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Implemented / not live-migrated** ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md)) |
+| Status | **Live-migrated / UAT closure blocked** ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md)) |
 | Updated | 2026-08-30 |
 | Code | `app/models/canonical_material.py`, `app/services/material_catalogue.py`, `app/routes/material_catalogue.py`, `/material-catalogue/` |
 | Architecture | [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) |
@@ -35,4 +35,4 @@ Living supplier price/promotion/inventory is **architected** ([ADR-036](../adr/A
 
 ## Relevant Feature Gate
 
-[FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED**.
+[FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED**.

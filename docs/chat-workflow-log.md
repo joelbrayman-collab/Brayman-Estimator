@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-014 live migration applied; office UAT closure blocked
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `a100caa2c1f5e1c29e79449c8ce5a144ff945f23` (start) |
+| Objective | Apply `d6e7f8a9b0c1` to the live development/UAT DB. Bounded office Material Catalogue UAT. Docs only unless a product defect is found. |
+| Business decision | Live migrate authorized. Do not repair product defects under this prompt. Do not close FG-014 if UAT finds a product-code defect. |
+| Architectural decision | Canonical identity remains platform-shared. CostItem remains org costing. ADR-008 remains Proposed. Supplier onboarding pin unchanged (FUTURE). |
+| Prompt template used | Bounded FG-014 live migration + office UAT |
+| Approved Cursor prompt summary | Apply only `c5d6e7f8a9b0` → `d6e7f8a9b0c1`. Browser UAT `/material-catalogue/`. Do not modify product code unless a defect is found — if so, STOP and do not repair. |
+| Files expected to change | Governed docs only (on success). Product code prohibited unless defect (then stop). |
+| Files prohibited from changing | Product repair; new migrations; ADR-008 status; supplier schema |
+| Implementation result | Migration **applied**. Live current = head = `d6e7f8a9b0c1`. Seed 27 rows. Catalogue list/search/filter/detail, Material link/unlink, org isolation GET 404, assembly read-through, Cost Library canonical column: **passed**. **UAT DEFECT:** catalogue `POST .../link` for non-Material and cross-org IDs flashes `Select a Material cost item to link.` instead of the service reason. Data remain unlinked. Closure **blocked**. Product code **not** changed. |
+| Tests | Dedicated FG-014 **28 passed**. Relevant regressions **278 passed**. Full suite **338 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Architecture record appended |
+| Constitutional issue raised | None |
+| Unresolved issues | FG-014 **not closed**. Catalogue link exception-order flash defect. Seed has no DISCONTINUED rows (filter empty; service tests cover new-link block). |
+| Next approved step | **Bounded product-defect repair** for `app/routes/material_catalogue.py` `link_cost_item` exception order, then re-UAT the fail-closed flashes. Do **not** re-run `flask db upgrade`. Do not start supplier onboarding. |
+| Next approved prompt | FG-014 UAT defect repair (catalogue link flash). Do not accept ADR-008. Do not start Phase D or supplier ingest. |
+| Commit hash | (this commit) |
+
 ### 2026-08-30 — FG-014 Material Catalogue V1 implemented
 
 | Field | Content |

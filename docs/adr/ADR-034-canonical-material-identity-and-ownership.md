@@ -78,7 +78,7 @@ Do not model all construction materials in V1.
 
 Accepting this ADR does **not** authorize product code, schema, migration, a Feature Gate, MaterialRequirement, Phase D, supplier SKUs, pricing, promotions, inventory, or Winchester demo.
 
-Recommended later first Feature Gate: [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED** — identity + CostItem link + office UX only.
+Recommended later first Feature Gate: [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED** — identity + CostItem link + office UX only.
 
 ## Alternatives Considered
 

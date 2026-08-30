@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — Implement FG-017 Organization Brand Profile V1 (pre-live-migration)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `7075a802ef98a4d4de5f66afd403d9c659a3c36d` (starting HEAD) |
+| Objective | Implement FG-017 exactly as reconnaissance: schema, logo custody, CURRENT-on-save, Proposal freeze/snapshot, Settings UI, tests. Do not live-migrate. |
+| Business decision | CURRENT-on-save. Freeze at first Issued; Accepted-without-Issued freezes at Accepted. Sticky snapshot. Settings nav, not a new module. |
+| Architectural decision | Additive `a9b0c1d2e3f4`. Brand Profile owned by Organization subsystem. Proposal owns `proposal_brand_snapshots`. No `branding_config` JSON. Template identity columns retained. |
+| Prompt template used | [prompts/cursor-implementation-template.md](prompts/cursor-implementation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — IMPLEMENT FG-017 ORGANIZATION BRAND PROFILE V1. Authorizes product code, tests, and migration file. Does **not** authorize live `flask db upgrade`. |
+| Files expected to change | Models/services/routes/templates for Brand Profile; Proposal freeze/render; navigation; tests; revision `a9b0c1d2e3f4`; governed docs |
+| Files prohibited from changing | Change Order PDF/email; Permit HTML/PDF; app chrome except Settings nav; live DB |
+| Implementation result | **IMPLEMENTED / LIVE MIGRATION PENDING.** Live current remains `f8a9b0c1d2e3`. Not CLOSED. |
+| Tests | Focused 119 passed. `./venv/bin/python -m pytest -q` → **423 passed**. Dedicated FG-017 **22**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None new. Issued brand freeze remains separate from ADR-002. |
+| Unresolved issues | Live migrate + ensure/backfill + office UAT not authorized. Issued→Draft status lock not decided. Internal breakdown branding later. |
+| Next approved step | **STOP.** Separate live-migrate prompt. |
+| Next approved prompt | Fresh-chat prompt in `docs/session-handoff.md` §22. |
+| Commit hash | (this implementation commit) |
+
 ### 2026-08-30 — Accept ADR-040 / Approve FG-017 / FG-017 implementation reconnaissance
 
 | Field | Content |

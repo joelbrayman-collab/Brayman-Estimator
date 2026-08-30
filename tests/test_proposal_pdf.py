@@ -1,6 +1,5 @@
 from datetime import date
 from io import BytesIO
-from pathlib import Path
 
 import pytest
 from pypdf import PdfReader
@@ -15,7 +14,6 @@ from app.services.estimate_builder import (
     update_version_pricing,
 )
 from app.services.proposal_pdf import (
-    DEFAULT_LOGO_STATIC_PATH,
     generate_proposal_pdf,
     sanitize_pdf_filename,
 )
@@ -230,22 +228,29 @@ def test_pdf_missing_custom_logo_falls_back_safely(app, proposal, template):
     template.logo_path = "branding/does-not-exist.png"
     db.session.commit()
 
-    default_logo = Path(app.static_folder) / DEFAULT_LOGO_STATIC_PATH
-    assert default_logo.is_file()
-
     pdf = generate_proposal_pdf(proposal).getvalue()
     assert pdf.startswith(b"%PDF")
     assert len(pdf) > 1000
+    text = _pdf_text(pdf)
+    assert "Brayman Construction" in text
+    assert "Brayman Construction Co." not in text
 
 
-def test_pdf_missing_all_logos_does_not_fail(app, proposal, template, monkeypatch):
-    template.logo_path = "branding/does-not-exist.png"
-    db.session.commit()
+def test_pdf_missing_all_logos_does_not_fail(app, proposal):
+    from app.services.brand_profile import (
+        ensure_current_brand_profile,
+        save_brand_profile,
+    )
+    from app.services.organizations import DEFAULT_ORGANIZATION_ID
 
-    missing = Path(app.static_folder) / "branding" / "missing-default.png"
-    monkeypatch.setattr(
-        "app.services.proposal_pdf.default_logo_filesystem_path",
-        lambda: missing,
+    profile = ensure_current_brand_profile(DEFAULT_ORGANIZATION_ID, commit=True)
+    save_brand_profile(
+        DEFAULT_ORGANIZATION_ID,
+        legal_name=profile.legal_name,
+        customer_facing_name=profile.customer_facing_name,
+        address=profile.address,
+        clear_logo=True,
+        commit=True,
     )
 
     pdf = generate_proposal_pdf(proposal).getvalue()
@@ -253,6 +258,7 @@ def test_pdf_missing_all_logos_does_not_fail(app, proposal, template, monkeypatc
     text = _pdf_text(pdf)
     assert "Grand Total" in text
     assert proposal.proposal_number in text
+    assert "Brayman Construction" in text
 
 
 def test_pdf_missing_optional_narrative_sections_do_not_fail(proposal):

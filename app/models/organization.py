@@ -47,6 +47,10 @@ class Organization(db.Model):
         back_populates="organization",
         cascade="all, delete-orphan",
     )
+    brand_profiles = db.relationship(
+        "OrganizationBrandProfile",
+        back_populates="organization",
+    )
 
     def __repr__(self):
         return f"<Organization {self.id} {self.display_name}>"

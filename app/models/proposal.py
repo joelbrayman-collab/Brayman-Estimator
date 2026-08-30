@@ -174,6 +174,11 @@ class Proposal(db.Model):
         cascade="all, delete-orphan",
         order_by="ProposalSection.sort_order, ProposalSection.id",
     )
+    brand_snapshot = db.relationship(
+        "ProposalBrandSnapshot",
+        back_populates="proposal",
+        uselist=False,
+    )
 
     def __repr__(self):
         return f"<Proposal {self.proposal_number}>"

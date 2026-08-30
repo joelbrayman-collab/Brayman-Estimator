@@ -25,7 +25,7 @@ def set_current_organization_id(org_id: str) -> None:
         g.organization_id = org_id
 
 
-def ensure_default_organization() -> Organization:
+def ensure_default_organization(*, commit: bool = True) -> Organization:
     """Ensure the default Brayman Construction organization (ORG-001) exists."""
     org = Organization.query.get(DEFAULT_ORGANIZATION_ID)
     if not org:
@@ -40,7 +40,10 @@ def ensure_default_organization() -> Organization:
             is_active=True,
         )
         db.session.add(org)
-        db.session.commit()
+        if commit:
+            db.session.commit()
+        else:
+            db.session.flush()
     return org
 
 

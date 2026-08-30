@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/proposal-preview.css') }}">
     <style>
         .proposal-document {
-            --proposal-primary: {{ template.primary_color or '#1f3a5f' }};
-            --proposal-accent: {{ template.accent_color or '#c79a2b' }};
+            --proposal-primary: {{ brand.display_primary_color }};
+            --proposal-accent: {{ brand.display_accent_color }};
         }
     </style>
 </head>
@@ -31,16 +31,16 @@
         <header class="row g-4 align-items-start mb-2">
             <div class="col-md-7">
                 {% if logo_url %}
-                <img class="proposal-logo mb-3" src="{{ logo_url }}" alt="{{ template.company_name or 'Company logo' }}">
+                <img class="proposal-logo mb-3" src="{{ logo_url }}" alt="{{ brand.customer_facing_name or 'Company logo' }}">
                 {% endif %}
-                {% if template.company_name %}
-                <p class="proposal-company-name">{{ template.company_name }}</p>
+                {% if brand.customer_facing_name %}
+                <p class="proposal-company-name">{{ brand.customer_facing_name }}</p>
                 {% endif %}
                 <div class="small text-muted mt-2">
-                    {% if template.company_address %}<div>{{ template.company_address }}</div>{% endif %}
-                    {% if template.company_phone %}<div>{{ template.company_phone }}</div>{% endif %}
-                    {% if template.company_email %}<div>{{ template.company_email }}</div>{% endif %}
-                    {% if template.company_website %}<div>{{ template.company_website }}</div>{% endif %}
+                    {% if brand.address %}<div>{{ brand.address }}</div>{% endif %}
+                    {% if brand.phone %}<div>{{ brand.phone }}</div>{% endif %}
+                    {% if brand.email %}<div>{{ brand.email }}</div>{% endif %}
+                    {% if brand.website %}<div>{{ brand.website }}</div>{% endif %}
                 </div>
             </div>
             <div class="col-md-5 text-md-end">

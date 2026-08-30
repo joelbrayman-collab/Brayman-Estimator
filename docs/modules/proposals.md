@@ -5,7 +5,7 @@
 | Status | **Current** (engine + snapshot + PDF; Accepted immutability **enforced**) |
 | Updated | 2026-08-30 |
 | Code | `app/models/proposal.py`; `app/routes/proposals.py`, `proposal_templates.py`; `app/services/proposals.py`, `proposal_pdf.py` |
-| Feature Gate | [FG-001](../feature-gates/FG-001-proposals-module.md) (module baseline) · [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (customer-output consistency) · [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED** (Brand Profile consumer; **not implemented**) |
+| Feature Gate | [FG-001](../feature-gates/FG-001-proposals-module.md) (module baseline) · [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (customer-output consistency) · [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **IMPLEMENTED / LIVE MIGRATION PENDING** (Brand Profile consumer; live migrate pending) |
 
 ## Purpose
 
@@ -24,6 +24,7 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 
 - `proposal_templates`
 - `proposals`, `proposal_sections`, `proposal_line_items`
+- `proposal_brand_snapshots` (issued/accepted brand freeze; FG-017)
 - Snapshot commercial fields on `Proposal` (client/project names, markups, totals, narrative, display flags)
 
 ## Referenced data
@@ -39,11 +40,11 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 - Project budget ledger (Projects / future Job Costing)
 - Electronic signature providers (Future)
 - Inventing CRM Company/User entities without Feature Gate
-- Owning the Organization Brand Profile ([ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [organization-brand-profile.md](../architecture/organization-brand-profile.md)). Per-template `logo_path` is **not** the intended long-term source of truth. [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) is **APPROVED / IMPLEMENTATION NOT STARTED** and **not implemented**.
+- Owning the Organization Brand Profile ([ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [organization-brand-profile.md](../architecture/organization-brand-profile.md)). Per-template `logo_path` is **not** the governed FG-017 render source. [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) is **IMPLEMENTED / LIVE MIGRATION PENDING**.
 
 ## Current implementation (accurate as of Milestone 002 review)
 
-**Complete:** templates; create-from-estimate-version; header + section/line snapshots; metadata/line edit + recalculation; status enum including `Accepted`; **service-layer immutability when `Accepted`** (`ensure_proposal_mutable`); preview; PDF; snapshot independence tests.
+**Complete:** templates; create-from-estimate-version; header + section/line snapshots; metadata/line edit + recalculation; status enum including `Accepted`; **service-layer immutability when `Accepted`** (`ensure_proposal_mutable`); preview; PDF; snapshot independence tests; **FG-017 Proposal brand snapshot** (freeze at Issued / Accepted-without-Issued; sticky; live migrate pending).
 
 **Not complete:** formal acceptance workflow (void/supersede/revision); project/budget creation from acceptance; e-signature; rich add/remove/reorder of proposal sections; optional CRM FKs.
 
@@ -56,7 +57,7 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 - Project creation from acceptance snapshot — later; Projects boundary (Rule 4)
 - Electronic signature — **Future**
 - Optional CRM FKs — deferred (ADR-003)
-- Organization Brand Profile as document branding source — [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED**; **NOT IMPLEMENTED**. Pin: [organization-brand-profile.md](../architecture/organization-brand-profile.md).
+- Organization Brand Profile as document branding source — [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **IMPLEMENTED / LIVE MIGRATION PENDING**. Pin: [organization-brand-profile.md](../architecture/organization-brand-profile.md).
 
 ## Dependencies
 

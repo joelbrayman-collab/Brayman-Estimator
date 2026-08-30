@@ -24,6 +24,11 @@ from reportlab.platypus import (
     TableStyle,
 )
 
+from app.services.brand_profile import (
+    brand_logo_filesystem_path,
+    get_proposal_brand_render_context,
+)
+
 DEFAULT_LOGO_STATIC_PATH = "branding/brayman-construction-logo.png"
 DEFAULT_PRIMARY_COLOR = "#1f3a5f"
 DEFAULT_ACCENT_COLOR = "#c79a2b"
@@ -376,15 +381,9 @@ def _pricing_table(items, styles, *, detailed: bool):
 
 def generate_proposal_pdf(proposal) -> BytesIO:
     """Build a PDF for ``proposal`` using snapshot values only."""
-    template = proposal.proposal_template
-    primary = _parse_color(
-        template.primary_color if template else None,
-        DEFAULT_PRIMARY_COLOR,
-    )
-    accent = _parse_color(
-        template.accent_color if template else None,
-        DEFAULT_ACCENT_COLOR,
-    )
+    brand = get_proposal_brand_render_context(proposal)
+    primary = _parse_color(brand.primary_color, DEFAULT_PRIMARY_COLOR)
+    accent = _parse_color(brand.accent_color, DEFAULT_ACCENT_COLOR)
     styles = _build_styles(primary, accent)
     styles["_primary"] = primary
 
@@ -397,30 +396,29 @@ def generate_proposal_pdf(proposal) -> BytesIO:
         topMargin=0.7 * inch,
         bottomMargin=0.75 * inch,
         title=proposal.title or proposal.proposal_number,
-        author=(template.company_name if template else None) or "Brayman Construction Platform",
+        author=brand.customer_facing_name or "Brayman Construction Platform",
     )
 
     story = []
-    logo = _logo_flowable(
-        resolve_logo_filesystem_path(template.logo_path if template else None)
-    )
+    logo = _logo_flowable(brand_logo_filesystem_path(brand))
     if logo is not None:
         story.append(logo)
         story.append(Spacer(1, 6))
 
     company_lines = []
-    if template and template.company_name:
-        company_lines.append(Paragraph(_escape(template.company_name), styles["company"]))
+    if brand.customer_facing_name:
+        company_lines.append(
+            Paragraph(_escape(brand.customer_facing_name), styles["company"])
+        )
     contact_bits = []
-    if template:
-        for value in (
-            template.company_address,
-            template.company_phone,
-            template.company_email,
-            template.company_website,
-        ):
-            if value:
-                contact_bits.append(_escape(value))
+    for value in (
+        brand.address,
+        brand.phone,
+        brand.email,
+        brand.website,
+    ):
+        if value:
+            contact_bits.append(_escape(value))
     if contact_bits:
         company_lines.append(Paragraph("<br/>".join(contact_bits), styles["meta"]))
 
@@ -643,7 +641,7 @@ def generate_proposal_pdf(proposal) -> BytesIO:
         if block is not None:
             story.append(block)
 
-    company_name = (template.company_name if template else None) or ""
+    company_name = brand.customer_facing_name or ""
 
     def _add_page_number(canvas, doc_):
         canvas.saveState()

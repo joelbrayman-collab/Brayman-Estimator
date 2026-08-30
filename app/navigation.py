@@ -125,9 +125,9 @@ NAV_SECTIONS = (
             },
             {
                 "title": "Settings",
-                "endpoint": None,
+                "endpoint": "settings.brand_profile",
                 "icon": "bi-gear",
-                "enabled": False,
+                "enabled": True,
             },
         ),
     },

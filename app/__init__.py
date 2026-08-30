@@ -1,3 +1,5 @@
+import tempfile
+
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -18,9 +20,13 @@ def create_app(config=None):
     app.config["HISTORICAL_UPLOAD_ZIP_MAX_MEMBER"] = 40 * 1024 * 1024
     app.config["HISTORICAL_UPLOAD_ZIP_MAX_FILES"] = 200
     app.config["HISTORICAL_UPLOAD_ACTOR"] = "Joel Brayman"
+    app.config["BRAND_LOGO_MAX_BYTES"] = 5 * 1024 * 1024
 
     if config:
         app.config.update(config)
+
+    if app.config.get("TESTING") and not app.config.get("BRAND_LOGO_ROOT"):
+        app.config["BRAND_LOGO_ROOT"] = tempfile.mkdtemp(prefix="calibai-brand-logos-")
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -40,6 +46,7 @@ def create_app(config=None):
     from app.routes.material_catalogue import material_catalogue_bp
     from app.project_controls import project_controls_bp
     from app.plan_intelligence import plan_intelligence_bp
+    from app.routes.settings import settings_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(clients_bp)
@@ -55,6 +62,7 @@ def create_app(config=None):
     app.register_blueprint(material_catalogue_bp)
     app.register_blueprint(project_controls_bp)
     app.register_blueprint(plan_intelligence_bp)
+    app.register_blueprint(settings_bp)
 
     from app.shell import register_shell_context
 

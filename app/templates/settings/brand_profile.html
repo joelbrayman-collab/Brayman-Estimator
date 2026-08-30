@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Brand Profile | Brayman Construction Platform{% endblock %}
+
+{% block page_title %}Brand Profile{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Settings</p>
+        <h1>Organization Brand Profile</h1>
+        <p>
+            Contractor identity and logo for generated customer documents.
+            Saving creates a new current version. Issued and Accepted proposals
+            keep the branding they were issued with.
+        </p>
+    </div>
+</div>
+
+<form method="post" class="form-panel" enctype="multipart/form-data">
+    <div class="form-grid">
+        <label>
+            Legal name *
+            <input type="text" name="legal_name" value="{{ form.legal_name }}" required maxlength="255">
+        </label>
+        <label>
+            Customer-facing name *
+            <input type="text" name="customer_facing_name" value="{{ form.customer_facing_name }}" required maxlength="255">
+        </label>
+        <label>
+            Phone
+            <input type="text" name="phone" value="{{ form.phone }}" maxlength="50">
+        </label>
+        <label>
+            Email
+            <input type="email" name="email" value="{{ form.email }}" maxlength="150">
+        </label>
+        <label>
+            Website
+            <input type="text" name="website" value="{{ form.website }}" maxlength="180">
+        </label>
+        <label>
+            Primary color
+            <input type="text" name="primary_color" value="{{ form.primary_color }}" maxlength="20" placeholder="#1f3a5f">
+        </label>
+        <label>
+            Accent color
+            <input type="text" name="accent_color" value="{{ form.accent_color }}" maxlength="20" placeholder="#c79a2b">
+        </label>
+    </div>
+
+    <label>
+        Address
+        <input type="text" name="address" value="{{ form.address }}" maxlength="255">
+    </label>
+
+    <label>
+        Logo
+        <input type="file" name="logo" accept=".png,.jpg,.jpeg,.gif,image/png,image/jpeg,image/gif">
+    </label>
+    <p class="text-muted">PNG, JPEG, or GIF. Maximum {{ '%.0f'|format(max_logo_bytes / (1024 * 1024)) }} MiB. Leave empty to keep the current logo. Remote URLs are not accepted.</p>
+
+    {% if profile and profile.logo_sha256 %}
+    <p>
+        Current logo:
+        <img src="{{ url_for('settings.current_brand_logo') }}" alt="{{ profile.customer_facing_name }}" class="proposal-logo" style="max-height: 64px;">
+        <span class="text-muted">version {{ profile.version_number }}</span>
+    </p>
+    {% elif profile %}
+    <p class="text-muted">No logo on the current Brand Profile (version {{ profile.version_number }}).</p>
+    {% endif %}
+
+    <div class="form-actions">
+        <button type="submit">Save Brand Profile</button>
+    </div>
+</form>
+{% endblock %}

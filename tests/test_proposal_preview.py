@@ -1,5 +1,4 @@
 from datetime import date
-from pathlib import Path
 
 import pytest
 
@@ -153,7 +152,8 @@ def test_preview_route_renders_core_layout(client, proposal, template):
 
     assert b"Downtown Renovation Proposal" in html
     assert proposal.proposal_number.encode() in html
-    assert b"Brayman Construction Co." in html
+    assert b"Brayman Construction" in html
+    assert b"Brayman Construction Co." not in html
     assert b"Introduction" in html
     assert b"Scope of Work" in html
     assert b"Clarifications" in html
@@ -229,8 +229,9 @@ def test_preview_logo_rendering_when_available(client, proposal):
     response = client.get(f"/proposals/{proposal.id}/preview")
     assert response.status_code == 200
     assert b'class="proposal-logo' in response.data
-    assert b"/static/branding/brayman-construction-logo.png" in response.data
-    assert b'alt="Brayman Construction Co."' in response.data
+    assert f"/proposals/{proposal.id}/brand-logo".encode() in response.data
+    assert b"/static/branding/brayman-construction-logo.png" not in response.data
+    assert b'alt="Brayman Construction"' in response.data
 
 
 def test_preview_falls_back_to_default_logo_when_unconfigured(client, estimate, template):
@@ -246,16 +247,25 @@ def test_preview_falls_back_to_default_logo_when_unconfigured(client, estimate, 
     response = client.get(f"/proposals/{proposal.id}/preview")
     assert response.status_code == 200
     assert b'class="proposal-logo' in response.data
-    assert b"/static/branding/brayman-construction-logo.png" in response.data
+    assert f"/proposals/{proposal.id}/brand-logo".encode() in response.data
+    assert b"/static/branding/brayman-construction-logo.png" not in response.data
 
 
-def test_preview_omits_logo_when_all_missing(client, estimate, template, monkeypatch):
-    template.logo_path = "branding/does-not-exist.png"
-    db.session.commit()
+def test_preview_omits_logo_when_all_missing(client, estimate, template):
+    from app.services.brand_profile import (
+        ensure_current_brand_profile,
+        save_brand_profile,
+    )
+    from app.services.organizations import DEFAULT_ORGANIZATION_ID
 
-    monkeypatch.setattr(
-        "app.services.proposal_pdf.default_logo_filesystem_path",
-        lambda: Path("/tmp/missing-brayman-logo.png"),
+    profile = ensure_current_brand_profile(DEFAULT_ORGANIZATION_ID, commit=True)
+    save_brand_profile(
+        DEFAULT_ORGANIZATION_ID,
+        legal_name=profile.legal_name,
+        customer_facing_name=profile.customer_facing_name,
+        address=profile.address,
+        clear_logo=True,
+        commit=True,
     )
 
     proposal = create_proposal(

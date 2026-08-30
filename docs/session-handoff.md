@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-017 APPROVED / IMPLEMENTATION NOT STARTED.** ADR-040 **Accepted**. Brand Profile **NOT IMPLEMENTED**. FG-016 **CLOSED / OPERATIONAL FOR UAT**. Live current = head `f8a9b0c1d2e3`. Pratt UAT project **id 9** port **5009**. FG-013–FG-015 **CLOSED / OPERATIONAL FOR UAT**. **STOP — do not implement Brand Profile until a separate implementation prompt.** ADR-008 / ADR-010 **Proposed**. |
+| Status | **FG-017 IMPLEMENTED / LIVE MIGRATION PENDING.** ADR-040 **Accepted**. Live current `f8a9b0c1d2e3`. Repository head `a9b0c1d2e3f4`. Full suite **423 passed**. FG-016 **CLOSED / OPERATIONAL FOR UAT**. Pratt UAT project **id 9** port **5009**. FG-013–FG-015 **CLOSED / OPERATIONAL FOR UAT**. **STOP — do not live-migrate FG-017 until a separate prompt. Do not mark CLOSED.** ADR-008 / ADR-010 **Proposed**. |
 | Updated | 2026-08-30 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -25,12 +25,12 @@ Authority order for the next session: repository governance → current-state re
 ## 2. VERIFIED BASELINE
 
 - Branch: `main`
-- Current HEAD / `origin/main`: Brand Profile approval + implementation reconnaissance (this docs commit). Parent `ee6a695eab8a3dcd4c02b663671990d124ec313d`. FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`.
+- Current HEAD / `origin/main`: FG-017 implementation (this commit). Parent `7075a802ef98a4d4de5f66afd403d9c659a3c36d`. FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`.
 - FG-016 implementation commit: `a709829d32d94ab2baf36f142ad0095254ba3d3a` (`feat: implement FG-016 Ontario Ottawa Permit Intelligence POC`)
-- Alembic graph head: **`f8a9b0c1d2e3`**. Live `flask db current`: **`f8a9b0c1d2e3`**. One head. Applied `e7f8a9b0c1d2` → `f8a9b0c1d2e3`.
-- Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010) → `c5d6e7f8a9b0` (FG-013) → `d6e7f8a9b0c1` (FG-014) → `e7f8a9b0c1d2` (FG-015) → **`f8a9b0c1d2e3` (FG-016; live current = head)**
-- Governed full suite: **401 passed**. Dedicated: FG-016 **37**; FG-015 **19**; FG-014 **35**; FG-013 **27**; FG-012 **19**; Project Hub **13**; take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**.
-- Working tree: this Brand Profile approval + reconnaissance pass is docs-only
+- Alembic graph head: **`a9b0c1d2e3f4`**. Live `flask db current`: **`f8a9b0c1d2e3`**. Expected current/head difference until live migrate.
+- Chain: … → **`f8a9b0c1d2e3` (FG-016; live current)** → **`a9b0c1d2e3f4` (FG-017; repository head, not applied live)**
+- Governed full suite: **423 passed**. Dedicated FG-017 **22**. FG-016 **37**; FG-015 **19**; FG-014 **35**; FG-013 **27**; FG-012 **19**; Project Hub **13**; take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**.
+- Working tree: FG-017 implementation + docs; live DB **not** upgraded
 - Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**. Runtime permit web lookup **NOT AUTHORIZED**.
 
 ### 29 Aug commit chain (all ancestors of `main`)
@@ -68,7 +68,7 @@ No additional 29 Aug CalibAi commits exist on `main`. FG-010 live-migrate docs a
 
 Read first: `AGENTS.md`; [platform-constitution.md](platform-constitution.md); [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md); [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md); [platform-governance.md](platform-governance.md); this file; [current-state.md](current-state.md); [project-state-report.md](project-state-report.md); [platform-roadmap.md](platform-roadmap.md); [feature-gates/README.md](feature-gates/README.md); [adr/README.md](adr/README.md).
 
-FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** files: **CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (architecture only). ADR-010 **Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Do not bulk-accept remaining Proposed ADRs. [ADR-040](adr/ADR-040-organization-brand-profile.md) is **Accepted**. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) is **APPROVED / IMPLEMENTATION NOT STARTED**. Organization Brand Profile is **not implemented**. Change Order document family is a **future pin only**.
+FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** files: **CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (architecture only). ADR-010 **Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Do not bulk-accept remaining Proposed ADRs. [ADR-040](adr/ADR-040-organization-brand-profile.md) is **Accepted**. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) is **IMPLEMENTED / LIVE MIGRATION PENDING**. Organization Brand Profile is **implemented in code**; live migrate is **not** applied. Change Order document family is a **future pin only**.
 
 ## 4. APPROVED PRODUCT VISION
 
@@ -177,7 +177,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **CLOSED / OPERATIONAL FOR UAT**. **LOCKED:** one user action may load many workbooks; no durable `UploadBatch`. Do **not** `flask db upgrade` again.
 - [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (docs only). BMR / Winchester / Darcy are **not exclusive**. Winchester is launch/reference. Contractor procurement (A) ≠ CalibAi channel (B). Darcy commercial terms **unset**. Supplier Feature Gate **not authorized**. Governed **bulk supplier onboarding** is **FUTURE / NOT IMPLEMENTED** (not one-product-at-a-time; does not expand FG-014).
 - **Permit Intelligence** Pass 2 is **CLOSED / OPERATIONAL FOR UAT**. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** ([ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)). [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (foundation). Advisory preflight. AHJ remains final. **PASS** means no issue identified against governed checks performed — never AHJ approved. No live lookup. No external AI. Mike Pratt Coach House at 2562 Church Street, North Gower, Ontario is the **FG-016 UAT reference** — live project **id 9** (`FG016-UAT-PRATT`) on port **5009**.
-- **Organization Brand Profile** is **FUTURE / NOT IMPLEMENTED** ([organization-brand-profile.md](architecture/organization-brand-profile.md)). [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. Implementation reconnaissance is recorded on FG-017. Current `Organization` identity fields and `ProposalTemplate.logo_path` / static Brayman asset are **not** the Brand Profile. **Do not implement** until a separate implementation prompt.
+- **Organization Brand Profile** is **IMPLEMENTED / LIVE MIGRATION PENDING** ([organization-brand-profile.md](architecture/organization-brand-profile.md)). [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md). Settings at `/settings/brand-profile`. Proposal preview/PDF consume snapshot-or-current. Live migrate **not** run.
 - **Change Order document family** is **FUTURE / NOT IMPLEMENTED** ([change-order-document-family.md](architecture/change-order-document-family.md)). Existing Change Order record remains authoritative. Do not create a second entity. Not email. Not field UX.
 
 ## 17. KNOWN RISKS / UNRESOLVED PRODUCT ITEMS
@@ -204,7 +204,7 @@ Do not start Phase D. Do not enable an external AI provider. Do not start auth, 
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP.** [ADR-040](adr/ADR-040-organization-brand-profile.md) is **Accepted**. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) is **APPROVED / IMPLEMENTATION NOT STARTED**. Wait for Joel / ChatGPT to issue a **separate FG-017 implementation prompt**. Do **not** implement from this reconnaissance. Do not begin national permit expansion, Phase D, Change Order document work, supplier integration, or external AI / runtime web lookup.
+**Next governed action:** **STOP.** [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) is **IMPLEMENTED / LIVE MIGRATION PENDING**. Wait for Joel / ChatGPT to authorize **live migrate** (`flask db upgrade` `f8a9b0c1d2e3` → `a9b0c1d2e3f4`) plus ensure/backfill and UAT. Do **not** mark CLOSED. Do not begin national permit expansion, Phase D, Change Order document work, supplier integration, or external AI / runtime web lookup.
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -232,14 +232,14 @@ git diff --check
 ./venv/bin/python -m pytest -q
 ```
 
-Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **current = head = `f8a9b0c1d2e3`**; FG-016 37; FG-015 19; FG-014 35; FG-013 27; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **401 passed**. Do **not** create another migration.
+Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **current = `f8a9b0c1d2e3`**; Alembic **heads = `a9b0c1d2e3f4`**; FG-017 22; FG-016 37; FG-015 19; FG-014 35; FG-013 27; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **423 passed**. Do **not** live-migrate until a separate prompt.
 
 ## 22. FRESH CHAT STARTUP PROMPT
 
 Canonical location for the next conversation. Paste into a **new** ChatGPT or Cursor chat. Do **not** continue from an old prompt without preflight.
 
 ```text
-BRAYMAN — CONTINUE CALIBAI DEVELOPMENT — FG-017 APPROVED / IMPLEMENTATION NOT STARTED
+BRAYMAN — CONTINUE CALIBAI DEVELOPMENT — FG-017 IMPLEMENTED / LIVE MIGRATION PENDING
 
 You are starting a FRESH conversation on the Brayman-Estimator (CalibAi / The Estimator) platform.
 
@@ -249,14 +249,12 @@ ChatGPT / Cursor memory is never corporate memory.
 
 Conversation titles in this workspace must start with: BRAYMAN — <Topic>.
 
-DO NOT implement Organization Brand Profile until Joel issues a separate FG-017 implementation prompt.
-DO NOT treat ADR-040 Accepted or FG-017 Approved as an implementation authorization.
-DO NOT create migration a9b0c1d2e3f4 until that implementation prompt.
+DO NOT run flask db upgrade against the live operating database until Joel issues a separate live-migrate prompt.
+DO NOT mark FG-017 CLOSED / OPERATIONAL FOR UAT.
 DO NOT start Change Order document work.
 DO NOT start Phase D.
 DO NOT start supplier integration.
 DO NOT enable external AI or runtime web lookup.
-DO NOT implement product code from reconnaissance alone.
 
 1. REVIEW REPOSITORY GOVERNANCE FIRST
 Read and comply with:
@@ -290,27 +288,26 @@ Confirm:
 - HEAD = origin/main
 - working tree clean
 - Alembic current = f8a9b0c1d2e3
-- Alembic heads = f8a9b0c1d2e3 (one graph head)
+- Alembic heads = a9b0c1d2e3f4 (expected current/head difference)
 
 3. IDENTIFY CURRENT STOP STATE
 Independently reconstruct from the repository:
 - FG-008 through FG-016 CLOSED / OPERATIONAL FOR UAT
-- Live current = head f8a9b0c1d2e3
-- Full suite governed baseline 401 passed
+- FG-017 IMPLEMENTED / LIVE MIGRATION PENDING
+- Live current f8a9b0c1d2e3; repository head a9b0c1d2e3f4
+- Full suite 423 passed; dedicated FG-017 22 passed
 - Pratt UAT project id 9 / FG016-UAT-PRATT / analysis v3 / advisory only
 - ADR-040 Accepted
-- FG-017 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED — NOT implemented
-- Organization Brand Profile NOT IMPLEMENTED
 - ADR-008 and ADR-010 remain Proposed
 - Phase D NOT STARTED / NOT AUTHORIZED
 - Real external AI NOT AUTHORIZED
 - Runtime permit web lookup NOT AUTHORIZED
 
 4. RETURN A CONCISE CURRENT STATE REVIEW
-Then WAIT for Joel to authorize the FG-017 implementation prompt, or a different task.
+Then WAIT for Joel to authorize live migration / UAT of FG-017, or a different task.
 
 Do NOT rely on AI memory. Do NOT guess missing product rules.
-Do NOT flask db upgrade. Do NOT create a migration. Do NOT implement Brand Profile.
+Do NOT flask db upgrade. Do NOT create another migration.
 
 PRESERVE → SEARCH → VERIFY → EXECUTE.
 Existing before new. No unauthorized redesign. No arbitrary policy invention.
@@ -456,4 +453,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: FG-016 **CLOSED / OPERATIONAL FOR UAT**; FG-015–FG-013 **CLOSED / OPERATIONAL FOR UAT**; live current = head `f8a9b0c1d2e3`; Permit Intelligence ADR-037/038/039 **Accepted**; **ADR-040 Accepted**; **FG-017 APPROVED / IMPLEMENTATION NOT STARTED**; Brand Profile **NOT IMPLEMENTED**. **STOP — do not implement Brand Profile until a separate implementation prompt.** Phase D unauthorized. Change Order document family **FUTURE / NOT IMPLEMENTED**.
+A–J: FG-017 **IMPLEMENTED / LIVE MIGRATION PENDING**; live current `f8a9b0c1d2e3`; repository head `a9b0c1d2e3f4`; full suite **423 passed**; FG-016 **CLOSED / OPERATIONAL FOR UAT**; **ADR-040 Accepted**. **STOP — do not live-migrate until a separate prompt. Do not mark FG-017 CLOSED.** Phase D unauthorized. Change Order document family **FUTURE / NOT IMPLEMENTED**.

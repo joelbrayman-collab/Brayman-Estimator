@@ -11,6 +11,10 @@ from app.models.proposal import (
     ProposalSection,
     ProposalTemplate,
 )
+from app.services.brand_profile import (
+    BrandProfileServiceError,
+    maybe_freeze_proposal_brand_snapshot,
+)
 from app.services.estimate_output import named_method_governs
 from app.services.organizations import get_current_organization_id
 
@@ -542,7 +546,13 @@ def create_proposal(
     db.session.add(proposal)
     db.session.flush()
     snapshot_estimate_version_content(proposal, version)
-    db.session.commit()
+    try:
+        if status in ("Issued", "Accepted"):
+            maybe_freeze_proposal_brand_snapshot(proposal, commit=False)
+        db.session.commit()
+    except BrandProfileServiceError as exc:
+        db.session.rollback()
+        raise ProposalServiceError(str(exc)) from exc
     return proposal
 
 
@@ -693,7 +703,12 @@ def update_proposal(proposal, **fields):
         if field in fields:
             setattr(proposal, field, bool(fields[field]))
 
-    db.session.commit()
+    try:
+        maybe_freeze_proposal_brand_snapshot(proposal, commit=False)
+        db.session.commit()
+    except BrandProfileServiceError as exc:
+        db.session.rollback()
+        raise ProposalServiceError(str(exc)) from exc
     return proposal
 
 

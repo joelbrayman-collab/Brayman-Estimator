@@ -12,10 +12,15 @@ from app.models.proposal import (
     ProposalSection,
     ProposalTemplate,
 )
+from app.services.brand_profile import (
+    BrandProfileServiceError,
+    brand_logo_filesystem_path,
+    brand_logo_mimetype,
+    get_proposal_brand_render_context,
+)
 from app.services.organizations import get_current_organization_id
 from app.services.proposal_pdf import (
     generate_proposal_pdf,
-    resolve_preview_logo_url,
     sanitize_pdf_filename,
 )
 from app.services.proposals import (
@@ -338,16 +343,38 @@ def view_proposal(id):
 @proposals_bp.route("/proposals/<int:id>/preview")
 def preview_proposal(id):
     proposal = _get_scoped_proposal_or_404(id)
-    template = proposal.proposal_template
+    try:
+        brand = get_proposal_brand_render_context(proposal)
+    except BrandProfileServiceError:
+        abort(404)
+    logo_url = None
+    if brand.has_logo and brand_logo_filesystem_path(brand) is not None:
+        logo_url = url_for("proposals.proposal_brand_logo", id=proposal.id)
     return render_template(
         "proposals/preview.html",
         proposal=proposal,
-        template=template,
-        logo_url=resolve_preview_logo_url(
-            template.logo_path if template else None,
-            url_for,
-        ),
+        template=proposal.proposal_template,
+        brand=brand,
+        logo_url=logo_url,
         section_rows=_preview_section_rows(proposal),
+    )
+
+
+@proposals_bp.route("/proposals/<int:id>/brand-logo")
+def proposal_brand_logo(id):
+    proposal = _get_scoped_proposal_or_404(id)
+    try:
+        brand = get_proposal_brand_render_context(proposal)
+    except BrandProfileServiceError:
+        abort(404)
+    path = brand_logo_filesystem_path(brand)
+    if path is None:
+        abort(404)
+    return send_file(
+        path,
+        mimetype=brand_logo_mimetype(brand),
+        as_attachment=False,
+        max_age=0,
     )
 
 

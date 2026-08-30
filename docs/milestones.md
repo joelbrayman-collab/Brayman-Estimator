@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — Implement FG-017 Organization Brand Profile V1 (pre-live-migration)
+
+| Field | Content |
+|-------|---------|
+| ID | FG-017 implementation |
+| Status | [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) **IMPLEMENTED / LIVE MIGRATION PENDING**; [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted** |
+| Branch | `main` |
+| Objective | Bounded Brand Profile V1 + Proposal snapshot. No live migrate. |
+| Deliverables | `organization_brand_profiles`; `proposal_brand_snapshots`; `instance/brand_logos`; Settings `/settings/brand-profile`; Proposal preview/PDF consume snapshot-or-current; revision `a9b0c1d2e3f4`; dedicated tests 22; full suite 423 |
+| Validation | Focused 119 passed. Full suite **423 passed**. Live `flask db current` remains `f8a9b0c1d2e3`. `git diff --check`. |
+| Next | **STOP.** Separate live-migrate / UAT prompt. Do not mark CLOSED. |
+
 ### 2026-08-30 — Accept ADR-040 / Approve FG-017 / implementation reconnaissance
 
 | Field | Content |

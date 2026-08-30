@@ -7,11 +7,11 @@
 | Target Milestone | **None.** FG-017 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Organization subsystem** owns Brand Profile and logo custody ([ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md); [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**). **Proposals** is the first consumer and owns the proposal issued-document brand snapshot ([modules/proposals.md](../modules/proposals.md)). |
 | Date | 2026-08-30 |
-| Status | **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED.** Does **not** by itself authorize product code. A separate implementation prompt is required. Do **not** create the migration in this reconnaissance pass. |
+| Status | **IMPLEMENTED / LIVE MIGRATION PENDING.** Product code, dedicated tests, and additive revision `a9b0c1d2e3f4` are in the repository. Live `flask db current` remains `f8a9b0c1d2e3`. Do **not** mark **CLOSED / OPERATIONAL FOR UAT** until Joel/ChatGPT authorizes live migrate and UAT. |
 | Architecture | [organization-brand-profile.md](../architecture/organization-brand-profile.md) · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [project-document-package.md](../architecture/project-document-package.md) · [modules/proposals.md](../modules/proposals.md) |
 | Related ADRs | [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-001](../adr/ADR-001-proposal-snapshot-ownership.md) **Proposed** (do **not** accept as a side effect) · [ADR-004](../adr/ADR-004-proposal-acceptance-workflow.md) **Proposed** (do **not** accept) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
-| Prerequisites | FG-016 **CLOSED / OPERATIONAL FOR UAT**. Live current = head `f8a9b0c1d2e3`. ADR-040 **Accepted**. Implementation reconnaissance recorded below. |
-| Approved baseline | Approval docs commit on `main` (this reconnaissance). Alembic current = head `f8a9b0c1d2e3`. Full suite governed baseline **401 passed** (not rerun for this docs pass). |
+| Prerequisites | FG-016 **CLOSED / OPERATIONAL FOR UAT**. ADR-040 **Accepted**. Implementation reconnaissance recorded below. Live current remains `f8a9b0c1d2e3` until a separate live-migrate prompt. |
+| Approved baseline | Implementation on `main` (this commit). Repository Alembic head `a9b0c1d2e3f4`. Live current **`f8a9b0c1d2e3`**. Dedicated tests **22 passed**. Full suite **423 passed**. |
 
 ---
 
@@ -19,17 +19,17 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED** |
+| Feature Gate (this document) | **IMPLEMENTED / LIVE MIGRATION PENDING** |
 | ADR-040 | **Accepted** |
-| Implementation | **NOT STARTED** — wait for a separate implementation prompt |
-| Schema / Alembic | **NOT CREATED** — designed revision `a9b0c1d2e3f4`; do not write it in this pass |
-| Logo storage | **NOT CREATED** |
-| Proposal renderer | **UNCHANGED** until implementation |
+| Implementation | **IMPLEMENTED** — live migrate **NOT RUN** |
+| Schema / Alembic | Repository head `a9b0c1d2e3f4`. Live current `f8a9b0c1d2e3`. |
+| Logo storage | **IMPLEMENTED** (`instance/brand_logos/`; not written to live DB this pass) |
+| Proposal renderer | Snapshot-or-current Brand Profile |
 | Change Order / Permit / Contract / QuickBooks | **NOT IN THIS GATE** |
 
 This gate establishes **organization-owned contractor branding** and stops Issued/Accepted Proposal documents from floating with later template/logo changes. It is **not** a document-family rewrite, not Permit Intelligence, and not an app-shell redesign.
 
-Approving this file does **not** implement Brand Profile. The implementation prompt is a later authorization.
+This gate is **implemented in code**. Live database migration is a **separate** authorization. Do **not** treat this file as CLOSED / OPERATIONAL FOR UAT.
 
 ---
 
@@ -175,7 +175,7 @@ Apply only after a separate **implementation** prompt. Not claimed complete by t
 
 ## Approved implementation reconnaissance (2026-08-30)
 
-**Status:** design only. **Do not implement from this section.** Exact plan for the later implementation prompt.
+**Status:** design recorded 2026-08-30; **implemented** in the FG-017 product pass. Live migrate remains pending.
 
 ### A. Existing Organization model
 
@@ -462,4 +462,4 @@ Stop and report if: a second Alembic head appears; Permit/CO/app-shell logo work
 |------|------|------|
 | Joel | Joel Brayman | 2026-08-30 |
 | ChatGPT review | Accept ADR-040 / Approve FG-017 / implementation reconnaissance | 2026-08-30 |
-| Cursor implementation note | Docs-only approval + reconnaissance. **IMPLEMENTATION NOT STARTED.** | 2026-08-30 |
+| Cursor implementation note | Product implementation + revision `a9b0c1d2e3f4` + 22 dedicated tests. Live migrate **NOT RUN**. **NOT CLOSED.** | 2026-08-30 |

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-013 CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. Material Catalogue [ADR-034](adr/ADR-034-canonical-material-identity-and-ownership.md) / [ADR-035](adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) / [ADR-036](adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** (not implemented). ADR-032 **Accepted**. **ADR-033 Accepted**. **ADR-008 Proposed**. FG-012 CLOSED / OPERATIONAL FOR UAT. ADR-021 **Accepted** (MONITOR not implemented). FG-011 / FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. Bulk supplier onboarding **FUTURE / NOT IMPLEMENTED**. |
+| Status | **FG-014 IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED**. FG-013 **CLOSED / OPERATIONAL FOR UAT**. Material Catalogue ADR-034/035/036 **Accepted**. ADR-032 **Accepted**. **ADR-033 Accepted**. **ADR-008 Proposed**. FG-012 CLOSED / OPERATIONAL FOR UAT. ADR-021 **Accepted** (MONITOR not implemented). FG-011 / FG-008 / FG-009 / FG-010 **CLOSED / OPERATIONAL FOR UAT**. Bulk supplier onboarding **FUTURE / NOT IMPLEMENTED**. |
 | Updated | 2026-08-30 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -23,8 +23,10 @@ Authority order for the next session: repository governance → current-state re
 ## 2. VERIFIED BASELINE
 
 - Branch: `main`
-- Starting HEAD / `origin/main` for this Feature Gate pass: `130b3fd35114014f0635d9a70e7cb3096647d480` (`docs: accept Material Catalogue architecture decisions`)
-- This FG-014 governance commit is current after push — verify with `git log -1`
+- Starting HEAD / `origin/main` for this implementation pass: `273803b75b6bcbe6ae56fbf3274cd4a2dafcec36` (`docs: approve Material Catalogue V1 feature gate`)
+- This FG-014 implementation commit is current after push — verify with `git log -1`
+- Alembic graph head: **`d6e7f8a9b0c1`**. Live `flask db current`: **`c5d6e7f8a9b0`** (implementation pass did **not** upgrade).
+- Tests (2026-08-30 FG-014 implementation): dedicated material catalogue **28**; full suite **338 passed**.
 - Alembic graph head: **`c5d6e7f8a9b0`**. Live `flask db current`: **`c5d6e7f8a9b0`** (**VERIFIED APPLIED**; one graph head). Migration was **not** run by the reconciliation/UAT pass.
 - Chain: `e1b2c3d4e5f6` → `f2c3d4e5f6a7` (FG-008) → `a3b4c5d6e7f8` (FG-009) → `b4c5d6e7f8a9` (FG-010) → `c5d6e7f8a9b0` (FG-013; live-applied before reconciliation)
 - Tests (2026-08-30 FG-013 close): dedicated historical upload **27**; historical ingestion **11**; labour **25**; pricing **33**; full suite **310 passed**.
@@ -66,7 +68,7 @@ No additional 29 Aug CalibAi commits exist on `main`. FG-010 live-migrate docs a
 
 Read first: `AGENTS.md`; [platform-constitution.md](platform-constitution.md); [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md); [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md); [platform-governance.md](platform-governance.md); this file; [current-state.md](current-state.md); [project-state-report.md](project-state-report.md); [platform-roadmap.md](platform-roadmap.md); [feature-gates/README.md](feature-gates/README.md); [adr/README.md](adr/README.md).
 
-FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** files: **CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (architecture only). ADR-010 **Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Do not bulk-accept remaining Proposed ADRs. Bulk supplier onboarding is a **future pin only**.
+FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** files: **CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (architecture only). ADR-010 **Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Do not bulk-accept remaining Proposed ADRs. Bulk supplier onboarding is a **future pin only**.
 
 ## 4. APPROVED PRODUCT VISION
 
@@ -89,13 +91,13 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**FG-013 CLOSED / OPERATIONAL FOR UAT.** Live current=head `c5d6e7f8a9b0`. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted** (not implemented). [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**.
+**FG-014 IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED.** Graph head `d6e7f8a9b0c1`. Live current `c5d6e7f8a9b0`. FG-013 remains **CLOSED / OPERATIONAL FOR UAT**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted**.
 
 ## 8. LAST AUTHORIZED DELTA
 
-This session: **FG-014 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED** (docs only). Identity-only lumber/sheets. Seed via same additive Alembic revision as table. Ordinary org users must not mutate platform identity. Bulk supplier onboarding pinned **FUTURE / NOT IMPLEMENTED**. No product code. No migration.
+This session: **FG-014 implemented** (identity + seed + CostItem FK + office UX). One additive revision `d6e7f8a9b0c1` **not live-applied**. Dedicated tests 28; full suite 338. No supplier ingest. ADR-008 remains Proposed.
 
-Prior: Material Catalogue ADR-034 / ADR-035 / ADR-036 **Accepted** (`130b3fd`). Architecture documented (`b53d9e7`). FG-013 closed. ADR-033 Accepted.
+Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue ADR-034 / ADR-035 / ADR-036 **Accepted** (`130b3fd`). FG-013 closed.
 
 ## 9. IMPLEMENTATION STATUS
 
@@ -103,13 +105,13 @@ Prior: Material Catalogue ADR-034 / ADR-035 / ADR-036 **Accepted** (`130b3fd`). 
 - Pricing Engine: `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent`. Methods `TRUE_GROSS_MARGIN` / `COST_PLUS_MARKUP` / `COST_PLUS_MARKUP_STACK`. Office `/pricing-engine/`.
 - Take-off: `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem`. Provider-neutral architecture; **`calibai-mock` only**. Office `/projects/<id>/plans/takeoff`. Initial element `INTERIOR_DOOR_OPENING`. COUNT dimensionless (no scale). Linear / polyline / area / perimeter remain scale-governed. Approved package immutable. No automatic estimate insertion.
 - Project Hub: `/projects/<id>` (`app/services/project_hub.py`) reads stored facts and links. PLAN / PRICE / CONTRACT operational from stored records; BUILD = existing Change Orders; field BUILD / MONITOR / LEARN Future labels only.
-- FG-012: `app/services/estimate_output.py`; `GET /estimates/<id>/versions/<version_id>/internal-breakdown`; named-method proposal snapshot totals from frozen `EstimatePricingSnapshot`; customer PDF Subtotal / Tax / Grand Total.
+- FG-014: `CanonicalMaterial`; optional `CostItem.canonical_material_id`; office `/material-catalogue/` (`app/services/material_catalogue.py`). Identity only. No live supplier data.
 
 ## 10. TEST / UAT / MIGRATION STATUS
 
-- Live current = `c5d6e7f8a9b0`. Graph head = `c5d6e7f8a9b0`. **VERIFIED APPLIED.** One Alembic head. This pass did **not** upgrade.
-- Dedicated: FG-013 upload 27; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
-- Full suite: **310 passed**.
+- Live current = `c5d6e7f8a9b0`. Graph head = `d6e7f8a9b0c1`. Implementation pass did **not** upgrade.
+- Dedicated: FG-014 material catalogue 28; FG-013 upload 27; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
+- Full suite: **338 passed**.
 - Bounded browser UAT: Flask **5004**; labeled `FG-013-UAT-*` mixed six-file + duplicate. No customer operating data.
 - Synthetic UAT for FG-008 / FG-009 / FG-010 / FG-012 is in the live development/UAT DB (labeled; not deleted).
 
@@ -140,7 +142,7 @@ Prior: Material Catalogue ADR-034 / ADR-035 / ADR-036 **Accepted** (`130b3fd`). 
 - **FG-004 / FG-005 / FG-006 / FG-007:** APPROVED, IMPLEMENTED & VERIFIED
 - **FG-008 / FG-009 / FG-010 / FG-011 / FG-012:** **CLOSED / OPERATIONAL FOR UAT**
 - **FG-013:** **CLOSED / OPERATIONAL FOR UAT**. Multi-file UX **LOCKED**. Folder/OS-drag native pickers **not live-browser verified**. ADR-032 **Accepted**. No durable `UploadBatch`. Revision `c5d6e7f8a9b0` live current=head.
-- **FG-014:** **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. Identity-only dimensional lumber + sheet goods. No supplier schema, bulk onboarding, Winchester, Phase D, or ADR-008.
+- **FG-014:** **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED**. Identity-only dimensional lumber + sheet goods. Revision `d6e7f8a9b0c1`. Live current `c5d6e7f8a9b0`. No supplier schema, bulk onboarding, Winchester, Phase D, or ADR-008.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
@@ -178,15 +180,15 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 18. DEFERRED ITEMS
 
-Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; auth; FG-014 **implementation** (gate approved; not started).
+Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; auth; FG-014 **live-migrate + office UAT**.
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN **implementation**, QuickBooks, or contract/warranty work. Do **not** run `flask db upgrade` again (FG-013 already at `c5d6e7f8a9b0`). Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not implement bulk supplier onboarding. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history. Do not implement Material Catalogue until a separate **FG-014 implementation prompt**. Do not implement supplier pricing. Do not accept ADR-008.
+Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN **implementation**, QuickBooks, or contract/warranty work. Do **not** run `flask db upgrade` until a FG-014 live-migrate prompt (graph head `d6e7f8a9b0c1`; live current `c5d6e7f8a9b0`). Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not implement bulk supplier onboarding. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history. Do not implement supplier pricing. Do not accept ADR-008.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **FG-014 implementation prompt** when separately authorized — identity-only lumber/sheets; one additive migration only if that prompt says so. Do **not** implement in this governance pass. Do **not** `flask db upgrade`. Do not start Phase D. **Do not start supplier integration / Winchester POC / bulk supplier onboarding.** Do not accept ADR-008.
+**Next governed action:** **FG-014 live-migrate + office UAT** when separately authorized. Do **not** `flask db upgrade` until that prompt. Do not start Phase D. **Do not start supplier integration / Winchester POC / bulk supplier onboarding.** Do not accept ADR-008.
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -214,7 +216,7 @@ git diff --check
 ./venv/bin/python -m pytest -q
 ```
 
-Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic graph head **and** live current `c5d6e7f8a9b0`; FG-013 27; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **310 passed**. Do **not** `flask db upgrade`.
+Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic graph head **`d6e7f8a9b0c1`**; live current **`c5d6e7f8a9b0`**; FG-014 28; FG-013 27; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **338 passed**. Do **not** `flask db upgrade` until a live-migrate prompt.
 
 ## 22. FRESH CHAT STARTUP PROMPT
 
@@ -224,7 +226,7 @@ Paste into a new ChatGPT or Cursor conversation:
 BRAYMAN — RESUME FROM REVIEW TURNOVER
 CONTINUITY / REPOSITORY-FIRST INITIALIZATION
 
-You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following FG-013 **CLOSED / OPERATIONAL FOR UAT** and [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted** (architecture only; not implemented). Canonical materials are CalibAi-seeded; CostItem is not identity; living supplier evidence is not the identity row. ADR-008 remains Proposed. Bulk supplier onboarding is **FUTURE / NOT IMPLEMENTED**.
+You are resuming work on the Brayman-Estimator (CalibAi / The Estimator) platform following [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED** and FG-013 **CLOSED / OPERATIONAL FOR UAT**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted**. Canonical materials are CalibAi-seeded; CostItem is not identity; living supplier evidence is not the identity row. ADR-008 remains Proposed. Bulk supplier onboarding is **FUTURE / NOT IMPLEMENTED**.
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 ChatGPT memory is not corporate memory.
@@ -258,19 +260,20 @@ Confirm:
 - branch = main
 - HEAD = origin/main
 - working tree clean
-- Alembic current = head = c5d6e7f8a9b0 (one head)
+- Alembic current = c5d6e7f8a9b0
+- Alembic heads = d6e7f8a9b0c1 (one graph head; live DB not upgraded)
 
 3. CONFIRM TEST BASELINE (if you will change product code later)
 ./venv/bin/python -m pytest -q
-Expected: 310 passed
+Expected: 338 passed
 
 4. RECONSTRUCT AUTHORITATIVE STATE FROM THE REPO
 Independently reconstruct:
 - FG-008 / FG-009 / FG-010 / FG-011 / FG-012 CLOSED / OPERATIONAL FOR UAT
 - FG-013 CLOSED / OPERATIONAL FOR UAT (graph head and live current c5d6e7f8a9b0; migration verified applied before reconciliation; that pass did not upgrade)
-- FG-014 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED (identity-only lumber/sheets; no product code)
-- Material Catalogue ADR-034 / ADR-035 / ADR-036 **Accepted** (architecture only; not implemented)
-- Next: FG-014 **implementation prompt** when authorized. Do not implement in a governance-only pass. Do not accept ADR-008. Do not start bulk supplier onboarding.
+- FG-014 IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED (graph head d6e7f8a9b0c1; live current c5d6e7f8a9b0)
+- Material Catalogue ADR-034 / ADR-035 / ADR-036 **Accepted**
+- Next: FG-014 **live-migrate + office UAT** when authorized. Do not flask db upgrade until that prompt. Do not accept ADR-008. Do not start bulk supplier onboarding.
 - ADR-032 Accepted (app-managed immutable historical workbook custody; legacy Desktop corpus not moved)
 - ADR-021 Accepted (composed frozen MONITOR baseline; Project Gross Margin; MONITOR not implemented; no Feature Gate)
 - FG-012 internal breakdown + named-method Proposal consistency (Estimating owner; existing Proposal is the customer-facing estimate; outputs 1–2 only; SCHEMA NO)
@@ -285,8 +288,7 @@ Do NOT rely on AI memory. Do NOT guess missing product rules.
 Do NOT start Phase D. Do NOT enable external AI.
 Do NOT start auth, BUILD / MONITOR / LEARN implementation, QuickBooks, or contract/warranty work.
 Do NOT treat ADR-021 as a MONITOR Feature Gate.
-Do NOT flask db upgrade FG-013 again (already at c5d6e7f8a9b0).
-Do NOT implement Material Catalogue until a separate FG-014 implementation prompt.
+Do NOT flask db upgrade FG-014 until a live-migrate prompt (graph head d6e7f8a9b0c1; live current c5d6e7f8a9b0).
 Do NOT begin supplier integration, bulk supplier onboarding, or Winchester POC.
 Do NOT accept ADR-008.
 
@@ -392,4 +394,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: FG-013 **CLOSED / OPERATIONAL FOR UAT**; Alembic current=head `c5d6e7f8a9b0`; [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**; Material Catalogue **ADR-034/035/036 Accepted**; next development boundary is **STOP** then **FG-014 implementation prompt**. Phase D unauthorized. Bulk supplier onboarding **FUTURE / NOT IMPLEMENTED**. Do not `flask db upgrade` again.
+A–J: FG-014 **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED**; graph head `d6e7f8a9b0c1`; live current `c5d6e7f8a9b0`; FG-013 **CLOSED / OPERATIONAL FOR UAT**; next development boundary is **STOP** then **FG-014 live-migrate + UAT**. Phase D unauthorized. Bulk supplier onboarding **FUTURE / NOT IMPLEMENTED**. Do not `flask db upgrade` until authorized.

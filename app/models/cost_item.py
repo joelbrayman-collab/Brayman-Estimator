@@ -43,6 +43,12 @@ class CostItem(db.Model):
     )
     supplier = db.Column(db.String(150))
     description = db.Column(db.Text)
+    canonical_material_id = db.Column(
+        db.Integer,
+        db.ForeignKey("canonical_materials.id"),
+        nullable=True,
+        index=True,
+    )
     is_active = db.Column(db.Boolean, nullable=False, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(
@@ -53,6 +59,7 @@ class CostItem(db.Model):
     )
 
     organization = db.relationship("Organization", back_populates="cost_items")
+    canonical_material = db.relationship("CanonicalMaterial")
 
     def __repr__(self):
         return f"<CostItem {self.code}>"

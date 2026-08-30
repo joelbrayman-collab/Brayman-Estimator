@@ -42,6 +42,12 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
+                "title": "Material Catalogue",
+                "endpoint": "material_catalogue.list_materials",
+                "icon": "bi-grid-3x3-gap",
+                "enabled": True,
+            },
+            {
                 "title": "Estimates",
                 "endpoint": "estimates.list_estimates",
                 "icon": "bi-calculator",

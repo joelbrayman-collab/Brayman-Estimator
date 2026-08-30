@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Material Catalogue | Brayman Construction Platform{% endblock %}
+{% block page_title %}Material Catalogue{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Estimating</p>
+        <h1>Material Catalogue</h1>
+        <p>
+            CalibAi canonical identity for dimensional lumber and sheet goods.
+            Platform-shared vocabulary. Organization {{ organization_id }}.
+            This surface does not show live supplier prices, promotions, or inventory.
+        </p>
+    </div>
+</div>
+
+<form method="get" class="form-panel" style="margin-bottom: 24px;">
+    <div class="form-grid">
+        <label>
+            Search
+            <input type="text" name="q" value="{{ search }}" placeholder="Code, name, grade, specification">
+        </label>
+        <label>
+            Category
+            <select name="category">
+                <option value="">All categories</option>
+                {% for value in categories %}
+                <option value="{{ value }}" {% if category == value %}selected{% endif %}>{{ category_labels.get(value, value) }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Kind
+            <select name="kind">
+                <option value="">All kinds</option>
+                {% for value in kinds %}
+                <option value="{{ value }}" {% if kind == value %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Status
+            <select name="status">
+                <option value="">All statuses</option>
+                {% for value in statuses %}
+                <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+    <div class="form-actions">
+        <button type="submit">Filter</button>
+        <a href="{{ url_for('material_catalogue.list_materials') }}">Clear</a>
+    </div>
+</form>
+
+{% if materials %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>UOM</th>
+            <th>Kind</th>
+            <th>Substitution</th>
+            <th>Status</th>
+            <th>Org links</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for material in materials %}
+        <tr>
+            <td>{{ material.code }}</td>
+            <td>{{ material.display_name }}</td>
+            <td>{{ category_labels.get(material.category, material.category) }}</td>
+            <td>{{ material.canonical_uom }}</td>
+            <td>{{ material.kind }}</td>
+            <td>{{ material.substitution_policy }}</td>
+            <td><span class="status">{{ material.status }}</span></td>
+            <td>{{ link_counts.get(material.id, 0) }}</td>
+            <td><a class="button-link" href="{{ url_for('material_catalogue.material_detail', material_id=material.id) }}">View</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <h2>No canonical materials match</h2>
+    <p>Adjust search or filters. Canonical identity is platform-seeded and read-only.</p>
+</div>
+{% endif %}
+{% endblock %}

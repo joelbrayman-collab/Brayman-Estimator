@@ -2,13 +2,13 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Intended architecture** (documented; **not implemented**) |
+| Status | **Partial Current** — FG-014 identity implemented in code; **not live-migrated** |
 | Date | 2026-08-30 |
 | Product | The Estimator / CalibAi |
-| Implementation | [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED** (identity + CostItem link + office UX only). This architecture document does **not** implement product code. Governing ADRs: [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md), [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md), [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**. |
+| Implementation | [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED** (identity + CostItem link + office UX). Graph head `d6e7f8a9b0c1`; live current still `c5d6e7f8a9b0`. Governing ADRs: [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md), [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md), [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**. |
 | Related | [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) **Accepted** · [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) **Accepted** · [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** · [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** (labour analogy) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (not accepted with identity) · [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) · [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) · [modules/estimating.md](../modules/estimating.md) · [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) |
 
-**Current vs intended vs future:** Today Estimating owns org-scoped `CostItem` and `Assembly` (`app/models/cost_item.py`, `app/models/assembly.py`). There is **no** Material Catalogue table, **no** canonical material identity, **no** `MaterialRequirement`, and **no** supplier SKU entity. Nothing below is claimed as implemented.
+**Current vs intended vs future:** Estimating owns org-scoped `CostItem` and `Assembly` (`app/models/cost_item.py`, `app/models/assembly.py`). [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) implements `canonical_materials` and optional `CostItem.canonical_material_id` in **code** (revision `d6e7f8a9b0c1`, **not live-migrated**). There is **no** `MaterialRequirement` and **no** supplier SKU entity. Living supplier evidence below is **not** claimed as implemented.
 
 ---
 
@@ -407,7 +407,7 @@ Material Catalogue is **not** Industry Benchmarking, **not** LEARN, **not** BUIL
 
 ## 20. Recommended first Feature Gate
 
-[FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**.
+[FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED**.
 
 **MATERIAL IDENTITY + ORGANIZATION COSTITEM LINK + OFFICE CATALOGUE UX**
 
@@ -430,8 +430,8 @@ Likely first POC: dimensional lumber + sheet goods.
 
 1. FG-013 **CLOSED / OPERATIONAL FOR UAT** — done
 2. Material Catalogue architecture + **ADR-034 / ADR-035 / ADR-036 Accepted** — done (not implemented)
-3. Material Catalogue Feature Gate **FG-014 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED** (identity-only lumber/sheets) — done (this pass)
-4. FG-014 **implementation** (not started; separate prompt)
+3. Material Catalogue Feature Gate **FG-014 IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED** (identity-only lumber/sheets)
+4. FG-014 **live-migrate + office UAT** (separate prompt)
 5. Phase D
 6. Later **Supplier Catalogue architecture/governance** (includes governed **bulk** onboarding pin; not one-SKU-at-a-time; **not** authorized here)
 7. Supplier Catalogue / Winchester reference demo (only after its own Feature Gate)

@@ -2,9 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Approved for implementation / not started** ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md)) |
+| Status | **Implemented / not live-migrated** ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md)) |
 | Updated | 2026-08-30 |
-| Code | **None** |
+| Code | `app/models/canonical_material.py`, `app/services/material_catalogue.py`, `app/routes/material_catalogue.py`, `/material-catalogue/` |
 | Architecture | [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) |
 | ADRs | [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) · [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) · [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** |
 
@@ -16,9 +16,9 @@ V1 ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sh
 
 Living supplier price/promotion/inventory is **architected** ([ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md)) and **not** owned or implemented here until a later Feature Gate. [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) remains **Proposed**.
 
-## Owned data (intended V1)
+## Owned data (V1)
 
-`canonical_materials` (name may vary). Platform-seeded. Not organization-owned.
+`canonical_materials`. Platform-seeded (27 V1 lumber/sheet rows). Not organization-owned.
 
 ## Referenced data
 
@@ -35,4 +35,4 @@ Living supplier price/promotion/inventory is **architected** ([ADR-036](../adr/A
 
 ## Relevant Feature Gate
 
-[FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**.
+[FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED**.

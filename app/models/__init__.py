@@ -1,5 +1,6 @@
 from app.models.assembly import Assembly, AssemblyItem
 from app.models.client import Client
+from app.models.canonical_material import CanonicalMaterial
 from app.models.cost_item import CostItem
 from app.models.estimate import (
     Estimate,
@@ -54,6 +55,7 @@ __all__ = [
     "Assembly",
     "AssemblyItem",
     "ChangeOrder",
+    "CanonicalMaterial",
     "ChangeOrderItem",
     "Client",
     "CostItem",

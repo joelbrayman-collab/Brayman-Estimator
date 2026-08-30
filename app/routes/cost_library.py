@@ -5,6 +5,11 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from app import db
 from app.models import CostItem
 from app.models.cost_item import COST_ITEM_CATEGORIES
+from app.services.material_catalogue import (
+    MaterialCatalogueError,
+    list_active_canonical_materials,
+    set_cost_item_canonical_material,
+)
 from app.services.organizations import get_current_organization_id
 
 cost_library_bp = Blueprint("cost_library", __name__, url_prefix="/cost-library")
@@ -23,6 +28,7 @@ def _form_values(cost_item=None):
             ).strip(),
             "supplier": request.form.get("supplier", "").strip(),
             "description": request.form.get("description", "").strip(),
+            "canonical_material_id": request.form.get("canonical_material_id", "").strip(),
         }
 
     if cost_item is None:
@@ -35,6 +41,7 @@ def _form_values(cost_item=None):
             "default_markup_percent": "0",
             "supplier": "",
             "description": "",
+            "canonical_material_id": "",
         }
 
     return {
@@ -46,6 +53,11 @@ def _form_values(cost_item=None):
         "default_markup_percent": f"{cost_item.default_markup_percent:.2f}",
         "supplier": cost_item.supplier or "",
         "description": cost_item.description or "",
+        "canonical_material_id": (
+            str(cost_item.canonical_material_id)
+            if cost_item.canonical_material_id
+            else ""
+        ),
     }
 
 
@@ -96,6 +108,29 @@ def _validate_cost_item_form(form, exclude_id=None):
     return errors, unit_cost, markup
 
 
+def _canonical_choices():
+    return list_active_canonical_materials()
+
+
+def _apply_canonical_link(cost_item, form):
+    raw = form.get("canonical_material_id") or ""
+    if cost_item.category != "Material":
+        if raw:
+            raise MaterialCatalogueError(
+                f"{cost_item.category} cost items cannot link to a canonical material."
+            )
+        if cost_item.canonical_material_id:
+            raise MaterialCatalogueError(
+                "Unlink the canonical material before changing this cost item away from Material."
+            )
+        return
+    set_cost_item_canonical_material(
+        cost_item,
+        raw or None,
+        organization_id=cost_item.organization_id,
+    )
+
+
 @cost_library_bp.route("/")
 def list_cost_items():
     org_id = get_current_organization_id()
@@ -118,6 +153,7 @@ def create_cost_item():
                 form=form,
                 categories=COST_ITEM_CATEGORIES,
                 cost_item=None,
+                canonical_materials=_canonical_choices(),
             )
 
         cost_item = CostItem(
@@ -132,6 +168,17 @@ def create_cost_item():
             description=form["description"] or None,
             is_active=True,
         )
+        try:
+            _apply_canonical_link(cost_item, form)
+        except MaterialCatalogueError as exc:
+            flash(str(exc), "error")
+            return render_template(
+                "cost_library/form.html",
+                form=form,
+                categories=COST_ITEM_CATEGORIES,
+                cost_item=None,
+                canonical_materials=_canonical_choices(),
+            )
 
         db.session.add(cost_item)
         db.session.commit()
@@ -144,6 +191,7 @@ def create_cost_item():
         form=form,
         categories=COST_ITEM_CATEGORIES,
         cost_item=None,
+        canonical_materials=_canonical_choices(),
     )
 
 
@@ -167,6 +215,7 @@ def edit_cost_item(id):
                 form=form,
                 categories=COST_ITEM_CATEGORIES,
                 cost_item=cost_item,
+                canonical_materials=_canonical_choices(),
             )
 
         cost_item.code = form["code"]
@@ -177,6 +226,20 @@ def edit_cost_item(id):
         cost_item.default_markup_percent = markup
         cost_item.supplier = form["supplier"] or None
         cost_item.description = form["description"] or None
+        try:
+            _apply_canonical_link(cost_item, form)
+        except MaterialCatalogueError as exc:
+            db.session.rollback()
+            flash(str(exc), "error")
+            return render_template(
+                "cost_library/form.html",
+                form=form,
+                categories=COST_ITEM_CATEGORIES,
+                cost_item=CostItem.query.filter_by(
+                    id=id, organization_id=org_id
+                ).first_or_404(),
+                canonical_materials=_canonical_choices(),
+            )
 
         db.session.commit()
 
@@ -188,6 +251,7 @@ def edit_cost_item(id):
         form=form,
         categories=COST_ITEM_CATEGORIES,
         cost_item=cost_item,
+        canonical_materials=_canonical_choices(),
     )
 
 

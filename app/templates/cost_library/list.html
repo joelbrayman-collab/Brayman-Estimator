@@ -25,6 +25,7 @@
             <th>Unit Cost</th>
             <th>Markup</th>
             <th>Supplier</th>
+            <th>Canonical</th>
             <th>Active</th>
             <th>Actions</th>
         </tr>
@@ -39,6 +40,13 @@
             <td>${{ "%.2f"|format(item.unit_cost) }}</td>
             <td>{{ "%.2f"|format(item.default_markup_percent) }}%</td>
             <td>{{ item.supplier or "—" }}</td>
+            <td>
+                {% if item.canonical_material %}
+                <a class="button-link" href="{{ url_for('material_catalogue.material_detail', material_id=item.canonical_material.id) }}">{{ item.canonical_material.code }}</a>
+                {% else %}
+                —
+                {% endif %}
+            </td>
             <td>
                 <span class="status">{{ "Active" if item.is_active else "Inactive" }}</span>
             </td>

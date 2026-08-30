@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — FG-014 Material Catalogue V1 implemented (not live-migrated)
+
+| Field | Content |
+|-------|---------|
+| ID | [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) |
+| Status | **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED** |
+| Date | 2026-08-30 |
+| Objective | Canonical lumber/sheet identity, platform seed, optional Material CostItem link, office catalogue UX. |
+| Deliverables | `canonical_materials`; revision `d6e7f8a9b0c1`; `/material-catalogue/`; dedicated tests. Live DB not upgraded. |
+| Validation | Dedicated **28 passed**. Full suite **338 passed**. Throwaway upgrade/downgrade. Live current remains `c5d6e7f8a9b0`. |
+| Next | Live-migrate + office UAT when authorized. Do not start Phase D or supplier POC. |
+
 ### 2026-08-30 — FG-014 Material Catalogue V1 Feature Gate approved
 
 | Field | Content |

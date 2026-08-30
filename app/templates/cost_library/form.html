@@ -60,6 +60,24 @@
         <textarea name="description" rows="5">{{ form.description }}</textarea>
     </label>
 
+    <label>
+        Canonical material (Material category only)
+        <select name="canonical_material_id">
+            <option value="">Not linked</option>
+            {% for material in canonical_materials %}
+            <option value="{{ material.id }}" {% if form.canonical_material_id == material.id|string %}selected{% endif %}>
+                {{ material.code }} — {{ material.display_name }}
+            </option>
+            {% endfor %}
+            {% if cost_item and cost_item.canonical_material and cost_item.canonical_material.status != "ACTIVE" %}
+            <option value="{{ cost_item.canonical_material.id }}" selected>
+                {{ cost_item.canonical_material.code }} — {{ cost_item.canonical_material.display_name }} ({{ cost_item.canonical_material.status }})
+            </option>
+            {% endif %}
+        </select>
+        <span>Read-only CalibAi identity. Link or unlink only. Create/edit of canonical materials is not available here.</span>
+    </label>
+
     <div class="form-actions">
         <button type="submit">{{ "Update Cost Item" if cost_item else "Save Cost Item" }}</button>
         <a href="{{ url_for('cost_library.list_cost_items') }}">Cancel</a>

@@ -7,11 +7,11 @@
 | Target Milestone | **None.** FG-014 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Material Catalogue** (canonical identity). Estimating retains `CostItem` / `Assembly` / `EstimateLineItem`. |
 | Date | 2026-08-30 |
-| Status | **APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED** |
+| Status | **IMPLEMENTED / VERIFIED / NOT LIVE-MIGRATED** |
 | Architecture | [material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) |
 | Related ADRs | [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) **Accepted** · [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) **Accepted** · [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** · [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) |
 | Prerequisites | FG-013 **CLOSED / OPERATIONAL FOR UAT**. ADR-034/035/036 **Accepted**. Alembic current = head `c5d6e7f8a9b0`. |
-| Approved baseline | HEAD at gate approval: verify `git log -1`. Last recorded full suite **310 passed**. |
+| Approved baseline | Gate-approval HEAD `273803b75b6bcbe6ae56fbf3274cd4a2dafcec36`. Implementation full suite **338 passed**. Graph head `d6e7f8a9b0c1`. Live current `c5d6e7f8a9b0`. |
 
 ---
 
@@ -19,13 +19,15 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **APPROVED FOR IMPLEMENTATION** |
-| Implementation | **NOT STARTED** |
-| Schema / Alembic | **Authorized** for a later implementation prompt: one bounded additive revision. **Not created in this pass.** |
-| Living supplier pricing / promotions / inventory | **OUT OF SCOPE** |
-| Phase D / MaterialRequirement / supplier SKU | **OUT OF SCOPE** |
+| Feature Gate (this document) | **IMPLEMENTED / VERIFIED** |
+| Implementation | **DONE** in product code. Office UX `/material-catalogue/`. **Not live-migrated.** |
+| Schema / Alembic | Graph head **`d6e7f8a9b0c1`**. Live development/UAT current **`c5d6e7f8a9b0`**. Do not apply until a separate live-migrate/UAT prompt. |
+| Living supplier pricing / promotions / inventory | **OUT OF SCOPE** (unchanged) |
+| Phase D / MaterialRequirement / supplier SKU | **OUT OF SCOPE** (unchanged) |
 
-This gate does **not** authorize supplier integration, bulk supplier catalogue onboarding, Winchester POC, ADR-008 acceptance, Phase D, procurement, ORG-ACTUAL, LEARN, or a second Alembic head.
+This gate does **not** authorize supplier integration, bulk supplier catalogue onboarding, Winchester POC, ADR-008 acceptance, Phase D, procurement, ORG-ACTUAL, LEARN, or applying `d6e7f8a9b0c1` to the live development/UAT database under the implementation prompt.
+
+**Code:** `app/models/canonical_material.py`, `app/services/material_catalogue.py`, `app/routes/material_catalogue.py`, optional `CostItem.canonical_material_id` in `app/models/cost_item.py`, revision `migrations/versions/d6e7f8a9b0c1_add_material_catalogue_identity_fg014.py`. Platform seed is 27 lumber/sheet rows keyed by `CAL-*` codes.
 
 ---
 

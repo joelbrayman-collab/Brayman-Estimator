@@ -68,6 +68,7 @@
             <th>Sort</th>
             <th>Code</th>
             <th>Cost Item</th>
+            <th>Canonical</th>
             <th>Unit Cost</th>
             <th>Qty</th>
             <th>Waste %</th>
@@ -80,7 +81,7 @@
         {% for item in assembly.assembly_items %}
         <tr>
             {% if editing_item_id == item.id %}
-            <td colspan="9">
+            <td colspan="10">
                 <form method="post" action="{{ url_for('assemblies.edit_assembly_item', id=assembly.id, item_id=item.id) }}" class="form-panel">
                     <p><strong>{{ item.cost_item.code }} — {{ item.cost_item.name }}</strong></p>
                     <div class="form-grid">
@@ -111,6 +112,13 @@
             <td>{{ item.sort_order }}</td>
             <td>{{ item.cost_item.code }}</td>
             <td>{{ item.cost_item.name }}</td>
+            <td>
+                {% if item.cost_item.canonical_material %}
+                <a class="button-link" href="{{ url_for('material_catalogue.material_detail', material_id=item.cost_item.canonical_material.id) }}">{{ item.cost_item.canonical_material.code }}</a>
+                {% else %}
+                —
+                {% endif %}
+            </td>
             <td>${{ "%.2f"|format(item.cost_item.unit_cost) }}</td>
             <td>{{ item.quantity }}</td>
             <td>{{ "%.2f"|format(item.waste_percent) }}%</td>

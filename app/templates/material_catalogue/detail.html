@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}{{ material.code }} | Material Catalogue{% endblock %}
+{% block page_title %}Material Catalogue{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Material Catalogue</p>
+        <h1>{{ material.display_name }}</h1>
+        <p>Read-only CalibAi identity. Ordinary office users cannot edit this definition.</p>
+    </div>
+    <a class="button-link" href="{{ url_for('material_catalogue.list_materials') }}">Back to catalogue</a>
+</div>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Code</p>
+            <p>{{ material.code }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Kind</p>
+            <p>{{ material.kind }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Category</p>
+            <p>{{ category_labels.get(material.category, material.category) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Trade</p>
+            <p>{{ material.trade or "—" }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Canonical UOM</p>
+            <p>{{ material.canonical_uom }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Substitution</p>
+            <p>{{ material.substitution_policy }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Status</p>
+            <p><span class="status">{{ material.status }}</span></p>
+        </div>
+        <div>
+            <p class="eyebrow">Grade / species</p>
+            <p>{{ material.grade_species or "—" }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Performance class</p>
+            <p>{{ material.performance_class or "—" }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Nominal thickness (in)</p>
+            <p>{{ material.nominal_thickness_in if material.nominal_thickness_in is not none else "—" }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Nominal width (in)</p>
+            <p>{{ material.nominal_width_in if material.nominal_width_in is not none else "—" }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Length (ft)</p>
+            <p>{{ material.length_ft if material.length_ft is not none else "—" }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Sheet size (in)</p>
+            <p>
+                {% if material.sheet_width_in is not none and material.sheet_length_in is not none %}
+                {{ material.sheet_width_in }} × {{ material.sheet_length_in }}
+                {% else %}
+                —
+                {% endif %}
+            </p>
+        </div>
+        <div>
+            <p class="eyebrow">Manufacturer</p>
+            <p>{{ material.manufacturer or "—" }}</p>
+        </div>
+    </div>
+    {% if material.specification_text %}
+    <p><strong>Specification:</strong> {{ material.specification_text }}</p>
+    {% endif %}
+    {% if material.description %}
+    <p>{{ material.description }}</p>
+    {% endif %}
+    <p class="eyebrow">Living supplier price, promotions, and inventory are not operational on this identity record.</p>
+</section>
+
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Organization {{ organization_id }}</p>
+        <h1>Linked Material Cost Items</h1>
+        <p>Only this organization's Material cost items. Link and unlink are explicit. No automatic mapping.</p>
+    </div>
+</section>
+
+{% if linked_cost_items %}
+<table class="data-table" style="margin-bottom: 24px;">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Unit (org)</th>
+            <th>Unit cost</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in linked_cost_items %}
+        <tr>
+            <td>{{ item.code }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.unit }}</td>
+            <td>${{ "%.2f"|format(item.unit_cost) }}</td>
+            <td>
+                <form method="post" action="{{ url_for('material_catalogue.unlink_cost_item', material_id=material.id) }}" style="display: inline;">
+                    <input type="hidden" name="cost_item_id" value="{{ item.id }}">
+                    <button type="submit">Unlink</button>
+                </form>
+                <a class="button-link" href="{{ url_for('cost_library.edit_cost_item', id=item.id) }}">Cost item</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state" style="margin-bottom: 24px;">
+    <h2>No linked Material cost items</h2>
+    <p>This organization has not linked a Material CostItem to this canonical identity.</p>
+</div>
+{% endif %}
+
+<section class="form-panel">
+    <h2>Link a Material Cost Item</h2>
+    {% if material.status != "ACTIVE" %}
+    <p>This canonical material is {{ material.status }}. New links must use an ACTIVE material.</p>
+    {% elif material_cost_items %}
+    <form method="post" action="{{ url_for('material_catalogue.link_cost_item', material_id=material.id) }}">
+        <div class="form-grid">
+            <label>
+                Material cost item *
+                <select name="cost_item_id" required>
+                    <option value="">Select a Material cost item</option>
+                    {% for item in material_cost_items %}
+                    <option value="{{ item.id }}">
+                        {{ item.code }} — {{ item.name }}
+                        {% if item.canonical_material_id %}(currently {{ item.canonical_material.code if item.canonical_material else item.canonical_material_id }}){% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Link cost item</button>
+        </div>
+    </form>
+    {% else %}
+    <div class="empty-state">
+        <h2>No Material cost items</h2>
+        <p>Create a Material-category cost item in the Cost Library, then link it here.</p>
+        <a class="button" href="{{ url_for('cost_library.create_cost_item') }}">Add Cost Item</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

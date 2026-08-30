@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-014 Material Catalogue V1 implemented
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `273803b75b6bcbe6ae56fbf3274cd4a2dafcec36` (start) |
+| Objective | Implement FG-014 identity V1. One additive migration. Do not live-migrate. |
+| Business decision | Platform-owned lumber/sheet seed. Optional Material CostItem link. Read-only canonical UX. |
+| Architectural decision | `canonical_materials` is platform-shared. CostItem remains org costing. ADR-008 remains Proposed. No supplier schema. |
+| Prompt template used | Bounded FG-014 product implementation |
+| Approved Cursor prompt summary | IMPLEMENT FG-014. One additive Alembic revision. Do not apply to live development/UAT DB. |
+| Files expected to change | models, services, routes, templates, migration, tests, governed docs |
+| Files prohibited from changing | TakeoffPackageItem; Assembly schema FK; ADR-008 status; live DB |
+| Implementation result | Identity + seed (27 rows) + CostItem FK + `/material-catalogue/`. Graph head `d6e7f8a9b0c1`. Live current `c5d6e7f8a9b0`. |
+| Tests | Dedicated FG-014 **28 passed**. Full suite **338 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Architecture record appended |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate and office UAT not done. ADR-008 remains Proposed. |
+| Next approved step | **FG-014 live-migrate + office UAT** when Joel authorizes. |
+| Next approved prompt | Bounded live-migrate + UAT. Do not start supplier ingest. |
+| Commit hash | (this commit) |
+
 ### 2026-08-30 — FG-014 Material Catalogue V1 Feature Gate + future supplier-onboarding pin
 
 | Field | Content |

@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-013 multi-file / folder upload UX locked
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `d41c4d92ee009cdc6679b140ecd44789362077f6` (start) |
+| Objective | Memorialize Joel’s FG-013 UX rule: one user action may load many historical workbooks (multi-select, multi drop, folder where the client supports it). No durable UploadBatch for UX. Docs only. |
+| Business decision | Users must not upload historical estimates one at a time. ~20–25 is guidance, not a quota. One failed/unsupported/duplicate/quarantined file must not block the rest. |
+| Architectural decision | NO durable UploadBatch = database architecture only. Does not mean single-file upload. Per-file ingest remains the transaction unit. Combined results summary is request-scoped. Implementation not authorized. |
+| Prompt template used | Bounded FG-013 governance clarification (documentation) |
+| Approved Cursor prompt summary | ADD TO FG-013 GOVERNANCE — MULTI-FILE / FOLDER UPLOAD CLARIFICATION. Do not implement uploads. Do not create UploadBatch. |
+| Files expected to change | FG-013 draft; feature-gates index; current-state; session-handoff; chat-workflow-log; roadmap as needed |
+| Files prohibited from changing | `app/**`, `tests/**`, `migrations/**`, database |
+| Implementation result | Created FG-013 as DRAFT FOR JOEL REVIEW with locked multi-file/folder section. Implementation not started. |
+| Tests | Docs-only. Last recorded full suite **283 passed**. |
+| Project-state-report update | Minimal (draft gate; not a coded milestone) |
+| Milestone entry update | No (not a completed milestone) |
+| Constitutional issue raised | None |
+| Unresolved issues | FG-013 remainder (schema, storage ADR, quarantine, auth) not approved. Implementation not authorized. |
+| Next approved step | **STOP DEVELOPMENT.** Do not implement FG-013. Joel reviews the draft gate. |
+| Next approved prompt | None unless Joel authorizes remaining FG-013 answers or a later implementation prompt. |
+| Commit hash | (this documentation commit) |
+
 ### 2026-08-30 — ADR-021 MONITOR baseline / Project Gross Margin acceptance
 
 | Field | Content |

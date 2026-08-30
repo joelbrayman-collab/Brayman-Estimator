@@ -160,7 +160,7 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 2. Phase D reviewed quantity → estimate mapping remains **NOT STARTED / NOT AUTHORIZED**.
 3. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
 4. Subsequent CalibAi sequence: auth, BUILD, field web, MONITOR implementation, LEARN — each separately gated. ADR-021 does not move MONITOR ahead of auth/BUILD.
-5. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate. Real external AI provider remains **not authorized**. Historical-upload onboarding and industry benchmarking remain future, separately gated; not authorized here.
+5. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate. Real external AI provider remains **not authorized**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) historical-upload onboarding is **DRAFT FOR JOEL REVIEW** (implementation not authorized; multi-file / folder UX locked; no durable UploadBatch). Industry benchmarking remains future, separately gated.
 
 ---
 

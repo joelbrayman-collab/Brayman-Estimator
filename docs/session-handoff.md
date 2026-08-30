@@ -66,7 +66,7 @@ No additional 29 Aug CalibAi commits exist on `main`. FG-010 live-migrate docs a
 
 Read first: `AGENTS.md`; [platform-constitution.md](platform-constitution.md); [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md); [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md); [platform-governance.md](platform-governance.md); this file; [current-state.md](current-state.md); [project-state-report.md](project-state-report.md); [platform-roadmap.md](platform-roadmap.md); [feature-gates/README.md](feature-gates/README.md); [adr/README.md](adr/README.md).
 
-FG-008 / FG-009 / FG-010 / FG-011 / FG-012 files: **CLOSED / OPERATIONAL FOR UAT**. ADR-010 **Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Do not bulk-accept remaining Proposed ADRs.
+FG-008 / FG-009 / FG-010 / FG-011 / FG-012 files: **CLOSED / OPERATIONAL FOR UAT**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **DRAFT FOR JOEL REVIEW** (not approved for implementation). ADR-010 **Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Do not bulk-accept remaining Proposed ADRs.
 
 ## 4. APPROVED PRODUCT VISION
 
@@ -89,11 +89,11 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**No coded milestone in progress.** [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (docs only). [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-011](feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**. M012 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**.
+**No coded milestone in progress.** [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **DRAFT FOR JOEL REVIEW** (implementation not authorized). [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (docs only). [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-011](feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**. M012 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**.
 
 ## 8. LAST AUTHORIZED DELTA
 
-ADR-021 MONITOR composed commercial baseline and Project Gross Margin **Accepted**. Documentation / governance only. MONITOR, BUILD actuals, profitability UI, industry benchmarking, and historical-upload onboarding remain **not implemented**. No schema. No migration. No Feature Gate.
+FG-013 draft created; multi-file / folder upload UX **LOCKED**. Documentation only. Implementation **not authorized**. No durable `UploadBatch`. No schema. No product code.
 
 ## 9. IMPLEMENTATION STATUS
 
@@ -137,13 +137,14 @@ ADR-021 MONITOR composed commercial baseline and Project Gross Margin **Accepted
 - **FG-003:** CONDITIONAL PASS — architecture only
 - **FG-004 / FG-005 / FG-006 / FG-007:** APPROVED, IMPLEMENTED & VERIFIED
 - **FG-008 / FG-009 / FG-010 / FG-011 / FG-012:** **CLOSED / OPERATIONAL FOR UAT**
-- No later gate approved or started.
+- **FG-013:** **DRAFT FOR JOEL REVIEW** — implementation **not authorized**. Multi-file / folder upload UX **LOCKED**.
+- No later gate approved for implementation.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
-29 Aug conversational decisions for FG-008 / FG-009 / FG-010 architecture, implementation, live migrate, UAT, and integrity stabilization are in Git (pins above) and governed docs. 30 Aug FG-012 is closed. This turnover memorializes ADR-021 **Accepted**: Project Gross Margin; composed frozen baseline; MONITOR not implemented; no Feature Gate.
+29 Aug conversational decisions for FG-008 / FG-009 / FG-010 architecture, implementation, live migrate, UAT, and integrity stabilization are in Git (pins above) and governed docs. 30 Aug FG-012 is closed; ADR-021 **Accepted**. This pass memorializes FG-013 **DRAFT**: one user action may load many workbooks; no durable UploadBatch for UX; implementation not authorized.
 
-**Completeness test:** Is any material approved fact only in this chat? **NO — verified through Turnover Delta Ledger reconciliation** after this docs commit.
+**Completeness test:** Is any material approved fact only in this chat? **NO — verified through Turnover Delta Ledger reconciliation** after this documentation update.
 
 ## 16. OPEN DECISIONS
 
@@ -156,7 +157,7 @@ ADR-021 MONITOR composed commercial baseline and Project Gross Margin **Accepted
 - Cancelled extraction-run status modeled; no cancel operation
 - ORG-001 optional overhead/profit treatments `UNSPECIFIED`; contingency visibility `UNSPECIFIED`; `contingency_source` / `contingency_pricing_treatment` unset (NULL) — distinct from org-approved `NOT_APPLIED`
 - Labour-snapshot Direct Labour Cost not included in estimate basis by default (ADR-021 records the GM comparability issue; does not correct it)
-- Next **product** gate not authorized (historical-upload onboarding vs authentication/BUILD remains Joel’s choice; MONITOR Feature Gate not authorized by ADR-021)
+- Next **product** gate not authorized. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **DRAFT FOR JOEL REVIEW** (implementation not authorized). **LOCKED:** one user action may load many workbooks (multi-select, multi drop, folder where supported); no durable `UploadBatch` for UX. Authentication / BUILD remains a separate candidate. MONITOR Feature Gate not authorized by ADR-021.
 
 ## 17. KNOWN RISKS / UNRESOLVED PRODUCT ITEMS
 
@@ -174,17 +175,17 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 18. DEFERRED ITEMS
 
-Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; historical-upload onboarding; industry benchmarking; auth.
+Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; FG-013 historical-upload **implementation**; industry benchmarking; auth.
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN **implementation**, QuickBooks, or contract/warranty work. Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, schema, or Alembic revision. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not delete synthetic UAT or append-only audit history.
+Do not start Phase D. Do not enable an external AI provider. Do not start auth, BUILD/MONITOR/LEARN **implementation**, QuickBooks, or contract/warranty work. Do not implement FG-013 uploads. Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, schema, or Alembic revision. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not delete synthetic UAT or append-only audit history.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**STOP DEVELOPMENT.** [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) is **Accepted**. MONITOR remains **not implemented**. Do not begin a MONITOR Feature Gate. Do not start Phase D.
+**STOP DEVELOPMENT.** [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) is **Accepted**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) is **DRAFT FOR JOEL REVIEW** — do **not** implement uploads. MONITOR remains **not implemented**. Do not start Phase D.
 
-**Separate candidates (not authorized):** office historical-upload onboarding; authentication / BUILD field capture; MONITOR implementation. Joel chooses the next product gate.
+**Separate candidates (not authorized for code):** remaining FG-013 gate answers / implementation; authentication / BUILD field capture; MONITOR implementation.
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 

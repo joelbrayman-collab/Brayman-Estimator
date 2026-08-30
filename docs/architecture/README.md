@@ -13,7 +13,8 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) | Future + Phase A / M007 page indexing current |
 | [document-intelligence.md](document-intelligence.md) | Architecture (M006); upload/pages/processing **Current** (M007) |
 | [sheet-intelligence.md](sheet-intelligence.md) | **Architecture (M008) + FG-004 approved** — Sheets / review **not implemented** |
-| [project-document-package.md](project-document-package.md) | **Intended** — authoritative record + four outputs (not implemented) |
+| [project-document-package.md](project-document-package.md) | **Intended** — authoritative record + four outputs (1–2 Current under FG-012; 3–4 Future); additional Permit & Approvals Report pin **FUTURE / NOT IMPLEMENTED** |
+| [permit-and-approvals-report.md](permit-and-approvals-report.md) | **FUTURE / NOT IMPLEMENTED** — advisory project permit-preflight document pin; not a Feature Gate; not legal-library implementation |
 | [quickbooks-integration.md](quickbooks-integration.md) | **Future** — export pipeline boundary (not implemented) |
 | [M004-plan-intelligence-readiness-report.md](M004-plan-intelligence-readiness-report.md) | Milestone 004 report |
 | [M006-document-intelligence-readiness-report.md](M006-document-intelligence-readiness-report.md) | Milestone 006 report |

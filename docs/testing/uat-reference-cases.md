@@ -3,11 +3,13 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Governing test / UAT reference |
-| Updated | 2026-08-25 |
+| Updated | 2026-08-30 |
 
 ## Purpose
 
 Record real or representative projects used to validate estimator outputs, reconciliation, and the four-output document package ([project-document-package.md](../architecture/project-document-package.md)). Reference cases are **not** final pricing authority — they exercise workflow and consistency.
+
+The **Permit & Approvals Report** is a separate **FUTURE / NOT IMPLEMENTED** governed project document ([permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md)). It is **not** one of the four estimate outputs. Do not treat ChatGPT or other preliminary research as an AHJ determination.
 
 ## Reference case — 3415 Roger Stevens Road (Detached Garage)
 
@@ -62,8 +64,27 @@ These were created during the reference exercise and must ultimately be **regene
 - QuickBooks output reflects approved customer estimate only
 - Contract generation requires approved estimate + governed warranty attachment
 
+## Future architecture / UAT reference — Mike Pratt Coach House (Permit & Approvals Report)
+
+| Field | Value |
+|-------|--------|
+| Project | Mike Pratt Coach House |
+| Address | 2562 Church Street, North Gower, Ontario |
+| Status | **Future architecture / UAT reference only** — not an in-app project; not a permit determination |
+| Recorded | 2026-08-30 |
+| Canonical pin | [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) |
+
+This case is the **permit-preflight** reference. The 3415 Roger Stevens Road case remains the commercial/document-package UAT reference.
+
+Preliminary review (outside this repository, **not** governed evidence) has already shown useful preflight questions, including coach-house footprint, building height, setbacks, private servicing/septic, rural grading-plan requirements, and zoning/site-plan submission completeness.
+
+**Do not treat that preliminary ChatGPT research as an authoritative project permit determination.** A separate repository-first architecture reconnaissance must verify and govern this capability before implementation.
+
+This pin does **not** authorize Permit Intelligence, jurisdictional legal-library implementation, live regulatory AI, in-product web lookup, automatic approval conclusions, municipal submissions, schema, migration, ADR, or a Feature Gate.
+
 ## Related
 
 - [pricing-policy.md](../pricing-policy.md)
 - [architecture/project-document-package.md](../architecture/project-document-package.md)
+- [architecture/permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md)
 - [testing-standards.md](../testing-standards.md)

@@ -110,6 +110,18 @@ Generated **only from an APPROVED estimate**.
 
 **No contract is final merely because it was generated.**
 
+## Additional governed project document (FUTURE / NOT IMPLEMENTED)
+
+**Status:** **FUTURE / NOT IMPLEMENTED.** Requirement pin only. Canonical record: [permit-and-approvals-report.md](permit-and-approvals-report.md).
+
+CalibAi must eventually retain a **Project Permit & Approvals Report** with the project's other authoritative/generated documents. It is an **advisory preflight**, not a fifth estimate-derived commercial output, and **not** a substitute for the AHJ or other regulated professionals.
+
+The report must be tied to project, address/jurisdiction, plan version, site-plan version, governing-rule source/version/effective date, generation date, and evidence/provenance. Later plan or by-law changes must not silently rewrite an earlier report.
+
+This pin does **not** authorize Permit Intelligence, jurisdictional legal-library implementation, live regulatory AI, in-product web lookup, automatic approval conclusions, municipal submissions, schema, migration, ADR, or a Feature Gate.
+
+This section does **not** change FG-012 outputs 1–2 or authorize outputs 3–4.
+
 ## Input change propagation
 
 When a governed field changes in the authoritative record (scope, price, allowance, exclusion, tax treatment, commercial term):
@@ -127,6 +139,7 @@ When a governed field changes in the authoritative record (scope, price, allowan
 | Internal detailed breakdown | **Estimating** — [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** |
 | QuickBooks export | Future integration boundary — [quickbooks-integration.md](quickbooks-integration.md) |
 | Ontario contract + warranty package | Governed templates — [legal-content-and-templates.md](../governance/legal-content-and-templates.md) |
+| Permit & Approvals Report | **FUTURE / NOT IMPLEMENTED** pin — [permit-and-approvals-report.md](permit-and-approvals-report.md) |
 
 ## Related
 
@@ -135,4 +148,5 @@ When a governed field changes in the authoritative record (scope, price, allowan
 - [quickbooks-integration.md](quickbooks-integration.md)
 - [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md)
 - [testing/uat-reference-cases.md](../testing/uat-reference-cases.md)
+- [permit-and-approvals-report.md](permit-and-approvals-report.md) — **FUTURE / NOT IMPLEMENTED** additional project document (advisory preflight; not outputs 1–4)
 - [platform-vision.md](../platform-vision.md)

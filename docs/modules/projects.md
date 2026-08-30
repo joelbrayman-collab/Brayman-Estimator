@@ -35,6 +35,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 - Owning Plan Intelligence / take-off / labour catalog / pricing-policy records (read/link only under FG-011)
 - Full ERP/accounting
 - Field-execution records (proposed **BUILD** module — [build.md](build.md); [ADR-020](../adr/ADR-020-build-module-boundary.md))
+- Permit Intelligence / jurisdictional legal library / live regulatory lookup / in-product web lookup / automatic permit approval conclusions / municipal submissions — **not authorized**. The Project Permit & Approvals Report is a **FUTURE / NOT IMPLEMENTED** pin only ([permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md)). Projects is the tentative future owner of the project-tied snapshot; that ownership is **not confirmed as implemented** and must be verified in a later reconnaissance. This pin does not expand FG-011.
 
 ## Current implementation
 
@@ -48,6 +49,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 - Project creation from accepted proposal snapshot (Rule 4) — **Future** (not FG-011)
 - Project budgets, scheduling, purchasing, job costing, invoicing — **Future**
 - Change order audit trail UI — noted as future in template
+- Project Permit & Approvals Report — **FUTURE / NOT IMPLEMENTED** pin ([permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md)); not a Feature Gate
 
 ## Dependencies
 

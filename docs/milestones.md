@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Architecture records (non-milestone)
 
+### 2026-08-30 — Permit & Approvals Report requirement pin
+
+| Field | Content |
+|-------|---------|
+| ID | Permit & Approvals Report (not a numbered M0xx; not a Feature Gate; not an ADR) |
+| Status | **FUTURE / NOT IMPLEMENTED** — requirement pin only |
+| Date | 2026-08-30 |
+| Objective | Record a governed advisory project permit-preflight document as future architecture. Identify permit/zoning/servicing/approval issues early enough to affect feasibility, scope, pricing, and contracting. Final authority remains the AHJ. |
+| Deliverables | Canonical pin [permit-and-approvals-report.md](architecture/permit-and-approvals-report.md); project-document-package additional-document note; UAT reference case (Mike Pratt Coach House, 2562 Church Street, North Gower, Ontario); indexes and status-doc cross-refs. |
+| Validation | Docs-only; `git diff --check`. No `app/` / `tests/` / `migrations/`. No Feature Gate. No ADR. Tests not required this pass. Last recorded full suite **338 passed**. |
+| Next | **FG-014 catalogue-link flash repair + re-UAT** (unchanged). Do not implement Permit Intelligence, legal-library, live regulatory lookup, schema, or a Permit Feature Gate in this record. |
+
 ### 2026-08-30 — FG-014 live-migrated; office UAT closure blocked
 
 | Field | Content |

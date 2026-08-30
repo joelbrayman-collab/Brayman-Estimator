@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-08-25 |
+| Updated | 2026-08-30 |
 | Implementation | Template registers and approval workflow **not implemented** |
 
 ## Purpose
@@ -46,6 +46,23 @@ Warranty language is **governed content**.
 
 **Register status:** No production warranty templates registered in repository as of 2026-08-25.
 
+## Not this pin — Permit & Approvals Report
+
+**Status:** **FUTURE / NOT IMPLEMENTED.** Canonical record: [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md).
+
+This Legal Content Gate governs **Ontario construction contract and warranty templates**. It does **not** own municipal/provincial/state zoning, permit, servicing, or AHJ requirement sources.
+
+The Permit & Approvals Report pin does **not** authorize:
+
+- jurisdictional legal-library implementation
+- live regulatory AI
+- in-product web lookup
+- automatic permit approval conclusions
+- municipal submissions
+- schema, migration, ADR, or a Feature Gate
+
+Do not treat ChatGPT or other tool research as an authoritative permit determination. Preliminary research on the Mike Pratt Coach House reference case is **not** governed legal content.
+
 ## Contract and warranty progression states
 
 Shared lifecycle states (see [project-document-package.md](../architecture/project-document-package.md)):
@@ -64,5 +81,6 @@ Generation alone does not mean final or sent.
 ## Related
 
 - [architecture/project-document-package.md](../architecture/project-document-package.md)
+- [architecture/permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) — **FUTURE / NOT IMPLEMENTED**; not this Legal Content Gate
 - [platform-governance.md](../platform-governance.md)
 - [platform-constitution.md](../platform-constitution.md) — Articles 5, 8, 9

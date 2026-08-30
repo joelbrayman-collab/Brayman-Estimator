@@ -155,7 +155,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
 - **BUILD / MONITOR / LEARN** — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md); BUILD boundary [ADR-020](adr/ADR-020-build-module-boundary.md) (**Accepted**, not implemented); MONITOR baseline [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) (**Accepted**, not implemented; Project Gross Margin)
 - **Field / shared API** — [ADR-022](adr/ADR-022-field-client-and-shared-api.md) (**Accepted** direction; not implemented)
-- **Project document package** — outputs **1–2** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. Outputs **3–4** (QuickBooks export, Ontario contract + warranty) remain **Future** — [architecture/project-document-package.md](architecture/project-document-package.md)
+- **Project document package** — outputs **1–2** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. Outputs **3–4** (QuickBooks export, Ontario contract + warranty) remain **Future** — [architecture/project-document-package.md](architecture/project-document-package.md). **Permit & Approvals Report** is an additional governed project document, **FUTURE / NOT IMPLEMENTED** — [architecture/permit-and-approvals-report.md](architecture/permit-and-approvals-report.md) (advisory preflight; not a fifth estimate output; not Permit Intelligence / legal-library / live regulatory lookup)
 - Scheduling, Job Costing, Invoicing
 - QuickBooks / accounting integration — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - Historical estimating intelligence (LEARN; [ADR-024](adr/ADR-024-learn-recommendation-boundary.md))
@@ -169,3 +169,4 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 - CAD ingestion (Phase G; PDF-first per ADR-009)
 - Estimate mapping from approved take-off packages (Phase D; not FG-010). Material Catalogue identity **precedes** Phase D implementation.
 - Material Catalogue implementation (lumber/sheets identity + CostItem link) — [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED** (catalogue-link flash repair remains)
+- Permit & Approvals Report / Permit Intelligence / jurisdictional legal-library / live regulatory lookup — [permit-and-approvals-report.md](architecture/permit-and-approvals-report.md) **FUTURE / NOT IMPLEMENTED**

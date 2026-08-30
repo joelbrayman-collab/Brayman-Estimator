@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FUTURE pin: Project Permit & Approvals Report
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `3e671f20a561b4c70bc837486f59f93a150f7fee` |
+| Objective | Architecture requirement pin only. Record a governed advisory PROJECT PERMIT & APPROVALS REPORT as FUTURE / NOT IMPLEMENTED. Do not interrupt FG-014 live-migration/UAT. |
+| Business decision | CalibAi must eventually generate an early-lifecycle permit/zoning/servicing preflight from address/jurisdiction + site/property + project type + plans/site plan + current governing municipal/provincial/state requirements, so issues can affect feasibility, scope, pricing, and contracting. The report is advisory. It does not replace the AHJ, building official, planner, surveyor, engineer, septic authority, conservation authority, attorney, or other regulated professionals. FINAL AUTHORITY remains the governing AHJ. |
+| Architectural decision | Additional governed project document (not estimate outputs 1–4). Retain with project documents; tie to project, address/jurisdiction, plan version, site-plan version, governing-rule source/version/effective date, generation date, evidence/provenance. Later plan or by-law changes must not silently rewrite an earlier report. Freshness: CURRENT RULE LOOKUP → CITED / VERSIONED PERMIT ANALYSIS → PROJECT REPORT SNAPSHOT → IMMUTABLE HISTORY. Re-check when plans, site plan, scope, address/jurisdiction, or governing requirements change. Status vocabulary (PASS / VERIFY / POTENTIAL NON-CONFORMANCE / ADDITIONAL APPROVAL LIKELY / MISSING INFORMATION / NOT APPLICABLE) is conceptual only — not product enums. Mike Pratt Coach House at 2562 Church Street, North Gower, Ontario is a future architecture/UAT reference; preliminary ChatGPT research is not an authoritative permit determination. Separate repository-first reconnaissance required before implementation. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | ARCHITECTURE REQUIREMENT PIN ONLY. Record Permit & Approvals Report as FUTURE / NOT IMPLEMENTED. Do not authorize Permit Intelligence, legal-library, live regulatory AI, web lookup, automatic approval conclusions, municipal submissions, schema, migration, ADR, or a Feature Gate. Continue FG-014 unchanged. |
+| Files expected to change | `docs/` architecture pin + indexes + status/handoff/log/milestones + UAT reference + legal-content distinction. |
+| Files prohibited from changing | `app/` · `tests/` · `migrations/` · FG-014 Feature Gate status · any ADR · new Feature Gate |
+| Implementation result | Canonical pin created. FG-014 status unchanged (**LIVE-MIGRATED / UAT DEFECT — CLOSURE BLOCKED**). Next coded work remains catalogue-link flash repair + re-UAT. |
+| Tests | Docs-only; `git diff --check`. Full suite not re-run this pass. Last recorded full suite **338 passed** (FG-014 live-migrate/UAT). |
+| Project-state-report update | Yes — future pin noted; next approved remains FG-014 defect repair. |
+| Milestone entry update | Yes — architecture record (non-milestone). |
+| Constitutional issue raised | None. Pin does not invent municipal law. |
+| Unresolved issues | FG-014 catalogue-link flash defect unrepaired. Permit capability requires later reconnaissance before any Feature Gate. |
+| Next approved step | **FG-014 catalogue-link flash repair + re-UAT**. |
+| Next approved prompt | FG-014 UAT defect repair (`link_cost_item` exception order). Do not implement Permit Intelligence. |
+| Commit hash | (pending docs commit) |
+
 ### 2026-08-30 — FG-014 live migration applied; office UAT closure blocked
 
 | Field | Content |

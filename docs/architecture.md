@@ -116,6 +116,7 @@ Client ──< Project ──< Estimate ──< EstimateVersion ──< Sections
 - Change Order detail template notes future audit trail UI (`app/templates/project_controls/change_orders/detail.html`).
 - Hard-coded `SECRET_KEY` in `create_app` (development default) — production secret handling is an open operational concern.
 - Flask-Login is in `requirements.txt` and **unused** in `app/` as of CAR-001 (no User model, no LoginManager). Multi-user security is **not implemented**.
+- Proposal create/recalc can restack markup/overhead/profit independently of `EstimatePricingSnapshot`; customer PDF can print Overhead/Profit rows; Estimate Totals header can present legacy stack labels when a snapshot governs — [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**.
 - Proposal “Accepted” status exists; full acceptance → project budget snapshot workflow is **not** documented as complete product (see Intended).
 - CRM is effectively Clients + Projects, not a full CRM suite.
 
@@ -126,6 +127,7 @@ Client ──< Project ──< Estimate ──< EstimateVersion ──< Sections
 Aligns with [platform-vision.md](platform-vision.md), [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md), and [architecture-principles.md](architecture-principles.md):
 
 - `Project` remains the CalibAi lifecycle hub ([ADR-019](adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted**). `/projects/<id>` is the Project Hub UX ([FG-011](feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**): read/link lifecycle surface owned by Projects; no new module, entity, or schema.
+- Internal Detailed Cost Breakdown + customer Proposal consistency ([FG-012](feature-gates/FG-012-estimate-output-consistency.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**): existing `EstimateVersion` / pricing snapshot is the source; existing Proposal is the customer-facing estimate; no new document module.
 - Explicit module ownership documents (CRM, Estimating, Proposals, Projects, Plan Intelligence, proposed BUILD, Supplier Catalogue, Project Controls expansions)
 - Immutable accepted-proposal snapshots feeding project creation (Rule 3–4)
 - Auditable financially significant actions (Rule 6)
@@ -150,7 +152,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
 - **BUILD / MONITOR / LEARN** — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md); BUILD boundary [ADR-020](adr/ADR-020-build-module-boundary.md) (**Accepted**, not implemented)
 - **Field / shared API** — [ADR-022](adr/ADR-022-field-client-and-shared-api.md) (**Accepted** direction; not implemented)
-- **Project document package** (internal breakdown, customer estimate, QuickBooks export, Ontario contract + warranty) — [architecture/project-document-package.md](architecture/project-document-package.md)
+- **Project document package** — outputs **1–2** governed by [FG-012](feature-gates/FG-012-estimate-output-consistency.md) (approved, not started). Outputs **3–4** (QuickBooks export, Ontario contract + warranty) remain **Future** — [architecture/project-document-package.md](architecture/project-document-package.md)
 - Scheduling, Job Costing, Invoicing
 - QuickBooks / accounting integration — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - Historical estimating intelligence (LEARN; [ADR-024](adr/ADR-024-learn-recommendation-boundary.md))

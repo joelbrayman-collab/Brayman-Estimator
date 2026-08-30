@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-012 Estimate-Output Consistency governance approval
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `2733e2f3b68b7320f08f093875e272532cd78885` (start) |
+| Objective | Memorialize Joel-approved FG-012 Internal Detailed Cost Breakdown + Customer Estimate Consistency. Documentation only. Do not implement. |
+| Business decision | Estimating owns the internal breakdown. Existing Proposal remains the customer-facing estimate. Outputs 1 and 2 only. Direct Cost = Σ `extended_cost`. Labour snapshots not in selling-price basis. No TBD/PLACEHOLDER schema. Estimate Totals presentation and customer-PDF Overhead/Profit leak in FG-012 implementation scope. |
+| Architectural decision | No new estimate entity, document module, or ADR. Consume FG-009 snapshots read-only. Preserve TRUE_GROSS_MARGIN / COST_PLUS_MARKUP / COST_PLUS_MARKUP_STACK / legacy no-snapshot. Source-contract principle for later outputs 3–4 only. Schema NO. Migration NO. |
+| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | FG-012 GOVERNANCE APPROVAL. Docs only. APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED. Do not implement FG-012. |
+| Files expected to change | Governed docs listed in the prompt |
+| Files prohibited from changing | `app/**`, `migrations/**`, tests, configuration |
+| Implementation result | FG-012 created. Indexes and current-state/handoff/roadmap/module/package docs updated. No product code. |
+| Tests / validation | `git diff --check`. Product tests not re-run (docs-only). Prior full suite **264 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | No (no new M0xx) |
+| Constitutional issue raised | None |
+| Unresolved issues | Implementation not started. Phase D unauthorized. ADR-010 Proposed. Office auth not implemented. TBD/PLACEHOLDER durable state deferred. |
+| Next approved step | Separate bounded FG-012 **implementation** Cursor prompt. Do not implement in this pass. |
+| Next approved prompt | FG-012 implementation (not this commit) |
+| Commit hash | (this docs commit) |
+
 ### 2026-08-30 — FG-011 Project Hub UX implementation
 
 | Field | Content |

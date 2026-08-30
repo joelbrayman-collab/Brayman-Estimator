@@ -3,13 +3,15 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current** (engine + snapshot + PDF; Accepted immutability **enforced**) |
-| Updated | 2026-07-25 |
+| Updated | 2026-08-30 |
 | Code | `app/models/proposal.py`; `app/routes/proposals.py`, `proposal_templates.py`; `app/services/proposals.py`, `proposal_pdf.py` |
-| Feature Gate | [FG-001](../feature-gates/FG-001-proposals-module.md) |
+| Feature Gate | [FG-001](../feature-gates/FG-001-proposals-module.md) (module baseline) · [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** (customer-output consistency) |
 
 ## Purpose
 
 Produce client-facing proposals from estimate versions using templates, preserving commercial snapshots independent of later estimate edits.
+
+Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md)): the existing Proposal preview/PDF **is** the customer-facing estimate. Do not create a separate Customer Estimate entity or document family. FG-012 (not started) must make Proposal commercial totals consistent with the source `EstimateVersion` / `EstimatePricingSnapshot` and must not leak internal Overhead/Profit on the customer PDF.
 
 ## Responsibilities
 
@@ -44,10 +46,11 @@ Produce client-facing proposals from estimate versions using templates, preservi
 
 **Not complete:** formal acceptance workflow (void/supersede/revision); project/budget creation from acceptance; e-signature; rich add/remove/reorder of proposal sections; optional CRM FKs.
 
-**Known debt:** model `ondelete="SET NULL"` on proposal→estimate FKs not mirrored in create migrations; waste baked into proposal `unit_cost`.
+**Known debt:** model `ondelete="SET NULL"` on proposal→estimate FKs not mirrored in create migrations; waste baked into proposal `unit_cost`. Proposal recalc currently restacks markup/overhead/profit and can diverge from an `EstimatePricingSnapshot` customer total; customer PDF can print Overhead/Profit rows that preview does not — **in scope for FG-012** (implementation not started).
 
 ## Planned capabilities
 
+- Customer totals consistent with source pricing snapshot / version — [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**
 - Formal acceptance workflow — after immutability (ADR-004)
 - Project creation from acceptance snapshot — later; Projects boundary (Rule 4)
 - Electronic signature — **Future**

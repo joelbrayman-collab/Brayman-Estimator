@@ -3,8 +3,8 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Intended / governing product architecture** (not fully implemented) |
-| Updated | 2026-08-25 |
-| Implementation | **None authorized** in August 2026 governance reconciliation |
+| Updated | 2026-08-30 |
+| Implementation | **FG-012** authorizes outputs **1 and 2 only** (**APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**). Outputs 3 and 4 remain Future. August 2026 reconciliation recorded the four-output package; it did not implement it. |
 
 ## Purpose
 
@@ -21,7 +21,9 @@ The Brayman Estimator must maintain **one authoritative project/estimate record*
 | Versioning | Approved commercial states use explicit versioning/supersession — no silent overwrite ([Constitution Article 5](../platform-constitution.md)) |
 | Placeholders | TBD / ALLOWANCE / PLACEHOLDER remain explicit until resolved ([pricing policy](../pricing-policy.md)) |
 
-**Current implementation note:** Estimate versions, proposal snapshots, and PDF output exist today. The full four-output package, Ontario contract generation, warranty attachment, and QuickBooks export pipeline are **Future / not implemented**.
+**Current implementation note:** Estimate versions, proposal snapshots, and PDF output exist today. [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) (**APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**) governs consistency of outputs **1 and 2** from the existing `Estimate` / `EstimateVersion` / lines / `EstimatePricingSnapshot` (when present). The existing **Proposal** preview/PDF **is** the customer-facing estimate. Ontario contract generation, warranty attachment, and QuickBooks export remain **Future / not implemented**. Do not build a four-output renderer under FG-012.
+
+**Source-contract principle:** every governed output must identify and derive from the authoritative `EstimateVersion` and, when present, its `EstimatePricingSnapshot`. Historical customer documents must not silently float with later estimate edits.
 
 ## Core document package (four outputs)
 
@@ -31,38 +33,41 @@ Every governed project workflow must support these four outputs:
 
 **Audience:** Brayman internal only — **must not** be customer-facing.
 
-**Contains (when implemented):**
+**FG-012 (approved, not started):** Estimating-owned office view/document of one `EstimateVersion` from stored facts. Direct Cost = Σ line `extended_cost`. Labour Engine snapshots, if shown, are labeled **not included in selling-price basis**. Do not invent missing supplier/subcontract prices. Machine-enforced TBD/PLACEHOLDER state is **not** in FG-012.
 
-- Direct materials
-- Supplier quotations
-- Subcontract / package direct costs
-- Labour hours by task
-- Direct labour cost
-- Allowances / placeholders
-- Waste / cleanup / disposal
-- Gross-margin calculations
-- Internal reconciliation
-- Internal estimating notes
+**Contains (when implemented under FG-012, from stored facts only):**
+
+- Estimate / version / snapshot identity
+- Sections and lines (quantity, unit, unit cost, waste, extended/direct cost)
+- Allowance identification
+- CostItem category where available
+- Direct Cost reconciliation
+- Authoritative pricing method and stored GM/markup treatment
+- Pre-tax selling price, tax, customer total
+- Optional labour snapshot evidence (separate; not in basis)
+
+Full four-output “catalogue” items such as supplier quotations remain **Future** unless already stored.
 
 ### 2. Customer-Facing Estimate
 
 **Audience:** Customer.
 
-**Contains (when implemented):**
+**Joel / FG-012:** the existing Proposal snapshot + preview + PDF **is** this output. Do not create a separate Customer Estimate entity.
 
-- Detailed scope
-- Customer-facing line items
-- Price
-- Appropriate allowances
-- Exclusions
-- Tax treatment
-- Commercial notes
+**Contains (when FG-012 is implemented):**
+
+- Detailed scope / customer-facing line items (selling prices)
+- Price reconciling to the source version/snapshot customer total
+- Appropriate allowances (labeled)
+- Exclusions / commercial notes as already snapshotted
+- Tax treatment from stored snapshot/version (no new tax engine)
 
 **Must NOT expose** (unless explicitly authorized):
 
-- Supplier costs
-- Internal labour cost
-- Gross margin
+- Supplier costs / unit cost / extended (direct) cost
+- Internal labour cost / Labour Engine snapshot cost
+- Gross margin / internal markup
+- Internal Overhead / Profit rows on the customer PDF
 
 ### 3. QuickBooks Estimate Output
 
@@ -118,13 +123,14 @@ When a governed field changes in the authoritative record (scope, price, allowan
 | Concern | Owning module / doc |
 |---------|---------------------|
 | Authoritative estimate structure | [Estimating](../modules/estimating.md) |
-| Customer-facing estimate presentation | Proposals (today: proposal snapshot/PDF; future: governed customer estimate output) |
-| Internal detailed breakdown | Estimating / future reporting boundary — Feature Gate required |
+| Customer-facing estimate presentation | **Proposals** — existing proposal snapshot/PDF **is** the customer-facing estimate ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md)) |
+| Internal detailed breakdown | **Estimating** — [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED** |
 | QuickBooks export | Future integration boundary — [quickbooks-integration.md](quickbooks-integration.md) |
 | Ontario contract + warranty package | Governed templates — [legal-content-and-templates.md](../governance/legal-content-and-templates.md) |
 
 ## Related
 
+- [feature-gates/FG-012-estimate-output-consistency.md](../feature-gates/FG-012-estimate-output-consistency.md)
 - [pricing-policy.md](../pricing-policy.md)
 - [quickbooks-integration.md](quickbooks-integration.md)
 - [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md)

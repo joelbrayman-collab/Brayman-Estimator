@@ -11,11 +11,11 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | FG-011 implementation follows governance `225731a2208e16fea8558a048e8c34f0f4879549`. Implementation pins: FG-008 `0569f25e7ff496ab637d52437d48cf815522afa1`; FG-009 `8e11179fb5abb42a68805fe011e84c15e866ea04`; FG-010 `9665295ace673a46a8c645ed0598e5e91d41931c`. Live DB current/head `b4c5d6e7f8a9`. |
+| HEAD / `origin/main` | Last product commit FG-011 `2733e2f3b68b7320f08f093875e272532cd78885`. FG-012 is **docs-only governance** until implementation. Implementation pins: FG-008 `0569f25e7ff496ab637d52437d48cf815522afa1`; FG-009 `8e11179fb5abb42a68805fe011e84c15e866ea04`; FG-010 `9665295ace673a46a8c645ed0598e5e91d41931c`. Live DB current/head `b4c5d6e7f8a9`. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
-| Working tree at last verified inspect | **FG-011 CLOSED / OPERATIONAL FOR UAT.** FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. M012 **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT**. |
-| Governance | FG-004–FG-011 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 CLOSED / OPERATIONAL FOR UAT**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. ADR-019 **Accepted**. Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
+| Working tree at last verified inspect | **FG-012 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED.** FG-011 **CLOSED / OPERATIONAL FOR UAT.** FG-008 / FG-009 / FG-010 remain **CLOSED / OPERATIONAL FOR UAT**. M012 **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT**. |
+| Governance | FG-004–FG-011 approved and implemented where noted; **FG-008 / FG-009 / FG-010 / FG-011 CLOSED / OPERATIONAL FOR UAT**. **FG-012 APPROVED FOR IMPLEMENTATION / IMPLEMENTATION NOT STARTED**. ADR-005/006/007/009/011/031 **Accepted**. ADR-010 **Proposed**. ADR-019 **Accepted**. Real external AI provider **not authorized**. CAR-001 adopted; ADR-028 **Accepted**; ADR-029 **Accepted**; ADR-025 **Accepted**; ADR-030 **Accepted** |
 
 ## Implemented (evidenced in code)
 
@@ -34,7 +34,8 @@
 ## Architecture / readiness only (not implemented)
 
 - Real external AI provider / OCR / CAD / multi-trade extraction / estimate mapping (Phase D later)
-- CalibAi V1 / BUILD / field / four-output package / QuickBooks API / Ontario contract
+- CalibAi V1 / BUILD / field / four-output **outputs 3–4** / QuickBooks API / Ontario contract
+- FG-012 product implementation (internal breakdown + Proposal consistency) — **authorized, not started**
 - Crew Template catalog, payroll burden, `LabourActualObservation` persistence
 
 ## Migrations
@@ -47,7 +48,8 @@
 M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **implemented, verified, committed, and pushed** on `main`.
 
 - **Current coded work:** FG-011 Project Hub UX — **CLOSED / OPERATIONAL FOR UAT.**
-- **Blocked / Not Started (product):** Phase D estimate mapping; four-output package; QuickBooks; contracts; BUILD field capture; MONITOR; LEARN; historical evidence repair; real external AI provider; office authentication.
+- **Approved, not started:** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) Estimate-output consistency (roadmap item 9) — **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. No schema. No new entity. Existing Proposal is the customer-facing estimate.
+- **Blocked / Not Started (product):** Phase D estimate mapping; four-output package outputs 3–4; QuickBooks; contracts; BUILD field capture; MONITOR; LEARN; historical evidence repair; real external AI provider; office authentication.
 
 ## August 25, 2026 governance (recorded — not implemented)
 
@@ -61,15 +63,16 @@ M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **
 
 ## Recommended next steps
 
-1. **STOP.** FG-011 is **CLOSED / OPERATIONAL FOR UAT**. Do not start Phase D or another Feature Gate from this snapshot.
+1. **FG-012** is **APPROVED FOR IMPLEMENTATION** / **IMPLEMENTATION NOT STARTED**. Next product work is a separate bounded FG-012 **implementation** Cursor prompt. Do not implement from this snapshot. Do not start Phase D.
 2. Preserve protected state (20/20 immutable source workbooks outside Git, tenant boundaries, cell provenance, immutable proposal/estimate snapshots, $65 / 15% ORG-001 policy text; optional layers remain `UNSPECIFIED`).
-3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under Project Hub, AI take-off, or Pricing Engine.
+3. Do not repair FG-006 labour quality defects (e.g. stored `hourly_rate = 0.13`) under Estimate-output consistency, Project Hub, AI take-off, or Pricing Engine.
 4. Do not enable a real external AI provider. Do not start Phase D estimate mapping. Do not start auth, BUILD/MONITOR/LEARN, QuickBooks, or contract/warranty work.
-5. Dashboard org-unscoped counts remain **out of scope** (not repaired by FG-011).
-6. Synthetic residue remains in the live development/UAT DB (FG-008 labour UAT artifacts; FG-009 `FG-009 UAT *`; FG-010 client/project/docs/runs/package). Leave labeled; do not invent cleanup. FG-009 leftover Estimate Totals header percents remain separate UI maintenance debt.
+5. Dashboard org-unscoped counts remain **out of scope**.
+6. Synthetic residue remains in the live development/UAT DB (FG-008 labour UAT artifacts; FG-009 `FG-009 UAT *`; FG-010 client/project/docs/runs/package). Leave labeled; do not invent cleanup. Estimate Totals header percents and customer-PDF Overhead/Profit leak are **in scope for FG-012 implementation** (not this docs pass).
 
 ## Related
 
+- [feature-gates/FG-012-estimate-output-consistency.md](feature-gates/FG-012-estimate-output-consistency.md)
 - [feature-gates/FG-011-project-hub-ux.md](feature-gates/FG-011-project-hub-ux.md)
 - [feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md)
 - [architecture/ai-takeoff-quantity-extraction-foundation.md](architecture/ai-takeoff-quantity-extraction-foundation.md)

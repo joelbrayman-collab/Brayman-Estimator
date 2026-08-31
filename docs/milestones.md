@@ -30,6 +30,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-08-30 — Accept ADR-041 / Approve FG-018 / implementation reconnaissance
+
+| Field | Content |
+|-------|---------|
+| ID | Docs-only Item 10 acceptance + reconnaissance |
+| Status | [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED** |
+| Branch | `main` |
+| Objective | Accept ADR-041, approve FG-018, record implementation reconnaissance. Do not implement. |
+| Deliverables | Status updates; FG-018 reconnaissance section. No `app/` / `tests/` / `migrations/`. |
+| Validation | Docs only. `git diff --check`. Tests not rerun. Alembic current/head remains `a9b0c1d2e3f4`. |
+| Next | **STOP product implementation.** Joel/ChatGPT review reconnaissance. Separate implementation prompt required. Shared API deferred. BUILD remains blocked. |
+
 ### 2026-08-30 — Draft ADR-041 and FG-018 (Item 10 office authentication)
 
 | Field | Content |

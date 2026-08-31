@@ -3,9 +3,9 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-041: Durable User, Organization Membership, Office Authentication, Session, and Historical Actor Provenance |
-| Status | **Proposed / FOR JOEL REVIEW.** Not Accepted. Does **not** authorize product implementation. |
+| Status | **Accepted** (2026-08-30; governing [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED**). Does **not** by itself authorize product code. Implementation requires a **separate** implementation prompt after this reconnaissance. |
 | Date | 2026-08-30 |
-| Related | [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **DRAFT / NOT APPROVED** · [ADR-022](ADR-022-field-client-and-shared-api.md) **Accepted** (field/API direction; no API in this ADR) · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [platform-roadmap.md](../platform-roadmap.md) item 10 · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [modules/build.md](../modules/build.md) · Constitution Articles 1, 4, 5, 6 |
+| Related | [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED** · [ADR-022](ADR-022-field-client-and-shared-api.md) **Accepted** (field/API direction; no API in this ADR) · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [platform-roadmap.md](../platform-roadmap.md) item 10 · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [modules/build.md](../modules/build.md) · Constitution Articles 1, 4, 5, 6 |
 
 ---
 
@@ -25,13 +25,13 @@ Joel/ChatGPT reviewed the Item-10 architecture reconnaissance (2026-08-30) and l
 
 [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) remains the tenant/legal-commercial root. Phase A architecture already names `UserMembership` as organization-owned. M011 implemented `Organization` **without** users. This ADR supplies the missing identity layer. It does **not** implement the Phase A phrase “with RBAC roles.”
 
-This ADR does **not** create a migration. Product implementation requires Joel acceptance of this ADR, approval of [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md), implementation reconnaissance, and a **separate** implementation prompt.
+This ADR does **not** create a migration. Product implementation still requires a **separate** implementation prompt after the FG-018 reconnaissance recorded in the Feature Gate.
 
 ---
 
 ## Decision
 
-**Proposed.** Do **not** treat this document as Accepted.
+**Accepted.** Do **not** treat acceptance as product implementation. Shared API remains deferred.
 
 ### 1. Durable User is the authenticated actor
 
@@ -186,6 +186,6 @@ This ADR; FG-018; adr/feature-gate indexes; current-state; session-handoff; proj
 
 | Role | Name | Date |
 |------|------|------|
-| Joel | | **Not accepted** |
-| ChatGPT review | Item-10 reconnaissance reviewed; this ADR drafted for Joel review | 2026-08-30 |
-| Cursor implementation note | Docs/governance only. No product code. Status remains **Proposed**. | 2026-08-30 |
+| Joel | Accepted via governed prompt | 2026-08-30 |
+| ChatGPT review | Item-10 architecture + FG-018 draft reviewed; acceptance authorized | 2026-08-30 |
+| Cursor implementation note | Docs/governance only this pass. Implementation reconnaissance recorded on FG-018. No product code. | 2026-08-30 |

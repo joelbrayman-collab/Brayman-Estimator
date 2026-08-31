@@ -118,7 +118,7 @@ Client ──< Project ──< Estimate ──< EstimateVersion ──< Sections
 - No prior `docs/` governance (this foundation addresses that).
 - Change Order detail template notes future audit trail UI (`app/templates/project_controls/change_orders/detail.html`).
 - Hard-coded `SECRET_KEY` in `create_app` (development default) — production secret handling is an open operational concern.
-- Flask-Login is in `requirements.txt` and **unused** in `app/` as of CAR-001 (no User model, no LoginManager). Multi-user security is **not implemented**.
+- Flask-Login is in `requirements.txt` and **unused** in `app/` (no User model, no LoginManager). [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED**. Multi-user security is **not implemented**.
 - Office proposal create/detail still lists Overhead/Profit amounts (zero when named-method snapshot governs). Customer preview/PDF do not. Draft proposal line edits still restack via `recalculate_proposal`.
 - Proposal “Accepted” status exists; full acceptance → project budget snapshot workflow is **not** documented as complete product (see Intended).
 - CRM is effectively Clients + Projects, not a full CRM suite.
@@ -175,5 +175,5 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 - Living supplier evidence / Winchester POC / bulk supplier onboarding (FG-014 identity is closed; ADR-008 remains Proposed)
 - Permit branding from Brand Profile; national Permit Rules expansion (FG-015/FG-016 POC is closed)
 - Change Order governed document family / client email / field UX — [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (do not create a second Change Order entity)
-- Authentication / actor identity + shared API (sequence item 10 — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Proposed**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **DRAFT / NOT APPROVED**; implementation **NOT STARTED**; shared API **deferred**)
+- Authentication / actor identity + shared API (sequence item 10 — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED**; shared API **deferred**)
 - BUILD field capture; field web (require Item 10 **implementation**); MONITOR implementation; LEARN / ML

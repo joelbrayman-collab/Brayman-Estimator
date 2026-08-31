@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — Accept ADR-041 / Approve FG-018 / implementation reconnaissance
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `4d02b402e85a538d48ce74c410f7927b1b2464a8` (starting HEAD) |
+| Objective | Accept ADR-041, approve FG-018 as IMPLEMENTATION NOT STARTED, record FG-018 implementation reconnaissance. |
+| Business decision | Office authentication is approved architecture. Product implementation is **not** started. Shared API deferred. BUILD remains blocked. |
+| Architectural decision | ADR-041 **Accepted**. FG-018 **Approved**. Recon pins `users` / `user_memberships`, pbkdf2:sha256, Flask-WTF CSRFProtect, Flask CLI bootstrap, membership fail-closed, no user_id campaign, revision `b0c1d2e3f4a5` not created. |
+| Prompt template used | Docs-only governance prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — ACCEPT ADR-041 / APPROVE FG-018 — IMPLEMENTATION RECONNAISSANCE ONLY. Do not implement. |
+| Files expected to change | Governed docs only. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; database. |
+| Implementation result | ADR accepted; FG-018 approved not implemented; reconnaissance recorded on FG-018. No product code. |
+| Tests | Not rerun. Governed baseline remains **423 passed**. `git diff --check`. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None |
+| Unresolved issues | Separate implementation prompt still required. Multi-membership selection remains fail-closed. Login throttling deferred. |
+| Next approved step | **STOP product implementation.** Joel/ChatGPT review reconnaissance then a separate implementation prompt. |
+| Next approved prompt | None for implementation until separately authorized. |
+| Commit hash | Live `HEAD`: verify `git rev-parse HEAD`. |
+
 ### 2026-08-30 — Draft ADR-041 and FG-018 (Item 10 office authentication)
 
 | Field | Content |

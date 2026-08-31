@@ -9,7 +9,7 @@
 | Date | 2026-08-28 |
 | Development Tenant | Organization 001 — Brayman Construction Inc. |
 | Related future pin | [organization-brand-profile.md](organization-brand-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**. [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md). Do not implement this document's `branding_config` JSON. |
-| Subsequent status (2026-08-30 Item 10) | [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Proposed**. [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **DRAFT / NOT APPROVED**. Durable User + UserMembership are the office-auth slice. Phase A “with RBAC roles” remains **not** FG-018 V1. Implementation **NOT STARTED**. Shared API **deferred**. |
+| Subsequent status (2026-08-30 Item 10) | [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED**. Durable User + UserMembership are the office-auth slice. Phase A “with RBAC roles” remains **not** FG-018 V1. Implementation **NOT STARTED**. Shared API **deferred**. |
 
 ---
 

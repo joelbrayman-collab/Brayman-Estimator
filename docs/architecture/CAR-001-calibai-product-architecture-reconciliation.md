@@ -29,7 +29,7 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-08-30 post-FG-017 — not authorized by CAR-001):** FG-011 through FG-017 are **CLOSED / OPERATIONAL FOR UAT**. Live Alembic current/head is **`a9b0c1d2e3f4`**. [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**. Full-suite governed baseline **423 passed**.
 
-**Subsequent status (2026-08-30 Item 10 governance — not authorized by CAR-001):** [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) is **Proposed**. [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **DRAFT / NOT APPROVED**. Office authentication **implementation NOT STARTED**. Shared API **deferred**. BUILD remains blocked until Item 10 is implemented. CAR-001 still does **not** authorize implementation. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Subsequent status (2026-08-30 Item 10 governance — not authorized by CAR-001):** [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) is **Accepted**. [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **APPROVED / IMPLEMENTATION NOT STARTED**. Office authentication **implementation NOT STARTED**. Shared API **deferred**. BUILD remains blocked until Item 10 is implemented. CAR-001 still does **not** authorize implementation. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
 ## What CAR-001 was
 

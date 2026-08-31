@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-08-30 |
+| Updated | 2026-08-31 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -29,6 +29,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 4. “Completed pending baseline commit” means deliverables exist in the working tree awaiting Joel-approved commit.
 
 ---
+
+### 2026-08-31 — FG-018 live migration + office UAT close
+
+| Field | Content |
+|-------|---------|
+| ID | FG-018 live migrate / bootstrap / UAT |
+| Status | [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** |
+| Branch | `main` |
+| Objective | Apply `b0c1d2e3f4a5` live; bootstrap first ORG-001 user; bounded authenticated office UAT. |
+| Deliverables | Live current = head `b0c1d2e3f4a5`; local-only SECRET_KEY; CLI bootstrap; office UAT port **5011**; docs close. Product code unchanged this pass. |
+| Validation | Dedicated **37 passed**. Focused **460 passed**. Full suite **460 passed**. Office UAT port **5011**. |
+| Next | **STOP.** Do not start shared API, BUILD, RBAC, or org-switcher. |
 
 ### 2026-08-31 — Implement FG-018 organization authentication (pre-live-migration)
 

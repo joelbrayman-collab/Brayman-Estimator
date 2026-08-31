@@ -40,7 +40,7 @@ Dated MONITOR **comparison snapshots** and dated **forecast snapshots** only. So
 
 - ADR-021 (this baseline) — **Accepted**
 - Verified actuals (BUILD / later actual-cost gates) before Actual Gross Margin can be computed
-- Authentication before field capture ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md); [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **IMPLEMENTED / LIVE MIGRATION PENDING**)
+- Authentication before field capture ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md); [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**)
 - Feature Gate + approved Cursor prompt before any code
 
 ## Related

@@ -1,0 +1,16 @@
+---
+description: Put copyable chat output in fenced code blocks so Cursor shows a copy control
+alwaysApply: true
+---
+
+# Copyable chat output
+
+Cursor shows a copy control on fenced code blocks, not on ordinary prose.
+
+When the reply contains anything Joel may need to copy — commands, emails, paths, HEAD SHAs, Alembic revisions, report field blocks, paste-back templates — put that content in a fenced code block.
+
+Do this even when the same facts also appear in prose.
+
+Do not leave copyable commands or report blocks in prose only.
+
+Keep secrets, passwords, and SECRET_KEY values out of chat, fenced or not.

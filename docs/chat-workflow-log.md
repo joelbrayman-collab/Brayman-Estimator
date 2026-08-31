@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-08-30 |
+| Updated | 2026-08-31 |
 
 ## Purpose
 
@@ -41,6 +41,28 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-08-31 — FG-018 live migration / bootstrap / office UAT close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-31 |
+| Branch | `main` @ `0d7af3e93a9d6c4f27eb2136f915297620be59ed` (starting HEAD) |
+| Objective | Authorized live `flask db upgrade` `a9b0c1d2e3f4` → `b0c1d2e3f4a5`; bootstrap first ORG-001 user; bounded office UAT; close FG-018 only if all criteria pass. |
+| Business decision | Office authentication is **CLOSED / OPERATIONAL FOR UAT**. Not production-security certification. Shared API / BUILD / RBAC remain out of gate. |
+| Architectural decision | Membership-derived org context; fail-closed 0/>1 memberships; no silent ORG-001 fallback; no `user_id` columns; historical actor strings untouched. |
+| Prompt template used | FG-018 live-migrate / bootstrap / office UAT prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — LIVE-MIGRATE / BOOTSTRAP / OFFICE UAT FG-018 AUTHENTICATION. Do not invent email. Password via getpass or AUTH_BOOTSTRAP_PASSWORD. Close only if all criteria pass. |
+| Files expected to change | Governed docs; local-only gitignored `.env`; live SQLite schema/users. No product-code change. |
+| Files prohibited from changing | Shared API; BUILD; RBAC; migrations history; ADR-008/010 status; committed secrets. |
+| Implementation result | Migration applied. Bootstrap succeeded (email normalized via strip().lower(); display name Joel Brayman; one active ORG-001 membership; duplicate failed closed). Office UAT **PASSED** on port **5011**. Dedicated **37 passed**. Focused **460 passed**. Full suite **460 passed**. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_auth_fg018.py` → **37 passed**; focused FG-018 list → **460 passed**; `./venv/bin/python -m pytest -q` → **460 passed** |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Shared API deferred. Browser tab could not be held for a visual walk; HTTP UAT covered the authorized routes. |
+| Next approved step | **STOP.** Do not start shared API or BUILD. |
+| Commit hash | verify `git rev-parse HEAD` after this commit |
 
 ### 2026-08-31 — Implement FG-018 organization authentication (pre-live-migration)
 

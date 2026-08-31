@@ -7,11 +7,11 @@
 | Target Milestone | **None.** FG-018 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Organization subsystem** owns `User` and `UserMembership` ([ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md); [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**). **Office / platform** owns login, logout, session, CSRF, and SECRET_KEY/config fail-closed behaviour. Existing modules consume authenticated actor identity on **new** writes within bounded implementation scope. |
 | Date | 2026-08-30 |
-| Status | **IMPLEMENTED / LIVE MIGRATION PENDING.** Product code, tests, and revision `b0c1d2e3f4a5` are in the repository. Live `flask db current` remains `a9b0c1d2e3f4`. Do **not** mark CLOSED / OPERATIONAL FOR UAT until live migration, CLI bootstrap, and office UAT succeed. |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** Live `flask db current` = repository head **`b0c1d2e3f4a5`**. Office UAT **PASSED** on port **5011**. Shared API **out of this gate**. This is **not** production-security certification. |
 | Architecture | [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** · [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** (shared API **deferred**) · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [platform-roadmap.md](../platform-roadmap.md) item 10 |
 | Related ADRs | [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** · [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
-| Prerequisites | FG-017 **CLOSED / OPERATIONAL FOR UAT**. Item-10 architecture reconnaissance reviewed. **ADR-041 Accepted.** Gate **Approved** and **implemented** in repository. Live migration **pending**. |
-| Approved baseline | Live Alembic current remains **`a9b0c1d2e3f4`**. Repository Alembic head **`b0c1d2e3f4a5`**. Full suite **460 passed**. Live migration **not run**. |
+| Prerequisites | FG-017 **CLOSED / OPERATIONAL FOR UAT**. Item-10 architecture reconnaissance reviewed. **ADR-041 Accepted.** Gate **Approved**, **implemented**, live-migrated, bootstrapped, and office-UAT closed. |
+| Approved baseline | Live Alembic current = head **`b0c1d2e3f4a5`**. Full suite **460 passed**. Dedicated FG-018 **37 passed**. |
 
 ---
 
@@ -19,14 +19,14 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / LIVE MIGRATION PENDING** |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT** |
 | ADR-041 | **Accepted** |
-| Implementation | **IMPLEMENTED** in repository. Live database **not** upgraded. |
-| Schema / Alembic | Revision **`b0c1d2e3f4a5`** created (schema-only). Live current **`a9b0c1d2e3f4`**. Repository head **`b0c1d2e3f4a5`**. Difference is expected until live `flask db upgrade`. |
+| Implementation | **IMPLEMENTED** and **live-migrated**. First ORG-001 user bootstrapped via CLI. Office UAT **PASSED** on port **5011**. |
+| Schema / Alembic | Revision **`b0c1d2e3f4a5`** applied live (`a9b0c1d2e3f4` → `b0c1d2e3f4a5`). Live current = head **`b0c1d2e3f4a5`**. One graph head. |
 | Shared API | **OUT OF THIS GATE** |
-| BUILD / Field Web | **BLOCKED** until FG-018 is live-migrated, bootstrapped, UAT-closed, and a later shared-API gate is separately governed if ADR-022 still requires it before field |
+| BUILD / Field Web | **BLOCKED** until a later shared-API gate is separately governed if ADR-022 still requires it before field |
 
-Do **not** mark this gate **CLOSED / OPERATIONAL FOR UAT** until live migration, CLI bootstrap, and office UAT succeed.
+This gate is **CLOSED / OPERATIONAL FOR UAT**. It is **not** production-security certification, SaaS readiness, or BUILD readiness beyond the authenticated office prerequisite.
 
 ### Implementation evidence (2026-08-31)
 
@@ -38,13 +38,32 @@ Do **not** mark this gate **CLOSED / OPERATIONAL FOR UAT** until live migration,
 | Dedicated tests | `tests/test_auth_fg018.py` **37 passed** |
 | Focused regression | Listed FG-018 suites + dedicated file **460 passed** |
 | Full suite | `./venv/bin/python -m pytest -q` **460 passed** (pre-FG-018 baseline 423) |
-| Live Alembic current | **`a9b0c1d2e3f4`** — **not upgraded** |
+| Live Alembic current | **`b0c1d2e3f4a5`** (applied 2026-08-31) |
 | Repository Alembic head | **`b0c1d2e3f4a5`** |
-| Remaining live action | Apply `b0c1d2e3f4a5`; `flask auth bootstrap-org-001-user`; set non-Git `SECRET_KEY`; verify login; office UAT. Then a separate close prompt. |
+| Remaining live action | **None for this gate.** Shared API remains a later gate. |
 
-A commit of this implementation does **not** constitute live migration or UAT close.
+### Live migration / bootstrap / office UAT evidence (2026-08-31)
 
-Success is **OFFICE AUTHENTICATION + ACTOR IDENTITY + MEMBERSHIP V1** in code, not a shared API, not BUILD, and not RBAC. Live operation still requires the migration/bootstrap sequence.
+| Item | Result |
+|------|--------|
+| Live upgrade | `a9b0c1d2e3f4` → `b0c1d2e3f4a5` (`add users and user memberships fg018`) |
+| Graph heads | One (`b0c1d2e3f4a5`) |
+| Local-only `SECRET_KEY` | Gitignored `.env`; not `development-secret-key`; value not recorded in docs |
+| Bootstrap | `flask auth bootstrap-org-001-user --display-name "Joel Brayman"`; email stored after governed `strip().lower()`; password via `AUTH_BOOTSTRAP_PASSWORD`; hash `pbkdf2:sha256`; plaintext absent; one active ORG-001 membership; duplicate bootstrap failed closed |
+| Office UAT port | **5011** (CSRF enabled; debug off) |
+| Login / logout | Unauthenticated `/` → `/login`; correct credentials → dashboard; wrong password generic failure; `GET /logout` 405; `POST /logout` clears session |
+| Fail-closed membership | Inactive login generic failure; zero-membership dashboard 403; multi-membership dashboard 403; disposable UAT users only |
+| Org context | Authenticated ORG-001 shell/lists scoped to ORG-001; no org-switcher; `ORG-FG014-UAT` project 4 / `EST-FG017-UAT-ISO` / `PROP-FG017-UAT-ISO` absent from ORG-001 shell; foreign-only member sees isolation estimate and cannot open ORG-001 project 3 |
+| Route / file protection | Representative families 200 when authenticated; `/settings/` authenticated 302 to Brand Profile (existing alias); unauthenticated downloads 302 to login; authenticated downloads 200; static CSS public |
+| CSRF | Login POST without token 400; form POST without token 400; valid tokens succeed; JSON calibration without `X-CSRFToken` 400; with header CSRF accepted |
+| SECRET_KEY | Production-like missing/dev-secret fail-closed; TESTING fallback allowed; `FLASK_DEBUG=1` may use development secret |
+| Actor provenance | New labeled writes snapshot `Joel Brayman` (labour `UAT-FG018-001`, pricing `UAT-FG018-ACTOR`, project commercial/permit, permit analysis, apply-org-pricing snapshot, historical review decision, take-off run). Brand Profile CURRENT was not rewritten; existing `created_by` remains `Joel Brayman`. |
+| Historical integrity | `labour_tasks.UAT-FG008-001` and `historical_upload_attempts.id=1` actor strings unchanged. No `user_id` columns added. |
+| Dedicated / focused / full | `tests/test_auth_fg018.py` **37 passed**; focused FG-018 list **460 passed**; `./venv/bin/python -m pytest -q` **460 passed** |
+
+A commit of the earlier implementation did **not** constitute live migration. This close records the authorized live-migrate / bootstrap / UAT pass.
+
+Success is **OFFICE AUTHENTICATION + ACTOR IDENTITY + MEMBERSHIP V1** operational for UAT, not a shared API, not BUILD, and not RBAC.
 
 ---
 
@@ -60,7 +79,7 @@ USER (email + hashed password + display name + active)
 → NEW GOVERNED WRITES SNAPSHOT ACTOR IDENTITY
 ```
 
-Office success (after live migration + CLI bootstrap + UAT close): a seeded ORG-001 office user can log in; unauthenticated office access fails closed; Organization context comes from membership; historical actor strings are unchanged. **This pass stops at IMPLEMENTED / LIVE MIGRATION PENDING.**
+Office success (after live migration + CLI bootstrap + UAT close): a seeded ORG-001 office user can log in; unauthenticated office access fails closed; Organization context comes from membership; historical actor strings are unchanged. **This pass is CLOSED / OPERATIONAL FOR UAT.**
 
 Success is **OFFICE AUTHENTICATION + ACTOR IDENTITY + MEMBERSHIP V1**, not a shared API, not BUILD, and not RBAC.
 
@@ -525,4 +544,4 @@ FG-018 does **not** implement `/api/`, `/api/v1/me`, tokens, field endpoints, or
 
 ## Documentation consistency note
 
-Roadmap item 10 office-auth is **IMPLEMENTED / LIVE MIGRATION PENDING**. Shared API remains **deferred**. BUILD remains **blocked** until FG-018 is live-migrated, bootstrapped, and closed. Do **not** mark this gate CLOSED until that live sequence succeeds.
+Roadmap item 10 office-auth is **CLOSED / OPERATIONAL FOR UAT**. Shared API remains **deferred**. BUILD remains **blocked** until a later shared-API gate is separately governed if ADR-022 still requires it.

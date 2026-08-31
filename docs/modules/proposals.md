@@ -5,7 +5,7 @@
 | Status | **Current** (engine + snapshot + PDF; Accepted immutability **enforced**) |
 | Updated | 2026-08-30 |
 | Code | `app/models/proposal.py`; `app/routes/proposals.py`, `proposal_templates.py`; `app/services/proposals.py`, `proposal_pdf.py` |
-| Feature Gate | [FG-001](../feature-gates/FG-001-proposals-module.md) (module baseline) · [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (customer-output consistency) · [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **IMPLEMENTED / LIVE MIGRATION PENDING** (Brand Profile consumer; live migrate pending) |
+| Feature Gate | [FG-001](../feature-gates/FG-001-proposals-module.md) (module baseline) · [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (customer-output consistency) · [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **CLOSED / OPERATIONAL FOR UAT** (Brand Profile consumer; live current=head `a9b0c1d2e3f4`) |
 
 ## Purpose
 
@@ -40,11 +40,11 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 - Project budget ledger (Projects / future Job Costing)
 - Electronic signature providers (Future)
 - Inventing CRM Company/User entities without Feature Gate
-- Owning the Organization Brand Profile ([ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [organization-brand-profile.md](../architecture/organization-brand-profile.md)). Per-template `logo_path` is **not** the governed FG-017 render source. [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) is **IMPLEMENTED / LIVE MIGRATION PENDING**.
+- Owning the Organization Brand Profile ([ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [organization-brand-profile.md](../architecture/organization-brand-profile.md)). Per-template `logo_path` is **not** the governed FG-017 render source. [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**.
 
 ## Current implementation (accurate as of Milestone 002 review)
 
-**Complete:** templates; create-from-estimate-version; header + section/line snapshots; metadata/line edit + recalculation; status enum including `Accepted`; **service-layer immutability when `Accepted`** (`ensure_proposal_mutable`); preview; PDF; snapshot independence tests; **FG-017 Proposal brand snapshot** (freeze at Issued / Accepted-without-Issued; sticky; live migrate pending).
+**Complete:** templates; create-from-estimate-version; header + section/line snapshots; metadata/line edit + recalculation; status enum including `Accepted`; **service-layer immutability when `Accepted`** (`ensure_proposal_mutable`); preview; PDF; snapshot independence tests; **FG-017 Proposal brand snapshot** (freeze at Issued / Accepted-without-Issued; sticky; live-migrated / office UAT on port **5010**).
 
 **Not complete:** formal acceptance workflow (void/supersede/revision); project/budget creation from acceptance; e-signature; rich add/remove/reorder of proposal sections; optional CRM FKs.
 
@@ -57,7 +57,7 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 - Project creation from acceptance snapshot — later; Projects boundary (Rule 4)
 - Electronic signature — **Future**
 - Optional CRM FKs — deferred (ADR-003)
-- Organization Brand Profile as document branding source — [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **IMPLEMENTED / LIVE MIGRATION PENDING**. Pin: [organization-brand-profile.md](../architecture/organization-brand-profile.md).
+- Organization Brand Profile as document branding source — [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Pin: [organization-brand-profile.md](../architecture/organization-brand-profile.md).
 
 ## Dependencies
 

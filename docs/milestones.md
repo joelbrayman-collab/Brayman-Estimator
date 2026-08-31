@@ -30,7 +30,17 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
-## Architecture records (non-milestone)
+### 2026-08-30 — FG-017 live migration + office UAT close
+
+| Field | Content |
+|-------|---------|
+| ID | FG-017 live migrate / UAT |
+| Status | [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted** |
+| Branch | `main` |
+| Objective | Apply `a9b0c1d2e3f4` live; ensure Brand Profiles; backfill Issued/Accepted snapshots; bounded office UAT. |
+| Deliverables | Live current = head `a9b0c1d2e3f4`; ORG-001 logo custody; isolation org without Brayman logo; UAT proposals 2–4; docs close. Product code unchanged. |
+| Validation | Dedicated **22 passed**. Focused **97 passed**. Full suite **423 passed**. Office UAT port **5010**. |
+| Next | **STOP.** Do not start the next Feature Gate. |
 
 ### 2026-08-30 — Implement FG-017 Organization Brand Profile V1 (pre-live-migration)
 

@@ -133,7 +133,7 @@ Do **not** force Change Order into a numbered “Document #7”. Do **not** crea
 
 Organization branding for all generated documents (core and transaction families) is pinned on [organization-brand-profile.md](organization-brand-profile.md). Do not create independent logo/header settings per module.
 
-These pins do **not** authorize Brand Profile live migration by themselves. [ADR-040](../adr/ADR-040-organization-brand-profile.md) is **Accepted**. [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) is **IMPLEMENTED / LIVE MIGRATION PENDING**. They do **not** authorize Change Order PDF rewrite or email. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) authorizes a **neutral CalibAi** Permit Report layout without Brand Profile; do **not** add a second Permit-logo system. They do **not** reopen FG-012, FG-014, or FG-015.
+These pins do **not** authorize Change Order PDF rewrite or email. [ADR-040](../adr/ADR-040-organization-brand-profile.md) is **Accepted**. [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) authorizes a **neutral CalibAi** Permit Report layout without Brand Profile; do **not** add a second Permit-logo system. They do **not** reopen FG-012, FG-014, or FG-015.
 
 ## Input change propagation
 
@@ -153,7 +153,7 @@ When a governed field changes in the authoritative record (scope, price, allowan
 | QuickBooks export | Future integration boundary — [quickbooks-integration.md](quickbooks-integration.md) |
 | Ontario contract + warranty package | Governed templates — [legal-content-and-templates.md](../governance/legal-content-and-templates.md) |
 | Permit & Approvals Report | **CLOSED / OPERATIONAL FOR UAT** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md); [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) — [permit-and-approvals-report.md](permit-and-approvals-report.md). Bounded Ontario / Ottawa coach-house POC. Not a national library. |
-| Organization Brand Profile | **IMPLEMENTED / LIVE MIGRATION PENDING** — [organization-brand-profile.md](organization-brand-profile.md); [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) (Proposal consumer live; CO/Permit consumers future) |
+| Organization Brand Profile | **CLOSED / OPERATIONAL FOR UAT** — [organization-brand-profile.md](organization-brand-profile.md); [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) (Proposal consumer live; CO/Permit consumers future) |
 | Change Order document family | **FUTURE / NOT IMPLEMENTED** pin — [change-order-document-family.md](change-order-document-family.md). Existing Change Order record remains authoritative. Project Controls / Projects. |
 
 ## Related
@@ -164,6 +164,6 @@ When a governed field changes in the authoritative record (scope, price, allowan
 - [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md)
 - [testing/uat-reference-cases.md](../testing/uat-reference-cases.md)
 - [permit-and-approvals-report.md](permit-and-approvals-report.md) — **FUTURE / NOT IMPLEMENTED** additional project document (advisory preflight; not outputs 1–4)
-- [organization-brand-profile.md](organization-brand-profile.md) — **IMPLEMENTED / LIVE MIGRATION PENDING** Organization Brand Profile
+- [organization-brand-profile.md](organization-brand-profile.md) — **CLOSED / OPERATIONAL FOR UAT** Organization Brand Profile
 - [change-order-document-family.md](change-order-document-family.md) — **FUTURE / NOT IMPLEMENTED** Change Order transaction-document family (not a numbered core output)
 - [platform-vision.md](../platform-vision.md)

@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — FG-017 live migration + office UAT close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `00ca492e28118d75757e9a9c82384978b5decd92` (starting HEAD) |
+| Objective | Apply FG-017 live migrate; ensure Brand Profiles; backfill snapshots; bounded office UAT; close only if all criteria pass. |
+| Business decision | CURRENT-on-save restore after UAT phone tests. Freeze at Issued; Accepted-without-Issued freezes at Accepted. Isolation fail-closed. Office UAT only — not broader production validation. |
+| Architectural decision | Apply existing `a9b0c1d2e3f4` only. Do not create another migration. Do not change product code unless a defect is found (none found). |
+| Prompt template used | Live-migrate + UAT prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — LIVE-MIGRATE AND UAT FG-017 ORGANIZATION BRAND PROFILE. Apply f8a9b0c1d2e3 → a9b0c1d2e3f4. Ensure + backfill. Office UAT. Tests. Docs. Close only if all evidence passes. |
+| Files expected to change | Governed docs only (plus live DB UAT residue and logo custody under `instance/`). |
+| Files prohibited from changing | Product code unless a defect is discovered; Alembic revisions; Change Order PDF; Permit branding. |
+| Implementation result | Migration applied. Current=head=`a9b0c1d2e3f4`. One graph head. Ensure created 2 CURRENT profiles. Backfill 0. Office UAT port **5010**. FG-017 **CLOSED / OPERATIONAL FOR UAT**. |
+| Tests | Dedicated FG-017 **22 passed**. Focused regressions **97 passed**. Full suite **423 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append close; do not rewrite implementation entry) |
+| Constitutional issue raised | None |
+| Unresolved issues | None for FG-017 closure. Issued→Draft lock still not decided. Internal breakdown branding later. Change Order / Permit branding remain unauthorized. |
+| Next approved step | **STOP.** Do not start the next Feature Gate. Do not begin Change Order documents, Phase D, supplier integration, or external AI / runtime web. |
+| Next approved prompt | None authorized. |
+| Commit hash | (this close commit) |
+
 ### 2026-08-30 — Implement FG-017 Organization Brand Profile V1 (pre-live-migration)
 
 | Field | Content |

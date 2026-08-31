@@ -7,11 +7,11 @@
 | Target Milestone | **None.** FG-017 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Organization subsystem** owns Brand Profile and logo custody ([ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md); [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**). **Proposals** is the first consumer and owns the proposal issued-document brand snapshot ([modules/proposals.md](../modules/proposals.md)). |
 | Date | 2026-08-30 |
-| Status | **IMPLEMENTED / LIVE MIGRATION PENDING.** Product code, dedicated tests, and additive revision `a9b0c1d2e3f4` are in the repository. Live `flask db current` remains `f8a9b0c1d2e3`. Do **not** mark **CLOSED / OPERATIONAL FOR UAT** until Joel/ChatGPT authorizes live migrate and UAT. |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** Live migrate applied `f8a9b0c1d2e3` → `a9b0c1d2e3f4`. Office UAT **PASSED** on port **5010**. This is office UAT, not broader production validation. |
 | Architecture | [organization-brand-profile.md](../architecture/organization-brand-profile.md) · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [project-document-package.md](../architecture/project-document-package.md) · [modules/proposals.md](../modules/proposals.md) |
 | Related ADRs | [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted** · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-001](../adr/ADR-001-proposal-snapshot-ownership.md) **Proposed** (do **not** accept as a side effect) · [ADR-004](../adr/ADR-004-proposal-acceptance-workflow.md) **Proposed** (do **not** accept) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
-| Prerequisites | FG-016 **CLOSED / OPERATIONAL FOR UAT**. ADR-040 **Accepted**. Implementation reconnaissance recorded below. Live current remains `f8a9b0c1d2e3` until a separate live-migrate prompt. |
-| Approved baseline | Implementation on `main` (this commit). Repository Alembic head `a9b0c1d2e3f4`. Live current **`f8a9b0c1d2e3`**. Dedicated tests **22 passed**. Full suite **423 passed**. |
+| Prerequisites | FG-016 **CLOSED / OPERATIONAL FOR UAT**. ADR-040 **Accepted**. Implementation reconnaissance recorded below. Live migrate and office UAT authorized 2026-08-30. |
+| Approved baseline | Implementation `00ca492e28118d75757e9a9c82384978b5decd92`. Live current = head **`a9b0c1d2e3f4`**. Dedicated tests **22 passed**. Full suite **423 passed** after live migrate / UAT. |
 
 ---
 
@@ -19,17 +19,17 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / LIVE MIGRATION PENDING** |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT** |
 | ADR-040 | **Accepted** |
-| Implementation | **IMPLEMENTED** — live migrate **NOT RUN** |
-| Schema / Alembic | Repository head `a9b0c1d2e3f4`. Live current `f8a9b0c1d2e3`. |
-| Logo storage | **IMPLEMENTED** (`instance/brand_logos/`; not written to live DB this pass) |
+| Implementation | **IMPLEMENTED** — live migrate **APPLIED**; office UAT **PASSED** (port **5010**) |
+| Schema / Alembic | Live current = graph head **`a9b0c1d2e3f4`**. One head. Applied `f8a9b0c1d2e3` → `a9b0c1d2e3f4`. |
+| Logo storage | **OPERATIONAL** (`instance/brand_logos/ORG-001/` for Brayman; isolation org not seeded) |
 | Proposal renderer | Snapshot-or-current Brand Profile |
 | Change Order / Permit / Contract / QuickBooks | **NOT IN THIS GATE** |
 
 This gate establishes **organization-owned contractor branding** and stops Issued/Accepted Proposal documents from floating with later template/logo changes. It is **not** a document-family rewrite, not Permit Intelligence, and not an app-shell redesign.
 
-This gate is **implemented in code**. Live database migration is a **separate** authorization. Do **not** treat this file as CLOSED / OPERATIONAL FOR UAT.
+This gate is **CLOSED / OPERATIONAL FOR UAT**. Live current = head `a9b0c1d2e3f4`. Office UAT **PASSED** on port **5010**. Do **not** claim broader production validation than office UAT.
 
 ---
 
@@ -175,7 +175,7 @@ Apply only after a separate **implementation** prompt. Not claimed complete by t
 
 ## Approved implementation reconnaissance (2026-08-30)
 
-**Status:** design recorded 2026-08-30; **implemented** in the FG-017 product pass. Live migrate remains pending.
+**Status:** design recorded 2026-08-30; **implemented** in the FG-017 product pass; **live-migrated and office-UAT verified** 2026-08-30.
 
 ### A. Existing Organization model
 
@@ -450,6 +450,34 @@ No repository constraint requires a Draft Brand Profile state.
 
 ---
 
+## Live migrate and office UAT (2026-08-30)
+
+Authorized separately from implementation. Product code was not changed in this pass.
+
+| Item | Result |
+|------|--------|
+| Starting HEAD / `origin/main` | `00ca492e28118d75757e9a9c82384978b5decd92` |
+| Alembic | Applied `f8a9b0c1d2e3` → `a9b0c1d2e3f4`. Current = head = `a9b0c1d2e3f4`. One graph head. |
+| Initialization | `ensure_brand_profiles_for_existing_organizations()` created **2** CURRENT profiles. `backfill_proposal_brand_snapshots()` created **0** (no Issued/Accepted rows existed). Draft `PROP-FG012-UAT-GM` was **not** snapshotted. |
+| Organizations | `ORG-001` Brayman Construction Inc. / Brayman Construction / 411 St. John Street, Merrickville, Ontario K0G 1N0. `ORG-FG014-UAT` isolation org. Exactly one CURRENT each. Version 1 seed; no invented phone/email/website/legal identifiers. |
+| ORG-001 logo | Copied governed static Brayman PNG into `instance/brand_logos/ORG-001/948f96e08827f18d77b47538f65c8b98b45caaf9c981adccba0189976948efe9.png` (80007 bytes; SHA matches). |
+| Isolation logo | `ORG-FG014-UAT` CURRENT has **no** logo; no Brayman file under that org path. |
+| Office UAT port | **5010** |
+| Settings | `/settings/brand-profile` shows ORG-001 identity; logo via `/settings/brand-logo`; no filesystem path/SHA leak; Settings in existing nav; no new top-level module; header Settings remains disabled (`Settings (coming soon)`). Sidebar still uses static chrome logo. |
+| CURRENT-on-save | Phone `FG017-UAT` created v2 CURRENT (v1 SUPERSEDED). Later `FG017-UAT-POST-ISSUE` created v3. Restore via governed `save_brand_profile` created v4 CURRENT with empty phone (original identity + same logo). No in-place identity/logo UPDATE. Exactly one CURRENT throughout. |
+| Draft/Ready | Existing Draft `PROP-FG012-UAT-GM` and UAT `PROP-FG017-UAT-ISSUE` preview/PDF used CURRENT Brand Profile (`Brayman Construction`, address, then-current phone). Template `company_name` `Brayman Construction Inc. (FG-012 UAT)` did **not** render. Logo `/proposals/<id>/brand-logo`. HTML and PDF agreed. |
+| Issued freeze | `PROP-FG017-UAT-ISSUE` (id 2) → Issued created **one** snapshot `freeze_trigger=ISSUED` from CURRENT v2 (phone `FG017-UAT`, Brayman logo SHA). Totals `$132.94` unchanged. |
+| Post-freeze profile change | After v3 CURRENT phone `FG017-UAT-POST-ISSUE`, Issued/Accepted preview+PDF of id 2 still showed `FG017-UAT` and **not** `POST-ISSUE`. Draft id 1 followed CURRENT. |
+| Issued → Accepted | Status Accepted; snapshot count remained **1**; trigger remained `ISSUED`; phone remained `FG017-UAT`. ADR-002 lock: edit/status mutation refused. UI: “Accepted — locked.” Totals unchanged. |
+| Accepted without Issued | Office POST created `PROP-FG017-UAT-ACCEPT-DIRECT` (id 3) as Accepted. Snapshot `freeze_trigger=ACCEPTED` from then-CURRENT v3 (phone `FG017-UAT-POST-ISSUE`). `issued_at` null. Later restore did not refresh it. |
+| Cross-org | Isolation proposal `PROP-FG017-UAT-ISO` (id 4, Draft, project 4). ORG-001 HTTP GET detail/preview/logo/PDF → **404**. Isolation render context is `FG-014 UAT Isolation Org Ltd.` with **no** logo and **no** Brayman name. Isolation `/brand-logo` fail-closed 404 (no static Brayman fallback). Template `SHOULD-NOT-RENDER Isolation Template Co.` was not used as identity. |
+| Tests | Dedicated **22 passed**. Focused regressions **97 passed** (119 with dedicated). Full suite **`./venv/bin/python -m pytest -q` → 423 passed**. |
+| Protected non-goals | Change Order PDF still hardcoded static Brayman / `Brayman Construction Platform`. Permit HTML/PDF untouched (CalibAi-neutral). No Phase D, supplier, QuickBooks, contract, auth, BUILD/MONITOR/LEARN, external AI, chrome redesign, or legal-identifier invention. |
+
+Labeled UAT residue (leave labeled; do not invent cleanup): Brand Profile versions 1–4 on ORG-001 (v4 CURRENT, empty phone, original identity); isolation CURRENT v1; proposals ids 2–4 (`PROP-FG017-UAT-ISSUE` Accepted, `PROP-FG017-UAT-ACCEPT-DIRECT` Accepted, `PROP-FG017-UAT-ISO` Draft); estimate `EST-FG017-UAT-ISO`; template `FG-017 UAT Isolation Template`.
+
+---
+
 ## Explicit stop conditions for the implementation prompt
 
 Stop and report if: a second Alembic head appears; Permit/CO/app-shell logo work is requested; legal identifiers are invented; `branding_config` JSON is about to be added; remote URL logos are proposed; Draft Brand Profile state is about to be added; Internal breakdown branding is pulled in; template identity columns are dropped.
@@ -463,3 +491,4 @@ Stop and report if: a second Alembic head appears; Permit/CO/app-shell logo work
 | Joel | Joel Brayman | 2026-08-30 |
 | ChatGPT review | Accept ADR-040 / Approve FG-017 / implementation reconnaissance | 2026-08-30 |
 | Cursor implementation note | Product implementation + revision `a9b0c1d2e3f4` + 22 dedicated tests. Live migrate **NOT RUN**. **NOT CLOSED.** | 2026-08-30 |
+| Cursor live-migrate / office UAT | Applied `f8a9b0c1d2e3` → `a9b0c1d2e3f4`. Ensure + backfill. Office UAT port **5010**. Full suite **423 passed**. **CLOSED / OPERATIONAL FOR UAT.** | 2026-08-30 |

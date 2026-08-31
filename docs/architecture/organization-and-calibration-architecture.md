@@ -8,7 +8,7 @@
 | Status | **ARCHITECTURAL SPECIFICATION & GOVERNANCE RECORD** (Phase A Complete — No Application Code / No Schema Migrations) |
 | Date | 2026-08-28 |
 | Development Tenant | Organization 001 — Brayman Construction Inc. |
-| Related future pin | [organization-brand-profile.md](organization-brand-profile.md) **IMPLEMENTED / LIVE MIGRATION PENDING**. [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**. [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md). Do not implement this document's `branding_config` JSON. |
+| Related future pin | [organization-brand-profile.md](organization-brand-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**. [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md). Do not implement this document's `branding_config` JSON. |
 
 ---
 

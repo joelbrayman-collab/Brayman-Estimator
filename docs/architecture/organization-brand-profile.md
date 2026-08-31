@@ -2,13 +2,13 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IMPLEMENTED / LIVE MIGRATION PENDING** — [ADR-040](../adr/ADR-040-organization-brand-profile.md) is **Accepted**. [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) is **IMPLEMENTED / LIVE MIGRATION PENDING**. Live `flask db current` remains `f8a9b0c1d2e3`. Do **not** mark CLOSED / OPERATIONAL FOR UAT. |
+| Status | **CLOSED / OPERATIONAL FOR UAT** — [ADR-040](../adr/ADR-040-organization-brand-profile.md) is **Accepted**. [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Live current = head `a9b0c1d2e3f4`. Office UAT **PASSED** on port **5010**. |
 | Date | 2026-08-30 |
 | Product | The Estimator / CalibAi |
-| Canonical record | This document (requirement). Architecture decision: [ADR-040](../adr/ADR-040-organization-brand-profile.md) (**Accepted**). First Feature Gate: [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) (**IMPLEMENTED / LIVE MIGRATION PENDING**). |
+| Canonical record | This document (requirement). Architecture decision: [ADR-040](../adr/ADR-040-organization-brand-profile.md) (**Accepted**). First Feature Gate: [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) (**CLOSED / OPERATIONAL FOR UAT**). |
 | Related | [ADR-040](../adr/ADR-040-organization-brand-profile.md) · [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) · [change-order-document-family.md](change-order-document-family.md) · [project-document-package.md](project-document-package.md) · [permit-and-approvals-report.md](permit-and-approvals-report.md) · [organization-and-calibration-architecture.md](organization-and-calibration-architecture.md) · [modules/proposals.md](../modules/proposals.md) · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) |
 
-**Current vs future:** FG-017 implements `organization_brand_profiles`, private logo custody under `instance/brand_logos/`, and `proposal_brand_snapshots`. Live migration `a9b0c1d2e3f4` is **pending**. Change Order PDF and Permit Report remain unchanged. CalibAi sidebar/favicon chrome remains the static Brayman asset except that Settings navigation is enabled.
+**Current vs future:** FG-017 implements `organization_brand_profiles`, private logo custody under `instance/brand_logos/`, and `proposal_brand_snapshots`. Live migration `a9b0c1d2e3f4` is **applied**. Change Order PDF and Permit Report remain unchanged. CalibAi sidebar/favicon chrome remains the static Brayman asset except that Settings navigation is enabled.
 
 ---
 
@@ -37,12 +37,12 @@ The contractor should configure branding during **onboarding / settings**, not b
 - BUILD expansion
 - MONITOR / LEARN
 - product implementation of Brand Profile
-- treating this pin as live-migrate authorization; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) product code exists but live `flask db upgrade` remains a separate prompt
-- live database migration without a dedicated live-migrate prompt
+- treating this pin as Change Order or Permit branding authorization
+- live database migration without a dedicated live-migrate prompt (FG-017 live migrate is **done**)
 
-FG-017 implemented Brand Profile schema, logo custody, Settings UI, and Proposal snapshot/render. This pin still does **not** authorize Change Order or Permit branding.
+FG-017 implemented Brand Profile schema, logo custody, Settings UI, and Proposal snapshot/render. Live migrate and office UAT are **applied**. This pin still does **not** authorize Change Order or Permit branding.
 
-A later repository-first architecture assessment produced [ADR-040](../adr/ADR-040-organization-brand-profile.md) (**Accepted**) and [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) (**IMPLEMENTED / LIVE MIGRATION PENDING**). Live migration remains a separate authorization.
+A later repository-first architecture assessment produced [ADR-040](../adr/ADR-040-organization-brand-profile.md) (**Accepted**) and [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) (**CLOSED / OPERATIONAL FOR UAT**).
 
 ---
 
@@ -180,4 +180,4 @@ ORGANIZATION SETUP
 - [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md)
 - [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md)
 - [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**
-- [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **IMPLEMENTED / LIVE MIGRATION PENDING**
+- [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **CLOSED / OPERATIONAL FOR UAT**

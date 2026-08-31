@@ -11,7 +11,7 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | FG-017 live-migrate / office UAT close `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5`. Implementation parent `00ca492e28118d75757e9a9c82384978b5decd92`. FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`. Alembic live current = head **`a9b0c1d2e3f4`**. Post-FG-017 docs reconciliation is a later docs-only commit — verify `git rev-parse HEAD`. |
+| HEAD / `origin/main` | Docs reconciliation `dd30d752190e56ed687e270950df9bf9a06d7a26`. FG-017 live-migrate / office UAT close `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5`. Implementation parent `00ca492e28118d75757e9a9c82384978b5decd92`. FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`. Alembic live current = head **`a9b0c1d2e3f4`**. Latest `main` SHA: verify `git rev-parse HEAD`. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
 | Working tree at last verified inspect | **FG-017 CLOSED / OPERATIONAL FOR UAT.** Live current = head `a9b0c1d2e3f4`. Office UAT **PASSED** on port **5010**. Full suite **423 passed**. [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**. FG-008–FG-016 **CLOSED / OPERATIONAL FOR UAT**. Pratt UAT project **id 9** port **5009**. |

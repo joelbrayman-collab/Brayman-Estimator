@@ -25,12 +25,12 @@ Authority order for the next session: repository governance → current-state re
 ## 2. VERIFIED BASELINE
 
 - Branch: `main`
-- FG-017 close SHA / former `origin/main` product close: `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5` (`docs: close FG-017 live migration and office UAT`). Implementation parent `00ca492e28118d75757e9a9c82384978b5decd92`. FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`. Current HEAD after the post-FG-017 docs reconciliation: verify `git rev-parse HEAD`.
+- Current HEAD: verify `git rev-parse HEAD`. Docs reconciliation: `dd30d752190e56ed687e270950df9bf9a06d7a26`. FG-017 close SHA: `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5` (`docs: close FG-017 live migration and office UAT`). Implementation parent `00ca492e28118d75757e9a9c82384978b5decd92`. FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`.
 - FG-016 implementation commit: `a709829d32d94ab2baf36f142ad0095254ba3d3a` (`feat: implement FG-016 Ontario Ottawa Permit Intelligence POC`)
 - Alembic graph head: **`a9b0c1d2e3f4`**. Live `flask db current`: **`a9b0c1d2e3f4`**. One graph head.
 - Chain: … → **`f8a9b0c1d2e3` (FG-016)** → **`a9b0c1d2e3f4` (FG-017; live current = head)**
 - Governed full suite: **423 passed**. Dedicated FG-017 **22**. FG-016 **37**; FG-015 **19**; FG-014 **35**; FG-013 **27**; FG-012 **19**; Project Hub **13**; take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**.
-- Working tree: FG-017 live-migrate docs close; live DB upgraded
+- Working tree: post-FG-017 docs reconciliation; live DB unchanged this pass
 - Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**. Runtime permit web lookup **NOT AUTHORIZED**.
 
 ### 29 Aug commit chain (all ancestors of `main`)

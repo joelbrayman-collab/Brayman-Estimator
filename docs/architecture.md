@@ -118,7 +118,7 @@ Client ──< Project ──< Estimate ──< EstimateVersion ──< Sections
 - No prior `docs/` governance (this foundation addresses that).
 - Change Order detail template notes future audit trail UI (`app/templates/project_controls/change_orders/detail.html`).
 - Hard-coded `SECRET_KEY` in `create_app` (development default) — production secret handling is an open operational concern.
-- Flask-Login is used for office authentication ([FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**). Shared API, RBAC, and multi-org switching are **not implemented**.
+- Flask-Login is used for office authentication ([FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**). Shared API is **not implemented** ([FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED**). RBAC and multi-org switching are **not implemented**.
 - Office proposal create/detail still lists Overhead/Profit amounts (zero when named-method snapshot governs). Customer preview/PDF do not. Draft proposal line edits still restack via `recalculate_proposal`.
 - Proposal “Accepted” status exists; full acceptance → project budget snapshot workflow is **not** documented as complete product (see Intended).
 - CRM is effectively Clients + Projects, not a full CRM suite.
@@ -175,5 +175,5 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 - Living supplier evidence / Winchester POC / bulk supplier onboarding (FG-014 identity is closed; ADR-008 remains Proposed)
 - Permit branding from Brand Profile; national Permit Rules expansion (FG-015/FG-016 POC is closed)
 - Change Order governed document family / client email / field UX — [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (do not create a second Change Order entity)
-- Authentication / actor identity + shared API (sequence item 10 **PARTIALLY COMPLETE** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** office slice; Shared API **NOT STARTED / DEFERRED / NOT AUTHORIZED**)
+- Authentication / actor identity + shared API (sequence item 10 **PARTIALLY COMPLETE** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** office slice; [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED**; Shared API product code **NOT STARTED**)
 - BUILD field capture; field web (**BLOCKED** until item 10 including Shared API is complete); MONITOR implementation; LEARN / ML

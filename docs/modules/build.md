@@ -37,7 +37,7 @@ Daily execution, crews, labour capture, subcontractor activity, material use, de
 
 ## Dependencies
 
-- Authentication before field capture ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md); [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** — shared API still required before BUILD if ADR-022 still requires it)
+- Authentication before field capture ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md); [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED** — Shared API product code **NOT STARTED**; BUILD remains blocked until item 10 including FG-019 is later closed)
 - Feature Gate + approved Cursor prompt before any code
 
 ## Related

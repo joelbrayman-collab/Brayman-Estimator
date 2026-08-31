@@ -33,6 +33,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-08-31 post-FG-018 — not authorized by CAR-001):** [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. Live Alembic current = head **`b0c1d2e3f4a5`**. Full suite **460 passed**. Roadmap item 10 is **PARTIALLY COMPLETE**: office Authentication / Actor Identity / Membership is closed; Shared API foundation remains **NOT STARTED / DEFERRED / NOT AUTHORIZED**. Items 11–12 (BUILD / Field Web) remain blocked. MONITOR remains downstream / not implemented. CAR-001 still does **not** authorize implementation. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.** Next authorized action: **STOP.**
 
+**Subsequent status (2026-08-31 FG-019 draft — not authorized by CAR-001):** [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) is **DRAFT FOR JOEL REVIEW / NOT APPROVED**. Shared API product code remains **NOT STARTED**. Item 10 remains **PARTIALLY COMPLETE**. Items 11–12 remain blocked. No new ADR. CAR-001 still does **not** authorize implementation. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

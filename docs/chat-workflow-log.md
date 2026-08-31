@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-31 — Draft FG-019 Shared API Foundation V1 (governance only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-31 |
+| Branch | `main` @ `f872662781260f0571f54c4921116389cc70dd27` (starting HEAD) |
+| Objective | Docs-only Feature Gate draft for the remaining Shared API slice of roadmap item 10. Do not implement `/api/`. Do not start BUILD. |
+| Business decision | FG-019 exists as **DRAFT FOR JOEL REVIEW / NOT APPROVED**. Item 10 remains **PARTIALLY COMPLETE**. Shared API product code **NOT STARTED**. BUILD remains **BLOCKED**. A draft is **not** approval. |
+| Architectural decision | Reuse FG-018 cookie/session. GET-only `/api/v1/me`, `/api/v1/projects`, `/api/v1/projects/<id>`. No migration. No tokens. No new ADR (ADR-022 + ADR-041 sufficient). Unauthenticated API → 401 JSON; 0/>1 membership → 403; cross-org → 404. |
+| Prompt template used | Feature Gate draft prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — DRAFT FG-019 SHARED API FOUNDATION — GOVERNANCE ONLY. Docs only. Do not implement `/api/`. Do not create a migration. Do not start BUILD. |
+| Files expected to change | `docs/feature-gates/FG-019-shared-api-foundation-v1.md`; Feature Gate / docs indexes; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log; milestones. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live database; ADR creation/acceptance; FG-018 close evidence. |
+| Implementation result | Docs-only. No product code. No tests changed. No database mutation. No migration. FG-019 **DRAFT / NOT APPROVED**. No ADR created. |
+| Tests | Not rerun (docs-only; governed baseline remains **460 passed**). |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append-only) |
+| Constitutional issue raised | None |
+| Unresolved issues | Whether Joel Approves FG-019. Native/token auth remains deferred. |
+| Next approved step | **STOP.** Wait for Joel review. Do not implement Shared API from this prompt. |
+| Next approved prompt | None. Fresh-chat prompt remains [session-handoff.md](session-handoff.md) §22. |
+| Commit hash | (this commit) |
+
 ### 2026-08-31 — Post-FG-018 current-state documentation reconciliation
 
 | Field | Content |

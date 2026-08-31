@@ -30,6 +30,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-08-31 — Draft FG-019 Shared API Foundation V1
+
+| Field | Content |
+|-------|---------|
+| ID | Docs-only FG-019 governance draft |
+| Status | [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) remains **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 remains **PARTIALLY COMPLETE**. Shared API product code **NOT STARTED**. BUILD remains **BLOCKED**. |
+| Branch | `main` |
+| Objective | Draft the remaining Shared API slice of roadmap item 10 as a Feature Gate. Do not implement `/api/`. Do not create an ADR. |
+| Deliverables | FG-019 draft; Feature Gate / docs indexes; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log; milestones. No `app/` / `tests/` / `migrations/`. |
+| Validation | `git diff --check`. Docs-only; product tests not rerun. Governed baseline remains **460 passed**. |
+| Next | **STOP.** Joel review of FG-019. Do not implement Shared API from this pass. |
+
 ### 2026-08-31 — Post-FG-018 current-state documentation reconciliation
 
 | Field | Content |

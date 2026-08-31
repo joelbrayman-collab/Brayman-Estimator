@@ -76,7 +76,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | [ADR-008](ADR-008-supplier-price-snapshotting.md) | Supplier Price Snapshotting | Proposed |
 | [ADR-033](ADR-033-supplier-neutrality-and-launch-partner-channel.md) | Supplier Neutrality, Dual Relationships, and Winchester Launch-Partner Channel | **Accepted** (2026-08-30; architecture only; supplier integration **not implemented**) |
 
-### Material Catalogue (architecture accepted; FG-014 approved, not started)
+### Material Catalogue (architecture accepted; FG-014 CLOSED / OPERATIONAL FOR UAT)
 
 | ADR | Title | Status |
 |-----|-------|--------|
@@ -106,29 +106,29 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) | Canonical Labour Task, Versioned Production Standard, and Evidence-to-Approval Calibration Lifecycle | **Accepted** (2026-08-29; governing FG-008; **CLOSED / OPERATIONAL FOR UAT**; revision `f2c3d4e5f6a7` in chain; live head `b4c5d6e7f8a9`) |
+| [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) | Canonical Labour Task, Versioned Production Standard, and Evidence-to-Approval Calibration Lifecycle | **Accepted** (2026-08-29; governing FG-008; **CLOSED / OPERATIONAL FOR UAT**; revision `f2c3d4e5f6a7` in chain; **gate-at-close** live head `b4c5d6e7f8a9`) |
 
 ### Pricing Engine (FG-009 foundation operational for UAT)
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-030](ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) | Organization-Owned Versioned Pricing Policy and Estimate Pricing Snapshot | **Accepted** (2026-08-29; governing FG-009 persistence/resolution/contingency treatment; **CLOSED / OPERATIONAL FOR UAT**; revision `a3b4c5d6e7f8` in chain; live head `b4c5d6e7f8a9`) |
+| [ADR-030](ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) | Organization-Owned Versioned Pricing Policy and Estimate Pricing Snapshot | **Accepted** (2026-08-29; governing FG-009 persistence/resolution/contingency treatment; **CLOSED / OPERATIONAL FOR UAT**; revision `a3b4c5d6e7f8` in chain; **gate-at-close** live head `b4c5d6e7f8a9`) |
 
 ### Historical ingestion / calibration onboarding
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-032](ADR-032-app-managed-historical-workbook-storage.md) | App-Managed Immutable Historical Workbook Storage / Source Custody | **Accepted** (2026-08-30; FG-013 **CLOSED / OPERATIONAL FOR UAT**; revision `c5d6e7f8a9b0` live current=head; legacy Desktop corpus not moved) |
+| [ADR-032](ADR-032-app-managed-historical-workbook-storage.md) | App-Managed Immutable Historical Workbook Storage / Source Custody | **Accepted** (2026-08-30; FG-013 **CLOSED / OPERATIONAL FOR UAT**; revision `c5d6e7f8a9b0` **gate-at-close** live current=head; legacy Desktop corpus not moved) |
 
 ### Permit Intelligence (architecture accepted; FG-015 closed; FG-016 closed)
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-037](ADR-037-project-location-and-jurisdiction-resolution.md) | Project Location and Jurisdiction Resolution Ownership | **Accepted** (2026-08-30; FG-015 civic location + resolver **CLOSED / OPERATIONAL FOR UAT**; live current=head `e7f8a9b0c1d2`; reused by FG-016) |
+| [ADR-037](ADR-037-project-location-and-jurisdiction-resolution.md) | Project Location and Jurisdiction Resolution Ownership | **Accepted** (2026-08-30; FG-015 civic location + resolver **CLOSED / OPERATIONAL FOR UAT**; **gate-at-close** live current=head `e7f8a9b0c1d2`; reused by FG-016) |
 | [ADR-038](ADR-038-permit-intelligence-authority-and-rules-library.md) | Permit Intelligence Authority and Permit Rules Library Provenance | **Accepted** (2026-08-30; FG-015 Pass 1 **CLOSED / OPERATIONAL FOR UAT**; [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**; 10 APPROVED Ottawa coach-house rules) |
 | [ADR-039](ADR-039-permit-report-snapshot-immutability-and-workflow.md) | Permit Report Snapshot Immutability and Workflow Effect | **Accepted** (2026-08-30; FG-015 preliminary snapshot **CLOSED / OPERATIONAL FOR UAT**; FG-016 substantive report **CLOSED / OPERATIONAL FOR UAT**) |
 
-### Organization Brand Profile (implemented; live migrate pending)
+### Organization Brand Profile (implemented; FG-017 CLOSED / OPERATIONAL FOR UAT)
 
 | ADR | Title | Status |
 |-----|-------|--------|

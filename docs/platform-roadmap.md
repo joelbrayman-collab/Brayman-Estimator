@@ -29,7 +29,16 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 **Differentiator (long-term):** PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project` record ([CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)). Plan → reviewed take-off → estimate remains the PLAN/PRICE spine, with citations and no silent commercial overwrite.
 
-**Next candidate milestone:** [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Live current = head `a9b0c1d2e3f4`. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**. [ADR-008](adr/ADR-008-supplier-price-snapshotting.md) **Proposed**. FG-010 Phase D is **NOT STARTED**. **Change Order document family** remains **FUTURE / NOT IMPLEMENTED**.
+**Governed position after FG-017:**
+
+| Layer | Position |
+|-------|----------|
+| **CURRENT** | FG-008 through FG-017 **CLOSED / OPERATIONAL FOR UAT** as applicable. [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**. Alembic current/head **`a9b0c1d2e3f4`**. Full-suite governed baseline **423 passed**. FG-017 close SHA `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5`. |
+| **NEXT AUTHORIZED ACTION** | **STOP.** No next Feature Gate authorized. No product implementation authorized. |
+| **ROADMAP DIRECTION** | The numbered CalibAi sequence below remains authoritative **direction** unless Joel changes it. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.** The first unfinished numbered sequence item is **item 10 Authentication / actor identity + shared API foundation**. Authentication is **NOT STARTED / NOT AUTHORIZED**. No Authentication Feature Gate exists. Items **11–12 require item 10**. |
+| **SEPARATELY GOVERNED FUTURE PROGRAMS** | Phase D; supplier integration; Change Order document family; Permit branding / national expansion; QuickBooks; Ontario Contract / Warranty; MONITOR; LEARN; real external AI; other repository-recorded future work. Not reordered here. Not authorized by FG-017 close. |
+
+[FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**. [ADR-008](adr/ADR-008-supplier-price-snapshotting.md) **Proposed**. FG-010 Phase D is **NOT STARTED**. **Change Order document family** remains **FUTURE / NOT IMPLEMENTED**.
 
 **M009 numbering:** A ChatGPT prompt briefly called the 2026-08-28 reconciliation “M009”. That label is withdrawn. The reconciliation is **CAR-001**. Historical milestone numbers are unchanged.
 
@@ -80,17 +89,19 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-- **`main` / `origin/main`** — ADR-021 governance (verify `git log -1`). Alembic current/head `b4c5d6e7f8a9`. FG-008 / FG-009 / FG-010 / FG-011 / FG-012 **CLOSED / OPERATIONAL FOR UAT**. ADR-021 **Accepted** (MONITOR not implemented).
+- **`main` / `origin/main`** — FG-017 live-migrate / office UAT close `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5` (verify `git log -1` / `git rev-parse HEAD` after later docs commits). Alembic **current = head = `a9b0c1d2e3f4`**. One graph head.
+- **FG-008 through FG-017** **CLOSED / OPERATIONAL FOR UAT** as applicable. [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**. Full-suite governed baseline **423 passed**.
+- **ADR-021** **Accepted** (MONITOR **not implemented**; Feature Gate **not** authorized by the ADR).
 - **Review Turnover Protocol** adopted (2026-08-28) — `Review Turnover` governing.
 - **M010 Scale Calibration & Measurement Tools** implemented and verified (2026-08-28).
 - **M011 Organization Foundation & Project Commercial Context** implemented and verified (2026-08-28).
 - **FG-006 Historical Estimate Ingestion Engine Phase B** implemented and verified (2026-08-28).
 - CalibAi V1 direction (not authorized as a single implementation): PLAN → PRICE → CONTRACT baseline → BUILD field capture → basic MONITOR — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md)
 - Document package outputs 3–4, QuickBooks API, contract/warranty generation — **not started** (governance recorded only). Outputs 1–2: [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**.
-- Permit Intelligence — architecture **Accepted** (ADR-037/038/039); Pass 2 **NOT IMPLEMENTED**; [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** ([permit-and-approvals-report.md](architecture/permit-and-approvals-report.md)).
-- Organization Brand Profile — **CLOSED / OPERATIONAL FOR UAT** ([organization-brand-profile.md](architecture/organization-brand-profile.md)); [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md)
+- Permit Intelligence — architecture **Accepted** (ADR-037/038/039); Pass 1 [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**; Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** ([permit-and-approvals-report.md](architecture/permit-and-approvals-report.md)). National permit expansion **not authorized**. Permit branding from Brand Profile **not authorized**.
+- Organization Brand Profile — **CLOSED / OPERATIONAL FOR UAT** ([organization-brand-profile.md](architecture/organization-brand-profile.md)); [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md). Proposal is the V1 consumer. Change Order / Permit / chrome consumers remain future.
 - Change Order document family — **FUTURE / NOT IMPLEMENTED** pin ([change-order-document-family.md](architecture/change-order-document-family.md)); not a Feature Gate; existing Change Order record remains authoritative.
-- Estimate mapping remains outside near-term sheet work
+- Estimate mapping (Phase D) remains **NOT STARTED / NOT AUTHORIZED**
 
 ---
 
@@ -103,20 +114,22 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 2. **M010** Scale Calibration / Measurement Tools — **Completed & Verified** (migration `c9e0f1a2b3d4`)
 3. **M011** Organization Foundation & Project Commercial Context — **Completed & Verified** (FG-007 / ADR-028; migration `d0a1b2c3d4e5`)
 4. **FG-006** Historical Estimate Ingestion Engine Phase B — **Completed & Verified** (migration `e1b2c3d4e5f6`)
-5. **FG-008** Labour Engine Phase B — **CLOSED / OPERATIONAL FOR UAT**; ADR-029 **Accepted**. Revision `f2c3d4e5f6a7` in chain (live head `b4c5d6e7f8a9`). Foundation operational for UAT (not a populated operating catalog; not selling-price integration).
+5. **FG-008** Labour Engine Phase B — **CLOSED / OPERATIONAL FOR UAT**; ADR-029 **Accepted**. Revision `f2c3d4e5f6a7` in chain. Foundation operational for UAT (not a populated operating catalog; not selling-price integration).
 6. Organization-Calibrated Pricing Engine — [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED / OPERATIONAL FOR UAT**. ADR-025 **Accepted**; ADR-030 **Accepted**. Revision `a3b4c5d6e7f8` in chain.
-7. AI Take-off / Quantity Extraction Foundation — [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **CLOSED / OPERATIONAL FOR UAT** (M012; ADR-031 **Accepted**; real external AI provider **not authorized**; live head `b4c5d6e7f8a9`)
+7. AI Take-off / Quantity Extraction Foundation — [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **CLOSED / OPERATIONAL FOR UAT** (M012; ADR-031 **Accepted**; real external AI provider **not authorized**; Alembic revision `b4c5d6e7f8a9` in chain)
 8. Project Hub UX — [FG-011](feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT** (evolve `/projects/<id>`; no new module; no schema)
 9. Internal Detailed Cost Breakdown + Customer Estimate consistency — [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (depends on Pricing Engine snapshot architecture; outputs 3–4 / four-output **product** remains Future)
-10. Authentication / actor identity + shared API foundation
-11. BUILD Field Capture V1
-12. Field Web / Today + Capture + plan access
+10. Authentication / actor identity + shared API foundation — **NOT STARTED / NOT AUTHORIZED**. No Authentication Feature Gate exists. Roadmap **direction only** — not implementation authority.
+11. BUILD Field Capture V1 — **requires item 10**. Not started. Not authorized.
+12. Field Web / Today + Capture + plan access — **requires item 10**. Not started. Not authorized.
 13. MONITOR basic estimated-vs-actual ([ADR-021](adr/ADR-021-monitor-commercial-baseline.md) **Accepted**; composed frozen baseline; Project Gross Margin; **not implemented**; Feature Gate **not authorized** by ADR-021)
 14. LEARN historical intelligence / review-gated learning (ADR-024)
 15. Contract/warranty when Legal Content Gate is satisfied
 16. QuickBooks when separately Feature-Gated
 
 **Auth dependency:** Items **11–12 require item 10** (authentication before field capture). Pricing Engine (item 6) and AI take-off (item 7) **require item 5** (Labour Engine), which is **implemented**. This sequence is **not** reordered to put auth before M009. Office M009 may proceed on the current unauthenticated app; field capture must not.
+
+**ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.** Listing item 10 as the first unfinished numbered item does **not** authorize architecture reconnaissance, Feature Gate drafting, or product implementation until Joel separately approves that work.
 
 **Explicitly later / separately Feature-Gated:** voice AI, photo AI, advanced forecasting, native iOS, offline-first sync, QuickBooks API, automated Ontario contract/warranty, supplier integrations, POs, CAD-first, multi-tenant productization, ML recommendations, product/repository rename.
 
@@ -159,11 +172,12 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Next recommended milestones
 
-1. **STOP.** [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Do not start the next Feature Gate. Do not implement MONITOR, Phase D, supplier/Winchester POC, bulk supplier onboarding, national permit expansion, or Change Order documents. Do not accept ADR-008.
-2. Phase D reviewed quantity → estimate mapping remains **NOT STARTED / NOT AUTHORIZED**.
-3. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
-4. Subsequent CalibAi sequence: auth, BUILD, field web, MONITOR implementation, LEARN — each separately gated. ADR-021 does not move MONITOR ahead of auth/BUILD.
-5. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate. Real external AI provider remains **not authorized**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) office historical-upload UX is **CLOSED / OPERATIONAL FOR UAT** (revision `c5d6e7f8a9b0`; no durable UploadBatch). Industry benchmarking remains future, separately gated.
+1. **STOP.** [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Do **not** start the next Feature Gate. Do **not** start Authentication. Do not implement MONITOR, Phase D, supplier/Winchester POC, bulk supplier onboarding, national permit expansion, or Change Order documents. Do not accept ADR-008. No product implementation is authorized.
+2. **Roadmap direction (not authorization):** the first unfinished numbered sequence item is **item 10 Authentication / actor identity + shared API foundation**. It is **NOT STARTED / NOT AUTHORIZED**. No Authentication Feature Gate exists. Items 11–12 remain dependent on item 10.
+3. Phase D reviewed quantity → estimate mapping remains **NOT STARTED / NOT AUTHORIZED**.
+4. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
+5. Subsequent CalibAi sequence after item 10: BUILD, field web, MONITOR implementation, LEARN — each separately gated. ADR-021 does not move MONITOR ahead of auth/BUILD.
+6. Formal proposal acceptance workflow (ADR-004) remains a Proposals-track candidate. Real external AI provider remains **not authorized**. [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) office historical-upload UX is **CLOSED / OPERATIONAL FOR UAT** (revision `c5d6e7f8a9b0` in chain; no durable UploadBatch). Industry benchmarking remains future, separately gated.
 
 ---
 
@@ -176,17 +190,22 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Future (provisional product)
 
+These remain **not started** unless a later Feature Gate says otherwise. FG-015 / FG-016 / FG-017 are **CLOSED / OPERATIONAL FOR UAT** and are **not** future work.
+
 - Formal proposal acceptance workflow; e-signature
-- [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) Permit Foundation V1 — **CLOSED / OPERATIONAL FOR UAT**; [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) Ontario / Ottawa Permit Intelligence POC — **CLOSED / OPERATIONAL FOR UAT** — [permit-and-approvals-report.md](architecture/permit-and-approvals-report.md) · [permit-rules-library.md](architecture/permit-rules-library.md)
-- Organization Brand Profile / org-owned logo / brand snapshot — **CLOSED / OPERATIONAL FOR UAT**; [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) ([organization-brand-profile.md](architecture/organization-brand-profile.md))
+- Permit branding from Brand Profile; national Permit Rules expansion (FG-016 Ontario/Ottawa POC is closed; expansion is not authorized)
 - Change Order governed document family / client email / field UX — **FUTURE / NOT IMPLEMENTED** pin ([change-order-document-family.md](architecture/change-order-document-family.md)); do not create a second Change Order entity
 - Project creation from accepted proposal; budgets
 - **Four-output document package** — outputs 1–2: [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**; outputs 3–4 (QuickBooks export, Ontario contract + warranty) remain Future — [architecture/project-document-package.md](architecture/project-document-package.md)
+- Authentication / actor identity + shared API (sequence item 10 — **NOT STARTED / NOT AUTHORIZED**; no Feature Gate)
+- BUILD field capture; field web (sequence items 11–12; **require item 10**)
+- MONITOR implementation; LEARN / ML recommendations
 - Scheduling, daily reports, timesheets
 - Purchasing / POs (beyond prep)
 - Job costing, invoicing, QuickBooks — see [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - Historical estimating intelligence; reports; settings
-- Full Plan Intelligence Phases C–G (C = FG-010 if approved) and Supplier Phases E–F as above
+- Plan Intelligence Phase **D–G** (Phase C / FG-010 is **CLOSED / OPERATIONAL FOR UAT**) and Supplier Phases E–F as above
+- Real external AI provider (ADR-010 **Proposed**; not authorized)
 
 ## Deferred
 
@@ -197,9 +216,11 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Decisions Required (Joel)
 
-1. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) is **CLOSED / OPERATIONAL FOR UAT**. Do **not** begin national permit expansion. Do **not** implement supplier integration, bulk supplier onboarding, or a Winchester POC. Do not accept ADR-008.
-2. ADR-010 remains **Proposed** (OCR/CAD/provider). Real external AI provider remains **not authorized**.
-3. Confirm POC element remains `INTERIOR_DOOR_OPENING` count.
-4. Auth model; production hosting/secrets (unchanged platform debt).
-5. Before a real AI provider: separate governed decision (identity, data sent, retention, training, privacy, credentials, failure, cost).
-6. Whether supplier CSV (Phase E) may start before take-off Phase D.
+1. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. **STOP.** Do **not** start the next Feature Gate. Do **not** start Authentication. Do **not** begin national permit expansion, Phase D, Change Order document work, supplier integration, bulk supplier onboarding, or a Winchester POC. Do not accept ADR-008.
+2. Whether to later authorize **sequence item 10** (Authentication / actor identity + shared API) as architecture reconnaissance and Feature-Gate drafting. That item is roadmap **direction only** until Joel authorizes it. No Authentication Feature Gate exists.
+3. ADR-010 remains **Proposed** (OCR/CAD/provider). Real external AI provider remains **not authorized**.
+4. Confirm POC element remains `INTERIOR_DOOR_OPENING` count.
+5. Auth model; production hosting/secrets (unchanged platform debt — not a Feature Gate).
+6. Before a real AI provider: separate governed decision (identity, data sent, retention, training, privacy, credentials, failure, cost).
+7. Whether supplier CSV (Phase E) may start before take-off Phase D.
+8. FG-017 leftovers (not this pass): Issued→Draft status lock; Internal Detailed Cost Breakdown branding.

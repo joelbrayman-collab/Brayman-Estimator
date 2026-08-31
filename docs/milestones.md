@@ -30,6 +30,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-08-30 — Post-FG-017 roadmap documentation reconciliation
+
+| Field | Content |
+|-------|---------|
+| ID | Docs-only roadmap / turnover reconciliation |
+| Status | FG-017 remains **CLOSED / OPERATIONAL FOR UAT**; ADR-040 **Accepted**; no next Feature Gate |
+| Branch | `main` |
+| Objective | Repair stale CURRENT/FUTURE/NEXT language after FG-017 close so the repository is one coherent post-FG-017 record. |
+| Deliverables | Roadmap, current-state, session-handoff, project-state-report, Feature Gate index, ADR index, related index docs. No `app/` / `tests/` / `migrations/`. |
+| Validation | Docs only. `git diff --check`. Tests not rerun. Alembic current/head remains `a9b0c1d2e3f4`. |
+| Next | **STOP.** Do not start Authentication. Do not create FG-018. Expected next *substantive* step only after Joel/ChatGPT review: separately authorized Authentication architecture and Feature-Gate reconnaissance. |
+
 ### 2026-08-30 — FG-017 live migration + office UAT close
 
 | Field | Content |

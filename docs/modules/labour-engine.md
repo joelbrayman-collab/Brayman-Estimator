@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Current** — FG-008 Phase B foundation **CLOSED / OPERATIONAL FOR UAT** (revision `f2c3d4e5f6a7` in chain; live head `b4c5d6e7f8a9`) |
+| Status | **Current** — FG-008 Phase B foundation **CLOSED / OPERATIONAL FOR UAT** (revision `f2c3d4e5f6a7` in chain; **gate-at-close** live head `b4c5d6e7f8a9`; live head today `a9b0c1d2e3f4`) |
 | Updated | 2026-08-30 |
 | Feature Gate | [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **CLOSED / OPERATIONAL FOR UAT** |
 | Architecture | [../architecture/labour-engine-phase-b-architecture.md](../architecture/labour-engine-phase-b-architecture.md) |

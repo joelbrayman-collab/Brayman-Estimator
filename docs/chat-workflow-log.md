@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — Post-FG-017 roadmap documentation reconciliation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5` (starting HEAD) |
+| Objective | Docs-only repair of stale CURRENT/FUTURE/NEXT roadmap and turnover language after FG-017 close. |
+| Business decision | STOP remains the next authorized action. Numbered sequence item 10 (Authentication) remains first unfinished direction item and is **NOT AUTHORIZED**. No FG-018. |
+| Architectural decision | None. ADR-040 remains Accepted. No ADR created or accepted. |
+| Prompt template used | Docs-only reconciliation prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — POST-FG-017 ROADMAP DOCUMENTATION RECONCILIATION. Repair identified drift. Preserve sequence ≠ authorization. Do not start Authentication. |
+| Files expected to change | Governed docs only. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; database; Feature Gate creation; ADR create/accept. |
+| Implementation result | Stale near-term Alembic/`b4c5d6e7f8a9`, Permit Pass 2 NOT IMPLEMENTED, FG-015/016/017-as-future, missing ADR-040 in handoff list, and “this commit” SHA wording repaired. Gate-at-close vs live-head distinction recorded. |
+| Tests | Not rerun. Governed baseline remains **423 passed**. `git diff --check`. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append docs reconciliation; do not rewrite FG-017 close) |
+| Constitutional issue raised | None |
+| Unresolved issues | Individual Feature Gate files still record **gate-at-close** Alembic heads (historical; left in place). |
+| Next approved step | **STOP.** Do not start Authentication. Do not create FG-018. |
+| Next approved prompt | None authorized. Expected next *substantive* step only after Joel/ChatGPT review: separately authorized Authentication architecture and Feature-Gate reconnaissance. |
+| Commit hash | (this docs commit) |
+
 ### 2026-08-30 — FG-017 live migration + office UAT close
 
 | Field | Content |

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** — FG-010 foundation in code; Alembic current/head `b4c5d6e7f8a9` |
+| Status | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** — FG-010 foundation in code; Alembic revision `b4c5d6e7f8a9` in chain (**gate-at-close** current/head; live head today `a9b0c1d2e3f4`) |
 | Date | 2026-08-30 |
 | Milestone | **M012** (foundation operational for UAT; Phase D mapping not started) |
 | Feature Gate | [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |

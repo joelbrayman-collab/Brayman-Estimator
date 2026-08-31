@@ -109,7 +109,8 @@ Client ──< Project ──< Estimate ──< EstimateVersion ──< Sections
 - Navigation also shows **disabled** placeholders: Purchase Orders, Job Costing, Reports, AI Assistant, Settings (`app/navigation.py`).
 - **Project Hub UX (FG-011):** `/projects/<id>` (`app/routes/projects.py` `view_project`, `app/services/project_hub.py`, `app/templates/projects/detail.html`) reads stored facts and links into owning modules. No durable hub entity.
 - **Estimate-output consistency (FG-012):** Estimating-owned internal breakdown (`app/services/estimate_output.py`, `GET /estimates/<id>/versions/<version_id>/internal-breakdown`). Named-method Proposal totals copy frozen `EstimatePricingSnapshot`. Customer PDF omits Overhead/Profit rows. No new entity or schema.
-- **Permit Foundation (FG-015):** `ProjectLocation`, platform jurisdiction definitions/aliases, versioned preliminary `PermitProfile`, Hub PLAN **PERMIT & APPROVALS** foundation panel (`app/services/jurisdiction.py`, `app/services/permit_foundation.py`). Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** (live current = head `f8a9b0c1d2e3`).
+- **Permit Foundation (FG-015):** `ProjectLocation`, platform jurisdiction definitions/aliases, versioned preliminary `PermitProfile`, Hub PLAN **PERMIT & APPROVALS** foundation panel (`app/services/jurisdiction.py`, `app/services/permit_foundation.py`). Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** (**gate-at-close** live current = head `f8a9b0c1d2e3`; live head today is `a9b0c1d2e3f4`).
+- **Organization Brand Profile (FG-017):** `OrganizationBrandProfile`, `ProposalBrandSnapshot`, Settings `/settings/brand-profile` (`app/services/brand_profile.py`, `app/services/brand_logo_storage.py`). **CLOSED / OPERATIONAL FOR UAT**. Live current = head `a9b0c1d2e3f4`. Change Order / Permit consumers remain future.
 
 ### Known architectural risks / incomplete boundaries
 
@@ -162,16 +163,17 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 - Scheduling, Job Costing, Invoicing
 - QuickBooks / accounting integration — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - Historical estimating intelligence (LEARN; [ADR-024](adr/ADR-024-learn-recommendation-boundary.md))
-- **Historical upload onboarding (FG-013)** — [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. Live current=head `c5d6e7f8a9b0`.
+- **Historical upload onboarding (FG-013)** — [FG-013](feature-gates/FG-013-contractor-calibration-onboarding-historical-upload-ux.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. Revision `c5d6e7f8a9b0` (**gate-at-close** live current=head; later superseded).
 - **Labour Engine Phase B** — [labour-engine-phase-b-architecture.md](architecture/labour-engine-phase-b-architecture.md); [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (foundation operational for UAT). Selling-price application remains out of scope of FG-008.
 - **Organization-Calibrated Pricing Engine** — [organization-calibrated-pricing-engine-architecture.md](architecture/organization-calibrated-pricing-engine-architecture.md); [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**. ADR-025 **Accepted**; ADR-030 **Accepted**. Foundation operational for UAT. Labour-snapshot Direct Labour Cost is not included in the estimate basis by default. Optional ORG-001 overhead/profit/contingency layers remain `UNSPECIFIED`.
 
-Labour Engine and Pricing Engine foundations are **Current**. AI take-off foundation is **operational for UAT**. Do **not** describe the remaining items in this Future list as existing:
+Labour Engine and Pricing Engine foundations are **Current**. AI take-off foundation, Permit Pass 1–2, Material Catalogue identity, historical-upload UX, and Organization Brand Profile V1 (Proposal consumer) are **CLOSED / OPERATIONAL FOR UAT**. Do **not** describe the remaining items in this Future list as existing:
 
 - Electronic signature / formal proposal acceptance workflows
 - CAD ingestion (Phase G; PDF-first per ADR-009)
 - Estimate mapping from approved take-off packages (Phase D; not FG-010). Material Catalogue identity **precedes** Phase D implementation.
-- Material Catalogue implementation (lumber/sheets identity + CostItem link) — [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**
-- Permit Intelligence / Permit & Approvals Report / jurisdiction resolver — architecture **Accepted** (ADR-037/038/039); Pass 1 [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**; Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** (no live lookup / external AI; 10 APPROVED Ottawa coach-house rules live) — [permit-and-approvals-report.md](architecture/permit-and-approvals-report.md) · [permit-rules-library.md](architecture/permit-rules-library.md) · [jurisdiction-resolution.md](architecture/jurisdiction-resolution.md)
-- Organization Brand Profile / org-owned logo upload / brand snapshot — [organization-brand-profile.md](architecture/organization-brand-profile.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md)
+- Living supplier evidence / Winchester POC / bulk supplier onboarding (FG-014 identity is closed; ADR-008 remains Proposed)
+- Permit branding from Brand Profile; national Permit Rules expansion (FG-015/FG-016 POC is closed)
 - Change Order governed document family / client email / field UX — [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (do not create a second Change Order entity)
+- Authentication / actor identity + shared API (sequence item 10 — **NOT STARTED / NOT AUTHORIZED**)
+- BUILD field capture; field web (require item 10); MONITOR implementation; LEARN / ML

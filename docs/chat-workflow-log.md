@@ -63,7 +63,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Individual Feature Gate files still record **gate-at-close** Alembic heads (historical; left in place). |
 | Next approved step | **STOP.** Do not start Authentication. Do not create FG-018. |
 | Next approved prompt | None authorized. Expected next *substantive* step only after Joel/ChatGPT review: separately authorized Authentication architecture and Feature-Gate reconnaissance. |
-| Commit hash | Content `dd30d752190e56ed687e270950df9bf9a06d7a26`. Latest `main` SHA: verify `git rev-parse HEAD`. |
+| Commit hash | Content `dd30d752190e56ed687e270950df9bf9a06d7a26`. SHA-pin `07cb46c501d968542dff567943044dc1db870f01`. Live `HEAD`: verify `git rev-parse HEAD`. |
 
 ### 2026-08-30 — FG-017 live migration + office UAT close
 

@@ -89,7 +89,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-- **`main` / `origin/main`** — Docs reconciliation `dd30d752190e56ed687e270950df9bf9a06d7a26`. FG-017 live-migrate / office UAT close `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5`. Alembic **current = head = `a9b0c1d2e3f4`**. One graph head. Latest `main` SHA: verify `git rev-parse HEAD`.
+- **`main` / `origin/main`** — FG-017 close `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5`. Docs-reconciliation content `dd30d752190e56ed687e270950df9bf9a06d7a26`. SHA-pin `07cb46c501d968542dff567943044dc1db870f01`. Live `HEAD` / `origin/main`: verify `git rev-parse HEAD` and `git rev-parse origin/main` (do not treat as a circular this-commit reference). Alembic **current = head = `a9b0c1d2e3f4`**. One graph head.
 - **FG-008 through FG-017** **CLOSED / OPERATIONAL FOR UAT** as applicable. [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**. Full-suite governed baseline **423 passed**.
 - **ADR-021** **Accepted** (MONITOR **not implemented**; Feature Gate **not** authorized by the ADR).
 - **Review Turnover Protocol** adopted (2026-08-28) — `Review Turnover` governing.

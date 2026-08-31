@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-020 IMPLEMENTED / LIVE MIGRATION PENDING.** Item 10 **COMPLETE**. FG-018/FG-019 **CLOSED / OPERATIONAL FOR UAT**. ADR-041 **Accepted**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Live current `b0c1d2e3f4a5`. Repository head `c1d2e3f4a5b6`. Full suite **527 passed**. Dedicated FG-020 **33 passed**. Focused **370 passed**. Item 12 **BLOCKED**. Do **not** mark FG-020 closed. Do **not** live-migrate from this prompt. ADR-008 / ADR-010 **Proposed**. |
+| Status | **FG-020 IMPLEMENTED / LIVE MIGRATION PENDING.** Image-only Compatible Renditions (HEIC/HEIF → JPEG) **IMPLEMENTED**. Storage-lifecycle pin recorded. Project Closeout **FUTURE**. Item 10 **COMPLETE**. FG-018/FG-019 **CLOSED / OPERATIONAL FOR UAT**. ADR-041 **Accepted**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Live current `b0c1d2e3f4a5`. Repository head `c1d2e3f4a5b6`. Full suite **538 passed**. Dedicated FG-020 **44 passed** (33 + 11). Focused (Hub + FG-018 + FG-019 + both FG-020) **128 passed**. Item 12 **BLOCKED**. Do **not** mark FG-020 closed. Do **not** implement Closeout. Do **not** start Field Web. ADR-008 / ADR-010 **Proposed**. |
 | Updated | 2026-08-31 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -29,7 +29,7 @@ Authority order for the next session: repository governance → current-state re
 - FG-016 implementation commit: `a709829d32d94ab2baf36f142ad0095254ba3d3a` (`feat: implement FG-016 Ontario Ottawa Permit Intelligence POC`)
 - Alembic graph head (repository): **`c1d2e3f4a5b6`**. Live `flask db current`: **`b0c1d2e3f4a5`**. One graph head. FG-020 upgrade **pending**.
 - Chain: … → **`b0c1d2e3f4a5` (FG-018; live current)** → **`c1d2e3f4a5b6` (FG-020; repository head, not applied live)**
-- Governed full suite: **527 passed**. Dedicated FG-020 **33**. Focused **370**. Dedicated FG-019 **34**. Dedicated FG-018 **37**. Pre-FG-020 baseline **494**.
+- Governed full suite: **538 passed**. Dedicated FG-020 **44** (33 field observation + 11 media compatibility). Focused (Hub + FG-018 + FG-019 + both FG-020) **128**. Dedicated FG-019 **34**. Dedicated FG-018 **37**. Pre-increment baseline **527**. Pre-FG-020 baseline **494**.
 - Working tree: clean after post-FG-018 docs reconciliation; live DB unchanged this pass
 - Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**. Runtime permit web lookup **NOT AUTHORIZED**.
 
@@ -95,7 +95,11 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **implement FG-020 BUILD Field Capture V1**. Product code, tests, docs, additive revision `c1d2e3f4a5b6`. Live `flask db upgrade` **not** run. Status **IMPLEMENTED / LIVE MIGRATION PENDING**. Not closed.
+**Last authorized delta:** **FG-020 Media Compatibility increment** — automatic HEIC/HEIF → JPEG Compatible Renditions after Original Source preservation. Image-only. No new migration. Live upgrade **not** run. Storage-lifecycle docs preserved and committed with this increment. FG-020 remains **IMPLEMENTED / LIVE MIGRATION PENDING**.
+
+Prior: docs-only **BUILD media compatibility + project-close storage lifecycle** clarification. Pin [build-media-storage-lifecycle.md](architecture/build-media-storage-lifecycle.md). Committed together with the rendition increment (not left stranded).
+
+Prior: **implement FG-020 BUILD Field Capture V1**. Product code, tests, docs, additive revision `c1d2e3f4a5b6`. Live `flask db upgrade` **not** run. Status **IMPLEMENTED / LIVE MIGRATION PENDING**. Not closed.
 
 Prior: docs-only **approve FG-020** and **record implementation reconnaissance**. BUILD product code **not started**. No migration.
 
@@ -143,13 +147,13 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - FG-017: `OrganizationBrandProfile`; `ProposalBrandSnapshot`; `app/services/brand_profile.py`; `app/services/brand_logo_storage.py`; Settings `/settings/brand-profile`; Proposal preview/PDF consume snapshot-or-current. Office UAT port **5010**.
 - FG-019: GET-only `/api/v1/me`, `/api/v1/projects`, `/api/v1/projects/<id>` plus **narrow** FG-020 BUILD POST allow-list; `app/services/shared_api.py`; JSON 401/403/404/405/409. API UAT port **5012**.
 - FG-018: `User`; `UserMembership`; `app/services/auth.py`; `/login` `/logout`; CSRFProtect; membership org context; CLI bootstrap/reset. Live current `b0c1d2e3f4a5`. Office UAT port **5011**.
-- FG-020: `FieldCaptureEvent`; `FieldCaptureOriginal`; `FieldCaptureDerivedCandidate`; `app/services/build.py`; `app/services/build_storage.py`; office `/projects/<id>/field-events/...`; Hub Field Observations; `flask build propose-derived-candidate`. Repository head `c1d2e3f4a5b6` **not applied live**.
+- FG-020: `FieldCaptureEvent`; `FieldCaptureOriginal`; `FieldCaptureDerivedCandidate`; `app/services/build.py`; `app/services/build_storage.py`; `app/services/build_rendition.py`; office `/projects/<id>/field-events/...` including `/display` JPEG; Hub Field Observations; `flask build propose-derived-candidate`. Repository head `c1d2e3f4a5b6` **not applied live**.
 
 ## 10. TEST / UAT / MIGRATION STATUS
 
 - Repository graph head `c1d2e3f4a5b6`. Live current `b0c1d2e3f4a5`. FG-020 upgrade **pending**. One graph head.
-- Dedicated: FG-020 **33**; FG-019 **34**; FG-018 **37**; FG-017 **22**; FG-016 **37**; FG-015 permit foundation **19**; FG-014 material catalogue **35**; FG-013 upload 27; FG-012 19; Project Hub (post-FG-020 assertions); take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
-- Focused regression: **370 passed**. Full suite: **527 passed**. Pre-FG-020 baseline **494**.
+- Dedicated: FG-020 **44** (33 + 11 media compatibility); FG-019 **34**; FG-018 **37**; FG-017 **22**; FG-016 **37**; FG-015 permit foundation **19**; FG-014 material catalogue **35**; FG-013 upload 27; FG-012 19; Project Hub (post-FG-020 assertions); take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
+- Focused regression (Hub + FG-018 + FG-019 + both FG-020 files): **128 passed**. Full suite: **538 passed**. Pre-increment baseline **527**. Pre-FG-020 baseline **494**.
 - Live API FG-019 UAT **PASSED** on port **5012**. Live office FG-018 UAT **PASSED** on port **5011**. FG-017 UAT remains **PASSED** on port **5010**. Pratt Permit Report UAT remains **PASSED** on port **5009** (project id 9). FG-020 office UAT **not started** (live migration pending).
 
 ## 11. PROTECTED STATE
@@ -185,7 +189,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - **FG-017:** **CLOSED / OPERATIONAL FOR UAT**. **Gate-at-close** current = head `a9b0c1d2e3f4`. Office UAT port **5010**. ADR-040 **Accepted**. Change Order / Permit branding **not** in this gate. Live head today is `b0c1d2e3f4a5`.
 - **FG-018:** **CLOSED / OPERATIONAL FOR UAT**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. Live current `b0c1d2e3f4a5`. Office UAT port **5011**. Shared API **out of this gate**. Not production-security certification.
 - **FG-019:** **CLOSED / OPERATIONAL FOR UAT**. Shared API Foundation V1. GET-only `/api/v1` plus FG-020 BUILD POST allow-list. No FG-019 migration. API UAT port **5012**.
-- **FG-020:** **IMPLEMENTED / LIVE MIGRATION PENDING**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Repository head `c1d2e3f4a5b6`. Live current remains `b0c1d2e3f4a5`. Dedicated **33**. Full suite **527**. Not closed. Field Web **not** in this gate.
+- **FG-020:** **IMPLEMENTED / LIVE MIGRATION PENDING**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Image-only Compatible Renditions **implemented**. Repository head `c1d2e3f4a5b6`. Live current remains `b0c1d2e3f4a5`. Dedicated **44**. Full suite **538**. Not closed. Field Web **not** in this gate. Closeout **not** started.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
@@ -227,17 +231,17 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 18. DEFERRED ITEMS
 
-Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; Field Web / iPhone Capture chrome; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; MONITOR/LEARN **implementation**; native/token auth; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; RBAC / org-switcher / invitations / SSO; national Permit Rules expansion; Change Order document family.
+Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; Project Closeout / archive-and-purge; Field Web / iPhone Capture chrome; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; MONITOR/LEARN **implementation**; native/token auth; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; RBAC / org-switcher / invitations / SSO; national Permit Rules expansion; Change Order document family.
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not start Phase D. Do not enable an external AI provider. Do not start Field Web, tokens, RBAC, org-switcher, invitations, SSO, or password-reset email. Do **not** run live `flask db upgrade` until a separate live-migration prompt. Do **not** mark FG-020 **CLOSED / OPERATIONAL FOR UAT** yet. Do not **implement** MONITOR/LEARN, QuickBooks, or contract/warranty work. Do **not** create another migration. Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not implement bulk supplier onboarding. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013 / FG-014 / **FG-015** / **FG-016** / **FG-017** / **FG-018** / **FG-019**. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history. Do not implement supplier pricing. Do not accept ADR-008. Do not accept ADR-010. Do not begin national permit expansion. Do not implement live regulatory AI, in-product web lookup, automatic permit conclusions, or municipal submissions. Do not implement Change Order document-family rewrite, client email, or a second Change Order entity until Joel separately Approves the gate and authorizes an implementation prompt.
+Do not start Phase D. Do not enable an external AI provider. Do not start Field Web, tokens, RBAC, org-switcher, invitations, SSO, or password-reset email. Do **not** implement Project Closeout. Do **not** expand renditions to audio conversion, extra sizes, or a job queue. Do **not** run live `flask db upgrade` until a separate live-migration prompt. Do **not** mark FG-020 **CLOSED / OPERATIONAL FOR UAT** yet. Do not **implement** MONITOR/LEARN, QuickBooks, or contract/warranty work. Do **not** create another migration. Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not implement bulk supplier onboarding. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013 / FG-014 / **FG-015** / **FG-016** / **FG-017** / **FG-018** / **FG-019**. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history. Do not implement supplier pricing. Do not accept ADR-008. Do not accept ADR-010. Do not begin national permit expansion. Do not implement live regulatory AI, in-product web lookup, automatic permit conclusions, or municipal submissions. Do not implement Change Order document-family rewrite, client email, or a second Change Order entity until Joel separately Approves the gate and authorizes an implementation prompt.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** Separate **live-migration / office UAT** prompt: `flask db upgrade` `b0c1d2e3f4a5` → `c1d2e3f4a5b6`, then office UAT of Field Observations. Do **not** mark FG-020 **CLOSED / OPERATIONAL FOR UAT** until that pass. Do **not** start Field Web. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) is **IMPLEMENTED / LIVE MIGRATION PENDING**.
+**Next governed action:** **STOP.** Separate live-migration / office UAT prompt (`b0c1d2e3f4a5` → `c1d2e3f4a5b6`). Do **not** mark FG-020 **CLOSED / OPERATIONAL FOR UAT**. Do **not** implement Project Closeout. Do **not** start Field Web. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) remains **IMPLEMENTED / LIVE MIGRATION PENDING**. Image-only Compatible Renditions are in.
 
-**Roadmap direction (not authorization):** Item 12 remains **BLOCKED**. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Roadmap direction (not authorization):** Item 12 remains **BLOCKED**. Project Closeout remains **FUTURE**. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -254,7 +258,7 @@ git rev-parse origin/main
 git diff --check
 ./venv/bin/flask db current
 ./venv/bin/flask db heads
-./venv/bin/python -m pytest -q tests/test_build_field_observation_fg020.py
+./venv/bin/python -m pytest -q tests/test_build_field_observation_fg020.py tests/test_build_media_compatibility_fg020.py
 ./venv/bin/python -m pytest -q tests/test_auth_fg018.py tests/test_shared_api_fg019.py
 ./venv/bin/python -m pytest -q tests/test_estimate_output_consistency.py
 ./venv/bin/python -m pytest -q tests/test_project_hub.py
@@ -267,7 +271,7 @@ git diff --check
 ./venv/bin/python -m pytest -q
 ```
 
-Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **current `b0c1d2e3f4a5`**; Alembic **heads `c1d2e3f4a5b6`** (one graph head; live current ≠ head); dedicated FG-020 **33**; focused **370**; FG-019 34; FG-018 37; FG-017 22; FG-016 37; FG-015 19; FG-014 35; FG-013 27; FG-012 19; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **527 passed**. Non-development `flask` CLI requires local-only `SECRET_KEY` (gitignored `.env`).
+Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **current `b0c1d2e3f4a5`**; Alembic **heads `c1d2e3f4a5b6`** (one graph head; live current ≠ head); dedicated FG-020 **44**; focused (Hub + FG-018 + FG-019 + both FG-020) **128**; FG-019 34; FG-018 37; FG-017 22; FG-016 37; FG-015 19; FG-014 35; FG-013 27; FG-012 19; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **538 passed**. Non-development `flask` CLI requires local-only `SECRET_KEY` (gitignored `.env`).
 
 ## 22. FRESH CHAT STARTUP PROMPT
 
@@ -286,6 +290,7 @@ Conversation titles in this workspace must start with: BRAYMAN — <Topic>.
 
 DO NOT live-migrate from this stopping point unless a separate prompt authorizes it.
 DO NOT mark FG-020 CLOSED / OPERATIONAL FOR UAT yet.
+DO NOT implement Project Closeout.
 DO NOT start Field Web.
 DO NOT add tokens or API keys.
 DO NOT start RBAC or an org-switcher.
@@ -297,10 +302,13 @@ DO NOT enable external AI or runtime web lookup.
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.
 Item 10 is COMPLETE (FG-018 + FG-019 both CLOSED / OPERATIONAL FOR UAT).
 Item 11 BUILD Field Observation foundation is IMPLEMENTED / LIVE MIGRATION PENDING.
+Image-only Compatible Renditions (HEIC/HEIF → JPEG) are IMPLEMENTED.
 ADR-042 is Accepted. FG-020 is IMPLEMENTED / LIVE MIGRATION PENDING.
 Live current b0c1d2e3f4a5. Repository head c1d2e3f4a5b6.
 Item 12 Field Web is BLOCKED / NOT AUTHORIZED.
-Next authorized action = separate live-migration / office UAT prompt. Do not start Field Web.
+Project Closeout is FUTURE.
+Storage-lifecycle pin: docs/architecture/build-media-storage-lifecycle.md
+Next authorized action = STOP. Separate live-migration / office UAT prompt. Do not implement Closeout. Do not start Field Web.
 
 1. REVIEW REPOSITORY GOVERNANCE FIRST
 Read and comply with:
@@ -346,7 +354,7 @@ Independently reconstruct from the repository:
 - FG-008 through FG-019 CLOSED / OPERATIONAL FOR UAT
 - FG-020 IMPLEMENTED / LIVE MIGRATION PENDING
 - Live current b0c1d2e3f4a5; repository head c1d2e3f4a5b6
-- Full suite 527 passed; dedicated FG-020 33; focused 370; dedicated FG-019 34; dedicated FG-018 37
+- Full suite 538 passed; dedicated FG-020 44 (33 + 11 media compatibility); focused Hub+FG-018+FG-019+FG-020 128; dedicated FG-019 34; dedicated FG-018 37
 - Pratt UAT project id 9 / FG016-UAT-PRATT / analysis v3 / advisory only
 - FG-018 office UAT PASSED on port 5011
 - FG-019 API UAT PASSED on port 5012
@@ -357,6 +365,9 @@ Independently reconstruct from the repository:
 - FG-019 CLOSED / OPERATIONAL FOR UAT
 - Roadmap item 10 COMPLETE
 - Item 11 BUILD IMPLEMENTED / LIVE MIGRATION PENDING (not closed)
+- Image-only Compatible Renditions (HEIC/HEIF → JPEG) IMPLEMENTED
+- Project Closeout / archive-and-purge FUTURE / NOT AUTHORIZED
+- Storage-lifecycle pin recorded (docs/architecture/build-media-storage-lifecycle.md)
 - Field Web BLOCKED until separately gated
 - ADR-008 and ADR-010 remain Proposed
 - Phase D NOT STARTED / NOT AUTHORIZED
@@ -364,7 +375,8 @@ Independently reconstruct from the repository:
 - Runtime permit web lookup NOT AUTHORIZED
 
 4. RETURN A CONCISE CURRENT STATE REVIEW
-Then WAIT for Joel to authorize the separate live-migration / office UAT prompt, or a different task.
+Then WAIT for Joel to authorize a live-migration / office UAT prompt, or a different task.
+Do NOT implement Project Closeout.
 Do NOT live-migrate unless that prompt is issued.
 Do NOT mark FG-020 CLOSED.
 Do NOT start Field Web.
@@ -528,4 +540,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: FG-020 **IMPLEMENTED / LIVE MIGRATION PENDING**; FG-019 **CLOSED / OPERATIONAL FOR UAT**; FG-018 **CLOSED / OPERATIONAL FOR UAT**; item 10 **COMPLETE**; live current `b0c1d2e3f4a5`; repository head `c1d2e3f4a5b6`; full suite **527 passed**; dedicated FG-020 **33**; focused **370**; dedicated FG-019 **34**; dedicated FG-018 **37**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Next: separate live-migration / office UAT. Do **not** start Field Web. Item 12 **BLOCKED**. Phase D unauthorized. Change Order document family **FUTURE / NOT IMPLEMENTED**.
+A–J: FG-020 **IMPLEMENTED / LIVE MIGRATION PENDING**; image-only Compatible Renditions **IMPLEMENTED**; storage-lifecycle pin **RECORDED**; Project Closeout **FUTURE**; FG-019 **CLOSED / OPERATIONAL FOR UAT**; FG-018 **CLOSED / OPERATIONAL FOR UAT**; item 10 **COMPLETE**; live current `b0c1d2e3f4a5`; repository head `c1d2e3f4a5b6`; full suite **538 passed**; dedicated FG-020 **44**; focused (Hub + FG-018 + FG-019 + both FG-020) **128**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Next: live-migration / office UAT. Do **not** start Field Web. Do **not** implement Closeout. Item 12 **BLOCKED**. Phase D unauthorized. Change Order document family **FUTURE / NOT IMPLEMENTED**.

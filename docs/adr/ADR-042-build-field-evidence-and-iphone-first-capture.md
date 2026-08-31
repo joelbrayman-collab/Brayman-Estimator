@@ -9,6 +9,10 @@
 
 **Current status (2026-08-31):** This ADR is **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) is **IMPLEMENTED / LIVE MIGRATION PENDING**. HEIC/HEIF originals are preserved (custody ≠ rendering). Live Alembic current remains **`b0c1d2e3f4a5`**; repository head is **`c1d2e3f4a5b6`**. Field Web, transcription, and live `flask db upgrade` were **not** run in the implementation prompt.
 
+**Subsequent status (2026-08-31 media storage lifecycle):** Joel confirmed Original Source vs Compatible Rendition vs Closed Project Archive. See [build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md). Renditions are regenerable working artifacts (HEIC/HEIF → JPEG is the first concrete requirement). They are **not** Original Source, **not** Derived Candidates, and **not** permanent archive records. Project Closeout / archive-before-purge is **FUTURE / NOT AUTHORIZED**. This ADR remains **Accepted**.
+
+**Subsequent status (2026-08-31 Compatible Rendition increment):** Image-only HEIC/HEIF → JPEG Compatible Renditions are **implemented** (`app/services/build_rendition.py`). Original Source custody is unchanged. No new migration. Live upgrade **not** run. Do **not** start Field Web. Do **not** implement Closeout.
+
 A committed Proposed ADR was not acceptance. This record is now **Accepted**. Live migration and office UAT remain a **separate** prompt. Do **not** start Field Web.
 
 ---
@@ -144,9 +148,11 @@ Do not silently promote a machine transcript to original evidence. Re-transcript
 
 ### 9. Photo
 
-Original photo bytes are evidence. Preserve original bytes, checksum/SHA, size, and governed metadata/provenance. Do not overwrite the original image.
+Original photo bytes are **Original Source**. Preserve original bytes, checksum/SHA, size, and governed metadata/provenance. Do not overwrite the original image.
 
-Any later AI observation, classification, issue suggestion, annotation, or derived crop/version is **separate** from the original.
+A **Compatible Rendition** (JPEG generated from HEIC/HEIF for desktop display) is a regenerable presentation/cache artifact. It must never replace Original Source bytes. FG-020 now generates that JPEG automatically after Original preservation. See [build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md).
+
+Any later AI observation, classification, issue suggestion, annotation, or derived crop/version is **separate** from the original **and** from Compatible Renditions. Compatible Renditions are not business Derived Candidates.
 
 Do **not** implement photo AI in BUILD V1.
 

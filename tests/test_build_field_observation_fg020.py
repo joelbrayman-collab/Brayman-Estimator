@@ -580,9 +580,10 @@ def test_heic_desktop_metadata_not_broken_image(client, app):
     html = client.get(f"/projects/{project.id}/field-events/{event_id}").get_data(as_text=True)
     assert "image/heic" in html
     assert "iphone.heic" in html
-    assert "cannot preview" in html.lower() or "cannot preview" in html
+    assert "This photo is saved" in html
+    assert "iphone.heic" in html
     assert f'src="/projects/{project.id}/field-events/{event_id}/originals/{uploaded["id"]}"' not in html
-    assert "Download original" in html
+    assert ">Original<" in html
     bytes_response = client.get(
         f"/projects/{project.id}/field-events/{event_id}/originals/{uploaded['id']}"
     )
@@ -602,7 +603,7 @@ def test_audio_desktop_rendering(client, app):
     html = client.get(f"/projects/{project.id}/field-events/{event_id}").get_data(as_text=True)
     assert "<audio" in html
     assert f"/projects/{project.id}/field-events/{event_id}/originals/{uploaded['id']}" in html
-    assert "Download original" in html
+    assert ">Original<" in html
     assert "transcript" not in html.lower()
     assert "waveform" not in html.lower()
 

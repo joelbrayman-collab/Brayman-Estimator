@@ -30,6 +30,32 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-08-31 — FG-020 Media Compatibility increment (HEIC/HEIF → JPEG)
+
+| Field | Content |
+|-------|---------|
+| ID | FG-020 Compatible Rendition increment / still live-migration pending |
+| Status | [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) remains **IMPLEMENTED / LIVE MIGRATION PENDING**. Image-only Compatible Renditions **implemented**. Project Closeout **FUTURE**. Item 12 **BLOCKED**. |
+| Branch | `main` |
+| Base commit | `77d496367f9e6f003eb69949adb3bd82c6cadfd7` |
+| Objective | Automatic HEIC/HEIF → JPEG Compatible Rendition after Original Source preservation. Preserve storage-lifecycle docs. Do not live-migrate. Do not start Field Web or Closeout. |
+| Deliverables | `app/services/build_rendition.py`; desktop `/display` JPEG route; Event Detail Photo rendering; `Pillow` + `pillow-heif`; `tests/test_build_media_compatibility_fg020.py`; storage-lifecycle pin committed with this increment. No new Alembic revision. |
+| Validation | Dedicated media compatibility **11 passed**. Combined dedicated FG-020 **44 passed**. Focused Hub+FG-018+FG-019+FG-020 **128 passed**. Full suite **538 passed**. Live current remains `b0c1d2e3f4a5`. Repository head remains `c1d2e3f4a5b6`. |
+| Next | Separate live-migration / office UAT prompt. Do not mark FG-020 closed. Do not start Field Web. Do not implement Closeout. |
+
+### 2026-08-31 — BUILD media compatibility + project-close storage lifecycle (docs only)
+
+| Field | Content |
+|-------|---------|
+| ID | Docs-only BUILD media storage-lifecycle clarification |
+| Status | Architecture pin recorded. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) remains **IMPLEMENTED / LIVE MIGRATION PENDING**. Compatible Renditions **not implemented**. Project Closeout **FUTURE / NOT AUTHORIZED**. Item 12 **BLOCKED**. |
+| Branch | `main` |
+| Base commit | `77d496367f9e6f003eb69949adb3bd82c6cadfd7` |
+| Objective | Clarify Original Source vs Compatible Rendition vs Closed Project Archive. Do not implement BUILD. Do not implement Closeout. |
+| Deliverables | [build-media-storage-lifecycle.md](architecture/build-media-storage-lifecycle.md); subsequent status on ADR-042 / FG-020; indexes; current-state / session-handoff / roadmap / project-state-report / chat-workflow-log. No `app/` / `tests/` / `migrations/`. |
+| Validation | Docs-only. Product tests not rerun. Governed baseline remains **527 passed**. Live current remains `b0c1d2e3f4a5`. |
+| Next | **STOP.** Joel/ChatGPT review. Then a revised FG-020 increment authorization if Compatible Renditions are to land. Do not start Field Web. |
+
 ### 2026-08-31 — Implement FG-020 BUILD Field Capture V1 (live migration pending)
 
 | Field | Content |

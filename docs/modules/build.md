@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | **Partial Current** — Field Capture V1 **IMPLEMENTED / LIVE MIGRATION PENDING**. Change Orders remain Project Controls. Field Web **not implemented**. |
 | Updated | 2026-08-31 |
-| Code | `app/models/build.py`, `app/services/build.py`, `app/services/build_storage.py`, `app/routes/build.py`, `app/cli/build.py`, `app/templates/build/`; `/api/v1` BUILD adapter in `app/routes/api_v1.py` |
+| Code | `app/models/build.py`, `app/services/build.py`, `app/services/build_storage.py`, `app/services/build_rendition.py`, `app/routes/build.py`, `app/cli/build.py`, `app/templates/build/`; `/api/v1` BUILD adapter in `app/routes/api_v1.py` |
 | ADR | [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** (boundary). [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **IMPLEMENTED / LIVE MIGRATION PENDING**. |
 | CAR | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 
@@ -38,7 +38,11 @@ Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Can
 
 **FG-020 Field Observation foundation** — models, additive revision `c1d2e3f4a5b6` (live current still `b0c1d2e3f4a5`), office Project Hub **Field Observations** beside Change Orders, event create/detail/supersession, private original download, bounded `/api/v1` BUILD POSTs, `flask build propose-derived-candidate` for UAT. Confirm/reject does not write Estimate, Proposal, Change Order, Permit, take-off, or MONITOR records.
 
-**Not implemented:** Field Web / Today / iPhone Capture chrome; microphone or camera UI; transcription; MONITOR; auto-Change Order.
+**Compatible Renditions (image-only increment)** — `app/services/build_rendition.py`. HEIC/HEIF Originals get an automatic JPEG at `instance/build_renditions/<org>/<project>/<event>/<original_id>/display.jpg` (`BUILD_RENDITION_ROOT`). Pillow + pillow-heif; JPEG quality 85; max long edge 2048 px; EXIF orientation applied. Failure does not roll back Original Source. JPEG/PNG/GIF stay native. Audio is unchanged. No schema. Event Detail renders the JPEG as **Photo** with an **Original** link. Hub Field Observations list is unchanged (no thumbnail redesign).
+
+**Not implemented:** Project Closeout / archive-and-purge; Field Web / Today / iPhone Capture chrome; microphone or camera UI; transcription; audio conversion; MONITOR; auto-Change Order.
+
+**Storage lifecycle:** Active projects may retain Original Source **plus** regenerable Compatible Renditions. After a separately governed Project Closeout, archive Original Source, verify, then purge renditions first and duplicate active originals second. Do **not** accumulate redundant copies indefinitely. FG-020 must not block that future path. Closeout is **not** this gate.
 
 ## Dependencies
 
@@ -48,6 +52,7 @@ Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Can
 
 - [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**
 - [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **IMPLEMENTED / LIVE MIGRATION PENDING**
+- [architecture/build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md) (Original Source / Compatible Rendition / Closed Project Archive — HEIC/HEIF JPEG renditions **implemented**; Closeout **not implemented**)
 - [modules/projects.md](projects.md) (Change Orders)
 - [modules/plan-intelligence.md](plan-intelligence.md)
 - [modules/monitor.md](monitor.md) (comparison layer; does not own BUILD actuals)

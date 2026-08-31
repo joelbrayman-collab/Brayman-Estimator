@@ -22,10 +22,12 @@
 | Feature Gate (this document) | **IMPLEMENTED / LIVE MIGRATION PENDING** |
 | ADR-042 | **Accepted** |
 | Implementation reconnaissance | **RECORDED 2026-08-31.** HEIC/HEIF original custody was **corrected at implementation** (see below). |
-| Implementation | **IMPLEMENTED.** Dedicated tests **33 passed**. Focused regression **370 passed**. Full suite **527 passed**. |
+| Implementation | **IMPLEMENTED.** Foundation dedicated tests **33 passed** / full suite **527**. Compatible Rendition increment: dedicated **44 passed** (33 + 11); focused Hub+FG-018+FG-019+FG-020 **128 passed**; full suite **538 passed**. |
 | Schema / Alembic | Repository revision **`c1d2e3f4a5b6`**, `down_revision` **`b0c1d2e3f4a5`**. **Live current remains `b0c1d2e3f4a5`.** One repository graph head. Live `flask db upgrade` **NOT RUN**. |
 | BUILD product code | **IMPLEMENTED** (office HTML, BUILD service, storage, bounded `/api/v1`, UAT CLI). |
 | Field Web (Item 12) | **BLOCKED / NOT AUTHORIZED.** FG-020 implementation still does **not** authorize Field Web. |
+| Compatible Renditions / Media Compatibility service | **IMPLEMENTED** (2026-08-31 image-only increment). HEIC/HEIF → JPEG automatically after Original Source preservation. Regenerable. No schema. See [build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md). |
+| Project Closeout / archive-and-purge | **FUTURE / NOT AUTHORIZED.** FG-020 must not block that future path. Renditions remain independently purgeable. |
 
 Do **not** mark this gate **CLOSED / OPERATIONAL FOR UAT** until a separate live-migration and office UAT prompt.
 
@@ -756,7 +758,7 @@ Recon §3 omitted HEIC/HEIF so desktop Chrome could preview JPEG/PNG/GIF. Joel�
 - Do **not** modify original bytes.
 - Store original bytes, SHA-256, byte size, canonical MIME, original filename where permitted, and provenance.
 - Validation uses narrow ISO-BMFF `ftyp` brand recognition (`heic` / `heif` / `mif1` / related still-image brands). Generic `mp41`/`mp42`/`isom` and AVIF are **not** accepted as HEIC.
-- Desktop: if the browser cannot natively preview HEIC/HEIF, show evidence metadata and authorized download/open. Do **not** present a broken `<img>`. A future derived JPEG preview would be separately governed and must never replace the original.
+- Desktop: if the browser cannot natively preview HEIC/HEIF, render the Compatible JPEG Rendition when present. If generation failed, show a photo placeholder plus authorized Original download. Do **not** present a broken `<img>`. A Compatible Rendition is regenerable working/display storage, **not** Original Source. See [build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md).
 - **WebP remains out.**
 
 ### File-custody rules (implemented)
@@ -780,14 +782,37 @@ That split is expected until the separate live-migration prompt.
 | Suite | Result |
 |-------|--------|
 | Dedicated `tests/test_build_field_observation_fg020.py` | **33 passed** |
-| Focused regression (FG-018/019, Hub, COs, org, Plan Intelligence, take-off, Labour, Pricing, Permit, estimates, proposals, historical upload, Brand Profile) | **370 passed** |
-| Full suite `./venv/bin/python -m pytest -q` | **527 passed** (pre-FG-020 baseline **494**) |
+| Dedicated `tests/test_build_media_compatibility_fg020.py` | **11 passed** (HEIC/HEIF → JPEG increment) |
+| Combined dedicated FG-020 | **44 passed** |
+| Focused (Hub + FG-018 + FG-019 + both FG-020 files) | **128 passed** |
+| Full suite `./venv/bin/python -m pytest -q` | **538 passed** (pre-increment governed baseline **527**; pre-FG-020 **494**) |
 
 `tests/test_auth_fg018.py::test_testing_secret_allowed` now unsets env `SECRET_KEY` so the TESTING fallback assertion is isolated (same pattern as the sibling debug-secret test).
 
 ### Remaining live-migration / UAT step
 
 A **separate** prompt must run live `flask db upgrade` (`b0c1d2e3f4a5` → `c1d2e3f4a5b6`), then office UAT of Field Observations beside Change Orders. Do **not** mark FG-020 **CLOSED / OPERATIONAL FOR UAT** until that pass. Do **not** start Field Web.
+
+### Subsequent status (2026-08-31 media storage lifecycle)
+
+Joel clarified Original Source vs Compatible Rendition vs Closed Project Archive. Canonical pin: [build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md).
+
+This clarification does **not** rewind FG-020 to **IMPLEMENTATION NOT STARTED**. Landed FG-020 Original Source custody stands.
+
+### Subsequent status (2026-08-31 Compatible Rendition increment)
+
+Authorized FG-020 increment implemented **before** live migration / office UAT:
+
+- HEIC/HEIF Original Source remains immutable and SHA-governed
+- Automatic JPEG Compatible Rendition after Original preservation (`Pillow` + `pillow-heif`, quality **85**, max long edge **2048 px**)
+- Storage: `instance/build_renditions/<org>/<project>/<event>/<original_id>/display.jpg`
+- No new Alembic revision
+- Image-only. Audio conversion **not** added
+- Project Closeout **not** started
+- Field Web **not** started
+- Live `flask db upgrade` **not** run
+
+**Next:** separate live-migration / office UAT prompt (`b0c1d2e3f4a5` → `c1d2e3f4a5b6`). Do **not** mark FG-020 **CLOSED / OPERATIONAL FOR UAT**. Do **not** implement Closeout. Do **not** start Field Web.
 
 ---
 

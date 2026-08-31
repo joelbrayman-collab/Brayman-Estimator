@@ -32,6 +32,7 @@ from app.services.build import (
     successor_event,
     supersede_event,
 )
+from app.services.build_rendition import open_display_rendition
 from app.services.build_storage import (
     audio_is_browser_playable,
     image_is_browser_displayable,
@@ -220,6 +221,27 @@ def original_content(project_id, event_id, original_id):
     )
 
 
+@build_bp.route(
+    "/projects/<int:project_id>/field-events/<int:event_id>/originals/<int:original_id>/display"
+)
+def original_display(project_id, event_id, original_id):
+    project = _project(project_id)
+    event = _event(project, event_id)
+    original = get_original(event, original_id)
+    if original is None or original.kind != "image":
+        abort(404)
+    path = open_display_rendition(original)
+    if path is None or not path.is_file():
+        abort(404)
+    return send_file(
+        path,
+        mimetype="image/jpeg",
+        as_attachment=False,
+        download_name="display.jpg",
+        max_age=0,
+    )
+
+
 def _original_view(project, event, original):
     content_url = url_for(
         "build.original_content",
@@ -227,10 +249,22 @@ def _original_view(project, event, original):
         event_id=event.id,
         original_id=original.id,
     )
+    display_path = None
+    if original.kind == "image" and not image_is_browser_displayable(original.mime_type):
+        display_path = open_display_rendition(original)
+    display_url = None
+    if display_path is not None:
+        display_url = url_for(
+            "build.original_display",
+            project_id=project.id,
+            event_id=event.id,
+            original_id=original.id,
+        )
     return {
         "original": original,
         "browser_image": image_is_browser_displayable(original.mime_type),
         "browser_audio": audio_is_browser_playable(original.mime_type),
         "content_url": content_url,
         "download_url": content_url + "?download=1",
+        "display_url": display_url,
     }

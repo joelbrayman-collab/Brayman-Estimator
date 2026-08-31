@@ -29,6 +29,7 @@ from app.models.build import (
 )
 from app.models.project import Project
 from app.services.auth import current_actor_display_name
+from app.services.build_rendition import ensure_compatible_rendition
 from app.services.build_storage import (
     BuildStorageError,
     absolute_stored_path,
@@ -247,6 +248,11 @@ def add_binary_original(
         raise BuildServiceError(str(exc)) from exc
     original.stored_relative_path = relative
     db.session.flush()
+    try:
+        ensure_compatible_rendition(original)
+    except Exception:
+        # Rendition failure must never roll back Original Source custody.
+        pass
     return original
 
 

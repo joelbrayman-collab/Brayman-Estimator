@@ -188,6 +188,10 @@ def create_app(config=None):
         app.config["BUILD_ORIGINAL_ROOT"] = tempfile.mkdtemp(
             prefix="calibai-build-originals-"
         )
+    if app.config.get("TESTING") and not app.config.get("BUILD_RENDITION_ROOT"):
+        app.config["BUILD_RENDITION_ROOT"] = tempfile.mkdtemp(
+            prefix="calibai-build-renditions-"
+        )
 
     db.init_app(app)
     migrate.init_app(app, db)

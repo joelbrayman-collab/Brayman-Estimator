@@ -42,6 +42,52 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-31 — FG-020 Media Compatibility increment (HEIC/HEIF → JPEG)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-31 |
+| Branch | `main` @ starting HEAD `77d496367f9e6f003eb69949adb3bd82c6cadfd7` |
+| Objective | Implement automatic HEIC/HEIF → JPEG Compatible Renditions before live migration / office UAT. Preserve and commit the storage-lifecycle docs. |
+| Business decision | Original Source remains canonical. Compatible Rendition is a regenerable working/cache JPEG for user-friendly desktop display. Contractor should not need to know HEIC vs JPEG. |
+| Architectural decision | Local `Pillow` + `pillow-heif` only. JPEG quality 85, max long edge 2048 px, EXIF orientation applied. Path `instance/build_renditions/<org>/<project>/<event>/<original_id>/display.jpg`. No schema. Capture-first: rendition failure does not roll back Original. Image-only. Closeout not started. |
+| Prompt template used | Feature increment (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — FG-020 MEDIA COMPATIBILITY INCREMENT — AUTOMATIC HEIC/HEIF → JPEG DESKTOP RENDITION. Bounded increment + tests + docs. Do not live-migrate. Do not rewind FG-020. |
+| Files expected to change | Rendition service/routes/templates; requirements.txt; dedicated tests; preserved storage-lifecycle docs and indexes. |
+| Files prohibited from changing | Live database; Alembic revisions; Field Web; Closeout product; audio conversion; FG-020 rewind. |
+| Implementation result | Renditions implemented. Storage-lifecycle docs preserved and committed with this increment. FG-020 remains **IMPLEMENTED / LIVE MIGRATION PENDING**. |
+| Tests | Dedicated `tests/test_build_media_compatibility_fg020.py` **11 passed**. Combined dedicated FG-020 **44 passed**. Focused Hub+FG-018+FG-019+FG-020 **128 passed**. Full suite `./venv/bin/python -m pytest -q` **538 passed** (pre-increment **527**). |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append-only) |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migration `b0c1d2e3f4a5` → `c1d2e3f4a5b6` and office UAT still pending. Closeout Feature Gate not created. |
+| Next approved step | **STOP.** Separate live-migration / office UAT prompt. Do not start Field Web. Do not implement Closeout. |
+| Next approved prompt | Live-migrate `b0c1d2e3f4a5` → `c1d2e3f4a5b6`, then office UAT of Field Observations including HEIC photos as JPEG. |
+| Commit hash | (this increment; verify `git rev-parse HEAD` after commit) |
+
+### 2026-08-31 — BUILD media compatibility + project-close storage lifecycle (docs only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-31 |
+| Branch | `main` @ `77d496367f9e6f003eb69949adb3bd82c6cadfd7` |
+| Objective | Record Original Source vs Compatible Rendition vs Closed Project Archive. Do not implement BUILD. Do not implement Closeout. Do not start Field Web. |
+| Business decision | Active projects may retain Original Source + regenerable Compatible Renditions. After separately governed Project Closeout: archive Original Source, verify, purge renditions first then duplicate active originals. Do not accumulate redundant copies indefinitely. |
+| Architectural decision | Renditions are regenerable presentation/cache artifacts, not Original Source, not Derived Candidates, not permanent archive records. HEIC/HEIF → JPEG is the first concrete rendition requirement. Archive format deferred to a future Project Closeout gate. FG-020 must not block archive-and-purge. Landed FG-020 Original Source custody is unchanged. Compatible Renditions remain **not implemented**. |
+| Prompt template used | Governance clarification (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — BUILD MEDIA COMPATIBILITY + PROJECT-CLOSE STORAGE LIFECYCLE — GOVERNANCE CLARIFICATION BEFORE FG-020 IMPLEMENTATION. Docs only. Do not implement BUILD. |
+| Files expected to change | Architecture pin; ADR-042 subsequent status; FG-020 subsequent status; BUILD module; current-state / session-handoff / roadmap / project-state-report / chat-workflow-log / milestones. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live database; Field Web; Closeout product; FG-020 rewind to not started. |
+| Implementation result | Docs only. Pin `docs/architecture/build-media-storage-lifecycle.md`. Product/database/Alembic unchanged. FG-020 remains **IMPLEMENTED / LIVE MIGRATION PENDING**. |
+| Tests | Docs-only. Product tests not rerun. Governed baseline remains **527 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append-only) |
+| Constitutional issue raised | Prompt text assumed FG-020 **IMPLEMENTATION NOT STARTED**. Repository already has FG-020 implemented at `77d4963`. Status was **not** rewound. |
+| Unresolved issues | Whether Compatible Renditions land as a revised FG-020 increment before live-migration/UAT. Archive format. Closeout Feature Gate not created. |
+| Next approved step | **STOP.** Joel/ChatGPT review. Then a revised FG-020 increment authorization if renditions are to land. Do not start Field Web. Do not implement Closeout. |
+| Next approved prompt | Revised FG-020 increment authorization after review. |
+| Commit hash | (docs uncommitted unless Joel requests commit) |
+
 ### 2026-08-31 — Implement FG-020 BUILD Field Capture V1 (live migration pending)
 
 | Field | Content |

@@ -144,7 +144,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-042](ADR-042-build-field-evidence-and-iphone-first-capture.md) | BUILD Field Evidence, Original Observation Custody, Desktop Review, and iPhone-First Capture Architecture | **Accepted** (2026-08-31). [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **IMPLEMENTED / LIVE MIGRATION PENDING**. Live current remains `b0c1d2e3f4a5`. |
+| [ADR-042](ADR-042-build-field-evidence-and-iphone-first-capture.md) | BUILD Field Evidence, Original Observation Custody, Desktop Review, and iPhone-First Capture Architecture | **Accepted** (2026-08-31). [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **IMPLEMENTED / LIVE MIGRATION PENDING**. Image-only Compatible Renditions **implemented**. Storage-lifecycle pin [build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md). Live current remains `b0c1d2e3f4a5`. |
 
 CAR-001 record: [../architecture/CAR-001-calibai-product-architecture-reconciliation.md](../architecture/CAR-001-calibai-product-architecture-reconciliation.md).
 

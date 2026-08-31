@@ -94,7 +94,7 @@ Notable behaviours evidenced in code/tests:
 ### Tests
 
 - Location: [`tests/`](../tests/)
-- Collected locally: last governed full suite **527 passed** (`./venv/bin/python -m pytest -q`, 2026-08-31 FG-020 implementation). Pre-FG-020 baseline **494**.
+- Collected locally: last governed full suite **538 passed** (`./venv/bin/python -m pytest -q`, 2026-08-31 FG-020 Compatible Rendition increment). Pre-increment baseline **527**. Pre-FG-020 baseline **494**.
 - Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders, project hub, plan upload/indexing/sheets/scale/take-off, labour engine, pricing engine, historical ingestion, organization foundation
 
 ### Current module relationships (simplified)
@@ -179,4 +179,4 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 - Permit branding from Brand Profile; national Permit Rules expansion (FG-015/FG-016 POC is closed)
 - Change Order governed document family / client email / field UX — [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (do not create a second Change Order entity)
 - Authentication / actor identity + shared API (sequence item 10 **COMPLETE** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**)
-- BUILD Field Web; MONITOR implementation; LEARN / ML (Item 11 Field Observation foundation is **IMPLEMENTED / LIVE MIGRATION PENDING**; [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**; [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md); Item 12 **BLOCKED / NOT AUTHORIZED**)
+- BUILD Field Web; MONITOR implementation; LEARN / ML (Item 11 Field Observation foundation is **IMPLEMENTED / LIVE MIGRATION PENDING**; image-only Compatible Renditions **implemented**; Project Closeout **not implemented** — [build-media-storage-lifecycle.md](architecture/build-media-storage-lifecycle.md); [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**; [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md); Item 12 **BLOCKED / NOT AUTHORIZED**)

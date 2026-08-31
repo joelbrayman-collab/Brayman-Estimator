@@ -51,25 +51,38 @@
         {% for item in originals %}
         {% set original = item.original %}
         <article class="panel" style="margin-top: 16px;">
-            <p class="eyebrow">{{ original.kind }} original {{ original.id }}</p>
-            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p>
             {% if original.kind == "text" %}
+            <p class="eyebrow">Text</p>
+            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p>
             <p style="white-space: pre-wrap; margin-top: 12px;">{{ original.text_body }}</p>
             {% elif original.kind == "image" and item.browser_image %}
+            <p class="eyebrow">Photo</p>
+            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p>
             <p style="margin-top: 12px;">
-                <img src="{{ item.content_url }}" alt="{{ original.original_filename or 'Field image original' }}" style="max-width: 100%; height: auto;">
+                <img src="{{ item.content_url }}" alt="Photo" style="max-width: 100%; height: auto;">
             </p>
-            <p><a href="{{ item.download_url }}">Download original</a></p>
+            <p><a href="{{ item.download_url }}">Original</a></p>
+            {% elif original.kind == "image" and item.display_url %}
+            <p class="eyebrow">Photo</p>
+            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p>
+            <p style="margin-top: 12px;">
+                <img src="{{ item.display_url }}" alt="Photo" style="max-width: 100%; height: auto;">
+            </p>
+            <p><a href="{{ item.download_url }}">Original</a></p>
             {% elif original.kind == "image" %}
+            <p class="eyebrow">Photo</p>
+            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p>
             <p class="muted-copy" style="margin-top: 12px;">
-                Original image evidence. This browser cannot preview {{ original.mime_type }} natively. The original bytes are preserved and were not converted.
+                This photo is saved. A display copy is not available in this browser yet. The original was not converted.
             </p>
             <p>
                 {% if original.original_filename %}<strong>{{ original.original_filename }}</strong> · {% endif %}
                 {{ original.mime_type }} · {{ original.byte_size }} bytes
             </p>
-            <p><a href="{{ item.download_url }}">Download original</a></p>
+            <p><a href="{{ item.download_url }}">Original</a></p>
             {% elif original.kind == "audio" %}
+            <p class="eyebrow">Audio</p>
+            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p>
             {% if item.browser_audio %}
             <p style="margin-top: 12px;">
                 <audio controls src="{{ item.content_url }}" preload="metadata">
@@ -85,7 +98,7 @@
                 {% if original.original_filename %}<strong>{{ original.original_filename }}</strong> · {% endif %}
                 {{ original.mime_type }} · {{ original.byte_size }} bytes
             </p>
-            <p><a href="{{ item.download_url }}">Download original</a></p>
+            <p><a href="{{ item.download_url }}">Original</a></p>
             {% endif %}
         </article>
         {% endfor %}

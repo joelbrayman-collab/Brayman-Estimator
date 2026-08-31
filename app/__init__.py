@@ -52,6 +52,11 @@ def _apply_secret_key(app: Flask) -> None:
     app.config["SECRET_KEY"] = secret
 
 
+def _is_api_request() -> bool:
+    path = request.path or ""
+    return path == "/api" or path.startswith("/api/")
+
+
 def _register_office_auth(app: Flask) -> None:
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"
@@ -70,6 +75,14 @@ def _register_office_auth(app: Flask) -> None:
             return None
         return user
 
+    @app.before_request
+    def reject_api_mutating_methods():
+        from app.services.shared_api import ERROR_METHOD_NOT_ALLOWED, api_error
+
+        if _is_api_request() and request.method not in ("GET", "HEAD", "OPTIONS"):
+            return api_error(ERROR_METHOD_NOT_ALLOWED, 405)
+        return None
+
     csrf.init_app(app)
 
     from app.cli.auth import auth_cli
@@ -84,9 +97,22 @@ def _register_office_auth(app: Flask) -> None:
             OrganizationAccessError,
             resolve_membership_organization_id,
         )
+        from app.services.shared_api import (
+            ERROR_AUTHENTICATION_REQUIRED,
+            ERROR_ORGANIZATION_CONTEXT,
+            api_error,
+        )
 
         endpoint = request.endpoint
         if endpoint in ("static", "auth.login", "auth.logout"):
+            return None
+        if _is_api_request():
+            if not current_user.is_authenticated:
+                return api_error(ERROR_AUTHENTICATION_REQUIRED, 401)
+            try:
+                g.organization_id = resolve_membership_organization_id(current_user)
+            except OrganizationAccessError:
+                return api_error(ERROR_ORGANIZATION_CONTEXT, 403)
             return None
         if endpoint is None:
             if not current_user.is_authenticated:
@@ -99,6 +125,22 @@ def _register_office_auth(app: Flask) -> None:
         except OrganizationAccessError:
             abort(403)
         return None
+
+    @app.errorhandler(404)
+    def handle_404(err):
+        from app.services.shared_api import ERROR_NOT_FOUND, api_error
+
+        if _is_api_request():
+            return api_error(ERROR_NOT_FOUND, 404)
+        return err.get_response()
+
+    @app.errorhandler(405)
+    def handle_405(err):
+        from app.services.shared_api import ERROR_METHOD_NOT_ALLOWED, api_error
+
+        if _is_api_request():
+            return api_error(ERROR_METHOD_NOT_ALLOWED, 405)
+        return err.get_response()
 
 
 def create_app(config=None):
@@ -144,6 +186,7 @@ def create_app(config=None):
     from app.project_controls import project_controls_bp
     from app.plan_intelligence import plan_intelligence_bp
     from app.routes.settings import settings_bp
+    from app.routes.api_v1 import api_v1_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(clients_bp)
@@ -160,6 +203,7 @@ def create_app(config=None):
     app.register_blueprint(project_controls_bp)
     app.register_blueprint(plan_intelligence_bp)
     app.register_blueprint(settings_bp)
+    app.register_blueprint(api_v1_bp)
 
     _register_office_auth(app)
 

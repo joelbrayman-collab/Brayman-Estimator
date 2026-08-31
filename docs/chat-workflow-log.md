@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-31 — Approve and implement FG-019 Shared API Foundation V1
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-31 |
+| Branch | `main` @ `97280f9f9fc62e5d1238c098eb0c246ab4071a8b` (starting HEAD) |
+| Objective | Approve and implement GET-only `/api/v1` Shared API Foundation. Close FG-019 if tests and UAT pass. Complete item 10. Do not start BUILD. |
+| Business decision | Cookie/session reuse of FG-018. `/me` includes email, excludes `is_active`. Project identity includes `client_name`. No tokens. No mutation. No migration. |
+| Architectural decision | No new ADR. ADR-022 + ADR-041 sufficient. JSON 401 for unauthenticated `/api/`. 403 for 0/>1 memberships. 404 for missing/cross-org. Mutating methods 405 before CSRF. |
+| Prompt template used | FG-019 approve-and-implement prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — APPROVE AND IMPLEMENT FG-019 SHARED API FOUNDATION V1. GET `/api/v1/me`, `/api/v1/projects`, `/api/v1/projects/<id>` only. No BUILD. No tokens. No migration. |
+| Files expected to change | `app/__init__.py`; `app/routes/api_v1.py`; `app/services/shared_api.py`; `tests/test_shared_api_fg019.py`; governed docs. |
+| Files prohibited from changing | `migrations/`; BUILD; Field Web; tokens; office HTML rewrite; ADR-008/010 status. |
+| Implementation result | GET-only `/api/v1` implemented. Dedicated **34**. Focused **326**. Full suite **494**. API UAT port **5012**. FG-019 **CLOSED / OPERATIONAL FOR UAT**. Item 10 **COMPLETE**. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_shared_api_fg019.py` → **34 passed**. Focused 16-file set → **326 passed**. Full suite → **494 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append-only) |
+| Constitutional issue raised | None |
+| Unresolved issues | BUILD architecture / Feature Gate not authorized. Native/token auth deferred. |
+| Next approved step | **STOP.** Do not start BUILD. |
+| Next approved prompt | None. Fresh-chat prompt remains [session-handoff.md](session-handoff.md) §22. |
+| Commit hash | (this commit) |
+
 ### 2026-08-31 — Draft FG-019 Shared API Foundation V1 (governance only)
 
 | Field | Content |

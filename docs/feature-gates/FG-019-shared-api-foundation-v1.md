@@ -7,11 +7,11 @@
 | Target Milestone | **None.** FG-019 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Office / platform** owns the `/api/v1` transport adapter. It does **not** take ownership of User, Organization, Project, or Client records. |
 | Date | 2026-08-31 |
-| Status | **DRAFT FOR JOEL REVIEW / NOT APPROVED.** Implementation **NOT STARTED.** A draft is **not** authorization. |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** Implementation **COMPLETE**. No migration. Live current = head **`b0c1d2e3f4a5`**. Dedicated tests **34 passed**. Focused regression **326 passed**. Full suite **494 passed**. API UAT port **5012**. This is **not** BUILD authorization. |
 | Architecture | [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** (field/API sequence; no API code in CAR-001) · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** (office User / membership / session; cookie-versus-token deferred to this gate) · [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** (BUILD **out of this gate**) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [platform-roadmap.md](../platform-roadmap.md) item 10 |
 | Related ADRs | [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Shared API architecture reconnaissance reviewed 2026-08-31. **ADR-022 Accepted. ADR-041 Accepted.** |
-| Approved baseline | Live Alembic current = head **`b0c1d2e3f4a5`**. Full suite **460 passed**. Dedicated FG-018 **37 passed**. |
+| Approved baseline | Pre-implementation: live Alembic current = head **`b0c1d2e3f4a5`**. Full suite **460 passed**. Dedicated FG-018 **37 passed**. Post-implementation: same Alembic head; full suite **494 passed**. |
 
 ---
 
@@ -19,13 +19,13 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **DRAFT FOR JOEL REVIEW / NOT APPROVED** |
-| Implementation | **NOT STARTED** |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT** |
+| Implementation | **COMPLETE** (`app/routes/api_v1.py`, `app/services/shared_api.py`, API JSON 401/403/404/405 in `app/__init__.py`) |
 | Schema / Alembic | **NO MIGRATION.** Live current = head **`b0c1d2e3f4a5`**. One graph head. |
-| Shared API product code | **NOT STARTED** |
-| BUILD / Field Web | **BLOCKED.** FG-019 closure would complete Item 10 and make Item 11 eligible for its own governance. FG-019 does **not** authorize BUILD implementation. |
+| Shared API product code | **IMPLEMENTED** — GET-only `/api/v1/me`, `/api/v1/projects`, `/api/v1/projects/<id>` |
+| BUILD / Field Web | **NOT AUTHORIZED.** Item 10 is **COMPLETE**. Item 11 BUILD is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. FG-019 closure does **not** authorize BUILD implementation. |
 
-This draft does **not** approve FG-019. It does **not** authorize `/api/` implementation, BUILD, Field Web, tokens, or a new ADR.
+Joel approved this gate in the 2026-08-31 implementation prompt. Cookie/session, GET-only, no tokens, no migration. Joel decisions applied: `/me` **includes** `email` and **excludes** `is_active`; project identity **includes** `client_name`.
 
 ---
 
@@ -42,7 +42,7 @@ FG-018 SESSION (Flask-Login cookie)
 
 Office HTML continues to call Flask routes/services directly. FG-019 is an **additional** adapter, not an office rewrite.
 
-Success (if later Approved, implemented, and closed): a session-authenticated User with exactly one active membership can `GET /api/v1/me` and tenant-scoped project identity reads; unauthenticated and fail-closed membership cases return JSON errors; no mutation; no BUILD surface; no migration.
+Success: a session-authenticated User with exactly one active membership can `GET /api/v1/me` and tenant-scoped project identity reads; unauthenticated and fail-closed membership cases return JSON errors; no mutation; no BUILD surface; no migration.
 
 Success is **SHARED API FOUNDATION V1**, not BUILD, not Field Web, not tokens, and not a public API.
 
@@ -52,15 +52,15 @@ Success is **SHARED API FOUNDATION V1**, not BUILD, not Field Web, not tokens, a
 
 | # | Question | Answer |
 |---|----------|--------|
-| 1 | What problem does this solve? | Item 10 is only **PARTIALLY COMPLETE**. FG-018 closed office login. ADR-022 still requires a shared JSON API before field/BUILD. No `/api/` blueprint exists. |
+| 1 | What problem does this solve? | Item 10 required a shared JSON API after FG-018 office login. ADR-022 requires that API before field/BUILD. |
 | 2 | Who is the user? | Future CalibAi clients (same-origin Field Web later). Not the customer. Not a public developer. Not native iOS in this gate. Office operators keep using HTML. |
 | 3 | Which module owns it? | **Office / platform** owns the `/api/v1` blueprint and JSON error/auth transport. Organization subsystem remains owner of User / UserMembership. Projects remains owner of `projects`. CRM remains owner of `clients`. |
 | 4 | What data does it own? | **None.** No new tables. Session remains the FG-018 Flask-Login session. |
 | 5 | What data does it reference? | `users`, `user_memberships`, `organizations`, `projects`, `clients` (client name only). |
-| 6 | What may implementation change? | Only after Joel Approves this gate **and** a separate implementation prompt: `/api/v1` blueprint; session-authenticated GET handlers; 401 JSON instead of HTML login redirect for `/api/` paths; optional thin org-scoped project-read helper that does **not** duplicate commercial rules; tests; docs. |
+| 6 | What may implementation change? | `/api/v1` blueprint; session-authenticated GET handlers; 401 JSON instead of HTML login redirect for `/api/` paths; thin org-scoped project-read helper that does **not** duplicate commercial rules; tests; docs. |
 | 7 | What must it not change? | BUILD; Field Web UI; tokens; office HTML rewrite; historical actor strings; Proposal immutability; Brand Profile freeze; Permit analysis; Labour/Pricing commercial rules; take-off approval; Material Catalogue identity; Change Order records; RBAC; org-switcher; ADR-008/010 status; Alembic history. |
-| 8 | Acceptance criteria? | See **Acceptance criteria** below. Not claimed complete by this draft. |
-| 9 | Tests required? | See **Dedicated tests** and **Regression**. None written in this pass. |
+| 8 | Acceptance criteria? | See **Acceptance criteria** below. Met at close. |
+| 9 | Tests required? | `tests/test_shared_api_fg019.py` **34 passed**. Focused regression **326 passed**. Full suite **494 passed**. |
 | 10 | Documentation? | This gate; feature-gate index; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log; milestones; docs/README. |
 | 11 | ADR required? | **No new ADR.** ADR-022 + ADR-041 are sufficient for cookie/session, read-only `/api/v1`, no tokens, no migration. If implementation wants tokens or a public API: **STOP**. |
 | 12 | Migration? | **NO.** No new tables. No token schema. No API credential storage. Do **not** run `flask db upgrade` for this gate. |
@@ -120,13 +120,12 @@ Existing office JSON under `plan_intelligence_bp` (calibration/measurement) is *
 | Field | Source |
 |-------|--------|
 | `user_id` | `User.id` |
-| `email` | `User.email` (normalized identity; justified so a client knows who is logged in) |
+| `email` | `User.email` (Joel: **INCLUDED**) |
 | `display_name` | `User.display_name` |
-| `is_active` | `User.is_active` |
 | `organization_id` | sole active `UserMembership.organization_id` |
 | `organization_display_name` | `Organization.display_name` |
 
-**Exclude:** `password_hash`; roles; membership rows beyond the current org; commercial records.
+**Exclude:** `is_active` (Joel: **EXCLUDED**); `password_hash`; roles; membership rows beyond the current org; commercial records.
 
 ### `GET /api/v1/projects` and `GET /api/v1/projects/<id>` — allow-list
 
@@ -141,9 +140,7 @@ Existing office JSON under `plan_intelligence_bp` (calibration/measurement) is *
 
 **Exclude:** address, description, commercial context, estimates, proposals, Change Orders, plans, take-off, permit profiles/analyses, labour/pricing snapshots, Brand Profile, historical ingestion, costs, margin.
 
-List is membership-org `Project.query.filter_by(organization_id=...)`. Detail is the same filter then `first_or_404`. Do **not** return `assemble_project_hub`.
-
-A later implementation prompt may add a **thin** org-scoped project-read helper in `app/services/` so the blueprint does not become a second query SoR. That helper must not invent commercial rules. **Do not create it in this draft pass.**
+List is membership-org `Project.query.filter_by(organization_id=...)` via `list_organization_projects` / `get_organization_project` in `app/services/shared_api.py`. Detail uses the same filter then `first()`. Missing and cross-org are indistinguishable **404 JSON**. Do **not** return `assemble_project_hub`.
 
 ---
 
@@ -223,20 +220,20 @@ If a later implementation prompt wants tokens: **STOP.** That contradicts this g
 
 ## Item-10 completion rule
 
-Roadmap item 10 (**Authentication / actor identity + shared API foundation**) becomes **COMPLETE** only when:
+Roadmap item 10 (**Authentication / actor identity + shared API foundation**) is **COMPLETE**:
 
-1. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT** (already true), **and**
+1. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**, **and**
 2. FG-019 Shared API Foundation is **CLOSED / OPERATIONAL FOR UAT**.
 
 Nothing more (not Field Web, not BUILD, not tokens, not RBAC).
 
-After Item 10 is complete, **Item 11 BUILD Field Capture** becomes eligible for its **own** architecture / Feature-Gate governance. FG-019 closure **must not** authorize BUILD implementation. Item 12 Field Web remains a later gate. MONITOR remains downstream.
+**Item 11 BUILD Field Capture** is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. FG-019 closure **must not** authorize BUILD implementation. Item 12 Field Web remains a later gate. MONITOR remains downstream.
 
 ---
 
-## Exact proposed scope
+## Exact implemented scope
 
-If later Approved **and** a separate implementation prompt is authorized, implementation may include **only**:
+This gate implemented **only**:
 
 1. Flask blueprint `/api/v1`.
 2. Session authentication reuse (FG-018 Flask-Login cookie).
@@ -279,11 +276,11 @@ If later Approved **and** a separate implementation prompt is authorized, implem
 
 ## Acceptance criteria
 
-Not claimed by this draft. If later implemented:
+Met at close:
 
 1. Unauthenticated `GET /api/v1/me` and `GET /api/v1/projects` → **401** JSON.
 2. Authenticated active User with exactly one active membership → **200** on `/me` and org-scoped project reads.
-3. `/me` returns **only** the allow-listed fields; no `password_hash`.
+3. `/me` returns **only** the allow-listed fields; no `password_hash`; no `is_active`.
 4. Project list returns **only** current-org projects; allow-listed fields only.
 5. Current-org project detail → **200** allow-list.
 6. Cross-org project id → **404**.
@@ -297,13 +294,13 @@ Not claimed by this draft. If later implemented:
 14. **No** BUILD surface.
 15. **No** token/auth schema; **no** migration.
 16. Office HTML login/logout and operating routes remain operational.
-17. Full suite passes with no unexplained loss versus **460 passed**.
+17. Full suite **494 passed** (pre-gate **460** + dedicated **34**; no unexplained loss).
 
 ---
 
-## Dedicated tests (future implementation prompt)
+## Dedicated tests
 
-Proposed file: `tests/test_shared_api_fg019.py` — **do not create until implementation is authorized.**
+File: `tests/test_shared_api_fg019.py` — **34 passed**.
 
 - `/api/v1/me` authenticated 200 + allow-list
 - `/api/v1/me` unauthenticated 401 JSON
@@ -324,18 +321,29 @@ CSRF: GET-only; no new CSRF exemption tests beyond proving GET succeeds without 
 
 ---
 
-## Regression (future implementation prompt)
+## Regression
 
 | Suite | Path |
 |-------|------|
 | Auth / membership | `tests/test_auth_fg018.py` |
 | Organization / tenant | `tests/test_organization_foundation.py` |
 | Project Hub | `tests/test_project_hub.py` |
-| Estimates / proposals | `tests/test_estimates.py`, `tests/test_proposals.py`, `tests/test_proposal_immutability.py` |
+| Estimates / proposals | `tests/test_estimates.py`, `tests/test_estimate_builder.py`, `tests/test_estimate_output_consistency.py`, `tests/test_proposals.py`, `tests/test_proposal_immutability.py` |
 | Brand / permit / plans | `tests/test_brand_profile_fg017.py`, `tests/test_permit_foundation_fg015.py`, `tests/test_permit_intelligence_fg016.py`, `tests/test_plan_upload.py`, `tests/test_takeoff.py` |
 | Labour / pricing | `tests/test_labour_engine.py`, `tests/test_pricing_engine.py` |
+| Shared API | `tests/test_shared_api_fg019.py` |
 
-Then `./venv/bin/python -m pytest -q`. Governed baseline today: **460 passed**. Do not claim a new count until that future run.
+Focused combined: **326 passed**. Then `./venv/bin/python -m pytest -q` → **494 passed**.
+
+---
+
+## Close evidence (2026-08-31)
+
+- Product: `app/routes/api_v1.py`, `app/services/shared_api.py`, `app/__init__.py` API JSON 401/403/404/405 and GET-only method reject (before CSRF, so POST returns **405** not CSRF 400). No CSRF exemption on office HTML POSTs.
+- Tests: dedicated **34**; focused **326**; full **494**.
+- API UAT port **5012**. Unauthenticated HTTP `GET /api/v1/me` → **401** JSON. Authenticated ORG-001 user id 1 session: `/me` allow-list; 11 ORG-001 projects; project 9 detail; foreign project **id 4** (`ORG-FG014-UAT`) → **404**; query/header org override ignored; POST/PUT/PATCH/DELETE → **405**; office `/` and `/projects/` HTML **200**.
+- Alembic unchanged: current = head `b0c1d2e3f4a5`.
+- Roadmap item 10 **COMPLETE**. Item 11 BUILD **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**.
 
 ---
 
@@ -343,10 +351,10 @@ Then `./venv/bin/python -m pytest -q`. Governed baseline today: **460 passed**. 
 
 **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
-Drafting FG-019 does **not** authorize Cursor to implement `/api/`. Joel must Approve this gate **and** issue a separate implementation prompt.
+FG-019 closure does **not** authorize BUILD, Field Web, tokens, or native iOS.
 
 ---
 
 ## Documentation consistency note
 
-Roadmap item 10 remains **PARTIALLY COMPLETE** until FG-019 is later **CLOSED / OPERATIONAL FOR UAT**. Shared API product code remains **NOT STARTED**. BUILD remains **BLOCKED**.
+Roadmap item 10 is **COMPLETE**. Shared API Foundation V1 is **CLOSED / OPERATIONAL FOR UAT**. BUILD remains **NOT AUTHORIZED**.

@@ -134,11 +134,11 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 |-----|-------|--------|
 | [ADR-040](ADR-040-organization-brand-profile.md) | Organization Brand Profile, Logo Custody, and Issued-Document Brand Snapshots | **Accepted** (2026-08-30; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **CLOSED / OPERATIONAL FOR UAT**; **gate-at-close** current=head `a9b0c1d2e3f4`) |
 
-### Authentication / actor identity (roadmap item 10 — office slice CLOSED / OPERATIONAL FOR UAT; Shared API draft only)
+### Authentication / actor identity (roadmap item 10 COMPLETE)
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-041](ADR-041-user-membership-and-office-authentication.md) | Durable User, Organization Membership, Office Authentication, Session, and Historical Actor Provenance | **Accepted** (2026-08-30; [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED**; Shared API product code **NOT STARTED**) |
+| [ADR-041](ADR-041-user-membership-and-office-authentication.md) | Durable User, Organization Membership, Office Authentication, Session, and Historical Actor Provenance | **Accepted** (2026-08-30; [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**) |
 
 CAR-001 record: [../architecture/CAR-001-calibai-product-architecture-reconciliation.md](../architecture/CAR-001-calibai-product-architecture-reconciliation.md).
 

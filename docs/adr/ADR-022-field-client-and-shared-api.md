@@ -5,7 +5,9 @@
 | Title | ADR-022: Field Client and Shared API Architecture |
 | Status | **Accepted** (architectural direction; no mobile/API implementation in CAR-001) |
 | Date | 2026-08-28 |
-| Related | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) · [ADR-020](ADR-020-build-module-boundary.md) |
+| Related | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) · [ADR-020](ADR-020-build-module-boundary.md) · [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
+
+**Current status (2026-08-31):** Shared API Foundation V1 exists as GET-only `/api/v1` over FG-018 cookie/session ([FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**). Field Web and native iOS remain **not implemented**. This ADR’s Decision is unchanged.
 
 ## Context
 
@@ -28,7 +30,7 @@ Field / iPhone use is a first-class CalibAi product requirement. The current app
 ## Consequences
 
 **Positive:** Preservation of Flask services; field can be Feature-Gated without a rewrite.  
-**Negative:** A JSON API and auth do not exist yet; field work waits on those gates.
+**Negative (at acceptance):** A JSON API and auth did not exist yet; field work waited on those gates. As of 2026-08-31 office auth ([FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md)) and Shared API Foundation V1 ([FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md)) are **CLOSED / OPERATIONAL FOR UAT**. Field Web / BUILD capture remain separately gated.
 
 ## Module Ownership Impact
 

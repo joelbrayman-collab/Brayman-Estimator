@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-018 CLOSED / OPERATIONAL FOR UAT.** [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED**. Shared API product code **NOT STARTED**. ADR-041 **Accepted**. Live current = head `b0c1d2e3f4a5`. Full suite **460 passed**. Dedicated FG-018 **37 passed**. Office UAT port **5011**. FG-008–FG-018 **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 **PARTIALLY COMPLETE**. Do **not** implement `/api/` or start BUILD. Next authorized action: **STOP** (Joel review of FG-019). ADR-008 / ADR-010 **Proposed**. |
+| Status | **FG-019 CLOSED / OPERATIONAL FOR UAT.** Item 10 **COMPLETE**. FG-018 **CLOSED / OPERATIONAL FOR UAT**. ADR-041 **Accepted**. Live current = head `b0c1d2e3f4a5`. Full suite **494 passed**. Dedicated FG-019 **34 passed**. Dedicated FG-018 **37 passed**. API UAT port **5012**. Office UAT port **5011**. FG-008–FG-019 **CLOSED / OPERATIONAL FOR UAT**. Do **not** start BUILD. Next authorized action: **STOP**. Item 11 **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. ADR-008 / ADR-010 **Proposed**. |
 | Updated | 2026-08-31 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -29,7 +29,7 @@ Authority order for the next session: repository governance → current-state re
 - FG-016 implementation commit: `a709829d32d94ab2baf36f142ad0095254ba3d3a` (`feat: implement FG-016 Ontario Ottawa Permit Intelligence POC`)
 - Alembic graph head (repository): **`b0c1d2e3f4a5`**. Live `flask db current`: **`b0c1d2e3f4a5`**. One graph head.
 - Chain: … → **`f8a9b0c1d2e3` (FG-016)** → **`a9b0c1d2e3f4` (FG-017)** → **`b0c1d2e3f4a5` (FG-018; live current = head)**
-- Governed full suite: **460 passed**. Dedicated FG-018 **37**. Pre-FG-018 baseline **423**. Dedicated FG-017 **22**. FG-016 **37**; FG-015 **19**; FG-014 **35**; FG-013 **27**; FG-012 **19**; Project Hub **13**; take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**.
+- Governed full suite: **494 passed**. Dedicated FG-019 **34**. Dedicated FG-018 **37**. Pre-FG-019 baseline **460**. Pre-FG-018 baseline **423**. Dedicated FG-017 **22**. FG-016 **37**; FG-015 **19**; FG-014 **35**; FG-013 **27**; FG-012 **19**; Project Hub **13**; take-off **18**; Plan Intelligence **56**; Pricing **33**; Labour **25**; Historical **11**.
 - Working tree: clean after post-FG-018 docs reconciliation; live DB unchanged this pass
 - Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**. Runtime permit web lookup **NOT AUTHORIZED**.
 
@@ -68,7 +68,7 @@ No additional 29 Aug CalibAi commits exist on `main`. FG-010 live-migrate docs a
 
 Read first: `AGENTS.md`; [platform-constitution.md](platform-constitution.md); [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md); [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md); [platform-governance.md](platform-governance.md); this file; [current-state.md](current-state.md); [project-state-report.md](project-state-report.md); [platform-roadmap.md](platform-roadmap.md); [feature-gates/README.md](feature-gates/README.md); [adr/README.md](adr/README.md).
 
-FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** files: **CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (architecture only). ADR-010 **Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Do not bulk-accept remaining Proposed ADRs. [ADR-040](adr/ADR-040-organization-brand-profile.md) is **Accepted**. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) is **Accepted**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **DRAFT FOR JOEL REVIEW / NOT APPROVED** (implementation **NOT STARTED**). Organization Brand Profile is **operational for office UAT**. Change Order document family is a **future pin only**.
+FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** files: **CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (architecture only). ADR-010 **Proposed**. **ADR-021 Accepted** (MONITOR not implemented). Do not bulk-accept remaining Proposed ADRs. [ADR-040](adr/ADR-040-organization-brand-profile.md) is **Accepted**. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) is **Accepted**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Organization Brand Profile is **operational for office UAT**. Change Order document family is a **future pin only**.
 
 ## 4. APPROVED PRODUCT VISION
 
@@ -91,11 +91,13 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**FG-018 CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **DRAFT FOR JOEL REVIEW / NOT APPROVED**. Shared API product code **NOT STARTED**. Roadmap item 10 is **PARTIALLY COMPLETE**. FG-017 remains **CLOSED / OPERATIONAL FOR UAT**. Live current = head `b0c1d2e3f4a5`. Office UAT port **5011**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted**. Permit Intelligence **ADR-037 / ADR-038 / ADR-039 Accepted**.
+**FG-019 CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) remains **CLOSED / OPERATIONAL FOR UAT**. Live current = head `b0c1d2e3f4a5`. API UAT port **5012**. Office UAT port **5011**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted**. Permit Intelligence **ADR-037 / ADR-038 / ADR-039 Accepted**.
 
 ## 8. LAST AUTHORIZED DELTA
 
-This session: **draft FG-019 Shared API Foundation V1**. Docs only. Status **DRAFT FOR JOEL REVIEW / NOT APPROVED**. No product code. No tests. No migration. No ADR created. Shared API implementation **NOT STARTED**. BUILD remains **BLOCKED**. Item 10 remains **PARTIALLY COMPLETE**.
+This session: **approve and implement FG-019 Shared API Foundation V1**. GET-only `/api/v1`. Dedicated **34**. Focused **326**. Full suite **494**. API UAT port **5012**. No migration. No BUILD. Item 10 **COMPLETE**.
+
+Prior: **draft FG-019 Shared API Foundation V1**. Docs only. Status was **DRAFT FOR JOEL REVIEW / NOT APPROVED**. No product code. No tests. No migration. No ADR created.
 
 Prior: **post-FG-018 current-state documentation reconciliation**. Docs only. No product code. No Feature Gate. No ADR created or accepted. No migration. No database mutation. Repaired stale CURRENT language so the repository matches FG-018 **CLOSED / OPERATIONAL FOR UAT** and item 10 **PARTIALLY COMPLETE**.
 
@@ -131,14 +133,15 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - FG-015: `ProjectLocation`; `JurisdictionDefinition` / `JurisdictionAlias`; versioned `PermitProfile`; `app/services/jurisdiction.py`; `app/services/permit_foundation.py`; `/projects/<id>/location/edit`.
 - FG-016: `PermitRule`, `ProjectPermitFact`, `PermitAnalysis`, `PermitFinding`; `app/services/permit_intelligence.py`; `/projects/<id>/permit-report` (+ PDF). 10 APPROVED Ottawa coach-house rules. Pratt live UAT project **id 9**.
 - FG-017: `OrganizationBrandProfile`; `ProposalBrandSnapshot`; `app/services/brand_profile.py`; `app/services/brand_logo_storage.py`; Settings `/settings/brand-profile`; Proposal preview/PDF consume snapshot-or-current. Office UAT port **5010**.
+- FG-019: GET-only `/api/v1/me`, `/api/v1/projects`, `/api/v1/projects/<id>`; `app/services/shared_api.py`; JSON 401/403/404/405. No migration. API UAT port **5012**.
 - FG-018: `User`; `UserMembership`; `app/services/auth.py`; `/login` `/logout`; CSRFProtect; membership org context; CLI bootstrap/reset. Live current = head `b0c1d2e3f4a5`. Office UAT port **5011**.
 
 ## 10. TEST / UAT / MIGRATION STATUS
 
 - Graph head `b0c1d2e3f4a5`. Live current `b0c1d2e3f4a5`. Applied `a9b0c1d2e3f4` → `b0c1d2e3f4a5`. One head.
-- Dedicated: FG-018 **37**; FG-017 **22**; FG-016 **37**; FG-015 permit foundation **19**; FG-014 material catalogue **35**; FG-013 upload 27; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
-- Full suite: **460 passed**.
-- Live office FG-018 UAT **PASSED** on port **5011**. FG-017 UAT remains **PASSED** on port **5010**. Pratt Permit Report UAT remains **PASSED** on port **5009** (project id 9).
+- Dedicated: FG-019 **34**; FG-018 **37**; FG-017 **22**; FG-016 **37**; FG-015 permit foundation **19**; FG-014 material catalogue **35**; FG-013 upload 27; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
+- Full suite: **494 passed**.
+- Live API FG-019 UAT **PASSED** on port **5012**. Live office FG-018 UAT **PASSED** on port **5011**. FG-017 UAT remains **PASSED** on port **5010**. Pratt Permit Report UAT remains **PASSED** on port **5009** (project id 9).
 
 ## 11. PROTECTED STATE
 
@@ -172,7 +175,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - **FG-016:** **CLOSED / OPERATIONAL FOR UAT**. **Gate-at-close** live current = head `f8a9b0c1d2e3` (later superseded by FG-017). Pratt UAT project 9 port 5009. 10 APPROVED Ottawa coach-house rules. No runtime web. No external AI.
 - **FG-017:** **CLOSED / OPERATIONAL FOR UAT**. **Gate-at-close** current = head `a9b0c1d2e3f4`. Office UAT port **5010**. ADR-040 **Accepted**. Change Order / Permit branding **not** in this gate. Live head today is `b0c1d2e3f4a5`.
 - **FG-018:** **CLOSED / OPERATIONAL FOR UAT**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. Live current = head `b0c1d2e3f4a5`. Office UAT port **5011**. Shared API **out of this gate**. Not production-security certification.
-- **FG-019:** **DRAFT FOR JOEL REVIEW / NOT APPROVED**. Shared API Foundation V1. Implementation **NOT STARTED**. No migration. Does **not** authorize BUILD.
+- **FG-019:** **CLOSED / OPERATIONAL FOR UAT**. Shared API Foundation V1. GET-only `/api/v1`. No migration. API UAT port **5012**. Does **not** authorize BUILD.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
@@ -195,7 +198,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (docs only). BMR / Winchester / Darcy are **not exclusive**. Winchester is launch/reference. Contractor procurement (A) ≠ CalibAi channel (B). Darcy commercial terms **unset**. Supplier Feature Gate **not authorized**. Governed **bulk supplier onboarding** is **FUTURE / NOT IMPLEMENTED** (not one-product-at-a-time; does not expand FG-014).
 - **Permit Intelligence** Pass 2 is **CLOSED / OPERATIONAL FOR UAT**. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** ([ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)). [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (foundation). Advisory preflight. AHJ remains final. **PASS** means no issue identified against governed checks performed — never AHJ approved. No live lookup. No external AI. Mike Pratt Coach House at 2562 Church Street, North Gower, Ontario is the **FG-016 UAT reference** — live project **id 9** (`FG016-UAT-PRATT`) on port **5009**.
 - **Organization Brand Profile** is **CLOSED / OPERATIONAL FOR UAT** ([organization-brand-profile.md](architecture/organization-brand-profile.md)). [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md). Settings at `/settings/brand-profile`. Proposal preview/PDF consume snapshot-or-current. **Gate-at-close** current = head `a9b0c1d2e3f4`. Office UAT port **5010**. Live head today is `b0c1d2e3f4a5`.
-- **Authentication / actor identity** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **PARTIALLY COMPLETE**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **DRAFT FOR JOEL REVIEW / NOT APPROVED**. Shared API product code **NOT STARTED**. BUILD remains **BLOCKED**.
+- **Authentication / actor identity + shared API** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. BUILD Item 11 is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**.
 - **Change Order document family** is **FUTURE / NOT IMPLEMENTED** ([change-order-document-family.md](architecture/change-order-document-family.md)). Existing Change Order record remains authoritative. Do not create a second entity. Not email. Not field UX.
 
 ## 17. KNOWN RISKS / UNRESOLVED PRODUCT ITEMS
@@ -208,23 +211,23 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 
 **FG-010:** 6 `takeoff.candidate.accept` PlanAuditEvent rows vs 4 accepted candidate rows (duplicate submit residue; do not invent a cleanup). Leftover suggested candidates on runs 2–3.
 
-**Platform:** office authentication is **operational for UAT** (FG-018). Shared API, RBAC, and org-switcher are **not implemented**. FG-019 is a **draft only**. This is not production-security certification.
+**Platform:** office authentication is **operational for UAT** (FG-018). Shared API Foundation V1 is **operational for UAT** (FG-019). RBAC and org-switcher are **not implemented**. This is not production-security certification.
 
 No product-code defects were opened for repair in this turnover. Do not fix them here.
 
 ## 18. DEFERRED ITEMS
 
-Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; shared API; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; RBAC / org-switcher / invitations / SSO; national Permit Rules expansion; Change Order document family.
+Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; field/mobile; QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; BUILD/MONITOR/LEARN **implementation**; native/token auth; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; RBAC / org-switcher / invitations / SSO; national Permit Rules expansion; Change Order document family.
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not start Phase D. Do not enable an external AI provider. Do not implement `/api/`. Do not start BUILD, RBAC, org-switcher, invitations, SSO, or password-reset email. Do not treat the FG-019 draft as approval. Do not **implement** MONITOR/LEARN, QuickBooks, or contract/warranty work. Do **not** create another migration. Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not implement bulk supplier onboarding. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013 / FG-014 / **FG-015** / **FG-016** / **FG-017** / **FG-018**. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history. Do not implement supplier pricing. Do not accept ADR-008. Do not begin national permit expansion. Do not implement live regulatory AI, in-product web lookup, automatic permit conclusions, or municipal submissions. Do not implement Change Order document-family rewrite, client email, or a second Change Order entity until Joel separately Approves the gate and authorizes an implementation prompt.
+Do not start Phase D. Do not enable an external AI provider. Do not start BUILD, Field Web, tokens, RBAC, org-switcher, invitations, SSO, or password-reset email. Do not treat Item-10 completion as BUILD authorization. Do not **implement** MONITOR/LEARN, QuickBooks, or contract/warranty work. Do **not** create another migration. Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not implement bulk supplier onboarding. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013 / FG-014 / **FG-015** / **FG-016** / **FG-017** / **FG-018**. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history. Do not implement supplier pricing. Do not accept ADR-008. Do not begin national permit expansion. Do not implement live regulatory AI, in-product web lookup, automatic permit conclusions, or municipal submissions. Do not implement Change Order document-family rewrite, client email, or a second Change Order entity until Joel separately Approves the gate and authorizes an implementation prompt.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP.** [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **DRAFT FOR JOEL REVIEW / NOT APPROVED**. Roadmap item 10 is **PARTIALLY COMPLETE**. Do not implement `/api/`. Do not start BUILD, RBAC, or org-switcher. Shared API product code remains **NOT STARTED**. BUILD remains **BLOCKED**.
+**Next governed action:** **STOP.** [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. Do not start BUILD, Field Web, tokens, RBAC, or org-switcher. Item 11 is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**.
 
-**Roadmap direction (not authorization):** item 10 office-auth is **CLOSED / OPERATIONAL FOR UAT**. Shared API implementation is **not** authorized until Joel Approves FG-019 **and** issues a separate implementation prompt. Items 11–12 remain blocked. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Roadmap direction (not authorization):** Item 11 BUILD Field Capture may later receive its own architecture / Feature Gate. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -252,14 +255,14 @@ git diff --check
 ./venv/bin/python -m pytest -q
 ```
 
-Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **current = head = `b0c1d2e3f4a5`**; one graph head; FG-018 37; FG-017 22; FG-016 37; FG-015 19; FG-014 35; FG-013 27; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **460 passed**. Non-development `flask` CLI requires local-only `SECRET_KEY` (gitignored `.env`).
+Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **current = head = `b0c1d2e3f4a5`**; one graph head; FG-019 34; FG-018 37; FG-017 22; FG-016 37; FG-015 19; FG-014 35; FG-013 27; FG-012 19; Project Hub 13; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **494 passed**. Non-development `flask` CLI requires local-only `SECRET_KEY` (gitignored `.env`).
 
 ## 22. FRESH CHAT STARTUP PROMPT
 
 Canonical location for the next conversation. Paste into a **new** ChatGPT or Cursor chat. Do **not** continue from an old prompt without preflight.
 
 ```text
-BRAYMAN — CONTINUE CALIBAI DEVELOPMENT — FG-019 DRAFT / NOT APPROVED
+BRAYMAN — CONTINUE CALIBAI DEVELOPMENT — FG-019 CLOSED / OPERATIONAL FOR UAT
 
 You are starting a FRESH conversation on the Brayman-Estimator (CalibAi / The Estimator) platform.
 
@@ -269,23 +272,19 @@ ChatGPT / Cursor memory is never corporate memory.
 
 Conversation titles in this workspace must start with: BRAYMAN — <Topic>.
 
-DO NOT implement /api/.
-DO NOT treat the FG-019 draft as approval.
 DO NOT start BUILD.
-DO NOT start RBAC or an org-switcher.
+DO NOT start Field Web.
 DO NOT add tokens or API keys.
+DO NOT start RBAC or an org-switcher.
 DO NOT start Change Order document work.
 DO NOT start Phase D.
 DO NOT start supplier integration.
 DO NOT enable external AI or runtime web lookup.
 
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.
-Item 10 is PARTIALLY COMPLETE.
-Office-auth is CLOSED / OPERATIONAL FOR UAT (ADR-041 Accepted; FG-018 closed).
-FG-019 Shared API Foundation is DRAFT FOR JOEL REVIEW / NOT APPROVED.
-Shared API product code is NOT STARTED.
-BUILD and Field Web remain BLOCKED.
-Current authorized state = STOP (Joel review of FG-019).
+Item 10 is COMPLETE (FG-018 + FG-019 both CLOSED / OPERATIONAL FOR UAT).
+Item 11 BUILD is ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED.
+Current authorized state = STOP.
 
 1. REVIEW REPOSITORY GOVERNANCE FIRST
 Read and comply with:
@@ -304,6 +303,7 @@ Read and comply with:
 - docs/feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md
 - docs/feature-gates/FG-019-shared-api-foundation-v1.md
 - docs/adr/ADR-022-field-client-and-shared-api.md
+- docs/adr/ADR-020-build-module-boundary.md
 
 2. VERIFY BASELINE (Cursor Terminal)
 cd /Users/joelbrayman/Desktop/Brayman-Estimator
@@ -325,28 +325,27 @@ Confirm:
 
 3. IDENTIFY CURRENT STOP STATE
 Independently reconstruct from the repository:
-- FG-008 through FG-018 CLOSED / OPERATIONAL FOR UAT
+- FG-008 through FG-019 CLOSED / OPERATIONAL FOR UAT
 - Live current = head b0c1d2e3f4a5
-- Full suite 460 passed; dedicated FG-018 37 passed
+- Full suite 494 passed; dedicated FG-019 34; dedicated FG-018 37
 - Pratt UAT project id 9 / FG016-UAT-PRATT / analysis v3 / advisory only
 - FG-018 office UAT PASSED on port 5011
+- FG-019 API UAT PASSED on port 5012
 - ADR-040 Accepted
 - ADR-041 Accepted
 - FG-018 CLOSED / OPERATIONAL FOR UAT
-- FG-019 DRAFT FOR JOEL REVIEW / NOT APPROVED
-- Roadmap item 10 PARTIALLY COMPLETE (office slice closed; Shared API not started)
-- Shared API product code NOT STARTED
-- BUILD BLOCKED
-- Field Web BLOCKED
+- FG-019 CLOSED / OPERATIONAL FOR UAT
+- Roadmap item 10 COMPLETE
+- Item 11 BUILD ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED
+- Field Web BLOCKED until separately gated
 - ADR-008 and ADR-010 remain Proposed
 - Phase D NOT STARTED / NOT AUTHORIZED
 - Real external AI NOT AUTHORIZED
 - Runtime permit web lookup NOT AUTHORIZED
 
 4. RETURN A CONCISE CURRENT STATE REVIEW
-Then WAIT for Joel to Approve FG-019 and issue a separate implementation prompt, or a different task.
-Do NOT implement Shared API or start BUILD.
-Do NOT mark FG-019 Approved.
+Then WAIT for Joel to authorize BUILD architecture / a Feature Gate, or a different task.
+Do NOT start BUILD.
 
 Do NOT rely on AI memory. Do NOT guess missing product rules.
 Do NOT create another migration.
@@ -507,4 +506,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: FG-018 **CLOSED / OPERATIONAL FOR UAT**; [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED**; item 10 **PARTIALLY COMPLETE**; live current = head `b0c1d2e3f4a5`; full suite **460 passed**; dedicated FG-018 **37 passed**; office UAT port **5011**. **STOP — do not implement `/api/` or start BUILD.** Phase D unauthorized. Change Order document family **FUTURE / NOT IMPLEMENTED**. Shared API product code **NOT STARTED**.
+A–J: FG-019 **CLOSED / OPERATIONAL FOR UAT**; FG-018 **CLOSED / OPERATIONAL FOR UAT**; item 10 **COMPLETE**; live current = head `b0c1d2e3f4a5`; full suite **494 passed**; dedicated FG-019 **34**; dedicated FG-018 **37**; API UAT port **5012**; office UAT port **5011**. **STOP — do not start BUILD.** Item 11 **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. Phase D unauthorized. Change Order document family **FUTURE / NOT IMPLEMENTED**.

@@ -3,11 +3,11 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-041: Durable User, Organization Membership, Office Authentication, Session, and Historical Actor Provenance |
-| Status | **Accepted** (2026-08-30; governing [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**). Live revision `b0c1d2e3f4a5` applied 2026-08-31. Shared API remains deferred. |
+| Status | **Accepted** (2026-08-30; governing [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**). Live revision `b0c1d2e3f4a5` applied 2026-08-31. Shared API is a later gate ([FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**). |
 | Date | 2026-08-30 |
 | Related | [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [ADR-022](ADR-022-field-client-and-shared-api.md) **Accepted** (field/API direction; no API in this ADR) · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [platform-roadmap.md](../platform-roadmap.md) item 10 · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [modules/build.md](../modules/build.md) · Constitution Articles 1, 4, 5, 6 |
 
-**Current status (2026-08-31):** Office authentication is **CLOSED / OPERATIONAL FOR UAT** ([FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md)). Roadmap item 10 is **PARTIALLY COMPLETE** — office User / membership / login is closed; Shared API foundation remains **NOT STARTED / DEFERRED / NOT AUTHORIZED**. Items 11–12 remain blocked. This ADR’s Decision is unchanged.
+**Current status (2026-08-31):** Office authentication is **CLOSED / OPERATIONAL FOR UAT** ([FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md)). Shared API Foundation V1 is **CLOSED / OPERATIONAL FOR UAT** ([FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md)). Roadmap item 10 is **COMPLETE**. Item 11 BUILD is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. This ADR’s Decision is unchanged.
 
 ---
 
@@ -17,7 +17,7 @@ The office application is unauthenticated. Anyone who can reach the Flask proces
 
 Organization isolation exists (`organization_id` query scoping; default `ORG-001` via `get_current_organization_id()`). There is **no User**, **no membership**, **no login**, and **no session org**. `Flask-Login` is declared in `requirements.txt` and unused.
 
-At ADR acceptance, roadmap item 10 (Authentication / actor identity + shared API foundation) was the first unfinished numbered CalibAi sequence item. As of 2026-08-31 the **office** slice is **CLOSED / OPERATIONAL FOR UAT** ([FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md)); only the Shared API portion remains unfinished. Items 11–12 (BUILD Field Capture; Field Web) **require** authentication before field capture ([ADR-022](ADR-022-field-client-and-shared-api.md)) and remain blocked until a later shared-API gate is separately governed. Building field capture on anonymous office access would make audit attribution fictional.
+At ADR acceptance, roadmap item 10 (Authentication / actor identity + shared API foundation) was the first unfinished numbered CalibAi sequence item. As of 2026-08-31 both the **office** slice ([FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md)) and the Shared API slice ([FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md)) are **CLOSED / OPERATIONAL FOR UAT**. Item 10 is **COMPLETE**. Item 11 BUILD remains **NOT AUTHORIZED** until separately Feature-Gated.
 
 ## Context
 

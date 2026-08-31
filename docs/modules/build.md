@@ -3,18 +3,20 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Proposed / Intended** — **not implemented** |
-| Updated | 2026-08-30 |
+| Updated | 2026-08-31 |
 | Code | None |
-| ADR | [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** (boundary only) |
+| ADR | [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** (boundary only). [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Proposed / FOR JOEL REVIEW** (field evidence / dual-surface architecture; **not Accepted**; does **not** authorize implementation). |
 | CAR | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 
 ## Purpose
 
 Own **field-execution records** for a Project so CalibAi can connect BUILD to the same authoritative project record used for PLAN / PRICE / CONTRACT.
 
+Two first-class surfaces share one BUILD system of record ([ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Proposed**): **desktop / office** (review, management, confirmation) and **field / iPhone** (fast capture). Neither is scaffolding for the other. Office HTML continues to call Flask services directly. Field Web (Item 12) consumes Shared API → the same services. A Proposed ADR is **not** implementation.
+
 ## Intended owned records (when Feature-Gated)
 
-Daily execution, crews, labour capture, subcontractor activity, material use, deliveries, equipment, progress, schedule/task updates, RFIs/issues, field notes, photos, inspections, field documentation. After permit **issuance**, BUILD may own operational evidence such as permit number, issued date, inspections, occupancy/final status — not the preflight analysis.
+**First BUILD domain (ADR-042 Proposed, not implemented):** Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Candidates (`PROPOSED` / `CONFIRMED` / `REJECTED`). Later BUILD may still expand toward daily execution, crews, labour capture, subcontractor activity, material use, deliveries, equipment, progress, schedule/task updates, RFIs/issues, inspections, and field documentation as separately gated. After permit **issuance**, BUILD may own operational evidence such as permit number, issued date, inspections, occupancy/final status — not the preflight analysis.
 
 ## Referenced data (intended)
 
@@ -42,6 +44,7 @@ Daily execution, crews, labour capture, subcontractor activity, material use, de
 
 ## Related
 
+- [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Proposed / FOR JOEL REVIEW**
 - [modules/projects.md](projects.md) (Change Orders)
 - [modules/plan-intelligence.md](plan-intelligence.md)
 - [modules/monitor.md](monitor.md) (comparison layer; does not own BUILD actuals)

@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-31 — Draft ADR-042 BUILD field evidence / iPhone-first capture (governance only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-31 |
+| Branch | `main` @ `50b21ec838e34799a7fe129da8e52a7126a81394` (starting HEAD) |
+| Objective | Docs-only Proposed ADR for BUILD field evidence, original custody, dual first-class surfaces (desktop review + iPhone-first capture), Item 11 vs Item 12, offline A/B/C. Do not accept the ADR. Do not create FG-020. Do not implement BUILD. |
+| Business decision | Desktop and Field are both first-class over one BUILD SoR. Capture-first. Original audio/photo/text immutable. Derived requires human confirmation. Audio/image upload API belongs to Item 11. Field Web UI remains Item 12. |
+| Architectural decision | **ADR-042 Proposed / FOR JOEL REVIEW.** Additive to ADR-023 (does not rewrite CAR-001-era voice/photo implementation prohibition). `user_id` + display-name snapshot on new BUILD tables only. Distinct `created_at` / `occurred_at`. Generic Derived Candidate. No CO FK in V1. |
+| Prompt template used | ADR governance draft prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — BUILD FIELD EVIDENCE / IPHONE-FIRST / VOICE-FIRST / DESKTOP-FIRST REVIEW ARCHITECTURE ADR — GOVERNANCE DRAFT ONLY. Create next valid ADR as Proposed. Do not accept. Do not create FG-020. Do not implement BUILD. |
+| Files expected to change | `docs/adr/ADR-042-*.md`; ADR index; CAR-001 subsequent status; BUILD module; current-state / handoff / roadmap / chat-workflow-log; minimum related indexes. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live database; FG-020; ADR-042 acceptance; ADR-008/010 status. |
+| Implementation result | ADR-042 drafted **Proposed / FOR JOEL REVIEW**. FG-020 **not created**. Product/database/Alembic unchanged. |
+| Tests | Docs-only. Product tests not rerun. Governed baseline remains **494 passed**. `git diff --check`. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append-only recorded governance draft) |
+| Constitutional issue raised | None. Proposed is not Accepted (Article 8). |
+| Unresolved issues | Joel must accept or reject ADR-042. FG-020 not authorized until acceptance. Field MIME/size limits deferred to FG-020 reconnaissance. |
+| Next approved step | **STOP.** Joel / ChatGPT review ADR-042. Do not create FG-020. Do not start BUILD. |
+| Next approved prompt | None until Joel accepts ADR-042. Then a separate docs-only FG-020 draft prompt. |
+| Commit hash | (this commit) |
+
 ### 2026-08-31 — Approve and implement FG-019 Shared API Foundation V1
 
 | Field | Content |

@@ -5,7 +5,9 @@
 | Title | ADR-023: Field Evidence — Original versus Derived Records |
 | Status | **Accepted** (provenance rules; no voice/photo implementation in CAR-001) |
 | Date | 2026-08-28 |
-| Related | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [ADR-015](ADR-015-extracted-metadata-ownership-and-provenance.md) · [ADR-017](ADR-017-sheet-metadata-suggestion-and-review-workflow.md) · [ADR-020](ADR-020-build-module-boundary.md) |
+| Related | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [ADR-015](ADR-015-extracted-metadata-ownership-and-provenance.md) · [ADR-017](ADR-017-sheet-metadata-suggestion-and-review-workflow.md) · [ADR-020](ADR-020-build-module-boundary.md) · [ADR-042](ADR-042-build-field-evidence-and-iphone-first-capture.md) **Proposed / FOR JOEL REVIEW** |
+
+**Subsequent architecture (2026-08-31):** [ADR-042](ADR-042-build-field-evidence-and-iphone-first-capture.md) is **Proposed / FOR JOEL REVIEW**. It does **not** change this ADR’s 2026-08-28 Decision. ADR-023 correctly prohibited voice/photo **implementation** in the CAR-001 phase (Decision 5). ADR-042, if later Accepted, would govern original audio/photo **custody** in the BUILD domain while continuing to prohibit transcription, voice AI, photo AI, and Field Web capture UI until separately gated. That is an additive subsequent decision, not a claim that this ADR was historically wrong. ADR-042 is **not Accepted**. It does **not** authorize implementation.
 
 ## Context
 

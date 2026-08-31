@@ -35,6 +35,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-08-31 FG-019 close — not authorized by CAR-001):** [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. GET-only `/api/v1`. No migration. Live Alembic current = head **`b0c1d2e3f4a5`**. Full suite **494 passed**. Roadmap item 10 is **COMPLETE**. Item 11 BUILD is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. CAR-001 still does **not** authorize BUILD implementation. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
+**Subsequent status (2026-08-31 ADR-042 Proposed — not authorized by CAR-001):** [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) is **Proposed / FOR JOEL REVIEW**. It does **not** accept BUILD architecture. FG-020 is **not created**. BUILD / Field Web / transcription / external AI remain **not implemented**. Item 11 remains **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. Live Alembic current = head **`b0c1d2e3f4a5`**. Full suite baseline **494 passed**. CAR-001 still does **not** authorize implementation.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:
@@ -70,6 +72,7 @@ CalibAi provides complementary **office** and **field** experiences over the sam
 | LEARN is review-gated and must not mutate pricing policy / cost library / approved estimates / historical actuals | [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** |
 | Field is first-class; Flask services → API → field web → native later if warranted | [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** |
 | Original field evidence separate from derived structured records | [ADR-023](../adr/ADR-023-field-evidence-provenance.md) **Accepted** |
+| Dual first-class BUILD surfaces; original audio/photo/text custody; capture-first; desktop review | [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Proposed / FOR JOEL REVIEW** (not accepted; not implemented) |
 | Pricing markup stack vs 15% gross-margin policy — named methods **CLOSED / OPERATIONAL FOR UAT** | [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED / OPERATIONAL FOR UAT** |
 
 Replacement of existing modules or schemas requires **separate explicit approval**.

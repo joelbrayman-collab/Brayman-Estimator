@@ -34,9 +34,9 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 | Layer | Position |
 |-------|----------|
 | **CURRENT** | FG-008 through FG-019 **CLOSED / OPERATIONAL FOR UAT** as applicable. Live current = head **`b0c1d2e3f4a5`**. Full suite **494 passed**. API UAT port **5012**. Office auth UAT port **5011**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. |
-| **NEXT AUTHORIZED ACTION** | **STOP.** Do not start BUILD, Field Web, tokens, RBAC, or org-switcher. |
+| **NEXT AUTHORIZED ACTION** | **STOP.** [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) is **Proposed / FOR JOEL REVIEW**. Do not create FG-020. Do not start BUILD, Field Web, tokens, RBAC, or org-switcher. |
 | **ROADMAP ITEM 10** | **COMPLETE.** Office Authentication / Actor Identity / Membership: **CLOSED / OPERATIONAL FOR UAT** ([FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md)). Shared API foundation: **CLOSED / OPERATIONAL FOR UAT** ([FG-019](feature-gates/FG-019-shared-api-foundation-v1.md)). |
-| **ROADMAP DIRECTION** | Item 11 BUILD is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.** |
+| **ROADMAP DIRECTION** | Item 11 BUILD is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Proposed / FOR JOEL REVIEW**. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.** |
 | **SEPARATELY GOVERNED FUTURE PROGRAMS** | BUILD; Field Web; Phase D; supplier integration; Change Order document family; Permit branding / national expansion; QuickBooks; Ontario Contract / Warranty; MONITOR; LEARN; real external AI; other repository-recorded future work. Not reordered here. Not authorized by FG-019 close. |
 
 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**. [ADR-008](adr/ADR-008-supplier-price-snapshotting.md) **Proposed**. FG-010 Phase D is **NOT STARTED**. **Change Order document family** remains **FUTURE / NOT IMPLEMENTED**.
@@ -121,7 +121,7 @@ Each item still needs its own Feature Gate / approved Cursor prompt.
 8. Project Hub UX — [FG-011](feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT** (evolve `/projects/<id>`; no new module; no schema)
 9. Internal Detailed Cost Breakdown + Customer Estimate consistency — [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (depends on Pricing Engine snapshot architecture; outputs 3–4 / four-output **product** remains Future)
 10. Authentication / actor identity + shared API foundation — **COMPLETE.** Office Authentication / Actor Identity / Membership: **CLOSED / OPERATIONAL FOR UAT** ([ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md)). Shared API foundation: **CLOSED / OPERATIONAL FOR UAT** ([FG-019](feature-gates/FG-019-shared-api-foundation-v1.md); GET-only `/api/v1`; no migration; live current = head `b0c1d2e3f4a5`).
-11. BUILD Field Capture V1 — **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED.** Item 10 is complete. Not started. Not authorized.
+11. BUILD Field Capture V1 — **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED.** [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Proposed / FOR JOEL REVIEW**. FG-020 **not created**. Not started. Not authorized.
 12. Field Web / Today + Capture + plan access — **BLOCKED.** Requires a separately governed Field Web / BUILD gate. Not started. Not authorized.
 13. MONITOR basic estimated-vs-actual ([ADR-021](adr/ADR-021-monitor-commercial-baseline.md) **Accepted**; composed frozen baseline; Project Gross Margin; **DOWNSTREAM / NOT IMPLEMENTED**; Feature Gate **not authorized** by ADR-021)
 14. LEARN historical intelligence / review-gated learning (ADR-024)
@@ -173,8 +173,8 @@ Phases A–D (Plan Intelligence) and E–F (Supplier) may be sequenced in parall
 
 ## Next recommended milestones
 
-1. **STOP.** [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. Do not start BUILD, Field Web, tokens, RBAC, or org-switcher. Do not implement MONITOR, Phase D, supplier/Winchester POC, bulk supplier onboarding, national permit expansion, or Change Order documents. Do not accept ADR-008.
-2. **Roadmap direction:** Item 11 BUILD is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. Wait for Joel to authorize BUILD architecture / a Feature Gate.
+1. **STOP.** [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) is **Proposed / FOR JOEL REVIEW**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. Do not create FG-020. Do not start BUILD, Field Web, tokens, RBAC, or org-switcher. Do not implement MONITOR, Phase D, supplier/Winchester POC, bulk supplier onboarding, national permit expansion, or Change Order documents. Do not accept ADR-008. Do not accept ADR-010.
+2. **Roadmap direction:** Item 11 BUILD is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. Wait for Joel to **accept ADR-042** before drafting FG-020.
 3. Phase D reviewed quantity → estimate mapping remains **NOT STARTED / NOT AUTHORIZED**.
 4. ADR-014 remains Proposed as a document; Page ≠ Sheet is required by FG-004 (M009 implemented).
 5. Subsequent CalibAi sequence after item 10: BUILD, field web, MONITOR implementation, LEARN — each separately gated. ADR-021 does not move MONITOR ahead of auth/BUILD.
@@ -217,8 +217,8 @@ These remain **not started** unless a later Feature Gate says otherwise. FG-015 
 
 ## Decisions Required (Joel)
 
-1. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. **STOP.** Do not start BUILD, Field Web, tokens, RBAC, or org-switcher. Do not implement national permit expansion, Phase D, Change Order document work, supplier integration, bulk supplier onboarding, or a Winchester POC. Do not accept ADR-008.
-2. Whether to authorize BUILD architecture / a BUILD Feature Gate. Item 11 is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**.
+1. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. **STOP.** [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) is **Proposed / FOR JOEL REVIEW**. Do not create FG-020. Do not start BUILD, Field Web, tokens, RBAC, or org-switcher. Do not implement national permit expansion, Phase D, Change Order document work, supplier integration, bulk supplier onboarding, or a Winchester POC. Do not accept ADR-008. Do not accept ADR-010.
+2. Whether to **accept ADR-042**. Item 11 is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. Do not draft FG-020 until ADR-042 is Accepted.
 3. ADR-010 remains **Proposed** (OCR/CAD/provider). Real external AI provider remains **not authorized**.
 4. Confirm POC element remains `INTERIOR_DOOR_OPENING` count.
 5. Remaining multi-user / SaaS questions (RBAC, invitations, SSO, org-switcher) and production hosting/secrets. Office authentication is **CLOSED / OPERATIONAL FOR UAT** — not an open auth-model gap.

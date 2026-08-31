@@ -30,6 +30,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-08-31 — Draft ADR-042 BUILD field evidence architecture (governance only)
+
+| Field | Content |
+|-------|---------|
+| ID | Docs-only ADR-042 governance draft |
+| Status | [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Proposed / FOR JOEL REVIEW**. Not accepted. FG-020 **not created**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) remains **CLOSED / OPERATIONAL FOR UAT**. Item 10 **COMPLETE**. Item 11 **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. |
+| Branch | `main` |
+| Objective | Memorialize iPhone-first / voice-first / desktop-review BUILD field-evidence architecture as a Proposed ADR. Do not implement BUILD. Do not create FG-020. |
+| Deliverables | ADR-042; ADR index; CAR-001 subsequent status; BUILD module; current-state / session-handoff / roadmap / project-state-report / chat-workflow-log. No `app/` / `tests/` / `migrations/`. |
+| Validation | `git diff --check`. Docs-only; product tests not rerun. Governed baseline remains **494 passed**. Alembic current = head `b0c1d2e3f4a5`. |
+| Next | **STOP.** Joel review of ADR-042. Do not create FG-020. Do not start BUILD. |
+
 ### 2026-08-31 — FG-019 Shared API Foundation V1 implementation and close
 
 | Field | Content |

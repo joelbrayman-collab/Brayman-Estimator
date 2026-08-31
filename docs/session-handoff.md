@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-019 CLOSED / OPERATIONAL FOR UAT.** Item 10 **COMPLETE**. FG-018 **CLOSED / OPERATIONAL FOR UAT**. ADR-041 **Accepted**. Live current = head `b0c1d2e3f4a5`. Full suite **494 passed**. Dedicated FG-019 **34 passed**. Dedicated FG-018 **37 passed**. API UAT port **5012**. Office UAT port **5011**. FG-008–FG-019 **CLOSED / OPERATIONAL FOR UAT**. Do **not** start BUILD. Next authorized action: **STOP**. Item 11 **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. ADR-008 / ADR-010 **Proposed**. |
+| Status | **FG-019 CLOSED / OPERATIONAL FOR UAT.** Item 10 **COMPLETE**. FG-018 **CLOSED / OPERATIONAL FOR UAT**. ADR-041 **Accepted**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Proposed / FOR JOEL REVIEW** (not accepted; FG-020 **not created**). Live current = head `b0c1d2e3f4a5`. Full suite **494 passed**. Dedicated FG-019 **34 passed**. Dedicated FG-018 **37 passed**. API UAT port **5012**. Office UAT port **5011**. FG-008–FG-019 **CLOSED / OPERATIONAL FOR UAT**. Do **not** start BUILD. Next authorized action: **STOP**. Item 11 **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. ADR-008 / ADR-010 **Proposed**. |
 | Updated | 2026-08-31 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -81,7 +81,7 @@ PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project`. No
 - **PLAN:** partial — M005–M010 implemented; **M012 / FG-010 foundation CLOSED / OPERATIONAL FOR UAT**; FG-015 Permit Foundation **CLOSED / OPERATIONAL FOR UAT**; FG-016 Pass 2 **CLOSED / OPERATIONAL FOR UAT**; Phase D mapping **NOT STARTED**
 - **PRICE:** partial — builder + commercial gate; Labour Engine Phase B **CLOSED / OPERATIONAL FOR UAT**; Pricing Engine **CLOSED / OPERATIONAL FOR UAT**; FG-012 internal breakdown + Proposal consistency **CLOSED / OPERATIONAL FOR UAT**
 - **CONTRACT:** partial (proposals are the customer-facing estimate; FG-012 reconciles snapshot totals; Ontario templates future)
-- **BUILD:** partial (change orders; field capture future)
+- **BUILD:** partial (change orders operational; field capture **not implemented**; [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Proposed / FOR JOEL REVIEW**)
 - **MONITOR:** future implementation (ADR-021 **Accepted**; composed frozen baseline; Project Gross Margin; not coded)
 - **LEARN:** future (ADR-024 boundary accepted; no ML)
 
@@ -91,13 +91,15 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**FG-019 CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) remains **CLOSED / OPERATIONAL FOR UAT**. Live current = head `b0c1d2e3f4a5`. API UAT port **5012**. Office UAT port **5011**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted**. Permit Intelligence **ADR-037 / ADR-038 / ADR-039 Accepted**.
+**FG-019 CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) remains **CLOSED / OPERATIONAL FOR UAT**. Live current = head `b0c1d2e3f4a5`. API UAT port **5012**. Office UAT port **5011**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Proposed / FOR JOEL REVIEW**. Material Catalogue **ADR-034 / ADR-035 / ADR-036 Accepted**. Permit Intelligence **ADR-037 / ADR-038 / ADR-039 Accepted**.
 
 ## 8. LAST AUTHORIZED DELTA
 
-This session: **approve and implement FG-019 Shared API Foundation V1**. GET-only `/api/v1`. Dedicated **34**. Focused **326**. Full suite **494**. API UAT port **5012**. No migration. No BUILD. Item 10 **COMPLETE**.
+**Last authorized delta:** docs-only [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Proposed / FOR JOEL REVIEW**. No BUILD code. No FG-020. No migration.
 
-Prior: **draft FG-019 Shared API Foundation V1**. Docs only. Status was **DRAFT FOR JOEL REVIEW / NOT APPROVED**. No product code. No tests. No migration. No ADR created.
+Prior: **approve and implement FG-019 Shared API Foundation V1**. GET-only `/api/v1`. Dedicated **34**. Focused **326**. Full suite **494**. API UAT port **5012**. No migration. No BUILD. Item 10 **COMPLETE**.
+
+Prior: **draft FG-019 Shared API Foundation V1**. Docs only. Status was **DRAFT FOR JOEL REVIEW / NOT APPROVED**. No product code. No tests. No migration.
 
 Prior: **post-FG-018 current-state documentation reconciliation**. Docs only. No product code. No Feature Gate. No ADR created or accepted. No migration. No database mutation. Repaired stale CURRENT language so the repository matches FG-018 **CLOSED / OPERATIONAL FOR UAT** and item 10 **PARTIALLY COMPLETE**.
 
@@ -221,13 +223,13 @@ Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualOb
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not start Phase D. Do not enable an external AI provider. Do not start BUILD, Field Web, tokens, RBAC, org-switcher, invitations, SSO, or password-reset email. Do not treat Item-10 completion as BUILD authorization. Do not **implement** MONITOR/LEARN, QuickBooks, or contract/warranty work. Do **not** create another migration. Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not implement bulk supplier onboarding. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013 / FG-014 / **FG-015** / **FG-016** / **FG-017** / **FG-018**. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history. Do not implement supplier pricing. Do not accept ADR-008. Do not begin national permit expansion. Do not implement live regulatory AI, in-product web lookup, automatic permit conclusions, or municipal submissions. Do not implement Change Order document-family rewrite, client email, or a second Change Order entity until Joel separately Approves the gate and authorizes an implementation prompt.
+Do not start Phase D. Do not enable an external AI provider. Do not start BUILD, Field Web, tokens, RBAC, org-switcher, invitations, SSO, or password-reset email. Do not treat Item-10 completion as BUILD authorization. Do not treat ADR-042 **Proposed** as acceptance or as FG-020. Do not **implement** MONITOR/LEARN, QuickBooks, or contract/warranty work. Do **not** create another migration. Do not treat ADR-021 acceptance as a MONITOR Feature Gate. Do not treat ADR-033 as a supplier Feature Gate or Winchester POC. Do not implement bulk supplier onboarding. Do not grant supplier exclusivity. Do not set Darcy percentages. Do not reopen FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / FG-013 / FG-014 / **FG-015** / **FG-016** / **FG-017** / **FG-018**. Do not insert estimate lines from take-off. Do not create a new document module, Customer Estimate entity, or a second Alembic head. Do not copy Dashboard unscoped counts. Do not rewrite historical labour facts. Do not move/recopy/delete the legacy Desktop corpus. Do not delete synthetic UAT or append-only audit history. Do not implement supplier pricing. Do not accept ADR-008. Do not accept ADR-010. Do not begin national permit expansion. Do not implement live regulatory AI, in-product web lookup, automatic permit conclusions, or municipal submissions. Do not implement Change Order document-family rewrite, client email, or a second Change Order entity until Joel separately Approves the gate and authorizes an implementation prompt.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP.** [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. Do not start BUILD, Field Web, tokens, RBAC, or org-switcher. Item 11 is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**.
+**Next governed action:** **STOP.** [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) is **Proposed / FOR JOEL REVIEW**. It is **not Accepted**. Do not create FG-020. Do not start BUILD, Field Web, tokens, RBAC, or org-switcher. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. Item 11 is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**.
 
-**Roadmap direction (not authorization):** Item 11 BUILD Field Capture may later receive its own architecture / Feature Gate. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Roadmap direction (not authorization):** After Joel **accepts** ADR-042, draft FG-020 in a separate docs-only prompt. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -284,7 +286,8 @@ DO NOT enable external AI or runtime web lookup.
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.
 Item 10 is COMPLETE (FG-018 + FG-019 both CLOSED / OPERATIONAL FOR UAT).
 Item 11 BUILD is ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED.
-Current authorized state = STOP.
+ADR-042 is Proposed / FOR JOEL REVIEW (not Accepted). FG-020 is not created.
+Current authorized state = STOP. Do not create FG-020. Do not start BUILD.
 
 1. REVIEW REPOSITORY GOVERNANCE FIRST
 Read and comply with:
@@ -299,6 +302,7 @@ Read and comply with:
 - docs/platform-roadmap.md
 - docs/feature-gates/README.md
 - docs/adr/README.md
+- docs/adr/ADR-042-build-field-evidence-and-iphone-first-capture.md
 - docs/adr/ADR-041-user-membership-and-office-authentication.md
 - docs/feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md
 - docs/feature-gates/FG-019-shared-api-foundation-v1.md
@@ -333,6 +337,7 @@ Independently reconstruct from the repository:
 - FG-019 API UAT PASSED on port 5012
 - ADR-040 Accepted
 - ADR-041 Accepted
+- ADR-042 Proposed / FOR JOEL REVIEW (not accepted; FG-020 not created)
 - FG-018 CLOSED / OPERATIONAL FOR UAT
 - FG-019 CLOSED / OPERATIONAL FOR UAT
 - Roadmap item 10 COMPLETE
@@ -506,4 +511,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: FG-019 **CLOSED / OPERATIONAL FOR UAT**; FG-018 **CLOSED / OPERATIONAL FOR UAT**; item 10 **COMPLETE**; live current = head `b0c1d2e3f4a5`; full suite **494 passed**; dedicated FG-019 **34**; dedicated FG-018 **37**; API UAT port **5012**; office UAT port **5011**. **STOP — do not start BUILD.** Item 11 **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. Phase D unauthorized. Change Order document family **FUTURE / NOT IMPLEMENTED**.
+A–J: FG-019 **CLOSED / OPERATIONAL FOR UAT**; FG-018 **CLOSED / OPERATIONAL FOR UAT**; item 10 **COMPLETE**; live current = head `b0c1d2e3f4a5`; full suite **494 passed**; dedicated FG-019 **34**; dedicated FG-018 **37**; API UAT port **5012**; office UAT port **5011**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Proposed / FOR JOEL REVIEW**. **STOP — do not start BUILD. Do not create FG-020.** Item 11 **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. Phase D unauthorized. Change Order document family **FUTURE / NOT IMPLEMENTED**.

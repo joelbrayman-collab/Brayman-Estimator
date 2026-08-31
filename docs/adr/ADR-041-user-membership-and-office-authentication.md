@@ -3,9 +3,9 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-041: Durable User, Organization Membership, Office Authentication, Session, and Historical Actor Provenance |
-| Status | **Accepted** (2026-08-30; governing [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED**). Does **not** by itself authorize product code. Implementation requires a **separate** implementation prompt after this reconnaissance. |
+| Status | **Accepted** (2026-08-30; governing [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **IMPLEMENTED / LIVE MIGRATION PENDING**). Live `flask db upgrade` of `b0c1d2e3f4a5` is **not** authorized by the implementation commit. |
 | Date | 2026-08-30 |
-| Related | [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED** · [ADR-022](ADR-022-field-client-and-shared-api.md) **Accepted** (field/API direction; no API in this ADR) · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [platform-roadmap.md](../platform-roadmap.md) item 10 · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [modules/build.md](../modules/build.md) · Constitution Articles 1, 4, 5, 6 |
+| Related | [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **IMPLEMENTED / LIVE MIGRATION PENDING** · [ADR-022](ADR-022-field-client-and-shared-api.md) **Accepted** (field/API direction; no API in this ADR) · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [organization-and-calibration-architecture.md](../architecture/organization-and-calibration-architecture.md) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [platform-roadmap.md](../platform-roadmap.md) item 10 · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [modules/build.md](../modules/build.md) · Constitution Articles 1, 4, 5, 6 |
 
 ---
 

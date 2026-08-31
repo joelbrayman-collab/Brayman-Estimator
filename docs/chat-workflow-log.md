@@ -42,6 +42,22 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-31 — Implement FG-018 organization authentication (pre-live-migration)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-31 |
+| Branch | `main` @ `b7b1bb59d3826ced14459e35d307628672344b5f` (starting HEAD) |
+| Objective | Implement FG-018 exactly as governed by ADR-041 and the recorded reconnaissance. Stop at IMPLEMENTED / LIVE MIGRATION PENDING. |
+| Business decision | Office authentication is product-implemented. Live migration/bootstrap/UAT remain separately authorized. Shared API deferred. BUILD remains blocked until live close. |
+| Architectural decision | User + UserMembership; pbkdf2:sha256; Flask-Login; CSRFProtect; membership fail-closed (0 or >1 active memberships); no RBAC; no org-switcher; no user_id columns; historical actor strings untouched. |
+| Prompt template used | FG-018 implementation prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — IMPLEMENT FG-018 ORGANIZATION AUTHENTICATION, ACTOR IDENTITY, AND MEMBERSHIP V1. Single additive migration `b0c1d2e3f4a5`. Do not live-migrate. |
+| Files expected to change | Auth models/services/routes/CLI; `create_app`; organizations/shell; bounded actor helpers; tests; docs; one Alembic revision; Flask-WTF dependency. |
+| Files prohibited from changing | Live operating database; shared API; BUILD/Field; RBAC; ADR-008/010 status. |
+| Implementation result | Implemented. Dedicated tests **37 passed**. Full suite **460 passed**. Live Alembic current **`a9b0c1d2e3f4`**. Repository head **`b0c1d2e3f4a5`**. Live upgrade **not run**. |
+| Commit hash | verify `git rev-parse HEAD` after this commit |
+
 ### 2026-08-30 — Accept ADR-041 / Approve FG-018 / implementation reconnaissance
 
 | Field | Content |

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
-from flask import current_app, has_app_context
+from flask import current_app, has_app_context, has_request_context
 from sqlalchemy import func
 
 from app import db
@@ -70,6 +70,13 @@ class BrandRenderContext:
 
 
 def _actor_name() -> str:
+    if has_request_context():
+        from flask_login import current_user
+
+        if getattr(current_user, "is_authenticated", False):
+            name = (getattr(current_user, "display_name", None) or "").strip()
+            if name:
+                return name
     if has_app_context():
         return current_app.config.get("HISTORICAL_UPLOAD_ACTOR") or "Joel Brayman"
     return "Joel Brayman"

@@ -16,6 +16,7 @@ from app.services.historical_review import (
 from app.services.historical_ingestion.upload import (
     process_upload_files,
 )
+from app.services.auth import form_actor
 
 bp = Blueprint("historical_estimates", __name__, url_prefix="/historical-estimates")
 
@@ -74,7 +75,7 @@ def post_review(estimate_id: int):
     try:
         review_status = request.form.get("review_status", "").strip()
         evidence_tier = request.form.get("evidence_tier", "").strip()
-        reviewed_by = request.form.get("reviewed_by", "").strip() or "Joel Brayman"
+        reviewed_by = form_actor("reviewed_by")
         review_notes = request.form.get("review_notes", "").strip()
 
         record_review_decision(

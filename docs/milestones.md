@@ -30,6 +30,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-08-31 — Implement FG-018 organization authentication (pre-live-migration)
+
+| Field | Content |
+|-------|---------|
+| ID | FG-018 implementation |
+| Status | [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **IMPLEMENTED / LIVE MIGRATION PENDING**; [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** |
+| Branch | `main` |
+| Objective | Implement office User, membership, login/logout, CSRF, SECRET_KEY fail-closed, CLI bootstrap/reset, membership org context, bounded actor snapshots, shell org isolation. Do not live-migrate. |
+| Deliverables | `users` / `user_memberships`; revision `b0c1d2e3f4a5`; Flask-Login + Flask-WTF; dedicated tests; docs. |
+| Validation | Dedicated FG-018 **37 passed**. Full suite **460 passed**. Live `flask db current` remains `a9b0c1d2e3f4`. Repository head `b0c1d2e3f4a5`. `git diff --check` clean. Live upgrade **not run**. |
+| Next | **STOP. Do not live-migrate.** Wait for Joel/ChatGPT authorization to apply `b0c1d2e3f4a5`, bootstrap ORG-001, set SECRET_KEY, and UAT. Do not mark CLOSED. |
+
 ### 2026-08-30 — Accept ADR-041 / Approve FG-018 / implementation reconnaissance
 
 | Field | Content |

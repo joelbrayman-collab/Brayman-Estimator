@@ -41,6 +41,7 @@ from app.services.estimate_output import (
     assemble_internal_cost_breakdown,
     named_method_governs,
 )
+from app.services.auth import form_actor
 from app.services.organizations import get_current_organization_id
 
 estimates_bp = Blueprint("estimates", __name__, url_prefix="/estimates")
@@ -568,7 +569,7 @@ def update_pricing(id, version_id):
 )
 def apply_org_pricing(id, version_id):
     estimate, version = _get_estimate_version(id, version_id)
-    actor = request.form.get("approved_by", "").strip() or "Joel Brayman"
+    actor = form_actor("approved_by")
     override_id = request.form.get("pricing_policy_override_id", type=int)
     reason = request.form.get("pricing_override_reason", "").strip()
     try:

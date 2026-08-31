@@ -471,7 +471,8 @@ def test_future_lifecycle_not_operational(client, project):
     assert "Future" in html
     assert "not operational" in html
     assert "estimated-versus-actual" in html
-    assert 'type="submit"' not in html
+    workspace = html.split('id="main-content"', 1)[-1]
+    assert 'type="submit"' not in workspace
     assert "project health" not in html.lower()
     assert "completion percent" not in html.lower()
     assert "Start monitoring" not in html

@@ -1,17 +1,109 @@
+import os
 import tempfile
 
-from flask import Flask
+from flask import Flask, abort, g, request
+from flask_login import LoginManager, current_user
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
 
 db = SQLAlchemy()
 migrate = Migrate()
+login_manager = LoginManager()
+csrf = CSRFProtect()
+
+DEVELOPMENT_SECRET_KEY = "development-secret-key"
+TESTING_FALLBACK_SECRET_KEY = "test-secret-key"
+
+
+class SecretKeyConfigError(RuntimeError):
+    """Non-development SECRET_KEY is missing or is the committed development value."""
+
+
+def _env_flag(name: str) -> bool:
+    return str(os.environ.get(name, "")).strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _apply_secret_key(app: Flask) -> None:
+    testing = bool(app.config.get("TESTING"))
+    debug = bool(app.debug) or bool(app.config.get("DEBUG")) or _env_flag("FLASK_DEBUG")
+    secret = app.config.get("SECRET_KEY")
+    if secret is None or secret == "":
+        env_secret = os.environ.get("SECRET_KEY")
+        secret = env_secret if env_secret else None
+
+    if testing:
+        app.config["SECRET_KEY"] = secret or TESTING_FALLBACK_SECRET_KEY
+        return
+
+    if debug:
+        app.config["SECRET_KEY"] = secret or DEVELOPMENT_SECRET_KEY
+        return
+
+    if not secret:
+        raise SecretKeyConfigError(
+            "SECRET_KEY must be supplied for non-development operation."
+        )
+    if secret == DEVELOPMENT_SECRET_KEY:
+        raise SecretKeyConfigError(
+            "SECRET_KEY must not be the committed development secret "
+            "in non-development operation."
+        )
+    app.config["SECRET_KEY"] = secret
+
+
+def _register_office_auth(app: Flask) -> None:
+    login_manager.init_app(app)
+    login_manager.login_view = "auth.login"
+    login_manager.login_message = "Please log in to access the office application."
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        from app.models.user import User
+
+        try:
+            uid = int(user_id)
+        except (TypeError, ValueError):
+            return None
+        user = db.session.get(User, uid)
+        if user is None or not user.is_active:
+            return None
+        return user
+
+    csrf.init_app(app)
+
+    from app.cli.auth import auth_cli
+    from app.routes.auth import auth_bp
+
+    app.register_blueprint(auth_bp)
+    app.cli.add_command(auth_cli)
+
+    @app.before_request
+    def protect_office_routes():
+        from app.services.organizations import (
+            OrganizationAccessError,
+            resolve_membership_organization_id,
+        )
+
+        endpoint = request.endpoint
+        if endpoint in ("static", "auth.login", "auth.logout"):
+            return None
+        if endpoint is None:
+            if not current_user.is_authenticated:
+                return login_manager.unauthorized()
+            return None
+        if not current_user.is_authenticated:
+            return login_manager.unauthorized()
+        try:
+            g.organization_id = resolve_membership_organization_id(current_user)
+        except OrganizationAccessError:
+            abort(403)
+        return None
 
 
 def create_app(config=None):
     app = Flask(__name__)
 
-    app.config["SECRET_KEY"] = "development-secret-key"
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///brayman_estimator.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["PLAN_UPLOAD_MAX_BYTES"] = 25 * 1024 * 1024
@@ -24,6 +116,11 @@ def create_app(config=None):
 
     if config:
         app.config.update(config)
+
+    _apply_secret_key(app)
+
+    if app.config.get("TESTING"):
+        app.config.setdefault("WTF_CSRF_ENABLED", False)
 
     if app.config.get("TESTING") and not app.config.get("BRAND_LOGO_ROOT"):
         app.config["BRAND_LOGO_ROOT"] = tempfile.mkdtemp(prefix="calibai-brand-logos-")
@@ -63,6 +160,8 @@ def create_app(config=None):
     app.register_blueprint(project_controls_bp)
     app.register_blueprint(plan_intelligence_bp)
     app.register_blueprint(settings_bp)
+
+    _register_office_auth(app)
 
     from app.shell import register_shell_context
 

@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List, Optional
 
-from flask import current_app
+from flask import current_app, has_request_context
 
 from app import db
 from app.models.historical_estimates import (
@@ -92,6 +92,13 @@ class UploadSummary:
 
 
 def _office_actor() -> str:
+    if has_request_context():
+        from flask_login import current_user
+
+        if getattr(current_user, "is_authenticated", False):
+            name = (getattr(current_user, "display_name", None) or "").strip()
+            if name:
+                return name
     return current_app.config.get("HISTORICAL_UPLOAD_ACTOR", "Joel Brayman")
 
 

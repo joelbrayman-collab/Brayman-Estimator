@@ -1042,3 +1042,71 @@ textarea {
         font-size: 1.55rem;
     }
 }
+
+.header-logout-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+body.login-page {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--workspace);
+    font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--text);
+}
+
+.login-card {
+    width: min(420px, calc(100% - 32px));
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-soft);
+    padding: 32px 28px;
+}
+
+.login-logo {
+    display: block;
+    margin: 0 auto 16px;
+    max-width: 180px;
+    height: auto;
+}
+
+.login-card h1 {
+    margin: 0 0 8px;
+    font-size: 1.35rem;
+    text-align: center;
+}
+
+.login-lede {
+    margin: 0 0 20px;
+    color: var(--muted);
+    text-align: center;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.login-form label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font: inherit;
+    margin-bottom: 8px;
+}
+
+.login-form .button {
+    margin-top: 8px;
+}

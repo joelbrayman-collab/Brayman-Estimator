@@ -1,6 +1,7 @@
 """Organization context and scoping service."""
 
 from flask import g, has_request_context
+from flask_login import current_user
 
 from app import db
 from app.models.organization import Organization
@@ -8,19 +9,63 @@ from app.models.organization import Organization
 DEFAULT_ORGANIZATION_ID = "ORG-001"
 
 
+class OrganizationAccessError(RuntimeError):
+    """Authenticated request cannot resolve a unique active membership."""
+
+
+def resolve_membership_organization_id(user) -> str:
+    """Return the sole active membership organization, or fail closed."""
+    from app.models.user import UserMembership
+
+    try:
+        user_id = int(user.get_id())
+    except (TypeError, ValueError, AttributeError) as exc:
+        raise OrganizationAccessError(
+            "Organization context requires an authenticated user."
+        ) from exc
+
+    rows = UserMembership.query.filter_by(user_id=user_id, is_active=True).all()
+    if len(rows) != 1:
+        raise OrganizationAccessError(
+            "Organization context requires exactly one active membership."
+        )
+    return rows[0].organization_id
+
+
+def _authenticated_user():
+    if not has_request_context():
+        return None
+    if not getattr(current_user, "is_authenticated", False):
+        return None
+    return current_user
+
+
 def get_current_organization_id() -> str:
     """Return the active organization ID for the current context.
 
-    In single-tenant / development mode, defaults to ORG-001 (Brayman Construction Inc.).
-    When request context contains an explicit organization override on flask.g, returns that.
+    Authenticated HTTP: exactly one active UserMembership. Never silent ORG-001.
+    Unauthenticated HTTP: fail closed (operating routes are login-gated).
+    No request context (CLI / seed): DEFAULT_ORGANIZATION_ID.
     """
-    if has_request_context() and hasattr(g, "organization_id") and g.organization_id:
-        return g.organization_id
+    user = _authenticated_user()
+    if user is not None:
+        org_id = resolve_membership_organization_id(user)
+        g.organization_id = org_id
+        return org_id
+    if has_request_context():
+        if getattr(g, "organization_id", None):
+            return g.organization_id
+        raise OrganizationAccessError(
+            "Unauthenticated HTTP requests cannot use organization context."
+        )
     return DEFAULT_ORGANIZATION_ID
 
 
 def set_current_organization_id(org_id: str) -> None:
-    """Set the active organization ID for the current request context."""
+    """Set the active organization ID for unauthenticated / non-HTTP tests.
+
+    Authenticated HTTP ignores this override and uses membership only.
+    """
     if has_request_context():
         g.organization_id = org_id
 

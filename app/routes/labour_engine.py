@@ -30,15 +30,14 @@ from app.services.labour_engine import (
     withdraw_production_rate_standard,
     revoke_accepted_labour_task_mapping,
 )
+from app.services.auth import form_actor
 from app.services.organizations import get_current_organization_id
 
 labour_engine_bp = Blueprint("labour_engine", __name__, url_prefix="/labour-engine")
 
-DEFAULT_REVIEWER = "Joel Brayman"
-
 
 def _actor():
-    return request.form.get("reviewed_by", "").strip() or DEFAULT_REVIEWER
+    return form_actor("reviewed_by")
 
 
 @labour_engine_bp.route("/")

@@ -18,6 +18,7 @@ from app.project_controls.pdf import (
     generate_change_order_pdf,
     sanitize_change_order_filename,
 )
+from app.services.auth import form_actor
 from app.services.organizations import get_current_organization_id
 from app.project_controls.services import (
     ChangeOrderServiceError,
@@ -127,7 +128,7 @@ def create_change_order_route():
                 title=request.form.get("title", ""),
                 description=request.form.get("description", ""),
                 reason=request.form.get("reason", ""),
-                requested_by=request.form.get("requested_by", ""),
+                requested_by=form_actor("requested_by"),
                 requested_date=_parse_date(request.form.get("requested_date")),
                 markup_percent=request.form.get("markup_percent") or 0,
                 tax_percent=request.form.get("tax_percent") or 0,
@@ -198,7 +199,7 @@ def create_from_estimate_version(estimate_id, version_id):
                 or version.revision_reason
                 or estimate.title,
                 reason=request.form.get("reason", ""),
-                requested_by=request.form.get("requested_by", ""),
+                requested_by=form_actor("requested_by"),
                 requested_date=_parse_date(request.form.get("requested_date")),
                 estimate_version=version,
                 markup_percent=request.form.get("markup_percent")
@@ -307,7 +308,7 @@ def edit_change_order(id):
                 title=request.form.get("title", ""),
                 description=request.form.get("description", ""),
                 reason=request.form.get("reason", ""),
-                requested_by=request.form.get("requested_by", ""),
+                requested_by=form_actor("requested_by"),
                 requested_date=_parse_date(request.form.get("requested_date")),
                 project_id=request.form.get("project_id", type=int),
                 markup_percent=request.form.get("markup_percent") or 0,

@@ -11,6 +11,7 @@ from app.models.pricing_engine import (
     PROFIT_TREATMENTS,
     EstimatePricingSnapshot,
 )
+from app.services.auth import form_actor
 from app.services.organizations import get_current_organization_id
 from app.services.pricing_engine import (
     PricingEngineError,
@@ -26,11 +27,9 @@ from app.services.pricing_engine import (
 
 pricing_engine_bp = Blueprint("pricing_engine", __name__, url_prefix="/pricing-engine")
 
-DEFAULT_ACTOR = "Joel Brayman"
-
 
 def _actor():
-    return request.form.get("approved_by", "").strip() or DEFAULT_ACTOR
+    return form_actor("approved_by")
 
 
 def _policy_or_404(policy_id):

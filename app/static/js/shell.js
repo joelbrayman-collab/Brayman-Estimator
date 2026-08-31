@@ -1,4 +1,23 @@
 (function () {
+  const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+  const csrfToken = csrfMeta ? csrfMeta.getAttribute("content") || "" : "";
+  if (csrfToken) {
+    document.querySelectorAll("form").forEach(function (form) {
+      const method = (form.getAttribute("method") || "get").toLowerCase();
+      if (method !== "post") {
+        return;
+      }
+      if (form.querySelector('input[name="csrf_token"]')) {
+        return;
+      }
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "csrf_token";
+      input.value = csrfToken;
+      form.appendChild(input);
+    });
+  }
+
   const body = document.body;
   const sidebar = document.getElementById("shell-sidebar");
   const overlay = document.getElementById("shell-overlay");

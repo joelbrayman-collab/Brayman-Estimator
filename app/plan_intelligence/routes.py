@@ -21,6 +21,7 @@ from app.plan_intelligence.models import (
     PlanSheetSuggestion,
     ProcessingAttempt,
 )
+from app.services.auth import form_actor
 from app.services.organizations import get_current_organization_id
 from app.plan_intelligence.packages import ensure_default_revision
 from app.plan_intelligence.services import (
@@ -1061,7 +1062,7 @@ def takeoff_start_run(project_id):
     try:
         document_id = int(request.form.get("plan_document_id") or 0)
         revision_id = int(request.form.get("drawing_revision_id") or 0)
-        created_by = request.form.get("created_by", "").strip()
+        created_by = form_actor("created_by")
         sheet_raw = request.form.get("sheet_ids", "").strip()
         sheet_ids = None
         if sheet_raw:
@@ -1126,7 +1127,7 @@ def takeoff_review_candidate(project_id, candidate_id):
             organization_id=org_id,
             candidate_id=candidate_id,
             action=request.form.get("action", ""),
-            reviewed_by=request.form.get("reviewed_by", ""),
+            reviewed_by=form_actor("reviewed_by"),
             review_reason=request.form.get("review_reason") or None,
             reviewed_quantity=qty,
             reviewed_geometry=geom,
@@ -1156,7 +1157,7 @@ def takeoff_create_package(project_id, run_id):
         package = create_draft_package(
             organization_id=org_id,
             run_id=run_id,
-            created_by=request.form.get("created_by", ""),
+            created_by=form_actor("created_by"),
             notes=request.form.get("notes") or None,
         )
         flash(f"Draft take-off package v{package.version_number} created.", "success")
@@ -1204,7 +1205,7 @@ def takeoff_approve_package(project_id, package_id):
         package = approve_package(
             organization_id=org_id,
             package_id=package_id,
-            approved_by=request.form.get("approved_by", ""),
+            approved_by=form_actor("approved_by"),
         )
         flash(
             f"Take-off package v{package.version_number} approved. Total {package.approved_total} {package.approved_unit}.",

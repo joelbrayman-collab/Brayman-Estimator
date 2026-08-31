@@ -16,6 +16,7 @@ from app.services.commercial_context import (
     create_initial_commercial_context,
     update_commercial_context,
 )
+from app.services.auth import current_actor_display_name, form_actor
 from app.services.organizations import get_current_organization_id
 from app.services.permit_foundation import (
     PermitFoundationError,
@@ -116,7 +117,7 @@ def create_project():
             db.session.add(project)
             db.session.flush()
 
-            created_by = request.form.get("created_by", "Estimator").strip() or "Estimator"
+            created_by = form_actor("created_by")
             create_initial_commercial_context(
                 project_id=project.id,
                 data=context_data,
@@ -262,7 +263,7 @@ def run_permit_analysis(id):
         execute_permit_analysis(
             project.id,
             organization_id=org_id,
-            generated_by="Estimator",
+            generated_by=current_actor_display_name(),
             commit=True,
         )
         flash("Permit analysis snapshot created. Prior versions were not rewritten.", "success")
@@ -296,7 +297,7 @@ def add_permit_fact(id):
             page_sheet_citation=(request.form.get("page_sheet_citation") or "").strip()
             or None,
             review_status=(request.form.get("review_status") or "REVIEWED").strip(),
-            reviewed_by="Estimator",
+            reviewed_by=current_actor_display_name(),
             commit=True,
         )
         flash("Reviewed project fact recorded.", "success")

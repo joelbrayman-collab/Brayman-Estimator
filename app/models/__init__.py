@@ -17,6 +17,7 @@ from app.models.estimate import (
     EstimateVersion,
 )
 from app.models.organization import Organization
+from app.models.user import User, UserMembership
 from app.models.brand_profile import OrganizationBrandProfile, ProposalBrandSnapshot
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
 from app.models.pricing_engine import (
@@ -93,6 +94,8 @@ __all__ = [
     "LabourTaskMapping",
     "ProductionRateStandard",
     "Organization",
+    "User",
+    "UserMembership",
     "OrganizationBrandProfile",
     "OrganizationPricingPolicy",
     "ProposalBrandSnapshot",

@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-31 — Contract / e-signature / signed Change Order reconnaissance (native signing delta)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-31 |
+| Branch | `main` @ `3a31ed052cc4813b98d94ec8c71ec9a1b2b57946` |
+| Objective | Record authorized CONTRACT / E-SIGNATURE / SIGNED CHANGE ORDER architecture reconnaissance, including native signing as a required option to evaluate. |
+| Business decision | A signing provider is not the commercial source of truth. CalibAi owns the frozen document, commercial record, signing request, signed artifact, and provenance. Native signing must be evaluated; a TSP is not assumed. |
+| Architectural decision | Recommended **NATIVE V1 subject to Ontario counsel review of the signing process**. Signing Service + Native adapter; DocuSign/Adobe remain future adapters. Click-to-sign + typed name is the V1 authority; graphics are presentation. Change Order overlay, not a second entity. Same service later for Contract after Legal Content Gate. No implementation. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — COMMERCIAL EXECUTION RECONNAISSANCE DELTA — EVALUATE CALIBAI NATIVE E-SIGNATURE. Docs only. Compare native vs DocuSign vs Adobe. Do not implement. Do not select a provider as product yet. |
+| Files expected to change | Architecture recon pin + indexes, CO document-family subsequent status, Legal Content Gate open decision, ADR-004 subsequent status, current-state / session-handoff / roadmap / chat-workflow-log / milestones / project-state-report. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live database; FG-020 close; Field Web; mail; signing UI. |
+| Implementation result | Docs only. Pin `docs/architecture/contract-esignature-and-signed-change-order.md`. No product/database/Alembic change. |
+| Tests | Not run (documentation-only; no product code). |
+| Project-state-report update | Yes (decisions pending) |
+| Milestone entry update | Yes (recon recorded) |
+| Constitutional issue raised | None. Native signing is not claimed legally sufficient without counsel. |
+| Unresolved issues | Ontario counsel process review; optional vendor-pricing research pass; CO document snapshot still a prerequisite pin (not implemented). |
+| Next approved step | **STOP.** Do not implement signing. FG-020 live migration / office UAT remains a separate prompt if still pending. Do not start Field Web. |
+| Next approved prompt | None from this pass. |
+| Commit hash | (this commit; verify `git rev-parse HEAD`) |
+
 ### 2026-08-31 — FG-020 Media Compatibility increment (HEIC/HEIF → JPEG)
 
 | Field | Content |

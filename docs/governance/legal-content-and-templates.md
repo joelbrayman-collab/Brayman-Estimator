@@ -76,7 +76,7 @@ Generation alone does not mean final or sent.
 1. Template storage location and format (repository vs controlled document store)
 2. Approval authority for legal template versions
 3. Ontario-specific statutory clause set and update process
-4. E-signature provider boundary (Future)
+4. E-signature provider boundary (Future). **Subsequent status (2026-08-31):** Native Signing reconnaissance is **complete** ([contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md)). Recommendation **NATIVE V1**. Implementation **NOT AUTHORIZED**. Signing-process counsel review is separate from this Legal Content Gate. Native signing must never bypass approved Contract/Warranty templates or human approval before send.
 
 ## Related
 

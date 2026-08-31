@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-08-31 — Contract / e-signature / signed Change Order reconnaissance (native signing delta)
+
+| Field | Content |
+|-------|---------|
+| ID | Architecture reconnaissance (not a Feature Gate) |
+| Status | **RECORDED / NOT IMPLEMENTED.** Reconnaissance **COMPLETE**. Recommendation **NATIVE V1** subject to Ontario counsel review of the signing process. Implementation **NOT AUTHORIZED**. |
+| Branch | `main` |
+| Base commit | `3a31ed052cc4813b98d94ec8c71ec9a1b2b57946` |
+| Objective | Evaluate CalibAi-native electronic signing vs DocuSign vs Adobe Acrobat Sign without assuming a TSP. |
+| Deliverables | [architecture/contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md) |
+| Validation | Docs only. No pytest. |
+| Architectural findings | Signing mechanism ≠ commercial SoR. CO overlay on existing `ChangeOrder`. Click-to-sign + typed name. Application-level PDF hashing pending counsel vs PAdES. |
+| Open decisions | Counsel process review; optional vendor pricing research; do not implement. |
+| Next milestone | **STOP.** No signing Feature Gate from this pass. |
+| Commit | this commit; verify `git rev-parse HEAD` |
+| Date | 2026-08-31 |
+
 ### 2026-08-31 — FG-020 Media Compatibility increment (HEIC/HEIF → JPEG)
 
 | Field | Content |

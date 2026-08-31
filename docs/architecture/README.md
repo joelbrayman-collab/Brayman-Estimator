@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-08-30 |
+| Updated | 2026-08-31 |
 
 Domain architecture documents describe **intended** systems. They are not claims of current implementation unless explicitly marked Current.
 
@@ -19,6 +19,7 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [jurisdiction-resolution.md](jurisdiction-resolution.md) | **Current (FG-015 civic foundation)** — **CLOSED / OPERATIONAL FOR UAT** — project location + reusable jurisdiction resolver; [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted**; reused by [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) |
 | [organization-brand-profile.md](organization-brand-profile.md) | **CLOSED / OPERATIONAL FOR UAT** — [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) |
 | [change-order-document-family.md](change-order-document-family.md) | **FUTURE / NOT IMPLEMENTED** — governed Change Order document family + email pin; existing Change Order record remains authoritative; not a Feature Gate |
+| [contract-esignature-and-signed-change-order.md](contract-esignature-and-signed-change-order.md) | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** — Native Signing V1 recommended; implementation **NOT AUTHORIZED**; counsel process review before any Feature Gate |
 | [quickbooks-integration.md](quickbooks-integration.md) | **Future** — export pipeline boundary (not implemented) |
 | [M004-plan-intelligence-readiness-report.md](M004-plan-intelligence-readiness-report.md) | Milestone 004 report |
 | [M006-document-intelligence-readiness-report.md](M006-document-intelligence-readiness-report.md) | Milestone 006 report |

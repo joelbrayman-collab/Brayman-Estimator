@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-020 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **BUILD** owns Field Capture Events, Original Payloads, Derived Candidates, and BUILD binary original custody ([ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted**; [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**). **Office / platform** owns the `/api/v1` transport adapter (FG-019). **Projects** owns `projects` and the Project Hub. **Project Controls** owns Change Orders. |
 | Date | 2026-08-31 |
-| Status | **DRAFT FOR JOEL REVIEW / NOT APPROVED.** A committed draft does **not** approve implementation. |
+| Status | **APPROVED / IMPLEMENTATION NOT STARTED** (2026-08-31). Approval does **not** start BUILD product code. A separate implementation Cursor prompt is required. |
 | Architecture | [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-023](../adr/ADR-023-field-evidence-provenance.md) **Accepted** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [platform-roadmap.md](../platform-roadmap.md) item 11 · [modules/build.md](../modules/build.md) |
 | Related ADRs | [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 **COMPLETE**. **ADR-042 Accepted.** BUILD architecture reconnaissance 2026-08-31. |
@@ -19,14 +19,15 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **DRAFT FOR JOEL REVIEW / NOT APPROVED** |
-| ADR-042 | **Accepted** (architecture only; not implementation) |
-| Implementation | **NOT STARTED** |
-| Schema / Alembic | **NO MIGRATION IN THIS PASS.** A later approved implementation requires an additive revision with `down_revision` **`b0c1d2e3f4a5`**. Do **not** run `flask db upgrade` now. |
+| Feature Gate (this document) | **APPROVED / IMPLEMENTATION NOT STARTED** |
+| ADR-042 | **Accepted** |
+| Implementation reconnaissance | **RECORDED 2026-08-31.** Verdict: **READY FOR BOUNDED IMPLEMENTATION.** |
+| Implementation | **NOT STARTED.** This approval pass does **not** authorize product code. |
+| Schema / Alembic | **NO MIGRATION IN THIS PASS.** Designed revision **`c1d2e3f4a5b6`**, `down_revision` **`b0c1d2e3f4a5`**. Do **not** create or run it now. |
 | BUILD product code | **NOT STARTED** |
-| Field Web (Item 12) | **BLOCKED / NOT AUTHORIZED.** FG-020 approval (later) still would **not** authorize Field Web. |
+| Field Web (Item 12) | **BLOCKED / NOT AUTHORIZED.** FG-020 approval still does **not** authorize Field Web. |
 
-Joel has **not** approved this Feature Gate. Do not implement BUILD from this draft.
+Joel approved this Feature Gate. Do **not** implement BUILD until a **separate** implementation Cursor prompt is issued.
 
 ---
 
@@ -66,7 +67,7 @@ Success is **BUILD Field Capture V1 foundation**, not Field Web, not transcripti
 | 9 | Tests required? | Proposed `tests/test_build_field_observation_fg020.py` plus listed regressions and full suite. Exact count deferred. |
 | 10 | Documentation? | This gate; feature-gate index; BUILD module; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log; milestones; docs/README. |
 | 11 | ADR required? | **Yes — already Accepted:** [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md). Do **not** create another ADR in the implementation prompt unless scope changes. |
-| 12 | Migration? | **YES** when implementation is approved. Additive only. `down_revision` **`b0c1d2e3f4a5`**. Exact tables/columns/indexes/FK/delete/supersedes/payload representation determined in **implementation reconnaissance**. Do **not** create the revision in this draft. |
+| 12 | Migration? | **YES** when the implementation prompt runs. Additive only. Designed revision **`c1d2e3f4a5b6`**, `down_revision` **`b0c1d2e3f4a5`**. **Do not create it in this recon pass.** |
 
 ---
 
@@ -89,7 +90,7 @@ Success is **BUILD Field Capture V1 foundation**, not Field Web, not transcripti
 
 ## Exact domain (three concepts)
 
-Exact table names are **not** frozen in this draft. Implementation reconnaissance names them. The concepts are frozen.
+Exact table names are frozen in **Implementation reconnaissance** below. The concepts remain Event / Original Payload / Derived Candidate.
 
 ### A. Field Capture Event
 
@@ -149,18 +150,7 @@ Original bytes remain preserved. Later AI/image interpretation is separate deriv
 
 ## File-custody implementation reconnaissance (required before code)
 
-Do **not** invent final MIME/size limits in this draft.
-
-Before product implementation, a **separate implementation reconnaissance** must inspect:
-
-- Plan storage
-- historical-ingestion storage ([ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md))
-- Brand Profile storage
-- existing MIME validation
-- existing file-size limits (plans/historical 25 MB; brand logos 5 MB are **not** automatically BUILD limits)
-- SHA / path-traversal / private-download patterns
-
-Then recommend the smallest defensible BUILD audio/image rules. If no repository convention is appropriate: **return to Joel**. Do not guess.
+**Complete (2026-08-31).** See **Implementation reconnaissance** below. Plans, historical ingestion, and Brand Profile custody were inspected. MIME/size recommendations are recorded. No product files were changed.
 
 ---
 
@@ -209,6 +199,9 @@ POST /api/v1/projects/<id>/field-events
 GET  /api/v1/projects/<id>/field-events
 GET  /api/v1/projects/<id>/field-events/<event_id>
 POST /api/v1/projects/<id>/field-events/<event_id>/originals
+GET  /api/v1/projects/<id>/field-events/<event_id>/originals
+GET  /api/v1/projects/<id>/field-events/<event_id>/originals/<original_id>
+GET  /api/v1/projects/<id>/field-events/<event_id>/originals/<original_id>/content
 GET  /api/v1/projects/<id>/field-events/<event_id>/derived
 POST /api/v1/projects/<id>/field-events/<event_id>/derived/<candidate_id>/confirm
 POST /api/v1/projects/<id>/field-events/<event_id>/derived/<candidate_id>/reject
@@ -404,19 +397,347 @@ FG-020 closure must **not** authorize Field Web code. Item 12 remains a later ga
 
 **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED** (same pattern as Item 10 → 11).
 
-Until FG-020 is approved, implemented, and closed, Item 12 remains **BLOCKED / NOT AUTHORIZED**.
+Until FG-020 is **implemented and closed**, Item 12 remains **BLOCKED / NOT AUTHORIZED**. FG-020 **approval** does not authorize Field Web.
 
 ---
 
 ## Implementation authorization
 
-This document is **DRAFT FOR JOEL REVIEW / NOT APPROVED**.
+This Feature Gate is **APPROVED / IMPLEMENTATION NOT STARTED**.
 
-Do **not** implement BUILD until:
+File-custody implementation reconnaissance is **recorded** in this document.
 
-1. Joel **approves** this Feature Gate, and
-2. a **separate** implementation Cursor prompt is issued, and
-3. file-custody implementation reconnaissance has recommended MIME/size rules (or Joel has decided).
+Do **not** implement BUILD until a **separate** implementation Cursor prompt is issued. This approval/recon pass does **not** authorize `app/`, `tests/`, or Alembic edits.
+
+---
+
+## Implementation reconnaissance (2026-08-31)
+
+**Status:** Recorded 2026-08-31. **Not implemented.** Verdict: **READY FOR BOUNDED IMPLEMENTATION.**
+
+Inspected (read-only): Project / Hub / Change Orders; FG-018 User / membership / CSRF / actor helpers; FG-019 `/api/v1`; Plan Intelligence storage; historical-ingestion storage; Brand Profile logo storage; `app/__init__.py` GET-only API lock; test fixtures; Alembic head `b0c1d2e3f4a5`; `requirements.txt`.
+
+### 1. Existing custody patterns
+
+| Pattern | Root | Path | SHA | Size | MIME / magic | Overwrite | Download |
+|---------|------|------|-----|------|--------------|-----------|----------|
+| **Plans** | `instance/plan_uploads/` (`PLAN_UPLOAD_ROOT`) | `<project_id>/<uuid>.pdf` | SHA-256 stored; filename is UUID | **25 MB** (`PLAN_UPLOAD_MAX_BYTES`) | `.pdf` only; magic `%PDF` | New UUID each upload; no SHA-path reuse | Login + org-scoped project 404; `send_file` attachment |
+| **Historical** | `instance/historical_uploads/` (`HISTORICAL_UPLOAD_ROOT`) | `<org_id>/<sha256>.xlsx\|.xlsm` | SHA-256 **is** the filename | **25 MB** | `.xlsx`/`.xlsm`; ZIP magic `PK\x03\x04`; OpenXML member checks | Same SHA: reuse if bytes match; **refuse** if SHA path bytes differ | Office review; not a public URL |
+| **Brand logos** | `instance/brand_logos/` (`BRAND_LOGO_ROOT`) | `<org_id>/<sha256><ext>` | SHA-256 filename | **5 MB** | `.png`/`.jpg`/`.jpeg`/`.gif`; PNG/JPEG/GIF magic | Same as historical | `GET /settings/brand-logo` inline `send_file`; org-scoped 404 |
+
+Shared: org or project segment sanitization; `os.path.basename` / relative-path checks; resolve-within-root; no remote URLs (logos). Plans use UUID names (not content-addressed). Historical/logos are content-addressed at org level because the file **is** the identity.
+
+BUILD originals are **evidence instances**, not org-level identity. Two identical photos on one Event are still two originals. Do **not** copy historical SHA-named global dedup.
+
+### 2. Recommended BUILD storage
+
+```text
+instance/build_originals/<organization_id>/<project_id>/<event_id>/<original_id><ext>
+```
+
+Config: `BUILD_ORIGINAL_ROOT` (default `instance/build_originals`); `BUILD_ORIGINAL_MAX_BYTES` = **25 * 1024 * 1024** (plan/historical class — logos’ 5 MB is a brand-graphic limit, not a photo/audio limit).
+
+- Sanitize org segment with the same `[A-Za-z0-9._-]{1,50}` regex as historical/logos.
+- Project id and event id / original id are integers; reject non-digits.
+- Controlled stored name: `{original_id}{extension}` after flush (id known).
+- Write via tempfile + `os.replace` + fsync (historical/logo pattern).
+- Never overwrite a path whose bytes differ. If the path exists and SHA matches, reuse (crash-retry). If it exists and SHA differs, fail closed.
+- SHA-256 of bytes stored on the Original row for integrity; **not** used as the filename.
+- Path traversal: `normpath` equality, no `..`, resolve-within-root.
+- Tests use a temp `BUILD_ORIGINAL_ROOT` (same pattern as `BRAND_LOGO_ROOT` under TESTING).
+- Alembic must **not** write or delete bytes. Downgrade drops tables only.
+
+### 3. Image MIME / size (V1)
+
+Reuse Brand Profile **magic + extension** family. Do **not** use the 5 MB logo cap.
+
+| Allow | MIME | Ext | Magic |
+|-------|------|-----|-------|
+| JPEG | `image/jpeg` | `.jpg` | `\xff\xd8\xff` |
+| PNG | `image/png` | `.png` | `\x89PNG` |
+| GIF | `image/gif` | `.gif` | `GIF87a` / `GIF89a` |
+
+- Max size: **25 MB**.
+- Declared extension must match magic. Do not trust `Content-Type` alone.
+- Stored MIME is the canonical mapping above, not the caller’s string.
+- **Omit HEIC / HEIF / WebP** in FG-020. No repository pattern; no transcode allowed; desktop Chrome cannot reliably display HEIC. Item 12 can request JPEG (`accept="image/jpeg"` / camera capture). Camera-roll HEIC is **deferred**, not a V1 blocker.
+- Fail closed: empty, oversize, unknown ext, magic mismatch → 400.
+
+### 4. Audio MIME / size (V1)
+
+No existing audio custody. `requirements.txt` has no ffmpeg / mutagen / pydub. Store original bytes only. No transcode. No waveform. No ASR.
+
+| Allow | MIME | Ext | Magic (practical) |
+|-------|------|-----|-------------------|
+| iPhone / Safari | `audio/mp4`, `audio/x-m4a`, `audio/aac` | `.m4a` / `.aac` | `ftyp` at offset 4 |
+| MPEG | `audio/mpeg` | `.mp3` | `ID3` or MPEG frame sync `\xff\xfb` / `\xff\xf3` / `\xff\xf2` |
+| WAV | `audio/wav` | `.wav` | `RIFF`….`WAVE` |
+| Chrome MediaRecorder | `audio/webm` | `.webm` | EBML `\x1a\x45\xdf\xa3` |
+
+- Max size: **25 MB**.
+- Reject `video/mp4` and other non-allow-listed types even if `ftyp` matches.
+- Residual risk: an `audio/mp4` ftyp file might be a video container. Do **not** add media parsers. Fail closed on MIME allow-list + family magic only.
+- Desktop playback: HTML5 `<audio>` with authorized content URL for these MIME types. If a browser cannot play WebM, authorized download remains available. No conversion.
+
+### 5. Exact Event schema — `field_capture_events`
+
+| Column | Type | Notes |
+|--------|------|--------|
+| `id` | Integer PK | Matches Project / User integer identity |
+| `organization_id` | String(50) NOT NULL FK `organizations.id` | indexed; membership-derived; never caller authority |
+| `project_id` | Integer NOT NULL FK `projects.id` | indexed |
+| `user_id` | Integer NULL FK `users.id` **ON DELETE SET NULL** | indexed; durable provenance |
+| `actor_display_name` | String(150) NOT NULL | snapshot at create; length matches `User.display_name` |
+| `occurred_at` | DateTime NOT NULL | field occurrence (naive UTC) |
+| `created_at` | DateTime NOT NULL | server record time; `datetime.utcnow` |
+| `supersedes_id` | Integer NULL FK `field_capture_events.id` **ON DELETE RESTRICT** | indexed; UNIQUE where not null |
+
+**Omit:** `updated_at` (Event identity is immutable). **Omit:** archive/status/commercial lifecycle columns. **Omit:** Change Order / plan / permit FKs.
+
+**Constraints:** UNIQUE `supersedes_id` (at most one successor). Service: superseded Event must share `organization_id` + `project_id`; `supersedes_id != id`.
+
+**FK delete:** `project_id` / `organization_id` **RESTRICT**. Do **not** add `cascade="all, delete-orphan"` from `Project`.
+
+### 6. Exact Original schema — `field_capture_originals`
+
+| Column | Type | Notes |
+|--------|------|--------|
+| `id` | Integer PK | |
+| `field_event_id` | Integer NOT NULL FK `field_capture_events.id` **ON DELETE RESTRICT** | indexed |
+| `kind` | String(16) NOT NULL | `text` / `audio` / `image` |
+| `text_body` | Text NULL | required iff `kind=text` |
+| `stored_relative_path` | String(512) NULL | required iff audio/image |
+| `sha256_hex` | String(64) NULL | required iff audio/image |
+| `byte_size` | Integer NULL | required iff audio/image |
+| `mime_type` | String(100) NULL | required iff audio/image |
+| `original_filename` | String(255) NULL | justified (PlanDocument / historical); sanitized basename |
+| `user_id` | Integer NULL FK `users.id` **ON DELETE SET NULL** | |
+| `actor_display_name` | String(150) NOT NULL | |
+| `created_at` | DateTime NOT NULL | |
+
+**Omit:** `updated_at`. No UPDATE API.
+
+**CHECK (shape):**
+
+```text
+(kind = 'text' AND text_body IS NOT NULL AND stored_relative_path IS NULL
+  AND sha256_hex IS NULL AND byte_size IS NULL AND mime_type IS NULL)
+OR
+(kind IN ('audio','image') AND stored_relative_path IS NOT NULL
+  AND sha256_hex IS NOT NULL AND byte_size IS NOT NULL AND mime_type IS NOT NULL
+  AND text_body IS NULL)
+```
+
+**Cardinality:** no unique-on-kind. One Event may have one or many text, audio, and image originals.
+
+### 7. Exact Derived Candidate schema — `field_capture_derived_candidates`
+
+| Column | Type | Notes |
+|--------|------|--------|
+| `id` | Integer PK | |
+| `field_event_id` | Integer NOT NULL FK `field_capture_events.id` **ON DELETE RESTRICT** | indexed |
+| `kind` | String(80) NOT NULL | generic label; **not** a frozen taxonomy CHECK |
+| `payload_json` | Text NOT NULL | JSON **object** text |
+| `status` | String(20) NOT NULL default `PROPOSED` | CHECK `PROPOSED` / `CONFIRMED` / `REJECTED` |
+| `source` | String(40) NOT NULL | `TEST_FIXTURE` / `UAT_CLI` / later `PROCESSOR` |
+| `proposer_user_id` | Integer NULL FK `users.id` **ON DELETE SET NULL** | |
+| `proposer_display_name` | String(150) NOT NULL | |
+| `created_at` | DateTime NOT NULL | proposed_at |
+| `decided_by_user_id` | Integer NULL FK `users.id` **ON DELETE SET NULL** | set on confirm/reject |
+| `decided_by_display_name` | String(150) NULL | |
+| `decided_at` | DateTime NULL | |
+
+**Omit:** `updated_at`. Only decision columns mutate.
+
+**Payload representation:** `Text` storing `json.dumps` of a **dict** (object). Matches `ProcessingResult.raw_payload` / permit snapshot JSON text. `db.JSON` is used for take-off geometry that is queried as structure; V1 Derived payload is not queried by key.
+
+Service rules: `json.loads` must return `dict` (reject array/scalar); UTF-8; no Python objects; kind stripped non-empty ≤80 chars. Do not freeze labour/RFI/CO columns.
+
+### 8. Confirm / reject
+
+Lawful transitions: `PROPOSED → CONFIRMED`, `PROPOSED → REJECTED` only. **CONFIRMED and REJECTED are terminal.** Reprocess = **new** candidate.
+
+Confirm/reject may change **only** `status`, `decided_by_user_id`, `decided_by_display_name`, `decided_at`. Must **not** alter Event, Original, Estimate, Proposal, Change Order, Permit, take-off, labour actuals, or MONITOR records. Service must not import those write APIs.
+
+### 9. Actor provenance
+
+On Event create, Original create, Derived propose, confirm, and reject:
+
+1. `user_id` = `current_user.id` when authenticated (nullable only if no user — office/API always have a user).
+2. Display-name snapshot = `current_actor_display_name()` (`app/services/auth.py`), truncated to 150.
+
+Do not backfill non-BUILD tables. Do not accept caller-supplied `user_id` or actor name as authority (ignore if present).
+
+### 10. `occurred_at` rule
+
+Repository convention: naive UTC `datetime.utcnow` (no timezone tables).
+
+| Boundary | Rule |
+|----------|------|
+| Schema | `occurred_at` NOT NULL |
+| Server `created_at` | always `datetime.utcnow()`; never caller-supplied |
+| Office form / API omit | default `occurred_at = created_at` |
+| If supplied | parse ISO-8601; if aware, convert to UTC and drop tzinfo; store naive UTC |
+| Invalid / unparseable | 400 |
+| Field Web (later) | should send capture time explicitly; FG-020 default still applies if omitted |
+
+No timezone product. Do not invent DST tables.
+
+### 11. BUILD service architecture
+
+Single module `app/services/build.py` (authoritative). Storage helper `app/services/build_storage.py`. Desktop routes and `/api/v1` **must** call these functions — no duplicated rules.
+
+| Function | Role |
+|----------|------|
+| `create_field_event(project, *, occurred_at=None, supersedes_id=None)` | Event + actor snapshot |
+| `add_text_original(event, text)` | Immutable text Original |
+| `add_binary_original(event, *, kind, data, filename)` | Validate + store + Original row |
+| `create_event_with_text(...)` | Office convenience: Event + text Original, original-only |
+| `list_field_events(organization_id, project_id)` | Chronological (`occurred_at` desc, `id` desc) |
+| `get_field_event(organization_id, project_id, event_id)` | None if missing/cross-org (404) |
+| `list_originals(event)` / `get_original(...)` | |
+| `open_original_file(original)` | Authorized path or error |
+| `list_derived_candidates(event)` / `get_derived_candidate(...)` | |
+| `propose_derived_candidate(event, *, kind, payload, source)` | Tests + UAT CLI only |
+| `confirm_derived_candidate(candidate)` / `reject_derived_candidate(candidate)` | Terminal |
+| `supersede_event(prior, *, text, occurred_at=None)` | New Event + text Original, `supersedes_id=prior.id` |
+
+Raise `BuildServiceError` for operator-facing 400s. Cross-org → `None` (404), never 403 existence leak.
+
+### 12. Exact API endpoints
+
+Narrow the FG-019 GET-only lock in `app/__init__.py` `reject_api_mutating_methods` so **POST is allowed only** on BUILD field-event paths below. `/api/v1/me` and `/api/v1/projects` mutations remain **405**. `tests/test_shared_api_fg019.py` mutating tests already target only those three paths — keep them.
+
+```text
+POST /api/v1/projects/<id>/field-events
+GET  /api/v1/projects/<id>/field-events
+GET  /api/v1/projects/<id>/field-events/<event_id>
+POST /api/v1/projects/<id>/field-events/<event_id>/originals
+GET  /api/v1/projects/<id>/field-events/<event_id>/originals
+GET  /api/v1/projects/<id>/field-events/<event_id>/originals/<original_id>
+GET  /api/v1/projects/<id>/field-events/<event_id>/originals/<original_id>/content
+GET  /api/v1/projects/<id>/field-events/<event_id>/derived
+POST /api/v1/projects/<id>/field-events/<event_id>/derived/<candidate_id>/confirm
+POST /api/v1/projects/<id>/field-events/<event_id>/derived/<candidate_id>/reject
+```
+
+**Binary strategy:** metadata on JSON GET; **bytes on GET `.../content`** (cookie session; no filesystem path in JSON). Desktop HTML uses a parallel Flask route for `<img>` / `<audio>` cookie GET:
+
+```text
+GET /projects/<project_id>/field-events/<event_id>/originals/<original_id>
+```
+
+Same `open_original_file` service. `as_attachment=False` for display; `?download=1` for download. Do **not** expose stored paths.
+
+Do not add PUT/PATCH/DELETE. No `/api/v1/build`, `/today`, `/field`.
+
+### 13. API contracts (summary)
+
+Auth: FG-018 cookie/session. Tenant: membership org only. Unauthenticated → **401 JSON**. 0 or >1 memberships → **403**. Cross-org project/event/original → **404** `"Not found."` CSRF: Flask-WTF; JSON/multipart POST requires `X-CSRFToken` (existing office JSON pattern in `tests/test_auth_fg018.py`). GET does not need CSRF. No tokens. Ignore caller `organization_id`.
+
+| Endpoint | Input | Success allow-list | Errors |
+|----------|-------|--------------------|--------|
+| POST field-events | JSON `{ "text"?, "occurred_at"?, "supersedes_id"? }`. `text` optional (event may be originals-only via follow-up POST). | event fields + `originals` array (may be empty or one text) | 400 empty/invalid; 404 project; 409 supersede conflict |
+| GET field-events | — | array of event summaries | 404 project |
+| GET event | — | event + originals summaries + derived summaries | 404 |
+| POST originals | JSON `{ "kind":"text","text":"..." }` **or** multipart `kind` + `file` | original metadata (no path) | 400 kind/MIME/size/magic; 404 event |
+| GET originals / GET original | — | metadata; `text_body` only for text; never `stored_relative_path` | 404 |
+| GET content | — | bytes + canonical MIME; 404 if text kind | 404 |
+| GET derived | — | candidates (kind, payload object, status, provenance) | 404 |
+| POST confirm/reject | empty JSON `{}` | candidate after decision | 404; **409** if not PROPOSED |
+
+Original-only create: POST event with `text` **or** POST event without originals then POST originals. Do **not** require derived.
+
+Event JSON allow-list: `id`, `project_id`, `organization_id`, `user_id`, `actor_display_name`, `occurred_at`, `created_at`, `supersedes_id`, `superseded_by_id` (nullable, derived). Original allow-list: `id`, `kind`, `text_body`, `sha256_hex`, `byte_size`, `mime_type`, `original_filename`, `user_id`, `actor_display_name`, `created_at`. Never password, never filesystem path.
+
+ISO datetime strings in JSON (`...Z`).
+
+### 14. Desktop Hub / routes
+
+Keep `#hub-build` Change Orders panel **unchanged** except remove the inner Future “Field BUILD is not operational” note (`tests/test_project_hub.py` currently asserts that copy — **update those assertions** in implementation).
+
+Add a sibling **Field Observations** `article.panel` under the same BUILD section (second panel in `dash-panels`), **not** a replacement for COs.
+
+Hub list columns: occurred_at, created_at, actor, original-kind summary, current/superseded badge. Link to detail. “Add text observation” button.
+
+| Route | Purpose |
+|-------|---------|
+| GET/POST `/projects/<id>/field-events/new` | Office text create (`occurred_at` optional datetime-local) |
+| GET `/projects/<id>/field-events/<event_id>` | Detail / review |
+| POST `/projects/<id>/field-events/<event_id>/supersede` | Correction: new Event + text, `supersedes_id` |
+| POST `.../derived/<candidate_id>/confirm` and `/reject` | HTML forms, CSRF |
+| GET `.../originals/<original_id>` | Inline evidence |
+
+`assemble_project_hub` adds `field_events` via BUILD list service. No Field Web styling.
+
+**Text:** show `text_body`. **Image:** bounded `<img src>` to authorized original URL (browser-native). **Audio:** `<audio controls src>` for supported MIME; plus download link. No transcription, waveform, or conversion.
+
+**Supersession UX:** prior Event remains listed with “Superseded” and link to successor. Successor shows “Correction of event #n”. No destructive edit.
+
+**Derived UAT without AI:** no fake AI UI. `propose_derived_candidate` is **service + Flask CLI** (`flask build propose-derived-candidate`) with `source=UAT_CLI` or `TEST_FIXTURE`. Office detail **displays and confirm/rejects** if candidates exist.
+
+### 15. Private download authorization
+
+Every binary open must verify: authenticated active User; exactly one active membership; `organization_id` match; project in that org; event belongs to that project; original belongs to that event. Any miss → **404**. Do not leak paths. Reuse plan/logo fail-closed 404.
+
+### 16. Migration design — do not create now
+
+| Field | Value |
+|-------|--------|
+| Revision | **`c1d2e3f4a5b6`** |
+| `down_revision` | **`b0c1d2e3f4a5`** |
+| Filename | `migrations/versions/c1d2e3f4a5b6_add_build_field_capture_fg020.py` |
+| Upgrade | create three tables + indexes + CHECKs + unique `supersedes_id` |
+| Downgrade | drop tables/indexes only; **do not** delete `instance/build_originals` |
+| Seed | **none** |
+
+Continuing the existing 12-hex rotate (`a9b0c1d2e3f4` → `b0c1d2e3f4a5` → `c1d2e3f4a5b6`).
+
+### 17. Implementation files (later prompt only)
+
+**NEW:** `app/models/build.py`; `app/services/build.py`; `app/services/build_storage.py`; `app/routes/build.py`; `app/cli/build.py`; `app/templates/build/event_detail.html`; `app/templates/build/event_form.html`; `migrations/versions/c1d2e3f4a5b6_add_build_field_capture_fg020.py`; `tests/test_build_field_observation_fg020.py`.
+
+**CHANGED:** `app/models/__init__.py`; `app/__init__.py` (register blueprint + CLI; `BUILD_ORIGINAL_*` config; TESTING temp root; **narrow** API mutating-method lock); `app/routes/api_v1.py`; `app/services/project_hub.py`; `app/templates/projects/detail.html`; `tests/test_project_hub.py` (Field Observations present; CO section remains; drop Future Field BUILD assertion).
+
+**Likely unchanged:** `tests/test_shared_api_fg019.py` (405 tests already scoped to `/me` and `/projects`); `tests/test_auth_fg018.py`.
+
+### 18. Dedicated tests — `tests/test_build_field_observation_fg020.py`
+
+Reuse `tests/auth_fixtures.py` + autouse login. CSRF dedicated app like FG-018/019. Cover: Event/text/original-only; actor `user_id` + snapshot; `occurred_at` default vs supplied vs distinct from `created_at`; supersession + unique successor + same-project; Original immutability (no update path / refuse overwrite); kinds; SHA; MIME/magic; size; storage path segments; traversal; authorized download; unauthenticated 401/302; cross-org 404; derived PROPOSED/confirm/reject/terminal 409; no Estimate/Proposal/CO/Permit/take-off/MONITOR/labour-actual writes; API 401/403/404; API CSRF; caller org ignored; Hub list; office create; detail; evidence display; CO section remains. Exact count deferred.
+
+### 19. Regression
+
+`tests/test_auth_fg018.py`; `tests/test_shared_api_fg019.py`; `tests/test_project_hub.py` (**will change**); `tests/test_change_orders.py`; `tests/test_plan_upload.py` / `tests/test_plan_indexing.py` / `tests/test_sheet_intelligence.py` / `tests/test_scale_measurement.py` / `tests/test_takeoff.py`; `tests/test_labour_engine.py`; `tests/test_pricing_engine.py`; `tests/test_permit_foundation_fg015.py`; `tests/test_permit_intelligence_fg016.py`; `tests/test_estimates.py`; `tests/test_proposals.py`; `tests/test_organization_foundation.py`; `tests/test_historical_upload_fg013.py`; `tests/test_brand_profile_fg017.py`. Then `./venv/bin/python -m pytest -q`. Baseline **494 passed**.
+
+### 20. Security / failure matrix
+
+| Case | Behavior |
+|------|----------|
+| Unauthenticated API | 401 JSON |
+| Unauthenticated office | 302 `/login` |
+| Inactive User | session loader returns None → 401/302 |
+| 0 or >1 memberships | API 403; office 403 |
+| Cross-org project/event/original | 404 |
+| Malformed event / unsupported kind / MIME mismatch / oversize / empty / bad magic | 400 |
+| Duplicate upload (same bytes, new original) | **allowed** (separate evidence rows) |
+| Duplicate SHA path crash-retry | reuse if bytes match; refuse if differ |
+| Missing event/candidate | 404 |
+| Confirm/reject terminal | 409 |
+| Supersede foreign / wrong-project Event | 404 |
+| Unique supersede conflict | 409 |
+| Missing CSRF on POST | 400 CSRF |
+| Traversal in stored path | ValueError → 404 |
+| Caller `organization_id` | ignored |
+
+### 21. Field Web boundary
+
+FG-020 implementation **must not** include Today, iPhone Capture chrome, microphone UI, camera UI, outdoor styling, one-handed field nav, or local retry. Item 11 must leave Event/Original/Derived + custody + API so Item 12 can build those without a second datastore.
+
+### 22. Readiness
+
+**READY FOR BOUNDED IMPLEMENTATION.**
+
+HEIC/WebP omitted with repository rationale (not a Joel blocker). Residual audio-in-video `ftyp` risk accepted without new parsers. GET-only API lock must be **narrowed**, not repealed.
 
 ---
 
@@ -424,6 +745,6 @@ Do **not** implement BUILD until:
 
 | Role | Name | Date |
 |------|------|------|
-| Joel | | **Not approved** — DRAFT FOR JOEL REVIEW |
-| ChatGPT review | | |
-| Cursor implementation note | Docs/governance draft only. ADR-042 **Accepted**. FG-020 **not approved**. No BUILD code. No migration. | 2026-08-31 |
+| Joel | Joel Brayman | 2026-08-31 |
+| ChatGPT review | FG-020 approval + implementation reconnaissance authorization | 2026-08-31 |
+| Cursor implementation note | Gate **APPROVED**. Recon **recorded**. BUILD product code **not started**. No migration. | 2026-08-31 |

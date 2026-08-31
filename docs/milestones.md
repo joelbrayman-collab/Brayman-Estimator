@@ -30,6 +30,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-08-31 — Approve FG-020 and record BUILD implementation reconnaissance (docs only)
+
+| Field | Content |
+|-------|---------|
+| ID | Docs-only FG-020 approval + implementation reconnaissance |
+| Status | [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **APPROVED / IMPLEMENTATION NOT STARTED**. Recon recorded. BUILD implementation **NOT STARTED**. Item 11 **approved / not started**. Item 12 **BLOCKED / NOT AUTHORIZED**. |
+| Branch | `main` |
+| Objective | Approve FG-020. Record recon. Do not implement BUILD. |
+| Deliverables | FG-020 approved; implementation reconnaissance; indexes; current-state / session-handoff / roadmap / project-state-report / chat-workflow-log. No `app/` / `tests/` / `migrations/`. |
+| Validation | `git diff --check`. Docs-only; product tests not rerun. Governed baseline remains **494 passed**. Alembic current = head `b0c1d2e3f4a5`. |
+| Next | **STOP.** Joel/ChatGPT review of recon. Then a separate implementation prompt. Do not start Field Web. |
+
 ### 2026-08-31 — Accept ADR-042 and draft FG-020 (governance only)
 
 | Field | Content |

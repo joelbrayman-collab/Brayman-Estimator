@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-31 — Approve FG-020 and record BUILD implementation reconnaissance (docs only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-31 |
+| Branch | `main` @ `a2a161203daac9f9f6f758fcb72680803ff56b20` (starting HEAD) |
+| Objective | Approve FG-020. Record implementation reconnaissance. Do not implement BUILD. |
+| Business decision | FG-020 **APPROVED / IMPLEMENTATION NOT STARTED**. Item 11 remains not started. Item 12 remains blocked. |
+| Architectural decision | Exact Event/Original/Derived schemas; BUILD storage under `instance/build_originals/`; image JPEG/PNG/GIF 25 MB; audio mp4/m4a/aac/mpeg/wav/webm 25 MB; payload_json Text object; designed revision `c1d2e3f4a5b6`. Narrow FG-019 GET-only lock for BUILD POSTs only. Verdict **READY FOR BOUNDED IMPLEMENTATION**. |
+| Prompt template used | Feature Gate approval + implementation reconnaissance (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — APPROVE FG-020 / BUILD FIELD CAPTURE V1 — IMPLEMENTATION RECONNAISSANCE ONLY. Approve FG-020. Recon. Do not implement BUILD. |
+| Files expected to change | FG-020 status + recon; indexes; current-state / handoff / roadmap / chat-workflow-log / milestones. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live database; BUILD product code. |
+| Implementation result | FG-020 **APPROVED / IMPLEMENTATION NOT STARTED**. Recon recorded. Product/database/Alembic unchanged. |
+| Tests | Docs-only. Product tests not rerun. Governed baseline remains **494 passed**. `git diff --check`. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append-only) |
+| Constitutional issue raised | None. Gate approval without implementation prompt is not code authorization. |
+| Unresolved issues | Separate implementation prompt after recon review. HEIC/WebP omitted (not a V1 blocker). Residual audio-in-video ftyp risk accepted. |
+| Next approved step | **STOP.** Joel/ChatGPT review recon. Then a **separate** implementation prompt. Do not start Field Web. |
+| Next approved prompt | None until the implementation authorization prompt is issued. |
+| Commit hash | (this commit) |
+
 ### 2026-08-31 — Accept ADR-042 and draft FG-020 (governance only)
 
 | Field | Content |

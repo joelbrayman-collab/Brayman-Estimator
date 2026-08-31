@@ -3,13 +3,13 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-042: BUILD Field Evidence, Original Observation Custody, Desktop Review, and iPhone-First Capture Architecture |
-| Status | **Accepted** (2026-08-31). Implementation **not started**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) is **APPROVED / IMPLEMENTATION NOT STARTED**. |
+| Status | **Accepted** (2026-08-31). [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) is **IMPLEMENTED / LIVE MIGRATION PENDING**. |
 | Date | 2026-08-31 (Proposed); **Accepted 2026-08-31** |
-| Related | [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [ADR-021](ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-022](ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-023](ADR-023-field-evidence-provenance.md) **Accepted** · [ADR-041](ADR-041-user-membership-and-office-authentication.md) **Accepted** · [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **APPROVED / IMPLEMENTATION NOT STARTED** · [modules/build.md](../modules/build.md) · [modules/monitor.md](../modules/monitor.md) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · Constitution Articles 3, 4, 5, 8 |
+| Related | [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [ADR-021](ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-022](ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-023](ADR-023-field-evidence-provenance.md) **Accepted** · [ADR-041](ADR-041-user-membership-and-office-authentication.md) **Accepted** · [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **IMPLEMENTED / LIVE MIGRATION PENDING** · [modules/build.md](../modules/build.md) · [modules/monitor.md](../modules/monitor.md) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · Constitution Articles 3, 4, 5, 8 |
 
-**Current status (2026-08-31):** This ADR is **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) is **APPROVED / IMPLEMENTATION NOT STARTED**. Implementation reconnaissance is recorded on FG-020. Accepting this ADR and approving FG-020 still do **not** start BUILD product code, Field Web, transcription, or a migration. A **separate** implementation Cursor prompt is required.
+**Current status (2026-08-31):** This ADR is **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) is **IMPLEMENTED / LIVE MIGRATION PENDING**. HEIC/HEIF originals are preserved (custody ≠ rendering). Live Alembic current remains **`b0c1d2e3f4a5`**; repository head is **`c1d2e3f4a5b6`**. Field Web, transcription, and live `flask db upgrade` were **not** run in the implementation prompt.
 
-A committed Proposed ADR was not acceptance. This record is now **Accepted**. Implementation still requires an **approved** Feature Gate plus Cursor prompt.
+A committed Proposed ADR was not acceptance. This record is now **Accepted**. Live migration and office UAT remain a **separate** prompt. Do **not** start Field Web.
 
 ---
 
@@ -338,7 +338,7 @@ Originals are immutable. Events are superseded, not destructively edited.
 
 ## Migration Impact
 
-**None in this ADR.** Additive BUILD schema is deferred to [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) implementation (designed revision **`c1d2e3f4a5b6`**, `down_revision` `b0c1d2e3f4a5`). FG-020 is **APPROVED / IMPLEMENTATION NOT STARTED**. Do **not** generate Alembic from this ADR. Live current = head remains `b0c1d2e3f4a5`.
+**None in this ADR.** Additive BUILD schema is owned by [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) (revision **`c1d2e3f4a5b6`**, `down_revision` `b0c1d2e3f4a5`). **Subsequent status (2026-08-31):** FG-020 is **IMPLEMENTED / LIVE MIGRATION PENDING**. Live current remains `b0c1d2e3f4a5`. This ADR still does **not** itself generate Alembic.
 
 ---
 
@@ -350,7 +350,7 @@ None in this acceptance pass (documentation only). Future FG-020 tests (when the
 
 ## Documentation Impact
 
-This ADR; ADR index; CAR-001 subsequent status; modules/build.md; current-state; session-handoff; chat-workflow-log; architecture.md; platform-roadmap Item 11 note; [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **APPROVED / IMPLEMENTATION NOT STARTED**.
+This ADR; ADR index; CAR-001 subsequent status; modules/build.md; current-state; session-handoff; chat-workflow-log; architecture.md; platform-roadmap Item 11 note; [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **IMPLEMENTED / LIVE MIGRATION PENDING**.
 
 ---
 

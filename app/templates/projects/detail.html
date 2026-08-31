@@ -25,7 +25,7 @@
     <span class="hub-lifecycle-step is-future">MONITOR · Future</span>
     <span class="hub-lifecycle-step is-future">LEARN · Future</span>
 </nav>
-<p class="muted-copy hub-lifecycle-note">Operational sections use stored records from owning modules. MONITOR, LEARN, field BUILD, QuickBooks, the four-output package, and Ontario contract/warranty are Future and are not operational here.</p>
+<p class="muted-copy hub-lifecycle-note">Operational sections use stored records from owning modules. MONITOR, LEARN, QuickBooks, the four-output package, and Ontario contract/warranty are Future and are not operational here.</p>
 
 <section class="form-panel" style="margin-bottom: 20px;">
     <div class="form-grid">
@@ -373,10 +373,51 @@
             <p>Project change orders will be listed here.</p>
         </div>
         {% endif %}
-        <div class="hub-future-note">
-            <p class="eyebrow">Future</p>
-            <p>Field BUILD (site capture, daily reports, field execution) is not operational. Existing Change Orders above remain the operational BUILD record.</p>
+    </article>
+    <article class="panel panel-wide">
+        <div class="panel-header">
+            <h2>Field Observations</h2>
+            <a href="{{ url_for('build.new_field_event', project_id=project.id) }}">Add text observation</a>
         </div>
+        {% if hub.field_event_rows %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Occurred</th>
+                    <th>Recorded</th>
+                    <th>Actor</th>
+                    <th>Originals</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in hub.field_event_rows %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('build.view_field_event', project_id=project.id, event_id=row.event.id) }}">
+                            {{ row.event.occurred_at.strftime("%Y-%m-%d %H:%M") }}
+                        </a>
+                    </td>
+                    <td>{{ row.event.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                    <td>{{ row.event.actor_display_name }}</td>
+                    <td>{{ row.kind_summary or "—" }}</td>
+                    <td>
+                        {% if row.superseded %}
+                        <span class="status">Superseded</span>
+                        {% else %}
+                        <span class="status">Current</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No field observations</h3>
+            <p>Saved original field observations for this project will appear here.</p>
+        </div>
+        {% endif %}
     </article>
 </section>
 

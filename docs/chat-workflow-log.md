@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-31 — Implement FG-020 BUILD Field Capture V1 (live migration pending)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-31 |
+| Branch | `main` @ starting HEAD `440d7c7c50306499fb720e874f7d0352031090e8` |
+| Objective | Implement approved FG-020 Field Observation foundation. Stop at IMPLEMENTED / LIVE MIGRATION PENDING. |
+| Business decision | FG-020 **IMPLEMENTED / LIVE MIGRATION PENDING**. Not closed. Item 12 remains blocked. HEIC/HEIF originals preserved (custody ≠ rendering). WebP out. |
+| Architectural decision | Additive revision `c1d2e3f4a5b6` (`down_revision` `b0c1d2e3f4a5`). Events / Originals / Derived Candidates. Private custody `instance/build_originals/`. Narrow FG-019 mutating lock for BUILD POSTs only. UAT CLI source `UAT_CLI`. No Field Web. No AI. No MONITOR. No CO automation. |
+| Prompt template used | Feature Gate implementation (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — IMPLEMENT FG-020 BUILD FIELD CAPTURE V1 — PROJECT FIELD OBSERVATION FOUNDATION. Authorize bounded product implementation + one additive migration. Do not live-migrate. Do not mark closed. |
+| Files expected to change | BUILD models/services/routes/CLI/templates; `api_v1.py`; Project Hub; migration `c1d2e3f4a5b6`; dedicated tests; Hub assertions; governed docs. |
+| Files prohibited from changing | Live database; Field Web; AI/transcription; MONITOR; CO automation; extra schema. |
+| Implementation result | FG-020 **IMPLEMENTED / LIVE MIGRATION PENDING**. Live current remains `b0c1d2e3f4a5`. Repository head `c1d2e3f4a5b6`. |
+| Tests | Dedicated **33 passed**. Focused **370 passed**. Full suite **527 passed**. Pre-FG-020 baseline **494**. `git diff --check`. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append-only) |
+| Constitutional issue raised | None. Live upgrade remains separately governed. |
+| Unresolved issues | Live `flask db upgrade` pending. Office UAT pending. Residual ISO-BMFF audio-in-video `ftyp` risk accepted without a heavy parser. |
+| Next approved step | Separate live-migration / office UAT prompt. Do not start Field Web. |
+| Next approved prompt | Live-migration / office UAT only. |
+| Commit hash | (this commit) |
+
 ### 2026-08-31 — Approve FG-020 and record BUILD implementation reconnaissance (docs only)
 
 | Field | Content |

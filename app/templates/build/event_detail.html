@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Field observation {{ event.id }} | {{ project.name }}{% endblock %}
+{% block page_title %}Field observation{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">BUILD</p>
+        <h1>Field observation {{ event.id }}</h1>
+        <p class="muted-copy">{{ project.name }}{% if project.project_number %} · {{ project.project_number }}{% endif %}</p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}#hub-build">Back to project</a>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 20px;">
+    <div class="form-grid">
+        <div><p class="eyebrow">Occurred at</p><p>{{ event.occurred_at.strftime("%Y-%m-%d %H:%M") }} UTC</p></div>
+        <div><p class="eyebrow">Recorded at</p><p>{{ event.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p></div>
+        <div><p class="eyebrow">Actor</p><p>{{ event.actor_display_name }}</p></div>
+        <div>
+            <p class="eyebrow">Status</p>
+            <p>
+                {% if successor %}
+                <span class="status">Superseded</span>
+                {% else %}
+                <span class="status">Current</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    {% if event.supersedes_id %}
+    <p class="muted-copy" style="margin-top: 12px;">
+        Correction of
+        <a href="{{ url_for('build.view_field_event', project_id=project.id, event_id=event.supersedes_id) }}">observation {{ event.supersedes_id }}</a>
+    </p>
+    {% endif %}
+    {% if successor %}
+    <p class="muted-copy" style="margin-top: 12px;">
+        Superseded by
+        <a href="{{ url_for('build.view_field_event', project_id=project.id, event_id=successor.id) }}">observation {{ successor.id }}</a>
+    </p>
+    {% endif %}
+</section>
+
+<section class="form-panel" style="margin-bottom: 20px;">
+    <h2>Original payloads</h2>
+    {% if originals %}
+        {% for item in originals %}
+        {% set original = item.original %}
+        <article class="panel" style="margin-top: 16px;">
+            <p class="eyebrow">{{ original.kind }} original {{ original.id }}</p>
+            <p class="muted-copy">Recorded by {{ original.actor_display_name }} at {{ original.created_at.strftime("%Y-%m-%d %H:%M") }} UTC</p>
+            {% if original.kind == "text" %}
+            <p style="white-space: pre-wrap; margin-top: 12px;">{{ original.text_body }}</p>
+            {% elif original.kind == "image" and item.browser_image %}
+            <p style="margin-top: 12px;">
+                <img src="{{ item.content_url }}" alt="{{ original.original_filename or 'Field image original' }}" style="max-width: 100%; height: auto;">
+            </p>
+            <p><a href="{{ item.download_url }}">Download original</a></p>
+            {% elif original.kind == "image" %}
+            <p class="muted-copy" style="margin-top: 12px;">
+                Original image evidence. This browser cannot preview {{ original.mime_type }} natively. The original bytes are preserved and were not converted.
+            </p>
+            <p>
+                {% if original.original_filename %}<strong>{{ original.original_filename }}</strong> · {% endif %}
+                {{ original.mime_type }} · {{ original.byte_size }} bytes
+            </p>
+            <p><a href="{{ item.download_url }}">Download original</a></p>
+            {% elif original.kind == "audio" %}
+            {% if item.browser_audio %}
+            <p style="margin-top: 12px;">
+                <audio controls src="{{ item.content_url }}" preload="metadata">
+                    Browser audio playback is not available for this original.
+                </audio>
+            </p>
+            {% else %}
+            <p class="muted-copy" style="margin-top: 12px;">
+                Original audio evidence. This browser cannot play {{ original.mime_type }} natively.
+            </p>
+            {% endif %}
+            <p>
+                {% if original.original_filename %}<strong>{{ original.original_filename }}</strong> · {% endif %}
+                {{ original.mime_type }} · {{ original.byte_size }} bytes
+            </p>
+            <p><a href="{{ item.download_url }}">Download original</a></p>
+            {% endif %}
+        </article>
+        {% endfor %}
+    {% else %}
+    <div class="empty-state empty-state-compact">
+        <h3>No original payloads</h3>
+        <p>This event has no stored text, audio, or image originals yet.</p>
+    </div>
+    {% endif %}
+</section>
+
+<section class="form-panel" style="margin-bottom: 20px;">
+    <h2>Derived candidates</h2>
+    <p class="muted-copy">Derived candidates are optional. Confirming or rejecting them does not change estimates, proposals, Change Orders, permits, take-off, or MONITOR records.</p>
+    {% if derived %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Kind</th>
+                <th>Status</th>
+                <th>Source</th>
+                <th>Proposer</th>
+                <th>Decision</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate in derived %}
+            <tr>
+                <td>{{ candidate.id }}</td>
+                <td>{{ candidate.kind }}</td>
+                <td><span class="status">{{ candidate.status }}</span></td>
+                <td>{{ candidate.source }}</td>
+                <td>{{ candidate.proposer_display_name }}</td>
+                <td>
+                    {% if candidate.decided_at %}
+                    {{ candidate.decided_by_display_name }} · {{ candidate.decided_at.strftime("%Y-%m-%d %H:%M") }} UTC
+                    {% else %}
+                    —
+                    {% endif %}
+                </td>
+                <td>
+                    {% if candidate.status == "PROPOSED" %}
+                    <form method="post" action="{{ url_for('build.confirm_candidate', project_id=project.id, event_id=event.id, candidate_id=candidate.id) }}" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit">Confirm</button>
+                    </form>
+                    <form method="post" action="{{ url_for('build.reject_candidate', project_id=project.id, event_id=event.id, candidate_id=candidate.id) }}" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit">Reject</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="7">
+                    <pre style="white-space: pre-wrap;">{{ candidate.payload_json }}</pre>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state empty-state-compact">
+        <h3>No derived candidates</h3>
+        <p>Originals can stand alone. There is no Generate AI control on this office surface.</p>
+    </div>
+    {% endif %}
+</section>
+
+<section class="form-panel">
+    <h2>Record correction</h2>
+    <p class="muted-copy">A correction creates a new event with a new text original. The prior observation remains visible and is not edited.</p>
+    <form method="post" action="{{ url_for('build.supersede_field_event', project_id=project.id, event_id=event.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>
+            Corrected observation *
+            <textarea name="text" rows="6" required></textarea>
+        </label>
+        <div class="form-grid">
+            <label>
+                Occurred at (optional)
+                <input type="datetime-local" name="occurred_at">
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Record correction</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-020 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **BUILD** owns Field Capture Events, Original Payloads, Derived Candidates, and BUILD binary original custody ([ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted**; [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**). **Office / platform** owns the `/api/v1` transport adapter (FG-019). **Projects** owns `projects` and the Project Hub. **Project Controls** owns Change Orders. |
 | Date | 2026-08-31 |
-| Status | **APPROVED / IMPLEMENTATION NOT STARTED** (2026-08-31). Approval does **not** start BUILD product code. A separate implementation Cursor prompt is required. |
+| Status | **IMPLEMENTED / LIVE MIGRATION PENDING** (2026-08-31). Not **CLOSED / OPERATIONAL FOR UAT**. Live `flask db upgrade` was **not** run. |
 | Architecture | [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-023](../adr/ADR-023-field-evidence-provenance.md) **Accepted** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [platform-roadmap.md](../platform-roadmap.md) item 11 · [modules/build.md](../modules/build.md) |
 | Related ADRs | [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 **COMPLETE**. **ADR-042 Accepted.** BUILD architecture reconnaissance 2026-08-31. |
@@ -19,15 +19,15 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **APPROVED / IMPLEMENTATION NOT STARTED** |
+| Feature Gate (this document) | **IMPLEMENTED / LIVE MIGRATION PENDING** |
 | ADR-042 | **Accepted** |
-| Implementation reconnaissance | **RECORDED 2026-08-31.** Verdict: **READY FOR BOUNDED IMPLEMENTATION.** |
-| Implementation | **NOT STARTED.** This approval pass does **not** authorize product code. |
-| Schema / Alembic | **NO MIGRATION IN THIS PASS.** Designed revision **`c1d2e3f4a5b6`**, `down_revision` **`b0c1d2e3f4a5`**. Do **not** create or run it now. |
-| BUILD product code | **NOT STARTED** |
-| Field Web (Item 12) | **BLOCKED / NOT AUTHORIZED.** FG-020 approval still does **not** authorize Field Web. |
+| Implementation reconnaissance | **RECORDED 2026-08-31.** HEIC/HEIF original custody was **corrected at implementation** (see below). |
+| Implementation | **IMPLEMENTED.** Dedicated tests **33 passed**. Focused regression **370 passed**. Full suite **527 passed**. |
+| Schema / Alembic | Repository revision **`c1d2e3f4a5b6`**, `down_revision` **`b0c1d2e3f4a5`**. **Live current remains `b0c1d2e3f4a5`.** One repository graph head. Live `flask db upgrade` **NOT RUN**. |
+| BUILD product code | **IMPLEMENTED** (office HTML, BUILD service, storage, bounded `/api/v1`, UAT CLI). |
+| Field Web (Item 12) | **BLOCKED / NOT AUTHORIZED.** FG-020 implementation still does **not** authorize Field Web. |
 
-Joel approved this Feature Gate. Do **not** implement BUILD until a **separate** implementation Cursor prompt is issued.
+Do **not** mark this gate **CLOSED / OPERATIONAL FOR UAT** until a separate live-migration and office UAT prompt.
 
 ---
 
@@ -397,17 +397,17 @@ FG-020 closure must **not** authorize Field Web code. Item 12 remains a later ga
 
 **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED** (same pattern as Item 10 → 11).
 
-Until FG-020 is **implemented and closed**, Item 12 remains **BLOCKED / NOT AUTHORIZED**. FG-020 **approval** does not authorize Field Web.
+Until FG-020 is **closed after live migration and office UAT**, Item 12 remains **BLOCKED / NOT AUTHORIZED**. FG-020 implementation still does **not** authorize Field Web.
 
 ---
 
 ## Implementation authorization
 
-This Feature Gate is **APPROVED / IMPLEMENTATION NOT STARTED**.
+This Feature Gate is **IMPLEMENTED / LIVE MIGRATION PENDING**.
 
-File-custody implementation reconnaissance is **recorded** in this document.
+File-custody implementation reconnaissance is **recorded** in this document. Bounded product implementation ran from the 2026-08-31 implementation prompt.
 
-Do **not** implement BUILD until a **separate** implementation Cursor prompt is issued. This approval/recon pass does **not** authorize `app/`, `tests/`, or Alembic edits.
+Do **not** run live `flask db upgrade` from this implementation prompt. Do **not** start Field Web.
 
 ---
 
@@ -738,6 +738,56 @@ FG-020 implementation **must not** include Today, iPhone Capture chrome, microph
 **READY FOR BOUNDED IMPLEMENTATION.**
 
 HEIC/WebP omitted with repository rationale (not a Joel blocker). Residual audio-in-video `ftyp` risk accepted without new parsers. GET-only API lock must be **narrowed**, not repealed.
+
+---
+
+## Implementation result (2026-08-31)
+
+**Status:** **IMPLEMENTED / LIVE MIGRATION PENDING.** Not closed. Live `flask db upgrade` was **not** run.
+
+### HEIC/HEIF original-custody correction
+
+Recon §3 omitted HEIC/HEIF so desktop Chrome could preview JPEG/PNG/GIF. Joel’s implementation prompt corrected that.
+
+**Custody and rendering are separate.** CalibAi is iPhone-first. Original photographic bytes are evidence. FG-020 **preserves** HEIC/HEIF originals in addition to JPEG, PNG, and GIF.
+
+- Do **not** transcode the original.
+- Do **not** replace an HEIC/HEIF original with JPEG.
+- Do **not** modify original bytes.
+- Store original bytes, SHA-256, byte size, canonical MIME, original filename where permitted, and provenance.
+- Validation uses narrow ISO-BMFF `ftyp` brand recognition (`heic` / `heif` / `mif1` / related still-image brands). Generic `mp41`/`mp42`/`isom` and AVIF are **not** accepted as HEIC.
+- Desktop: if the browser cannot natively preview HEIC/HEIF, show evidence metadata and authorized download/open. Do **not** present a broken `<img>`. A future derived JPEG preview would be separately governed and must never replace the original.
+- **WebP remains out.**
+
+### File-custody rules (implemented)
+
+Root: `instance/build_originals/<organization_id>/<project_id>/<event_id>/<original_id><ext>` (`BUILD_ORIGINAL_ROOT`, `BUILD_ORIGINAL_MAX_BYTES` default **25 MB**). SHA-256 is evidence metadata on the row, not the filename. Duplicate bytes are allowed as separate Original records. Tempfile + fsync + `os.replace`. Path-traversal and org-segment checks. Alembic does **not** touch stored bytes. Tests use a temp `BUILD_ORIGINAL_ROOT`.
+
+**Audio known limitation:** ISO-BMFF `ftyp` inspection cannot prove an audio stream is present without a media parser. FG-020 does not add a parser. Residual audio-in-video `ftyp` risk remains. Caller `Content-Type` is not authority. Canonical MIME comes from extension + family magic. `video/mp4` is not a stored MIME.
+
+### Live current vs repository head
+
+| Kind | Revision |
+|------|----------|
+| Live `flask db current` | **`b0c1d2e3f4a5`** (unchanged; upgrade **not** run) |
+| Repository Alembic head | **`c1d2e3f4a5b6`** |
+| Graph heads | one (`c1d2e3f4a5b6`) |
+
+That split is expected until the separate live-migration prompt.
+
+### Tests
+
+| Suite | Result |
+|-------|--------|
+| Dedicated `tests/test_build_field_observation_fg020.py` | **33 passed** |
+| Focused regression (FG-018/019, Hub, COs, org, Plan Intelligence, take-off, Labour, Pricing, Permit, estimates, proposals, historical upload, Brand Profile) | **370 passed** |
+| Full suite `./venv/bin/python -m pytest -q` | **527 passed** (pre-FG-020 baseline **494**) |
+
+`tests/test_auth_fg018.py::test_testing_secret_allowed` now unsets env `SECRET_KEY` so the TESTING fallback assertion is isolated (same pattern as the sibling debug-secret test).
+
+### Remaining live-migration / UAT step
+
+A **separate** prompt must run live `flask db upgrade` (`b0c1d2e3f4a5` → `c1d2e3f4a5b6`), then office UAT of Field Observations beside Change Orders. Do **not** mark FG-020 **CLOSED / OPERATIONAL FOR UAT** until that pass. Do **not** start Field Web.
 
 ---
 

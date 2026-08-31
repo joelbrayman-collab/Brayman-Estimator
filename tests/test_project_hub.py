@@ -464,7 +464,9 @@ def test_future_lifecycle_not_operational(client, project):
     assert response.status_code == 200
     assert "MONITOR" in html
     assert "LEARN" in html
-    assert "Field BUILD" in html
+    assert "Field Observations" in html
+    assert "Related Change Orders" in html
+    assert "Field BUILD" not in html
     assert "QuickBooks" in html
     assert "four-output" in html
     assert "Ontario contract" in html

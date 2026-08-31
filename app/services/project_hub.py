@@ -22,6 +22,7 @@ from app.plan_intelligence.models import (
 from app.plan_intelligence.services import list_plan_documents
 from app.plan_intelligence.takeoff import list_packages_for_project, list_runs_for_project
 from app.project_controls import repository as change_order_repo
+from app.services.build import list_field_events, original_kind_summary, successor_event
 from app.services.permit_foundation import assemble_permit_foundation_state
 from app.services.permit_intelligence import assemble_permit_intelligence_state
 
@@ -102,6 +103,18 @@ def assemble_project_hub(project, organization_id: str) -> dict:
     approved_packages = [
         package for package in takeoff_packages if package.status == "approved"
     ]
+    field_events = list_field_events(organization_id, project.id)
+    field_event_rows = []
+    for event in field_events:
+        successor = successor_event(event)
+        field_event_rows.append(
+            {
+                "event": event,
+                "kind_summary": original_kind_summary(event),
+                "superseded": successor is not None,
+                "successor": successor,
+            }
+        )
 
     return {
         "permit_foundation": assemble_permit_foundation_state(project),
@@ -121,6 +134,8 @@ def assemble_project_hub(project, organization_id: str) -> dict:
         "latest_takeoff_run": takeoff_runs[0] if takeoff_runs else None,
         "takeoff_packages": takeoff_packages,
         "approved_takeoff_packages": approved_packages,
+        "field_events": field_events,
+        "field_event_rows": field_event_rows,
     }
 
 

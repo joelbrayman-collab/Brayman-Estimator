@@ -547,7 +547,8 @@ def test_csrf_json_measurement_post_enforcement(csrf_app, csrf_client):
         assert b"CSRF" not in with_token.data
 
 
-def test_testing_secret_allowed():
+def test_testing_secret_allowed(monkeypatch):
+    monkeypatch.delenv("SECRET_KEY", raising=False)
     application = create_app(
         {"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:"}
     )

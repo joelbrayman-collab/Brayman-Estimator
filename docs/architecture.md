@@ -39,6 +39,8 @@ From [`app/__init__.py`](../app/__init__.py):
 | `plan_intelligence_bp` | `app/plan_intelligence/` |
 | `labour_engine_bp` | `app/routes/labour_engine.py` |
 | `pricing_engine_bp` | `app/routes/pricing_engine.py` |
+| `api_v1_bp` | `app/routes/api_v1.py` |
+| `build_bp` | `app/routes/build.py` |
 
 Shell context: [`app/shell.py`](../app/shell.py). Navigation SSOT: [`app/navigation.py`](../app/navigation.py).
 
@@ -57,6 +59,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Project controls | `ChangeOrder`, `ChangeOrderItem` | `app/project_controls/models.py` |
 | Plan Intelligence | `DrawingPackage`, `DrawingRevision`, `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `PlanScaleCalibration`, `PlanMeasurement`, `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem` | `app/plan_intelligence/models.py` |
 | Labour Engine | `LabourTask`, `LabourTaskMapping`, `ProductionRateStandard`, `DirectLabourCostRateStandard`, `LabourCalibrationCandidate`, `EstimateLabourSnapshot`, `LabourAuditEvent` | `app/models/labour_engine.py` |
+| BUILD | `FieldCaptureEvent`, `FieldCaptureOriginal`, `FieldCaptureDerivedCandidate` | `app/models/build.py` — FG-020 **IMPLEMENTED / LIVE MIGRATION PENDING** |
 | Pricing Engine | `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent` | `app/models/pricing_engine.py` |
 
 Notable behaviours evidenced in code/tests:
@@ -71,14 +74,14 @@ Notable behaviours evidenced in code/tests:
 
 | Layer | Paths |
 |-------|-------|
-| Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py` |
+| Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py`, `build.py`, `build_storage.py` |
 | Project controls | `app/project_controls/services.py`, `repository.py`, `pdf.py` |
 | Plan Intelligence | `app/plan_intelligence/services.py`, `processing.py`, `extraction.py`, `storage.py`, `packages.py`, `audit.py`, `takeoff.py`, `takeoff_extractors.py` |
 | Generic repositories package | `app/repositories/` (present; inspect before assuming usage) |
 
 ### Templates & static assets
 
-- Templates: `app/templates/` (clients, projects including Project Hub `projects/detail.html`, estimates, proposals, proposal_templates, assemblies, cost_library, project_controls, plan_intelligence including take-off, labour_engine, pricing_engine, dashboard, base, partials)
+- Templates: `app/templates/` (clients, projects including Project Hub `projects/detail.html`, estimates, proposals, proposal_templates, assemblies, cost_library, project_controls, plan_intelligence including take-off, labour_engine, pricing_engine, build field observations, dashboard, base, partials)
 - Static: `app/static/` (css, js, branding)
 
 ### Migrations
@@ -86,12 +89,12 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic graph head and live development/UAT current: **`e7f8a9b0c1d2`** (FG-015). Chain includes `c5d6e7f8a9b0` (FG-013) → `d6e7f8a9b0c1` (FG-014) → `e7f8a9b0c1d2` (FG-015). Verify `flask db current` per environment before relying on it.
+- Alembic **repository** graph head: **`c1d2e3f4a5b6`** (FG-020). Live development/UAT `flask db current`: **`b0c1d2e3f4a5`** (FG-018). FG-020 upgrade is **pending**. One graph head. Verify `flask db current` per environment before relying on it.
 
 ### Tests
 
 - Location: [`tests/`](../tests/)
-- Collected locally: last governed full suite **401 passed** (`./venv/bin/python -m pytest -q`, 2026-08-30 FG-016 close).
+- Collected locally: last governed full suite **527 passed** (`./venv/bin/python -m pytest -q`, 2026-08-31 FG-020 implementation). Pre-FG-020 baseline **494**.
 - Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders, project hub, plan upload/indexing/sheets/scale/take-off, labour engine, pricing engine, historical ingestion, organization foundation
 
 ### Current module relationships (simplified)
@@ -118,7 +121,7 @@ Client ──< Project ──< Estimate ──< EstimateVersion ──< Sections
 - No prior `docs/` governance (this foundation addresses that).
 - Change Order detail template notes future audit trail UI (`app/templates/project_controls/change_orders/detail.html`).
 - Hard-coded `SECRET_KEY` in `create_app` (development default) — production secret handling is an open operational concern.
-- Flask-Login is used for office authentication ([FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**). Shared API Foundation V1 is **operational for UAT** ([FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**; GET-only `/api/v1`). RBAC and multi-org switching are **not implemented**.
+- Flask-Login is used for office authentication ([FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**). Shared API Foundation V1 is **operational for UAT** ([FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**) with a **narrow** FG-020 BUILD POST allow-list. RBAC and multi-org switching are **not implemented**.
 - Office proposal create/detail still lists Overhead/Profit amounts (zero when named-method snapshot governs). Customer preview/PDF do not. Draft proposal line edits still restack via `recalculate_proposal`.
 - Proposal “Accepted” status exists; full acceptance → project budget snapshot workflow is **not** documented as complete product (see Intended).
 - CRM is effectively Clients + Projects, not a full CRM suite.
@@ -157,7 +160,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
 ### Other future capabilities
 
-- **BUILD / MONITOR / LEARN** — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md); BUILD boundary [ADR-020](adr/ADR-020-build-module-boundary.md) (**Accepted**, not implemented); field evidence / dual-surface architecture [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) (**Accepted**, not implemented); [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **APPROVED / IMPLEMENTATION NOT STARTED**; MONITOR baseline [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) (**Accepted**, not implemented; Project Gross Margin)
+- **BUILD / MONITOR / LEARN** — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md); BUILD boundary [ADR-020](adr/ADR-020-build-module-boundary.md) (**Accepted**); field evidence / dual-surface architecture [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) (**Accepted**); [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **IMPLEMENTED / LIVE MIGRATION PENDING**; MONITOR baseline [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) (**Accepted**, not implemented; Project Gross Margin)
 - **Field / shared API** — [ADR-022](adr/ADR-022-field-client-and-shared-api.md) (**Accepted** direction). Shared API Foundation V1 **implemented** ([FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**). Field Web **not implemented**.
 - **Project document package** — outputs **1–2** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. Outputs **3–4** remain **Future**. **Permit Intelligence** Pass 1 **CLOSED / OPERATIONAL FOR UAT** ([FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md)); Pass 2 **CLOSED / OPERATIONAL FOR UAT** ([FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md); ADR-037/038/039). Permit & Approvals Report is a **core project document**, not a fifth estimate output and not a Change Order. **Organization Brand Profile** is **CLOSED / OPERATIONAL FOR UAT** ([ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md)). **Change Order document family** remains **FUTURE / NOT IMPLEMENTED**.
 - Scheduling, Job Costing, Invoicing
@@ -176,4 +179,4 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 - Permit branding from Brand Profile; national Permit Rules expansion (FG-015/FG-016 POC is closed)
 - Change Order governed document family / client email / field UX — [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (do not create a second Change Order entity)
 - Authentication / actor identity + shared API (sequence item 10 **COMPLETE** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**)
-- BUILD field capture; field web (Item 11 **approved / implementation not started**; [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**; [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **APPROVED / IMPLEMENTATION NOT STARTED**; Item 12 **BLOCKED / NOT AUTHORIZED**); MONITOR implementation; LEARN / ML
+- BUILD Field Web; MONITOR implementation; LEARN / ML (Item 11 Field Observation foundation is **IMPLEMENTED / LIVE MIGRATION PENDING**; [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**; [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md); Item 12 **BLOCKED / NOT AUTHORIZED**)

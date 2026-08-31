@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Add field observation | {{ project.name }}{% endblock %}
+{% block page_title %}Field observation{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">BUILD</p>
+        <h1>Add text observation</h1>
+        <p class="muted-copy">{{ project.name }}{% if project.project_number %} · {{ project.project_number }}{% endif %}</p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}#hub-build">Back to project</a>
+    </div>
+</div>
+
+<form method="post" class="form-panel">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>
+        Observation *
+        <textarea name="text" rows="8" required>{{ form.text }}</textarea>
+    </label>
+    <div class="form-grid">
+        <label>
+            Occurred at (optional)
+            <input type="datetime-local" name="occurred_at" value="{{ form.occurred_at }}">
+        </label>
+    </div>
+    <p class="muted-copy">If occurred at is omitted, it is recorded as the save time. This saves an original text observation only. It does not create a Change Order or run AI.</p>
+    <div class="form-actions">
+        <button type="submit">Save original</button>
+        <a href="{{ url_for('projects.view_project', id=project.id) }}#hub-build">Cancel</a>
+    </div>
+</form>
+{% endblock %}

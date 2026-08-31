@@ -19,6 +19,11 @@ from app.models.estimate import (
 from app.models.organization import Organization
 from app.models.user import User, UserMembership
 from app.models.brand_profile import OrganizationBrandProfile, ProposalBrandSnapshot
+from app.models.build import (
+    FieldCaptureDerivedCandidate,
+    FieldCaptureEvent,
+    FieldCaptureOriginal,
+)
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
 from app.models.pricing_engine import (
     EstimatePricingSnapshot,
@@ -71,6 +76,9 @@ __all__ = [
     "DrawingPackage",
     "DrawingRevision",
     "Estimate",
+    "FieldCaptureDerivedCandidate",
+    "FieldCaptureEvent",
+    "FieldCaptureOriginal",
     "EstimateLineItem",
     "EstimatePricingSnapshot",
     "EstimateSection",

@@ -30,6 +30,19 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-08-31 — Implement FG-020 BUILD Field Capture V1 (live migration pending)
+
+| Field | Content |
+|-------|---------|
+| ID | FG-020 implementation / pre-live-migration stop |
+| Status | [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **IMPLEMENTED / LIVE MIGRATION PENDING**. Not **CLOSED / OPERATIONAL FOR UAT**. Item 11 implemented / live migration pending. Item 12 **BLOCKED / NOT AUTHORIZED**. |
+| Branch | `main` |
+| Base commit | `440d7c7c50306499fb720e874f7d0352031090e8` |
+| Objective | Implement bounded FG-020 Field Observation foundation. Preserve HEIC/HEIF originals. Do not live-migrate. Do not start Field Web. |
+| Deliverables | Additive revision `c1d2e3f4a5b6`; BUILD models/services/storage; office Field Observations; bounded `/api/v1` BUILD; UAT CLI; dedicated tests; governed docs. |
+| Validation | Dedicated **33 passed**. Focused **370 passed**. Full suite **527 passed**. Live current remains `b0c1d2e3f4a5`. Repository head `c1d2e3f4a5b6`. Live `flask db upgrade` **not run**. |
+| Next | Separate live-migration / office UAT prompt. Do not mark FG-020 closed. Do not start Field Web. |
+
 ### 2026-08-31 — Approve FG-020 and record BUILD implementation reconnaissance (docs only)
 
 | Field | Content |

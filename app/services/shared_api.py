@@ -33,6 +33,7 @@ ERROR_ORGANIZATION_CONTEXT = (
 )
 ERROR_NOT_FOUND = "Not found."
 ERROR_METHOD_NOT_ALLOWED = "Method not allowed."
+ERROR_CONFLICT = "Conflict."
 
 
 def api_error(message, status):

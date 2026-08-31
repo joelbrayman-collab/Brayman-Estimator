@@ -1,4 +1,5 @@
 import os
+import re
 import tempfile
 
 from flask import Flask, abort, g, request
@@ -52,9 +53,21 @@ def _apply_secret_key(app: Flask) -> None:
     app.config["SECRET_KEY"] = secret
 
 
+_BUILD_API_POST_RE = re.compile(
+    r"^/api/v1/projects/\d+/field-events"
+    r"(/\d+/(originals|derived/\d+/(confirm|reject)))?$"
+)
+
+
 def _is_api_request() -> bool:
     path = request.path or ""
     return path == "/api" or path.startswith("/api/")
+
+
+def _is_allowed_build_api_post() -> bool:
+    if request.method != "POST":
+        return False
+    return bool(_BUILD_API_POST_RE.fullmatch(request.path or ""))
 
 
 def _register_office_auth(app: Flask) -> None:
@@ -80,16 +93,20 @@ def _register_office_auth(app: Flask) -> None:
         from app.services.shared_api import ERROR_METHOD_NOT_ALLOWED, api_error
 
         if _is_api_request() and request.method not in ("GET", "HEAD", "OPTIONS"):
+            if _is_allowed_build_api_post():
+                return None
             return api_error(ERROR_METHOD_NOT_ALLOWED, 405)
         return None
 
     csrf.init_app(app)
 
     from app.cli.auth import auth_cli
+    from app.cli.build import build_cli
     from app.routes.auth import auth_bp
 
     app.register_blueprint(auth_bp)
     app.cli.add_command(auth_cli)
+    app.cli.add_command(build_cli)
 
     @app.before_request
     def protect_office_routes():
@@ -155,6 +172,7 @@ def create_app(config=None):
     app.config["HISTORICAL_UPLOAD_ZIP_MAX_FILES"] = 200
     app.config["HISTORICAL_UPLOAD_ACTOR"] = "Joel Brayman"
     app.config["BRAND_LOGO_MAX_BYTES"] = 5 * 1024 * 1024
+    app.config["BUILD_ORIGINAL_MAX_BYTES"] = 25 * 1024 * 1024
 
     if config:
         app.config.update(config)
@@ -166,6 +184,10 @@ def create_app(config=None):
 
     if app.config.get("TESTING") and not app.config.get("BRAND_LOGO_ROOT"):
         app.config["BRAND_LOGO_ROOT"] = tempfile.mkdtemp(prefix="calibai-brand-logos-")
+    if app.config.get("TESTING") and not app.config.get("BUILD_ORIGINAL_ROOT"):
+        app.config["BUILD_ORIGINAL_ROOT"] = tempfile.mkdtemp(
+            prefix="calibai-build-originals-"
+        )
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -187,6 +209,7 @@ def create_app(config=None):
     from app.plan_intelligence import plan_intelligence_bp
     from app.routes.settings import settings_bp
     from app.routes.api_v1 import api_v1_bp
+    from app.routes.build import build_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(clients_bp)
@@ -204,6 +227,7 @@ def create_app(config=None):
     app.register_blueprint(plan_intelligence_bp)
     app.register_blueprint(settings_bp)
     app.register_blueprint(api_v1_bp)
+    app.register_blueprint(build_bp)
 
     _register_office_auth(app)
 

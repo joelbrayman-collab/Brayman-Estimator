@@ -30,6 +30,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-08-31 — Accept ADR-042 and draft FG-020 (governance only)
+
+| Field | Content |
+|-------|---------|
+| ID | Docs-only ADR-042 acceptance + FG-020 draft |
+| Status | [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED**. BUILD implementation **NOT STARTED**. Item 11 **governance in progress / NOT AUTHORIZED**. Item 12 **BLOCKED / NOT AUTHORIZED**. |
+| Branch | `main` |
+| Objective | Accept BUILD field-evidence architecture. Draft FG-020. Do not implement BUILD. |
+| Deliverables | ADR-042 Accepted; FG-020 draft; indexes; current-state / session-handoff / roadmap / project-state-report / chat-workflow-log. No `app/` / `tests/` / `migrations/`. |
+| Validation | `git diff --check`. Docs-only; product tests not rerun. Governed baseline remains **494 passed**. Alembic current = head `b0c1d2e3f4a5`. |
+| Next | **STOP.** Joel review of FG-020. Do not implement BUILD. Do not start Field Web. |
+
 ### 2026-08-31 — Draft ADR-042 BUILD field evidence architecture (governance only)
 
 | Field | Content |

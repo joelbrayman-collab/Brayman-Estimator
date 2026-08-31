@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-31 — Accept ADR-042 and draft FG-020 (governance only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-31 |
+| Branch | `main` @ `327e510e7d521d2689bf7d756953fda85cb68a0d` (starting HEAD) |
+| Objective | Accept ADR-042. Draft FG-020 as **NOT APPROVED**. Do not implement BUILD. Do not start Field Web. |
+| Business decision | Dual first-class BUILD surfaces and original-custody architecture are **Accepted**. Item 11 remains unauthorized until FG-020 is approved. Item 12 remains blocked. |
+| Architectural decision | **ADR-042 Accepted.** **FG-020 DRAFT FOR JOEL REVIEW / NOT APPROVED.** Additive migration later (`down_revision` `b0c1d2e3f4a5`). File-custody MIME/size deferred to implementation reconnaissance. |
+| Prompt template used | ADR accept + Feature Gate draft prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — ACCEPT ADR-042 AND DRAFT FG-020 BUILD FIELD CAPTURE V1 — GOVERNANCE ONLY. Accept ADR-042. Draft FG-020. Do not implement BUILD. |
+| Files expected to change | ADR-042 status; FG-020 draft; indexes; current-state / handoff / roadmap / chat-workflow-log / milestones. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live database; FG-020 approval; BUILD code. |
+| Implementation result | ADR-042 **Accepted**. FG-020 **DRAFT / NOT APPROVED**. Product/database/Alembic unchanged. |
+| Tests | Docs-only. Product tests not rerun. Governed baseline remains **494 passed**. `git diff --check`. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append-only) |
+| Constitutional issue raised | None. Draft Feature Gate is not approval (Article 8 / Feature Gate process). |
+| Unresolved issues | Joel must approve or reject FG-020. MIME/size for BUILD audio/image remains for implementation reconnaissance. |
+| Next approved step | **STOP.** Joel / ChatGPT review FG-020. Do not implement BUILD. |
+| Next approved prompt | None until FG-020 is approved. Then a separate implementation prompt plus file-custody reconnaissance. |
+| Commit hash | (this commit) |
+
 ### 2026-08-31 — Draft ADR-042 BUILD field evidence / iPhone-first capture (governance only)
 
 | Field | Content |

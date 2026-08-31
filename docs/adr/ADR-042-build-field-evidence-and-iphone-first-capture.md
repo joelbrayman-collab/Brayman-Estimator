@@ -3,11 +3,13 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-042: BUILD Field Evidence, Original Observation Custody, Desktop Review, and iPhone-First Capture Architecture |
-| Status | **Proposed / FOR JOEL REVIEW** — **not Accepted**. Does **not** authorize implementation, FG-020, Field Web, transcription, or external AI. |
-| Date | 2026-08-31 |
-| Related | [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [ADR-021](ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-022](ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-023](ADR-023-field-evidence-provenance.md) **Accepted** · [ADR-041](ADR-041-user-membership-and-office-authentication.md) **Accepted** · [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [modules/build.md](../modules/build.md) · [modules/monitor.md](../modules/monitor.md) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · Constitution Articles 3, 4, 5, 8 |
+| Status | **Accepted** (2026-08-31). Implementation **not authorized**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) is **DRAFT FOR JOEL REVIEW / NOT APPROVED**. |
+| Date | 2026-08-31 (Proposed); **Accepted 2026-08-31** |
+| Related | [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [ADR-021](ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-022](ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-023](ADR-023-field-evidence-provenance.md) **Accepted** · [ADR-041](ADR-041-user-membership-and-office-authentication.md) **Accepted** · [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **DRAFT / NOT APPROVED** · [modules/build.md](../modules/build.md) · [modules/monitor.md](../modules/monitor.md) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · Constitution Articles 3, 4, 5, 8 |
 
-A committed Proposed ADR is **not** acceptance. Implementation still requires Joel acceptance of this ADR **and** a separately approved Feature Gate plus Cursor prompt.
+**Current status (2026-08-31):** This ADR is **Accepted**. Accepting it does **not** authorize BUILD product code, Field Web, transcription, external AI, or a migration. Item 11 remains **not implemented**. FG-020 is a **separate** Feature Gate draft and is **not approved**.
+
+A committed Proposed ADR was not acceptance. This record is now **Accepted**. Implementation still requires an **approved** Feature Gate plus Cursor prompt.
 
 ---
 
@@ -35,7 +37,7 @@ This ADR is the subsequent architecture decision. It does **not** claim ADR-023 
 
 ## Decision
 
-**Proposed.** Do **not** treat this document as product implementation, Feature Gate approval, or acceptance.
+**Accepted.** Do **not** treat acceptance as product implementation, FG-020 approval, or Field Web authorization.
 
 ### 1. Two first-class BUILD surfaces, one system of record
 
@@ -306,7 +308,7 @@ Original custody is not interpretation. Voice AI / photo AI remain later Feature
 - **Auto-create Change Orders from field issues** — Rejected (ADR-020).
 - **Store field photos on `PlanDocument`** — Rejected (ADR-023 Decision 4).
 - **Silently rewrite ADR-023 Decision 5** — Rejected: additive subsequent ADR instead.
-- **Accept this ADR in the same pass as drafting** — Rejected: Proposed is not Accepted.
+- **Accept this ADR in the same pass as drafting** — Rejected at draft (2026-08-31 Proposed commit). **Accepted** in a later governance pass the same day. Still does **not** authorize implementation.
 
 ---
 
@@ -322,7 +324,7 @@ Original custody is not interpretation. Voice AI / photo AI remain later Feature
 
 BUILD (`docs/modules/build.md`) gains intended ownership of Field Capture Events, Original Payloads, Derived Candidates, and BUILD binary original custody. Project Controls retains Change Orders. Plan Intelligence retains plan PDFs. Permit Intelligence retains preflight analysis. MONITOR remains a comparison/read layer. Shared API remains platform transport (FG-019); BUILD **extends** it when gated. Field Web (Item 12) is a client, not an owning module of BUILD records.
 
-No ownership transfer in this Proposed document. Implementation remains unauthorized.
+Ownership of future BUILD records is named here. Implementation remains unauthorized until FG-020 is **approved** and a Cursor implementation prompt is issued.
 
 ---
 
@@ -336,19 +338,19 @@ Originals are immutable. Events are superseded, not destructively edited.
 
 ## Migration Impact
 
-**Deferred.** Additive BUILD schema only under a future accepted ADR **and** approved Feature Gate. **None** in this pass. Live current = head remains `b0c1d2e3f4a5`.
+**None in this ADR.** Additive BUILD schema is deferred to an **approved** [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) implementation (expected `down_revision` `b0c1d2e3f4a5`). FG-020 is **not approved**. Do **not** generate Alembic from this acceptance. Live current = head remains `b0c1d2e3f4a5`.
 
 ---
 
 ## Testing Impact
 
-None in this Proposed pass. Future FG-020 tests must cover original-only create, original immutability, org isolation, CSRF on mutating `/api/v1`, and confirm/reject that does not write Estimate / CO / MONITOR.
+None in this acceptance pass (documentation only). Future FG-020 tests (when the gate is approved and implemented) must cover original-only create, original immutability, org isolation, CSRF on mutating `/api/v1`, and confirm/reject that does not write Estimate / CO / MONITOR.
 
 ---
 
 ## Documentation Impact
 
-This ADR; ADR index; CAR-001 subsequent status; modules/build.md; current-state; session-handoff; chat-workflow-log; architecture.md; platform-roadmap Item 11 note. FG-020 is **not** created.
+This ADR; ADR index; CAR-001 subsequent status; modules/build.md; current-state; session-handoff; chat-workflow-log; architecture.md; platform-roadmap Item 11 note; [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **DRAFT / NOT APPROVED**.
 
 ---
 
@@ -356,6 +358,6 @@ This ADR; ADR index; CAR-001 subsequent status; modules/build.md; current-state;
 
 | Role | Name | Date |
 |------|------|------|
-| Joel | | **Not accepted** — FOR JOEL REVIEW |
-| ChatGPT review | | |
-| Cursor implementation note | Docs/governance draft only. No BUILD code. No FG-020. No migration. | 2026-08-31 |
+| Joel | Joel Brayman | 2026-08-31 |
+| ChatGPT review | Architecture reconnaissance + dual-surface / original-custody review | 2026-08-31 |
+| Cursor implementation note | Documentation / governance only. ADR Accepted. FG-020 drafted **NOT APPROVED**. No BUILD code. No migration. | 2026-08-31 |

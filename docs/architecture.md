@@ -175,5 +175,5 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 - Living supplier evidence / Winchester POC / bulk supplier onboarding (FG-014 identity is closed; ADR-008 remains Proposed)
 - Permit branding from Brand Profile; national Permit Rules expansion (FG-015/FG-016 POC is closed)
 - Change Order governed document family / client email / field UX — [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (do not create a second Change Order entity)
-- Authentication / actor identity + shared API (sequence item 10 — **NOT STARTED / NOT AUTHORIZED**)
-- BUILD field capture; field web (require item 10); MONITOR implementation; LEARN / ML
+- Authentication / actor identity + shared API (sequence item 10 — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Proposed**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **DRAFT / NOT APPROVED**; implementation **NOT STARTED**; shared API **deferred**)
+- BUILD field capture; field web (require Item 10 **implementation**); MONITOR implementation; LEARN / ML

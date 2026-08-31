@@ -30,6 +30,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-08-30 — Draft ADR-041 and FG-018 (Item 10 office authentication)
+
+| Field | Content |
+|-------|---------|
+| ID | Docs-only Item 10 governance draft |
+| Status | [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Proposed**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **DRAFT / NOT APPROVED**; implementation **NOT STARTED** |
+| Branch | `main` |
+| Objective | Draft User/membership/office-auth ADR and FG-018. Do not accept, approve, or implement. |
+| Deliverables | ADR-041; FG-018; index/current-state/handoff/roadmap updates. No `app/` / `tests/` / `migrations/`. |
+| Validation | Docs only. `git diff --check`. Tests not rerun. Alembic current/head remains `a9b0c1d2e3f4`. |
+| Next | **STOP product implementation.** Joel/ChatGPT review. Do not implement Authentication. Shared API deferred. BUILD remains blocked. |
+
 ### 2026-08-30 — Post-FG-017 roadmap documentation reconciliation
 
 | Field | Content |

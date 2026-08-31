@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-30 — Draft ADR-041 and FG-018 (Item 10 office authentication)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-30 |
+| Branch | `main` @ `b68dc6e014fc7854075c3d866eff831bf592eb95` (starting HEAD) |
+| Objective | Docs-only draft of ADR-041 (Proposed) and FG-018 (DRAFT / NOT APPROVED) for office authentication, actor identity, and membership. |
+| Business decision | Item 10 governance has begun. Product implementation is **not** authorized. Shared API deferred. BUILD remains blocked. No credentials in Git. |
+| Architectural decision | One durable User; UserMembership; email/password; Flask-Login/session; no RBAC; historical actor strings preserved; CSRF and SECRET_KEY fail-closed required in later implementation. ADR remains **Proposed**. |
+| Prompt template used | Docs-only governance prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — ROADMAP ITEM 10 — DRAFT AUTHENTICATION ADR + FG-018 GOVERNANCE ONLY. Do not accept ADR. Do not approve FG-018. Do not implement. |
+| Files expected to change | Governed docs only. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; database. |
+| Implementation result | ADR-041 Proposed and FG-018 Draft created. Indexes and current-state updated. No product code. |
+| Tests | Not rerun. Governed baseline remains **423 passed**. `git diff --check`. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append; do not rewrite FG-017 close) |
+| Constitutional issue raised | None |
+| Unresolved issues | ADR-041 not accepted. FG-018 not approved. Multi-membership selection if a User has more than one active membership. Exact table names, CSRF library, bootstrap CLI, SECRET_KEY env, optional user_id paths deferred to implementation reconnaissance. |
+| Next approved step | **STOP product implementation.** Joel/ChatGPT review ADR-041 and FG-018. |
+| Next approved prompt | None for implementation. After acceptance/approval: separate implementation reconnaissance. |
+| Commit hash | Live `HEAD`: verify `git rev-parse HEAD`. |
+
 ### 2026-08-30 — Post-FG-017 roadmap documentation reconciliation
 
 | Field | Content |

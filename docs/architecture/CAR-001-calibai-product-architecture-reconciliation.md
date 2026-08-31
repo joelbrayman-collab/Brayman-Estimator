@@ -27,7 +27,9 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-08-30 — not authorized by CAR-001):** FG-010 / M012 is **LIVE-MIGRATED / UAT-SMOKE-VERIFIED** (`b4c5d6e7f8a9` **gate-at-close** head). **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT.** Real external AI provider **not authorized**. Phase D **not started**. [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR composed baseline and Project Gross Margin; MONITOR **not implemented**). [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (supplier-neutral Winchester launch/reference channel; supplier integration **not implemented**; no Feature Gate).
 
-**Subsequent status (2026-08-30 post-FG-017 — not authorized by CAR-001):** FG-011 through FG-017 are **CLOSED / OPERATIONAL FOR UAT**. Live Alembic current/head is **`a9b0c1d2e3f4`**. [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**. Full-suite governed baseline **423 passed**. The first unfinished item on the [platform-roadmap.md](../platform-roadmap.md) numbered sequence is **item 10 Authentication / actor identity + shared API foundation** — **NOT STARTED / NOT AUTHORIZED**; no Feature Gate. CAR-001 still does **not** authorize implementation. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Subsequent status (2026-08-30 post-FG-017 — not authorized by CAR-001):** FG-011 through FG-017 are **CLOSED / OPERATIONAL FOR UAT**. Live Alembic current/head is **`a9b0c1d2e3f4`**. [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**. Full-suite governed baseline **423 passed**.
+
+**Subsequent status (2026-08-30 Item 10 governance — not authorized by CAR-001):** [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) is **Proposed**. [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **DRAFT / NOT APPROVED**. Office authentication **implementation NOT STARTED**. Shared API **deferred**. BUILD remains blocked until Item 10 is implemented. CAR-001 still does **not** authorize implementation. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
 ## What CAR-001 was
 

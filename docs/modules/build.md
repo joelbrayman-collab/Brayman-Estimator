@@ -37,7 +37,7 @@ Daily execution, crews, labour capture, subcontractor activity, material use, de
 
 ## Dependencies
 
-- Authentication / actor identity before field capture ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md))
+- Authentication / actor identity before field capture ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md); [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Proposed**; [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **DRAFT / NOT APPROVED** — **not implemented**)
 - Feature Gate + approved Cursor prompt before any code
 
 ## Related

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Living architecture map |
-| Updated | 2026-08-30 |
+| Updated | 2026-08-31 |
 | Evidence baseline | `main` @ CAR-001 adoption (see git); Plan Intelligence Current claims evidenced in `app/plan_intelligence/` and migration `a7c8e9f0b1d2` |
 
 **Cite code paths for implemented claims.** Distinctions below are mandatory. CalibAi lifecycle architecture: [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md).
@@ -175,5 +175,5 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 - Living supplier evidence / Winchester POC / bulk supplier onboarding (FG-014 identity is closed; ADR-008 remains Proposed)
 - Permit branding from Brand Profile; national Permit Rules expansion (FG-015/FG-016 POC is closed)
 - Change Order governed document family / client email / field UX — [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (do not create a second Change Order entity)
-- Authentication / actor identity + shared API (sequence item 10 — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** office slice; shared API **deferred**)
-- BUILD field capture; field web (require Item 10 **implementation**); MONITOR implementation; LEARN / ML
+- Authentication / actor identity + shared API (sequence item 10 **PARTIALLY COMPLETE** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** office slice; Shared API **NOT STARTED / DEFERRED / NOT AUTHORIZED**)
+- BUILD field capture; field web (**BLOCKED** until item 10 including Shared API is complete); MONITOR implementation; LEARN / ML

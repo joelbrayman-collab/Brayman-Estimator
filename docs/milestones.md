@@ -30,6 +30,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-08-31 — Post-FG-018 current-state documentation reconciliation
+
+| Field | Content |
+|-------|---------|
+| ID | Post-FG-018 docs reconciliation |
+| Status | Docs-only. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) remains **CLOSED / OPERATIONAL FOR UAT**; [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) remains **Accepted**. Roadmap item 10 recorded **PARTIALLY COMPLETE**. |
+| Branch | `main` |
+| Objective | Repair current-state documentation lag identified by the post-FG-018 read-only roadmap reconciliation. |
+| Deliverables | Current-state / roadmap / ADR index / CAR-001 subsequent status / ADR-041 current-status / handoff / project-state-report / Feature Gate index clarifications. No `app/` / `tests/` / `migrations/`. No FG-019. No ADR created or accepted. |
+| Validation | `git diff --check`. Docs-only; product tests not rerun. |
+| Next | **STOP.** No Feature Gate authorized. Do not start Shared API reconnaissance from this pass. |
+
 ### 2026-08-31 — FG-018 live migration + office UAT close
 
 | Field | Content |

@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-08-31 — Post-FG-018 current-state documentation reconciliation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-08-31 |
+| Branch | `main` @ `2bc8f5620983441de6772c0ac94cd5d6718c0efe` (starting HEAD) |
+| Objective | Bounded docs-only repair of current-state drift after FG-018 close. Record item 10 as PARTIALLY COMPLETE. Do not create FG-019 or start Shared API. |
+| Business decision | Office authentication remains **CLOSED / OPERATIONAL FOR UAT**. Shared API remains **NOT STARTED / NOT AUTHORIZED**. BUILD remains **BLOCKED**. Next authorized action remains **STOP**. |
+| Architectural decision | None. ADR-041 Decision unchanged. ADR-022 sequence unchanged. ADR-008 / ADR-010 remain Proposed. |
+| Prompt template used | Post-FG-018 documentation reconciliation prompt (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — POST-FG-018 DOCUMENTATION RECONCILIATION. Docs only. Do not create FG-019. Do not start Shared API reconnaissance. |
+| Files expected to change | Governing CURRENT-state docs listed in the prompt (roadmap, ADR index, CAR-001 subsequent status, ADR-041 current status, current-state, session-handoff, project-state-report, Feature Gate index as needed, chat-workflow-log, milestones). |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live database; Feature Gate creation; ADR creation/acceptance. |
+| Implementation result | Docs-only. No product code. No tests changed. No database mutation. No migration. No FG-019. No ADR created or accepted. |
+| Tests | Not rerun (docs-only; governance does not require product tests for this pass). |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append-only) |
+| Constitutional issue raised | None |
+| Unresolved issues | Whether Joel authorizes later Shared API architecture reconnaissance. |
+| Next approved step | **STOP.** Do not start Shared API reconnaissance from this prompt. |
+| Next approved prompt | None. Fresh-chat prompt remains [session-handoff.md](session-handoff.md) §22. |
+| Commit hash | (this commit) |
+
 ### 2026-08-31 — FG-018 live migration / bootstrap / office UAT close
 
 | Field | Content |

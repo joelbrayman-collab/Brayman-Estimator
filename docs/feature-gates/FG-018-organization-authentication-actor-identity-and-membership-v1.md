@@ -24,7 +24,7 @@
 | Implementation | **IMPLEMENTED** and **live-migrated**. First ORG-001 user bootstrapped via CLI. Office UAT **PASSED** on port **5011**. |
 | Schema / Alembic | Revision **`b0c1d2e3f4a5`** applied live (`a9b0c1d2e3f4` → `b0c1d2e3f4a5`). Live current = head **`b0c1d2e3f4a5`**. One graph head. |
 | Shared API | **OUT OF THIS GATE** |
-| BUILD / Field Web | **BLOCKED** until a later shared-API gate is separately governed if ADR-022 still requires it before field |
+| BUILD / Field Web | **BLOCKED.** ADR-022 still requires a separately governed Shared API step before field implementation. Do not create that gate from a documentation pass. |
 
 This gate is **CLOSED / OPERATIONAL FOR UAT**. It is **not** production-security certification, SaaS readiness, or BUILD readiness beyond the authenticated office prerequisite.
 
@@ -544,4 +544,4 @@ FG-018 does **not** implement `/api/`, `/api/v1/me`, tokens, field endpoints, or
 
 ## Documentation consistency note
 
-Roadmap item 10 office-auth is **CLOSED / OPERATIONAL FOR UAT**. Shared API remains **deferred**. BUILD remains **blocked** until a later shared-API gate is separately governed if ADR-022 still requires it.
+Roadmap item 10 office-auth is **CLOSED / OPERATIONAL FOR UAT**. Item 10 as a whole is **PARTIALLY COMPLETE**. Shared API remains **deferred / not implemented**. BUILD remains **BLOCKED** until a later shared-API gate is separately governed ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md)). Do not create FG-019 from a documentation pass.

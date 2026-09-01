@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-08-31 |
+| Updated | 2026-09-01 |
 
 ## Purpose
 
@@ -41,6 +41,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-01 — Native Signed Change Order counsel-review specification
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-01 |
+| Branch | `main` @ starting HEAD `4538e6f3e8a6bdbe4cb01e2555ebf5a13ce41a86` |
+| Objective | Prepare a docs-only Ontario counsel-review specification of the proposed CalibAi Native electronic-signing **process** for Change Orders. |
+| Business decision | Brayman internally approved ≠ customer signed. Native signing overlays the existing Change Order. No unsigned-work bypass. Counsel reviews the process; this draft is not legal approval. |
+| Architectural decision | None new. Recon remains **COMPLETE**; recommendation **NATIVE V1**. Counsel spec **PREPARED**. Implementation **NOT AUTHORIZED**. No Feature Gate. No ADR created or accepted. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — NATIVE SIGNED CHANGE ORDERS — COUNSEL-REVIEW SPECIFICATION — GOVERNANCE ONLY. Docs only. Do not implement signing, mail, DocuSign, Adobe, or CO lifecycle. Do not create a Feature Gate or ADR. |
+| Files expected to change | Counsel-facing spec under `docs/legal/` plus minimum governance indexes. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live database; FG-020 close; Field Web; Contract implementation. |
+| Implementation result | Docs only. Counsel spec at `docs/legal/native-signing-process-counsel-review.md`. No product/database/Alembic change. |
+| Tests | Not run (documentation-only; no product code). |
+| Project-state-report update | Yes (decisions pending; next action) |
+| Milestone entry update | Yes (counsel spec recorded) |
+| Constitutional issue raised | None. Consent wording is not marked APPROVED. |
+| Unresolved issues | Ontario counsel answers to the 15-question decision list; then a Feature Gate only if Joel authorizes after counsel. CO document snapshot still a prerequisite pin (not implemented). |
+| Next approved step | Give counsel the spec. Do not implement Native Signing. Do not start Contract. FG-020 live migration remains a separate prompt. |
+| Next approved prompt | None from this pass. |
+| Commit hash | (this commit; verify `git rev-parse HEAD`) |
 
 ### 2026-08-31 — Contract / e-signature / signed Change Order reconnaissance (native signing delta)
 

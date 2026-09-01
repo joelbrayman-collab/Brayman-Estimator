@@ -2,13 +2,14 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED.** Recommendation **NATIVE V1**. Implementation **NOT AUTHORIZED**. Ontario counsel review of the signing **PROCESS** is required before any Native Signing Feature Gate. No provider selected as product. No Feature Gate. No ADR. No product code. |
-| Date | 2026-08-31 |
+| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED.** Recommendation **NATIVE V1**. Counsel process-review specification **PREPARED**. Implementation **NOT AUTHORIZED**. No Native Signing Feature Gate. No ADR. No product code. |
+| Date | 2026-08-31 (recon); **2026-09-01** (counsel specification prepared) |
 | Product | The Estimator / CalibAi |
-| Canonical record | This document |
+| Canonical architecture | This document |
+| Counsel-facing process spec | [native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — **DRAFT FOR ONTARIO COUNSEL REVIEW / NOT LEGAL APPROVAL / NOT IMPLEMENTED** |
 | Related | [change-order-document-family.md](change-order-document-family.md) · [project-document-package.md](project-document-package.md) · [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [ADR-004](../adr/ADR-004-proposal-acceptance-workflow.md) **Proposed** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [modules/projects.md](../modules/projects.md) · [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted** |
 
-This reconnaissance is **complete** as architecture. It does **not** authorize implementation, a Feature Gate, an ADR, a migration, email, a signing UI, DocuSign, Adobe Acrobat Sign, or Ontario contract/warranty template authoring.
+This reconnaissance is **complete** as architecture. The counsel-facing signing-process specification is **prepared**. Neither document authorizes implementation, a Feature Gate, an ADR, a migration, email, a signing UI, DocuSign, Adobe Acrobat Sign, or Ontario contract/warranty template authoring.
 
 Commercial-execution architecture may proceed **in parallel** with BUILD governance. Parallel does **not** mean implementation is authorized. Field Web remains separately governed.
 
@@ -427,16 +428,9 @@ Do **not** claim native signing is legally sufficient for every Brayman document
 
 This is review of the **signing process**, not approval of contract/warranty **templates**.
 
-Present to Ontario counsel:
+**Subsequent status (2026-09-01):** Counsel-facing specification **PREPARED** at [native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md). **DRAFT FOR ONTARIO COUNSEL REVIEW.** **NOT LEGAL APPROVAL.** **NOT IMPLEMENTED.** Change Orders are the intended first use case. Contract signing remains later and behind the Legal Content Gate.
 
-1. Signing ceremony (15 steps above)
-2. Consent / intention language (to be drafted for counsel; AI must not mark it APPROVED)
-3. Signer-identification method (email + unique link + typed name; no IDV in V1)
-4. Audit fields (Signing Record table)
-5. Signed-document format (pre-sign PDF + completed PDF + hashes; no PAdES unless counsel requires)
-6. Change Order signature workflow overlay
-7. Contract signature workflow (same service; templates still Legal Content Gate)
-8. Any **exceptions** requiring wet-ink or a TSP (To be verified)
+Give counsel that document. Do not treat it as approval.
 
 Counsel should consider, without this document pretending to be legal advice:
 
@@ -495,6 +489,7 @@ Preserve DocuSign / Adobe as **future adapters**.
 
 - [change-order-document-family.md](change-order-document-family.md)
 - [project-document-package.md](project-document-package.md)
+- [legal/native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — **DRAFT FOR ONTARIO COUNSEL REVIEW / NOT LEGAL APPROVAL / NOT IMPLEMENTED**
 - [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md)
 - [organization-brand-profile.md](organization-brand-profile.md)
 - [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md)

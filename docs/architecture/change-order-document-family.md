@@ -196,6 +196,7 @@ Brand-at-issue preservation is defined on [organization-brand-profile.md](organi
 - [ADR-020](../adr/ADR-020-build-module-boundary.md)
 - [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md)
 - [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) — approved Change Order deltas are part of the composed MONITOR baseline; MONITOR is **not implemented**
-- [contract-esignature-and-signed-change-order.md](contract-esignature-and-signed-change-order.md) — **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED.** Recommendation **NATIVE V1**. Implementation **NOT AUTHORIZED**. This pin still does **not** implement email or electronic signatures.
+- [contract-esignature-and-signed-change-order.md](contract-esignature-and-signed-change-order.md) — **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED.** Recommendation **NATIVE V1**. Counsel spec **PREPARED**. Implementation **NOT AUTHORIZED**. This pin still does **not** implement email or electronic signatures.
+- [legal/native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — **DRAFT FOR ONTARIO COUNSEL REVIEW / NOT LEGAL APPROVAL / NOT IMPLEMENTED**
 
-**Subsequent status (2026-08-31):** Contract / e-signature reconnaissance recorded. Do **not** treat that recon as Change Order document-family implementation. Existing Change Order record remains authoritative.
+**Subsequent status (2026-09-01):** Counsel process-review specification prepared. Do **not** treat that spec as Change Order document-family implementation. Existing Change Order record remains authoritative. Native signing overlays the existing Change Order; it does not replace Project Controls.

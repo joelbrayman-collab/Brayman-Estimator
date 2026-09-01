@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-08-30 |
+| Updated | 2026-09-01 |
 
 ## Highest-order authority
 
@@ -146,7 +146,8 @@ Recorded 2026-08-25 — **documentation only; not implemented**:
 | Pricing policy ($65/hr; 15% gross margin) | [pricing-policy.md](pricing-policy.md) |
 | QuickBooks pipeline (no API) | [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md) |
 | Ontario contract + warranty / Legal Content Gate | [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md) |
-| Contract / e-signature / signed Change Order recon | [architecture/contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md) — **COMPLETE / NOT IMPLEMENTED**; recommendation **NATIVE V1**; counsel process review before any Feature Gate |
+| Contract / e-signature / signed Change Order recon | [architecture/contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md) — **COMPLETE / NOT IMPLEMENTED**; recommendation **NATIVE V1**; counsel spec **PREPARED**; implementation **NOT AUTHORIZED**; no Feature Gate |
+| Native signing process — counsel review | [legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md) — **DRAFT FOR ONTARIO COUNSEL REVIEW / NOT LEGAL APPROVAL / NOT IMPLEMENTED**; Change Orders first; Contract later behind Legal Content Gate |
 | UAT reference case (3415 Roger Stevens Road) | [testing/uat-reference-cases.md](testing/uat-reference-cases.md) |
 
 **CAR-001** (2026-08-28): CalibAi architectural direction — [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md). Does not authorize product code. M009 is coded Sheets (implemented later under FG-004; not by CAR-001).

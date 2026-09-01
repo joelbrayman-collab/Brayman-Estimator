@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current** (project records + change orders package). [FG-011](../feature-gates/FG-011-project-hub-ux.md) Project Hub UX **CLOSED / OPERATIONAL FOR UAT** |
-| Updated | 2026-08-30 |
+| Updated | 2026-09-01 |
 | Code | `app/models/project.py`, `app/routes/projects.py`, `app/services/project_hub.py`; Project Controls: `app/project_controls/` |
 | Feature Gate | [FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** (Hub PLAN Permit Report state + `/projects/<id>/permit-report`). |
 
@@ -59,7 +59,7 @@ Platform-shared (not org-owned): `jurisdiction_definitions`, `jurisdiction_alias
 - Project location / jurisdiction resolver / preliminary Permit Profile — **CLOSED / OPERATIONAL FOR UAT** ([FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md)). Preserve `Project.address`.
 - Project Permit Intelligence Pass 2 / Permit & Approvals Report analysis — **CLOSED / OPERATIONAL FOR UAT** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md); [permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md); ADR-037/038/039).
 - Change Order governed document family / preview-generate-email / field UX — **FUTURE / NOT IMPLEMENTED** pin ([change-order-document-family.md](../architecture/change-order-document-family.md)); not a Feature Gate; do not create a second Change Order entity
-- Contract / e-signature / signed Change Order — **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** ([contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md)); recommendation **NATIVE V1**; implementation **NOT AUTHORIZED**
+- Contract / e-signature / signed Change Order — **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** ([contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md)); recommendation **NATIVE V1**; counsel spec **PREPARED** ([native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md)); implementation **NOT AUTHORIZED**; no Feature Gate
 
 ## Dependencies
 

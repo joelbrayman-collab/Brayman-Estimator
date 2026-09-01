@@ -25,7 +25,7 @@ Roadmap and vision include formal proposal acceptance and eventual project/budge
 4. **Project creation from accepted proposal** is a **separate later milestone** owned at the boundary of Proposals (source snapshot) and Projects (creates project/budget records). Proposals must not own the project budget ledger.
 5. Supersession: accepting a new proposal for the same job should mark prior accepted proposals `Superseded` per product rules (details in Milestone 004 Feature Gate).
 
-**Subsequent status (2026-08-31):** Contract / Change Order e-signature reconnaissance is **complete** at [contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md). Recommendation **NATIVE V1**. Implementation **NOT AUTHORIZED**. This ADR remains **Proposed**. That recon does **not** implement Proposal e-signature and does **not** expand this ADR’s Decision.
+**Subsequent status (2026-09-01):** Contract / Change Order e-signature reconnaissance is **complete** at [contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md). Recommendation **NATIVE V1**. Counsel spec **PREPARED** ([native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md)). Implementation **NOT AUTHORIZED**. No signing Feature Gate. No signing ADR created or accepted. This ADR remains **Proposed**. That recon and counsel spec do **not** implement Proposal e-signature and do **not** expand this ADR’s Decision.
 
 ## Alternatives Considered
 

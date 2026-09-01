@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-08-31 |
+| Updated | 2026-09-01 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -29,6 +29,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 4. “Completed pending baseline commit” means deliverables exist in the working tree awaiting Joel-approved commit.
 
 ---
+
+### 2026-09-01 — Native Signed Change Order counsel-review specification
+
+| Field | Content |
+|-------|---------|
+| ID | Governance specification (not a Feature Gate) |
+| Status | **RECORDED / NOT IMPLEMENTED.** Counsel process-review specification **PREPARED**. Native Signing recon remains **COMPLETE**. Recommendation **NATIVE V1**. Implementation **NOT AUTHORIZED**. No Feature Gate. No ADR. |
+| Branch | `main` |
+| Base commit | `4538e6f3e8a6bdbe4cb01e2555ebf5a13ce41a86` |
+| Objective | Give Ontario construction counsel a concise review specification of the proposed Native electronic-signing process for Brayman Change Orders. |
+| Deliverables | [legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md) |
+| Validation | Docs only. No pytest. |
+| Architectural findings | None new. Overlay existing Change Order. BRAYMAN APPROVED ≠ CUSTOMER SIGNED. SHA-256 + immutable Signing Record pending counsel vs PAdES. |
+| Open decisions | Counsel YES/NO/MODIFY list in the spec. Do not implement until Joel authorizes a Feature Gate after counsel. |
+| Next milestone | Give counsel the spec. No signing Feature Gate from this pass. FG-020 remains **IMPLEMENTED / LIVE MIGRATION PENDING**. |
+| Commit | this commit; verify `git rev-parse HEAD` |
+| Date | 2026-09-01 |
 
 ### 2026-08-31 — Contract / e-signature / signed Change Order reconnaissance (native signing delta)
 

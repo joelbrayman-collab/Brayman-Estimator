@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-08-30 |
+| Updated | 2026-09-01 |
 | Implementation | Template registers and approval workflow **not implemented** |
 
 ## Purpose
@@ -76,10 +76,11 @@ Generation alone does not mean final or sent.
 1. Template storage location and format (repository vs controlled document store)
 2. Approval authority for legal template versions
 3. Ontario-specific statutory clause set and update process
-4. E-signature provider boundary (Future). **Subsequent status (2026-08-31):** Native Signing reconnaissance is **complete** ([contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md)). Recommendation **NATIVE V1**. Implementation **NOT AUTHORIZED**. Signing-process counsel review is separate from this Legal Content Gate. Native signing must never bypass approved Contract/Warranty templates or human approval before send.
+4. E-signature provider boundary (Future). **Subsequent status (2026-09-01):** Native Signing reconnaissance is **complete** ([contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md)). Recommendation **NATIVE V1**. Counsel process-review specification **PREPARED** ([native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md)) — **DRAFT FOR ONTARIO COUNSEL REVIEW / NOT LEGAL APPROVAL**. Implementation **NOT AUTHORIZED**. No signing Feature Gate. Change Orders are the intended first use case. Contract signing remains later and behind this Legal Content Gate. Native signing must never bypass approved Contract/Warranty templates or human approval before send.
 
 ## Related
 
+- [legal/native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — signing **process** draft for counsel; **not** template approval
 - [architecture/project-document-package.md](../architecture/project-document-package.md)
 - [architecture/permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) — **FUTURE / NOT IMPLEMENTED**; not this Legal Content Gate
 - [platform-governance.md](../platform-governance.md)

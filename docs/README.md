@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative documentation map |
-| Updated | 2026-08-31 |
+| Updated | 2026-09-01 |
 | Product | The Estimator (Brayman Estimator) |
 
 ## Purpose
@@ -70,7 +70,8 @@ Also read [`platform-governance.md`](platform-governance.md), [`governance/conti
 | [modules/permit-intelligence.md](modules/permit-intelligence.md) | Permit Intelligence capability ownership | Pass 1 **Current (FG-015)** **CLOSED / OPERATIONAL FOR UAT**; Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** |
 | [architecture/organization-brand-profile.md](architecture/organization-brand-profile.md) | Organization Brand Profile, logo, brand snapshot | **CLOSED / OPERATIONAL FOR UAT** — [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) |
 | [architecture/change-order-document-family.md](architecture/change-order-document-family.md) | Governed Change Order document family (snapshot / preview / email) | **Future / NOT IMPLEMENTED** — requirement pin only; existing Change Order record remains authoritative; not a Feature Gate |
-| [architecture/contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md) | Contract, e-signature, and signed Change Orders | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** — recommendation **NATIVE V1**; implementation **NOT AUTHORIZED**; Ontario counsel process review before any Feature Gate |
+| [architecture/contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md) | Contract, e-signature, and signed Change Orders | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** — recommendation **NATIVE V1**; counsel spec **PREPARED**; implementation **NOT AUTHORIZED**; no Feature Gate |
+| [legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md) | Native electronic signing Change Order process — counsel review specification | **DRAFT FOR ONTARIO COUNSEL REVIEW / NOT LEGAL APPROVAL / NOT IMPLEMENTED** |
 | [architecture/build-media-storage-lifecycle.md](architecture/build-media-storage-lifecycle.md) | BUILD Original Source vs Compatible Rendition vs Closed Project Archive | **Architecture pin** — HEIC/HEIF JPEG renditions **implemented**; Closeout **not implemented**; FG-020 Original Source custody exists |
 | [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md) | QuickBooks export pipeline boundary | **Future** — not implemented |
 | [architecture/M006-document-intelligence-readiness-report.md](architecture/M006-document-intelligence-readiness-report.md) | Milestone 006 readiness report | Historical / operational |
@@ -107,7 +108,7 @@ Also read [`platform-governance.md`](platform-governance.md), [`governance/conti
 | [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md) | Continuity, anti-drift, preflight, rollover, protected assets | **Governing** |
 | [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) | Review Turnover procedure, delta ledger, fresh chat startup | **Governing** |
 | [pricing-policy.md](pricing-policy.md) | Labour rate, gross margin, placeholder rules | **Governing** (product policy) |
-| [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md) | Ontario contract + warranty template governance; Legal Content Gate | **Governing** |
+| [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md) | Ontario contract + warranty template governance; Legal Content Gate | **Governing** — templates remain separate from the signing-process counsel draft |
 | [development-workflow.md](development-workflow.md) | Joel → ChatGPT → Cursor lifecycle | **Governing** for AI sessions |
 | [documentation-standards.md](documentation-standards.md) | How docs are written and updated | Governing for docs |
 | [testing-standards.md](testing-standards.md) | Test expectations | Governing for QA |

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Intended / governing product architecture** (not fully implemented) |
-| Updated | 2026-08-30 |
+| Updated | 2026-09-01 |
 | Implementation | **FG-012** authorizes outputs **1 and 2 only**. **CLOSED / OPERATIONAL FOR UAT** (2026-08-30). Outputs 3 and 4 remain Future. |
 
 ## Purpose
@@ -155,7 +155,7 @@ When a governed field changes in the authoritative record (scope, price, allowan
 | Permit & Approvals Report | **CLOSED / OPERATIONAL FOR UAT** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md); [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) — [permit-and-approvals-report.md](permit-and-approvals-report.md). Bounded Ontario / Ottawa coach-house POC. Not a national library. |
 | Organization Brand Profile | **CLOSED / OPERATIONAL FOR UAT** — [organization-brand-profile.md](organization-brand-profile.md); [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) (Proposal consumer live; CO/Permit consumers future) |
 | Change Order document family | **FUTURE / NOT IMPLEMENTED** pin — [change-order-document-family.md](change-order-document-family.md). Existing Change Order record remains authoritative. Project Controls / Projects. |
-| Contract / e-signature / signed Change Order | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** — [contract-esignature-and-signed-change-order.md](contract-esignature-and-signed-change-order.md). Recommendation **NATIVE V1**. Implementation **NOT AUTHORIZED**. |
+| Contract / e-signature / signed Change Order | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** — [contract-esignature-and-signed-change-order.md](contract-esignature-and-signed-change-order.md). Recommendation **NATIVE V1**. Counsel spec **PREPARED** ([native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md)). Implementation **NOT AUTHORIZED**. |
 
 ## Related
 
@@ -167,5 +167,6 @@ When a governed field changes in the authoritative record (scope, price, allowan
 - [permit-and-approvals-report.md](permit-and-approvals-report.md) — **FUTURE / NOT IMPLEMENTED** additional project document (advisory preflight; not outputs 1–4)
 - [organization-brand-profile.md](organization-brand-profile.md) — **CLOSED / OPERATIONAL FOR UAT** Organization Brand Profile
 - [change-order-document-family.md](change-order-document-family.md) — **FUTURE / NOT IMPLEMENTED** Change Order transaction-document family (not a numbered core output)
-- [contract-esignature-and-signed-change-order.md](contract-esignature-and-signed-change-order.md) — **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED**; recommendation **NATIVE V1**; implementation **NOT AUTHORIZED**
+- [contract-esignature-and-signed-change-order.md](contract-esignature-and-signed-change-order.md) — **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED**; recommendation **NATIVE V1**; counsel spec **PREPARED**; implementation **NOT AUTHORIZED**
+- [legal/native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — **DRAFT FOR ONTARIO COUNSEL REVIEW / NOT LEGAL APPROVAL / NOT IMPLEMENTED**
 - [platform-vision.md](../platform-vision.md)

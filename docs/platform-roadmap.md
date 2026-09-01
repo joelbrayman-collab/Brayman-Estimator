@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Planning |
-| Updated | 2026-08-31 |
+| Updated | 2026-09-01 |
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
@@ -33,8 +33,8 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 | Layer | Position |
 |-------|----------|
-| **CURRENT** | FG-008 through FG-019 **CLOSED / OPERATIONAL FOR UAT** as applicable. FG-020 **IMPLEMENTED / LIVE MIGRATION PENDING**. Image-only Compatible Renditions **implemented**. Native Signing architecture reconnaissance **COMPLETE / NOT IMPLEMENTED** (recommendation **NATIVE V1**; implementation **NOT AUTHORIZED**). Live current **`b0c1d2e3f4a5`**. Repository head **`c1d2e3f4a5b6`**. Full suite **538 passed**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. |
-| **NEXT AUTHORIZED ACTION** | **STOP** signing implementation. FG-020: separate live-migration / office UAT prompt (`b0c1d2e3f4a5` → `c1d2e3f4a5b6`). Commercial-execution: Ontario counsel review of the signing PROCESS before a Native Signing Feature Gate. Do **not** mark FG-020 closed. Do **not** implement Project Closeout. Do **not** start Field Web. |
+| **CURRENT** | FG-008 through FG-019 **CLOSED / OPERATIONAL FOR UAT** as applicable. FG-020 **IMPLEMENTED / LIVE MIGRATION PENDING**. Image-only Compatible Renditions **implemented**. Native Signing architecture reconnaissance **COMPLETE / NOT IMPLEMENTED** (recommendation **NATIVE V1**; counsel spec **PREPARED**; implementation **NOT AUTHORIZED**; no Feature Gate). Live current **`b0c1d2e3f4a5`**. Repository head **`c1d2e3f4a5b6`**. Full suite **538 passed**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. |
+| **NEXT AUTHORIZED ACTION** | Give Ontario counsel [legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md). Do **not** implement signing. Do **not** create a Feature Gate. FG-020: separate live-migration / office UAT prompt (`b0c1d2e3f4a5` → `c1d2e3f4a5b6`). Do **not** mark FG-020 closed. Do **not** implement Project Closeout. Do **not** start Field Web. Do **not** start Contract implementation. |
 | **ROADMAP ITEM 10** | **COMPLETE.** Office Authentication / Actor Identity / Membership: **CLOSED / OPERATIONAL FOR UAT** ([FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md)). Shared API foundation: **CLOSED / OPERATIONAL FOR UAT** ([FG-019](feature-gates/FG-019-shared-api-foundation-v1.md)). |
 | **ROADMAP DIRECTION** | Item 11 is **IMPLEMENTED / LIVE MIGRATION PENDING**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Item 12 **BLOCKED**. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.** |
 | **SEPARATELY GOVERNED FUTURE PROGRAMS** | Project Closeout / archive-and-purge; Field Web; Phase D; supplier integration; Change Order document family; Permit branding / national expansion; QuickBooks; Ontario Contract / Warranty; MONITOR; LEARN; real external AI; other repository-recorded future work. Not reordered here. Not authorized by this increment. |
@@ -200,7 +200,7 @@ These remain **not started** unless a later Feature Gate says otherwise. FG-015 
 - **Four-output document package** — outputs 1–2: [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**; outputs 3–4 (QuickBooks export, Ontario contract + warranty) remain Future — [architecture/project-document-package.md](architecture/project-document-package.md)
 - Shared API foundation — **CLOSED / OPERATIONAL FOR UAT** ([FG-019](feature-gates/FG-019-shared-api-foundation-v1.md); [ADR-022](adr/ADR-022-field-client-and-shared-api.md)). GET-only `/api/v1`. No tokens. Office authentication remains [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md).
 - BUILD Field Observation foundation — **IMPLEMENTED / LIVE MIGRATION PENDING** ([FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md)); image-only Compatible Renditions **implemented**; Field Web (sequence item 12) **BLOCKED**
-- Contract / e-signature / signed Change Order — **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** ([architecture/contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md)); recommendation **NATIVE V1**; implementation **NOT AUTHORIZED**; counsel process review required before a Feature Gate
+- Contract / e-signature / signed Change Order — **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** ([architecture/contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md)); recommendation **NATIVE V1**; counsel spec **PREPARED** ([legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md)); implementation **NOT AUTHORIZED**; no Feature Gate; Change Orders first; Contract later behind Legal Content Gate
 - MONITOR implementation; LEARN / ML recommendations
 - Scheduling, daily reports, timesheets
 - Purchasing / POs (beyond prep)

@@ -1,16 +1,18 @@
 ---
-description: Put copyable chat output in fenced code blocks so Cursor shows a copy control
+description: Put copyable chat output in a fenced block at the END of the reply so Cursor shows a copy control there
 alwaysApply: true
 ---
 
 # Copyable chat output
 
-Cursor shows a copy control on fenced code blocks, not on ordinary prose.
+Cursor shows a copy control on fenced code blocks, not on ordinary prose. There is no separate copy-icon API.
 
-When the reply contains anything Joel may need to copy — commands, emails, paths, HEAD SHAs, Alembic revisions, report field blocks, paste-back templates — put that content in a fenced code block.
+When the reply contains anything Joel may need to copy — paste-ready Cursor prompts, `prompt?` replies, emails, commands, paths, HEAD SHAs, Alembic revisions, report field blocks — put that content in a fenced code block.
 
-Do this even when the same facts also appear in prose.
+**Put the primary copyable fence last.** Brief context may go above. Do not put explanation, options, or follow-up questions after the fence. That is what makes the copy control appear at the end of the message (same pattern as AiRIA).
 
-Do not leave copyable commands or report blocks in prose only.
+If several things are copyable, the fence Joel is meant to copy now (usually the full prompt) is the last block in the reply.
+
+Do this even when the same facts also appear in prose. Do not leave copyable commands or prompt text in prose only.
 
 Keep secrets, passwords, and SECRET_KEY values out of chat, fenced or not.

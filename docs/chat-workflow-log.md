@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-01 — FG-020 live migration / office UAT close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-01 |
+| Branch | `main` @ starting HEAD `473b04eff8766f917e46abf793cc699b179a4fb6` |
+| Objective | Close FG-020 after live Alembic verify and office UAT of Field Observations + HEIC Compatible Renditions. |
+| Business decision | BUILD Field Capture V1 is operational for UAT. Item 11 COMPLETE. Item 12 eligible for separate governance, not authorized. Native Signing remains waiting for counsel. |
+| Architectural decision | None new. Overlay existing Change Order. Original Source + regenerable JPEG rendition remains the active-storage model. Closeout not started. |
+| Prompt template used | Feature increment / live-migrate close (this chat). |
+| Approved Cursor prompt summary | BRAYMAN — RESUME FG-020 LIVE MIGRATION / OFFICE UAT. BUILD Field Capture V1 + Media Compatibility. Do not implement Native Signing or Field Web. |
+| Files expected to change | FG-020 close docs and indexes only. |
+| Files prohibited from changing | Product code; tests; migrations; counsel spec; Native Signing Feature Gate. |
+| Implementation result | Live current already `c1d2e3f4a5b6` (verified; upgrade not re-run). Office UAT port **5013**, project **12**. Dedicated **44** / focused **128** / full **538**. Gate **CLOSED / OPERATIONAL FOR UAT**. |
+| Tests | Dedicated 44 passed; focused 128 passed; full suite 538 passed. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Cursor browser tab could not be created this session; usability taken from authenticated office HTML. Placeholder office user password was CLI-reset for this pass. Field Web not started. Native Signing waiting for counsel. |
+| Next approved step | **STOP.** Give counsel the Native Signing spec. Do not start Field Web. |
+| Next approved prompt | None from this pass. |
+| Commit hash | (this commit; verify `git rev-parse HEAD`) |
+
 ### 2026-09-01 — Native Signed Change Order counsel-review specification
 
 | Field | Content |

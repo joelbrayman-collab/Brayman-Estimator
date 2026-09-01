@@ -2,10 +2,10 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Partial Current** — Field Capture V1 **IMPLEMENTED / LIVE MIGRATION PENDING**. Change Orders remain Project Controls. Field Web **not implemented**. |
-| Updated | 2026-08-31 |
+| Status | **Partial Current** — Field Capture V1 **CLOSED / OPERATIONAL FOR UAT**. Change Orders remain Project Controls. Field Web **not implemented**. |
+| Updated | 2026-09-01 |
 | Code | `app/models/build.py`, `app/services/build.py`, `app/services/build_storage.py`, `app/services/build_rendition.py`, `app/routes/build.py`, `app/cli/build.py`, `app/templates/build/`; `/api/v1` BUILD adapter in `app/routes/api_v1.py` |
-| ADR | [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** (boundary). [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **IMPLEMENTED / LIVE MIGRATION PENDING**. |
+| ADR | [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** (boundary). [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. |
 | CAR | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 
 ## Purpose
@@ -36,7 +36,7 @@ Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Can
 
 ## Current implementation
 
-**FG-020 Field Observation foundation** — models, additive revision `c1d2e3f4a5b6` (live current still `b0c1d2e3f4a5`), office Project Hub **Field Observations** beside Change Orders, event create/detail/supersession, private original download, bounded `/api/v1` BUILD POSTs, `flask build propose-derived-candidate` for UAT. Confirm/reject does not write Estimate, Proposal, Change Order, Permit, take-off, or MONITOR records.
+**FG-020 Field Observation foundation** — models, additive revision `c1d2e3f4a5b6` (live current = head), office Project Hub **Field Observations** beside Change Orders, event create/detail/supersession, private original download, bounded `/api/v1` BUILD POSTs, `flask build propose-derived-candidate` for UAT. Confirm/reject does not write Estimate, Proposal, Change Order, Permit, take-off, or MONITOR records. Office UAT **PASSED** on port **5013**.
 
 **Compatible Renditions (image-only increment)** — `app/services/build_rendition.py`. HEIC/HEIF Originals get an automatic JPEG at `instance/build_renditions/<org>/<project>/<event>/<original_id>/display.jpg` (`BUILD_RENDITION_ROOT`). Pillow + pillow-heif; JPEG quality 85; max long edge 2048 px; EXIF orientation applied. Failure does not roll back Original Source. JPEG/PNG/GIF stay native. Audio is unchanged. No schema. Event Detail renders the JPEG as **Photo** with an **Original** link. Hub Field Observations list is unchanged (no thumbnail redesign).
 

@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-020 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **BUILD** owns Field Capture Events, Original Payloads, Derived Candidates, and BUILD binary original custody ([ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted**; [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**). **Office / platform** owns the `/api/v1` transport adapter (FG-019). **Projects** owns `projects` and the Project Hub. **Project Controls** owns Change Orders. |
 | Date | 2026-08-31 |
-| Status | **IMPLEMENTED / LIVE MIGRATION PENDING** (2026-08-31). Not **CLOSED / OPERATIONAL FOR UAT**. Live `flask db upgrade` was **not** run. |
+| Status | **CLOSED / OPERATIONAL FOR UAT** (2026-09-01). Live current = head **`c1d2e3f4a5b6`**. Office UAT **PASSED** on port **5013**. Item 12 is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. This is **not** Field Web authorization. |
 | Architecture | [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-023](../adr/ADR-023-field-evidence-provenance.md) **Accepted** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [platform-roadmap.md](../platform-roadmap.md) item 11 · [modules/build.md](../modules/build.md) |
 | Related ADRs | [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 **COMPLETE**. **ADR-042 Accepted.** BUILD architecture reconnaissance 2026-08-31. |
@@ -19,17 +19,17 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / LIVE MIGRATION PENDING** |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT** |
 | ADR-042 | **Accepted** |
 | Implementation reconnaissance | **RECORDED 2026-08-31.** HEIC/HEIF original custody was **corrected at implementation** (see below). |
 | Implementation | **IMPLEMENTED.** Foundation dedicated tests **33 passed** / full suite **527**. Compatible Rendition increment: dedicated **44 passed** (33 + 11); focused Hub+FG-018+FG-019+FG-020 **128 passed**; full suite **538 passed**. |
-| Schema / Alembic | Repository revision **`c1d2e3f4a5b6`**, `down_revision` **`b0c1d2e3f4a5`**. **Live current remains `b0c1d2e3f4a5`.** One repository graph head. Live `flask db upgrade` **NOT RUN**. |
+| Schema / Alembic | Repository revision **`c1d2e3f4a5b6`**, `down_revision` **`b0c1d2e3f4a5`**. **Live current = head `c1d2e3f4a5b6`.** One graph head. |
 | BUILD product code | **IMPLEMENTED** (office HTML, BUILD service, storage, bounded `/api/v1`, UAT CLI). |
-| Field Web (Item 12) | **BLOCKED / NOT AUTHORIZED.** FG-020 implementation still does **not** authorize Field Web. |
+| Field Web (Item 12) | **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED.** FG-020 close does **not** start Field Web. |
 | Compatible Renditions / Media Compatibility service | **IMPLEMENTED** (2026-08-31 image-only increment). HEIC/HEIF → JPEG automatically after Original Source preservation. Regenerable. No schema. See [build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md). |
 | Project Closeout / archive-and-purge | **FUTURE / NOT AUTHORIZED.** FG-020 must not block that future path. Renditions remain independently purgeable. |
 
-Do **not** mark this gate **CLOSED / OPERATIONAL FOR UAT** until a separate live-migration and office UAT prompt.
+Live migration and office UAT closed this gate on **2026-09-01**. Do **not** start Field Web from this close.
 
 ---
 
@@ -399,13 +399,13 @@ FG-020 closure must **not** authorize Field Web code. Item 12 remains a later ga
 
 **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED** (same pattern as Item 10 → 11).
 
-Until FG-020 is **closed after live migration and office UAT**, Item 12 remains **BLOCKED / NOT AUTHORIZED**. FG-020 implementation still does **not** authorize Field Web.
+FG-020 is **CLOSED / OPERATIONAL FOR UAT**. Item 12 is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. FG-020 close still does **not** authorize Field Web.
 
 ---
 
 ## Implementation authorization
 
-This Feature Gate is **IMPLEMENTED / LIVE MIGRATION PENDING**.
+This Feature Gate is **CLOSED / OPERATIONAL FOR UAT**.
 
 File-custody implementation reconnaissance is **recorded** in this document. Bounded product implementation ran from the 2026-08-31 implementation prompt.
 
@@ -771,11 +771,11 @@ Root: `instance/build_originals/<organization_id>/<project_id>/<event_id>/<origi
 
 | Kind | Revision |
 |------|----------|
-| Live `flask db current` | **`b0c1d2e3f4a5`** (unchanged; upgrade **not** run) |
+| Live `flask db current` | **`c1d2e3f4a5b6`** (after 2026-09-01 close) |
 | Repository Alembic head | **`c1d2e3f4a5b6`** |
 | Graph heads | one (`c1d2e3f4a5b6`) |
 
-That split is expected until the separate live-migration prompt.
+**Subsequent status (2026-09-01):** live current = head. See Live migration / office UAT close above.
 
 ### Tests
 
@@ -789,9 +789,36 @@ That split is expected until the separate live-migration prompt.
 
 `tests/test_auth_fg018.py::test_testing_secret_allowed` now unsets env `SECRET_KEY` so the TESTING fallback assertion is isolated (same pattern as the sibling debug-secret test).
 
-### Remaining live-migration / UAT step
+### Live migration / office UAT close (2026-09-01)
 
-A **separate** prompt must run live `flask db upgrade` (`b0c1d2e3f4a5` → `c1d2e3f4a5b6`), then office UAT of Field Observations beside Change Orders. Do **not** mark FG-020 **CLOSED / OPERATIONAL FOR UAT** until that pass. Do **not** start Field Web.
+**Status:** **CLOSED / OPERATIONAL FOR UAT.**
+
+| Item | Evidence |
+|------|----------|
+| Live Alembic | `flask db current` = `flask db heads` = **`c1d2e3f4a5b6`**. One graph head. Upgrade `b0c1d2e3f4a5` → `c1d2e3f4a5b6` was already applied on the live UAT DB before this close pass; this pass **verified** current=head and did **not** re-run upgrade or create a second revision. |
+| Office UAT port | **5013** (existing listener reused; CSRF enabled; debug off; gitignored `.env` `SECRET_KEY`) |
+| UAT project | Project **12** `FG-018 UAT Actor Project` / ORG-001 |
+| Prior UAT events (2026-08-31) | Events **1–8** (text default/explicit, JPEG, HEIC, stub HEIC, supersession 8→7, derived 1 CONFIRMED / 2 REJECTED) |
+| This-pass events (2026-09-01) | **9** text default (later superseded); **10** text explicit; **11** JPEG; **12** HEIC; **14** WAV audio; **15** correction of 9; **16** org-override ignored (still ORG-001); **17** undecodable HEIC stub |
+| Originals (this pass) | JPEG **12** SHA `bc1895be…1355`; HEIC **13** SHA `fb82c4ea…9c3a` (bytes intact; JPEG rendition 64×96; long edge ≤ 2048; no upscale); audio **14**; stub **17** SHA `25d6b18d…4ad5` |
+| Rendition regen | Deleted `display.jpg` for original 13; display GET regenerated JPEG; Original SHA unchanged |
+| Conversion failure | Event 17 / original 17: Original kept; `/display` **404**; Event Detail fallback + Original link; no broken HEIC `<img>` |
+| Supersession | 15 supersedes 9; 9 preserved Current→Superseded; API second successor **409** |
+| Derived | CLI `propose-derived-candidate` candidates **3** CONFIRMED / **4** REJECTED on event 10; actor snapshot Joel Brayman; terminal re-decision API **409** |
+| Cross-module | Estimate / Proposal / Change Order / Brand / Permit fingerprints **unchanged** after BUILD writes |
+| Auth / tenant | Office unauth **302** `/login`; API unauth **401** JSON; cross-org project 4 **404** office and API |
+| BUILD API | Event create/list/detail; Original create/list/detail/content; Derived list/confirm/reject; cookie session; membership org; caller `organization_id` ignored; mutation CSRF required (**400** if missing); no path serialization |
+| FG-019 lock | `POST /api/v1/me` **405**; `POST /api/v1/projects` **405** |
+| Desktop usability | Authenticated Project Hub HTML: Change Orders remain; Field Observations beside them; actor / occurred_at / created_at / original kinds / Current vs Superseded; Add text observation; PLAN / PRICE / CONTRACT intact; HEIC Event Detail labeled Photo and served via JPEG `/display`; Original download; audio `<audio>` no waveform/transcription; no filesystem path leak. Interactive Cursor browser tab could not be created this session; usability is from authenticated rendered office HTML, not HTTP status alone. |
+| Tests | Dedicated **44 passed**; focused **128 passed**; full suite **538 passed** |
+| Item 11 | **COMPLETE** |
+| Item 12 | **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED** |
+| Closeout | **FUTURE / NOT AUTHORIZED.** Active storage remains Original Source + regenerable Compatible Rendition. Renditions remain independently purgeable. |
+| Commercial Execution | Native Signing remains **WAITING FOR COUNSEL / IMPLEMENTATION NOT AUTHORIZED**. No signing Feature Gate. Counsel spec unchanged. |
+
+**Operational note:** CLI `flask auth reset-password` was used on the existing placeholder office user so this pass could authenticate. The original bootstrap password is not in the repository. Reset again if a different office password is required. Do not commit credentials.
+
+Do **not** start Field Web. Do **not** implement Native Signing, mail, Contract, or Project Closeout from this close.
 
 ### Subsequent status (2026-08-31 media storage lifecycle)
 
@@ -812,7 +839,7 @@ Authorized FG-020 increment implemented **before** live migration / office UAT:
 - Field Web **not** started
 - Live `flask db upgrade` **not** run
 
-**Next:** separate live-migration / office UAT prompt (`b0c1d2e3f4a5` → `c1d2e3f4a5b6`). Do **not** mark FG-020 **CLOSED / OPERATIONAL FOR UAT**. Do **not** implement Closeout. Do **not** start Field Web.
+**Subsequent status (2026-09-01):** live-migration / office UAT **closed** this gate. Do **not** implement Closeout. Do **not** start Field Web.
 
 ---
 

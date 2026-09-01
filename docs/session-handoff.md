@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-020 IMPLEMENTED / LIVE MIGRATION PENDING.** Image-only Compatible Renditions (HEIC/HEIF → JPEG) **IMPLEMENTED**. Storage-lifecycle pin recorded. Project Closeout **FUTURE**. Item 10 **COMPLETE**. FG-018/FG-019 **CLOSED / OPERATIONAL FOR UAT**. ADR-041 **Accepted**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Live current `b0c1d2e3f4a5`. Repository head `c1d2e3f4a5b6`. Full suite **538 passed**. Dedicated FG-020 **44 passed** (33 + 11). Focused (Hub + FG-018 + FG-019 + both FG-020) **128 passed**. Item 12 **BLOCKED**. Do **not** mark FG-020 closed. Do **not** implement Closeout. Do **not** start Field Web. ADR-008 / ADR-010 **Proposed**. |
+| Status | **FG-020 CLOSED / OPERATIONAL FOR UAT.** Image-only Compatible Renditions **IMPLEMENTED**. Item 11 **COMPLETE**. Item 12 **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. Live current = head `c1d2e3f4a5b6`. Office UAT port **5013**. Full suite **538 passed**. Dedicated FG-020 **44**. Focused **128**. Native Signing **WAITING FOR COUNSEL / IMPLEMENTATION NOT AUTHORIZED**. Do **not** start Field Web. Do **not** implement Closeout or Native Signing. ADR-008 / ADR-010 **Proposed**. |
 | Updated | 2026-09-01 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -27,8 +27,8 @@ Authority order for the next session: repository governance → current-state re
 - Branch: `main`
 - FG-017 close SHA: `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5` (`docs: close FG-017 live migration and office UAT`). Docs-reconciliation content: `dd30d752190e56ed687e270950df9bf9a06d7a26`. SHA-pin: `07cb46c501d968542dff567943044dc1db870f01`. Live `HEAD` / `origin/main`: verify `git rev-parse HEAD` and `git rev-parse origin/main` (do not treat as a circular this-commit reference). Implementation parent `00ca492e28118d75757e9a9c82384978b5decd92`. FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`.
 - FG-016 implementation commit: `a709829d32d94ab2baf36f142ad0095254ba3d3a` (`feat: implement FG-016 Ontario Ottawa Permit Intelligence POC`)
-- Alembic graph head (repository): **`c1d2e3f4a5b6`**. Live `flask db current`: **`b0c1d2e3f4a5`**. One graph head. FG-020 upgrade **pending**.
-- Chain: … → **`b0c1d2e3f4a5` (FG-018; live current)** → **`c1d2e3f4a5b6` (FG-020; repository head, not applied live)**
+- Alembic graph head (repository): **`c1d2e3f4a5b6`**. Live `flask db current`: **`c1d2e3f4a5b6`**. One graph head.
+- Chain: … → **`b0c1d2e3f4a5` (FG-018)** → **`c1d2e3f4a5b6` (FG-020; live current = head)**
 - Governed full suite: **538 passed**. Dedicated FG-020 **44** (33 field observation + 11 media compatibility). Focused (Hub + FG-018 + FG-019 + both FG-020) **128**. Dedicated FG-019 **34**. Dedicated FG-018 **37**. Pre-increment baseline **527**. Pre-FG-020 baseline **494**.
 - Working tree: clean after post-FG-018 docs reconciliation; live DB unchanged this pass
 - Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**. Runtime permit web lookup **NOT AUTHORIZED**.
@@ -81,7 +81,7 @@ PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project`. No
 - **PLAN:** partial — M005–M010 implemented; **M012 / FG-010 foundation CLOSED / OPERATIONAL FOR UAT**; FG-015 Permit Foundation **CLOSED / OPERATIONAL FOR UAT**; FG-016 Pass 2 **CLOSED / OPERATIONAL FOR UAT**; Phase D mapping **NOT STARTED**
 - **PRICE:** partial — builder + commercial gate; Labour Engine Phase B **CLOSED / OPERATIONAL FOR UAT**; Pricing Engine **CLOSED / OPERATIONAL FOR UAT**; FG-012 internal breakdown + Proposal consistency **CLOSED / OPERATIONAL FOR UAT**
 - **CONTRACT:** partial (proposals are the customer-facing estimate; FG-012 reconciles snapshot totals; Ontario templates future)
-- **BUILD:** partial (change orders operational; Field Observation foundation **IMPLEMENTED / LIVE MIGRATION PENDING**; [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**; [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md); Field Web **not implemented**)
+- **BUILD:** partial (change orders operational; Field Observation foundation **CLOSED / OPERATIONAL FOR UAT**; [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**; [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md); Field Web **not implemented**)
 - **MONITOR:** future implementation (ADR-021 **Accepted**; composed frozen baseline; Project Gross Margin; not coded)
 - **LEARN:** future (ADR-024 boundary accepted; no ML)
 
@@ -91,11 +91,13 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**FG-020 IMPLEMENTED / LIVE MIGRATION PENDING**. Roadmap item 10 is **COMPLETE**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) remains **CLOSED / OPERATIONAL FOR UAT**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) remains **CLOSED / OPERATIONAL FOR UAT**. Live current `b0c1d2e3f4a5`. Repository head `c1d2e3f4a5b6`. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**.
+**FG-020 CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. Item 11 is **COMPLETE**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) remains **CLOSED / OPERATIONAL FOR UAT**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) remains **CLOSED / OPERATIONAL FOR UAT**. Live current = head `c1d2e3f4a5b6`. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**.
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** docs-only **NATIVE SIGNED CHANGE ORDER counsel-review specification PREPARED**. Canonical counsel document: [legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md) — **DRAFT FOR ONTARIO COUNSEL REVIEW / NOT LEGAL APPROVAL / NOT IMPLEMENTED**. Architecture recon remains **COMPLETE** ([architecture/contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md)). Recommendation **NATIVE V1**. Implementation **NOT AUTHORIZED**. No signing Feature Gate. No ADR created or accepted. Change Orders are the intended first use case. Contract signing remains later and behind the Legal Content Gate. Do **not** implement signing, mail, DocuSign, Adobe, or CO lifecycle from this pass. FG-020 remains **IMPLEMENTED / LIVE MIGRATION PENDING**.
+**Last authorized delta:** **FG-020 LIVE MIGRATION / OFFICE UAT CLOSE.** Gate **CLOSED / OPERATIONAL FOR UAT**. Live current = head `c1d2e3f4a5b6`. Office UAT port **5013**, project **12**. Dedicated **44** / focused **128** / full **538**. Item 11 **COMPLETE**. Item 12 **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. Native Signing remains **WAITING FOR COUNSEL / IMPLEMENTATION NOT AUTHORIZED**.
+
+Prior: docs-only **NATIVE SIGNED CHANGE ORDER counsel-review specification PREPARED**. Canonical counsel document: [legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md) — **DRAFT FOR ONTARIO COUNSEL REVIEW / NOT LEGAL APPROVAL / NOT IMPLEMENTED**. Architecture recon remains **COMPLETE**. Recommendation **NATIVE V1**. Implementation **NOT AUTHORIZED**. No signing Feature Gate.
 
 Prior: docs-only **CONTRACT / E-SIGNATURE / SIGNED CHANGE ORDER** architecture reconnaissance **COMPLETE**. Canonical: [architecture/contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md). Recommendation **NATIVE V1**. Implementation **NOT AUTHORIZED**.
 
@@ -155,7 +157,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 
 ## 10. TEST / UAT / MIGRATION STATUS
 
-- Repository graph head `c1d2e3f4a5b6`. Live current `b0c1d2e3f4a5`. FG-020 upgrade **pending**. One graph head.
+- Repository graph head `c1d2e3f4a5b6`. Live current `c1d2e3f4a5b6`. One graph head.
 - Dedicated: FG-020 **44** (33 + 11 media compatibility); FG-019 **34**; FG-018 **37**; FG-017 **22**; FG-016 **37**; FG-015 permit foundation **19**; FG-014 material catalogue **35**; FG-013 upload 27; FG-012 19; Project Hub (post-FG-020 assertions); take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
 - Focused regression (Hub + FG-018 + FG-019 + both FG-020 files): **128 passed**. Full suite: **538 passed**. Pre-increment baseline **527**. Pre-FG-020 baseline **494**.
 - Live API FG-019 UAT **PASSED** on port **5012**. Live office FG-018 UAT **PASSED** on port **5011**. FG-017 UAT remains **PASSED** on port **5010**. Pratt Permit Report UAT remains **PASSED** on port **5009** (project id 9). FG-020 office UAT **not started** (live migration pending).
@@ -193,7 +195,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - **FG-017:** **CLOSED / OPERATIONAL FOR UAT**. **Gate-at-close** current = head `a9b0c1d2e3f4`. Office UAT port **5010**. ADR-040 **Accepted**. Change Order / Permit branding **not** in this gate. Live head today is `b0c1d2e3f4a5`.
 - **FG-018:** **CLOSED / OPERATIONAL FOR UAT**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. Live current `b0c1d2e3f4a5`. Office UAT port **5011**. Shared API **out of this gate**. Not production-security certification.
 - **FG-019:** **CLOSED / OPERATIONAL FOR UAT**. Shared API Foundation V1. GET-only `/api/v1` plus FG-020 BUILD POST allow-list. No FG-019 migration. API UAT port **5012**.
-- **FG-020:** **IMPLEMENTED / LIVE MIGRATION PENDING**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Image-only Compatible Renditions **implemented**. Repository head `c1d2e3f4a5b6`. Live current remains `b0c1d2e3f4a5`. Dedicated **44**. Full suite **538**. Not closed. Field Web **not** in this gate. Closeout **not** started.
+- **FG-020:** **CLOSED / OPERATIONAL FOR UAT**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Image-only Compatible Renditions **implemented**. Live current = head `c1d2e3f4a5b6`. Office UAT port **5013**. Dedicated **44**. Full suite **538**. Field Web **not** in this gate. Closeout **not** started.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
@@ -216,7 +218,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (docs only). BMR / Winchester / Darcy are **not exclusive**. Winchester is launch/reference. Contractor procurement (A) ≠ CalibAi channel (B). Darcy commercial terms **unset**. Supplier Feature Gate **not authorized**. Governed **bulk supplier onboarding** is **FUTURE / NOT IMPLEMENTED** (not one-product-at-a-time; does not expand FG-014).
 - **Permit Intelligence** Pass 2 is **CLOSED / OPERATIONAL FOR UAT**. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** ([ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)). [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (foundation). Advisory preflight. AHJ remains final. **PASS** means no issue identified against governed checks performed — never AHJ approved. No live lookup. No external AI. Mike Pratt Coach House at 2562 Church Street, North Gower, Ontario is the **FG-016 UAT reference** — live project **id 9** (`FG016-UAT-PRATT`) on port **5009**.
 - **Organization Brand Profile** is **CLOSED / OPERATIONAL FOR UAT** ([organization-brand-profile.md](architecture/organization-brand-profile.md)). [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md). Settings at `/settings/brand-profile`. Proposal preview/PDF consume snapshot-or-current. **Gate-at-close** current = head `a9b0c1d2e3f4`. Office UAT port **5010**. Live head today is `b0c1d2e3f4a5`.
-- **Authentication / actor identity + shared API** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **IMPLEMENTED / LIVE MIGRATION PENDING**. Item 12 is **BLOCKED**.
+- **Authentication / actor identity + shared API** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Item 12 is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**.
 - **Change Order document family** is **FUTURE / NOT IMPLEMENTED** ([change-order-document-family.md](architecture/change-order-document-family.md)). Existing Change Order record remains authoritative. Do not create a second entity. Not email. Not field UX.
 
 ## 17. KNOWN RISKS / UNRESOLVED PRODUCT ITEMS
@@ -243,9 +245,9 @@ Do not start Phase D. Do not enable an external AI provider. Do not start Field 
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** Give Ontario construction counsel [legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md). Do **not** implement Native Signing, mail, or a signing Feature Gate. Do **not** start Contract implementation. Separate live-migration / office UAT prompt (`b0c1d2e3f4a5` → `c1d2e3f4a5b6`) remains the coded FG-020 close path. Do **not** mark FG-020 **CLOSED / OPERATIONAL FOR UAT**. Do **not** implement Project Closeout. Do **not** start Field Web. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) remains **IMPLEMENTED / LIVE MIGRATION PENDING**.
+**Next governed action:** **STOP.** Give Ontario construction counsel [legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md). Do **not** implement Native Signing, mail, or a signing Feature Gate. Do **not** start Field Web. Do **not** implement Project Closeout or Contract. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) is **CLOSED / OPERATIONAL FOR UAT**.
 
-**Roadmap direction (not authorization):** Item 12 remains **BLOCKED**. Project Closeout remains **FUTURE**. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Roadmap direction (not authorization):** Item 12 is **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. Project Closeout remains **FUTURE**. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -275,7 +277,7 @@ git diff --check
 ./venv/bin/python -m pytest -q
 ```
 
-Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **current `b0c1d2e3f4a5`**; Alembic **heads `c1d2e3f4a5b6`** (one graph head; live current ≠ head); dedicated FG-020 **44**; focused (Hub + FG-018 + FG-019 + both FG-020) **128**; FG-019 34; FG-018 37; FG-017 22; FG-016 37; FG-015 19; FG-014 35; FG-013 27; FG-012 19; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **538 passed**. Non-development `flask` CLI requires local-only `SECRET_KEY` (gitignored `.env`).
+Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **current = heads `c1d2e3f4a5b6`** (one graph head); dedicated FG-020 **44**; focused (Hub + FG-018 + FG-019 + both FG-020) **128**; FG-019 34; FG-018 37; FG-017 22; FG-016 37; FG-015 19; FG-014 35; FG-013 27; FG-012 19; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; full suite **538 passed**. Non-development `flask` CLI requires local-only `SECRET_KEY` (gitignored `.env`).
 
 ## 22. FRESH CHAT STARTUP PROMPT
 
@@ -292,10 +294,9 @@ ChatGPT / Cursor memory is never corporate memory.
 
 Conversation titles in this workspace must start with: BRAYMAN — <Topic>.
 
-DO NOT live-migrate from this stopping point unless a separate prompt authorizes it.
-DO NOT mark FG-020 CLOSED / OPERATIONAL FOR UAT yet.
-DO NOT implement Project Closeout.
 DO NOT start Field Web.
+DO NOT implement Native Signing.
+DO NOT implement Project Closeout.
 DO NOT add tokens or API keys.
 DO NOT start RBAC or an org-switcher.
 DO NOT start Change Order document work.
@@ -305,14 +306,15 @@ DO NOT enable external AI or runtime web lookup.
 
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.
 Item 10 is COMPLETE (FG-018 + FG-019 both CLOSED / OPERATIONAL FOR UAT).
-Item 11 BUILD Field Observation foundation is IMPLEMENTED / LIVE MIGRATION PENDING.
+Item 11 BUILD Field Observation foundation is COMPLETE.
 Image-only Compatible Renditions (HEIC/HEIF → JPEG) are IMPLEMENTED.
-ADR-042 is Accepted. FG-020 is IMPLEMENTED / LIVE MIGRATION PENDING.
-Live current b0c1d2e3f4a5. Repository head c1d2e3f4a5b6.
-Item 12 Field Web is BLOCKED / NOT AUTHORIZED.
+ADR-042 is Accepted. FG-020 is CLOSED / OPERATIONAL FOR UAT.
+Live current = head c1d2e3f4a5b6.
+Item 12 Field Web is ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED.
+Native Signing is WAITING FOR COUNSEL / IMPLEMENTATION NOT AUTHORIZED.
 Project Closeout is FUTURE.
 Storage-lifecycle pin: docs/architecture/build-media-storage-lifecycle.md
-Next authorized action = STOP. Separate live-migration / office UAT prompt. Do not implement Closeout. Do not start Field Web.
+Next authorized action = STOP. Give counsel the Native Signing spec. Do not start Field Web. Do not implement Closeout or Native Signing.
 
 1. REVIEW REPOSITORY GOVERNANCE FIRST
 Read and comply with:
@@ -350,14 +352,14 @@ Confirm:
 - branch = main
 - HEAD = origin/main
 - working tree clean
-- Alembic current = b0c1d2e3f4a5
-- Alembic heads = c1d2e3f4a5b6 (one graph head; live current ≠ head)
+- Alembic current = c1d2e3f4a5b6
+- Alembic heads = c1d2e3f4a5b6 (one graph head; live current = head)
 
 3. IDENTIFY CURRENT STOP STATE
 Independently reconstruct from the repository:
 - FG-008 through FG-019 CLOSED / OPERATIONAL FOR UAT
-- FG-020 IMPLEMENTED / LIVE MIGRATION PENDING
-- Live current b0c1d2e3f4a5; repository head c1d2e3f4a5b6
+- FG-020 CLOSED / OPERATIONAL FOR UAT
+- Live current = head c1d2e3f4a5b6
 - Full suite 538 passed; dedicated FG-020 44 (33 + 11 media compatibility); focused Hub+FG-018+FG-019+FG-020 128; dedicated FG-019 34; dedicated FG-018 37
 - Pratt UAT project id 9 / FG016-UAT-PRATT / analysis v3 / advisory only
 - FG-018 office UAT PASSED on port 5011
@@ -368,7 +370,8 @@ Independently reconstruct from the repository:
 - FG-018 CLOSED / OPERATIONAL FOR UAT
 - FG-019 CLOSED / OPERATIONAL FOR UAT
 - Roadmap item 10 COMPLETE
-- Item 11 BUILD IMPLEMENTED / LIVE MIGRATION PENDING (not closed)
+- Item 11 BUILD COMPLETE
+- Item 12 ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED
 - Image-only Compatible Renditions (HEIC/HEIF → JPEG) IMPLEMENTED
 - Project Closeout / archive-and-purge FUTURE / NOT AUTHORIZED
 - Storage-lifecycle pin recorded (docs/architecture/build-media-storage-lifecycle.md)
@@ -544,4 +547,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: FG-020 **IMPLEMENTED / LIVE MIGRATION PENDING**; image-only Compatible Renditions **IMPLEMENTED**; Native Signing architecture reconnaissance **COMPLETE / NOT IMPLEMENTED** (recommendation **NATIVE V1**; counsel spec **PREPARED**; implementation **NOT AUTHORIZED**; no Feature Gate); storage-lifecycle pin **RECORDED**; Project Closeout **FUTURE**; FG-019 **CLOSED / OPERATIONAL FOR UAT**; FG-018 **CLOSED / OPERATIONAL FOR UAT**; item 10 **COMPLETE**; live current `b0c1d2e3f4a5`; repository head `c1d2e3f4a5b6`; full suite **538 passed**; dedicated FG-020 **44**; focused (Hub + FG-018 + FG-019 + both FG-020) **128**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Next: give Ontario counsel [legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md); FG-020 live-migration / office UAT remains a separate coded close path. Do **not** start Field Web. Do **not** implement Native Signing, Contract, or Closeout. Item 12 **BLOCKED**. Phase D unauthorized. Change Order document family **FUTURE / NOT IMPLEMENTED**.
+A–J: FG-020 **CLOSED / OPERATIONAL FOR UAT**; image-only Compatible Renditions **IMPLEMENTED**; Item 11 **COMPLETE**; Item 12 **ELIGIBLE / NOT AUTHORIZED**; Native Signing **WAITING FOR COUNSEL / IMPLEMENTATION NOT AUTHORIZED** (counsel spec **PREPARED**; no Feature Gate); storage-lifecycle pin **RECORDED**; Project Closeout **FUTURE**; live current = head `c1d2e3f4a5b6`; office UAT port **5013**; full suite **538 passed**; dedicated FG-020 **44**; focused **128**. Do **not** start Field Web. Do **not** implement Native Signing, Contract, or Closeout.

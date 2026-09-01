@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Architecture pin.** Original Source custody exists under [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **IMPLEMENTED / LIVE MIGRATION PENDING**. Image-only Compatible Renditions (HEIC/HEIF → JPEG) **IMPLEMENTED** as a 2026-08-31 FG-020 increment. Project Closeout / archive-and-purge **FUTURE / NOT IMPLEMENTED**. |
+| Status | **Architecture pin.** Original Source custody exists under [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Image-only Compatible Renditions (HEIC/HEIF → JPEG) **IMPLEMENTED**. Project Closeout / archive-and-purge **FUTURE / NOT IMPLEMENTED**. |
 | Date | 2026-08-31 |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |
@@ -10,7 +10,7 @@
 
 This is a **storage-lifecycle and user-experience** pin. It does **not** change commercial policy. It does **not** implement Project Closeout. It does **not** start Field Web.
 
-**Implemented (2026-08-31 increment):** local HEIC/HEIF → JPEG Compatible Renditions via `app/services/build_rendition.py`. Original Source bytes remain immutable. No new Alembic revision. Live `flask db upgrade` was **not** run.
+**Implemented (2026-08-31 increment; 2026-09-01 live-migrated):** local HEIC/HEIF → JPEG Compatible Renditions via `app/services/build_rendition.py`. Original Source bytes remain immutable. No new Alembic revision. Live current = head `c1d2e3f4a5b6`.
 
 Do **not** frame ordinary construction photos primarily as legal evidence. Source preservation exists for quality, integrity, reversibility, compatibility, future processing, and reliable project records.
 

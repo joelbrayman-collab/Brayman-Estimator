@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-01 — FG-020 live migration / office UAT close
+
+| Field | Content |
+|-------|---------|
+| ID | [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** Item 11 **COMPLETE**. Item 12 **ELIGIBLE FOR SEPARATE GOVERNANCE / NOT AUTHORIZED**. |
+| Branch | `main` |
+| Base commit | `473b04eff8766f917e46abf793cc699b179a4fb6` |
+| Objective | Verify live Alembic current=head and close office UAT of Field Observations + HEIC JPEG renditions. |
+| Deliverables | Live current = head `c1d2e3f4a5b6`; office UAT port **5013**; project 12 events 9–17 plus prior 1–8; close docs. |
+| Validation | Dedicated **44 passed**; focused **128 passed**; full suite **538 passed**. |
+| Architectural findings | Commercial fingerprints unchanged. HEIC Original SHA preserved. Renditions regenerable and independently stored. API second successor and derived re-decision **409**. FG-019 mutation lock intact. |
+| Open decisions | Field Web Feature Gate not created. Native Signing waiting for counsel. Closeout FUTURE. |
+| Next milestone | **STOP.** Do not start Field Web. Give counsel the Native Signing spec. |
+| Commit | this commit; verify `git rev-parse HEAD` |
+| Date | 2026-09-01 |
+
 ### 2026-09-01 — Native Signed Change Order counsel-review specification
 
 | Field | Content |

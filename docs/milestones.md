@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-01 — Item 12 Field Web recon complete + Native Signing counsel pin
+
+| Field | Content |
+|-------|---------|
+| ID | Architecture reconnaissance + governance pin (not a Feature Gate) |
+| Status | **RECORDED / NOT IMPLEMENTED.** Item 12 recon **COMPLETE / NOT IMPLEMENTED**. Native Signing **DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE**; **PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL**. |
+| Branch | `main` |
+| Base commit | `42b9c792b7c4fd968ed46be0ff15975cf3880eb5` |
+| Objective | Close Item 12 architecture reconnaissance as the canonical pin and record Joel’s Native Signing counsel pin so counsel is not treated as a general development hold. |
+| Deliverables | [architecture/field-web-today-and-capture.md](architecture/field-web-today-and-capture.md) (canonical; extended). Counsel pin recorded across governed indexes. FG-021 / ADR-043 **not created**. |
+| Validation | Docs only. No pytest this pass. Alembic current = heads `c1d2e3f4a5b6` verified. Full suite **538 passed** claimed, not rerun. |
+| Architectural findings | Field V1 = Flask/Jinja `/field` + `/api/v1`. Server-side Event/Original idempotency required (schema gap vs FG-020). API display rendition GET missing. Plan access and CO signing visibility deferred from V1. |
+| Open decisions | Joel may authorize FG-021 + ADR-043 drafting **or** a separately governed Native Signing development track. Production signing remains counsel-blocked. |
+| Next milestone | **STOP Field Web implementation.** Do not create FG-021 / ADR-043 unless Joel authorizes. |
+| Commit | uncommitted docs; verify `git rev-parse HEAD` |
+| Date | 2026-09-01 |
+
 ### 2026-09-01 — FG-020 live migration / office UAT close
 
 | Field | Content |

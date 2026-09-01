@@ -46,12 +46,13 @@ Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Can
 
 ## Dependencies
 
-- Authentication before field capture ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md); [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**). [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **IMPLEMENTED / LIVE MIGRATION PENDING**. Item 12 is **BLOCKED / NOT AUTHORIZED** until FG-020 is closed after live migration and office UAT.
+- Authentication before field capture ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md); [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**). [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Item 12 Field Web recon **COMPLETE / NOT IMPLEMENTED** ([field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md)). Implementation **NOT AUTHORIZED**.
 
 ## Related
 
 - [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**
-- [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **IMPLEMENTED / LIVE MIGRATION PENDING**
+- [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**
+- [architecture/field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md) — Item 12 recon **COMPLETE / NOT IMPLEMENTED**
 - [architecture/build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md) (Original Source / Compatible Rendition / Closed Project Archive — HEIC/HEIF JPEG renditions **implemented**; Closeout **not implemented**)
 - [modules/projects.md](projects.md) (Change Orders)
 - [modules/plan-intelligence.md](plan-intelligence.md)

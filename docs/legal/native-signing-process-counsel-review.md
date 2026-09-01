@@ -30,6 +30,20 @@ Counsel is asked to determine whether this process is appropriate for Brayman’
 
 Counsel is **not** asked to design CalibAi, redesign the Change Order workflow, review the whole platform, select DocuSign or Adobe Acrobat Sign, draft the construction contract, or review BUILD.
 
+### Status for CalibAi development (Joel 2026-09-01)
+
+This counsel review is **not** a general CalibAi development hold.
+
+```text
+NATIVE SIGNING DEVELOPMENT:
+MAY PROCEED UNDER SEPARATE GOVERNANCE
+
+NATIVE SIGNING PRODUCTION ACTIVATION / REAL CUSTOMER USE:
+BLOCKED PENDING ONTARIO COUNSEL APPROVAL OF THE SIGNING PROCESS
+```
+
+Counsel questions below are **unchanged**. Do not treat unanswered counsel questions as a block on Field Web or other unrelated roadmap items. Do not enable real customer signing until counsel decisions are reconciled and approved.
+
 ---
 
 ## 1. Commercial problem

@@ -42,6 +42,52 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-01 — Item 12 recon verification + Native Signing counsel pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-01 |
+| Branch | `main` @ starting HEAD `42b9c792b7c4fd968ed46be0ff15975cf3880eb5` = `origin/main` |
+| Objective | Docs-only completion pass: verify Item 12 Field Web recon pin, replace leftover counsel-as-general-hold language, record Joel Native Signing pin, finish session-handoff leftovers. |
+| Business decision | Ontario counsel review is **not** a general development hold and does **not** block Item 12. Native Signing **development may proceed under separate governance**. **Production activation / real customer use is blocked** pending counsel approval of the signing process. |
+| Architectural decision | Canonical Item 12 pin remains [architecture/field-web-today-and-capture.md](architecture/field-web-today-and-capture.md) (extended; no second architecture document). Proposed FG-021 / ADR-043 **not created**. Field Web implementation **not started**. Native Signing implementation **not started**. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — ITEM 12 FIELD WEB recon completion + Joel Native Signing counsel pin. Docs only. Do not create FG-021 or ADR-043. Do not implement Field Web or Native Signing. Do not change counsel-review QUESTIONS. Do not weaken Legal Content Gate. |
+| Files expected to change | Governed docs + canonical pin only. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live database; FG-021; ADR-043; counsel-review questions. |
+| Implementation result | Docs only. Pin verified/extended to cover all 41 report topics. Leftover counsel-hold and session-handoff language corrected. Prior 2026-09-01 Field Web recon log entry preserved. |
+| Tests | Not run (documentation-only; no product code). Full suite **538 passed** remains the FG-020 close claim. Alembic current = heads `c1d2e3f4a5b6` verified this pass. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes — this pass appended |
+| Constitutional issue raised | None. Legal Content Gate for Ontario Contract/Warranty templates unchanged. |
+| Unresolved issues | Joel authorization for FG-021 + ADR-043 drafting, or a separate Native Signing development track. Counsel answers remain open. Safari MediaRecorder MIME To be verified on device at implementation. |
+| Next approved step | **STOP Field Web implementation.** Joel may authorize FG-021 + ADR-043 drafting **or** separately governed Native Signing development (production still blocked pending counsel). |
+| Next approved prompt | None from this pass. |
+| Commit hash | (uncommitted docs; verify `git rev-parse HEAD`) |
+
+### 2026-09-01 — Field Web / Today + Capture architecture reconnaissance
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-01 |
+| Branch | `main` @ starting HEAD `42b9c792b7c4fd968ed46be0ff15975cf3880eb5` |
+| Objective | Docs-only architecture reconnaissance for roadmap Item 12 Field Web / Today + Capture. |
+| Business decision | Field Web is a first-class iPhone capture surface over the same BUILD records. Not a shrunken office app. Capture-first. Plan access deferred from V1. Derived review and Change Order signing visibility out of V1. |
+| Architectural decision | Flask/Jinja Field route family + JS calling `/api/v1`. Ordinary mobile web (PWA deferred). Event-then-Originals. IndexedDB retry-until-ACK. Server-side Event/Original idempotency required (not in FG-020 schema). API display rendition GET missing. Proposed future FG-021 / ADR-043 **not created**. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — ROADMAP ITEM 12 FIELD WEB / TODAY + CAPTURE — ARCHITECTURE RECONNAISSANCE ONLY. Docs only. Do not implement Field Web. Do not create a Feature Gate or ADR. |
+| Files expected to change | Architecture pin + indexes, current-state / session-handoff / roadmap / chat-workflow-log / milestones / project-state-report. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live database; Native Signing; Contract; FG-020 rewind. |
+| Implementation result | Docs only. Pin `docs/architecture/field-web-today-and-capture.md`. No product/database/Alembic change. |
+| Tests | Not run (documentation-only; no product code). |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None. Idempotency requires a future ADR before implementation. |
+| Unresolved issues | Safari MediaRecorder MIME To be verified on device; FG-021 / ADR-043 not created; Native Signing waiting for counsel. |
+| Next approved step | **STOP.** Do not implement Field Web. Do not create FG-021 without Joel authorization. |
+| Next approved prompt | None from this pass. |
+| Commit hash | (this commit; verify `git rev-parse HEAD`) |
+
 ### 2026-09-01 — FG-020 live migration / office UAT close
 
 | Field | Content |

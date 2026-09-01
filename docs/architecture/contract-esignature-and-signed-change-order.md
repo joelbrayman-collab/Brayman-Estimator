@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED.** Recommendation **NATIVE V1**. Counsel process-review specification **PREPARED**. Implementation **NOT AUTHORIZED**. No Native Signing Feature Gate. No ADR. No product code. |
+| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED.** Recommendation **NATIVE V1**. Counsel process-review specification **PREPARED**. **Development may proceed under separate governance. Production activation / real customer use is blocked pending Ontario counsel approval of the signing process.** No Native Signing Feature Gate in this pass. No ADR. No product code. |
 | Date | 2026-08-31 (recon); **2026-09-01** (counsel specification prepared) |
 | Product | The Estimator / CalibAi |
 | Canonical architecture | This document |
@@ -11,7 +11,19 @@
 
 This reconnaissance is **complete** as architecture. The counsel-facing signing-process specification is **prepared**. Neither document authorizes implementation, a Feature Gate, an ADR, a migration, email, a signing UI, DocuSign, Adobe Acrobat Sign, or Ontario contract/warranty template authoring.
 
-Commercial-execution architecture may proceed **in parallel** with BUILD governance. Parallel does **not** mean implementation is authorized. Field Web remains separately governed.
+Commercial-execution architecture may proceed **in parallel** with BUILD / Field Web governance. Counsel review of the Native Signing **process** is **not** a general development hold.
+
+```text
+NATIVE SIGNING DEVELOPMENT:
+MAY PROCEED UNDER SEPARATE GOVERNANCE
+
+NATIVE SIGNING PRODUCTION ACTIVATION / REAL CUSTOMER USE:
+BLOCKED PENDING ONTARIO COUNSEL APPROVAL OF THE SIGNING PROCESS
+```
+
+Separately governed Native Signing architecture, Feature Gate drafting, implementation, testing, and non-production UAT may proceed when Joel authorizes that track. Do **not** enable real customer / commercial signing until counsel decisions are reconciled and approved. The Legal Content Gate for Ontario Contract / Warranty templates remains **separate** and in force.
+
+Field Web remains separately governed. Parallel does **not** mean this document authorizes signing product code.
 
 **Delta (2026-08-31):** Joel requires CalibAi to evaluate whether electronic signing can be implemented **natively** inside CalibAi rather than requiring a DocuSign or Adobe Acrobat Sign subscription. A third-party provider is **not** assumed.
 

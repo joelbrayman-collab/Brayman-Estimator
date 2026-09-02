@@ -491,3 +491,85 @@ def test_getrandomvalues_fallback_and_randomuuid_pass_server(client, app):
     assert second.status_code == 201
     assert second.get_json()["client_capture_uuid"] == fallback
     assert FieldCaptureEvent.query.filter_by(project_id=project.id).count() == 2
+
+
+STORAGE_FAIL_MESSAGE = (
+    "Cannot safely keep this capture on this phone. Try photo or text later, or free storage."
+)
+
+
+def test_field_js_photo_blob_normalize_indexeddb_contract():
+    source = FIELD_JS.read_text(encoding="utf-8")
+    assert "function blobFromBinary" in source
+    assert "function normalizeImageOriginals" in source
+    assert "function persistFailure" in source
+    assert "function logFieldPersistFailure" in source
+    assert "arrayBuffer()" in source
+    assert "new Blob([buffer], { type: type })" in source
+    assert 'row.kind !== "image"' in source
+    assert "Math.random" not in source
+    assert "createObjectURL" in source
+    assert re.search(r"heic|heif|transcode|createImageBitmap|OffscreenCanvas", source, re.I) is None
+    blob_fn = re.search(r"function blobFromBinary\(source, mime\) \{.*?\n  \}", source, re.S)
+    assert blob_fn, "blobFromBinary() must remain in field.js"
+    assert "arrayBuffer()" in blob_fn.group(0)
+    assert "new Blob([buffer]" in blob_fn.group(0)
+    save_match = re.search(r"function saveNew\(projectId\) \{.*?\n  \}", source, re.S)
+    assert save_match, "saveNew() must remain in field.js"
+    save_src = save_match.group(0)
+    assert save_src.index("normalizeImageOriginals") < save_src.index("persistCapture")
+    assert save_src.index("persistCapture") < save_src.index("uploadCapture")
+    assert STORAGE_FAIL_MESSAGE in save_src
+    assert "err.message" not in save_src
+    assert "err.stack" not in save_src
+    catch_src = save_src[save_src.rfind(".catch(function (err)") :]
+    assert "logFieldPersistFailure" in catch_src
+    assert "uploadCapture" not in catch_src
+    assert "postEvent" not in catch_src
+    assert "postJson" not in catch_src
+    assert "postForm" not in catch_src
+    assert 'kind: "audio"' in save_src
+    assert "recordedBlob" in save_src
+    audio_push = save_src[save_src.index('kind: "audio"') : save_src.index("photos.forEach")]
+    assert "blobFromBinary" not in audio_push
+    assert 'form.append("file", original.blob, original.filename || "capture")' in source
+    log_match = re.search(r"function logFieldPersistFailure\(err\) \{.*?\n  \}", source, re.S)
+    assert log_match, "logFieldPersistFailure() must remain in field.js"
+    log_src = log_match.group(0)
+    assert "console.warn" in log_src
+    assert "stage" in log_src
+    assert "cookie" not in log_src.lower()
+    assert "csrf" not in log_src.lower()
+    assert "password" not in log_src.lower()
+    assert "blob" not in log_src.lower()
+    init_match = re.search(r"function init\(\) \{.*?\n  \}", source, re.S)
+    assert init_match
+    assert 'persistFailure("idb_open"' in init_match.group(0)
+
+
+def test_photo_blob_normalize_preserves_bytes_mime_and_filename():
+    """Mirror blobFromBinary: ArrayBuffer copy → Blob(type=original MIME); filename stays metadata."""
+    original = b"\xff\xd8\xff" + os.urandom(128)
+    mime = "image/jpeg"
+    filename = "IMG_UAT.JPG"
+    capture_uuid = str(uuid.uuid4())
+    original_uuid = str(uuid.uuid4())
+    buffer = bytes(original)
+    blob_bytes = bytes(buffer)
+    blob_type = mime
+    row = {
+        "client_original_uuid": original_uuid,
+        "client_capture_uuid": capture_uuid,
+        "kind": "image",
+        "blob": blob_bytes,
+        "filename": filename,
+        "mime": blob_type,
+        "state": "pending",
+    }
+    assert row["blob"] == original
+    assert row["mime"] == mime
+    assert row["filename"] == filename
+    assert row["kind"] == "image"
+    assert row["client_original_uuid"] == original_uuid
+    assert row["client_capture_uuid"] == capture_uuid
+    assert hashlib.sha256(row["blob"]).digest() == hashlib.sha256(original).digest()

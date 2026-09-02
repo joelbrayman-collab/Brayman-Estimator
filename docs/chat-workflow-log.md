@@ -42,6 +42,121 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-02 — FG-021 capture: iPhone swipe-left Delete UX (queued)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` |
+| Objective | Capture Joel’s iPhone Recent Observation Delete UX. Do not implement. Do not interrupt IndexedDB photo-put repair. |
+| Business decision | Field: tap opens; swipe left reveals Delete; tap Delete then confirm; then governed deletion. Swipe is not delete. Accessible non-swipe equivalent required. Desktop: no swipe; conventional Delete. Native iPhone patterns where they fit the task. |
+| Architectural decision | **None.** UX does not choose hard delete / tombstone / UAT cleanup. Retention recon still required. |
+| Prompt template used | Requirement capture / UX clarification. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 UAT REQUIREMENT CLARIFICATION — IPHONE RECENT OBSERVATIONS — SWIPE LEFT TO DELETE. Capture only. Continue photo-put repair. Do not delete observations. FG-021 stays OPEN. |
+| Files expected to change | Capture note; chat-workflow-log; session-handoff pointer. |
+| Files prohibited from changing | Product deletion code; live observations; Alembic; CSRF; auth. |
+| Implementation result | Recorded in [architecture/fg-021-recent-observation-delete-requirement-capture.md](architecture/fg-021-recent-observation-delete-requirement-capture.md). **No Delete UI. No rows deleted.** |
+| Tests | Not applicable (docs capture). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Record-retention model still unchosen. Photo re-UAT still required first. |
+| Next approved step | Small-JPEG iPhone re-UAT of the photo-put repair. Then Joel/ChatGPT review of deletion capture. |
+| Next approved prompt | None for Delete. Photo re-UAT is the next physical action. |
+| Commit hash | (pending) |
+
+### 2026-09-02 — FG-021 IndexedDB photo-put repair (File→ArrayBuffer→Blob)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` @ parent `4cb07bee1d6f004d0cb67110d17350893a646f13` |
+| Objective | Bounded Safari HTTP LAN IndexedDB photo-put repair. Do not close FG-021. |
+| Business decision | Persist image bytes as Blob (not library File) so small CHOOSE PHOTO can retain-until-ACK. |
+| Architectural decision | ADR-043 unchanged: persist before POST. No skip-IDB. No HEIC client convert. Filename/MIME stay metadata. Audio not converted. Console persist-stage logging only. |
+| Prompt template used | Bounded client repair. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 BOUNDED INDEXEDDB PHOTO-PUT REPAIR — File → ArrayBuffer → Blob. Tests + docs. Commit/push if tests pass. |
+| Files expected to change | `app/static/js/field.js`; `tests/test_field_web_fg021.py`; current-state; session-handoff; chat-workflow-log; FG-021; roadmap. |
+| Files prohibited from changing | Alembic; models; CSRF; auth; live DB rows; HEIC conversion; PWA. |
+| Implementation result | `blobFromBinary` + `normalizeImageOriginals` before `persistCapture`. `putStore` classifies `idb_open` / `idb_put` / quota. Gate **NOT CLOSED**. |
+| Tests | Dedicated FG-021 **17 passed**. Focused **145 passed**. Full **555 passed**. Cursor Terminal. |
+| Project-state-report update | No — not a milestone close. |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Small-JPEG iPhone re-UAT not yet run against this JS. |
+| Next approved step | Hard-refresh Capture; CHOOSE PHOTO one small screenshot/JPEG; Save. |
+| Next approved prompt | Observation Delete — **not authorized**. See capture note. |
+| Commit hash | (pending) |
+
+### 2026-09-02 — FG-021 small JPEG CHOOSE PHOTO Save FAIL BEFORE POST (CASE B)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` @ HEAD `4cb07bee1d6f004d0cb67110d17350893a646f13` |
+| Objective | One diagnostic iPhone CHOOSE PHOTO (small screenshot/JPEG) after desktop Event 18 PASS. Observe IndexedDB vs POST. Do not repair. Do not close FG-021. |
+| Business decision | CASE B: same local IndexedDB storage message on a small library image. Stop iPhone actions. ChatGPT reviews bounded File→ArrayBuffer→Blob repair before any code change. |
+| Architectural decision | None implemented. Candidate (not applied): normalize photo `File` → `ArrayBuffer` → `Blob` before IndexedDB put; preserve MIME/bytes; filename metadata separate; retain-until-ACK; no skip-IDB; no client HEIC conversion. |
+| Prompt template used | UAT continue / one diagnostic (no product code). |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 IPHONE UAT CONTINUE — ONE DIAGNOSTIC IMAGE TEST — NO REPAIR YET. Desktop Event 18 first (already PASS). Then CHOOSE PHOTO one small screenshot/JPEG, Save, inspect live DB/Flask. CASE A vs CASE B. Do not implement File→Blob from this prompt. |
+| Files expected to change | session-handoff; current-state; chat-workflow-log; FG-021 gate status; platform-roadmap (UAT fact only). |
+| Files prohibited from changing | Product code; Alembic; live schema; CSRF; auth; Event 18 / Original 18 rows; UUID repair; Native Signing; Closeout. |
+| Implementation result | Joel reported the same IndexedDB message as the prior photo attempt. Live SQLite still **18/18**. Event **18** / Original **18** unchanged (`FG021-IPHON-UAT-TEXT`). Flask **562293**: last iPhone POST remains `13:02:30` (Event 18); **no** field-events POST for this attempt. **SMALL JPEG INDEXEDDB / SAVE: FAIL BEFORE POST.** Product code unchanged. Gate **NOT CLOSED**. |
+| Tests | Not re-run. Read-only SQLite + Flask log inspect. |
+| Project-state-report update | No — not a milestone close. |
+| Milestone entry update | No — gate not closed. |
+| Constitutional issue raised | None |
+| Unresolved issues | Photo IndexedDB put on Safari HTTP LAN. Exact Safari `DOMException` not logged. Chosen file name/MIME/size not captured. Preview yes/no not reported. |
+| Next approved step | Paste CASE B report to ChatGPT. Do not start another iPhone action. Do not implement File→Blob until a separate approved Cursor prompt. |
+| Next approved prompt | Bounded IndexedDB photo-put repair (File→ArrayBuffer→Blob) — **only if ChatGPT authorizes**. |
+| Commit hash | (docs only; uncommitted) |
+
+### 2026-09-02 — FG-021 desktop Event 18 continuity PASS; small-image diagnostic pending
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` @ HEAD `4cb07bee1d6f004d0cb67110d17350893a646f13` |
+| Objective | Desktop continuity of Event 18 before one iPhone CHOOSE PHOTO diagnostic. Do not repair. Do not close FG-021. |
+| Business decision | Ask Joel for one small library JPEG/screenshot only after desktop Event 18 is still the same record. Do not invent iPhone image results. |
+| Architectural decision | None. Verification only. No File→Blob. No product-code change. |
+| Prompt template used | UAT continue / one diagnostic (no product code). |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 IPHONE UAT CONTINUE — ONE DIAGNOSTIC IMAGE TEST — NO REPAIR YET. Verify Event 18 on desktop Hub + live SQLite. If PASS, one iPhone CHOOSE PHOTO (small screenshot/JPEG) then Save. Do not implement File→Blob. Do not close FG-021. |
+| Files expected to change | session-handoff; current-state; chat-workflow-log (factual UAT-continue note only). |
+| Files prohibited from changing | Product code; Alembic; live schema; CSRF; auth; Event 18 / Original 18 rows; UUID repair; Native Signing; Closeout. |
+| Implementation result | Desktop continuity **PASS**. Hub Field Observations: one row → Event **18**, actor **Joel Brayman**, originals `text`, Current. Event Detail text exact `FG021-IPHON-UAT-TEXT`. SQLite **18/18**; Event **18** project **11** / `ORG-001` / `user_id` 1; no duplicate text row. Flask **562293** no POST after `13:02:30`. Image diagnostic **not run** — pending Joel. Gate **NOT CLOSED**. |
+| Tests | Not re-run this pass. Browser MCP could not open a tab; Hub verified via authenticated GET of rendered `/projects/11` and `/projects/11/field-events/18` on port **5014**. |
+| Project-state-report update | No — not a milestone close. |
+| Milestone entry update | No — gate not closed. |
+| Constitutional issue raised | None |
+| Unresolved issues | Photo / IndexedDB quota still open. Small-image iPhone Save not attempted this pass. |
+| Next approved step | Joel: CHOOSE PHOTO one small screenshot or known JPEG, then Save. Report preview yes/no and SAVING/SAVED/error text. Do **not** TAKE PHOTO. Do **not** attach full-size HEIC. |
+| Next approved prompt | After a real small-image attempt: write the small-image diagnostic report (CASE A or CASE B). Do not implement File→Blob unless CASE B and separately approved. |
+| Commit hash | (docs only; uncommitted) |
+
+### 2026-09-02 — FG-021 iPhone Safari text-only UAT verified PASS
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` |
+| Objective | Objectively verify Joel-reported iPhone Safari FG-021 text-only Save (`FG021-IPHON-UAT-TEXT`, no photo) against live SQLite and Flask logs. Do not close the gate. |
+| Business decision | UUID repair + text path may be marked PASS only if live Event/Original rows and Flask 201/201 match. Photo / IndexedDB quota remains open. |
+| Architectural decision | None. Verification only. |
+| Prompt template used | UAT verification (no product code). |
+| Approved Cursor prompt summary | BRAYMAN — verify iPhone Safari FG-021 text-only capture against live `instance/brayman_estimator.db` (prior 17/17) and Flask logs ~13:00–13:02 `192.168.134.202` POST field-events 201. Confirm Event/Original ids, client UUIDs, ORG-001, actor, occurred_at. FG-021 stays OPEN. One next action only: do not attach full-size HEIC. |
+| Files expected to change | current-state; session-handoff; chat-workflow-log; FG-021 status notes. |
+| Files prohibited from changing | Product code; Alembic; live schema; CSRF; auth; Native Signing; Closeout. |
+| Implementation result | Verified. Live counts **18/18**. Event **18** / Original **18** on project **11** / `ORG-001`. Text exact `FG021-IPHON-UAT-TEXT`. `client_capture_uuid` `50984dd1-1478-4ce6-9799-94b453f91368`. `client_original_uuid` `2dddb194-fd1c-4ced-9b28-2a3a332fb5b8`. Actor **Joel Brayman**. Flask Cursor terminal **562293** `13:02:30` **201/201**. UUID repair + text path **PASS**. Photo path **still open**. Gate **NOT CLOSED**. |
+| Tests | Not re-run this pass (verification of live UAT rows only). Prior suite remains **553** / dedicated FG-021 **15** / focused **143**. |
+| Project-state-report update | No — not a milestone close. |
+| Milestone entry update | No — gate not closed. |
+| Constitutional issue raised | None |
+| Unresolved issues | Photo / IndexedDB quota still open. Voice, HEIC, retry, and remaining real-device checklist items not verified. |
+| Next approved step | One small screenshot or JPEG on the same iPhone Safari capture. Do **not** attach a full-size HEIC yet. Do **not** close FG-021. |
+| Next approved prompt | Verify the small JPEG/screenshot photo probe if Joel reports SAVED, or separately governed Native Signing development. |
+| Commit hash | (docs only; uncommitted) |
+
 ### 2026-09-02 — FG-021 bounded LAN iPhone Save Original UUID repair
 
 | Field | Content |

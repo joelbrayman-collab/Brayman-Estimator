@@ -85,12 +85,82 @@
     });
   }
 
-  function putStore(storeName, value) {
-    return openDb().then(function (db) {
-      var tx = db.transaction(storeName, "readwrite");
-      tx.objectStore(storeName).put(value);
-      return txDone(tx);
+  function isQuotaError(err) {
+    if (!err) return false;
+    var name = String(err.name || "");
+    var message = String(err.message || "");
+    return (
+      name === "QuotaExceededError" ||
+      name === "NS_ERROR_DOM_QUOTA_REACHED" ||
+      /quota/i.test(message)
+    );
+  }
+
+  function persistFailure(stage, err) {
+    var wrapped = new Error((err && err.message) || "IndexedDB persist failed.");
+    wrapped.stage = isQuotaError(err) ? "quota" : stage;
+    wrapped.causeName = (err && err.name) || "";
+    return wrapped;
+  }
+
+  function logFieldPersistFailure(err) {
+    try {
+      console.warn("Field capture local persist failed", {
+        stage: (err && err.stage) || "idb_put",
+        name: (err && (err.causeName || err.name)) || "",
+        message: String((err && err.message) || "").slice(0, 180),
+      });
+    } catch (ignored) {
+      /* diagnostic only */
+    }
+  }
+
+  function blobFromBinary(source, mime) {
+    var type = mime || (source && source.type) || "";
+    if (!source || typeof source.arrayBuffer !== "function") {
+      return Promise.reject(
+        persistFailure("blob_normalize", new Error("Blob normalization is not available."))
+      );
+    }
+    return source.arrayBuffer().then(
+      function (buffer) {
+        return new Blob([buffer], { type: type });
+      },
+      function (err) {
+        throw persistFailure("blob_normalize", err);
+      }
+    );
+  }
+
+  function normalizeImageOriginals(originals) {
+    var chain = Promise.resolve();
+    originals.forEach(function (row) {
+      chain = chain.then(function () {
+        if (row.kind !== "image" || !row.blob) return;
+        return blobFromBinary(row.blob, row.mime).then(function (blob) {
+          row.blob = blob;
+        });
+      });
     });
+    return chain;
+  }
+
+  function putStore(storeName, value) {
+    return openDb()
+      .then(
+        function (db) {
+          var tx = db.transaction(storeName, "readwrite");
+          tx.objectStore(storeName).put(value);
+          return txDone(tx);
+        },
+        function (err) {
+          throw persistFailure("idb_open", err);
+        }
+      )
+      .catch(function (err) {
+        if (err && err.stage) throw err;
+        throw persistFailure("idb_put", err);
+      });
   }
 
   function deleteStore(storeName, key) {
@@ -619,7 +689,10 @@
       state: "draft_local",
       text: text || null,
     };
-    persistCapture(capture, originals)
+    normalizeImageOriginals(originals)
+      .then(function () {
+        return persistCapture(capture, originals);
+      })
       .then(function () {
         return uploadCapture(capture, originals);
       })
@@ -631,7 +704,8 @@
           renderPhotos();
         }
       })
-      .catch(function () {
+      .catch(function (err) {
+        logFieldPersistFailure(err);
         setFeedback("Cannot safely keep this capture on this phone. Try photo or text later, or free storage.");
         setStatus("");
       });
@@ -692,8 +766,9 @@
         updateRetryPanel();
         initCapture();
       })
-      .catch(function () {
+      .catch(function (err) {
         persistenceReady = false;
+        logFieldPersistFailure(persistFailure("idb_open", err));
         setFeedback("Cannot safely keep this capture on this phone. Try photo or text later, or free storage.");
         var save = document.getElementById("field-save");
         if (save) save.disabled = true;

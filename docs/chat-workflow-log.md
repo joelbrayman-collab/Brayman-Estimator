@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-02 — FG-021 local HTTPS UAT setup started (voice enablement only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` @ `6e7a8ef` (`6e7a8efe8e618844dae1cfae36621d44d8bf5112` = `origin/main` at setup start) |
+| Objective | Start local HTTPS for real iPhone Safari secure-context voice UAT. No product-code change. |
+| Business decision | Do not close FG-021. Do not claim voice PASS or iPhone trust complete. Do not kill HTTP 5014. |
+| Architectural decision | Flask `--cert`/`--key` with openssl local CA + leaf. Certs outside git. Chosen origin `https://Joels-MacBook-Air.local:5443`. IndexedDB is origin-scoped; HTTP and HTTPS are different origins; no HTTP voice pending to migrate. |
+| Prompt template used | FG-021 local HTTPS real iPhone UAT setup — voice enablement only. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 LOCAL HTTPS REAL IPHONE UAT SETUP — VOICE ENABLEMENT ONLY. |
+| Files expected to change | session-handoff; current-state; chat-workflow-log (in-progress note only). |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; CSRF; auth; Observation Delete; PWA; transcription; AI. |
+| Implementation result | Local CA + leaf generated at `/Users/joelbrayman/Desktop/CalibAi-UAT-TLS/` (outside git). Leaf SAN `DNS:Joels-MacBook-Air.local`, `IP:192.168.134.223`. Public CA `CalibAi-UAT-Local-CA.cer`. HTTP **5014** Flask **562293** left running. HTTPS Flask listening on **5443**. `curl -k` login **200**. Voice **NOT** claimed PASS. Gate **NOT CLOSED**. |
+| Tests | Not re-run (docs + environment only). Preflight: `lsof` 5443 listen; HTTP 5014 still listen. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | iPhone CA install / trust / login / voice UAT not started. HEIC, retry, Observation Delete still open. |
+| Next approved step | Get `CalibAi-UAT-Local-CA.cer` onto the iPhone (AirDrop). Do not browse HTTPS yet. Do not start voice. |
+| Next approved prompt | None from this setup pass. |
+| Commit hash | (docs; this increment) |
+
 ### 2026-09-02 — FG-021 secure-context UAT investigation (HTTPS not implemented)
 
 | Field | Content |

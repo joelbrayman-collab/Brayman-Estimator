@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-01 |
+| Updated | 2026-09-02 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -29,6 +29,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 4. “Completed pending baseline commit” means deliverables exist in the working tree awaiting Joel-approved commit.
 
 ---
+
+### 2026-09-02 — ADR-043 Accepted + FG-021 approved + implementation recon
+
+| Field | Content |
+|-------|---------|
+| ID | Governance acceptance / recon (not a coded milestone) |
+| Status | **RECORDED / NOT IMPLEMENTED.** [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED**. Implementation recon **COMPLETE**. Field Web product **NOT STARTED**. |
+| Branch | `main` |
+| Base commit | Draft `6273fa4`; tooling `d69cfb66aaad5ad178375ddb2eaddc55091f6a7c`; Item 12 recon `24959d2650021380bbe8b1ef9ba94d5857debd26`. |
+| Objective | Accept ADR-043, Approve FG-021, and freeze FG-021 implementation design without product code or a migration. |
+| Deliverables | ADR-043 Accepted; FG-021 approved/not started; [architecture/fg-021-field-web-v1-implementation-reconnaissance.md](architecture/fg-021-field-web-v1-implementation-reconnaissance.md); index/handoff updates. No migration. No product code. |
+| Validation | Docs only. Alembic current = heads `c1d2e3f4a5b6` verified. Full suite **538 passed** claimed, not rerun. |
+| Architectural findings | Event UUID UNIQUE(org, uuid) String(36) nullable. Original UUID UNIQUE(event, uuid) String(36) nullable. UUID v4 36-char lowercase. Event/Original 201/200/409. IndexedDB `calibai-field-v1`. No PWA. Safari reopen/retry. Designed revision `d2e3f4a5b6c7`. Readiness: READY FOR BOUNDED IMPLEMENTATION after a separate prompt. |
+| Open decisions | Separate implementation prompt. Native Signing production remains counsel-blocked. |
+| Next milestone | **STOP Field Web product implementation** until a separate FG-021 implementation prompt. |
+| Commit | verify `git rev-parse HEAD` after this docs commit |
+| Date | 2026-09-02 |
 
 ### 2026-09-01 — ADR-043 Proposed + FG-021 draft (not approved)
 

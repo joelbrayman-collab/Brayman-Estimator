@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-09-01 |
+| Updated | 2026-09-02 |
 
 Domain architecture documents describe **intended** systems. They are not claims of current implementation unless explicitly marked Current.
 
@@ -20,7 +20,8 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [organization-brand-profile.md](organization-brand-profile.md) | **CLOSED / OPERATIONAL FOR UAT** — [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) |
 | [change-order-document-family.md](change-order-document-family.md) | **FUTURE / NOT IMPLEMENTED** — governed Change Order document family + email pin; existing Change Order record remains authoritative; not a Feature Gate |
 | [contract-esignature-and-signed-change-order.md](contract-esignature-and-signed-change-order.md) | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** — Native Signing V1 recommended; counsel spec **PREPARED**; **development may proceed under separate governance**; **production activation blocked pending counsel**; no Feature Gate in this pass |
-| [field-web-today-and-capture.md](field-web-today-and-capture.md) | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** — Item 12 Field Web / Today + Capture; [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Proposed**; [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **DRAFT / NOT APPROVED**; implementation **NOT AUTHORIZED** |
+| [field-web-today-and-capture.md](field-web-today-and-capture.md) | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** — Item 12 Field Web / Today + Capture; [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**; [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED**; product implementation **NOT AUTHORIZED** until a separate prompt |
+| [fg-021-field-web-v1-implementation-reconnaissance.md](fg-021-field-web-v1-implementation-reconnaissance.md) | **IMPLEMENTATION RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** — FG-021 file/API/schema freeze; designed revision `d2e3f4a5b6c7` **not created** |
 | [quickbooks-integration.md](quickbooks-integration.md) | **Future** — export pipeline boundary (not implemented) |
 | [M004-plan-intelligence-readiness-report.md](M004-plan-intelligence-readiness-report.md) | Milestone 004 report |
 | [M006-document-intelligence-readiness-report.md](M006-document-intelligence-readiness-report.md) | Milestone 006 report |

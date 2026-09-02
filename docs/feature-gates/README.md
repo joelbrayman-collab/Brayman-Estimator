@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-09-01 |
+| Updated | 2026-09-02 |
 
 Feature Gate documents answer the twelve governance questions in [platform-governance.md](../platform-governance.md) for a specific module or milestone **before** Cursor implementation.
 
@@ -41,7 +41,7 @@ Do not rewrite historical gate-at-close facts. Do not treat a gate-at-close head
 | [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) | Organization Authentication, Actor Identity, and Membership V1 | **CLOSED / OPERATIONAL FOR UAT** (2026-08-31; **live** current=head `b0c1d2e3f4a5`; office UAT port **5011**; [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; shared API **out of this gate**) |
 | [FG-019](FG-019-shared-api-foundation-v1.md) | Shared API Foundation V1 — Authenticated JSON Transport | **CLOSED / OPERATIONAL FOR UAT** (2026-08-31; no migration; live current=head `b0c1d2e3f4a5`; dedicated **34**; full suite **494**; API UAT port **5012**; does **not** authorize BUILD) |
 | [FG-020](FG-020-build-field-capture-v1-project-field-observation-foundation.md) | BUILD Field Capture V1 — Project Field Observation Foundation | **CLOSED / OPERATIONAL FOR UAT** (2026-09-01; live current=head `c1d2e3f4a5b6`; office UAT port **5013**; dedicated **44**; focused **128**; full suite **538**). Image-only Compatible Renditions **implemented**. Project Closeout **not implemented**. Item 12 recon **COMPLETE / NOT IMPLEMENTED**. |
-| [FG-021](FG-021-field-web-v1-today-and-capture.md) | Field Web V1 — Today + Capture | **DRAFT FOR JOEL REVIEW / NOT APPROVED** (2026-09-01). [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Proposed**. Implementation **NOT AUTHORIZED**. No migration. |
+| [FG-021](FG-021-field-web-v1-today-and-capture.md) | Field Web V1 — Today + Capture | **APPROVED / IMPLEMENTATION NOT STARTED** (2026-09-02). [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. Implementation recon **COMPLETE**. Designed revision **`d2e3f4a5b6c7`** **not created**. |
 
 [FG-015](FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-016](FG-016-ontario-ottawa-permit-intelligence-poc.md) is **CLOSED / OPERATIONAL FOR UAT**. Pratt office UAT **PASSED** on port **5009** (project id 9). [FG-017](FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Live current = head `c1d2e3f4a5b6`. Office authentication UAT **PASSED** on port **5011**.
 
@@ -51,4 +51,4 @@ Implementation is not authorized by a Feature Gate until Joel approves the gate 
 
 **Native Signing:** architecture recon is **COMPLETE** and the counsel-review specification is **PREPARED** ([native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md)). **Development may proceed under separate governance.** **Production activation / real customer use is blocked pending Ontario counsel approval of the signing process.** Counsel review is **not** a general CalibAi development hold. Do **not** create a signing Feature Gate from Item 12. Do **not** assign FG-021 to Native Signing.
 
-**Field Web (Item 12):** architecture reconnaissance is **COMPLETE** ([field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md)). [FG-021](FG-021-field-web-v1-today-and-capture.md) is **DRAFT FOR JOEL REVIEW / NOT APPROVED**. [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) is **Proposed**. Implementation is **NOT AUTHORIZED**. Do **not** assign FG-021 to Native Signing.
+**Field Web (Item 12):** architecture reconnaissance is **COMPLETE** ([field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md)). [FG-021](FG-021-field-web-v1-today-and-capture.md) is **APPROVED / IMPLEMENTATION NOT STARTED**. [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) is **Accepted**. Implementation recon: [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md). Product implementation **NOT AUTHORIZED** until a separate implementation prompt. Do **not** assign FG-021 to Native Signing.

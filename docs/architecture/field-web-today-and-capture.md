@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED.** [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Proposed**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED**. Implementation **NOT AUTHORIZED**. |
+| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED.** [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED**. Implementation recon **COMPLETE**. Product implementation **NOT AUTHORIZED** until a separate prompt. |
 | Date | 2026-09-01 |
 | Product | The Estimator / CalibAi |
 | Roadmap | Item 12 — Field Web / Today + Capture |
@@ -11,7 +11,7 @@
 | Related | [modules/build.md](../modules/build.md) · [build-media-storage-lifecycle.md](build-media-storage-lifecycle.md) · [ADR-023](../adr/ADR-023-field-evidence-provenance.md) · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) · Native Signing is a **parallel** commercial-execution track (see §34) |
 | Repository baseline | `main` @ `42b9c792b7c4fd968ed46be0ff15975cf3880eb5` = `origin/main`. Alembic current = heads **`c1d2e3f4a5b6`**. Full suite **538 passed** claimed from FG-020 close — **not rerun** this docs-only recon. |
 
-This reconnaissance is **complete** as architecture. Subsequent 2026-09-01 governance draft: [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) is **Proposed**; [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **DRAFT FOR JOEL REVIEW / NOT APPROVED**. That draft does **not** authorize Field Web implementation, a migration, microphone/camera product UI, transcription, external AI, MONITOR, Project Closeout, Native Signing, or Contract. Ontario counsel review of Native Signing is **not** a Field Web hold.
+This reconnaissance is **complete** as architecture. Subsequent 2026-09-01 governance draft: [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) was **Proposed**; [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) was **DRAFT FOR JOEL REVIEW / NOT APPROVED** (committed `6273fa4`). Subsequent 2026-09-02: ADR-043 is **Accepted**; FG-021 is **APPROVED / IMPLEMENTATION NOT STARTED**; implementation recon is **COMPLETE** ([fg-021-field-web-v1-implementation-reconnaissance.md](fg-021-field-web-v1-implementation-reconnaissance.md)). Product implementation, a migration, microphone/camera product UI, transcription, external AI, MONITOR, Project Closeout, Native Signing, and Contract remain **NOT AUTHORIZED** by this architecture pin. Ontario counsel review of Native Signing is **not** a Field Web hold.
 
 ### 41-section report coverage (this pin is canonical)
 
@@ -306,7 +306,7 @@ This is:
 | Schema | Additive columns + unique constraints |
 | Migration | **Yes**, in the Field Web Feature Gate if that gate owns the keys |
 | ADR | **Yes**, before implementation — schema/idempotency policy is not fully locked by ADR-042 |
-| Feature Gate | [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **DRAFT / NOT APPROVED** |
+| Feature Gate | [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED** |
 
 Do not silently add columns. Do not treat SHA-only matching as Event idempotency (two photos can share no SHA; two retries of empty Event have no SHA).
 
@@ -558,18 +558,20 @@ Automated pytest cannot replace real-device mic/camera/HEIC/retry. FG-021 must i
 
 ## 31. Feature Gate shape
 
-**Subsequent status (2026-09-01):** [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **DRAFTED** as **DRAFT FOR JOEL REVIEW / NOT APPROVED**. [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) is **Proposed**. Implementation remains **NOT AUTHORIZED**.
+**Subsequent status (2026-09-01):** [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) was **DRAFTED** as **DRAFT FOR JOEL REVIEW / NOT APPROVED**. [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) was **Proposed**. Implementation remained **NOT AUTHORIZED**.
+
+**Subsequent status (2026-09-02):** ADR-043 is **Accepted**. FG-021 is **APPROVED / IMPLEMENTATION NOT STARTED**. Implementation recon is **COMPLETE**. Product implementation remains **NOT AUTHORIZED** until a separate implementation prompt.
 
 | Question | Answer from repository indexes |
 |----------|--------------------------------|
-| Next Feature Gate id | **FG-021** — [FG-021-field-web-v1-today-and-capture.md](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **DRAFT / NOT APPROVED**. Native Signing must **not** consume FG-021. |
+| Next Feature Gate id | **FG-021** — [FG-021-field-web-v1-today-and-capture.md](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED**. Native Signing must **not** consume FG-021. |
 | Proposed title | **Field Web V1 — Today + Capture** |
-| New ADR required? | **Yes.** [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Proposed**. Must be **Accepted** before implementation. ADR-042 remains the dual-surface / original-custody ADR. |
+| New ADR required? | **Accepted.** [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md). ADR-042 remains the dual-surface / original-custody ADR. |
 | Owner | Field Web is a **client**. BUILD remains owner of Events/Originals. Office/platform owns `/api/v1` adapters. |
 | Scope | `/field` templates+JS; iPhone Safari Today/Project/Capture; voice/photo/text Originals via FG-020 API; IndexedDB retry; CSRF; idempotent Event/Original API + additive schema; API display rendition GET; desktop Hub continuity tests |
 | Non-goals | Transcription; AI; PWA/service worker; native iOS; tokens; RBAC; org-switcher; Derived review UI; Change Order signing or UNSIGNED/AWAITING/SIGNED badges; MONITOR; Closeout; plan viewer; full offline sync; office shell reuse as Field; Native Signing production activation |
-| Migration | **Likely yes** (idempotency keys). Not authorized now. |
-| Implementation recon | Required after FG-021 is approved: runtime `MediaRecorder.isTypeSupported` on target iPhones, input vs getUserMedia, IndexedDB quota, CSRF refresh |
+| Migration | Designed revision **`d2e3f4a5b6c7`**. **Not created.** Not authorized until the implementation prompt. |
+| Implementation recon | **COMPLETE** — [fg-021-field-web-v1-implementation-reconnaissance.md](fg-021-field-web-v1-implementation-reconnaissance.md) |
 | Tests | Dedicated Field Web + API idempotency + CSRF + isolation + Hub continuity; real-device UAT |
 
 ---
@@ -588,7 +590,7 @@ A contractor can, on iPhone Safari:
   on the desktop Project Hub Field Observations / Event Detail.
 ```
 
-That is the destination. FG-021 is **drafted / not approved**. ADR-043 is **Proposed / not Accepted**. A migration and real-device UAT remain **not authorized**.
+That is the destination. FG-021 is **APPROVED / IMPLEMENTATION NOT STARTED**. ADR-043 is **Accepted**. A migration and real-device UAT remain **not authorized** until a separate implementation prompt.
 
 ---
 
@@ -618,10 +620,11 @@ That is the destination. FG-021 is **drafted / not approved**. ADR-043 is **Prop
 ## Related
 
 - [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**
-- [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Proposed**
+- [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**
 - [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted**
 - [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**
-- [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **DRAFT / NOT APPROVED**
+- [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED**
+- [fg-021-field-web-v1-implementation-reconnaissance.md](fg-021-field-web-v1-implementation-reconnaissance.md) **COMPLETE / NOT IMPLEMENTED**
 - [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**
 - [legal/native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — parallel track; counsel does **not** block Field Web
 
@@ -727,16 +730,14 @@ Replace leftover language that treated counsel as a **general development hold**
 ## 39. Recommended next governed action
 
 ```text
-STOP Field Web implementation.
+STOP product implementation in this architecture pin.
 
-ADR-043 is Proposed. FG-021 is DRAFT / NOT APPROVED.
+ADR-043 is Accepted. FG-021 is APPROVED / IMPLEMENTATION NOT STARTED.
+Implementation recon is COMPLETE.
 
-Joel may next:
-  (A) Accept ADR-043 and Approve FG-021, then authorize implementation
-      reconnaissance / product work in a separate prompt, OR
-  (B) authorize a separately governed Native Signing development track
-      (architecture / FG drafting / implementation / testing / non-production UAT).
-
+Joel/ChatGPT may next issue a separate FG-021 IMPLEMENTATION prompt.
+Do not implement Field Web until that prompt.
+Native Signing DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE.
 Native Signing PRODUCTION ACTIVATION / REAL CUSTOMER USE
 remains BLOCKED PENDING ONTARIO COUNSEL APPROVAL OF THE SIGNING PROCESS.
 

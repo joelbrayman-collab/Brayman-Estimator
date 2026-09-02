@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-01 |
+| Updated | 2026-09-02 |
 
 ## Purpose
 
@@ -41,6 +41,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-02 — Accept ADR-043, approve FG-021, Field Web implementation recon
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` @ starting HEAD `d69cfb66aaad5ad178375ddb2eaddc55091f6a7c` (copy-icon tooling). Origin was `24959d2650021380bbe8b1ef9ba94d5857debd26` before the tooling push. Draft commit `6273fa4` already on origin. |
+| Objective | Docs-only: push tooling commit separately; commit ADR-043/FG-021 drafts; Accept ADR-043; Approve FG-021; record implementation reconnaissance. Do not implement Field Web. |
+| Business decision | Field Web V1 remains Today + Project confirmation + Capture (voice/photo/short text). Flask/Jinja + focused JS + Shared API. No PWA. Native Signing development may proceed separately; production blocked pending counsel. |
+| Architectural decision | ADR-043 **Accepted**: online-first IndexedDB retain-until-ACK; `client_capture_uuid` UNIQUE(org, uuid); `client_original_uuid` UNIQUE(event, uuid); Event/Original first 201 replay 200 conflict 409. FG-021 **APPROVED / IMPLEMENTATION NOT STARTED**. Designed revision `d2e3f4a5b6c7` **not created**. Readiness: READY FOR BOUNDED IMPLEMENTATION after a separate prompt. |
+| Prompt template used | Governed Item-12 authorization (Accept / Approve / recon only). |
+| Approved Cursor prompt summary | BRAYMAN — ACCEPT ADR-043 / APPROVE FG-021 — FIELD WEB V1 IMPLEMENTATION RECONNAISSANCE ONLY. Docs only. Do not modify app/, tests/, or create a migration. |
+| Files expected to change | Governance/docs only, including `docs/architecture/fg-021-field-web-v1-implementation-reconnaissance.md`. |
+| Files prohibited from changing | `app/`, `tests/`, `migrations/`, database, Legal Content Gate. |
+| Implementation result | Docs only. ADR-043 **Accepted**. FG-021 **APPROVED / IMPLEMENTATION NOT STARTED**. Implementation recon **COMPLETE**. Field Web product **not started**. |
+| Tests | Full suite **538 passed** claimed from FG-020 close — **not rerun**. Alembic current = heads `c1d2e3f4a5b6` verified. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Separate FG-021 implementation prompt not issued. Native Signing production remains counsel-blocked. Login lede copy for Field `next` is non-blocking. |
+| Next approved step | **STOP product implementation.** Wait for a separate FG-021 implementation prompt. |
+| Next approved prompt | Separate FG-021 implementation prompt (not this pass), or separately governed Native Signing development. |
+| Commit hash | (this commit) |
 
 ### 2026-09-01 — Draft ADR-043 Proposed + FG-021 (not approved)
 

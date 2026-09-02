@@ -3,11 +3,13 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-043: Field Web Capture Reliability, Local Pending Capture, and Idempotent Replay Architecture |
-| Status | **Proposed / for Joel review.** Not Accepted. Not implementation authorization. |
-| Date | 2026-09-01 |
-| Related | [ADR-042](ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-022](ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-023](ADR-023-field-evidence-provenance.md) **Accepted** · [ADR-041](ADR-041-user-membership-and-office-authentication.md) **Accepted** · [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED** · [architecture/field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md) · [modules/build.md](../modules/build.md) · [architecture/build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md) |
+| Status | **Accepted** (2026-09-02). [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **APPROVED / IMPLEMENTATION NOT STARTED**. |
+| Date | 2026-09-01 (Proposed); **Accepted 2026-09-02** |
+| Related | [ADR-042](ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-022](ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-023](ADR-023-field-evidence-provenance.md) **Accepted** · [ADR-041](ADR-041-user-membership-and-office-authentication.md) **Accepted** · [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED** · [architecture/field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md) · [architecture/fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md) · [modules/build.md](../modules/build.md) · [architecture/build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md) |
 
-This ADR is **Proposed**. It does **not** accept itself. It does **not** approve [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md). It does **not** authorize Field Web product code, a migration, Native Signing, transcription, or a PWA.
+This ADR is **Accepted**. Historical status: **Proposed** 2026-09-01 (committed as draft `6273fa4`). Acceptance does **not** authorize Field Web product code, a migration, Native Signing, transcription, or a PWA. Implementation requires a **separate** FG-021 implementation prompt.
+
+Exact column types, HTTP replay codes, IndexedDB stores, and revision `d2e3f4a5b6c7` are frozen in [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md).
 
 ADR-042 remains the dual-surface / original-custody ADR. This ADR covers **Field client capture reliability**: local pending hold, client operation identity, and server idempotent replay.
 
@@ -45,7 +47,7 @@ That gap is the decision this ADR exists to lock.
 
 ## Decision
 
-**Proposed.** Do **not** treat this file as Accepted, as FG-021 approval, or as product authorization.
+**Accepted.** Do **not** treat acceptance as product implementation.
 
 ### 1. Online-first; retain until ACK; not full offline sync
 
@@ -232,7 +234,7 @@ Adds **optional** client operation identifiers on BUILD Event/Original rows. Doe
 
 ## Migration impact
 
-**Required** for FG-021 implementation (one additive revision after `c1d2e3f4a5b6`). **Not created in this pass.** No historical backfill. Exact revision identifier deferred to implementation reconnaissance.
+**Required** for FG-021 implementation (one additive revision **`d2e3f4a5b6c7`** after `c1d2e3f4a5b6`). **Not created in this pass.** No historical backfill. Frozen in [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md).
 
 ---
 
@@ -268,6 +270,6 @@ Counsel review is **not** a Field Web hold. Legal Content Gate for Ontario Contr
 
 | Role | Name | Date |
 |------|------|------|
-| Joel | | |
-| ChatGPT review | | |
-| Cursor implementation note | Proposed only. Not Accepted. Not implemented. |
+| Joel | Joel Brayman | 2026-09-02 |
+| ChatGPT review | Authorized with FG-021 approval / implementation recon prompt | 2026-09-02 |
+| Cursor implementation note | Accepted. Implementation **not started**. Recon: [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md). |

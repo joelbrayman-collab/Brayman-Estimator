@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-09-01 |
+| Updated | 2026-09-02 |
 
 ## Highest-order authority
 
@@ -147,7 +147,7 @@ Recorded 2026-08-25 — **documentation only; not implemented**:
 | QuickBooks pipeline (no API) | [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md) |
 | Ontario contract + warranty / Legal Content Gate | [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md) |
 | Contract / e-signature / signed Change Order recon | [architecture/contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md) — **COMPLETE / NOT IMPLEMENTED**; recommendation **NATIVE V1**; counsel spec **PREPARED**; **development may proceed under separate governance**; **production activation blocked pending counsel**; no Feature Gate in this pass |
-| Field Web / Today + Capture recon | [architecture/field-web-today-and-capture.md](architecture/field-web-today-and-capture.md) — **COMPLETE / NOT IMPLEMENTED**; [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Proposed**; [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) **DRAFT / NOT APPROVED**; implementation **NOT AUTHORIZED** |
+| Field Web / Today + Capture recon | [architecture/field-web-today-and-capture.md](architecture/field-web-today-and-capture.md) — **COMPLETE / NOT IMPLEMENTED**; [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**; [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED**; implementation recon [architecture/fg-021-field-web-v1-implementation-reconnaissance.md](architecture/fg-021-field-web-v1-implementation-reconnaissance.md) **COMPLETE**; product implementation **NOT AUTHORIZED** until a separate prompt |
 | Native signing process — counsel review | [legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md) — **DRAFT FOR ONTARIO COUNSEL REVIEW / NOT LEGAL APPROVAL / NOT IMPLEMENTED**; counsel is **not** a general development hold; Change Orders first; Contract later behind Legal Content Gate |
 | UAT reference case (3415 Roger Stevens Road) | [testing/uat-reference-cases.md](testing/uat-reference-cases.md) |
 

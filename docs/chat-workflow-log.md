@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-02 — FG-021 bounded LAN iPhone Save Original UUID repair
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` @ starting HEAD `443c39f556e30028d1166986342b8ee87264a8e8` |
+| Objective | Bounded FG-021 UAT defect repair: Save Original no-op on HTTP LAN iPhone because `newUuid()` only called `crypto.randomUUID()` (unavailable on insecure HTTP). Do not close the gate. Do not migrate. |
+| Business decision | Field Web V1 must generate RFC 4122 UUID v4 on iPhone Safari over HTTP LAN without weakening server validation, CSRF, auth, or idempotency. |
+| Architectural decision | `crypto.randomUUID()` when available; else `crypto.getRandomValues` 16 bytes with v4 version/variant bits; fail visibly if neither API. No `Math.random()`. Pre-POST UUID errors use existing Capture feedback. JS remains source of truth. |
+| Prompt template used | [cursor-bugfix-template.md](prompts/cursor-bugfix-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 BOUNDED REPAIR SAVE ORIGINAL NO-OP ON HTTP LAN IPHONE. Repair `field.js` `newUuid()` only plus smallest pytest coverage and docs. Do not close FG-021. Do not migrate. Do not weaken CSRF/auth. |
+| Files expected to change | `app/static/js/field.js`; `tests/test_field_web_fg021.py`; current-state; session-handoff; chat-workflow-log; FG-021 status / UUID contract as needed. |
+| Files prohibited from changing | CSRF; auth; IndexedDB architecture; Event/Original idempotency; API routes; schema; Alembic; HEIC; desktop BUILD; Project selection; Today; live DB; Native Signing. |
+| Implementation result | FG-021 remains **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Gate **NOT CLOSED**. Live current = head `d2e3f4a5b6c7`. No migration. No live DB mutation. |
+| Tests | Dedicated FG-021 **15 passed**. Focused **143 passed**. Full suite **553 passed**, 1568 warnings, 245.54s. Baselines 13 / 141 / 551; +2 dedicated, no unexplained loss. |
+| Project-state-report update | No — not a milestone close. |
+| Milestone entry update | No — gate not closed. |
+| Constitutional issue raised | None |
+| Unresolved issues | Real iPhone Safari UAT still pending. Retry Save Original after hard refresh. Gate not closed. |
+| Next approved step | Retry Save Original on the same iPhone Safari UAT URL. Do not close FG-021 until UAT. |
+| Next approved prompt | iPhone UAT / FG-021 close prompt after successful retry, or separately governed Native Signing development. |
+| Commit hash | (this commit) |
+
 ### 2026-09-02 — FG-021 live migration apply d2e3f4a5b6c7
 
 | Field | Content |

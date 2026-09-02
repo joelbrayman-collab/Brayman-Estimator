@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING.** Gate **NOT CLOSED**. Live current = head **`d2e3f4a5b6c7`**. Full suite **551 passed**. Dedicated FG-021 **13**. Focused **141**. Dedicated FG-020 **44**. Real iPhone UAT **not complete**. Native Signing **DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE**; **PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL**. Do **not** close FG-021. Do **not** implement Closeout. ADR-008 / ADR-010 **Proposed**. |
+| Status | **FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN.** Gate **NOT CLOSED**. Bounded LAN iPhone Save Original UUID repair landed. Live current = head **`d2e3f4a5b6c7`**. Full suite **553 passed**. Dedicated FG-021 **15**. Focused **143**. Dedicated FG-020 **44**. Real iPhone UAT **not complete**. Native Signing **DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE**; **PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL**. Do **not** close FG-021. Do **not** implement Closeout. ADR-008 / ADR-010 **Proposed**. |
 | Updated | 2026-09-02 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -91,11 +91,13 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**. Gate **NOT CLOSED**. Roadmap item 10 is **COMPLETE**. Item 11 is **COMPLETE**. Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**. [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) remains **CLOSED / OPERATIONAL FOR UAT**. Live current = head `d2e3f4a5b6c7`.
+**FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Gate **NOT CLOSED**. Bounded LAN iPhone Save Original UUID repair landed. Roadmap item 10 is **COMPLETE**. Item 11 is **COMPLETE**. Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) remains **CLOSED / OPERATIONAL FOR UAT**. Live current = head `d2e3f4a5b6c7`.
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** FG-021 live migration only. Identified live SQLite `instance/brayman_estimator.db`. Created one gitignored byte-for-byte pre-migration copy `instance/brayman_estimator-backup-before-fg021-d2e3f4a5b6c7.db` (outside Git; not used for recovery). Applied `flask db upgrade` `c1d2e3f4a5b6` → `d2e3f4a5b6c7`. Live current = head. Product/test/migration files **not** changed. Gate **NOT CLOSED**. Real iPhone UAT **not complete**. Native Signing **DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE**; **PRODUCTION ACTIVATION BLOCKED PENDING ONTARIO COUNSEL APPROVAL OF THE SIGNING PROCESS**. FG-020 remains **CLOSED / OPERATIONAL FOR UAT**.
+**Last authorized delta:** Bounded FG-021 iPhone HTTP LAN Save Original repair. `app/static/js/field.js` `newUuid()` now uses `crypto.randomUUID()` when available, else `crypto.getRandomValues` 16-byte RFC 4122 v4 (version/variant bits). No `Math.random()`. Pre-POST UUID failure shows existing Capture feedback: `Unable to prepare this capture for saving. Please retry.` Dedicated FG-021 **15**; focused **143**; full **553**. Live current remains head `d2e3f4a5b6c7`. No migration. No live DB mutation. CSRF/auth unchanged. Gate **NOT CLOSED**. Real iPhone UAT **not complete** — retry Save Original after hard refresh.
+
+Prior: FG-021 live migration only. Identified live SQLite `instance/brayman_estimator.db`. Created one gitignored byte-for-byte pre-migration copy `instance/brayman_estimator-backup-before-fg021-d2e3f4a5b6c7.db` (outside Git; not used for recovery). Applied `flask db upgrade` `c1d2e3f4a5b6` → `d2e3f4a5b6c7`. Live current = head. Product/test/migration files **not** changed in that pass. Gate **NOT CLOSED**.
 
 Prior: FG-021 Field Web V1 product implementation. `/field` Today + Project confirm + Capture. IndexedDB. Idempotent Event/Original API. Display GET. Revision `d2e3f4a5b6c7` created. Live upgrade **not** run in that pass. Gate **NOT CLOSED**.
 
@@ -165,8 +167,8 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 ## 10. TEST / UAT / MIGRATION STATUS
 
 - Repository graph head `d2e3f4a5b6c7`. Live current `d2e3f4a5b6c7`. One graph head. Applied `c1d2e3f4a5b6` → `d2e3f4a5b6c7`.
-- Dedicated: FG-021 **13**; FG-020 **44** (33 + 11 media compatibility); FG-019 **34**; FG-018 **37**; FG-017 **22**; FG-016 **37**; FG-015 permit foundation **19**; FG-014 material catalogue **35**; FG-013 upload 27; FG-012 19; Project Hub (post-FG-020 assertions); take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
-- Focused regression (Hub + FG-018 + FG-019 + both FG-020 + FG-021): **141 passed**. Full suite: **551 passed** (216.74s).
+- Dedicated: FG-021 **15**; FG-020 **44** (33 + 11 media compatibility); FG-019 **34**; FG-018 **37**; FG-017 **22**; FG-016 **37**; FG-015 permit foundation **19**; FG-014 material catalogue **35**; FG-013 upload 27; FG-012 19; Project Hub (post-FG-020 assertions); take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
+- Focused regression (Hub + FG-018 + FG-019 + both FG-020 + FG-021): **143 passed**. Full suite: **553 passed** (245.54s).
 - Live API FG-019 UAT **PASSED** on port **5012**. Live office FG-018 UAT **PASSED** on port **5011**. FG-017 UAT remains **PASSED** on port **5010**. Pratt Permit Report UAT remains **PASSED** on port **5009** (project id 9). FG-020 office UAT **PASSED** on port **5013**.
 
 ## 11. PROTECTED STATE
@@ -203,7 +205,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - **FG-018:** **CLOSED / OPERATIONAL FOR UAT**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. Live current `b0c1d2e3f4a5`. Office UAT port **5011**. Shared API **out of this gate**. Not production-security certification.
 - **FG-019:** **CLOSED / OPERATIONAL FOR UAT**. Shared API Foundation V1. GET-only `/api/v1` plus FG-020 BUILD POST allow-list. No FG-019 migration. API UAT port **5012**.
 - **FG-020:** **CLOSED / OPERATIONAL FOR UAT**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Image-only Compatible Renditions **implemented**. Gate-at-close live current = head was `c1d2e3f4a5b6`. Office UAT port **5013**. Dedicated **44**. Full suite **538**. Field Web **not** in this gate. Closeout **not** started.
-- **FG-021:** **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**. [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. Live current = head `d2e3f4a5b6c7`. Gate **NOT CLOSED**. Real iPhone UAT **not complete**. Dedicated **13**. Focused **141**.
+- **FG-021:** **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. Live current = head `d2e3f4a5b6c7`. Gate **NOT CLOSED**. Bounded LAN iPhone Save Original UUID repair landed. Real iPhone UAT **not complete**. Dedicated **15**. Focused **143**.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
@@ -253,9 +255,9 @@ Do not start Phase D. Do not enable an external AI provider. Do not close FG-021
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** Real iPhone Safari UAT for [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md). Do **not** close the gate until UAT. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval. Do **not** implement Native Signing production, mail, Closeout, or Contract templates from this pass.
+**Next governed action:** Retry real iPhone Safari UAT Save Original on the same HTTP LAN URL after a hard refresh for [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md). Do **not** close the gate until UAT. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval. Do **not** implement Native Signing production, mail, Closeout, or Contract templates from this pass.
 
-**Roadmap direction (not authorization):** Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Roadmap direction (not authorization):** Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -285,7 +287,7 @@ git diff --check
 ./venv/bin/python -m pytest -q
 ```
 
-Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **current = heads `d2e3f4a5b6c7`** (one graph head); dedicated FG-021 **13**; focused (Hub + FG-018 + FG-019 + both FG-020 + FG-021) **141**; dedicated FG-020 **44**; FG-019 34; FG-018 37; FG-017 22; FG-016 37; FG-015 19; FG-014 35; FG-013 27; FG-012 19; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; implementation full suite **551 passed**. Non-development `flask` CLI requires local-only `SECRET_KEY` (gitignored `.env`).
+Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **current = heads `d2e3f4a5b6c7`** (one graph head); dedicated FG-021 **15**; focused (Hub + FG-018 + FG-019 + both FG-020 + FG-021) **143**; dedicated FG-020 **44**; FG-019 34; FG-018 37; FG-017 22; FG-016 37; FG-015 19; FG-014 35; FG-013 27; FG-012 19; take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11; implementation full suite **553 passed**. Non-development `flask` CLI requires local-only `SECRET_KEY` (gitignored `.env`).
 
 ## 22. FRESH CHAT STARTUP PROMPT
 
@@ -568,4 +570,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**; gate **NOT CLOSED**; live current = head `d2e3f4a5b6c7`; dedicated FG-021 **13**; focused **141**; FG-020 **CLOSED / OPERATIONAL FOR UAT**; Native Signing **DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE**; **PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL**; Project Closeout **FUTURE**. Do **not** close FG-021 until real iPhone UAT. Do **not** enable Native Signing production. Do **not** implement Contract templates or Closeout. Pre-migration SQLite copy remains gitignored under `instance/` and must **not** be committed.
+A–J: [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**; gate **NOT CLOSED**; bounded LAN iPhone Save Original UUID repair landed; live current = head `d2e3f4a5b6c7`; dedicated FG-021 **15**; focused **143**; FG-020 **CLOSED / OPERATIONAL FOR UAT**; Native Signing **DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE**; **PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL**; Project Closeout **FUTURE**. Do **not** close FG-021 until real iPhone UAT. Do **not** enable Native Signing production. Do **not** implement Contract templates or Closeout. Pre-migration SQLite copy remains gitignored under `instance/` and must **not** be committed.

@@ -3,14 +3,18 @@
 from __future__ import annotations
 
 import hashlib
+import os
+import re
 import uuid
 from io import BytesIO
+from pathlib import Path
 
 import pytest
 
 from app import create_app, db
 from app.models import Organization
 from app.models.build import FieldCaptureEvent, FieldCaptureOriginal
+from app.services.build import normalize_client_uuid
 from app.services.organizations import ensure_default_organization
 from tests.auth_fixtures import (
     DEFAULT_OFFICE_EMAIL,
@@ -413,3 +417,77 @@ def test_csrf_required_and_replay_after_fresh_token(csrf_app, csrf_client):
     assert replay.status_code == 200
     me_post = csrf_client.post("/api/v1/me", headers={"X-CSRFToken": fresh})
     _assert_json_error(me_post, 405)
+
+
+FIELD_JS = Path(__file__).resolve().parents[1] / "app" / "static" / "js" / "field.js"
+PREPARE_FAIL_MESSAGE = "Unable to prepare this capture for saving. Please retry."
+
+
+def _uuid_v4_from_getrandomvalues(random_bytes: bytes) -> str:
+    """Mirror field.js getRandomValues fallback. JS remains the source of truth."""
+    assert len(random_bytes) == 16
+    buf = bytearray(random_bytes)
+    buf[6] = (buf[6] & 0x0F) | 0x40
+    buf[8] = (buf[8] & 0x3F) | 0x80
+    hexed = buf.hex()
+    return (
+        f"{hexed[0:8]}-{hexed[8:12]}-{hexed[12:16]}-{hexed[16:20]}-{hexed[20:32]}"
+    )
+
+
+def test_field_js_lan_http_uuid_fallback_contract():
+    source = FIELD_JS.read_text(encoding="utf-8")
+    fn_match = re.search(r"function newUuid\(\) \{.*?\n  \}", source, re.S)
+    assert fn_match, "newUuid() must remain in field.js"
+    new_uuid_src = fn_match.group(0)
+    assert "crypto.randomUUID" in new_uuid_src
+    assert "crypto.getRandomValues" in new_uuid_src
+    assert "0x40" in new_uuid_src
+    assert "0x0f" in new_uuid_src
+    assert "0x80" in new_uuid_src
+    assert "0x3f" in new_uuid_src
+    assert "Math.random" not in source
+    assert "This browser cannot create a capture identity." in new_uuid_src
+    save_match = re.search(r"function saveNew\(projectId\) \{.*?\n  \}", source, re.S)
+    assert save_match, "saveNew() must remain in field.js"
+    save_src = save_match.group(0)
+    assert "try {" in save_src
+    assert "newUuid()" in save_src
+    assert PREPARE_FAIL_MESSAGE in save_src
+    assert "err.message" not in save_src
+    assert "err.stack" not in save_src
+
+
+def test_getrandomvalues_fallback_and_randomuuid_pass_server(client, app):
+    project = _add_project(name="LAN UUID Fallback")
+    random_style = str(uuid.uuid4())
+    parsed_random = uuid.UUID(random_style)
+    assert parsed_random.version == 4
+    assert random_style == str(parsed_random)
+    assert normalize_client_uuid(random_style, field_name="client_capture_uuid") == random_style
+    first = client.post(
+        f"/api/v1/projects/{project.id}/field-events",
+        json={"client_capture_uuid": random_style},
+    )
+    assert first.status_code == 201
+    assert first.get_json()["client_capture_uuid"] == random_style
+
+    fallback = _uuid_v4_from_getrandomvalues(os.urandom(16))
+    assert len(fallback) == 36
+    assert fallback == fallback.lower()
+    assert re.fullmatch(
+        r"[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}",
+        fallback,
+    )
+    parsed = uuid.UUID(fallback)
+    assert parsed.version == 4
+    assert parsed.variant == uuid.RFC_4122
+    assert str(parsed) == fallback
+    assert normalize_client_uuid(fallback, field_name="client_capture_uuid") == fallback
+    second = client.post(
+        f"/api/v1/projects/{project.id}/field-events",
+        json={"client_capture_uuid": fallback},
+    )
+    assert second.status_code == 201
+    assert second.get_json()["client_capture_uuid"] == fallback
+    assert FieldCaptureEvent.query.filter_by(project_id=project.id).count() == 2

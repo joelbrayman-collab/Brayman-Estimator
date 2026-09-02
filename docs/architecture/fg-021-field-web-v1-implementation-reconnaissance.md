@@ -81,7 +81,7 @@ xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 
 | Rule | Decision |
 |------|----------|
-| Client generate | `crypto.randomUUID()` (v4) before first POST |
+| Client generate | `crypto.randomUUID()` (v4) when available; otherwise `crypto.getRandomValues` 16 bytes with RFC 4122 v4 version/variant bits. No `Math.random()`. Fail visibly if neither API exists. |
 | Server parse | `uuid.UUID(value)` then require `.version == 4` |
 | Normalize | strip; lowercase; store hyphenated form (`str(parsed)`) |
 | Reject | missing hyphens, URN `urn:uuid:`, braces, uppercase-only accepted only after normalize; invalid → **400** `BuildServiceError` |

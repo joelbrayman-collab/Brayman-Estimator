@@ -129,6 +129,28 @@
     if (window.crypto && typeof crypto.randomUUID === "function") {
       return crypto.randomUUID();
     }
+    if (window.crypto && typeof crypto.getRandomValues === "function") {
+      var bytes = new Uint8Array(16);
+      crypto.getRandomValues(bytes);
+      bytes[6] = (bytes[6] & 0x0f) | 0x40;
+      bytes[8] = (bytes[8] & 0x3f) | 0x80;
+      var hex = "";
+      var i;
+      for (i = 0; i < bytes.length; i += 1) {
+        hex += (bytes[i] + 256).toString(16).slice(-2);
+      }
+      return (
+        hex.slice(0, 8) +
+        "-" +
+        hex.slice(8, 12) +
+        "-" +
+        hex.slice(12, 16) +
+        "-" +
+        hex.slice(16, 20) +
+        "-" +
+        hex.slice(20, 32)
+      );
+    }
     throw new Error("This browser cannot create a capture identity.");
   }
 
@@ -548,41 +570,47 @@
       setFeedback("Cannot safely keep this capture on this phone. Try photo or text later, or free storage.");
       return;
     }
-    var captureUuid = newUuid();
+    var captureUuid;
     var originals = [];
-    if (text) {
-      originals.push({
-        client_original_uuid: newUuid(),
-        client_capture_uuid: captureUuid,
-        kind: "text",
-        text_body: text,
-        filename: "note.txt",
-        mime: "text/plain",
-        state: "pending",
+    try {
+      captureUuid = newUuid();
+      if (text) {
+        originals.push({
+          client_original_uuid: newUuid(),
+          client_capture_uuid: captureUuid,
+          kind: "text",
+          text_body: text,
+          filename: "note.txt",
+          mime: "text/plain",
+          state: "pending",
+        });
+      }
+      if (recordedBlob) {
+        originals.push({
+          client_original_uuid: newUuid(),
+          client_capture_uuid: captureUuid,
+          kind: "audio",
+          blob: recordedBlob,
+          filename: recordedMime.indexOf("webm") !== -1 ? "note.webm" : "note.m4a",
+          mime: recordedMime,
+          state: "pending",
+        });
+      }
+      photos.forEach(function (file, index) {
+        originals.push({
+          client_original_uuid: newUuid(),
+          client_capture_uuid: captureUuid,
+          kind: "image",
+          blob: file,
+          filename: file.name || "photo-" + (index + 1) + ".jpg",
+          mime: file.type || "image/jpeg",
+          state: "pending",
+        });
       });
+    } catch (err) {
+      setFeedback("Unable to prepare this capture for saving. Please retry.");
+      return;
     }
-    if (recordedBlob) {
-      originals.push({
-        client_original_uuid: newUuid(),
-        client_capture_uuid: captureUuid,
-        kind: "audio",
-        blob: recordedBlob,
-        filename: recordedMime.indexOf("webm") !== -1 ? "note.webm" : "note.m4a",
-        mime: recordedMime,
-        state: "pending",
-      });
-    }
-    photos.forEach(function (file, index) {
-      originals.push({
-        client_original_uuid: newUuid(),
-        client_capture_uuid: captureUuid,
-        kind: "image",
-        blob: file,
-        filename: file.name || "photo-" + (index + 1) + ".jpg",
-        mime: file.type || "image/jpeg",
-        state: "pending",
-      });
-    });
     var capture = {
       client_capture_uuid: captureUuid,
       project_id: projectId,

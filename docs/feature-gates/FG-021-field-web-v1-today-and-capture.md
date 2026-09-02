@@ -7,11 +7,11 @@
 | Target Milestone | **None.** FG-021 is the governing identifier. Do not assign a new M0xx number. Do **not** assign FG-021 to Native Signing. |
 | Module | **Field Web is a client.** **BUILD** owns Field Capture Events, Original Payloads, Derived Candidates, and BUILD binary custody. **Office / platform** owns `/api/v1` adapters, cookie session, and CSRF. **Projects** owns `projects`. |
 | Date | 2026-09-01 |
-| Status | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING** (2026-09-02). Gate **NOT CLOSED**. Real iPhone UAT **not complete**. Live current = head **`d2e3f4a5b6c7`**. |
+| Status | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** (2026-09-02). Gate **NOT CLOSED**. Bounded LAN iPhone Save Original UUID repair landed. Real iPhone UAT **not complete**. Live current = head **`d2e3f4a5b6c7`**. |
 | Architecture | [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** · [architecture/field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md) · [architecture/fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md) · [modules/build.md](../modules/build.md) · [architecture/build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md) |
 | Related ADRs | [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | [FG-020](FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Item 11 **COMPLETE**. Item 12 reconnaissance **COMPLETE**. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. ADR-043 **Accepted**. This gate **Approved**. Implementation recon **COMPLETE**. |
-| Approved baseline | Live Alembic current = head **`d2e3f4a5b6c7`**. Full suite **551 passed**. Dedicated FG-021 **13**. Focused **141**. Dedicated FG-020 **44**. |
+| Approved baseline | Live Alembic current = head **`d2e3f4a5b6c7`**. Full suite **553 passed**. Dedicated FG-021 **15**. Focused **143**. Dedicated FG-020 **44**. |
 
 ---
 
@@ -19,13 +19,13 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING** — **NOT CLOSED** |
+| Feature Gate (this document) | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** — **NOT CLOSED**. Bounded LAN iPhone Save Original UUID repair landed. |
 | ADR-043 | **Accepted** |
 | ADR-042 | **Accepted** (dual-surface / original custody; unchanged) |
 | Implementation reconnaissance | **COMPLETE** ([fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md)). |
 | Implementation | **LANDED** — `/field` Today + Project confirm + Capture; IndexedDB; idempotent Event/Original API; display GET |
 | Schema / Alembic | Revision **`d2e3f4a5b6c7` applied live** (`c1d2e3f4a5b6` → `d2e3f4a5b6c7`). Live current = head. |
-| Field Web product | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**. Real iPhone UAT **not complete**. |
+| Field Web product | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Real iPhone UAT **not complete**. Retry Save Original after hard refresh. |
 | Native Signing | Parallel track. Development may proceed under **separate** governance. Production activation **blocked pending counsel**. Not this gate. |
 | Project Closeout | **FUTURE / NOT AUTHORIZED** |
 

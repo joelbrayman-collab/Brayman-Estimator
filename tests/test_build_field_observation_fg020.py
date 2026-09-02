@@ -878,7 +878,9 @@ def test_no_field_web_or_ai_surfaces(client, app):
     assert "camera" not in html.lower()
     assert "iPhone Capture" not in html
     assert client.get("/today").status_code == 404
-    assert client.get("/field").status_code == 404
+    field = client.get("/field", follow_redirects=False)
+    assert field.status_code == 302
+    assert field.headers["Location"].endswith("/field/today")
     assert client.get("/api/v1/today").status_code == 404
     assert client.get("/api/v1/field").status_code == 404
     from app.routes import build as build_routes

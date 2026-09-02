@@ -30,6 +30,11 @@ class FieldCaptureEvent(db.Model):
             "supersedes_id",
             name="uq_field_capture_events_supersedes_id",
         ),
+        db.UniqueConstraint(
+            "organization_id",
+            "client_capture_uuid",
+            name="uq_field_capture_events_org_client_capture_uuid",
+        ),
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -59,6 +64,7 @@ class FieldCaptureEvent(db.Model):
         db.ForeignKey("field_capture_events.id", ondelete="RESTRICT"),
         nullable=True,
     )
+    client_capture_uuid = db.Column(db.String(36), nullable=True)
 
     organization = db.relationship("Organization")
     project = db.relationship("Project")
@@ -103,6 +109,11 @@ class FieldCaptureOriginal(db.Model):
             ")",
             name="ck_field_capture_originals_shape",
         ),
+        db.UniqueConstraint(
+            "field_event_id",
+            "client_original_uuid",
+            name="uq_field_capture_originals_event_client_original_uuid",
+        ),
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -119,6 +130,7 @@ class FieldCaptureOriginal(db.Model):
     byte_size = db.Column(db.Integer, nullable=True)
     mime_type = db.Column(db.String(100), nullable=True)
     original_filename = db.Column(db.String(255), nullable=True)
+    client_original_uuid = db.Column(db.String(36), nullable=True)
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id", ondelete="SET NULL"),

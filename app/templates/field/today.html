@@ -1,0 +1,47 @@
+{% extends "field/base.html" %}
+{% block title %}Today — Field{% endblock %}
+{% block field_page %}today{% endblock %}
+{% block content %}
+<section class="field-panel">
+    <h1>Today</h1>
+    {% if project %}
+    <p class="field-project-name">{{ project.name }}</p>
+    {% if project.project_number %}
+    <p class="field-muted">{{ project.project_number }}</p>
+    {% endif %}
+    <a class="field-btn field-btn-primary" href="{{ url_for('field.capture', project_id=project.id) }}">Capture</a>
+    <a class="field-btn field-btn-secondary" href="{{ url_for('field.projects') }}">Switch Project</a>
+    {% else %}
+    <p>Confirm the Project before capturing.</p>
+    <a class="field-btn field-btn-primary" href="{{ url_for('field.projects') }}">Choose Project</a>
+    {% endif %}
+</section>
+
+<section class="field-panel" id="field-retry-panel" hidden>
+    <h2>Needs Retry</h2>
+    <p id="field-retry-count" class="field-muted"></p>
+    <a class="field-btn field-btn-danger" id="field-retry-link" href="#">Retry pending captures</a>
+</section>
+
+{% if recent %}
+<section class="field-panel">
+    <h2>Recent observations</h2>
+    <ul class="field-recent">
+        {% for card in recent %}
+        <li class="field-recent-item">
+            <p class="field-recent-meta">{{ card.event.actor_display_name }} · {{ card.event.occurred_at.strftime('%Y-%m-%d %H:%M') }}</p>
+            {% if card.text_excerpt %}<p>{{ card.text_excerpt }}</p>{% endif %}
+            {% if card.image_original_id and project %}
+            <img
+                class="field-thumb"
+                alt="Field photo"
+                src="{{ url_for('api_v1.field_event_original_display', project_id=project.id, event_id=card.event.id, original_id=card.image_original_id) }}"
+            >
+            {% endif %}
+            {% if card.has_audio %}<p class="field-muted">Audio attached</p>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
+{% endblock %}

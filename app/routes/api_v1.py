@@ -12,17 +12,17 @@ from app.services.build import (
     BuildConflictError,
     BuildNotFoundError,
     BuildServiceError,
-    add_binary_original,
-    add_text_original,
     confirm_derived_candidate,
-    create_event_with_text,
-    create_field_event,
+    create_or_replay_binary_original,
+    create_or_replay_field_event,
+    create_or_replay_text_original,
     get_derived_candidate,
     get_field_event,
     get_original,
     list_derived_candidates,
     list_field_events,
     list_originals,
+    open_field_display_file,
     open_original_file,
     persist_event,
     reject_derived_candidate,
@@ -111,23 +111,17 @@ def field_events(project_id):
         return jsonify([serialize_event_summary(event) for event in events])
     try:
         payload = _json_object()
-        occurred_at = payload.get("occurred_at")
-        supersedes_id = payload.get("supersedes_id")
-        if "text" in payload:
-            event = create_event_with_text(
-                project,
-                payload.get("text"),
-                occurred_at=occurred_at,
-                supersedes_id=supersedes_id,
-            )
-        else:
-            event = create_field_event(
-                project,
-                occurred_at=occurred_at,
-                supersedes_id=supersedes_id,
-            )
+        event, created = create_or_replay_field_event(
+            project,
+            occurred_at=payload.get("occurred_at"),
+            supersedes_id=payload.get("supersedes_id"),
+            client_capture_uuid=payload.get("client_capture_uuid"),
+        )
+        if created:
+            if "text" in payload:
+                create_or_replay_text_original(event, payload.get("text") or "")
             persist_event(event)
-        return jsonify(serialize_event_detail(event)), 201
+        return jsonify(serialize_event_detail(event)), 201 if created else 200
     except BuildServiceError as exc:
         db.session.rollback()
         return _build_error(exc)
@@ -163,10 +157,11 @@ def field_event_originals(project_id, event_id):
             [serialize_original(original) for original in list_originals(event)]
         )
     try:
-        original = _create_original_from_request(event)
-        db.session.commit()
-        db.session.refresh(original)
-        return jsonify(serialize_original(original)), 201
+        original, created = _create_original_from_request(event)
+        if created:
+            db.session.commit()
+            db.session.refresh(original)
+        return jsonify(serialize_original(original)), 201 if created else 200
     except BuildServiceError as exc:
         db.session.rollback()
         return _build_error(exc)
@@ -214,6 +209,36 @@ def field_event_original_content(project_id, event_id, original_id):
         mimetype=original.mime_type,
         as_attachment=False,
         download_name=original.original_filename or path.name,
+        max_age=0,
+    )
+
+
+@api_v1_bp.route(
+    "/projects/<int:project_id>/field-events/<int:event_id>/originals/<int:original_id>/display",
+    methods=["GET"],
+)
+def field_event_original_display(project_id, event_id, original_id):
+    project, error = _current_project(project_id)
+    if error is not None:
+        return error
+    event, error = _current_event(project, event_id)
+    if error is not None:
+        return error
+    original = get_original(event, original_id)
+    if original is None:
+        return api_error(ERROR_NOT_FOUND, 404)
+    try:
+        result = open_field_display_file(original)
+    except BuildServiceError:
+        return api_error(ERROR_NOT_FOUND, 404)
+    if result is None:
+        return api_error(ERROR_NOT_FOUND, 404)
+    path, mime = result
+    return send_file(
+        path,
+        mimetype=mime,
+        as_attachment=False,
+        download_name="display.jpg" if mime == "image/jpeg" else path.name,
         max_age=0,
     )
 
@@ -275,17 +300,23 @@ def _create_original_from_request(event):
         request.mimetype and request.mimetype.startswith("multipart/form-data")
     ):
         kind = (request.form.get("kind") or "").strip().lower()
+        client_original_uuid = request.form.get("client_original_uuid")
         if kind == "text":
-            return add_text_original(event, request.form.get("text") or "")
+            return create_or_replay_text_original(
+                event,
+                request.form.get("text") or "",
+                client_original_uuid=client_original_uuid,
+            )
         upload = request.files.get("file")
         if upload is None:
             raise BuildServiceError("An original file is required.")
         data = upload.read()
-        return add_binary_original(
+        return create_or_replay_binary_original(
             event,
             kind=kind,
             data=data,
             filename=upload.filename,
+            client_original_uuid=client_original_uuid,
         )
     payload = _json_object()
     kind = (payload.get("kind") or "").strip().lower()
@@ -293,4 +324,8 @@ def _create_original_from_request(event):
         raise BuildServiceError(
             "Binary originals must be uploaded as multipart/form-data."
         )
-    return add_text_original(event, payload.get("text") or "")
+    return create_or_replay_text_original(
+        event,
+        payload.get("text") or "",
+        client_original_uuid=payload.get("client_original_uuid"),
+    )

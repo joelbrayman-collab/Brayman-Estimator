@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-02 — Implement FG-021 Field Web V1 Today + Capture
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` @ starting HEAD `eb4466c4d090aaf366d39ebe2e3ff8ec1a382993` |
+| Objective | Implement FG-021 Field Web V1: Today + Project confirm + Capture; idempotent Event/Original API; display GET; additive revision `d2e3f4a5b6c7`. Do not live-upgrade. Do not close the gate. |
+| Business decision | Field Web V1 is Flask/Jinja + focused JS. IndexedDB retain-until-ACK. No PWA. No transcription. Native Signing remains a separate track. |
+| Architectural decision | Event UUID UNIQUE(org, uuid); Original UUID UNIQUE(event, uuid); first 201 / replay 200 / conflict 409; Field display GET; live current remains `c1d2e3f4a5b6`. |
+| Prompt template used | FG-021 Field Web V1 implementation prompt. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 FIELD WEB V1 IMPLEMENTATION. Create `d2e3f4a5b6c7`. Implement `/field` + idempotent API. Do not run live `flask db upgrade`. Do not close FG-021. |
+| Files expected to change | `app/`, `tests/test_field_web_fg021.py`, `migrations/versions/d2e3f4a5b6c7_*.py`, governed docs. |
+| Files prohibited from changing | Live database; Legal Content Gate; Native Signing product; PWA; transcription. |
+| Implementation result | FG-021 **IMPLEMENTED / LIVE MIGRATION PENDING**. Gate **NOT CLOSED**. Revision created. Live upgrade **not** run. |
+| Tests | Dedicated FG-021 **13 passed**. Focused **141 passed**. Full suite **551 passed**. Live `flask db current` `c1d2e3f4a5b6`. Heads `d2e3f4a5b6c7`. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live upgrade pending. Real iPhone UAT pending. Gate not closed. |
+| Next approved step | Explicit live-migration prompt, then real iPhone Safari UAT. Do not close FG-021 until UAT. |
+| Next approved prompt | Live-migration + iPhone UAT close prompt, or separately governed Native Signing development. |
+| Commit hash | (this commit) |
+
 ### 2026-09-02 — Accept ADR-043, approve FG-021, Field Web implementation recon
 
 | Field | Content |

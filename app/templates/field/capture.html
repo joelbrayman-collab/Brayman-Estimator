@@ -1,0 +1,39 @@
+{% extends "field/base.html" %}
+{% block title %}Capture — Field{% endblock %}
+{% block field_page %}capture{% endblock %}
+{% block content %}
+<section class="field-panel field-capture" data-project-id="{{ project.id }}">
+    <h1>Capture</h1>
+    <p class="field-project-name" id="field-capture-project">{{ project.name }}</p>
+    {% if project.project_number %}
+    <p class="field-muted">{{ project.project_number }}</p>
+    {% endif %}
+
+    <label class="field-label" for="field-text">Short text</label>
+    <textarea id="field-text" class="field-textarea" rows="4" maxlength="4000" aria-label="Short text note"></textarea>
+
+    <div class="field-actions">
+        <button type="button" class="field-btn field-btn-secondary" id="field-record">Record</button>
+        <button type="button" class="field-btn field-btn-secondary" id="field-stop" hidden>Stop</button>
+        <button type="button" class="field-btn field-btn-ghost" id="field-discard-audio" hidden>Discard recording</button>
+    </div>
+    <audio id="field-audio-preview" controls hidden aria-label="Recorded audio playback"></audio>
+    <p class="field-muted" id="field-voice-note"></p>
+
+    <div class="field-actions">
+        <label class="field-btn field-btn-secondary field-file-btn">
+            Take Photo
+            <input id="field-take-photo" type="file" accept="image/*" capture="environment" hidden>
+        </label>
+        <label class="field-btn field-btn-secondary field-file-btn">
+            Choose Photo
+            <input id="field-choose-photo" type="file" accept="image/*" multiple hidden>
+        </label>
+    </div>
+    <ul class="field-photo-list" id="field-photo-list"></ul>
+
+    <button type="button" class="field-btn field-btn-primary field-save" id="field-save">Save original</button>
+    <p class="field-feedback" id="field-feedback" aria-live="polite"></p>
+    <a class="field-btn field-btn-ghost" href="{{ url_for('field.today') }}">Back to Today</a>
+</section>
+{% endblock %}

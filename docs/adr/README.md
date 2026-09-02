@@ -146,11 +146,11 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 |-----|-------|--------|
 | [ADR-042](ADR-042-build-field-evidence-and-iphone-first-capture.md) | BUILD Field Evidence, Original Observation Custody, Desktop Review, and iPhone-First Capture Architecture | **Accepted** (2026-08-31). [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Image-only Compatible Renditions **implemented**. Storage-lifecycle pin [build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md). Live current = head `c1d2e3f4a5b6`. |
 
-### Field Web capture reliability (Accepted; FG-021 approved / not started)
+### Field Web capture reliability (Accepted; FG-021 implemented / live migration pending)
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-043](ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) | Field Web Capture Reliability, Local Pending Capture, and Idempotent Replay Architecture | **Accepted** (2026-09-02). [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED**. Implementation recon [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md). Designed revision `d2e3f4a5b6c7` **not created**. |
+| [ADR-043](ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) | Field Web Capture Reliability, Local Pending Capture, and Idempotent Replay Architecture | **Accepted** (2026-09-02). [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE MIGRATION PENDING**. Revision `d2e3f4a5b6c7` created; live current remains `c1d2e3f4a5b6`. |
 
 CAR-001 record: [../architecture/CAR-001-calibai-product-architecture-reconciliation.md](../architecture/CAR-001-calibai-product-architecture-reconciliation.md).
 

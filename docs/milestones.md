@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-02 — FG-021 Field Web V1 implemented / live migration pending
+
+| Field | Content |
+|-------|---------|
+| ID | FG-021 coded increment (gate **NOT CLOSED**) |
+| Status | **IMPLEMENTED / LIVE MIGRATION PENDING.** [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) landed. Live current remains `c1d2e3f4a5b6`. Graph head `d2e3f4a5b6c7`. Real iPhone UAT **not complete**. |
+| Branch | `main` |
+| Base commit | `eb4466c4d090aaf366d39ebe2e3ff8ec1a382993` |
+| Objective | Land Field Web V1 Today + Project confirm + Capture and idempotent Event/Original API without applying the live migration or closing the gate. |
+| Deliverables | `/field` routes/templates/CSS/JS; `client_capture_uuid` / `client_original_uuid`; Event/Original 201/200/409; display GET; revision `d2e3f4a5b6c7`; dedicated tests. |
+| Validation | Dedicated FG-021 **13 passed**. Focused **141 passed**. Full suite **551 passed**. Live current `c1d2e3f4a5b6` verified (upgrade not run). |
+| Architectural findings | Frozen recon held. Office Hub unchanged. No PWA. No transcription. Native Signing unchanged. |
+| Open decisions | Live upgrade authorization. Real iPhone UAT. Gate close. |
+| Next milestone | Live `flask db upgrade` + iPhone UAT close, under a separate prompt. |
+| Commit | verify `git rev-parse HEAD` after this implementation commit |
+| Date | 2026-09-02 |
+
 ### 2026-09-02 — ADR-043 Accepted + FG-021 approved + implementation recon
 
 | Field | Content |

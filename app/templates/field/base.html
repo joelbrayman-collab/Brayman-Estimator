@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{% block title %}Field — CalibAi{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/field.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body class="field-body" data-field-page="{% block field_page %}today{% endblock %}">
+    <header class="field-header">
+        <a class="field-brand" href="{{ url_for('field.today') }}">
+            <img
+                src="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}"
+                alt="CalibAi Field"
+                width="120"
+                height="48"
+            >
+        </a>
+        <form method="post" action="{{ url_for('auth.logout') }}" class="field-logout" id="field-logout-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="field-logout-btn">Log out</button>
+        </form>
+    </header>
+    <main class="field-main" id="main-content">
+        <div class="field-status" id="field-live-status" role="status" aria-live="polite"></div>
+        {% block content %}{% endblock %}
+    </main>
+    <script src="{{ url_for('static', filename='js/field.js') }}" defer></script>
+</body>
+</html>

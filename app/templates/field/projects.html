@@ -1,0 +1,53 @@
+{% extends "field/base.html" %}
+{% block title %}Projects — Field{% endblock %}
+{% block field_page %}projects{% endblock %}
+{% block content %}
+{% if confirm_project %}
+<section class="field-panel">
+    <h1>Confirm Project</h1>
+    <p class="field-project-name">{{ confirm_project.name }}</p>
+    {% if confirm_project.project_number %}
+    <p class="field-muted">{{ confirm_project.project_number }}</p>
+    {% endif %}
+    <form method="post" action="{{ url_for('field.project_confirm', project_id=confirm_project.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="field-btn field-btn-primary" name="next" value="capture">Confirm and Capture</button>
+        <button type="submit" class="field-btn field-btn-secondary">Confirm for Today</button>
+    </form>
+    <a class="field-btn field-btn-ghost" href="{{ url_for('field.projects') }}">Choose a different Project</a>
+</section>
+{% if recent %}
+<section class="field-panel">
+    <h2>Recent observations</h2>
+    <ul class="field-recent">
+        {% for card in recent %}
+        <li class="field-recent-item">
+            <p class="field-recent-meta">{{ card.event.actor_display_name }} · {{ card.event.occurred_at.strftime('%Y-%m-%d %H:%M') }}</p>
+            {% if card.text_excerpt %}<p>{{ card.text_excerpt }}</p>{% endif %}
+            {% if card.has_audio %}<p class="field-muted">Audio attached</p>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
+{% else %}
+<section class="field-panel">
+    <h1>Projects</h1>
+    <p>Select the job you are standing on.</p>
+    <ul class="field-project-list">
+        {% for row in projects %}
+        <li>
+            <a class="field-project-link" href="{{ url_for('field.project_confirm', project_id=row.id) }}">
+                <span class="field-project-name">{{ row.name }}</span>
+                {% if row.project_number %}<span class="field-muted">{{ row.project_number }}</span>{% endif %}
+                {% if confirmed_id == row.id %}<span class="field-muted">Current</span>{% endif %}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% if not projects %}
+    <p class="field-muted">No projects are available in this organization.</p>
+    {% endif %}
+</section>
+{% endif %}
+{% endblock %}

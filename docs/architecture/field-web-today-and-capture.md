@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED.** [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED**. Implementation recon **COMPLETE**. Product implementation **NOT AUTHORIZED** until a separate prompt. |
+| Status | **IMPLEMENTED / LIVE MIGRATION PENDING.** [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE MIGRATION PENDING**. Gate **NOT CLOSED**. Live current `c1d2e3f4a5b6`. Graph head `d2e3f4a5b6c7`. |
 | Date | 2026-09-01 |
 | Product | The Estimator / CalibAi |
 | Roadmap | Item 12 — Field Web / Today + Capture |

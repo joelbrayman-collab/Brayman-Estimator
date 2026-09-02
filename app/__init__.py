@@ -214,6 +214,7 @@ def create_app(config=None):
     from app.routes.settings import settings_bp
     from app.routes.api_v1 import api_v1_bp
     from app.routes.build import build_bp
+    from app.routes.field import field_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(clients_bp)
@@ -232,6 +233,7 @@ def create_app(config=None):
     app.register_blueprint(settings_bp)
     app.register_blueprint(api_v1_bp)
     app.register_blueprint(build_bp)
+    app.register_blueprint(field_bp)
 
     _register_office_auth(app)
 

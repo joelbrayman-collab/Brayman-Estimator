@@ -2,15 +2,15 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **COMPLETE / NOT IMPLEMENTED.** [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED**. |
+| Status | **COMPLETE.** Product **IMPLEMENTED / LIVE MIGRATION PENDING**. Frozen recon remains law. Live current `c1d2e3f4a5b6`. Graph head `d2e3f4a5b6c7`. |
 | Date | 2026-09-02 |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |
 | Related | [field-web-today-and-capture.md](field-web-today-and-capture.md) · [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) · [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) · [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) · [build-media-storage-lifecycle.md](build-media-storage-lifecycle.md) |
 
-This reconnaissance freezes implementation design for FG-021. It does **not** authorize product code, a migration, or `flask db upgrade`.
+This reconnaissance freezes implementation design for FG-021. Product code and revision `d2e3f4a5b6c7` have landed. Live `flask db upgrade` was **not** run. Gate **NOT CLOSED**. Real iPhone UAT remains required.
 
-Readiness: **READY FOR BOUNDED IMPLEMENTATION** after a separate Joel/ChatGPT implementation prompt.
+Readiness: **IMPLEMENTED / LIVE MIGRATION PENDING.**
 
 ---
 

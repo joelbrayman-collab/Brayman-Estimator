@@ -115,19 +115,18 @@
     }
   }
 
-  function blobFromBinary(source, mime) {
-    var type = mime || (source && source.type) || "";
+  function bytesFromImageFile(source) {
     if (!source || typeof source.arrayBuffer !== "function") {
       return Promise.reject(
-        persistFailure("blob_normalize", new Error("Blob normalization is not available."))
+        persistFailure("IMAGE_ARRAYBUFFER_READ", new Error("Image byte read is not available."))
       );
     }
     return source.arrayBuffer().then(
       function (buffer) {
-        return new Blob([buffer], { type: type });
+        return new Uint8Array(buffer);
       },
       function (err) {
-        throw persistFailure("blob_normalize", err);
+        throw persistFailure("IMAGE_ARRAYBUFFER_READ", err);
       }
     );
   }
@@ -137,15 +136,33 @@
     originals.forEach(function (row) {
       chain = chain.then(function () {
         if (row.kind !== "image" || !row.blob) return;
-        return blobFromBinary(row.blob, row.mime).then(function (blob) {
-          row.blob = blob;
+        return bytesFromImageFile(row.blob).then(function (bytes) {
+          row.bytes = bytes;
+          delete row.blob;
         });
       });
     });
     return chain;
   }
 
+  function fileBlobForUpload(original) {
+    if (original.kind === "image") {
+      if (!original.bytes) {
+        throw persistFailure("IMAGE_BLOB_RECONSTRUCT", new Error("Pending image bytes are missing."));
+      }
+      try {
+        return new Blob([original.bytes], { type: original.mime || "" });
+      } catch (err) {
+        throw persistFailure("IMAGE_BLOB_RECONSTRUCT", err);
+      }
+    }
+    if (original.blob) return original.blob;
+    throw persistFailure("MULTIPART_PREPARE", new Error("Pending binary original is missing."));
+  }
+
   function putStore(storeName, value) {
+    var putStage =
+      storeName === "pending_originals" ? "INDEXEDDB_PENDING_ORIGINAL_PUT" : "idb_put";
     return openDb()
       .then(
         function (db) {
@@ -159,7 +176,7 @@
       )
       .catch(function (err) {
         if (err && err.stage) throw err;
-        throw persistFailure("idb_put", err);
+        throw persistFailure(putStage, err);
       });
   }
 
@@ -546,7 +563,8 @@
       var form = new FormData();
       form.append("kind", original.kind);
       form.append("client_original_uuid", original.client_original_uuid);
-      form.append("file", original.blob, original.filename || "capture");
+      var fileBlob = fileBlobForUpload(original);
+      form.append("file", fileBlob, original.filename || "capture");
       return postForm(url, form);
     }).then(function (result) {
       if (result.response.status === 401) {

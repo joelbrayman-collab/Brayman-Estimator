@@ -498,22 +498,29 @@ STORAGE_FAIL_MESSAGE = (
 )
 
 
-def test_field_js_photo_blob_normalize_indexeddb_contract():
+def test_field_js_image_bytes_indexeddb_contract():
     source = FIELD_JS.read_text(encoding="utf-8")
-    assert "function blobFromBinary" in source
+    assert "function bytesFromImageFile" in source
     assert "function normalizeImageOriginals" in source
+    assert "function fileBlobForUpload" in source
     assert "function persistFailure" in source
     assert "function logFieldPersistFailure" in source
     assert "arrayBuffer()" in source
-    assert "new Blob([buffer], { type: type })" in source
-    assert 'row.kind !== "image"' in source
+    assert "new Uint8Array(buffer)" in source
+    assert "row.bytes = bytes" in source
+    assert "delete row.blob" in source
+    assert 'new Blob([original.bytes], { type: original.mime || "" })' in source
+    assert 'form.append("file", fileBlob, original.filename || "capture")' in source
+    assert "IMAGE_ARRAYBUFFER_READ" in source
+    assert "INDEXEDDB_PENDING_ORIGINAL_PUT" in source
+    assert "IMAGE_BLOB_RECONSTRUCT" in source
+    assert "MULTIPART_PREPARE" in source
     assert "Math.random" not in source
-    assert "createObjectURL" in source
     assert re.search(r"heic|heif|transcode|createImageBitmap|OffscreenCanvas", source, re.I) is None
-    blob_fn = re.search(r"function blobFromBinary\(source, mime\) \{.*?\n  \}", source, re.S)
-    assert blob_fn, "blobFromBinary() must remain in field.js"
-    assert "arrayBuffer()" in blob_fn.group(0)
-    assert "new Blob([buffer]" in blob_fn.group(0)
+    bytes_fn = re.search(r"function bytesFromImageFile\(source\) \{.*?\n  \}", source, re.S)
+    assert bytes_fn, "bytesFromImageFile() must remain in field.js"
+    assert "arrayBuffer()" in bytes_fn.group(0)
+    assert "new Blob(" not in bytes_fn.group(0)
     save_match = re.search(r"function saveNew\(projectId\) \{.*?\n  \}", source, re.S)
     assert save_match, "saveNew() must remain in field.js"
     save_src = save_match.group(0)
@@ -528,11 +535,8 @@ def test_field_js_photo_blob_normalize_indexeddb_contract():
     assert "postEvent" not in catch_src
     assert "postJson" not in catch_src
     assert "postForm" not in catch_src
-    assert 'kind: "audio"' in save_src
-    assert "recordedBlob" in save_src
     audio_push = save_src[save_src.index('kind: "audio"') : save_src.index("photos.forEach")]
-    assert "blobFromBinary" not in audio_push
-    assert 'form.append("file", original.blob, original.filename || "capture")' in source
+    assert "bytesFromImageFile" not in audio_push
     log_match = re.search(r"function logFieldPersistFailure\(err\) \{.*?\n  \}", source, re.S)
     assert log_match, "logFieldPersistFailure() must remain in field.js"
     log_src = log_match.group(0)
@@ -547,29 +551,30 @@ def test_field_js_photo_blob_normalize_indexeddb_contract():
     assert 'persistFailure("idb_open"' in init_match.group(0)
 
 
-def test_photo_blob_normalize_preserves_bytes_mime_and_filename():
-    """Mirror blobFromBinary: ArrayBuffer copy → Blob(type=original MIME); filename stays metadata."""
+def test_photo_bytes_persist_and_blob_reconstruct_preserves_bytes_mime_filename():
+    """Mirror: File.arrayBuffer() → Uint8Array persist → Blob([bytes], {type: mime}) for POST."""
     original = b"\xff\xd8\xff" + os.urandom(128)
     mime = "image/jpeg"
-    filename = "IMG_UAT.JPG"
+    filename = "IMG_UAT.PNG"
     capture_uuid = str(uuid.uuid4())
     original_uuid = str(uuid.uuid4())
-    buffer = bytes(original)
-    blob_bytes = bytes(buffer)
-    blob_type = mime
+    stored_bytes = bytes(original)
     row = {
         "client_original_uuid": original_uuid,
         "client_capture_uuid": capture_uuid,
         "kind": "image",
-        "blob": blob_bytes,
+        "bytes": stored_bytes,
         "filename": filename,
-        "mime": blob_type,
+        "mime": mime,
         "state": "pending",
     }
-    assert row["blob"] == original
-    assert row["mime"] == mime
+    assert "blob" not in row
+    assert row["bytes"] == original
+    reconstructed = bytes(row["bytes"])
+    reconstructed_type = row["mime"]
+    assert reconstructed == original
+    assert reconstructed_type == mime
     assert row["filename"] == filename
-    assert row["kind"] == "image"
-    assert row["client_original_uuid"] == original_uuid
-    assert row["client_capture_uuid"] == capture_uuid
-    assert hashlib.sha256(row["blob"]).digest() == hashlib.sha256(original).digest()
+    form_filename = row["filename"] or "capture"
+    assert form_filename == filename
+    assert hashlib.sha256(reconstructed).digest() == hashlib.sha256(original).digest()

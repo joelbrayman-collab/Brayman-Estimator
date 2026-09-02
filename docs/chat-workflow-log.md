@@ -42,6 +42,52 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-02 — FG-021 persist image Uint8Array in IndexedDB
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` @ parent `33bac00` |
+| Objective | Bounded IndexedDB image-bytes repair: persist Uint8Array, reconstruct Blob only for POST. Do not close FG-021. |
+| Business decision | File→Blob was insufficient on real iPhone Safari screenshots. Store raw bytes instead. |
+| Architectural decision | ADR-043 persist-before-POST unchanged. No skip-IDB. No HEIC convert. Text path unchanged. Audio still Blob. |
+| Prompt template used | Bounded client repair. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 BOUNDED INDEXEDDB IMAGE-BYTES REPAIR — ArrayBuffer/Uint8Array persistence. |
+| Files expected to change | `app/static/js/field.js`; `tests/test_field_web_fg021.py`; status docs. |
+| Files prohibited from changing | Alembic; CSRF; auth; Observation Delete; live schema. |
+| Implementation result | `bytesFromImageFile` + `row.bytes` Uint8Array; `fileBlobForUpload` reconstructs Blob; FormData still uses filename. Gate **NOT CLOSED**. |
+| Tests | Dedicated FG-021 **17 passed**. Focused **145 passed**. Full **555 passed**. Cursor Terminal. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Small-screenshot iPhone re-UAT not yet run against this JS. |
+| Next approved step | Close Capture tab, reopen, CHOOSE PHOTO one small screenshot, Save. |
+| Next approved prompt | None until that UAT result. |
+| Commit hash | (pending) |
+
+### 2026-09-02 — FG-021 screenshot re-UAT FAIL after File→Blob repair
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` @ `33bac00` (`ada1b7c` repair parent) |
+| Objective | Observe three screenshot Save attempts after File→Blob repair. Do not patch unless separately authorized. |
+| Business decision | STOP. File→Blob did not get screenshots into the office. Do not skip IndexedDB. ChatGPT reviews ArrayBuffer/Uint8Array persist. |
+| Architectural decision | None implemented. Candidate: persist image bytes as ArrayBuffer/Uint8Array in IndexedDB; reconstruct Blob only for multipart POST. |
+| Prompt template used | UAT observe / no product code. |
+| Approved Cursor prompt summary | Joel reported same storage error on three screenshots. Inspect Flask + live DB. Do not implement a second repair from this message. |
+| Files expected to change | session-handoff; chat-workflow-log (UAT fact). |
+| Files prohibited from changing | Product code; Alembic; CSRF; auth; Observation Delete. |
+| Implementation result | Live **25/25**. Events **19–25** text-only. No image Originals. Same UI storage message. Text notes (`Test 6`/`Test 7`) POSTed; screenshots did not. Gate **NOT CLOSED**. |
+| Tests | Not re-run. Read-only SQLite + Flask **562293**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Safari IndexedDB still rejects image Blob/File put. Safari console exception not captured. |
+| Next approved step | Paste CASE to ChatGPT. Do not try more photos until a new repair is authorized. |
+| Next approved prompt | Bounded IDB persist as ArrayBuffer/Uint8Array — **only if ChatGPT authorizes**. |
+| Commit hash | (docs; uncommitted) |
+
 ### 2026-09-02 — FG-021 capture: iPhone swipe-left Delete UX (queued)
 
 | Field | Content |

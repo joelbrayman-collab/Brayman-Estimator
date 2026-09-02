@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN.** Gate **NOT CLOSED**. Text-only iPhone Save **PASS** (Event **18**). Desktop continuity **PASS**. Small JPEG CHOOSE PHOTO previously **FAIL BEFORE POST**. Bounded IndexedDB photo-put repair **LANDED** (`File`→`ArrayBuffer`→`Blob` in `app/static/js/field.js`); small-JPEG re-UAT **pending**. Recent Observation Delete **CAPTURED / QUEUED / NOT AUTHORIZED**. Live current = head **`d2e3f4a5b6c7`**. Full suite **555 passed**. Dedicated FG-021 **17**. Focused **145**. Dedicated FG-020 **44**. Do **not** close FG-021. Do **not** implement Closeout. ADR-008 / ADR-010 **Proposed**. |
+| Status | **FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN.** Gate **NOT CLOSED**. Text-only **PASS**. File→Blob screenshot re-UAT **FAIL**. Uint8Array IndexedDB image-bytes repair **LANDED**; small-screenshot re-UAT **pending**. Observation Delete **QUEUED**. Live current = head **`d2e3f4a5b6c7`**. Do **not** close FG-021. |
 | Updated | 2026-09-02 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -95,7 +95,11 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** Bounded IndexedDB photo-put repair **LANDED** in `app/static/js/field.js`: image `File` → `arrayBuffer()` → `new Blob([buffer], { type: original MIME })` before `pending_originals` put. Filename/MIME stay metadata. Audio not converted. ADR-043 retain-until-ACK unchanged (persist still before POST). Console `warn` logs persist stage (`idb_open` / `idb_put` / `blob_normalize` / `quota`) without blobs, cookies, CSRF, or passwords. Dedicated FG-021 **17**; focused **145**; full **555**. Alembic still `d2e3f4a5b6c7`. Live DB **not** mutated. Gate **NOT CLOSED**. Next physical UAT: hard-refresh Capture, **CHOOSE PHOTO** one small screenshot/JPEG, Save. Queued (not this repair): [Recent Observation Delete capture](architecture/fg-021-recent-observation-delete-requirement-capture.md) — iPhone **swipe left → reveal Delete → confirm**; retention model **not** chosen; **do not implement** until Joel/ChatGPT review after photo re-UAT.
+**Last authorized delta:** Bounded IndexedDB image-bytes repair **LANDED**: persist image as `Uint8Array` (`bytesFromImageFile` → `row.bytes`), **not** File/Blob. Reconstruct `new Blob([bytes], { type: mime })` only for FormData. Stages: `IMAGE_ARRAYBUFFER_READ`, `INDEXEDDB_PENDING_ORIGINAL_PUT`, `IMAGE_BLOB_RECONSTRUCT`, `MULTIPART_PREPARE`. Text path unchanged. Audio still Blob (not this UAT). ADR-043 persist-before-POST unchanged. Gate **NOT CLOSED**. Next: hard-refresh Capture, CHOOSE PHOTO one small screenshot, Save.
+
+Prior: Screenshot re-UAT after File→Blob (`ada1b7c`) — **FAIL**. Live **25/25**. Events **19–25** text-only. Zero image Originals.
+
+Prior: Bounded IndexedDB photo-put repair **LANDED** (`ada1b7c`) in `app/static/js/field.js`: image `File` → `arrayBuffer()` → `new Blob([buffer], { type: original MIME })` before `pending_originals` put. Dedicated FG-021 **17**; focused **145**; full **555**. Alembic still `d2e3f4a5b6c7`.
 
 Prior: Objective verify of Joel-reported iPhone Safari FG-021 text-only Save (`FG021-IPHON-UAT-TEXT`, no photo). Live `instance/brayman_estimator.db` now **18/18** Events/Originals (prior **17/17**). Event **18** / Original **18** on project **11** / `ORG-001`; actor **Joel Brayman** (`user_id` 1); `occurred_at` `2026-09-02 17:02:30.474201` UTC (= 13:02:30 EDT); `client_capture_uuid` and `client_original_uuid` populated. Flask Cursor terminal **562293** at `02/Sep/2026 13:02:30` from `192.168.134.202`: `POST /api/v1/projects/11/field-events` **201** then `POST .../field-events/18/originals` **201**. UUID repair + text path **PASS**. Photo / IndexedDB quota **still open**. Gate **NOT CLOSED**. Next: one small screenshot/JPEG — do **not** attach a full-size HEIC yet.
 

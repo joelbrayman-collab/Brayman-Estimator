@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED.** Implementation **NOT AUTHORIZED**. No Feature Gate. No ADR created or accepted in this pass. |
+| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED.** [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Proposed**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED**. Implementation **NOT AUTHORIZED**. |
 | Date | 2026-09-01 |
 | Product | The Estimator / CalibAi |
 | Roadmap | Item 12 — Field Web / Today + Capture |
@@ -11,7 +11,7 @@
 | Related | [modules/build.md](../modules/build.md) · [build-media-storage-lifecycle.md](build-media-storage-lifecycle.md) · [ADR-023](../adr/ADR-023-field-evidence-provenance.md) · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) · Native Signing is a **parallel** commercial-execution track (see §34) |
 | Repository baseline | `main` @ `42b9c792b7c4fd968ed46be0ff15975cf3880eb5` = `origin/main`. Alembic current = heads **`c1d2e3f4a5b6`**. Full suite **538 passed** claimed from FG-020 close — **not rerun** this docs-only recon. |
 
-This reconnaissance is **complete** as architecture. It does **not** authorize Field Web implementation, a Feature Gate, an ADR, a migration, microphone/camera product UI, transcription, external AI, MONITOR, Project Closeout, Native Signing, or Contract. Ontario counsel review of Native Signing is **not** a Field Web hold.
+This reconnaissance is **complete** as architecture. Subsequent 2026-09-01 governance draft: [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) is **Proposed**; [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **DRAFT FOR JOEL REVIEW / NOT APPROVED**. That draft does **not** authorize Field Web implementation, a migration, microphone/camera product UI, transcription, external AI, MONITOR, Project Closeout, Native Signing, or Contract. Ontario counsel review of Native Signing is **not** a Field Web hold.
 
 ### 41-section report coverage (this pin is canonical)
 
@@ -50,7 +50,7 @@ Parent report sections 1–41 map here. Do **not** create a second architecture 
 | 29 | Real-device UAT | §30 |
 | 30 | Schema / migration | §13 + §31 |
 | 31 | ADR-043 | §31 |
-| 32 | FG-021 | §31 |
+| 32 | FG-021 | §31 (now drafted; not approved) |
 | 33 | Proposed scope | §31 |
 | 34 | Non-goals | §31 + §33 |
 | 35 | Acceptance criteria | §35 |
@@ -306,7 +306,7 @@ This is:
 | Schema | Additive columns + unique constraints |
 | Migration | **Yes**, in the Field Web Feature Gate if that gate owns the keys |
 | ADR | **Yes**, before implementation — schema/idempotency policy is not fully locked by ADR-042 |
-| Feature Gate | In scope for FG-021 (proposed; **not created**) |
+| Feature Gate | [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **DRAFT / NOT APPROVED** |
 
 Do not silently add columns. Do not treat SHA-only matching as Event idempotency (two photos can share no SHA; two retries of empty Event have no SHA).
 
@@ -556,13 +556,15 @@ Automated pytest cannot replace real-device mic/camera/HEIC/retry. FG-021 must i
 
 ---
 
-## 31. Feature Gate shape (**do not create**)
+## 31. Feature Gate shape
+
+**Subsequent status (2026-09-01):** [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **DRAFTED** as **DRAFT FOR JOEL REVIEW / NOT APPROVED**. [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) is **Proposed**. Implementation remains **NOT AUTHORIZED**.
 
 | Question | Answer from repository indexes |
 |----------|--------------------------------|
-| Next Feature Gate id | **FG-021** (FG-020 is the last numbered gate). Native Signing must **not** consume FG-021. |
+| Next Feature Gate id | **FG-021** — [FG-021-field-web-v1-today-and-capture.md](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **DRAFT / NOT APPROVED**. Native Signing must **not** consume FG-021. |
 | Proposed title | **Field Web V1 — Today + Capture** |
-| New ADR required? | **Yes, before implementation**, covering Field client boundary + retry/idempotency schema. Working name **ADR-043**. **Do not draft/accept in this pass.** ADR-042 remains the dual-surface / original-custody ADR. |
+| New ADR required? | **Yes.** [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Proposed**. Must be **Accepted** before implementation. ADR-042 remains the dual-surface / original-custody ADR. |
 | Owner | Field Web is a **client**. BUILD remains owner of Events/Originals. Office/platform owns `/api/v1` adapters. |
 | Scope | `/field` templates+JS; iPhone Safari Today/Project/Capture; voice/photo/text Originals via FG-020 API; IndexedDB retry; CSRF; idempotent Event/Original API + additive schema; API display rendition GET; desktop Hub continuity tests |
 | Non-goals | Transcription; AI; PWA/service worker; native iOS; tokens; RBAC; org-switcher; Derived review UI; Change Order signing or UNSIGNED/AWAITING/SIGNED badges; MONITOR; Closeout; plan viewer; full offline sync; office shell reuse as Field; Native Signing production activation |
@@ -586,7 +588,7 @@ A contractor can, on iPhone Safari:
   on the desktop Project Hub Field Observations / Event Detail.
 ```
 
-That is the destination. It still requires a Feature Gate, likely ADR-043, likely a migration, and real-device UAT. **None of that is authorized by this reconnaissance.**
+That is the destination. FG-021 is **drafted / not approved**. ADR-043 is **Proposed / not Accepted**. A migration and real-device UAT remain **not authorized**.
 
 ---
 
@@ -616,8 +618,10 @@ That is the destination. It still requires a Feature Gate, likely ADR-043, likel
 ## Related
 
 - [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**
+- [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Proposed**
 - [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted**
 - [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**
+- [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **DRAFT / NOT APPROVED**
 - [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**
 - [legal/native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — parallel track; counsel does **not** block Field Web
 
@@ -645,7 +649,7 @@ This Item 12 reconnaissance does **not** implement Native Signing, create its Fe
 
 ---
 
-## 35. Proposed acceptance criteria (future FG-021 — **not created**)
+## 35. Proposed acceptance criteria (FG-021 — **drafted / not approved**)
 
 A future Field Web gate is acceptable only when all of the following are true. This recon does **not** authorize that gate.
 
@@ -661,7 +665,7 @@ A future Field Web gate is acceptable only when all of the following are true. T
 
 ---
 
-## 36. Dedicated test plan (future FG-021 — **not created**)
+## 36. Dedicated test plan (FG-021 — **drafted / not approved**)
 
 Automated (pytest; office + API; no real-device substitute):
 
@@ -693,7 +697,7 @@ Real-device UAT (required; not replaceable by pytest):
 
 This recon recommends; it does **not** decide:
 
-1. Whether to authorize **FG-021 + ADR-043 drafting** (Field Web V1). **Not created here.**
+1. Whether to **Accept ADR-043** and **Approve FG-021** (Field Web V1). Drafted 2026-09-01; **not accepted/approved**. Implementation **NOT AUTHORIZED**.
 2. Whether to authorize a **separate Native Signing development** track. Production activation / real customer use remains **blocked pending counsel** regardless.
 3. Confirm V1 = Today + Project confirm + Capture; **plan access deferred** (recon recommendation).
 4. Confirm technology **A** (Flask/Jinja Field family + page JS), not SPA, not PWA.
@@ -725,10 +729,12 @@ Replace leftover language that treated counsel as a **general development hold**
 ```text
 STOP Field Web implementation.
 
-Joel may next authorize ONE of:
-  (A) FG-021 + ADR-043 drafting for Field Web V1 — Today + Capture
-      (do not create those files until Joel authorizes), OR
-  (B) a separately governed Native Signing development track
+ADR-043 is Proposed. FG-021 is DRAFT / NOT APPROVED.
+
+Joel may next:
+  (A) Accept ADR-043 and Approve FG-021, then authorize implementation
+      reconnaissance / product work in a separate prompt, OR
+  (B) authorize a separately governed Native Signing development track
       (architecture / FG drafting / implementation / testing / non-production UAT).
 
 Native Signing PRODUCTION ACTIVATION / REAL CUSTOMER USE

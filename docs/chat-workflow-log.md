@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-01 — Draft ADR-043 Proposed + FG-021 (not approved)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-01 |
+| Branch | `main` @ starting HEAD `24959d2650021380bbe8b1ef9ba94d5857debd26` (Item 12 recon). Copy-icon Cursor rule committed separately first as `d69cfb66aaad5ad178375ddb2eaddc55091f6a7c` (not pushed). |
+| Objective | Docs-only: draft ADR-043 (Proposed) and FG-021 (DRAFT / NOT APPROVED) for Field Web V1 Today + Capture. |
+| Business decision | Field Web V1 = Today + Project confirmation + Capture (voice/photo/short text). Flask/Jinja + focused JS + Shared API. Not SPA, PWA, or native iOS. Native Signing development may proceed under separate governance; production blocked pending counsel. |
+| Architectural decision | ADR-043 Proposed: online-first IndexedDB retain-until-ACK; `client_capture_uuid` / `client_original_uuid`; tenant-safe uniqueness; Event-then-Originals partial success; SAVING/SAVED/NEEDS RETRY are client UX states; CSRF remains mandatory. FG-021 drafted, not approved. No migration. No product code. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — ITEM 12 FIELD WEB V1 ADR-043 + FG-021 GOVERNANCE DRAFT. Docs only. Do not Accept ADR-043. Do not Approve FG-021. Do not implement Field Web. |
+| Files expected to change | ADR-043; FG-021; governed indexes; current-state; session-handoff; roadmap; project-state-report; chat-workflow-log; milestones. Copy-icon rule committed separately beforehand. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live database; Native Signing implementation; Contract templates. |
+| Implementation result | Docs only. ADR-043 **Proposed**. FG-021 **DRAFT / NOT APPROVED**. Field Web implementation **not started**. |
+| Tests | Not run (documentation-only). Full suite **538 passed** remains the FG-020 close claim. Alembic current = heads `c1d2e3f4a5b6` verified this pass. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes — this pass appended |
+| Constitutional issue raised | None. Legal Content Gate unchanged. |
+| Unresolved issues | Joel Accept ADR-043 and Approve FG-021. Exact schema/column names deferred to implementation reconnaissance. Safari MediaRecorder MIME To be verified on device. |
+| Next approved step | **STOP Field Web implementation.** Joel may Accept ADR-043 and Approve FG-021 (implementation still a later prompt) **or** authorize separately governed Native Signing development (production still blocked pending counsel). |
+| Next approved prompt | None from this pass. |
+| Commit hash | (uncommitted docs; copy-icon rule `d69cfb6`; Item 12 recon `24959d2`) |
+
 ### 2026-09-01 — Item 12 recon verification + Native Signing counsel pin
 
 | Field | Content |

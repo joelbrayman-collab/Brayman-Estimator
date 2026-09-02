@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-01 — ADR-043 Proposed + FG-021 draft (not approved)
+
+| Field | Content |
+|-------|---------|
+| ID | Governance draft (not a coded milestone) |
+| Status | **RECORDED / NOT IMPLEMENTED.** [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Proposed**. [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) **DRAFT FOR JOEL REVIEW / NOT APPROVED**. Field Web implementation **NOT AUTHORIZED**. |
+| Branch | `main` |
+| Base commit | Item 12 recon `24959d2650021380bbe8b1ef9ba94d5857debd26`; copy-icon rule `d69cfb66aaad5ad178375ddb2eaddc55091f6a7c` committed separately first (not pushed). |
+| Objective | Draft Field Web V1 capture-reliability ADR and Feature Gate for Joel review without accepting, approving, or implementing. |
+| Deliverables | ADR-043 Proposed; FG-021 draft; index/handoff updates. No migration. No product code. |
+| Validation | Docs only. Alembic current = heads `c1d2e3f4a5b6` verified. Full suite **538 passed** claimed, not rerun. |
+| Architectural findings | V1 = Today + Project confirm + Capture. Flask/Jinja + focused JS. IndexedDB pending hold. Server idempotent replay required. Plan/Derived/CO visibility deferred. Real iPhone UAT required to close FG-021. |
+| Open decisions | Joel Accept ADR-043 and Approve FG-021. Native Signing production remains counsel-blocked. |
+| Next milestone | **STOP Field Web implementation.** Implementation requires Accepted ADR-043 + Approved FG-021 + a separate implementation prompt. |
+| Commit | uncommitted docs; verify `git rev-parse HEAD` |
+| Date | 2026-09-01 |
+
 ### 2026-09-01 — Item 12 Field Web recon complete + Native Signing counsel pin
 
 | Field | Content |

@@ -13,7 +13,7 @@
 
 **Subsequent status (2026-08-31 Compatible Rendition increment):** Image-only HEIC/HEIF → JPEG Compatible Renditions are **implemented** (`app/services/build_rendition.py`). Original Source custody is unchanged. No new migration.
 
-**Subsequent status (2026-09-01):** [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Live current = head `c1d2e3f4a5b6`. Item 12 remains **NOT AUTHORIZED**. Do **not** implement Closeout.
+**Subsequent status (2026-09-01):** [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Live current = head `c1d2e3f4a5b6`. Item 12 recon **COMPLETE / NOT IMPLEMENTED**. [ADR-043](ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Proposed**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **DRAFT / NOT APPROVED**. Do **not** implement Field Web. Do **not** implement Closeout.
 
 A committed Proposed ADR was not acceptance. This record is now **Accepted**. Live migration and office UAT remain a **separate** prompt. Do **not** start Field Web.
 

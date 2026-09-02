@@ -7,11 +7,11 @@
 | Target Milestone | **None.** FG-021 is the governing identifier. Do not assign a new M0xx number. Do **not** assign FG-021 to Native Signing. |
 | Module | **Field Web is a client.** **BUILD** owns Field Capture Events, Original Payloads, Derived Candidates, and BUILD binary custody. **Office / platform** owns `/api/v1` adapters, cookie session, and CSRF. **Projects** owns `projects`. |
 | Date | 2026-09-01 |
-| Status | **IMPLEMENTED / LIVE MIGRATION PENDING** (2026-09-02). Gate **NOT CLOSED**. Real iPhone UAT **not complete**. Live `flask db upgrade` **not run**. |
+| Status | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING** (2026-09-02). Gate **NOT CLOSED**. Real iPhone UAT **not complete**. Live current = head **`d2e3f4a5b6c7`**. |
 | Architecture | [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** · [architecture/field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md) · [architecture/fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md) · [modules/build.md](../modules/build.md) · [architecture/build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md) |
 | Related ADRs | [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | [FG-020](FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Item 11 **COMPLETE**. Item 12 reconnaissance **COMPLETE**. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. ADR-043 **Accepted**. This gate **Approved**. Implementation recon **COMPLETE**. |
-| Approved baseline | Live Alembic current **`c1d2e3f4a5b6`**. Repository graph head **`d2e3f4a5b6c7`**. Full suite **551 passed**. Dedicated FG-021 **13**. Focused **141**. Dedicated FG-020 **44**. |
+| Approved baseline | Live Alembic current = head **`d2e3f4a5b6c7`**. Full suite **551 passed**. Dedicated FG-021 **13**. Focused **141**. Dedicated FG-020 **44**. |
 
 ---
 
@@ -19,19 +19,19 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / LIVE MIGRATION PENDING** — **NOT CLOSED** |
+| Feature Gate (this document) | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING** — **NOT CLOSED** |
 | ADR-043 | **Accepted** |
 | ADR-042 | **Accepted** (dual-surface / original custody; unchanged) |
 | Implementation reconnaissance | **COMPLETE** ([fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md)). |
 | Implementation | **LANDED** — `/field` Today + Project confirm + Capture; IndexedDB; idempotent Event/Original API; display GET |
-| Schema / Alembic | Revision **`d2e3f4a5b6c7` created**. Live current remains **`c1d2e3f4a5b6`**. Live upgrade **not run**. |
-| Field Web product | **IMPLEMENTED / LIVE MIGRATION PENDING**. Real iPhone UAT **not complete**. |
+| Schema / Alembic | Revision **`d2e3f4a5b6c7` applied live** (`c1d2e3f4a5b6` → `d2e3f4a5b6c7`). Live current = head. |
+| Field Web product | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**. Real iPhone UAT **not complete**. |
 | Native Signing | Parallel track. Development may proceed under **separate** governance. Production activation **blocked pending counsel**. Not this gate. |
 | Project Closeout | **FUTURE / NOT AUTHORIZED** |
 
-This draft was **Approved 2026-09-02**. Historical status: **DRAFT FOR JOEL REVIEW / NOT APPROVED** (committed `6273fa4`). Approval does **not** authorize implementation, a migration, microphone/camera product UI, transcription, PWA, Native Signing, or Contract templates.
+This draft was **Approved 2026-09-02**. Historical status: **DRAFT FOR JOEL REVIEW / NOT APPROVED** (committed `6273fa4`). Product implementation later landed. Live upgrade `c1d2e3f4a5b6` → `d2e3f4a5b6c7` later applied. The gate still **does not close** until real iPhone Safari UAT.
 
-A **separate** implementation prompt is required. Frozen file/API/schema decisions: [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md).
+Frozen file/API/schema decisions remain: [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md).
 
 ---
 
@@ -275,11 +275,11 @@ No normal `occurred_at` picker in Field V1. Server defaults to **NOW** when omit
 
 ## Migration direction
 
-FG-021 is expected to require **one** additive migration after `c1d2e3f4a5b6`.
+FG-021 required **one** additive migration after `c1d2e3f4a5b6`.
 
-**Do not create it until a separate implementation prompt.** Designed revision **`d2e3f4a5b6c7`**. Frozen in [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md).
+Revision **`d2e3f4a5b6c7`** was created in the implementation prompt and **applied live** in the live-migration prompt (`c1d2e3f4a5b6` → `d2e3f4a5b6c7`). Live current = head. Do **not** create another migration.
 
-Exact Event/Original UUID columns, uniqueness, revision **`d2e3f4a5b6c7`**, and downgrade are frozen in [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md). Do **not** create the migration until a separate implementation prompt.
+Exact Event/Original UUID columns, uniqueness, revision **`d2e3f4a5b6c7`**, and downgrade remain frozen in [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md).
 
 No historical backfill. Office rows without client UUIDs remain lawful ([ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) Decision 4).
 
@@ -287,7 +287,7 @@ No historical backfill. Office rows without client UUIDs remain lawful ([ADR-043
 
 ## Implementation reconnaissance
 
-**COMPLETE** — [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md). Do **not** run product work until a separate implementation prompt.
+**COMPLETE** — [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md). Product implementation **landed**. Live upgrade **applied**. Gate still **NOT CLOSED** until real iPhone UAT.
 
 Device checks still required **during implementation / UAT**:
 
@@ -386,6 +386,8 @@ No transcription or AI required.
 
 ## Acceptance criteria
 
+**Subsequent status (2026-09-02 live migration):** Product implementation and live upgrade are done. Automated tests remain green (dedicated **13** / focused **141** / full suite **551**). Real iPhone Safari UAT is **not complete**. Gate **NOT CLOSED**.
+
 Not met until implementation + tests + real-device UAT. Draft bar:
 
 1. On current iPhone Safari, an authenticated contractor can confirm a Project, Capture voice and/or photo and/or short text, and see SAVING → SAVED (or NEEDS RETRY that retries).
@@ -434,7 +436,7 @@ Counsel review is **not** a Field Web hold. The [Legal Content Gate](../governan
 
 ## Closure rule
 
-This gate is **Approved**. ADR-043 is **Accepted**. Implementation recon is **COMPLETE**. The gate still **closes nothing** until a later implementation prompt completes the completion rule **and** dedicated tests **and** real iPhone UAT pass **and** live current remains a single graph head after additive revision `d2e3f4a5b6c7`.
+This gate is **Approved**. ADR-043 is **Accepted**. Implementation recon is **COMPLETE**. Product implementation **landed**. Live current = head **`d2e3f4a5b6c7`**. The gate still **closes nothing** until dedicated tests remain green **and** real iPhone Safari UAT passes. Do **not** close FG-021 from this live-migration pass.
 
 ---
 

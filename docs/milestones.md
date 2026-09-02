@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-02 — FG-021 live migration to d2e3f4a5b6c7
+
+| Field | Content |
+|-------|---------|
+| ID | FG-021 live-migration increment (gate **NOT CLOSED**) |
+| Status | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING.** [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) live current = head `d2e3f4a5b6c7`. Real iPhone UAT **not complete**. |
+| Branch | `main` |
+| Base commit | `5c36f6fcdf3c54aab9d103cd5152685382618984` |
+| Objective | Apply live `flask db upgrade` to `d2e3f4a5b6c7` after one gitignored pre-migration SQLite copy. Do not close the gate. |
+| Deliverables | Live schema UUID columns/constraints; docs status LIVE-MIGRATED / IPHONE UAT PENDING. Product/test/migration files unchanged. |
+| Validation | Dedicated FG-021 **13 passed**. Focused **141 passed**. Full suite **551 passed**. `flask db current` = `flask db heads` = `d2e3f4a5b6c7`. |
+| Architectural findings | No backfill. Existing FG-020 rows remain client-UUID NULL. Named UNIQUE constraints present in live SQLite. Backup not committed. |
+| Open decisions | Real iPhone Safari UAT. Gate close. |
+| Next milestone | Real iPhone UAT / FG-021 close under a separate prompt. |
+| Commit | verify `git rev-parse HEAD` after this live-migration docs commit |
+| Date | 2026-09-02 |
+
 ### 2026-09-02 — FG-021 Field Web V1 implemented / live migration pending
 
 | Field | Content |

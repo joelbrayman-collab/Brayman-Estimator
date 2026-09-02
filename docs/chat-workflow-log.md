@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-02 — FG-021 live migration apply d2e3f4a5b6c7
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` @ starting HEAD `5c36f6fcdf3c54aab9d103cd5152685382618984` |
+| Objective | Live-migrate FG-021 only: identify live SQLite, take one gitignored pre-migration copy, apply `flask db upgrade` `c1d2e3f4a5b6` → `d2e3f4a5b6c7`. Do not close the gate. Do not invent iPhone UAT. |
+| Business decision | Live SQLite file is not a backup. One bounded pre-FG-021 copy is required before upgrade. Backup stays outside Git and is not used for recovery unless separately authorized. |
+| Architectural decision | Additive revision `d2e3f4a5b6c7` applied live. No backfill. Existing office UUID-null rows remain lawful. Live current = head. |
+| Prompt template used | [cursor-migration-template.md](prompts/cursor-migration-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 LIVE MIGRATION SAFETY CLARIFICATION THEN EXECUTE AUTHORIZED LIVE-MIGRATION PROMPT. Apply `d2e3f4a5b6c7` only after backup verification/creation. |
+| Files expected to change | Governed docs only after live upgrade. |
+| Files prohibited from changing | Product code; test code; migration files; Alembic history; backup commit. |
+| Implementation result | FG-021 **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**. Gate **NOT CLOSED**. Live current = head `d2e3f4a5b6c7`. Pre-migration copy `instance/brayman_estimator-backup-before-fg021-d2e3f4a5b6c7.db` gitignored. |
+| Tests | Dedicated FG-021 **13 passed**. Focused **141 passed**. Full suite **551 passed**, 1564 warnings, 216.74s. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Real iPhone Safari UAT pending. Gate not closed. |
+| Next approved step | Real iPhone Safari UAT. Do not close FG-021 until UAT. |
+| Next approved prompt | iPhone UAT / FG-021 close prompt, or separately governed Native Signing development. |
+| Commit hash | (this commit) |
+
 ### 2026-09-02 — Implement FG-021 Field Web V1 Today + Capture
 
 | Field | Content |

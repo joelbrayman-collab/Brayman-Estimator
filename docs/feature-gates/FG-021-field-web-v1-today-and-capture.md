@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-021 is the governing identifier. Do not assign a new M0xx number. Do **not** assign FG-021 to Native Signing. |
 | Module | **Field Web is a client.** **BUILD** owns Field Capture Events, Original Payloads, Derived Candidates, and BUILD binary custody. **Office / platform** owns `/api/v1` adapters, cookie session, and CSRF. **Projects** owns `projects`. |
 | Date | 2026-09-01 |
-| Status | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** (2026-09-02). Gate **NOT CLOSED**. Text-only **PASS**. File→Blob screenshot re-UAT **FAIL**. Uint8Array IndexedDB image-bytes repair **LANDED**; small-screenshot re-UAT **pending**. Observation Delete **QUEUED / NOT AUTHORIZED**. Live current = head **`d2e3f4a5b6c7`**. |
+| Status | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** (2026-09-02). Gate **NOT CLOSED**. Text-only **PASS**. Screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28**). **HEIC REAL-DEVICE NOT YET TESTED.** Voice UAT **BLOCKED** on HTTP LAN. **SECURE-CONTEXT INVESTIGATION COMPLETE / HTTPS NOT IMPLEMENTED.** Next: Joel/ChatGPT review — do **not** start HTTPS until authorized. Observation Delete **QUEUED**. Live current = head **`d2e3f4a5b6c7`**. |
 | Architecture | [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** · [architecture/field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md) · [architecture/fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md) · [modules/build.md](../modules/build.md) · [architecture/build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md) |
 | Related ADRs | [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | [FG-020](FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Item 11 **COMPLETE**. Item 12 reconnaissance **COMPLETE**. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. ADR-043 **Accepted**. This gate **Approved**. Implementation recon **COMPLETE**. |
@@ -19,13 +19,13 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** — **NOT CLOSED**. Text-only **PASS**. File→Blob screenshot re-UAT **FAIL**. Uint8Array image-bytes persist **LANDED**; small-screenshot re-UAT **pending**. Observation Delete **QUEUED**. |
+| Feature Gate (this document) | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** — **NOT CLOSED**. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE NOT YET TESTED.** Voice UAT **BLOCKED** on HTTP LAN. **SECURE-CONTEXT INVESTIGATION COMPLETE / HTTPS NOT IMPLEMENTED.** Observation Delete **QUEUED**. |
 | ADR-043 | **Accepted** |
 | ADR-042 | **Accepted** (dual-surface / original custody; unchanged) |
 | Implementation reconnaissance | **COMPLETE** ([fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md)). |
 | Implementation | **LANDED** — `/field` Today + Project confirm + Capture; IndexedDB; idempotent Event/Original API; display GET |
 | Schema / Alembic | Revision **`d2e3f4a5b6c7` applied live** (`c1d2e3f4a5b6` → `d2e3f4a5b6c7`). Live current = head. |
-| Field Web product | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Text-only **PASS**. File→Blob screenshot re-UAT **FAIL**. Image pending Originals persist as `Uint8Array` bytes; Blob reconstructed only for multipart POST. Small-screenshot re-UAT **pending**. Real iPhone UAT **not complete**. |
+| Field Web product | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE NOT YET TESTED.** Voice UAT **BLOCKED** on HTTP LAN. **SECURE-CONTEXT INVESTIGATION COMPLETE / HTTPS NOT IMPLEMENTED.** Real iPhone UAT **not complete**. |
 | Native Signing | Parallel track. Development may proceed under **separate** governance. Production activation **blocked pending counsel**. Not this gate. |
 | Project Closeout | **FUTURE / NOT AUTHORIZED** |
 
@@ -166,6 +166,10 @@ Runtime `MediaRecorder.isTypeSupported` must determine supported format. Prefer 
 No transcription, ASR, voice AI, waveform, or client audio transcode.
 
 Exact blob MIME on target iPhones is **To be verified** in implementation reconnaissance / real-device UAT.
+
+**Subsequent status (2026-09-02 real iPhone voice UAT):** Record tap on the same HTTP LAN Capture page (Project **11**, `http://192.168.134.223:5014`) produced no recording-state UX, no reported permission prompt, and no Save. Flask **562293** had **no** Event/Original POST after Take Photo Event **28** / Original **27** at `14:43`. Live DB still **28** / **27**; no new Project 11 audio Original. `enableVoice()` disables `#field-record` and skips binding `startRecord` when `navigator.mediaDevices` / `getUserMedia` / `MediaRecorder` is missing. Published pin: `getUserMedia` requires a secure context (HTTPS or localhost). **VOICE UAT BLOCKED — SECURE CONTEXT INVESTIGATION REQUIRED.** Do **not** retry voice on this HTTP LAN URL expecting a different Record result. Do **not** implement HTTPS from this observation.
+
+**Subsequent status (2026-09-02 secure-context investigation):** Read-only / environment-only. Confirmed: iPhone Safari `getUserMedia` / `MediaRecorder` require a secure context; HTTP LAN IP is **not** one. No existing trusted local cert; `mkcert` **not installed**; `cryptography` **not installed** (`flask --cert adhoc` unavailable). OpenSSL LibreSSL **3.3.6** present. Current UAT is HTTP-only `flask run --host=0.0.0.0 --port=5014` (Cursor terminal **562293**). No nginx/caddy; stock `httpd` not running. Smallest later local path (not started): Flask `--cert`/`--key` with a newly generated cert whose SAN matches the hostname the iPhone will type, plus iOS CA profile + Certificate Trust Settings. IndexedDB is origin-scoped — HTTP pending (if any) will not appear on HTTPS; from UAT observation no voice pending was created. Record can still look tappable when APIs are missing (captured, not repaired). **HTTPS NOT IMPLEMENTED.** Gate **NOT CLOSED.** Do **not** start HTTPS until Joel/ChatGPT authorize a separate local-HTTPS UAT prompt.
 
 ---
 
@@ -387,6 +391,10 @@ No transcription or AI required.
 ## Acceptance criteria
 
 **Subsequent status (2026-09-02 live migration):** Product implementation and live upgrade are done. Automated tests remain green (dedicated **13** / focused **141** / full suite **551**; later repair suite **15** / **143** / **553**). Real iPhone Safari UAT is **not complete**. Gate **NOT CLOSED**.
+
+**Subsequent status (2026-09-02 real iPhone voice UAT):** Voice **BLOCKED** at Record tap on HTTP LAN. No server POST. Live still **28** Events / **27** Originals. **TAKE PHOTO PASS AS JPEG** preserved. **HEIC REAL-DEVICE NOT YET TESTED.** **VOICE UAT BLOCKED — SECURE CONTEXT INVESTIGATION REQUIRED.** Gate **NOT CLOSED**.
+
+**Subsequent status (2026-09-02 secure-context investigation):** Investigation **COMPLETE**. HTTPS **NOT IMPLEMENTED**. No product-code / test / DB / migration change. Next: Joel/ChatGPT review of the investigation. Do **not** start HTTPS until authorized. Gate **NOT CLOSED**.
 
 **Subsequent status (2026-09-02 iPhone text UAT):** Live `instance/brayman_estimator.db` **18/18** vs prior **17/17**. Event **18** / Original **18** on project **11** / `ORG-001`; body exact `FG021-IPHON-UAT-TEXT`; both client UUIDs populated; actor **Joel Brayman**; Flask `192.168.134.202` POSTs **201/201** at `13:02:30`. UUID repair + text path **PASS**. Photo / HEIC / IndexedDB quota **still open**. Next probe: one small screenshot or JPEG — do **not** attach a full-size HEIC yet. Gate **NOT CLOSED**.
 

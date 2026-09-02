@@ -42,6 +42,75 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-02 — FG-021 secure-context UAT investigation (HTTPS not implemented)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` @ `1422279` (`1422279598af5a16e770844494e7f8954a761838` = `origin/main`) |
+| Objective | Read-only / environment-only investigation of the smallest safe way to run existing FG-021 Field Web on a real iPhone Safari secure origin for microphone UAT. |
+| Business decision | Do not start HTTPS. Do not install mkcert, certs, or iPhone profiles. Do not close FG-021. Next is Joel/ChatGPT review. |
+| Architectural decision | None implemented. Existing pin confirmed: `getUserMedia` requires a secure context (HTTPS or localhost). HTTP LAN IP is not a secure context. IndexedDB is origin-scoped. |
+| Prompt template used | Investigation / environment-only (no product-code change). |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 SECURE-CONTEXT INVESTIGATION — READ-ONLY / ENVIRONMENT-ONLY. |
+| Files expected to change | current-state; session-handoff; chat-workflow-log; FG-021; platform-roadmap (investigation findings only). |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; CSRF; auth; Observation Delete; HTTPS/PWA; transcription; AI; database writes. |
+| Implementation result | HTTPS **NOT IMPLEMENTED**. Product code / tests / DB / migration **unchanged**. Alembic current = head **`d2e3f4a5b6c7`**. `which mkcert` failed; `CAROOT` unset; `cryptography` not installed. OpenSSL LibreSSL **3.3.6** at `/usr/bin/openssl`. Flask 3.1.3 `flask run --cert` / `--key` supported; current UAT **562293** is HTTP-only `--host=0.0.0.0 --port=5014`. No existing trusted cert files. No nginx/caddy; stock `httpd` not running. Bonjour `Joels-MacBook-Air.local`. Smallest later local path: Flask `--cert`/`--key` + SAN-matching hostname + iOS CA profile + Certificate Trust Settings. No voice pending created on HTTP origin (Save never reached). Record can appear tappable when voice APIs missing (captured, not repaired). Gate **NOT CLOSED**. |
+| Tests | Not re-run (docs/investigation only). Preflight: `git diff --check` clean; `flask db current` / `heads` = `d2e3f4a5b6c7`. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Voice UAT still blocked until authorized local HTTPS. HEIC, retry, Observation Delete still open. iPhone IndexedDB contents To be verified from device. |
+| Next approved step | Joel/ChatGPT review. Do not start HTTPS until a separate local-HTTPS UAT prompt is authorized. |
+| Next approved prompt | None from this investigation. Do not start HTTPS. |
+| Commit hash | (docs; uncommitted) |
+
+### 2026-09-02 — FG-021 real iPhone voice UAT blocked at Record tap
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` @ `1422279` |
+| Objective | Observation-only diagnose of Joel-reported iPhone Safari Record tap that does nothing. No product-code change. |
+| Business decision | Stop at Record-tap failure. Do not repair HTTP microphone. Do not close FG-021. Preserve Take Photo JPEG PASS. Do not claim HEIC. |
+| Architectural decision | None. Existing pin: `getUserMedia` requires a secure context (HTTPS or localhost). |
+| Prompt template used | UAT observe / voice Record tap. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 REAL IPHONE VOICE UAT — OBSERVATION ONLY. |
+| Files expected to change | current-state; session-handoff; chat-workflow-log; FG-021; platform-roadmap (UAT fact only). |
+| Files prohibited from changing | Product code; Alembic; CSRF; auth; Observation Delete; HTTPS/PWA; transcription; AI. |
+| Implementation result | Record tap produced no recording-state UX and no reported permission prompt. Flask **562293**: last Event/Original POST remains `14:43:26`/`14:43:27` Event **28** / Original **27**. Capture `GET` at `14:52:41` from `192.168.134.202` with **no** later POST. Live DB **28** Events / **27** Originals; Event **26** empty; no new Project 11 audio Original. Alembic current = head **`d2e3f4a5b6c7`**. Most likely: `enableVoice()` disables `#field-record` when media APIs missing on HTTP LAN. **VOICE UAT BLOCKED — SECURE CONTEXT INVESTIGATION REQUIRED.** Gate **NOT CLOSED**. |
+| Tests | Not re-run (docs/observation only). Live SQLite read-only + Flask **562293** + `flask db current`. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Voice blocked pending secure-context investigation. Retry, HEIC, Observation Delete still open. |
+| Next approved step | Joel/ChatGPT authorize a bounded secure-context investigation. Do not retry voice on `http://LAN-IP:5014`. |
+| Next approved prompt | None from this observation pass. |
+| Commit hash | (docs; uncommitted) |
+
+### 2026-09-02 — FG-021 real iPhone Take Photo JPEG PASS
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-02 |
+| Branch | `main` @ `1422279` |
+| Objective | One Take Photo UAT after screenshot PASS. No code. No voice. No delete. |
+| Business decision | Record actual MIME from live Original. Do not claim HEIC. Stop after PASS. |
+| Architectural decision | None. |
+| Prompt template used | UAT continue / Take Photo. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 IPHONE UAT CONTINUE — TAKE PHOTO — REAL CAMERA PATH. |
+| Files expected to change | session-handoff; chat-workflow-log; current-state/FG-021 status (UAT fact). |
+| Files prohibited from changing | Product code; Alembic; CSRF; auth; Observation Delete. |
+| Implementation result | Event **28** / Original **27**. `image/jpeg` 3568736 bytes `image.jpg`. Flask 201/201 at 14:43. Hub Event Detail displays JPEG. **REAL IPHONE TAKE PHOTO: PASS.** HEIC **not** exercised. Gate **NOT CLOSED**. |
+| Tests | Not re-run. Live SQLite + Flask **562293** + authenticated Hub GET. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Voice, retry, HEIC camera-if-produced, Observation Delete still open. Event **26** remains originals-empty (prior retry artifact). |
+| Next approved step | Joel/ChatGPT review. Do not start voice until authorized. |
+| Next approved prompt | None from this UAT pass. |
+| Commit hash | (docs; uncommitted) |
+
 ### 2026-09-02 — FG-021 persist image Uint8Array in IndexedDB
 
 | Field | Content |

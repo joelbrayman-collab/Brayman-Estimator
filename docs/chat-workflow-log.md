@@ -42,6 +42,52 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-03 — FG-021 persist Field audio bytes in IndexedDB for Safari
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-03 |
+| Branch | `main` @ `207bcf1` (parent) |
+| Objective | Bounded audio IndexedDB persist repair: Blob → arrayBuffer → Uint8Array, reconstruct Blob only for multipart POST. |
+| Business decision | Do not close FG-021. Voice Save re-UAT required. No conversion/transcription. |
+| Architectural decision | Share `bytesFromBlob()` for image and audio. ADR-043 retain-until-ACK preserved. |
+| Prompt template used | Bounded audio IndexedDB persist repair. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 BOUNDED AUDIO INDEXEDDB PERSIST REPAIR. |
+| Files expected to change | `app/static/js/field.js`; `tests/test_field_web_fg021.py`; FG-021 UAT docs. |
+| Files prohibited from changing | migrations; CSRF; auth; Observation Delete; HTTPS certs. |
+| Implementation result | `bytesFromBlob` + `normalizeImageOriginals` now converts audio Blobs to `row.bytes` and deletes `row.blob`. `fileBlobForUpload` reconstructs audio from bytes. Dedicated **19**. Focused **147**. Full **557**. Alembic still `d2e3f4a5b6c7`. Live DB not mutated. Gate **NOT CLOSED**. |
+| Tests | Dedicated 19 passed. Focused 147 passed. Full 557 passed. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Voice Save re-UAT pending. HEIC, retry, Observation Delete still open. |
+| Next approved step | Hard-refresh Capture; voice-only Save on `https://192.168.134.223:5443`. |
+| Next approved prompt | None until voice Save UAT result. |
+| Commit hash | (this commit) |
+
+### 2026-09-03 — FG-021 HTTPS iPhone voice Record/playback PASS, Save FAIL
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-03 |
+| Branch | `main` @ `207bcf1` |
+| Objective | Record exact HTTPS voice Save error after Record/playback succeeded. No product-code repair. |
+| Business decision | Stop. Do not auto-repair audio IndexedDB persist. Do not close FG-021. |
+| Architectural decision | None implemented. Audio still stored as IndexedDB Blob; images use `Uint8Array` bytes. |
+| Prompt template used | FG-021 local HTTPS / voice UAT. |
+| Approved Cursor prompt summary | BRAYMAN — RESUME FG-021 DOC RECONCILIATION → LOCAL HTTPS → VOICE UAT (Save-error capture). |
+| Files expected to change | current-state; session-handoff; chat-workflow-log; FG-021; platform-roadmap (UAT fact only). |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; CSRF; auth. |
+| Implementation result | HTTPS origin `https://192.168.134.223:5443` (`.local` Yahoo-search). Trust ON. Login/Capture worked. Record + playback **PASS**. Save error exact product text: `Cannot safely keep this capture on this phone. Try photo or text later, or free storage.` No Event/Original POST on Flask **510616**. Live DB **28** / **27**. Gate **NOT CLOSED**. |
+| Tests | Not re-run (observation/docs only). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Voice Save blocked at IndexedDB persist of audio Blob. HEIC, retry, Observation Delete still open. |
+| Next approved step | Joel/ChatGPT review. Do not auto-repair. |
+| Next approved prompt | None from this observation. |
+| Commit hash | (docs; uncommitted) |
+
 ### 2026-09-02 — FG-021 local HTTPS UAT setup started (voice enablement only)
 
 | Field | Content |

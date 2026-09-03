@@ -115,10 +115,10 @@
     }
   }
 
-  function bytesFromImageFile(source) {
+  function bytesFromBlob(source, stage) {
     if (!source || typeof source.arrayBuffer !== "function") {
       return Promise.reject(
-        persistFailure("IMAGE_ARRAYBUFFER_READ", new Error("Image byte read is not available."))
+        persistFailure(stage, new Error("Binary byte read is not available."))
       );
     }
     return source.arrayBuffer().then(
@@ -126,17 +126,22 @@
         return new Uint8Array(buffer);
       },
       function (err) {
-        throw persistFailure("IMAGE_ARRAYBUFFER_READ", err);
+        throw persistFailure(stage, err);
       }
     );
+  }
+
+  function bytesFromImageFile(source) {
+    return bytesFromBlob(source, "IMAGE_ARRAYBUFFER_READ");
   }
 
   function normalizeImageOriginals(originals) {
     var chain = Promise.resolve();
     originals.forEach(function (row) {
       chain = chain.then(function () {
-        if (row.kind !== "image" || !row.blob) return;
-        return bytesFromImageFile(row.blob).then(function (bytes) {
+        if ((row.kind !== "image" && row.kind !== "audio") || !row.blob) return;
+        var stage = row.kind === "audio" ? "AUDIO_ARRAYBUFFER_READ" : "IMAGE_ARRAYBUFFER_READ";
+        return bytesFromBlob(row.blob, stage).then(function (bytes) {
           row.bytes = bytes;
           delete row.blob;
         });
@@ -146,14 +151,19 @@
   }
 
   function fileBlobForUpload(original) {
-    if (original.kind === "image") {
+    if (original.kind === "image" || original.kind === "audio") {
+      var reconstructStage =
+        original.kind === "audio" ? "AUDIO_BLOB_RECONSTRUCT" : "IMAGE_BLOB_RECONSTRUCT";
       if (!original.bytes) {
-        throw persistFailure("IMAGE_BLOB_RECONSTRUCT", new Error("Pending image bytes are missing."));
+        throw persistFailure(
+          reconstructStage,
+          new Error("Pending " + original.kind + " bytes are missing.")
+        );
       }
       try {
         return new Blob([original.bytes], { type: original.mime || "" });
       } catch (err) {
-        throw persistFailure("IMAGE_BLOB_RECONSTRUCT", err);
+        throw persistFailure(reconstructStage, err);
       }
     }
     if (original.blob) return original.blob;

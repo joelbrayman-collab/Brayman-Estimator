@@ -500,6 +500,7 @@ STORAGE_FAIL_MESSAGE = (
 
 def test_field_js_image_bytes_indexeddb_contract():
     source = FIELD_JS.read_text(encoding="utf-8")
+    assert "function bytesFromBlob" in source
     assert "function bytesFromImageFile" in source
     assert "function normalizeImageOriginals" in source
     assert "function fileBlobForUpload" in source
@@ -517,10 +518,14 @@ def test_field_js_image_bytes_indexeddb_contract():
     assert "MULTIPART_PREPARE" in source
     assert "Math.random" not in source
     assert re.search(r"heic|heif|transcode|createImageBitmap|OffscreenCanvas", source, re.I) is None
-    bytes_fn = re.search(r"function bytesFromImageFile\(source\) \{.*?\n  \}", source, re.S)
-    assert bytes_fn, "bytesFromImageFile() must remain in field.js"
+    bytes_fn = re.search(r"function bytesFromBlob\(source, stage\) \{.*?\n  \}", source, re.S)
+    assert bytes_fn, "bytesFromBlob() must remain in field.js"
     assert "arrayBuffer()" in bytes_fn.group(0)
     assert "new Blob(" not in bytes_fn.group(0)
+    image_fn = re.search(r"function bytesFromImageFile\(source\) \{.*?\n  \}", source, re.S)
+    assert image_fn, "bytesFromImageFile() must remain in field.js"
+    assert "IMAGE_ARRAYBUFFER_READ" in image_fn.group(0)
+    assert "new Blob(" not in image_fn.group(0)
     save_match = re.search(r"function saveNew\(projectId\) \{.*?\n  \}", source, re.S)
     assert save_match, "saveNew() must remain in field.js"
     save_src = save_match.group(0)
@@ -537,6 +542,7 @@ def test_field_js_image_bytes_indexeddb_contract():
     assert "postForm" not in catch_src
     audio_push = save_src[save_src.index('kind: "audio"') : save_src.index("photos.forEach")]
     assert "bytesFromImageFile" not in audio_push
+    assert "bytesFromBlob" not in audio_push
     log_match = re.search(r"function logFieldPersistFailure\(err\) \{.*?\n  \}", source, re.S)
     assert log_match, "logFieldPersistFailure() must remain in field.js"
     log_src = log_match.group(0)
@@ -551,6 +557,39 @@ def test_field_js_image_bytes_indexeddb_contract():
     assert 'persistFailure("idb_open"' in init_match.group(0)
 
 
+def test_field_js_audio_bytes_indexeddb_contract():
+    source = FIELD_JS.read_text(encoding="utf-8")
+    assert "AUDIO_ARRAYBUFFER_READ" in source
+    assert "AUDIO_BLOB_RECONSTRUCT" in source
+    assert "INDEXEDDB_PENDING_ORIGINAL_PUT" in source
+    assert "MULTIPART_PREPARE" in source
+    assert re.search(r"transcode|ffmpeg|transcri", source, re.I) is None
+    normalize = re.search(r"function normalizeImageOriginals\(originals\) \{.*?\n  \}", source, re.S)
+    assert normalize, "normalizeImageOriginals() must remain in field.js"
+    norm_src = normalize.group(0)
+    assert 'row.kind !== "audio"' in norm_src
+    assert "AUDIO_ARRAYBUFFER_READ" in norm_src
+    assert "delete row.blob" in norm_src
+    upload = re.search(r"function fileBlobForUpload\(original\) \{.*?\n  \}", source, re.S)
+    assert upload, "fileBlobForUpload() must remain in field.js"
+    upload_src = upload.group(0)
+    assert 'original.kind === "audio"' in upload_src
+    assert "AUDIO_BLOB_RECONSTRUCT" in upload_src
+    assert 'new Blob([original.bytes], { type: original.mime || "" })' in upload_src
+    save_match = re.search(r"function saveNew\(projectId\) \{.*?\n  \}", source, re.S)
+    save_src = save_match.group(0)
+    assert save_src.index("normalizeImageOriginals") < save_src.index("persistCapture")
+    assert save_src.index("persistCapture") < save_src.index("uploadCapture")
+    audio_push = save_src[save_src.index('kind: "audio"') : save_src.index("photos.forEach")]
+    assert "blob: recordedBlob" in audio_push
+    assert "mime: recordedMime" in audio_push
+    assert "bytesFromBlob" not in audio_push
+    catch_src = save_src[save_src.rfind(".catch(function (err)") :]
+    assert STORAGE_FAIL_MESSAGE in catch_src
+    assert "uploadCapture" not in catch_src
+    assert "postEvent" not in catch_src
+
+
 def test_photo_bytes_persist_and_blob_reconstruct_preserves_bytes_mime_filename():
     """Mirror: File.arrayBuffer() → Uint8Array persist → Blob([bytes], {type: mime}) for POST."""
     original = b"\xff\xd8\xff" + os.urandom(128)
@@ -563,6 +602,35 @@ def test_photo_bytes_persist_and_blob_reconstruct_preserves_bytes_mime_filename(
         "client_original_uuid": original_uuid,
         "client_capture_uuid": capture_uuid,
         "kind": "image",
+        "bytes": stored_bytes,
+        "filename": filename,
+        "mime": mime,
+        "state": "pending",
+    }
+    assert "blob" not in row
+    assert row["bytes"] == original
+    reconstructed = bytes(row["bytes"])
+    reconstructed_type = row["mime"]
+    assert reconstructed == original
+    assert reconstructed_type == mime
+    assert row["filename"] == filename
+    form_filename = row["filename"] or "capture"
+    assert form_filename == filename
+    assert hashlib.sha256(reconstructed).digest() == hashlib.sha256(original).digest()
+
+
+def test_audio_bytes_persist_and_blob_reconstruct_preserves_bytes_mime_filename():
+    """Mirror: Blob.arrayBuffer() → Uint8Array persist → Blob([bytes], {type: mime}) for POST."""
+    original = b"\x00\x01\x02" + os.urandom(128)
+    mime = "audio/mp4"
+    filename = "note.m4a"
+    capture_uuid = str(uuid.uuid4())
+    original_uuid = str(uuid.uuid4())
+    stored_bytes = bytes(original)
+    row = {
+        "client_original_uuid": original_uuid,
+        "client_capture_uuid": capture_uuid,
+        "kind": "audio",
         "bytes": stored_bytes,
         "filename": filename,
         "mime": mime,

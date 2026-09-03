@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-021 is the governing identifier. Do not assign a new M0xx number. Do **not** assign FG-021 to Native Signing. |
 | Module | **Field Web is a client.** **BUILD** owns Field Capture Events, Original Payloads, Derived Candidates, and BUILD binary custody. **Office / platform** owns `/api/v1` adapters, cookie session, and CSRF. **Projects** owns `projects`. |
 | Date | 2026-09-01 |
-| Status | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** (2026-09-03). Gate **NOT CLOSED**. Text-only **PASS**. Screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28**). **HEIC REAL-DEVICE NOT YET TESTED.** HTTPS voice Record/playback **PASS**. Audio IndexedDB `Uint8Array` persist repair **LANDED**; Save re-UAT **pending**. Observation Delete **QUEUED**. Live current = head **`d2e3f4a5b6c7`**. |
+| Status | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** (2026-09-03). Gate **NOT CLOSED**. Text-only **PASS**. Screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28**). **HEIC REAL-DEVICE NOT YET TESTED.** **REAL IPHONE VOICE SAVE PASS** (Event **30** / Original **28**, `audio/mp4`). **REAL IPHONE NETWORK RETAIN / RETRY PASS** (Event **31** / Original **29**, text). Observation Delete **QUEUED**. Live current = head **`d2e3f4a5b6c7`**. |
 | Architecture | [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** · [architecture/field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md) · [architecture/fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md) · [modules/build.md](../modules/build.md) · [architecture/build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md) |
 | Related ADRs | [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | [FG-020](FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Item 11 **COMPLETE**. Item 12 reconnaissance **COMPLETE**. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. ADR-043 **Accepted**. This gate **Approved**. Implementation recon **COMPLETE**. |
@@ -19,13 +19,13 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** — **NOT CLOSED**. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE NOT YET TESTED.** Voice UAT **BLOCKED** on HTTP LAN. **SECURE-CONTEXT INVESTIGATION COMPLETE / HTTPS NOT IMPLEMENTED.** Observation Delete **QUEUED**. |
+| Feature Gate (this document) | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** — **NOT CLOSED**. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE NOT YET TESTED.** **REAL IPHONE VOICE SAVE PASS.** **REAL IPHONE NETWORK RETAIN / RETRY PASS.** Local HTTPS UAT origin in use. Observation Delete **QUEUED**. |
 | ADR-043 | **Accepted** |
 | ADR-042 | **Accepted** (dual-surface / original custody; unchanged) |
 | Implementation reconnaissance | **COMPLETE** ([fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md)). |
 | Implementation | **LANDED** — `/field` Today + Project confirm + Capture; IndexedDB; idempotent Event/Original API; display GET |
 | Schema / Alembic | Revision **`d2e3f4a5b6c7` applied live** (`c1d2e3f4a5b6` → `d2e3f4a5b6c7`). Live current = head. |
-| Field Web product | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE NOT YET TESTED.** Voice UAT **BLOCKED** on HTTP LAN. **SECURE-CONTEXT INVESTIGATION COMPLETE / HTTPS NOT IMPLEMENTED.** Real iPhone UAT **not complete**. |
+| Field Web product | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE NOT YET TESTED.** **REAL IPHONE VOICE SAVE PASS.** **REAL IPHONE NETWORK RETAIN / RETRY PASS.** Real iPhone UAT **not complete** (HEIC, mixed capture, Observation Delete remaining). |
 | Native Signing | Parallel track. Development may proceed under **separate** governance. Production activation **blocked pending counsel**. Not this gate. |
 | Project Closeout | **FUTURE / NOT AUTHORIZED** |
 
@@ -174,6 +174,8 @@ Exact blob MIME on target iPhones is **To be verified** in implementation reconn
 **Subsequent status (2026-09-03 HTTPS iPhone voice UAT):** Local HTTPS on **5443**. Working origin `https://192.168.134.223:5443` (Bonjour `.local` searched as Yahoo). CA trusted. Login/Capture worked. Record + playback **PASS**. Save **FAIL** with product text `Cannot safely keep this capture on this phone. Try photo or text later, or free storage.` No Event/Original POST. Live still **28** / **27**. Audio still IndexedDB Blob. **Do not auto-repair.** Gate **NOT CLOSED**.
 
 **Subsequent status (2026-09-03 audio IndexedDB persist repair):** Shared `bytesFromBlob()` converts image and audio Blobs to `Uint8Array` before IndexedDB put. Reconstruct `new Blob([bytes], { type: mime })` only for multipart POST. No transcode. No migration. Voice Save re-UAT **pending**. Gate **NOT CLOSED**.
+
+**Subsequent status (2026-09-03 real iPhone voice Save PASS):** Event **30** / Original **28** on `https://192.168.134.223:5443`. Actual MIME `audio/mp4`, filename `note.m4a`, 179117 bytes. No transcode. Gate **NOT CLOSED**. Do **not** close FG-021 from voice success alone.
 
 ---
 
@@ -393,6 +395,8 @@ No transcription or AI required.
 ---
 
 ## Acceptance criteria
+
+**Subsequent status (2026-09-03 real iPhone network retain / retry UAT):** **PASS.** HTTPS `https://192.168.134.223:5443`, Project **11**, text-only. Wi-Fi off then Save: no Event POST (Case A); Capture top status **NEEDS RETRY**; feedback showed Safari `Load failed`. Today: **Needs Retry** / `1 capture needs retry.` Retry pending captures: Event POST **201** then Original POST **201** at `14:02:16`. Event **31** / Original **29**; body `FG021 Network Retry UAT`; one Event + one Original; UUIDs populated. Live **31** / **29**. Desktop Hub `/projects/11/field-events/31` confirmed same Event. Gate **NOT CLOSED**.
 
 **Subsequent status (2026-09-02 live migration):** Product implementation and live upgrade are done. Automated tests remain green (dedicated **13** / focused **141** / full suite **551**; later repair suite **15** / **143** / **553**). Real iPhone Safari UAT is **not complete**. Gate **NOT CLOSED**.
 

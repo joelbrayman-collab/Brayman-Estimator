@@ -2,8 +2,8 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN.** Gate **NOT CLOSED**. Text-only **PASS**. Small screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28** / Original **27**, `image/jpeg`). **HEIC REAL-DEVICE NOT YET TESTED.** HTTPS iPhone voice Record/playback **PASS**; Save **FAIL** at audio IndexedDB Blob. Bounded audio `Uint8Array` persist repair **LANDED**; voice Save re-UAT **pending**. Live still **28** Events / **27** Originals. Observation Delete **QUEUED**. Live current = head **`d2e3f4a5b6c7`**. Do **not** close FG-021. |
-| Updated | 2026-09-02 |
+| Status | **FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN.** Gate **NOT CLOSED**. Text-only **PASS**. Small screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28** / Original **27**, `image/jpeg`). **HEIC REAL-DEVICE NOT YET TESTED.** **REAL IPHONE VOICE SAVE PASS** (Event **30** / Original **28**, `audio/mp4`, `note.m4a`). **REAL IPHONE NETWORK RETAIN / RETRY PASS** (Event **31** / Original **29**, text). Observation Delete **QUEUED**. Live current = head **`d2e3f4a5b6c7`**. Do **not** close FG-021. |
+| Updated | 2026-09-03 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
 
@@ -81,7 +81,7 @@ PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project`. No
 - **PLAN:** partial — M005–M010 implemented; **M012 / FG-010 foundation CLOSED / OPERATIONAL FOR UAT**; FG-015 Permit Foundation **CLOSED / OPERATIONAL FOR UAT**; FG-016 Pass 2 **CLOSED / OPERATIONAL FOR UAT**; Phase D mapping **NOT STARTED**
 - **PRICE:** partial — builder + commercial gate; Labour Engine Phase B **CLOSED / OPERATIONAL FOR UAT**; Pricing Engine **CLOSED / OPERATIONAL FOR UAT**; FG-012 internal breakdown + Proposal consistency **CLOSED / OPERATIONAL FOR UAT**
 - **CONTRACT:** partial (proposals are the customer-facing estimate; FG-012 reconciles snapshot totals; Ontario templates future)
-- **BUILD:** partial (change orders operational; Field Observation foundation **CLOSED / OPERATIONAL FOR UAT**; [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**; [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md); Field Web **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**)
+- **BUILD:** partial (change orders operational; Field Observation foundation **CLOSED / OPERATIONAL FOR UAT**; [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**; [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md); Field Web **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**)
 - **MONITOR:** future implementation (ADR-021 **Accepted**; composed frozen baseline; Project Gross Margin; not coded)
 - **LEARN:** future (ADR-024 boundary accepted; no ML)
 
@@ -95,7 +95,9 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** Bounded Field audio IndexedDB persist repair **LANDED** (`bytesFromBlob` → `Uint8Array` `row.bytes`; reconstruct `new Blob([bytes], { type: mime })` for multipart only). Image path unchanged in behavior. Text path unchanged. No migration. HTTPS voice Record/playback remains **PASS**; Save re-UAT **pending**. Gate **NOT CLOSED**.
+**Last authorized delta:** **REAL IPHONE NETWORK RETAIN / RETRY PASS.** HTTPS `https://192.168.134.223:5443`. Text-only. Wi-Fi off then Save: no Event POST (Case A); status **NEEDS RETRY**; feedback Safari `Load failed`. Today **Needs Retry** / `1 capture needs retry.` Retry: Flask **855195** `14:02:16` POST Event **201** then Original **201**. Event **31** / Original **29**, project **11**, `ORG-001`, Joel Brayman `user_id` 1. Body `FG021 Network Retry UAT`. UUIDs `532871ae-db01-4263-8562-d64baf4aa00e` / `022fe42b-8e8f-421b-a159-0c01eae15667`. Live **31** / **29**. Desktop Hub `/projects/11/field-events/31` same Event (Mac login required on HTTPS origin). Do **not** close FG-021. **HEIC REAL-DEVICE NOT YET TESTED.**
+
+**Prior:** **REAL IPHONE VOICE SAVE PASS.** HTTPS `https://192.168.134.223:5443`. Flask **420792** `07:44:50` POST Event **201** then Original **201**. Event **30** / Original **28**, project **11**, `ORG-001`, Joel Brayman `user_id` 1. Actual MIME `audio/mp4` (file `ftyp iso5`), filename `note.m4a`, 179117 bytes, SHA-256 `f248655624f1f84f9c80a61cb7623443d96afd40069fdca29406f76a6072c1f9`. Client UUIDs populated. Event **29** POST at `07:44:11` has **no** Original (refresh leftover). Do **not** close FG-021. **HEIC REAL-DEVICE NOT YET TESTED.**
 
 Prior: HTTPS iPhone voice UAT — Record/playback **PASS**; Save **FAIL**. Origin `https://192.168.134.223:5443` (Bonjour `.local` searched as Yahoo). CA profile installed; Certificate Trust Settings ON. Login/CSRF/Field Capture worked. Exact Save error: `Cannot safely keep this capture on this phone. Try photo or text later, or free storage.` HTTPS Flask **510616** / port **5443**: no Event/Original POST after Capture GET 200 at `07:09:07`. Live DB still **28** / **27**. Audio still persisted as IndexedDB Blob (`field.js` `saveNew`); images were repaired to `Uint8Array` bytes. **Do not repair from this observation.** Gate **NOT CLOSED**.
 
@@ -223,7 +225,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - **FG-018:** **CLOSED / OPERATIONAL FOR UAT**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. Live current `b0c1d2e3f4a5`. Office UAT port **5011**. Shared API **out of this gate**. Not production-security certification.
 - **FG-019:** **CLOSED / OPERATIONAL FOR UAT**. Shared API Foundation V1. GET-only `/api/v1` plus FG-020 BUILD POST allow-list. No FG-019 migration. API UAT port **5012**.
 - **FG-020:** **CLOSED / OPERATIONAL FOR UAT**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Image-only Compatible Renditions **implemented**. Gate-at-close live current = head was `c1d2e3f4a5b6`. Office UAT port **5013**. Dedicated **44**. Full suite **538**. Field Web **not** in this gate. Closeout **not** started.
-- **FG-021:** **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. Live current = head `d2e3f4a5b6c7`. Gate **NOT CLOSED**. Text-only **PASS**. Screenshot PNG **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE NOT YET TESTED.** HTTPS voice Record/playback **PASS**. Audio IndexedDB `Uint8Array` persist repair **LANDED**; Save re-UAT **pending**. Live **28** Events / **27** Originals. Dedicated **19**. Focused **147**.
+- **FG-021:** **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. Live current = head `d2e3f4a5b6c7`. Gate **NOT CLOSED**. Text-only **PASS**. Screenshot PNG **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE NOT YET TESTED.** **REAL IPHONE VOICE SAVE PASS** (Event **30**, `audio/mp4`). Live **30** Events / **28** Originals. Dedicated **19**. Focused **147**.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
@@ -246,7 +248,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (docs only). BMR / Winchester / Darcy are **not exclusive**. Winchester is launch/reference. Contractor procurement (A) ≠ CalibAi channel (B). Darcy commercial terms **unset**. Supplier Feature Gate **not authorized**. Governed **bulk supplier onboarding** is **FUTURE / NOT IMPLEMENTED** (not one-product-at-a-time; does not expand FG-014).
 - **Permit Intelligence** Pass 2 is **CLOSED / OPERATIONAL FOR UAT**. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** ([ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)). [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (foundation). Advisory preflight. AHJ remains final. **PASS** means no issue identified against governed checks performed — never AHJ approved. No live lookup. No external AI. Mike Pratt Coach House at 2562 Church Street, North Gower, Ontario is the **FG-016 UAT reference** — live project **id 9** (`FG016-UAT-PRATT`) on port **5009**.
 - **Organization Brand Profile** is **CLOSED / OPERATIONAL FOR UAT** ([organization-brand-profile.md](architecture/organization-brand-profile.md)). [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md). Settings at `/settings/brand-profile`. Proposal preview/PDF consume snapshot-or-current. **Gate-at-close** current = head `a9b0c1d2e3f4`. Office UAT port **5010**. Live head today is `b0c1d2e3f4a5`.
-- **Authentication / actor identity + shared API** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**.
+- **Authentication / actor identity + shared API** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**.
 - **Change Order document family** is **FUTURE / NOT IMPLEMENTED** ([change-order-document-family.md](architecture/change-order-document-family.md)). Existing Change Order record remains authoritative. Do not create a second entity. Not email. Not field UX.
 
 ## 17. KNOWN RISKS / UNRESOLVED PRODUCT ITEMS
@@ -273,7 +275,7 @@ Do not start Phase D. Do not enable an external AI provider. Do not close FG-021
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** Hard-refresh Field Capture on `https://192.168.134.223:5443`, then voice-only Record → Stop → playback → Save (`FG021 iPhone voice UAT`). Do **not** mix capture, HEIC, retry, or Observation Delete. Do **not** close [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md). Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval.
+**Next governed action:** Joel/ChatGPT **review** real iPhone network retain / retry PASS. Do **not** proceed to mixed capture, HEIC, Observation Delete, or FG-021 closure from this result. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval.
 
 **Roadmap direction (not authorization):** Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
@@ -312,7 +314,7 @@ Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **cur
 Canonical location for the next conversation. Paste into a **new** ChatGPT or Cursor chat. Do **not** continue from an old prompt without preflight.
 
 ```text
-BRAYMAN — CONTINUE CALIBAI DEVELOPMENT — FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING
+BRAYMAN — CONTINUE CALIBAI DEVELOPMENT — FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN
 
 You are starting a FRESH conversation on the Brayman-Estimator (CalibAi / The Estimator) platform.
 
@@ -341,8 +343,8 @@ Item 11 BUILD Field Observation foundation is COMPLETE.
 Image-only Compatible Renditions (HEIC/HEIF → JPEG) are IMPLEMENTED.
 ADR-042 is Accepted. FG-020 is CLOSED / OPERATIONAL FOR UAT.
 Live current = head d2e3f4a5b6c7.
-Item 12 Field Web is IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING.
-ADR-043 is Accepted. FG-021 is IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING. Gate NOT CLOSED.
+Item 12 Field Web is IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN.
+ADR-043 is Accepted. FG-021 is IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN. Gate NOT CLOSED.
 Implementation recon is COMPLETE (docs/architecture/fg-021-field-web-v1-implementation-reconnaissance.md).
 Native Signing DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE.
 Native Signing PRODUCTION ACTIVATION is BLOCKED PENDING COUNSEL PROCESS APPROVAL.
@@ -407,11 +409,11 @@ Independently reconstruct from the repository:
 - ADR-041 Accepted
 - ADR-042 Accepted
 - ADR-043 Accepted
-- FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING (gate NOT CLOSED)
+- FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN (gate NOT CLOSED)
 - Implementation recon COMPLETE; product LANDED; live upgrade APPLIED
 - Roadmap item 10 COMPLETE
 - Item 11 BUILD COMPLETE
-- Item 12 Field Web IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING
+- Item 12 Field Web IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN
 - Image-only Compatible Renditions (HEIC/HEIF → JPEG) IMPLEMENTED
 - Project Closeout / archive-and-purge FUTURE / NOT AUTHORIZED
 - Storage-lifecycle pin recorded (docs/architecture/build-media-storage-lifecycle.md)

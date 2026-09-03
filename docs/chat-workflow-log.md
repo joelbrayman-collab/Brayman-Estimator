@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-02 |
+| Updated | 2026-09-03 |
 
 ## Purpose
 
@@ -41,6 +41,52 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-03 — FG-021 real iPhone network retain / retry PASS (text)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-03 |
+| Branch | `main` @ `f7bd8c1` |
+| Objective | Observation-only real-iPhone UAT of ADR-043 NETWORK INTERRUPTION → LOCAL RETENTION → NEEDS RETRY → RESTORE → RETRY → one Event + one Original. Text only. No product-code change. |
+| Business decision | Stop after PASS. Do not close FG-021. Do not start mixed capture, HEIC, Observation Delete, or a second capture. |
+| Architectural decision | None. Case A: Wi-Fi off before Save; no Event POST until Retry. Safari fetch `Load failed` shown in Capture feedback; top status **NEEDS RETRY**. Stored body `FG021 Network Retry UAT` (iPhone casing; instructed ALL CAPS). |
+| Prompt template used | FG-021 real iPhone network retain / retry UAT (observation only). |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 REAL IPHONE NETWORK RETAIN / RETRY UAT. |
+| Files expected to change | UAT docs only. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; CSRF; auth. |
+| Implementation result | **REAL IPHONE NETWORK RETAIN / RETRY PASS.** HTTPS `https://192.168.134.223:5443`. Offline Save: no Flask Event POST. Today: **Needs Retry** / `1 capture needs retry.` Retry: Flask **855195** `14:02:16` Event POST **201** then Original POST **201**. Event **31** / Original **29**, project **11**, `ORG-001`, Joel Brayman `user_id` 1. `client_capture_uuid` `532871ae-db01-4263-8562-d64baf4aa00e`; `client_original_uuid` `022fe42b-8e8f-421b-a159-0c01eae15667`. One text Original; no duplicate Event for this capture. Live **31** / **29**. Desktop Hub `/projects/11/field-events/31` **200** after Mac login (`next` preserved). Joel confirmed Field observation **31** and the same text. Gate **NOT CLOSED**. |
+| Tests | Not re-run (observation only). Last product suite remains dedicated FG-021 **19** / focused **147** / full **557**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | HEIC real-device **NOT YET TESTED**. Mixed capture not tested. Observation Delete **QUEUED**. Offline feedback uses Safari `Load failed` (status still NEEDS RETRY). Mac HTTPS needs login + local CA trust. FG-021 still OPEN. |
+| Next approved step | Joel/ChatGPT review. Do not close FG-021. |
+| Next approved prompt | None from this UAT. |
+| Commit hash | (this commit) |
+
+### 2026-09-03 — FG-021 real iPhone voice Save PASS (audio/mp4)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-03 |
+| Branch | `main` @ `f7bd8c1` |
+| Objective | Observation-only retest of voice Save after audio IndexedDB Uint8Array repair. No product-code change. |
+| Business decision | Stop after PASS. Do not close FG-021. Do not start mixed capture, HEIC, retry, or Observation Delete. |
+| Architectural decision | None. Actual iPhone MIME was `audio/mp4` / `note.m4a`. |
+| Prompt template used | FG-021 post-audio-repair real iPhone voice retest only. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 POST-AUDIO-REPAIR REAL IPHONE VOICE RETEST ONLY. |
+| Files expected to change | UAT docs only. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic. |
+| Implementation result | **REAL IPHONE VOICE SAVE PASS.** Event **30** / Original **28**. `audio/mp4`, `note.m4a`, 179117 bytes, SHA `f248655624f1f84f9c80a61cb7623443d96afd40069fdca29406f76a6072c1f9`. Flask **420792** Event 201 then Original 201 at `07:44:50`. Event **29** empty leftover at `07:44:11`. Live **30** / **28**. Gate **NOT CLOSED**. |
+| Tests | Not re-run (observation only). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | HEIC real-device, mixed capture, retry, Observation Delete, FG-021 still OPEN. |
+| Next approved step | Joel/ChatGPT review. |
+| Next approved prompt | None from this retest. |
+| Commit hash | (this commit) |
 
 ### 2026-09-03 — FG-021 persist Field audio bytes in IndexedDB for Safari
 

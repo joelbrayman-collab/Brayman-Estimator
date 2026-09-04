@@ -42,6 +42,52 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-03 — Commit recovered Allen Jacques approved document presentation baseline
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-03 |
+| Branch | `main` @ `0547bd5` (parent) |
+| Objective | Docs-only governance commit of the recovered presentation pin/manifest. No binaries. No product code. |
+| Business decision | Joel/ChatGPT: Allen Jacques package is the first project using the approved presentation family. 01–07 APPROVED PRESENTATION REFERENCES (design only). Document 04 = INTERNAL ENTRY REFERENCE. Document 05 legal = COMMERCIAL_DRAFT / NOT APPROVED. |
+| Architectural decision | ADR-032 leave-in-place Desktop ZIP; SHA identity in Git. Recovered presentation raster is reconstruction reference; FG-017 raster question unresolved. FG-012 renderers current but materially different. |
+| Prompt template used | BRAYMAN — COMMIT RECOVERED APPROVED DOCUMENT PRESENTATION BASELINE. |
+| Approved Cursor prompt summary | Verify ZIP SHA; classify 04 as INTERNAL ENTRY REFERENCE; preserve 05 COMMERCIAL_DRAFT; commit/push docs only; do not copy binaries. |
+| Files expected to change | Docs/governance only. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; Desktop ZIP; FG-021 product. |
+| Implementation result | Pin + manifest committed. Original ZIP unmodified. No DOCX/PDF in Git. |
+| Tests | Not run (docs-only). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None. Legal Content Gate not populated. |
+| Unresolved issues | Brand Profile / FG-017 raster vs recovered 2048×819 letterhead. Reusable template extraction not authorized. Product renderer reconciliation with this baseline is future governance. |
+| Next approved step | Separate estimate-generation chat may use recovered files as presentation authority; current workbook remains data authority. Do not generate that estimate from this commit. |
+| Next approved prompt | None from this commit for product code. |
+| Commit hash | (filled after commit) |
+
+### 2026-09-03 — Govern recovered Allen Jacques document presentation baseline
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-03 |
+| Branch | `main` @ `0547bd5` (parent) |
+| Objective | Close artifact-custody gap: record recovered Desktop ZIP as approved **presentation** baseline. Docs/governance only. No binaries in Git. |
+| Business decision | Joel: first project using the approved document presentation family. Presentation/design approved. Legal content of document 05 remains COMMERCIAL_DRAFT. |
+| Architectural decision | ADR-032-class custody: leave-in-place Desktop bytes; SHA-256 identity in Git. Do not use `instance/` product stores. Do not commit DOCX/PDF. |
+| Prompt template used | BRAYMAN — GOVERN RECOVERED APPROVED DOCUMENT PRESENTATION BASELINE. |
+| Approved Cursor prompt summary | Verify ZIP SHA; forensic presentation extraction; classify 01–07; Legal Content Gate unchanged; no template extraction; no estimate generation. |
+| Files expected to change | Docs only. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; Desktop ZIP; FG-021 product. |
+| Implementation result | Pin + manifest written. Original ZIP unmodified. FG-017 logo vs recovered header image recorded as different SHA. FG-012 renderers recorded as material visual mismatch. |
+| Tests | Not run (docs-only). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None. Legal Content Gate not populated. |
+| Unresolved issues | Whether later Brand Profile / Proposal PDF should use recovered 2048×819 letterhead vs FG-017 `948f96e0…`. Reusable template extraction not authorized. |
+| Next approved step | Docs-only commit authorized in the subsequent COMMIT prompt. |
+| Next approved prompt | BRAYMAN — COMMIT RECOVERED APPROVED DOCUMENT PRESENTATION BASELINE. |
+| Commit hash | (see subsequent commit entry) |
+
 ### 2026-09-03 — FG-021 real iPhone network retain / retry PASS (text)
 
 | Field | Content |

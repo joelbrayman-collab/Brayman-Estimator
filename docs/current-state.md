@@ -81,6 +81,7 @@ M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **
 ## August 25, 2026 governance (recorded — not implemented)
 
 - **Authoritative estimate record** + **four-output document package** — [architecture/project-document-package.md](architecture/project-document-package.md)
+- **Approved document presentation baseline** — recovered Allen Jacques / 3415 Roger Stevens 2026-08-31 ZIP (Desktop leave-in-place; SHA-256 in [testing/allen-jacques-garage-presentation-baseline-manifest.md](testing/allen-jacques-garage-presentation-baseline-manifest.md)). **Presentation / design approved** for documents 01–07. Document **04** is **INTERNAL ENTRY REFERENCE** (not a customer deliverable). Document **05** legal content **COMMERCIAL_DRAFT / NOT APPROVED**. Not reusable templates. Binaries **not** in Git. FG-012 renderers **materially differ**. FG-021 unchanged.
 - **Pricing policy** ($65/hr labour direct; 15% gross margin) — [pricing-policy.md](pricing-policy.md) — **ORG-001 values, not CalibAi universal defaults**
 - **QuickBooks pipeline boundary** (no API) — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - **Ontario contract + warranty / Legal Content Gate** — [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md)

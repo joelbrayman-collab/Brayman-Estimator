@@ -33,6 +33,8 @@ Govern Ontario construction contract language, statutory/consumer wording, warra
 
 **Register status:** No production templates registered in repository as of 2026-08-25. Future entries live in this governance track (implementation TBD).
 
+**Subsequent status (2026-09-03):** Recovered Allen Jacques document **05** (`Ontario Construction Contract COMMERCIAL_DRAFT`) is an **approved presentation reference** only. It does **not** populate this register, does **not** authorize production contract use, customer execution, or Native Signing. See [approved-document-presentation-reference-baseline.md](../architecture/approved-document-presentation-reference-baseline.md).
+
 ## Warranty template register (governed — empty until approved)
 
 Warranty language is **governed content**.

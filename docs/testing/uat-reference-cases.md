@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Governing test / UAT reference |
-| Updated | 2026-08-30 |
+| Updated | 2026-09-03 |
 
 ## Purpose
 
@@ -18,8 +18,8 @@ The **Permit & Approvals Report** is a governed project document ([permit-and-ap
 | Project | Detached Garage |
 | Address | 3415 Roger Stevens Road, North Gower, Ontario |
 | Contractor | Brayman Construction Inc., 411 St. John Street, Merrickville, ON K0G 1N0 |
-| Status | **Reference / UAT — draft outputs not final pricing** |
-| Recorded | 2026-08-25 |
+| Status | **Reference / UAT.** Commercial numbers in recovered 2026-08-31 package are **project-specific**, not a reusable price. **Presentation design** of that package is the approved document-presentation baseline ([approved-document-presentation-reference-baseline.md](../architecture/approved-document-presentation-reference-baseline.md)). |
+| Recorded | 2026-08-25; presentation baseline recovered 2026-09-03 |
 
 ### Pricing parameters (reference)
 
@@ -48,13 +48,11 @@ The **Permit & Approvals Report** is a governed project document ([permit-and-ap
 
 ### Draft outputs from reference exercise (not final)
 
-These were created during the reference exercise and must ultimately be **regenerated/reconciled together** from one authoritative estimate record:
+The recovered 2026-08-31 Desktop ZIP is the **first project package** using the Joel-approved presentation family (seven DOCX/PDF pairs + three source-quote PDFs). Identity: [allen-jacques-garage-presentation-baseline-manifest.md](allen-jacques-garage-presentation-baseline-manifest.md). Bytes remain **outside Git**.
 
-1. Internal Detailed Cost Breakdown
-2. Customer-Facing Draft Estimate
-3. QuickBooks Entry Sheet
+The seven presentation families are **not** the FG-012 HTML/PDF renderers. Pricing in that package **must not** be copied into another project. Document **04** is an **INTERNAL ENTRY REFERENCE**, not a customer deliverable (recovered customer-facing folder is provenance only).
 
-**Do not treat current draft pricing as final.**
+**Do not treat recovered project pricing as a template.** Document 05 remains **COMMERCIAL_DRAFT** (Legal Content Gate not populated).
 
 ### UAT expectations (when implemented)
 

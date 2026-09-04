@@ -163,6 +163,7 @@ When a governed field changes in the authoritative record (scope, price, allowan
 - [pricing-policy.md](../pricing-policy.md)
 - [quickbooks-integration.md](quickbooks-integration.md)
 - [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md)
+- [approved-document-presentation-reference-baseline.md](approved-document-presentation-reference-baseline.md) — recovered Allen Jacques package is the **approved presentation / design baseline** (not reusable templates; document 04 is INTERNAL ENTRY REFERENCE; document 05 legal content remains COMMERCIAL_DRAFT)
 - [testing/uat-reference-cases.md](../testing/uat-reference-cases.md)
 - [permit-and-approvals-report.md](permit-and-approvals-report.md) — **FUTURE / NOT IMPLEMENTED** additional project document (advisory preflight; not outputs 1–4)
 - [organization-brand-profile.md](organization-brand-profile.md) — **CLOSED / OPERATIONAL FOR UAT** Organization Brand Profile

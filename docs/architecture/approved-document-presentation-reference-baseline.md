@@ -2,12 +2,12 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **APPROVED PRESENTATION / DOCUMENT DESIGN BASELINE** (2026-09-03). **SOURCE CUSTODY CLOSED** (2026-09-04). **Not** a reusable template source. **Not** Legal Content Gate approval. **Not** product implementation. |
+| Status | **APPROVED PRESENTATION / DOCUMENT DESIGN BASELINE** (2026-09-03). **SOURCE CUSTODY CLOSED** (2026-09-04). [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED**. Extraction **not** performed. **Not** Legal Content Gate approval. **Not** product implementation. |
 | Date | 2026-09-03 (presentation approval); **2026-09-04** (durable source custody) |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |
 | Manifest | [testing/allen-jacques-garage-presentation-baseline-manifest.md](../testing/allen-jacques-garage-presentation-baseline-manifest.md) |
-| Related | [project-document-package.md](project-document-package.md) · [testing/uat-reference-cases.md](../testing/uat-reference-cases.md) · [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [organization-brand-profile.md](organization-brand-profile.md) · [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) · [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) · [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) |
+| Related | [project-document-package.md](project-document-package.md) · [testing/uat-reference-cases.md](../testing/uat-reference-cases.md) · [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [organization-brand-profile.md](organization-brand-profile.md) · [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) · [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) · [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) · [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) |
 
 ## Purpose
 
@@ -109,17 +109,23 @@ The separate estimate-generation conversation may now use this recovered package
 - Document 04 = **INTERNAL ENTRY REFERENCE** (not a customer deliverable)
 - Document 05 legal content remains **COMMERCIAL_DRAFT / NOT APPROVED**
 - source-quote PDFs are **not** templates
-- reusable template extraction has **not** yet occurred
+- reusable template extraction has **not** yet occurred ([FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED**)
 
 Do **not** generate that estimate from this pin.
 
-## Future reusable-template extraction (not this pin)
+## Future reusable-template extraction ([FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md))
 
-A later Feature Gate may extract reusable presentation source that **keeps** page geometry, typography, header/footer structure, table styling, spacing, section hierarchy, and visual identity, and **removes** Allen Jacques, site address, project numbers, prices, quantities, dates, project-specific scope/allowances/exclusions, and source-quote content. **Not authorized here.**
+[FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) is **APPROVED / IMPLEMENTATION NOT STARTED**. It authorizes a later extraction of reusable presentation source that **keeps** page geometry, typography, header/footer structure, table styling, spacing, section hierarchy, and visual identity, and **removes** Allen Jacques, site address, project numbers, prices, quantities, dates, project-specific scope/allowances/exclusions, and source-quote content.
+
+Derived masters must live under a **separate** durable directory (`Reusable Master Template Family V1/`), not in this immutable-source directory. Identity register: [testing/reusable-approved-document-template-family-v1-register.md](../testing/reusable-approved-document-template-family-v1-register.md) (**empty** until extraction).
+
+This pin does **not** perform extraction. Do **not** extract without a separate implementation prompt.
 
 ## Related
 
 - [testing/allen-jacques-garage-presentation-baseline-manifest.md](../testing/allen-jacques-garage-presentation-baseline-manifest.md)
+- [testing/reusable-approved-document-template-family-v1-register.md](../testing/reusable-approved-document-template-family-v1-register.md)
+- [feature-gates/FG-022-reusable-approved-document-template-family-v1.md](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md)
 - [testing/uat-reference-cases.md](../testing/uat-reference-cases.md)
 - [project-document-package.md](project-document-package.md)
 - [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md)

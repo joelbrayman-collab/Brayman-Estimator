@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-04 — Approve FG-022 reusable document template family
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-04 |
+| Branch | `main` @ `aed1163cde86910f06a536c758b11d3b488d399b` (start) |
+| Objective | Create and approve FG-022 for project-neutral extraction of the governed Allen Jacques presentation family. Docs/governance only. |
+| Business decision | FG-022 is a parallel document-template track. Seven families 01–07. Document 04 INTERNAL ENTRY REFERENCE. Document 05 COMMERCIAL_DRAFT / NOT FOR EXECUTION. Legal Content Gate remains empty. Extraction not performed. Immutable source unchanged. |
+| Architectural decision | No new ADR. Existing project-document, ADR-032 custody, ADR-040 Brand Profile, and Legal Content Gate boundaries are sufficient. DOCX visual masters. Derived store separate from immutable source. FG-012 / FG-017 / FG-021 unchanged. No migration. |
+| Prompt template used | BRAYMAN — CALIBAI FG-022 GOVERNANCE. |
+| Approved Cursor prompt summary | Create FG-022 if unused. Approve if consistent. Do not extract. Do not change product code, Legal Content Gate, FG-021, or source ZIP. |
+| Files expected to change | Feature Gate, indexes, presentation/legal pins, current-state, session-handoff, roadmap, chat-workflow-log. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; source ZIP/DOCX/PDF; FG-021 body; FG-012; FG-017. |
+| Implementation result | FG-022 created **APPROVED / IMPLEMENTATION NOT STARTED**. Empty V1 identity register. Extraction not performed. |
+| Tests | Docs only: `git diff --check`; markdown links on changed files. Full pytest not run. Last product-changing suite remains 19 / 147 / 557. |
+| Project-state-report update | Yes — PART B records FG-022 parallel track. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. Rule 1 satisfied without a new `app/` module: ownership stays on existing presentation / project-document pins. |
+| Unresolved issues | Joel/ChatGPT must review FG-022 before authorizing extraction. FG-017 raster vs recovered header unresolved. FG-021 remaining UAT independently open. ChatGPT Library remains a logical collection path. |
+| Next approved step | STOP for Joel/ChatGPT review of FG-022 before extraction. |
+| Next approved prompt | None from this governance pass. |
+| Commit hash | this commit |
+
 ### 2026-09-04 — Reconcile current CalibAi turnover state
 
 | Field | Content |

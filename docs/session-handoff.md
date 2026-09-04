@@ -95,7 +95,9 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **CLOSE approved document template custody (docs + durable byte copy; no Git binaries).** Source ZIP SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` re-verified. All **17** members PASS including families **01–07**. Durable store: `/Users/joelbrayman/Documents/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/` (exact original ZIP only). ChatGPT Library logical collection `/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/`. Desktop copy leave-in-place. **SOURCE CUSTODY CLOSED.** Document **04** = **INTERNAL ENTRY REFERENCE**. Document **05** legal = **COMMERCIAL_DRAFT / NOT APPROVED**. Legal Content Gate **empty**. Reusable extraction **not** performed. FG-012 / FG-017 / FG-021 **unchanged**. FG-021 **OPEN**.
+**Last authorized delta:** **APPROVE FG-022 reusable approved document template family (docs/governance only).** [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED**. Extraction **not** performed. Immutable source ZIP unchanged. Legal Content Gate **empty**. Document **04** = **INTERNAL ENTRY REFERENCE**. Document **05** = **COMMERCIAL_DRAFT / NOT FOR EXECUTION**. FG-012 / FG-017 / FG-021 **unchanged**. FG-021 **OPEN**.
+
+**Prior:** **CLOSE approved document template custody (docs + durable byte copy; no Git binaries).** Source ZIP SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` re-verified. All **17** members PASS including families **01–07**. Durable store: `/Users/joelbrayman/Documents/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/` (exact original ZIP only). ChatGPT Library logical collection `/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/`. Desktop copy leave-in-place. **SOURCE CUSTODY CLOSED.** Document **04** = **INTERNAL ENTRY REFERENCE**. Document **05** legal = **COMMERCIAL_DRAFT / NOT APPROVED**. Legal Content Gate **empty**. Reusable extraction **not** performed. FG-012 / FG-017 / FG-021 **unchanged**. FG-021 **OPEN**.
 
 **Prior:** **COMMIT recovered Allen Jacques approved document presentation baseline (docs only).** ZIP SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` verified. Pin [architecture/approved-document-presentation-reference-baseline.md](architecture/approved-document-presentation-reference-baseline.md) + [testing/allen-jacques-garage-presentation-baseline-manifest.md](testing/allen-jacques-garage-presentation-baseline-manifest.md). Documents 01–07 **APPROVED PRESENTATION REFERENCES**. Document **04** = **INTERNAL ENTRY REFERENCE** (ZIP customer-facing folder is provenance only). Document **05** legal = **COMMERCIAL_DRAFT / NOT APPROVED**. Bytes **not** in Git. FG-021 **unchanged / OPEN**.
 
@@ -204,7 +206,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - Human review is authoritative; AI confidence advisory only
 - ORG isolation; no cross-org pooling; ORG-001 $65 / 15% GM are org-specific, not CalibAi defaults
 - Legal Content Gate for Ontario contract/warranty — registers **empty**; Document 05 does **not** populate them
-- Approved Allen Jacques presentation source ZIP — SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874`; durable bytes outside Git at `/Users/joelbrayman/Documents/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/`; **not** in `instance/`; **not** reusable templates
+- Approved Allen Jacques presentation source ZIP — SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874`; durable bytes outside Git at `/Users/joelbrayman/Documents/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/`; **not** in `instance/`; [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED**; extraction **not** performed
 - Append-only audit history (including ORG-999 probe row and UAT reconciliation)
 
 ## 12. ACCEPTED ADRs
@@ -231,6 +233,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - **FG-019:** **CLOSED / OPERATIONAL FOR UAT**. Shared API Foundation V1. GET-only `/api/v1` plus FG-020 BUILD POST allow-list. No FG-019 migration. API UAT port **5012**.
 - **FG-020:** **CLOSED / OPERATIONAL FOR UAT**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Image-only Compatible Renditions **implemented**. Gate-at-close live current = head was `c1d2e3f4a5b6`. Office UAT port **5013**. Dedicated **44**. Full suite **538**. Field Web **not** in this gate. Closeout **not** started.
 - **FG-021:** **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. Live current = head `d2e3f4a5b6c7`. Gate **NOT CLOSED**. Text **PASS**. Screenshot PNG **PASS**. **TAKE PHOTO PASS AS JPEG.** Voice Save **PASS** (Event **30**, `audio/mp4`). Network retain/retry **PASS** (Event **31**, text). Desktop continuity **PASS**. **HEIC REAL-DEVICE NOT YET TESTED.** Live **31** Events / **29** Originals. Dedicated **19**. Focused **147**. Full **557**.
+- **FG-022:** **APPROVED / IMPLEMENTATION NOT STARTED**. Reusable approved document template family V1. Parallel document-template track. Extraction **not** performed. Legal Content Gate **empty**. Does **not** alter FG-021 or item 12.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
@@ -272,7 +275,7 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 18. DEFERRED ITEMS
 
-Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; Project Closeout / archive-and-purge; FG-021 remaining real-iPhone UAT (HEIC, mixed capture, IndexedDB browser-close recovery); Observation Delete (**QUEUED / NOT AUTHORIZED**); QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; MONITOR/LEARN **implementation**; native/token auth; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; RBAC / org-switcher / invitations / SSO; national Permit Rules expansion; Change Order document family; Contract / e-signature / signed Change Order (recon recorded, **not implemented**); reusable presentation-template extraction (**NOT PERFORMED**).
+Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; Project Closeout / archive-and-purge; FG-021 remaining real-iPhone UAT (HEIC, mixed capture, IndexedDB browser-close recovery); Observation Delete (**QUEUED / NOT AUTHORIZED**); QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; MONITOR/LEARN **implementation**; native/token auth; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; RBAC / org-switcher / invitations / SSO; national Permit Rules expansion; Change Order document family; Contract / e-signature / signed Change Order (recon recorded, **not implemented**); [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) reusable presentation-template extraction (**APPROVED / IMPLEMENTATION NOT STARTED**; **NOT PERFORMED**).
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
@@ -280,7 +283,7 @@ Do not start Phase D. Do not enable an external AI provider. Do not close FG-021
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP.** Approved presentation **source custody is CLOSED**. Do **not** extract reusable templates. Do **not** continue FG-021 from this pass. When Joel resumes FG-021, next high-value real-iPhone UAT candidate is pending capture → browser close → reopen → IndexedDB recover → retry → exactly one Event/Original. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval. Separate Speakeasy document-generation may use this package as **presentation authority** only — not from this CalibAi product pass.
+**Next governed action:** **STOP** for Joel/ChatGPT review of [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) before authorizing actual extraction. Do **not** extract from this pass. Do **not** continue FG-021 from this pass. When Joel resumes FG-021, next high-value real-iPhone UAT candidate is pending capture → browser close → reopen → IndexedDB recover → retry → exactly one Event/Original. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval.
 
 **Roadmap direction (not authorization):** Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
@@ -356,7 +359,7 @@ Native Signing PRODUCTION ACTIVATION is BLOCKED PENDING COUNSEL PROCESS APPROVAL
 Project Closeout is FUTURE.
 Storage-lifecycle pin: docs/architecture/build-media-storage-lifecycle.md
 Canonical Item 12 pin: docs/architecture/field-web-today-and-capture.md
-Next authorized action = STOP for Joel/ChatGPT. Remaining FG-021 real-iPhone UAT versus reusable-template extraction are not chosen here. Do not close FG-021. Native Signing production remains blocked pending counsel. Do not implement Closeout.
+Next authorized action = STOP for Joel/ChatGPT review of FG-022 before authorizing extraction. FG-022 is APPROVED / IMPLEMENTATION NOT STARTED. Extraction NOT PERFORMED. Do not close FG-021. Native Signing production remains blocked pending counsel. Do not implement Closeout.
 
 1. REVIEW REPOSITORY GOVERNANCE FIRST
 Read and comply with:

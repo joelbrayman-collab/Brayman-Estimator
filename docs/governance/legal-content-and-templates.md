@@ -37,6 +37,8 @@ Govern Ontario construction contract language, statutory/consumer wording, warra
 
 **Subsequent status (2026-09-04):** Approved presentation **source custody CLOSED**. Durable exact ZIP is outside Git. That custody closure does **not** populate this register, does **not** approve Document 05 legal content, and does **not** authorize production contract use, customer execution, or Native Signing.
 
+**Subsequent status (2026-09-04, FG-022):** [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED** authorizes later project-neutral **presentation** extraction only. Family 05 reusable V1 treatment is **PROJECT-NEUTRAL PRESENTATION / COMMERCIAL-DRAFT REFERENCE** and must remain **COMMERCIAL DRAFT — NOT FOR EXECUTION**. FG-022 does **not** populate this register, does **not** approve contract or warranty language, and does **not** authorize execution or Native Signing.
+
 ## Warranty template register (governed — empty until approved)
 
 Warranty language is **governed content**.

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Intended / governing product architecture** (not fully implemented) |
-| Updated | 2026-09-01 |
+| Updated | 2026-09-04 |
 | Implementation | **FG-012** authorizes outputs **1 and 2 only**. **CLOSED / OPERATIONAL FOR UAT** (2026-08-30). Outputs 3 and 4 remain Future. |
 
 ## Purpose
@@ -154,6 +154,7 @@ When a governed field changes in the authoritative record (scope, price, allowan
 | Ontario contract + warranty package | Governed templates — [legal-content-and-templates.md](../governance/legal-content-and-templates.md) |
 | Permit & Approvals Report | **CLOSED / OPERATIONAL FOR UAT** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md); [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) — [permit-and-approvals-report.md](permit-and-approvals-report.md). Bounded Ontario / Ottawa coach-house POC. Not a national library. |
 | Organization Brand Profile | **CLOSED / OPERATIONAL FOR UAT** — [organization-brand-profile.md](organization-brand-profile.md); [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) (Proposal consumer live; CO/Permit consumers future) |
+| Reusable approved presentation masters | **APPROVED / IMPLEMENTATION NOT STARTED** — [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md). Owns project-neutral visual masters, classification, provenance, and approved presentation geometry/style. Does **not** own project/commercial values or Legal Content Gate approval. Extraction **not** performed. |
 | Change Order document family | **FUTURE / NOT IMPLEMENTED** pin — [change-order-document-family.md](change-order-document-family.md). Existing Change Order record remains authoritative. Project Controls / Projects. |
 | Contract / e-signature / signed Change Order | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** — [contract-esignature-and-signed-change-order.md](contract-esignature-and-signed-change-order.md). Recommendation **NATIVE V1**. Counsel spec **PREPARED** ([native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md)). Implementation **NOT AUTHORIZED**. |
 
@@ -163,7 +164,7 @@ When a governed field changes in the authoritative record (scope, price, allowan
 - [pricing-policy.md](../pricing-policy.md)
 - [quickbooks-integration.md](quickbooks-integration.md)
 - [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md)
-- [approved-document-presentation-reference-baseline.md](approved-document-presentation-reference-baseline.md) — recovered Allen Jacques package is the **approved presentation / design baseline** (not reusable templates; document 04 is INTERNAL ENTRY REFERENCE; document 05 legal content remains COMMERCIAL_DRAFT)
+- [approved-document-presentation-reference-baseline.md](approved-document-presentation-reference-baseline.md) — recovered Allen Jacques package is the **approved presentation / design baseline** (source custody **CLOSED**; [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **APPROVED / IMPLEMENTATION NOT STARTED**; extraction **not** performed; document 04 is INTERNAL ENTRY REFERENCE; document 05 legal content remains COMMERCIAL_DRAFT)
 - [testing/uat-reference-cases.md](../testing/uat-reference-cases.md)
 - [permit-and-approvals-report.md](permit-and-approvals-report.md) — **FUTURE / NOT IMPLEMENTED** additional project document (advisory preflight; not outputs 1–4)
 - [organization-brand-profile.md](organization-brand-profile.md) — **CLOSED / OPERATIONAL FOR UAT** Organization Brand Profile

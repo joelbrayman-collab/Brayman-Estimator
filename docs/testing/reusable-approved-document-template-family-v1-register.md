@@ -2,8 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IMPLEMENTED / VERIFIED / JOEL APPROVAL PENDING** (2026-09-04). Extraction **performed**. Masters are **not** JOEL APPROVED / **not** APPROVED REUSABLE MASTER. |
+| Status | **CLOSED / APPROVED REUSABLE MASTER FAMILY V1** (2026-09-04). Joel presentation-master approval **recorded**. Family 05 legal content remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. Legal Content Gate **empty**. Artifact bytes **unchanged**. |
 | Updated | 2026-09-04 |
+| Joel presentation-master approval | **2026-09-04** |
 | Feature Gate | [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) |
 | Immutable source | [allen-jacques-garage-presentation-baseline-manifest.md](allen-jacques-garage-presentation-baseline-manifest.md) |
 | Canonical pin | [architecture/approved-document-presentation-reference-baseline.md](../architecture/approved-document-presentation-reference-baseline.md) |
@@ -48,7 +49,7 @@ Git identity register for derived **project-neutral** reusable visual masters. B
 
 Durable path prefix: `/Users/joelbrayman/Documents/CalibAi/Approved Document Templates/Reusable Master Template Family V1/`
 
-Lifecycle this pass (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDUE VERIFIED → VISUALLY VERIFIED**. **Not** JOEL APPROVED. **Not** APPROVED REUSABLE MASTER.
+Lifecycle (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDUE VERIFIED → VISUALLY VERIFIED → JOEL APPROVED**. Families **01, 02, 03, 04, 06, 07** are **APPROVED REUSABLE MASTER**. Family **05** is **APPROVED REUSABLE PRESENTATION MASTER**; legal status remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**.
 
 ### 01 — Labour Calculation Detail
 
@@ -62,13 +63,13 @@ Lifecycle this pass (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDU
 | Verification PDF | `VERIFICATION PDF/01_Brayman_Labour_Calculation_Detail_MASTER_V1.pdf` |
 | PDF SHA-256 | `d6c76f24eac47efb227ce22a05d5985aed497af4679d716fa4dfd458fadc6541` |
 | PDF bytes | 105749 |
-| PDF pages | 1 (source presentation PDF was 2 pages; page count reduced because long Allen-specific task text was removed — not a redesign) |
+| PDF pages | 1 (source presentation PDF was 2 pages; page count reduced because long Allen-specific task text was removed — not a redesign). **Joel accepted** this variance 2026-09-04. Do **not** force the master back to two pages. |
 | Source DOCX | `INTERNAL - DO NOT SHARE/01_Allen_Jacques_Labour_Calculation_Detail.docx` |
 | Source DOCX SHA-256 | `d3698dc09297a8c701d8d5842b34c1e8d5ab4519cb253953ea0bcd64f3622d80` |
 | Source baseline ZIP SHA-256 | `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` |
 | Extraction date | 2026-09-04 |
 | Verification status | SOURCE-VERIFIED **PASS** · ZERO-RESIDUE **PASS** · VISUAL **PASS** |
-| Approval status | **VISUALLY VERIFIED / JOEL APPROVAL PENDING** |
+| Approval status | **JOEL APPROVED / APPROVED REUSABLE MASTER** |
 | Legal-content status | N/A |
 
 ### 02 — Internal Detailed Cost Breakdown
@@ -83,13 +84,13 @@ Lifecycle this pass (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDU
 | Verification PDF | `VERIFICATION PDF/02_Brayman_Internal_Detailed_Cost_Breakdown_MASTER_V1.pdf` |
 | PDF SHA-256 | `b015b864afe44e37b6002fd05511abbac2e663f835b228232655831892a31e33` |
 | PDF bytes | 114029 |
-| PDF pages | 2 (Pricing Reconciliation table continues on page 2) |
+| PDF pages | 2 (Pricing Reconciliation table continues on page 2). Continuation-page effect **Joel accepted** 2026-09-04. |
 | Source DOCX | `INTERNAL - DO NOT SHARE/02_Allen_Jacques_Internal_Detailed_Cost_Breakdown.docx` |
 | Source DOCX SHA-256 | `a1d4169fe4927beca2fe87ac2f9f6df91ac70695578751410f24bae0021a38e6` |
 | Source baseline ZIP SHA-256 | `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` |
 | Extraction date | 2026-09-04 |
 | Verification status | SOURCE-VERIFIED **PASS** · ZERO-RESIDUE **PASS** · VISUAL **PASS** |
-| Approval status | **VISUALLY VERIFIED / JOEL APPROVAL PENDING** |
+| Approval status | **JOEL APPROVED / APPROVED REUSABLE MASTER** |
 | Legal-content status | N/A |
 
 ### 03 — Customer Facing Estimate
@@ -104,13 +105,13 @@ Lifecycle this pass (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDU
 | Verification PDF | `VERIFICATION PDF/03_Brayman_Customer_Facing_Estimate_MASTER_V1.pdf` |
 | PDF SHA-256 | `8612044ea18d1526c2fa5c2a68f47ed80fb0153d3787aa6ec7c074f98268fa60` |
 | PDF bytes | 115895 |
-| PDF pages | 2 (exclusions overflow; not a blank page) |
+| PDF pages | 2 (exclusions overflow; not a blank page). Sparse page-2 continuation **Joel accepted** 2026-09-04. |
 | Source DOCX | `CUSTOMER-FACING - FINAL BUILD ONLY/03_Allen_Jacques_Customer_Facing_Estimate.docx` |
 | Source DOCX SHA-256 | `25477a29650b16d16252f80c21df0c7bdb3d9e5a7ee0b7d1674ba6667d66bea9` |
 | Source baseline ZIP SHA-256 | `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` |
 | Extraction date | 2026-09-04 |
 | Verification status | SOURCE-VERIFIED **PASS** · ZERO-RESIDUE **PASS** · VISUAL **PASS** |
-| Approval status | **VISUALLY VERIFIED / JOEL APPROVAL PENDING** |
+| Approval status | **JOEL APPROVED / APPROVED REUSABLE MASTER** |
 | Legal-content status | N/A |
 
 ### 04 — QuickBooks Estimate Entry
@@ -131,7 +132,7 @@ Lifecycle this pass (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDU
 | Source baseline ZIP SHA-256 | `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` |
 | Extraction date | 2026-09-04 |
 | Verification status | SOURCE-VERIFIED **PASS** · ZERO-RESIDUE **PASS** · VISUAL **PASS** |
-| Approval status | **VISUALLY VERIFIED / JOEL APPROVAL PENDING** |
+| Approval status | **JOEL APPROVED / APPROVED REUSABLE MASTER** |
 | Legal-content status | N/A |
 
 ### 05 — Ontario Construction Contract
@@ -146,14 +147,14 @@ Lifecycle this pass (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDU
 | Verification PDF | `VERIFICATION PDF/05_Brayman_Ontario_Construction_Contract_COMMERCIAL_DRAFT_MASTER_V1.pdf` |
 | PDF SHA-256 | `c101d03a29119e45baac2c96836fc179a8e735438a58be1566bf2b13c0944566` |
 | PDF bytes | 120191 |
-| PDF pages | 2 |
+| PDF pages | 2. Continuation-page effect **Joel accepted** 2026-09-04. |
 | Source DOCX | `CUSTOMER-FACING - FINAL BUILD ONLY/05_Allen_Jacques_Ontario_Construction_Contract_COMMERCIAL_DRAFT.docx` |
 | Source DOCX SHA-256 | `c7f20e2d05c3f29b5bb7390562ab80b6255bf9d93ec7213c242c953e39f26225` |
 | Source baseline ZIP SHA-256 | `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` |
 | Extraction date | 2026-09-04 |
 | Verification status | SOURCE-VERIFIED **PASS** · ZERO-RESIDUE **PASS** · VISUAL **PASS** |
-| Approval status | **VISUALLY VERIFIED / JOEL APPROVAL PENDING** |
-| Legal-content status | **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. Legal Content Gate **empty**. Neutralization replaced project variables only. No Ontario clauses invented. No Native Signing. Prominent labels: header `GOVERNED COMMERCIAL DRAFT`; subtitle `COMMERCIAL DRAFT — NOT FOR EXECUTION`; body `NOT FOR SIGNATURE`. |
+| Approval status | **PRESENTATION:** **JOEL APPROVED / APPROVED REUSABLE PRESENTATION MASTER**. **Not** an approved Ontario construction contract. **Not** a production contract template. **Not** legally approved. **Not** ready for signature. |
+| Legal-content status | **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. **NOT FOR EXECUTION**. **NOT FOR SIGNATURE**. Legal Content Gate **empty**. Neutralization replaced project variables only. No Ontario clauses invented. No Native Signing. Prominent labels: header `GOVERNED COMMERCIAL DRAFT`; subtitle `COMMERCIAL DRAFT — NOT FOR EXECUTION`; body `NOT FOR SIGNATURE`. |
 
 ### 06 — Door / Window / Skylight Schedule
 
@@ -173,7 +174,7 @@ Lifecycle this pass (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDU
 | Source baseline ZIP SHA-256 | `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` |
 | Extraction date | 2026-09-04 |
 | Verification status | SOURCE-VERIFIED **PASS** · ZERO-RESIDUE **PASS** · VISUAL **PASS** |
-| Approval status | **VISUALLY VERIFIED / JOEL APPROVAL PENDING** |
+| Approval status | **JOEL APPROVED / APPROVED REUSABLE MASTER** |
 | Legal-content status | N/A |
 
 ### 07 — Client Construction Proposal
@@ -188,13 +189,13 @@ Lifecycle this pass (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDU
 | Verification PDF | `VERIFICATION PDF/07_Brayman_Client_Construction_Proposal_MASTER_V1.pdf` |
 | PDF SHA-256 | `9eb1ca7110024a12470dc03a84e29a79b43fa9efef605cee48083f0f911d501b` |
 | PDF bytes | 117180 |
-| PDF pages | 2 (price table / exclusions / acceptance continue on page 2) |
+| PDF pages | 2 (price table / exclusions / acceptance continue on page 2). Continuation-page effect **Joel accepted** 2026-09-04. |
 | Source DOCX | `CUSTOMER-FACING - FINAL BUILD ONLY/07_Allen_Jacques_Client_Construction_Proposal.docx` |
 | Source DOCX SHA-256 | `3541453b187a405bbabdcea0f57cd615f3567c2dc73cd6f9a10baee2130aabc1` |
 | Source baseline ZIP SHA-256 | `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` |
 | Extraction date | 2026-09-04 |
 | Verification status | SOURCE-VERIFIED **PASS** · ZERO-RESIDUE **PASS** · VISUAL **PASS** |
-| Approval status | **VISUALLY VERIFIED / JOEL APPROVAL PENDING** |
+| Approval status | **JOEL APPROVED / APPROVED REUSABLE MASTER** |
 | Legal-content status | N/A |
 
 ## Audits
@@ -213,4 +214,4 @@ Lifecycle this pass (all seven): **EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDU
 
 EXTRACTED → SOURCE-VERIFIED → ZERO-RESIDUE VERIFIED → VISUALLY VERIFIED → JOEL APPROVED → APPROVED REUSABLE MASTER
 
-This pass stops at **VISUALLY VERIFIED**. Family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED** after any later presentation-master approval.
+Families **01, 02, 03, 04, 06, and 07** are **JOEL APPROVED / APPROVED REUSABLE MASTER**. Family **05** is **JOEL APPROVED / APPROVED REUSABLE PRESENTATION MASTER**. Family 05 legal status remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**.

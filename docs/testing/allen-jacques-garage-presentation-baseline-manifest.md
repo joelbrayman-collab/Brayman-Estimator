@@ -6,7 +6,7 @@
 | Updated | 2026-09-04 |
 | Canonical pin | [architecture/approved-document-presentation-reference-baseline.md](../architecture/approved-document-presentation-reference-baseline.md) |
 
-These files are **project-specific reference artifacts**. They remain the immutable presentation source. Derived project-neutral masters live under [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) (**IMPLEMENTED / VERIFIED / JOEL APPROVAL PENDING**).
+These files are **project-specific reference artifacts**. They remain the immutable presentation source. Derived project-neutral masters live under [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) (**CLOSED / APPROVED REUSABLE MASTER FAMILY V1**). Do **not** use these source files as working templates when the approved reusable masters are available.
 
 ## Baseline
 
@@ -32,7 +32,7 @@ These files are **project-specific reference artifacts**. They remain the immuta
 | Provenance | `python-docx` creator; Microsoft Macintosh Word / `Normal.dotm` |
 | FG-012 | Current product HTML/ReportLab renderers are **materially different** from this Word family. Do not claim visual match. Future document-generation governance must reconcile product renderers with this baseline. |
 | FG-017 | Governed static logo SHA-256 `948f96e08827f18d77b47538f65c8b98b45caaf9c981adccba0189976948efe9` — **different bytes** from the recovered header image. Recovered presentation remains the reconstruction reference. Brand Profile raster **not** resolved here. |
-| Legal Content Gate | Registers remain **empty**. Document 05 is presentation-approved only; legal content **COMMERCIAL_DRAFT / NOT APPROVED**. [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) family 05 master does **not** populate this gate. |
+| Legal Content Gate | Registers remain **empty**. Document 05 is presentation-approved only; legal content **COMMERCIAL_DRAFT / NOT APPROVED**. [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) family 05 is an **APPROVED REUSABLE PRESENTATION MASTER** and does **not** populate this gate. |
 
 ## Seven presentation families (DOCX + PDF)
 

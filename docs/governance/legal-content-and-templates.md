@@ -39,6 +39,8 @@ Govern Ontario construction contract language, statutory/consumer wording, warra
 
 **Subsequent status (2026-09-04, FG-022 implementation):** [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) extracted a project-neutral **presentation / commercial-draft reference** for family 05. That extraction does **not** populate this register, does **not** approve contract or warranty language, and does **not** authorize execution or Native Signing. Family 05 remains **COMMERCIAL DRAFT — NOT FOR EXECUTION**.
 
+**Subsequent status (2026-09-04, FG-022 closure):** Joel recorded presentation-master approval for Families 01–07. [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) is **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**. Family 05 is an **APPROVED REUSABLE PRESENTATION MASTER** only. This closure does **not** populate this register, does **not** approve contract or warranty language, and does **not** authorize execution or Native Signing. Family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED / NOT FOR EXECUTION / NOT FOR SIGNATURE**.
+
 ## Warranty template register (governed — empty until approved)
 
 Warranty language is **governed content**.

@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-04 — Close FG-022 reusable approved document masters
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-04 |
+| Branch | `main` @ `a09ba34e8f97c0a83af65490b9fd104f2996160f` (start) |
+| Objective | Record Joel presentation-master approval and close FG-022. Docs only. |
+| Business decision | Families 01–07 JOEL APPROVED as APPROVED REUSABLE MASTER FAMILY V1 for presentation use. Family 05 remains COMMERCIAL_DRAFT / NOT LEGALLY APPROVED / NOT FOR EXECUTION / NOT FOR SIGNATURE. Legal Content Gate empty. Neutralization-related pagination variances accepted. |
+| Architectural decision | None new. Immutable source remains provenance. Reusable Master Template Family V1 is reusable presentation authority. Project / Estimate / Pricing records remain project-data authority. FG-012 / FG-017 / FG-021 unchanged. No migration. |
+| Prompt template used | BRAYMAN — CALIBAI FG-022 FINAL JOEL APPROVAL / CLOSURE (documentation template). |
+| Approved Cursor prompt summary | Advance register approval states; close FG-022; do not alter master bytes, source ZIP, product code, Legal Content Gate, or FG-021. |
+| Files expected to change | Docs/register only. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; source ZIP/DOCX/PDF; derived master DOCX/PDF; FG-021 body; FG-012; FG-017. |
+| Implementation result | FG-022 **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**. Seven masters / seven PDFs hashes unchanged. |
+| Tests | Docs: `git diff --check`; live hash MATCH vs register; source ZIP MATCH. Product pytest not run. Last product-changing suite remains 19 / 147 / 557. |
+| Project-state-report update | Yes. |
+| Milestone entry update | No — FG-022 has no M0xx. |
+| Constitutional issue raised | None. |
+| Unresolved issues | FG-017 raster vs recovered header unresolved. FG-021 remaining UAT independently open. Family 05 legal content not approved. |
+| Next approved step | STOP. Do not begin another feature from this pass. |
+| Next approved prompt | None from this closure pass. |
+| Commit hash | this commit |
+
 ### 2026-09-04 — Implement FG-022 reusable document masters
 
 | Field | Content |

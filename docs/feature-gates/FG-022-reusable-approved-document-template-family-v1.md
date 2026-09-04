@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-022 is the governing identifier. Do **not** assign a new M0xx number. Do **not** assign FG-022 to Field Web, Native Signing, FG-012 product renderers, or Legal Content Gate population. |
 | Owning domain | **Approved Document Presentation / Project Document Package** ([approved-document-presentation-reference-baseline.md](../architecture/approved-document-presentation-reference-baseline.md); [project-document-package.md](../architecture/project-document-package.md)). This is **not** a new product code module. |
 | Date | 2026-09-04 |
-| Status | **IMPLEMENTED / VERIFIED / JOEL APPROVAL PENDING** (2026-09-04). Extraction **performed**. Masters **not** JOEL APPROVED / **not** APPROVED REUSABLE MASTER. Immutable source **unchanged**. Legal Content Gate **empty**. |
+| Status | **CLOSED / APPROVED REUSABLE MASTER FAMILY V1** (2026-09-04). Extraction **complete**. Source / zero-residue / visual verification **PASS**. Joel presentation-master approval **COMPLETE**. Durable custody **COMPLETE**. Product implementation **NONE**. Database migration **NONE**. Legal Content Gate **UNCHANGED / EMPTY**. Family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. Immutable source **unchanged**. |
 | Architecture | [approved-document-presentation-reference-baseline.md](../architecture/approved-document-presentation-reference-baseline.md) · [project-document-package.md](../architecture/project-document-package.md) · [testing/allen-jacques-garage-presentation-baseline-manifest.md](../testing/allen-jacques-garage-presentation-baseline-manifest.md) · [testing/reusable-approved-document-template-family-v1-register.md](../testing/reusable-approved-document-template-family-v1-register.md) · [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [organization-brand-profile.md](../architecture/organization-brand-profile.md) · [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** |
 | Related ADRs | [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** (bytes outside Git; SHA-256 identity in Git). [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted** (Brand Profile remains separate). **No new ADR.** |
 | Prerequisites | Approved presentation source custody **CLOSED**. Source ZIP SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874`. 17/17 members verified. This implementation prompt authorized 2026-09-04. |
@@ -19,19 +19,45 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / VERIFIED / JOEL APPROVAL PENDING** — **NOT CLOSED** |
-| Extraction | **PERFORMED** — seven DOCX masters + seven verification PDFs |
+| Feature Gate (this document) | **CLOSED / APPROVED REUSABLE MASTER FAMILY V1** |
+| Extraction | **COMPLETE** — seven DOCX masters + seven verification PDFs |
+| Source verification | **PASS** |
+| Zero-residue verification | **PASS** |
+| Visual verification | **PASS** |
+| Joel presentation-master approval | **COMPLETE** (2026-09-04) |
+| Durable custody | **COMPLETE** — `Reusable Master Template Family V1/` |
 | Immutable presentation source | **UNCHANGED** — durable custody **CLOSED** |
-| Legal Content Gate | **EMPTY** — not populated by this gate |
+| Legal Content Gate | **UNCHANGED / EMPTY** — not populated by this gate |
 | FG-012 product renderers | **UNCHANGED** |
 | FG-017 Brand Profile raster | **UNCHANGED** — unresolved vs recovered header |
 | FG-021 Field Web | **UNCHANGED** — **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** / **NOT CLOSED** |
-| Schema / Alembic | **NO** — live current remains **`d2e3f4a5b6c7`** |
+| Schema / Alembic | **NONE** — live current remains **`d2e3f4a5b6c7`** |
+| Product implementation | **NONE** |
+| Database migration | **NONE** |
 | New ADR | **None** |
 | New product module | **None** |
-| Joel presentation-master approval | **PENDING** — do **not** assign JOEL APPROVED or APPROVED REUSABLE MASTER |
 
-This gate is a **separately governed parallel document-template track**. It does **not** alter [FG-021](FG-021-field-web-v1-today-and-capture.md) or roadmap item 12. Implementation landed 2026-09-04. The gate **does not close** until Joel presentation-master approval.
+This gate is a **separately governed parallel document-template track**. It does **not** alter [FG-021](FG-021-field-web-v1-today-and-capture.md) or roadmap item 12. Implementation landed 2026-09-04. Joel presentation-master approval recorded 2026-09-04. The gate is **CLOSED**.
+
+### Governing template authority after closure
+
+```text
+IMMUTABLE SOURCE / PROVENANCE AUTHORITY
+  = Allen Jacques Presentation Baseline - 2026-09-03
+
+REUSABLE PRESENTATION AUTHORITY
+  = Reusable Master Template Family V1
+    /Users/joelbrayman/Documents/CalibAi/Approved Document Templates/
+    Reusable Master Template Family V1/
+
+For future Brayman manual project-document generation:
+  PROJECT DATA AUTHORITY  = current governed Project / Estimate / Pricing records
+  PRESENTATION AUTHORITY  = APPROVED REUSABLE MASTER FAMILY V1
+```
+
+Do **not** use Allen Jacques project data. Do **not** use the Allen Jacques project documents as working templates when the approved reusable masters are available. The Allen Jacques package remains immutable provenance/reference.
+
+Family 05 presentation-master approval does **not** equal legal-template approval. Family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED / NOT FOR EXECUTION / NOT FOR SIGNATURE**.
 
 ---
 
@@ -53,8 +79,8 @@ The derived master family must:
 - never imply legal approval that does not exist
 
 ```text
-IMMUTABLE APPROVED PRESENTATION SOURCE
-  → PROJECT-NEUTRAL REUSABLE VISUAL MASTERS (this gate, later implementation)
+IMMUTABLE APPROVED PRESENTATION SOURCE (provenance)
+  → APPROVED REUSABLE MASTER FAMILY V1 (this gate, CLOSED)
     ≠ PRODUCT HTML/REPORTLAB RENDERERS (FG-012)
     ≠ ORGANIZATION BRAND PROFILE RASTER (FG-017)
     ≠ LEGAL CONTENT GATE / EXECUTABLE CONTRACT (empty)
@@ -74,7 +100,7 @@ IMMUTABLE APPROVED PRESENTATION SOURCE
 | 5 | What data does it reference? | Immutable source ZIP SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874`; seven presentation families 01–07; shared `styles.xml` SHA `760005ab7de5676d3d702b2484b60c7960b2b09be48eb0e7a2756ddea328973e`; recovered header raster SHA `0949c20891bb38a651403ca4e1965b3938a471bb68ec82773df80f3d5c50d4d2`. Does **not** own FG-012 renderer output or FG-017 logo bytes. |
 | 6 | What may implementation change? | Derived masters in a **separate** durable directory; Git identity register rows/hashes; visual-verification notes; governed docs. **Only after a separate extraction implementation prompt.** Neutral field labels such as Client / Project / Site / Date are allowed. |
 | 7 | What must it not change? | Immutable source ZIP / DOCX / PDF; `app/`; `tests/`; Alembic; database; FG-012 HTML/ReportLab; Proposal rendering; Internal Breakdown rendering; FG-017 logo substitution; FG-021; Legal Content Gate registers; Native Signing; MONITOR; LEARN; Phase D; supplier; QuickBooks API; a new programmatic templating syntax; fake customer data. |
-| 8 | Acceptance criteria? | See **Acceptance criteria** below. Extraction/verification **met** for this pass. Joel presentation-master approval **not** met. Gate **not** closed. |
+| 8 | Acceptance criteria? | See **Acceptance criteria** below. Extraction, verification, Joel presentation-master approval, and durable custody **met**. Gate **CLOSED**. Family 05 legal content **not** approved. |
 | 9 | Tests required? | SHA identity of derived masters; zero-residue scan; visual inspection of every extracted master. Automated product pytest is **not** the acceptance path. Do **not** rerun the full suite merely because this gate exists. |
 | 10 | Documentation? | This gate; feature-gate index; presentation baseline pin; project-document-package ownership row; empty V1 register; legal-content subsequent status; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log. |
 | 11 | ADR required? | **No.** Existing project-document, custody ([ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md)), Brand Profile ([ADR-040](../adr/ADR-040-organization-brand-profile.md)), and Legal Content Gate boundaries are sufficient. **STOP** if implementation would need a new product document module, a second commercial source of truth, Legal Content Gate population, FG-012 visual-parity claim, FG-017 raster substitution, or a programmatic template engine. |
@@ -120,7 +146,7 @@ Do **not** extract into, rewrite, or replace files in the immutable-source direc
 | 02 | Internal Detailed Cost Breakdown | **INTERNAL** |
 | 03 | Customer Facing Estimate | **CUSTOMER-FACING** |
 | 04 | QuickBooks Estimate Entry | **INTERNAL ENTRY REFERENCE**. **Not** customer-facing. **Not** QuickBooks API. |
-| 05 | Ontario Construction Contract | **APPROVED PRESENTATION REFERENCE ONLY**. **COMMERCIAL_DRAFT**. **NOT LEGALLY APPROVED**. **NOT FOR EXECUTION**. **NOT FOR SIGNATURE**. |
+| 05 | Ontario Construction Contract | **PROJECT-NEUTRAL PRESENTATION / COMMERCIAL-DRAFT REFERENCE**. **APPROVED REUSABLE PRESENTATION MASTER**. **COMMERCIAL_DRAFT**. **NOT LEGALLY APPROVED**. **NOT FOR EXECUTION**. **NOT FOR SIGNATURE**. |
 | 06 | Door / Window / Skylight Schedule | **CUSTOMER-FACING** |
 | 07 | Client Construction Proposal | **CUSTOMER-FACING** |
 
@@ -141,7 +167,7 @@ PROJECT-NEUTRAL PRESENTATION / COMMERCIAL-DRAFT REFERENCE
 COMMERCIAL DRAFT — NOT FOR EXECUTION
 ```
 
-Presentation approval does **not** equal legal approval. Even after a later presentation-master approval, family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**.
+Presentation approval does **not** equal legal approval. Family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED** after this presentation-master approval.
 
 Do **not**:
 
@@ -207,7 +233,7 @@ FG-022 distinguishes:
 
 | Kind | This gate |
 |------|-----------|
-| **Reusable visual master** | **In scope** (later implementation) |
+| **Reusable visual master** | **Complete** — **APPROVED REUSABLE MASTER FAMILY V1** |
 | **Future programmatic document template engine** | **Out of scope** |
 
 ---
@@ -291,7 +317,7 @@ REDESIGNED
 9. Joel presentation-master approval recorded per family.
 10. Legal Content Gate still **empty**. FG-012 / FG-017 / FG-021 unchanged.
 
-**Not fully met** until Joel presentation-master approval. Extraction, source-verify, zero-residue, and visual-verify **PASS** for families 01–07.
+**Met** 2026-09-04. Joel presentation-master approval recorded. Gate **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**. Family 05 legal content remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. Legal Content Gate remains **empty**.
 
 ---
 
@@ -320,8 +346,11 @@ Do **not** silently substitute FG-017 branding into the master extraction.
 For V1:
 
 ```text
-THE APPROVED RECOVERED PRESENTATION IS THE PRESENTATION AUTHORITY.
+THE APPROVED RECOVERED PRESENTATION IS THE IMMUTABLE SOURCE / PROVENANCE AUTHORITY.
+THE APPROVED REUSABLE MASTER FAMILY V1 IS THE REUSABLE PRESENTATION AUTHORITY.
 ```
+
+Do **not** silently substitute FG-017 branding into the approved reusable masters.
 
 Broader Brand Profile raster reconciliation remains **unresolved future work**.
 
@@ -337,9 +366,12 @@ Roadmap item 12 is unchanged. This gate is **not** item 13 MONITOR and does **no
 
 ## Out of scope
 
-- Closing this gate or assigning JOEL APPROVED / APPROVED REUSABLE MASTER
+Historical implementation-pass constraints (2026-09-04 extraction) forbade closing the gate or assigning JOEL APPROVED until a separate Joel/ChatGPT approval. That approval was recorded 2026-09-04 and **supersedes** the extraction-pass prohibition on closure.
+
+Still out of scope after closure:
+
 - Populating Legal Content Gate
-- Creating legal content
+- Creating or approving legal content (contract clauses, warranty, statutory, consumer-protection)
 - Changing FG-012, FG-017, or FG-021
 - Continuing iPhone UAT
 - Closing FG-021
@@ -350,6 +382,8 @@ Roadmap item 12 is unchanged. This gate is **not** item 13 MONITOR and does **no
 - Supplier work
 - QuickBooks API
 - Programmatic template engine
+- Regenerating master bytes
+- Treating Family 05 as an approved Ontario construction contract, production contract template, legally approved document, or ready-for-signature instrument
 
 ---
 

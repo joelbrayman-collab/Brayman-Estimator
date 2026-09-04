@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **APPROVED PRESENTATION / DOCUMENT DESIGN BASELINE** (2026-09-03). **SOURCE CUSTODY CLOSED** (2026-09-04). [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **IMPLEMENTED / VERIFIED / JOEL APPROVAL PENDING**. Derived masters exist; **not** JOEL APPROVED. **Not** Legal Content Gate approval. **Not** product implementation. |
+| Status | **APPROVED PRESENTATION / DOCUMENT DESIGN BASELINE** (2026-09-03). **SOURCE CUSTODY CLOSED** (2026-09-04). [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**. Derived masters are **JOEL APPROVED** presentation masters. Family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. **Not** Legal Content Gate approval. **Not** product implementation. |
 | Date | 2026-09-03 (presentation approval); **2026-09-04** (durable source custody) |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |
@@ -69,7 +69,7 @@ Verified 2026-09-03, read-only, original ZIP unmodified:
 - Body titles are ALL-CAPS document names; identity block Client / Project / Site / Date; tables for commercial lines
 - Body fonts in styles: Aptos (and Courier / theme majors)
 
-These files are **not** reusable templates until a later governed extraction removes Allen Jacques / address / prices / quantities / dates / scope.
+These files are **project-specific reference artifacts**. They remain the immutable presentation **source / provenance**. They are **not** working templates. Derived project-neutral masters live under [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) (**CLOSED / APPROVED REUSABLE MASTER FAMILY V1**).
 
 ## Custody (do not invent)
 
@@ -102,20 +102,34 @@ For reconstruction/reproduction of the approved presentation family, **the recov
 The separate estimate-generation conversation may now use this recovered package as the **APPROVED PRESENTATION REFERENCE**, subject to:
 
 - current estimate/workbook = **project-data authority**
-- recovered Allen Jacques documents = **presentation authority**
+- [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **APPROVED REUSABLE MASTER FAMILY V1** = **reusable presentation authority**
+- recovered Allen Jacques documents = **immutable source / provenance** (not working templates)
 - no Allen Jacques project-specific value may survive
 - no redesign
 - no generic FG-012 visual substitution
 - Document 04 = **INTERNAL ENTRY REFERENCE** (not a customer deliverable)
 - Document 05 legal content remains **COMMERCIAL_DRAFT / NOT APPROVED**
 - source-quote PDFs are **not** templates
-- reusable template extraction **performed** 2026-09-04 ([FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **IMPLEMENTED / VERIFIED / JOEL APPROVAL PENDING**; masters **not** JOEL APPROVED)
 
 Do **not** generate that estimate from this pin.
 
-## Future reusable-template extraction ([FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md))
+## Reusable Master Family V1 ([FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED**)
 
-[FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) is **IMPLEMENTED / VERIFIED / JOEL APPROVAL PENDING**. Derived project-neutral DOCX masters and verification PDFs live under `Reusable Master Template Family V1/`. Identity register: [testing/reusable-approved-document-template-family-v1-register.md](../testing/reusable-approved-document-template-family-v1-register.md). This pin remains the **immutable source**. Do **not** treat derived masters as the source. Do **not** assign JOEL APPROVED from this pin.
+[FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) is **CLOSED / APPROVED REUSABLE MASTER FAMILY V1** (2026-09-04). Derived project-neutral DOCX masters and verification PDFs live under `Reusable Master Template Family V1/`. Identity register: [testing/reusable-approved-document-template-family-v1-register.md](../testing/reusable-approved-document-template-family-v1-register.md).
+
+```text
+IMMUTABLE SOURCE / PROVENANCE AUTHORITY
+  = Allen Jacques Presentation Baseline - 2026-09-03 (this pin)
+
+REUSABLE PRESENTATION AUTHORITY
+  = Reusable Master Template Family V1
+    /Users/joelbrayman/Documents/CalibAi/Approved Document Templates/
+    Reusable Master Template Family V1/
+```
+
+For future Brayman **manual** project-document generation: project/estimate/pricing records supply **project data**; **APPROVED REUSABLE MASTER FAMILY V1** supplies **presentation**. Do **not** use Allen Jacques project data. Do **not** use the Allen Jacques project documents as working templates when the approved reusable masters are available.
+
+This pin remains the **immutable source**. Do **not** treat derived masters as the source. Family 05 is an **APPROVED REUSABLE PRESENTATION MASTER** only. Legal content remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED / NOT FOR EXECUTION / NOT FOR SIGNATURE**.
 
 ## Related
 

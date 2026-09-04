@@ -6,7 +6,7 @@
 | Status | **APPROVED / GOVERNING** |
 | Approved by | Joel Brayman |
 | Adopted | 2026-08-28 |
-| Updated | 2026-08-28 |
+| Updated | 2026-09-04 |
 | Exact Trigger Phrase | `Review Turnover` |
 | Applies to | ChatGPT, Cursor, Codex, and future AI development agents working on this repository |
 
@@ -219,9 +219,26 @@ Triggered if:
 
 ## 10. Required Turnover Package (Standard Structure)
 
-On `TURNOVER PASS`, the turnover report and `docs/session-handoff.md` must present the 22-point standard turnover package:
+On `TURNOVER PASS`, the turnover report and `docs/session-handoff.md` must present the 22-point standard turnover package.
 
-1. **PROJECT / REPOSITORY:** Name, local path, environment.
+The package **must also** contain these visible continuity fields (traceability metadata; not a new numbered product item):
+
+```text
+ACTIVE CHAT TITLE:
+<exact active ChatGPT development chat title>
+
+CONTINUITY DISPLAY RULE:
+Every CalibAi development response begins with the exact active chat title in
+bold and ends with:
+
+END — <exact active chat title>
+
+When a Cursor prompt is present, the END line follows the complete prompt.
+```
+
+Canonical rule: [continuity-and-anti-drift.md](continuity-and-anti-drift.md#chat-title-continuity-convention-permanent). This does **not** replace the Cursor/IDE workspace rule that chat titles start with `BRAYMAN — <Topic>`.
+
+1. **PROJECT / REPOSITORY:** Name, local path, environment. Include both the **ACTIVE CHAT TITLE** (ChatGPT originating conversation) and the Cursor/IDE `BRAYMAN — <Topic>` workspace-title rule.
 2. **VERIFIED BASELINE:** Branch, `HEAD` SHA, `origin/main` SHA, working tree state, Alembic head.
 3. **GOVERNING DOCUMENTS:** Active governance references.
 4. **APPROVED PRODUCT VISION:** Strategic product identity (The Estimator / CalibAi).
@@ -257,6 +274,21 @@ CONTINUITY / REPOSITORY-FIRST INITIALIZATION
 You are resuming work on the Brayman-Estimator platform following a successful Review Turnover.
 The prior conversation has been discarded. The repository is the ONE SOURCE OF TRUTH.
 
+ACTIVE CHAT TITLE:
+<record the exact ChatGPT development chat title for the NEW conversation, once known>
+
+CONTINUITY DISPLAY RULE:
+Every CalibAi development response begins with the exact active ChatGPT
+development chat title in bold and ends with:
+
+END — <exact active chat title>
+
+When a Cursor prompt is present, the END line follows the complete prompt.
+Every CalibAi development response ends with the next complete ready-to-paste
+Cursor prompt unless Joel explicitly says no prompt is required.
+
+Cursor / IDE workspace conversation titles must start with: BRAYMAN — <Topic>.
+
 1. ANTI-DRIFT PREFLIGHT
 Read and comply with:
 - AGENTS.md
@@ -286,7 +318,6 @@ Independently reconstruct:
 - Next authorized action
 
 Do NOT rely on AI memory. Do NOT guess missing product rules.
-Conversation titles in this workspace must start with: BRAYMAN — <Topic>.
 ```
 
 ---

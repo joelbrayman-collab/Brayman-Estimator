@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-08-28 |
+| Updated | 2026-09-04 |
 
 ## Lifecycle
 
@@ -21,6 +21,18 @@
 12. **After implementation:** update documentation, roadmap, and handoff; update [milestones.md](milestones.md) where appropriate; update [project-state-report.md](project-state-report.md); identify the **next approved prompt** or explicitly state that none is approved.
 13. **Joel** approves the milestone.
 14. The work is committed with a descriptive message (and pushed when Joel directs).
+
+## CalibAi development response continuity
+
+Permanent convention: [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md#chat-title-continuity-convention-permanent).
+
+Every CalibAi development assessment, implementation review, UAT review, stopping-report review, governance response, or turnover response must:
+
+- begin with the exact active ChatGPT development chat title in bold;
+- end with `END — <exact active chat title>` **after** any complete ready-to-paste Cursor prompt;
+- end with the next complete ready-to-paste Cursor prompt unless Joel explicitly states that no prompt is required.
+
+Do **not** weaken this rule. Cursor/IDE workspace titles remain `BRAYMAN — <Topic>`.
 
 ## Cursor prompt requirements
 
@@ -57,7 +69,10 @@ Prefer **Cursor Terminal** for git, pytest, Flask, and documentation commands in
 
 ## Chat conversation naming
 
-To prevent cross-project context confusion (e.g. between Brayman-Estimator and AiRIA), all chat conversation titles in this workspace must start with `BRAYMAN — <Topic>`.
+Two title systems remain in force and must not be collapsed:
+
+- **Cursor / IDE workspace titles** must start with `BRAYMAN — <Topic>` to prevent cross-project mixing (e.g. AiRIA).
+- **ChatGPT development chat titles** are originating-conversation traceability metadata. Use the exact title. See [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md#chat-title-continuity-convention-permanent).
 
 ## Related
 

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Governing for AI agents (Cursor, etc.) |
-| Updated | 2026-08-28 |
+| Updated | 2026-09-04 |
 | Product | The Estimator |
 
 ## Before you edit
@@ -34,6 +34,7 @@ Authoritative index: [`docs/README.md`](docs/README.md).
 - **Never claim** work or test results that were not performed.
 - Chat history is not the system of record; repository docs are.
 - Follow the [Continuity & Anti-Drift Protocol](docs/governance/continuity-and-anti-drift.md). AI memory is never authoritative project state.
+- Follow the **chat-title continuity convention** in that protocol: begin every CalibAi development response with the exact ChatGPT development chat title in bold; end with `END — <exact title>` **after** any Cursor prompt. Cursor/IDE workspace titles remain `BRAYMAN — <Topic>`. Every CalibAi development response ends with the next complete ready-to-paste Cursor prompt unless Joel explicitly says no prompt is required.
 
 ## Workflow
 

@@ -6,12 +6,30 @@
 | Updated | 2026-09-04 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
+| Active ChatGPT development chat title | **CalibAi Development — 4 Sep 2026** (working title recorded 2026-09-04; use verbatim once Joel confirms the exact UI title) |
 
 Authority order for the next session: repository governance → current-state records → accepted ADRs / Feature Gates → implementation/migration/test evidence → conversation memory only as supplementary context.
 
 **ALL-CHAT TURNOVER:** After this package is committed, every active CalibAi development chat may be abandoned. A new chat has **zero reliable conversation memory**. Chat history is supplemental only. No new chat may continue from a pasted old Cursor prompt without first running the required repository preflight/review.
 
 **PRESERVE → SEARCH → VERIFY → EXECUTE.** Existing before new. No unauthorized redesign. No arbitrary policy invention. No context-drift changes. ChatGPT / Cursor memory is never corporate memory.
+
+```text
+ACTIVE CHAT TITLE:
+CalibAi Development — 4 Sep 2026
+
+CONTINUITY DISPLAY RULE:
+Every CalibAi development response begins with the exact active ChatGPT
+development chat title in bold and ends with:
+
+END — <exact active chat title>
+
+When a Cursor prompt is present, the END line follows the complete prompt.
+Every CalibAi development response ends with the next complete ready-to-paste
+Cursor prompt unless Joel explicitly says no prompt is required.
+```
+
+Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md#chat-title-continuity-convention-permanent). Cursor/IDE workspace titles remain `BRAYMAN — <Topic>`.
 
 ---
 
@@ -20,7 +38,8 @@ Authority order for the next session: repository governance → current-state re
 - **Product:** CalibAi / Brayman Estimator (The Estimator). Do not rename.
 - **Path:** `/Users/joelbrayman/Desktop/Brayman-Estimator` (`~/Desktop/Brayman-Estimator`)
 - **Environment:** local Flask office app; SQLite development/UAT DB (`sqlite:///brayman_estimator.db` → `instance/brayman_estimator.db`)
-- **Chat titles:** must start with `BRAYMAN — <Topic>`
+- **ACTIVE CHAT TITLE:** `CalibAi Development — 4 Sep 2026` (ChatGPT originating development chat; working title until Joel confirms the exact UI title)
+- **Cursor / IDE workspace chat titles:** must start with `BRAYMAN — <Topic>`
 
 ## 2. VERIFIED BASELINE
 
@@ -95,7 +114,9 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **CLOSE FG-022 reusable approved document template family V1 (docs only; no master-byte change).** Joel presentation-master approval recorded. Families 01–04, 06–07 **JOEL APPROVED / APPROVED REUSABLE MASTER**. Family 05 **JOEL APPROVED / APPROVED REUSABLE PRESENTATION MASTER**; legal **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. Immutable source ZIP unchanged. Legal Content Gate **empty**. FG-012 / FG-017 / FG-021 **unchanged**. FG-021 **OPEN**. FG-022 **CLOSED**.
+**Last authorized delta:** **GOVERN CalibAi chat-title continuity convention (docs only).** Permanent response/turnover traceability: begin with exact ChatGPT development chat title in bold; end with `END — <title>` after any Cursor prompt; standing next-prompt rule preserved. Does **not** alter FG-021, FG-022, product code, Legal Content Gate, or master bytes.
+
+**Prior:** **CLOSE FG-022 reusable approved document template family V1 (docs only; no master-byte change).** Joel presentation-master approval recorded. Families 01–04, 06–07 **JOEL APPROVED / APPROVED REUSABLE MASTER**. Family 05 **JOEL APPROVED / APPROVED REUSABLE PRESENTATION MASTER**; legal **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. Immutable source ZIP unchanged. Legal Content Gate **empty**. FG-012 / FG-017 / FG-021 **unchanged**. FG-021 **OPEN**. FG-022 **CLOSED**.
 
 **Prior:** **IMPLEMENT FG-022 reusable approved document masters (durable DOCX/PDF outside Git; docs/register in Git).** Seven families EXTRACTED / SOURCE-VERIFIED / ZERO-RESIDUE VERIFIED / VISUALLY VERIFIED. **Not** JOEL APPROVED. Immutable source ZIP unchanged. Legal Content Gate **empty**. Document **04** = **INTERNAL ENTRY REFERENCE**. Document **05** = **COMMERCIAL_DRAFT / NOT FOR EXECUTION**. FG-012 / FG-017 / FG-021 **unchanged**. FG-021 **OPEN**. FG-022 **NOT CLOSED**.
 
@@ -287,7 +308,7 @@ Do not start Phase D. Do not enable an external AI provider. Do not close FG-021
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP.** Do **not** begin another feature from this FG-022 closure. Do **not** continue FG-021 from this pass. When Joel resumes FG-021, next high-value real-iPhone UAT candidate is pending capture → browser close → reopen → IndexedDB recover → retry → exactly one Event/Original. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval.
+**Next governed action:** **STOP.** Do **not** begin another feature from this continuity-convention pass. Do **not** continue FG-021 from this pass. When Joel resumes FG-021, next high-value real-iPhone UAT candidate is pending capture → browser close → reopen → IndexedDB recover → retry → exactly one Event/Original. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval.
 
 **Roadmap direction (not authorization):** Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
@@ -334,7 +355,20 @@ The prior development chats have been discarded. You have ZERO reliable conversa
 Chat history is supplemental only. The repository is the ONE SOURCE OF TRUTH.
 ChatGPT / Cursor memory is never corporate memory.
 
-Conversation titles in this workspace must start with: BRAYMAN — <Topic>.
+Conversation titles in this Cursor/IDE workspace must start with: BRAYMAN — <Topic>.
+
+ACTIVE CHAT TITLE (ChatGPT originating development chat for the NEW conversation):
+<record the exact title once known>
+
+CONTINUITY DISPLAY RULE:
+Every CalibAi development response begins with the exact active ChatGPT
+development chat title in bold and ends with:
+
+END — <exact active chat title>
+
+When a Cursor prompt is present, the END line follows the complete prompt.
+Every CalibAi development response ends with the next complete ready-to-paste
+Cursor prompt unless Joel explicitly says no prompt is required.
 
 DO NOT close FG-021.
 DO NOT invent iPhone UAT results.

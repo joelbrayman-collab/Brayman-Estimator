@@ -122,6 +122,8 @@ Stop substantive implementation and create or refresh a **verified handoff** whe
 
 Update [session-handoff.md](session-handoff.md), [current-state.md](current-state.md), and [chat-workflow-log.md](chat-workflow-log.md) when stopping for drift or executing a Review Turnover.
 
+Permanent **chat-title continuity convention**: [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md#chat-title-continuity-convention-permanent). Turnover packages must record `ACTIVE CHAT TITLE` and carry the display rule into the fresh chat. This is traceability metadata only.
+
 ### Resume procedure (no automatic pull)
 
 ```bash

@@ -20,6 +20,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 |-------|---------|
 | Date | |
 | Branch | |
+| Active ChatGPT development chat title | |
 | Objective | |
 | Business decision | |
 | Architectural decision | |
@@ -41,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-04 — Govern CalibAi chat-title continuity convention
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-04 |
+| Branch | `main` @ `46eab360d5f43c4f0c3397f8409dd7fee1fb2c79` (start) |
+| Active ChatGPT development chat title | CalibAi Development — 4 Sep 2026 (working title until Joel confirms the exact UI title) |
+| Objective | Record a permanent CalibAi continuity convention for originating ChatGPT chat-title traceability. Docs/governance only. |
+| Business decision | Every CalibAi development response begins with the exact active ChatGPT chat title in bold and ends with `END — <title>` after any Cursor prompt. Turnovers must record ACTIVE CHAT TITLE and carry the rule forward. Standing next-prompt rule preserved. Traceability metadata only. |
+| Architectural decision | None. Existing continuity and turnover documents hold the rule. No new policy file. No Feature Gate. No ADR. |
+| Prompt template used | BRAYMAN — CALIBAI CONTINUITY CONVENTION GOVERNANCE UPDATE (documentation template). |
+| Approved Cursor prompt summary | Record chat-title continuity in existing governance. Do not change product code, FG-021, or FG-022. |
+| Files expected to change | Continuity protocol, turnover protocol, session-handoff, chat-workflow-log, AGENTS.md, development-workflow, platform-governance pointer, Cursor rules. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; FG-021; FG-022; master DOCX/PDF; Legal Content Gate registers. |
+| Implementation result | Convention recorded. Two title systems distinguished (ChatGPT originating title vs Cursor `BRAYMAN — <Topic>`). |
+| Tests | Docs: `git diff --check`; markdown links. Product pytest not run. |
+| Project-state-report update | No — not a milestone. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Exact ChatGPT UI title not independently readable from Cursor; working title recorded until Joel confirms. FG-021 remaining UAT independently open. |
+| Next approved step | STOP. Do not begin another feature from this pass. |
+| Next approved prompt | None from this governance pass. |
+| Commit hash | this commit |
 
 ### 2026-09-04 — Close FG-022 reusable approved document masters
 

@@ -6,7 +6,7 @@
 | Status | **APPROVED / GOVERNING** |
 | Approved by | Joel Brayman |
 | Adopted | 2026-08-28 |
-| Updated | 2026-08-28 |
+| Updated | 2026-09-04 |
 | Applies to | ChatGPT, Cursor, Codex, and future AI development agents |
 
 ## Repository application
@@ -173,10 +173,71 @@ This procedure reconciles the active conversation's material deltas against repo
 
 ---
 
+## Chat-title continuity convention (permanent)
+
+Adopted **2026-09-04**. This is a **permanent continuity convention**, not a temporary formatting preference.
+
+The chat title is **TRACEABILITY METADATA**. It does **not** alter product architecture, implementation authority, roadmap priority, Feature Gate state, or ADR state.
+
+### Two title systems (do not collapse)
+
+| System | Rule |
+|--------|------|
+| **ChatGPT development chat title** | Exact originating ChatGPT conversation title. Required on every CalibAi development response, copied Cursor prompt package, stopping report, and turnover. |
+| **Cursor / IDE workspace chat title** | Must start with `BRAYMAN — <Topic>` to prevent cross-project mixing with other workspaces (e.g. AiRIA). Unchanged. |
+
+### Required CalibAi development response structure
+
+Every CalibAi development response (assessment, implementation review, UAT review, stopping-report review, governance response, or turnover response) must:
+
+1. **Begin** with the exact active ChatGPT development chat title in **bold**.
+2. **End** with: `END — <exact active ChatGPT development chat title>`
+3. When a Cursor prompt is provided, the END line appears **after** the complete ready-to-paste Cursor prompt. Do **not** place the END marker before the prompt.
+4. End with the next complete ready-to-paste Cursor prompt unless Joel explicitly states that no prompt is required.
+
+Required structure:
+
+```text
+**<EXACT ACTIVE CHAT TITLE>**
+
+[assessment / review / development response]
+
+[complete ready-to-paste Cursor prompt]
+
+**END — <EXACT ACTIVE CHAT TITLE>**
+```
+
+Copied Cursor prompts, stopping reports, turnovers, and governance notes must remain traceable to the originating ChatGPT development chat.
+
+### Standing next-prompt rule
+
+Every CalibAi development assessment, implementation review, UAT review, stopping-report review, governance response, or turnover response must end with the next complete ready-to-paste Cursor prompt unless Joel explicitly states that no prompt is required. Do **not** weaken this rule.
+
+### Turnover / rollover requirement
+
+Every future CalibAi turnover or rollover package must contain a visible field:
+
+```text
+ACTIVE CHAT TITLE:
+<exact active ChatGPT development chat title>
+
+CONTINUITY DISPLAY RULE:
+Every CalibAi development response begins with the exact active chat title in
+bold and ends with:
+
+END — <exact active chat title>
+
+When a Cursor prompt is present, the END line follows the complete prompt.
+```
+
+Every fresh-chat turnover prompt must carry this rule forward explicitly.
+
 ## Rollover package
 
 Before rollover, record or verify:
 
+- **ACTIVE CHAT TITLE** (exact ChatGPT development chat title)
+- **CONTINUITY DISPLAY RULE** (begin bold title; END line after any Cursor prompt)
 - current repository / branch / commit
 - current milestone
 - approved baseline

@@ -7,11 +7,11 @@
 | Target Milestone | **None.** FG-022 is the governing identifier. Do **not** assign a new M0xx number. Do **not** assign FG-022 to Field Web, Native Signing, FG-012 product renderers, or Legal Content Gate population. |
 | Owning domain | **Approved Document Presentation / Project Document Package** ([approved-document-presentation-reference-baseline.md](../architecture/approved-document-presentation-reference-baseline.md); [project-document-package.md](../architecture/project-document-package.md)). This is **not** a new product code module. |
 | Date | 2026-09-04 |
-| Status | **APPROVED / IMPLEMENTATION NOT STARTED.** Extraction **not** performed. Immutable source **unchanged**. Legal Content Gate **empty**. |
+| Status | **IMPLEMENTED / VERIFIED / JOEL APPROVAL PENDING** (2026-09-04). Extraction **performed**. Masters **not** JOEL APPROVED / **not** APPROVED REUSABLE MASTER. Immutable source **unchanged**. Legal Content Gate **empty**. |
 | Architecture | [approved-document-presentation-reference-baseline.md](../architecture/approved-document-presentation-reference-baseline.md) · [project-document-package.md](../architecture/project-document-package.md) · [testing/allen-jacques-garage-presentation-baseline-manifest.md](../testing/allen-jacques-garage-presentation-baseline-manifest.md) · [testing/reusable-approved-document-template-family-v1-register.md](../testing/reusable-approved-document-template-family-v1-register.md) · [governance/legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [organization-brand-profile.md](../architecture/organization-brand-profile.md) · [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** |
 | Related ADRs | [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted** (bytes outside Git; SHA-256 identity in Git). [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted** (Brand Profile remains separate). **No new ADR.** |
-| Prerequisites | Approved presentation source custody **CLOSED**. Source ZIP SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874`. 17/17 members verified. Joel/ChatGPT review of this gate before authorizing the extraction implementation prompt. |
-| Approved baseline | Docs/governance only. Product-changing tests remain dedicated FG-021 **19** / focused **147** / full **557**. Alembic current = head **`d2e3f4a5b6c7`**. |
+| Prerequisites | Approved presentation source custody **CLOSED**. Source ZIP SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874`. 17/17 members verified. This implementation prompt authorized 2026-09-04. |
+| Approved baseline | Docs + durable derived masters outside Git. Product-changing tests remain dedicated FG-021 **19** / focused **147** / full **557**. Alembic current = head **`d2e3f4a5b6c7`**. |
 
 ---
 
@@ -19,8 +19,8 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **APPROVED / IMPLEMENTATION NOT STARTED** |
-| Extraction | **NOT PERFORMED** |
+| Feature Gate (this document) | **IMPLEMENTED / VERIFIED / JOEL APPROVAL PENDING** — **NOT CLOSED** |
+| Extraction | **PERFORMED** — seven DOCX masters + seven verification PDFs |
 | Immutable presentation source | **UNCHANGED** — durable custody **CLOSED** |
 | Legal Content Gate | **EMPTY** — not populated by this gate |
 | FG-012 product renderers | **UNCHANGED** |
@@ -29,8 +29,9 @@
 | Schema / Alembic | **NO** — live current remains **`d2e3f4a5b6c7`** |
 | New ADR | **None** |
 | New product module | **None** |
+| Joel presentation-master approval | **PENDING** — do **not** assign JOEL APPROVED or APPROVED REUSABLE MASTER |
 
-This gate is a **separately governed parallel document-template track**. It does **not** alter [FG-021](FG-021-field-web-v1-today-and-capture.md) or roadmap item 12. Approving this gate does **not** authorize extraction until a later Joel-authorized implementation prompt.
+This gate is a **separately governed parallel document-template track**. It does **not** alter [FG-021](FG-021-field-web-v1-today-and-capture.md) or roadmap item 12. Implementation landed 2026-09-04. The gate **does not close** until Joel presentation-master approval.
 
 ---
 
@@ -73,7 +74,7 @@ IMMUTABLE APPROVED PRESENTATION SOURCE
 | 5 | What data does it reference? | Immutable source ZIP SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874`; seven presentation families 01–07; shared `styles.xml` SHA `760005ab7de5676d3d702b2484b60c7960b2b09be48eb0e7a2756ddea328973e`; recovered header raster SHA `0949c20891bb38a651403ca4e1965b3938a471bb68ec82773df80f3d5c50d4d2`. Does **not** own FG-012 renderer output or FG-017 logo bytes. |
 | 6 | What may implementation change? | Derived masters in a **separate** durable directory; Git identity register rows/hashes; visual-verification notes; governed docs. **Only after a separate extraction implementation prompt.** Neutral field labels such as Client / Project / Site / Date are allowed. |
 | 7 | What must it not change? | Immutable source ZIP / DOCX / PDF; `app/`; `tests/`; Alembic; database; FG-012 HTML/ReportLab; Proposal rendering; Internal Breakdown rendering; FG-017 logo substitution; FG-021; Legal Content Gate registers; Native Signing; MONITOR; LEARN; Phase D; supplier; QuickBooks API; a new programmatic templating syntax; fake customer data. |
-| 8 | Acceptance criteria? | See **Acceptance criteria** below. **Not met** — implementation not started. |
+| 8 | Acceptance criteria? | See **Acceptance criteria** below. Extraction/verification **met** for this pass. Joel presentation-master approval **not** met. Gate **not** closed. |
 | 9 | Tests required? | SHA identity of derived masters; zero-residue scan; visual inspection of every extracted master. Automated product pytest is **not** the acceptance path. Do **not** rerun the full suite merely because this gate exists. |
 | 10 | Documentation? | This gate; feature-gate index; presentation baseline pin; project-document-package ownership row; empty V1 register; legal-content subsequent status; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log. |
 | 11 | ADR required? | **No.** Existing project-document, custody ([ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md)), Brand Profile ([ADR-040](../adr/ADR-040-organization-brand-profile.md)), and Legal Content Gate boundaries are sufficient. **STOP** if implementation would need a new product document module, a second commercial source of truth, Legal Content Gate population, FG-012 visual-parity claim, FG-017 raster substitution, or a programmatic template engine. |
@@ -220,7 +221,7 @@ Root (already established):
 | Store | Path | Role |
 |-------|------|------|
 | Immutable source | `Allen Jacques Presentation Baseline - 2026-09-03/` | Exact original ZIP only. Do **not** use as the derived working directory. |
-| Derived V1 masters | `Reusable Master Template Family V1/` | Future extracted DOCX masters. **Not created in this governance pass.** |
+| Derived V1 masters | `Reusable Master Template Family V1/` | Extracted DOCX masters + verification PDFs (2026-09-04). |
 
 Each future master must record in Git:
 
@@ -234,7 +235,7 @@ Each future master must record in Git:
 - SHA-256 of the derived file
 - legal-content status where applicable (family 05: **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**)
 
-Binary DOCX/PDF files remain **outside Git** unless separate governance changes the binary-custody rule. Git records identity and provenance in [reusable-approved-document-template-family-v1-register.md](../testing/reusable-approved-document-template-family-v1-register.md) (empty until extraction).
+Binary DOCX/PDF files remain **outside Git** unless separate governance changes the binary-custody rule. Git records identity and provenance in [reusable-approved-document-template-family-v1-register.md](../testing/reusable-approved-document-template-family-v1-register.md).
 
 ---
 
@@ -290,7 +291,7 @@ REDESIGNED
 9. Joel presentation-master approval recorded per family.
 10. Legal Content Gate still **empty**. FG-012 / FG-017 / FG-021 unchanged.
 
-**Not met** in this governance pass.
+**Not fully met** until Joel presentation-master approval. Extraction, source-verify, zero-residue, and visual-verify **PASS** for families 01–07.
 
 ---
 
@@ -336,7 +337,7 @@ Roadmap item 12 is unchanged. This gate is **not** item 13 MONITOR and does **no
 
 ## Out of scope
 
-- Performing extraction in this governance pass
+- Closing this gate or assigning JOEL APPROVED / APPROVED REUSABLE MASTER
 - Populating Legal Content Gate
 - Creating legal content
 - Changing FG-012, FG-017, or FG-021

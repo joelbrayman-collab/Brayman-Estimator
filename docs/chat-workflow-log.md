@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-04 — Implement FG-022 reusable document masters
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-04 |
+| Branch | `main` @ `a855663675b71c3bf941652b2be983f32fa139c8` (start) |
+| Objective | Extract project-neutral reusable visual masters from the governed Allen Jacques presentation family. |
+| Business decision | Seven families EXTRACTED / SOURCE-VERIFIED / ZERO-RESIDUE VERIFIED / VISUALLY VERIFIED. Not JOEL APPROVED. Document 04 INTERNAL ENTRY REFERENCE. Document 05 COMMERCIAL_DRAFT / NOT FOR EXECUTION. Legal Content Gate empty. |
+| Architectural decision | None new. DOCX visual masters in a separate durable directory. PDFs are verification only. FG-012 / FG-017 / FG-021 unchanged. No migration. |
+| Prompt template used | BRAYMAN — CALIBAI FG-022 IMPLEMENTATION. |
+| Approved Cursor prompt summary | Copy governed DOCX; neutralize Allen Jacques project content; preserve presentation; render Word PDFs; inspect every page; populate register; stop before Joel approval. |
+| Files expected to change | Docs/register only. Derived binaries outside Git. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; source ZIP/DOCX/PDF; FG-021 body; FG-012; FG-017. |
+| Implementation result | Seven DOCX + seven verification PDFs. Source ZIP SHA unchanged. Zero user-visible residue. Family 01 PDF 1 page (source was 2). |
+| Tests | Docs: `git diff --check`; markdown links. Product pytest not run. Last product-changing suite remains 19 / 147 / 557. |
+| Project-state-report update | Yes. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Joel presentation-master approval pending. FG-017 raster vs recovered header unresolved. FG-021 remaining UAT independently open. |
+| Next approved step | STOP for Joel/ChatGPT review of the seven masters. |
+| Next approved prompt | None from this implementation pass. |
+| Commit hash | this commit |
+
 ### 2026-09-04 — Approve FG-022 reusable document template family
 
 | Field | Content |

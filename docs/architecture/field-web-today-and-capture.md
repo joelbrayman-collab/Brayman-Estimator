@@ -11,7 +11,7 @@
 | Related | [modules/build.md](../modules/build.md) · [build-media-storage-lifecycle.md](build-media-storage-lifecycle.md) · [ADR-023](../adr/ADR-023-field-evidence-provenance.md) · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) · Native Signing is a **parallel** commercial-execution track (see §34) |
 | Repository baseline | `main` @ `42b9c792b7c4fd968ed46be0ff15975cf3880eb5` = `origin/main`. Alembic current = heads **`c1d2e3f4a5b6`**. Full suite **538 passed** claimed from FG-020 close — **not rerun** this docs-only recon. |
 
-This reconnaissance is **complete** as architecture. Subsequent 2026-09-01 governance draft: [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) was **Proposed**; [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) was **DRAFT FOR JOEL REVIEW / NOT APPROVED** (committed `6273fa4`). Subsequent 2026-09-02: ADR-043 is **Accepted**; FG-021 is **APPROVED / IMPLEMENTATION NOT STARTED**; implementation recon is **COMPLETE** ([fg-021-field-web-v1-implementation-reconnaissance.md](fg-021-field-web-v1-implementation-reconnaissance.md)). Subsequent 2026-09-02 product: FG-021 **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**. Live current = head `d2e3f4a5b6c7`. Gate **NOT CLOSED**. Real iPhone UAT **not complete**. This architecture pin still does **not** authorize Native Signing production, transcription, PWA, MONITOR, Project Closeout, or Contract.
+This reconnaissance is **complete** as architecture. Subsequent 2026-09-01 governance draft: [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) was **Proposed**; [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) was **DRAFT FOR JOEL REVIEW / NOT APPROVED** (committed `6273fa4`). Subsequent 2026-09-02: ADR-043 is **Accepted**; FG-021 is **APPROVED / IMPLEMENTATION NOT STARTED**; implementation recon is **COMPLETE** ([fg-021-field-web-v1-implementation-reconnaissance.md](fg-021-field-web-v1-implementation-reconnaissance.md)). Subsequent 2026-09-02 product: FG-021 **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**. **Current status (2026-09-04):** FG-021 **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Gate **NOT CLOSED**. Text / screenshot PNG / Take Photo JPEG / voice Save / network retain-retry **PASS**. HEIC, mixed capture, IndexedDB browser-close recovery, and Observation Delete remain **OPEN**. Live current = head `d2e3f4a5b6c7`. This architecture pin still does **not** authorize Native Signing production, transcription, PWA, MONITOR, Project Closeout, or Contract.
 
 ### 41-section report coverage (this pin is canonical)
 
@@ -306,7 +306,7 @@ This is:
 | Schema | Additive columns + unique constraints |
 | Migration | **Yes**, in the Field Web Feature Gate if that gate owns the keys |
 | ADR | **Yes**, before implementation — schema/idempotency policy is not fully locked by ADR-042 |
-| Feature Gate | [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED** |
+| Feature Gate | [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** (historical recon: APPROVED / IMPLEMENTATION NOT STARTED) |
 
 Do not silently add columns. Do not treat SHA-only matching as Event idempotency (two photos can share no SHA; two retries of empty Event have no SHA).
 
@@ -562,15 +562,17 @@ Automated pytest cannot replace real-device mic/camera/HEIC/retry. FG-021 must i
 
 **Subsequent status (2026-09-02):** ADR-043 is **Accepted**. FG-021 is **APPROVED / IMPLEMENTATION NOT STARTED**. Implementation recon is **COMPLETE**. Product implementation remains **NOT AUTHORIZED** until a separate implementation prompt.
 
+**Subsequent status (2026-09-04):** FG-021 **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Gate **NOT CLOSED**. Live current = head `d2e3f4a5b6c7`.
+
 | Question | Answer from repository indexes |
 |----------|--------------------------------|
-| Next Feature Gate id | **FG-021** — [FG-021-field-web-v1-today-and-capture.md](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED**. Native Signing must **not** consume FG-021. |
+| Next Feature Gate id | **FG-021** — [FG-021-field-web-v1-today-and-capture.md](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Native Signing must **not** consume FG-021. |
 | Proposed title | **Field Web V1 — Today + Capture** |
 | New ADR required? | **Accepted.** [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md). ADR-042 remains the dual-surface / original-custody ADR. |
 | Owner | Field Web is a **client**. BUILD remains owner of Events/Originals. Office/platform owns `/api/v1` adapters. |
 | Scope | `/field` templates+JS; iPhone Safari Today/Project/Capture; voice/photo/text Originals via FG-020 API; IndexedDB retry; CSRF; idempotent Event/Original API + additive schema; API display rendition GET; desktop Hub continuity tests |
 | Non-goals | Transcription; AI; PWA/service worker; native iOS; tokens; RBAC; org-switcher; Derived review UI; Change Order signing or UNSIGNED/AWAITING/SIGNED badges; MONITOR; Closeout; plan viewer; full offline sync; office shell reuse as Field; Native Signing production activation |
-| Migration | Designed revision **`d2e3f4a5b6c7`**. **Not created.** Not authorized until the implementation prompt. |
+| Migration | Designed revision **`d2e3f4a5b6c7`**. **Applied live.** Gate still **NOT CLOSED**. |
 | Implementation recon | **COMPLETE** — [fg-021-field-web-v1-implementation-reconnaissance.md](fg-021-field-web-v1-implementation-reconnaissance.md) |
 | Tests | Dedicated Field Web + API idempotency + CSRF + isolation + Hub continuity; real-device UAT |
 
@@ -590,7 +592,7 @@ A contractor can, on iPhone Safari:
   on the desktop Project Hub Field Observations / Event Detail.
 ```
 
-That is the destination. FG-021 is **APPROVED / IMPLEMENTATION NOT STARTED**. ADR-043 is **Accepted**. A migration and real-device UAT remain **not authorized** until a separate implementation prompt.
+That is the destination. FG-021 is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. ADR-043 is **Accepted**. Remaining real-device UAT is still required to close.
 
 ---
 
@@ -623,8 +625,8 @@ That is the destination. FG-021 is **APPROVED / IMPLEMENTATION NOT STARTED**. AD
 - [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**
 - [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted**
 - [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**
-- [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **APPROVED / IMPLEMENTATION NOT STARTED**
-- [fg-021-field-web-v1-implementation-reconnaissance.md](fg-021-field-web-v1-implementation-reconnaissance.md) **COMPLETE / NOT IMPLEMENTED**
+- [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**
+- [fg-021-field-web-v1-implementation-reconnaissance.md](fg-021-field-web-v1-implementation-reconnaissance.md) **COMPLETE**; product **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**
 - [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**
 - [legal/native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — parallel track; counsel does **not** block Field Web
 
@@ -730,13 +732,14 @@ Replace leftover language that treated counsel as a **general development hold**
 ## 39. Recommended next governed action
 
 ```text
-STOP product implementation in this architecture pin.
+STOP. Do not implement product code from this architecture pin.
 
-ADR-043 is Accepted. FG-021 is APPROVED / IMPLEMENTATION NOT STARTED.
-Implementation recon is COMPLETE.
+ADR-043 is Accepted. FG-021 is IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN.
+Gate NOT CLOSED.
 
-Joel/ChatGPT may next issue a separate FG-021 IMPLEMENTATION prompt.
-Do not implement Field Web until that prompt.
+Joel/ChatGPT reviews remaining FG-021 real-iPhone closure UAT versus
+separately governed reusable-template extraction. Do not choose here.
+Do not close FG-021. Do not implement Observation Delete.
 Native Signing DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE.
 Native Signing PRODUCTION ACTIVATION / REAL CUSTOMER USE
 remains BLOCKED PENDING ONTARIO COUNSEL APPROVAL OF THE SIGNING PROCESS.
@@ -746,4 +749,4 @@ Do not weaken the Legal Content Gate for Ontario Contract / Warranty templates.
 Do not assign FG-021 to Native Signing.
 ```
 
-**ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.** Item 12 recon complete does **not** authorize Field Web product code.
+**ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.** Item 12 is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. That does **not** close FG-021 or authorize MONITOR, Closeout, or template extraction.

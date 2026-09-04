@@ -47,6 +47,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-02 FG-021 live migration — not authorized by CAR-001):** [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**. Live Alembic current = head **`d2e3f4a5b6c7`**. Full suite **551 passed**. Gate **NOT CLOSED**. Real iPhone UAT **not complete**. CAR-001 still does **not** authorize Native Signing production, MONITOR, Project Closeout, or closing FG-021. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
+**Subsequent status (2026-09-04 current-state reconciliation — not authorized by CAR-001):** [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Latest product-changing suite **557 passed** (dedicated FG-021 **19**; focused **147**). Approved presentation source custody **CLOSED**. Legal Content Gate **empty**. CAR-001 still does **not** authorize Native Signing production, MONITOR, Project Closeout, reusable-template extraction, or closing FG-021.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:
@@ -82,7 +84,7 @@ CalibAi provides complementary **office** and **field** experiences over the sam
 | LEARN is review-gated and must not mutate pricing policy / cost library / approved estimates / historical actuals | [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** |
 | Field is first-class; Flask services → API → field web → native later if warranted | [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** |
 | Original field evidence separate from derived structured records | [ADR-023](../adr/ADR-023-field-evidence-provenance.md) **Accepted** |
-| Dual first-class BUILD surfaces; original audio/photo/text custody; capture-first; desktop review | [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**; [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING** |
+| Dual first-class BUILD surfaces; original audio/photo/text custody; capture-first; desktop review | [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**; [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** |
 | Pricing markup stack vs 15% gross-margin policy — named methods **CLOSED / OPERATIONAL FOR UAT** | [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED / OPERATIONAL FOR UAT** |
 
 Replacement of existing modules or schemas requires **separate explicit approval**.

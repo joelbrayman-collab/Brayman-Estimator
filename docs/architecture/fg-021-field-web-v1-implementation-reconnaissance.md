@@ -2,15 +2,15 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **COMPLETE.** Product **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**. Frozen recon remains law. Live current = head `d2e3f4a5b6c7`. |
+| Status | **COMPLETE.** Product **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Frozen recon remains law. Live current = head `d2e3f4a5b6c7`. |
 | Date | 2026-09-02 |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |
 | Related | [field-web-today-and-capture.md](field-web-today-and-capture.md) · [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) · [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) · [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) · [build-media-storage-lifecycle.md](build-media-storage-lifecycle.md) |
 
-This reconnaissance freezes implementation design for FG-021. Product code and revision `d2e3f4a5b6c7` have landed. Live `flask db upgrade` was applied (`c1d2e3f4a5b6` → `d2e3f4a5b6c7`). Gate **NOT CLOSED**. Real iPhone UAT remains required.
+This reconnaissance freezes implementation design for FG-021. Product code and revision `d2e3f4a5b6c7` have landed. Live `flask db upgrade` was applied (`c1d2e3f4a5b6` → `d2e3f4a5b6c7`). Gate **NOT CLOSED**. Remaining real iPhone UAT is still required to close.
 
-Readiness: **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING.**
+Readiness: **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN.**
 
 ---
 
@@ -489,7 +489,7 @@ Open (non-blocking): whether login page copy should say “CalibAi” vs “Offi
 
 ## Conflicts
 
-FG-020 close text still says Item 12 “ELIGIBLE / NOT AUTHORIZED” in places — **historical**. Current indexes must say FG-021 **APPROVED / IMPLEMENTATION NOT STARTED**.
+FG-020 close text still says Item 12 “ELIGIBLE / NOT AUTHORIZED” in places — **historical**. Current indexes must say FG-021 **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** (gate **NOT CLOSED**).
 
 Login lede “Office sign in” is slightly Field-awkward; do **not** redesign login in FG-021.
 

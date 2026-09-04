@@ -42,6 +42,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-04 — Reconcile current CalibAi turnover state
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-04 |
+| Branch | `main` @ `97f35fe757f0be99af9140693d2e12924659ec46` (start) |
+| Objective | Bounded docs-only reconciliation of remaining CURRENT-STATE drift after presentation-source custody closure. |
+| Business decision | FG-021 remains OPEN. Proven iPhone PASSes (text, screenshot PNG, Take Photo JPEG, voice Save, network retain/retry, desktop continuity) are current. HEIC / mixed / IndexedDB browser-close / Observation Delete remain OPEN. Presentation source custody CLOSED. Legal Content Gate empty. |
+| Architectural decision | None new. ADR-043 remains Accepted. FG-012 / FG-017 / Native Signing / reusable extraction unchanged. |
+| Prompt template used | BRAYMAN — CALIBAI POST-CUSTODY CURRENT-STATE DOCUMENTATION RECONCILIATION. |
+| Approved Cursor prompt summary | Repair stale current-looking language only. Preserve historical snapshots. Do not implement. Do not close FG-021. Do not choose next UAT vs template extraction. |
+| Files expected to change | Current-authority docs only. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; Feature Gate files except CURRENT FG-021 wording; approved presentation ZIP. |
+| Implementation result | Stale CURRENT FG-021 PENDING / IMPLEMENTATION NOT STARTED / screenshot re-UAT pending / old test baselines repaired where they presented as today. Historical dated entries left. |
+| Tests | Docs only: `git diff --check`; markdown links on changed files. Full pytest not run. Last product-changing suite remains 19 / 147 / 557. |
+| Project-state-report update | Yes — PART B brought forward to 2026-09-04. |
+| Milestone entry update | No (historical milestone rows left). |
+| Constitutional issue raised | None. |
+| Unresolved issues | Joel/ChatGPT still chooses remaining FG-021 UAT versus reusable-template extraction. ChatGPT Library remains a logical collection path. FG-017 raster vs recovered header unresolved. |
+| Next approved step | STOP for Joel/ChatGPT review. |
+| Next approved prompt | None from this reconciliation. |
+| Commit hash | this commit |
+
 ### 2026-09-04 — Close approved document template custody gap
 
 | Field | Content |

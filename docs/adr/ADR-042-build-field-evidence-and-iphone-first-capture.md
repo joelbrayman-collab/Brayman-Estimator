@@ -9,6 +9,8 @@
 
 **Current status (2026-09-02):** This ADR is **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**. Live Alembic current = head **`d2e3f4a5b6c7`**. HEIC/HEIF originals remain preserved (custody ≠ rendering). Transcription remains out of scope. Project Closeout remains **FUTURE**.
 
+**Subsequent status (2026-09-04):** [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Gate **NOT CLOSED**. Text / screenshot PNG / Take Photo JPEG / voice Save / network retain-retry **PASS**. HEIC real-device **NOT YET TESTED**. Observation Delete **QUEUED**. This ADR remains **Accepted**.
+
 **Subsequent status (2026-08-31 media storage lifecycle):** Joel confirmed Original Source vs Compatible Rendition vs Closed Project Archive. See [build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md). Renditions are regenerable working artifacts (HEIC/HEIF → JPEG is the first concrete requirement). They are **not** Original Source, **not** Derived Candidates, and **not** permanent archive records. Project Closeout / archive-before-purge is **FUTURE / NOT AUTHORIZED**. This ADR remains **Accepted**.
 
 **Subsequent status (2026-08-31 Compatible Rendition increment):** Image-only HEIC/HEIF → JPEG Compatible Renditions are **implemented** (`app/services/build_rendition.py`). Original Source custody is unchanged. No new migration.

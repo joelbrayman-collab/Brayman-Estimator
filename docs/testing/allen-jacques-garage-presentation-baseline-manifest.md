@@ -2,8 +2,8 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Governing identity register** for the recovered presentation baseline |
-| Updated | 2026-09-03 |
+| Status | **Governing identity register** for the recovered presentation baseline. **SOURCE CUSTODY CLOSED** (2026-09-04). |
+| Updated | 2026-09-04 |
 | Canonical pin | [architecture/approved-document-presentation-reference-baseline.md](../architecture/approved-document-presentation-reference-baseline.md) |
 
 These files are **project-specific reference artifacts**. They are **not** reusable templates until a later governed extraction.
@@ -14,16 +14,19 @@ These files are **project-specific reference artifacts**. They are **not** reusa
 |-------|--------|
 | Baseline name | Allen Jacques Garage — first project using the approved document presentation family |
 | Source ZIP filename | `Allen_Jacques_Garage_FINAL_116778_Internal_and_Customer_2026-08-31.zip` |
-| Source ZIP absolute path (leave-in-place) | `/Users/joelbrayman/Desktop/Allen_Jacques_Garage_FINAL_116778_Internal_and_Customer_2026-08-31.zip` |
+| Durable source ZIP absolute path | `/Users/joelbrayman/Documents/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/Allen_Jacques_Garage_FINAL_116778_Internal_and_Customer_2026-08-31.zip` |
+| ChatGPT Library logical collection | `/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/` |
+| Recovered Desktop provenance copy | `/Users/joelbrayman/Desktop/Allen_Jacques_Garage_FINAL_116778_Internal_and_Customer_2026-08-31.zip` — leave in place; not sole custody |
 | Source ZIP SHA-256 | `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` |
 | Source ZIP mtime | 2026-08-31 15:23 (local) |
 | Member count | 17 |
-| Recovery / verification date | 2026-09-03 |
+| Recovery / verification date | 2026-09-03 (identity); **2026-09-04** (durable custody re-verified; 17/17 members PASS; families 01–07 PASS) |
+| Custody status | **CLOSED** — exact original ZIP in the durable store. Not extracted. Not a reusable template. Not in Git. Not in `instance/`. |
 | Project | Detached Garage — Allen Jacques |
 | Site | 3415 Roger Stevens Road, North Gower, ON |
 | Contractor header | Brayman Construction Inc., 411 St. John Street, Merrickville, ON K0G 1N0 |
 | Joel approval | Confirmed 2026-09-03: this package was **the first project using the Joel-approved document presentation family**. Documents 01–07 are **APPROVED PRESENTATION REFERENCES** (visual design / geometry / typography / header-footer / tables / spacing / identity). **Not** approved merely by that: Allen Jacques project data, prices, quantities, dates, scope, allowances, exclusions, source-quote contents, legal language, or that project’s commercial terms. |
-| Git binary custody | **Bytes not in Git.** Identity in this manifest. Same pattern as [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md) Desktop leave-in-place. |
+| Git binary custody | **Bytes not in Git.** Identity in this manifest. Durable bytes in the Documents store above. Same SHA-outside-Git pattern as [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md); this is **not** the historical-workbook corpus and **not** product `instance/` storage. |
 | Shared `word/styles.xml` SHA-256 | `760005ab7de5676d3d702b2484b60c7960b2b09be48eb0e7a2756ddea328973e` (all seven DOCX) |
 | Shared header image SHA-256 | `0949c20891bb38a651403ca4e1965b3938a471bb68ec82773df80f3d5c50d4d2` (PNG 2048×819, 92001 bytes, all seven DOCX) |
 | Provenance | `python-docx` creator; Microsoft Macintosh Word / `Normal.dotm` |

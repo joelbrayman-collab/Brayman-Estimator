@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-09-03 |
+| Updated | 2026-09-04 |
 | Evidence | Local repository inspection |
 
 ## Baseline
@@ -81,7 +81,7 @@ M005–M011, **FG-006**, **FG-008**, **FG-009**, and **M012 / FG-010** remain **
 ## August 25, 2026 governance (recorded — not implemented)
 
 - **Authoritative estimate record** + **four-output document package** — [architecture/project-document-package.md](architecture/project-document-package.md)
-- **Approved document presentation baseline** — recovered Allen Jacques / 3415 Roger Stevens 2026-08-31 ZIP (Desktop leave-in-place; SHA-256 in [testing/allen-jacques-garage-presentation-baseline-manifest.md](testing/allen-jacques-garage-presentation-baseline-manifest.md)). **Presentation / design approved** for documents 01–07. Document **04** is **INTERNAL ENTRY REFERENCE** (not a customer deliverable). Document **05** legal content **COMMERCIAL_DRAFT / NOT APPROVED**. Not reusable templates. Binaries **not** in Git. FG-012 renderers **materially differ**. FG-021 unchanged.
+- **Approved document presentation baseline** — Allen Jacques / 3415 Roger Stevens 2026-08-31 ZIP. SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` in [testing/allen-jacques-garage-presentation-baseline-manifest.md](testing/allen-jacques-garage-presentation-baseline-manifest.md). **SOURCE CUSTODY CLOSED** (2026-09-04): durable exact ZIP at `/Users/joelbrayman/Documents/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/`. ChatGPT Library logical collection `/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/`. Desktop copy leave-in-place provenance, not sole custody. **Presentation / design approved** for documents 01–07. Document **04** is **INTERNAL ENTRY REFERENCE** (not a customer deliverable). Document **05** legal content **COMMERCIAL_DRAFT / NOT APPROVED**. Legal Content Gate **empty**. Not reusable templates. Extraction **not** performed. Binaries **not** in Git. FG-012 renderers **materially differ** (unchanged). FG-017 raster question **unresolved** (unchanged). FG-021 unchanged.
 - **Pricing policy** ($65/hr labour direct; 15% gross margin) — [pricing-policy.md](pricing-policy.md) — **ORG-001 values, not CalibAi universal defaults**
 - **QuickBooks pipeline boundary** (no API) — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
 - **Ontario contract + warranty / Legal Content Gate** — [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md)

@@ -2,8 +2,8 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **APPROVED PRESENTATION / DOCUMENT DESIGN BASELINE** (2026-09-03). **Not** a reusable template source. **Not** Legal Content Gate approval. **Not** product implementation. |
-| Date | 2026-09-03 |
+| Status | **APPROVED PRESENTATION / DOCUMENT DESIGN BASELINE** (2026-09-03). **SOURCE CUSTODY CLOSED** (2026-09-04). **Not** a reusable template source. **Not** Legal Content Gate approval. **Not** product implementation. |
+| Date | 2026-09-03 (presentation approval); **2026-09-04** (durable source custody) |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |
 | Manifest | [testing/allen-jacques-garage-presentation-baseline-manifest.md](../testing/allen-jacques-garage-presentation-baseline-manifest.md) |
@@ -27,9 +27,11 @@ It does **not**:
 
 **Category D generated project package** (not a `.dotx` / generator):
 
-`/Users/joelbrayman/Desktop/Allen_Jacques_Garage_FINAL_116778_Internal_and_Customer_2026-08-31.zip`
+`Allen_Jacques_Garage_FINAL_116778_Internal_and_Customer_2026-08-31.zip`
 
 SHA-256: `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874`
+
+**Durable custody** (closed 2026-09-04): `/Users/joelbrayman/Documents/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/` — exact original ZIP only. Recovered Desktop copy remains leave-in-place provenance. See **Custody** below.
 
 First project: Allen Jacques / Detached Garage / 3415 Roger Stevens Road, North Gower. Dated 2026-08-31. Quote basis `$116,778.00 + HST` appears in customer documents and is **project-specific**, not a template value.
 
@@ -71,17 +73,21 @@ These files are **not** reusable templates until a later governed extraction rem
 
 ## Custody (do not invent)
 
-Repository binary policy for customer/project bytes is already [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md): **bytes outside Git**; **SHA-256 identity in Git**; leave-in-place Desktop corpus (historical workbooks). Plan PDFs, brand logos, and Field originals use gitignored `instance/` stores — **wrong custody** for this presentation baseline (those roots are product runtime, not a document-design register).
+Repository binary policy for customer/project bytes is already [ADR-032](../adr/ADR-032-app-managed-historical-workbook-storage.md): **bytes outside Git**; **SHA-256 identity in Git**. Plan PDFs, brand logos, and Field originals use gitignored `instance/` stores — **wrong custody** for this presentation baseline (those roots are product runtime, not a document-design register). Do **not** commit DOCX/PDF/ZIP binaries to Git.
 
-**Chosen custody for this baseline:**
+**Custody status: CLOSED** (verified 2026-09-04). The approved source bytes no longer depend solely on Desktop.
 
 | Layer | Location |
 |-------|----------|
-| Bytes | Leave-in-place Desktop ZIP (do **not** copy into Git; do **not** copy into `instance/` from this pin) |
+| **Immutable source ZIP (durable byte store)** | `/Users/joelbrayman/Documents/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/Allen_Jacques_Garage_FINAL_116778_Internal_and_Customer_2026-08-31.zip` |
+| ChatGPT Library logical collection (established 2026-09-04) | `/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/` — collection name only; **not** a Cursor-writable filesystem. Governed bytes are the Documents store above. |
+| Recovered Desktop provenance copy | `/Users/joelbrayman/Desktop/Allen_Jacques_Garage_FINAL_116778_Internal_and_Customer_2026-08-31.zip` — **leave in place**; do **not** delete; **not** sole custody |
 | Identity | This pin + [manifest](../testing/allen-jacques-garage-presentation-baseline-manifest.md) in Git |
 | UAT project pin | [testing/uat-reference-cases.md](../testing/uat-reference-cases.md) |
 
-Do not commit DOCX/PDF binaries to Git.
+**Verification (2026-09-04):** source ZIP SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` matched the governed hash. All **17** ZIP members matched the [manifest](../testing/allen-jacques-garage-presentation-baseline-manifest.md), including DOCX/PDF identities for families **01–07**. Durable copy SHA-256 matched. Original ZIP unmodified. No extraction. No redesign.
+
+The durable store holds the **exact original ZIP** only. Do **not** treat extracted members, regenerated files, or project-neutral derivatives as the immutable source.
 
 ## FG-012 / FG-017
 

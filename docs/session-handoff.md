@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN.** Gate **NOT CLOSED**. Text-only **PASS**. Small screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28** / Original **27**, `image/jpeg`). **HEIC REAL-DEVICE NOT YET TESTED.** **REAL IPHONE VOICE SAVE PASS** (Event **30** / Original **28**, `audio/mp4`, `note.m4a`). **REAL IPHONE NETWORK RETAIN / RETRY PASS** (Event **31** / Original **29**, text). Observation Delete **QUEUED**. Live current = head **`d2e3f4a5b6c7`**. Do **not** close FG-021. |
-| Updated | 2026-09-03 |
+| Updated | 2026-09-04 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
 
@@ -95,7 +95,9 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **COMMIT recovered Allen Jacques approved document presentation baseline (docs only).** ZIP SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` verified. Pin [architecture/approved-document-presentation-reference-baseline.md](architecture/approved-document-presentation-reference-baseline.md) + [testing/allen-jacques-garage-presentation-baseline-manifest.md](testing/allen-jacques-garage-presentation-baseline-manifest.md). Documents 01–07 **APPROVED PRESENTATION REFERENCES**. Document **04** = **INTERNAL ENTRY REFERENCE** (ZIP customer-facing folder is provenance only). Document **05** legal = **COMMERCIAL_DRAFT / NOT APPROVED**. Bytes **not** in Git. FG-021 **unchanged / OPEN**.
+**Last authorized delta:** **CLOSE approved document template custody (docs + durable byte copy; no Git binaries).** Source ZIP SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` re-verified. All **17** members PASS including families **01–07**. Durable store: `/Users/joelbrayman/Documents/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/` (exact original ZIP only). ChatGPT Library logical collection `/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/`. Desktop copy leave-in-place. **SOURCE CUSTODY CLOSED.** Document **04** = **INTERNAL ENTRY REFERENCE**. Document **05** legal = **COMMERCIAL_DRAFT / NOT APPROVED**. Legal Content Gate **empty**. Reusable extraction **not** performed. FG-012 / FG-017 / FG-021 **unchanged**. FG-021 **OPEN**.
+
+**Prior:** **COMMIT recovered Allen Jacques approved document presentation baseline (docs only).** ZIP SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874` verified. Pin [architecture/approved-document-presentation-reference-baseline.md](architecture/approved-document-presentation-reference-baseline.md) + [testing/allen-jacques-garage-presentation-baseline-manifest.md](testing/allen-jacques-garage-presentation-baseline-manifest.md). Documents 01–07 **APPROVED PRESENTATION REFERENCES**. Document **04** = **INTERNAL ENTRY REFERENCE** (ZIP customer-facing folder is provenance only). Document **05** legal = **COMMERCIAL_DRAFT / NOT APPROVED**. Bytes **not** in Git. FG-021 **unchanged / OPEN**.
 
 **Prior:** **REAL IPHONE NETWORK RETAIN / RETRY PASS.** HTTPS `https://192.168.134.223:5443`. Text-only. Wi-Fi off then Save: no Event POST (Case A); status **NEEDS RETRY**; feedback Safari `Load failed`. Today **Needs Retry** / `1 capture needs retry.` Retry: Flask **855195** `14:02:16` POST Event **201** then Original **201**. Event **31** / Original **29**, project **11**, `ORG-001`, Joel Brayman `user_id` 1. Body `FG021 Network Retry UAT`. UUIDs `532871ae-db01-4263-8562-d64baf4aa00e` / `022fe42b-8e8f-421b-a159-0c01eae15667`. Live **31** / **29**. Desktop Hub `/projects/11/field-events/31` same Event (Mac login required on HTTPS origin). Do **not** close FG-021. **HEIC REAL-DEVICE NOT YET TESTED.**
 
@@ -201,7 +203,8 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - `HistoricalLabourItem` source facts **not rewritten** (120 rows; 43 with stored `hourly_rate = 0.13` remain evidence defects)
 - Human review is authoritative; AI confidence advisory only
 - ORG isolation; no cross-org pooling; ORG-001 $65 / 15% GM are org-specific, not CalibAi defaults
-- Legal Content Gate for Ontario contract/warranty
+- Legal Content Gate for Ontario contract/warranty — registers **empty**; Document 05 does **not** populate them
+- Approved Allen Jacques presentation source ZIP — SHA-256 `26f5e579c01651f2e304a76fbed1de7ab54ba144055937c2a1fc6871ebe5e874`; durable bytes outside Git at `/Users/joelbrayman/Documents/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/`; **not** in `instance/`; **not** reusable templates
 - Append-only audit history (including ORG-999 probe row and UAT reconciliation)
 
 ## 12. ACCEPTED ADRs
@@ -277,7 +280,7 @@ Do not start Phase D. Do not enable an external AI provider. Do not close FG-021
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** Joel/ChatGPT **review** real iPhone network retain / retry PASS. Do **not** proceed to mixed capture, HEIC, Observation Delete, or FG-021 closure from this result. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval.
+**Next governed action:** **STOP.** Approved presentation **source custody is CLOSED**. Do **not** extract reusable templates. Do **not** continue FG-021 from this pass. When Joel resumes FG-021, next high-value real-iPhone UAT candidate is pending capture → browser close → reopen → IndexedDB recover → retry → exactly one Event/Original. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval. Separate Speakeasy document-generation may use this package as **presentation authority** only — not from this CalibAi product pass.
 
 **Roadmap direction (not authorization):** Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 

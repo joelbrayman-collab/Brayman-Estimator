@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-03 |
+| Updated | 2026-09-04 |
 
 ## Purpose
 
@@ -41,6 +41,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-04 — Close approved document template custody gap
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-04 |
+| Branch | `main` @ `acba785259fd705b56042b08b486be2319a22745` (start) |
+| Objective | Close presentation-source custody so approved bytes no longer depend solely on Desktop. Docs + durable exact ZIP copy. No Git binaries. No product code. |
+| Business decision | Exact recovered ZIP remains byte-level presentation authority. Documents 01–07 classifications unchanged. Document 04 INTERNAL ENTRY REFERENCE. Document 05 COMMERCIAL_DRAFT / NOT APPROVED. Legal Content Gate empty. Reusable extraction not performed. |
+| Architectural decision | Git remains identity authority. Durable byte store: `/Users/joelbrayman/Documents/CalibAi/Approved Document Templates/Allen Jacques Presentation Baseline - 2026-09-03/`. ChatGPT Library logical collection recorded; Cursor does not write ChatGPT Library objects. Desktop ZIP left in place as provenance. Not `instance/`. FG-012 / FG-017 / FG-021 unchanged. |
+| Prompt template used | BRAYMAN — CALIBAI APPROVED DOCUMENT TEMPLATE CUSTODY CLOSURE. |
+| Approved Cursor prompt summary | Verify ZIP SHA and 17-member manifest; copy exact original ZIP to durable store; update custody docs; commit/push docs only. |
+| Files expected to change | Docs/governance only. Durable ZIP outside Git. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; Feature Gates; ADRs; FG-021; Native Signing; Speakeasy documents. |
+| Implementation result | SOURCE ZIP SHA MATCH. 17/17 members PASS. Families 01–07 PASS. Durable copy SHA match. Original ZIP unmodified. No extraction. |
+| Tests | Docs/custody only: `git diff --check`; member SHA verification. Full pytest not run. |
+| Project-state-report update | No (not a coded milestone). |
+| Milestone entry update | No |
+| Constitutional issue raised | None. Legal Content Gate not populated. |
+| Unresolved issues | ChatGPT Library is a logical collection path, not a Cursor-writable filesystem. FG-017 raster vs recovered header still unresolved. Reusable template extraction not authorized. Broader FG-021/test-count doc drift remains for a separate reconciliation prompt. |
+| Next approved step | STOP. Do not extract reusable templates. Do not continue FG-021 from this pass. |
+| Next approved prompt | None from this custody closure. |
+| Commit hash | (filled after commit) |
 
 ### 2026-09-03 — Commit recovered Allen Jacques approved document presentation baseline
 

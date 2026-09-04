@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative documentation map |
-| Updated | 2026-09-03 |
+| Updated | 2026-09-04 |
 | Product | The Estimator (Brayman Estimator) |
 
 ## Purpose
@@ -61,8 +61,8 @@ Also read [`platform-governance.md`](platform-governance.md), [`governance/conti
 | [architecture/document-intelligence.md](architecture/document-intelligence.md) | Document Intelligence (packages, pages, search) | Architecture (M006); partial Current (M007) |
 | [architecture/sheet-intelligence.md](architecture/sheet-intelligence.md) | Sheet Intelligence (sheet entities, review) | Architecture (M008); **Implemented (M009)** |
 | [architecture/project-document-package.md](architecture/project-document-package.md) | Authoritative record + four core outputs | Outputs 1–2: [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. Outputs 3–4 **Future**. Permit & Approvals Report is a **core project document**; Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** (ADR-039). Change Order document family pin **FUTURE / NOT IMPLEMENTED**. |
-| [architecture/approved-document-presentation-reference-baseline.md](architecture/approved-document-presentation-reference-baseline.md) | Recovered Allen Jacques garage package as approved **presentation / design** baseline | **Governing for presentation reference** — not reusable templates; not Legal Content Gate approval; binaries outside Git |
-| [testing/allen-jacques-garage-presentation-baseline-manifest.md](testing/allen-jacques-garage-presentation-baseline-manifest.md) | SHA-256 identity register for that ZIP | Governing identity (leave-in-place Desktop bytes) |
+| [architecture/approved-document-presentation-reference-baseline.md](architecture/approved-document-presentation-reference-baseline.md) | Recovered Allen Jacques garage package as approved **presentation / design** baseline | **Governing for presentation reference** — **SOURCE CUSTODY CLOSED** (2026-09-04); not reusable templates; not Legal Content Gate approval; binaries outside Git |
+| [testing/allen-jacques-garage-presentation-baseline-manifest.md](testing/allen-jacques-garage-presentation-baseline-manifest.md) | SHA-256 identity register for that ZIP | Governing identity; durable bytes in Documents CalibAi approved-template store |
 | [architecture/permit-and-approvals-report.md](architecture/permit-and-approvals-report.md) | Permit Intelligence + Permit & Approvals Report | **Pass 2 CLOSED / OPERATIONAL FOR UAT** ([FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)) — ADR-037/038/039 **Accepted**; [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** |
 | [architecture/permit-rules-library.md](architecture/permit-rules-library.md) | Permit Rules Library V1 (Ontario / Ottawa POC) | **CLOSED / OPERATIONAL FOR UAT** — [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md); 10 APPROVED rules; [sources](architecture/permit-rules-ontario-ottawa-sources.md) |
 | [architecture/jurisdiction-resolution.md](architecture/jurisdiction-resolution.md) | Project location and reusable jurisdiction resolver | **Current (FG-015 civic foundation)** — **CLOSED / OPERATIONAL FOR UAT** — [ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted**; reused by [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) |

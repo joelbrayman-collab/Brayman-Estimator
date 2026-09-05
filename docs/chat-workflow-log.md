@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-05 — FG-021 HEIC library-photo UAT NOT EXERCISED
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-05 |
+| Branch | `main` @ `236e6c19d18fad5d44ea5f2b4e9325792ecfd27e` (start) |
+| Active ChatGPT development chat title | CalibAi Development — 4 Sep 2026 |
+| Objective | Inspect server-side bytes after Joel’s High Efficiency native Camera → library → Field Web Choose Photo Save. Classify HEIC PASS / FAIL / NOT EXERCISED from actual Original bytes. Do not close FG-021. |
+| Business decision | **HEIC UAT NOT EXERCISED.** Safari delivered JPEG. Do not classify HEIC PASS. HEIC remains OPEN. Do not start mixed capture. Do not repair. |
+| Architectural decision | None. FG-020 Compatible Rendition path was not invoked (JPEG is browser-displayable). |
+| Prompt template used | Bounded FG-021 real-iPhone UAT evidence inspection. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 HEIC REAL-IPHONE UAT — SERVER-SIDE EVIDENCE INSPECTION / CLASSIFICATION. |
+| Files expected to change | Current/UAT records only (NOT EXERCISED, not PASS). |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; ADR-043; FG-022; master bytes; Legal Content Gate. |
+| Implementation result | Event **33** / Original **31**, project **12** (`FG-018 UAT Actor Project`), `ORG-001`, Joel Brayman `user_id` 1. Flask **556723** `06:14:32` Event **201** then Original **201**. Filename `IMG_5350.jpeg`; stored `ORG-001/12/33/31.jpg`; MIME `image/jpeg`. **Actual bytes JPEG JFIF** (`FF D8 FF` + `JFIF`), 2691705 bytes, SHA-256 `2fbfe2217f22f727a0a76455b5fb07e8e65d0b403a7ff521c4c1f2b7c4ec66f0`. No HEIC/HEIF `ftyp`. No rendition dir. Field Today display GET **200** same JPEG length. Desktop Hub `/projects/12/field-events/33` **200**. Live **33** / **31**. One Event + one Original; no duplicate UUIDs. iOS version To be verified. Gate **NOT CLOSED**. |
+| Tests | Docs: `git diff --check`; markdown links. Product pytest not run. Last product-changing suite remains 19 / 147 / 557. |
+| Project-state-report update | Yes — PART B this-pass decision recorded. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. |
+| Unresolved issues | HEIC/HEIF Original still **NOT EXERCISED** on real iPhone Safari. Mixed capture not tested. Observation Delete **QUEUED**. iOS/Safari version To be verified. FG-021 still OPEN. |
+| Next approved step | STOP. Do not close FG-021. Do not start mixed capture. |
+| Next approved prompt | None from this inspection pass. |
+| Commit hash | this commit |
+
 ### 2026-09-05 — FG-021 real iPhone browser-close IndexedDB recovery UAT
 
 | Field | Content |

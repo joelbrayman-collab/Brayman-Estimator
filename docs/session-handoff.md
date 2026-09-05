@@ -2,8 +2,8 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN.** Gate **NOT CLOSED**. Text-only **PASS**. Small screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28** / Original **27**, `image/jpeg`). **HEIC REAL-DEVICE NOT YET TESTED.** **REAL IPHONE VOICE SAVE PASS** (Event **30** / Original **28**, `audio/mp4`, `note.m4a`). **REAL IPHONE NETWORK RETAIN / RETRY PASS** (Event **31** / Original **29**, text). Observation Delete **QUEUED**. Live current = head **`d2e3f4a5b6c7`**. Do **not** close FG-021. |
-| Updated | 2026-09-04 |
+| Status | **FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN.** Gate **NOT CLOSED**. Text-only **PASS**. Small screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28** / Original **27**, `image/jpeg`). **HEIC REAL-DEVICE NOT YET TESTED.** **REAL IPHONE VOICE SAVE PASS** (Event **30** / Original **28**, `audio/mp4`, `note.m4a`). **REAL IPHONE NETWORK RETAIN / RETRY PASS** (Event **31** / Original **29**, text). **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS** (Event **32** / Original **30**, Take Photo JPEG). Observation Delete **QUEUED**. Live current = head **`d2e3f4a5b6c7`**. Do **not** close FG-021. |
+| Updated | 2026-09-05 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
 | Active ChatGPT development chat title | **CalibAi Development — 4 Sep 2026** (working title recorded 2026-09-04; use verbatim once Joel confirms the exact UI title) |
@@ -114,7 +114,9 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **GOVERN CalibAi chat-title continuity convention (docs only).** Permanent response/turnover traceability: begin with exact ChatGPT development chat title in bold; end with `END — <title>` after any Cursor prompt; standing next-prompt rule preserved. Does **not** alter FG-021, FG-022, product code, Legal Content Gate, or master bytes.
+**Last authorized delta:** **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS.** HTTPS `https://192.168.134.223:5443`. Take Photo JPEG. Operator completed pending capture → Safari close → reopen → retry. Flask Cursor Terminal **556723**: no Event POST after Capture GET `05:14:26` until Capture GET `05:19:01`, then Event **201** + Original **201** at `05:19:02`. Event **32** / Original **30**, project **11**, `ORG-001`, Joel Brayman `user_id` 1. `image/jpeg`, `image.jpg`, 2796786 bytes, JFIF, SHA-256 `4bbd4d2fa9b5a660a57bc2d60c32e094876023c91fa8705a6c6827e22c3e3155`. UUIDs `bdfd719f-d008-4ecf-957f-6168c6edefe5` / `586c19d4-e122-4bdf-be71-525ab2574e61`. One Event + one Original; no 409. Live **32** / **30**. Desktop Hub `/projects/11/field-events/32` **200**. Safari process-kill operator-attested. Do **not** close FG-021. **HEIC REAL-DEVICE NOT YET TESTED.**
+
+**Prior:** **GOVERN CalibAi chat-title continuity convention (docs only).** Permanent response/turnover traceability: begin with exact ChatGPT development chat title in bold; end with `END — <title>` after any Cursor prompt; standing next-prompt rule preserved. Does **not** alter FG-021, FG-022, product code, Legal Content Gate, or master bytes.
 
 **Prior:** **CLOSE FG-022 reusable approved document template family V1 (docs only; no master-byte change).** Joel presentation-master approval recorded. Families 01–04, 06–07 **JOEL APPROVED / APPROVED REUSABLE MASTER**. Family 05 **JOEL APPROVED / APPROVED REUSABLE PRESENTATION MASTER**; legal **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. Immutable source ZIP unchanged. Legal Content Gate **empty**. FG-012 / FG-017 / FG-021 **unchanged**. FG-021 **OPEN**. FG-022 **CLOSED**.
 
@@ -257,7 +259,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - **FG-018:** **CLOSED / OPERATIONAL FOR UAT**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. Live current `b0c1d2e3f4a5`. Office UAT port **5011**. Shared API **out of this gate**. Not production-security certification.
 - **FG-019:** **CLOSED / OPERATIONAL FOR UAT**. Shared API Foundation V1. GET-only `/api/v1` plus FG-020 BUILD POST allow-list. No FG-019 migration. API UAT port **5012**.
 - **FG-020:** **CLOSED / OPERATIONAL FOR UAT**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Image-only Compatible Renditions **implemented**. Gate-at-close live current = head was `c1d2e3f4a5b6`. Office UAT port **5013**. Dedicated **44**. Full suite **538**. Field Web **not** in this gate. Closeout **not** started.
-- **FG-021:** **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. Live current = head `d2e3f4a5b6c7`. Gate **NOT CLOSED**. Text **PASS**. Screenshot PNG **PASS**. **TAKE PHOTO PASS AS JPEG.** Voice Save **PASS** (Event **30**, `audio/mp4`). Network retain/retry **PASS** (Event **31**, text). Desktop continuity **PASS**. **HEIC REAL-DEVICE NOT YET TESTED.** Live **31** Events / **29** Originals. Dedicated **19**. Focused **147**. Full **557**.
+- **FG-021:** **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. Live current = head `d2e3f4a5b6c7`. Gate **NOT CLOSED**. Text **PASS**. Screenshot PNG **PASS**. **TAKE PHOTO PASS AS JPEG.** Voice Save **PASS** (Event **30**, `audio/mp4`). Network retain/retry **PASS** (Event **31**, text). Browser-close IndexedDB recovery **PASS** (Event **32** / Original **30**, JPEG). Desktop continuity **PASS**. **HEIC REAL-DEVICE NOT YET TESTED.** Live **32** Events / **30** Originals. Dedicated **19**. Focused **147**. Full **557**.
 - **FG-022:** **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**. Reusable approved document template family V1. Seven DOCX + seven verification PDFs. Parallel document-template track. Legal Content Gate **empty**. Family 05 **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. Does **not** alter FG-021 or item 12.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
@@ -300,7 +302,7 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 18. DEFERRED ITEMS
 
-Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; Project Closeout / archive-and-purge; FG-021 remaining real-iPhone UAT (HEIC, mixed capture, IndexedDB browser-close recovery); Observation Delete (**QUEUED / NOT AUTHORIZED**); QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; MONITOR/LEARN **implementation**; native/token auth; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; RBAC / org-switcher / invitations / SSO; national Permit Rules expansion; Change Order document family; Contract / e-signature / signed Change Order (recon recorded, **not implemented**).
+Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; Project Closeout / archive-and-purge; FG-021 remaining real-iPhone UAT (HEIC, mixed capture, background/foreground, session-expiry, CSRF recovery, older iPhone/Safari smoke, orientation/readability where practical); Observation Delete (**QUEUED / NOT AUTHORIZED**); QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; MONITOR/LEARN **implementation**; native/token auth; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; RBAC / org-switcher / invitations / SSO; national Permit Rules expansion; Change Order document family; Contract / e-signature / signed Change Order (recon recorded, **not implemented**).
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
@@ -308,7 +310,7 @@ Do not start Phase D. Do not enable an external AI provider. Do not close FG-021
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP.** Do **not** begin another feature from this continuity-convention pass. Do **not** continue FG-021 from this pass. When Joel resumes FG-021, next high-value real-iPhone UAT candidate is pending capture → browser close → reopen → IndexedDB recover → retry → exactly one Event/Original. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval.
+**Next governed action:** **STOP.** Do **not** close FG-021. Do **not** proceed to HEIC, mixed capture, or another UAT case from this pass. When Joel resumes FG-021, next high-value real-iPhone UAT candidate is **HEIC** real-device capture/display. Observation Delete remains **QUEUED / NOT AUTHORIZED**. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval.
 
 **Roadmap direction (not authorization):** Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 

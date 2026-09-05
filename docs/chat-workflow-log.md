@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-04 |
+| Updated | 2026-09-05 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-05 — FG-021 real iPhone browser-close IndexedDB recovery UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-05 |
+| Branch | `main` @ `a38d9e4a26318cdcfe900e56da2e1d1566225fed` (start) |
+| Active ChatGPT development chat title | CalibAi Development — 4 Sep 2026 |
+| Objective | Observation-only real-iPhone UAT of ADR-043 PENDING CAPTURE → SAFARI CLOSE → REOPEN → INDEXEDDB RECOVERY → RETRY → exactly one Event + one Original → desktop continuity. JPEG (Event+Original). No product-code change. Do not close FG-021. |
+| Business decision | Browser-close recovery **PASS**. Gate remains OPEN. HEIC / mixed capture / Observation Delete remain OPEN. Do not proceed to HEIC in this pass. |
+| Architectural decision | None. Used existing Case A pending path (no Event POST until Capture reload) then `retryExisting` 201/201. Safari process-kill operator-attested. |
+| Prompt template used | Bounded FG-021 real-iPhone UAT. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 REAL IPHONE UAT — BROWSER CLOSE → INDEXEDDB RECOVERY → IDEMPOTENT RETRY. |
+| Files expected to change | Current/UAT records only. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; ADR-043; FG-022; master bytes; Legal Content Gate. |
+| Implementation result | **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS.** HTTPS `https://192.168.134.223:5443`. Take Photo JPEG. Flask **556723**: no Event POST after Capture GET `05:14:26` until Capture GET `05:19:01` then Event POST **201** and Original POST **201** at `05:19:02`. Today `05:18:10` still showed Events **27**/**28** only. Event **32** / Original **30**, project **11**, `ORG-001`, Joel Brayman `user_id` 1. `image/jpeg`, `image.jpg`, 2796786 bytes, JFIF, SHA-256 `4bbd4d2fa9b5a660a57bc2d60c32e094876023c91fa8705a6c6827e22c3e3155`. UUIDs `bdfd719f-d008-4ecf-957f-6168c6edefe5` / `586c19d4-e122-4bdf-be71-525ab2574e61`. One Event + one Original; no 409; no duplicate UUID rows. Live **32** / **30**. Desktop Hub `/projects/11/field-events/32` **200** (Photo + Original; Hub list links Event **32**). No separate text Original. Gate **NOT CLOSED**. |
+| Tests | Docs: `git diff --check`; markdown links. Product pytest not run (docs-only UAT record). Last product-changing suite remains 19 / 147 / 557. |
+| Project-state-report update | Yes — PART B brought forward to 2026-09-05. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. |
+| Unresolved issues | HEIC real-device **NOT YET TESTED**. Mixed capture not tested. Observation Delete **QUEUED**. iOS/Safari version To be verified. Safari process-kill cannot be observed from Flask. FG-021 still OPEN. |
+| Next approved step | STOP. Do not close FG-021. Do not proceed to HEIC in this pass. |
+| Next approved prompt | None from this UAT pass. |
+| Commit hash | this commit |
 
 ### 2026-09-04 — Govern CalibAi chat-title continuity convention
 

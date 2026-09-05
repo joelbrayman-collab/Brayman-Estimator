@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-05 — FG-021 background/foreground persistence real-iPhone UAT PASS (docs only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-05 |
+| Branch | `main` @ `09bbbbb4321fd3ad1e87ddb6d97bc792dcf42d1a` (start) |
+| Active ChatGPT development chat title | BRAYMAN - CalibAi 5 Sep 2026 |
+| Objective | Record already-performed ordinary background/foreground text-capture UAT as PASS. Do not repeat the iPhone test. Do not create another Event/Original. Do not close FG-021. |
+| Business decision | **BACKGROUND / FOREGROUND PERSISTENCE REAL-IPHONE UAT PASS.** One Event **36** / one text Original **36** on Project **11**. Unsaved Capture text survived ordinary Safari backgrounding (not force-close). Do not close FG-021. Do not start session-expiry or CSRF UAT in this pass. |
+| Architectural decision | None. Unsaved Capture text is not IndexedDB until Save. This UAT is Safari keeping the Capture page in memory across ordinary backgrounding. ASCII hyphen in the text body vs operator em dash is not a product defect. |
+| Prompt template used | Bounded FG-021 real-iPhone UAT docs-only record. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 BACKGROUND / FOREGROUND PERSISTENCE POST-SAVE SERVER EVIDENCE INSPECTION. |
+| Files expected to change | Current/UAT records only. Current ChatGPT development chat title records updated to `BRAYMAN - CalibAi 5 Sep 2026`. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; ADR; FG-022; master bytes; Legal Content Gate. Historical chat-title entries left unchanged. |
+| Implementation result | Event **36**, Project **11**, `ORG-001`, Joel Brayman `user_id` 1. Flask **556723**: Capture GET `07:17:25`; Event **201** + Original **201** at `07:19:10`; Today **200** `07:19:17`. Original **36** `kind=text` body `FG-021 background-foreground UAT - 5 Sep 2026`. `client_capture_uuid` `3394825c-bb74-409b-93c6-d976021ec39e`; `client_original_uuid` `f4ede486-1b7b-40de-be02-47e5af04c5ba`. Live **36** / **36**. Field Today **200**. Desktop Hub Event **36** **200**. One Event + one text Original; no 409; no orphan. Gate **NOT CLOSED**. |
+| Tests | Docs: `git diff --check`; markdown links. Product pytest not run. Last product-changing suite remains 19 / 147 / 557. |
+| Project-state-report update | Yes — PART B this-pass decision recorded. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining FG-021 UAT: session-expiry; CSRF; older iPhone smoke; orientation/readability. Observation Delete **QUEUED**. FG-021 still OPEN. |
+| Next approved step | STOP. Do not close FG-021. Do not start session-expiry recovery in this pass. |
+| Next approved prompt | None from this docs-only record. |
+| Commit hash | this commit |
+
 ### 2026-09-05 — FG-021 mixed-capture real-iPhone UAT PASS (docs only)
 
 | Field | Content |

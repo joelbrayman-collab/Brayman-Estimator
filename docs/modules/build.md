@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Partial Current** — Field Capture V1 **CLOSED / OPERATIONAL FOR UAT**. Field Web V1 **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Change Orders remain Project Controls. |
-| Updated | 2026-09-04 |
+| Updated | 2026-09-05 |
 | Code | `app/models/build.py`, `app/services/build.py`, `app/services/build_storage.py`, `app/services/build_rendition.py`, `app/routes/build.py`, `app/cli/build.py`, `app/templates/build/`; `/api/v1` BUILD adapter in `app/routes/api_v1.py` |
 | ADR | [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** (boundary). [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. |
 | CAR | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
@@ -40,7 +40,7 @@ Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Can
 
 **Compatible Renditions (image-only increment)** — `app/services/build_rendition.py`. HEIC/HEIF Originals get an automatic JPEG at `instance/build_renditions/<org>/<project>/<event>/<original_id>/display.jpg` (`BUILD_RENDITION_ROOT`). Pillow + pillow-heif; JPEG quality 85; max long edge 2048 px; EXIF orientation applied. Failure does not roll back Original Source. JPEG/PNG/GIF stay native. Audio is unchanged. No schema. Event Detail renders the JPEG as **Photo** with an **Original** link. Hub Field Observations list is unchanged (no thumbnail redesign).
 
-**Not implemented:** Project Closeout / archive-and-purge; Observation Delete; remaining FG-021 durability/UX UAT; transcription; audio conversion; MONITOR; auto-Change Order. Field Web `/field` Today + Capture **is implemented** ([FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **OPEN**). HEIC real-device Files/Browse UAT is **PASS** (Event **34** / Original **32**). Mixed capture UAT is **PASS** (Event **35**).
+**Not implemented:** Project Closeout / archive-and-purge; Observation Delete; remaining FG-021 durability/UX UAT (session-expiry, CSRF recovery, older iPhone/Safari smoke, orientation/readability); transcription; audio conversion; MONITOR; auto-Change Order. Field Web `/field` Today + Capture **is implemented** ([FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **OPEN**). HEIC real-device Files/Browse UAT is **PASS** (Event **34** / Original **32**). Mixed capture UAT is **PASS** (Event **35**). Background/foreground persistence UAT is **PASS** (Event **36** / Original **36**).
 
 **Storage lifecycle:** Active projects may retain Original Source **plus** regenerable Compatible Renditions. After a separately governed Project Closeout, archive Original Source, verify, then purge renditions first and duplicate active originals second. Do **not** accumulate redundant copies indefinitely. FG-020 must not block that future path. Closeout is **not** this gate.
 

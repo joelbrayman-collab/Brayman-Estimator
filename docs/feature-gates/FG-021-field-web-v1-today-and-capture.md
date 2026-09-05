@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-021 is the governing identifier. Do not assign a new M0xx number. Do **not** assign FG-021 to Native Signing. |
 | Module | **Field Web is a client.** **BUILD** owns Field Capture Events, Original Payloads, Derived Candidates, and BUILD binary custody. **Office / platform** owns `/api/v1` adapters, cookie session, and CSRF. **Projects** owns `projects`. |
 | Date | 2026-09-01 |
-| Status | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** (2026-09-03). Gate **NOT CLOSED**. Text-only **PASS**. Screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28**). **HEIC REAL-DEVICE NOT YET TESTED.** **REAL IPHONE VOICE SAVE PASS** (Event **30** / Original **28**, `audio/mp4`). **REAL IPHONE NETWORK RETAIN / RETRY PASS** (Event **31** / Original **29**, text). **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS** (Event **32** / Original **30**, Take Photo JPEG). Observation Delete **QUEUED**. Live current = head **`d2e3f4a5b6c7`**. |
+| Status | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** (2026-09-03). Gate **NOT CLOSED**. Text-only **PASS**. Screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28**). **HEIC REAL-DEVICE PASS** (Event **34** / Original **32**, Files/Browse `IMG_5351.HEIC`). **REAL IPHONE VOICE SAVE PASS** (Event **30** / Original **28**, `audio/mp4`). **REAL IPHONE NETWORK RETAIN / RETRY PASS** (Event **31** / Original **29**, text). **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS** (Event **32** / Original **30**, Take Photo JPEG). Observation Delete **QUEUED**. Live current = head **`d2e3f4a5b6c7`**. |
 | Architecture | [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** · [architecture/field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md) · [architecture/fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md) · [modules/build.md](../modules/build.md) · [architecture/build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md) |
 | Related ADRs | [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | [FG-020](FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Item 11 **COMPLETE**. Item 12 reconnaissance **COMPLETE**. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. ADR-043 **Accepted**. This gate **Approved**. Implementation recon **COMPLETE**. |
@@ -19,13 +19,13 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** — **NOT CLOSED**. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE NOT YET TESTED.** **REAL IPHONE VOICE SAVE PASS.** **REAL IPHONE NETWORK RETAIN / RETRY PASS.** **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS.** Local HTTPS UAT origin in use. Observation Delete **QUEUED**. |
+| Feature Gate (this document) | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** — **NOT CLOSED**. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE PASS.** **REAL IPHONE VOICE SAVE PASS.** **REAL IPHONE NETWORK RETAIN / RETRY PASS.** **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS.** Local HTTPS UAT origin in use. Observation Delete **QUEUED**. |
 | ADR-043 | **Accepted** |
 | ADR-042 | **Accepted** (dual-surface / original custody; unchanged) |
 | Implementation reconnaissance | **COMPLETE** ([fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md)). |
 | Implementation | **LANDED** — `/field` Today + Project confirm + Capture; IndexedDB; idempotent Event/Original API; display GET |
 | Schema / Alembic | Revision **`d2e3f4a5b6c7` applied live** (`c1d2e3f4a5b6` → `d2e3f4a5b6c7`). Live current = head. |
-| Field Web product | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE NOT YET TESTED.** **REAL IPHONE VOICE SAVE PASS.** **REAL IPHONE NETWORK RETAIN / RETRY PASS.** **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS.** Real iPhone UAT **not complete** (HEIC, mixed capture, Observation Delete remaining). |
+| Field Web product | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE PASS.** **REAL IPHONE VOICE SAVE PASS.** **REAL IPHONE NETWORK RETAIN / RETRY PASS.** **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS.** Real iPhone UAT **not complete** (mixed capture, Observation Delete remaining). |
 | Native Signing | Parallel track. Development may proceed under **separate** governance. Production activation **blocked pending counsel**. Not this gate. |
 | Project Closeout | **FUTURE / NOT AUTHORIZED** |
 
@@ -375,6 +375,8 @@ Current iPhone Safari **MUST** cover:
 
 Also require one older supported iPhone/Safari smoke test where practical.
 
+**Current remaining real-iPhone UAT (2026-09-05 after genuine HEIC PASS):** mixed capture; background/foreground persistence; session-expiry recovery; CSRF recovery; older supported iPhone/Safari smoke where practical; orientation / portrait / one-handed / outdoor readability. Observation Delete remains **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED**. Do **not** close FG-021 from HEIC PASS alone.
+
 ---
 
 ## Completion rule
@@ -395,6 +397,8 @@ No transcription or AI required.
 ---
 
 ## Acceptance criteria
+
+**Subsequent status (2026-09-05 genuine HEIC Files/Browse real-iPhone UAT):** **PASS.** Files source `IMG_5351.HEIC`. Safari Choose Photo → Browse/Files → Save. HTTPS `https://192.168.134.223:5443`, **Project 11**. Flask Cursor Terminal **556723** `06:36:56` Event POST **201** then Original POST **201**. Event **34** / Original **32**, `ORG-001`, Joel Brayman `user_id` 1. Filename `IMG_5351.HEIC`; MIME `image/heic`; stored `instance/build_originals/ORG-001/11/34/32.heic`. **Actual bytes ISO-BMFF HEIC** (`ftyp` major `heic`; compatible `mif1` `MiHE` `MiPr` `miaf` `MiHB` `heic`), 1479610 bytes, SHA-256 `e042b2672cbb7170bcfeeefc74cb816dae72710c5bf937cf17a46b313851b319`. Compatible rendition `instance/build_renditions/ORG-001/11/34/32/display.jpg` JPEG JFIF 439618 bytes, SHA-256 `946ce4f6eaa4bab05616f664695ce81d9c1d7c3bffcf32ab231e45b060f9365c`. Original `/content` `image/heic` 1479610 bytes; Field Today and Hub `/display` `image/jpeg` 439618 bytes (rendition). Desktop Hub `/projects/11/field-events/34` **200**. Live **34** / **32**. One Event + one Original; no 409. Gate **NOT CLOSED**.
 
 **Subsequent status (2026-09-05 real iPhone library-photo HEIC UAT):** **NOT EXERCISED.** High Efficiency native Camera → Photos library → Field Web **Choose Photo** (not Take Photo). Joel reported Save and Field Today display succeeded. Flask Cursor Terminal **556723** `06:14:32` Event POST **201** then Original POST **201** for **project 12** (not 11). Event **33** / Original **31**, `ORG-001`, Joel Brayman `user_id` 1. Filename `IMG_5350.jpeg`; stored `instance/build_originals/ORG-001/12/33/31.jpg`. Reported MIME `image/jpeg`. **Actual bytes are JPEG JFIF** (`FF D8 FF` + `JFIF`), 2691705 bytes, SHA-256 `2fbfe2217f22f727a0a76455b5fb07e8e65d0b403a7ff521c4c1f2b7c4ec66f0`. No HEIC/HEIF `ftyp` brands. No Compatible Rendition directory (JPEG does not require one). Field Today `GET .../originals/31/display` **200** `image/jpeg` same byte length as Original. Desktop Hub `/projects/12/field-events/33` **200**. Live **33** / **31**. Safari delivered JPEG to CalibAi; HEIC/HEIF Original custody and JPEG-rendition path were **not** exercised. Gate **NOT CLOSED**. **HEIC REAL-DEVICE still OPEN.**
 

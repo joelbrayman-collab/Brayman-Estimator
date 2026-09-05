@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-05 — FG-021 genuine HEIC Files/Browse real-device UAT PASS
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-05 |
+| Branch | `main` @ `32317deca6f25435c59a69dffef86103b6164811` (start) |
+| Active ChatGPT development chat title | CalibAi Development — 4 Sep 2026 |
+| Objective | Inspect server-side bytes after Joel independently confirmed Files source `IMG_5351.HEIC`, then Safari Choose Photo → Browse/Files → Save original. Classify genuine HEIC PASS / FAIL / NOT EXERCISED. Do not close FG-021. |
+| Business decision | **HEIC REAL-DEVICE UAT PASS.** Genuine HEIC Original received and preserved. JPEG Compatible Rendition derived. Field Today and desktop Hub display the rendition. Do not close FG-021. Do not start mixed capture. |
+| Architectural decision | None. Existing FG-020 Compatible Rendition path exercised. Original Source remains HEIC; display uses derived JPEG. Rendition is not a second Original. |
+| Prompt template used | Bounded FG-021 real-iPhone UAT evidence inspection. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 GENUINE HEIC FILES-PATH UAT — FINAL SERVER-SIDE VERIFICATION. |
+| Files expected to change | Current/UAT records only (PASS). Preserve historical library Choose Photo NOT EXERCISED. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; ADR; FG-022; master bytes; Legal Content Gate. |
+| Implementation result | Event **34** / Original **32**, Project **11** (`FG-016 UAT — Unsupported Use (synthetic Ottawa garage)`), `ORG-001`, Joel Brayman `user_id` 1. Flask **556723** `06:36:56` Event **201** then Original **201**. Filename `IMG_5351.HEIC`; MIME `image/heic`; stored `ORG-001/11/34/32.heic`. Actual bytes ISO-BMFF HEIC (`ftyp` major `heic`; compatible `mif1` `MiHE` `MiPr` `miaf` `MiHB` `heic`), 1479610 bytes, SHA-256 `e042b2672cbb7170bcfeeefc74cb816dae72710c5bf937cf17a46b313851b319`. Rendition `ORG-001/11/34/32/display.jpg` JPEG JFIF 439618 bytes, SHA-256 `946ce4f6eaa4bab05616f664695ce81d9c1d7c3bffcf32ab231e45b060f9365c`. Original `/content` `image/heic` 1479610; `/display` `image/jpeg` 439618. Desktop Hub `/projects/11/field-events/34` **200**. Live **34** / **32**. One Event + one Original; no 409; rendition not counted as Original. iOS version To be verified. Gate **NOT CLOSED**. |
+| Tests | Docs: `git diff --check`; markdown links. Product pytest not run. Last product-changing suite remains 19 / 147 / 557. |
+| Project-state-report update | Yes — PART B this-pass decision recorded. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Mixed capture not tested. Background/foreground, session-expiry, CSRF recovery, older iPhone smoke, orientation/readability remaining. Observation Delete **QUEUED**. iOS/Safari version To be verified. FG-021 still OPEN. |
+| Next approved step | STOP. Do not close FG-021. Do not start mixed capture. |
+| Next approved prompt | None from this inspection pass. |
+| Commit hash | this commit |
+
 ### 2026-09-05 — FG-021 HEIC library-photo UAT NOT EXERCISED
 
 | Field | Content |

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-05 — FG-021 mixed-capture real-iPhone UAT PASS (docs only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-05 |
+| Branch | `main` @ `25644d2e3910d1c06cf9d349dc8d0044a2ad98f7` (start) |
+| Active ChatGPT development chat title | CalibAi Development — 4 Sep 2026 |
+| Objective | Record already-performed mixed-capture UAT as PASS. Do not repeat the iPhone test. Do not create another Event/Original. |
+| Business decision | **MIXED CAPTURE REAL-IPHONE UAT PASS.** One Event **35** with three Originals `{text, image, audio}` on Project **11**. Do not close FG-021. Do not repeat mixed capture. |
+| Architectural decision | None. Short text remains Original `kind=text` (count-criteria conflict from the first mixed prompt is historical). ASCII hyphen in the text body vs operator em dash is not a product defect. |
+| Prompt template used | Bounded FG-021 real-iPhone UAT docs-only record. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 MIXED CAPTURE DOCS-ONLY PASS RECORD / DO NOT REPEAT IPHONE TEST. |
+| Files expected to change | Current/UAT records only. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; ADR; FG-022; master bytes; Legal Content Gate. |
+| Implementation result | Event **35**, Project **11**, `ORG-001`, Joel Brayman `user_id` 1. Flask **556723** `06:52:40` Event **201** + three Original **201**. Original **33** text `FG-021 mixed capture UAT - 5 Sep 2026`. Original **34** `note.m4a` `audio/mp4` 190338 bytes SHA-256 `92d3896b7f88887dd33bd3dc443609a413e8581a8bb86d2b743de6258e5b6c5f`. Original **35** `image.jpg` JPEG JFIF 3076035 bytes SHA-256 `d3e947e6603e7d1dbd947634e0a603778de2e2688367266e3972f3d61f9c3bae`. Live **35** / **35**. Field Today **200**. Desktop Hub Event **35** **200**. Gate **NOT CLOSED**. |
+| Tests | Docs: `git diff --check`; markdown links. Product pytest not run. Last product-changing suite remains 19 / 147 / 557. |
+| Project-state-report update | Yes — PART B this-pass decision recorded. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining FG-021 UAT: background/foreground; session-expiry; CSRF; older iPhone smoke; orientation/readability. Observation Delete **QUEUED**. FG-021 still OPEN. |
+| Next approved step | STOP. Do not close FG-021. Do not repeat mixed capture. Do not start background/foreground in this pass. |
+| Next approved prompt | None from this docs-only record. |
+| Commit hash | this commit |
+
 ### 2026-09-05 — FG-021 genuine HEIC Files/Browse real-device UAT PASS
 
 | Field | Content |

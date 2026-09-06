@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-05 |
+| Updated | 2026-09-06 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-06 — FG-021 CSRF recovery real-iPhone UAT PASS (docs only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-06 |
+| Branch | `main` @ `4c52167f5d60372cb595a4984b9b7c93945b0782` (start) |
+| Active ChatGPT development chat title | BRAYMAN - CalibAi 5 Sep 2026 |
+| Objective | Inspect the authorized real-iPhone natural-expiry CSRF Save and record PASS if proven. Do not ask Joel to touch the iPhone. Do not create another Event/Original. Do not close FG-021. Do not mark session-expiry PASS. |
+| Business decision | **CSRF RECOVERY REAL-IPHONE UAT PASS.** One Event **39** / one text Original **39** on Project **11**. Same Capture document dwelled **5856 s**. First Event POST **400** (expired CSRF) created no Event. `refreshCsrf` Capture GET **200**. Same UUID replayed Event **201** then Original **201**. Operator UI **SAVED**. Do not close FG-021. SESSION-EXPIRY RECOVERY remains **OPEN / DEFERRED / NOT YET EXERCISED**. |
+| Architectural decision | None. Flask-WTF default `WTF_CSRF_TIME_LIMIT` **3600 s** (app does not override). CSRFProtect 400 is Werkzeug HTML; `field.js` `requestOnce` matches `/csrf/i` or `/token/i` then GETs `window.location.pathname`. ASCII hyphen in the text body vs operator em dash is not a product defect. Event **38** remains interrupted-pending residue (not this PASS). |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 CSRF RECOVERY FINAL POST-SAVE EVIDENCE INSPECTION. |
+| Files expected to change | Current/UAT records only. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; ADR; FG-022; master bytes; Legal Content Gate. |
+| Implementation result | Detached HTTPS PID **88819** PPID **1** port **5443** continuous. T0 Capture GET **200** `06:02:58` EDT. Save `07:40:34` EDT. Sequence: Event POST **400** → Capture GET **200** (no static) → Event POST **201** → Original POST **201**. Event **39**, Project **11**, `ORG-001`, Joel Brayman `user_id` 1. Original **39** `kind=text` body `FG-021 CSRF recovery UAT - 6 Sep 2026`. `client_capture_uuid` `0012e6af-c627-4c40-9793-5e1e6611691f`; `client_original_uuid` `acba9f83-5ed2-40ae-a811-c805318594c0`. Live **39** / **39**. UUID counts 1/1. No orphan. No login/logout/401 during Save. Field Today GET after Save **not** performed. Hub HTML **200** **not** obtained (inspector unauthenticated **302**). Gate **NOT CLOSED**. |
+| Tests | Docs: `git diff --check`; markdown links. Product pytest not run. Last product-changing suite remains 19 / 147 / 557. |
+| Project-state-report update | Yes — PART B this-pass decision recorded. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining FG-021 UAT: orientation / portrait / one-handed / outdoor; older iPhone smoke where practical; session-expiry **deferred**. Observation Delete **QUEUED**. FG-021 still OPEN. |
+| Next approved step | STOP. Do not close FG-021. Do not start usability or session-expiry UAT in this pass. |
+| Next approved prompt | None from this docs-only record. |
+| Commit hash | this commit |
 
 ### 2026-09-05 — FG-021 background/foreground persistence real-iPhone UAT PASS (docs only)
 

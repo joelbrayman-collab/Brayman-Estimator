@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **RECONNAISSANCE COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **DRAFT FOR JOEL APPROVAL**. MONITOR V1 is **NOT IMPLEMENTED** and **NOT AUTHORIZED FOR CODE**. |
+| Status | **RECONNAISSANCE COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**. MONITOR V1 is **NOT IMPLEMENTED**. |
 | Date | 2026-09-06 |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |
@@ -14,17 +14,19 @@ This reconnaissance freezes the smallest lawful MONITOR V1 implementation design
 ```text
 MONITOR V1:
 RECONNAISSANCE COMPLETE
-FEATURE GATE DRAFTED (FG-023)
-NOT APPROVED
-NOT AUTHORIZED FOR IMPLEMENTATION
+FEATURE GATE APPROVED (FG-023)
+IMPLEMENTATION NOT STARTED
+IMPLEMENTATION NOT YET AUTHORIZED
 NOT IMPLEMENTED
 ```
 
-Accepting [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) does **not** authorize implementation. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **DRAFT FOR JOEL APPROVAL** and does **not** authorize product code, schema, or migration. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+Accepting [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) does **not** authorize implementation. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **APPROVED** and still does **not** authorize product code, schema, or migration until a separate implementation prompt exists. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
-Readiness: **FEATURE GATE DRAFTED — AWAITING JOEL APPROVAL.**
+Readiness: **FEATURE GATE APPROVED — IMPLEMENTATION READINESS / PREFLIGHT NEXT. DO NOT IMPLEMENT FROM APPROVAL.**
 
 **Subsequent status (2026-09-06):** FG-023 drafted. Office Direct Cost actuals are **in** the draft gate (BUILD `ProjectDirectCostActual`). No model or migration created.
+
+**Subsequent status (2026-09-06 FG-023 approval):** FG-023 **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**. Joel/ChatGPT accepted the gate as written, including correction semantics (`amount >= 0`; superseding successor may carry `0.00`). No product code. No migration.
 
 ---
 
@@ -517,22 +519,22 @@ Not created in this pass. A bounded MONITOR V1 gate would need the twelve govern
 
 ## Unresolved decisions
 
-The 2026-09-06 recon listed four Joel freezes. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **drafts** them as:
+The 2026-09-06 recon listed four Joel freezes. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) records them as **APPROVED as written**:
 
 1. Office Direct Cost actuals **in V1** (same gate).
 2. **Incremental** observations + supersession.
 3. **No** MONITOR-owned comparison snapshot table in V1.
 4. Any org member who can use Hub may enter actuals (**no RBAC**).
 
-Those remain **not approved** until Joel approves FG-023. Labour-apples-to-apples GM remains a documented later issue (ADR-021 §9).
+Those four freezes are **approved in FG-023**. Implementation remains **NOT STARTED / NOT YET AUTHORIZED**. Labour-apples-to-apples GM remains a documented later issue (ADR-021 §9).
 
 ---
 
 ## Feature-gate readiness
 
-**FEATURE GATE DRAFTED (FG-023) — AWAITING JOEL APPROVAL.**
+**FEATURE GATE APPROVED (FG-023) — IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED.**
 
-Do **not** treat the draft as authorization.
+Do **not** treat this approval as authorization to implement.
 
 ---
 

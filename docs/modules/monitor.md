@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Proposed / Intended** — **not implemented**. V1 recon **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **DRAFT FOR JOEL APPROVAL / NOT APPROVED / NOT AUTHORIZED FOR IMPLEMENTATION**. |
+| Status | **Proposed / Intended** — **not implemented**. V1 recon **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**. |
 | Updated | 2026-09-06 |
 | Code | None |
 | ADR | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (baseline and Project Gross Margin governance; implementation not authorized) |
@@ -35,14 +35,14 @@ Dated MONITOR **comparison snapshots** and dated **forecast snapshots** only. So
 
 ## Current implementation
 
-**None.** [FG-011](../feature-gates/FG-011-project-hub-ux.md) Project Hub labels MONITOR **Future**. No MONITOR models, routes, or UI. V1 design freeze: [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md). Feature Gate: [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **DRAFT FOR JOEL APPROVAL**.
+**None.** [FG-011](../feature-gates/FG-011-project-hub-ux.md) Project Hub labels MONITOR **Future**. No MONITOR models, routes, or UI. V1 design freeze: [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md). Feature Gate: [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**.
 
 ## Dependencies
 
 - ADR-021 (this baseline) — **Accepted**
 - Verified actuals (BUILD / later actual-cost gates) before Actual Gross Margin can be computed
 - Authentication before field capture ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md); [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**)
-- Feature Gate + approved Cursor prompt before any code. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **DRAFT FOR JOEL APPROVAL** and does **not** satisfy this requirement until approved and paired with an implementation prompt.
+- Feature Gate + approved Cursor prompt before any code. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **APPROVED** and still requires a **separate** implementation prompt before any product code.
 
 ## Related
 

@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-023 is the governing identifier. Do not assign a new M0xx number. Roadmap Item 13. |
 | Module | **MONITOR** owns the comparison / read projection. **BUILD** owns office Direct Cost actuals (`ProjectDirectCostActual`). **Projects** owns Hub UX at `/projects/<id>`. Estimating, Pricing Engine, Proposals, and Project Controls retain their commercial records. |
 | Date | 2026-09-06 |
-| Status | **DRAFT FOR JOEL APPROVAL.** **NOT APPROVED.** **NOT AUTHORIZED FOR IMPLEMENTATION.** |
+| Status | **APPROVED.** **IMPLEMENTATION NOT STARTED.** **IMPLEMENTATION NOT YET AUTHORIZED.** |
 | Architecture | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** · [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) **COMPLETE** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [modules/monitor.md](../modules/monitor.md) · [FG-011](FG-011-project-hub-ux.md) |
 | Related ADRs | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (commercial baseline; this gate does **not** create a new ADR) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | Item 12 / [FG-021](FG-021-field-web-v1-today-and-capture.md) **CLOSED** (SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**). [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) / [FG-019](FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-008](FG-008-labour-engine-phase-b.md) / [FG-009](FG-009-organization-calibrated-pricing-engine.md) / [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. MONITOR V1 recon **COMPLETE**. |
@@ -19,9 +19,9 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **DRAFT FOR JOEL APPROVAL** |
-| Implementation | **NOT STARTED / NOT AUTHORIZED** |
-| Schema / Alembic | **NOT CREATED.** Additive migration is **required if this draft is approved as written** (BUILD actuals). Do **not** mint a revision in this draft. |
+| Feature Gate (this document) | **APPROVED** (2026-09-06). **IMPLEMENTATION NOT STARTED.** **IMPLEMENTATION NOT YET AUTHORIZED.** |
+| Implementation | **NOT STARTED / NOT YET AUTHORIZED** |
+| Schema / Alembic | **NOT CREATED.** Additive migration is required when a separate implementation prompt is approved (BUILD actuals). Do **not** mint a revision in this approval pass. |
 | New ADR | **None.** ADR-021 already accepted. |
 | MONITOR product code | **None** |
 | Office actuals | **None.** Proposed BUILD record only. |
@@ -29,13 +29,13 @@
 
 ```text
 FG-023:
-DRAFT FOR JOEL APPROVAL
-NOT APPROVED
-NOT AUTHORIZED FOR IMPLEMENTATION
+APPROVED
+IMPLEMENTATION NOT STARTED
+IMPLEMENTATION NOT YET AUTHORIZED
 MONITOR V1 NOT IMPLEMENTED
 ```
 
-Joel approval of this document plus a **separate** approved Cursor implementation prompt are both required before any product code, model, or migration. Drafting this gate does **not** authorize implementation. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+Joel/ChatGPT approved this gate **as written** on **2026-09-06**. Approval includes the correction semantics (`amount >= 0` so a superseding successor may carry `0.00` while the original durable entry remains). Approval of this document does **not** authorize product code, model, or migration. A **separate** approved Cursor implementation prompt is required. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
 ---
 
@@ -47,9 +47,9 @@ This is the smallest useful Item 13 (estimated-vs-actual). It does **not** wait 
 
 ---
 
-## V1 policy freezes (this draft)
+## V1 policy freezes
 
-These were open in the recon. This draft **freezes** them for Joel review:
+These were open in the recon. This gate **freezes** them. Joel/ChatGPT approved them as written on 2026-09-06:
 
 | Decision | Freeze |
 |----------|--------|
@@ -75,11 +75,11 @@ If Joel rejects office actuals in this gate, **STOP** and return a baseline-only
 | 5 | What data does it reference? | Locked source `EstimateVersion`; `EstimatePricingSnapshot` when present; `EstimateLineItem.extended_cost` fallback; Accepted `Proposal`; authorized `ChangeOrder` (`Approved` or `Invoiced`) `subtotal + markup`; `Organization` / `Project` / `User`; **not** Field Events as cost; **not** `EstimateLabourSnapshot` as actual or as selling-price basis. |
 | 6 | What may implementation change? | Additive BUILD actuals model + service + Hub-routed POST/supersede; MONITOR read service; Hub `#hub-monitor` operational panel; dedicated tests; governed docs; **one** additive Alembic revision **only after** an approved implementation prompt. |
 | 7 | What must it not change? | Approved estimate / Accepted Proposal / Change Order commercial values; Field Capture Events / Originals / Derived Candidates; Labour Engine / Pricing Engine standards; LEARN; Field Web UI; QuickBooks; Phase D; Observation Delete; Closeout; Native Signing; session revocation; RBAC; org-switcher; NET PROFIT language; CO estimated-cost schema; forecast snapshots; historical ingestion as this-project actuals. |
-| 8 | Acceptance criteria? | See **Acceptance criteria** below. **Not met** — implementation not authorized. |
+| 8 | Acceptance criteria? | See **Acceptance criteria** below. **Not met** — implementation not yet authorized. |
 | 9 | Tests required? | Dedicated `tests/test_monitor_v1_fg023.py` (name may vary) covering composition, PGM, missing states, actuals sum/supersession, org isolation, Hub copy, immutability; Hub/auth regressions; full suite. Exact count deferred until implementation. |
 | 10 | Documentation? | This gate; feature-gate index; `modules/monitor.md`; `modules/build.md`; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log; milestones; docs/README; recon subsequent status. |
 | 11 | ADR required? | **No new ADR.** ADR-021 already accepted. Stop and return if implementation would invent NET PROFIT, CO cost-from-`unit_price`, Field-Event-as-cost, QuickBooks as required actuals, MONITOR as actuals SoR, or RBAC. |
-| 12 | Migration? | **YES if this draft is approved as written** (BUILD `project_direct_cost_actuals`). Additive only. `down_revision` must be the then-current head (today `d2e3f4a5b6c7`). **Do not create the revision or choose a revision id in this draft.** If Joel strips actuals from V1, migration becomes **No**. |
+| 12 | Migration? | **YES — approved as written** (BUILD `project_direct_cost_actuals`). Additive only. `down_revision` must be the then-current head (today `d2e3f4a5b6c7`). **Do not create the revision or choose a revision id in this approval pass.** If a later amendment strips actuals from V1, migration becomes **No**. |
 
 ---
 
@@ -155,7 +155,7 @@ Labour-apples-to-apples GM remains a **documented later** issue (ADR-021 §9). D
 
 ---
 
-## Proposed BUILD actuals record (do not create in this draft)
+## Proposed BUILD actuals record (do not create until implementation is authorized)
 
 **Name:** `ProjectDirectCostActual`  
 **Table:** `project_direct_cost_actuals`
@@ -207,7 +207,7 @@ Required Hub presentation after implementation:
 
 No invented health traffic-lights. No NET PROFIT label. No industry benchmarks.
 
-Lifecycle chip `MONITOR · Future` becomes operational only when this gate is implemented and closed — **not** in this draft.
+Lifecycle chip `MONITOR · Future` becomes operational only when this gate is implemented and closed — **not** from this approval.
 
 ---
 
@@ -240,13 +240,13 @@ Implementation (when separately authorized) is incomplete until all of the follo
 8. UI never says NET PROFIT.
 9. Org isolation holds.
 10. Dedicated tests + focused Hub/auth/BUILD regressions + full suite pass; exact counts recorded at implementation close.
-11. Office UAT (recon plan) performed and recorded under a later close prompt — **not** this draft.
+11. Office UAT (recon plan) performed and recorded under a later close prompt — **not** this approval pass.
 
 ---
 
-## Tests (future; do not run as MONITOR tests in this draft)
+## Tests (future; do not run as MONITOR tests in this approval pass)
 
-Last governed product-changing baseline remains dedicated FG-021 **20** / focused **148** / full **558**. This draft does **not** rerun pytest.
+Last governed product-changing baseline remains dedicated FG-021 **20** / focused **148** / full **558**. This approval pass does **not** rerun pytest.
 
 When implemented: composition; floating-draft rejection; CO set; tax exclusion; no CO cost invention; actual sum of current rows; superseded excluded; `amount >= 0`; class enum; org isolation; CSRF; Hub copy; immutability; PGM identities; incomplete states; Field Events not inputs.
 
@@ -299,8 +299,8 @@ Office-only:
 
 | Role | State |
 |------|--------|
-| Joel | **Pending.** This document is a draft. |
-| ChatGPT review | Drafted from the 2026-09-06 recon for Joel review. |
-| Cursor | Documentation only this pass. No product code. No migration. |
+| Joel | **Approved as written** 2026-09-06. Correction semantics including `amount >= 0` / `0.00` superseding successor **accepted**. |
+| ChatGPT review | **Approved as written** 2026-09-06. |
+| Cursor | Documentation-only approval record. No product code. No migration. |
 
-**Next governed action after Joel approves this gate:** a separate bounded **implementation** Cursor prompt. Until then: **STOP. Do not implement MONITOR.**
+**Next governed action:** IMPLEMENTATION READINESS / PREFLIGHT for approved FG-023. Do **not** implement MONITOR from this approval. A separate implementation Cursor prompt is required.

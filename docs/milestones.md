@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-06 — FG-023 MONITOR V1 Feature Gate approval
+
+| Field | Content |
+|-------|---------|
+| ID | FG-023 MONITOR V1 — Estimated versus Actual (approval record) |
+| Status | **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED.** [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md). |
+| Branch | `main` |
+| Base commit | `da02f44712bf40911dbda44926db1dd96f0a146c` |
+| Objective | Record Joel/ChatGPT approval of FG-023 as written. Do not implement MONITOR. Do not create a migration. |
+| Deliverables | Approval-state update on FG-023 and current-authority docs. Frozen contract preserved. No product code. No tests. No migration. |
+| Validation | Docs-only. Last governed product-changing suite: dedicated FG-021 **20**; focused **148**; full **558**. Live **39** Events / **39** Originals. Alembic current = head `d2e3f4a5b6c7`. |
+| Architectural findings | Correction semantics including `amount >= 0` / `0.00` superseding successor accepted. BUILD office actuals remain in the approved gate (not created). MONITOR comparison remains live projection. Field Events remain evidence only. No new ADR. |
+| Open decisions | Separate implementation authorization. Observation Delete **QUEUED**. |
+| Next milestone | IMPLEMENTATION READINESS / PREFLIGHT. Do not implement MONITOR from this approval. |
+| Commit | this docs-only approval record |
+| Date | 2026-09-06 |
+
 ### 2026-09-06 — FG-023 MONITOR V1 Feature Gate draft
 
 | Field | Content |

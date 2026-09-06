@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-06 — FG-023 MONITOR V1 Feature Gate approval (docs only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-06 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN - CalibAi 5 Sep 2026** |
+| Objective | Record Joel/ChatGPT approval of FG-023 as written. Do not implement MONITOR. Do not create a migration. Do not accept a new ADR. |
+| Business decision | FG-023 **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**. Correction semantics including `amount >= 0` / `0.00` superseding successor **accepted**. Office Direct Cost actuals remain in the same gate (BUILD `ProjectDirectCostActual`; not created). Item 13 **RECON COMPLETE / FEATURE GATE APPROVED / NOT IMPLEMENTED / NOT AUTHORIZED FOR CODE**. |
+| Architectural decision | Frozen FG-023 contract unchanged. No new ADR. ADR-021 remains the commercial baseline. Dual ownership unchanged: MONITOR comparison projection; BUILD actuals; Projects Hub UX. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — RECORD FG-023 APPROVAL (docs only). |
+| Files expected to change | FG-023 status/approval; feature-gate index; current-authority docs; recon subsequent status; roadmap Item 13. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; live DB; FG-021/FG-022 product meaning; substantive FG-023 contract identities. |
+| Implementation result | Documentation only. Product code unchanged. Tests unchanged. Database unchanged. No migration. No ADR accepted. Live **39** / **39**. Live current = head `d2e3f4a5b6c7`. |
+| Tests | Product pytest not re-run (docs-only). Last governed product-changing baseline remains dedicated **20** / focused **148** / full **558**. `git diff --check` on this docs pass. |
+| Project-state-report update | Yes — FG-023 approval. |
+| Milestone entry update | Yes. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Separate FG-023 implementation authorization. Observation Delete **QUEUED**. SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. |
+| Next approved step | IMPLEMENTATION READINESS / PREFLIGHT for approved FG-023. Do not implement MONITOR. |
+| Next approved prompt | Implementation readiness / preflight (not implementation). |
+| Commit hash | (this commit) |
+
 ### 2026-09-06 — FG-023 MONITOR V1 Feature Gate draft (docs only)
 
 | Field | Content |

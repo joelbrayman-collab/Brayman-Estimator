@@ -18,7 +18,7 @@ Two first-class surfaces share one BUILD system of record ([ADR-042](../adr/ADR-
 
 Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Candidates (`PROPOSED` / `CONFIRMED` / `REJECTED`); BUILD private original bytes under `instance/build_originals/`. JPEG, PNG, GIF, and HEIC/HEIF originals are preserved without transcoding. WebP is out. Later BUILD may still expand toward daily execution, crews, labour capture, and post-issuance permit operational evidence as separately gated.
 
-**Proposed (not implemented):** office Direct Cost actuals (`ProjectDirectCostActual`) under [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **DRAFT FOR JOEL APPROVAL**. Distinct from Field Capture Events. **NOT AUTHORIZED FOR IMPLEMENTATION.**
+**Proposed (not implemented):** office Direct Cost actuals (`ProjectDirectCostActual`) under [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**. Distinct from Field Capture Events.
 
 ## Referenced data
 
@@ -35,7 +35,7 @@ Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Can
 - Silent AI write of labour/material/progress without human confirmation ([ADR-023](../adr/ADR-023-field-evidence-provenance.md))
 - Transcription, voice AI, photo AI, Field Web chrome
 - Converting Field Observations into financial actuals / MONITOR cost
-- MONITOR comparison projection (MONITOR read layer; FG-023 draft, not implemented)
+- MONITOR comparison projection (MONITOR read layer; FG-023 **APPROVED**, not implemented)
 - Owning Permit Intelligence preflight analysis ([permit-intelligence.md](permit-intelligence.md); [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md)). BUILD may later own **post-issuance** permit/inspection operational evidence only.
 
 ## Current implementation

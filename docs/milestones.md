@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-06 — FG-023 MONITOR V1 Feature Gate draft
+
+| Field | Content |
+|-------|---------|
+| ID | FG-023 MONITOR V1 — Estimated versus Actual (draft) |
+| Status | **DRAFT FOR JOEL APPROVAL / NOT APPROVED / NOT AUTHORIZED FOR IMPLEMENTATION.** [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md). |
+| Branch | `main` |
+| Base commit | `1285ecfe0366e7a946323fbac83a1a829e940cb8` |
+| Objective | Draft the MONITOR V1 Feature Gate from recon. Do not implement MONITOR. Do not create a migration. |
+| Deliverables | FG-023 document; current-authority pins; residual roadmap Item 13 leftover repair. No product code. No tests. No migration. |
+| Validation | Docs-only. Last governed product-changing suite: dedicated FG-021 **20**; focused **148**; full **558**. Live **39** Events / **39** Originals. Alembic current = head `d2e3f4a5b6c7`. |
+| Architectural findings | Office actuals included in the draft gate as BUILD-owned incremental Direct Cost. MONITOR comparison is live projection. Field Events remain evidence only. No new ADR. |
+| Open decisions | Joel approval of FG-023. Observation Delete **QUEUED**. |
+| Next milestone | Joel review. Do not implement MONITOR. |
+| Commit | this docs-only draft |
+| Date | 2026-09-06 |
+
 ### 2026-09-06 — MONITOR V1 / Item 13 implementation reconnaissance
 
 | Field | Content |

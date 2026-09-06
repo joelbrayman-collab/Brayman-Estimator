@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **RECONNAISSANCE ONLY.** MONITOR V1 is **NOT IMPLEMENTED**, **NOT FEATURE-GATED**, and **NOT AUTHORIZED FOR CODE**. |
+| Status | **RECONNAISSANCE COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **DRAFT FOR JOEL APPROVAL**. MONITOR V1 is **NOT IMPLEMENTED** and **NOT AUTHORIZED FOR CODE**. |
 | Date | 2026-09-06 |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |
@@ -13,15 +13,18 @@ This reconnaissance freezes the smallest lawful MONITOR V1 implementation design
 
 ```text
 MONITOR V1:
-RECONNAISSANCE ONLY
+RECONNAISSANCE COMPLETE
+FEATURE GATE DRAFTED (FG-023)
+NOT APPROVED
+NOT AUTHORIZED FOR IMPLEMENTATION
 NOT IMPLEMENTED
-NOT FEATURE-GATED
-NOT AUTHORIZED FOR CODE
 ```
 
-Accepting [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) does **not** authorize a Feature Gate, schema, migration, or product code. This document does **not** create or approve a Feature Gate. This document does **not** accept a new ADR. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+Accepting [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) does **not** authorize implementation. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **DRAFT FOR JOEL APPROVAL** and does **not** authorize product code, schema, or migration. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
-Readiness: **READY FOR FEATURE-GATE DRAFT.** Remaining V1 policy freezes belong in Feature Gate answers, not a new ADR (see [Unresolved decisions](#unresolved-decisions)).
+Readiness: **FEATURE GATE DRAFTED — AWAITING JOEL APPROVAL.**
+
+**Subsequent status (2026-09-06):** FG-023 drafted. Office Direct Cost actuals are **in** the draft gate (BUILD `ProjectDirectCostActual`). No model or migration created.
 
 ---
 
@@ -514,28 +517,22 @@ Not created in this pass. A bounded MONITOR V1 gate would need the twelve govern
 
 ## Unresolved decisions
 
-These do **not** require a new ADR if the Feature Gate stays inside ADR-021. They **do** need Joel/ChatGPT freeze in the Feature Gate:
+The 2026-09-06 recon listed four Joel freezes. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **drafts** them as:
 
-1. **Include office Direct Cost actuals in V1?** Recommended **yes** (otherwise estimated-vs-actual cannot exist). Alternative: baseline-only + MISSING ACTUALS (weaker Item 13).
-2. **Incremental observations vs restated class-to-date?** Recommended **incremental** + supersession (Field Event analogue).
-3. **MONITOR-owned comparison snapshots in V1?** Recommended **no** (live projection).
-4. **Who may enter actuals?** Recommended: any org member who can use Hub. Not RBAC.
+1. Office Direct Cost actuals **in V1** (same gate).
+2. **Incremental** observations + supersession.
+3. **No** MONITOR-owned comparison snapshot table in V1.
+4. Any org member who can use Hub may enter actuals (**no RBAC**).
 
-Labour-apples-to-apples GM remains a **documented later** issue (ADR-021 §9). Do not block V1.
+Those remain **not approved** until Joel approves FG-023. Labour-apples-to-apples GM remains a documented later issue (ADR-021 §9).
 
 ---
 
 ## Feature-gate readiness
 
-**A. READY FOR FEATURE-GATE DRAFT**
+**FEATURE GATE DRAFTED (FG-023) — AWAITING JOEL APPROVAL.**
 
-Not B: ADR-021 already accepted the commercial baseline, ownership split, tax-outside-GM rule, and actuals-not-MONITOR-SoR rule. Office actuals as BUILD-owned ORG-ACTUAL is consistent with ADR-020/021.
-
-Not C: existing records and the actuals gap are identified at code-path grain.
-
-Not D: no constitutional conflict. Implementation remains unauthorized until a Feature Gate and approved Cursor prompt exist.
-
-Do **not** treat this reconnaissance as authorization.
+Do **not** treat the draft as authorization.
 
 ---
 

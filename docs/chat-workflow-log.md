@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-06 — FG-023 MONITOR V1 Feature Gate draft (docs only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-06 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN - CalibAi 5 Sep 2026** |
+| Objective | Draft FG-023 from the MONITOR V1 recon. Do not implement MONITOR. Do not create a migration. Do not accept a new ADR. |
+| Business decision | FG-023 **DRAFT FOR JOEL APPROVAL / NOT APPROVED / NOT AUTHORIZED FOR IMPLEMENTATION**. Office Direct Cost actuals **included** in the same gate (BUILD `ProjectDirectCostActual`; incremental; no MONITOR snapshot table). Field Events remain evidence only. Residual roadmap “Do not start Item 13” current-authority leftover repaired. |
+| Architectural decision | No new ADR. ADR-021 remains the commercial baseline. Dual ownership: MONITOR comparison projection; BUILD actuals; Projects Hub UX. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — MONITOR V1 FEATURE GATE DRAFT (docs only). |
+| Files expected to change | FG-023 gate; feature-gate index; current-authority docs; recon subsequent status; residual roadmap next/decisions sections. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; live DB; FG-021/FG-022 product meaning. |
+| Implementation result | Documentation only. Product code unchanged. Tests unchanged. Database unchanged. No migration. No ADR accepted. Live **39** / **39**. Live current = head `d2e3f4a5b6c7`. |
+| Tests | Product pytest not re-run (docs-only). Last governed product-changing baseline remains dedicated **20** / focused **148** / full **558**. `git diff --check` on this docs pass. |
+| Project-state-report update | Yes — FG-023 draft. |
+| Milestone entry update | Yes. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Joel approval of FG-023. Observation Delete **QUEUED**. SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. |
+| Next approved step | Joel review of FG-023. Do not implement MONITOR. |
+| Next approved prompt | None until Joel approves FG-023 (then a separate implementation prompt). |
+| Commit hash | (this commit) |
+
 ### 2026-09-06 — MONITOR V1 / Item 13 implementation reconnaissance (docs only)
 
 | Field | Content |

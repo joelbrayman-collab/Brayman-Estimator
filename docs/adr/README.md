@@ -90,7 +90,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 |-----|-------|--------|
 | [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) | CalibAi Lifecycle and Project Hub | **Accepted** (direction; no schema change) |
 | [ADR-020](ADR-020-build-module-boundary.md) | BUILD Module Boundary vs Project Controls | **Accepted** (boundary; not implemented) |
-| [ADR-021](ADR-021-monitor-commercial-baseline.md) | MONITOR Commercial Baseline and Project Gross Margin | **Accepted** (2026-08-30; governance only; MONITOR **not implemented**; V1 recon [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) **COMPLETE**) |
+| [ADR-021](ADR-021-monitor-commercial-baseline.md) | MONITOR Commercial Baseline and Project Gross Margin | **Accepted** (2026-08-30; governance only; MONITOR **not implemented**; V1 recon **COMPLETE**; [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **DRAFT FOR JOEL APPROVAL**) |
 | [ADR-022](ADR-022-field-client-and-shared-api.md) | Field Client and Shared API | **Accepted** (direction; no API/mobile code) |
 | [ADR-023](ADR-023-field-evidence-provenance.md) | Field Evidence Original vs Derived | **Accepted** (rules; no voice/photo code) |
 | [ADR-024](ADR-024-learn-recommendation-boundary.md) | LEARN Recommendation Boundary | **Accepted** (boundary; no ML) |

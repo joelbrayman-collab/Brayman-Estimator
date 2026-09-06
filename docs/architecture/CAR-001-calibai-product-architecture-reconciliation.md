@@ -51,7 +51,9 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-06 FG-021 OPTION 2 close — not authorized by CAR-001):** [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **CLOSED**. SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**. Live current = head **`d2e3f4a5b6c7`**. Full suite **558**. CAR-001 still does **not** authorize MONITOR implementation.
 
-**Subsequent status (2026-09-06 MONITOR V1 recon — not authorized by CAR-001):** MONITOR V1 implementation reconnaissance is **COMPLETE** ([monitor-v1-implementation-reconnaissance.md](monitor-v1-implementation-reconnaissance.md)). MONITOR remains **NOT IMPLEMENTED / NOT FEATURE-GATED / NOT AUTHORIZED FOR CODE**. CAR-001 still does **not** authorize MONITOR product code. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Subsequent status (2026-09-06 MONITOR V1 recon — not authorized by CAR-001):** MONITOR V1 implementation reconnaissance is **COMPLETE** ([monitor-v1-implementation-reconnaissance.md](monitor-v1-implementation-reconnaissance.md)). MONITOR remains **NOT IMPLEMENTED**. CAR-001 still does **not** authorize MONITOR product code. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+
+**Subsequent status (2026-09-06 FG-023 draft — not authorized by CAR-001):** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **DRAFT FOR JOEL APPROVAL / NOT APPROVED / NOT AUTHORIZED FOR IMPLEMENTATION**. CAR-001 still does **not** authorize MONITOR product code.
 
 ## What CAR-001 was
 

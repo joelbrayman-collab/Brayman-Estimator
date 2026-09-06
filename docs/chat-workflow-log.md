@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-06 — FG-021 older supported iPhone/Safari WAIVED AS NOT PRACTICAL (docs only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-06 |
+| Branch | `main` @ `c858af55e29711ac421c552f4dc351b3fffb10ba` (start) |
+| Active ChatGPT development chat title | BRAYMAN - CalibAi 5 Sep 2026 |
+| Objective | Record Joel/ChatGPT older-device disposition. Do not close FG-021. Do not resume session-expiry UAT. |
+| Business decision | **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Not PASS. Not FAIL. Not exercised. Conservative: older coverage is distinct from the primary UAT device. Joel has no separate older physical iPhone. Approved FG-021 “where practical” applies. Primary UAT remains iPhone 14 / iOS 26.6.1 / Safari and is **not** the older-device PASS. No device matrix invented. SESSION-EXPIRY RECOVERY remains **OPEN / DEFERRED / NOT YET EXERCISED** (only substantive unresolved FG-021 UAT). Observation Delete **QUEUED** and does **not** block closure. Gate **NOT CLOSED**. |
+| Architectural decision | None. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 OLDER-IPHONE GOVERNANCE DISPOSITION. |
+| Files expected to change | Current/UAT docs only. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; ADR; FG-022; architecture reconnaissance historical snapshots except current remaining-UAT language. |
+| Implementation result | Docs-only disposition record. Product code unchanged. Tests unchanged. |
+| Tests | Product pytest not re-run (docs-only). Last governed suite remains dedicated **20** / focused **148** / full **558**. `git diff --check` this pass. |
+| Project-state-report update | Yes — PART B this-pass decision recorded. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Session-expiry **deferred**. Observation Delete **QUEUED**. FG-021 still OPEN. |
+| Next approved step | STOP. Do not close FG-021. Do not resume session-expiry UAT. Do not implement Observation Delete. |
+| Next approved prompt | None from this documentation pass. |
+| Commit hash | this commit |
+
 ### 2026-09-06 — FG-021 landscape-tolerance real-iPhone UAT PASS (docs only)
 
 | Field | Content |

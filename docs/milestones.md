@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-02 |
+| Updated | 2026-09-06 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -29,6 +29,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 4. “Completed pending baseline commit” means deliverables exist in the working tree awaiting Joel-approved commit.
 
 ---
+
+### 2026-09-06 — FG-021 CLOSED with SESSION-EXPIRY deferred exception
+
+| Field | Content |
+|-------|---------|
+| ID | FG-021 closure (OPTION 2 explicit deferred SESSION-EXPIRY exception) |
+| Status | **CLOSED.** IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION. [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md). **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED** (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED). **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Live current = head `d2e3f4a5b6c7`. |
+| Branch | `main` |
+| Base commit | `24d291603c62c88e620c17a86222a6dd40603758` |
+| Objective | Close FG-021 under Joel/ChatGPT-authorized OPTION 2. Do not claim SESSION-EXPIRY PASS. Do not start Item 13. |
+| Deliverables | Current-authority documentation/governance closure. No product code. No tests. No migration. No database mutation. |
+| Validation | Docs-only. Last governed product-changing suite: dedicated FG-021 **20**; focused **148**; full **558**. Live **39** Events / **39** Originals. Alembic current = head `d2e3f4a5b6c7`. |
+| Architectural findings | Recovery path (persist → API 401 → IndexedDB retained → login `next` → same-UUID replay) is implemented. Current product has no naturally exercisable real-iPhone session-expiry trigger. Event **37** / Original **37** are authenticated residue, not recovery evidence. |
+| Open decisions | Observation Delete **QUEUED**. Session revocation / idle timeout **FUTURE AUTHENTICATION HARDENING / NOT FG-021**. Item 13 MONITOR **NOT AUTHORIZED**. |
+| Next milestone | **STOP.** Do not start Item 13 / MONITOR. Do not implement Observation Delete. Do not implement session revocation. |
+| Commit | this docs-only close |
+| Date | 2026-09-06 |
 
 ### 2026-09-02 — FG-021 live migration to d2e3f4a5b6c7
 

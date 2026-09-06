@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-021 is the governing identifier. Do not assign a new M0xx number. Do **not** assign FG-021 to Native Signing. |
 | Module | **Field Web is a client.** **BUILD** owns Field Capture Events, Original Payloads, Derived Candidates, and BUILD binary custody. **Office / platform** owns `/api/v1` adapters, cookie session, and CSRF. **Projects** owns `projects`. |
 | Date | 2026-09-01 |
-| Status | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** (2026-09-03). Gate **NOT CLOSED**. Text-only **PASS**. Screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28**). **HEIC REAL-DEVICE PASS** (Event **34** / Original **32**, Files/Browse `IMG_5351.HEIC`). **MIXED CAPTURE PASS** (Event **35**, Originals **33** text / **34** audio / **35** JPEG). **BACKGROUND / FOREGROUND PERSISTENCE PASS** (Event **36** / Original **36**, text). **CSRF RECOVERY PASS** (Event **39** / Original **39**, text). Portrait **PASS**. One-handed **PASS**. Outdoor readability **PASS**. **LANDSCAPE TOLERANCE PASS.** **ORIENTATION / PORTRAIT PASS.** **CURRENT-IPHONE FIELD-USABILITY PASS.** **REAL IPHONE VOICE SAVE PASS** (Event **30** / Original **28**, `audio/mp4`). **REAL IPHONE NETWORK RETAIN / RETRY PASS** (Event **31** / Original **29**, text). **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS** (Event **32** / Original **30**, Take Photo JPEG). SESSION-EXPIRY RECOVERY **OPEN / DEFERRED / NOT YET EXERCISED**. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL** (not PASS / not FAIL / not exercised; no separate older physical iPhone available). Observation Delete **QUEUED** (does **not** block FG-021 closure). Live current = head **`d2e3f4a5b6c7`**. |
+| Status | **CLOSED** (2026-09-06). IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION. Text-only **PASS**. Screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28**). **HEIC REAL-DEVICE PASS** (Event **34** / Original **32**, Files/Browse `IMG_5351.HEIC`). **MIXED CAPTURE PASS** (Event **35**, Originals **33** text / **34** audio / **35** JPEG). **BACKGROUND / FOREGROUND PERSISTENCE PASS** (Event **36** / Original **36**, text). **CSRF RECOVERY PASS** (Event **39** / Original **39**, text). Portrait **PASS**. One-handed **PASS**. Outdoor readability **PASS**. **LANDSCAPE TOLERANCE PASS.** **ORIENTATION / PORTRAIT PASS.** **CURRENT-IPHONE FIELD-USABILITY PASS.** **REAL IPHONE VOICE SAVE PASS** (Event **30** / Original **28**, `audio/mp4`). **REAL IPHONE NETWORK RETAIN / RETRY PASS** (Event **31** / Original **29**, text). **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS** (Event **32** / Original **30**, Take Photo JPEG). **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED.** NOT PASS. NOT FAIL. NOT N/A. NOT WAIVED. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL** (not PASS / not FAIL / not exercised; no separate older physical iPhone available). Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Live current = head **`d2e3f4a5b6c7`**. |
 | Architecture | [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** · [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted** · [architecture/field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md) · [architecture/fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md) · [modules/build.md](../modules/build.md) · [architecture/build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md) |
 | Related ADRs | [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | [FG-020](FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Item 11 **COMPLETE**. Item 12 reconnaissance **COMPLETE**. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. ADR-043 **Accepted**. This gate **Approved**. Implementation recon **COMPLETE**. |
@@ -19,17 +19,17 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** — **NOT CLOSED**. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE PASS.** **MIXED CAPTURE PASS.** **BACKGROUND / FOREGROUND PERSISTENCE PASS.** **REAL IPHONE VOICE SAVE PASS.** **REAL IPHONE NETWORK RETAIN / RETRY PASS.** **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS.** Local HTTPS UAT origin in use. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete **QUEUED** (does **not** block FG-021 closure). |
+| Feature Gate (this document) | **CLOSED** (2026-09-06). IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE PASS.** **MIXED CAPTURE PASS.** **BACKGROUND / FOREGROUND PERSISTENCE PASS.** **REAL IPHONE VOICE SAVE PASS.** **REAL IPHONE NETWORK RETAIN / RETRY PASS.** **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS.** Local HTTPS UAT origin in use. **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED** (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED). **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. |
 | ADR-043 | **Accepted** |
 | ADR-042 | **Accepted** (dual-surface / original custody; unchanged) |
 | Implementation reconnaissance | **COMPLETE** ([fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md)). |
 | Implementation | **LANDED** — `/field` Today + Project confirm + Capture; IndexedDB; idempotent Event/Original API; display GET |
 | Schema / Alembic | Revision **`d2e3f4a5b6c7` applied live** (`c1d2e3f4a5b6` → `d2e3f4a5b6c7`). Live current = head. |
-| Field Web product | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE PASS.** **MIXED CAPTURE PASS.** **BACKGROUND / FOREGROUND PERSISTENCE PASS.** **CSRF RECOVERY PASS.** Portrait **PASS**. One-handed **PASS**. Outdoor readability **PASS**. **LANDSCAPE TOLERANCE PASS.** **ORIENTATION / PORTRAIT PASS.** **CURRENT-IPHONE FIELD-USABILITY PASS.** **REAL IPHONE VOICE SAVE PASS.** **REAL IPHONE NETWORK RETAIN / RETRY PASS.** **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS.** Real iPhone UAT **not complete** (session-expiry deferred). **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete **QUEUED** (does **not** block FG-021 closure). |
+| Field Web product | **CLOSED** (2026-09-06). IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION. Text-only **PASS**. **TAKE PHOTO PASS AS JPEG.** **HEIC REAL-DEVICE PASS.** **MIXED CAPTURE PASS.** **BACKGROUND / FOREGROUND PERSISTENCE PASS.** **CSRF RECOVERY PASS.** Portrait **PASS**. One-handed **PASS**. Outdoor readability **PASS**. **LANDSCAPE TOLERANCE PASS.** **ORIENTATION / PORTRAIT PASS.** **CURRENT-IPHONE FIELD-USABILITY PASS.** **REAL IPHONE VOICE SAVE PASS.** **REAL IPHONE NETWORK RETAIN / RETRY PASS.** **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS.** **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED** (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED). **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. |
 | Native Signing | Parallel track. Development may proceed under **separate** governance. Production activation **blocked pending counsel**. Not this gate. |
 | Project Closeout | **FUTURE / NOT AUTHORIZED** |
 
-This draft was **Approved 2026-09-02**. Historical status: **DRAFT FOR JOEL REVIEW / NOT APPROVED** (committed `6273fa4`). Product implementation later landed. Live upgrade `c1d2e3f4a5b6` → `d2e3f4a5b6c7` later applied. The gate still **does not close** until real iPhone Safari UAT.
+This draft was **Approved 2026-09-02**. Historical status: **DRAFT FOR JOEL REVIEW / NOT APPROVED** (committed `6273fa4`). Product implementation later landed. Live upgrade `c1d2e3f4a5b6` → `d2e3f4a5b6c7` later applied. Gate **CLOSED** 2026-09-06 with the explicit SESSION-EXPIRY RECOVERY deferred exception below. This is **not** a claim that every individual UAT row passed.
 
 Frozen file/API/schema decisions remain: [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md).
 
@@ -297,7 +297,7 @@ No historical backfill. Office rows without client UUIDs remain lawful ([ADR-043
 
 ## Implementation reconnaissance
 
-**COMPLETE** — [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md). Product implementation **landed**. Live upgrade **applied**. Gate still **NOT CLOSED** until real iPhone UAT.
+**COMPLETE** — [fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md). Product implementation **landed**. Live upgrade **applied**. Gate **CLOSED** 2026-09-06 subject to the explicit SESSION-EXPIRY RECOVERY deferred exception.
 
 Device checks still required **during implementation / UAT**:
 
@@ -375,7 +375,29 @@ Current iPhone Safari **MUST** cover:
 
 Also require one older supported iPhone/Safari smoke test where practical.
 
-**Current remaining real-iPhone UAT (2026-09-06 after older-iPhone disposition):** session-expiry recovery (**OPEN / DEFERRED / NOT YET EXERCISED**). That is the only substantive unresolved FG-021 UAT item. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL** (not PASS / not FAIL / not exercised). Primary real-device UAT remains iPhone 14 / iOS 26.6.1 / Safari and is **not** double-counted as the older-device PASS. Repository does not define “older” or a minimum iPhone/iOS/Safari matrix. Portrait / one-handed / outdoor / landscape / orientation are **PASS**. Current-iPhone field-usability package is **PASS**. Observation Delete remains **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED** and does **not** block FG-021 closure. CSRF recovery is **PASS**. Do **not** close FG-021 from this disposition alone.
+**Final real-iPhone UAT (2026-09-06 Joel/ChatGPT OPTION 2 closure):** current-iPhone functional / reliability / usability UAT is **PASS** except SESSION-EXPIRY RECOVERY.
+
+```text
+SESSION-EXPIRY RECOVERY:
+DEFERRED / NOT YET EXERCISED
+NOT PASS
+NOT FAIL
+NOT N/A
+NOT WAIVED
+
+OLDER SUPPORTED IPHONE / SAFARI:
+WAIVED AS NOT PRACTICAL
+NOT PASS
+NOT FAIL
+NOT EXERCISED
+
+OBSERVATION DELETE:
+QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING
+```
+
+**SESSION-EXPIRY exception (do not weaken):** the recovery path is implemented (persist pending capture → API 401 retains IndexedDB → office login with `next` → return to Field → replay same UUIDs → ACK). The current governed product has no configured idle session timeout, uses signed client-side Flask sessions, and has no server-side per-login session revocation. No existing product-faithful real-iPhone procedure naturally creates session expiry during pending upload. Prior real-iPhone attempts did **not** prove SESSION-EXPIRY RECOVERY PASS. Event **37** / Original **37** are authenticated UAT residue and are **not** session-expiry recovery evidence. Event **38** remains interrupted CSRF residue. Event **39** / Original **39** remain CSRF recovery PASS. Manufacturing a trigger (timeout reduction, cookie deletion, SECRET_KEY rotation, site-data manipulation, session-revocation implementation, authentication architecture change) would not be faithful FG-021 closure UAT. Server-side per-login session revocation / idle timeout remains **FUTURE AUTHENTICATION HARDENING / NOT AUTHORIZED / NOT FG-021**. This is an explicitly authorized Joel/ChatGPT closure exception. Do **not** convert this item to PASS. Do **not** hide the limitation. Do **not** claim real-iPhone session-expiry recovery was exercised.
+
+**OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL** (not PASS / not FAIL / not exercised). Primary real-device UAT remains iPhone 14 / iOS 26.6.1 / Safari and is **not** double-counted as the older-device PASS. Repository does not define “older” or a minimum iPhone/iOS/Safari matrix. Portrait / one-handed / outdoor / landscape / orientation are **PASS**. Current-iPhone field-usability package is **PASS**. Observation Delete remains **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED** and does **not** block this closed gate. CSRF recovery is **PASS**.
 
 ---
 
@@ -397,6 +419,8 @@ No transcription or AI required.
 ---
 
 ## Acceptance criteria
+
+**Subsequent status (2026-09-06 OPTION 2 explicit deferred closure):** **CLOSED.** Joel/ChatGPT authorized OPTION 2. IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION. **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED.** NOT PASS. NOT FAIL. NOT N/A. NOT WAIVED. Recovery path implemented; current product has no naturally exercisable real-iPhone session-expiry trigger during pending upload. Event **37** / Original **37** are **not** session-expiry recovery evidence. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Server-side per-login session revocation / idle timeout remains **FUTURE AUTHENTICATION HARDENING / NOT FG-021**. Dedicated **20**. Focused **148**. Full **558**. Live **39** Events / **39** Originals. Live current = head **`d2e3f4a5b6c7`**.
 
 **Subsequent status (2026-09-06 older supported iPhone/Safari):** **WAIVED AS NOT PRACTICAL.** Not PASS. Not FAIL. Not exercised. Joel/ChatGPT conservative disposition: older-device coverage is distinct from the primary UAT device. Joel does **not** have a separate older physical iPhone. Approved FG-021 criterion is “one older supported iPhone/Safari smoke test where practical.” Repository does not define “older” and does not define a minimum iPhone/iOS/Safari matrix. Primary real-device UAT remains iPhone 14 / iOS 26.6.1 / Safari and is **not** the older-device PASS. Gate **NOT CLOSED**. SESSION-EXPIRY RECOVERY remains **OPEN / DEFERRED / NOT YET EXERCISED**. Observation Delete remains **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED** and does **not** block FG-021 closure.
 
@@ -474,7 +498,7 @@ Counsel review is **not** a Field Web hold. The [Legal Content Gate](../governan
 
 ## Closure rule
 
-This gate is **Approved**. ADR-043 is **Accepted**. Implementation recon is **COMPLETE**. Product implementation **landed**. Live current = head **`d2e3f4a5b6c7`**. The gate still **closes nothing** until dedicated tests remain green **and** real iPhone Safari UAT passes. Do **not** close FG-021 from this live-migration pass.
+This gate is **CLOSED** (2026-09-06). ADR-043 is **Accepted**. Implementation recon is **COMPLETE**. Product implementation **landed**. Live current = head **`d2e3f4a5b6c7`**. Dedicated tests remain green (dedicated **20** / focused **148** / full **558**). Real iPhone Safari UAT is **COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION**. **SESSION-EXPIRY RECOVERY remains DEFERRED / NOT YET EXERCISED** (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED). This closure does **not** claim that every individual UAT row passed. Do **not** start Item 13 / MONITOR, Observation Delete, or session revocation from this close.
 
 ---
 

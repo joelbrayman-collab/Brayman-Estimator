@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-06 — FG-021 CLOSED with SESSION-EXPIRY deferred exception (docs only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-06 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN - CalibAi 5 Sep 2026** |
+| Objective | Close FG-021 under Joel/ChatGPT-authorized OPTION 2 explicit deferred closure. Do not change product/tests/auth/DB. Do not convert SESSION-EXPIRY to PASS. Do not start Item 13 / MONITOR / Observation Delete / session revocation. |
+| Business decision | **FG-021 CLOSED.** IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION. **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED.** NOT PASS. NOT FAIL. NOT N/A. NOT WAIVED. Recovery path implemented; current product has no naturally exercisable real-iPhone session-expiry trigger. Event **37** / Original **37** remain authenticated residue, **not** recovery evidence. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Server-side per-login session revocation / idle timeout remains **FUTURE AUTHENTICATION HARDENING / NOT FG-021**. Roadmap Item 12 **CLOSED**. |
+| Architectural decision | None new. No ADR created/accepted. FG-018 signed-cookie architecture unchanged. |
+| Prompt template used | Bounded FG-021 docs-only gate closure. |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 OPTION 2 EXPLICIT DEFERRED CLOSURE. |
+| Files expected to change | Current-authority docs only: FG-021 gate, Feature Gate index, current-state, session-handoff, project-state-report, roadmap, modules/build, chat-workflow-log, milestones, related current-authority indexes. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; live DB; ADR body except current-authority FG-021 cross-refs; FG-022. |
+| Implementation result | Documentation/governance closure only. Product code unchanged. Tests unchanged. Database unchanged. No migration. No Event/Original created. Live **39** / **39**. Live current = head `d2e3f4a5b6c7`. |
+| Tests | Product pytest not re-run (docs-only closure). Last governed product-changing baseline remains dedicated **20** / focused **148** / full **558**. `git diff --check` on this docs pass. |
+| Project-state-report update | Yes — FG-021 **CLOSED**. |
+| Milestone entry update | Yes — FG-021 closure recorded. |
+| Constitutional issue raised | None. SESSION-EXPIRY remains explicitly not PASS. |
+| Unresolved issues | SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**. Observation Delete **QUEUED**. Session revocation / idle timeout future auth hardening. Item 13 MONITOR **NOT AUTHORIZED**. |
+| Next approved step | STOP. Do not start Item 13 / MONITOR. Do not implement Observation Delete. Do not implement session revocation. |
+| Next approved prompt | None from this close. |
+| Commit hash | (this commit) |
+
 ### 2026-09-06 — FG-021 older supported iPhone/Safari WAIVED AS NOT PRACTICAL (docs only)
 
 | Field | Content |

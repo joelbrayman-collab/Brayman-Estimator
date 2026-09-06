@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN.** Gate **NOT CLOSED**. Text-only **PASS**. Small screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28** / Original **27**, `image/jpeg`). **HEIC REAL-DEVICE PASS** (Event **34** / Original **32**, Files/Browse `IMG_5351.HEIC`, Project **11**). **MIXED CAPTURE PASS** (Event **35**, Originals **33** text / **34** audio / **35** JPEG). **BACKGROUND / FOREGROUND PERSISTENCE PASS** (Event **36** / Original **36**, text). **CSRF RECOVERY PASS** (Event **39** / Original **39**, text). Portrait **PASS**. One-handed **PASS**. Outdoor readability **PASS**. **LANDSCAPE TOLERANCE PASS.** **ORIENTATION / PORTRAIT PASS.** **CURRENT-IPHONE FIELD-USABILITY PASS.** **REAL IPHONE VOICE SAVE PASS** (Event **30** / Original **28**, `audio/mp4`, `note.m4a`). **REAL IPHONE NETWORK RETAIN / RETRY PASS** (Event **31** / Original **29**, text). **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS** (Event **32** / Original **30**, Take Photo JPEG). Primary UAT device iPhone 14 / iOS 26.6.1 / Safari. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** SESSION-EXPIRY RECOVERY **OPEN / DEFERRED / NOT YET EXERCISED**. Observation Delete **QUEUED** (does **not** block FG-021 closure). Live current = head **`d2e3f4a5b6c7`**. Do **not** close FG-021. |
+| Status | **FG-021 CLOSED.** IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION. Text-only **PASS**. Small screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28** / Original **27**, `image/jpeg`). **HEIC REAL-DEVICE PASS** (Event **34** / Original **32**, Files/Browse `IMG_5351.HEIC`, Project **11**). **MIXED CAPTURE PASS** (Event **35**, Originals **33** text / **34** audio / **35** JPEG). **BACKGROUND / FOREGROUND PERSISTENCE PASS** (Event **36** / Original **36**, text). **CSRF RECOVERY PASS** (Event **39** / Original **39**, text). Portrait **PASS**. One-handed **PASS**. Outdoor readability **PASS**. **LANDSCAPE TOLERANCE PASS.** **ORIENTATION / PORTRAIT PASS.** **CURRENT-IPHONE FIELD-USABILITY PASS.** **REAL IPHONE VOICE SAVE PASS** (Event **30** / Original **28**, `audio/mp4`, `note.m4a`). **REAL IPHONE NETWORK RETAIN / RETRY PASS** (Event **31** / Original **29**, text). **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS** (Event **32** / Original **30**, Take Photo JPEG). Primary UAT device iPhone 14 / iOS 26.6.1 / Safari. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED** (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED). Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Live current = head **`d2e3f4a5b6c7`**. Do **not** start Item 13 / MONITOR. |
 | Updated | 2026-09-06 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -100,7 +100,7 @@ PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project`. No
 - **PLAN:** partial — M005–M010 implemented; **M012 / FG-010 foundation CLOSED / OPERATIONAL FOR UAT**; FG-015 Permit Foundation **CLOSED / OPERATIONAL FOR UAT**; FG-016 Pass 2 **CLOSED / OPERATIONAL FOR UAT**; Phase D mapping **NOT STARTED**
 - **PRICE:** partial — builder + commercial gate; Labour Engine Phase B **CLOSED / OPERATIONAL FOR UAT**; Pricing Engine **CLOSED / OPERATIONAL FOR UAT**; FG-012 internal breakdown + Proposal consistency **CLOSED / OPERATIONAL FOR UAT**
 - **CONTRACT:** partial (proposals are the customer-facing estimate; FG-012 reconciles snapshot totals; Ontario templates future)
-- **BUILD:** partial (change orders operational; Field Observation foundation **CLOSED / OPERATIONAL FOR UAT**; [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**; [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md); Field Web **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**)
+- **BUILD:** partial (change orders operational; Field Observation foundation **CLOSED / OPERATIONAL FOR UAT**; [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**; [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md); Field Web **CLOSED** — [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md); SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**)
 - **MONITOR:** future implementation (ADR-021 **Accepted**; composed frozen baseline; Project Gross Margin; not coded)
 - **LEARN:** future (ADR-024 boundary accepted; no ML)
 
@@ -110,11 +110,13 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Gate **NOT CLOSED**. Bounded LAN iPhone Save Original UUID repair landed. Roadmap item 10 is **COMPLETE**. Item 11 is **COMPLETE**. Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) remains **CLOSED / OPERATIONAL FOR UAT**. Live current = head `d2e3f4a5b6c7`.
+**FG-021 CLOSED.** IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION. Bounded LAN iPhone Save Original UUID repair landed. Roadmap item 10 is **COMPLETE**. Item 11 is **COMPLETE**. Item 12 Field Web is **CLOSED**. [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) remains **CLOSED / OPERATIONAL FOR UAT**. Live current = head `d2e3f4a5b6c7`. Do **not** start Item 13.
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Not PASS. Not FAIL. Not exercised. Conservative disposition: older-device coverage is distinct from the primary UAT device. Joel has no separate older physical iPhone. Approved FG-021 uses “where practical.” Primary UAT remains iPhone 14 / iOS 26.6.1 / Safari and is **not** the older-device PASS. Repository does not define “older” or a device matrix. SESSION-EXPIRY RECOVERY remains **OPEN / DEFERRED / NOT YET EXERCISED** (only substantive unresolved FG-021 UAT). Observation Delete **QUEUED** and does **not** block closure. Do **not** close FG-021. Do **not** resume session-expiry UAT from this pass.
+**Last authorized delta:** **CLOSE FG-021 with OPTION 2 explicit SESSION-EXPIRY deferred exception** (docs only). Gate **CLOSED**. IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION. **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED.** NOT PASS. NOT FAIL. NOT N/A. NOT WAIVED. Recovery path implemented; current product has no naturally exercisable real-iPhone session-expiry trigger. Event **37** / Original **37** remain authenticated residue, **not** recovery evidence. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Server-side per-login session revocation / idle timeout remains **FUTURE AUTHENTICATION HARDENING / NOT FG-021**. Do **not** start Item 13 / MONITOR. Do **not** implement Observation Delete. Do **not** implement session revocation from this close.
+
+**Prior:** **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Not PASS. Not FAIL. Not exercised. Conservative disposition: older-device coverage is distinct from the primary UAT device. Joel has no separate older physical iPhone. Approved FG-021 uses “where practical.” Primary UAT remains iPhone 14 / iOS 26.6.1 / Safari and is **not** the older-device PASS. Repository does not define “older” or a device matrix. SESSION-EXPIRY RECOVERY remains **OPEN / DEFERRED / NOT YET EXERCISED** (only substantive unresolved FG-021 UAT). Observation Delete **QUEUED** and does **not** block closure. Do **not** close FG-021. Do **not** resume session-expiry UAT from this pass.
 
 **Prior:** **LANDSCAPE-TOLERANCE REAL-IPHONE UAT PASS.** Implemented CSS `057ff15` is sufficient. Initial post-fix retest **FAIL** was confounded by iPhone Portrait Orientation Lock **ON** (not a CalibAi product defect). After lock **OFF**, Field adjusted correctly. Portrait / one-handed / outdoor / landscape / orientation **PASS**. **CURRENT-IPHONE FIELD-USABILITY PASS.** No second CSS correction. Do **not** close FG-021. Do **not** start older-device or session-expiry UAT from this pass.
 
@@ -236,8 +238,8 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 ## 10. TEST / UAT / MIGRATION STATUS
 
 - Repository graph head `d2e3f4a5b6c7`. Live current `d2e3f4a5b6c7`. One graph head. Applied `c1d2e3f4a5b6` → `d2e3f4a5b6c7`.
-- Dedicated: FG-021 **19**; FG-020 **44** (33 + 11 media compatibility); FG-019 **34**; FG-018 **37**; FG-017 **22**; FG-016 **37**; FG-015 permit foundation **19**; FG-014 material catalogue **35**; FG-013 upload 27; FG-012 19; Project Hub (post-FG-020 assertions); take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
-- Focused regression (Hub + FG-018 + FG-019 + both FG-020 + FG-021): **147 passed**. Full suite: **557 passed**.
+- Dedicated: FG-021 **20**; FG-020 **44** (33 + 11 media compatibility); FG-019 **34**; FG-018 **37**; FG-017 **22**; FG-016 **37**; FG-015 permit foundation **19**; FG-014 material catalogue **35**; FG-013 upload 27; FG-012 19; Project Hub (post-FG-020 assertions); take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
+- Focused regression (Hub + FG-018 + FG-019 + both FG-020 + FG-021): **148 passed**. Full suite: **558 passed**.
 - Live API FG-019 UAT **PASSED** on port **5012**. Live office FG-018 UAT **PASSED** on port **5011**. FG-017 UAT remains **PASSED** on port **5010**. Pratt Permit Report UAT remains **PASSED** on port **5009** (project id 9). FG-020 office UAT **PASSED** on port **5013**.
 
 ## 11. PROTECTED STATE
@@ -275,7 +277,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - **FG-018:** **CLOSED / OPERATIONAL FOR UAT**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. Live current `b0c1d2e3f4a5`. Office UAT port **5011**. Shared API **out of this gate**. Not production-security certification.
 - **FG-019:** **CLOSED / OPERATIONAL FOR UAT**. Shared API Foundation V1. GET-only `/api/v1` plus FG-020 BUILD POST allow-list. No FG-019 migration. API UAT port **5012**.
 - **FG-020:** **CLOSED / OPERATIONAL FOR UAT**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. Image-only Compatible Renditions **implemented**. Gate-at-close live current = head was `c1d2e3f4a5b6`. Office UAT port **5013**. Dedicated **44**. Full suite **538**. Field Web **not** in this gate. Closeout **not** started.
-- **FG-021:** **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. Live current = head `d2e3f4a5b6c7`. Gate **NOT CLOSED**. Text **PASS**. Screenshot PNG **PASS**. **TAKE PHOTO PASS AS JPEG.** Voice Save **PASS** (Event **30**, `audio/mp4`). Network retain/retry **PASS** (Event **31**, text). Browser-close IndexedDB recovery **PASS** (Event **32** / Original **30**, JPEG). **HEIC REAL-DEVICE PASS** (Event **34** / Original **32**, Files/Browse `IMG_5351.HEIC`). **MIXED CAPTURE PASS** (Event **35**, Originals **33** text / **34** audio / **35** JPEG). **BACKGROUND / FOREGROUND PERSISTENCE PASS** (Event **36** / Original **36**, text). **CSRF RECOVERY PASS** (Event **39** / Original **39**, text). Portrait **PASS**. One-handed **PASS**. Outdoor readability **PASS**. **LANDSCAPE TOLERANCE PASS.** **ORIENTATION / PORTRAIT PASS.** **CURRENT-IPHONE FIELD-USABILITY PASS.** Desktop continuity **PASS**. SESSION-EXPIRY RECOVERY **OPEN / DEFERRED / NOT YET EXERCISED**. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete **QUEUED / NOT AUTHORIZED** (does **not** block FG-021 closure). Live **39** Events / **39** Originals. Dedicated **20**. Focused **148**. Full **558**.
+- **FG-021:** **CLOSED** (2026-09-06). IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION. [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. Live current = head `d2e3f4a5b6c7`. Text **PASS**. Screenshot PNG **PASS**. **TAKE PHOTO PASS AS JPEG.** Voice Save **PASS** (Event **30**, `audio/mp4`). Network retain/retry **PASS** (Event **31**, text). Browser-close IndexedDB recovery **PASS** (Event **32** / Original **30**, JPEG). **HEIC REAL-DEVICE PASS** (Event **34** / Original **32**, Files/Browse `IMG_5351.HEIC`). **MIXED CAPTURE PASS** (Event **35**, Originals **33** text / **34** audio / **35** JPEG). **BACKGROUND / FOREGROUND PERSISTENCE PASS** (Event **36** / Original **36**, text). **CSRF RECOVERY PASS** (Event **39** / Original **39**, text). Portrait **PASS**. One-handed **PASS**. Outdoor readability **PASS**. **LANDSCAPE TOLERANCE PASS.** **ORIENTATION / PORTRAIT PASS.** **CURRENT-IPHONE FIELD-USABILITY PASS.** Desktop continuity **PASS**. **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED** (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED). **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Live **39** Events / **39** Originals. Dedicated **20**. Focused **148**. Full **558**.
 - **FG-022:** **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**. Reusable approved document template family V1. Seven DOCX + seven verification PDFs. Parallel document-template track. Legal Content Gate **empty**. Family 05 **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. Does **not** alter FG-021 or item 12.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
@@ -299,7 +301,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (docs only). BMR / Winchester / Darcy are **not exclusive**. Winchester is launch/reference. Contractor procurement (A) ≠ CalibAi channel (B). Darcy commercial terms **unset**. Supplier Feature Gate **not authorized**. Governed **bulk supplier onboarding** is **FUTURE / NOT IMPLEMENTED** (not one-product-at-a-time; does not expand FG-014).
 - **Permit Intelligence** Pass 2 is **CLOSED / OPERATIONAL FOR UAT**. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** ([ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)). [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (foundation). Advisory preflight. AHJ remains final. **PASS** means no issue identified against governed checks performed — never AHJ approved. No live lookup. No external AI. Mike Pratt Coach House at 2562 Church Street, North Gower, Ontario is the **FG-016 UAT reference** — live project **id 9** (`FG016-UAT-PRATT`) on port **5009**.
 - **Organization Brand Profile** is **CLOSED / OPERATIONAL FOR UAT** ([organization-brand-profile.md](architecture/organization-brand-profile.md)). [ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md). Settings at `/settings/brand-profile`. Proposal preview/PDF consume snapshot-or-current. **Gate-at-close** current = head `a9b0c1d2e3f4`. Office UAT port **5010**. Live head today is `d2e3f4a5b6c7`.
-- **Authentication / actor identity + shared API** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**.
+- **Authentication / actor identity + shared API** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Item 12 Field Web is **CLOSED** ([FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md); SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**).
 - **Change Order document family** is **FUTURE / NOT IMPLEMENTED** ([change-order-document-family.md](architecture/change-order-document-family.md)). Existing Change Order record remains authoritative. Do not create a second entity. Not email. Not field UX.
 
 ## 17. KNOWN RISKS / UNRESOLVED PRODUCT ITEMS
@@ -318,17 +320,17 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 18. DEFERRED ITEMS
 
-Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; Project Closeout / archive-and-purge; FG-021 remaining real-iPhone UAT (session-expiry **deferred**); Observation Delete (**QUEUED / NOT AUTHORIZED**; does **not** block FG-021 closure); QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; MONITOR/LEARN **implementation**; native/token auth; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; RBAC / org-switcher / invitations / SSO; national Permit Rules expansion; Change Order document family; Contract / e-signature / signed Change Order (recon recorded, **not implemented**).
+Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualObservation`; Project Closeout / archive-and-purge; FG-021 SESSION-EXPIRY RECOVERY (**DEFERRED / NOT YET EXERCISED**; not PASS); Observation Delete (**QUEUED / NOT AUTHORIZED**); server-side per-login session revocation / idle timeout (**FUTURE AUTHENTICATION HARDENING / NOT FG-021**); QuickBooks API; Ontario contract/warranty; four-output outputs 3–4; TBD/PLACEHOLDER durable state; OCR/CAD; multi-trade extraction; real external AI provider; MONITOR/LEARN **implementation**; native/token auth; supplier / Winchester POC; bulk supplier catalogue onboarding; Darcy channel economics; industry benchmarking; RBAC / org-switcher / invitations / SSO; national Permit Rules expansion; Change Order document family; Contract / e-signature / signed Change Order (recon recorded, **not implemented**).
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not start Phase D. Do not enable an external AI provider. Do not close FG-021 until real iPhone Safari UAT. Do not add tokens, RBAC, org-switcher, invitations, SSO, or password-reset email. Do **not** implement Project Closeout. Do **not** expand renditions to audio conversion, extra sizes, or a job queue. Do **not** create another migration. Do not **implement** MONITOR/LEARN, QuickBooks, or contract/warranty **template** work. Do **not** enable Native Signing for real customer / commercial use. Native Signing **development** may proceed only under **separate** Joel-authorized governance. Do not reopen FG-008 through FG-020. Do not accept ADR-008. Do not accept ADR-010. Do not add PWA, transcription, or native iOS from this gate.
+Do not start Phase D. Do not enable an external AI provider. Do not reopen FG-021. Do not add tokens, RBAC, org-switcher, invitations, SSO, or password-reset email. Do **not** implement Project Closeout. Do **not** expand renditions to audio conversion, extra sizes, or a job queue. Do **not** create another migration. Do not **implement** MONITOR/LEARN, QuickBooks, or contract/warranty **template** work. Do **not** enable Native Signing for real customer / commercial use. Native Signing **development** may proceed only under **separate** Joel-authorized governance. Do not reopen FG-008 through FG-021. Do not accept ADR-008. Do not accept ADR-010. Do not add PWA, transcription, or native iOS from this gate. Do **not** implement Observation Delete. Do **not** implement session revocation / idle timeout from this close. Do **not** start Item 13.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP.** Do **not** close FG-021. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Current-iPhone field-usability is **PASS**. Do **not** resume session-expiry UAT. Remaining FG-021 UAT: SESSION-EXPIRY RECOVERY (**OPEN / DEFERRED / NOT YET EXERCISED**) — the only substantive unresolved FG-021 UAT item. Observation Delete remains **QUEUED / NOT AUTHORIZED** and does **not** block FG-021 closure. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval.
+**Next governed action:** **STOP.** [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) is **CLOSED**. **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED** (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED). **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Current-iPhone field-usability is **PASS**. Do **not** start Item 13 / MONITOR. Do **not** implement Observation Delete. Do **not** implement session revocation / idle timeout. Observation Delete remains **QUEUED / NOT AUTHORIZED**. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval.
 
-**Roadmap direction (not authorization):** Item 12 Field Web is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Roadmap direction (not authorization):** Item 12 Field Web is **CLOSED**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.** Do **not** start Item 13.
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -365,7 +367,7 @@ Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **cur
 Canonical location for the next conversation. Paste into a **new** ChatGPT or Cursor chat. Do **not** continue from an old prompt without preflight.
 
 ```text
-BRAYMAN — CONTINUE CALIBAI DEVELOPMENT — FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN
+BRAYMAN — CONTINUE CALIBAI DEVELOPMENT — FG-021 CLOSED (SESSION-EXPIRY DEFERRED)
 
 You are starting a FRESH conversation on the Brayman-Estimator (CalibAi / The Estimator) platform.
 
@@ -388,7 +390,11 @@ When a Cursor prompt is present, the END line follows the complete prompt.
 Every CalibAi development response ends with the next complete ready-to-paste
 Cursor prompt unless Joel explicitly says no prompt is required.
 
-DO NOT close FG-021.
+DO NOT reopen FG-021.
+DO NOT convert SESSION-EXPIRY RECOVERY to PASS / N/A / WAIVED.
+DO NOT start Item 13 / MONITOR.
+DO NOT implement Observation Delete.
+DO NOT implement session revocation / idle timeout.
 DO NOT invent iPhone UAT results.
 DO NOT implement Native Signing for real customer / commercial use.
 DO NOT weaken the Legal Content Gate.
@@ -407,15 +413,17 @@ Item 11 BUILD Field Observation foundation is COMPLETE.
 Image-only Compatible Renditions (HEIC/HEIF → JPEG) are IMPLEMENTED.
 ADR-042 is Accepted. FG-020 is CLOSED / OPERATIONAL FOR UAT.
 Live current = head d2e3f4a5b6c7.
-Item 12 Field Web is IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN.
-ADR-043 is Accepted. FG-021 is IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN. Gate NOT CLOSED.
+Item 12 Field Web is CLOSED.
+ADR-043 is Accepted. FG-021 is CLOSED.
+SESSION-EXPIRY RECOVERY is DEFERRED / NOT YET EXERCISED (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED).
+OLDER SUPPORTED IPHONE / SAFARI is WAIVED AS NOT PRACTICAL.
 Implementation recon is COMPLETE (docs/architecture/fg-021-field-web-v1-implementation-reconnaissance.md).
 Native Signing DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE.
 Native Signing PRODUCTION ACTIVATION is BLOCKED PENDING COUNSEL PROCESS APPROVAL.
 Project Closeout is FUTURE.
 Storage-lifecycle pin: docs/architecture/build-media-storage-lifecycle.md
 Canonical Item 12 pin: docs/architecture/field-web-today-and-capture.md
-Next authorized action = STOP. Do not begin another feature from this FG-022 closure. FG-022 is CLOSED / APPROVED REUSABLE MASTER FAMILY V1. Family 05 remains COMMERCIAL_DRAFT / NOT LEGALLY APPROVED. Do not close FG-021. Native Signing production remains blocked pending counsel. Do not implement Closeout.
+Next authorized action = STOP. Do not begin Item 13 / MONITOR from this FG-021 close. FG-022 is CLOSED / APPROVED REUSABLE MASTER FAMILY V1. Family 05 remains COMMERCIAL_DRAFT / NOT LEGALLY APPROVED. Native Signing production remains blocked pending counsel. Do not implement Closeout.
 
 1. REVIEW REPOSITORY GOVERNANCE FIRST
 Read and comply with:
@@ -464,7 +472,7 @@ Confirm:
 Independently reconstruct from the repository:
 - FG-008 through FG-020 CLOSED / OPERATIONAL FOR UAT
 - Live current = head d2e3f4a5b6c7
-- Dedicated FG-021 19; focused Hub+FG-018+FG-019+FG-020+FG-021 147; full suite 557; dedicated FG-020 44; dedicated FG-019 34; dedicated FG-018 37
+- Dedicated FG-021 20; focused Hub+FG-018+FG-019+FG-020+FG-021 148; full suite 558; dedicated FG-020 44; dedicated FG-019 34; dedicated FG-018 37
 - Pratt UAT project id 9 / FG016-UAT-PRATT / analysis v3 / advisory only
 - FG-018 office UAT PASSED on port 5011
 - FG-019 API UAT PASSED on port 5012
@@ -473,15 +481,17 @@ Independently reconstruct from the repository:
 - ADR-041 Accepted
 - ADR-042 Accepted
 - ADR-043 Accepted
-- FG-021 IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN (gate NOT CLOSED)
+- FG-021 CLOSED (SESSION-EXPIRY RECOVERY DEFERRED / NOT YET EXERCISED; NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED)
 - Implementation recon COMPLETE; product LANDED; live upgrade APPLIED
 - Roadmap item 10 COMPLETE
 - Item 11 BUILD COMPLETE
-- Item 12 Field Web IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN
+- Item 12 Field Web CLOSED
 - Image-only Compatible Renditions (HEIC/HEIF → JPEG) IMPLEMENTED
 - Project Closeout / archive-and-purge FUTURE / NOT AUTHORIZED
 - Storage-lifecycle pin recorded (docs/architecture/build-media-storage-lifecycle.md)
-- Real iPhone Safari UAT NOT COMPLETE
+- SESSION-EXPIRY RECOVERY DEFERRED / NOT YET EXERCISED
+- OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL
+- Observation Delete QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING
 - Native Signing DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE; PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL
 - ADR-008 and ADR-010 remain Proposed
 - Phase D NOT STARTED / NOT AUTHORIZED
@@ -489,8 +499,9 @@ Independently reconstruct from the repository:
 - Runtime permit web lookup NOT AUTHORIZED
 
 4. RETURN A CONCISE CURRENT STATE REVIEW
-Then STOP. Joel may issue a real iPhone Safari UAT / FG-021 close prompt, authorize a separately governed Native Signing development prompt (production still blocked pending counsel), or a different task.
-Do NOT close FG-021 until real iPhone UAT.
+Then STOP. Joel may authorize a separately governed Native Signing development prompt (production still blocked pending counsel), Observation Delete, or a different task. Do NOT start Item 13 / MONITOR from this close.
+Do NOT reopen FG-021.
+Do NOT convert SESSION-EXPIRY RECOVERY to PASS / N/A / WAIVED.
 Do NOT invent iPhone UAT results.
 Do NOT implement Project Closeout.
 Do NOT enable Native Signing for real customer use.
@@ -654,4 +665,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**; gate **NOT CLOSED**; Text **PASS**; Screenshot PNG **PASS**; Take Photo JPEG **PASS**; Voice Save **PASS** (Event **30**); Network retain/retry **PASS** (Event **31**); HEIC real-device **PASS** (Event **34** / Original **32**); Mixed capture **PASS** (Event **35**); Background/foreground persistence **PASS** (Event **36**); Observation Delete **QUEUED**; live current = head `d2e3f4a5b6c7`; dedicated FG-021 **19**; focused **147**; full **557**; FG-020 **CLOSED / OPERATIONAL FOR UAT**; [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**; Family 05 **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**; Legal Content Gate **empty**; approved presentation source custody **CLOSED**; Native Signing **DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE**; **PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL**; Project Closeout **FUTURE**. Do **not** close FG-021. Do **not** enable Native Signing production. Do **not** implement Contract templates or Closeout. Pre-migration SQLite copy remains gitignored under `instance/` and must **not** be committed.
+A–J: [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED**; IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION; Text **PASS**; Screenshot PNG **PASS**; Take Photo JPEG **PASS**; Voice Save **PASS** (Event **30**); Network retain/retry **PASS** (Event **31**); HEIC real-device **PASS** (Event **34** / Original **32**); Mixed capture **PASS** (Event **35**); Background/foreground persistence **PASS** (Event **36**); CSRF recovery **PASS** (Event **39**); **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED** (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED); **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL**; Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**; live current = head `d2e3f4a5b6c7`; dedicated FG-021 **20**; focused **148**; full **558**; FG-020 **CLOSED / OPERATIONAL FOR UAT**; [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**; Family 05 **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**; Legal Content Gate **empty**; approved presentation source custody **CLOSED**; Native Signing **DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE**; **PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL**; Project Closeout **FUTURE**. Do **not** start Item 13 / MONITOR. Do **not** enable Native Signing production. Do **not** implement Contract templates or Closeout. Pre-migration SQLite copy remains gitignored under `instance/` and must **not** be committed.

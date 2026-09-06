@@ -39,6 +39,8 @@
 
 This gate is a **separately governed parallel document-template track**. It does **not** alter [FG-021](FG-021-field-web-v1-today-and-capture.md) or roadmap item 12. Implementation landed 2026-09-04. Joel presentation-master approval recorded 2026-09-04. The gate is **CLOSED**.
 
+**Subsequent status (2026-09-06):** [FG-021](FG-021-field-web-v1-today-and-capture.md) is independently **CLOSED** with the explicit SESSION-EXPIRY deferred exception. FG-022 remains **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**. The FG-021 row above is the 2026-09-04 at-close snapshot.
+
 ### Governing template authority after closure
 
 ```text
@@ -358,9 +360,9 @@ Broader Brand Profile raster reconciliation remains **unresolved future work**.
 
 ## FG-021 / roadmap relationship
 
-[FG-021](FG-021-field-web-v1-today-and-capture.md) remains **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** / **NOT CLOSED**.
+[FG-021](FG-021-field-web-v1-today-and-capture.md) was **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** / **NOT CLOSED** at FG-022 close (2026-09-04). **Subsequent status (2026-09-06):** FG-021 is independently **CLOSED** subject to the explicit SESSION-EXPIRY deferred exception. FG-022 does **not** reopen FG-021.
 
-Roadmap item 12 is unchanged. This gate is **not** item 13 MONITOR and does **not** authorize MONITOR, LEARN, Native Signing, or QuickBooks.
+Roadmap item 12 is unchanged by this gate. This gate is **not** item 13 MONITOR and does **not** authorize MONITOR, LEARN, Native Signing, or QuickBooks.
 
 ---
 

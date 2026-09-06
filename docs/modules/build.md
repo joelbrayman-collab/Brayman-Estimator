@@ -2,17 +2,17 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Partial Current** — Field Capture V1 **CLOSED / OPERATIONAL FOR UAT**. Field Web V1 **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Change Orders remain Project Controls. |
-| Updated | 2026-09-05 |
+| Status | **Partial Current** — Field Capture V1 **CLOSED / OPERATIONAL FOR UAT**. Field Web V1 **CLOSED** (SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**). Change Orders remain Project Controls. |
+| Updated | 2026-09-06 |
 | Code | `app/models/build.py`, `app/services/build.py`, `app/services/build_storage.py`, `app/services/build_rendition.py`, `app/routes/build.py`, `app/cli/build.py`, `app/templates/build/`; `/api/v1` BUILD adapter in `app/routes/api_v1.py` |
-| ADR | [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** (boundary). [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. |
+| ADR | [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** (boundary). [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED**. |
 | CAR | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 
 ## Purpose
 
 Own **field-execution records** for a Project so CalibAi can connect BUILD to the same authoritative project record used for PLAN / PRICE / CONTRACT.
 
-Two first-class surfaces share one BUILD system of record ([ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**): **desktop / office** (review, management, confirmation — FG-020) and **field / iPhone** (fast capture — FG-021 **OPEN**). Neither is scaffolding for the other. Office HTML calls Flask services directly. Field Web consumes Shared API → the same services.
+Two first-class surfaces share one BUILD system of record ([ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**): **desktop / office** (review, management, confirmation — FG-020) and **field / iPhone** (fast capture — FG-021 **CLOSED**). Neither is scaffolding for the other. Office HTML calls Flask services directly. Field Web consumes Shared API → the same services.
 
 ## Owned records (FG-020)
 
@@ -40,22 +40,22 @@ Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Can
 
 **Compatible Renditions (image-only increment)** — `app/services/build_rendition.py`. HEIC/HEIF Originals get an automatic JPEG at `instance/build_renditions/<org>/<project>/<event>/<original_id>/display.jpg` (`BUILD_RENDITION_ROOT`). Pillow + pillow-heif; JPEG quality 85; max long edge 2048 px; EXIF orientation applied. Failure does not roll back Original Source. JPEG/PNG/GIF stay native. Audio is unchanged. No schema. Event Detail renders the JPEG as **Photo** with an **Original** link. Hub Field Observations list is unchanged (no thumbnail redesign).
 
-**Not implemented:** Project Closeout / archive-and-purge; Observation Delete; remaining FG-021 durability/UX UAT (session-expiry **deferred**); transcription; audio conversion; MONITOR; auto-Change Order. Field Web `/field` Today + Capture **is implemented** ([FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **OPEN**). HEIC real-device Files/Browse UAT is **PASS** (Event **34** / Original **32**). Mixed capture UAT is **PASS** (Event **35**). Background/foreground persistence UAT is **PASS** (Event **36** / Original **36**). CSRF recovery UAT is **PASS** (Event **39** / Original **39**). Portrait / one-handed / outdoor readability UAT is **PASS**. Landscape-tolerance real-iPhone UAT is **PASS**. Current-iPhone field-usability is **PASS**. Primary UAT device is iPhone 14 / iOS 26.6.1 / Safari. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete does **not** block FG-021 closure.
+**Not implemented:** Project Closeout / archive-and-purge; Observation Delete; server-side per-login session revocation / idle timeout; transcription; audio conversion; MONITOR; auto-Change Order. Field Web `/field` Today + Capture **is implemented** ([FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED**). **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED** (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED). HEIC real-device Files/Browse UAT is **PASS** (Event **34** / Original **32**). Mixed capture UAT is **PASS** (Event **35**). Background/foreground persistence UAT is **PASS** (Event **36** / Original **36**). CSRF recovery UAT is **PASS** (Event **39** / Original **39**). Portrait / one-handed / outdoor readability UAT is **PASS**. Landscape-tolerance real-iPhone UAT is **PASS**. Current-iPhone field-usability is **PASS**. Primary UAT device is iPhone 14 / iOS 26.6.1 / Safari. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete remains **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**.
 
 **Storage lifecycle:** Active projects may retain Original Source **plus** regenerable Compatible Renditions. After a separately governed Project Closeout, archive Original Source, verify, then purge renditions first and duplicate active originals second. Do **not** accumulate redundant copies indefinitely. FG-020 must not block that future path. Closeout is **not** this gate.
 
 ## Dependencies
 
-- Authentication before field capture ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md); [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**). [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Live current = head `d2e3f4a5b6c7`.
+- Authentication before field capture ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md); [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**). [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED**. Live current = head `d2e3f4a5b6c7`.
 
 ## Related
 
 - [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**
 - [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**
 - [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**
-- [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**
-- [architecture/field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md) — Item 12 **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**
-- [architecture/fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md) — implementation recon **COMPLETE**; product **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**
+- [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED** (SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**)
+- [architecture/field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md) — Item 12 **CLOSED**
+- [architecture/fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md) — implementation recon **COMPLETE**; product **CLOSED** subject to SESSION-EXPIRY deferred exception
 - [architecture/build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md) (Original Source / Compatible Rendition / Closed Project Archive — HEIC/HEIF JPEG renditions **implemented**; Closeout **not implemented**)
 - [modules/projects.md](projects.md) (Change Orders)
 - [modules/plan-intelligence.md](plan-intelligence.md)

@@ -57,6 +57,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-06 FG-023 approval — not authorized by CAR-001):** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**. CAR-001 still does **not** authorize MONITOR product code.
 
+**Subsequent status (2026-09-06 FG-023 preflight — not authorized by CAR-001):** [fg-023-monitor-v1-implementation-preflight.md](fg-023-monitor-v1-implementation-preflight.md) is **COMPLETE**. Readiness **B**. CAR-001 still does **not** authorize MONITOR product code.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

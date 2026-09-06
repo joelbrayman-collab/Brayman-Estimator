@@ -22,11 +22,13 @@ NOT IMPLEMENTED
 
 Accepting [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) does **not** authorize implementation. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **APPROVED** and still does **not** authorize product code, schema, or migration until a separate implementation prompt exists. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
-Readiness: **FEATURE GATE APPROVED — IMPLEMENTATION READINESS / PREFLIGHT NEXT. DO NOT IMPLEMENT FROM APPROVAL.**
+Readiness: **FEATURE GATE APPROVED — IMPLEMENTATION PREFLIGHT COMPLETE. DO NOT IMPLEMENT FROM PREFLIGHT.**
 
 **Subsequent status (2026-09-06):** FG-023 drafted. Office Direct Cost actuals are **in** the draft gate (BUILD `ProjectDirectCostActual`). No model or migration created.
 
 **Subsequent status (2026-09-06 FG-023 approval):** FG-023 **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**. Joel/ChatGPT accepted the gate as written, including correction semantics (`amount >= 0`; superseding successor may carry `0.00`). No product code. No migration.
+
+**Subsequent status (2026-09-06 FG-023 implementation preflight):** [fg-023-monitor-v1-implementation-preflight.md](fg-023-monitor-v1-implementation-preflight.md) **COMPLETE**. Readiness **B. READY WITH EXPLICIT NON-BLOCKING NOTES**. Implementation remains **NOT AUTHORIZED**.
 
 ---
 

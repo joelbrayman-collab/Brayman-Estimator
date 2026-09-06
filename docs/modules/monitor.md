@@ -35,7 +35,7 @@ Dated MONITOR **comparison snapshots** and dated **forecast snapshots** only. So
 
 ## Current implementation
 
-**None.** [FG-011](../feature-gates/FG-011-project-hub-ux.md) Project Hub labels MONITOR **Future**. No MONITOR models, routes, or UI. V1 design freeze: [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md). Feature Gate: [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**.
+**None.** [FG-011](../feature-gates/FG-011-project-hub-ux.md) Project Hub labels MONITOR **Future**. No MONITOR models, routes, or UI. V1 design freeze: [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md). Preflight: [fg-023-monitor-v1-implementation-preflight.md](../architecture/fg-023-monitor-v1-implementation-preflight.md) **COMPLETE**. Feature Gate: [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**.
 
 ## Dependencies
 

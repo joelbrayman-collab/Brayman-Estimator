@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-06 — FG-023 MONITOR V1 implementation preflight
+
+| Field | Content |
+|-------|---------|
+| ID | FG-023 MONITOR V1 — implementation preflight |
+| Status | **PREFLIGHT COMPLETE / READY WITH EXPLICIT NON-BLOCKING NOTES.** Implementation **NOT AUTHORIZED.** [fg-023-monitor-v1-implementation-preflight.md](architecture/fg-023-monitor-v1-implementation-preflight.md). |
+| Branch | `main` |
+| Base commit | `64b6a5472613f00b862170bd57be07486a11f91f` |
+| Objective | Pin later implementation mechanics for approved FG-023. Do not implement MONITOR. Do not create a migration. |
+| Deliverables | Canonical preflight artifact; current-authority pins. Frozen FG-023 contract preserved. No product code. No tests. No migration. |
+| Validation | Docs-only. Last governed product-changing suite: dedicated FG-021 **20**; focused **148**; full **558**. Live **39** Events / **39** Originals. Alembic current = head `d2e3f4a5b6c7`. |
+| Architectural findings | No `ProjectDirectCostActual` exists. Hub `#hub-monitor` remains Future. Field Events remain evidence only. Expected later `down_revision = d2e3f4a5b6c7`. Non-blocking notes: future-dated `incurred_on`; GM display digits; multiple Accepted Proposals. |
+| Open decisions | Separate implementation authorization. Observation Delete **QUEUED**. |
+| Next milestone | Separate implementation prompt. Do not implement MONITOR from this preflight. |
+| Commit | this docs-only preflight record |
+| Date | 2026-09-06 |
+
 ### 2026-09-06 — FG-023 MONITOR V1 Feature Gate approval
 
 | Field | Content |

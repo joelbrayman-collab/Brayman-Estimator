@@ -303,4 +303,4 @@ Office-only:
 | ChatGPT review | **Approved as written** 2026-09-06. |
 | Cursor | Documentation-only approval record. No product code. No migration. |
 
-**Next governed action:** IMPLEMENTATION READINESS / PREFLIGHT for approved FG-023. Do **not** implement MONITOR from this approval. A separate implementation Cursor prompt is required.
+**Next governed action:** SEPARATE IMPLEMENTATION AUTHORIZATION for approved FG-023. Preflight: [fg-023-monitor-v1-implementation-preflight.md](../architecture/fg-023-monitor-v1-implementation-preflight.md) **COMPLETE**. Do **not** implement MONITOR from this gate document or from preflight.

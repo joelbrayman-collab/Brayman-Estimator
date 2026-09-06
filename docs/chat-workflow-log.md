@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-06 — FG-023 MONITOR V1 implementation preflight (docs + read-only inspect)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-06 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN - CalibAi 5 Sep 2026** |
+| Objective | Pin implementation-ready FG-023 mechanics. Do not implement MONITOR. Do not create a model or migration. |
+| Business decision | Preflight **COMPLETE**. Readiness **B. READY WITH EXPLICIT NON-BLOCKING NOTES**. FG-023 remains **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**. Item 13 still **NOT AUTHORIZED FOR CODE**. |
+| Architectural decision | Frozen FG-023 contract unchanged. BUILD `ProjectDirectCostActual` field/constraint/supersession pins recorded. MONITOR live projection service contract recorded. No new ADR. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — FG-023 MONITOR V1 IMPLEMENTATION READINESS / PREFLIGHT (docs + read-only). |
+| Files expected to change | Canonical preflight artifact; current-authority pins; recon subsequent status. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; live DB; FG-021/FG-022 product meaning; substantive FG-023 contract identities. |
+| Implementation result | Documentation only. Product code unchanged. Tests unchanged. Database unchanged. No migration. No ADR accepted. Live **39** / **39**. Live current = head `d2e3f4a5b6c7`. |
+| Tests | Product pytest not re-run (docs-only). Last governed product-changing baseline remains dedicated **20** / focused **148** / full **558**. `git diff --check` on this docs pass. |
+| Project-state-report update | Yes — FG-023 preflight. |
+| Milestone entry update | Yes. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Future-dated `incurred_on`; GM display digits; multiple Accepted Proposals → `AMBIGUOUS_COMMITMENT`. Observation Delete **QUEUED**. SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. |
+| Next approved step | Separate FG-023 implementation authorization. Do not implement MONITOR from this preflight. |
+| Next approved prompt | Separate implementation prompt (slices A/B; live migrate/UAT remains C). |
+| Commit hash | (this commit) |
+
 ### 2026-09-06 — FG-023 MONITOR V1 Feature Gate approval (docs only)
 
 | Field | Content |

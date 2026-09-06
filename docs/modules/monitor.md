@@ -2,10 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Proposed / Intended** — **not implemented** |
-| Updated | 2026-08-30 |
+| Status | **Proposed / Intended** — **not implemented**. V1 recon **COMPLETE**. **NOT FEATURE-GATED / NOT AUTHORIZED FOR CODE**. |
+| Updated | 2026-09-06 |
 | Code | None |
 | ADR | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (baseline and Project Gross Margin governance; implementation not authorized) |
+| Recon | [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) **COMPLETE** |
 | CAR | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 
 ## Purpose
@@ -34,7 +35,7 @@ Dated MONITOR **comparison snapshots** and dated **forecast snapshots** only. So
 
 ## Current implementation
 
-**None.** [FG-011](../feature-gates/FG-011-project-hub-ux.md) Project Hub labels MONITOR **Future**. No MONITOR models, routes, or UI.
+**None.** [FG-011](../feature-gates/FG-011-project-hub-ux.md) Project Hub labels MONITOR **Future**. No MONITOR models, routes, or UI. V1 design freeze: [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) (**RECONNAISSANCE ONLY**).
 
 ## Dependencies
 

@@ -77,7 +77,7 @@ Platform-shared (not org-owned): `jurisdiction_definitions`, `jurisdiction_alias
 ## Open decisions
 
 - Whether Project Controls becomes its own top-level module doc
-- MONITOR implementation remains **not started**. Baseline governance is [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (composed frozen baseline; Project Gross Margin). Actuals and MONITOR UI are not implemented.
+- MONITOR implementation remains **not started**. Baseline governance is [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**. V1 recon [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) is **COMPLETE**. MONITOR remains **NOT FEATURE-GATED / NOT AUTHORIZED FOR CODE**.
 
 ## Relevant tests
 
@@ -90,4 +90,4 @@ Platform-shared (not org-owned): `jurisdiction_definitions`, `jurisdiction_alias
 
 - [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted**
 - [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted**
-- [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR not implemented)
+- [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR not implemented; V1 recon complete)

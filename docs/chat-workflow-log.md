@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-06 — MONITOR V1 / Item 13 implementation reconnaissance (docs only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-06 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN - CalibAi 5 Sep 2026** |
+| Objective | Freeze smallest lawful MONITOR V1 design. Do not implement MONITOR. Do not create/approve a Feature Gate. Do not accept a new ADR. |
+| Business decision | Item 13 **RECON COMPLETE / NOT IMPLEMENTED / NOT FEATURE-GATED / NOT AUTHORIZED FOR CODE**. Feature-gate readiness **READY FOR FEATURE-GATE DRAFT**. Field Events **EVIDENCE ONLY**, not actual cost. Recommended V1: Hub comparison projection + BUILD office Direct Cost actuals. Forecast out of V1. |
+| Architectural decision | No new ADR. ADR-021 remains the commercial baseline. MONITOR owns no V1 durable table. Actuals, if gated, are BUILD-owned `ProjectDirectCostActual` (design freeze only; not created). |
+| Prompt template used | Bounded read-only implementation reconnaissance + docs-only current-authority cleanup. |
+| Approved Cursor prompt summary | BRAYMAN — ROADMAP ITEM 13 / MONITOR V1 READ-ONLY IMPLEMENTATION RECONNAISSANCE. |
+| Files expected to change | Recon artifact; current-authority docs; three CURRENT-looking stale pins (roadmap near-term subsection; Observation Delete capture header/priority; modules README live-head). |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; live DB; Feature Gate files (no new FG); ADR body except index cross-ref. |
+| Implementation result | Documentation only. Product code unchanged. Tests unchanged. Database unchanged. No migration. No Feature Gate. No ADR accepted. Live **39** / **39**. Live current = head `d2e3f4a5b6c7`. |
+| Tests | Product pytest not re-run (docs-only). Last governed product-changing baseline remains dedicated **20** / focused **148** / full **558**. `git diff --check` on this docs pass. |
+| Project-state-report update | Yes — Item 13 recon complete. |
+| Milestone entry update | Yes — recon recorded. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Feature Gate still required before code. Joel freeze: include office actuals in V1 (recommended yes); incremental vs restated; no MONITOR snapshot table. Observation Delete **QUEUED**. SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. |
+| Next approved step | Draft MONITOR V1 Feature Gate from the recon. Do not implement MONITOR. |
+| Next approved prompt | MONITOR V1 Feature Gate draft (docs only). |
+| Commit hash | (this commit) |
+
 ### 2026-09-06 — FG-021 CLOSED with SESSION-EXPIRY deferred exception (docs only)
 
 | Field | Content |

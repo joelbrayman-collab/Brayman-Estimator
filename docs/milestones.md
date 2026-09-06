@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-06 — MONITOR V1 / Item 13 implementation reconnaissance
+
+| Field | Content |
+|-------|---------|
+| ID | Roadmap Item 13 MONITOR V1 implementation reconnaissance |
+| Status | **RECON COMPLETE / NOT IMPLEMENTED / NOT FEATURE-GATED / NOT AUTHORIZED FOR CODE.** [monitor-v1-implementation-reconnaissance.md](architecture/monitor-v1-implementation-reconnaissance.md). ADR-021 remains **Accepted** architecture only. |
+| Branch | `main` |
+| Base commit | `c1ec5f35e77f263d8191300a34e87490cfcb81bb` |
+| Objective | Freeze smallest lawful MONITOR V1 design. Do not implement MONITOR. Do not create a Feature Gate. |
+| Deliverables | Recon artifact; current-authority pins; three CURRENT-looking stale-authority repairs. No product code. No tests. No migration. No database mutation. |
+| Validation | Docs-only. Last governed product-changing suite: dedicated FG-021 **20**; focused **148**; full **558**. Live **39** Events / **39** Originals. Alembic current = head `d2e3f4a5b6c7`. |
+| Architectural findings | No verified Actual Direct Cost records exist. Field Events are evidence only. CO is sell-side revenue delta, not cost. Smallest useful V1 is Hub projection plus recommended BUILD office Direct Cost actuals. Forecast out of V1. Ready for Feature Gate draft. |
+| Open decisions | Include office actuals in V1 (recommended yes). Incremental vs restated-to-date. No MONITOR snapshot table in V1. Observation Delete **QUEUED**. |
+| Next milestone | Draft MONITOR V1 Feature Gate. Do not implement MONITOR. |
+| Commit | this docs-only recon |
+| Date | 2026-09-06 |
+
 ### 2026-09-06 — FG-021 CLOSED with SESSION-EXPIRY deferred exception
 
 | Field | Content |

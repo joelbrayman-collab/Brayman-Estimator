@@ -49,6 +49,10 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-04 current-state reconciliation — not authorized by CAR-001):** [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN**. Latest product-changing suite **557 passed** (dedicated FG-021 **19**; focused **147**). Approved presentation source custody **CLOSED**. Legal Content Gate **empty**. CAR-001 still does **not** authorize Native Signing production, MONITOR, Project Closeout, reusable-template extraction, or closing FG-021.
 
+**Subsequent status (2026-09-06 FG-021 OPTION 2 close — not authorized by CAR-001):** [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **CLOSED**. SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**. Live current = head **`d2e3f4a5b6c7`**. Full suite **558**. CAR-001 still does **not** authorize MONITOR implementation.
+
+**Subsequent status (2026-09-06 MONITOR V1 recon — not authorized by CAR-001):** MONITOR V1 implementation reconnaissance is **COMPLETE** ([monitor-v1-implementation-reconnaissance.md](monitor-v1-implementation-reconnaissance.md)). MONITOR remains **NOT IMPLEMENTED / NOT FEATURE-GATED / NOT AUTHORIZED FOR CODE**. CAR-001 still does **not** authorize MONITOR product code. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

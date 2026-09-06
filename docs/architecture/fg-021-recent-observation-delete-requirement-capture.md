@@ -2,25 +2,27 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **CAPTURED / QUEUED / NOT AUTHORIZED.** Do **not** implement while FG-021 IndexedDB photo-put repair re-UAT is open. |
+| Status | **CAPTURED / QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING.** Retention policy **not** chosen. Do **not** implement from MONITOR recon. |
 | Date | 2026-09-02 |
 | Product | The Estimator / CalibAi |
 | Captured from | Joel — Field Web Recent Observations Delete / test cleanup; iPhone **swipe left → Delete** UX (2026-09-02) |
-| Related | [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** · [build-media-storage-lifecycle.md](build-media-storage-lifecycle.md) |
+| Related | [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted** · [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED** (SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**) · [build-media-storage-lifecycle.md](build-media-storage-lifecycle.md) |
 
 This document **captures a requirement**. It does **not** authorize implementation. It does **not** choose a deletion model. It does **not** create a Feature Gate, ADR, or migration.
 
 **Do not delete any existing Field Observations from this capture.**
 
+**Subsequent status (2026-09-06):** [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **CLOSED**. SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**. Observation Delete remains **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Header/priority language that said FG-021 was OPEN and that photo-put re-UAT was current priority is **stale current-authority** and is repaired here. The captured user requirement below is unchanged.
+
 ---
 
 ## Current priority (do not skip)
 
-1. Finish FG-021 IndexedDB photo-put repair **small-JPEG iPhone re-UAT**.
-2. Joel/ChatGPT review this capture.
-3. Only then: architecture recon → Feature Gate answers → approved Cursor prompt.
+1. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **CLOSED**. Do **not** reopen it from this capture.
+2. Observation Delete remains **QUEUED**. Retention / deletion model is **not** chosen. Do **not** implement Delete from MONITOR V1 recon.
+3. Only after separate Joel/ChatGPT authorization: architecture recon → Feature Gate answers → approved Cursor prompt.
 
-FG-021 remains **OPEN**. Do **not** close it from this capture.
+This capture does **not** block MONITOR Feature Gate drafting. It does **not** authorize Observation Delete.
 
 ---
 

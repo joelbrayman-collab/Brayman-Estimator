@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-06 — FG-021 landscape-tolerance real-iPhone UAT PASS (docs only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-06 |
+| Branch | `main` @ `057ff15ce91ca8fd15ca815e9f7fd972e34c6f2c` (start) |
+| Active ChatGPT development chat title | BRAYMAN - CalibAi 5 Sep 2026 |
+| Objective | Record current-iPhone landscape / orientation / field-usability PASS after Joel disabled Portrait Orientation Lock. Do not modify product or tests. Do not close FG-021. |
+| Business decision | **LANDSCAPE TOLERANCE PASS.** **ORIENTATION / PORTRAIT PASS.** **CURRENT-IPHONE FIELD-USABILITY PASS.** Implemented CSS `057ff15` is sufficient. Initial post-fix FAIL was confounded by iPhone Portrait Orientation Lock **ON** (not a CalibAi product defect). After lock **OFF**, Field adjusted correctly. No second CSS correction. Gate **NOT CLOSED**. SESSION-EXPIRY RECOVERY remains **OPEN / DEFERRED / NOT YET EXERCISED**. Older supported iPhone/Safari smoke pending separate disposition. Observation Delete **QUEUED / NOT AUTHORIZED**. |
+| Architectural decision | None. Current landscape CSS remains sufficient. Do not add a short-wide media-query workaround. |
+| Prompt template used | [cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 LANDSCAPE-TOLERANCE FINAL REAL-IPHONE UAT GOVERNANCE. |
+| Files expected to change | Current/UAT docs only. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; templates; JS; ADR; FG-022. |
+| Implementation result | Docs-only UAT record. Product code unchanged. Tests unchanged. |
+| Tests | Product pytest not re-run (docs-only). Last governed suite remains dedicated **20** / focused **148** / full **558**. `git diff --check` this pass. |
+| Project-state-report update | Yes — PART B this-pass decision recorded. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Session-expiry **deferred**. Older iPhone smoke pending. Observation Delete **QUEUED**. FG-021 still OPEN. |
+| Next approved step | STOP. Do not close FG-021. Do not start older-device or session-expiry UAT. Do not implement Observation Delete. |
+| Next approved prompt | None from this documentation pass. |
+| Commit hash | this commit |
+
 ### 2026-09-06 — FG-021 landscape-tolerance CSS correction (retest required)
 
 | Field | Content |

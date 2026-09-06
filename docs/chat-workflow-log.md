@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-06 — FG-021 landscape-tolerance CSS correction (retest required)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-06 |
+| Branch | `main` @ `2df50177820c8421b091132d8ba1a70ddaaba38a` (start) |
+| Active ChatGPT development chat title | BRAYMAN - CalibAi 5 Sep 2026 |
+| Objective | Smallest CSS-only landscape-tolerance correction. Do not mark landscape PASS. Do not close FG-021. |
+| Business decision | Operator landscape FAIL preserved. Portrait / one-handed / outdoor / general visibility **PASS**. Landscape **FIX IMPLEMENTED / REAL-IPHONE RETEST REQUIRED / NOT YET PASS**. |
+| Architectural decision | `@media (orientation: landscape)` after `min-width: 720px`. Portrait defaults unchanged. No template/JS/API/schema change. |
+| Prompt template used | [cursor-bugfix-template.md](prompts/cursor-bugfix-template.md) |
+| Approved Cursor prompt summary | BRAYMAN — FG-021 LANDSCAPE-TOLERANCE BOUNDED CSS CORRECTION. |
+| Files expected to change | `app/static/css/field.css`; `tests/test_field_web_fg021.py`; current/UAT docs. |
+| Files prohibited from changing | `field.js`; capture/IndexedDB/CSRF/auth/API; Alembic; ADR; FG-022. |
+| Implementation result | Landscape compact grid/row/sticky Save in `field.css`. New CSS contract test. Dedicated **20**. Focused **148**. Full **558**. |
+| Tests | `./venv/bin/python -m pytest tests/test_field_web_fg021.py -q` — **20 passed**. Focused Hub+FG-018+FG-019+both FG-020+FG-021 — **148 passed**. `./venv/bin/python -m pytest -q` — **558 passed**. `git diff --check` clean. |
+| Project-state-report update | Yes — PART B this-pass decision recorded. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Landscape real-iPhone retest. Session-expiry **deferred**. Older iPhone smoke pending. Observation Delete **QUEUED**. FG-021 still OPEN. |
+| Next approved step | STOP. Real-iPhone landscape retest required before PASS. Do not close FG-021. Do not start older-device or session-expiry UAT. |
+| Next approved prompt | None from this implementation pass. |
+| Commit hash | this commit |
+
 ### 2026-09-06 — FG-021 CSRF recovery real-iPhone UAT PASS (docs only)
 
 | Field | Content |

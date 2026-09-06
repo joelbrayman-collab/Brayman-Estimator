@@ -420,7 +420,66 @@ def test_csrf_required_and_replay_after_fresh_token(csrf_app, csrf_client):
 
 
 FIELD_JS = Path(__file__).resolve().parents[1] / "app" / "static" / "js" / "field.js"
+FIELD_CSS = Path(__file__).resolve().parents[1] / "app" / "static" / "css" / "field.css"
 PREPARE_FAIL_MESSAGE = "Unable to prepare this capture for saving. Please retry."
+
+
+def _css_media_block(source: str, query: str) -> str:
+    marker = f"@media {query}"
+    idx = source.index(marker)
+    brace = source.index("{", idx)
+    depth = 0
+    for offset, char in enumerate(source[brace:]):
+        if char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return source[brace : brace + offset + 1]
+    raise AssertionError(f"unclosed {marker}")
+
+
+def test_field_css_landscape_tolerance_contract():
+    source = FIELD_CSS.read_text(encoding="utf-8")
+    default = source.split("@media", 1)[0]
+    wide = _css_media_block(source, "(min-width: 720px)")
+    landscape = _css_media_block(source, "(orientation: landscape)")
+
+    assert ".field-actions" in default
+    assert "flex-direction: column" in default
+    assert "max-width: 42rem" in default
+    assert "min-height: 6rem" in default
+    assert "min-height: 48px" in default
+    assert "min-height: 56px" in default
+    assert "min-height: 44px" in default
+    assert "min-width: 44px" in default
+    assert "(orientation: landscape)" not in default
+    assert "flex-direction: row" not in default
+    assert "position: sticky" not in default
+    assert "grid-template-columns: 1fr 1fr" not in default
+
+    assert source.index("@media (min-width: 720px)") < source.index(
+        "@media (orientation: landscape)"
+    )
+    assert "orientation" not in wide
+    assert "flex-direction: row" in wide
+    assert "grid-template-columns" not in wide
+    assert "position: sticky" not in wide
+    assert "max-width: none" not in wide
+
+    assert "max-width: none" in landscape
+    assert "grid-template-columns: 1fr 1fr" in landscape
+    assert "flex-direction: row" in landscape
+    assert "min-height: 2.75rem" in landscape
+    assert "min-height: 44px" in landscape
+    assert "min-height: 48px" in landscape
+    assert "min-width: 44px" in landscape
+    assert "position: sticky" in landscape
+    assert ".field-save" in landscape
+    assert "min-height: 6rem" not in landscape
+    assert "flex-direction: column" not in landscape
+    assert "(min-width: 720px)" not in landscape
+    assert landscape.count("min-height: 44px") >= 1
 
 
 def _uuid_v4_from_getrandomvalues(random_bytes: bytes) -> str:

@@ -216,3 +216,126 @@ input:focus-visible {
         flex: 1;
     }
 }
+
+@media (orientation: landscape) {
+    body.field-body {
+        padding: calc(8px + var(--field-pad-top)) calc(16px + var(--field-pad-right)) calc(12px + var(--field-pad-bottom)) calc(16px + var(--field-pad-left));
+    }
+
+    .field-header {
+        margin-bottom: 8px;
+    }
+
+    .field-brand img {
+        height: 32px;
+    }
+
+    .field-main {
+        max-width: none;
+    }
+
+    .field-panel {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+    }
+
+    .field-panel > :not(.field-btn):not(.field-file-btn) {
+        grid-column: 1 / -1;
+    }
+
+    .field-panel > form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .field-panel > form > .field-btn {
+        width: 100%;
+        margin: 0;
+        min-height: 44px;
+    }
+
+    .field-panel > .field-btn-ghost,
+    .field-panel > form > .field-btn-ghost {
+        grid-column: 1 / -1;
+    }
+
+    .field-project-name {
+        margin: 0;
+    }
+
+    .field-muted {
+        margin: 0;
+    }
+
+    .field-label {
+        margin: 4px 0 2px;
+    }
+
+    .field-textarea {
+        min-height: 2.75rem;
+        padding: 8px 12px;
+    }
+
+    .field-btn,
+    .field-file-btn {
+        margin: 0;
+        min-height: 44px;
+        padding: 8px 12px;
+    }
+
+    .field-btn-primary,
+    .field-save {
+        min-height: 48px;
+    }
+
+    .field-save {
+        grid-column: 1 / -1;
+        width: 100%;
+        position: sticky;
+        bottom: calc(8px + var(--field-pad-bottom));
+        z-index: 2;
+    }
+
+    .field-logout-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .field-actions {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: stretch;
+    }
+
+    .field-actions .field-btn,
+    .field-actions .field-file-btn {
+        flex: 1 1 12rem;
+        width: auto;
+        min-width: 44px;
+        margin: 0;
+    }
+
+    .field-thumb {
+        max-height: 96px;
+    }
+
+    .field-photo-list {
+        margin: 0;
+    }
+
+    .field-photo-list img {
+        width: 48px;
+        height: 48px;
+    }
+
+    .field-status {
+        min-height: 1em;
+        margin-bottom: 4px;
+    }
+}

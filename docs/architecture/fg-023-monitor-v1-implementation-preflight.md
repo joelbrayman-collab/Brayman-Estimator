@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **SLICE A PREFLIGHT COMPLETE** (2026-09-06). **SLICE B PREFLIGHT COMPLETE** (2026-09-07). **SLICE B IMPLEMENTED / NOT LIVE-MIGRATED** (2026-09-07). [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A + Slice B **IMPLEMENTED / NOT LIVE-MIGRATED**. Hub `#hub-monitor` **in product code**. This document remains the mechanics pin. Live migrate / office UAT remain **not** authorized by this preflight. |
+| Status | **SLICE A PREFLIGHT COMPLETE** (2026-09-06). **SLICE B PREFLIGHT COMPLETE** (2026-09-07). **SLICE B IMPLEMENTED / NOT LIVE-MIGRATED** (2026-09-07). **SLICE C PREFLIGHT COMPLETE** (2026-09-07). [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A + Slice B **IMPLEMENTED / NOT LIVE-MIGRATED**. Slice C **NOT PERFORMED**. Hub `#hub-monitor` **in product code**. This document remains the mechanics pin. Live migrate / office UAT remain **not** authorized by this Slice C preflight. |
 | Date | 2026-09-06 |
 | Parent | Approval commit `64b6a5472613f00b862170bd57be07486a11f91f` |
 | Recon | [monitor-v1-implementation-reconnaissance.md](monitor-v1-implementation-reconnaissance.md) **COMPLETE** |
@@ -26,6 +26,8 @@ This document pins later implementation mechanics. It does **not** amend FG-023.
 **Subsequent status (2026-09-07 Slice B preflight):** Hub + office write-pattern reconnaissance complete. Slice B file allow-list and workflow pinned below. No product code. No migration. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. No live actuals table. Gate **not closed**.
 
 **Subsequent status (2026-09-07 Slice B implementation):** Hub `#hub-monitor` + BUILD office actuals create/supersede POSTs **implemented**. Dedicated tests **35 passed**. Focused **149 passed**. Full suite **593 passed**. Historical Slice A focused **126** and pre-Slice-B focused **137** remain historical. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. No live `project_direct_cost_actuals` table. Gate **not closed**. Live migrate / office UAT **not** performed.
+
+**Subsequent status (2026-09-07 Slice C preflight):** Live-migrate + office-UAT workflow pinned below. No `flask db upgrade`. No office UAT. No product code. No new migration. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. No live actuals table. Gate **not closed**.
 
 ---
 
@@ -674,3 +676,334 @@ No new actuals model; no new migration; QuickBooks; accounting; forecast-final G
 Notes already pinned: `incurred_on` any parseable date (Slice A); GM Hub display = percent via `as_money(gm * 100)` two decimals (display only); `AMBIGUOUS_COMMITMENT` does not pick latest.
 
 This Slice B preflight **does not** authorize implementation.
+
+---
+
+## SLICE C IMPLEMENTATION PREFLIGHT (2026-09-07)
+
+**Status:** **PREFLIGHT COMPLETE / NOT PERFORMED.** This section does **not** authorize live migrate, office UAT, UAT-project creation, or FG-023 close.
+
+```text
+FG-023: APPROVED / OPEN / NOT CLOSED
+SLICE A: IMPLEMENTED / NOT LIVE-MIGRATED
+SLICE B: IMPLEMENTED / NOT LIVE-MIGRATED
+SLICE C: PREFLIGHT COMPLETE / NOT PERFORMED
+MONITOR: IN PRODUCT CODE / NOT LIVE-MIGRATED / NOT OFFICE-UAT-VERIFIED / NOT CLOSED
+THIS PREFLIGHT DOES NOT AUTHORIZE flask db upgrade OR OFFICE UAT
+```
+
+Inspect date: 2026-09-07. Parent product SHA `7dd4d82c927ec2c38a0562e7e1cdedbccabb6662`. Repository Alembic head `e3f4a5b6c7d8`. Live current `d2e3f4a5b6c7`. Live Field **39** Events / **39** Originals. `project_direct_cost_actuals` **absent** live. Dedicated **35** / focused **149** / full **593**. Historical Slice A focused **126** and pre-Slice-B focused **137** remain historical.
+
+Slice A + Slice B product implementation is the **frozen foundation**. Do not redesign `ProjectDirectCostActual`, actuals service, MONITOR calculation, Hub MONITOR, create/supersede routes, commercial identities, or correction semantics.
+
+### C1. Slice C boundary
+
+Three phases. Execute later only under a separate Slice C **execution** prompt. Do not combine with this preflight.
+
+| Phase | Scope | Not this pass |
+|-------|--------|----------------|
+| **1. Live migration** | Apply **existing** revision `e3f4a5b6c7d8` (`down_revision = d2e3f4a5b6c7`) to live SQLite `instance/brayman_estimator.db` | No new migration |
+| **2. Post-migration verification** | Prove current = heads = `e3f4a5b6c7d8`; one graph head; table exists; schema matches committed file; **zero** invented actuals rows; Field **39 / 39** | No schema redesign |
+| **3. Office UAT** | Exercise Hub `#hub-monitor` + office create/supersede on a **new labeled FG-023 UAT project** | No LEARN / QuickBooks / Field Web MONITOR |
+
+FG-023 remains **OPEN** until the closure threshold in C14 is met **and** ChatGPT later authorizes close. Slice C execution may complete migrate + UAT without closing the gate.
+
+### C2. Pre-migration commands (copy for later execution)
+
+Run in **Cursor Terminal** from `/Users/joelbrayman/Desktop/Brayman-Estimator`. Load gitignored `.env` for `SECRET_KEY`. Do **not** run `flask db upgrade` until the later execution prompt.
+
+```bash
+cd /Users/joelbrayman/Desktop/Brayman-Estimator
+git branch --show-current
+git rev-parse HEAD
+git rev-parse origin/main
+git status --short
+git log -1 --oneline
+set -a && . ./.env && set +a
+export FLASK_APP=app.py
+./venv/bin/flask db heads
+./venv/bin/flask db current
+sqlite3 instance/brayman_estimator.db <<'SQL'
+SELECT COUNT(*) AS events FROM field_capture_events;
+SELECT COUNT(*) AS originals FROM field_capture_originals;
+SELECT COUNT(*) AS actuals_table FROM sqlite_master WHERE type='table' AND name='project_direct_cost_actuals';
+SELECT version_num FROM alembic_version;
+SQL
+```
+
+Expected before migrate:
+
+| Check | Expected |
+|-------|----------|
+| Branch | `main` |
+| HEAD = origin/main | later execution parent (this preflight’s product parent is `7dd4d82c927ec2c38a0562e7e1cdedbccabb6662`; re-verify after this docs commit) |
+| Working tree | clean |
+| Staging | empty |
+| `flask db heads` | exactly one line: `e3f4a5b6c7d8 (head)` |
+| `flask db current` | `d2e3f4a5b6c7` |
+| Events / Originals | 39 / 39 |
+| `actuals_table` | 0 |
+| `alembic_version` | `d2e3f4a5b6c7` |
+
+Gitignored byte-for-byte pre-migration copy (FG-021 pattern; `instance/` is gitignored; copy is **not** a recovery procedure unless a later prompt authorizes restore):
+
+```bash
+cp instance/brayman_estimator.db instance/brayman_estimator-backup-before-fg023-e3f4a5b6c7d8.db
+cmp instance/brayman_estimator.db instance/brayman_estimator-backup-before-fg023-e3f4a5b6c7d8.db
+```
+
+### C3. Pinned live-migration command
+
+**Recommended command:**
+
+```bash
+cd /Users/joelbrayman/Desktop/Brayman-Estimator
+set -a && . ./.env && set +a
+export FLASK_APP=app.py
+./venv/bin/flask db upgrade e3f4a5b6c7d8
+```
+
+**Rationale:** The lawful revision is already committed (`migrations/versions/e3f4a5b6c7d8_add_project_direct_cost_actuals_fg023.py`). An **explicit target** is preferred over bare `flask db upgrade` so Slice C cannot overshoot if another revision is minted between prompts. Today there is one graph head, so bare `flask db upgrade` would be equivalent — still use the explicit target.
+
+Do **not** run `flask db downgrade`. Do **not** stamp. Do **not** create another revision.
+
+Migration contract (committed file, frozen): additive `CREATE TABLE project_direct_cost_actuals` only; **no backfill**; existing projects remain valid with zero rows; CHECK `amount >= 0`; CHECK `cost_class IN ('labour','material','subcontract','other_direct')`; CHECK `source = 'OFFICE_MANUAL'`; unique `supersedes_id`.
+
+### C4. Post-migration verification commands (read-only)
+
+```bash
+cd /Users/joelbrayman/Desktop/Brayman-Estimator
+set -a && . ./.env && set +a
+export FLASK_APP=app.py
+./venv/bin/flask db heads
+./venv/bin/flask db current
+sqlite3 instance/brayman_estimator.db <<'SQL'
+SELECT COUNT(*) AS head_rows FROM alembic_version;
+SELECT version_num FROM alembic_version;
+SELECT name FROM sqlite_master WHERE type='table' AND name='project_direct_cost_actuals';
+SELECT sql FROM sqlite_master WHERE type='table' AND name='project_direct_cost_actuals';
+SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='project_direct_cost_actuals' ORDER BY name;
+SELECT COUNT(*) AS actual_rows FROM project_direct_cost_actuals;
+SELECT COUNT(*) AS events FROM field_capture_events;
+SELECT COUNT(*) AS originals FROM field_capture_originals;
+SQL
+```
+
+Expected after migrate, **before** any UAT actuals:
+
+| Check | Expected |
+|-------|----------|
+| heads | `e3f4a5b6c7d8 (head)` — one graph head |
+| current | `e3f4a5b6c7d8` |
+| `alembic_version` row count | 1 |
+| table name | `project_direct_cost_actuals` |
+| schema | columns `id`, `organization_id`, `project_id`, `user_id`, `actor_display_name`, `cost_class`, `amount`, `incurred_on`, `note`, `source`, `supersedes_id`, `created_at`, `provenance`; CHECKs and FKs as in the committed revision |
+| indexes | org, project, user, composite org+project (names as created by the revision) |
+| `actual_rows` | **0** (migration must not invent financial history) |
+| Events / Originals | **39 / 39** |
+
+Then confirm the office app can load Hub GET `/projects/<id>` for an existing project (no write).
+
+### C5. STOP conditions
+
+**STOP before migration if:**
+
+- branch ≠ `main`
+- HEAD ≠ origin/main
+- working tree dirty or staging non-empty
+- `flask db heads` ≠ single `e3f4a5b6c7d8`
+- live current ≠ `d2e3f4a5b6c7`
+- `project_direct_cost_actuals` already exists
+- Field Events or Originals ≠ 39
+- committed migration file content differs from `e3f4a5b6c7d8_add_project_direct_cost_actuals_fg023.py` as on `main`
+- Flask cannot start / `SECRET_KEY` missing for non-test CLI
+
+**STOP after migration if:**
+
+- current ≠ `e3f4a5b6c7d8`
+- heads ≠ one `e3f4a5b6c7d8`
+- table absent or schema unexpected
+- `actual_rows` ≠ 0 immediately after upgrade
+- Field Event / Original counts changed
+- existing live data damaged
+- Hub cannot load
+
+Do **not** improvise repairs, downgrade, stamp, or restore from backup unless a **separate** ChatGPT prompt authorizes that recovery.
+
+### C6. UAT project / data strategy (live inspect 2026-09-07)
+
+**Recommendation: C — a new purpose-built FG-023 UAT project is required during the later authorized execution pass.**
+
+Do **not** create it in this preflight. ChatGPT must authorize creation in the Slice C execution prompt.
+
+Live inspect (read-only) found **no** existing project that is lawful for MONITOR happy-path writes:
+
+| Live project | Why not primary MONITOR UAT |
+|--------------|------------------------------|
+| 1 `Estimator Project` | Empty Lead; not a labeled FG-023 vessel; do not invent financial history here |
+| 2 `FG-009 UAT Test` | **Two** Accepted Proposals (`PROP-FG017-UAT-ISSUE`, `PROP-FG017-UAT-ACCEPT-DIRECT`) → `AMBIGUOUS_COMMITMENT`; source version 2 is **unlocked Draft**; all COs **Draft** (excluded from revenue). Contaminating FG-009/FG-012/FG-017 residue is prohibited |
+| 3 `FG-010 UAT` | Take-off residue; no suitable commercial commitment |
+| 4 `FG015-UAT-ISO-OTHER-ORG` | `ORG-FG014-UAT` isolation project — keep for fail-closed, **not** ORG-001 writes |
+| 5–8 `FG015-UAT-*` | Permit-foundation residue; no Accepted Proposal |
+| 9 `FG016-UAT-PRATT` | Governed Pratt permit UAT — do not add synthetic actuals |
+| 10–11 FG-016 unsupported synthetics | Project **11** holds **21** Field Events (FG-021 real-iPhone residue). Do not mix financial actuals |
+| 12 `FG-018 UAT Actor Project` | **18** Field Events; Draft estimate; snapshot pre-tax selling price **0** (missing GM denominator). Do not mix |
+
+3415 Roger Stevens / Allen Jacques is a **document-package reference**, not a live project in this DB. Option **D** (real project + Joel-supplied real actuals) is **not** the V1 proof path for four classes + `0.00` correction.
+
+**Required later UAT vessel (execution-authorized, labeled synthetic):**
+
+- Organization: `ORG-001`
+- Suggested identity: project number `FG023-UAT-MONITOR`, name containing `FG-023 UAT`
+- Exactly **one** Accepted Proposal
+- Locked source `EstimateVersion` with `EstimatePricingSnapshot`
+- One **Approved** CO (subtotal + markup; tax excluded from MONITOR revenue)
+- One **Pending Approval** CO and one **Rejected** CO (exclusion proof)
+- No Field Event writes on this project during Slice C
+
+**Read-only secondary Hub checks** (no actuals writes): an existing no-commitment ORG-001 project (for example FG-015 labeled projects) may show `MISSING_CUSTOMER_COMMITMENT`. Project 2 may show `AMBIGUOUS_COMMITMENT`. Do not “fix” those states.
+
+**Dollar values:** this preflight does **not** create amounts. Slice C execution must use **Joel/ChatGPT-authorized labeled synthetic** amounts in the execution prompt. Recommended candidates for that later authorization (replace if Joel prefers): labour `100.00`, material `50.00`, subcontract `25.00`, other_direct `10.00`, then supersede `other_direct` to `0.00`. Do not copy Allen Jacques / Winchester commercial numbers.
+
+**Office UAT port:** recommended **5014** (next after FG-020 **5013**), CSRF on, debug off, gitignored `.env` `SECRET_KEY`. Do not start the server in this preflight.
+
+### C7. Hub baseline UAT (before any actual-cost write)
+
+PHYSICAL OFFICE UAT REQUIRED on `FG023-UAT-MONITOR` after migrate + commercial setup:
+
+1. Authenticated office user; ORG-001; correct project Hub.
+2. MONITOR lifecycle chip navigates to `#hub-monitor`.
+3. Original Estimated Direct Cost, Original Estimated Pre-Tax Selling Price, Original Estimated GM display from service output.
+4. Approved/Invoiced CO revenue delta includes the Approved CO only (subtotal + markup; tax excluded).
+5. Pending / Rejected COs excluded.
+6. Current Authorized Pre-Tax Revenue = original pre-tax selling price + authorized CO delta.
+7. Current Authorized Estimated Cost remains Original Estimated Direct Cost (disclaimer copy).
+8. **MISSING ACTUALS** shown; actual totals **not** `$0.00`; Actual-to-Date GM and GM variance withheld.
+9. Page must not contain `Inf`, `NaN`, or `NET PROFIT`.
+10. Field Observations remain evidence-only on this Hub.
+
+LEARN remains Future.
+
+### C8. Actual-cost create UAT
+
+PHYSICAL OFFICE UAT REQUIRED. First write: **labour**, authorized positive amount, parseable `incurred_on`, optional note.
+
+Verify after save:
+
+- Redirect to Hub `#hub-monitor`
+- ACTIVE row visible; `OFFICE_MANUAL`; actor snapshot present; org/project owned
+- Class total and Actual Direct Cost to Date update
+- MISSING ACTUALS clears
+- Actual-to-Date GM and GM variance appear when denominator is valid
+- Original estimate identities unchanged
+
+**Explicit ACTIVE `0.00` ≠ `MISSING_ACTUALS`:** do **not** use `0.00` as the first create. Prove it via the **successor** in C10 (`other_direct` → `0.00` while other ACTIVE rows remain). The `other_direct` class then shows `$0.00` as PRESENT.
+
+### C9. Cost-class UAT
+
+PHYSICAL OFFICE UAT REQUIRED for all four classes on the new labeled project (small synthetic history, isolated to FG-023):
+
+- labour (first create)
+- material
+- subcontract
+- other_direct
+
+Then confirm class rollup + total. Values only as authorized in the execution prompt.
+
+### C10. Supersession / `0.00` correction UAT
+
+PHYSICAL OFFICE UAT REQUIRED.
+
+- Correct the ACTIVE `other_direct` row via supersede to authorized `0.00`
+- Successor created; original durable; original excluded from ACTIVE rollup; successor included
+- SUPERSEDED history visible; no DELETE; no in-place amount edit
+- Totals, Actual-to-Date GM, and GM variance recalculate
+- Original estimated identities remain frozen
+
+Non-active correction → 409 is **AUTOMATED COVERAGE SUFFICIENT FOR V1** (`tests/test_monitor_v1_fg023.py`). Optional physical: submit supersede on the now-superseded row if cheap.
+
+### C11. Fail-closed / validation UAT
+
+| Case | Classification | Rationale |
+|------|----------------|-----------|
+| Non-active correction → 409 | **AUTOMATED COVERAGE SUFFICIENT FOR V1** | Dedicated HTTP test already asserts 409 |
+| Cross-project correction → 404 | **AUTOMATED COVERAGE SUFFICIENT FOR V1** | Dedicated HTTP test; do not mutate live sibling projects |
+| Cross-org → 404 | **AUTOMATED COVERAGE SUFFICIENT FOR V1** | Dedicated HTTP test; keep `ORG-FG014-UAT` isolation project 4 untouched |
+| CSRF missing token | **AUTOMATED COVERAGE SUFFICIENT FOR V1** | Dedicated CSRF test; office CSRF already operational (FG-018) |
+| Malformed amount/date | **AUTOMATED COVERAGE SUFFICIENT FOR V1** | Service/HTTP validation tests; optional cheap empty-amount office submit |
+| No DELETE route | **AUTOMATED COVERAGE SUFFICIENT FOR V1** | Dedicated 404 on `/delete` |
+
+Do not perform dangerous live cross-org SQL or Field-project writes merely to re-prove automated isolation.
+
+### C12. Commercial identity verification (verify, do not redesign)
+
+PHYSICAL OFFICE UAT REQUIRED arithmetic check on the labeled project after actuals exist:
+
+```text
+Original Estimated GM =
+  1 - (Original Estimated Direct Cost / Original Estimated Pre-Tax Selling Price)
+
+Actual-to-Date GM =
+  1 - (Actual Direct Cost to Date / Current Authorized Pre-Tax Revenue)
+
+GM Variance = Actual-to-Date GM - Original Estimated GM
+
+Current Authorized Pre-Tax Revenue =
+  Original Estimated Pre-Tax Selling Price
+  + Approved/Invoiced CO Pre-Tax Revenue Delta
+
+CO revenue delta = subtotal + markup
+Tax excluded.
+Current Authorized Estimated Cost = Original Estimated Direct Cost
+Field Evidence excluded.
+```
+
+Hub display: money `$` + two decimals; GM `as_money(gm * 100)` + `%` two decimals; missing GM = `not calculated`.
+
+No forecast-final GM. No cost-to-complete. No QuickBooks. No NET PROFIT.
+
+### C13. UAT disposition vocabulary
+
+Each required **physical** item becomes exactly one of:
+
+- **PASS**
+- **FAIL**
+- **DEFERRED / NOT YET EXERCISED**
+- **WAIVED AS NOT PRACTICAL**
+
+Do not silently convert untested items to PASS. Automated-classified items may be recorded **AUTOMATED COVERAGE SUFFICIENT FOR V1** without a physical PASS.
+
+**Block FG-023 closure:** migration FAIL; post-migration verification FAIL; Hub cannot load; commercial identity FAIL; create FAIL; supersede/`0.00` FAIL; MISSING ACTUALS shown as `$0.00`; Inf/NaN/NET PROFIT; Field continuity changed; invented migration rows.
+
+**Bounded repair (separate prompt):** product defect found in Slice A/B during UAT — STOP; do not silently redesign.
+
+**Non-blocking future:** LEARN; Field Web MONITOR; Observation Delete; session revocation; items in C15.
+
+### C14. FG-023 closure threshold (do not close in this preflight)
+
+ChatGPT may later authorize close only if **all** are true:
+
+- Live migrate PASS (`current = heads = e3f4a5b6c7d8`)
+- Post-migration verification PASS (table present; **zero** rows before UAT writes; Field **39 / 39**)
+- Hub MONITOR office UAT PASS (baseline + MISSING ACTUALS)
+- Actual create PASS (four classes)
+- Supersede / `0.00` correction PASS
+- Commercial identity verification PASS
+- Required fail-closed behavior **AUTOMATED COVERAGE SUFFICIENT FOR V1** (or physical PASS)
+- Current-authority docs reconciled
+- Working tree clean; HEAD = origin/main
+- Joel/ChatGPT explicit close authorization
+
+Slice C **execution** should migrate + UAT + record dispositions. It should **not** close FG-023 unless that execution prompt explicitly authorizes close **after** the UAT report.
+
+### C15. Out of scope (unchanged by successful MONITOR UAT)
+
+LEARN; recommendations; machine learning; QuickBooks; forecast-final GM; cost-to-complete; Field Web MONITOR; Observation Delete; session revocation; external AI; payroll; GL; AP; AR; invoicing/accounting; automatic Field Evidence → actual cost; NET PROFIT; unrelated Hub redesign; another migration.
+
+### C16. Slice C readiness
+
+**B. READY WITH EXPLICIT NON-BLOCKING NOTES**
+
+Notes: new labeled `FG023-UAT-MONITOR` project required at execution (strategy **C**); synthetic amounts deferred to execution authorization; fail-closed HTTP cases accepted as automated for V1; explicit `flask db upgrade e3f4a5b6c7d8`; gitignored pre-migration copy; FG-023 close is a later decision.
+
+This Slice C preflight **does not** authorize live migrate, office UAT, or UAT-project creation.

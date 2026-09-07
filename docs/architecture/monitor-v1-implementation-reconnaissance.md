@@ -35,6 +35,8 @@ Readiness: **FEATURE GATE APPROVED — IMPLEMENTATION PREFLIGHT COMPLETE. DO NOT
 
 **Subsequent status (2026-09-07 FG-023 Slice B):** Hub `#hub-monitor` + BUILD office actuals create/supersede **implemented**. Live migrate **not** performed. Office UAT **not** started. FG-023 **not closed**.
 
+**Subsequent status (2026-09-07 FG-023 Slice C preflight):** Live-migrate + office-UAT workflow pinned. Live migrate **not** performed. Office UAT **not** started. FG-023 **not closed**.
+
 ---
 
 ## Landed inventory (do not change here)

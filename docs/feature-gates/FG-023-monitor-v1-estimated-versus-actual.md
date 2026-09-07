@@ -20,7 +20,7 @@
 | Layer | State |
 |-------|--------|
 | Feature Gate (this document) | **APPROVED / OPEN** (2026-09-06). **NOT CLOSED.** |
-| Implementation | **SLICE A IMPLEMENTED.** **SLICE B IMPLEMENTED.** Live migrate / office UAT **NOT STARTED.** |
+| Implementation | **SLICE A IMPLEMENTED.** **SLICE B IMPLEMENTED.** Slice C **PREFLIGHT COMPLETE / NOT PERFORMED.** Live migrate / office UAT **NOT STARTED.** |
 | Schema / Alembic | Revision **`e3f4a5b6c7d8`** created (`down_revision = d2e3f4a5b6c7`). **NOT APPLIED TO LIVE DB.** Live current remains **`d2e3f4a5b6c7`**. |
 | New ADR | **None.** ADR-021 already accepted. |
 | MONITOR product code | Slice A service `app/services/monitor.py` `assemble_monitor_v1`. Hub `#hub-monitor` **in product code**. **No MONITOR snapshot table.** **Not live-migrated.** |
@@ -308,4 +308,4 @@ Office-only:
 | ChatGPT review | **Approved as written** 2026-09-06. |
 | Cursor | Slice A implemented 2026-09-06. Slice B implemented 2026-09-07 (Hub `#hub-monitor` + BUILD office actuals create/supersede). Live migrate **not** this pass. |
 
-**Next governed action:** FG-023 **SLICE C** live `flask db upgrade` + office UAT + close — **separate authorization**. Slice A + Slice B **IMPLEMENTED / NOT LIVE-MIGRATED**. Hub `#hub-monitor` is in product code; **not** live-migrated; **not** office-UAT-verified; **not** operational in live/UAT. Do **not** live-migrate from this Slice B result. Do **not** start office UAT. Do **not** start LEARN. Do **not** start Observation Delete.
+**Next governed action:** FG-023 **SLICE C EXECUTION** live `flask db upgrade e3f4a5b6c7d8` + office UAT — **separate authorization**. Slice C **PREFLIGHT COMPLETE / NOT PERFORMED**. Slice A + Slice B **IMPLEMENTED / NOT LIVE-MIGRATED**. Do **not** live-migrate from this preflight. Do **not** start office UAT. Do **not** create UAT actuals. Do **not** start LEARN. Do **not** start Observation Delete.

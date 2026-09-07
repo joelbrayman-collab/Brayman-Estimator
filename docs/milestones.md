@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-07 — FG-023 MONITOR V1 Slice C implementation preflight
+
+| Field | Content |
+|-------|---------|
+| ID | FG-023 MONITOR V1 — Slice C preflight |
+| Status | **PREFLIGHT COMPLETE / NOT PERFORMED.** Live migrate **NOT RUN.** Office UAT **NOT STARTED.** Gate **NOT CLOSED.** Does **not** authorize Slice C execution. |
+| Branch | `main` |
+| Base commit | `7dd4d82c927ec2c38a0562e7e1cdedbccabb6662` |
+| Objective | Pin live upgrade of existing `e3f4a5b6c7d8`, post-migration verification, UAT project strategy, and closure threshold. |
+| Deliverables | Slice C section in [fg-023-monitor-v1-implementation-preflight.md](architecture/fg-023-monitor-v1-implementation-preflight.md); current-authority next-action pins. No `app/` / `tests/` / `migrations/` change. |
+| Validation | Docs only. `git diff --check`. Product pytest not rerun. Last product baseline dedicated **35** / focused **149** / historical Slice A focused **126** / pre-Slice-B focused **137** / full **593**. Live current `d2e3f4a5b6c7`. Live **39** / **39**. |
+| Architectural findings | No existing live project is a lawful MONITOR happy-path write vessel. Strategy **C**: new labeled `FG023-UAT-MONITOR` required at execution. Explicit `flask db upgrade e3f4a5b6c7d8`. Fail-closed HTTP automated-sufficient for V1. |
+| Open decisions | Slice C **execution** authorization. FG-023 close after UAT. SESSION-EXPIRY **DEFERRED**. Observation Delete **QUEUED**. |
+| Next milestone | FG-023 Slice C live migrate + office UAT execution. Do not live-migrate from this preflight. |
+| Commit | (this docs commit) |
+| Date | 2026-09-07 |
+
 ### 2026-09-07 — FG-023 MONITOR V1 Slice B (Hub MONITOR + office actuals writes)
 
 | Field | Content |

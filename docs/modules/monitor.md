@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Partial Current** — Slice A comparison service **implemented**. Slice B Hub `#hub-monitor` + office actuals writes **implemented**. **NOT LIVE-MIGRATED**. **NOT OFFICE-UAT-VERIFIED**. V1 recon **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN / NOT CLOSED**. Live migration **NOT PERFORMED**. |
+| Status | **Partial Current** — Slice A comparison service **implemented**. Slice B Hub `#hub-monitor` + office actuals writes **implemented**. Slice C **PREFLIGHT COMPLETE / NOT PERFORMED**. **NOT LIVE-MIGRATED**. **NOT OFFICE-UAT-VERIFIED**. V1 recon **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN / NOT CLOSED**. Live migration **NOT PERFORMED**. |
 | Updated | 2026-09-07 |
 | Code | `app/services/monitor.py` (`assemble_monitor_v1`). BUILD actuals: `app/models/direct_cost_actual.py`, `app/services/direct_cost_actuals.py`, `app/routes/build.py` create/supersede. Hub: `app/services/project_hub.py`, `app/templates/projects/detail.html` `#hub-monitor`. |
 | ADR | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (baseline and Project Gross Margin; Slice A projection + Slice B Hub display implemented; not live-migrated) |

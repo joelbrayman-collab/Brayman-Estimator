@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-07 — FG-023 MONITOR V1 Slice C implementation preflight
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-07 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026** (Cursor authorized prompt title; session-handoff still records ChatGPT originating title **BRAYMAN - CalibAi 5 Sep 2026**) |
+| Objective | Governed Slice C implementation preflight only: pin live `flask db upgrade e3f4a5b6c7d8`, post-migration verification, office-UAT project strategy, UAT/fail-closed/closure contracts. No migrate. No UAT. No product code. |
+| Business decision | FG-023 remains **APPROVED / OPEN / NOT CLOSED**. Slice A + Slice B remain **IMPLEMENTED / NOT LIVE-MIGRATED**. Slice C **PREFLIGHT COMPLETE / NOT PERFORMED**. Hub `#hub-monitor` **in product code**. Office UAT **NOT STARTED**. MONITOR V1 **not operational**. |
+| Architectural decision | Explicit upgrade target `e3f4a5b6c7d8`. Gitignored pre-migration copy. UAT strategy **C**: new labeled `FG023-UAT-MONITOR` project required at execution. Fail-closed HTTP cases **AUTOMATED COVERAGE SUFFICIENT FOR V1**. `0.00` proven as successor, not first create. No new ADR. No new migration. |
+| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) (documentation / reconnaissance). |
+| Approved Cursor prompt summary | Slice C preflight. Design live migrate + office UAT. Do not run flask db upgrade. Do not perform office UAT. Do not create actuals. |
+| Files expected to change | Existing preflight record; current-state; session-handoff; project-state-report; chat-workflow-log; milestones; feature-gates README; FG-023 next action; modules/monitor; platform-roadmap; bounded current-authority pins. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; live DB; FG-021/FG-022 product meaning; FG-023 commercial identities; Slice A/B historical preflight bodies. |
+| Implementation result | Documentation only. Slice C section appended to [fg-023-monitor-v1-implementation-preflight.md](architecture/fg-023-monitor-v1-implementation-preflight.md). No `app/` / `tests/` / `migrations/` change. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. |
+| Tests | Product pytest not re-run (docs-only). Last governed product baseline remains dedicated FG-023 **35** / focused **149** / historical Slice A focused **126** / pre-Slice-B focused **137** / full **593**. `git diff --check` on this docs pass. |
+| Project-state-report update | Yes — Slice C preflight 2026-09-07. |
+| Milestone entry update | Yes. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Slice C **execution** authorization; Observation Delete **QUEUED**; SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. |
+| Next approved step | FG-023 Slice C live `flask db upgrade e3f4a5b6c7d8` + office UAT under a separate execution authorization. Do not live-migrate from this preflight. Do not start office UAT from this preflight. |
+| Next approved prompt | FG-023 SLICE C EXECUTION LIVE MIGRATION + POST-MIGRATION VERIFICATION + BOUNDED OFFICE UAT. |
+| Commit hash | (this docs commit) |
+
 ### 2026-09-07 — FG-023 MONITOR V1 Slice B Hub MONITOR + office actuals writes
 
 | Field | Content |

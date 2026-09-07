@@ -44,7 +44,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Stale §22 still said do not start Item 13 / MONITOR and pinned Alembic current = heads `d2e3f4a5b6c7`. Superseded this pass. |
 | Open decisions | Slice B Hub UI authorization. Slice C live-migrate + office UAT. GM display digits. SESSION-EXPIRY **DEFERRED**. Observation Delete **QUEUED**. |
 | Next milestone | FG-023 Slice B implementation preflight / authorization. Do not live-migrate. Do not start Slice B product code from this turnover. |
-| Commit | Confirm `HEAD` after this docs commit. |
+| Commit | `ea9c4b765bd58c5d12414784399e2c29822f1e6f` |
 | Date | 2026-09-07 |
 
 ### 2026-09-06 — FG-023 MONITOR V1 Slice A (model + services + tests)

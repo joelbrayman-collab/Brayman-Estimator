@@ -46,11 +46,11 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 - Branch: `main`
 - FG-017 close SHA: `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5` (`docs: close FG-017 live migration and office UAT`). Docs-reconciliation content: `dd30d752190e56ed687e270950df9bf9a06d7a26`. SHA-pin: `07cb46c501d968542dff567943044dc1db870f01`. Implementation parent `00ca492e28118d75757e9a9c82384978b5decd92`. FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`.
 - FG-016 implementation commit: `a709829d32d94ab2baf36f142ad0095254ba3d3a` (`feat: implement FG-016 Ontario Ottawa Permit Intelligence POC`)
-- Live `HEAD` / `origin/main`: **`2553cf09bdd6b8018112d7eb4b682f87aa103b01`** (`feat: add FG-023 Slice A actuals model, services, and tests`)
+- Live `HEAD` / `origin/main` after Review Turnover package: **`ea9c4b765bd58c5d12414784399e2c29822f1e6f`** (`docs: record FG-023 Slice A Review Turnover`). Last product-changing: **`2553cf09bdd6b8018112d7eb4b682f87aa103b01`**. Confirm `HEAD` = `origin/main` after any SHA-pin commit.
 - Alembic graph head (repository): **`e3f4a5b6c7d8`**. Live `flask db current`: **`d2e3f4a5b6c7`**. Live current **is not** repository head. One graph head.
 - Chain: … → **`c1d2e3f4a5b6` (FG-020)** → **`d2e3f4a5b6c7` (FG-021; live current)** → **`e3f4a5b6c7d8` (FG-023 Slice A; not applied live)**
 - Latest product-changing governed full suite: **581 passed**. Dedicated FG-023 Slice A **23**. Focused (dedicated FG-023 + Hub + FG-018 + FG-020 + FG-021) **126**. Dedicated FG-021 **20**. Focused (Hub + FG-018 + FG-019 + both FG-020 + FG-021) **148** remains the prior FG-021 close bundle. Dedicated FG-020 **44** (33 field observation + 11 media compatibility). Dedicated FG-019 **34**. Dedicated FG-018 **37**. FG-020 **gate-at-close** full suite **538** remains historical.
-- Working tree: clean after FG-023 Slice A (`2553cf09bdd6b8018112d7eb4b682f87aa103b01`); this Review Turnover is docs-only. Live DB unchanged this pass. After this package is committed and pushed, confirm `HEAD` = `origin/main` with `git rev-parse`.
+- Working tree: clean after Review Turnover package `ea9c4b765bd58c5d12414784399e2c29822f1e6f`. Live DB unchanged this pass. Confirm `HEAD` = `origin/main`.
 - Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**. Runtime permit web lookup **NOT AUTHORIZED**.
 
 ### 29 Aug commit chain (all ancestors of `main`)
@@ -449,6 +449,9 @@ ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.
 Last product-changing commit:
 2553cf09bdd6b8018112d7eb4b682f87aa103b01
 feat: add FG-023 Slice A actuals model, services, and tests
+Review Turnover package commit:
+ea9c4b765bd58c5d12414784399e2c29822f1e6f
+docs: record FG-023 Slice A Review Turnover
 Item 10 is COMPLETE (FG-018 + FG-019 both CLOSED / OPERATIONAL FOR UAT).
 Item 11 BUILD Field Observation foundation is COMPLETE.
 Image-only Compatible Renditions (HEIC/HEIF → JPEG) are IMPLEMENTED.

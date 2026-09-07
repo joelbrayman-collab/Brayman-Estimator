@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Slice B Hub UI authorization; Slice C live-migrate + office UAT; GM display digits; Observation Delete **QUEUED**; SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. |
 | Next approved step | FG-023 Slice B office write routes/forms + Project Hub `#hub-monitor` implementation preflight / authorization. Do not implement Slice B from this turnover. Do not live-migrate. |
 | Next approved prompt | FG-023 SLICE B OFFICE WRITE ROUTES/FORMS + PROJECT HUB `#hub-monitor` IMPLEMENTATION PREFLIGHT / AUTHORIZATION. |
-| Commit hash | (this commit) |
+| Commit hash | `ea9c4b765bd58c5d12414784399e2c29822f1e6f` |
 
 ### 2026-09-06 — FG-023 Slice A model, services, tests
 

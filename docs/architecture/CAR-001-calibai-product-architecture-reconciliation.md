@@ -77,6 +77,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-07 FG-023 close — not authorized by CAR-001):** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**. Item 13 **CLOSED / OPERATIONAL FOR UAT**. Close-time tests dedicated **35** / focused **149** / full **593**. CAR-001 still does **not** authorize FG-024, FG-025, or LEARN.
 
+**Subsequent status (2026-09-07 FG-025 implementation preflight — not authorized by CAR-001):** [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) is **IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED / NOT CLOSED**. CAR-001 still does **not** authorize FG-025 UI rewrite, FG-024, or LEARN.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

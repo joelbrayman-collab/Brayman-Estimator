@@ -46,11 +46,11 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 - Branch: `main`
 - FG-017 close SHA: `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5` (`docs: close FG-017 live migration and office UAT`). Docs-reconciliation content: `dd30d752190e56ed687e270950df9bf9a06d7a26`. SHA-pin: `07cb46c501d968542dff567943044dc1db870f01`. Implementation parent `00ca492e28118d75757e9a9c82384978b5decd92`. FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`.
 - FG-016 implementation commit: `a709829d32d94ab2baf36f142ad0095254ba3d3a` (`feat: implement FG-016 Ontario Ottawa Permit Intelligence POC`)
-- Live `HEAD` / `origin/main` after this FG-023 close docs commit: confirm `HEAD` = `origin/main`. Last product-changing **`7dd4d82c927ec2c38a0562e7e1cdedbccabb6662`**.
+- Live `HEAD` / `origin/main` after this FG-025 preflight docs commit: confirm `HEAD` = `origin/main`. Last product-changing **`7dd4d82c927ec2c38a0562e7e1cdedbccabb6662`**.
 - Alembic graph head (repository): **`e3f4a5b6c7d8`**. Live `flask db current`: **`e3f4a5b6c7d8`**. Live current **equals** repository head. One graph head.
 - Chain: … → **`c1d2e3f4a5b6` (FG-020)** → **`d2e3f4a5b6c7` (FG-021)** → **`e3f4a5b6c7d8` (FG-023 Slice A; applied live 2026-09-07 Slice C)**
 - Latest product-changing governed full suite: **593 passed**. Dedicated FG-023 **35**. Focused (dedicated FG-023 + Hub + FG-018 + both FG-020 files + FG-021) **149**. Historical Slice A close focused command **126** remains accurate for that close. Pre-Slice-B focused **137** remains historical. Dedicated FG-021 **20**. Focused (Hub + FG-018 + FG-019 + both FG-020 + FG-021) **148** remains the prior FG-021 close bundle. Dedicated FG-020 **44** (33 field observation + 11 media compatibility). Dedicated FG-019 **34**. Dedicated FG-018 **37**. FG-020 **gate-at-close** full suite **538** remains historical.
-- Working tree: confirm clean after this FG-023 close docs commit. Confirm `HEAD` = `origin/main`. Live DB mutated only by authorized Slice C migrate + labeled UAT project **id 13**. Close wrote **no** further actuals.
+- Working tree: confirm clean after this FG-025 preflight docs commit. Confirm `HEAD` = `origin/main`. Live DB mutated only by authorized Slice C migrate + labeled UAT project **id 13**. Close wrote **no** further actuals. This preflight wrote **no** actuals.
 - Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**. Runtime permit web lookup **NOT AUTHORIZED**.
 
 ### 29 Aug commit chain (all ancestors of `main`)
@@ -115,7 +115,9 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **FG-023 MONITOR V1 close** (2026-09-07, docs / governance). Status **CLOSED / OPERATIONAL FOR UAT**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**. Close-time tests dedicated **35** / focused **149** / full **593**. No product code. No UI rewrite. No further actuals. Hub lifecycle already operational for MONITOR; LEARN remains Future. FG-024 and FG-025 remain **FUTURE / NOT IMPLEMENTATION-AUTHORIZED**.
+**Last authorized delta:** **FG-025 contractor-facing UX implementation preflight** (2026-09-07, docs / reconnaissance). Status **IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED / NOT CLOSED**. No product code. No UI rewrite. Recommended next coded work: Slice 1 Hub MONITOR display mapping **only after a separate prompt**.
+
+**Prior:** **FG-023 MONITOR V1 close** (2026-09-07, docs / governance). Status **CLOSED / OPERATIONAL FOR UAT**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**. Close-time tests dedicated **35** / focused **149** / full **593**. No product code. Hub lifecycle already operational for MONITOR; LEARN remains Future.
 
 **Prior:** **FG-025 Contractor-Facing UX Language recorded** (2026-09-07, docs / governance only). Status **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Product-wide copy sweep after FG-023 close. No product code. No UI rewrite. Does **not** implement from this recording. FG-023 is now **CLOSED**.
 
@@ -310,7 +312,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - **FG-022:** **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**. Reusable approved document template family V1. Seven DOCX + seven verification PDFs. Parallel document-template track. Legal Content Gate **empty**. Family 05 **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. Does **not** alter FG-021 or item 12.
 - **FG-023:** **CLOSED / OPERATIONAL FOR UAT**. Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**. Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**. Live current = heads `e3f4a5b6c7d8`. Office UAT port **5014**. Synthetic project **id 13** `FG023-UAT-MONITOR`. Close-time dedicated **35**. Current focused **149**. Historical Slice A focused **126**. Pre-Slice-B focused **137**. Full **593**.
 - **FG-024:** **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. One linked North American CONTRACT intelligence gate (library / update engine / frozen snapshot / monitoring). Slices A–D **not authorized**. Legal Content Gate **empty**. Does **not** alter FG-023. FG-025 is **not** a split of this gate.
-- **FG-025:** **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Product-wide contractor-facing UX language / terminology sweep. After FG-023 **close**, before broad external UAT. No UI rewrite in this recording. Does **not** alter FG-023.
+- **FG-025:** **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED / NOT CLOSED**. Product-wide contractor-facing UX language / terminology sweep. After FG-023 close, before broad external UAT. No UI rewrite in this preflight. Does **not** alter FG-023.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
@@ -336,7 +338,9 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 
 **2026-09-07 FG-025 recording.** [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Docs only. Does **not** rewrite UI. Does **not** interrupt FG-023.
 
-**2026-09-07 FG-023 close.** [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**. Close-time tests **35 / 149 / 593**. No product-code change. Hub MONITOR lifecycle already operational; LEARN remains Future. FG-024 and FG-025 remain **FUTURE / NOT IMPLEMENTATION-AUTHORIZED**.
+**2026-09-07 FG-023 close.** [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**. Close-time tests **35 / 149 / 593**. No product-code change. Hub MONITOR lifecycle already operational; LEARN remains Future.
+
+**2026-09-07 FG-025 implementation preflight.** [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED / NOT CLOSED**. Docs only. Does **not** rewrite UI. Does **not** authorize implementation.
 
 **Completeness test:** Is there any material approved decision, requirement, implementation fact, protected baseline, unresolved decision, or current authorization present in the active conversation / Turnover Delta Ledger that is not represented in the repository? **NO — verified through Turnover Delta Ledger reconciliation.**
 
@@ -361,7 +365,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - **Authentication / actor identity + shared API** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Roadmap item 10 is **COMPLETE**. [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Item 12 Field Web is **CLOSED** ([FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md); SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**).
 - **Change Order document family** is **FUTURE / NOT IMPLEMENTED** ([change-order-document-family.md](architecture/change-order-document-family.md)). Existing Change Order record remains authoritative. Do not create a second entity. Not email. Not field UX.
 - **[FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md)** is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. One linked gate. Slices A–D **not authorized**. Legal Content Gate remains **empty**. Do **not** populate jurisdictions. Do **not** implement from this recording. FG-025 is **not** a split of this gate.
-- **[FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md)** is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Product-wide contractor-facing UX language. After FG-023 **close**. Do **not** rewrite UI from this recording.
+- **[FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md)** is **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED / NOT CLOSED**. Product-wide contractor-facing UX language. After FG-023 close. Do **not** rewrite UI from this preflight.
 
 ## 17. KNOWN RISKS / UNRESOLVED PRODUCT ITEMS
 
@@ -387,9 +391,9 @@ Do not start Phase D. Do not enable an external AI provider. Do not reopen FG-02
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP.** No implementation package is authorized from FG-023 close. Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**. Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**. Do **not** begin FG-024. Do **not** implement FG-025. Do **not** implement Observation Delete. Do **not** implement session revocation / idle timeout. [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) remains **CLOSED**. **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED.** **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete remains **QUEUED / NOT AUTHORIZED**. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval.
+**Next governed action:** **STOP pending Joel/ChatGPT review of the FG-025 preflight.** FG-025 is **IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED**. Do **not** rewrite UI from this preflight. Do **not** begin FG-024. Do **not** implement Observation Delete. Do **not** implement session revocation / idle timeout. [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) remains **CLOSED**. **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED.** **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete remains **QUEUED / NOT AUTHORIZED**. Native Signing **development** may proceed only under **separate** governance; **production activation** remains blocked pending Ontario counsel process approval.
 
-**Roadmap direction (not authorization):** Item 12 Field Web is **CLOSED**. Item 13 **CLOSED / OPERATIONAL FOR UAT**. [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED** (recommended next product-quality activity only). Item 15 / [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Roadmap direction (not authorization):** Item 12 Field Web is **CLOSED**. Item 13 **CLOSED / OPERATIONAL FOR UAT**. [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) is **IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED** (recommended next product-quality activity only). Item 15 / [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
@@ -520,11 +524,11 @@ incurred_on accepts any parseable calendar date (no today cutoff).
 Field Events evidence only. No NET PROFIT. No forecast-final GM.
 Money: existing as_money ROUND_HALF_UP 0.01.
 
-Next governed action = STOP. No implementation package is authorized from FG-023 close.
+Next governed action = STOP pending Joel/ChatGPT review of the FG-025 preflight.
 Slice C MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS.
 Slice A + Slice B IMPLEMENTED / LIVE-MIGRATED.
-FG-025 is FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.
-Do not begin FG-024. Do not implement FG-025.
+FG-025 is IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED / NOT CLOSED.
+Do not begin FG-024. Do not rewrite UI from this preflight.
 Do NOT re-run flask db upgrade e3f4a5b6c7d8.
 
 1. REVIEW REPOSITORY GOVERNANCE FIRST
@@ -588,6 +592,7 @@ Independently reconstruct from the repository:
 - Hub #hub-monitor LIVE / OFFICE-UAT-VERIFIED
 - MONITOR V1 IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED
 - Live current = heads e3f4a5b6c7d8
+- FG-025 IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED / NOT CLOSED
 - Dedicated FG-023 35; focused 149; historical Slice A focused 126; pre-Slice-B focused 137; full suite 593 (close-time rerun 2026-09-07)
 - Pratt UAT project id 9 / FG016-UAT-PRATT / analysis v3 / advisory only
 - FG-018 office UAT PASSED on port 5011
@@ -611,8 +616,9 @@ Independently reconstruct from the repository:
 4. RETURN A CONCISE CURRENT STATE REVIEW
 FG-023 is CLOSED / OPERATIONAL FOR UAT.
 MONITOR V1 is IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED.
-The next governed Cursor prompt is NONE.
-STOP. Do NOT start FG-024. Do NOT start FG-025. Do NOT start LEARN.
+FG-025 is IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED / NOT CLOSED.
+The next governed Cursor prompt is NONE until Joel/ChatGPT authorize FG-025 Slice 1.
+STOP. Do NOT rewrite UI from this preflight. Do NOT start FG-024. Do NOT start LEARN.
 Do NOT reopen FG-021.
 Do NOT convert SESSION-EXPIRY RECOVERY to PASS / N/A / WAIVED.
 Do NOT invent iPhone UAT results.
@@ -778,4 +784,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**; Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**; Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**; MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**; preflight [architecture/fg-023-monitor-v1-implementation-preflight.md](architecture/fg-023-monitor-v1-implementation-preflight.md) **COMPLETE**; MONITOR V1 recon **COMPLETE**; BUILD actuals live; migration `e3f4a5b6c7d8` **applied live**; [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED**; IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION; **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED**; Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**; live current = heads `e3f4a5b6c7d8`; dedicated FG-023 **35**; focused **149**; historical Slice A focused **126**; pre-Slice-B focused **137**; full **593** (close-time rerun 2026-09-07); dedicated FG-021 **20**; FG-020 **CLOSED / OPERATIONAL FOR UAT**; [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**; Family 05 **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**; Legal Content Gate **empty**; [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; Native Signing **DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE**; **PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL**; Project Closeout **FUTURE**. Do **not** reopen FG-023. Do **not** begin FG-024. Do **not** implement FG-025. Pre-migration SQLite copies remain gitignored under `instance/` and must **not** be committed.
+A–J: [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**; Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**; Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**; MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**; preflight [architecture/fg-023-monitor-v1-implementation-preflight.md](architecture/fg-023-monitor-v1-implementation-preflight.md) **COMPLETE**; MONITOR V1 recon **COMPLETE**; BUILD actuals live; migration `e3f4a5b6c7d8` **applied live**; [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED**; IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION; **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED**; Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**; live current = heads `e3f4a5b6c7d8`; dedicated FG-023 **35**; focused **149**; historical Slice A focused **126**; pre-Slice-B focused **137**; full **593** (close-time rerun 2026-09-07); dedicated FG-021 **20**; FG-020 **CLOSED / OPERATIONAL FOR UAT**; [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**; Family 05 **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**; Legal Content Gate **empty**; [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED**; Native Signing **DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE**; **PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL**; Project Closeout **FUTURE**. Do **not** reopen FG-023. Do **not** begin FG-024. Do **not** rewrite UI from this preflight. Pre-migration SQLite copies remain gitignored under `instance/` and must **not** be committed.

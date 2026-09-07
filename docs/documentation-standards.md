@@ -41,7 +41,7 @@ Use one of:
 
 ## Product UI copy (distinct from this document)
 
-This file governs **repository documentation**. Contractor-facing **product UI** language is [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. Visual brand remains [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md). Do not treat this file as a UI glossary.
+This file governs **repository documentation**. Contractor-facing **product UI** language is [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED**. Visual brand remains [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md). Do not treat this file as a UI glossary.
 
 ## Distinguishing material
 

@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-07 — FG-025 contractor-facing UX implementation preflight
+
+| Field | Content |
+|-------|---------|
+| ID | FG-025 — implementation preflight |
+| Status | **IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED / NOT CLOSED.** |
+| Branch | `main` |
+| Base commit | `00c763b1a5d936eaa3b825105ffa0001b48c5ef5` |
+| Objective | Inventory user-facing language; pin terminology principles and slice strategy; do not rewrite UI. |
+| Deliverables | FG-025 IMPLEMENTATION PREFLIGHT section; current-authority pins. No product-code change. |
+| Validation | Docs-only. No `app/` / `tests/` / `migrations/` change. `git diff --check`. Product pytest not re-run. Live current = heads `e3f4a5b6c7d8`. Field **39 / 39**. |
+| Architectural findings | Highest leakage is Hub MONITOR raw enums. Presentation-layer mapping recommended. Customer Proposal/PDF is a separate audience. “Current contract value” can confuse legal contract with authorized revenue. |
+| Open decisions | Final glossary strings; Slice 1 authorization; specialist nav names. |
+| Next milestone | Joel/ChatGPT review, then optional FG-025 Slice 1 prompt. Do **not** start FG-024. |
+| Commit | (this docs commit) |
+| Date | 2026-09-07 |
+
 ### 2026-09-07 — FG-023 MONITOR V1 CLOSED / OPERATIONAL FOR UAT
 
 | Field | Content |

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-07 — FG-025 contractor-facing UX implementation preflight
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-07 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026** |
+| Objective | FG-025 implementation preflight: product-wide UI language inventory, terminology contract, slice strategy, file allow-list, test/UAT plan. Docs/reconnaissance only. |
+| Business decision | FG-025 is **IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED / NOT CLOSED**. FG-023 remains **CLOSED**. FG-024 remains **FUTURE / NOT IMPLEMENTATION-AUTHORIZED**. Glossary candidates **not pinned**. “Current contract value” wording **flagged**. Strategy **B** (controlled slices). Next: Joel/ChatGPT review, then separate Slice 1 prompt if approved. |
+| Architectural decision | Presentation-layer mapping. Do not rename enums/schema. MONITOR identities unchanged. Customer documents are a separate audience (Slice F). No new ADR. No migration. |
+| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | FG-025 implementation preflight. Inventory UI language. Do not rewrite copy. Docs commit + push after PASS. |
+| Files expected to change | FG-025 gate (preflight section); current-authority pins; current-state / session-handoff / project-state-report / chat-workflow-log / milestones. |
+| Files prohibited from changing | `app/`; `tests/`; templates; CSS/JS; Alembic; live DB; FG-024 implementation. |
+| Implementation result | Documentation preflight only. No `app/` / `tests/` / `migrations/` change. Live current `e3f4a5b6c7d8`. Live **39** / **39**. |
+| Tests | Product pytest **not re-run** (docs-only). `git diff --check` on this docs pass. Historical close-time **35 / 149 / 593** remain the coded baseline. |
+| Project-state-report update | Yes — FG-025 preflight complete / not implementation-authorized. |
+| Milestone entry update | Yes — preflight recorded. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Final contractor strings not pinned; “contract value” vs Current Authorized Pre-Tax Revenue **G**; specialist nav names **G**; FG-012 office Overhead/Profit residual out of terminology-only slice. |
+| Next approved step | **STOP pending review.** Do **not** implement FG-025 from this preflight. Do **not** start FG-024. Do **not** start LEARN. |
+| Next approved prompt | None authorized. Recommended Slice 1 Hub MONITOR display mapping after Joel/ChatGPT review. |
+| Commit hash | (this docs commit) |
+
 ### 2026-09-07 — FG-023 MONITOR V1 CLOSED / OPERATIONAL FOR UAT
 
 | Field | Content |

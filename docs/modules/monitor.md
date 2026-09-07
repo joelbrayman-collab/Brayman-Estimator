@@ -57,4 +57,4 @@ Dated MONITOR **comparison snapshots** and dated **forecast snapshots** only. So
 - [modules/estimating.md](estimating.md)
 - [modules/proposals.md](proposals.md)
 - [pricing-policy.md](../pricing-policy.md)
-- Contractor-facing display copy: [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED** (Hub `#hub-monitor` is in later sweep; commercial identities stay frozen; display strings after FG-023 close)
+- Contractor-facing display copy: [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED** (Hub `#hub-monitor` is Slice 1 of later sweep; commercial identities stay frozen)

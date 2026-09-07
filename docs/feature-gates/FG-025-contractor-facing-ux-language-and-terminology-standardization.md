@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-025 is the governing identifier. Do not assign a new M0xx number. This is a **commercialization hygiene** gate, not a new lifecycle stage. Sequence: **after [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) closes**, **before** broad external UAT / U.S. commercialization. |
 | Module | **Cross-cutting UX copy.** [Projects](../modules/projects.md) owns Project Hub chrome. Owning modules retain their screens: Plan Intelligence, Estimating, Pricing Engine, Proposals, Project Controls, BUILD, MONITOR, LEARN (Future), authentication. This gate does **not** transfer record ownership. |
 | Date | 2026-09-07 |
-| Status | **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** This recording is **not** Feature Gate approval for implementation. Do **not** rewrite UI from this document. |
+| Status | **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED / NOT CLOSED** (2026-09-07). This document is **not** Feature Gate approval for implementation. Do **not** rewrite UI from this document. |
 | Architecture | [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** (PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN) · [FG-011](FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT** (Hub reads/links; Future labeled) · [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (office vs customer-facing estimate copy) · [FG-017](FG-017-organization-brand-profile-v1.md) **CLOSED / OPERATIONAL FOR UAT** (visual brand, not terminology) · [FG-021](FG-021-field-web-v1-today-and-capture.md) **CLOSED** (Field Web capture copy) · [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 | Related ADRs | **None new in this recording pass.** Visual identity remains [ADR-040](../adr/ADR-040-organization-brand-profile.md). Do **not** accept ADR-008 or ADR-010 from this gate. |
 | Prerequisites | [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. This gate remains **NOT IMPLEMENTATION-AUTHORIZED**. Slice C is **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. This recording does **not** rewrite UI. |
@@ -18,25 +18,27 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **RECORDED.** **NOT APPROVED FOR IMPLEMENTATION.** |
+| Feature Gate (this document) | **RECORDED.** **IMPLEMENTATION PREFLIGHT COMPLETE.** **NOT APPROVED FOR IMPLEMENTATION.** **NOT CLOSED.** |
 | UI copy rewrite | **NOT AUTHORIZED** |
-| Product code | **None.** |
+| Product code | **None this pass.** |
 | Schema / Alembic | **None.** |
-| New ADR | **None in this recording.** |
+| New ADR | **None.** |
 
 ```text
 FG-025:
 FUTURE
 RECORDED
+IMPLEMENTATION PREFLIGHT COMPLETE
 NOT IMPLEMENTATION-AUTHORIZED
 NOT IMPLEMENTED
+NOT CLOSED
 NO UI REWRITE IN THIS PASS
 FG-023: CLOSED / OPERATIONAL FOR UAT
 FG-024: UNCHANGED FUTURE CONTRACT INTELLIGENCE GATE
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
 ```
 
-Joel/ChatGPT recorded this gate on **2026-09-07** as durable product/governance authority only. Recording is **not** implementation approval. FG-023 is now **CLOSED**. Do **not** draft an implementation preflight from this document until a separate bounded prompt authorizes the sweep.
+Joel/ChatGPT recorded this gate on **2026-09-07** as durable product/governance authority. A separate 7 Sep 2026 prompt authorized **implementation preflight only**. Recording plus preflight is **not** implementation approval. FG-023 remains **CLOSED**. Do **not** rewrite UI until a later bounded implementation prompt.
 
 ---
 
@@ -241,12 +243,263 @@ Future review must not assume one glossary for every role.
 
 ---
 
+---
+
+## IMPLEMENTATION PREFLIGHT (2026-09-07)
+
+**Status:** **PREFLIGHT COMPLETE.** **NOT IMPLEMENTED.** **NOT CLOSED.** **NOT IMPLEMENTATION-AUTHORIZED.**
+
+Inspect date: 2026-09-07. Parent SHA `00c763b1a5d936eaa3b825105ffa0001b48c5ef5` (`docs: close FG-023 MONITOR V1`). Live current = heads `e3f4a5b6c7d8`. Field **39 / 39**. FG-023 **CLOSED / OPERATIONAL FOR UAT**. No product-code change in this pass. No separate architecture recon file: this gate remains the authority.
+
+### Preflight principle
+
+```text
+INTERNAL TECHNICAL LANGUAGE MAY REMAIN INTERNAL.
+USER-FACING LANGUAGE MUST BE CONTRACTOR-FACING.
+Prefer a presentation-layer mapping. Do not rename model fields,
+enums, or schema columns merely to change display copy.
+```
+
+Lifecycle stage names **PLAN / PRICE / CONTRACT / BUILD / MONITOR / LEARN** remain product language ([ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md)). LEARN remains **Future**.
+
+### C. Product-wide UI surface inventory (current)
+
+73 office/Field HTML templates + 3 JS files + shell nav. User-facing copy is **mostly embedded in Jinja**. Flash strings originate in `app/routes/*.py`. Field live feedback is in `app/static/js/field.js`. CSS has **no** contractor copy (`content: "/"` breadcrumb only). Customer Proposal preview/PDF is a **separate audience** (FG-012).
+
+| Surface | Files | Notes |
+|---------|-------|--------|
+| Shell / nav | `app/templates/base.html`, `partials/sidebar.html`, `partials/header.html`, `app/navigation.py` | Dashboard, Clients, Projects, Estimating group, Project Controls, Settings. Disabled: Purchase Orders, Job Costing, Reports, AI Assistant (**Soon**). |
+| Auth | `app/templates/auth/login.html`, `app/routes/auth.py` | “Office sign in”; “organization membership credentials”. |
+| Dashboard | `app/templates/dashboard.html`, `partials/dashboard_cards.html` | “Executive overview”; Recent Estimates / Proposals. |
+| Clients / Projects lists | `app/templates/clients/*`, `projects/list.html`, `projects/form.html` | CRM; project status chip is stored `project.status`. |
+| Project Hub | `app/templates/projects/detail.html`, `app/services/project_hub.py` | Lifecycle chips; PLAN/PRICE/CONTRACT/BUILD/MONITOR; LEARN Future. Highest leakage. |
+| PLAN / location / permit | Hub PLAN panel; `projects/edit_location.html`; `projects/permit_report.html`; `plan_intelligence/*` | Permit findings render `finding.status.replace('_', ' ')` (still ALL_CAPS words). |
+| PRICE estimates | `estimates/*`, `assemblies/*`, `cost_library/*`, `material_catalogue/*` | Internal breakdown leaks class names (`EstimateVersion`, `EstimatePricingSnapshot`). |
+| Labour / pricing engines | `labour_engine/*`, `pricing_engine/*` | Office-specialist; raw `Provenance`, `SUPERSEDED`, `organization_id`. |
+| Historical | `historical_estimates/*` | `TIER_A` chip; FG-013 mapped sentence exists for review status. |
+| CONTRACT office | `proposals/*`, `proposal_templates/*` | Office detail still shows Overhead/Profit rows; customer preview omits them (FG-012). |
+| BUILD office | Hub BUILD; `build/event_form.html`, `build/event_detail.html`; Change Orders `project_controls/change_orders/*` | Field observation “Superseded”; actuals “ACTIVE actuals”. |
+| Field Web | `field/today.html`, `capture.html`, `projects.html`, `field.js` | Action-first; “Save original”; `SAVED` / `SAVING` / `NEEDS RETRY`. |
+| MONITOR | Hub `#hub-monitor` | Raw MONITOR states and metric identities. |
+| LEARN | Hub `#hub-learn` | Future placeholder only. Keep Future. |
+| Settings | `settings/brand_profile.html` | Mostly contractor-clear. |
+| Flashes | owning routes | Mix of contractor-clear (`Actual cost recorded.`) and technical (`Policy superseded. New DRAFT version created.`). |
+
+### D–E. Leakage inventory and classification
+
+Classes: **A** keep contractor · **B** keep industry · **C** rewrite technical · **D** improve awkward · **E** must not display raw · **F** customer-document separate · **G** Joel/ChatGPT decision.
+
+| Visible copy (current) | File | Class | Notes |
+|------------------------|------|-------|--------|
+| Change Order, Direct Cost, Gross Margin, Allowance, Subcontract, Labour, Material, Permit | many | **A / B** | Keep. Do not “simplify” into job-costing slang. |
+| PLAN / PRICE / CONTRACT / BUILD / MONITOR | Hub | **A** | Lifecycle product language. |
+| LEARN · Future | Hub | **A** | Must remain Future. |
+| `MISSING ACTUALS` / `MISSING CUSTOMER COMMITMENT` / `AMBIGUOUS COMMITMENT` / `MISSING ORIGINAL BASELINE` | `projects/detail.html` | **E** | Domain keys rendered as headlines. Domain keys in `monitor.py` **stay**. |
+| `no ACTIVE office actual-cost entries` / `ACTIVE actuals` | Hub | **E** | Implementation-state `ACTIVE`. |
+| `Actual Direct Cost — other_direct` and `<option>other_direct` | Hub | **E** | Enum as label. `labour`/`material`/`subcontract` are industry words; still capitalize for display. |
+| `Actual-to-Date Project Gross Margin` | Hub | **D / G** | Accurate; abbreviation-first. |
+| `GM Variance` | Hub | **D / G** | Keep meaning; wording not pinned. |
+| `Current Authorized Pre-Tax Revenue` | Hub | **D / G** | Frozen FG-023 identity. Display may differ **only** if meaning is preserved. Flag: “contract value” can be read as a signed legal contract. |
+| `Original Estimated GM` / `Approved/Invoiced CO Revenue Delta` | Hub | **D** | Estimator-precise; owner may want plainer labels. |
+| `CO cost delta not stored` (`CO_COST_DELTA_COPY`) | `monitor.py` via Hub | **C** | Governance sentence on Hub. |
+| `Provenance: source version … snapshot …` | Hub | **E** | Audit IDs. Offer a contractor “Source” line without raw table names. |
+| `SUPERSEDED` chip / `Superseded actuals` | Hub | **C** | Correction history. Button `Record correction` is already nearer contractor language — **keep as candidate**. |
+| Commercial Decision Gate Context / M011 helper | Hub | **C / D** | Governance milestone leak. |
+| `PRELIMINARY / FOUNDATION ONLY` · `ADVISORY ONLY` · `RECHECK REQUIRED` · `AHJ` | Hub PLAN / permit report | **B / D** | Keep legal caution; drop ALL_CAPS where a sentence works. |
+| `LOCATION_COMPLETE` displayed as “complete” | Hub | **A** | Already mapped. Pattern to copy. |
+| Permit `MISSING_INFORMATION` → `MISSING INFORMATION` | `permit_report.html` | **E / C** | Underscore stripped; still enum English. |
+| `TRUE_GROSS_MARGIN` / `COST_PLUS_MARKUP` / `COST_PLUS_MARKUP_STACK` | estimates, internal breakdown | **C / G** | Office-internal method names. Do not put on customer PDF. |
+| `EstimateVersion` / `EstimatePricingSnapshot` headings | `internal_breakdown.html` | **E** | Class names on an office page. |
+| `Organization {{ organization_id }}` | labour index, material catalogue, snapshots | **C** | Show company name, not `ORG-001`, unless Joel wants the code. |
+| `Provenance` fields / `Supersede (new draft version)` | labour + pricing | **C** | Specialist office tools; still not contractor-facing. |
+| `TIER_A` chip | historical index | **E** | FG-013 already mapped review-status sentences; evidence tier chip still raw. |
+| `Inspect Provenance` / `Source-Cell Provenance Observations` | historical | **E** | Calibration reviewers may need source-cell detail — **G** whether to keep a technical sub-panel labeled “Where this number came from”. |
+| Flash `Policy superseded. New DRAFT version created.` | `pricing_engine.py` | **C** | |
+| Login “organization membership credentials” | `auth/login.html` | **D** | |
+| Nav “Labour Engine” / “Pricing Engine” / “Historical Evidence” | `navigation.py` | **D / G** | Specialist names vs “Labour rates” / “Pricing” / “Previous estimates”. |
+| Field `Save original` / `SAVED` / `SAVING` / `NEEDS RETRY` | Field templates + `field.js` | **D** | Action-first already; drop ALL_CAPS and “original” if Joel agrees. IndexedDB store names stay internal. |
+| Proposal office Overhead / Profit amounts | `proposals/detail.html` | **F / G** | FG-012 already hides from customer preview/PDF. Office display is a known residual — wording vs whether to hide is **not** a casual FG-025 rewrite. |
+| Customer Proposal/PDF legal-ish labels | `proposals/preview.html` | **F** | **Out of first implementation slices.** Not FG-024 legal content, but still a different audience. |
+| `operational for UAT` | **not in product UI** (docs only) | — | Do not introduce into UI. |
+| `ProjectDirectCostActual` / `organization_id` as code | models/services | — | **Keep internal.** Not a display string except where templates print `organization_id`. |
+
+`ProjectDirectCostActual` does **not** appear as a Hub heading. `implementation status` / `operational for UAT` do **not** appear in templates (verified by search of product UI).
+
+### F. Proposed contractor-facing glossary (not pinned)
+
+Final strings require Joel/ChatGPT approval. Directional only.
+
+| Internal term | Current user-facing | Recommended display (candidate) | Rationale | Surfaces |
+|---------------|---------------------|----------------------------------|-----------|----------|
+| `MISSING_ACTUALS` | MISSING ACTUALS | No actual costs entered yet | Empty state, not a fake $0.00 | Hub MONITOR |
+| `MISSING_CUSTOMER_COMMITMENT` | MISSING CUSTOMER COMMITMENT | No accepted proposal yet | Contractor language | Hub |
+| `AMBIGUOUS_COMMITMENT` | AMBIGUOUS COMMITMENT | More than one accepted proposal — this screen will not pick one | Preserve fail-closed meaning | Hub |
+| `MISSING_ORIGINAL_BASELINE` | MISSING ORIGINAL BASELINE | An accepted proposal exists, but the original estimate cannot be used | Awkward accurate | Hub |
+| `other_direct` | other_direct | Other direct cost | Enum leak | Hub forms/metrics |
+| `labour` / `material` / `subcontract` | lowercase enum | Labour / Material / Subcontract | Industry terms; capitalize | Hub |
+| supersede actual | SUPERSEDED / Superseded actuals | Corrected cost / Previous entries | Action already “Record correction” | Hub, BUILD |
+| Provenance block | Provenance: source version… | Source of these numbers (proposal, estimate, pricing lock) — hide raw IDs unless a “details” disclosure | Audit ≠ Hub headline | Hub |
+| Actual-to-Date Project Gross Margin | same | Gross margin so far | Owner-readable; **must remain** actual-to-date GM on current authorized pre-tax revenue | Hub |
+| GM Variance | same | Margin change from the original estimate | Candidate; Joel may keep “GM” on estimator screens | Hub |
+| Current Authorized Pre-Tax Revenue | same | Current authorized selling price before tax | **Flag:** “contract value” risks legal-contract confusion. Do not adopt “Current Contract Value” without Joel. | Hub |
+| Original Estimated Direct Cost | same | Original estimated direct cost | **A** — keep | Hub |
+| `CO_COST_DELTA_COPY` | CO cost delta not stored | Change Order estimated cost is not stored on the Change Order | Meaning preserved | Hub |
+| Estimate / Proposal / Change Order | same | same | **A** — do not merge | all |
+| Direct Cost vs Actual Cost | mixed “actual-cost” | Direct cost (estimated) vs Actual direct cost (entered) | Keep the distinction | Hub / BUILD |
+| Client | Client | Client (office). Customer on generated documents | Do not rename CRM entity | CRM vs Proposal |
+| Field Observation | Field observation | Field observation / note | **A** Field | BUILD / Field |
+| `TIER_A` | TIER_A | Estimate associated with a completed project (already FG-013 for review status) | Map evidence-tier chips the same way | Historical |
+| TRUE_GROSS_MARGIN | TRUE_GROSS_MARGIN | Target gross margin | Office PRICE only; **G** | Estimates |
+| COST_PLUS_MARKUP_STACK | COST_PLUS_MARKUP_STACK | Legacy markup stack | Office PRICE only | Estimates |
+| Labour Engine | Labour Engine | Labour rates | **G** | Nav |
+| Pricing Engine | Pricing Engine | Pricing | **G** | Nav |
+| Historical Evidence | Historical Evidence | Previous estimates | **D** | Nav |
+
+Do **not** invent equivalence: Estimate ≠ Proposal ≠ Contract; Direct Cost ≠ Actual Cost; Field Observation ≠ Actual Cost; Permit finding ≠ AHJ approval.
+
+### G. Role / audience
+
+| Audience | Surface | Copy |
+|----------|---------|------|
+| Owner | Hub MONITOR, dashboard | Margin, authorized selling price, missing-actuals in sentences |
+| Estimator | PRICE, internal breakdown, Hub metrics | May keep Gross Margin, Direct Cost, Change Order; drop class names |
+| Project manager | Hub PLAN/BUILD/MONITOR | Progress vs estimate; no schema |
+| Office administrator | login, lists, Settings | Plain account/list language |
+| Field worker | `/field` | Short verbs. Do not import Hub GM vocabulary onto Field Web |
+| External customer | Proposal preview/PDF | **F — separate review.** FG-025 office sweep must not casually retitle customer documents |
+
+### H. Error / empty-state standard (proposed)
+
+Every user-facing empty, warning, and error should answer:
+
+1. What is missing / what happened
+2. Why it matters
+3. What to do next
+
+Avoid stack traces, raw enums, raw status keys, database terms, unexplained governance.
+
+Example (MONITOR missing actuals, candidate): “No actual costs have been entered yet. Margin so far cannot be shown as $0.00. Use Record actual direct cost below.”
+
+Example (no accepted proposal): “This project has no accepted proposal yet. Original estimated figures are not treated as a committed baseline. Accept a proposal when the customer has committed.”
+
+### I. Status / action label standard (proposed)
+
+Prefer verbs that match user intent. Keep industry-normal nouns.
+
+| Current | Evaluate |
+|---------|----------|
+| Record correction | **Keep candidate** (better than Supersede) |
+| Save actual | Save actual cost |
+| Supersede (new draft version) | Save as a new version |
+| Reprocess / indexing flashes | Run again / Index again |
+| Archive (plan document) | **Keep** Archive |
+| Void (sheet/calibration) | **Keep** Void (drawing practice) |
+| Capture / Save original | Capture / Save |
+| Retry pending captures | Retry |
+| Update Context | Update project settings |
+| Sign in | **Keep** |
+
+Chips: map enums through a display helper; never print `SUPERSEDED` / `MISSING_ACTUALS` raw.
+
+### J. Commercial / accounting meaning (must preserve)
+
+FG-025 changes **wording only**. Do not alter Gross Margin calculations, Direct Cost meaning, tax treatment, `EstimatePricingSnapshot` authority, Accepted Proposal authority, Change Order authority, MONITOR identities, Actual Direct Cost aggregation, or current authorized revenue logic.
+
+**Flag before adopting “Current Contract Value Before Tax”:** that phrase can be read as a signed construction contract. The MONITOR identity is **Current Authorized Pre-Tax Revenue** = accepted-proposal pre-tax selling price + Approved/Invoiced CO revenue delta, tax excluded. If Joel wants “contract value” language, ChatGPT must confirm it does not imply FG-024 legal execution.
+
+**Flag:** “Gross margin so far” must remain Actual-to-Date GM (current authorized pre-tax revenue vs actual direct cost to date), not a new forecast-final figure.
+
+**Flag:** office Proposal Overhead/Profit rows are an FG-012 residual. Hiding them is **not** a terminology-only change; do not do it inside a copy sweep unless separately authorized.
+
+### K. FG-024 / legal-content boundary
+
+FG-025 may retitle ordinary CONTRACT **navigation** (Proposals, templates) only. Do **not** rewrite legal clauses, populate contracts/warranties, change statutory notices, alter legal approval states, implement Contract Update Engine, or change jurisdiction support. Legal Content Gate remains empty and FG-024-owned.
+
+### L. Recommended implementation strategy
+
+**B. Controlled slices by surface** — not one unbounded product-wide sweep.
+
+Copy lives in Jinja, route flashes, and Field JS. MONITOR **display** tests currently assert raw strings (`MISSING ACTUALS`, `other_direct`) in `tests/test_monitor_v1_fg023.py` and `tests/test_project_hub.py`. Domain tests asserting `actuals_state == "MISSING_ACTUALS"` **must not** change.
+
+Presentation pattern: a small display-map module (e.g. `app/presentation/contractor_copy.py`) + Jinja usage. **Do not** rename enums or `assemble_monitor_v1` keys.
+
+Proposed slices (later authorization, one prompt each):
+
+| Slice | Scope | Why separate |
+|-------|--------|----------------|
+| **1** | Hub `#hub-monitor` + actuals forms/tables | Highest leakage; test coupling; commercialization-critical |
+| **2** | Hub PLAN permit labels + commercial-context heading + LEARN Future note (wording only) | Governance leak; keep LEARN Future |
+| **3** | Office PRICE specialist: estimates internal breakdown, labour, pricing, historical chips, material catalogue org label | Different audience |
+| **4** | Nav / dashboard / auth / Settings | Low risk, high visibility |
+| **5** | Field Web ALL_CAPS + “Save original” | Already mostly contractor-facing |
+| **F** | Customer Proposal/PDF | Separate review; not Slice 1 |
+
+Schema: **not required.** If a later slice appears to need a migration to improve wording: **STOP**.
+
+### M. Proposed file allow-list (implementation, not this pass)
+
+**CREATE (later):** `app/presentation/contractor_copy.py` (or equivalent display maps); `tests/test_fg025_contractor_copy.py`.
+
+**MODIFY (by slice):**
+
+- Slice 1: `app/templates/projects/detail.html` (MONITOR/actuals only); display-map module; display assertions in `tests/test_monitor_v1_fg023.py` / `tests/test_project_hub.py` (HTML copy only). Optional: Hub-only flashes in `app/routes/build.py` if they still echo enum names.
+- Slice 2: same Hub template (PLAN/LEARN/commercial-context blocks only).
+- Slice 3: `estimates/internal_breakdown.html`, `estimates/detail.html`, `estimates/version_detail.html`, `labour_engine/*`, `pricing_engine/*`, `historical_estimates/*`, `material_catalogue/*`, related route flashes (`pricing_engine.py`, `labour_engine.py`, `historical_estimates` routes).
+- Slice 4: `app/navigation.py`, `dashboard.html`, `auth/login.html`, `settings/brand_profile.html`.
+- Slice 5: `field/*.html`, `app/static/js/field.js` (user-visible strings only).
+
+**DO NOT TOUCH:** `migrations/`; models and enum constants; `app/services/monitor.py` calculation keys; commercial arithmetic; Proposal PDF total logic; FG-024; Observation Delete; session revocation; LEARN product; CSS except if a later slice proves a `content:` string (none today).
+
+### N. Test plan (implementation, not this pass)
+
+Preserve behavior: navigation, forms, validation, auth, tenant isolation, Hub, Field Web, MONITOR math, Estimate/Proposal functions.
+
+Pin:
+
+- Rendered UI for targeted states does **not** contain raw `MISSING_ACTUALS`, `MISSING_CUSTOMER_COMMITMENT`, `AMBIGUOUS_COMMITMENT`, `MISSING_ORIGINAL_BASELINE`, `other_direct` as labels (after Slice 1).
+- Domain JSON/service still uses those keys.
+- MONITOR remains operational; LEARN remains Future; `NET PROFIT` remains absent.
+- Customer PDF/preview not unintentionally changed (FG-012 assertions stay).
+
+**Focused regression bundle (proposed):**
+
+```bash
+./venv/bin/python -m pytest -q \
+  tests/test_fg025_contractor_copy.py \
+  tests/test_monitor_v1_fg023.py \
+  tests/test_project_hub.py \
+  tests/test_auth_fg018.py \
+  tests/test_build_field_observation_fg020.py \
+  tests/test_build_media_compatibility_fg020.py \
+  tests/test_field_web_fg021.py
+```
+
+Plus estimate/proposal tests when Slice 3/F runs. **Full suite must run after each implementation slice.** Current full-suite baseline: **593 passed**. Do not claim a future count.
+
+This preflight did **not** re-run pytest.
+
+### O. Visual / manual UAT plan (after implementation — do not execute now)
+
+Representative pages: Dashboard, Project Hub (PLAN/PRICE/CONTRACT/BUILD/MONITOR), Field Web Today/Capture, Settings, Estimates/Proposals (office), one customer preview. Purpose: clarity that string tests cannot judge.
+
+**Joel should approve final contractor-facing wording before FG-025 closure.** ChatGPT reviews meaning preservation. Office UAT on a labeled project (existing `FG023-UAT-MONITOR` id 13 is valid for MONITOR copy; do not write further actuals unless a later prompt says so).
+
+### Readiness
+
+**B. READY WITH EXPLICIT NON-BLOCKING NOTES**
+
+Notes: glossary candidates are **not pinned**; “contract value” wording is flagged; customer documents are Slice F / separate; specialist engine nav names are **G**; FG-012 office Overhead/Profit residual is out of a terminology-only slice.
+
+This preflight **does not** authorize implementation.
+
+---
+
 ## Approval
 
 | Role | State |
 |------|--------|
-| Joel / ChatGPT | **Recorded** 2026-09-07 as FUTURE product/governance authority. **Not** implementation-approved. |
-| Cursor | Docs recording only. No product code. No UI rewrite. |
-| Implementation | **NOT AUTHORIZED** until FG-023 is closed **and** Joel/ChatGPT later approve this gate for implementation with a bounded prompt. |
+| Joel / ChatGPT | **Recorded** 2026-09-07 as FUTURE product/governance authority. Preflight **COMPLETE** 2026-09-07. **Not** implementation-approved. |
+| Cursor | Docs / reconnaissance only. No product code. No UI rewrite. |
+| Implementation | **NOT AUTHORIZED** until Joel/ChatGPT approve a bounded slice prompt. |
 
-**Next governed action for the platform is STOP.** FG-023 is **CLOSED / OPERATIONAL FOR UAT**. Do **not** start FG-025 copy rewrite from this recording. Do **not** start FG-024.
+**Next governed action:** Joel/ChatGPT review this preflight, then issue a **separate** Slice 1 implementation prompt if approved. Do **not** start FG-025 copy rewrite from this preflight. Do **not** start FG-024. Do **not** start LEARN. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**

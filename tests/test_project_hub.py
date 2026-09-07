@@ -475,7 +475,8 @@ def test_future_lifecycle_not_operational(client, project):
     assert "LEARN · Future" in html
     assert "MONITOR · Future" not in html
     assert "Estimated versus actual" in html
-    assert "MISSING ACTUALS" in html
+    assert "No actual costs entered yet" in html
+    assert "MISSING ACTUALS" not in html
     assert "Record actual direct cost" in html
     workspace = html.split('id="main-content"', 1)[-1]
     assert 'type="submit"' in workspace

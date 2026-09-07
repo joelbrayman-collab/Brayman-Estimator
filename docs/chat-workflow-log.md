@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-07 — FG-025 Slice 1 Hub MONITOR contractor-facing display mapping
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-07 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026** |
+| Objective | Implement FG-025 Slice 1 only: presentation-layer mapping for Project Hub `#hub-monitor` and office actuals forms/tables. |
+| Business decision | Slice 1 **AUTHORIZED AND IMPLEMENTED**. FG-025 overall **NOT CLOSED**. Remaining slices **NOT AUTHORIZED**. FG-023 remains **CLOSED**. FG-024 remains **FUTURE / NOT IMPLEMENTATION-AUTHORIZED**. |
+| Architectural decision | Presentation mapping in `app/presentation/contractor_copy.py`. Do not rename enums/schema. MONITOR identities unchanged. Optional Jinja wiring via existing `app/shell.py` UI helper. |
+| Prompt template used | `docs/prompts/cursor-implementation-template.md` does **not** exist. Followed AGENTS.md and the bounded Slice 1 prompt. |
+| Approved Cursor prompt summary | FG-025 Slice 1 Hub MONITOR display mapping only. No schema, migration, MONITOR arithmetic, enum rename, FG-024, LEARN, or product-wide copy sweep. Commit + push after PASS. |
+| Files expected to change | `app/presentation/contractor_copy.py`; `app/templates/projects/detail.html` (`#hub-monitor` / actuals); optional `app/shell.py`; `tests/test_fg025_contractor_copy.py`; HTML assertions in `tests/test_monitor_v1_fg023.py` / `tests/test_project_hub.py`; current-authority docs. |
+| Files prohibited from changing | `migrations/`; models/enums; `app/services/monitor.py` keys/arithmetic; Field Web; labour/pricing/nav/PDF; FG-024; live DB. |
+| Implementation result | Slice 1 implemented. Internal keys preserved. Live current `e3f4a5b6c7d8`. Live **39** / **39**. Project **13** five actuals unchanged. |
+| Tests | Dedicated **10 passed**. Focused **159 passed**. Full **603 passed**. `git diff --check` PASS. |
+| Project-state-report update | Yes — FG-025 Slice 1 implemented / not closed. |
+| Milestone entry update | Yes — Slice 1 recorded. |
+| Constitutional issue raised | None. Display vs domain keys distinguished. Extra product file: `app/shell.py` (existing UI context processor). |
+| Unresolved issues | Remaining FG-025 slices unauthorized. “Superseded by” column header and empty superseded history copy left as leakage. “Contract value” still flagged. |
+| Next approved step | **STOP.** Do **not** start Slice 2. Do **not** start FG-024. Do **not** start LEARN. |
+| Next approved prompt | None authorized. |
+| Commit hash | (this product commit) |
+
 ### 2026-09-07 — FG-025 contractor-facing UX implementation preflight
 
 | Field | Content |

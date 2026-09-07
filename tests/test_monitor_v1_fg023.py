@@ -802,17 +802,22 @@ def test_hub_monitor_missing_actuals_and_commitment(client, project):
     html = _html(response)
     monitor = _monitor_html(html)
     assert response.status_code == 200
-    assert "MISSING ACTUALS" in monitor
-    assert "MISSING CUSTOMER COMMITMENT" in monitor
+    assert "No actual costs entered yet" in monitor
+    assert "No actual costs have been entered yet." in monitor
+    assert "No accepted proposal yet" in monitor
+    assert "MISSING ACTUALS" not in monitor
+    assert "MISSING CUSTOMER COMMITMENT" not in monitor
     assert "not calculated" in monitor
     assert "$0.00</p>" not in monitor.split("Actual Direct Cost to Date", 1)[-1][:200]
     assert "Inf" not in monitor
     assert "NaN" not in monitor
     assert "NET PROFIT" not in html
-    assert "labour" in monitor
-    assert "material" in monitor
-    assert "subcontract" in monitor
-    assert "other_direct" in monitor
+    assert "Labour" in monitor
+    assert "Material" in monitor
+    assert "Subcontract" in monitor
+    assert "Other direct cost" in monitor
+    assert ">other_direct<" not in monitor
+    assert "Actual Direct Cost — other_direct" not in monitor
 
 
 def test_hub_renders_baseline_cos_and_excludes_pending_rejected(client, project):
@@ -864,7 +869,8 @@ def test_hub_renders_baseline_cos_and_excludes_pending_rejected(client, project)
     assert "9999" not in monitor
     assert pending.title not in monitor
     assert rejected.title not in monitor
-    assert "CO cost delta not stored" in monitor
+    assert "Change Order estimated cost is not stored on the Change Order" in monitor
+    assert "CO cost delta not stored" not in monitor
     assert "75.00%" in monitor
 
 
@@ -896,7 +902,7 @@ def test_create_all_classes_zero_note_actor_and_quantization(client, project):
     assert DEFAULT_OFFICE_DISPLAY_NAME in monitor
     assert "$10.13" in monitor
     assert "labour note" in monitor
-    assert "ACTIVE" in monitor
+    assert "Current actual costs" in monitor
     rows = list_direct_cost_actuals(project.organization_id, project.id)
     assert len(rows) == 5
     assert all(row.amount == Decimal("10.13") for row in rows if row.note)
@@ -932,7 +938,7 @@ def test_supersede_excludes_prior_and_rejects_non_active(client, project):
     )
     assert correction.status_code == 302
     html = _monitor_html(_html(client.get(f"/projects/{project.id}")))
-    assert "SUPERSEDED" in html
+    assert "Corrected" in html
     assert f"#{list_active_direct_cost_actuals(project.organization_id, project.id)[0].id}" in html
     assert "$80.00" in html
     view = assemble_monitor_v1(project, project.organization_id)
@@ -1024,7 +1030,8 @@ def test_no_delete_path_and_field_events_excluded(client, project):
     db.session.add(event)
     db.session.commit()
     html = _monitor_html(_html(client.get(f"/projects/{project.id}")))
-    assert "MISSING ACTUALS" in html
+    assert "No actual costs entered yet" in html
+    assert "MISSING ACTUALS" not in html
     source = inspect.getsource(build_routes)
     assert "direct-cost-actuals" in source
     assert "/delete" not in source
@@ -1045,7 +1052,8 @@ def test_ambiguous_commitment_and_zero_denominator_hub(client, project):
     _add_snapshot(second_version, direct_cost="300.00", selling="400.00")
     _accept(second, second_version, title="Accepted hub two", template=template)
     html = _monitor_html(_html(client.get(f"/projects/{project.id}")))
-    assert "AMBIGUOUS COMMITMENT" in html
+    assert "More than one accepted proposal — this screen will not pick one" in html
+    assert "AMBIGUOUS COMMITMENT" not in html
     assert "not calculated" in html
     assert "Inf" not in html
     assert "NaN" not in html

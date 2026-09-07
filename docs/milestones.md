@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-07 — FG-025 Slice 1 Hub MONITOR contractor-facing display mapping
+
+| Field | Content |
+|-------|---------|
+| ID | FG-025 — Slice 1 Hub MONITOR display mapping |
+| Status | **SLICE 1 IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED.** Remaining slices **NOT AUTHORIZED.** Not a product-wide sweep. |
+| Branch | `main` |
+| Base commit | `01d6fadbcbb968ad873552ec463fa83eb0b7fd8d` |
+| Objective | Presentation-layer mapping so Hub `#hub-monitor` and office actuals forms/tables no longer display raw MONITOR/BUILD state names. |
+| Deliverables | `app/presentation/contractor_copy.py`; Hub MONITOR/actuals template mapping; `tests/test_fg025_contractor_copy.py`; HTML copy assertion updates. Optional `app/shell.py` template-helper wiring. |
+| Validation | Dedicated **10 passed**. Focused **159 passed**. Full **603 passed**. `git diff --check`. Live current = heads `e3f4a5b6c7d8`. Field **39 / 39**. Project **13** five actuals unchanged. |
+| Architectural findings | Internal domain keys (`MISSING_ACTUALS`, `other_direct`, `CO_COST_DELTA_COPY`) remain in services. Frozen Hub metric identities unchanged. |
+| Open decisions | Remaining FG-025 slices; “contract value” wording still flagged; FG-024 unauthorized. |
+| Next milestone | **STOP.** Do **not** start Slice 2. Do **not** start FG-024. Do **not** start LEARN. |
+| Commit | (this product commit) |
+| Date | 2026-09-07 |
+
 ### 2026-09-07 — FG-025 contractor-facing UX implementation preflight
 
 | Field | Content |

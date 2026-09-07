@@ -87,7 +87,7 @@ Architecture first. Counsel-approved content incrementally.
 
 ## One Feature Gate — four internal slices
 
-FG-024 is **one** linked Feature Gate. Do **not** split these into FG-025 / FG-026 / FG-027.
+FG-024 is **one** linked Feature Gate. Do **not** split these four slices into separate Feature Gates. [FG-025](FG-025-contractor-facing-ux-language-and-terminology-standardization.md) is a **different** product gate (contractor-facing UX language), not a contract-intelligence slice.
 
 ### Slice A — Jurisdictional Legal Content Library
 

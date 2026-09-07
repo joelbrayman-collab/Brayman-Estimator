@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-07 — FG-025 Contractor-Facing UX Language recorded
+
+| Field | Content |
+|-------|---------|
+| ID | FG-025 — Contractor-Facing UX Language & Terminology Standardization |
+| Status | **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** Does **not** rewrite UI. Does **not** interrupt FG-023. |
+| Branch | `main` |
+| Base commit | `ed0c45dec3c4e705b884109466f566d957aea2e2` |
+| Objective | Record a future product-wide contractor-facing terminology sweep after FG-023 close and before broad external UAT. Keep internal enums in code. Inventory leakage; do not rewrite copy. |
+| Deliverables | [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md); discoverability pins in feature-gates README, roadmap commercialization hygiene, current-authority indexes; FG-024 clarification that FG-025 is not a contract-slice split. |
+| Validation | Docs-only. No `app/` / `tests/` / `migrations/` change. `git diff --check`. Product pytest not re-run. |
+| Architectural findings | Extends Hub/Field/customer-document copy practice. No existing product-wide UX language standard. MONITOR Hub currently leaks enum names (`MISSING_ACTUALS`, etc.). |
+| Open decisions | Implementation authorization after FG-023 close; final contractor wording (not pinned). |
+| Next milestone | FG-023 close authorization. Do **not** start FG-025 copy rewrite. |
+| Commit | (this docs commit) |
+| Date | 2026-09-07 |
+
 ### 2026-09-07 — FG-023 MONITOR V1 Slice C (live migrate + office UAT)
 
 | Field | Content |

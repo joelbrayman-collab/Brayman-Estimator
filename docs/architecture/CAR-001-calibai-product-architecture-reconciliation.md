@@ -73,6 +73,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-07 FG-024 recorded — not authorized by CAR-001):** [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. CONTRACT legal-content intelligence is recorded, not implemented. Next governed implementation action remains FG-023 Slice C **execution**. CAR-001 still does **not** authorize FG-024 product code, legal-content population, live migrate, or office UAT.
 
+**Subsequent status (2026-09-07 FG-025 recorded — not authorized by CAR-001):** [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Contractor-facing UX language is recorded, not implemented. Slice C is already **PASS**. Next governed action remains FG-023 **close**. CAR-001 still does **not** authorize FG-025 UI rewrite, FG-023 close, or FG-024 product code.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

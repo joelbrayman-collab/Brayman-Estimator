@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-07 — FG-025 Contractor-Facing UX Language recorded (future; not implementation-authorized)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-07 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026** |
+| Objective | Record FG-025 as a FUTURE Feature Gate for a product-wide contractor-facing UX language / terminology sweep. Docs/governance only. Do not rewrite UI. Do not interrupt FG-023. |
+| Business decision | FG-025 is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Sequence: FG-023 **close** first, then FG-025 sweep, then broader external / U.S. commercialization. Internal model/state names may remain technical in code. User-facing UI must use contractor-facing terminology. FG-023 remains **OPEN** with Slice C **PASS**. Next governed action remains FG-023 close. |
+| Architectural decision | Extends FG-011 Hub / ADR-019 lifecycle labels, FG-012 office vs customer copy, FG-013 TIER_A label, FG-017 visual brand (not terminology), FG-021 Field copy, and FG-023 commercial identities (display only after close). Does **not** duplicate FG-024 legal content. FG-025 is **not** a split of FG-024 slices. No new ADR. No migration. |
+| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) (documentation / governance). |
+| Approved Cursor prompt summary | Record FG-025. Search existing UX/terminology authority first. Inventory surfaces and internal-term leakage. No product code. No UI rewrite. Do not interrupt FG-023. |
+| Files expected to change | New FG-025 document; feature-gates README; FG-024 ID clarification; FG-023 next-action pin; docs README; platform-roadmap; platform-governance; current-state / session-handoff / project-state-report / chat-workflow-log / milestones; bounded architecture/module pins. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; live DB; FG-023 product meaning / close sequence; FG-021/FG-022 product meaning. |
+| Implementation result | Documentation only. FG-025 recorded. No `app/` / `tests/` / `migrations/` change. Live current remains `e3f4a5b6c7d8`. Live **39** / **39**. |
+| Tests | Product pytest **not re-run** (docs-only). Last governed product baseline remains dedicated FG-023 **35** / focused **149** / historical Slice A focused **126** / pre-Slice-B focused **137** / full **593**. `git diff --check` on this docs pass. |
+| Project-state-report update | Yes — FG-025 recorded 2026-09-07; current milestone remains FG-023 close. |
+| Milestone entry update | Yes — recorded, not a completed product milestone. |
+| Constitutional issue raised | None. Display copy vs domain keys distinguished. |
+| Unresolved issues | FG-023 **close authorization**; Observation Delete **QUEUED**; SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. FG-025 implementation unauthorized. FG-024 Slices A–D remain unauthorized. |
+| Next approved step | FG-023 close authorization under a separate ChatGPT prompt. Do **not** close from this pass. Do **not** implement FG-025. Do **not** implement FG-024. |
+| Next approved prompt | FG-023 CLOSE AUTHORIZATION (ChatGPT Architect; not this pass). |
+| Commit hash | (this docs commit) |
+
 ### 2026-09-07 — FG-023 MONITOR V1 Slice C live migrate + office UAT
 
 | Field | Content |

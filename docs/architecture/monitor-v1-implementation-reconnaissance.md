@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **RECONNAISSANCE COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**. MONITOR V1 is **NOT IMPLEMENTED**. |
+| Status | **RECONNAISSANCE COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A **IMPLEMENTED / NOT LIVE-MIGRATED**. MONITOR V1 is **PARTIALLY IMPLEMENTED** (service only). Hub UI **NOT IMPLEMENTED**. Gate **NOT CLOSED**. |
 | Date | 2026-09-06 |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |
@@ -15,9 +15,10 @@ This reconnaissance freezes the smallest lawful MONITOR V1 implementation design
 MONITOR V1:
 RECONNAISSANCE COMPLETE
 FEATURE GATE APPROVED (FG-023)
-IMPLEMENTATION NOT STARTED
-IMPLEMENTATION NOT YET AUTHORIZED
-NOT IMPLEMENTED
+SLICE A IMPLEMENTED / NOT LIVE-MIGRATED
+HUB UI NOT IMPLEMENTED
+PARTIALLY IMPLEMENTED
+GATE NOT CLOSED
 ```
 
 Accepting [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) does **not** authorize implementation. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **APPROVED** and still does **not** authorize product code, schema, or migration until a separate implementation prompt exists. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
@@ -29,6 +30,8 @@ Readiness: **FEATURE GATE APPROVED — IMPLEMENTATION PREFLIGHT COMPLETE. DO NOT
 **Subsequent status (2026-09-06 FG-023 approval):** FG-023 **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**. Joel/ChatGPT accepted the gate as written, including correction semantics (`amount >= 0`; superseding successor may carry `0.00`). No product code. No migration.
 
 **Subsequent status (2026-09-06 FG-023 implementation preflight):** [fg-023-monitor-v1-implementation-preflight.md](fg-023-monitor-v1-implementation-preflight.md) **COMPLETE**. Readiness **B. READY WITH EXPLICIT NON-BLOCKING NOTES**. Implementation remains **NOT AUTHORIZED**.
+
+**Subsequent status (2026-09-06 FG-023 Slice A):** Model + additive migration `e3f4a5b6c7d8` + BUILD actuals service + MONITOR `assemble_monitor_v1` + dedicated tests **implemented**. Live migrate **not** performed. Hub UI **not** implemented. FG-023 **not closed**.
 
 ---
 
@@ -528,15 +531,15 @@ The 2026-09-06 recon listed four Joel freezes. [FG-023](../feature-gates/FG-023-
 3. **No** MONITOR-owned comparison snapshot table in V1.
 4. Any org member who can use Hub may enter actuals (**no RBAC**).
 
-Those four freezes are **approved in FG-023**. Implementation remains **NOT STARTED / NOT YET AUTHORIZED**. Labour-apples-to-apples GM remains a documented later issue (ADR-021 §9).
+Those four freezes are **approved in FG-023**. Slice A product code is **implemented / not live-migrated**. Hub UI, live migrate, and office UAT remain **not** this recon.
 
 ---
 
 ## Feature-gate readiness
 
-**FEATURE GATE APPROVED (FG-023) — IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED.**
+**FEATURE GATE APPROVED (FG-023) — OPEN / NOT CLOSED. SLICE A IMPLEMENTED / NOT LIVE-MIGRATED.**
 
-Do **not** treat this approval as authorization to implement.
+Do **not** treat Slice A as operational MONITOR V1. Do **not** live-migrate from this recon.
 
 ---
 

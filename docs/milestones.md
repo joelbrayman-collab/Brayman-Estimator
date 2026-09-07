@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-06 — FG-023 MONITOR V1 Slice A (model + services + tests)
+
+| Field | Content |
+|-------|---------|
+| ID | FG-023 MONITOR V1 — Slice A |
+| Status | **IMPLEMENTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED.** Hub UI **NOT IMPLEMENTED.** Gate **NOT CLOSED.** |
+| Branch | `main` |
+| Base commit | `b50cf6881555c32e25ca4ab7e5c8d7fcac044c0b` |
+| Objective | Persist BUILD office Direct Cost actuals and MONITOR V1 projection without Hub UI or live migrate. |
+| Deliverables | `ProjectDirectCostActual`; additive revision `e3f4a5b6c7d8`; `app/services/direct_cost_actuals.py`; `app/services/monitor.py` `assemble_monitor_v1`; `tests/test_monitor_v1_fg023.py`; current-authority docs. |
+| Validation | Dedicated **23 passed**. Focused **126 passed**. Full suite **581 passed**. `git diff --check` clean. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. No live actuals rows. |
+| Architectural findings | Cross-project supersession requires caller `project` plus org-scoped prior load. Field Events remain evidence only. `MISSING_ACTUALS` is not zero cost. |
+| Open decisions | Slice B Hub UI. Slice C live-migrate + office UAT. GM display digits. |
+| Next milestone | FG-023 Slice B Hub write routes/forms + `#hub-monitor`. Do not live-migrate from Slice A. |
+| Commit | Verify `git rev-parse HEAD` after this commit. |
+| Date | 2026-09-06 |
+
 ### 2026-09-06 — FG-023 MONITOR V1 implementation preflight
 
 | Field | Content |

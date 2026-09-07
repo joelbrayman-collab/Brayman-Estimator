@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED**. Implementation **NOT STARTED / NOT AUTHORIZED BY THIS PREFLIGHT**. |
+| Status | **PREFLIGHT COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A **IMPLEMENTED / NOT LIVE-MIGRATED** (2026-09-06). Hub UI **NOT IMPLEMENTED**. This preflight remains the Slice A mechanics pin. |
 | Date | 2026-09-06 |
 | Parent | Approval commit `64b6a5472613f00b862170bd57be07486a11f91f` |
 | Recon | [monitor-v1-implementation-reconnaissance.md](monitor-v1-implementation-reconnaissance.md) **COMPLETE** |
@@ -16,7 +16,9 @@ NOT AUTHORIZED BY THIS PREFLIGHT
 MONITOR V1 NOT IMPLEMENTED
 ```
 
-This document pins later implementation mechanics. It does **not** amend FG-023. It does **not** authorize product code, models, or migration.
+This document pins later implementation mechanics. It does **not** amend FG-023. Slice A product code was authorized by a later 6 Sep 2026 implementation prompt. Hub UI, live migrate, and office UAT remain **not** authorized by this preflight.
+
+**Subsequent status (2026-09-06 Slice A):** Model `ProjectDirectCostActual`, additive revision `e3f4a5b6c7d8` (`down_revision = d2e3f4a5b6c7`), BUILD `app/services/direct_cost_actuals.py`, MONITOR `assemble_monitor_v1`, dedicated tests **23 passed**. Live current remains `d2e3f4a5b6c7`. Live Event/Original counts **39 / 39**. No live `ProjectDirectCostActual` rows. Hub `#hub-monitor` **not implemented**. Gate **not closed**.
 
 ---
 

@@ -18,7 +18,7 @@ Two first-class surfaces share one BUILD system of record ([ADR-042](../adr/ADR-
 
 Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Candidates (`PROPOSED` / `CONFIRMED` / `REJECTED`); BUILD private original bytes under `instance/build_originals/`. JPEG, PNG, GIF, and HEIC/HEIF originals are preserved without transcoding. WebP is out. Later BUILD may still expand toward daily execution, crews, labour capture, and post-issuance permit operational evidence as separately gated.
 
-**Proposed (not implemented):** office Direct Cost actuals (`ProjectDirectCostActual`) under [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / IMPLEMENTATION NOT STARTED / IMPLEMENTATION NOT YET AUTHORIZED**. Distinct from Field Capture Events.
+**Implemented (Slice A, not live-migrated):** office Direct Cost actuals (`ProjectDirectCostActual`, table `project_direct_cost_actuals`, service `app/services/direct_cost_actuals.py`) under [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Additive revision `e3f4a5b6c7d8` **not applied to live DB**. Distinct from Field Capture Events. Hub write UI **not implemented**.
 
 ## Referenced data
 
@@ -35,7 +35,7 @@ Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Can
 - Silent AI write of labour/material/progress without human confirmation ([ADR-023](../adr/ADR-023-field-evidence-provenance.md))
 - Transcription, voice AI, photo AI, Field Web chrome
 - Converting Field Observations into financial actuals / MONITOR cost
-- MONITOR comparison projection (MONITOR read layer; FG-023 **APPROVED**, not implemented)
+- MONITOR comparison projection (MONITOR read layer; FG-023 Slice A service **implemented**; Hub UI **not implemented**)
 - Owning Permit Intelligence preflight analysis ([permit-intelligence.md](permit-intelligence.md); [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md)). BUILD may later own **post-issuance** permit/inspection operational evidence only.
 
 ## Current implementation
@@ -44,7 +44,9 @@ Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Can
 
 **Compatible Renditions (image-only increment)** — `app/services/build_rendition.py`. HEIC/HEIF Originals get an automatic JPEG at `instance/build_renditions/<org>/<project>/<event>/<original_id>/display.jpg` (`BUILD_RENDITION_ROOT`). Pillow + pillow-heif; JPEG quality 85; max long edge 2048 px; EXIF orientation applied. Failure does not roll back Original Source. JPEG/PNG/GIF stay native. Audio is unchanged. No schema. Event Detail renders the JPEG as **Photo** with an **Original** link. Hub Field Observations list is unchanged (no thumbnail redesign).
 
-**Not implemented:** Project Closeout / archive-and-purge; Observation Delete; server-side per-login session revocation / idle timeout; transcription; audio conversion; MONITOR; auto-Change Order. Field Web `/field` Today + Capture **is implemented** ([FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED**). **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED** (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED). HEIC real-device Files/Browse UAT is **PASS** (Event **34** / Original **32**). Mixed capture UAT is **PASS** (Event **35**). Background/foreground persistence UAT is **PASS** (Event **36** / Original **36**). CSRF recovery UAT is **PASS** (Event **39** / Original **39**). Portrait / one-handed / outdoor readability UAT is **PASS**. Landscape-tolerance real-iPhone UAT is **PASS**. Current-iPhone field-usability is **PASS**. Primary UAT device is iPhone 14 / iOS 26.6.1 / Safari. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete remains **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**.
+**Not implemented:** Project Closeout / archive-and-purge; Observation Delete; server-side per-login session revocation / idle timeout; transcription; audio conversion; Hub MONITOR UI; auto-Change Order. Field Web `/field` Today + Capture **is implemented** ([FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED**). **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED** (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED). HEIC real-device Files/Browse UAT is **PASS** (Event **34** / Original **32**). Mixed capture UAT is **PASS** (Event **35**). Background/foreground persistence UAT is **PASS** (Event **36** / Original **36**). CSRF recovery UAT is **PASS** (Event **39** / Original **39**). Portrait / one-handed / outdoor readability UAT is **PASS**. Landscape-tolerance real-iPhone UAT is **PASS**. Current-iPhone field-usability is **PASS**. Primary UAT device is iPhone 14 / iOS 26.6.1 / Safari. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** Observation Delete remains **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**.
+
+**FG-023 Slice A actuals:** model + service **in code**. Migration `e3f4a5b6c7d8` **created, not applied live**. No office write routes in this slice.
 
 **Storage lifecycle:** Active projects may retain Original Source **plus** regenerable Compatible Renditions. After a separately governed Project Closeout, archive Original Source, verify, then purge renditions first and duplicate active originals second. Do **not** accumulate redundant copies indefinitely. FG-020 must not block that future path. Closeout is **not** this gate.
 

@@ -24,6 +24,7 @@ from app.models.build import (
     FieldCaptureEvent,
     FieldCaptureOriginal,
 )
+from app.models.direct_cost_actual import ProjectDirectCostActual
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
 from app.models.pricing_engine import (
     EstimatePricingSnapshot,
@@ -79,6 +80,7 @@ __all__ = [
     "FieldCaptureDerivedCandidate",
     "FieldCaptureEvent",
     "FieldCaptureOriginal",
+    "ProjectDirectCostActual",
     "EstimateLineItem",
     "EstimatePricingSnapshot",
     "EstimateSection",

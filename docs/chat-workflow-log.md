@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-06 — FG-023 Slice A model, services, tests
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-06 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN - CalibAi 5 Sep 2026** |
+| Objective | Implement FG-023 Slice A only: `ProjectDirectCostActual`, additive Alembic revision, BUILD actuals service, MONITOR `assemble_monitor_v1`, dedicated tests, current-authority docs. No Hub UI. No live migrate. |
+| Business decision | FG-023 remains **APPROVED / OPEN / NOT CLOSED**. Slice A **IMPLEMENTED / NOT LIVE-MIGRATED**. MONITOR V1 **PARTIALLY IMPLEMENTED**. Hub UI **NOT IMPLEMENTED**. Office UAT **NOT STARTED**. Item 13 **PARTIALLY IMPLEMENTED**. |
+| Architectural decision | BUILD owns actuals. MONITOR owns live projection. No MONITOR snapshot table. No Field Event conversion. `incurred_on` accepts any parseable calendar date. Multiple Accepted Proposals → `AMBIGUOUS_COMMITMENT`. No new ADR. |
+| Prompt template used | Approved Slice A implementation prompt (model + migration + services + tests). |
+| Approved Cursor prompt summary | BRAYMAN — FG-023 MONITOR V1 IMPLEMENTATION SLICE A. MODEL + MIGRATION + SERVICES + TESTS. NO HUB UI. NO LIVE MIGRATE. |
+| Files expected to change | `app/models/direct_cost_actual.py`; `app/models/__init__.py`; `app/services/direct_cost_actuals.py`; `app/services/monitor.py`; `migrations/versions/e3f4a5b6c7d8_add_project_direct_cost_actuals_fg023.py`; `tests/test_monitor_v1_fg023.py`; current-authority docs. |
+| Files prohibited from changing | Hub routes/templates; Field Web; live DB; FG-021/FG-022 product meaning; LEARN; Observation Delete; QuickBooks; FG-023 commercial identities. |
+| Implementation result | Slice A product code landed. Revision `e3f4a5b6c7d8` (`down_revision = d2e3f4a5b6c7`). Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. No live actuals table. No Hub UI. |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_monitor_v1_fg023.py` — **23 passed**. Focused dedicated FG-023 + Hub + FG-018 + FG-020 + FG-021 — **126 passed**. Full suite `./venv/bin/python -m pytest -q` — **581 passed**. `git diff --check` clean. |
+| Project-state-report update | Yes — FG-023 Slice A. |
+| Milestone entry update | Yes. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Hub UI / Slice B; live migrate / Slice C; office UAT; GM display digits; Observation Delete **QUEUED**; SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. |
+| Next approved step | FG-023 Slice B office write routes/forms + Project Hub `#hub-monitor` implementation preflight / authorization. Do not live-migrate. Do not start office UAT. |
+| Next approved prompt | FG-023 SLICE B OFFICE WRITE ROUTES/FORMS + PROJECT HUB `#hub-monitor` IMPLEMENTATION PREFLIGHT / AUTHORIZATION. |
+| Commit hash | (this commit) |
+
 ### 2026-09-06 — FG-023 MONITOR V1 implementation preflight (docs + read-only inspect)
 
 | Field | Content |

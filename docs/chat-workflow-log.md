@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-06 |
+| Updated | 2026-09-07 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-07 — Review Turnover (FG-023 Slice A stop state)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-07 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN - CalibAi 5 Sep 2026** |
+| Objective | Full Review Turnover. Stop substantive development. Reconcile current-authority docs and produce a zero-memory fresh-chat prompt. No Slice B. No live migrate. |
+| Business decision | **TURNOVER PASS** after delta-ledger reconciliation. FG-023 remains **APPROVED / OPEN / NOT CLOSED**. Slice A remains **IMPLEMENTED / NOT LIVE-MIGRATED**. MONITOR V1 **PARTIALLY IMPLEMENTED**. Hub UI **NOT IMPLEMENTED**. Office UAT **NOT STARTED**. |
+| Architectural decision | No new ADR. Frozen FG-023 contract unchanged. Last product-changing SHA remains `2553cf09bdd6b8018112d7eb4b682f87aa103b01`. |
+| Prompt template used | [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) 22-point package |
+| Approved Cursor prompt summary | Review Turnover. Full and complete. Create a fully briefed new chat. |
+| Files expected to change | session-handoff; current-state; project-state-report; chat-workflow-log; milestones; feature-gates README; adr README; bounded current-authority pins. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; live DB; FG-021/FG-022 product meaning; FG-023 commercial identities; master template bytes. |
+| Implementation result | Documentation only. Stale §9/§10/§14/§18/§22 repaired. Completeness test **NO**. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. No live actuals table. |
+| Tests | Product pytest not re-run (docs-only). Last governed product-changing baseline remains dedicated FG-023 **23** / focused **126** / full **581**. `git diff --check` on this docs pass. |
+| Project-state-report update | Yes — Review Turnover 2026-09-07. |
+| Milestone entry update | Yes. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Slice B Hub UI authorization; Slice C live-migrate + office UAT; GM display digits; Observation Delete **QUEUED**; SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. |
+| Next approved step | FG-023 Slice B office write routes/forms + Project Hub `#hub-monitor` implementation preflight / authorization. Do not implement Slice B from this turnover. Do not live-migrate. |
+| Next approved prompt | FG-023 SLICE B OFFICE WRITE ROUTES/FORMS + PROJECT HUB `#hub-monitor` IMPLEMENTATION PREFLIGHT / AUTHORIZATION. |
+| Commit hash | (this commit) |
 
 ### 2026-09-06 — FG-023 Slice A model, services, tests
 

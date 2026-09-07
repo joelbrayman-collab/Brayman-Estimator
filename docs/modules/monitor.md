@@ -3,9 +3,9 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Partial Current** — Slice A comparison service **implemented** (not operational Hub). V1 recon **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN / NOT CLOSED**. Hub UI **NOT IMPLEMENTED**. Live migration **NOT PERFORMED**. |
-| Updated | 2026-09-06 |
+| Updated | 2026-09-07 |
 | Code | `app/services/monitor.py` (`assemble_monitor_v1`). BUILD actuals: `app/models/direct_cost_actual.py`, `app/services/direct_cost_actuals.py`. No Hub `#hub-monitor` UI. |
-| ADR | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (baseline and Project Gross Margin governance; implementation not authorized) |
+| ADR | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (baseline and Project Gross Margin; Slice A projection implemented; Hub UI not implemented) |
 | Recon | [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) **COMPLETE** |
 | CAR | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 

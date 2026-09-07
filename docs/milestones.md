@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-06 |
+| Updated | 2026-09-07 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-07 — Review Turnover (FG-023 Slice A stop state)
+
+| Field | Content |
+|-------|---------|
+| ID | Review Turnover (docs only) |
+| Status | **TURNOVER PASS** — FG-023 remains **APPROVED / OPEN / NOT CLOSED**; Slice A **IMPLEMENTED / NOT LIVE-MIGRATED** |
+| Branch | `main` |
+| Base commit | `2553cf09bdd6b8018112d7eb4b682f87aa103b01` |
+| Objective | Durably represent FG-023 Slice A stop state; repair stale current-authority pins; rebuild session-handoff §22 for a zero-memory fresh chat. |
+| Deliverables | 22-point turnover package; completeness test **NO**; fresh-chat prompt in session-handoff §22. No `app/` / `tests/` / `migrations/` change. |
+| Validation | Docs only. `git diff --check`. Product pytest not rerun. Last product baseline dedicated **23** / focused **126** / full **581**. Live current `d2e3f4a5b6c7`. Live **39** / **39**. |
+| Architectural findings | Stale §22 still said do not start Item 13 / MONITOR and pinned Alembic current = heads `d2e3f4a5b6c7`. Superseded this pass. |
+| Open decisions | Slice B Hub UI authorization. Slice C live-migrate + office UAT. GM display digits. SESSION-EXPIRY **DEFERRED**. Observation Delete **QUEUED**. |
+| Next milestone | FG-023 Slice B implementation preflight / authorization. Do not live-migrate. Do not start Slice B product code from this turnover. |
+| Commit | Confirm `HEAD` after this docs commit. |
+| Date | 2026-09-07 |
+
 ### 2026-09-06 — FG-023 MONITOR V1 Slice A (model + services + tests)
 
 | Field | Content |
@@ -44,7 +61,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Cross-project supersession requires caller `project` plus org-scoped prior load. Field Events remain evidence only. `MISSING_ACTUALS` is not zero cost. |
 | Open decisions | Slice B Hub UI. Slice C live-migrate + office UAT. GM display digits. |
 | Next milestone | FG-023 Slice B Hub write routes/forms + `#hub-monitor`. Do not live-migrate from Slice A. |
-| Commit | Verify `git rev-parse HEAD` after this commit. |
+| Commit | `2553cf09bdd6b8018112d7eb4b682f87aa103b01` |
 | Date | 2026-09-06 |
 
 ### 2026-09-06 — FG-023 MONITOR V1 implementation preflight

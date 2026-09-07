@@ -11,9 +11,11 @@
 ```text
 FG-023:
 APPROVED
-IMPLEMENTATION NOT STARTED
-NOT AUTHORIZED BY THIS PREFLIGHT
-MONITOR V1 NOT IMPLEMENTED
+OPEN
+NOT CLOSED
+SLICE A: IMPLEMENTED / NOT LIVE-MIGRATED
+HUB UI NOT IMPLEMENTED
+THIS PREFLIGHT DOES NOT AUTHORIZE SLICE B OR LIVE MIGRATE
 ```
 
 This document pins later implementation mechanics. It does **not** amend FG-023. Slice A product code was authorized by a later 6 Sep 2026 implementation prompt. Hub UI, live migrate, and office UAT remain **not** authorized by this preflight.

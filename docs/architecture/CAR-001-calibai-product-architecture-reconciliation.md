@@ -59,6 +59,10 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-06 FG-023 preflight — not authorized by CAR-001):** [fg-023-monitor-v1-implementation-preflight.md](fg-023-monitor-v1-implementation-preflight.md) is **COMPLETE**. Readiness **B**. CAR-001 still does **not** authorize MONITOR product code.
 
+**Subsequent status (2026-09-06 FG-023 Slice A — not authorized by CAR-001):** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) Slice A is **IMPLEMENTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED** (`2553cf09bdd6b8018112d7eb4b682f87aa103b01`; revision `e3f4a5b6c7d8` not applied live). MONITOR V1 is **PARTIALLY IMPLEMENTED**. Hub UI **NOT IMPLEMENTED**. Live current remains **`d2e3f4a5b6c7`**. Full suite **581**. CAR-001 still does **not** authorize Slice B, live migrate, or office UAT.
+
+**Subsequent status (2026-09-07 Review Turnover — not authorized by CAR-001):** Current-authority pins and session-handoff §22 reconciled to Slice A. Next governed action is FG-023 Slice B **implementation preflight / authorization**, not product code from the turnover itself.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:
@@ -90,7 +94,7 @@ CalibAi provides complementary **office** and **field** experiences over the sam
 | `Project` remains the lifecycle hub; no parallel CalibAi Job entity | [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** |
 | Preserve and extend the existing Flask platform (CRM, Projects, Estimating, Proposals, COs, Plan/Document/Sheet Intelligence architecture) | ADR-019 |
 | BUILD is a new owning module; Change Orders stay with Project Controls | [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** |
-| MONITOR compares estimated ↔ actual ↔ forecast; frozen composed baseline; Project Gross Margin | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (2026-08-30; MONITOR **not implemented**) |
+| MONITOR compares estimated ↔ actual ↔ forecast; frozen composed baseline; Project Gross Margin | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (Slice A projection **implemented**; Hub UI **not implemented**; [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN / NOT CLOSED**) |
 | LEARN is review-gated and must not mutate pricing policy / cost library / approved estimates / historical actuals | [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** |
 | Field is first-class; Flask services → API → field web → native later if warranted | [ADR-022](../adr/ADR-022-field-client-and-shared-api.md) **Accepted** |
 | Original field evidence separate from derived structured records | [ADR-023](../adr/ADR-023-field-evidence-provenance.md) **Accepted** |

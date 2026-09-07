@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-07 — FG-024 North American Contract Intelligence recorded
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 — North American Contract Intelligence & Legal Content Lifecycle |
+| Status | **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** Slices A–D **not authorized**. Does **not** interrupt FG-023. |
+| Branch | `main` |
+| Base commit | `60011d1b37e02da6ad71c5f230c7bb1a6919a164` |
+| Objective | Record one linked future Feature Gate for jurisdiction-aware legal content, update engine, frozen contract snapshots, and legal-change monitoring. Preserve the Legal Content Gate. Do not implement. |
+| Deliverables | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md); discoverability pins in feature-gates README, Legal Content Gate, project-document-package, roadmap Item 15, current-authority indexes. |
+| Validation | Docs-only. No `app/` / `tests/` / `migrations/` change. `git diff --check`. Product pytest not re-run. |
+| Architectural findings | Extends existing Legal Content Gate + ADR-037 jurisdiction identity + issued-document immutability. Permit Rules remain a separate domain. Fail closed; no generic North American fallback. |
+| Open decisions | Implementation authorization; Ontario/U.S. content population; later ADR for library schema if required. |
+| Next milestone | FG-023 Slice C **execution** (live migrate + office UAT). Do **not** start FG-024 Slice A. |
+| Commit | (this docs commit) |
+| Date | 2026-09-07 |
+
 ### 2026-09-07 — FG-023 MONITOR V1 Slice C implementation preflight
 
 | Field | Content |

@@ -3,12 +3,14 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-09-04 |
-| Implementation | Template registers and approval workflow **not implemented** |
+| Updated | 2026-09-07 |
+| Implementation | Template registers and approval workflow **not implemented**. North American library / update engine / frozen contract snapshot / legal-change monitoring are **FUTURE** under [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) (**RECORDED / NOT IMPLEMENTATION-AUTHORIZED**). |
 
 ## Purpose
 
-Govern Ontario construction contract language, statutory/consumer wording, warranty obligations, and legal templates. The Estimator may **not** invent or silently alter legal obligations.
+Govern construction contract language, statutory/consumer wording, warranty obligations, and legal templates. Ontario remains the **first expected** Canadian jurisdiction package and the historical register home. The Estimator may **not** invent or silently alter legal obligations.
+
+**North American scope (future):** Canada (provinces and territories) and the United States (states) are the commercial destinations. Population is incremental. Architecture must not require redesign per jurisdiction. See [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md). This document remains the Legal Content Gate. FG-024 does **not** replace it.
 
 ## Legal Content Gate
 
@@ -41,6 +43,8 @@ Govern Ontario construction contract language, statutory/consumer wording, warra
 
 **Subsequent status (2026-09-04, FG-022 closure):** Joel recorded presentation-master approval for Families 01–07. [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) is **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**. Family 05 is an **APPROVED REUSABLE PRESENTATION MASTER** only. This closure does **not** populate this register, does **not** approve contract or warranty language, and does **not** authorize execution or Native Signing. Family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED / NOT FOR EXECUTION / NOT FOR SIGNATURE**.
 
+**Subsequent status (2026-09-07, FG-024 recorded):** [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) records the future North American CONTRACT-stage legal-content library, update engine, frozen generation snapshot, and change-monitoring capability. Status: **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. This recording does **not** populate this register, does **not** approve any legal language, does **not** authorize Ontario or U.S. content drafting, and does **not** interrupt [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md). AI still cannot independently set legal content to **APPROVED**. Fail closed if no counsel-approved jurisdiction package exists. No generic North American fallback.
+
 ## Warranty template register (governed — empty until approved)
 
 Warranty language is **governed content**.
@@ -58,7 +62,7 @@ Warranty language is **governed content**.
 
 **Status:** Permit Rules Library is a **separate** governed source from this Legal Content Gate. Architecture **Accepted**: [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md). Canonical V1 pin: [permit-rules-library.md](../architecture/permit-rules-library.md). [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** populated a bounded Ontario / Ottawa coach-house corpus. This gate still does **not** own municipal/provincial zoning or permit rules.
 
-This Legal Content Gate governs **Ontario construction contract and warranty templates**. It does **not** own municipal/provincial/state zoning, permit, servicing, or AHJ requirement sources. The Permit Rules Library is a **separate** governed source.
+This Legal Content Gate governs **construction contract and warranty templates** (Ontario first; later North American packages under FG-024). It does **not** own municipal/provincial/state zoning, permit, servicing, or AHJ requirement sources. The Permit Rules Library is a **separate** governed source. Permit authority and contract legal-content authority remain independent even when they share Project jurisdiction identity ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md)).
 
 [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) and this Legal Content Gate do **not** authorize:
 
@@ -88,6 +92,7 @@ Generation alone does not mean final or sent.
 
 ## Related
 
+- [feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) — future North American library / update engine / frozen snapshot / monitoring (**RECORDED / NOT IMPLEMENTATION-AUTHORIZED**)
 - [legal/native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — signing **process** draft for counsel; **not** template approval
 - [architecture/project-document-package.md](../architecture/project-document-package.md)
 - [architecture/permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) — **FUTURE / NOT IMPLEMENTED**; not this Legal Content Gate

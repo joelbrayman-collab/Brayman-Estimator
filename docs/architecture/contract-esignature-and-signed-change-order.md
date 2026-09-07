@@ -21,7 +21,9 @@ NATIVE SIGNING PRODUCTION ACTIVATION / REAL CUSTOMER USE:
 BLOCKED PENDING ONTARIO COUNSEL APPROVAL OF THE SIGNING PROCESS
 ```
 
-Separately governed Native Signing architecture, Feature Gate drafting, implementation, testing, and non-production UAT may proceed when Joel authorizes that track. Do **not** enable real customer / commercial signing until counsel decisions are reconciled and approved. The Legal Content Gate for Ontario Contract / Warranty templates remains **separate** and in force.
+Separately governed Native Signing architecture, Feature Gate drafting, implementation, testing, and non-production UAT may proceed when Joel authorizes that track. Do **not** enable real customer / commercial signing until counsel decisions are reconciled and approved. The Legal Content Gate for construction Contract / Warranty templates remains **separate** and in force. Future North American legal-content lifecycle is [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) (**FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**); that recording does **not** authorize Native Signing product work.
+
+**Subsequent status (2026-09-07, FG-024 recorded):** FG-024 records the future CONTRACT legal-content library, update engine, frozen generation snapshot, and change monitoring. Native Signing process recon in this document remains unchanged. Contract signing remains later and behind the Legal Content Gate.
 
 Field Web remains separately governed. Parallel does **not** mean this document authorizes signing product code.
 

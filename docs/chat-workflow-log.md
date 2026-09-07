@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-07 — FG-024 North American Contract Intelligence recorded (future; not implementation-authorized)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-07 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026** (Cursor authorized prompt title; session-handoff still records ChatGPT originating title **BRAYMAN - CalibAi 5 Sep 2026**) |
+| Objective | Record FG-024 as one linked FUTURE Feature Gate (Legal Content Library + Contract Update Engine + frozen generation snapshot + legal-change monitoring). Docs/governance only. Do not implement. Do not interrupt FG-023. |
+| Business decision | FG-024 is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. One gate, four internal slices, none authorized. Legal Content Gate preserved and still empty. Canada + United States commercial destinations; Ontario first expected Canadian package; no population. FG-023 remains the active implementation stream. |
+| Architectural decision | Extend existing Legal Content Gate, ProjectLocation/ADR-037 identity, and issued-document immutability (Constitution Article 5 / ADR-002 / ADR-039 analogue). Do not duplicate Permit Rules Library. Fail closed if no approved jurisdiction package. AI cannot approve or activate legal content. No new ADR. No migration. |
+| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) (documentation / governance). |
+| Approved Cursor prompt summary | Record FG-024. Search existing authority first. No product code. No migration. No legal-content population. Do not interrupt FG-023. |
+| Files expected to change | New FG-024 document; feature-gates README; Legal Content Gate; project-document-package; platform-roadmap Item 15; docs README; Projects module; current-state / session-handoff / project-state-report / chat-workflow-log / milestones; bounded architecture pins. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; live DB; FG-023 product/state file; FG-021/FG-022 product meaning. |
+| Implementation result | Documentation only. FG-024 recorded. No `app/` / `tests/` / `migrations/` change. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. |
+| Tests | Product pytest not re-run (docs-only). Last governed product baseline remains dedicated FG-023 **35** / focused **149** / historical Slice A focused **126** / pre-Slice-B focused **137** / full **593**. `git diff --check` on this docs pass. |
+| Project-state-report update | Yes — FG-024 recorded 2026-09-07; current milestone remains FG-023 Slice C. |
+| Milestone entry update | Yes — recorded, not a completed product milestone. |
+| Constitutional issue raised | None. Issued/signed contract immutability restated as FG-024 invariant (Article 5 analogue). |
+| Unresolved issues | FG-023 Slice C **execution**; Observation Delete **QUEUED**; SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. FG-024 Slices A–D remain unauthorized. |
+| Next approved step | FG-023 Slice C live `flask db upgrade e3f4a5b6c7d8` + office UAT under a separate execution authorization. Do **not** implement FG-024. |
+| Next approved prompt | FG-023 SLICE C EXECUTION LIVE MIGRATION + POST-MIGRATION VERIFICATION + BOUNDED OFFICE UAT. |
+| Commit hash | (this docs commit) |
+
 ### 2026-09-07 — FG-023 MONITOR V1 Slice C implementation preflight
 
 | Field | Content |

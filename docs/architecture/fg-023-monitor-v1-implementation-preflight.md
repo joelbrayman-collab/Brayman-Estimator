@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **SLICE A PREFLIGHT COMPLETE** (2026-09-06). **SLICE B PREFLIGHT COMPLETE** (2026-09-07). [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A **IMPLEMENTED / NOT LIVE-MIGRATED**. Hub UI **NOT IMPLEMENTED**. This document remains the mechanics pin. Slice B product code is **not** authorized by this preflight. |
+| Status | **SLICE A PREFLIGHT COMPLETE** (2026-09-06). **SLICE B PREFLIGHT COMPLETE** (2026-09-07). **SLICE B IMPLEMENTED / NOT LIVE-MIGRATED** (2026-09-07). [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A + Slice B **IMPLEMENTED / NOT LIVE-MIGRATED**. Hub `#hub-monitor` **in product code**. This document remains the mechanics pin. Live migrate / office UAT remain **not** authorized by this preflight. |
 | Date | 2026-09-06 |
 | Parent | Approval commit `64b6a5472613f00b862170bd57be07486a11f91f` |
 | Recon | [monitor-v1-implementation-reconnaissance.md](monitor-v1-implementation-reconnaissance.md) **COMPLETE** |
@@ -24,6 +24,8 @@ This document pins later implementation mechanics. It does **not** amend FG-023.
 **Subsequent status (2026-09-06 Slice A):** Model `ProjectDirectCostActual`, additive revision `e3f4a5b6c7d8` (`down_revision = d2e3f4a5b6c7`), BUILD `app/services/direct_cost_actuals.py`, MONITOR `assemble_monitor_v1`, dedicated tests **23 passed**. Live current remains `d2e3f4a5b6c7`. Live Event/Original counts **39 / 39**. No live `ProjectDirectCostActual` rows. Hub `#hub-monitor` **not implemented**. Gate **not closed**.
 
 **Subsequent status (2026-09-07 Slice B preflight):** Hub + office write-pattern reconnaissance complete. Slice B file allow-list and workflow pinned below. No product code. No migration. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. No live actuals table. Gate **not closed**.
+
+**Subsequent status (2026-09-07 Slice B implementation):** Hub `#hub-monitor` + BUILD office actuals create/supersede POSTs **implemented**. Dedicated tests **35 passed**. Focused **149 passed**. Full suite **593 passed**. Historical Slice A focused **126** and pre-Slice-B focused **137** remain historical. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. No live `project_direct_cost_actuals` table. Gate **not closed**. Live migrate / office UAT **not** performed.
 
 ---
 

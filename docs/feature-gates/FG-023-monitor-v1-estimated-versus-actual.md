@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-023 is the governing identifier. Do not assign a new M0xx number. Roadmap Item 13. |
 | Module | **MONITOR** owns the comparison / read projection. **BUILD** owns office Direct Cost actuals (`ProjectDirectCostActual`). **Projects** owns Hub UX at `/projects/<id>`. Estimating, Pricing Engine, Proposals, and Project Controls retain their commercial records. |
 | Date | 2026-09-06 |
-| Status | **APPROVED / OPEN.** Slice A **IMPLEMENTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED.** Hub UI **NOT IMPLEMENTED.** Gate **NOT CLOSED.** |
+| Status | **APPROVED / OPEN.** Slice A + Slice B **IMPLEMENTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED.** Hub `#hub-monitor` **in product code.** Gate **NOT CLOSED.** |
 | Architecture | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** · [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) **COMPLETE** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [modules/monitor.md](../modules/monitor.md) · [FG-011](FG-011-project-hub-ux.md) |
 | Related ADRs | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (commercial baseline; this gate does **not** create a new ADR) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | Item 12 / [FG-021](FG-021-field-web-v1-today-and-capture.md) **CLOSED** (SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**). [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) / [FG-019](FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-008](FG-008-labour-engine-phase-b.md) / [FG-009](FG-009-organization-calibrated-pricing-engine.md) / [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. MONITOR V1 recon **COMPLETE**. |
@@ -20,11 +20,11 @@
 | Layer | State |
 |-------|--------|
 | Feature Gate (this document) | **APPROVED / OPEN** (2026-09-06). **NOT CLOSED.** |
-| Implementation | **SLICE A IMPLEMENTED.** Slice B Hub UI **NOT IMPLEMENTED.** Live migrate / office UAT **NOT STARTED.** |
+| Implementation | **SLICE A IMPLEMENTED.** **SLICE B IMPLEMENTED.** Live migrate / office UAT **NOT STARTED.** |
 | Schema / Alembic | Revision **`e3f4a5b6c7d8`** created (`down_revision = d2e3f4a5b6c7`). **NOT APPLIED TO LIVE DB.** Live current remains **`d2e3f4a5b6c7`**. |
 | New ADR | **None.** ADR-021 already accepted. |
-| MONITOR product code | Slice A service `app/services/monitor.py` `assemble_monitor_v1`. **No Hub UI.** **No MONITOR snapshot table.** |
-| Office actuals | BUILD model `ProjectDirectCostActual` + `app/services/direct_cost_actuals.py` **in code**. **No Hub write routes.** **No live UAT rows.** |
+| MONITOR product code | Slice A service `app/services/monitor.py` `assemble_monitor_v1`. Hub `#hub-monitor` **in product code**. **No MONITOR snapshot table.** **Not live-migrated.** |
+| Office actuals | BUILD model `ProjectDirectCostActual` + `app/services/direct_cost_actuals.py` **in code**. BUILD POST create/supersede **in code**. **No live UAT rows.** |
 | Field Web MONITOR UI | **Out of scope** |
 
 ```text
@@ -33,8 +33,9 @@ APPROVED
 OPEN
 NOT CLOSED
 SLICE A: IMPLEMENTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED
+SLICE B: IMPLEMENTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED
 MONITOR V1: PARTIALLY IMPLEMENTED
-HUB UI: NOT IMPLEMENTED
+HUB UI: IN PRODUCT CODE / NOT LIVE-MIGRATED
 LIVE MIGRATION: NOT PERFORMED
 OFFICE UAT: NOT STARTED
 ```
@@ -305,6 +306,6 @@ Office-only:
 |------|--------|
 | Joel | **Approved as written** 2026-09-06. Correction semantics including `amount >= 0` / `0.00` superseding successor **accepted**. |
 | ChatGPT review | **Approved as written** 2026-09-06. |
-| Cursor | Slice A implemented 2026-09-06 (model, additive migration `e3f4a5b6c7d8`, BUILD actuals service, MONITOR projection, dedicated tests). Hub UI / live migrate **not** this pass. |
+| Cursor | Slice A implemented 2026-09-06. Slice B implemented 2026-09-07 (Hub `#hub-monitor` + BUILD office actuals create/supersede). Live migrate **not** this pass. |
 
-**Next governed action:** FG-023 **SLICE B** office write routes/forms + Project Hub `#hub-monitor` — **implementation** (separate authorization). Slice B **preflight COMPLETE** 2026-09-07. Do **not** live-migrate. Do **not** start office UAT. Do **not** start LEARN. Do **not** start Observation Delete. This Feature Gate text does **not** itself authorize Slice B product code.
+**Next governed action:** FG-023 **SLICE C** live `flask db upgrade` + office UAT + close — **separate authorization**. Slice A + Slice B **IMPLEMENTED / NOT LIVE-MIGRATED**. Hub `#hub-monitor` is in product code; **not** live-migrated; **not** office-UAT-verified; **not** operational in live/UAT. Do **not** live-migrate from this Slice B result. Do **not** start office UAT. Do **not** start LEARN. Do **not** start Observation Delete.

@@ -7,10 +7,13 @@ estimates, or invent lifecycle/health state.
 
 from __future__ import annotations
 
+from decimal import Decimal
+
 from sqlalchemy import func
 
 from app import db
 from app.models import Proposal
+from app.models.direct_cost_actual import COST_CLASSES
 from app.models.labour_engine import EstimateLabourSnapshot
 from app.plan_intelligence.models import (
     DrawingPackage,
@@ -23,8 +26,15 @@ from app.plan_intelligence.services import list_plan_documents
 from app.plan_intelligence.takeoff import list_packages_for_project, list_runs_for_project
 from app.project_controls import repository as change_order_repo
 from app.services.build import list_field_events, original_kind_summary, successor_event
+from app.services.direct_cost_actuals import (
+    is_active_actual,
+    list_direct_cost_actuals,
+    successor_direct_cost_actual,
+)
+from app.services.monitor import assemble_monitor_v1
 from app.services.permit_foundation import assemble_permit_foundation_state
 from app.services.permit_intelligence import assemble_permit_intelligence_state
+from app.services.pricing_engine import as_money
 
 
 def assemble_project_hub(project, organization_id: str) -> dict:
@@ -116,6 +126,18 @@ def assemble_project_hub(project, organization_id: str) -> dict:
             }
         )
 
+    monitor = assemble_monitor_v1(project, organization_id)
+    actual_rows = []
+    for actual in list_direct_cost_actuals(organization_id, project.id):
+        successor = successor_direct_cost_actual(actual)
+        actual_rows.append(
+            {
+                "actual": actual,
+                "active": is_active_actual(actual),
+                "successor": successor,
+            }
+        )
+
     return {
         "permit_foundation": assemble_permit_foundation_state(project),
         "permit_intelligence": assemble_permit_intelligence_state(project),
@@ -136,7 +158,22 @@ def assemble_project_hub(project, organization_id: str) -> dict:
         "approved_takeoff_packages": approved_packages,
         "field_events": field_events,
         "field_event_rows": field_event_rows,
+        "monitor": monitor,
+        "monitor_gm_percent": {
+            "estimated": _gm_percent(monitor.get("estimated_gm")),
+            "actual_to_date": _gm_percent(monitor.get("actual_to_date_gm")),
+            "variance": _gm_percent(monitor.get("gm_variance")),
+        },
+        "direct_cost_actual_rows": actual_rows,
+        "direct_cost_classes": COST_CLASSES,
     }
+
+
+def _gm_percent(fraction):
+    """Display-only percent from a MONITOR fraction. Does not recompute GM."""
+    if fraction is None:
+        return None
+    return as_money(Decimal(fraction) * Decimal("100"))
 
 
 def _existing_active_revision(project):

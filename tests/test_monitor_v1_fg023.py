@@ -1,11 +1,12 @@
-"""FG-023 Slice A — BUILD actuals model/service + MONITOR projection.
+"""FG-023 — BUILD actuals + MONITOR projection + Slice B Hub/write.
 
-No Hub UI, Hub write routes, live migrate, Field Web, LEARN, or delete.
+No live migrate, Field Web MONITOR, LEARN, or DELETE.
 """
 
 from __future__ import annotations
 
 import inspect
+import re
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -24,6 +25,7 @@ from app.project_controls.services import (
     create_change_order,
     update_change_order_status,
 )
+from app.routes import build as build_routes
 from app.services import create_estimate
 from app.services.direct_cost_actuals import (
     DirectCostActualConflictError,
@@ -45,10 +47,21 @@ from app.services.estimate_builder import add_manual_line, create_section, updat
 from app.services.estimates import clone_current_version, lock_version
 from app.services.monitor import assemble_monitor_v1
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
+from app.services.project_hub import assemble_project_hub
 from app.services.proposals import (
     create_proposal,
     create_proposal_template,
     update_proposal_status,
+)
+from tests.auth_fixtures import (
+    DEFAULT_OFFICE_DISPLAY_NAME,
+    DEFAULT_OFFICE_EMAIL,
+    DEFAULT_OFFICE_PASSWORD,
+    create_membership,
+    create_user,
+    ensure_office_user,
+    login_office_user,
+    logout_office_user,
 )
 
 
@@ -76,6 +89,11 @@ def app():
         yield application
         db.session.remove()
         db.drop_all()
+
+
+@pytest.fixture
+def client(app):
+    return app.test_client()
 
 
 @pytest.fixture
@@ -717,3 +735,396 @@ def test_baseline_records_unchanged_after_actuals(app, project):
     assert co.status == co_status
     assert successor.amount == Decimal("25.00")
     assert "net profit" not in str(assemble_monitor_v1(project, project.organization_id)).lower()
+
+
+def _html(response):
+    return response.get_data(as_text=True)
+
+
+def _monitor_html(html):
+    return html.split('id="hub-monitor"', 1)[-1].split('id="hub-learn"', 1)[0]
+
+
+def _csrf_token(response):
+    html = _html(response)
+    match = re.search(r'name="csrf_token"[^>]*value="([^"]+)"', html)
+    if match is None:
+        match = re.search(r'<meta name="csrf-token" content="([^"]+)"', html)
+    assert match is not None, html[:800]
+    return match.group(1)
+
+
+def _post_actual(client, project_id, **fields):
+    payload = {
+        "cost_class": "labour",
+        "amount": "10.00",
+        "incurred_on": "2026-09-01",
+        "note": "",
+    }
+    payload.update(fields)
+    return client.post(
+        f"/projects/{project_id}/direct-cost-actuals",
+        data=payload,
+        follow_redirects=False,
+    )
+
+
+def _complete_baseline(project, number="EST-FG023-HUB"):
+    estimate, version = _estimate_with_line(project, number=number)
+    _add_snapshot(version, direct_cost="250.00", selling="1000.00")
+    _accept(estimate, version, title=f"Accepted {number}")
+    return estimate, version
+
+
+def test_hub_attaches_monitor_without_recomputation(app, project):
+    source = inspect.getsource(assemble_project_hub)
+    assert "assemble_monitor_v1" in source
+    assert "1 - (" not in source
+    assert "original_estimated_direct_cost /" not in source
+    hub = assemble_project_hub(project, project.organization_id)
+    assert hub["monitor"]["actuals_state"] == "MISSING_ACTUALS"
+    assert hub["monitor_gm_percent"]["estimated"] is None
+    assert hub["direct_cost_classes"] == COST_CLASSES
+
+
+@pytest.mark.no_office_auth
+def test_office_unauthenticated_hub_and_writes_redirect(client, project):
+    hub = client.get(f"/projects/{project.id}")
+    assert hub.status_code == 302
+    assert "/login" in (hub.headers.get("Location") or "")
+    created = _post_actual(client, project.id)
+    assert created.status_code == 302
+    assert "/login" in (created.headers.get("Location") or "")
+
+
+def test_hub_monitor_missing_actuals_and_commitment(client, project):
+    response = client.get(f"/projects/{project.id}")
+    html = _html(response)
+    monitor = _monitor_html(html)
+    assert response.status_code == 200
+    assert "MISSING ACTUALS" in monitor
+    assert "MISSING CUSTOMER COMMITMENT" in monitor
+    assert "not calculated" in monitor
+    assert "$0.00</p>" not in monitor.split("Actual Direct Cost to Date", 1)[-1][:200]
+    assert "Inf" not in monitor
+    assert "NaN" not in monitor
+    assert "NET PROFIT" not in html
+    assert "labour" in monitor
+    assert "material" in monitor
+    assert "subcontract" in monitor
+    assert "other_direct" in monitor
+
+
+def test_hub_renders_baseline_cos_and_excludes_pending_rejected(client, project):
+    _complete_baseline(project, number="EST-FG023-COUI")
+    approved = create_change_order(
+        project=project,
+        title="Approved Hub CO",
+        markup_percent=10,
+        tax_percent=13,
+        status="Draft",
+    )
+    add_change_order_item(
+        approved, description="Extra", quantity=1, unit="ea", unit_price=100
+    )
+    update_change_order_status(approved, "Approved")
+    invoiced = create_change_order(
+        project=project,
+        title="Invoiced Hub CO",
+        markup_percent=0,
+        tax_percent=13,
+        status="Draft",
+    )
+    add_change_order_item(
+        invoiced, description="Invoice extra", quantity=1, unit="ea", unit_price=50
+    )
+    update_change_order_status(invoiced, "Invoiced")
+    pending = create_change_order(
+        project=project, title="Pending Hub CO", status="Pending Approval"
+    )
+    rejected = create_change_order(
+        project=project, title="Rejected Hub CO", status="Rejected"
+    )
+    add_change_order_item(
+        pending, description="Ignore pending", quantity=1, unit="ea", unit_price=9999
+    )
+    db.session.refresh(approved)
+    db.session.refresh(invoiced)
+    expected_delta = (
+        Decimal(approved.subtotal)
+        + Decimal(approved.markup)
+        + Decimal(invoiced.subtotal)
+        + Decimal(invoiced.markup or 0)
+    )
+    html = _html(client.get(f"/projects/{project.id}"))
+    monitor = _monitor_html(html)
+    assert "$250.00" in monitor
+    assert "$1000.00" in monitor
+    assert f"${expected_delta:.2f}" in monitor
+    assert "9999" not in monitor
+    assert pending.title not in monitor
+    assert rejected.title not in monitor
+    assert "CO cost delta not stored" in monitor
+    assert "75.00%" in monitor
+
+
+def test_create_all_classes_zero_note_actor_and_quantization(client, project):
+    _complete_baseline(project, number="EST-FG023-CREATE")
+    classes = ("labour", "material", "subcontract", "other_direct")
+    for cost_class in classes:
+        response = _post_actual(
+            client,
+            project.id,
+            cost_class=cost_class,
+            amount="10.126",
+            incurred_on="2026-09-02",
+            note=f"{cost_class} note",
+        )
+        assert response.status_code == 302
+        assert "#hub-monitor" in (response.headers.get("Location") or "")
+    zero = _post_actual(
+        client,
+        project.id,
+        cost_class="labour",
+        amount="0.00",
+        incurred_on="2026-09-03",
+        note="",
+    )
+    assert zero.status_code == 302
+    html = _html(client.get(f"/projects/{project.id}"))
+    monitor = _monitor_html(html)
+    assert DEFAULT_OFFICE_DISPLAY_NAME in monitor
+    assert "$10.13" in monitor
+    assert "labour note" in monitor
+    assert "ACTIVE" in monitor
+    rows = list_direct_cost_actuals(project.organization_id, project.id)
+    assert len(rows) == 5
+    assert all(row.amount == Decimal("10.13") for row in rows if row.note)
+    assert any(row.amount == Decimal("0.00") and is_active_actual(row) for row in rows)
+    assert assemble_monitor_v1(project, project.organization_id)[
+        "actual_direct_cost_to_date"
+    ] == Decimal("40.52")
+    assert "MISSING ACTUALS" not in monitor.split("Actual Direct Cost to Date", 1)[-1][:80]
+
+
+def test_explicit_zero_is_present_not_missing_actuals(client, project):
+    _complete_baseline(project, number="EST-FG023-ZEROUI")
+    _post_actual(client, project.id, amount="0.00")
+    html = _monitor_html(_html(client.get(f"/projects/{project.id}")))
+    assert "MISSING ACTUALS" not in html.split("Actual Direct Cost to Date", 1)[-1][:120]
+    assert "$0.00" in html
+    assert "100.00%" in html
+
+
+def test_supersede_excludes_prior_and_rejects_non_active(client, project):
+    _complete_baseline(project, number="EST-FG023-SUP")
+    created = _post_actual(client, project.id, amount="100.00", note="original")
+    assert created.status_code == 302
+    original = list_direct_cost_actuals(project.organization_id, project.id)[0]
+    correction = client.post(
+        f"/projects/{project.id}/direct-cost-actuals/{original.id}/supersede",
+        data={
+            "cost_class": "labour",
+            "amount": "80.00",
+            "incurred_on": "2026-09-04",
+            "note": "corrected",
+        },
+    )
+    assert correction.status_code == 302
+    html = _monitor_html(_html(client.get(f"/projects/{project.id}")))
+    assert "SUPERSEDED" in html
+    assert f"#{list_active_direct_cost_actuals(project.organization_id, project.id)[0].id}" in html
+    assert "$80.00" in html
+    view = assemble_monitor_v1(project, project.organization_id)
+    assert view["actual_direct_cost_to_date"] == Decimal("80.00")
+    conflict = client.post(
+        f"/projects/{project.id}/direct-cost-actuals/{original.id}/supersede",
+        data={
+            "cost_class": "labour",
+            "amount": "70.00",
+            "incurred_on": "2026-09-05",
+            "note": "again",
+        },
+    )
+    assert conflict.status_code == 409
+    assert original.amount == Decimal("100.00")
+
+
+def test_cross_project_and_cross_org_http_corrections_404(client, app, project, org_b):
+    _complete_baseline(project, number="EST-FG023-XPROJ")
+    _post_actual(client, project.id, amount="15.00")
+    original = list_direct_cost_actuals(project.organization_id, project.id)[0]
+    other = _make_project("Other HTTP", "FG023-HTTP-2", DEFAULT_ORGANIZATION_ID)
+    cross_project = client.post(
+        f"/projects/{other.id}/direct-cost-actuals/{original.id}/supersede",
+        data={
+            "cost_class": "labour",
+            "amount": "1.00",
+            "incurred_on": "2026-09-06",
+            "note": "",
+        },
+    )
+    assert cross_project.status_code == 404
+    foreign = _make_project("Apex HTTP", "FG023-HTTP-ORG2", "ORG-002")
+    foreign_row = create_direct_cost_actual(
+        foreign,
+        cost_class="labour",
+        amount="99.00",
+        incurred_on="2026-09-01",
+        actor_display_name="Apex",
+        organization_id="ORG-002",
+    )
+    foreign_as_home = client.post(
+        f"/projects/{foreign.id}/direct-cost-actuals/{foreign_row.id}/supersede",
+        data={
+            "cost_class": "labour",
+            "amount": "1.00",
+            "incurred_on": "2026-09-06",
+            "note": "",
+        },
+    )
+    assert foreign_as_home.status_code == 404
+    apex_user = create_user(
+        email="apex.sliceb@example.com",
+        password="apex-password",
+        display_name="Apex Slice B",
+    )
+    create_membership(apex_user, "ORG-002")
+    db.session.commit()
+    logout_office_user(client)
+    switched = login_office_user(
+        client, email="apex.sliceb@example.com", password="apex-password"
+    )
+    assert switched.status_code == 302
+    assert client.get(f"/projects/{project.id}").status_code == 404
+    cross_org = client.post(
+        f"/projects/{project.id}/direct-cost-actuals/{original.id}/supersede",
+        data={
+            "cost_class": "labour",
+            "amount": "1.00",
+            "incurred_on": "2026-09-06",
+            "note": "",
+        },
+    )
+    assert cross_org.status_code == 404
+    db.session.refresh(original)
+    assert original.amount == Decimal("15.00")
+    assert successor_direct_cost_actual(original) is None
+
+
+def test_no_delete_path_and_field_events_excluded(client, project):
+    _complete_baseline(project, number="EST-FG023-EVID")
+    event = FieldCaptureEvent(
+        organization_id=project.organization_id,
+        project_id=project.id,
+        actor_display_name="Field",
+        occurred_at=datetime.utcnow(),
+        created_at=datetime.utcnow(),
+    )
+    db.session.add(event)
+    db.session.commit()
+    html = _monitor_html(_html(client.get(f"/projects/{project.id}")))
+    assert "MISSING ACTUALS" in html
+    source = inspect.getsource(build_routes)
+    assert "direct-cost-actuals" in source
+    assert "/delete" not in source
+    deleted = client.post(
+        f"/projects/{project.id}/direct-cost-actuals/1/delete",
+        data={"amount": "1.00"},
+    )
+    assert deleted.status_code == 404
+    assert ProjectDirectCostActual.query.count() == 0
+
+
+def test_ambiguous_commitment_and_zero_denominator_hub(client, project):
+    first, first_version = _estimate_with_line(project, number="EST-FG023-AMB1")
+    _add_snapshot(first_version, direct_cost="100.00", selling="200.00")
+    template = _template("Ambiguous hub template")
+    _accept(first, first_version, title="Accepted hub one", template=template)
+    second, second_version = _estimate_with_line(project, number="EST-FG023-AMB2")
+    _add_snapshot(second_version, direct_cost="300.00", selling="400.00")
+    _accept(second, second_version, title="Accepted hub two", template=template)
+    html = _monitor_html(_html(client.get(f"/projects/{project.id}")))
+    assert "AMBIGUOUS COMMITMENT" in html
+    assert "not calculated" in html
+    assert "Inf" not in html
+    assert "NaN" not in html
+
+    zero_rev = _make_project("Zero revenue hub", "FG023-ZERO-HUB", DEFAULT_ORGANIZATION_ID)
+    z_est, z_ver = _estimate_with_line(zero_rev, number="EST-FG023-ZUI")
+    _add_snapshot(z_ver, direct_cost="10.00", selling="0.00", tax_amount="0.00")
+    _accept(z_est, z_ver, title="Zero selling hub")
+    _post_actual(client, zero_rev.id, amount="5.00")
+    zero_html = _monitor_html(_html(client.get(f"/projects/{zero_rev.id}")))
+    assert "not calculated" in zero_html
+    assert "Inf" not in zero_html
+    assert "NaN" not in zero_html
+    gm_block = zero_html.split("Original Estimated GM", 1)[-1][:80]
+    assert "0.00%" not in gm_block
+
+
+def test_gm_variance_and_tax_excluded_on_hub(client, project):
+    _complete_baseline(project, number="EST-FG023-GMUI")
+    _post_actual(client, project.id, cost_class="labour", amount="100.00")
+    _post_actual(client, project.id, cost_class="material", amount="50.00")
+    html = _monitor_html(_html(client.get(f"/projects/{project.id}")))
+    assert "75.00%" in html
+    assert "85.00%" in html
+    assert "10.00%" in html
+    view = assemble_monitor_v1(project, project.organization_id)
+    assert view["estimated_gm"] == Decimal("0.75")
+    assert view["actual_to_date_gm"] == Decimal("0.85")
+    assert view["gm_variance"] == Decimal("0.10")
+
+
+def test_csrf_required_for_actuals_writes(app):
+    csrf_app = create_app(
+        {
+            "TESTING": True,
+            "WTF_CSRF_ENABLED": True,
+            "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
+            "SECRET_KEY": "csrf-test-fg023",
+        }
+    )
+    with csrf_app.app_context():
+        db.create_all()
+        ensure_default_organization()
+        ensure_office_user()
+        project = _make_project("CSRF Monitor", "FG023-CSRF", DEFAULT_ORGANIZATION_ID)
+        project_id = project.id
+        csrf_client = csrf_app.test_client()
+        token = _csrf_token(csrf_client.get("/login"))
+        login = csrf_client.post(
+            "/login",
+            data={
+                "email": DEFAULT_OFFICE_EMAIL,
+                "password": DEFAULT_OFFICE_PASSWORD,
+                "csrf_token": token,
+            },
+        )
+        assert login.status_code == 302
+        missing = csrf_client.post(
+            f"/projects/{project_id}/direct-cost-actuals",
+            data={
+                "cost_class": "labour",
+                "amount": "1.00",
+                "incurred_on": "2026-09-01",
+            },
+        )
+        assert missing.status_code == 400
+        assert ProjectDirectCostActual.query.count() == 0
+        office_token = _csrf_token(csrf_client.get(f"/projects/{project_id}"))
+        ok = csrf_client.post(
+            f"/projects/{project_id}/direct-cost-actuals",
+            data={
+                "csrf_token": office_token,
+                "cost_class": "labour",
+                "amount": "1.00",
+                "incurred_on": "2026-09-01",
+                "note": "csrf ok",
+            },
+        )
+        assert ok.status_code == 302
+        assert ProjectDirectCostActual.query.count() == 1
+        db.session.remove()
+        db.drop_all()

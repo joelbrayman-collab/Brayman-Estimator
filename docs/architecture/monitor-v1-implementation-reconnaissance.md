@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **RECONNAISSANCE COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A **IMPLEMENTED / NOT LIVE-MIGRATED**. MONITOR V1 is **PARTIALLY IMPLEMENTED** (service only). Hub UI **NOT IMPLEMENTED**. Gate **NOT CLOSED**. |
+| Status | **RECONNAISSANCE COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A + Slice B **IMPLEMENTED / NOT LIVE-MIGRATED**. MONITOR V1 is **PARTIALLY IMPLEMENTED** (service + Hub `#hub-monitor` + office writes). **Not live-migrated.** Gate **NOT CLOSED**. |
 | Date | 2026-09-06 |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |
@@ -32,6 +32,8 @@ Readiness: **FEATURE GATE APPROVED — IMPLEMENTATION PREFLIGHT COMPLETE. DO NOT
 **Subsequent status (2026-09-06 FG-023 implementation preflight):** [fg-023-monitor-v1-implementation-preflight.md](fg-023-monitor-v1-implementation-preflight.md) **COMPLETE**. Readiness **B. READY WITH EXPLICIT NON-BLOCKING NOTES**. Implementation remains **NOT AUTHORIZED**.
 
 **Subsequent status (2026-09-06 FG-023 Slice A):** Model + additive migration `e3f4a5b6c7d8` + BUILD actuals service + MONITOR `assemble_monitor_v1` + dedicated tests **implemented**. Live migrate **not** performed. Hub UI **not** implemented. FG-023 **not closed**.
+
+**Subsequent status (2026-09-07 FG-023 Slice B):** Hub `#hub-monitor` + BUILD office actuals create/supersede **implemented**. Live migrate **not** performed. Office UAT **not** started. FG-023 **not closed**.
 
 ---
 

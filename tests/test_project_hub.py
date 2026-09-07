@@ -155,6 +155,8 @@ def test_project_hub_renders_org_scoped(client, project):
     assert 'id="hub-price"' in html
     assert 'id="hub-contract"' in html
     assert 'id="hub-build"' in html
+    assert 'id="hub-monitor"' in html
+    assert 'href="#hub-monitor"' in html
 
 
 def test_cross_org_project_hub_fails_closed(client, app, org_b):
@@ -470,15 +472,20 @@ def test_future_lifecycle_not_operational(client, project):
     assert "QuickBooks" in html
     assert "four-output" in html
     assert "Ontario contract" in html
-    assert "Future" in html
-    assert "not operational" in html
-    assert "estimated-versus-actual" in html
+    assert "LEARN · Future" in html
+    assert "MONITOR · Future" not in html
+    assert "Estimated versus actual" in html
+    assert "MISSING ACTUALS" in html
+    assert "Record actual direct cost" in html
     workspace = html.split('id="main-content"', 1)[-1]
-    assert 'type="submit"' not in workspace
+    assert 'type="submit"' in workspace
+    learn = html.split('id="hub-learn"', 1)[-1]
+    assert "LEARN is not operational" in learn
     assert "project health" not in html.lower()
     assert "completion percent" not in html.lower()
     assert "Start monitoring" not in html
     assert "Generate recommendation" not in html
+    assert "NET PROFIT" not in html
 
 
 def test_hub_get_does_not_mutate_approved_takeoff_or_create_packages(client, project):

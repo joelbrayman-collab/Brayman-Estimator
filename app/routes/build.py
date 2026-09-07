@@ -37,7 +37,16 @@ from app.services.build_storage import (
     audio_is_browser_playable,
     image_is_browser_displayable,
 )
+from app.services.direct_cost_actuals import (
+    DirectCostActualConflictError,
+    DirectCostActualError,
+    DirectCostActualNotFoundError,
+    create_direct_cost_actual,
+    get_direct_cost_actual,
+    supersede_direct_cost_actual,
+)
 from app.services.organizations import get_current_organization_id
+from app.services.project_hub import assemble_project_hub
 
 build_bp = Blueprint("build", __name__)
 
@@ -65,6 +74,97 @@ def _handle_service_error(exc: BuildServiceError):
         return "conflict"
     flash(str(exc), "error")
     return "invalid"
+
+
+def _actuals_form():
+    return {
+        "cost_class": (request.form.get("cost_class") or "").strip(),
+        "amount": (request.form.get("amount") or "").strip(),
+        "incurred_on": (request.form.get("incurred_on") or "").strip(),
+        "note": (request.form.get("note") or "").strip(),
+    }
+
+
+def _hub_monitor_redirect(project):
+    return redirect(
+        url_for("projects.view_project", id=project.id) + "#hub-monitor"
+    )
+
+
+def _render_hub_with_actuals_form(project, form, *, supersede_actual_id=None, status=400):
+    hub = assemble_project_hub(project, get_current_organization_id())
+    return (
+        render_template(
+            "projects/detail.html",
+            project=project,
+            hub=hub,
+            estimates=hub["estimates"],
+            proposals=hub["proposals"],
+            change_orders=hub["change_orders"],
+            actuals_form=form,
+            supersede_actual_id=supersede_actual_id,
+        ),
+        status,
+    )
+
+
+def _handle_actual_error(exc, project, form, *, supersede_actual_id=None):
+    if isinstance(exc, DirectCostActualNotFoundError):
+        abort(404)
+    if isinstance(exc, DirectCostActualConflictError):
+        flash(str(exc), "error")
+        return _render_hub_with_actuals_form(
+            project, form, supersede_actual_id=supersede_actual_id, status=409
+        )
+    flash(str(exc), "error")
+    return _render_hub_with_actuals_form(
+        project, form, supersede_actual_id=supersede_actual_id, status=400
+    )
+
+
+@build_bp.route("/projects/<int:project_id>/direct-cost-actuals", methods=["POST"])
+def create_project_direct_cost_actual(project_id):
+    project = _project(project_id)
+    form = _actuals_form()
+    try:
+        create_direct_cost_actual(
+            project,
+            cost_class=form["cost_class"],
+            amount=form["amount"],
+            incurred_on=form["incurred_on"],
+            note=form["note"] or None,
+        )
+    except DirectCostActualError as exc:
+        return _handle_actual_error(exc, project, form)
+    flash("Actual cost recorded.", "success")
+    return _hub_monitor_redirect(project)
+
+
+@build_bp.route(
+    "/projects/<int:project_id>/direct-cost-actuals/<int:actual_id>/supersede",
+    methods=["POST"],
+)
+def supersede_project_direct_cost_actual(project_id, actual_id):
+    project = _project(project_id)
+    form = _actuals_form()
+    prior = get_direct_cost_actual(project.organization_id, project.id, actual_id)
+    try:
+        if prior is None:
+            raise DirectCostActualNotFoundError("Actual-cost entry was not found.")
+        supersede_direct_cost_actual(
+            prior,
+            project=project,
+            cost_class=form["cost_class"],
+            amount=form["amount"],
+            incurred_on=form["incurred_on"],
+            note=form["note"] or None,
+        )
+    except DirectCostActualError as exc:
+        return _handle_actual_error(
+            exc, project, form, supersede_actual_id=actual_id
+        )
+    flash("Correction recorded. The prior actual-cost entry remains visible.", "success")
+    return _hub_monitor_redirect(project)
 
 
 @build_bp.route("/projects/<int:project_id>/field-events/new", methods=["GET", "POST"])

@@ -18,7 +18,7 @@ Two first-class surfaces share one BUILD system of record ([ADR-042](../adr/ADR-
 
 Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Candidates (`PROPOSED` / `CONFIRMED` / `REJECTED`); BUILD private original bytes under `instance/build_originals/`. JPEG, PNG, GIF, and HEIC/HEIF originals are preserved without transcoding. WebP is out. Later BUILD may still expand toward daily execution, crews, labour capture, and post-issuance permit operational evidence as separately gated.
 
-**Implemented (Slice A, not live-migrated):** office Direct Cost actuals (`ProjectDirectCostActual`, table `project_direct_cost_actuals`, service `app/services/direct_cost_actuals.py`) under [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Additive revision `e3f4a5b6c7d8` **not applied to live DB**. Distinct from Field Capture Events. Hub write UI **not implemented**. Slice B **PREFLIGHT COMPLETE** (2026-09-07) — routes/forms remain unimplemented until a separate authorization.
+**Implemented (Slice A + Slice B, not live-migrated):** office Direct Cost actuals (`ProjectDirectCostActual`, table `project_direct_cost_actuals`, service `app/services/direct_cost_actuals.py`, POST create/supersede in `app/routes/build.py`) under [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Additive revision `e3f4a5b6c7d8` **not applied to live DB**. Distinct from Field Capture Events. Hub `#hub-monitor` write UI **implemented in code**.
 
 ## Referenced data
 
@@ -35,7 +35,7 @@ Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Can
 - Silent AI write of labour/material/progress without human confirmation ([ADR-023](../adr/ADR-023-field-evidence-provenance.md))
 - Transcription, voice AI, photo AI, Field Web chrome
 - Converting Field Observations into financial actuals / MONITOR cost
-- MONITOR comparison projection (MONITOR read layer; FG-023 Slice A service **implemented**; Hub UI **not implemented**)
+- MONITOR comparison projection (MONITOR read layer; FG-023 Slice A service **implemented**; Slice B Hub display **implemented**; not live-migrated)
 - Owning Permit Intelligence preflight analysis ([permit-intelligence.md](permit-intelligence.md); [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md)). BUILD may later own **post-issuance** permit/inspection operational evidence only.
 
 ## Current implementation

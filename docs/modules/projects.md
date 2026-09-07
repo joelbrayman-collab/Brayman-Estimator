@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current** (project records + change orders package). [FG-011](../feature-gates/FG-011-project-hub-ux.md) Project Hub UX **CLOSED / OPERATIONAL FOR UAT** |
-| Updated | 2026-09-01 |
+| Updated | 2026-09-07 |
 | Code | `app/models/project.py`, `app/routes/projects.py`, `app/services/project_hub.py`; Project Controls: `app/project_controls/` |
 | Feature Gate | [FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** (Hub PLAN Permit Report state + `/projects/<id>/permit-report`). |
 
@@ -16,7 +16,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 - Project CRUD (name, number, address, status, description, client)
 - Parent for estimates
 - Change Orders lifecycle (draft → approval statuses) via `project_controls` package
-- Project Hub UX at `/projects/<id>` ([FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**): identity, versioned commercial context, PLAN / PRICE / CONTRACT stored facts and links, existing Change Orders under BUILD **plus** BUILD Field Observations ([FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**); MONITOR / LEARN labeled Future. Read-only assembly in `app/services/project_hub.py`. No durable hub entity. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) PLAN **PERMIT & APPROVALS** foundation state — **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) extends the same panel with truthful Gate-2 state (report available, last analysis, plan/site basis, attention count, recheck yes/no) and the office HTML/PDF report.
+- Project Hub UX at `/projects/<id>` ([FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**): identity, versioned commercial context, PLAN / PRICE / CONTRACT stored facts and links, existing Change Orders under BUILD **plus** BUILD Field Observations ([FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**); MONITOR V1 `#hub-monitor` comparison + office actuals writes ([FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) Slice B **implemented / not live-migrated**); LEARN labeled Future. Read-only assembly in `app/services/project_hub.py` plus BUILD-owned actuals POSTs. No durable hub entity. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) PLAN **PERMIT & APPROVALS** foundation state — **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) extends the same panel with truthful Gate-2 state (report available, last analysis, plan/site basis, attention count, recheck yes/no) and the office HTML/PDF report.
 
 ## Owned data
 
@@ -77,7 +77,7 @@ Platform-shared (not org-owned): `jurisdiction_definitions`, `jurisdiction_alias
 ## Open decisions
 
 - Whether Project Controls becomes its own top-level module doc
-- MONITOR Slice A comparison service is **implemented**; Hub `#hub-monitor` remains **not started**. Baseline governance is [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**. V1 recon [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) is **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **APPROVED / OPEN / NOT CLOSED**.
+- MONITOR Slice A comparison service and Slice B Hub `#hub-monitor` are **implemented / not live-migrated**. Baseline governance is [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**. V1 recon [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) is **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **APPROVED / OPEN / NOT CLOSED**. Next: Slice C live migrate + office UAT.
 
 ## Relevant tests
 

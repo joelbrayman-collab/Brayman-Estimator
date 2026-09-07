@@ -2,10 +2,10 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Partial Current** — Slice A comparison service **implemented** (not operational Hub). Slice B **PREFLIGHT COMPLETE**. V1 recon **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN / NOT CLOSED**. Hub UI **NOT IMPLEMENTED**. Live migration **NOT PERFORMED**. |
+| Status | **Partial Current** — Slice A comparison service **implemented**. Slice B Hub `#hub-monitor` + office actuals writes **implemented**. **NOT LIVE-MIGRATED**. **NOT OFFICE-UAT-VERIFIED**. V1 recon **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN / NOT CLOSED**. Live migration **NOT PERFORMED**. |
 | Updated | 2026-09-07 |
-| Code | `app/services/monitor.py` (`assemble_monitor_v1`). BUILD actuals: `app/models/direct_cost_actual.py`, `app/services/direct_cost_actuals.py`. No Hub `#hub-monitor` UI. |
-| ADR | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (baseline and Project Gross Margin; Slice A projection implemented; Hub UI not implemented) |
+| Code | `app/services/monitor.py` (`assemble_monitor_v1`). BUILD actuals: `app/models/direct_cost_actual.py`, `app/services/direct_cost_actuals.py`, `app/routes/build.py` create/supersede. Hub: `app/services/project_hub.py`, `app/templates/projects/detail.html` `#hub-monitor`. |
+| ADR | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (baseline and Project Gross Margin; Slice A projection + Slice B Hub display implemented; not live-migrated) |
 | Recon | [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) **COMPLETE** |
 | CAR | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 
@@ -35,16 +35,18 @@ Dated MONITOR **comparison snapshots** and dated **forecast snapshots** only. So
 
 ## Current implementation
 
-**Slice A (2026-09-06):** live projection `assemble_monitor_v1(project, organization_id)` in `app/services/monitor.py`. BUILD-owned `ProjectDirectCostActual` / `project_direct_cost_actuals` via `app/services/direct_cost_actuals.py`. Additive revision `e3f4a5b6c7d8` **created, not applied live**. Dedicated tests `tests/test_monitor_v1_fg023.py` **23 passed**. Full suite **581 passed**.
+**Slice A (2026-09-06):** live projection `assemble_monitor_v1(project, organization_id)` in `app/services/monitor.py`. BUILD-owned `ProjectDirectCostActual` / `project_direct_cost_actuals` via `app/services/direct_cost_actuals.py`. Additive revision `e3f4a5b6c7d8` **created, not applied live**.
 
-**Not implemented:** Project Hub `#hub-monitor` UI / office write routes; live `flask db upgrade`; office UAT; MONITOR snapshot table; forecast-final GM; NET PROFIT; Field Event conversion; QuickBooks. [FG-011](../feature-gates/FG-011-project-hub-ux.md) Hub still labels MONITOR **Future** until Slice B **implementation**. Preflight: [fg-023-monitor-v1-implementation-preflight.md](../architecture/fg-023-monitor-v1-implementation-preflight.md) **COMPLETE** (Slice A + Slice B). Feature Gate: [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN / NOT CLOSED**.
+**Slice B (2026-09-07):** Project Hub `#hub-monitor` displays MONITOR V1 identities and office actual-cost create/supersede POSTs in `app/routes/build.py`. Dedicated tests `tests/test_monitor_v1_fg023.py` **35 passed**. Focused **149 passed**. Full suite **593 passed**. Historical Slice A focused **126** and pre-Slice-B focused **137** remain historical.
+
+**Not implemented:** live `flask db upgrade`; office UAT; MONITOR snapshot table; forecast-final GM; NET PROFIT; Field Event conversion; QuickBooks; Field Web MONITOR. LEARN remains Future on the Hub. Preflight: [fg-023-monitor-v1-implementation-preflight.md](../architecture/fg-023-monitor-v1-implementation-preflight.md) **COMPLETE** (Slice A + Slice B). Feature Gate: [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN / NOT CLOSED**.
 
 ## Dependencies
 
 - ADR-021 (this baseline) — **Accepted**
 - Verified actuals (BUILD / later actual-cost gates) before Actual Gross Margin can be computed
 - Authentication before field capture ([ADR-022](../adr/ADR-022-field-client-and-shared-api.md); [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**)
-- Feature Gate + approved Cursor prompt before remaining slices. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **APPROVED / OPEN**. Slice A is **implemented / not live-migrated**. Slice B Hub UI and Slice C live-migrate/UAT remain separately authorized.
+- Feature Gate + approved Cursor prompt before remaining slices. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **APPROVED / OPEN**. Slice A and Slice B are **implemented / not live-migrated**. Slice C live-migrate/UAT remains separately authorized.
 
 ## Related
 

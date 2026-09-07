@@ -65,6 +65,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-07 Slice B preflight — not authorized by CAR-001):** Slice B **PREFLIGHT COMPLETE**. Hub UI **NOT IMPLEMENTED**. Next governed action is FG-023 Slice B **implementation** (separate authorization). CAR-001 still does **not** authorize Slice B product code, live migrate, or office UAT.
 
+**Subsequent status (2026-09-07 Slice B implementation — not authorized by CAR-001):** Slice B **IMPLEMENTED / NOT LIVE-MIGRATED**. Hub `#hub-monitor` **in product code**. Dedicated **35**. Focused **149**. Full **593**. Live current remains **`d2e3f4a5b6c7`**. CAR-001 still does **not** authorize live migrate or office UAT.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

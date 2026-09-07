@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-07 — FG-023 MONITOR V1 Slice B (Hub MONITOR + office actuals writes)
+
+| Field | Content |
+|-------|---------|
+| ID | FG-023 MONITOR V1 — Slice B |
+| Status | **IMPLEMENTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED.** Hub `#hub-monitor` **in product code.** Gate **NOT CLOSED.** Office UAT **NOT STARTED.** |
+| Branch | `main` |
+| Base commit | `b5e68bec0819985b75e306637bb0de79b948045e` |
+| Objective | Render MONITOR V1 on Project Hub `#hub-monitor` and add BUILD office actual-cost create/supersede writes without live migrate. |
+| Deliverables | `app/services/project_hub.py` `hub["monitor"]`; `app/templates/projects/detail.html` `#hub-monitor`; BUILD POSTs in `app/routes/build.py`; tests in `tests/test_monitor_v1_fg023.py` and `tests/test_project_hub.py`; current-authority docs. No new migration. |
+| Validation | Dedicated **35 passed**. Focused **149 passed**. Full suite **593 passed**. Historical Slice A focused **126** and pre-Slice-B focused **137** remain historical. `git diff --check` clean. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. No live actuals table. |
+| Architectural findings | Hub GET continues to pass `hub`. Template consumes `assemble_monitor_v1` output. Writes stay on BUILD. No second MONITOR engine. No DELETE. No in-place amount edit. |
+| Open decisions | Slice C live-migrate + office UAT. SESSION-EXPIRY **DEFERRED**. Observation Delete **QUEUED**. |
+| Next milestone | FG-023 Slice C live `flask db upgrade` + office UAT. Do not live-migrate from Slice B. |
+| Commit | (this commit) |
+| Date | 2026-09-07 |
+
 ### 2026-09-07 — FG-023 MONITOR V1 Slice B implementation preflight
 
 | Field | Content |

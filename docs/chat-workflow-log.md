@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-07 — FG-023 MONITOR V1 Slice B Hub MONITOR + office actuals writes
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-07 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026** (Cursor authorized prompt title; session-handoff still records ChatGPT originating title **BRAYMAN - CalibAi 5 Sep 2026**) |
+| Objective | Implement FG-023 Slice B only: Project Hub `#hub-monitor` MONITOR V1 display + BUILD office actual-cost create/supersede POSTs, bounded tests, current-authority docs. No live migrate. No office UAT. |
+| Business decision | FG-023 remains **APPROVED / OPEN / NOT CLOSED**. Slice A remains **IMPLEMENTED / NOT LIVE-MIGRATED**. Slice B **IMPLEMENTED / NOT LIVE-MIGRATED**. Hub `#hub-monitor` **in product code**. Office UAT **NOT STARTED**. MONITOR V1 **not operational** in live/UAT. |
+| Architectural decision | Reuse Slice A `create_direct_cost_actual` / `supersede_direct_cost_actual` / `assemble_monitor_v1`. Hub GET `/projects/<id>` via `project_hub.py` `hub["monitor"]`. BUILD POSTs create/supersede. No second model/engine. Template does not recompute commercial identities. GM Hub display = percent via `as_money(gm * 100)` two decimals. No DELETE. No in-place amount edit. No new ADR. No new migration. |
+| Prompt template used | FG-023 Slice B IMPLEMENTATION (product code + tests + docs). |
+| Approved Cursor prompt summary | Slice B Hub MONITOR + office actuals writes. Do not live-migrate. Do not start office UAT. Do not close FG-023. |
+| Files expected to change | `app/routes/build.py`; `app/services/project_hub.py`; `app/templates/projects/detail.html`; `tests/test_monitor_v1_fg023.py`; `tests/test_project_hub.py`; current-authority docs. CSS only if required (not required). |
+| Files prohibited from changing | Slice A services/models; Alembic; live DB; Field Web; Observation Delete; LEARN; FG-021/FG-022 product meaning; FG-023 commercial identities. |
+| Implementation result | Slice B product code landed. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. No live `project_direct_cost_actuals` table. Gate **OPEN**. |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_monitor_v1_fg023.py` — **35 passed**. Focused dedicated FG-023 + Hub + FG-018 + both FG-020 + FG-021 — **149 passed**. Full suite `./venv/bin/python -m pytest -q` — **593 passed**. Historical Slice A focused **126** and pre-Slice-B focused **137** remain historical. `git diff --check`. |
+| Project-state-report update | Yes — FG-023 Slice B 2026-09-07. |
+| Milestone entry update | Yes. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Slice C live-migrate + office UAT; Observation Delete **QUEUED**; SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. |
+| Next approved step | FG-023 Slice C live `flask db upgrade` + office UAT under a separate authorization. Do not live-migrate from this result. Do not start office UAT from this result. |
+| Next approved prompt | FG-023 SLICE C LIVE MIGRATE + OFFICE UAT. |
+| Commit hash | (this commit) |
+
 ### 2026-09-07 — FG-023 MONITOR V1 Slice B implementation preflight
 
 | Field | Content |

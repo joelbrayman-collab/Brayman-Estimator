@@ -307,4 +307,4 @@ Office-only:
 | ChatGPT review | **Approved as written** 2026-09-06. |
 | Cursor | Slice A implemented 2026-09-06 (model, additive migration `e3f4a5b6c7d8`, BUILD actuals service, MONITOR projection, dedicated tests). Hub UI / live migrate **not** this pass. |
 
-**Next governed action:** FG-023 **SLICE B** office write routes/forms + Project Hub `#hub-monitor` — implementation preflight / authorization. Do **not** live-migrate. Do **not** start office UAT. Do **not** start LEARN. Do **not** start Observation Delete.
+**Next governed action:** FG-023 **SLICE B** office write routes/forms + Project Hub `#hub-monitor` — **implementation** (separate authorization). Slice B **preflight COMPLETE** 2026-09-07. Do **not** live-migrate. Do **not** start office UAT. Do **not** start LEARN. Do **not** start Observation Delete. This Feature Gate text does **not** itself authorize Slice B product code.

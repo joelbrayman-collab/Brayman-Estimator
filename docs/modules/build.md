@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Partial Current** — Field Capture V1 **CLOSED / OPERATIONAL FOR UAT**. Field Web V1 **CLOSED** (SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**). Change Orders remain Project Controls. |
-| Updated | 2026-09-06 |
+| Updated | 2026-09-07 |
 | Code | `app/models/build.py`, `app/services/build.py`, `app/services/build_storage.py`, `app/services/build_rendition.py`, `app/routes/build.py`, `app/cli/build.py`, `app/templates/build/`; `/api/v1` BUILD adapter in `app/routes/api_v1.py` |
 | ADR | [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** (boundary). [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted**. [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED**. |
 | CAR | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
@@ -18,7 +18,7 @@ Two first-class surfaces share one BUILD system of record ([ADR-042](../adr/ADR-
 
 Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Candidates (`PROPOSED` / `CONFIRMED` / `REJECTED`); BUILD private original bytes under `instance/build_originals/`. JPEG, PNG, GIF, and HEIC/HEIF originals are preserved without transcoding. WebP is out. Later BUILD may still expand toward daily execution, crews, labour capture, and post-issuance permit operational evidence as separately gated.
 
-**Implemented (Slice A, not live-migrated):** office Direct Cost actuals (`ProjectDirectCostActual`, table `project_direct_cost_actuals`, service `app/services/direct_cost_actuals.py`) under [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Additive revision `e3f4a5b6c7d8` **not applied to live DB**. Distinct from Field Capture Events. Hub write UI **not implemented**.
+**Implemented (Slice A, not live-migrated):** office Direct Cost actuals (`ProjectDirectCostActual`, table `project_direct_cost_actuals`, service `app/services/direct_cost_actuals.py`) under [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Additive revision `e3f4a5b6c7d8` **not applied to live DB**. Distinct from Field Capture Events. Hub write UI **not implemented**. Slice B **PREFLIGHT COMPLETE** (2026-09-07) — routes/forms remain unimplemented until a separate authorization.
 
 ## Referenced data
 

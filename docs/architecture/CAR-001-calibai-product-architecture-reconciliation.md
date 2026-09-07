@@ -61,7 +61,9 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-06 FG-023 Slice A — not authorized by CAR-001):** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) Slice A is **IMPLEMENTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED** (`2553cf09bdd6b8018112d7eb4b682f87aa103b01`; revision `e3f4a5b6c7d8` not applied live). MONITOR V1 is **PARTIALLY IMPLEMENTED**. Hub UI **NOT IMPLEMENTED**. Live current remains **`d2e3f4a5b6c7`**. Full suite **581**. CAR-001 still does **not** authorize Slice B, live migrate, or office UAT.
 
-**Subsequent status (2026-09-07 Review Turnover — not authorized by CAR-001):** Current-authority pins and session-handoff §22 reconciled to Slice A. Next governed action is FG-023 Slice B **implementation preflight / authorization**, not product code from the turnover itself.
+**Subsequent status (2026-09-07 Review Turnover — not authorized by CAR-001):** Current-authority pins and session-handoff §22 reconciled to Slice A. Next governed action at that time was FG-023 Slice B **implementation preflight / authorization**.
+
+**Subsequent status (2026-09-07 Slice B preflight — not authorized by CAR-001):** Slice B **PREFLIGHT COMPLETE**. Hub UI **NOT IMPLEMENTED**. Next governed action is FG-023 Slice B **implementation** (separate authorization). CAR-001 still does **not** authorize Slice B product code, live migrate, or office UAT.
 
 ## What CAR-001 was
 

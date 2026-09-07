@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-07 — FG-023 MONITOR V1 Slice B implementation preflight
+
+| Field | Content |
+|-------|---------|
+| ID | FG-023 MONITOR V1 — Slice B preflight |
+| Status | **PREFLIGHT COMPLETE.** Hub UI **NOT IMPLEMENTED.** Gate **NOT CLOSED.** Does **not** authorize Slice B product code. |
+| Branch | `main` |
+| Base commit | `68b7d02b08553f51e08882bb1dc8ae2b7eb434d3` |
+| Objective | Pin Slice B Hub + office actual-cost write workflow against existing Slice A services and Field Observation patterns. |
+| Deliverables | Slice B section in [fg-023-monitor-v1-implementation-preflight.md](architecture/fg-023-monitor-v1-implementation-preflight.md); current-authority next-action pins. No `app/` / `tests/` / `migrations/` change. |
+| Validation | Docs only. `git diff --check`. Product pytest not rerun. Last product baseline dedicated **23** / current focused **137** / historical Slice A focused **126** / full **581**. Live current `d2e3f4a5b6c7`. Live **39** / **39**. |
+| Architectural findings | Writes belong on BUILD POSTs from Hub `#hub-monitor`. `projects.py` GET stays if hub service carries MONITOR. No second model. No new migration. GM Hub display pinned as percent. Focused **137** is the Slice B regression bundle; **126** remains historical Slice A close. |
+| Open decisions | Slice B **implementation** authorization. Slice C live-migrate + office UAT. SESSION-EXPIRY **DEFERRED**. Observation Delete **QUEUED**. |
+| Next milestone | FG-023 Slice B Hub write routes/forms + `#hub-monitor` implementation. Do not live-migrate from this preflight. |
+| Commit | (this docs commit) |
+| Date | 2026-09-07 |
+
 ### 2026-09-07 — Review Turnover (FG-023 Slice A stop state)
 
 | Field | Content |

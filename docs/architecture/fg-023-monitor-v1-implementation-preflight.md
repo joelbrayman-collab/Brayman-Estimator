@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A **IMPLEMENTED / NOT LIVE-MIGRATED** (2026-09-06). Hub UI **NOT IMPLEMENTED**. This preflight remains the Slice A mechanics pin. |
+| Status | **SLICE A PREFLIGHT COMPLETE** (2026-09-06). **SLICE B PREFLIGHT COMPLETE** (2026-09-07). [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A **IMPLEMENTED / NOT LIVE-MIGRATED**. Hub UI **NOT IMPLEMENTED**. This document remains the mechanics pin. Slice B product code is **not** authorized by this preflight. |
 | Date | 2026-09-06 |
 | Parent | Approval commit `64b6a5472613f00b862170bd57be07486a11f91f` |
 | Recon | [monitor-v1-implementation-reconnaissance.md](monitor-v1-implementation-reconnaissance.md) **COMPLETE** |
@@ -14,13 +14,16 @@ APPROVED
 OPEN
 NOT CLOSED
 SLICE A: IMPLEMENTED / NOT LIVE-MIGRATED
+SLICE B PREFLIGHT: COMPLETE
 HUB UI NOT IMPLEMENTED
-THIS PREFLIGHT DOES NOT AUTHORIZE SLICE B OR LIVE MIGRATE
+THIS PREFLIGHT DOES NOT AUTHORIZE SLICE B PRODUCT CODE OR LIVE MIGRATE
 ```
 
-This document pins later implementation mechanics. It does **not** amend FG-023. Slice A product code was authorized by a later 6 Sep 2026 implementation prompt. Hub UI, live migrate, and office UAT remain **not** authorized by this preflight.
+This document pins later implementation mechanics. It does **not** amend FG-023. Slice A product code was authorized by a later 6 Sep 2026 implementation prompt. Slice B Hub UI / write routes remain **not** authorized until a separate implementation prompt. Live migrate and office UAT remain **not** authorized by this preflight.
 
 **Subsequent status (2026-09-06 Slice A):** Model `ProjectDirectCostActual`, additive revision `e3f4a5b6c7d8` (`down_revision = d2e3f4a5b6c7`), BUILD `app/services/direct_cost_actuals.py`, MONITOR `assemble_monitor_v1`, dedicated tests **23 passed**. Live current remains `d2e3f4a5b6c7`. Live Event/Original counts **39 / 39**. No live `ProjectDirectCostActual` rows. Hub `#hub-monitor` **not implemented**. Gate **not closed**.
+
+**Subsequent status (2026-09-07 Slice B preflight):** Hub + office write-pattern reconnaissance complete. Slice B file allow-list and workflow pinned below. No product code. No migration. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. No live actuals table. Gate **not closed**.
 
 ---
 
@@ -440,3 +443,232 @@ None of these reopen FG-023 commercial identities.
 Not C/D/E: live code can implement FG-023 as written using existing Estimate / snapshot / Proposal / Change Order / Hub / Field Event supersession analogues without inventing a new accounting policy, provided the notes above are pinned in the implementation prompt rather than guessed in code.
 
 This preflight **does not** authorize implementation.
+
+---
+
+## SLICE B IMPLEMENTATION PREFLIGHT (2026-09-07)
+
+Documentation / reconnaissance only. Does **not** authorize product code, live `flask db upgrade`, or office UAT.
+
+Inspected 2026-09-07 at `HEAD` `68b7d02b08553f51e08882bb1dc8ae2b7eb434d3`. Slice A product SHA `2553cf09bdd6b8018112d7eb4b682f87aa103b01`. No Slice A blocking defect found.
+
+### B1. Slice A interfaces to reuse (do not duplicate)
+
+**BUILD writes** — `app/services/direct_cost_actuals.py`:
+
+| Function | Use |
+|----------|-----|
+| `create_direct_cost_actual(project, *, cost_class, amount, incurred_on, note=None, ...)` | Create incremental OFFICE_MANUAL row |
+| `supersede_direct_cost_actual(prior, *, project, cost_class, amount, incurred_on, note=None, ...)` | Successor only; caller must pass `project` |
+| `get_direct_cost_actual(organization_id, project_id, actual_id)` | Scoped load |
+| `list_direct_cost_actuals` / `list_active_direct_cost_actuals` | History vs ACTIVE |
+| `is_active_actual` / `successor_direct_cost_actual` | ACTIVE vs superseded |
+| `parse_amount` / `parse_incurred_on` | Form parsing (any parseable calendar date; no today cutoff) |
+| `DirectCostActualError` (400) / `NotFoundError` (404) / `ConflictError` (409) | Route mapping |
+
+Do **not** add DELETE. Do **not** edit `amount` in place. Do **not** let the browser choose `organization_id`. Service derives org from membership + `project`, `user_id` from session, `actor_display_name` from `current_actor_display_name`, `source=OFFICE_MANUAL`.
+
+**MONITOR reads** — `app/services/monitor.py` `assemble_monitor_v1(project, organization_id) -> dict`.
+
+Templates and routes must **display** these keys. They must **not** recompute GM, CO delta, or actuals rollup.
+
+| Key | Meaning |
+|-----|---------|
+| `original_estimated_direct_cost` | Frozen original DC |
+| `original_estimated_pre_tax_selling_price` | Frozen original pre-tax selling |
+| `estimated_gm` | Original Estimated GM (fraction) or `None` |
+| `approved_co_revenue_delta` | Approved/Invoiced `subtotal + markup` |
+| `authorized_co_count` / `authorized_co_ids` | Same set |
+| `current_authorized_estimated_cost` | Equals original DC in V1 |
+| `current_authorized_pre_tax_revenue` | Original selling + CO delta |
+| `actual_direct_cost_to_date` | ACTIVE sum or `None` |
+| `actual_cost_by_class` | dict or `None` |
+| `actual_to_date_gm` / `gm_variance` | fractions or `None` |
+| `actuals_state` | `MISSING_ACTUALS` / `PRESENT` |
+| `baseline_state` | `COMPLETE` / `MISSING_CUSTOMER_COMMITMENT` / `AMBIGUOUS_COMMITMENT` / `MISSING_ORIGINAL_BASELINE` |
+| `provenance` | source version / snapshot / accepted proposal / CO ids / last actual `created_at` |
+| `current_actuals` | ACTIVE rows |
+| `co_cost_delta_copy` | `"CO cost delta not stored"` |
+
+Schema: `e3f4a5b6c7d8` already exists. **DO NOT TOUCH** migration files. No second model. No second calculation engine.
+
+### B2. Project Hub reconnaissance
+
+| Item | Actual |
+|------|--------|
+| Route | `GET /projects/<id>` → `app/routes/projects.py` `view_project` |
+| Isolation | `Project.query.filter_by(id=id, organization_id=org_id).first_or_404()`; org from `get_current_organization_id()` |
+| Auth | Global `protect_office_routes` in `app/__init__.py` (unauthenticated office HTML → `/login`). No per-view `login_required` decorator |
+| Assembly | `assemble_project_hub(project, org_id)` — read-only; does **not** currently call `assemble_monitor_v1` |
+| Template | `app/templates/projects/detail.html` |
+| CSS | `app/static/css/app.css` `.hub-lifecycle` / `.hub-future-note` / `.hub-section-label` |
+| Tests | `tests/test_project_hub.py` including `test_future_lifecycle_not_operational` |
+
+Lifecycle: PLAN / PRICE / CONTRACT / BUILD are operational `<a href="#hub-*">`. MONITOR and LEARN are `<span class="hub-lifecycle-step is-future">`.
+
+`#hub-monitor` today:
+
+```html
+<p class="hub-section-label" id="hub-monitor">MONITOR</p>
+<div class="hub-future-note">
+    <p class="eyebrow">Future</p>
+    <p>MONITOR is not operational. This hub does not show estimated-versus-actual, forecasts, or project-health metrics.</p>
+</div>
+```
+
+No MONITOR data assumptions. No second Project page. Safest delta: evolve this section in place (FG-011 / FG-023).
+
+**Where actuals interaction lives:** **inside `#hub-monitor`** (FG-023 UI items 11–12: form + current actuals with supersede). Writes POST to BUILD routes (Field Event analogue). Redirect back to `projects.view_project` `#hub-monitor`. No separate MONITOR app. No required extra GET form page.
+
+### B3. Office write-pattern reconnaissance
+
+Closest analogue: `app/routes/build.py` Field Observations.
+
+| Concern | Existing pattern to copy |
+|---------|--------------------------|
+| Login | `protect_office_routes` |
+| Org | `get_current_organization_id()` |
+| Project | `_project(project_id)` → `filter_by(id, organization_id).first_or_404()` |
+| CSRF | Flask-WTF; hidden `csrf_token`; tests copy `_csrf_token` from `tests/test_build_field_observation_fg020.py` |
+| POST form | `request.form.get`; no new WTForms class |
+| Money | BUILD `parse_amount` → `as_money`; Hub money display already `"%.2f"\|format(...)` |
+| Date | `<input type="date" name="incurred_on">` + `parse_incurred_on` (no `max=today`) |
+| Note | optional textarea |
+| Actor | service `current_actor_display_name`; do not accept org from the browser |
+| Redirect | POST-Redirect-GET to Hub `#hub-monitor` |
+| Flash | `flash(..., "success"\|"error")` |
+| 404 | `abort(404)` on `DirectCostActualNotFoundError` |
+| 400 | flash + re-render Hub with submitted form values |
+| 409 | flash + redirect Hub (non-active correction) |
+| Tests | office `client` login used by Hub / FG-018 / FG-020 |
+
+No generic CRUD. No DELETE route or button.
+
+### B4. Pinned Slice B user workflow
+
+**Hub GET** `/projects/<id>`:
+
+1. `assemble_project_hub` also calls `assemble_monitor_v1` and exposes `hub["monitor"]`.
+2. Lifecycle MONITOR chip becomes an in-page `#hub-monitor` link (LEARN stays Future).
+3. `#hub-monitor` replaces the Future note with the FG-023 comparison panel + create form + ACTIVE list.
+
+**Create (minimum fields):** `cost_class`, `amount`, `incurred_on`, `note`. POST `/projects/<int:project_id>/direct-cost-actuals` on `app/routes/build.py`. Call `create_direct_cost_actual`. Flash success. Redirect Hub `#hub-monitor`.
+
+**Correct:** ACTIVE row only. Inline supersede fields: same four inputs. POST `/projects/<int:project_id>/direct-cost-actuals/<int:actual_id>/supersede`. Call `supersede_direct_cost_actual(..., project=project)`. `0.00` allowed. Original preserved. Non-active → 409 flash. Cross-project/org → 404.
+
+**List:** ACTIVE first with supersede control. Superseded history on the same panel, labeled superseded (Field Event analogue). Show predecessor id / actor / `created_at`. Not a GL history product.
+
+**No** provenance input. **No** organization field. **No** DELETE.
+
+### B5. MONITOR state / error presentation
+
+Display formatting only (no second math):
+
+- Money: existing `$` + `"%.2f"` (two decimal places).
+- GM fraction from the service: Hub may show **percent** as `as_money(gm * 100)` with two decimal places and `%`. Missing GM is the state label, **never** `0.00%`, Inf, or NaN.
+- Never label NET PROFIT.
+
+| State | Show | Withhold | Entry available? |
+|-------|------|----------|------------------|
+| `baseline_state=COMPLETE` and `actuals_state=PRESENT` | All identities that the service populated; Actual GM / variance only if not `None` | Nothing required | Yes |
+| `MISSING_ACTUALS` | Baseline layers that exist; **MISSING ACTUALS** | Actual total, class totals, Actual GM, variance — do not show `0.00` as actuals | Yes |
+| `PRESENT` with explicit ACTIVE `0.00` | Actuals present; Actual GM may compute | Do not call this MISSING ACTUALS | Yes |
+| `MISSING_CUSTOMER_COMMITMENT` | Warning; CO delta/count may still show | Original DC/selling/Estimated GM as committed baseline | Yes (actuals still lawful; Actual GM withheld without revenue denominator) |
+| `AMBIGUOUS_COMMITMENT` | Warning; do not pick latest Accepted | Committed original pair / Estimated GM | Yes |
+| `MISSING_ORIGINAL_BASELINE` | Warning (Accepted exists but locked source version missing/unusable) | Fake baseline numbers | Yes |
+| Estimated or Actual GM `None` (zero/missing denominator) | State / “not calculated” | Inf/NaN/`0.00%` pretending to be GM | Yes |
+| `current_authorized_estimated_cost` | Original DC + copy **CO cost delta not stored** | Invented CO cost | — |
+
+Actual-cost entry remains available in every Hub-open org-member case (FG-023: no RBAC). Calculations stay unavailable until the service populates them.
+
+### B6. Commercial identities (unchanged)
+
+```
+Original Estimated GM = 1 - (Original Estimated Direct Cost / Original Estimated Pre-Tax Selling Price)
+Actual-to-Date GM = 1 - (Actual Direct Cost to Date / Current Authorized Pre-Tax Revenue)
+GM Variance = Actual-to-Date GM - Original Estimated GM
+Current Authorized Pre-Tax Revenue = Original Estimated Pre-Tax Selling Price + Approved/Invoiced CO Pre-Tax Revenue Delta
+CO revenue delta = subtotal + markup (tax excluded)
+Current Authorized Estimated Cost = Original Estimated Direct Cost
+```
+
+Field Evidence excluded. No forecast-final GM. No cost-to-complete. No NET PROFIT. No QuickBooks.
+
+### B7. Focused test bundle (resolved)
+
+| Record | Command / count |
+|--------|-----------------|
+| Historical Slice A close | Dedicated FG-023 + Hub + FG-018 + FG-020 **field observation only** + FG-021 = **126**. Accurate for that close. **Do not rewrite.** |
+| Why 137 appeared | 2026-09-07 Review Turnover `session-handoff` §21 listed both FG-020 files, adding `tests/test_build_media_compatibility_fg020.py` (**11** tests). |
+| Slice B governed focused set | Broader **137** bundle. Intentional current coverage of FG-020 as closed (44 tests = 33+11). Compatible with FG-023 “Hub/auth/BUILD regressions”. |
+
+**Pre-Slice-B focused command and expected count:**
+
+```bash
+./venv/bin/python -m pytest -q \
+  tests/test_monitor_v1_fg023.py \
+  tests/test_project_hub.py \
+  tests/test_auth_fg018.py \
+  tests/test_build_field_observation_fg020.py \
+  tests/test_build_media_compatibility_fg020.py \
+  tests/test_field_web_fg021.py
+```
+
+Expected **before Slice B product code:** **137 passed**. Dedicated FG-023 **23**. Full suite **581**. Slice B implementation close records new exact counts.
+
+### B8. Slice B test plan
+
+**EXISTING BEFORE NEW:** extend `tests/test_monitor_v1_fg023.py` (filename frozen by FG-023). Also **modify** `tests/test_project_hub.py` so MONITOR Future-not-operational assertions do not block V1 (LEARN / QuickBooks / four-output / Ontario remain Future).
+
+Do **not** create a second dedicated test module unless the implementation prompt later finds `test_monitor_v1_fg023.py` unworkable.
+
+Cover at least: login 302; org/project 404; Hub MONITOR rendering of service keys; CO Approved/Invoiced included and pending/rejected excluded; create all four classes; `as_money`; `0.00`; `incurred_on` parse; note; actor snapshot; ACTIVE aggregation; superseded excluded from rollup; successor create; non-active correction 409; cross-project/org 404; no DELETE; MISSING_ACTUALS vs explicit `0.00`; MISSING_CUSTOMER_COMMITMENT; AMBIGUOUS_COMMITMENT; zero denominator; no Inf/NaN; tax excluded; Field Events excluded; both GMs + variance; CSRF; Hub/BUILD/Field regressions.
+
+Isolated test DB only. No live UAT DB.
+
+### B9. Authorized Slice B file delta
+
+| Path | Class |
+|------|--------|
+| `app/routes/build.py` | **MODIFY** — POST create + POST supersede |
+| `app/services/project_hub.py` | **MODIFY** — attach `assemble_monitor_v1` |
+| `app/templates/projects/detail.html` | **MODIFY** — operational `#hub-monitor` |
+| `app/static/css/app.css` | **MODIFY only if** existing Hub classes cannot render the panel; prefer no CSS change |
+| `tests/test_monitor_v1_fg023.py` | **MODIFY** — Slice B Hub/write cases |
+| `tests/test_project_hub.py` | **MODIFY** — MONITOR Future assertions |
+| Current-authority docs | **MODIFY** at implementation/close |
+| `app/routes/projects.py` | **DO NOT TOUCH** if Hub GET already passes `hub` (preferred) |
+| `app/services/direct_cost_actuals.py` | **DO NOT TOUCH** |
+| `app/services/monitor.py` | **DO NOT TOUCH** |
+| `app/models/direct_cost_actual.py` | **DO NOT TOUCH** |
+| `app/models/__init__.py` | **DO NOT TOUCH** |
+| `migrations/versions/e3f4a5b6c7d8_*.py` | **DO NOT TOUCH** |
+| Field Web / Observation Delete / LEARN | **DO NOT TOUCH** |
+
+**CREATE:** none expected (forms live in `detail.html`). If implementation cannot keep create/supersede on the Hub without a second template, smallest fallback is one BUILD template — that would be a later allow-list amendment, not this preflight’s default.
+
+If reconnaissance during implementation says another migration is required: **STOP** and return to ChatGPT.
+
+### B10. Live migration boundary
+
+| Pin | Value |
+|-----|--------|
+| Repository Alembic head | `e3f4a5b6c7d8` |
+| Live current before/during Slice B | `d2e3f4a5b6c7` |
+| Slice B `flask db upgrade` | **Forbidden** unless a later Slice C prompt |
+| Tests | Isolated schema |
+| Office UAT | After separately authorized live migrate |
+
+Do not combine Slice B implementation + live migrate + office UAT.
+
+### B11. Non-goals
+
+No new actuals model; no new migration; QuickBooks; accounting; forecast-final GM; cost-to-complete; LEARN; ML; Observation Delete; session revocation; Field Web MONITOR; PWA/native; transcription; external AI; payroll/GL/AP/AR; Field Evidence → cost; NET PROFIT; unrelated UI redesign; second Hub; Slice A identity redesign.
+
+### B12. Slice B readiness
+
+**B. READY WITH EXPLICIT NON-BLOCKING NOTES**
+
+Notes already pinned: `incurred_on` any parseable date (Slice A); GM Hub display = percent via `as_money(gm * 100)` two decimals (display only); `AMBIGUOUS_COMMITMENT` does not pick latest.
+
+This Slice B preflight **does not** authorize implementation.

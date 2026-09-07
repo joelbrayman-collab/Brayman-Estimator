@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-07 — FG-023 MONITOR V1 Slice B implementation preflight
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-07 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026** (Cursor authorized prompt title; session-handoff still records ChatGPT originating title **BRAYMAN - CalibAi 5 Sep 2026**) |
+| Objective | Governed Slice B implementation preflight only: Hub + office write reconnaissance, file allow-list, workflow pin, focused-bundle resolution. No product code. No live migrate. |
+| Business decision | FG-023 remains **APPROVED / OPEN / NOT CLOSED**. Slice A remains **IMPLEMENTED / NOT LIVE-MIGRATED**. Slice B **PREFLIGHT COMPLETE**. Hub UI **NOT IMPLEMENTED**. Office UAT **NOT STARTED**. MONITOR V1 **not operational**. |
+| Architectural decision | Reuse Slice A `create_direct_cost_actual` / `supersede_direct_cost_actual` / `assemble_monitor_v1`. Hub GET `/projects/<id>` + BUILD POST create/supersede. No second model/engine. GM Hub display = percent via `as_money(gm * 100)` two decimals. Focused **137** current / **126** historical. No new ADR. No new migration. |
+| Prompt template used | FG-023 Slice B IMPLEMENTATION PREFLIGHT (documentation / reconnaissance). |
+| Approved Cursor prompt summary | Slice B preflight. Recon + design + governed docs. Do not implement Slice B product code. Do not live-migrate. |
+| Files expected to change | Existing preflight record; current-state; session-handoff; project-state-report; chat-workflow-log; milestones; feature-gates README; FG-023 next action; modules/monitor + build; platform-roadmap. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; live DB; FG-021/FG-022 product meaning; FG-023 commercial identities; Slice A historical inspect-gap table. |
+| Implementation result | Documentation only. Slice B section appended to [fg-023-monitor-v1-implementation-preflight.md](architecture/fg-023-monitor-v1-implementation-preflight.md). No `app/` / `tests/` / `migrations/` change. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. |
+| Tests | Product pytest not re-run (docs-only). Last governed product baseline remains dedicated FG-023 **23** / current focused **137** (start-of-day 7 Sep) / historical Slice A focused **126** / full **581**. `git diff --check` on this docs pass. |
+| Project-state-report update | Yes — Slice B preflight 2026-09-07. |
+| Milestone entry update | Yes. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Slice B Hub UI **implementation** authorization; Slice C live-migrate + office UAT; Observation Delete **QUEUED**; SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. |
+| Next approved step | FG-023 Slice B office write routes/forms + Project Hub `#hub-monitor` **implementation** under a separate product-code authorization. Do not live-migrate. Do not start office UAT from this preflight. |
+| Next approved prompt | FG-023 SLICE B OFFICE WRITE ROUTES/FORMS + PROJECT HUB `#hub-monitor` IMPLEMENTATION. |
+| Commit hash | (this docs commit) |
+
 ### 2026-09-07 — Review Turnover (FG-023 Slice A stop state)
 
 | Field | Content |

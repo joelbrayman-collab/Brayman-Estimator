@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-07 — FG-025 Slice 2 contractor-facing Project Hub language
+
+| Field | Content |
+|-------|---------|
+| ID | FG-025 — Slice 2 Project Hub language |
+| Status | **SLICE 2 IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED.** Remaining slices **NOT AUTHORIZED.** Not a product-wide sweep. |
+| Branch | `main` |
+| Base commit | `5a2dd7addfd71ddde6c81fab63a6f8f040a27315` |
+| Objective | Contractor-facing language on the office Project Hub and embedded PLAN/PRICE/CONTRACT/BUILD/MONITOR copy, without rewriting standalone modules. |
+| Deliverables | Hub `detail.html` copy; `contractor_copy.py` Slice 2 constants; FG-025 and Hub HTML tests. |
+| Validation | Dedicated **10 passed**. Focused **159 passed**. Full **603 passed**. Manual Hub review **PASS** (project 13, Flask 5015). `git diff --check`. Live current = heads `e3f4a5b6c7d8`. Field **39 / 39**. Project **13** five actuals unchanged. |
+| Architectural findings | Reused Slice 1 presentation map. Chosen heading **Pricing assumptions**. Frozen metric labels unchanged. |
+| Open decisions | Remaining FG-025 slices; “contract value” wording still flagged; FG-024 unauthorized. |
+| Next milestone | **STOP.** Do **not** start Slice 3. Do **not** start FG-024. Do **not** start LEARN. |
+| Commit | (this product commit) |
+| Date | 2026-09-07 |
+
 ### 2026-09-07 — FG-025 Slice 1 Hub MONITOR contractor-facing display mapping
 
 | Field | Content |

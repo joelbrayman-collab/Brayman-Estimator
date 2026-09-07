@@ -12,20 +12,30 @@ from app.models import Client, Project
 from app.presentation.contractor_copy import (
     CO_COST_DELTA_INTERNAL,
     CO_COST_DELTA_LABEL,
+    CORRECTED_BY_HEADING,
     CORRECTED_ITEM_LABEL,
     CURRENT_ACTUALS_EMPTY,
     CURRENT_ACTUALS_HEADING,
+    PERMIT_ADVISORY_EYEBROW,
+    PERMIT_FOUNDATION_EYEBROW,
+    PERMIT_RECHECK_HEADING,
+    PREVIOUS_ENTRIES_EMPTY,
     PREVIOUS_ENTRIES_HEADING,
+    PRICING_ASSUMPTIONS_HEADING,
+    LEGACY_PRICING_ASSUMPTIONS_HEADING,
+    NO_PRICING_ASSUMPTIONS,
     RECORD_CORRECTION_BUTTON,
     SOURCE_HEADLINE,
     co_cost_delta_label,
     cost_class_label,
+    entry_reference,
     monitor_empty_copy,
     monitor_source_detail,
     monitor_source_headline,
     monitor_state_label,
+    sentence_label,
 )
-from app.services.direct_cost_actuals import list_direct_cost_actuals
+from app.services.direct_cost_actuals import list_active_direct_cost_actuals, list_direct_cost_actuals
 from app.services.monitor import assemble_monitor_v1
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
 from tests.test_monitor_v1_fg023 import (
@@ -116,7 +126,20 @@ def test_actual_group_and_correction_copy_are_pinned():
     assert CURRENT_ACTUALS_EMPTY == "No current actual-cost entries"
     assert PREVIOUS_ENTRIES_HEADING == "Previous entries"
     assert CORRECTED_ITEM_LABEL == "Corrected"
+    assert CORRECTED_BY_HEADING == "Corrected by"
+    assert PREVIOUS_ENTRIES_EMPTY == "No previous cost corrections."
     assert RECORD_CORRECTION_BUTTON == "Record correction"
+    assert PRICING_ASSUMPTIONS_HEADING == "Pricing assumptions"
+    assert NO_PRICING_ASSUMPTIONS == "No pricing assumptions recorded."
+    assert LEGACY_PRICING_ASSUMPTIONS_HEADING == (
+        "Legacy project — pricing assumptions not recorded"
+    )
+    assert PERMIT_FOUNDATION_EYEBROW == "Preliminary / foundation only"
+    assert PERMIT_ADVISORY_EYEBROW == "Advisory only"
+    assert PERMIT_RECHECK_HEADING == "Recheck required"
+    assert entry_reference(123) == "Entry reference 123"
+    assert sentence_label("interior_door") == "interior door"
+    assert sentence_label("superseded-in-set") == "superseded in set"
 
 
 def test_co_cost_delta_and_source_copy_are_pinned():
@@ -175,6 +198,7 @@ def test_rendered_hub_maps_missing_states_and_preserves_monitor(client, project)
     assert CURRENT_ACTUALS_HEADING in monitor
     assert CURRENT_ACTUALS_EMPTY in monitor
     assert PREVIOUS_ENTRIES_HEADING in monitor
+    assert PREVIOUS_ENTRIES_EMPTY in monitor
     assert SOURCE_HEADLINE in monitor
     assert CO_COST_DELTA_LABEL in monitor
     assert "CO cost delta not stored" not in monitor
@@ -191,6 +215,23 @@ def test_rendered_hub_maps_missing_states_and_preserves_monitor(client, project)
     view = assemble_monitor_v1(project, project.organization_id)
     assert view["actuals_state"] == "MISSING_ACTUALS"
     assert view["baseline_state"] == "MISSING_CUSTOMER_COMMITMENT"
+    assert "Commercial Decision Gate Context" not in html
+    assert "No commercial context recorded." not in html
+    assert PRICING_ASSUMPTIONS_HEADING in html
+    assert NO_PRICING_ASSUMPTIONS in html
+    assert PERMIT_FOUNDATION_EYEBROW in html
+    assert "PRELIMINARY / FOUNDATION ONLY" not in html
+    assert "RECHECK REQUIRED" not in html
+    assert "Original Estimated Direct Cost" in html
+    assert "Original Estimated Pre-Tax Selling Price" in html
+    assert "Original Estimated GM" in html
+    assert "Approved/Invoiced CO Revenue Delta" in html
+    assert "Current Authorized Pre-Tax Revenue" in html
+    assert "Current Authorized Estimated Cost" in html
+    assert "Actual Direct Cost to Date" in html
+    assert "Actual-to-Date Project Gross Margin" in html
+    assert "GM Variance" in html
+    assert "Current Contract Value" not in html
 
 
 def test_rendered_hub_maps_ambiguous_commitment(client, project):
@@ -256,9 +297,17 @@ def test_rendered_hub_maps_current_and_previous_actuals(client, project):
     html = _monitor_html(_html(client.get(f"/projects/{project.id}")))
     assert PREVIOUS_ENTRIES_HEADING in html
     assert CORRECTED_ITEM_LABEL in html
+    assert CORRECTED_BY_HEADING in html
     assert "Record correction" in html
     assert "SUPERSEDED</span>" not in html
     assert "Superseded actuals" not in html
+    assert "Superseded by" not in html
+    assert "No superseded actual-cost history." not in html
+    successor_id = list_active_direct_cost_actuals(project.organization_id, project.id)[0].id
+    assert entry_reference(successor_id) in html
+    assert f"#{successor_id}" not in html
+    assert "<th>Id</th>" not in html
+    assert "<th>ID</th>" not in html
     assert "Source of these numbers" in html
     assert "pricing lock" in html
     assert "accepted proposal" in html

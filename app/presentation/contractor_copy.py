@@ -1,4 +1,4 @@
-"""FG-025 Slice 1 contractor-facing display mapping.
+"""FG-025 contractor-facing display mapping (Slice 1 MONITOR + Slice 2 Hub).
 
 Presentation only. Deterministic. No DB access, I/O, service ownership,
 commercial calculations, or mutation. Internal domain keys stay authoritative.
@@ -35,8 +35,21 @@ CURRENT_ACTUALS_HEADING = "Current actual costs"
 CURRENT_ACTUALS_EMPTY = "No current actual-cost entries"
 PREVIOUS_ENTRIES_HEADING = "Previous entries"
 CORRECTED_ITEM_LABEL = "Corrected"
+CORRECTED_BY_HEADING = "Corrected by"
+PREVIOUS_ENTRIES_EMPTY = "No previous cost corrections."
 RECORD_CORRECTION_BUTTON = "Record correction"
 SOURCE_HEADLINE = "Source of these numbers"
+PRICING_ASSUMPTIONS_HEADING = "Pricing assumptions"
+NO_PRICING_ASSUMPTIONS = "No pricing assumptions recorded."
+LEGACY_PRICING_ASSUMPTIONS_HEADING = (
+    "Legacy project — pricing assumptions not recorded"
+)
+PERMIT_FOUNDATION_EYEBROW = "Preliminary / foundation only"
+PERMIT_ADVISORY_EYEBROW = "Advisory only"
+PERMIT_RECHECK_HEADING = "Recheck required"
+PERMIT_RECHECK_WHY = (
+    "Location, plan/site facts, or rules have changed since the last report."
+)
 
 EMPTY_COPY = {
     "MISSING_ACTUALS": {
@@ -114,3 +127,15 @@ def monitor_source_detail(provenance: dict | None, authorized_co_count: int = 0)
     else:
         last_line = "No actual cost recorded yet."
     return f"{source} {co_line} {last_line}"
+
+
+def entry_reference(record_id) -> str:
+    if record_id is None or record_id == "":
+        return ""
+    return f"Entry reference {record_id}"
+
+
+def sentence_label(value: str | None) -> str:
+    if not value:
+        return ""
+    return str(value).replace("_", " ").replace("-", " ")

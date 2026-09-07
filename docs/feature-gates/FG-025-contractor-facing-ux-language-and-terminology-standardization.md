@@ -7,10 +7,10 @@
 | Target Milestone | **None.** FG-025 is the governing identifier. Do not assign a new M0xx number. This is a **commercialization hygiene** gate, not a new lifecycle stage. Sequence: **after [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) closes**, **before** broad external UAT / U.S. commercialization. |
 | Module | **Cross-cutting UX copy.** [Projects](../modules/projects.md) owns Project Hub chrome. Owning modules retain their screens: Plan Intelligence, Estimating, Pricing Engine, Proposals, Project Controls, BUILD, MONITOR, LEARN (Future), authentication. This gate does **not** transfer record ownership. |
 | Date | 2026-09-07 |
-| Status | **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED / NOT A PRODUCT-WIDE SWEEP** (2026-09-07). Slice 1 is **AUTHORIZED AND IMPLEMENTED**. Remaining FG-025 slices / surfaces are **NOT AUTHORIZED**. Do **not** treat this gate as closed. |
+| Status | **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 2 IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED / NOT A PRODUCT-WIDE SWEEP** (2026-09-07). Remaining FG-025 slices / surfaces are **NOT AUTHORIZED**. Do **not** treat this gate as closed. |
 | Architecture | [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** (PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN) · [FG-011](FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT** (Hub reads/links; Future labeled) · [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (office vs customer-facing estimate copy) · [FG-017](FG-017-organization-brand-profile-v1.md) **CLOSED / OPERATIONAL FOR UAT** (visual brand, not terminology) · [FG-021](FG-021-field-web-v1-today-and-capture.md) **CLOSED** (Field Web capture copy) · [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 | Related ADRs | **None new in this recording pass.** Visual identity remains [ADR-040](../adr/ADR-040-organization-brand-profile.md). Do **not** accept ADR-008 or ADR-010 from this gate. |
-| Prerequisites | [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. Slice 1 was authorized by a bounded Joel/ChatGPT prompt (2026-09-07). Remaining slices remain **NOT AUTHORIZED**. |
+| Prerequisites | [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. Slice 1 and Slice 2 were each authorized by a bounded Joel/ChatGPT prompt (2026-09-07). Remaining slices remain **NOT AUTHORIZED**. |
 
 ---
 
@@ -18,9 +18,9 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **RECORDED.** **IMPLEMENTATION PREFLIGHT COMPLETE.** **SLICE 1 IMPLEMENTED.** **NOT CLOSED.** |
-| UI copy rewrite | **SLICE 1 AUTHORIZED AND IMPLEMENTED.** Remaining surfaces **NOT AUTHORIZED.** |
-| Product code | Presentation mapping `app/presentation/contractor_copy.py` + Hub `#hub-monitor` / actuals display. |
+| Feature Gate (this document) | **RECORDED.** **IMPLEMENTATION PREFLIGHT COMPLETE.** **SLICE 1 IMPLEMENTED.** **SLICE 2 IMPLEMENTED.** **NOT CLOSED.** |
+| UI copy rewrite | **SLICE 1 AND SLICE 2 AUTHORIZED AND IMPLEMENTED.** Remaining surfaces **NOT AUTHORIZED.** |
+| Product code | Presentation mapping `app/presentation/contractor_copy.py` + Project Hub (`detail.html`) PLAN/PRICE/CONTRACT/BUILD/MONITOR display. |
 | Schema / Alembic | **None.** |
 | New ADR | **None.** |
 
@@ -29,16 +29,16 @@ FG-025:
 FUTURE / RECORDED
 IMPLEMENTATION PREFLIGHT COMPLETE
 SLICE 1 IMPLEMENTED / TESTED / COMMITTED / PUSHED
+SLICE 2 IMPLEMENTED / TESTED / COMMITTED / PUSHED
 NOT CLOSED
 NOT A PRODUCT-WIDE SWEEP
-SLICE 1: AUTHORIZED AND IMPLEMENTED
 REMAINING FG-025 SLICES / SURFACES: NOT AUTHORIZED
 FG-023: CLOSED / OPERATIONAL FOR UAT
 FG-024: FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
 ```
 
-Joel/ChatGPT recorded this gate on **2026-09-07**. Preflight completed the same day. A later 7 Sep 2026 prompt **authorized Slice 1 only**. The gate is **no longer** globally **NOT IMPLEMENTATION-AUTHORIZED**. Remaining slices stay unauthorized. FG-023 remains **CLOSED**. Do **not** start Slice 2 from this document.
+Joel/ChatGPT recorded this gate on **2026-09-07**. Preflight completed the same day. Bounded prompts authorized Slice 1 then Slice 2 the same day. The gate is **NOT CLOSED**. Remaining surfaces stay unauthorized. FG-023 remains **CLOSED**. Do **not** start Slice 3 from this document.
 
 ---
 
@@ -506,7 +506,28 @@ Dedicated tests: `tests/test_fg025_contractor_copy.py`. HTML copy assertions upd
 
 Frozen Slice 1 Hub metric identities were **not** renamed. No schema, migration, live DB write, MONITOR arithmetic change, enum/model rename, Field Web rewrite, LEARN, or FG-024.
 
-Do **not** start Slice 2 from this section.
+Do **not** start Slice 3 from this section.
+
+---
+
+## SLICE 2 IMPLEMENTATION (2026-09-07)
+
+**Status:** **SLICE 2 IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Gate **NOT CLOSED.** Remaining slices **NOT AUTHORIZED.** Not a product-wide sweep.
+
+Presentation-layer mapping only, reusing `app/presentation/contractor_copy.py`. No competing copy system. No schema, migration, live DB write, MONITOR arithmetic change, enum/model rename, Field Web rewrite, LEARN, or FG-024.
+
+Project Hub (`app/templates/projects/detail.html`) contractor-facing copy:
+
+- Actual-cost history: `Corrected by`, `No previous cost corrections.`, muted `Entry reference {id}`; primary `Id`/`ID` column removed.
+- Commercial heading: **Pricing assumptions** (legacy empty: `Legacy project — pricing assumptions not recorded`; missing: `No pricing assumptions recorded.`).
+- PLAN permit Hub: `Preliminary / foundation only`, `Advisory only`, `Recheck required`.
+- Take-off Hub labels via `sentence_label()` (snake_case not primary).
+
+Slice 1 MONITOR mappings and frozen financial metric labels were **not** renamed.
+
+Dedicated tests: `tests/test_fg025_contractor_copy.py` (**10**). Hub HTML copy assertions also updated in `tests/test_project_hub.py`, `tests/test_monitor_v1_fg023.py`, `tests/test_permit_foundation_fg015.py`, and `tests/test_organization_foundation.py` (legacy Hub banner only). Domain-key assertions unchanged.
+
+Do **not** start Slice 3 from this section.
 
 ---
 
@@ -514,8 +535,8 @@ Do **not** start Slice 2 from this section.
 
 | Role | State |
 |------|--------|
-| Joel / ChatGPT | **Recorded** 2026-09-07. Preflight **COMPLETE** 2026-09-07. **Slice 1 authorized and implemented** 2026-09-07. Remaining slices **not** authorized. Gate **not** closed. |
-| Cursor | Slice 1 product + tests + docs. No Slice 2. No FG-024. No LEARN. |
-| Implementation | **SLICE 1 DONE.** Remaining FG-025 surfaces **NOT AUTHORIZED** until a later bounded prompt. |
+| Joel / ChatGPT | **Recorded** 2026-09-07. Preflight **COMPLETE** 2026-09-07. **Slice 1 authorized and implemented** 2026-09-07. **Slice 2 authorized and implemented** 2026-09-07. Remaining slices **not** authorized. Gate **not** closed. |
+| Cursor | Slice 2 Project Hub language + tests + docs. No Slice 3. No FG-024. No LEARN. |
+| Implementation | **SLICE 2 DONE.** Remaining FG-025 surfaces **NOT AUTHORIZED** until a later bounded prompt. |
 
-**Next governed action:** **STOP.** Return Slice 1 report to ChatGPT Architect. Do **not** start Slice 2. Do **not** start FG-024. Do **not** start LEARN. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Next governed action:** **STOP.** Return Slice 2 report to ChatGPT Architect. Do **not** start Slice 3. Do **not** start FG-024. Do **not** start LEARN. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**

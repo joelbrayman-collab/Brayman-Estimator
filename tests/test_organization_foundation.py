@@ -806,7 +806,8 @@ def test_legacy_project_can_update_to_version_2_while_old_estimate_stays_pinned(
     # UI renders human-readable legacy unrecorded banner
     resp_view = client.get(f"/projects/{p.id}")
     assert resp_view.status_code == 200
-    assert b"Legacy project \xe2\x80\x94 commercial context not recorded" in resp_view.data
+    assert b"Legacy project \xe2\x80\x94 pricing assumptions not recorded" in resp_view.data
+    assert b"Commercial Decision Gate Context" not in resp_view.data
 
     # User updates project to active valid Version 2
     resp_edit = client.post(

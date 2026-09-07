@@ -939,7 +939,8 @@ def test_supersede_excludes_prior_and_rejects_non_active(client, project):
     assert correction.status_code == 302
     html = _monitor_html(_html(client.get(f"/projects/{project.id}")))
     assert "Corrected" in html
-    assert f"#{list_active_direct_cost_actuals(project.organization_id, project.id)[0].id}" in html
+    assert f"Entry reference {list_active_direct_cost_actuals(project.organization_id, project.id)[0].id}" in html
+    assert f"#{list_active_direct_cost_actuals(project.organization_id, project.id)[0].id}" not in html
     assert "$80.00" in html
     view = assemble_monitor_v1(project, project.organization_id)
     assert view["actual_direct_cost_to_date"] == Decimal("80.00")

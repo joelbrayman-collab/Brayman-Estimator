@@ -356,7 +356,8 @@ def test_new_project_auto_creates_location_and_preliminary_profile(client, app):
     assert "complete" in html
     assert "resolved" in html
     assert "preliminary" in html
-    assert "PRELIMINARY / FOUNDATION ONLY" in html
+    assert "Preliminary / foundation only" in html
+    assert "PRELIMINARY / FOUNDATION ONLY" not in html
 
 
 def test_incomplete_new_project_creates_unresolved_preliminary_profile(client, app):
@@ -481,7 +482,8 @@ def test_project_hub_displays_foundation_states_and_no_substantive_findings(
     existing = _make_existing_project(name="Hub Existing")
     html = _html(client.get(f"/projects/{existing.id}"))
     assert "Permit &amp; Approvals" in html or "Permit & Approvals" in html
-    assert "PRELIMINARY / FOUNDATION ONLY" in html
+    assert "Preliminary / foundation only" in html
+    assert "PRELIMINARY / FOUNDATION ONLY" not in html
     assert "not generated" in html
     assert "not performed" in html
     assert "not available" in html

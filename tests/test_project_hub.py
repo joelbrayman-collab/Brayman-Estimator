@@ -182,7 +182,8 @@ def test_identity_and_commercial_context_remain(client, project):
     response = client.get(f"/projects/{project.id}")
     assert response.status_code == 200
     html = _html(response)
-    assert "Commercial Decision Gate Context" in html
+    assert "Pricing assumptions" in html
+    assert "Commercial Decision Gate Context" not in html
     assert "Addition" in html
     assert "Competitive" in html
     assert "Update Context" in html
@@ -312,11 +313,12 @@ def test_takeoff_status_without_estimate_insertion(client, project):
     html = _html(response)
     assert response.status_code == 200
     assert "completed" in html
-    assert "interior_door" in html
+    assert "interior door" in html
     assert "approved" in html
     assert "7.0" in html
     assert "do not insert estimate lines" in html
-    assert "Phase D" in html
+    assert "Quantity mapping into estimates is not started" in html
+    assert "Phase D" not in html
     assert f"/projects/{project.id}/plans/takeoff" in html
     assert EstimateLineItem.query.count() == line_count_before == 0
 

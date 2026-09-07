@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-07 — FG-025 Slice 2 contractor-facing Project Hub language
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-07 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026** |
+| Objective | Implement FG-025 Slice 2 only: contractor-facing language on the office Project Hub and its directly embedded PLAN/PRICE/CONTRACT/BUILD/MONITOR project-context copy. |
+| Business decision | Slice 2 **AUTHORIZED AND IMPLEMENTED**. Chosen Hub heading **Pricing assumptions**. FG-025 overall **NOT CLOSED**. Remaining slices **NOT AUTHORIZED**. FG-023 remains **CLOSED**. FG-024 remains **FUTURE / NOT IMPLEMENTATION-AUTHORIZED**. |
+| Architectural decision | Reuse Slice 1 `app/presentation/contractor_copy.py`. Do not create a competing copy system. Do not rename enums/schema. MONITOR identities unchanged. |
+| Prompt template used | `docs/prompts/cursor-implementation-template.md` does **not** exist. Followed AGENTS.md and the bounded Slice 2 prompt. |
+| Approved Cursor prompt summary | FG-025 Slice 2 Project Hub language only. No schema, migration, MONITOR arithmetic, enum rename, FG-024, LEARN, Field Web, engines, PDF, nav, or product-wide copy sweep. Commit + push after PASS. |
+| Files expected to change | `app/presentation/contractor_copy.py`; `app/templates/projects/detail.html`; `tests/test_fg025_contractor_copy.py`; Hub HTML assertions in `tests/test_project_hub.py` / `tests/test_monitor_v1_fg023.py`; current-authority docs. |
+| Files prohibited from changing | `migrations/`; models/enums; `app/services/monitor.py`; Field Web; labour/pricing/nav/PDF; FG-024; live DB. |
+| Implementation result | Slice 2 implemented. Extra Hub HTML assertion files: `tests/test_permit_foundation_fg015.py`, `tests/test_organization_foundation.py`. Internal keys preserved. Live current `e3f4a5b6c7d8`. Live **39** / **39**. Project **13** five actuals unchanged. |
+| Tests | Dedicated **10 passed**. Focused **159 passed**. Full **603 passed**. Manual Hub review **PASS**. `git diff --check` PASS. |
+| Project-state-report update | Yes — FG-025 Slice 2 implemented / not closed. |
+| Milestone entry update | Yes — Slice 2 recorded. |
+| Constitutional issue raised | None. Extra test files are Hub HTML copy regressions only. |
+| Unresolved issues | Remaining FG-025 slices unauthorized. Hub leftovers: Update Context; TRUE_GROSS_MARGIN method name; proposal “immutable”; PASS finding caution; lifecycle ALL_CAPS; form `other_direct` values. “Contract value” still flagged. |
+| Next approved step | **STOP.** Do **not** start Slice 3. Do **not** start FG-024. Do **not** start LEARN. |
+| Next approved prompt | None authorized. |
+| Commit hash | (this product commit) |
+
 ### 2026-09-07 — FG-025 Slice 1 Hub MONITOR contractor-facing display mapping
 
 | Field | Content |

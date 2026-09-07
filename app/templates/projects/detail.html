@@ -42,15 +42,15 @@
 {% set ctx = project.current_commercial_context %}
 <section class="form-panel" style="margin-bottom: 20px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h3 style="margin: 0;">Commercial Decision Gate Context (Active v{{ ctx.version_number if ctx else 1 }})</h3>
+        <h3 style="margin: 0;">{{ contractor_copy.PRICING_ASSUMPTIONS_HEADING }}{% if ctx %} (version {{ ctx.version_number }}){% endif %}</h3>
         <a class="button-link" href="{{ url_for('projects.edit_commercial_context', id=project.id) }}">Update Context</a>
     </div>
     {% if ctx %}
         {% if ctx.is_legacy_unknown %}
         <div style="background: #fdf6e2; border-left: 4px solid #c79a2b; padding: 12px 16px; border-radius: 4px; margin-bottom: 12px;">
-            <p style="margin: 0; font-weight: 600; color: #8a6d3b;">Legacy project — commercial context not recorded</p>
+            <p style="margin: 0; font-weight: 600; color: #8a6d3b;">{{ contractor_copy.LEGACY_PRICING_ASSUMPTIONS_HEADING }}</p>
             <p class="muted-copy" style="margin: 4px 0 0 0; font-size: 0.9em;">
-                This project was created prior to the Commercial Decision Gate (M011). Assumptions were not recorded historically and will not be inferred. If this project becomes active, click "Update Context" to record explicit commercial parameters.
+                This project was created before pricing assumptions were recorded. Past assumptions will not be guessed. If this project becomes active, use Update Context to record them.
             </p>
         </div>
         {% else %}
@@ -72,7 +72,7 @@
         <p class="muted-copy" style="margin-top: 4px; font-size: 0.85em;">{{ ctx.change_summary }}</p>
         {% endif %}
     {% else %}
-        <p class="muted-copy">No commercial context recorded.</p>
+        <p class="muted-copy">{{ contractor_copy.NO_PRICING_ASSUMPTIONS }}</p>
     {% endif %}
 </section>
 
@@ -87,10 +87,10 @@
         </div>
         {% set pf = hub.permit_foundation %}
         {% set pi = hub.permit_intelligence %}
-        <p class="eyebrow">PRELIMINARY / FOUNDATION ONLY{% if pi.report_available %} · ADVISORY ONLY{% endif %}</p>
-        <p class="muted-copy">This is not zoning compliant, permit ready, permit approved, building-code compliant, or AHJ reviewed. PASS never means AHJ approval.</p>
+        <p class="eyebrow">{{ contractor_copy.PERMIT_FOUNDATION_EYEBROW }}{% if pi.report_available %} · {{ contractor_copy.PERMIT_ADVISORY_EYEBROW }}{% endif %}</p>
+        <p class="muted-copy">This is not zoning compliant, permit ready, permit approved, building-code compliant, or reviewed by the authority having jurisdiction (AHJ). A PASS finding never means AHJ approval.</p>
         {% if pi.recheck_required %}
-        <p class="muted-copy"><strong>RECHECK REQUIRED</strong> — location, plan/site, facts, or rules have changed since the last report.</p>
+        <p class="muted-copy"><strong>{{ contractor_copy.PERMIT_RECHECK_HEADING }}</strong> — {{ contractor_copy.PERMIT_RECHECK_WHY }}</p>
         {% endif %}
         {% if pi.attention_count and pi.attention_count > 0 %}
         <p class="muted-copy"><strong>Commercial warning (acknowledgement only):</strong> {{ pi.attention_count }} finding(s) require attention before treating a final proposal or contract as unconstrained. This does not block proposals or contracts.</p>
@@ -145,7 +145,7 @@
         <p class="muted-copy" style="margin-top: 12px;">
             Permit context: {{ pf.profile.permit_context_class }}
             {% if pf.profile.resolved_jurisdiction_name %}
-            · Recorded AHJ identity: {{ pf.profile.resolved_jurisdiction_name }}
+            · Recorded permit authority: {{ pf.profile.resolved_jurisdiction_name }}
             {% endif %}
         </p>
         {% else %}
@@ -174,7 +174,7 @@
         {% else %}
         <div class="empty-state empty-state-compact">
             <h3>No plan documents</h3>
-            <p>Upload searchable PDF plan sets for this project (Phase A storage).</p>
+            <p>Upload searchable PDF plan sets for this project.</p>
             <a class="button-link" href="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}">Upload PDF</a>
         </div>
         {% endif %}
@@ -193,7 +193,7 @@
             {% for sheet in hub.sheets[:6] %}
             <li>
                 <span class="activity-title">{{ sheet.number or "Unnumbered" }}{% if sheet.title %} — {{ sheet.title }}{% endif %}</span>
-                <span class="activity-meta">Review {{ sheet.review_status }} · Drawing {{ sheet.drawing_status }}</span>
+                <span class="activity-meta">Review {{ contractor_copy.sentence_label(sheet.review_status) }} · Drawing {{ contractor_copy.sentence_label(sheet.drawing_status) }}</span>
             </li>
             {% endfor %}
         </ul>
@@ -223,7 +223,7 @@
             <a href="{{ url_for('plan_intelligence.takeoff_index', project_id=project.id) }}">Take-off workspace</a>
         </div>
         {% if hub.latest_takeoff_run %}
-        <p>Latest run #{{ hub.latest_takeoff_run.id }}: <span class="status">{{ hub.latest_takeoff_run.status }}</span> · {{ hub.latest_takeoff_run.element_type }} · {{ hub.latest_takeoff_run.provider }}</p>
+        <p>Latest run: <span class="status">{{ contractor_copy.sentence_label(hub.latest_takeoff_run.status) }}</span> · {{ contractor_copy.sentence_label(hub.latest_takeoff_run.element_type) }}</p>
         {% else %}
         <p class="muted-copy">No extraction runs stored for this project.</p>
         {% endif %}
@@ -233,8 +233,8 @@
             {% for package in hub.approved_takeoff_packages[:4] %}
             <li>
                 <a href="{{ url_for('plan_intelligence.takeoff_package_detail', project_id=project.id, package_id=package.id) }}">
-                    <span class="activity-title">{{ package.element_type }} v{{ package.version_number }}</span>
-                    <span class="activity-meta">{{ package.status }}{% if package.approved_total is not none %} · stored total {{ package.approved_total }} {{ package.approved_unit }}{% endif %}</span>
+                    <span class="activity-title">{{ contractor_copy.sentence_label(package.element_type) }} v{{ package.version_number }}</span>
+                    <span class="activity-meta">{{ contractor_copy.sentence_label(package.status) }}{% if package.approved_total is not none %} · stored total {{ package.approved_total }} {{ package.approved_unit }}{% endif %}</span>
                 </a>
             </li>
             {% endfor %}
@@ -244,7 +244,7 @@
         {% else %}
         <p class="muted-copy">No take-off packages stored.</p>
         {% endif %}
-        <p class="muted-copy">Approved take-off packages do not insert estimate lines. Quantity mapping into estimates is not started (Phase D).</p>
+        <p class="muted-copy">Approved take-off packages do not insert estimate lines. Quantity mapping into estimates is not started.</p>
     </article>
 </section>
 
@@ -585,19 +585,17 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Class</th>
                 <th>Amount</th>
                 <th>Incurred</th>
                 <th>Actor</th>
                 <th>Recorded</th>
-                <th>Superseded by</th>
+                <th>{{ contractor_copy.CORRECTED_BY_HEADING }}</th>
             </tr>
         </thead>
         <tbody>
             {% for row in superseded_rows %}
             <tr>
-                <td>{{ row.actual.id }}</td>
                 <td>{{ contractor_copy.cost_class_label(row.actual.cost_class) }}</td>
                 <td>${{ "%.2f"|format(row.actual.amount) }}</td>
                 <td>{{ row.actual.incurred_on.isoformat() }}</td>
@@ -605,14 +603,16 @@
                 <td>{{ row.actual.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
                 <td>
                     <span class="status">{{ contractor_copy.CORRECTED_ITEM_LABEL }}</span>
-                    {% if row.successor %}#{{ row.successor.id }}{% endif %}
+                    {% if row.successor %}
+                    <p class="muted-copy" style="margin: 4px 0 0 0;">{{ contractor_copy.entry_reference(row.successor.id) }}</p>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% else %}
-    <p class="muted-copy">No superseded actual-cost history.</p>
+    <p class="muted-copy">{{ contractor_copy.PREVIOUS_ENTRIES_EMPTY }}</p>
     {% endif %}
 </section>
 

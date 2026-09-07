@@ -8,9 +8,9 @@
 | Module | **Cross-cutting UX copy.** [Projects](../modules/projects.md) owns Project Hub chrome. Owning modules retain their screens: Plan Intelligence, Estimating, Pricing Engine, Proposals, Project Controls, BUILD, MONITOR, LEARN (Future), authentication. This gate does **not** transfer record ownership. |
 | Date | 2026-09-07 |
 | Status | **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** This recording is **not** Feature Gate approval for implementation. Do **not** rewrite UI from this document. |
-| Architecture | [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** (PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN) · [FG-011](FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT** (Hub reads/links; Future labeled) · [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (office vs customer-facing estimate copy) · [FG-017](FG-017-organization-brand-profile-v1.md) **CLOSED / OPERATIONAL FOR UAT** (visual brand, not terminology) · [FG-021](FG-021-field-web-v1-today-and-capture.md) **CLOSED** (Field Web capture copy) · [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN / NOT CLOSED** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
+| Architecture | [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** (PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN) · [FG-011](FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT** (Hub reads/links; Future labeled) · [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (office vs customer-facing estimate copy) · [FG-017](FG-017-organization-brand-profile-v1.md) **CLOSED / OPERATIONAL FOR UAT** (visual brand, not terminology) · [FG-021](FG-021-field-web-v1-today-and-capture.md) **CLOSED** (Field Web capture copy) · [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 | Related ADRs | **None new in this recording pass.** Visual identity remains [ADR-040](../adr/ADR-040-organization-brand-profile.md). Do **not** accept ADR-008 or ADR-010 from this gate. |
-| Prerequisites | Active implementation stream remains [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) **close**. This gate does **not** jump the queue. Slice C is already **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. This recording does **not** reopen Slice C. |
+| Prerequisites | [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. This gate remains **NOT IMPLEMENTATION-AUTHORIZED**. Slice C is **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. This recording does **not** rewrite UI. |
 
 ---
 
@@ -31,15 +31,12 @@ RECORDED
 NOT IMPLEMENTATION-AUTHORIZED
 NOT IMPLEMENTED
 NO UI REWRITE IN THIS PASS
-FG-023: UNCHANGED
-  APPROVED / OPEN / NOT CLOSED
-  SLICE C: MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS
-  NEXT: CLOSE AUTHORIZATION
+FG-023: CLOSED / OPERATIONAL FOR UAT
 FG-024: UNCHANGED FUTURE CONTRACT INTELLIGENCE GATE
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
 ```
 
-Joel/ChatGPT recorded this gate on **2026-09-07** as durable product/governance authority only. Recording is **not** implementation approval. Do **not** draft an implementation preflight from this document until FG-023 is closed and a separate bounded prompt authorizes the sweep.
+Joel/ChatGPT recorded this gate on **2026-09-07** as durable product/governance authority only. Recording is **not** implementation approval. FG-023 is now **CLOSED**. Do **not** draft an implementation preflight from this document until a separate bounded prompt authorizes the sweep.
 
 ---
 
@@ -224,7 +221,7 @@ Future review must not assume one glossary for every role.
 3. Broader external / U.S. commercialization and later roadmap items
 ```
 
-- Does **not** interrupt FG-023. Slice C is already **PASS**. Next governed action remains **FG-023 close authorization**.
+- Does **not** reopen FG-023. Slice C remains **PASS**. FG-023 is **CLOSED / OPERATIONAL FOR UAT**. This gate remains **NOT IMPLEMENTATION-AUTHORIZED**.
 - Does **not** authorize FG-024 implementation or legal-content population.
 - Does **not** jump LEARN (roadmap item 14) or QuickBooks (item 16) as the next coded stream.
 - **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
@@ -252,4 +249,4 @@ Future review must not assume one glossary for every role.
 | Cursor | Docs recording only. No product code. No UI rewrite. |
 | Implementation | **NOT AUTHORIZED** until FG-023 is closed **and** Joel/ChatGPT later approve this gate for implementation with a bounded prompt. |
 
-**Next governed action for the platform remains FG-023 close authorization.** Do **not** start FG-025 copy rewrite from this recording.
+**Next governed action for the platform is STOP.** FG-023 is **CLOSED / OPERATIONAL FOR UAT**. Do **not** start FG-025 copy rewrite from this recording. Do **not** start FG-024.

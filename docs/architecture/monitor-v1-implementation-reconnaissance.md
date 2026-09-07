@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **RECONNAISSANCE COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**. Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. MONITOR V1 is **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / NOT YET CLOSED**. Gate **NOT CLOSED**. |
+| Status | **RECONNAISSANCE COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**. Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**. Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. MONITOR V1 is **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**. |
 | Date | 2026-09-06 |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |
@@ -21,7 +21,9 @@ PARTIALLY IMPLEMENTED
 GATE NOT CLOSED
 ```
 
-Accepting [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) does **not** authorize implementation. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **APPROVED** and still does **not** authorize product code, schema, or migration until a separate implementation prompt exists. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+Accepting [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) does **not** authorize implementation. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. Historical freeze text below remains Slice A-era. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+
+**Subsequent status (2026-09-07 close):** MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**. Item 13 **CLOSED / OPERATIONAL FOR UAT**.
 
 Readiness: **FEATURE GATE APPROVED — IMPLEMENTATION PREFLIGHT COMPLETE. DO NOT IMPLEMENT FROM PREFLIGHT.**
 
@@ -541,7 +543,9 @@ Those four freezes are **approved in FG-023**. Slice A product code is **impleme
 
 ## Feature-gate readiness
 
-**FEATURE GATE APPROVED (FG-023) — OPEN / NOT CLOSED. SLICE A IMPLEMENTED / NOT LIVE-MIGRATED.**
+**FEATURE GATE CLOSED (FG-023) — CLOSED / OPERATIONAL FOR UAT.** Historical Slice A line below is superseded.
+
+**FEATURE GATE APPROVED (FG-023) — OPEN / NOT CLOSED. SLICE A IMPLEMENTED / NOT LIVE-MIGRATED.** *(historical at Slice A)*
 
 Do **not** treat Slice A as operational MONITOR V1. Do **not** live-migrate from this recon.
 

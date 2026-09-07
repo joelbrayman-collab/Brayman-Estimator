@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-07 — FG-023 MONITOR V1 CLOSED / OPERATIONAL FOR UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-07 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026** |
+| Objective | Close FG-023 after independently verifying Slice C PASS, Hub lifecycle, live Alembic/Field/UAT evidence, and close-time pytest. Docs/governance close. Bounded Hub-label exception only if MONITOR still claimed Future. |
+| Business decision | FG-023 is **CLOSED / OPERATIONAL FOR UAT**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**. Item 13 **CLOSED / OPERATIONAL FOR UAT**. Hub MONITOR lifecycle already operational; LEARN remains Future. No product-code change. No FG-025 copy rewrite. No FG-024 implementation. No further actuals. Next governed action: **STOP**. |
+| Architectural decision | Display-copy remains FG-025. Commercial identities unchanged. No MONITOR snapshot table. No Field Event conversion. No new migration. |
+| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) (documentation / governance close). |
+| Approved Cursor prompt summary | FG-023 MONITOR V1 close authorization. Verify Slice C PASS. Close tests. Reconcile current-authority docs. Do not start FG-024/FG-025/LEARN. |
+| Files expected to change | FG-023 gate; current-authority indexes; current-state / session-handoff / project-state-report / chat-workflow-log / milestones; modules; bounded architecture pins. Product code only if Hub still labeled MONITOR Future. |
+| Files prohibited from changing | `app/` (unless bounded Hub label); `tests/`; Alembic; live DB; FG-024/FG-025 implementation. |
+| Implementation result | Documentation close. Hub already operational (`MONITOR` not `MONITOR · Future`). No `app/` / `tests/` / `migrations/` change. Live current `e3f4a5b6c7d8`. Live **39** / **39**. Project **13** five actuals rows unchanged. |
+| Tests | Dedicated **35 passed**. Focused **149 passed**. Full **593 passed**. Historical Slice A focused **126** / pre-Slice-B **137** remain historical. `git diff --check` on this docs pass. |
+| Project-state-report update | Yes — FG-023 CLOSED / OPERATIONAL FOR UAT. |
+| Milestone entry update | Yes — close recorded. |
+| Constitutional issue raised | None. |
+| Unresolved issues | FG-025 **NOT IMPLEMENTATION-AUTHORIZED**; Observation Delete **QUEUED**; SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. FG-024 Slices A–D remain unauthorized. |
+| Next approved step | **STOP.** Do **not** implement FG-025. Do **not** implement FG-024. Do **not** start LEARN. |
+| Next approved prompt | None authorized from this close. |
+| Commit hash | (this docs commit) |
+
 ### 2026-09-07 — FG-025 Contractor-Facing UX Language recorded (future; not implementation-authorized)
 
 | Field | Content |

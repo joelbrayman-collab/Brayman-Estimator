@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-07 — FG-023 MONITOR V1 CLOSED / OPERATIONAL FOR UAT
+
+| Field | Content |
+|-------|---------|
+| ID | FG-023 MONITOR V1 — close |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED.** Item 13 **CLOSED / OPERATIONAL FOR UAT.** |
+| Branch | `main` |
+| Base commit | `9e0978a9662c9e4bce7cf5dbe30e78f8e992cd9e` |
+| Objective | Independently verify Slice C PASS and close FG-023. Bounded Hub-label exception only if MONITOR still claimed Future. |
+| Deliverables | Gate close; current-authority reconciliation; close-time pytest. No product-code change (Hub already operational). No new migration. No further actuals. |
+| Validation | Dedicated **35 passed**. Focused **149 passed**. Full **593 passed**. Live current = heads `e3f4a5b6c7d8`. Field **39 / 39**. Project **13** five actuals; zero on 1/2/9/11/12. `git diff --check`. |
+| Architectural findings | Hub lifecycle already `MONITOR` operational; `LEARN · Future` retained. FG-025 copy sweep not started. |
+| Open decisions | FG-025 implementation; FG-024 implementation; Observation Delete; SESSION-EXPIRY. |
+| Next milestone | **STOP.** Do **not** start FG-025 or FG-024 from this close. |
+| Commit | (this docs commit) |
+| Date | 2026-09-07 |
+
 ### 2026-09-07 — FG-025 Contractor-Facing UX Language recorded
 
 | Field | Content |

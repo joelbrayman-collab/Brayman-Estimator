@@ -16,7 +16,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 - Project CRUD (name, number, address, status, description, client)
 - Parent for estimates
 - Change Orders lifecycle (draft → approval statuses) via `project_controls` package
-- Project Hub UX at `/projects/<id>` ([FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**): identity, versioned commercial context, PLAN / PRICE / CONTRACT stored facts and links, existing Change Orders under BUILD **plus** BUILD Field Observations ([FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**); MONITOR V1 `#hub-monitor` comparison + office actuals writes ([FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) Slice B **implemented / live-migrated / office-UAT-verified**); LEARN labeled Future. Read-only assembly in `app/services/project_hub.py` plus BUILD-owned actuals POSTs. No durable hub entity. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) PLAN **PERMIT & APPROVALS** foundation state — **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) extends the same panel with truthful Gate-2 state (report available, last analysis, plan/site basis, attention count, recheck yes/no) and the office HTML/PDF report.
+- Project Hub UX at `/projects/<id>` ([FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**): identity, versioned commercial context, PLAN / PRICE / CONTRACT stored facts and links, existing Change Orders under BUILD **plus** BUILD Field Observations ([FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**); MONITOR V1 `#hub-monitor` comparison + office actuals writes ([FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**; Slice B **implemented / live-migrated / office-UAT-verified**); LEARN labeled Future. Read-only assembly in `app/services/project_hub.py` plus BUILD-owned actuals POSTs. No durable hub entity. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) PLAN **PERMIT & APPROVALS** foundation state — **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) extends the same panel with truthful Gate-2 state (report available, last analysis, plan/site basis, attention count, recheck yes/no) and the office HTML/PDF report.
 
 ## Owned data
 
@@ -78,7 +78,7 @@ Platform-shared (not org-owned): `jurisdiction_definitions`, `jurisdiction_alias
 ## Open decisions
 
 - Whether Project Controls becomes its own top-level module doc
-- MONITOR Slice A comparison service and Slice B Hub `#hub-monitor` are **implemented / live-migrated / office-UAT-verified**. Baseline governance is [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**. V1 recon [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) is **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **APPROVED / OPEN / NOT CLOSED**. Next: gate **close authorization**.
+- MONITOR Slice A comparison service and Slice B Hub `#hub-monitor` are **implemented / live-migrated / office-UAT-verified**. Baseline governance is [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**. V1 recon [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) is **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**.
 
 ## Relevant tests
 
@@ -91,4 +91,4 @@ Platform-shared (not org-owned): `jurisdiction_definitions`, `jurisdiction_alias
 
 - [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted**
 - [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted**
-- [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR not implemented; V1 recon complete)
+- [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR V1 **CLOSED / OPERATIONAL FOR UAT**; V1 recon complete)

@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-023 is the governing identifier. Do not assign a new M0xx number. Roadmap Item 13. |
 | Module | **MONITOR** owns the comparison / read projection. **BUILD** owns office Direct Cost actuals (`ProjectDirectCostActual`). **Projects** owns Hub UX at `/projects/<id>`. Estimating, Pricing Engine, Proposals, and Project Controls retain their commercial records. |
 | Date | 2026-09-06 |
-| Status | **APPROVED / OPEN.** Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED.** Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS.** Hub `#hub-monitor` **LIVE / OFFICE-UAT-VERIFIED.** Gate **NOT CLOSED.** |
+| Status | **CLOSED / OPERATIONAL FOR UAT** (2026-09-07). Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED.** Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS.** Hub `#hub-monitor` **LIVE / OFFICE-UAT-VERIFIED.** MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED.** |
 | Architecture | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** · [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) **COMPLETE** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [modules/monitor.md](../modules/monitor.md) · [FG-011](FG-011-project-hub-ux.md) |
 | Related ADRs | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (commercial baseline; this gate does **not** create a new ADR) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | Item 12 / [FG-021](FG-021-field-web-v1-today-and-capture.md) **CLOSED** (SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**). [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) / [FG-019](FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-008](FG-008-labour-engine-phase-b.md) / [FG-009](FG-009-organization-calibrated-pricing-engine.md) / [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. MONITOR V1 recon **COMPLETE**. |
@@ -19,26 +19,25 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **APPROVED / OPEN** (2026-09-06). **NOT CLOSED.** |
-| Implementation | **SLICE A IMPLEMENTED / LIVE-MIGRATED.** **SLICE B IMPLEMENTED / LIVE-MIGRATED.** Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS.** Gate **NOT CLOSED.** |
-| Schema / Alembic | Revision **`e3f4a5b6c7d8`** (`down_revision = d2e3f4a5b6c7`) **APPLIED LIVE** 2026-09-07 (`d2e3f4a5b6c7` → `e3f4a5b6c7d8`). Live current = heads = **`e3f4a5b6c7d8`**. One graph head. |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT** (2026-09-07). Approved 2026-09-06. |
+| Implementation | **SLICE A IMPLEMENTED / LIVE-MIGRATED.** **SLICE B IMPLEMENTED / LIVE-MIGRATED.** Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS.** Gate **CLOSED.** |
+| Schema / Alembic | Revision **`e3f4a5b6c7d8`** (`down_revision = d2e3f4a5b6c7`) **APPLIED LIVE** 2026-09-07 (`d2e3f4a5b6c7` → `e3f4a5b6c7d8`). Live current = heads = **`e3f4a5b6c7d8`**. One graph head. **Gate-at-close** live current = head **`e3f4a5b6c7d8`**. |
 | New ADR | **None.** ADR-021 already accepted. |
-| MONITOR product code | Slice A service `app/services/monitor.py` `assemble_monitor_v1`. Hub `#hub-monitor` **live / office-UAT-verified**. **No MONITOR snapshot table.** **NOT YET CLOSED.** |
-| Office actuals | BUILD model `ProjectDirectCostActual` + `app/services/direct_cost_actuals.py`. BUILD POST create/supersede. Live UAT rows **only** on synthetic project **id 13** `FG023-UAT-MONITOR` (five rows; authorized create + supersession sequence). |
+| MONITOR product code | Slice A service `app/services/monitor.py` `assemble_monitor_v1`. Hub `#hub-monitor` **live / office-UAT-verified**. **No MONITOR snapshot table.** |
+| Office actuals | BUILD model `ProjectDirectCostActual` + `app/services/direct_cost_actuals.py`. BUILD POST create/supersede. Live UAT rows **only** on synthetic project **id 13** `FG023-UAT-MONITOR` (five rows; authorized create + supersession sequence). Close pass wrote **no** further actuals. |
 | Field Web MONITOR UI | **Out of scope** |
 
 ```text
 FG-023:
-APPROVED
-OPEN
-NOT CLOSED
+CLOSED / OPERATIONAL FOR UAT
 SLICE A: IMPLEMENTED / LIVE-MIGRATED
 SLICE B: IMPLEMENTED / LIVE-MIGRATED
 SLICE C: MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS
-MONITOR V1: IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / NOT YET CLOSED
+MONITOR V1: IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED
+ROADMAP ITEM 13: CLOSED / OPERATIONAL FOR UAT
 ```
 
-Joel/ChatGPT approved this gate **as written** on **2026-09-06**. Approval includes the correction semantics (`amount >= 0` so a superseding successor may carry `0.00` while the original durable entry remains). Slice A product code was authorized by a later 6 Sep 2026 implementation prompt. Slice B Hub UI was authorized 7 Sep 2026. Slice C live migrate + office UAT was authorized and **PASSED** 7 Sep 2026. **MONITOR V1 is live-migrated and office-UAT-verified. The gate is not closed.** Closure requires a separate ChatGPT authorization. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+Joel/ChatGPT approved this gate **as written** on **2026-09-06**. Approval includes the correction semantics (`amount >= 0` so a superseding successor may carry `0.00` while the original durable entry remains). Slice A product code was authorized by a later 6 Sep 2026 implementation prompt. Slice B Hub UI was authorized 7 Sep 2026. Slice C live migrate + office UAT was authorized and **PASSED** 7 Sep 2026. Close was authorized 7 Sep 2026. **MONITOR V1 is live-migrated, office-UAT-verified, and closed.** **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
 ### Slice C live migrate + office UAT (2026-09-07)
 
@@ -100,7 +99,7 @@ If Joel rejects office actuals in this gate, **STOP** and return a baseline-only
 | 5 | What data does it reference? | Locked source `EstimateVersion`; `EstimatePricingSnapshot` when present; `EstimateLineItem.extended_cost` fallback; Accepted `Proposal`; authorized `ChangeOrder` (`Approved` or `Invoiced`) `subtotal + markup`; `Organization` / `Project` / `User`; **not** Field Events as cost; **not** `EstimateLabourSnapshot` as actual or as selling-price basis. |
 | 6 | What may implementation change? | Additive BUILD actuals model + service + Hub-routed POST/supersede; MONITOR read service; Hub `#hub-monitor` operational panel; dedicated tests; governed docs; **one** additive Alembic revision **only after** an approved implementation prompt. |
 | 7 | What must it not change? | Approved estimate / Accepted Proposal / Change Order commercial values; Field Capture Events / Originals / Derived Candidates; Labour Engine / Pricing Engine standards; LEARN; Field Web UI; QuickBooks; Phase D; Observation Delete; Closeout; Native Signing; session revocation; RBAC; org-switcher; NET PROFIT language; CO estimated-cost schema; forecast snapshots; historical ingestion as this-project actuals. |
-| 8 | Acceptance criteria? | See **Acceptance criteria** below. **Not met** — implementation not yet authorized. |
+| 8 | Acceptance criteria? | See **Acceptance criteria** below. **Met** at close 2026-09-07. |
 | 9 | Tests required? | Dedicated `tests/test_monitor_v1_fg023.py` (name may vary) covering composition, PGM, missing states, actuals sum/supersession, org isolation, Hub copy, immutability; Hub/auth regressions; full suite. Exact count deferred until implementation. |
 | 10 | Documentation? | This gate; feature-gate index; `modules/monitor.md`; `modules/build.md`; current-state; session-handoff; project-state-report; roadmap; chat-workflow-log; milestones; docs/README; recon subsequent status. |
 | 11 | ADR required? | **No new ADR.** ADR-021 already accepted. Stop and return if implementation would invent NET PROFIT, CO cost-from-`unit_price`, Field-Event-as-cost, QuickBooks as required actuals, MONITOR as actuals SoR, or RBAC. |
@@ -232,7 +231,7 @@ Required Hub presentation after implementation:
 
 No invented health traffic-lights. No NET PROFIT label. No industry benchmarks.
 
-Lifecycle chip `MONITOR · Future` becomes operational only when this gate is implemented and closed — **not** from this approval.
+Lifecycle chip `MONITOR` is operational for V1 (not `MONITOR · Future`). LEARN remains Future.
 
 ---
 
@@ -253,9 +252,9 @@ Reuse FG-018 membership and Hub isolation:
 
 ## Acceptance criteria
 
-Implementation (when separately authorized) is incomplete until all of the following are true:
+**Met at close (2026-09-07).** Independently re-verified against repository evidence and close-time tests. No second office UAT was invented.
 
-1. Hub MONITOR panel is operational on `/projects/<id>` and no longer claims MONITOR is not operational **for this V1 scope**.
+1. Hub MONITOR panel is operational on `/projects/<id>` and no longer claims MONITOR is not operational **for this V1 scope**. Lifecycle link is `MONITOR` (not `MONITOR · Future`). LEARN remains Future.
 2. Floating drafts are never used as committed baseline.
 3. Authorized CO set is `Approved` or `Invoiced`; tax excluded; `unit_price` not treated as cost.
 4. Field Events are not inputs to Actual Direct Cost.
@@ -264,30 +263,28 @@ Implementation (when separately authorized) is incomplete until all of the follo
 7. Estimated GM uses the original pair; Actual GM uses current authorized pre-tax revenue.
 8. UI never says NET PROFIT.
 9. Org isolation holds.
-10. Dedicated tests + focused Hub/auth/BUILD regressions + full suite pass; exact counts recorded at implementation close.
-11. Office UAT (recon plan) performed and recorded under a later close prompt — **not** this approval pass.
+10. Dedicated tests + focused Hub/auth/BUILD regressions + full suite pass; exact counts recorded at implementation close: dedicated **35**; focused **149**; full **593**. Historical Slice A focused **126** and pre-Slice-B focused **137** remain historical.
+11. Office UAT (Slice C) **PASS** — recorded; not re-run as a second physical UAT at close.
 
 ---
 
-## Tests (future; do not run as MONITOR tests in this approval pass)
+## Tests (close-time)
 
-Last governed product-changing baseline remains dedicated FG-021 **20** / focused **148** / full **558**. This approval pass does **not** rerun pytest.
+Close authorization (2026-09-07) re-ran pytest in Cursor Terminal:
 
-When implemented: composition; floating-draft rejection; CO set; tax exclusion; no CO cost invention; actual sum of current rows; superseded excluded; `amount >= 0`; class enum; org isolation; CSRF; Hub copy; immutability; PGM identities; incomplete states; Field Events not inputs.
+| Bundle | Command | Result |
+|--------|---------|--------|
+| Dedicated | `./venv/bin/python -m pytest -q tests/test_monitor_v1_fg023.py` | **35 passed** |
+| Focused | dedicated + `tests/test_project_hub.py` + `tests/test_auth_fg018.py` + both FG-020 files + `tests/test_field_web_fg021.py` | **149 passed** |
+| Full | `./venv/bin/python -m pytest -q` | **593 passed** |
+
+Coverage includes composition; floating-draft rejection; CO set; tax exclusion; no CO cost invention; actual sum of current rows; superseded excluded; `amount >= 0`; class enum; org isolation; CSRF; Hub copy; immutability; PGM identities; incomplete states; Field Events not inputs.
 
 ---
 
-## Office UAT (future; do not perform)
+## Office UAT
 
-Office-only:
-
-1. Locked version + snapshot + Accepted Proposal + one Approved CO: three layers + estimated GM; MISSING ACTUALS; no Actual GM.
-2. Enter labour and material actuals: totals + Actual GM + variance.
-3. Supersede a mistaken actual: prior row retained; totals use successor.
-4. Second org cannot see the project/actuals.
-5. Estimate / Accepted Proposal / CO / Field Event unchanged.
-6. HST not in GM; CO tax not in revenue; no NET PROFIT copy.
-7. Draft-only estimate: committed baseline missing, not a fake number.
+Slice C office UAT **PASS** (2026-09-07, port **5014**, project **id 13** `FG023-UAT-MONITOR`). Close did **not** invent a second office UAT and did **not** write further actuals.
 
 ---
 
@@ -326,6 +323,6 @@ Office-only:
 |------|--------|
 | Joel | **Approved as written** 2026-09-06. Correction semantics including `amount >= 0` / `0.00` superseding successor **accepted**. |
 | ChatGPT review | **Approved as written** 2026-09-06. |
-| Cursor | Slice A implemented 2026-09-06. Slice B implemented 2026-09-07 (Hub `#hub-monitor` + BUILD office actuals create/supersede). Slice C live migrate + office UAT **PASS** 2026-09-07. Gate **not closed**. |
+| Cursor | Slice A implemented 2026-09-06. Slice B implemented 2026-09-07 (Hub `#hub-monitor` + BUILD office actuals create/supersede). Slice C live migrate + office UAT **PASS** 2026-09-07. Gate **CLOSED / OPERATIONAL FOR UAT** 2026-09-07. Close-time tests dedicated **35** / focused **149** / full **593**. No product-code change at close. Hub lifecycle already operational for MONITOR; LEARN remains Future. |
 
-**Next governed action:** FG-023 **CLOSE AUTHORIZATION** — separate ChatGPT prompt. Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**. Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / NOT YET CLOSED**. Do **not** close FG-023 from this Slice C execution record. Do **not** begin FG-024. Do **not** implement [FG-025](FG-025-contractor-facing-ux-language-and-terminology-standardization.md) (FUTURE / RECORDED; waits for this gate to close). Do **not** start LEARN. Do **not** start Observation Delete.
+**Next governed action:** **STOP.** No implementation package is authorized from this close. Do **not** begin FG-024. Do **not** implement [FG-025](FG-025-contractor-facing-ux-language-and-terminology-standardization.md) (**FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; recommended next product-quality activity only). Do **not** start LEARN. Do **not** start Observation Delete. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**

@@ -69,6 +69,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-07 Slice C preflight — not authorized by CAR-001):** Slice C **PREFLIGHT COMPLETE / NOT PERFORMED**. Next governed action is FG-023 Slice C **execution**. CAR-001 still does **not** authorize live migrate or office UAT.
 
+**Subsequent status (2026-09-07 Slice C execution — not authorized by CAR-001):** Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. Live current = heads **`e3f4a5b6c7d8`**. Gate remains **OPEN**. CAR-001 still does **not** authorize FG-023 close or FG-024.
+
 **Subsequent status (2026-09-07 FG-024 recorded — not authorized by CAR-001):** [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. CONTRACT legal-content intelligence is recorded, not implemented. Next governed implementation action remains FG-023 Slice C **execution**. CAR-001 still does **not** authorize FG-024 product code, legal-content population, live migrate, or office UAT.
 
 ## What CAR-001 was

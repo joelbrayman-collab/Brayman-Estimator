@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-07 — FG-023 MONITOR V1 Slice C (live migrate + office UAT)
+
+| Field | Content |
+|-------|---------|
+| ID | FG-023 MONITOR V1 — Slice C execution |
+| Status | **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS.** Gate **NOT CLOSED.** MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / NOT YET CLOSED.** |
+| Branch | `main` |
+| Base commit | `2cb6e783cbce6951bf54002133296e9144667eff` |
+| Objective | Apply existing revision `e3f4a5b6c7d8`; verify schema and Field continuity; office-UAT Hub MONITOR, four-class actuals, and `0.00` supersession on labeled `FG023-UAT-MONITOR`. |
+| Deliverables | Live migrate; gitignored backup; synthetic UAT project **id 13**; office UAT on port **5014**; current-authority docs. No product-code change. No new migration. |
+| Validation | `flask db upgrade e3f4a5b6c7d8` **PASS**. current = heads = `e3f4a5b6c7d8`. Field **39 / 39**. Hub baseline **PASS**. Four-class create **PASS**. Supersession / `0.00` **PASS**. Independent arithmetic **PASS**. Fail-closed HTTP **AUTOMATED COVERAGE SUFFICIENT FOR V1**. Tests **not rerun** (historical **35 / 149 / 126 / 137 / 593**). Zero UAT actuals on projects 1, 2, 9, 11, 12. |
+| Architectural findings | ACTIVE rollup after supersession **175.00**. Successor `0.00` PRESENT not MISSING_ACTUALS. Original 10.00 row preserved SUPERSEDED. Pending/Rejected CO and tax excluded. Field Evidence excluded. |
+| Open decisions | FG-023 **close authorization**. SESSION-EXPIRY **DEFERRED**. Observation Delete **QUEUED**. |
+| Next milestone | FG-023 close authorization. Do **not** begin FG-024. |
+| Commit | (this docs commit) |
+| Date | 2026-09-07 |
+
 ### 2026-09-07 — FG-024 North American Contract Intelligence recorded
 
 | Field | Content |
@@ -43,7 +60,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Validation | Docs-only. No `app/` / `tests/` / `migrations/` change. `git diff --check`. Product pytest not re-run. |
 | Architectural findings | Extends existing Legal Content Gate + ADR-037 jurisdiction identity + issued-document immutability. Permit Rules remain a separate domain. Fail closed; no generic North American fallback. |
 | Open decisions | Implementation authorization; Ontario/U.S. content population; later ADR for library schema if required. |
-| Next milestone | FG-023 Slice C **execution** (live migrate + office UAT). Do **not** start FG-024 Slice A. |
+| Next milestone | FG-023 **close authorization**. Do **not** start FG-024 Slice A. |
 | Commit | (this docs commit) |
 | Date | 2026-09-07 |
 

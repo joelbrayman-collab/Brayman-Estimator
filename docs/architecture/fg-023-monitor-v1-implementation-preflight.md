@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **SLICE A PREFLIGHT COMPLETE** (2026-09-06). **SLICE B PREFLIGHT COMPLETE** (2026-09-07). **SLICE B IMPLEMENTED / NOT LIVE-MIGRATED** (2026-09-07). **SLICE C PREFLIGHT COMPLETE** (2026-09-07). [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A + Slice B **IMPLEMENTED / NOT LIVE-MIGRATED**. Slice C **NOT PERFORMED**. Hub `#hub-monitor` **in product code**. This document remains the mechanics pin. Live migrate / office UAT remain **not** authorized by this Slice C preflight. |
+| Status | **SLICE A PREFLIGHT COMPLETE** (2026-09-06). **SLICE B PREFLIGHT COMPLETE** (2026-09-07). **SLICE B IMPLEMENTED** (2026-09-07). **SLICE C PREFLIGHT COMPLETE** (2026-09-07). **SLICE C MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS** (2026-09-07). [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN / NOT CLOSED**. Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / NOT YET CLOSED**. This document remains the mechanics pin. Gate close remains a **separate** ChatGPT authorization. |
 | Date | 2026-09-06 |
 | Parent | Approval commit `64b6a5472613f00b862170bd57be07486a11f91f` |
 | Recon | [monitor-v1-implementation-reconnaissance.md](monitor-v1-implementation-reconnaissance.md) **COMPLETE** |
@@ -28,6 +28,8 @@ This document pins later implementation mechanics. It does **not** amend FG-023.
 **Subsequent status (2026-09-07 Slice B implementation):** Hub `#hub-monitor` + BUILD office actuals create/supersede POSTs **implemented**. Dedicated tests **35 passed**. Focused **149 passed**. Full suite **593 passed**. Historical Slice A focused **126** and pre-Slice-B focused **137** remain historical. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. No live `project_direct_cost_actuals` table. Gate **not closed**. Live migrate / office UAT **not** performed.
 
 **Subsequent status (2026-09-07 Slice C preflight):** Live-migrate + office-UAT workflow pinned below. No `flask db upgrade`. No office UAT. No product code. No new migration. Live current remains `d2e3f4a5b6c7`. Live **39** / **39**. No live actuals table. Gate **not closed**.
+
+**Subsequent status (2026-09-07 Slice C execution):** Authorized live `flask db upgrade e3f4a5b6c7d8` applied (`d2e3f4a5b6c7` → `e3f4a5b6c7d8`). Gitignored pre-migration copy `instance/brayman_estimator-backup-before-fg023-e3f4a5b6c7d8.db`. Live current = heads = `e3f4a5b6c7d8` (one graph head). Table `project_direct_cost_actuals` exists. Field continuity **39** Events / **39** Originals. Synthetic UAT project **id 13** `FG023-UAT-MONITOR` (ORG-001). Office Hub UAT on port **5014** **PASS** (baseline MISSING ACTUALS; four-class create; `other_direct` 10.00 → 0.00 supersession). No UAT actuals on projects 1, 2, 9, 11, or 12. Fail-closed HTTP items remain **AUTOMATED COVERAGE SUFFICIENT FOR V1**. No product-code change. No new migration. Historical tests **35 / 149 / 126 / 137 / 593** not rerun. Gate **OPEN / NOT CLOSED**. FG-024 remains **FUTURE / NOT IMPLEMENTATION-AUTHORIZED**.
 
 ---
 
@@ -681,15 +683,15 @@ This Slice B preflight **does not** authorize implementation.
 
 ## SLICE C IMPLEMENTATION PREFLIGHT (2026-09-07)
 
-**Status:** **PREFLIGHT COMPLETE / NOT PERFORMED.** This section does **not** authorize live migrate, office UAT, UAT-project creation, or FG-023 close.
+**Status:** **PREFLIGHT COMPLETE.** **SLICE C EXECUTION COMPLETE / PASS** (2026-09-07). Live migrate **PERFORMED**. Office UAT **PASS**. This historical preflight section still does **not** itself authorize close. Gate remains **OPEN**.
 
 ```text
 FG-023: APPROVED / OPEN / NOT CLOSED
-SLICE A: IMPLEMENTED / NOT LIVE-MIGRATED
-SLICE B: IMPLEMENTED / NOT LIVE-MIGRATED
-SLICE C: PREFLIGHT COMPLETE / NOT PERFORMED
-MONITOR: IN PRODUCT CODE / NOT LIVE-MIGRATED / NOT OFFICE-UAT-VERIFIED / NOT CLOSED
-THIS PREFLIGHT DOES NOT AUTHORIZE flask db upgrade OR OFFICE UAT
+SLICE A: IMPLEMENTED / LIVE-MIGRATED
+SLICE B: IMPLEMENTED / LIVE-MIGRATED
+SLICE C: MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS
+MONITOR: IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / NOT YET CLOSED
+GATE CLOSE REQUIRES SEPARATE CHATGPT AUTHORIZATION
 ```
 
 Inspect date: 2026-09-07. Parent product SHA `7dd4d82c927ec2c38a0562e7e1cdedbccabb6662`. Repository Alembic head `e3f4a5b6c7d8`. Live current `d2e3f4a5b6c7`. Live Field **39** Events / **39** Originals. `project_direct_cost_actuals` **absent** live. Dedicated **35** / focused **149** / full **593**. Historical Slice A focused **126** and pre-Slice-B focused **137** remain historical.

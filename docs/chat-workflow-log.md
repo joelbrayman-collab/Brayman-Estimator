@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-07 — FG-023 MONITOR V1 Slice C live migrate + office UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-07 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026** |
+| Objective | Execute FG-023 Slice C exactly as pinned: live `flask db upgrade e3f4a5b6c7d8`, post-migration verification, labeled `FG023-UAT-MONITOR`, office Hub UAT, four-class actuals, `0.00` supersession, docs after PASS. |
+| Business decision | FG-023 remains **APPROVED / OPEN / NOT CLOSED**. Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**. Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / NOT YET CLOSED**. FG-024 remains **FUTURE / NOT IMPLEMENTATION-AUTHORIZED**. |
+| Architectural decision | Apply existing committed revision only. Gitignored pre-migration copy. UAT writes only on synthetic project **id 13**. Fail-closed HTTP remains **AUTOMATED COVERAGE SUFFICIENT FOR V1**. No DELETE. No in-place rewrite. No new migration. No product-code change. |
+| Prompt template used | Slice C execution prompt (live migrate + office UAT). |
+| Approved Cursor prompt summary | FG-023 MONITOR V1 Slice C execution: live migrate existing `e3f4a5b6c7d8`; gitignored backup; create `FG023-UAT-MONITOR`; office UAT of `#hub-monitor`; actual-cost create + `0.00` supersession; docs commit + push after PASS. Do not close FG-023. Do not begin FG-024. |
+| Files expected to change | Current-authority docs only after PASS. |
+| Files prohibited from changing | `app/`; `tests/`; Alembic revisions; live DB/backup (gitignored); FG-024 implementation. |
+| Implementation result | Upgrade **PASS**. current = heads = `e3f4a5b6c7d8`. Field **39 / 39**. Project **13** commercial vessel + five actuals rows. Office UAT port **5014** Hub baseline / four-class / supersession **PASS**. Independent arithmetic **PASS**. Zero actuals on projects 1, 2, 9, 11, 12. |
+| Tests | Product pytest **not re-run**. Last governed product baseline remains dedicated FG-023 **35** / focused **149** / historical Slice A focused **126** / pre-Slice-B focused **137** / full **593**. `git diff --check` on this docs pass. |
+| Project-state-report update | Yes — Slice C PASS; gate remains OPEN. |
+| Milestone entry update | Yes — Slice C execution recorded; not a gate close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | FG-023 **close authorization**; Observation Delete **QUEUED**; SESSION-EXPIRY **DEFERRED / NOT YET EXERCISED**. FG-024 Slices A–D remain unauthorized. |
+| Next approved step | FG-023 close authorization under a separate ChatGPT prompt. Do **not** close from this pass. Do **not** implement FG-024. |
+| Next approved prompt | FG-023 CLOSE AUTHORIZATION (ChatGPT Architect; not this pass). |
+| Commit hash | (this docs commit) |
+
 ### 2026-09-07 — FG-024 North American Contract Intelligence recorded (future; not implementation-authorized)
 
 | Field | Content |

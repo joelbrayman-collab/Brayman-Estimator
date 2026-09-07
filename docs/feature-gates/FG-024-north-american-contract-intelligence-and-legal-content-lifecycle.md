@@ -347,4 +347,4 @@ Active implementation stream remains **FG-023 MONITOR V1**. This recording does 
 | Cursor | Docs recording only. No product code. No migration. No legal-content population. |
 | Implementation | **NOT AUTHORIZED** until Joel/ChatGPT later approve this gate **for implementation** and issue a bounded slice prompt. |
 
-**Next governed action for the platform remains FG-023 Slice C execution.** Do **not** start FG-024 Slice A from this recording.
+**Next governed action for the platform is FG-023 close authorization.** Do **not** start FG-024 Slice A from this recording.

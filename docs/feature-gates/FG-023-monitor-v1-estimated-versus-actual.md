@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-023 is the governing identifier. Do not assign a new M0xx number. Roadmap Item 13. |
 | Module | **MONITOR** owns the comparison / read projection. **BUILD** owns office Direct Cost actuals (`ProjectDirectCostActual`). **Projects** owns Hub UX at `/projects/<id>`. Estimating, Pricing Engine, Proposals, and Project Controls retain their commercial records. |
 | Date | 2026-09-06 |
-| Status | **APPROVED / OPEN.** Slice A + Slice B **IMPLEMENTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED.** Hub `#hub-monitor` **in product code.** Gate **NOT CLOSED.** |
+| Status | **APPROVED / OPEN.** Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED.** Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS.** Hub `#hub-monitor` **LIVE / OFFICE-UAT-VERIFIED.** Gate **NOT CLOSED.** |
 | Architecture | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** · [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) **COMPLETE** · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](../adr/ADR-020-build-module-boundary.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-042](../adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) **Accepted** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [modules/monitor.md](../modules/monitor.md) · [FG-011](FG-011-project-hub-ux.md) |
 | Related ADRs | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (commercial baseline; this gate does **not** create a new ADR) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** (do **not** accept) · [ADR-010](../adr/ADR-010-build-versus-buy-document-processing.md) **Proposed** (do **not** accept) |
 | Prerequisites | Item 12 / [FG-021](FG-021-field-web-v1-today-and-capture.md) **CLOSED** (SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**). [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) / [FG-019](FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-008](FG-008-labour-engine-phase-b.md) / [FG-009](FG-009-organization-calibrated-pricing-engine.md) / [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. MONITOR V1 recon **COMPLETE**. |
@@ -20,11 +20,11 @@
 | Layer | State |
 |-------|--------|
 | Feature Gate (this document) | **APPROVED / OPEN** (2026-09-06). **NOT CLOSED.** |
-| Implementation | **SLICE A IMPLEMENTED.** **SLICE B IMPLEMENTED.** Slice C **PREFLIGHT COMPLETE / NOT PERFORMED.** Live migrate / office UAT **NOT STARTED.** |
-| Schema / Alembic | Revision **`e3f4a5b6c7d8`** created (`down_revision = d2e3f4a5b6c7`). **NOT APPLIED TO LIVE DB.** Live current remains **`d2e3f4a5b6c7`**. |
+| Implementation | **SLICE A IMPLEMENTED / LIVE-MIGRATED.** **SLICE B IMPLEMENTED / LIVE-MIGRATED.** Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS.** Gate **NOT CLOSED.** |
+| Schema / Alembic | Revision **`e3f4a5b6c7d8`** (`down_revision = d2e3f4a5b6c7`) **APPLIED LIVE** 2026-09-07 (`d2e3f4a5b6c7` → `e3f4a5b6c7d8`). Live current = heads = **`e3f4a5b6c7d8`**. One graph head. |
 | New ADR | **None.** ADR-021 already accepted. |
-| MONITOR product code | Slice A service `app/services/monitor.py` `assemble_monitor_v1`. Hub `#hub-monitor` **in product code**. **No MONITOR snapshot table.** **Not live-migrated.** |
-| Office actuals | BUILD model `ProjectDirectCostActual` + `app/services/direct_cost_actuals.py` **in code**. BUILD POST create/supersede **in code**. **No live UAT rows.** |
+| MONITOR product code | Slice A service `app/services/monitor.py` `assemble_monitor_v1`. Hub `#hub-monitor` **live / office-UAT-verified**. **No MONITOR snapshot table.** **NOT YET CLOSED.** |
+| Office actuals | BUILD model `ProjectDirectCostActual` + `app/services/direct_cost_actuals.py`. BUILD POST create/supersede. Live UAT rows **only** on synthetic project **id 13** `FG023-UAT-MONITOR` (five rows; authorized create + supersession sequence). |
 | Field Web MONITOR UI | **Out of scope** |
 
 ```text
@@ -32,15 +32,35 @@ FG-023:
 APPROVED
 OPEN
 NOT CLOSED
-SLICE A: IMPLEMENTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED
-SLICE B: IMPLEMENTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED
-MONITOR V1: PARTIALLY IMPLEMENTED
-HUB UI: IN PRODUCT CODE / NOT LIVE-MIGRATED
-LIVE MIGRATION: NOT PERFORMED
-OFFICE UAT: NOT STARTED
+SLICE A: IMPLEMENTED / LIVE-MIGRATED
+SLICE B: IMPLEMENTED / LIVE-MIGRATED
+SLICE C: MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS
+MONITOR V1: IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / NOT YET CLOSED
 ```
 
-Joel/ChatGPT approved this gate **as written** on **2026-09-06**. Approval includes the correction semantics (`amount >= 0` so a superseding successor may carry `0.00` while the original durable entry remains). Slice A product code was authorized by a later 6 Sep 2026 implementation prompt. **MONITOR V1 is not operational** until later slices, live migrate, and office UAT succeed. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+Joel/ChatGPT approved this gate **as written** on **2026-09-06**. Approval includes the correction semantics (`amount >= 0` so a superseding successor may carry `0.00` while the original durable entry remains). Slice A product code was authorized by a later 6 Sep 2026 implementation prompt. Slice B Hub UI was authorized 7 Sep 2026. Slice C live migrate + office UAT was authorized and **PASSED** 7 Sep 2026. **MONITOR V1 is live-migrated and office-UAT-verified. The gate is not closed.** Closure requires a separate ChatGPT authorization. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+
+### Slice C live migrate + office UAT (2026-09-07)
+
+| Item | Result |
+|------|--------|
+| Live `flask db upgrade e3f4a5b6c7d8` | **PASS** (`d2e3f4a5b6c7` → `e3f4a5b6c7d8`) |
+| Gitignored backup | `instance/brayman_estimator-backup-before-fg023-e3f4a5b6c7d8.db` (`cmp` identical; not committed) |
+| Alembic after migrate | current = heads = `e3f4a5b6c7d8`; one graph head |
+| Field continuity | **39** Events / **39** Originals |
+| UAT project | **id 13** `FG023-UAT-MONITOR` / ORG-001 / client id **8** |
+| Estimate / version / snapshot | Estimate **8** `EST-FG023-UAT-MONITOR`; version **8** locked; snapshot **5** `TRUE_GROSS_MARGIN` DC **850.00** / pre-tax selling **1000.00** / tax **130.00** (excluded) |
+| Accepted Proposal | **id 5** `PROP-FG023-UAT-MONITOR` (exactly one Accepted) |
+| Approved CO | **id 4** `CO-000004` subtotal **100.00** + markup **20.00** = **120.00** (tax 15.60 excluded) |
+| Pending CO | **id 5** `CO-000005` subtotal **50.00** + markup **5.00** — **excluded** |
+| Rejected CO | **id 6** `CO-000006` subtotal **40.00** + markup **0.00** — **excluded** |
+| Hub baseline physical UAT | **PASS** (port **5014**; `#hub-monitor`; MISSING ACTUALS not shown as $0.00; no Inf/NaN/NET PROFIT) |
+| Four-class create physical UAT | **PASS** labour **100.00** / material **50.00** / subcontract **25.00** / other_direct **10.00**; to-date **185.00**; actor **Joel Brayman**; source **OFFICE_MANUAL** |
+| Supersession / 0.00 physical UAT | **PASS** actual **4** SUPERSEDED preserved; successor **5** ACTIVE **0.00**; to-date **175.00**; other_direct class **0.00**; no DELETE |
+| Independent arithmetic | Original GM **15.00%**; authorized revenue **1120.00**; after supersession Actual-to-Date GM **84.38%**; variance **69.38%** — Hub agrees |
+| Fail-closed HTTP | **AUTOMATED COVERAGE SUFFICIENT FOR V1** (not physical UAT) |
+| Protected projects 1, 2, 9, 11, 12 | **zero** FG-023 UAT actuals |
+| Tests this pass | **Not rerun.** Historical dedicated **35** / focused **149** / Slice A focused **126** / pre-Slice-B focused **137** / full **593** |
 
 ---
 
@@ -306,6 +326,6 @@ Office-only:
 |------|--------|
 | Joel | **Approved as written** 2026-09-06. Correction semantics including `amount >= 0` / `0.00` superseding successor **accepted**. |
 | ChatGPT review | **Approved as written** 2026-09-06. |
-| Cursor | Slice A implemented 2026-09-06. Slice B implemented 2026-09-07 (Hub `#hub-monitor` + BUILD office actuals create/supersede). Live migrate **not** this pass. |
+| Cursor | Slice A implemented 2026-09-06. Slice B implemented 2026-09-07 (Hub `#hub-monitor` + BUILD office actuals create/supersede). Slice C live migrate + office UAT **PASS** 2026-09-07. Gate **not closed**. |
 
-**Next governed action:** FG-023 **SLICE C EXECUTION** live `flask db upgrade e3f4a5b6c7d8` + office UAT — **separate authorization**. Slice C **PREFLIGHT COMPLETE / NOT PERFORMED**. Slice A + Slice B **IMPLEMENTED / NOT LIVE-MIGRATED**. Do **not** live-migrate from this preflight. Do **not** start office UAT. Do **not** create UAT actuals. Do **not** start LEARN. Do **not** start Observation Delete.
+**Next governed action:** FG-023 **CLOSE AUTHORIZATION** — separate ChatGPT prompt. Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**. Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / NOT YET CLOSED**. Do **not** close FG-023 from this Slice C execution record. Do **not** begin FG-024. Do **not** start LEARN. Do **not** start Observation Delete.

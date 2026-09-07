@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **RECONNAISSANCE COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A + Slice B **IMPLEMENTED / NOT LIVE-MIGRATED**. MONITOR V1 is **PARTIALLY IMPLEMENTED** (service + Hub `#hub-monitor` + office writes). **Not live-migrated.** Gate **NOT CLOSED**. |
+| Status | **RECONNAISSANCE COMPLETE.** [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **APPROVED / OPEN**. Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**. Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. MONITOR V1 is **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / NOT YET CLOSED**. Gate **NOT CLOSED**. |
 | Date | 2026-09-06 |
 | Product | The Estimator / CalibAi |
 | Canonical record | This document |

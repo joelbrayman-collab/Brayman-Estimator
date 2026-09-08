@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Live migrate + office UAT not authorized. V1-03 not started. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** UAT. Do **not** begin V1-03. |
 | Next approved prompt | **None** — HOLD pending live-migrate / UAT authorization. |
-| Commit hash | Pending this implementation commit |
+| Commit hash | `c751d72b32f1ed415375719df2fd69936ace64d7` |
 
 ### 2026-09-08 — V1-02 / FG-027 costing-approval ADR, Feature Gate, and architecture preflight
 

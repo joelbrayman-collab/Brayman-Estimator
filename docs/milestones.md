@@ -44,7 +44,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Estimating owns costing. Pricing consumes frozen `approved_direct_cost_total`. Labour snapshot remains out of basis. Empty Assembly $0 BLOCKS. No supplier requirement. |
 | Open decisions | Live migrate + office UAT require a later prompt. V1-03 / ADR-008 remain unauthorized. |
 | Next milestone | **STOP.** Do not live-migrate. Do not UAT. Do not begin V1-03. |
-| Commit | Pending this implementation commit / follow-up pin |
+| Commit | `c751d72b32f1ed415375719df2fd69936ace64d7` |
 | Date | 2026-09-08 |
 
 ### 2026-09-08 — V1-02 / FG-027 costing-approval ADR, Feature Gate, and architecture preflight

@@ -102,6 +102,25 @@ def version_is_costing_editable(version):
     return True
 
 
+def establish_legacy_library_unit_cost_reference(line_item):
+    """Freeze pre-edit working unit_cost as library reference for pre-FG-027 lines.
+
+    CostItem/Assembly rows inserted before FG-027 columns exist can have
+    library_unit_cost_reference NULL. The best available historical copy is the
+    project's current working unit_cost, not today's library value.
+
+    Does not query CostItem or Assembly. Does not overwrite a populated reference.
+    Custom/Allowance lines are ignored.
+    """
+    line_type = line_item.line_type or ""
+    if line_type not in ("Cost Item", "Assembly"):
+        return line_item.library_unit_cost_reference
+    if line_item.library_unit_cost_reference is not None:
+        return line_item.library_unit_cost_reference
+    line_item.library_unit_cost_reference = _q4(line_item.unit_cost)
+    return line_item.library_unit_cost_reference
+
+
 def classify_working_source_kind(line_item):
     line_type = line_item.line_type or ""
     if line_type == "Custom":

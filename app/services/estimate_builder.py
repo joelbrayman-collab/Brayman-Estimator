@@ -395,6 +395,11 @@ def update_line_item(
     if quantity is not None:
         line_item.quantity = _validate_non_negative(quantity, "Quantity")
     if unit_cost is not None:
+        from app.services.estimate_costing import (
+            establish_legacy_library_unit_cost_reference,
+        )
+
+        establish_legacy_library_unit_cost_reference(line_item)
         line_item.unit_cost = _validate_non_negative(unit_cost, "Unit cost")
     if waste_percent is not None:
         line_item.waste_percent = _validate_non_negative(waste_percent, "Waste percent")

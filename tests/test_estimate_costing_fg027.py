@@ -26,6 +26,7 @@ from app.models.estimate_costing import (
     EstimateCostingSnapshotLine,
 )
 from app.models.pricing_engine import EstimatePricingSnapshot
+from app.models.takeoff_estimate_insertion import TakeoffEstimateInsertion
 from app.services.estimate_builder import (
     add_assembly_line,
     add_cost_item_line,
@@ -575,3 +576,164 @@ def test_office_costing_review_and_approve_all_route(client, app):
     assert EstimateCostingSnapshot.query.filter_by(estimate_version_id=version.id).count() == 1
     html = client.get(f"/estimates/{estimate.id}/versions/{version.id}")
     assert b"Approved costing snapshot" in html.data
+
+
+def _clear_library_reference(line):
+    """Simulate a pre-FG-027 library-derived row (NULL reference)."""
+    pre_edit = line.unit_cost
+    line.library_unit_cost_reference = None
+    db.session.commit()
+    db.session.refresh(line)
+    assert line.library_unit_cost_reference is None
+    return pre_edit
+
+
+def test_legacy_assembly_null_reference_freezes_pre_edit_cost(app):
+    estimate = _estimate("EST-FG027-0030")
+    version = estimate.current_version
+    section = create_section(version, name="Direct")
+    assembly = _empty_assembly(code="ASM-LEGACY-0")
+    library_cost = assembly.base_unit_cost
+    line = add_assembly_line(section, assembly_id=assembly.id, quantity=3)
+    pre_edit = _clear_library_reference(line)
+    assert pre_edit == Decimal("0") or pre_edit == Decimal("0.00")
+    insertions_before = TakeoffEstimateInsertion.query.count()
+    pricing_before = EstimatePricingSnapshot.query.count()
+
+    update_line_item(
+        line,
+        unit_cost=Decimal("250.00"),
+        costing_override_reason="FG-027 UAT synthetic door costing override",
+        actor="Joel Brayman",
+    )
+    db.session.refresh(line)
+    assert line.library_unit_cost_reference == Decimal("0.0000") or line.library_unit_cost_reference == Decimal("0")
+    assert line.unit_cost == Decimal("250.0000") or line.unit_cost == Decimal("250")
+    assert line.costing_source_kind == SOURCE_MANUAL_OVERRIDE
+    assert line.costing_override_reason == "FG-027 UAT synthetic door costing override"
+    assert line.costing_override_by == "Joel Brayman"
+    assert line.costing_override_at is not None
+    db.session.refresh(assembly)
+    assert assembly.base_unit_cost == library_cost
+    assert TakeoffEstimateInsertion.query.count() == insertions_before
+    assert EstimatePricingSnapshot.query.count() == pricing_before
+
+    snapshot = approve_all_costing(version, actor="Joel Brayman")
+    frozen = snapshot.lines[0]
+    assert frozen.source_kind == SOURCE_MANUAL_OVERRIDE
+    assert frozen.is_manual_override is True
+    assert frozen.library_unit_cost_reference == Decimal("0.0000") or frozen.library_unit_cost_reference == Decimal("0")
+    assert frozen.override_reason == "FG-027 UAT synthetic door costing override"
+    assert EstimatePricingSnapshot.query.count() == pricing_before
+
+
+def test_legacy_cost_item_null_reference_freezes_pre_edit_cost(app):
+    estimate = _estimate("EST-FG027-0031")
+    version = estimate.current_version
+    section = create_section(version, name="Direct")
+    item = _cost_item()
+    library_cost = item.unit_cost
+    line = add_cost_item_line(section, cost_item_id=item.id, quantity=1)
+    pre_edit = _clear_library_reference(line)
+    assert pre_edit == library_cost
+
+    update_line_item(
+        line,
+        unit_cost=Decimal("75.00"),
+        costing_override_reason="Legacy CostItem working-cost correction",
+        actor="Joel Brayman",
+    )
+    db.session.refresh(line)
+    assert line.library_unit_cost_reference == library_cost
+    assert line.unit_cost == Decimal("75.0000") or line.unit_cost == Decimal("75")
+    assert line.costing_source_kind == SOURCE_MANUAL_OVERRIDE
+    assert line.costing_override_reason == "Legacy CostItem working-cost correction"
+    assert line.costing_override_by == "Joel Brayman"
+    assert line.costing_override_at is not None
+    db.session.refresh(item)
+    assert item.unit_cost == library_cost
+    snapshot = approve_all_costing(version, actor="Joel Brayman")
+    assert snapshot.lines[0].source_kind == SOURCE_MANUAL_OVERRIDE
+    assert EstimatePricingSnapshot.query.count() == 0
+
+
+def test_legacy_library_change_without_reason_blocks_approval(app):
+    estimate = _estimate("EST-FG027-0032")
+    version = estimate.current_version
+    section = create_section(version, name="Direct")
+    item = _cost_item()
+    line = add_cost_item_line(section, cost_item_id=item.id, quantity=1)
+    _clear_library_reference(line)
+    update_line_item(line, unit_cost=Decimal("75.00"), actor="Joel Brayman")
+    evaluation = evaluate_costing(version)
+    assert BLOCK_OVERRIDE_REASON_REQUIRED in evaluation["block_codes"]
+    assert evaluation["can_approve"] is False
+    with pytest.raises(EstimateCostingError):
+        approve_all_costing(version, actor="Joel Brayman")
+    assert EstimateCostingSnapshot.query.count() == 0
+    db.session.refresh(line)
+    assert line.costing_source_kind == SOURCE_MANUAL_OVERRIDE
+    assert line.library_unit_cost_reference == item.unit_cost
+    assert not (line.costing_override_reason or "").strip()
+
+
+def test_existing_library_reference_is_not_overwritten(app):
+    estimate = _estimate("EST-FG027-0033")
+    version = estimate.current_version
+    section = create_section(version, name="Direct")
+    item = _cost_item()
+    line = add_cost_item_line(section, cost_item_id=item.id, quantity=1)
+    original_reference = line.library_unit_cost_reference
+    assert original_reference is not None
+    update_line_item(
+        line,
+        unit_cost=Decimal("75.00"),
+        costing_override_reason="First override",
+        actor="Joel Brayman",
+    )
+    db.session.refresh(line)
+    assert line.library_unit_cost_reference == original_reference
+    update_line_item(
+        line,
+        unit_cost=Decimal("90.00"),
+        costing_override_reason="Second override",
+        actor="Joel Brayman",
+    )
+    db.session.refresh(line)
+    assert line.library_unit_cost_reference == original_reference
+    assert line.unit_cost == Decimal("90.0000") or line.unit_cost == Decimal("90")
+    assert line.costing_source_kind == SOURCE_MANUAL_OVERRIDE
+    assert line.costing_override_reason == "Second override"
+    db.session.refresh(item)
+    assert item.unit_cost == original_reference
+    approve_all_costing(version, actor="Joel Brayman")
+    frozen = current_costing_snapshot(version).lines[0]
+    assert frozen.library_unit_cost_reference == original_reference
+    assert EstimatePricingSnapshot.query.count() == 0
+
+
+def test_unchanged_legacy_cost_does_not_fabricate_override(app):
+    estimate = _estimate("EST-FG027-0034")
+    version = estimate.current_version
+    section = create_section(version, name="Direct")
+    item = _cost_item()
+    line = add_cost_item_line(section, cost_item_id=item.id, quantity=1)
+    working = line.unit_cost
+    _clear_library_reference(line)
+    update_line_item(
+        line,
+        description=item.name,
+        unit_cost=working,
+        actor="Joel Brayman",
+    )
+    db.session.refresh(line)
+    assert line.costing_source_kind == SOURCE_LIBRARY_COST_ITEM
+    assert line.library_unit_cost_reference == working
+    assert line.costing_override_reason is None
+    assert line.costing_override_by is None
+    assert line.costing_override_at is None
+    evaluation = evaluate_costing(version)
+    assert BLOCK_OVERRIDE_REASON_REQUIRED not in evaluation["block_codes"]
+    snapshot = approve_all_costing(version, actor="Joel Brayman")
+    assert snapshot.lines[0].source_kind == SOURCE_LIBRARY_COST_ITEM
+    assert snapshot.lines[0].is_manual_override is False

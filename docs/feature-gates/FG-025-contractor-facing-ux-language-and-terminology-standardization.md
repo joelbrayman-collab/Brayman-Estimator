@@ -568,7 +568,12 @@ Shared office shell copy:
 - Login lede **Sign in with your email and password.** Header **Sign out**. Auth behavior unchanged. `GENERIC_LOGIN_FAILURE` unchanged.
 - Settings Brand Profile heading **Brand profile**. Helper uses company/customer language. Logo helper uses MB, not MiB. Stored brand values unchanged.
 
-Dedicated tests: `tests/test_fg025_contractor_copy.py` (**16**). Copy assertion also updated in `tests/test_brand_profile_fg017.py`. Domain/auth/tenant assertions unchanged.
+Dedicated tests: `tests/test_fg025_contractor_copy.py` (**16**). Copy assertion also updated in `tests/test_brand_profile_fg017.py`. Domain/auth/tenant assertions unchanged. Product SHA **`56e16f03446f982d577d2a3f0d3375ef865e1dc9`**. Independent close review (2026-09-08) independently reran dedicated **16 passed** and Slice-4 focused **114 passed**; governed **226** and full **609** were **not** independently rerun during that review.
+
+Remaining / unauthorized after Slice 4 (not a must-rewrite list; remaining surfaces **NOT AUTHORIZED**):
+
+- Unauthorized candidate surfaces: Field Web copy including Log out; customer Proposal/PDF terminology; Historical Evidence nav and historical specialist screens; standalone Permit screens; Hub PRICE table leftover `TRUE_GROSS_MARGIN`; final product-wide terminology sweep.
+- **REVIEW / DECISION REQUIRED** (not implied must-change): Cost Items nav label; “Contract value” terminology; Dashboard `page_title` still Dashboard; Office sign in / Brayman Construction Platform titles retained; `GENERIC_LOGIN_FAILURE` retained for security; Brand Profile saved. flash retained; disabled Settings (coming soon) frozen by FG-017.
 
 Do **not** start Slice 5 from this section.
 

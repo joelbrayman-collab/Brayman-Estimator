@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — FG-025 Slice 4 post-close documentation reconciliation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
+| Objective | Docs-only reconciliation of Slice 4 close-review documentation-hygiene findings. |
+| Business decision | Slice 4 remains **PASS — MINOR DOCUMENTATION NOTE ONLY**. Product SHA stays **`56e16f03446f982d577d2a3f0d3375ef865e1dc9`**. This commit is **not** the Slice 4 product SHA. FG-025 overall **NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**. |
+| Architectural decision | No product, test, migration, or DB change. Pin Slice 4 product SHA. Expand current-authority remaining-surface inventory. Preserve historical Slice 1–4 stop-lines. Distinguish **REVIEW / DECISION REQUIRED** from unauthorized candidate surfaces. |
+| Prompt template used | Bounded Joel/ChatGPT post-close documentation reconciliation prompt. |
+| Approved Cursor prompt summary | Pin Slice 4 product SHA `56e16f0…`; reconcile current-state/PSR/handoff HEAD; complete remaining-surface inventory with REVIEW/DECISION vs unauthorized-candidate distinction. Docs only. Commit + push. No Slice 5. |
+| Files expected to change | Current-authority docs only. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; website. |
+| Implementation result | Slice 4 product SHA pinned. Remaining-surface inventory expanded in current-state, PSR, session-handoff, and FG-025. CAR-001 Slice 4 subsequent-status now pins product SHA. Live current `e3f4a5b6c7d8`. Live **39** / **39**. |
+| Tests | Not rerun (docs-only). Preserved Slice 4 evidence: dedicated **16**; Slice-4 focused **114**; governed **226**; full **609**. Independent close review reran dedicated **16** and Slice-4 focused **114**; governed and full **not** independently rerun. |
+| Project-state-report update | Yes — Slice 4 product SHA pinned; docs-only reconciliation distinguished. |
+| Milestone entry update | Yes — Slice 4 product SHA pinned; docs-reconciliation recorded. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining FG-025 surfaces unauthorized. Slice 5 not authorized. |
+| Next approved step | **STOP.** Do **not** start Slice 5. Do **not** start FG-024. Do **not** start LEARN. Do **not** restart website work. |
+| Next approved prompt | None authorized. |
+| Commit hash | this docs-only reconciliation commit (not Slice 4 product SHA `56e16f03446f982d577d2a3f0d3375ef865e1dc9`) |
+
 ### 2026-09-08 — FG-025 Slice 4 contractor-facing office language
 
 | Field | Content |
@@ -65,7 +89,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Remaining FG-025 surfaces unauthorized (Field Web, customer PDF, Historical Evidence nav, standalone Permit screens). Header disabled **Settings (coming soon)** left frozen (FG-017). “Contract value” still flagged G. Slice 5 not authorized. |
 | Next approved step | **STOP.** Do **not** start Slice 5. Do **not** start FG-024. Do **not** start LEARN. Do **not** restart website work. |
 | Next approved prompt | None authorized. |
-| Commit hash | this Slice 4 product-changing commit (parent `ab6219827f33a59f4d6528bbfffbd4551b9d1411`) |
+| Commit hash | `56e16f03446f982d577d2a3f0d3375ef865e1dc9` (`feat: continue FG-025 contractor-facing office language`) |
 
 ### 2026-09-08 — FG-025 Slice 3 post-close documentation reconciliation
 

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — V1-02 / FG-027 live migration and office UAT stop
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` @ `b944436136d0bafb198b27c401b79792d076ef16` (start) |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
+| Objective | Live-migrate additive `a5b6c7d8e9f0` and run bounded office UAT of costing approval on EstimateVersion 9 |
+| Business decision | Joel authorized live migrate + bounded office UAT. Do not re-implement. Do not silently repair defects. Close only if all UAT criteria PASS. |
+| Architectural decision | Unchanged ADR-044. UAT stopped because pre-FG-027 line 7 has NULL `library_unit_cost_reference`, so a working-cost change is not classified as MANUAL_OVERRIDE. |
+| Prompt template used | Authorized V1-02 / FG-027 live migration + bounded office UAT package (8 Sep 2026) |
+| Approved Cursor prompt summary | Backup live DB; upgrade `a5b6c7d8e9f0`; office UAT BLOCK → override → Approve All → Pricing → recost → stale → re-apply. Do not begin V1-03. |
+| Files expected to change | Governance/current-authority docs only if UAT complete; this recording is live-migrate PASS / UAT STOP |
+| Files prohibited from changing | Product code; silent defect repair; V1-03 / ADR-008 / FG-024 / another FG-025 slice / LEARN |
+| Implementation result | Live upgrade **PASS**. Office UAT **STOPPED / NOT PASS**. Gate **NOT CLOSED**. V1-02 remains **PARTIAL** 0.40. Readiness **39%**. |
+| Tests | Product tests **NOT RERUN**. Historical dedicated FG-027 **15** / full **647**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Override provenance on pre-FG-027 EstimateLineItem rows. Remaining costing/pricing UAT not run. |
+| Next approved step | **STOP.** Return defect to ChatGPT Architect. Do **not** silently repair. Do **not** begin V1-03. |
+| Next approved prompt | **None** — HOLD pending defect-repair authorization. |
+| Commit hash | Pending this docs recording |
+
 ### 2026-09-08 — V1-02 / FG-027 costing-approval product implementation
 
 | Field | Content |

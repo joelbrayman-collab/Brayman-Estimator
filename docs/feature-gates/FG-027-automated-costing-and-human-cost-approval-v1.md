@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-027 is the governing identifier for CalibAi **V1-02**. Do not assign a new M0xx number. Lifecycle home remains **PRICE**. Do not add a new top-level stage. |
 | Module | **Estimating** owns costing approval and costing snapshots. **Pricing Engine consumes** the current approved costing. **Labour Engine** retains `EstimateLabourSnapshot`. No new module. |
 | Date | 2026-09-08 |
-| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED.** **NOT LIVE-MIGRATED.** **UAT NOT RUN / NOT AUTHORIZED.** **NOT CLOSED.** **NOT OPERATIONAL FOR UAT.** Architecture preflight remains complete. [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED.** **OFFICE UAT STOPPED / NOT PASS.** **NOT CLOSED.** **NOT OPERATIONAL FOR UAT.** Live current = heads **`a5b6c7d8e9f0`**. Architecture preflight remains complete. [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. |
 | Architecture | [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted** · [fg-027-costing-approval-preflight.md](../architecture/fg-027-costing-approval-preflight.md) **PREFLIGHT COMPLETE** · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](../adr/ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [FG-009](FG-009-organization-calibrated-pricing-engine.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-008](FG-008-labour-engine-phase-b.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-014](FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [v1-completion-register.md](../v1-completion-register.md) V1-02 · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 | Related ADRs | **[ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) Accepted**. Do **not** accept ADR-008 or ADR-010 from this gate. |
 | Prerequisites | [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-009](FG-009-organization-calibrated-pricing-engine.md) **CLOSED**. Working CostItem / Assembly / Draft line edit exist. Live migrate + UAT require a **separate** authorized prompt. |
@@ -18,29 +18,27 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / TESTED / COMMITTED / PUSHED.** **NOT LIVE-MIGRATED.** **UAT NOT AUTHORIZED.** **NOT CLOSED.** |
+| Feature Gate (this document) | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED.** **OFFICE UAT STOPPED / NOT PASS.** **NOT CLOSED.** |
 | Product code | `app/models/estimate_costing.py`; `app/services/estimate_costing.py`; Estimate version Costing Review; Pricing consume / stale |
-| Schema / Alembic | Migration **file** `a5b6c7d8e9f0` down_revision `f4a5b6c7d8e9` **created**. Live apply **NOT RUN**. |
-| Approve All Costing | **IMPLEMENTED** (repository; not live-migrated) |
-| Pricing consume / stale | **IMPLEMENTED** (repository; not live-migrated) |
+| Schema / Alembic | Additive `a5b6c7d8e9f0` **applied live** (`f4a5b6c7d8e9` → `a5b6c7d8e9f0`). Live current = heads **`a5b6c7d8e9f0`**. |
+| Approve All Costing | **IMPLEMENTED / LIVE.** Zero-cost BLOCK office UAT **PASS**. Full costing-approval UAT **STOPPED**. |
+| Pricing consume / stale | **IMPLEMENTED / LIVE.** Office consume / stale UAT **NOT RUN** (stopped before Apply Pricing). |
 | Labour-in-basis | **UNCHANGED** (`include_labour_snapshot_direct_cost=False`) |
 | Supplier evidence | **NOT REQUIRED** |
 
 ```text
 FG-027:
-IMPLEMENTED / TESTED / COMMITTED / PUSHED
-NOT LIVE-MIGRATED
-UAT NOT RUN / NOT AUTHORIZED
+IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED
+OFFICE UAT STOPPED / NOT PASS
 NOT CLOSED
 NOT OPERATIONAL FOR UAT
 ADR-044 ACCEPTED
-MIGRATION FILE a5b6c7d8e9f0
-LIVE CURRENT f4a5b6c7d8e9
+LIVE CURRENT = HEADS a5b6c7d8e9f0
 APPROVE ALL = COSTING APPROVAL ONLY
 DO NOT ACCEPT ADR-008
 ```
 
-Joel authorized product implementation on **2026-09-08**. Live migrate and office UAT remain separately authorized.
+Joel authorized live migrate + bounded office UAT on **2026-09-08**. Live upgrade **PASS**. Office UAT **STOPPED** on EstimateLineItem **id 7** override-provenance defect (pre-FG-027 `library_unit_cost_reference` NULL). No product-code repair in that pass.
 
 ---
 
@@ -184,7 +182,9 @@ Working CostItem cost; working Assembly cost; manual custom; manual allowance; z
 
 ## Implementation authorization
 
-**Product implementation authorized and executed 2026-09-08.** Live `flask db upgrade` and office UAT are **NOT AUTHORIZED** by that package. Do **not** mark CLOSED / OPERATIONAL FOR UAT until live migrate + UAT complete under a later prompt.
+**Product implementation authorized and executed 2026-09-08.** Live migrate + bounded office UAT authorized and executed the same date.
+
+**Subsequent status (2026-09-08 live migrate + office UAT):** Live `flask db upgrade a5b6c7d8e9f0` **PASS**. Gitignored backup `instance/brayman_estimator-backup-before-fg027-a5b6c7d8e9f0.db`. Office UAT port **5016** against EstimateVersion **id 9**. Zero-cost BLOCK **PASS** (`MISSING_ASSEMBLY_COST`, `INCOMPLETE_DIRECT_COST_TOTAL`). Failed Approve All POST **PASS** (no snapshot). Working unit_cost on line **7** changed to **250** (extended **750**). Manual override provenance **FAIL**: `library_unit_cost_reference` remains **NULL** on the pre-FG-027 inserted line, so classification stayed `LIBRARY_ASSEMBLY`, override reason was not persisted, and Approve All became enabled without override evidence. UAT **STOPPED**. No Approve All snapshot. No Pricing apply. Assembly **id 2** and TakeoffPackage **id 1** unchanged. Gate **NOT CLOSED**. Product tests **not** rerun. Do **not** silently repair under the UAT prompt.
 
 ---
 

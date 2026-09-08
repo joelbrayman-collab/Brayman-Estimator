@@ -37,7 +37,7 @@ CalibAi owns the engine. Each organization owns its commercial intelligence. ORG
 - `project_commercial_contexts` (posture/risk as snapshot context, not silent multipliers; optional `pricing_policy_id`)
 - `estimate_versions` / line `extended_cost`
 - Labour Engine **direct labour cost** (read-only consume; default apply path does not add labour-snapshot cost into the estimate basis)
-- Later FG-027 CURRENT costing snapshot (Estimating-owned; [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md)). Product **IMPLEMENTED** in repository; live migrate **NOT RUN**. `include_labour_snapshot_direct_cost=False` remains unchanged.
+- Later FG-027 CURRENT costing snapshot (Estimating-owned; [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md)). **LIVE-MIGRATED**; office consume UAT **NOT RUN**. `include_labour_snapshot_direct_cost=False` remains unchanged.
 - FG-006 historical commercial facts (read-only evidence)
 
 ## Prohibited responsibilities
@@ -56,7 +56,7 @@ CalibAi owns the engine. Each organization owns its commercial intelligence. ORG
 - Versions **with** a snapshot recalculate via the frozen named method (`refresh_version_from_snapshot`). Later org policy changes do not re-resolve locked snapshots.
 - New estimates are **not** auto-converted to `TRUE_GROSS_MARGIN`. A human must apply org pricing on a draft version.
 - [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) takeoff-to-estimate insert does **not** apply Pricing Engine or create pricing snapshots.
-- V1-02 / [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) requires governed Apply Pricing to consume a CURRENT Estimating-owned costing snapshot ([ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md)). **IMPLEMENTED** in repository; **NOT LIVE-MIGRATED**. `include_labour_snapshot_direct_cost=False` remains unchanged.
+- V1-02 / [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) requires governed Apply Pricing to consume a CURRENT Estimating-owned costing snapshot ([ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md)). **LIVE-MIGRATED**; office UAT **STOPPED** before Apply Pricing. `include_labour_snapshot_direct_cost=False` remains unchanged.
 - ORG-001 seed (migration, if `ORG-001` exists): `TRUE_GROSS_MARGIN` 15%, Ontario HST 13% (`CA-ON`). Overhead, profit, and contingency treatments are **`UNSPECIFIED`** (not yet governed; not inferred from historical workbooks). `UNSPECIFIED` is distinct from an org-approved `NOT_APPLIED` decision. Not a CalibAi default.
 - Pricing Posture and Execution Risk are recorded on the snapshot only.
 - FG-009-aware Change Orders inherit the linked snapshot **and apply its pricing METHOD** (`TRUE_GROSS_MARGIN`, `COST_PLUS_MARKUP`, or `COST_PLUS_MARKUP_STACK`). Historical Change Orders without a snapshot retain legacy markup-on-subtotal behavior.

@@ -2,26 +2,23 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED** (2026-09-08). **NOT LIVE-MIGRATED.** **UAT NOT RUN / NOT AUTHORIZED.** **NOT CLOSED.** **NOT OPERATIONAL FOR UAT.** [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Live Alembic remains **`f4a5b6c7d8e9`**. Repository graph head **`a5b6c7d8e9f0`**. |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED** (2026-09-08). **OFFICE UAT STOPPED / NOT PASS.** **NOT CLOSED.** **NOT OPERATIONAL FOR UAT.** [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Live current = heads **`a5b6c7d8e9f0`**. |
 | Date | 2026-09-08 |
 | Parent | FG-026 close SHA `bacb5abf574b3dfe30bda4b6d6015026a3946607`. Architecture recording SHA `076e12f022fa5248a34e7baf7d05ae51e9e0ac4b`. Implementation start pin `28fb5c0445fafabb2924d5d43bce46bf5fca3d0e`. |
 | Gate | [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) |
-| Readiness | Product implementation complete in repository. Live migrate / office UAT **not authorized**. |
+| Readiness | Product implementation complete. Live migrate **PASS**. Office UAT **STOPPED** on override-provenance defect for pre-FG-027 line 7. |
 
 ```text
 FG-027:
-IMPLEMENTED / TESTED / COMMITTED / PUSHED
-NOT LIVE-MIGRATED
-UAT NOT RUN / NOT AUTHORIZED
+IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED
+OFFICE UAT STOPPED / NOT PASS
 NOT CLOSED
 NOT OPERATIONAL FOR UAT
 ADR-044 ACCEPTED
-MIGRATION FILE a5b6c7d8e9f0
-DOWN_REVISION f4a5b6c7d8e9
-LIVE CURRENT f4a5b6c7d8e9
+LIVE CURRENT = HEADS a5b6c7d8e9f0
 ```
 
-This document pins implementation mechanics. Historical “do not create now” language below is the 2026-09-08 architecture recording. Product code, migration file `a5b6c7d8e9f0`, and tests **were implemented** under the authorized 8 Sep 2026 FG-027 package. Live `flask db upgrade` and office UAT remain **NOT AUTHORIZED**.
+This document pins implementation mechanics. Historical “do not create now” language below is the 2026-09-08 architecture recording. Product code, migration file `a5b6c7d8e9f0`, and tests **were implemented** under the authorized 8 Sep 2026 FG-027 package. Live upgrade **PASS**. Office UAT **STOPPED** (override provenance on EstimateLineItem id 7).
 
 ---
 

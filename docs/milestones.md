@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-08 — V1-02 / FG-027 live migration and office UAT stop
+
+| Field | Content |
+|-------|---------|
+| ID | FG-027 / V1-02 |
+| Status | **LIVE-MIGRATED / OFFICE UAT STOPPED / NOT PASS / NOT CLOSED** |
+| Branch | `main` |
+| Base commit | `b944436136d0bafb198b27c401b79792d076ef16` |
+| Objective | Apply additive `a5b6c7d8e9f0` live and run bounded office UAT of costing approval on EstimateVersion 9 |
+| Deliverables | Live current = heads `a5b6c7d8e9f0`; gitignored backup `instance/brayman_estimator-backup-before-fg027-a5b6c7d8e9f0.db`; office UAT port **5016** |
+| Validation | Live upgrade **PASS**. Zero-cost BLOCK **PASS**. Failed Approve All atomicity **PASS**. Manual override provenance **FAIL** (line 7 `library_unit_cost_reference` NULL; working unit_cost 250 classified `LIBRARY_ASSEMBLY`). No costing snapshot. No Pricing apply. Product tests **not** rerun. |
+| Architectural findings | Pre-FG-027 inserted lines do not backfill `library_unit_cost_reference`. `classify_working_source_kind` treats NULL reference as non-override. |
+| Open decisions | Defect repair authorization. Remaining office UAT after repair. |
+| Next milestone | **STOP.** Return defect to ChatGPT Architect. Do not silently repair. Do not begin V1-03. |
+| Commit | Pending this docs recording |
+| Date | 2026-09-08 |
+
 ### 2026-09-08 — V1-02 / FG-027 costing-approval product implementation
 
 | Field | Content |

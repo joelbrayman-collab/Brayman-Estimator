@@ -1,5 +1,7 @@
 """Plan Intelligence routes — upload, indexing, search, archive, and Sheet Intelligence (M009)."""
 
+import uuid
+
 from flask import (
     Blueprint,
     abort,
@@ -22,7 +24,14 @@ from app.plan_intelligence.models import (
     ProcessingAttempt,
 )
 from app.services.auth import form_actor
+from app.services.estimates import EstimateServiceError
 from app.services.organizations import get_current_organization_id
+from app.services.takeoff_estimate_mapping import (
+    TakeoffEstimateMappingError,
+    insert_takeoff_estimate_mapping,
+    mapping_context,
+    preview_takeoff_estimate_mapping,
+)
 from app.plan_intelligence.packages import ensure_default_revision
 from app.plan_intelligence.services import (
     PlanIntelligenceServiceError,
@@ -1226,4 +1235,136 @@ def takeoff_approve_package(project_id, package_id):
                 project_id=project.id,
                 package_id=package_id,
             )
+        )
+
+
+def _map_form_values(package, *, client_insertion_key=None):
+    return {
+        "target_kind": (request.form.get("target_kind") or "").strip(),
+        "target_assembly_id": request.form.get("target_assembly_id", type=int),
+        "target_cost_item_id": request.form.get("target_cost_item_id", type=int),
+        "estimate_version_id": request.form.get("estimate_version_id", type=int),
+        "estimate_section_id": request.form.get("estimate_section_id", type=int),
+        "confirmed_quantity": (request.form.get("confirmed_quantity") or "").strip(),
+        "confirmed_unit": (request.form.get("confirmed_unit") or "").strip(),
+        "client_insertion_key": (
+            (request.form.get("client_insertion_key") or "").strip()
+            or client_insertion_key
+            or str(uuid.uuid4())
+        ),
+        "suggested_quantity": package.approved_total,
+        "suggested_unit": package.approved_unit,
+    }
+
+
+def _selected_target_id(form):
+    if form["target_kind"] == "assembly":
+        return form["target_assembly_id"]
+    if form["target_kind"] == "cost_item":
+        return form["target_cost_item_id"]
+    return None
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/takeoff/packages/<int:package_id>/map",
+    methods=["GET", "POST"],
+)
+def takeoff_map_to_estimate(project_id, package_id):
+    project = _get_project_or_404(project_id)
+    org_id = get_current_organization_id()
+    try:
+        package = get_package_or_404(org_id, package_id)
+    except PlanIntelligenceServiceError:
+        abort(404)
+    if package.project_id != project.id:
+        abort(404)
+    if package.status != "approved":
+        flash(
+            "Only an approved take-off package can be mapped to an estimate.",
+            "error",
+        )
+        return redirect(
+            url_for(
+                "plan_intelligence.takeoff_package_detail",
+                project_id=project.id,
+                package_id=package.id,
+            )
+        )
+
+    context = mapping_context(organization_id=org_id, package=package)
+    preview = None
+    form = _map_form_values(package)
+
+    if request.method == "GET":
+        if form["confirmed_quantity"] == "" and package.approved_total is not None:
+            form["confirmed_quantity"] = ""
+        return render_template(
+            "plan_intelligence/takeoff_map.html",
+            project=project,
+            package=package,
+            form=form,
+            preview=preview,
+            **context,
+        )
+
+    intent = (request.form.get("intent") or "").strip()
+    form = _map_form_values(package)
+    try:
+        if intent == "preview":
+            preview = preview_takeoff_estimate_mapping(
+                organization_id=org_id,
+                package_id=package.id,
+                estimate_version_id=form["estimate_version_id"],
+                estimate_section_id=form["estimate_section_id"],
+                target_kind=form["target_kind"],
+                target_id=_selected_target_id(form),
+                confirmed_quantity=form["confirmed_quantity"],
+                confirmed_unit=form["confirmed_unit"],
+            )
+            return render_template(
+                "plan_intelligence/takeoff_map.html",
+                project=project,
+                package=package,
+                form=form,
+                preview=preview,
+                **context,
+            )
+        if intent != "insert":
+            raise TakeoffEstimateMappingError(
+                "Choose Preview or Insert into estimate."
+            )
+        insertion = insert_takeoff_estimate_mapping(
+            organization_id=org_id,
+            package_id=package.id,
+            estimate_version_id=form["estimate_version_id"],
+            estimate_section_id=form["estimate_section_id"],
+            target_kind=form["target_kind"],
+            target_id=_selected_target_id(form),
+            confirmed_quantity=form["confirmed_quantity"],
+            confirmed_unit=form["confirmed_unit"],
+            client_insertion_key=form["client_insertion_key"],
+            actor_display_name=form_actor("actor"),
+        )
+        flash(
+            "Inserted estimate line "
+            f"#{insertion.estimate_line_item_id} from take-off package "
+            f"#{package.id}. Pricing was not applied.",
+            "success",
+        )
+        return redirect(
+            url_for(
+                "estimates.view_version",
+                id=insertion.estimate_id,
+                version_id=insertion.estimate_version_id,
+            )
+        )
+    except (TakeoffEstimateMappingError, EstimateServiceError) as exc:
+        flash(str(exc), "error")
+        return render_template(
+            "plan_intelligence/takeoff_map.html",
+            project=project,
+            package=package,
+            form=form,
+            preview=preview,
+            **context,
         )

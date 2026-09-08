@@ -5,7 +5,7 @@
 | Status | **Current** (core implemented) |
 | Updated | 2026-09-08 |
 | Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`; `app/services/estimates.py`, `estimate_builder.py`, `estimate_output.py` |
-| Feature Gate | [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (internal breakdown + customer consistency). [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED** (later Estimating-owned insertion/citation; not implemented). |
+| Feature Gate | [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (internal breakdown + customer consistency). [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT RUN / NOT CLOSED** (Estimating-owned insertion/citation). |
 
 ## Purpose
 
@@ -26,6 +26,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - `cost_items`
 - `assemblies`, `assembly_items`
 - `estimates`, `estimate_versions`, `estimate_sections`, `estimate_line_items`
+- `takeoff_estimate_insertions`, `takeoff_estimate_insertion_citations` (FG-026; Estimating-owned frozen provenance)
 
 ## Referenced data
 
@@ -53,7 +54,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 ## Planned capabilities
 
-- Takeoff-to-estimate insertion + frozen citation provenance — [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Estimating would own later `TakeoffEstimateInsertion` / citation rows and the commercial insert commit. Plan Intelligence remains owner of the source package. Package approval does **not** insert lines.
+- Takeoff-to-estimate insertion + frozen citation provenance — [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT RUN**. Service: `app/services/takeoff_estimate_mapping.py`. UI: `/projects/<id>/plans/takeoff/packages/<package_id>/map`. Plan Intelligence remains owner of the source package. Package approval does **not** insert lines. Live migrate/UAT not done.
 - Future Material-category `CostItem` → canonical material link ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**); assembly components resolvable to canonical materials later; fulfillment uses **exploded** material quantities even when the commercial line stays rolled-up ([material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md)). Identity V1 does not explode Assemblies.
 - QuickBooks and Ontario contract/warranty remain **Future**.
 - Historical estimating intelligence — **Future**

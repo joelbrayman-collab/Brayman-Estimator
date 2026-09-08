@@ -57,6 +57,7 @@ Office UI at `/labour-engine/`. Contractor-facing page title is **Labour rates**
 - AI never sets ORG-APPROVED
 - Tenant queries fail closed
 - Locked estimate snapshots do not float with later standards
+- [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) takeoff-to-estimate insert does **not** create labour snapshots
 
 ## Open decisions
 

@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-08 — FG-026 takeoff-to-estimate mapping V1 implementation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-026 |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT RUN / NOT CLOSED** |
+| Branch | `main` |
+| Base commit | `73253c46b5fcb54a96345107ac49fe1162063369` |
+| Objective | Bounded PLAN → PRICE Phase D: map an approved TakeoffPackage into governed EstimateLineItem(s) on an existing editable Draft on the same Project, with frozen Estimating-owned insertion/citation provenance. |
+| Deliverables | Models + additive `f4a5b6c7d8e9`; mapping service; builder uncommitted helpers; map UI; dedicated tests **20**; full suite **632**. |
+| Validation | Dedicated / PLAN / Estimating / pricing-labour-material / governed bundle / full pytest as recorded in chat-workflow-log. Live migrate **not** run. UAT **NOT RUN**. |
+| Architectural findings | PLAN proposes / Estimating commits. Existing `add_*_line` still commit for manual builder. FG-026 insert is one transaction. |
+| Open decisions | Live migrate + bounded project-3 UAT authorization. |
+| Next milestone | Separate live-migrate / UAT prompt. |
+| Commit | (this implementation commit) |
+| Date | 2026-09-08 |
+
 ### 2026-09-08 — CalibAi V1 completion register
 
 | Field | Content |

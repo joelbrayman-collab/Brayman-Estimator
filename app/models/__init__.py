@@ -25,6 +25,10 @@ from app.models.build import (
     FieldCaptureOriginal,
 )
 from app.models.direct_cost_actual import ProjectDirectCostActual
+from app.models.takeoff_estimate_insertion import (
+    TakeoffEstimateInsertion,
+    TakeoffEstimateInsertionCitation,
+)
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
 from app.models.pricing_engine import (
     EstimatePricingSnapshot,
@@ -119,6 +123,8 @@ __all__ = [
     "TakeoffExtractionRun",
     "TakeoffPackage",
     "TakeoffPackageItem",
+    "TakeoffEstimateInsertion",
+    "TakeoffEstimateInsertionCitation",
     "PermitAnalysis",
     "PermitFinding",
     "PermitProfile",

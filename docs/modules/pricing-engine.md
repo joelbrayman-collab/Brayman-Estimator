@@ -54,6 +54,7 @@ CalibAi owns the engine. Each organization owns its commercial intelligence. ORG
 - Versions **without** an `EstimatePricingSnapshot` continue to use live `COST_PLUS_MARKUP_STACK` in `app/services/estimate_builder.py`.
 - Versions **with** a snapshot recalculate via the frozen named method (`refresh_version_from_snapshot`). Later org policy changes do not re-resolve locked snapshots.
 - New estimates are **not** auto-converted to `TRUE_GROSS_MARGIN`. A human must apply org pricing on a draft version.
+- [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) takeoff-to-estimate insert does **not** apply Pricing Engine or create pricing snapshots.
 - ORG-001 seed (migration, if `ORG-001` exists): `TRUE_GROSS_MARGIN` 15%, Ontario HST 13% (`CA-ON`). Overhead, profit, and contingency treatments are **`UNSPECIFIED`** (not yet governed; not inferred from historical workbooks). `UNSPECIFIED` is distinct from an org-approved `NOT_APPLIED` decision. Not a CalibAi default.
 - Pricing Posture and Execution Risk are recorded on the snapshot only.
 - FG-009-aware Change Orders inherit the linked snapshot **and apply its pricing METHOD** (`TRUE_GROSS_MARGIN`, `COST_PLUS_MARKUP`, or `COST_PLUS_MARKUP_STACK`). Historical Change Orders without a snapshot retain legacy markup-on-subtotal behavior.

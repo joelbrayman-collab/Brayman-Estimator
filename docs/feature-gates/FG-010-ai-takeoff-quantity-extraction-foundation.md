@@ -25,7 +25,7 @@
 | ADR-010 | **Proposed** (real external AI provider **not authorized**) |
 | Implementation | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED.** Provider-neutral foundation in `app/plan_intelligence/` (`takeoff.py`, `takeoff_extractors.py`, models, office UI). Additive migration `b4c5d6e7f8a9` is the Alembic graph head **and** live development/UAT current. Dedicated tests `tests/test_takeoff.py`. Synthetic browser/UAT smoke **performed**. |
 | Real external AI provider | **NOT AUTHORIZED** |
-| Phase D estimate mapping | **NOT STARTED in product code.** Subsequent 2026-09-08: [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. |
+| Phase D estimate mapping | **NOT STARTED in this FG-010 close record.** Subsequent 2026-09-08 recording: [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) preflight. Subsequent same-date implementation: **IMPLEMENTED IN GIT / NOT LIVE-MIGRATED / UAT NOT RUN**. |
 
 This gate implemented the provider-neutral M012 foundation. It does **not** implement OCR, CAD, multi-trade extraction, automatic estimate insertion, Labour Engine or Pricing Engine changes, BUILD/MONITOR/LEARN, QuickBooks, or contracts. Real external AI provider integration remains **not authorized**.
 
@@ -261,3 +261,5 @@ See **Out** plus FG-009 UI leftover-stack-percent cleanup (separate maintenance)
 Foundation is **CLOSED / OPERATIONAL FOR UAT**. M012 is **AI TAKE-OFF FOUNDATION OPERATIONAL FOR UAT**. Live Alembic current/head `b4c5d6e7f8a9`. Real external AI provider remains **not authorized**. Phase D estimate mapping is **not started**. COUNT is dimensionless (no scale required). Dimensional measurement remains scale-governed. Synthetic UAT residue is labeled `FG-010 UAT` and left in place. **STOP DEVELOPMENT.** Next candidate from the roadmap is **Project Hub UX** (item 8) — **NOT STARTED / NOT AUTHORIZED**. Phase D remains **NOT STARTED / NOT AUTHORIZED**. Do not start Phase D. Do not enable an external AI provider. Do not start another milestone.
 
 **Subsequent status (2026-09-08 — not authorized by FG-010):** [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **FUTURE / RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. FG-010 remains **CLOSED**. This close record does **not** authorize FG-026 implementation.
+
+**Subsequent status (2026-09-08 FG-026 implementation — not authorized by FG-010):** [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT RUN / NOT CLOSED**. FG-010 remains **CLOSED**. Live migrate / UAT still require a separate prompt.

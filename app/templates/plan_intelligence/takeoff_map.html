@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block title %}Map to estimate | Package #{{ package.id }} | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Map to estimate{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Plan Intelligence · Map to estimate</p>
+        <h1>Map package #{{ package.id }} to an estimate</h1>
+        <p class="muted-copy">{{ project.name }} · {{ package.element_type }} · Approved total {{ package.approved_total }} {{ package.approved_unit }}</p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('plan_intelligence.takeoff_package_detail', project_id=project.id, package_id=package.id) }}">Back to package</a>
+        <a class="button-link" href="{{ url_for('estimates.create_estimate_route') }}">Open Estimates</a>
+    </div>
+</div>
+
+<p class="muted-copy">PLAN proposes. Estimating commits. Approval of this package did not insert a commercial line. Pricing is a later, separate action.</p>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Source evidence</h2>
+    <p class="muted-copy">Element grouping: <strong>{{ package.element_type }}</strong>. Suggested estimate quantity is the approved package total. Confirm quantity and unit yourself — this screen will not convert units.</p>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Sheet / page</th>
+                <th>Review</th>
+                <th>Qty</th>
+                <th>Evidence</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in source_items %}
+            <tr>
+                <td>#{{ item.id }}</td>
+                <td>{{ item.sheet_number or item.plan_sheet_id or "—" }} · page {{ item.page_index }}</td>
+                <td>{{ item.review_status }}</td>
+                <td>{{ item.reviewed_quantity }}</td>
+                <td class="muted-copy">{{ item.source_evidence }} · bbox {{ item.geometry_data }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="muted-copy">No frozen source items.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+{% if not draft_versions %}
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>No editable Draft on this project</h2>
+    <p>This project has no existing editable Draft estimate version. Create a Draft estimate and a section using the existing Estimates workflow, then return here. Mapping will not create a project, estimate, version, or section.</p>
+    <p><a class="button-link" href="{{ url_for('estimates.create_estimate_route') }}">Open Estimates</a></p>
+</section>
+{% elif not assemblies and not cost_items %}
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>No suitable commercial target</h2>
+    <p>Mapping requires an existing organization Assembly or Cost Item. If none exists, stop mapping and create the commercial target first. This workflow will not invent an Assembly, Cost Item, supplier, or SKU.</p>
+    <p>
+        <a class="button-link" href="{{ url_for('assemblies.create_assembly') }}">Open Assemblies</a>
+        <a class="button-link" href="{{ url_for('cost_library.create_cost_item') }}">Open Cost Library</a>
+    </p>
+</section>
+{% else %}
+<form method="post" class="form-panel" id="takeoff-map-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="client_insertion_key" value="{{ form.client_insertion_key }}">
+    <h2>Commercial mapping</h2>
+    <div class="form-grid">
+        <label>
+            Commercial target type
+            <select name="target_kind" id="target_kind" required>
+                <option value="">Select…</option>
+                <option value="assembly" {% if form.target_kind == 'assembly' %}selected{% endif %}>Assembly</option>
+                <option value="cost_item" {% if form.target_kind == 'cost_item' %}selected{% endif %}>Cost Item</option>
+            </select>
+        </label>
+        <label id="assembly_field">
+            Existing Assembly
+            <select name="target_assembly_id" id="target_assembly_id">
+                <option value="">Select an Assembly…</option>
+                {% for assembly in assemblies %}
+                <option value="{{ assembly.id }}" data-unit="{{ assembly.unit }}" {% if form.target_assembly_id == assembly.id %}selected{% endif %}>
+                    {{ assembly.code }} — {{ assembly.name }} ({{ assembly.unit }})
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+        <label id="cost_item_field">
+            Existing Cost Item
+            <select name="target_cost_item_id" id="target_cost_item_id">
+                <option value="">Select a Cost Item…</option>
+                {% for item in cost_items %}
+                <option value="{{ item.id }}" data-unit="{{ item.unit }}" {% if form.target_cost_item_id == item.id %}selected{% endif %}>
+                    {{ item.code }} — {{ item.name }} ({{ item.unit }})
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+        <p class="muted-copy" style="grid-column: 1 / -1;">
+            Suggested quantity from the approved package: <strong>{{ package.approved_total }} {{ package.approved_unit }}</strong>.
+            Package unit is a suggestion only. Confirm the estimate quantity and the target unit. There is no automatic unit conversion.
+        </p>
+        <label>
+            Confirmed estimate quantity
+            <input type="text" name="confirmed_quantity" value="{{ form.confirmed_quantity }}" required placeholder="Type the quantity you confirm">
+        </label>
+        <label>
+            Confirmed target unit
+            <input type="text" name="confirmed_unit" id="confirmed_unit" value="{{ form.confirmed_unit }}" required placeholder="Type the unit you confirm">
+        </label>
+        <p class="muted-copy" id="unit-hint" style="grid-column: 1 / -1;"></p>
+        <label>
+            Existing Draft estimate version
+            <select name="estimate_version_id" id="estimate_version_id" required>
+                <option value="">Select a Draft…</option>
+                {% for version in draft_versions %}
+                <option value="{{ version.id }}" {% if form.estimate_version_id == version.id %}selected{% endif %}>
+                    {{ version.estimate.estimate_number }} · {{ version.display_label }}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Existing estimate section
+            <select name="estimate_section_id" id="estimate_section_id" required>
+                <option value="">Select a section…</option>
+                {% for section in sections %}
+                <option
+                    value="{{ section.id }}"
+                    data-version-id="{{ section.estimate_version_id }}"
+                    {% if form.estimate_section_id == section.id %}selected{% endif %}
+                >
+                    {{ section.estimate_version.estimate.estimate_number }} · {{ section.estimate_version.display_label }} · {{ section.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+        {% if not sections %}
+        <p class="muted-copy" style="grid-column: 1 / -1;">
+            The selected Draft has no section yet. Add a section using the existing estimate builder. Mapping will not create a section.
+        </p>
+        {% endif %}
+        <label>
+            Actor
+            <input type="text" name="actor" value="{{ form_actor_value if form_actor_value is defined else '' }}" placeholder="Your name">
+        </label>
+    </div>
+    <div class="form-actions" style="margin-top: 16px;">
+        <button type="submit" name="intent" value="preview">Preview</button>
+        {% if preview %}
+        <button type="submit" name="intent" value="insert">Insert into estimate</button>
+        {% endif %}
+    </div>
+</form>
+{% endif %}
+
+{% if preview %}
+<section class="form-panel" style="margin-top: 24px;">
+    <h2>Proposed commercial line</h2>
+    <p class="muted-copy">Review the line and source citations. Nothing is inserted until you choose Insert into estimate.</p>
+    <div class="form-grid">
+        <div><p class="eyebrow">Target</p><p>{{ preview.template_code }} — {{ preview.template_name }} ({{ preview.target_kind }})</p></div>
+        <div><p class="eyebrow">Confirmed quantity</p><p>{{ preview.confirmed_quantity }} {{ preview.confirmed_unit }}</p></div>
+        <div><p class="eyebrow">Package suggestion</p><p>{{ preview.suggested_quantity }} {{ preview.suggested_unit }}</p></div>
+        <div><p class="eyebrow">Template unit</p><p>{{ preview.template_unit }}</p></div>
+        <div><p class="eyebrow">Draft</p><p>{{ preview.version.estimate.estimate_number }} · {{ preview.version.display_label }}</p></div>
+        <div><p class="eyebrow">Section</p><p>{{ preview.section.name }}</p></div>
+    </div>
+    {% if preview.unit_differs %}
+    <p class="muted-copy" style="margin-top: 12px;">Package unit, template unit, and confirmed unit are not all the same. Mapping does not convert them.</p>
+    {% endif %}
+    <h3 style="margin-top: 16px;">Source citations ({{ preview.source_items|length }})</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Candidate / run</th>
+                <th>Sheet / page</th>
+                <th>Qty</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in preview.source_items %}
+            <tr>
+                <td>#{{ item.id }}</td>
+                <td>#{{ item.takeoff_candidate_id }} / run {{ item.takeoff_run_id }}</td>
+                <td>{{ item.sheet_number or "—" }} · page {{ item.page_index }}</td>
+                <td>{{ item.reviewed_quantity }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endif %}
+
+<script>
+(function () {
+    var kind = document.getElementById("target_kind");
+    var assemblyField = document.getElementById("assembly_field");
+    var costField = document.getElementById("cost_item_field");
+    var assemblySelect = document.getElementById("target_assembly_id");
+    var costSelect = document.getElementById("target_cost_item_id");
+    var versionSelect = document.getElementById("estimate_version_id");
+    var sectionSelect = document.getElementById("estimate_section_id");
+    var hint = document.getElementById("unit-hint");
+    if (!kind) return;
+
+    function selectedUnit() {
+        var select = kind.value === "assembly" ? assemblySelect : costSelect;
+        if (!select) return "";
+        var option = select.options[select.selectedIndex];
+        return option ? (option.getAttribute("data-unit") || "") : "";
+    }
+
+    function syncTarget() {
+        var isAssembly = kind.value === "assembly";
+        var isCost = kind.value === "cost_item";
+        if (assemblyField) assemblyField.style.display = isAssembly ? "" : "none";
+        if (costField) costField.style.display = isCost ? "" : "none";
+        if (assemblySelect) assemblySelect.required = isAssembly;
+        if (costSelect) costSelect.required = isCost;
+        if (hint) {
+            var unit = selectedUnit();
+            hint.textContent = unit
+                ? ("Selected target unit: " + unit + ". Type that unit below to confirm it, or type a different unit. Mapping will not convert automatically.")
+                : "Select a target to see its unit. Type the unit you confirm.";
+        }
+    }
+
+    function syncSections() {
+        if (!versionSelect || !sectionSelect) return;
+        var versionId = versionSelect.value;
+        var options = sectionSelect.querySelectorAll("option[data-version-id]");
+        options.forEach(function (option) {
+            var match = !versionId || option.getAttribute("data-version-id") === versionId;
+            option.hidden = !match;
+            if (!match && option.selected) {
+                option.selected = false;
+                sectionSelect.value = "";
+            }
+        });
+    }
+
+    kind.addEventListener("change", syncTarget);
+    if (assemblySelect) assemblySelect.addEventListener("change", syncTarget);
+    if (costSelect) costSelect.addEventListener("change", syncTarget);
+    if (versionSelect) versionSelect.addEventListener("change", syncSections);
+    syncTarget();
+    syncSections();
+})();
+</script>
+{% endblock %}

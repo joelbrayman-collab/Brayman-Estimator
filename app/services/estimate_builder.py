@@ -181,7 +181,16 @@ def _validate_non_negative(value, label):
     return amount
 
 
-def add_cost_item_line(section, *, cost_item_id, quantity=1, waste_percent=0, notes=None):
+def add_cost_item_line_uncommitted(
+    section,
+    *,
+    cost_item_id,
+    quantity=1,
+    waste_percent=0,
+    notes=None,
+    unit=None,
+):
+    """Create a cost-item line without committing. Caller owns the transaction."""
     version = section.estimate_version
     ensure_version_editable(version)
 
@@ -191,6 +200,12 @@ def add_cost_item_line(section, *, cost_item_id, quantity=1, waste_percent=0, no
 
     quantity = _validate_non_negative(quantity, "Quantity")
     waste_percent = _validate_non_negative(waste_percent, "Waste percent")
+    if unit is None:
+        line_unit = cost_item.unit
+    else:
+        line_unit = (unit or "").strip()
+        if not line_unit:
+            raise EstimateServiceError("Unit is required.")
 
     line_item = EstimateLineItem(
         estimate_section_id=section.id,
@@ -200,7 +215,7 @@ def add_cost_item_line(section, *, cost_item_id, quantity=1, waste_percent=0, no
         code=cost_item.code,
         description=cost_item.name,
         quantity=quantity,
-        unit=cost_item.unit,
+        unit=line_unit,
         unit_cost=as_decimal(cost_item.unit_cost),
         waste_percent=waste_percent,
         markup_percent=as_decimal(cost_item.default_markup_percent),
@@ -211,11 +226,31 @@ def add_cost_item_line(section, *, cost_item_id, quantity=1, waste_percent=0, no
     db.session.add(line_item)
     db.session.flush()
     recalculate_version(version)
+    return line_item
+
+
+def add_cost_item_line(section, *, cost_item_id, quantity=1, waste_percent=0, notes=None):
+    line_item = add_cost_item_line_uncommitted(
+        section,
+        cost_item_id=cost_item_id,
+        quantity=quantity,
+        waste_percent=waste_percent,
+        notes=notes,
+    )
     db.session.commit()
     return line_item
 
 
-def add_assembly_line(section, *, assembly_id, quantity=1, waste_percent=0, notes=None):
+def add_assembly_line_uncommitted(
+    section,
+    *,
+    assembly_id,
+    quantity=1,
+    waste_percent=0,
+    notes=None,
+    unit=None,
+):
+    """Create an assembly line without committing. Caller owns the transaction."""
     version = section.estimate_version
     ensure_version_editable(version)
 
@@ -225,6 +260,12 @@ def add_assembly_line(section, *, assembly_id, quantity=1, waste_percent=0, note
 
     quantity = _validate_non_negative(quantity, "Quantity")
     waste_percent = _validate_non_negative(waste_percent, "Waste percent")
+    if unit is None:
+        line_unit = assembly.unit
+    else:
+        line_unit = (unit or "").strip()
+        if not line_unit:
+            raise EstimateServiceError("Unit is required.")
 
     line_item = EstimateLineItem(
         estimate_section_id=section.id,
@@ -234,7 +275,7 @@ def add_assembly_line(section, *, assembly_id, quantity=1, waste_percent=0, note
         code=assembly.code,
         description=assembly.name,
         quantity=quantity,
-        unit=assembly.unit,
+        unit=line_unit,
         unit_cost=as_decimal(assembly.base_unit_cost),
         waste_percent=waste_percent,
         markup_percent=as_decimal(assembly.default_markup_percent),
@@ -245,6 +286,17 @@ def add_assembly_line(section, *, assembly_id, quantity=1, waste_percent=0, note
     db.session.add(line_item)
     db.session.flush()
     recalculate_version(version)
+    return line_item
+
+
+def add_assembly_line(section, *, assembly_id, quantity=1, waste_percent=0, notes=None):
+    line_item = add_assembly_line_uncommitted(
+        section,
+        assembly_id=assembly_id,
+        quantity=quantity,
+        waste_percent=waste_percent,
+        notes=notes,
+    )
     db.session.commit()
     return line_item
 

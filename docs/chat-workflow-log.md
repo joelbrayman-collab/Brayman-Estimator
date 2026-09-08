@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — FG-026 takeoff-to-estimate mapping V1 implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
+| Objective | Implement FG-026 PLAN → PRICE Phase D takeoff-to-estimate mapping V1. |
+| Business decision | Explicit human insert only. Package approval does not insert. No live migrate. UAT not run. |
+| Architectural decision | Estimating-owned `TakeoffEstimateInsertion` + citations. Atomic line+provenance. Uncommitted builder helpers. UNIQUE grouping + client_insertion_key. No labour/pricing snapshot. No MaterialRequirement. |
+| Prompt template used | `docs/prompts/cursor-feature-template.md` (implementation package). |
+| Approved Cursor prompt summary | V1-01 / FG-026 PLAN → PRICE Phase D takeoff-to-estimate mapping V1 implementation package (8 Sep 2026). Live migrate/UAT not authorized. |
+| Files expected to change | Estimating models/service, estimate_builder helpers, Plan Intelligence map routes/templates, one Alembic revision, dedicated tests, current-authority docs. |
+| Files prohibited from changing | Live DB; V1-02 costing; supplier/BMR; FG-024; another FG-025 slice; LEARN; QuickBooks; contracts; Native Signing; Observation Delete; new Permit/Field. |
+| Implementation result | Product implemented in Git. Migration file `f4a5b6c7d8e9` not applied live. Gate not closed. |
+| Tests | Dedicated FG-026 **20 passed**. PLAN takeoff **18 passed**. Estimating/builder **22 passed**. Pricing/labour/material **93 passed**. Governed bundle **172 passed**. Full suite **632 passed**. Historical full **612** is the pre-FG-026 baseline. |
+| Project-state-report update | Yes. |
+| Milestone entry update | Yes. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Live migrate. Bounded UAT on project 3 (no estimate today — not a defect). Human-created door Assembly still required for UAT. |
+| Next approved step | **STOP.** Return to ChatGPT Architect for live-migrate / UAT authorization. |
+| Next approved prompt | HOLD — live migrate / UAT not authorized. |
+| Commit hash | (this implementation commit) |
+
 ### 2026-09-08 — CalibAi V1 completion register
 
 | Field | Content |

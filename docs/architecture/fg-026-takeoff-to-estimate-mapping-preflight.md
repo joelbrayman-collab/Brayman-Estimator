@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE** (2026-09-08). [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** |
+| Status | **PREFLIGHT COMPLETE** (2026-09-08). Subsequent implementation (same date): product **IMPLEMENTED / TESTED / COMMITTED / PUSHED**. Live migrate / UAT **NOT AUTHORIZED / NOT RUN**. [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **NOT CLOSED**. |
 | Date | 2026-09-08 |
 | Parent | Review Turnover `1c20100a3838828cdeebece51ed820bcf15063fb` |
 | Gate | [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) |
@@ -12,9 +12,10 @@
 FG-026:
 RECORDED
 ARCHITECTURE PREFLIGHT COMPLETE
-NOT IMPLEMENTATION-AUTHORIZED
-NOT IMPLEMENTED
-THIS PREFLIGHT DOES NOT AUTHORIZE PRODUCT CODE, SCHEMA, OR MIGRATION
+IMPLEMENTED / TESTED / COMMITTED / PUSHED (2026-09-08)
+NOT LIVE-MIGRATED
+UAT NOT RUN
+NOT CLOSED
 ```
 
 This document pins later implementation mechanics. It does **not** amend accepted ADRs. It does **not** authorize implementation.
@@ -204,9 +205,9 @@ Line `unit` on insert = **user-confirmed unit**, not silently the package `appro
 
 ## 7. Migration requirement
 
-**This pass:** none.
+**This preflight pass:** none.
 
-**Later implementation:** **YES**, one additive Alembic revision after current head `e3f4a5b6c7d8`. Tables above only. No take-off table mutation. No estimate line column required if insertion uniquely points at the line. Do **not** generate the revision from this preflight.
+**Implementation (2026-09-08):** additive Alembic revision **`f4a5b6c7d8e9`** (`down_revision = e3f4a5b6c7d8`). Tables above only. Do **not** live-upgrade from the implementation package. Live current remains `e3f4a5b6c7d8` until a later authorized migrate.
 
 ---
 

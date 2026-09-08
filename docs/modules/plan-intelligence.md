@@ -5,7 +5,7 @@
 | Status | **Phase A + M007 indexing + M009 Sheet classification + M010 scale/measurement implemented**; **M012 / FG-010 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
 | Updated | 2026-09-08 |
 | Code | `app/plan_intelligence/` |
-| Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) · [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** · [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED** |
+| Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) · [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** · [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT RUN / NOT CLOSED** |
 | Architecture | [../architecture/plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) · [../architecture/document-intelligence.md](../architecture/document-intelligence.md) · [../architecture/sheet-intelligence.md](../architecture/sheet-intelligence.md) · [../architecture/ai-takeoff-quantity-extraction-foundation.md](../architecture/ai-takeoff-quantity-extraction-foundation.md) · [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) (Phase D sequencing; take-off stays quantity-only) |
 | Readiness | [../architecture/M004-plan-intelligence-readiness-report.md](../architecture/M004-plan-intelligence-readiness-report.md) · [../architecture/M006-document-intelligence-readiness-report.md](../architecture/M006-document-intelligence-readiness-report.md) · [../architecture/M008-sheet-intelligence-readiness-report.md](../architecture/M008-sheet-intelligence-readiness-report.md) |
 
@@ -51,7 +51,7 @@ Proposal generation already exists. Plan Intelligence is the next major platform
 | Project-scoped relational search/filter | **Done** (M007) |
 | Sheet classification / human review | **Done** (M009; `plan_sheets`, `plan_sheet_pages`, `plan_sheet_suggestions`, human accept/edit/reject, uniqueness validation) |
 | Scale calibration / measurement | **Done** (M010; [FG-005](../feature-gates/FG-005-m010-scale-calibration.md); ADR-026/027; migration `c9e0f1a2b3d4`). COUNT does **not** require dimensional scale. |
-| AI take-off foundation | **Done (operational for UAT)** (M012 / [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md); mock extractor only; migration `b4c5d6e7f8a9` live). Real external AI provider **not authorized**. Phase D mapping [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. |
+| AI take-off foundation | **Done (operational for UAT)** (M012 / [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md); mock extractor only; migration `b4c5d6e7f8a9` live). Real external AI provider **not authorized**. Phase D mapping [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT RUN**. |
 | OCR / CAD | **Out of scope of current code.** |
 
 Routes live under `/projects/<id>/plans…`. Estimating, Proposals, OCR, CAD, AI, and supplier features are unchanged.
@@ -94,7 +94,7 @@ See [document-intelligence.md](../architecture/document-intelligence.md) and [FG
 - CAD-first platform strategy
 - Supplier catalogue / live pricing / procurement
 - CostItem or SKU ownership on `TakeoffPackageItem` (take-off remains quantity/citation/element evidence)
-- Implementing Phase D from this module without a separate FG-026 implementation prompt ([FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) is **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**)
+- Writing `EstimateLineItem` from Plan Intelligence (FG-026 mapping UI proposes; Estimating service commits)
 - Full OCR optimisation
 - Speculative AI pricing
 - Permit Intelligence implementation (read-through of reviewed plan/site facts is **future**; [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) **Accepted**; does not authorize Phase D or mutating take-off evidence)
@@ -116,12 +116,12 @@ See [document-intelligence.md](../architecture/document-intelligence.md) and [FG
 
 ### Intended (later)
 
-Automated take-off quantities / extraction runs / approved packages (**M012 / FG-010 Current** — operational for UAT); mapping proposals ([FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; Estimating owns insertion/commit; Plan Intelligence does **not** write `EstimateLineItem`).
+Automated take-off quantities / extraction runs / approved packages (**M012 / FG-010 Current** — operational for UAT); mapping proposals ([FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **IMPLEMENTED IN GIT / NOT LIVE-MIGRATED**; Estimating owns insertion/commit; Plan Intelligence does **not** write `EstimateLineItem`).
 
 ## Referenced data
 
 - `Project` (scope)
-- Estimating `Assembly` / `CostItem` / `EstimateVersion` (mapping targets only — [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) recorded; not implemented)
+- Estimating `Assembly` / `CostItem` / `EstimateVersion` (mapping targets — [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) implemented in Git; Estimating owns insert)
 
 ## Prohibited responsibilities
 

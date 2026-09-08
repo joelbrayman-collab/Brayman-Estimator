@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | V1-03 not authorized; BMR DEMO READY **NO**; BRAYMAN REAL-LIFE UAT READY **NO** |
 | Next approved step | **STOP.** Return to ChatGPT Architect for V1-03 authorization. |
 | Next approved prompt | Not in this pass (STOP / V1-03 authorization). |
-| Commit hash | Close SHA **this commit** (pin follows). |
+| Commit hash | Close SHA **`c348bcfb41daead674aaf75050fc0a6847a8c0c0`**. Pin follows. |
 
 ### 2026-09-08 — V1-02 / FG-027 bounded legacy override-provenance repair
 

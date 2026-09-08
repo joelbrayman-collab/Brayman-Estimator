@@ -44,7 +44,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Stale Flask 5016 (pre-repair PID) had to be restarted onto current `main` before the repair could be office-verified. |
 | Open decisions | V1-03 authorization. Do not accept ADR-008 from this close. |
 | Next milestone | **STOP.** Return to ChatGPT Architect for V1-03 authorization. Do **not** begin V1-03 from this close. |
-| Commit | Close SHA **this commit** |
+| Commit | Close SHA **`c348bcfb41daead674aaf75050fc0a6847a8c0c0`** |
 | Date | 2026-09-08 |
 
 ### 2026-09-08 — V1-02 / FG-027 bounded legacy override-provenance repair

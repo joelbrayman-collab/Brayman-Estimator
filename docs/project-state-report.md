@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative milestone-level state |
-| Updated | 2026-09-07 |
+| Updated | 2026-09-08 |
 
 Update this report at every **completed milestone** and major interruption point.
 Distinguish from:
@@ -47,10 +47,10 @@ Distinguish from:
 
 | Field | Content |
 |-------|---------|
-| Report date | 2026-09-07 |
+| Report date | 2026-09-08 |
 | Repository | Brayman-Estimator (The Estimator) |
 | Current branch | `main` |
-| Current commit / `origin/main` | Confirm `HEAD` = `origin/main` after this FG-025 Slice 3 commit. Last product-changing is this Slice 3 SHA (parent Slice 2 **`1aa54f51dcd2447ce6934dddbf5305c81016a824`**). |
+| Current commit / `origin/main` | Slice 3 product SHA **`071f5f923515c6405298bf96b0af249a20f81358`** (`feat: continue FG-025 contractor-facing PRICE language`). At Slice 3 close, `HEAD` = `origin/main` = that product SHA. Parent Slice 2 **`1aa54f51dcd2447ce6934dddbf5305c81016a824`**. A later **docs-only** post-close reconciliation commit (this update) is **not** the Slice 3 product SHA. |
 | Latest completed **coded** milestone on `main` | **FG-023 CLOSED / OPERATIONAL FOR UAT** (live `e3f4a5b6c7d8`; office UAT port **5014**; project **id 13** `FG023-UAT-MONITOR`). Close-time: dedicated **35** / focused **149** / full **593**. Historical Slice A close: dedicated **23** / focused **126** / full **581**. Pre-Slice-B focused **137** remains historical. **FG-021 CLOSED** remains the last Field Web product close (gate-at-close live current `d2e3f4a5b6c7`; dedicated FG-021 **20**; focused **148**; full **558**). **FG-020 CLOSED / OPERATIONAL FOR UAT**. **FG-019 CLOSED / OPERATIONAL FOR UAT**. **FG-018 CLOSED / OPERATIONAL FOR UAT**. FG-008 through FG-017 remain **CLOSED / OPERATIONAL FOR UAT**. |
 | Current milestone | [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**. Item 13 **CLOSED / OPERATIONAL FOR UAT**. [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / SLICE 2 IMPLEMENTED / SLICE 3 IMPLEMENTED / NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**. [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED**. Parallel: [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**. Future recorded: [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. Item 11 **COMPLETE**. Item 10 **COMPLETE**. |
 | Product status | Operational on `main`: FG-021 Field Web V1 **CLOSED**. Text / screenshot PNG / Take Photo JPEG / voice Save / network retain-retry / browser-close IndexedDB recovery / HEIC Files/Browse real-device / mixed capture / background-foreground persistence / CSRF recovery / portrait / one-handed / outdoor readability **PASS**. **LANDSCAPE TOLERANCE PASS.** **ORIENTATION / PORTRAIT PASS.** **CURRENT-IPHONE FIELD-USABILITY PASS.** Primary UAT device iPhone 14 / iOS 26.6.1 / Safari. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED** (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED). Observation Delete remains **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Four-output outputs 3–4 / QuickBooks API / Ontario contract **not implemented**. |
@@ -67,7 +67,7 @@ Distinguish from:
 | Next candidate milestone | FG-025 Slice 4 nav/auth/Settings copy — **NOT AUTHORIZED until a separate prompt**. Native Signing — **development may proceed under separate governance**; production blocked pending counsel. Observation Delete — **QUEUED / NOT AUTHORIZED**. |
 | Documents to read first | [session-handoff.md](session-handoff.md) → [current-state.md](current-state.md) → [feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) → [feature-gates/FG-023-monitor-v1-estimated-versus-actual.md](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) |
 | Approved next Cursor prompt location or summary | **STOP.** Do **not** begin Slice 4. Do **not** begin FG-024. Do **not** begin LEARN. |
-| Commit status | Confirm `HEAD` = `origin/main` after this FG-025 Slice 3 commit. Live current = heads `e3f4a5b6c7d8`. FG-023 **CLOSED / OPERATIONAL FOR UAT**. FG-025 **SLICE 1, SLICE 2, AND SLICE 3 IMPLEMENTED / NOT CLOSED**. FG-024 **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. FG-021 **CLOSED**. FG-022 **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**. |
+| Commit status | Slice 3 product SHA **`071f5f923515c6405298bf96b0af249a20f81358`**. At Slice 3 close, `HEAD` = `origin/main` = that product SHA. A later **docs-only** post-close reconciliation commit is **not** the Slice 3 product SHA. Live current = heads `e3f4a5b6c7d8`. FG-023 **CLOSED / OPERATIONAL FOR UAT**. FG-025 **SLICE 1, SLICE 2, AND SLICE 3 IMPLEMENTED / NOT CLOSED**. FG-024 **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. FG-021 **CLOSED**. FG-022 **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**. |
 | Governance baseline | FG-023 CLOSED / OPERATIONAL FOR UAT; MONITOR V1 IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED; FG-025 SLICE 1, SLICE 2, AND SLICE 3 IMPLEMENTED / NOT CLOSED; remaining surfaces NOT AUTHORIZED; live current = heads e3f4a5b6c7d8; dedicated FG-025 13; PRICE-focused 167; governed 303; full 606; FG-021 CLOSED; SESSION-EXPIRY RECOVERY DEFERRED / NOT YET EXERCISED; Observation Delete QUEUED / NON-BLOCKING; FG-022 CLOSED / APPROVED REUSABLE MASTER FAMILY V1; FG-024 FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED |
 
 ### Resume commands (Cursor Terminal)

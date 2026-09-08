@@ -528,13 +528,15 @@ Slice 1 MONITOR mappings and frozen financial metric labels were **not** renamed
 
 Dedicated tests: `tests/test_fg025_contractor_copy.py` (**10**). Hub HTML copy assertions also updated in `tests/test_project_hub.py`, `tests/test_monitor_v1_fg023.py`, `tests/test_permit_foundation_fg015.py`, and `tests/test_organization_foundation.py` (legacy Hub banner only). Domain-key assertions unchanged.
 
-Do **not** start Slice 4 from this section.
+Do **not** start Slice 3 from this section.
 
 ---
 
 ## SLICE 3 IMPLEMENTATION (2026-09-07)
 
 **Status:** **SLICE 3 IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Gate **NOT CLOSED.** Remaining FG-025 surfaces **NOT AUTHORIZED.** Not a product-wide sweep.
+
+Product SHA: **`071f5f923515c6405298bf96b0af249a20f81358`** (`feat: continue FG-025 contractor-facing PRICE language`). A later docs-only post-close reconciliation commit is **not** this product SHA.
 
 Presentation-layer mapping only, reusing `app/presentation/contractor_copy.py`. No competing copy system. No schema, migration, live DB write, pricing/labour/estimate arithmetic change, enum/model rename, MONITOR change, Field Web rewrite, customer PDF rewrite, LEARN, or FG-024.
 
@@ -546,7 +548,7 @@ Office PRICE specialist copy:
 - Cost Library / Assemblies: **Catalogue** column (internal canonical identity unchanged).
 - Material Catalogue: shared-name copy; status/kind/substitution mapped for display.
 
-Dedicated tests: `tests/test_fg025_contractor_copy.py` (**13**). PRICE HTML copy assertions also updated in `tests/test_pricing_engine.py`, `tests/test_labour_engine.py`, and `tests/test_estimate_output_consistency.py`. Domain-key assertions unchanged.
+Dedicated tests: `tests/test_fg025_contractor_copy.py` (**13**). PRICE HTML copy assertions also updated in `tests/test_pricing_engine.py`, `tests/test_labour_engine.py`, and `tests/test_estimate_output_consistency.py`. Domain-key assertions unchanged. Slice 3 committed evidence: dedicated **13 passed**; PRICE-focused **167 passed**; governed **303 passed**; full **606 passed**. Independent close review (2026-09-08) independently reran dedicated **13 passed** and PRICE-focused **167 passed**; governed **303** and full **606** were **not** independently rerun during that review.
 
 Do **not** start Slice 4 from this section.
 

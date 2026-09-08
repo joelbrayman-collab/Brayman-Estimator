@@ -81,7 +81,9 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-07 FG-025 Slice 1 — not authorized by CAR-001):** [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **SLICE 1 IMPLEMENTED / NOT CLOSED**. Remaining slices **NOT AUTHORIZED**. CAR-001 still does **not** authorize Slice 2, FG-024, or LEARN.
 
-**Subsequent status (2026-09-07 FG-025 Slice 3 — not authorized by CAR-001):** [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **SLICE 1, SLICE 2, AND SLICE 3 IMPLEMENTED / NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**. CAR-001 still does **not** authorize Slice 4, FG-024, or LEARN.
+**Subsequent status (2026-09-07 FG-025 Slice 2 — not authorized by CAR-001):** [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **SLICE 1 AND SLICE 2 IMPLEMENTED / NOT CLOSED**. Remaining slices **NOT AUTHORIZED**. CAR-001 still does **not** authorize Slice 3, FG-024, or LEARN.
+
+**Subsequent status (2026-09-07 FG-025 Slice 3 — not authorized by CAR-001):** [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **SLICE 3 IMPLEMENTED / TESTED / COMMITTED / PUSHED**. Product SHA **`071f5f923515c6405298bf96b0af249a20f81358`**. FG-025 overall **NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**. No schema / migration / DB / calculation change. CAR-001 still does **not** authorize Slice 4, FG-024, or LEARN.
 
 ## What CAR-001 was
 

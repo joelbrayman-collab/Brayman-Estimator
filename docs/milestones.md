@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-07 |
+| Updated | 2026-09-08 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-08 — FG-025 Slice 3 post-close documentation reconciliation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-025 — Slice 3 close-record documentation reconciliation |
+| Status | **DOCS ONLY.** Slice 3 product SHA pinned. Gate **NOT CLOSED.** Remaining surfaces **NOT AUTHORIZED.** |
+| Branch | `main` |
+| Base commit | `071f5f923515c6405298bf96b0af249a20f81358` |
+| Objective | Correct three Slice 3 close-review documentation-hygiene findings. No product change. |
+| Deliverables | Pin Slice 3 product SHA; restore CAR-001 Slice 2 subsequent-status and append Slice 3; restore FG-025 Slice 2 historical stop-line from parent. |
+| Validation | `git diff --check`. Docs only. Tests not rerun. Preserved Slice 3: dedicated **13** / PRICE-focused **167** / governed **303** / full **606**. Independent close review reran dedicated **13** and PRICE-focused **167**; governed and full not independently rerun. |
+| Architectural findings | This commit is **not** the Slice 3 product SHA. No schema / migration / DB / calculation change. |
+| Open decisions | Remaining FG-025 surfaces; FG-024 unauthorized. |
+| Next milestone | **STOP.** Do **not** start Slice 4. Do **not** start FG-024. Do **not** start LEARN. |
+| Commit | this docs-only reconciliation commit (not Slice 3 product SHA `071f5f923515c6405298bf96b0af249a20f81358`) |
+| Date | 2026-09-08 |
+
 ### 2026-09-07 — FG-025 Slice 3 contractor-facing PRICE language
 
 | Field | Content |
@@ -44,7 +61,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Reused Slice 1/2 presentation map. Office titles **Pricing** / **Labour rates**. Internal `TRUE_GROSS_MARGIN` unchanged; display **Gross Margin Pricing**. Global nav still says Labour Engine / Pricing Engine (Slice 4). Hub PRICE table leftover `TRUE_GROSS_MARGIN` left frozen except link labels. |
 | Open decisions | Remaining FG-025 surfaces; “contract value” wording still flagged; FG-024 unauthorized. |
 | Next milestone | **STOP.** Do **not** start Slice 4. Do **not** start FG-024. Do **not** start LEARN. |
-| Commit | (this product commit) |
+| Commit | `071f5f923515c6405298bf96b0af249a20f81358` (`feat: continue FG-025 contractor-facing PRICE language`) |
 | Date | 2026-09-07 |
 
 ### 2026-09-07 — FG-025 Slice 2 contractor-facing Project Hub language

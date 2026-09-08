@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-07 |
+| Updated | 2026-09-08 |
 
 ## Purpose
 
@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — FG-025 Slice 3 post-close documentation reconciliation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
+| Objective | Docs-only reconciliation of three Slice 3 close-review documentation-hygiene findings. |
+| Business decision | Slice 3 remains **PASS — MINOR DOCUMENTATION NOTE ONLY**. Product SHA stays **`071f5f923515c6405298bf96b0af249a20f81358`**. This commit is **not** the Slice 3 product SHA. FG-025 overall **NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**. |
+| Architectural decision | No product, test, migration, or DB change. Preserve CAR-001 chronological subsequent-status. Restore FG-025 Slice 2 historical stop-line from parent `1aa54f51dcd2447ce6934dddbf5305c81016a824`. |
+| Prompt template used | Bounded Joel/ChatGPT post-close documentation reconciliation prompt. |
+| Approved Cursor prompt summary | Pin Slice 3 product SHA; reconcile current-state/handoff confirm-HEAD wording; restore CAR-001 Slice 2 subsequent-status and append Slice 3; restore FG-025 Slice 2 historical wording from parent if exact. Docs only. Commit + push. No Slice 4. |
+| Files expected to change | Current-authority docs only. |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; website. |
+| Implementation result | Placeholders pinned. CAR-001 Slice 2 paragraph restored and Slice 3 paragraph appended. FG-025 Slice 2 stop-line restored to **Do not start Slice 3 from this section.** Live current `e3f4a5b6c7d8`. Live **39** / **39**. |
+| Tests | Not rerun (docs-only). Preserved Slice 3 evidence: dedicated **13**; PRICE-focused **167**; governed **303**; full **606**. Independent close review reran dedicated **13** and PRICE-focused **167**; governed and full **not** independently rerun. |
+| Project-state-report update | Yes — Slice 3 product SHA pinned; docs-only reconciliation distinguished. |
+| Milestone entry update | Yes — Slice 3 product SHA pinned; docs-reconciliation recorded. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining FG-025 surfaces unauthorized. Slice 1/Slice 2 chat-workflow-log and milestones commit placeholders left unchanged (historical; not this prompt). |
+| Next approved step | **STOP.** Do **not** start Slice 4. Do **not** start FG-024. Do **not** start LEARN. Do **not** restart website work. |
+| Next approved prompt | None authorized. |
+| Commit hash | this docs-only reconciliation commit (not Slice 3 product SHA `071f5f923515c6405298bf96b0af249a20f81358`) |
+
 ### 2026-09-07 — FG-025 Slice 3 contractor-facing PRICE language
 
 | Field | Content |
@@ -65,7 +89,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Remaining FG-025 surfaces unauthorized. “Contract value” still flagged. |
 | Next approved step | **STOP.** Do **not** start Slice 4. Do **not** start FG-024. Do **not** start LEARN. |
 | Next approved prompt | None authorized. |
-| Commit hash | (this product commit) |
+| Commit hash | `071f5f923515c6405298bf96b0af249a20f81358` (`feat: continue FG-025 contractor-facing PRICE language`) |
 
 ### 2026-09-07 — FG-025 Slice 2 contractor-facing Project Hub language
 

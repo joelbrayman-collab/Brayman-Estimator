@@ -3,10 +3,10 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FG-025 SLICE 3 IMPLEMENTED / NOT CLOSED.** [FG-023 CLOSED / OPERATIONAL FOR UAT.] Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED.** Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS.** MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED.** MONITOR V1 recon **COMPLETE**. [FG-021 CLOSED.] IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION. Text-only **PASS**. Small screenshot PNG **PASS** (Event **27**). **TAKE PHOTO PASS AS JPEG** (Event **28** / Original **27**, `image/jpeg`). **HEIC REAL-DEVICE PASS** (Event **34** / Original **32**, Files/Browse `IMG_5351.HEIC`, Project **11**). **MIXED CAPTURE PASS** (Event **35**, Originals **33** text / **34** audio / **35** JPEG). **BACKGROUND / FOREGROUND PERSISTENCE PASS** (Event **36** / Original **36**, text). **CSRF RECOVERY PASS** (Event **39** / Original **39**, text). Portrait **PASS**. One-handed **PASS**. Outdoor readability **PASS**. **LANDSCAPE TOLERANCE PASS.** **ORIENTATION / PORTRAIT PASS.** **CURRENT-IPHONE FIELD-USABILITY PASS.** **REAL IPHONE VOICE SAVE PASS** (Event **30** / Original **28**, `audio/mp4`, `note.m4a`). **REAL IPHONE NETWORK RETAIN / RETRY PASS** (Event **31** / Original **29**, text). **REAL IPHONE BROWSER CLOSE → INDEXEDDB RECOVERY → RETRY PASS** (Event **32** / Original **30**, Take Photo JPEG). Primary UAT device iPhone 14 / iOS 26.6.1 / Safari. **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.** **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED** (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED). Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Live current **`e3f4a5b6c7d8`**. Repository Alembic head **`e3f4a5b6c7d8`**. |
-| Updated | 2026-09-07 |
+| Updated | 2026-09-08 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
-| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026** |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
 
 Authority order for the next session: repository governance → current-state records → accepted ADRs / Feature Gates → implementation/migration/test evidence → conversation memory only as supplementary context.
 
@@ -16,7 +16,7 @@ Authority order for the next session: repository governance → current-state re
 
 ```text
 ACTIVE CHAT TITLE:
-BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026
+BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026
 
 CONTINUITY DISPLAY RULE:
 Every CalibAi development response begins with the exact active ChatGPT
@@ -38,7 +38,7 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 - **Product:** CalibAi / Brayman Estimator (The Estimator). Do not rename.
 - **Path:** `/Users/joelbrayman/Desktop/Brayman-Estimator` (`~/Desktop/Brayman-Estimator`)
 - **Environment:** local Flask office app; SQLite development/UAT DB (`sqlite:///brayman_estimator.db` → `instance/brayman_estimator.db`)
-- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026`
+- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026`
 - **Cursor / IDE workspace chat titles:** must start with `BRAYMAN — <Topic>`
 
 ## 2. VERIFIED BASELINE
@@ -46,11 +46,11 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 - Branch: `main`
 - FG-017 close SHA: `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5` (`docs: close FG-017 live migration and office UAT`). Docs-reconciliation content: `dd30d752190e56ed687e270950df9bf9a06d7a26`. SHA-pin: `07cb46c501d968542dff567943044dc1db870f01`. Implementation parent `00ca492e28118d75757e9a9c82384978b5decd92`. FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`.
 - FG-016 implementation commit: `a709829d32d94ab2baf36f142ad0095254ba3d3a` (`feat: implement FG-016 Ontario Ottawa Permit Intelligence POC`)
-- Live `HEAD` / `origin/main` after this FG-025 Slice 3 commit: confirm `HEAD` = `origin/main`. Parent product-changing **`1aa54f51dcd2447ce6934dddbf5305c81016a824`**.
+- Slice 3 product SHA: **`071f5f923515c6405298bf96b0af249a20f81358`** (`feat: continue FG-025 contractor-facing PRICE language`). At Slice 3 close, `HEAD` = `origin/main` = that product SHA. Parent product-changing **`1aa54f51dcd2447ce6934dddbf5305c81016a824`**. A later **docs-only** post-close reconciliation commit (this update) is **not** the Slice 3 product SHA.
 - Alembic graph head (repository): **`e3f4a5b6c7d8`**. Live `flask db current`: **`e3f4a5b6c7d8`**. Live current **equals** repository head. One graph head.
 - Chain: … → **`c1d2e3f4a5b6` (FG-020)** → **`d2e3f4a5b6c7` (FG-021)** → **`e3f4a5b6c7d8` (FG-023 Slice A; applied live 2026-09-07 Slice C)**
 - Latest product-changing governed full suite: **606 passed**. Dedicated FG-025 Slice 3 **13**. PRICE-focused **167**. Governed (dedicated FG-025 + FG-023 + Hub + FG-018 + both FG-020 files + FG-021 + PRICE specialist files) **303**. Close-time FG-023 dedicated **35** / focused **149** / full **593** remain historical. Historical Slice A close focused command **126** remains accurate for that close. Pre-Slice-B focused **137** remains historical. Dedicated FG-021 **20**. Focused (Hub + FG-018 + FG-019 + both FG-020 + FG-021) **148** remains the prior FG-021 close bundle. Dedicated FG-020 **44** (33 field observation + 11 media compatibility). Dedicated FG-019 **34**. Dedicated FG-018 **37**. FG-020 **gate-at-close** full suite **538** remains historical.
-- Working tree: confirm clean after this FG-025 Slice 3 commit. Confirm `HEAD` = `origin/main`. Live DB mutated only by authorized Slice C migrate + labeled UAT project **id 13**. Slice 3 wrote **no** actuals. Slice 2 wrote **no** actuals. Slice 1 wrote **no** actuals. Close wrote **no** further actuals.
+- Working tree was **clean** at Slice 3 close (`HEAD` = `origin/main` = product SHA **`071f5f923515c6405298bf96b0af249a20f81358`**). Live DB mutated only by authorized Slice C migrate + labeled UAT project **id 13**. Slice 3 wrote **no** actuals. Slice 2 wrote **no** actuals. Slice 1 wrote **no** actuals. Close wrote **no** further actuals. This docs-only reconciliation writes **no** actuals.
 - Real external AI provider **NOT AUTHORIZED**. Phase D **NOT STARTED**. Runtime permit web lookup **NOT AUTHORIZED**.
 
 ### 29 Aug commit chain (all ancestors of `main`)

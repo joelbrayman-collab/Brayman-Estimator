@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-09-07 |
+| Updated | 2026-09-08 |
 | Evidence | Local repository inspection |
 
 ## Baseline
@@ -11,7 +11,7 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | Confirm `HEAD` = `origin/main` after this FG-025 Slice 3 commit. Last product-changing: this Slice 3 SHA. Parent Slice 2 `1aa54f51dcd2447ce6934dddbf5305c81016a824`. Live Alembic current = repository head **`e3f4a5b6c7d8`**. |
+| HEAD / `origin/main` | Slice 3 product SHA **`071f5f923515c6405298bf96b0af249a20f81358`** (`feat: continue FG-025 contractor-facing PRICE language`). At Slice 3 close, `HEAD` = `origin/main` = that product SHA. Parent Slice 2 `1aa54f51dcd2447ce6934dddbf5305c81016a824`. A later **docs-only** post-close reconciliation commit (this update) is **not** the Slice 3 product SHA. Live Alembic current = repository head **`e3f4a5b6c7d8`**. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
 | **Working tree at last verified inspect** | **FG-025 SLICE 3 IMPLEMENTED 2026-09-07.** [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / SLICE 2 IMPLEMENTED / SLICE 3 IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED / NOT YET PRODUCT-WIDE COMPLETE**. Remaining surfaces **NOT AUTHORIZED**. [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**. MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**. [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. **FG-021 CLOSED.** Live **39** Events / **39** Originals. Project **13** five actuals unchanged. Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Live current = heads **`e3f4a5b6c7d8`**. Slice 3 dedicated FG-025 **13**. PRICE-focused **167**. Governed **303**. Full **606**. Close-time FG-023 dedicated **35** / focused **149** / full **593** remain historical. Dedicated FG-021 **20**. Prior FG-021 focused **148** / full **558** remain historical. |

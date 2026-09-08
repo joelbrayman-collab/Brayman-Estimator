@@ -6,9 +6,9 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Pricing Engine</p>
+        <p class="eyebrow">{{ contractor_copy.PRICING_HEADING }}</p>
         <h1>Create draft policy</h1>
-        <p>DRAFT until a human approves. Target GM and markup rates are fractions (0.15 = 15%).</p>
+        <p>Draft until a human approves. Target gross margin and markup rates are decimals (0.15 = 15%). Gross Margin is not markup.</p>
     </div>
 </div>
 
@@ -22,16 +22,16 @@
             Method *
             <select name="method" required>
                 {% for m in methods %}
-                <option value="{{ m }}">{{ m }}</option>
+                <option value="{{ m }}">{{ contractor_copy.pricing_method_label(m) }}</option>
                 {% endfor %}
             </select>
         </label>
         <label>
-            Target gross margin (fraction)
+            Target gross margin (0.15 = 15%)
             <input type="text" name="target_gross_margin" placeholder="0.15">
         </label>
         <label>
-            Markup rate (fraction)
+            Markup rate (0.15 = 15%)
             <input type="text" name="markup_rate" placeholder="0.15">
         </label>
         <label>
@@ -46,7 +46,7 @@
             Overhead treatment
             <select name="overhead_treatment">
                 {% for t in overhead_treatments %}
-                <option value="{{ t }}">{{ t }}</option>
+                <option value="{{ t }}">{{ contractor_copy.office_status_label(t) }}</option>
                 {% endfor %}
             </select>
         </label>
@@ -54,7 +54,7 @@
             Profit treatment
             <select name="profit_treatment">
                 {% for t in profit_treatments %}
-                <option value="{{ t }}">{{ t }}</option>
+                <option value="{{ t }}">{{ contractor_copy.office_status_label(t) }}</option>
                 {% endfor %}
             </select>
         </label>
@@ -66,7 +66,7 @@
             Contingency visibility
             <select name="contingency_visibility">
                 {% for v in visibilities %}
-                <option value="{{ v }}">{{ v }}</option>
+                <option value="{{ v }}">{{ contractor_copy.office_status_label(v) }}</option>
                 {% endfor %}
             </select>
         </label>
@@ -75,12 +75,12 @@
             <select name="contingency_pricing_treatment">
                 <option value="">—</option>
                 {% for t in treatments %}
-                <option value="{{ t }}">{{ t }}</option>
+                <option value="{{ t }}">{{ contractor_copy.office_status_label(t) }}</option>
                 {% endfor %}
             </select>
         </label>
         <label>
-            Contingency rate (fraction)
+            Contingency rate (0.05 = 5%)
             <input type="text" name="contingency_rate" placeholder="0.05">
         </label>
         <label>
@@ -97,7 +97,7 @@
         </label>
     </div>
     <label>
-        Provenance
+        {{ contractor_copy.SOURCE_NOTES_LABEL }}
         <textarea name="provenance" rows="3"></textarea>
     </label>
     <div class="form-actions">

@@ -781,7 +781,7 @@ def test_audit_events_recorded(app):
 def test_office_ui_task_create_and_archive(client, app):
     resp = client.get("/labour-engine/")
     assert resp.status_code == 200
-    assert b"Labour Engine" in resp.data
+    assert b"Labour rates" in resp.data
 
     resp = client.post(
         "/labour-engine/tasks/new",
@@ -820,8 +820,10 @@ def test_mapping_ui_accept(client, app):
         follow_redirects=True,
     )
     assert resp.status_code == 200
-    assert b"SUGGESTED" in resp.data
+    assert b"SUGGESTED" not in resp.data
+    assert b"Suggested" in resp.data
     mapping = LabourTaskMapping.query.one()
+    assert mapping.review_status == "SUGGESTED"
     accept = client.post(
         f"/labour-engine/mappings/{mapping.id}/accept",
         data={"reviewed_by": "Joel Brayman", "labour_task_id": task.id},

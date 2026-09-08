@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Production Rate Standards | Brayman Construction Platform{% endblock %}
-{% block page_title %}Production Rate Standards{% endblock %}
+{% block title %}Production Rates | Brayman Construction Platform{% endblock %}
+{% block page_title %}Production Rates{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Labour Engine</p>
-        <h1>Production Rate Standards</h1>
-        <p>Hours per production unit. Not a direct labour cost rate. ORG-APPROVED versions are created only by candidate approval.</p>
+        <p class="eyebrow">{{ contractor_copy.LABOUR_RATES_HEADING }}</p>
+        <h1>Production rates</h1>
+        <p>Hours per production unit. Not a direct labour cost rate. Organization-approved versions are created only by candidate approval.</p>
     </div>
     <a class="button" href="{{ url_for('labour_engine.create_standard') }}">New draft standard</a>
 </div>
 
-<p><a class="button-link" href="{{ url_for('labour_engine.index') }}">Labour Engine home</a></p>
+<p><a class="button-link" href="{{ url_for('labour_engine.index') }}">{{ contractor_copy.LABOUR_RATES_HEADING }} home</a></p>
 
 {% if standards %}
 <table class="data-table">
@@ -37,8 +37,8 @@
             <td>{{ standard.production_rate }}</td>
             <td>{{ standard.unit_of_measure }}</td>
             <td>{{ standard.applicable_conditions or "—" }}</td>
-            <td>{{ standard.evidence_class }}</td>
-            <td>{{ standard.approval_status }}</td>
+            <td>{{ contractor_copy.office_status_label(standard.evidence_class) }}</td>
+            <td>{{ contractor_copy.office_status_label(standard.approval_status) }}</td>
             <td><a class="button-link" href="{{ url_for('labour_engine.standard_detail', standard_id=standard.id) }}">View</a></td>
         </tr>
         {% endfor %}
@@ -47,7 +47,7 @@
 {% else %}
 <div class="empty-state">
     <h2>No production rate standards</h2>
-    <p>Create a draft, then promote through a Calibration Candidate. Historical evidence does not auto-promote.</p>
+    <p>Create a draft, then promote through a calibration candidate. Historical evidence does not auto-promote.</p>
 </div>
 {% endif %}
 {% endblock %}

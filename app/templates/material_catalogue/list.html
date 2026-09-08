@@ -9,9 +9,8 @@
         <p class="eyebrow">Estimating</p>
         <h1>Material Catalogue</h1>
         <p>
-            CalibAi canonical identity for dimensional lumber and sheet goods.
-            Platform-shared vocabulary. Organization {{ organization_id }}.
-            This surface does not show live supplier prices, promotions, or inventory.
+            Shared names for dimensional lumber and sheet goods.
+            This catalogue does not show live supplier prices, promotions, or inventory.
         </p>
     </div>
 </div>
@@ -36,7 +35,7 @@
             <select name="kind">
                 <option value="">All kinds</option>
                 {% for value in kinds %}
-                <option value="{{ value }}" {% if kind == value %}selected{% endif %}>{{ value }}</option>
+                <option value="{{ value }}" {% if kind == value %}selected{% endif %}>{{ contractor_copy.office_status_label(value) }}</option>
                 {% endfor %}
             </select>
         </label>
@@ -45,7 +44,7 @@
             <select name="status">
                 <option value="">All statuses</option>
                 {% for value in statuses %}
-                <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ value }}</option>
+                <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ contractor_copy.office_status_label(value) }}</option>
                 {% endfor %}
             </select>
         </label>
@@ -78,9 +77,9 @@
             <td>{{ material.display_name }}</td>
             <td>{{ category_labels.get(material.category, material.category) }}</td>
             <td>{{ material.canonical_uom }}</td>
-            <td>{{ material.kind }}</td>
-            <td>{{ material.substitution_policy }}</td>
-            <td><span class="status">{{ material.status }}</span></td>
+            <td>{{ contractor_copy.office_status_label(material.kind) }}</td>
+            <td>{{ contractor_copy.office_status_label(material.substitution_policy) }}</td>
+            <td><span class="status">{{ contractor_copy.office_status_label(material.status) }}</span></td>
             <td>{{ link_counts.get(material.id, 0) }}</td>
             <td><a class="button-link" href="{{ url_for('material_catalogue.material_detail', material_id=material.id) }}">View</a></td>
         </tr>
@@ -89,8 +88,8 @@
 </table>
 {% else %}
 <div class="empty-state">
-    <h2>No canonical materials match</h2>
-    <p>Adjust search or filters. Canonical identity is platform-seeded and read-only.</p>
+    <h2>No materials match</h2>
+    <p>Adjust search or filters. Shared catalogue names are platform-seeded and read-only.</p>
 </div>
 {% endif %}
 {% endblock %}

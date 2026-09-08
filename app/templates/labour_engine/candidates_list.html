@@ -6,15 +6,15 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Labour Engine</p>
-        <h1>Calibration Candidates</h1>
-        <p>AI cannot approve. Approval writes a new ORG-APPROVED standard version.</p>
+        <p class="eyebrow">{{ contractor_copy.LABOUR_RATES_HEADING }}</p>
+        <h1>Calibration candidates</h1>
+        <p>AI cannot approve. Approval writes a new organization-approved standard version.</p>
     </div>
     <a class="button" href="{{ url_for('labour_engine.create_candidate') }}">New candidate</a>
 </div>
 
 <p>
-    <a class="button-link" href="{{ url_for('labour_engine.index') }}">Labour Engine home</a> ·
+    <a class="button-link" href="{{ url_for('labour_engine.index') }}">{{ contractor_copy.LABOUR_RATES_HEADING }} home</a> ·
     Filter:
     <a href="{{ url_for('labour_engine.list_candidates') }}">All</a> ·
     <a href="{{ url_for('labour_engine.list_candidates', state='DRAFT') }}">Draft</a> ·
@@ -27,7 +27,7 @@
 <table class="data-table">
     <thead>
         <tr>
-            <th>ID</th>
+            <th>Entry</th>
             <th>Kind</th>
             <th>Task</th>
             <th>State</th>
@@ -39,10 +39,10 @@
         {% for candidate in candidates %}
         <tr>
             <td>{{ candidate.id }}</td>
-            <td>{{ candidate.standard_kind }}</td>
+            <td>{{ contractor_copy.office_status_label(candidate.standard_kind) }}</td>
             <td>{{ candidate.labour_task.task_code if candidate.labour_task else "—" }}</td>
-            <td>{{ candidate.state }}</td>
-            <td>{{ candidate.evidence_class }}</td>
+            <td>{{ contractor_copy.office_status_label(candidate.state) }}</td>
+            <td>{{ contractor_copy.office_status_label(candidate.evidence_class) }}</td>
             <td><a class="button-link" href="{{ url_for('labour_engine.candidate_detail', candidate_id=candidate.id) }}">Review</a></td>
         </tr>
         {% endfor %}

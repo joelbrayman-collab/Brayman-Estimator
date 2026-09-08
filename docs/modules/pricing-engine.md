@@ -50,6 +50,7 @@ CalibAi owns the engine. Each organization owns its commercial intelligence. ORG
 
 ## Current implementation
 
+- Office UI page title is **Pricing**. Internal method key `TRUE_GROSS_MARGIN` is unchanged; contractor-facing display is **Gross Margin Pricing** ([FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) Slice 3). Gross Margin is not called Markup.
 - Versions **without** an `EstimatePricingSnapshot` continue to use live `COST_PLUS_MARKUP_STACK` in `app/services/estimate_builder.py`.
 - Versions **with** a snapshot recalculate via the frozen named method (`refresh_version_from_snapshot`). Later org policy changes do not re-resolve locked snapshots.
 - New estimates are **not** auto-converted to `TRUE_GROSS_MARGIN`. A human must apply org pricing on a draft version.

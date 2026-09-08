@@ -187,9 +187,11 @@ def test_internal_breakdown_renders_for_org_version(client, app):
     assert b"Internal Detailed Cost Breakdown" in html
     assert b"not customer-facing" in html
     assert estimate.estimate_number.encode() in html
-    assert b"EstimateVersion" in html
+    assert b"Estimate version" in html
     assert str(version.id).encode() in html
-    assert b"COST_PLUS_MARKUP_STACK" in html
+    assert b"EstimateVersion" not in html
+    assert b"COST_PLUS_MARKUP_STACK" not in html
+    assert b"Cost plus markup (legacy stack)" in html
     assert b"$100.00" in html
 
 
@@ -300,8 +302,9 @@ def test_labour_snapshot_labeled_not_in_basis_and_not_mutated(client, app):
     )
     assert resp.status_code == 200
     html = resp.data
-    assert b"LABOUR ENGINE SNAPSHOT" in html
-    assert b"NOT INCLUDED IN SELLING-PRICE BASIS" in html
+    assert b"LABOUR ENGINE SNAPSHOT" not in html
+    assert b"Labour rate snapshot" in html
+    assert b"not included in selling-price basis" in html
 
     frozen_labour = EstimateLabourSnapshot.query.get(labour.id)
     assert frozen_labour.calculated_man_hours == hours_before
@@ -516,14 +519,16 @@ def test_named_method_estimate_totals_not_legacy_stack_labels(client, app):
     resp = client.get(f"/estimates/{estimate.id}/versions/{version.id}")
     assert resp.status_code == 200
     html = resp.data
-    assert b"TRUE_GROSS_MARGIN" in html
+    assert b"TRUE_GROSS_MARGIN" not in html
+    assert b"Gross Margin Pricing" in html
     assert b"Authoritative method" in html
     assert b"Overhead (0.00%)" not in html
     assert b"Profit (0.00%)" not in html
     assert b"Customer total" in html
     detail = client.get(f"/estimates/{estimate.id}")
     assert detail.status_code == 200
-    assert b"TRUE_GROSS_MARGIN" in detail.data
+    assert b"TRUE_GROSS_MARGIN" not in detail.data
+    assert b"Gross Margin Pricing" in detail.data
     assert b"Customer total" in detail.data
 
 

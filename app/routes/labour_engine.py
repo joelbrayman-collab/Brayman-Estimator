@@ -32,6 +32,7 @@ from app.services.labour_engine import (
 )
 from app.services.auth import form_actor
 from app.services.organizations import get_current_organization_id
+from app.presentation.contractor_copy import office_status_label
 
 labour_engine_bp = Blueprint("labour_engine", __name__, url_prefix="/labour-engine")
 
@@ -180,7 +181,7 @@ def suggest_mapping():
             actor=_actor(),
         )
         flash(
-            f"Mapping suggested (status {mapping.review_status}; not accepted).",
+            f"Mapping suggested (status {office_status_label(mapping.review_status)}; not accepted).",
             "success",
         )
         return redirect(url_for("labour_engine.mapping_detail", mapping_id=mapping.id))
@@ -240,7 +241,7 @@ def not_labour_mapping(mapping_id):
             reviewed_by=_actor(),
             review_notes=request.form.get("review_notes", ""),
         )
-        flash("Source string marked NOT_LABOUR. Historical row unchanged.", "success")
+        flash("Source string marked as not labour. Historical row unchanged.", "success")
     except LabourEngineError as exc:
         flash(str(exc), "danger")
     return redirect(url_for("labour_engine.mapping_detail", mapping_id=mapping_id))
@@ -291,8 +292,8 @@ def create_standard():
                 created_by=_actor(),
             )
             flash(
-                f"Draft production rate standard v{standard.version_number} created. "
-                "It is not ORG-APPROVED.",
+                f"Draft production rate v{standard.version_number} created. "
+                "It is not an approved operating standard.",
                 "success",
             )
             return redirect(
@@ -387,7 +388,10 @@ def create_candidate():
                 supporting_evidence_refs=request.form.get("supporting_evidence_refs", ""),
                 created_by=_actor(),
             )
-            flash("Calibration candidate created in DRAFT. Not ORG-APPROVED.", "success")
+            flash(
+                "Calibration candidate saved as a draft. It is not an approved operating standard.",
+                "success",
+            )
             return redirect(
                 url_for("labour_engine.candidate_detail", candidate_id=candidate.id)
             )

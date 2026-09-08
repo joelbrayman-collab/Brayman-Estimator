@@ -71,7 +71,7 @@
         {% if current_named_method_governs %}
         <div>
             <p class="eyebrow">Authoritative method</p>
-            <p><strong>{{ current_pricing_snapshot.method }}</strong></p>
+            <p><strong>{{ contractor_copy.pricing_method_label(current_pricing_snapshot.method) }}</strong></p>
         </div>
         <div>
             <p class="eyebrow">Pre-tax selling price</p>
@@ -175,14 +175,14 @@
                 {% endif %}
             </td>
             {% if named_method_governs(version.pricing_snapshot) %}
-            <td>{{ version.pricing_snapshot.method }}</td>
+            <td>{{ contractor_copy.pricing_method_label(version.pricing_snapshot.method) }}</td>
             <td>${{ "%.2f"|format(version.pricing_snapshot.pre_tax_selling_price) }}</td>
             <td>—</td>
             <td>—</td>
             <td>{{ "%.2f"|format(version.pricing_snapshot.tax_percent) }}%</td>
             <td>${{ "%.2f"|format(version.pricing_snapshot.customer_total) }}</td>
             {% else %}
-            <td>{{ version.pricing_snapshot.method if version.pricing_snapshot else "COST_PLUS_MARKUP_STACK" }}</td>
+            <td>{{ contractor_copy.pricing_method_label(version.pricing_snapshot.method if version.pricing_snapshot else "COST_PLUS_MARKUP_STACK") }}</td>
             <td>${{ "%.2f"|format(version.subtotal) }}</td>
             <td>{{ "%.2f"|format(version.overhead_percent) }}%</td>
             <td>{{ "%.2f"|format(version.profit_percent) }}%</td>

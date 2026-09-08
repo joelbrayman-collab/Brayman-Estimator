@@ -6,9 +6,9 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Labour Engine</p>
-        <h1>New draft production rate standard</h1>
-        <p>This creates a DRAFT / non-ORG-APPROVED record only.</p>
+        <p class="eyebrow">{{ contractor_copy.LABOUR_RATES_HEADING }}</p>
+        <h1>New draft production rate</h1>
+        <p>This creates a draft record only. It is not an approved operating standard.</p>
     </div>
 </div>
 
@@ -43,7 +43,7 @@
             Evidence class
             <select name="evidence_class">
                 {% for cls in evidence_classes %}
-                <option value="{{ cls }}" {% if cls == "PROVISIONAL" %}selected{% endif %}>{{ cls }}</option>
+                <option value="{{ cls }}" {% if cls == "PROVISIONAL" %}selected{% endif %}>{{ contractor_copy.office_status_label(cls) }}</option>
                 {% endfor %}
             </select>
         </label>
@@ -61,7 +61,7 @@
         </label>
     </div>
     <label>
-        Provenance
+        {{ contractor_copy.SOURCE_NOTES_LABEL }}
         <textarea name="provenance" rows="3"></textarea>
     </label>
     <div class="form-actions">

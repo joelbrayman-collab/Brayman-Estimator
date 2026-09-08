@@ -12,7 +12,7 @@
 
 Own CalibAi **canonical material identity** (what the project requires): platform-seeded vocabulary, controlled requirement UOM, GENERIC vs SPECIFIED, lifecycle status.
 
-V1 ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md)): dimensional lumber + sheet goods identity + office catalogue UX + optional Material-category `CostItem` link.
+V1 ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md)): dimensional lumber + sheet goods identity + office catalogue UX + optional Material-category `CostItem` link. Office kind/status labels use contractor-facing mapping ([FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) Slice 3); internal identity keys unchanged.
 
 Living supplier price/promotion/inventory is **architected** ([ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md)) and **not** owned or implemented here until a later Feature Gate. [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) remains **Proposed**.
 

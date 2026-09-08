@@ -100,7 +100,7 @@ def approve_policy(policy_id):
     try:
         approve_pricing_policy(policy_id, actor=_actor())
         db.session.commit()
-        flash("Policy approved (ORG-APPROVED).", "success")
+        flash("Policy approved.", "success")
     except PricingEngineError as exc:
         flash(str(exc), "error")
     return redirect(url_for("pricing_engine.policy_detail", policy_id=policy_id))
@@ -133,7 +133,7 @@ def supersede_policy(policy_id):
     try:
         new_policy = supersede_pricing_policy(policy_id, actor=_actor())
         db.session.commit()
-        flash("Policy superseded. New DRAFT version created.", "success")
+        flash("Policy saved as a new draft version.", "success")
         return redirect(url_for("pricing_engine.policy_detail", policy_id=new_policy.id))
     except PricingEngineError as exc:
         flash(str(exc), "error")

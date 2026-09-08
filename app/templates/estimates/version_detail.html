@@ -42,7 +42,7 @@
             <p>{{ estimate.estimate_number }}</p>
         </div>
         <div>
-            <p class="eyebrow">Version Status</p>
+            <p class="eyebrow">Version status</p>
             <p>{{ version.status }}</p>
         </div>
     </div>
@@ -76,11 +76,12 @@
 <section class="form-panel pricing-summary" style="margin-bottom: 24px;">
     <h2>Estimate Totals</h2>
     {% if named_method_governs %}
-    <p>Authoritative method: <strong>{{ pricing_snapshot.method }}</strong> (EstimatePricingSnapshot id {{ pricing_snapshot.id }}). Legacy Overhead / Profit percentage labels do not govern this calculation.</p>
+    <p>Authoritative method: <strong>{{ contractor_copy.pricing_method_label(pricing_snapshot.method) }}</strong>. Legacy Overhead / Profit percentage labels do not govern this calculation.</p>
+    <p class="muted-copy">{{ contractor_copy.entry_reference(pricing_snapshot.id) }}</p>
     {% if pricing_snapshot.method == "TRUE_GROSS_MARGIN" %}
-    <p>True gross margin — not markup. Target GM fraction: {{ pricing_snapshot.target_gross_margin if pricing_snapshot.target_gross_margin is not none else "—" }}</p>
+    <p>Gross Margin Pricing — not markup. Target gross margin: {{ pricing_snapshot.target_gross_margin if pricing_snapshot.target_gross_margin is not none else "—" }}</p>
     {% elif pricing_snapshot.method == "COST_PLUS_MARKUP" %}
-    <p>Cost-plus markup rate (fraction): {{ pricing_snapshot.markup_rate if pricing_snapshot.markup_rate is not none else "—" }}</p>
+    <p>Cost plus markup rate: {{ pricing_snapshot.markup_rate if pricing_snapshot.markup_rate is not none else "—" }}</p>
     {% endif %}
     <div class="form-grid">
         <div>
@@ -149,29 +150,29 @@
 </section>
 
 <section class="form-panel" style="margin-bottom: 24px;">
-    <h2>Pricing Engine</h2>
+    <h2>{{ contractor_copy.PRICING_HEADING }}</h2>
     {% if pricing_snapshot %}
     <p>
-        Method <strong>{{ pricing_snapshot.method }}</strong>
+        Method <strong>{{ contractor_copy.pricing_method_label(pricing_snapshot.method) }}</strong>
         {% if pricing_snapshot.method == "COST_PLUS_MARKUP_STACK" %}
         — legacy named stack
         {% elif pricing_snapshot.method == "TRUE_GROSS_MARGIN" %}
-        — true gross margin (not markup)
+        — Gross Margin, not markup
         {% endif %}
-        · Source {{ pricing_snapshot.resolution_source }}
+        · Source {{ contractor_copy.office_status_label(pricing_snapshot.resolution_source) }}
         {% if pricing_snapshot.requires_review %} · requires review{% endif %}
     </p>
     <div class="form-grid">
         <div>
-            <p class="eyebrow">Direct cost basis (internal)</p>
+            <p class="eyebrow">Direct cost basis</p>
             <p>${{ "%.2f"|format(pricing_snapshot.direct_cost_basis) }}</p>
         </div>
         <div>
-            <p class="eyebrow">Target GM (fraction)</p>
+            <p class="eyebrow">Target gross margin</p>
             <p>{{ pricing_snapshot.target_gross_margin if pricing_snapshot.target_gross_margin is not none else "—" }}</p>
         </div>
         <div>
-            <p class="eyebrow">Markup rate (fraction)</p>
+            <p class="eyebrow">Markup rate</p>
             <p>{{ pricing_snapshot.markup_rate if pricing_snapshot.markup_rate is not none else "—" }}</p>
         </div>
         <div>
@@ -200,10 +201,10 @@
         </div>
     </div>
     <p>
-        <a class="button-link" href="{{ url_for('pricing_engine.snapshot_detail', snapshot_id=pricing_snapshot.id) }}">Open snapshot</a>
+        <a class="button-link" href="{{ url_for('pricing_engine.snapshot_detail', snapshot_id=pricing_snapshot.id) }}">Open pricing lock</a>
     </p>
     {% else %}
-    <p>No EstimatePricingSnapshot. This version uses the live <strong>COST_PLUS_MARKUP_STACK</strong> (legacy) calculation. Totals are not backfilled to true GM.</p>
+    <p>{{ contractor_copy.NO_PRICING_LOCK }}</p>
     {% endif %}
 
     {% if editable %}
@@ -215,11 +216,11 @@
                 <input type="text" name="approved_by" value="Joel Brayman" required>
             </label>
             <label>
-                Optional ORG-APPROVED override
+                Optional organization-approved override
                 <select name="pricing_policy_override_id">
                     <option value="">Use resolved org / context policy</option>
                     {% for policy in approved_pricing_policies %}
-                    <option value="{{ policy.id }}">{{ policy.policy_code }} v{{ policy.version_number }} — {{ policy.method }}</option>
+                    <option value="{{ policy.id }}">{{ policy.policy_code }} v{{ policy.version_number }} — {{ contractor_copy.pricing_method_label(policy.method) }}</option>
                     {% endfor %}
                 </select>
             </label>

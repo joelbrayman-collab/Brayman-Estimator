@@ -42,6 +42,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 ## Current implementation
 
+- Office Estimate screens use **Estimate version** / **Pricing lock** display labels ([FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) Slice 3). Estimate ≠ Proposal. Internal models unchanged.
 - Estimate statuses and version statuses defined in `app/models/estimate.py`
 - `AUTO_LOCK_VERSION_STATUSES` locks versions when Issued/Accepted/Rejected/Superseded
 - Builder service supports structured line construction

@@ -6,9 +6,9 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Labour Engine</p>
+        <p class="eyebrow">{{ contractor_copy.LABOUR_RATES_HEADING }}</p>
         <h1>{{ task.task_code }} — {{ task.canonical_name }}</h1>
-        <p>Status {{ task.status }} · Source {{ task.source }} · Org {{ task.organization_id }}</p>
+        <p>Status {{ contractor_copy.office_status_label(task.status) }} · Source {{ contractor_copy.office_status_label(task.source) }}</p>
     </div>
     {% if task.status != "ARCHIVED" %}
     <a class="button" href="{{ url_for('labour_engine.edit_task', task_id=task.id) }}">Edit</a>
@@ -22,7 +22,7 @@
         <tr><th>Production unit</th><td>{{ task.production_unit }}</td></tr>
         <tr><th>Unit of measure</th><td>{{ task.unit_of_measure }}</td></tr>
         <tr><th>Description</th><td>{{ task.description or "—" }}</td></tr>
-        <tr><th>Provenance</th><td>{{ task.provenance or "—" }}</td></tr>
+        <tr><th>{{ contractor_copy.SOURCE_NOTES_LABEL }}</th><td>{{ task.provenance or "—" }}</td></tr>
         <tr><th>Created</th><td>{{ task.created_at }} by {{ task.created_by or "—" }}</td></tr>
     </tbody>
 </table>
@@ -34,7 +34,7 @@
 </form>
 {% endif %}
 
-<h2>Production Rate Standards</h2>
+<h2>Production rates</h2>
 {% if standards %}
 <table class="data-table">
     <thead>
@@ -53,8 +53,8 @@
             <td>v{{ standard.version_number }}</td>
             <td>{{ standard.production_rate }}</td>
             <td>{{ standard.applicable_conditions or "—" }}</td>
-            <td>{{ standard.evidence_class }}</td>
-            <td>{{ standard.approval_status }}</td>
+            <td>{{ contractor_copy.office_status_label(standard.evidence_class) }}</td>
+            <td>{{ contractor_copy.office_status_label(standard.approval_status) }}</td>
             <td><a class="button-link" href="{{ url_for('labour_engine.standard_detail', standard_id=standard.id) }}">View</a></td>
         </tr>
         {% endfor %}

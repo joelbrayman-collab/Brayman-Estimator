@@ -8,7 +8,7 @@
     <div>
         <p class="eyebrow">Material Catalogue</p>
         <h1>{{ material.display_name }}</h1>
-        <p>Read-only CalibAi identity. Ordinary office users cannot edit this definition.</p>
+        <p>Read-only catalogue name. Ordinary office users cannot edit this definition.</p>
     </div>
     <a class="button-link" href="{{ url_for('material_catalogue.list_materials') }}">Back to catalogue</a>
 </div>
@@ -21,7 +21,7 @@
         </div>
         <div>
             <p class="eyebrow">Kind</p>
-            <p>{{ material.kind }}</p>
+            <p>{{ contractor_copy.office_status_label(material.kind) }}</p>
         </div>
         <div>
             <p class="eyebrow">Category</p>
@@ -32,16 +32,16 @@
             <p>{{ material.trade or "—" }}</p>
         </div>
         <div>
-            <p class="eyebrow">Canonical UOM</p>
+            <p class="eyebrow">Unit</p>
             <p>{{ material.canonical_uom }}</p>
         </div>
         <div>
             <p class="eyebrow">Substitution</p>
-            <p>{{ material.substitution_policy }}</p>
+            <p>{{ contractor_copy.office_status_label(material.substitution_policy) }}</p>
         </div>
         <div>
             <p class="eyebrow">Status</p>
-            <p><span class="status">{{ material.status }}</span></p>
+            <p><span class="status">{{ contractor_copy.office_status_label(material.status) }}</span></p>
         </div>
         <div>
             <p class="eyebrow">Grade / species</p>
@@ -89,7 +89,7 @@
 
 <section class="page-heading">
     <div>
-        <p class="eyebrow">Organization {{ organization_id }}</p>
+        <p class="eyebrow">This organization</p>
         <h1>Linked Material Cost Items</h1>
         <p>Only this organization's Material cost items. Link and unlink are explicit. No automatic mapping.</p>
     </div>
@@ -127,14 +127,14 @@
 {% else %}
 <div class="empty-state" style="margin-bottom: 24px;">
     <h2>No linked Material cost items</h2>
-    <p>This organization has not linked a Material CostItem to this canonical identity.</p>
+    <p>This organization has not linked a Material cost item to this catalogue name.</p>
 </div>
 {% endif %}
 
 <section class="form-panel">
     <h2>Link a Material Cost Item</h2>
     {% if material.status != "ACTIVE" %}
-    <p>This canonical material is {{ material.status }}. New links must use an ACTIVE material.</p>
+    <p>This catalogue name is {{ contractor_copy.office_status_label(material.status) }}. New links must use an active material.</p>
     {% elif material_cost_items %}
     <form method="post" action="{{ url_for('material_catalogue.link_cost_item', material_id=material.id) }}">
         <div class="form-grid">

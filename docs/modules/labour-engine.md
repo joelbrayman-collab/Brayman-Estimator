@@ -47,7 +47,7 @@ CalibAi owns the engine. Each organization owns its labour intelligence. ORG-001
 
 ## Current implementation
 
-Office UI at `/labour-engine/`. ORG-001 $65 CAD/man-hour Direct Labour Cost Rate Standard v1 is seeded as organization policy (`docs/pricing-policy.md` provenance); other organizations do not inherit it. Unknown organizations receive fail-closed resolution and cannot persist `LabourAuditEvent`. Historical labour remains FG-006 evidence. Estimating `CostItem` category `Labour` lump unit costs remain valid for legacy estimates. Snapshots are opt-in and are **not** wired into selling-price calculation.
+Office UI at `/labour-engine/`. Contractor-facing page title is **Labour rates** ([FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) Slice 3 display mapping; internal module name unchanged). ORG-001 $65 CAD/man-hour Direct Labour Cost Rate Standard v1 is seeded as organization policy (`docs/pricing-policy.md` provenance); other organizations do not inherit it. Unknown organizations receive fail-closed resolution and cannot persist `LabourAuditEvent`. Historical labour remains FG-006 evidence. Estimating `CostItem` category `Labour` lump unit costs remain valid for legacy estimates. Snapshots are opt-in and are **not** wired into selling-price calculation.
 
 ## Invariants
 

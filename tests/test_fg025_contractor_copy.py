@@ -1,9 +1,11 @@
-"""FG-025 Slice 1 contractor-facing MONITOR display mapping.
+"""FG-025 contractor-facing display mapping (Slice 1 MONITOR + Slice 2 Hub + Slice 3 PRICE).
 
 Presentation tests only. Internal domain keys stay authoritative.
 """
 
 from __future__ import annotations
+
+from decimal import Decimal
 
 import pytest
 
@@ -16,16 +18,20 @@ from app.presentation.contractor_copy import (
     CORRECTED_ITEM_LABEL,
     CURRENT_ACTUALS_EMPTY,
     CURRENT_ACTUALS_HEADING,
+    LABOUR_RATES_HEADING,
     PERMIT_ADVISORY_EYEBROW,
     PERMIT_FOUNDATION_EYEBROW,
     PERMIT_RECHECK_HEADING,
     PREVIOUS_ENTRIES_EMPTY,
     PREVIOUS_ENTRIES_HEADING,
     PRICING_ASSUMPTIONS_HEADING,
+    PRICING_HEADING,
     LEGACY_PRICING_ASSUMPTIONS_HEADING,
     NO_PRICING_ASSUMPTIONS,
     RECORD_CORRECTION_BUTTON,
     SOURCE_HEADLINE,
+    SOURCE_NOTES_LABEL,
+    CATALOGUE_COLUMN_LABEL,
     co_cost_delta_label,
     cost_class_label,
     entry_reference,
@@ -33,11 +39,14 @@ from app.presentation.contractor_copy import (
     monitor_source_detail,
     monitor_source_headline,
     monitor_state_label,
+    office_status_label,
+    pricing_method_label,
     sentence_label,
 )
 from app.services.direct_cost_actuals import list_active_direct_cost_actuals, list_direct_cost_actuals
 from app.services.monitor import assemble_monitor_v1
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
+from app.services.pricing_engine import create_pricing_policy
 from tests.test_monitor_v1_fg023 import (
     _accept,
     _add_snapshot,
@@ -315,3 +324,76 @@ def test_rendered_hub_maps_current_and_previous_actuals(client, project):
     view = assemble_monitor_v1(project, project.organization_id)
     assert view["actuals_state"] == "PRESENT"
     assert view["actual_direct_cost_to_date"] is not None
+
+
+def test_slice3_pricing_method_labels_are_pinned():
+    assert LABOUR_RATES_HEADING == "Labour rates"
+    assert PRICING_HEADING == "Pricing"
+    assert SOURCE_NOTES_LABEL == "Source notes"
+    assert CATALOGUE_COLUMN_LABEL == "Catalogue"
+    assert pricing_method_label("TRUE_GROSS_MARGIN") == "Gross Margin Pricing"
+    assert pricing_method_label("COST_PLUS_MARKUP") == "Cost plus markup"
+    assert pricing_method_label("COST_PLUS_MARKUP_STACK") == (
+        "Cost plus markup (legacy stack)"
+    )
+    assert "Markup" not in pricing_method_label("TRUE_GROSS_MARGIN")
+    assert office_status_label("ORG_APPROVED") == "Organization approved"
+    assert office_status_label("ORG-APPROVED") == "Organization approved"
+    assert office_status_label("NOT_LABOUR") == "Not labour"
+    assert office_status_label("DRAFT") == "Draft"
+
+
+def test_slice3_internal_pricing_method_keys_remain():
+    from app.models.pricing_engine import PRICING_METHODS
+
+    assert "TRUE_GROSS_MARGIN" in PRICING_METHODS
+    assert pricing_method_label("TRUE_GROSS_MARGIN") != "TRUE_GROSS_MARGIN"
+    assert pricing_method_label("TRUE_GROSS_MARGIN") != "Markup Pricing"
+
+
+def test_slice3_labour_and_pricing_office_copy(client, project):
+    labour = _html(client.get("/labour-engine/"))
+    assert "<h1>Labour rates</h1>" in labour
+    assert "Canonical Labour Tasks" not in labour
+    assert "Labour tasks" in labour
+    assert "FG-008" not in labour
+    assert "organization_id" not in labour
+    create_pricing_policy(
+        policy_code="ORG-001-TRUE-GM-15",
+        method="TRUE_GROSS_MARGIN",
+        actor="Joel Brayman",
+        target_gross_margin=Decimal("0.15"),
+        tax_percent=Decimal("13"),
+        is_default=True,
+    )
+    from app import db
+
+    db.session.commit()
+    pricing = _html(client.get("/pricing-engine/"))
+    assert "<h1>Pricing</h1>" in pricing
+    assert "TRUE_GROSS_MARGIN" not in pricing
+    assert "Gross Margin Pricing" in pricing
+    assert "Markup Pricing" not in pricing
+    assert "FG-009" not in pricing
+    assert "organization_id" not in pricing
+    catalogue = _html(client.get("/material-catalogue/"))
+    assert "Material Catalogue" in catalogue
+    assert "Organization ORG-001" not in catalogue
+    assert ">GENERIC<" not in catalogue
+    assert ">ACTIVE<" not in catalogue
+    library = _html(client.get("/cost-library/"))
+    assert "Cost Library" in library
+    assemblies = _html(client.get("/assemblies/"))
+    assert "Assemblies" in assemblies
+    hub = _html(client.get(f"/projects/{project.id}"))
+    method_block = hub.split("Organization methodology:", 1)[1][:500]
+    assert "Labour rates" in method_block
+    assert "Pricing Engine" not in method_block
+    assert "Labour Engine" not in method_block
+    assert "LEARN · Future" in hub
+    assert "NET PROFIT" not in hub
+    assert PRICING_ASSUMPTIONS_HEADING in hub
+    assert PERMIT_FOUNDATION_EYEBROW in hub
+    assert "Original Estimated Direct Cost" in hub
+    view = assemble_monitor_v1(project, project.organization_id)
+    assert view["actuals_state"] == "MISSING_ACTUALS"

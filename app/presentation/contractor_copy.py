@@ -1,4 +1,4 @@
-"""FG-025 contractor-facing display mapping (Slice 1 MONITOR + Slice 2 Hub).
+"""FG-025 contractor-facing display mapping (Slice 1–3).
 
 Presentation only. Deterministic. No DB access, I/O, service ownership,
 commercial calculations, or mutation. Internal domain keys stay authoritative.
@@ -139,3 +139,100 @@ def sentence_label(value: str | None) -> str:
     if not value:
         return ""
     return str(value).replace("_", " ").replace("-", " ")
+
+
+LABOUR_RATES_HEADING = "Labour rates"
+PRICING_HEADING = "Pricing"
+SOURCE_NOTES_LABEL = "Source notes"
+PRICING_LOCK_HEADING = "Pricing lock"
+CATALOGUE_COLUMN_LABEL = "Catalogue"
+
+PRICING_METHOD_LABELS = {
+    "TRUE_GROSS_MARGIN": "Gross Margin Pricing",
+    "COST_PLUS_MARKUP": "Cost plus markup",
+    "COST_PLUS_MARKUP_STACK": "Cost plus markup (legacy stack)",
+}
+
+NO_PRICING_LOCK = (
+    "No pricing lock. This version uses the live "
+    f"{PRICING_METHOD_LABELS['COST_PLUS_MARKUP_STACK']} "
+    "calculation. Totals are not backfilled to Gross Margin Pricing."
+)
+
+OFFICE_STATUS_LABELS = {
+    "DRAFT": "Draft",
+    "ORG_APPROVED": "Organization approved",
+    "ORG-APPROVED": "Organization approved",
+    "ORG_APPROVED_ACTIVE": "Organization approved (active)",
+    "SUPERSEDED": "Superseded",
+    "WITHDRAWN": "Withdrawn",
+    "ACTIVE": "Active",
+    "ARCHIVED": "Archived",
+    "APPROVED": "Approved",
+    "DISCONTINUED": "Discontinued",
+    "GENERIC": "Generic",
+    "SPECIFIED": "Specified",
+    "ALLOWED": "Allowed",
+    "RESTRICTED": "Restricted",
+    "PROHIBITED": "Prohibited",
+    "NOT_LABOUR": "Not labour",
+    "SUGGESTED": "Suggested",
+    "ACCEPTED": "Accepted",
+    "REJECTED": "Rejected",
+    "REVOKED": "Revoked",
+    "PROPOSED": "Proposed",
+    "IN_REVIEW": "In review",
+    "CURRENT": "Current",
+    "MANUAL": "Manual",
+    "BASELINE": "Baseline",
+    "PROVISIONAL": "Provisional",
+    "ORG-ACTUAL": "Organization actual",
+    "ORG-HISTORICAL": "Organization historical",
+    "PRODUCTION_RATE": "Production rate",
+    "DIRECT_LABOUR_COST_RATE": "Direct labour cost rate",
+    "MAPPED_FROM_HISTORICAL": "Mapped from historical",
+    "BASELINE_CLONE": "Baseline clone",
+    "UNSPECIFIED": "Not specified",
+    "NOT_APPLIED": "Not applied",
+    "DIRECT_PROJECT_COST": "Direct project cost",
+    "INCLUDED_IN_MARGIN_ECONOMICS": "Included in margin economics",
+    "SEPARATELY_CUSTOMER_PRICED": "Separately customer-priced",
+    "INTERNAL_RESERVE": "Internal reserve",
+    "CUSTOMER_PRICED": "Customer-priced",
+    "INCLUDED_IN_MARGIN_BASIS": "Included in margin basis",
+    "ADDED_AFTER_BASE_PRICING": "Added after base pricing",
+    "ESTIMATE_OVERRIDE": "Estimate override",
+    "COMMERCIAL_CONTEXT": "Pricing assumptions",
+    "ORGANIZATION_DEFAULT": "Organization default",
+    "CALIBAI_BASELINE": "Platform baseline",
+    "PROVISIONAL_LEGACY_STACK": "Provisional legacy stack",
+    "HUMAN": "Human",
+    "AI": "AI",
+    "RULE": "Rule",
+}
+
+
+def pricing_method_label(method: str | None) -> str:
+    if not method:
+        return ""
+    mapped = PRICING_METHOD_LABELS.get(method)
+    if mapped:
+        return mapped
+    return office_status_label(method)
+
+
+def office_status_label(value: str | None) -> str:
+    if not value:
+        return ""
+    mapped = OFFICE_STATUS_LABELS.get(value)
+    if mapped:
+        return mapped
+    mapped_method = PRICING_METHOD_LABELS.get(value)
+    if mapped_method:
+        return mapped_method
+    text = sentence_label(value)
+    if text.isupper():
+        if " " not in text:
+            return text.capitalize()
+        return text.title()
+    return text

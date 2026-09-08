@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-025 is the governing identifier. Do not assign a new M0xx number. This is a **commercialization hygiene** gate, not a new lifecycle stage. Sequence: **after [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) closes**, **before** broad external UAT / U.S. commercialization. |
 | Module | **Cross-cutting UX copy.** [Projects](../modules/projects.md) owns Project Hub chrome. Owning modules retain their screens: Plan Intelligence, Estimating, Pricing Engine, Proposals, Project Controls, BUILD, MONITOR, LEARN (Future), authentication. This gate does **not** transfer record ownership. |
 | Date | 2026-09-07 |
-| Status | **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 2 IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED / NOT A PRODUCT-WIDE SWEEP** (2026-09-07). Remaining FG-025 slices / surfaces are **NOT AUTHORIZED**. Do **not** treat this gate as closed. |
+| Status | **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 2 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 3 IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED / NOT A PRODUCT-WIDE SWEEP** (2026-09-07). Remaining FG-025 surfaces are **NOT AUTHORIZED**. Do **not** treat this gate as closed. |
 | Architecture | [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** (PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN) · [FG-011](FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT** (Hub reads/links; Future labeled) · [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (office vs customer-facing estimate copy) · [FG-017](FG-017-organization-brand-profile-v1.md) **CLOSED / OPERATIONAL FOR UAT** (visual brand, not terminology) · [FG-021](FG-021-field-web-v1-today-and-capture.md) **CLOSED** (Field Web capture copy) · [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 | Related ADRs | **None new in this recording pass.** Visual identity remains [ADR-040](../adr/ADR-040-organization-brand-profile.md). Do **not** accept ADR-008 or ADR-010 from this gate. |
 | Prerequisites | [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. Slice 1 and Slice 2 were each authorized by a bounded Joel/ChatGPT prompt (2026-09-07). Remaining slices remain **NOT AUTHORIZED**. |
@@ -18,9 +18,9 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **RECORDED.** **IMPLEMENTATION PREFLIGHT COMPLETE.** **SLICE 1 IMPLEMENTED.** **SLICE 2 IMPLEMENTED.** **NOT CLOSED.** |
-| UI copy rewrite | **SLICE 1 AND SLICE 2 AUTHORIZED AND IMPLEMENTED.** Remaining surfaces **NOT AUTHORIZED.** |
-| Product code | Presentation mapping `app/presentation/contractor_copy.py` + Project Hub (`detail.html`) PLAN/PRICE/CONTRACT/BUILD/MONITOR display. |
+| Feature Gate (this document) | **RECORDED.** **IMPLEMENTATION PREFLIGHT COMPLETE.** **SLICE 1 IMPLEMENTED.** **SLICE 2 IMPLEMENTED.** **SLICE 3 IMPLEMENTED.** **NOT CLOSED.** |
+| UI copy rewrite | **SLICE 1, SLICE 2, AND SLICE 3 AUTHORIZED AND IMPLEMENTED.** Remaining surfaces **NOT AUTHORIZED.** |
+| Product code | Presentation mapping `app/presentation/contractor_copy.py` + Project Hub (`detail.html`) PLAN/PRICE/CONTRACT/BUILD/MONITOR display + office PRICE specialist templates. |
 | Schema / Alembic | **None.** |
 | New ADR | **None.** |
 
@@ -30,15 +30,16 @@ FUTURE / RECORDED
 IMPLEMENTATION PREFLIGHT COMPLETE
 SLICE 1 IMPLEMENTED / TESTED / COMMITTED / PUSHED
 SLICE 2 IMPLEMENTED / TESTED / COMMITTED / PUSHED
+SLICE 3 IMPLEMENTED / TESTED / COMMITTED / PUSHED
 NOT CLOSED
-NOT A PRODUCT-WIDE SWEEP
-REMAINING FG-025 SLICES / SURFACES: NOT AUTHORIZED
+NOT YET PRODUCT-WIDE COMPLETE
+REMAINING FG-025 SURFACES: NOT AUTHORIZED
 FG-023: CLOSED / OPERATIONAL FOR UAT
 FG-024: FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
 ```
 
-Joel/ChatGPT recorded this gate on **2026-09-07**. Preflight completed the same day. Bounded prompts authorized Slice 1 then Slice 2 the same day. The gate is **NOT CLOSED**. Remaining surfaces stay unauthorized. FG-023 remains **CLOSED**. Do **not** start Slice 3 from this document.
+Joel/ChatGPT recorded this gate on **2026-09-07**. Preflight completed the same day. Bounded prompts authorized Slice 1, Slice 2, then Slice 3 the same day. The gate is **NOT CLOSED**. Remaining surfaces stay unauthorized. FG-023 remains **CLOSED**. Do **not** start Slice 4 from this document.
 
 ---
 
@@ -527,7 +528,27 @@ Slice 1 MONITOR mappings and frozen financial metric labels were **not** renamed
 
 Dedicated tests: `tests/test_fg025_contractor_copy.py` (**10**). Hub HTML copy assertions also updated in `tests/test_project_hub.py`, `tests/test_monitor_v1_fg023.py`, `tests/test_permit_foundation_fg015.py`, and `tests/test_organization_foundation.py` (legacy Hub banner only). Domain-key assertions unchanged.
 
-Do **not** start Slice 3 from this section.
+Do **not** start Slice 4 from this section.
+
+---
+
+## SLICE 3 IMPLEMENTATION (2026-09-07)
+
+**Status:** **SLICE 3 IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Gate **NOT CLOSED.** Remaining FG-025 surfaces **NOT AUTHORIZED.** Not a product-wide sweep.
+
+Presentation-layer mapping only, reusing `app/presentation/contractor_copy.py`. No competing copy system. No schema, migration, live DB write, pricing/labour/estimate arithmetic change, enum/model rename, MONITOR change, Field Web rewrite, customer PDF rewrite, LEARN, or FG-024.
+
+Office PRICE specialist copy:
+
+- Pricing office title **Pricing**. Method `TRUE_GROSS_MARGIN` displays **Gross Margin Pricing** (never Markup Pricing; internal key unchanged). `COST_PLUS_MARKUP` displays **Cost plus markup**. `COST_PLUS_MARKUP_STACK` displays **Cost plus markup (legacy stack)**.
+- Labour office title **Labour rates** (org rates/tasks/standards; not a job labour estimate). Hub PRICE links: **Pricing** / **Labour rates**.
+- Estimate office: **Estimate version**, **Pricing lock**; Estimate ≠ Proposal preserved.
+- Cost Library / Assemblies: **Catalogue** column (internal canonical identity unchanged).
+- Material Catalogue: shared-name copy; status/kind/substitution mapped for display.
+
+Dedicated tests: `tests/test_fg025_contractor_copy.py` (**13**). PRICE HTML copy assertions also updated in `tests/test_pricing_engine.py`, `tests/test_labour_engine.py`, and `tests/test_estimate_output_consistency.py`. Domain-key assertions unchanged.
+
+Do **not** start Slice 4 from this section.
 
 ---
 
@@ -535,8 +556,8 @@ Do **not** start Slice 3 from this section.
 
 | Role | State |
 |------|--------|
-| Joel / ChatGPT | **Recorded** 2026-09-07. Preflight **COMPLETE** 2026-09-07. **Slice 1 authorized and implemented** 2026-09-07. **Slice 2 authorized and implemented** 2026-09-07. Remaining slices **not** authorized. Gate **not** closed. |
-| Cursor | Slice 2 Project Hub language + tests + docs. No Slice 3. No FG-024. No LEARN. |
-| Implementation | **SLICE 2 DONE.** Remaining FG-025 surfaces **NOT AUTHORIZED** until a later bounded prompt. |
+| Joel / ChatGPT | **Recorded** 2026-09-07. Preflight **COMPLETE** 2026-09-07. **Slice 1 authorized and implemented** 2026-09-07. **Slice 2 authorized and implemented** 2026-09-07. **Slice 3 authorized and implemented** 2026-09-07. Remaining surfaces **not** authorized. Gate **not** closed. |
+| Cursor | Slice 3 PRICE specialist language + tests + docs. No Slice 4. No FG-024. No LEARN. |
+| Implementation | **SLICE 3 DONE.** Remaining FG-025 surfaces **NOT AUTHORIZED** until a later bounded prompt. |
 
-**Next governed action:** **STOP.** Return Slice 2 report to ChatGPT Architect. Do **not** start Slice 3. Do **not** start FG-024. Do **not** start LEARN. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Next governed action:** **STOP.** Return Slice 3 report to ChatGPT Architect. Do **not** start Slice 4. Do **not** start FG-024. Do **not** start LEARN. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-07 — FG-025 Slice 3 contractor-facing PRICE language
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-07 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 7 SEP 2026** |
+| Objective | Implement FG-025 Slice 3 only: contractor-facing language on current office PRICE specialist screens. |
+| Business decision | Slice 3 **AUTHORIZED AND IMPLEMENTED**. Office titles **Pricing** / **Labour rates**. Internal `TRUE_GROSS_MARGIN` unchanged; display **Gross Margin Pricing**. FG-025 overall **NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**. FG-023 remains **CLOSED**. FG-024 remains **FUTURE / NOT IMPLEMENTATION-AUTHORIZED**. |
+| Architectural decision | Reuse Slice 1/2 `app/presentation/contractor_copy.py`. Do not create a competing copy system. Do not rename enums/schema. No pricing/labour/estimate arithmetic change. Hub otherwise frozen except PRICE specialist link labels. |
+| Prompt template used | `docs/prompts/cursor-implementation-template.md` does **not** exist. Followed AGENTS.md and the bounded Slice 3 prompt. |
+| Approved Cursor prompt summary | FG-025 Slice 3 PRICE specialist language only. No schema, migration, calculation change, enum rename, MONITOR, FG-024, LEARN, Field Web, customer PDF, auth/Settings, or navigation-wide sweep. Commit + push after PASS. |
+| Files expected to change | `app/presentation/contractor_copy.py`; PRICE office templates; Hub PRICE link labels if needed; `tests/test_fg025_contractor_copy.py`; PRICE HTML assertions; current-authority docs. |
+| Files prohibited from changing | `migrations/`; models/enums; MONITOR services; Field Web; PDFs; auth/Settings; `app/navigation.py`; FG-024; live DB. |
+| Implementation result | Slice 3 implemented. Hub PRICE links: **Pricing** / **Labour rates**. Live current `e3f4a5b6c7d8`. Live **39** / **39**. Project **13** five actuals unchanged. |
+| Tests | Dedicated **13 passed**. PRICE-focused **167 passed**. Governed **303 passed**. Full **606 passed**. Manual PRICE review **PASS**. `git diff --check` PASS. |
+| Project-state-report update | Yes — FG-025 Slice 3 implemented / not closed. |
+| Milestone entry update | Yes — Slice 3 recorded. |
+| Constitutional issue raised | None. Global nav still Labour Engine / Pricing Engine (Slice 4). Hub PRICE table leftover `TRUE_GROSS_MARGIN` left frozen except link labels. |
+| Unresolved issues | Remaining FG-025 surfaces unauthorized. “Contract value” still flagged. |
+| Next approved step | **STOP.** Do **not** start Slice 4. Do **not** start FG-024. Do **not** start LEARN. |
+| Next approved prompt | None authorized. |
+| Commit hash | (this product commit) |
+
 ### 2026-09-07 — FG-025 Slice 2 contractor-facing Project Hub language
 
 | Field | Content |

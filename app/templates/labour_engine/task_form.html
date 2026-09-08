@@ -6,7 +6,7 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Labour Engine</p>
+        <p class="eyebrow">{{ contractor_copy.LABOUR_RATES_HEADING }}</p>
         <h1>{{ "Edit Labour Task" if task else "New Labour Task" }}</h1>
     </div>
 </div>
@@ -18,7 +18,7 @@
             <input type="text" name="task_code" value="{{ task.task_code if task else '' }}" {% if task %}readonly{% else %}required{% endif %}>
         </label>
         <label>
-            Canonical name *
+            Task name *
             <input type="text" name="canonical_name" value="{{ task.canonical_name if task else '' }}" required>
         </label>
         <label>
@@ -47,7 +47,7 @@
         <textarea name="description" rows="3">{{ task.description if task and task.description else '' }}</textarea>
     </label>
     <label>
-        Provenance
+        {{ contractor_copy.SOURCE_NOTES_LABEL }}
         <textarea name="provenance" rows="3">{{ task.provenance if task and task.provenance else '' }}</textarea>
     </label>
     <div class="form-actions">

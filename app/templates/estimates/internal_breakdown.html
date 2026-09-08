@@ -27,22 +27,23 @@
             <p>{{ estimate.estimate_number }} — {{ estimate.title }}</p>
         </div>
         <div>
-            <p class="eyebrow">EstimateVersion</p>
-            <p>id {{ version.id }} · {{ version.display_label }}</p>
+            <p class="eyebrow">Estimate version</p>
+            <p>{{ version.display_label }}</p>
+            <p class="muted-copy">{{ contractor_copy.entry_reference(version.id) }}</p>
         </div>
         <div>
             <p class="eyebrow">Authoritative pricing method</p>
-            <p><strong>{{ method }}</strong></p>
+            <p><strong>{{ contractor_copy.pricing_method_label(method) }}</strong></p>
         </div>
         {% if pricing_snapshot %}
         <div>
-            <p class="eyebrow">EstimatePricingSnapshot</p>
-            <p>id {{ pricing_snapshot.id }}</p>
+            <p class="eyebrow">{{ contractor_copy.PRICING_LOCK_HEADING }}</p>
+            <p>{{ contractor_copy.entry_reference(pricing_snapshot.id) }}</p>
         </div>
         {% else %}
         <div>
-            <p class="eyebrow">EstimatePricingSnapshot</p>
-            <p>None — legacy COST_PLUS_MARKUP_STACK</p>
+            <p class="eyebrow">{{ contractor_copy.PRICING_LOCK_HEADING }}</p>
+            <p>None — {{ contractor_copy.pricing_method_label("COST_PLUS_MARKUP_STACK") }}</p>
         </div>
         {% endif %}
     </div>
@@ -50,7 +51,7 @@
 
 <section class="form-panel" style="margin-bottom: 24px;">
     <h2>Direct Cost reconciliation</h2>
-    <p>Internal Direct Cost = sum of line <code>extended_cost</code> (waste already included). Labour Engine snapshots are not included.</p>
+    <p>Internal Direct Cost is the sum of line extended cost (waste already included). Labour rate snapshots are not included.</p>
     <p><strong>Direct Cost total: ${{ "%.2f"|format(direct_cost) }}</strong></p>
 </section>
 
@@ -109,16 +110,17 @@
 <section class="form-panel" style="margin-bottom: 24px;">
     <h2>Selling-price authority</h2>
     {% if named_method_governs %}
-    <p>Named method <strong>{{ method }}</strong> on EstimatePricingSnapshot id {{ pricing_snapshot.id }} is authoritative. Legacy Overhead / Profit stack labels do not govern this version.</p>
+    <p>Named method <strong>{{ contractor_copy.pricing_method_label(method) }}</strong> on this pricing lock is authoritative. Legacy Overhead / Profit stack labels do not govern this version.</p>
+    <p class="muted-copy">{{ contractor_copy.entry_reference(pricing_snapshot.id) }}</p>
     {% if method == "TRUE_GROSS_MARGIN" %}
-    <p>True gross margin (not markup). Target GM fraction: {{ target_gross_margin if target_gross_margin is not none else "—" }}</p>
+    <p>Gross Margin Pricing — not markup. Target gross margin: {{ target_gross_margin if target_gross_margin is not none else "—" }}</p>
     {% elif method == "COST_PLUS_MARKUP" %}
-    <p>Cost-plus markup rate (fraction): {{ markup_rate if markup_rate is not none else "—" }}</p>
+    <p>Cost plus markup rate: {{ markup_rate if markup_rate is not none else "—" }}</p>
     {% endif %}
     {% elif pricing_snapshot %}
-    <p>Snapshot method <strong>{{ method }}</strong> (legacy named stack). Version Overhead / Profit / Tax percents apply.</p>
+    <p>Pricing lock method <strong>{{ contractor_copy.pricing_method_label(method) }}</strong> (legacy named stack). Version Overhead / Profit / Tax percents apply.</p>
     {% else %}
-    <p>No pricing snapshot. Live <strong>COST_PLUS_MARKUP_STACK</strong> (legacy) calculation.</p>
+    <p>No pricing lock. Live <strong>{{ contractor_copy.pricing_method_label("COST_PLUS_MARKUP_STACK") }}</strong> calculation.</p>
     {% endif %}
     <div class="form-grid">
         <div>
@@ -141,23 +143,23 @@
 </section>
 
 <section class="form-panel" style="margin-bottom: 24px;">
-    <h2>Labour Engine snapshot</h2>
-    <p><strong>LABOUR ENGINE SNAPSHOT — NOT INCLUDED IN SELLING-PRICE BASIS</strong></p>
+    <h2>Labour rate snapshot</h2>
+    <p><strong>Labour rate snapshot — not included in selling-price basis</strong></p>
     <p>These hours and costs are related evidence only. They do not increase Direct Cost or selling price.</p>
     {% if labour_snapshots %}
     <div class="table-wrap">
         <table class="data-table internal-breakdown-table">
             <thead>
                 <tr>
-                    <th>Snapshot id</th>
-                    <th class="num">Man-hours</th>
+                    <th>Entry</th>
+                    <th class="num">Hours</th>
                     <th class="num">Direct labour cost</th>
                 </tr>
             </thead>
             <tbody>
                 {% for row in labour_snapshots %}
                 <tr>
-                    <td>{{ row.id }}</td>
+                    <td>{{ contractor_copy.entry_reference(row.id) }}</td>
                     <td class="num">{{ row.calculated_man_hours }}</td>
                     <td class="num">${{ "%.2f"|format(row.direct_labour_cost) }}</td>
                 </tr>
@@ -167,7 +169,7 @@
     </div>
     <p>Labour snapshot hours (not in basis): {{ labour_total_hours }} · Direct labour cost (not in basis): ${{ "%.2f"|format(labour_total_cost) }}</p>
     {% else %}
-    <p class="muted-copy">No EstimateLabourSnapshot on this version.</p>
+    <p class="muted-copy">No labour rate snapshot on this version.</p>
     {% endif %}
 </section>
 {% endblock %}

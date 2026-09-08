@@ -6,11 +6,11 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Labour Engine</p>
+        <p class="eyebrow">{{ contractor_copy.LABOUR_RATES_HEADING }}</p>
         <h1>Historical labour mappings</h1>
         <p>Suggestions are never auto-accepted. Historical source rows are not rewritten.</p>
     </div>
-    <a class="button-link" href="{{ url_for('labour_engine.index') }}">Labour Engine home</a>
+    <a class="button-link" href="{{ url_for('labour_engine.index') }}">{{ contractor_copy.LABOUR_RATES_HEADING }} home</a>
 </div>
 
 <p>
@@ -28,7 +28,7 @@
 <table class="data-table">
     <thead>
         <tr>
-            <th>ID</th>
+            <th>Entry</th>
             <th>Source string</th>
             <th>Hours</th>
             <th>Stored hourly rate</th>
@@ -68,7 +68,7 @@
 <table class="data-table">
     <thead>
         <tr>
-            <th>ID</th>
+            <th>Entry</th>
             <th>Source string</th>
             <th>Task</th>
             <th>Status</th>
@@ -82,7 +82,7 @@
             <td>{{ mapping.id }}</td>
             <td>{{ mapping.source_string }}</td>
             <td>{{ mapping.labour_task.task_code if mapping.labour_task else "—" }}</td>
-            <td>{{ mapping.review_status }}</td>
+            <td>{{ contractor_copy.office_status_label(mapping.review_status) }}</td>
             <td>{{ mapping.suggested_by }}</td>
             <td><a class="button-link" href="{{ url_for('labour_engine.mapping_detail', mapping_id=mapping.id) }}">Review</a></td>
         </tr>

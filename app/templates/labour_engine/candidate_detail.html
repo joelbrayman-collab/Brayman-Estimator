@@ -6,9 +6,9 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Labour Engine</p>
-        <h1>Candidate {{ candidate.id }} — {{ candidate.state }}</h1>
-        <p>{{ candidate.standard_kind }} · {{ candidate.evidence_class }} · Org {{ candidate.organization_id }}</p>
+        <p class="eyebrow">{{ contractor_copy.LABOUR_RATES_HEADING }}</p>
+        <h1>Candidate {{ candidate.id }} — {{ contractor_copy.office_status_label(candidate.state) }}</h1>
+        <p>{{ contractor_copy.office_status_label(candidate.standard_kind) }} · {{ contractor_copy.office_status_label(candidate.evidence_class) }}</p>
     </div>
     <a class="button-link" href="{{ url_for('labour_engine.list_candidates') }}">Back</a>
 </div>
@@ -35,15 +35,15 @@
         New state
         <select name="new_state" required>
             {% if candidate.state == "DRAFT" %}
-            <option value="PROPOSED">PROPOSED</option>
-            <option value="WITHDRAWN">WITHDRAWN</option>
+            <option value="PROPOSED">{{ contractor_copy.office_status_label("PROPOSED") }}</option>
+            <option value="WITHDRAWN">{{ contractor_copy.office_status_label("WITHDRAWN") }}</option>
             {% elif candidate.state == "PROPOSED" %}
-            <option value="IN_REVIEW">IN_REVIEW</option>
-            <option value="WITHDRAWN">WITHDRAWN</option>
+            <option value="IN_REVIEW">{{ contractor_copy.office_status_label("IN_REVIEW") }}</option>
+            <option value="WITHDRAWN">{{ contractor_copy.office_status_label("WITHDRAWN") }}</option>
             {% elif candidate.state == "IN_REVIEW" %}
-            <option value="APPROVED">APPROVED</option>
-            <option value="REJECTED">REJECTED</option>
-            <option value="WITHDRAWN">WITHDRAWN</option>
+            <option value="APPROVED">{{ contractor_copy.office_status_label("APPROVED") }}</option>
+            <option value="REJECTED">{{ contractor_copy.office_status_label("REJECTED") }}</option>
+            <option value="WITHDRAWN">{{ contractor_copy.office_status_label("WITHDRAWN") }}</option>
             {% endif %}
         </select>
     </label>

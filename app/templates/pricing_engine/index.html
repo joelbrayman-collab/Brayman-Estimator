@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Pricing Engine | Brayman Construction Platform{% endblock %}
-{% block page_title %}Pricing Engine{% endblock %}
+{% block title %}{{ contractor_copy.PRICING_HEADING }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.PRICING_HEADING }}{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">Estimating</p>
-        <h1>Pricing Engine</h1>
-        <p>Organization {{ organization_id }} — FG-009. Organization-owned policies. CalibAi owns methods; this org owns rates. Internal office view.</p>
+        <h1>{{ contractor_copy.PRICING_HEADING }}</h1>
+        <p>Organization pricing policies. Methods stay platform-owned; this organization owns rates.</p>
     </div>
     <a class="button" href="{{ url_for('pricing_engine.create_policy') }}">New draft policy</a>
 </div>
@@ -31,8 +31,8 @@
         <tr>
             <td>{{ policy.policy_code }}</td>
             <td>v{{ policy.version_number }}</td>
-            <td>{{ policy.method }}</td>
-            <td>{{ policy.approval_status }}</td>
+            <td>{{ contractor_copy.pricing_method_label(policy.method) }}</td>
+            <td>{{ contractor_copy.office_status_label(policy.approval_status) }}</td>
             <td>{% if policy.is_default %}Yes{% else %}—{% endif %}</td>
             <td>{% if policy.tax_percent is not none %}{{ "%.2f"|format(policy.tax_percent) }}{% else %}—{% endif %}</td>
             <td><a class="button-link" href="{{ url_for('pricing_engine.policy_detail', policy_id=policy.id) }}">Open</a></td>

@@ -6,9 +6,9 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Labour Engine</p>
+        <p class="eyebrow">{{ contractor_copy.LABOUR_RATES_HEADING }}</p>
         <h1>Mapping {{ mapping.id }}</h1>
-        <p>Status {{ mapping.review_status }} · Suggested by {{ mapping.suggested_by }} · Org {{ mapping.organization_id }}</p>
+        <p>Status {{ contractor_copy.office_status_label(mapping.review_status) }} · Suggested by {{ mapping.suggested_by }}</p>
     </div>
     <a class="button-link" href="{{ url_for('labour_engine.list_mappings') }}">Back to mappings</a>
 </div>
@@ -16,12 +16,12 @@
 <table class="data-table">
     <tbody>
         <tr><th>Source string</th><td>{{ mapping.source_string }}</td></tr>
-        <tr><th>Canonical task</th><td>{{ mapping.labour_task.task_code if mapping.labour_task else "—" }}</td></tr>
+        <tr><th>Labour task</th><td>{{ mapping.labour_task.task_code if mapping.labour_task else "—" }}</td></tr>
         <tr><th>Historical labour item</th><td>{{ mapping.historical_labour_item_id or "—" }}</td></tr>
         <tr><th>Confidence</th><td>{{ mapping.mapping_confidence if mapping.mapping_confidence is not none else "—" }}</td></tr>
         <tr><th>Reviewed by</th><td>{{ mapping.reviewed_by or "—" }} at {{ mapping.reviewed_at or "—" }}</td></tr>
         <tr><th>Notes</th><td>{{ mapping.review_notes or "—" }}</td></tr>
-        <tr><th>Provenance</th><td>{{ mapping.provenance or "—" }}</td></tr>
+        <tr><th>{{ contractor_copy.SOURCE_NOTES_LABEL }}</th><td>{{ mapping.provenance or "—" }}</td></tr>
     </tbody>
 </table>
 
@@ -29,14 +29,14 @@
 <h2>Source evidence (immutable)</h2>
 <table class="data-table">
     <tbody>
-        <tr><th>task_description</th><td>{{ mapping.historical_labour_item.task_description }}</td></tr>
-        <tr><th>crew_size</th><td>{{ mapping.historical_labour_item.crew_size }}</td></tr>
-        <tr><th>duration_days</th><td>{{ mapping.historical_labour_item.duration_days }}</td></tr>
-        <tr><th>hours_per_day</th><td>{{ mapping.historical_labour_item.hours_per_day }}</td></tr>
-        <tr><th>total_man_hours</th><td>{{ mapping.historical_labour_item.total_man_hours }}</td></tr>
-        <tr><th>hourly_rate</th><td>{{ mapping.historical_labour_item.hourly_rate }}</td></tr>
-        <tr><th>extended_labour_cost</th><td>{{ mapping.historical_labour_item.extended_labour_cost }}</td></tr>
-        <tr><th>formula_pattern</th><td>{{ mapping.historical_labour_item.formula_pattern }}</td></tr>
+        <tr><th>Description</th><td>{{ mapping.historical_labour_item.task_description }}</td></tr>
+        <tr><th>Crew size</th><td>{{ mapping.historical_labour_item.crew_size }}</td></tr>
+        <tr><th>Duration (days)</th><td>{{ mapping.historical_labour_item.duration_days }}</td></tr>
+        <tr><th>Hours per day</th><td>{{ mapping.historical_labour_item.hours_per_day }}</td></tr>
+        <tr><th>Hours</th><td>{{ mapping.historical_labour_item.total_man_hours }}</td></tr>
+        <tr><th>Hourly rate</th><td>{{ mapping.historical_labour_item.hourly_rate }}</td></tr>
+        <tr><th>Labour cost</th><td>{{ mapping.historical_labour_item.extended_labour_cost }}</td></tr>
+        <tr><th>Formula pattern</th><td>{{ mapping.historical_labour_item.formula_pattern }}</td></tr>
     </tbody>
 </table>
 {% endif %}
@@ -45,7 +45,7 @@
 <form method="post" action="{{ url_for('labour_engine.accept_mapping', mapping_id=mapping.id) }}" class="form-panel">
     <h2>Human review</h2>
     <label>
-        Canonical task
+        Labour task
         <select name="labour_task_id">
             <option value="">Keep suggested task</option>
             {% for task in tasks %}
@@ -72,8 +72,8 @@
 </form>
 <form method="post" action="{{ url_for('labour_engine.not_labour_mapping', mapping_id=mapping.id) }}" class="form-panel">
     <input type="hidden" name="reviewed_by" value="Joel Brayman">
-    <label>NOT_LABOUR notes <textarea name="review_notes" rows="2"></textarea></label>
-    <button type="submit">Mark NOT_LABOUR</button>
+    <label>Not-labour notes <textarea name="review_notes" rows="2"></textarea></label>
+    <button type="submit">Mark as not labour</button>
 </form>
 {% endif %}
 {% if mapping.review_status == "ACCEPTED" %}

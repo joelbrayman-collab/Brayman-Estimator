@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-07 — FG-025 Slice 3 contractor-facing PRICE language
+
+| Field | Content |
+|-------|---------|
+| ID | FG-025 — Slice 3 PRICE specialist language |
+| Status | **SLICE 3 IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED.** Remaining surfaces **NOT AUTHORIZED.** Not a product-wide sweep. |
+| Branch | `main` |
+| Base commit | `1aa54f51dcd2447ce6934dddbf5305c81016a824` |
+| Objective | Contractor-facing language on current office PRICE specialist screens (Pricing, Labour rates, Estimates, Cost Library, Assemblies, Material Catalogue), without changing calculations, schema, or MONITOR. |
+| Deliverables | PRICE templates + `contractor_copy.py` Slice 3 maps; Hub PRICE link labels only; FG-025 and PRICE HTML tests. |
+| Validation | Dedicated **13 passed**. PRICE-focused **167 passed**. Governed **303 passed**. Full **606 passed**. Manual PRICE review **PASS**. `git diff --check`. Live current = heads `e3f4a5b6c7d8`. Field **39 / 39**. Project **13** five actuals unchanged. |
+| Architectural findings | Reused Slice 1/2 presentation map. Office titles **Pricing** / **Labour rates**. Internal `TRUE_GROSS_MARGIN` unchanged; display **Gross Margin Pricing**. Global nav still says Labour Engine / Pricing Engine (Slice 4). Hub PRICE table leftover `TRUE_GROSS_MARGIN` left frozen except link labels. |
+| Open decisions | Remaining FG-025 surfaces; “contract value” wording still flagged; FG-024 unauthorized. |
+| Next milestone | **STOP.** Do **not** start Slice 4. Do **not** start FG-024. Do **not** start LEARN. |
+| Commit | (this product commit) |
+| Date | 2026-09-07 |
+
 ### 2026-09-07 — FG-025 Slice 2 contractor-facing Project Hub language
 
 | Field | Content |

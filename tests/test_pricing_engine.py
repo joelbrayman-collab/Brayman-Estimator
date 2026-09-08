@@ -323,8 +323,10 @@ def test_legacy_estimates_load_without_recalculation(app, client):
     assert version.pricing_snapshot is None
     response = client.get(f"/estimates/{estimate.id}/versions/{version.id}")
     assert response.status_code == 200
-    assert b"COST_PLUS_MARKUP_STACK" in response.data
-    assert b"No EstimatePricingSnapshot" in response.data
+    assert b"COST_PLUS_MARKUP_STACK" not in response.data
+    assert b"Cost plus markup (legacy stack)" in response.data
+    assert b"No EstimatePricingSnapshot" not in response.data
+    assert b"No pricing lock." in response.data
 
 
 def test_locked_snapshot_immutability(app):
@@ -1002,7 +1004,8 @@ def test_office_pricing_policy_ui(client, app):
     resp = client.get("/pricing-engine/")
     assert resp.status_code == 200
     assert b"ORG-001-TRUE-GM-15" in resp.data
-    assert b"TRUE_GROSS_MARGIN" in resp.data
+    assert b"TRUE_GROSS_MARGIN" not in resp.data
+    assert b"Gross Margin Pricing" in resp.data
 
 
 def test_alembic_fg009_upgrade_and_downgrade_preserves_legacy_totals(tmp_path):

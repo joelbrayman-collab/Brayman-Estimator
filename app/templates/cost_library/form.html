@@ -61,7 +61,7 @@
     </label>
 
     <label>
-        Canonical material (Material category only)
+        Catalogue material (Material category only)
         <select name="canonical_material_id">
             <option value="">Not linked</option>
             {% for material in canonical_materials %}
@@ -71,11 +71,11 @@
             {% endfor %}
             {% if cost_item and cost_item.canonical_material and cost_item.canonical_material.status != "ACTIVE" %}
             <option value="{{ cost_item.canonical_material.id }}" selected>
-                {{ cost_item.canonical_material.code }} — {{ cost_item.canonical_material.display_name }} ({{ cost_item.canonical_material.status }})
+                {{ cost_item.canonical_material.code }} — {{ cost_item.canonical_material.display_name }} ({{ contractor_copy.office_status_label(cost_item.canonical_material.status) }})
             </option>
             {% endif %}
         </select>
-        <span>Read-only CalibAi identity. Link or unlink only. Create/edit of canonical materials is not available here.</span>
+        <span>Shared catalogue name. Link or unlink only. Catalogue names are not edited here.</span>
     </label>
 
     <div class="form-actions">

@@ -6,9 +6,9 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Labour Engine</p>
+        <p class="eyebrow">{{ contractor_copy.LABOUR_RATES_HEADING }}</p>
         <h1>New calibration candidate</h1>
-        <p>Starts in DRAFT. Not an operating standard.</p>
+        <p>Starts as a draft. Not an operating standard.</p>
     </div>
 </div>
 
@@ -18,7 +18,7 @@
             Standard kind *
             <select name="standard_kind" required>
                 {% for kind in kinds %}
-                <option value="{{ kind }}">{{ kind }}</option>
+                <option value="{{ kind }}">{{ contractor_copy.office_status_label(kind) }}</option>
                 {% endfor %}
             </select>
         </label>
@@ -55,7 +55,7 @@
             Evidence class
             <select name="evidence_class">
                 {% for cls in evidence_classes %}
-                <option value="{{ cls }}" {% if cls == "ORG-HISTORICAL" %}selected{% endif %}>{{ cls }}</option>
+                <option value="{{ cls }}" {% if cls == "ORG-HISTORICAL" %}selected{% endif %}>{{ contractor_copy.office_status_label(cls) }}</option>
                 {% endfor %}
             </select>
         </label>

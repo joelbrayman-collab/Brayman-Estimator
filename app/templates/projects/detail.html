@@ -302,8 +302,8 @@
         </div>
         {% endif %}
         <p class="muted-copy" style="margin-top: 12px;">
-            Organization methodology: <a href="{{ url_for('pricing_engine.index') }}">Pricing Engine</a> ·
-            <a href="{{ url_for('labour_engine.index') }}">Labour Engine</a>
+            Organization methodology: <a href="{{ url_for('pricing_engine.index') }}">{{ contractor_copy.PRICING_HEADING }}</a> ·
+            <a href="{{ url_for('labour_engine.index') }}">{{ contractor_copy.LABOUR_RATES_HEADING }}</a>
             (catalogues, not this project’s operating data).
         </p>
     </article>

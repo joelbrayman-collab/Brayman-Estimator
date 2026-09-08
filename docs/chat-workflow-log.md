@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — FG-026 live migration and office UAT close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
+| Objective | Execute authorized FG-026 live `flask db upgrade` to `f4a5b6c7d8e9` and bounded project-3 office UAT. Close the gate if acceptance passes. |
+| Business decision | Joel authorized the previously HOLDed live-migrate + UAT prompt. V1-02 remains unauthorized. |
+| Architectural decision | No product-code change. Additive live apply only. Estimating-owned insertion/citation remains. No automatic pricing/labour/supplier/MaterialRequirement. |
+| Prompt template used | `docs/prompts/cursor-feature-template.md` (live migrate + bounded UAT). |
+| Approved Cursor prompt summary | FG-026 LIVE MIGRATE + BOUNDED UAT (8 Sep 2026). V1-02 / Approve All Costing / V1-03 / FG-024 / another FG-025 slice not authorized. |
+| Files expected to change | `docs/` current-authority pins, FG-026 close, V1 register scoring, milestones, chat-workflow-log. |
+| Files prohibited from changing | Product code; tests; `migrations/`; V1-02 costing; supplier/BMR; FG-024; another FG-025 slice; LEARN; QuickBooks; contracts; Native Signing; Observation Delete; new Permit/Field. |
+| Implementation result | Live upgrade `e3f4a5b6c7d8` → `f4a5b6c7d8e9` **PASS**. Office UAT **PASS** on port **5015**. Gate **CLOSED / OPERATIONAL FOR UAT**. V1-01 **COMPLETE**. Readiness **38.85 → 39%**. |
+| Tests | PRODUCT TESTS NOT RERUN — live-migrate / UAT / governance close only. Historical implementation evidence remains dedicated **20** / full **632**. |
+| Project-state-report update | Yes. |
+| Milestone entry update | Yes. |
+| Constitutional issue raised | None. |
+| Unresolved issues | V1-02 costing not authorized. Hub PLAN leftover “mapping is not started” copy is remaining FG-025 surface / not this gate. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin V1-02. |
+| Next approved prompt | HOLD — do not begin V1-02. |
+| Commit hash | this FG-026 live-migrate/UAT docs commit |
+
 ### 2026-09-08 — FG-026 takeoff-to-estimate mapping V1 implementation
 
 | Field | Content |

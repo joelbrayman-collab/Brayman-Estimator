@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE** (2026-09-08). Subsequent implementation (same date): product **IMPLEMENTED / TESTED / COMMITTED / PUSHED**. Live migrate / UAT **NOT AUTHORIZED / NOT RUN**. [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **NOT CLOSED**. |
+| Status | **PREFLIGHT COMPLETE** (2026-09-08). Subsequent implementation: product **IMPLEMENTED / TESTED / COMMITTED / PUSHED**. Subsequent live migrate + office UAT **PASS**. [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**. |
 | Date | 2026-09-08 |
 | Parent | Review Turnover `1c20100a3838828cdeebece51ed820bcf15063fb` |
 | Gate | [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) |
@@ -13,9 +13,9 @@ FG-026:
 RECORDED
 ARCHITECTURE PREFLIGHT COMPLETE
 IMPLEMENTED / TESTED / COMMITTED / PUSHED (2026-09-08)
-NOT LIVE-MIGRATED
-UAT NOT RUN
-NOT CLOSED
+LIVE-MIGRATED (e3f4a5b6c7d8 → f4a5b6c7d8e9)
+OFFICE UAT PASS
+CLOSED / OPERATIONAL FOR UAT
 ```
 
 This document pins later implementation mechanics. It does **not** amend accepted ADRs. It does **not** authorize implementation.
@@ -207,7 +207,7 @@ Line `unit` on insert = **user-confirmed unit**, not silently the package `appro
 
 **This preflight pass:** none.
 
-**Implementation (2026-09-08):** additive Alembic revision **`f4a5b6c7d8e9`** (`down_revision = e3f4a5b6c7d8`). Tables above only. Do **not** live-upgrade from the implementation package. Live current remains `e3f4a5b6c7d8` until a later authorized migrate.
+**Implementation (2026-09-08):** additive Alembic revision **`f4a5b6c7d8e9`** (`down_revision = e3f4a5b6c7d8`). Tables above only. **Live migrate (same date):** `e3f4a5b6c7d8` → `f4a5b6c7d8e9`. Live current = heads **`f4a5b6c7d8e9`**. Gitignored backup `instance/brayman_estimator-backup-before-fg026-f4a5b6c7d8e9.db`.
 
 ---
 

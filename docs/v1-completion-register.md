@@ -2,24 +2,23 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-08). Does **not** authorize live migrate, UAT, or later V1 packages. |
+| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-08). V1-01 / FG-026 **COMPLETE**. Does **not** authorize V1-02, FG-024, or another FG-025 slice. |
 | Product | CalibAi / The Estimator |
 | Date | 2026-09-08 |
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibAi V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. |
 
 ```text
-CALIBAI V1 READINESS: 34%
+CALIBAI V1 READINESS: 39%
 
 MAJOR PACKAGES:
-0 / 11 COMPLETE
+1 / 11 COMPLETE
 
 CURRENT V1 PACKAGE:
-V1-01 / FG-026 IMPLEMENTED / TESTED / COMMITTED / PUSHED
-NOT LIVE-MIGRATED / UAT NOT RUN / NOT CLOSED
+V1-02 (NOT AUTHORIZED)
 
 CRITICAL PATH:
-V1-01 live migrate + UAT (separate authorization) → V1-02 → V1-03 / V1-04
+V1-02 → V1-03 / V1-04
 V1-06 (parallel) → Ontario legal approval → V1-07 production for contracts
 V1-05 after V1-04 output 3
 V1-10 before real Brayman projects
@@ -32,7 +31,7 @@ BRAYMAN REAL-LIFE UAT READY:
 NO
 
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
-THIS REGISTER DOES NOT AUTHORIZE LIVE MIGRATE, UAT DATA, FG-024, OR ANOTHER FG-025 SLICE
+THIS REGISTER DOES NOT AUTHORIZE V1-02, FG-024, OR ANOTHER FG-025 SLICE
 ```
 
 ---
@@ -162,14 +161,15 @@ No package from Joel’s list is rejected. No existing August 2026 four-output /
 
 | Field | Value |
 |-------|--------|
-| **CALIBAI V1 READINESS** | **34%** |
-| **MAJOR PACKAGES COMPLETE** | **0 / 11** |
+| **CALIBAI V1 READINESS** | **39%** |
+| **MAJOR PACKAGES COMPLETE** | **1 / 11** |
+| COMPLETE | **1** (V1-01) |
 | SUBSTANTIALLY COMPLETE | **2** (V1-08, V1-09) |
-| PARTIAL | **5** (V1-01, V1-02, V1-04, V1-06, V1-10) |
+| PARTIAL | **4** (V1-02, V1-04, V1-06, V1-10) |
 | ARCHITECTURE COMPLETE / NOT IMPLEMENTED | **3** (V1-03, V1-05, V1-07) |
 | NOT STARTED | **1** (V1-11) |
-| **CURRENT V1 PACKAGE** | **V1-01 / FG-026 IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT RUN** |
-| **CRITICAL PATH** | V1-01 → V1-02 → V1-03 / V1-04; V1-06 parallel; V1-10 before real UAT; V1-11 last |
+| **CURRENT V1 PACKAGE** | **V1-02 (NOT AUTHORIZED)** |
+| **CRITICAL PATH** | V1-02 → V1-03 / V1-04; V1-06 parallel; V1-10 before real UAT; V1-11 last |
 | **BMR DEMO READY** | **NO** |
 | **BRAYMAN REAL-LIFE UAT READY** | **NO** |
 
@@ -187,16 +187,16 @@ Weights total **100%** and reflect **remaining business/product significance** f
 |-------|--------|
 | Intent | Approved / reviewed PLAN quantities become traceable governed estimate items |
 | Weight | **10%** |
-| Status | **PARTIAL** — product implemented/tested in Git; not live-migrated; UAT not run |
-| Factor | **0.55** (evidence-based: implementation + tests without live migrate/UAT; not COMPLETE) |
-| Contribution | **5.5** |
+| Status | **COMPLETE** — live-migrated; bounded office UAT **PASS**; [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
+| Factor | **1.00** |
+| Contribution | **10.0** |
 | V1 REQUIRED? | **YES** |
 | BLOCKER? | **NO** |
 | Dependencies | FG-010 **CLOSED**; existing Draft EstimateVersion + Assembly/CostItem on the same Project |
-| Governing | [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT RUN / NOT CLOSED**; [fg-026-takeoff-to-estimate-mapping-preflight.md](architecture/fg-026-takeoff-to-estimate-mapping-preflight.md); ADR-005/006/007/011/031 |
-| Next governed action | Separate authorized **live migrate + bounded UAT**. Do **not** live-upgrade or create project-3 Draft/Assembly from this implementation package. |
+| Governing | [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [fg-026-takeoff-to-estimate-mapping-preflight.md](architecture/fg-026-takeoff-to-estimate-mapping-preflight.md); ADR-005/006/007/011/031 |
+| Next governed action | **STOP.** Do **not** begin V1-02. V1-02 remains **NOT AUTHORIZED**. |
 
-PLAN proposes. Estimating commits. Package approval does **not** insert. Live approved package id 1 on project 3 has **no** estimate (not a defect).
+PLAN proposes. Estimating commits. Package approval does **not** insert. Live UAT: TakeoffPackage **id 1** on project **3** mapped to Estimate **id 9** / version **id 9** / line **id 7** (quantity **3** `ea`) with insertion **id 1** and **3** citations. Package 1 **unchanged**. No labour/pricing snapshot, MaterialRequirement, or supplier/SKU from the insert.
 
 ### V1-02 — Automated costing + human cost approval
 
@@ -396,7 +396,7 @@ Remaining unauthorized candidates: customer Proposal/PDF terminology; Historical
 
 | ID | Weight | Factor | Contribution |
 |----|--------|--------|--------------|
-| V1-01 | 10 | 0.55 | 5.5 |
+| V1-01 | 10 | 1.00 | 10.0 |
 | V1-02 | 10 | 0.40 | 4.0 |
 | V1-03 | 12 | 0.15 | 1.8 |
 | V1-04 | 8 | 0.50 | 4.0 |
@@ -407,7 +407,7 @@ Remaining unauthorized candidates: customer Proposal/PDF terminology; Historical
 | V1-09 | 6 | 0.70 | 4.2 |
 | V1-10 | 10 | 0.35 | 3.5 |
 | V1-11 | 7 | 0.00 | 0.0 |
-| **Total** | **100** | | **34.35 → 34%** |
+| **Total** | **100** | | **38.85 → 39%** |
 
 Round the published readiness to the **nearest whole percent**. Recalculate from this table when a package status changes. Do not average Feature Gate counts.
 
@@ -483,7 +483,7 @@ The BMR demo must show CalibAi as an **integrated contractor platform**, not a s
 | Project setup (ORG-001, location, commercial context) | supporting / V1-10 | **EXISTS** |
 | Plan ingestion + sheet/review | PLAN foundation | **EXISTS** (M005–M010) |
 | Takeoff / quantity evidence | FG-010 | **EXISTS** (mock extractor; interior-door count) |
-| Map approved quantities → estimate | V1-01 | **IMPLEMENTED IN GIT / NOT LIVE-MIGRATED / UAT NOT RUN** |
+| Map approved quantities → estimate | V1-01 | **COMPLETE** (FG-026 **CLOSED / OPERATIONAL FOR UAT**) |
 | Estimate creation on the same project | PRICE | **EXISTS** (manual builder) |
 | Costing from org commercial intelligence | V1-02 | **PARTIAL** (library + labour/pricing; not CalibAi-costed exceptions) |
 | Supplier / BMR relationship | V1-03 | **NOT IMPLEMENTED** |
@@ -520,12 +520,12 @@ Real-life UAT means V1 is complete and controlled enough to operate **real Braym
 | Criterion | V1 bar | Current |
 |-----------|--------|---------|
 | Data safety / tenant integrity | Org isolation; no cross-org writes | **PARTIAL** (UAT-operational; not production-certified) |
-| Migration state | Live current = heads; known residue labeled | **YES** (`e3f4a5b6c7d8`; labeled synthetics remain) |
+| Migration state | Live current = heads; known residue labeled | **YES** (`f4a5b6c7d8e9`; labeled synthetics remain) |
 | Backups | Governed backup/restore before real projects | **NO** (ad-hoc gitignored copies only) |
 | Authentication | Office login; SECRET_KEY not the committed dev secret | **UAT YES / production not certified** |
 | User onboarding + Ben/Brayman training | Written operating/training pack | **NO** |
 | Real project creation | CRM + Hub + location | **YES** |
-| Estimate workflow | V1-01 + V1-02 + FG-009 | **NO** (no Phase D) |
+| Estimate workflow | V1-01 + V1-02 + FG-009 | **NO** (V1-01 **COMPLETE**; V1-02 costing remains PARTIAL) |
 | Customer-document workflow | Output 2; branded Proposal | **YES** (FG-012/017). Remaining PDF language = V1-09 decision |
 | Contract / legal safety | Fail-closed unless Ontario package APPROVED | **FAIL-CLOSED by absence** (cannot lawfully generate) |
 | BUILD / Field | Capture + office observations | **YES** (FG-020/021) |
@@ -587,16 +587,16 @@ Do **not** block V1 on:
 Copy this block into later implementation reports and fill from this register:
 
 ```text
-CALIBAI V1 READINESS: 30%
+CALIBAI V1 READINESS: 39%
 
 MAJOR PACKAGES:
-0 / 11 COMPLETE
+1 / 11 COMPLETE
 
 CURRENT V1 PACKAGE:
-NONE AUTHORIZED
+V1-02 (NOT AUTHORIZED)
 
 CRITICAL PATH:
-V1-01 → V1-02 → V1-03 / V1-04
+V1-02 → V1-03 / V1-04
 V1-06 parallel
 V1-10 before real UAT
 V1-11 last

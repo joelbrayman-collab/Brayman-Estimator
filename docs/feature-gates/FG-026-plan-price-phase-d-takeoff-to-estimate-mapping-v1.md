@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-026 is the governing identifier. Do not assign a new M0xx number. Roadmap Phase D (reviewed quantities → estimate assemblies) is the sequence home. This is **not** Item 14 LEARN and **not** Item 15 / [FG-024](FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md). |
 | Module | **PLAN proposes. PRICE / Estimating commits.** Plan Intelligence remains owner of take-off evidence. Estimating remains owner of `EstimateVersion`, `EstimateLineItem`, insertion, and frozen estimate-side provenance. No new module. |
 | Date | 2026-09-08 |
-| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT RUN / NOT CLOSED.** Architecture preflight remains complete. Live `flask db upgrade` and bounded UAT are **not** authorized by the implementation package. |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED. Live current = heads **`f4a5b6c7d8e9`**. |
 | Architecture | [ai-takeoff-quantity-extraction-foundation.md](../architecture/ai-takeoff-quantity-extraction-foundation.md) · [plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) · [fg-026-takeoff-to-estimate-mapping-preflight.md](../architecture/fg-026-takeoff-to-estimate-mapping-preflight.md) **PREFLIGHT COMPLETE** · [ADR-005](../adr/ADR-005-ai-takeoff-traceability.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](../adr/ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-011](../adr/ADR-011-ai-confidence-threshold-policy.md) **Accepted** · [ADR-031](../adr/ADR-031-versioned-extraction-run-takeoff-package-and-candidate-provenance.md) **Accepted** · [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) **Accepted** · [FG-010](FG-010-ai-takeoff-quantity-extraction-foundation.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-014](FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 | Related ADRs | **None new in this recording / preflight pass.** Implementation stays within accepted ADR-005 / 006 / 007 / 011 / 031 / 035. Do **not** accept ADR-008 or ADR-010 from this gate. |
 | Prerequisites | [FG-010](FG-010-ai-takeoff-quantity-extraction-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Material Catalogue identity **exists** ([FG-014](FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md)). [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED**. [FG-025](FG-025-contractor-facing-ux-language-and-terminology-standardization.md) remaining surfaces **NOT AUTHORIZED** and are **not** this gate. |
@@ -18,23 +18,23 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / TESTED / COMMITTED / PUSHED.** **NOT LIVE-MIGRATED.** **UAT NOT RUN.** **NOT CLOSED.** |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT.** IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED. |
 | Product code | Estimating-owned insert service + Plan Intelligence map UI. |
-| Schema / Alembic | Additive revision **`f4a5b6c7d8e9`** in Git (`e3f4a5b6c7d8` → `f4a5b6c7d8e9`). Live current remains **`e3f4a5b6c7d8`**. Do **not** live-upgrade until a later authorized sequence. |
-| MaterialRequirement | **OUT OF V1.** ADR-035 remains architecture direction only. |
-| Labour snapshot from take-off | **OUT OF V1.** Insert path does not create labour snapshots. |
-| Pricing Engine apply | **OUT OF V1.** Existing FG-009 remains a separate human action after lines exist. |
+| Schema / Alembic | Additive revision **`f4a5b6c7d8e9`**. Live current = heads **`f4a5b6c7d8e9`**. Gitignored backup `instance/brayman_estimator-backup-before-fg026-f4a5b6c7d8e9.db`. |
+| MaterialRequirement | **OUT OF V1.** ADR-035 remains architecture direction only. Not created by this UAT. |
+| Labour snapshot from take-off | **OUT OF V1.** Insert created **0** labour snapshots. |
+| Pricing Engine apply | **OUT OF V1.** Destination version **0** pricing snapshots. Existing org snapshots remain **5** (pre-existing; not created by FG-026). |
 
 ```text
 FG-026:
+CLOSED / OPERATIONAL FOR UAT
 IMPLEMENTED / TESTED / COMMITTED / PUSHED
-NOT LIVE-MIGRATED
-UAT NOT RUN
-NOT CLOSED / NOT OPERATIONAL
+LIVE-MIGRATED
+OFFICE UAT PASS
 PLAN PROPOSES / ESTIMATING COMMITS
 PACKAGE APPROVAL DOES NOT INSERT
 NO NEW ADR
-ADDITIVE MIGRATION f4a5b6c7d8e9 EXISTS IN GIT ONLY
+ADDITIVE MIGRATION f4a5b6c7d8e9 APPLIED LIVE
 ```
 
 ---
@@ -142,11 +142,11 @@ Mapping/insert **must not proceed** when:
 | 5 | What data does it reference? | `TakeoffPackage` / `TakeoffPackageItem` (Plan Intelligence); `Estimate` / `EstimateVersion` / `EstimateSection` / `EstimateLineItem`; `Assembly` / `CostItem`; `Organization` / `Project` / `User` actor snapshot. Not CanonicalMaterial as insert target. Not `PlanMeasurement`. Not Labour snapshots. |
 | 6 | What may it change? | Additive Estimating provenance tables; non-committing builder helpers used by FG-026 insert; mapping UI on the existing take-off package surface; Estimating insert service. Existing `add_*_line` callers still commit as before. |
 | 7 | What must it not change? | Take-off models/immutability; Estimate builder commercial math; FG-009 policies/snapshots; FG-008 labour standards or labour-in-basis default; Material Catalogue identity; historical workbooks; Accepted proposals; Field Events/Originals; MONITOR arithmetic; FG-025 remaining surfaces; FG-024; LEARN. |
-| 8 | What are the acceptance criteria? | Explicit human insert only; four quantity layers preserved; provenance reconstructable; package unchanged; locked/non-Draft versions untouched; dedicated tests pass. Live migrate + UAT remain later. |
-| 9 | What tests are required? | Dedicated `tests/test_takeoff_estimate_mapping_fg026.py` (**20 passed**). PLAN takeoff, Estimating/builder, pricing/labour/material, governed bundle, and full suite rerun on implementation. |
+| 8 | What are the acceptance criteria? | Explicit human insert only; four quantity layers preserved; provenance reconstructable; package unchanged; locked/non-Draft versions untouched; dedicated tests pass. Live migrate + bounded office UAT **PASS** (2026-09-08). |
+| 9 | What tests are required? | Dedicated `tests/test_takeoff_estimate_mapping_fg026.py` (**20 passed**). PLAN takeoff, Estimating/builder, pricing/labour/material, governed bundle, and full suite rerun on implementation. Live-migrate/UAT pass did **not** rerun the full suite (historical **632**). |
 | 10 | What documentation must be updated? | This gate; preflight; feature-gates README; docs README; current-state; session-handoff; project-state-report; milestones; chat-workflow-log; roadmap Phase D pin; Plan Intelligence and Estimating module docs; architecture.md; CAR-001 subsequent status; platform-governance pin. |
 | 11 | Does it require an ADR? | **No in this pass.** Insertion-audit ownership stays with Estimating (ADR-006 / ADR-007). Frozen citation snapshot on insert is ADR-005. Many items per line is cardinality, not an ownership transfer. If a later prompt moved insertion audit into Plan Intelligence, **STOP** and require a new ADR. |
-| 12 | Does it require a database migration? | **Yes.** Additive `f4a5b6c7d8e9`. File exists in Git. Live upgrade **not** applied. |
+| 12 | Does it require a database migration? | **Yes.** Additive `f4a5b6c7d8e9`. **Applied live** `e3f4a5b6c7d8` → `f4a5b6c7d8e9`. |
 
 ---
 
@@ -156,27 +156,39 @@ Real external AI; OCR; CAD; multi-trade extraction; supplier integration; SKU ma
 
 ---
 
-## UAT design (later; do not create data from this implementation package)
+## UAT record (2026-09-08)
 
-Live fact (not a defect): approved `TakeoffPackage` **id 1** is on **project 3**; project 3 currently has **no** estimate.
+**UAT status: PASS.** Office UAT on port **5015**.
 
-**UAT status: NOT RUN.**
+| Record | Identity |
+|--------|----------|
+| Source package | TakeoffPackage **id 1** / project **3** / `INTERIOR_DOOR_OPENING` / approved total **3.0 count** / 3 items. **Unchanged** after insert. |
+| Destination estimate | Estimate **id 9** `EST-FG026-UAT` / title `FG026-UAT takeoff-to-estimate mapping` / Draft / project **3** |
+| Destination version | EstimateVersion **id 9** / v1 Initial Estimate / Draft / not locked |
+| Destination section | EstimateSection **id 7** `FG026-UAT Doors` |
+| Target | Assembly **id 2** `FG026-UAT-DOOR` — human-created interior door opening (`ea`). **Not** `FG014-UAT-ASM`. |
+| Line | EstimateLineItem **id 7** Assembly `FG026-UAT-DOOR` quantity **3** unit **ea** |
+| Insertion | TakeoffEstimateInsertion **id 1** |
+| Citations | **3** (package items 1, 2, 3) |
+| Labour snapshots on version 9 | **0** |
+| Pricing snapshots on version 9 | **0** (org total remaining **5** pre-existing) |
+| MaterialRequirement | table **absent** |
+| Field Events | **39** unchanged |
+| Actuals on project 3 | **0** |
 
-Later bounded UAT, after live-migration authorization:
-
-**A.** Create a labeled synthetic Draft estimate **on project 3** using the existing estimating workflow (including at least one section).
-
-**B.** Create an explicitly human-authored labeled UAT Assembly (preferred) or CostItem as the commercial target. Do **not** use AI to create the target. Do **not** treat `FG014-UAT-ASM` (framing lumber UAT) as an interior-door Assembly.
-
-Do **not** write live DB data in this implementation package.
+Hub leftover copy on project 3 PLAN still says mapping is not started. That display string is **not** this gate; remaining FG-025 surfaces remain **NOT AUTHORIZED**.
 
 ---
 
 ## Implementation authorization
 
-Product implementation was authorized by the 8 Sep 2026 FG-026 implementation package. That package does **not** authorize live `flask db upgrade` or UAT data creation. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION** for live migrate / UAT.
+Product implementation was authorized by the 8 Sep 2026 FG-026 implementation package. Live migrate + bounded UAT were authorized separately the same date and **PASS**. **STOP.** Do **not** begin V1-02.
 
 ---
+
+## Close
+
+FG-026 is **CLOSED / OPERATIONAL FOR UAT**. Phase D mapping is operational for labeled synthetic UAT. Pricing, labour snapshots, MaterialRequirement, supplier/SKU, and V1-02 costing remain out of this gate.
 
 ## Related
 

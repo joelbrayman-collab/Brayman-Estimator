@@ -25,7 +25,7 @@
 | ADR-010 | **Proposed** (real external AI provider **not authorized**) |
 | Implementation | **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED.** Provider-neutral foundation in `app/plan_intelligence/` (`takeoff.py`, `takeoff_extractors.py`, models, office UI). Additive migration `b4c5d6e7f8a9` is the Alembic graph head **and** live development/UAT current. Dedicated tests `tests/test_takeoff.py`. Synthetic browser/UAT smoke **performed**. |
 | Real external AI provider | **NOT AUTHORIZED** |
-| Phase D estimate mapping | **NOT STARTED in this FG-010 close record.** Subsequent 2026-09-08 recording: [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) preflight. Subsequent same-date implementation: **IMPLEMENTED IN GIT / NOT LIVE-MIGRATED / UAT NOT RUN**. |
+| Phase D estimate mapping | **NOT STARTED in this FG-010 close record.** Subsequent 2026-09-08 recording: [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) preflight. Subsequent same-date implementation: **IMPLEMENTED IN GIT**. Subsequent same-date live migrate + office UAT: **CLOSED / OPERATIONAL FOR UAT**. |
 
 This gate implemented the provider-neutral M012 foundation. It does **not** implement OCR, CAD, multi-trade extraction, automatic estimate insertion, Labour Engine or Pricing Engine changes, BUILD/MONITOR/LEARN, QuickBooks, or contracts. Real external AI provider integration remains **not authorized**.
 
@@ -263,3 +263,5 @@ Foundation is **CLOSED / OPERATIONAL FOR UAT**. M012 is **AI TAKE-OFF FOUNDATION
 **Subsequent status (2026-09-08 — not authorized by FG-010):** [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **FUTURE / RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. FG-010 remains **CLOSED**. This close record does **not** authorize FG-026 implementation.
 
 **Subsequent status (2026-09-08 FG-026 implementation — not authorized by FG-010):** [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT RUN / NOT CLOSED**. FG-010 remains **CLOSED**. Live migrate / UAT still require a separate prompt.
+
+**Subsequent status (2026-09-08 FG-026 live migrate + office UAT — not authorized by FG-010):** [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Live current = heads **`f4a5b6c7d8e9`**. FG-010 remains **CLOSED**. V1-02 remains **NOT AUTHORIZED**.

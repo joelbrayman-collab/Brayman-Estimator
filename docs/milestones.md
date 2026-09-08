@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-08 — FG-026 live migration and office UAT close
+
+| Field | Content |
+|-------|---------|
+| ID | FG-026 |
+| Status | **CLOSED / OPERATIONAL FOR UAT** |
+| Branch | `main` |
+| Base commit | `1a855cc7e020f1f712c6710b30c8e7faca2c4713` |
+| Objective | Apply additive `f4a5b6c7d8e9` live and run bounded project-3 office UAT for Phase D mapping. |
+| Deliverables | Live current = heads `f4a5b6c7d8e9`; labeled Draft estimate/version/section; human-created Assembly `FG026-UAT-DOOR`; one EstimateLineItem with three frozen citations; governance close. |
+| Validation | Live upgrade **PASS**. One graph head. Additive tables exist. Office UAT **PASS** on port **5015**. Package 1 unchanged. No labour/pricing snapshot, MaterialRequirement, or supplier/SKU from insert. Product tests **not** rerun. |
+| Architectural findings | PLAN proposes / Estimating commits remains. Package approval still does not insert. Hub PLAN leftover mapping copy is out of this gate. |
+| Open decisions | V1-02 costing authorization. |
+| Next milestone | **STOP.** Do **not** begin V1-02. |
+| Commit | this FG-026 live-migrate/UAT docs commit |
+| Date | 2026-09-08 |
+
 ### 2026-09-08 — FG-026 takeoff-to-estimate mapping V1 implementation
 
 | Field | Content |

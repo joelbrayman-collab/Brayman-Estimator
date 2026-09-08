@@ -93,6 +93,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-08 V1 completion register after FG-026 implementation):** [v1-completion-register.md](../v1-completion-register.md) remains governing. Readiness **34%**. **0 / 11** major packages COMPLETE. V1-01 PARTIAL factor 0.55. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. This does **not** authorize live migrate, FG-024, another FG-025 slice, or LEARN.
 
+**Subsequent status (2026-09-08 FG-026 live migrate + office UAT — not authorized by CAR-001):** [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Live current = heads **`f4a5b6c7d8e9`**. [v1-completion-register.md](../v1-completion-register.md) readiness **39%**. **1 / 11** COMPLETE (V1-01). CAR-001 still does **not** authorize V1-02, FG-024, remaining FG-025 surfaces, or LEARN.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

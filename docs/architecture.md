@@ -54,7 +54,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Projects | `Project` | `app/models/project.py` |
 | Cost library | `CostItem` | `app/models/cost_item.py` — org costing record; **not** CalibAi material identity ([material-catalogue-architecture.md](architecture/material-catalogue-architecture.md) Intended) |
 | Assemblies | `Assembly`, `AssemblyItem` | `app/models/assembly.py` |
-| Estimating | `Estimate`, `EstimateVersion`, `EstimateSection`, `EstimateLineItem`, `TakeoffEstimateInsertion`, `TakeoffEstimateInsertionCitation` | `app/models/estimate.py`; `app/models/takeoff_estimate_insertion.py` (FG-026; not live-migrated) |
+| Estimating | `Estimate`, `EstimateVersion`, `EstimateSection`, `EstimateLineItem`, `TakeoffEstimateInsertion`, `TakeoffEstimateInsertionCitation` | `app/models/estimate.py`; `app/models/takeoff_estimate_insertion.py` (FG-026; **live-migrated**) |
 | Proposals | `ProposalTemplate`, `Proposal`, `ProposalSection`, `ProposalLineItem` | `app/models/proposal.py` |
 | Project controls | `ChangeOrder`, `ChangeOrderItem` | `app/project_controls/models.py` |
 | Plan Intelligence | `DrawingPackage`, `DrawingRevision`, `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `PlanScaleCalibration`, `PlanMeasurement`, `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem` | `app/plan_intelligence/models.py` |
@@ -89,12 +89,12 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic **repository** graph head: **`e3f4a5b6c7d8`** (FG-023 Slice A). Live development/UAT `flask db current`: **`e3f4a5b6c7d8`**. Live current **equals** repository head. One graph head. Verify `flask db current` per environment before relying on it.
+- Alembic **repository** graph head: **`f4a5b6c7d8e9`** (FG-026). Live development/UAT `flask db current`: **`f4a5b6c7d8e9`**. Live current **equals** repository head. One graph head. Verify `flask db current` per environment before relying on it.
 
 ### Tests
 
 - Location: [`tests/`](../tests/)
-- Collected locally: close-time governed full suite **593 passed** (`./venv/bin/python -m pytest -q`, FG-023 close 2026-09-07). Dedicated FG-023 **35**. Focused **149**. Last product-changing SHA **`7dd4d82c927ec2c38a0562e7e1cdedbccabb6662`**. Historical Slice A focused **126** / full **581**. FG-021 close full suite **558** remains historical.
+- Collected locally: last product-changing governed full suite **632 passed** (`./venv/bin/python -m pytest -q`, FG-026 implementation 2026-09-08). Dedicated FG-026 **20**. Historical FG-023 close full suite **593** / dedicated **35** / focused **149**. Last product-changing SHA **`aa4c71800586e0b8e2a63931bcdc8bc44d87a489`**. Historical Slice A focused **126** / full **581**. FG-021 close full suite **558** remains historical.
 - Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders, project hub, plan upload/indexing/sheets/scale/take-off, labour engine, pricing engine, historical ingestion, organization foundation
 
 ### Current module relationships (simplified)
@@ -106,7 +106,7 @@ Client ──< Project ──< Estimate ──< EstimateVersion ──< Sections
               │            │
               │            └── ChangeOrder (optional estimate_version FK)
               │
-              └── PlanDocument / DrawingPackage / sheets / measurements / take-off packages (Plan Intelligence; M005–M010 + M012 foundation; Phase D mapping [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) implemented in Git / not live-migrated)
+              └── PlanDocument / DrawingPackage / sheets / measurements / take-off packages (Plan Intelligence; M005–M010 + M012 foundation; Phase D mapping [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**)
 ```
 
 - Navigation also shows **disabled** placeholders: Purchase Orders, Job Costing, Reports, AI Assistant, Settings (`app/navigation.py`).
@@ -139,7 +139,7 @@ Aligns with [platform-vision.md](platform-vision.md), [CAR-001](architecture/CAR
 - Auditable financially significant actions (Rule 6)
 - Service boundaries for cross-module access (Rule 11)
 - Governance Feature Gate before net-new modules
-- Human-approved, source-traceable take-off before estimate insertion (ADR-005/006 **Accepted**; [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; mapping [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT RUN**)
+- Human-approved, source-traceable take-off before estimate insertion (ADR-005/006 **Accepted**; [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; mapping [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**)
 - One project-location / jurisdiction-resolution architecture ([ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted**; [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**)
 - Permit Intelligence as a project capability; Permit & Approvals Report as its governed snapshot ([ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted**; Pass 1 [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**; Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**)
 - Supplier price snapshots on consumption (ADR-008 — Proposed)
@@ -152,7 +152,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
 ### Differentiating pillars
 
-- [Plan Intelligence and Automated Take-Off](architecture/plan-intelligence-and-automated-takeoff.md) — Phases A–M010 **Current**; Phase **C** AI take-off foundation **operational for UAT** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**); Phase D [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT RUN**; Phases E–G future
+- [Plan Intelligence and Automated Take-Off](architecture/plan-intelligence-and-automated-takeoff.md) — Phases A–M010 **Current**; Phase **C** AI take-off foundation **operational for UAT** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**); Phase D [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**; Phases E–G future
 - [Material Catalogue](architecture/material-catalogue-architecture.md) — **Partial Current** / [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-034](adr/ADR-034-canonical-material-identity-and-ownership.md) / [ADR-035](adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) / [ADR-036](adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**. Living supplier evidence is **not** the identity row. `CostItem` is **not** canonical material.
 - [Supplier Catalogue, Inventory and Pricing](architecture/supplier-catalogue-inventory-pricing.md) — Phases E–F **Future** (what a supplier sells; maps **to** Material Catalogue; does **not** own CalibAi identity). **Governed bulk onboarding** is a **FUTURE / NOT IMPLEMENTED** pin (not one-product-at-a-time; not authorized by FG-014).
 - [Supplier Channel and Launch-Partner Model](architecture/supplier-channel-and-launch-partner.md) — **Future**; [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (Winchester launch/reference, supplier-neutral, dual relationships; **not implemented**)
@@ -161,7 +161,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 ### Other future capabilities
 
 - **BUILD / MONITOR / LEARN** — [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md); BUILD boundary [ADR-020](adr/ADR-020-build-module-boundary.md) (**Accepted**); field evidence / dual-surface architecture [ADR-042](adr/ADR-042-build-field-evidence-and-iphone-first-capture.md) (**Accepted**); [FG-020](feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**; MONITOR baseline [ADR-021](adr/ADR-021-monitor-commercial-baseline.md) (**Accepted**; Slice A projection + Slice B Hub `#hub-monitor` implemented; live-migrated; office-UAT-verified; Project Gross Margin); MONITOR V1 recon [architecture/monitor-v1-implementation-reconnaissance.md](architecture/monitor-v1-implementation-reconnaissance.md) **COMPLETE**; preflight [architecture/fg-023-monitor-v1-implementation-preflight.md](architecture/fg-023-monitor-v1-implementation-preflight.md) **COMPLETE**; [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**
-- **Field / shared API** — [ADR-022](adr/ADR-022-field-client-and-shared-api.md) (**Accepted** direction). Shared API Foundation V1 **implemented** ([FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**). Field Web V1 **CLOSED** ([FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md); [architecture/field-web-today-and-capture.md](architecture/field-web-today-and-capture.md); SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**). [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. Live current `e3f4a5b6c7d8`.
+- **Field / shared API** — [ADR-022](adr/ADR-022-field-client-and-shared-api.md) (**Accepted** direction). Shared API Foundation V1 **implemented** ([FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**). Field Web V1 **CLOSED** ([FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md); [architecture/field-web-today-and-capture.md](architecture/field-web-today-and-capture.md); SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**). [ADR-043](adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**. Live current `f4a5b6c7d8e9`.
 - **Project document package** — outputs **1–2** [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**. Outputs **3–4** remain **Future**. **Permit Intelligence** Pass 1 **CLOSED / OPERATIONAL FOR UAT** ([FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md)); Pass 2 **CLOSED / OPERATIONAL FOR UAT** ([FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md); ADR-037/038/039). Permit & Approvals Report is a **core project document**, not a fifth estimate output and not a Change Order. **Organization Brand Profile** is **CLOSED / OPERATIONAL FOR UAT** ([ADR-040](adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md)). **Change Order document family** remains **FUTURE / NOT IMPLEMENTED**. Construction contract/warranty generation is [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**.
 - Scheduling, Job Costing, Invoicing
 - QuickBooks / accounting integration — [architecture/quickbooks-integration.md](architecture/quickbooks-integration.md)
@@ -174,7 +174,7 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 
 - Electronic signature / formal proposal acceptance workflows
 - CAD ingestion (Phase G; PDF-first per ADR-009)
-- Estimate mapping from approved take-off packages — [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT RUN** (not FG-010). Live migrate/UAT remain later.
+- Estimate mapping from approved take-off packages — [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** (not FG-010). V1-02 costing remains later and separately authorized.
 - Living supplier evidence / Winchester POC / bulk supplier onboarding (FG-014 identity is closed; ADR-008 remains Proposed)
 - Permit branding from Brand Profile; national Permit Rules expansion (FG-015/FG-016 POC is closed)
 - Change Order governed document family / client email / field UX — [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (do not create a second Change Order entity)

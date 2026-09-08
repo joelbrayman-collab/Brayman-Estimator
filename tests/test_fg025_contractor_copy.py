@@ -1,4 +1,4 @@
-"""FG-025 contractor-facing display mapping (Slice 1 MONITOR + Slice 2 Hub + Slice 3 PRICE + Slice 4 office shell).
+"""FG-025 contractor-facing display mapping (Slice 1 MONITOR + Slice 2 Hub + Slice 3 PRICE + Slice 4 office shell + Slice 5 Field Web).
 
 Presentation tests only. Internal domain keys stay authoritative.
 """
@@ -6,6 +6,7 @@ Presentation tests only. Internal domain keys stay authoritative.
 from __future__ import annotations
 
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
@@ -37,6 +38,25 @@ from app.presentation.contractor_copy import (
     LOGIN_LEDE,
     SIGN_OUT_LABEL,
     BRAND_PROFILE_HEADING,
+    FIELD_SAVE_ORIGINAL,
+    FIELD_NOTES_LABEL,
+    FIELD_CHANGE_PROJECT,
+    FIELD_CONFIRM_BEFORE_CAPTURE,
+    FIELD_NO_PROJECTS,
+    FIELD_RETRY_HEADING,
+    FIELD_RETRY_LINK,
+    FIELD_RETRY_ONE,
+    FIELD_RETRY_MANY_SUFFIX,
+    FIELD_SAVED,
+    FIELD_SAVING,
+    FIELD_NEEDS_RETRY,
+    FIELD_EVENT_SAVE_FAILED,
+    FIELD_ORIGINAL_SAVE_FAILED,
+    FIELD_CAPTURE_START_FAILED,
+    FIELD_ADD_BEFORE_SAVE,
+    FIELD_LOGOUT_CONFIRM,
+    FIELD_OTHER_PROJECT_PENDING,
+    FIELD_DISCARD_OTHER_PENDING,
     co_cost_delta_label,
     cost_class_label,
     entry_reference,
@@ -441,7 +461,8 @@ def test_slice4_nav_routes_and_engine_labels(client, project):
     assert "Remote URLs" not in settings
     assert " MiB" not in settings
     field = _html(client.get("/field/today"))
-    assert "Log out" in field
+    assert SIGN_OUT_LABEL in field
+    assert "Log out" not in field
     assert "shell-sidebar" not in field
 
 
@@ -460,3 +481,123 @@ def test_slice4_login_copy_and_auth_behavior(client):
     follow = client.get("/")
     assert follow.status_code == 200
     assert DASHBOARD_HEADING.encode() in follow.data
+
+
+FIELD_JS = Path(__file__).resolve().parents[1] / "app" / "static" / "js" / "field.js"
+
+
+def test_slice5_field_copy_constants_are_pinned():
+    assert SIGN_OUT_LABEL == "Sign out"
+    assert FIELD_SAVE_ORIGINAL == "Save original"
+    assert FIELD_NOTES_LABEL == "Notes"
+    assert FIELD_CHANGE_PROJECT == "Change project"
+    assert FIELD_CONFIRM_BEFORE_CAPTURE == "Confirm the project before capturing."
+    assert FIELD_NO_PROJECTS == "No projects are available."
+    assert FIELD_RETRY_HEADING == "Not sent yet"
+    assert FIELD_RETRY_LINK == "Try sending again"
+    assert FIELD_RETRY_ONE == "1 capture did not send."
+    assert FIELD_RETRY_MANY_SUFFIX == " captures did not send."
+    assert FIELD_SAVED == "Saved"
+    assert FIELD_SAVING == "Saving…"
+    assert FIELD_NEEDS_RETRY == "Could not send"
+    assert FIELD_EVENT_SAVE_FAILED == "This observation could not be saved."
+    assert FIELD_ORIGINAL_SAVE_FAILED == (
+        "The original photo or file could not be saved."
+    )
+    assert FIELD_CAPTURE_START_FAILED == (
+        "This phone could not start a capture. Try again."
+    )
+    assert FIELD_ADD_BEFORE_SAVE == "Add a photo, recording, or note before saving."
+    assert FIELD_LOGOUT_CONFIRM == (
+        "Unsent captures will be removed from this phone. Sign out?"
+    )
+    assert FIELD_OTHER_PROJECT_PENDING == (
+        "A capture is still waiting on another project. "
+        "Open that project to send it, or discard it?"
+    )
+    assert FIELD_DISCARD_OTHER_PENDING == (
+        "Discard the waiting capture for the other project?"
+    )
+
+
+def test_slice5_field_web_surfaces_hide_raw_internal_copy(client, project):
+    today = _html(client.get("/field/today"))
+    assert SIGN_OUT_LABEL in today
+    assert "Log out" not in today
+    assert FIELD_CONFIRM_BEFORE_CAPTURE in today
+    assert "Choose Project" in today
+    assert 'action="/logout"' in today
+    assert "shell-sidebar" not in today
+    assert "app-shell" not in today
+    assert "Observation Delete" not in today
+    assert "Delete observation" not in today
+    assert "NET PROFIT" not in today
+    assert "FieldEvidenceEvent" not in today
+    assert "event_id" not in today
+    assert "FieldCaptureEvent" not in today
+    projects = _html(client.get("/field/projects"))
+    assert SIGN_OUT_LABEL in projects
+    assert "Log out" not in projects
+    assert "Select the job you are standing on." in projects
+    assert "Observation Delete" not in projects
+    confirm = client.post(
+        f"/field/projects/{project.id}",
+        data={"next": "capture"},
+        follow_redirects=False,
+    )
+    assert confirm.status_code == 302
+    capture = _html(client.get(f"/field/projects/{project.id}/capture"))
+    assert FIELD_SAVE_ORIGINAL in capture
+    assert FIELD_NOTES_LABEL in capture
+    assert "Take Photo" in capture
+    assert "Choose Photo" in capture
+    assert "Save original" in capture
+    assert "Short text" not in capture
+    assert "Log out" not in capture
+    assert "rendition" not in capture.lower()
+    assert "Observation Delete" not in capture
+    assert "Delete observation" not in capture
+    assert "NET PROFIT" not in capture
+    today_confirmed = _html(client.get("/field/today"))
+    assert FIELD_CHANGE_PROJECT in today_confirmed
+    assert FIELD_RETRY_HEADING in today_confirmed
+    assert FIELD_RETRY_LINK in today_confirmed
+    assert "Capture" in today_confirmed
+    assert "Switch Project" not in today_confirmed
+    assert "Needs Retry" not in today_confirmed
+    hub = _html(client.get(f"/projects/{project.id}"))
+    assert "LEARN · Future" in hub
+    assert "NET PROFIT" not in hub
+
+
+def test_slice5_field_js_pins_python_copy_and_internal_keys():
+    source = FIELD_JS.read_text(encoding="utf-8")
+    assert f'signOut: "{SIGN_OUT_LABEL}"' in source
+    assert f'saved: "{FIELD_SAVED}"' in source
+    assert f'saving: "{FIELD_SAVING}"' in source
+    assert f'needsRetry: "{FIELD_NEEDS_RETRY}"' in source
+    assert f'eventSaveFailed: "{FIELD_EVENT_SAVE_FAILED}"' in source
+    assert f'originalSaveFailed: "{FIELD_ORIGINAL_SAVE_FAILED}"' in source
+    assert f'captureStartFailed: "{FIELD_CAPTURE_START_FAILED}"' in source
+    assert f'addBeforeSave: "{FIELD_ADD_BEFORE_SAVE}"' in source
+    assert f'logoutConfirm: "{FIELD_LOGOUT_CONFIRM}"' in source
+    assert FIELD_OTHER_PROJECT_PENDING in source
+    assert f'discardOtherPending: "{FIELD_DISCARD_OTHER_PENDING}"' in source
+    assert f'retryOne: "{FIELD_RETRY_ONE}"' in source
+    assert f'retryManySuffix: "{FIELD_RETRY_MANY_SUFFIX}"' in source
+    assert 'setAttribute("data-state", state)' in source
+    assert '"needs_retry"' in source
+    assert "pending_captures" in source
+    assert "pending_originals" in source
+    assert "Log out" not in source
+    assert "Event could not be saved." not in source
+    assert "Original could not be saved." not in source
+    assert "This browser cannot create a capture identity." not in source
+    assert "NEEDS RETRY" not in source
+    assert 'setFeedback("SAVED"' not in source
+    assert 'setStatus("SAVED")' not in source
+    assert 'setFeedback("SAVING"' not in source
+    assert "short text" not in source
+    assert "Observation Delete" not in source
+    assert "Delete observation" not in source
+    assert "NET PROFIT" not in source

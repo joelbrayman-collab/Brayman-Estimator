@@ -23,7 +23,7 @@
         </a>
         <form method="post" action="{{ url_for('auth.logout') }}" class="field-logout" id="field-logout-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" class="field-logout-btn">Log out</button>
+            <button type="submit" class="field-logout-btn">{{ contractor_copy.SIGN_OUT_LABEL }}</button>
         </form>
     </header>
     <main class="field-main" id="main-content">

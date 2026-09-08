@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-025 is the governing identifier. Do not assign a new M0xx number. This is a **commercialization hygiene** gate, not a new lifecycle stage. Sequence: **after [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) closes**, **before** broad external UAT / U.S. commercialization. |
 | Module | **Cross-cutting UX copy.** [Projects](../modules/projects.md) owns Project Hub chrome. Owning modules retain their screens: Plan Intelligence, Estimating, Pricing Engine, Proposals, Project Controls, BUILD, MONITOR, LEARN (Future), authentication. This gate does **not** transfer record ownership. |
 | Date | 2026-09-07 |
-| Status | **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 2 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 3 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 4 IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED / NOT A PRODUCT-WIDE SWEEP** (2026-09-08). Remaining FG-025 surfaces are **NOT AUTHORIZED**. Do **not** treat this gate as closed. |
+| Status | **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 2 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 3 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 4 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 5 IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED / NOT A PRODUCT-WIDE SWEEP** (2026-09-08). Remaining FG-025 surfaces are **NOT AUTHORIZED**. Do **not** treat this gate as closed. |
 | Architecture | [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** (PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN) · [FG-011](FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT** (Hub reads/links; Future labeled) · [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (office vs customer-facing estimate copy) · [FG-017](FG-017-organization-brand-profile-v1.md) **CLOSED / OPERATIONAL FOR UAT** (visual brand, not terminology) · [FG-021](FG-021-field-web-v1-today-and-capture.md) **CLOSED** (Field Web capture copy) · [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 | Related ADRs | **None new in this recording pass.** Visual identity remains [ADR-040](../adr/ADR-040-organization-brand-profile.md). Do **not** accept ADR-008 or ADR-010 from this gate. |
 | Prerequisites | [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. Slices 1–4 were each authorized by a bounded Joel/ChatGPT prompt. Remaining surfaces remain **NOT AUTHORIZED**. |
@@ -18,7 +18,7 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **RECORDED.** **IMPLEMENTATION PREFLIGHT COMPLETE.** **SLICE 1 IMPLEMENTED.** **SLICE 2 IMPLEMENTED.** **SLICE 3 IMPLEMENTED.** **SLICE 4 IMPLEMENTED.** **NOT CLOSED.** |
+| Feature Gate (this document) | **RECORDED.** **IMPLEMENTATION PREFLIGHT COMPLETE.** **SLICE 1 IMPLEMENTED.** **SLICE 2 IMPLEMENTED.** **SLICE 3 IMPLEMENTED.** **SLICE 4 IMPLEMENTED.** **SLICE 5 IMPLEMENTED.** **NOT CLOSED.** |
 | UI copy rewrite | **SLICE 1, SLICE 2, SLICE 3, AND SLICE 4 AUTHORIZED AND IMPLEMENTED.** Remaining surfaces **NOT AUTHORIZED.** |
 | Product code | Presentation mapping `app/presentation/contractor_copy.py` + Project Hub (`detail.html`) PLAN/PRICE/CONTRACT/BUILD/MONITOR display + office PRICE specialist templates + shared office nav/dashboard/auth/Settings copy. |
 | Schema / Alembic | **None.** |
@@ -32,6 +32,7 @@ SLICE 1 IMPLEMENTED / TESTED / COMMITTED / PUSHED
 SLICE 2 IMPLEMENTED / TESTED / COMMITTED / PUSHED
 SLICE 3 IMPLEMENTED / TESTED / COMMITTED / PUSHED
 SLICE 4 IMPLEMENTED / TESTED / COMMITTED / PUSHED
+SLICE 5 IMPLEMENTED / TESTED / COMMITTED / PUSHED
 NOT CLOSED
 NOT YET PRODUCT-WIDE COMPLETE
 REMAINING FG-025 SURFACES: NOT AUTHORIZED
@@ -40,7 +41,7 @@ FG-024: FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
 ```
 
-Joel/ChatGPT recorded this gate on **2026-09-07**. Preflight completed the same day. Bounded prompts authorized Slice 1, Slice 2, Slice 3, then Slice 4. The gate is **NOT CLOSED**. Remaining surfaces stay unauthorized. FG-023 remains **CLOSED**. Do **not** start Slice 5 from this document.
+Joel/ChatGPT recorded this gate on **2026-09-07**. Preflight completed the same day. Bounded prompts authorized Slice 1 through Slice 5. The gate is **NOT CLOSED**. Remaining surfaces stay unauthorized. FG-023 remains **CLOSED**. Do **not** start another FG-025 slice from this document.
 
 ---
 
@@ -579,12 +580,38 @@ Do **not** start Slice 5 from this section.
 
 ---
 
+## SLICE 5 IMPLEMENTATION (2026-09-08)
+
+**Status:** **SLICE 5 IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Gate **NOT CLOSED.** Remaining FG-025 surfaces **NOT AUTHORIZED.** Not a product-wide sweep.
+
+Presentation-layer mapping only, reusing `app/presentation/contractor_copy.py`. No competing copy system. No schema, migration, live DB write, Field workflow change, media pipeline change, enum/model rename, Observation Delete, session-revocation implementation, office UI rewrite, customer PDF rewrite, MONITOR change, LEARN, or FG-024.
+
+Field Web user-facing copy (`app/templates/field/*.html`, `app/static/js/field.js` visible strings):
+
+- Header **Log out** → **Sign out**. Logout route, CSRF, and session behavior unchanged.
+- Today **Switch Project** → **Change project**. Retry heading **Not sent yet**; retry link **Try sending again**.
+- Capture notes label **Notes** (was Short text). **Save original** preserved for provenance.
+- Visible save status **Saved** / **Saving…** / **Could not send** (internal `saved` / `saving` / `needs_retry` state keys unchanged).
+- Capture fallbacks: observation/original save failures, sign-out confirm, other-project pending, add-before-save. No Field observation-detail page exists; recent observations remain on Today/confirm.
+- Field Web does not label Compatible Renditions; photo thumbs use **Field photo**. Original provenance remains identifiable via **Save original**.
+
+Dedicated tests: `tests/test_fg025_contractor_copy.py` (**19**). Copy assertion also updated in `tests/test_field_web_fg021.py` (`newUuid` failure wording). Domain/auth/media/Field-workflow assertions unchanged. Field-focused bundle **83 passed**. Prompt governed list **190 passed**. Full **612 passed**. Live current `e3f4a5b6c7d8`. Live **39** / **39**. Project **13** five actuals unchanged.
+
+Remaining / unauthorized after Slice 5 (not a must-rewrite list; remaining surfaces **NOT AUTHORIZED**):
+
+- Unauthorized candidate surfaces: customer Proposal/PDF terminology; Historical Evidence nav and historical specialist screens; standalone Permit screens; Hub PRICE table leftover `TRUE_GROSS_MARGIN`; final product-wide terminology sweep.
+- **REVIEW / DECISION REQUIRED** (not implied must-change): Cost Items nav label; “Contract value” terminology; Dashboard `page_title` still Dashboard; Office sign in / Brayman Construction Platform titles retained; `GENERIC_LOGIN_FAILURE` retained for security; Brand Profile saved. flash retained; disabled Settings (coming soon) frozen by FG-017.
+
+Do **not** start another FG-025 slice from this section.
+
+---
+
 ## Approval
 
 | Role | State |
 |------|--------|
-| Joel / ChatGPT | **Recorded** 2026-09-07. Preflight **COMPLETE** 2026-09-07. **Slice 1–3 authorized and implemented** 2026-09-07. **Slice 4 authorized and implemented** 2026-09-08. Remaining surfaces **not** authorized. Gate **not** closed. |
-| Cursor | Slice 4 office nav/dashboard/auth/Settings language + tests + docs. No Slice 5. No FG-024. No LEARN. |
-| Implementation | **SLICE 4 DONE.** Remaining FG-025 surfaces **NOT AUTHORIZED** until a later bounded prompt. |
+| Joel / ChatGPT | **Recorded** 2026-09-07. Preflight **COMPLETE** 2026-09-07. **Slice 1–3 authorized and implemented** 2026-09-07. **Slice 4 authorized and implemented** 2026-09-08. **Slice 5 authorized and implemented** 2026-09-08. Remaining surfaces **not** authorized. Gate **not** closed. |
+| Cursor | Slice 5 Field Web language + tests + docs. No Slice 6. No FG-024. No LEARN. |
+| Implementation | **SLICE 5 DONE.** Remaining FG-025 surfaces **NOT AUTHORIZED** until a later bounded prompt. |
 
-**Next governed action:** **STOP.** Return Slice 4 report to ChatGPT Architect. Do **not** start Slice 5. Do **not** start FG-024. Do **not** start LEARN. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Next governed action:** **STOP.** Return Slice 5 report to ChatGPT Architect. Do **not** start another FG-025 slice. Do **not** start FG-024. Do **not** start LEARN. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**

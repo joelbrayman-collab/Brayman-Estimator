@@ -10,17 +10,17 @@
     <p class="field-muted">{{ project.project_number }}</p>
     {% endif %}
     <a class="field-btn field-btn-primary" href="{{ url_for('field.capture', project_id=project.id) }}">Capture</a>
-    <a class="field-btn field-btn-secondary" href="{{ url_for('field.projects') }}">Switch Project</a>
+    <a class="field-btn field-btn-secondary" href="{{ url_for('field.projects') }}">{{ contractor_copy.FIELD_CHANGE_PROJECT }}</a>
     {% else %}
-    <p>Confirm the Project before capturing.</p>
+    <p>{{ contractor_copy.FIELD_CONFIRM_BEFORE_CAPTURE }}</p>
     <a class="field-btn field-btn-primary" href="{{ url_for('field.projects') }}">Choose Project</a>
     {% endif %}
 </section>
 
 <section class="field-panel" id="field-retry-panel" hidden>
-    <h2>Needs Retry</h2>
+    <h2>{{ contractor_copy.FIELD_RETRY_HEADING }}</h2>
     <p id="field-retry-count" class="field-muted"></p>
-    <a class="field-btn field-btn-danger" id="field-retry-link" href="#">Retry pending captures</a>
+    <a class="field-btn field-btn-danger" id="field-retry-link" href="#">{{ contractor_copy.FIELD_RETRY_LINK }}</a>
 </section>
 
 {% if recent %}

@@ -506,7 +506,9 @@ def test_field_js_lan_http_uuid_fallback_contract():
     assert "0x80" in new_uuid_src
     assert "0x3f" in new_uuid_src
     assert "Math.random" not in source
-    assert "This browser cannot create a capture identity." in new_uuid_src
+    assert "FIELD_COPY.captureStartFailed" in new_uuid_src
+    assert "This phone could not start a capture. Try again." in source
+    assert "This browser cannot create a capture identity." not in source
     save_match = re.search(r"function saveNew\(projectId\) \{.*?\n  \}", source, re.S)
     assert save_match, "saveNew() must remain in field.js"
     save_src = save_match.group(0)

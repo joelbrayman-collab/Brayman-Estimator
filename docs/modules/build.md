@@ -60,6 +60,7 @@ Field Capture Event; Original Payloads (`text` / `audio` / `image`); Derived Can
 - [ADR-043](../adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md) **Accepted**
 - [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**
 - [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED** (SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**)
+- [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) Slice 5 Field Web display copy **IMPLEMENTED / NOT CLOSED** (`app/templates/field/`, `app/static/js/field.js` visible strings; **Save original** preserved; Observation Delete still **QUEUED**)
 - [architecture/field-web-today-and-capture.md](../architecture/field-web-today-and-capture.md) — Item 12 **CLOSED**
 - [architecture/fg-021-field-web-v1-implementation-reconnaissance.md](../architecture/fg-021-field-web-v1-implementation-reconnaissance.md) — implementation recon **COMPLETE**; product **CLOSED** subject to SESSION-EXPIRY deferred exception
 - [architecture/build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md) (Original Source / Compatible Rendition / Closed Project Archive — HEIC/HEIF JPEG renditions **implemented**; Closeout **not implemented**)

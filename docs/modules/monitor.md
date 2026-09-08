@@ -57,4 +57,4 @@ Dated MONITOR **comparison snapshots** and dated **forecast snapshots** only. So
 - [modules/estimating.md](estimating.md)
 - [modules/proposals.md](proposals.md)
 - [pricing-policy.md](../pricing-policy.md)
-- Contractor-facing display copy: [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **SLICE 1, SLICE 2, SLICE 3, AND SLICE 4 IMPLEMENTED / NOT CLOSED** (Hub `#hub-monitor` plus Project Hub PLAN/commercial/history copy, office PRICE specialist mapping, and shared office shell in `app/presentation/contractor_copy.py`; commercial identities stay frozen; remaining surfaces not authorized)
+- Contractor-facing display copy: [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **SLICE 1, SLICE 2, SLICE 3, SLICE 4, AND SLICE 5 IMPLEMENTED / NOT CLOSED** (Hub `#hub-monitor` plus Project Hub PLAN/commercial/history copy, office PRICE specialist mapping, shared office shell, and Field Web in `app/presentation/contractor_copy.py`; commercial identities stay frozen; remaining surfaces not authorized)

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — FG-025 Slice 5 contractor-facing Field Web language
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
+| Objective | Implement FG-025 Slice 5 only: contractor-facing language on existing Field Web. |
+| Business decision | Slice 5 **AUTHORIZED AND IMPLEMENTED**. Field header **Sign out**. Today **Change project** / **Not sent yet**. Capture **Notes** with **Save original** preserved. Visible save status **Saved** / **Saving…** / **Could not send**. FG-025 overall **NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**. FG-023 remains **CLOSED**. FG-024 remains **FUTURE / NOT IMPLEMENTATION-AUTHORIZED**. |
+| Architectural decision | Reuse Slice 1–4 `app/presentation/contractor_copy.py`. Do not create a competing copy system. Do not rename models, enums, routes, or schema. No Field workflow, media pipeline, Observation Delete, or session-revocation change. |
+| Prompt template used | `docs/prompts/cursor-implementation-template.md` does **not** exist. Followed AGENTS.md and the bounded Slice 5 prompt. |
+| Approved Cursor prompt summary | FG-025 Slice 5 only. Field Web copy. No schema/migration/DB. No Slice 6. No FG-024. No LEARN. No website. |
+| Files expected to change | Field templates; `app/static/js/field.js` visible strings; `app/presentation/contractor_copy.py`; FG-025 tests; FG-021 copy assertion; current-authority docs. |
+| Files prohibited from changing | `migrations/`; models/enums except read-only; office UI rewrite; customer PDF; MONITOR arithmetic; LEARN; website; CSS; FG-024. |
+| Implementation result | Field Log out → Sign out. Switch Project → Change project. Short text → Notes. Visible ALL_CAPS save status mapped. Save original preserved. Live current `e3f4a5b6c7d8`. Live **39** / **39**. Project **13** five actuals unchanged. |
+| Tests | Dedicated: `./venv/bin/python -m pytest -q tests/test_fg025_contractor_copy.py` → **19 passed**. Field-focused (FG-025 + both FG-020 + FG-021) **83 passed**. Governed (prompt list) **190 passed**. Full `./venv/bin/python -m pytest -q` → **612 passed**. |
+| Project-state-report update | Yes — Slice 5 implemented / not closed; remaining surfaces not authorized. |
+| Milestone entry update | Yes — Slice 5 recorded. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining FG-025 surfaces unauthorized (customer PDF, Historical Evidence, standalone Permit, Hub PRICE TRUE_GROSS_MARGIN, final sweep). Observation Delete still QUEUED. |
+| Next approved step | **STOP.** Do **not** start another FG-025 slice. Do **not** start FG-024. Do **not** start LEARN. Do **not** restart website work. |
+| Next approved prompt | None authorized. |
+| Commit hash | this `feat: continue FG-025 contractor-facing Field Web language` commit |
+
 ### 2026-09-08 — FG-025 Slice 4 post-close documentation reconciliation
 
 | Field | Content |

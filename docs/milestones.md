@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-08 — FG-025 Slice 5 contractor-facing Field Web language
+
+| Field | Content |
+|-------|---------|
+| ID | FG-025 — Slice 5 Field Web language |
+| Status | **RECORDED / IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED** |
+| Branch | `main` |
+| Base commit | `0ed4d67282551d75b4204e33d367f3f3baba023a` |
+| Objective | Contractor-facing Field Web copy only. |
+| Deliverables | Field templates + `field.js` visible strings + `contractor_copy.py` Slice 5 constants; FG-025 and FG-021 copy tests. |
+| Validation | Dedicated **19 passed**. Field-focused **83 passed**. Prompt governed list **190 passed**. Full **612 passed**. Manual Field Web review **PASS** on port **5026**. Live **39 / 39**. Project 13 five actuals unchanged. `git diff --check` clean. |
+| Architectural findings | Presentation only. **Save original** preserved. No Observation Delete. No session revocation. No Field observation-detail page exists. |
+| Open decisions | Remaining FG-025 surfaces; “contract value” wording still flagged; FG-024 unauthorized. |
+| Next milestone | **STOP.** Do **not** start another FG-025 slice. Do **not** start FG-024. Do **not** start LEARN. |
+| Commit | this `feat: continue FG-025 contractor-facing Field Web language` commit |
+| Date | 2026-09-08 |
+
 ### 2026-09-08 — FG-025 Slice 4 post-close documentation reconciliation
 
 | Field | Content |

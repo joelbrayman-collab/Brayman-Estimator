@@ -18,6 +18,22 @@
   var recordedMime = "";
   var photos = [];
   var persistenceReady = false;
+  var FIELD_COPY = {
+    signOut: "Sign out",
+    saved: "Saved",
+    saving: "Saving…",
+    needsRetry: "Could not send",
+    eventSaveFailed: "This observation could not be saved.",
+    originalSaveFailed: "The original photo or file could not be saved.",
+    captureStartFailed: "This phone could not start a capture. Try again.",
+    addBeforeSave: "Add a photo, recording, or note before saving.",
+    logoutConfirm: "Unsent captures will be removed from this phone. Sign out?",
+    otherProjectPending:
+      "A capture is still waiting on another project. Open that project to send it, or discard it?",
+    discardOtherPending: "Discard the waiting capture for the other project?",
+    retryOne: "1 capture did not send.",
+    retryManySuffix: " captures did not send.",
+  };
 
   function csrfToken() {
     var meta = document.querySelector('meta[name="csrf-token"]');
@@ -34,6 +50,17 @@
     if (!node) return;
     node.textContent = text || "";
     if (state) node.setAttribute("data-state", state);
+  }
+
+  function visibleError(err, fallback) {
+    var message = String((err && err.message) || "");
+    if (
+      !message ||
+      /IndexedDB|Pending |Binary byte|QuotaExceeded|NS_ERROR_DOM/i.test(message)
+    ) {
+      return fallback;
+    }
+    return message;
   }
 
   function refreshCsrfFromHtml(html) {
@@ -248,7 +275,7 @@
         hex.slice(20, 32)
       );
     }
-    throw new Error("This browser cannot create a capture identity.");
+    throw new Error(FIELD_COPY.captureStartFailed);
   }
 
   function jsonHeaders() {
@@ -333,7 +360,7 @@
       };
       getAllStore("pending_captures")
         .then(function (captures) {
-          if (captures.length && !window.confirm("Unsent captures will be removed from this phone. Log out?")) {
+          if (captures.length && !window.confirm(FIELD_COPY.logoutConfirm)) {
             return;
           }
           return wipePending().then(proceed);
@@ -358,7 +385,9 @@
         }
         panel.hidden = false;
         count.textContent =
-          retry.length === 1 ? "1 capture needs retry." : retry.length + " captures need retry.";
+          retry.length === 1
+            ? FIELD_COPY.retryOne
+            : retry.length + FIELD_COPY.retryManySuffix;
         if (link) {
           var first = retry[0];
           link.href = "/field/projects/" + first.project_id + "/capture";
@@ -549,7 +578,7 @@
         throw new Error("Sign in required.");
       }
       if (result.response.status !== 201 && result.response.status !== 200) {
-        throw new Error(result.payload.error || "Event could not be saved.");
+        throw new Error(result.payload.error || FIELD_COPY.eventSaveFailed);
       }
       capture.server_event_id = result.payload.id;
       capture.state = "saving";
@@ -582,7 +611,7 @@
         throw new Error("Sign in required.");
       }
       if (result.response.status !== 201 && result.response.status !== 200) {
-        throw new Error(result.payload.error || "Original could not be saved.");
+        throw new Error(result.payload.error || FIELD_COPY.originalSaveFailed);
       }
       original.state = "acked";
       return deleteStore("pending_originals", original.client_original_uuid);
@@ -595,19 +624,19 @@
     });
     if (pending.length) {
       return markNeedsRetry(capture, pending).then(function () {
-        setFeedback("NEEDS RETRY", "needs_retry");
-        setStatus("NEEDS RETRY");
+        setFeedback(FIELD_COPY.needsRetry, "needs_retry");
+        setStatus(FIELD_COPY.needsRetry);
       });
     }
     return deleteStore("pending_captures", capture.client_capture_uuid).then(function () {
-      setFeedback("SAVED", "saved");
-      setStatus("SAVED");
+      setFeedback(FIELD_COPY.saved, "saved");
+      setStatus(FIELD_COPY.saved);
     });
   }
 
   function uploadCapture(capture, originals) {
-    setFeedback("SAVING", "saving");
-    setStatus("SAVING");
+    setFeedback(FIELD_COPY.saving, "saving");
+    setStatus(FIELD_COPY.saving);
     capture.state = "saving";
     return putStore("pending_captures", capture)
       .then(function () {
@@ -631,8 +660,8 @@
       })
       .catch(function (err) {
         return markNeedsRetry(capture, originals).then(function () {
-          setFeedback((err && err.message) || "NEEDS RETRY", "needs_retry");
-          setStatus("NEEDS RETRY");
+          setFeedback(visibleError(err, FIELD_COPY.needsRetry), "needs_retry");
+          setStatus(FIELD_COPY.needsRetry);
         });
       });
   }
@@ -661,7 +690,7 @@
   function saveNew(projectId) {
     var text = (document.getElementById("field-text").value || "").trim();
     if (!text && !recordedBlob && !photos.length) {
-      setFeedback("Add a photo, recording, or short text before saving.");
+      setFeedback(FIELD_COPY.addBeforeSave);
       return;
     }
     if (!persistenceReady) {
@@ -748,14 +777,12 @@
       if (!other.length) return;
       var first = other[0];
       if (
-        window.confirm(
-          "A pending capture is still bound to another Project. Open that Project to finish retry, or discard it?"
-        )
+        window.confirm(FIELD_COPY.otherProjectPending)
       ) {
         window.location.href = "/field/projects/" + first.project_id + "/capture";
         return;
       }
-      if (window.confirm("Discard the pending capture for the other Project?")) {
+      if (window.confirm(FIELD_COPY.discardOtherPending)) {
         return getAllStore("pending_originals").then(function (originals) {
           var chain = Promise.resolve();
           other.forEach(function (capture) {

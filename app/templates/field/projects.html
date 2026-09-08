@@ -46,7 +46,7 @@
         {% endfor %}
     </ul>
     {% if not projects %}
-    <p class="field-muted">No projects are available in this organization.</p>
+    <p class="field-muted">{{ contractor_copy.FIELD_NO_PROJECTS }}</p>
     {% endif %}
 </section>
 {% endif %}

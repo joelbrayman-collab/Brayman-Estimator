@@ -44,7 +44,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Estimating owns costing snapshots. Pricing consumes. Labour snapshots remain out of selling-price basis. Approve All = costing approval only. Proposed later revision `a5b6c7d8e9f0` down_revision `f4a5b6c7d8e9` — not created. |
 | Open decisions | FG-027 implementation authorization. Remaining V1 register §13 items except #2. |
 | Next milestone | **STOP.** Do **not** implement FG-027. |
-| Commit | Pending this docs commit |
+| Commit | `076e12f022fa5248a34e7baf7d05ae51e9e0ac4b` |
 | Date | 2026-09-08 |
 
 ### 2026-09-08 — FG-026 live migration and office UAT close

@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | FG-027 product implementation not authorized. Remaining V1 register §13 decisions except #2. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement FG-027. |
 | Next approved prompt | **None** — HOLD. Do not implement V1-02. |
-| Commit hash | Pending this docs commit |
+| Commit hash | `076e12f022fa5248a34e7baf7d05ae51e9e0ac4b` |
 
 ### 2026-09-08 — FG-026 live migration and office UAT close
 

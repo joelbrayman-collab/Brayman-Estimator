@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | **PREFLIGHT COMPLETE** (2026-09-08). Product implementation **NOT AUTHORIZED**. [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. |
 | Date | 2026-09-08 |
-| Parent | FG-026 close SHA `bacb5abf574b3dfe30bda4b6d6015026a3946607` |
+| Parent | FG-026 close SHA `bacb5abf574b3dfe30bda4b6d6015026a3946607`. Architecture recording SHA `076e12f022fa5248a34e7baf7d05ae51e9e0ac4b`. |
 | Gate | [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) |
 | Readiness | **B. READY WITH EXPLICIT NON-BLOCKING NOTES** — implementation still requires a separate authorized prompt; live UAT Assembly id 2 remains empty (`unit_cost` 0 on line 7); that is a BLOCK condition, not a schema blocker. |
 

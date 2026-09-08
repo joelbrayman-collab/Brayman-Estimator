@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | V1-02 costing not authorized. Hub PLAN leftover “mapping is not started” copy is remaining FG-025 surface / not this gate. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin V1-02. |
 | Next approved prompt | HOLD — do not begin V1-02. |
-| Commit hash | this FG-026 live-migrate/UAT docs commit |
+| Commit hash | `20d23b0103ee729e1d9770feeddfa7f8754e8804` |
 
 ### 2026-09-08 — FG-026 takeoff-to-estimate mapping V1 implementation
 

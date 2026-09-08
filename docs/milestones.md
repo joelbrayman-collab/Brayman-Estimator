@@ -44,7 +44,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | PLAN proposes / Estimating commits remains. Package approval still does not insert. Hub PLAN leftover mapping copy is out of this gate. |
 | Open decisions | V1-02 costing authorization. |
 | Next milestone | **STOP.** Do **not** begin V1-02. |
-| Commit | this FG-026 live-migrate/UAT docs commit |
+| Commit | `20d23b0103ee729e1d9770feeddfa7f8754e8804` |
 | Date | 2026-09-08 |
 
 ### 2026-09-08 — FG-026 takeoff-to-estimate mapping V1 implementation

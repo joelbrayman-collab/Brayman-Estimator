@@ -44,7 +44,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | PLAN proposes / Estimating commits. Existing `add_*_line` still commit for manual builder. FG-026 insert is one transaction. |
 | Open decisions | Live migrate + bounded project-3 UAT authorization. |
 | Next milestone | Separate live-migrate / UAT prompt. |
-| Commit | (this implementation commit) |
+| Commit | `aa4c71800586e0b8e2a63931bcdc8bc44d87a489` |
 | Date | 2026-09-08 |
 
 ### 2026-09-08 — CalibAi V1 completion register

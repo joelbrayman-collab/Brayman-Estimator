@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Live migrate. Bounded UAT on project 3 (no estimate today — not a defect). Human-created door Assembly still required for UAT. |
 | Next approved step | **STOP.** Return to ChatGPT Architect for live-migrate / UAT authorization. |
 | Next approved prompt | HOLD — live migrate / UAT not authorized. |
-| Commit hash | (this implementation commit) |
+| Commit hash | `aa4c71800586e0b8e2a63931bcdc8bc44d87a489` |
 
 ### 2026-09-08 — CalibAi V1 completion register
 

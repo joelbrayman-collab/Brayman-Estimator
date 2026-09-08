@@ -2,26 +2,22 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED** (2026-09-08). **OFFICE UAT STOPPED / NOT PASS.** **NOT CLOSED.** **NOT OPERATIONAL FOR UAT.** Legacy override-provenance defect **REPAIRED / TESTED / COMMITTED / PUSHED / AWAITING UAT CONTINUATION** (`72949f99da2b56ec06e95e16e29fa194a6730bbd`). [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Live current = heads **`a5b6c7d8e9f0`**. |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE UAT PASS / CLOSED / OPERATIONAL FOR UAT** (2026-09-08). Legacy override-provenance defect **REPAIRED** (`72949f99da2b56ec06e95e16e29fa194a6730bbd`) and **office-UAT-verified**. [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Live current = heads **`a5b6c7d8e9f0`**. |
 | Date | 2026-09-08 |
 | Parent | FG-026 close SHA `bacb5abf574b3dfe30bda4b6d6015026a3946607`. Architecture recording SHA `076e12f022fa5248a34e7baf7d05ae51e9e0ac4b`. Implementation start pin `28fb5c0445fafabb2924d5d43bce46bf5fca3d0e`. |
 | Gate | [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) |
-| Readiness | Product implementation complete. Live migrate **PASS**. Office UAT **STOPPED / NOT PASS**. Legacy NULL-reference override provenance **REPAIRED** in product (awaiting UAT continuation). Live line 7 **not** mutated by the repair. |
+| Readiness | Product implementation complete. Live migrate **PASS**. Office UAT continuation **PASS**. Gate **CLOSED / OPERATIONAL FOR UAT**. |
 
 ```text
 FG-027:
+CLOSED / OPERATIONAL FOR UAT
 IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED
-OFFICE UAT STOPPED / NOT PASS
-NOT CLOSED
-NOT OPERATIONAL FOR UAT
-LEGACY OVERRIDE-PROVENANCE DEFECT
-REPAIRED / TESTED / COMMITTED / PUSHED
-AWAITING UAT CONTINUATION
+OFFICE UAT PASS
 ADR-044 ACCEPTED
 LIVE CURRENT = HEADS a5b6c7d8e9f0
 ```
 
-This document pins implementation mechanics. Historical “do not create now” language below is the 2026-09-08 architecture recording. Product code, migration file `a5b6c7d8e9f0`, and tests **were implemented** under the authorized 8 Sep 2026 FG-027 package. Live upgrade **PASS**. Office UAT **STOPPED** (override provenance on EstimateLineItem id 7). Bounded repair **`72949f99da2b56ec06e95e16e29fa194a6730bbd`** freezes pre-edit working `unit_cost` as `library_unit_cost_reference` when that column is NULL on a CostItem/Assembly Draft edit. It does **not** query today’s library. It does **not** overwrite a populated reference. It does **not** mutate live line 7.
+This document pins implementation mechanics. Historical “do not create now” language below is the 2026-09-08 architecture recording. Product code, migration file `a5b6c7d8e9f0`, and tests **were implemented** under the authorized 8 Sep 2026 FG-027 package. Live upgrade **PASS**. First office UAT **STOPPED** (override provenance on EstimateLineItem id 7). Bounded repair **`72949f99da2b56ec06e95e16e29fa194a6730bbd`** freezes pre-edit working `unit_cost` as `library_unit_cost_reference` when that column is NULL on a CostItem/Assembly Draft edit. It does **not** query today’s library. It does **not** overwrite a populated reference. 2026-09-08 UAT continuation **PASS**; live line 7 now holds the verified override (`library_unit_cost_reference` **0.0000**, working **260**, `MANUAL_OVERRIDE`) with costing snapshots **1 SUPERSEDED / 2 CURRENT**.
 
 ---
 

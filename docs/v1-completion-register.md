@@ -2,23 +2,23 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-08). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **LIVE-MIGRATED / OFFICE UAT STOPPED / NOT CLOSED**. Legacy override-provenance defect **REPAIRED / TESTED / COMMITTED / PUSHED / AWAITING UAT CONTINUATION**. Readiness remains **39%** (V1-02 stays **PARTIAL** factor 0.40 — office UAT did not PASS). Does **not** authorize FG-027 close, V1-03, FG-024, or another FG-025 slice. |
+| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-08). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**). Readiness **45%** (V1-02 factor **1.00**). **2 / 11** COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Does **not** authorize V1-03, FG-024, or another FG-025 slice. |
 | Product | CalibAi / The Estimator |
 | Date | 2026-09-08 |
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibAi V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. |
 
 ```text
-CALIBAI V1 READINESS: 39%
+CALIBAI V1 READINESS: 45%
 
 MAJOR PACKAGES:
-1 / 11 COMPLETE
+2 / 11 COMPLETE
 
 CURRENT V1 PACKAGE:
-V1-02 / FG-027 (LIVE-MIGRATED / OFFICE UAT STOPPED / NOT CLOSED)
+V1-03 (ARCHITECTURE COMPLETE / NOT IMPLEMENTED)
 
 CRITICAL PATH:
-V1-02 → V1-03 / V1-04
+V1-03 / V1-04
 V1-06 (parallel) → Ontario legal approval → V1-07 production for contracts
 V1-05 after V1-04 output 3
 V1-10 before real Brayman projects
@@ -31,7 +31,7 @@ BRAYMAN REAL-LIFE UAT READY:
 NO
 
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
-THIS REGISTER DOES NOT AUTHORIZE FG-027 CLOSE, V1-03, FG-024, OR ANOTHER FG-025 SLICE
+THIS REGISTER DOES NOT AUTHORIZE V1-03, FG-024, OR ANOTHER FG-025 SLICE
 ```
 
 ---
@@ -161,15 +161,15 @@ No package from Joel’s list is rejected. No existing August 2026 four-output /
 
 | Field | Value |
 |-------|--------|
-| **CALIBAI V1 READINESS** | **39%** |
-| **MAJOR PACKAGES COMPLETE** | **1 / 11** |
-| COMPLETE | **1** (V1-01) |
+| **CALIBAI V1 READINESS** | **45%** |
+| **MAJOR PACKAGES COMPLETE** | **2 / 11** |
+| COMPLETE | **2** (V1-01, V1-02) |
 | SUBSTANTIALLY COMPLETE | **2** (V1-08, V1-09) |
-| PARTIAL | **4** (V1-02, V1-04, V1-06, V1-10) |
+| PARTIAL | **3** (V1-04, V1-06, V1-10) |
 | ARCHITECTURE COMPLETE / NOT IMPLEMENTED | **3** (V1-03, V1-05, V1-07) |
 | NOT STARTED | **1** (V1-11) |
-| **CURRENT V1 PACKAGE** | **V1-02 / FG-027 (LIVE-MIGRATED / OFFICE UAT STOPPED / NOT CLOSED)** |
-| **CRITICAL PATH** | V1-02 → V1-03 / V1-04; V1-06 parallel; V1-10 before real UAT; V1-11 last |
+| **CURRENT V1 PACKAGE** | **V1-03 (ARCHITECTURE COMPLETE / NOT IMPLEMENTED)** |
+| **CRITICAL PATH** | V1-03 / V1-04; V1-06 parallel; V1-10 before real UAT; V1-11 last |
 | **BMR DEMO READY** | **NO** |
 | **BRAYMAN REAL-LIFE UAT READY** | **NO** |
 
@@ -194,7 +194,7 @@ Weights total **100%** and reflect **remaining business/product significance** f
 | BLOCKER? | **NO** |
 | Dependencies | FG-010 **CLOSED**; existing Draft EstimateVersion + Assembly/CostItem on the same Project |
 | Governing | [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [fg-026-takeoff-to-estimate-mapping-preflight.md](architecture/fg-026-takeoff-to-estimate-mapping-preflight.md); ADR-005/006/007/011/031 |
-| Next governed action | V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **LIVE-MIGRATED / OFFICE UAT STOPPED**. Legacy override-provenance defect **REPAIRED / AWAITING UAT CONTINUATION**. Do **not** close FG-027 from this register. |
+| Next governed action | V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **COMPLETE / CLOSED / OPERATIONAL FOR UAT**. Do **not** begin V1-03 from this register. |
 
 PLAN proposes. Estimating commits. Package approval does **not** insert. Live UAT: TakeoffPackage **id 1** on project **3** mapped to Estimate **id 9** / version **id 9** / line **id 7** (quantity **3** `ea`) with insertion **id 1** and **3** citations. Package 1 **unchanged**. No labour/pricing snapshot, MaterialRequirement, or supplier/SKU from the insert.
 
@@ -204,18 +204,18 @@ PLAN proposes. Estimating commits. Package approval does **not** insert. Live UA
 |-------|--------|
 | Intent | CalibAi develops costs from governed organizational commercial intelligence. Human **costing** approval remains required. Mature path: CalibAi costs → flags exceptions / low-confidence → estimator reviews → **Approve all costing** → Pricing Engine. |
 | Weight | **10%** |
-| Status | **PARTIAL** (live-migrated; office UAT **STOPPED / NOT PASS**; legacy override-provenance defect **REPAIRED / AWAITING UAT CONTINUATION**). Factor unchanged. |
-| Factor | 0.40 |
-| Contribution | **4.0** |
+| Status | **COMPLETE** — live-migrated; bounded office UAT **PASS**; [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
+| Factor | **1.00** |
+| Contribution | **10.0** |
 | V1 REQUIRED? | **YES** (human-approved costing before pricing). Exception-based review is **V1 maturation**, not a launch fabricator of history. |
 | BLOCKER? | **NO** |
 | Dependencies | V1-01 for takeoff-sourced lines; FG-008 / FG-009 / FG-014 foundations |
-| Governing | [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **LIVE-MIGRATED / OFFICE UAT STOPPED / NOT CLOSED**; [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**; [fg-027-costing-approval-preflight.md](architecture/fg-027-costing-approval-preflight.md); [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **CLOSED**; [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED**; [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED**; ADR-025/030/034/035/036 |
-| Next governed action | **STOP.** Return to ChatGPT Architect for **UAT-continuation authorization**. Do **not** resume UAT from this register. Do **not** close FG-027. Do **not** begin V1-03. |
+| Governing | [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**; [fg-027-costing-approval-preflight.md](architecture/fg-027-costing-approval-preflight.md); [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **CLOSED**; [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED**; [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED**; ADR-025/030/034/035/036 |
+| Next governed action | **STOP.** Do **not** begin V1-03 from this register. Return to ChatGPT Architect for V1-03 / supplier-workflow authorization. |
 
-**Exists live:** additive `a5b6c7d8e9f0`; Costing Review UI; zero-cost BLOCK on EstimateVersion 9. Working line 7 unit_cost **250** with `library_unit_cost_reference` **NULL** (failed-UAT residue; **not** mutated by the 2026-09-08 repair). Product repair SHA **`72949f99da2b56ec06e95e16e29fa194a6730bbd`**. Labour snapshot **not** in selling-price basis. Supplier evidence not required.
+**Exists live / office-UAT-verified (EstimateVersion id 9):** additive `a5b6c7d8e9f0`; Costing Review; zero-cost BLOCK; legacy NULL-reference freeze (`library_unit_cost_reference` **0.0000**); `MANUAL_OVERRIDE` with reason/actor/time; Approve All snapshot **1 SUPERSEDED 750.00** / **2 CURRENT 780.00**; Pricing consume CURRENT then STALE then re-apply (`EstimatePricingSnapshot` id **6**, `costing_snapshot_id` **2**, TRUE_GM, customer **1036.94**). Labour snapshot **not** in selling-price basis. Supplier evidence not required. Assembly **id 2** and TakeoffPackage **id 1** unchanged. Repair SHA **`72949f99da2b56ec06e95e16e29fa194a6730bbd`**.
 
-**Does not exist / not verified:** office Approve All Costing PASS; frozen CURRENT snapshot; Pricing consume / STALE / re-apply UAT. MaterialRequirement; supplier-priced costing; ML confidence remain out of V1-02.
+**Out of V1-02:** MaterialRequirement; supplier-priced costing; ML confidence; V1-03 / ADR-008.
 
 “Approve all” means **costing** approval only. It does **not** approve takeoff mappings, customer selling price, or bypass commercial validation.
 
@@ -397,7 +397,7 @@ Remaining unauthorized candidates: customer Proposal/PDF terminology; Historical
 | ID | Weight | Factor | Contribution |
 |----|--------|--------|--------------|
 | V1-01 | 10 | 1.00 | 10.0 |
-| V1-02 | 10 | 0.40 | 4.0 |
+| V1-02 | 10 | 1.00 | 10.0 |
 | V1-03 | 12 | 0.15 | 1.8 |
 | V1-04 | 8 | 0.50 | 4.0 |
 | V1-05 | 6 | 0.15 | 0.9 |
@@ -407,7 +407,7 @@ Remaining unauthorized candidates: customer Proposal/PDF terminology; Historical
 | V1-09 | 6 | 0.70 | 4.2 |
 | V1-10 | 10 | 0.35 | 3.5 |
 | V1-11 | 7 | 0.00 | 0.0 |
-| **Total** | **100** | | **38.85 → 39%** |
+| **Total** | **100** | | **44.85 → 45%** |
 
 Round the published readiness to the **nearest whole percent**. Recalculate from this table when a package status changes. Do not average Feature Gate counts.
 
@@ -485,7 +485,7 @@ The BMR demo must show CalibAi as an **integrated contractor platform**, not a s
 | Takeoff / quantity evidence | FG-010 | **EXISTS** (mock extractor; interior-door count) |
 | Map approved quantities → estimate | V1-01 | **COMPLETE** (FG-026 **CLOSED / OPERATIONAL FOR UAT**) |
 | Estimate creation on the same project | PRICE | **EXISTS** (manual builder) |
-| Costing from org commercial intelligence | V1-02 | **PARTIAL** (library + labour/pricing; not CalibAi-costed exceptions) |
+| Costing from org commercial intelligence | V1-02 | **COMPLETE** (human costing + Approve All before Pricing; exception-based review is maturation) |
 | Supplier / BMR relationship | V1-03 | **NOT IMPLEMENTED** |
 | Pricing Engine apply | FG-009 | **EXISTS** (separate human action) |
 | Customer estimate | V1-04 output 2 | **EXISTS** |
@@ -520,12 +520,12 @@ Real-life UAT means V1 is complete and controlled enough to operate **real Braym
 | Criterion | V1 bar | Current |
 |-----------|--------|---------|
 | Data safety / tenant integrity | Org isolation; no cross-org writes | **PARTIAL** (UAT-operational; not production-certified) |
-| Migration state | Live current = heads; known residue labeled | **YES** (`f4a5b6c7d8e9`; labeled synthetics remain) |
+| Migration state | Live current = heads; known residue labeled | **YES** (`a5b6c7d8e9f0`; labeled synthetics remain) |
 | Backups | Governed backup/restore before real projects | **NO** (ad-hoc gitignored copies only) |
 | Authentication | Office login; SECRET_KEY not the committed dev secret | **UAT YES / production not certified** |
 | User onboarding + Ben/Brayman training | Written operating/training pack | **NO** |
 | Real project creation | CRM + Hub + location | **YES** |
-| Estimate workflow | V1-01 + V1-02 + FG-009 | **NO** (V1-01 **COMPLETE**; V1-02 costing remains PARTIAL) |
+| Estimate workflow | V1-01 + V1-02 + FG-009 | **YES** (V1-01 **COMPLETE**; V1-02 **COMPLETE**; FG-009 **CLOSED**). Real-life UAT still **NO** pending V1-10 / legal / V1-11 |
 | Customer-document workflow | Output 2; branded Proposal | **YES** (FG-012/017). Remaining PDF language = V1-09 decision |
 | Contract / legal safety | Fail-closed unless Ontario package APPROVED | **FAIL-CLOSED by absence** (cannot lawfully generate) |
 | BUILD / Field | Capture + office observations | **YES** (FG-020/021) |
@@ -587,16 +587,16 @@ Do **not** block V1 on:
 Copy this block into later implementation reports and fill from this register:
 
 ```text
-CALIBAI V1 READINESS: 39%
+CALIBAI V1 READINESS: 45%
 
 MAJOR PACKAGES:
-1 / 11 COMPLETE
+2 / 11 COMPLETE
 
 CURRENT V1 PACKAGE:
-V1-02 / FG-027 (LIVE-MIGRATED / OFFICE UAT STOPPED / NOT CLOSED)
+V1-03 (ARCHITECTURE COMPLETE / NOT IMPLEMENTED)
 
 CRITICAL PATH:
-V1-02 → V1-03 / V1-04
+V1-03 / V1-04
 V1-06 parallel
 V1-10 before real UAT
 V1-11 last

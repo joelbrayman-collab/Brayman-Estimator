@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-027 is the governing identifier for CalibAi **V1-02**. Do not assign a new M0xx number. Lifecycle home remains **PRICE**. Do not add a new top-level stage. |
 | Module | **Estimating** owns costing approval and costing snapshots. **Pricing Engine consumes** the current approved costing. **Labour Engine** retains `EstimateLabourSnapshot`. No new module. |
 | Date | 2026-09-08 |
-| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED.** **OFFICE UAT STOPPED / NOT PASS.** **NOT CLOSED.** **NOT OPERATIONAL FOR UAT.** Legacy override-provenance defect **REPAIRED / TESTED / COMMITTED / PUSHED / AWAITING UAT CONTINUATION** (`72949f99da2b56ec06e95e16e29fa194a6730bbd`). Live current = heads **`a5b6c7d8e9f0`**. Architecture preflight remains complete. [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE UAT PASS.** Legacy override-provenance defect **REPAIRED** (`72949f99da2b56ec06e95e16e29fa194a6730bbd`) and **office-UAT-verified**. Live current = heads **`a5b6c7d8e9f0`**. Architecture preflight remains complete. [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. |
 | Architecture | [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted** · [fg-027-costing-approval-preflight.md](../architecture/fg-027-costing-approval-preflight.md) **PREFLIGHT COMPLETE** · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](../adr/ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [FG-009](FG-009-organization-calibrated-pricing-engine.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-008](FG-008-labour-engine-phase-b.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-014](FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [v1-completion-register.md](../v1-completion-register.md) V1-02 · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 | Related ADRs | **[ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) Accepted**. Do **not** accept ADR-008 or ADR-010 from this gate. |
 | Prerequisites | [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-009](FG-009-organization-calibrated-pricing-engine.md) **CLOSED**. Working CostItem / Assembly / Draft line edit exist. Live migrate + UAT require a **separate** authorized prompt. |
@@ -18,32 +18,31 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED.** **OFFICE UAT STOPPED / NOT PASS.** **NOT CLOSED.** Legacy override-provenance defect **REPAIRED / AWAITING UAT CONTINUATION**. |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT.** **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE UAT PASS.** Legacy override-provenance defect **REPAIRED / OFFICE-UAT-VERIFIED**. |
 | Product code | `app/models/estimate_costing.py`; `app/services/estimate_costing.py`; Estimate version Costing Review; Pricing consume / stale |
 | Schema / Alembic | Additive `a5b6c7d8e9f0` **applied live** (`f4a5b6c7d8e9` → `a5b6c7d8e9f0`). Live current = heads **`a5b6c7d8e9f0`**. |
-| Approve All Costing | **IMPLEMENTED / LIVE.** Zero-cost BLOCK office UAT **PASS**. Full costing-approval UAT **STOPPED**. |
-| Pricing consume / stale | **IMPLEMENTED / LIVE.** Office consume / stale UAT **NOT RUN** (stopped before Apply Pricing). |
+| Approve All Costing | **IMPLEMENTED / LIVE / OFFICE UAT PASS.** Zero-cost BLOCK **PASS**. Override provenance **PASS**. Frozen CURRENT snapshot **PASS**. Recost supersession **PASS**. |
+| Pricing consume / stale | **IMPLEMENTED / LIVE / OFFICE UAT PASS.** Consume CURRENT **PASS**. STALE / REQUIRES RE-APPLY after recost **PASS**. Re-apply **PASS**. |
 | Labour-in-basis | **UNCHANGED** (`include_labour_snapshot_direct_cost=False`) |
 | Supplier evidence | **NOT REQUIRED** |
 
 ```text
 FG-027:
+CLOSED / OPERATIONAL FOR UAT
 IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED
-OFFICE UAT STOPPED / NOT PASS
-NOT CLOSED
-NOT OPERATIONAL FOR UAT
-LEGACY OVERRIDE-PROVENANCE DEFECT
-REPAIRED / TESTED / COMMITTED / PUSHED
-AWAITING UAT CONTINUATION
+OFFICE UAT PASS
 ADR-044 ACCEPTED
 LIVE CURRENT = HEADS a5b6c7d8e9f0
 APPROVE ALL = COSTING APPROVAL ONLY
 DO NOT ACCEPT ADR-008
+DO NOT BEGIN V1-03 FROM THIS CLOSE
 ```
 
-Joel authorized live migrate + bounded office UAT on **2026-09-08**. Live upgrade **PASS**. Office UAT **STOPPED** on EstimateLineItem **id 7** override-provenance defect (pre-FG-027 `library_unit_cost_reference` NULL).
+Joel authorized live migrate + bounded office UAT on **2026-09-08**. Live upgrade **PASS**. First office UAT **STOPPED** on EstimateLineItem **id 7** override-provenance defect (pre-FG-027 `library_unit_cost_reference` NULL).
 
-Joel authorized a **bounded product repair** on **2026-09-08** (no new migration; no live DB write). Repair SHA **`72949f99da2b56ec06e95e16e29fa194a6730bbd`**. On CostItem/Assembly Draft edit, a NULL `library_unit_cost_reference` freezes the **pre-edit working `unit_cost`** as the line’s library reference. A later different working cost is `MANUAL_OVERRIDE` with required reason/actor/time. Populated references are not overwritten. Live UAT row 7 was **not** mutated in the repair pass.
+Joel authorized a **bounded product repair** on **2026-09-08** (no new migration; no live DB write). Repair SHA **`72949f99da2b56ec06e95e16e29fa194a6730bbd`**. On CostItem/Assembly Draft edit, a NULL `library_unit_cost_reference` freezes the **pre-edit working `unit_cost`** as the line’s library reference. A later different working cost is `MANUAL_OVERRIDE` with required reason/actor/time. Populated references are not overwritten.
+
+Joel authorized **bounded office UAT continuation** on **2026-09-08** (no new migration; close only if remaining UAT PASS). Remaining office UAT **PASS**. Gate **CLOSED / OPERATIONAL FOR UAT**.
 
 ---
 
@@ -191,7 +190,18 @@ Working CostItem cost; working Assembly cost; manual custom; manual allowance; z
 
 **Subsequent status (2026-09-08 live migrate + office UAT):** Live `flask db upgrade a5b6c7d8e9f0` **PASS**. Gitignored backup `instance/brayman_estimator-backup-before-fg027-a5b6c7d8e9f0.db`. Office UAT port **5016** against EstimateVersion **id 9**. Zero-cost BLOCK **PASS** (`MISSING_ASSEMBLY_COST`, `INCOMPLETE_DIRECT_COST_TOTAL`). Failed Approve All POST **PASS** (no snapshot). Working unit_cost on line **7** changed to **250** (extended **750**). Manual override provenance **FAIL**: `library_unit_cost_reference` remains **NULL** on the pre-FG-027 inserted line, so classification stayed `LIBRARY_ASSEMBLY`, override reason was not persisted, and Approve All became enabled without override evidence. UAT **STOPPED**. No Approve All snapshot. No Pricing apply. Assembly **id 2** and TakeoffPackage **id 1** unchanged. Gate **NOT CLOSED**. Product tests **not** rerun under the UAT prompt.
 
-**Subsequent status (2026-09-08 bounded legacy override-provenance repair):** Product SHA **`72949f99da2b56ec06e95e16e29fa194a6730bbd`**. No new migration. No live DB write. Dedicated FG-027 **20 passed**. Estimating focused **29**. Pricing focused **52**. FG-026 **20**. Governed A–D bundle **121**. Full suite **652 passed**. Historical dedicated **15** / full **647** remain the pre-repair baseline. Live line 7 remains UAT residue (working **250**, `library_unit_cost_reference` **NULL**) until a separately authorized UAT continuation. Gate remains **NOT CLOSED**. V1-02 remains **PARTIAL**.
+**Subsequent status (2026-09-08 bounded legacy override-provenance repair):** Product SHA **`72949f99da2b56ec06e95e16e29fa194a6730bbd`**. No new migration. No live DB write. Dedicated FG-027 **20 passed**. Estimating focused **29**. Pricing focused **52**. FG-026 **20**. Governed A–D bundle **121**. Full suite **652 passed**. Historical dedicated **15** / full **647** remain the pre-repair baseline.
+
+**Subsequent status (2026-09-08 bounded office UAT continuation + close):** No new migration. No product-code change. Stale Flask PID **45009** on port **5016** (pre-repair process) was stopped; Flask restarted on **5016** from `main` HEAD **`cf282bc6ea5cb8c917b9bae052c84a31cae65445`**. Line **7** was restored to pre-failed-edit state (`unit_cost` **0**, `library_unit_cost_reference` **NULL**, `LIBRARY_ASSEMBLY`) by direct field assignment, **not** `update_line_item`. Remaining office UAT **PASS** on EstimateVersion **id 9** / port **5016** / actor **Joel Brayman**:
+
+- Override **0 → 250** with reason `FG-027 UAT synthetic door costing override` froze `library_unit_cost_reference` **0.0000**, classified `MANUAL_OVERRIDE`, extended **750.00**, actor/time set. Assembly **id 2** unchanged (0 components, `base_unit_cost` 0). Insertion **id 1** / **3** citations unchanged. No costing snapshot from the edit. Zero-cost BLOCKs cleared; WARN `UNIT_MISMATCH_CONFIRMED`, `NO_SUPPLIER_EVIDENCE`, `LABOUR_EVIDENCE_ABSENT` did not block. Apply Pricing stayed disabled until costing approval.
+- Approve All Costing created snapshot **id 1** CURRENT, approved direct cost **750.00**, frozen line `MANUAL_OVERRIDE` / library ref **0** / reason retained. **No** Pricing auto-apply. Version remained Draft / unlocked.
+- Apply org pricing (resolved ORG-001 TRUE_GM 15%) created/updated unique pricing snapshot **id 6**: method `TRUE_GROSS_MARGIN`, source `ORG_APPROVED_ACTIVE`, `costing_snapshot_id` **1**, basis **750.00**, customer total **997.06**. Labour snapshots on version 9 remained **0**.
+- Recost **250 → 260** with new reason `FG-027 UAT recost 250 to 260 after first costing approval`. Library reference stayed **0.0000**. Working extended **780.00**. Snapshot **1** remained CURRENT at **750.00** until re-approval. UI required Approve All again before Apply Pricing.
+- Second Approve All superseded snapshot **1** (preserved **750.00** / original reason) with snapshot **id 2** CURRENT **780.00** / recost reason. Pricing consume status **STALE / REQUIRES RE-APPLY** (`costing_snapshot_id` still **1**). UI showed **STALE / REQUIRES RE-APPLY**.
+- Re-apply pricing set `costing_snapshot_id` **2**, consume **CURRENT**, basis **780.00**, customer **1036.94**. Labour snapshots on version 9 remained **0**. CostItem/Assembly libraries unchanged.
+
+Gate **CLOSED / OPERATIONAL FOR UAT**. V1-02 **COMPLETE**. Product tests **not** rerun under this UAT/close prompt; last verified dedicated **20** / full **652**. Do **not** begin V1-03 from this close. Do **not** accept ADR-008.
 
 ---
 

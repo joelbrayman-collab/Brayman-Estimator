@@ -174,7 +174,7 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 
 - Electronic signature / formal proposal acceptance workflows
 - CAD ingestion (Phase G; PDF-first per ADR-009)
-- Estimate mapping from approved take-off packages — [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** (not FG-010). V1-02 costing — [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **LIVE-MIGRATED / OFFICE UAT STOPPED / NOT CLOSED**; legacy override-provenance **REPAIRED / AWAITING UAT CONTINUATION**; [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**.
+- Estimate mapping from approved take-off packages — [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** (not FG-010). V1-02 costing — [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**.
 - Living supplier evidence / Winchester POC / bulk supplier onboarding (FG-014 identity is closed; ADR-008 remains Proposed)
 - Permit branding from Brand Profile; national Permit Rules expansion (FG-015/FG-016 POC is closed)
 - Change Order governed document family / client email / field UX — [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (do not create a second Change Order entity)

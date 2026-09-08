@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-08 — V1-02 / FG-027 office UAT continuation + close
+
+| Field | Content |
+|-------|---------|
+| ID | FG-027 / V1-02 |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** Remaining office UAT **PASS**. V1-02 **COMPLETE**. Readiness **45%**. |
+| Branch | `main` |
+| Base commit | `cf282bc6ea5cb8c917b9bae052c84a31cae65445` |
+| Objective | Resume remaining FG-027 office UAT after the legacy override-provenance repair and close the gate only if UAT PASS. |
+| Deliverables | Live UAT continuation on EstimateVersion **id 9** / port **5016**; FG-027 / V1 register / current-authority close docs. No new migration. No product-code change. |
+| Validation | Override freeze **PASS**. Approve All **PASS**. Pricing consume **PASS**. Recost supersession **PASS**. STALE / re-apply **PASS**. Labour-in-basis unchanged. Assembly **id 2** / TakeoffPackage **id 1** unchanged. Product tests **not** rerun (last verified dedicated **20** / full **652**). |
+| Architectural findings | Stale Flask 5016 (pre-repair PID) had to be restarted onto current `main` before the repair could be office-verified. |
+| Open decisions | V1-03 authorization. Do not accept ADR-008 from this close. |
+| Next milestone | **STOP.** Return to ChatGPT Architect for V1-03 authorization. Do **not** begin V1-03 from this close. |
+| Commit | Close SHA **this commit** |
+| Date | 2026-09-08 |
+
 ### 2026-09-08 — V1-02 / FG-027 bounded legacy override-provenance repair
 
 | Field | Content |

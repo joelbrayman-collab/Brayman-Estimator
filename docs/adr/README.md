@@ -150,7 +150,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-044](ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) | Costing Approval, Snapshot Ownership, and Pricing Consumption Boundary | **Accepted** (2026-09-08; [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **LIVE-MIGRATED / OFFICE UAT STOPPED / NOT CLOSED**; live current = heads `a5b6c7d8e9f0`) |
+| [ADR-044](ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) | Costing Approval, Snapshot Ownership, and Pricing Consumption Boundary | **Accepted** (2026-09-08; [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**; live current = heads `a5b6c7d8e9f0`) |
 
 ### Field Web capture reliability (Accepted; FG-021 CLOSED)
 

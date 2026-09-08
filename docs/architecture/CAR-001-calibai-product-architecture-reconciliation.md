@@ -95,6 +95,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-08 FG-027 implemented — live migrate not authorized by CAR-001):** [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED**. [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Live current remains **`f4a5b6c7d8e9`**. Repository graph head **`a5b6c7d8e9f0`**. Readiness remains **39%**. CAR-001 still does **not** authorize FG-027 live migrate, FG-024, remaining FG-025 surfaces, or LEARN.
 
+**Subsequent status (2026-09-08 FG-027 office UAT continuation + close — not authorized by CAR-001):** [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**. V1-02 **COMPLETE**. Readiness **45%**. Live current = heads **`a5b6c7d8e9f0`**. CAR-001 still does **not** authorize V1-03, FG-024, remaining FG-025 surfaces, or LEARN.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

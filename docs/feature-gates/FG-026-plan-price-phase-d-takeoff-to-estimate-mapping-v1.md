@@ -192,6 +192,8 @@ FG-026 is **CLOSED / OPERATIONAL FOR UAT**. Phase D mapping is operational for l
 
 **Subsequent (2026-09-08, not this gate):** V1-02 is recorded as [FG-027](FG-027-automated-costing-and-human-cost-approval-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. FG-026 product remains unchanged.
 
+**Subsequent (2026-09-08 FG-027 close, not this gate):** [FG-027](FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**. V1-02 **COMPLETE**. FG-026 product remains unchanged.
+
 ## Related
 
 - [fg-026-takeoff-to-estimate-mapping-preflight.md](../architecture/fg-026-takeoff-to-estimate-mapping-preflight.md)

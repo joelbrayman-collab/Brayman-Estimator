@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — V1-02 / FG-027 bounded office UAT continuation + close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026 |
+| Objective | Resume remaining FG-027 office UAT after the legacy override-provenance repair and close the gate only if remaining UAT PASS |
+| Business decision | Joel authorized UAT continuation. Close FG-027 only on PASS. Do not begin V1-03. No new migration. |
+| Architectural decision | Unchanged ADR-044. Pre-edit working `unit_cost` freeze for NULL library reference was office-verified. |
+| Prompt template used | Authorized V1-02 / FG-027 bounded office UAT continuation after legacy override-provenance repair (8 Sep 2026) |
+| Approved Cursor prompt summary | BOUNDED OFFICE UAT CONTINUATION AFTER LEGACY OVERRIDE-PROVENANCE REPAIR; NO NEW MIGRATION; NO FG-027 CLOSE UNLESS UAT PASS; NO V1-03 |
+| Files expected to change | Live UAT DB (EstimateVersion 9 / line 7 / costing + pricing snapshots); FG-027 / V1 / current-authority docs if PASS |
+| Files prohibited from changing | Alembic revisions; product redesign; V1-03; CalibAi rename; FG-024; FG-025; LEARN |
+| Implementation result | Remaining office UAT **PASS**. FG-027 **CLOSED / OPERATIONAL FOR UAT**. V1-02 **COMPLETE**. Readiness **45%**. |
+| Tests | Product tests **not** rerun under this prompt. Last verified dedicated FG-027 **20** / full **652**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None |
+| Unresolved issues | V1-03 not authorized; BMR DEMO READY **NO**; BRAYMAN REAL-LIFE UAT READY **NO** |
+| Next approved step | **STOP.** Return to ChatGPT Architect for V1-03 authorization. |
+| Next approved prompt | Not in this pass (STOP / V1-03 authorization). |
+| Commit hash | Close SHA **this commit** (pin follows). |
+
 ### 2026-09-08 — V1-02 / FG-027 bounded legacy override-provenance repair
 
 | Field | Content |

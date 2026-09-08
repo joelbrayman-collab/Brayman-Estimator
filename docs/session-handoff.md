@@ -46,7 +46,7 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 - Branch: `main`
 - FG-017 close SHA: `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5` (`docs: close FG-017 live migration and office UAT`). Docs-reconciliation content: `dd30d752190e56ed687e270950df9bf9a06d7a26`. SHA-pin: `07cb46c501d968542dff567943044dc1db870f01`. Implementation parent `00ca492e28118d75757e9a9c82384978b5decd92`. FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`.
 - FG-016 implementation commit: `a709829d32d94ab2baf36f142ad0095254ba3d3a` (`feat: implement FG-016 Ontario Ottawa Permit Intelligence POC`)
-- Slice 5 product commit (`feat: continue FG-025 contractor-facing Field Web language`). Parent **`0ed4d67282551d75b4204e33d367f3f3baba023a`** (`docs: reconcile FG-025 Slice 4 close record`). Slice 4 product SHA remains **`56e16f03446f982d577d2a3f0d3375ef865e1dc9`**. Slice 3 product SHA remains **`071f5f923515c6405298bf96b0af249a20f81358`**.
+- Slice 5 product SHA **`5b497905086554214e85f69afd8101d88f89161c`** (`feat: continue FG-025 contractor-facing Field Web language`). Parent **`0ed4d67282551d75b4204e33d367f3f3baba023a`** (`docs: reconcile FG-025 Slice 4 close record`). Slice 4 product SHA remains **`56e16f03446f982d577d2a3f0d3375ef865e1dc9`**. Slice 3 product SHA remains **`071f5f923515c6405298bf96b0af249a20f81358`**.
 - Alembic graph head (repository): **`e3f4a5b6c7d8`**. Live `flask db current`: **`e3f4a5b6c7d8`**. Live current **equals** repository head. One graph head.
 - Chain: … → **`c1d2e3f4a5b6` (FG-020)** → **`d2e3f4a5b6c7` (FG-021)** → **`e3f4a5b6c7d8` (FG-023 Slice A; applied live 2026-09-07 Slice C)**
 - Latest product-changing governed full suite: **612 passed**. Dedicated FG-025 Slice 5 **19**. Field-focused **83**. Prompt governed list **190**. Slice 4 dedicated **16** / Slice-4 focused **114** / governed **226** / full **609** remain historical. Independent Slice 4 close review reran dedicated **16** and Slice-4 focused **114**; governed and full **not** independently rerun. Slice 3 dedicated **13** / PRICE-focused **167** / governed **303** / full **606** remain historical. Close-time FG-023 dedicated **35** / focused **149** / full **593** remain historical. Historical Slice A close focused command **126** remains accurate for that close. Pre-Slice-B focused **137** remains historical. Dedicated FG-021 **20**. Focused (Hub + FG-018 + FG-019 + both FG-020 + FG-021) **148** remains the prior FG-021 close bundle. Dedicated FG-020 **44** (33 field observation + 11 media compatibility). Dedicated FG-019 **34**. Dedicated FG-018 **37**. FG-020 **gate-at-close** full suite **538** remains historical.
@@ -88,7 +88,7 @@ No additional 29 Aug CalibAi commits exist on `main`. FG-010 live-migrate docs a
 
 Read first: `AGENTS.md`; [platform-constitution.md](platform-constitution.md); [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md); [governance/review-turnover-protocol.md](governance/review-turnover-protocol.md); [platform-governance.md](platform-governance.md); this file; [current-state.md](current-state.md); [project-state-report.md](project-state-report.md); [platform-roadmap.md](platform-roadmap.md); [feature-gates/README.md](feature-gates/README.md); [adr/README.md](adr/README.md).
 
-FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** files: **CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (architecture only). ADR-010 **Proposed**. Do not bulk-accept remaining Proposed ADRs. [ADR-040](adr/ADR-040-organization-brand-profile.md) is **Accepted**. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) is **Accepted**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. **ADR-021 Accepted** (MONITOR Slice A projection **implemented**; Hub UI **not implemented**; gate **not closed**). Organization Brand Profile is **operational for office UAT**. Change Order document family is a **future pin only**.
+FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** files: **CLOSED / OPERATIONAL FOR UAT**. [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted**. [ADR-032](adr/ADR-032-app-managed-historical-workbook-storage.md) **Accepted**. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (architecture only). ADR-010 **Proposed**. Do not bulk-accept remaining Proposed ADRs. [ADR-040](adr/ADR-040-organization-brand-profile.md) is **Accepted**. [FG-017](feature-gates/FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) is **Accepted**. [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. **ADR-021 Accepted** (MONITOR Slice A projection + Slice B Hub **implemented / live-migrated / office-UAT-verified**; [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**). Organization Brand Profile is **operational for office UAT**. Change Order document family is a **future pin only**.
 
 ## 4. APPROVED PRODUCT VISION
 
@@ -115,7 +115,9 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **FG-025 Slice 5 contractor-facing Field Web language** (2026-09-08). Status **SLICE 5 AUTHORIZED AND IMPLEMENTED / NOT CLOSED**. Presentation mapping only. Remaining surfaces **NOT AUTHORIZED**.
+**Last authorized delta:** **2026-09-08 Review Turnover** (docs only). Status **RECONCILIATION / SHA PIN / CURRENT-AUTHORITY REPAIR**. No product code. Slice 5 product SHA remains **`5b497905086554214e85f69afd8101d88f89161c`**. This turnover commit is **not** the Slice 5 product SHA.
+
+**Prior:** **FG-025 Slice 5 contractor-facing Field Web language** (2026-09-08). Status **SLICE 5 AUTHORIZED AND IMPLEMENTED / NOT CLOSED**. Presentation mapping only. Remaining surfaces **NOT AUTHORIZED**.
 
 **Prior:** **FG-025 Slice 4 contractor-facing office language** (2026-09-08). Status **SLICE 4 AUTHORIZED AND IMPLEMENTED / NOT CLOSED**. Presentation mapping only. Remaining surfaces were then **NOT AUTHORIZED**.
 
@@ -270,11 +272,12 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - FG-020: `FieldCaptureEvent`; `FieldCaptureOriginal`; `FieldCaptureDerivedCandidate`; `app/services/build.py`; `app/services/build_storage.py`; `app/services/build_rendition.py`; office `/projects/<id>/field-events/...` including `/display` JPEG; Hub Field Observations; `flask build propose-derived-candidate`. Gate-at-close live current = head was `c1d2e3f4a5b6`.
 - FG-021: `/field` Today + Project confirm + Capture; IndexedDB `calibai-field-v1`; idempotent Event/Original POST; display GET; `client_capture_uuid` / `client_original_uuid`. **Gate-at-close** live current `d2e3f4a5b6c7` (later superseded by FG-023 `e3f4a5b6c7d8`).
 - FG-023: `ProjectDirectCostActual` / `project_direct_cost_actuals`; `app/services/direct_cost_actuals.py`; `app/services/monitor.py` `assemble_monitor_v1`; Hub `#hub-monitor`; BUILD create/supersede POSTs; additive revision `e3f4a5b6c7d8` **applied live** 2026-09-07. Product SHA `7dd4d82c927ec2c38a0562e7e1cdedbccabb6662`. Office UAT project **id 13**.
+- FG-025: `app/presentation/contractor_copy.py` Slice 1–5 display mapping (Hub MONITOR, Project Hub, office PRICE specialist, office shell, Field Web). Slice 5 product SHA **`5b497905086554214e85f69afd8101d88f89161c`**. Gate **NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**.
 
 ## 10. TEST / UAT / MIGRATION STATUS
 
 - Repository graph head `e3f4a5b6c7d8`. Live current `e3f4a5b6c7d8`. Live current **equals** repository head. One graph head. Applied `d2e3f4a5b6c7` → `e3f4a5b6c7d8` (2026-09-07 Slice C). Live `project_direct_cost_actuals` exists. Five UAT rows on project **id 13** only.
-- Latest product-changing: dedicated FG-023 **35**; focused **149**; historical Slice A close focused **126**; pre-Slice-B focused **137**; full suite **593 passed**.
+- Latest product-changing: Slice 5 dedicated FG-025 **19**; Field-focused **83**; prompt governed list **190**; full suite **612 passed** (SHA `5b497905086554214e85f69afd8101d88f89161c`). Dedicated FG-023 **35**; focused **149**; historical Slice A close focused **126**; pre-Slice-B focused **137**; full suite **593 passed** remain historical close-time FG-023 evidence.
 - Historical dedicated: FG-021 **20**; FG-020 **44** (33 + 11 media compatibility); FG-019 **34**; FG-018 **37**; FG-017 **22**; FG-016 **37**; FG-015 permit foundation **19**; FG-014 material catalogue **35**; FG-013 upload 27; FG-012 19; Project Hub (post-FG-020 assertions); take-off 18; Plan Intelligence 56; Pricing 33; Labour 25; Historical 11.
 - Prior FG-021 close bundle (historical): focused (Hub + FG-018 + FG-019 + both FG-020 + FG-021) **148 passed**. Full suite at FG-021 close **558 passed**.
 - Live API FG-019 UAT **PASSED** on port **5012**. Live office FG-018 UAT **PASSED** on port **5011**. FG-017 UAT remains **PASSED** on port **5010**. Pratt Permit Report UAT remains **PASSED** on port **5009** (project id 9). FG-020 office UAT **PASSED** on port **5013**.
@@ -322,6 +325,22 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
 
+**2026-09-08 Review Turnover.** Chat history is not the system of record. Classifications:
+
+| Item | Classification |
+|------|----------------|
+| FG-025 Slice 5 Field Web copy / SHA `5b497905086554214e85f69afd8101d88f89161c` / dedicated **19** / Field-focused **83** / governed **190** / full **612** | **ALREADY IN REPOSITORY** (product). SHA pin was **PARTIALLY MEMORIALIZED** — pinned this pass |
+| Live Alembic `e3f4a5b6c7d8`; Field **39 / 39**; Project 13 five actuals | **ALREADY IN REPOSITORY** (verified this pass) |
+| FG-023 CLOSED; FG-024 FUTURE / NOT IMPLEMENTATION-AUTHORIZED; FG-025 NOT CLOSED; remaining surfaces NOT AUTHORIZED | **ALREADY IN REPOSITORY** |
+| §3 ADR-021 “Hub UI not implemented / gate not closed” | **SUPERSEDED** — repaired this pass |
+| §19 “Do not start Slice 5” after Slice 5 implemented | **SUPERSEDED** — repaired this pass |
+| §10 / §21 / §22 still citing FG-023 full **593** as latest product-changing suite | **PARTIALLY MEMORIALIZED** — repaired this pass |
+| Durable-storage A–J still “Slice 1 / Do not start Slice 2” | **SUPERSEDED** — repaired this pass |
+| Feature-gates README FG-017 “live current today is d2e3f4a5b6c7”; FG-021 index “Live current = head d2e3…”; roadmap “Do not start Slice 5” | **SUPERSEDED** — repaired this pass |
+| Observation Delete; SESSION-EXPIRY RECOVERY deferred; no Slice 6 authorization | **ALREADY IN REPOSITORY** |
+
+**Completeness test:** Is there any material approved decision, requirement, implementation fact, protected baseline, unresolved decision, or current authorization present in the active conversation / Turnover Delta Ledger that is not represented in the repository? **NO — verified through Turnover Delta Ledger reconciliation.**
+
 **2026-09-07 Review Turnover.** Chat history is not the system of record. Classifications:
 
 | Item | Classification |
@@ -358,7 +377,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 
 **2026-09-07 FG-025 implementation preflight.** [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **IMPLEMENTATION PREFLIGHT COMPLETE**. Docs only. Did **not** rewrite UI. Did **not** authorize remaining slices.
 
-**Completeness test:** Is there any material approved decision, requirement, implementation fact, protected baseline, unresolved decision, or current authorization present in the active conversation / Turnover Delta Ledger that is not represented in the repository? **NO — verified through Turnover Delta Ledger reconciliation.**
+**Completeness test (historical 2026-09-07 Review Turnover):** answered **NO** at that pass. Superseded by the 2026-09-08 Review Turnover completeness test above.
 
 ## 16. OPEN DECISIONS
 
@@ -403,7 +422,7 @@ Phase D estimate mapping; Crew Template catalog; payroll burden; `LabourActualOb
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do not start Phase D. Do not enable an external AI provider. Do not reopen FG-021. Do not add tokens, RBAC, org-switcher, invitations, SSO, or password-reset email. Do **not** implement Project Closeout. Do **not** expand renditions to audio conversion, extra sizes, or a job queue. Do **not** create another Alembic revision. Do not **implement** LEARN, QuickBooks, FG-024, remaining FG-025 surfaces, or contract/warranty **template** work. Do **not** start Slice 5. Do **not** populate Ontario or U.S. legal content. Do **not** enable Native Signing for real customer / commercial use. Native Signing **development** may proceed only under **separate** Joel-authorized governance. Do not reopen FG-008 through FG-023. Do not accept ADR-008. Do not accept ADR-010. Do not add PWA, transcription, or native iOS from this gate. Do **not** implement Observation Delete. Do **not** implement session revocation / idle timeout. FG-024 recording does **not** authorize implementation. FG-025 remaining slices are **not** authorized.
+Do not start Phase D. Do not enable an external AI provider. Do not reopen FG-021. Do not add tokens, RBAC, org-switcher, invitations, SSO, or password-reset email. Do **not** implement Project Closeout. Do **not** expand renditions to audio conversion, extra sizes, or a job queue. Do **not** create another Alembic revision. Do not **implement** LEARN, QuickBooks, FG-024, remaining FG-025 surfaces, or contract/warranty **template** work. Do **not** start another FG-025 slice. Do **not** populate Ontario or U.S. legal content. Do **not** enable Native Signing for real customer / commercial use. Native Signing **development** may proceed only under **separate** Joel-authorized governance. Do not reopen FG-008 through FG-023. Do not accept ADR-008. Do not accept ADR-010. Do not add PWA, transcription, or native iOS from this gate. Do **not** implement Observation Delete. Do **not** implement session revocation / idle timeout. FG-024 recording does **not** authorize implementation. FG-025 remaining surfaces are **not** authorized.
 
 ## 20. NEXT AUTHORIZED ACTION
 
@@ -426,6 +445,7 @@ git rev-parse origin/main
 git diff --check
 ./venv/bin/flask db current
 ./venv/bin/flask db heads
+./venv/bin/python -m pytest -q tests/test_fg025_contractor_copy.py
 ./venv/bin/python -m pytest -q tests/test_monitor_v1_fg023.py
 ./venv/bin/python -m pytest -q tests/test_monitor_v1_fg023.py tests/test_project_hub.py tests/test_auth_fg018.py tests/test_build_field_observation_fg020.py tests/test_build_media_compatibility_fg020.py tests/test_field_web_fg021.py
 ./venv/bin/python -m pytest -q tests/test_build_field_observation_fg020.py tests/test_build_media_compatibility_fg020.py
@@ -441,7 +461,7 @@ git diff --check
 ./venv/bin/python -m pytest -q
 ```
 
-Expected: branch `main`; HEAD = `origin/main`; working tree clean; Alembic **repository head = live current `e3f4a5b6c7d8`**; dedicated FG-023 **35**; focused **149**; historical Slice A close focused **126**; pre-Slice-B focused **137**; full suite **593 passed** (not rerun this Slice C pass). Dedicated FG-021 **20**; prior FG-021 focused bundle **148**; dedicated FG-020 **44**; FG-019 34; FG-018 37 remain historical. Live **39** Events / **39** Originals. Non-development `flask` CLI requires local-only `SECRET_KEY` (gitignored `.env`).
+Expected: branch `main`; HEAD = `origin/main` = this Review Turnover docs commit (ancestor product SHA **`5b497905086554214e85f69afd8101d88f89161c`**); working tree clean; Alembic **repository head = live current `e3f4a5b6c7d8`**; Slice 5 dedicated FG-025 **19**; Field-focused **83**; prompt governed **190**; full suite **612 passed**. Dedicated FG-023 **35**; focused **149**; historical Slice A close focused **126**; pre-Slice-B focused **137**; full suite **593 passed** remain historical. Dedicated FG-021 **20**; prior FG-021 focused bundle **148**; dedicated FG-020 **44**; FG-019 34; FG-018 37 remain historical. Live **39** Events / **39** Originals. Non-development `flask` CLI requires local-only `SECRET_KEY` (gitignored `.env`).
 
 ## 22. FRESH CHAT STARTUP PROMPT
 
@@ -451,7 +471,7 @@ Canonical location for the next conversation. Paste into a **new** ChatGPT or Cu
 BRAYMAN — RESUME FROM REVIEW TURNOVER
 CONTINUITY / REPOSITORY-FIRST INITIALIZATION
 
-You are starting a FRESH conversation on the Brayman-Estimator (CalibAi / The Estimator) platform following a successful Review Turnover (2026-09-07).
+You are starting a FRESH conversation on the Brayman-Estimator (CalibAi / The Estimator) platform following a successful Review Turnover (2026-09-08).
 The prior conversation has been discarded. You have ZERO reliable conversation memory.
 Chat history is supplemental only. The repository is the ONE SOURCE OF TRUTH.
 ChatGPT / Cursor memory is never corporate memory.
@@ -459,7 +479,7 @@ ChatGPT / Cursor memory is never corporate memory.
 Conversation titles in this Cursor/IDE workspace must start with: BRAYMAN — <Topic>.
 
 ACTIVE CHAT TITLE (ChatGPT originating development chat):
-BRAYMAN - CalibAi 5 Sep 2026
+BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026
 (Record the exact title of the NEW ChatGPT development chat once Joel names it. Until then, keep using this title.)
 
 CONTINUITY DISPLAY RULE:
@@ -491,14 +511,15 @@ DO NOT start supplier integration.
 DO NOT enable external AI or runtime web lookup.
 DO NOT create another migration.
 DO NOT amend the frozen FG-023 commercial contract.
+DO NOT start another FG-025 slice.
+DO NOT start FG-024.
 
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.
 Last product-changing commit:
-7dd4d82c927ec2c38a0562e7e1cdedbccabb6662
-feat: add FG-023 Slice B Hub MONITOR and office actuals writes
-Review Turnover package commit:
-ea9c4b765bd58c5d12414784399e2c29822f1e6f
-docs: record FG-023 Slice A Review Turnover
+5b497905086554214e85f69afd8101d88f89161c
+feat: continue FG-025 contractor-facing Field Web language
+This Review Turnover is docs-only. Its commit is NOT the Slice 5 product SHA.
+Ancestor FG-023 Slice B product SHA remains 7dd4d82c927ec2c38a0562e7e1cdedbccabb6662.
 Item 10 is COMPLETE (FG-018 + FG-019 both CLOSED / OPERATIONAL FOR UAT).
 Item 11 BUILD Field Observation foundation is COMPLETE.
 Image-only Compatible Renditions (HEIC/HEIF → JPEG) are IMPLEMENTED.
@@ -525,9 +546,11 @@ Hub #hub-monitor is LIVE / OFFICE-UAT-VERIFIED.
 Office write routes/forms are LIVE / OFFICE-UAT-VERIFIED.
 Office UAT is COMPLETE / PASS (project id 13 FG023-UAT-MONITOR, port 5014).
 Item 13 is CLOSED / OPERATIONAL FOR UAT.
-Dedicated FG-023 35. Focused 149. Historical Slice A close focused 126. Pre-Slice-B focused 137. Full suite at close 593.
-FG-025 Slice 3 dedicated 13. PRICE-focused 167. Governed 303. Full suite 606.
+FG-025 Slice 5 dedicated 19. Field-focused 83. Prompt governed 190. Full suite 612.
+Historical Slice 4 dedicated 16 / Slice-4 focused 114 / governed 226 / full 609.
+Historical Slice 3 dedicated 13 / PRICE-focused 167 / governed 303 / full 606.
 Historical Slice 2 dedicated 10 / focused 159 / full 603.
+Dedicated FG-023 35. Focused 149. Historical Slice A close focused 126. Pre-Slice-B focused 137. Full suite at close 593.
 Prior FG-021 close bundle (historical): dedicated 20 / focused 148 / full 558.
 
 FROZEN FG-023 CONTRACT (do not amend):
@@ -564,6 +587,7 @@ Read and comply with:
 - docs/feature-gates/README.md
 - docs/adr/README.md
 - docs/feature-gates/FG-023-monitor-v1-estimated-versus-actual.md
+- docs/feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md
 - docs/architecture/fg-023-monitor-v1-implementation-preflight.md
 - docs/architecture/monitor-v1-implementation-reconnaissance.md
 - docs/adr/ADR-021-monitor-commercial-baseline.md
@@ -594,7 +618,7 @@ Confirm:
 - branch = main
 - HEAD = origin/main
 - working tree clean
-- last product-changing commit is ancestor 7dd4d82c927ec2c38a0562e7e1cdedbccabb6662
+- last product-changing commit is ancestor 5b497905086554214e85f69afd8101d88f89161c
 - Alembic current = e3f4a5b6c7d8
 - Alembic heads = e3f4a5b6c7d8 (one graph head; live current EQUALS repository head)
 - live project_direct_cost_actuals table EXISTS
@@ -808,4 +832,4 @@ Untracked Git files: **none**. Intended FG-008/009/010 product results are in Gi
 
 ### Durable-storage checklist
 
-A–J: [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**; Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**; Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**; MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**; preflight [architecture/fg-023-monitor-v1-implementation-preflight.md](architecture/fg-023-monitor-v1-implementation-preflight.md) **COMPLETE**; MONITOR V1 recon **COMPLETE**; BUILD actuals live; migration `e3f4a5b6c7d8` **applied live**; [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED**; IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION; **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED**; Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**; live current = heads `e3f4a5b6c7d8`; dedicated FG-023 **35**; focused **149**; historical Slice A focused **126**; pre-Slice-B focused **137**; full **593** (close-time rerun 2026-09-07); dedicated FG-021 **20**; FG-020 **CLOSED / OPERATIONAL FOR UAT**; [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**; Family 05 **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**; Legal Content Gate **empty**; [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / NOT CLOSED**; Native Signing **DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE**; **PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL**; Project Closeout **FUTURE**. Do **not** reopen FG-023. Do **not** begin FG-024. Do **not** start Slice 2. Pre-migration SQLite copies remain gitignored under `instance/` and must **not** be committed.
+A–J: [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**; Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**; Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**; MONITOR V1 **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED**; preflight [architecture/fg-023-monitor-v1-implementation-preflight.md](architecture/fg-023-monitor-v1-implementation-preflight.md) **COMPLETE**; MONITOR V1 recon **COMPLETE**; BUILD actuals live; migration `e3f4a5b6c7d8` **applied live**; [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED**; IMPLEMENTED / LIVE-MIGRATED / REAL-IPHONE UAT COMPLETE SUBJECT TO THE EXPLICIT SESSION-EXPIRY DEFERRED EXCEPTION; **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED**; Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**; live current = heads `e3f4a5b6c7d8`; Slice 5 product SHA **`5b497905086554214e85f69afd8101d88f89161c`**; dedicated FG-025 **19**; Field-focused **83**; prompt governed **190**; full **612**; dedicated FG-023 **35**; focused **149**; historical Slice A focused **126**; pre-Slice-B focused **137**; full **593** (close-time rerun 2026-09-07); dedicated FG-021 **20**; FG-020 **CLOSED / OPERATIONAL FOR UAT**; [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**; Family 05 **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**; Legal Content Gate **empty**; [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1–5 IMPLEMENTED / NOT CLOSED**; remaining surfaces **NOT AUTHORIZED**; Native Signing **DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE**; **PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL**; Project Closeout **FUTURE**. Do **not** reopen FG-023. Do **not** begin FG-024. Do **not** start another FG-025 slice. Pre-migration SQLite copies remain gitignored under `instance/` and must **not** be committed.

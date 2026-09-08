@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-08 — FG-025 Slice 5 Review Turnover
+
+| Field | Content |
+|-------|---------|
+| ID | Review Turnover — FG-025 Slice 5 |
+| Status | **RECORDED / DOCS ONLY / TURNOVER PASS** |
+| Branch | `main` |
+| Base commit | `5b497905086554214e85f69afd8101d88f89161c` |
+| Objective | Complete Review Turnover. Pin Slice 5 product SHA. Repair current-authority contradictions. |
+| Deliverables | session-handoff 22-point package; Fresh Chat Startup Prompt; SHA pins; drift repairs. |
+| Validation | Dedicated FG-025 **19 passed** reconfirmed. Live Alembic `e3f4a5b6c7d8`. Live **39 / 39**. Project 13 five actuals unchanged. Full **612** remains the Slice 5 product-SHA evidence (not rerun this pass). |
+| Architectural findings | No product-code change. This commit is **not** the Slice 5 product SHA. |
+| Open decisions | Remaining FG-025 surfaces; Observation Delete still QUEUED. |
+| Next milestone | **STOP.** Do **not** start another FG-025 slice. Do **not** start FG-024. Do **not** start LEARN. |
+| Commit | this Review Turnover docs commit |
+| Date | 2026-09-08 |
+
 ### 2026-09-08 — FG-025 Slice 5 contractor-facing Field Web language
 
 | Field | Content |
@@ -44,7 +61,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Presentation only. **Save original** preserved. No Observation Delete. No session revocation. No Field observation-detail page exists. |
 | Open decisions | Remaining FG-025 surfaces; “contract value” wording still flagged; FG-024 unauthorized. |
 | Next milestone | **STOP.** Do **not** start another FG-025 slice. Do **not** start FG-024. Do **not** start LEARN. |
-| Commit | this `feat: continue FG-025 contractor-facing Field Web language` commit |
+| Commit | `5b497905086554214e85f69afd8101d88f89161c` |
 | Date | 2026-09-08 |
 
 ### 2026-09-08 — FG-025 Slice 4 post-close documentation reconciliation

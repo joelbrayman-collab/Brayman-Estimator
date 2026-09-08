@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — FG-025 Slice 5 Review Turnover
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
+| Objective | Complete Review Turnover with full repo review. Docs-only. Pin Slice 5 product SHA. Repair current-authority contradictions. Produce Fresh Chat Startup Prompt. |
+| Business decision | Substantive development **STOP**. FG-025 Slice 5 remains **IMPLEMENTED / NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**. FG-023 remains **CLOSED**. FG-024 remains **FUTURE / NOT IMPLEMENTATION-AUTHORIZED**. |
+| Architectural decision | No product, test, migration, or DB change. Pin product SHA **`5b497905086554214e85f69afd8101d88f89161c`**. Preserve historical Slice 1–4 stop-lines. This turnover commit is **not** the Slice 5 product SHA. |
+| Prompt template used | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) Phase 2. |
+| Approved Cursor prompt summary | Cursor chat refresh / complete turnover with full repo review. Docs only. No Slice 6. No FG-024. No LEARN. |
+| Files expected to change | Current-authority docs: session-handoff, current-state, PSR, milestones, chat-workflow-log, FG-025, CAR-001, roadmap, feature-gates README. |
+| Files prohibited from changing | Product code; tests; `migrations/`; live DB; CSS. |
+| Implementation result | Slice 5 SHA pinned. Stale §3 ADR-021, §19 Slice 5 stop, §22 2026-09-07 prompt, durable-storage A–J, and roadmap “Do not start Slice 5” repaired. Completeness test **NO**. TURNOVER PASS. |
+| Tests | Dedicated FG-025 reconfirmed this pass: `./venv/bin/python -m pytest -q tests/test_fg025_contractor_copy.py` → **19 passed**. Full suite **not** rerun this turnover; cite Slice 5 product SHA run **612 passed**. |
+| Project-state-report update | Yes — turnover recorded; product SHA pinned. |
+| Milestone entry update | Yes — turnover recorded. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining FG-025 surfaces unauthorized. Observation Delete still QUEUED. SESSION-EXPIRY RECOVERY still DEFERRED. |
+| Next approved step | **STOP.** Start a fresh chat from the Fresh Chat Startup Prompt. Do **not** start another FG-025 slice. Do **not** start FG-024. Do **not** start LEARN. |
+| Next approved prompt | None authorized. Fresh Chat Startup Prompt is resume-only. |
+| Commit hash | (this Review Turnover docs commit) |
+
 ### 2026-09-08 — FG-025 Slice 5 contractor-facing Field Web language
 
 | Field | Content |
@@ -65,7 +89,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Remaining FG-025 surfaces unauthorized (customer PDF, Historical Evidence, standalone Permit, Hub PRICE TRUE_GROSS_MARGIN, final sweep). Observation Delete still QUEUED. |
 | Next approved step | **STOP.** Do **not** start another FG-025 slice. Do **not** start FG-024. Do **not** start LEARN. Do **not** restart website work. |
 | Next approved prompt | None authorized. |
-| Commit hash | this `feat: continue FG-025 contractor-facing Field Web language` commit |
+| Commit hash | `5b497905086554214e85f69afd8101d88f89161c` |
 
 ### 2026-09-08 — FG-025 Slice 4 post-close documentation reconciliation
 

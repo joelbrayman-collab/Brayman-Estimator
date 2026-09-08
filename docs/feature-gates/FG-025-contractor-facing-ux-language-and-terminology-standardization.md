@@ -595,7 +595,7 @@ Field Web user-facing copy (`app/templates/field/*.html`, `app/static/js/field.j
 - Capture fallbacks: observation/original save failures, sign-out confirm, other-project pending, add-before-save. No Field observation-detail page exists; recent observations remain on Today/confirm.
 - Field Web does not label Compatible Renditions; photo thumbs use **Field photo**. Original provenance remains identifiable via **Save original**.
 
-Dedicated tests: `tests/test_fg025_contractor_copy.py` (**19**). Copy assertion also updated in `tests/test_field_web_fg021.py` (`newUuid` failure wording). Domain/auth/media/Field-workflow assertions unchanged. Field-focused bundle **83 passed**. Prompt governed list **190 passed**. Full **612 passed**. Live current `e3f4a5b6c7d8`. Live **39** / **39**. Project **13** five actuals unchanged.
+Dedicated tests: `tests/test_fg025_contractor_copy.py` (**19**). Copy assertion also updated in `tests/test_field_web_fg021.py` (`newUuid` failure wording). Domain/auth/media/Field-workflow assertions unchanged. Field-focused bundle **83 passed**. Prompt governed list **190 passed**. Full **612 passed**. Product SHA **`5b497905086554214e85f69afd8101d88f89161c`**. Live current `e3f4a5b6c7d8`. Live **39** / **39**. Project **13** five actuals unchanged.
 
 Remaining / unauthorized after Slice 5 (not a must-rewrite list; remaining surfaces **NOT AUTHORIZED**):
 

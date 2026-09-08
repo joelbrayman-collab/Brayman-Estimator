@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Office UAT continuation; live line 7 residue (working 250 / NULL reference); FG-027 close; remaining costing/pricing UAT |
 | Next approved step | **STOP.** Return to ChatGPT Architect for UAT-continuation authorization. |
 | Next approved prompt | Not in this pass. |
-| Commit hash | Product **`72949f99da2b56ec06e95e16e29fa194a6730bbd`** |
+| Commit hash | Product **`72949f99da2b56ec06e95e16e29fa194a6730bbd`**. Docs **`020bb55cfb87222ed6dfb1b6fd6770f3b0e3b6be`**. |
 
 ### 2026-09-08 — V1-02 / FG-027 live migration and office UAT stop
 

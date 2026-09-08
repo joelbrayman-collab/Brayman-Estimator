@@ -91,6 +91,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-08 FG-026 recording — not authorized by CAR-001):** [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **FUTURE / RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Preflight [fg-026-takeoff-to-estimate-mapping-preflight.md](fg-026-takeoff-to-estimate-mapping-preflight.md). No product code. No migration. CAR-001 still does **not** authorize Phase D implementation, FG-024, remaining FG-025 surfaces, or LEARN.
 
+**Subsequent status (2026-09-08 V1 completion register — not authorized by CAR-001):** [v1-completion-register.md](../v1-completion-register.md) is the governing CalibAi V1 product-completion instrument. Initial readiness **30%**. **0 / 11** major packages COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. This recording does **not** authorize FG-026 implementation, FG-024, another FG-025 slice, or LEARN.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

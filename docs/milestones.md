@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-08 — CalibAi V1 completion register
+
+| Field | Content |
+|-------|---------|
+| ID | CalibAi V1 Completion Register |
+| Status | **RECORDED / GOVERNING / DOCS ONLY** |
+| Branch | `main` |
+| Base commit | `95b396602eb578f0399e7785d7e066b6dd0056f8` |
+| Objective | Establish the authoritative CalibAi V1 definition and 11-package completion register. |
+| Deliverables | `docs/v1-completion-register.md`; cross-pins. No product code. |
+| Validation | `git diff --check`. Docs only. Product tests **not** rerun. |
+| Architectural findings | V1 = BMR DEMO READY **and** BRAYMAN REAL-LIFE UAT READY. Initial readiness **30%**. **0 / 11** COMPLETE. FG-024 remains **NOT IMPLEMENTATION-AUTHORIZED**. FG-026 remains **NOT IMPLEMENTATION-AUTHORIZED**. |
+| Open decisions | Seven Joel decisions in the register §13. |
+| Next milestone | **STOP.** Do **not** implement FG-026. Do **not** implement FG-024. Do **not** start another FG-025 slice. |
+| Commit | this V1 register docs commit |
+| Date | 2026-09-08 |
+
 ### 2026-09-08 — FG-026 takeoff-to-estimate mapping preflight
 
 | Field | Content |

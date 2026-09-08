@@ -16,7 +16,7 @@ This folder is the **system of record** for platform vision, architecture, gover
 |-------|-----------|------|
 | **Constitutional** | [platform-constitution.md](platform-constitution.md) | Highest-order, rarely changed platform law |
 | **Architectural** | [architecture-principles.md](architecture-principles.md), [architecture.md](architecture.md), [adr/](adr/), [modules/](modules/) | Durable rules, structure, decisions, ownership |
-| **Operational status** | [project-state-report.md](project-state-report.md), [current-state.md](current-state.md), [session-handoff.md](session-handoff.md) | Milestone state, detailed snapshot, immediate resume |
+| **Operational status** | [project-state-report.md](project-state-report.md), [current-state.md](current-state.md), [session-handoff.md](session-handoff.md), [v1-completion-register.md](v1-completion-register.md) | Milestone state, detailed snapshot, immediate resume, **CalibAi V1 product-completion** |
 | **Historical records** | [milestones.md](milestones.md), [chat-workflow-log.md](chat-workflow-log.md) | Append-only milestone and decision history |
 | **Reusable templates** | [prompts/](prompts/), [adr/ADR-000-template.md](adr/ADR-000-template.md) | Starting points for Cursor work and ADRs |
 
@@ -25,16 +25,17 @@ This folder is the **system of record** for platform vision, architecture, gover
 1. [`../AGENTS.md`](../AGENTS.md)
 2. [`platform-constitution.md`](platform-constitution.md)
 3. [`project-state-report.md`](project-state-report.md)
-4. [`current-state.md`](current-state.md)
-5. [`platform-vision.md`](platform-vision.md)
-6. [`architecture-principles.md`](architecture-principles.md)
-7. [`architecture.md`](architecture.md)
-8. [`platform-roadmap.md`](platform-roadmap.md)
-9. Relevant module document under [`modules/`](modules/)
-10. Relevant ADRs under [`adr/`](adr/)
-11. Relevant Feature Gate under [`feature-gates/`](feature-gates/)
-12. [`session-handoff.md`](session-handoff.md)
-13. Relevant prompt template under [`prompts/`](prompts/)
+4. [`v1-completion-register.md`](v1-completion-register.md)
+5. [`current-state.md`](current-state.md)
+6. [`platform-vision.md`](platform-vision.md)
+7. [`architecture-principles.md`](architecture-principles.md)
+8. [`architecture.md`](architecture.md)
+9. [`platform-roadmap.md`](platform-roadmap.md)
+10. Relevant module document under [`modules/`](modules/)
+11. Relevant ADRs under [`adr/`](adr/)
+12. Relevant Feature Gate under [`feature-gates/`](feature-gates/)
+13. [`session-handoff.md`](session-handoff.md)
+14. Relevant prompt template under [`prompts/`](prompts/)
 
 Also read [`platform-governance.md`](platform-governance.md), [`governance/continuity-and-anti-drift.md`](governance/continuity-and-anti-drift.md), [`governance/review-turnover-protocol.md`](governance/review-turnover-protocol.md), and [`definition-of-done.md`](definition-of-done.md) before starting any feature.
 
@@ -44,6 +45,7 @@ Also read [`platform-governance.md`](platform-governance.md), [`governance/conti
 |----------|---------|-----------|
 | [platform-constitution.md](platform-constitution.md) | Highest-order platform law (Articles 1–12) | **Constitutional** |
 | [project-state-report.md](project-state-report.md) | Milestone-level state + template | Operational (mandatory at milestones) |
+| [v1-completion-register.md](v1-completion-register.md) | CalibAi V1 definition, 11-package register, BMR / Brayman real-life UAT readiness | **Governing product-completion instrument** — does **not** authorize implementation. Initial readiness **30%**. |
 | [milestones.md](milestones.md) | Append-only milestone history | Historical |
 | [prompts/](prompts/) | Reusable Cursor prompt templates | Templates |
 | [platform-vision.md](platform-vision.md) | CalibAi vision + current Estimator core | Product intent (Joel-approved CAR-001) |

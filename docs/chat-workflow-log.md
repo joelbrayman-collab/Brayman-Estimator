@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — CalibAi V1 completion register
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
+| Objective | Establish the authoritative CalibAi V1 definition and measurable V1 completion register. Docs/governance only. |
+| Business decision | V1 means BMR DEMO READY **and** BRAYMAN REAL-LIFE UAT READY. Brayman Construction is the first real-life UAT organization. Initial readiness **30%**. **0 / 11** major packages COMPLETE. Neither readiness flag is YES. |
+| Architectural decision | One canonical register at `docs/v1-completion-register.md`. Feature Gates remain implementation governance. LEARN V1 = evidence capture, not ML. QuickBooks V1 recommended as output/entry (not live API) pending Joel. FG-024 Slice D live monitoring recommended POST-V1; 06H versioning remains V1. FG-026 and FG-024 remain **NOT IMPLEMENTATION-AUTHORIZED**. |
+| Prompt template used | `docs/prompts/cursor-documentation-template.md` (docs/governance only). |
+| Approved Cursor prompt summary | V1 COMPLETION REGISTER — AUTHORITATIVE V1 DEFINITION + REPOSITORY GAP RECONCILIATION. No product implementation. |
+| Files expected to change | `docs/` only (register + indexes + current-authority pins). |
+| Files prohibited from changing | Product code; tests; `migrations/`; live DB; `app/`. |
+| Implementation result | Register recorded. Cross-pins updated. No product code. No migration. No live DB writes. |
+| Tests | `git diff --check`. PRODUCT TESTS NOT RERUN — V1 GOVERNANCE / GAP RECONCILIATION ONLY. |
+| Project-state-report update | Yes — V1 register governing; readiness 30%. |
+| Milestone entry update | Yes — V1 register recorded. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Seven Joel decisions in register §13. FG-026/FG-024 not implemented. Remaining FG-025 surfaces unauthorized. |
+| Next approved step | **STOP.** Do **not** implement FG-026. Do **not** implement FG-024. Do **not** start another FG-025 slice. Do **not** start LEARN. |
+| Next approved prompt | None authorized. Return control to ChatGPT Architect. |
+| Commit hash | (this V1 register docs commit) |
+
 ### 2026-09-08 — FG-026 takeoff-to-estimate mapping preflight
 
 | Field | Content |

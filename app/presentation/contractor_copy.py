@@ -143,6 +143,14 @@ def sentence_label(value: str | None) -> str:
 
 LABOUR_RATES_HEADING = "Labour rates"
 PRICING_HEADING = "Pricing"
+COSTING_REVIEW_HEADING = "Costing review"
+APPROVE_ALL_COSTING_BUTTON = "Approve all costing"
+COSTING_NOT_APPROVED = "Costing is not approved yet."
+PRICING_NEEDS_APPROVED_COSTING = "Apply pricing after costing is approved."
+PRICING_STALE_REQUIRES_REAPPLY = "STALE / REQUIRES RE-APPLY"
+WORKING_COSTING_CHANGED = (
+    "Working costs changed. Approve all costing again before applying pricing."
+)
 LOGIN_LEDE = "Sign in with your email and password."
 SIGN_OUT_LABEL = "Sign out"
 DASHBOARD_HEADING = "Office home"

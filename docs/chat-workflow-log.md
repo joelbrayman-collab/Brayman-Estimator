@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — V1-02 / FG-027 costing-approval product implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` @ `28fb5c0445fafabb2924d5d43bce46bf5fca3d0e` (start) |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
+| Objective | Implement FG-027 Automated Costing + Human Cost Approval V1 |
+| Business decision | Joel authorized the FG-027 implementation package. Approve All = costing approval only. Live migrate and UAT not authorized. |
+| Architectural decision | Estimating-owned `EstimateCostingSnapshot` + frozen line facts. Pricing consumes CURRENT frozen total and fails closed without it. Recost supersedes on the same Draft. Locked/Issued cannot recost. Labour snapshot remains out of basis. ADR-008 remains Proposed. |
+| Prompt template used | Authorized V1-02 / FG-027 implementation package (8 Sep 2026) |
+| Approved Cursor prompt summary | AUTOMATED COSTING + HUMAN COST APPROVAL V1. One additive migration file `a5b6c7d8e9f0`. Do not live migrate. Do not UAT. Do not begin V1-03. |
+| Files expected to change | `app/models/estimate_costing.py`; `app/services/estimate_costing.py`; estimate builder/routes/templates; pricing consume; migration `a5b6c7d8e9f0`; tests; FG-027 / V1 / current-authority docs |
+| Files prohibited from changing | Live DB; UAT data; V1-03 / ADR-008 / FG-024 / another FG-025 slice / LEARN / QuickBooks / contracts |
+| Implementation result | FG-027 **IMPLEMENTED / TESTED / COMMITTED / PUSHED**. **NOT LIVE-MIGRATED.** **UAT NOT AUTHORIZED.** V1 readiness remains **39%** (V1-02 PARTIAL 0.40). |
+| Tests | A dedicated FG-027 **15 passed**. B estimating focused **29 passed**. C pricing focused **52 passed**. D labour/material **60 passed**. E FG-026 **20 passed**. F governed bundle **176 passed**. G full suite **647 passed**. Historical full **632** is the pre-FG-027 baseline. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate + office UAT not authorized. V1-03 not started. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** UAT. Do **not** begin V1-03. |
+| Next approved prompt | **None** — HOLD pending live-migrate / UAT authorization. |
+| Commit hash | Pending this implementation commit |
+
 ### 2026-09-08 — V1-02 / FG-027 costing-approval ADR, Feature Gate, and architecture preflight
 
 | Field | Content |

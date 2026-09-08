@@ -30,6 +30,7 @@ from app.services.organizations import (
     DEFAULT_ORGANIZATION_ID,
     ensure_default_organization,
 )
+from app.services.estimate_costing import approve_all_costing
 from app.services.pricing_engine import (
     apply_resolved_pricing_to_version,
     approve_pricing_policy,
@@ -125,6 +126,11 @@ def _direct_estimate(number, unit_cost=100, markup=0, waste=0, line_type="Custom
         markup_percent=markup,
     )
     return estimate
+
+
+def _apply_priced(version, actor="Joel Brayman", **kwargs):
+    approve_all_costing(version, actor=actor)
+    return apply_resolved_pricing_to_version(version, actor=actor, **kwargs)
 
 
 def _true_gm_policy():
@@ -258,7 +264,7 @@ def test_internal_identifies_version_and_snapshot_when_present(app):
     _true_gm_policy()
     estimate = _direct_estimate("EST-FG012-0004")
     version = estimate.current_version
-    snapshot = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    snapshot = _apply_priced(version)
     db.session.commit()
     view = assemble_internal_cost_breakdown(estimate, version)
     assert view["version"].id == version.id
@@ -271,7 +277,7 @@ def test_labour_snapshot_labeled_not_in_basis_and_not_mutated(client, app):
     _true_gm_policy()
     estimate = _direct_estimate("EST-FG012-0005")
     version = estimate.current_version
-    apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    _apply_priced(version)
     db.session.commit()
     task = create_labour_task(
         task_code="FG012-ICF",
@@ -322,7 +328,7 @@ def test_true_gross_margin_proposal_equals_snapshot_customer_total(app):
     _true_gm_policy()
     estimate = _direct_estimate("EST-FG012-0006")
     version = estimate.current_version
-    snapshot = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    snapshot = _apply_priced(version)
     db.session.commit()
     proposal = create_proposal(
         estimate=estimate,
@@ -343,7 +349,7 @@ def test_cost_plus_markup_proposal_equals_snapshot_customer_total(app):
     _markup_policy()
     estimate = _direct_estimate("EST-FG012-0007")
     version = estimate.current_version
-    snapshot = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    snapshot = _apply_priced(version)
     db.session.commit()
     assert snapshot.method == "COST_PLUS_MARKUP"
     proposal = create_proposal(
@@ -380,7 +386,7 @@ def test_customer_preview_does_not_leak_internal_costs(client, app):
     _true_gm_policy()
     estimate = _direct_estimate("EST-FG012-0009")
     version = estimate.current_version
-    apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    _apply_priced(version)
     db.session.commit()
     proposal = create_proposal(
         estimate=estimate,
@@ -404,7 +410,7 @@ def test_customer_pdf_firewall_and_no_overhead_profit_rows(app):
     _true_gm_policy()
     estimate = _direct_estimate("EST-FG012-0010")
     version = estimate.current_version
-    snapshot = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    snapshot = _apply_priced(version)
     db.session.commit()
     proposal = create_proposal(
         estimate=estimate,
@@ -449,7 +455,7 @@ def test_tax_reconciles_to_stored_snapshot(app):
     _true_gm_policy()
     estimate = _direct_estimate("EST-FG012-0012")
     version = estimate.current_version
-    snapshot = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    snapshot = _apply_priced(version)
     db.session.commit()
     proposal = create_proposal(
         estimate=estimate, version=version, template=_template()
@@ -492,7 +498,7 @@ def test_locked_pricing_snapshot_not_mutated_by_outputs(client, app):
     _true_gm_policy()
     estimate = _direct_estimate("EST-FG012-0015")
     version = estimate.current_version
-    snapshot = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    snapshot = _apply_priced(version)
     db.session.commit()
     lock_version(version)
     before = (
@@ -514,7 +520,7 @@ def test_named_method_estimate_totals_not_legacy_stack_labels(client, app):
     _true_gm_policy()
     estimate = _direct_estimate("EST-FG012-0016")
     version = estimate.current_version
-    apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    _apply_priced(version)
     db.session.commit()
     resp = client.get(f"/estimates/{estimate.id}/versions/{version.id}")
     assert resp.status_code == 200

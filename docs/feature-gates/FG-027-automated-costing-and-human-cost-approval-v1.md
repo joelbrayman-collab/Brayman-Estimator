@@ -7,10 +7,10 @@
 | Target Milestone | **None.** FG-027 is the governing identifier for CalibAi **V1-02**. Do not assign a new M0xx number. Lifecycle home remains **PRICE**. Do not add a new top-level stage. |
 | Module | **Estimating** owns costing approval and costing snapshots. **Pricing Engine consumes** the current approved costing. **Labour Engine** retains `EstimateLabourSnapshot`. No new module. |
 | Date | 2026-09-08 |
-| Status | **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** This recording is **not** Feature Gate approval for product implementation. |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED.** **NOT LIVE-MIGRATED.** **UAT NOT RUN / NOT AUTHORIZED.** **NOT CLOSED.** **NOT OPERATIONAL FOR UAT.** Architecture preflight remains complete. [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. |
 | Architecture | [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted** · [fg-027-costing-approval-preflight.md](../architecture/fg-027-costing-approval-preflight.md) **PREFLIGHT COMPLETE** · [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** · [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](../adr/ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [FG-009](FG-009-organization-calibrated-pricing-engine.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-008](FG-008-labour-engine-phase-b.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-014](FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [v1-completion-register.md](../v1-completion-register.md) V1-02 · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
-| Related ADRs | **[ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) Accepted** (this recording). Do **not** accept ADR-008 or ADR-010 from this gate. |
-| Prerequisites | [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-009](FG-009-organization-calibrated-pricing-engine.md) **CLOSED**. Working CostItem / Assembly / Draft line edit exist. Implementation still requires a **separate** authorized prompt. |
+| Related ADRs | **[ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) Accepted**. Do **not** accept ADR-008 or ADR-010 from this gate. |
+| Prerequisites | [FG-026](FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-009](FG-009-organization-calibrated-pricing-engine.md) **CLOSED**. Working CostItem / Assembly / Draft line edit exist. Live migrate + UAT require a **separate** authorized prompt. |
 
 ---
 
@@ -18,29 +18,29 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **RECORDED.** Architecture preflight **COMPLETE**. **NOT APPROVED FOR IMPLEMENTATION.** |
-| Product code | **None.** |
-| Schema / Alembic | **None this pass.** Later implementation likely requires additive `a5b6c7d8e9f0` down_revision `f4a5b6c7d8e9`. Do not create it now. |
-| Approve All Costing | **NOT IMPLEMENTED** |
-| Pricing consume / stale | **NOT IMPLEMENTED** (today Apply Pricing has no costing-approval gate) |
+| Feature Gate (this document) | **IMPLEMENTED / TESTED / COMMITTED / PUSHED.** **NOT LIVE-MIGRATED.** **UAT NOT AUTHORIZED.** **NOT CLOSED.** |
+| Product code | `app/models/estimate_costing.py`; `app/services/estimate_costing.py`; Estimate version Costing Review; Pricing consume / stale |
+| Schema / Alembic | Migration **file** `a5b6c7d8e9f0` down_revision `f4a5b6c7d8e9` **created**. Live apply **NOT RUN**. |
+| Approve All Costing | **IMPLEMENTED** (repository; not live-migrated) |
+| Pricing consume / stale | **IMPLEMENTED** (repository; not live-migrated) |
 | Labour-in-basis | **UNCHANGED** (`include_labour_snapshot_direct_cost=False`) |
 | Supplier evidence | **NOT REQUIRED** |
 
 ```text
 FG-027:
-RECORDED
-ARCHITECTURE PREFLIGHT COMPLETE
-NOT IMPLEMENTATION-AUTHORIZED
-NOT IMPLEMENTED
+IMPLEMENTED / TESTED / COMMITTED / PUSHED
+NOT LIVE-MIGRATED
+UAT NOT RUN / NOT AUTHORIZED
+NOT CLOSED
+NOT OPERATIONAL FOR UAT
 ADR-044 ACCEPTED
-NO PRODUCT CODE
-NO SCHEMA
-NO MIGRATION
+MIGRATION FILE a5b6c7d8e9f0
+LIVE CURRENT f4a5b6c7d8e9
 APPROVE ALL = COSTING APPROVAL ONLY
 DO NOT ACCEPT ADR-008
 ```
 
-Joel/ChatGPT recorded this gate on **2026-09-08** as durable product/governance authority. Recording is **not** implementation approval.
+Joel authorized product implementation on **2026-09-08**. Live migrate and office UAT remain separately authorized.
 
 ---
 
@@ -176,17 +176,15 @@ ML confidence; LEARN; supplier/BMR V1-03; ADR-008 implementation; MaterialRequir
 
 ---
 
-## Required later test plan (not implemented now)
+## Required test plan (implemented)
 
-Working CostItem cost; working Assembly cost; manual custom; manual allowance; zero-cost block; empty Assembly block; warnings do not block; manual override reason; version-level Approve All; frozen line facts; approved total; actor/time; recost same Draft; old costing snapshot preserved; supersession; locked version no recost; pricing cannot be current without approved costing; pricing becomes stale after recost; re-apply pricing after new costing approval; no Labour Snapshot basis change; no supplier requirement; no CostItem/Assembly mutation; no PLAN/FG-026 mutation.
+Working CostItem cost; working Assembly cost; manual custom; manual allowance; zero-cost block; empty Assembly block; warnings do not block; manual override reason; version-level Approve All; frozen line facts; approved total; actor/time; recost same Draft; old costing snapshot preserved; supersession; locked version no recost; pricing cannot be current without approved costing; pricing becomes stale after recost; re-apply pricing after new costing approval; no Labour Snapshot basis change; no supplier requirement; no CostItem/Assembly mutation; transaction rollback. Dedicated file: `tests/test_estimate_costing_fg027.py`.
 
 ---
 
 ## Implementation authorization
 
-**Not authorized.** A later bounded Cursor prompt must authorize product implementation. Do **not** generate migration `a5b6c7d8e9f0` from this recording.
-
-Recommended later slices (not separate Feature Gates): (1) schema + immutability; (2) costing service / Approve All; (3) Estimate version Costing Review UI; (4) Pricing consume + stale; (5) live migrate + UAT.
+**Product implementation authorized and executed 2026-09-08.** Live `flask db upgrade` and office UAT are **NOT AUTHORIZED** by that package. Do **not** mark CLOSED / OPERATIONAL FOR UAT until live migrate + UAT complete under a later prompt.
 
 ---
 

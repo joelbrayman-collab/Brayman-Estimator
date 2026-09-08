@@ -16,6 +16,10 @@ from app.models.estimate import (
     EstimateSection,
     EstimateVersion,
 )
+from app.models.estimate_costing import (
+    EstimateCostingSnapshot,
+    EstimateCostingSnapshotLine,
+)
 from app.models.organization import Organization
 from app.models.user import User, UserMembership
 from app.models.brand_profile import OrganizationBrandProfile, ProposalBrandSnapshot
@@ -81,6 +85,8 @@ __all__ = [
     "DrawingPackage",
     "DrawingRevision",
     "Estimate",
+    "EstimateCostingSnapshot",
+    "EstimateCostingSnapshotLine",
     "FieldCaptureDerivedCandidate",
     "FieldCaptureEvent",
     "FieldCaptureOriginal",

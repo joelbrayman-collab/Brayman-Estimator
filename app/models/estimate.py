@@ -286,6 +286,11 @@ class EstimateLineItem(db.Model):
         default=Decimal("0"),
     )
     notes = db.Column(db.Text)
+    costing_source_kind = db.Column(db.String(40), nullable=True)
+    library_unit_cost_reference = db.Column(db.Numeric(14, 4), nullable=True)
+    costing_override_reason = db.Column(db.Text, nullable=True)
+    costing_override_by = db.Column(db.String(150), nullable=True)
+    costing_override_at = db.Column(db.DateTime, nullable=True)
     sort_order = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(

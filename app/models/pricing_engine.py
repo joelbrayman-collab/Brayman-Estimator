@@ -156,6 +156,12 @@ class EstimatePricingSnapshot(db.Model):
         nullable=False,
         index=True,
     )
+    costing_snapshot_id = db.Column(
+        db.Integer,
+        db.ForeignKey("estimate_costing_snapshots.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
     policy_id = db.Column(
         db.Integer,
         db.ForeignKey("organization_pricing_policies.id"),
@@ -199,6 +205,7 @@ class EstimatePricingSnapshot(db.Model):
         backref=db.backref("pricing_snapshot", uselist=False),
     )
     policy = db.relationship("OrganizationPricingPolicy")
+    costing_snapshot = db.relationship("EstimateCostingSnapshot")
 
     def __repr__(self):
         return f"<EstimatePricingSnapshot ev={self.estimate_version_id} {self.method}>"

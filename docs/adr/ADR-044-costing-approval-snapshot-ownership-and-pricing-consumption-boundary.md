@@ -11,6 +11,8 @@ This ADR does **not** authorize schema, migration, or product-code changes. [FG-
 
 This ADR does **not** accept [ADR-008](ADR-008-supplier-price-snapshotting.md).
 
+**Subsequent status (2026-09-08 implementation):** [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) product code, migration file `a5b6c7d8e9f0`, and tests were implemented under a separate authorized prompt. Live migrate and UAT remain **NOT AUTHORIZED**. ADR-044 itself stays **Accepted**.
+
 ---
 
 ## Context

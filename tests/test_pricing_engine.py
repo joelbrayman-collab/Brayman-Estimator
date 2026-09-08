@@ -48,6 +48,7 @@ from app.services.organizations import (
     DEFAULT_ORGANIZATION_ID,
     ensure_default_organization,
 )
+from app.services.estimate_costing import approve_all_costing
 from app.services.pricing_engine import (
     PricingEngineError,
     apply_resolved_pricing_to_version,
@@ -72,6 +73,11 @@ from app.services.proposals import (
     update_proposal,
     update_proposal_status,
 )
+
+
+def _apply_priced(version, actor="Joel Brayman", **kwargs):
+    approve_all_costing(version, actor=actor)
+    return apply_resolved_pricing_to_version(version, actor=actor, **kwargs)
 
 
 @pytest.fixture
@@ -333,7 +339,7 @@ def test_locked_snapshot_immutability(app):
     _true_gm_policy()
     estimate = _direct_100_estimate("EST-2026-9103")
     version = estimate.current_version
-    snapshot = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    snapshot = _apply_priced(version)
     db.session.commit()
     original_pre_tax = snapshot.pre_tax_selling_price
     lock_version(version)
@@ -491,7 +497,7 @@ def test_pricing_posture_and_execution_risk_do_not_alter_cost_facts(app):
         unit_cost=100,
         markup_percent=0,
     )
-    snapshot = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    snapshot = _apply_priced(version)
     db.session.commit()
     assert line.quantity == Decimal("1.0000")
     assert line.unit_cost == Decimal("100.0000")
@@ -549,7 +555,7 @@ def test_apply_true_gm_sets_snapshot_and_tax(app):
     _true_gm_policy()
     estimate = _direct_100_estimate("EST-2026-9110")
     version = estimate.current_version
-    snapshot = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    snapshot = _apply_priced(version)
     db.session.commit()
     assert snapshot.method == "TRUE_GROSS_MARGIN"
     assert snapshot.direct_cost_basis == Decimal("100.00")
@@ -606,7 +612,7 @@ def test_true_gm_change_order_applies_inherited_method(app):
     _true_gm_policy()
     estimate = _direct_100_estimate("EST-2026-9111")
     version = estimate.current_version
-    snapshot = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    snapshot = _apply_priced(version)
     db.session.commit()
     version.overhead_percent = Decimal("10")
     db.session.commit()
@@ -638,7 +644,7 @@ def test_cost_plus_markup_change_order_applies_inherited_method(app):
     markup = _markup_policy(is_default=True, tax_percent=Decimal("13"))
     estimate = _direct_100_estimate("EST-2026-9201")
     version = estimate.current_version
-    snapshot = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    snapshot = _apply_priced(version)
     db.session.commit()
     assert snapshot.method == "COST_PLUS_MARKUP"
     assert snapshot.policy_id == markup.id
@@ -669,7 +675,7 @@ def test_cost_plus_markup_stack_change_order_applies_legacy_stack(app):
     _stack_policy()
     estimate = _direct_100_estimate("EST-2026-9202")
     version = estimate.current_version
-    snapshot = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    snapshot = _apply_priced(version)
     db.session.commit()
     assert snapshot.method == "COST_PLUS_MARKUP_STACK"
     _, overhead, profit, pre_tax = legacy_stack_pre_tax(
@@ -704,7 +710,7 @@ def test_change_order_override_requires_human_reason_and_preserves_method(app):
     _true_gm_policy()
     estimate = _direct_100_estimate("EST-2026-9111b")
     version = estimate.current_version
-    snapshot = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    snapshot = _apply_priced(version)
     db.session.commit()
     change_order = create_change_order(
         project=estimate.project,
@@ -722,9 +728,7 @@ def test_change_order_override_requires_human_reason_and_preserves_method(app):
         actor="Joel Brayman",
         reason="Alternate method for CO override",
     )
-    other_snap = apply_resolved_pricing_to_version(
-        other.current_version, actor="Joel Brayman"
-    )
+    other_snap = _apply_priced(other.current_version)
     db.session.commit()
     assert other_snap.method == "COST_PLUS_MARKUP"
     with pytest.raises(PricingEngineError, match="reason"):
@@ -791,7 +795,7 @@ def test_legacy_change_order_without_snapshot_keeps_markup_formula(app):
 def test_cross_org_snapshot_cannot_attach_to_change_order(app, org_b):
     _true_gm_policy()
     estimate = _direct_100_estimate("EST-2026-9204")
-    apply_resolved_pricing_to_version(estimate.current_version, actor="Joel Brayman")
+    _apply_priced(estimate.current_version)
     db.session.commit()
     change_order = create_change_order(
         project=estimate.project,
@@ -816,9 +820,8 @@ def test_cross_org_snapshot_cannot_attach_to_change_order(app, org_b):
         unit_cost=100,
         markup_percent=0,
     )
-    snap_b = apply_resolved_pricing_to_version(
+    snap_b = _apply_priced(
         estimate_b.current_version,
-        actor="Joel Brayman",
         organization_id="ORG-002",
     )
     db.session.commit()
@@ -847,9 +850,7 @@ def test_historical_change_orders_unchanged(app):
     stored_tax = historical.tax_percent
     stored_total = historical.total
     _true_gm_policy()
-    apply_resolved_pricing_to_version(
-        estimate.current_version, actor="Joel Brayman"
-    )
+    _apply_priced(estimate.current_version)
     db.session.commit()
     db.session.refresh(historical)
     assert historical.pricing_snapshot_id is None
@@ -892,9 +893,7 @@ def test_labour_engine_direct_cost_consumed_not_mutated(app):
     rate_value = rate_before.production_rate
     labour_total = labour_engine_direct_cost_total(estimate.current_version)
     assert labour_total == pinned_cost
-    snapshot = apply_resolved_pricing_to_version(
-        estimate.current_version, actor="Joel Brayman"
-    )
+    snapshot = _apply_priced(estimate.current_version)
     db.session.commit()
     assert snapshot.direct_cost_basis == Decimal("100.00")
     frozen_labour = EstimateLabourSnapshot.query.get(labour_snap.id)
@@ -926,7 +925,7 @@ def test_proposal_immutability_survives_later_pricing_apply(app):
     original_total = proposal.total
     original_title = proposal.title
     _true_gm_policy()
-    apply_resolved_pricing_to_version(version, actor="Joel Brayman")
+    _apply_priced(version)
     db.session.commit()
     db.session.refresh(proposal)
     assert proposal.status == "Accepted"
@@ -978,10 +977,7 @@ def test_historical_labour_facts_unchanged_by_pricing(app):
     db.session.add(item)
     db.session.commit()
     _true_gm_policy()
-    apply_resolved_pricing_to_version(
-        _direct_100_estimate("EST-2026-9116").current_version,
-        actor="Joel Brayman",
-    )
+    _apply_priced(_direct_100_estimate("EST-2026-9116").current_version)
     db.session.commit()
     leftover = HistoricalLabourItem.query.get(item.id)
     assert leftover.hourly_rate == Decimal("0.1300") or leftover.hourly_rate == Decimal("0.13")

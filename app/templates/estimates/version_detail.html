@@ -149,6 +149,78 @@
     {% endif %}
 </section>
 
+<section class="form-panel" id="costing-review" style="margin-bottom: 24px;">
+    <h2>{{ contractor_copy.COSTING_REVIEW_HEADING }}</h2>
+    {% if costing_review.has_current_costing and costing_review.working_matches_current %}
+    <p>Approved costing snapshot {{ costing_review.current_snapshot.id }} — direct cost ${{ "%.2f"|format(costing_review.current_snapshot.approved_direct_cost_total) }} · {{ costing_review.current_snapshot.actor_display_name }} · {{ costing_review.current_snapshot.approved_at }}.</p>
+    {% elif costing_review.has_current_costing %}
+    <p><strong>{{ contractor_copy.WORKING_COSTING_CHANGED }}</strong></p>
+    {% else %}
+    <p>{{ contractor_copy.COSTING_NOT_APPROVED }}</p>
+    {% endif %}
+
+    {% if costing_review.block_codes %}
+    <p><strong>Blocking exceptions</strong></p>
+    <ul>
+        {% for code in costing_review.block_codes %}
+        <li>{{ code }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if costing_review.warning_codes %}
+    <p>Warnings (do not block approval)</p>
+    <ul>
+        {% for code in costing_review.warning_codes %}
+        <li>{{ code }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if costing_review.line_results %}
+    <table>
+        <thead>
+            <tr>
+                <th>Line</th>
+                <th>Source</th>
+                <th>Unit cost</th>
+                <th>Extended</th>
+                <th>Exceptions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in costing_review.line_results %}
+            <tr>
+                <td>{{ row.line_item.description }}</td>
+                <td>{{ row.source_kind }}{% if row.is_manual_override %} · override{% endif %}</td>
+                <td>${{ "%.4f"|format(row.line_item.unit_cost) }}</td>
+                <td>${{ "%.2f"|format(row.line_item.extended_cost) }}</td>
+                <td>
+                    {% if row.block_codes %}{{ row.block_codes|join(", ") }}{% endif %}
+                    {% if row.warning_codes %}{{ row.warning_codes|join(", ") }}{% endif %}
+                    {% if not row.block_codes and not row.warning_codes %}—{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    {% if editable %}
+    <form method="post" action="{{ url_for('estimates.approve_all_costing_route', id=estimate.id, version_id=version.id) }}">
+        <div class="form-grid">
+            <label>
+                Human actor
+                <input type="text" name="approved_by" value="Joel Brayman" required>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" {% if costing_review.block_codes %}disabled{% endif %}>{{ contractor_copy.APPROVE_ALL_COSTING_BUTTON }}</button>
+        </div>
+    </form>
+    {% endif %}
+</section>
+
 <section class="form-panel" style="margin-bottom: 24px;">
     <h2>{{ contractor_copy.PRICING_HEADING }}</h2>
     {% if pricing_snapshot %}
@@ -161,6 +233,9 @@
         {% endif %}
         · Source {{ contractor_copy.office_status_label(pricing_snapshot.resolution_source) }}
         {% if pricing_snapshot.requires_review %} · requires review{% endif %}
+        {% if costing_review.pricing_is_stale %}
+        · <strong>{{ contractor_copy.PRICING_STALE_REQUIRES_REAPPLY }}</strong>
+        {% endif %}
     </p>
     <div class="form-grid">
         <div>
@@ -209,6 +284,12 @@
 
     {% if editable %}
     <form method="post" action="{{ url_for('estimates.apply_org_pricing', id=estimate.id, version_id=version.id) }}" class="form-panel">
+        {% if not costing_review.costing_ready_for_pricing %}
+        <p>{{ contractor_copy.PRICING_NEEDS_APPROVED_COSTING }}</p>
+        {% endif %}
+        {% if costing_review.pricing_is_stale %}
+        <p><strong>{{ contractor_copy.PRICING_STALE_REQUIRES_REAPPLY }}</strong></p>
+        {% endif %}
         <p>Apply the resolved organization pricing policy to this draft version. Human actor required. Does not convert other estimates.</p>
         <div class="form-grid">
             <label>
@@ -230,7 +311,7 @@
             </label>
         </div>
         <div class="form-actions">
-            <button type="submit">Apply org pricing policy</button>
+            <button type="submit" {% if not costing_review.costing_ready_for_pricing %}disabled{% endif %}>Apply org pricing policy</button>
         </div>
     </form>
     {% endif %}
@@ -335,6 +416,7 @@
                             <label>Waste % <input type="number" name="waste_percent" value="{{ item_edit_form.waste_percent }}" step="0.01" min="0"></label>
                             <label>Markup % <input type="number" name="markup_percent" value="{{ item_edit_form.markup_percent }}" step="0.01" min="0"></label>
                             <label>Notes <input type="text" name="notes" value="{{ item_edit_form.notes }}"></label>
+                            <label>Cost override reason <input type="text" name="costing_override_reason" value="{{ item_edit_form.costing_override_reason }}"></label>
                         </div>
                         <div class="form-actions">
                             <button type="submit">Update Line Item</button>

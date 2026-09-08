@@ -146,11 +146,11 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 |-----|-------|--------|
 | [ADR-042](ADR-042-build-field-evidence-and-iphone-first-capture.md) | BUILD Field Evidence, Original Observation Custody, Desktop Review, and iPhone-First Capture Architecture | **Accepted** (2026-08-31). [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**. Image-only Compatible Renditions **implemented**. Storage-lifecycle pin [build-media-storage-lifecycle.md](../architecture/build-media-storage-lifecycle.md). **Gate-at-close** live current was `c1d2e3f4a5b6`; live head today is `d2e3f4a5b6c7`. |
 
-### Costing approval (Accepted; FG-027 recorded / not implementation-authorized)
+### Costing approval (Accepted; FG-027 implemented / not live-migrated)
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-044](ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) | Costing Approval, Snapshot Ownership, and Pricing Consumption Boundary | **Accepted** (2026-09-08; architecture only; [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**; no schema) |
+| [ADR-044](ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) | Costing Approval, Snapshot Ownership, and Pricing Consumption Boundary | **Accepted** (2026-09-08; [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED**; migration file `a5b6c7d8e9f0`) |
 
 ### Field Web capture reliability (Accepted; FG-021 CLOSED)
 

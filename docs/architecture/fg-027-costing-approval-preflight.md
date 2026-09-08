@@ -2,25 +2,26 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE** (2026-09-08). Product implementation **NOT AUTHORIZED**. [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED** (2026-09-08). **NOT LIVE-MIGRATED.** **UAT NOT RUN / NOT AUTHORIZED.** **NOT CLOSED.** **NOT OPERATIONAL FOR UAT.** [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Live Alembic remains **`f4a5b6c7d8e9`**. Repository graph head **`a5b6c7d8e9f0`**. |
 | Date | 2026-09-08 |
-| Parent | FG-026 close SHA `bacb5abf574b3dfe30bda4b6d6015026a3946607`. Architecture recording SHA `076e12f022fa5248a34e7baf7d05ae51e9e0ac4b`. |
+| Parent | FG-026 close SHA `bacb5abf574b3dfe30bda4b6d6015026a3946607`. Architecture recording SHA `076e12f022fa5248a34e7baf7d05ae51e9e0ac4b`. Implementation start pin `28fb5c0445fafabb2924d5d43bce46bf5fca3d0e`. |
 | Gate | [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) |
-| Readiness | **B. READY WITH EXPLICIT NON-BLOCKING NOTES** — implementation still requires a separate authorized prompt; live UAT Assembly id 2 remains empty (`unit_cost` 0 on line 7); that is a BLOCK condition, not a schema blocker. |
+| Readiness | Product implementation complete in repository. Live migrate / office UAT **not authorized**. |
 
 ```text
 FG-027:
-RECORDED
-ARCHITECTURE PREFLIGHT COMPLETE
-NOT IMPLEMENTATION-AUTHORIZED
-NOT IMPLEMENTED
+IMPLEMENTED / TESTED / COMMITTED / PUSHED
+NOT LIVE-MIGRATED
+UAT NOT RUN / NOT AUTHORIZED
+NOT CLOSED
+NOT OPERATIONAL FOR UAT
 ADR-044 ACCEPTED
-NO SCHEMA CREATED
-PROPOSED LATER REVISION a5b6c7d8e9f0
+MIGRATION FILE a5b6c7d8e9f0
 DOWN_REVISION f4a5b6c7d8e9
+LIVE CURRENT f4a5b6c7d8e9
 ```
 
-This document pins later implementation mechanics. It does **not** amend accepted ADRs except by citing ADR-044. It does **not** authorize implementation. It does **not** create a migration.
+This document pins implementation mechanics. Historical “do not create now” language below is the 2026-09-08 architecture recording. Product code, migration file `a5b6c7d8e9f0`, and tests **were implemented** under the authorized 8 Sep 2026 FG-027 package. Live `flask db upgrade` and office UAT remain **NOT AUTHORIZED**.
 
 ---
 

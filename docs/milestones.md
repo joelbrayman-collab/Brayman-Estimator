@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-08 — V1-02 / FG-027 costing-approval product implementation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-027 / V1-02 |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED** |
+| Branch | `main` |
+| Base commit | `28fb5c0445fafabb2924d5d43bce46bf5fca3d0e` |
+| Objective | Implement Automated Costing + Human Cost Approval V1: working costing review, deterministic BLOCK/WARN, Approve All Costing, immutable costing snapshots, recost/supersession, Pricing consume / STALE |
+| Deliverables | `EstimateCostingSnapshot` + frozen lines; working override columns; Pricing `costing_snapshot_id`; Costing Review UI; migration file `a5b6c7d8e9f0`; dedicated tests |
+| Validation | Dedicated FG-027 **15 passed**. Estimating focused **29**. Pricing focused **52**. Labour/material **60**. FG-026 **20**. Governed bundle **176**. Full suite **647 passed**. Live migrate **NOT RUN**. UAT **NOT RUN**. |
+| Architectural findings | Estimating owns costing. Pricing consumes frozen `approved_direct_cost_total`. Labour snapshot remains out of basis. Empty Assembly $0 BLOCKS. No supplier requirement. |
+| Open decisions | Live migrate + office UAT require a later prompt. V1-03 / ADR-008 remain unauthorized. |
+| Next milestone | **STOP.** Do not live-migrate. Do not UAT. Do not begin V1-03. |
+| Commit | Pending this implementation commit / follow-up pin |
+| Date | 2026-09-08 |
+
 ### 2026-09-08 — V1-02 / FG-027 costing-approval ADR, Feature Gate, and architecture preflight
 
 | Field | Content |

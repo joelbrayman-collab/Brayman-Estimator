@@ -42,6 +42,11 @@ from app.services.estimate_output import (
     named_method_governs,
 )
 from app.services.auth import form_actor
+from app.services.estimate_costing import (
+    EstimateCostingError,
+    approve_all_costing,
+    costing_review_context,
+)
 from app.services.organizations import get_current_organization_id
 
 estimates_bp = Blueprint("estimates", __name__, url_prefix="/estimates")
@@ -132,6 +137,7 @@ def _builder_context(estimate, version, **extra):
         "pricing_snapshot": snapshot,
         "named_method_governs": named_method_governs(snapshot),
         "approved_pricing_policies": approved_policies,
+        "costing_review": costing_review_context(version),
     }
     context.update(extra)
     return context
@@ -479,6 +485,7 @@ def view_version(id, version_id):
                 "waste_percent": f"{item.waste_percent:.2f}",
                 "markup_percent": f"{item.markup_percent:.2f}",
                 "notes": item.notes or "",
+                "costing_override_reason": item.costing_override_reason or "",
             }
         else:
             editing_item_id = None
@@ -590,10 +597,32 @@ def apply_org_pricing(id, version_id):
         from app.services.pricing_engine import PricingEngineError
 
         db.session.rollback()
-        if isinstance(exc, (PricingEngineError, EstimateServiceError)):
+        if isinstance(exc, (PricingEngineError, EstimateServiceError, EstimateCostingError)):
             flash(str(exc), "error")
         else:
             raise
+    return redirect(
+        url_for("estimates.view_version", id=estimate.id, version_id=version.id)
+    )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/approve-all-costing",
+    methods=["POST"],
+)
+def approve_all_costing_route(id, version_id):
+    estimate, version = _get_estimate_version(id, version_id)
+    actor = form_actor("approved_by")
+    try:
+        approve_all_costing(version, actor=actor)
+        flash("Costing approved for this version.", "success")
+    except EstimateCostingError as exc:
+        db.session.rollback()
+        codes = ", ".join(exc.block_codes) if exc.block_codes else str(exc)
+        flash(str(exc) if not exc.block_codes else f"{exc} ({codes})", "error")
+    except EstimateServiceError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
     return redirect(
         url_for("estimates.view_version", id=estimate.id, version_id=version.id)
     )
@@ -778,6 +807,9 @@ def edit_line_item_route(id, version_id, section_id, item_id):
         "waste_percent": request.form.get("waste_percent", "").strip(),
         "markup_percent": request.form.get("markup_percent", "").strip(),
         "notes": request.form.get("notes", "").strip(),
+        "costing_override_reason": request.form.get(
+            "costing_override_reason", ""
+        ).strip(),
     }
 
     try:
@@ -791,6 +823,8 @@ def edit_line_item_route(id, version_id, section_id, item_id):
             waste_percent=form["waste_percent"],
             markup_percent=form["markup_percent"],
             notes=form["notes"],
+            costing_override_reason=form["costing_override_reason"],
+            actor=form_actor("approved_by"),
         )
     except EstimateServiceError as exc:
         flash(str(exc), "error")

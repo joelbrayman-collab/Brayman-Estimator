@@ -667,6 +667,7 @@ def persist_pricing_snapshot(
     pre_tax,
     tax_amount,
     customer_total,
+    costing_snapshot_id=None,
 ):
     policy = resolved.get("policy")
     posture, risk = _context_posture_risk(version)
@@ -712,6 +713,7 @@ def persist_pricing_snapshot(
         pre_tax_selling_price=pre_tax,
         tax_amount=tax_amount,
         customer_total=customer_total,
+        costing_snapshot_id=costing_snapshot_id,
         provenance=(
             f"source={resolved['source']}; method={resolved['method']}; "
             f"posture={posture}; execution_risk={risk}"
@@ -760,6 +762,16 @@ def apply_resolved_pricing_to_version(
     if version.estimate.project.organization_id != org_id:
         raise PricingEngineError("Estimate does not belong to this organization.")
 
+    from app.services.estimate_costing import (
+        EstimateCostingError,
+        require_current_costing_for_pricing,
+    )
+
+    try:
+        costing = require_current_costing_for_pricing(version)
+    except EstimateCostingError as exc:
+        raise PricingEngineError(str(exc)) from exc
+
     for section in version.sections:
         for item in section.line_items:
             apply_line_item_calculations(item)
@@ -782,11 +794,10 @@ def apply_resolved_pricing_to_version(
         organization_id=org_id,
     )
 
-    line_direct = version_line_direct_cost(version)
     labour_direct = labour_engine_direct_cost_total(version, organization_id=org_id)
-    direct = line_direct
+    direct = as_money(costing.approved_direct_cost_total)
     if include_labour_snapshot_direct_cost:
-        direct = as_money(line_direct + labour_direct)
+        direct = as_money(direct + labour_direct)
 
     policy = resolved["policy"]
     method = resolved["method"]
@@ -814,6 +825,7 @@ def apply_resolved_pricing_to_version(
             pre_tax=pre_tax,
             tax_amount=as_money(tax_amount),
             customer_total=as_money(version.total),
+            costing_snapshot_id=costing.id,
         )
         db.session.flush()
         return snapshot
@@ -854,6 +866,7 @@ def apply_resolved_pricing_to_version(
             pre_tax=pre_tax,
             tax_amount=tax_amount,
             customer_total=customer_total,
+            costing_snapshot_id=costing.id,
         )
         db.session.flush()
         return snapshot

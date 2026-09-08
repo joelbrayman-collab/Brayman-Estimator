@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import ROUND_HALF_UP, Decimal
 
 from app import db
@@ -220,6 +221,8 @@ def add_cost_item_line_uncommitted(
         waste_percent=waste_percent,
         markup_percent=as_decimal(cost_item.default_markup_percent),
         notes=(notes or "").strip() or None,
+        costing_source_kind="LIBRARY_COST_ITEM",
+        library_unit_cost_reference=as_decimal(cost_item.unit_cost),
         sort_order=_next_line_sort_order(section),
     )
     apply_line_item_calculations(line_item)
@@ -280,6 +283,8 @@ def add_assembly_line_uncommitted(
         waste_percent=waste_percent,
         markup_percent=as_decimal(assembly.default_markup_percent),
         notes=(notes or "").strip() or None,
+        costing_source_kind="LIBRARY_ASSEMBLY",
+        library_unit_cost_reference=as_decimal(assembly.base_unit_cost),
         sort_order=_next_line_sort_order(section),
     )
     apply_line_item_calculations(line_item)
@@ -345,6 +350,9 @@ def add_manual_line(
         waste_percent=waste_percent,
         markup_percent=markup_percent,
         notes=(notes or "").strip() or None,
+        costing_source_kind=(
+            "MANUAL_CUSTOM" if line_type == "Custom" else "MANUAL_ALLOWANCE"
+        ),
         sort_order=_next_line_sort_order(section),
     )
     apply_line_item_calculations(line_item)
@@ -366,6 +374,8 @@ def update_line_item(
     markup_percent=None,
     code=None,
     notes=None,
+    costing_override_reason=None,
+    actor=None,
 ):
     version = line_item.section.estimate_version
     ensure_version_editable(version)
@@ -398,10 +408,48 @@ def update_line_item(
     if notes is not None:
         line_item.notes = notes.strip() or None
 
+    _sync_working_costing_fields(
+        line_item,
+        costing_override_reason=costing_override_reason,
+        actor=actor,
+    )
     apply_line_item_calculations(line_item)
     recalculate_version(version)
     db.session.commit()
     return line_item
+
+
+def _sync_working_costing_fields(line_item, *, costing_override_reason=None, actor=None):
+    line_type = line_item.line_type or ""
+    if line_type == "Custom":
+        line_item.costing_source_kind = "MANUAL_CUSTOM"
+        return
+    if line_type == "Allowance":
+        line_item.costing_source_kind = "MANUAL_ALLOWANCE"
+        return
+    if line_type not in ("Cost Item", "Assembly"):
+        return
+    reference = line_item.library_unit_cost_reference
+    is_override = (
+        reference is not None
+        and as_decimal(line_item.unit_cost) != as_decimal(reference)
+    )
+    if is_override:
+        line_item.costing_source_kind = "MANUAL_OVERRIDE"
+        if costing_override_reason is not None:
+            line_item.costing_override_reason = (
+                (costing_override_reason or "").strip() or None
+            )
+        if actor:
+            line_item.costing_override_by = actor
+            line_item.costing_override_at = datetime.utcnow()
+        return
+    line_item.costing_source_kind = (
+        "LIBRARY_ASSEMBLY" if line_type == "Assembly" else "LIBRARY_COST_ITEM"
+    )
+    line_item.costing_override_reason = None
+    line_item.costing_override_by = None
+    line_item.costing_override_at = None
 
 
 def delete_line_item(line_item):
@@ -475,6 +523,11 @@ def clone_sections_to_version(source_version, target_version):
                 extended_cost=as_decimal(item.extended_cost),
                 sell_price=as_decimal(item.sell_price),
                 notes=item.notes,
+                costing_source_kind=item.costing_source_kind,
+                library_unit_cost_reference=item.library_unit_cost_reference,
+                costing_override_reason=item.costing_override_reason,
+                costing_override_by=item.costing_override_by,
+                costing_override_at=item.costing_override_at,
                 sort_order=item.sort_order,
             )
             db.session.add(new_item)

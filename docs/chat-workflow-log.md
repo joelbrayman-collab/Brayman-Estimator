@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Override provenance on pre-FG-027 EstimateLineItem rows. Remaining costing/pricing UAT not run. |
 | Next approved step | **STOP.** Return defect to ChatGPT Architect. Do **not** silently repair. Do **not** begin V1-03. |
 | Next approved prompt | **None** — HOLD pending defect-repair authorization. |
-| Commit hash | Pending this docs recording |
+| Commit hash | `3bf832b2fea5e1ade8c3e412dc7635a4a15c42b1` |
 
 ### 2026-09-08 — V1-02 / FG-027 costing-approval product implementation
 

@@ -44,7 +44,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Pre-FG-027 inserted lines do not backfill `library_unit_cost_reference`. `classify_working_source_kind` treats NULL reference as non-override. |
 | Open decisions | Defect repair authorization. Remaining office UAT after repair. |
 | Next milestone | **STOP.** Return defect to ChatGPT Architect. Do not silently repair. Do not begin V1-03. |
-| Commit | Pending this docs recording |
+| Commit | `3bf832b2fea5e1ade8c3e412dc7635a4a15c42b1` |
 | Date | 2026-09-08 |
 
 ### 2026-09-08 — V1-02 / FG-027 costing-approval product implementation

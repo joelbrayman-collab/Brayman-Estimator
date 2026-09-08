@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — V1-02 / FG-027 costing-approval ADR, Feature Gate, and architecture preflight
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` @ `bacb5abf574b3dfe30bda4b6d6015026a3946607` (start) |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
+| Objective | Docs-only memorialization of V1-02 Automated Costing + Human Cost Approval architecture: one ADR, one Feature Gate, one preflight, minimum current-authority updates |
+| Business decision | Approve All means costing approval only. Human costing approval is mandatory before governed Pricing. Labour snapshots remain out of default pricing basis. Supplier evidence is not required. Zero/missing CostItem/Assembly commercial cost BLOCKS. Manual Custom/Allowance WARN if a valid cost is entered. Recost = new immutable costing snapshot on the same Draft EstimateVersion. Pricing becomes STALE after recost. Locked/Issued cannot recost. |
+| Architectural decision | [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Estimating owns costing approval/snapshots. Pricing Engine consumes. Labour Engine retains EstimateLabourSnapshot. Do not use EstimatePricingSnapshot as the costing record. Relational snapshot header + line rows; JSON only for advisory warnings. Proposed later Alembic `a5b6c7d8e9f0` down_revision `f4a5b6c7d8e9` — not created. ADR-008 remains Proposed. |
+| Prompt template used | Authorized V1-02 ADR + Feature Gate + architecture preflight prompt (governance / documentation only) |
+| Approved Cursor prompt summary | Create next unused ADR and Feature Gate; write preflight; update minimum governance docs; no product code, schema, migration, live DB, or costing implementation |
+| Files expected to change | `docs/adr/ADR-044-*.md`; `docs/feature-gates/FG-027-*.md`; `docs/architecture/fg-027-costing-approval-preflight.md`; ADR/FG READMEs; V1 register; current-state; session-handoff; project-state-report; platform-roadmap; chat-workflow-log; milestones; estimating/pricing-engine modules; architecture.md; docs/README.md; CAR-001 subsequent status; FG-026 subsequent note |
+| Files prohibited from changing | `app/**`; `migrations/**`; tests; live DB; Feature Gate implementation |
+| Implementation result | ADR-044 **Accepted**. FG-027 **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. V1 readiness remains **39%** (V1-02 stays PARTIAL 0.40). No product code. |
+| Tests | `git diff --check`. **PRODUCT TESTS NOT RERUN — V1-02 ADR / FEATURE GATE / PREFLIGHT ONLY.** Last product-changing full suite remains **632 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | FG-027 product implementation not authorized. Remaining V1 register §13 decisions except #2. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement FG-027. |
+| Next approved prompt | **None** — HOLD. Do not implement V1-02. |
+| Commit hash | Pending this docs commit |
+
 ### 2026-09-08 — FG-026 live migration and office UAT close
 
 | Field | Content |

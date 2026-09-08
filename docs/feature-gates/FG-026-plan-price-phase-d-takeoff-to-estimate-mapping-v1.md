@@ -190,6 +190,8 @@ Product implementation was authorized by the 8 Sep 2026 FG-026 implementation pa
 
 FG-026 is **CLOSED / OPERATIONAL FOR UAT**. Phase D mapping is operational for labeled synthetic UAT. Pricing, labour snapshots, MaterialRequirement, supplier/SKU, and V1-02 costing remain out of this gate.
 
+**Subsequent (2026-09-08, not this gate):** V1-02 is recorded as [FG-027](FG-027-automated-costing-and-human-cost-approval-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. FG-026 product remains unchanged.
+
 ## Related
 
 - [fg-026-takeoff-to-estimate-mapping-preflight.md](../architecture/fg-026-takeoff-to-estimate-mapping-preflight.md)

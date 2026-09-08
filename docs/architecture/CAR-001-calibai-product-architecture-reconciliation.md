@@ -93,7 +93,7 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-08 V1 completion register after FG-026 implementation):** [v1-completion-register.md](../v1-completion-register.md) remains governing. Readiness **34%**. **0 / 11** major packages COMPLETE. V1-01 PARTIAL factor 0.55. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. This does **not** authorize live migrate, FG-024, another FG-025 slice, or LEARN.
 
-**Subsequent status (2026-09-08 FG-026 live migrate + office UAT — not authorized by CAR-001):** [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Live current = heads **`f4a5b6c7d8e9`**. [v1-completion-register.md](../v1-completion-register.md) readiness **39%**. **1 / 11** COMPLETE (V1-01). CAR-001 still does **not** authorize V1-02, FG-024, remaining FG-025 surfaces, or LEARN.
+**Subsequent status (2026-09-08 FG-027 recorded — not authorized by CAR-001):** [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. V1-02 costing-approval architecture is recorded, not implemented. [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) remains **CLOSED / OPERATIONAL FOR UAT**. Live current = heads **`f4a5b6c7d8e9`**. Readiness remains **39%**. CAR-001 still does **not** authorize FG-027 product code, FG-024, remaining FG-025 surfaces, or LEARN.
 
 ## What CAR-001 was
 

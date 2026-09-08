@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-08). V1-01 / FG-026 **COMPLETE**. Does **not** authorize V1-02, FG-024, or another FG-025 slice. |
+| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-08). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Readiness remains **39%** (architecture recording does not change the PARTIAL factor). Does **not** authorize FG-027 product implementation, FG-024, or another FG-025 slice. |
 | Product | CalibAi / The Estimator |
 | Date | 2026-09-08 |
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
@@ -15,7 +15,7 @@ MAJOR PACKAGES:
 1 / 11 COMPLETE
 
 CURRENT V1 PACKAGE:
-V1-02 (NOT AUTHORIZED)
+V1-02 / FG-027 (RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED)
 
 CRITICAL PATH:
 V1-02 → V1-03 / V1-04
@@ -31,7 +31,7 @@ BRAYMAN REAL-LIFE UAT READY:
 NO
 
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
-THIS REGISTER DOES NOT AUTHORIZE V1-02, FG-024, OR ANOTHER FG-025 SLICE
+THIS REGISTER DOES NOT AUTHORIZE FG-027 PRODUCT IMPLEMENTATION, FG-024, OR ANOTHER FG-025 SLICE
 ```
 
 ---
@@ -168,7 +168,7 @@ No package from Joel’s list is rejected. No existing August 2026 four-output /
 | PARTIAL | **4** (V1-02, V1-04, V1-06, V1-10) |
 | ARCHITECTURE COMPLETE / NOT IMPLEMENTED | **3** (V1-03, V1-05, V1-07) |
 | NOT STARTED | **1** (V1-11) |
-| **CURRENT V1 PACKAGE** | **V1-02 (NOT AUTHORIZED)** |
+| **CURRENT V1 PACKAGE** | **V1-02 / FG-027 (RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED)** |
 | **CRITICAL PATH** | V1-02 → V1-03 / V1-04; V1-06 parallel; V1-10 before real UAT; V1-11 last |
 | **BMR DEMO READY** | **NO** |
 | **BRAYMAN REAL-LIFE UAT READY** | **NO** |
@@ -194,7 +194,7 @@ Weights total **100%** and reflect **remaining business/product significance** f
 | BLOCKER? | **NO** |
 | Dependencies | FG-010 **CLOSED**; existing Draft EstimateVersion + Assembly/CostItem on the same Project |
 | Governing | [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [fg-026-takeoff-to-estimate-mapping-preflight.md](architecture/fg-026-takeoff-to-estimate-mapping-preflight.md); ADR-005/006/007/011/031 |
-| Next governed action | **STOP.** Do **not** begin V1-02. V1-02 remains **NOT AUTHORIZED**. |
+| Next governed action | V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **RECORDED**. Do **not** implement from this register. |
 
 PLAN proposes. Estimating commits. Package approval does **not** insert. Live UAT: TakeoffPackage **id 1** on project **3** mapped to Estimate **id 9** / version **id 9** / line **id 7** (quantity **3** `ea`) with insertion **id 1** and **3** citations. Package 1 **unchanged**. No labour/pricing snapshot, MaterialRequirement, or supplier/SKU from the insert.
 
@@ -204,22 +204,22 @@ PLAN proposes. Estimating commits. Package approval does **not** insert. Live UA
 |-------|--------|
 | Intent | CalibAi develops costs from governed organizational commercial intelligence. Human **costing** approval remains required. Mature path: CalibAi costs → flags exceptions / low-confidence → estimator reviews → **Approve all costing** → Pricing Engine. |
 | Weight | **10%** |
-| Status | **PARTIAL** |
+| Status | **PARTIAL** (working CostItem/Assembly/line costs exist; costing-approval product **NOT IMPLEMENTED**). Architecture/preflight **COMPLETE**. Factor unchanged — architecture recording does not raise readiness. |
 | Factor | 0.40 |
 | Contribution | **4.0** |
 | V1 REQUIRED? | **YES** (human-approved costing before pricing). Exception-based review is **V1 maturation**, not a launch fabricator of history. |
 | BLOCKER? | **NO** |
 | Dependencies | V1-01 for takeoff-sourced lines; FG-008 / FG-009 / FG-014 foundations |
-| Governing | [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **CLOSED**; [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED**; [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED**; ADR-025/030/034/035/036 |
-| Next governed action | Separate Feature Gate when Joel authorizes costing-application work. Do **not** invent costing-state machines in this register. |
+| Governing | [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**; [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**; [fg-027-costing-approval-preflight.md](architecture/fg-027-costing-approval-preflight.md); [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **CLOSED**; [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED**; [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED**; ADR-025/030/034/035/036 |
+| Next governed action | **STOP.** Do **not** implement FG-027 until a separate implementation prompt. Do **not** create migration `a5b6c7d8e9f0` from this register. |
 
-**Exists today:** org CostItem / Assembly libraries; Labour Engine standards + snapshots (labour snapshot **not** in selling-price basis by default); Pricing Engine apply as a **separate human action**; historical workbook evidence.
+**Exists today:** org CostItem / Assembly libraries; copy-at-insert working `EstimateLineItem.unit_cost`; Labour Engine standards + snapshots (labour snapshot **not** in selling-price basis by default); Pricing Engine apply as a **separate human action** with **no** costing-approval gate; historical workbook evidence; ADR-044 / FG-027 architecture.
 
-**Does not exist:** CalibAi-developed costs with exception flags; an “Approve all costing” workflow; MaterialRequirement; supplier-priced costing.
+**Does not exist:** Approve All Costing product; `EstimateCostingSnapshot`; Pricing fail-closed on missing approved costing; MaterialRequirement; supplier-priced costing; ML confidence.
 
 “Approve all” means **costing** approval only. It does **not** approve takeoff mappings, customer selling price, or bypass commercial validation.
 
-**Joel decision:** confirm V1 ships with **human costing + explicit confirmation before Pricing Engine**, with exception-based CalibAi costing maturing during real UAT — versus requiring exception-based costing before BMR demo. Register recommendation: **human costing is V1-required; exception-based is V1-maturation.**
+**Joel decision (recorded 2026-09-08 in ADR-044):** V1 ships with **human costing + explicit Approve All Costing before Pricing Engine**. Exception-based review matures during real UAT. Zero/missing CostItem/Assembly commercial cost **BLOCKS**. Manual Custom/Allowance **WARN** if a valid cost is entered. Labour snapshots remain out of default pricing basis. Supplier evidence is not required.
 
 ### V1-03 — BMR / supplier workflow V1
 
@@ -573,7 +573,7 @@ Do **not** block V1 on:
 | # | Decision | Register recommendation |
 |---|----------|-------------------------|
 | 1 | QuickBooks V1 = A (output/entry) vs B (live API) | **A now; API POST-V1** |
-| 2 | Exception-based CalibAi costing required before BMR? | **No.** Human costing + explicit approval is V1; exception-based matures in real UAT |
+| 2 | Exception-based CalibAi costing required before BMR? | **RECORDED (ADR-044 / FG-027).** **No.** Human costing + explicit Approve All Costing is V1; exception-based matures in real UAT |
 | 3 | FG-024 Slice D live legal-source monitoring in V1? | **POST-V1.** Keep 06H versioning/supersession/effective-date in V1 |
 | 4 | Customer Proposal/PDF FG-025 remainder in BMR demo? | **Yes**, via a later bounded slice |
 | 5 | Project Closeout before first real project? | **No** for BMR; **V1-desired** before long-running real UAT |
@@ -593,7 +593,7 @@ MAJOR PACKAGES:
 1 / 11 COMPLETE
 
 CURRENT V1 PACKAGE:
-V1-02 (NOT AUTHORIZED)
+V1-02 / FG-027 (RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED)
 
 CRITICAL PATH:
 V1-02 → V1-03 / V1-04
@@ -616,6 +616,8 @@ NO
 - [current-state.md](current-state.md)
 - [feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md)
 - [feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md)
+- [feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md)
+- [adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md)
 - [governance/legal-content-and-templates.md](governance/legal-content-and-templates.md)
 - [architecture/project-document-package.md](architecture/project-document-package.md)
 - [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md)

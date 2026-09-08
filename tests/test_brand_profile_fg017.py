@@ -328,7 +328,7 @@ def test_isolation_org_does_not_receive_brayman_logo(app, isolation_org):
 def test_settings_form_and_logo_upload_replace(client, app):
     response = client.get("/settings/brand-profile")
     assert response.status_code == 200
-    assert b"Organization Brand Profile" in response.data
+    assert b"Brand profile" in response.data
     assert b"Legal name" in response.data
 
     current = get_current_brand_profile(DEFAULT_ORGANIZATION_ID)

@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-08 — FG-025 Slice 4 contractor-facing office language
+
+| Field | Content |
+|-------|---------|
+| ID | FG-025 — Slice 4 office shell language |
+| Status | **SLICE 4 IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED.** Remaining surfaces **NOT AUTHORIZED.** Not a product-wide sweep. |
+| Branch | `main` |
+| Base commit | `ab6219827f33a59f4d6528bbfffbd4551b9d1411` |
+| Objective | Contractor-facing language on shared OFFICE navigation, dashboard, authentication, and Settings / Brand Profile, without changing routes, permissions, auth behavior, or Settings values. |
+| Deliverables | Shared office templates + `contractor_copy.py` Slice 4 constants; nav titles aligned to Slice 3 page names; FG-025 and Brand Profile HTML tests. |
+| Validation | Dedicated **16 passed**. Slice-4 focused **114 passed**. Governed **226 passed**. Full **609 passed**. Manual office-shell review **PASS** (Flask 5025). `git diff --check`. Live current = heads `e3f4a5b6c7d8`. Field **39 / 39**. Project **13** five actuals unchanged. |
+| Architectural findings | Reused Slice 1–3 presentation map. Global nav **Labour rates** / **Pricing**. Historical Evidence nav left as-is. Cost Items left as-is. Header disabled **Settings (coming soon)** left frozen. Field Web **Log out** unchanged. |
+| Open decisions | Remaining FG-025 surfaces; “contract value” wording still flagged; FG-024 unauthorized. |
+| Next milestone | **STOP.** Do **not** start Slice 5. Do **not** start FG-024. Do **not** start LEARN. |
+| Commit | this Slice 4 product-changing commit (parent `ab6219827f33a59f4d6528bbfffbd4551b9d1411`) |
+| Date | 2026-09-08 |
+
 ### 2026-09-08 — FG-025 Slice 3 post-close documentation reconciliation
 
 | Field | Content |

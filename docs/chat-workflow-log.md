@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — FG-025 Slice 4 contractor-facing office language
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
+| Objective | Implement FG-025 Slice 4 only: contractor-facing language on shared OFFICE shell, navigation, dashboard, authentication, and Settings / Brand Profile. |
+| Business decision | Slice 4 **AUTHORIZED AND IMPLEMENTED**. Global nav **Labour rates** / **Pricing**. Dashboard **Office home**. Login **Sign in with your email and password.** Header **Sign out**. Settings **Brand profile**. FG-025 overall **NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**. FG-023 remains **CLOSED**. FG-024 remains **FUTURE / NOT IMPLEMENTATION-AUTHORIZED**. |
+| Architectural decision | Reuse Slice 1–3 `app/presentation/contractor_copy.py`. Do not create a competing copy system. Do not rename routes, blueprints, enums, or schema. No auth/session/Settings behavior change. No Field Web / PDF / MONITOR / pricing / labour arithmetic change. |
+| Prompt template used | `docs/prompts/cursor-implementation-template.md` does **not** exist. Followed AGENTS.md and the bounded Slice 4 prompt. |
+| Approved Cursor prompt summary | FG-025 Slice 4 only. Shared office nav/dashboard/auth/Settings copy. No schema/migration/DB. No Slice 5. No FG-024. No LEARN. No website. |
+| Files expected to change | `app/presentation/contractor_copy.py`; `app/navigation.py`; office templates for login, base, dashboard, brand profile; FG-025 tests; current-authority docs. |
+| Files prohibited from changing | `migrations/`; models/enums except read-only; Field Web; customer PDF; MONITOR arithmetic; LEARN; website; FG-024. |
+| Implementation result | Nav titles mapped to Slice 3 page names. Dashboard heading/lede and status labels. Login lede + Sign out. Brand profile heading/lede; MB helper. Routes/endpoints/auth/Settings values unchanged. Field Web still **Log out**. Live current `e3f4a5b6c7d8`. Live **39** / **39**. Project **13** five actuals unchanged. |
+| Tests | Dedicated: `./venv/bin/python -m pytest -q tests/test_fg025_contractor_copy.py` → **16 passed**. Slice-4 focused (FG-025 + auth FG-018 + Brand Profile + organization foundation + change orders + proposals) **114 passed**. Governed (required FG-023/Hub/auth/FG-020/FG-021 plus Slice 4 affected files) **226 passed**. Full `./venv/bin/python -m pytest -q` → **609 passed**. |
+| Project-state-report update | Yes — Slice 4 implemented / not closed; remaining surfaces not authorized. |
+| Milestone entry update | Yes — Slice 4 recorded. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining FG-025 surfaces unauthorized (Field Web, customer PDF, Historical Evidence nav, standalone Permit screens). Header disabled **Settings (coming soon)** left frozen (FG-017). “Contract value” still flagged G. Slice 5 not authorized. |
+| Next approved step | **STOP.** Do **not** start Slice 5. Do **not** start FG-024. Do **not** start LEARN. Do **not** restart website work. |
+| Next approved prompt | None authorized. |
+| Commit hash | this Slice 4 product-changing commit (parent `ab6219827f33a59f4d6528bbfffbd4551b9d1411`) |
+
 ### 2026-09-08 — FG-025 Slice 3 post-close documentation reconciliation
 
 | Field | Content |

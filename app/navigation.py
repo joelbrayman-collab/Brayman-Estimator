@@ -1,5 +1,7 @@
 """Single source of truth for application shell navigation."""
 
+from app.presentation.contractor_copy import LABOUR_RATES_HEADING, PRICING_HEADING
+
 # Navigation is grouped into platform modules.
 # Each item: title, endpoint (or None), icon (Bootstrap Icons class), enabled
 NAV_SECTIONS = (
@@ -60,13 +62,13 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
-                "title": "Labour Engine",
+                "title": LABOUR_RATES_HEADING,
                 "endpoint": "labour_engine.index",
                 "icon": "bi-stopwatch",
                 "enabled": True,
             },
             {
-                "title": "Pricing Engine",
+                "title": PRICING_HEADING,
                 "endpoint": "pricing_engine.index",
                 "icon": "bi-percent",
                 "enabled": True,

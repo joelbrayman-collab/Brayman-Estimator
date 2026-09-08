@@ -1,4 +1,4 @@
-"""FG-025 contractor-facing display mapping (Slice 1–3).
+"""FG-025 contractor-facing display mapping (Slice 1–4).
 
 Presentation only. Deterministic. No DB access, I/O, service ownership,
 commercial calculations, or mutation. Internal domain keys stay authoritative.
@@ -143,6 +143,16 @@ def sentence_label(value: str | None) -> str:
 
 LABOUR_RATES_HEADING = "Labour rates"
 PRICING_HEADING = "Pricing"
+LOGIN_LEDE = "Sign in with your email and password."
+SIGN_OUT_LABEL = "Sign out"
+DASHBOARD_HEADING = "Office home"
+DASHBOARD_LEDE = "Open a project, start an estimate, or issue a proposal."
+BRAND_PROFILE_HEADING = "Brand profile"
+BRAND_PROFILE_LEDE = (
+    "Company identity and logo for documents you send to customers. "
+    "Saving creates a new current version. Issued and Accepted proposals "
+    "keep the branding they were issued with."
+)
 SOURCE_NOTES_LABEL = "Source notes"
 PRICING_LOCK_HEADING = "Pricing lock"
 CATALOGUE_COLUMN_LABEL = "Catalogue"

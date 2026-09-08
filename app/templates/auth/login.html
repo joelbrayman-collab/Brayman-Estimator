@@ -21,7 +21,7 @@
             height="72"
         >
         <h1>Office sign in</h1>
-        <p class="login-lede">Use your organization membership credentials.</p>
+        <p class="login-lede">{{ contractor_copy.LOGIN_LEDE }}</p>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}

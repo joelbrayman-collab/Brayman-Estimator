@@ -1,4 +1,4 @@
-"""FG-025 contractor-facing display mapping (Slice 1 MONITOR + Slice 2 Hub + Slice 3 PRICE).
+"""FG-025 contractor-facing display mapping (Slice 1 MONITOR + Slice 2 Hub + Slice 3 PRICE + Slice 4 office shell).
 
 Presentation tests only. Internal domain keys stay authoritative.
 """
@@ -32,6 +32,11 @@ from app.presentation.contractor_copy import (
     SOURCE_HEADLINE,
     SOURCE_NOTES_LABEL,
     CATALOGUE_COLUMN_LABEL,
+    DASHBOARD_HEADING,
+    DASHBOARD_LEDE,
+    LOGIN_LEDE,
+    SIGN_OUT_LABEL,
+    BRAND_PROFILE_HEADING,
     co_cost_delta_label,
     cost_class_label,
     entry_reference,
@@ -397,3 +402,61 @@ def test_slice3_labour_and_pricing_office_copy(client, project):
     assert "Original Estimated Direct Cost" in hub
     view = assemble_monitor_v1(project, project.organization_id)
     assert view["actuals_state"] == "MISSING_ACTUALS"
+
+
+def test_slice4_office_shell_labels_are_pinned():
+    assert LABOUR_RATES_HEADING == "Labour rates"
+    assert PRICING_HEADING == "Pricing"
+    assert LOGIN_LEDE == "Sign in with your email and password."
+    assert SIGN_OUT_LABEL == "Sign out"
+    assert DASHBOARD_HEADING == "Office home"
+    assert DASHBOARD_LEDE == "Open a project, start an estimate, or issue a proposal."
+    assert BRAND_PROFILE_HEADING == "Brand profile"
+
+
+def test_slice4_nav_routes_and_engine_labels(client, project):
+    from app.navigation import NAV_ITEMS
+
+    labour = next(item for item in NAV_ITEMS if item["endpoint"] == "labour_engine.index")
+    pricing = next(item for item in NAV_ITEMS if item["endpoint"] == "pricing_engine.index")
+    assert labour["title"] == LABOUR_RATES_HEADING
+    assert pricing["title"] == PRICING_HEADING
+    home = _html(client.get("/"))
+    assert 'href="/labour-engine/"' in home
+    assert 'href="/pricing-engine/"' in home
+    assert ">Labour rates<" in home
+    assert ">Pricing<" in home
+    assert "Labour Engine" not in home
+    assert "Pricing Engine" not in home
+    assert DASHBOARD_HEADING in home
+    assert "Executive overview" not in home
+    assert SIGN_OUT_LABEL in home
+    assert 'aria-label="Log out"' not in home
+    hub = _html(client.get(f"/projects/{project.id}"))
+    assert "LEARN · Future" in hub
+    assert "NET PROFIT" not in hub
+    settings = _html(client.get("/settings/brand-profile"))
+    assert f"<h1>{BRAND_PROFILE_HEADING}</h1>" in settings
+    assert "Organization Brand Profile" not in settings
+    assert "Remote URLs" not in settings
+    assert " MiB" not in settings
+    field = _html(client.get("/field/today"))
+    assert "Log out" in field
+    assert "shell-sidebar" not in field
+
+
+@pytest.mark.no_office_auth
+def test_slice4_login_copy_and_auth_behavior(client):
+    from tests.auth_fixtures import ensure_office_user, login_office_user
+
+    page = _html(client.get("/login"))
+    assert LOGIN_LEDE in page
+    assert "organization membership credentials" not in page
+    assert "Office sign in" in page
+    ensure_office_user()
+    response = login_office_user(client)
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith("/")
+    follow = client.get("/")
+    assert follow.status_code == 200
+    assert DASHBOARD_HEADING.encode() in follow.data

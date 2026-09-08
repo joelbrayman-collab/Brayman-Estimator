@@ -1,19 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Brand Profile | Brayman Construction Platform{% endblock %}
+{% block title %}{{ contractor_copy.BRAND_PROFILE_HEADING }} | Brayman Construction Platform{% endblock %}
 
-{% block page_title %}Brand Profile{% endblock %}
+{% block page_title %}{{ contractor_copy.BRAND_PROFILE_HEADING }}{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">Settings</p>
-        <h1>Organization Brand Profile</h1>
-        <p>
-            Contractor identity and logo for generated customer documents.
-            Saving creates a new current version. Issued and Accepted proposals
-            keep the branding they were issued with.
-        </p>
+        <h1>{{ contractor_copy.BRAND_PROFILE_HEADING }}</h1>
+        <p>{{ contractor_copy.BRAND_PROFILE_LEDE }}</p>
     </div>
 </div>
 
@@ -58,7 +54,7 @@
         Logo
         <input type="file" name="logo" accept=".png,.jpg,.jpeg,.gif,image/png,image/jpeg,image/gif">
     </label>
-    <p class="text-muted">PNG, JPEG, or GIF. Maximum {{ '%.0f'|format(max_logo_bytes / (1024 * 1024)) }} MiB. Leave empty to keep the current logo. Remote URLs are not accepted.</p>
+    <p class="text-muted">PNG, JPEG, or GIF. Maximum {{ '%.0f'|format(max_logo_bytes / (1024 * 1024)) }} MB. Leave empty to keep the current logo. Upload a file; a web link cannot be used as a logo.</p>
 
     {% if profile and profile.logo_sha256 %}
     <p>

@@ -7,8 +7,8 @@
 <section class="dash-intro">
     <div>
         <p class="eyebrow">Brayman Construction Co.</p>
-        <h2 class="dash-heading">Executive overview</h2>
-        <p class="muted-copy">Track projects, estimates, and proposals across the Brayman Construction Platform.</p>
+        <h2 class="dash-heading">{{ contractor_copy.DASHBOARD_HEADING }}</h2>
+        <p class="muted-copy">{{ contractor_copy.DASHBOARD_LEDE }}</p>
     </div>
     <div class="dash-intro-actions">
         <a class="button" href="{{ url_for('estimates.create_estimate_route') }}">New estimate</a>
@@ -30,7 +30,7 @@
             <li>
                 <a href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">
                     <span class="activity-title">{{ estimate.title }}</span>
-                    <span class="activity-meta">{{ estimate.estimate_number }} · {{ estimate.status }}</span>
+                    <span class="activity-meta">{{ estimate.estimate_number }} · {{ contractor_copy.office_status_label(estimate.status) }}</span>
                 </a>
             </li>
             {% endfor %}
@@ -55,7 +55,7 @@
             <li>
                 <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">
                     <span class="activity-title">{{ proposal.title }}</span>
-                    <span class="activity-meta">{{ proposal.proposal_number }} · {{ proposal.status }}</span>
+                    <span class="activity-meta">{{ proposal.proposal_number }} · {{ contractor_copy.office_status_label(proposal.status) }}</span>
                 </a>
             </li>
             {% endfor %}

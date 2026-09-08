@@ -85,6 +85,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-07 FG-025 Slice 3 — not authorized by CAR-001):** [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **SLICE 3 IMPLEMENTED / TESTED / COMMITTED / PUSHED**. Product SHA **`071f5f923515c6405298bf96b0af249a20f81358`**. FG-025 overall **NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**. No schema / migration / DB / calculation change. CAR-001 still does **not** authorize Slice 4, FG-024, or LEARN.
 
+**Subsequent status (2026-09-08 FG-025 Slice 4 — not authorized by CAR-001):** [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **SLICE 4 IMPLEMENTED / TESTED / COMMITTED / PUSHED**. Parent **`ab6219827f33a59f4d6528bbfffbd4551b9d1411`**. FG-025 overall **NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**. No schema / migration / DB / calculation change. CAR-001 still does **not** authorize Slice 5, FG-024, or LEARN.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

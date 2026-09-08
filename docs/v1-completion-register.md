@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-08). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **LIVE-MIGRATED / OFFICE UAT STOPPED / NOT CLOSED**. Readiness remains **39%** (V1-02 stays **PARTIAL** factor 0.40 — office UAT did not PASS). Does **not** authorize a silent product repair, FG-024, or another FG-025 slice. |
+| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-08). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **LIVE-MIGRATED / OFFICE UAT STOPPED / NOT CLOSED**. Legacy override-provenance defect **REPAIRED / TESTED / COMMITTED / PUSHED / AWAITING UAT CONTINUATION**. Readiness remains **39%** (V1-02 stays **PARTIAL** factor 0.40 — office UAT did not PASS). Does **not** authorize FG-027 close, V1-03, FG-024, or another FG-025 slice. |
 | Product | CalibAi / The Estimator |
 | Date | 2026-09-08 |
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
@@ -31,7 +31,7 @@ BRAYMAN REAL-LIFE UAT READY:
 NO
 
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
-THIS REGISTER DOES NOT AUTHORIZE A SILENT FG-027 PRODUCT REPAIR, FG-024, OR ANOTHER FG-025 SLICE
+THIS REGISTER DOES NOT AUTHORIZE FG-027 CLOSE, V1-03, FG-024, OR ANOTHER FG-025 SLICE
 ```
 
 ---
@@ -194,7 +194,7 @@ Weights total **100%** and reflect **remaining business/product significance** f
 | BLOCKER? | **NO** |
 | Dependencies | FG-010 **CLOSED**; existing Draft EstimateVersion + Assembly/CostItem on the same Project |
 | Governing | [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [fg-026-takeoff-to-estimate-mapping-preflight.md](architecture/fg-026-takeoff-to-estimate-mapping-preflight.md); ADR-005/006/007/011/031 |
-| Next governed action | V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **LIVE-MIGRATED / OFFICE UAT STOPPED**. Do **not** silently repair from this register. |
+| Next governed action | V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **LIVE-MIGRATED / OFFICE UAT STOPPED**. Legacy override-provenance defect **REPAIRED / AWAITING UAT CONTINUATION**. Do **not** close FG-027 from this register. |
 
 PLAN proposes. Estimating commits. Package approval does **not** insert. Live UAT: TakeoffPackage **id 1** on project **3** mapped to Estimate **id 9** / version **id 9** / line **id 7** (quantity **3** `ea`) with insertion **id 1** and **3** citations. Package 1 **unchanged**. No labour/pricing snapshot, MaterialRequirement, or supplier/SKU from the insert.
 
@@ -204,16 +204,16 @@ PLAN proposes. Estimating commits. Package approval does **not** insert. Live UA
 |-------|--------|
 | Intent | CalibAi develops costs from governed organizational commercial intelligence. Human **costing** approval remains required. Mature path: CalibAi costs → flags exceptions / low-confidence → estimator reviews → **Approve all costing** → Pricing Engine. |
 | Weight | **10%** |
-| Status | **PARTIAL** (live-migrated; office UAT **STOPPED / NOT PASS** on override provenance for EstimateLineItem id 7). Factor unchanged. |
+| Status | **PARTIAL** (live-migrated; office UAT **STOPPED / NOT PASS**; legacy override-provenance defect **REPAIRED / AWAITING UAT CONTINUATION**). Factor unchanged. |
 | Factor | 0.40 |
 | Contribution | **4.0** |
 | V1 REQUIRED? | **YES** (human-approved costing before pricing). Exception-based review is **V1 maturation**, not a launch fabricator of history. |
 | BLOCKER? | **NO** |
 | Dependencies | V1-01 for takeoff-sourced lines; FG-008 / FG-009 / FG-014 foundations |
 | Governing | [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **LIVE-MIGRATED / OFFICE UAT STOPPED / NOT CLOSED**; [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**; [fg-027-costing-approval-preflight.md](architecture/fg-027-costing-approval-preflight.md); [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **CLOSED**; [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED**; [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED**; ADR-025/030/034/035/036 |
-| Next governed action | **STOP.** Return override-provenance defect to ChatGPT Architect. Do **not** silently repair. Do **not** begin V1-03. |
+| Next governed action | **STOP.** Return to ChatGPT Architect for **UAT-continuation authorization**. Do **not** resume UAT from this register. Do **not** close FG-027. Do **not** begin V1-03. |
 
-**Exists live:** additive `a5b6c7d8e9f0`; Costing Review UI; zero-cost BLOCK on EstimateVersion 9. Working line 7 unit_cost **250** (UAT residue). Labour snapshot **not** in selling-price basis. Supplier evidence not required.
+**Exists live:** additive `a5b6c7d8e9f0`; Costing Review UI; zero-cost BLOCK on EstimateVersion 9. Working line 7 unit_cost **250** with `library_unit_cost_reference` **NULL** (failed-UAT residue; **not** mutated by the 2026-09-08 repair). Product repair SHA **`72949f99da2b56ec06e95e16e29fa194a6730bbd`**. Labour snapshot **not** in selling-price basis. Supplier evidence not required.
 
 **Does not exist / not verified:** office Approve All Costing PASS; frozen CURRENT snapshot; Pricing consume / STALE / re-apply UAT. MaterialRequirement; supplier-priced costing; ML confidence remain out of V1-02.
 

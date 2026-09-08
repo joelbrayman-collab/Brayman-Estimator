@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-08 — V1-02 / FG-027 bounded legacy override-provenance repair
+
+| Field | Content |
+|-------|---------|
+| ID | FG-027 / V1-02 |
+| Status | **LEGACY OVERRIDE-PROVENANCE DEFECT REPAIRED / TESTED / COMMITTED / PUSHED / AWAITING UAT CONTINUATION.** Gate remains **LIVE-MIGRATED / OFFICE UAT STOPPED / NOT PASS / NOT CLOSED**. |
+| Branch | `main` |
+| Base commit | `db43d54e57a884de491cffa3bcda9119efde0c7a` |
+| Objective | Repair NULL `library_unit_cost_reference` classification so a later working-cost change on a pre-FG-027 CostItem/Assembly Draft line is `MANUAL_OVERRIDE` with required reason/actor/time. |
+| Deliverables | `establish_legacy_library_unit_cost_reference` in `app/services/estimate_costing.py`; call from `update_line_item` before applying a new `unit_cost`; dedicated tests in `tests/test_estimate_costing_fg027.py`. No new migration. No live DB write. |
+| Validation | Dedicated FG-027 **20 passed**. Estimating focused **29**. Pricing focused **52**. FG-026 **20**. Governed A–D bundle **121**. Full suite **652 passed**. Historical dedicated **15** / full **647** remain the pre-repair baseline. |
+| Architectural findings | Best available historical copy for a NULL-reference library-derived line is the **pre-edit working `unit_cost`**, not today’s CostItem/Assembly library value. Populated references stay frozen. |
+| Open decisions | Office UAT continuation authorization. FG-027 close. V1-02 COMPLETE. |
+| Next milestone | **STOP.** Return to ChatGPT Architect for UAT-continuation authorization. Do **not** close FG-027. Do **not** begin V1-03. |
+| Commit | Product **`72949f99da2b56ec06e95e16e29fa194a6730bbd`** (`fix: preserve FG-027 legacy override provenance`) |
+| Date | 2026-09-08 |
+
 ### 2026-09-08 — V1-02 / FG-027 live migration and office UAT stop
 
 | Field | Content |

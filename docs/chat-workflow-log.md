@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — V1-02 / FG-027 bounded legacy override-provenance repair
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026 |
+| Objective | Bounded FG-027 product repair for legacy NULL `library_unit_cost_reference` override provenance |
+| Business decision | Joel authorized repair without a new migration, without live DB write, and without UAT continuation or FG-027 close |
+| Architectural decision | Pre-edit working `unit_cost` is the frozen library reference for CostItem/Assembly lines whose `library_unit_cost_reference` is NULL. Do not query today’s library. Do not overwrite a populated reference. |
+| Prompt template used | Authorized V1-02 / FG-027 bounded legacy override-provenance defect repair (8 Sep 2026) |
+| Approved Cursor prompt summary | BOUNDED LEGACY OVERRIDE-PROVENANCE DEFECT REPAIR; NO NEW MIGRATION; NO UAT CONTINUATION IN THIS PASS |
+| Files expected to change | `app/services/estimate_costing.py`; `app/services/estimate_builder.py`; `tests/test_estimate_costing_fg027.py`; FG-027 / V1 / current-authority docs |
+| Files prohibited from changing | Alembic revisions; live DB; FG-027 close; V1-03; CalibAi rename; FG-024; FG-025; LEARN |
+| Implementation result | Defect **REPAIRED / TESTED / COMMITTED / PUSHED**. FG-027 remains **LIVE-MIGRATED / OFFICE UAT STOPPED / NOT PASS / NOT CLOSED**. V1 readiness remains **39%**. |
+| Tests | A dedicated FG-027 **20 passed**. B estimating focused **29 passed**. C pricing focused **52 passed**. D FG-026 **20 passed**. E governed A–D bundle **121 passed**. F full suite **652 passed**. Historical dedicated **15** / full **647** remain the pre-repair baseline. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None |
+| Unresolved issues | Office UAT continuation; live line 7 residue (working 250 / NULL reference); FG-027 close; remaining costing/pricing UAT |
+| Next approved step | **STOP.** Return to ChatGPT Architect for UAT-continuation authorization. |
+| Next approved prompt | Not in this pass. |
+| Commit hash | Product **`72949f99da2b56ec06e95e16e29fa194a6730bbd`** |
+
 ### 2026-09-08 — V1-02 / FG-027 live migration and office UAT stop
 
 | Field | Content |

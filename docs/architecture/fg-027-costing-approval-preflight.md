@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED** (2026-09-08). **OFFICE UAT STOPPED / NOT PASS.** **NOT CLOSED.** **NOT OPERATIONAL FOR UAT.** [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Live current = heads **`a5b6c7d8e9f0`**. |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED** (2026-09-08). **OFFICE UAT STOPPED / NOT PASS.** **NOT CLOSED.** **NOT OPERATIONAL FOR UAT.** Legacy override-provenance defect **REPAIRED / TESTED / COMMITTED / PUSHED / AWAITING UAT CONTINUATION** (`72949f99da2b56ec06e95e16e29fa194a6730bbd`). [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Live current = heads **`a5b6c7d8e9f0`**. |
 | Date | 2026-09-08 |
 | Parent | FG-026 close SHA `bacb5abf574b3dfe30bda4b6d6015026a3946607`. Architecture recording SHA `076e12f022fa5248a34e7baf7d05ae51e9e0ac4b`. Implementation start pin `28fb5c0445fafabb2924d5d43bce46bf5fca3d0e`. |
 | Gate | [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) |
-| Readiness | Product implementation complete. Live migrate **PASS**. Office UAT **STOPPED** on override-provenance defect for pre-FG-027 line 7. |
+| Readiness | Product implementation complete. Live migrate **PASS**. Office UAT **STOPPED / NOT PASS**. Legacy NULL-reference override provenance **REPAIRED** in product (awaiting UAT continuation). Live line 7 **not** mutated by the repair. |
 
 ```text
 FG-027:
@@ -14,11 +14,14 @@ IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED
 OFFICE UAT STOPPED / NOT PASS
 NOT CLOSED
 NOT OPERATIONAL FOR UAT
+LEGACY OVERRIDE-PROVENANCE DEFECT
+REPAIRED / TESTED / COMMITTED / PUSHED
+AWAITING UAT CONTINUATION
 ADR-044 ACCEPTED
 LIVE CURRENT = HEADS a5b6c7d8e9f0
 ```
 
-This document pins implementation mechanics. Historical “do not create now” language below is the 2026-09-08 architecture recording. Product code, migration file `a5b6c7d8e9f0`, and tests **were implemented** under the authorized 8 Sep 2026 FG-027 package. Live upgrade **PASS**. Office UAT **STOPPED** (override provenance on EstimateLineItem id 7).
+This document pins implementation mechanics. Historical “do not create now” language below is the 2026-09-08 architecture recording. Product code, migration file `a5b6c7d8e9f0`, and tests **were implemented** under the authorized 8 Sep 2026 FG-027 package. Live upgrade **PASS**. Office UAT **STOPPED** (override provenance on EstimateLineItem id 7). Bounded repair **`72949f99da2b56ec06e95e16e29fa194a6730bbd`** freezes pre-edit working `unit_cost` as `library_unit_cost_reference` when that column is NULL on a CostItem/Assembly Draft edit. It does **not** query today’s library. It does **not** overwrite a populated reference. It does **not** mutate live line 7.
 
 ---
 
@@ -174,6 +177,8 @@ Indexes: `organization_id`, `estimate_version_id`, `status` on snapshots; `costi
 | `MANUAL_ALLOWANCE` | `line_type` Allowance |
 | `MANUAL_OVERRIDE` | Cost Item or Assembly whose working `unit_cost` ≠ `library_unit_cost_reference` |
 
+On Draft CostItem/Assembly **edit**, if `library_unit_cost_reference` is NULL (pre-FG-027 insert), freeze the **pre-edit working `unit_cost`** as the reference before comparing. Do **not** look up current CostItem/Assembly library values. Do **not** overwrite a non-NULL reference on later edits.
+
 **Reserved extension points (not V1-02 operating sources):** `SUPPLIER_SNAPSHOT`, `HISTORICAL_SUGGESTION`, `AI_SUGGESTION`. Do not write these as operating sources in V1-02.
 
 ---
@@ -274,11 +279,11 @@ FG-026 map UI is **not** the costing home.
 
 ---
 
-## 8. FG-026 line 7 (do not mutate)
+## 8. FG-026 line 7 (do not mutate in architecture or repair passes)
 
-EstimateLineItem id 7 / Assembly id 2 / qty 3 `ea` / `unit_cost` 0.
+EstimateLineItem id 7 / Assembly id 2 / qty 3 `ea`. Pre-UAT working `unit_cost` was **0**. Failed UAT residue: working **250**, `library_unit_cost_reference` **NULL**.
 
-V1-02 must **BLOCK** Approve All until a human enters a cost (or the Assembly gains components **and** the estimator sets a new working cost / override). Mapping provenance stays. Do not invent a door price. Do not change the UAT row in this preflight.
+V1-02 must **BLOCK** Approve All until a human enters a cost with required override provenance when the working cost differs from the frozen library reference. Mapping provenance stays. Do not invent a door price. Do **not** mutate live line 7 from architecture, live-migrate, or the 2026-09-08 bounded repair. UAT continuation is separately authorized and must re-exercise override from a NULL-reference **pre-edit** working cost (the live residue is already 250).
 
 ---
 

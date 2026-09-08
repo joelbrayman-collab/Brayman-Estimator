@@ -13,6 +13,8 @@ This ADR does **not** accept [ADR-008](ADR-008-supplier-price-snapshotting.md).
 
 **Subsequent status (2026-09-08 live migrate + UAT):** Additive `a5b6c7d8e9f0` **applied live**. Office UAT **STOPPED / NOT PASS** on EstimateLineItem id 7 override provenance (`library_unit_cost_reference` NULL). Gate **NOT CLOSED**. ADR-044 itself stays **Accepted**.
 
+**Subsequent status (2026-09-08 bounded legacy override-provenance repair):** Product SHA **`72949f99da2b56ec06e95e16e29fa194a6730bbd`**. NULL `library_unit_cost_reference` on a CostItem/Assembly Draft edit now freezes pre-edit working `unit_cost` as the line reference; a changed cost is `MANUAL_OVERRIDE`. No new migration. No live DB write. Gate remains **NOT CLOSED**. ADR-044 stays **Accepted**.
+
 ---
 
 ## Context

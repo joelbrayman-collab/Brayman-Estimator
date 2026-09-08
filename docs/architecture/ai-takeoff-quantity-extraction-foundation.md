@@ -11,7 +11,7 @@
 | Prerequisites | M005–M010 Plan Intelligence **implemented**; FG-007/M011 org isolation **implemented**; FG-008 Labour Engine **CLOSED / OPERATIONAL FOR UAT**; FG-009 Pricing Engine **CLOSED / OPERATIONAL FOR UAT** |
 | Product code | `app/plan_intelligence/models.py` (`TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem`); `app/plan_intelligence/takeoff.py`; `app/plan_intelligence/takeoff_extractors.py` (deterministic mock only); office routes/templates. Migration `migrations/versions/b4c5d6e7f8a9_add_ai_takeoff_foundation_fg010.py`. |
 
-This document is **approved architecture** plus a **verified foundation implementation**. It does **not** authorize a real external AI provider or Phase D estimate mapping.
+This document is **approved architecture** plus a **verified foundation implementation**. It does **not** authorize a real external AI provider. Phase D estimate mapping is now recorded as [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED** and is **not** authorized from this file.
 
 ---
 
@@ -54,7 +54,7 @@ This foundation must **not** silently cross into PRICE. FG-009 remains the selli
 | Provider-neutral extractor | `app/plan_intelligence/takeoff_extractors.py` — **deterministic mock only** (`calibai-mock`) |
 | Office take-off UI | `/projects/<id>/plans/takeoff` |
 
-**Not implemented:** real external AI provider; OCR; CAD; estimate mapping from take-off (Phase D); Labour/Pricing Engine consumption of take-off packages.
+**Not implemented:** real external AI provider; OCR; CAD; estimate mapping from take-off (Phase D — [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) recorded / not implementation-authorized); Labour/Pricing Engine consumption of take-off packages.
 
 ### Implemented (this architecture / FG-010)
 
@@ -62,7 +62,7 @@ Phase **C** foundation: searchable architectural PDF → interior-door **count**
 
 ### Future (separate gates)
 
-OCR/scanned; CAD; multi-trade; schedule cross-check automation; Phase **D** estimate mapping; Labour Engine consumption of reviewed quantities; Pricing Engine application to mapped estimate versions.
+OCR/scanned; CAD; multi-trade; schedule cross-check automation; Phase **D** estimate mapping ([FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**); Labour Engine consumption of reviewed quantities; Pricing Engine application to mapped estimate versions.
 
 ---
 
@@ -443,6 +443,8 @@ Covered in `tests/test_takeoff.py` and COUNT-without-scale tests in `tests/test_
 | ADR-010 | **Proposed** — PDF.js historical FG-005 fact; remaining buy decisions deferred; **real external AI provider not authorized** |
 | Product code | **Implemented** (mock extractor only; live-migrated; UAT-smoke-verified) |
 | Real external AI provider | **NOT AUTHORIZED** |
-| Phase D estimate mapping | **NOT STARTED** |
+| Phase D estimate mapping | **NOT STARTED in product code.** Subsequent 2026-09-08: [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. |
 
-**Next action:** **STOP DEVELOPMENT.** 29 Aug day-end turnover is the closure of this cycle. Do not enable a real external AI provider. Do not start Phase D. Next roadmap candidate is Project Hub UX — **NOT STARTED / NOT AUTHORIZED**.
+**Next action (historical FG-010 close):** **STOP DEVELOPMENT.** 29 Aug day-end turnover is the closure of this cycle. Do not enable a real external AI provider. Do not start Phase D.
+
+**Subsequent status (2026-09-08 — not authorized by FG-010):** FG-026 is recorded and preflight-complete. This architecture file does **not** authorize FG-026 implementation.

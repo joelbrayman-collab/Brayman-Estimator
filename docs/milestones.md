@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-08 — FG-026 takeoff-to-estimate mapping preflight
+
+| Field | Content |
+|-------|---------|
+| ID | FG-026 — PLAN → PRICE Phase D Takeoff-to-Estimate Mapping V1 |
+| Status | **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED** |
+| Branch | `main` |
+| Base commit | `1c20100a3838828cdeebece51ed820bcf15063fb` |
+| Objective | Record FG-026 Feature Gate and architecture preflight. Docs/governance only. |
+| Deliverables | FG-026 gate; preflight; current-authority pins. No product code. No migration. |
+| Validation | `git diff --check`. Docs only. Product tests **not** rerun. |
+| Architectural findings | PLAN proposes / Estimating commits. Package approval does **not** insert. Later implementation would require an additive migration. No new ADR in this pass. |
+| Open decisions | FG-026 implementation authorization (separate prompt). Remaining FG-025 surfaces. Observation Delete still QUEUED. |
+| Next milestone | **STOP.** Do **not** implement FG-026 from this recording. Do **not** start another FG-025 slice. Do **not** start FG-024. Do **not** start LEARN. |
+| Commit | this FG-026 docs commit |
+| Date | 2026-09-08 |
+
 ### 2026-09-08 — FG-025 Slice 5 Review Turnover
 
 | Field | Content |

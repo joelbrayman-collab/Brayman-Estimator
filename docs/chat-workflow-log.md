@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-08 — FG-026 takeoff-to-estimate mapping preflight
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-08 |
+| Branch | `main` |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
+| Objective | Record FG-026 Feature Gate and architecture preflight for PLAN → PRICE Phase D takeoff-to-estimate mapping V1. Docs/governance only. |
+| Business decision | FG-026 **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Recording is **not** implementation approval. Remaining FG-025 surfaces remain **NOT AUTHORIZED**. FG-023 remains **CLOSED**. FG-024 remains **FUTURE / NOT IMPLEMENTATION-AUTHORIZED**. |
+| Architectural decision | PLAN proposes; Estimating commits. Package approval does not insert. Map only to existing org Assembly or CostItem. Insert only into existing editable Draft EstimateVersion on the same Project. Four quantity layers stay distinct. One commercial line per package element grouping with many frozen citations. No new ADR. Later implementation would require an additive Estimating-owned insertion/citation migration. MaterialRequirement, labour-from-takeoff, automatic pricing, and PlanMeasurement are out of V1. |
+| Prompt template used | `docs/prompts/cursor-documentation-template.md` (docs/governance only). |
+| Approved Cursor prompt summary | FG-026 PLAN → PRICE Phase D takeoff-to-estimate mapping V1 Feature Gate + architecture preflight. No product implementation. |
+| Files expected to change | `docs/` only (FG-026 gate, preflight, indexes, current-state, session-handoff, PSR, milestones, chat-workflow-log, roadmap, module pins). |
+| Files prohibited from changing | Product code; tests; `migrations/`; live DB; `app/`. |
+| Implementation result | Gate and preflight recorded. Current-authority pins updated. No product code. No migration. No live DB writes. |
+| Tests | `git diff --check`. PRODUCT TESTS NOT RERUN — FEATURE GATE / ARCHITECTURE PREFLIGHT ONLY. Historical Slice 5 full suite **612** remains the last product-changing evidence. |
+| Project-state-report update | Yes — FG-026 recorded / not implementation-authorized. |
+| Milestone entry update | Yes — FG-026 preflight recorded. |
+| Constitutional issue raised | None. Insertion-audit ownership stays with Estimating (ADR-006/007). |
+| Unresolved issues | FG-026 not implemented. Implementation requires a separate prompt. Remaining FG-025 surfaces unauthorized. Observation Delete still QUEUED. SESSION-EXPIRY RECOVERY still DEFERRED. |
+| Next approved step | **STOP.** Do **not** implement FG-026 from this recording. Do **not** start another FG-025 slice. Do **not** start FG-024. Do **not** start LEARN. |
+| Next approved prompt | None authorized. Return control to ChatGPT Architect. |
+| Commit hash | (this FG-026 docs commit) |
+
 ### 2026-09-08 — FG-025 Slice 5 Review Turnover
 
 | Field | Content |

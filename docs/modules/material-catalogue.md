@@ -30,7 +30,7 @@ Living supplier price/promotion/inventory is **architected** ([ADR-036](../adr/A
 - Organization unit cost / markup (`CostItem`)
 - Supplier SKU, price, promotion, inventory
 - Bulk supplier catalogue onboarding / ingest / sync (future Supplier Catalogue pin; not this module’s V1 work)
-- `MaterialRequirement` / Phase D / TakeoffPackageItem commercial FKs
+- `MaterialRequirement` / TakeoffPackageItem commercial FKs. [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) V1 also does **not** create MaterialRequirement or commercial FKs on package items.
 - Letting one organization mutate global identity for all organizations
 
 ## Relevant Feature Gate

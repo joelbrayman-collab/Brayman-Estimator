@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-09 — FG-031 Slice A scope delivery routing product implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-09 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Implement FG-031 Slice A routing core: EstimateScopeDelivery, additive Alembic file, Hub PRICE Scope Delivery Review, per-row confirm, Approve All, FG-027 unresolved BLOCK, Supplier Package CONTRACTOR_PURCHASED filter, clone copy, tests. No live migrate. No Slice B. |
+| Business decision | Two stored dimensions; no HYBRID enum; 1:1 per EstimateLineItem; OWNER_SUPPLIED / OWNER_THIRD_PARTY schema-valid but hidden in first Slice A UI; human confirmation; Approve All explicit POST; uncited MANUAL/DEMO fail-closed for Supplier Package. |
+| Architectural decision | [ADR-048](adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / SLICE B NOT AUTHORIZED / NOT CLOSED**. Clone copies dimensions; cloned Draft is `PROPOSED` (resolved) or `DRAFT` (unresolved) with confirmation cleared. Costing BLOCK is absent/UNRESOLVED dimensions (Allowance exception), not unconfirmed. V1 remains **55% / 3 of 11**. FG-030 remains **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. ADR-008 remains **Proposed**. |
+| Prompt template used | Joel/ChatGPT FG-031 Slice A product implementation (9 Sep 2026) |
+| Approved Cursor prompt summary | Slice A product implementation. One additive Alembic **file**. No live flask db upgrade. No live UAT. No Slice B. Commit/push if PASS. |
+| Files expected to change | EstimateScopeDelivery model; migration `c7d8e9f0a1b2`; routing service/routes/template; FG-027 BLOCK; Supplier Package filter; clone copy; tests; minimum current-authority docs |
+| Files prohibited from changing | Live DB; Slice B Subcontractor/quote/RFQ/portal; FG-030; V1-04; ADR-008 acceptance; LEARN; QuickBooks; contracts; Native Signing; Observation Delete; website; HostPapa |
+| Implementation result | Slice A coded and tested. Migration file not applied live. Live current remains `b6c7d8e9f0a1`. Repository Alembic head `c7d8e9f0a1b2`. |
+| Tests | Dedicated FG-031 **23 passed**. FG-027 **20**. FG-026 **20**. FG-029 **16**. Estimating clone/builder **22**. Material Catalogue **35**. Labour Engine **25**. Pricing **33**. Output/proposals **28**. Project Hub **13**. Governed bundle **235 passed**. Full suite **704 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate not run. UAT not authorized. Slice B not authorized. FG-030 not implementation-authorized. V1-04 not begun. Owner/third-party remain reserved UI values. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** implement Slice B. Do **not** implement FG-030. Do **not** begin V1-04. |
+| Next approved prompt | None from this implementation. |
+| Commit hash | Product this Slice A commit (pin follows). Parent pin **`9c3eeddb0ae8e4c0daaba119ee6eb590a25c6a18`**. |
+
 ### 2026-09-09 — ADR-048 / FG-031 scope delivery routing architecture recording
 
 | Field | Content |

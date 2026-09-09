@@ -118,6 +118,18 @@ class EstimateCostingSnapshotLine(db.Model):
             "estimate_line_item_id",
             name="uq_estimate_costing_snapshot_lines_snapshot_line",
         ),
+        db.CheckConstraint(
+            "material_procurement IS NULL OR material_procurement IN ("
+            "'CONTRACTOR_PURCHASED', 'SUBCONTRACTOR_SUPPLIED', "
+            "'OWNER_SUPPLIED', 'NO_MATERIAL', 'UNRESOLVED')",
+            name="ck_estimate_costing_snapshot_lines_material_procurement",
+        ),
+        db.CheckConstraint(
+            "labour_delivery IS NULL OR labour_delivery IN ("
+            "'INTERNAL', 'SUBCONTRACT', 'OWNER_THIRD_PARTY', "
+            "'NO_LABOUR', 'UNRESOLVED')",
+            name="ck_estimate_costing_snapshot_lines_labour_delivery",
+        ),
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -153,6 +165,8 @@ class EstimateCostingSnapshotLine(db.Model):
     is_manual_override = db.Column(db.Boolean, nullable=False, default=False)
     override_reason = db.Column(db.Text, nullable=True)
     warning_codes = db.Column(db.JSON, nullable=True)
+    material_procurement = db.Column(db.String(40), nullable=True)
+    labour_delivery = db.Column(db.String(40), nullable=True)
     sort_order = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 

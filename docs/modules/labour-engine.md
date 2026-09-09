@@ -59,7 +59,7 @@ Office UI at `/labour-engine/`. Contractor-facing page title is **Labour rates**
 - Locked estimate snapshots do not float with later standards
 - [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) takeoff-to-estimate insert does **not** create labour snapshots
 - [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) / [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) keep labour snapshots out of default selling-price basis and keep the office labour-snapshot pin **out of V1-02**
-- [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) / [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) `INTERNAL` labour routing **permits** this engine; it does **not** auto-create `LabourTask`, production standards, or snapshots. FG-031 is **NOT IMPLEMENTATION-AUTHORIZED**.
+- [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) / [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) `INTERNAL` labour routing **permits** this engine; it does **not** auto-create `LabourTask`, production standards, or snapshots. Slice A does not change `LABOUR_EVIDENCE_ABSENT` WARN or `include_labour_snapshot_direct_cost=False`.
 
 ## Open decisions
 

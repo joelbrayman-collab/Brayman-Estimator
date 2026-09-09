@@ -19,7 +19,7 @@ This module does **not** own CalibraytAI canonical material identity or thin `Ma
 
 Supplier named-user login, SupplierUserMembership, package sharing, and supplier workspace are [FG-030](../feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. [ADR-047](../adr/ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only). This module will own those records **when implemented**. They do **not** exist in product code today.
 
-[FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) later **filters** what may enter a Supplier Package: only `CONTRACTOR_PURCHASED` material is normally eligible. This module does **not** own routing. Uncited MANUAL/DEMO `MaterialRequirement` rows must not silently enter a package. FG-031 is **NOT IMPLEMENTATION-AUTHORIZED**. FG-030 remains who may see an issued package.
+[FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) Slice A **filters** what may enter a Supplier Package: include a cited `MaterialRequirement` only when the cited line has **CONFIRMED** `material_procurement = CONTRACTOR_PURCHASED`. Uncited MANUAL/DEMO rows fail closed (no silent package inclusion). This module does **not** own routing. FG-030 remains who may see an issued package (**RECORDED / NOT IMPLEMENTATION-AUTHORIZED**).
 
 ## Referenced data
 
@@ -40,4 +40,4 @@ Canonical materials and project `MaterialRequirement` (Material Catalogue); `org
 
 ## Relevant ADRs
 
-ADR-008, ADR-010 (Proposed). **ADR-033, ADR-034, ADR-035, ADR-036, ADR-046, ADR-047, ADR-048 Accepted**. This module does not own CalibraytAI identity. FG-030 and FG-031 are architecture only.
+ADR-008, ADR-010 (Proposed). **ADR-033, ADR-034, ADR-035, ADR-036, ADR-046, ADR-047, ADR-048 Accepted**. This module does not own CalibraytAI identity. FG-030 is architecture only. FG-031 Slice A package filter is implemented; live migrate / Slice B / UAT are not.

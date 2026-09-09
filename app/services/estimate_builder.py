@@ -536,6 +536,12 @@ def clone_sections_to_version(source_version, target_version):
                 sort_order=item.sort_order,
             )
             db.session.add(new_item)
+            db.session.flush()
+            from app.services.estimate_scope_delivery import (
+                copy_scope_delivery_for_cloned_line,
+            )
+
+            copy_scope_delivery_for_cloned_line(item, new_item)
 
     db.session.flush()
     recalculate_version(target_version)

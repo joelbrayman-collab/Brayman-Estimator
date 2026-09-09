@@ -15,6 +15,7 @@ from app.models import (
     CanonicalMaterial,
     Client,
     CostItem,
+    Estimate,
     EstimateCostingSnapshot,
     Organization,
     Project,
@@ -33,6 +34,10 @@ from app.plan_intelligence.models import TakeoffCandidate, TakeoffPackage, Takeo
 from app.services.estimate_builder import add_cost_item_line, create_section
 from app.services.estimate_costing import approve_all_costing
 from app.services.estimates import create_estimate
+from tests.scope_delivery_support import (
+    confirm_contractor_purchased_routing,
+    ensure_resolved_scope_routing,
+)
 from app.services.labour_engine import ensure_org_001_direct_labour_cost_rate_standard
 from app.services.material_catalogue import (
     ensure_canonical_material_seed,
@@ -159,13 +164,42 @@ def _graph(*, supplier_code="DEMO-YARD-A", sku="SKU-2X6-12"):
     }
 
 
-def _mapped_requirement(project, graph, *, qty="10"):
+def _contractor_purchased_line(project):
+    suffix = f"{project.id}-{Estimate.query.count() + 1}"
+    cost = CostItem(
+        code=f"MAT-FG029-R{suffix}",
+        name="FG-029 routed material",
+        category="Material",
+        unit="ea",
+        unit_cost=Decimal("50.00"),
+        default_markup_percent=Decimal("0"),
+        organization_id=DEFAULT_ORGANIZATION_ID,
+        is_active=True,
+    )
+    db.session.add(cost)
+    db.session.commit()
+    estimate = create_estimate(
+        project_id=project.id,
+        estimate_number=f"EST-FG029-R{suffix}",
+        title="FG-029 routing",
+    )
+    section = create_section(estimate.current_version, name="Material")
+    line = add_cost_item_line(section, cost_item_id=cost.id, quantity=Decimal("1"))
+    confirm_contractor_purchased_routing(line, actor="office-reviewer")
+    db.session.commit()
+    return line
+
+
+def _mapped_requirement(project, graph, *, qty="10", estimate_line_item_id=None):
+    if estimate_line_item_id is None:
+        estimate_line_item_id = _contractor_purchased_line(project).id
     req = create_material_requirement(
         project_id=project.id,
         canonical_material_id=graph["lumber"].id,
         quantity=qty,
         canonical_uom="EA",
-        source_kind="DEMO_SYNTHETIC",
+        source_kind="ESTIMATE_LINE_CITE",
+        estimate_line_item_id=estimate_line_item_id,
         actor_display_name="office-reviewer",
         organization_id=DEFAULT_ORGANIZATION_ID,
     )
@@ -431,6 +465,8 @@ def test_price_is_inform_only_no_costing_or_pricing_mutation(app):
         is_default=True,
     )
     db.session.commit()
+    ensure_resolved_scope_routing(version, actor="office-reviewer")
+    confirm_contractor_purchased_routing(line, actor="office-reviewer")
     snapshot = approve_all_costing(version, actor="office-reviewer")
     pricing = apply_resolved_pricing_to_version(version, actor="office-reviewer")
     db.session.refresh(line)
@@ -441,7 +477,7 @@ def test_price_is_inform_only_no_costing_or_pricing_mutation(app):
     pricing_method = pricing.method
     pricing_total = pricing.customer_total
     pricing_costing_id = pricing.costing_snapshot_id
-    _mapped_requirement(project, graph)
+    _mapped_requirement(project, graph, estimate_line_item_id=line.id)
     issue_supplier_package_from_review(
         project_id=project.id,
         supplier_id=graph["supplier"].id,
@@ -469,7 +505,8 @@ def test_frozen_package_html_pdf_delivery_and_no_order(app, client):
         canonical_material_id=graph["osb"].id,
         quantity="8",
         canonical_uom="EA",
-        source_kind="MANUAL",
+        source_kind="ESTIMATE_LINE_CITE",
+        estimate_line_item_id=req.estimate_line_item_id,
         actor_display_name="office-reviewer",
     )
     review_material_requirement(

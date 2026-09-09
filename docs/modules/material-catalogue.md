@@ -32,7 +32,7 @@ Living supplier price/promotion/inventory is **architected** ([ADR-036](../adr/A
 - Bulk supplier catalogue onboarding / ingest / sync (future Supplier Catalogue pin; not this module’s V1 work)
 - `MaterialRequirement` commercial mutation after REVIEWED except package copy. [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) assigns `MaterialRequirement` ownership here. [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) V1 does **not** create MaterialRequirement or commercial FKs on package items.
 - Letting one organization mutate global identity for all organizations
-- Storing scope-delivery routing on `CanonicalMaterial` or `MaterialRequirement` ([ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md); [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **NOT IMPLEMENTATION-AUTHORIZED**). Uncited MANUAL/DEMO requirements must not silently enter a Supplier Package.
+- Storing scope-delivery routing on `CanonicalMaterial` or `MaterialRequirement` ([ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md); [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) Slice A **filters** Supplier Package eligibility only). Uncited MANUAL/DEMO requirements must not silently enter a Supplier Package.
 
 ## Relevant Feature Gate
 

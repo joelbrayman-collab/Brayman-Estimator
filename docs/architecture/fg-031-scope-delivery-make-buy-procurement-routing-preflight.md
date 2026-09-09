@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **COMPLETE (architecture recording).** Product implementation **NOT AUTHORIZED.** |
+| Status | **COMPLETE (architecture recording).** Slice A product **IMPLEMENTED / NOT LIVE-MIGRATED.** |
 | Date | 2026-09-09 |
-| Gate | [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED** |
+| Gate | [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / SLICE B NOT AUTHORIZED / NOT CLOSED** |
 | ADR | [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** (architecture only) |
-| Alembic | Live current **`b6c7d8e9f0a1`**. Repository head **`b6c7d8e9f0a1`**. One graph head. **No migration in this pass.** Later Slice A requires one additive migration after `b6c7d8e9f0a1`. Do **not** reserve or create a revision from this recording. |
+| Alembic | Live current **`b6c7d8e9f0a1`**. Repository head **`c7d8e9f0a1b2`**. One graph head. Slice A migration **file only** — **not applied live**. |
 | Product | CalibraytAI (formerly CalibAi) |
 | Source | Completed SCOPE DELIVERY / MAKE-BUY / PROCUREMENT ROUTING architecture reconciliation + preflight (2026-09-09). This document records that recon; it does **not** redo architecture from scratch. |
 
@@ -30,11 +30,11 @@ This pin is **not** an implementation authorization.
 
 | Layer | State |
 |-------|--------|
-| **Current** | `EstimateLineItem` has no delivery-routing fields. PLAN owns quantities/citations. `CostItem.category` includes `Subcontractor` as a reusable library label. `ProjectCommercialContext.delivery_model` is project-level only (`Self-Perform` / `Mixed` / `Primarily Subcontracted`). FG-029 Supplier Package freeze currently includes **all** project `MaterialRequirement` rows for a supplier/location. Labour snapshots are opt-in and **not** in default selling-price basis. No Subcontractor entity. No subcontract RFQ. |
-| **Intended (FG-031, not implemented)** | Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem`; two stored dimensions; human Scope Delivery Review; Approve All Scope Routing; `SCOPE_DELIVERY_UNRESOLVED` BLOCK on FG-027 except Allowance; Supplier Package filter `CONTRACTOR_PURCHASED` only; Slice B thin Subcontractor + quote evidence before Brayman real-life UAT. |
+| **Current** | Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem` (Slice A; migration file **`c7d8e9f0a1b2` not applied live**). Two stored dimensions; Hub PRICE Scope Delivery Review; Approve All Scope Routing; `SCOPE_DELIVERY_UNRESOLVED` BLOCK on editable Draft costing (Allowance exception); Supplier Package includes cited requirements only when confirmed `CONTRACTOR_PURCHASED`. Uncited MANUAL/DEMO fail-closed. PLAN remains quantity/evidence. No Subcontractor entity. No subcontract RFQ. |
+| **Intended (remaining this gate)** | Live migrate + office UAT for Slice A. Slice B thin Subcontractor + quote evidence before Brayman real-life UAT. |
 | **Future** | Org routing defaults; exception-based review; subcontract RFQ/package HTML/PDF; owner-supplied/third-party UX; LEARN; component-level Assembly routing; subcontractor portal; supplier price → estimate cost; BUILD/MONITOR execution-plan expansion. |
 
-Do **not** claim Intended surfaces exist in product code.
+Do **not** claim remaining Intended (Slice B / live migrate / UAT) surfaces exist.
 
 ---
 
@@ -312,12 +312,14 @@ V1-04 remains the current scored package and is **NOT STARTED**.
 
 ## 16. Stop conditions
 
-Do **not** implement FG-031 from this pin.
+Architecture recording is complete. Slice A product is implemented separately.
+
+Do **not** live-migrate FG-031 from this pin.
+
+Do **not** implement Slice B.
 
 Do **not** implement FG-030.
 
 Do **not** begin V1-04.
-
-Do **not** create an Alembic revision.
 
 Do **not** mutate the live database.

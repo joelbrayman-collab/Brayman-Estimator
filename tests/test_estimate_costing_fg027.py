@@ -58,6 +58,7 @@ from app.services.pricing_engine import (
     apply_resolved_pricing_to_version,
     create_pricing_policy,
 )
+from tests.scope_delivery_support import ensure_resolved_scope_routing
 
 
 @pytest.fixture
@@ -165,6 +166,11 @@ def _empty_assembly(*, code="FG026-UAT-DOOR"):
     return assembly
 
 
+def _approve(version, actor="Joel Brayman", **kwargs):
+    ensure_resolved_scope_routing(version, actor=actor)
+    return approve_all_costing(version, actor=actor, **kwargs)
+
+
 def _true_gm_policy():
     policy = create_pricing_policy(
         policy_code="ORG-001-TRUE-GM-15",
@@ -196,7 +202,7 @@ def test_working_cost_item_and_assembly_costs(app):
     assert cost_line.library_unit_cost_reference == cost_line.unit_cost
     assert asm_line.costing_source_kind == SOURCE_LIBRARY_ASSEMBLY
     assert asm_line.unit_cost == Decimal("100.00") or asm_line.unit_cost == Decimal("100")
-    snapshot = approve_all_costing(version, actor="Joel Brayman")
+    snapshot = _approve(version, actor="Joel Brayman")
     assert snapshot.status == COSTING_SNAPSHOT_STATUS_CURRENT
     kinds = {row.source_kind for row in snapshot.lines}
     assert SOURCE_LIBRARY_COST_ITEM in kinds
@@ -223,12 +229,13 @@ def test_manual_custom_and_allowance_warn_do_not_block(app):
         unit="ls",
         unit_cost=20,
     )
+    ensure_resolved_scope_routing(version, actor="Joel Brayman")
     evaluation = evaluate_costing(version)
     assert WARN_MANUAL_CUSTOM in evaluation["warning_codes"]
     assert WARN_MANUAL_ALLOWANCE in evaluation["warning_codes"]
     assert WARN_NO_SUPPLIER_EVIDENCE in evaluation["warning_codes"]
     assert evaluation["can_approve"] is True
-    snapshot = approve_all_costing(version, actor="Joel Brayman")
+    snapshot = _approve(version, actor="Joel Brayman")
     assert snapshot.approved_direct_cost_total == Decimal("100.00")
     assert custom.costing_source_kind == SOURCE_MANUAL_CUSTOM
     assert allowance.costing_source_kind == SOURCE_MANUAL_ALLOWANCE
@@ -247,7 +254,7 @@ def test_zero_cost_item_blocks_approval(app):
     assert BLOCK_MISSING_COST_ITEM_COST in evaluation["block_codes"]
     assert evaluation["can_approve"] is False
     with pytest.raises(EstimateCostingError, match="blocking"):
-        approve_all_costing(version, actor="Joel Brayman")
+        _approve(version, actor="Joel Brayman")
     assert EstimateCostingSnapshot.query.count() == 0
 
 
@@ -261,7 +268,7 @@ def test_zero_assembly_blocks_approval_without_inventing_cost(app):
     evaluation = evaluate_costing(version)
     assert BLOCK_MISSING_ASSEMBLY_COST in evaluation["block_codes"]
     with pytest.raises(EstimateCostingError):
-        approve_all_costing(version, actor="Joel Brayman")
+        _approve(version, actor="Joel Brayman")
     assert EstimateCostingSnapshot.query.count() == 0
     db.session.refresh(assembly)
     assert assembly.base_unit_cost == Decimal("0")
@@ -280,14 +287,14 @@ def test_manual_override_reason_required_and_provenance(app):
     evaluation = evaluate_costing(version)
     assert BLOCK_OVERRIDE_REASON_REQUIRED in evaluation["block_codes"]
     with pytest.raises(EstimateCostingError):
-        approve_all_costing(version, actor="Joel Brayman")
+        _approve(version, actor="Joel Brayman")
     update_line_item(
         line,
         unit_cost=Decimal("75.00"),
         costing_override_reason="Site-specific supplier quote",
         actor="Joel Brayman",
     )
-    snapshot = approve_all_costing(version, actor="Joel Brayman")
+    snapshot = _approve(version, actor="Joel Brayman")
     frozen = snapshot.lines[0]
     assert frozen.source_kind == SOURCE_MANUAL_OVERRIDE
     assert frozen.is_manual_override is True
@@ -313,7 +320,7 @@ def test_approve_all_freezes_facts_total_actor_and_time(app):
         unit_cost=Decimal("10.00"),
         waste_percent=Decimal("10"),
     )
-    snapshot = approve_all_costing(version, actor="Joel Brayman")
+    snapshot = _approve(version, actor="Joel Brayman")
     assert snapshot.actor_display_name == "Joel Brayman"
     assert snapshot.approved_at is not None
     assert snapshot.line_count == 1
@@ -340,11 +347,11 @@ def test_recost_same_draft_preserves_old_snapshot_and_supersedes(app):
         unit="ls",
         unit_cost=100,
     )
-    first = approve_all_costing(version, actor="Joel Brayman")
+    first = _approve(version, actor="Joel Brayman")
     first_id = first.id
     first_total = first.approved_direct_cost_total
     update_line_item(line, unit_cost=Decimal("125.00"), actor="Joel Brayman")
-    second = approve_all_costing(version, actor="Joel Brayman")
+    second = _approve(version, actor="Joel Brayman")
     assert second.id != first_id
     assert second.estimate_version_id == version.id
     assert second.status == COSTING_SNAPSHOT_STATUS_CURRENT
@@ -368,10 +375,10 @@ def test_locked_and_issued_versions_cannot_recost(app):
         unit="ls",
         unit_cost=100,
     )
-    approve_all_costing(version, actor="Joel Brayman")
+    _approve(version, actor="Joel Brayman")
     lock_version(version)
     with pytest.raises(EstimateCostingError):
-        approve_all_costing(version, actor="Joel Brayman")
+        _approve(version, actor="Joel Brayman")
     evaluation = evaluate_costing(version)
     assert BLOCK_VERSION_NOT_EDITABLE in evaluation["block_codes"]
 
@@ -388,7 +395,7 @@ def test_locked_and_issued_versions_cannot_recost(app):
     )
     set_version_status(uv, "Issued")
     with pytest.raises(EstimateCostingError):
-        approve_all_costing(uv, actor="Joel Brayman")
+        _approve(uv, actor="Joel Brayman")
 
 
 def test_pricing_unavailable_without_approved_costing_then_references_snapshot(app):
@@ -406,7 +413,7 @@ def test_pricing_unavailable_without_approved_costing_then_references_snapshot(a
     )
     with pytest.raises(PricingEngineError, match="Approved costing is required"):
         apply_resolved_pricing_to_version(version, actor="Joel Brayman")
-    costing = approve_all_costing(version, actor="Joel Brayman")
+    costing = _approve(version, actor="Joel Brayman")
     pricing = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
     db.session.commit()
     assert pricing.costing_snapshot_id == costing.id
@@ -427,14 +434,14 @@ def test_pricing_stale_after_recost_requires_explicit_reapply(app):
         unit="ls",
         unit_cost=100,
     )
-    first = approve_all_costing(version, actor="Joel Brayman")
+    first = _approve(version, actor="Joel Brayman")
     pricing = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
     db.session.commit()
     assert pricing.costing_snapshot_id == first.id
     update_line_item(line, unit_cost=Decimal("140.00"), actor="Joel Brayman")
     with pytest.raises(PricingEngineError, match="Approve all costing"):
         apply_resolved_pricing_to_version(version, actor="Joel Brayman")
-    second = approve_all_costing(version, actor="Joel Brayman")
+    second = _approve(version, actor="Joel Brayman")
     db.session.refresh(pricing)
     assert pricing.costing_snapshot_id == first.id
     assert pricing_consume_status(version) == PRICING_STATUS_STALE_REQUIRES_REAPPLY
@@ -462,7 +469,7 @@ def test_labour_snapshot_not_created_and_not_in_pricing_basis(app):
     from app.models.labour_engine import EstimateLabourSnapshot
 
     assert EstimateLabourSnapshot.query.count() == 0
-    costing = approve_all_costing(version, actor="Joel Brayman")
+    costing = _approve(version, actor="Joel Brayman")
     pricing = apply_resolved_pricing_to_version(
         version, actor="Joel Brayman", include_labour_snapshot_direct_cost=False
     )
@@ -487,10 +494,11 @@ def test_no_library_or_working_side_effects_on_supplier_requirement(app):
     assembly_code = assembly.code
     cost_line_id = cost_line.id
     asm_line_id = asm_line.id
+    ensure_resolved_scope_routing(version, actor="Joel Brayman")
     evaluation = evaluate_costing(version)
     assert WARN_NO_SUPPLIER_EVIDENCE in evaluation["warning_codes"]
     assert evaluation["can_approve"] is True
-    snapshot = approve_all_costing(version, actor="Joel Brayman")
+    snapshot = _approve(version, actor="Joel Brayman")
     db.session.refresh(item)
     db.session.refresh(assembly)
     assert item.unit_cost == item_cost
@@ -517,7 +525,7 @@ def test_approval_transaction_rollback_preserves_working_lines(app):
     original_cost = line.unit_cost
     with patch.object(db.session, "commit", side_effect=RuntimeError("boom")):
         with pytest.raises(RuntimeError, match="boom"):
-            approve_all_costing(version, actor="Joel Brayman")
+            _approve(version, actor="Joel Brayman")
     assert EstimateCostingSnapshot.query.count() == 0
     assert EstimateCostingSnapshotLine.query.count() == 0
     leftover = EstimateLineItem.query.get(line_id)
@@ -538,7 +546,7 @@ def test_costing_snapshot_financial_columns_are_immutable(app):
         unit="ls",
         unit_cost=100,
     )
-    snapshot = approve_all_costing(version, actor="Joel Brayman")
+    snapshot = _approve(version, actor="Joel Brayman")
     snapshot.approved_direct_cost_total = Decimal("1.00")
     with pytest.raises(EstimateCostingError, match="immutable"):
         db.session.commit()
@@ -563,6 +571,7 @@ def test_office_costing_review_and_approve_all_route(client, app):
         unit="ls",
         unit_cost=100,
     )
+    ensure_resolved_scope_routing(version, actor="Joel Brayman")
     response = client.get(f"/estimates/{estimate.id}/versions/{version.id}")
     assert response.status_code == 200
     assert b"Costing review" in response.data
@@ -618,7 +627,7 @@ def test_legacy_assembly_null_reference_freezes_pre_edit_cost(app):
     assert TakeoffEstimateInsertion.query.count() == insertions_before
     assert EstimatePricingSnapshot.query.count() == pricing_before
 
-    snapshot = approve_all_costing(version, actor="Joel Brayman")
+    snapshot = _approve(version, actor="Joel Brayman")
     frozen = snapshot.lines[0]
     assert frozen.source_kind == SOURCE_MANUAL_OVERRIDE
     assert frozen.is_manual_override is True
@@ -652,7 +661,7 @@ def test_legacy_cost_item_null_reference_freezes_pre_edit_cost(app):
     assert line.costing_override_at is not None
     db.session.refresh(item)
     assert item.unit_cost == library_cost
-    snapshot = approve_all_costing(version, actor="Joel Brayman")
+    snapshot = _approve(version, actor="Joel Brayman")
     assert snapshot.lines[0].source_kind == SOURCE_MANUAL_OVERRIDE
     assert EstimatePricingSnapshot.query.count() == 0
 
@@ -669,7 +678,7 @@ def test_legacy_library_change_without_reason_blocks_approval(app):
     assert BLOCK_OVERRIDE_REASON_REQUIRED in evaluation["block_codes"]
     assert evaluation["can_approve"] is False
     with pytest.raises(EstimateCostingError):
-        approve_all_costing(version, actor="Joel Brayman")
+        _approve(version, actor="Joel Brayman")
     assert EstimateCostingSnapshot.query.count() == 0
     db.session.refresh(line)
     assert line.costing_source_kind == SOURCE_MANUAL_OVERRIDE
@@ -706,7 +715,7 @@ def test_existing_library_reference_is_not_overwritten(app):
     assert line.costing_override_reason == "Second override"
     db.session.refresh(item)
     assert item.unit_cost == original_reference
-    approve_all_costing(version, actor="Joel Brayman")
+    _approve(version, actor="Joel Brayman")
     frozen = current_costing_snapshot(version).lines[0]
     assert frozen.library_unit_cost_reference == original_reference
     assert EstimatePricingSnapshot.query.count() == 0
@@ -734,6 +743,6 @@ def test_unchanged_legacy_cost_does_not_fabricate_override(app):
     assert line.costing_override_at is None
     evaluation = evaluate_costing(version)
     assert BLOCK_OVERRIDE_REASON_REQUIRED not in evaluation["block_codes"]
-    snapshot = approve_all_costing(version, actor="Joel Brayman")
+    snapshot = _approve(version, actor="Joel Brayman")
     assert snapshot.lines[0].source_kind == SOURCE_LIBRARY_COST_ITEM
     assert snapshot.lines[0].is_manual_override is False

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Scope Delivery Review | {{ project.name }}{% endblock %}
+{% block page_title %}Scope Delivery Review{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">PRICE</p>
+        <h1>Scope Delivery Review</h1>
+        <p class="muted-copy">
+            Decide who provides material and who performs labour for each estimate line.
+            Confirmation does not approve costing, apply pricing, or create supplier or labour records.
+        </p>
+        {% if review.estimate and review.version %}
+        <p class="muted-copy">
+            {{ review.estimate.estimate_number }} ·
+            <a href="{{ url_for('estimates.view_version', id=review.estimate.id, version_id=review.version.id) }}">
+                {{ review.version.display_label }}
+            </a>
+            {% if not review.editable %} · read only{% endif %}
+        </p>
+        {% endif %}
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
+    </div>
+</div>
+
+{% if not review.version %}
+<div class="empty-state">
+    <h3>No estimate yet</h3>
+    <p>Create an estimate for this project to review scope delivery.</p>
+</div>
+{% elif not review.rows %}
+<div class="empty-state">
+    <h3>No estimate lines</h3>
+    <p>Add commercial lines to the working draft before confirming scope delivery.</p>
+</div>
+{% else %}
+{% if review.editable and review.eligible_proposed_count %}
+<form method="post" action="{{ url_for('scope_delivery.approve_all', project_id=project.id) }}" style="margin-bottom: 16px;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="version_id" value="{{ review.version.id }}">
+    <input type="hidden" name="estimate_id" value="{{ review.estimate.id }}">
+    <button type="submit" class="button-link">Approve All Scope Routing</button>
+    <p class="muted-copy" style="margin-top: 8px;">
+        Confirms {{ review.eligible_proposed_count }} proposed line{{ "" if review.eligible_proposed_count == 1 else "s" }} with both decisions made.
+        Unresolved lines are skipped. This does not approve costing.
+    </p>
+</form>
+{% endif %}
+
+<div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Scope</th>
+                <th>Material provided by</th>
+                <th>Labour performed by</th>
+                <th>Status</th>
+                <th>Cost evidence</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in review.rows %}
+            <tr>
+                <td>
+                    <strong>{{ row.line_item.description }}</strong>
+                    <div class="muted-copy">
+                        {{ row.section.name }} · {{ row.line_item.line_type }}
+                        · {{ row.display_class }}
+                    </div>
+                </td>
+                <td>
+                    {% if review.editable %}
+                    <form method="post" action="{{ url_for('scope_delivery.save_row', project_id=project.id, line_id=row.line_item.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="version_id" value="{{ review.version.id }}">
+                        <input type="hidden" name="estimate_id" value="{{ review.estimate.id }}">
+                        <input type="hidden" name="labour_delivery" value="{{ row.labour_delivery }}">
+                        <select name="material_procurement" onchange="this.form.submit()">
+                            {% for value in row.material_choices %}
+                            <option value="{{ value }}" {% if value == row.material_procurement %}selected{% endif %}>
+                                {{ contractor_copy.scope_material_label(value) }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                    {% else %}
+                    {{ contractor_copy.scope_material_label(row.material_procurement) }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if review.editable %}
+                    <form method="post" action="{{ url_for('scope_delivery.save_row', project_id=project.id, line_id=row.line_item.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="version_id" value="{{ review.version.id }}">
+                        <input type="hidden" name="estimate_id" value="{{ review.estimate.id }}">
+                        <input type="hidden" name="material_procurement" value="{{ row.material_procurement }}">
+                        <select name="labour_delivery" onchange="this.form.submit()">
+                            {% for value in row.labour_choices %}
+                            <option value="{{ value }}" {% if value == row.labour_delivery %}selected{% endif %}>
+                                {{ contractor_copy.scope_labour_label(value) }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                    {% else %}
+                    {{ contractor_copy.scope_labour_label(row.labour_delivery) }}
+                    {% endif %}
+                </td>
+                <td>{{ contractor_copy.office_status_label(row.status) }}</td>
+                <td>
+                    {% if row.cost_evidence.source_kind %}
+                    {{ contractor_copy.office_status_label(row.cost_evidence.source_kind) }}
+                    {% else %}
+                    Working cost
+                    {% endif %}
+                    <div class="muted-copy">{{ row.cost_evidence.extended_cost }}</div>
+                </td>
+                <td>
+                    {% if review.editable and row.can_confirm %}
+                    <form method="post" action="{{ url_for('scope_delivery.confirm_row', project_id=project.id, line_id=row.line_item.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="version_id" value="{{ review.version.id }}">
+                        <input type="hidden" name="estimate_id" value="{{ review.estimate.id }}">
+                        <button type="submit">Confirm</button>
+                    </form>
+                    {% elif row.status == "CONFIRMED" %}
+                    Confirmed
+                    {% elif not review.editable %}
+                    —
+                    {% else %}
+                    Decide both first
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

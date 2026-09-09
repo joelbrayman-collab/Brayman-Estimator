@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-09). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **COMPLETE**. V1-03 / [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**). Readiness **55%** (V1-03 factor **1.00**; 44.85 − 1.8 + 12.0 = 55.05 → **55%**). **3 / 11** COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. Does **not** authorize FG-024, FG-030 implementation, FG-031 implementation, or V1-04. [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED** (supporting gate; **not** a 12th package; does **not** rescore). FG-028 **CLOSED / OPERATIONAL FOR UAT** (does **not** rescore this register). |
+| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-09). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **COMPLETE**. V1-03 / [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**). Readiness **55%** (V1-03 factor **1.00**; 44.85 − 1.8 + 12.0 = 55.05 → **55%**). **3 / 11** COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. Does **not** authorize FG-024, FG-030 implementation, FG-031 Slice B, live migrate of Slice A, or V1-04. [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / SLICE B NOT AUTHORIZED / NOT CLOSED** (supporting gate; **not** a 12th package; does **not** rescore). FG-028 **CLOSED / OPERATIONAL FOR UAT** (does **not** rescore this register). |
 | Product | CalibraytAI / The Estimator (formerly CalibAi) |
 | Date | 2026-09-08 |
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
@@ -31,8 +31,9 @@ BRAYMAN REAL-LIFE UAT READY:
 NO
 
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
-THIS REGISTER DOES NOT AUTHORIZE FG-024, FG-030 IMPLEMENTATION, FG-031 IMPLEMENTATION, OR V1-04
+THIS REGISTER DOES NOT AUTHORIZE FG-024, FG-030 IMPLEMENTATION, FG-031 SLICE B, LIVE MIGRATE OF SLICE A, OR V1-04
 FG-031 IS A SUPPORTING GATE — NOT A 12TH MAJOR PACKAGE — DOES NOT RESCORE
+FG-031 SLICE A IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED
 FG-028 CLOSED / OPERATIONAL FOR UAT — DOES NOT RESCORE THIS REGISTER
 ```
 
@@ -237,13 +238,13 @@ PLAN proposes. Estimating commits. Package approval does **not** insert. Live UA
 | BLOCKER? | **NO** (V1-03 complete; ADR-008 still **Proposed**; BMR DEMO READY still **NO** pending fail-closed/Ontario contract story) |
 | Dependencies | Material Catalogue identity (FG-014 **CLOSED**); V1-01 for requirement traceability; ADR-033 dual relationships |
 | Governing | [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**; [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [fg-029-bmr-supplier-workflow-v1-preflight.md](architecture/fg-029-bmr-supplier-workflow-v1-preflight.md); [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**; [ADR-036](adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**; [ADR-008](adr/ADR-008-supplier-price-snapshotting.md) **Proposed**; FG-014 identity only |
-| Next governed action | **STOP.** V1-03 is **COMPLETE**. FG-028 is **CLOSED / OPERATIONAL FOR UAT**. Do **not** implement FG-031. Do **not** implement FG-030. Do **not** begin V1-04 / FG-024 from this close. Return to ChatGPT Architect. |
+| Next governed action | **STOP.** V1-03 is **COMPLETE**. FG-028 is **CLOSED / OPERATIONAL FOR UAT**. FG-031 Slice A is **IMPLEMENTED / NOT LIVE-MIGRATED / NOT CLOSED**. Do **not** live-migrate FG-031. Do **not** implement Slice B. Do **not** implement FG-030. Do **not** begin V1-04 / FG-024 from this close. Return to ChatGPT Architect. |
 
 **V1 minimum (honest BMR demo, not a marketplace):** thin `MaterialRequirement` → human-reviewed DEMO Winchester SKU mapping → inform-only price/availability evidence → frozen Supplier Package HTML+PDF. Live-migrated 2026-09-09. Bounded DEMO/SYNTHETIC UAT **PASS** on project **id 14**. FG-010 remains interior-door count only. Inventory API, EDI, POs, bulk onboarding, other dealers, Darcy channel economics, and supplier-price → estimate cost remain **OUT OF FG-029** / **POST-V1** unless Joel expands V1. Evidence: [fg029-live-migrate-bounded-uat-record.md](testing/fg029-live-migrate-bounded-uat-record.md).
 
 Supplier **named-user login / workspace** is a separate recorded gate: [FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; [ADR-047](adr/ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only). FG-030 is **not** a 12th major package and does **not** change this factor. FG-029 remains HTML/PDF delivery, not a supplier portal.
 
-**Scope delivery / make-buy routing** is a separate supporting gate: [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**; [ADR-048](adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** (architecture only). FG-031 is **not** a 12th major package and does **not** change this factor or V1 scoring. Do **not** implement from this register.
+**Scope delivery / make-buy routing** is a separate supporting gate: [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / SLICE B NOT AUTHORIZED / NOT CLOSED**; [ADR-048](adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. FG-031 is **not** a 12th major package and does **not** change this factor or V1 scoring. Do **not** rescore from Slice A.
 
 ### V1-04 — Authoritative four-output estimate package
 
@@ -256,9 +257,9 @@ Supplier **named-user login / workspace** is a separate recorded gate: [FG-030](
 | Contribution | **4.0** |
 | V1 REQUIRED? | **YES** (existing August 2026 commitment) |
 | BLOCKER? | Output 4 blocked on V1-06 Ontario legal approval for production |
-| Dependencies | FG-012; V1-05 for output 3; V1-06 for output 4; FG-022 presentation masters; [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) later informs internal delivery class and QuickBooks cost-class split (**recorded; not implemented**; customer estimate remains delivery-blind) |
+| Dependencies | FG-012; V1-05 for output 3; V1-06 for output 4; FG-022 presentation masters; [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) later informs internal delivery class and QuickBooks cost-class split (**Slice A implemented; Slice B / V1-04 not begun**; customer estimate remains delivery-blind) |
 | Governing | [project-document-package.md](architecture/project-document-package.md); [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED**; [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED** (presentation only) |
-| Next governed action | Do **not** begin V1-04 from the FG-031 recording. Output 3 under V1-05; output 4 under V1-06. Do not build a second contract system. |
+| Next governed action | Do **not** begin V1-04 from FG-031 Slice A. Output 3 under V1-05; output 4 under V1-06. Do not build a second contract system. |
 
 | Output | Status |
 |--------|--------|

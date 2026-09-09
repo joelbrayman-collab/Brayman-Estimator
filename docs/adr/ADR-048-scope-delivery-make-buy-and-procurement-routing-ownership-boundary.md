@@ -3,11 +3,11 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-048: Scope Delivery, Make-Buy, and Procurement Routing Ownership Boundary |
-| Status | **Accepted** (architecture / governance only). [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) is **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. |
+| Status | **Accepted.** Slice A product implementation is **separate** from this ADR’s architecture recording. [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / SLICE B NOT AUTHORIZED / NOT CLOSED**. |
 | Date | 2026-09-09 |
 | Related | [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) · [fg-031-scope-delivery-make-buy-procurement-routing-preflight.md](../architecture/fg-031-scope-delivery-make-buy-procurement-routing-preflight.md) · [ADR-006](ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-021](ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-024](ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-044](ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted** · [ADR-046](ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted** · [ADR-047](ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only) · [ADR-008](ADR-008-supplier-price-snapshotting.md) **Proposed** |
 
-This ADR authorizes the **ownership and commercial boundary** for how project scope is delivered (who supplies material; who performs labour). It does **not** authorize product code, schema, migration, live database writes, FG-031 implementation, FG-030 implementation, V1-04, or acceptance of [ADR-008](ADR-008-supplier-price-snapshotting.md).
+This ADR authorizes the **ownership and commercial boundary** for how project scope is delivered (who supplies material; who performs labour). Slice A product code is authorized only by a separate implementation prompt. This ADR does **not** authorize live database writes, Slice B, FG-030 implementation, V1-04, or acceptance of [ADR-008](ADR-008-supplier-price-snapshotting.md).
 
 ---
 
@@ -147,13 +147,13 @@ Working routing is Estimating-owned, org-isolated, EstimateVersion-scoped. Freez
 
 ## Migration impact
 
-**Deferred.** Later FG-031 Slice A implementation requires one additive migration after live head `b6c7d8e9f0a1`. This ADR does **not** create a revision.
+**Slice A product:** additive file **`c7d8e9f0a1b2`** (`down_revision = b6c7d8e9f0a1`). Creates `estimate_scope_deliveries` and nullable costing-snapshot freeze columns. **Not applied live.** This ADR does **not** authorize live migrate.
 
 ---
 
 ## Testing impact
 
-None in this recording. Later FG-031 tests are listed in the preflight.
+Slice A dedicated tests live in `tests/test_scope_delivery_fg031.py`. Architecture recording itself did not run product tests.
 
 ---
 

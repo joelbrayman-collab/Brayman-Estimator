@@ -153,6 +153,7 @@ def test_project_hub_renders_org_scoped(client, project):
     assert "BUILD" in html
     assert 'id="hub-plan"' in html
     assert 'id="hub-price"' in html
+    assert "Scope Delivery Review" in html
     assert 'id="hub-contract"' in html
     assert 'id="hub-build"' in html
     assert 'id="hub-monitor"' in html

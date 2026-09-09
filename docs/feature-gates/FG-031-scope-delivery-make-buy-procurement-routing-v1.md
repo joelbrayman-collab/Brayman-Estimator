@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-031 is a **supporting V1 gate**. It is **not** a 12th major V1 package. Recording or later implementation **does not** rescore [v1-completion-register.md](../v1-completion-register.md). Preserve **55% / 3 of 11 COMPLETE**. |
 | Module | **Estimating** owns `EstimateScopeDelivery` (Slice A) and later thin Subcontractor identity + `SubcontractQuoteEvidence` (Slice B). Supplier Catalogue **filters** Supplier Package eligibility from routing. Material Catalogue continues to own `CanonicalMaterial` and thin `MaterialRequirement`. Labour Engine continues to own opt-in snapshots. PLAN does **not** own routing. |
 | Date | 2026-09-09 |
-| Status | **FUTURE / RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** (architecture only). |
+| Status | **SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED. OVERALL NOT CLOSED.** Live migration **NOT RUN / NOT AUTHORIZED.** UAT **NOT RUN / NOT AUTHORIZED.** Slice B **NOT AUTHORIZED / NOT IMPLEMENTED.** [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. Do **not** rescore V1 (**55% / 3 of 11 COMPLETE**). |
 | Architecture | [fg-031-scope-delivery-make-buy-procurement-routing-preflight.md](../architecture/fg-031-scope-delivery-make-buy-procurement-routing-preflight.md) · [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](../adr/ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted** · [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted** · [FG-027](FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-029](FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-030](FG-030-supplier-identity-authentication-and-access-isolation.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED** |
 | Related ADRs | **[ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) Accepted** (architecture). Do **not** accept ADR-008 from this gate. Do **not** reopen FG-027. |
 | Prerequisites | FG-027 costing **CLOSED / OPERATIONAL FOR UAT**. FG-029 contractor-office Supplier Package **CLOSED / OPERATIONAL FOR UAT**. This gate does **not** implement FG-030, V1-04, FG-024, LEARN, QuickBooks, or contracts. |
@@ -18,32 +18,37 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **RECORDED.** **ARCHITECTURE PREFLIGHT COMPLETE.** **NOT APPROVED FOR IMPLEMENTATION.** |
-| Slice A routing core | **NOT AUTHORIZED** |
-| Slice B subcontract quote evidence | **NOT AUTHORIZED** |
-| Schema / Alembic | **None.** Later Slice A needs one additive migration after `b6c7d8e9f0a1`. Do **not** create a revision from this recording. |
-| Product code | **None.** |
+| Feature Gate (this document) | **SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Overall **NOT CLOSED.** |
+| Slice A routing core | **IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Not live-migrated. UAT not authorized. |
+| Slice B subcontract quote evidence | **NOT AUTHORIZED / NOT IMPLEMENTED** |
+| Schema / Alembic | Additive file **`c7d8e9f0a1b2`** (`down_revision = b6c7d8e9f0a1`). Repository head **`c7d8e9f0a1b2`**. Live current remains **`b6c7d8e9f0a1`**. **Do not live-migrate from this pass.** |
+| Product code | Slice A routing model, service, Hub PRICE Scope Delivery Review, FG-027 `SCOPE_DELIVERY_UNRESOLVED` BLOCK, Supplier Package `CONTRACTOR_PURCHASED` filter. |
 | V1 scoring | **Unchanged.** **55% / 3 of 11 COMPLETE.** Not a 12th package. |
 
 ```text
 FG-031:
-RECORDED
-ARCHITECTURE PREFLIGHT COMPLETE
-NOT IMPLEMENTATION-AUTHORIZED
+SLICE A IMPLEMENTED
+TESTED
+COMMITTED
+PUSHED
+NOT LIVE-MIGRATED
+UAT NOT AUTHORIZED
+SLICE B NOT AUTHORIZED
 NOT IMPLEMENTED
-ADR-048 ACCEPTED (ARCHITECTURE ONLY)
-NO SCHEMA
-NO LIVE DB MUTATION
+OVERALL NOT CLOSED
+ADR-048 ACCEPTED
 NOT A 12TH MAJOR V1 PACKAGE
 DO NOT RESCORE V1 (REMAINS 55% / 3 OF 11)
-FG-027 UNCHANGED (FINAL COSTING AUTHORITY)
-FG-029 UNCHANGED (SUPPLIER PRICE INFORM ONLY)
+FG-027 REMAINS FINAL COSTING AUTHORITY
+FG-029 SUPPLIER PRICE REMAINS INFORM ONLY
 FG-030 UNCHANGED (RECORDED / NOT IMPLEMENTATION-AUTHORIZED)
-DO NOT IMPLEMENT FROM THIS GATE
-DO NOT BEGIN V1-04 FROM THIS GATE
+DO NOT LIVE-MIGRATE
+DO NOT IMPLEMENT SLICE B
+DO NOT IMPLEMENT FG-030
+DO NOT BEGIN V1-04
 ```
 
-Joel directed this architecture on **2026-09-09**. Recording is **not** implementation approval.
+Slice A product implementation authorized 2026-09-09. Live migrate / UAT / Slice B remain separately authorized.
 
 ---
 
@@ -64,13 +69,13 @@ FG-031 defines **WHAT** may enter or share a Supplier Package. [FG-030](FG-030-s
 | 3 | Which module owns it? | Estimating owns routing (and later Slice B Subcontractor + quote evidence). Supplier Catalogue filters packages. Material Catalogue / Labour Engine / PLAN do not own routing. |
 | 4 | What data does it own? | Future Slice A: `estimate_scope_deliveries` (1:1 with `EstimateLineItem`). Future Slice B: thin org-scoped Subcontractor + `SubcontractQuoteEvidence`. Not CanonicalMaterial, not CostItem/Assembly masters, not takeoff items. |
 | 5 | What data does it reference? | `organizations`, `projects`, `estimates`, `estimate_versions`, `estimate_line_items`. Later: selected quote identity frozen onto costing snapshot lines. |
-| 6 | What may it change? | This recording changes **docs/governance only**. Later Slice A may add routing table, Hub PRICE Scope Delivery Review, per-row confirm, Approve All Scope Routing, `SCOPE_DELIVERY_UNRESOLVED` BLOCK on FG-027 (Allowance exception), and CONTRACTOR_PURCHASED Supplier Package filter. |
-| 7 | What must it not change? | Product code now; live DB; PLAN; CostItem/Assembly/CanonicalMaterial schemas; FG-027 source kinds; supplier-price INFORM ONLY; customer estimate privacy; FG-030 status; V1 55% / 3 of 11; branding; FG-024; remaining FG-025; LEARN; QuickBooks; contracts; Native Signing; Observation Delete. |
-| 8 | What are the acceptance criteria? | Architecture recorded; two stored dimensions; 1:1 EstimateLineItem; no HYBRID enum; human confirmation; Approve All design authorized for Slice A; fail-closed costing BLOCK specified; Supplier Package filter specified. Later implementation (separate prompt): tests in the preflight PASS. |
-| 9 | What tests are required? | None in this recording. Later tests are listed in the preflight § Test plan. |
-| 10 | What documentation must be updated? | ADR-048; this gate; preflight; current-state; session-handoff; indexes; V1 register **status text only** (do **not** rescore). |
-| 11 | Does it require an ADR? | **Yes — ADR-048.** |
-| 12 | Does it require a database migration? | **Not in this recording.** Later Slice A implementation requires one additive migration after live head `b6c7d8e9f0a1` (not created here). |
+| 6 | What may it change? | Slice A: `estimate_scope_deliveries`, Hub PRICE Scope Delivery Review, per-row confirm, Approve All Scope Routing, `SCOPE_DELIVERY_UNRESOLVED` BLOCK on FG-027 (Allowance exception), CONTRACTOR_PURCHASED Supplier Package filter, EstimateVersion clone copy with conservative reconfirmation, nullable costing-snapshot freeze columns. |
+| 7 | What must it not change? | Live DB this pass; PLAN; CostItem/Assembly/CanonicalMaterial schemas; FG-027 source kinds; supplier-price INFORM ONLY; customer estimate privacy; FG-030 status; V1 55% / 3 of 11; branding; FG-024; remaining FG-025; LEARN; QuickBooks; contracts; Native Signing; Observation Delete; Slice B. |
+| 8 | What are the acceptance criteria? | Two stored dimensions; 1:1 EstimateLineItem; no HYBRID enum; human confirmation; Approve All; fail-closed costing BLOCK; Supplier Package filter; dedicated + regression tests PASS. Live migrate / UAT / Slice B **not** this pass. |
+| 9 | What tests are required? | Dedicated FG-031 Slice A tests plus Estimating / FG-026 / FG-027 / FG-029 / Material / Labour / Pricing / output / clone / Hub PRICE regressions, governed bundle, and full suite. |
+| 10 | What documentation must be updated? | This gate; current-state; session-handoff; indexes; V1 register **status text only** (do **not** rescore). |
+| 11 | Does it require an ADR? | **Yes — ADR-048** (already Accepted). |
+| 12 | Does it require a database migration? | **Yes — additive file `c7d8e9f0a1b2` after `b6c7d8e9f0a1`.** Do **not** live-migrate from this pass. |
 
 ---
 
@@ -149,7 +154,7 @@ Do **not** add costing source kinds `SOURCE_SUPPLIER_PRICE` or `SOURCE_SUBCONTRA
 
 | Gate / surface | Interaction |
 |----------------|-------------|
-| FG-027 | Remains final costing authority. Later Slice A adds upstream `SCOPE_DELIVERY_UNRESOLVED` BLOCK (Allowance exception). Existing source kinds unchanged in Slice A. |
+| FG-027 | Remains final costing authority. Slice A adds upstream `SCOPE_DELIVERY_UNRESOLVED` BLOCK (Allowance exception). Existing source kinds unchanged. |
 | Pricing / ADR-044 | Routing does not apply Pricing. If later routing/quote/labour changes working direct cost, FG-027 recost is required and existing Pricing becomes STALE / REQUIRES RE-APPLY. No automatic Pricing. |
 | Labour | `INTERNAL` **permits** existing Labour Engine workflow. Routing does **not** auto-create LabourTask, ProductionRateStandard, or LabourSnapshot. `LABOUR_EVIDENCE_ABSENT` remains a warning unless separately governed. Do not silently include labour-snapshot direct cost in selling-price basis. |
 | Customer Estimate / V1-04 | Delivery-blind. Do not expose routing enums, internal labour rates, supplier prices/identity (unless later commercially authorized), subcontract quote cost, margin, or markup. Internal Detailed Cost Breakdown may later display internal delivery class. |
@@ -177,7 +182,7 @@ If one Assembly requires component-level mixed delivery in V1, split it into sep
 
 ## Non-goals
 
-Product implementation from this recording · FG-030 · V1-04 · FG-024 · remaining FG-025 · LEARN · QuickBooks · contracts · Native Signing · Observation Delete · website · live BMR · PO · marketplace · collapsing Subcontractor into Supplier · storing routing on PLAN/catalogues · HYBRID enum · silent ML auto-approval
+Product implementation of Slice B · live migrate from this recording · FG-030 · V1-04 · FG-024 · remaining FG-025 · LEARN · QuickBooks · contracts · Native Signing · Observation Delete · website · live BMR · PO · marketplace · collapsing Subcontractor into Supplier · storing routing on PLAN/catalogues · HYBRID enum · silent ML auto-approval
 
 ---
 
@@ -185,6 +190,6 @@ Product implementation from this recording · FG-030 · V1-04 · FG-024 · remai
 
 | Layer | State |
 |-------|--------|
-| **Current** | No `EstimateScopeDelivery`. FG-027 costing exists. FG-029 packages all project MaterialRequirements for a supplier/location. Customer Proposal is selling-price-oriented. |
-| **Intended (this gate, not implemented)** | Two-dimension EstimateVersion-scoped routing; human Scope Delivery Review; Approve All Scope Routing; unresolved BLOCK on costing; CONTRACTOR_PURCHASED package filter; Slice B quote evidence before real-life UAT. |
+| **Current** | Slice A: Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem`; two stored dimensions; Hub PRICE Scope Delivery Review; Approve All Scope Routing; `SCOPE_DELIVERY_UNRESOLVED` BLOCK on editable Draft costing (Allowance exception); Supplier Package includes cited requirements only when confirmed `CONTRACTOR_PURCHASED`. Migration file **`c7d8e9f0a1b2` not applied live**. |
+| **Intended (remaining this gate)** | Live migrate + office UAT for Slice A. Slice B thin Subcontractor + quote evidence before Brayman real-life UAT. |
 | **Future** | Org defaults; exception-based review; RFQ/package; owner UX; portal; LEARN; component Assembly routing. |

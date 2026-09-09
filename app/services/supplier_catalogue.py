@@ -476,6 +476,12 @@ def _freeze_package_lines(
         db.session.delete(line)
     db.session.flush()
     for requirement in requirements:
+        from app.services.estimate_scope_delivery import (
+            material_requirement_is_supplier_package_eligible,
+        )
+
+        if not material_requirement_is_supplier_package_eligible(requirement):
+            continue
         mapping = SupplierRequirementMap.query.filter_by(
             material_requirement_id=requirement.id,
             supplier_id=package.supplier_id,

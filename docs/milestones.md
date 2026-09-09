@@ -30,6 +30,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-09 — FG-031 Slice A scope delivery routing product implementation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-031 Slice A (supporting V1 gate; not a 12th major package) |
+| Status | **SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / SLICE B NOT AUTHORIZED / NOT CLOSED.** ADR-048 **Accepted**. V1 remains **55% / 3 of 11**. FG-030 remains **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. |
+| Branch | `main` |
+| Objective | Implement Estimating-owned two-dimension scope delivery routing, Scope Delivery Review, Approve All, FG-027 unresolved BLOCK, Supplier Package CONTRACTOR_PURCHASED filter. |
+| Deliverables | `EstimateScopeDelivery`; additive Alembic file `c7d8e9f0a1b2`; Hub PRICE UI; costing BLOCK; package eligibility; clone copy; dedicated + regression tests; current-authority docs. |
+| Validation | Dedicated FG-031 **23 passed**. Governed bundle **235 passed**. Full suite **704 passed**. Live migrate **not run**. UAT **not run**. |
+| Architectural findings | No stored HYBRID. Clone conservative reconfirmation (`PROPOSED`/`DRAFT`, confirmation cleared). Uncited MANUAL/DEMO fail-closed via required estimate-line citation + confirmed CONTRACTOR_PURCHASED. |
+| Open decisions | Live migrate / office UAT / Slice B remain separately authorized. |
+| Next milestone | **STOP.** Do not live-migrate. Do not implement Slice B. Do not implement FG-030. Do not begin V1-04. |
+| Date | 2026-09-09 |
+
 ### 2026-09-09 — ADR-048 / FG-031 scope delivery routing architecture recording
 
 | Field | Content |

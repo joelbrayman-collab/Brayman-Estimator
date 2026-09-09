@@ -22,6 +22,13 @@ from app.models.estimate_costing import (
 )
 from app.models.labour_engine import EstimateLabourSnapshot
 from app.models.pricing_engine import AI_ACTOR_TOKENS, EstimatePricingSnapshot
+from app.models.estimate_scope_delivery import (
+    LABOUR_NO_LABOUR,
+    LABOUR_UNRESOLVED,
+    MATERIAL_NO_MATERIAL,
+    MATERIAL_UNRESOLVED,
+    EstimateScopeDelivery,
+)
 from app.models.takeoff_estimate_insertion import TakeoffEstimateInsertion
 from app.services.estimate_builder import apply_line_item_calculations, as_decimal, as_money
 from app.services.estimates import EstimateServiceError, ensure_version_editable
@@ -36,6 +43,7 @@ BLOCK_VERSION_NOT_EDITABLE = "VERSION_NOT_EDITABLE"
 BLOCK_OVERRIDE_REASON_REQUIRED = "OVERRIDE_REASON_REQUIRED"
 BLOCK_INCOMPLETE_DIRECT_COST_TOTAL = "INCOMPLETE_DIRECT_COST_TOTAL"
 BLOCK_INACTIVE_LIBRARY_REFRESH = "INACTIVE_LIBRARY_REFRESH"
+BLOCK_SCOPE_DELIVERY_UNRESOLVED = "SCOPE_DELIVERY_UNRESOLVED"
 
 WARN_MANUAL_CUSTOM = "MANUAL_CUSTOM"
 WARN_MANUAL_ALLOWANCE = "MANUAL_ALLOWANCE"
@@ -230,6 +238,31 @@ def _unique_append(bucket, code):
         bucket.append(code)
 
 
+def _scope_delivery_is_unresolved_for_costing(line_item):
+    """FG-031 Slice A upstream BLOCK. Allowance NO_MATERIAL+NO_LABOUR excepted."""
+    routing = EstimateScopeDelivery.query.filter_by(
+        estimate_line_item_id=line_item.id
+    ).first()
+    if (line_item.line_type or "") == "Allowance":
+        if routing is None:
+            return False
+        if (
+            routing.material_procurement == MATERIAL_NO_MATERIAL
+            and routing.labour_delivery == LABOUR_NO_LABOUR
+        ):
+            return False
+        return (
+            routing.material_procurement == MATERIAL_UNRESOLVED
+            or routing.labour_delivery == LABOUR_UNRESOLVED
+        )
+    if routing is None:
+        return True
+    return (
+        routing.material_procurement == MATERIAL_UNRESOLVED
+        or routing.labour_delivery == LABOUR_UNRESOLVED
+    )
+
+
 def _line_extended_facts_complete(line_item):
     if line_item.quantity is None or line_item.quantity == "":
         return False
@@ -277,6 +310,10 @@ def evaluate_costing(version):
             complete_total = False
         if is_override and not (item.costing_override_reason or "").strip():
             line_blocks.append(BLOCK_OVERRIDE_REASON_REQUIRED)
+        if version_is_costing_editable(version) and _scope_delivery_is_unresolved_for_costing(
+            item
+        ):
+            line_blocks.append(BLOCK_SCOPE_DELIVERY_UNRESOLVED)
 
         if line_type == "Custom" and facts_ok and not _is_zero_cost(item.unit_cost):
             line_warns.append(WARN_MANUAL_CUSTOM)
@@ -421,6 +458,9 @@ def approve_all_costing(version, *, actor, user_id=None, commit=True):
             item = result["line_item"]
             kind, is_override = result["source_kind"], result["is_manual_override"]
             item.costing_source_kind = kind
+            routing = EstimateScopeDelivery.query.filter_by(
+                estimate_line_item_id=item.id
+            ).first()
             db.session.add(
                 EstimateCostingSnapshotLine(
                     costing_snapshot_id=snapshot.id,
@@ -438,6 +478,12 @@ def approve_all_costing(version, *, actor, user_id=None, commit=True):
                     is_manual_override=bool(is_override),
                     override_reason=item.costing_override_reason if is_override else None,
                     warning_codes=list(result["warning_codes"]) or None,
+                    material_procurement=(
+                        routing.material_procurement if routing is not None else None
+                    ),
+                    labour_delivery=(
+                        routing.labour_delivery if routing is not None else None
+                    ),
                     sort_order=sort_order,
                     created_at=approved_at,
                 )

@@ -259,7 +259,40 @@ OFFICE_STATUS_LABELS = {
     "HUMAN": "Human",
     "AI": "AI",
     "RULE": "Rule",
+    "CONFIRMED": "Confirmed",
+    "UNRESOLVED": "Not decided yet",
+    "NONE": "None",
+    "ORG_DEFAULT": "Organization default",
 }
+
+
+SCOPE_MATERIAL_LABELS = {
+    "CONTRACTOR_PURCHASED": "We purchase the material",
+    "SUBCONTRACTOR_SUPPLIED": "Subcontractor supplies it",
+    "OWNER_SUPPLIED": "Owner supplies it",
+    "NO_MATERIAL": "No material",
+    "UNRESOLVED": "Not decided yet",
+}
+
+SCOPE_LABOUR_LABELS = {
+    "INTERNAL": "Our crew",
+    "SUBCONTRACT": "Subcontractor",
+    "OWNER_THIRD_PARTY": "Owner's third party",
+    "NO_LABOUR": "No labour",
+    "UNRESOLVED": "Not decided yet",
+}
+
+
+def scope_material_label(value: str | None) -> str:
+    if not value:
+        return ""
+    return SCOPE_MATERIAL_LABELS.get(value) or office_status_label(value)
+
+
+def scope_labour_label(value: str | None) -> str:
+    if not value:
+        return ""
+    return SCOPE_LABOUR_LABELS.get(value) or office_status_label(value)
 
 
 def pricing_method_label(method: str | None) -> str:

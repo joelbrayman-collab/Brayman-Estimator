@@ -30,6 +30,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-09 — FG-029 V1-03 BMR / supplier workflow architecture recording
+
+| Field | Content |
+|-------|---------|
+| ID | FG-029 / V1-03 |
+| Status | **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** |
+| Branch | `main` |
+| Objective | Record ADR-046 and FG-029 so V1-03 has governing architecture without product implementation |
+| Deliverables | ADR-046 Accepted; FG-029; [fg-029-bmr-supplier-workflow-v1-preflight.md](architecture/fg-029-bmr-supplier-workflow-v1-preflight.md); current-authority reconciliation |
+| Validation | Docs only. **PRODUCT TESTS NOT RERUN — V1-03 ADR / FG / PREFLIGHT ONLY.** Live current = heads `a5b6c7d8e9f0`. No schema. |
+| Architectural findings | Thin MaterialRequirement; inform-only supplier price; DEMO Winchester; FG-010 remains door count; ADR-008 stays Proposed |
+| Open decisions | FG-029 implementation authorization; FG-028 Slice 3 asset; website |
+| Next milestone | **STOP.** Do **not** implement V1-03. V1 remains **45% / 2 of 11**. |
+| Commit | (when available) |
+
 ### 2026-09-09 — FG-028 CalibAi → CalibraytAI product identity Slices 1–2
 
 | Field | Content |

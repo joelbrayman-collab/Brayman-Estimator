@@ -231,6 +231,8 @@ A project-scoped **MaterialRequirement** is the likely later record that can ser
 
 **Do not create this model now.** It requires separate Phase D / governance review before implementation.
 
+**Subsequent status (2026-09-09 — not this identity document's original authorization):** [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted** assigns thin `MaterialRequirement` ownership to Material Catalogue. [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. The table **does not exist**. FG-026 did **not** create it. Do **not** implement from this subsequent note.
+
 ---
 
 ## 12. Phase D sequencing
@@ -372,6 +374,8 @@ Brayman project
 ```
 
 The demo is proof that supplier data can **map onto** the CalibAi spine. It must not define the spine.
+
+**Subsequent status (2026-09-09):** [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) records the honest V1 demo: FG-010 remains **interior-door count only**; lumber/OSB `MaterialRequirement` rows are **manual / DEMO_SYNTHETIC**, not extracted take-off. Price/availability are inform-only. **NOT IMPLEMENTATION-AUTHORIZED.** Product name in current authority is **CalibraytAI**.
 
 ### Supplier-channel value (two-way)
 

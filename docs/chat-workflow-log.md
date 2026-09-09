@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-09 — FG-029 V1-03 BMR / supplier workflow architecture recording
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-09 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Docs-only ADR-046 + FG-029 + V1-03 preflight. No product implementation. |
+| Business decision | Smallest honest BMR demo: CanonicalMaterial → thin MaterialRequirement → human DEMO Winchester mapping → inform-only evidence → frozen Supplier Package HTML+PDF. No live BMR. No lumber take-off. |
+| Architectural decision | [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. Supplier price INFORM ONLY. |
+| Prompt template used | Authorized V1-03 ADR + FG governance recording (9 Sep 2026) |
+| Approved Cursor prompt summary | ADR-046 + FG-029 + preflight docs only; commit/push; no schema; no V1 rescore |
+| Files expected to change | ADR/FG/preflight + current-authority indexes |
+| Files prohibited from changing | app/; migrations/; tests/; live DB; FG-028 product identity; logos |
+| Implementation result | **RECORDED.** FG-029 **NOT IMPLEMENTATION-AUTHORIZED**. V1 remains **45% / 2 of 11**. |
+| Tests | **PRODUCT TESTS NOT RERUN — V1-03 ADR / FG / PREFLIGHT ONLY.** |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None |
+| Unresolved issues | Implementation authorization; Slice 3 logo; website; apply-to-estimate still needs ADR-008 if ever wanted |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do not implement V1-03. |
+| Next approved prompt | None until Joel/ChatGPT authorize FG-029 implementation, Slice 3, or website. |
+| Commit hash | (when available) |
+
 ### 2026-09-09 — FG-028 CalibAi → CalibraytAI product identity Slices 1–2
 
 | Field | Content |

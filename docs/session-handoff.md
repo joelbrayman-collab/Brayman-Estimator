@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-028 SLICES 1–2 IMPLEMENTED / SLICE 3 HELD / NOT CLOSED.** Current product **CalibraytAI** (formerly CalibAi). [ADR-045](adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted**. **FG-027 CLOSED / OPERATIONAL FOR UAT.** **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE UAT PASS.** [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. CalibraytAI V1 readiness **45%**. **2 / 11** COMPLETE (V1-01, V1-02). BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [FG-026 CLOSED / OPERATIONAL FOR UAT.] [FG-025 SLICE 5 IMPLEMENTED / NOT CLOSED.] Remaining FG-025 surfaces **NOT AUTHORIZED**. [FG-023 CLOSED / OPERATIONAL FOR UAT.] [FG-021 CLOSED.] Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Live current = heads **`a5b6c7d8e9f0`**. |
+| Status | **FG-029 RECORDED / NOT IMPLEMENTATION-AUTHORIZED.** [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. **FG-028 SLICES 1–2 IMPLEMENTED / SLICE 3 HELD / NOT CLOSED.** Current product **CalibraytAI** (formerly CalibAi). [ADR-045](adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted**. **FG-027 CLOSED / OPERATIONAL FOR UAT.** CalibraytAI V1 readiness **45%**. **2 / 11** COMPLETE (V1-01, V1-02). BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [FG-026 CLOSED / OPERATIONAL FOR UAT.] [FG-025 SLICE 5 IMPLEMENTED / NOT CLOSED.] Remaining FG-025 surfaces **NOT AUTHORIZED**. [FG-023 CLOSED / OPERATIONAL FOR UAT.] [FG-021 CLOSED.] Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Live current = heads **`a5b6c7d8e9f0`**. |
 | Updated | 2026-09-09 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [v1-completion-register.md](v1-completion-register.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -437,7 +437,8 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - **[FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md)** is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. One linked gate. Slices A–D **not authorized**. Legal Content Gate remains **empty**. Do **not** populate jurisdictions. Do **not** implement from this recording. FG-025 is **not** a split of this gate.
 - **[FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md)** is **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / SLICE 2 IMPLEMENTED / SLICE 3 IMPLEMENTED / SLICE 4 IMPLEMENTED / SLICE 5 IMPLEMENTED / NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**. Do **not** start another FG-025 slice from this handoff.
 - **[FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md)** is **CLOSED / OPERATIONAL FOR UAT**. PLAN proposes / Estimating commits. Additive `f4a5b6c7d8e9` **applied live**.
-- **[FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md)** is **CLOSED / OPERATIONAL FOR UAT**. [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Do **not** begin V1-03 from this handoff. Do **not** accept ADR-008.
+- **[FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md)** is **CLOSED / OPERATIONAL FOR UAT**. [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Do **not** accept ADR-008.
+- **[FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md)** is **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. Preflight [fg-029-bmr-supplier-workflow-v1-preflight.md](architecture/fg-029-bmr-supplier-workflow-v1-preflight.md). Do **not** implement from this recording.
 
 ## 17. KNOWN RISKS / UNRESOLVED PRODUCT ITEMS
 
@@ -459,11 +460,11 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do **not** begin V1-03 from this handoff. Do not enable an external AI provider. Do not reopen FG-021. Do **not** implement LEARN, QuickBooks, FG-024, remaining FG-025 surfaces, or contract/warranty **template** work. Do **not** start another FG-025 slice. Do **not** implement Observation Delete. Do **not** accept ADR-008 from this close. Do **not** install a CalibraytAI logo until Joel supplies the approved Slice 3 asset. Do **not** publish the marketing website from this repository.
+Do **not** implement V1-03 from [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md). Do not enable an external AI provider. Do not reopen FG-021. Do **not** implement LEARN, QuickBooks, FG-024, remaining FG-025 surfaces, or contract/warranty **template** work. Do **not** start another FG-025 slice. Do **not** implement Observation Delete. Do **not** accept ADR-008 from this recording. Do **not** install a CalibraytAI logo until Joel supplies the approved Slice 3 asset. Do **not** publish the marketing website from this repository.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP. Do not begin V1-03 from this handoff.** [v1-completion-register.md](v1-completion-register.md) is **GOVERNING**. CalibraytAI V1 readiness **45%**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [FG-028](feature-gates/FG-028-calibai-to-calibraytai-product-identity-transition.md) is **SLICES 1–2 IMPLEMENTED / SLICE 3 HELD / NOT CLOSED**. [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Remaining FG-025 surfaces **NOT AUTHORIZED**. Do **not** begin FG-024. Do **not** implement Observation Delete. [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) remains **CLOSED**.
+**Next governed action:** **STOP. Do not implement V1-03 from this handoff.** [v1-completion-register.md](v1-completion-register.md) is **GOVERNING**. CalibraytAI V1 readiness **45%**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) is **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. [FG-028](feature-gates/FG-028-calibai-to-calibraytai-product-identity-transition.md) is **SLICES 1–2 IMPLEMENTED / SLICE 3 HELD / NOT CLOSED**. [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Remaining FG-025 surfaces **NOT AUTHORIZED**. Do **not** begin FG-024. Do **not** implement Observation Delete. [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) remains **CLOSED**.
 
 **Roadmap direction (not authorization):** Item 12 Field Web is **CLOSED**. Item 13 **CLOSED / OPERATIONAL FOR UAT**. [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) is **SLICE 1, SLICE 2, SLICE 3, SLICE 4, AND SLICE 5 IMPLEMENTED / NOT CLOSED** (remaining surfaces not authorized). [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Item 15 / [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
@@ -710,9 +711,12 @@ FG-025 is SLICE 1, SLICE 2, SLICE 3, SLICE 4, AND SLICE 5 IMPLEMENTED / NOT CLOS
 Remaining FG-025 surfaces are NOT AUTHORIZED.
 FG-026 is CLOSED / OPERATIONAL FOR UAT.
 FG-027 is CLOSED / OPERATIONAL FOR UAT.
+FG-028 is SLICES 1–2 IMPLEMENTED / SLICE 3 HELD / NOT CLOSED.
+FG-029 is RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.
+ADR-046 is Accepted. ADR-008 remains Proposed.
 CalibraytAI V1 readiness is 45%. 2 / 11 COMPLETE (V1-01, V1-02). BMR DEMO READY NO. BRAYMAN REAL-LIFE UAT READY NO.
-The next governed Cursor prompt is NONE until Joel/ChatGPT authorize V1-03 or FG-028 Slice 3.
-STOP. Do NOT begin V1-03. Do NOT start another FG-025 slice. Do NOT start FG-024. Do NOT start LEARN.
+The next governed Cursor prompt is NONE until Joel/ChatGPT authorize FG-029 implementation or FG-028 Slice 3.
+STOP. Do NOT implement V1-03. Do NOT start another FG-025 slice. Do NOT start FG-024. Do NOT start LEARN.
 Do NOT reopen FG-021.
 Do NOT convert SESSION-EXPIRY RECOVERY to PASS / N/A / WAIVED.
 Do NOT invent iPhone UAT results.

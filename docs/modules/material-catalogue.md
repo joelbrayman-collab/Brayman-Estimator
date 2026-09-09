@@ -14,7 +14,7 @@ Own CalibAi **canonical material identity** (what the project requires): platfor
 
 V1 ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md)): dimensional lumber + sheet goods identity + office catalogue UX + optional Material-category `CostItem` link. Office kind/status labels use contractor-facing mapping ([FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) Slice 3); internal identity keys unchanged.
 
-Living supplier price/promotion/inventory is **architected** ([ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md)) and **not** owned or implemented here until a later Feature Gate. [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) remains **Proposed**.
+Living supplier price/promotion/inventory is **architected** ([ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md)) and **not** owned or implemented here until a later Feature Gate. [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**: this module **will** own thin project `MaterialRequirement` when [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) is implementation-authorized. [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) remains **Proposed**.
 
 ## Owned data (V1)
 
@@ -30,7 +30,7 @@ Living supplier price/promotion/inventory is **architected** ([ADR-036](../adr/A
 - Organization unit cost / markup (`CostItem`)
 - Supplier SKU, price, promotion, inventory
 - Bulk supplier catalogue onboarding / ingest / sync (future Supplier Catalogue pin; not this module’s V1 work)
-- `MaterialRequirement` / TakeoffPackageItem commercial FKs. [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) V1 also does **not** create MaterialRequirement or commercial FKs on package items.
+- `MaterialRequirement` / TakeoffPackageItem commercial FKs **until FG-029 is implementation-authorized**. [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) assigns future `MaterialRequirement` ownership here; **no table exists today**. [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) V1 also does **not** create MaterialRequirement or commercial FKs on package items.
 - Letting one organization mutate global identity for all organizations
 
 ## Relevant Feature Gate

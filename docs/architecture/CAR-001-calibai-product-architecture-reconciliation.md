@@ -99,6 +99,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-09 FG-028 product identity — not authorized by CAR-001):** Current product name is **CalibraytAI** (formerly CalibAi). [ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted**. [FG-028](../feature-gates/FG-028-calibai-to-calibraytai-product-identity-transition.md) Slices 1–2 **IMPLEMENTED**; Slice 3 logo asset **HELD**. Repository name remains The Estimator / Brayman-Estimator. CAR-001 still does **not** authorize V1-03, FG-024 implementation, remaining FG-025 surfaces, LEARN, or a repository rename.
 
+**Subsequent status (2026-09-09 FG-029 V1-03 architecture recording — not authorized by CAR-001):** [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. ADR-008 remains **Proposed**. V1 remains **45% / 2 of 11**. CAR-001 still does **not** authorize V1-03 product code, live BMR integration, FG-024 implementation, remaining FG-025 surfaces, or LEARN.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

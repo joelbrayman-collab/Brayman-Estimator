@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | **Future** — not implemented |
 | Updated | 2026-08-30 |
-| Code | None (only free-text `CostItem.supplier` exists in Estimating today) |
+| Code | None (only free-text `CostItem.supplier` exists in Estimating today). [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. |
 | Architecture | [../architecture/supplier-catalogue-inventory-pricing.md](../architecture/supplier-catalogue-inventory-pricing.md) · [../architecture/supplier-channel-and-launch-partner.md](../architecture/supplier-channel-and-launch-partner.md) · [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) |
 
 ## Purpose
@@ -23,7 +23,7 @@ CalibAi canonical materials (Material Catalogue); internal cost items/assemblies
 
 **Governed bulk supplier onboarding** is required later: a supplier must not enter catalogue products one at a time. Lifecycle: SOURCE → BULK INGEST → SUPPLIER PRODUCTS → MAP TO CALIBAI CANONICAL MATERIALS → HUMAN REVIEW / EXCEPTIONS → ACTIVE SUPPLIER CATALOGUE → CONTINUING SYNCHRONIZATION. Initial onboarding (products + reviewed mappings) is distinct from ongoing sync (prices, promotions, inventory, availability, lifecycle) without unnecessarily remapping unchanged products.
 
-This pin does **not** expand [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md), authorize supplier schema/ingestion, BMR/POC, live pricing/inventory, or a Supplier Feature Gate. Canonical record: [supplier-catalogue-inventory-pricing.md](../architecture/supplier-catalogue-inventory-pricing.md).
+This pin does **not** expand [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md), authorize supplier schema/ingestion, live BMR API, live pricing/inventory, or FG-029 **implementation**. Canonical record: [supplier-catalogue-inventory-pricing.md](../architecture/supplier-catalogue-inventory-pricing.md). V1-03 architecture: [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**; [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) recorded only.
 
 ## Prohibited responsibilities
 
@@ -36,4 +36,4 @@ This pin does **not** expand [FG-014](../feature-gates/FG-014-material-catalogue
 
 ## Relevant ADRs
 
-ADR-008, ADR-010 (Proposed). **ADR-033, ADR-034, ADR-035, ADR-036 Accepted** (architecture only; not implemented). This module does not own CalibAi identity.
+ADR-008, ADR-010 (Proposed). **ADR-033, ADR-034, ADR-035, ADR-036, ADR-046 Accepted** (architecture only; supplier workflow **not implemented**). This module does not own CalibraytAI identity.

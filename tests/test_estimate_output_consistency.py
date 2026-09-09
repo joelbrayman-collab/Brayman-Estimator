@@ -31,7 +31,7 @@ from app.services.organizations import (
     ensure_default_organization,
 )
 from app.services.estimate_costing import approve_all_costing
-from tests.scope_delivery_support import ensure_resolved_scope_routing
+from tests.scope_delivery_support import ensure_confirmed_scope_routing
 from app.services.pricing_engine import (
     apply_resolved_pricing_to_version,
     approve_pricing_policy,
@@ -130,7 +130,7 @@ def _direct_estimate(number, unit_cost=100, markup=0, waste=0, line_type="Custom
 
 
 def _apply_priced(version, actor="Joel Brayman", **kwargs):
-    ensure_resolved_scope_routing(version, actor=actor)
+    ensure_confirmed_scope_routing(version, actor=actor)
     approve_all_costing(version, actor=actor)
     return apply_resolved_pricing_to_version(version, actor=actor, **kwargs)
 

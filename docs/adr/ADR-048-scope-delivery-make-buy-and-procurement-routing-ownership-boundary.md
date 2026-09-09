@@ -89,7 +89,7 @@ S. **No ML/confidence value may silently authorize routing.** [ADR-024](ADR-024-
 
 T. **Future organization defaults may suggest routing** but must **never rewrite** historical project decisions.
 
-U. **[FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) remains final authority** for approved direct costing. Do not reopen that gate. FG-031 later adds an upstream BLOCK: `SCOPE_DELIVERY_UNRESOLVED` (except legitimate Allowance).
+U. **[FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) remains final authority** for approved direct costing. Do not reopen that gate. FG-031 adds an upstream BLOCK: `SCOPE_DELIVERY_UNRESOLVED` unless routing is **CONFIRMED** (except legitimate Allowance). `PROPOSED` is not costing authority.
 
 V. **Routing itself does not** apply Pricing, set margin, set markup, set tax, or set contingency.
 

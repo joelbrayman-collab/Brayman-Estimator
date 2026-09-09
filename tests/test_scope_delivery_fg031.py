@@ -95,7 +95,7 @@ from app.services.supplier_catalogue import (
 )
 from tests.scope_delivery_support import (
     confirm_contractor_purchased_routing,
-    ensure_resolved_scope_routing,
+    ensure_confirmed_scope_routing,
 )
 
 MIGRATION = Path(
@@ -251,6 +251,9 @@ def test_deterministic_suggestion_is_not_approval(app):
     assert routing.status != STATUS_CONFIRMED
     assert routing.confirmed_at is None
     assert routing.suggestion_source == SUGGESTION_RULE
+    evaluation = evaluate_costing(version)
+    assert BLOCK_SCOPE_DELIVERY_UNRESOLVED in evaluation["block_codes"]
+    assert evaluation["can_approve"] is False
 
 
 def test_derived_display_class_not_stored(app):
@@ -290,6 +293,9 @@ def test_human_per_row_confirmation_records_actor_time(app):
     assert row.status == STATUS_CONFIRMED
     assert row.confirmed_at is not None
     assert row.actor_display_name == "Joel Brayman"
+    evaluation = evaluate_costing(version)
+    assert BLOCK_SCOPE_DELIVERY_UNRESOLVED not in evaluation["block_codes"]
+    assert evaluation["can_approve"] is True
 
 
 def test_unresolved_cannot_be_confirmed(app):
@@ -310,6 +316,9 @@ def test_unresolved_cannot_be_confirmed(app):
     with pytest.raises(EstimateScopeDeliveryError, match="Unresolved"):
         confirm_scope_delivery(line, actor="Joel Brayman")
     assert get_scope_delivery_for_line(line).status != STATUS_CONFIRMED
+    evaluation = evaluate_costing(version)
+    assert BLOCK_SCOPE_DELIVERY_UNRESOLVED in evaluation["block_codes"]
+    assert evaluation["can_approve"] is False
 
 
 def test_locked_and_issued_refuse_routing_edit(app):
@@ -401,12 +410,96 @@ def test_unresolved_blocks_fg027_except_allowance(app):
     assert BLOCK_SCOPE_DELIVERY_UNRESOLVED not in allowance_result["block_codes"]
     with pytest.raises(Exception):
         approve_all_costing(version, actor="Joel Brayman")
+
+
+def test_draft_and_proposed_resolved_routing_block_costing(app):
+    estimate = _estimate("EST-FG031-0042")
+    version = estimate.current_version
+    section = create_section(version, name="Direct")
+    line = add_manual_line(
+        section,
+        line_type="Custom",
+        description="Package",
+        quantity=1,
+        unit="ls",
+        unit_cost=80,
+    )
+    row = save_scope_delivery(
+        line,
+        material_procurement=MATERIAL_CONTRACTOR_PURCHASED,
+        labour_delivery=LABOUR_INTERNAL,
+        actor="Joel Brayman",
+    )
+    assert row.status == STATUS_PROPOSED
+    evaluation = evaluate_costing(version)
+    assert BLOCK_SCOPE_DELIVERY_UNRESOLVED in evaluation["block_codes"]
+    assert evaluation["can_approve"] is False
+    row.status = STATUS_DRAFT
+    db.session.commit()
+    evaluation = evaluate_costing(version)
+    assert BLOCK_SCOPE_DELIVERY_UNRESOLVED in evaluation["block_codes"]
+    assert evaluation["can_approve"] is False
+
+
+def test_confirmed_routing_satisfies_costing_prerequisite(app):
+    estimate = _estimate("EST-FG031-0043")
+    version = estimate.current_version
+    section = create_section(version, name="Direct")
+    custom = add_manual_line(
+        section,
+        line_type="Custom",
+        description="Package",
+        quantity=1,
+        unit="ls",
+        unit_cost=80,
+    )
+    allowance = add_manual_line(
+        section,
+        line_type="Allowance",
+        description="Site allowance",
+        quantity=1,
+        unit="ls",
+        unit_cost=20,
+    )
     save_scope_delivery(
         custom,
         material_procurement=MATERIAL_CONTRACTOR_PURCHASED,
         labour_delivery=LABOUR_INTERNAL,
         actor="Joel Brayman",
     )
+    confirm_scope_delivery(custom, actor="Joel Brayman")
+    evaluation = evaluate_costing(version)
+    assert BLOCK_SCOPE_DELIVERY_UNRESOLVED not in evaluation["block_codes"]
+    assert evaluation["can_approve"] is True
+    allowance_result = next(
+        row for row in evaluation["line_results"] if row["line_item"].id == allowance.id
+    )
+    assert BLOCK_SCOPE_DELIVERY_UNRESOLVED not in allowance_result["block_codes"]
+    assert WARN_MANUAL_ALLOWANCE in evaluation["warning_codes"]
+
+
+def test_approve_all_scope_routing_then_costing_prerequisite_passes(app):
+    estimate = _estimate("EST-FG031-0044")
+    version = estimate.current_version
+    section = create_section(version, name="Direct")
+    line = add_manual_line(
+        section,
+        line_type="Custom",
+        description="Package",
+        quantity=1,
+        unit="ls",
+        unit_cost=80,
+    )
+    save_scope_delivery(
+        line,
+        material_procurement=MATERIAL_CONTRACTOR_PURCHASED,
+        labour_delivery=LABOUR_INTERNAL,
+        actor="Joel Brayman",
+    )
+    assert get_scope_delivery_for_line(line).status == STATUS_PROPOSED
+    assert evaluate_costing(version)["can_approve"] is False
+    approve_all_scope_routing(version, actor="Joel Brayman")
+    assert get_scope_delivery_for_line(line).status == STATUS_CONFIRMED
     evaluation = evaluate_costing(version)
     assert BLOCK_SCOPE_DELIVERY_UNRESOLVED not in evaluation["block_codes"]
     assert evaluation["can_approve"] is True
@@ -498,6 +591,13 @@ def test_clone_copies_dimensions_and_requires_reconfirmation(app):
     assert copied.confirmed_at is None
     assert copied.confirmed_by is None
     assert source.status == STATUS_CONFIRMED
+    cloned_evaluation = evaluate_costing(cloned)
+    assert BLOCK_SCOPE_DELIVERY_UNRESOLVED in cloned_evaluation["block_codes"]
+    assert cloned_evaluation["can_approve"] is False
+    confirm_scope_delivery(cloned_line, actor="Joel Brayman")
+    cloned_evaluation = evaluate_costing(cloned)
+    assert BLOCK_SCOPE_DELIVERY_UNRESOLVED not in cloned_evaluation["block_codes"]
+    assert cloned_evaluation["can_approve"] is True
 
 
 def test_historical_locked_version_readable_without_routing_block(app):
@@ -512,7 +612,7 @@ def test_historical_locked_version_readable_without_routing_block(app):
         unit="ls",
         unit_cost=100,
     )
-    ensure_resolved_scope_routing(version, actor="Joel Brayman")
+    ensure_confirmed_scope_routing(version, actor="Joel Brayman")
     snapshot = approve_all_costing(version, actor="Joel Brayman")
     lock_version(version)
     frozen = EstimateCostingSnapshot.query.get(snapshot.id)
@@ -695,7 +795,7 @@ def test_supplier_price_inform_only_and_no_pricing_mutation(app):
         provenance="FG-031",
         is_default=True,
     )
-    ensure_resolved_scope_routing(version, actor="Joel Brayman")
+    ensure_confirmed_scope_routing(version, actor="Joel Brayman")
     costing = approve_all_costing(version, actor="Joel Brayman")
     pricing = apply_resolved_pricing_to_version(version, actor="Joel Brayman")
     unit_before = line.unit_cost
@@ -836,7 +936,7 @@ def test_customer_output_routing_privacy(app):
         provenance="FG-031",
         is_default=True,
     )
-    ensure_resolved_scope_routing(version, actor="Joel Brayman")
+    ensure_confirmed_scope_routing(version, actor="Joel Brayman")
     approve_all_costing(version, actor="Joel Brayman")
     apply_resolved_pricing_to_version(version, actor="Joel Brayman")
     breakdown = assemble_internal_cost_breakdown(estimate, version)

@@ -47,7 +47,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 ## Current implementation
 
 - Office Estimate screens use **Estimate version** / **Pricing lock** display labels ([FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) Slice 3). Estimate ≠ Proposal. Internal models unchanged.
-- Office Scope Delivery Review — **implemented (not live-migrated / not closed)** ([FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) Slice A). Hub PRICE `/projects/<id>/scope-delivery`. Per-row confirm + Approve All Scope Routing. Does **not** approve costing or apply Pricing.
+- Office Scope Delivery Review — **implemented (not live-migrated / not closed)** ([FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) Slice A). Hub PRICE `/projects/<id>/scope-delivery`. Per-row confirm + Approve All Scope Routing. Does **not** approve costing or apply Pricing. FG-027 Costing Approval requires **CONFIRMED** routing (`PROPOSED` is not costing authority).
 - Estimate statuses and version statuses defined in `app/models/estimate.py`
 - `AUTO_LOCK_VERSION_STATUSES` locks versions when Issued/Accepted/Rejected/Superseded
 - Builder service supports structured line construction

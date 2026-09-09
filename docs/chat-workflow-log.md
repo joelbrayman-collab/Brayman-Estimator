@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-09 — FG-031 Slice A human-confirmation costing gate repair
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-09 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Bounded repair: FG-027 Costing Approval requires CONFIRMED scope routing, not merely resolved dimensions. No live migrate. No Slice B. |
+| Business decision | PROPOSED is suggested/resolved working routing, not approved routing. CONFIRMED is human-approved routing and is required before Costing Approval. |
+| Architectural decision | Keep public block identity `SCOPE_DELIVERY_UNRESOLVED`. No new `SCOPE_DELIVERY_UNCONFIRMED` code. Allowance exception preserved. Clone remains PROPOSED (reconfirm before costing). Supplier Package still CONFIRMED + CONTRACTOR_PURCHASED. V1 remains **55% / 3 of 11**. |
+| Prompt template used | Joel/ChatGPT FG-031 Slice A bounded human-confirmation gate repair (9 Sep 2026) |
+| Approved Cursor prompt summary | One bounded repair: costing requires CONFIRMED routing. No live migrate. No Slice B. Commit/push if PASS. |
+| Files expected to change | `app/services/estimate_costing.py`; test helper + FG-027/pricing/output/FG-029/FG-031 tests; minimum FG-031 docs |
+| Files prohibited from changing | Live DB; Alembic revision; Slice B; FG-030; V1-04; website |
+| Implementation result | Costing BLOCK if absent, UNRESOLVED, or status != CONFIRMED. No schema change. Live current remains `b6c7d8e9f0a1`. |
+| Tests | Dedicated FG-031 **26 passed**. FG-027 **20**. FG-029 **16**. Clone/builder **22**. Governed bundle **258 passed**. Full suite **707 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate not run. UAT not authorized. Slice B not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** implement Slice B. Do **not** implement FG-030. Do **not** begin V1-04. |
+| Next approved prompt | None from this repair. |
+| Commit hash | Repair this commit (pin follows). Parent pin **`c7662164a3f562f18cdd4b71079970348b1cd72c`**. |
+
 ### 2026-09-09 — FG-031 Slice A scope delivery routing product implementation
 
 | Field | Content |

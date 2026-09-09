@@ -27,6 +27,7 @@ from app.models.estimate_scope_delivery import (
     LABOUR_UNRESOLVED,
     MATERIAL_NO_MATERIAL,
     MATERIAL_UNRESOLVED,
+    STATUS_CONFIRMED,
     EstimateScopeDelivery,
 )
 from app.models.takeoff_estimate_insertion import TakeoffEstimateInsertion
@@ -239,7 +240,11 @@ def _unique_append(bucket, code):
 
 
 def _scope_delivery_is_unresolved_for_costing(line_item):
-    """FG-031 Slice A upstream BLOCK. Allowance NO_MATERIAL+NO_LABOUR excepted."""
+    """FG-031 upstream BLOCK: absent, UNRESOLVED, or not CONFIRMED.
+
+    PROPOSED/DRAFT resolved routing is not commercial authority.
+    Allowance with no row, or NO_MATERIAL + NO_LABOUR, remains excepted.
+    """
     routing = EstimateScopeDelivery.query.filter_by(
         estimate_line_item_id=line_item.id
     ).first()
@@ -251,16 +256,20 @@ def _scope_delivery_is_unresolved_for_costing(line_item):
             and routing.labour_delivery == LABOUR_NO_LABOUR
         ):
             return False
-        return (
+        if (
             routing.material_procurement == MATERIAL_UNRESOLVED
             or routing.labour_delivery == LABOUR_UNRESOLVED
-        )
+        ):
+            return True
+        return routing.status != STATUS_CONFIRMED
     if routing is None:
         return True
-    return (
+    if (
         routing.material_procurement == MATERIAL_UNRESOLVED
         or routing.labour_delivery == LABOUR_UNRESOLVED
-    )
+    ):
+        return True
+    return routing.status != STATUS_CONFIRMED
 
 
 def _line_extended_facts_complete(line_item):

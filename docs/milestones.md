@@ -30,6 +30,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-09 — FG-031 Slice A human-confirmation costing gate repair
+
+| Field | Content |
+|-------|---------|
+| ID | FG-031 Slice A repair (supporting V1 gate; not a 12th major package) |
+| Status | **SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / SLICE B NOT AUTHORIZED / NOT CLOSED.** Human-confirmation costing gate repaired. V1 remains **55% / 3 of 11**. |
+| Branch | `main` |
+| Objective | Require CONFIRMED scope routing before FG-027 Costing Approval. PROPOSED is not commercial authority. |
+| Deliverables | Costing BLOCK extended to unconfirmed routing; dedicated tests; minimum current-authority docs. No migration. |
+| Validation | Dedicated FG-031 **26 passed**. FG-027 **20**. FG-029 **16**. Governed bundle **258 passed**. Full suite **707 passed**. Live migrate **not run**. |
+| Architectural findings | Reused `SCOPE_DELIVERY_UNRESOLVED`. No new public block code. Clone remains PROPOSED until human reconfirm. |
+| Open decisions | Live migrate / office UAT / Slice B remain separately authorized. |
+| Next milestone | **STOP.** Do not live-migrate. Do not implement Slice B. Do not implement FG-030. Do not begin V1-04. |
+| Date | 2026-09-09 |
+
 ### 2026-09-09 — FG-031 Slice A scope delivery routing product implementation
 
 | Field | Content |

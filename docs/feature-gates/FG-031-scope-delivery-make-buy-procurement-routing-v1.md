@@ -22,7 +22,7 @@
 | Slice A routing core | **IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Not live-migrated. UAT not authorized. |
 | Slice B subcontract quote evidence | **NOT AUTHORIZED / NOT IMPLEMENTED** |
 | Schema / Alembic | Additive file **`c7d8e9f0a1b2`** (`down_revision = b6c7d8e9f0a1`). Repository head **`c7d8e9f0a1b2`**. Live current remains **`b6c7d8e9f0a1`**. **Do not live-migrate from this pass.** |
-| Product code | Slice A routing model, service, Hub PRICE Scope Delivery Review, FG-027 `SCOPE_DELIVERY_UNRESOLVED` BLOCK, Supplier Package `CONTRACTOR_PURCHASED` filter. |
+| Product code | Slice A routing model, service, Hub PRICE Scope Delivery Review, FG-027 `SCOPE_DELIVERY_UNRESOLVED` BLOCK (**CONFIRMED routing required**; `PROPOSED` is not costing authority), Supplier Package `CONTRACTOR_PURCHASED` filter. |
 | V1 scoring | **Unchanged.** **55% / 3 of 11 COMPLETE.** Not a 12th package. |
 
 ```text
@@ -110,7 +110,7 @@ Later implement:
 9. Contractor-facing columns: Scope · Material provided by · Labour performed by · Status · Cost evidence · Action.
 10. Human per-row confirmation.
 11. **Approve All Scope Routing** — explicit human POST; confirms only eligible proposed rows; does **not** confirm unresolved rows; records actor/time; does **not** approve costing; does **not** apply Pricing; does **not** approve supplier mapping.
-12. Fail-closed costing: once Slice A is live, `SCOPE_DELIVERY_UNRESOLVED` **BLOCKS** FG-027 Costing Approval except legitimate Allowance (`NO_MATERIAL` + `NO_LABOUR` on an Allowance line remains WARN, not BLOCK).
+12. Fail-closed costing: once Slice A is live, `SCOPE_DELIVERY_UNRESOLVED` **BLOCKS** FG-027 Costing Approval unless required routing is **CONFIRMED**. Resolved `PROPOSED` / `DRAFT` dimensions are **not** commercial authority. Legitimate Allowance (`NO_MATERIAL` + `NO_LABOUR`, or no routing row) remains excepted (WARN, not BLOCK).
 13. Supplier Package eligibility: only MaterialRequirements associated with `CONTRACTOR_PURCHASED` routing are automatically eligible. Exclude `SUBCONTRACTOR_SUPPLIED`, `OWNER_SUPPLIED`, `NO_MATERIAL`, `UNRESOLVED`.
 14. Uncited MANUAL / DEMO MaterialRequirements must **not** silently enter a Supplier Package; they require explicit contractor-purchased designation/reconciliation first.
 15. Preserve FG-029: supplier price INFORM ONLY.
@@ -154,7 +154,7 @@ Do **not** add costing source kinds `SOURCE_SUPPLIER_PRICE` or `SOURCE_SUBCONTRA
 
 | Gate / surface | Interaction |
 |----------------|-------------|
-| FG-027 | Remains final costing authority. Slice A adds upstream `SCOPE_DELIVERY_UNRESOLVED` BLOCK (Allowance exception). Existing source kinds unchanged. |
+| FG-027 | Remains final costing authority. Slice A adds upstream `SCOPE_DELIVERY_UNRESOLVED` BLOCK unless routing is **CONFIRMED** (Allowance exception). `PROPOSED` is not costing authority. Existing source kinds unchanged. |
 | Pricing / ADR-044 | Routing does not apply Pricing. If later routing/quote/labour changes working direct cost, FG-027 recost is required and existing Pricing becomes STALE / REQUIRES RE-APPLY. No automatic Pricing. |
 | Labour | `INTERNAL` **permits** existing Labour Engine workflow. Routing does **not** auto-create LabourTask, ProductionRateStandard, or LabourSnapshot. `LABOUR_EVIDENCE_ABSENT` remains a warning unless separately governed. Do not silently include labour-snapshot direct cost in selling-price basis. |
 | Customer Estimate / V1-04 | Delivery-blind. Do not expose routing enums, internal labour rates, supplier prices/identity (unless later commercially authorized), subcontract quote cost, margin, or markup. Internal Detailed Cost Breakdown may later display internal delivery class. |
@@ -190,6 +190,6 @@ Product implementation of Slice B · live migrate from this recording · FG-030 
 
 | Layer | State |
 |-------|--------|
-| **Current** | Slice A: Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem`; two stored dimensions; Hub PRICE Scope Delivery Review; Approve All Scope Routing; `SCOPE_DELIVERY_UNRESOLVED` BLOCK on editable Draft costing (Allowance exception); Supplier Package includes cited requirements only when confirmed `CONTRACTOR_PURCHASED`. Migration file **`c7d8e9f0a1b2` not applied live**. |
+| **Current** | Slice A: Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem`; two stored dimensions; Hub PRICE Scope Delivery Review; Approve All Scope Routing; `SCOPE_DELIVERY_UNRESOLVED` BLOCK on editable Draft costing unless routing is **CONFIRMED** (Allowance exception); Supplier Package includes cited requirements only when confirmed `CONTRACTOR_PURCHASED`. Migration file **`c7d8e9f0a1b2` not applied live**. |
 | **Intended (remaining this gate)** | Live migrate + office UAT for Slice A. Slice B thin Subcontractor + quote evidence before Brayman real-life UAT. |
 | **Future** | Org defaults; exception-based review; RFQ/package; owner UX; portal; LEARN; component Assembly routing. |

@@ -36,7 +36,7 @@ from app.services.estimate_costing import approve_all_costing
 from app.services.estimates import create_estimate
 from tests.scope_delivery_support import (
     confirm_contractor_purchased_routing,
-    ensure_resolved_scope_routing,
+    ensure_confirmed_scope_routing,
 )
 from app.services.labour_engine import ensure_org_001_direct_labour_cost_rate_standard
 from app.services.material_catalogue import (
@@ -465,7 +465,7 @@ def test_price_is_inform_only_no_costing_or_pricing_mutation(app):
         is_default=True,
     )
     db.session.commit()
-    ensure_resolved_scope_routing(version, actor="office-reviewer")
+    ensure_confirmed_scope_routing(version, actor="office-reviewer")
     confirm_contractor_purchased_routing(line, actor="office-reviewer")
     snapshot = approve_all_costing(version, actor="office-reviewer")
     pricing = apply_resolved_pricing_to_version(version, actor="office-reviewer")

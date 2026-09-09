@@ -58,7 +58,7 @@ from app.services.pricing_engine import (
     apply_resolved_pricing_to_version,
     create_pricing_policy,
 )
-from tests.scope_delivery_support import ensure_resolved_scope_routing
+from tests.scope_delivery_support import ensure_confirmed_scope_routing
 
 
 @pytest.fixture
@@ -167,7 +167,7 @@ def _empty_assembly(*, code="FG026-UAT-DOOR"):
 
 
 def _approve(version, actor="Joel Brayman", **kwargs):
-    ensure_resolved_scope_routing(version, actor=actor)
+    ensure_confirmed_scope_routing(version, actor=actor)
     return approve_all_costing(version, actor=actor, **kwargs)
 
 
@@ -229,7 +229,7 @@ def test_manual_custom_and_allowance_warn_do_not_block(app):
         unit="ls",
         unit_cost=20,
     )
-    ensure_resolved_scope_routing(version, actor="Joel Brayman")
+    ensure_confirmed_scope_routing(version, actor="Joel Brayman")
     evaluation = evaluate_costing(version)
     assert WARN_MANUAL_CUSTOM in evaluation["warning_codes"]
     assert WARN_MANUAL_ALLOWANCE in evaluation["warning_codes"]
@@ -494,7 +494,7 @@ def test_no_library_or_working_side_effects_on_supplier_requirement(app):
     assembly_code = assembly.code
     cost_line_id = cost_line.id
     asm_line_id = asm_line.id
-    ensure_resolved_scope_routing(version, actor="Joel Brayman")
+    ensure_confirmed_scope_routing(version, actor="Joel Brayman")
     evaluation = evaluate_costing(version)
     assert WARN_NO_SUPPLIER_EVIDENCE in evaluation["warning_codes"]
     assert evaluation["can_approve"] is True
@@ -571,7 +571,7 @@ def test_office_costing_review_and_approve_all_route(client, app):
         unit="ls",
         unit_cost=100,
     )
-    ensure_resolved_scope_routing(version, actor="Joel Brayman")
+    ensure_confirmed_scope_routing(version, actor="Joel Brayman")
     response = client.get(f"/estimates/{estimate.id}/versions/{version.id}")
     assert response.status_code == 200
     assert b"Costing review" in response.data

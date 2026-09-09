@@ -17,9 +17,9 @@ from app.services.estimate_scope_delivery import (
 
 
 def ensure_resolved_scope_routing(version, *, actor="Joel Brayman"):
-    """Make non-Allowance lines resolved so FG-027 costing tests can approve.
+    """Make non-Allowance lines resolved (PROPOSED). Does not confirm.
 
-    Does not confirm. Suggestion is not approval. Skips locked/non-Draft versions.
+    Suggestion is not approval. Skips locked/non-Draft versions.
     """
     if not version_is_routing_editable(version):
         return
@@ -39,6 +39,29 @@ def ensure_resolved_scope_routing(version, *, actor="Joel Brayman"):
             actor=actor,
             commit=False,
         )
+
+
+def ensure_confirmed_scope_routing(version, *, actor="Joel Brayman"):
+    """Resolve and confirm non-Allowance lines so FG-027 costing tests can approve.
+
+    Test-only. Not production auto-approval. Skips locked/non-Draft versions.
+    """
+    if not version_is_routing_editable(version):
+        return
+    ensure_resolved_scope_routing(version, actor=actor)
+    for item in iter_version_line_items(version):
+        if (item.line_type or "") == "Allowance":
+            continue
+        routing = get_scope_delivery_for_line(item)
+        if routing is None:
+            continue
+        if routing.status == STATUS_CONFIRMED:
+            continue
+        if not dimensions_are_resolved(
+            routing.material_procurement, routing.labour_delivery
+        ):
+            continue
+        confirm_scope_delivery(item, actor=actor, commit=False)
 
 
 def confirm_contractor_purchased_routing(line_item, *, actor="Joel Brayman"):

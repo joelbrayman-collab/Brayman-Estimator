@@ -30,7 +30,7 @@ This pin is **not** an implementation authorization.
 
 | Layer | State |
 |-------|--------|
-| **Current** | Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem` (Slice A; migration file **`c7d8e9f0a1b2` not applied live**). Two stored dimensions; Hub PRICE Scope Delivery Review; Approve All Scope Routing; `SCOPE_DELIVERY_UNRESOLVED` BLOCK on editable Draft costing (Allowance exception); Supplier Package includes cited requirements only when confirmed `CONTRACTOR_PURCHASED`. Uncited MANUAL/DEMO fail-closed. PLAN remains quantity/evidence. No Subcontractor entity. No subcontract RFQ. |
+| **Current** | Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem` (Slice A; migration file **`c7d8e9f0a1b2` not applied live**). Two stored dimensions; Hub PRICE Scope Delivery Review; Approve All Scope Routing; `SCOPE_DELIVERY_UNRESOLVED` BLOCK on editable Draft costing unless routing is **CONFIRMED** (`PROPOSED` is not costing authority; Allowance exception); Supplier Package includes cited requirements only when confirmed `CONTRACTOR_PURCHASED`. Uncited MANUAL/DEMO fail-closed. PLAN remains quantity/evidence. No Subcontractor entity. No subcontract RFQ. |
 | **Intended (remaining this gate)** | Live migrate + office UAT for Slice A. Slice B thin Subcontractor + quote evidence before Brayman real-life UAT. |
 | **Future** | Org routing defaults; exception-based review; subcontract RFQ/package HTML/PDF; owner-supplied/third-party UX; LEARN; component-level Assembly routing; subcontractor portal; supplier price → estimate cost; BUILD/MONITOR execution-plan expansion. |
 
@@ -160,9 +160,9 @@ No confidence-based auto-approval. No LEARN.
 
 Do **not** reopen FG-027.
 
-Once Slice A is live: `SCOPE_DELIVERY_UNRESOLVED` **BLOCKS** Costing Approval except legitimate Allowance.
+Once Slice A is live: `SCOPE_DELIVERY_UNRESOLVED` **BLOCKS** Costing Approval unless required routing is **CONFIRMED**. Resolved `PROPOSED` / `DRAFT` dimensions are **not** commercial authority.
 
-**Allowance exception:** an Allowance commercial line with `NO_MATERIAL` + `NO_LABOUR` remains WARN, not BLOCK.
+**Allowance exception:** an Allowance commercial line with no routing row, or with `NO_MATERIAL` + `NO_LABOUR`, remains WARN, not BLOCK. CONFIRMED Allowance routing is also valid.
 
 Do **not** add `SOURCE_SUPPLIER_PRICE` or `SOURCE_SUBCONTRACT_QUOTE` in Slice A.
 

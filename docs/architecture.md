@@ -99,7 +99,7 @@ Notable behaviours evidenced in code/tests:
 ### Tests
 
 - Location: [`tests/`](../tests/)
-- Collected locally: last product-changing governed full suite **704 passed** (`./venv/bin/python -m pytest -q`, FG-031 Slice A 2026-09-09). Dedicated FG-031 **23**. Historical FG-028 Slice 3 full **681**. Dedicated FG-029 **16**. Historical FG-027 close full suite **652**. Dedicated FG-026 **20**.
+- Collected locally: last product-changing governed full suite **707 passed** (`./venv/bin/python -m pytest -q`, FG-031 Slice A confirmation-gate repair 2026-09-09). Dedicated FG-031 **26**. Historical Slice A implementation full **704**. Historical FG-028 Slice 3 full **681**. Dedicated FG-029 **16**. Historical FG-027 close full suite **652**. Dedicated FG-026 **20**.
 - Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders, project hub, plan upload/indexing/sheets/scale/take-off, labour engine, pricing engine, historical ingestion, organization foundation, supplier package / MaterialRequirement, scope delivery routing
 
 ### Current module relationships (simplified)

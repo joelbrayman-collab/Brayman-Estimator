@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | FG-031 implementation not authorized. Slice A UI may hide OWNER_SUPPLIED / OWNER_THIRD_PARTY (architecture values retained). FG-030 not implementation-authorized. V1-04 not begun. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement FG-031. Do **not** implement FG-030. Do **not** begin V1-04. |
 | Next approved prompt | None from this recording. |
-| Commit hash | follows this recording |
+| Commit hash | Architecture **`1c6c8c492b92f11cc80ad1b6e8689f0e42523bcd`**. Pin follows. |
 
 ### 2026-09-09 — FG-028 Slice 3 approved logo installation / close
 

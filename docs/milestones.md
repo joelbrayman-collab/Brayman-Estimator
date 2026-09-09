@@ -43,7 +43,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Two stored dimensions; 1:1 EstimateScopeDelivery per EstimateLineItem; no HYBRID enum; PLAN remains quantity/evidence; Estimating owns routing; Supplier Package filter CONTRACTOR_PURCHASED; unresolved later BLOCKS FG-027 except Allowance. |
 | Open decisions | FG-031 implementation authorization. First Slice A UI hide vs expose owner-supplied/third-party. FG-030 implementation. V1-04 start. |
 | Next milestone | **STOP.** Do **not** implement FG-031, FG-030, or V1-04. |
-| Commit | follows this recording |
+| Commit | Architecture **`1c6c8c492b92f11cc80ad1b6e8689f0e42523bcd`**. Pin follows. |
 | Date | 2026-09-09 |
 
 ### 2026-09-09 — FG-028 Slice 3 approved logo installation / close

@@ -43,7 +43,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Thin MaterialRequirement; inform-only supplier price; DEMO Winchester; FG-010 remains door count; ADR-008 stays Proposed |
 | Open decisions | FG-029 implementation authorization; FG-028 Slice 3 asset; website |
 | Next milestone | **STOP.** Do **not** implement V1-03. V1 remains **45% / 2 of 11**. |
-| Commit | (when available) |
+| Commit | Architecture recording **`07039c8dabfeba7b6ef4714d2cee50abf648bc4f`**. Pin follows. |
 
 ### 2026-09-09 — FG-028 CalibAi → CalibraytAI product identity Slices 1–2
 

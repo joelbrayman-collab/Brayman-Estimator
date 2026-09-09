@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Implementation authorization; Slice 3 logo; website; apply-to-estimate still needs ADR-008 if ever wanted |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do not implement V1-03. |
 | Next approved prompt | None until Joel/ChatGPT authorize FG-029 implementation, Slice 3, or website. |
-| Commit hash | (when available) |
+| Commit hash | Architecture recording **`07039c8dabfeba7b6ef4714d2cee50abf648bc4f`**. Pin follows. |
 
 ### 2026-09-09 — FG-028 CalibAi → CalibraytAI product identity Slices 1–2
 

@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Live migrate + UAT not authorized. Live DEMO BMR seed not populated. V1-03 not COMPLETE. FG-028 Slice 3 pending. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** populate live DEMO BMR data. Do **not** begin another V1 package. |
 | Next approved prompt | None until Joel/ChatGPT authorize live-migrate/UAT or FG-028 Slice 3. |
-| Commit hash | Product SHA pending pin after this commit. |
+| Commit hash | Product **`ee578dcb5a688842ebedaff0682131826e6c7188`**. Pin follows. |
 
 ### 2026-09-09 — FG-029 V1-03 BMR / supplier workflow architecture recording
 

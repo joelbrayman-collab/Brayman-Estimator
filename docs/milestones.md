@@ -43,7 +43,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Supplier price INFORM ONLY. No EstimateLineItem / FG-027 / Pricing mutation. ADR-008 remains Proposed. FG-010 remains door count. |
 | Open decisions | Live-migrate / UAT authorization; FG-028 Slice 3 asset; website |
 | Next milestone | **STOP.** Do **not** live-migrate. Do **not** populate live DEMO BMR data. V1 remains **45% / 2 of 11**. |
-| Commit | Product SHA pending pin after this commit. |
+| Commit | Product **`ee578dcb5a688842ebedaff0682131826e6c7188`**. Pin follows. |
 
 ### 2026-09-09 — FG-029 V1-03 BMR / supplier workflow architecture recording
 

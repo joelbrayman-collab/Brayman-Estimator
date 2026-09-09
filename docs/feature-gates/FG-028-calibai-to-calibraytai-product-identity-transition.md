@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-028 is the governing identifier. Do **not** assign a new M0xx number. Do **not** score V1 package completion from this gate. |
 | Module | Platform product identity. No new module. Does **not** take ownership of Organization Brand Profile, Estimating, Permit Intelligence records, or Field capture records. |
 | Date | 2026-09-09 |
-| Status | **SLICES 1–2 IMPLEMENTED / TESTED / COMMITTED / PUSHED. SLICE 3 ASSET INSTALLATION PENDING. NOT CLOSED.** Live current = heads **`a5b6c7d8e9f0`**. [ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted**. |
+| Status | **SLICES 1–2 IMPLEMENTED / TESTED / COMMITTED / PUSHED. SLICE 3 ASSET INSTALLATION PENDING. NOT CLOSED.** Product SHA **`e06fa92c4543ae641ba5067b1d277af048d97139`**. Live current = heads **`a5b6c7d8e9f0`**. [ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted**. |
 | Architecture | [ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted** · [product-identity.md](../governance/product-identity.md) · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) · [ADR-040](../adr/ADR-040-organization-brand-profile.md) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 | Related ADRs | **[ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) Accepted**. Do **not** accept ADR-008 or ADR-010 from this gate. |
 | Prerequisites | FG-027 **CLOSED / OPERATIONAL FOR UAT**. Product-identity reconnaissance complete (2026-09-08). |

@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Slice 3 Joel-approved lettering asset. Website **EXTERNAL / PENDING**. Field PNG remains Brayman Construction until Slice 3. |
 | Next approved step | **STOP.** Do not begin V1-03. Do not install logo until Joel supplies asset. |
 | Next approved prompt | None until Joel/ChatGPT authorize Slice 3, website, or V1-03. |
-| Commit hash | (when available) |
+| Commit hash | `e06fa92c4543ae641ba5067b1d277af048d97139` |
 
 ### 2026-09-08 — V1-02 / FG-027 bounded office UAT continuation + close
 

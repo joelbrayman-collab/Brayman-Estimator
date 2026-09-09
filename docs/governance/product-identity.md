@@ -36,7 +36,7 @@ Historical references to CalibAi remain valid historical truth.
 | Decision | Joel selected CalibraytAI on 2026-09-08; implementation authorized 2026-09-09 |
 | Feature Gate | [FG-028](../feature-gates/FG-028-calibai-to-calibraytai-product-identity-transition.md) |
 | ADR | [ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) |
-| Product commit SHA | *Pinned after the Slices 1–2 commit.* |
+| Product commit SHA | `e06fa92c4543ae641ba5067b1d277af048d97139` (`feat: transition current product identity to CalibraytAI`) |
 | Schema / Alembic | **None.** Live current remains heads `a5b6c7d8e9f0`. |
 
 ## Historical rule

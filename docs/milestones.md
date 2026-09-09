@@ -43,7 +43,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Four identities remain distinct. Field PNG/title conflation held for Slice 3. |
 | Open decisions | Joel-approved CalibraytAI lettering asset; external website pass |
 | Next milestone | **STOP.** V1-03 **NOT STARTED**. V1 remains **45% / 2 of 11**. |
-| Date | 2026-09-09 |
+| Commit | `e06fa92c4543ae641ba5067b1d277af048d97139` |
 
 ### 2026-09-08 — V1-02 / FG-027 office UAT continuation + close
 

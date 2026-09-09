@@ -43,6 +43,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | No stored HYBRID. Clone conservative reconfirmation (`PROPOSED`/`DRAFT`, confirmation cleared). Uncited MANUAL/DEMO fail-closed via required estimate-line citation + confirmed CONTRACTOR_PURCHASED. |
 | Open decisions | Live migrate / office UAT / Slice B remain separately authorized. |
 | Next milestone | **STOP.** Do not live-migrate. Do not implement Slice B. Do not implement FG-030. Do not begin V1-04. |
+| Commit | Product **`54120608df98432b9be80faf8c2a3a08cdb5679c`**. Pin follows. |
 | Date | 2026-09-09 |
 
 ### 2026-09-09 — ADR-048 / FG-031 scope delivery routing architecture recording

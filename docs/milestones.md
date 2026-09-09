@@ -30,6 +30,34 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-09 — FG-029 post-UAT governance reconciliation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-029 / V1-03 close docs |
+| Status | **GOVERNANCE RECONCILED.** FG-029 **CLOSED / OPERATIONAL FOR UAT**. V1-03 **COMPLETE**. V1 **55% / 3 of 11**. FG-028 Slice 3 **APPLICATION INSTALLATION / TEST / ACCEPTANCE PENDING / NOT CLOSED**. FG-030 **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. Copyable-output rule preserved. |
+| Branch | `main` |
+| Objective | Reconcile interleaved already-authorized governance dirt into one coherent current-authority state. |
+| Deliverables | FG-029 close/UAT authority; FG-028 asset-status; FG-030 architecture recording; `.cursor/rules/50-chat-copyable-output.mdc` preserved; UAT record. |
+| Validation | Docs/governance only. Product tests **NOT RERUN**. Historical FG-029 dedicated **16** / governed **210** / full **677**. `git diff --check` clean. No `app/` / `tests/` / `migrations/` changes. Live current remains `b6c7d8e9f0a1`. |
+| Open decisions | FG-028 Slice 3 application installation. FG-030 implementation. V1-04. SCOPE DELIVERY / MAKE-BUY architecture. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. |
+| Date | 2026-09-09 |
+
+### 2026-09-09 — FG-029 live migration + bounded BMR demo office UAT
+
+| Field | Content |
+|-------|---------|
+| ID | FG-029 / V1-03 |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** Live-migrated. Bounded DEMO Winchester UAT **PASS**. Subsequent governance reconciliation committed the close docs. |
+| Branch | `main` |
+| Objective | Apply `b6c7d8e9f0a1` live and exercise the governed supplier workflow on labeled DEMO/SYNTHETIC data only. |
+| Deliverables | Live current = head `b6c7d8e9f0a1`. Project **id 14** `FG029-UAT-BMR-DEMO`. Issued package **id 1**. HTML+PDF. Non-floating freeze. V1-03 **COMPLETE**. Readiness **55%**. |
+| Validation | UAT PASS. Product tests **not** rerun (HISTORICAL dedicated 16 / governed 210 / full 677). |
+| Open decisions | FG-028 Slice 3 application installation. FG-030 implementation. V1-04. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. |
+| Date | 2026-09-09 |
+
 ### 2026-09-09 — FG-029 V1-03 BMR / supplier workflow product implementation
 
 | Field | Content |

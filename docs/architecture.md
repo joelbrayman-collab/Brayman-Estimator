@@ -42,7 +42,7 @@ From [`app/__init__.py`](../app/__init__.py):
 | `api_v1_bp` | `app/routes/api_v1.py` |
 | `build_bp` | `app/routes/build.py` |
 | `field_bp` | `app/routes/field.py` |
-| `supplier_package_bp` | `app/routes/supplier_package.py` — FG-029 Hub PRICE mapping review / Supplier Package (**not live-migrated**) |
+| `supplier_package_bp` | `app/routes/supplier_package.py` — FG-029 Hub PRICE mapping review / Supplier Package (**CLOSED / OPERATIONAL FOR UAT**) |
 
 Shell context: [`app/shell.py`](../app/shell.py). Navigation SSOT: [`app/navigation.py`](../app/navigation.py).
 
@@ -62,8 +62,8 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Plan Intelligence | `DrawingPackage`, `DrawingRevision`, `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `PlanScaleCalibration`, `PlanMeasurement`, `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem` | `app/plan_intelligence/models.py` |
 | Labour Engine | `LabourTask`, `LabourTaskMapping`, `ProductionRateStandard`, `DirectLabourCostRateStandard`, `LabourCalibrationCandidate`, `EstimateLabourSnapshot`, `LabourAuditEvent` | `app/models/labour_engine.py` |
 | BUILD | `FieldCaptureEvent`, `FieldCaptureOriginal`, `FieldCaptureDerivedCandidate` | `app/models/build.py` — FG-020 **CLOSED / OPERATIONAL FOR UAT** |
-| Material Catalogue | `CanonicalMaterial`, `MaterialRequirement` | `app/models/canonical_material.py`; `app/models/material_requirement.py` (FG-029; **not live-migrated**) |
-| Supplier Catalogue | `Supplier`, `SupplierLocation`, `ContractorSupplierAccount`, `SupplierProduct`, price/availability evidence, maps, `SupplierPackage` / lines | `app/models/supplier_catalogue.py` (FG-029; inform-only price; **not live-migrated**) |
+| Material Catalogue | `CanonicalMaterial`, `MaterialRequirement` | `app/models/canonical_material.py`; `app/models/material_requirement.py` (FG-029; **CLOSED / OPERATIONAL FOR UAT**) |
+| Supplier Catalogue | `Supplier`, `SupplierLocation`, `ContractorSupplierAccount`, `SupplierProduct`, price/availability evidence, maps, `SupplierPackage` / lines | `app/models/supplier_catalogue.py` (FG-029; inform-only price; **CLOSED / OPERATIONAL FOR UAT**) |
 | Pricing Engine | `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent` | `app/models/pricing_engine.py` |
 
 Notable behaviours evidenced in code/tests:
@@ -93,7 +93,7 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic **repository** graph head: **`b6c7d8e9f0a1`** (FG-029 file). Live development/UAT `flask db current`: **`a5b6c7d8e9f0`**. Live current **does not equal** repository head until a separately authorized live migrate. Verify `flask db current` per environment before relying on it.
+- Alembic **repository** graph head: **`b6c7d8e9f0a1`** (FG-029). Live development/UAT `flask db current`: **`b6c7d8e9f0a1`**. Live current **equals** repository head. Verify `flask db current` per environment before relying on it.
 
 ### Tests
 
@@ -158,7 +158,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
 - [Plan Intelligence and Automated Take-Off](architecture/plan-intelligence-and-automated-takeoff.md) — Phases A–M010 **Current**; Phase **C** AI take-off foundation **operational for UAT** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**); Phase D [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**; Phases E–G future
 - [Material Catalogue](architecture/material-catalogue-architecture.md) — **Partial Current** / [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-034](adr/ADR-034-canonical-material-identity-and-ownership.md) / [ADR-035](adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) / [ADR-036](adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**. Living supplier evidence is **not** the identity row. `CostItem` is **not** canonical material.
-- [Supplier Catalogue, Inventory and Pricing](architecture/supplier-catalogue-inventory-pricing.md) — Phases E–F **Future** (what a supplier sells; maps **to** Material Catalogue; does **not** own CalibraytAI identity). **Governed bulk onboarding** is a **FUTURE / NOT IMPLEMENTED** pin. V1-03 [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**.
+- [Supplier Catalogue, Inventory and Pricing](architecture/supplier-catalogue-inventory-pricing.md) — Phases E–F **Future** (what a supplier sells; maps **to** Material Catalogue; does **not** own CalibraytAI identity). **Governed bulk onboarding** is a **FUTURE / NOT IMPLEMENTED** pin. V1-03 [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. Supplier named-user isolation [FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; [ADR-047](adr/ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only).
 - [Supplier Channel and Launch-Partner Model](architecture/supplier-channel-and-launch-partner.md) — **Future**; [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (Winchester launch/reference, supplier-neutral, dual relationships; **not implemented**)
 - Procurement / purchase-order preparation (nav placeholder only today)
 
@@ -179,7 +179,7 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 - Electronic signature / formal proposal acceptance workflows
 - CAD ingestion (Phase G; PDF-first per ADR-009)
 - Estimate mapping from approved take-off packages — [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** (not FG-010). V1-02 costing — [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**.
-- Living supplier evidence / Winchester POC / bulk supplier onboarding (FG-014 identity is closed; [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; ADR-008 remains Proposed)
+- Living supplier evidence / Winchester POC / bulk supplier onboarding (FG-014 identity is closed; [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) supplier login **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; ADR-008 remains Proposed)
 - Permit branding from Brand Profile; national Permit Rules expansion (FG-015/FG-016 POC is closed)
 - Change Order governed document family / client email / field UX — [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (do not create a second Change Order entity)
 - Authentication / actor identity + shared API (sequence item 10 **COMPLETE** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**)

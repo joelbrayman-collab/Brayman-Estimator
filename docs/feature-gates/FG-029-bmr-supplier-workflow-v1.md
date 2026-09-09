@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-029 is the governing identifier. Do **not** assign a new M0xx number. V1 package **V1-03** in [v1-completion-register.md](../v1-completion-register.md). |
 | Module | **Supplier Catalogue** owns supplier/location/product/mapping/package. **Material Catalogue** owns `CanonicalMaterial` and thin `MaterialRequirement`. Plan Intelligence and Estimating **do not** take supplier SKU ownership. |
 | Date | 2026-09-09 |
-| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED.** ADR-008 remains **Proposed**. Live current remains **`a5b6c7d8e9f0`**. Repository Alembic head **`b6c7d8e9f0a1`**. V1-03 is **not COMPLETE**. |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / BOUNDED BMR DEMO OFFICE UAT PASS.** ADR-008 remains **Proposed**. Live current = repository head **`b6c7d8e9f0a1`**. V1-03 is **COMPLETE**. |
 | Architecture | [fg-029-bmr-supplier-workflow-v1-preflight.md](../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md) · [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted** · [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** · [ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) **Accepted** · [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) **Accepted** · [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) **Proposed** · [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted** · [supplier-channel-and-launch-partner.md](../architecture/supplier-channel-and-launch-partner.md) · [supplier-catalogue-inventory-pricing.md](../architecture/supplier-catalogue-inventory-pricing.md) · [material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) |
 | Related ADRs | **[ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) Accepted.** Do **not** accept ADR-008 or ADR-010 from this gate. |
 | Prerequisites | FG-014 **CLOSED / OPERATIONAL FOR UAT**. FG-026 **CLOSED / OPERATIONAL FOR UAT**. FG-027 **CLOSED / OPERATIONAL FOR UAT**. [FG-028](FG-028-calibai-to-calibraytai-product-identity-transition.md) Slice 3 logo hold **does not block** this recording. |
@@ -18,32 +18,40 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED / TESTED / COMMITTED / PUSHED.** **NOT LIVE-MIGRATED.** **UAT NOT AUTHORIZED.** **NOT CLOSED.** |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT.** |
 | Architecture preflight | **COMPLETE** |
 | Product code / models | **Yes.** `MaterialRequirement`; Supplier Catalogue models/services; Hub PRICE mapping review; HTML + PDF |
-| Schema / Alembic | Migration **file** `b6c7d8e9f0a1` (`down_revision` `a5b6c7d8e9f0`) **created, not applied live** |
-| Live DB / demo seed | **None.** Live current remains `a5b6c7d8e9f0`. No live DEMO BMR seed |
+| Schema / Alembic | Migration `b6c7d8e9f0a1` (`down_revision` `a5b6c7d8e9f0`) **applied live** 2026-09-09 |
+| Live DB / demo seed | Bounded labeled DEMO/SYNTHETIC UAT only. Project **id 14** `FG029-UAT-BMR-DEMO`. Not a live BMR account. |
 | ADR-008 | **Proposed** (unchanged) |
 
 ```text
 FG-029:
+CLOSED / OPERATIONAL FOR UAT
 IMPLEMENTED
 TESTED
 COMMITTED
 PUSHED
-NOT LIVE-MIGRATED
-UAT NOT AUTHORIZED
-NOT CLOSED
+LIVE-MIGRATED
+BOUNDED BMR DEMO OFFICE UAT PASS
 ADR-046 ACCEPTED
 ADR-008 REMAINS PROPOSED
-REPOSITORY ALEMBIC HEAD b6c7d8e9f0a1
-LIVE CURRENT a5b6c7d8e9f0
-NO LIVE DB MUTATION
-V1 REMAINS 45% / 2 OF 11
-FG-028 UNCHANGED (SLICE 3 HELD)
+LIVE CURRENT = HEAD b6c7d8e9f0a1
+V1-03 COMPLETE
+V1 READINESS 55% / 3 OF 11
+BMR DEMO READY NO
+BRAYMAN REAL-LIFE UAT READY NO
+FG-028 UNCHANGED (SLICE 3 APPLICATION INSTALLATION / TEST / ACCEPTANCE PENDING)
+FG-030 UNCHANGED (NOT IMPLEMENTATION-AUTHORIZED)
 ```
 
-Joel/ChatGPT authorized FG-029 product implementation on **2026-09-09**. Close requires a separately authorized live-migrate / UAT package. Do **not** mark CLOSED, OPERATIONAL FOR UAT, LIVE-MIGRATED, or V1-03 COMPLETE.
+UAT evidence: [fg029-live-migrate-bounded-uat-record.md](../testing/fg029-live-migrate-bounded-uat-record.md).
+
+**Subsequent status (2026-09-09 FG-028 Slice 3 asset):** FG-028 Slice 3 is **ASSET RECEIVED / JOEL APPROVED / FINAL / APPLICATION INSTALLATION / TEST / ACCEPTANCE PENDING**. That does **not** change FG-029. Slice 3 was **not** installed during this UAT.
+
+**Subsequent status (2026-09-09 FG-030):** Supplier named-user login / workspace is [FG-030](FG-030-supplier-identity-authentication-and-access-isolation.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. FG-029 answer 2 remains: this gate is **not** a supplier portal. HTML/PDF delivery is unchanged. FG-030 was **not** implemented during this live-migrate / UAT.
+
+**Subsequent status (2026-09-09 live migrate + UAT):** Joel/ChatGPT authorized live migration + bounded BMR demo office UAT. **PASS.** Gate **CLOSED / OPERATIONAL FOR UAT**. V1-03 **COMPLETE**.
 
 ---
 
@@ -122,7 +130,7 @@ Do **not** populate the database in this recording.
 
 | Track | V1-03 bar | After this recording |
 |-------|-----------|----------------------|
-| BMR DEMO V1 | Requirement → DEMO mapping → frozen package → HTML/PDF | **NO** (code exists; **not** live-migrated; **UAT not authorized**) |
+| BMR DEMO V1 | Requirement → DEMO mapping → frozen package → HTML/PDF | **YES for this V1-03 slice** (live-migrated; bounded DEMO Winchester UAT **PASS**). Register **BMR DEMO READY** remains **NO** (fail-closed/Ontario contract story still missing). |
 | Brayman real-life UAT | Manual/synthetic supplier workflow is enough; live BMR **not** required | Still **NO** (V1-10 / legal / V1-11 remain) |
 
 Register §10.2 still requires a fail-closed or Ontario contract story for **BMR DEMO READY**. V1-03 architecture recording does **not** flip that flag.
@@ -131,4 +139,4 @@ Register §10.2 still requires a fail-closed or Ontario contract story for **BMR
 
 ## Non-goals
 
-ADR-008 acceptance · live ordering · PLAN mutation · costing/pricing mutation · FG-028 close · V1 rescore · live migrate / UAT from this implementation · V1-03 COMPLETE
+ADR-008 acceptance · live ordering · PLAN mutation · costing/pricing mutation · FG-028 close · FG-030 implementation · live BMR API / EDI / PO

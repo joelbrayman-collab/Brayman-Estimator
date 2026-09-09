@@ -5,7 +5,7 @@
 | Status | **Future architecture** (direction accepted; **not implemented**) |
 | Updated | 2026-08-30 |
 | Related | [supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) · [material-catalogue-architecture.md](material-catalogue-architecture.md) · [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) · [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) · [platform-roadmap.md](../platform-roadmap.md) Phases E–F |
-| Implementation | [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) is **IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED**. Live BMR API, EDI, live DEMO seed, and channel partnership B remain **not authorized**. |
+| Implementation | [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-030](../feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) supplier login is **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. Live BMR API, EDI, live DEMO seed, and channel partnership B remain **not authorized**. |
 
 **Current vs future:** Today the app has only an optional free-text `CostItem.supplier` string. There is **no** supplier entity, catalogue, inventory API, EDI, purchase-order module, channel-partner record, or Darcy/BMR commercial participation. Nothing below is claimed as implemented.
 

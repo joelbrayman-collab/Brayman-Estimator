@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **COMPLETE.** FG-029 product is **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED** (2026-09-09) |
+| Status | **COMPLETE.** Subsequent: FG-029 is **CLOSED / OPERATIONAL FOR UAT** (live-migrated; bounded BMR demo office UAT **PASS**, 2026-09-09). |
 | Date | 2026-09-09 |
 | Gate | [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) |
 | ADR | [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted** |

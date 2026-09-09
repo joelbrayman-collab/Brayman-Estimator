@@ -37,7 +37,7 @@ Historical references to CalibAi remain valid historical truth.
 | Feature Gate | [FG-028](../feature-gates/FG-028-calibai-to-calibraytai-product-identity-transition.md) |
 | ADR | [ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) |
 | Product commit SHA | `e06fa92c4543ae641ba5067b1d277af048d97139` (`feat: transition current product identity to CalibraytAI`) |
-| Schema / Alembic | **None.** Live current remains heads `a5b6c7d8e9f0`. |
+| Schema / Alembic | **None.** Live current = heads `b6c7d8e9f0a1` (FG-029; this identity gate has no migration). |
 
 ## Historical rule
 
@@ -73,17 +73,19 @@ Brayman Construction identity is separate. Do **not** replace `Brayman Construct
 | Stored `permit_findings.advisory_language` | **Frozen.** Do not UPDATE for branding. |
 | Proposal / Change Order | Tenant / Brand Profile / `Brayman Construction Platform` **unchanged**. |
 
-## Visual asset (Slice 3 — held)
+## Visual asset (Slice 3 — received / not installed)
 
-Joel will supply an approved CalibraytAI lettering asset. Design retained: same emblem, colours, layout; **only** lettering CalibAi → CalibraytAI.
+Joel-approved final package **`CalibraytAI_090926_Final.zip`** is on the Desktop (SHA-256 `2328333b67a3cece1e0e251276d96bbcf83b9589f6dfe55440be11819e6b8cde`). Variants **V1** (dark / navy backgrounds) and **V2** (light / white backgrounds). Formats: AI, EPS, JPG, PDF, PNG, PSD, SVG. These assets are **FINAL**. Do **not** redesign, regenerate, recolour, retype, reconstruct, change emblem, change proportions, or change the PLAN • PRICE • BUILD lockup.
 
-Until that asset is installed, Field **text** is CalibraytAI while the header/favicon may continue to use `app/static/branding/brayman-construction-logo.png`. That is a **temporary known identity/asset conflation**, not a Brand Profile change.
+**APPLICATION INSTALLATION / TEST / ACCEPTANCE PENDING.** Do **not** install from this reconciliation. Slice 3 installation requires a separate bounded prompt. The package is **FINAL** and already received.
+
+Until installed, Field **text** is CalibraytAI while the header/favicon may continue to use `app/static/branding/brayman-construction-logo.png`. That is a **temporary known identity/asset conflation**, not a Brand Profile change.
 
 ## Website
 
-**WEBSITE PRODUCT-IDENTITY TRANSITION: EXTERNAL / PENDING SEPARATE JOEL-CHATGPT PASS.**
+**WEBSITE (EXTERNAL / NOT THIS REPOSITORY):** Version 15 CalibraytAI identity is published; live QA **PASS**. Supplier Integration is a separate Work stream; Phase 2 outstanding/in progress outside this repo. Future universal website Log In gateway is **not implemented**. Hosting migration chatgpt.site → HostPapa is **QUEUED POST-BETA**. No redesign during hosting migration.
 
-Marketing website source is outside this repository. This document does **not** authorize website implementation, publish, or deploy.
+This document does **not** authorize website source changes, republish, or HostPapa migration from Cursor.
 
 ## Related
 

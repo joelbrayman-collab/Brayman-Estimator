@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-028 is the governing identifier. Do **not** assign a new M0xx number. Do **not** score V1 package completion from this gate. |
 | Module | Platform product identity. No new module. Does **not** take ownership of Organization Brand Profile, Estimating, Permit Intelligence records, or Field capture records. |
 | Date | 2026-09-09 |
-| Status | **SLICES 1–2 IMPLEMENTED / TESTED / COMMITTED / PUSHED. SLICE 3 ASSET INSTALLATION PENDING. NOT CLOSED.** Product SHA **`e06fa92c4543ae641ba5067b1d277af048d97139`**. Live current = heads **`a5b6c7d8e9f0`**. [ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted**. |
+| Status | **SLICES 1–2 IMPLEMENTED / TESTED / COMMITTED / PUSHED. SLICE 3 ASSET RECEIVED / JOEL APPROVED / FINAL / APPLICATION INSTALLATION / TEST / ACCEPTANCE PENDING. NOT CLOSED.** Product SHA **`e06fa92c4543ae641ba5067b1d277af048d97139`**. Live current = heads **`b6c7d8e9f0a1`** (FG-029 applied; this gate has no migration). [ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted**. Do **not** install from this reconciliation. |
 | Architecture | [ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted** · [product-identity.md](../governance/product-identity.md) · [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) · [ADR-040](../adr/ADR-040-organization-brand-profile.md) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 | Related ADRs | **[ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) Accepted**. Do **not** accept ADR-008 or ADR-010 from this gate. |
 | Prerequisites | FG-027 **CLOSED / OPERATIONAL FOR UAT**. Product-identity reconnaissance complete (2026-09-08). |
@@ -18,25 +18,26 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **NOT CLOSED.** Slices 1–2 **IMPLEMENTED / TESTED / COMMITTED / PUSHED**. Slice 3 **PENDING**. |
+| Feature Gate (this document) | **NOT CLOSED.** Slices 1–2 **IMPLEMENTED / TESTED / COMMITTED / PUSHED**. Slice 3 **ASSET RECEIVED / JOEL APPROVED / FINAL / APPLICATION INSTALLATION / TEST / ACCEPTANCE PENDING**. |
 | Slice 1 — visible product text + tests | **IMPLEMENTED** |
 | Slice 2 — current authority + future-facing docs | **IMPLEMENTED** |
-| Slice 3 — Joel-approved lettering asset | **HELD / JOEL ASSET PENDING** |
-| Website | **EXTERNAL / PENDING SEPARATE JOEL-CHATGPT PASS** |
-| Schema / Alembic | **None.** Live current = heads **`a5b6c7d8e9f0`**. |
+| Slice 3 — Joel-approved lettering asset | **ASSET RECEIVED / JOEL APPROVED / FINAL.** Package `CalibraytAI_090926_Final.zip`. **APPLICATION INSTALLATION / TEST / ACCEPTANCE PENDING.** Do **not** install from this reconciliation. |
+| Website | **EXTERNAL.** Version 15 CalibraytAI identity published / live QA PASS (not this repository). Supplier Integration Phase 2 is a separate Work stream. Universal website Log In gateway **not implemented**. Hosting migration chatgpt.site → HostPapa **QUEUED POST-BETA**. |
+| Schema / Alembic | **None.** Live current = heads **`b6c7d8e9f0a1`**. |
 | Live DB mutation | **None.** |
 
 ```text
 FG-028:
 SLICES 1–2 IMPLEMENTED / TESTED / COMMITTED / PUSHED
-SLICE 3 ASSET INSTALLATION PENDING
+SLICE 3 ASSET RECEIVED / JOEL APPROVED / FINAL
+APPLICATION INSTALLATION / TEST / ACCEPTANCE PENDING
 NOT CLOSED
 ADR-045 ACCEPTED
-LIVE CURRENT = HEADS a5b6c7d8e9f0
+LIVE CURRENT = HEADS b6c7d8e9f0a1
 NO SCHEMA MIGRATION
 NO LIVE DB MUTATION
-V1 REMAINS 45% / 2 OF 11
-DO NOT BEGIN V1-03 FROM THIS GATE
+V1 55% / 3 OF 11 (FG-029 CLOSED; THIS GATE DOES NOT RESCORE V1)
+DO NOT INSTALL SLICE 3 FROM THIS RECONCILIATION
 ```
 
 Do **not** mark CLOSED while required logo/product-asset acceptance remains open.
@@ -91,11 +92,24 @@ Transition **current** product identity from CalibAi to **CalibraytAI** without 
 
 ---
 
-## Slice 3 (held)
+## Slice 3 (asset received / application installation pending)
 
-Joel-approved CalibraytAI lettering asset is **not** in this implementation. Same emblem, colours, layout; lettering only. Field may continue using `branding/brayman-construction-logo.png` until Slice 3.
+Joel-approved CalibraytAI final logo package is **received**. It is **FINAL**. It is **not installed**. **APPLICATION INSTALLATION / TEST / ACCEPTANCE PENDING.** Do **not** install from this reconciliation. Bounded Slice 3 installation + tests + close requires a **separate** Cursor prompt. The asset is **not** awaiting receipt.
 
-Temporary known identity/asset conflation: Field **text** CalibraytAI + Brayman Construction **PNG**.
+| Field | Value |
+|-------|--------|
+| Package | `CalibraytAI_090926_Final.zip` |
+| Path (outside Git) | `/Users/joelbrayman/Desktop/CalibraytAI_090926_Final.zip` |
+| Size | 17,666,994 bytes |
+| SHA-256 | `2328333b67a3cece1e0e251276d96bbcf83b9589f6dfe55440be11819e6b8cde` |
+| Inventory (listed, not extracted into the app) | `V1 LOGO/` and `V2 LOGO/`, each with `.ai` `.eps` `.jpg` `.pdf` `.png` `.psd` `.svg` |
+
+Approved variants (final; do **not** redesign, regenerate, recolour, retype, reconstruct, change emblem, change proportions, or change the PLAN • PRICE • BUILD lockup):
+
+- **V1 LOGO** — use on dark / navy backgrounds: white Calibrayt lettering + gold Ai
+- **V2 LOGO** — use on light / white backgrounds: dark navy Calibrayt lettering + gold Ai
+
+Field may continue using `branding/brayman-construction-logo.png` until Slice 3 installation. Temporary known identity/asset conflation remains: Field **text** CalibraytAI + Brayman Construction **PNG**.
 
 ---
 

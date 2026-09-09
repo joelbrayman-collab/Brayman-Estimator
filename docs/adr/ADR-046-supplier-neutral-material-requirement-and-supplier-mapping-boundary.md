@@ -3,11 +3,11 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-046: Supplier-Neutral Material Requirement and Supplier Mapping Boundary |
-| Status | **Accepted.** FG-029 product is **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED**. ADR-008 remains **Proposed**. |
+| Status | **Accepted.** FG-029 is **CLOSED / OPERATIONAL FOR UAT** (live-migrated; bounded BMR demo office UAT **PASS**). ADR-008 remains **Proposed**. |
 | Date | 2026-09-09 |
 | Related | [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) · [fg-029-bmr-supplier-workflow-v1-preflight.md](../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md) · [ADR-033](ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** · [ADR-034](ADR-034-canonical-material-identity-and-ownership.md) **Accepted** · [ADR-035](ADR-035-material-quantity-uom-and-requirement-boundary.md) **Accepted** · [ADR-036](ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** · [ADR-008](ADR-008-supplier-price-snapshotting.md) **Proposed** · [ADR-044](ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted** · [ADR-006](ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-024](ADR-024-learn-recommendation-boundary.md) **Accepted** |
 
-This ADR authorizes the **V1-03 ownership and commercial boundary**. [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) product implementation is **in repository** and **not live-migrated**. This ADR still does **not** authorize live database writes, synthetic live DEMO BMR population, a live BMR API, or acceptance of [ADR-008](ADR-008-supplier-price-snapshotting.md).
+This ADR authorizes the **V1-03 ownership and commercial boundary**. [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. This ADR still does **not** authorize a live BMR API or acceptance of [ADR-008](ADR-008-supplier-price-snapshotting.md).
 
 ---
 

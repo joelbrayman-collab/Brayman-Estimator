@@ -2,10 +2,10 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Current (partial)** — [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED** |
+| Status | **Current (partial)** — [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
 | Updated | 2026-09-09 |
 | Code | `app/models/supplier_catalogue.py`, `app/services/supplier_catalogue.py`, `app/services/supplier_package_pdf.py`, `app/routes/supplier_package.py`, Hub PRICE `/projects/<id>/supplier-package` |
-| Architecture | [../architecture/supplier-catalogue-inventory-pricing.md](../architecture/supplier-catalogue-inventory-pricing.md) · [../architecture/supplier-channel-and-launch-partner.md](../architecture/supplier-channel-and-launch-partner.md) · [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) · [../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md](../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md) |
+| Architecture | [../architecture/supplier-catalogue-inventory-pricing.md](../architecture/supplier-catalogue-inventory-pricing.md) · [../architecture/supplier-channel-and-launch-partner.md](../architecture/supplier-channel-and-launch-partner.md) · [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) · [../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md](../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md) · [../architecture/fg-030-supplier-identity-and-access-isolation.md](../architecture/fg-030-supplier-identity-and-access-isolation.md) |
 
 ## Purpose
 
@@ -13,9 +13,11 @@ Own supplier identity, dealer SKUs, human-reviewed mapping, living inform-only p
 
 ## Owned data (FG-029)
 
-`suppliers`, `supplier_locations`, `contractor_supplier_accounts`, `supplier_products`, `supplier_product_price_evidence`, `supplier_product_availability_evidence`, `canonical_material_supplier_maps`, `supplier_requirement_maps`, `supplier_packages`, `supplier_package_lines`. Additive migration **file** `b6c7d8e9f0a1` — **not applied live**.
+`suppliers`, `supplier_locations`, `contractor_supplier_accounts`, `supplier_products`, `supplier_product_price_evidence`, `supplier_product_availability_evidence`, `canonical_material_supplier_maps`, `supplier_requirement_maps`, `supplier_packages`, `supplier_package_lines`. Additive migration **`b6c7d8e9f0a1` applied live**.
 
 This module does **not** own CalibraytAI canonical material identity or thin `MaterialRequirement` (Material Catalogue).
+
+Supplier named-user login, SupplierUserMembership, package sharing, and supplier workspace are [FG-030](../feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. [ADR-047](../adr/ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only). This module will own those records **when implemented**. They do **not** exist in product code today.
 
 ## Referenced data
 
@@ -36,4 +38,4 @@ Canonical materials and project `MaterialRequirement` (Material Catalogue); `org
 
 ## Relevant ADRs
 
-ADR-008, ADR-010 (Proposed). **ADR-033, ADR-034, ADR-035, ADR-036, ADR-046 Accepted**. This module does not own CalibraytAI identity.
+ADR-008, ADR-010 (Proposed). **ADR-033, ADR-034, ADR-035, ADR-036, ADR-046, ADR-047 Accepted**. This module does not own CalibraytAI identity. FG-030 is architecture only.

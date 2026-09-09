@@ -9,6 +9,8 @@
 
 **Current status (2026-09-02):** Office authentication is **CLOSED / OPERATIONAL FOR UAT** ([FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md)). Shared API Foundation V1 is **CLOSED / OPERATIONAL FOR UAT** ([FG-019](../feature-gates/FG-019-shared-api-foundation-v1.md)). Roadmap item 10 is **COMPLETE**. [ADR-042](ADR-042-build-field-evidence-and-iphone-first-capture.md) is **Accepted**. [FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) is **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT PENDING**. This ADR’s Decision is unchanged.
 
+**Subsequent status (2026-09-09 FG-030 — not authorized by this ADR):** [ADR-047](ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only). Supplier named-users remain the same durable `User`. They must **not** receive contractor `UserMembership`. Supplier vs contractor is a **principal class / workspace**, not V1 office RBAC. [FG-030](../feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) is **NOT IMPLEMENTATION-AUTHORIZED**. This ADR’s Decision 1–4 for contractor office remains unchanged.
+
 ---
 
 ## Problem

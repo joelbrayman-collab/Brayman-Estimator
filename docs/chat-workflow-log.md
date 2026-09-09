@@ -43,6 +43,102 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-09 — FG-029 post-UAT governance reconciliation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-09 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Reconcile interleaved already-authorized governance dirt into one coherent current-authority state after FG-029 live migrate + bounded UAT PASS. |
+| Business decision | One governance commit containing FG-029 close/UAT authority, FG-028 asset-status, FG-030 architecture recording, and previously authorized copyable-output rule. Push `main`. Bounded SHA-pin if convention requires. No product code. No logo install. No FG-030 implementation. |
+| Architectural decision | FG-029 **CLOSED / OPERATIONAL FOR UAT**. V1-03 **COMPLETE**. V1 **55% / 3 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. FG-028 Slice 3 **ASSET RECEIVED / JOEL APPROVED / FINAL / APPLICATION INSTALLATION / TEST / ACCEPTANCE PENDING / NOT CLOSED**. ADR-047 **Accepted** (architecture only). FG-030 **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. ADR-008 remains **Proposed**. SCOPE DELIVERY / MAKE-BUY routing **QUEUED** only. Website Version 15 published / live QA PASS (external). HostPapa **QUEUED POST-BETA**. |
+| Prompt template used | Joel/ChatGPT FG-029 post-UAT governance reconciliation (9 Sep 2026) |
+| Approved Cursor prompt summary | Docs/governance only. Preserve FG-028 / FG-030 / copyable-output. One coherent commit. Push main. Do not install logos. Do not implement FG-030. Do not begin V1-04. |
+| Files expected to change | Governance/current-authority docs + `.cursor/rules/50-chat-copyable-output.mdc` (preserved) + UAT record |
+| Files prohibited from changing | Product code; tests; models; templates; Alembic; live DB; logo assets; website source |
+| Implementation result | Governance reconciled. Product tree unchanged. Live Alembic remains `b6c7d8e9f0a1`. |
+| Tests | **NOT RERUN** — docs/governance reconciliation only. Historical FG-029 dedicated **16** / governed **210** / full **677**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | FG-028 Slice 3 application installation pending. FG-030 not implementation-authorized. V1-04 not begun. SCOPE DELIVERY / MAKE-BUY not implemented. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | None from this reconciliation. FG-028 Slice 3 / FG-030 / V1-04 require separate authorization. |
+| Commit hash | (this reconciliation commit) |
+
+### 2026-09-09 — FG-029 live migration + bounded BMR demo office UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-09 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Authorized FG-029 live migrate + bounded DEMO Winchester office UAT. Preserve existing FG-028 / FG-030 / copyable-output dirt. |
+| Business decision | Live-migrate `a5b6c7d8e9f0` → `b6c7d8e9f0a1`. Create labeled DEMO/SYNTHETIC UAT only. Close FG-029 if all criteria PASS. Do not install FG-028 logos. Do not implement FG-030. |
+| Architectural decision | Additive schema only. Supplier price INFORM ONLY. Frozen issued package does not float. No EstimateLineItem / costing / Pricing mutation. No PLAN mutation. No BMR HTTP/EDI/PO. ADR-008 remains Proposed. |
+| Prompt template used | Joel/ChatGPT FG-029 live-migrate / UAT prompt (9 Sep 2026) |
+| Approved Cursor prompt summary | Resume live migration + bounded BMR demo office UAT. Preserve existing governance dirt. Do not run FG-028. Do not implement FG-030. |
+| Files expected to change | Live DB (gitignored) + minimum FG-029 close/current-authority docs |
+| Files prohibited from changing | Product code; FG-028 logo install; FG-030 implementation; discarding unrelated dirt |
+| Implementation result | Migration **PASS**. UAT **PASS**. Project **id 14**. Package **id 1** ISSUED. V1-03 **COMPLETE**. Readiness **55%**. BMR DEMO READY **NO**. Close-doc Git commit **blocked** by interleaved FG-028/FG-030 dirt. |
+| Tests | **NOT RERUN**. Historical FG-029 dedicated **16** / governed **210** / full **677**. |
+| Project-state-report update | Yes (working tree; not committed) |
+| Milestone entry update | Yes (working tree; not committed) |
+| Constitutional issue raised | None |
+| Unresolved issues | Close docs cannot be safely committed while FG-028/FG-030 dirt is interleaved in the same files. FG-028 Slice 3 installation pending. FG-030 not implementation-authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | None from this close. FG-028 Slice 3 / FG-030 / V1-04 require separate authorization. |
+| Commit hash | **none** — UAT PASS / CLOSE DOC COMMIT BLOCKED BY INTERLEAVED GOVERNANCE DIRT |
+
+### 2026-09-09 — FG-030 supplier identity / authentication / access isolation architecture
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-09 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Define and govern supplier named-user login, membership, sharing, isolation, workspace, and login routing. No implementation. |
+| Business decision | No supplier sees another supplier's commercial data or work product. No supplier receives unrestricted contractor-office access. Contractor costing/margins never supplier-visible. Share unit = issued Supplier Package. Website may link to one application login. |
+| Architectural decision | [ADR-047](adr/ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only). One `User`; principal classes CONTRACTOR vs SUPPLIER; SupplierUserMembership separate from `UserMembership`; V1 dual-hat fails closed; not office RBAC; not a 12th V1 package. ADR-008 remains **Proposed**. |
+| Prompt template used | Joel/ChatGPT define-and-govern brief (9 Sep 2026) |
+| Approved Cursor prompt summary | Record FG-030 + ADR-047; no product code; no migration; do not live-migrate FG-029; do not install FG-028 Slice 3; do not rescore V1 |
+| Files expected to change | Governance/current-authority docs only |
+| Files prohibited from changing | `app/`; `migrations/`; tests; live DB; website source; logos |
+| Implementation result | Docs recorded. FG-030 **NOT IMPLEMENTATION-AUTHORIZED**. **NOT IMPLEMENTED**. V1 remains **45% / 2 of 11**. |
+| Tests | **NOT RERUN** (docs-only). Historical FG-029 dedicated **16** / governed **210** / full **677**. |
+| Project-state-report update | Yes |
+| Milestone entry update | No (not a completed coded milestone) |
+| Constitutional issue raised | None |
+| Unresolved issues | FG-030 implementation not authorized. FG-029 live-migrate / UAT not authorized from this recording. FG-028 Slice 3 installation pending. Website **EXTERNAL**. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Next product action is FG-029 live migration + bounded BMR demo UAT after Joel’s explicit live-migrate authorization. Do **not** implement FG-030 from this recording. |
+| Next approved prompt | FG-029 live migration + bounded BMR demo office UAT (execute only after Joel explicitly authorizes). |
+| Commit hash | uncommitted docs at this recording |
+
+### 2026-09-09 — FG-028 Slice 3 asset received (installation pending)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-09 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Record Joel-approved CalibraytAI final logo package. No Slice 3 installation. No FG-029 live migrate from this prompt. |
+| Business decision | Package `CalibraytAI_090926_Final.zip` is FINAL. V1 for dark/navy (white Calibrayt + gold Ai). V2 for light/white (navy Calibrayt + gold Ai). AI/EPS/JPG/PDF/PNG/PSD/SVG. Do not redesign/regenerate/recolour/retype/reconstruct or change emblem, proportions, or PLAN • PRICE • BUILD lockup. |
+| Architectural decision | FG-028 Slice 3 = **ASSET RECEIVED / JOEL APPROVED / INSTALLATION PENDING / NOT CLOSED**. Do **not** install during FG-029 live migration / UAT. Installation is next after FG-029 reconciliation under a separate prompt. |
+| Prompt template used | FG-028 Slice 3 asset status update (9 Sep 2026) |
+| Approved Cursor prompt summary | Record asset received; do not install; do not live-migrate FG-029 from this prompt; return control after recording |
+| Files expected to change | Governance/current-authority docs only |
+| Files prohibited from changing | `app/`; `app/static/branding/`; migrations; tests; live DB; FG-029 product code; website |
+| Implementation result | Docs recorded. Zip listed/hashed **outside Git**. **Not extracted into the app.** FG-028 **NOT CLOSED**. V1 remains **45% / 2 of 11**. |
+| Tests | **NOT RERUN** (docs-only status; no product defect). Historical FG-028 dedicated **9** / focused **117** / full **661**. Historical FG-029 dedicated **16** / governed **210** / full **677**. |
+| Project-state-report update | Yes |
+| Milestone entry update | No (gate not closed; not a completed milestone) |
+| Constitutional issue raised | None |
+| Unresolved issues | Slice 3 installation pending. FG-029 live-migrate / UAT not authorized from this recording. Website **EXTERNAL / PENDING**. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Next product action is FG-029 live migration + bounded BMR demo UAT after Joel’s explicit live-migrate authorization. Do **not** install Slice 3 during that UAT. |
+| Next approved prompt | FG-029 live migration + bounded BMR demo office UAT (execute only after Joel explicitly authorizes). |
+| Commit hash | uncommitted docs at this recording |
+
 ### 2026-09-09 — FG-029 V1-03 BMR / supplier workflow product implementation
 
 | Field | Content |

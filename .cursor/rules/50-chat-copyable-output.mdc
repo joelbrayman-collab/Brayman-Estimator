@@ -1,17 +1,22 @@
 ---
-description: Put copyable chat output in a fenced block at the END of the reply so Cursor shows a copy control there
+description: Every assistant note ends with a fenced block so Cursor shows a copy control at the bottom
 alwaysApply: true
 ---
 
-# Copyable chat output
+# Copyable close on every note
 
 Cursor shows a copy control on fenced code blocks, not on ordinary prose. There is no separate copy-icon API.
 
-When the reply contains anything Joel may need to copy — paste-ready Cursor prompts, `prompt?` replies, emails, commands, paths, HEAD SHAs, Alembic revisions, report field blocks — put that content in a fenced code block.
+**Always** end every assistant note with a fenced code block as the last copyable content, so a copy control appears at the bottom of the note.
 
-**Put the primary copyable fence last among copyable blocks.** Brief context may go above. Do not put explanation, options, or follow-up questions after the fence, except the required CalibraytAI `END — <title>` line below.
+Do this on every reply, including short acknowledgements, STOP holds, and questions. Do not leave a note that ends only in prose.
 
-If several things are copyable, the fence Joel is meant to copy now (usually the full prompt) is the last **copyable** block in the reply.
+Put the primary copyable fence last among copyable blocks. Brief context may go above. Do not put explanation, options, or follow-up questions after that fence, except the required CalibraytAI `END — <title>` line below.
+
+What belongs in the closing fence:
+
+- If Joel may need to paste something (Cursor prompt, `prompt?` reply, email, command, path, HEAD SHA, Alembic revision, report field block): that exact content.
+- Otherwise: a compact copyable close of the note (key takeaway and next action).
 
 Do this even when the same facts also appear in prose. Do not leave copyable commands or prompt text in prose only.
 

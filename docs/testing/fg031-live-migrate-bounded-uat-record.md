@@ -8,6 +8,7 @@
 | Product SHA | `54120608df98432b9be80faf8c2a3a08cdb5679c` |
 | Confirmation-gate repair SHA | `ec8dcf35f0da109b75422504e1a104c1623d186c` |
 | Start pin SHA | `bbe22f2a10ba9ba827e50c92688774a025b95d34` |
+| Close SHA | `b50b0dcd1ea24f1a37ed32d04325ce09127fd203` |
 | Actor | Joel Brayman — FG031-UAT |
 | Organization | ORG-001 / Brayman Construction Inc. |
 

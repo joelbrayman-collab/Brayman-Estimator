@@ -43,7 +43,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | CONFIRMED routing is costing authority; resolved PROPOSED still blocks. Supplier Package includes only cited CONFIRMED CONTRACTOR_PURCHASED. Slice B tables remain absent. |
 | Open decisions | Slice B remains separately authorized. FG-030 remains **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. V1-04 not begun. ADR-008 remains **Proposed**. |
 | Next milestone | **STOP.** Return to ChatGPT Architect. Do not implement Slice B. Do not implement FG-030. Do not begin V1-04. |
-| Commit | Close follows this inspect. Start pin **`bbe22f2a10ba9ba827e50c92688774a025b95d34`**. |
+| Commit | Close **`b50b0dcd1ea24f1a37ed32d04325ce09127fd203`**. Start pin **`bbe22f2a10ba9ba827e50c92688774a025b95d34`**. Pin follows. |
 | Date | 2026-09-09 |
 
 ### 2026-09-09 — FG-031 Slice A human-confirmation costing gate repair

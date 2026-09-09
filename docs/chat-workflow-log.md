@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Slice B not authorized. FG-030 not implementation-authorized. V1-04 not begun. BMR DEMO READY remains NO (Ontario/fail-closed contract story). Interactive logged-in browser walkthrough of Scope Delivery Review was not available (expired sessions); authenticated product HTML PASS. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement Slice B. Do **not** implement FG-030. Do **not** begin V1-04. |
 | Next approved prompt | None from this UAT. |
-| Commit hash | Close follows this inspect. Start pin **`bbe22f2a10ba9ba827e50c92688774a025b95d34`**. |
+| Commit hash | Close **`b50b0dcd1ea24f1a37ed32d04325ce09127fd203`**. Start pin **`bbe22f2a10ba9ba827e50c92688774a025b95d34`**. Pin follows. |
 
 ### 2026-09-09 — FG-031 Slice A human-confirmation costing gate repair
 

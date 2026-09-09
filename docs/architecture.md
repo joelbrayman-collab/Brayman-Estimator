@@ -41,6 +41,8 @@ From [`app/__init__.py`](../app/__init__.py):
 | `pricing_engine_bp` | `app/routes/pricing_engine.py` |
 | `api_v1_bp` | `app/routes/api_v1.py` |
 | `build_bp` | `app/routes/build.py` |
+| `field_bp` | `app/routes/field.py` |
+| `supplier_package_bp` | `app/routes/supplier_package.py` — FG-029 Hub PRICE mapping review / Supplier Package (**not live-migrated**) |
 
 Shell context: [`app/shell.py`](../app/shell.py). Navigation SSOT: [`app/navigation.py`](../app/navigation.py).
 
@@ -60,6 +62,8 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Plan Intelligence | `DrawingPackage`, `DrawingRevision`, `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `PlanScaleCalibration`, `PlanMeasurement`, `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem` | `app/plan_intelligence/models.py` |
 | Labour Engine | `LabourTask`, `LabourTaskMapping`, `ProductionRateStandard`, `DirectLabourCostRateStandard`, `LabourCalibrationCandidate`, `EstimateLabourSnapshot`, `LabourAuditEvent` | `app/models/labour_engine.py` |
 | BUILD | `FieldCaptureEvent`, `FieldCaptureOriginal`, `FieldCaptureDerivedCandidate` | `app/models/build.py` — FG-020 **CLOSED / OPERATIONAL FOR UAT** |
+| Material Catalogue | `CanonicalMaterial`, `MaterialRequirement` | `app/models/canonical_material.py`; `app/models/material_requirement.py` (FG-029; **not live-migrated**) |
+| Supplier Catalogue | `Supplier`, `SupplierLocation`, `ContractorSupplierAccount`, `SupplierProduct`, price/availability evidence, maps, `SupplierPackage` / lines | `app/models/supplier_catalogue.py` (FG-029; inform-only price; **not live-migrated**) |
 | Pricing Engine | `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent` | `app/models/pricing_engine.py` |
 
 Notable behaviours evidenced in code/tests:
@@ -74,14 +78,14 @@ Notable behaviours evidenced in code/tests:
 
 | Layer | Paths |
 |-------|-------|
-| Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py`, `build.py`, `build_storage.py` |
+| Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py`, `build.py`, `build_storage.py`, `material_requirements.py`, `supplier_catalogue.py`, `supplier_package_pdf.py` |
 | Project controls | `app/project_controls/services.py`, `repository.py`, `pdf.py` |
 | Plan Intelligence | `app/plan_intelligence/services.py`, `processing.py`, `extraction.py`, `storage.py`, `packages.py`, `audit.py`, `takeoff.py`, `takeoff_extractors.py` |
 | Generic repositories package | `app/repositories/` (present; inspect before assuming usage) |
 
 ### Templates & static assets
 
-- Templates: `app/templates/` (clients, projects including Project Hub `projects/detail.html`, estimates, proposals, proposal_templates, assemblies, cost_library, project_controls, plan_intelligence including take-off, labour_engine, pricing_engine, build field observations, dashboard, base, partials)
+- Templates: `app/templates/` (clients, projects including Project Hub `projects/detail.html` and Supplier Package `projects/supplier_package.html` / `supplier_package_output.html`, estimates, proposals, proposal_templates, assemblies, cost_library, project_controls, plan_intelligence including take-off, labour_engine, pricing_engine, build field observations, dashboard, base, partials)
 - Static: `app/static/` (css, js, branding)
 
 ### Migrations
@@ -89,13 +93,13 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic **repository** graph head: **`a5b6c7d8e9f0`** (FG-027). Live development/UAT `flask db current`: **`a5b6c7d8e9f0`**. Live current **equals** repository head. One graph head. Verify `flask db current` per environment before relying on it.
+- Alembic **repository** graph head: **`b6c7d8e9f0a1`** (FG-029 file). Live development/UAT `flask db current`: **`a5b6c7d8e9f0`**. Live current **does not equal** repository head until a separately authorized live migrate. Verify `flask db current` per environment before relying on it.
 
 ### Tests
 
 - Location: [`tests/`](../tests/)
-- Collected locally: last product-changing governed full suite **632 passed** (`./venv/bin/python -m pytest -q`, FG-026 implementation 2026-09-08). Dedicated FG-026 **20**. Historical FG-023 close full suite **593** / dedicated **35** / focused **149**. Last product-changing SHA **`aa4c71800586e0b8e2a63931bcdc8bc44d87a489`**. Historical Slice A focused **126** / full **581**. FG-021 close full suite **558** remains historical.
-- Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders, project hub, plan upload/indexing/sheets/scale/take-off, labour engine, pricing engine, historical ingestion, organization foundation
+- Collected locally: last product-changing governed full suite **677 passed** (`./venv/bin/python -m pytest -q`, FG-029 implementation 2026-09-09). Dedicated FG-029 **16**. Historical FG-028 full suite **661**. Historical FG-027 close full suite **652**. Dedicated FG-026 **20**.
+- Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders, project hub, plan upload/indexing/sheets/scale/take-off, labour engine, pricing engine, historical ingestion, organization foundation, supplier package / MaterialRequirement
 
 ### Current module relationships (simplified)
 

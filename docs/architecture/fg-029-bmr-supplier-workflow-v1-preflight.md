@@ -2,24 +2,25 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED** (2026-09-09) |
+| Status | **COMPLETE.** FG-029 product is **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED** (2026-09-09) |
 | Date | 2026-09-09 |
 | Gate | [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) |
 | ADR | [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted** |
-| Alembic | Live current = heads **`a5b6c7d8e9f0`**. Proposed later revision **`b6c7d8e9f0a1`** — **not created**. |
+| Alembic | Live current **`a5b6c7d8e9f0`**. Repository head **`b6c7d8e9f0a1`** (`down_revision` `a5b6c7d8e9f0`) — **file created, not applied live**. |
 | Product | CalibraytAI (formerly CalibAi) |
 
 ```text
 FG-029 PREFLIGHT:
 COMPLETE
-NOT IMPLEMENTATION-AUTHORIZED
-NO SCHEMA CREATED
-NO PRODUCT CODE
+IMPLEMENTED IN PRODUCT CODE
+MIGRATION FILE b6c7d8e9f0a1 EXISTS
+NOT LIVE-MIGRATED
+UAT NOT AUTHORIZED
 ADR-008 REMAINS PROPOSED
 REAL BMR INTEGRATION NOT AVAILABLE
 ```
 
-This document pins the smallest additive schema, UI, outputs, and tests for a **later** implementation prompt. It does **not** authorize that prompt.
+This document pinned the smallest additive schema, UI, outputs, and tests. Product implementation followed under a separate authorization. Live migrate and UAT remain separately authorized.
 
 ---
 

@@ -460,12 +460,18 @@ def test_assembly_read_through_only_via_cost_item(app, client):
 def test_no_material_requirement_or_supplier_or_takeoff_fks(app):
     import app.models as models_pkg
 
-    assert not hasattr(models_pkg, "MaterialRequirement")
+    assert hasattr(models_pkg, "MaterialRequirement")
     assert "class MaterialRequirement" not in Path(
         "app/models/canonical_material.py"
     ).read_text()
-    assert not hasattr(models_pkg, "Supplier")
-    assert not hasattr(models_pkg, "SupplierProduct")
+    assert hasattr(models_pkg, "Supplier")
+    assert hasattr(models_pkg, "SupplierProduct")
+    identity_cols = set(CanonicalMaterial.__table__.columns.keys())
+    for forbidden in ("supplier_id", "sku", "supplier_sku", "unit_cost", "price"):
+        assert forbidden not in identity_cols
+    requirement_cols = set(models_pkg.MaterialRequirement.__table__.columns.keys())
+    for forbidden in ("supplier_id", "sku", "supplier_sku", "unit_cost", "price"):
+        assert forbidden not in requirement_cols
     takeoff_cols = set(TakeoffPackageItem.__table__.columns.keys())
     assert "canonical_material_id" not in takeoff_cols
     assert "cost_item_id" not in takeoff_cols

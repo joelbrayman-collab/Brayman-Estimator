@@ -3,11 +3,11 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-046: Supplier-Neutral Material Requirement and Supplier Mapping Boundary |
-| Status | **Accepted** (governance / architecture only; **not implemented**) |
+| Status | **Accepted.** FG-029 product is **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED**. ADR-008 remains **Proposed**. |
 | Date | 2026-09-09 |
 | Related | [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) · [fg-029-bmr-supplier-workflow-v1-preflight.md](../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md) · [ADR-033](ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** · [ADR-034](ADR-034-canonical-material-identity-and-ownership.md) **Accepted** · [ADR-035](ADR-035-material-quantity-uom-and-requirement-boundary.md) **Accepted** · [ADR-036](ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** · [ADR-008](ADR-008-supplier-price-snapshotting.md) **Proposed** · [ADR-044](ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted** · [ADR-006](ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-024](ADR-024-learn-recommendation-boundary.md) **Accepted** |
 
-This ADR authorizes the **V1-03 ownership and commercial boundary**. Recording [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) does **not** authorize product code, schema, migration, live database writes, synthetic DB population, a live BMR API, or acceptance of [ADR-008](ADR-008-supplier-price-snapshotting.md).
+This ADR authorizes the **V1-03 ownership and commercial boundary**. [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) product implementation is **in repository** and **not live-migrated**. This ADR still does **not** authorize live database writes, synthetic live DEMO BMR population, a live BMR API, or acceptance of [ADR-008](ADR-008-supplier-price-snapshotting.md).
 
 ---
 
@@ -143,7 +143,7 @@ remain UNCHANGED by supplier evidence in V1-03
 |---------|--------|
 | `CanonicalMaterial` identity | **Material Catalogue** (unchanged) |
 | `MaterialRequirement` | **Material Catalogue** (new; project application of identity) |
-| Supplier, location, product, mapping, living price/availability evidence | **Supplier Catalogue** (still unimplemented) |
+| Supplier, location, product, mapping, living price/availability evidence | **Supplier Catalogue** (FG-029 implemented; not live-migrated) |
 | Supplier Package freeze + HTML/PDF | **Supplier Catalogue** (consume Material Catalogue + project identity) |
 | `TakeoffPackageItem` | **Plan Intelligence** (unchanged) |
 | `EstimateLineItem` / costing snapshots / Pricing | **Estimating** / Pricing Engine (unchanged; not written by V1-03) |
@@ -152,15 +152,15 @@ remain UNCHANGED by supplier evidence in V1-03
 
 ## Data Ownership Impact
 
-No tables exist today. Future additive schema is recorded in [fg-029-bmr-supplier-workflow-v1-preflight.md](../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md). Issued Supplier Package lines are immutable commercial/fulfillment history for the **supplier-facing** artifact. They are not estimate history.
+Additive tables exist as the FG-029 migration **file** `b6c7d8e9f0a1`. Issued Supplier Package lines are immutable commercial/fulfillment history for the **supplier-facing** artifact. They are not estimate history. Live DB does **not** yet contain these tables.
 
 ## Migration Impact
 
-**Deferred.** Proposed next Alembic revision (not created): `b6c7d8e9f0a1`, `down_revision = a5b6c7d8e9f0`. Create only under a later FG-029 **implementation** authorization.
+Revision **file** `b6c7d8e9f0a1`, `down_revision = a5b6c7d8e9f0`. **Not applied live.** Live current remains `a5b6c7d8e9f0`.
 
 ## Testing Impact
 
-None in this recording pass. Later implementation tests are listed in FG-029 / the preflight. Do not implement tests now.
+Dedicated FG-029 tests in `tests/test_supplier_workflow_fg029.py`. Governed Material Catalogue / Estimating / FG-026 / FG-027 / output / tenancy / full suite rerun on implementation. Live migrate and UAT **not** run.
 
 ## Documentation Impact
 
@@ -173,3 +173,4 @@ None in this recording pass. Later implementation tests are listed in FG-029 / t
 | Joel | Joel Brayman (V1-03 ADR + FG recording authorization) | 2026-09-09 |
 | ChatGPT review | Authorized docs-only prompt | 2026-09-09 |
 | Cursor implementation note | Docs/ADR/FG/preflight only. No product code. ADR-008 **not** accepted. | 2026-09-09 |
+| Cursor implementation note | FG-029 product implemented. Migration file created, not live-applied. ADR-008 **not** accepted. | 2026-09-09 |

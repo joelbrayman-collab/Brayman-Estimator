@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Supplier Package {{ package.id }} | {{ project.name }}{% endblock %}
+{% block page_title %}Supplier Package{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">{{ contractor.product_name }}</p>
+        <h1>Supplier Package #{{ package.id }}</h1>
+        <p class="muted-copy">
+            Supplier-facing snapshot. Inform-only price and availability.
+            Not a customer estimate. Not a submitted purchase order.
+        </p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('supplier_package.mapping_review', project_id=project.id) }}">Mapping Review</a>
+        <a class="button-link" href="{{ url_for('supplier_package.download_package_pdf', project_id=project.id, package_id=package.id) }}">Download PDF</a>
+    </div>
+</div>
+
+{% if package.demo_synthetic %}
+<div class="form-panel" style="margin-bottom: 16px;">
+    <p class="eyebrow">DEMO / SYNTHETIC</p>
+    <p>This package contains labeled demonstration evidence. It does not claim live BMR price, inventory, or API.</p>
+</div>
+{% endif %}
+
+<div class="form-panel" style="margin-bottom: 16px;">
+    <p>Contractor: {{ contractor.customer_facing_name }}</p>
+    <p>Project: {{ project.name }}</p>
+    <p>Supplier: {{ package.supplier.legal_name }}</p>
+    <p>Branch: {{ package.supplier_location.display_name }}</p>
+    <p>Package status: {{ contractor_copy.office_status_label(package.status) }}</p>
+    <p>Readiness: {{ readiness }}</p>
+    <p>Issued: {% if package.issued_at %}{{ package.issued_at.strftime("%Y-%m-%d %H:%M UTC") }} · {{ package.issued_by_display_name }}{% else %}—{% endif %}</p>
+</div>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Canonical material</th>
+            <th>Requirement</th>
+            <th>Supplier product / SKU</th>
+            <th>Pick / load</th>
+            <th>Price evidence</th>
+            <th>Availability</th>
+            <th>Mapping</th>
+            <th>Delivery group</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in package.lines %}
+        <tr>
+            <td>
+                {{ line.canonical_material_code }}
+                <div class="muted-copy">{{ line.canonical_material_name }}</div>
+                {% if line.demo_synthetic %}<div class="muted-copy">DEMO / SYNTHETIC</div>{% endif %}
+            </td>
+            <td>{{ line.requirement_qty }} {{ line.requirement_uom }}</td>
+            <td>
+                {% if line.supplier_sku %}
+                {{ line.supplier_sku }}
+                <div class="muted-copy">{{ line.supplier_product_description }}</div>
+                {% else %}
+                —
+                {% endif %}
+            </td>
+            <td>
+                {% if line.sales_qty is not none %}
+                {{ line.sales_qty }} {{ line.sales_uom }}
+                {% else %}
+                —
+                {% endif %}
+            </td>
+            <td>
+                {% if line.price_amount is not none %}
+                {{ line.price_currency }} {{ line.price_amount }}
+                <div class="muted-copy">{{ line.price_captured_at.strftime("%Y-%m-%d") if line.price_captured_at else "" }} · inform only</div>
+                {% else %}
+                —
+                {% endif %}
+            </td>
+            <td>
+                {% if line.availability_status %}
+                {{ contractor_copy.office_status_label(line.availability_status) }}
+                <div class="muted-copy">{{ line.availability_captured_at.strftime("%Y-%m-%d") if line.availability_captured_at else "" }} · not live inventory</div>
+                {% else %}
+                —
+                {% endif %}
+            </td>
+            <td>{{ contractor_copy.office_status_label(line.mapping_status) }}</td>
+            <td>{{ line.delivery_stage or "—" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<section class="form-panel" style="margin-top: 16px;">
+    <h2>Unresolved items</h2>
+    {% set unresolved = package.lines | selectattr("mapping_status", "ne", "MAPPED") | list %}
+    {% if unresolved %}
+    <ul>
+        {% for line in unresolved %}
+        <li>{{ line.canonical_material_code }} — {{ line.requirement_qty }} {{ line.requirement_uom }} — {{ contractor_copy.office_status_label(line.mapping_status) }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>None.</p>
+    {% endif %}
+</section>
+{% endblock %}

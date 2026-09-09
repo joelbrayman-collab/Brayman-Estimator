@@ -6,7 +6,6 @@ import uuid
 from decimal import Decimal
 
 import pytest
-from sqlalchemy import inspect as sa_inspect
 
 from app import create_app, db
 from app.models import (
@@ -571,8 +570,9 @@ def test_no_labour_or_pricing_snapshot_or_material_requirement(app):
     )
     assert EstimateLabourSnapshot.query.count() == 0
     assert EstimatePricingSnapshot.query.count() == 0
-    tables = set(sa_inspect(db.engine).get_table_names())
-    assert "material_requirements" not in tables
+    from app.models.material_requirement import MaterialRequirement
+
+    assert MaterialRequirement.query.count() == 0
     insertion = TakeoffEstimateInsertion.query.one()
     assert insertion.provenance.get("supplier") is None
     assert insertion.provenance.get("sku") is None

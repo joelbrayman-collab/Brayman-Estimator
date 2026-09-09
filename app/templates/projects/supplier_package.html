@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}Supplier Package | {{ project.name }}{% endblock %}
+{% block page_title %}Supplier Package{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">PRICE</p>
+        <h1>Mapping Review</h1>
+        <p class="muted-copy">
+            Project material requirements mapped to supplier products.
+            Supplier price and availability are evidence only. They do not change estimate cost, costing approval, or selling price.
+            This is not a submitted purchase order and not live BMR inventory.
+        </p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
+    </div>
+</div>
+
+{% if review.account and review.account.demo_synthetic %}
+<div class="form-panel" style="margin-bottom: 16px;">
+    <p class="eyebrow">DEMO / SYNTHETIC</p>
+    <p>Labeled demonstration supplier evidence. Not live BMR price, inventory, or API.</p>
+</div>
+{% endif %}
+
+{% if not review.accounts %}
+<div class="empty-state">
+    <h3>No supplier account</h3>
+    <p>This organization has no contractor–supplier account yet. Later UAT may add a labeled DEMO branch. This screen does not create live BMR data.</p>
+</div>
+{% else %}
+<form method="get" class="form-panel" style="margin-bottom: 16px;">
+    <div class="form-grid">
+        <label>
+            Supplier / branch
+            <select name="supplier_location_id" onchange="this.form.submit()">
+                {% for account in review.accounts %}
+                <option
+                    value="{{ account.supplier_location_id }}"
+                    {% if review.account and account.id == review.account.id %}selected{% endif %}
+                >
+                    {{ account.supplier.legal_name }} — {{ account.supplier_location.display_name }}{% if account.demo_synthetic %} (DEMO){% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+        {% if review.account %}
+        <input type="hidden" name="supplier_id" value="{{ review.account.supplier_id }}">
+        {% endif %}
+    </div>
+</form>
+{% endif %}
+
+<section class="form-panel" style="margin-bottom: 16px;">
+    <h2>Material requirement</h2>
+    <p class="muted-copy">Supplier-neutral. Manual or DEMO / SYNTHETIC. Not plan take-off lumber quantities.</p>
+    <form method="post" action="{{ url_for('supplier_package.create_requirement_route', project_id=project.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-grid">
+            <label>
+                Canonical material
+                <select name="canonical_material_id" required>
+                    {% for material in materials %}
+                    <option value="{{ material.id }}">{{ material.code }} — {{ material.display_name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Quantity
+                <input type="text" name="quantity" required>
+            </label>
+            <label>
+                Unit
+                <select name="canonical_uom">
+                    {% for uom in uoms %}
+                    <option value="{{ uom }}">{{ uom }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Source
+                <select name="source_kind">
+                    {% for kind in source_kinds %}
+                    <option value="{{ kind }}">{{ contractor_copy.office_status_label(kind) }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Note
+                <input type="text" name="note">
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Add requirement</button>
+        </div>
+    </form>
+</section>
+
+{% if review.rows %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Requirement</th>
+            <th>Qty</th>
+            <th>Status</th>
+            <th>Mapping</th>
+            <th>Price / availability evidence</th>
+            <th>Delivery group</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in review.rows %}
+        <tr>
+            <td>
+                {{ row.requirement.canonical_material.code }}
+                <div class="muted-copy">{{ row.requirement.canonical_material.display_name }}</div>
+                {% if row.requirement.source_kind == "DEMO_SYNTHETIC" %}
+                <div class="muted-copy">DEMO / SYNTHETIC</div>
+                {% endif %}
+            </td>
+            <td>{{ row.requirement.quantity }} {{ row.requirement.canonical_uom }}</td>
+            <td>
+                {{ contractor_copy.office_status_label(row.requirement.status) }}
+                {% if row.requirement.status == "DRAFT" %}
+                <form method="post" action="{{ url_for('supplier_package.review_requirement_route', project_id=project.id, requirement_id=row.requirement.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit">Mark reviewed</button>
+                </form>
+                {% endif %}
+            </td>
+            <td>
+                {% if review.account %}
+                <form method="post" action="{{ url_for('supplier_package.upsert_map_route', project_id=project.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="material_requirement_id" value="{{ row.requirement.id }}">
+                    <input type="hidden" name="supplier_id" value="{{ review.account.supplier_id }}">
+                    <input type="hidden" name="supplier_location_id" value="{{ review.account.supplier_location_id }}">
+                    {% if review.account.demo_synthetic %}
+                    <input type="hidden" name="demo_synthetic" value="1">
+                    {% endif %}
+                    <select name="mapping_status">
+                        {% for status in mapping_statuses %}
+                        <option value="{{ status }}" {% if row.mapping and row.mapping.mapping_status == status %}selected{% endif %}>
+                            {{ contractor_copy.office_status_label(status) }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <select name="supplier_product_id">
+                        <option value="">Unresolved</option>
+                        {% for product in review.products %}
+                        <option value="{{ product.id }}" {% if row.product and row.product.id == product.id %}selected{% endif %}>
+                            {{ product.sku }} — {{ product.description }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Save mapping</button>
+                </form>
+                {% if row.mapping %}
+                <div class="muted-copy">{{ row.mapping.actor_display_name }}{% if row.mapping.mapped_at %} · {{ row.mapping.mapped_at.strftime("%Y-%m-%d %H:%M") }}{% endif %}</div>
+                {% endif %}
+                {% else %}
+                —
+                {% endif %}
+            </td>
+            <td>
+                {% if row.price %}
+                {{ row.price.currency }} {{ row.price.amount }} / {{ row.price.unit }}
+                <div class="muted-copy">Inform only · {{ row.price.captured_at.strftime("%Y-%m-%d") }} · {{ row.price.source }}</div>
+                {% else %}
+                <span class="muted-copy">No price evidence</span>
+                {% endif %}
+                {% if row.availability %}
+                <div>{{ contractor_copy.office_status_label(row.availability.status) }}</div>
+                <div class="muted-copy">Captured {{ row.availability.captured_at.strftime("%Y-%m-%d") }} · not live inventory</div>
+                {% endif %}
+            </td>
+            <td>
+                <input
+                    form="package-actions"
+                    type="text"
+                    name="delivery_stage_{{ row.requirement.id }}"
+                    value=""
+                    placeholder="Framing / sheathing"
+                >
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state empty-state-compact">
+    <h3>No material requirements</h3>
+    <p>Add a reviewed project requirement before mapping.</p>
+</div>
+{% endif %}
+
+{% if review.account %}
+<form id="package-actions" method="post" class="form-panel" style="margin-top: 16px;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="supplier_id" value="{{ review.account.supplier_id }}">
+    <input type="hidden" name="supplier_location_id" value="{{ review.account.supplier_location_id }}">
+    <p class="eyebrow">Supplier Package</p>
+    <p class="muted-copy">Frozen supplier-facing snapshot. Generate a draft, or issue as order-ready / review-ready. Issuing does not submit a purchase order.</p>
+    <div class="form-actions">
+        <button type="submit" formaction="{{ url_for('supplier_package.generate_package_route', project_id=project.id) }}">Generate Supplier Package</button>
+        <button type="submit" formaction="{{ url_for('supplier_package.issue_package_route', project_id=project.id) }}">Issue Supplier Package</button>
+    </div>
+</form>
+{% endif %}
+
+{% if review.packages %}
+<section class="form-panel" style="margin-top: 16px;">
+    <h2>Packages</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Package</th>
+                <th>Status</th>
+                <th>Readiness</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for package in review.packages %}
+            <tr>
+                <td>#{{ package.id }} {% if package.demo_synthetic %}DEMO / SYNTHETIC{% endif %}</td>
+                <td>{{ contractor_copy.office_status_label(package.status) }}</td>
+                <td>{% if package.status == "ISSUED" %}order-ready / review-ready{% else %}draft{% endif %}</td>
+                <td>
+                    <a href="{{ url_for('supplier_package.view_package', project_id=project.id, package_id=package.id) }}">HTML</a>
+                    ·
+                    <a href="{{ url_for('supplier_package.download_package_pdf', project_id=project.id, package_id=package.id) }}">PDF</a>
+                    {% if package.status == "DRAFT" %}
+                    <form method="post" action="{{ url_for('supplier_package.issue_existing_package_route', project_id=project.id, package_id=package.id) }}" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit">Issue</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endif %}
+{% endblock %}

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-09 — FG-029 V1-03 BMR / supplier workflow product implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-09 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Resume and complete authorized FG-029 product implementation from interrupted WIP |
+| Business decision | CanonicalMaterial → thin MaterialRequirement → human mapping → Supplier/SKU → inform-only evidence → frozen Supplier Package HTML+PDF. No live BMR. No live migrate. No UAT. |
+| Architectural decision | [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. Supplier price INFORM ONLY. |
+| Prompt template used | Authorized FG-029 resume implementation package (9 Sep 2026) |
+| Approved Cursor prompt summary | Resume FG-029; preserve interrupted working tree; one additive migration file `b6c7d8e9f0a1`; tests; commit/push; no live migrate; no live DEMO BMR seed |
+| Files expected to change | models/services/routes/templates/tests/migration `b6c7d8e9f0a1`; FG-029 / V1 / current-authority docs |
+| Files prohibited from changing | live DB; live DEMO seed; ADR-008 acceptance; FG-028 Slice 3; FG-024; LEARN; PO/API |
+| Implementation result | FG-029 **IMPLEMENTED / TESTED / COMMITTED / PUSHED**. **NOT LIVE-MIGRATED.** **UAT NOT AUTHORIZED.** **NOT CLOSED.** V1 remains **45% / 2 of 11**. |
+| Tests | A dedicated FG-029 **16 passed**. B Material Catalogue **35 passed**. C Estimating+FG-026+FG-027 **62 passed**. D output/PDF **41 passed**. E tenancy **56 passed**. F governed bundle **210 passed**. G full suite **677 passed**. Historical full **661** is the pre-FG-029 product-changing baseline. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate + UAT not authorized. Live DEMO BMR seed not populated. V1-03 not COMPLETE. FG-028 Slice 3 pending. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** populate live DEMO BMR data. Do **not** begin another V1 package. |
+| Next approved prompt | None until Joel/ChatGPT authorize live-migrate/UAT or FG-028 Slice 3. |
+| Commit hash | Product SHA pending pin after this commit. |
+
 ### 2026-09-09 — FG-029 V1-03 BMR / supplier workflow architecture recording
 
 | Field | Content |

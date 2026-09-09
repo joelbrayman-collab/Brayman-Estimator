@@ -306,6 +306,10 @@
             <a href="{{ url_for('labour_engine.index') }}">{{ contractor_copy.LABOUR_RATES_HEADING }}</a>
             (catalogues, not this project’s operating data).
         </p>
+        <p class="muted-copy" style="margin-top: 12px;">
+            <a href="{{ url_for('supplier_package.mapping_review', project_id=project.id) }}">Supplier Package</a>
+            — mapping review and supplier-facing package. Price evidence is inform only.
+        </p>
     </article>
 </section>
 

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-09). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**). Readiness **45%** (V1-02 factor **1.00**). **2 / 11** COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. V1-03 architecture/preflight **RECORDED** ([ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**; [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **NOT IMPLEMENTATION-AUTHORIZED**). Does **not** authorize V1-03 product implementation, FG-024, or another FG-025 slice. |
+| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-09). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**). Readiness **45%** (V1-02 factor **1.00**). **2 / 11** COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. V1-03 / [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED** (factor remains **0.15**; **not COMPLETE**). [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. Does **not** authorize live-migrate/UAT, FG-024, or another FG-025 slice. |
 | Product | CalibraytAI / The Estimator (formerly CalibAi) |
 | Date | 2026-09-08 |
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
@@ -15,7 +15,7 @@ MAJOR PACKAGES:
 2 / 11 COMPLETE
 
 CURRENT V1 PACKAGE:
-V1-03 (ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED)
+V1-03 (IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED)
 
 CRITICAL PATH:
 V1-03 / V1-04
@@ -31,7 +31,7 @@ BRAYMAN REAL-LIFE UAT READY:
 NO
 
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
-THIS REGISTER DOES NOT AUTHORIZE V1-03 IMPLEMENTATION, FG-024, OR ANOTHER FG-025 SLICE
+THIS REGISTER DOES NOT AUTHORIZE LIVE-MIGRATE / UAT, FG-024, OR ANOTHER FG-025 SLICE
 ```
 
 ---
@@ -166,9 +166,10 @@ No package from Joel’s list is rejected. No existing August 2026 four-output /
 | COMPLETE | **2** (V1-01, V1-02) |
 | SUBSTANTIALLY COMPLETE | **2** (V1-08, V1-09) |
 | PARTIAL | **3** (V1-04, V1-06, V1-10) |
-| ARCHITECTURE COMPLETE / NOT IMPLEMENTED | **3** (V1-03, V1-05, V1-07) |
+| IMPLEMENTED / NOT CLOSED | **1** (V1-03) |
+| ARCHITECTURE COMPLETE / NOT IMPLEMENTED | **2** (V1-05, V1-07) |
 | NOT STARTED | **1** (V1-11) |
-| **CURRENT V1 PACKAGE** | **V1-03 (ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED)** |
+| **CURRENT V1 PACKAGE** | **V1-03 (IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED)** |
 | **CRITICAL PATH** | V1-03 / V1-04; V1-06 parallel; V1-10 before real UAT; V1-11 last |
 | **BMR DEMO READY** | **NO** |
 | **BRAYMAN REAL-LIFE UAT READY** | **NO** |
@@ -194,7 +195,7 @@ Weights total **100%** and reflect **remaining business/product significance** f
 | BLOCKER? | **NO** |
 | Dependencies | FG-010 **CLOSED**; existing Draft EstimateVersion + Assembly/CostItem on the same Project |
 | Governing | [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [fg-026-takeoff-to-estimate-mapping-preflight.md](architecture/fg-026-takeoff-to-estimate-mapping-preflight.md); ADR-005/006/007/011/031 |
-| Next governed action | V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **COMPLETE / CLOSED / OPERATIONAL FOR UAT**. V1-03 architecture is **RECORDED**; do **not** implement from this register. |
+| Next governed action | V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **COMPLETE / CLOSED / OPERATIONAL FOR UAT**. V1-03 / [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) is **IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED**. Do **not** live-migrate from this register. |
 
 PLAN proposes. Estimating commits. Package approval does **not** insert. Live UAT: TakeoffPackage **id 1** on project **3** mapped to Estimate **id 9** / version **id 9** / line **id 7** (quantity **3** `ea`) with insertion **id 1** and **3** citations. Package 1 **unchanged**. No labour/pricing snapshot, MaterialRequirement, or supplier/SKU from the insert.
 
@@ -211,7 +212,7 @@ PLAN proposes. Estimating commits. Package approval does **not** insert. Live UA
 | BLOCKER? | **NO** |
 | Dependencies | V1-01 for takeoff-sourced lines; FG-008 / FG-009 / FG-014 foundations |
 | Governing | [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**; [fg-027-costing-approval-preflight.md](architecture/fg-027-costing-approval-preflight.md); [FG-008](feature-gates/FG-008-labour-engine-phase-b.md) **CLOSED**; [FG-009](feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED**; [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED**; ADR-025/030/034/035/036 |
-| Next governed action | V1-03 architecture is **RECORDED** ([FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md)). Do **not** implement from this register. |
+| Next governed action | V1-03 / [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) is **IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED**. Do **not** live-migrate from this register. |
 
 **Exists live / office-UAT-verified (EstimateVersion id 9):** additive `a5b6c7d8e9f0`; Costing Review; zero-cost BLOCK; legacy NULL-reference freeze (`library_unit_cost_reference` **0.0000**); `MANUAL_OVERRIDE` with reason/actor/time; Approve All snapshot **1 SUPERSEDED 750.00** / **2 CURRENT 780.00**; Pricing consume CURRENT then STALE then re-apply (`EstimatePricingSnapshot` id **6**, `costing_snapshot_id` **2**, TRUE_GM, customer **1036.94**). Labour snapshot **not** in selling-price basis. Supplier evidence not required. Assembly **id 2** and TakeoffPackage **id 1** unchanged. Repair SHA **`72949f99da2b56ec06e95e16e29fa194a6730bbd`**.
 
@@ -227,16 +228,16 @@ PLAN proposes. Estimating commits. Package approval does **not** insert. Live UA
 |-------|--------|
 | Intent | Minimum credible demonstration of project requirement → supplier commercial evidence/pricing → estimate. BMR Winchester is first launch/reference supplier. Not a marketplace. |
 | Weight | **12%** |
-| Status | **ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED** |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED** |
 | Factor | 0.15 |
 | Contribution | **1.8** |
 | V1 REQUIRED? | **YES** for BMR demo |
-| BLOCKER? | **NO** ([FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) recorded / not implementation-authorized; ADR-008 still **Proposed**) |
+| BLOCKER? | **NO** (live-migrate / UAT not authorized; ADR-008 still **Proposed**; V1-03 **not COMPLETE**) |
 | Dependencies | Material Catalogue identity (FG-014 **CLOSED**); V1-01 for requirement traceability; ADR-033 dual relationships |
-| Governing | [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**; [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; [fg-029-bmr-supplier-workflow-v1-preflight.md](architecture/fg-029-bmr-supplier-workflow-v1-preflight.md); [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**; [ADR-036](adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**; [ADR-008](adr/ADR-008-supplier-price-snapshotting.md) **Proposed**; FG-014 identity only |
-| Next governed action | **STOP.** Do **not** implement from [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md). Return to ChatGPT Architect for a separate implementation authorization. |
+| Governing | [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**; [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED**; [fg-029-bmr-supplier-workflow-v1-preflight.md](architecture/fg-029-bmr-supplier-workflow-v1-preflight.md); [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**; [ADR-036](adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**; [ADR-008](adr/ADR-008-supplier-price-snapshotting.md) **Proposed**; FG-014 identity only |
+| Next governed action | **STOP.** Do **not** live-migrate. Do **not** populate live DEMO BMR data. Do **not** begin another V1 package. Return to ChatGPT Architect. |
 
-**V1 minimum (honest BMR demo, not a marketplace):** thin `MaterialRequirement` → human-reviewed DEMO Winchester SKU mapping → inform-only price/availability evidence → frozen Supplier Package HTML+PDF. FG-010 remains interior-door count only. Inventory API, EDI, POs, bulk onboarding, other dealers, Darcy channel economics, and supplier-price → estimate cost remain **OUT OF FG-029** / **POST-V1** unless Joel expands V1. **Do not rescore** from this architecture recording (factor remains 0.15).
+**V1 minimum (honest BMR demo, not a marketplace):** thin `MaterialRequirement` → human-reviewed DEMO Winchester SKU mapping → inform-only price/availability evidence → frozen Supplier Package HTML+PDF. Product is in repository. Live DB **unchanged**. FG-010 remains interior-door count only. Inventory API, EDI, POs, bulk onboarding, other dealers, Darcy channel economics, and supplier-price → estimate cost remain **OUT OF FG-029** / **POST-V1** unless Joel expands V1. **Do not rescore** (factor remains 0.15). **Do not mark V1-03 COMPLETE** before live close criteria.
 
 ### V1-04 — Authoritative four-output estimate package
 
@@ -486,7 +487,7 @@ The BMR demo must show CalibraytAI as an **integrated contractor platform**, not
 | Map approved quantities → estimate | V1-01 | **COMPLETE** (FG-026 **CLOSED / OPERATIONAL FOR UAT**) |
 | Estimate creation on the same project | PRICE | **EXISTS** (manual builder) |
 | Costing from org commercial intelligence | V1-02 | **COMPLETE** (human costing + Approve All before Pricing; exception-based review is maturation) |
-| Supplier / BMR relationship | V1-03 | **NOT IMPLEMENTED** |
+| Supplier / BMR relationship | V1-03 | **IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED** |
 | Pricing Engine apply | FG-009 | **EXISTS** (separate human action) |
 | Customer estimate | V1-04 output 2 | **EXISTS** |
 | Contract package (Ontario) | V1-06 / V1-04 output 4 | **NOT IMPLEMENTED** (presentation draft only) |
@@ -593,7 +594,7 @@ MAJOR PACKAGES:
 2 / 11 COMPLETE
 
 CURRENT V1 PACKAGE:
-V1-03 (ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED)
+V1-03 (IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED)
 
 CRITICAL PATH:
 V1-03 / V1-04

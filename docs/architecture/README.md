@@ -29,9 +29,9 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [M006-document-intelligence-readiness-report.md](M006-document-intelligence-readiness-report.md) | Milestone 006 report |
 | [M008-sheet-intelligence-readiness-report.md](M008-sheet-intelligence-readiness-report.md) | Milestone 008 readiness (architecture) |
 | [material-catalogue-architecture.md](material-catalogue-architecture.md) | **Partial Current** — [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**; ADR-034/035/036 **Accepted**; [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted** (MaterialRequirement ownership; **not implemented**) |
-| [fg-029-bmr-supplier-workflow-v1-preflight.md](fg-029-bmr-supplier-workflow-v1-preflight.md) | **COMPLETE / NOT IMPLEMENTATION-AUTHORIZED** — V1-03 schema/UI/test pin; [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) |
+| [fg-029-bmr-supplier-workflow-v1-preflight.md](fg-029-bmr-supplier-workflow-v1-preflight.md) | **COMPLETE.** FG-029 product **IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED** |
 | [architecture/supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) | Future — supplier SKU/price/inventory; maps to Material Catalogue; **bulk onboarding pin FUTURE / NOT IMPLEMENTED**; does **not** own CalibraytAI identity |
-| [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) | **Future** — [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**; [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED** |
+| [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) | **Partial Current** — [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**; [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **IMPLEMENTED / NOT LIVE-MIGRATED** |
 
 Platform map: [../architecture.md](../architecture.md).
 Principles: [../architecture-principles.md](../architecture-principles.md).

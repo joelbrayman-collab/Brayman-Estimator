@@ -1,6 +1,19 @@
 from app.models.assembly import Assembly, AssemblyItem
 from app.models.client import Client
 from app.models.canonical_material import CanonicalMaterial
+from app.models.material_requirement import MaterialRequirement
+from app.models.supplier_catalogue import (
+    CanonicalMaterialSupplierMap,
+    ContractorSupplierAccount,
+    Supplier,
+    SupplierLocation,
+    SupplierPackage,
+    SupplierPackageLine,
+    SupplierProduct,
+    SupplierProductAvailabilityEvidence,
+    SupplierProductPriceEvidence,
+    SupplierRequirementMap,
+)
 from app.models.cost_item import CostItem
 from app.models.jurisdiction import JurisdictionAlias, JurisdictionDefinition
 from app.models.permit_intelligence import (
@@ -79,6 +92,17 @@ __all__ = [
     "AssemblyItem",
     "ChangeOrder",
     "CanonicalMaterial",
+    "CanonicalMaterialSupplierMap",
+    "ContractorSupplierAccount",
+    "MaterialRequirement",
+    "Supplier",
+    "SupplierLocation",
+    "SupplierPackage",
+    "SupplierPackageLine",
+    "SupplierProduct",
+    "SupplierProductAvailabilityEvidence",
+    "SupplierProductPriceEvidence",
+    "SupplierRequirementMap",
     "ChangeOrderItem",
     "Client",
     "CostItem",

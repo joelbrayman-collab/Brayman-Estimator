@@ -162,7 +162,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-046](ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) | Supplier-Neutral Material Requirement and Supplier Mapping Boundary | **Accepted** (2026-09-09; architecture only; [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; ADR-008 remains **Proposed**) |
+| [ADR-046](ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) | Supplier-Neutral Material Requirement and Supplier Mapping Boundary | **Accepted** (2026-09-09; [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED**; ADR-008 remains **Proposed**) |
 
 ### Field Web capture reliability (Accepted; FG-021 CLOSED)
 

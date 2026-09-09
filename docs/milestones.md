@@ -30,6 +30,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-09 — FG-029 V1-03 BMR / supplier workflow product implementation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-029 / V1-03 |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED.** |
+| Branch | `main` |
+| Objective | Implement authorized FG-029 BMR / supplier workflow from interrupted WIP |
+| Deliverables | MaterialRequirement; Supplier Catalogue; mapping review UI; frozen Supplier Package HTML+PDF; additive migration file `b6c7d8e9f0a1`; dedicated tests; current-authority recording |
+| Validation | Dedicated **16 passed**. Material Catalogue **35**. Estimating+FG-026+FG-027 **62**. Output/PDF **41**. Tenancy **56**. Governed bundle **210**. Full suite **677 passed**. Live current remains `a5b6c7d8e9f0`. Repository head `b6c7d8e9f0a1`. Live migrate **not** run. UAT **NOT RUN**. |
+| Architectural findings | Supplier price INFORM ONLY. No EstimateLineItem / FG-027 / Pricing mutation. ADR-008 remains Proposed. FG-010 remains door count. |
+| Open decisions | Live-migrate / UAT authorization; FG-028 Slice 3 asset; website |
+| Next milestone | **STOP.** Do **not** live-migrate. Do **not** populate live DEMO BMR data. V1 remains **45% / 2 of 11**. |
+| Commit | Product SHA pending pin after this commit. |
+
 ### 2026-09-09 — FG-029 V1-03 BMR / supplier workflow architecture recording
 
 | Field | Content |

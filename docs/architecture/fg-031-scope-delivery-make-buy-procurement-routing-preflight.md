@@ -1,0 +1,323 @@
+# FG-031 Scope Delivery / Make-Buy / Procurement Routing — Architecture preflight
+
+| Attribute | Value |
+|-----------|--------|
+| Status | **COMPLETE (architecture recording).** Product implementation **NOT AUTHORIZED.** |
+| Date | 2026-09-09 |
+| Gate | [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED** |
+| ADR | [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** (architecture only) |
+| Alembic | Live current **`b6c7d8e9f0a1`**. Repository head **`b6c7d8e9f0a1`**. One graph head. **No migration in this pass.** Later Slice A requires one additive migration after `b6c7d8e9f0a1`. Do **not** reserve or create a revision from this recording. |
+| Product | CalibraytAI (formerly CalibAi) |
+| Source | Completed SCOPE DELIVERY / MAKE-BUY / PROCUREMENT ROUTING architecture reconciliation + preflight (2026-09-09). This document records that recon; it does **not** redo architecture from scratch. |
+
+```text
+FG-031 PREFLIGHT:
+COMPLETE
+ADR-048 ACCEPTED (ARCHITECTURE ONLY)
+NOT IMPLEMENTATION-AUTHORIZED
+NOT IMPLEMENTED
+NO SCHEMA CREATED
+NO ALEMBIC REVISION
+V1 REMAINS 55% / 3 OF 11
+NOT A 12TH MAJOR PACKAGE
+```
+
+This pin is **not** an implementation authorization.
+
+---
+
+## 1. Current vs Intended vs Future
+
+| Layer | State |
+|-------|--------|
+| **Current** | `EstimateLineItem` has no delivery-routing fields. PLAN owns quantities/citations. `CostItem.category` includes `Subcontractor` as a reusable library label. `ProjectCommercialContext.delivery_model` is project-level only (`Self-Perform` / `Mixed` / `Primarily Subcontracted`). FG-029 Supplier Package freeze currently includes **all** project `MaterialRequirement` rows for a supplier/location. Labour snapshots are opt-in and **not** in default selling-price basis. No Subcontractor entity. No subcontract RFQ. |
+| **Intended (FG-031, not implemented)** | Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem`; two stored dimensions; human Scope Delivery Review; Approve All Scope Routing; `SCOPE_DELIVERY_UNRESOLVED` BLOCK on FG-027 except Allowance; Supplier Package filter `CONTRACTOR_PURCHASED` only; Slice B thin Subcontractor + quote evidence before Brayman real-life UAT. |
+| **Future** | Org routing defaults; exception-based review; subcontract RFQ/package HTML/PDF; owner-supplied/third-party UX; LEARN; component-level Assembly routing; subcontractor portal; supplier price → estimate cost; BUILD/MONITOR execution-plan expansion. |
+
+Do **not** claim Intended surfaces exist in product code.
+
+---
+
+## 2. Ownership (do not store routing on these)
+
+PLAN remains quantity/evidence authority. PLAN does **not** own who performs work, who provides material, subcontractor/supplier identity, delivery routing, margin, or selling price.
+
+**Do not store routing on:** `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem`, `CostItem`, `Assembly`, `AssemblyItem`, `CanonicalMaterial`, `MaterialRequirement`.
+
+Assemblies and CostItems remain reusable / project-neutral. If one Assembly requires component-level mixed delivery in V1, **split** into separate commercial `EstimateLineItem` rows. Component-level Assembly routing is **POST-V1**.
+
+One `EstimateSection` may contain mixed routing.
+
+Routing is EstimateVersion-scoped. Clone/version operations must copy routing onto cloned commercial lines. Working routing is mutable only on an editable Draft. Issued/locked versions cannot change routing. Historical snapshots remain immutable.
+
+---
+
+## 3. Two independent stored dimensions
+
+### Material procurement
+
+| Value | Meaning |
+|-------|---------|
+| `CONTRACTOR_PURCHASED` | Contractor buys the material (normally Supplier Package eligible) |
+| `SUBCONTRACTOR_SUPPLIED` | Subcontractor supplies the material |
+| `OWNER_SUPPLIED` | Owner supplies the material (architecture value; Slice A UI may hide) |
+| `NO_MATERIAL` | Line has no material |
+| `UNRESOLVED` | Not yet confirmed |
+
+### Labour delivery
+
+| Value | Meaning |
+|-------|---------|
+| `INTERNAL` | Contractor labour (permits existing Labour Engine; does not auto-create snapshots) |
+| `SUBCONTRACT` | Subcontractor performs labour |
+| `OWNER_THIRD_PARTY` | Owner's third party performs labour (architecture value; Slice A UI may hide) |
+| `NO_LABOUR` | Line has no labour |
+| `UNRESOLVED` | Not yet confirmed |
+
+**Do not store HYBRID.** Hybrid is derived (example: `CONTRACTOR_PURCHASED` + `SUBCONTRACT`).
+
+Display-only summaries: Internal · Subcontract · Material only · Hybrid · Unresolved · Allowance.
+
+Human confirmation is required. Deterministic suggestions (`RULE`, `ORG_DEFAULT`, `NONE`) are permitted. No ML/confidence value may silently authorize routing. Future org defaults may suggest but must never rewrite historical project decisions.
+
+---
+
+## 4. Slice A proposed schema (do not create)
+
+Table: `estimate_scope_deliveries`. Estimating-owned. All FKs **ON DELETE RESTRICT**. Do not mutate takeoff, CostItem, Assembly, CanonicalMaterial, or MaterialRequirement schemas in FG-031 Slice A.
+
+| Column | Type | Null | Notes |
+|--------|------|------|--------|
+| `id` | Integer PK | no | |
+| `organization_id` | Integer FK `organizations` | no | Indexed |
+| `project_id` | Integer FK `projects` | no | Indexed |
+| `estimate_id` | Integer FK `estimates` | no | |
+| `estimate_version_id` | Integer FK `estimate_versions` | no | Indexed |
+| `estimate_line_item_id` | Integer FK `estimate_line_items` | no | **UNIQUE** |
+| `material_procurement` | String | no | CHECK: `CONTRACTOR_PURCHASED` \| `SUBCONTRACTOR_SUPPLIED` \| `OWNER_SUPPLIED` \| `NO_MATERIAL` \| `UNRESOLVED` |
+| `labour_delivery` | String | no | CHECK: `INTERNAL` \| `SUBCONTRACT` \| `OWNER_THIRD_PARTY` \| `NO_LABOUR` \| `UNRESOLVED` |
+| `status` | String | no | CHECK: `DRAFT` \| `PROPOSED` \| `CONFIRMED` |
+| `suggestion_source` | String | yes | CHECK when present: `RULE` \| `ORG_DEFAULT` \| `NONE` |
+| `confirmed_by` | Integer / actor id | yes | Required when `status = CONFIRMED` |
+| `confirmed_at` | DateTime | yes | Required when `status = CONFIRMED` |
+| `actor_display_name` | String | no | Last mutating actor display |
+| `created_at` | DateTime | no | |
+| `updated_at` | DateTime | no | |
+
+### Tenant / project / version consistency (service-enforced)
+
+The routing row's `organization_id`, `project_id`, `estimate_id`, and `estimate_version_id` **must equal** the commercial line's chain:
+
+`estimate_line_items` → `estimate_sections` → `estimate_versions` → `estimates` → `projects` → `organizations`.
+
+Fail closed on mismatch. Cross-org queries fail closed. One routing row per line (UNIQUE on `estimate_line_item_id`).
+
+Do **not** create this table from this recording.
+
+---
+
+## 5. Snapshot / immutability
+
+Working `EstimateScopeDelivery` is mutable **only** on an editable Draft `EstimateVersion`.
+
+At FG-027 Costing Approval, copy `material_procurement` and `labour_delivery` onto `EstimateCostingSnapshotLine`. Do **not** create a second routing snapshot table for Slice A.
+
+Slice B may also freeze selected quote evidence identity/facts onto the same costing snapshot line.
+
+Issued/locked EstimateVersions cannot change routing.
+
+Version cloning must copy routing against cloned `EstimateLineItem` rows (same commercial identity in the new version).
+
+BUILD/MONITOR must eventually consume **frozen approved** routing, not floating Draft routing.
+
+---
+
+## 6. Slice A UI / Approve All (design; not implemented)
+
+Project Hub PRICE: **Scope Delivery Review**.
+
+Contractor-facing columns: Scope · Material provided by · Labour performed by · Status · Cost evidence · Action.
+
+Human per-row confirmation.
+
+**Approve All Scope Routing** is **AUTHORIZED DESIGN** for Slice A:
+
+- explicit human POST
+- confirms only eligible `PROPOSED` rows
+- does **not** confirm `UNRESOLVED` rows
+- records actor/time
+- does **not** approve costing
+- does **not** apply Pricing
+- does **not** approve supplier mapping
+
+No confidence-based auto-approval. No LEARN.
+
+`OWNER_SUPPLIED` / `OWNER_THIRD_PARTY` remain in architecture CHECKs. First Slice A UI **may hide** them as reserved/advanced.
+
+---
+
+## 7. FG-027 interaction
+
+Do **not** reopen FG-027.
+
+Once Slice A is live: `SCOPE_DELIVERY_UNRESOLVED` **BLOCKS** Costing Approval except legitimate Allowance.
+
+**Allowance exception:** an Allowance commercial line with `NO_MATERIAL` + `NO_LABOUR` remains WARN, not BLOCK.
+
+Do **not** add `SOURCE_SUPPLIER_PRICE` or `SOURCE_SUBCONTRACT_QUOTE` in Slice A.
+
+FG-027 remains final human costing authority.
+
+---
+
+## 8. Pricing interaction
+
+Routing changes do **not** apply Pricing.
+
+If later routing / quote / labour decisions change working direct cost: FG-027 recost is required. Existing Pricing becomes **STALE / REQUIRES RE-APPLY** under [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md). No automatic Pricing.
+
+---
+
+## 9. Labour interaction
+
+`INTERNAL` labour routing **may permit** existing Labour Engine workflow.
+
+It does **not** automatically create `LabourTask`, `ProductionRateStandard`, or `LabourSnapshot`.
+
+Existing `LABOUR_EVIDENCE_ABSENT` remains a warning unless separately governed.
+
+Do **not** silently include labour-snapshot direct cost in selling-price basis (`include_labour_snapshot_direct_cost=False` remains the default).
+
+---
+
+## 10. Supplier Package filter
+
+Only MaterialRequirements associated with routing `CONTRACTOR_PURCHASED` may automatically be Supplier Package eligible, subject to human supplier mapping.
+
+Exclude:
+
+- `SUBCONTRACTOR_SUPPLIED`
+- `OWNER_SUPPLIED`
+- `NO_MATERIAL`
+- `UNRESOLVED`
+
+Uncited MANUAL / DEMO MaterialRequirements must **not** silently enter a Supplier Package. They require explicit contractor-purchased designation/reconciliation under this architecture first.
+
+Supplier price remains INFORM ONLY (ADR-046 / FG-029). Routing does **not** create MaterialRequirements.
+
+FG-031 = **what** may enter a package. [FG-030](../feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) later = **who** may see the issued package (still **not** implementation-authorized).
+
+Supplier must not see: internal labour, subcontract quotes, customer selling price, GM, markup, other suppliers, other supplier prices/availability.
+
+---
+
+## 11. Slice B proposed facts (do not create)
+
+Thin org-scoped Subcontractor (not a marketplace): `id`, `organization_id`, `code`, `legal_name`, `status`, `created_at` / `updated_at`.
+
+Do **not** collapse Subcontractor into `Supplier`.
+
+`SubcontractQuoteEvidence` (Estimating-owned, EstimateVersion-scoped): `organization_id`, `project_id`, `estimate_version_id`, `estimate_line_item_id` or `routing_id`, `subcontractor_id`, `quote_reference`, `amount`, `currency`, `quote_date`, `expires_on`, `included_scope`, `exclusions`, attachment/provenance, actor, `received_at`, `selection_status` (`RECEIVED` · `SELECTED` · `REJECTED` · `SUPERSEDED`).
+
+Quote evidence does not silently set selling price. Selected quote used in working direct cost still requires FG-027 Costing Approval. Freeze selected quote identity/facts into the costing snapshot.
+
+Must work:
+
+- Hybrid: `CONTRACTOR_PURCHASED` + `SUBCONTRACT`
+- Complete subcontract: `SUBCONTRACTOR_SUPPLIED` + `SUBCONTRACT`
+- Labour-only subcontract: `NO_MATERIAL` + `SUBCONTRACT`
+
+Out of FG-031: Subcontractor Portal, multi-bid marketplace, subcontract EDI/order flow.
+
+Subcontract RFQ/package is **not** required for BMR Demo Ready. Strong candidate before/during Brayman real-life UAT. Not Slice A. HTML/PDF may mature during UAT. Portal is POST-V1.
+
+---
+
+## 12. Customer Estimate / V1-04 / QuickBooks
+
+Customer-facing estimate remains scope-oriented and selling-price-oriented. Do **not** expose routing enums, internal labour rates, supplier pricing, supplier identity unless separately commercially relevant, subcontract quote cost, margin, or markup.
+
+This decision applies to later V1-04 output work. Do **not** begin V1-04 from this recording.
+
+Internal Detailed Cost Breakdown may eventually display internal delivery class.
+
+QuickBooks / V1-05 later consumes planned cost-class split (material/vendor, subcontract, internal labour). Routing provides planned classification. No QuickBooks implementation here.
+
+Contract output remains customer-scope-oriented.
+
+---
+
+## 13. BUILD / MONITOR
+
+No implementation in FG-031 initial slices unless separately authorized.
+
+Later mapping:
+
+- `INTERNAL` labour → planned labour
+- `CONTRACTOR_PURCHASED` → planned material
+- `SUBCONTRACT` and/or `SUBCONTRACTOR_SUPPLIED` → planned subcontract
+
+Actuals remain independent: labour, material, subcontract, other_direct. Do not double-count hybrid selling price.
+
+---
+
+## 14. Test plan (later implementation; not run now)
+
+Record later tests covering:
+
+- two independent routing dimensions
+- internal labour
+- contractor-purchased material
+- complete subcontract
+- contractor-material + subcontract-labour hybrid
+- contractor-material + internal-labour hybrid
+- subcontractor-material + subcontract-labour
+- no-material + subcontract-labour
+- no PLAN mutation
+- no CostItem / Assembly contamination
+- no CanonicalMaterial contamination
+- EstimateVersion isolation
+- clone-copy routing
+- human per-row confirmation
+- Approve All eligible rows
+- Approve All skips unresolved
+- unresolved blocks FG-027 approval
+- Allowance exception
+- Supplier Package filters by `CONTRACTOR_PURCHASED`
+- uncited/manual requirement fail-closed inclusion
+- customer estimate privacy
+- supplier privacy
+- subcontract quote privacy
+- no supplier-price cost mutation
+- FG-027 remains final authority
+- Pricing no-auto-apply
+- Pricing STALE after recost
+- tenant isolation
+- transaction rollback
+- historical routing preservation
+
+Product tests are **NOT RERUN** for this recording.
+
+---
+
+## 15. V1 scoring
+
+Supporting architecture. **Not** a 12th major package. Do **not** rescore from this recording.
+
+Preserve: **55%** · **3 / 11 COMPLETE**.
+
+V1-04 remains the current scored package and is **NOT STARTED**.
+
+---
+
+## 16. Stop conditions
+
+Do **not** implement FG-031 from this pin.
+
+Do **not** implement FG-030.
+
+Do **not** begin V1-04.
+
+Do **not** create an Alembic revision.
+
+Do **not** mutate the live database.

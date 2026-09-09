@@ -5,7 +5,7 @@
 | Status | **Current (partial)** — [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
 | Updated | 2026-09-09 |
 | Code | `app/models/supplier_catalogue.py`, `app/services/supplier_catalogue.py`, `app/services/supplier_package_pdf.py`, `app/routes/supplier_package.py`, Hub PRICE `/projects/<id>/supplier-package` |
-| Architecture | [../architecture/supplier-catalogue-inventory-pricing.md](../architecture/supplier-catalogue-inventory-pricing.md) · [../architecture/supplier-channel-and-launch-partner.md](../architecture/supplier-channel-and-launch-partner.md) · [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) · [../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md](../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md) · [../architecture/fg-030-supplier-identity-and-access-isolation.md](../architecture/fg-030-supplier-identity-and-access-isolation.md) |
+| Architecture | [../architecture/supplier-catalogue-inventory-pricing.md](../architecture/supplier-catalogue-inventory-pricing.md) · [../architecture/supplier-channel-and-launch-partner.md](../architecture/supplier-channel-and-launch-partner.md) · [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) · [../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md](../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md) · [../architecture/fg-030-supplier-identity-and-access-isolation.md](../architecture/fg-030-supplier-identity-and-access-isolation.md) · [../architecture/fg-031-scope-delivery-make-buy-procurement-routing-preflight.md](../architecture/fg-031-scope-delivery-make-buy-procurement-routing-preflight.md) |
 
 ## Purpose
 
@@ -18,6 +18,8 @@ Own supplier identity, dealer SKUs, human-reviewed mapping, living inform-only p
 This module does **not** own CalibraytAI canonical material identity or thin `MaterialRequirement` (Material Catalogue).
 
 Supplier named-user login, SupplierUserMembership, package sharing, and supplier workspace are [FG-030](../feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. [ADR-047](../adr/ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only). This module will own those records **when implemented**. They do **not** exist in product code today.
+
+[FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) later **filters** what may enter a Supplier Package: only `CONTRACTOR_PURCHASED` material is normally eligible. This module does **not** own routing. Uncited MANUAL/DEMO `MaterialRequirement` rows must not silently enter a package. FG-031 is **NOT IMPLEMENTATION-AUTHORIZED**. FG-030 remains who may see an issued package.
 
 ## Referenced data
 
@@ -38,4 +40,4 @@ Canonical materials and project `MaterialRequirement` (Material Catalogue); `org
 
 ## Relevant ADRs
 
-ADR-008, ADR-010 (Proposed). **ADR-033, ADR-034, ADR-035, ADR-036, ADR-046, ADR-047 Accepted**. This module does not own CalibraytAI identity. FG-030 is architecture only.
+ADR-008, ADR-010 (Proposed). **ADR-033, ADR-034, ADR-035, ADR-036, ADR-046, ADR-047, ADR-048 Accepted**. This module does not own CalibraytAI identity. FG-030 and FG-031 are architecture only.

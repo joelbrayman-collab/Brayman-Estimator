@@ -30,6 +30,22 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-09 — ADR-048 / FG-031 scope delivery routing architecture recording
+
+| Field | Content |
+|-------|---------|
+| ID | ADR-048 / FG-031 (supporting V1 gate; not a 12th major package) |
+| Status | **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** ADR-048 **Accepted** (architecture only). V1 remains **55% / 3 of 11**. FG-030 remains **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. |
+| Branch | `main` |
+| Objective | Record scope delivery / make-buy / procurement routing ownership and two bounded FG-031 slices from the completed architecture reconciliation. Docs only. |
+| Deliverables | ADR-048; FG-031; preflight; current-authority indexes and handoff docs |
+| Validation | `git diff --check`. Product tests **NOT RERUN**. |
+| Architectural findings | Two stored dimensions; 1:1 EstimateScopeDelivery per EstimateLineItem; no HYBRID enum; PLAN remains quantity/evidence; Estimating owns routing; Supplier Package filter CONTRACTOR_PURCHASED; unresolved later BLOCKS FG-027 except Allowance. |
+| Open decisions | FG-031 implementation authorization. First Slice A UI hide vs expose owner-supplied/third-party. FG-030 implementation. V1-04 start. |
+| Next milestone | **STOP.** Do **not** implement FG-031, FG-030, or V1-04. |
+| Commit | follows this recording |
+| Date | 2026-09-09 |
+
 ### 2026-09-09 — FG-028 Slice 3 approved logo installation / close
 
 | Field | Content |

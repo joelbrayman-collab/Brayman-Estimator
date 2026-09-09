@@ -3,9 +3,9 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current** (core implemented) |
-| Updated | 2026-09-08 |
+| Updated | 2026-09-09 |
 | Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`; `app/services/estimates.py`, `estimate_builder.py`, `estimate_output.py` |
-| Feature Gate | [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (internal breakdown + customer consistency). [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** (Estimating-owned insertion/citation). [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** (costing approval). |
+| Feature Gate | [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (internal breakdown + customer consistency). [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** (Estimating-owned insertion/citation). [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** (costing approval). [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED** (scope-delivery routing; not implemented). |
 
 ## Purpose
 
@@ -28,6 +28,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - `estimates`, `estimate_versions`, `estimate_sections`, `estimate_line_items`
 - `takeoff_estimate_insertions`, `takeoff_estimate_insertion_citations` (FG-026; Estimating-owned frozen provenance)
 - `estimate_costing_snapshots`, `estimate_costing_snapshot_lines` (FG-027; Estimating-owned; additive `a5b6c7d8e9f0` **applied live**)
+- Future: `estimate_scope_deliveries` ([FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md); [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** architecture only; **not implemented**; 1:1 with `EstimateLineItem`)
 
 ## Referenced data
 
@@ -41,6 +42,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - Project change order lifecycle ownership (Project Controls / Projects)
 - Accounting integrations
 - Auto-creating `EstimateLineItem` rows from Permit Intelligence findings ([ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md); [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md)). Permit Intelligence may later **identify** cost implications; human-controlled propose-allowance is **not authorized** this pass.
+- Storing scope-delivery routing on PLAN takeoff, `CostItem`, `Assembly`, `CanonicalMaterial`, or `MaterialRequirement` ([ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md))
 
 ## Current implementation
 
@@ -57,6 +59,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 - Takeoff-to-estimate insertion + frozen citation provenance — [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Service: `app/services/takeoff_estimate_mapping.py`. UI: `/projects/<id>/plans/takeoff/packages/<package_id>/map`. Plan Intelligence remains owner of the source package. Package approval does **not** insert lines. Live current = heads **`f4a5b6c7d8e9`**.
 - Costing approval + immutable costing snapshot — [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Legacy NULL `library_unit_cost_reference` on CostItem/Assembly Draft edit freezes pre-edit working `unit_cost` (`72949f99da2b56ec06e95e16e29fa194a6730bbd`). [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Preflight [fg-027-costing-approval-preflight.md](../architecture/fg-027-costing-approval-preflight.md). Approve All = costing approval only. Pricing Engine consumes; does not own costing.
+- Scope delivery / make-buy routing — [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** (architecture only). Two stored dimensions; 1:1 `EstimateScopeDelivery` per `EstimateLineItem`. Do **not** implement from this recording.
 - Future Material-category `CostItem` → canonical material link ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**); assembly components resolvable to canonical materials later; fulfillment uses **exploded** material quantities even when the commercial line stays rolled-up ([material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md)). Identity V1 does not explode Assemblies.
 - QuickBooks and Ontario contract/warranty remain **Future**.
 - Historical estimating intelligence — **Future**
@@ -92,5 +95,6 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR not implemented)
 - [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** (LEARN must not mutate cost library / approved estimates)
 - [material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) **Intended** ([ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) / [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) / [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**; CostItem is not CalibraytAI identity; living supplier evidence is not the identity row)
-- [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted** (architecture only): Estimating does **not** own `MaterialRequirement`; V1-03 supplier price is inform-only and must not write `EstimateLineItem` / FG-027 / FG-009. [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **NOT IMPLEMENTATION-AUTHORIZED**.
+- [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**: Estimating does **not** own `MaterialRequirement`; V1-03 supplier price is inform-only and must not write `EstimateLineItem` / FG-027 / FG-009. [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT**.
+- [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** (architecture only): Estimating owns project-specific `EstimateScopeDelivery`. [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**.
 - [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** — Estimating owns internal breakdown; Proposal remains the customer-facing estimate

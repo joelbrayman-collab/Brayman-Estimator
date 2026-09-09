@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current** — FG-008 Phase B foundation **CLOSED / OPERATIONAL FOR UAT** (revision `f2c3d4e5f6a7` in chain; **gate-at-close** live head `b4c5d6e7f8a9`; live head today `a9b0c1d2e3f4`) |
-| Updated | 2026-08-30 |
+| Updated | 2026-09-09 |
 | Feature Gate | [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **CLOSED / OPERATIONAL FOR UAT** |
 | Architecture | [../architecture/labour-engine-phase-b-architecture.md](../architecture/labour-engine-phase-b-architecture.md) |
 | ADR | [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** |
@@ -59,6 +59,7 @@ Office UI at `/labour-engine/`. Contractor-facing page title is **Labour rates**
 - Locked estimate snapshots do not float with later standards
 - [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) takeoff-to-estimate insert does **not** create labour snapshots
 - [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) / [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) keep labour snapshots out of default selling-price basis and keep the office labour-snapshot pin **out of V1-02**
+- [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) / [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) `INTERNAL` labour routing **permits** this engine; it does **not** auto-create `LabourTask`, production standards, or snapshots. FG-031 is **NOT IMPLEMENTATION-AUTHORIZED**.
 
 ## Open decisions
 

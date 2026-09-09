@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-09 — ADR-048 / FG-031 scope delivery routing architecture recording
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-09 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Docs-only recording of ADR-048, FG-031, and architecture preflight from the completed scope-delivery reconciliation. No product implementation. |
+| Business decision | Two stored routing dimensions (material procurement × labour delivery). No HYBRID enum. Human confirmation required. Approve All Scope Routing is authorized design for Slice A. Unresolved routing later BLOCKS FG-027 except Allowance. Supplier Package eligibility = CONTRACTOR_PURCHASED only. Customer estimate remains delivery-blind. |
+| Architectural decision | [ADR-048](adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** (architecture only). [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Supporting V1 gate; **not** a 12th package. V1 remains **55% / 3 of 11**. FG-030 remains **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. ADR-008 remains **Proposed**. |
+| Prompt template used | Joel/ChatGPT ADR-048 + FG-031 governance recording (9 Sep 2026) |
+| Approved Cursor prompt summary | Docs/architecture only. Record ADR-048, FG-031, preflight, minimum current-authority. Commit/push if coherent. Do not implement FG-031, FG-030, or V1-04. No schema. No Alembic. |
+| Files expected to change | Governance/current-authority docs only |
+| Files prohibited from changing | `app/`; `migrations/`; tests; live DB; branding; website |
+| Implementation result | Docs recorded. ADR-048 **Accepted**. FG-031 **NOT IMPLEMENTATION-AUTHORIZED**. **NOT IMPLEMENTED**. No product code. No migration. |
+| Tests | **NOT RERUN** — ADR-048 / FG-031 architecture recording only. Last product-changing full suite **681 passed** (HISTORICAL; FG-028 Slice 3). |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (recorded architecture; not a coded milestone) |
+| Constitutional issue raised | None |
+| Unresolved issues | FG-031 implementation not authorized. Slice A UI may hide OWNER_SUPPLIED / OWNER_THIRD_PARTY (architecture values retained). FG-030 not implementation-authorized. V1-04 not begun. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement FG-031. Do **not** implement FG-030. Do **not** begin V1-04. |
+| Next approved prompt | None from this recording. |
+| Commit hash | follows this recording |
+
 ### 2026-09-09 — FG-028 Slice 3 approved logo installation / close
 
 | Field | Content |

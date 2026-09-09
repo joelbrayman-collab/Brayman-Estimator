@@ -111,6 +111,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-09 FG-028 Slice 3 installed — not authorized by CAR-001):** [FG-028](../feature-gates/FG-028-calibai-to-calibraytai-product-identity-transition.md) **SLICES 1–3 COMPLETE / CLOSED / OPERATIONAL FOR UAT**. Runtime `calibraytai-logo-v2.png` on Field header. Tenant office/login/Brand Profile logos unchanged. Field favicon unchanged (no supplied square favicon). CAR-001 still does **not** authorize FG-030 implementation, V1-04, FG-024, remaining FG-025 surfaces, LEARN, SCOPE DELIVERY / MAKE-BUY routing, or a repository rename.
 
+**Subsequent status (2026-09-09 FG-031 scope delivery architecture — not authorized by CAR-001):** [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** (architecture only). [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Two stored dimensions; 1:1 `EstimateScopeDelivery` per `EstimateLineItem`; no HYBRID enum. Supporting V1 gate; **not** a 12th major package. V1 remains **55% / 3 of 11**. CAR-001 still does **not** authorize FG-031 implementation, FG-030 implementation, V1-04, FG-024, remaining FG-025 surfaces, LEARN, or a repository rename.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

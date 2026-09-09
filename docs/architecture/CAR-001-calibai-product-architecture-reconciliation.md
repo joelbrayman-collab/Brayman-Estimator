@@ -113,6 +113,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-09 FG-031 Slice A product — not authorized by CAR-001):** [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / SLICE B NOT AUTHORIZED / NOT CLOSED**. Two stored dimensions; 1:1 `EstimateScopeDelivery` per `EstimateLineItem`; no HYBRID enum. Supporting V1 gate; **not** a 12th major package. V1 remains **55% / 3 of 11**. CAR-001 still does **not** authorize live migrate, Slice B, FG-030 implementation, V1-04, FG-024, remaining FG-025 surfaces, LEARN, or a repository rename.
 
+**Subsequent status (2026-09-09 FG-031 Slice A live migrate + bounded office UAT — not authorized by CAR-001):** [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT**. Overall **NOT CLOSED**. Slice B **NOT AUTHORIZED / NOT IMPLEMENTED**. Live current = head **`c7d8e9f0a1b2`**. Canonical DEMO project **id 19**. V1 remains **55% / 3 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. CAR-001 still does **not** authorize Slice B, FG-030 implementation, V1-04, FG-024, remaining FG-025 surfaces, LEARN, or a repository rename.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

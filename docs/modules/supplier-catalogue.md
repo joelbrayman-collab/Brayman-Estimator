@@ -40,4 +40,4 @@ Canonical materials and project `MaterialRequirement` (Material Catalogue); `org
 
 ## Relevant ADRs
 
-ADR-008, ADR-010 (Proposed). **ADR-033, ADR-034, ADR-035, ADR-036, ADR-046, ADR-047, ADR-048 Accepted**. This module does not own CalibraytAI identity. FG-030 is architecture only. FG-031 Slice A package filter is implemented; live migrate / Slice B / UAT are not.
+ADR-008, ADR-010 (Proposed). **ADR-033, ADR-034, ADR-035, ADR-036, ADR-046, ADR-047, ADR-048 Accepted**. This module does not own CalibraytAI identity. FG-030 is architecture only. FG-031 Slice A package filter is **live-migrated / office UAT PASS**; Slice B is not.

@@ -30,6 +30,22 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-09 — FG-031 Slice A live migrate + bounded office UAT
+
+| Field | Content |
+|-------|---------|
+| ID | FG-031 Slice A live migrate / office UAT (supporting V1 gate; not a 12th major package) |
+| Status | **SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT / SLICE B NOT AUTHORIZED / OVERALL NOT CLOSED.** V1 remains **55% / 3 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+| Branch | `main` |
+| Objective | Governed live backup; apply `c7d8e9f0a1b2`; bounded synthetic office UAT of Scope Delivery Review, confirmation gate, Supplier Package filter, clone reconfirm, and privacy/isolation. No Slice B. No product-code repair. |
+| Deliverables | Live current = head `c7d8e9f0a1b2`. Canonical DEMO project **id 19**. UAT record. Current-authority close docs. |
+| Validation | Required commercial UAT cases **PASS**. Product tests **NOT RERUN** (no product defect). Historical dedicated FG-031 **26** / FG-027 **20** / FG-029 **16** / governed **258** / full **707**. |
+| Architectural findings | CONFIRMED routing is costing authority; resolved PROPOSED still blocks. Supplier Package includes only cited CONFIRMED CONTRACTOR_PURCHASED. Slice B tables remain absent. |
+| Open decisions | Slice B remains separately authorized. FG-030 remains **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. V1-04 not begun. ADR-008 remains **Proposed**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do not implement Slice B. Do not implement FG-030. Do not begin V1-04. |
+| Commit | Close follows this inspect. Start pin **`bbe22f2a10ba9ba827e50c92688774a025b95d34`**. |
+| Date | 2026-09-09 |
+
 ### 2026-09-09 — FG-031 Slice A human-confirmation costing gate repair
 
 | Field | Content |

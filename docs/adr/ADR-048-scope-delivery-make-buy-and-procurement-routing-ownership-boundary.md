@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-048: Scope Delivery, Make-Buy, and Procurement Routing Ownership Boundary |
-| Status | **Accepted.** Slice A product implementation is **separate** from this ADR’s architecture recording. [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / SLICE B NOT AUTHORIZED / NOT CLOSED**. |
+| Status | **Accepted.** Slice A product implementation is **separate** from this ADR’s architecture recording. [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT / SLICE B NOT AUTHORIZED / NOT CLOSED**. |
 | Date | 2026-09-09 |
 | Related | [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) · [fg-031-scope-delivery-make-buy-procurement-routing-preflight.md](../architecture/fg-031-scope-delivery-make-buy-procurement-routing-preflight.md) · [ADR-006](ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-021](ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-024](ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-044](ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted** · [ADR-046](ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted** · [ADR-047](ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only) · [ADR-008](ADR-008-supplier-price-snapshotting.md) **Proposed** |
 
@@ -147,7 +147,7 @@ Working routing is Estimating-owned, org-isolated, EstimateVersion-scoped. Freez
 
 ## Migration impact
 
-**Slice A product:** additive file **`c7d8e9f0a1b2`** (`down_revision = b6c7d8e9f0a1`). Creates `estimate_scope_deliveries` and nullable costing-snapshot freeze columns. **Not applied live.** This ADR does **not** authorize live migrate.
+**Slice A product:** additive file **`c7d8e9f0a1b2`** (`down_revision = b6c7d8e9f0a1`). Creates `estimate_scope_deliveries` and nullable costing-snapshot freeze columns. **Subsequent status (2026-09-09 live migrate + bounded office UAT):** applied live. Live current = head **`c7d8e9f0a1b2`**. This ADR does **not** authorize Slice B.
 
 ---
 

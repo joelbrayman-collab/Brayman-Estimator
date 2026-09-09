@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-09 — FG-031 Slice A live migrate + bounded office UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-09 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Governed live DB backup; live migrate `c7d8e9f0a1b2`; bounded synthetic office UAT of FG-031 Slice A. No Slice B. No FG-030. No V1-04. No product-code repair if UAT finds a defect. |
+| Business decision | Slice A becomes LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT only if required checks PASS. Overall FG-031 remains NOT CLOSED because Slice B is not implemented. V1 remains **55% / 3 of 11**. BMR DEMO READY remains **NO**. |
+| Architectural decision | ADR-048 remains Accepted. CONFIRMED routing is costing authority; resolved PROPOSED still blocks. Supplier Package cited CONFIRMED CONTRACTOR_PURCHASED filter. ADR-008 remains Proposed. FG-030 unchanged. |
+| Prompt template used | Joel/ChatGPT FG-031 Slice A live migration + bounded office UAT (9 Sep 2026) |
+| Approved Cursor prompt summary | Live backup; migrate `c7d8e9f0a1b2`; bounded DEMO UAT; operational close if PASS; commit/push close docs. No Slice B. No product repair. |
+| Files expected to change | Current-authority governance docs; dedicated UAT record. Live DB mutation via Alembic + labeled synthetic UAT only. |
+| Files prohibited from changing | Product code; Slice B; FG-030; V1-04; ADR-008 acceptance; LEARN; QuickBooks; contracts; Native Signing; Observation Delete; website; HostPapa; backup file (gitignored) |
+| Implementation result | Backup SHA-256 `f2dec3fd0010f67398a908c065a6f273a7c8b3ed7b37280d1113ed16f3b3987b`. Live current = head `c7d8e9f0a1b2`. Canonical UAT project **id 19**. Required UAT PASSed. No product defect. |
+| Tests | **NOT RERUN** (no product defect). HISTORICAL dedicated FG-031 **26**; FG-027 **20**; FG-029 **16**; governed bundle **258**; full suite **707**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Slice B not authorized. FG-030 not implementation-authorized. V1-04 not begun. BMR DEMO READY remains NO (Ontario/fail-closed contract story). Interactive logged-in browser walkthrough of Scope Delivery Review was not available (expired sessions); authenticated product HTML PASS. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement Slice B. Do **not** implement FG-030. Do **not** begin V1-04. |
+| Next approved prompt | None from this UAT. |
+| Commit hash | Close follows this inspect. Start pin **`bbe22f2a10ba9ba827e50c92688774a025b95d34`**. |
+
 ### 2026-09-09 — FG-031 Slice A human-confirmation costing gate repair
 
 | Field | Content |

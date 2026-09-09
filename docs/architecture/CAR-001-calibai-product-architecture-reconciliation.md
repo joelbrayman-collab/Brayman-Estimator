@@ -109,6 +109,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-09 FG-029 live migrate + bounded UAT close — not authorized by CAR-001):** [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Live current = head **`b6c7d8e9f0a1`**. V1-03 **COMPLETE**. Readiness **55%**. **3 / 11** COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Bounded DEMO project **id 14**. Issued package **id 1**. FG-030 remains **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. FG-028 Slice 3 remains **APPLICATION INSTALLATION / TEST / ACCEPTANCE PENDING**. CAR-001 still does **not** authorize FG-030 implementation, Slice 3 installation, V1-04, FG-024, remaining FG-025 surfaces, LEARN, SCOPE DELIVERY / MAKE-BUY routing, or a repository rename.
 
+**Subsequent status (2026-09-09 FG-028 Slice 3 installed — not authorized by CAR-001):** [FG-028](../feature-gates/FG-028-calibai-to-calibraytai-product-identity-transition.md) **SLICES 1–3 COMPLETE / CLOSED / OPERATIONAL FOR UAT**. Runtime `calibraytai-logo-v2.png` on Field header. Tenant office/login/Brand Profile logos unchanged. Field favicon unchanged (no supplied square favicon). CAR-001 still does **not** authorize FG-030 implementation, V1-04, FG-024, remaining FG-025 surfaces, LEARN, SCOPE DELIVERY / MAKE-BUY routing, or a repository rename.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-09). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **COMPLETE**. V1-03 / [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**). Readiness **55%** (V1-03 factor **1.00**; 44.85 − 1.8 + 12.0 = 55.05 → **55%**). **3 / 11** COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. Does **not** authorize FG-024, FG-030 implementation, or FG-028 Slice 3 installation. |
+| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-09). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **COMPLETE**. V1-03 / [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**). Readiness **55%** (V1-03 factor **1.00**; 44.85 − 1.8 + 12.0 = 55.05 → **55%**). **3 / 11** COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. Does **not** authorize FG-024, FG-030 implementation, or V1-04. FG-028 **CLOSED / OPERATIONAL FOR UAT** (does **not** rescore this register). |
 | Product | CalibraytAI / The Estimator (formerly CalibAi) |
 | Date | 2026-09-08 |
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
@@ -31,7 +31,8 @@ BRAYMAN REAL-LIFE UAT READY:
 NO
 
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
-THIS REGISTER DOES NOT AUTHORIZE FG-024, FG-030 IMPLEMENTATION, OR FG-028 SLICE 3 INSTALLATION
+THIS REGISTER DOES NOT AUTHORIZE FG-024, FG-030 IMPLEMENTATION, OR V1-04
+FG-028 CLOSED / OPERATIONAL FOR UAT — DOES NOT RESCORE THIS REGISTER
 ```
 
 ---
@@ -235,7 +236,7 @@ PLAN proposes. Estimating commits. Package approval does **not** insert. Live UA
 | BLOCKER? | **NO** (V1-03 complete; ADR-008 still **Proposed**; BMR DEMO READY still **NO** pending fail-closed/Ontario contract story) |
 | Dependencies | Material Catalogue identity (FG-014 **CLOSED**); V1-01 for requirement traceability; ADR-033 dual relationships |
 | Governing | [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**; [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [fg-029-bmr-supplier-workflow-v1-preflight.md](architecture/fg-029-bmr-supplier-workflow-v1-preflight.md); [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**; [ADR-036](adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**; [ADR-008](adr/ADR-008-supplier-price-snapshotting.md) **Proposed**; FG-014 identity only |
-| Next governed action | **STOP.** V1-03 is **COMPLETE**. Do **not** implement FG-030. Do **not** install FG-028 Slice 3 from this register. Do **not** begin V1-04 / FG-024 from this close. Return to ChatGPT Architect. |
+| Next governed action | **STOP.** V1-03 is **COMPLETE**. FG-028 is **CLOSED / OPERATIONAL FOR UAT**. Do **not** implement FG-030. Do **not** begin V1-04 / FG-024 from this close. Return to ChatGPT Architect. |
 
 **V1 minimum (honest BMR demo, not a marketplace):** thin `MaterialRequirement` → human-reviewed DEMO Winchester SKU mapping → inform-only price/availability evidence → frozen Supplier Package HTML+PDF. Live-migrated 2026-09-09. Bounded DEMO/SYNTHETIC UAT **PASS** on project **id 14**. FG-010 remains interior-door count only. Inventory API, EDI, POs, bulk onboarding, other dealers, Darcy channel economics, and supplier-price → estimate cost remain **OUT OF FG-029** / **POST-V1** unless Joel expands V1. Evidence: [fg029-live-migrate-bounded-uat-record.md](testing/fg029-live-migrate-bounded-uat-record.md).
 

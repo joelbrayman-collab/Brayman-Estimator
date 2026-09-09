@@ -96,4 +96,4 @@ Dedicated FG-028 tests for Field title/alt, Project Hub aria-label, Permit PDF t
 | Joel | Joel Brayman | 2026-09-09 |
 | ChatGPT review | Authorized implementation prompt | 2026-09-09 |
 | Cursor implementation note | Slices 1–2 under FG-028; Slice 3 held | 2026-09-09 |
-| Cursor subsequent status | Slice 3 package `CalibraytAI_090926_Final.zip` **ASSET RECEIVED / JOEL APPROVED / FINAL**. **APPLICATION INSTALLATION / TEST / ACCEPTANCE PENDING.** Do **not** install from the FG-029 close reconciliation. | 2026-09-09 |
+| Cursor subsequent status | Slice 3 **INSTALLED / TESTED / VERIFIED.** Runtime `calibraytai-logo-v2.png` on Field header (light background). FG-028 **CLOSED / OPERATIONAL FOR UAT**. Tenant office/login/Brand Profile logos unchanged. | 2026-09-09 |

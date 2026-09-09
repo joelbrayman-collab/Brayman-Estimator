@@ -30,6 +30,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-09 — FG-028 Slice 3 approved logo installation / close
+
+| Field | Content |
+|-------|---------|
+| ID | FG-028 / product identity Slice 3 |
+| Status | **SLICES 1–3 COMPLETE / CLOSED / OPERATIONAL FOR UAT.** CALIBRAYTAI PRODUCT IDENTITY TRANSITION **COMPLETE**. Runtime V2 Field header logo installed. Tenant branding preserved. V1 remains **55% / 3 of 11**. FG-030 **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. |
+| Branch | `main` |
+| Objective | Install Joel-approved CalibraytAI runtime product logos from `CalibraytAI_090926_Final.zip`; test; verify; close FG-028. |
+| Deliverables | `app/static/branding/calibraytai-logo-v2.png`; Field header src; bounded tests; FG-028 close docs. |
+| Validation | Dedicated **13**. Combined Field/brand/proposal/CO/auth **131**. Focused **117**. FG-029 **16**. Full **681**. Visual QA Field desktop/mobile + office dashboard PASS. `git diff --check`. No `migrations/`. Live current remains `b6c7d8e9f0a1`. |
+| Open decisions | FG-030 implementation. V1-04. SCOPE DELIVERY / MAKE-BUY architecture. Field favicon remains tenant PNG. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. |
+| Commit | Product SHA pending this commit / pin. |
+| Date | 2026-09-09 |
+
 ### 2026-09-09 — FG-029 post-UAT governance reconciliation
 
 | Field | Content |

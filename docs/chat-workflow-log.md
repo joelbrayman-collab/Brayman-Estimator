@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-09 — FG-028 Slice 3 approved logo installation / close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-09 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Install Joel-approved CalibraytAI runtime product logos, test, verify, close FG-028. |
+| Business decision | Strict asset swap. V2 on Field header (light/cream). No V1 install (no governed dark PRODUCT placement). Tenant office/login/Brand Profile/Proposal/Change Order unchanged. No favicon derivation. No layout/typography change. |
+| Architectural decision | FG-028 **SLICES 1–3 COMPLETE / CLOSED / OPERATIONAL FOR UAT**. CALIBRAYTAI PRODUCT IDENTITY TRANSITION **COMPLETE**. V1 remains **55% / 3 of 11**. FG-030 **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. SCOPE DELIVERY / MAKE-BUY **QUEUED** only. |
+| Prompt template used | Joel/ChatGPT FG-028 Slice 3 authorized prompt (9 Sep 2026) |
+| Approved Cursor prompt summary | Locate `CalibraytAI_090926_Final.zip`; install required runtime PNG; replace governed PRODUCT placements only; V1 dark / V2 light; bounded tests; visual QA; close FG-028; commit/push if PASS. |
+| Files expected to change | Runtime V2 PNG; Field header template; FG-028 tests; minimum FG-028 governance close docs |
+| Files prohibited from changing | Schema/Alembic; live DB; tenant logos; website; FG-030; V1-04; scope-delivery; Supplier Integration; HostPapa |
+| Implementation result | V2 PNG installed as exact ZIP bytes. Field header src swapped. Layout/CSS footprint preserved. V1 PNG not installed. Favicon unchanged. |
+| Tests | Dedicated FG-028 **13 passed**. Field **20**. Combined Field/FG-025/Brand/Proposal/CO/auth **131 passed**. Focused Field/Hub/Permit/Brand/Labour **117 passed**. FG-029 **16 passed**. Full suite **681 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Field favicon remains tenant PNG (no supplied square favicon). FG-030 not implementation-authorized. V1-04 not begun. SCOPE DELIVERY / MAKE-BUY not implemented. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Queued next architecture: SCOPE DELIVERY / MAKE-BUY / PROCUREMENT ROUTING. |
+| Next approved prompt | None from this close. |
+| Commit hash | Product SHA pending this commit / pin. |
+
 ### 2026-09-09 — FG-029 post-UAT governance reconciliation
 
 | Field | Content |

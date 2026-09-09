@@ -73,13 +73,14 @@ Brayman Construction identity is separate. Do **not** replace `Brayman Construct
 | Stored `permit_findings.advisory_language` | **Frozen.** Do not UPDATE for branding. |
 | Proposal / Change Order | Tenant / Brand Profile / `Brayman Construction Platform` **unchanged**. |
 
-## Visual asset (Slice 3 — received / not installed)
+## Visual asset (Slice 3 — installed)
 
-Joel-approved final package **`CalibraytAI_090926_Final.zip`** is on the Desktop (SHA-256 `2328333b67a3cece1e0e251276d96bbcf83b9589f6dfe55440be11819e6b8cde`). Variants **V1** (dark / navy backgrounds) and **V2** (light / white backgrounds). Formats: AI, EPS, JPG, PDF, PNG, PSD, SVG. These assets are **FINAL**. Do **not** redesign, regenerate, recolour, retype, reconstruct, change emblem, change proportions, or change the PLAN • PRICE • BUILD lockup.
+Joel-approved final package **`CalibraytAI_090926_Final.zip`** remains the external source authority on the Desktop (SHA-256 `2328333b67a3cece1e0e251276d96bbcf83b9589f6dfe55440be11819e6b8cde`). Runtime PNG **`app/static/branding/calibraytai-logo-v2.png`** is the exact ZIP member `V2 LOGO/CalibraytAI.png` (SHA-256 `b719bdd2fe7814d49d1a4065c4d6b1915f8e3cd6696f711c08e8d49b3fa53aea`).
 
-**APPLICATION INSTALLATION / TEST / ACCEPTANCE PENDING.** Do **not** install from this reconciliation. Slice 3 installation requires a separate bounded prompt. The package is **FINAL** and already received.
+- **V1** — dark / navy backgrounds: not installed; no governed PRODUCT dark-background placement exists.
+- **V2** — light / cream Field header: **installed**.
 
-Until installed, Field **text** is CalibraytAI while the header/favicon may continue to use `app/static/branding/brayman-construction-logo.png`. That is a **temporary known identity/asset conflation**, not a Brand Profile change.
+Office chrome, login mark, tenant Brand Profile, Proposal, and Change Order continue to use `app/static/branding/brayman-construction-logo.png`. Field favicon remains that tenant PNG because the package contains no supplied square favicon and derivation is forbidden.
 
 ## Website
 

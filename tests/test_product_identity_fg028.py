@@ -1,4 +1,4 @@
-"""FG-028 CalibraytAI product-identity tests (Slices 1–2)."""
+"""FG-028 CalibraytAI product-identity tests (Slices 1–3)."""
 
 from __future__ import annotations
 
@@ -22,6 +22,9 @@ from tests.test_permit_intelligence_fg016 import (
     _make_project,
     _pdf_text,
 )
+
+PRODUCT_LOGO_V2 = "branding/calibraytai-logo-v2.png"
+TENANT_LOGO = "branding/brayman-construction-logo.png"
 
 
 @pytest.fixture
@@ -83,15 +86,49 @@ def project(app):
     return row
 
 
+def test_approved_v2_runtime_asset_exists():
+    path = Path("app/static") / PRODUCT_LOGO_V2
+    assert path.is_file()
+    assert path.stat().st_size > 0
+
+
 def test_field_visible_title_and_alt_are_calibraytai(client):
     html = client.get("/field/today").get_data(as_text=True)
     assert "Today — CalibraytAI" in html
     assert 'alt="CalibraytAI Field"' in html
     assert "CalibAi" not in html
-    assert "branding/brayman-construction-logo.png" in html
+    assert PRODUCT_LOGO_V2 in html
+    assert 'src="/static/branding/calibraytai-logo-v2.png"' in html
     assert "Brayman Construction Platform" not in html
     base = Path("app/templates/field/base.html").read_text()
     assert "Field — CalibraytAI" in base
+    assert PRODUCT_LOGO_V2 in base
+    assert base.count(PRODUCT_LOGO_V2) == 1
+    assert base.count(TENANT_LOGO) == 1
+
+
+def test_field_header_uses_v2_on_light_background():
+    css = Path("app/static/css/field.css").read_text()
+    assert "body.field-body" in css
+    assert "background: var(--cream)" in css
+    assert "--cream: #f4f2ee" in css
+    base = Path("app/templates/field/base.html").read_text()
+    assert PRODUCT_LOGO_V2 in base
+    assert "calibraytai-logo-v1" not in base
+
+
+def test_office_login_sidebar_keep_tenant_logo():
+    login = Path("app/templates/auth/login.html").read_text()
+    sidebar = Path("app/templates/partials/sidebar.html").read_text()
+    office = Path("app/templates/base.html").read_text()
+    assert TENANT_LOGO in login
+    assert 'alt="Brayman Construction"' in login
+    assert PRODUCT_LOGO_V2 not in login
+    assert TENANT_LOGO in sidebar
+    assert 'alt="Brayman Construction"' in sidebar
+    assert PRODUCT_LOGO_V2 not in sidebar
+    assert TENANT_LOGO in office
+    assert PRODUCT_LOGO_V2 not in office
 
 
 def test_project_hub_lifecycle_aria_and_office_chrome(client, project):
@@ -137,6 +174,22 @@ def test_office_and_change_order_tenant_branding_unchanged():
     assert 'alt="Brayman Construction"' in login
     assert PRODUCT_NAME == "Brayman Construction Platform"
     assert DEFAULT_LOGO_STATIC_PATH == "branding/brayman-construction-logo.png"
+    assert PRODUCT_LOGO_V2 not in login
+    assert PRODUCT_LOGO_V2 not in Path("app/project_controls/pdf.py").read_text()
+    assert PRODUCT_LOGO_V2 not in Path("app/services/proposal_pdf.py").read_text()
+    assert PRODUCT_LOGO_V2 not in Path("app/services/brand_profile.py").read_text()
+
+
+def test_supplier_package_has_no_product_logo_placement():
+    html = Path("app/templates/projects/supplier_package.html").read_text()
+    output = Path("app/templates/projects/supplier_package_output.html").read_text()
+    pdf_src = Path("app/services/supplier_package_pdf.py").read_text()
+    assert "calibraytai-logo" not in html
+    assert "calibraytai-logo" not in output
+    assert "calibraytai-logo" not in pdf_src
+    assert "brayman-construction-logo" not in html
+    assert "brayman-construction-logo" not in output
+    assert "brayman-construction-logo" not in pdf_src
 
 
 def test_technical_identifiers_preserved():

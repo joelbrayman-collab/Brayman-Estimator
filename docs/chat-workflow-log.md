@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Field favicon remains tenant PNG (no supplied square favicon). FG-030 not implementation-authorized. V1-04 not begun. SCOPE DELIVERY / MAKE-BUY not implemented. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Queued next architecture: SCOPE DELIVERY / MAKE-BUY / PROCUREMENT ROUTING. |
 | Next approved prompt | None from this close. |
-| Commit hash | Product SHA pending this commit / pin. |
+| Commit hash | Product **`502035fa70ced1d0ff042db3077cc66f50e68de4`**. Pin follows. |
 
 ### 2026-09-09 — FG-029 post-UAT governance reconciliation
 

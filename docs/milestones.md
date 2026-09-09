@@ -42,7 +42,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Validation | Dedicated **13**. Combined Field/brand/proposal/CO/auth **131**. Focused **117**. FG-029 **16**. Full **681**. Visual QA Field desktop/mobile + office dashboard PASS. `git diff --check`. No `migrations/`. Live current remains `b6c7d8e9f0a1`. |
 | Open decisions | FG-030 implementation. V1-04. SCOPE DELIVERY / MAKE-BUY architecture. Field favicon remains tenant PNG. |
 | Next milestone | **STOP.** Return to ChatGPT Architect. |
-| Commit | Product SHA pending this commit / pin. |
+| Commit | Product **`502035fa70ced1d0ff042db3077cc66f50e68de4`**. Pin follows. |
 | Date | 2026-09-09 |
 
 ### 2026-09-09 — FG-029 post-UAT governance reconciliation

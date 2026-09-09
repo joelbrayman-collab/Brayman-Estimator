@@ -1,4 +1,4 @@
-"""CalibAi canonical material identity (FG-014 / ADR-034). Platform-shared; not org-owned."""
+"""CalibraytAI canonical material identity (FG-014 / ADR-034). Platform-shared; not org-owned."""
 
 from datetime import datetime
 from decimal import Decimal

@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED.** Recommendation **NATIVE V1**. Counsel process-review specification **PREPARED**. **Development may proceed under separate governance. Production activation / real customer use is blocked pending Ontario counsel approval of the signing process.** No Native Signing Feature Gate in this pass. No ADR. No product code. |
 | Date | 2026-08-31 (recon); **2026-09-01** (counsel specification prepared) |
-| Product | The Estimator / CalibAi |
+| Product | The Estimator / CalibraytAI (formerly CalibAi) |
 | Canonical architecture | This document |
 | Counsel-facing process spec | [native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — **DRAFT FOR ONTARIO COUNSEL REVIEW / NOT LEGAL APPROVAL / NOT IMPLEMENTED** |
 | Related | [change-order-document-family.md](change-order-document-family.md) · [project-document-package.md](project-document-package.md) · [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [ADR-004](../adr/ADR-004-proposal-acceptance-workflow.md) **Proposed** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [modules/projects.md](../modules/projects.md) · [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted** |
@@ -27,7 +27,7 @@ Separately governed Native Signing architecture, Feature Gate drafting, implemen
 
 Field Web remains separately governed. Parallel does **not** mean this document authorizes signing product code.
 
-**Delta (2026-08-31):** Joel requires CalibAi to evaluate whether electronic signing can be implemented **natively** inside CalibAi rather than requiring a DocuSign or Adobe Acrobat Sign subscription. A third-party provider is **not** assumed.
+**Delta (2026-08-31):** Joel requires CalibraytAI to evaluate whether electronic signing can be implemented **natively** inside CalibraytAI rather than requiring a DocuSign or Adobe Acrobat Sign subscription. A third-party provider is **not** assumed.
 
 ---
 
@@ -55,18 +55,18 @@ Objectives:
 A SIGNING PROVIDER IS NOT THE COMMERCIAL SOURCE OF TRUTH.
 ```
 
-CalibAi owns:
+CalibraytAI owns:
 
 | Concern | Owner |
 |---------|--------|
-| Exact document / package version | CalibAi (document snapshot bytes + SHA) |
+| Exact document / package version | CalibraytAI (document snapshot bytes + SHA) |
 | Commercial record | Existing owning module (`ChangeOrder`; future contract package record) |
-| Document status | CalibAi |
-| Signing request | CalibAi Signing Service |
-| Signed completion status | CalibAi Signing Service |
-| Signed artifact | CalibAi private custody |
+| Document status | CalibraytAI |
+| Signing request | CalibraytAI Signing Service |
+| Signed completion status | CalibraytAI Signing Service |
+| Signed artifact | CalibraytAI private custody |
 | Project association | `projects` |
-| Provenance | CalibAi Signing Record |
+| Provenance | CalibraytAI Signing Record |
 
 The signing **mechanism** (native ceremony, or a later DocuSign/Adobe adapter) only establishes **customer intent / authorization** against that exact frozen document.
 
@@ -92,13 +92,13 @@ Do **not** create a second Change Order entity. Do **not** let a PDF or a vendor
 
 Evaluate **A, B, and C**. Do not implement any.
 
-### A. CalibAi Native Signing
+### A. CalibraytAI Native Signing
 
-CalibAi conducts the signing ceremony on a CalibAi HTTPS page against a CalibAi-frozen PDF. CalibAi stores the Signing Record and artifacts. A transactional mail provider delivers the link. No DocuSign/Adobe subscription is required for V1.
+CalibraytAI conducts the signing ceremony on a CalibraytAI HTTPS page against a CalibraytAI-frozen PDF. CalibraytAI stores the Signing Record and artifacts. A transactional mail provider delivers the link. No DocuSign/Adobe subscription is required for V1.
 
 ### B. DocuSign adapter
 
-CalibAi still freezes the document and owns the commercial record. CalibAi calls DocuSign (or equivalent TSP) to collect the signature, then **imports** completion status + signed artifact. Vendor is a mechanism, not the source of truth.
+CalibraytAI still freezes the document and owns the commercial record. CalibraytAI calls DocuSign (or equivalent TSP) to collect the signature, then **imports** completion status + signed artifact. Vendor is a mechanism, not the source of truth.
 
 ### C. Adobe Acrobat Sign adapter
 
@@ -125,18 +125,18 @@ Minimum defensible flow. **Not implemented.**
 
 1. Brayman generates / finalizes a governed Change Order or Contract PDF snapshot.
 2. Authenticated Brayman user explicitly **Approves for Signature**.
-3. CalibAi freezes exact document bytes/version. Record SHA-256 of the **pre-sign** PDF.
-4. CalibAi creates a secure cryptographically random signing request (store **hash** of the token, not the token).
+3. CalibraytAI freezes exact document bytes/version. Record SHA-256 of the **pre-sign** PDF.
+4. CalibraytAI creates a secure cryptographically random signing request (store **hash** of the token, not the token).
 5. Customer receives a unique signing link at a **governed recipient email**.
 6. Link has bounded expiry and may be revoked / voided.
 7. Customer opens the **exact frozen document**.
 8. Customer can review and download the document **before** signing.
-9. CalibAi displays explicit electronic-signature **consent / intent** language (versioned text).
+9. CalibraytAI displays explicit electronic-signature **consent / intent** language (versioned text).
 10. Customer identifies / confirms signer (typed legal name matching the invitation, with an explicit mismatch warning — product rule later).
 11. Customer may optionally apply a typed or drawn **graphical** signature as presentation only.
 12. Customer explicitly presses **SIGN & ACCEPT**.
-13. CalibAi records completion (Signing Record immutable after complete).
-14. CalibAi generates / preserves the completed signed document and audit record.
+13. CalibraytAI records completion (Signing Record immutable after complete).
+14. CalibraytAI generates / preserves the completed signed document and audit record.
 15. The signing link **cannot** be reused to alter the completed transaction (idempotent; further SIGN → fail closed).
 
 A regenerated or modified PDF **must not** inherit a prior signature.
@@ -164,7 +164,7 @@ Record at minimum:
 | sent_by | Authenticated sender (may equal approved_by) |
 | signer name (invited) | Who was asked to sign |
 | signer email | Governed recipient |
-| signing_request_id | CalibAi identity |
+| signing_request_id | CalibraytAI identity |
 | signed_at UTC | Completion instant |
 | SHA-256 of **completed** document | Tamper detection of the signed artifact |
 | signing state | See Signing Record |
@@ -191,7 +191,7 @@ Do **not** copy a completed signature onto a later regeneration.
 | Identity-document verification | **NOT** in V1 |
 | Biometrics | **NOT** in V1 |
 
-**Rationale:** This is a **simple electronic signature** ceremony: the invited inbox, the unique secret link, the frozen document, the named person, and an explicit act of acceptance. That matches typical Brayman Change Order authorization (homeowner / client authorizing a priced change) without turning CalibAi into an identity-proofing product.
+**Rationale:** This is a **simple electronic signature** ceremony: the invited inbox, the unique secret link, the frozen document, the named person, and an explicit act of acceptance. That matches typical Brayman Change Order authorization (homeowner / client authorizing a priced change) without turning CalibraytAI into an identity-proofing product.
 
 Do **not** automatically add SMS, MFA, ID scan, or biometrics because commercial TSPs offer them. Add a second factor only if **Ontario counsel** says this transaction class requires it.
 
@@ -272,7 +272,7 @@ After `SIGNED`, the record is immutable except for authorized void metadata that
 
 ## Privacy / data minimization
 
-CalibAi needs only enough to prove:
+CalibraytAI needs only enough to prove:
 
 - who was invited
 - which exact document they were shown
@@ -300,7 +300,7 @@ Conceptual composition of the final PDF:
 ```text
 ORIGINAL FROZEN PDF
 + signature representation / completion block
-+ CalibAi signing certificate / audit page
++ CalibraytAI signing certificate / audit page
 → FINAL SIGNED PDF
 ```
 
@@ -325,7 +325,7 @@ Minimum capability:
 | Signed confirmation | To customer and/or office |
 | Completed document | Link (authenticated) or attachment |
 
-**Recommendation:** use a **transactional mail provider** (organization-owned credentials). Do **not** build CalibAi SMTP infrastructure in V1.
+**Recommendation:** use a **transactional mail provider** (organization-owned credentials). Do **not** build CalibraytAI SMTP infrastructure in V1.
 
 Email is **not** a reason to choose DocuSign. DocuSign’s value is a mature signing ceremony and vendor audit pack — not mail itself.
 
@@ -422,15 +422,15 @@ Vendor list prices are **not** recorded here. A separate authorized public-web /
 
 | Concern | Native V1 | Third-party V1 (B or C) |
 |---------|-----------|-------------------------|
-| Development effort | Higher in CalibAi (ceremony, tokens, PDF completion page, mail) | Lower ceremony; higher integration (API, webhooks, envelope mapping, failure modes) |
-| Security ownership | CalibAi owns token + artifact security | Shared: vendor + CalibAi still must freeze docs and import artifacts correctly |
-| Mail | Still required (transactional provider) | Vendor often sends mail; CalibAi still needs status sync |
+| Development effort | Higher in CalibraytAI (ceremony, tokens, PDF completion page, mail) | Lower ceremony; higher integration (API, webhooks, envelope mapping, failure modes) |
+| Security ownership | CalibraytAI owns token + artifact security | Shared: vendor + CalibraytAI still must freeze docs and import artifacts correctly |
+| Mail | Still required (transactional provider) | Vendor often sends mail; CalibraytAI still needs status sync |
 | Operating cost | Mail + hosting; no per-envelope signing SaaS | Recurring subscription / envelope fees (**amounts To be verified**) |
 | Maintenance | Ceremony + PDF + mail + audit | Vendor API churn, webhook auth, envelope/version drift |
-| Customer simplicity | Stay on CalibAi-branded page; no second product login | Familiar TSP UX; hand-off off-site |
-| CalibAi integration | Direct: same Project, same CO, same SHA | Must map vendor envelope ↔ CalibAi source version without losing SoR |
-| Provider independence | High | Vendor lock-in for the ceremony; SoR can still stay in CalibAi if designed correctly |
-| Mature audit pack | CalibAi-designed; counsel must accept | Vendor certificate packs are familiar to some counterparties/lenders |
+| Customer simplicity | Stay on CalibraytAI-branded page; no second product login | Familiar TSP UX; hand-off off-site |
+| CalibraytAI integration | Direct: same Project, same CO, same SHA | Must map vendor envelope ↔ CalibraytAI source version without losing SoR |
+| Provider independence | High | Vendor lock-in for the ceremony; SoR can still stay in CalibraytAI if designed correctly |
+| Mature audit pack | CalibraytAI-designed; counsel must accept | Vendor certificate packs are familiar to some counterparties/lenders |
 
 **Architecture conclusion:** a third-party TSP is **optional**, not required, if Native V1 plus counsel review of the **process** is accepted.
 
@@ -470,7 +470,7 @@ Not **THIRD-PARTY V1**. Not **FURTHER RESEARCH REQUIRED** for product architectu
 Optional later research (not blocking this recon):
 
 - current DocuSign / Adobe envelope pricing (authorized public-web pass)
-- whether any lender, insurer, or AHJ counterparties will reject a CalibAi-native audit pack
+- whether any lender, insurer, or AHJ counterparties will reject a CalibraytAI-native audit pack
 
 Preserve DocuSign / Adobe as **future adapters**.
 

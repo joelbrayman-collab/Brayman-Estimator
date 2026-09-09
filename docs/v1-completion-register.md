@@ -1,15 +1,15 @@
-# CalibAi V1 Completion Register
+# CalibraytAI V1 Completion Register
 
 | Attribute | Value |
 |-----------|--------|
 | Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-08). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**). Readiness **45%** (V1-02 factor **1.00**). **2 / 11** COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Does **not** authorize V1-03, FG-024, or another FG-025 slice. |
-| Product | CalibAi / The Estimator |
+| Product | CalibraytAI / The Estimator (formerly CalibAi) |
 | Date | 2026-09-08 |
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
-| Authority | Completeness of **CalibAi V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. |
+| Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
 ```text
-CALIBAI V1 READINESS: 45%
+CALIBRAYTAI V1 READINESS: 45%
 
 MAJOR PACKAGES:
 2 / 11 COMPLETE
@@ -38,11 +38,11 @@ THIS REGISTER DOES NOT AUTHORIZE V1-03, FG-024, OR ANOTHER FG-025 SLICE
 
 ## 1. Governing V1 outcome
 
-CalibAi V1 is complete when:
+CalibraytAI V1 is complete when:
 
 1. all development required for the first **operational** product is complete;
-2. CalibAi is ready for a **credible end-to-end BMR demonstration**;
-3. Brayman Construction can begin entering **REAL** projects and using CalibAi as the first real-world operational / UAT organization.
+2. CalibraytAI is ready for a **credible end-to-end BMR demonstration**;
+3. Brayman Construction can begin entering **REAL** projects and using CalibraytAI as the first real-world operational / UAT organization.
 
 Brayman Construction (`ORG-001`) is the first real-life UAT environment. Ben Brayman and Brayman Construction users must be able to be trained on the tool and operate real projects through the V1 workflow.
 
@@ -161,7 +161,7 @@ No package from Joel’s list is rejected. No existing August 2026 four-output /
 
 | Field | Value |
 |-------|--------|
-| **CALIBAI V1 READINESS** | **45%** |
+| **CALIBRAYTAI V1 READINESS** | **45%** |
 | **MAJOR PACKAGES COMPLETE** | **2 / 11** |
 | COMPLETE | **2** (V1-01, V1-02) |
 | SUBSTANTIALLY COMPLETE | **2** (V1-08, V1-09) |
@@ -202,7 +202,7 @@ PLAN proposes. Estimating commits. Package approval does **not** insert. Live UA
 
 | Field | Value |
 |-------|--------|
-| Intent | CalibAi develops costs from governed organizational commercial intelligence. Human **costing** approval remains required. Mature path: CalibAi costs → flags exceptions / low-confidence → estimator reviews → **Approve all costing** → Pricing Engine. |
+| Intent | CalibraytAI develops costs from governed organizational commercial intelligence. Human **costing** approval remains required. Mature path: CalibraytAI costs → flags exceptions / low-confidence → estimator reviews → **Approve all costing** → Pricing Engine. |
 | Weight | **10%** |
 | Status | **COMPLETE** — live-migrated; bounded office UAT **PASS**; [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
 | Factor | **1.00** |
@@ -360,7 +360,7 @@ Remaining unauthorized candidates: customer Proposal/PDF terminology; Historical
 
 | Field | Value |
 |-------|--------|
-| Intent | Minimum security, integrity, backup/recovery, production configuration, onboarding, operating docs, training, error/recovery, and deployment to put **real** Brayman projects into CalibAi safely. Not enterprise-scale infrastructure. |
+| Intent | Minimum security, integrity, backup/recovery, production configuration, onboarding, operating docs, training, error/recovery, and deployment to put **real** Brayman projects into CalibraytAI safely. Not enterprise-scale infrastructure. |
 | Weight | **10%** |
 | Status | **PARTIAL** |
 | Factor | 0.35 |
@@ -474,7 +474,7 @@ Canada (provinces/territories) and United States (states) remain the commercial 
 
 ## 10. BMR demonstration — minimum definition
 
-The BMR demo must show CalibAi as an **integrated contractor platform**, not a slide deck of screens.
+The BMR demo must show CalibraytAI as an **integrated contractor platform**, not a slide deck of screens.
 
 ### 10.1 In the minimum demo
 
@@ -573,7 +573,7 @@ Do **not** block V1 on:
 | # | Decision | Register recommendation |
 |---|----------|-------------------------|
 | 1 | QuickBooks V1 = A (output/entry) vs B (live API) | **A now; API POST-V1** |
-| 2 | Exception-based CalibAi costing required before BMR? | **RECORDED (ADR-044 / FG-027).** **No.** Human costing + explicit Approve All Costing is V1; exception-based matures in real UAT |
+| 2 | Exception-based CalibraytAI costing required before BMR? | **RECORDED (ADR-044 / FG-027).** **No.** Human costing + explicit Approve All Costing is V1; exception-based matures in real UAT |
 | 3 | FG-024 Slice D live legal-source monitoring in V1? | **POST-V1.** Keep 06H versioning/supersession/effective-date in V1 |
 | 4 | Customer Proposal/PDF FG-025 remainder in BMR demo? | **Yes**, via a later bounded slice |
 | 5 | Project Closeout before first real project? | **No** for BMR; **V1-desired** before long-running real UAT |
@@ -587,7 +587,7 @@ Do **not** block V1 on:
 Copy this block into later implementation reports and fill from this register:
 
 ```text
-CALIBAI V1 READINESS: 45%
+CALIBRAYTAI V1 READINESS: 45%
 
 MAJOR PACKAGES:
 2 / 11 COMPLETE

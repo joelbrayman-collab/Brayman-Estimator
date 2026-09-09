@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative documentation map |
-| Updated | 2026-09-08 |
+| Updated | 2026-09-09 |
 | Product | The Estimator (Brayman Estimator) |
 
 ## Purpose
@@ -16,7 +16,7 @@ This folder is the **system of record** for platform vision, architecture, gover
 |-------|-----------|------|
 | **Constitutional** | [platform-constitution.md](platform-constitution.md) | Highest-order, rarely changed platform law |
 | **Architectural** | [architecture-principles.md](architecture-principles.md), [architecture.md](architecture.md), [adr/](adr/), [modules/](modules/) | Durable rules, structure, decisions, ownership |
-| **Operational status** | [project-state-report.md](project-state-report.md), [current-state.md](current-state.md), [session-handoff.md](session-handoff.md), [v1-completion-register.md](v1-completion-register.md) | Milestone state, detailed snapshot, immediate resume, **CalibAi V1 product-completion** |
+| **Operational status** | [project-state-report.md](project-state-report.md), [current-state.md](current-state.md), [session-handoff.md](session-handoff.md), [v1-completion-register.md](v1-completion-register.md) | Milestone state, detailed snapshot, immediate resume, **CalibraytAI V1 product-completion** |
 | **Historical records** | [milestones.md](milestones.md), [chat-workflow-log.md](chat-workflow-log.md) | Append-only milestone and decision history |
 | **Reusable templates** | [prompts/](prompts/), [adr/ADR-000-template.md](adr/ADR-000-template.md) | Starting points for Cursor work and ADRs |
 
@@ -37,7 +37,7 @@ This folder is the **system of record** for platform vision, architecture, gover
 13. [`session-handoff.md`](session-handoff.md)
 14. Relevant prompt template under [`prompts/`](prompts/)
 
-Also read [`platform-governance.md`](platform-governance.md), [`governance/continuity-and-anti-drift.md`](governance/continuity-and-anti-drift.md), [`governance/review-turnover-protocol.md`](governance/review-turnover-protocol.md), and [`definition-of-done.md`](definition-of-done.md) before starting any feature.
+Also read [`platform-governance.md`](platform-governance.md), [`governance/product-identity.md`](governance/product-identity.md), [`governance/continuity-and-anti-drift.md`](governance/continuity-and-anti-drift.md), [`governance/review-turnover-protocol.md`](governance/review-turnover-protocol.md), and [`definition-of-done.md`](definition-of-done.md) before starting any feature.
 
 ## Document catalog
 
@@ -45,10 +45,11 @@ Also read [`platform-governance.md`](platform-governance.md), [`governance/conti
 |----------|---------|-----------|
 | [platform-constitution.md](platform-constitution.md) | Highest-order platform law (Articles 1–12) | **Constitutional** |
 | [project-state-report.md](project-state-report.md) | Milestone-level state + template | Operational (mandatory at milestones) |
-| [v1-completion-register.md](v1-completion-register.md) | CalibAi V1 definition, 11-package register, BMR / Brayman real-life UAT readiness | **Governing product-completion instrument** — V1-01 and V1-02 **COMPLETE**. Readiness **45%**. [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**. |
+| [v1-completion-register.md](v1-completion-register.md) | CalibraytAI V1 definition, 11-package register, BMR / Brayman real-life UAT readiness | **Governing product-completion instrument** — V1-01 and V1-02 **COMPLETE**. Readiness **45%**. [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Product identity: [governance/product-identity.md](governance/product-identity.md). |
 | [milestones.md](milestones.md) | Append-only milestone history | Historical |
 | [prompts/](prompts/) | Reusable Cursor prompt templates | Templates |
-| [platform-vision.md](platform-vision.md) | CalibAi vision + current Estimator core | Product intent (Joel-approved CAR-001) |
+| [platform-vision.md](platform-vision.md) | CalibraytAI (formerly CalibAi) vision + current Estimator core | Product intent (Joel-approved CAR-001 / ADR-045) |
+| [governance/product-identity.md](governance/product-identity.md) | Current vs former product name | **Governing** — CalibraytAI current; CalibAi former |
 | [architecture-principles.md](architecture-principles.md) | Numbered durable platform rules | **Architectural** — changes require ADR + Joel |
 | [architecture.md](architecture.md) | Current vs intended vs future architecture | Factual for *current*; aspirational elsewhere |
 | [architecture/](architecture/) | Domain architecture (Plan Intelligence, Supplier, …) | Future unless marked Current |

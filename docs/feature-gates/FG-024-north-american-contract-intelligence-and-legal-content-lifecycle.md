@@ -46,7 +46,7 @@ Joel/ChatGPT recorded this gate on **2026-09-07** as durable product/governance 
 
 ## Purpose
 
-CalibAi shall ultimately provide a governed North American **CONTRACT**-stage capability that:
+CalibraytAI shall ultimately provide a governed North American **CONTRACT**-stage capability that:
 
 1. maintains jurisdiction-aware approved construction legal content;
 2. detects and assesses changes to authoritative legal sources;
@@ -62,7 +62,7 @@ Ontario must **not** become a one-off hard-coded contract implementation.
 
 ## Commercial / product context
 
-CalibAi is intended for commercialization in **Canada** and the **United States**.
+CalibraytAI is intended for commercialization in **Canada** and the **United States**.
 
 Architecture must support:
 
@@ -142,7 +142,7 @@ Future capability for authoritative-source monitoring; candidate change detectio
 
 | # | Question | Answer |
 |---|----------|--------|
-| 1 | What problem does this solve? | CalibAi cannot yet generate, version, or keep current jurisdiction-compliant construction contracts. Ontario is documented as a one-jurisdiction Legal Content Gate with an empty register. Hard-coding Ontario, or generating “generic North American” contracts, would not support Canada + U.S. commercialization. |
+| 1 | What problem does this solve? | CalibraytAI cannot yet generate, version, or keep current jurisdiction-compliant construction contracts. Ontario is documented as a one-jurisdiction Legal Content Gate with an empty register. Hard-coding Ontario, or generating “generic North American” contracts, would not support Canada + U.S. commercialization. |
 | 2 | Who is the user? | Office estimator / principal generating customer contracts; counsel/human reviewers of legal-content versions; later, customers who receive/sign frozen contracts. Not Field Web. Not MONITOR. |
 | 3 | Which module owns it? | **CONTRACT** stage. Legal Content Gate owns approval of legal content. Projects owns location/jurisdiction facts. Permit Intelligence owns permit rules, not contract clauses. Native Signing owns signing process, not template legal text. Organization Brand Profile / FG-022 own presentation, not legal approval. |
 | 4 | What data does it own? | **Future, not created:** jurisdiction legal-content packages and versioned content objects; update-engine candidates and review records; frozen contract-generation snapshots. **This recording owns no schema.** |
@@ -237,7 +237,7 @@ These dates are **not** assumed identical:
 | Date | Role |
 |------|------|
 | Source publication date | When the issuing authority published the change |
-| Source retrieval date | When CalibAi obtained the source |
+| Source retrieval date | When CalibraytAI obtained the source |
 | Legal effective date | When the legal change governs |
 | Counsel approval date | When the content version was APPROVED |
 | Platform activation date | When the version became ACTIVE for generation |
@@ -307,11 +307,11 @@ FG-024 must **FAIL CLOSED** where legal authority is insufficient, including:
 - unresolved effective-date conflict
 - required counsel review incomplete
 
-CalibAi must **not** silently generate a supposedly jurisdiction-compliant contract from generic content in these states.
+CalibraytAI must **not** silently generate a supposedly jurisdiction-compliant contract from generic content in these states.
 
 ---
 
-## Relation to CalibAi lifecycle
+## Relation to CalibraytAI lifecycle
 
 FG-024 belongs principally to **CONTRACT**.
 

@@ -1,5 +1,5 @@
 # BRAYMAN CONSTRUCTION INC.
-# CALIBAI NATIVE ELECTRONIC SIGNING
+# CALIBRAYTAI NATIVE ELECTRONIC SIGNING
 # CHANGE ORDER PROCESS — COUNSEL REVIEW SPECIFICATION
 
 | Attribute | Value |
@@ -7,7 +7,7 @@
 | Status | **DRAFT FOR ONTARIO COUNSEL REVIEW.** **NOT LEGAL APPROVAL.** **NOT IMPLEMENTED.** |
 | Date | 2026-09-01 |
 | Company | Brayman Construction Inc. |
-| Product | CalibAi (The Estimator) |
+| Product | CalibraytAI (The Estimator; formerly CalibAi) |
 | Scope | Proposed **electronic signing process** for **Change Orders** (V1) |
 | Canonical architecture (internal) | [contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md) |
 | Legal Content Gate (templates) | [legal-content-and-templates.md](../governance/legal-content-and-templates.md) — **separate**; this document does **not** approve Contract or Warranty text |
@@ -28,11 +28,11 @@ It is **not**:
 
 Counsel is asked to determine whether this process is appropriate for Brayman’s Ontario **Change Orders**, and to identify required changes.
 
-Counsel is **not** asked to design CalibAi, redesign the Change Order workflow, review the whole platform, select DocuSign or Adobe Acrobat Sign, draft the construction contract, or review BUILD.
+Counsel is **not** asked to design CalibraytAI, redesign the Change Order workflow, review the whole platform, select DocuSign or Adobe Acrobat Sign, draft the construction contract, or review BUILD.
 
-### Status for CalibAi development (Joel 2026-09-01)
+### Status for CalibraytAI development (Joel 2026-09-01)
 
-This counsel review is **not** a general CalibAi development hold.
+This counsel review is **not** a general CalibraytAI development hold.
 
 ```text
 NATIVE SIGNING DEVELOPMENT:
@@ -50,7 +50,7 @@ Counsel questions below are **unchanged**. Do not treat unanswered counsel quest
 
 Brayman has experienced commercial risk where Change Order work proceeded without clear **signed customer authorization**.
 
-CalibAi’s objective is to make this distinction unmistakable:
+CalibraytAI’s objective is to make this distinction unmistakable:
 
 ```text
 BRAYMAN INTERNALLY APPROVED
@@ -96,10 +96,10 @@ This is the proposed V1 process. Counsel has **not** approved it.
 
 1. Brayman prepares the Change Order (scope, price, items).
 2. Brayman completes internal review/approval.
-3. CalibAi generates and **freezes** the exact Change Order PDF that will be signed.
+3. CalibraytAI generates and **freezes** the exact Change Order PDF that will be signed.
 4. A SHA-256 hash of those exact pre-sign PDF bytes is recorded.
 5. An authenticated Brayman user explicitly chooses **SEND FOR SIGNATURE**.
-6. CalibAi creates a cryptographically random signing request (secret token).
+6. CalibraytAI creates a cryptographically random signing request (secret token).
 7. Only the **hash** of the token is stored (the secret itself is not kept at rest).
 8. The request is associated with: organization, project, Change Order, frozen document, recipient name, recipient email.
 9. The customer receives a unique signing link at a **governed recipient email**.
@@ -107,12 +107,12 @@ This is the proposed V1 process. Counsel has **not** approved it.
 11. The link may be revoked/voided before completion.
 12. The customer opens the **exact frozen** Change Order.
 13. The customer can review and download it **before** signing.
-14. CalibAi displays **counsel-approved** electronic-signature consent / intention text (versioned; wording not invented here).
+14. CalibraytAI displays **counsel-approved** electronic-signature consent / intention text (versioned; wording not invented here).
 15. The customer confirms the signer name.
 16. The customer explicitly activates **SIGN & ACCEPT**.
 17. The typed/adopted signer name is recorded.
 18. An optional visual “signature” glyph may appear for familiarity. It is **not** the authoritative signing event.
-19. CalibAi records successful completion.
+19. CalibraytAI records successful completion.
 20. The signing request becomes completed / terminal.
 21. A completed signed PDF is generated and preserved.
 22. A Signing Record is preserved.
@@ -174,7 +174,7 @@ Proposed:
 
 ## 6. Consent / intent (functional requirement only)
 
-CalibAi will **not** invent final legal wording. AI cannot mark consent language **APPROVED**.
+CalibraytAI will **not** invent final legal wording. AI cannot mark consent language **APPROVED**.
 
 Before SIGN & ACCEPT, the customer must explicitly acknowledge, in counsel-approved words, that:
 
@@ -184,7 +184,7 @@ Before SIGN & ACCEPT, the customer must explicitly acknowledge, in counsel-appro
 
 **C.** their electronic action constitutes their signature / acceptance of the **identified** Change Order.
 
-**Question for counsel:** Please provide or approve the exact wording. CalibAi will store that text as a **versioned** consent record and display that version at signing.
+**Question for counsel:** Please provide or approve the exact wording. CalibraytAI will store that text as a **versioned** consent record and display that version at signing.
 
 ---
 
@@ -281,7 +281,7 @@ The final PDF may include:
 - a signing / completion block
 - signer name
 - signed timestamp
-- CalibAi signing-request reference
+- CalibraytAI signing-request reference
 - a completion / audit page
 
 Final legal wording on that page is **not** authored here.
@@ -294,7 +294,7 @@ Proposed Native V1 uses:
 
 ```text
 application-level SHA-256
-+ immutable CalibAi Signing Record
++ immutable CalibraytAI Signing Record
 + immutable pre-sign PDF
 + immutable final signed PDF
 ```

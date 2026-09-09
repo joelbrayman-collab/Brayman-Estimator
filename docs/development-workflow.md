@@ -22,11 +22,11 @@
 13. **Joel** approves the milestone.
 14. The work is committed with a descriptive message (and pushed when Joel directs).
 
-## CalibAi development response continuity
+## CalibraytAI development response continuity
 
 Permanent convention: [governance/continuity-and-anti-drift.md](governance/continuity-and-anti-drift.md#chat-title-continuity-convention-permanent).
 
-Every CalibAi development assessment, implementation review, UAT review, stopping-report review, governance response, or turnover response must:
+Every CalibraytAI development assessment, implementation review, UAT review, stopping-report review, governance response, or turnover response must:
 
 - begin with the exact active ChatGPT development chat title in bold;
 - end with `END — <exact active chat title>` **after** any complete ready-to-paste Cursor prompt;

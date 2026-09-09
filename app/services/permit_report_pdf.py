@@ -1,4 +1,4 @@
-"""Neutral CalibAi Permit & Approvals Report PDF (FG-016). Same snapshot as HTML."""
+"""Neutral CalibraytAI Permit & Approvals Report PDF (FG-016). Same snapshot as HTML."""
 
 from __future__ import annotations
 
@@ -51,7 +51,7 @@ def generate_permit_report_pdf(analysis: PermitAnalysis) -> BytesIO:
         textColor=colors.HexColor("#333333"),
     )
     story = []
-    story.append(Paragraph("CalibAi — Permit &amp; Approvals Report", title))
+    story.append(Paragraph("CalibraytAI — Permit &amp; Approvals Report", title))
     story.append(Paragraph("ADVISORY ONLY — not AHJ approval", small))
     story.append(Spacer(1, 8))
     meta = [

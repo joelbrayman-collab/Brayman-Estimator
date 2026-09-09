@@ -6,7 +6,7 @@
 | Updated | 2026-09-08 |
 | Evidence baseline | `main` @ CAR-001 adoption (see git); Plan Intelligence Current claims evidenced in `app/plan_intelligence/` and migration `a7c8e9f0b1d2` |
 
-**Cite code paths for implemented claims.** Distinctions below are mandatory. CalibAi lifecycle architecture: [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md).
+**Cite code paths for implemented claims.** Distinctions below are mandatory. CalibraytAI lifecycle architecture: [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md). Current vs former product name: [governance/product-identity.md](governance/product-identity.md).
 
 ---
 
@@ -52,7 +52,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 |--------|--------|------|
 | CRM-ish | `Client` | `app/models/client.py` |
 | Projects | `Project` | `app/models/project.py` |
-| Cost library | `CostItem` | `app/models/cost_item.py` — org costing record; **not** CalibAi material identity ([material-catalogue-architecture.md](architecture/material-catalogue-architecture.md) Intended) |
+| Cost library | `CostItem` | `app/models/cost_item.py` — org costing record; **not** CalibraytAI material identity ([material-catalogue-architecture.md](architecture/material-catalogue-architecture.md) Intended) |
 | Assemblies | `Assembly`, `AssemblyItem` | `app/models/assembly.py` |
 | Estimating | `Estimate`, `EstimateVersion`, `EstimateSection`, `EstimateLineItem`, `TakeoffEstimateInsertion`, `TakeoffEstimateInsertionCitation` | `app/models/estimate.py`; `app/models/takeoff_estimate_insertion.py` (FG-026; **live-migrated**) |
 | Proposals | `ProposalTemplate`, `Proposal`, `ProposalSection`, `ProposalLineItem` | `app/models/proposal.py` |
@@ -132,7 +132,7 @@ Client ──< Project ──< Estimate ──< EstimateVersion ──< Sections
 
 Aligns with [platform-vision.md](platform-vision.md), [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md), and [architecture-principles.md](architecture-principles.md):
 
-- `Project` remains the CalibAi lifecycle hub ([ADR-019](adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted**). `/projects/<id>` is the Project Hub UX ([FG-011](feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**): read/link lifecycle surface owned by Projects; no new module, entity, or schema.
+- `Project` remains the CalibraytAI lifecycle hub ([ADR-019](adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted**). `/projects/<id>` is the Project Hub UX ([FG-011](feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**): read/link lifecycle surface owned by Projects; no new module, entity, or schema.
 - Internal Detailed Cost Breakdown + customer Proposal consistency ([FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**): existing `EstimateVersion` / pricing snapshot is the source; existing Proposal is the customer-facing estimate; no new document module.
 - Explicit module ownership documents (CRM, Estimating, Proposals, Projects, Plan Intelligence, Material Catalogue, proposed BUILD, Supplier Catalogue, Project Controls expansions)
 - Immutable accepted-proposal snapshots feeding project creation (Rule 3–4)
@@ -154,7 +154,7 @@ Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
 - [Plan Intelligence and Automated Take-Off](architecture/plan-intelligence-and-automated-takeoff.md) — Phases A–M010 **Current**; Phase **C** AI take-off foundation **operational for UAT** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**); Phase D [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**; Phases E–G future
 - [Material Catalogue](architecture/material-catalogue-architecture.md) — **Partial Current** / [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**. [ADR-034](adr/ADR-034-canonical-material-identity-and-ownership.md) / [ADR-035](adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) / [ADR-036](adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**. Living supplier evidence is **not** the identity row. `CostItem` is **not** canonical material.
-- [Supplier Catalogue, Inventory and Pricing](architecture/supplier-catalogue-inventory-pricing.md) — Phases E–F **Future** (what a supplier sells; maps **to** Material Catalogue; does **not** own CalibAi identity). **Governed bulk onboarding** is a **FUTURE / NOT IMPLEMENTED** pin (not one-product-at-a-time; not authorized by FG-014).
+- [Supplier Catalogue, Inventory and Pricing](architecture/supplier-catalogue-inventory-pricing.md) — Phases E–F **Future** (what a supplier sells; maps **to** Material Catalogue; does **not** own CalibraytAI identity). **Governed bulk onboarding** is a **FUTURE / NOT IMPLEMENTED** pin (not one-product-at-a-time; not authorized by FG-014).
 - [Supplier Channel and Launch-Partner Model](architecture/supplier-channel-and-launch-partner.md) — **Future**; [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted** (Winchester launch/reference, supplier-neutral, dual relationships; **not implemented**)
 - Procurement / purchase-order preparation (nav placeholder only today)
 

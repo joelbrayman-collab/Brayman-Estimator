@@ -15,11 +15,11 @@ This document is the **supplier-channel** architecture. **What the project requi
 
 ## Governing principle
 
-CalibAi remains **supplier-neutral** and must be capable of supporting **multiple competing building-material suppliers**.
+CalibraytAI remains **supplier-neutral** and must be capable of supporting **multiple competing building-material suppliers**.
 
-**BMR, BMR Winchester, and Darcy are not exclusive CalibAi supplier partners.** Do not propose or architect supplier exclusivity, national exclusivity, category exclusivity, or perpetual rights to unrelated CalibAi supplier business unless Joel separately and expressly authorizes that grant.
+**BMR, BMR Winchester, and Darcy are not exclusive CalibraytAI supplier partners.** Do not propose or architect supplier exclusivity, national exclusivity, category exclusivity, or perpetual rights to unrelated CalibraytAI supplier business unless Joel separately and expressly authorizes that grant.
 
-**Reward Darcy for value created / business originated. Do not compensate him by surrendering CalibAi’s broader supplier-channel opportunity.**
+**Reward Darcy for value created / business originated. Do not compensate him by surrendering CalibraytAI’s broader supplier-channel opportunity.**
 
 ---
 
@@ -31,7 +31,7 @@ BMR Winchester is contemplated as a potential:
 2. **First supplier reference deployment** — a reference implementation others can be shown, not a distribution lock-in.
 3. **Supplier-channel business-development partner** — help originate further supplier accounts if the Winchester implementation succeeds.
 
-That is a **launch and reference** role. It is **not** an exclusive supplier arrangement, exclusive BMR arrangement, or exclusive CalibAi go-to-market right.
+That is a **launch and reference** role. It is **not** an exclusive supplier arrangement, exclusive BMR arrangement, or exclusive CalibraytAI go-to-market right.
 
 ### Initial partnership concept
 
@@ -49,7 +49,7 @@ CALIBAI
 |-------|---------------------------|
 | **Brayman Construction** (`ORG-001`) | Contractor-side real-world workflow |
 | **Darcy / BMR Winchester** | Supplier-side real-world workflow; launch / reference / channel-development partner |
-| **CalibAi** | Platform connecting plan → reviewed take-off → **CalibAi Material Catalogue** → supplier mapping → price/inventory → delivery → fulfillment |
+| **CalibraytAI** | Platform connecting plan → reviewed take-off → **CalibraytAI Material Catalogue** → supplier mapping → price/inventory → delivery → fulfillment |
 
 Together they can **prove** (when a later Feature Gate authorizes a POC — not this pass):
 
@@ -82,11 +82,11 @@ This governs **project / material purchasing** and **authorized project-data sha
 - quotes, inventory, delivery, pick/load/fulfillment for that contractor’s jobs
 - which project facts the contractor authorizes the supplier to see
 
-This is **not** a CalibAi channel-partnership contract.
+This is **not** a CalibraytAI channel-partnership contract.
 
-### B. CalibAi ↔ supplier channel relationship
+### B. CalibraytAI ↔ supplier channel relationship
 
-**Example:** CalibAi ↔ Darcy / BMR Winchester.
+**Example:** CalibraytAI ↔ Darcy / BMR Winchester.
 
 This governs **launch partnership, integration, channel development, branding, and commercial participation**:
 
@@ -103,20 +103,20 @@ These names are architectural. They are **not** tables to create in this pass.
 
 | Concept | Owns | Relationship |
 |---------|------|----------------|
-| Contractor organization | CalibAi tenant (e.g. ORG-001) | Party on A |
+| Contractor organization | CalibraytAI tenant (e.g. ORG-001) | Party on A |
 | Supplier organization | Legal/trade supplier (dealer, banner, or national enterprise) | Party on A and/or B |
 | Supplier location / branch | Inventory, delivery, local pricing | Party on A; may participate in B |
 | Contractor–supplier account | Account numbers, contract price lists, authorized sharing | **A only** |
-| Supplier channel partnership | Launch/reference/integration/channel terms with CalibAi | **B only** |
+| Supplier channel partnership | Launch/reference/integration/channel terms with CalibraytAI | **B only** |
 | Channel originator participation | Future economics for originated supplier accounts | **B only**; not in Winchester POC |
 
-A national banner (for example BMR corporate) is **not** the same record as one dealer location (BMR Winchester). A person who helps originate accounts (Darcy) is **not** the supplier organization and **not** an exclusive agent of CalibAi’s supplier market.
+A national banner (for example BMR corporate) is **not** the same record as one dealer location (BMR Winchester). A person who helps originate accounts (Darcy) is **not** the supplier organization and **not** an exclusive agent of CalibraytAI’s supplier market.
 
 ---
 
 ## Channel expansion
 
-If the Winchester implementation is successful, Darcy may help CalibAi pursue:
+If the Winchester implementation is successful, Darcy may help CalibraytAI pursue:
 
 - other BMR dealers
 - BMR corporate / broader BMR network
@@ -139,7 +139,7 @@ The BMR Winchester implementation should become a **reference implementation**, 
 
 ## Darcy economic participation (assess later; no terms here)
 
-Future commercial structures may reward Darcy for supplier-channel business he **materially helps originate or develop**, without transferring exclusivity over CalibAi’s supplier market.
+Future commercial structures may reward Darcy for supplier-channel business he **materially helps originate or develop**, without transferring exclusivity over CalibraytAI’s supplier market.
 
 **Models to assess later** (categories only — **no percentages, fees, durations, or contract terms in this pass**):
 
@@ -155,11 +155,11 @@ Future commercial structures may reward Darcy for supplier-channel business he *
 - supplier exclusivity
 - national exclusivity
 - category exclusivity
-- perpetual rights to unrelated CalibAi supplier business
+- perpetual rights to unrelated CalibraytAI supplier business
 
 unless Joel separately and expressly authorizes that grant.
 
-Participation, if later approved, should attach to **originated supplier-channel relationships (B)** that Darcy materially helped create or develop — not to all CalibAi contractor procurement (A), and not to supplier accounts he did not originate.
+Participation, if later approved, should attach to **originated supplier-channel relationships (B)** that Darcy materially helped create or develop — not to all CalibraytAI contractor procurement (A), and not to supplier accounts he did not originate.
 
 **Do not implement channel economics in any Winchester / supplier-integration POC.**
 
@@ -192,7 +192,7 @@ A large national supplier may later require capabilities such as:
 - Model supplier **organization** separately from **location**.
 - Treat catalogue, contract price, branch price, and list price as distinct (see catalogue architecture).
 - Use an **adapter** boundary for import/API/EDI; do not hard-code “Winchester is the only supplier.”
-- Keep contractor–supplier **account mapping** distinct from CalibAi channel partnership.
+- Keep contractor–supplier **account mapping** distinct from CalibraytAI channel partnership.
 - Keep inventory **location-scoped** so DC vs store can be added later.
 - Do not bake exclusive branding or a single PreferredSupplier into Estimating core.
 
@@ -257,7 +257,7 @@ Do **not** invent those numbers now. Do **not** claim the workflow is deployed.
 | Catalogue, SKU, price lists, inventory sync, adapters | Proposed **Supplier Catalogue** module |
 | Governed bulk supplier onboarding (file/feed/SFTP/API/EDI) | Proposed **Supplier Catalogue** — **FUTURE / NOT IMPLEMENTED**; not one-product-at-a-time; not FG-014 |
 | Contractor–supplier procurement account and project sharing (relationship A) | Supplier Catalogue / future Procurement — **not** Estimating’s free-text field |
-| CalibAi channel partnership and originator participation (relationship B) | Supplier Catalogue channel records, or a later explicitly owned Channel concern — **not** a cost-item flag |
+| CalibraytAI channel partnership and originator participation (relationship B) | Supplier Catalogue channel records, or a later explicitly owned Channel concern — **not** a cost-item flag |
 | Estimate lines and cost items | **Estimating** (consumes price snapshots; does not own supplier identity) |
 | Reviewed take-off quantities | **Plan Intelligence** |
 | Purchase orders / fulfillment | Future **Projects / Procurement** (nav placeholder only today) |

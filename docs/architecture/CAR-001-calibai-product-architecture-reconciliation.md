@@ -97,6 +97,8 @@ Do not renumber historical milestones.
 
 **Subsequent status (2026-09-08 FG-027 office UAT continuation + close — not authorized by CAR-001):** [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**. V1-02 **COMPLETE**. Readiness **45%**. Live current = heads **`a5b6c7d8e9f0`**. CAR-001 still does **not** authorize V1-03, FG-024, remaining FG-025 surfaces, or LEARN.
 
+**Subsequent status (2026-09-09 FG-028 product identity — not authorized by CAR-001):** Current product name is **CalibraytAI** (formerly CalibAi). [ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted**. [FG-028](../feature-gates/FG-028-calibai-to-calibraytai-product-identity-transition.md) Slices 1–2 **IMPLEMENTED**; Slice 3 logo asset **HELD**. Repository name remains The Estimator / Brayman-Estimator. CAR-001 still does **not** authorize V1-03, FG-024 implementation, remaining FG-025 surfaces, LEARN, or a repository rename.
+
 ## What CAR-001 was
 
 A repository-grounded, **read-only** mapping of the existing Brayman-Estimator / The Estimator platform onto the CalibAi lifecycle:

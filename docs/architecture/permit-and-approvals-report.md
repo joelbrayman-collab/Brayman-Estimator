@@ -4,11 +4,11 @@
 |-----------|--------|
 | Status | **Pass 2 CLOSED / OPERATIONAL FOR UAT** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)). Pass 1 foundation **Current (FG-015)** — **CLOSED / OPERATIONAL FOR UAT**. Architecture **Accepted** ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) / [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) |
 | Date | 2026-08-30 |
-| Product | The Estimator / CalibAi |
+| Product | The Estimator / CalibraytAI (formerly CalibAi) |
 | Canonical record | This document |
 | Related | [jurisdiction-resolution.md](jurisdiction-resolution.md) · [project-document-package.md](project-document-package.md) · [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) · [modules/projects.md](../modules/projects.md) · [modules/permit-intelligence.md](../modules/permit-intelligence.md) · [organization-brand-profile.md](organization-brand-profile.md) · [change-order-document-family.md](change-order-document-family.md) |
 
-**Current vs future:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) implemented Pass 1 foundation. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** (Pass 2 POC: bounded rules, facts, deterministic evaluation, immutable `permit_analyses` snapshots, office HTML report, neutral CalibAi PDF). FG-015 preliminary profiles remain `PRELIMINARY_FOUNDATION`. Live current = head `f8a9b0c1d2e3`. Pratt UAT project **id 9** port **5009**.
+**Current vs future:** [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) implemented Pass 1 foundation. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** (Pass 2 POC: bounded rules, facts, deterministic evaluation, immutable `permit_analyses` snapshots, office HTML report, neutral CalibraytAI PDF). FG-015 preliminary profiles remain `PRELIMINARY_FOUNDATION`. Live current = head `f8a9b0c1d2e3`. Pratt UAT project **id 9** port **5009**.
 
 ---
 
@@ -24,7 +24,7 @@ Do **not** reduce Permit Intelligence to a PDF form.
 
 ## Authority
 
-CalibAi: **advisory preflight / project intelligence**.
+CalibraytAI: **advisory preflight / project intelligence**.
 
 AHJ / municipality / regulated professional: **final authority**.
 

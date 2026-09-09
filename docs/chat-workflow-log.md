@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-08 |
+| Updated | 2026-09-09 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-09 — FG-028 CalibAi → CalibraytAI product identity Slices 1–2
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-09 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Record ADR-045 / FG-028 / product-identity.md and implement Slices 1–2 (visible product text + current-authority docs). Slice 3 logo held. No V1-03. |
+| Business decision | Permanent product name **CalibraytAI**. Former name **CalibAi**. Historical CalibAi remains historical truth. Office chrome Brayman Construction Platform and ORG-001 Brand Profile preserved. |
+| Architectural decision | [ADR-045](adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted**. No schema migration. No live DB mutation. Technical identifiers preserved. |
+| Prompt template used | Authorized governed product-identity transition Slices 1–2 (9 Sep 2026) |
+| Approved Cursor prompt summary | ADR + FG-028 + product-identity.md; Slice 1 visible strings + tests; Slice 2 current authority; Slice 3 held; no V1-03; no migration |
+| Files expected to change | Field/Hub/historical/permit/labour visible product strings; tests; current-authority docs; new ADR/FG/product-identity |
+| Files prohibited from changing | Alembic; live DB; logos; website; V1 percentages; Brand Profile; office BCP; identifier tokens |
+| Implementation result | Slices 1–2 **IMPLEMENTED**. FG-028 **NOT CLOSED** (Slice 3 pending). V1 remains **45% / 2 of 11**. |
+| Tests | Dedicated FG-028 **9 passed**. Focused Field/Hub/Permit/Brand/Labour **117 passed**. Full suite **661 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (append) |
+| Constitutional issue raised | None (product-identity linked; Articles 1–12 not amended) |
+| Unresolved issues | Slice 3 Joel-approved lettering asset. Website **EXTERNAL / PENDING**. Field PNG remains Brayman Construction until Slice 3. |
+| Next approved step | **STOP.** Do not begin V1-03. Do not install logo until Joel supplies asset. |
+| Next approved prompt | None until Joel/ChatGPT authorize Slice 3, website, or V1-03. |
+| Commit hash | (when available) |
 
 ### 2026-09-08 — V1-02 / FG-027 bounded office UAT continuation + close
 

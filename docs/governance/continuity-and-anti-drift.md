@@ -1,8 +1,8 @@
-# CalibAi Continuity & Anti-Drift Protocol
+# CalibraytAI Continuity & Anti-Drift Protocol
 
 | Attribute | Value |
 |-----------|--------|
-| Title | CalibAi Continuity & Anti-Drift Protocol |
+| Title | CalibraytAI Continuity & Anti-Drift Protocol (formerly CalibAi Continuity & Anti-Drift Protocol) |
 | Status | **APPROVED / GOVERNING** |
 | Approved by | Joel Brayman |
 | Adopted | 2026-08-28 |
@@ -21,7 +21,7 @@ Existing context-drift rules in [platform-governance.md](../platform-governance.
 
 ## Purpose
 
-Prevent AI context drift, continuity loss, unauthorized reinterpretation, and silent replacement of approved project state from becoming durable CalibAi product state.
+Prevent AI context drift, continuity loss, unauthorized reinterpretation, and silent replacement of approved project state from becoming durable CalibraytAI product state.
 
 ---
 
@@ -183,12 +183,12 @@ The chat title is **TRACEABILITY METADATA**. It does **not** alter product archi
 
 | System | Rule |
 |--------|------|
-| **ChatGPT development chat title** | Exact originating ChatGPT conversation title. Required on every CalibAi development response, copied Cursor prompt package, stopping report, and turnover. |
+| **ChatGPT development chat title** | Exact originating ChatGPT conversation title. Required on every CalibraytAI development response, copied Cursor prompt package, stopping report, and turnover. |
 | **Cursor / IDE workspace chat title** | Must start with `BRAYMAN — <Topic>` to prevent cross-project mixing with other workspaces (e.g. AiRIA). Unchanged. |
 
-### Required CalibAi development response structure
+### Required CalibraytAI development response structure
 
-Every CalibAi development response (assessment, implementation review, UAT review, stopping-report review, governance response, or turnover response) must:
+Every CalibraytAI development response (assessment, implementation review, UAT review, stopping-report review, governance response, or turnover response) must:
 
 1. **Begin** with the exact active ChatGPT development chat title in **bold**.
 2. **End** with: `END — <exact active ChatGPT development chat title>`
@@ -211,18 +211,18 @@ Copied Cursor prompts, stopping reports, turnovers, and governance notes must re
 
 ### Standing next-prompt rule
 
-Every CalibAi development assessment, implementation review, UAT review, stopping-report review, governance response, or turnover response must end with the next complete ready-to-paste Cursor prompt unless Joel explicitly states that no prompt is required. Do **not** weaken this rule.
+Every CalibraytAI development assessment, implementation review, UAT review, stopping-report review, governance response, or turnover response must end with the next complete ready-to-paste Cursor prompt unless Joel explicitly states that no prompt is required. Do **not** weaken this rule.
 
 ### Turnover / rollover requirement
 
-Every future CalibAi turnover or rollover package must contain a visible field:
+Every future CalibraytAI turnover or rollover package must contain a visible field:
 
 ```text
 ACTIVE CHAT TITLE:
 <exact active ChatGPT development chat title>
 
 CONTINUITY DISPLAY RULE:
-Every CalibAi development response begins with the exact active chat title in
+Every CalibraytAI development response begins with the exact active chat title in
 bold and ends with:
 
 END — <exact active chat title>

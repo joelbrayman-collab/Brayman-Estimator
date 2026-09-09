@@ -13,6 +13,8 @@ Define the **non-negotiable** governance and architectural principles that super
 
 Chat history is not authoritative unless memorialized in the repository.
 
+Current vs former **product name** is recorded in [governance/product-identity.md](governance/product-identity.md) (**CalibraytAI**, formerly CalibAi). This Constitution does **not** rename the repository (The Estimator / Brayman-Estimator) and does **not** replace tenant or office-chrome identity.
+
 ---
 
 ## Constitutional Articles
@@ -71,6 +73,7 @@ A faster implementation is not acceptable if it weakens ownership, auditability,
 | [architecture-principles.md](architecture-principles.md) | Numbered operational Rules 1–12 that implement the Constitution |
 | [platform-governance.md](platform-governance.md) | Process, Feature Gate, roles |
 | [adr/](adr/) | Deliberate decisions and exceptions |
+| [governance/product-identity.md](governance/product-identity.md) | Current vs former product name; does not amend these Articles |
 
 ## Approval
 

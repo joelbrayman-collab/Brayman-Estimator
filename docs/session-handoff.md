@@ -2,30 +2,30 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-027 CLOSED / OPERATIONAL FOR UAT.** **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE UAT PASS.** [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. CalibAi V1 readiness **45%**. **2 / 11** COMPLETE (V1-01, V1-02). BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [FG-026 CLOSED / OPERATIONAL FOR UAT.] [FG-025 SLICE 5 IMPLEMENTED / NOT CLOSED.] Remaining FG-025 surfaces **NOT AUTHORIZED**. [FG-023 CLOSED / OPERATIONAL FOR UAT.] [FG-021 CLOSED.] Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Live current = heads **`a5b6c7d8e9f0`**. |
-| Updated | 2026-09-08 |
+| Status | **FG-028 SLICES 1–2 IMPLEMENTED / SLICE 3 HELD / NOT CLOSED.** Current product **CalibraytAI** (formerly CalibAi). [ADR-045](adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted**. **FG-027 CLOSED / OPERATIONAL FOR UAT.** **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE UAT PASS.** [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. CalibraytAI V1 readiness **45%**. **2 / 11** COMPLETE (V1-01, V1-02). BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [FG-026 CLOSED / OPERATIONAL FOR UAT.] [FG-025 SLICE 5 IMPLEMENTED / NOT CLOSED.] Remaining FG-025 surfaces **NOT AUTHORIZED**. [FG-023 CLOSED / OPERATIONAL FOR UAT.] [FG-021 CLOSED.] Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Live current = heads **`a5b6c7d8e9f0`**. |
+| Updated | 2026-09-09 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [v1-completion-register.md](v1-completion-register.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
-| Active ChatGPT development chat title | **BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026** |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026** |
 
 Authority order for the next session: repository governance → current-state records → accepted ADRs / Feature Gates → implementation/migration/test evidence → conversation memory only as supplementary context.
 
-**ALL-CHAT TURNOVER:** After this package is committed, every active CalibAi development chat may be abandoned. A new chat has **zero reliable conversation memory**. Chat history is supplemental only. No new chat may continue from a pasted old Cursor prompt without first running the required repository preflight/review.
+**ALL-CHAT TURNOVER:** After this package is committed, every active CalibraytAI development chat may be abandoned. A new chat has **zero reliable conversation memory**. Chat history is supplemental only. No new chat may continue from a pasted old Cursor prompt without first running the required repository preflight/review.
 
 **PRESERVE → SEARCH → VERIFY → EXECUTE.** Existing before new. No unauthorized redesign. No arbitrary policy invention. No context-drift changes. ChatGPT / Cursor memory is never corporate memory.
 
 ```text
 ACTIVE CHAT TITLE:
-BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026
+BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026
 
 CONTINUITY DISPLAY RULE:
-Every CalibAi development response begins with the exact active ChatGPT
+Every CalibraytAI development response begins with the exact active ChatGPT
 development chat title in bold and ends with:
 
 END — <exact active chat title>
 
 When a Cursor prompt is present, the END line follows the complete prompt.
-Every CalibAi development response ends with the next complete ready-to-paste
+Every CalibraytAI development response ends with the next complete ready-to-paste
 Cursor prompt unless Joel explicitly says no prompt is required.
 ```
 
@@ -35,10 +35,10 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 
 ## 1. PROJECT / REPOSITORY
 
-- **Product:** CalibAi / Brayman Estimator (The Estimator). Do not rename.
+- **Product:** CalibraytAI / Brayman Estimator (The Estimator). Formerly CalibAi. Do not confuse with office chrome (Brayman Construction Platform) or tenant Brand Profile.
 - **Path:** `/Users/joelbrayman/Desktop/Brayman-Estimator` (`~/Desktop/Brayman-Estimator`)
 - **Environment:** local Flask office app; SQLite development/UAT DB (`sqlite:///brayman_estimator.db` → `instance/brayman_estimator.db`)
-- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026`
+- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026`
 - **Cursor / IDE workspace chat titles:** must start with `BRAYMAN — <Topic>`
 
 ## 2. VERIFIED BASELINE
@@ -93,7 +93,7 @@ FG-008 / FG-009 / FG-010 / FG-011 / FG-012 / **FG-013** files: **CLOSED / OPERAT
 
 ## 4. APPROVED PRODUCT VISION
 
-PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project`. No rename. Office and field complementary. CalibAi owns methodology; each organization owns commercial intelligence. Brayman Construction is `ORG-001`, not the universal CalibAi default.
+PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN on one `Project`. No repository rename. Office and field complementary. CalibraytAI owns methodology; each organization owns commercial intelligence. Brayman Construction is `ORG-001`, not the universal CalibraytAI default.
 
 ## 5. CURRENT CALIBAI LIFECYCLE STATE
 
@@ -459,11 +459,11 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do **not** begin V1-03 from this handoff. Do not enable an external AI provider. Do not reopen FG-021. Do **not** implement LEARN, QuickBooks, FG-024, remaining FG-025 surfaces, or contract/warranty **template** work. Do **not** start another FG-025 slice. Do **not** implement Observation Delete. Do **not** accept ADR-008 from this close. Do **not** begin CalibAi → CalibraytAI.
+Do **not** begin V1-03 from this handoff. Do not enable an external AI provider. Do not reopen FG-021. Do **not** implement LEARN, QuickBooks, FG-024, remaining FG-025 surfaces, or contract/warranty **template** work. Do **not** start another FG-025 slice. Do **not** implement Observation Delete. Do **not** accept ADR-008 from this close. Do **not** install a CalibraytAI logo until Joel supplies the approved Slice 3 asset. Do **not** publish the marketing website from this repository.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP. Return to ChatGPT Architect for V1-03 authorization. Do not begin V1-03 from this handoff.** [v1-completion-register.md](v1-completion-register.md) is **GOVERNING**. CalibAi V1 readiness **45%**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Remaining FG-025 surfaces **NOT AUTHORIZED**. Do **not** begin FG-024. Do **not** implement Observation Delete. [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) remains **CLOSED**.
+**Next governed action:** **STOP. Do not begin V1-03 from this handoff.** [v1-completion-register.md](v1-completion-register.md) is **GOVERNING**. CalibraytAI V1 readiness **45%**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [FG-028](feature-gates/FG-028-calibai-to-calibraytai-product-identity-transition.md) is **SLICES 1–2 IMPLEMENTED / SLICE 3 HELD / NOT CLOSED**. [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Remaining FG-025 surfaces **NOT AUTHORIZED**. Do **not** begin FG-024. Do **not** implement Observation Delete. [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) remains **CLOSED**.
 
 **Roadmap direction (not authorization):** Item 12 Field Web is **CLOSED**. Item 13 **CLOSED / OPERATIONAL FOR UAT**. [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) is **SLICE 1, SLICE 2, SLICE 3, SLICE 4, AND SLICE 5 IMPLEMENTED / NOT CLOSED** (remaining surfaces not authorized). [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Item 15 / [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
@@ -508,7 +508,7 @@ Canonical location for the next conversation. Paste into a **new** ChatGPT or Cu
 BRAYMAN — RESUME FROM REVIEW TURNOVER
 CONTINUITY / REPOSITORY-FIRST INITIALIZATION
 
-You are starting a FRESH conversation on the Brayman-Estimator (CalibAi / The Estimator) platform following a successful Review Turnover (2026-09-08).
+You are starting a FRESH conversation on the Brayman-Estimator (CalibraytAI / The Estimator) platform following a successful Review Turnover (2026-09-09).
 The prior conversation has been discarded. You have ZERO reliable conversation memory.
 Chat history is supplemental only. The repository is the ONE SOURCE OF TRUTH.
 ChatGPT / Cursor memory is never corporate memory.
@@ -516,17 +516,17 @@ ChatGPT / Cursor memory is never corporate memory.
 Conversation titles in this Cursor/IDE workspace must start with: BRAYMAN — <Topic>.
 
 ACTIVE CHAT TITLE (ChatGPT originating development chat):
-BRAYMAN — CALIBAI DEVELOPMENT 8 SEP 2026
+BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026
 (Record the exact title of the NEW ChatGPT development chat once Joel names it. Until then, keep using this title.)
 
 CONTINUITY DISPLAY RULE:
-Every CalibAi development response begins with the exact active ChatGPT
+Every CalibraytAI development response begins with the exact active ChatGPT
 development chat title in bold and ends with:
 
 END — <exact active chat title>
 
 When a Cursor prompt is present, the END line follows the complete prompt.
-Every CalibAi development response ends with the next complete ready-to-paste
+Every CalibraytAI development response ends with the next complete ready-to-paste
 Cursor prompt unless Joel explicitly says no prompt is required.
 
 DO NOT reopen FG-021.
@@ -699,7 +699,7 @@ Independently reconstruct from the repository:
 - Observation Delete QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING
 - Native Signing DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE; PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL
 - ADR-008 and ADR-010 remain Proposed
-- CalibAi V1 readiness 45%; 2 / 11 COMPLETE (V1-01, V1-02); BMR DEMO READY NO; BRAYMAN REAL-LIFE UAT READY NO
+- CalibraytAI V1 readiness 45%; 2 / 11 COMPLETE (V1-01, V1-02); BMR DEMO READY NO; BRAYMAN REAL-LIFE UAT READY NO
 - Real external AI NOT AUTHORIZED
 - Runtime permit web lookup NOT AUTHORIZED
 
@@ -710,8 +710,8 @@ FG-025 is SLICE 1, SLICE 2, SLICE 3, SLICE 4, AND SLICE 5 IMPLEMENTED / NOT CLOS
 Remaining FG-025 surfaces are NOT AUTHORIZED.
 FG-026 is CLOSED / OPERATIONAL FOR UAT.
 FG-027 is CLOSED / OPERATIONAL FOR UAT.
-CalibAi V1 readiness is 45%. 2 / 11 COMPLETE (V1-01, V1-02). BMR DEMO READY NO. BRAYMAN REAL-LIFE UAT READY NO.
-The next governed Cursor prompt is NONE until Joel/ChatGPT authorize V1-03.
+CalibraytAI V1 readiness is 45%. 2 / 11 COMPLETE (V1-01, V1-02). BMR DEMO READY NO. BRAYMAN REAL-LIFE UAT READY NO.
+The next governed Cursor prompt is NONE until Joel/ChatGPT authorize V1-03 or FG-028 Slice 3.
 STOP. Do NOT begin V1-03. Do NOT start another FG-025 slice. Do NOT start FG-024. Do NOT start LEARN.
 Do NOT reopen FG-021.
 Do NOT convert SESSION-EXPIRY RECOVERY to PASS / N/A / WAIVED.

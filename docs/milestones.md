@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-08 |
+| Updated | 2026-09-09 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -29,6 +29,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 4. “Completed pending baseline commit” means deliverables exist in the working tree awaiting Joel-approved commit.
 
 ---
+
+### 2026-09-09 — FG-028 CalibAi → CalibraytAI product identity Slices 1–2
+
+| Field | Content |
+|-------|---------|
+| ID | FG-028 |
+| Status | **SLICES 1–2 IMPLEMENTED / TESTED / COMMITTED / PUSHED. SLICE 3 ASSET INSTALLATION PENDING. NOT CLOSED.** |
+| Branch | `main` |
+| Objective | Governed product-identity transition CalibAi → CalibraytAI without history rewrite, tenant overwrite, or schema churn |
+| Deliverables | ADR-045 Accepted; FG-028; [product-identity.md](governance/product-identity.md); Slice 1 visible strings + tests; Slice 2 current-authority docs |
+| Validation | Dedicated **9 passed**. Focused Field/Hub/Permit/Brand/Labour **117 passed**. Full suite **661 passed**. Live current = heads `a5b6c7d8e9f0`. No live DB mutation. |
+| Architectural findings | Four identities remain distinct. Field PNG/title conflation held for Slice 3. |
+| Open decisions | Joel-approved CalibraytAI lettering asset; external website pass |
+| Next milestone | **STOP.** V1-03 **NOT STARTED**. V1 remains **45% / 2 of 11**. |
+| Date | 2026-09-09 |
 
 ### 2026-09-08 — V1-02 / FG-027 office UAT continuation + close
 

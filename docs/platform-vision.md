@@ -2,28 +2,28 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Joel-approved CalibAi direction** (2026-08-28); repository product name remains The Estimator |
-| Updated | 2026-08-28 |
-| Approval | CalibAi vision and lifecycle: Joel Brayman via CAR-001. Repository/product rename is a **separate** future approval. |
-| Record | [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
+| Status | **Joel-approved CalibraytAI direction** (product identity 2026-09-09; lifecycle direction 2026-08-28); repository product name remains The Estimator |
+| Updated | 2026-09-09 |
+| Approval | CalibraytAI (formerly CalibAi) vision and lifecycle: Joel Brayman via CAR-001 and [ADR-045](adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md). Repository rename remains a **separate** future approval. |
+| Record | [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [product-identity.md](governance/product-identity.md) |
 
-## CalibAi
+## CalibraytAI (formerly CalibAi)
 
-CalibAi is a **construction intelligence platform** connecting **PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN** through **one authoritative project record**.
+CalibraytAI is a **construction intelligence platform** connecting **PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN** through **one authoritative project record**.
 
 **Positioning:** Construction intelligence. Calibrated.
 
 **Learning principle:** Every project makes the next project smarter.
 
-CalibAi provides complementary **office** and **field** experiences over the same authoritative project record, the same business rules, and the same service layer. Field/iPhone use is a first-class product requirement ([ADR-022](adr/ADR-022-field-client-and-shared-api.md)).
+CalibraytAI provides complementary **office** and **field** experiences over the same authoritative project record, the same business rules, and the same service layer. Field/iPhone use is a first-class product requirement ([ADR-022](adr/ADR-022-field-client-and-shared-api.md)).
 
-The existing `Project` entity remains the lifecycle hub ([ADR-019](adr/ADR-019-calibai-lifecycle-and-project-hub.md)). CalibAi extends this repository’s implemented commercial core; it does not rename the repository in CAR-001.
+The existing `Project` entity remains the lifecycle hub ([ADR-019](adr/ADR-019-calibai-lifecycle-and-project-hub.md)). CalibraytAI extends this repository’s implemented commercial core; CAR-001 did not rename the repository. Current vs former product name: [product-identity.md](governance/product-identity.md).
 
 ## What The Estimator is (current product in this repository)
 
-The Estimator is a **construction estimating and commercial operations platform** for Brayman (working title: Brayman Estimator). It is the **current office commercial core** of CalibAi: client relationship and project leads through structured estimating, client proposals, and project controls—with a path toward **plan-intelligent quantity take-off**, **supplier-priced procurement**, job costing, field capture, monitoring, and historical intelligence.
+The Estimator is a **construction estimating and commercial operations platform** for Brayman (working title: Brayman Estimator). It is the **current office commercial core** of CalibraytAI: client relationship and project leads through structured estimating, client proposals, and project controls—with a path toward **plan-intelligent quantity take-off**, **supplier-priced procurement**, job costing, field capture, monitoring, and historical intelligence.
 
-It is intended to be **attorney-quality in discipline** (documented, auditable, recoverable) while serving **construction business users**: estimators, project managers, principals, office staff, and (CalibAi) field crews using the same project record.
+It is intended to be **attorney-quality in discipline** (documented, auditable, recoverable) while serving **construction business users**: estimators, project managers, principals, office staff, and (CalibraytAI) field crews using the same project record.
 
 ## Problems it is intended to solve
 
@@ -41,14 +41,14 @@ It is intended to be **attorney-quality in discipline** (documented, auditable, 
 - Project managers / project controls staff
 - Company principals reviewing proposals and change orders
 - Office / CRM operators maintaining clients and projects
-- Field crews and supervisors (CalibAi field experience — first-class; not implemented)
+- Field crews and supervisors (CalibraytAI field experience — first-class; Field Web V1 is closed subject to SESSION-EXPIRY deferred exception)
 - (Future) Take-off reviewers validating AI/manual quantities
 - (Future) Purchasing staff preparing supplier POs
 - (Future) Supplier-channel launch/reference partners (not exclusive; [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md))
 
 ## Long-term platform direction
 
-CAR-001 records the approved CalibAi sequencing direction on [platform-roadmap.md](platform-roadmap.md). The lists below remain the existing commercial/operations path. They are **not** a claim that later stages exist in code.
+CAR-001 records the approved CalibraytAI sequencing direction on [platform-roadmap.md](platform-roadmap.md). The lists below remain the existing commercial/operations path. They are **not** a claim that later stages exist in code.
 
 ### Foundational commercial path (partially current)
 
@@ -77,10 +77,14 @@ Without Joel approval and an ADR where required, the platform does not expand in
 
 AI does not silently invent prices, scopes, quantities, or contracts. Historical estimates, proposals, take-offs, and financial records are versioned or superseded, not silently overwritten.
 
-CalibAi office and field experiences are **complementary**. The product is an office-and-field construction intelligence platform, not a field-only app.
+CalibraytAI office and field experiences are **complementary**. The product is an office-and-field construction intelligence platform, not a field-only app.
+
+Office chrome remains **Brayman Construction Platform**. Tenant identity remains Brayman Construction / Organization Brand Profile. Those are not the product name.
 
 ## Related documents
 
+- [governance/product-identity.md](governance/product-identity.md)
+- [adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md](adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md)
 - [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md)
 - [architecture-principles.md](architecture-principles.md)
 - [platform-roadmap.md](platform-roadmap.md)

@@ -536,7 +536,8 @@ def test_permit_html_pdf_remain_calibai_neutral():
     assert "brand_profile" not in pdf_src
     assert "brayman-construction-logo" not in html
     assert "brayman-construction-logo" not in pdf_src
-    assert "CalibAi" in pdf_src
+    assert "CalibraytAI" in pdf_src
+    assert "CalibAi" not in pdf_src
 
 
 def test_ensure_existing_organizations_and_template_columns_preserved(app, isolation_org):

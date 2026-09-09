@@ -9,13 +9,13 @@ Cursor shows a copy control on fenced code blocks, not on ordinary prose. There 
 
 When the reply contains anything Joel may need to copy — paste-ready Cursor prompts, `prompt?` replies, emails, commands, paths, HEAD SHAs, Alembic revisions, report field blocks — put that content in a fenced code block.
 
-**Put the primary copyable fence last among copyable blocks.** Brief context may go above. Do not put explanation, options, or follow-up questions after the fence, except the required CalibAi `END — <title>` line below.
+**Put the primary copyable fence last among copyable blocks.** Brief context may go above. Do not put explanation, options, or follow-up questions after the fence, except the required CalibraytAI `END — <title>` line below.
 
 If several things are copyable, the fence Joel is meant to copy now (usually the full prompt) is the last **copyable** block in the reply.
 
 Do this even when the same facts also appear in prose. Do not leave copyable commands or prompt text in prose only.
 
-**CalibAi chat-title continuity:** After that primary fence, the only permitted trailing line is:
+**CalibraytAI chat-title continuity:** After that primary fence, the only permitted trailing line is:
 
 `END — <exact active ChatGPT development chat title>`
 

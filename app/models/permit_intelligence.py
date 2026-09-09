@@ -38,7 +38,7 @@ FORBIDDEN_FACT_TYPES = frozenset(
 )
 
 ADVISORY_AUTHORITY_LANGUAGE = (
-    "CalibAi advisory preflight only. PASS means no issue identified against the "
+    "CalibraytAI advisory preflight only. PASS means no issue identified against the "
     "governed checks performed. It does not mean permit approved, zoning approved, "
     "or AHJ approved. The authority having jurisdiction remains final."
 )

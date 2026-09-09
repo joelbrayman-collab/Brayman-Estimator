@@ -1,4 +1,4 @@
-"""Historical Estimate Ingestion models for CalibAi evidence repository (FG-006 / ADR-024 / ADR-028)."""
+"""Historical Estimate Ingestion models for CalibraytAI evidence repository (FG-006 / ADR-024 / ADR-028)."""
 
 from datetime import datetime
 

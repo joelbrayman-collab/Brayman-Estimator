@@ -661,7 +661,7 @@ def test_office_html_report_and_hub_truth(client, app):
     assert pdf.status_code == 200
     assert pdf.data.startswith(b"%PDF")
     text = _pdf_text(pdf.data)
-    assert "CalibAi" in text
+    assert "CalibraytAI" in text
     assert "ADVISORY ONLY" in text
     assert "Brayman Proposal" not in text
 
@@ -674,7 +674,7 @@ def test_pdf_is_same_snapshot_neutral_calibai(app):
     data = pdf.read()
     assert data.startswith(b"%PDF")
     text = _pdf_text(data)
-    assert "CalibAi" in text
+    assert "CalibraytAI" in text
     assert "ADVISORY ONLY" in text
     assert "not AHJ approval" in text
 

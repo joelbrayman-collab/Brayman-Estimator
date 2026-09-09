@@ -6,6 +6,7 @@
 | Date | 2026-09-09 |
 | Gate | [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) |
 | Product SHA | `ee578dcb5a688842ebedaff0682131826e6c7188` |
+| Close SHA | `880697a246de7e901a81f89584168a9a9fb1dd67` |
 | Pin SHA at start | `489d69aa21697b7cde0ccdc207271f8ebd558a43` |
 | Actor | Joel Brayman — FG029-UAT |
 | Organization | ORG-001 / Brayman Construction Inc. |

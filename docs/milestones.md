@@ -42,6 +42,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Validation | Docs/governance only. Product tests **NOT RERUN**. Historical FG-029 dedicated **16** / governed **210** / full **677**. `git diff --check` clean. No `app/` / `tests/` / `migrations/` changes. Live current remains `b6c7d8e9f0a1`. |
 | Open decisions | FG-028 Slice 3 application installation. FG-030 implementation. V1-04. SCOPE DELIVERY / MAKE-BUY architecture. |
 | Next milestone | **STOP.** Return to ChatGPT Architect. |
+| Commit | Close **`880697a246de7e901a81f89584168a9a9fb1dd67`**. Pin follows. |
 | Date | 2026-09-09 |
 
 ### 2026-09-09 — FG-029 live migration + bounded BMR demo office UAT

@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | FG-028 Slice 3 application installation pending. FG-030 not implementation-authorized. V1-04 not begun. SCOPE DELIVERY / MAKE-BUY not implemented. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. |
 | Next approved prompt | None from this reconciliation. FG-028 Slice 3 / FG-030 / V1-04 require separate authorization. |
-| Commit hash | (this reconciliation commit) |
+| Commit hash | Close **`880697a246de7e901a81f89584168a9a9fb1dd67`**. Pin follows. |
 
 ### 2026-09-09 — FG-029 live migration + bounded BMR demo office UAT
 

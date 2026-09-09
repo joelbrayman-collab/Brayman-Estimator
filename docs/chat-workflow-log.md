@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Live migrate not run. UAT not authorized. Slice B not authorized. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** implement Slice B. Do **not** implement FG-030. Do **not** begin V1-04. |
 | Next approved prompt | None from this repair. |
-| Commit hash | Repair this commit (pin follows). Parent pin **`c7662164a3f562f18cdd4b71079970348b1cd72c`**. |
+| Commit hash | Repair **`ec8dcf35f0da109b75422504e1a104c1623d186c`**. Pin follows. Parent pin **`c7662164a3f562f18cdd4b71079970348b1cd72c`**. |
 
 ### 2026-09-09 — FG-031 Slice A scope delivery routing product implementation
 

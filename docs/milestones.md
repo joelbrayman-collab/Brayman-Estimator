@@ -43,6 +43,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Reused `SCOPE_DELIVERY_UNRESOLVED`. No new public block code. Clone remains PROPOSED until human reconfirm. |
 | Open decisions | Live migrate / office UAT / Slice B remain separately authorized. |
 | Next milestone | **STOP.** Do not live-migrate. Do not implement Slice B. Do not implement FG-030. Do not begin V1-04. |
+| Commit | Repair **`ec8dcf35f0da109b75422504e1a104c1623d186c`**. Pin follows. |
 | Date | 2026-09-09 |
 
 ### 2026-09-09 — FG-031 Slice A scope delivery routing product implementation

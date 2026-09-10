@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Live migrate not run. UAT not authorized. FG-030 not implementation-authorized. V1-04 not begun. RFQ/package not implemented. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate Slice B. Do **not** implement FG-030. Do **not** begin V1-04. |
 | Next approved prompt | None from this implementation. |
-| Commit hash | Product pending commit. Start pin **`0d98b87112e8dda3537fe125d25f0737212bfe1c`**. |
+| Commit hash | Product **`5e1082af68e0eb145d9da01c0fa26585f6b8b9d1`**. Start pin **`0d98b87112e8dda3537fe125d25f0737212bfe1c`**. Pin follows. |
 
 ### 2026-09-09 — FG-031 Slice A live migrate + bounded office UAT
 

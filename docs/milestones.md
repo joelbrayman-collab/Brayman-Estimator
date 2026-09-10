@@ -43,6 +43,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Quote is evidence, not cost authority. One SELECTED quote per line; prior SELECTED becomes SUPERSEDED. No SOURCE_SUBCONTRACT_QUOTE. Attachment is optional textual `provenance_note` only. |
 | Open decisions | Slice B live migrate / UAT. FG-030. V1-04. |
 | Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate Slice B. |
+| Commit | Product **`5e1082af68e0eb145d9da01c0fa26585f6b8b9d1`**. Start pin **`0d98b87112e8dda3537fe125d25f0737212bfe1c`**. Pin follows. |
 | Date | 2026-09-10 |
 
 ### 2026-09-09 — FG-031 Slice A live migrate + bounded office UAT

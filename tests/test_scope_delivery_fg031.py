@@ -565,8 +565,9 @@ def test_subcontract_routing_does_not_require_subcontractor_entity(app):
         actor="Joel Brayman",
     )
     confirm_scope_delivery(line, actor="Joel Brayman")
-    with pytest.raises(ModuleNotFoundError):
-        __import__("app.models.subcontractor")
+    from app.models.subcontractor import Subcontractor
+
+    assert Subcontractor.query.count() == 0
     names = {c.key for c in sa_inspect(EstimateScopeDelivery).mapper.column_attrs}
     assert "subcontractor_id" not in names
 

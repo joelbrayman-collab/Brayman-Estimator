@@ -14,6 +14,12 @@ from app.services.estimate_scope_delivery import (
     save_scope_delivery,
 )
 from app.services.organizations import get_current_organization_id
+from app.services.subcontract_quote import (
+    SubcontractQuoteError,
+    receive_quote,
+    reject_quote,
+    select_quote,
+)
 
 scope_delivery_bp = Blueprint("scope_delivery", __name__, url_prefix="/projects")
 
@@ -169,3 +175,82 @@ def approve_all(project_id):
     except EstimateScopeDeliveryError as exc:
         flash(str(exc), "error")
     return _review_redirect(project, version)
+
+
+@scope_delivery_bp.route(
+    "/<int:project_id>/scope-delivery/lines/<int:line_id>/quotes/receive",
+    methods=["POST"],
+)
+def receive_quote_row(project_id, line_id):
+    project, org_id = _project(project_id)
+    line = EstimateLineItem.query.get_or_404(line_id)
+    actor = form_actor("actor_display_name")
+    try:
+        receive_quote(
+            line,
+            actor=actor,
+            organization_id=org_id,
+            project_id=project.id,
+            subcontractor_id=request.form.get("subcontractor_id", type=int),
+            subcontractor_code=request.form.get("subcontractor_code"),
+            subcontractor_legal_name=request.form.get("subcontractor_legal_name"),
+            quote_reference=request.form.get("quote_reference") or "",
+            amount=request.form.get("amount") or "",
+            currency=request.form.get("currency") or "CAD",
+            quote_date=request.form.get("quote_date") or "",
+            expires_on=request.form.get("expires_on") or None,
+            included_scope=request.form.get("included_scope"),
+            exclusions=request.form.get("exclusions"),
+            provenance_note=request.form.get("provenance_note"),
+            user_id=_actor_user_id(),
+        )
+        flash("Subcontract quote recorded. It is evidence only and does not set cost.", "success")
+        return _review_redirect(project, _selected_version(project, org_id))
+    except SubcontractQuoteError as exc:
+        flash(str(exc), "error")
+        return _review_redirect(project, _selected_version(project, org_id))
+
+
+@scope_delivery_bp.route(
+    "/<int:project_id>/scope-delivery/quotes/<int:quote_id>/select",
+    methods=["POST"],
+)
+def select_quote_row(project_id, quote_id):
+    project, org_id = _project(project_id)
+    actor = form_actor("actor_display_name")
+    try:
+        row = select_quote(
+            quote_id,
+            actor=actor,
+            organization_id=org_id,
+            project_id=project.id,
+            user_id=_actor_user_id(),
+        )
+        flash("Quote selected as evidence. Working cost was not changed.", "success")
+        version = row.estimate_version
+        return _review_redirect(project, version)
+    except SubcontractQuoteError as exc:
+        flash(str(exc), "error")
+        return _review_redirect(project, _selected_version(project, org_id))
+
+
+@scope_delivery_bp.route(
+    "/<int:project_id>/scope-delivery/quotes/<int:quote_id>/reject",
+    methods=["POST"],
+)
+def reject_quote_row(project_id, quote_id):
+    project, org_id = _project(project_id)
+    actor = form_actor("actor_display_name")
+    try:
+        row = reject_quote(
+            quote_id,
+            actor=actor,
+            organization_id=org_id,
+            project_id=project.id,
+            user_id=_actor_user_id(),
+        )
+        flash("Quote marked rejected. Historical evidence was kept.", "success")
+        return _review_redirect(project, row.estimate_version)
+    except SubcontractQuoteError as exc:
+        flash(str(exc), "error")
+        return _review_redirect(project, _selected_version(project, org_id))

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-09 |
+| Updated | 2026-09-10 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-10 — FG-031 Slice B subcontract quote evidence product implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-10 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Implement FG-031 Slice B: thin org-scoped Subcontractor, EstimateVersion-scoped SubcontractQuoteEvidence, human selection, selected-quote freeze into FG-027 costing snapshot, PRICE quote review. No live migrate. No live UAT. No FG-030. No V1-04. |
+| Business decision | A quote is evidence. It does not set EstimateLineItem cost or apply Pricing. One SELECTED quote per line. Prior SELECTED is SUPERSEDED, not deleted. Selected quote freeze is identity plus copied facts. |
+| Architectural decision | ADR-048 remains Accepted. Do not collapse Subcontractor into Supplier. No SOURCE_SUBCONTRACT_QUOTE. No selected-quote requirement before costing. Allowance remains compatible. Attachment is optional textual provenance_note. V1 remains **55% / 3 of 11**. |
+| Prompt template used | Joel/ChatGPT FG-031 Slice B product implementation (9 Sep 2026) |
+| Approved Cursor prompt summary | Slice B product implementation. One additive Alembic file `d8e9f0a1b2c3`. No live flask db upgrade. No live UAT. No FG-030. No V1-04. Commit/push if PASS. |
+| Files expected to change | Subcontractor/quote models; migration `d8e9f0a1b2c3`; quote service; costing freeze columns; Scope Delivery Review UI; dedicated tests; minimum current-authority docs |
+| Files prohibited from changing | Live DB; FG-030; V1-04; ADR-008 acceptance; LEARN; QuickBooks; contracts; Native Signing; Observation Delete; website; HostPapa |
+| Implementation result | Slice B coded and tested. Migration file **not applied live**. Live current remains `c7d8e9f0a1b2`. Repository Alembic head `d8e9f0a1b2c3`. |
+| Tests | Dedicated Slice B **21 passed**. Slice A **26**. FG-027 **20**. FG-029 **16**. Estimating clone/builder **22**. Pricing **33**. Output/proposals **68**. Material Catalogue **35**. Labour Engine **25**. FG-026 **20**. Project Hub **13**. Governed bundle **306 passed**. Full suite **728 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate not run. UAT not authorized. FG-030 not implementation-authorized. V1-04 not begun. RFQ/package not implemented. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate Slice B. Do **not** implement FG-030. Do **not** begin V1-04. |
+| Next approved prompt | None from this implementation. |
+| Commit hash | Product pending commit. Start pin **`0d98b87112e8dda3537fe125d25f0737212bfe1c`**. |
 
 ### 2026-09-09 — FG-031 Slice A live migrate + bounded office UAT
 

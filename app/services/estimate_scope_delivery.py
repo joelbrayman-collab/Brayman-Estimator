@@ -630,8 +630,13 @@ def assemble_scope_delivery_review(
                         and dimensions_are_resolved(material, labour)
                         and status != STATUS_CONFIRMED
                     ),
+                    "quote_review": None,
                 }
             )
+    from app.services.subcontract_quote import assemble_line_quote_review
+
+    for row in rows:
+        row["quote_review"] = assemble_line_quote_review(row["line_item"])
     return {
         "project": project,
         "version": version,

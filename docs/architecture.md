@@ -43,7 +43,7 @@ From [`app/__init__.py`](../app/__init__.py):
 | `build_bp` | `app/routes/build.py` |
 | `field_bp` | `app/routes/field.py` |
 | `supplier_package_bp` | `app/routes/supplier_package.py` — FG-029 Hub PRICE mapping review / Supplier Package (**CLOSED / OPERATIONAL FOR UAT**) |
-| `scope_delivery_bp` | `app/routes/scope_delivery.py` — FG-031 Hub PRICE Scope Delivery Review (Slice A **LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT / NOT CLOSED**) |
+| `scope_delivery_bp` | `app/routes/scope_delivery.py` — FG-031 Hub PRICE Scope Delivery Review (Slice A **OPERATIONAL FOR UAT**; Slice B quote evidence **IMPLEMENTED / NOT LIVE-MIGRATED**) |
 
 Shell context: [`app/shell.py`](../app/shell.py). Navigation SSOT: [`app/navigation.py`](../app/navigation.py).
 
@@ -57,7 +57,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Projects | `Project` | `app/models/project.py` |
 | Cost library | `CostItem` | `app/models/cost_item.py` — org costing record; **not** CalibraytAI material identity ([material-catalogue-architecture.md](architecture/material-catalogue-architecture.md) Intended) |
 | Assemblies | `Assembly`, `AssemblyItem` | `app/models/assembly.py` |
-| Estimating | `Estimate`, `EstimateVersion`, `EstimateSection`, `EstimateLineItem`, `TakeoffEstimateInsertion`, `TakeoffEstimateInsertionCitation`, `EstimateScopeDelivery` | `app/models/estimate.py`; `app/models/takeoff_estimate_insertion.py` (FG-026; **live-migrated**); `app/models/estimate_scope_delivery.py` (FG-031 Slice A; migration **`c7d8e9f0a1b2` applied live**) |
+| Estimating | `Estimate`, `EstimateVersion`, `EstimateSection`, `EstimateLineItem`, `TakeoffEstimateInsertion`, `TakeoffEstimateInsertionCitation`, `EstimateScopeDelivery`, `Subcontractor`, `SubcontractQuoteEvidence` | `app/models/estimate.py`; `app/models/takeoff_estimate_insertion.py` (FG-026; **live-migrated**); `app/models/estimate_scope_delivery.py` (FG-031 Slice A; migration **`c7d8e9f0a1b2` applied live**); `app/models/subcontractor.py` (FG-031 Slice B; migration **`d8e9f0a1b2c3` FILE / not applied live**) |
 | Proposals | `ProposalTemplate`, `Proposal`, `ProposalSection`, `ProposalLineItem` | `app/models/proposal.py` |
 | Project controls | `ChangeOrder`, `ChangeOrderItem` | `app/project_controls/models.py` |
 | Plan Intelligence | `DrawingPackage`, `DrawingRevision`, `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `PlanScaleCalibration`, `PlanMeasurement`, `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem` | `app/plan_intelligence/models.py` |
@@ -94,12 +94,12 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic **repository** graph head: **`c7d8e9f0a1b2`** (FG-031 Slice A). Live development/UAT `flask db current`: **`c7d8e9f0a1b2 (head)`**. Live current **equals** repository head. FG-031 Slice A **applied live** 2026-09-09. Verify `flask db current` per environment before relying on it.
+- Alembic **repository** graph head: **`d8e9f0a1b2c3`** (FG-031 Slice B file). Live development/UAT `flask db current`: **`c7d8e9f0a1b2`**. Live current is **behind** repository head until Slice B live migrate. Slice A **applied live** 2026-09-09. Verify `flask db current` per environment before relying on it.
 
 ### Tests
 
 - Location: [`tests/`](../tests/)
-- Collected locally: last product-changing governed full suite **707 passed** (`./venv/bin/python -m pytest -q`, FG-031 Slice A confirmation-gate repair 2026-09-09). Dedicated FG-031 **26**. Historical Slice A implementation full **704**. Historical FG-028 Slice 3 full **681**. Dedicated FG-029 **16**. Historical FG-027 close full suite **652**. Dedicated FG-026 **20**.
+- Collected locally: last product-changing governed full suite **728 passed** (`./venv/bin/python -m pytest -q`, FG-031 Slice B 2026-09-10). Dedicated Slice B **21**. Dedicated Slice A **26**. Governed bundle **306**. Historical Slice A confirmation-gate full **707**. Dedicated FG-029 **16**. Dedicated FG-027 **20**. Dedicated FG-026 **20**.
 - Coverage areas: assemblies, estimates/builder, proposals, proposal snapshots/preview/pdf, change orders, project hub, plan upload/indexing/sheets/scale/take-off, labour engine, pricing engine, historical ingestion, organization foundation, supplier package / MaterialRequirement, scope delivery routing
 
 ### Current module relationships (simplified)
@@ -145,7 +145,7 @@ Aligns with [platform-vision.md](platform-vision.md), [CAR-001](architecture/CAR
 - Service boundaries for cross-module access (Rule 11)
 - Governance Feature Gate before net-new modules
 - Human-approved, source-traceable take-off before estimate insertion (ADR-005/006 **Accepted**; [FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; mapping [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**)
-- Scope delivery / make-buy routing on the commercial line ([ADR-048](adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**; [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT / NOT CLOSED**): two stored dimensions; Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem`; PLAN remains quantity/evidence
+- Scope delivery / make-buy routing on the commercial line ([ADR-048](adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**; [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A OPERATIONAL FOR UAT / SLICE B IMPLEMENTED / NOT LIVE-MIGRATED / NOT CLOSED**): two stored dimensions; Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem`; thin `Subcontractor` + quote evidence; PLAN remains quantity/evidence
 - One project-location / jurisdiction-resolution architecture ([ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted**; [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**)
 - Permit Intelligence as a project capability; Permit & Approvals Report as its governed snapshot ([ADR-038](adr/ADR-038-permit-intelligence-authority-and-rules-library.md) / [ADR-039](adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted**; Pass 1 [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**; Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**)
 - Supplier price snapshots on consumption (ADR-008 — Proposed)
@@ -182,7 +182,7 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 - CAD ingestion (Phase G; PDF-first per ADR-009)
 - Estimate mapping from approved take-off packages — [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** (not FG-010). V1-02 costing — [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**.
 - Living supplier evidence / Winchester POC / bulk supplier onboarding (FG-014 identity is closed; [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) supplier login **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; ADR-008 remains Proposed)
-- Scope delivery / make-buy / procurement routing remaining work ([FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT / SLICE B NOT AUTHORIZED / NOT CLOSED**; [ADR-048](adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**; two stored dimensions; no HYBRID enum; not a 12th V1 package)
+- Scope delivery / make-buy / procurement routing remaining work ([FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A OPERATIONAL FOR UAT / SLICE B IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED**; [ADR-048](adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**; two stored dimensions; no HYBRID enum; not a 12th V1 package)
 - Permit branding from Brand Profile; national Permit Rules expansion (FG-015/FG-016 POC is closed)
 - Change Order governed document family / client email / field UX — [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (do not create a second Change Order entity)
 - Authentication / actor identity + shared API (sequence item 10 **COMPLETE** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**)

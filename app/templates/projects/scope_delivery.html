@@ -11,6 +11,8 @@
         <p class="muted-copy">
             Decide who provides material and who performs labour for each estimate line.
             Confirmation does not approve costing, apply pricing, or create supplier or labour records.
+            When labour is performed by a subcontractor, record quote evidence here.
+            Selecting a quote does not set working cost or pricing.
         </p>
         {% if review.estimate and review.version %}
         <p class="muted-copy">
@@ -137,6 +139,102 @@
                     {% endif %}
                 </td>
             </tr>
+            {% if row.quote_review and row.quote_review.eligible %}
+            <tr>
+                <td colspan="6">
+                    <div class="muted-copy" style="margin-bottom: 8px;"><strong>Subcontract quote evidence</strong> — evidence only; does not set cost or pricing.</div>
+                    {% if row.quote_review.quotes %}
+                    <table class="data-table" style="margin-bottom: 12px;">
+                        <thead>
+                            <tr>
+                                <th>Subcontractor</th>
+                                <th>Quote reference</th>
+                                <th>Quoted amount</th>
+                                <th>Quote date</th>
+                                <th>Expires</th>
+                                <th>Status</th>
+                                <th>Scope included</th>
+                                <th>Exclusions</th>
+                                {% if review.editable %}
+                                <th>Action</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for quote in row.quote_review.quotes %}
+                            <tr {% if row.quote_review.selected and quote.id == row.quote_review.selected.id %}style="outline: 2px solid #1f4b3a; background: #f3f8f5;"{% endif %}>
+                                <td>{{ quote.subcontractor.legal_name }} ({{ quote.subcontractor.code }})</td>
+                                <td>{{ quote.quote_reference }}</td>
+                                <td>{{ quote.amount }} {{ quote.currency }}</td>
+                                <td>{{ quote.quote_date }}</td>
+                                <td>{{ quote.expires_on or "—" }}</td>
+                                <td>
+                                    {{ contractor_copy.office_status_label(quote.selection_status) }}
+                                    {% if row.quote_review.selected and quote.id == row.quote_review.selected.id %}
+                                    · Selected quote
+                                    {% endif %}
+                                </td>
+                                <td>{{ quote.included_scope or "—" }}</td>
+                                <td>{{ quote.exclusions or "—" }}</td>
+                                {% if review.editable %}
+                                <td>
+                                    {% if quote.selection_status == "RECEIVED" %}
+                                    <form method="post" action="{{ url_for('scope_delivery.select_quote_row', project_id=project.id, quote_id=quote.id) }}" style="display:inline;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="version_id" value="{{ review.version.id }}">
+                                        <input type="hidden" name="estimate_id" value="{{ review.estimate.id }}">
+                                        <button type="submit">Select quote</button>
+                                    </form>
+                                    <form method="post" action="{{ url_for('scope_delivery.reject_quote_row', project_id=project.id, quote_id=quote.id) }}" style="display:inline;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="version_id" value="{{ review.version.id }}">
+                                        <input type="hidden" name="estimate_id" value="{{ review.estimate.id }}">
+                                        <button type="submit">Reject</button>
+                                    </form>
+                                    {% elif quote.selection_status == "SELECTED" %}
+                                    Selected quote
+                                    {% else %}
+                                    —
+                                    {% endif %}
+                                </td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p class="muted-copy">No subcontract quotes recorded yet.</p>
+                    {% endif %}
+                    {% if review.editable %}
+                    <form method="post" action="{{ url_for('scope_delivery.receive_quote_row', project_id=project.id, line_id=row.line_item.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="version_id" value="{{ review.version.id }}">
+                        <input type="hidden" name="estimate_id" value="{{ review.estimate.id }}">
+                        <p style="margin: 8px 0 4px;"><strong>Record quote</strong></p>
+                        <label>Existing subcontractor
+                            <select name="subcontractor_id">
+                                <option value="">New subcontractor</option>
+                                {% for party in row.quote_review.subcontractors %}
+                                <option value="{{ party.id }}">{{ party.legal_name }} ({{ party.code }})</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label>New subcontractor code <input type="text" name="subcontractor_code"></label>
+                        <label>Legal name <input type="text" name="subcontractor_legal_name"></label>
+                        <label>Quote reference <input type="text" name="quote_reference" required></label>
+                        <label>Quoted amount <input type="text" name="amount" required></label>
+                        <label>Currency <input type="text" name="currency" value="CAD" maxlength="3"></label>
+                        <label>Quote date <input type="date" name="quote_date" required></label>
+                        <label>Expires <input type="date" name="expires_on"></label>
+                        <label>Scope included <input type="text" name="included_scope"></label>
+                        <label>Exclusions <input type="text" name="exclusions"></label>
+                        <label>Provenance note <input type="text" name="provenance_note"></label>
+                        <button type="submit">Record quote</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
             {% endfor %}
         </tbody>
     </table>

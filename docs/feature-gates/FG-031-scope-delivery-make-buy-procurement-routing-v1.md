@@ -5,9 +5,9 @@
 | Feature Gate ID | `FG-031` |
 | Feature Name | Scope Delivery / Make-Buy / Procurement Routing V1 |
 | Target Milestone | **None.** FG-031 is a **supporting V1 gate**. It is **not** a 12th major V1 package. Recording or later implementation **does not** rescore [v1-completion-register.md](../v1-completion-register.md). Preserve **55% / 3 of 11 COMPLETE**. |
-| Module | **Estimating** owns `EstimateScopeDelivery` (Slice A) and later thin Subcontractor identity + `SubcontractQuoteEvidence` (Slice B). Supplier Catalogue **filters** Supplier Package eligibility from routing. Material Catalogue continues to own `CanonicalMaterial` and thin `MaterialRequirement`. Labour Engine continues to own opt-in snapshots. PLAN does **not** own routing. |
-| Date | 2026-09-09 |
-| Status | **SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT. OVERALL NOT CLOSED.** Slice B **NOT AUTHORIZED / NOT IMPLEMENTED.** [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. Do **not** rescore V1 (**55% / 3 of 11 COMPLETE**). |
+| Module | **Estimating** owns `EstimateScopeDelivery` (Slice A) and thin Subcontractor identity + `SubcontractQuoteEvidence` (Slice B). Supplier Catalogue **filters** Supplier Package eligibility from routing. Material Catalogue continues to own `CanonicalMaterial` and thin `MaterialRequirement`. Labour Engine continues to own opt-in snapshots. PLAN does **not** own routing. |
+| Date | 2026-09-10 |
+| Status | **SLICE A OPERATIONAL FOR UAT. SLICE B IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED. OVERALL NOT CLOSED.** [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. Do **not** rescore V1 (**55% / 3 of 11 COMPLETE**). |
 | Architecture | [fg-031-scope-delivery-make-buy-procurement-routing-preflight.md](../architecture/fg-031-scope-delivery-make-buy-procurement-routing-preflight.md) · [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** · [ADR-006](../adr/ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](../adr/ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted** · [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted** · [FG-027](FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-029](FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-030](FG-030-supplier-identity-authentication-and-access-isolation.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED** |
 | Related ADRs | **[ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) Accepted** (architecture). Do **not** accept ADR-008 from this gate. Do **not** reopen FG-027. |
 | Prerequisites | FG-027 costing **CLOSED / OPERATIONAL FOR UAT**. FG-029 contractor-office Supplier Package **CLOSED / OPERATIONAL FOR UAT**. This gate does **not** implement FG-030, V1-04, FG-024, LEARN, QuickBooks, or contracts. |
@@ -18,24 +18,22 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT.** Overall **NOT CLOSED.** |
+| Feature Gate (this document) | **SLICE A OPERATIONAL FOR UAT. SLICE B IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED.** Overall **NOT CLOSED.** |
 | Slice A routing core | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT.** |
-| Slice B subcontract quote evidence | **NOT AUTHORIZED / NOT IMPLEMENTED** |
-| Schema / Alembic | Additive **`c7d8e9f0a1b2`** applied live (`b6c7d8e9f0a1` → `c7d8e9f0a1b2`). Live current = repository head **`c7d8e9f0a1b2`**. One graph head. |
-| Product code | Slice A routing model, service, Hub PRICE Scope Delivery Review, FG-027 `SCOPE_DELIVERY_UNRESOLVED` BLOCK (**CONFIRMED routing required**; `PROPOSED` is not costing authority), Supplier Package `CONTRACTOR_PURCHASED` filter. |
+| Slice B subcontract quote evidence | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED** |
+| Schema / Alembic | Slice A **`c7d8e9f0a1b2` applied live**. Slice B additive **`d8e9f0a1b2c3` FILE** (`c7d8e9f0a1b2` → `d8e9f0a1b2c3`) **not applied live**. Live current **`c7d8e9f0a1b2`**. Repository graph head **`d8e9f0a1b2c3`**. One graph head. |
+| Product code | Slice A routing plus Slice B `Subcontractor` / `SubcontractQuoteEvidence`, human quote selection, selected-quote freeze onto `EstimateCostingSnapshotLine`, Hub PRICE Scope Delivery Review quote evidence. Quote is evidence, not cost authority. |
 | V1 scoring | **Unchanged.** **55% / 3 of 11 COMPLETE.** Not a 12th package. |
 
 ```text
 FG-031:
-SLICE A IMPLEMENTED
+SLICE A OPERATIONAL FOR UAT
+SLICE B IMPLEMENTED
 TESTED
 COMMITTED
 PUSHED
-LIVE-MIGRATED
-OFFICE UAT PASS
-OPERATIONAL FOR UAT
-SLICE B NOT AUTHORIZED
-NOT IMPLEMENTED
+NOT LIVE-MIGRATED
+UAT NOT AUTHORIZED
 OVERALL NOT CLOSED
 ADR-048 ACCEPTED
 NOT A 12TH MAJOR V1 PACKAGE
@@ -43,12 +41,12 @@ DO NOT RESCORE V1 (REMAINS 55% / 3 OF 11)
 FG-027 REMAINS FINAL COSTING AUTHORITY
 FG-029 SUPPLIER PRICE REMAINS INFORM ONLY
 FG-030 UNCHANGED (RECORDED / NOT IMPLEMENTATION-AUTHORIZED)
-DO NOT IMPLEMENT SLICE B
+DO NOT LIVE-MIGRATE SLICE B
 DO NOT IMPLEMENT FG-030
 DO NOT BEGIN V1-04
 ```
 
-Slice A live migrate + bounded office UAT authorized and **PASS** 2026-09-09. Evidence: [fg031-live-migrate-bounded-uat-record.md](../testing/fg031-live-migrate-bounded-uat-record.md). Slice B remains separately authorized.
+Slice A live migrate + bounded office UAT authorized and **PASS** 2026-09-09. Evidence: [fg031-live-migrate-bounded-uat-record.md](../testing/fg031-live-migrate-bounded-uat-record.md). Slice B product implementation authorized and **PASS** 2026-09-10. Do **not** live-migrate Slice B from this recording.
 
 ---
 
@@ -182,7 +180,7 @@ If one Assembly requires component-level mixed delivery in V1, split it into sep
 
 ## Non-goals
 
-Product implementation of Slice B · live migrate from this recording · FG-030 · V1-04 · FG-024 · remaining FG-025 · LEARN · QuickBooks · contracts · Native Signing · Observation Delete · website · live BMR · PO · marketplace · collapsing Subcontractor into Supplier · storing routing on PLAN/catalogues · HYBRID enum · silent ML auto-approval
+Live migrate Slice B from this recording · Slice B office UAT · subcontract RFQ/package HTML/PDF · subcontractor portal/login · FG-030 · V1-04 · FG-024 · remaining FG-025 · LEARN · QuickBooks · contracts · Native Signing · Observation Delete · website · live BMR · PO · marketplace · collapsing Subcontractor into Supplier · storing routing on PLAN/catalogues · HYBRID enum · silent ML auto-approval · automatic quote → cost
 
 ---
 
@@ -190,6 +188,6 @@ Product implementation of Slice B · live migrate from this recording · FG-030 
 
 | Layer | State |
 |-------|--------|
-| **Current** | Slice A: Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem`; two stored dimensions; Hub PRICE Scope Delivery Review; Approve All Scope Routing; `SCOPE_DELIVERY_UNRESOLVED` BLOCK on editable Draft costing unless routing is **CONFIRMED** (Allowance exception); Supplier Package includes cited requirements only when confirmed `CONTRACTOR_PURCHASED`. Migration **`c7d8e9f0a1b2` applied live**. Bounded office UAT **PASS**. |
-| **Intended (remaining this gate)** | Slice B thin Subcontractor + quote evidence before Brayman real-life UAT. |
+| **Current** | Slice A: Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem`; two stored dimensions; Hub PRICE Scope Delivery Review; Approve All Scope Routing; `SCOPE_DELIVERY_UNRESOLVED` BLOCK on editable Draft costing unless routing is **CONFIRMED** (Allowance exception); Supplier Package includes cited requirements only when confirmed `CONTRACTOR_PURCHASED`. Migration **`c7d8e9f0a1b2` applied live**. Bounded office UAT **PASS**. Slice B: thin org-scoped `Subcontractor` + EstimateVersion-scoped `SubcontractQuoteEvidence`; human SELECTED/REJECTED/SUPERSEDED; selected-quote freeze onto `EstimateCostingSnapshotLine`; contractor-facing quote review on Scope Delivery Review. Migration **`d8e9f0a1b2c3` FILE only / not applied live**. |
+| **Intended (remaining this gate)** | Slice B live migrate + bounded office UAT. Then remaining close conditions (RFQ/package is maturation, not Slice B product). |
 | **Future** | Org defaults; exception-based review; RFQ/package; owner UX; portal; LEARN; component Assembly routing. |

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-09 |
+| Updated | 2026-09-10 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -29,6 +29,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 4. “Completed pending baseline commit” means deliverables exist in the working tree awaiting Joel-approved commit.
 
 ---
+
+### 2026-09-10 — FG-031 Slice B subcontract quote evidence product implementation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-031 Slice B subcontract identity + quote evidence (supporting V1 gate; not a 12th major package) |
+| Status | **SLICE B IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED.** Slice A remains **OPERATIONAL FOR UAT**. Overall **NOT CLOSED.** V1 remains **55% / 3 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+| Branch | `main` |
+| Objective | Thin org-scoped Subcontractor; EstimateVersion-scoped SubcontractQuoteEvidence; human SELECTED workflow; freeze selected quote facts onto EstimateCostingSnapshotLine; contractor-facing PRICE quote review. No live migrate. No live UAT. No FG-030. No V1-04. |
+| Deliverables | `app/models/subcontractor.py`; additive Alembic **`d8e9f0a1b2c3` FILE**; `app/services/subcontract_quote.py`; costing freeze columns; Scope Delivery Review quote UI; dedicated tests. |
+| Validation | Dedicated Slice B **21 passed**. Slice A **26**. FG-027 **20**. FG-029 **16**. Governed bundle **306**. Full suite **728**. Live current remains **`c7d8e9f0a1b2`**. |
+| Architectural findings | Quote is evidence, not cost authority. One SELECTED quote per line; prior SELECTED becomes SUPERSEDED. No SOURCE_SUBCONTRACT_QUOTE. Attachment is optional textual `provenance_note` only. |
+| Open decisions | Slice B live migrate / UAT. FG-030. V1-04. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate Slice B. |
+| Date | 2026-09-10 |
 
 ### 2026-09-09 — FG-031 Slice A live migrate + bounded office UAT
 

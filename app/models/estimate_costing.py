@@ -167,6 +167,22 @@ class EstimateCostingSnapshotLine(db.Model):
     warning_codes = db.Column(db.JSON, nullable=True)
     material_procurement = db.Column(db.String(40), nullable=True)
     labour_delivery = db.Column(db.String(40), nullable=True)
+    subcontract_quote_evidence_id = db.Column(
+        db.Integer,
+        db.ForeignKey("subcontract_quote_evidence.id", ondelete="RESTRICT"),
+        nullable=True,
+    )
+    subcontract_quote_reference = db.Column(db.String(120), nullable=True)
+    subcontract_quoted_amount = db.Column(db.Numeric(14, 2), nullable=True)
+    subcontract_quote_currency = db.Column(db.String(3), nullable=True)
+    subcontract_quote_date = db.Column(db.Date, nullable=True)
+    subcontractor_id = db.Column(
+        db.Integer,
+        db.ForeignKey("subcontractors.id", ondelete="RESTRICT"),
+        nullable=True,
+    )
+    subcontract_subcontractor_code = db.Column(db.String(80), nullable=True)
+    subcontract_subcontractor_legal_name = db.Column(db.String(220), nullable=True)
     sort_order = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
@@ -177,6 +193,8 @@ class EstimateCostingSnapshotLine(db.Model):
     estimate_line_item = db.relationship("EstimateLineItem")
     cost_item = db.relationship("CostItem")
     assembly = db.relationship("Assembly")
+    subcontract_quote_evidence = db.relationship("SubcontractQuoteEvidence")
+    subcontractor = db.relationship("Subcontractor")
 
     def __repr__(self):
         return (

@@ -3,9 +3,9 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current** (core implemented) |
-| Updated | 2026-09-09 |
-| Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`, `estimate_scope_delivery.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`, `scope_delivery.py`; `app/services/estimates.py`, `estimate_builder.py`, `estimate_output.py`, `estimate_scope_delivery.py` |
-| Feature Gate | [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (internal breakdown + customer consistency). [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** (Estimating-owned insertion/citation). [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** (costing approval). [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT / NOT CLOSED** (scope-delivery routing). |
+| Updated | 2026-09-10 |
+| Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`, `estimate_scope_delivery.py`, `subcontractor.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`, `scope_delivery.py`; `app/services/estimates.py`, `estimate_builder.py`, `estimate_output.py`, `estimate_scope_delivery.py`, `subcontract_quote.py` |
+| Feature Gate | [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (internal breakdown + customer consistency). [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** (Estimating-owned insertion/citation). [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** (costing approval). [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A OPERATIONAL FOR UAT / SLICE B IMPLEMENTED / NOT LIVE-MIGRATED / NOT CLOSED** (scope-delivery routing + quote evidence). |
 
 ## Purpose
 
@@ -29,6 +29,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - `takeoff_estimate_insertions`, `takeoff_estimate_insertion_citations` (FG-026; Estimating-owned frozen provenance)
 - `estimate_costing_snapshots`, `estimate_costing_snapshot_lines` (FG-027; Estimating-owned; additive `a5b6c7d8e9f0` **applied live**)
 - `estimate_scope_deliveries` ([FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) Slice A; [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**; 1:1 with `EstimateLineItem`; migration **`c7d8e9f0a1b2` applied live**)
+- `subcontractors`, `subcontract_quote_evidence` ([FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) Slice B; Estimating-owned; migration **`d8e9f0a1b2c3` FILE / not applied live**)
 
 ## Referenced data
 
@@ -60,7 +61,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 - Takeoff-to-estimate insertion + frozen citation provenance — [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Service: `app/services/takeoff_estimate_mapping.py`. UI: `/projects/<id>/plans/takeoff/packages/<package_id>/map`. Plan Intelligence remains owner of the source package. Package approval does **not** insert lines. Live current = heads **`f4a5b6c7d8e9`**.
 - Costing approval + immutable costing snapshot — [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Legacy NULL `library_unit_cost_reference` on CostItem/Assembly Draft edit freezes pre-edit working `unit_cost` (`72949f99da2b56ec06e95e16e29fa194a6730bbd`). [ADR-044](../adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Preflight [fg-027-costing-approval-preflight.md](../architecture/fg-027-costing-approval-preflight.md). Approve All = costing approval only. Pricing Engine consumes; does not own costing.
-- Scope delivery / make-buy routing — [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT / SLICE B NOT AUTHORIZED / NOT CLOSED**. [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. Two stored dimensions; 1:1 `EstimateScopeDelivery` per `EstimateLineItem`. Hub PRICE Scope Delivery Review. Do **not** implement Slice B.
+- Scope delivery / make-buy routing — [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A OPERATIONAL FOR UAT / SLICE B IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED**. [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. Two stored dimensions; 1:1 `EstimateScopeDelivery` per `EstimateLineItem`. Thin `Subcontractor` + `SubcontractQuoteEvidence`. Hub PRICE Scope Delivery Review. Do **not** live-migrate Slice B.
 - Future Material-category `CostItem` → canonical material link ([FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**); assembly components resolvable to canonical materials later; fulfillment uses **exploded** material quantities even when the commercial line stays rolled-up ([material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md)). Identity V1 does not explode Assemblies.
 - QuickBooks and Ontario contract/warranty remain **Future**.
 - Historical estimating intelligence — **Future**

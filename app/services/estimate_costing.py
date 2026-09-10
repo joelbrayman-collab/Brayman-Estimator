@@ -53,6 +53,7 @@ WARN_NO_SUPPLIER_EVIDENCE = "NO_SUPPLIER_EVIDENCE"
 WARN_CANONICAL_MATERIAL_UNRESOLVED = "CANONICAL_MATERIAL_UNRESOLVED"
 WARN_LABOUR_EVIDENCE_ABSENT = "LABOUR_EVIDENCE_ABSENT"
 WARN_INACTIVE_LIBRARY_RETAINED = "INACTIVE_LIBRARY_RETAINED"
+WARN_SUBCONTRACT_QUOTE_AMOUNT_DIFFERS = "SUBCONTRACT_QUOTE_AMOUNT_DIFFERS"
 
 PRICING_STATUS_CURRENT = "CURRENT"
 PRICING_STATUS_STALE_REQUIRES_REAPPLY = "STALE / REQUIRES RE-APPLY"
@@ -329,6 +330,11 @@ def evaluate_costing(version):
         if line_type == "Allowance" and facts_ok and not _is_zero_cost(item.unit_cost):
             line_warns.append(WARN_MANUAL_ALLOWANCE)
 
+        from app.services.subcontract_quote import quote_amount_differs_from_working_cost
+
+        if quote_amount_differs_from_working_cost(item):
+            line_warns.append(WARN_SUBCONTRACT_QUOTE_AMOUNT_DIFFERS)
+
         insertion = TakeoffEstimateInsertion.query.filter_by(
             estimate_line_item_id=item.id
         ).first()
@@ -470,6 +476,9 @@ def approve_all_costing(version, *, actor, user_id=None, commit=True):
             routing = EstimateScopeDelivery.query.filter_by(
                 estimate_line_item_id=item.id
             ).first()
+            from app.services.subcontract_quote import freeze_facts_for_line
+
+            quote_freeze = freeze_facts_for_line(item)
             db.session.add(
                 EstimateCostingSnapshotLine(
                     costing_snapshot_id=snapshot.id,
@@ -493,6 +502,24 @@ def approve_all_costing(version, *, actor, user_id=None, commit=True):
                     labour_delivery=(
                         routing.labour_delivery if routing is not None else None
                     ),
+                    subcontract_quote_evidence_id=quote_freeze[
+                        "subcontract_quote_evidence_id"
+                    ],
+                    subcontract_quote_reference=quote_freeze[
+                        "subcontract_quote_reference"
+                    ],
+                    subcontract_quoted_amount=quote_freeze["subcontract_quoted_amount"],
+                    subcontract_quote_currency=quote_freeze[
+                        "subcontract_quote_currency"
+                    ],
+                    subcontract_quote_date=quote_freeze["subcontract_quote_date"],
+                    subcontractor_id=quote_freeze["subcontractor_id"],
+                    subcontract_subcontractor_code=quote_freeze[
+                        "subcontract_subcontractor_code"
+                    ],
+                    subcontract_subcontractor_legal_name=quote_freeze[
+                        "subcontract_subcontractor_legal_name"
+                    ],
                     sort_order=sort_order,
                     created_at=approved_at,
                 )

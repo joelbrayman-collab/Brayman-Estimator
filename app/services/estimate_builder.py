@@ -542,6 +542,9 @@ def clone_sections_to_version(source_version, target_version):
             )
 
             copy_scope_delivery_for_cloned_line(item, new_item)
+            from app.services.subcontract_quote import copy_quotes_for_cloned_line
+
+            copy_quotes_for_cloned_line(item, new_item)
 
     db.session.flush()
     recalculate_version(target_version)

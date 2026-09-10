@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **COMPLETE (architecture recording).** Slice A product **IMPLEMENTED / LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT.** Overall FG-031 **NOT CLOSED**. |
+| Status | **COMPLETE (architecture recording).** Slice A **LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT.** Slice B product **IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED.** Overall FG-031 **NOT CLOSED**. |
 | Date | 2026-09-09 |
-| Gate | [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A IMPLEMENTED / LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT / SLICE B NOT AUTHORIZED / NOT CLOSED** |
+| Gate | [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A OPERATIONAL FOR UAT / SLICE B IMPLEMENTED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED / NOT CLOSED** |
 | ADR | [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** (architecture only) |
-| Alembic | Live current **`c7d8e9f0a1b2 (head)`**. Repository head **`c7d8e9f0a1b2`**. One graph head. Slice A migration **applied live** 2026-09-09. |
+| Alembic | Live current **`c7d8e9f0a1b2`**. Repository head **`d8e9f0a1b2c3`**. One graph head. Slice A **applied live**. Slice B **`d8e9f0a1b2c3` FILE not applied live**. |
 | Product | CalibraytAI (formerly CalibAi) |
 | Source | Completed SCOPE DELIVERY / MAKE-BUY / PROCUREMENT ROUTING architecture reconciliation + preflight (2026-09-09). This document records that recon; it does **not** redo architecture from scratch. |
 
@@ -30,11 +30,11 @@ This pin is **not** an implementation authorization.
 
 | Layer | State |
 |-------|--------|
-| **Current** | Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem` (Slice A; migration **`c7d8e9f0a1b2` applied live**). Two stored dimensions; Hub PRICE Scope Delivery Review; Approve All Scope Routing; `SCOPE_DELIVERY_UNRESOLVED` BLOCK on editable Draft costing unless routing is **CONFIRMED** (`PROPOSED` is not costing authority; Allowance exception); Supplier Package includes cited requirements only when confirmed `CONTRACTOR_PURCHASED`. Uncited MANUAL/DEMO fail-closed. PLAN remains quantity/evidence. No Subcontractor entity. No subcontract RFQ. Bounded office UAT **PASS**. |
-| **Intended (remaining this gate)** | Slice B thin Subcontractor + quote evidence before Brayman real-life UAT. |
+| **Current** | Estimating-owned `EstimateScopeDelivery` 1:1 with `EstimateLineItem` (Slice A; migration **`c7d8e9f0a1b2` applied live**). Two stored dimensions; Hub PRICE Scope Delivery Review; Approve All Scope Routing; `SCOPE_DELIVERY_UNRESOLVED` BLOCK on editable Draft costing unless routing is **CONFIRMED** (`PROPOSED` is not costing authority; Allowance exception); Supplier Package includes cited requirements only when confirmed `CONTRACTOR_PURCHASED`. Uncited MANUAL/DEMO fail-closed. PLAN remains quantity/evidence. Slice B `Subcontractor` + `SubcontractQuoteEvidence` **coded** (migration **`d8e9f0a1b2c3` FILE / not live**). No subcontract RFQ. No subcontractor portal. Bounded Slice A office UAT **PASS**. |
+| **Intended (remaining this gate)** | Slice B live migrate + bounded office UAT before Brayman real-life UAT. |
 | **Future** | Org routing defaults; exception-based review; subcontract RFQ/package HTML/PDF; owner-supplied/third-party UX; LEARN; component-level Assembly routing; subcontractor portal; supplier price → estimate cost; BUILD/MONITOR execution-plan expansion. |
 
-Do **not** claim remaining Intended (Slice B) surfaces exist.
+Do **not** claim Slice B is live-migrated or UAT-authorized.
 
 ---
 
@@ -324,4 +324,6 @@ Do **not** begin V1-04.
 
 Do **not** mutate the live database.
 
-**Subsequent status (2026-09-09 Slice A live migrate + office UAT — not authorized by this architecture pin):** [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) Slice A **LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT**. Overall **NOT CLOSED**. Slice B **NOT AUTHORIZED / NOT IMPLEMENTED**. Evidence: [fg031-live-migrate-bounded-uat-record.md](../testing/fg031-live-migrate-bounded-uat-record.md). Live current = head **`c7d8e9f0a1b2`**.
+**Subsequent status (2026-09-09 Slice A live migrate + office UAT — not authorized by this architecture pin):** [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) Slice A **LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT**. Overall **NOT CLOSED**. Evidence: [fg031-live-migrate-bounded-uat-record.md](../testing/fg031-live-migrate-bounded-uat-record.md). Live current after Slice A = **`c7d8e9f0a1b2`**.
+
+**Subsequent status (2026-09-10 Slice B product implementation — not authorized by this architecture pin):** Slice A remains **OPERATIONAL FOR UAT**. Slice B **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / UAT NOT AUTHORIZED**. Overall **NOT CLOSED**. Live current remains **`c7d8e9f0a1b2`**. Repository head **`d8e9f0a1b2c3`**.

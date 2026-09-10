@@ -34,6 +34,7 @@ from app.models.estimate_costing import (
     EstimateCostingSnapshotLine,
 )
 from app.models.estimate_scope_delivery import EstimateScopeDelivery
+from app.models.subcontractor import Subcontractor, SubcontractQuoteEvidence
 from app.models.organization import Organization
 from app.models.user import User, UserMembership
 from app.models.brand_profile import OrganizationBrandProfile, ProposalBrandSnapshot
@@ -113,6 +114,8 @@ __all__ = [
     "EstimateCostingSnapshot",
     "EstimateCostingSnapshotLine",
     "EstimateScopeDelivery",
+    "Subcontractor",
+    "SubcontractQuoteEvidence",
     "FieldCaptureDerivedCandidate",
     "FieldCaptureEvent",
     "FieldCaptureOriginal",

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-10 — FG-032 Slices A+B implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-10 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Implement FG-032 Slices A+B from corrected baseline `010f6d6`. Accept ADR-049. Additive migration file after `d8e9f0a1b2c3`. Do not live-migrate. Do not office-UAT. Do not implement Slice C. |
+| Business decision | Joel accepted ADR-049 and authorized Slices A+B on 10 Sep 2026. Option A remains selected. Option B POST-V1. V1 remains **55% / 3 of 11**. V1-04 remains **PARTIAL**. V1-05 **PARTIAL**. |
+| Architectural decision | Estimating owns QuickBooks-ready package freeze. Issued or Accepted Proposal may qualify if current totals match CURRENT pricing (`pricing_consume_status()`). Issued-not-Accepted WARNs. Copy Proposal facts at package freeze. ISSUED package does not float. Artifact A from Proposal lines (`unit_price`). Artifact B from costing snapshot + frozen FG-031 routing. Hybrid one amount. Allowance exception preserved. |
+| Prompt template used | Joel/ChatGPT FG-032 V1-05 Option A Slices A+B implementation — corrected baseline reissue (10 Sep 2026) |
+| Approved Cursor prompt summary | Verify `main` @ `010f6d641a756ceb2ab67475a284d3b8426c7b20`; accept ADR-049; implement Slices A+B; one additive Alembic file; focused + full tests; docs; commit; push; A–AD report; STOP. No live migrate. No Slice C. |
+| Files expected to change | Models, migration `e9f0a1b2c3d4`, service/PDF/storage/routes/templates, Hub PRICE link, FG-032 tests, governing docs |
+| Files prohibited from changing | Live database; Slice C tables; QuickBooks API; CSV/IIF; costing/pricing/Proposal/Scope Delivery source mutation; FG-030; V1-04; ADR-008; V1 rescore |
+| Implementation result | Slices A+B implemented. ADR-049 Accepted. Migration file created, not applied live. Full suite **751 passed**. |
+| Tests | Dedicated `tests/test_quickbooks_ready_fg032.py` **23 passed**, 306 warnings, 9.50s. Focused regression **209 passed**, 1279 warnings, 89.55s. Full `./venv/bin/python -m pytest -q` **751 passed**, 2479 warnings, 350.35s. Live `flask db current` remained **`d8e9f0a1b2c3`**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migration not run. Office UAT not run. Slice C not authorized. Ontario/fail-closed contract blocker unchanged. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** office-UAT. Do **not** implement Slice C. |
+| Next approved prompt | None. |
+| Commit hash | Follows this implementation commit. |
+
 ### 2026-09-10 — FG-032 recon errata (Issued vs Accepted; derived pricing STALE)
 
 | Field | Content |

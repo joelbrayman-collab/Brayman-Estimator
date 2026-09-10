@@ -192,6 +192,10 @@ def create_app(config=None):
         app.config["BUILD_RENDITION_ROOT"] = tempfile.mkdtemp(
             prefix="calibai-build-renditions-"
         )
+    if app.config.get("TESTING") and not app.config.get("QUICKBOOKS_PACKAGE_ROOT"):
+        app.config["QUICKBOOKS_PACKAGE_ROOT"] = tempfile.mkdtemp(
+            prefix="calibai-quickbooks-packages-"
+        )
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -217,6 +221,7 @@ def create_app(config=None):
     from app.routes.field import field_bp
     from app.routes.supplier_package import supplier_package_bp
     from app.routes.scope_delivery import scope_delivery_bp
+    from app.routes.estimate_quickbooks import estimate_quickbooks_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(clients_bp)
@@ -238,6 +243,7 @@ def create_app(config=None):
     app.register_blueprint(field_bp)
     app.register_blueprint(supplier_package_bp)
     app.register_blueprint(scope_delivery_bp)
+    app.register_blueprint(estimate_quickbooks_bp)
 
     _register_office_auth(app)
 

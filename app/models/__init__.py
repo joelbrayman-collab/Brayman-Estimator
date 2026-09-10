@@ -33,6 +33,11 @@ from app.models.estimate_costing import (
     EstimateCostingSnapshot,
     EstimateCostingSnapshotLine,
 )
+from app.models.estimate_quickbooks import (
+    EstimateQuickBooksCostClassLine,
+    EstimateQuickBooksPackage,
+    EstimateQuickBooksSalesLine,
+)
 from app.models.estimate_scope_delivery import EstimateScopeDelivery
 from app.models.subcontractor import Subcontractor, SubcontractQuoteEvidence
 from app.models.organization import Organization
@@ -113,6 +118,9 @@ __all__ = [
     "Estimate",
     "EstimateCostingSnapshot",
     "EstimateCostingSnapshotLine",
+    "EstimateQuickBooksCostClassLine",
+    "EstimateQuickBooksPackage",
+    "EstimateQuickBooksSalesLine",
     "EstimateScopeDelivery",
     "Subcontractor",
     "SubcontractQuoteEvidence",

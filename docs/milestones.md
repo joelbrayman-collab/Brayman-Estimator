@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-10 — FG-032 Slices A+B QuickBooks-ready artifacts (not live-migrated)
+
+| Field | Content |
+|-------|---------|
+| ID | FG-032 Slices A+B / ADR-049 Accepted (V1-05 Option A; not a 12th major package) |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / OFFICE UAT NOT RUN / SLICE C NOT AUTHORIZED / OVERALL NOT CLOSED.** V1 remains **55% / 3 of 11**. Current scored package **V1-04 / PARTIAL**. V1-05 **PARTIAL**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+| Branch | `main` |
+| Objective | Governed internal-office sales-entry sheet + planned cost-class companion |
+| Validation | Dedicated **23 passed**; focused **209 passed**; full **751 passed**. Live current remained `d8e9f0a1b2c3`. |
+| Next milestone | **STOP.** Live migrate / office UAT / Slice C require separate authorization. |
+| Date | 2026-09-10 |
+
 ### 2026-09-10 — V1-05 QuickBooks Option A architecture preflight (documentation only)
 
 | Field | Content |

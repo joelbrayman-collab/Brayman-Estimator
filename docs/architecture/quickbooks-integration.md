@@ -2,9 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Intended V1 Option A recorded; not implemented.** Option B live API remains **POST-V1**. |
+| Status | **Intended V1 Option A implemented for Slices A+B; not live-migrated; not office-UAT; Slice C not implemented.** Option B live API remains **POST-V1**. |
 | Updated | 2026-09-10 |
-| Implementation | **Prohibited** until [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) is separately implementation-authorized. This document is **not** that authorization. |
+| Implementation | Slices A+B in `app/services/estimate_quickbooks.py`, `app/routes/estimate_quickbooks.py`. Hub PRICE `/projects/<id>/quickbooks-entry`. Migration **`e9f0a1b2c3d4` not applied live**. |
 
 ## Purpose
 
@@ -14,7 +14,7 @@ Define the architecture boundary for handing an **approved customer estimate** t
 
 | Option | Meaning | V1 status |
 |--------|---------|-----------|
-| **A.** Governed QuickBooks-ready output / controlled human-entry workflow | Internal office HTML/PDF pair a human uses to type a QuickBooks Estimate | **SELECTED.** Architecture recorded. **Not implemented.** |
+| **A.** Governed QuickBooks-ready output / controlled human-entry workflow | Internal office HTML/PDF pair a human uses to type a QuickBooks Estimate | **SELECTED.** Slices A+B **IMPLEMENTED / NOT LIVE-MIGRATED**. Slice C **NOT AUTHORIZED**. |
 | **B.** Live QuickBooks Online API | OAuth / SDK / auto-post | **POST-V1 / NOT AUTHORIZED** unless Joel separately reverses |
 
 Distinguish:

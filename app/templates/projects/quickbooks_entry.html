@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block title %}QuickBooks-ready entry | {{ project.name }}{% endblock %}
+{% block page_title %}QuickBooks-ready entry{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">PRICE · INTERNAL OFFICE</p>
+        <h1>QuickBooks-ready entry</h1>
+        <p class="muted-copy">
+            Governed internal artifacts for <strong>manual</strong> QuickBooks Estimate entry.
+            Not posted to QuickBooks. Not an import file. Download does not confirm entry.
+            There is no Entered-in-QuickBooks action in this slice.
+        </p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
+    </div>
+</div>
+
+{% if preview.block_codes %}
+<div class="form-panel" style="margin-bottom: 16px;">
+    <p class="eyebrow">BLOCKED</p>
+    <p>Generation and issue are blocked until these conditions are resolved.</p>
+    <ul>
+        {% for code in preview.block_codes %}
+        <li><code>{{ code }}</code></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if preview.warning_codes %}
+<div class="form-panel" style="margin-bottom: 16px;">
+    <p class="eyebrow">WARN — governed human review required</p>
+    <ul>
+        {% for code in preview.warning_codes %}
+        <li><code>{{ code }}</code></li>
+        {% endfor %}
+    </ul>
+    <p class="muted-copy">Warnings do not silently become costing or pricing blocks.</p>
+</div>
+{% endif %}
+
+{% if preview.header %}
+<p class="muted-copy">
+    Pricing consume status: <strong>{{ preview.pricing_consume_status }}</strong>
+    · Costing snapshot {{ preview.header.costing_snapshot_id }}
+    · Pricing snapshot {{ preview.header.pricing_snapshot_id }}
+    · Proposal {{ preview.header.proposal_number }} ({{ preview.header.proposal_status_at_freeze }})
+</p>
+{% endif %}
+
+<section class="form-panel" style="margin-bottom: 16px;">
+    <p class="eyebrow">INTERNAL ENTRY REFERENCE</p>
+    <h2>QUICKBOOKS ESTIMATE / ENTRY SHEET</h2>
+    <p class="muted-copy">
+        Artifact A — customer selling lines copied from the Proposal.
+        Unit selling rate is Proposal line unit price. Internal cost, margin, routing,
+        supplier identity, and subcontract quotes are not shown.
+        QuickBooks-ready for manual entry. Not posted. Not an import file.
+    </p>
+    {% if preview.header %}
+    <table class="data-table">
+        <tbody>
+            <tr><th>Customer</th><td>{{ preview.header.client_name }}</td></tr>
+            <tr><th>Project</th><td>{{ preview.header.project_name }}</td></tr>
+            <tr><th>Project number</th><td>{{ preview.header.project_number or "—" }}</td></tr>
+            <tr><th>Project / billing address</th><td>{{ preview.header.project_address or "—" }}</td></tr>
+            <tr><th>Estimate</th><td>{{ preview.header.estimate_number }} · v{{ preview.header.estimate_version_number }}</td></tr>
+            <tr><th>Proposal</th><td>{{ preview.header.proposal_number }}</td></tr>
+            <tr><th>Estimate date</th><td>{{ preview.header.estimate_date or "—" }}</td></tr>
+            <tr><th>Tax</th><td>{{ preview.header.tax_label }} ({{ preview.header.tax_percent }}%)</td></tr>
+            <tr><th>Customer message</th><td>{{ preview.header.customer_message or "—" }}</td></tr>
+        </tbody>
+    </table>
+    <table class="data-table" style="margin-top: 12px;">
+        <thead>
+            <tr>
+                <th>Product/Service</th>
+                <th>Customer Description</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Rate</th>
+                <th>Amount</th>
+                <th>Tax</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for line in preview.sales_lines %}
+            <tr>
+                <td>{{ line.product_service_label or "—" }}</td>
+                <td>{{ line.description }}</td>
+                <td>{{ line.quantity }}</td>
+                <td>{{ line.unit }}</td>
+                <td>{{ line.unit_price }}</td>
+                <td>{{ line.amount }}</td>
+                <td>{{ line.tax_label }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p class="muted-copy" style="margin-top: 8px;">
+        Pre-tax {{ preview.header.pre_tax }}
+        · Tax {{ preview.header.tax_amount }}
+        · Customer total {{ preview.header.customer_total }}
+        {{ preview.header.currency }}
+    </p>
+    {% else %}
+    <p class="muted-copy">Sales-estimate entry cannot be assembled until eligibility passes.</p>
+    {% endif %}
+</section>
+
+<section class="form-panel" style="margin-bottom: 16px;">
+    <p class="eyebrow">INTERNAL / PLANNED COST-CLASSIFICATION</p>
+    <h2>Planned cost-classification companion</h2>
+    <p class="muted-copy">
+        Artifact B — approved direct-cost lines from the current costing snapshot
+        with frozen FG-031 routing. Separate from Artifact A. Never attached to the
+        customer Proposal or a Supplier Package. Not a second sales total.
+    </p>
+    {% if preview.header %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Approved cost</th>
+                <th>Material</th>
+                <th>Labour</th>
+                <th>Class</th>
+                <th>Flags</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for line in preview.cost_class_lines %}
+            <tr>
+                <td>{{ line.description }}</td>
+                <td>{{ line.quantity }}</td>
+                <td>{{ line.unit }}</td>
+                <td>{{ line.extended_cost }}</td>
+                <td>{{ line.material_procurement or "—" }}</td>
+                <td>{{ line.labour_delivery or "—" }}</td>
+                <td>{{ line.planned_class }}</td>
+                <td>
+                    {% if line.is_hybrid %}HYBRID unsplit{% endif %}
+                    {% if line.is_allowance %}ALLOWANCE{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p class="muted-copy" style="margin-top: 8px;">
+        Approved direct-cost total {{ preview.header.approved_direct_cost_total }}
+        {{ preview.header.currency }}
+    </p>
+    {% else %}
+    <p class="muted-copy">Cost-class companion cannot be assembled until eligibility passes.</p>
+    {% endif %}
+</section>
+
+<section class="form-panel" style="margin-bottom: 16px;">
+    <h2>Review and issue</h2>
+    <p class="muted-copy">
+        Principal workflow: DRAFT → REVIEWED → ISSUED. ISSUED artifacts are immutable.
+        Correction requires a new package that explicitly supersedes the prior one.
+    </p>
+    {% if preview.eligible %}
+    <form method="post" action="{{ url_for('estimate_quickbooks.mark_reviewed_route', project_id=project.id) }}" style="margin-bottom: 12px;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {% if preview.version %}<input type="hidden" name="version_id" value="{{ preview.version.id }}">{% endif %}
+        <label>
+            Actor
+            <input type="text" name="actor_display_name" value="{{ actor_display_name }}" required>
+        </label>
+        <button type="submit">Mark reviewed</button>
+    </form>
+    <form method="post" action="{{ url_for('estimate_quickbooks.regenerate_route', project_id=project.id) }}" style="margin-bottom: 12px;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {% if preview.version %}<input type="hidden" name="version_id" value="{{ preview.version.id }}">{% endif %}
+        <input type="hidden" name="actor_display_name" value="{{ actor_display_name }}">
+        <button type="submit">Regenerate from current sources</button>
+    </form>
+    {% endif %}
+</section>
+
+<section class="form-panel">
+    <h2>Packages</h2>
+    {% if packages %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Package</th>
+                <th>Status</th>
+                <th>Proposal</th>
+                <th>Issued</th>
+                <th>Downloads</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for package in packages %}
+            <tr>
+                <td>{{ package.package_number }}</td>
+                <td><span class="status">{{ package.status }}</span></td>
+                <td>{{ package.proposal_number }}</td>
+                <td>{{ package.issued_at or "—" }}</td>
+                <td>
+                    {% if package.status in ('ISSUED', 'SUPERSEDED', 'VOID') and package.sales_storage_key %}
+                    <a href="{{ url_for('estimate_quickbooks.download_sales_pdf', project_id=project.id, package_id=package.id) }}">Sales entry PDF</a>
+                    ·
+                    <a href="{{ url_for('estimate_quickbooks.download_cost_class_pdf', project_id=project.id, package_id=package.id) }}">Cost-class PDF</a>
+                    <div class="muted-copy">Separate private downloads. Neither records QuickBooks entry.</div>
+                    {% elif package.status == 'REVIEWED' %}
+                    <form method="post" action="{{ url_for('estimate_quickbooks.issue_route', project_id=project.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="package_id" value="{{ package.id }}">
+                        {% if preview.version %}<input type="hidden" name="version_id" value="{{ preview.version.id }}">{% endif %}
+                        <input type="hidden" name="actor_display_name" value="{{ actor_display_name }}">
+                        {% set issued_same = packages | selectattr('status', 'equalto', 'ISSUED') | selectattr('costing_snapshot_id', 'equalto', package.costing_snapshot_id) | selectattr('pricing_snapshot_id', 'equalto', package.pricing_snapshot_id) | selectattr('proposal_id', 'equalto', package.proposal_id) | list %}
+                        {% if issued_same %}
+                        <input type="hidden" name="supersede_package_id" value="{{ issued_same[0].id }}">
+                        <button type="submit">Issue and supersede {{ issued_same[0].package_number }}</button>
+                        {% else %}
+                        <button type="submit">Issue frozen package</button>
+                        {% endif %}
+                    </form>
+                    {% else %}
+                    —
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="muted-copy">No QuickBooks-ready packages yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

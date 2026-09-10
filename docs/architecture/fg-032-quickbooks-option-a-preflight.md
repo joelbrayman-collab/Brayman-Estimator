@@ -2,30 +2,30 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **COMPLETE (architecture recording).** [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** |
+| Status | **RECONCILED WITH IMPLEMENTED SLICES A+B.** Product implemented; migration file **`e9f0a1b2c3d4`** not applied live. [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **OVERALL NOT CLOSED.** |
 | Date | 2026-09-10 |
 | Gate | [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) |
-| ADR | [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Proposed / FOR JOEL REVIEW** |
-| Alembic | Live current **`d8e9f0a1b2c3`**. Repository head **`d8e9f0a1b2c3`**. One graph head. **No migration in this recording.** |
+| ADR | [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted** 10 Sep 2026 |
+| Alembic | Live current **`d8e9f0a1b2c3`**. Repository head **`e9f0a1b2c3d4`**. One graph head. **Not applied live.** |
 | Product | CalibraytAI (formerly CalibAi) |
 | Tenant | Brayman Construction Inc. / ORG-001 |
 | Joel decision | **V1-05 Option A approved 2026-09-10.** Option B live QuickBooks Online API remains **POST-V1**. |
 
 ```text
 FG-032 PREFLIGHT:
-COMPLETE
-ADR-049 PROPOSED / FOR JOEL REVIEW
-NOT IMPLEMENTATION-AUTHORIZED
-NOT IMPLEMENTED
-NO SCHEMA CREATED
+RECONCILED WITH SLICES A+B IMPLEMENTATION
+ADR-049 ACCEPTED 10 SEP 2026
+SLICES A+B IMPLEMENTED / NOT LIVE-MIGRATED
+SLICE C NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED
+SCHEMA FILE e9f0a1b2c3d4 / LIVE CURRENT d8e9f0a1b2c3
 V1 REMAINS 55% / 3 OF 11
 V1-04 REMAINS PARTIAL / CURRENT SCORED PACKAGE
-V1-05 REMAINS ARCHITECTURE COMPLETE / NOT IMPLEMENTED
+V1-05 REMAINS PARTIAL
 OPTION A = QUICKBOOKS-READY MANUAL ENTRY (NOT IMPORT, NOT API)
 OUTPUT 3 = CONTROLLED PAIR (SALES-ENTRY SHEET + COST-CLASS COMPANION)
 ```
 
-This document records repository reconnaissance and the implementation preflight. It does **not** authorize product code, a migration, live database writes, artifact generation, or a QuickBooks connection.
+This document remains the architecture preflight. Slices A+B product code and migration **file** exist. Live database writes and office UAT remain unauthorized.
 
 **Subsequent recon note (2026-09-10):** Late model inventory confirmed: pricing CURRENT/STALE is **derived** (`pricing_consume_status()`), not a snapshot column; Proposal commercial immutability is **Accepted only** (ADR-002); Issued remains editable; `project_number` is on `Project` (not copied onto Proposal); unit selling rate for artifact A is `ProposalLineItem.unit_price`. Architecture recommendation unchanged: copy-at-freeze; WARN if Issued.
 
@@ -397,7 +397,7 @@ The Allen Jacques **filled project** PDF is a presentation reference, not a reus
 
 ---
 
-## 17. Proposed persistence (not created)
+## 17. Persistence (implemented Slices A+B; not applied live)
 
 Names are proposals. Do not create models or Alembic now.
 

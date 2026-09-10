@@ -3,11 +3,11 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-049: QuickBooks-Ready Output Ownership, Snapshot, and Human-Entry Boundary |
-| Status | **Proposed / FOR JOEL REVIEW.** Not Accepted. [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) is **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. |
+| Status | **Accepted** by Joel Brayman, 10 Sep 2026. [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **implementation-authorized**. Slice C remains **NOT IMPLEMENTATION-AUTHORIZED**. |
 | Date | 2026-09-10 |
 | Related | [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) · [fg-032-quickbooks-option-a-preflight.md](../architecture/fg-032-quickbooks-option-a-preflight.md) · [quickbooks-integration.md](../architecture/quickbooks-integration.md) · [project-document-package.md](../architecture/project-document-package.md) · [ADR-002](ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-025](ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** · [ADR-044](ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted** · [ADR-048](ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** · [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [ADR-008](ADR-008-supplier-price-snapshotting.md) **Proposed** |
 
-This ADR proposes the **ownership and freeze boundary** for V1-05 Option A: a governed QuickBooks-ready output and controlled human-entry workflow. It does **not** authorize product code, schema, migration, live database writes, CSV/IIF/Excel generation, or a live QuickBooks API. It does **not** accept [ADR-008](ADR-008-supplier-price-snapshotting.md).
+This ADR is the **ownership and freeze boundary** for V1-05 Option A: a governed QuickBooks-ready output and controlled human-entry workflow. Joel authorized FG-032 Slices A+B implementation on **10 Sep 2026**. It does **not** authorize Slice C entry-confirmation persistence, live database migration, office UAT, CSV/IIF/Excel generation, or a live QuickBooks API. It does **not** accept [ADR-008](ADR-008-supplier-price-snapshotting.md).
 
 Joel selected Option A on **2026-09-10**. Option B (live QuickBooks Online API) remains **POST-V1** unless Joel separately changes that decision.
 
@@ -41,7 +41,7 @@ Existing [quickbooks-integration.md](../architecture/quickbooks-integration.md) 
 
 ## Decision
 
-**Proposed as architecture.** Do **not** treat this document as Accepted or as implementation authorization.
+**Accepted.** FG-032 Slices A+B may implement Estimating-owned freeze tables, review/issue, and private HTML/PDF artifacts. Slice C (`estimate_quickbooks_entry_events`, ENTERED/REVERSED/CORRECTED) remains unauthorized.
 
 ### 1. CalibraytAI remains the commercial source of truth
 
@@ -117,7 +117,7 @@ Correction of an ISSUED package creates a new package and SUPERSEDES the prior o
 - **Live API in V1 (Option B)** — Rejected by Joel 2026-09-10. POST-V1.
 - **Claim CSV/IIF import** — Rejected. No repository evidence of a supported QuickBooks import contract.
 - **Let Proposals own the QB PDF** — Rejected. Proposal is the customer-facing estimate and must stay delivery-blind. Internal entry is Estimating/output, like internal breakdown.
-- **Accept this ADR in the recording pass** — Rejected. Prompt prefers **Proposed / FOR JOEL REVIEW**.
+- **Accept this ADR in the recording pass** — Rejected at recording. Joel accepted this ADR on **10 Sep 2026** with FG-032 Slices A+B implementation authorization.
 
 ---
 
@@ -137,11 +137,11 @@ New Estimating-owned freeze tables (names in the preflight; not created now). Co
 
 ## Migration Impact
 
-**Deferred.** Additive when FG-032 implementation is authorized. None in this recording. Do not create an Alembic revision now.
+Additive revision **`e9f0a1b2c3d4`** revises **`d8e9f0a1b2c3`**. One graph head. **Do not apply live** from the Slices A+B implementation prompt. Slice C tables are not created.
 
 ## Testing Impact
 
-Deferred to a later implementation prompt: freeze/non-float, reconciliation, privacy, isolation, BLOCK/WARN, supersession, confirmation-not-from-download.
+Focused FG-032 tests plus FG-009 / FG-012 / FG-027 / FG-029 / FG-031 / Proposal / authorization regression. Live migration and office UAT remain unauthorized. Slice C confirmation-not-from-download remains a documentation/UI rule until Slice C is authorized.
 
 ## Documentation Impact
 
@@ -151,6 +151,6 @@ FG-032; Option A preflight; quickbooks-integration.md; project-document-package.
 
 | Role | Name | Date |
 |------|------|------|
-| Joel | Option A **direction** approved. This ADR remains **Proposed** until Joel accepts it. | 2026-09-10 |
-| ChatGPT review | Architecture recording | 2026-09-10 |
-| Cursor implementation note | **Proposed.** Docs only. No product code or migration. | 2026-09-10 |
+| Joel | Option A **direction** approved 2026-09-10. This ADR **Accepted** 10 Sep 2026 with FG-032 Slices A+B implementation authorization. | 2026-09-10 |
+| ChatGPT review | Architecture recording, then corrected Issued vs Accepted freeze, then implementation prompt. | 2026-09-10 |
+| Cursor implementation note | **Accepted.** Slices A+B implemented as authorized. Slice C not implemented. Live migration not run. | 2026-09-10 |

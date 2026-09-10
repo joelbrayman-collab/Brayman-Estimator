@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-10 — V1-05 QuickBooks Option A architecture preflight
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-10 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Documentation-only repository reconnaissance and architecture preflight for V1-05 Option A (governed QuickBooks-ready output / controlled human-entry). No product code. No migration. No live DB mutation. No V1 rescore. |
+| Business decision | Joel selected Option A on 2026-09-10. Option B live QuickBooks Online API remains **POST-V1**. V1 remains **55% / 3 of 11**. V1-04 remains **PARTIAL** / current scored package. V1-05 remains **ARCHITECTURE COMPLETE / NOT IMPLEMENTED**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+| Architectural decision | Output 3 = controlled pair (Family 04 sales-entry sheet + planned cost-class companion). Estimating owns the frozen package. CalibraytAI remains SoR. QuickBooks is destination. ENTERED is an explicit human record. ADR-049 **Proposed / FOR JOEL REVIEW**. FG-032 **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. ADR-008 remains **Proposed**. |
+| Prompt template used | Joel/ChatGPT V1-05 Option A repository reconnaissance + architecture preflight — documentation only (10 Sep 2026) |
+| Approved Cursor prompt summary | Verify baseline on `main` @ `1a473d15c4cefb99a519f0b797f1772844206074`; recon models/services; record ADR-049 Proposed, FG-032, Option A preflight; update indexes/continuity; commit `docs: define V1-05 QuickBooks Option A`; push main; return A–AV report; STOP. Do not implement. |
+| Files expected to change | ADR-049; FG-032; fg-032 preflight; quickbooks-integration; project-document-package; estimating module; architecture.md; platform-roadmap; V1 register status text; current-state; project-state-report; session-handoff; docs indexes; milestones; chat-workflow-log |
+| Files prohibited from changing | Application code; templates; CSS; JS; migrations; live database; FG-030 product; V1-04 product; ADR-008 acceptance; costing/pricing/Proposal/PDF |
+| Implementation result | Documentation recorded. FG-032 **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Diff documentation-only. |
+| Tests | **NOT RERUN.** HISTORICAL Slice B UAT focused **83 passed**, 454 warnings, 15.24s; full **728 passed**, 2173 warnings, 373.17s. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | ADR-049 not Accepted. FG-032 not implementation-authorized. Family 04 layout review before implementation. FG-030 not implementation-authorized. V1-04 not begun. Ontario contract blocker unchanged. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement FG-032. Do **not** create a migration. Do **not** implement FG-030. Do **not** begin V1-04 product work. |
+| Next approved prompt | None from this architecture recording. |
+| Commit hash | This documentation recording (`docs: define V1-05 QuickBooks Option A`). Product **`5e1082af68e0eb145d9da01c0fa26585f6b8b9d1`**. Parent docs close **`1a473d15c4cefb99a519f0b797f1772844206074`**. |
+
 ### 2026-09-10 — FG-031 documentation-only final governance close
 
 | Field | Content |

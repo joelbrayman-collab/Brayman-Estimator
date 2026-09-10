@@ -30,6 +30,24 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+---
+
+### 2026-09-10 — V1-05 QuickBooks Option A architecture preflight (documentation only)
+
+| Field | Content |
+|-------|---------|
+| ID | FG-032 / ADR-049 recording (V1-05 Option A; not a 12th major package) |
+| Status | **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** Joel selected Option A. Option B live API **POST-V1**. V1 remains **55% / 3 of 11**. Current scored package **V1-04 / PARTIAL**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+| Branch | `main` |
+| Objective | Repository reconnaissance and architecture preflight for governed QuickBooks-ready output / controlled human-entry workflow. Documentation only. No product code. No migration. No live DB mutation. No V1 rescore. |
+| Deliverables | ADR-049 Proposed; FG-032 recorded; Option A preflight; quickbooks-integration and project-document-package pins; estimating ownership note; indexes; current-state; project-state-report; session-handoff; V1 register status text; milestones; chat-workflow-log. |
+| Validation | Product tests **NOT RERUN**. HISTORICAL Slice B UAT focused **83 passed**, 454 warnings, 15.24s; full **728 passed**, 2173 warnings, 373.17s. Live current remains **`d8e9f0a1b2c3`**. Repository head **`d8e9f0a1b2c3`**. One graph head. |
+| Architectural findings | Output 3 = controlled pair (sales-entry sheet + planned cost-class companion). Format = office HTML/PDF; QuickBooks-ready not importable. Estimating owns the artifact. Amounts from CURRENT costing + CURRENT pricing + Issued/Accepted Proposal. Routing classifies; does not prove amount. ENTERED is a human record. Family 04 presentation content review required before implementation. |
+| Open decisions | ADR-049 acceptance. FG-032 implementation authorization. Family 04 layout mapping. FG-030. V1-04 start. ADR-008 remains **Proposed**. Ontario contract blocker unchanged. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** implement FG-032. Do **not** create a migration. Do **not** implement FG-030. Do **not** begin V1-04 product work. |
+| Commit | This documentation recording (`docs: define V1-05 QuickBooks Option A`) |
+| Date | 2026-09-10 |
+
 ### 2026-09-10 — FG-031 documentation-only final governance close
 
 | Field | Content |

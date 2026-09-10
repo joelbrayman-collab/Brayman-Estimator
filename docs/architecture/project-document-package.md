@@ -3,8 +3,8 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Intended / governing product architecture** (not fully implemented) |
-| Updated | 2026-09-07 |
-| Implementation | **FG-012** authorizes outputs **1 and 2 only**. **CLOSED / OPERATIONAL FOR UAT** (2026-08-30). Outputs 3 and 4 remain Future. Contract/warranty generation is the future CONTRACT home of [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) (**RECORDED / NOT IMPLEMENTATION-AUTHORIZED**). |
+| Updated | 2026-09-10 |
+| Implementation | **FG-012** authorizes outputs **1 and 2 only**. **CLOSED / OPERATIONAL FOR UAT** (2026-08-30). Output 3 architecture is recorded under [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) (**RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**; Joel Option A 2026-09-10). Output 4 remains Future. Contract/warranty generation is the future CONTRACT home of [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) (**RECORDED / NOT IMPLEMENTATION-AUTHORIZED**). |
 
 ## Purpose
 
@@ -21,7 +21,7 @@ The Brayman Estimator must maintain **one authoritative project/estimate record*
 | Versioning | Approved commercial states use explicit versioning/supersession — no silent overwrite ([Constitution Article 5](../platform-constitution.md)) |
 | Placeholders | TBD / ALLOWANCE / PLACEHOLDER remain explicit until resolved ([pricing policy](../pricing-policy.md)) |
 
-**Current implementation note:** Estimate versions, proposal snapshots, and PDF output exist today. [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) (**CLOSED / OPERATIONAL FOR UAT**) governs consistency of outputs **1 and 2** from the existing `Estimate` / `EstimateVersion` / lines / `EstimatePricingSnapshot` (when present). Internal breakdown: `GET /estimates/<id>/versions/<version_id>/internal-breakdown`. The existing **Proposal** preview/PDF **is** the customer-facing estimate. Ontario contract generation, warranty attachment, and QuickBooks export remain **Future / not implemented**. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) is the recorded future Feature Gate for jurisdiction-aware contract generation and frozen issued/signed snapshots; it is **not** implementation-authorized. Do not build a four-output renderer under a later gate without authorization.
+**Current implementation note:** Estimate versions, proposal snapshots, and PDF output exist today. [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) (**CLOSED / OPERATIONAL FOR UAT**) governs consistency of outputs **1 and 2** from the existing `Estimate` / `EstimateVersion` / lines / `EstimatePricingSnapshot` (when present). Internal breakdown: `GET /estimates/<id>/versions/<version_id>/internal-breakdown`. The existing **Proposal** preview/PDF **is** the customer-facing estimate. Ontario contract generation and warranty attachment remain **Future / not implemented**. QuickBooks-ready output 3 is **architecture-recorded / not implemented** ([FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md)). [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) is the recorded future Feature Gate for jurisdiction-aware contract generation and frozen issued/signed snapshots; it is **not** implementation-authorized. Do not build a four-output renderer under a later gate without authorization.
 
 **Source-contract principle:** every governed output must identify and derive from the authoritative `EstimateVersion` and, when present, its `EstimatePricingSnapshot`. Historical customer documents must not silently float with later estimate edits. Later MONITOR / Project Gross Margin uses that same frozen pin plus the Accepted Proposal and approved Change Order deltas ([ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted**); MONITOR is **not implemented**.
 
@@ -69,13 +69,18 @@ Full four-output “catalogue” items such as supplier quotations remain **Futu
 - Gross margin / internal markup
 - Internal Overhead / Profit rows on the customer PDF
 
-### 3. QuickBooks Estimate Output
+### 3. QuickBooks Estimate / Entry
 
-**Audience:** QuickBooks workflow (customer-facing estimate representation).
+**Audience:** Internal office / accounting. **Not** a customer deliverable. Selling **values** must match the approved customer estimate / Issued or Accepted Proposal.
 
-A customer-facing QuickBooks-ready representation of the **approved** estimate.
+**Status:** **ARCHITECTURE RECORDED / NOT IMPLEMENTED** ([FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md); [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Proposed**). Joel selected **Option A** (governed QuickBooks-ready output / controlled human-entry workflow) on 2026-09-10. Live QuickBooks API is **POST-V1**.
 
-See [quickbooks-integration.md](quickbooks-integration.md) for the governed pipeline boundary. **Do not implement QuickBooks API** without Feature Gate and Joel approval.
+V1 output 3 is a **controlled pair**:
+
+1. **Sales-estimate entry sheet** (Family 04 **INTERNAL ENTRY REFERENCE**) for manual QuickBooks Estimate entry.
+2. **Planned cost-classification companion** (not in Family 04) using FG-027 costing amounts and frozen FG-031 routing.
+
+See [quickbooks-integration.md](quickbooks-integration.md) and [fg-032-quickbooks-option-a-preflight.md](fg-032-quickbooks-option-a-preflight.md). **Do not implement** product code, import files, or QuickBooks API from this document.
 
 ### 4. Ontario Construction Contract
 
@@ -150,7 +155,7 @@ When a governed field changes in the authoritative record (scope, price, allowan
 | Authoritative estimate structure | [Estimating](../modules/estimating.md) |
 | Customer-facing estimate presentation | **Proposals** — existing proposal snapshot/PDF **is** the customer-facing estimate ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md)) |
 | Internal detailed breakdown | **Estimating** — [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** |
-| QuickBooks export | Future integration boundary — [quickbooks-integration.md](quickbooks-integration.md) |
+| QuickBooks-ready package (output 3) | **Estimating / output layer** — [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**; [quickbooks-integration.md](quickbooks-integration.md). Not a live API. Not Proposal-owned. |
 | Ontario contract + warranty package | Governed templates — [legal-content-and-templates.md](../governance/legal-content-and-templates.md). Future North American library / update engine / frozen snapshot: [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. |
 | Permit & Approvals Report | **CLOSED / OPERATIONAL FOR UAT** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md); [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) — [permit-and-approvals-report.md](permit-and-approvals-report.md). Bounded Ontario / Ottawa coach-house POC. Not a national library. |
 | Organization Brand Profile | **CLOSED / OPERATIONAL FOR UAT** — [organization-brand-profile.md](organization-brand-profile.md); [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) (Proposal consumer live; CO/Permit consumers future) |

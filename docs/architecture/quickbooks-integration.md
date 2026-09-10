@@ -2,63 +2,92 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Future architecture** (governance recorded; **not implemented**) |
-| Updated | 2026-08-25 |
-| Implementation | **Prohibited** until Feature Gate + Joel approval |
+| Status | **Intended V1 Option A recorded; not implemented.** Option B live API remains **POST-V1**. |
+| Updated | 2026-09-10 |
+| Implementation | **Prohibited** until [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) is separately implementation-authorized. This document is **not** that authorization. |
 
 ## Purpose
 
-Define the long-term architecture boundary for exporting **approved customer estimates** to QuickBooks without bypassing human review or the authoritative estimate record.
+Define the architecture boundary for handing an **approved customer estimate** to QuickBooks without bypassing human review or the authoritative CalibraytAI estimate record.
+
+## Joel V1 decision (2026-09-10)
+
+| Option | Meaning | V1 status |
+|--------|---------|-----------|
+| **A.** Governed QuickBooks-ready output / controlled human-entry workflow | Internal office HTML/PDF pair a human uses to type a QuickBooks Estimate | **SELECTED.** Architecture recorded. **Not implemented.** |
+| **B.** Live QuickBooks Online API | OAuth / SDK / auto-post | **POST-V1 / NOT AUTHORIZED** unless Joel separately reverses |
+
+Distinguish:
+
+| Term | Meaning |
+|------|---------|
+| QuickBooks-ready | Artifacts a human can use to type a QuickBooks Estimate |
+| QuickBooks-importable | A file QuickBooks will ingest without typing — **not claimed in V1** |
+| Manual QuickBooks entry | Human types from the sheet into QuickBooks |
+| Live QuickBooks integration | API — Option B / POST-V1 |
+
+Do **not** claim CSV, IIF, Excel, SDK, or API compatibility.
 
 ## Current state
 
-- QuickBooks is listed as a **Future** capability in [architecture.md](../architecture.md) and [platform-roadmap.md](../platform-roadmap.md).
-- No QuickBooks Online API integration exists in the application today.
-- Manual QuickBooks entry sheets may be used operationally outside the app (see UAT reference case).
+- No QuickBooks Online API, OAuth, IIF, or CSV export exists in the application.
+- Outputs 1–2 exist ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**). Output 3 is **not implemented**.
+- Family 04 **QuickBooks Estimate / Entry Sheet** is an **INTERNAL ENTRY REFERENCE** reusable master ([FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md)). Not a customer deliverable. Not an API.
+- [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**.
+- [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Proposed / FOR JOEL REVIEW**.
 
-## Governed pipeline boundary
+## Source of truth
+
+CalibraytAI remains the authoritative commercial record. QuickBooks is an **accounting destination**, not the estimating source of truth.
+
+## Governed Option A pipeline
 
 ```text
 Estimator authoritative record
-  → approved customer estimate
-  → QuickBooks draft estimate
-  → human review
-  → customer send
+  → CURRENT costing snapshot (FG-027)
+  → CURRENT pricing snapshot (FG-009) consuming that costing snapshot
+  → Issued or Accepted Proposal (output 2) matching those frozen totals
+  → human review of QuickBooks-ready pair
+  → ISSUED frozen office artifacts (output 3)
+  → human types QuickBooks Estimate
+  → optional human “entered in QuickBooks” confirmation
 ```
 
-| Stage | Rule |
-|-------|------|
-| Authoritative record | Single source ([project-document-package.md](project-document-package.md)) |
-| Approval gate | Only **approved** customer estimate proceeds to QuickBooks draft |
-| Draft export | System may prepare QuickBooks-ready representation; not auto-send |
-| Human review | Required before customer send |
-| Customer send | Explicit human action outside silent automation |
+Download is **not** proof of entry. CalibraytAI cannot verify QuickBooks acceptance without an integration.
 
-## Long-term direction
+## Output 3 (V1)
 
-Architecture should support **QuickBooks Online API** integration when authorized, while preserving:
+A **controlled pair** of **internal office** artifacts ([fg-032-quickbooks-option-a-preflight.md](fg-032-quickbooks-option-a-preflight.md)):
 
-- Version provenance back to estimate version
-- No silent overwrite of sent/exported commercial records
-- Audit trail for export and send actions ([Constitution Article 6](../platform-constitution.md))
-- Separation of internal costs/margins from customer-facing QuickBooks lines
+1. **Sales-estimate entry sheet** (Family 04) — customer selling lines + tax from frozen pricing / Proposal.
+2. **Planned cost-classification companion** — approved direct cost from the costing snapshot; class from frozen FG-031 routing. Not in Family 04.
+
+Do **not** leak companion internals into the customer Proposal/PDF or Supplier Package.
+
+Estimating / output layer owns the package. Proposals keep the customer PDF. Pricing Engine keeps pricing snapshots.
+
+## Amounts
+
+- Selling totals copy frozen pricing / Proposal. Do **not** recompute `Direct Cost / 0.85` at export.
+- Direct-cost amounts copy the CURRENT costing snapshot. Routing classifies; it does not prove the amount.
+- Supplier price and subcontract quotes remain evidence, not automatic cost authority.
+- ISSUED artifacts must not float.
 
 ## Prohibited in unauthorized work
 
-- Implementing QuickBooks API clients
-- Auto-creating or auto-sending QuickBooks estimates without review gate
-- Treating QuickBooks as the authoritative commercial record (Estimator remains authoritative)
-
-## Feature Gate prerequisites (when proposed)
-
-1. Approved customer estimate output specification
-2. Field mapping document (Estimator → QuickBooks estimate)
-3. Error handling and idempotency strategy
-4. ADR if integration affects ownership or financial controls
-5. Joel approval of export/send workflow
+- Implementing QuickBooks API clients, OAuth, or SDK
+- Auto-creating or auto-sending QuickBooks estimates
+- Claiming CSV / IIF / Excel import
+- Treating QuickBooks as the authoritative commercial record
+- Invoices, bills, purchase orders, payroll, payments, banking, or actual-cost sync under this pin
+- Implementing FG-032 product code from architecture recording alone
 
 ## Related
 
+- [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md)
+- [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md)
+- [fg-032-quickbooks-option-a-preflight.md](fg-032-quickbooks-option-a-preflight.md)
 - [project-document-package.md](project-document-package.md)
 - [pricing-policy.md](../pricing-policy.md)
+- [v1-completion-register.md](../v1-completion-register.md)
 - [platform-roadmap.md](../platform-roadmap.md)

@@ -245,6 +245,8 @@ Internal Detailed Cost Breakdown may eventually display internal delivery class.
 
 QuickBooks / V1-05 later consumes planned cost-class split (material/vendor, subcontract, internal labour). Routing provides planned classification. No QuickBooks implementation here.
 
+**Subsequent status (2026-09-10, not authorized by FG-031):** Joel selected V1-05 **Option A**. [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Planned class is consumed from **frozen costing-snapshot routing**, not live Scope Delivery. Amounts remain FG-027 costing authority. Hybrid lines must not double-count. Live QuickBooks API remains POST-V1. This subsequent note does **not** change FG-031 closed product meaning.
+
 Contract output remains customer-scope-oriented.
 
 ---

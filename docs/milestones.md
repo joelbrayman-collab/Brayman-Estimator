@@ -41,6 +41,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Branch | `main` |
 | Objective | Governed internal-office sales-entry sheet + planned cost-class companion |
 | Validation | Dedicated **23 passed**; focused **209 passed**; full **751 passed**. Live current remained `d8e9f0a1b2c3`. |
+| Product SHA | **`70e571140e12377aa5bd009b598530576401113b`** (`feat: implement FG-032 QuickBooks-ready artifacts`) |
 | Next milestone | **STOP.** Live migrate / office UAT / Slice C require separate authorization. |
 | Date | 2026-09-10 |
 

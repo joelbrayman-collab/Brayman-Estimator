@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Live migration not run. Office UAT not run. Slice C not authorized. Ontario/fail-closed contract blocker unchanged. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** office-UAT. Do **not** implement Slice C. |
 | Next approved prompt | None. |
-| Commit hash | Follows this implementation commit. |
+| Commit hash | Product **`70e571140e12377aa5bd009b598530576401113b`** (`feat: implement FG-032 QuickBooks-ready artifacts`). Pin follows. |
 
 ### 2026-09-10 — FG-032 recon errata (Issued vs Accepted; derived pricing STALE)
 

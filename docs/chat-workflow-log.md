@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-10 — FG-031 Slice B live migrate + bounded office UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-10 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Governed live DB backup; live migrate `d8e9f0a1b2c3`; bounded synthetic office UAT of FG-031 Slice B. No FG-030. No V1-04. No subcontract RFQ/package. |
+| Business decision | Slice B becomes LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT only if required checks PASS. Overall FG-031 remains NOT CLOSED pending ChatGPT Architect confirmation. V1 remains **55% / 3 of 11**. BMR DEMO READY remains **NO**. |
+| Architectural decision | ADR-048 remains Accepted. Quote is evidence, not cost or Pricing authority. FG-027 remains human costing authority. Selected quote freeze is identity plus copied facts. ADR-008 remains Proposed. FG-030 unchanged. |
+| Prompt template used | Joel/ChatGPT FG-031 Slice B live migration + bounded office UAT (10 Sep 2026) |
+| Approved Cursor prompt summary | Baseline verify; recoverable backup; apply `d8e9f0a1b2c3`; bounded DEMO office UAT; operational close if PASS; commit/push close docs. No FG-030. No V1-04. No product correction unless a verified Slice B defect blocked UAT. |
+| Files expected to change | Current-authority governance docs; dedicated Slice B UAT record. Live DB mutation via Alembic + labeled synthetic UAT only. |
+| Files prohibited from changing | Product code (none required); FG-030; V1-04; ADR-008 acceptance; LEARN; QuickBooks; contracts; Native Signing; Observation Delete; website; HostPapa; backup file (gitignored) |
+| Implementation result | Backup SHA-256 `b1096083400b6bc840cdb113e157f5795fb3a7c52723ffb70515eb293617bef5`. Live current = head `d8e9f0a1b2c3`. Canonical UAT project **id 25**. Required UAT PASSed. No product defect. |
+| Tests | Focused Slice B+A+FG-027+FG-029 **83 passed** (15.24s). Full suite **728 passed**, 2173 warnings, **373.17s**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | FG-031 overall NOT CLOSED (Architect confirmation). FG-030 not implementation-authorized. V1-04 not begun. RFQ/package not implemented. BMR DEMO READY remains NO (Ontario/fail-closed contract story). |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement FG-030. Do **not** begin V1-04. Do **not** implement a subcontract RFQ/package. |
+| Next approved prompt | None from this UAT. |
+| Commit hash | This documentation/UAT close commit. Start pin **`314ced5699688a329dbdd7ab2484ef552dd447db`**. Product **`5e1082af68e0eb145d9da01c0fa26585f6b8b9d1`**. |
+
 ### 2026-09-10 — FG-031 Slice B subcontract quote evidence product implementation
 
 | Field | Content |

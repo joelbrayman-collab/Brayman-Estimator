@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-09-09 |
+| Updated | 2026-09-10 |
 
 Domain architecture documents describe **intended** systems. They are not claims of current implementation unless explicitly marked Current.
 
@@ -31,7 +31,7 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [material-catalogue-architecture.md](material-catalogue-architecture.md) | **Partial Current** — [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**; ADR-034/035/036 **Accepted**; [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted** (MaterialRequirement ownership; FG-029 **CLOSED / OPERATIONAL FOR UAT**) |
 | [fg-029-bmr-supplier-workflow-v1-preflight.md](fg-029-bmr-supplier-workflow-v1-preflight.md) | **COMPLETE.** [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
 | [fg-030-supplier-identity-and-access-isolation.md](fg-030-supplier-identity-and-access-isolation.md) | **RECORDED / NOT IMPLEMENTATION-AUTHORIZED.** [FG-030](../feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) |
-| [fg-031-scope-delivery-make-buy-procurement-routing-preflight.md](fg-031-scope-delivery-make-buy-procurement-routing-preflight.md) | **COMPLETE (architecture recording).** [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A OPERATIONAL FOR UAT / SLICE B IMPLEMENTED / NOT LIVE-MIGRATED / NOT CLOSED** |
+| [fg-031-scope-delivery-make-buy-procurement-routing-preflight.md](fg-031-scope-delivery-make-buy-procurement-routing-preflight.md) | **COMPLETE (architecture recording).** [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A OPERATIONAL FOR UAT / SLICE B LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT / NOT CLOSED** |
 | [architecture/supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) | Future — supplier SKU/price/inventory; maps to Material Catalogue; **bulk onboarding pin FUTURE / NOT IMPLEMENTED**; does **not** own CalibraytAI identity |
 | [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) | **Partial Current** — [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**; [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
 

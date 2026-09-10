@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-09-09 |
+| Updated | 2026-09-10 |
 
 ## When an ADR is required
 
@@ -175,7 +175,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-048](ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) | Scope Delivery, Make-Buy, and Procurement Routing Ownership Boundary | **Accepted** (2026-09-09; [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A OPERATIONAL FOR UAT / SLICE B IMPLEMENTED / NOT LIVE-MIGRATED / NOT CLOSED**) |
+| [ADR-048](ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) | Scope Delivery, Make-Buy, and Procurement Routing Ownership Boundary | **Accepted** (2026-09-09; [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A OPERATIONAL FOR UAT / SLICE B LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT / NOT CLOSED**) |
 
 ### Field Web capture reliability (Accepted; FG-021 CLOSED)
 

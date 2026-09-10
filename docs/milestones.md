@@ -30,6 +30,22 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-10 — FG-031 Slice B live migrate + bounded office UAT
+
+| Field | Content |
+|-------|---------|
+| ID | FG-031 Slice B live migrate + bounded office UAT (supporting V1 gate; not a 12th major package) |
+| Status | **SLICE B LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT.** Slice A remains **OPERATIONAL FOR UAT**. Overall **NOT CLOSED.** V1 remains **55% / 3 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+| Branch | `main` |
+| Objective | Recoverable live SQLite backup; apply committed migration `d8e9f0a1b2c3`; bounded synthetic office UAT of FG-031 Slice B. No FG-030. No V1-04. No subcontract RFQ/package. |
+| Deliverables | Backup `instance/brayman_estimator-backup-before-fg031b-d8e9f0a1b2c3-20260910-083215.db` (gitignored). Live current = head `d8e9f0a1b2c3`. Canonical UAT project **id 25**. Dedicated UAT record. Governance close docs. |
+| Validation | Focused **83 passed**. Full suite **728 passed**, 2173 warnings, 373.17s. All required UAT cases **PASS**. No product correction. |
+| Architectural findings | Quote remains evidence. FG-027 remains costing authority. Quote selection does not mutate cost or Pricing. Selected-quote freeze is non-floating. Customer and Supplier Package outputs remain private. |
+| Open decisions | FG-031 overall close remains with ChatGPT Architect. RFQ/package is maturation. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** implement FG-030. Do **not** begin V1-04. |
+| Commit | This documentation/UAT close commit (`docs: close FG-031 Slice B UAT`) |
+| Date | 2026-09-10 |
+
 ### 2026-09-10 — FG-031 Slice B subcontract quote evidence product implementation
 
 | Field | Content |

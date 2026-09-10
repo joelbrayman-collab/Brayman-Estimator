@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-10 — FG-031 documentation-only final governance close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-10 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Documentation-only final governance close of FG-031 after architectural review, implementation review, live migration, Slice A office UAT, and Slice B bounded office UAT. No application code. No migration. No live DB mutation. No UAT rerun. No V1 rescore. |
+| Business decision | FG-031 **CLOSED / OPERATIONAL FOR UAT**. Slice A and Slice B **OPERATIONAL FOR UAT**. Subcontract RFQ/package **MATURATION DURING UAT / NOT REQUIRED FOR CLOSURE / NOT IMPLEMENTED**. V1 remains **55% / 3 of 11**. Current scored package **V1-04 / NOT STARTED**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Independent remaining blocker: Ontario/fail-closed contract story. |
+| Architectural decision | ADR-048 remains **Accepted**. FG-027 remains final human Costing authority. FG-029 supplier price remains INFORM ONLY. FG-030 remains **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. ADR-008 remains **Proposed**. Close does **not** authorize RFQ/package, FG-030, or V1-04. |
+| Prompt template used | Joel/ChatGPT FG-031 final governance close — documentation reconciliation only (10 Sep 2026) |
+| Approved Cursor prompt summary | Verify baseline on `main` @ `8629f0459e51a94ee42cb475a536570cfbc21639`; reconcile FG-031 current vs original design; update minimum authoritative docs; commit `docs: close FG-031`; push main; return A–AB report; STOP. |
+| Files expected to change | FG-031 gate; preflight; ADR-048; current-state; project-state-report; session-handoff; V1 register; platform-roadmap; docs indexes; estimating module; milestones; chat-workflow-log; UAT records only if a subsequent close note was required |
+| Files prohibited from changing | Application code; templates; CSS; migrations; live database; UAT evidence body; FG-030; V1-04; ADR-008 acceptance |
+| Implementation result | Documentation reconciled. FG-031 **CLOSED / OPERATIONAL FOR UAT**. Diff documentation-only. |
+| Tests | **NOT RERUN.** HISTORICAL Slice B UAT focused **83 passed**, 454 warnings, 15.24s; full **728 passed**, 2173 warnings, 373.17s. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | FG-030 not implementation-authorized. V1-04 not begun. RFQ/package not implemented. BMR DEMO READY remains NO (Ontario/fail-closed contract story). |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement FG-030. Do **not** begin V1-04. Do **not** implement subcontract RFQ/package. |
+| Next approved prompt | None from this documentation close. |
+| Commit hash | This documentation close commit (`docs: close FG-031`). Product **`5e1082af68e0eb145d9da01c0fa26585f6b8b9d1`**. Slice B UAT close **`8629f0459e51a94ee42cb475a536570cfbc21639`**. |
+
 ### 2026-09-10 — FG-031 Slice B live migrate + bounded office UAT
 
 | Field | Content |

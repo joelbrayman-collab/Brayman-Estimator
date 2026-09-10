@@ -30,6 +30,22 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-10 — FG-031 documentation-only final governance close
+
+| Field | Content |
+|-------|---------|
+| ID | FG-031 final governance close (supporting V1 gate; not a 12th major package) |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** Slice A **OPERATIONAL FOR UAT**. Slice B **OPERATIONAL FOR UAT**. Subcontract RFQ/package **MATURATION DURING UAT / NOT IMPLEMENTED**. V1 remains **55% / 3 of 11**. Current scored package **V1-04 / NOT STARTED**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+| Branch | `main` |
+| Objective | Documentation-only Architect close of FG-031 after Slice A and Slice B implementation, live migrate, and office UAT PASS. No application-code change. No migration. No live DB mutation. No UAT rerun. No V1 rescore. |
+| Deliverables | Current-authority status reconciliation across FG-031, ADR-048, preflight, indexes, current-state, project-state-report, session-handoff, V1 register, roadmap, modules, milestones, and chat-workflow-log. Historical UAT records preserved. |
+| Validation | Product tests **NOT RERUN**. HISTORICAL Slice B UAT focused **83 passed**, 454 warnings, 15.24s; full **728 passed**, 2173 warnings, 373.17s. Live current remains **`d8e9f0a1b2c3`**. Repository head **`d8e9f0a1b2c3`**. One graph head. |
+| Architectural findings | Two stored dimensions; no HYBRID enum; human routing confirmation; unresolved routing blocks FG-027; Allowance exception preserved; quote is evidence not cost; selected-quote freeze; PLAN/catalogue ownership preserved. Close does **not** authorize RFQ/package, FG-030, or V1-04. |
+| Open decisions | FG-030 implementation. V1-04 start. Subcontract RFQ/package remains maturation. ADR-008 remains **Proposed**. Independent remaining blocker: Ontario/fail-closed contract story. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** implement FG-030. Do **not** begin V1-04. Do **not** implement subcontract RFQ/package. |
+| Commit | This documentation close commit (`docs: close FG-031`) |
+| Date | 2026-09-10 |
+
 ### 2026-09-10 — FG-031 Slice B live migrate + bounded office UAT
 
 | Field | Content |

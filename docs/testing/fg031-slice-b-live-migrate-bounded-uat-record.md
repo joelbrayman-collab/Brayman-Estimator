@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **UAT PASS.** Live-migrated. Bounded DEMO/SYNTHETIC office UAT **PASS**. Slice B **OPERATIONAL FOR UAT**. FG-031 **OVERALL NOT CLOSED** (ChatGPT Architect confirmation of remaining gate close still required). |
+| Status | **UAT PASS.** Live-migrated. Bounded DEMO/SYNTHETIC office UAT **PASS**. Slice B **OPERATIONAL FOR UAT**. Subsequent 2026-09-10: [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT**. This file remains historical Slice B UAT evidence and is not rewritten. |
 | Date | 2026-09-10 |
 | Gate | [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) |
 | Product SHA | `5e1082af68e0eb145d9da01c0fa26585f6b8b9d1` |
@@ -180,3 +180,5 @@ No product-code correction. Runner-only false positives (approve-button matcher;
 - BMR DEMO READY: remains **NO**
 - BRAYMAN REAL-LIFE UAT READY: remains **NO**
 - FG-031 overall: **NOT CLOSED**
+
+Subsequent 2026-09-10 documentation close: [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT**. The UAT-session line above is historical evidence from this record.

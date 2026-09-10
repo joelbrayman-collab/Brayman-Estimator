@@ -3,11 +3,11 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-048: Scope Delivery, Make-Buy, and Procurement Routing Ownership Boundary |
-| Status | **Accepted.** Slice A is **OPERATIONAL FOR UAT**. Slice B is **LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT**. [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **SLICE A OPERATIONAL FOR UAT / SLICE B LIVE-MIGRATED / OFFICE UAT PASS / OPERATIONAL FOR UAT / NOT CLOSED**. |
+| Status | **Accepted.** [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT.** Slice A and Slice B are **OPERATIONAL FOR UAT**. |
 | Date | 2026-09-09 |
 | Related | [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) · [fg-031-scope-delivery-make-buy-procurement-routing-preflight.md](../architecture/fg-031-scope-delivery-make-buy-procurement-routing-preflight.md) · [ADR-006](ADR-006-human-approval-before-estimate-insertion.md) **Accepted** · [ADR-007](ADR-007-plan-and-estimate-version-ownership.md) **Accepted** · [ADR-021](ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-024](ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-044](ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted** · [ADR-046](ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted** · [ADR-047](ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only) · [ADR-008](ADR-008-supplier-price-snapshotting.md) **Proposed** |
 
-This ADR authorizes the **ownership and commercial boundary** for how project scope is delivered (who supplies material; who performs labour). Slice A product code is authorized only by a separate implementation prompt. This ADR does **not** authorize live database writes, Slice B, FG-030 implementation, V1-04, or acceptance of [ADR-008](ADR-008-supplier-price-snapshotting.md).
+This ADR authorizes the **ownership and commercial boundary** for how project scope is delivered (who supplies material; who performs labour). Subsequent FG-031 Slice A and Slice B product implementation, live migrate, and office UAT were separately authorized and are now **CLOSED / OPERATIONAL FOR UAT**. This ADR does **not** authorize FG-030 implementation, V1-04, subcontract RFQ/package, or acceptance of [ADR-008](ADR-008-supplier-price-snapshotting.md).
 
 ---
 

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **UAT PASS.** Live-migrated. Bounded DEMO/SYNTHETIC office UAT **PASS**. Slice A **OPERATIONAL FOR UAT**. FG-031 **OVERALL NOT CLOSED** (Slice B not implemented). |
+| Status | **UAT PASS.** Live-migrated. Bounded DEMO/SYNTHETIC office UAT **PASS**. Slice A **OPERATIONAL FOR UAT**. Subsequent 2026-09-10: [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT**. This file remains historical Slice A UAT evidence and is not rewritten. |
 | Date | 2026-09-09 |
 | Gate | [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) |
 | Product SHA | `54120608df98432b9be80faf8c2a3a08cdb5679c` |
@@ -141,3 +141,5 @@ Historical FG-031 confirmation-gate repair evidence: dedicated **26 passed**; FG
 - V1 scoring: remains **55% / 3 of 11**
 - BMR DEMO READY: remains **NO** (Ontario/fail-closed contract story still missing)
 - BRAYMAN REAL-LIFE UAT READY: remains **NO** (Slice B still required)
+
+Subsequent 2026-09-10 documentation close: [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Slice B was implemented and UAT-passed after this Slice A record. The UAT-session lines above are historical evidence from this record.

@@ -27,6 +27,8 @@ OUTPUT 3 = CONTROLLED PAIR (SALES-ENTRY SHEET + COST-CLASS COMPANION)
 
 This document records repository reconnaissance and the implementation preflight. It does **not** authorize product code, a migration, live database writes, artifact generation, or a QuickBooks connection.
 
+**Subsequent recon note (2026-09-10):** Late model inventory confirmed: pricing CURRENT/STALE is **derived** (`pricing_consume_status()`), not a snapshot column; Proposal commercial immutability is **Accepted only** (ADR-002); Issued remains editable; `project_number` is on `Project` (not copied onto Proposal); unit selling rate for artifact A is `ProposalLineItem.unit_price`. Architecture recommendation unchanged: copy-at-freeze; WARN if Issued.
+
 ---
 
 ## 1. Current vs Intended vs Future
@@ -70,9 +72,9 @@ No application code matches QuickBooks, IIF, OAuth, or QBO SDK (repository searc
 | Estimate | `estimate_number`; `EstimateVersion.id`, `version_number`, status, lock | Working until locked; ISSUED/ACCEPTED versions lock |
 | Line working cost/sell | `EstimateLineItem` qty, unit, description, `unit_cost`, `extended_cost`, `sell_price` | **Working** — can float; **not** the export authority |
 | Costing snapshot | `EstimateCostingSnapshot` CURRENT/SUPERSEDED; line `extended_cost`, `line_type`, frozen routing, quote freeze columns | **Approved / frozen** — cost authority |
-| Pricing snapshot | unique per version; `pre_tax_selling_price`, `tax_percent`, `tax_amount`, `customer_total`, `costing_snapshot_id` | **Approved / frozen** until STALE |
+| Pricing snapshot | unique per version; `pre_tax_selling_price`, `tax_percent`, `tax_amount`, `customer_total`, `costing_snapshot_id`. Consume status **CURRENT** vs **`STALE / REQUIRES RE-APPLY`** is **derived** by `pricing_consume_status()` (costing id match). There is **no** `status` column on `EstimatePricingSnapshot`. | **Approved / frozen** when the EstimateVersion is locked; STALE means re-apply required, not that the row was deleted |
 | Scope Delivery | 1:1 `EstimateScopeDelivery`; CONFIRMED required for costing except Allowance | Working until freeze onto costing snapshot |
-| Proposal | `proposal_number`, status, frozen subtotal/tax/total; `ProposalLineItem.unit_price` / `extended_price` | Frozen at issue (ADR-002) |
+| Proposal | `proposal_number`, status, copied subtotal/tax/total; `ProposalLineItem.unit_price` / `extended_price`. **Commercial immutability is Accepted only** ([ADR-002](../adr/ADR-002-accepted-proposal-immutability.md)). Issued remains editable. Brand identity freezes at Issued (or Accepted if never Issued). | Copy at create; **Accepted = immutable**. Do **not** cite ADR-002 as an Issued freeze |
 | Internal breakdown | `app/services/estimate_output.py`; `GET /estimates/<id>/versions/<version_id>/internal-breakdown` | Derived view; not a QB artifact |
 | Rounding | existing `as_money` ROUND_HALF_UP 0.01 | Authoritative money helper |
 | ORG-001 commercial policy | 15% true GM (`Selling = Direct / 0.85`); HST 13% | Policy for **new** pricing apply — **not** reapplied at QB export |
@@ -97,7 +99,8 @@ No application code matches QuickBooks, IIF, OAuth, or QBO SDK (repository searc
 ```text
 CURRENT costing snapshot
   + CURRENT (not STALE) pricing snapshot that consumed that costing snapshot
-  + Issued or Accepted Proposal whose frozen totals match CURRENT pricing
+  + Issued or Accepted Proposal whose **current** totals match CURRENT pricing
+    (Accepted is commercially immutable per ADR-002; Issued is still editable — copy onto the QB package at freeze)
   + client + project identity
   + tax on pricing snapshot
   + FG-031 routing already frozen on costing lines (UNRESOLVED already blocked costing except Allowance)
@@ -227,7 +230,7 @@ Status values: **AVAILABLE** · **DERIVED** · **MISSING** · **NOT REQUIRED** �
 | Site / project address | `Project.address` and/or `ProjectLocation` civic | Projects / Permit foundation | Copy at freeze | Yes | WARN if blank | AVAILABLE |
 | Estimate number | `Estimate.estimate_number` | Estimating | Copy | Yes | No | AVAILABLE |
 | EstimateVersion identifier | `EstimateVersion.id` + `version_number` | Estimating | Pin | Yes | No | AVAILABLE |
-| Proposal identifier | `Proposal.id` + `proposal_number` | Proposals | Pin Issued/Accepted | Yes | No | AVAILABLE |
+| Proposal identifier | `Proposal.id` + `proposal_number` | Proposals | Pin Issued/Accepted. Copy commercial values at QB freeze. **Accepted** is immutable; **Issued** is not. | Yes | WARN if Issued | AVAILABLE |
 | Output generation date | package `issued_at` | Estimating (future) | Frozen at issue | Yes | No | DERIVED (after impl) |
 | Currency | `Organization.currency` (CAD) | Organization | Copy; BLOCK if not CAD in V1 | Yes | No | AVAILABLE |
 | Jurisdiction | pricing `tax_jurisdiction` / org label | Pricing / Organization | Frozen on snapshot | Yes | No | AVAILABLE |
@@ -357,13 +360,13 @@ Separate artifacts **are required** (pair): sales-entry vs internal cost-class. 
 
 **WARN (generate allowed after review):**
 
+- Proposal is Issued but not Accepted (ADR-002 locks Accepted only; copy totals onto the QB package at freeze so later Proposal edits cannot float an ISSUED package);
 - hybrid unsplit amount;
 - Allowance lines;
 - blank unstructured address;
 - Client.name vs Proposal.client_name differ;
 - no Product/Service mapping;
-- OWNER_SUPPLIED / OWNER_THIRD_PARTY present (rare; classify explicitly, do not invent cost);
-- Proposal Issued but later customer data edited on CRM (use Proposal freeze).
+- OWNER_SUPPLIED / OWNER_THIRD_PARTY present (rare; classify explicitly, do not invent cost).
 
 ---
 
@@ -504,7 +507,7 @@ Rollback later: drop new tables only if never ISSUED in production; otherwise pr
 
 **Regression:** FG-012 output; FG-027 costing; FG-009 pricing; FG-031 routing; FG-029 supplier package; Proposal PDF; clone/lock.
 
-**Office UAT script (later):** pick ORG-001 project with Issued Proposal matching CURRENT pricing; open review; confirm BLOCK on STALE; issue; download both PDFs; type into QuickBooks offline (operator); confirm ENTERED; recost a **copy/new version** and prove historical ISSUED totals unchanged.
+**Office UAT script (later):** pick ORG-001 project with Issued **or Accepted** Proposal matching CURRENT pricing; if Issued, confirm WARN that commercial fields remain editable; open review; confirm BLOCK on STALE; issue; download both PDFs; type into QuickBooks offline (operator); confirm ENTERED; recost a **copy/new version** and prove historical ISSUED totals unchanged.
 
 This recording: **tests not rerun.** HISTORICAL: focused **83 passed** / 454 warnings / 15.24s; full **728 passed** / 2173 warnings / 373.17s.
 

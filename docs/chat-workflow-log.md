@@ -43,6 +43,22 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-10 — FG-032 recon errata (Issued vs Accepted; derived pricing STALE)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-10 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Bounded documentation errata after late model inventory. Correct Issued-vs-Accepted freeze and derived pricing consume status. No product code. No rescore. |
+| Business decision | Unchanged. Option A remains Joel-selected. FG-032 remains not implementation-authorized. |
+| Architectural decision | Keep Issued or Accepted as QB prerequisite. Copy commercial values at package freeze. WARN if Issued (ADR-002 locks Accepted only). Pricing CURRENT/STALE remains a derived consume status. |
+| Implementation result | Preflight + FG-032 prerequisite/UAT wording corrected. |
+| Tests | **NOT RERUN.** |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement FG-032. |
+| Next approved prompt | None. |
+| Commit hash | Follows this errata commit. |
+
 ### 2026-09-10 — V1-05 QuickBooks Option A architecture preflight
 
 | Field | Content |

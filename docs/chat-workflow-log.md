@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-11 — FG-032 post-UAT documentation correction
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-11 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Documentation-only correction of leftover present-state contradictions after FG-032 Slices A+B live migrate / UAT. |
+| Business decision | No product-policy change. Preserve Slices A+B LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / OVERALL NOT CLOSED. Preserve V1 **55% / 3 of 11**. Slice C remains NOT AUTHORIZED. |
+| Architectural decision | Live current remains **`e9f0a1b2c3d4`**. Output 3 Slices A+B are already implemented; remaining FG-032 work is Slice C only. |
+| Prompt template used | Joel/ChatGPT FG-032 post-UAT documentation correction (11 Sep 2026) |
+| Approved Cursor prompt summary | Verify `main` @ `92a349f`; correct V1 register live current and stale authorization wording; correct ADR README FG-032 present-state; equivalent present-state only; commit; push; STOP. No product. No migrate. No Slice C. No V1 rescore. |
+| Files expected to change | V1 register; ADR README; ADR-049 present-state notes; current-authority continuity docs |
+| Files prohibited from changing | Application code; models; services; routes; templates; FG-032 migration; live database; UAT seed |
+| Implementation result | Documentation-only. Live DB untouched. |
+| Tests | **HISTORICAL / NOT RERUN.** Dedicated **23 passed** / 12.96s. Full **751 passed** / 2479 warnings / 329.14s. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Slice C not authorized. FG-032 overall not closed. Joel decision remaining: authorize Slice C or leave FG-032 open. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement Slice C from this cleanup. Do **not** close FG-032. Do **not** rescore V1. |
+| Next approved prompt | None from this cleanup. |
+| Commit hash | This documentation correction. Parent **`92a349fcc854dffa70f850408c95112c1efca8ab`**. |
+
 ### 2026-09-11 — FG-032 Slices A+B live migrate + bounded office UAT
 
 | Field | Content |

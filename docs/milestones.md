@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-11 — FG-032 post-UAT documentation correction
+
+| Field | Content |
+|-------|---------|
+| ID | FG-032 post-UAT present-state correction (documentation only) |
+| Status | **DOCUMENTATION-ONLY.** Slices A+B remain **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / SLICE C NOT AUTHORIZED / OVERALL NOT CLOSED.** V1 remains **55% / 3 of 11**. V1-04 **PARTIAL**. V1-05 **PARTIAL**. |
+| Branch | `main` |
+| Objective | Correct leftover present-state contradictions after live migrate / UAT (V1 register live current; stale “output 3 remains to be authorized”; ADR README FG-032 NOT LIVE-MIGRATED) |
+| Validation | Product tests **not** rerun. HISTORICAL dedicated **23** / full **751**. Live current remained `e9f0a1b2c3d4`. Live DB untouched. |
+| Next milestone | **STOP.** Joel decision: authorize Slice C or leave FG-032 open. |
+| Date | 2026-09-11 |
+
 ### 2026-09-11 — FG-032 Slices A+B live migrate + bounded office UAT
 
 | Field | Content |

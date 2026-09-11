@@ -260,7 +260,7 @@ Supplier **named-user login / workspace** is a separate recorded gate: [FG-030](
 | BLOCKER? | Output 4 blocked on V1-06 Ontario legal approval for production |
 | Dependencies | FG-012; V1-05 for output 3; V1-06 for output 4; FG-022 presentation masters; [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** informs internal delivery class and QuickBooks cost-class split (customer estimate remains delivery-blind); [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT** |
 | Governing | [project-document-package.md](architecture/project-document-package.md); [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED**; [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED** (presentation only) |
-| Next governed action | Do **not** begin V1-04 product work from FG-032 recording. Output 3 implementation remains under V1-05 / FG-032 when separately authorized. Output 4 under V1-06. Do not build a second contract system. |
+| Next governed action | Do **not** begin V1-04 product work from this register. Output 3 Slices A+B are **live-migrated / bounded office UAT PASS / operational for UAT** under V1-05 / FG-032 (**OVERALL NOT CLOSED**; Slice C **NOT AUTHORIZED**). Output 4 under V1-06. Do not build a second contract system. |
 
 | Output | Status |
 |--------|--------|
@@ -529,7 +529,7 @@ Real-life UAT means V1 is complete and controlled enough to operate **real Braym
 | Criterion | V1 bar | Current |
 |-----------|--------|---------|
 | Data safety / tenant integrity | Org isolation; no cross-org writes | **PARTIAL** (UAT-operational; not production-certified) |
-| Migration state | Live current = heads; known residue labeled | **YES** (`d8e9f0a1b2c3`; labeled synthetics remain including `FG029-UAT-BMR-DEMO`, `FG031-UAT-SCOPE-ROUTING`, and Slice B project **id 25**) |
+| Migration state | Live current = heads; known residue labeled | **YES** (`e9f0a1b2c3d4`; labeled synthetics remain including `FG029-UAT-BMR-DEMO`, `FG031-UAT-SCOPE-ROUTING`, Slice B project **id 25**, and FG-032 project **id 26**) |
 | Backups | Governed backup/restore before real projects | **NO** (ad-hoc gitignored copies only) |
 | Authentication | Office login; SECRET_KEY not the committed dev secret | **UAT YES / production not certified** |
 | User onboarding + Ben/Brayman training | Written operating/training pack | **NO** |

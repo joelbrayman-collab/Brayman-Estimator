@@ -137,11 +137,11 @@ New Estimating-owned freeze tables (names in the preflight; not created now). Co
 
 ## Migration Impact
 
-Additive revision **`e9f0a1b2c3d4`** revises **`d8e9f0a1b2c3`**. One graph head. **Do not apply live** from the Slices A+B implementation prompt. Slice C tables are not created.
+Additive revision **`e9f0a1b2c3d4`** revises **`d8e9f0a1b2c3`**. One graph head. **Do not apply live** from the Slices A+B implementation prompt. Subsequent live migrate **applied 2026-09-11**; live current = head **`e9f0a1b2c3d4`**. Slice C tables are not created.
 
 ## Testing Impact
 
-Focused FG-032 tests plus FG-009 / FG-012 / FG-027 / FG-029 / FG-031 / Proposal / authorization regression. Live migration and office UAT remain unauthorized. Slice C confirmation-not-from-download remains a documentation/UI rule until Slice C is authorized.
+Focused FG-032 tests plus FG-009 / FG-012 / FG-027 / FG-029 / FG-031 / Proposal / authorization regression. Live migration and bounded office UAT **PASS** 2026-09-11. Slice C confirmation-not-from-download remains a documentation/UI rule until Slice C is authorized.
 
 ## Documentation Impact
 

@@ -2,6 +2,7 @@
 
 Copied facts only. Does not own costing, pricing, Proposal, or Scope Delivery.
 Slice C models append-only human entry-confirmation events.
+Active ENTERED occupancy is a separate mutable lock row.
 """
 
 from datetime import datetime
@@ -197,6 +198,11 @@ class EstimateQuickBooksPackage(db.Model):
         back_populates="package",
         order_by="EstimateQuickBooksEntryEvent.id",
     )
+    entry_occupancy = db.relationship(
+        "EstimateQuickBooksEntryOccupancy",
+        back_populates="package",
+        uselist=False,
+    )
 
     @validates("status")
     def _validate_status(self, key, value):
@@ -348,4 +354,50 @@ class EstimateQuickBooksEntryEvent(db.Model):
         return (
             f"<EstimateQuickBooksEntryEvent {self.kind} "
             f"pkg={self.estimate_quickbooks_package_id} id={self.id}>"
+        )
+
+
+class EstimateQuickBooksEntryOccupancy(db.Model):
+    """At most one active ENTERED confirmation per package (FG-032 Slice C repair).
+
+    Mutable lock row. Append-only history remains on entry events.
+    """
+
+    __tablename__ = "estimate_quickbooks_entry_occupancies"
+    __table_args__ = (
+        db.UniqueConstraint(
+            "entered_event_id",
+            name="uq_estimate_quickbooks_entry_occupancies_event",
+        ),
+    )
+
+    estimate_quickbooks_package_id = db.Column(
+        db.Integer,
+        db.ForeignKey("estimate_quickbooks_packages.id", ondelete="RESTRICT"),
+        primary_key=True,
+    )
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    entered_event_id = db.Column(
+        db.Integer,
+        db.ForeignKey("estimate_quickbooks_entry_events.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    package = db.relationship(
+        "EstimateQuickBooksPackage",
+        back_populates="entry_occupancy",
+    )
+    entered_event = db.relationship("EstimateQuickBooksEntryEvent")
+
+    def __repr__(self):
+        return (
+            f"<EstimateQuickBooksEntryOccupancy "
+            f"pkg={self.estimate_quickbooks_package_id} "
+            f"event={self.entered_event_id}>"
         )

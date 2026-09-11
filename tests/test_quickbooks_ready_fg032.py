@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import threading
 from decimal import Decimal
 from io import BytesIO
 
@@ -25,6 +26,7 @@ from app.models.estimate_quickbooks import (
     QB_STATUS_REVIEWED,
     QB_STATUS_SUPERSEDED,
     EstimateQuickBooksEntryEvent,
+    EstimateQuickBooksEntryOccupancy,
     EstimateQuickBooksPackage,
 )
 from app.models.estimate_scope_delivery import (
@@ -44,6 +46,7 @@ from app.services.estimate_costing import (
     current_costing_snapshot,
     pricing_consume_status,
 )
+from app.services import estimate_quickbooks as qb_service
 from app.services.estimate_quickbooks import (
     BLOCK_COST_CLASS_SUM_MISMATCH,
     BLOCK_CROSS_ORG,
@@ -927,7 +930,7 @@ def test_alembic_fg032_slice_c_upgrade_and_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["f0a1b2c3d4e5"]
+        assert script.get_heads() == ["f1a2b3c4d5e6"]
         command.upgrade(alembic_cfg, "e9f0a1b2c3d4")
         engine = db.engine
         with engine.begin() as conn:
@@ -939,6 +942,7 @@ def test_alembic_fg032_slice_c_upgrade_and_downgrade(tmp_path):
             }
             assert "estimate_quickbooks_packages" in tables
             assert "estimate_quickbooks_entry_events" not in tables
+            assert "estimate_quickbooks_entry_occupancies" not in tables
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
             assert [row[0] for row in heads] == ["e9f0a1b2c3d4"]
         command.upgrade(alembic_cfg, "f0a1b2c3d4e5")
@@ -950,6 +954,7 @@ def test_alembic_fg032_slice_c_upgrade_and_downgrade(tmp_path):
                 )
             }
             assert "estimate_quickbooks_entry_events" in tables
+            assert "estimate_quickbooks_entry_occupancies" not in tables
             columns = {
                 row[1]
                 for row in conn.execute(sa.text("PRAGMA table_info(estimate_quickbooks_entry_events)"))
@@ -976,6 +981,29 @@ def test_alembic_fg032_slice_c_upgrade_and_downgrade(tmp_path):
             assert "ENTERED" in sql and "REVERSED" in sql and "CORRECTED" in sql
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
             assert [row[0] for row in heads] == ["f0a1b2c3d4e5"]
+        command.upgrade(alembic_cfg, "f1a2b3c4d5e6")
+        with engine.begin() as conn:
+            tables = {
+                row[0]
+                for row in conn.execute(
+                    sa.text("SELECT name FROM sqlite_master WHERE type='table'")
+                )
+            }
+            assert "estimate_quickbooks_entry_occupancies" in tables
+            occupancy_columns = {
+                row[1]
+                for row in conn.execute(
+                    sa.text("PRAGMA table_info(estimate_quickbooks_entry_occupancies)")
+                )
+            }
+            assert {
+                "estimate_quickbooks_package_id",
+                "organization_id",
+                "entered_event_id",
+                "created_at",
+            } <= occupancy_columns
+            heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
+            assert [row[0] for row in heads] == ["f1a2b3c4d5e6"]
         with pytest.raises(sa.exc.IntegrityError):
             with engine.begin() as conn:
                 conn.execute(sa.text("PRAGMA foreign_keys=OFF"))
@@ -988,6 +1016,37 @@ def test_alembic_fg032_slice_c_upgrade_and_downgrade(tmp_path):
                         "CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
                     )
                 )
+        with pytest.raises(sa.exc.IntegrityError):
+            with engine.begin() as conn:
+                conn.execute(sa.text("PRAGMA foreign_keys=OFF"))
+                conn.execute(
+                    sa.text(
+                        "INSERT INTO estimate_quickbooks_entry_occupancies ("
+                        "estimate_quickbooks_package_id, organization_id, "
+                        "entered_event_id, created_at"
+                        ") VALUES (1, 'ORG-001', 1, CURRENT_TIMESTAMP)"
+                    )
+                )
+                conn.execute(
+                    sa.text(
+                        "INSERT INTO estimate_quickbooks_entry_occupancies ("
+                        "estimate_quickbooks_package_id, organization_id, "
+                        "entered_event_id, created_at"
+                        ") VALUES (1, 'ORG-001', 2, CURRENT_TIMESTAMP)"
+                    )
+                )
+        command.downgrade(alembic_cfg, "f0a1b2c3d4e5")
+        with engine.begin() as conn:
+            tables = {
+                row[0]
+                for row in conn.execute(
+                    sa.text("SELECT name FROM sqlite_master WHERE type='table'")
+                )
+            }
+            assert "estimate_quickbooks_entry_occupancies" not in tables
+            assert "estimate_quickbooks_entry_events" in tables
+            heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
+            assert [row[0] for row in heads] == ["f0a1b2c3d4e5"]
         command.downgrade(alembic_cfg, "e9f0a1b2c3d4")
         with engine.begin() as conn:
             tables = {
@@ -1044,6 +1103,11 @@ def test_entered_succeeds_on_issued_and_refuses_unissued(app):
     assert event.kind == QB_EVENT_ENTERED
     assert derived_entry_state(reviewed) == ENTRY_STATE_ENTERED
     assert list_entry_events(reviewed) == [event]
+    occupancy = EstimateQuickBooksEntryOccupancy.query.filter_by(
+        estimate_quickbooks_package_id=reviewed.id
+    ).one()
+    assert occupancy.entered_event_id == event.id
+    assert occupancy.organization_id == DEFAULT_ORGANIZATION_ID
 
 
 def test_duplicate_active_entered_blocks(app):
@@ -1055,6 +1119,117 @@ def test_duplicate_active_entered_blocks(app):
     assert BLOCK_DUPLICATE_ACTIVE_ENTERED in exc.value.block_codes
     db.session.rollback()
     assert EstimateQuickBooksEntryEvent.query.count() == 1
+    assert EstimateQuickBooksEntryOccupancy.query.count() == 1
+
+
+def test_concurrent_entered_exactly_one_succeeds(tmp_path):
+    from sqlalchemy.pool import NullPool
+
+    db_path = tmp_path / "fg032_concurrent_entered.db"
+    application = create_app(
+        {
+            "TESTING": True,
+            "SQLALCHEMY_DATABASE_URI": f"sqlite:///{db_path}",
+            "SQLALCHEMY_ENGINE_OPTIONS": {
+                "connect_args": {"check_same_thread": False, "timeout": 15},
+                "poolclass": NullPool,
+            },
+            "SECRET_KEY": "test-secret-fg032-concurrent",
+            "WTF_CSRF_ENABLED": False,
+        }
+    )
+    with application.app_context():
+        db.create_all()
+        db.session.execute(sa.text("PRAGMA journal_mode=WAL"))
+        db.session.execute(sa.text("PRAGMA busy_timeout=15000"))
+        db.session.commit()
+        ensure_default_organization()
+        seeded = _seed()
+        package = _issued_package(seeded)
+        package_id = package.id
+        assert derived_entry_state(package) == ENTRY_STATE_NOT_ENTERED
+        assert EstimateQuickBooksEntryEvent.query.count() == 0
+        assert EstimateQuickBooksEntryOccupancy.query.count() == 0
+        db.session.commit()
+        db.session.remove()
+
+    barrier = threading.Barrier(2, timeout=15)
+    observed_not_entered = []
+    outcomes = []
+    original_sync = qb_service._synchronize_entered_claim_for_tests
+
+    def sync():
+        observed_not_entered.append(ENTRY_STATE_NOT_ENTERED)
+        barrier.wait()
+
+    qb_service._synchronize_entered_claim_for_tests = sync
+    try:
+
+        def worker(actor):
+            with application.app_context():
+                pkg = db.session.get(EstimateQuickBooksPackage, package_id)
+                try:
+                    event = confirm_entered(
+                        pkg,
+                        actor=actor,
+                        organization_id=DEFAULT_ORGANIZATION_ID,
+                    )
+                    outcomes.append(("ok", event.id, actor))
+                except EstimateQuickBooksError as exc:
+                    db.session.rollback()
+                    outcomes.append(("block", list(exc.block_codes), actor))
+                except Exception as exc:
+                    db.session.rollback()
+                    outcomes.append(("error", type(exc).__name__, str(exc)))
+
+        threads = [
+            threading.Thread(target=worker, args=("Joel Brayman",)),
+            threading.Thread(target=worker, args=("Office Clerk",)),
+        ]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(timeout=30)
+            assert not thread.is_alive()
+    finally:
+        qb_service._synchronize_entered_claim_for_tests = original_sync
+
+    assert observed_not_entered == [ENTRY_STATE_NOT_ENTERED, ENTRY_STATE_NOT_ENTERED]
+    successes = [row for row in outcomes if row[0] == "ok"]
+    failures = [row for row in outcomes if row[0] == "block"]
+    errors = [row for row in outcomes if row[0] == "error"]
+    assert errors == []
+    assert len(successes) == 1
+    assert len(failures) == 1
+    assert BLOCK_DUPLICATE_ACTIVE_ENTERED in failures[0][1]
+
+    with application.app_context():
+        package = db.session.get(EstimateQuickBooksPackage, package_id)
+        events = list_entry_events(package)
+        occupancies = EstimateQuickBooksEntryOccupancy.query.filter_by(
+            estimate_quickbooks_package_id=package_id
+        ).all()
+        assert derived_entry_state(package) == ENTRY_STATE_ENTERED
+        assert [event.kind for event in events] == [QB_EVENT_ENTERED]
+        assert len(events) == 1
+        assert len(occupancies) == 1
+        assert occupancies[0].entered_event_id == events[0].id
+        assert occupancies[0].organization_id == DEFAULT_ORGANIZATION_ID
+        assert EstimateQuickBooksEntryEvent.query.count() == 1
+        assert EstimateQuickBooksEntryOccupancy.query.count() == 1
+        assert (
+            EstimateQuickBooksEntryEvent.query.filter(
+                EstimateQuickBooksEntryEvent.organization_id != DEFAULT_ORGANIZATION_ID
+            ).count()
+            == 0
+        )
+        assert (
+            EstimateQuickBooksEntryOccupancy.query.filter(
+                EstimateQuickBooksEntryOccupancy.organization_id
+                != DEFAULT_ORGANIZATION_ID
+            ).count()
+            == 0
+        )
 
 
 def test_entry_human_actor_required_and_ai_refused(app):
@@ -1084,6 +1259,7 @@ def test_entry_organization_isolation_blocks_and_rolls_back(app):
     db.session.rollback()
     assert derived_entry_state(package) == ENTRY_STATE_NOT_ENTERED
     assert EstimateQuickBooksEntryEvent.query.count() == 0
+    assert EstimateQuickBooksEntryOccupancy.query.count() == 0
 
 
 def test_reversed_and_corrected_state_machine(app):
@@ -1112,6 +1288,7 @@ def test_reversed_and_corrected_state_machine(app):
     assert events[0].id == entered.id
     assert events[0].kind == QB_EVENT_ENTERED
     assert derived_entry_state(package) == ENTRY_STATE_NOT_ENTERED
+    assert EstimateQuickBooksEntryOccupancy.query.count() == 0
     with pytest.raises(EstimateQuickBooksError) as exc:
         reverse_entry(
             package,
@@ -1126,6 +1303,10 @@ def test_reversed_and_corrected_state_machine(app):
     )
     assert later.kind == QB_EVENT_ENTERED
     assert derived_entry_state(package) == ENTRY_STATE_ENTERED
+    later_occupancy = EstimateQuickBooksEntryOccupancy.query.filter_by(
+        estimate_quickbooks_package_id=package.id
+    ).one()
+    assert later_occupancy.entered_event_id == later.id
     corrected = correct_entry(
         package,
         actor="Joel Brayman",
@@ -1134,6 +1315,9 @@ def test_reversed_and_corrected_state_machine(app):
     )
     assert corrected.kind == QB_EVENT_CORRECTED
     assert derived_entry_state(package) == ENTRY_STATE_ENTERED
+    assert EstimateQuickBooksEntryOccupancy.query.filter_by(
+        estimate_quickbooks_package_id=package.id
+    ).one().entered_event_id == later.id
     kinds = [event.kind for event in list_entry_events(package)]
     assert kinds == [
         QB_EVENT_ENTERED,

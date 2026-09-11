@@ -3,6 +3,8 @@
 Copies frozen Proposal selling lines and costing snapshot cost-class lines.
 Does not mutate costing, pricing, Proposal, Scope Delivery, or catalogues.
 Slice C records append-only human ENTERED / REVERSED / CORRECTED events.
+Active ENTERED is enforced by a unique occupancy lock row, not by
+read-state-then-insert.
 """
 
 from __future__ import annotations
@@ -12,6 +14,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import event, inspect as sa_inspect
+from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import object_mapper
 
 from app import db
@@ -33,6 +36,7 @@ from app.models.estimate_quickbooks import (
     QUICKBOOKS_ISSUED_STATUSES,
     EstimateQuickBooksCostClassLine,
     EstimateQuickBooksEntryEvent,
+    EstimateQuickBooksEntryOccupancy,
     EstimateQuickBooksPackage,
     EstimateQuickBooksSalesLine,
 )
@@ -924,6 +928,68 @@ def entry_summaries_for_packages(packages, organization_id=None):
     return summaries
 
 
+def _duplicate_active_entered_error():
+    return EstimateQuickBooksError(
+        "This package already has an active Entered in QuickBooks confirmation.",
+        block_codes=[BLOCK_DUPLICATE_ACTIVE_ENTERED],
+    )
+
+
+def _is_sqlite_writer_conflict(exc):
+    message = str(exc).lower()
+    return "unique" in message or "locked" in message or "busy" in message
+
+
+def _synchronize_entered_claim_for_tests():
+    """Test seam so concurrent ENTERED callers can overlap after the NOT ENTERED read."""
+    return None
+
+
+def _claim_active_entered(package, event):
+    db.session.add(
+        EstimateQuickBooksEntryOccupancy(
+            estimate_quickbooks_package_id=package.id,
+            organization_id=package.organization_id,
+            entered_event_id=event.id,
+        )
+    )
+    db.session.flush()
+
+
+def _release_active_entered(package):
+    occupancy = db.session.get(
+        EstimateQuickBooksEntryOccupancy,
+        package.id,
+    )
+    if occupancy is None:
+        return
+    if occupancy.organization_id != package.organization_id:
+        raise EstimateQuickBooksError(
+            "QuickBooks package does not belong to this organization.",
+            block_codes=[BLOCK_CROSS_ORG],
+        )
+    db.session.delete(occupancy)
+    db.session.flush()
+
+
+def _commit_entered_occupancy(commit):
+    try:
+        if commit:
+            db.session.commit()
+        else:
+            db.session.flush()
+    except IntegrityError as exc:
+        db.session.rollback()
+        if _is_sqlite_writer_conflict(exc):
+            raise _duplicate_active_entered_error() from None
+        raise
+    except OperationalError as exc:
+        db.session.rollback()
+        if _is_sqlite_writer_conflict(exc):
+            raise _duplicate_active_entered_error() from None
+        raise
+
+
 def _append_entry_event(
     package,
     *,
@@ -973,19 +1039,31 @@ def confirm_entered(
             block_codes=[BLOCK_ENTRY_NOT_ISSUED],
         )
     if derived_entry_state(package, organization_id=org_id) == ENTRY_STATE_ENTERED:
-        raise EstimateQuickBooksError(
-            "This package already has an active Entered in QuickBooks confirmation.",
-            block_codes=[BLOCK_DUPLICATE_ACTIVE_ENTERED],
-        )
+        raise _duplicate_active_entered_error()
+    _synchronize_entered_claim_for_tests()
     note_text = (note or "").strip() or None
-    return _append_entry_event(
+    event = _append_entry_event(
         package,
         kind=QB_EVENT_ENTERED,
         actor_name=actor_name,
         actor_user_id=actor_user_id,
         note=note_text,
-        commit=commit,
+        commit=False,
     )
+    try:
+        _claim_active_entered(package, event)
+        _commit_entered_occupancy(commit)
+    except IntegrityError as exc:
+        db.session.rollback()
+        if _is_sqlite_writer_conflict(exc):
+            raise _duplicate_active_entered_error() from None
+        raise
+    except OperationalError as exc:
+        db.session.rollback()
+        if _is_sqlite_writer_conflict(exc):
+            raise _duplicate_active_entered_error() from None
+        raise
+    return event
 
 
 def reverse_entry(
@@ -1006,14 +1084,22 @@ def reverse_entry(
             "Reversal requires an active Entered in QuickBooks confirmation.",
             block_codes=[BLOCK_ENTRY_NOT_ACTIVE],
         )
-    return _append_entry_event(
+    event = _append_entry_event(
         package,
         kind=QB_EVENT_REVERSED,
         actor_name=actor_name,
         actor_user_id=actor_user_id,
         note=note_text,
-        commit=commit,
+        commit=False,
     )
+    _release_active_entered(package)
+    if commit:
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            raise
+    return event
 
 
 def correct_entry(

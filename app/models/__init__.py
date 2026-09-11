@@ -36,6 +36,7 @@ from app.models.estimate_costing import (
 from app.models.estimate_quickbooks import (
     EstimateQuickBooksCostClassLine,
     EstimateQuickBooksEntryEvent,
+    EstimateQuickBooksEntryOccupancy,
     EstimateQuickBooksPackage,
     EstimateQuickBooksSalesLine,
 )
@@ -121,6 +122,7 @@ __all__ = [
     "EstimateCostingSnapshotLine",
     "EstimateQuickBooksCostClassLine",
     "EstimateQuickBooksEntryEvent",
+    "EstimateQuickBooksEntryOccupancy",
     "EstimateQuickBooksPackage",
     "EstimateQuickBooksSalesLine",
     "EstimateScopeDelivery",

@@ -32,6 +32,19 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-11 — FG-032 Slice C atomic ENTERED occupancy repair
+
+| Field | Content |
+|-------|---------|
+| ID | FG-032 Slice C concurrent ENTERED repair |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / OFFICE UAT NOT RUN.** Slices A+B remain **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**. Gate **OVERALL NOT CLOSED**. V1 remains **55% / 3 of 11**. V1-04 **PARTIAL**. V1-05 **PARTIAL**. |
+| Branch | `main` |
+| Objective | Enforce at most one active ENTERED confirmation under concurrent submissions using a database unique occupancy lock after `f0a1b2c3d4e5`. |
+| Deliverables | `EstimateQuickBooksEntryOccupancy`; revision **`f1a2b3c4d5e6`**; `confirm_entered` / `reverse_entry` occupancy claim/release; genuine concurrent-session test; governance updates. Live DB **not** upgraded. |
+| Validation | Dedicated **37 passed** / 15.98s. Affected regressions **256 passed** / 134.28s. Full **765 passed** / 2669 warnings / 422.30s. Live current remains **`e9f0a1b2c3d4`**. One graph head **`f1a2b3c4d5e6`**. |
+| Next milestone | Slice C live migrate + office UAT — **NOT AUTHORIZED FROM THIS REPAIR**. Do **not** close FG-032. Do **not** rescore V1. |
+| Date | 2026-09-11 |
+
 ### 2026-09-11 — FG-032 Slice C implementation
 
 | Field | Content |

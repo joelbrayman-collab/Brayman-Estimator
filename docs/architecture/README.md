@@ -25,7 +25,7 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [fg-021-field-web-v1-implementation-reconnaissance.md](fg-021-field-web-v1-implementation-reconnaissance.md) | **COMPLETE** — FG-021 file/API/schema freeze; live current = head `d2e3f4a5b6c7` |
 | [fg-021-recent-observation-delete-requirement-capture.md](fg-021-recent-observation-delete-requirement-capture.md) | **CAPTURED / QUEUED / NOT AUTHORIZED** — Recent Observation Delete + iPhone swipe-left UX; retention model not chosen |
 | [quickbooks-integration.md](quickbooks-integration.md) | **Intended V1 Option A Slices A+B live-migrated / bounded office UAT PASS; Slice C implemented in repository / not live-migrated** — [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md); [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**; Option B API POST-V1 |
-| [fg-032-quickbooks-option-a-preflight.md](fg-032-quickbooks-option-a-preflight.md) | **RECONCILED.** A+B **`e9f0a1b2c3d4` applied live**. Slice C **`f0a1b2c3d4e5` not applied live**. |
+| [fg-032-quickbooks-option-a-preflight.md](fg-032-quickbooks-option-a-preflight.md) | **RECONCILED.** A+B **`e9f0a1b2c3d4` applied live**. Slice C **`f0a1b2c3d4e5` / occupancy `f1a2b3c4d5e6` not applied live**. |
 | [M004-plan-intelligence-readiness-report.md](M004-plan-intelligence-readiness-report.md) | Milestone 004 report |
 | [M006-document-intelligence-readiness-report.md](M006-document-intelligence-readiness-report.md) | Milestone 006 report |
 | [M008-sheet-intelligence-readiness-report.md](M008-sheet-intelligence-readiness-report.md) | Milestone 008 readiness (architecture) |

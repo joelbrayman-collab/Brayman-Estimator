@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-11 — FG-032 Slice C atomic ENTERED occupancy repair
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-11 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Repair FG-032 Slice C so concurrent ENTERED submissions cannot create two active ENTERED confirmations. |
+| Business decision | Joel authorized the atomic ENTERED repair. Do **not** apply Slice C or occupancy live. Do **not** conduct Slice C office UAT. Do **not** close FG-032. Do **not** rescore V1. |
+| Architectural decision | Unique `estimate_quickbooks_entry_occupancies` (package PK) claimed in the same transaction as the ENTERED event; IntegrityError/locked fail closed as `DUPLICATE_ACTIVE_ENTERED`; REVERSED deletes occupancy and retains event history. |
+| Prompt template used | Joel/ChatGPT FG-032 Slice C atomic ENTERED-confirmation repair (11 Sep 2026) |
+| Approved Cursor prompt summary | Verify `main` @ `3275df0`; add occupancy lock after `f0a1b2c3d4e5`; genuine concurrent test; focused + regression + full suite; docs; commit; push; STOP. No live migrate. |
+| Files expected to change | FG-032 models/services/tests; one new Alembic revision after `f0a1b2c3d4e5`; governance docs |
+| Files prohibited from changing | Live database; `f0a1b2c3d4e5`; Project 26 UAT records; A+B freeze semantics; V1 scores |
+| Implementation result | Occupancy lock implemented. Live current remains **`e9f0a1b2c3d4`**. Repository head **`f1a2b3c4d5e6`**. One graph head. |
+| Tests | Dedicated **37 passed**, 496 warnings, 15.98s. Affected regressions **256 passed**, 1147 warnings, 134.28s. Full **`./venv/bin/python -m pytest -q` → 765 passed**, 2669 warnings, 422.30s. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Slice C not live-migrated. Slice C office UAT not run. FG-032 overall not closed. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate Slice C. Do **not** conduct Slice C office UAT. Do **not** close FG-032. Do **not** rescore V1. |
+| Next approved prompt | None from this repair. |
+| Commit hash | This occupancy repair. Parent **`3275df0381133ac246670620f75ca1e767b198b3`**. |
+
 ### 2026-09-11 — FG-032 Slice C implementation
 
 | Field | Content |

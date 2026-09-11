@@ -30,6 +30,8 @@ This document remains the architecture preflight. Slices A+B product code, live 
 
 **Subsequent status (2026-09-11 live migrate / UAT):** Live `flask db upgrade e9f0a1b2c3d4` **PASS**. Live current = **`e9f0a1b2c3d4`**. Bounded DEMO office UAT **PASS** on project **id 26**. Evidence [testing/fg032-slices-ab-live-migrate-bounded-uat-record.md](../testing/fg032-slices-ab-live-migrate-bounded-uat-record.md). Gate **OVERALL NOT CLOSED**.
 
+**Subsequent status (2026-09-11 Slice C atomic ENTERED repair):** Concurrent ENTERED submissions are now blocked by unique `estimate_quickbooks_entry_occupancies` (package PK). Additive **`f1a2b3c4d5e6`** revises **`f0a1b2c3d4e5`**. One graph head. Live current remains **`e9f0a1b2c3d4`**. Slice C **not live-migrated**. Slice C office UAT **not run**. Do **not** apply **`f0a1b2c3d4e5`** or **`f1a2b3c4d5e6`** live from this repair.
+
 **Subsequent status (2026-09-11 Slice C implementation):** Slice C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / OFFICE UAT NOT RUN**. Additive **`f0a1b2c3d4e5`** revises **`e9f0a1b2c3d4`**. One graph head. Live current remains **`e9f0a1b2c3d4`**. Do **not** apply Slice C live from this preflight.
 
 **Subsequent recon note (2026-09-11):** Git parent of product **`70e571140e12377aa5bd009b598530576401113b`** is **`010f6d641a756ceb2ab67475a284d3b8426c7b20`** (`docs: correct FG-032 Issued vs Accepted freeze`), not FG-031 Slice B **`5e1082af68e0eb145d9da01c0fa26585f6b8b9d1`**. Architecture **`93773820e410e327cd81919172c49a6f661def9e`**. Docs pin **`9c254a38c39ef866cad3c5aca1f01cae4907f376`**. Live current remains **`d8e9f0a1b2c3`**. Repository head remains **`e9f0a1b2c3d4`**.
@@ -380,7 +382,7 @@ Separate artifacts **are required** (pair): sales-entry vs internal cost-class. 
 ## 15. Duplicate and failure controls
 
 - Unique constraint: at most one ISSUED package per (`estimate_version_id`, `costing_snapshot_id`, `pricing_snapshot_id`, `proposal_id`) unless status SUPERSEDED/VOID.
-- Confirmation: at most one active ENTERED per package; subsequent ENTERED **BLOCKS**; REVERSED allows a later ENTERED with new event row.
+- Confirmation: at most one active ENTERED per package; subsequent ENTERED **BLOCKS**; REVERSED allows a later ENTERED with new event row. Active ENTERED is enforced by unique occupancy (`estimate_quickbooks_entry_occupancies`), not by read-state-then-insert.
 - Download counter is informational; it is **not** entry.
 - Cross-org: same fail-closed 404 pattern as other Estimating routes.
 

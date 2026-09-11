@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-049: QuickBooks-Ready Output Ownership, Snapshot, and Human-Entry Boundary |
-| Status | **Accepted** by Joel Brayman, 10 Sep 2026. [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**. Slice C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / OFFICE UAT NOT RUN**. Product SHA **`70e571140e12377aa5bd009b598530576401113b`**. Product parent **`010f6d641a756ceb2ab67475a284d3b8426c7b20`**. Live current **`e9f0a1b2c3d4`**. Repository head **`f0a1b2c3d4e5`**. Gate **NOT CLOSED**. |
+| Status | **Accepted** by Joel Brayman, 10 Sep 2026. [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**. Slice C **IMPLEMENTED / ATOMIC ENTERED REPAIR TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / OFFICE UAT NOT RUN**. Product SHA **`70e571140e12377aa5bd009b598530576401113b`**. Product parent **`010f6d641a756ceb2ab67475a284d3b8426c7b20`**. Live current **`e9f0a1b2c3d4`**. Repository head **`f1a2b3c4d5e6`**. Gate **NOT CLOSED**. |
 | Date | 2026-09-10 |
 | Related | [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) · [fg-032-quickbooks-option-a-preflight.md](../architecture/fg-032-quickbooks-option-a-preflight.md) · [quickbooks-integration.md](../architecture/quickbooks-integration.md) · [project-document-package.md](../architecture/project-document-package.md) · [ADR-002](ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-025](ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted** · [ADR-030](ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted** · [ADR-044](ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted** · [ADR-048](ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted** · [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [ADR-008](ADR-008-supplier-price-snapshotting.md) **Proposed** |
 
@@ -41,7 +41,7 @@ Existing [quickbooks-integration.md](../architecture/quickbooks-integration.md) 
 
 ## Decision
 
-**Accepted.** FG-032 Slices A+B implement Estimating-owned freeze tables, review/issue, and private HTML/PDF artifacts. Slice C (`estimate_quickbooks_entry_events`, ENTERED/REVERSED/CORRECTED) is **implemented in the repository** and **not live-migrated**.
+**Accepted.** FG-032 Slices A+B implement Estimating-owned freeze tables, review/issue, and private HTML/PDF artifacts. Slice C (`estimate_quickbooks_entry_events`, ENTERED/REVERSED/CORRECTED, plus unique occupancy lock) is **implemented in the repository** and **not live-migrated**.
 
 ### 1. CalibraytAI remains the commercial source of truth
 
@@ -137,11 +137,11 @@ New Estimating-owned freeze tables (names in the preflight; not created now). Co
 
 ## Migration Impact
 
-Additive revision **`e9f0a1b2c3d4`** revises **`d8e9f0a1b2c3`** (Slices A+B; **applied live** 2026-09-11). Additive revision **`f0a1b2c3d4e5`** revises **`e9f0a1b2c3d4`** (Slice C; **not applied live**). One graph head **`f0a1b2c3d4e5`**. Live current **`e9f0a1b2c3d4`**.
+Additive revision **`e9f0a1b2c3d4`** revises **`d8e9f0a1b2c3`** (Slices A+B; **applied live** 2026-09-11). Additive revision **`f0a1b2c3d4e5`** revises **`e9f0a1b2c3d4`** (Slice C events; **not applied live**). Additive revision **`f1a2b3c4d5e6`** revises **`f0a1b2c3d4e5`** (active ENTERED occupancy; **not applied live**). One graph head **`f1a2b3c4d5e6`**. Live current **`e9f0a1b2c3d4`**.
 
 ## Testing Impact
 
-Focused FG-032 tests plus FG-009 / FG-012 / FG-027 / FG-029 / FG-031 / Proposal / authorization regression. Live migration and bounded office UAT **PASS** 2026-09-11 for Slices A+B. Slice C confirmation-not-from-download is implemented in tests. Slice C live migrate and office UAT **NOT RUN**.
+Focused FG-032 tests plus FG-009 / FG-012 / FG-027 / FG-029 / FG-031 / Proposal / authorization regression. Live migration and bounded office UAT **PASS** 2026-09-11 for Slices A+B. Slice C confirmation-not-from-download is implemented in tests. Concurrent ENTERED occupancy enforcement is tested with independent sessions. Slice C live migrate and office UAT **NOT RUN**.
 
 ## Documentation Impact
 
@@ -153,4 +153,4 @@ FG-032; Option A preflight; quickbooks-integration.md; project-document-package.
 |------|------|------|
 | Joel | Option A **direction** approved 2026-09-10. This ADR **Accepted** 10 Sep 2026 with FG-032 Slices A+B implementation authorization. | 2026-09-10 |
 | ChatGPT review | Architecture recording, then corrected Issued vs Accepted freeze, then implementation prompt. | 2026-09-10 |
-| Cursor implementation note | **Accepted.** Slices A+B implemented as authorized. Slice C implemented 11 Sep 2026. Live Slice C migration **not** run. Slice C office UAT **not** run. | 2026-09-11 |
+| Cursor implementation note | **Accepted.** Slices A+B implemented as authorized. Slice C implemented 11 Sep 2026. Atomic ENTERED occupancy repair 11 Sep 2026. Live Slice C migration **not** run. Slice C office UAT **not** run. | 2026-09-11 |

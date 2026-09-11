@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-11 — FG-032 documentation-only final governance close + V1-05 rescore
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-11 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Documentation-only final governance close of FG-032 after Slices A+B and Slice C implementation, live migrate, and bounded office UAT PASS. Evidence-based V1-05 rescore. No application code. No migration. No live DB mutation. No UAT rerun. No V1-04 rescore. |
+| Business decision | FG-032 **CLOSED / OPERATIONAL FOR UAT**. V1-05 **COMPLETE**. Readiness **60% / 4 of 11** (55.05 − 0.9 + 6.0 = 60.15 → **60%**). V1-04 remains **PARTIAL / CURRENT SCORED PACKAGE**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Independent remaining blocker: Ontario/fail-closed contract story. |
+| Architectural decision | ADR-049 remains **Accepted**. Option A remains the V1 requirement. Option B live QuickBooks API remains **POST-V1**. V1-05 owns output 3 scoring. Close does **not** authorize live QuickBooks API, CSV/IIF, FG-030, or V1-04. |
+| Prompt template used | Joel/ChatGPT FG-032 final governance closure + V1-05 evidence-based rescore (11 Sep 2026) |
+| Approved Cursor prompt summary | Verify `main` @ `07490698fe325a6bd433be47070bce429c9f8ad8`; live current = repository head `f1a2b3c4d5e6`; documentation-only FG-032 close; V1-05 COMPLETE / 60% / 4 of 11; do not rescore V1-04; do not flip BMR/BRAYMAN READY; commit `docs: close FG-032 and rescore V1-05`; push main; return complete report; STOP. |
+| Files expected to change | FG-032 gate; preflight; ADR-049; V1 register; current-state; project-state-report; session-handoff; platform-roadmap; docs indexes; estimating module; milestones; chat-workflow-log; UAT records subsequent close notes only |
+| Files prohibited from changing | Application code; templates; CSS; migrations; live database; UAT evidence body; FG-030; V1-04 implementation; live QuickBooks API; CSV/IIF; ADR-008 acceptance |
+| Implementation result | Documentation reconciled. FG-032 **CLOSED / OPERATIONAL FOR UAT**. V1-05 **COMPLETE**. Diff documentation-only. |
+| Tests | **NOT RERUN.** HISTORICAL Slice C UAT dedicated **37 passed**, 496 warnings, 16.61s; affected regressions **256 passed**, 1147 warnings, 88.48s; full **765 passed**, 2669 warnings, 299.75s. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | V1-04 remains PARTIAL. FG-030 not implementation-authorized. Live QuickBooks API remains POST-V1. BMR DEMO READY remains NO (Ontario/fail-closed contract story). |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement live QuickBooks API. Do **not** implement FG-030. Do **not** begin V1-04. Do **not** implement subcontract RFQ/package. |
+| Next approved prompt | None from this documentation close. |
+| Commit hash | This documentation close commit (`docs: close FG-032 and rescore V1-05`). Parent **`07490698fe325a6bd433be47070bce429c9f8ad8`**. |
+
 ### 2026-09-11 — FG-032 Slice C live migrate + bounded office UAT
 
 | Field | Content |

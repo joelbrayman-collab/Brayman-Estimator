@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **RECONCILED WITH LIVE-MIGRATED SLICES A+B AND SLICE C.** Product implemented; **`f1a2b3c4d5e6` applied live** 2026-09-11. Bounded office UAT **PASS**. [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **OVERALL NOT CLOSED.** |
+| Status | **RECONCILED WITH CLOSED FG-032.** Product implemented; **`f1a2b3c4d5e6` applied live** 2026-09-11. Bounded office UAT **PASS**. [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT.** |
 | Date | 2026-09-10 |
 | Gate | [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) |
 | ADR | [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted** 10 Sep 2026 |
@@ -26,7 +26,9 @@ OPTION A = QUICKBOOKS-READY MANUAL ENTRY (NOT IMPORT, NOT API)
 OUTPUT 3 = CONTROLLED PAIR (SALES-ENTRY SHEET + COST-CLASS COMPANION)
 ```
 
-This document remains the architecture preflight. Slices A+B product code, live migration, and bounded office UAT exist. Slice C is **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**.
+This document remains the architecture preflight. Slices A+B product code, live migration, and bounded office UAT exist. Slice C is **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**. [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) is **CLOSED / OPERATIONAL FOR UAT**.
+
+**Subsequent status (2026-09-11 FG-032 close + V1-05 rescore):** Documentation-only close **PASS**. Gate **CLOSED / OPERATIONAL FOR UAT**. V1-05 **COMPLETE**. Readiness **60% / 4 of 11**. V1-04 remains **PARTIAL**. Evidence [testing/fg032-slice-c-live-migrate-bounded-uat-record.md](../testing/fg032-slice-c-live-migrate-bounded-uat-record.md). Option B remains **POST-V1**.
 
 **Subsequent status (2026-09-11 Slice C live migrate + bounded office UAT):** Live `flask db upgrade f1a2b3c4d5e6` **PASS**. Live current = **`f1a2b3c4d5e6 (head)`**. Bounded DEMO office UAT **PASS** on project **id 26** package **1**. Evidence [testing/fg032-slice-c-live-migrate-bounded-uat-record.md](../testing/fg032-slice-c-live-migrate-bounded-uat-record.md). Gate **OVERALL NOT CLOSED**.
 

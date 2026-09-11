@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-11 — FG-032 documentation-only final governance close + V1-05 rescore
+
+| Field | Content |
+|-------|---------|
+| ID | FG-032 final governance close + V1-05 evidence-based rescore |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** V1-05 **COMPLETE**. Readiness **60% / 4 of 11**. V1-04 remains **PARTIAL / CURRENT SCORED PACKAGE**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+| Branch | `main` |
+| Base commit | `07490698fe325a6bd433be47070bce429c9f8ad8` (`docs: record FG-032 Slice C live migration and UAT`) |
+| Objective | Documentation-only Architect close of FG-032 after Slices A+B and Slice C implementation, live migrate, and bounded office UAT PASS. Evidence-based V1-05 rescore. No application-code change. No migration. No live DB mutation. No UAT rerun. No V1-04 rescore. |
+| Deliverables | Current-authority status reconciliation across FG-032, ADR-049, preflight, V1 register, indexes, current-state, project-state-report, session-handoff, roadmap, modules, milestones, and chat-workflow-log. Historical UAT records preserved with subsequent close notes. |
+| Validation | Product tests **NOT RERUN**. HISTORICAL Slice C UAT dedicated **37 passed**, 496 warnings, 16.61s; affected regressions **256 passed**, 1147 warnings, 88.48s; full **765 passed**, 2669 warnings, 299.75s. Live current remains **`f1a2b3c4d5e6 (head)`**. Repository head **`f1a2b3c4d5e6`**. One graph head. |
+| Architectural findings | Option A remains the V1 requirement. Option B live QuickBooks API remains **POST-V1**. V1-05 owns output 3 scoring. V1-04 remains PARTIAL (outputs 1–2 complete; output 3 scored under V1-05; output 4 not). Close does **not** flip BMR DEMO READY or BRAYMAN REAL-LIFE UAT READY. Independent remaining blocker: Ontario/fail-closed contract story. |
+| Open decisions | V1-04 product work. FG-030 implementation. Subcontract RFQ/package remains maturation. ADR-008 remains **Proposed**. Live QuickBooks API remains POST-V1. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** implement live QuickBooks API. Do **not** implement FG-030. Do **not** begin V1-04. Do **not** implement subcontract RFQ/package. |
+| Commit | This documentation close commit (`docs: close FG-032 and rescore V1-05`) |
+| Date | 2026-09-11 |
+
 ### 2026-09-11 — FG-032 Slice C live migrate + bounded office UAT
 
 | Field | Content |

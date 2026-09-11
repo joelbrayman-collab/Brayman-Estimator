@@ -181,7 +181,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-049](ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) | QuickBooks-Ready Output Ownership, Snapshot, and Human-Entry Boundary | **Accepted** (2026-09-10; Joel Brayman; [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**; Slice C **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / NOT CLOSED**; Option B POST-V1) |
+| [ADR-049](ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) | QuickBooks-Ready Output Ownership, Snapshot, and Human-Entry Boundary | **Accepted** (2026-09-10; Joel Brayman; [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT**; V1-05 **COMPLETE**; Option B POST-V1) |
 
 ### Field Web capture reliability (Accepted; FG-021 CLOSED)
 

@@ -251,6 +251,8 @@ QuickBooks / V1-05 later consumes planned cost-class split (material/vendor, sub
 
 **Subsequent status (2026-09-11 live migrate / UAT):** FG-032 Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / OVERALL NOT CLOSED**. Live current = head **`e9f0a1b2c3d4`**. Canonical UAT project **id 26**. Slice C remains **NOT AUTHORIZED**. This subsequent note does **not** change FG-031 closed product meaning.
 
+**Subsequent status (2026-09-11 FG-032 close + V1-05 rescore):** [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT**. V1-05 **COMPLETE**. Readiness **60% / 4 of 11**. This subsequent note does **not** change FG-031 closed product meaning.
+
 Contract output remains customer-scope-oriented.
 
 ---

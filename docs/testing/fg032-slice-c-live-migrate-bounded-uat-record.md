@@ -10,7 +10,9 @@
 | Organization | ORG-001 / Brayman Construction Inc. |
 | Method | Authenticated Flask `test_client` against live office PRICE / QuickBooks-ready entry / Proposal / Supplier Package / Field Web routes. Session `_user_id` = `"1"` (Joel Brayman). Gitignored runners `instance/fg032c_uat_office.py` and `instance/fg032c_uat_office_continue.py` (not committed). |
 
-This file records Slice C live-migration and bounded office UAT facts only. It does **not** close FG-032. It does **not** rescore V1. It does **not** implement live QuickBooks API, OAuth, CSV, or IIF. Slices A+B evidence remains in [fg032-slices-ab-live-migrate-bounded-uat-record.md](fg032-slices-ab-live-migrate-bounded-uat-record.md) and is historical for A+B facts.
+This file records Slice C live-migration and bounded office UAT facts only. It does **not** implement live QuickBooks API, OAuth, CSV, or IIF. Slices A+B evidence remains in [fg032-slices-ab-live-migrate-bounded-uat-record.md](fg032-slices-ab-live-migrate-bounded-uat-record.md) and is historical for A+B facts.
+
+**Subsequent status (2026-09-11 FG-032 close + V1-05 rescore):** [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. V1-05 **COMPLETE**. Readiness **60% / 4 of 11**. V1-04 remains **PARTIAL**. The UAT evidence in this file remains historical and unchanged.
 
 Historical repair-time tests (focused **37** / regression **256** / full **765** at occupancy-repair commit) are **not** this session’s results.
 
@@ -163,14 +165,16 @@ Historical occupancy-repair tests (focused 37 / 15.98s; regression 256 / 134.28s
 - Live UAT did not perform an unsafe two-writer race against the office database.
 - Package **4** DRAFT remains as labeled UAT residue.
 - FG-032 is **not closed**. V1 remains **55% / 3 of 11**. V1-04 **PARTIAL**. V1-05 **PARTIAL**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**.
+
+**Subsequent status (2026-09-11 FG-032 close + V1-05 rescore):** those remaining-risk pins above are historical to this UAT. Gate is now **CLOSED / OPERATIONAL FOR UAT**. V1-05 **COMPLETE**. Readiness **60% / 4 of 11**. V1-04 remains **PARTIAL**.
 - Live QuickBooks API / OAuth / CSV / IIF remain **not authorized**.
 
 ## Boundaries not expanded
 
-- FG-032 overall: **NOT CLOSED**
-- V1 scoring: **unchanged** **55% / 3 of 11**
+- FG-032 overall: **CLOSED / OPERATIONAL FOR UAT** (subsequent 2026-09-11 documentation close; this file’s UAT evidence is unchanged)
+- V1 scoring: **subsequent V1-05 COMPLETE**; published readiness **60% / 4 of 11** (this UAT file did not itself rescore)
 - V1-04: **PARTIAL / CURRENT SCORED PACKAGE**
-- V1-05: **PARTIAL**
+- V1-05: **COMPLETE** (subsequent close-time rescore; this UAT file did not itself rescore)
 - Live QuickBooks API / OAuth / SDK: **POST-V1 / NOT AUTHORIZED**
 - CSV / IIF / Excel: **NOT CLAIMED**
 - FG-030: **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**

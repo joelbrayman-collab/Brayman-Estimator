@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-09-10 |
+| Updated | 2026-09-11 |
 
 Feature Gate documents answer the twelve governance questions in [platform-governance.md](../platform-governance.md) for a specific module or milestone **before** Cursor implementation.
 
@@ -11,8 +11,8 @@ Feature Gate documents answer the twelve governance questions in [platform-gover
 
 | Kind | Meaning |
 |------|---------|
-| Live current | Development/UAT `flask db current` today: **`d8e9f0a1b2c3`** (FG-031 Slice A and Slice B applied). FG-032 **`e9f0a1b2c3d4` is not applied live**. |
-| **Repository graph head** | Alembic heads in Git: **`e9f0a1b2c3d4`** (FG-032 Slices A+B file). One graph head. Live current **does not** equal repository head until live migrate is separately authorized. |
+| Live current | Development/UAT `flask db current` today: **`e9f0a1b2c3d4`** (FG-032 Slices A+B applied live 2026-09-11). |
+| **Repository graph head** | Alembic heads in Git: **`e9f0a1b2c3d4`**. One graph head. Live current **equals** repository head. |
 | **Gate-at-close migration head** | The live current at that Feature Gate’s close. Index rows that name an earlier revision (`b4c5d6e7f8a9`, `d6e7f8a9b0c1`, `e7f8a9b0c1d2`, `f8a9b0c1d2e3`, …) are **historical at-close** facts. They remain in the chain. They are **not** the live head today. |
 
 Do not rewrite historical gate-at-close facts. Do not treat a gate-at-close head as live current.
@@ -52,7 +52,7 @@ Do not rewrite historical gate-at-close facts. Do not treat a gate-at-close head
 | [FG-029](FG-029-bmr-supplier-workflow-v1.md) | BMR / Supplier Workflow V1 | **CLOSED / OPERATIONAL FOR UAT** (2026-09-09). **LIVE-MIGRATED / BOUNDED BMR DEMO OFFICE UAT PASS.** [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. Live current = head `b6c7d8e9f0a1`. V1 **55% / 3 of 11**. |
 | [FG-030](FG-030-supplier-identity-authentication-and-access-isolation.md) | Supplier Identity, Authentication, and Access Isolation | **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED** (2026-09-09). [ADR-047](../adr/ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only). No schema. No website publish. Does **not** rescore V1. |
 | [FG-031](FG-031-scope-delivery-make-buy-procurement-routing-v1.md) | Scope Delivery / Make-Buy / Procurement Routing V1 | **CLOSED / OPERATIONAL FOR UAT** (2026-09-10). [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. Supporting V1 gate; **not** a 12th major package. Does **not** rescore V1 (**55% / 3 of 11**). |
-| [FG-032](FG-032-quickbooks-ready-output-entry-v1.md) | QuickBooks-Ready Output / Controlled Human-Entry V1 | **SLICES A+B IMPLEMENTED / TESTED / NOT LIVE-MIGRATED / OVERALL NOT CLOSED** (2026-09-10). [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**. Slice C **NOT AUTHORIZED**. Does **not** rescore V1. |
+| [FG-032](FG-032-quickbooks-ready-output-entry-v1.md) | QuickBooks-Ready Output / Controlled Human-Entry V1 | **SLICES A+B LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / OVERALL NOT CLOSED** (2026-09-11). [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**. Slice C **NOT AUTHORIZED**. Does **not** rescore V1. |
 
 [FG-015](FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-016](FG-016-ontario-ottawa-permit-intelligence-poc.md) is **CLOSED / OPERATIONAL FOR UAT**. Pratt office UAT **PASSED** on port **5009** (project id 9). [FG-017](FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Live current `f4a5b6c7d8e9`. Office authentication UAT **PASSED** on port **5011**.
 
@@ -84,4 +84,4 @@ Implementation is not authorized by a Feature Gate until Joel approves the gate 
 
 **Scope delivery / make-buy / procurement routing (closed / operational for UAT):** [FG-031](FG-031-scope-delivery-make-buy-procurement-routing-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. Preflight: [fg-031-scope-delivery-make-buy-procurement-routing-preflight.md](../architecture/fg-031-scope-delivery-make-buy-procurement-routing-preflight.md). Evidence: [fg031-live-migrate-bounded-uat-record.md](../testing/fg031-live-migrate-bounded-uat-record.md) (Slice A) · [fg031-slice-b-live-migrate-bounded-uat-record.md](../testing/fg031-slice-b-live-migrate-bounded-uat-record.md) (Slice B). Two stored dimensions; 1:1 `EstimateScopeDelivery` per `EstimateLineItem`; no HYBRID enum; thin `Subcontractor` + quote evidence. Supporting V1 gate; **not** a 12th major package. Do **not** rescore V1. Subcontract RFQ/package is **maturation during UAT / not implemented**. Do **not** implement FG-030. Do **not** begin V1-04.
 
-**QuickBooks-ready output / controlled human-entry:** [FG-032](FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED / OVERALL NOT CLOSED**. [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**. Slice C **NOT IMPLEMENTATION-AUTHORIZED**. Option B live QuickBooks API remains **POST-V1**. Does **not** rescore V1.
+**QuickBooks-ready output / controlled human-entry:** [FG-032](FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / OVERALL NOT CLOSED**. [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**. Slice C **NOT IMPLEMENTATION-AUTHORIZED**. Option B live QuickBooks API remains **POST-V1**. Does **not** rescore V1.

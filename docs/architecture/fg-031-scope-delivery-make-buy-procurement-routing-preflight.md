@@ -249,6 +249,8 @@ QuickBooks / V1-05 later consumes planned cost-class split (material/vendor, sub
 
 **Subsequent status (2026-09-11):** FG-032 Slices A+B are **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / OVERALL NOT CLOSED**. Product SHA **`70e571140e12377aa5bd009b598530576401113b`**. Product parent **`010f6d641a756ceb2ab67475a284d3b8426c7b20`**. [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**. Slice C remains **NOT AUTHORIZED**. This subsequent note does **not** change FG-031 closed product meaning.
 
+**Subsequent status (2026-09-11 live migrate / UAT):** FG-032 Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / OVERALL NOT CLOSED**. Live current = head **`e9f0a1b2c3d4`**. Canonical UAT project **id 26**. Slice C remains **NOT AUTHORIZED**. This subsequent note does **not** change FG-031 closed product meaning.
+
 Contract output remains customer-scope-oriented.
 
 ---

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-10 |
+| Updated | 2026-09-11 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -31,6 +31,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 ---
 
 ---
+
+### 2026-09-11 — FG-032 Slices A+B live migrate + bounded office UAT
+
+| Field | Content |
+|-------|---------|
+| ID | FG-032 Slices A+B live migrate / bounded office UAT (V1-05 Option A; not a 12th major package) |
+| Status | **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / SLICE C NOT AUTHORIZED / OVERALL NOT CLOSED.** V1 remains **55% / 3 of 11**. Current scored package **V1-04 / PARTIAL**. V1-05 **PARTIAL**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+| Branch | `main` |
+| Objective | Apply additive `e9f0a1b2c3d4` to live UAT DB and prove bounded DEMO office QuickBooks-ready entry without Slice C |
+| Validation | Dedicated **23 passed** / 12.96s. Full **751 passed**, 2479 warnings, 329.14s. Canonical project **id 26**. Packages QB-2026-0001 ISSUED / 0002 ISSUED / 0003 REVIEWED (stale BLOCK). Live current = head `e9f0a1b2c3d4`. |
+| Product SHA | **`70e571140e12377aa5bd009b598530576401113b`** (`feat: implement FG-032 QuickBooks-ready artifacts`) |
+| Start pin | **`520eeca7410e1a575f46a0bb8ed8126ea0d26445`** |
+| Evidence | [testing/fg032-slices-ab-live-migrate-bounded-uat-record.md](testing/fg032-slices-ab-live-migrate-bounded-uat-record.md) |
+| Next milestone | **STOP.** Slice C / close gate / V1-04 require separate authorization. |
+| Date | 2026-09-11 |
 
 ### 2026-09-11 — FG-032 post-implementation governance reconciliation (documentation only)
 

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-10). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **COMPLETE**. V1-03 / [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**). Readiness **55%** (V1-03 factor **1.00**; 44.85 − 1.8 + 12.0 = 55.05 → **55%**). **3 / 11** COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. Does **not** authorize FG-024, FG-030 implementation, FG-032 live migration / Slice C / office UAT, or V1-04 product work. [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** (supporting gate; **not** a 12th package; does **not** rescore). [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED / OVERALL NOT CLOSED** (V1-05 Option A; does **not** rescore). FG-028 **CLOSED / OPERATIONAL FOR UAT** (does **not** rescore this register). |
+| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-10). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **COMPLETE**. V1-03 / [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**). Readiness **55%** (V1-03 factor **1.00**; 44.85 − 1.8 + 12.0 = 55.05 → **55%**). **3 / 11** COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. Does **not** authorize FG-024, FG-030 implementation, FG-032 Slice C, or V1-04 product work. [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** (supporting gate; **not** a 12th package; does **not** rescore). [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / OVERALL NOT CLOSED** (V1-05 Option A; does **not** rescore). FG-028 **CLOSED / OPERATIONAL FOR UAT** (does **not** rescore this register). |
 | Product | CalibraytAI / The Estimator (formerly CalibAi) |
 | Date | 2026-09-08 |
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
@@ -31,10 +31,10 @@ BRAYMAN REAL-LIFE UAT READY:
 NO
 
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
-THIS REGISTER DOES NOT AUTHORIZE FG-024, FG-030 IMPLEMENTATION, FG-032 LIVE MIGRATION / SLICE C / OFFICE UAT, OR V1-04 PRODUCT WORK
+THIS REGISTER DOES NOT AUTHORIZE FG-024, FG-030 IMPLEMENTATION, FG-032 SLICE C, OR V1-04 PRODUCT WORK
 FG-031 IS A SUPPORTING GATE — NOT A 12TH MAJOR PACKAGE — DOES NOT RESCORE
 FG-031 CLOSED / OPERATIONAL FOR UAT
-FG-032 SLICES A+B IMPLEMENTED / NOT LIVE-MIGRATED / OVERALL NOT CLOSED — OPTION A — DOES NOT RESCORE
+FG-032 SLICES A+B LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / OVERALL NOT CLOSED — OPTION A — DOES NOT RESCORE
 FG-028 CLOSED / OPERATIONAL FOR UAT — DOES NOT RESCORE THIS REGISTER
 ```
 
@@ -258,7 +258,7 @@ Supplier **named-user login / workspace** is a separate recorded gate: [FG-030](
 | Contribution | **4.0** |
 | V1 REQUIRED? | **YES** (existing August 2026 commitment) |
 | BLOCKER? | Output 4 blocked on V1-06 Ontario legal approval for production |
-| Dependencies | FG-012; V1-05 for output 3; V1-06 for output 4; FG-022 presentation masters; [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** informs internal delivery class and QuickBooks cost-class split (customer estimate remains delivery-blind); [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **IMPLEMENTED / NOT LIVE-MIGRATED** |
+| Dependencies | FG-012; V1-05 for output 3; V1-06 for output 4; FG-022 presentation masters; [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** informs internal delivery class and QuickBooks cost-class split (customer estimate remains delivery-blind); [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT** |
 | Governing | [project-document-package.md](architecture/project-document-package.md); [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED**; [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED** (presentation only) |
 | Next governed action | Do **not** begin V1-04 product work from FG-032 recording. Output 3 implementation remains under V1-05 / FG-032 when separately authorized. Output 4 under V1-06. Do not build a second contract system. |
 
@@ -266,7 +266,7 @@ Supplier **named-user login / workspace** is a separate recorded gate: [FG-030](
 |--------|--------|
 | 1 Internal Detailed Cost Breakdown | **COMPLETE** (FG-012) |
 | 2 Customer-Facing Estimate (Proposal) | **COMPLETE** as entity (FG-012). Remaining contractor-facing PDF terminology is V1-09. |
-| 3 QuickBooks Estimate / Entry | **SLICES A+B IMPLEMENTED / NOT LIVE-MIGRATED / NOT CLOSED.** [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Option A controlled pair. Slice C **NOT AUTHORIZED**. Presentation reference (Allen Jacques / Family 04) exists **outside Git**. |
+| 3 QuickBooks Estimate / Entry | **SLICES A+B LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / NOT CLOSED.** [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Option A controlled pair. Slice C **NOT AUTHORIZED**. Presentation reference (Allen Jacques / Family 04) exists **outside Git**. |
 | 4 Contract / execution package | **NOT IMPLEMENTED.** Family 05 is **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. |
 
 ### V1-05 — QuickBooks V1
@@ -279,14 +279,14 @@ Supplier **named-user login / workspace** is a separate recorded gate: [FG-030](
 | Factor | 0.15 |
 | Contribution | **0.9** |
 | V1 REQUIRED? | **YES** as four-output item 3. Live API is **not** assumed. |
-| BLOCKER? | Joel selected **Option A** on 2026-09-10. Slices A+B **implemented / not live-migrated**. Slice C, live migrate, and office UAT remain **not authorized**. Option B live API remains **POST-V1**. |
+| BLOCKER? | Joel selected **Option A** on 2026-09-10. Slices A+B **live-migrated / bounded office UAT PASS / operational for UAT**. Slice C remains **not authorized**. Option B live API remains **POST-V1**. |
 | Dependencies | Approved customer estimate (output 2); CURRENT costing + CURRENT pricing; FG-031 frozen routing for companion class |
 | Governing | [quickbooks-integration.md](architecture/quickbooks-integration.md); [project-document-package.md](architecture/project-document-package.md) output 3; [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md); [ADR-049](adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**; [fg-032-quickbooks-option-a-preflight.md](architecture/fg-032-quickbooks-option-a-preflight.md) |
-| Next governed action | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** office-UAT. Do **not** implement Slice C. |
+| Next governed action | **STOP.** Return to ChatGPT Architect. Do **not** implement Slice C. Do **not** rescore this register. |
 
 | Option | Repository evidence | Register recommendation |
 |--------|---------------------|-------------------------|
-| **A.** Governed QuickBooks-ready output / entry workflow | Existing V1 architecture. Human review. No API. [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B implemented / not live-migrated. | **JOEL SELECTED 2026-09-10.** V1 REQUIRED. **PARTIAL.** |
+| **A.** Governed QuickBooks-ready output / entry workflow | Existing V1 architecture. Human review. No API. [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B live-migrated / bounded office UAT PASS. | **JOEL SELECTED 2026-09-10.** V1 REQUIRED. **PARTIAL.** |
 | **B.** Live QuickBooks Online API | Explicitly **prohibited** until Feature Gate + Joel approval | **POST-V1** unless Joel reverses |
 
 Estimator remains the authoritative commercial record. QuickBooks must not become SoR.
@@ -581,7 +581,7 @@ Do **not** block V1 on:
 
 | # | Decision | Register recommendation |
 |---|----------|-------------------------|
-| 1 | QuickBooks V1 = A (output/entry) vs B (live API) | **SELECTED (2026-09-10): A now; API POST-V1.** [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B implemented / not live-migrated / not closed. |
+| 1 | QuickBooks V1 = A (output/entry) vs B (live API) | **SELECTED (2026-09-10): A now; API POST-V1.** [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B live-migrated / bounded office UAT PASS / not closed. |
 | 2 | Exception-based CalibraytAI costing required before BMR? | **RECORDED (ADR-044 / FG-027).** **No.** Human costing + explicit Approve All Costing is V1; exception-based matures in real UAT |
 | 3 | FG-024 Slice D live legal-source monitoring in V1? | **POST-V1.** Keep 06H versioning/supersession/effective-date in V1 |
 | 4 | Customer Proposal/PDF FG-025 remainder in BMR demo? | **Yes**, via a later bounded slice |

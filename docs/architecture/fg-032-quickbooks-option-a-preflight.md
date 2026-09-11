@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **RECONCILED WITH IMPLEMENTED SLICES A+B.** Product implemented; migration file **`e9f0a1b2c3d4`** not applied live. [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **OVERALL NOT CLOSED.** |
+| Status | **RECONCILED WITH LIVE-MIGRATED SLICES A+B.** Product implemented; **`e9f0a1b2c3d4` applied live** 2026-09-11. Bounded office UAT **PASS**. [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **OVERALL NOT CLOSED.** |
 | Date | 2026-09-10 |
 | Gate | [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) |
 | ADR | [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted** 10 Sep 2026 |
-| Alembic | Live current **`d8e9f0a1b2c3`**. Repository head **`e9f0a1b2c3d4`**. One graph head. **Not applied live.** |
+| Alembic | Live current **`e9f0a1b2c3d4`**. Repository head **`e9f0a1b2c3d4`**. One graph head. **Applied live 2026-09-11.** |
 | Product | CalibraytAI (formerly CalibAi) |
 | Tenant | Brayman Construction Inc. / ORG-001 |
 | Joel decision | **V1-05 Option A approved 2026-09-10.** Option B live QuickBooks Online API remains **POST-V1**. |
@@ -15,9 +15,10 @@
 FG-032 PREFLIGHT:
 RECONCILED WITH SLICES A+B IMPLEMENTATION
 ADR-049 ACCEPTED 10 SEP 2026
-SLICES A+B IMPLEMENTED / NOT LIVE-MIGRATED
+SLICES A+B LIVE-MIGRATED / BOUNDED OFFICE UAT PASS
+OPERATIONAL FOR UAT
 SLICE C NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED
-SCHEMA FILE e9f0a1b2c3d4 / LIVE CURRENT d8e9f0a1b2c3
+SCHEMA e9f0a1b2c3d4 APPLIED LIVE / LIVE CURRENT e9f0a1b2c3d4
 V1 REMAINS 55% / 3 OF 11
 V1-04 REMAINS PARTIAL / CURRENT SCORED PACKAGE
 V1-05 REMAINS PARTIAL
@@ -25,7 +26,9 @@ OPTION A = QUICKBOOKS-READY MANUAL ENTRY (NOT IMPORT, NOT API)
 OUTPUT 3 = CONTROLLED PAIR (SALES-ENTRY SHEET + COST-CLASS COMPANION)
 ```
 
-This document remains the architecture preflight. Slices A+B product code and migration **file** exist. Live database writes and office UAT remain unauthorized.
+This document remains the architecture preflight. Slices A+B product code, live migration, and bounded office UAT exist. Slice C remains unauthorized.
+
+**Subsequent status (2026-09-11 live migrate / UAT):** Live `flask db upgrade e9f0a1b2c3d4` **PASS**. Live current = head **`e9f0a1b2c3d4`**. Bounded DEMO office UAT **PASS** on project **id 26**. Evidence [testing/fg032-slices-ab-live-migrate-bounded-uat-record.md](../testing/fg032-slices-ab-live-migrate-bounded-uat-record.md). Slice C remains **NOT AUTHORIZED**. Gate **OVERALL NOT CLOSED**.
 
 **Subsequent recon note (2026-09-11):** Git parent of product **`70e571140e12377aa5bd009b598530576401113b`** is **`010f6d641a756ceb2ab67475a284d3b8426c7b20`** (`docs: correct FG-032 Issued vs Accepted freeze`), not FG-031 Slice B **`5e1082af68e0eb145d9da01c0fa26585f6b8b9d1`**. Architecture **`93773820e410e327cd81919172c49a6f661def9e`**. Docs pin **`9c254a38c39ef866cad3c5aca1f01cae4907f376`**. Live current remains **`d8e9f0a1b2c3`**. Repository head remains **`e9f0a1b2c3d4`**.
 
@@ -37,8 +40,8 @@ This document remains the architecture preflight. Slices A+B product code and mi
 
 | Layer | State |
 |-------|--------|
-| **Current** | Authoritative `Estimate` / `EstimateVersion`; FG-027 CURRENT `EstimateCostingSnapshot`; FG-009 `EstimatePricingSnapshot` (CURRENT vs `STALE / REQUIRES RE-APPLY`); Issued/Accepted `Proposal` + PDF (output 2); FG-012 internal breakdown (output 1); FG-031 frozen `material_procurement` / `labour_delivery` on costing snapshot lines; Family 04 reusable master **outside Git**. FG-032 Slices A+B package/HTML/PDF **implemented / not live-migrated**. No QuickBooks client, OAuth, IIF, CSV, or “entered in QuickBooks” record in `app/`. |
-| **Intended remaining (FG-032)** | Live migrate + office UAT. Slice C ENTERED/REVERSED confirmation remains **not authorized**. |
+| **Current** | Authoritative `Estimate` / `EstimateVersion`; FG-027 CURRENT `EstimateCostingSnapshot`; FG-009 `EstimatePricingSnapshot` (CURRENT vs `STALE / REQUIRES RE-APPLY`); Issued/Accepted `Proposal` + PDF (output 2); FG-012 internal breakdown (output 1); FG-031 frozen `material_procurement` / `labour_delivery` on costing snapshot lines; Family 04 reusable master **outside Git**. FG-032 Slices A+B package/HTML/PDF **live-migrated / bounded office UAT PASS**. No QuickBooks client, OAuth, IIF, CSV, or “entered in QuickBooks” record in `app/`. |
+| **Intended remaining (FG-032)** | Slice C ENTERED/REVERSED confirmation remains **not authorized**. |
 | **Future / POST-V1** | Option B live QuickBooks Online API; CSV/IIF/Excel only if a later gate proves a supported import contract; invoices, bills, POs, payroll, payments, banking, actual-cost sync; stored hybrid amount split. |
 
 ---
@@ -399,7 +402,7 @@ The Allen Jacques **filled project** PDF is a presentation reference, not a reus
 
 ---
 
-## 17. Persistence (implemented Slices A+B; not applied live)
+## 17. Persistence (implemented Slices A+B; applied live 2026-09-11)
 
 Names are proposals. Do not create models or Alembic now.
 
@@ -492,6 +495,8 @@ Services (names): `app/services/estimate_quickbooks.py` assemble/validate/issue/
 Do not begin Slice A without a separate implementation prompt and Joel authorization. Prefer ADR-049 **Accepted** before schema if Joel requires acceptance first; this recording leaves ADR-049 **Proposed**.
 
 **Subsequent status (2026-09-11):** Slices A+B were later implemented under Joel authorization. ADR-049 is **Accepted**. Slice C remains **NOT IMPLEMENTATION-AUTHORIZED**. Do **not** live-migrate from this preflight.
+
+**Subsequent status (2026-09-11 live migrate / UAT):** Live migration **applied**. Bounded office UAT **PASS**. Do **not** re-migrate from this preflight. Do **not** implement Slice C from this preflight.
 
 ---
 

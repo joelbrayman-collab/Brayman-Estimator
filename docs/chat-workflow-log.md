@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-11 — FG-032 Slices A+B live migrate + bounded office UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-11 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Governed live DB backup; live migrate `e9f0a1b2c3d4`; bounded DEMO/SYNTHETIC office UAT of FG-032 Slices A+B. No Slice C. No live QuickBooks API. No CSV/IIF. No FG-030. No V1-04. No V1 rescore. |
+| Business decision | Slices A+B become LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT. Overall FG-032 remains NOT CLOSED. Slice C remains NOT IMPLEMENTATION-AUTHORIZED. V1 remains **55% / 3 of 11**. V1-04 **PARTIAL**. V1-05 **PARTIAL**. BMR DEMO READY remains **NO**. |
+| Architectural decision | ADR-049 remains Accepted. Estimating owns the QuickBooks-ready package freeze. Download is not entry. No `estimate_quickbooks_entry_events` table. Option B live API remains POST-V1. |
+| Prompt template used | Joel/ChatGPT FG-032 Slices A+B live migration + bounded office UAT (11 Sep 2026) |
+| Approved Cursor prompt summary | Verify `main` @ `520eeca`; recoverable backup; apply `e9f0a1b2c3d4`; bounded DEMO office UAT; docs/UAT record; commit/push; A–V report; STOP. No Slice C. No close gate. No V1 rescore. |
+| Files expected to change | Current-authority governance docs; dedicated FG-032 UAT record. Live DB mutation via Alembic + labeled synthetic UAT only. |
+| Files prohibited from changing | Product code (none required); Slice C; live QuickBooks API; CSV/IIF; FG-030; V1-04; ADR-008 acceptance; LEARN; contracts; Native Signing; Observation Delete; website; HostPapa; backup file (gitignored) |
+| Implementation result | Backup SHA-256 `a4634e3587c8e5065781cbc9975587a485d94113aa2c8fa0ae750c4ce3d8cd6d`. Live current = head `e9f0a1b2c3d4`. Canonical UAT project **id 26**. Packages QB-2026-0001 ISSUED / 0002 ISSUED / 0003 REVIEWED (stale BLOCK). Required UAT PASSed. No product defect. |
+| Tests | Dedicated FG-032 **23 passed** (12.96s). Full suite **751 passed**, 2479 warnings, **329.14s**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | FG-032 overall NOT CLOSED. Slice C not authorized. FG-030 not implementation-authorized. V1-04 not begun. Ontario/fail-closed contract blocker unchanged. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** re-migrate. Do **not** implement Slice C. Do **not** close FG-032. Do **not** rescore V1. |
+| Next approved prompt | None from this UAT. |
+| Commit hash | This documentation/UAT close commit. Start pin **`520eeca7410e1a575f46a0bb8ed8126ea0d26445`**. Product **`70e571140e12377aa5bd009b598530576401113b`**. |
+
 ### 2026-09-11 — FG-032 post-implementation governance reconciliation
 
 | Field | Content |

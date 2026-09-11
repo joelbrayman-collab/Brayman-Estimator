@@ -2,7 +2,7 @@
 
 Copies frozen Proposal selling lines and costing snapshot cost-class lines.
 Does not mutate costing, pricing, Proposal, Scope Delivery, or catalogues.
-Slice C entry events are not implemented.
+Slice C records append-only human ENTERED / REVERSED / CORRECTED events.
 """
 
 from __future__ import annotations
@@ -21,12 +21,18 @@ from app.models.estimate_costing import (
     EstimateCostingSnapshotLine,
 )
 from app.models.estimate_quickbooks import (
+    ENTRY_STATE_ENTERED,
+    ENTRY_STATE_NOT_ENTERED,
+    QB_EVENT_CORRECTED,
+    QB_EVENT_ENTERED,
+    QB_EVENT_REVERSED,
     QB_STATUS_DRAFT,
     QB_STATUS_ISSUED,
     QB_STATUS_REVIEWED,
     QB_STATUS_SUPERSEDED,
     QUICKBOOKS_ISSUED_STATUSES,
     EstimateQuickBooksCostClassLine,
+    EstimateQuickBooksEntryEvent,
     EstimateQuickBooksPackage,
     EstimateQuickBooksSalesLine,
 )
@@ -86,6 +92,13 @@ BLOCK_DUPLICATE_ACTIVE_ISSUED = "DUPLICATE_ACTIVE_ISSUED"
 BLOCK_STALE_UNISSUED = "STALE_UNISSUED"
 BLOCK_NO_PROPOSAL = "NO_ELIGIBLE_PROPOSAL"
 BLOCK_NO_PRICING = "NO_PRICING_SNAPSHOT"
+BLOCK_ENTRY_NOT_ISSUED = "ENTRY_NOT_ISSUED"
+BLOCK_DUPLICATE_ACTIVE_ENTERED = "DUPLICATE_ACTIVE_ENTERED"
+BLOCK_ENTRY_NOT_ACTIVE = "ENTRY_NOT_ACTIVE"
+BLOCK_ENTRY_REASON_REQUIRED = "ENTRY_REASON_REQUIRED"
+BLOCK_ENTRY_ACTOR_REQUIRED = "ENTRY_ACTOR_REQUIRED"
+BLOCK_ENTRY_AI_ACTOR = "ENTRY_AI_ACTOR"
+BLOCK_ENTRY_IMMUTABLE = "ENTRY_EVENT_IMMUTABLE"
 
 WARN_PROPOSAL_ISSUED_NOT_ACCEPTED = "PROPOSAL_ISSUED_NOT_ACCEPTED"
 WARN_HYBRID_UNSPLIT = "HYBRID_UNSPLIT"
@@ -100,7 +113,7 @@ _ISSUED_HEADER_MUTABLE = frozenset({"status", "superseded_by_id", "updated_at"})
 
 
 class EstimateQuickBooksError(Exception):
-    """Raised when QuickBooks-ready generation, review, or issue cannot complete."""
+    """Raised when QuickBooks-ready generation, review, issue, or entry cannot complete."""
 
     def __init__(self, message, *, block_codes=None, warning_codes=None):
         super().__init__(message)
@@ -128,6 +141,31 @@ def _assert_human_actor(actor: str, *, action: str) -> str:
     if name.upper() in AI_ACTOR_TOKENS:
         raise EstimateQuickBooksError("AI cannot review or issue a QuickBooks-ready package.")
     return name
+
+
+def _assert_entry_actor(actor: str, *, action: str) -> str:
+    name = (actor or "").strip()
+    if not name:
+        raise EstimateQuickBooksError(
+            f"{action} requires a human actor.",
+            block_codes=[BLOCK_ENTRY_ACTOR_REQUIRED],
+        )
+    if name.upper() in AI_ACTOR_TOKENS:
+        raise EstimateQuickBooksError(
+            "AI cannot confirm, reverse, or correct QuickBooks entry.",
+            block_codes=[BLOCK_ENTRY_AI_ACTOR],
+        )
+    return name
+
+
+def _require_entry_note(note, *, action: str) -> str:
+    text = (note or "").strip()
+    if not text:
+        raise EstimateQuickBooksError(
+            f"{action} requires a nonblank reason.",
+            block_codes=[BLOCK_ENTRY_REASON_REQUIRED],
+        )
+    return text
 
 
 def suggest_next_package_number(organization_id, year=None):
@@ -839,6 +877,173 @@ def issued_pdf_bytes(package, kind: str, *, organization_id=None) -> bytes:
     return data
 
 
+def _assert_package_org(package, org_id):
+    if package is None or package.organization_id != org_id:
+        raise EstimateQuickBooksError(
+            "QuickBooks package does not belong to this organization.",
+            block_codes=[BLOCK_CROSS_ORG],
+        )
+
+
+def list_entry_events(package, organization_id=None):
+    org_id = _org_id(organization_id)
+    _assert_package_org(package, org_id)
+    return (
+        EstimateQuickBooksEntryEvent.query.filter_by(
+            estimate_quickbooks_package_id=package.id,
+            organization_id=org_id,
+        )
+        .order_by(EstimateQuickBooksEntryEvent.id.asc())
+        .all()
+    )
+
+
+def derived_entry_state(package, organization_id=None):
+    """Current human-recorded entry state from ordered append-only events."""
+    state = ENTRY_STATE_NOT_ENTERED
+    for event in list_entry_events(package, organization_id=organization_id):
+        if event.kind == QB_EVENT_ENTERED:
+            state = ENTRY_STATE_ENTERED
+        elif event.kind == QB_EVENT_REVERSED:
+            state = ENTRY_STATE_NOT_ENTERED
+    return state
+
+
+def entry_summaries_for_packages(packages, organization_id=None):
+    org_id = _org_id(organization_id)
+    summaries = {}
+    for package in packages:
+        events = list_entry_events(package, organization_id=org_id)
+        state = ENTRY_STATE_NOT_ENTERED
+        for event in events:
+            if event.kind == QB_EVENT_ENTERED:
+                state = ENTRY_STATE_ENTERED
+            elif event.kind == QB_EVENT_REVERSED:
+                state = ENTRY_STATE_NOT_ENTERED
+        summaries[package.id] = {"state": state, "events": events}
+    return summaries
+
+
+def _append_entry_event(
+    package,
+    *,
+    kind,
+    actor_name,
+    actor_user_id,
+    note,
+    commit,
+):
+    event = EstimateQuickBooksEntryEvent(
+        organization_id=package.organization_id,
+        project_id=package.project_id,
+        estimate_quickbooks_package_id=package.id,
+        kind=kind,
+        actor_user_id=actor_user_id,
+        actor_display_name=actor_name,
+        occurred_at=datetime.utcnow(),
+        note=note,
+    )
+    db.session.add(event)
+    if commit:
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            raise
+    else:
+        db.session.flush()
+    return event
+
+
+def confirm_entered(
+    package,
+    *,
+    actor,
+    actor_user_id=None,
+    note=None,
+    organization_id=None,
+    commit=True,
+):
+    actor_name = _assert_entry_actor(actor, action="Confirm QuickBooks entry")
+    org_id = _org_id(organization_id)
+    _assert_package_org(package, org_id)
+    if package.status != QB_STATUS_ISSUED:
+        raise EstimateQuickBooksError(
+            "Entered in QuickBooks can be confirmed only for an ISSUED package.",
+            block_codes=[BLOCK_ENTRY_NOT_ISSUED],
+        )
+    if derived_entry_state(package, organization_id=org_id) == ENTRY_STATE_ENTERED:
+        raise EstimateQuickBooksError(
+            "This package already has an active Entered in QuickBooks confirmation.",
+            block_codes=[BLOCK_DUPLICATE_ACTIVE_ENTERED],
+        )
+    note_text = (note or "").strip() or None
+    return _append_entry_event(
+        package,
+        kind=QB_EVENT_ENTERED,
+        actor_name=actor_name,
+        actor_user_id=actor_user_id,
+        note=note_text,
+        commit=commit,
+    )
+
+
+def reverse_entry(
+    package,
+    *,
+    actor,
+    reason,
+    actor_user_id=None,
+    organization_id=None,
+    commit=True,
+):
+    actor_name = _assert_entry_actor(actor, action="Reverse QuickBooks entry")
+    org_id = _org_id(organization_id)
+    _assert_package_org(package, org_id)
+    note_text = _require_entry_note(reason, action="Reverse QuickBooks entry")
+    if derived_entry_state(package, organization_id=org_id) != ENTRY_STATE_ENTERED:
+        raise EstimateQuickBooksError(
+            "Reversal requires an active Entered in QuickBooks confirmation.",
+            block_codes=[BLOCK_ENTRY_NOT_ACTIVE],
+        )
+    return _append_entry_event(
+        package,
+        kind=QB_EVENT_REVERSED,
+        actor_name=actor_name,
+        actor_user_id=actor_user_id,
+        note=note_text,
+        commit=commit,
+    )
+
+
+def correct_entry(
+    package,
+    *,
+    actor,
+    note,
+    actor_user_id=None,
+    organization_id=None,
+    commit=True,
+):
+    actor_name = _assert_entry_actor(actor, action="Correct QuickBooks entry")
+    org_id = _org_id(organization_id)
+    _assert_package_org(package, org_id)
+    note_text = _require_entry_note(note, action="Correct QuickBooks entry")
+    if derived_entry_state(package, organization_id=org_id) != ENTRY_STATE_ENTERED:
+        raise EstimateQuickBooksError(
+            "Correction requires an active Entered in QuickBooks confirmation.",
+            block_codes=[BLOCK_ENTRY_NOT_ACTIVE],
+        )
+    return _append_entry_event(
+        package,
+        kind=QB_EVENT_CORRECTED,
+        actor_name=actor_name,
+        actor_user_id=actor_user_id,
+        note=note_text,
+        commit=commit,
+    )
+
+
 def sales_artifact_text(package) -> str:
     """Plain text used by privacy tests for Artifact A."""
     parts = [
@@ -934,4 +1139,20 @@ def _reject_issued_line_rewrite(mapper, connection, target):
     raise EstimateQuickBooksError(
         "Issued QuickBooks package lines are immutable.",
         block_codes=[BLOCK_ISSUED_IMMUTABLE],
+    )
+
+
+@event.listens_for(EstimateQuickBooksEntryEvent, "before_update")
+def _reject_entry_event_update(mapper, connection, target):
+    raise EstimateQuickBooksError(
+        "QuickBooks entry events are append-only and immutable.",
+        block_codes=[BLOCK_ENTRY_IMMUTABLE],
+    )
+
+
+@event.listens_for(EstimateQuickBooksEntryEvent, "before_delete")
+def _reject_entry_event_delete(mapper, connection, target):
+    raise EstimateQuickBooksError(
+        "QuickBooks entry events are append-only and immutable.",
+        block_codes=[BLOCK_ENTRY_IMMUTABLE],
     )

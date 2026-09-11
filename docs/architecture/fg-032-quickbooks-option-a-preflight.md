@@ -26,9 +26,11 @@ OPTION A = QUICKBOOKS-READY MANUAL ENTRY (NOT IMPORT, NOT API)
 OUTPUT 3 = CONTROLLED PAIR (SALES-ENTRY SHEET + COST-CLASS COMPANION)
 ```
 
-This document remains the architecture preflight. Slices A+B product code, live migration, and bounded office UAT exist. Slice C remains unauthorized.
+This document remains the architecture preflight. Slices A+B product code, live migration, and bounded office UAT exist. Slice C is **implemented in the repository** and **not live-migrated**.
 
-**Subsequent status (2026-09-11 live migrate / UAT):** Live `flask db upgrade e9f0a1b2c3d4` **PASS**. Live current = head **`e9f0a1b2c3d4`**. Bounded DEMO office UAT **PASS** on project **id 26**. Evidence [testing/fg032-slices-ab-live-migrate-bounded-uat-record.md](../testing/fg032-slices-ab-live-migrate-bounded-uat-record.md). Slice C remains **NOT AUTHORIZED**. Gate **OVERALL NOT CLOSED**.
+**Subsequent status (2026-09-11 live migrate / UAT):** Live `flask db upgrade e9f0a1b2c3d4` **PASS**. Live current = **`e9f0a1b2c3d4`**. Bounded DEMO office UAT **PASS** on project **id 26**. Evidence [testing/fg032-slices-ab-live-migrate-bounded-uat-record.md](../testing/fg032-slices-ab-live-migrate-bounded-uat-record.md). Gate **OVERALL NOT CLOSED**.
+
+**Subsequent status (2026-09-11 Slice C implementation):** Slice C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / OFFICE UAT NOT RUN**. Additive **`f0a1b2c3d4e5`** revises **`e9f0a1b2c3d4`**. One graph head. Live current remains **`e9f0a1b2c3d4`**. Do **not** apply Slice C live from this preflight.
 
 **Subsequent recon note (2026-09-11):** Git parent of product **`70e571140e12377aa5bd009b598530576401113b`** is **`010f6d641a756ceb2ab67475a284d3b8426c7b20`** (`docs: correct FG-032 Issued vs Accepted freeze`), not FG-031 Slice B **`5e1082af68e0eb145d9da01c0fa26585f6b8b9d1`**. Architecture **`93773820e410e327cd81919172c49a6f661def9e`**. Docs pin **`9c254a38c39ef866cad3c5aca1f01cae4907f376`**. Live current remains **`d8e9f0a1b2c3`**. Repository head remains **`e9f0a1b2c3d4`**.
 
@@ -41,7 +43,7 @@ This document remains the architecture preflight. Slices A+B product code, live 
 | Layer | State |
 |-------|--------|
 | **Current** | Authoritative `Estimate` / `EstimateVersion`; FG-027 CURRENT `EstimateCostingSnapshot`; FG-009 `EstimatePricingSnapshot` (CURRENT vs `STALE / REQUIRES RE-APPLY`); Issued/Accepted `Proposal` + PDF (output 2); FG-012 internal breakdown (output 1); FG-031 frozen `material_procurement` / `labour_delivery` on costing snapshot lines; Family 04 reusable master **outside Git**. FG-032 Slices A+B package/HTML/PDF **live-migrated / bounded office UAT PASS**. No QuickBooks client, OAuth, IIF, CSV, or “entered in QuickBooks” record in `app/`. |
-| **Intended remaining (FG-032)** | Slice C ENTERED/REVERSED confirmation remains **not authorized**. |
+| **Intended remaining (FG-032)** | Slice C live migrate + office UAT remain **not run**. Gate not closed. |
 | **Future / POST-V1** | Option B live QuickBooks Online API; CSV/IIF/Excel only if a later gate proves a supported import contract; invoices, bills, POs, payroll, payments, banking, actual-cost sync; stored hybrid amount split. |
 
 ---
@@ -494,9 +496,11 @@ Services (names): `app/services/estimate_quickbooks.py` assemble/validate/issue/
 
 Do not begin Slice A without a separate implementation prompt and Joel authorization. Prefer ADR-049 **Accepted** before schema if Joel requires acceptance first; this recording leaves ADR-049 **Proposed**.
 
-**Subsequent status (2026-09-11):** Slices A+B were later implemented under Joel authorization. ADR-049 is **Accepted**. Slice C remains **NOT IMPLEMENTATION-AUTHORIZED**. Do **not** live-migrate from this preflight.
+**Subsequent status (2026-09-11):** Slices A+B were later implemented under Joel authorization. ADR-049 is **Accepted**.
 
-**Subsequent status (2026-09-11 live migrate / UAT):** Live migration **applied**. Bounded office UAT **PASS**. Do **not** re-migrate from this preflight. Do **not** implement Slice C from this preflight.
+**Subsequent status (2026-09-11 live migrate / UAT):** Live migration **applied**. Bounded office UAT **PASS**. Do **not** re-migrate Slices A+B from this preflight.
+
+**Subsequent status (2026-09-11 Slice C implementation):** Slice C **implemented in the repository**. Do **not** live-migrate Slice C from this preflight.
 
 ---
 

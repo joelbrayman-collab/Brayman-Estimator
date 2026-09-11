@@ -1,7 +1,7 @@
 """Estimating-owned QuickBooks-ready package freeze (FG-032 / ADR-049).
 
 Copied facts only. Does not own costing, pricing, Proposal, or Scope Delivery.
-Slice C entry events are not modeled.
+Slice C models append-only human entry-confirmation events.
 """
 
 from datetime import datetime
@@ -26,6 +26,17 @@ QUICKBOOKS_PACKAGE_STATUSES = (
     QB_STATUS_VOID,
 )
 QUICKBOOKS_ISSUED_STATUSES = (QB_STATUS_ISSUED, QB_STATUS_SUPERSEDED, QB_STATUS_VOID)
+
+QB_EVENT_ENTERED = "ENTERED"
+QB_EVENT_REVERSED = "REVERSED"
+QB_EVENT_CORRECTED = "CORRECTED"
+QUICKBOOKS_ENTRY_EVENT_KINDS = (
+    QB_EVENT_ENTERED,
+    QB_EVENT_REVERSED,
+    QB_EVENT_CORRECTED,
+)
+ENTRY_STATE_NOT_ENTERED = "NOT ENTERED"
+ENTRY_STATE_ENTERED = "ENTERED"
 
 
 class EstimateQuickBooksPackage(db.Model):
@@ -181,6 +192,11 @@ class EstimateQuickBooksPackage(db.Model):
         ),
         cascade="all, delete-orphan",
     )
+    entry_events = db.relationship(
+        "EstimateQuickBooksEntryEvent",
+        back_populates="package",
+        order_by="EstimateQuickBooksEntryEvent.id",
+    )
 
     @validates("status")
     def _validate_status(self, key, value):
@@ -263,3 +279,73 @@ class EstimateQuickBooksCostClassLine(db.Model):
 
     def __repr__(self):
         return f"<EstimateQuickBooksCostClassLine pkg={self.package_id} {self.id}>"
+
+
+class EstimateQuickBooksEntryEvent(db.Model):
+    """Append-only human QuickBooks entry confirmation (FG-032 Slice C).
+
+    Derived entry state is computed from ordered events. Rows are immutable.
+    """
+
+    __tablename__ = "estimate_quickbooks_entry_events"
+    __table_args__ = (
+        db.CheckConstraint(
+            "kind IN ('ENTERED', 'REVERSED', 'CORRECTED')",
+            name="ck_estimate_quickbooks_entry_events_kind",
+        ),
+        Index(
+            "ix_estimate_quickbooks_entry_events_org_package_id",
+            "organization_id",
+            "estimate_quickbooks_package_id",
+            "id",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    project_id = db.Column(
+        db.Integer,
+        db.ForeignKey("projects.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    estimate_quickbooks_package_id = db.Column(
+        db.Integer,
+        db.ForeignKey("estimate_quickbooks_packages.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    kind = db.Column(db.String(20), nullable=False)
+    actor_user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    actor_display_name = db.Column(db.String(150), nullable=False)
+    occurred_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    note = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    organization = db.relationship("Organization")
+    project = db.relationship("Project")
+    package = db.relationship(
+        "EstimateQuickBooksPackage",
+        back_populates="entry_events",
+    )
+
+    @validates("kind")
+    def _validate_kind(self, key, value):
+        if value not in QUICKBOOKS_ENTRY_EVENT_KINDS:
+            raise ValueError("QuickBooks entry event kind is not valid.")
+        return value
+
+    def __repr__(self):
+        return (
+            f"<EstimateQuickBooksEntryEvent {self.kind} "
+            f"pkg={self.estimate_quickbooks_package_id} id={self.id}>"
+        )

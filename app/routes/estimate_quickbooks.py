@@ -1,4 +1,4 @@
-"""Project Hub PRICE — QuickBooks-ready entry (FG-032 Slices A+B)."""
+"""Project Hub PRICE — QuickBooks-ready entry (FG-032 Slices A+B+C)."""
 
 from flask import (
     Blueprint,
@@ -12,17 +12,23 @@ from flask import (
 from flask_login import current_user
 from io import BytesIO
 
+from app import db
+
 from app.models import Project
 from app.models.estimate import Estimate, EstimateVersion
 from app.services.auth import current_actor_display_name, form_actor
 from app.services.estimate_quickbooks import (
     EstimateQuickBooksError,
     assemble_quickbooks_preview,
+    confirm_entered,
+    correct_entry,
+    entry_summaries_for_packages,
     get_package_or_404,
     issue_package,
     issued_pdf_bytes,
     list_packages_for_project,
     regenerate_draft,
+    reverse_entry,
     save_reviewed_package,
 )
 from app.services.organizations import get_current_organization_id
@@ -91,11 +97,13 @@ def review(project_id):
         organization_id=org_id,
     )
     packages = list_packages_for_project(project.id, organization_id=org_id)
+    entry_by_package = entry_summaries_for_packages(packages, organization_id=org_id)
     return render_template(
         "projects/quickbooks_entry.html",
         project=project,
         preview=preview,
         packages=packages,
+        entry_by_package=entry_by_package,
         actor_display_name=current_actor_display_name(),
     )
 
@@ -178,6 +186,96 @@ def regenerate_route(project_id):
             "success",
         )
     except EstimateQuickBooksError as exc:
+        flash(str(exc), "error")
+    return _review_redirect(project, version)
+
+
+@estimate_quickbooks_bp.route(
+    "/<int:project_id>/quickbooks-packages/<int:package_id>/entered",
+    methods=["POST"],
+)
+def confirm_entered_route(project_id, package_id):
+    project, org_id = _project(project_id)
+    version = _selected_version(project, org_id)
+    try:
+        package = get_package_or_404(
+            package_id, project_id=project.id, organization_id=org_id
+        )
+        confirm_entered(
+            package,
+            actor=form_actor("actor_display_name", fallback=current_actor_display_name()),
+            actor_user_id=_actor_user_id(),
+            note=request.form.get("note"),
+            organization_id=org_id,
+        )
+        flash(
+            "Entered in QuickBooks recorded. CalibraytAI did not post to QuickBooks "
+            "and did not verify QuickBooks. Confirmation does not change the "
+            "estimate or Proposal. Event history is retained.",
+            "success",
+        )
+    except EstimateQuickBooksError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+    return _review_redirect(project, version)
+
+
+@estimate_quickbooks_bp.route(
+    "/<int:project_id>/quickbooks-packages/<int:package_id>/reverse-entry",
+    methods=["POST"],
+)
+def reverse_entry_route(project_id, package_id):
+    project, org_id = _project(project_id)
+    version = _selected_version(project, org_id)
+    try:
+        package = get_package_or_404(
+            package_id, project_id=project.id, organization_id=org_id
+        )
+        reverse_entry(
+            package,
+            actor=form_actor("actor_display_name", fallback=current_actor_display_name()),
+            reason=request.form.get("reason"),
+            actor_user_id=_actor_user_id(),
+            organization_id=org_id,
+        )
+        flash(
+            "QuickBooks entry reversed in CalibraytAI only. Reversal changes only "
+            "CalibraytAI’s recorded state. CalibraytAI did not post to QuickBooks "
+            "and did not verify QuickBooks. Event history is retained.",
+            "success",
+        )
+    except EstimateQuickBooksError as exc:
+        db.session.rollback()
+        flash(str(exc), "error")
+    return _review_redirect(project, version)
+
+
+@estimate_quickbooks_bp.route(
+    "/<int:project_id>/quickbooks-packages/<int:package_id>/correct-entry",
+    methods=["POST"],
+)
+def correct_entry_route(project_id, package_id):
+    project, org_id = _project(project_id)
+    version = _selected_version(project, org_id)
+    try:
+        package = get_package_or_404(
+            package_id, project_id=project.id, organization_id=org_id
+        )
+        correct_entry(
+            package,
+            actor=form_actor("actor_display_name", fallback=current_actor_display_name()),
+            note=request.form.get("note"),
+            actor_user_id=_actor_user_id(),
+            organization_id=org_id,
+        )
+        flash(
+            "QuickBooks entry correction recorded. CalibraytAI did not post to "
+            "QuickBooks and did not verify QuickBooks. The estimate and Proposal "
+            "are unchanged. Event history is retained.",
+            "success",
+        )
+    except EstimateQuickBooksError as exc:
+        db.session.rollback()
         flash(str(exc), "error")
     return _review_redirect(project, version)
 

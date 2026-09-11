@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-11 — FG-032 Slice C implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-11 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Implement FG-032 Slice C human ENTERED/REVERSED/CORRECTED confirmation after the post-UAT documentation cleanup baseline. |
+| Business decision | Joel authorized Slice C implementation. Do **not** apply the Slice C migration live. Do **not** conduct Slice C office UAT. Do **not** close FG-032. Do **not** rescore V1. |
+| Architectural decision | Append-only `estimate_quickbooks_entry_events`. Derived state from ordered events. ENTERED only on ISSUED. Duplicate active ENTERED BLOCK. REVERSED/CORRECTED require nonblank reason and active ENTERED. No QuickBooks API/OAuth/CSV/IIF. |
+| Prompt template used | Joel/ChatGPT FG-032 Slice C implementation (corrected post-cleanup baseline, 11 Sep 2026) |
+| Approved Cursor prompt summary | Verify `main` @ `e4336f8`; implement Slice C model/migration/service/routes/UI/tests/docs; one additive Alembic after `e9f0a1b2c3d4`; do not live-migrate; commit; push; STOP. |
+| Files expected to change | FG-032 models/services/routes/templates/tests; one new Alembic revision; governance docs |
+| Files prohibited from changing | Live database; `e9f0a1b2c3d4`; Project 26 UAT records; A+B freeze semantics; V1 scores |
+| Implementation result | Slice C implemented. Live current remains **`e9f0a1b2c3d4`**. Repository head **`f0a1b2c3d4e5`**. One graph head. |
+| Tests | Dedicated **36 passed**, 479 warnings, 15.04s. Affected regressions **203 passed**, 1083 warnings, 77.92s. Full **`./venv/bin/python -m pytest -q` → 764 passed**, 2652 warnings, 396.89s. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Slice C not live-migrated. Slice C office UAT not run. FG-032 overall not closed. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate Slice C. Do **not** conduct Slice C office UAT. Do **not** close FG-032. Do **not** rescore V1. |
+| Next approved prompt | None from this implementation. |
+| Commit hash | This Slice C implementation. Parent **`e4336f8dbe5f40f971f253f2e0c7c8781138eb29`**. |
+
 ### 2026-09-11 — FG-032 post-UAT documentation correction
 
 | Field | Content |

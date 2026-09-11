@@ -10,8 +10,9 @@
         <h1>QuickBooks-ready entry</h1>
         <p class="muted-copy">
             Governed internal artifacts for <strong>manual</strong> QuickBooks Estimate entry.
-            Not posted to QuickBooks. Not an import file. Download does not confirm entry.
-            There is no Entered-in-QuickBooks action in this slice.
+            CalibraytAI did not post to QuickBooks. CalibraytAI did not verify QuickBooks.
+            Downloading does not mean entered. Confirmation does not change the estimate or Proposal.
+            Reversal changes only CalibraytAI’s recorded state. Event history is retained.
         </p>
     </div>
     <div>
@@ -196,6 +197,7 @@
                 <th>Status</th>
                 <th>Proposal</th>
                 <th>Issued</th>
+                <th>Entry state</th>
                 <th>Downloads</th>
             </tr>
         </thead>
@@ -206,6 +208,10 @@
                 <td><span class="status">{{ package.status }}</span></td>
                 <td>{{ package.proposal_number }}</td>
                 <td>{{ package.issued_at or "—" }}</td>
+                <td>
+                    {% set entry = entry_by_package.get(package.id, {"state": "NOT ENTERED", "events": []}) %}
+                    <span class="status">{{ entry.state }}</span>
+                </td>
                 <td>
                     {% if package.status in ('ISSUED', 'SUPERSEDED', 'VOID') and package.sales_storage_key %}
                     <a href="{{ url_for('estimate_quickbooks.download_sales_pdf', project_id=project.id, package_id=package.id) }}">Sales entry PDF</a>
@@ -236,6 +242,97 @@
     </table>
     {% else %}
     <p class="muted-copy">No QuickBooks-ready packages yet.</p>
+    {% endif %}
+</section>
+
+<section class="form-panel">
+    <h2>Entered in QuickBooks</h2>
+    <p class="muted-copy">
+        This is a human record only. CalibraytAI did not post to QuickBooks and did not
+        verify QuickBooks. Downloading does not mean entered. Confirmation does not change the estimate or Proposal.
+        Reversal changes only CalibraytAI’s recorded state. Event history is retained.
+    </p>
+    {% if packages %}
+        {% for package in packages %}
+            {% if package.status in ('ISSUED', 'SUPERSEDED', 'VOID') %}
+                {% set entry = entry_by_package.get(package.id, {"state": "NOT ENTERED", "events": []}) %}
+                <div class="form-panel" style="margin-top: 12px;">
+                    <p class="eyebrow">{{ package.package_number }} · {{ package.status }}</p>
+                    <p>Current human-recorded entry state: <strong>{{ entry.state }}</strong></p>
+                    {% if package.status == 'ISSUED' and entry.state != 'ENTERED' %}
+                    <form method="post" action="{{ url_for('estimate_quickbooks.confirm_entered_route', project_id=project.id, package_id=package.id) }}" style="margin-bottom: 12px;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        {% if preview.version %}<input type="hidden" name="version_id" value="{{ preview.version.id }}">{% endif %}
+                        <label>
+                            Actor
+                            <input type="text" name="actor_display_name" value="{{ actor_display_name }}" required>
+                        </label>
+                        <p class="muted-copy">
+                            I confirm that a human typed this ISSUED package into QuickBooks.
+                            CalibraytAI did not post or verify that entry.
+                        </p>
+                        <button type="submit">Entered in QuickBooks</button>
+                    </form>
+                    {% endif %}
+                    {% if entry.state == 'ENTERED' %}
+                    <form method="post" action="{{ url_for('estimate_quickbooks.reverse_entry_route', project_id=project.id, package_id=package.id) }}" style="margin-bottom: 12px;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        {% if preview.version %}<input type="hidden" name="version_id" value="{{ preview.version.id }}">{% endif %}
+                        <input type="hidden" name="actor_display_name" value="{{ actor_display_name }}">
+                        <label>
+                            Reversal reason
+                            <input type="text" name="reason" required>
+                        </label>
+                        <p class="muted-copy">
+                            Reversal changes only CalibraytAI’s recorded state. Event history is retained.
+                        </p>
+                        <button type="submit">Reverse entry</button>
+                    </form>
+                    <form method="post" action="{{ url_for('estimate_quickbooks.correct_entry_route', project_id=project.id, package_id=package.id) }}" style="margin-bottom: 12px;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        {% if preview.version %}<input type="hidden" name="version_id" value="{{ preview.version.id }}">{% endif %}
+                        <input type="hidden" name="actor_display_name" value="{{ actor_display_name }}">
+                        <label>
+                            Correction note
+                            <input type="text" name="note" required>
+                        </label>
+                        <p class="muted-copy">
+                            Correction appends history and leaves the package ENTERED.
+                            The estimate and Proposal are unchanged.
+                        </p>
+                        <button type="submit">Record correction</button>
+                    </form>
+                    {% endif %}
+                    <h3>Event history</h3>
+                    {% if entry.events %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Kind</th>
+                                <th>Actor</th>
+                                <th>Time</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in entry.events %}
+                            <tr>
+                                <td>{{ event.kind }}</td>
+                                <td>{{ event.actor_display_name }}</td>
+                                <td>{{ event.occurred_at }}</td>
+                                <td>{{ event.note or "—" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p class="muted-copy">No entry events. Downloading does not create history.</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+    <p class="muted-copy">Issue a package before recording Entered in QuickBooks.</p>
     {% endif %}
 </section>
 {% endblock %}

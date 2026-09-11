@@ -32,6 +32,19 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-11 — FG-032 Slice C implementation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-032 Slice C entry confirmation |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / OFFICE UAT NOT RUN.** Slices A+B remain **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**. Gate **OVERALL NOT CLOSED**. V1 remains **55% / 3 of 11**. V1-04 **PARTIAL**. V1-05 **PARTIAL**. |
+| Branch | `main` |
+| Objective | Implement explicit human ENTERED confirmation, REVERSED, CORRECTED, duplicate active-entry BLOCK, append-only events, org-scoped UI/routes, one additive Alembic revision after `e9f0a1b2c3d4`. |
+| Deliverables | `EstimateQuickBooksEntryEvent`; revision **`f0a1b2c3d4e5`**; service/routes/UI; focused + regression + full-suite tests; governance updates. Live DB **not** upgraded. |
+| Validation | Dedicated **36 passed** / 15.04s. Affected regressions **203 passed** / 77.92s. Full **764 passed** / 2652 warnings / 396.89s. Live current remains **`e9f0a1b2c3d4`**. One graph head **`f0a1b2c3d4e5`**. |
+| Next milestone | Slice C live migrate + office UAT — **NOT AUTHORIZED FROM THIS IMPLEMENTATION**. Do **not** close FG-032. Do **not** rescore V1. |
+| Date | 2026-09-11 |
+
 ### 2026-09-11 — FG-032 post-UAT documentation correction
 
 | Field | Content |

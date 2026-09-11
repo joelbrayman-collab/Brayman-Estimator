@@ -44,6 +44,7 @@ From [`app/__init__.py`](../app/__init__.py):
 | `field_bp` | `app/routes/field.py` |
 | `supplier_package_bp` | `app/routes/supplier_package.py` — FG-029 Hub PRICE mapping review / Supplier Package (**CLOSED / OPERATIONAL FOR UAT**) |
 | `scope_delivery_bp` | `app/routes/scope_delivery.py` — FG-031 Hub PRICE Scope Delivery Review (**CLOSED / OPERATIONAL FOR UAT**; Slice A and Slice B **OPERATIONAL FOR UAT**) |
+| `estimate_quickbooks_bp` | `app/routes/estimate_quickbooks.py` — FG-032 Hub PRICE QuickBooks-ready entry (Slices A+B **LIVE-MIGRATED**; Slice C **IMPLEMENTED / NOT LIVE-MIGRATED**) |
 
 Shell context: [`app/shell.py`](../app/shell.py). Navigation SSOT: [`app/navigation.py`](../app/navigation.py).
 
@@ -57,7 +58,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Projects | `Project` | `app/models/project.py` |
 | Cost library | `CostItem` | `app/models/cost_item.py` — org costing record; **not** CalibraytAI material identity ([material-catalogue-architecture.md](architecture/material-catalogue-architecture.md) Intended) |
 | Assemblies | `Assembly`, `AssemblyItem` | `app/models/assembly.py` |
-| Estimating | `Estimate`, `EstimateVersion`, `EstimateSection`, `EstimateLineItem`, `TakeoffEstimateInsertion`, `TakeoffEstimateInsertionCitation`, `EstimateScopeDelivery`, `Subcontractor`, `SubcontractQuoteEvidence` | `app/models/estimate.py`; `app/models/takeoff_estimate_insertion.py` (FG-026; **live-migrated**); `app/models/estimate_scope_delivery.py` (FG-031 Slice A; migration **`c7d8e9f0a1b2` applied live**); `app/models/subcontractor.py` (FG-031 Slice B; migration **`d8e9f0a1b2c3` applied live**) |
+| Estimating | `Estimate`, `EstimateVersion`, `EstimateSection`, `EstimateLineItem`, `TakeoffEstimateInsertion`, `TakeoffEstimateInsertionCitation`, `EstimateScopeDelivery`, `Subcontractor`, `SubcontractQuoteEvidence`, `EstimateQuickBooksPackage`, `EstimateQuickBooksSalesLine`, `EstimateQuickBooksCostClassLine`, `EstimateQuickBooksEntryEvent` | `app/models/estimate.py`; `app/models/takeoff_estimate_insertion.py` (FG-026; **live-migrated**); `app/models/estimate_scope_delivery.py` (FG-031 Slice A; migration **`c7d8e9f0a1b2` applied live**); `app/models/subcontractor.py` (FG-031 Slice B; migration **`d8e9f0a1b2c3` applied live**); `app/models/estimate_quickbooks.py` (FG-032; A+B **`e9f0a1b2c3d4` applied live**; Slice C **`f0a1b2c3d4e5` not applied live**) |
 | Proposals | `ProposalTemplate`, `Proposal`, `ProposalSection`, `ProposalLineItem` | `app/models/proposal.py` |
 | Project controls | `ChangeOrder`, `ChangeOrderItem` | `app/project_controls/models.py` |
 | Plan Intelligence | `DrawingPackage`, `DrawingRevision`, `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `PlanScaleCalibration`, `PlanMeasurement`, `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem` | `app/plan_intelligence/models.py` |
@@ -79,7 +80,7 @@ Notable behaviours evidenced in code/tests:
 
 | Layer | Paths |
 |-------|-------|
-| Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py`, `build.py`, `build_storage.py`, `material_requirements.py`, `supplier_catalogue.py`, `supplier_package_pdf.py`, `estimate_costing.py`, `estimate_scope_delivery.py` |
+| Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py`, `build.py`, `build_storage.py`, `material_requirements.py`, `supplier_catalogue.py`, `supplier_package_pdf.py`, `estimate_costing.py`, `estimate_scope_delivery.py`, `estimate_quickbooks.py` |
 | Project controls | `app/project_controls/services.py`, `repository.py`, `pdf.py` |
 | Plan Intelligence | `app/plan_intelligence/services.py`, `processing.py`, `extraction.py`, `storage.py`, `packages.py`, `audit.py`, `takeoff.py`, `takeoff_extractors.py` |
 | Generic repositories package | `app/repositories/` (present; inspect before assuming usage) |
@@ -94,7 +95,7 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic **repository** graph head: **`d8e9f0a1b2c3`** (FG-031 Slice B). Live development/UAT `flask db current`: **`d8e9f0a1b2c3`**. Live current **equals** repository head. One graph head. Slice A **applied live** 2026-09-09. Slice B **applied live** 2026-09-10. Verify `flask db current` per environment before relying on it.
+- Alembic **repository** graph head: **`f0a1b2c3d4e5`** (FG-032 Slice C). Live development/UAT `flask db current`: **`e9f0a1b2c3d4`** (FG-032 Slices A+B). Live current **lags** repository head. One graph head. Do **not** apply Slice C live from this implementation. Verify `flask db current` per environment before relying on it.
 
 ### Tests
 

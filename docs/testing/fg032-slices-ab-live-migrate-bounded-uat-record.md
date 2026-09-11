@@ -13,6 +13,8 @@
 
 This file records Slices A+B live-migration and UAT facts only. It does **not** implement Slice C, live QuickBooks API, CSV/IIF, FG-030, or V1-04. It does **not** close FG-032.
 
+**Subsequent status (2026-09-11 Slice C live migrate + bounded office UAT):** Slice C is **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**. Live current **`f1a2b3c4d5e6 (head)`**. Evidence [fg032-slice-c-live-migrate-bounded-uat-record.md](fg032-slice-c-live-migrate-bounded-uat-record.md). FG-032 **OVERALL NOT CLOSED**. The A+B evidence in this file remains historical and unchanged.
+
 **Subsequent status (2026-09-11 Slice C atomic ENTERED repair):** Unique occupancy **`f1a2b3c4d5e6`** was added after **`f0a1b2c3d4e5`**. Slice C was **not** live-migrated. Slice C office UAT was **not** run. The A+B evidence in this file remains historical and unchanged. Live current remains **`e9f0a1b2c3d4`**.
 
 **Subsequent status (2026-09-11 Slice C implementation):** Slice C was later **IMPLEMENTED / TESTED / COMMITTED / PUSHED** in the repository (`f0a1b2c3d4e5`). Slice C was **not** live-migrated. Slice C office UAT was **not** run. The A+B evidence in this file remains historical and unchanged. Live current remains **`e9f0a1b2c3d4`**.

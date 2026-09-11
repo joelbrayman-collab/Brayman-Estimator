@@ -44,7 +44,7 @@ From [`app/__init__.py`](../app/__init__.py):
 | `field_bp` | `app/routes/field.py` |
 | `supplier_package_bp` | `app/routes/supplier_package.py` — FG-029 Hub PRICE mapping review / Supplier Package (**CLOSED / OPERATIONAL FOR UAT**) |
 | `scope_delivery_bp` | `app/routes/scope_delivery.py` — FG-031 Hub PRICE Scope Delivery Review (**CLOSED / OPERATIONAL FOR UAT**; Slice A and Slice B **OPERATIONAL FOR UAT**) |
-| `estimate_quickbooks_bp` | `app/routes/estimate_quickbooks.py` — FG-032 Hub PRICE QuickBooks-ready entry (Slices A+B **LIVE-MIGRATED**; Slice C **IMPLEMENTED / ATOMIC ENTERED REPAIR / NOT LIVE-MIGRATED**) |
+| `estimate_quickbooks_bp` | `app/routes/estimate_quickbooks.py` — FG-032 Hub PRICE QuickBooks-ready entry (Slices A+B **LIVE-MIGRATED**; Slice C **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS**) |
 
 Shell context: [`app/shell.py`](../app/shell.py). Navigation SSOT: [`app/navigation.py`](../app/navigation.py).
 
@@ -58,7 +58,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Projects | `Project` | `app/models/project.py` |
 | Cost library | `CostItem` | `app/models/cost_item.py` — org costing record; **not** CalibraytAI material identity ([material-catalogue-architecture.md](architecture/material-catalogue-architecture.md) Intended) |
 | Assemblies | `Assembly`, `AssemblyItem` | `app/models/assembly.py` |
-| Estimating | `Estimate`, `EstimateVersion`, `EstimateSection`, `EstimateLineItem`, `TakeoffEstimateInsertion`, `TakeoffEstimateInsertionCitation`, `EstimateScopeDelivery`, `Subcontractor`, `SubcontractQuoteEvidence`, `EstimateQuickBooksPackage`, `EstimateQuickBooksSalesLine`, `EstimateQuickBooksCostClassLine`, `EstimateQuickBooksEntryEvent`, `EstimateQuickBooksEntryOccupancy` | `app/models/estimate.py`; `app/models/takeoff_estimate_insertion.py` (FG-026; **live-migrated**); `app/models/estimate_scope_delivery.py` (FG-031 Slice A; migration **`c7d8e9f0a1b2` applied live**); `app/models/subcontractor.py` (FG-031 Slice B; migration **`d8e9f0a1b2c3` applied live**); `app/models/estimate_quickbooks.py` (FG-032; A+B **`e9f0a1b2c3d4` applied live**; Slice C **`f0a1b2c3d4e5` / occupancy `f1a2b3c4d5e6` not applied live**) |
+| Estimating | `Estimate`, `EstimateVersion`, `EstimateSection`, `EstimateLineItem`, `TakeoffEstimateInsertion`, `TakeoffEstimateInsertionCitation`, `EstimateScopeDelivery`, `Subcontractor`, `SubcontractQuoteEvidence`, `EstimateQuickBooksPackage`, `EstimateQuickBooksSalesLine`, `EstimateQuickBooksCostClassLine`, `EstimateQuickBooksEntryEvent`, `EstimateQuickBooksEntryOccupancy` | `app/models/estimate.py`; `app/models/takeoff_estimate_insertion.py` (FG-026; **live-migrated**); `app/models/estimate_scope_delivery.py` (FG-031 Slice A; migration **`c7d8e9f0a1b2` applied live**); `app/models/subcontractor.py` (FG-031 Slice B; migration **`d8e9f0a1b2c3` applied live**); `app/models/estimate_quickbooks.py` (FG-032; A+B **`e9f0a1b2c3d4` applied live**; Slice C **`f0a1b2c3d4e5` / occupancy `f1a2b3c4d5e6` applied live**) |
 | Proposals | `ProposalTemplate`, `Proposal`, `ProposalSection`, `ProposalLineItem` | `app/models/proposal.py` |
 | Project controls | `ChangeOrder`, `ChangeOrderItem` | `app/project_controls/models.py` |
 | Plan Intelligence | `DrawingPackage`, `DrawingRevision`, `PlanDocument`, `PlanPage`, `ProcessingAttempt`, `ProcessingResult`, `PlanAuditEvent`, `PlanSheet`, `PlanSheetPage`, `PlanSheetSuggestion`, `PlanScaleCalibration`, `PlanMeasurement`, `TakeoffExtractionRun`, `TakeoffCandidate`, `TakeoffPackage`, `TakeoffPackageItem` | `app/plan_intelligence/models.py` |
@@ -95,7 +95,7 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic **repository** graph head: **`f1a2b3c4d5e6`** (FG-032 Slice C occupancy repair). Live development/UAT `flask db current`: **`e9f0a1b2c3d4`** (FG-032 Slices A+B). Live current **lags** repository head. One graph head. Do **not** apply Slice C events **`f0a1b2c3d4e5`** or occupancy **`f1a2b3c4d5e6`** live from this repair. Verify `flask db current` per environment before relying on it.
+- Alembic **repository** graph head: **`f1a2b3c4d5e6`** (FG-032 Slice C occupancy). Live development/UAT `flask db current`: **`f1a2b3c4d5e6 (head)`**. One graph head. Slice C events **`f0a1b2c3d4e5`** and occupancy **`f1a2b3c4d5e6` applied live** 2026-09-11. Verify `flask db current` per environment before relying on it.
 
 ### Tests
 

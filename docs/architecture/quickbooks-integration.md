@@ -2,9 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Intended V1 Option A implemented. Slices A+B live-migrated and bounded office UAT PASS. Slice C implemented and atomically repaired in repository / not live-migrated / office UAT not run.** Option B live API remains **POST-V1**. |
+| Status | **Intended V1 Option A implemented. Slices A+B and Slice C live-migrated and bounded office UAT PASS.** Option B live API remains **POST-V1**. |
 | Updated | 2026-09-11 |
-| Implementation | Slices A+B+C in `app/services/estimate_quickbooks.py`, `app/routes/estimate_quickbooks.py`. Hub PRICE `/projects/<id>/quickbooks-entry`. A+B migration **`e9f0a1b2c3d4` applied live**. Slice C events **`f0a1b2c3d4e5`** and occupancy **`f1a2b3c4d5e6` not applied live**. |
+| Implementation | Slices A+B+C in `app/services/estimate_quickbooks.py`, `app/routes/estimate_quickbooks.py`. Hub PRICE `/projects/<id>/quickbooks-entry`. A+B migration **`e9f0a1b2c3d4` applied live**. Slice C events **`f0a1b2c3d4e5`** and occupancy **`f1a2b3c4d5e6` applied live**. Live current **`f1a2b3c4d5e6 (head)`**. |
 
 ## Purpose
 
@@ -14,7 +14,7 @@ Define the architecture boundary for handing an **approved customer estimate** t
 
 | Option | Meaning | V1 status |
 |--------|---------|-----------|
-| **A.** Governed QuickBooks-ready output / controlled human-entry workflow | Internal office HTML/PDF pair a human uses to type a QuickBooks Estimate | **SELECTED.** Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**. Slice C **IMPLEMENTED / ATOMIC ENTERED REPAIR TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / OFFICE UAT NOT RUN**. |
+| **A.** Governed QuickBooks-ready output / controlled human-entry workflow | Internal office HTML/PDF pair a human uses to type a QuickBooks Estimate | **SELECTED.** Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**. Slice C **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**. |
 | **B.** Live QuickBooks Online API | OAuth / SDK / auto-post | **POST-V1 / NOT AUTHORIZED** unless Joel separately reverses |
 
 Distinguish:
@@ -31,7 +31,7 @@ Do **not** claim CSV, IIF, Excel, SDK, or API compatibility.
 ## Current state
 
 - No QuickBooks Online API, OAuth, IIF, or CSV export exists in the application.
-- Outputs 1–2 exist ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**). Output 3 Slices A+B are **live-migrated / bounded office UAT PASS** ([FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **OVERALL NOT CLOSED**). Slice C is **implemented and atomically repaired in the repository / not live-migrated / office UAT not run**.
+- Outputs 1–2 exist ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**). Output 3 Slices A+B and Slice C are **live-migrated / bounded office UAT PASS** ([FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **OVERALL NOT CLOSED**).
 - Family 04 **QuickBooks Estimate / Entry Sheet** is an **INTERNAL ENTRY REFERENCE** reusable master ([FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md)). Not a customer deliverable. Not an API.
 - [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / OVERALL NOT CLOSED**. Product SHA **`70e571140e12377aa5bd009b598530576401113b`**. Product parent **`010f6d641a756ceb2ab67475a284d3b8426c7b20`**. Canonical UAT project **id 26**.
 - [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted** by Joel Brayman, 10 Sep 2026.

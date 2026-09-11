@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-11 — FG-032 Slice C live migrate + bounded office UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-11 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Governed live DB backup; live migrate through `f1a2b3c4d5e6`; bounded DEMO/SYNTHETIC office UAT of FG-032 Slice C. No FG-032 close. No V1 rescore. No live QuickBooks API. No CSV/IIF. No FG-030. No V1-04. |
+| Business decision | Slice C becomes LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT. Slices A+B remain LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT. Overall FG-032 remains NOT CLOSED. V1 remains **55% / 3 of 11**. V1-04 **PARTIAL**. V1-05 **PARTIAL**. BMR DEMO READY remains **NO**. |
+| Architectural decision | Pending chain `e9f0a1b2c3d4` → `f0a1b2c3d4e5` → `f1a2b3c4d5e6` applied live. Occupancy uniqueness is the package PK. Historical A+B UAT evidence remains historical. |
+| Prompt template used | Joel/ChatGPT FG-032 Slice C live migration + bounded office UAT (11 Sep 2026) |
+| Approved Cursor prompt summary | Verify `main` @ `00de051`; recoverable backup; apply `f1a2b3c4d5e6`; focused + regression + full suite; bounded DEMO office UAT; docs/UAT record; docs-only commit/push; A–AF report; STOP. No close gate. No V1 rescore. |
+| Files expected to change | Governance/docs and UAT record only after PASS |
+| Files prohibited from changing | Application code; templates; CSS; migrations; live QuickBooks API; CSV/IIF; FG-030; V1-04; ADR-008 acceptance; LEARN; contracts; Native Signing; Observation Delete; website; HostPapa; backup file (gitignored) |
+| Implementation result | Live `flask db upgrade f1a2b3c4d5e6` **PASS**. Live current **`f1a2b3c4d5e6 (head)`**. Bounded DEMO office UAT **97 cases PASS** on project **26** package **1**. Product correction **none**. |
+| Tests | This session: dedicated **37 passed**, 496 warnings, 16.61s. Affected regressions **256 passed**, 1147 warnings, 88.48s. Full **`./venv/bin/python -m pytest -q` → 765 passed**, 2669 warnings, 299.75s. Historical occupancy-repair 37/256/765 remain historical. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | FG-032 overall NOT CLOSED. FG-030 not implementation-authorized. V1-04 not begun. Ontario/fail-closed contract blocker unchanged. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** close FG-032. Do **not** rescore V1. Do **not** implement FG-030. Do **not** begin V1-04. |
+| Next approved prompt | None from this UAT. |
+| Commit hash | This documentation commit. Parent **`00de0517b994635dec0be04a6e581167f690f7fe`**. |
+
 ### 2026-09-11 — FG-032 Slice C atomic ENTERED occupancy repair
 
 | Field | Content |

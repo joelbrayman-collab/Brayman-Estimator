@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | **Intended / governing product architecture** (not fully implemented) |
 | Updated | 2026-09-10 |
-| Implementation | **FG-012** authorizes outputs **1 and 2**. **CLOSED / OPERATIONAL FOR UAT** (2026-08-30). Output 3 Slices A+B are live-migrated under [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) (**LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**; Slice C **IMPLEMENTED / NOT LIVE-MIGRATED / OFFICE UAT NOT RUN / OVERALL NOT CLOSED**; Joel Option A 2026-09-10). Output 4 remains Future. Contract/warranty generation is the future CONTRACT home of [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) (**RECORDED / NOT IMPLEMENTATION-AUTHORIZED**). |
+| Implementation | **FG-012** authorizes outputs **1 and 2**. **CLOSED / OPERATIONAL FOR UAT** (2026-08-30). Output 3 Slices A+B and Slice C are live-migrated under [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) (**LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**; **OVERALL NOT CLOSED**; Joel Option A 2026-09-10). Output 4 remains Future. Contract/warranty generation is the future CONTRACT home of [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) (**RECORDED / NOT IMPLEMENTATION-AUTHORIZED**). |
 
 ## Purpose
 
@@ -73,7 +73,7 @@ Full four-output “catalogue” items such as supplier quotations remain **Futu
 
 **Audience:** Internal office / accounting. **Not** a customer deliverable. Selling **values** must match the approved customer estimate / Issued or Accepted Proposal.
 
-**Status:** **SLICES A+B LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / SLICE C IMPLEMENTED / NOT LIVE-MIGRATED / OFFICE UAT NOT RUN / OVERALL NOT CLOSED** ([FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md); [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**). Joel selected **Option A** on 2026-09-10. Live QuickBooks API is **POST-V1**.
+**Status:** **SLICES A+B LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / SLICE C LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT / OVERALL NOT CLOSED** ([FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md); [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**). Joel selected **Option A** on 2026-09-10. Live QuickBooks API is **POST-V1**.
 
 V1 output 3 is a **controlled pair**:
 
@@ -155,7 +155,7 @@ When a governed field changes in the authoritative record (scope, price, allowan
 | Authoritative estimate structure | [Estimating](../modules/estimating.md) |
 | Customer-facing estimate presentation | **Proposals** — existing proposal snapshot/PDF **is** the customer-facing estimate ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md)) |
 | Internal detailed breakdown | **Estimating** — [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** |
-| QuickBooks-ready package (output 3) | **Estimating / output layer** — [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**; Slice C **IMPLEMENTED / NOT LIVE-MIGRATED / OFFICE UAT NOT RUN**; [quickbooks-integration.md](quickbooks-integration.md). Not a live API. Not Proposal-owned. |
+| QuickBooks-ready package (output 3) | **Estimating / output layer** — [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**; Slice C **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**; [quickbooks-integration.md](quickbooks-integration.md). Not a live API. Not Proposal-owned. |
 | Ontario contract + warranty package | Governed templates — [legal-content-and-templates.md](../governance/legal-content-and-templates.md). Future North American library / update engine / frozen snapshot: [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. |
 | Permit & Approvals Report | **CLOSED / OPERATIONAL FOR UAT** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md); [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md)) — [permit-and-approvals-report.md](permit-and-approvals-report.md). Bounded Ontario / Ottawa coach-house POC. Not a national library. |
 | Organization Brand Profile | **CLOSED / OPERATIONAL FOR UAT** — [organization-brand-profile.md](organization-brand-profile.md); [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted**; [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) (Proposal consumer live; CO/Permit consumers future) |

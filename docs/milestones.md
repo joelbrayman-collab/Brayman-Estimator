@@ -32,6 +32,22 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-11 — FG-032 Slice C live migrate + bounded office UAT
+
+| Field | Content |
+|-------|---------|
+| ID | FG-032 Slice C live migrate + bounded office UAT |
+| Status | **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT.** Slices A+B remain **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**. Gate **OVERALL NOT CLOSED**. V1 remains **55% / 3 of 11**. V1-04 **PARTIAL**. V1-05 **PARTIAL**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+| Branch | `main` |
+| Base commit | `00de0517b994635dec0be04a6e581167f690f7fe` (`fix: enforce atomic FG-032 entry confirmation`) |
+| Objective | Apply pending Slice C revisions `f0a1b2c3d4e5` then `f1a2b3c4d5e6` to the live UAT DB and prove bounded DEMO office ENTERED/CORRECTED/REVERSED/re-entry without closing FG-032. |
+| Deliverables | Live current **`f1a2b3c4d5e6 (head)`**; backup `instance/brayman_estimator-backup-before-fg032c-f1a2b3c4d5e6-20260911-115130.db` (gitignored); [testing/fg032-slice-c-live-migrate-bounded-uat-record.md](testing/fg032-slice-c-live-migrate-bounded-uat-record.md); current-authority governance updates. No application-code change. |
+| Validation | Dedicated **37 passed** / 16.61s. Affected regressions **256 passed** / 88.48s. Full **765 passed** / 2669 warnings / 299.75s. Bounded office UAT **97 cases PASS** on DEMO project **id 26** package **1**. Historical occupancy-repair 37/256/765 remain historical. |
+| Architectural findings | Download/issue is not entry. Unique occupancy by package PK. Concurrent race proof remains the focused test `test_concurrent_entered_exactly_one_succeeds` (not live). No QuickBooks API/OAuth/CSV/IIF. |
+| Open decisions | FG-032 close. Do **not** rescore V1. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** close FG-032. Do **not** rescore V1. |
+| Date | 2026-09-11 |
+
 ### 2026-09-11 — FG-032 Slice C atomic ENTERED occupancy repair
 
 | Field | Content |

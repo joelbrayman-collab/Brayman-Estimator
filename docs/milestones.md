@@ -32,6 +32,18 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-11 — FG-032 post-implementation governance reconciliation (documentation only)
+
+| Field | Content |
+|-------|---------|
+| ID | FG-032 docs recon / product-parent correction |
+| Status | **DOCUMENTATION-ONLY.** Slices A+B remain **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / OFFICE UAT NOT RUN / SLICE C NOT AUTHORIZED / OVERALL NOT CLOSED.** Product parent corrected to **`010f6d641a756ceb2ab67475a284d3b8426c7b20`**. Product SHA **`70e571140e12377aa5bd009b598530576401113b`**. V1 remains **55% / 3 of 11**. V1-04 **PARTIAL**. V1-05 **PARTIAL**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+| Branch | `main` |
+| Objective | Correct the known FG-032 product-parent error and reconcile current governance records with Git |
+| Validation | Product tests **not** rerun. HISTORICAL dedicated **23** / focused **209** / full **751**. Live current remained `d8e9f0a1b2c3`. |
+| Next milestone | **STOP.** Live migrate / office UAT / Slice C require separate authorization. |
+| Date | 2026-09-11 |
+
 ### 2026-09-10 — FG-032 Slices A+B QuickBooks-ready artifacts (not live-migrated)
 
 | Field | Content |

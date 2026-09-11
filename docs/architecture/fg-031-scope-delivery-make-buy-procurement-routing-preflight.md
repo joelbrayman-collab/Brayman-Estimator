@@ -247,6 +247,8 @@ QuickBooks / V1-05 later consumes planned cost-class split (material/vendor, sub
 
 **Subsequent status (2026-09-10, not authorized by FG-031):** Joel selected V1-05 **Option A**. [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Planned class is consumed from **frozen costing-snapshot routing**, not live Scope Delivery. Amounts remain FG-027 costing authority. Hybrid lines must not double-count. Live QuickBooks API remains POST-V1. This subsequent note does **not** change FG-031 closed product meaning.
 
+**Subsequent status (2026-09-11):** FG-032 Slices A+B are **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / OVERALL NOT CLOSED**. Product SHA **`70e571140e12377aa5bd009b598530576401113b`**. Product parent **`010f6d641a756ceb2ab67475a284d3b8426c7b20`**. [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**. Slice C remains **NOT AUTHORIZED**. This subsequent note does **not** change FG-031 closed product meaning.
+
 Contract output remains customer-scope-oriented.
 
 ---

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-10 |
+| Updated | 2026-09-11 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-11 — FG-032 post-implementation governance reconciliation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-11 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026 |
+| Objective | Documentation-only correction of the FG-032 product parent and reconciliation of current-state records with the actual Git chain. |
+| Business decision | No product-policy change. Preserve FG-032 Slices A+B implemented / not live-migrated / not closed. Preserve V1 **55% / 3 of 11**. |
+| Architectural decision | FG-032 product parent is **`010f6d641a756ceb2ab67475a284d3b8426c7b20`** (`docs: correct FG-032 Issued vs Accepted freeze`), not FG-031 Slice B **`5e1082af68e0eb145d9da01c0fa26585f6b8b9d1`**. Product **`70e571140e12377aa5bd009b598530576401113b`**. Pin **`9c254a38c39ef866cad3c5aca1f01cae4907f376`**. Architecture **`93773820e410e327cd81919172c49a6f661def9e`**. |
+| Prompt template used | Joel/ChatGPT FG-032 Slices A+B post-implementation governance reconciliation — documentation only (11 Sep 2026) |
+| Approved Cursor prompt summary | Verify `main` @ `9c254a38c39ef866cad3c5aca1f01cae4907f376`; correct product parent; reconcile current-state docs; commit; push; A–V report; STOP. No product code. No live migrate. No Slice C. |
+| Files expected to change | Governing documentation only |
+| Files prohibited from changing | Application code; models; services; routes; templates; CSS/JS; FG-032 migration; live database |
+| Implementation result | Documentation-only. Incorrect FG-032 parent removed from current-state. Valid FG-031 `5e1082a` history preserved. |
+| Tests | **HISTORICAL / NOT RERUN.** Dedicated **23 passed** / 9.50s. Focused **209 passed** / 89.55s. Full **751 passed** / 2479 warnings / 350.35s. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migration not run. Office UAT not run. Slice C not authorized. Ontario/fail-closed contract blocker unchanged. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** office-UAT. Do **not** implement Slice C. |
+| Next approved prompt | None. |
+| Commit hash | Follows this documentation correction. |
 
 ### 2026-09-10 — FG-032 Slices A+B implementation
 

@@ -31,10 +31,10 @@ Do **not** claim CSV, IIF, Excel, SDK, or API compatibility.
 ## Current state
 
 - No QuickBooks Online API, OAuth, IIF, or CSV export exists in the application.
-- Outputs 1–2 exist ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**). Output 3 is **not implemented**.
+- Outputs 1–2 exist ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**). Output 3 Slices A+B are **implemented / not live-migrated** ([FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **OVERALL NOT CLOSED**). Slice C is **not implemented**.
 - Family 04 **QuickBooks Estimate / Entry Sheet** is an **INTERNAL ENTRY REFERENCE** reusable master ([FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md)). Not a customer deliverable. Not an API.
-- [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **RECORDED / ARCHITECTURE PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**.
-- [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Proposed / FOR JOEL REVIEW**.
+- [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) Slices A+B **IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT LIVE-MIGRATED / OFFICE UAT NOT RUN / OVERALL NOT CLOSED**. Product SHA **`70e571140e12377aa5bd009b598530576401113b`**. Product parent **`010f6d641a756ceb2ab67475a284d3b8426c7b20`**.
+- [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted** by Joel Brayman, 10 Sep 2026.
 
 ## Source of truth
 

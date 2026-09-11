@@ -27,6 +27,8 @@ OUTPUT 3 = CONTROLLED PAIR (SALES-ENTRY SHEET + COST-CLASS COMPANION)
 
 This document remains the architecture preflight. Slices A+B product code and migration **file** exist. Live database writes and office UAT remain unauthorized.
 
+**Subsequent recon note (2026-09-11):** Git parent of product **`70e571140e12377aa5bd009b598530576401113b`** is **`010f6d641a756ceb2ab67475a284d3b8426c7b20`** (`docs: correct FG-032 Issued vs Accepted freeze`), not FG-031 Slice B **`5e1082af68e0eb145d9da01c0fa26585f6b8b9d1`**. Architecture **`93773820e410e327cd81919172c49a6f661def9e`**. Docs pin **`9c254a38c39ef866cad3c5aca1f01cae4907f376`**. Live current remains **`d8e9f0a1b2c3`**. Repository head remains **`e9f0a1b2c3d4`**.
+
 **Subsequent recon note (2026-09-10):** Late model inventory confirmed: pricing CURRENT/STALE is **derived** (`pricing_consume_status()`), not a snapshot column; Proposal commercial immutability is **Accepted only** (ADR-002); Issued remains editable; `project_number` is on `Project` (not copied onto Proposal); unit selling rate for artifact A is `ProposalLineItem.unit_price`. Architecture recommendation unchanged: copy-at-freeze; WARN if Issued.
 
 ---
@@ -35,8 +37,8 @@ This document remains the architecture preflight. Slices A+B product code and mi
 
 | Layer | State |
 |-------|--------|
-| **Current** | Authoritative `Estimate` / `EstimateVersion`; FG-027 CURRENT `EstimateCostingSnapshot`; FG-009 `EstimatePricingSnapshot` (CURRENT vs `STALE / REQUIRES RE-APPLY`); Issued/Accepted `Proposal` + PDF (output 2); FG-012 internal breakdown (output 1); FG-031 frozen `material_procurement` / `labour_delivery` on costing snapshot lines; Family 04 reusable master **outside Git**. No QuickBooks client, OAuth, IIF, CSV, or “entered in QuickBooks” record in `app/`. |
-| **Intended (FG-032, not implemented)** | Estimating-owned frozen QuickBooks-ready **package**: sales-estimate entry HTML/PDF + planned cost-class companion; human review; ISSUED immutability; optional human ENTERED confirmation; supersession. |
+| **Current** | Authoritative `Estimate` / `EstimateVersion`; FG-027 CURRENT `EstimateCostingSnapshot`; FG-009 `EstimatePricingSnapshot` (CURRENT vs `STALE / REQUIRES RE-APPLY`); Issued/Accepted `Proposal` + PDF (output 2); FG-012 internal breakdown (output 1); FG-031 frozen `material_procurement` / `labour_delivery` on costing snapshot lines; Family 04 reusable master **outside Git**. FG-032 Slices A+B package/HTML/PDF **implemented / not live-migrated**. No QuickBooks client, OAuth, IIF, CSV, or “entered in QuickBooks” record in `app/`. |
+| **Intended remaining (FG-032)** | Live migrate + office UAT. Slice C ENTERED/REVERSED confirmation remains **not authorized**. |
 | **Future / POST-V1** | Option B live QuickBooks Online API; CSV/IIF/Excel only if a later gate proves a supported import contract; invoices, bills, POs, payroll, payments, banking, actual-cost sync; stored hybrid amount split. |
 
 ---
@@ -488,6 +490,8 @@ Services (names): `app/services/estimate_quickbooks.py` assemble/validate/issue/
 | **C** | ENTERED / REVERSED events + duplicate BLOCK + download ≠ entered |
 
 Do not begin Slice A without a separate implementation prompt and Joel authorization. Prefer ADR-049 **Accepted** before schema if Joel requires acceptance first; this recording leaves ADR-049 **Proposed**.
+
+**Subsequent status (2026-09-11):** Slices A+B were later implemented under Joel authorization. ADR-049 is **Accepted**. Slice C remains **NOT IMPLEMENTATION-AUTHORIZED**. Do **not** live-migrate from this preflight.
 
 ---
 

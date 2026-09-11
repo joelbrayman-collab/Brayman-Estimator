@@ -37,6 +37,10 @@ JOEL OPTION A DIRECTION APPROVED 2026-09-10
 OPTION B LIVE QUICKBOOKS API = POST-V1 / NOT AUTHORIZED
 SCHEMA FILE e9f0a1b2c3d4 CREATED / NOT APPLIED LIVE
 LIVE CURRENT REMAINS d8e9f0a1b2c3
+PRODUCT SHA 70e571140e12377aa5bd009b598530576401113b
+PRODUCT PARENT 010f6d641a756ceb2ab67475a284d3b8426c7b20
+ARCHITECTURE 93773820e410e327cd81919172c49a6f661def9e
+DOCS PIN 9c254a38c39ef866cad3c5aca1f01cae4907f376
 DO NOT RESCORE V1 (REMAINS 55% / 3 OF 11)
 V1-04 REMAINS PARTIAL / CURRENT SCORED PACKAGE
 V1-05 REMAINS PARTIAL
@@ -78,7 +82,7 @@ CalibraytAI remains the commercial source of truth. QuickBooks is the accounting
 | 6 | What may it change? | Estimating-owned freeze tables, review/issue routes, private HTML/PDF artifacts, Hub PRICE entry. Must **not** mutate costing, pricing, Proposal, Scope Delivery, or catalogues. |
 | 7 | What must it not change? | Costing or pricing calculations; Proposal/PDF; Supplier Package; Scope Delivery product behaviour; FG-027 / FG-029 / FG-031 closed product meaning; live DB; live QuickBooks API; CSV/IIF/Excel claims; invoices/bills/POs/payroll/payments; ADR-008 status; V1 55% / 3 of 11; branding; FG-024; FG-030; remaining FG-025; LEARN; Native Signing; Observation Delete. |
 | 8 | What are the acceptance criteria? | Slices A+B implemented and tested; ADR-049 Accepted; additive migration file created and not applied live; freeze/non-float, reconciliation, privacy, isolation, download-not-entry, supersession tests PASS; Slice C not implemented; office UAT not run; gate not closed. |
-| 9 | What tests are required? | Dedicated FG-032 **23 passed** (9.50s, 306 warnings). Focused regression **209 passed** (89.55s, 1279 warnings). Full suite **`./venv/bin/python -m pytest -q` → 751 passed**, 2479 warnings, 350.35s. |
+| 9 | What tests are required? | Dedicated FG-032 **23 passed** (9.50s, 306 warnings). Focused regression **209 passed** (89.55s, 1279 warnings). Full suite **`./venv/bin/python -m pytest -q` → 751 passed**, 2479 warnings, 350.35s. **HISTORICAL / NOT RERUN** during the 11 Sep 2026 documentation reconciliation. |
 | 10 | What documentation must be updated? | This gate; ADR-049; Option A preflight; quickbooks-integration.md; project-document-package.md; estimating module; indexes; V1 register **status text only** (do **not** rescore). |
 | 11 | Does it require an ADR? | **Yes — ADR-049**, **Accepted** by Joel Brayman, 10 Sep 2026. |
 | 12 | Does it require a database migration? | **Yes.** Additive **`e9f0a1b2c3d4`** after **`d8e9f0a1b2c3`**. **Not applied live.** |

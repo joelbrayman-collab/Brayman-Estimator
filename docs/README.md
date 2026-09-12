@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative documentation map |
-| Updated | 2026-09-11 |
+| Updated | 2026-09-12 |
 | Product | The Estimator (Brayman Estimator) |
 
 ## Purpose

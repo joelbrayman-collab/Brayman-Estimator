@@ -3,10 +3,10 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FG-032 CLOSED / OPERATIONAL FOR UAT.** [ADR-049](adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**. Joel selected V1-05 **Option A**. V1-05 **COMPLETE**. **FG-031 CLOSED / OPERATIONAL FOR UAT.** [ADR-048](adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. **FG-028 SLICES 1–3 COMPLETE / CLOSED / OPERATIONAL FOR UAT.** Runtime Field header V2 logo installed. **FG-029 CLOSED / OPERATIONAL FOR UAT.** **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / BOUNDED BMR DEMO OFFICE UAT PASS.** [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. **FG-030 RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** [ADR-047](adr/ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only). Current product **CalibraytAI** (formerly CalibAi). [ADR-045](adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted**. **FG-027 CLOSED / OPERATIONAL FOR UAT.** CalibraytAI V1 readiness **60%**. **4 / 11** COMPLETE (V1-01, V1-02, V1-03, V1-05). BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [FG-026 CLOSED / OPERATIONAL FOR UAT.] [FG-025 SLICE 5 IMPLEMENTED / NOT CLOSED.] Remaining FG-025 surfaces **NOT AUTHORIZED**. [FG-023 CLOSED / OPERATIONAL FOR UAT.] [FG-021 CLOSED.] Observation Delete **QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING**. Live current **`f1a2b3c4d5e6 (head)`**. Repository Alembic head **`f1a2b3c4d5e6`**. Website (external): Version 15 published / live QA PASS. |
-| Updated | 2026-09-11 |
+| Updated | 2026-09-12 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [v1-completion-register.md](v1-completion-register.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
-| Active ChatGPT development chat title | **BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026** |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBRAYTAI DEVELOPMENT 12 SEP 2026** |
 
 Authority order for the next session: repository governance → current-state records → accepted ADRs / Feature Gates → implementation/migration/test evidence → conversation memory only as supplementary context.
 
@@ -16,7 +16,7 @@ Authority order for the next session: repository governance → current-state re
 
 ```text
 ACTIVE CHAT TITLE:
-BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026
+BRAYMAN — CALIBRAYTAI DEVELOPMENT 12 SEP 2026
 
 CONTINUITY DISPLAY RULE:
 Every CalibraytAI development response begins with the exact active ChatGPT
@@ -38,7 +38,7 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 - **Product:** CalibraytAI / Brayman Estimator (The Estimator). Formerly CalibAi. Do not confuse with office chrome (Brayman Construction Platform) or tenant Brand Profile.
 - **Path:** `/Users/joelbrayman/Desktop/Brayman-Estimator` (`~/Desktop/Brayman-Estimator`)
 - **Environment:** local Flask office app; SQLite development/UAT DB (`sqlite:///brayman_estimator.db` → `instance/brayman_estimator.db`)
-- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026`
+- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 12 SEP 2026`
 - **Cursor / IDE workspace chat titles:** must start with `BRAYMAN — <Topic>`
 
 ## 2. VERIFIED BASELINE
@@ -116,7 +116,9 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **2026-09-11 FG-032 documentation-only final close + V1-05 evidence-based rescore.** Gate **CLOSED / OPERATIONAL FOR UAT**. V1-05 **COMPLETE**. Readiness **60% / 4 of 11**. V1-04 remains **PARTIAL / CURRENT SCORED PACKAGE**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Parent Slice C UAT docs **`07490698fe325a6bd433be47070bce429c9f8ad8`**. Do **not** implement live QuickBooks API. Do **not** begin V1-04 product work. Do **not** implement FG-030.
+**Last authorized delta:** **2026-09-12 documentation-only catch-up / publication / deployment reconciliation.** Present-state leftovers from the FG-032 close were corrected (live Alembic current, FG-032/ADR-049 closed status, FG-029 closed status, FG-021 closed status, M009 implemented). Full suite rerun **765 passed**, 2669 warnings, **297.20s**. No application-code change. No migration. No live DB mutation. No V1-04. No V1 rescore. Parent FG-032 close **`09fca291a72fc17ca6f00872c01b4ff20ef19136`**.
+
+**Prior:** **2026-09-11 FG-032 documentation-only final close + V1-05 evidence-based rescore.** Gate **CLOSED / OPERATIONAL FOR UAT**. V1-05 **COMPLETE**. Readiness **60% / 4 of 11**. V1-04 remains **PARTIAL / CURRENT SCORED PACKAGE**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Parent Slice C UAT docs **`07490698fe325a6bd433be47070bce429c9f8ad8`**. Do **not** implement live QuickBooks API. Do **not** begin V1-04 product work. Do **not** implement FG-030.
 
 **Prior:** **2026-09-11 FG-032 Slice C live migrate + bounded office UAT.** `flask db upgrade f1a2b3c4d5e6` **PASS**. Live current **`f1a2b3c4d5e6 (head)`**. Bounded DEMO office UAT **PASS** on project **26** package **1**. Evidence [testing/fg032-slice-c-live-migrate-bounded-uat-record.md](testing/fg032-slice-c-live-migrate-bounded-uat-record.md). Slices A+B remain **LIVE-MIGRATED / BOUNDED OFFICE UAT PASS / OPERATIONAL FOR UAT**. Gate **OVERALL NOT CLOSED** at that UAT. V1 remained **55% / 3 of 11** at that UAT. Parent occupancy repair **`00de0517b994635dec0be04a6e581167f690f7fe`**.
 
@@ -563,7 +565,7 @@ ChatGPT / Cursor memory is never corporate memory.
 Conversation titles in this Cursor/IDE workspace must start with: BRAYMAN — <Topic>.
 
 ACTIVE CHAT TITLE (ChatGPT originating development chat):
-BRAYMAN — CALIBRAYTAI DEVELOPMENT 9 SEP 2026
+BRAYMAN — CALIBRAYTAI DEVELOPMENT 12 SEP 2026
 (Record the exact title of the NEW ChatGPT development chat once Joel names it. Until then, keep using this title.)
 
 CONTINUITY DISPLAY RULE:

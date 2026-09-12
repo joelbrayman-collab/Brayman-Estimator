@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-11 |
+| Updated | 2026-09-12 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-12 — Catch-up / publication / deployment reconciliation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-12 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 12 SEP 2026 |
+| Objective | Complete catch-up: inventory unpublished/stranded work; reconcile present-state documentation leftovers from FG-032 close; verify migrations, tests, and deployment meaning. No product implementation. No V1-04. No new Feature Gate. No new ADR. |
+| Business decision | Repository remains FG-032 **CLOSED / OPERATIONAL FOR UAT**. V1-05 **COMPLETE**. Readiness **60% / 4 of 11**. V1-04 remains **PARTIAL**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Stale local branches remain **STALE / HISTORICAL** and were not merged. |
+| Architectural decision | None. Present-state leftovers only. Historical UAT records and append-only log bodies were not rewritten. |
+| Prompt template used | Joel catch-up / publication / deployment reconciliation (12 Sep 2026) |
+| Approved Cursor prompt summary | Verify git/worktrees/stashes/branches; read governance; reconcile present-state docs; flask db current/heads; run full pytest; do not migrate; do not deploy; do not start V1-04. |
+| Files expected to change | Present-state operational docs (current-state, session-handoff, project-state-report, roadmap, indexes, chat-workflow-log) |
+| Files prohibited from changing | Application code; templates; CSS; JS; migrations; live database; historical UAT evidence bodies; V1 register scores; FG-030; V1-04 product; new Feature Gate; new ADR |
+| Implementation result | Working tree was clean. No stash. One worktree. HEAD = origin/main at inspect parent `09fca29`. Live Alembic current = head `f1a2b3c4d5e6`. Present-state leftovers corrected. Stale unique commits on `cursor/constructos-branding-engine` and `cursor/sidebar-navigation-refinement` classified STALE/HISTORICAL; not merged. |
+| Tests | `./venv/bin/python -m pytest -q` — **765 passed**, 2669 warnings, **297.20s**. |
+| Project-state-report update | Yes |
+| Milestone entry update | No (not a product milestone) |
+| Constitutional issue raised | None |
+| Unresolved issues | V1-04 remains PARTIAL / not started. FG-030 not implementation-authorized. Stale local branches retained (do not delete). HostPapa **QUEUED POST-BETA**. Brayman-Estimator has no production app deploy; local UAT Flask/SQLite is the governed environment. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin V1-04 product work. Do **not** implement FG-030. Do **not** merge stale local branches. |
+| Next approved prompt | None from this catch-up. ChatGPT issues any V1-04 documentation-only prompt separately. |
+| Commit hash | This documentation catch-up commit. Parent **`09fca291a72fc17ca6f00872c01b4ff20ef19136`**. |
 
 ### 2026-09-11 — FG-032 documentation-only final governance close + V1-05 rescore
 

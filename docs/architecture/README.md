@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-09-10 |
+| Updated | 2026-09-12 |
 
 Domain architecture documents describe **intended** systems. They are not claims of current implementation unless explicitly marked Current.
 
@@ -12,7 +12,7 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [CAR-001-calibai-product-architecture-reconciliation.md](CAR-001-calibai-product-architecture-reconciliation.md) | **Approved architectural direction** (2026-08-28); implementation not authorized |
 | [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) | Future + Phase A / M007 page indexing current |
 | [document-intelligence.md](document-intelligence.md) | Architecture (M006); upload/pages/processing **Current** (M007) |
-| [sheet-intelligence.md](sheet-intelligence.md) | **Architecture (M008) + FG-004 approved** — Sheets / review **not implemented** |
+| [sheet-intelligence.md](sheet-intelligence.md) | **Architecture (M008) + FG-004 approved** — Sheets / review **IMPLEMENTED / VERIFIED** (M009) |
 | [project-document-package.md](project-document-package.md) | **Intended** — authoritative record + four outputs (1–2 Current under FG-012; output 3 **CLOSED / OPERATIONAL FOR UAT** under [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md); output 4 Future); Permit & Approvals Report is a **core project document** (ADR-039 **Accepted**; Pass 2 [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**); Change Order is a **transaction-document family** pin, not a numbered core output; contract/warranty generation [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED** |
 | [permit-and-approvals-report.md](permit-and-approvals-report.md) | **Pass 2 CLOSED / OPERATIONAL FOR UAT** ([FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md)) — ADR-037/038/039 **Accepted**; [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT** (foundation) |
 | [permit-rules-library.md](permit-rules-library.md) | **CLOSED / OPERATIONAL FOR UAT** — Permit Rules Library V1 (Ontario / Ottawa POC); [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md); [permit-rules-ontario-ottawa-sources.md](permit-rules-ontario-ottawa-sources.md) |
@@ -21,7 +21,7 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [approved-document-presentation-reference-baseline.md](approved-document-presentation-reference-baseline.md) | **Governing for immutable source / provenance** — SOURCE CUSTODY **CLOSED**; [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED / APPROVED REUSABLE MASTER FAMILY V1** |
 | [change-order-document-family.md](change-order-document-family.md) | **FUTURE / NOT IMPLEMENTED** — governed Change Order document family + email pin; existing Change Order record remains authoritative; not a Feature Gate |
 | [contract-esignature-and-signed-change-order.md](contract-esignature-and-signed-change-order.md) | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** — Native Signing V1 recommended; counsel spec **PREPARED**; **development may proceed under separate governance**; **production activation blocked pending counsel**; no Feature Gate in this pass |
-| [field-web-today-and-capture.md](field-web-today-and-capture.md) | **IMPLEMENTED / LIVE-MIGRATED / IPHONE UAT OPEN** — Item 12 Field Web / Today + Capture; [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) gate **NOT CLOSED** |
+| [field-web-today-and-capture.md](field-web-today-and-capture.md) | **IMPLEMENTED / LIVE-MIGRATED / CLOSED** — Item 12 Field Web / Today + Capture; [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED** (SESSION-EXPIRY RECOVERY **DEFERRED / NOT YET EXERCISED**) |
 | [fg-021-field-web-v1-implementation-reconnaissance.md](fg-021-field-web-v1-implementation-reconnaissance.md) | **COMPLETE** — FG-021 file/API/schema freeze; live current = head `d2e3f4a5b6c7` |
 | [fg-021-recent-observation-delete-requirement-capture.md](fg-021-recent-observation-delete-requirement-capture.md) | **CAPTURED / QUEUED / NOT AUTHORIZED** — Recent Observation Delete + iPhone swipe-left UX; retention model not chosen |
 | [quickbooks-integration.md](quickbooks-integration.md) | **V1 Option A CLOSED / OPERATIONAL FOR UAT** — [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md); [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**; Option B API POST-V1 |

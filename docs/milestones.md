@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-11 |
+| Updated | 2026-09-12 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -31,6 +31,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 ---
 
 ---
+
+### 2026-09-12 — Catch-up / publication / deployment reconciliation
+
+| Field | Content |
+|-------|---------|
+| ID | Catch-up present-state documentation reconciliation |
+| Status | **RECORDED.** No product change. FG-032 remains **CLOSED / OPERATIONAL FOR UAT**. V1-05 remains **COMPLETE**. Readiness remains **60% / 4 of 11**. |
+| Branch | `main` |
+| Base commit | `09fca291a72fc17ca6f00872c01b4ff20ef19136` (`docs: close FG-032 and rescore V1-05`) |
+| Objective | Account for unpublished/stranded work; correct present-state leftovers; verify migrations, tests, and deployment meaning. No V1-04. No new Feature Gate. No new ADR. |
+| Deliverables | Present-state corrections in current-state, session-handoff, project-state-report, roadmap, Feature Gate/ADR/module/architecture indexes, chat-workflow-log. Stale local branches inventoried and left in place. |
+| Validation | `./venv/bin/python -m pytest -q` — **765 passed**, 2669 warnings, **297.20s**. Live current = repository head **`f1a2b3c4d5e6 (head)`**. Working tree was clean at inspect. No stash. One worktree. |
+| Architectural findings | No unpublished completed product on `main`. Unique July 2026 commits on `cursor/constructos-branding-engine` and `cursor/sidebar-navigation-refinement` remain **STALE / HISTORICAL**. Brayman-Estimator governed environment is local Flask/SQLite UAT; HostPapa is website **QUEUED POST-BETA**. |
+| Open decisions | V1-04 documentation-only prompt still belongs to ChatGPT Architect. Do **not** merge stale branches. Do **not** deploy HostPapa from this repository. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin V1-04 product work. |
+| Commit | This documentation catch-up commit |
+| Date | 2026-09-12 |
 
 ### 2026-09-11 — FG-032 documentation-only final governance close + V1-05 rescore
 

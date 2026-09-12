@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Planning |
-| Updated | 2026-09-11 |
+| Updated | 2026-09-12 |
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
@@ -221,7 +221,7 @@ These remain **not started** unless a later Feature Gate says otherwise. FG-015 
 
 ## Decisions Required (Joel)
 
-1. [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) Slice 1 through Slice 5 are **IMPLEMENTED**. Remaining surfaces **NOT AUTHORIZED**. [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) is **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. Do **not** implement V1-03 from this recording. Do **not** start another FG-025 slice. Do **not** implement FG-024. Do **not** implement Closeout. Do not implement national permit expansion, Change Order document work, live BMR API, or bulk supplier onboarding. Do not accept ADR-008. Do not accept ADR-010. [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) remains **CLOSED**. **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED.** **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.**
+1. [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) Slice 1 through Slice 5 are **IMPLEMENTED**. Remaining surfaces **NOT AUTHORIZED**. [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Do **not** reopen V1-03. Do **not** start another FG-025 slice. Do **not** implement FG-024. Do **not** implement Closeout. Do not implement national permit expansion, Change Order document work, live BMR API, or bulk supplier onboarding. Do not accept ADR-008. Do not accept ADR-010. [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md) remains **CLOSED**. **SESSION-EXPIRY RECOVERY: DEFERRED / NOT YET EXERCISED.** **OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL.**
 2. Native Signing is a **parallel** track ([legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md)). **Development may proceed under separate governance. Production activation / real customer use is blocked pending Ontario counsel approval of the signing process.** Counsel review is **not** a general development hold. Legal Content Gate for Contract/Warranty templates remains in force. Project Closeout remains **FUTURE**.
 3. ADR-010 remains **Proposed** (OCR/CAD/provider). Real external AI provider remains **not authorized**.
 4. Confirm POC element remains `INTERIOR_DOOR_OPENING` count.

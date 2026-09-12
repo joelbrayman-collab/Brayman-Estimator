@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-12 — FG-024 Slice A legal-content library preflight
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-12 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 12 SEP 2026 |
+| Objective | Documentation-only FG-024 Slice A implementation preflight: freeze North American library engine, fail-closed, reuse ADR-037, draft ADR-050 Proposed, retitle output 4. No product code. No migration. No legal drafting. |
+| Business decision | Ontario remains first UAT jurisdiction / first expected Canadian package, not CONTRACT product scope. No generic North American fallback. Family 05 remains COMMERCIAL_DRAFT. V1 scores unchanged. |
+| Architectural decision | ADR-050 **Proposed** (required before Slice A product code). Schema **YES later / NO file now**. Smallest later product slice = empty library + fail-closed, not authorized from this preflight. |
+| Prompt template used | Joel/ChatGPT FG-024 Slice A documentation-only implementation preflight (12 Sep 2026) |
+| Approved Cursor prompt summary | Verify SHA 3200112; read FG-024 / Legal Content Gate / V1 register / ADR-037; write Slice A preflight; draft ADR-050 Proposed; retitle project-document-package output 4; update indexes; pytest; do not implement product. |
+| Files expected to change | Preflight, ADR-050, FG-024, Legal Content Gate, project-document-package, V1 register next-action only, current-state, session-handoff, project-state-report, roadmap, indexes, chat-workflow-log, milestones |
+| Files prohibited from changing | Application code; templates; CSS; JS; migrations; live database; tests for new behaviour; V1 scores; Family 05 legal status |
+| Implementation result | Preflight COMPLETE. ADR-050 Proposed. Output 4 retitled Contract / execution package. Product NOT AUTHORIZED. |
+| Tests | `./venv/bin/python -m pytest -q` — **765 passed**, 2669 warnings, **268.08s**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (docs recording; not a product milestone) |
+| Constitutional issue raised | None |
+| Unresolved issues | Joel must Accept or reject ADR-050. Slice A product remains unauthorized. 06D Ontario counsel BLOCKED. V1-04 output 4 NOT IMPLEMENTED. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement Slice A product. Do **not** Accept ADR-050 from Cursor. |
+| Next approved prompt | ChatGPT issues any ADR-050 acceptance or later empty-library product prompt separately. |
+| Commit hash | This documentation preflight commit. Parent **`3200112d627d6c6d8173daf72194f8409ac84b11`**. |
+
 ### 2026-09-12 — Catch-up / publication / deployment reconciliation
 
 | Field | Content |

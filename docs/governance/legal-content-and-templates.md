@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | **Governing** |
 | Updated | 2026-09-07 |
-| Implementation | Template registers and approval workflow **not implemented**. North American library / update engine / frozen contract snapshot / legal-change monitoring are **FUTURE** under [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) (**RECORDED / NOT IMPLEMENTATION-AUTHORIZED**). |
+| Implementation | Template registers and approval workflow **not implemented**. North American library / update engine / frozen contract snapshot / legal-change monitoring remain **FUTURE** under [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) (**RECORDED / SLICE A PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED**). Slice A preflight: [fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md). [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Proposed**. |
 
 ## Purpose
 
@@ -44,6 +44,8 @@ Govern construction contract language, statutory/consumer wording, warranty obli
 **Subsequent status (2026-09-04, FG-022 closure):** Joel recorded presentation-master approval for Families 01–07. [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) is **CLOSED / APPROVED REUSABLE MASTER FAMILY V1**. Family 05 is an **APPROVED REUSABLE PRESENTATION MASTER** only. This closure does **not** populate this register, does **not** approve contract or warranty language, and does **not** authorize execution or Native Signing. Family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED / NOT FOR EXECUTION / NOT FOR SIGNATURE**.
 
 **Subsequent status (2026-09-07, FG-024 recorded):** [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) records the future North American CONTRACT-stage legal-content library, update engine, frozen generation snapshot, and change-monitoring capability. Status: **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. This recording does **not** populate this register, does **not** approve any legal language, does **not** authorize Ontario or U.S. content drafting, and does **not** interrupt [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md). AI still cannot independently set legal content to **APPROVED**. Fail closed if no counsel-approved jurisdiction package exists. No generic North American fallback.
+
+**Subsequent status (2026-09-12, FG-024 Slice A preflight):** Architecture preflight **COMPLETE**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Proposed**. This does **not** populate this register, does **not** approve any legal language, does **not** mark Family 05 legally approved, and does **not** authorize Slice A product code. Fail closed remains mandatory. No generic North American fallback.
 
 ## Warranty template register (governed — empty until approved)
 
@@ -92,7 +94,9 @@ Generation alone does not mean final or sent.
 
 ## Related
 
-- [feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) — future North American library / update engine / frozen snapshot / monitoring (**RECORDED / NOT IMPLEMENTATION-AUTHORIZED**)
+- [feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) — future North American library / update engine / frozen snapshot / monitoring (**RECORDED / SLICE A PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED**)
+- [architecture/fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md) — Slice A engine freeze; empty library; fail-closed; **not** product authorization
+- [adr/ADR-050-north-american-legal-content-library-ownership.md](../adr/ADR-050-north-american-legal-content-library-ownership.md) — **Proposed**; required before Slice A product code
 - [legal/native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — signing **process** draft for counsel; **not** template approval
 - [architecture/project-document-package.md](../architecture/project-document-package.md)
 - [architecture/permit-and-approvals-report.md](../architecture/permit-and-approvals-report.md) — **FUTURE / NOT IMPLEMENTED**; not this Legal Content Gate

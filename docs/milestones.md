@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-12 — FG-024 Slice A legal-content library preflight
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 Slice A documentation-only implementation preflight |
+| Status | **PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Proposed**. V1 remains **60% / 4 of 11**. V1-04 remains **PARTIAL**. V1-06 remains **PARTIAL**. |
+| Branch | `main` |
+| Base commit | `3200112d627d6c6d8173daf72194f8409ac84b11` (`docs: reconcile present-state leftovers after FG-032 close`) |
+| Objective | Freeze Slice A engine architecture, fail-closed matrix, ownership, schema-later decision, and ADR-050 Proposed. Retitle output 4. No product code. No migration. No legal drafting. |
+| Deliverables | [architecture/fg-024-slice-a-legal-content-library-preflight.md](architecture/fg-024-slice-a-legal-content-library-preflight.md); [adr/ADR-050-north-american-legal-content-library-ownership.md](adr/ADR-050-north-american-legal-content-library-ownership.md); present-state documentation updates. |
+| Validation | `./venv/bin/python -m pytest -q` — **765 passed**, 2669 warnings, **268.08s**. Live current remains **`f1a2b3c4d5e6 (head)`**. No application-code change. |
+| Architectural findings | North American library intent confirmed. Ontario is first package, not product scope. Fail-closed is mandatory. Empty library + fail-closed is the smallest later product slice. Second contract system forbidden. |
+| Open decisions | Joel Accept/reject ADR-050. Slice A product authorization. Ontario counsel (06D). |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** implement FG-024 Slice A product. |
+| Commit | This documentation preflight commit |
+| Date | 2026-09-12 |
+
 ### 2026-09-12 — Catch-up / publication / deployment reconciliation
 
 | Field | Content |

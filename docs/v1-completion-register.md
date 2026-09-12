@@ -258,7 +258,7 @@ Supplier **named-user login / workspace** is a separate recorded gate: [FG-030](
 | BLOCKER? | Output 4 blocked on V1-06 Ontario legal approval for production |
 | Dependencies | FG-012; V1-05 for output 3 (**COMPLETE**); V1-06 for output 4; FG-022 presentation masters; [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** informs internal delivery class and QuickBooks cost-class split (customer estimate remains delivery-blind); [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
 | Governing | [project-document-package.md](architecture/project-document-package.md); [FG-012](feature-gates/FG-012-estimate-output-consistency.md) **CLOSED**; [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED** (presentation only) |
-| Next governed action | Do **not** begin V1-04 product work from this register. Output 3 is **COMPLETE** under V1-05 / [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Output 4 under V1-06. Do not build a second contract system. |
+| Next governed action | Do **not** begin V1-04 product work from this register. Output 3 is **COMPLETE** under V1-05 / [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Output 4 under V1-06 / FG-024. [FG-024 Slice A preflight](architecture/fg-024-slice-a-legal-content-library-preflight.md) **COMPLETE**; product **NOT AUTHORIZED**. Do not build a second contract system. |
 
 | Output | Status |
 |--------|--------|
@@ -301,8 +301,8 @@ Estimator remains the authoritative commercial record. QuickBooks must not becom
 | V1 REQUIRED? | **YES** (06A–06I). 06J **POST-V1**. |
 | BLOCKER? | **YES** for production contract use: Legal Content Gate **empty**; Family 05 **NOT LEGALLY APPROVED**; AI cannot mark legal content APPROVED |
 | Dependencies | ADR-037 / FG-015 jurisdiction identity; Legal Content Gate; V1-07 for 06I |
-| Governing | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**; [legal-content-and-templates.md](governance/legal-content-and-templates.md) |
-| Next governed action | **STOP.** Do **not** implement FG-024 from this register. |
+| Governing | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / SLICE A PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**; [fg-024-slice-a-legal-content-library-preflight.md](architecture/fg-024-slice-a-legal-content-library-preflight.md); [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Proposed**; [legal-content-and-templates.md](governance/legal-content-and-templates.md) |
+| Next governed action | **STOP.** Slice A preflight is **COMPLETE**. Do **not** implement FG-024 Slice A product from this register. Do **not** Accept ADR-050 from this register. |
 
 Deep reconciliation: **§9**. Sub-gates: **§9.4**.
 
@@ -464,7 +464,7 @@ Round the published readiness to the **nearest whole percent**. Recalculate from
 
 | ID | Name | V1 REQUIRED? | Status | Notes |
 |----|------|--------------|--------|-------|
-| 06A | Contract library architecture / engine | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | FG-024 Slice A recorded |
+| 06A | Contract library architecture / engine | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | FG-024 Slice A preflight **COMPLETE**; [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Proposed**; product **NOT AUTHORIZED** |
 | 06B | Project jurisdiction → correct legal package | **YES** | **PARTIAL** | Identity/resolver **COMPLETE** (FG-015). Package **selection** not implemented. |
 | 06C | Versioned contract/warranty content + provenance/approval states | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | Legal Content Gate states + FG-024 library states recorded |
 | 06D | Ontario approved contract + warranty package | **YES** | **BLOCKED** | Counsel/legal approval. Empty register. |
@@ -497,7 +497,7 @@ The BMR demo must show CalibraytAI as an **integrated contractor platform**, not
 | Pricing Engine apply | FG-009 | **EXISTS** (separate human action) |
 | Customer estimate | V1-04 output 2 | **EXISTS** |
 | QuickBooks-ready entry (Option A) | V1-05 / V1-04 output 3 | **EXISTS** ([FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT**) |
-| Contract package (Ontario) | V1-06 / V1-04 output 4 | **NOT IMPLEMENTED** (presentation draft only) |
+| Contract / execution package (first expected Canadian package: Ontario) | V1-06 / V1-04 output 4 | **NOT IMPLEMENTED** (presentation draft only; Slice A preflight COMPLETE; no generator) |
 | Field capture | V1-08 | **EXISTS** |
 | Actual cost + MONITOR | FG-023 | **EXISTS** |
 | Traceability / audit | ADR-005/002/039/023 | **PARTIAL** (PLAN/PRICE/BUILD/MONITOR; not CONTRACT) |

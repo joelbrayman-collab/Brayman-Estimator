@@ -3,13 +3,13 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-050: North American Legal Content Library Ownership and Fail-Closed Boundary |
-| Status | **Proposed** (2026-09-12). Not Accepted. Does **not** authorize product code, schema, migration, legal drafting, or FG-024 Slice A implementation. |
-| Date | 2026-09-12 |
+| Status | **Accepted** by Joel Brayman / ChatGPT Architect, 13 Sep 2026 (architecture / fail-closed ownership only). Does **not** authorize product code, schema, migration, legal drafting, or FG-024 Slice A implementation. |
+| Date | 2026-09-12; Accepted 2026-09-13 |
 | Related | [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) · [fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md) · [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [project-document-package.md](../architecture/project-document-package.md) · [ADR-037](ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** · [ADR-038](ADR-038-permit-intelligence-authority-and-rules-library.md) **Accepted** · [ADR-039](ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-002](ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-040](ADR-040-organization-brand-profile.md) **Accepted** · [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED** (presentation only) |
 
 This ADR is the **ownership and fail-closed boundary** for the North American CONTRACT-stage legal-content library (FG-024 Slice A). It is the analogue of [ADR-038](ADR-038-permit-intelligence-authority-and-rules-library.md) for permit rules: a distinct governed library, not a second jurisdiction resolver, and not a second contract system.
 
-Accepting this ADR later would **not** by itself authorize product code, Ontario/U.S. population, Family 05 legal approval, contract generation, or Native Signing.
+Accepting this ADR does **not** by itself authorize product code, Ontario/U.S. population, Family 05 legal approval, contract generation, or Native Signing. A later bounded Cursor prompt is required for Slice A product.
 
 ---
 
@@ -33,13 +33,13 @@ Without this ADR, a later implementer could:
 - let AI mark legal content APPROVED;
 - collapse Native Signing process approval into template legal approval.
 
-[FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) already recorded the North American intent. FG-024 Q11 deferred library schema / package ownership to a later implementation prompt. This ADR is that ownership decision. It remains **Proposed** until Joel accepts it.
+[FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) already recorded the North American intent. FG-024 Q11 deferred library schema / package ownership to a later implementation prompt. This ADR is that ownership decision. It was **Accepted** 13 Sep 2026 as architecture only.
 
 ---
 
 ## Decision
 
-**Proposed.** Do not treat this as Accepted.
+**Accepted.** Architecture / fail-closed ownership only. Do **not** treat acceptance as Slice A product authorization.
 
 ### 1. One North American legal-content library; Ontario is first package, not product scope
 
@@ -90,9 +90,9 @@ V1-07 owns signing **process**. It does not own template legal text. Contract si
 
 V1-04 owns four-output **package completeness**. V1-06 / FG-024 supply output 4. Do not rebuild outputs 1–3. Do not create a second contract system.
 
-### 8. No implementation from this ADR while Proposed
+### 8. Acceptance does not authorize product implementation
 
-Proposing or later accepting this ADR does **not** authorize product code, schema, migration, legal drafting, or Slice A implementation. A later bounded Cursor prompt is required.
+Accepting this ADR does **not** authorize product code, schema, migration, legal drafting, or Slice A implementation. A later bounded Cursor prompt is required.
 
 ---
 
@@ -111,7 +111,7 @@ Proposing or later accepting this ADR does **not** authorize product code, schem
 
 **Positive:** Durable ownership; North American architecture preserved; Ontario remains first UAT package; fail-closed is an ADR-level invariant; second contract system is forbidden.
 
-**Negative:** Slice A product still cannot start until Joel accepts this ADR **and** issues a bounded implementation prompt. Ontario legal language remains BLOCKED on counsel (06D). Empty library means fail-closed by absence until a later product slice exists.
+**Negative:** Slice A product still cannot start until Joel issues a bounded implementation prompt. Ontario legal language remains BLOCKED on counsel (06D). Empty library means fail-closed by absence until a later product slice exists.
 
 ## Module Ownership Impact
 
@@ -137,6 +137,6 @@ None in this pass. A later empty-library product slice must prove fail-closed wh
 
 | Role | Name | Date |
 |------|------|------|
-| Joel | | **Not accepted** |
-| ChatGPT review | FG-024 Slice A documentation preflight | 2026-09-12 |
-| Cursor implementation note | Drafted **Proposed** from ADR-000. No product code. No migration. |
+| Joel | Joel Brayman / ChatGPT Architect | 2026-09-13 |
+| ChatGPT review | FG-024 Slice A documentation preflight (2026-09-12); final review / Accept | 2026-09-13 |
+| Cursor implementation note | Drafted **Proposed** 2026-09-12 from ADR-000. **Accepted** 2026-09-13 documentation-only. No product code. No migration. |

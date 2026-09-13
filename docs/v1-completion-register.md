@@ -301,8 +301,8 @@ Estimator remains the authoritative commercial record. QuickBooks must not becom
 | V1 REQUIRED? | **YES** (06A–06I). 06J **POST-V1**. |
 | BLOCKER? | **YES** for production contract use: Legal Content Gate **empty**; Family 05 **NOT LEGALLY APPROVED**; AI cannot mark legal content APPROVED |
 | Dependencies | ADR-037 / FG-015 jurisdiction identity; Legal Content Gate; V1-07 for 06I |
-| Governing | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / SLICE A PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**; [fg-024-slice-a-legal-content-library-preflight.md](architecture/fg-024-slice-a-legal-content-library-preflight.md); [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Proposed**; [legal-content-and-templates.md](governance/legal-content-and-templates.md) |
-| Next governed action | **STOP.** Slice A preflight is **COMPLETE**. Do **not** implement FG-024 Slice A product from this register. Do **not** Accept ADR-050 from this register. |
+| Governing | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / SLICE A PREFLIGHT COMPLETE / ADR-050 ACCEPTED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**; [fg-024-slice-a-legal-content-library-preflight.md](architecture/fg-024-slice-a-legal-content-library-preflight.md); [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** (architecture only); [legal-content-and-templates.md](governance/legal-content-and-templates.md) |
+| Next governed action | **STOP.** Slice A preflight is **COMPLETE**. ADR-050 is **Accepted**. Do **not** implement FG-024 Slice A product from this register. |
 
 Deep reconciliation: **§9**. Sub-gates: **§9.4**.
 
@@ -464,7 +464,7 @@ Round the published readiness to the **nearest whole percent**. Recalculate from
 
 | ID | Name | V1 REQUIRED? | Status | Notes |
 |----|------|--------------|--------|-------|
-| 06A | Contract library architecture / engine | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | FG-024 Slice A preflight **COMPLETE**; [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Proposed**; product **NOT AUTHORIZED** |
+| 06A | Contract library architecture / engine | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | FG-024 Slice A preflight **COMPLETE**; [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**; product **NOT AUTHORIZED** |
 | 06B | Project jurisdiction → correct legal package | **YES** | **PARTIAL** | Identity/resolver **COMPLETE** (FG-015). Package **selection** not implemented. |
 | 06C | Versioned contract/warranty content + provenance/approval states | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | Legal Content Gate states + FG-024 library states recorded |
 | 06D | Ontario approved contract + warranty package | **YES** | **BLOCKED** | Counsel/legal approval. Empty register. |

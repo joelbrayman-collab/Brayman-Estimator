@@ -5,7 +5,7 @@
 | Status | **PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** Documentation and architecture freeze only. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) remains **not** approved for product implementation. |
 | Date | 2026-09-12 |
 | Gate | [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) Slice A only |
-| ADR | [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Proposed** — required **before product code**. Do not Accept from this preflight. |
+| ADR | [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** — required **before product code**. Acceptance does **not** authorize Slice A product. |
 | Alembic | Live current **`f1a2b3c4d5e6 (head)`**. Repository head **`f1a2b3c4d5e6`**. One graph head. **No new revision.** |
 | Product | CalibraytAI (formerly CalibAi) |
 | Tenant | Brayman Construction Inc. / ORG-001 |
@@ -16,7 +16,7 @@ FG-024 SLICE A PREFLIGHT:
 COMPLETE
 NOT IMPLEMENTATION-AUTHORIZED
 NOT IMPLEMENTED
-ADR-050 PROPOSED / NOT ACCEPTED
+ADR-050 ACCEPTED / ARCHITECTURE ONLY
 NO SCHEMA FILE
 NO LEGAL DRAFTING
 NO GENERIC NORTH AMERICAN FALLBACK
@@ -27,6 +27,8 @@ V1-06 REMAINS PARTIAL / 0.25
 ```
 
 This document freezes Slice A **engine architecture** for a later bounded product prompt. It does **not** authorize that prompt.
+
+**Subsequent status (2026-09-13):** [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** by Joel Brayman / ChatGPT Architect (architecture / fail-closed ownership only). Slice A architecture prerequisite **satisfied**. Product implementation remains **NOT AUTHORIZED / NOT IMPLEMENTED**. Do **not** rescore V1.
 
 **Out of this preflight:** Slice B update engine product; Slice C generation; Slice D live monitoring; Ontario/U.S. legal population; Family 05 legal approval; Native Signing product; V1-04 product work; V1 rescore.
 
@@ -193,10 +195,10 @@ If a later product prompt requires schema, that prompt must include **Joel-appro
 |----------|--------|
 | Required? | **REQUIRED BEFORE PRODUCT CODE** |
 | This pass | [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) drafted **Proposed** from [ADR-000-template.md](../adr/ADR-000-template.md) |
-| Accept now? | **No** |
-| Implement from Proposed? | **No** |
+| Accept now? | **No** (preflight 2026-09-12). **Accepted** 2026-09-13 architecture only. |
+| Implement from Accepted? | **No** |
 
-FG-024 Q11 deferred library schema / package ownership. This preflight supplies that ADR as Proposed. Joel must Accept ADR-050 before Slice A product code.
+FG-024 Q11 deferred library schema / package ownership. This preflight supplies that ADR as Proposed. Joel **Accepted** ADR-050 on **13 Sep 2026**. Slice A product code still requires a later bounded implementation prompt.
 
 ---
 
@@ -247,3 +249,5 @@ Do **not** rescore because a preflight now exists. 06A remains **ARCHITECTURE CO
 ## 11. Prohibited scope (this pass)
 
 Application code · models · routes · services · templates · CSS/JS · tests altered for new behaviour · Alembic revision · live DB mutation · legal-content population · Family 05 legal-status change · Native Signing product · V1-04 product · accepting ADR-050 · accepting ADR-008 or ADR-010 · website · HostPapa · rescore V1
+
+**Subsequent (2026-09-13):** [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**. The 2026-09-12 preflight prohibition on accepting ADR-050 is closed. Slice A **product** remains prohibited until a bounded implementation prompt.

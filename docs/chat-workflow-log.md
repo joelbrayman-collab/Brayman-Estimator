@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-12 |
+| Updated | 2026-09-13 |
 
 ## Purpose
 
@@ -42,6 +42,150 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-13 — Accept ADR-050 legal-content library ownership
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-13 |
+| Branch | `main` @ `20c62d43ee12a679d39fbd44e2232a87754964ed` (parent) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 13 SEP 2026 |
+| Objective | Final bounded review of ADR-050 against the approved FG-024 Slice A preflight. Accept if it exactly records approved architecture. Reconcile current-state docs. Test, commit, push. No product code. |
+| Business decision | Joel Brayman / ChatGPT Architect Accept ADR-050 as architecture / fail-closed ownership only. |
+| Architectural decision | ADR-050 **Accepted**. One North American library; Ontario first UAT package not product scope; one ADR-037 resolver; one Legal Content Gate; fail-closed; Family 05 presentation only; V1-04 vs V1-06 boundary; Native Signing separate; additive future schema not `permit_rules`. FG-024 Slice A product remains **NOT AUTHORIZED / NOT IMPLEMENTED**. V1 remains **60% / 4 of 11**. |
+| Prompt template used | Joel ADR-050 final review / acceptance (13 Sep 2026) |
+| Approved Cursor prompt summary | Verify baseline 20c62d4; read governing records; Accept ADR-050 if it matches preflight; reconcile docs; pytest; commit `docs: accept ADR-050 legal-content library ownership`; push main; STOP. |
+| Files expected to change | ADR-050; FG-024; preflight; Legal Content Gate; indexes; V1 register status text; current-state / session-handoff / project-state-report / roadmap / milestones / chat-workflow-log |
+| Files prohibited from changing | Application code; migrations; legal-content population; FG-022 masters; Issue/Send/Accept of EST-2026-0019; V1 rescore |
+| Implementation result | ADR-050 **Accepted**. Architecture prerequisite satisfied. Product not implemented. EST-2026-0019 occupancy preserved. |
+| Tests | `./venv/bin/python -m pytest -q` — **765 passed**, 2669 warnings, **301.88s**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (recorded acceptance; not a V1 package completion) |
+| Constitutional issue raised | None |
+| Unresolved issues | Slice A product unauthorized. 06D Ontario counsel BLOCKED. V1-04 output 4 NOT IMPLEMENTED. EST-2026-0019 not issued. |
+| Next approved step | **STOP.** Bounded FG-024 Slice A empty-library product prompt is next candidate, not this pass. |
+| Next approved prompt | Empty North American legal-content library + additive schema + resolver-backed selection + coded fail-closed behaviour. Do not begin until Joel issues that prompt. |
+| Commit hash | This documentation acceptance commit |
+
+### 2026-09-12 — EST-2026-0019 recost concrete to $275/m³ and regenerate two documents
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-12 |
+| Branch | `main` @ `20c62d43ee12a679d39fbd44e2232a87754964ed` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 12 SEP 2026 |
+| Objective | Apply Ben’s $275/m³ Brayman Construction concrete cost on version 34 and regenerate Internal Detailed Cost Breakdown + Construction Estimate. |
+| Business decision | Concrete 60 m³ @ **$275** (replaces $235). Labour 284 mh and other unit prices unchanged. TRUE GM 15%. |
+| Architectural decision | Live Draft records updated in place (Client 22 / Project 27 / Estimate 28 / Version 34 / Proposal 14). FG-022 masters copied, not rewritten. |
+| Prompt template used | Joel verbal: adjust concrete cost to $275 and provide the two docs. |
+| Approved Cursor prompt summary | Recost EST-2026-0019 concrete to $275 Brayman Construction cost; regenerate the two Joel-review DOCX; do not issue. |
+| Files expected to change | Live DB version 34 / snapshot 14 / Proposal 14; Desktop + `instance/review-EST-2026-0019/` DOCX; handoff docs |
+| Files prohibited from changing | Application code; migrations; FG-022 master bytes; Issue/Send/Accept; Documents 01/04–07 |
+| Implementation result | Concrete 60 × $275 = $16,500. Materials $23,932 · labour $18,460 · direct $42,392.00 · sell $49,872.94 · HST $6,483.48 · total $56,356.42. Recon PASS. Two DOCX rewritten. Not issued. |
+| Tests | Product suite not rerun. Live recon $49,872.94 / $6,483.48 / $56,356.42. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Site TBD. TES not engineering. Family 03 register still Customer Facing Estimate (later cleanup). Not issued. |
+| Next approved step | **STOP.** Joel reviews the two Desktop DOCX files. |
+| Next approved prompt | Apply Joel review marks to the two $275 files only. |
+| Commit hash | Product HEAD unchanged: `20c62d43ee12a679d39fbd44e2232a87754964ed`. |
+
+### 2026-09-12 — EST-2026-0019 Internal Breakdown + Construction Estimate for Joel review
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-12 |
+| Branch | `main` @ `20c62d43ee12a679d39fbd44e2232a87754964ed` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 12 SEP 2026 |
+| Objective | Finish EST-2026-0019. Generate ONLY Internal Detailed Cost Breakdown and Construction Estimate from approved visual templates. Do not stop over naming. |
+| Business decision | This-project customer title is CONSTRUCTION ESTIMATE. Family 03 visual master used; register rename is later non-blocking cleanup. |
+| Architectural decision | Masters copied, not rewritten. No product renderer change. |
+| Prompt template used | Joel finish-the-quote-now (12 Sep 2026) |
+| Approved Cursor prompt summary | Produce the two documents now from version 34; title CONSTRUCTION ESTIMATE; recon PASS; do not issue. |
+| Files expected to change | Desktop/instance review DOCX; handoff docs |
+| Files prohibited from changing | Application code; migrations; FG-022 master bytes; Issue/Send/Accept; Documents 01/04–07 |
+| Implementation result | Two DOCX written. Titles INTERNAL DETAILED COST BREAKDOWN and CONSTRUCTION ESTIMATE. Recon PASS. Not issued. |
+| Tests | Product suite not rerun. Live recon $47,049.41 / $6,116.42 / $53,165.83. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Site TBD. TES not engineering. Family 03 register still Customer Facing Estimate (later cleanup). Not issued. |
+| Next approved step | **STOP.** Joel reviews the two Desktop DOCX files. |
+| Next approved prompt | Apply Joel review marks to the two files only. |
+| Commit hash | Product HEAD unchanged: `20c62d43ee12a679d39fbd44e2232a87754964ed`. |
+
+### 2026-09-12 — STOP: CONSTRUCTION ESTIMATE vs Family 03 title conflict
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-12 |
+| Branch | `main` @ `20c62d43ee12a679d39fbd44e2232a87754964ed` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 12 SEP 2026 |
+| Objective | Apply Joel governance correction: current approved titles only; Marc customer document must be CONSTRUCTION ESTIMATE. Locate masters. STOP on conflict. |
+| Business decision | Historical Allen/Speakeasy names are not title authority. Current master/register/product terminology is. |
+| Architectural decision | None implemented. Family 03 was not renamed. Masters not rewritten. |
+| Prompt template used | Joel governance correction — approved document terminology authority (12 Sep 2026) |
+| Approved Cursor prompt summary | Locate current masters for INTERNAL DETAILED COST BREAKDOWN and CONSTRUCTION ESTIMATE; use exact approved titles; STOP if authority conflicts. |
+| Files expected to change | None unless titles already matched |
+| Files prohibited from changing | FG-022 master bytes; Family 03 rename; application code; migrations; Issue/Send/Accept |
+| Implementation result | **STOP.** Family 02 title matches. Family 03 current approved title is CUSTOMER-FACING ESTIMATE. CONSTRUCTION ESTIMATE not found in repo, masters, or product terminology. |
+| Tests | Not run (no code/document mutation). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None. Title retitle would be a governed master revision, not Cursor reinterpretation. |
+| Unresolved issues | Joel/ChatGPT must Accept a Family 03 title revision to CONSTRUCTION ESTIMATE, or confirm Family 03 remains CUSTOMER-FACING ESTIMATE for Marc. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | Only after Joel resolves the title. Then regenerate Family 02 + the resolved customer family from masters. |
+| Commit hash | Product HEAD unchanged: `20c62d43ee12a679d39fbd44e2232a87754964ed`. |
+
+### 2026-09-12 — EST-2026-0019 two-document package on FG-022 approved masters
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-12 |
+| Branch | `main` @ `20c62d43ee12a679d39fbd44e2232a87754964ed` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 12 SEP 2026 |
+| Objective | Generate ONLY Family 02 Internal Detailed Cost Breakdown and Family 03 Customer-Facing Estimate from FG-022 approved reusable masters. Populate Marc content. Do not redesign. |
+| Business decision | Approved template first. Project data from EstimateVersion 34. Presentation from Reusable Master Template Family V1. Prior ad-hoc HTML review files removed. |
+| Architectural decision | No product renderer change. FG-012 HTML/ReportLab not used. Masters copied; master SHA unchanged. Future programmatic template engine remains out of scope. |
+| Prompt template used | Joel two-document estimate package — approved templates required (12 Sep 2026) |
+| Approved Cursor prompt summary | Locate FG-022 Families 02 and 03; fill copies with EST-2026-0019 content; recon PASS; STOP for Joel review. |
+| Files expected to change | Desktop/instance review DOCX; live DB already priced; handoff docs |
+| Files prohibited from changing | Application code; migrations; FG-022 master bytes; Issue/Send/Accept; Documents 01/04–07 |
+| Implementation result | Family 02 and 03 copies written. Masters SHA verified unchanged. Residue PASS. Word AppleScript PDF export failed (not substituted with ReportLab). |
+| Tests | Product suite **not rerun**. Live recon PASS $47,049.41 / $6,116.42 / $53,165.83. Master SHA 02 `b187911a…461a93` / 03 `25a816cd…c3825`. styles.xml and header PNG SHA MATCH register. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Site TBD. TES not engineering. Word Save As PDF still needed for verification PDFs. Documents 01/04–07 not generated. Not issued. |
+| Next approved step | **STOP.** Joel reviews the two Desktop DOCX files. |
+| Next approved prompt | Apply Joel's review marks to the same two FG-022 copies only. |
+| Commit hash | Product HEAD unchanged: `20c62d43ee12a679d39fbd44e2232a87754964ed`. |
+
+### 2026-09-12 — EST-2026-0019 Solid Steel / Marc Bouliion 40×80 TES — two Joel-review documents
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-12 |
+| Branch | `main` @ `20c62d43ee12a679d39fbd44e2232a87754964ed` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 12 SEP 2026 |
+| Objective | Enter locked commercial basis on existing EstimateVersion 34; produce only two Joel-review files (internal cost breakdown + customer estimate). Do not Issue. Do not generate the other five documents. |
+| Business decision | TRUE GM 15%; labour $65/mh; 60 m³ @ $235 with fibre; Speakeasy-comparable unit prices (mesh $58, VB $150, 15M $26, forms $750, pump $2,500); TES 14 m³ / 28-bar allowance labeled not engineering; site ready by others. |
+| Architectural decision | None. Used existing Estimate / costing / TRUE_GM snapshot / Draft proposal. No product schema change. |
+| Prompt template used | Commercial two-document Joel review (not a Feature Gate) |
+| Approved Cursor prompt summary | Do not recreate Client 22 / Project 27 / Estimate 28. Price version 34. Write Desktop HTML internal + customer. Reconcile snapshot = proposal. STOP for Joel review. |
+| Files expected to change | Live DB estimate lines / costing / pricing snapshot / Draft proposal; gitignored Desktop + `instance/review-EST-2026-0019/` HTML; handoff docs |
+| Files prohibited from changing | Application code; migrations; Issue/Send/Accept; labour-calc DOCX; QB; contract; D/W/S; client construction proposal |
+| Implementation result | Version 34 priced. Snapshot 14. Proposal 14 `PROP-2026-0006` Draft. Recon PASS. Two HTML files written to Desktop. |
+| Tests | Product suite **not rerun** (no application-code change). Live recon: direct $39,992.00 = sell $47,049.41 = HST $6,116.42 = total $53,165.83 across version + proposal. |
+| Project-state-report update | No (not a product milestone) |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Joel review of the two HTML files. Site address TBD. TES geometry/rebar remain estimating assumptions. CostItem `001` still stored unit `meters`. Not issued. |
+| Next approved step | **STOP.** Joel reviews the two Desktop HTML files. Do not Issue. |
+| Next approved prompt | Apply Joel's review marks to version 34 and regenerate the two HTML files only, unless Joel lists additional documents. |
+| Commit hash | Product HEAD unchanged: `20c62d43ee12a679d39fbd44e2232a87754964ed`. Live DB + gitignored HTML + this log/handoff only. |
 
 ### 2026-09-12 — FG-024 Slice A legal-content library preflight
 

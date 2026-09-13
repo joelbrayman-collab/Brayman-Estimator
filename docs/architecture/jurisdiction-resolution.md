@@ -14,7 +14,9 @@
 
 **Subsequent status (2026-09-07, FG-024 recorded):** Future CONTRACT legal-content packages reuse this jurisdiction **identity**. Permit Rules Library (ADR-038) and Legal Content Gate / [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) remain **separate** content authorities. FG-024 is **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED** and does **not** create a second resolver.
 
-**Subsequent status (2026-09-12, FG-024 Slice A preflight):** Slice A engine architecture freeze **COMPLETE**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Proposed**. Future CONTRACT legal-content packages still reuse this jurisdiction **identity**. Product implementation remains **NOT AUTHORIZED**. No second resolver.
+**Subsequent status (2026-09-12, FG-024 Slice A preflight):** Slice A engine architecture freeze **COMPLETE**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) drafted **Proposed**. Future CONTRACT legal-content packages still reuse this jurisdiction **identity**. Product implementation remains **NOT AUTHORIZED**. No second resolver.
+
+**Subsequent status (2026-09-13):** [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** (architecture only). Future CONTRACT legal-content packages still reuse this jurisdiction **identity**. Product implementation remains **NOT AUTHORIZED**. No second resolver.
 
 ---
 

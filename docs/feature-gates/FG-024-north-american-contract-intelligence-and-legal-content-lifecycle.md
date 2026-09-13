@@ -8,8 +8,8 @@
 | Module | **CONTRACT** stage of PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN. The existing [Legal Content Gate](../governance/legal-content-and-templates.md) remains the approval authority for legal templates and jurisdiction packages. **Projects** owns `ProjectLocation` / jurisdiction identity ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md)). Permit Rules Library remains a **separate** domain ([ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md)). Native Signing remains a **separate** process track ([contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md)). |
 | Date | 2026-09-07 |
 | Status | **FUTURE / RECORDED / SLICE A PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** This recording is **not** Feature Gate approval for implementation. Slices A–D product work is **not** authorized. Slice A architecture preflight: [fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md). |
-| Architecture | [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [project-document-package.md](../architecture/project-document-package.md) · [fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md) · [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** · [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) **Accepted** · [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted** · [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Proposed** · [FG-022](FG-022-reusable-approved-document-template-family-v1.md) **CLOSED / APPROVED REUSABLE MASTER FAMILY V1** (presentation only) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
-| Related ADRs | [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Proposed** (library ownership / fail-closed; required before Slice A product code). Do **not** accept ADR-050, ADR-008, or ADR-010 from this gate. |
+| Architecture | [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [project-document-package.md](../architecture/project-document-package.md) · [fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md) · [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** · [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) **Accepted** · [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted** · [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** · [FG-022](FG-022-reusable-approved-document-template-family-v1.md) **CLOSED / APPROVED REUSABLE MASTER FAMILY V1** (presentation only) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
+| Related ADRs | [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** 13 Sep 2026 (library ownership / fail-closed; architecture only). Acceptance does **not** authorize Slice A product. Do **not** accept ADR-008 or ADR-010 from this gate. |
 | Prerequisites | Active implementation stream remains [FG-023](FG-023-monitor-v1-estimated-versus-actual.md). This gate does **not** jump the queue. Legal Content Gate remains **empty**. Family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. Native Signing production remains blocked pending counsel process approval. |
 
 ---
@@ -36,14 +36,16 @@ NOT IMPLEMENTATION-AUTHORIZED
 NOT IMPLEMENTED
 NOT FOUR SEPARATE FEATURE GATES
 SLICES A–D PRODUCT: NOT AUTHORIZED
-ADR-050: PROPOSED / NOT ACCEPTED
+ADR-050: ACCEPTED / ARCHITECTURE ONLY
 LEGAL CONTENT GATE: PRESERVED / STILL EMPTY
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
 ```
 
 Joel/ChatGPT recorded this gate on **2026-09-07** as durable product/governance authority only. Recording is **not** implementation approval.
 
-**Subsequent status (2026-09-12, Slice A preflight):** Architecture preflight **COMPLETE**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Proposed**. Product implementation remains **NOT AUTHORIZED**. Do **not** begin Slice A product code from the preflight.
+**Subsequent status (2026-09-12, Slice A preflight):** Architecture preflight **COMPLETE**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) drafted **Proposed**. Product implementation remains **NOT AUTHORIZED**. Do **not** begin Slice A product code from the preflight.
+
+**Subsequent status (2026-09-13):** [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** by Joel Brayman / ChatGPT Architect (architecture / fail-closed ownership only). Slice A architecture prerequisite **satisfied**. Product implementation remains **NOT AUTHORIZED / NOT IMPLEMENTED**. Do **not** rescore V1.
 
 ---
 
@@ -155,7 +157,7 @@ Future capability for authoritative-source monitoring; candidate change detectio
 | 8 | What are the acceptance criteria? | **This recording:** FG-024 exists; FUTURE / NOT IMPLEMENTATION-AUTHORIZED; slices A–D pinned; Legal Content Gate preserved; FG-023 unchanged as active stream. **Implementation acceptance:** later, per authorized slice. |
 | 9 | What tests are required? | **None** for this docs-only recording. Later slices require dedicated tests before implementation close. |
 | 10 | What documentation must be updated? | This Feature Gate; feature-gates README; Legal Content Gate subsequent status; project-document-package pin; platform-roadmap Item 15 / future-programs; docs README; Projects module future line; current-state / session-handoff / chat-workflow-log / milestones / project-state-report as required for discoverability **without** implying product code. |
-| 11 | Does it require an ADR? | **Yes before Slice A product code.** [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) is **Proposed** (2026-09-12). ADR-037 already pins one jurisdiction resolver. ADR-002 / Constitution Article 5 already pin historical-record immutability. Do **not** Accept ADR-050 from the Slice A preflight. |
+| 11 | Does it require an ADR? | **Yes before Slice A product code.** [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) is **Accepted** (13 Sep 2026; architecture only). ADR-037 already pins one jurisdiction resolver. ADR-002 / Constitution Article 5 already pin historical-record immutability. Acceptance does **not** authorize Slice A product. |
 | 12 | Does it require a database migration? | **No** in this recording. Later slices may require additive migrations only after implementation authorization. |
 
 ---
@@ -350,4 +352,4 @@ Active implementation stream remains **FG-023 MONITOR V1**. This recording does 
 | Cursor | Docs recording only. No product code. No migration. No legal-content population. |
 | Implementation | **NOT AUTHORIZED** until Joel/ChatGPT later approve this gate **for implementation** and issue a bounded slice prompt. |
 
-**Next governed action for the platform is STOP.** Slice A preflight is **COMPLETE**. Do **not** start FG-024 Slice A **product** from this recording or from the preflight. Do **not** Accept ADR-050 from Cursor. Do **not** implement FG-025 remaining surfaces from this gate.
+**Next governed action for the platform is STOP.** Slice A preflight is **COMPLETE**. ADR-050 is **Accepted**. Do **not** start FG-024 Slice A **product** from this recording. Do **not** implement FG-025 remaining surfaces from this gate.

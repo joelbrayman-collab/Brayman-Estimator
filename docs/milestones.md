@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-12 |
+| Updated | 2026-09-13 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -31,6 +31,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 ---
 
 ---
+
+### 2026-09-13 — ADR-050 Accepted (North American legal-content library ownership)
+
+| Field | Content |
+|-------|---------|
+| ID | ADR-050 acceptance (architecture / fail-closed ownership only) |
+| Status | **ACCEPTED.** [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** by Joel Brayman / ChatGPT Architect. FG-024 Slice A architecture prerequisite **satisfied**. Product **NOT IMPLEMENTED**. V1 remains **60% / 4 of 11**. |
+| Branch | `main` |
+| Base commit | `20c62d43ee12a679d39fbd44e2232a87754964ed` (`docs: record FG-024 Slice A legal-content library preflight`) |
+| Objective | Final bounded review of ADR-050 against the approved Slice A preflight. Accept if it exactly records approved architecture. Reconcile current-state docs. No product code. No migration. |
+| Deliverables | ADR-050 status **Accepted**; present-state documentation reconciliation. |
+| Validation | `./venv/bin/python -m pytest -q` — **765 passed**, 2669 warnings, **301.88s**. Live current remains **`f1a2b3c4d5e6 (head)`**. No application-code change. |
+| Architectural findings | ADR-050 matches the approved preflight: one North American library; Ontario first UAT package not product scope; one ADR-037 resolver; one Legal Content Gate; fail-closed / no generic fallback; Family 05 presentation only; V1-04 completeness vs V1-06 engine; Native Signing separate; additive future schema not `permit_rules`. |
+| Open decisions | Bounded FG-024 Slice A empty-library product prompt. Ontario counsel (06D). |
+| Next milestone | **STOP.** Do **not** begin FG-024 Slice A product from this acceptance. |
+| Commit | This documentation acceptance commit |
+| Date | 2026-09-13 |
 
 ### 2026-09-12 — FG-024 Slice A legal-content library preflight
 

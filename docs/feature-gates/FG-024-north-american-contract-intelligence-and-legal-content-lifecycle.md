@@ -7,9 +7,9 @@
 | Target Milestone | **None.** FG-024 is the governing identifier. Do not assign a new M0xx number. Roadmap Item 15 (contract/warranty when Legal Content Gate is satisfied) is the sequence home. |
 | Module | **CONTRACT** stage of PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN. The existing [Legal Content Gate](../governance/legal-content-and-templates.md) remains the approval authority for legal templates and jurisdiction packages. **Projects** owns `ProjectLocation` / jurisdiction identity ([ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md)). Permit Rules Library remains a **separate** domain ([ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md)). Native Signing remains a **separate** process track ([contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md)). |
 | Date | 2026-09-07 |
-| Status | **FUTURE / RECORDED / SLICE A PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** This recording is **not** Feature Gate approval for implementation. Slices A–D product work is **not** authorized. Slice A architecture preflight: [fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md). |
+| Status | **FUTURE / RECORDED / SLICE A PRODUCT IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED.** Slices B–D product work is **not** authorized. Live `flask db upgrade` is **not** authorized from this implementation. Slice A architecture preflight: [fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md). |
 | Architecture | [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [project-document-package.md](../architecture/project-document-package.md) · [fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md) · [ADR-037](../adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** · [ADR-038](../adr/ADR-038-permit-intelligence-authority-and-rules-library.md) **Accepted** · [ADR-039](../adr/ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-040](../adr/ADR-040-organization-brand-profile.md) **Accepted** · [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** · [FG-022](FG-022-reusable-approved-document-template-family-v1.md) **CLOSED / APPROVED REUSABLE MASTER FAMILY V1** (presentation only) · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
-| Related ADRs | [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** 13 Sep 2026 (library ownership / fail-closed; architecture only). Acceptance does **not** authorize Slice A product. Do **not** accept ADR-008 or ADR-010 from this gate. |
+| Related ADRs | [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** 13 Sep 2026. Slice A empty-library product **implemented in repository** 13 Sep 2026. Live migration **not** run. Do **not** accept ADR-008 or ADR-010 from this gate. |
 | Prerequisites | Active implementation stream remains [FG-023](FG-023-monitor-v1-estimated-versus-actual.md). This gate does **not** jump the queue. Legal Content Gate remains **empty**. Family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. Native Signing production remains blocked pending counsel process approval. |
 
 ---
@@ -18,26 +18,28 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **RECORDED.** Slice A preflight **COMPLETE**. **NOT APPROVED FOR IMPLEMENTATION.** |
-| Slice A — Jurisdictional Legal Content Library | **PREFLIGHT COMPLETE / NOT IMPLEMENTATION-AUTHORIZED** |
+| Feature Gate (this document) | **RECORDED.** Slice A product **IMPLEMENTED IN REPOSITORY**. **NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED.** |
+| Slice A — Jurisdictional Legal Content Library | **PRODUCT IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED** |
 | Slice B — Contract Update Engine | **NOT AUTHORIZED** |
 | Slice C — Contract generation + frozen snapshot | **NOT AUTHORIZED** |
 | Slice D — Legal change monitoring + alerts | **NOT AUTHORIZED** |
-| Schema / Alembic | **None.** Do not create a migration from this recording. |
-| Legal content population | **None.** Ontario and U.S. packages remain unpopulated. |
-| Product code | **None.** |
+| Schema / Alembic | Repository revision **`b1c2d3e4f5a6`** revises **`f1a2b3c4d5e6`**. Live current remains **`f1a2b3c4d5e6 (head)` until later authorized live-migrate**. |
+| Legal content population | **None.** Ontario and U.S. packages remain unpopulated. Library tables are empty. |
+| Product code | Slice A models + selection service + tests. No UI. No generation. |
 
 ```text
 FG-024:
 FUTURE
 RECORDED
-SLICE A PREFLIGHT COMPLETE
-NOT IMPLEMENTATION-AUTHORIZED
-NOT IMPLEMENTED
+SLICE A PRODUCT IMPLEMENTED IN REPOSITORY
+NOT LIVE-MIGRATED
+NOT OFFICE-UAT
+NOT CLOSED
 NOT FOUR SEPARATE FEATURE GATES
-SLICES A–D PRODUCT: NOT AUTHORIZED
-ADR-050: ACCEPTED / ARCHITECTURE ONLY
+SLICES B–D PRODUCT: NOT AUTHORIZED
+ADR-050: ACCEPTED
 LEGAL CONTENT GATE: PRESERVED / STILL EMPTY
+NORTH AMERICAN LIBRARY: PERSISTENCE + SELECTION ENGINE / NO LIVE CONTENT
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
 ```
 
@@ -46,6 +48,8 @@ Joel/ChatGPT recorded this gate on **2026-09-07** as durable product/governance 
 **Subsequent status (2026-09-12, Slice A preflight):** Architecture preflight **COMPLETE**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) drafted **Proposed**. Product implementation remains **NOT AUTHORIZED**. Do **not** begin Slice A product code from the preflight.
 
 **Subsequent status (2026-09-13):** [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** by Joel Brayman / ChatGPT Architect (architecture / fail-closed ownership only). Slice A architecture prerequisite **satisfied**. Product implementation remains **NOT AUTHORIZED / NOT IMPLEMENTED**. Do **not** rescore V1.
+
+**Subsequent status (2026-09-13, Slice A product):** Empty-library persistence, ADR-037-backed selection, and coded fail-closed are **implemented in the repository**. Alembic **`b1c2d3e4f5a6`** created. Live migration **not** run. Legal Content Gate remains **empty**. No Ontario/U.S. population. No UI. No contract generation. V1 score **unchanged**. Do **not** begin Slice B/C/D.
 
 ---
 
@@ -330,14 +334,17 @@ Active implementation stream remains **FG-023 MONITOR V1**. This recording does 
 
 ## Out of scope (this recording and until a later implementation prompt)
 
-- Product code, schema, migrations, routes, forms
+The 2026-09-07 recording excluded product code. A later bounded prompt authorized **Slice A only**. Still out of scope:
+
+- Live `flask db upgrade`
+- Hub / CONTRACT UI
 - Ontario or U.S. legal-content drafting or population
 - Legal advice
 - AI-generated clauses marked APPROVED
 - Counsel approval of any template
 - Native Signing implementation or production activation
 - Signed Change Order product work
-- FG-023 interruption or expansion
+- Slices B–D product
 - QuickBooks / payroll / GL / AP / AR
 - LEARN
 - Generic North American fallback contracts
@@ -348,8 +355,8 @@ Active implementation stream remains **FG-023 MONITOR V1**. This recording does 
 
 | Role | State |
 |------|--------|
-| Joel / ChatGPT | **Recorded** 2026-09-07 as FUTURE product/governance authority. **Not** implementation-approved. |
-| Cursor | Docs recording only. No product code. No migration. No legal-content population. |
-| Implementation | **NOT AUTHORIZED** until Joel/ChatGPT later approve this gate **for implementation** and issue a bounded slice prompt. |
+| Joel / ChatGPT | **Recorded** 2026-09-07. Slice A product **authorized** 13 Sep 2026. Gate **NOT CLOSED**. |
+| Cursor | Slice A models, additive `b1c2d3e4f5a6`, selection service, tests. No live migrate. No UI. |
+| Implementation | Slice A **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED**. |
 
-**Next governed action for the platform is STOP.** Slice A preflight is **COMPLETE**. ADR-050 is **Accepted**. Do **not** start FG-024 Slice A **product** from this recording. Do **not** implement FG-025 remaining surfaces from this gate.
+**Next governed action for the platform is STOP.** Slice A product is **in the repository** and **not live-migrated**. Do **not** run live `flask db upgrade`. Do **not** start Slice B, Slice C, Slice D, counsel drafting, or UI from this gate.

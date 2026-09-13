@@ -301,8 +301,8 @@ Estimator remains the authoritative commercial record. QuickBooks must not becom
 | V1 REQUIRED? | **YES** (06A–06I). 06J **POST-V1**. |
 | BLOCKER? | **YES** for production contract use: Legal Content Gate **empty**; Family 05 **NOT LEGALLY APPROVED**; AI cannot mark legal content APPROVED |
 | Dependencies | ADR-037 / FG-015 jurisdiction identity; Legal Content Gate; V1-07 for 06I |
-| Governing | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / SLICE A PREFLIGHT COMPLETE / ADR-050 ACCEPTED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**; [fg-024-slice-a-legal-content-library-preflight.md](architecture/fg-024-slice-a-legal-content-library-preflight.md); [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** (architecture only); [legal-content-and-templates.md](governance/legal-content-and-templates.md) |
-| Next governed action | **STOP.** Slice A preflight is **COMPLETE**. ADR-050 is **Accepted**. Do **not** implement FG-024 Slice A product from this register. |
+| Governing | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / SLICE A PRODUCT IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED**; [fg-024-slice-a-legal-content-library-preflight.md](architecture/fg-024-slice-a-legal-content-library-preflight.md); [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**; [legal-content-and-templates.md](governance/legal-content-and-templates.md) |
+| Next governed action | **STOP.** Slice A engine is **in the repository** and **not live-migrated**. Do **not** live-migrate. Do **not** begin Slice B/C/D. Do **not** rescore V1. Factor remains **0.25**. |
 
 Deep reconciliation: **§9**. Sub-gates: **§9.4**.
 
@@ -426,7 +426,7 @@ Round the published readiness to the **nearest whole percent**. Recalculate from
 
 | Question | Answer |
 |----------|--------|
-| 1. Contract-library architecture | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) records one linked gate: Slice A library, Slice B update engine, Slice C generation + frozen snapshot, Slice D change monitoring. **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** |
+| 1. Contract-library architecture | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) records one linked gate: Slice A library, Slice B update engine, Slice C generation + frozen snapshot, Slice D change monitoring. Slice A engine **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED**. Slices B–D **NOT AUTHORIZED**. |
 | 2. Legal Content Gate | [legal-content-and-templates.md](governance/legal-content-and-templates.md) remains approval authority. Register **empty**. AI **cannot** independently set legal content to APPROVED. Versions are superseded, not silently overwritten. |
 | 3. Four-output home | Output 4 in [project-document-package.md](architecture/project-document-package.md). FG-012 does **not** own it. |
 | 4. Native Signing | Separate process track. Production blocked pending counsel. Development may proceed under separate governance. |
@@ -434,7 +434,7 @@ Round the published readiness to the **nearest whole percent**. Recalculate from
 | 6. Jurisdiction identity | **Reusable.** [ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted**; [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED**. One resolver. Permit rules (ADR-038) are **not** contract clauses. |
 | 7. Frozen snapshot pattern | ADR-002 (accepted proposals); ADR-039 (permit reports); FG-024 records the CONTRACT analogue. **Not implemented** for contracts. |
 | 8. Update / monitoring | FG-024 Slice B + D **recorded**, not implemented. Effective-date fields are specified (source publication ≠ counsel approval ≠ platform activation ≠ generation). |
-| 9. Fail-closed | FG-024: no approved package / unsupported jurisdiction / unresolved effective-date → **FAIL CLOSED**. **No generic North American fallback.** |
+| 9. Fail-closed | FG-024: no approved package / unsupported jurisdiction / unresolved effective-date → **FAIL CLOSED**. **Coded in repository.** **No generic North American fallback.** Empty library BLOCK. Not live-migrated. |
 
 ### 9.2 FG-024 pieces vs V1
 
@@ -445,7 +445,7 @@ Round the published readiness to the **nearest whole percent**. Recalculate from
 | C — Generation + frozen snapshot | **V1 REQUIRED** |
 | D — Automated legal-source monitoring / alerts | **JOEL DECISION.** Register recommendation: **POST-V1**. V1 can ship with human/counsel-initiated updates (Slice B without live watchers). Do **not** treat this as dropping 06H: effective-date / supersession remain V1. |
 
-**Do not implement FG-024 from this register.**
+**Do not live-migrate FG-024 from this register. Do not implement Slices B–D from this register.**
 
 ### 9.3 Ontario contract / legal blockers
 
@@ -464,13 +464,13 @@ Round the published readiness to the **nearest whole percent**. Recalculate from
 
 | ID | Name | V1 REQUIRED? | Status | Notes |
 |----|------|--------------|--------|-------|
-| 06A | Contract library architecture / engine | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | FG-024 Slice A preflight **COMPLETE**; [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**; product **NOT AUTHORIZED** |
-| 06B | Project jurisdiction → correct legal package | **YES** | **PARTIAL** | Identity/resolver **COMPLETE** (FG-015). Package **selection** not implemented. |
-| 06C | Versioned contract/warranty content + provenance/approval states | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | Legal Content Gate states + FG-024 library states recorded |
+| 06A | Contract library architecture / engine | **YES** | **ENGINE IN REPOSITORY / NOT LIVE-MIGRATED** | Slice A empty-library persistence + selection; Alembic `b1c2d3e4f5a6` not applied live; no Ontario content; V1-06 factor **unchanged** |
+| 06B | Project jurisdiction → correct legal package | **YES** | **PARTIAL** | Identity/resolver **COMPLETE** (FG-015). Package **selection implemented in repository**; empty library fail-closed; not live-migrated |
+| 06C | Versioned contract/warranty content + provenance/approval states | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | Legal Content Gate states + FG-024 library states recorded; object table exists; bodies unpopulated |
 | 06D | Ontario approved contract + warranty package | **YES** | **BLOCKED** | Counsel/legal approval. Empty register. |
 | 06E | Contract generation from approved project/estimate | **YES** | **NOT STARTED** | FG-024 Slice C |
 | 06F | Frozen generated-contract snapshot | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | Pattern exists elsewhere; not for contracts |
-| 06G | Fail-closed when approved jurisdiction package unavailable | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | Specified; not coded |
+| 06G | Fail-closed when approved jurisdiction package unavailable | **YES** | **CODED IN REPOSITORY / NOT LIVE-MIGRATED** | Empty library BLOCK; no generic fallback; not live |
 | 06H | Effective-date / supersession / update architecture | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | V1 = versioning + supersession + effective dates. Live source monitoring = recommended POST-V1 |
 | 06I | Contract package → Native Signing handoff | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | Depends on V1-07; production blocked |
 | 06J | Additional province/state population | **NO** | **POST-V1** | Unless Joel names another launch jurisdiction |

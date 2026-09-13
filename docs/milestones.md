@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-13 — FG-024 Slice A empty legal-content library product
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 Slice A product |
+| Status | **PRODUCT IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED.** V1 remains **60% / 4 of 11**. Legal Content Gate **empty**. |
+| Branch | `main` |
+| Base commit | `a4516b5a82ae6210751d42270e3250ca470cc139` |
+| Date | 2026-09-13 |
+| Objective | Empty North American legal-content library persistence + ADR-037-backed selection + coded fail-closed. |
+| Deliverables | `legal_content_jurisdiction_packages`, `legal_content_objects`, Alembic `b1c2d3e4f5a6`, `app/services/legal_content.py`, focused tests. No UI. No seed. |
+| Validation | Dedicated **17 passed** / 2.29s. Full suite **782 passed** / 2704 warnings / 267.61s. Live current remains `f1a2b3c4d5e6`. One graph head `b1c2d3e4f5a6`. |
+| Architectural findings | Platform-governed library; no org ownership; no country-node fallback; APPROVED ≠ ACTIVE. |
+| Open decisions | Live migrate + bounded office UAT. Slices B–D. Ontario counsel population. |
+| Next milestone | **STOP.** Do not live-migrate. Do not begin Slice B. |
+| Commit | This product commit |
+
 ### 2026-09-13 — ADR-050 Accepted (North American legal-content library ownership)
 
 | Field | Content |

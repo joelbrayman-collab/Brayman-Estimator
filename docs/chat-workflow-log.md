@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-13 — FG-024 Slice A empty legal-content library product
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-13 |
+| Branch | `main` @ `a4516b5a82ae6210751d42270e3250ca470cc139` (parent) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 13 SEP 2026 |
+| Objective | Implement FG-024 Slice A only: empty North American legal-content library persistence, ADR-037 resolver-backed selection, coded fail-closed. One additive Alembic revision. No live migrate. No UI. No legal seed. |
+| Business decision | Joel / ChatGPT Architect authorized Slice A product after ADR-050 Accepted and Slice A preflight COMPLETE. Empty library is an intentional valid state. |
+| Architectural decision | Platform-governed `legal_content_jurisdiction_packages` + `legal_content_objects`. Reuse ADR-037 `resolve_jurisdiction`. No `organization_id`. No `permit_rules` reuse. No country-node fallback. APPROVED ≠ ACTIVE. No AI promote helpers. |
+| Prompt template used | Joel / ChatGPT Architect bounded FG-024 Slice A product prompt (13 Sep 2026) |
+| Approved Cursor prompt summary | Verify main @ a4516b5 / live current f1a2b3c4d5e6; implement empty library + one additive revision b1c2d3e4f5a6; selection service; tests A–N; full pytest; docs; commit `feat: add FG-024 legal-content library foundation`; push main; do not live-migrate. |
+| Files expected to change | models, one Alembic revision, legal_content service, focused tests, FG-032 heads assertion, current-state docs |
+| Files prohibited from changing | UI/templates/CSS/JS; live DB upgrade; Ontario/U.S. seed; EST-2026-0019 commercial records; Family 05; Permit Rules; V1 rescore |
+| Implementation result | Slice A product in repository. Live current remains `f1a2b3c4d5e6`. Repo head `b1c2d3e4f5a6`. EST-2026-0019 occupancy preserved. |
+| Tests | Focused `./venv/bin/python -m pytest -q tests/test_legal_content_library_fg024.py` — **17 passed**, 35 warnings, **2.29s**. Full `./venv/bin/python -m pytest -q` — **782 passed**, 2704 warnings, **267.61s**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (Slice A product recorded; not a V1 package completion; not gate close) |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate unauthorized. Slices B–D unauthorized. 06D Ontario counsel BLOCKED. V1-04 output 4 NOT IMPLEMENTED. EST-2026-0019 not issued. |
+| Next approved step | **STOP.** Do not live-migrate. Do not begin another FG-024 slice. |
+| Next approved prompt | **None.** Return to ChatGPT Architect. |
+| Commit hash | This product commit |
+
 ### 2026-09-13 — Accept ADR-050 legal-content library ownership
 
 | Field | Content |

@@ -16,6 +16,10 @@ from app.models.supplier_catalogue import (
 )
 from app.models.cost_item import CostItem
 from app.models.jurisdiction import JurisdictionAlias, JurisdictionDefinition
+from app.models.legal_content import (
+    LegalContentJurisdictionPackage,
+    LegalContentObject,
+)
 from app.models.permit_intelligence import (
     PermitAnalysis,
     PermitFinding,
@@ -147,6 +151,8 @@ __all__ = [
     "HistoricalUploadAttempt",
     "JurisdictionAlias",
     "JurisdictionDefinition",
+    "LegalContentJurisdictionPackage",
+    "LegalContentObject",
     "DirectLabourCostRateStandard",
     "EstimateLabourSnapshot",
     "LabourAuditEvent",

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-13 — CalibraytAI Opening V1 SHA pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-13 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 13 SEP 2026 |
+| Objective | Pin Opening V1 product SHA after push; record DEPLOYED / OPERATIONAL. |
+| Business decision | Joel: deploy and move on. No website. No HostPapa. No polish. |
+| Architectural decision | Unchanged from ingest. |
+| Prompt template used | Same Phase 3 package closeout. |
+| Approved Cursor prompt summary | Record hashes, deployed SHA, rollback, STOP. |
+| Files expected to change | Continuity docs only |
+| Files prohibited from changing | Application code, media, Alembic, Slice B preflight |
+| Implementation result | Product SHA `d6fa984b1e84be4a1b21ff8f7358fc1d43fa74dc` on `origin/main`. |
+| Tests | Not re-run for documentation pin. Prior dedicated **11 passed**; full **793 passed**. |
+| Project-state-report update | Yes (SHA pin) |
+| Milestone entry update | Yes (commit field) |
+| Constitutional issue raised | None |
+| Unresolved issues | Website integration separate. Slice B files remain untracked. |
+| Next approved step | **STOP.** |
+| Next approved prompt | **None.** Return to ChatGPT Architect. |
+| Commit hash | This documentation pin |
+
 ### 2026-09-13 — CalibraytAI Opening V1 Phase 3 ingest
 
 | Field | Content |
@@ -65,7 +89,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Public website opening integration remains separate. HostPapa app deploy does not exist. Residual construction-plate interpolation is inherent. Slice B preflight files remain uncommitted and excluded. |
 | Next approved step | **STOP.** Do not polish Opening V1. Do not start website opening package unless separately authorized. |
 | Next approved prompt | **None.** Return to ChatGPT Architect. |
-| Commit hash | This product commit |
+| Commit hash | `d6fa984b1e84be4a1b21ff8f7358fc1d43fa74dc` (`feat: add CalibraytAI Opening V1 login playback`). Pushed `origin/main`. |
 
 ### 2026-09-13 — CalibraytAI Opening V1 Phase 2 pass 2 softer dissolves
 

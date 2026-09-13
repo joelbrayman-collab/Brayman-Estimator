@@ -37,12 +37,13 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Field | Content |
 |-------|---------|
 | ID | Opening V1 |
-| Status | **DEPLOYED / OPERATIONAL** for local governed UAT. Website integration **SEPARATE**. HostPapa app deploy **not applicable**. |
+| Status | **DEPLOYED / OPERATIONAL** for local governed UAT + `origin/main`. Website integration **SEPARATE**. HostPapa app deploy **not applicable**. |
 | Objective | Final silent ~7s opening from locked Frame F; ingest web media; fail-open login playback. |
 | Deliverables | HQ/web/WebM, `app/static/opening/v1/`, login overlay, focused tests. |
-| Validation | Dedicated opening tests **11 passed**. Full suite **793 passed**, 2716 warnings, **301.25s**. Local Flask port **5020**. |
+| Validation | Dedicated opening tests **11 passed**. Full suite **793 passed**, 2716 warnings, **301.25s**. Local Flask port **5020**. Pushed `origin/main`. |
 | Open decisions | Public website reuse is a separate package. |
 | Next milestone | STOP. No opening polish. No FG-024 Slice B from this package. |
+| Commit | Product `d6fa984b1e84be4a1b21ff8f7358fc1d43fa74dc`. Rollback `06ad8f7f69437b2e4302ba155ece6291ba9414ce`. |
 | Date | 2026-09-13 |
 
 ### 2026-09-13 — FG-024 Slice A live migrate + bounded office UAT close

@@ -116,7 +116,7 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **2026-09-13 CalibraytAI Opening V1 Phase 3 production + ingest.** Joel approved Phase 2 Pass 2 (“good for now — deploy and move on”). Frame F locked. HQ + web MP4/WebM ingested at `app/static/opening/v1/`. Login playback fail-open. Local smoke on port **5020**. Website integration **SEPARATE**. HostPapa app deploy **not applicable**. Uncommitted FG-024 Slice B preflight files must **not** be mixed into this commit.
+**Last authorized delta:** **2026-09-13 CalibraytAI Opening V1 Phase 3 production + ingest.** Product SHA **`d6fa984b1e84be4a1b21ff8f7358fc1d43fa74dc`**. Rollback **`06ad8f7f69437b2e4302ba155ece6291ba9414ce`**. Joel approved Phase 2 Pass 2 (“good for now — deploy and move on”). Frame F locked. HQ + web MP4/WebM ingested at `app/static/opening/v1/`. Login playback fail-open. Local smoke on port **5020**. Website integration **SEPARATE**. HostPapa app deploy **not applicable**. Uncommitted FG-024 Slice B preflight files must **not** be mixed into this commit.
 
 **Prior:** **2026-09-13 FG-024 Slice A live migrate + bounded office UAT.** `flask db upgrade` **PASS**. Live current **`b1c2d3e4f5a6 (head)`**. Empty library. Fail-closed UAT PASS on labeled projects **13** and **9**. Dedicated **17 passed**. Full suite **782 passed**. Slice A **CLOSED / OPERATIONAL FOR UAT**. V1 remains **60% / 4 of 11**. EST-2026-0019 occupancy ($275/m³) unchanged and not issued.
 
@@ -528,7 +528,7 @@ Do **not** reopen FG-032. Do **not** implement live QuickBooks API. Do **not** i
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP.** Opening V1 is ingested and locally operational. Do **not** start another opening polish cycle. Do **not** integrate the public website in this package. FG-024 Slice A remains **CLOSED / OPERATIONAL FOR UAT**. Do **not** begin Slice B/C/D product from this animation pass. CalibraytAI V1 readiness **60%**. **4 / 11** COMPLETE.
+**Next governed action:** **STOP.** Opening V1 is **DEPLOYED / OPERATIONAL** on `origin/main` (`d6fa984b1e84be4a1b21ff8f7358fc1d43fa74dc`) + local Flask UAT. Do **not** start another opening polish cycle. Do **not** integrate the public website in this package. FG-024 Slice A remains **CLOSED / OPERATIONAL FOR UAT**. Do **not** begin Slice B/C/D product from this animation pass. CalibraytAI V1 readiness **60%**. **4 / 11** COMPLETE.
 
 **Roadmap direction (not authorization):** Item 12 Field Web is **CLOSED**. Item 13 **CLOSED / OPERATIONAL FOR UAT**. [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) is **SLICE 1, SLICE 2, SLICE 3, SLICE 4, AND SLICE 5 IMPLEMENTED / NOT CLOSED** (remaining surfaces not authorized). [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Item 15 / [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) is **FUTURE / RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / OVERALL OPEN / PARTIAL**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 

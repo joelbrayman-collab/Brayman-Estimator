@@ -2,10 +2,13 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **INGESTED / LOCALLY OPERATIONAL** |
+| Status | **DEPLOYED / OPERATIONAL** (origin/main + local governed UAT) |
 | Date | 2026-09-13 |
 | Product | CalibraytAI |
 | Phase | 3 of 4 (HQ media + application ingest) |
+| Product SHA | `d6fa984b1e84be4a1b21ff8f7358fc1d43fa74dc` |
+| Rollback SHA | `06ad8f7f69437b2e4302ba155ece6291ba9414ce` |
+| Deployment ID | `d6fa984b1e84be4a1b21ff8f7358fc1d43fa74dc` (git SHA; HostPapa N/A) |
 
 ## Approval
 
@@ -52,3 +55,16 @@ HQ is **not** served to browsers.
 Playback: JS-injected overlay on unauthenticated `/login` only. Login form is in the HTML without the overlay (no-JS fail-open). Skip, Escape, `prefers-reduced-motion` bypass, media/play/timeout fail-open. Session no-replay. 7-day `localStorage` suppression. Authenticated navigation never mounts the controller.
 
 Website integration: **MEDIA AVAILABLE / WEBSITE INTEGRATION SEPARATE**. Do not publish the public website from this repository.
+
+## Closeout
+
+| Field | Value |
+|-------|--------|
+| Product SHA | `d6fa984b1e84be4a1b21ff8f7358fc1d43fa74dc` |
+| Rollback | `06ad8f7f69437b2e4302ba155ece6291ba9414ce` |
+| Deployment ID | same as product SHA (git; HostPapa N/A) |
+| Alembic | unchanged `b1c2d3e4f5a6 (head)` |
+| Tests | dedicated **11 passed**; full **793 passed** / 2716 warnings / **301.25s** |
+| Local smoke | Flask `127.0.0.1:5020` `/login` 200; web MP4/WebM 200 |
+| Website | MEDIA AVAILABLE / WEBSITE INTEGRATION SEPARATE |
+

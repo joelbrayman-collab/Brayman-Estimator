@@ -16,7 +16,7 @@
 
 **Subsequent status (2026-09-12, FG-024 Slice A preflight):** Slice A engine architecture freeze **COMPLETE**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) drafted **Proposed**. Future CONTRACT legal-content packages still reuse this jurisdiction **identity**. Product implementation remains **NOT AUTHORIZED**. No second resolver.
 
-**Subsequent status (2026-09-13):** [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** (architecture only). Future CONTRACT legal-content packages still reuse this jurisdiction **identity**. Product implementation remains **NOT AUTHORIZED**. No second resolver.
+**Subsequent status (2026-09-13, FG-024 Slice B architecture):** Slice B source/update preflight **COMPLETE**. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (architecture only). CONTRACT packages still reuse this jurisdiction **identity**. No second resolver. Slice B product **NOT AUTHORIZED**.
 
 ---
 

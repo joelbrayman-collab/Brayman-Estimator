@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-13 — Adopt FG-024 Slice B lifecycle architecture / Accept ADR-051
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-13 |
+| Branch | `main` @ `3c2420209680c7d06ce85b6278920f7fcc45faa4` (parent) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 13 SEP 2026 |
+| Objective | Reconcile untracked Slice B drafts against current FG-024 / ADR-050 / Legal Content Gate. Adopt if conforming. Accept ADR-051 if required and conforming. Docs only. |
+| Business decision | Joel / ChatGPT Architect: do not redesign; do not invent policy; Accept ADR-051 if it records existing architecture. Defer generation-while-pending. Do not authorize Slice B product. |
+| Architectural decision | Slice B preflight **CONFORMS**. ADR-051 **REQUIRED AND CONFORMING** → **Accepted** (architecture only). Source classes A–D; Slice B vs D monitoring boundary; AI cannot APPROVE/ACTIVE; candidate does not auto-SUPERSEDE; `APPROVED` ≠ `ACTIVE`. §6 **deferred**. ADR-050 unreopened. V1 remains **60% / 4 of 11**. |
+| Prompt template used | Joel FG-024 Slice B existing governance draft reconciliation (13 Sep 2026) |
+| Approved Cursor prompt summary | Verify 3c24202; read governing records + untracked drafts; validate; Accept ADR-051 if A; pytest; commit `docs: adopt FG-024 Slice B lifecycle architecture`; push; STOP. |
+| Files expected to change | ADR-051; Slice B preflight; FG-024; Legal Content Gate; indexes; V1 register next-action; current-state / session-handoff / project-state-report / roadmap / milestones / chat-workflow-log |
+| Files prohibited from changing | Application code; migrations; legal-content population; Opening V1 media; EST-2026-0019; V1 rescore |
+| Implementation result | Preflight adopted. ADR-051 Accepted. Product not implemented. Working tree reconciled. |
+| Tests | `./venv/bin/python -m pytest -q` — **793 passed**, 2716 warnings, **284.13s**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (architecture adoption; not a V1 package completion) |
+| Constitutional issue raised | None. Article 8 satisfied by ADR-051. |
+| Unresolved issues | Slice B product unauthorized. Generation-while-`UPDATE_PENDING_REVIEW` deferred. 06D Ontario counsel BLOCKED. |
+| Next approved step | **STOP.** Do not begin Slice B product. |
+| Next approved prompt | **None.** Return to ChatGPT Architect. |
+| Commit hash | This documentation adoption commit |
+
 ### 2026-09-13 — CalibraytAI Opening V1 SHA pin
 
 | Field | Content |

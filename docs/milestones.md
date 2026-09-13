@@ -32,6 +32,19 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-13 — FG-024 Slice B architecture adopted (ADR-051 Accepted)
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 Slice B architecture |
+| Status | **PREFLIGHT COMPLETE / ADR-051 ACCEPTED / PRODUCT NOT AUTHORIZED / NOT IMPLEMENTED.** Slice A remains **CLOSED / OPERATIONAL FOR UAT**. Gate overall **OPEN / PARTIAL**. |
+| Objective | Reconcile existing untracked Slice B drafts against current FG-024 / ADR-050 / Legal Content Gate authority; adopt if conforming; Accept ADR-051. |
+| Deliverables | Tracked Slice B preflight; ADR-051 Accepted; continuity docs. No product code. |
+| Validation | Documentation-only. Canonical suite required after adoption. |
+| Open decisions | Generation-while-`UPDATE_PENDING_REVIEW` **deferred**. Ontario legal population BLOCKED. |
+| Next milestone | STOP. Do not begin Slice B product. |
+| Date | 2026-09-13 |
+
 ### 2026-09-13 — CalibraytAI Opening V1 ingest
 
 | Field | Content |

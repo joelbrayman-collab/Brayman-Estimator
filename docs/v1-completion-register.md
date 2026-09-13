@@ -301,8 +301,8 @@ Estimator remains the authoritative commercial record. QuickBooks must not becom
 | V1 REQUIRED? | **YES** (06A–06I). 06J **POST-V1**. |
 | BLOCKER? | **YES** for production contract use: Legal Content Gate **empty**; Family 05 **NOT LEGALLY APPROVED**; AI cannot mark legal content APPROVED |
 | Dependencies | ADR-037 / FG-015 jurisdiction identity; Legal Content Gate; V1-07 for 06I |
-| Governing | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / OVERALL OPEN / PARTIAL**; [fg-024-slice-a-legal-content-library-preflight.md](architecture/fg-024-slice-a-legal-content-library-preflight.md); [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**; [legal-content-and-templates.md](governance/legal-content-and-templates.md); [testing/fg024-slice-a-live-migrate-bounded-uat-record.md](testing/fg024-slice-a-live-migrate-bounded-uat-record.md) |
-| Next governed action | **STOP.** Slice A is **CLOSED / OPERATIONAL FOR UAT** (live / empty). Do **not** begin Slice B/C/D. Do **not** rescore V1. Factor remains **0.25**. |
+| Governing | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B PREFLIGHT COMPLETE / OVERALL OPEN / PARTIAL**; [fg-024-slice-a-legal-content-library-preflight.md](architecture/fg-024-slice-a-legal-content-library-preflight.md); [fg-024-slice-b-legal-content-source-lifecycle-preflight.md](architecture/fg-024-slice-b-legal-content-source-lifecycle-preflight.md); [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**; [ADR-051](adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**; [legal-content-and-templates.md](governance/legal-content-and-templates.md); [testing/fg024-slice-a-live-migrate-bounded-uat-record.md](testing/fg024-slice-a-live-migrate-bounded-uat-record.md) |
+| Next governed action | **STOP.** Slice A is **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B architecture **PREFLIGHT COMPLETE**; [ADR-051](adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Do **not** begin Slice B product. Do **not** rescore V1. Factor remains **0.25**. |
 
 Deep reconciliation: **§9**. Sub-gates: **§9.4**.
 
@@ -471,7 +471,7 @@ Round the published readiness to the **nearest whole percent**. Recalculate from
 | 06E | Contract generation from approved project/estimate | **YES** | **NOT STARTED** | FG-024 Slice C |
 | 06F | Frozen generated-contract snapshot | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | Pattern exists elsewhere; not for contracts |
 | 06G | Fail-closed when approved jurisdiction package unavailable | **YES** | **LIVE / OFFICE UAT PASS** | Empty library BLOCK; no generic fallback; live proven 2026-09-13 |
-| 06H | Effective-date / supersession / update architecture | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | V1 = versioning + supersession + effective dates. Live source monitoring = recommended POST-V1 |
+| 06H | Effective-date / supersession / update architecture | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | V1 = versioning + supersession + effective dates. Slice B source/update architecture **Accepted** ([ADR-051](adr/ADR-051-legal-content-source-and-update-lifecycle.md)); product **NOT IMPLEMENTED**. Live source monitoring = recommended POST-V1 |
 | 06I | Contract package → Native Signing handoff | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | Depends on V1-07; production blocked |
 | 06J | Additional province/state population | **NO** | **POST-V1** | Unless Joel names another launch jurisdiction |
 

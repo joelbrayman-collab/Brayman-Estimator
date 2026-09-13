@@ -32,6 +32,25 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-13 — FG-024 Slice C live migrate + bounded office UAT
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 Slice C live UAT |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** Slice A remains **CLOSED / OPERATIONAL FOR UAT**. Slice B remains **CLOSED / OPERATIONAL FOR UAT**. Gate overall **OPEN / PARTIAL**. |
+| Branch | `main` |
+| Base commit | `1a2553932da1b750e2cbe0e32fd90e54d569a685` (`feat: add FG-024 contract generation foundation`) |
+| Objective | Live-migrate additive `d3e4f5a6b7c8`; bounded office UAT of generation, provenance, immutable snapshot, fail-closed, and Slice A/B regression; close Slice C if all criteria pass. |
+| Deliverables | Live current `d3e4f5a6b7c8 (head)`; backup `instance/brayman_estimator-backup-before-fg024c-d3e4f5a6b7c8-20260913-143836.db` (gitignored); [testing/fg024-slice-c-live-migrate-bounded-uat-record.md](testing/fg024-slice-c-live-migrate-bounded-uat-record.md); current-authority governance updates. No application-code change. |
+| Validation | Dedicated Slice C **16 passed** / 2.71s. Slice A **17 passed** / 2.32s. Slice B **16 passed** / 2.10s. Full suite **825 passed** / 2771 warnings / 266.33s / exit **0**. Live current = repo head `d3e4f5a6b7c8`. One graph head. |
+| Architectural findings | Empty library FAIL CLOSED. Family 05 remains presentation shell. ADR-051 §6 remains deferred / fail-closed. GENERATED ≠ EXECUTED. Old snapshot unchanged after later mutation. Later generation created a new snapshot. No Native Signing. No real legal content. No real customer contract. |
+| Open decisions | C1 production “APPROVED estimate” mapping. C2 ADR-051 §6 ALLOW/BLOCK/WARN. C3 warranty increment. Slice D. 06D Ontario counsel. |
+| Next milestone | **STOP.** Do not begin Slice D. |
+| Commit | This live-UAT close commit |
+| Date | 2026-09-13 |
+
+---
+
 ### 2026-09-13 — FG-024 Slice C contract-generation product foundation
 
 | Field | Content |

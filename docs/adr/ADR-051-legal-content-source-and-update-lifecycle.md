@@ -108,6 +108,8 @@ Accepting this ADR does **not** by itself authorize product code, schema, migrat
 
 **Subsequent status (2026-09-13, Slice C product foundation):** Generation service fail-closes pending-candidate / `UPDATE_PENDING_REVIEW` as `PENDING_REVIEW_UNSUPPORTED`. This is **not** a permanent §6 ALLOW/WARN/BLOCK policy. §6 remains **deferred**. Legal Content Gate remains **empty**. This ADR is **not** reopened.
 
+**Subsequent status (2026-09-13, Slice C live migrate + bounded office UAT):** Live generation fail-closed `PENDING_REVIEW_UNSUPPORTED` on the deferred §6 branch. No ALLOW / WARN / production BLOCK policy was implemented. Slice C **CLOSED / OPERATIONAL FOR UAT**. §6 remains **deferred**. Legal Content Gate remains **empty**. This ADR is **not** reopened.
+
 ## Module Ownership Impact
 
 CONTRACT / FG-024 Slice B would own source, snapshot, candidate, and review-event records (later). Legal Content Gate retains APPROVED. Slice A retains selection/fail-closed. Slice D later owns watchers. Permit Intelligence unchanged. Native Signing unchanged.

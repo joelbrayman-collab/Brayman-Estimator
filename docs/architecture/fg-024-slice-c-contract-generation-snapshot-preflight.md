@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE.** Subsequent Slice C product **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED.** Do **not** live-migrate. Do **not** begin Slice D. |
+| Status | **PREFLIGHT COMPLETE.** Subsequent Slice C product **CLOSED / OPERATIONAL FOR UAT** after live migrate + bounded office UAT. Live current **`d3e4f5a6b7c8 (head)`**. Do **not** begin Slice D. |
 | Date | 2026-09-13 |
 | Gate | [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) Slice C only |
-| Parent | Slice A **CLOSED / OPERATIONAL FOR UAT**. Slice B **CLOSED / OPERATIONAL FOR UAT**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Live current **`c2d3e4f5a6b7 (head)`**. Library **empty**. |
-| Alembic | Live current **`c2d3e4f5a6b7 (head)`**. Repository head **`d3e4f5a6b7c8`**. One graph head. Additive Slice C revision **not applied live**. |
+| Parent | Slice A **CLOSED / OPERATIONAL FOR UAT**. Slice B **CLOSED / OPERATIONAL FOR UAT**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Live current **`d3e4f5a6b7c8 (head)`**. Library **empty**. |
+| Alembic | Live current **`d3e4f5a6b7c8 (head)`**. Repository head **`d3e4f5a6b7c8`**. One graph head. Additive Slice C revision **applied live**. |
 | Product | CalibraytAI (formerly CalibAi) |
 | Tenant | Brayman Construction Inc. / ORG-001 |
 | Parent SHA | `a176db36034af17309fd3f3e7e8c9a58043d6f56` (`docs: close FG-024 Slice B after live UAT`) |
@@ -37,7 +37,9 @@ This document freezes Slice C **generation + immutable project-snapshot architec
 
 **Subsequent status (2026-09-13, documentation close):** Full suite **809 passed**, 2738 warnings, **545.74s**, exit **0**. Product remains **NOT AUTHORIZED / NOT IMPLEMENTED**. Legal Content Gate remains **empty**.
 
-**Subsequent status (2026-09-13, Slice C product foundation):** Bounded product prompt implemented generation + immutable snapshot in the repository. Alembic **`d3e4f5a6b7c8`** created (`down_revision` **`c2d3e4f5a6b7`**). Live `flask db upgrade` **not** run. Live current remains **`c2d3e4f5a6b7 (head)`**. Dedicated Slice C **16 passed**. Slice A **17 passed**. Slice B **16 passed**. Full **825 passed**, 2771 warnings, **494.48s**. Legal Content Gate remains **empty**. Synthetic generation only. C1/C2/C3 unresolved. Native Signing absent. Slice C **NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED**. Slice D **NOT AUTHORIZED**. V1 remains **60% / 4 of 11**.
+**Subsequent status (2026-09-13, Slice C product foundation):** Bounded product prompt implemented generation + immutable snapshot in the repository. Alembic **`d3e4f5a6b7c8`** created (`down_revision` **`c2d3e4f5a6b7`**). Live `flask db upgrade` **not** run at that commit. Live current remained **`c2d3e4f5a6b7 (head)`**. Dedicated Slice C **16 passed**. Slice A **17 passed**. Slice B **16 passed**. Full **825 passed**, 2771 warnings, **494.48s**. Legal Content Gate remains **empty**. Synthetic generation only. C1/C2/C3 unresolved. Native Signing absent. Slice C was **NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED** at that commit. Slice D **NOT AUTHORIZED**. V1 remains **60% / 4 of 11**.
+
+**Subsequent status (2026-09-13, Slice C live migrate + bounded office UAT):** Live `flask db upgrade` **PASS**. Live current **`d3e4f5a6b7c8 (head)`**. Synthetic generation + immutable snapshot office UAT **PASS**. Dedicated Slice C **16 passed**. Slice A **17 passed**. Slice B **16 passed**. Full **825 passed**, 2771 warnings, **266.33s**. Slice C **CLOSED / OPERATIONAL FOR UAT**. Legal Content Gate remains **empty**. No real jurisdictional content. No real customer contract. C1/C2/C3 unresolved. Native Signing absent. Slice D **NOT AUTHORIZED**. V1 remains **60% / 4 of 11**. Evidence [../testing/fg024-slice-c-live-migrate-bounded-uat-record.md](../testing/fg024-slice-c-live-migrate-bounded-uat-record.md).
 
 **Out of this preflight:** Slice C product code; Alembic; live DB mutation; Ontario/U.S. legal population; Family 05 legal approval; Native Signing product; Slice D watchers/alerts; V1 rescore; website; HostPapa; AiRIA.
 

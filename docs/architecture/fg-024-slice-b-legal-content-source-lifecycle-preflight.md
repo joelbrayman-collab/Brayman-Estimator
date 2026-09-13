@@ -43,7 +43,9 @@ This document freezes Slice B **source / update lifecycle architecture** for a l
 
 **Subsequent status (2026-09-13, Slice C preflight):** [fg-024-slice-c-contract-generation-snapshot-preflight.md](fg-024-slice-c-contract-generation-snapshot-preflight.md) **PREFLIGHT COMPLETE**. Product **NOT AUTHORIZED / NOT IMPLEMENTED**. Slice B remains **CLOSED / OPERATIONAL FOR UAT**. Do **not** begin Slice C product or Slice D.
 
-**Subsequent status (2026-09-13, Slice C product foundation):** Slice C generation + snapshot **implemented in the repository**. Live migrate **not** run. Slice B remains **CLOSED / OPERATIONAL FOR UAT**. Do **not** live-migrate Slice C. Do **not** begin Slice D.
+**Subsequent status (2026-09-13, Slice C product foundation):** Slice C generation + snapshot **implemented in the repository**. Live migrate **not** run at that commit. Slice B remains **CLOSED / OPERATIONAL FOR UAT**. Slice D **NOT AUTHORIZED**.
+
+**Subsequent status (2026-09-13, Slice C live migrate + bounded office UAT):** Slice C **CLOSED / OPERATIONAL FOR UAT**. Live current **`d3e4f5a6b7c8 (head)`**. Slice B remains **CLOSED / OPERATIONAL FOR UAT**. Do **not** begin Slice D.
 
 **Out of this preflight:** Slice B product code; Slice C generation; Slice D live watchers/alerts; Ontario/U.S. legal population; Family 05 legal approval; Native Signing product; V1-04 product work; V1 rescore.
 

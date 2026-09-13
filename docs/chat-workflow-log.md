@@ -43,6 +43,102 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-13 — CalibraytAI Opening V1 Phase 3 ingest
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-13 |
+| Branch | `main` @ `06ad8f7f69437b2e4302ba155ece6291ba9414ce` (parent) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 13 SEP 2026 |
+| Objective | Phase 3 HQ + ingest + tests + local smoke + push origin/main. Joel: deploy and move on. |
+| Business decision | Phase 2 Pass 2 approved. Frame F locked. No website package. No HostPapa. No tagline. |
+| Architectural decision | Login-only JS-injected overlay; fail-open; 7-day suppress; session no-replay; reduced-motion bypass. HQ not served to browsers. |
+| Prompt template used | Joel Opening V1 Phase 3 final production + ingest + deploy (13 Sep 2026) |
+| Approved Cursor prompt summary | Build HQ from locked F; ingest static/opening/v1; tests; local verify; commit/push; no migration; no website. |
+| Files expected to change | branding phase-3, static/opening/v1, login templates/js/css, opening service, tests, continuity docs |
+| Files prohibited from changing | Alembic; EST-2026-0019; FG-024 Slice B product; Frame F pixels; public website; HostPapa |
+| Implementation result | HQ 1920×1080 7.000s silent. Web MP4/WebM ingested. Login overlay fail-open. Dedicated **11 passed**. Full **793 passed** / 2716 warnings / **301.25s**. Local Flask **5020**. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_opening_v1.py` — **11 passed**, 12 warnings, **4.38s**. Full `./venv/bin/python -m pytest -q` — **793 passed**, 2716 warnings, **301.25s**. |
+| Project-state-report update | No V1 rescore |
+| Milestone entry update | Yes (Opening V1 ingest recorded; not a V1 package completion) |
+| Constitutional issue raised | None |
+| Unresolved issues | Public website opening integration remains separate. HostPapa app deploy does not exist. Residual construction-plate interpolation is inherent. Slice B preflight files remain uncommitted and excluded. |
+| Next approved step | **STOP.** Do not polish Opening V1. Do not start website opening package unless separately authorized. |
+| Next approved prompt | **None.** Return to ChatGPT Architect. |
+| Commit hash | This product commit |
+
+### 2026-09-13 — CalibraytAI Opening V1 Phase 2 pass 2 softer dissolves
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-13 |
+| Branch | `main` @ `06ad8f7f69437b2e4302ba155ece6291ba9414ce` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 13 SEP 2026 |
+| Objective | Rebuild Phase 2 preview with much softer still-to-still transitions; keep locked Frame F; STOP. |
+| Business decision | Joel liked pass 1 but required less jerk and softer image transitions. |
+| Architectural decision | Same stills. ~0.95s cosine dissolves, one shared camera, light mid-fade blur. Pass 1 MP4 preserved. |
+| Prompt template used | Joel motion-preview correction (softer transitions) |
+| Approved Cursor prompt summary | Soften Phase 2 transitions; do not regenerate house; no HQ; no ingest. |
+| Files expected to change | phase-2 composition + preview MP4 + Phase 2 record / handoff |
+| Files prohibited from changing | Frame F pixels; product runtime; `static/opening/`; Alembic |
+| Implementation result | Pass 2 MP4 7.000s SHA `ad5121c32985d4b72a9927bbec9b9e188bf45f13b06899f4d967047291d9a17e`. **STOP FOR JOEL MOTION APPROVAL.** |
+| Tests | Not run (no product code). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Still a stills dissolve preview, not HQ continuous construction. |
+| Next approved step | **STOP.** Joel reviews pass 2. |
+| Next approved prompt | Phase 3 HQ only after Joel approves the motion preview. |
+| Commit hash | Uncommitted |
+
+### 2026-09-13 — CalibraytAI Opening V1 Phase 2 motion preview STOP
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-13 |
+| Branch | `main` @ `06ad8f7f69437b2e4302ba155ece6291ba9414ce` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 13 SEP 2026 |
+| Objective | Phase 2 only: compressed silent motion preview of approved stills; lock Frame F; STOP for motion approval. |
+| Business decision | Joel authorized Phase 2 (`Ok...lets go.`). Phase 1 storyboard + Frame F approved for Opening V1. |
+| Architectural decision | Frame F immutable. Preview is timing/sequence from approved stills, not HQ continuous 3D assembly. No app ingest. |
+| Prompt template used | Opening V1 Phase 2 motion-preview prompt (gated on Phase 1 approval) |
+| Approved Cursor prompt summary | Motion preview ~7s silent 16:9 from locked Frame F; no HQ; no static/opening/; no deploy; STOP. |
+| Files expected to change | `docs/branding/calibraytai-opening-v1/phase-2/**`, Phase 1/2 records, current-state, session-handoff, chat-workflow-log |
+| Files prohibited from changing | Product runtime; `static/opening/`; Alembic; EST-2026-0019; logo redesign; Frame F pixels |
+| Implementation result | Preview MP4 7.000s 1280×720 silent H.264. Frame F locked (same SHA as candidate). **STOP FOR JOEL MOTION APPROVAL.** |
+| Tests | Not run (no product code). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Crossfades are not the HQ continuous build. Residual Phase 1 still drift visible in fades. Uncommitted Slice B preflight docs must not be mixed in. |
+| Next approved step | **STOP.** Joel approves or rejects the motion preview. Phase 3 is not authorized until that approval. |
+| Next approved prompt | Phase 3 HQ masters **only after** Joel approves Phase 2. |
+| Commit hash | Uncommitted at Phase 2 STOP |
+
+### 2026-09-13 — CalibraytAI Opening V1 Phase 1 storyboard STOP
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-13 |
+| Branch | `main` @ `06ad8f7f69437b2e4302ba155ece6291ba9414ce` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 13 SEP 2026 |
+| Objective | Phase 1 only: storyboard Frames A–G, contact sheet, Frame F master candidate, exact timeline. STOP for Joel approval. |
+| Business decision | Joel authorized the Opening V1 cinematic spec. No tagline invention. Approved V1 dark logo for Frame G. Animation must never be required for product access (later phases). |
+| Architectural decision | One continuous house from blueprint to completed home. Frame F becomes immutable only after Joel approval. No application ingest until Phase 4 after media approval. |
+| Prompt template used | Joel Opening V1 full cinematic production + application integration spec (Phase 1 STOP gate) |
+| Approved Cursor prompt summary | Produce Phase 1 storyboard A–G + contact sheet + Frame F master candidate; STOP; do not motion-preview, HQ-render, ingest, or deploy. |
+| Files expected to change | `docs/branding/calibraytai-opening-v1/**`, current-state, session-handoff, chat-workflow-log, docs index |
+| Files prohibited from changing | Product runtime code; `static/opening/`; Alembic; EST-2026-0019; FG-024 Slice B/C/D product; logo redesign |
+| Implementation result | Phase 1 stills + contact sheet + composited Frame G. Frame F **not** immutable. **STOP FOR JOEL APPROVAL.** |
+| Tests | Not run (no product code; storyboard stills only). |
+| Project-state-report update | No (not a V1 package / gate close) |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Joel must approve storyboard + Frame F. Residual still-to-still geometry drift. Uncommitted FG-024 Slice B preflight docs remain in the working tree and must not be mixed into this work. |
+| Next approved step | **STOP.** Joel approves or rejects Phase 1. Phase 2 is not authorized until that approval. |
+| Next approved prompt | Phase 2 motion preview **only after** Joel approves the storyboard and Frame F master. |
+| Commit hash | Uncommitted at Phase 1 STOP |
+
 ### 2026-09-13 — FG-024 Slice A live migrate + bounded office UAT close
 
 | Field | Content |

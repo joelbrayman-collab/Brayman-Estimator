@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative documentation map |
-| Updated | 2026-09-12 |
+| Updated | 2026-09-13 |
 | Product | The Estimator (Brayman Estimator) |
 
 ## Purpose
@@ -50,6 +50,9 @@ Also read [`platform-governance.md`](platform-governance.md), [`governance/produ
 | [prompts/](prompts/) | Reusable Cursor prompt templates | Templates |
 | [platform-vision.md](platform-vision.md) | CalibraytAI (formerly CalibAi) vision + current Estimator core | Product intent (Joel-approved CAR-001 / ADR-045) |
 | [governance/product-identity.md](governance/product-identity.md) | Current vs former product name | **Governing** — CalibraytAI current; CalibAi former |
+| [branding/calibraytai-opening-v1/PHASE-1-STORYBOARD.md](branding/calibraytai-opening-v1/PHASE-1-STORYBOARD.md) | Startup opening V1 storyboard | **PHASE 1 APPROVED** — Frame F immutable |
+| [branding/calibraytai-opening-v1/PHASE-2-MOTION-PREVIEW.md](branding/calibraytai-opening-v1/PHASE-2-MOTION-PREVIEW.md) | Startup opening V1 motion preview | **PHASE 2 PASS 2 APPROVED** |
+| [branding/calibraytai-opening-v1/PHASE-3-PRODUCTION.md](branding/calibraytai-opening-v1/PHASE-3-PRODUCTION.md) | Opening V1 HQ + ingest | **DEPLOYED / OPERATIONAL** (local UAT + origin/main). Website integration separate |
 | [architecture-principles.md](architecture-principles.md) | Numbered durable platform rules | **Architectural** — changes require ADR + Joel |
 | [architecture.md](architecture.md) | Current vs intended vs future architecture | Factual for *current*; aspirational elsewhere |
 | [architecture/](architecture/) | Domain architecture (Plan Intelligence, Supplier, …) | Future unless marked Current |

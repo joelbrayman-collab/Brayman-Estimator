@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/opening-v1.css') }}">
 </head>
 <body class="login-page">
     <main class="login-card">
@@ -45,5 +46,9 @@
             <button type="submit" class="button">Sign in</button>
         </form>
     </main>
+    {% if opening_v1 %}
+    <script type="application/json" id="opening-v1-config">{{ opening_v1 | tojson }}</script>
+    <script src="{{ url_for('static', filename='js/opening-v1.js') }}" defer></script>
+    {% endif %}
 </body>
 </html>

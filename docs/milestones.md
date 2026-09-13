@@ -32,6 +32,19 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-13 — CalibraytAI Opening V1 ingest
+
+| Field | Content |
+|-------|---------|
+| ID | Opening V1 |
+| Status | **DEPLOYED / OPERATIONAL** for local governed UAT. Website integration **SEPARATE**. HostPapa app deploy **not applicable**. |
+| Objective | Final silent ~7s opening from locked Frame F; ingest web media; fail-open login playback. |
+| Deliverables | HQ/web/WebM, `app/static/opening/v1/`, login overlay, focused tests. |
+| Validation | Dedicated opening tests **11 passed**. Full suite **793 passed**, 2716 warnings, **301.25s**. Local Flask port **5020**. |
+| Open decisions | Public website reuse is a separate package. |
+| Next milestone | STOP. No opening polish. No FG-024 Slice B from this package. |
+| Date | 2026-09-13 |
+
 ### 2026-09-13 — FG-024 Slice A live migrate + bounded office UAT close
 
 | Field | Content |

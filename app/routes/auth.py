@@ -6,6 +6,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user
 
 from app.services.auth import GENERIC_LOGIN_FAILURE, authenticate
+from app.services.opening_v1 import opening_v1_config
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -36,11 +37,17 @@ def login():
         )
         if user is None:
             flash(GENERIC_LOGIN_FAILURE, "error")
-            return render_template("auth/login.html")
+            return render_template(
+                "auth/login.html",
+                opening_v1=opening_v1_config(url_for),
+            )
         login_user(user, remember=False)
         return redirect(safe_next_url(request.form.get("next") or request.args.get("next")))
 
-    return render_template("auth/login.html")
+    return render_template(
+        "auth/login.html",
+        opening_v1=opening_v1_config(url_for),
+    )
 
 
 @auth_bp.route("/logout", methods=["POST"])

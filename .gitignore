@@ -6,4 +6,5 @@ instance/
 *.db
 uploads/*
 generated/*
-.DS_Store
+*.DS_Store
+docs/branding/calibraytai-opening-v1/**/frames/

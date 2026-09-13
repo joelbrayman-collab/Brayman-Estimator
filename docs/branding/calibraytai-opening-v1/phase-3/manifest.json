@@ -1,0 +1,72 @@
+{
+  "version": "opening-v1",
+  "duration_s": 7.0,
+  "fps": 30,
+  "hq_size": [
+    1920,
+    1080
+  ],
+  "web_size": [
+    1280,
+    720
+  ],
+  "audio": false,
+  "locked_frame_f_sha256": "e73c121be02198bdc8e5e70a786b4f8f56b3fa234720b68669c79c2def54ab7b",
+  "files": {
+    "frame_f_locked": {
+      "path": "/Users/joelbrayman/Desktop/Brayman-Estimator/docs/branding/calibraytai-opening-v1/storyboard/frame-f-completed-house-master-v1-approved.png",
+      "sha256": "e73c121be02198bdc8e5e70a786b4f8f56b3fa234720b68669c79c2def54ab7b",
+      "bytes": 273655
+    },
+    "hq_mp4": {
+      "path": "/Users/joelbrayman/Desktop/Brayman-Estimator/docs/branding/calibraytai-opening-v1/phase-3/opening-v1-hq.mp4",
+      "sha256": "4ea4f6f265c1b8a3fff44dacda051ae0dfa7da596d7d3deec34b0bdc8defbe83",
+      "bytes": 6133194
+    },
+    "web_mp4": {
+      "path": "/Users/joelbrayman/Desktop/Brayman-Estimator/docs/branding/calibraytai-opening-v1/phase-3/opening-v1-web.mp4",
+      "sha256": "89cc657b48a8c074d6464b0194c2b7e041acb6f7847156e0342b47ecfc303c07",
+      "bytes": 1293445
+    },
+    "web_webm": {
+      "path": "/Users/joelbrayman/Desktop/Brayman-Estimator/docs/branding/calibraytai-opening-v1/phase-3/opening-v1-web.webm",
+      "sha256": "b0ee195386a45421624b3764e757e08f3306d34526151aaab3d5f97f4d352fc0",
+      "bytes": 1359652
+    },
+    "contact_sheet": {
+      "path": "/Users/joelbrayman/Desktop/Brayman-Estimator/docs/branding/calibraytai-opening-v1/phase-3/contact-sheet-phase-3.jpg",
+      "sha256": "4570af47300e7a24e52ba1a7cb36931b4d6612380b645a6f32bb6dc8e481c19d",
+      "bytes": 384299
+    },
+    "ingest_mp4": {
+      "path": "/Users/joelbrayman/Desktop/Brayman-Estimator/app/static/opening/v1/opening-v1-web.mp4",
+      "sha256": "89cc657b48a8c074d6464b0194c2b7e041acb6f7847156e0342b47ecfc303c07",
+      "bytes": 1293445
+    },
+    "ingest_webm": {
+      "path": "/Users/joelbrayman/Desktop/Brayman-Estimator/app/static/opening/v1/opening-v1-web.webm",
+      "sha256": "b0ee195386a45421624b3764e757e08f3306d34526151aaab3d5f97f4d352fc0",
+      "bytes": 1359652
+    },
+    "ingest_poster": {
+      "path": "/Users/joelbrayman/Desktop/Brayman-Estimator/app/static/opening/v1/opening-v1-poster.jpg",
+      "sha256": "696a297375fad704639fc3f40f435bb253f5594fb4da112b3f076290db73e7b3",
+      "bytes": 209018
+    },
+    "ingest_reduced_motion": {
+      "path": "/Users/joelbrayman/Desktop/Brayman-Estimator/app/static/opening/v1/opening-v1-reduced-motion.jpg",
+      "sha256": "f84e664989e63e13d7096e5a076181a1396e2300447f18e4e86c51d85528be61",
+      "bytes": 222148
+    },
+    "phase2_pass2": {
+      "path": "/Users/joelbrayman/Desktop/Brayman-Estimator/docs/branding/calibraytai-opening-v1/phase-2/opening-v1-phase-2-motion-preview.mp4",
+      "sha256": "ad5121c32985d4b72a9927bbec9b9e188bf45f13b06899f4d967047291d9a17e",
+      "bytes": 2446065
+    },
+    "phase2_pass1": {
+      "path": "/Users/joelbrayman/Desktop/Brayman-Estimator/docs/branding/calibraytai-opening-v1/phase-2/opening-v1-phase-2-motion-preview-pass1.mp4",
+      "sha256": "63e692c173f077f33966928ef153106dae1a7a0f0f15e91e3fbfc10081f82d7d",
+      "bytes": 1445595
+    }
+  }
+}

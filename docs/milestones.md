@@ -32,6 +32,25 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-13 — FG-024 Slice B live migrate + bounded office UAT
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 Slice B live UAT |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** Slice A remains **CLOSED / OPERATIONAL FOR UAT**. Gate overall **OPEN / PARTIAL**. |
+| Branch | `main` |
+| Base commit | `e36397778d282e14801bfb00c896ec7a3c36057f` (`feat: add FG-024 legal-content update foundation`) |
+| Objective | Live-migrate additive `c2d3e4f5a6b7`; bounded office UAT of source/snapshot/candidate/AI-boundary; preserve Slice A fail-closed; close Slice B if all criteria pass. |
+| Deliverables | Live current `c2d3e4f5a6b7 (head)`; backup `instance/brayman_estimator-backup-before-fg024b-c2d3e4f5a6b7-20260913-125346.db` (gitignored); [testing/fg024-slice-b-live-migrate-bounded-uat-record.md](testing/fg024-slice-b-live-migrate-bounded-uat-record.md); current-authority governance updates. No application-code change. |
+| Validation | Dedicated Slice B **16 passed** / 2.21s. Dedicated Slice A **17 passed** / 2.25s. Full suite **809 passed** / 2738 warnings / 278.30s / exit 0. Commercial continuity PASS. Source/snapshot/candidate/AI-boundary/Slice-A regression PASS. Legal Content Gate empty. |
+| Architectural findings | Candidate is not legal authority. AI/AUTOMATION cannot APPROVE or ACTIVE. Slice B activation remains unavailable. Unchanged snapshot does not create a false candidate. ADR-051 §6 remains deferred. No live monitoring. |
+| Open decisions | Slice C/D. Generation-while-`UPDATE_PENDING_REVIEW`. 06D Ontario counsel. |
+| Next milestone | **STOP.** Do not begin Slice C or Slice D. |
+| Commit | This live-UAT close commit |
+| Date | 2026-09-13 |
+
+---
+
 ### 2026-09-13 — FG-024 Slice B product foundation (not live-migrated)
 
 | Field | Content |

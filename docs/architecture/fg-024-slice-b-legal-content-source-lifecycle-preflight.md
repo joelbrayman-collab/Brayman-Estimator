@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE.** [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Subsequent Slice B product foundation **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED**. Do **not** begin Slice C/D. |
+| Status | **PREFLIGHT COMPLETE.** [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Subsequent Slice B **CLOSED / OPERATIONAL FOR UAT**. Do **not** begin Slice C/D. |
 | Date | 2026-09-13 |
 | Gate | [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) Slice B only |
-| Parent | Slice A **CLOSED / OPERATIONAL FOR UAT**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**. Live current **`b1c2d3e4f5a6 (head)`**. Library **empty**. |
-| Alembic | Live current **`b1c2d3e4f5a6 (head)`**. Repository head **`c2d3e4f5a6b7`**. One graph head. Additive Slice B revision exists in the repository; **not applied live**. |
+| Parent | Slice A **CLOSED / OPERATIONAL FOR UAT**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**. Subsequent live current **`c2d3e4f5a6b7 (head)`**. Library **empty**. |
+| Alembic | Live current **`c2d3e4f5a6b7 (head)`**. Repository head **`c2d3e4f5a6b7`**. One graph head. Additive Slice B revision **applied live** 2026-09-13. |
 | Product | CalibraytAI (formerly CalibAi) |
 | Tenant | Brayman Construction Inc. / ORG-001 |
 
@@ -38,6 +38,8 @@ This document freezes Slice B **source / update lifecycle architecture** for a l
 **Subsequent status (2026-09-13):** Existing-governance reconciliation. Preflight **validated** against FG-024 / ADR-050 / Legal Content Gate. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (architecture only). §6 generation-while-`UPDATE_PENDING_REVIEW` **deferred** — not option B. Product remains **NOT AUTHORIZED / NOT IMPLEMENTED**. V1 remains **60% / 4 of 11**. Legal Content Gate remains **empty**.
 
 **Subsequent status (2026-09-13, Slice B product foundation):** Bounded product prompt implemented source / snapshot / candidate / review foundation in the repository. Alembic **`c2d3e4f5a6b7`** created. Live migrate **not** run. Office UAT **not** started. Slice B **NOT CLOSED**. Generation-while-pending remains **deferred**. Slice C/D **NOT AUTHORIZED**. Legal Content Gate remains **empty**. V1 remains **60% / 4 of 11**.
+
+**Subsequent status (2026-09-13, Slice B live migrate + bounded office UAT):** Live `flask db upgrade` **PASS**. Live current **`c2d3e4f5a6b7 (head)`**. Bounded office UAT **PASS**. Slice B **CLOSED / OPERATIONAL FOR UAT**. Evidence [fg024-slice-b-live-migrate-bounded-uat-record.md](../testing/fg024-slice-b-live-migrate-bounded-uat-record.md). Generation-while-pending remains **deferred**. Slice C/D **NOT AUTHORIZED**. Legal Content Gate remains **empty**. V1 remains **60% / 4 of 11**.
 
 **Out of this preflight:** Slice B product code; Slice C generation; Slice D live watchers/alerts; Ontario/U.S. legal population; Family 05 legal approval; Native Signing product; V1-04 product work; V1 rescore.
 

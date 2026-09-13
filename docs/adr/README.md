@@ -188,7 +188,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | ADR | Title | Status |
 |-----|-------|--------|
 | [ADR-050](ADR-050-north-american-legal-content-library-ownership.md) | North American Legal Content Library Ownership and Fail-Closed Boundary | **Accepted** (2026-09-13; Joel Brayman / ChatGPT Architect; subsequent Slice A **CLOSED / OPERATIONAL FOR UAT**; live current **`b1c2d3e4f5a6 (head)`**; library **empty**) |
-| [ADR-051](ADR-051-legal-content-source-and-update-lifecycle.md) | Legal Content Source Classes, Candidate-Update Lifecycle, and Slice B / Slice D Boundary | **Accepted** (2026-09-13; Joel Brayman / ChatGPT Architect; subsequent Slice B product foundation **in repository / not live-migrated**; §6 generation-while-pending **deferred**) |
+| [ADR-051](ADR-051-legal-content-source-and-update-lifecycle.md) | Legal Content Source Classes, Candidate-Update Lifecycle, and Slice B / Slice D Boundary | **Accepted** (2026-09-13; Joel Brayman / ChatGPT Architect; subsequent Slice B **CLOSED / OPERATIONAL FOR UAT**; §6 generation-while-pending **deferred**) |
 
 ### Field Web capture reliability (Accepted; FG-021 CLOSED)
 

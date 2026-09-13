@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-13 — FG-024 Slice B live migrate + bounded office UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-13 |
+| Branch | `main` @ `e36397778d282e14801bfb00c896ec7a3c36057f` (parent) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 13 SEP 2026 |
+| Objective | Live-migrate FG-024 Slice B additive schema `c2d3e4f5a6b7`; bounded office UAT of source/snapshot/candidate/human-counsel/AI boundaries; close Slice B only if all acceptance criteria pass. |
+| Business decision | Joel / ChatGPT Architect authorized live migrate + bounded office UAT + docs/closure only. No Slice C/D. No Ontario/U.S. legal seed. No V1 rescore. |
+| Architectural decision | Preserve Slice A fail-closed. Candidate is review material, not legal authority. AI/AUTOMATION cannot APPROVE or ACTIVE. Slice B activation remains unavailable. Unchanged snapshot does not create a false candidate. ADR-051 §6 remains deferred. No live monitoring. |
+| Prompt template used | Joel FG-024 Slice B live migration + bounded office UAT (13 Sep 2026) |
+| Approved Cursor prompt summary | Verify e363977 / live b1c2d3e4f5a6 / repo head c2d3e4f5a6b7; backup live DB; flask db upgrade; empty Slice-B tables; commercial continuity; synthetic source/snapshot/candidate UAT; AI/human boundaries; Slice A regression; focused + full pytest; close Slice B if PASS; commit `docs: close FG-024 Slice B after live UAT`; push. |
+| Files expected to change | Slice B UAT record; FG-024 / ADR-051 / Legal Content Gate / current-state / session-handoff / project-state-report / milestones / chat-workflow-log / V1 register / roadmap indexes |
+| Files prohibited from changing | Application code; Slice A selector; permit_rules; Ontario/U.S. seed; Opening V1 media; EST-2026-0019; Slice C/D |
+| Implementation result | Live current `c2d3e4f5a6b7 (head)`. Slice B **CLOSED / OPERATIONAL FOR UAT**. Legal Content Gate **empty**. Labeled synthetic source `FG024B-UAT-SRC-001` retained. EST-2026-0019 occupancy preserved. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_legal_content_update_fg024.py` — **16 passed**, 22 warnings, **2.21s**. `./venv/bin/python -m pytest -q tests/test_legal_content_library_fg024.py` — **17 passed**, 35 warnings, **2.25s**. `./venv/bin/python -m pytest -q` — **809 passed**, 2738 warnings, **278.30s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (Slice B live UAT close; not a V1 package completion) |
+| Constitutional issue raised | None. ADR-051 already Accepted. |
+| Unresolved issues | Slice C/D unauthorized. Generation-while-`UPDATE_PENDING_REVIEW` deferred. 06D Ontario counsel BLOCKED. Output 4 not complete. V1-06 not complete. |
+| Next approved step | **STOP.** Do not begin Slice C or Slice D. |
+| Next approved prompt | **None.** Return to ChatGPT Architect. |
+| Commit hash | This live-UAT close commit |
+
 ### 2026-09-13 — FG-024 Slice B product foundation
 
 | Field | Content |

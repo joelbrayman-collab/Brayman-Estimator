@@ -102,6 +102,8 @@ Accepting this ADR does **not** by itself authorize product code, schema, migrat
 
 **Subsequent status (2026-09-13, Slice B product foundation):** A later bounded Cursor prompt implemented the source / snapshot / candidate / review foundation in the repository (Alembic **`c2d3e4f5a6b7`**). Live migration **not** run. Office UAT **not** started. Slice B **not closed**. §6 remains **deferred**. Legal Content Gate remains **empty**.
 
+**Subsequent status (2026-09-13, Slice B live migrate + bounded office UAT):** Live `flask db upgrade` **PASS**. Live current **`c2d3e4f5a6b7 (head)`**. Bounded office UAT **PASS**. Slice B **CLOSED / OPERATIONAL FOR UAT**. §6 remains **deferred**. Legal Content Gate remains **empty**. Evidence [fg024-slice-b-live-migrate-bounded-uat-record.md](../testing/fg024-slice-b-live-migrate-bounded-uat-record.md). This ADR is **not** reopened.
+
 ## Module Ownership Impact
 
 CONTRACT / FG-024 Slice B would own source, snapshot, candidate, and review-event records (later). Legal Content Gate retains APPROVED. Slice A retains selection/fail-closed. Slice D later owns watchers. Permit Intelligence unchanged. Native Signing unchanged.
@@ -112,7 +114,7 @@ Source and candidate records are **platform-governed legal-process evidence**, n
 
 ## Migration Impact
 
-**Deferred at acceptance.** Subsequent Slice B product created additive revision **`c2d3e4f5a6b7`** (`down_revision` **`b1c2d3e4f5a6`**). Live `flask db upgrade` remains unauthorized until a later migrate prompt.
+**Deferred at acceptance.** Subsequent Slice B product created additive revision **`c2d3e4f5a6b7`** (`down_revision` **`b1c2d3e4f5a6`**). Subsequent live `flask db upgrade` **applied** 2026-09-13. Live current = repository head **`c2d3e4f5a6b7 (head)`**.
 
 ## Testing Impact
 

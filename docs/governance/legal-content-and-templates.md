@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | **Governing** |
 | Updated | 2026-09-13 |
-| Implementation | Template registers remain **empty**. Slice A library persistence + selection engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B source/update foundation **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED**. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Frozen contract snapshot / legal-change monitoring remain **FUTURE**. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. |
+| Implementation | Template registers remain **empty**. Slice A library persistence + selection engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B source/update foundation **CLOSED / OPERATIONAL FOR UAT** (live). [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Frozen contract snapshot / legal-change monitoring remain **FUTURE**. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. |
 
 ## Purpose
 
@@ -54,6 +54,8 @@ Govern construction contract language, statutory/consumer wording, warranty obli
 **Subsequent status (2026-09-13, Slice B architecture):** Existing-governance reconciliation **validated** the Slice B source/update preflight. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (architecture only). Slice B **PREFLIGHT COMPLETE / PRODUCT NOT AUTHORIZED / NOT IMPLEMENTED**. This **still does not** populate this register. Generation-while-`UPDATE_PENDING_REVIEW` **deferred**.
 
 **Subsequent status (2026-09-13, Slice B product foundation):** Source / snapshot / candidate / review tables and service exist in the repository (`legal_content_sources`, `legal_content_source_snapshots`, `legal_content_candidate_changes`, `legal_content_candidate_impacts`, `legal_content_review_events`, `app/services/legal_content_update.py`). Alembic **`c2d3e4f5a6b7`** not applied live. This **still does not** populate this register, approve any legal language, or mark Family 05 legally approved. AI still cannot independently set legal content to **APPROVED** or **ACTIVE**. No live monitoring. No contract generation.
+
+**Subsequent status (2026-09-13, Slice B live migrate + bounded office UAT):** Alembic **`c2d3e4f5a6b7` applied live**. Slice B **CLOSED / OPERATIONAL FOR UAT**. Labeled synthetic UAT source/snapshot/candidate rows exist as update-engine evidence only. This **still does not** populate this register or approve any legal language. Live library packages/objects remain **0**. Family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**.
 
 ## Warranty template register (governed — empty until approved)
 

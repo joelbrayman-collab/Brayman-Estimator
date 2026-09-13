@@ -104,6 +104,8 @@ Accepting this ADR does **not** by itself authorize product code, schema, migrat
 
 **Subsequent status (2026-09-13, Slice B live migrate + bounded office UAT):** Live `flask db upgrade` **PASS**. Live current **`c2d3e4f5a6b7 (head)`**. Bounded office UAT **PASS**. Slice B **CLOSED / OPERATIONAL FOR UAT**. §6 remains **deferred**. Legal Content Gate remains **empty**. Evidence [fg024-slice-b-live-migrate-bounded-uat-record.md](../testing/fg024-slice-b-live-migrate-bounded-uat-record.md). This ADR is **not** reopened.
 
+**Subsequent status (2026-09-13, Slice C preflight):** Slice C generation / snapshot architecture frozen in [fg-024-slice-c-contract-generation-snapshot-preflight.md](../architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md). Product **NOT AUTHORIZED**. §6 remains **deferred** and is **not** resolved here. Pending-candidate generation stays unimplemented / fail-closed. New ADR **not** required.
+
 ## Module Ownership Impact
 
 CONTRACT / FG-024 Slice B would own source, snapshot, candidate, and review-event records (later). Legal Content Gate retains APPROVED. Slice A retains selection/fail-closed. Slice D later owns watchers. Permit Intelligence unchanged. Native Signing unchanged.

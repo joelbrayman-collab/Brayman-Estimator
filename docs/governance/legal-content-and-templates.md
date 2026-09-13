@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | **Governing** |
 | Updated | 2026-09-13 |
-| Implementation | Template registers remain **empty**. Slice A library persistence + selection engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B source/update foundation **CLOSED / OPERATIONAL FOR UAT** (live). [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Frozen contract snapshot / legal-change monitoring remain **FUTURE**. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. |
+| Implementation | Template registers remain **empty**. Slice A library persistence + selection engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B source/update foundation **CLOSED / OPERATIONAL FOR UAT** (live). Slice C generation / snapshot **PREFLIGHT COMPLETE / PRODUCT NOT AUTHORIZED**. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Frozen contract snapshot / legal-change monitoring remain **FUTURE**. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. |
 
 ## Purpose
 
@@ -57,6 +57,8 @@ Govern construction contract language, statutory/consumer wording, warranty obli
 
 **Subsequent status (2026-09-13, Slice B live migrate + bounded office UAT):** Alembic **`c2d3e4f5a6b7` applied live**. Slice B **CLOSED / OPERATIONAL FOR UAT**. Labeled synthetic UAT source/snapshot/candidate rows exist as update-engine evidence only. This **still does not** populate this register or approve any legal language. Live library packages/objects remain **0**. Family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**.
 
+**Subsequent status (2026-09-13, Slice C preflight):** [fg-024-slice-c-contract-generation-snapshot-preflight.md](../architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md) **PREFLIGHT COMPLETE**. Product **NOT AUTHORIZED / NOT IMPLEMENTED**. This **still does not** populate this register, approve Family 05 legally, or authorize generation. Empty library remains FAIL CLOSED. ADR-051 §6 remains **deferred**.
+
 ## Warranty template register (governed — empty until approved)
 
 Warranty language is **governed content**.
@@ -104,9 +106,9 @@ Generation alone does not mean final or sent.
 
 ## Related
 
-- [feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) — North American library / update engine / frozen snapshot / monitoring (**RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B PREFLIGHT COMPLETE / OVERALL OPEN / PARTIAL**)
+- [feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) — North American library / update engine / frozen snapshot / monitoring (**RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C PREFLIGHT COMPLETE / OVERALL OPEN / PARTIAL**)
 - [architecture/fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md) — Slice A engine freeze; empty library; fail-closed
-- [architecture/fg-024-slice-b-legal-content-source-lifecycle-preflight.md](../architecture/fg-024-slice-b-legal-content-source-lifecycle-preflight.md) — Slice B source/update freeze; **PREFLIGHT COMPLETE**; product **NOT AUTHORIZED**
+- [architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md](../architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md) — Slice C generation / snapshot freeze; **PREFLIGHT COMPLETE**; product **NOT AUTHORIZED**
 - [adr/ADR-050-north-american-legal-content-library-ownership.md](../adr/ADR-050-north-american-legal-content-library-ownership.md) — **Accepted** 13 Sep 2026 (library ownership / fail-closed)
 - [adr/ADR-051-legal-content-source-and-update-lifecycle.md](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) — **Accepted** 13 Sep 2026 (source classes / candidate-update / Slice B–D boundary; architecture only)
 - [legal/native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — signing **process** draft for counsel; **not** template approval

@@ -34,6 +34,8 @@ This document freezes Slice A **engine architecture** for a later bounded produc
 
 **Subsequent status (2026-09-13, Slice A live migrate + UAT):** Slice A **CLOSED / OPERATIONAL FOR UAT**. Live current **`b1c2d3e4f5a6 (head)`**. Library **empty**. Evidence [fg024-slice-a-live-migrate-bounded-uat-record.md](../testing/fg024-slice-a-live-migrate-bounded-uat-record.md).
 
+**Subsequent status (2026-09-13, Slice C preflight):** [fg-024-slice-c-contract-generation-snapshot-preflight.md](fg-024-slice-c-contract-generation-snapshot-preflight.md) **PREFLIGHT COMPLETE**. Product **NOT AUTHORIZED / NOT IMPLEMENTED**. Slice A remains **CLOSED / OPERATIONAL FOR UAT**.
+
 **Out of this preflight:** Slice B update engine product; Slice C generation; Slice D live monitoring; Ontario/U.S. legal population; Family 05 legal approval; Native Signing product; V1-04 product work; V1 rescore.
 
 ---

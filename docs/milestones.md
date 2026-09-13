@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-13 — FG-024 Slice C contract-generation preflight
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 Slice C preflight |
+| Status | **PREFLIGHT COMPLETE / PRODUCT NOT AUTHORIZED / NOT IMPLEMENTED.** Slice A remains **CLOSED / OPERATIONAL FOR UAT**. Slice B remains **CLOSED / OPERATIONAL FOR UAT**. Gate overall **OPEN / PARTIAL**. |
+| Branch | `main` |
+| Base commit | `a176db36034af17309fd3f3e7e8c9a58043d6f56` (`docs: close FG-024 Slice B after live UAT`) |
+| Objective | Freeze Slice C contract-generation + immutable project-snapshot architecture. No product code. No migration. No live DB mutation. No legal drafting. |
+| Deliverables | [architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md](architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md); current-authority governance updates. No application-code change. |
+| Validation | Documentation-only. `./venv/bin/python -m pytest -q` — **809 passed**, 2738 warnings, **545.74s**, exit **0**. No Slice C behavioural tests created. |
+| Architectural findings | Slice C consumes Slice A selector; does not own Legal Content Gate APPROVED, Slice B source/update, Native Signing, or a second library. Empty library remains FAIL CLOSED. Family 05 is presentation shell only. GENERATED ≠ EXECUTED. ADR-051 §6 remains deferred / fail-closed on that branch. SCHEMA REQUIRED later. NEW ADR NOT REQUIRED. Draft EstimateVersion cannot generate. |
+| Open decisions | C1 production mapping of “APPROVED estimate”. C2 ADR-051 §6 ALLOW/BLOCK/WARN. C3 warranty schedule increment. Slice C product authorization. Slice D. |
+| Next milestone | **STOP.** Do not begin Slice C product or Slice D. |
+| Commit | This Slice C preflight commit |
+| Date | 2026-09-13 |
+
 ### 2026-09-13 — FG-024 Slice B live migrate + bounded office UAT
 
 | Field | Content |

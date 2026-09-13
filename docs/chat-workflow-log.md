@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-13 — FG-024 Slice C contract-generation preflight
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-13 |
+| Branch | `main` @ `a176db36034af17309fd3f3e7e8c9a58043d6f56` (parent) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 13 SEP 2026 |
+| Objective | Freeze FG-024 Slice C contract-generation + immutable project-snapshot architecture. Documentation / architecture only. |
+| Business decision | Joel / ChatGPT Architect authorized Slice C preflight only. No product. No migration. No live DB mutation. No legal drafting. No Native Signing. No Slice D. No V1 rescore. |
+| Architectural decision | Slice C consumes Slice A selector and Slice B provenance; does not own Legal Content Gate APPROVED, jurisdiction identity, Family 05 legal approval, or Native Signing. Empty library remains FAIL CLOSED. Family 05 is presentation shell only. GENERATED ≠ EXECUTED. ADR-051 §6 remains deferred / fail-closed on that branch. SCHEMA REQUIRED later. NEW ADR NOT REQUIRED. Draft EstimateVersion cannot generate. |
+| Prompt template used | Joel FG-024 Slice C contract-generation preflight (13 Sep 2026) |
+| Approved Cursor prompt summary | Verify a176db3 / live and repo head c2d3e4f5a6b7; read FG-024 / ADR-050 / ADR-051 / Slice A–B / document-package / FG-022 / Native Signing; freeze Slice C generation + snapshot architecture; one preflight; update current-state records; full pytest; commit `docs: record FG-024 Slice C contract-generation preflight`; push; do not implement product. |
+| Files expected to change | Slice C preflight; FG-024 / Legal Content Gate / ADR-051 subsequent; current-state / session-handoff / project-state-report / milestones / chat-workflow-log / V1 register / roadmap / document-package indexes |
+| Files prohibited from changing | Application code; Alembic; live DB; Ontario/U.S. seed; Opening V1 media; EST-2026-0019; Slice D; Native Signing product |
+| Implementation result | Slice C **PREFLIGHT COMPLETE / PRODUCT NOT AUTHORIZED / NOT IMPLEMENTED**. Legal Content Gate **empty**. EST-2026-0019 occupancy preserved. V1 remains **60% / 4 of 11**. |
+| Tests | `./venv/bin/python -m pytest -q` — **809 passed**, 2738 warnings, **545.74s**, exit **0**. Canonical baseline confirmed. No Slice C behavioural tests created. No product-code change. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (Slice C preflight; not a V1 package completion) |
+| Constitutional issue raised | None. New ADR not required. |
+| Unresolved issues | C1 production “APPROVED estimate” mapping. C2 ADR-051 §6 ALLOW/BLOCK/WARN. C3 warranty increment. Slice C product unauthorized. Slice D unauthorized. 06D Ontario counsel BLOCKED. Output 4 not complete. |
+| Next approved step | **STOP.** Do not begin Slice C product or Slice D. Return to ChatGPT Architect. |
+| Next approved prompt | **None.** Return to ChatGPT Architect. |
+| Commit hash | This Slice C preflight commit |
+
 ### 2026-09-13 — FG-024 Slice B live migrate + bounded office UAT
 
 | Field | Content |

@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-051: Legal Content Source Classes, Candidate-Update Lifecycle, and Slice B / Slice D Boundary |
-| Status | **Accepted** by Joel Brayman / ChatGPT Architect, 13 Sep 2026 (source-class / candidate-update / Slice B–D boundary). Does **not** authorize Slice B product code, schema, migration, legal drafting, live monitoring, or Native Signing. |
+| Status | **Accepted** by Joel Brayman / ChatGPT Architect, 13 Sep 2026 (source-class / candidate-update / Slice B–D boundary). Subsequent Slice B product foundation is **implemented in the repository** from a later bounded prompt. This ADR still does **not** authorize live migration, office UAT, legal drafting, live monitoring, Slice C/D, or Native Signing. |
 | Date | 2026-09-13; Accepted 2026-09-13 |
 | Related | [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) · [fg-024-slice-b-legal-content-source-lifecycle-preflight.md](../architecture/fg-024-slice-b-legal-content-source-lifecycle-preflight.md) · [ADR-050](ADR-050-north-american-legal-content-library-ownership.md) **Accepted** · [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [ADR-037](ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** · [ADR-038](ADR-038-permit-intelligence-authority-and-rules-library.md) **Accepted** · [ADR-002](ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-010](ADR-010-build-versus-buy-document-processing.md) **Proposed** |
 
@@ -100,6 +100,8 @@ Accepting this ADR does **not** by itself authorize product code, schema, migrat
 
 **Negative:** Slice B product still cannot start until Joel issues a bounded implementation prompt. ACTIVE-during-review generation policy remains **deferred** (not option B). Ontario content remains BLOCKED on counsel (06D).
 
+**Subsequent status (2026-09-13, Slice B product foundation):** A later bounded Cursor prompt implemented the source / snapshot / candidate / review foundation in the repository (Alembic **`c2d3e4f5a6b7`**). Live migration **not** run. Office UAT **not** started. Slice B **not closed**. §6 remains **deferred**. Legal Content Gate remains **empty**.
+
 ## Module Ownership Impact
 
 CONTRACT / FG-024 Slice B would own source, snapshot, candidate, and review-event records (later). Legal Content Gate retains APPROVED. Slice A retains selection/fail-closed. Slice D later owns watchers. Permit Intelligence unchanged. Native Signing unchanged.
@@ -110,11 +112,11 @@ Source and candidate records are **platform-governed legal-process evidence**, n
 
 ## Migration Impact
 
-**Deferred.** None in this pass. A later authorized Slice B product may require an **additive** migration for source / snapshot / candidate / review-event tables. Do not write a revision from this ADR.
+**Deferred at acceptance.** Subsequent Slice B product created additive revision **`c2d3e4f5a6b7`** (`down_revision` **`b1c2d3e4f5a6`**). Live `flask db upgrade` remains unauthorized until a later migrate prompt.
 
 ## Testing Impact
 
-None in this pass. A later empty-candidate product slice must prove: no AI APPROVED/ACTIVE; candidate does not generate; empty library still BLOCK; no legal seed.
+Subsequent empty-candidate product tests prove: no AI APPROVED/ACTIVE; candidate is not legal authority; candidate does not auto-SUPERSEDE or deactivate ACTIVE; empty library still BLOCK; no legal seed; no live monitoring.
 
 ## Documentation Impact
 
@@ -126,4 +128,4 @@ None in this pass. A later empty-candidate product slice must prove: no AI APPRO
 |------|------|------|
 | Joel | Joel Brayman / ChatGPT Architect | 2026-09-13 |
 | ChatGPT review | Slice B documentation preflight; existing-governance reconciliation / Accept | 2026-09-13 |
-| Cursor implementation note | Drafted **Proposed** 2026-09-13 from ADR-000. **Accepted** 2026-09-13 documentation-only. §6 generation-while-pending **deferred**. Slice B product remains **NOT AUTHORIZED / NOT IMPLEMENTED**. |
+| Cursor implementation note | Drafted **Proposed** 2026-09-13 from ADR-000. **Accepted** 2026-09-13 documentation-only. Subsequent bounded product prompt implemented repository foundation 2026-09-13. §6 generation-while-pending remains **deferred**. Live migrate **not** authorized. |

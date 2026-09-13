@@ -32,6 +32,25 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-13 — FG-024 Slice B product foundation (not live-migrated)
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 Slice B product |
+| Status | **PRODUCT FOUNDATION IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED.** Slice A remains **CLOSED / OPERATIONAL FOR UAT**. Gate overall **OPEN / PARTIAL**. |
+| Branch | `main` |
+| Base commit | `72b54515f93683f96e7c09723f613cf27fc13082` (`docs: adopt FG-024 Slice B lifecycle architecture`) |
+| Objective | Smallest source / snapshot / candidate / review foundation. No live migrate. No Slice C/D. No legal seed. |
+| Deliverables | `LegalContentSource`, `LegalContentSourceSnapshot`, `LegalContentCandidateChange`, `LegalContentCandidateImpact`, `LegalContentReviewEvent`; `app/services/legal_content_update.py`; Alembic `c2d3e4f5a6b7`; focused tests. No UI. No seed. |
+| Validation | Dedicated **16 passed** / 2.17s. Full suite **809 passed** / 2738 warnings / 373.56s. Live current remains `b1c2d3e4f5a6`. One graph head `c2d3e4f5a6b7`. |
+| Architectural findings | Slice A selector unreopened. AI cannot APPROVE/ACTIVE. Candidate is review material. No auto-SUPERSEDE/deactivate. Generation-while-pending deferred. No live monitoring. |
+| Open decisions | Slice B live migrate + bounded UAT. Generation-while-`UPDATE_PENDING_REVIEW`. Slice C/D. 06D Ontario counsel. |
+| Next milestone | **STOP.** Do not live-migrate. Do not begin Slice C or Slice D. |
+| Commit | This product commit |
+| Date | 2026-09-13 |
+
+---
+
 ### 2026-09-13 — FG-024 Slice B architecture adopted (ADR-051 Accepted)
 
 | Field | Content |

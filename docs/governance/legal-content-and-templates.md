@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | **Governing** |
 | Updated | 2026-09-13 |
-| Implementation | Template registers remain **empty**. Slice A library persistence + selection engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B source/update architecture **PREFLIGHT COMPLETE**; [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (architecture only); product **NOT AUTHORIZED**. Frozen contract snapshot / legal-change monitoring remain **FUTURE**. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. |
+| Implementation | Template registers remain **empty**. Slice A library persistence + selection engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B source/update foundation **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED**. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Frozen contract snapshot / legal-change monitoring remain **FUTURE**. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. |
 
 ## Purpose
 
@@ -52,6 +52,8 @@ Govern construction contract language, statutory/consumer wording, warranty obli
 **Subsequent status (2026-09-13, Slice A product):** Empty-library tables and coded fail-closed selection exist in the repository (`legal_content_jurisdiction_packages`, `legal_content_objects`, `app/services/legal_content.py`). Alembic **`b1c2d3e4f5a6`** not applied live. This **still does not** populate this register, approve any legal language, or mark Family 05 legally approved. Ontario project + empty library → **BLOCK**. No generic North American fallback.
 
 **Subsequent status (2026-09-13, Slice B architecture):** Existing-governance reconciliation **validated** the Slice B source/update preflight. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (architecture only). Slice B **PREFLIGHT COMPLETE / PRODUCT NOT AUTHORIZED / NOT IMPLEMENTED**. This **still does not** populate this register. Generation-while-`UPDATE_PENDING_REVIEW` **deferred**.
+
+**Subsequent status (2026-09-13, Slice B product foundation):** Source / snapshot / candidate / review tables and service exist in the repository (`legal_content_sources`, `legal_content_source_snapshots`, `legal_content_candidate_changes`, `legal_content_candidate_impacts`, `legal_content_review_events`, `app/services/legal_content_update.py`). Alembic **`c2d3e4f5a6b7`** not applied live. This **still does not** populate this register, approve any legal language, or mark Family 05 legally approved. AI still cannot independently set legal content to **APPROVED** or **ACTIVE**. No live monitoring. No contract generation.
 
 ## Warranty template register (governed — empty until approved)
 

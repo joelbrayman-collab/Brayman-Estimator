@@ -164,3 +164,265 @@ class LegalContentObject(db.Model):
 
     def __repr__(self):
         return f"<LegalContentObject {self.kind} v{self.version_number}>"
+
+
+SOURCE_CLASSES = (
+    "OFFICIAL_PRIMARY",
+    "COUNSEL_SUPPLIED",
+    "ORGANIZATION_COMMERCIAL",
+    "SECONDARY_INFORMATIONAL",
+)
+
+CANDIDATE_STATES = (
+    "PROPOSED",
+    "COUNSEL_REVIEW",
+    "RETURNED",
+    "REFUSED",
+)
+
+REVIEW_ACTIONS = (
+    "ROUTED",
+    "RETURNED",
+    "APPROVE_VERSION",
+    "REFUSED",
+)
+
+REVIEW_ACTOR_KINDS = (
+    "HUMAN",
+    "COUNSEL",
+    "AI",
+    "AUTOMATION",
+)
+
+
+class LegalContentSource(db.Model):
+    """Platform-governed legal-content source identity. Not legal authority."""
+
+    __tablename__ = "legal_content_sources"
+    __table_args__ = (
+        db.CheckConstraint(
+            "source_class IN ('OFFICIAL_PRIMARY', 'COUNSEL_SUPPLIED', "
+            "'ORGANIZATION_COMMERCIAL', 'SECONDARY_INFORMATIONAL')",
+            name="ck_legal_content_sources_source_class",
+        ),
+        db.UniqueConstraint("source_code", name="uq_legal_content_sources_source_code"),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    source_code = db.Column(db.String(80), nullable=False)
+    source_class = db.Column(db.String(40), nullable=False, index=True)
+    source_identity = db.Column(db.String(255), nullable=False)
+    issuing_identity = db.Column(db.String(255), nullable=True)
+    source_citation = db.Column(db.Text, nullable=True)
+    source_url = db.Column(db.Text, nullable=True)
+    jurisdiction_definition_id = db.Column(
+        db.Integer,
+        db.ForeignKey("jurisdiction_definitions.id"),
+        nullable=True,
+        index=True,
+    )
+    provenance = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    jurisdiction = db.relationship("JurisdictionDefinition")
+    snapshots = db.relationship(
+        "LegalContentSourceSnapshot",
+        back_populates="source",
+        cascade="all, delete-orphan",
+    )
+
+    def __repr__(self):
+        return f"<LegalContentSource {self.source_code} {self.source_class}>"
+
+
+class LegalContentSourceSnapshot(db.Model):
+    """Immutable retrieved/received source snapshot. Hash is not approval."""
+
+    __tablename__ = "legal_content_source_snapshots"
+    __table_args__ = (
+        db.UniqueConstraint(
+            "source_id",
+            "payload_sha256",
+            name="uq_legal_content_source_snapshots_source_hash",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    source_id = db.Column(
+        db.Integer,
+        db.ForeignKey("legal_content_sources.id"),
+        nullable=False,
+        index=True,
+    )
+    payload_sha256 = db.Column(db.String(64), nullable=False, index=True)
+    retrieved_at = db.Column(db.DateTime, nullable=False)
+    published_at = db.Column(db.Date, nullable=True)
+    legal_effective_at = db.Column(db.Date, nullable=True)
+    source_revision = db.Column(db.String(80), nullable=True)
+    payload_text = db.Column(db.Text, nullable=True)
+    provenance = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    source = db.relationship("LegalContentSource", back_populates="snapshots")
+
+    def __repr__(self):
+        return f"<LegalContentSourceSnapshot {self.payload_sha256[:12]}>"
+
+
+class LegalContentCandidateChange(db.Model):
+    """Review material. Not legal authority. Does not mutate ACTIVE packages."""
+
+    __tablename__ = "legal_content_candidate_changes"
+    __table_args__ = (
+        db.CheckConstraint(
+            "candidate_state IN ('PROPOSED', 'COUNSEL_REVIEW', 'RETURNED', "
+            "'REFUSED')",
+            name="ck_legal_content_candidates_state",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    source_id = db.Column(
+        db.Integer,
+        db.ForeignKey("legal_content_sources.id"),
+        nullable=False,
+        index=True,
+    )
+    snapshot_id = db.Column(
+        db.Integer,
+        db.ForeignKey("legal_content_source_snapshots.id"),
+        nullable=False,
+        index=True,
+    )
+    jurisdiction_definition_id = db.Column(
+        db.Integer,
+        db.ForeignKey("jurisdiction_definitions.id"),
+        nullable=True,
+        index=True,
+    )
+    candidate_state = db.Column(db.String(20), nullable=False, index=True)
+    change_summary = db.Column(db.Text, nullable=True)
+    detected_difference = db.Column(db.Text, nullable=True)
+    previous_package_id = db.Column(
+        db.Integer,
+        db.ForeignKey("legal_content_jurisdiction_packages.id"),
+        nullable=True,
+        index=True,
+    )
+    previous_object_id = db.Column(
+        db.Integer,
+        db.ForeignKey("legal_content_objects.id"),
+        nullable=True,
+        index=True,
+    )
+    proposed_object_id = db.Column(
+        db.Integer,
+        db.ForeignKey("legal_content_objects.id"),
+        nullable=True,
+        index=True,
+    )
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    source = db.relationship("LegalContentSource")
+    snapshot = db.relationship("LegalContentSourceSnapshot")
+    jurisdiction = db.relationship("JurisdictionDefinition")
+    previous_package = db.relationship(
+        "LegalContentJurisdictionPackage",
+        foreign_keys=[previous_package_id],
+    )
+    previous_object = db.relationship(
+        "LegalContentObject",
+        foreign_keys=[previous_object_id],
+    )
+    proposed_object = db.relationship(
+        "LegalContentObject",
+        foreign_keys=[proposed_object_id],
+    )
+    impacts = db.relationship(
+        "LegalContentCandidateImpact",
+        back_populates="candidate",
+        cascade="all, delete-orphan",
+    )
+    review_events = db.relationship(
+        "LegalContentReviewEvent",
+        back_populates="candidate",
+        cascade="all, delete-orphan",
+    )
+
+    def __repr__(self):
+        return f"<LegalContentCandidateChange {self.id} {self.candidate_state}>"
+
+
+class LegalContentCandidateImpact(db.Model):
+    """Affected package/object relationship for a candidate. Review prep only."""
+
+    __tablename__ = "legal_content_candidate_impacts"
+
+    id = db.Column(db.Integer, primary_key=True)
+    candidate_id = db.Column(
+        db.Integer,
+        db.ForeignKey("legal_content_candidate_changes.id"),
+        nullable=False,
+        index=True,
+    )
+    package_id = db.Column(
+        db.Integer,
+        db.ForeignKey("legal_content_jurisdiction_packages.id"),
+        nullable=True,
+        index=True,
+    )
+    object_id = db.Column(
+        db.Integer,
+        db.ForeignKey("legal_content_objects.id"),
+        nullable=True,
+        index=True,
+    )
+    notes = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    candidate = db.relationship(
+        "LegalContentCandidateChange",
+        back_populates="impacts",
+    )
+    package = db.relationship("LegalContentJurisdictionPackage")
+    content_object = db.relationship("LegalContentObject")
+
+    def __repr__(self):
+        return f"<LegalContentCandidateImpact {self.id}>"
+
+
+class LegalContentReviewEvent(db.Model):
+    """Append-only human/counsel (or refused AI) review action."""
+
+    __tablename__ = "legal_content_review_events"
+    __table_args__ = (
+        db.CheckConstraint(
+            "action IN ('ROUTED', 'RETURNED', 'APPROVE_VERSION', 'REFUSED')",
+            name="ck_legal_content_review_events_action",
+        ),
+        db.CheckConstraint(
+            "actor_kind IN ('HUMAN', 'COUNSEL', 'AI', 'AUTOMATION')",
+            name="ck_legal_content_review_events_actor_kind",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    candidate_id = db.Column(
+        db.Integer,
+        db.ForeignKey("legal_content_candidate_changes.id"),
+        nullable=False,
+        index=True,
+    )
+    action = db.Column(db.String(20), nullable=False, index=True)
+    actor_kind = db.Column(db.String(20), nullable=False)
+    actor_identifier = db.Column(db.String(150), nullable=False)
+    notes = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    candidate = db.relationship(
+        "LegalContentCandidateChange",
+        back_populates="review_events",
+    )
+
+    def __repr__(self):
+        return f"<LegalContentReviewEvent {self.action} {self.actor_kind}>"

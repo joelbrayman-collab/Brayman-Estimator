@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-13 — FG-024 Slice B product foundation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-13 |
+| Branch | `main` @ `72b54515f93683f96e7c09723f613cf27fc13082` (parent) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 13 SEP 2026 |
+| Objective | Implement smallest FG-024 Slice B source / snapshot / candidate / review foundation. One additive migration. No live migrate. No Slice C/D. |
+| Business decision | Joel / ChatGPT Architect authorized Slice B product foundation only. |
+| Architectural decision | Preserve Slice A library/selector. Source classes A–D are provenance not approval. Candidate is review material. AI cannot APPROVE/ACTIVE. No auto-SUPERSEDE/deactivate. Generation-while-pending deferred. No live monitoring. |
+| Prompt template used | Joel FG-024 Slice B product foundation (13 Sep 2026) |
+| Approved Cursor prompt summary | Verify 72b5451 / live b1c2d3e4f5a6; implement Slice B tables + service + tests; one additive c2d3e4f5a6b7; full pytest; commit `feat: add FG-024 legal-content update foundation`; push; do not live-migrate. |
+| Files expected to change | legal_content models; legal_content_update service; Alembic c2d3e4f5a6b7; Slice B tests; FG-032 heads assertion; governing docs |
+| Files prohibited from changing | Slice A selector behaviour; permit_rules; Ontario/U.S. seed; Opening V1 media; EST-2026-0019; live flask db upgrade; Slice C/D |
+| Implementation result | Slice B product in repository. Live current remains `b1c2d3e4f5a6`. Repo head `c2d3e4f5a6b7`. EST-2026-0019 occupancy preserved. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_legal_content_update_fg024.py` — **16 passed**, 22 warnings, **2.17s**. `./venv/bin/python -m pytest -q` — **809 passed**, 2738 warnings, **373.56s**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (product foundation; not a V1 package completion) |
+| Constitutional issue raised | None. ADR-051 already Accepted. |
+| Unresolved issues | Live migrate unauthorized. Office UAT unauthorized. Generation-while-`UPDATE_PENDING_REVIEW` deferred. 06D Ontario counsel BLOCKED. Slice C/D unauthorized. |
+| Next approved step | **STOP.** Do not live-migrate. Do not begin Slice C or Slice D. |
+| Next approved prompt | **None.** Return to ChatGPT Architect. |
+| Commit hash | This product commit |
+
 ### 2026-09-13 — Adopt FG-024 Slice B lifecycle architecture / Accept ADR-051
 
 | Field | Content |

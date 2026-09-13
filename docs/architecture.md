@@ -67,7 +67,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Material Catalogue | `CanonicalMaterial`, `MaterialRequirement` | `app/models/canonical_material.py`; `app/models/material_requirement.py` (FG-029; **CLOSED / OPERATIONAL FOR UAT**) |
 | Supplier Catalogue | `Supplier`, `SupplierLocation`, `ContractorSupplierAccount`, `SupplierProduct`, price/availability evidence, maps, `SupplierPackage` / lines | `app/models/supplier_catalogue.py` (FG-029; inform-only price; **CLOSED / OPERATIONAL FOR UAT**) |
 | Pricing Engine | `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent` | `app/models/pricing_engine.py` |
-| Legal Content Library | `LegalContentJurisdictionPackage`, `LegalContentObject` | `app/models/legal_content.py` (FG-024 Slice A; **live-migrated / empty**) |
+| Legal Content Library | `LegalContentJurisdictionPackage`, `LegalContentObject`, `LegalContentSource`, `LegalContentSourceSnapshot`, `LegalContentCandidateChange`, `LegalContentCandidateImpact`, `LegalContentReviewEvent` | `app/models/legal_content.py` (FG-024 Slice A **live-migrated / empty**; Slice B update foundation **in repository / not live-migrated**) |
 
 Notable behaviours evidenced in code/tests:
 
@@ -81,7 +81,7 @@ Notable behaviours evidenced in code/tests:
 
 | Layer | Paths |
 |-------|-------|
-| Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py`, `build.py`, `build_storage.py`, `material_requirements.py`, `supplier_catalogue.py`, `supplier_package_pdf.py`, `estimate_costing.py`, `estimate_scope_delivery.py`, `estimate_quickbooks.py`, `legal_content.py` |
+| Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py`, `build.py`, `build_storage.py`, `material_requirements.py`, `supplier_catalogue.py`, `supplier_package_pdf.py`, `estimate_costing.py`, `estimate_scope_delivery.py`, `estimate_quickbooks.py`, `legal_content.py`, `legal_content_update.py` |
 | Project controls | `app/project_controls/services.py`, `repository.py`, `pdf.py` |
 | Plan Intelligence | `app/plan_intelligence/services.py`, `processing.py`, `extraction.py`, `storage.py`, `packages.py`, `audit.py`, `takeoff.py`, `takeoff_extractors.py` |
 | Generic repositories package | `app/repositories/` (present; inspect before assuming usage) |
@@ -96,7 +96,7 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic **repository** graph head: **`b1c2d3e4f5a6`** (FG-024 Slice A empty legal-content library). Live development/UAT `flask db current`: **`b1c2d3e4f5a6 (head)`**. One graph head. Live current **equals** repository head. FG-024 Slice A **`b1c2d3e4f5a6` applied live** 2026-09-13. FG-032 Slice C occupancy **`f1a2b3c4d5e6` applied live** 2026-09-11 (superseded as live current). Verify `flask db current` per environment before relying on it.
+- Alembic **repository** graph head: **`c2d3e4f5a6b7`** (FG-024 Slice B update foundation). Live development/UAT `flask db current`: **`b1c2d3e4f5a6 (head)`**. One graph head. Live current **does not equal** repository head until authorized Slice B live migrate. FG-024 Slice A **`b1c2d3e4f5a6` applied live** 2026-09-13. FG-032 Slice C occupancy **`f1a2b3c4d5e6` applied live** 2026-09-11 (superseded as live current). Verify `flask db current` per environment before relying on it.
 
 ### Tests
 

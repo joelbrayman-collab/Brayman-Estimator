@@ -17,8 +17,13 @@ from app.models.supplier_catalogue import (
 from app.models.cost_item import CostItem
 from app.models.jurisdiction import JurisdictionAlias, JurisdictionDefinition
 from app.models.legal_content import (
+    LegalContentCandidateChange,
+    LegalContentCandidateImpact,
     LegalContentJurisdictionPackage,
     LegalContentObject,
+    LegalContentReviewEvent,
+    LegalContentSource,
+    LegalContentSourceSnapshot,
 )
 from app.models.permit_intelligence import (
     PermitAnalysis,
@@ -151,8 +156,13 @@ __all__ = [
     "HistoricalUploadAttempt",
     "JurisdictionAlias",
     "JurisdictionDefinition",
+    "LegalContentCandidateChange",
+    "LegalContentCandidateImpact",
     "LegalContentJurisdictionPackage",
     "LegalContentObject",
+    "LegalContentReviewEvent",
+    "LegalContentSource",
+    "LegalContentSourceSnapshot",
     "DirectLabourCostRateStandard",
     "EstimateLabourSnapshot",
     "LabourAuditEvent",

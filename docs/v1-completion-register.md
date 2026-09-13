@@ -301,8 +301,8 @@ Estimator remains the authoritative commercial record. QuickBooks must not becom
 | V1 REQUIRED? | **YES** (06A–06I). 06J **POST-V1**. |
 | BLOCKER? | **YES** for production contract use: Legal Content Gate **empty**; Family 05 **NOT LEGALLY APPROVED**; AI cannot mark legal content APPROVED |
 | Dependencies | ADR-037 / FG-015 jurisdiction identity; Legal Content Gate; V1-07 for 06I |
-| Governing | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B PREFLIGHT COMPLETE / OVERALL OPEN / PARTIAL**; [fg-024-slice-a-legal-content-library-preflight.md](architecture/fg-024-slice-a-legal-content-library-preflight.md); [fg-024-slice-b-legal-content-source-lifecycle-preflight.md](architecture/fg-024-slice-b-legal-content-source-lifecycle-preflight.md); [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**; [ADR-051](adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**; [legal-content-and-templates.md](governance/legal-content-and-templates.md); [testing/fg024-slice-a-live-migrate-bounded-uat-record.md](testing/fg024-slice-a-live-migrate-bounded-uat-record.md) |
-| Next governed action | **STOP.** Slice A is **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B architecture **PREFLIGHT COMPLETE**; [ADR-051](adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Do **not** begin Slice B product. Do **not** rescore V1. Factor remains **0.25**. |
+| Governing | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B PRODUCT FOUNDATION IN REPOSITORY / NOT LIVE-MIGRATED / NOT CLOSED / OVERALL OPEN / PARTIAL**; [fg-024-slice-a-legal-content-library-preflight.md](architecture/fg-024-slice-a-legal-content-library-preflight.md); [fg-024-slice-b-legal-content-source-lifecycle-preflight.md](architecture/fg-024-slice-b-legal-content-source-lifecycle-preflight.md); [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**; [ADR-051](adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**; [legal-content-and-templates.md](governance/legal-content-and-templates.md); [testing/fg024-slice-a-live-migrate-bounded-uat-record.md](testing/fg024-slice-a-live-migrate-bounded-uat-record.md) |
+| Next governed action | **STOP.** Slice A is **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B product foundation is **IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED**. Do **not** live-migrate from this register. Do **not** begin Slice C/D. Do **not** rescore V1. Factor remains **0.25**. |
 
 Deep reconciliation: **§9**. Sub-gates: **§9.4**.
 
@@ -426,14 +426,14 @@ Round the published readiness to the **nearest whole percent**. Recalculate from
 
 | Question | Answer |
 |----------|--------|
-| 1. Contract-library architecture | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) records one linked gate: Slice A library, Slice B update engine, Slice C generation + frozen snapshot, Slice D change monitoring. Slice A engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slices B–D **NOT AUTHORIZED**. |
+| 1. Contract-library architecture | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) records one linked gate: Slice A library, Slice B update engine, Slice C generation + frozen snapshot, Slice D change monitoring. Slice A engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B foundation **in repository / not live-migrated**. Slices C–D **NOT AUTHORIZED**. |
 | 2. Legal Content Gate | [legal-content-and-templates.md](governance/legal-content-and-templates.md) remains approval authority. Register **empty**. AI **cannot** independently set legal content to APPROVED. Versions are superseded, not silently overwritten. |
 | 3. Four-output home | Output 4 in [project-document-package.md](architecture/project-document-package.md). FG-012 does **not** own it. |
 | 4. Native Signing | Separate process track. Production blocked pending counsel. Development may proceed under separate governance. |
 | 5. Presentation | [FG-022](feature-gates/FG-022-reusable-approved-document-template-family-v1.md) Family 05 is an **APPROVED REUSABLE PRESENTATION MASTER** only — **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED / NOT FOR EXECUTION**. |
 | 6. Jurisdiction identity | **Reusable.** [ADR-037](adr/ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted**; [FG-015](feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED**. One resolver. Permit rules (ADR-038) are **not** contract clauses. |
 | 7. Frozen snapshot pattern | ADR-002 (accepted proposals); ADR-039 (permit reports); FG-024 records the CONTRACT analogue. **Not implemented** for contracts. |
-| 8. Update / monitoring | FG-024 Slice B + D **recorded**, not implemented. Effective-date fields are specified (source publication ≠ counsel approval ≠ platform activation ≠ generation). |
+| 8. Update / monitoring | FG-024 Slice B product foundation **in repository / not live-migrated**. Slice D live monitoring **not implemented**. Effective-date fields are specified (source publication ≠ counsel approval ≠ platform activation ≠ generation). |
 | 9. Fail-closed | FG-024: no approved package / unsupported jurisdiction / unresolved effective-date → **FAIL CLOSED**. **Coded and live-UAT-proven.** **No generic North American fallback.** Empty library BLOCK. Live / empty. |
 
 ### 9.2 FG-024 pieces vs V1
@@ -445,7 +445,7 @@ Round the published readiness to the **nearest whole percent**. Recalculate from
 | C — Generation + frozen snapshot | **V1 REQUIRED** |
 | D — Automated legal-source monitoring / alerts | **JOEL DECISION.** Register recommendation: **POST-V1**. V1 can ship with human/counsel-initiated updates (Slice B without live watchers). Do **not** treat this as dropping 06H: effective-date / supersession remain V1. |
 
-**Do not implement Slices B–D from this register. Do not rescore V1 from Slice A close.**
+**Do not implement Slices C–D from this register. Do not rescore V1 from Slice B product.**
 
 ### 9.3 Ontario contract / legal blockers
 
@@ -471,7 +471,7 @@ Round the published readiness to the **nearest whole percent**. Recalculate from
 | 06E | Contract generation from approved project/estimate | **YES** | **NOT STARTED** | FG-024 Slice C |
 | 06F | Frozen generated-contract snapshot | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | Pattern exists elsewhere; not for contracts |
 | 06G | Fail-closed when approved jurisdiction package unavailable | **YES** | **LIVE / OFFICE UAT PASS** | Empty library BLOCK; no generic fallback; live proven 2026-09-13 |
-| 06H | Effective-date / supersession / update architecture | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | V1 = versioning + supersession + effective dates. Slice B source/update architecture **Accepted** ([ADR-051](adr/ADR-051-legal-content-source-and-update-lifecycle.md)); product **NOT IMPLEMENTED**. Live source monitoring = recommended POST-V1 |
+| 06H | Effective-date / supersession / update architecture | **YES** | **ENGINE IN REPOSITORY / NOT LIVE-MIGRATED** | V1 = versioning + supersession + effective dates. Slice B source/snapshot/candidate/review foundation in repository (Alembic `c2d3e4f5a6b7`; not applied live). Generation-while-pending **deferred**. Live source monitoring = recommended POST-V1. V1-06 factor **unchanged** |
 | 06I | Contract package → Native Signing handoff | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | Depends on V1-07; production blocked |
 | 06J | Additional province/state population | **NO** | **POST-V1** | Unless Joel names another launch jurisdiction |
 
@@ -528,7 +528,7 @@ Real-life UAT means V1 is complete and controlled enough to operate **real Braym
 | Criterion | V1 bar | Current |
 |-----------|--------|---------|
 | Data safety / tenant integrity | Org isolation; no cross-org writes | **PARTIAL** (UAT-operational; not production-certified) |
-| Migration state | Live current = heads; known residue labeled | **YES** (`b1c2d3e4f5a6 (head)`; labeled synthetics remain including `FG029-UAT-BMR-DEMO`, `FG031-UAT-SCOPE-ROUTING`, Slice B project **id 25**, FG-032 project **id 26**, and FG-024 reuse of projects **9** / **13**) |
+| Migration state | Live current = heads; known residue labeled | **PARTIAL** (live current `b1c2d3e4f5a6 (head)`; repository head `c2d3e4f5a6b7`; Slice B not live-migrated; labeled synthetics remain including `FG029-UAT-BMR-DEMO`, `FG031-UAT-SCOPE-ROUTING`, Slice B project **id 25**, FG-032 project **id 26**, and FG-024 reuse of projects **9** / **13**) |
 | Backups | Governed backup/restore before real projects | **NO** (ad-hoc gitignored copies only) |
 | Authentication | Office login; SECRET_KEY not the committed dev secret | **UAT YES / production not certified** |
 | User onboarding + Ben/Brayman training | Written operating/training pack | **NO** |

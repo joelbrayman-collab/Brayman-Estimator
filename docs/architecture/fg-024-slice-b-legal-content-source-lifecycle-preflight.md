@@ -2,27 +2,29 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE.** [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (architecture only). Product **NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Do **not** begin Slice B product code. |
+| Status | **PREFLIGHT COMPLETE.** [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Subsequent Slice B product foundation **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED**. Do **not** begin Slice C/D. |
 | Date | 2026-09-13 |
 | Gate | [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) Slice B only |
 | Parent | Slice A **CLOSED / OPERATIONAL FOR UAT**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**. Live current **`b1c2d3e4f5a6 (head)`**. Library **empty**. |
-| Alembic | Unchanged. Live current = repository head **`b1c2d3e4f5a6`**. One graph head. **No migration in this pass.** |
+| Alembic | Live current **`b1c2d3e4f5a6 (head)`**. Repository head **`c2d3e4f5a6b7`**. One graph head. Additive Slice B revision exists in the repository; **not applied live**. |
 | Product | CalibraytAI (formerly CalibAi) |
 | Tenant | Brayman Construction Inc. / ORG-001 |
 
 ```text
 FG-024 SLICE B PREFLIGHT:
 COMPLETE
-PRODUCT NOT IMPLEMENTATION-AUTHORIZED
-NOT IMPLEMENTED
-NO MIGRATION
-NO LIVE DB MUTATION
+ADR-051 ACCEPTED
+PRODUCT FOUNDATION IMPLEMENTED IN REPOSITORY
+NOT LIVE-MIGRATED
+NOT OFFICE-UAT
+NOT CLOSED
+LIVE CURRENT: b1c2d3e4f5a6
+REPOSITORY HEAD: c2d3e4f5a6b7
 NO LEGAL DRAFTING
 NO ONTARIO / U.S. POPULATION
 NO CONTRACT GENERATION
 NO SIGNING
 NO V1 RESCORE
-ADR-051 ACCEPTED / ARCHITECTURE ONLY
 LEGAL CONTENT GATE: EMPTY
 LIVE MONITORING: SLICE D / NOT SLICE B
 APPROVED != ACTIVE
@@ -34,6 +36,8 @@ V1 REMAINS 60% / 4 OF 11
 This document freezes Slice B **source / update lifecycle architecture** for a later bounded product prompt. It does **not** authorize that prompt. It does **not** reopen Slice A.
 
 **Subsequent status (2026-09-13):** Existing-governance reconciliation. Preflight **validated** against FG-024 / ADR-050 / Legal Content Gate. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (architecture only). §6 generation-while-`UPDATE_PENDING_REVIEW` **deferred** — not option B. Product remains **NOT AUTHORIZED / NOT IMPLEMENTED**. V1 remains **60% / 4 of 11**. Legal Content Gate remains **empty**.
+
+**Subsequent status (2026-09-13, Slice B product foundation):** Bounded product prompt implemented source / snapshot / candidate / review foundation in the repository. Alembic **`c2d3e4f5a6b7`** created. Live migrate **not** run. Office UAT **not** started. Slice B **NOT CLOSED**. Generation-while-pending remains **deferred**. Slice C/D **NOT AUTHORIZED**. Legal Content Gate remains **empty**. V1 remains **60% / 4 of 11**.
 
 **Out of this preflight:** Slice B product code; Slice C generation; Slice D live watchers/alerts; Ontario/U.S. legal population; Family 05 legal approval; Native Signing product; V1-04 product work; V1 rescore.
 
@@ -339,3 +343,5 @@ Do **not** rescore because a Slice B preflight now exists. 06H remains **ARCHITE
 Application code · models · routes · services · templates · CSS/JS · behavioural Slice B tests · Alembic revision · live DB mutation · legal-content population · Family 05 legal-status change · Native Signing product · Slice C/D product · accepting ADR-008 or ADR-010 · website · HostPapa · rescore V1
 
 **Subsequent (2026-09-13):** [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. The original preflight prohibition on accepting ADR-051 is closed. Slice B **product** remains prohibited until a bounded implementation prompt.
+
+**Subsequent (2026-09-13, Slice B product foundation):** Bounded product prompt implemented the smallest source / snapshot / candidate / review foundation. Live migrate, office UAT, Slice C, Slice D, legal seed, and generation remain prohibited from this document.

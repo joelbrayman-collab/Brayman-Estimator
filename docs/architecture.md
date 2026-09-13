@@ -68,6 +68,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Supplier Catalogue | `Supplier`, `SupplierLocation`, `ContractorSupplierAccount`, `SupplierProduct`, price/availability evidence, maps, `SupplierPackage` / lines | `app/models/supplier_catalogue.py` (FG-029; inform-only price; **CLOSED / OPERATIONAL FOR UAT**) |
 | Pricing Engine | `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent` | `app/models/pricing_engine.py` |
 | Legal Content Library | `LegalContentJurisdictionPackage`, `LegalContentObject`, `LegalContentSource`, `LegalContentSourceSnapshot`, `LegalContentCandidateChange`, `LegalContentCandidateImpact`, `LegalContentReviewEvent` | `app/models/legal_content.py` (FG-024 Slice A **live / empty**; Slice B update foundation **live-migrated / operational for UAT**) |
+| Generated contract snapshot | `GeneratedProjectContract`, `ProjectContractSnapshot`, `ProjectContractSnapshotObject` | `app/models/project_contract.py` (FG-024 Slice C **repository only / not live-migrated**; synthetic tests; GENERATED ≠ executed) |
 
 Notable behaviours evidenced in code/tests:
 
@@ -96,7 +97,7 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic **repository** graph head: **`c2d3e4f5a6b7`** (FG-024 Slice B update foundation). Live development/UAT `flask db current`: **`c2d3e4f5a6b7 (head)`**. One graph head. Live current **equals** repository head. FG-024 Slice B **`c2d3e4f5a6b7` applied live** 2026-09-13. FG-024 Slice A **`b1c2d3e4f5a6` applied live** 2026-09-13. FG-032 Slice C occupancy **`f1a2b3c4d5e6` applied live** 2026-09-11 (superseded as live current). Verify `flask db current` per environment before relying on it.
+- Alembic **repository** graph head: **`d3e4f5a6b7c8`** (FG-024 Slice C contract-generation foundation; **not applied live**). Live development/UAT `flask db current`: **`c2d3e4f5a6b7 (head)`**. One graph head. Live current **lags** repository head. FG-024 Slice B **`c2d3e4f5a6b7` applied live** 2026-09-13. FG-024 Slice A **`b1c2d3e4f5a6` applied live** 2026-09-13. FG-032 Slice C occupancy **`f1a2b3c4d5e6` applied live** 2026-09-11 (superseded as live current). Verify `flask db current` per environment before relying on it.
 
 ### Tests
 

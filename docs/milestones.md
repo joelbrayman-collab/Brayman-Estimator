@@ -32,6 +32,25 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-13 — FG-024 Slice C contract-generation product foundation
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 Slice C product |
+| Status | **PRODUCT FOUNDATION IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED.** Slice A remains **CLOSED / OPERATIONAL FOR UAT**. Slice B remains **CLOSED / OPERATIONAL FOR UAT**. Gate overall **OPEN / PARTIAL**. |
+| Branch | `main` |
+| Base commit | `252870da30433922c9b55bd4bfcf555704be73c8` (`docs: record FG-024 Slice C contract-generation preflight`) |
+| Objective | Smallest governed generation + immutable snapshot foundation. Synthetic tests only. No live migrate. No Slice D. No legal seed. |
+| Deliverables | `GeneratedProjectContract`, `ProjectContractSnapshot`, `ProjectContractSnapshotObject`; `app/services/contract_generation.py`; Alembic `d3e4f5a6b7c8`; focused tests. No UI. No seed. No Native Signing. |
+| Validation | Dedicated Slice C **16 passed** / 2.66s. Slice A **17 passed** / 2.92s. Slice B **16 passed** / 2.72s. Full suite **825 passed** / 2771 warnings / 494.48s. Live current remains `c2d3e4f5a6b7`. One graph head `d3e4f5a6b7c8`. |
+| Architectural findings | Slice A selector reused. Draft EstimateVersion fail-closed. Family 05 is presentation shell only. Pending-candidate §6 branch fail-closed without encoding ALLOW/WARN. GENERATED ≠ EXECUTED. Old snapshot unchanged after later mutation. |
+| Open decisions | Slice C live migrate + bounded UAT. C1 production “APPROVED estimate” mapping. C2 ADR-051 §6 ALLOW/BLOCK/WARN. C3 warranty increment. Slice D. 06D Ontario counsel. |
+| Next milestone | **STOP.** Do not live-migrate. Do not begin Slice D. |
+| Commit | This product commit |
+| Date | 2026-09-13 |
+
+---
+
 ### 2026-09-13 — FG-024 Slice C contract-generation preflight
 
 | Field | Content |

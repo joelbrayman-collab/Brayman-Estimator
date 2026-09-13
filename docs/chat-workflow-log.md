@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-13 — FG-024 Slice C contract-generation product foundation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-13 |
+| Branch | `main` @ `252870da30433922c9b55bd4bfcf555704be73c8` (parent) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 13 SEP 2026 |
+| Objective | Smallest FG-024 Slice C generation + immutable snapshot foundation. Synthetic tests only. |
+| Business decision | Joel / ChatGPT Architect authorized Slice C product foundation. No live migrate. No Slice D. No legal drafting. No Native Signing. No V1 rescore. |
+| Architectural decision | Reuse Slice A selector and ADR-037. Pin EstimateVersion, legal objects, presentation master. Freeze immutable snapshot. Draft fail-closed. Family 05 presentation only. ADR-051 §6 remains deferred / fail-closed on that branch. C1/C2/C3 unresolved. |
+| Prompt template used | Joel FG-024 Slice C product (13 Sep 2026) |
+| Approved Cursor prompt summary | Verify 252870d / live current c2d3e4f5a6b7; implement generation + snapshot + one additive migration d3e4f5a6b7c8; synthetic tests; focused + full pytest; docs; commit `feat: add FG-024 contract generation foundation`; push; do not live-migrate. |
+| Files expected to change | models/service/migration/tests; FG-024 / Legal Content Gate / continuity docs |
+| Files prohibited from changing | Live DB; Ontario/U.S. seed; Opening V1 media; EST-2026-0019; Slice D; Native Signing product |
+| Implementation result | Slice C **PRODUCT FOUNDATION IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED**. Legal Content Gate **empty**. EST-2026-0019 occupancy preserved. V1 remains **60% / 4 of 11**. |
+| Tests | Dedicated Slice C **16 passed** / 2.66s. Slice A **17 passed** / 2.92s. Slice B **16 passed** / 2.72s. `./venv/bin/python -m pytest -q` — **825 passed**, 2771 warnings, **494.48s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (Slice C product foundation; not a V1 package completion) |
+| Constitutional issue raised | None. New ADR not required. |
+| Unresolved issues | C1 production “APPROVED estimate” mapping. C2 ADR-051 §6 ALLOW/BLOCK/WARN. C3 warranty increment. Slice C live migrate unauthorized from this close. Slice D unauthorized. 06D Ontario counsel BLOCKED. Output 4 not complete. |
+| Next approved step | **STOP.** Do not live-migrate. Do not begin Slice D. Return to ChatGPT Architect. |
+| Next approved prompt | **None.** Return to ChatGPT Architect. |
+| Commit hash | This Slice C product commit |
+
 ### 2026-09-13 — FG-024 Slice C contract-generation preflight
 
 | Field | Content |

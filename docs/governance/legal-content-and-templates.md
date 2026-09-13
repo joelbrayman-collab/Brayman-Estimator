@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | **Governing** |
 | Updated | 2026-09-13 |
-| Implementation | Template registers remain **empty**. Slice A library persistence + selection engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B source/update foundation **CLOSED / OPERATIONAL FOR UAT** (live). Slice C generation / snapshot **PREFLIGHT COMPLETE / PRODUCT NOT AUTHORIZED**. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Frozen contract snapshot / legal-change monitoring remain **FUTURE**. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. |
+| Implementation | Template registers remain **empty**. Slice A library persistence + selection engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B source/update foundation **CLOSED / OPERATIONAL FOR UAT** (live). Slice C generation / snapshot **PRODUCT FOUNDATION IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED**. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Frozen contract snapshot / legal-change monitoring remain **FUTURE** for live use. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. |
 
 ## Purpose
 
@@ -59,6 +59,8 @@ Govern construction contract language, statutory/consumer wording, warranty obli
 
 **Subsequent status (2026-09-13, Slice C preflight):** [fg-024-slice-c-contract-generation-snapshot-preflight.md](../architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md) **PREFLIGHT COMPLETE**. Product **NOT AUTHORIZED / NOT IMPLEMENTED**. This **still does not** populate this register, approve Family 05 legally, or authorize generation. Empty library remains FAIL CLOSED. ADR-051 §6 remains **deferred**.
 
+**Subsequent status (2026-09-13, Slice C product foundation):** Generation + immutable snapshot exist in the repository (`project_generated_contracts`, `project_contract_snapshots`, `project_contract_snapshot_objects`, `app/services/contract_generation.py`). Alembic **`d3e4f5a6b7c8`** not applied live. This **still does not** populate this register, approve any legal language, or mark Family 05 legally approved. Synthetic tests only. Empty library remains FAIL CLOSED. ADR-051 §6 remains **deferred**.
+
 ## Warranty template register (governed — empty until approved)
 
 Warranty language is **governed content**.
@@ -108,7 +110,7 @@ Generation alone does not mean final or sent.
 
 - [feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) — North American library / update engine / frozen snapshot / monitoring (**RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C PREFLIGHT COMPLETE / OVERALL OPEN / PARTIAL**)
 - [architecture/fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md) — Slice A engine freeze; empty library; fail-closed
-- [architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md](../architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md) — Slice C generation / snapshot freeze; **PREFLIGHT COMPLETE**; product **NOT AUTHORIZED**
+- [architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md](../architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md) — Slice C generation / snapshot freeze; **PREFLIGHT COMPLETE**; subsequent product **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED**
 - [adr/ADR-050-north-american-legal-content-library-ownership.md](../adr/ADR-050-north-american-legal-content-library-ownership.md) — **Accepted** 13 Sep 2026 (library ownership / fail-closed)
 - [adr/ADR-051-legal-content-source-and-update-lifecycle.md](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) — **Accepted** 13 Sep 2026 (source classes / candidate-update / Slice B–D boundary; architecture only)
 - [legal/native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — signing **process** draft for counsel; **not** template approval

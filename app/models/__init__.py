@@ -25,6 +25,11 @@ from app.models.legal_content import (
     LegalContentSource,
     LegalContentSourceSnapshot,
 )
+from app.models.project_contract import (
+    GeneratedProjectContract,
+    ProjectContractSnapshot,
+    ProjectContractSnapshotObject,
+)
 from app.models.permit_intelligence import (
     PermitAnalysis,
     PermitFinding,
@@ -163,6 +168,9 @@ __all__ = [
     "LegalContentReviewEvent",
     "LegalContentSource",
     "LegalContentSourceSnapshot",
+    "GeneratedProjectContract",
+    "ProjectContractSnapshot",
+    "ProjectContractSnapshotObject",
     "DirectLabourCostRateStandard",
     "EstimateLabourSnapshot",
     "LabourAuditEvent",

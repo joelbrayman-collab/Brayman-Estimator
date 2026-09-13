@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE.** Product **NOT AUTHORIZED / NOT IMPLEMENTED.** Do **not** begin Slice C product. Do **not** begin Slice D. |
+| Status | **PREFLIGHT COMPLETE.** Subsequent Slice C product **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED.** Do **not** live-migrate. Do **not** begin Slice D. |
 | Date | 2026-09-13 |
 | Gate | [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) Slice C only |
 | Parent | Slice A **CLOSED / OPERATIONAL FOR UAT**. Slice B **CLOSED / OPERATIONAL FOR UAT**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Live current **`c2d3e4f5a6b7 (head)`**. Library **empty**. |
-| Alembic | Live current **`c2d3e4f5a6b7 (head)`**. Repository head **`c2d3e4f5a6b7`**. One graph head. This preflight creates **no** migration. |
+| Alembic | Live current **`c2d3e4f5a6b7 (head)`**. Repository head **`d3e4f5a6b7c8`**. One graph head. Additive Slice C revision **not applied live**. |
 | Product | CalibraytAI (formerly CalibAi) |
 | Tenant | Brayman Construction Inc. / ORG-001 |
 | Parent SHA | `a176db36034af17309fd3f3e7e8c9a58043d6f56` (`docs: close FG-024 Slice B after live UAT`) |
@@ -36,6 +36,8 @@ V1 REMAINS 60% / 4 OF 11
 This document freezes Slice C **generation + immutable project-snapshot architecture** for a later bounded product prompt. It does **not** authorize that prompt. It does **not** reopen Slice A, Slice B, ADR-050, or ADR-051.
 
 **Subsequent status (2026-09-13, documentation close):** Full suite **809 passed**, 2738 warnings, **545.74s**, exit **0**. Product remains **NOT AUTHORIZED / NOT IMPLEMENTED**. Legal Content Gate remains **empty**.
+
+**Subsequent status (2026-09-13, Slice C product foundation):** Bounded product prompt implemented generation + immutable snapshot in the repository. Alembic **`d3e4f5a6b7c8`** created (`down_revision` **`c2d3e4f5a6b7`**). Live `flask db upgrade` **not** run. Live current remains **`c2d3e4f5a6b7 (head)`**. Dedicated Slice C **16 passed**. Slice A **17 passed**. Slice B **16 passed**. Full **825 passed**, 2771 warnings, **494.48s**. Legal Content Gate remains **empty**. Synthetic generation only. C1/C2/C3 unresolved. Native Signing absent. Slice C **NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED**. Slice D **NOT AUTHORIZED**. V1 remains **60% / 4 of 11**.
 
 **Out of this preflight:** Slice C product code; Alembic; live DB mutation; Ontario/U.S. legal population; Family 05 legal approval; Native Signing product; Slice D watchers/alerts; V1 rescore; website; HostPapa; AiRIA.
 

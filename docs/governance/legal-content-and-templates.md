@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | **Governing** |
 | Updated | 2026-09-13 |
-| Implementation | Template registers remain **empty**. Slice A library persistence + selection engine **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED**. Update engine / frozen contract snapshot / legal-change monitoring remain **FUTURE**. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **SLICE A PRODUCT IN REPOSITORY / NOT CLOSED**. Preflight: [fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md). [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**. |
+| Implementation | Template registers remain **empty**. Slice A library persistence + selection engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Update engine / frozen contract snapshot / legal-change monitoring remain **FUTURE**. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. Preflight: [fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md). [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**. |
 
 ## Purpose
 
@@ -50,6 +50,8 @@ Govern construction contract language, statutory/consumer wording, warranty obli
 **Subsequent status (2026-09-13):** [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** by Joel Brayman / ChatGPT Architect (architecture / fail-closed ownership only). Slice A architecture prerequisite **satisfied**. This does **not** populate this register, does **not** approve any legal language, does **not** mark Family 05 legally approved, and does **not** authorize Slice A product code. Fail closed remains mandatory. No generic North American fallback.
 
 **Subsequent status (2026-09-13, Slice A product):** Empty-library tables and coded fail-closed selection exist in the repository (`legal_content_jurisdiction_packages`, `legal_content_objects`, `app/services/legal_content.py`). Alembic **`b1c2d3e4f5a6`** not applied live. This **still does not** populate this register, approve any legal language, or mark Family 05 legally approved. Ontario project + empty library → **BLOCK**. No generic North American fallback.
+
+**Subsequent status (2026-09-13, Slice A live migrate + UAT):** `b1c2d3e4f5a6` **applied live**. Library **empty** (0 packages / 0 objects). Slice A **CLOSED / OPERATIONAL FOR UAT**. This **still does not** populate this register. Ontario + empty library remains **BLOCK**.
 
 ## Warranty template register (governed — empty until approved)
 

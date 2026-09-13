@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-13 — FG-024 Slice A live migrate + bounded office UAT close
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 Slice A live migrate / office UAT |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** Gate overall **OPEN / PARTIAL**. V1 remains **60% / 4 of 11**. Legal Content Gate **empty**. Live library **empty**. |
+| Branch | `main` |
+| Base commit | `868f8f2c7c46b36c4e121204fa2c12b2250c00ce` |
+| Date | 2026-09-13 |
+| Objective | Apply additive `b1c2d3e4f5a6` live and prove empty-library / resolver-backed / coded fail-closed office UAT without legal seed. |
+| Deliverables | Live current `b1c2d3e4f5a6 (head)`; backup `instance/brayman_estimator-backup-before-fg024a-b1c2d3e4f5a6-20260913-091555.db` (gitignored); [testing/fg024-slice-a-live-migrate-bounded-uat-record.md](testing/fg024-slice-a-live-migrate-bounded-uat-record.md); current-authority governance updates. No application-code change. |
+| Validation | Dedicated **17 passed** / 2.28s. Full suite **782 passed** / 2704 warnings / 269.18s. Live current = repo head `b1c2d3e4f5a6`. One graph head. Unresolved jurisdiction BLOCK `JURISDICTION_UNRESOLVED`. Ontario + empty library BLOCK `JURISDICTION_NOT_SUPPORTED`. |
+| Architectural findings | ADR-037 resolver reused. No Family 05 / Permit Rules legal authority. No generic fallback. Empty live library is the intended Slice A state. |
+| Open decisions | Slices B–D. Ontario counsel population. V1-04. |
+| Next milestone | **STOP.** Do not begin Slice B. |
+| Commit | This documentation commit |
+
 ### 2026-09-13 — FG-024 Slice A empty legal-content library product
 
 | Field | Content |

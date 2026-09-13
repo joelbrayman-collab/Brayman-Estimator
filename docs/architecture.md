@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Living architecture map |
-| Updated | 2026-09-11 |
+| Updated | 2026-09-13 |
 | Evidence baseline | `main` @ CAR-001 adoption (see git); Plan Intelligence Current claims evidenced in `app/plan_intelligence/` and migration `a7c8e9f0b1d2` |
 
 **Cite code paths for implemented claims.** Distinctions below are mandatory. CalibraytAI lifecycle architecture: [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md). Current vs former product name: [governance/product-identity.md](governance/product-identity.md).
@@ -67,6 +67,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Material Catalogue | `CanonicalMaterial`, `MaterialRequirement` | `app/models/canonical_material.py`; `app/models/material_requirement.py` (FG-029; **CLOSED / OPERATIONAL FOR UAT**) |
 | Supplier Catalogue | `Supplier`, `SupplierLocation`, `ContractorSupplierAccount`, `SupplierProduct`, price/availability evidence, maps, `SupplierPackage` / lines | `app/models/supplier_catalogue.py` (FG-029; inform-only price; **CLOSED / OPERATIONAL FOR UAT**) |
 | Pricing Engine | `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent` | `app/models/pricing_engine.py` |
+| Legal Content Library | `LegalContentJurisdictionPackage`, `LegalContentObject` | `app/models/legal_content.py` (FG-024 Slice A; **live-migrated / empty**) |
 
 Notable behaviours evidenced in code/tests:
 
@@ -80,7 +81,7 @@ Notable behaviours evidenced in code/tests:
 
 | Layer | Paths |
 |-------|-------|
-| Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py`, `build.py`, `build_storage.py`, `material_requirements.py`, `supplier_catalogue.py`, `supplier_package_pdf.py`, `estimate_costing.py`, `estimate_scope_delivery.py`, `estimate_quickbooks.py` |
+| Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py`, `build.py`, `build_storage.py`, `material_requirements.py`, `supplier_catalogue.py`, `supplier_package_pdf.py`, `estimate_costing.py`, `estimate_scope_delivery.py`, `estimate_quickbooks.py`, `legal_content.py` |
 | Project controls | `app/project_controls/services.py`, `repository.py`, `pdf.py` |
 | Plan Intelligence | `app/plan_intelligence/services.py`, `processing.py`, `extraction.py`, `storage.py`, `packages.py`, `audit.py`, `takeoff.py`, `takeoff_extractors.py` |
 | Generic repositories package | `app/repositories/` (present; inspect before assuming usage) |
@@ -95,7 +96,7 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic **repository** graph head: **`f1a2b3c4d5e6`** (FG-032 Slice C occupancy). Live development/UAT `flask db current`: **`f1a2b3c4d5e6 (head)`**. One graph head. Slice C events **`f0a1b2c3d4e5`** and occupancy **`f1a2b3c4d5e6` applied live** 2026-09-11. Verify `flask db current` per environment before relying on it.
+- Alembic **repository** graph head: **`b1c2d3e4f5a6`** (FG-024 Slice A empty legal-content library). Live development/UAT `flask db current`: **`b1c2d3e4f5a6 (head)`**. One graph head. Live current **equals** repository head. FG-024 Slice A **`b1c2d3e4f5a6` applied live** 2026-09-13. FG-032 Slice C occupancy **`f1a2b3c4d5e6` applied live** 2026-09-11 (superseded as live current). Verify `flask db current` per environment before relying on it.
 
 ### Tests
 
@@ -189,4 +190,4 @@ Labour Engine and Pricing Engine foundations are **Current**. AI take-off founda
 - Authentication / actor identity + shared API (sequence item 10 **COMPLETE** — [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT**; [FG-019](feature-gates/FG-019-shared-api-foundation-v1.md) **CLOSED / OPERATIONAL FOR UAT**)
 - MONITOR remainder (forecast-final GM / Field Web MONITOR / LEARN); LEARN / ML; Project Closeout (Item 11 Field Observation foundation is **COMPLETE**; Item 12 Field Web is **CLOSED** — [FG-021](feature-gates/FG-021-field-web-v1-today-and-capture.md); Item 13 [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**; Slice A + Slice B **IMPLEMENTED / LIVE-MIGRATED**; Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**; Closeout **not implemented** — [build-media-storage-lifecycle.md](architecture/build-media-storage-lifecycle.md))
 - Contractor-facing UX language — [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / SLICE 2 IMPLEMENTED / SLICE 3 IMPLEMENTED / SLICE 4 IMPLEMENTED / SLICE 5 IMPLEMENTED / NOT CLOSED** (Project Hub, office PRICE specialist, shared office shell, and Field Web display mapping; remaining surfaces not authorized)
-- Contract / e-signature / signed Change Order — **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** ([architecture/contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md)). Recommendation **NATIVE V1**. Counsel spec **PREPARED** ([legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md)). **Development may proceed under separate governance. Production activation / real customer use is blocked pending Ontario counsel approval of the signing process.** Signing process remains a separate track from legal-content templates. Contract legal-content lifecycle is [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / SLICE A PRODUCT IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT CLOSED**.
+- Contract / e-signature / signed Change Order — **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED** ([architecture/contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md)). Recommendation **NATIVE V1**. Counsel spec **PREPARED** ([legal/native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md)). **Development may proceed under separate governance. Production activation / real customer use is blocked pending Ontario counsel approval of the signing process.** Signing process remains a separate track from legal-content templates. Contract legal-content lifecycle is [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / OVERALL OPEN / PARTIAL**.

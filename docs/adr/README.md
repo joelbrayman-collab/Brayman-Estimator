@@ -183,11 +183,11 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 |-----|-------|--------|
 | [ADR-049](ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) | QuickBooks-Ready Output Ownership, Snapshot, and Human-Entry Boundary | **Accepted** (2026-09-10; Joel Brayman; [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT**; V1-05 **COMPLETE**; Option B POST-V1) |
 
-### North American legal-content library ownership (Accepted; FG-024 Slice A product not authorized)
+### North American legal-content library ownership (Accepted; FG-024 Slice A CLOSED / OPERATIONAL FOR UAT)
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-050](ADR-050-north-american-legal-content-library-ownership.md) | North American Legal Content Library Ownership and Fail-Closed Boundary | **Accepted** (2026-09-13; Joel Brayman / ChatGPT Architect; subsequent Slice A product **IN REPOSITORY / NOT LIVE-MIGRATED**) |
+| [ADR-050](ADR-050-north-american-legal-content-library-ownership.md) | North American Legal Content Library Ownership and Fail-Closed Boundary | **Accepted** (2026-09-13; Joel Brayman / ChatGPT Architect; subsequent Slice A **CLOSED / OPERATIONAL FOR UAT**; live current **`b1c2d3e4f5a6 (head)`**; library **empty**) |
 
 ### Field Web capture reliability (Accepted; FG-021 CLOSED)
 

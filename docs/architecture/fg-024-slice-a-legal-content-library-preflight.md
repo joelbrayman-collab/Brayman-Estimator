@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE.** Subsequent Slice A product **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED** (2026-09-13). This preflight remains the architecture freeze; it does **not** authorize Slices B–D. |
+| Status | **PREFLIGHT COMPLETE.** Subsequent Slice A product **CLOSED / OPERATIONAL FOR UAT** (live-migrated 2026-09-13). This preflight remains the architecture freeze; it does **not** authorize Slices B–D. |
 | Date | 2026-09-12 |
 | Gate | [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) Slice A only |
 | ADR | [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** — required **before product code**. Acceptance does **not** authorize Slice A product. |
-| Alembic | Live current **`f1a2b3c4d5e6`**. Repository head **`b1c2d3e4f5a6`**. One graph head. Live migrate **not** run. |
+| Alembic | Live current **`b1c2d3e4f5a6 (head)`**. Repository head **`b1c2d3e4f5a6`**. One graph head. Applied live 2026-09-13. |
 | Product | CalibraytAI (formerly CalibAi) |
 | Tenant | Brayman Construction Inc. / ORG-001 |
 | Parent recon | 12 Sep 2026 V1-04 / V1-06 reconnaissance on SHA `3200112d627d6c6d8173daf72194f8409ac84b11` |
@@ -31,6 +31,8 @@ This document freezes Slice A **engine architecture** for a later bounded produc
 **Subsequent status (2026-09-13):** [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** by Joel Brayman / ChatGPT Architect (architecture / fail-closed ownership only). Slice A architecture prerequisite **satisfied**. Product implementation remains **NOT AUTHORIZED / NOT IMPLEMENTED**. Do **not** rescore V1.
 
 **Subsequent status (2026-09-13, Slice A product):** Empty-library persistence, ADR-037-backed selection, and coded fail-closed are **implemented in the repository**. Alembic **`b1c2d3e4f5a6`**. Live migration **not** run. Legal Content Gate remains **empty**. V1 score **unchanged**. Do **not** begin Slice B/C/D.
+
+**Subsequent status (2026-09-13, Slice A live migrate + UAT):** Slice A **CLOSED / OPERATIONAL FOR UAT**. Live current **`b1c2d3e4f5a6 (head)`**. Library **empty**. Evidence [fg024-slice-a-live-migrate-bounded-uat-record.md](../testing/fg024-slice-a-live-migrate-bounded-uat-record.md).
 
 **Out of this preflight:** Slice B update engine product; Slice C generation; Slice D live monitoring; Ontario/U.S. legal population; Family 05 legal approval; Native Signing product; V1-04 product work; V1 rescore.
 

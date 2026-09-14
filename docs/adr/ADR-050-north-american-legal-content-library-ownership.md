@@ -3,13 +3,15 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-050: North American Legal Content Library Ownership and Fail-Closed Boundary |
-| Status | **Accepted** by Joel Brayman / ChatGPT Architect, 13 Sep 2026 (architecture / fail-closed ownership). Subsequent Slice A product implemented, live-migrated, and **CLOSED / OPERATIONAL FOR UAT** the same day. Does **not** authorize Slices B–D, legal drafting, or Native Signing. |
+| Status | **Accepted** by Joel Brayman / ChatGPT Architect, 13 Sep 2026 (architecture / fail-closed ownership). Subsequent Slice A product implemented, live-migrated, and **CLOSED / OPERATIONAL FOR UAT** the same day. Accepting this ADR did **not** by itself authorize Slices B–D, legal drafting, or Native Signing. |
 | Date | 2026-09-12; Accepted 2026-09-13 |
 | Related | [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) · [fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md) · [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [project-document-package.md](../architecture/project-document-package.md) · [ADR-037](ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** · [ADR-038](ADR-038-permit-intelligence-authority-and-rules-library.md) **Accepted** · [ADR-039](ADR-039-permit-report-snapshot-immutability-and-workflow.md) **Accepted** · [ADR-002](ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-040](ADR-040-organization-brand-profile.md) **Accepted** · [FG-022](../feature-gates/FG-022-reusable-approved-document-template-family-v1.md) **CLOSED** (presentation only) |
 
 This ADR is the **ownership and fail-closed boundary** for the North American CONTRACT-stage legal-content library (FG-024 Slice A). It is the analogue of [ADR-038](ADR-038-permit-intelligence-authority-and-rules-library.md) for permit rules: a distinct governed library, not a second jurisdiction resolver, and not a second contract system.
 
 Accepting this ADR did **not** by itself authorize product code. Bounded prompts on 13 Sep 2026 implemented Slice A, live-migrated `b1c2d3e4f5a6`, and closed Slice A as **OPERATIONAL FOR UAT** with an empty live library. Ontario/U.S. population, Family 05 legal approval, contract generation, and Native Signing remain unauthorized.
+
+**Subsequent status (2026-09-14 docs reconciliation):** Later bounded prompts closed Slice B and Slice C as **CLOSED / OPERATIONAL FOR UAT**. Slice D remains **NOT AUTHORIZED**. Legal drafting and Native Signing remain unauthorized. This note does **not** change the original ownership decision.
 
 ---
 

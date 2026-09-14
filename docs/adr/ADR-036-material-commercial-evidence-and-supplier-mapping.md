@@ -17,6 +17,8 @@ If those facts are stored on the identity row, or collapsed into a single mutabl
 
 This ADR does **not** authorize product code, schema, a Feature Gate, Winchester POC, or a Material Cost Standard.
 
+**Subsequent status (2026-09-14 docs reconciliation):** Primary acceptance remains **Accepted**. [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) inform-only supplier evidence is **CLOSED / OPERATIONAL FOR UAT**. [ADR-008](ADR-008-supplier-price-snapshotting.md) remains **Proposed**. Living supplier API / bulk catalogue onboarding remain **not implemented**. This note does **not** accept ADR-008.
+
 ## Decision
 
 ### 1. Keep commercial evidence classes separate

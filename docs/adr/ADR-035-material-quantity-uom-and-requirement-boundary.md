@@ -20,6 +20,8 @@ Without a quantity/UOM boundary, supplier pack conversion would be confused with
 
 This ADR does **not** authorize MaterialRequirement implementation, Phase D, schema, or product code.
 
+**Subsequent status (2026-09-14 docs reconciliation):** Primary acceptance remains **Accepted**. [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) is **CLOSED / OPERATIONAL FOR UAT**. Thin `MaterialRequirement` was later implemented under [ADR-046](ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) / [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Phase D mapping is [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** and does **not** create MaterialRequirement. This note does **not** change the original boundary decision.
+
 ## Decision
 
 ### 1. Canonical requirement UOM ≠ supplier sales/pack UOM

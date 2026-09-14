@@ -3,11 +3,13 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-051: Legal Content Source Classes, Candidate-Update Lifecycle, and Slice B / Slice D Boundary |
-| Status | **Accepted** by Joel Brayman / ChatGPT Architect, 13 Sep 2026 (source-class / candidate-update / Slice B–D boundary). Subsequent Slice B product foundation is **implemented in the repository** from a later bounded prompt. This ADR still does **not** authorize live migration, office UAT, legal drafting, live monitoring, Slice C/D, or Native Signing. |
+| Status | **Accepted** by Joel Brayman / ChatGPT Architect, 13 Sep 2026 (source-class / candidate-update / Slice B–D boundary). Subsequent Slice B product foundation is **implemented in the repository** from a later bounded prompt. Accepting this ADR still did **not** by itself authorize live migration, office UAT, legal drafting, live monitoring, Slice C/D, or Native Signing. |
 | Date | 2026-09-13; Accepted 2026-09-13 |
 | Related | [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) · [fg-024-slice-b-legal-content-source-lifecycle-preflight.md](../architecture/fg-024-slice-b-legal-content-source-lifecycle-preflight.md) · [ADR-050](ADR-050-north-american-legal-content-library-ownership.md) **Accepted** · [legal-content-and-templates.md](../governance/legal-content-and-templates.md) · [ADR-037](ADR-037-project-location-and-jurisdiction-resolution.md) **Accepted** · [ADR-038](ADR-038-permit-intelligence-authority-and-rules-library.md) **Accepted** · [ADR-002](ADR-002-accepted-proposal-immutability.md) **Accepted** · [ADR-010](ADR-010-build-versus-buy-document-processing.md) **Proposed** |
 
 This ADR is the **source-class, candidate-update, and Slice B / Slice D boundary** for FG-024. It does **not** replace [ADR-050](ADR-050-north-american-legal-content-library-ownership.md) (library ownership and fail-closed selection). It does **not** reopen Slice A.
+
+**Subsequent status (2026-09-14 docs reconciliation):** Later bounded prompts closed Slice B and Slice C as **CLOSED / OPERATIONAL FOR UAT**. Slice D, legal drafting, live monitoring, and Native Signing remain unauthorized. ADR-051 §6 generation-while-pending remains **deferred**. This note does **not** change the original boundary decision.
 
 ---
 

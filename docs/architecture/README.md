@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-09-13 |
+| Updated | 2026-09-14 |
 
 Domain architecture documents describe **intended** systems. They are not claims of current implementation unless explicitly marked Current.
 
@@ -25,7 +25,7 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [fg-021-field-web-v1-implementation-reconnaissance.md](fg-021-field-web-v1-implementation-reconnaissance.md) | **COMPLETE** — FG-021 file/API/schema freeze; live current = head `d2e3f4a5b6c7` |
 | [fg-021-recent-observation-delete-requirement-capture.md](fg-021-recent-observation-delete-requirement-capture.md) | **CAPTURED / QUEUED / NOT AUTHORIZED** — Recent Observation Delete + iPhone swipe-left UX; retention model not chosen |
 | [quickbooks-integration.md](quickbooks-integration.md) | **V1 Option A CLOSED / OPERATIONAL FOR UAT** — [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md); [ADR-049](../adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**; Option B API POST-V1 |
-| [fg-032-quickbooks-option-a-preflight.md](fg-032-quickbooks-option-a-preflight.md) | **RECONCILED.** [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Live current **`f1a2b3c4d5e6 (head)`**. |
+| [fg-032-quickbooks-option-a-preflight.md](fg-032-quickbooks-option-a-preflight.md) | **RECONCILED.** [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Gate-at-close live current **`f1a2b3c4d5e6 (head)`**. Live current today **`d3e4f5a6b7c8 (head)`**. |
 | [fg-024-slice-a-legal-content-library-preflight.md](fg-024-slice-a-legal-content-library-preflight.md) | **PREFLIGHT COMPLETE.** Subsequent Slice A **CLOSED / OPERATIONAL FOR UAT**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**. |
 | [fg-024-slice-b-legal-content-source-lifecycle-preflight.md](fg-024-slice-b-legal-content-source-lifecycle-preflight.md) | **PREFLIGHT COMPLETE / ADR-051 ACCEPTED / SUBSEQUENT SLICE B CLOSED / OPERATIONAL FOR UAT.** [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) Slice B. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. |
 | [fg-024-slice-c-contract-generation-snapshot-preflight.md](fg-024-slice-c-contract-generation-snapshot-preflight.md) | **PREFLIGHT COMPLETE / SUBSEQUENT SLICE C CLOSED / OPERATIONAL FOR UAT.** [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) Slice C. New ADR **not** required. |
@@ -38,6 +38,18 @@ Domain architecture documents describe **intended** systems. They are not claims
 | [fg-031-scope-delivery-make-buy-procurement-routing-preflight.md](fg-031-scope-delivery-make-buy-procurement-routing-preflight.md) | **COMPLETE (architecture recording).** [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
 | [architecture/supplier-catalogue-inventory-pricing.md](supplier-catalogue-inventory-pricing.md) | Future — supplier SKU/price/inventory; maps to Material Catalogue; **bulk onboarding pin FUTURE / NOT IMPLEMENTED**; does **not** own CalibraytAI identity |
 | [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) | **Partial Current** — [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md) **Accepted**; [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
+| [monitor-v1-implementation-reconnaissance.md](monitor-v1-implementation-reconnaissance.md) | **COMPLETE** — FG-023 MONITOR V1 reconnaissance; [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT** |
+| [fg-023-monitor-v1-implementation-preflight.md](fg-023-monitor-v1-implementation-preflight.md) | **COMPLETE** — FG-023 MONITOR V1 implementation preflight |
+| [labour-engine-phase-b-architecture.md](labour-engine-phase-b-architecture.md) | **Current** — [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) **CLOSED / OPERATIONAL FOR UAT** |
+| [organization-and-calibration-architecture.md](organization-and-calibration-architecture.md) | Organization / calibration architecture (M011 / labour / pricing context) |
+| [organization-calibrated-pricing-engine-architecture.md](organization-calibrated-pricing-engine-architecture.md) | **Current** — [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **CLOSED / OPERATIONAL FOR UAT** |
+| [historical-estimate-ingestion-architecture.md](historical-estimate-ingestion-architecture.md) | **Current** — [FG-006](../feature-gates/FG-006-historical-estimate-ingestion-phase-b.md) Phase B **implemented** |
+| [historical-estimates-source-manifest.md](historical-estimates-source-manifest.md) | Historical workbook source manifest (legacy corpus outside Git) |
+| [ai-takeoff-quantity-extraction-foundation.md](ai-takeoff-quantity-extraction-foundation.md) | **Current** — [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **CLOSED / OPERATIONAL FOR UAT**; real external AI **not authorized** |
+| [build-media-storage-lifecycle.md](build-media-storage-lifecycle.md) | Original Source vs Compatible Rendition vs Closed Project Archive; HEIC/HEIF JPEG renditions **implemented**; Closeout **not implemented** |
+| [fg-026-takeoff-to-estimate-mapping-preflight.md](fg-026-takeoff-to-estimate-mapping-preflight.md) | **COMPLETE.** [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
+| [fg-027-costing-approval-preflight.md](fg-027-costing-approval-preflight.md) | **COMPLETE.** [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
+| [permit-rules-ontario-ottawa-sources.md](permit-rules-ontario-ottawa-sources.md) | Ontario / Ottawa permit-rule source citations for [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) |
 
 Platform map: [../architecture.md](../architecture.md).
 Principles: [../architecture-principles.md](../architecture-principles.md).

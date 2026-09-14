@@ -35,13 +35,13 @@ Selling Price = Direct Cost / 0.85
 
 This document records **ORG-001** (Brayman Construction) policy. It is not the universal CalibAi pricing model.
 
-### Project Gross Margin (MONITOR — governed, not implemented)
+### Project Gross Margin (MONITOR — governed; V1 implemented)
 
-The initial authoritative CalibAi **project** profitability metric is **PROJECT GROSS MARGIN** ([ADR-021](adr/ADR-021-monitor-commercial-baseline.md) **Accepted**). **NET PROFIT** is not the official project metric until overhead / burden / G&A allocation is separately governed.
+The initial authoritative CalibAi **project** profitability metric is **PROJECT GROSS MARGIN** ([ADR-021](adr/ADR-021-monitor-commercial-baseline.md) **Accepted**; [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**). **NET PROFIT** is not the official project metric until overhead / burden / G&A allocation is separately governed.
 
-Tax remains **outside** gross-margin arithmetic. MONITOR (not implemented) must compare **pre-tax** estimated Direct Cost and pre-tax selling price / authorized revenue. Do not use tax-collected amounts as revenue or margin.
+Tax remains **outside** gross-margin arithmetic. MONITOR V1 must compare **pre-tax** estimated Direct Cost and pre-tax selling price / authorized revenue. Do not use tax-collected amounts as revenue or margin.
 
-This is distinct from the live-estimate method above: estimate selling price uses the named pricing method on Direct Cost. Project Gross Margin later compares a **frozen composed baseline** (locked `EstimateVersion` + `EstimatePricingSnapshot` when present + Accepted Proposal + approved Change Order deltas) to verified actual Direct Cost. Draft estimates and Draft Proposal restacks are not the committed baseline.
+This is distinct from the live-estimate method above: estimate selling price uses the named pricing method on Direct Cost. Project Gross Margin compares a **frozen composed baseline** (locked `EstimateVersion` + `EstimatePricingSnapshot` when present + Accepted Proposal + approved Change Order deltas) to verified actual Direct Cost. Draft estimates and Draft Proposal restacks are not the committed baseline. Forecast-final GM and cost-to-complete remain **out of V1**.
 
 QuickBooks is not required for Project Gross Margin. Industry benchmarks are not inputs to it.
 

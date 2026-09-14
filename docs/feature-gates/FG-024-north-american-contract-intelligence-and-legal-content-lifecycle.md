@@ -119,7 +119,9 @@ FG-024 is **one** linked Feature Gate. Do **not** split these four slices into s
 
 Future foundation for jurisdiction packages; contract clauses/content objects; warranties; notices/disclosures; prescribed forms where applicable; provenance; source authority; effective dates; counsel-review state; approved versions; supersession; jurisdiction support status.
 
-**Preflight complete. Product not authorized now.**
+**Historical recording fence (2026-09-07):** Preflight complete. Product not authorized then.
+
+**Subsequent status:** Slice A is **CLOSED / OPERATIONAL FOR UAT**. Live library remains **empty**. Slice D remains **Not authorized now**.
 
 ### Slice B — Contract Update Engine
 
@@ -137,7 +139,9 @@ SOURCE CHANGE DETECTED
 
 The Update Engine **maintains** the Legal Content Library. It must **not** independently override Legal Content Gate approval authority.
 
-**Architecture preflight COMPLETE.** Product **NOT AUTHORIZED.** [fg-024-slice-b-legal-content-source-lifecycle-preflight.md](../architecture/fg-024-slice-b-legal-content-source-lifecycle-preflight.md). [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (architecture only).
+**Historical recording fence:** Architecture preflight COMPLETE. Product **NOT AUTHORIZED** at that recording.
+
+**Subsequent status:** Slice B is **CLOSED / OPERATIONAL FOR UAT**. [fg-024-slice-b-legal-content-source-lifecycle-preflight.md](../architecture/fg-024-slice-b-legal-content-source-lifecycle-preflight.md). [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Live monitoring remains Slice D.
 
 ### Slice C — Contract generation + frozen snapshot
 
@@ -154,7 +158,9 @@ PROJECT JURISDICTION
 
 If no approved jurisdiction package exists: **FAIL CLOSED.** No silent fallback to a generic North American contract.
 
-**Architecture preflight COMPLETE.** Subsequent product foundation **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED**. [fg-024-slice-c-contract-generation-snapshot-preflight.md](../architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md). Service `app/services/contract_generation.py`. Models `GeneratedProjectContract`, `ProjectContractSnapshot`, `ProjectContractSnapshotObject`. Alembic **`d3e4f5a6b7c8`** not applied live. ADR-051 §6 remains **deferred**; pending-candidate generation stays unimplemented / fail-closed. GENERATED ≠ EXECUTED. Family 05 remains presentation shell only.
+**Historical product-foundation fence:** Architecture preflight COMPLETE. Subsequent product foundation was **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED** at that commit. Alembic **`d3e4f5a6b7c8`** was not applied live at that commit.
+
+**Subsequent status:** Slice C is **CLOSED / OPERATIONAL FOR UAT**. Live current / repository head **`d3e4f5a6b7c8 (head)`**. [fg-024-slice-c-contract-generation-snapshot-preflight.md](../architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md). Service `app/services/contract_generation.py`. Models `GeneratedProjectContract`, `ProjectContractSnapshot`, `ProjectContractSnapshotObject`. ADR-051 §6 remains **deferred**; pending-candidate generation stays unimplemented / fail-closed. GENERATED ≠ EXECUTED. Family 05 remains presentation shell only. No real jurisdictional content. Slice D remains **Not authorized now**.
 
 ### Slice D — Legal change monitoring + alerts
 
@@ -345,13 +351,15 @@ It may consume Project jurisdiction from **PLAN** and approved commercial/projec
 
 It does **not** own MONITOR, LEARN, BUILD actuals, Permit Intelligence conclusions, or Native Signing production activation.
 
-Active implementation stream remains **FG-023 MONITOR V1**. This recording does **not** authorize jumping the queue.
+**Historical recording (2026-09-07):** Active implementation stream remained **FG-023 MONITOR V1**. That recording did **not** authorize jumping the queue.
+
+**Subsequent status:** [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. FG-024 overall remains **OPEN / PARTIAL**. Slice D remains **Not authorized now**.
 
 ---
 
 ## Out of scope (this recording and until a later implementation prompt)
 
-The 2026-09-07 recording excluded product code. Slice A product and live-migrate are **done**. Still out of scope:
+The 2026-09-07 recording excluded product code. Slice A, Slice B, and Slice C product and live-migrate are **done**. Still out of scope:
 
 - Hub / CONTRACT UI
 - Ontario or U.S. legal-content drafting or population
@@ -360,7 +368,7 @@ The 2026-09-07 recording excluded product code. Slice A product and live-migrate
 - Counsel approval of any template
 - Native Signing implementation or production activation
 - Signed Change Order product work
-- Slices B–D product
+- Slice D product
 - QuickBooks / payroll / GL / AP / AR
 - LEARN
 - Generic North American fallback contracts

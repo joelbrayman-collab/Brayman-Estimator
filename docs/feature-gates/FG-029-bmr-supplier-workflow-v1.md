@@ -53,6 +53,8 @@ UAT evidence: [fg029-live-migrate-bounded-uat-record.md](../testing/fg029-live-m
 
 **Subsequent status (2026-09-09 live migrate + UAT):** Joel/ChatGPT authorized live migration + bounded BMR demo office UAT. **PASS.** Gate **CLOSED / OPERATIONAL FOR UAT**. V1-03 **COMPLETE**.
 
+**Subsequent status (2026-09-14 docs reconciliation):** The frozen close block above remains historical evidence at FG-029 close (V1 **55% / 3 of 11**; FG-028 Slice 3 then pending). Current governed V1 is **60% / 4 of 11** COMPLETE (V1-01, V1-02, V1-03, V1-05). [FG-028](FG-028-calibai-to-calibraytai-product-identity-transition.md) Slices 1–3 are **COMPLETE / CLOSED / OPERATIONAL FOR UAT**. ADR-008 remains **Proposed**. FG-030 remains **NOT IMPLEMENTATION-AUTHORIZED**. This note does **not** reopen FG-029.
+
 ---
 
 ## Purpose

@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-021: MONITOR Approved Commercial Baseline and Project Gross Margin |
-| Status | **Accepted** (governance / architecture only; MONITOR **not implemented**) |
+| Status | **Accepted** (governance / architecture only; MONITOR **not implemented** at acceptance) |
 | Date | 2026-08-28 (Proposed); **Accepted 2026-08-30** |
 | Related | [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [ADR-002](ADR-002-accepted-proposal-immutability.md) · [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) · [ADR-020](ADR-020-build-module-boundary.md) · [ADR-024](ADR-024-learn-recommendation-boundary.md) · [ADR-025](ADR-025-pricing-policy-versus-estimate-markup-stack.md) · [ADR-030](ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) · [pricing-policy.md](../pricing-policy.md) · [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) · [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) |
 
@@ -16,6 +16,8 @@ Until this acceptance, the **baseline pointer** was open: a specific `EstimateVe
 A 2026-08-30 architecture reconnaissance (calibration / benchmarking / profitability) confirmed that MONITOR and project profitability must not use a floating draft, must not treat industry benchmarks as profitability truth, and must not wait on QuickBooks or Phase D. The remaining blocker was this ADR.
 
 Accepting this ADR **does not** authorize MONITOR code, BUILD actuals, profitability UI, industry benchmarking, historical-upload onboarding, schema, or a Feature Gate.
+
+**Subsequent status (2026-09-14 docs reconciliation):** Primary acceptance remains **Accepted**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. MONITOR V1 (estimated vs actual Hub projection) is **IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED**. Forecast-final GM, cost-to-complete, and Field Web MONITOR remain **out of V1**. This note does **not** change the original architectural decision.
 
 ## Decision
 

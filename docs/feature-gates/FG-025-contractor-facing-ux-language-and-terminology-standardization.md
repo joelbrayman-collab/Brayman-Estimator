@@ -43,6 +43,8 @@ ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
 
 Joel/ChatGPT recorded this gate on **2026-09-07**. Preflight completed the same day. Bounded prompts authorized Slice 1 through Slice 5. The gate is **NOT CLOSED**. Remaining surfaces stay unauthorized. FG-023 remains **CLOSED**. Do **not** start another FG-025 slice from this document.
 
+**Subsequent status (2026-09-14 docs reconciliation):** The frozen FG-024 line in the block above is historical recording evidence. Current FG-024 is **SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C CLOSED / OPERATIONAL FOR UAT / OVERALL OPEN / PARTIAL**. Slice D remains **NOT AUTHORIZED**. FG-025 remains **NOT CLOSED**. Remaining FG-025 surfaces remain **NOT AUTHORIZED**.
+
 ---
 
 ## Purpose

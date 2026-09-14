@@ -110,9 +110,9 @@ Generation alone does not mean final or sent.
 
 ## Related
 
-- [feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) — North American library / update engine / frozen snapshot / monitoring (**RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C PREFLIGHT COMPLETE / OVERALL OPEN / PARTIAL**)
+- [feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) — North American library / update engine / frozen snapshot / monitoring (**RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C CLOSED / OPERATIONAL FOR UAT / OVERALL OPEN / PARTIAL**; Slice D **NOT AUTHORIZED**)
 - [architecture/fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md) — Slice A engine freeze; empty library; fail-closed
-- [architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md](../architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md) — Slice C generation / snapshot freeze; **PREFLIGHT COMPLETE**; subsequent product **IMPLEMENTED IN REPOSITORY / NOT LIVE-MIGRATED**
+- [architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md](../architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md) — Slice C generation / snapshot freeze; **PREFLIGHT COMPLETE**; subsequent product **CLOSED / OPERATIONAL FOR UAT**
 - [adr/ADR-050-north-american-legal-content-library-ownership.md](../adr/ADR-050-north-american-legal-content-library-ownership.md) — **Accepted** 13 Sep 2026 (library ownership / fail-closed)
 - [adr/ADR-051-legal-content-source-and-update-lifecycle.md](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) — **Accepted** 13 Sep 2026 (source classes / candidate-update / Slice B–D boundary; architecture only)
 - [legal/native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) — signing **process** draft for counsel; **not** template approval

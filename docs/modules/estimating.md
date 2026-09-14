@@ -98,7 +98,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 - [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted**
 - [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted**
-- [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR not implemented)
+- [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR V1 **CLOSED / OPERATIONAL FOR UAT** under [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md); forecast-final GM / cost-to-complete remain out of V1)
 - [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md) **Accepted** (LEARN must not mutate cost library / approved estimates)
 - [material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) **Intended** ([ADR-034](../adr/ADR-034-canonical-material-identity-and-ownership.md) / [ADR-035](../adr/ADR-035-material-quantity-uom-and-requirement-boundary.md) / [ADR-036](../adr/ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted**; CostItem is not CalibraytAI identity; living supplier evidence is not the identity row)
 - [ADR-046](../adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**: Estimating does **not** own `MaterialRequirement`; V1-03 supplier price is inform-only and must not write `EstimateLineItem` / FG-027 / FG-009. [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT**.

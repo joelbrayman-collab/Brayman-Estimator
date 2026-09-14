@@ -17,6 +17,8 @@ ADR-029 already rejected treating CostItem Labour as the production-rate engine.
 
 This ADR does **not** authorize implementation, schema, migration, a Feature Gate, supplier integration, or a Winchester POC.
 
+**Subsequent status (2026-09-14 docs reconciliation):** Primary acceptance remains **Accepted**. [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) is **CLOSED / OPERATIONAL FOR UAT** (canonical identity). Living supplier catalogue / Winchester live API remain **not** this ADR.
+
 ## Decision
 
 ### 1. CalibAi owns canonical material identity

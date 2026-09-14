@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-13 |
+| Updated | 2026-09-14 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -29,6 +29,25 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 4. “Completed pending baseline commit” means deliverables exist in the working tree awaiting Joel-approved commit.
 
 ---
+
+---
+
+### 2026-09-14 — Known documentation-drift cleanup
+
+| Field | Content |
+|-------|---------|
+| ID | Docs-only stale-state reconciliation |
+| Status | **COMPLETE.** Docs-only. No product implementation. No V1 rescore. No migration. |
+| Branch | `main` |
+| Base commit | `92005e15bf9785350234bf78d7e85c175fa4b587` (`docs: close FG-024 Slice C after live UAT`) |
+| Objective | Reconcile known stale CURRENT catalogs/indexes/handoff with already-governed later authority; preserve historically truthful records. |
+| Deliverables | Current-facing FG-024 Slice C / V1 / MONITOR / material-catalogue / architecture-index / EST-2026-0019 path / ADR subsequent-status / frozen subsequent-status notes; normal continuity records. |
+| Validation | Full suite **825 passed** / 2771 warnings / 258.44s / exit **0**. Live current = repo head `d3e4f5a6b7c8`. One graph head. |
+| Architectural findings | No governance substance changed. ADR-008 / ADR-010 remain Proposed. FG-024 overall OPEN / PARTIAL. Slice D NOT AUTHORIZED. V1 remains 60% / 4 of 11. Legal Content Gate empty. EST-2026-0019 unchanged. |
+| Open decisions | Next real CalibraytAI development priority remains with Joel / ChatGPT Architect. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. |
+| Commit | This docs-only reconciliation commit |
+| Date | 2026-09-14 |
 
 ---
 

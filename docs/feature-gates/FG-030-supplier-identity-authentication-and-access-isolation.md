@@ -48,6 +48,8 @@ Joel directed this isolation architecture on **2026-09-09**. Recording is **not*
 
 **Subsequent status (2026-09-09 FG-029 close — not authorized by this gate):** [FG-029](FG-029-bmr-supplier-workflow-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Live current = head **`b6c7d8e9f0a1`**. V1 is **55% / 3 of 11**. V1-03 **COMPLETE**. FG-030 remains **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Do **not** treat FG-029 contractor-office tenancy as FG-030 supplier-portal isolation.
 
+**Subsequent status (2026-09-14 docs reconciliation):** The frozen recording block above remains historical (V1 then **45% / 2 of 11**). Current governed V1 is **60% / 4 of 11** COMPLETE (V1-01, V1-02, V1-03, V1-05). FG-030 remains **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. This note does **not** authorize FG-030 implementation.
+
 ---
 
 ## Purpose

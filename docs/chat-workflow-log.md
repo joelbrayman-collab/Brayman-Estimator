@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-13 |
+| Updated | 2026-09-14 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-14 — Known documentation-drift cleanup
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-14 |
+| Branch | `main` @ `92005e15bf9785350234bf78d7e85c175fa4b587` (parent) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 14 SEP 2026 |
+| Objective | Reconcile known stale CURRENT-STATE / INDEX / HANDOFF documentation with already-governed later authority. Preserve historically truthful records. |
+| Business decision | Joel / ChatGPT Architect authorized bounded docs-only cleanup. No new audit. No product implementation. No V1 rescore. No migration. No EST-2026-0019 mutation. No new Feature Gate or ADR. |
+| Architectural decision | Owning Feature Gate + Accepted ADR + current operational authority control over stale catalog/index language. Proposed remains Proposed. Historical fences remain historical. |
+| Prompt template used | Joel bounded docs-only reconciliation (14 Sep 2026) |
+| Approved Cursor prompt summary | Preflight 92005e15 / live d3e4f5a6b7c8; reconcile FG-024 Slice C current catalogs, session-handoff inner CURRENT, platform-governance V1/FG-026, MONITOR current-facing, ADR subsequent-status notes, feature-gate index, material-catalogue, architecture index, EST-2026-0019 review paths, frozen subsequent-status notes; pytest; commit `docs: reconcile stale current-state references`; push; STOP. |
+| Files expected to change | Current catalogs/indexes/handoff/ADR subsequent-status notes and normal continuity records |
+| Files prohibited from changing | Application code; tests; migrations; EST-2026-0019; V1 register scores; Proposed ADR status |
+| Implementation result | Docs-only. Slice C current catalogs now **CLOSED / OPERATIONAL FOR UAT**. V1 remains **60% / 4 of 11**. Live current remains `d3e4f5a6b7c8 (head)`. Legal Content Gate **empty**. ADR-008 / ADR-010 remain **Proposed**. Slice D **NOT AUTHORIZED**. |
+| Tests | `./venv/bin/python -m pytest -q` — **825 passed**, 2771 warnings, **258.44s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (docs-only reconciliation; not a V1 package completion) |
+| Constitutional issue raised | None. New ADR not required. New Feature Gate not required. |
+| Unresolved issues | Genuine remaining gaps only: some historical CAR-001 subsequent-status snapshots and Feature Gate Q7 freeze numbers remain historical by design. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | **None.** Return to ChatGPT Architect. |
+| Commit hash | This docs-only reconciliation commit |
 
 ### 2026-09-13 — FG-024 Slice C live migrate + bounded office UAT
 

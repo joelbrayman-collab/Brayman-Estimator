@@ -92,4 +92,4 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 - [ADR-002 Accepted Proposal Immutability](../adr/ADR-002-accepted-proposal-immutability.md) — **Accepted / implemented (Milestone 003)**
 - [ADR-003 Optional CRM Foreign Keys](../adr/ADR-003-optional-crm-foreign-keys.md) — Accepted as defer
 - [ADR-004 Proposal Acceptance Workflow](../adr/ADR-004-proposal-acceptance-workflow.md) — Accepted direction; workflow not built in M003
-- [ADR-021 MONITOR Commercial Baseline](../adr/ADR-021-monitor-commercial-baseline.md) — **Accepted** (Accepted Proposal is the customer-commitment pin; MONITOR not implemented)
+- [ADR-021 MONITOR Commercial Baseline](../adr/ADR-021-monitor-commercial-baseline.md) — **Accepted** (Accepted Proposal is the customer-commitment pin; MONITOR V1 **CLOSED / OPERATIONAL FOR UAT** under [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md))

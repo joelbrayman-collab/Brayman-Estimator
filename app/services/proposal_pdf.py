@@ -24,6 +24,13 @@ from reportlab.platypus import (
     TableStyle,
 )
 
+from app.presentation.contractor_copy import (
+    CUSTOMER_CLIENT_LABEL,
+    CUSTOMER_DOCUMENT_TITLE,
+    CUSTOMER_NO_PRICING_SECTIONS,
+    CUSTOMER_PRICING_HEADING,
+    CUSTOMER_PROJECT_LABEL,
+)
 from app.services.brand_profile import (
     brand_logo_filesystem_path,
     get_proposal_brand_render_context,
@@ -395,7 +402,7 @@ def generate_proposal_pdf(proposal) -> BytesIO:
         rightMargin=0.7 * inch,
         topMargin=0.7 * inch,
         bottomMargin=0.75 * inch,
-        title=proposal.title or proposal.proposal_number,
+        title=CUSTOMER_DOCUMENT_TITLE,
         author=brand.customer_facing_name or "Brayman Construction Platform",
     )
 
@@ -433,9 +440,8 @@ def generate_proposal_pdf(proposal) -> BytesIO:
         else "—"
     )
     right_block = [
-        Paragraph(_escape(proposal.title), styles["title"]),
+        Paragraph(_escape(CUSTOMER_DOCUMENT_TITLE), styles["title"]),
         Paragraph(_escape(proposal.proposal_number), styles["right_meta"]),
-        Paragraph(f"Status: {_escape(proposal.status)}", styles["right_meta"]),
         Paragraph(f"Date: {_escape(created)}", styles["right_meta"]),
         Paragraph(f"Valid until: {_escape(valid_until)}", styles["right_meta"]),
     ]
@@ -490,7 +496,7 @@ def generate_proposal_pdf(proposal) -> BytesIO:
         )
     )
 
-    client_lines = [Paragraph("CLIENT", styles["label"])]
+    client_lines = [Paragraph(_escape(CUSTOMER_CLIENT_LABEL.upper()), styles["label"])]
     client_lines.append(Paragraph(_escape(proposal.client_name), styles["body"]))
     if proposal.client_company:
         client_lines.append(Paragraph(_escape(proposal.client_company), styles["body"]))
@@ -502,7 +508,7 @@ def generate_proposal_pdf(proposal) -> BytesIO:
         if value:
             client_lines.append(Paragraph(_escape(value), styles["meta"]))
 
-    project_lines = [Paragraph("PROJECT", styles["label"])]
+    project_lines = [Paragraph(_escape(CUSTOMER_PROJECT_LABEL.upper()), styles["label"])]
     project_lines.append(Paragraph(_escape(proposal.project_name), styles["body"]))
     if proposal.project_address:
         project_lines.append(Paragraph(_escape(proposal.project_address), styles["meta"]))
@@ -558,7 +564,7 @@ def generate_proposal_pdf(proposal) -> BytesIO:
         if block is not None:
             story.append(block)
 
-    story.append(Paragraph("Proposal Pricing", styles["heading"]))
+    story.append(Paragraph(_escape(CUSTOMER_PRICING_HEADING), styles["heading"]))
     story.append(
         HRFlowable(
             width="100%",
@@ -570,7 +576,7 @@ def generate_proposal_pdf(proposal) -> BytesIO:
     )
 
     if not proposal.sections:
-        story.append(Paragraph("No pricing sections on this proposal.", styles["meta"]))
+        story.append(Paragraph(_escape(CUSTOMER_NO_PRICING_SECTIONS), styles["meta"]))
     else:
         for section in proposal.sections:
             items = _visible_line_items(proposal, section)

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-14 — FG-025 customer-document language slice
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-14 |
+| Branch | `main` @ `d2c7f35734495d8e93c97cbba9802efacb3d659b` (parent) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 14 SEP 2026 |
+| Objective | Bounded FG-025 customer-document language on the existing Proposal preview and Proposal PDF. |
+| Business decision | Joel / ChatGPT Architect authorized one customer-facing wording slice. Customer-facing title **CONSTRUCTION ESTIMATE**. Do not close FG-025. Do not rescore V1. Do not mutate EST-2026-0019. |
+| Architectural decision | Presentation mapping only via `app/presentation/contractor_copy.py`. Existing Proposal/PDF reused. No schema, migration, new entity, FG-012 reopen, FG-017 reopen, legal content, Slice D, Native Signing, FG-030, or live QuickBooks. |
+| Prompt template used | Joel bounded FG-025 customer-document language implementation (14 Sep 2026) |
+| Approved Cursor prompt summary | Preflight d2c7f357 / live d3e4f5a6b7c8; customer title CONSTRUCTION ESTIMATE; replace Proposal Pricing; remove customer-visible Draft/Issued/Accepted; preserve display flags / FG-012 / FG-017 / immutability; pytest; commit `feat: add FG-025 customer document language`; push; STOP. |
+| Files expected to change | Preview/PDF presentation, contractor_copy, dedicated tests, FG-025 and continuity docs |
+| Files prohibited from changing | Migrations; models; EST-2026-0019; FG-029; FG-022; FG-024 Slice D; V1 scores; Proposed ADR status |
+| Implementation result | Slice 6 implemented. Customer title **CONSTRUCTION ESTIMATE**. Proposal Pricing gone from customer preview/PDF. Office status not printed on customer document. Display flags / firewall / brand freeze / immutability unchanged. EST-2026-0019 untouched. FG-025 **NOT CLOSED**. V1 remains **60% / 4 of 11**. BMR DEMO READY **NO**. |
+| Tests | Focused `tests/test_proposal_preview.py tests/test_proposal_pdf.py tests/test_fg025_contractor_copy.py tests/test_estimate_output_consistency.py tests/test_brand_profile_fg017.py tests/test_proposal_immutability.py` — **97 passed**, 355 warnings, **33.12s**. `./venv/bin/python -m pytest -q` — **829 passed**, 2778 warnings, **264.51s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (Slice 6 recorded; not a V1 package completion; not an FG-025 close) |
+| Constitutional issue raised | None. New ADR not required. New Feature Gate not required. ADR-001 / ADR-004 remain **Proposed**. |
+| Unresolved issues | FG-025 remaining unauthorized surfaces. Independent BMR DEMO READY blocker remains fail-closed / Ontario contract story. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | **None.** Return to ChatGPT Architect. |
+| Commit hash | This FG-025 customer-document language commit |
+
 ### 2026-09-14 — Known documentation-drift cleanup
 
 | Field | Content |

@@ -1,4 +1,4 @@
-"""FG-025 contractor-facing display mapping (Slice 1 MONITOR + Slice 2 Hub + Slice 3 PRICE + Slice 4 office shell + Slice 5 Field Web).
+"""FG-025 contractor-facing display mapping (Slice 1 MONITOR + Slice 2 Hub + Slice 3 PRICE + Slice 4 office shell + Slice 5 Field Web + Slice 6 customer document).
 
 Presentation tests only. Internal domain keys stay authoritative.
 """
@@ -13,6 +13,11 @@ import pytest
 from app import create_app, db
 from app.models import Client, Project
 from app.presentation.contractor_copy import (
+    CUSTOMER_CLIENT_LABEL,
+    CUSTOMER_DOCUMENT_TITLE,
+    CUSTOMER_NO_PRICING_SECTIONS,
+    CUSTOMER_PRICING_HEADING,
+    CUSTOMER_PROJECT_LABEL,
     CO_COST_DELTA_INTERNAL,
     CO_COST_DELTA_LABEL,
     CORRECTED_BY_HEADING,
@@ -601,3 +606,17 @@ def test_slice5_field_js_pins_python_copy_and_internal_keys():
     assert "Observation Delete" not in source
     assert "Delete observation" not in source
     assert "NET PROFIT" not in source
+
+
+def test_slice6_customer_document_copy_pins():
+    assert CUSTOMER_DOCUMENT_TITLE == "CONSTRUCTION ESTIMATE"
+    assert CUSTOMER_PRICING_HEADING == "Pricing"
+    assert CUSTOMER_NO_PRICING_SECTIONS == (
+        "No priced items on this construction estimate."
+    )
+    assert CUSTOMER_CLIENT_LABEL == "Customer"
+    assert CUSTOMER_PROJECT_LABEL == "Project"
+    assert "Proposal Pricing" not in CUSTOMER_PRICING_HEADING
+    assert "Draft" not in CUSTOMER_DOCUMENT_TITLE
+    assert "Issued" not in CUSTOMER_DOCUMENT_TITLE
+    assert "Accepted" not in CUSTOMER_DOCUMENT_TITLE

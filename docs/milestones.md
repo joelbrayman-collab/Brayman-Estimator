@@ -32,6 +32,25 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-14 — FG-025 customer-document language slice
+
+| Field | Content |
+|-------|---------|
+| ID | FG-025 Slice 6 (customer Proposal preview/PDF language) |
+| Status | **COMPLETE / NOT A GATE CLOSE.** Presentation-only. FG-025 overall **NOT CLOSED**. |
+| Branch | `main` |
+| Base commit | `d2c7f35734495d8e93c97cbba9802efacb3d659b` |
+| Objective | Clean customer-facing wording on the existing Proposal preview and Proposal PDF. Customer-facing title **CONSTRUCTION ESTIMATE**. |
+| Deliverables | Preview/PDF title and pricing labels; office status removed from customer document; centralized copy constants; dedicated tests; continuity docs |
+| Validation | Focused **97 passed** / 33.12s. Full **829 passed**, 2778 warnings, **264.51s**. Alembic unchanged `d3e4f5a6b7c8 (head)`. EST-2026-0019 occupancy unchanged. |
+| Architectural findings | Presentation language only. No schema. No migration. No new customer-estimate entity. FG-012 firewall and FG-017 brand freeze unchanged. Proposal immutability unchanged. |
+| Open decisions | FG-025 remaining surfaces still unauthorized. Independent BMR DEMO READY blocker remains fail-closed / Ontario contract story. ADR-001 / ADR-004 remain **Proposed**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do not close FG-025. Do not begin Slice D. |
+| Commit | This FG-025 customer-document language commit |
+| Date | 2026-09-14 |
+
+---
+
 ### 2026-09-14 — Known documentation-drift cleanup
 
 | Field | Content |

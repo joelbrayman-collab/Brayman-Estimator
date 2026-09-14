@@ -44,10 +44,7 @@
                 </div>
             </div>
             <div class="col-md-5 text-md-end">
-                <div class="mb-2">
-                    <span class="proposal-status-badge proposal-status-{{ proposal.status|lower }}">{{ proposal.status }}</span>
-                </div>
-                <h1 class="h3 mb-1">{{ proposal.title }}</h1>
+                <h1 class="h3 mb-1">{{ contractor_copy.CUSTOMER_DOCUMENT_TITLE }}</h1>
                 <div class="fw-semibold mb-3">{{ proposal.proposal_number }}</div>
                 <div class="row g-2 text-md-end">
                     <div class="col-6 col-md-12">
@@ -66,7 +63,7 @@
 
         <div class="row g-4 mb-4">
             <div class="col-md-6">
-                <div class="proposal-meta-label">Client</div>
+                <div class="proposal-meta-label">{{ contractor_copy.CUSTOMER_CLIENT_LABEL }}</div>
                 <div class="fw-semibold">{{ proposal.client_name }}</div>
                 {% if proposal.client_company %}<div>{{ proposal.client_company }}</div>{% endif %}
                 {% if proposal.client_address %}<div class="text-muted">{{ proposal.client_address }}</div>{% endif %}
@@ -74,7 +71,7 @@
                 {% if proposal.client_phone %}<div class="text-muted">{{ proposal.client_phone }}</div>{% endif %}
             </div>
             <div class="col-md-6">
-                <div class="proposal-meta-label">Project</div>
+                <div class="proposal-meta-label">{{ contractor_copy.CUSTOMER_PROJECT_LABEL }}</div>
                 <div class="fw-semibold">{{ proposal.project_name }}</div>
                 {% if proposal.project_address %}<div class="text-muted">{{ proposal.project_address }}</div>{% endif %}
             </div>
@@ -95,7 +92,7 @@
         {% endif %}
 
         <section class="proposal-section-block">
-            <h2>Proposal Pricing</h2>
+            <h2>{{ contractor_copy.CUSTOMER_PRICING_HEADING }}</h2>
 
             {% for row in section_rows %}
             {% set section = row.section %}
@@ -148,7 +145,7 @@
                 {% endif %}
             </div>
             {% else %}
-            <p class="text-muted">No pricing sections on this proposal.</p>
+            <p class="text-muted">{{ contractor_copy.CUSTOMER_NO_PRICING_SECTIONS }}</p>
             {% endfor %}
 
             <div class="proposal-totals mt-3">

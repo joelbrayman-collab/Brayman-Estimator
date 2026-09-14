@@ -150,7 +150,8 @@ def test_preview_route_renders_core_layout(client, proposal, template):
     assert response.status_code == 200
     html = response.data
 
-    assert b"Downtown Renovation Proposal" in html
+    assert b"CONSTRUCTION ESTIMATE" in html
+    assert b"Downtown Renovation Proposal" not in html
     assert proposal.proposal_number.encode() in html
     assert b"Brayman Construction" in html
     assert b"Brayman Construction Co." not in html
@@ -169,17 +170,48 @@ def test_preview_route_renders_core_layout(client, proposal, template):
     assert template.accent_color.encode() in html
 
 
-def test_preview_status_badge_rendering(client, proposal):
+def test_preview_uses_customer_document_language(client, proposal):
+    response = client.get(f"/proposals/{proposal.id}/preview")
+    assert response.status_code == 200
+    html = response.data
+    assert b"CONSTRUCTION ESTIMATE" in html
+    assert b"Proposal Pricing" not in html
+    assert b">Pricing<" in html
+    article = html.split(b'<article class="proposal-document">', 1)[1]
+    article = article.split(b"</article>", 1)[0]
+    assert b"Draft" not in article
+    assert b"Issued" not in article
+    assert b"Accepted" not in article
+    assert b"proposal-status-" not in html
+    assert b"TRUE_GROSS_MARGIN" not in html
+    assert b"Overhead" not in html
+    assert b"Profit" not in html
+    assert b"Customer" in html
+    assert proposal.title.encode() not in article
+
+
+def test_preview_does_not_expose_office_status(client, proposal):
     update_proposal_status(proposal, "Issued")
     response = client.get(f"/proposals/{proposal.id}/preview")
     assert response.status_code == 200
-    assert b"proposal-status-issued" in response.data
-    assert b"Issued" in response.data
+    article = response.data.split(b'<article class="proposal-document">', 1)[1]
+    article = article.split(b"</article>", 1)[0]
+    assert b"Issued" not in article
+    assert b"proposal-status-issued" not in response.data
+
+    detail = client.get(f"/proposals/{proposal.id}")
+    assert detail.status_code == 200
+    assert b"Issued" in detail.data
 
     update_proposal_status(proposal, "Accepted")
     response = client.get(f"/proposals/{proposal.id}/preview")
-    assert b"proposal-status-accepted" in response.data
-    assert b"Accepted" in response.data
+    article = response.data.split(b'<article class="proposal-document">', 1)[1]
+    article = article.split(b"</article>", 1)[0]
+    assert b"Accepted" not in article
+    assert b"proposal-status-accepted" not in response.data
+
+    detail = client.get(f"/proposals/{proposal.id}")
+    assert b"Accepted" in detail.data
 
 
 def test_preview_visible_pricing_and_template_options(client, proposal):

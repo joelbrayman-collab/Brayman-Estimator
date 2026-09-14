@@ -356,12 +356,12 @@ No Native Signing Feature Gate exists yet. Recommendation remains **NATIVE V1** 
 | V1 REQUIRED? | **YES** for office/Field language already shipped. Remaining surfaces are **not** automatically V1-required. |
 | BLOCKER? | **NO** |
 | Dependencies | None beyond existing screens |
-| Governing | [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **SLICE 1–5 IMPLEMENTED / NOT CLOSED**; remaining surfaces **NOT AUTHORIZED** |
+| Governing | [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **SLICE 1–6 IMPLEMENTED / NOT CLOSED**; remaining surfaces **NOT AUTHORIZED** |
 | Next governed action | **STOP.** Do **not** start another FG-025 slice from this register. |
 
-Remaining unauthorized candidates: customer Proposal/PDF terminology; Historical Evidence nav/screens; standalone Permit screens; Hub PRICE leftover `TRUE_GROSS_MARGIN`; final product-wide sweep.
+Remaining unauthorized candidates: Historical Evidence nav/screens; standalone Permit screens; Hub PRICE leftover `TRUE_GROSS_MARGIN`; final product-wide sweep.
 
-**Joel decision:** whether customer Proposal/PDF terminology is **V1-required for BMR demo**. Register recommendation: **YES for BMR** (customer-facing output 2), still requiring a **separate** FG-025 slice prompt.
+**Joel decision #4 (2026-09-14):** customer Proposal/PDF terminology **IMPLEMENTED** as the FG-025 customer-document language slice. Existing Proposal preview/PDF reused. Customer-facing title **CONSTRUCTION ESTIMATE**. No schema/migration. FG-025 overall **NOT CLOSED**. V1 score **unchanged**.
 
 ### V1-10 — Operational hardening / real-project readiness
 
@@ -515,7 +515,9 @@ The BMR demo must show CalibraytAI as an **integrated contractor platform**, not
 - Session revocation
 - Customer Proposal/PDF polish **unless** Joel confirms it is in the demo script (recommended in)
 
-**BMR DEMO READY = NO.** V1-01 exists, V1-02 exists, V1-03 Winchester slice exists, V1-05 Option A exists, and [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Remaining independent blocker: a **fail-closed or Ontario** contract story that does not pretend Family 05 is legally approved. ADR-008 remains **Proposed**. FG-032 close does **not** flip this to YES.
+**Subsequent status (2026-09-14):** the bounded FG-025 customer-document language slice is **IMPLEMENTED**. Customer-facing title **CONSTRUCTION ESTIMATE**. This does **not** flip BMR DEMO READY.
+
+**BMR DEMO READY = NO.** V1-01 exists, V1-02 exists, V1-03 Winchester slice exists, V1-05 Option A exists, and [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Remaining independent blocker: a **fail-closed or Ontario** contract story that does not pretend Family 05 is legally approved. ADR-008 remains **Proposed**. FG-032 close does **not** flip this to YES. The FG-025 customer-document language slice does **not** flip this to YES.
 
 A demo that only shows takeoff + manual estimate + Field + MONITOR is a **partial platform tour**, not BMR demo-ready under this register.
 
@@ -583,7 +585,7 @@ Do **not** block V1 on:
 | 1 | QuickBooks V1 = A (output/entry) vs B (live API) | **SELECTED (2026-09-10): A now; API POST-V1.** [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT**. V1-05 **COMPLETE**. |
 | 2 | Exception-based CalibraytAI costing required before BMR? | **RECORDED (ADR-044 / FG-027).** **No.** Human costing + explicit Approve All Costing is V1; exception-based matures in real UAT |
 | 3 | FG-024 Slice D live legal-source monitoring in V1? | **POST-V1.** Keep 06H versioning/supersession/effective-date in V1 |
-| 4 | Customer Proposal/PDF FG-025 remainder in BMR demo? | **Yes**, via a later bounded slice |
+| 4 | Customer Proposal/PDF FG-025 remainder in BMR demo? | **IMPLEMENTED (2026-09-14).** Existing Proposal preview/PDF customer title **CONSTRUCTION ESTIMATE**. FG-025 overall **NOT CLOSED**. V1 not rescored. |
 | 5 | Project Closeout before first real project? | **No** for BMR; **V1-desired** before long-running real UAT |
 | 6 | Any launch jurisdiction besides Ontario? | **No** unless named (06J stays POST-V1) |
 | 7 | Native Signing **development** now vs wait for counsel? | Architecture already: **development may proceed**; **production blocked** |

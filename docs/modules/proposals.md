@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current** (engine + snapshot + PDF; Accepted immutability **enforced**) |
-| Updated | 2026-08-30 |
+| Updated | 2026-09-14 |
 | Code | `app/models/proposal.py`; `app/routes/proposals.py`, `proposal_templates.py`; `app/services/proposals.py`, `proposal_pdf.py` |
 | Feature Gate | [FG-001](../feature-gates/FG-001-proposals-module.md) (module baseline) · [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (customer-output consistency) · [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md) **CLOSED / OPERATIONAL FOR UAT** (Brand Profile consumer; live current=head `a9b0c1d2e3f4`) |
 
@@ -12,6 +12,8 @@
 Produce client-facing proposals from estimate versions using templates, preserving commercial snapshots independent of later estimate edits.
 
 Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**): the existing Proposal preview/PDF **is** the customer-facing estimate. Named-method (`TRUE_GROSS_MARGIN`, `COST_PLUS_MARKUP`) proposal totals copy the frozen `EstimatePricingSnapshot` commercial result and do not restack markup/overhead/profit. Legacy no-snapshot versions retain `COST_PLUS_MARKUP_STACK`. Customer PDF prints Subtotal / Tax / Grand Total only (no internal Overhead/Profit rows).
+
+**Subsequent status (2026-09-14 FG-025 customer-document language):** customer preview/PDF presentation title is **CONSTRUCTION ESTIMATE**. Internal Proposal entities, stored titles, office Draft/Issued/Accepted status, and snapshot/immutability semantics are unchanged. [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) **SLICE 6 IMPLEMENTED / NOT CLOSED**.
 
 ## Responsibilities
 

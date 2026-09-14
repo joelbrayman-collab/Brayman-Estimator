@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-025 is the governing identifier. Do not assign a new M0xx number. This is a **commercialization hygiene** gate, not a new lifecycle stage. Sequence: **after [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) closes**, **before** broad external UAT / U.S. commercialization. |
 | Module | **Cross-cutting UX copy.** [Projects](../modules/projects.md) owns Project Hub chrome. Owning modules retain their screens: Plan Intelligence, Estimating, Pricing Engine, Proposals, Project Controls, BUILD, MONITOR, LEARN (Future), authentication. This gate does **not** transfer record ownership. |
 | Date | 2026-09-07 |
-| Status | **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 2 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 3 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 4 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 5 IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED / NOT A PRODUCT-WIDE SWEEP** (2026-09-08). Remaining FG-025 surfaces are **NOT AUTHORIZED**. Do **not** treat this gate as closed. |
+| Status | **FUTURE / RECORDED / IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 2 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 3 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 4 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 5 IMPLEMENTED / TESTED / COMMITTED / PUSHED / SLICE 6 IMPLEMENTED / TESTED / COMMITTED / PUSHED / NOT CLOSED / NOT A PRODUCT-WIDE SWEEP** (2026-09-14). Remaining FG-025 surfaces are **NOT AUTHORIZED**. Do **not** treat this gate as closed. |
 | Architecture | [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** (PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN) · [FG-011](FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT** (Hub reads/links; Future labeled) · [FG-012](FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (office vs customer-facing estimate copy) · [FG-017](FG-017-organization-brand-profile-v1.md) **CLOSED / OPERATIONAL FOR UAT** (visual brand, not terminology) · [FG-021](FG-021-field-web-v1-today-and-capture.md) **CLOSED** (Field Web capture copy) · [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT** · [CAR-001](../architecture/CAR-001-calibai-product-architecture-reconciliation.md) |
 | Related ADRs | **None new in this recording pass.** Visual identity remains [ADR-040](../adr/ADR-040-organization-brand-profile.md). Do **not** accept ADR-008 or ADR-010 from this gate. |
 | Prerequisites | [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. Slices 1–4 were each authorized by a bounded Joel/ChatGPT prompt. Remaining surfaces remain **NOT AUTHORIZED**. |
@@ -18,9 +18,9 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **RECORDED.** **IMPLEMENTATION PREFLIGHT COMPLETE.** **SLICE 1 IMPLEMENTED.** **SLICE 2 IMPLEMENTED.** **SLICE 3 IMPLEMENTED.** **SLICE 4 IMPLEMENTED.** **SLICE 5 IMPLEMENTED.** **NOT CLOSED.** |
-| UI copy rewrite | **SLICE 1, SLICE 2, SLICE 3, AND SLICE 4 AUTHORIZED AND IMPLEMENTED.** Remaining surfaces **NOT AUTHORIZED.** |
-| Product code | Presentation mapping `app/presentation/contractor_copy.py` + Project Hub (`detail.html`) PLAN/PRICE/CONTRACT/BUILD/MONITOR display + office PRICE specialist templates + shared office nav/dashboard/auth/Settings copy. |
+| Feature Gate (this document) | **RECORDED.** **IMPLEMENTATION PREFLIGHT COMPLETE.** **SLICE 1 IMPLEMENTED.** **SLICE 2 IMPLEMENTED.** **SLICE 3 IMPLEMENTED.** **SLICE 4 IMPLEMENTED.** **SLICE 5 IMPLEMENTED.** **SLICE 6 IMPLEMENTED.** **NOT CLOSED.** |
+| UI copy rewrite | **SLICE 1–6 AUTHORIZED AND IMPLEMENTED.** Remaining surfaces **NOT AUTHORIZED.** |
+| Product code | Presentation mapping `app/presentation/contractor_copy.py` + Project Hub (`detail.html`) PLAN/PRICE/CONTRACT/BUILD/MONITOR display + office PRICE specialist templates + shared office nav/dashboard/auth/Settings copy + customer Proposal preview/PDF title and pricing labels. |
 | Schema / Alembic | **None.** |
 | New ADR | **None.** |
 
@@ -44,6 +44,8 @@ ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
 Joel/ChatGPT recorded this gate on **2026-09-07**. Preflight completed the same day. Bounded prompts authorized Slice 1 through Slice 5. The gate is **NOT CLOSED**. Remaining surfaces stay unauthorized. FG-023 remains **CLOSED**. Do **not** start another FG-025 slice from this document.
 
 **Subsequent status (2026-09-14 docs reconciliation):** The frozen FG-024 line in the block above is historical recording evidence. Current FG-024 is **SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C CLOSED / OPERATIONAL FOR UAT / OVERALL OPEN / PARTIAL**. Slice D remains **NOT AUTHORIZED**. FG-025 remains **NOT CLOSED**. Remaining FG-025 surfaces remain **NOT AUTHORIZED**.
+
+**Subsequent status (2026-09-14 FG-025 customer-document language / Slice 6):** Joel / ChatGPT Architect authorized one bounded customer Proposal preview/PDF wording slice. **SLICE 6 IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Customer-facing title **CONSTRUCTION ESTIMATE**. Existing Proposal/PDF reused. No schema / migration / new entity. No legal-content, Slice D, Native Signing, FG-030, or live QuickBooks dependency. EST-2026-0019 untouched. FG-025 overall remains **NOT CLOSED**. Remaining surfaces **NOT AUTHORIZED**. BMR DEMO READY remains **NO**.
 
 ---
 
@@ -608,12 +610,40 @@ Do **not** start another FG-025 slice from this section.
 
 ---
 
+## SLICE 6 IMPLEMENTATION (2026-09-14)
+
+**Status:** **SLICE 6 IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Gate **NOT CLOSED.** Remaining FG-025 surfaces **NOT AUTHORIZED.** Not a product-wide sweep.
+
+Presentation-layer mapping only, reusing `app/presentation/contractor_copy.py`. No competing copy system. No schema, migration, live DB write, new customer-estimate entity, FG-012 reopen, FG-017 reopen, FG-029 change, FG-022 rewrite, FG-024 Slice D, Legal Content Gate population, Native Signing, FG-030, or live QuickBooks API.
+
+Customer Proposal preview (`app/templates/proposals/preview.html`) and customer Proposal PDF (`app/services/proposal_pdf.py`):
+
+- Customer-facing document title **CONSTRUCTION ESTIMATE** (presentation only). Stored `proposal.title`, models, routes, and office detail remain Proposal records.
+- Customer pricing heading **Pricing** (replaces customer-visible **Proposal Pricing**).
+- Empty pricing copy **No priced items on this construction estimate.**
+- Customer party label **Customer** (was customer-visible Client / CLIENT).
+- Internal office workflow status **Draft / Issued / Accepted** is not printed on the customer document. Office proposal detail still shows those statuses. Proposal status semantics and immutability are unchanged.
+- `show_detailed_pricing` / `show_section_totals` semantics unchanged.
+- FG-012 firewall unchanged: customer preview/PDF still omit Overhead / Profit / `TRUE_GROSS_MARGIN`.
+- FG-017 Draft/Ready live brand and Issued/Accepted brand-snapshot freeze unchanged.
+
+Dedicated tests: `tests/test_proposal_preview.py`, `tests/test_proposal_pdf.py`, `tests/test_fg025_contractor_copy.py` Slice 6 pin. FG-012 / FG-017 / immutability regression suites remain green. Focused **97 passed**. Full **829 passed**.
+
+Remaining / unauthorized after Slice 6 (not a must-rewrite list; remaining surfaces **NOT AUTHORIZED**):
+
+- Unauthorized candidate surfaces: Historical Evidence nav and historical specialist screens; standalone Permit screens; Hub PRICE table leftover `TRUE_GROSS_MARGIN`; final product-wide terminology sweep.
+- **REVIEW / DECISION REQUIRED** (not implied must-change): Cost Items nav label; “Contract value” terminology; Dashboard `page_title` still Dashboard; Office sign in / Brayman Construction Platform titles retained; `GENERIC_LOGIN_FAILURE` retained for security; Brand Profile saved. flash retained; disabled Settings (coming soon) frozen by FG-017.
+
+Do **not** start another FG-025 slice from this section. Do **not** close FG-025 from this section.
+
+---
+
 ## Approval
 
 | Role | State |
 |------|--------|
-| Joel / ChatGPT | **Recorded** 2026-09-07. Preflight **COMPLETE** 2026-09-07. **Slice 1–3 authorized and implemented** 2026-09-07. **Slice 4 authorized and implemented** 2026-09-08. **Slice 5 authorized and implemented** 2026-09-08. Remaining surfaces **not** authorized. Gate **not** closed. |
-| Cursor | Slice 5 Field Web language + tests + docs. No Slice 6. No FG-024. No LEARN. |
-| Implementation | **SLICE 5 DONE.** Remaining FG-025 surfaces **NOT AUTHORIZED** until a later bounded prompt. |
+| Joel / ChatGPT | **Recorded** 2026-09-07. Preflight **COMPLETE** 2026-09-07. **Slice 1–3 authorized and implemented** 2026-09-07. **Slice 4 authorized and implemented** 2026-09-08. **Slice 5 authorized and implemented** 2026-09-08. **Slice 6 (customer-document language) authorized and implemented** 2026-09-14. Remaining surfaces **not** authorized. Gate **not** closed. |
+| Cursor | Slice 6 customer Proposal preview/PDF language + tests + docs. No FG-025 close. No FG-024 Slice D. No Native Signing. No FG-030. |
+| Implementation | **SLICE 6 DONE.** Remaining FG-025 surfaces **NOT AUTHORIZED** until a later bounded prompt. Gate **NOT CLOSED.** |
 
-**Next governed action:** **STOP.** Return Slice 5 report to ChatGPT Architect. Do **not** start another FG-025 slice. Do **not** start FG-024. Do **not** start LEARN. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
+**Next governed action:** **STOP.** Return Slice 6 report to ChatGPT Architect. Do **not** start another FG-025 slice. Do **not** close FG-025. Do **not** begin FG-024 Slice D. Do **not** start LEARN. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**

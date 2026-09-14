@@ -21,6 +21,7 @@ from app.services.proposals import (
     create_proposal,
     create_proposal_template,
     update_proposal,
+    update_proposal_status,
 )
 
 
@@ -184,8 +185,30 @@ def test_pdf_multi_section_generation(proposal):
     assert "Formwork" in text
     assert "Grand Total" in text
     assert "Subtotal" in text
+    assert "CONSTRUCTION ESTIMATE" in text
+    assert "Proposal Pricing" not in text
+    assert "Downtown Renovation Proposal" not in text
+    assert "Status:" not in text
+    assert "Draft" not in text
     assert "Overhead" not in text
     assert "Profit" not in text
+
+
+def test_pdf_uses_customer_document_language(proposal):
+    text = _pdf_text(generate_proposal_pdf(proposal).getvalue())
+    assert "CONSTRUCTION ESTIMATE" in text
+    assert "Proposal Pricing" not in text
+    assert "Pricing" in text
+    assert "Status:" not in text
+    assert "Draft" not in text
+    assert "Issued" not in text
+    assert "Accepted" not in text
+    assert "TRUE_GROSS_MARGIN" not in text
+    assert "Overhead" not in text
+    assert "Profit" not in text
+    assert "CUSTOMER" in text
+    assert proposal.title not in text
+    assert proposal.proposal_number in text
 
 
 def test_pdf_detailed_pricing_visible_when_enabled(proposal):
@@ -194,6 +217,19 @@ def test_pdf_detailed_pricing_visible_when_enabled(proposal):
     assert "Unit Price" in text
     assert "Amount" in text
     assert "Mobilization" in text
+
+
+def test_pdf_does_not_expose_office_status(proposal):
+    update_proposal_status(proposal, "Issued")
+    text = _pdf_text(generate_proposal_pdf(proposal).getvalue())
+    assert "Status:" not in text
+    assert "Issued" not in text
+    assert "CONSTRUCTION ESTIMATE" in text
+
+    update_proposal_status(proposal, "Accepted")
+    text = _pdf_text(generate_proposal_pdf(proposal).getvalue())
+    assert "Accepted" not in text
+    assert "Status:" not in text
 
 
 def test_pdf_detailed_pricing_hidden_when_disabled(proposal):

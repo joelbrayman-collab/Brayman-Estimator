@@ -1,4 +1,4 @@
-"""FG-025 contractor-facing display mapping (Slice 1–5).
+"""FG-025 contractor-facing display mapping (Slice 1–6).
 
 Presentation only. Deterministic. No DB access, I/O, service ownership,
 commercial calculations, or mutation. Internal domain keys stay authoritative.
@@ -305,6 +305,13 @@ def pricing_method_label(method: str | None) -> str:
     if mapped:
         return mapped
     return office_status_label(method)
+
+
+CUSTOMER_DOCUMENT_TITLE = "CONSTRUCTION ESTIMATE"
+CUSTOMER_PRICING_HEADING = "Pricing"
+CUSTOMER_NO_PRICING_SECTIONS = "No priced items on this construction estimate."
+CUSTOMER_CLIENT_LABEL = "Customer"
+CUSTOMER_PROJECT_LABEL = "Project"
 
 
 def office_status_label(value: str | None) -> str:

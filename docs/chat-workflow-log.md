@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-14 — FG-024 TECH-C Family 05 merge + artifact custody
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-14 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 14 SEP 2026 |
+| Objective | TECH-C only: Family 05 DOCX merge + generated-contract artifact custody / immutability |
+| Business decision | DOCX is the primary generated contract artifact. Family 05 remains COMMERCIAL_DRAFT presentation authority. Counsel deferred for technical development; mandatory pre-production gate. Ontario production NOT APPROVED / NOT ACTIVE. GENERATED != EXECUTED. |
+| Architectural decision | Renderer consumes frozen snapshot only. Copy of Family 05 master; never mutate master bytes. Private instance custody + SHA-256. Additive schema for storage key/media type. No Word→PDF path. |
+| Prompt template used | Bounded TECH-C implementation authorization (14 Sep 2026) |
+| Approved Cursor prompt summary | Preflight 6892628 / live f5a6b7c8d9e0; Family 05 merge + custody; python-docx; one additive migration a6b7c8d9e0f1; focused tests then live upgrade; synthetic UAT; full pytest; docs; commit `feat: render governed Family 05 contract artifact`; push; STOP; do not begin TECH-D. |
+| Files expected to change | merge/master/storage services, generation, models, one Alembic revision, python-docx, focused tests, governed docs |
+| Files prohibited from changing | EST-2026-0019; Family 05 master bytes; TECH-D; Native Signing; Slice D; V1 rescore; Ontario PRODUCTION legal bodies |
+| Implementation result | TECH-C **PASS**. Live current `a6b7c8d9e0f1 (head)`. PRODUCTION packages **0**. EST-2026-0019 unchanged. Family 05 SHA unchanged. FG-024 remains OPEN / PARTIAL. |
+| Tests | Focused TECH-C + FG-024 related + Hub/customer/proposal **175 passed** / 42.44s. Full **899 passed**, 3022 warnings, **290.85s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | TECH-D production-shaped synthetic Ontario UAT not started. Ontario production legal content empty. Counsel gate outstanding. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin TECH-D. |
+| Next approved prompt | None from this note. |
+| Commit hash | (this TECH-C commit) |
+
 ### 2026-09-14 — FG-024 TECH-B C1/C2/C3 generation policy
 
 | Field | Content |

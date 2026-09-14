@@ -74,6 +74,8 @@ class GeneratedProjectContract(db.Model):
         index=True,
     )
     artifact_sha256 = db.Column(db.String(64), nullable=False, index=True)
+    artifact_storage_key = db.Column(db.String(255), nullable=True)
+    artifact_media_type = db.Column(db.String(120), nullable=True)
     generated_at = db.Column(db.DateTime, nullable=False)
     generated_by_identifier = db.Column(db.String(150), nullable=False)
     generation_process = db.Column(db.String(40), nullable=False)
@@ -148,6 +150,8 @@ class ProjectContractSnapshot(db.Model):
     commercial_sha256 = db.Column(db.String(64), nullable=False)
     artifact_text = db.Column(db.Text, nullable=False)
     artifact_sha256 = db.Column(db.String(64), nullable=False)
+    artifact_storage_key = db.Column(db.String(255), nullable=True)
+    artifact_media_type = db.Column(db.String(120), nullable=True)
     generated_at = db.Column(db.DateTime, nullable=False)
     generated_by_identifier = db.Column(db.String(150), nullable=False)
     generation_process = db.Column(db.String(40), nullable=False)

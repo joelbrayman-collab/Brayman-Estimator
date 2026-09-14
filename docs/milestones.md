@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-14 — FG-024 TECH-C Family 05 merge + artifact custody
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 TECH-C Family 05 merge + artifact custody |
+| Status | **COMPLETE / NOT A GATE CLOSE.** FG-024 overall **OPEN / PARTIAL**. TECH-D **not started**. |
+| Branch | `main` |
+| Base commit | `689262818b172aa4e317648a9a0ae72639f1f070` |
+| Objective | Merge frozen commercial facts and frozen legal objects into a copy of governed Family 05; retain generated DOCX privately with SHA-256 and master provenance. |
+| Deliverables | `app/services/family_05_master.py`, `family_05_contract_merge.py`, `contract_artifact_storage.py`; generation wiring; additive `a6b7c8d9e0f1` applied live; [testing/fg024-tech-c-live-migrate-bounded-uat-record.md](testing/fg024-tech-c-live-migrate-bounded-uat-record.md). Future Project Element direction recorded only: [architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md). |
+| Validation | Focused TECH-C + FG-024 related + Hub/customer/proposal **175 passed** / 42.44s. Full **899 passed**, 3022 warnings, **290.85s**. Alembic current = heads `a6b7c8d9e0f1`. EST-2026-0019 occupancy unchanged. Live PRODUCTION packages **0**. Family 05 master SHA unchanged. |
+| Architectural findings | Renderer never writes the master path. Historical Slice C contracts remain valid with nullable storage keys. Retrieval reads retained bytes; it does not re-render. |
+| Open decisions | TECH-D production-shaped synthetic Ontario UAT. Ontario 06D. Slice D. Native Signing. V1 rescore. Later Project Element preflight. |
+| Next milestone | **STOP.** Recommended next chunk TECH-D — **not authorized from this note**. |
+| Commit | this TECH-C commit (`feat: render governed Family 05 contract artifact`) |
+| Date | 2026-09-14 |
+
 ### 2026-09-14 — FG-024 TECH-B C1/C2/C3 generation policy
 
 | Field | Content |

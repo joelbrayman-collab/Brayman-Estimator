@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current (V1)** — Slice A comparison service **implemented**. Slice B Hub `#hub-monitor` + office actuals writes **implemented**. Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. **LIVE-MIGRATED**. **OFFICE-UAT-VERIFIED**. V1 recon **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**. |
-| Updated | 2026-09-07 |
+| Updated | 2026-09-14 |
 | Code | `app/services/monitor.py` (`assemble_monitor_v1`). BUILD actuals: `app/models/direct_cost_actual.py`, `app/services/direct_cost_actuals.py`, `app/routes/build.py` create/supersede. Hub: `app/services/project_hub.py`, `app/templates/projects/detail.html` `#hub-monitor`. |
 | ADR | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (baseline and Project Gross Margin; Slice A projection + Slice B Hub display implemented; live-migrated; office-UAT-verified) |
 | Recon | [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) **COMPLETE** |
@@ -42,6 +42,8 @@ Dated MONITOR **comparison snapshots** and dated **forecast snapshots** only. So
 **Slice C (2026-09-07):** Live `flask db upgrade e3f4a5b6c7d8` **PASS**. Office UAT **PASS** on port **5014** against synthetic project **id 13** `FG023-UAT-MONITOR`. Tests **not rerun**.
 
 **Not implemented (out of V1):** MONITOR snapshot table; forecast-final GM; NET PROFIT; Field Event conversion; QuickBooks; Field Web MONITOR. LEARN remains Future on the Hub. Preflight: [fg-023-monitor-v1-implementation-preflight.md](../architecture/fg-023-monitor-v1-implementation-preflight.md) **COMPLETE**. Feature Gate: [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**.
+
+**Future recorded (not authorized):** Project Element / Time / LEARN authority — one CalibraytAI platform, organization configuration data, PROJECT → PROJECT ELEMENT → ACTIVITY → HOURS. Record: [project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md). Do **not** implement from that record.
 
 ## Dependencies
 

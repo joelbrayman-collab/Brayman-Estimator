@@ -1,9 +1,8 @@
 """FG-024 contract generation + immutable snapshot.
 
 Reuses Slice A selector and ADR-037 via that selector. Does not own legal
-approval, Native Signing, or Family 05 merge. TECH-B C1/C2/C3 policy:
-Issued/Accepted locked EstimateVersion, explicit Issued/Accepted Proposal,
-WARN on valid ACTIVE + pending candidate, Ontario requires provision + warranty.
+approval or Native Signing. TECH-C merges a copy of the governed Family 05
+master from the frozen snapshot and retains the DOCX bytes privately.
 """
 
 from __future__ import annotations
@@ -30,6 +29,14 @@ from app.models.project_contract import (
     ProjectContractSnapshotObject,
 )
 from app.models.proposal import Proposal
+from app.services.contract_artifact_storage import (
+    read_retained_docx,
+    store_immutable_docx,
+)
+from app.services.family_05_contract_merge import merge_family_05_from_frozen
+from app.services.family_05_master import (
+    FAMILY_05_MEDIA_TYPE,
+)
 from app.services.legal_content import (
     AUTHORITY_PRODUCTION,
     STATUS_ALLOW,
@@ -55,6 +62,7 @@ BLOCK_PROPOSAL_VERSION_MISMATCH = "PROPOSAL_VERSION_MISMATCH"
 BLOCK_PROPOSAL_PROJECT_MISMATCH = "PROPOSAL_PROJECT_MISMATCH"
 BLOCK_MISSING_COMMERCIAL_FACTS = "MISSING_COMMERCIAL_FACTS"
 BLOCK_MISSING_PRESENTATION_MASTER = "MISSING_PRESENTATION_MASTER"
+BLOCK_PRESENTATION_MASTER_SHA_MISMATCH = "PRESENTATION_MASTER_SHA_MISMATCH"
 BLOCK_MISSING_REQUIRED_LEGAL_OBJECT = "MISSING_REQUIRED_LEGAL_OBJECT"
 BLOCK_LEGAL_OBJECT_NOT_AUTHORITATIVE = "LEGAL_OBJECT_NOT_AUTHORITATIVE"
 BLOCK_PENDING_REVIEW_UNSUPPORTED = "PENDING_REVIEW_UNSUPPORTED"
@@ -238,8 +246,9 @@ def generate_project_contract(
         return _block(BLOCK_ORGANIZATION_MISMATCH)
     client_name = (client.name or "").strip()
     project_name = (project.name or "").strip()
+    project_address = (project.address or "").strip()
     estimate_number = (estimate.estimate_number or "").strip()
-    if not client_name or not project_name or not estimate_number:
+    if not client_name or not project_name or not estimate_number or not project_address:
         return _block(BLOCK_MISSING_COMMERCIAL_FACTS)
     if Decimal(version.total or 0) <= 0 and Decimal(version.subtotal or 0) <= 0:
         return _block(BLOCK_MISSING_COMMERCIAL_FACTS)
@@ -285,7 +294,9 @@ def generate_project_contract(
         "client_name": client_name,
         "project_id": project.id,
         "project_name": project_name,
-        "project_address": project.address or "",
+        "project_address": project_address,
+        "site": project_address,
+        "contract_date": generated_at.date().isoformat(),
         "estimate_id": estimate.id,
         "estimate_number": estimate_number,
         "estimate_version_id": version.id,
@@ -310,6 +321,18 @@ def generate_project_contract(
     ]
     legal_content_sha256 = _sha256_text(_canonical_json(legal_payload))
     commercial_sha256 = _sha256_text(_canonical_json(commercial))
+
+    merged = merge_family_05_from_frozen(
+        presentation_master=master,
+        commercial=commercial,
+        legal_objects=legal_payload,
+    )
+    if not merged.merged or not merged.docx_bytes:
+        return _block(merged.block_code or BLOCK_MISSING_PRESENTATION_MASTER)
+    storage_key, docx_sha256 = store_immutable_docx(
+        organization_id,
+        merged.docx_bytes,
+    )
 
     artifact_lines = [
         "CALIBRAYTAI GENERATED CONTRACT ARTIFACT",
@@ -338,6 +361,8 @@ def generate_project_contract(
         f"presentation_legal_status={master['legal_status']}",
         f"legal_content_sha256={legal_content_sha256}",
         f"commercial_sha256={commercial_sha256}",
+        f"artifact_storage_key={storage_key}",
+        f"docx_sha256={docx_sha256}",
         "LEGAL CONTENT",
     ]
     for item in legal_payload:
@@ -349,7 +374,7 @@ def generate_project_contract(
     artifact_lines.append("COMMERCIAL")
     artifact_lines.append(_canonical_json(commercial))
     artifact_text = "\n".join(artifact_lines) + "\n"
-    artifact_sha256 = _sha256_text(artifact_text)
+    artifact_sha256 = docx_sha256
 
     contract = GeneratedProjectContract(
         organization_id=organization_id,
@@ -361,6 +386,8 @@ def generate_project_contract(
         contract_number=_suggest_contract_number(organization_id),
         status=STATUS_GENERATED,
         artifact_sha256=artifact_sha256,
+        artifact_storage_key=storage_key,
+        artifact_media_type=FAMILY_05_MEDIA_TYPE,
         generated_at=generated_at,
         generated_by_identifier=actor,
         generation_process=GENERATION_PROCESS_SLICE_C,
@@ -405,6 +432,8 @@ def generate_project_contract(
         commercial_sha256=commercial_sha256,
         artifact_text=artifact_text,
         artifact_sha256=artifact_sha256,
+        artifact_storage_key=storage_key,
+        artifact_media_type=FAMILY_05_MEDIA_TYPE,
         generated_at=generated_at,
         generated_by_identifier=actor,
         generation_process=GENERATION_PROCESS_SLICE_C,
@@ -440,6 +469,18 @@ def generate_project_contract(
         artifact_sha256=contract.artifact_sha256,
         warn_code=warn_code,
     )
+
+
+def retrieve_generated_contract_docx(snapshot: ProjectContractSnapshot) -> Optional[bytes]:
+    """Return retained merged DOCX bytes. Does not re-render from live state."""
+    key = (snapshot.artifact_storage_key or "").strip()
+    if not key:
+        return None
+    data = read_retained_docx(key)
+    digest = hashlib.sha256(data).hexdigest()
+    if digest != (snapshot.artifact_sha256 or "").lower():
+        raise ValueError("Retained generated-contract bytes do not match frozen SHA-256.")
+    return data
 
 
 def generation_service_source() -> str:

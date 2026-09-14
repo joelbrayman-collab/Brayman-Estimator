@@ -64,6 +64,7 @@ from app.services.legal_content_update import (
     register_legal_content_source,
 )
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
+from app.services.family_05_master import governed_presentation_master
 from app.services.permit_foundation import establish_project_location_and_profile
 from app.services.proposals import create_proposal, create_proposal_template
 
@@ -86,17 +87,8 @@ COMMERCIAL_CREATE = {
     "justification_reason": "",
 }
 
-SYNTHETIC_MASTER_SHA = hashlib.sha256(
-    "SYNTHETIC FAMILY 05 PRESENTATION SHELL - NOT LEGAL AUTHORITY".encode("utf-8")
-).hexdigest()
-
-SYNTHETIC_MASTER = {
-    "family_code": "05",
-    "version": "V1-SYNTHETIC",
-    "filename": "SYNTHETIC_FAMILY_05_PRESENTATION_SHELL.docx",
-    "sha256": SYNTHETIC_MASTER_SHA,
-    "legal_status": "COMMERCIAL_DRAFT",
-}
+SYNTHETIC_MASTER = governed_presentation_master()
+SYNTHETIC_MASTER_SHA = SYNTHETIC_MASTER["sha256"]
 
 SYNTHETIC_LEGAL_BODY = (
     "SYNTHETIC CONTRACT PROVISION — TEST/UAT — NOT ONTARIO LEGAL AUTHORITY — NOT FOR EXECUTION"
@@ -668,7 +660,7 @@ def test_alembic_fg024_tech_b_upgrade_and_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["f5a6b7c8d9e0"]
+        assert script.get_heads() == ["a6b7c8d9e0f1"]
 
         command.upgrade(alembic_cfg, "e4f5a6b7c8d9")
         engine = db.engine

@@ -198,6 +198,10 @@ def create_app(config=None):
         app.config["QUICKBOOKS_PACKAGE_ROOT"] = tempfile.mkdtemp(
             prefix="calibai-quickbooks-packages-"
         )
+    if app.config.get("TESTING") and not app.config.get("CONTRACT_ARTIFACT_ROOT"):
+        app.config["CONTRACT_ARTIFACT_ROOT"] = tempfile.mkdtemp(
+            prefix="calibai-generated-contracts-"
+        )
 
     db.init_app(app)
     migrate.init_app(app, db)

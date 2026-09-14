@@ -162,6 +162,15 @@ body.sign-body {
     font-size: 1.15rem;
 }
 
+.sign-btn-decline {
+    background: var(--white);
+    color: var(--danger);
+}
+
+.sign-form-decline {
+    margin-top: 8px;
+}
+
 .sign-sha-label {
     margin: 12px 0 4px;
     font-weight: 600;

@@ -1,7 +1,8 @@
 """FG-033 Native Signing request engine.
 
 SIGN-A: freeze + CREATED → APPROVED_FOR_SIGNATURE.
-SIGN-B: invitation token + SENT → SIGNED. No executed PDF.
+SIGN-B: invitation token + SENT → SIGNED.
+SIGN-C: countersign + executed PDF custody + VOID / EXPIRE / DECLINE / RESEND.
 """
 
 from __future__ import annotations
@@ -26,6 +27,7 @@ from app.models.signing import (
     ACTOR_AUTOMATION,
     ACTOR_HUMAN,
     ACTOR_SIGNER,
+    ACTOR_SYSTEM,
     AUTHORITY_SYNTHETIC_UAT,
     CONSENT_SYNTHETIC_UAT_BODY,
     CONSENT_SYNTHETIC_UAT_CODE,
@@ -33,27 +35,36 @@ from app.models.signing import (
     DOCUMENT_FAMILY_CONTRACT,
     EVENT_APPROVED_FOR_SIGNATURE,
     EVENT_CONSENT_ACCEPTED,
+    EVENT_COUNTERSIGNED,
+    EVENT_DECLINED,
+    EVENT_EXECUTED,
+    EVENT_EXPIRED,
     EVENT_REQUEST_CREATED,
+    EVENT_RESENT,
     EVENT_SENT,
     EVENT_SIGNED,
     EVENT_VIEWED,
+    EVENT_VOIDED,
     ROLE_CUSTOMER,
     ROLE_ORGANIZATION_COUNTERSIGN,
     SIGNING_AUTHORITY_CLASSES,
     STATUS_APPROVED_FOR_SIGNATURE,
     STATUS_CREATED,
     STATUS_DECLINED,
+    STATUS_EXECUTED,
     STATUS_EXPIRED,
     STATUS_SENT,
     STATUS_SIGNED,
     STATUS_VOIDED,
     SigningConsentVersion,
     SigningEvent,
+    SigningExecutedArtifact,
     SigningFrozenArtifact,
     SigningParticipant,
     SigningRequest,
     SigningTokenAccessAttempt,
 )
+from app.models.project import Project
 from app.models.user import User, UserMembership
 from app.project_controls.models import ChangeOrder
 from app.project_controls.pdf import generate_change_order_pdf
@@ -61,10 +72,12 @@ from app.project_controls.repository import get_change_order
 from app.services.contract_artifact_storage import read_retained_docx
 from app.services.family_05_master import FAMILY_05_MASTER_SHA256, FAMILY_05_MEDIA_TYPE
 from app.services.signing_artifact_storage import (
+    SigningArtifactStorageError,
     read_retained_bytes,
     sha256_hex,
     store_immutable_bytes,
 )
+from app.services.signing_executed_pdf import assemble_executed_pdf
 
 PROTECTED_ESTIMATE_NUMBER = "EST-2026-0019"
 DEFAULT_INVITATION_DAYS = 7
@@ -108,11 +121,33 @@ BLOCK_CONSENT_NOT_ACCEPTED = "CONSENT_NOT_ACCEPTED"
 BLOCK_CONFIRMED_NAME_REQUIRED = "CONFIRMED_NAME_REQUIRED"
 BLOCK_CONTRACT_PDF_NOT_AVAILABLE = "CONTRACT_PDF_NOT_AVAILABLE"
 BLOCK_REQUEST_TERMINAL = "REQUEST_TERMINAL"
+BLOCK_AI_CANNOT_COUNTERSIGN = "AI_CANNOT_COUNTERSIGN"
+BLOCK_REQUEST_NOT_SIGNED = "REQUEST_NOT_SIGNED"
+BLOCK_COUNTERSIGN_NOT_REQUIRED = "COUNTERSIGN_NOT_REQUIRED"
+BLOCK_COUNTERSIGN_REQUIRED = "COUNTERSIGN_REQUIRED"
+BLOCK_CUSTOMER_SIGNATURE_MISSING = "CUSTOMER_SIGNATURE_MISSING"
+BLOCK_VOID_REASON_REQUIRED = "VOID_REASON_REQUIRED"
+BLOCK_REQUEST_NOT_ELIGIBLE = "REQUEST_NOT_ELIGIBLE"
+BLOCK_EXECUTED_ARTIFACT_MISSING = "EXECUTED_ARTIFACT_MISSING"
+BLOCK_EXECUTED_ARTIFACT_FAILED = "EXECUTED_ARTIFACT_FAILED"
+BLOCK_ALREADY_EXECUTED = "ALREADY_EXECUTED"
 
 DEFAULT_TOKEN_FAIL_LIMIT = 8
 DEFAULT_TOKEN_FAIL_WINDOW_SECONDS = 900
 _CREDENTIAL_RE = re.compile(r"^([A-Za-z0-9_-]{8,80})\.([A-Za-z0-9_-]{20,200})$")
 _TERMINAL_STATUSES = frozenset({STATUS_VOIDED, STATUS_EXPIRED, STATUS_DECLINED})
+_EXPIRE_ELIGIBLE_STATUSES = frozenset(
+    {STATUS_CREATED, STATUS_APPROVED_FOR_SIGNATURE, STATUS_SENT}
+)
+_VOID_ELIGIBLE_STATUSES = frozenset(
+    {
+        STATUS_CREATED,
+        STATUS_APPROVED_FOR_SIGNATURE,
+        STATUS_SENT,
+        STATUS_SIGNED,
+    }
+)
+_COMPLETED_STATUSES = frozenset({STATUS_SIGNED, STATUS_EXECUTED})
 
 _AI_OR_AUTOMATION = frozenset({ACTOR_AI, ACTOR_AUTOMATION})
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
@@ -159,9 +194,16 @@ def retrieve_frozen_artifact_bytes(artifact: SigningFrozenArtifact) -> bytes:
     return data
 
 
-def _require_human(actor_kind: str, *, creating: bool) -> None:
+def _require_human(
+    actor_kind: str,
+    *,
+    creating: bool = False,
+    ai_block_code: Optional[str] = None,
+) -> None:
     kind = (actor_kind or "").strip().upper()
     if kind in _AI_OR_AUTOMATION:
+        if ai_block_code:
+            raise SigningServiceError(ai_block_code)
         raise SigningServiceError(
             BLOCK_AI_CANNOT_CREATE if creating else BLOCK_AI_CANNOT_APPROVE
         )
@@ -690,6 +732,50 @@ def _customer_participant(request: SigningRequest) -> SigningParticipant:
     return customer
 
 
+def _org_countersign_participant(request: SigningRequest) -> Optional[SigningParticipant]:
+    return next(
+        (row for row in request.participants if row.role == ROLE_ORGANIZATION_COUNTERSIGN),
+        None,
+    )
+
+
+def _new_lookup_key() -> str:
+    lookup_key = secrets.token_urlsafe(16)
+    while SigningParticipant.query.filter_by(lookup_key=lookup_key).first() is not None:
+        lookup_key = secrets.token_urlsafe(16)
+    return lookup_key
+
+
+def _invalidate_customer_token(participant: SigningParticipant, *, now: datetime) -> None:
+    if participant.token_consumed_at is None:
+        participant.token_consumed_at = now
+
+
+def _document_reference(request: SigningRequest) -> str:
+    if request.document_family == DOCUMENT_FAMILY_CHANGE_ORDER:
+        change_order = get_change_order(
+            request.source_record_id,
+            organization_id=request.organization_id,
+        )
+        if change_order is not None and (change_order.number or "").strip():
+            return change_order.number
+    if request.document_family == DOCUMENT_FAMILY_CONTRACT:
+        contract = db.session.get(GeneratedProjectContract, request.source_record_id)
+        if contract is not None and (getattr(contract, "contract_number", None) or "").strip():
+            return contract.contract_number
+    project = db.session.get(Project, request.project_id)
+    if project is not None and (project.name or "").strip():
+        return project.name
+    return request.request_number
+
+
+def _require_customer_signature(request: SigningRequest) -> SigningParticipant:
+    customer = _customer_participant(request)
+    if not (customer.confirmed_signer_name or "").strip() or customer.signed_at is None:
+        raise SigningServiceError(BLOCK_CUSTOMER_SIGNATURE_MISSING)
+    return customer
+
+
 def issue_customer_invitation(
     request_id: int,
     *,
@@ -709,9 +795,7 @@ def issue_customer_invitation(
     if request.expires_at is None or request.expires_at <= now:
         raise SigningServiceError(BLOCK_TOKEN_EXPIRED)
     customer = _customer_participant(request)
-    lookup_key = secrets.token_urlsafe(16)
-    while SigningParticipant.query.filter_by(lookup_key=lookup_key).first() is not None:
-        lookup_key = secrets.token_urlsafe(16)
+    lookup_key = _new_lookup_key()
     secret = secrets.token_urlsafe(32)
     customer.lookup_key = lookup_key
     customer.token_hash = hash_invitation_secret(secret)
@@ -780,6 +864,12 @@ def resolve_customer_access(
         raise SigningServiceError(BLOCK_REQUEST_TERMINAL)
     expires_at = participant.token_expires_at or request.expires_at
     if expires_at is None or expires_at <= now:
+        _expire_request_once(
+            request,
+            now=now,
+            actor_kind=ACTOR_SYSTEM,
+            actor_identifier="signing-expire",
+        )
         _record_access_attempt(
             lookup_key=lookup_key,
             client_ip=client_ip,
@@ -787,8 +877,8 @@ def resolve_customer_access(
         )
         db.session.commit()
         raise SigningServiceError(BLOCK_TOKEN_EXPIRED)
-    if request.status == STATUS_SIGNED or participant.token_consumed_at is not None:
-        if allow_completed and request.status == STATUS_SIGNED:
+    if request.status in _COMPLETED_STATUSES or participant.token_consumed_at is not None:
+        if allow_completed and request.status in _COMPLETED_STATUSES:
             _record_access_attempt(
                 lookup_key=lookup_key,
                 client_ip=client_ip,
@@ -903,5 +993,370 @@ def accept_and_sign(
         actor_identifier=participant.invited_email,
         artifact_sha256=request.frozen_artifact.sha256,
     )
+    db.session.flush()
+    if not request.countersign_required:
+        try:
+            with db.session.begin_nested():
+                _retain_executed_artifact(
+                    request,
+                    actor_kind=ACTOR_SYSTEM,
+                    actor_identifier="signing-execute",
+                    now=now,
+                )
+        except (SigningServiceError, SigningArtifactStorageError):
+            pass
     db.session.commit()
     return request
+
+
+def _expire_request_once(
+    request: SigningRequest,
+    *,
+    now: datetime,
+    actor_kind: str,
+    actor_identifier: str,
+) -> bool:
+    if request.status not in _EXPIRE_ELIGIBLE_STATUSES:
+        return False
+    if request.expires_at is None or request.expires_at > now:
+        return False
+    if any(event.event_type == EVENT_EXPIRED for event in request.events):
+        request.status = STATUS_EXPIRED
+        return True
+    customer = _customer_participant(request)
+    _invalidate_customer_token(customer, now=now)
+    request.status = STATUS_EXPIRED
+    _append_event(
+        request,
+        event_type=EVENT_EXPIRED,
+        actor_kind=actor_kind,
+        actor_identifier=actor_identifier,
+        artifact_sha256=request.frozen_artifact.sha256,
+    )
+    return True
+
+
+def _require_signed_change_order_pdf(request: SigningRequest) -> bytes:
+    if request.document_family != DOCUMENT_FAMILY_CHANGE_ORDER:
+        raise SigningServiceError(BLOCK_CONTRACT_PDF_NOT_AVAILABLE)
+    if request.frozen_artifact.media_type != PDF_MEDIA_TYPE:
+        raise SigningServiceError(BLOCK_CONTRACT_PDF_NOT_AVAILABLE)
+    return retrieve_frozen_artifact_bytes(request.frozen_artifact)
+
+
+def _retain_executed_artifact(
+    request: SigningRequest,
+    *,
+    actor_kind: str,
+    actor_identifier: str,
+    now: datetime,
+    store_bytes=None,
+) -> SigningExecutedArtifact:
+    if request.status == STATUS_EXECUTED or request.executed_artifact is not None:
+        raise SigningServiceError(BLOCK_ALREADY_EXECUTED)
+    if request.status != STATUS_SIGNED:
+        raise SigningServiceError(BLOCK_REQUEST_NOT_SIGNED)
+    _require_customer_signature(request)
+    store = store_bytes or store_immutable_bytes
+    frozen_bytes = _require_signed_change_order_pdf(request)
+    try:
+        executed_bytes = assemble_executed_pdf(
+            frozen_bytes,
+            request,
+            document_reference=_document_reference(request),
+            executed_at=now,
+        )
+        storage_key, digest = store(
+            request.organization_id,
+            executed_bytes,
+            extension=".pdf",
+        )
+    except SigningServiceError:
+        raise
+    except SigningArtifactStorageError as exc:
+        raise SigningServiceError(BLOCK_EXECUTED_ARTIFACT_FAILED) from exc
+    except Exception as exc:
+        raise SigningServiceError(BLOCK_EXECUTED_ARTIFACT_FAILED) from exc
+    executed = SigningExecutedArtifact(
+        organization_id=request.organization_id,
+        signing_request_id=request.id,
+        source_frozen_artifact_id=request.frozen_artifact_id,
+        media_type=PDF_MEDIA_TYPE,
+        storage_key=storage_key,
+        sha256=digest,
+        created_at=now,
+    )
+    db.session.add(executed)
+    db.session.flush()
+    request.status = STATUS_EXECUTED
+    request.executed_at = now
+    _append_event(
+        request,
+        event_type=EVENT_EXECUTED,
+        actor_kind=actor_kind,
+        actor_identifier=actor_identifier,
+        artifact_sha256=digest,
+    )
+    return executed
+
+
+def countersign_and_execute(
+    request_id: int,
+    *,
+    organization_id: str,
+    actor_kind: str,
+    actor_user_id: int,
+    actor_identifier: str,
+    store_bytes=None,
+) -> SigningRequest:
+    _require_human(actor_kind, ai_block_code=BLOCK_AI_CANNOT_COUNTERSIGN)
+    user = _require_active_membership(actor_user_id, organization_id)
+    request = get_signing_request(request_id, organization_id)
+    if request.status in _TERMINAL_STATUSES:
+        raise SigningServiceError(BLOCK_REQUEST_TERMINAL)
+    if request.status == STATUS_EXECUTED:
+        raise SigningServiceError(BLOCK_ALREADY_EXECUTED)
+    if request.status != STATUS_SIGNED:
+        raise SigningServiceError(BLOCK_REQUEST_NOT_SIGNED)
+    if not request.countersign_required:
+        raise SigningServiceError(BLOCK_COUNTERSIGN_NOT_REQUIRED)
+    _require_customer_signature(request)
+    retrieve_frozen_artifact_bytes(request.frozen_artifact)
+    identifier = (actor_identifier or user.email).strip() or user.email
+    now = datetime.utcnow()
+    try:
+        request.countersigned_at = now
+        request.countersigned_by_user_id = user.id
+        request.countersigned_by_identifier = identifier
+        org_participant = _org_countersign_participant(request)
+        if org_participant is not None:
+            org_participant.user_id = user.id
+            org_participant.confirmed_signer_name = user.display_name
+            org_participant.signed_at = now
+        _append_event(
+            request,
+            event_type=EVENT_COUNTERSIGNED,
+            actor_kind=ACTOR_HUMAN,
+            actor_identifier=identifier,
+            artifact_sha256=request.frozen_artifact.sha256,
+        )
+        _retain_executed_artifact(
+            request,
+            actor_kind=ACTOR_HUMAN,
+            actor_identifier=identifier,
+            now=now,
+            store_bytes=store_bytes,
+        )
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+    return get_signing_request(request_id, organization_id)
+
+
+def execute_signed_request(
+    request_id: int,
+    *,
+    organization_id: str,
+    actor_kind: str,
+    actor_user_id: int,
+    actor_identifier: str,
+    store_bytes=None,
+) -> SigningRequest:
+    _require_human(actor_kind, creating=False)
+    user = _require_active_membership(actor_user_id, organization_id)
+    request = get_signing_request(request_id, organization_id)
+    if request.status in _TERMINAL_STATUSES:
+        raise SigningServiceError(BLOCK_REQUEST_TERMINAL)
+    if request.status == STATUS_EXECUTED:
+        raise SigningServiceError(BLOCK_ALREADY_EXECUTED)
+    if request.status != STATUS_SIGNED:
+        raise SigningServiceError(BLOCK_REQUEST_NOT_SIGNED)
+    if request.countersign_required:
+        raise SigningServiceError(BLOCK_COUNTERSIGN_REQUIRED)
+    identifier = (actor_identifier or user.email).strip() or user.email
+    now = datetime.utcnow()
+    try:
+        _retain_executed_artifact(
+            request,
+            actor_kind=ACTOR_HUMAN,
+            actor_identifier=identifier,
+            now=now,
+            store_bytes=store_bytes,
+        )
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+    return get_signing_request(request_id, organization_id)
+
+
+def resend_customer_invitation(
+    request_id: int,
+    *,
+    organization_id: str,
+    actor_kind: str,
+    actor_user_id: int,
+    actor_identifier: str,
+) -> InvitationIssue:
+    _require_human(actor_kind, creating=False)
+    user = _require_active_membership(actor_user_id, organization_id)
+    request = get_signing_request(request_id, organization_id)
+    if request.status in _TERMINAL_STATUSES:
+        raise SigningServiceError(BLOCK_REQUEST_TERMINAL)
+    if request.status != STATUS_SENT:
+        raise SigningServiceError(BLOCK_REQUEST_NOT_SENT)
+    now = datetime.utcnow()
+    if request.expires_at is None or request.expires_at <= now:
+        raise SigningServiceError(BLOCK_TOKEN_EXPIRED)
+    customer = _customer_participant(request)
+    lookup_key = _new_lookup_key()
+    secret = secrets.token_urlsafe(32)
+    customer.lookup_key = lookup_key
+    customer.token_hash = hash_invitation_secret(secret)
+    customer.token_expires_at = request.expires_at
+    customer.token_consumed_at = None
+    identifier = (actor_identifier or user.email).strip() or user.email
+    _append_event(
+        request,
+        event_type=EVENT_RESENT,
+        actor_kind=ACTOR_HUMAN,
+        actor_identifier=identifier,
+        artifact_sha256=request.frozen_artifact.sha256,
+    )
+    db.session.commit()
+    return InvitationIssue(
+        request=request,
+        path=customer_signing_path(lookup_key, secret),
+        lookup_key=lookup_key,
+        secret=secret,
+    )
+
+
+def void_signing_request(
+    request_id: int,
+    *,
+    organization_id: str,
+    actor_kind: str,
+    actor_user_id: int,
+    actor_identifier: str,
+    reason: str,
+) -> SigningRequest:
+    _require_human(actor_kind, creating=False)
+    user = _require_active_membership(actor_user_id, organization_id)
+    request = get_signing_request(request_id, organization_id)
+    if request.status == STATUS_EXECUTED:
+        raise SigningServiceError(BLOCK_ALREADY_EXECUTED)
+    if request.status in _TERMINAL_STATUSES:
+        raise SigningServiceError(BLOCK_REQUEST_TERMINAL)
+    if request.status not in _VOID_ELIGIBLE_STATUSES:
+        raise SigningServiceError(BLOCK_REQUEST_NOT_ELIGIBLE)
+    reason_text = (reason or "").strip()
+    if not reason_text:
+        raise SigningServiceError(BLOCK_VOID_REASON_REQUIRED)
+    if len(reason_text) > 255:
+        raise SigningServiceError(BLOCK_VOID_REASON_REQUIRED)
+    now = datetime.utcnow()
+    identifier = (actor_identifier or user.email).strip() or user.email
+    customer = _customer_participant(request)
+    _invalidate_customer_token(customer, now=now)
+    request.status = STATUS_VOIDED
+    request.voided_at = now
+    request.voided_by_user_id = user.id
+    request.voided_by_identifier = identifier
+    request.void_reason = reason_text
+    _append_event(
+        request,
+        event_type=EVENT_VOIDED,
+        actor_kind=ACTOR_HUMAN,
+        actor_identifier=identifier,
+        artifact_sha256=request.frozen_artifact.sha256,
+    )
+    db.session.commit()
+    return request
+
+
+def expire_signing_request(
+    request_id: int,
+    *,
+    organization_id: str,
+    actor_kind: str,
+    actor_user_id: int,
+    actor_identifier: str,
+    now: Optional[datetime] = None,
+) -> SigningRequest:
+    _require_human(actor_kind, creating=False)
+    user = _require_active_membership(actor_user_id, organization_id)
+    request = get_signing_request(request_id, organization_id)
+    moment = now or datetime.utcnow()
+    identifier = (actor_identifier or user.email).strip() or user.email
+    if request.status == STATUS_EXPIRED:
+        return request
+    if request.status in _TERMINAL_STATUSES:
+        raise SigningServiceError(BLOCK_REQUEST_TERMINAL)
+    if request.status not in _EXPIRE_ELIGIBLE_STATUSES:
+        raise SigningServiceError(BLOCK_REQUEST_NOT_ELIGIBLE)
+    if request.expires_at is None or request.expires_at > moment:
+        raise SigningServiceError(BLOCK_REQUEST_NOT_ELIGIBLE)
+    _expire_request_once(
+        request,
+        now=moment,
+        actor_kind=ACTOR_HUMAN,
+        actor_identifier=identifier,
+    )
+    db.session.commit()
+    return request
+
+
+def decline_signing_request(
+    credential: str,
+    *,
+    client_ip: Optional[str],
+    user_agent: Optional[str],
+) -> SigningRequest:
+    access = resolve_customer_access(
+        credential,
+        client_ip=client_ip,
+        user_agent=user_agent,
+        allow_completed=False,
+    )
+    request = access.request
+    participant = access.participant
+    now = datetime.utcnow()
+    participant.token_consumed_at = now
+    participant.completion_ip = _client_ip(client_ip)
+    participant.user_agent = _user_agent(user_agent)
+    request.status = STATUS_DECLINED
+    request.declined_at = now
+    _append_event(
+        request,
+        event_type=EVENT_DECLINED,
+        actor_kind=ACTOR_SIGNER,
+        actor_identifier=participant.invited_email,
+        artifact_sha256=request.frozen_artifact.sha256,
+    )
+    db.session.commit()
+    return request
+
+
+def retrieve_executed_artifact_bytes(
+    request_id: int,
+    organization_id: str,
+) -> bytes:
+    request = get_signing_request(request_id, organization_id)
+    executed = request.executed_artifact
+    if executed is None:
+        raise SigningServiceError(BLOCK_EXECUTED_ARTIFACT_MISSING)
+    if executed.organization_id != organization_id:
+        raise SigningServiceError(BLOCK_ORGANIZATION_MISMATCH)
+    data = read_retained_bytes(executed.storage_key)
+    if sha256_hex(data) != executed.sha256:
+        raise SigningServiceError(BLOCK_ARTIFACT_SHA_MISMATCH)
+    return data
+
+
+def executed_pdf_bytes_for_customer(access: ResolvedSigningAccess) -> bytes:
+    request = access.request
+    if request.status != STATUS_EXECUTED:
+        raise SigningServiceError(BLOCK_EXECUTED_ARTIFACT_MISSING)
+    return retrieve_executed_artifact_bytes(request.id, request.organization_id)

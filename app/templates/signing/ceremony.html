@@ -37,12 +37,23 @@
 
         {% if completed %}
         <section class="sign-panel" data-sign-complete="true">
+            {% if executed %}
+            <p class="sign-ok">Executed successfully.</p>
+            <p class="sign-muted">This signing request is complete.</p>
+            {% if executed_sha %}
+            <p class="sign-sha-label">Executed document SHA-256</p>
+            <p class="sign-hash">{{ executed_sha }}</p>
+            {% endif %}
+            {% else %}
             <p class="sign-ok">Signed successfully.</p>
             {% if signing_request.countersign_required %}
             <p class="sign-muted">Awaiting organization countersignature.</p>
             {% endif %}
+            {% endif %}
             <p class="sign-muted">Confirmed as {{ participant.confirmed_signer_name }}.</p>
-            {% if is_change_order_pdf %}
+            {% if executed %}
+            <a class="sign-btn sign-btn-primary" href="{{ url_for('sign.executed', credential=credential) }}">Download executed PDF</a>
+            {% elif is_change_order_pdf %}
             <a class="sign-btn" href="{{ url_for('sign.document', credential=credential) }}">Download signed document copy</a>
             {% endif %}
         </section>
@@ -80,6 +91,10 @@
                     value="{{ participant.invited_name }}"
                 >
                 <button class="sign-btn sign-btn-primary" type="submit">Sign &amp; Accept</button>
+            </form>
+            <form method="post" action="{{ url_for('sign.decline', credential=credential) }}" class="sign-form sign-form-decline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="sign-btn sign-btn-decline" type="submit">Decline</button>
             </form>
         </section>
         {% endif %}

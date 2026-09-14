@@ -12,6 +12,8 @@
             <h1 class="sign-doc-title">This signing link is not available.</h1>
             {% if rate_limited %}
             <p class="sign-error">Too many attempts. Try again later.</p>
+            {% elif declined %}
+            <p class="sign-muted">This invitation was declined. No signature was recorded.</p>
             {% else %}
             <p class="sign-muted">The invitation may be invalid, expired, or already used.</p>
             {% endif %}

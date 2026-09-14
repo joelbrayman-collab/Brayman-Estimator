@@ -239,6 +239,7 @@ def create_app(config=None):
     from app.routes.scope_delivery import scope_delivery_bp
     from app.routes.estimate_quickbooks import estimate_quickbooks_bp
     from app.routes.sign import sign_bp
+    from app.routes.signing import signing_office_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(clients_bp)
@@ -262,6 +263,7 @@ def create_app(config=None):
     app.register_blueprint(scope_delivery_bp)
     app.register_blueprint(estimate_quickbooks_bp)
     app.register_blueprint(sign_bp)
+    app.register_blueprint(signing_office_bp)
 
     _register_office_auth(app)
 

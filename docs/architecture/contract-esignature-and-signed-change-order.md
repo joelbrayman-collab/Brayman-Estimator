@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE.** Subsequent [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **OPEN / PARTIAL**. SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C/D/E **NOT STARTED**. Production / real-customer Native Signing **NOT COMPLETE**. Recommendation **NATIVE V1**. Counsel spec **PREPARED** (historical draft; not a development gate). |
+| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE.** Subsequent [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **OPEN / PARTIAL**. SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C **IMPLEMENTED**. SIGN-D/E **NOT STARTED**. Production / real-customer Native Signing **NOT COMPLETE**. Recommendation **NATIVE V1**. Counsel spec **PREPARED** (historical draft; not a development gate). |
 | Date | 2026-08-31 (recon); **2026-09-01** (counsel specification prepared) |
 | Product | The Estimator / CalibraytAI (formerly CalibAi) |
 | Canonical architecture | This document |
@@ -24,6 +24,8 @@ BLOCKED PENDING ONTARIO COUNSEL APPROVAL OF THE SIGNING PROCESS
 Separately governed Native Signing architecture, Feature Gate drafting, implementation, testing, and non-production UAT may proceed when Joel authorizes that track. Do **not** enable real customer / commercial signing until counsel decisions are reconciled and approved. The Legal Content Gate for construction Contract / Warranty templates remains **separate** and in force. Future North American legal-content lifecycle is [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) (**FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**); that recording does **not** authorize Native Signing product work.
 
 **Subsequent status (2026-09-07, FG-024 recorded):** FG-024 records the future CONTRACT legal-content library, update engine, frozen generation snapshot, and change monitoring. Native Signing process recon in this document remains unchanged. Contract signing remains later and behind the Legal Content Gate.
+
+**Subsequent status (2026-09-14, FG-033 SIGN-C):** SIGN-C countersign + executed PDF custody + VOID/EXPIRE/DECLINE/RESEND **IMPLEMENTED**. Pre-sign freeze preserved. Distinct executed SHA. Customer/office executed retrieval. Additive **`d9e0f1a2b3c4`**. Real iPhone close remains SIGN-D. LibreOffice remains SIGN-E. No transactional email. No external-review dependency. Production Native Signing **NOT COMPLETE**. V1 **not rescored**.
 
 **Subsequent status (2026-09-14, FG-033 SIGN-B):** SIGN-B invitation + public `/sign` customer ceremony **IMPLEMENTED**. Hash-at-rest token. No customer account. Stops at SIGNED. Countersign and executed PDF remain SIGN-C. Real iPhone close remains SIGN-D. No transactional email. Additive **`c8d9e0f1a2b3`**. No external-review dependency in the development workflow. Production Native Signing **NOT COMPLETE**. V1 **not rescored**.
 

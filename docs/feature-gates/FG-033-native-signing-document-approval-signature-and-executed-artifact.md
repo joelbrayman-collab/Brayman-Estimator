@@ -7,9 +7,9 @@
 | Target Milestone | **V1-07.** Not a 12th major V1 package. Does **not** rescore V1. |
 | Module | **Signing Service** owns signing requests, frozen signable artifacts, participants, consent versions, signing events, and later executed artifacts. Change Orders remain Project Controls. Generated contracts remain FG-024 / CONTRACT. Native Signing is an **overlay**. |
 | Date | 2026-09-14 |
-| Status | **OPEN / PARTIAL.** SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C/D/E **NOT STARTED**. Production / real-customer Native Signing **NOT COMPLETE**. No external-review dependency in the development workflow. |
+| Status | **OPEN / PARTIAL.** SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C **IMPLEMENTED**. SIGN-D/E **NOT STARTED**. Production / real-customer Native Signing **NOT COMPLETE**. No external-review dependency in the development workflow. |
 | Architecture | [contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md) **ARCHITECTURE RECONNAISSANCE COMPLETE**. [native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) **DRAFT FOR ONTARIO COUNSEL REVIEW / NOT LEGAL APPROVAL**. [change-order-document-family.md](../architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (V1 signing freezes the current ReportLab CO PDF). [FG-024](FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted**. [ADR-004](../adr/ADR-004-proposal-acceptance-workflow.md) **Proposed** (Proposal e-sign out of this gate). |
-| Related ADRs | No new ADR in SIGN-A or SIGN-B. Existing Native Signing recon remains architecture. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) / [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (contract legal content remains separate). |
+| Related ADRs | No new ADR in SIGN-A, SIGN-B, or SIGN-C. Existing Native Signing recon remains architecture. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) / [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (contract legal content remains separate). |
 | Prerequisites | TECH-A/B/C/D **PASS**. Frozen generated-contract DOCX custody live. Change Order business record live. FG-018 office Users / membership. Development proceeds on product/software requirements. Do **not** add legal-review gates or approval states. |
 
 ---
@@ -21,10 +21,10 @@
 | Feature Gate (this document) | **OPEN / PARTIAL** |
 | SIGN-A | **IMPLEMENTED** — freeze + request engine + audit through APPROVED_FOR_SIGNATURE |
 | SIGN-B | **IMPLEMENTED** — secure invitation + public `/sign` + iPhone-first customer ceremony through SIGNED |
-| SIGN-C | **NOT STARTED** |
+| SIGN-C | **IMPLEMENTED** — countersign + executed PDF custody + VOID/EXPIRE/DECLINE/RESEND |
 | SIGN-D | **NOT STARTED** |
 | SIGN-E | **NOT STARTED** |
-| Schema / Alembic | Additive SIGN-A **`b7c8d9e0f1a2`**. Additive SIGN-B **`c8d9e0f1a2b3`** revises **`b7c8d9e0f1a2`**. Live current **equals** repository head. |
+| Schema / Alembic | Additive SIGN-A **`b7c8d9e0f1a2`**. Additive SIGN-B **`c8d9e0f1a2b3`**. Additive SIGN-C **`d9e0f1a2b3c4`** revises **`c8d9e0f1a2b3`**. Live current **equals** repository head. |
 | Production Native Signing | **NOT COMPLETE** |
 | V1 scoring | **NOT RESCORED** (**60% / 4 of 11**) |
 
@@ -33,11 +33,12 @@ FG-033:
 OPEN / PARTIAL
 SIGN-A IMPLEMENTED
 SIGN-B IMPLEMENTED
-SIGN-C / SIGN-D / SIGN-E NOT STARTED
+SIGN-C IMPLEMENTED
+SIGN-D / SIGN-E NOT STARTED
 PUBLIC /sign ROUTE NARROWLY EXEMPTED
 TOKEN HASH-AT-REST
 NO CUSTOMER ACCOUNT
-NO EXECUTED PDF
+EXECUTED PDF IN PRIVATE CUSTODY
 NO TRANSACTIONAL EMAIL
 NO LIBREOFFICE CONVERSION
 NO EXTERNAL-REVIEW DEPENDENCY
@@ -63,15 +64,15 @@ Change Orders are the first overlay. Generated contracts use the same engine lat
 | 1 | What problem does this solve? | Brayman internally approved Change Orders and generated contracts can be mistaken for customer-authorized / executed documents. There is no governed signing request, freeze, invitation, ceremony, or executed artifact. |
 | 2 | Who is the user? | Office: any **ACTIVE** organization member (no RBAC). Customer: invited signer via secure link (SIGN-B); **no** CalibraytAI account. Not AI. Not a public generate-anyway control. |
 | 3 | Which module owns it? | Signing Service (`app/services/signing.py`, `app/models/signing.py`). Overlay only. Does not own Change Order commercial records or generated-contract commercial identity. |
-| 4 | What data does it own? | `signing_requests`, `signing_participants`, `signing_events`, `signing_frozen_artifacts`, `signing_consent_versions`, `signing_token_access_attempts` (SIGN-B), later executed artifacts (SIGN-C). Private `instance/signing_artifacts/`. |
+| 4 | What data does it own? | `signing_requests`, `signing_participants`, `signing_events`, `signing_frozen_artifacts`, `signing_consent_versions`, `signing_token_access_attempts` (SIGN-B), `signing_executed_artifacts` (SIGN-C). Private `instance/signing_artifacts/`. |
 | 5 | What data does it reference? | Organization, User / UserMembership, Client, Project, `ChangeOrder`, `GeneratedProjectContract` / `ProjectContractSnapshot`, Family 05 master SHA, TECH-C DOCX custody. |
-| 6 | What may it change? | Signing-owned tables, frozen signing-artifact bytes, SIGN-A/B CLI, public `/sign` (SIGN-B), later executed PDF (SIGN-C). May freeze a **copy** of the current CO PDF. Must **not** mutate CO statuses or generated-contract `GENERATED` constraint. |
+| 6 | What may it change? | Signing-owned tables, frozen and executed signing-artifact bytes, SIGN-A/B/C CLI, public `/sign` (SIGN-B/C), office `/signing-requests/<id>/executed`. May freeze a **copy** of the current CO PDF. Must **not** mutate CO statuses or generated-contract `GENERATED` constraint. |
 | 7 | What must it not change? | `CHANGE_ORDER_STATUSES`; EST-2026-0019; PRODUCTION Ontario legal packages; Family 05 master; FG-024 Slice D; Proposal e-sign (ADR-004); Time / MONITOR / LEARN; inventing RBAC; DocuSign/Adobe as source of truth. |
-| 8 | What are the acceptance criteria? | Complete workstream: immutable artifact; human APPROVED_FOR_SIGNATURE; secure invite; consent; signature; countersign path; executed custody; audit; CO + synthetic contract E2E; iPhone UAT; production contract signing remains fail-closed. SIGN-A subset: freeze + CREATED → APPROVED_FOR_SIGNATURE + audit. SIGN-B subset: invitation + public ceremony through SIGNED. |
-| 9 | What tests are required? | Dedicated SIGN-A and SIGN-B identity/tenancy/token/ceremony tests; migration upgrade/downgrade; TECH-A/B/C/D and Change Order regressions; full suite. |
+| 8 | What are the acceptance criteria? | Complete workstream: immutable artifact; human APPROVED_FOR_SIGNATURE; secure invite; consent; signature; countersign path; executed custody; audit; CO + synthetic contract E2E; iPhone UAT; production contract signing remains fail-closed. SIGN-A subset: freeze + CREATED → APPROVED_FOR_SIGNATURE + audit. SIGN-B subset: invitation + public ceremony through SIGNED. SIGN-C subset: countersign / no-countersign execute + executed PDF custody + VOID/EXPIRE/DECLINE/RESEND. |
+| 9 | What tests are required? | Dedicated SIGN-A, SIGN-B, and SIGN-C identity/tenancy/token/ceremony/custody tests; migration upgrade/downgrade; TECH-A/B/C/D and Change Order regressions; full suite. |
 | 10 | What documentation must be updated? | This gate; feature-gates README; modules; architecture; current-state; session-handoff; chat-workflow-log; milestones; project-state-report; v1-completion-register (no rescore); Native Signing recon subsequent status. |
-| 11 | Does it require an ADR? | **No new ADR for SIGN-A or SIGN-B.** Existing recon already recommends NATIVE V1. Schema follows additive org-scoped immutable-artifact pattern. |
-| 12 | Does it require a database migration? | **Yes.** SIGN-A **`b7c8d9e0f1a2`**. SIGN-B additive **`c8d9e0f1a2b3`**. |
+| 11 | Does it require an ADR? | **No new ADR for SIGN-A, SIGN-B, or SIGN-C.** Existing recon already recommends NATIVE V1. Schema follows additive org-scoped immutable-artifact pattern. |
+| 12 | Does it require a database migration? | **Yes.** SIGN-A **`b7c8d9e0f1a2`**. SIGN-B additive **`c8d9e0f1a2b3`**. SIGN-C additive **`d9e0f1a2b3c4`**. |
 
 ---
 
@@ -111,7 +112,11 @@ Secure token (hash-at-rest), public `/sign/*` exemption, review frozen PDF, plac
 
 ### SIGN-C — Countersign + executed PDF + custody
 
-Office countersign; executed PDF + SHA; downloads; VOID/EXPIRE/DECLINE/RESEND. **NOT STARTED.**
+**Status: IMPLEMENTED (this prompt).**
+
+Office HUMAN countersign for SIGNED + `countersign_required=true` (any ACTIVE org member; AI/AUTOMATION BLOCK). No-countersign path assembles EXECUTED without a second ceremony. Executed PDF = immutable pre-sign PDF + completion/audit page (pypdf). Distinct private artifact. SHA-256 of retained bytes. SIGNED → EXECUTED only after custody succeeds. VOID / EXPIRE / DECLINE / RESEND. Customer completed-link executed download. Smallest office `/signing-requests/<id>/executed`. Token unusable for SIGN & ACCEPT after EXECUTED/VOIDED/EXPIRED/DECLINED. RESEND rotates the SENT token.
+
+**STOP:** no SIGN-D Hub polish, no real iPhone UAT close, no transactional email, no LibreOffice / SIGN-E.
 
 ### SIGN-D — Change Order E2E + synthetic / real-iPhone UAT
 
@@ -130,7 +135,7 @@ CREATED → APPROVED_FOR_SIGNATURE → SENT → SIGNED → EXECUTED
                                     ↘ VOIDED | EXPIRED | DECLINED
 ```
 
-VIEWED and COUNTERSIGNED are **events**, not statuses. SIGN-B services exercise **CREATED → APPROVED_FOR_SIGNATURE → SENT → SIGNED**. EXECUTED remains SIGN-C.
+VIEWED and COUNTERSIGNED are **events**, not statuses. SIGN-B services exercise **CREATED → APPROVED_FOR_SIGNATURE → SENT → SIGNED**. SIGN-C services exercise **SIGNED → EXECUTED** (with or without COUNTERSIGNED) plus VOIDED / EXPIRED / DECLINED / RESENT.
 
 ---
 

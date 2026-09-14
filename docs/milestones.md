@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-14 — FG-033 SIGN-C countersign + executed PDF + custody
+
+| Field | Content |
+|-------|---------|
+| ID | FG-033 SIGN-C countersign + executed PDF + custody |
+| Status | **COMPLETE / NOT A GATE CLOSE.** FG-033 overall **OPEN / PARTIAL**. SIGN-D/E **not started**. Production Native Signing **not complete**. |
+| Branch | `main` |
+| Base commit | `daf254c1a0f7e1125dbad4620c29bf8d40625254` |
+| Objective | Implement SIGN-C only: organization countersign, executed PDF assembly/custody, VOID/EXPIRE/DECLINE/RESEND. |
+| Deliverables | `signing_executed_artifacts`; countersign/execute/lifecycle services; pypdf audit page; office `/signing-requests/<id>/executed`; customer executed download; CLI complete/lifecycle; additive `d9e0f1a2b3c4` applied live; [testing/fg033-sign-c-live-bounded-uat-record.md](testing/fg033-sign-c-live-bounded-uat-record.md). |
+| Validation | Dedicated SIGN-C **19 passed**. Dedicated SIGN-A **11 passed**. Dedicated SIGN-B **18 passed**. Focused SIGN-A/B + CONTRACT + Change Order **174 passed**. Full **951 passed**, 3151 warnings, **529.43s**. Alembic current = heads `d9e0f1a2b3c4`. EST-2026-0019 occupancy unchanged. Live PRODUCTION packages **0**. SIGN-2026-0004 EXECUTED. SIGN-2026-0003 retained SIGNED. |
+| Architectural findings | Pre-sign freeze never overwritten. Executed SHA is of retained bytes and is not printed inside the PDF. Custody failure leaves SIGNED. No new ADR. |
+| Open decisions | SIGN-D. Ontario 06D. Slice D. V1 rescore. Later Project Element preflight. |
+| Next milestone | **STOP.** Recommended next chunk SIGN-D — **not authorized from this note**. |
+| Commit | this SIGN-C product commit (`feat: complete Native Signing execution lifecycle`) |
+| Date | 2026-09-14 |
+
 ### 2026-09-14 — FG-033 SIGN-B secure invitation + public customer ceremony
 
 | Field | Content |

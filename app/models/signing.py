@@ -2,7 +2,8 @@
 
 Not a second Change Order. Not a second generated-contract commercial entity.
 SIGN-A: freeze + CREATED → APPROVED_FOR_SIGNATURE.
-SIGN-B: invitation token + SENT → SIGNED. No executed artifact.
+SIGN-B: invitation token + SENT → SIGNED.
+SIGN-C: countersign + executed PDF custody + VOID/EXPIRE/DECLINE/RESEND.
 """
 
 from datetime import datetime
@@ -152,6 +153,51 @@ class SigningFrozenArtifact(db.Model):
         return f"<SigningFrozenArtifact {self.sha256[:12]} {self.document_family}>"
 
 
+class SigningExecutedArtifact(db.Model):
+    """Immutable executed PDF in private signing custody. Never overwrites the pre-sign freeze."""
+
+    __tablename__ = "signing_executed_artifacts"
+    __table_args__ = (
+        db.UniqueConstraint(
+            "signing_request_id",
+            name="uq_signing_executed_artifacts_request",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    signing_request_id = db.Column(
+        db.Integer,
+        db.ForeignKey("signing_requests.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    source_frozen_artifact_id = db.Column(
+        db.Integer,
+        db.ForeignKey("signing_frozen_artifacts.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    media_type = db.Column(db.String(120), nullable=False)
+    storage_key = db.Column(db.String(255), nullable=False)
+    sha256 = db.Column(db.String(64), nullable=False, index=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    request = db.relationship(
+        "SigningRequest",
+        back_populates="executed_artifact",
+        foreign_keys=[signing_request_id],
+    )
+    source_frozen_artifact = db.relationship("SigningFrozenArtifact")
+
+    def __repr__(self):
+        return f"<SigningExecutedArtifact {self.sha256[:12]} request={self.signing_request_id}>"
+
+
 class SigningRequest(db.Model):
     """Org-owned signing ceremony overlay. Not a commercial source of truth."""
 
@@ -236,9 +282,34 @@ class SigningRequest(db.Model):
         index=True,
     )
     approved_by_identifier = db.Column(db.String(150), nullable=True)
+    executed_at = db.Column(db.DateTime, nullable=True)
+    countersigned_at = db.Column(db.DateTime, nullable=True)
+    countersigned_by_user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
+    countersigned_by_identifier = db.Column(db.String(150), nullable=True)
+    voided_at = db.Column(db.DateTime, nullable=True)
+    voided_by_user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
+    voided_by_identifier = db.Column(db.String(150), nullable=True)
+    void_reason = db.Column(db.String(255), nullable=True)
+    declined_at = db.Column(db.DateTime, nullable=True)
 
     frozen_artifact = db.relationship("SigningFrozenArtifact")
     consent_version = db.relationship("SigningConsentVersion")
+    executed_artifact = db.relationship(
+        "SigningExecutedArtifact",
+        uselist=False,
+        back_populates="request",
+        foreign_keys="SigningExecutedArtifact.signing_request_id",
+    )
     participants = db.relationship(
         "SigningParticipant",
         back_populates="request",

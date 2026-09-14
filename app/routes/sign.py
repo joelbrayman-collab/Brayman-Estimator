@@ -1,7 +1,7 @@
-"""FG-033 SIGN-B public customer signing ceremony.
+"""FG-033 SIGN-B/C public customer signing ceremony.
 
 Narrow /sign/* exemption. No office chrome. No customer account.
-Stops at SIGNED. Does not countersign or assemble an executed PDF.
+SIGN-B: SENT → SIGNED. SIGN-C: decline, EXECUTED confirmation, executed PDF download.
 """
 
 from __future__ import annotations
@@ -19,6 +19,7 @@ from app.models.project import Project
 from app.models.signing import (
     AUTHORITY_SYNTHETIC_UAT,
     DOCUMENT_FAMILY_CHANGE_ORDER,
+    STATUS_EXECUTED,
     STATUS_SIGNED,
 )
 from app.project_controls.repository import get_change_order
@@ -33,6 +34,8 @@ from app.services.signing import (
     BLOCK_TOKEN_RATE_LIMITED,
     SigningServiceError,
     accept_and_sign,
+    decline_signing_request,
+    executed_pdf_bytes_for_customer,
     frozen_pdf_bytes_for_customer,
     record_customer_viewed,
     resolve_customer_access,
@@ -69,11 +72,17 @@ def _ceremony_context(access):
         "document_title": document_title,
         "consent": signing_request.consent_version,
         "artifact_sha": signing_request.frozen_artifact.sha256,
+        "executed_sha": (
+            signing_request.executed_artifact.sha256
+            if signing_request.executed_artifact is not None
+            else None
+        ),
         "is_change_order_pdf": (
             signing_request.document_family == DOCUMENT_FAMILY_CHANGE_ORDER
         ),
         "is_synthetic": signing_request.authority_class == AUTHORITY_SYNTHETIC_UAT,
-        "completed": signing_request.status == STATUS_SIGNED,
+        "completed": signing_request.status in (STATUS_SIGNED, STATUS_EXECUTED),
+        "executed": signing_request.status == STATUS_EXECUTED,
         "credential": None,
     }
 
@@ -112,7 +121,7 @@ def ceremony(credential):
         )
     except SigningServiceError as exc:
         return _fail_closed(exc.code)
-    if access.request.status != STATUS_SIGNED:
+    if access.request.status not in (STATUS_SIGNED, STATUS_EXECUTED):
         record_customer_viewed(access)
     context = _ceremony_context(access)
     context["credential"] = credential
@@ -132,6 +141,29 @@ def document(credential):
     except SigningServiceError as exc:
         return _fail_closed(exc.code)
     filename = f"{access.request.request_number}.pdf"
+    return Response(
+        pdf,
+        mimetype="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
+@sign_bp.route("/<credential>/executed", methods=["GET"])
+def executed(credential):
+    try:
+        access = resolve_customer_access(
+            credential,
+            client_ip=_client_ip(),
+            user_agent=_user_agent(),
+            allow_completed=True,
+        )
+        pdf = executed_pdf_bytes_for_customer(access)
+    except SigningServiceError as exc:
+        return _fail_closed(exc.code)
+    filename = f"{access.request.request_number}-executed.pdf"
     return Response(
         pdf,
         mimetype="application/pdf",
@@ -181,3 +213,24 @@ def sign_accept(credential):
     context["just_signed"] = True
     _ = signing_request
     return render_template("signing/ceremony.html", **context)
+
+
+@sign_bp.route("/<credential>/decline", methods=["POST"])
+def decline(credential):
+    try:
+        decline_signing_request(
+            credential,
+            client_ip=_client_ip(),
+            user_agent=_user_agent(),
+        )
+    except SigningServiceError as exc:
+        return _fail_closed(exc.code)
+    return (
+        render_template(
+            "signing/unavailable.html",
+            code="DECLINED",
+            rate_limited=False,
+            declined=True,
+        ),
+        200,
+    )

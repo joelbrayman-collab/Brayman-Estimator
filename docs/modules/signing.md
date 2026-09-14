@@ -2,9 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Partial Current.** [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **OPEN / PARTIAL**. SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C/D/E **NOT STARTED**. Production / real-customer Native Signing **NOT COMPLETE**. No external-review dependency in the development workflow. |
+| Status | **Partial Current.** [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **OPEN / PARTIAL**. SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C **IMPLEMENTED**. SIGN-D/E **NOT STARTED**. Production / real-customer Native Signing **NOT COMPLETE**. No external-review dependency in the development workflow. |
 | Updated | 2026-09-14 |
-| Code | `app/models/signing.py`, `app/services/signing.py`, `app/services/signing_artifact_storage.py`, `app/cli/signing.py`, `app/routes/sign.py`, `app/templates/signing/`, `app/static/css/signing.css` |
+| Code | `app/models/signing.py`, `app/services/signing.py`, `app/services/signing_artifact_storage.py`, `app/services/signing_executed_pdf.py`, `app/cli/signing.py`, `app/routes/sign.py`, `app/routes/signing.py`, `app/templates/signing/`, `app/static/css/signing.css` |
 | Feature Gate | [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) |
 | Architecture | [contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md) |
 
@@ -24,7 +24,7 @@ Native Signing is an **overlay**. It freezes a signable artifact and records a g
 - Append-only `REQUEST_CREATED` / `APPROVED_FOR_SIGNATURE`
 - Authority `SYNTHETIC_UAT` / `PRODUCTION`
 
-## SIGN-B (current)
+## SIGN-B
 
 - Secure invitation: `secrets.token_urlsafe` lookup + secret; SHA-256 hash-at-rest; raw secret shown once
 - URL `/sign/<lookup_key>.<secret>`
@@ -45,6 +45,21 @@ Native Signing is an **overlay**. It freezes a signable artifact and records a g
 - RESEND is SIGN-C
 - Additive Alembic **`c8d9e0f1a2b3`** (parent `b7c8d9e0f1a2`)
 
+## SIGN-C (current)
+
+- SIGNED + `countersign_required=true`: active org HUMAN countersigns; COUNTERSIGNED event; executed PDF assembled; EXECUTED
+- SIGNED + `countersign_required=false`: executed PDF assembled without a second signature ceremony
+- Executed PDF = immutable pre-sign PDF + completion/audit page (`pypdf`); commercial pages are not re-rendered
+- Distinct private artifact `instance/signing_artifacts/<org>/<sha>.pdf`; SHA-256 of exact retained bytes
+- Request becomes EXECUTED only after custody succeeds; custody failure leaves SIGNED
+- RESEND rotates SENT token; old secret fail-closed; same frozen artifact and consent
+- VOID (CREATED / APPROVED_FOR_SIGNATURE / SENT / SIGNED) requires reason; terminal; token invalid; EXECUTED cannot be voided in place
+- EXPIRE when `expires_at` passed and not yet SIGNED/EXECUTED; EXPIRED once
+- Customer DECLINE from SENT; no signature evidence; no executed artifact
+- Customer completed-link can download executed PDF; office GET `/signing-requests/<id>/executed`
+- Events COUNTERSIGNED / EXECUTED / RESENT / VOIDED / EXPIRED / DECLINED
+- Additive Alembic **`d9e0f1a2b3c4`** (parent `c8d9e0f1a2b3`)
+
 ## Owned data
 
 - `signing_consent_versions`
@@ -53,21 +68,22 @@ Native Signing is an **overlay**. It freezes a signable artifact and records a g
 - `signing_participants` (token hash-at-rest + SIGN-B evidence columns)
 - `signing_events`
 - `signing_token_access_attempts` (never stores raw secrets)
+- `signing_executed_artifacts`
 
 Private bytes: `instance/signing_artifacts/` (gitignored).
 
-## Prohibited (SIGN-B)
+## Prohibited (SIGN-C)
 
-- Countersignature action
-- Executed PDF
 - Transactional email
 - LibreOffice conversion (SIGN-E)
+- SIGN-D Hub dashboard polish / real iPhone UAT close
 - Customer account registration
 - Mutating `CHANGE_ORDER_STATUSES` or generated-contract `GENERATED`
 - EST-2026-0019
 - Inventing RBAC
 - Legal-review approval states / fields
+- Overwriting the pre-sign freeze
 
 ## Later slices (not started)
 
-SIGN-C countersign + executed PDF. SIGN-D CO E2E + real iPhone UAT. SIGN-E Family 05 DOCX→PDF.
+SIGN-D CO E2E + real iPhone UAT. SIGN-E Family 05 DOCX→PDF.

@@ -1,5 +1,4 @@
-"""Flask CLI signing group — SIGN-A office request create / inspect / approve.
-SIGN-B: issue a one-time copyable customer invitation URL.
+"""Flask CLI signing group — SIGN-A/B/C office request, invite, complete, lifecycle.
 """
 
 from __future__ import annotations
@@ -12,16 +11,22 @@ from app.services.organizations import get_current_organization_id
 from app.services.signing import (
     SigningServiceError,
     approve_signing_request,
+    countersign_and_execute,
     create_change_order_signing_request,
     create_contract_signing_request,
+    execute_signed_request,
+    expire_signing_request,
     get_signing_request,
     issue_customer_invitation,
+    resend_customer_invitation,
+    retrieve_executed_artifact_bytes,
+    void_signing_request,
 )
 
 
 @click.group("signing")
 def signing_cli():
-    """Native Signing office operator commands (SIGN-A / SIGN-B invite)."""
+    """Native Signing office operator commands (SIGN-A / SIGN-B / SIGN-C)."""
 
 
 def _fail(exc: SigningServiceError):
@@ -152,11 +157,14 @@ def show_command(request_id):
         request = get_signing_request(request_id, get_current_organization_id())
     except SigningServiceError as exc:
         _fail(exc)
+    executed_sha = ""
+    if request.executed_artifact is not None:
+        executed_sha = f" executed_sha={request.executed_artifact.sha256}"
     click.echo(
         f"{request.request_number} status={request.status} "
         f"family={request.document_family} authority={request.authority_class} "
         f"sha={request.frozen_artifact.sha256} "
-        f"countersign={request.countersign_required}"
+        f"countersign={request.countersign_required}{executed_sha}"
     )
     for event in request.events:
         click.echo(
@@ -184,3 +192,133 @@ def invite_command(request_id, actor_user_id, actor_identifier):
         _fail(exc)
     click.echo(f"{issued.request.request_number} status={issued.request.status}")
     click.echo(issued.path)
+
+
+@signing_cli.command("resend")
+@click.option("--request-id", type=int, required=True)
+@click.option("--actor-user-id", type=int, required=True)
+@click.option("--actor-identifier", required=True)
+@with_appcontext
+def resend_command(request_id, actor_user_id, actor_identifier):
+    """Rotate the SENT customer token. Old secret fails. Frozen artifact is unchanged."""
+    try:
+        issued = resend_customer_invitation(
+            request_id,
+            organization_id=get_current_organization_id(),
+            actor_kind=ACTOR_HUMAN,
+            actor_user_id=actor_user_id,
+            actor_identifier=actor_identifier,
+        )
+    except SigningServiceError as exc:
+        _fail(exc)
+    click.echo(f"{issued.request.request_number} status={issued.request.status}")
+    click.echo(issued.path)
+
+
+@signing_cli.command("countersign")
+@click.option("--request-id", type=int, required=True)
+@click.option("--actor-user-id", type=int, required=True)
+@click.option("--actor-identifier", required=True)
+@with_appcontext
+def countersign_command(request_id, actor_user_id, actor_identifier):
+    """HUMAN countersign a SIGNED request and retain the executed PDF."""
+    try:
+        request = countersign_and_execute(
+            request_id,
+            organization_id=get_current_organization_id(),
+            actor_kind=ACTOR_HUMAN,
+            actor_user_id=actor_user_id,
+            actor_identifier=actor_identifier,
+        )
+    except SigningServiceError as exc:
+        _fail(exc)
+    click.echo(
+        f"{request.request_number} status={request.status} "
+        f"executed_sha={request.executed_artifact.sha256}"
+    )
+
+
+@signing_cli.command("execute")
+@click.option("--request-id", type=int, required=True)
+@click.option("--actor-user-id", type=int, required=True)
+@click.option("--actor-identifier", required=True)
+@with_appcontext
+def execute_command(request_id, actor_user_id, actor_identifier):
+    """Complete a SIGNED request that does not require countersignature."""
+    try:
+        request = execute_signed_request(
+            request_id,
+            organization_id=get_current_organization_id(),
+            actor_kind=ACTOR_HUMAN,
+            actor_user_id=actor_user_id,
+            actor_identifier=actor_identifier,
+        )
+    except SigningServiceError as exc:
+        _fail(exc)
+    click.echo(
+        f"{request.request_number} status={request.status} "
+        f"executed_sha={request.executed_artifact.sha256}"
+    )
+
+
+@signing_cli.command("void")
+@click.option("--request-id", type=int, required=True)
+@click.option("--actor-user-id", type=int, required=True)
+@click.option("--actor-identifier", required=True)
+@click.option("--reason", required=True)
+@with_appcontext
+def void_command(request_id, actor_user_id, actor_identifier, reason):
+    """Human VOID for a non-executed request. Artifacts and events are retained."""
+    try:
+        request = void_signing_request(
+            request_id,
+            organization_id=get_current_organization_id(),
+            actor_kind=ACTOR_HUMAN,
+            actor_user_id=actor_user_id,
+            actor_identifier=actor_identifier,
+            reason=reason,
+        )
+    except SigningServiceError as exc:
+        _fail(exc)
+    click.echo(f"{request.request_number} status={request.status}")
+
+
+@signing_cli.command("expire")
+@click.option("--request-id", type=int, required=True)
+@click.option("--actor-user-id", type=int, required=True)
+@click.option("--actor-identifier", required=True)
+@with_appcontext
+def expire_command(request_id, actor_user_id, actor_identifier):
+    """Expire a request whose expires_at has passed and that is not yet signed."""
+    try:
+        request = expire_signing_request(
+            request_id,
+            organization_id=get_current_organization_id(),
+            actor_kind=ACTOR_HUMAN,
+            actor_user_id=actor_user_id,
+            actor_identifier=actor_identifier,
+        )
+    except SigningServiceError as exc:
+        _fail(exc)
+    click.echo(f"{request.request_number} status={request.status}")
+
+
+@signing_cli.command("download-executed")
+@click.option("--request-id", type=int, required=True)
+@click.option("--output", type=click.Path(dir_okay=False), required=True)
+@with_appcontext
+def download_executed_command(request_id, output):
+    """Write exact retained executed PDF bytes for the current organization."""
+    try:
+        request = get_signing_request(request_id, get_current_organization_id())
+        data = retrieve_executed_artifact_bytes(
+            request_id,
+            get_current_organization_id(),
+        )
+    except SigningServiceError as exc:
+        _fail(exc)
+    with open(output, "wb") as handle:
+        handle.write(data)
+    click.echo(
+        f"{request.request_number} bytes={len(data)} sha={request.executed_artifact.sha256}"
+    )

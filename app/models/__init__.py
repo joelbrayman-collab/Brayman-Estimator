@@ -34,6 +34,7 @@ from app.models.project_contract import (
 from app.models.signing import (
     SigningConsentVersion,
     SigningEvent,
+    SigningExecutedArtifact,
     SigningFrozenArtifact,
     SigningParticipant,
     SigningRequest,

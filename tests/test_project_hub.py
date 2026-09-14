@@ -137,6 +137,11 @@ def test_hub_assembler_is_read_only():
     assert "apply_resolved_pricing" not in combined
     assert "create_estimate_labour_snapshot" not in combined
     assert "create_estimate(" not in combined
+    assert "generate_project_contract" not in combined
+    assert "_legal_content_selection" in source
+    assert "select_legal_content_package_for_project" in module_source
+    assert "resolve_jurisdiction" not in combined
+    assert "_selection_nodes" not in combined
 
 
 def test_project_hub_renders_org_scoped(client, project):

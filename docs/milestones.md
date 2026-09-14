@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-14 — Fail-closed CONTRACT Hub UX
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 fail-closed CONTRACT Hub UX (06G office exposure) |
+| Status | **COMPLETE / NOT A GATE CLOSE.** FG-024 overall **OPEN / PARTIAL**. Independent BMR contract-story **PASS**. BMR DEMO READY remains **NO**. |
+| Branch | `main` |
+| Base commit | `bd1baf9426ab3a6db2d0d063fe1a76c14c8bc3ef` |
+| Objective | Show the existing fail-closed selector result on office CONTRACT so Ontario with no ACTIVE package cannot pretend a production contract exists. |
+| Deliverables | Hub `#hub-contract-legal` status panel; contractor_copy mapping; dedicated tests; C1/C2/C3 recorded in governance docs |
+| Validation | Focused Hub + Hub UX **22 passed** / 12.82s. Full **838 passed**, 2857 warnings, **277.98s**. Alembic unchanged `d3e4f5a6b7c8 (head)`. EST-2026-0019 occupancy unchanged. Live library packages/objects **0**. |
+| Architectural findings | Selector remains authority. No generation control. No Family 05 fallback. No schema/migration. Activation not built. Native Signing remains separate. |
+| Open decisions | Architect review of overall BMR DEMO READY. Ontario 06D / Output 4. C2 WARN UI deferred until selector returns WARN. Slice D unauthorized. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do not begin Slice D. Do not populate Ontario legal content. |
+| Commit | This fail-closed CONTRACT Hub UX commit |
+| Date | 2026-09-14 |
+
 ### 2026-09-14 — FG-025 customer-document language slice
 
 | Field | Content |

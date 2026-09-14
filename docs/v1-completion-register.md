@@ -302,7 +302,7 @@ Estimator remains the authoritative commercial record. QuickBooks must not becom
 | BLOCKER? | **YES** for production contract use: Legal Content Gate **empty**; Family 05 **NOT LEGALLY APPROVED**; AI cannot mark legal content APPROVED |
 | Dependencies | ADR-037 / FG-015 jurisdiction identity; Legal Content Gate; V1-07 for 06I |
 | Governing | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C CLOSED / OPERATIONAL FOR UAT / OVERALL OPEN / PARTIAL**; [fg-024-slice-a-legal-content-library-preflight.md](architecture/fg-024-slice-a-legal-content-library-preflight.md); [fg-024-slice-b-legal-content-source-lifecycle-preflight.md](architecture/fg-024-slice-b-legal-content-source-lifecycle-preflight.md); [fg-024-slice-c-contract-generation-snapshot-preflight.md](architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md); [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**; [ADR-051](adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**; [legal-content-and-templates.md](governance/legal-content-and-templates.md); [testing/fg024-slice-a-live-migrate-bounded-uat-record.md](testing/fg024-slice-a-live-migrate-bounded-uat-record.md); [testing/fg024-slice-b-live-migrate-bounded-uat-record.md](testing/fg024-slice-b-live-migrate-bounded-uat-record.md); [testing/fg024-slice-c-live-migrate-bounded-uat-record.md](testing/fg024-slice-c-live-migrate-bounded-uat-record.md) |
-| Next governed action | **STOP.** Slice A is **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B is **CLOSED / OPERATIONAL FOR UAT**. Slice C is **CLOSED / OPERATIONAL FOR UAT**. Do **not** begin Slice D. Do **not** populate Ontario legal content. Do **not** rescore V1. Factor remains **0.25**. |
+| Next governed action | **STOP.** Slice A is **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B is **CLOSED / OPERATIONAL FOR UAT**. Slice C is **CLOSED / OPERATIONAL FOR UAT**. Hub CONTRACT fail-closed UX is **IMPLEMENTED**. Do **not** begin Slice D. Do **not** populate Ontario legal content. Do **not** rescore V1. Factor remains **0.25**. |
 
 Deep reconciliation: **§9**. Sub-gates: **§9.4**.
 
@@ -470,7 +470,7 @@ Round the published readiness to the **nearest whole percent**. Recalculate from
 | 06D | Ontario approved contract + warranty package | **YES** | **BLOCKED** | Counsel/legal approval. Empty register. |
 | 06E | Contract generation from approved project/estimate | **YES** | **ENGINE LIVE / SYNTHETIC-UAT PROVEN / NO REAL JURISDICTIONAL CONTENT** | FG-024 Slice C **CLOSED / OPERATIONAL FOR UAT**; Alembic `d3e4f5a6b7c8` applied live; no real customer contract; V1-06 factor **unchanged** |
 | 06F | Frozen generated-contract snapshot | **YES** | **ENGINE LIVE / SYNTHETIC-UAT PROVEN / NO REAL JURISDICTIONAL CONTENT** | Immutable `ProjectContractSnapshot`; live-migrated / synthetic UAT PASS; V1-06 factor **unchanged** |
-| 06G | Fail-closed when approved jurisdiction package unavailable | **YES** | **LIVE / OFFICE UAT PASS** | Empty library BLOCK; no generic fallback; live proven 2026-09-13 |
+| 06G | Fail-closed when approved jurisdiction package unavailable | **YES** | **LIVE / OFFICE UAT PASS / HUB UX EXPOSED** | Empty library BLOCK; no generic fallback; live proven 2026-09-13; Hub CONTRACT exposes BLOCK 2026-09-14; Family 05 not substituted |
 | 06H | Effective-date / supersession / update architecture | **YES** | **ENGINE LIVE / EMPTY LIBRARY** | V1 = versioning + supersession + effective dates. Slice B source/snapshot/candidate/review foundation **CLOSED / OPERATIONAL FOR UAT**; Alembic `c2d3e4f5a6b7` applied live. Generation-while-pending **deferred**. Live source monitoring = recommended POST-V1. V1-06 factor **unchanged** |
 | 06I | Contract package → Native Signing handoff | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | Depends on V1-07; production blocked |
 | 06J | Additional province/state population | **NO** | **POST-V1** | Unless Joel names another launch jurisdiction |
@@ -517,7 +517,9 @@ The BMR demo must show CalibraytAI as an **integrated contractor platform**, not
 
 **Subsequent status (2026-09-14):** the bounded FG-025 customer-document language slice is **IMPLEMENTED**. Customer-facing title **CONSTRUCTION ESTIMATE**. This does **not** flip BMR DEMO READY.
 
-**BMR DEMO READY = NO.** V1-01 exists, V1-02 exists, V1-03 Winchester slice exists, V1-05 Option A exists, and [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Remaining independent blocker: a **fail-closed or Ontario** contract story that does not pretend Family 05 is legally approved. ADR-008 remains **Proposed**. FG-032 close does **not** flip this to YES. The FG-025 customer-document language slice does **not** flip this to YES.
+**Subsequent status (2026-09-14, fail-closed CONTRACT UX):** Independent BMR **contract-story** (truthful fail-closed BLOCK on office CONTRACT Hub; Family 05 not used as legal authority; no fake Ontario contract) **PASS**. Overall **BMR DEMO READY remains NO**. Remaining overall-demo reasons include Ontario 06D / Output 4, Native Signing, and Architect checklist review. This slice does **not** flip BMR DEMO READY to YES.
+
+**BMR DEMO READY = NO.** V1-01 exists, V1-02 exists, V1-03 Winchester slice exists, V1-05 Option A exists, and [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Independent fail-closed contract-story **PASS** (2026-09-14 Hub UX). Overall demo remains **NO** pending Architect checklist review and remaining register gaps (Ontario 06D / Output 4 / Native Signing). ADR-008 remains **Proposed**. FG-032 close does **not** flip this to YES. The FG-025 customer-document language slice does **not** flip this to YES. The fail-closed CONTRACT Hub UX does **not** flip this to YES.
 
 A demo that only shows takeoff + manual estimate + Field + MONITOR is a **partial platform tour**, not BMR demo-ready under this register.
 
@@ -537,7 +539,7 @@ Real-life UAT means V1 is complete and controlled enough to operate **real Braym
 | Real project creation | CRM + Hub + location | **YES** |
 | Estimate workflow | V1-01 + V1-02 + FG-009 | **YES** (V1-01 **COMPLETE**; V1-02 **COMPLETE**; FG-009 **CLOSED**). Real-life UAT still **NO** pending V1-10 / legal / V1-11 |
 | Customer-document workflow | Output 2; branded Proposal | **YES** (FG-012/017). Remaining PDF language = V1-09 decision |
-| Contract / legal safety | Fail-closed unless Ontario package APPROVED | **FAIL-CLOSED by absence** (cannot lawfully generate) |
+| Contract / legal safety | Fail-closed unless Ontario package APPROVED | **FAIL-CLOSED by absence** (cannot lawfully generate). Hub CONTRACT now **shows** that BLOCK. |
 | BUILD / Field | Capture + office observations | **YES** (FG-020/021) |
 | Actual costs + MONITOR | FG-023 | **YES** |
 | Recovery / error handling | Documented; session-expiry still deferred | **PARTIAL** |

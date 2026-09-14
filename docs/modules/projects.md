@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current** (project records + change orders package). [FG-011](../feature-gates/FG-011-project-hub-ux.md) Project Hub UX **CLOSED / OPERATIONAL FOR UAT** |
-| Updated | 2026-09-13 |
+| Updated | 2026-09-14 |
 | Code | `app/models/project.py`, `app/routes/projects.py`, `app/services/project_hub.py`; Project Controls: `app/project_controls/` |
 | Feature Gate | [FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** (Hub PLAN Permit Report state + `/projects/<id>/permit-report`). |
 
@@ -16,7 +16,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 - Project CRUD (name, number, address, status, description, client)
 - Parent for estimates
 - Change Orders lifecycle (draft → approval statuses) via `project_controls` package
-- Project Hub UX at `/projects/<id>` ([FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**): identity, versioned commercial context, PLAN / PRICE / CONTRACT stored facts and links, existing Change Orders under BUILD **plus** BUILD Field Observations ([FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**); MONITOR V1 `#hub-monitor` comparison + office actuals writes ([FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**; Slice B **implemented / live-migrated / office-UAT-verified**); LEARN labeled Future. Read-only assembly in `app/services/project_hub.py` plus BUILD-owned actuals POSTs. No durable hub entity. [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) PLAN **PERMIT & APPROVALS** foundation state — **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) extends the same panel with truthful Gate-2 state (report available, last analysis, plan/site basis, attention count, recheck yes/no) and the office HTML/PDF report.
+- Project Hub UX at `/projects/<id>` ([FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**): identity, versioned commercial context, PLAN / PRICE / CONTRACT stored facts and links, existing Change Orders under BUILD **plus** BUILD Field Observations ([FG-020](../feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md) **CLOSED / OPERATIONAL FOR UAT**); MONITOR V1 `#hub-monitor` comparison + office actuals writes ([FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**; Slice B **implemented / live-migrated / office-UAT-verified**); LEARN labeled Future. Read-only assembly in `app/services/project_hub.py` plus BUILD-owned actuals POSTs. No durable hub entity. CONTRACT `#hub-contract-legal` displays FG-024 fail-closed selection (no generation control). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) PLAN **PERMIT & APPROVALS** foundation state — **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) extends the same panel with truthful Gate-2 state (report available, last analysis, plan/site basis, attention count, recheck yes/no) and the office HTML/PDF report.
 
 ## Owned data
 
@@ -86,6 +86,7 @@ Org-scoped generated contracts (FG-024 Slice C; **live / synthetic-UAT proven**;
 
 - `tests/test_permit_foundation_fg015.py`
 - `tests/test_project_hub.py`
+- `tests/test_contract_fail_closed_hub_fg024.py`
 - `tests/test_change_orders.py`
 - Project fixtures embedded across estimate/proposal tests
 

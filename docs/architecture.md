@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Living architecture map |
-| Updated | 2026-09-13 |
+| Updated | 2026-09-14 |
 | Evidence baseline | `main` @ CAR-001 adoption (see git); Plan Intelligence Current claims evidenced in `app/plan_intelligence/` and migration `a7c8e9f0b1d2` |
 
 **Cite code paths for implemented claims.** Distinctions below are mandatory. CalibraytAI lifecycle architecture: [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md). Current vs former product name: [governance/product-identity.md](governance/product-identity.md).
@@ -118,7 +118,7 @@ Client ──< Project ──< Estimate ──< EstimateVersion ──< Sections
 ```
 
 - Navigation also shows **disabled** placeholders: Purchase Orders, Job Costing, Reports, AI Assistant, Settings (`app/navigation.py`).
-- **Project Hub UX (FG-011):** `/projects/<id>` (`app/routes/projects.py` `view_project`, `app/services/project_hub.py`, `app/templates/projects/detail.html`) reads stored facts and links into owning modules. No durable hub entity.
+- **Project Hub UX (FG-011):** `/projects/<id>` (`app/routes/projects.py` `view_project`, `app/services/project_hub.py`, `app/templates/projects/detail.html`) reads stored facts and links into owning modules. No durable hub entity. CONTRACT `#hub-contract-legal` displays the existing FG-024 selector fail-closed result (`select_legal_content_package_for_project`); it does not generate contracts.
 - **Estimate-output consistency (FG-012):** Estimating-owned internal breakdown (`app/services/estimate_output.py`, `GET /estimates/<id>/versions/<version_id>/internal-breakdown`). Named-method Proposal totals copy frozen `EstimatePricingSnapshot`. Customer PDF omits Overhead/Profit rows. No new entity or schema.
 - **Permit Foundation (FG-015):** `ProjectLocation`, platform jurisdiction definitions/aliases, versioned preliminary `PermitProfile`, Hub PLAN **PERMIT & APPROVALS** foundation panel (`app/services/jurisdiction.py`, `app/services/permit_foundation.py`). Pass 2 [FG-016](feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT** (**gate-at-close** live current = head `f8a9b0c1d2e3`; live head today is `d2e3f4a5b6c7`).
 - **Organization Brand Profile (FG-017):** `OrganizationBrandProfile`, `ProposalBrandSnapshot`, Settings `/settings/brand-profile` (`app/services/brand_profile.py`, `app/services/brand_logo_storage.py`). **CLOSED / OPERATIONAL FOR UAT**. Live current = head `a9b0c1d2e3f4`. Change Order / Permit consumers remain future.

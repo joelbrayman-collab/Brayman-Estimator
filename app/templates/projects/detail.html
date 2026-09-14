@@ -25,7 +25,7 @@
     <a class="hub-lifecycle-step" href="#hub-monitor">MONITOR</a>
     <span class="hub-lifecycle-step is-future">LEARN · Future</span>
 </nav>
-<p class="muted-copy hub-lifecycle-note">Operational sections use stored records from owning modules. LEARN, QuickBooks, the four-output package, and Ontario contract/warranty are Future and are not operational here.</p>
+<p class="muted-copy hub-lifecycle-note">Operational sections use stored records from owning modules. LEARN remains Future. The four-output package remains Future. Ontario contract and warranty generation remain Future. Fail-closed production-contract status is shown under CONTRACT.</p>
 
 <section class="form-panel" style="margin-bottom: 20px;">
     <div class="form-grid">
@@ -318,7 +318,25 @@
 </section>
 
 <p class="hub-section-label" id="hub-contract">CONTRACT</p>
+{% set contract_copy = contractor_copy.contract_selection_copy(hub.legal_content_selection) %}
 <section class="dash-panels">
+    <article class="panel panel-wide" id="hub-contract-legal">
+        <div class="panel-header">
+            <h2>{{ contractor_copy.CONTRACT_STATUS_HEADING }}</h2>
+        </div>
+        <p class="eyebrow">{{ contract_copy.heading }}</p>
+        <p>{{ contract_copy.lede }}</p>
+        <p>{{ contract_copy.next }}</p>
+        {% if contract_copy.blocked %}
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_SAFEGUARD }}</p>
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_PRODUCTION_GENERATED }}</p>
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_FAMILY_05_FALLBACK }}</p>
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_BYPASS }}</p>
+        {% endif %}
+        {% if contract_copy.block_code or contract_copy.jurisdiction_code %}
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_OFFICE_DETAIL_LABEL }}{% if contract_copy.jurisdiction_code %} · {{ contract_copy.jurisdiction_code }}{% endif %}{% if contract_copy.block_code %} · {{ contract_copy.block_code }}{% endif %}</p>
+        {% endif %}
+    </article>
     <article class="panel panel-wide">
         <div class="panel-header">
             <h2>Related Proposals</h2>
@@ -632,6 +650,6 @@
 
 <div class="hub-future-note" style="margin-top: 16px;">
     <p class="eyebrow">Future — not operational on this hub</p>
-    <p>QuickBooks export, the four-output document package, Ontario contract and warranty, and real external AI are Future. They are not available as controls here.</p>
+    <p>QuickBooks export, the four-output document package, Ontario contract and warranty generation, and real external AI are Future. They are not available as generate controls here. Fail-closed production-contract status is shown under CONTRACT.</p>
 </div>
 {% endblock %}

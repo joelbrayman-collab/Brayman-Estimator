@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-09-13 |
+| Updated | 2026-09-14 |
 | Implementation | Template registers remain **empty**. Slice A library persistence + selection engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B source/update foundation **CLOSED / OPERATIONAL FOR UAT** (live). Slice C generation / snapshot **CLOSED / OPERATIONAL FOR UAT** (engine live / synthetic-UAT proven / no real jurisdictional content). [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Legal-change monitoring remains **FUTURE**. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. |
 
 ## Purpose
@@ -62,6 +62,8 @@ Govern construction contract language, statutory/consumer wording, warranty obli
 **Subsequent status (2026-09-13, Slice C product foundation):** Generation + immutable snapshot exist in the repository (`project_generated_contracts`, `project_contract_snapshots`, `project_contract_snapshot_objects`, `app/services/contract_generation.py`). Alembic **`d3e4f5a6b7c8`** not applied live at that commit. This **still does not** populate this register, approve any legal language, or mark Family 05 legally approved. Synthetic tests only. Empty library remains FAIL CLOSED. ADR-051 §6 remains **deferred**.
 
 **Subsequent status (2026-09-13, Slice C live migrate + bounded office UAT):** Alembic **`d3e4f5a6b7c8` applied live**. Slice C **CLOSED / OPERATIONAL FOR UAT**. Labeled synthetic generated-contract rows exist as engine evidence only (`CTR-2026-0001`, `CTR-2026-0002`). This **still does not** populate this register or approve any legal language. Live library packages/objects remain **0**. Family 05 remains **COMMERCIAL_DRAFT / NOT LEGALLY APPROVED**. No real customer contract. ADR-051 §6 remains **deferred**.
+
+**Subsequent status (2026-09-14, fail-closed CONTRACT Hub UX):** Project Hub CONTRACT now shows the existing fail-closed selector result. This **still does not** populate this register, approve any legal language, mark Family 05 legally approved, activate a package, or generate a production Ontario contract. Empty library remains FAIL CLOSED. AI still cannot APPROVE or ACTIVE.
 
 ## Warranty template register (governed — empty until approved)
 

@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from decimal import Decimal
 
+from types import SimpleNamespace
+
 from sqlalchemy import func
 
 from app import db
@@ -32,6 +34,7 @@ from app.services.direct_cost_actuals import (
     successor_direct_cost_actual,
 )
 from app.services.monitor import assemble_monitor_v1
+from app.services.legal_content import select_legal_content_package_for_project
 from app.services.permit_foundation import assemble_permit_foundation_state
 from app.services.permit_intelligence import assemble_permit_intelligence_state
 from app.services.pricing_engine import as_money
@@ -138,6 +141,8 @@ def assemble_project_hub(project, organization_id: str) -> dict:
             }
         )
 
+    legal_content_selection = _legal_content_selection(project.id)
+
     return {
         "permit_foundation": assemble_permit_foundation_state(project),
         "permit_intelligence": assemble_permit_intelligence_state(project),
@@ -166,7 +171,26 @@ def assemble_project_hub(project, organization_id: str) -> dict:
         },
         "direct_cost_actual_rows": actual_rows,
         "direct_cost_classes": COST_CLASSES,
+        "legal_content_selection": legal_content_selection,
     }
+
+
+def _legal_content_selection(project_id: int):
+    """Reuse the Slice A selector. Fail closed if selection cannot be read."""
+    try:
+        return select_legal_content_package_for_project(project_id)
+    except Exception:
+        return SimpleNamespace(
+            available=False,
+            status="BLOCK",
+            block_code=None,
+            package_id=None,
+            package=None,
+            jurisdiction_code=None,
+            library_state=None,
+            support_status=None,
+            selection_error=True,
+        )
 
 
 def _gm_percent(fraction):

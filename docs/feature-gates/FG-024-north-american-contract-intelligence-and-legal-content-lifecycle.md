@@ -25,7 +25,7 @@
 | Slice D — Legal change monitoring + alerts | **NOT AUTHORIZED** |
 | Schema / Alembic | Live current **`d3e4f5a6b7c8 (head)`**. Repository head **`d3e4f5a6b7c8`**. One graph head. Slice C **applied live**. |
 | Legal content population | **None.** Live library **empty**. Ontario and U.S. packages remain unpopulated. Labeled Slice B UAT source/snapshot/candidate rows and labeled Slice C generated-contract rows are synthetic evidence, not legal content and not real customer contracts. |
-| Product code | Slice A models + selection service (live / empty). Slice B source / snapshot / candidate / review foundation (live). Slice C generation + immutable snapshot (live / synthetic-UAT proven). No UI. No Native Signing. |
+| Product code | Slice A models + selection service (live / empty). Slice B source / snapshot / candidate / review foundation (live). Slice C generation + immutable snapshot (live / synthetic-UAT proven). Hub CONTRACT fail-closed status (selector result only; no generation control; no legal-admin UI). No Native Signing. |
 
 ```text
 FG-024:
@@ -42,6 +42,7 @@ LEGAL CONTENT GATE: EMPTY
 NORTH AMERICAN LIBRARY: PERSISTENCE + RESOLVER SELECTION + CODED FAIL-CLOSED / LIVE / EMPTY
 UPDATE FOUNDATION: LIVE
 CONTRACT GENERATION: ENGINE LIVE / SYNTHETIC-UAT PROVEN / NO REAL JURISDICTIONAL CONTENT
+CONTRACT HUB UX: FAIL-CLOSED STATUS EXPOSED / NO GENERATION CONTROL
 V1 SCORE UNCHANGED
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
 ```
@@ -67,6 +68,15 @@ Joel/ChatGPT recorded this gate on **2026-09-07** as durable product/governance 
 **Subsequent status (2026-09-13, Slice C product foundation):** Generation + immutable snapshot **implemented in the repository**. Additive Alembic **`d3e4f5a6b7c8`**. Live `flask db upgrade` **not** run at that commit. Live current remained **`c2d3e4f5a6b7 (head)`**. Dedicated Slice C **16 passed**. Slice A **17 passed**. Slice B **16 passed**. Full **825 passed**. Legal Content Gate remains **empty**. Synthetic generation only. No Ontario/U.S. population. No Native Signing. No warranty schedule. C1/C2/C3 unresolved. Slice C was **NOT LIVE-MIGRATED / NOT OFFICE-UAT / NOT CLOSED** at that commit. Slice D **NOT AUTHORIZED**. V1 score **unchanged** (**60% / 4 of 11**).
 
 **Subsequent status (2026-09-13, Slice C live migrate + bounded office UAT):** Live `flask db upgrade` **PASS**. Live current **`d3e4f5a6b7c8 (head)`**. Immediate empty Slice-C tables **PASS**. Commercial continuity **PASS**. Fail-closed / no-fallback / synthetic generation / immutability / pinning / Native Signing boundary / Slice A+B regression UAT **PASS**. Dedicated Slice C **16 passed**. Slice A **17 passed**. Slice B **16 passed**. Full **825 passed**. Slice C **CLOSED / OPERATIONAL FOR UAT**. Gate overall **OPEN / PARTIAL**. Evidence [fg024-slice-c-live-migrate-bounded-uat-record.md](../testing/fg024-slice-c-live-migrate-bounded-uat-record.md). Legal Content Gate remains **empty**. No real jurisdictional content. No real customer contract. C1/C2/C3 remain unresolved. Slice D **NOT AUTHORIZED**. V1 score **unchanged** (**60% / 4 of 11**).
+
+**Subsequent status (2026-09-14, fail-closed CONTRACT Hub UX):** Office Project Hub `#hub-contract` exposes the existing Slice A selector result. Ontario + no ACTIVE counsel-approved package → **BLOCK** with office-safe copy. Selector `select_legal_content_package_for_project` remains authority. No generation control. No override. No Family 05 fallback. No Ontario legal-content population. No activation service. No Native Signing. No schema/migration. Dedicated Hub UX **9 passed**. Focused Hub + Hub UX **22 passed**. Full **838 passed**. Gate overall remains **OPEN / PARTIAL**. Slice D **NOT AUTHORIZED**. FG-024 **not closed**. V1 score **unchanged** (**60% / 4 of 11**).
+
+**Recorded production decisions (2026-09-14; not implemented in this slice):**
+
+- **C1:** Production contract generation requires an Issued Proposal tied to a locked / non-Draft EstimateVersion. A Draft estimate cannot generate a production contract. Generation UX is **not** implemented here.
+- **C2:** When an ACTIVE legal package exists and a newer candidate is pending counsel review, production policy is **WARN**. The existing ACTIVE counsel-approved package remains authority until an approved successor is activated. If the ACTIVE package is itself invalid, expired, superseded without a valid replacement, or otherwise fails existing effective-date rules, **BLOCK**. The existing selector does **not** currently return WARN; this slice does not add WARN UI.
+- **C3:** Warranty is required for the first Ontario production contract package. Warranty generation is **not** implemented here.
+- **Activation:** ACTIVE requires an explicit human-authorized administrative action. AI cannot APPROVE or ACTIVE. Activation is **not** built here.
 
 ---
 

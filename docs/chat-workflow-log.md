@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-14 — Fail-closed CONTRACT Hub UX
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-14 |
+| Branch | `main` @ `bd1baf9426ab3a6db2d0d063fe1a76c14c8bc3ef` (parent) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 14 SEP 2026 |
+| Objective | Expose the existing FG-024 / 06G fail-closed contract-selection result in the office CONTRACT experience. |
+| Business decision | Joel / ChatGPT Architect authorized one bounded fail-closed CONTRACT UX. Independent BMR contract-story PASS is sufficient for that blocker. Do not flip BMR DEMO READY to YES. Do not populate Ontario legal content. |
+| Architectural decision | Reuse `select_legal_content_package_for_project` from Hub assembly. Presentation via `contractor_copy.contract_selection_copy`. No duplicate jurisdiction rules. C1/C2/C3 recorded. Activation remains human-authorized. AI cannot APPROVE/ACTIVE. Native Signing remains separate. |
+| Prompt template used | Joel bounded fail-closed CONTRACT UX implementation (14 Sep 2026) |
+| Approved Cursor prompt summary | Preflight bd1baf94 / live d3e4f5a6b7c8; expose selector BLOCK on Hub CONTRACT; Ontario empty library; no generate/override; no Family 05 fallback; pytest; commit `feat: expose fail-closed contract status`; push; STOP. |
+| Files expected to change | Hub assembler/template, contractor_copy, dedicated tests, FG-024 and continuity docs |
+| Files prohibited from changing | Migrations; models; EST-2026-0019; Ontario legal bodies; activation; Slice D; Native Signing; FG-030; live QuickBooks |
+| Implementation result | Hub `#hub-contract-legal` shows Production contract unavailable when no ACTIVE package. Selector remains authority. No production contract created. Family 05 not substituted. EST-2026-0019 untouched. Independent BMR contract-story **PASS**. BMR DEMO READY **NO**. FG-024 **not closed**. V1 remains **60% / 4 of 11**. |
+| Tests | Focused `tests/test_contract_fail_closed_hub_fg024.py tests/test_project_hub.py` — **22 passed**, 62 warnings, **12.82s**. `./venv/bin/python -m pytest -q` — **838 passed**, 2857 warnings, **277.98s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (fail-closed CONTRACT UX recorded; not a V1 package completion; not an FG-024 close) |
+| Constitutional issue raised | None. New ADR not required. New Feature Gate not required. ADR-001 / ADR-004 remain **Proposed**. |
+| Unresolved issues | Ontario 06D / Output 4. Native Signing not implemented. Activation not built. FG-024 overall OPEN / PARTIAL. BMR DEMO READY remains NO pending Architect checklist review. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | **None.** Return to ChatGPT Architect. |
+| Commit hash | This fail-closed CONTRACT Hub UX commit |
+
 ### 2026-09-14 — FG-025 customer-document language slice
 
 | Field | Content |

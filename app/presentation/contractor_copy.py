@@ -1,4 +1,4 @@
-"""FG-025 contractor-facing display mapping (Slice 1–6).
+"""FG-025 contractor-facing display mapping (Slice 1–6) plus FG-024 CONTRACT Hub copy.
 
 Presentation only. Deterministic. No DB access, I/O, service ownership,
 commercial calculations, or mutation. Internal domain keys stay authoritative.
@@ -312,6 +312,85 @@ CUSTOMER_PRICING_HEADING = "Pricing"
 CUSTOMER_NO_PRICING_SECTIONS = "No priced items on this construction estimate."
 CUSTOMER_CLIENT_LABEL = "Customer"
 CUSTOMER_PROJECT_LABEL = "Project"
+
+CONTRACT_STATUS_HEADING = "Production contract"
+CONTRACT_PRODUCTION_UNAVAILABLE = "Production contract unavailable"
+CONTRACT_PRODUCTION_AVAILABLE = "Production contract package available"
+CONTRACT_NO_ACTIVE_PACKAGE = (
+    "No active counsel-approved contract package is available for this jurisdiction."
+)
+CONTRACT_LOCATION_INCOMPLETE = (
+    "Project location is not complete, so a production contract cannot be generated."
+)
+CONTRACT_PACKAGE_NOT_USABLE = (
+    "The selected package cannot be used for production contract generation."
+)
+CONTRACT_STATUS_UNDETERMINED = (
+    "Production contract status could not be determined. Contract generation is blocked."
+)
+CONTRACT_GENERATION_BLOCKED = (
+    "Contract generation is blocked until approved legal content is activated."
+)
+CONTRACT_ACTIVE_PACKAGE_SELECTED = (
+    "An active counsel-approved package is selected for this jurisdiction."
+)
+CONTRACT_GENERATION_NOT_FROM_HUB = (
+    "Production generation is not started from this screen."
+)
+CONTRACT_SAFEGUARD = (
+    "This is a legal-content safeguard. The estimate and proposal are not broken."
+)
+CONTRACT_NO_PRODUCTION_GENERATED = "No production contract has been generated."
+CONTRACT_NO_FAMILY_05_FALLBACK = (
+    "A commercial presentation draft is not used as a substitute contract."
+)
+CONTRACT_NO_BYPASS = "This screen does not override the legal-content gate."
+CONTRACT_OFFICE_DETAIL_LABEL = "Office detail"
+
+CONTRACT_BLOCK_LEDES = {
+    "JURISDICTION_NOT_SUPPORTED": CONTRACT_NO_ACTIVE_PACKAGE,
+    "NO_ACTIVE_PACKAGE": CONTRACT_NO_ACTIVE_PACKAGE,
+    "PACKAGE_NOT_ACTIVE": CONTRACT_NO_ACTIVE_PACKAGE,
+    "PACKAGE_SUPERSEDED_NO_ACTIVE_REPLACEMENT": CONTRACT_NO_ACTIVE_PACKAGE,
+    "JURISDICTION_UNRESOLVED": CONTRACT_LOCATION_INCOMPLETE,
+    "PACKAGE_NOT_EFFECTIVE": CONTRACT_PACKAGE_NOT_USABLE,
+    "EFFECTIVE_DATE_UNRESOLVED": CONTRACT_PACKAGE_NOT_USABLE,
+    "COVERAGE_LIMITED": CONTRACT_PACKAGE_NOT_USABLE,
+}
+
+
+def contract_selection_copy(selection) -> dict:
+    """Map a Slice A LegalContentSelection to office CONTRACT copy.
+
+    Presentation only. Does not resolve jurisdiction or select packages.
+    """
+    if selection is None or getattr(selection, "selection_error", False):
+        return {
+            "blocked": True,
+            "heading": CONTRACT_PRODUCTION_UNAVAILABLE,
+            "lede": CONTRACT_STATUS_UNDETERMINED,
+            "next": CONTRACT_GENERATION_BLOCKED,
+            "block_code": None,
+            "jurisdiction_code": None,
+        }
+    if getattr(selection, "available", False):
+        return {
+            "blocked": False,
+            "heading": CONTRACT_PRODUCTION_AVAILABLE,
+            "lede": CONTRACT_ACTIVE_PACKAGE_SELECTED,
+            "next": CONTRACT_GENERATION_NOT_FROM_HUB,
+            "block_code": None,
+            "jurisdiction_code": getattr(selection, "jurisdiction_code", None),
+        }
+    code = getattr(selection, "block_code", None)
+    return {
+        "blocked": True,
+        "heading": CONTRACT_PRODUCTION_UNAVAILABLE,
+        "lede": CONTRACT_BLOCK_LEDES.get(code, CONTRACT_NO_ACTIVE_PACKAGE),
+        "next": CONTRACT_GENERATION_BLOCKED,
+        "block_code": code,
+        "jurisdiction_code": getattr(selection, "jurisdiction_code", None),
+    }
 
 
 def office_status_label(value: str | None) -> str:

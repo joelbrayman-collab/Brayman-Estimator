@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-14 — FG-024 TECH-D production-shaped synthetic Ontario UAT
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 TECH-D production-shaped synthetic Ontario UAT |
+| Status | **COMPLETE / NOT A GATE CLOSE.** FG-024 overall **OPEN / PARTIAL**. Native Signing **not started**. |
+| Branch | `main` |
+| Base commit | `af00fca3e3c1d34ed3bdd890ef71826b1b97d5a8` |
+| Objective | Prove the TECH-A/B/C CONTRACT chain end-to-end with unmistakably synthetic Ontario UAT content. |
+| Deliverables | `tests/test_synthetic_ontario_contract_uat_fg024.py`; live SYNTHETIC_UAT package `FG024D-UAT-ON-001`; CTR-2026-0003 / CTR-2026-0004; [testing/fg024-tech-d-live-bounded-uat-record.md](testing/fg024-tech-d-live-bounded-uat-record.md). |
+| Validation | Dedicated TECH-D **5 passed**. Focused TECH-A/B/C/D + FG-024 **124 passed** / 25.62s. Full **904 passed**, 3040 warnings, **350.10s**. Alembic current = heads `a6b7c8d9e0f1`. EST-2026-0019 occupancy unchanged. Live PRODUCTION packages **0**. Family 05 master SHA unchanged. |
+| Architectural findings | No new schema required. SYNTHETIC_UAT ACTIVE never satisfies ordinary PRODUCTION selection. WARN generation uses current ACTIVE bodies. Retrieval reads retained bytes. |
+| Open decisions | Native Signing. Ontario 06D. Slice D. V1 rescore. Later Project Element preflight. |
+| Next milestone | **STOP.** Recommended next workstream Native Signing — **not authorized from this note**. |
+| Commit | this TECH-D commit (`test: prove synthetic Ontario contract flow`) |
+| Date | 2026-09-14 |
+
 ### 2026-09-14 — FG-024 TECH-C Family 05 merge + artifact custody
 
 | Field | Content |

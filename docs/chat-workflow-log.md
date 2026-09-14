@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-14 — FG-024 TECH-D production-shaped synthetic Ontario UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-14 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 14 SEP 2026 |
+| Objective | TECH-D only: production-shaped synthetic Ontario CONTRACT UAT of the TECH-A/B/C chain |
+| Business decision | Technical proof only. SYNTHETIC / COMMERCIAL_DRAFT / NOT FOR EXECUTION / NOT FOR SIGNATURE. GENERATED != EXECUTED. PRODUCTION Ontario remains empty. |
+| Architectural decision | No new schema. Explicit SYNTHETIC_UAT path. Ordinary PRODUCTION selector ignores synthetic ACTIVE. Family 05 copy-only merge + private custody. |
+| Prompt template used | Bounded TECH-D UAT authorization (14 Sep 2026) |
+| Approved Cursor prompt summary | Prove C1/C2/C3, TECH-A activation, Family 05 merge, custody/immutability, production fail-closed; focused + full pytest; docs; commit `test: prove synthetic Ontario contract flow`; STOP; do not begin Native Signing. |
+| Files expected to change | dedicated TECH-D tests; UAT evidence; governed continuity docs |
+| Files prohibited from changing | EST-2026-0019; Family 05 master; Native Signing; Slice D; V1 rescore; Ontario PRODUCTION legal; Time/Performance |
+| Implementation result | TECH-D **PASS**. Live current `a6b7c8d9e0f1 (head)`. PRODUCTION packages **0**. EST-2026-0019 unchanged. Family 05 SHA unchanged. FG-024 remains OPEN / PARTIAL. |
+| Tests | Dedicated TECH-D **5 passed**. Focused TECH-A/B/C/D + FG-024 **124 passed** / 25.62s. Full **904 passed**, 3040 warnings, **350.10s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Native Signing not started. Ontario production legal content empty. Counsel gate outstanding. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin Native Signing. |
+| Next approved prompt | None from this note. |
+| Commit hash | (this TECH-D commit) |
+
 ### 2026-09-14 — Future mobile-first Time UX recorded (not implemented)
 
 | Field | Content |

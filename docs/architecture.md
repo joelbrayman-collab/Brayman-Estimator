@@ -67,7 +67,7 @@ Registered in [`app/models/__init__.py`](../app/models/__init__.py):
 | Material Catalogue | `CanonicalMaterial`, `MaterialRequirement` | `app/models/canonical_material.py`; `app/models/material_requirement.py` (FG-029; **CLOSED / OPERATIONAL FOR UAT**) |
 | Supplier Catalogue | `Supplier`, `SupplierLocation`, `ContractorSupplierAccount`, `SupplierProduct`, price/availability evidence, maps, `SupplierPackage` / lines | `app/models/supplier_catalogue.py` (FG-029; inform-only price; **CLOSED / OPERATIONAL FOR UAT**) |
 | Pricing Engine | `OrganizationPricingPolicy`, `EstimatePricingSnapshot`, `PricingAuditEvent` | `app/models/pricing_engine.py` |
-| Legal Content Library | `LegalContentJurisdictionPackage`, `LegalContentObject`, `LegalContentSource`, `LegalContentSourceSnapshot`, `LegalContentCandidateChange`, `LegalContentCandidateImpact`, `LegalContentReviewEvent` | `app/models/legal_content.py` (FG-024 Slice A **live / empty**; Slice B update foundation **live-migrated / operational for UAT**) |
+| Legal Content Library | `LegalContentJurisdictionPackage`, `LegalContentObject`, `LegalContentSource`, `LegalContentSourceSnapshot`, `LegalContentCandidateChange`, `LegalContentCandidateImpact`, `LegalContentReviewEvent`, `LegalContentActivationEvent` | `app/models/legal_content.py` (FG-024 Slice A **live / empty**; Slice B update foundation **live-migrated / operational for UAT**; TECH-A activation + `authority_class` **live-migrated**) |
 | Generated contract snapshot | `GeneratedProjectContract`, `ProjectContractSnapshot`, `ProjectContractSnapshotObject` | `app/models/project_contract.py` (FG-024 Slice C **live / synthetic-UAT proven**; GENERATED ≠ executed; no real customer contract) |
 
 Notable behaviours evidenced in code/tests:
@@ -97,7 +97,7 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic **repository** graph head: **`d3e4f5a6b7c8`** (FG-024 Slice C contract-generation foundation; **applied live**). Live development/UAT `flask db current`: **`d3e4f5a6b7c8 (head)`**. One graph head. Live current **equals** repository head. FG-024 Slice B **`c2d3e4f5a6b7` applied live** 2026-09-13. FG-024 Slice A **`b1c2d3e4f5a6` applied live** 2026-09-13. FG-032 Slice C occupancy **`f1a2b3c4d5e6` applied live** 2026-09-11 (superseded as live current). Verify `flask db current` per environment before relying on it.
+- Alembic **repository** graph head: **`e4f5a6b7c8d9`** (FG-024 TECH-A activation; **applied live**). Live development/UAT `flask db current`: **`e4f5a6b7c8d9 (head)`**. One graph head. Live current **equals** repository head. FG-024 Slice C **`d3e4f5a6b7c8` applied live** 2026-09-13 (superseded as live current). FG-024 Slice B **`c2d3e4f5a6b7` applied live** 2026-09-13. FG-024 Slice A **`b1c2d3e4f5a6` applied live** 2026-09-13. FG-032 Slice C occupancy **`f1a2b3c4d5e6` applied live** 2026-09-11 (superseded as live current). Verify `flask db current` per environment before relying on it.
 
 ### Tests
 

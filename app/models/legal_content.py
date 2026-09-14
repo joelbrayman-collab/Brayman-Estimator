@@ -30,6 +30,16 @@ CONTENT_KINDS = (
     "other",
 )
 
+AUTHORITY_CLASSES = (
+    "SYNTHETIC_UAT",
+    "PRODUCTION",
+)
+
+ACTIVATION_ACTIONS = (
+    "ACTIVATE",
+    "SUPERSEDE",
+)
+
 
 class LegalContentJurisdictionPackage(db.Model):
     """Platform-governed jurisdiction legal-content package. Not org-owned."""
@@ -45,6 +55,10 @@ class LegalContentJurisdictionPackage(db.Model):
             "support_status IN ('SUPPORTED', 'LIMITED', "
             "'UPDATE_PENDING_REVIEW', 'NOT_YET_SUPPORTED')",
             name="ck_legal_content_packages_support_status",
+        ),
+        db.CheckConstraint(
+            "authority_class IN ('SYNTHETIC_UAT', 'PRODUCTION')",
+            name="ck_legal_content_packages_authority_class",
         ),
         db.UniqueConstraint(
             "package_code",
@@ -72,9 +86,11 @@ class LegalContentJurisdictionPackage(db.Model):
     library_state = db.Column(db.String(20), nullable=False, index=True)
     effective_from = db.Column(db.Date, nullable=True)
     effective_to = db.Column(db.Date, nullable=True)
+    authority_class = db.Column(db.String(20), nullable=False, index=True)
     counsel_approved_at = db.Column(db.DateTime, nullable=True)
     counsel_approved_by = db.Column(db.String(150), nullable=True)
     activated_at = db.Column(db.DateTime, nullable=True)
+    activated_by = db.Column(db.String(150), nullable=True)
     superseded_by_id = db.Column(
         db.Integer,
         db.ForeignKey("legal_content_jurisdiction_packages.id"),
@@ -93,6 +109,12 @@ class LegalContentJurisdictionPackage(db.Model):
     content_objects = db.relationship(
         "LegalContentObject",
         back_populates="package",
+        cascade="all, delete-orphan",
+    )
+    activation_events = db.relationship(
+        "LegalContentActivationEvent",
+        back_populates="package",
+        foreign_keys="LegalContentActivationEvent.package_id",
         cascade="all, delete-orphan",
     )
 
@@ -426,3 +448,50 @@ class LegalContentReviewEvent(db.Model):
 
     def __repr__(self):
         return f"<LegalContentReviewEvent {self.action} {self.actor_kind}>"
+
+
+class LegalContentActivationEvent(db.Model):
+    """Append-only human/counsel activation or supersession evidence."""
+
+    __tablename__ = "legal_content_activation_events"
+    __table_args__ = (
+        db.CheckConstraint(
+            "action IN ('ACTIVATE', 'SUPERSEDE')",
+            name="ck_legal_content_activation_events_action",
+        ),
+        db.CheckConstraint(
+            "actor_kind IN ('HUMAN', 'COUNSEL', 'AI', 'AUTOMATION')",
+            name="ck_legal_content_activation_events_actor_kind",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    package_id = db.Column(
+        db.Integer,
+        db.ForeignKey("legal_content_jurisdiction_packages.id"),
+        nullable=False,
+        index=True,
+    )
+    action = db.Column(db.String(20), nullable=False, index=True)
+    actor_kind = db.Column(db.String(20), nullable=False)
+    actor_identifier = db.Column(db.String(150), nullable=False)
+    predecessor_package_id = db.Column(
+        db.Integer,
+        db.ForeignKey("legal_content_jurisdiction_packages.id"),
+        nullable=True,
+        index=True,
+    )
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    package = db.relationship(
+        "LegalContentJurisdictionPackage",
+        foreign_keys=[package_id],
+        back_populates="activation_events",
+    )
+    predecessor_package = db.relationship(
+        "LegalContentJurisdictionPackage",
+        foreign_keys=[predecessor_package_id],
+    )
+
+    def __repr__(self):
+        return f"<LegalContentActivationEvent {self.action} {self.actor_kind}>"

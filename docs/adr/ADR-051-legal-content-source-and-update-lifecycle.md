@@ -11,6 +11,8 @@ This ADR is the **source-class, candidate-update, and Slice B / Slice D boundary
 
 **Subsequent status (2026-09-14 docs reconciliation):** Later bounded prompts closed Slice B and Slice C as **CLOSED / OPERATIONAL FOR UAT**. Slice D, legal drafting, live monitoring, and Native Signing remain unauthorized. ADR-051 §6 generation-while-pending remains **deferred**. This note does **not** change the original boundary decision.
 
+**Subsequent status (2026-09-14, TECH-A):** HUMAN/COUNSEL may activate APPROVED packages. AI cannot ACTIVE. Explicit supersession is recorded on append-only activation events. §6 remains **deferred**. This ADR is **not** reopened.
+
 ---
 
 ## Context

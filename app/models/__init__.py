@@ -17,6 +17,7 @@ from app.models.supplier_catalogue import (
 from app.models.cost_item import CostItem
 from app.models.jurisdiction import JurisdictionAlias, JurisdictionDefinition
 from app.models.legal_content import (
+    LegalContentActivationEvent,
     LegalContentCandidateChange,
     LegalContentCandidateImpact,
     LegalContentJurisdictionPackage,
@@ -161,6 +162,7 @@ __all__ = [
     "HistoricalUploadAttempt",
     "JurisdictionAlias",
     "JurisdictionDefinition",
+    "LegalContentActivationEvent",
     "LegalContentCandidateChange",
     "LegalContentCandidateImpact",
     "LegalContentJurisdictionPackage",

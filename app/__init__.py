@@ -102,11 +102,13 @@ def _register_office_auth(app: Flask) -> None:
 
     from app.cli.auth import auth_cli
     from app.cli.build import build_cli
+    from app.cli.legal_content import legal_content_cli
     from app.routes.auth import auth_bp
 
     app.register_blueprint(auth_bp)
     app.cli.add_command(auth_cli)
     app.cli.add_command(build_cli)
+    app.cli.add_command(legal_content_cli)
 
     @app.before_request
     def protect_office_routes():

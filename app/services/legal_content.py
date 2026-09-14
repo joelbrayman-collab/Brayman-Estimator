@@ -6,12 +6,15 @@ from typing import Optional
 
 from app.models import Project
 from app.models.jurisdiction import JurisdictionDefinition
-from app.models.legal_content import LegalContentJurisdictionPackage
+from app.models.legal_content import AUTHORITY_CLASSES, LegalContentJurisdictionPackage
 from app.models.organization import Organization
 from app.services.jurisdiction import resolve_jurisdiction
 
 STATUS_AVAILABLE = "AVAILABLE"
 STATUS_BLOCK = "BLOCK"
+
+AUTHORITY_PRODUCTION = "PRODUCTION"
+AUTHORITY_SYNTHETIC_UAT = "SYNTHETIC_UAT"
 
 BLOCK_JURISDICTION_UNRESOLVED = "JURISDICTION_UNRESOLVED"
 BLOCK_JURISDICTION_NOT_SUPPORTED = "JURISDICTION_NOT_SUPPORTED"
@@ -69,16 +72,18 @@ def _available(package: LegalContentJurisdictionPackage) -> LegalContentSelectio
     )
 
 
-def _packages_for_node(node: JurisdictionDefinition):
+def _packages_for_node(node: JurisdictionDefinition, authority_class: str):
     return LegalContentJurisdictionPackage.query.filter_by(
-        jurisdiction_definition_id=node.id
+        jurisdiction_definition_id=node.id,
+        authority_class=authority_class,
     ).all()
 
 
-def _active_package(node: JurisdictionDefinition):
+def _active_package(node: JurisdictionDefinition, authority_class: str):
     return LegalContentJurisdictionPackage.query.filter_by(
         jurisdiction_definition_id=node.id,
         library_state="ACTIVE",
+        authority_class=authority_class,
     ).one_or_none()
 
 
@@ -140,13 +145,19 @@ def select_legal_content_package_for_project(
     project_id: int,
     *,
     as_of: Optional[date] = None,
+    authority_class: str = AUTHORITY_PRODUCTION,
 ) -> LegalContentSelection:
     """Return AVAILABLE or a deterministic BLOCK. Never invents legal authority.
+
+    Ordinary office/production selection uses ACTIVE + PRODUCTION only.
+    SYNTHETIC_UAT never satisfies this default path.
 
     Reuses ADR-037 / FG-015 ``resolve_jurisdiction``. Does not consult
     Organization.tax_jurisdiction, Permit Rules, or FG-022 presentation masters.
     """
     day = as_of or date.today()
+    if authority_class not in AUTHORITY_CLASSES:
+        return _block(BLOCK_JURISDICTION_NOT_SUPPORTED)
     project = Project.query.get(project_id)
     if project is None:
         return _block(BLOCK_JURISDICTION_UNRESOLVED)
@@ -175,22 +186,35 @@ def select_legal_content_package_for_project(
     province_node = nodes[0] if nodes[0].kind == "province_state" else None
 
     if municipal_node is not None:
-        municipal_active = _active_package(municipal_node)
+        municipal_active = _active_package(municipal_node, authority_class)
         if municipal_active is not None:
             return _evaluate_active(municipal_active, day)
 
     if province_node is not None:
-        province_active = _active_package(province_node)
+        province_active = _active_package(province_node, authority_class)
         if province_active is not None:
             return _evaluate_active(province_active, day)
 
     scoped_rows = []
     for node in nodes:
-        scoped_rows.extend(_packages_for_node(node))
+        scoped_rows.extend(_packages_for_node(node, authority_class))
     jurisdiction_code = (
         province_node.code if province_node is not None else municipal.code
     )
     return _block_for_non_active_rows(scoped_rows, jurisdiction_code)
+
+
+def select_synthetic_uat_legal_content_package_for_project(
+    project_id: int,
+    *,
+    as_of: Optional[date] = None,
+) -> LegalContentSelection:
+    """Explicit synthetic technical/UAT selection. Not an office production path."""
+    return select_legal_content_package_for_project(
+        project_id,
+        as_of=as_of,
+        authority_class=AUTHORITY_SYNTHETIC_UAT,
+    )
 
 
 def assert_platform_library_not_org_mutable():

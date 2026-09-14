@@ -13,6 +13,8 @@ Accepting this ADR did **not** by itself authorize product code. Bounded prompts
 
 **Subsequent status (2026-09-14 docs reconciliation):** Later bounded prompts closed Slice B and Slice C as **CLOSED / OPERATIONAL FOR UAT**. Slice D remains **NOT AUTHORIZED**. Legal drafting and Native Signing remain unauthorized. This note does **not** change the original ownership decision.
 
+**Subsequent status (2026-09-14, TECH-A):** HUMAN/COUNSEL activation + `authority_class` implemented. Ordinary production selection requires ACTIVE + PRODUCTION. Live PRODUCTION packages remain **0**. This ADR is **not** reopened. Slice D remains **NOT AUTHORIZED**.
+
 ---
 
 ## Context

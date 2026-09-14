@@ -136,11 +136,13 @@ def _package(*, code, jurisdiction_code, library_state):
         province_or_state_code="CA-ON",
         support_status="SUPPORTED",
         library_state=library_state,
+        authority_class="PRODUCTION",
         effective_from=date(2026, 1, 1),
         effective_to=date(2027, 12, 31),
         counsel_approved_at=now,
         counsel_approved_by="Counsel Test",
         activated_at=now if library_state == "ACTIVE" else None,
+        activated_by="test-activator" if library_state == "ACTIVE" else None,
         provenance="TEST DATA ONLY — not counsel approval",
         created_at=now,
     )

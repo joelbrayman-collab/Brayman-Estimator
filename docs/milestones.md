@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-14 — FG-024 TECH-A human activation + authority class
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 TECH-A human activation + authority class |
+| Status | **COMPLETE / NOT A GATE CLOSE.** FG-024 overall **OPEN / PARTIAL**. TECH-B/C/D **not started**. |
+| Branch | `main` |
+| Base commit | `065b724eaf6f7b8aa4d4586dd33b0d852e84e329` |
+| Objective | HUMAN/COUNSEL activation of eligible APPROVED packages; SYNTHETIC_UAT vs PRODUCTION; ordinary production selector safety. |
+| Deliverables | `authority_class`, `activated_by`, `legal_content_activation_events`; `activate_legal_content`; `flask legal-content activate`; additive `e4f5a6b7c8d9` applied live; [testing/fg024-tech-a-live-migrate-bounded-uat-record.md](testing/fg024-tech-a-live-migrate-bounded-uat-record.md). |
+| Validation | Focused TECH-A + FG-024 related **73 passed** / 12.72s. Full **853 passed**, 2881 warnings, **276.57s**. Alembic current = heads `e4f5a6b7c8d9`. EST-2026-0019 occupancy unchanged. Live PRODUCTION packages **0**. |
+| Architectural findings | APPROVED ≠ ACTIVE. SYNTHETIC_UAT never satisfies ordinary production selection. Unique ACTIVE-per-node index remains final DB protection. |
+| Open decisions | TECH-B C1/C2/C3. Ontario 06D. Slice D. Native Signing. V1 rescore. |
+| Next milestone | **STOP.** Recommended next chunk TECH-B — **not authorized from this note**. |
+| Commit | this TECH-A commit (`feat: add governed legal content activation`) |
+| Date | 2026-09-14 |
+
 ### 2026-09-14 — Fail-closed CONTRACT Hub UX
 
 | Field | Content |

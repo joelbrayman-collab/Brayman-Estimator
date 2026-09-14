@@ -129,6 +129,8 @@ def _package(
     counsel_approved_by=None,
     activated_at=None,
     superseded_by_id=None,
+    authority_class="PRODUCTION",
+    activated_by=None,
 ):
     node = _node(jurisdiction_code)
     country_code = node.code.split("-")[0]
@@ -145,11 +147,13 @@ def _package(
         province_or_state_code=province,
         support_status=support_status,
         library_state=library_state,
+        authority_class=authority_class,
         effective_from=effective_from,
         effective_to=effective_to,
         counsel_approved_at=now if counsel_approved_by else None,
         counsel_approved_by=counsel_approved_by,
         activated_at=activated_at or (now if library_state == "ACTIVE" else None),
+        activated_by=activated_by or ("test-activator" if library_state == "ACTIVE" else None),
         superseded_by_id=superseded_by_id,
         provenance="TEST DATA ONLY — not counsel approval",
         created_at=now,
@@ -427,6 +431,7 @@ def test_content_object_body_unpopulated_and_unique_active_constraint(app):
                 province_or_state_code="CA-ON",
                 support_status="SUPPORTED",
                 library_state="ACTIVE",
+                authority_class="PRODUCTION",
                 effective_from=date(2026, 1, 1),
                 counsel_approved_by="Counsel Test",
                 counsel_approved_at=datetime.utcnow(),

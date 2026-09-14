@@ -180,11 +180,13 @@ def _package(
         province_or_state_code=province,
         support_status=support_status,
         library_state=library_state,
+        authority_class="PRODUCTION",
         effective_from=effective_from,
         effective_to=effective_to,
         counsel_approved_at=now if counsel_approved_by else None,
         counsel_approved_by=counsel_approved_by,
         activated_at=now if library_state == "ACTIVE" else None,
+        activated_by="test-activator" if library_state == "ACTIVE" else None,
         provenance="TEST DATA ONLY — not counsel approval",
         created_at=now,
     )
@@ -524,7 +526,7 @@ def test_alembic_fg024_slice_c_upgrade_empty_and_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["d3e4f5a6b7c8"]
+        assert script.get_heads() == ["e4f5a6b7c8d9"]
 
         command.upgrade(alembic_cfg, "c2d3e4f5a6b7")
         engine = db.engine

@@ -39,8 +39,8 @@ from app.services.legal_content_update import (
     ACTOR_AUTOMATION,
     ACTOR_COUNSEL,
     ACTOR_HUMAN,
-    BLOCK_ACTIVATION_NOT_SLICE_B,
     BLOCK_ACTIVE_MUTATION_FORBIDDEN,
+    BLOCK_ACTOR_IDENTIFIER_REQUIRED,
     BLOCK_AI_CANNOT_ACTIVATE,
     BLOCK_AI_CANNOT_APPROVE,
     BLOCK_AI_CANNOT_ROUTE,
@@ -176,11 +176,13 @@ def _package(
         province_or_state_code=province,
         support_status=support_status,
         library_state=library_state,
+        authority_class="PRODUCTION",
         effective_from=effective_from,
         effective_to=effective_to,
         counsel_approved_at=now if counsel_approved_by else None,
         counsel_approved_by=counsel_approved_by,
         activated_at=now if library_state == "ACTIVE" else None,
+        activated_by="test-activator" if library_state == "ACTIVE" else None,
         provenance="TEST DATA ONLY — not counsel approval",
         created_at=now,
     )
@@ -346,7 +348,7 @@ def test_ai_cannot_set_active(app):
     assert auto_exc.value.code == BLOCK_AI_CANNOT_ACTIVATE
     with pytest.raises(LegalContentUpdateError) as human_exc:
         activate_legal_content(actor_kind=ACTOR_HUMAN)
-    assert human_exc.value.code == BLOCK_ACTIVATION_NOT_SLICE_B
+    assert human_exc.value.code == BLOCK_ACTOR_IDENTIFIER_REQUIRED
 
 
 def test_candidate_does_not_supersede_or_deactivate_active(app):
@@ -532,7 +534,7 @@ def test_alembic_fg024_slice_b_upgrade_empty_and_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["d3e4f5a6b7c8"]
+        assert script.get_heads() == ["e4f5a6b7c8d9"]
 
         command.upgrade(alembic_cfg, "b1c2d3e4f5a6")
         engine = db.engine

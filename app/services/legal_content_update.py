@@ -8,13 +8,17 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 from typing import Optional, Union
+
+from sqlalchemy.exc import IntegrityError
 
 from app import db
 from app.models.jurisdiction import JurisdictionDefinition
 from app.models.legal_content import (
+    AUTHORITY_CLASSES,
     SOURCE_CLASSES,
+    LegalContentActivationEvent,
     LegalContentCandidateChange,
     LegalContentCandidateImpact,
     LegalContentJurisdictionPackage,
@@ -64,6 +68,18 @@ BLOCK_ACTIVATION_NOT_SLICE_B = "ACTIVATION_NOT_SLICE_B"
 BLOCK_INVALID_CANDIDATE_STATE = "INVALID_CANDIDATE_STATE"
 BLOCK_PROPOSED_OBJECT_REQUIRED = "PROPOSED_OBJECT_REQUIRED"
 BLOCK_PAYLOAD_REQUIRED = "PAYLOAD_REQUIRED"
+BLOCK_PACKAGE_NOT_APPROVED = "PACKAGE_NOT_APPROVED"
+BLOCK_EFFECTIVE_FROM_REQUIRED = "EFFECTIVE_FROM_REQUIRED"
+BLOCK_AUTHORITY_CLASS_REQUIRED = "AUTHORITY_CLASS_REQUIRED"
+BLOCK_AUTHORITY_CLASS_INVALID = "AUTHORITY_CLASS_INVALID"
+BLOCK_ACTIVE_PACKAGE_EXISTS = "ACTIVE_PACKAGE_EXISTS"
+BLOCK_SUPERSEDE_PACKAGE_MISMATCH = "SUPERSEDE_PACKAGE_MISMATCH"
+BLOCK_OBJECTS_NOT_APPROVED = "OBJECTS_NOT_APPROVED"
+BLOCK_ACTOR_IDENTIFIER_REQUIRED = "ACTOR_IDENTIFIER_REQUIRED"
+
+ACTION_ACTIVATE = "ACTIVATE"
+ACTION_SUPERSEDE = "SUPERSEDE"
+OBJECT_AUTHORITATIVE_STATES = frozenset({"APPROVED", "ACTIVE"})
 
 
 class LegalContentUpdateError(Exception):
@@ -298,6 +314,26 @@ def _record_event(
     )
 
 
+def _record_activation_event(
+    *,
+    package_id: int,
+    action: str,
+    actor_kind: str,
+    actor_identifier: str,
+    predecessor_package_id: Optional[int] = None,
+) -> LegalContentActivationEvent:
+    event = LegalContentActivationEvent(
+        package_id=package_id,
+        action=action,
+        actor_kind=actor_kind,
+        actor_identifier=actor_identifier,
+        predecessor_package_id=predecessor_package_id,
+        created_at=datetime.utcnow(),
+    )
+    db.session.add(event)
+    return event
+
+
 def route_candidate_to_counsel_review(
     candidate_id: int,
     *,
@@ -442,14 +478,98 @@ def approve_content_version(
 
 
 def activate_legal_content(
-    *args,
+    package_id: Optional[int] = None,
+    *,
     actor_kind: str = ACTOR_HUMAN,
-    **kwargs,
-):
-    """Slice B does not activate. AI/automation cannot set ACTIVE."""
+    actor_identifier: str = "",
+    effective_from: Optional[date] = None,
+    effective_to: Optional[date] = None,
+    supersede_package_id: Optional[int] = None,
+    commit: bool = True,
+) -> LegalContentJurisdictionPackage:
+    """HUMAN/COUNSEL may activate an APPROVED package. Never in-place unactivate.
+
+    AI/AUTOMATION cannot activate. APPROVED is not ACTIVE. SYNTHETIC_UAT and
+    PRODUCTION are package attributes; this service does not invent them.
+    """
     if actor_kind in AI_OR_AUTOMATION:
         raise LegalContentUpdateError(BLOCK_AI_CANNOT_ACTIVATE)
-    raise LegalContentUpdateError(BLOCK_ACTIVATION_NOT_SLICE_B)
+    if actor_kind not in COUNSEL_ACTORS:
+        raise LegalContentUpdateError(BLOCK_COUNSEL_ACTOR_REQUIRED)
+    identifier = (actor_identifier or "").strip()
+    if not identifier:
+        raise LegalContentUpdateError(BLOCK_ACTOR_IDENTIFIER_REQUIRED)
+    if package_id is None:
+        raise LegalContentUpdateError(BLOCK_PACKAGE_NOT_FOUND)
+    if effective_from is None:
+        raise LegalContentUpdateError(BLOCK_EFFECTIVE_FROM_REQUIRED)
+
+    package = db.session.get(LegalContentJurisdictionPackage, package_id)
+    if package is None:
+        raise LegalContentUpdateError(BLOCK_PACKAGE_NOT_FOUND)
+    if package.library_state != "APPROVED":
+        raise LegalContentUpdateError(BLOCK_PACKAGE_NOT_APPROVED)
+    if not package.authority_class:
+        raise LegalContentUpdateError(BLOCK_AUTHORITY_CLASS_REQUIRED)
+    if package.authority_class not in AUTHORITY_CLASSES:
+        raise LegalContentUpdateError(BLOCK_AUTHORITY_CLASS_INVALID)
+    for obj in package.content_objects:
+        if obj.library_state not in OBJECT_AUTHORITATIVE_STATES:
+            raise LegalContentUpdateError(BLOCK_OBJECTS_NOT_APPROVED)
+
+    existing_active = LegalContentJurisdictionPackage.query.filter_by(
+        jurisdiction_definition_id=package.jurisdiction_definition_id,
+        library_state="ACTIVE",
+    ).one_or_none()
+    predecessor = None
+    if existing_active is not None:
+        if supersede_package_id is None:
+            raise LegalContentUpdateError(BLOCK_ACTIVE_PACKAGE_EXISTS)
+        if existing_active.id != supersede_package_id:
+            raise LegalContentUpdateError(BLOCK_SUPERSEDE_PACKAGE_MISMATCH)
+        if existing_active.id == package.id:
+            raise LegalContentUpdateError(BLOCK_PACKAGE_NOT_APPROVED)
+        predecessor = existing_active
+    elif supersede_package_id is not None:
+        raise LegalContentUpdateError(BLOCK_SUPERSEDE_PACKAGE_MISMATCH)
+
+    now = datetime.utcnow()
+    try:
+        if predecessor is not None:
+            predecessor.library_state = "SUPERSEDED"
+            predecessor.superseded_by_id = package.id
+            _record_activation_event(
+                package_id=predecessor.id,
+                action=ACTION_SUPERSEDE,
+                actor_kind=actor_kind,
+                actor_identifier=identifier,
+                predecessor_package_id=predecessor.id,
+            )
+        package.library_state = "ACTIVE"
+        package.activated_at = now
+        package.activated_by = identifier
+        package.effective_from = effective_from
+        package.effective_to = effective_to
+        _record_activation_event(
+            package_id=package.id,
+            action=ACTION_ACTIVATE,
+            actor_kind=actor_kind,
+            actor_identifier=identifier,
+            predecessor_package_id=(
+                predecessor.id if predecessor is not None else None
+            ),
+        )
+        if commit:
+            db.session.commit()
+        else:
+            db.session.flush()
+    except IntegrityError as exc:
+        db.session.rollback()
+        raise LegalContentUpdateError(BLOCK_ACTIVE_PACKAGE_EXISTS) from exc
+    except Exception:
+        db.session.rollback()
+        raise
+    return package
 
 
 def supersede_active_from_candidate(*args, **kwargs):

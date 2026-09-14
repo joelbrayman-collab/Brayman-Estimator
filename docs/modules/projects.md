@@ -26,7 +26,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 - `permit_analyses`, `permit_findings`, `project_permit_facts` (FG-016 project-tied Pass 2; organization-scoped)
 - `change_orders`, `change_order_items` (package-owned tables)
 
-Platform-shared (not org-owned): `jurisdiction_definitions`, `jurisdiction_aliases`, `permit_rules`, `legal_content_jurisdiction_packages`, `legal_content_objects` (FG-024 Slice A; live / empty), `legal_content_sources`, `legal_content_source_snapshots`, `legal_content_candidate_changes`, `legal_content_candidate_impacts`, `legal_content_review_events` (FG-024 Slice B; live; labeled UAT source evidence only, not legal authority).
+Platform-shared (not org-owned): `jurisdiction_definitions`, `jurisdiction_aliases`, `permit_rules`, `legal_content_jurisdiction_packages`, `legal_content_objects` (FG-024 Slice A; live / empty), `legal_content_sources`, `legal_content_source_snapshots`, `legal_content_candidate_changes`, `legal_content_candidate_impacts`, `legal_content_review_events` (FG-024 Slice B; live; labeled UAT source evidence only, not legal authority), `legal_content_activation_events` (FG-024 TECH-A; live; empty after synthetic UAT cleanup).
 
 Org-scoped generated contracts (FG-024 Slice C; **live / synthetic-UAT proven**; not a real customer contract): `project_generated_contracts`, `project_contract_snapshots`, `project_contract_snapshot_objects`.
 

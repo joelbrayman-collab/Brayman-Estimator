@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-14 — FG-024 TECH-A human activation + authority class
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-14 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 14 SEP 2026 |
+| Objective | TECH-A only: human/counsel activation + SYNTHETIC_UAT / PRODUCTION authority class |
+| Business decision | HUMAN/COUNSEL only may activate. AI cannot. APPROVED ≠ ACTIVE. Ordinary production selection = ACTIVE + PRODUCTION. Counsel deferred for technical development; mandatory pre-production gate. Ontario production NOT APPROVED / NOT ACTIVE. |
+| Architectural decision | Implement existing `activate_legal_content` boundary. Append-only activation events. CLI `flask legal-content activate`. No Hub/customer/AI activation. No PRODUCTION Ontario seed. |
+| Prompt template used | Bounded TECH-A implementation authorization (14 Sep 2026) |
+| Approved Cursor prompt summary | Preflight 065b724 / live d3e4f5a6b7c8; TECH-A schema + one additive migration e4f5a6b7c8d9; activate_legal_content; selector authority-class safety; CLI; focused tests then live upgrade; synthetic UAT; full pytest; docs; commit `feat: add governed legal content activation`; push; STOP; do not begin TECH-B. |
+| Files expected to change | legal_content model/service/selector/CLI; one Alembic revision; focused tests; governed docs |
+| Files prohibited from changing | EST-2026-0019; Family 05 legal bodies; TECH-B/C/D; Native Signing; Slice D; V1 rescore |
+| Implementation result | TECH-A **PASS**. Live current `e4f5a6b7c8d9 (head)`. PRODUCTION packages **0**. EST-2026-0019 unchanged. FG-024 remains OPEN / PARTIAL. |
+| Tests | Focused TECH-A + FG-024 related **73 passed** / 12.72s. Full **853 passed**, 2881 warnings, **276.57s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | TECH-B C1/C2/C3 generation policy not started. Ontario production legal content empty. Counsel gate outstanding. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin TECH-B. |
+| Next approved prompt | None from this note. |
+| Commit hash | (this TECH-A commit) |
+
 ### 2026-09-14 — Fail-closed CONTRACT Hub UX
 
 | Field | Content |

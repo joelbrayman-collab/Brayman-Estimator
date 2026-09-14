@@ -65,6 +65,8 @@ Govern construction contract language, statutory/consumer wording, warranty obli
 
 **Subsequent status (2026-09-14, fail-closed CONTRACT Hub UX):** Project Hub CONTRACT now shows the existing fail-closed selector result. This **still does not** populate this register, approve any legal language, mark Family 05 legally approved, activate a package, or generate a production Ontario contract. Empty library remains FAIL CLOSED. AI still cannot APPROVE or ACTIVE.
 
+**Subsequent status (2026-09-14, TECH-A human activation + authority class):** Activation engine + `authority_class` exist. HUMAN/COUNSEL may activate an eligible APPROVED package. AI cannot ACTIVE. Ordinary production selection requires ACTIVE + PRODUCTION. SYNTHETIC_UAT does **not** satisfy ordinary production selection. This **still does not** populate this register, approve Ontario production legal content, or mark Family 05 legally approved. Live PRODUCTION packages remain **0**. Counsel review remains **DEFERRED FOR V1 TECHNICAL DEVELOPMENT** / **MANDATORY PRE-PRODUCTION GATE** / **NOT A LEGAL APPROVAL**. Ontario production remains **NOT APPROVED / NOT ACTIVE**. Production contract execution remains **BLOCKED PENDING COUNSEL REVIEW**.
+
 ## Warranty template register (governed — empty until approved)
 
 Warranty language is **governed content**.

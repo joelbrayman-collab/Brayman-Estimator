@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-14 — Future mobile-first Time UX recorded (not implemented)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-14 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 14 SEP 2026 |
+| Objective | Record Joel’s non-negotiable mobile-first / iPhone-primary Time Entry UX for later architecture only |
+| Business decision | Time Entry is a field / iPhone experience. Do not design a desktop timesheet and compress it later. Maximum intelligence behind the screen; minimum effort in the field. Submitted time is not trusted ORG-ACTUAL until human approval. Real iPhone UAT required before Time capability closes. |
+| Architectural decision | None authorized. Record only in [architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md). |
+| Prompt template used | TECH-C continuation; architecture record only |
+| Approved Cursor prompt summary | No change to TECH-C product scope. Record mobile-first Time UX. Do not implement Time UI, elements, activities, TODAY, approval, MONITOR, LEARN, TECH-D, or Native Signing. |
+| Files expected to change | Future-record + governed index/handoff pointers |
+| Files prohibited from changing | TECH-C product code; Family 05 master; EST-2026-0019; Ontario PRODUCTION legal; V1 score |
+| Implementation result | Recorded. **NOT IMPLEMENTED.** TECH-C product remains `9a6c86fb8e66234a10ac19f15118d8caea200af6`. |
+| Tests | None required (docs-only). Prior TECH-C full suite **899 passed**. |
+| Project-state-report update | No (TECH-C product already recorded) |
+| Milestone entry update | SHA pin only on existing TECH-C entry |
+| Constitutional issue raised | None |
+| Unresolved issues | Later Architect preflight after CONTRACT workstream |
+| Next approved step | **STOP.** TECH-C **PASS**. Do **not** begin TECH-D. |
+| Next approved prompt | None from this note. |
+| Commit hash | (this docs pin) |
+
 ### 2026-09-14 — FG-024 TECH-C Family 05 merge + artifact custody
 
 | Field | Content |
@@ -65,7 +89,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | TECH-D production-shaped synthetic Ontario UAT not started. Ontario production legal content empty. Counsel gate outstanding. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin TECH-D. |
 | Next approved prompt | None from this note. |
-| Commit hash | (this TECH-C commit) |
+| Commit hash | `9a6c86fb8e66234a10ac19f15118d8caea200af6` |
 
 ### 2026-09-14 — FG-024 TECH-B C1/C2/C3 generation policy
 

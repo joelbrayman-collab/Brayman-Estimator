@@ -46,7 +46,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Renderer never writes the master path. Historical Slice C contracts remain valid with nullable storage keys. Retrieval reads retained bytes; it does not re-render. |
 | Open decisions | TECH-D production-shaped synthetic Ontario UAT. Ontario 06D. Slice D. Native Signing. V1 rescore. Later Project Element preflight. |
 | Next milestone | **STOP.** Recommended next chunk TECH-D — **not authorized from this note**. |
-| Commit | this TECH-C commit (`feat: render governed Family 05 contract artifact`) |
+| Commit | `9a6c86fb8e66234a10ac19f15118d8caea200af6` (`feat: render governed Family 05 contract artifact`) |
 | Date | 2026-09-14 |
 
 ### 2026-09-14 — FG-024 TECH-B C1/C2/C3 generation policy

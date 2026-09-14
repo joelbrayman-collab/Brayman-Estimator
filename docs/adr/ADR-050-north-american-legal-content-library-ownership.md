@@ -15,6 +15,8 @@ Accepting this ADR did **not** by itself authorize product code. Bounded prompts
 
 **Subsequent status (2026-09-14, TECH-A):** HUMAN/COUNSEL activation + `authority_class` implemented. Ordinary production selection requires ACTIVE + PRODUCTION. Live PRODUCTION packages remain **0**. This ADR is **not** reopened. Slice D remains **NOT AUTHORIZED**.
 
+**Subsequent status (2026-09-14, TECH-B):** Generation policy requires explicit Issued/Accepted Proposal + Issued/Accepted locked EstimateVersion. Ontario V1 requires contract_provision + warranty. Live PRODUCTION packages remain **0**. This ADR is **not** reopened. Slice D remains **NOT AUTHORIZED**.
+
 ---
 
 ## Context

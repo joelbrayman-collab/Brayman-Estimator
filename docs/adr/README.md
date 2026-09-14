@@ -187,8 +187,8 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-050](ADR-050-north-american-legal-content-library-ownership.md) | North American Legal Content Library Ownership and Fail-Closed Boundary | **Accepted** (2026-09-13; Joel Brayman / ChatGPT Architect; subsequent Slice A **CLOSED / OPERATIONAL FOR UAT**; subsequent Slice B and Slice C **CLOSED / OPERATIONAL FOR UAT**; TECH-A **IMPLEMENTED**; Slice D **NOT AUTHORIZED**; live current **`e4f5a6b7c8d9 (head)`**; library **empty**) |
-| [ADR-051](ADR-051-legal-content-source-and-update-lifecycle.md) | Legal Content Source Classes, Candidate-Update Lifecycle, and Slice B / Slice D Boundary | **Accepted** (2026-09-13; Joel Brayman / ChatGPT Architect; subsequent Slice B **CLOSED / OPERATIONAL FOR UAT**; subsequent Slice C **CLOSED / OPERATIONAL FOR UAT**; Slice D **NOT AUTHORIZED**; §6 generation-while-pending **deferred**) |
+| [ADR-050](ADR-050-north-american-legal-content-library-ownership.md) | North American Legal Content Library Ownership and Fail-Closed Boundary | **Accepted** (2026-09-13; Joel Brayman / ChatGPT Architect; subsequent Slice A **CLOSED / OPERATIONAL FOR UAT**; subsequent Slice B and Slice C **CLOSED / OPERATIONAL FOR UAT**; TECH-A **IMPLEMENTED**; TECH-B **IMPLEMENTED**; Slice D **NOT AUTHORIZED**; live current **`f5a6b7c8d9e0 (head)`**; library **empty**) |
+| [ADR-051](ADR-051-legal-content-source-and-update-lifecycle.md) | Legal Content Source Classes, Candidate-Update Lifecycle, and Slice B / Slice D Boundary | **Accepted** (2026-09-13; Joel Brayman / ChatGPT Architect; subsequent Slice B **CLOSED / OPERATIONAL FOR UAT**; subsequent Slice C **CLOSED / OPERATIONAL FOR UAT**; TECH-B **WARN** implemented for valid ACTIVE + pending candidate; Slice D **NOT AUTHORIZED**) |
 
 ### Field Web capture reliability (Accepted; FG-021 CLOSED)
 

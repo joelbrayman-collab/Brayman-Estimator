@@ -11,7 +11,7 @@ This ADR is the **source-class, candidate-update, and Slice B / Slice D boundary
 
 **Subsequent status (2026-09-14 docs reconciliation):** Later bounded prompts closed Slice B and Slice C as **CLOSED / OPERATIONAL FOR UAT**. Slice D, legal drafting, live monitoring, and Native Signing remain unauthorized. ADR-051 §6 generation-while-pending remains **deferred**. This note does **not** change the original boundary decision.
 
-**Subsequent status (2026-09-14, TECH-A):** HUMAN/COUNSEL may activate APPROVED packages. AI cannot ACTIVE. Explicit supersession is recorded on append-only activation events. §6 remains **deferred**. This ADR is **not** reopened.
+**Subsequent status (2026-09-14, TECH-B):** Valid ACTIVE + pending candidate is **WARN**. Current ACTIVE remains authority. Candidate is not authority. Independently invalid ACTIVE remains **BLOCK**. §6 is implemented for that WARN case only. This ADR is **not** reopened. Slice D remains **NOT AUTHORIZED**.
 
 ---
 
@@ -140,4 +140,4 @@ Subsequent empty-candidate product tests prove: no AI APPROVED/ACTIVE; candidate
 |------|------|------|
 | Joel | Joel Brayman / ChatGPT Architect | 2026-09-13 |
 | ChatGPT review | Slice B documentation preflight; existing-governance reconciliation / Accept | 2026-09-13 |
-| Cursor implementation note | Drafted **Proposed** 2026-09-13 from ADR-000. **Accepted** 2026-09-13 documentation-only. Subsequent bounded product prompt implemented repository foundation 2026-09-13. §6 generation-while-pending remains **deferred**. Live migrate **not** authorized. |
+| Cursor implementation note | Drafted **Proposed** 2026-09-13 from ADR-000. **Accepted** 2026-09-13 documentation-only. Subsequent bounded product prompt implemented repository foundation 2026-09-13. Subsequent TECH-B implemented §6 WARN for valid ACTIVE + pending candidate. Slice D / live monitoring remain unauthorized. |

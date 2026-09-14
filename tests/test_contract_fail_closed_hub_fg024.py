@@ -15,12 +15,14 @@ from app.models.legal_content import LegalContentJurisdictionPackage
 from app.models.project_contract import GeneratedProjectContract
 from app.presentation.contractor_copy import (
     CONTRACT_ACTIVE_PACKAGE_SELECTED,
+    CONTRACT_ACTIVE_REMAINS_AUTHORITY,
     CONTRACT_GENERATION_BLOCKED,
     CONTRACT_LOCATION_INCOMPLETE,
     CONTRACT_NO_ACTIVE_PACKAGE,
     CONTRACT_NO_BYPASS,
     CONTRACT_NO_FAMILY_05_FALLBACK,
     CONTRACT_NO_PRODUCTION_GENERATED,
+    CONTRACT_PENDING_UPDATE_WARN,
     CONTRACT_PRODUCTION_AVAILABLE,
     CONTRACT_PRODUCTION_UNAVAILABLE,
     CONTRACT_SAFEGUARD,
@@ -34,7 +36,14 @@ from app.services.jurisdiction import ensure_jurisdiction_seed
 from app.services.legal_content import (
     BLOCK_JURISDICTION_NOT_SUPPORTED,
     STATUS_BLOCK,
+    STATUS_WARN,
+    WARN_PENDING_CANDIDATE,
     select_legal_content_package_for_project,
+)
+from app.services.legal_content_update import (
+    create_candidate_from_snapshot,
+    ingest_source_snapshot,
+    register_legal_content_source,
 )
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
 from app.services.permit_foundation import establish_project_location_and_profile
@@ -179,8 +188,25 @@ def test_copy_maps_selector_result_without_jurisdiction_rules():
         SimpleNamespace(available=True, block_code=None, jurisdiction_code="CA-ON")
     )
     assert available["blocked"] is False
+    assert available["warned"] is False
     assert available["heading"] == CONTRACT_PRODUCTION_AVAILABLE
     assert available["lede"] == CONTRACT_ACTIVE_PACKAGE_SELECTED
+
+    warned = contract_selection_copy(
+        SimpleNamespace(
+            available=True,
+            status="WARN",
+            warn_code="PENDING_CANDIDATE",
+            block_code=None,
+            jurisdiction_code="CA-ON",
+        )
+    )
+    assert warned["blocked"] is False
+    assert warned["warned"] is True
+    assert warned["heading"] == CONTRACT_PRODUCTION_AVAILABLE
+    assert warned["lede"] == CONTRACT_PENDING_UPDATE_WARN
+    assert warned["next"] == CONTRACT_ACTIVE_REMAINS_AUTHORITY
+    assert warned["warn_code"] == "PENDING_CANDIDATE"
 
     failed = contract_selection_copy(
         SimpleNamespace(available=False, selection_error=True, block_code=None)
@@ -320,6 +346,48 @@ def test_available_package_still_has_no_generate_control(client):
     assert "Generate contract" not in html
     assert "generate anyway" not in html.lower()
     assert GeneratedProjectContract.query.count() == 0
+
+
+def test_pending_candidate_shows_warn_not_block_on_contract_hub(client):
+    project = _ottawa_project()
+    package = _package(
+        code="TEST-ON-ACTIVE-WARN-HUB",
+        jurisdiction_code="CA-ON",
+        library_state="ACTIVE",
+    )
+    source = register_legal_content_source(
+        source_code="FG024-HUB-SRC-001",
+        source_class="OFFICIAL_PRIMARY",
+        source_identity="Synthetic hub pending source",
+        jurisdiction_definition_id=package.jurisdiction_definition_id,
+        provenance="TEST DATA ONLY",
+    )
+    snap = ingest_source_snapshot(source.id, "SYNTHETIC HUB PAYLOAD")
+    create_candidate_from_snapshot(
+        snap.snapshot.id,
+        change_summary="synthetic hub pending",
+        affected_package_id=package.id,
+    )
+    selection = select_legal_content_package_for_project(project.id, as_of=date(2026, 9, 14))
+    assert selection.available is True
+    assert selection.status == STATUS_WARN
+    assert selection.warn_code == WARN_PENDING_CANDIDATE
+
+    response = client.get(f"/projects/{project.id}")
+    html = _html(response)
+    contract = _contract_section(html)
+    assert response.status_code == 200
+    assert CONTRACT_PRODUCTION_AVAILABLE in contract
+    assert CONTRACT_PENDING_UPDATE_WARN in contract
+    assert CONTRACT_ACTIVE_REMAINS_AUTHORITY in contract
+    assert CONTRACT_PRODUCTION_UNAVAILABLE not in contract
+    assert CONTRACT_NO_ACTIVE_PACKAGE not in contract
+    assert "Generate contract" not in html
+    assert "generate anyway" not in html.lower()
+    assert "PENDING_CANDIDATE" in contract
+    assert CONTRACT_NO_BYPASS in contract
+    assert GeneratedProjectContract.query.count() == 0
+    assert PROTECTED_ESTIMATE_NUMBER not in html
 
 
 def test_hub_does_not_duplicate_selector_rules():

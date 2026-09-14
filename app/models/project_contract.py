@@ -60,6 +60,12 @@ class GeneratedProjectContract(db.Model):
         nullable=False,
         index=True,
     )
+    proposal_id = db.Column(
+        db.Integer,
+        db.ForeignKey("proposals.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
     contract_number = db.Column(db.String(40), nullable=False)
     status = db.Column(
         db.String(20),
@@ -127,6 +133,17 @@ class ProjectContractSnapshot(db.Model):
     estimate_number = db.Column(db.String(50), nullable=False)
     estimate_version_number = db.Column(db.Integer, nullable=False)
     estimate_version_status = db.Column(db.String(50), nullable=False)
+    proposal_id = db.Column(db.Integer, nullable=True, index=True)
+    proposal_number = db.Column(db.String(50), nullable=True)
+    proposal_status = db.Column(db.String(50), nullable=True)
+    selection_status = db.Column(db.String(20), nullable=True)
+    warn_code = db.Column(db.String(40), nullable=True)
+    pending_candidate_id = db.Column(db.Integer, nullable=True)
+    pending_candidate_used_as_authority = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False,
+    )
     commercial_variables_json = db.Column(db.JSON, nullable=False)
     commercial_sha256 = db.Column(db.String(64), nullable=False)
     artifact_text = db.Column(db.Text, nullable=False)

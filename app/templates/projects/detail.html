@@ -327,14 +327,19 @@
         <p class="eyebrow">{{ contract_copy.heading }}</p>
         <p>{{ contract_copy.lede }}</p>
         <p>{{ contract_copy.next }}</p>
+        {% if contract_copy.warned %}
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_PENDING_UPDATE_WARN }}</p>
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_ACTIVE_REMAINS_AUTHORITY }}</p>
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_BYPASS }}</p>
+        {% endif %}
         {% if contract_copy.blocked %}
         <p class="muted-copy">{{ contractor_copy.CONTRACT_SAFEGUARD }}</p>
         <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_PRODUCTION_GENERATED }}</p>
         <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_FAMILY_05_FALLBACK }}</p>
         <p class="muted-copy">{{ contractor_copy.CONTRACT_NO_BYPASS }}</p>
         {% endif %}
-        {% if contract_copy.block_code or contract_copy.jurisdiction_code %}
-        <p class="muted-copy">{{ contractor_copy.CONTRACT_OFFICE_DETAIL_LABEL }}{% if contract_copy.jurisdiction_code %} · {{ contract_copy.jurisdiction_code }}{% endif %}{% if contract_copy.block_code %} · {{ contract_copy.block_code }}{% endif %}</p>
+        {% if contract_copy.block_code or contract_copy.warn_code or contract_copy.jurisdiction_code %}
+        <p class="muted-copy">{{ contractor_copy.CONTRACT_OFFICE_DETAIL_LABEL }}{% if contract_copy.jurisdiction_code %} · {{ contract_copy.jurisdiction_code }}{% endif %}{% if contract_copy.block_code %} · {{ contract_copy.block_code }}{% endif %}{% if contract_copy.warn_code %} · {{ contract_copy.warn_code }}{% endif %}</p>
         {% endif %}
     </article>
     <article class="panel panel-wide">

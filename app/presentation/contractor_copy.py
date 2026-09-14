@@ -334,6 +334,14 @@ CONTRACT_GENERATION_BLOCKED = (
 CONTRACT_ACTIVE_PACKAGE_SELECTED = (
     "An active counsel-approved package is selected for this jurisdiction."
 )
+CONTRACT_PENDING_UPDATE_WARN = (
+    "An approved active contract package is available and remains the current "
+    "authority, but an update is pending legal review."
+)
+CONTRACT_ACTIVE_REMAINS_AUTHORITY = (
+    "The current approved package remains in force. A pending update is not "
+    "used as contract authority."
+)
 CONTRACT_GENERATION_NOT_FROM_HUB = (
     "Production generation is not started from this screen."
 )
@@ -367,28 +375,47 @@ def contract_selection_copy(selection) -> dict:
     if selection is None or getattr(selection, "selection_error", False):
         return {
             "blocked": True,
+            "warned": False,
             "heading": CONTRACT_PRODUCTION_UNAVAILABLE,
             "lede": CONTRACT_STATUS_UNDETERMINED,
             "next": CONTRACT_GENERATION_BLOCKED,
             "block_code": None,
+            "warn_code": None,
             "jurisdiction_code": None,
         }
     if getattr(selection, "available", False):
+        status = getattr(selection, "status", None)
+        warn_code = getattr(selection, "warn_code", None)
+        if status == "WARN" or warn_code:
+            return {
+                "blocked": False,
+                "warned": True,
+                "heading": CONTRACT_PRODUCTION_AVAILABLE,
+                "lede": CONTRACT_PENDING_UPDATE_WARN,
+                "next": CONTRACT_ACTIVE_REMAINS_AUTHORITY,
+                "block_code": None,
+                "warn_code": warn_code or "PENDING_CANDIDATE",
+                "jurisdiction_code": getattr(selection, "jurisdiction_code", None),
+            }
         return {
             "blocked": False,
+            "warned": False,
             "heading": CONTRACT_PRODUCTION_AVAILABLE,
             "lede": CONTRACT_ACTIVE_PACKAGE_SELECTED,
             "next": CONTRACT_GENERATION_NOT_FROM_HUB,
             "block_code": None,
+            "warn_code": None,
             "jurisdiction_code": getattr(selection, "jurisdiction_code", None),
         }
     code = getattr(selection, "block_code", None)
     return {
         "blocked": True,
+        "warned": False,
         "heading": CONTRACT_PRODUCTION_UNAVAILABLE,
         "lede": CONTRACT_BLOCK_LEDES.get(code, CONTRACT_NO_ACTIVE_PACKAGE),
         "next": CONTRACT_GENERATION_BLOCKED,
         "block_code": code,
+        "warn_code": None,
         "jurisdiction_code": getattr(selection, "jurisdiction_code", None),
     }
 

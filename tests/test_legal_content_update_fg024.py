@@ -32,6 +32,8 @@ from app.services.legal_content import (
     BLOCK_JURISDICTION_NOT_SUPPORTED,
     STATUS_AVAILABLE,
     STATUS_BLOCK,
+    STATUS_WARN,
+    WARN_PENDING_CANDIDATE,
     select_legal_content_package_for_project,
 )
 from app.services.legal_content_update import (
@@ -502,7 +504,8 @@ def test_active_package_still_selected_while_candidate_exists(app):
     project = _ottawa_project()
     result = select_legal_content_package_for_project(project.id)
     assert result.available is True
-    assert result.status == STATUS_AVAILABLE
+    assert result.status == STATUS_WARN
+    assert result.warn_code == WARN_PENDING_CANDIDATE
     assert result.package_id == package.id
     assert result.library_state == "ACTIVE"
 
@@ -534,7 +537,7 @@ def test_alembic_fg024_slice_b_upgrade_empty_and_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["e4f5a6b7c8d9"]
+        assert script.get_heads() == ["f5a6b7c8d9e0"]
 
         command.upgrade(alembic_cfg, "b1c2d3e4f5a6")
         engine = db.engine

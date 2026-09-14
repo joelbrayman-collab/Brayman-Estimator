@@ -33,7 +33,7 @@ from app.services.contract_generation import (
     BLOCK_MISSING_COMMERCIAL_FACTS,
     BLOCK_MISSING_PRESENTATION_MASTER,
     BLOCK_MISSING_REQUIRED_LEGAL_OBJECT,
-    BLOCK_PENDING_REVIEW_UNSUPPORTED,
+    BLOCK_PROPOSAL_REQUIRED,
     PRESENTATION_LEGAL_STATUS,
     STATUS_BLOCK,
     STATUS_GENERATED,
@@ -43,13 +43,18 @@ from app.services.contract_generation import (
 from app.services.estimates import create_estimate
 from app.services.jurisdiction import ensure_jurisdiction_seed
 from app.services.legal_content import (
+    AUTHORITY_PRODUCTION,
     BLOCK_JURISDICTION_NOT_SUPPORTED,
     BLOCK_JURISDICTION_UNRESOLVED,
     BLOCK_PACKAGE_NOT_ACTIVE,
     BLOCK_PACKAGE_NOT_EFFECTIVE,
+    STATUS_ALLOW,
     STATUS_AVAILABLE,
+    STATUS_WARN,
+    WARN_PENDING_CANDIDATE,
     select_legal_content_package_for_project,
 )
+from app.services.proposals import create_proposal, create_proposal_template
 from app.services.legal_content_update import (
     create_candidate_from_snapshot,
     ingest_source_snapshot,
@@ -91,7 +96,15 @@ SYNTHETIC_MASTER = {
     "legal_status": "COMMERCIAL_DRAFT",
 }
 
-SYNTHETIC_LEGAL_BODY = "SYNTHETIC CONTRACT PROVISION — NOT ONTARIO LAW"
+SYNTHETIC_LEGAL_BODY = (
+    "SYNTHETIC CONTRACT PROVISION — TEST/UAT — NOT ONTARIO LEGAL AUTHORITY — NOT FOR EXECUTION"
+)
+SYNTHETIC_WARRANTY_BODY = (
+    "SYNTHETIC WARRANTY — TEST/UAT — NOT ONTARIO LEGAL AUTHORITY — NOT FOR EXECUTION"
+)
+SYNTHETIC_CANDIDATE_BODY = (
+    "SYNTHETIC CANDIDATE BODY — MUST NEVER BE USED AS LEGAL AUTHORITY"
+)
 
 
 @pytest.fixture
@@ -234,7 +247,35 @@ def _estimate(project, *, number, status="Draft", total="1130.00", org_id=DEFAUL
     return estimate, version
 
 
-def _generate(project, version, *, master=None, actor="cursor-test"):
+def _proposal(estimate, version, *, status="Issued", number=None):
+    template = create_proposal_template(
+        name=f"FG024C Template {number or estimate.estimate_number}",
+        is_active=True,
+        default_intro_text="Intro",
+        default_payment_terms="Net 30",
+    )
+    return create_proposal(
+        estimate=estimate,
+        version=version,
+        template=template,
+        status=status,
+        title="FG024C synthetic proposal",
+        proposal_number=number or f"PROP-{estimate.estimate_number}",
+    )
+
+
+def _generate(
+    project,
+    version,
+    proposal=None,
+    *,
+    master=None,
+    actor="cursor-test",
+    proposal_id="__default__",
+    authority_class=AUTHORITY_PRODUCTION,
+):
+    if proposal_id == "__default__":
+        proposal_id = proposal.id if proposal is not None else None
     return generate_project_contract(
         project.id,
         version.id,
@@ -242,6 +283,8 @@ def _generate(project, version, *, master=None, actor="cursor-test"):
         presentation_master=SYNTHETIC_MASTER if master is None else master,
         actor_identifier=actor,
         actor_kind="HUMAN",
+        proposal_id=proposal_id,
+        authority_class=authority_class,
     )
 
 
@@ -255,14 +298,21 @@ def _ready_ontario(*, number="EST-FG024C-READY"):
         effective_from=date(2026, 1, 1),
     )
     obj = _object(package)
+    warranty = _object(
+        package,
+        kind="warranty",
+        body=SYNTHETIC_WARRANTY_BODY,
+    )
     estimate, version = _estimate(project, number=number, status="Issued")
-    return project, package, obj, estimate, version
+    proposal = _proposal(estimate, version, number=f"PROP-{number}")
+    return project, package, obj, estimate, version, proposal, warranty
 
 
 def test_unresolved_jurisdiction_blocks(app):
     project = _make_project(address="Free text only")
-    _, version = _estimate(project, number="EST-FG024C-UNRES", status="Issued")
-    result = _generate(project, version)
+    estimate, version = _estimate(project, number="EST-FG024C-UNRES", status="Issued")
+    proposal = _proposal(estimate, version, number="PROP-FG024C-UNRES")
+    result = _generate(project, version, proposal)
     assert result.generated is False
     assert result.status == STATUS_BLOCK
     assert result.block_code == BLOCK_JURISDICTION_UNRESOLVED
@@ -271,9 +321,10 @@ def test_unresolved_jurisdiction_blocks(app):
 
 def test_empty_legal_library_blocks(app):
     project = _ottawa_project()
-    _, version = _estimate(project, number="EST-FG024C-EMPTY", status="Issued")
+    estimate, version = _estimate(project, number="EST-FG024C-EMPTY", status="Issued")
+    proposal = _proposal(estimate, version, number="PROP-FG024C-EMPTY")
     assert LegalContentJurisdictionPackage.query.count() == 0
-    result = _generate(project, version)
+    result = _generate(project, version, proposal)
     assert result.generated is False
     assert result.block_code == BLOCK_JURISDICTION_NOT_SUPPORTED
     assert GeneratedProjectContract.query.count() == 0
@@ -288,8 +339,9 @@ def test_package_not_active_blocks(app):
         counsel_approved_by="Counsel Test",
         effective_from=date(2026, 1, 1),
     )
-    _, version = _estimate(project, number="EST-FG024C-NACT", status="Issued")
-    result = _generate(project, version)
+    estimate, version = _estimate(project, number="EST-FG024C-NACT", status="Issued")
+    proposal = _proposal(estimate, version, number="PROP-FG024C-NACT")
+    result = _generate(project, version, proposal)
     assert result.generated is False
     assert result.block_code == BLOCK_PACKAGE_NOT_ACTIVE
 
@@ -303,8 +355,9 @@ def test_package_outside_effective_date_blocks(app):
         counsel_approved_by="Counsel Test",
         effective_from=date(2099, 1, 1),
     )
-    _, version = _estimate(project, number="EST-FG024C-EFF", status="Issued")
-    result = _generate(project, version, actor="cursor-test")
+    estimate, version = _estimate(project, number="EST-FG024C-EFF", status="Issued")
+    proposal = _proposal(estimate, version, number="PROP-FG024C-EFF")
+    result = _generate(project, version, proposal, actor="cursor-test")
     assert result.generated is False
     assert result.block_code == BLOCK_PACKAGE_NOT_EFFECTIVE
 
@@ -318,8 +371,9 @@ def test_missing_required_legal_object_blocks(app):
         counsel_approved_by="Counsel Test",
         effective_from=date(2026, 1, 1),
     )
-    _, version = _estimate(project, number="EST-FG024C-NOOBJ", status="Issued")
-    result = _generate(project, version)
+    estimate, version = _estimate(project, number="EST-FG024C-NOOBJ", status="Issued")
+    proposal = _proposal(estimate, version, number="PROP-FG024C-NOOBJ")
+    result = _generate(project, version, proposal)
     assert result.generated is False
     assert result.block_code == BLOCK_MISSING_REQUIRED_LEGAL_OBJECT
 
@@ -334,27 +388,30 @@ def test_legal_object_not_authoritative_blocks(app):
         effective_from=date(2026, 1, 1),
     )
     _object(package, library_state="PROPOSED")
-    _, version = _estimate(project, number="EST-FG024C-PROP", status="Issued")
-    result = _generate(project, version)
+    _object(package, kind="warranty", body=SYNTHETIC_WARRANTY_BODY, library_state="PROPOSED")
+    estimate, version = _estimate(project, number="EST-FG024C-PROP", status="Issued")
+    proposal = _proposal(estimate, version, number="PROP-FG024C-PROP")
+    result = _generate(project, version, proposal)
     assert result.generated is False
     assert result.block_code == BLOCK_LEGAL_OBJECT_NOT_AUTHORITATIVE
 
 
 def test_missing_presentation_master_blocks(app):
-    project, _, _, _, version = _ready_ontario(number="EST-FG024C-NOMASTER")
+    project, _, _, _, version, proposal, _ = _ready_ontario(number="EST-FG024C-NOMASTER")
     result = generate_project_contract(
         project.id,
         version.id,
         organization_id=project.organization_id,
         presentation_master={},
         actor_identifier="cursor-test",
+        proposal_id=proposal.id,
     )
     assert result.generated is False
     assert result.block_code == BLOCK_MISSING_PRESENTATION_MASTER
 
 
 def test_draft_estimate_version_blocks(app):
-    project, _, _, _, _ = _ready_ontario(number="EST-FG024C-DRAFTPKG")
+    project, _, _, _, _, _, _ = _ready_ontario(number="EST-FG024C-DRAFTPKG")
     _, draft = _estimate(project, number="EST-FG024C-DRAFT", status="Draft")
     result = _generate(project, draft)
     assert result.generated is False
@@ -363,19 +420,20 @@ def test_draft_estimate_version_blocks(app):
 
 
 def test_missing_commercial_facts_blocks(app):
-    project, _, _, _, version = _ready_ontario(number="EST-FG024C-ZERO")
+    project, _, _, _, version, proposal, _ = _ready_ontario(number="EST-FG024C-ZERO")
     version.subtotal = Decimal("0")
     version.total = Decimal("0")
     db.session.commit()
-    result = _generate(project, version)
+    result = _generate(project, version, proposal)
     assert result.generated is False
     assert result.block_code == BLOCK_MISSING_COMMERCIAL_FACTS
 
 
 def test_family_05_alone_blocks(app):
     project = _ottawa_project()
-    _, version = _estimate(project, number="EST-FG024C-F05", status="Issued")
-    result = _generate(project, version)
+    estimate, version = _estimate(project, number="EST-FG024C-F05", status="Issued")
+    proposal = _proposal(estimate, version, number="PROP-FG024C-F05")
+    result = _generate(project, version, proposal)
     assert result.generated is False
     assert result.block_code == BLOCK_JURISDICTION_NOT_SUPPORTED
     assert GeneratedProjectContract.query.count() == 0
@@ -407,8 +465,9 @@ def test_generic_na_and_cross_jurisdiction_never(app):
         counsel_approved_by="Counsel Test",
         effective_from=date(2026, 1, 1),
     )
-    _, version = _estimate(project, number="EST-FG024C-XJ", status="Issued")
-    result = _generate(project, version)
+    estimate, version = _estimate(project, number="EST-FG024C-XJ", status="Issued")
+    proposal = _proposal(estimate, version, number="PROP-FG024C-XJ")
+    result = _generate(project, version, proposal)
     assert result.generated is False
     assert result.block_code == BLOCK_JURISDICTION_NOT_SUPPORTED
     source = inspect.getsource(generation_service)
@@ -425,8 +484,10 @@ def test_permit_rules_not_used_as_legal_authority(app):
     assert PermitRule.query.count() >= 0
 
 
-def test_pending_candidate_branch_not_silently_allowed(app):
-    project, package, _, _, version = _ready_ontario(number="EST-FG024C-PEND")
+def test_pending_candidate_warns_and_uses_active_package(app):
+    project, package, obj, _, version, proposal, warranty = _ready_ontario(
+        number="EST-FG024C-PEND"
+    )
     assert select_legal_content_package_for_project(project.id).status == STATUS_AVAILABLE
     source = register_legal_content_source(
         source_code="FG024C-SRC-001",
@@ -436,15 +497,38 @@ def test_pending_candidate_branch_not_silently_allowed(app):
         provenance="TEST DATA ONLY",
     )
     snap = ingest_source_snapshot(source.id, "SYNTHETIC PAYLOAD V1")
-    create_candidate_from_snapshot(
+    candidate = create_candidate_from_snapshot(
         snap.snapshot.id,
-        change_summary="synthetic pending",
+        change_summary=SYNTHETIC_CANDIDATE_BODY,
         affected_package_id=package.id,
     )
-    result = _generate(project, version)
-    assert result.generated is False
-    assert result.block_code == BLOCK_PENDING_REVIEW_UNSUPPORTED
-    assert GeneratedProjectContract.query.count() == 0
+    selection = select_legal_content_package_for_project(project.id)
+    assert selection.available is True
+    assert selection.status == STATUS_WARN
+    assert selection.warn_code == WARN_PENDING_CANDIDATE
+    assert selection.package_id == package.id
+    result = _generate(project, version, proposal)
+    assert result.generated is True
+    assert result.warn_code == WARN_PENDING_CANDIDATE
+    snapshot = db.session.get(ProjectContractSnapshot, result.snapshot_id)
+    assert snapshot.selection_status == STATUS_WARN
+    assert snapshot.warn_code == WARN_PENDING_CANDIDATE
+    assert snapshot.pending_candidate_id == candidate.id
+    assert snapshot.pending_candidate_used_as_authority is False
+    assert snapshot.package_id == package.id
+    bodies = {
+        row.object_kind: row.object_body
+        for row in ProjectContractSnapshotObject.query.filter_by(snapshot_id=snapshot.id)
+    }
+    assert bodies["contract_provision"] == SYNTHETIC_LEGAL_BODY
+    assert bodies["warranty"] == SYNTHETIC_WARRANTY_BODY
+    assert SYNTHETIC_CANDIDATE_BODY not in snapshot.artifact_text
+    assert "pending_candidate_used_as_authority=false" in snapshot.artifact_text
+    assert package.library_state == "ACTIVE"
+    db.session.refresh(candidate)
+    assert candidate.candidate_state == "PROPOSED"
+    assert obj.body == SYNTHETIC_LEGAL_BODY
+    assert warranty.body == SYNTHETIC_WARRANTY_BODY
 
 
 def test_native_signing_absent(app):
@@ -457,8 +541,10 @@ def test_native_signing_absent(app):
 
 
 def test_synthetic_generation_freezes_immutable_snapshot(app):
-    project, package, obj, estimate, version = _ready_ontario(number="EST-FG024C-OK")
-    result = _generate(project, version)
+    project, package, obj, estimate, version, proposal, warranty = _ready_ontario(
+        number="EST-FG024C-OK"
+    )
+    result = _generate(project, version, proposal)
     assert result.generated is True
     assert result.status == STATUS_GENERATED
     assert result.block_code is None
@@ -468,42 +554,54 @@ def test_synthetic_generation_freezes_immutable_snapshot(app):
     assert snapshot is not None
     assert contract.status == STATUS_GENERATED
     assert contract.estimate_version_id == version.id
+    assert contract.proposal_id == proposal.id
     assert snapshot.package_id == package.id
     assert snapshot.estimate_version_id == version.id
+    assert snapshot.proposal_id == proposal.id
+    assert snapshot.proposal_number == proposal.proposal_number
+    assert snapshot.proposal_status == "Issued"
     assert snapshot.presentation_family_code == "05"
     assert snapshot.presentation_master_sha256 == SYNTHETIC_MASTER_SHA
     assert snapshot.presentation_legal_status == PRESENTATION_LEGAL_STATUS
     assert snapshot.artifact_sha256 == result.artifact_sha256
     assert snapshot.artifact_sha256 == contract.artifact_sha256
     assert "NOT AN EXECUTED CONTRACT" in snapshot.artifact_text
-    pinned = ProjectContractSnapshotObject.query.filter_by(snapshot_id=snapshot.id).one()
-    assert pinned.legal_content_object_id == obj.id
-    assert pinned.object_body == SYNTHETIC_LEGAL_BODY
+    pinned = {
+        row.object_kind: row
+        for row in ProjectContractSnapshotObject.query.filter_by(snapshot_id=snapshot.id)
+    }
+    assert pinned["contract_provision"].legal_content_object_id == obj.id
+    assert pinned["contract_provision"].object_body == SYNTHETIC_LEGAL_BODY
+    assert pinned["warranty"].legal_content_object_id == warranty.id
+    assert pinned["warranty"].object_body == SYNTHETIC_WARRANTY_BODY
     old_artifact = snapshot.artifact_text
     old_hash = snapshot.artifact_sha256
     old_legal_hash = snapshot.legal_content_sha256
     old_commercial_hash = snapshot.commercial_sha256
-    old_body = pinned.object_body
+    old_body = pinned["contract_provision"].object_body
 
     obj.body = "MUTATED LIVE LEGAL OBJECT — MUST NOT TOUCH SNAPSHOT"
+    warranty.body = "MUTATED LIVE WARRANTY — MUST NOT TOUCH SNAPSHOT"
     package.package_code = "MUTATED-PACKAGE-CODE"
     version.total = Decimal("9999.00")
     db.session.commit()
 
     frozen = db.session.get(ProjectContractSnapshot, snapshot.id)
-    frozen_obj = ProjectContractSnapshotObject.query.filter_by(
-        snapshot_id=snapshot.id
-    ).one()
+    frozen_objs = {
+        row.object_kind: row
+        for row in ProjectContractSnapshotObject.query.filter_by(snapshot_id=snapshot.id)
+    }
     assert frozen.artifact_text == old_artifact
     assert frozen.artifact_sha256 == old_hash
     assert frozen.legal_content_sha256 == old_legal_hash
     assert frozen.commercial_sha256 == old_commercial_hash
     assert frozen.package_code == "TEST-ON-ACTIVE-C"
     assert frozen.estimate_version_status == "Issued"
-    assert frozen_obj.object_body == old_body
+    assert frozen_objs["contract_provision"].object_body == old_body
+    assert frozen_objs["warranty"].object_body == SYNTHETIC_WARRANTY_BODY
     assert Decimal(str(frozen.commercial_variables_json["total"])) == Decimal("1130.00")
 
-    second = _generate(project, version)
+    second = _generate(project, version, proposal)
     assert second.generated is True
     assert second.snapshot_id != snapshot.id
     assert second.artifact_sha256 != old_hash
@@ -526,7 +624,7 @@ def test_alembic_fg024_slice_c_upgrade_empty_and_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["e4f5a6b7c8d9"]
+        assert script.get_heads() == ["f5a6b7c8d9e0"]
 
         command.upgrade(alembic_cfg, "c2d3e4f5a6b7")
         engine = db.engine

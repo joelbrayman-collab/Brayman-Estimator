@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-14 — FG-024 TECH-B C1/C2/C3 generation policy
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-14 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 14 SEP 2026 |
+| Objective | TECH-B only: C1 commercial generation gate, C2 pending-candidate WARN, C3 Ontario warranty requirement |
+| Business decision | Production-shaped generation requires explicit Issued/Accepted Proposal + Issued/Accepted locked EstimateVersion. Valid ACTIVE + pending candidate = WARN. Ontario V1 requires contract_provision + warranty. Counsel deferred for technical development; mandatory pre-production gate. Ontario production NOT APPROVED / NOT ACTIVE. |
+| Architectural decision | Selector remains authority and now returns ALLOW/WARN/BLOCK. Proposal identity pin + WARN provenance on generated contract/snapshot. No Family 05 merge. No PRODUCTION Ontario seed. |
+| Prompt template used | Bounded TECH-B implementation authorization (14 Sep 2026) |
+| Approved Cursor prompt summary | Preflight bb4ddb1 / live e4f5a6b7c8d9; C1/C2/C3; one additive migration f5a6b7c8d9e0; focused tests then live upgrade; synthetic UAT; full pytest; docs; commit `feat: govern Ontario contract generation policy`; push; STOP; do not begin TECH-C. |
+| Files expected to change | selector, generation, Hub WARN copy, models, one Alembic revision, focused tests, governed docs |
+| Files prohibited from changing | EST-2026-0019; Family 05 legal bodies; TECH-C/D; Native Signing; Slice D; V1 rescore |
+| Implementation result | TECH-B **PASS**. Live current `f5a6b7c8d9e0 (head)`. PRODUCTION packages **0**. EST-2026-0019 unchanged. FG-024 remains OPEN / PARTIAL. |
+| Tests | Focused TECH-B + FG-024 related **150 passed** / 31.37s. Full **886 passed**, 2989 warnings, **292.71s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | TECH-C Family 05 merge not started. Ontario production legal content empty. Counsel gate outstanding. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin TECH-C. |
+| Next approved prompt | None from this note. |
+| Commit hash | (this TECH-B commit) |
+
 ### 2026-09-14 — FG-024 TECH-A human activation + authority class
 
 | Field | Content |

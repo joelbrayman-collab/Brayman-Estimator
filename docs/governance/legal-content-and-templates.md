@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | **Governing** |
 | Updated | 2026-09-14 |
-| Implementation | Template registers remain **empty**. Slice A library persistence + selection engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B source/update foundation **CLOSED / OPERATIONAL FOR UAT** (live). Slice C generation / snapshot **CLOSED / OPERATIONAL FOR UAT** (engine live / synthetic-UAT proven / no real jurisdictional content). [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Legal-change monitoring remains **FUTURE**. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. |
+| Implementation | Template registers remain **empty**. Slice A library persistence + selection engine **CLOSED / OPERATIONAL FOR UAT** (live / empty). Slice B source/update foundation **CLOSED / OPERATIONAL FOR UAT** (live). Slice C generation / snapshot **CLOSED / OPERATIONAL FOR UAT** (engine live / synthetic-UAT proven / no real jurisdictional content). TECH-A activation **IMPLEMENTED**. TECH-B generation policy **IMPLEMENTED**. [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. Legal-change monitoring remains **FUTURE**. [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. |
 
 ## Purpose
 
@@ -65,7 +65,7 @@ Govern construction contract language, statutory/consumer wording, warranty obli
 
 **Subsequent status (2026-09-14, fail-closed CONTRACT Hub UX):** Project Hub CONTRACT now shows the existing fail-closed selector result. This **still does not** populate this register, approve any legal language, mark Family 05 legally approved, activate a package, or generate a production Ontario contract. Empty library remains FAIL CLOSED. AI still cannot APPROVE or ACTIVE.
 
-**Subsequent status (2026-09-14, TECH-A human activation + authority class):** Activation engine + `authority_class` exist. HUMAN/COUNSEL may activate an eligible APPROVED package. AI cannot ACTIVE. Ordinary production selection requires ACTIVE + PRODUCTION. SYNTHETIC_UAT does **not** satisfy ordinary production selection. This **still does not** populate this register, approve Ontario production legal content, or mark Family 05 legally approved. Live PRODUCTION packages remain **0**. Counsel review remains **DEFERRED FOR V1 TECHNICAL DEVELOPMENT** / **MANDATORY PRE-PRODUCTION GATE** / **NOT A LEGAL APPROVAL**. Ontario production remains **NOT APPROVED / NOT ACTIVE**. Production contract execution remains **BLOCKED PENDING COUNSEL REVIEW**.
+**Subsequent status (2026-09-14, TECH-B C1/C2/C3 generation policy):** Generation policy now distinguishes ALLOW / WARN / BLOCK. Valid ACTIVE + pending candidate is WARN; current ACTIVE remains authority. Ontario V1 generation requires contract_provision + warranty. This **still does not** populate this register, approve Ontario production legal content, or mark Family 05 legally approved. Live PRODUCTION packages remain **0**. Counsel review remains **DEFERRED FOR V1 TECHNICAL DEVELOPMENT** / **MANDATORY PRE-PRODUCTION GATE** / **NOT A LEGAL APPROVAL**. Ontario production remains **NOT APPROVED / NOT ACTIVE**. Production contract execution remains **BLOCKED PENDING COUNSEL REVIEW**.
 
 ## Warranty template register (governed — empty until approved)
 
@@ -114,7 +114,7 @@ Generation alone does not mean final or sent.
 
 ## Related
 
-- [feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) — North American library / update engine / frozen snapshot / monitoring (**RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C CLOSED / OPERATIONAL FOR UAT / OVERALL OPEN / PARTIAL**; Slice D **NOT AUTHORIZED**)
+- [feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) — North American library / update engine / frozen snapshot / monitoring (**RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C CLOSED / OPERATIONAL FOR UAT / TECH-A IMPLEMENTED / TECH-B IMPLEMENTED / OVERALL OPEN / PARTIAL**; Slice D **NOT AUTHORIZED**)
 - [architecture/fg-024-slice-a-legal-content-library-preflight.md](../architecture/fg-024-slice-a-legal-content-library-preflight.md) — Slice A engine freeze; empty library; fail-closed
 - [architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md](../architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md) — Slice C generation / snapshot freeze; **PREFLIGHT COMPLETE**; subsequent product **CLOSED / OPERATIONAL FOR UAT**
 - [adr/ADR-050-north-american-legal-content-library-ownership.md](../adr/ADR-050-north-american-legal-content-library-ownership.md) — **Accepted** 13 Sep 2026 (library ownership / fail-closed)

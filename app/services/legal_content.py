@@ -6,15 +6,25 @@ from typing import Optional
 
 from app.models import Project
 from app.models.jurisdiction import JurisdictionDefinition
-from app.models.legal_content import AUTHORITY_CLASSES, LegalContentJurisdictionPackage
+from app.models.legal_content import (
+    AUTHORITY_CLASSES,
+    LegalContentCandidateChange,
+    LegalContentCandidateImpact,
+    LegalContentJurisdictionPackage,
+)
 from app.models.organization import Organization
 from app.services.jurisdiction import resolve_jurisdiction
 
-STATUS_AVAILABLE = "AVAILABLE"
+STATUS_ALLOW = "ALLOW"
+STATUS_WARN = "WARN"
 STATUS_BLOCK = "BLOCK"
+STATUS_AVAILABLE = STATUS_ALLOW
 
 AUTHORITY_PRODUCTION = "PRODUCTION"
 AUTHORITY_SYNTHETIC_UAT = "SYNTHETIC_UAT"
+
+WARN_PENDING_CANDIDATE = "PENDING_CANDIDATE"
+OPEN_CANDIDATE_STATES = frozenset({"PROPOSED", "COUNSEL_REVIEW"})
 
 BLOCK_JURISDICTION_UNRESOLVED = "JURISDICTION_UNRESOLVED"
 BLOCK_JURISDICTION_NOT_SUPPORTED = "JURISDICTION_NOT_SUPPORTED"
@@ -37,6 +47,8 @@ class LegalContentSelection:
     jurisdiction_code: Optional[str]
     library_state: Optional[str]
     support_status: Optional[str]
+    warn_code: Optional[str] = None
+    pending_candidate_id: Optional[int] = None
 
 
 def _block(
@@ -57,19 +69,83 @@ def _block(
         ),
         library_state=package.library_state if package is not None else None,
         support_status=package.support_status if package is not None else None,
+        warn_code=None,
+        pending_candidate_id=None,
     )
 
 
-def _available(package: LegalContentJurisdictionPackage) -> LegalContentSelection:
+def _allow(package: LegalContentJurisdictionPackage) -> LegalContentSelection:
     return LegalContentSelection(
         available=True,
-        status=STATUS_AVAILABLE,
+        status=STATUS_ALLOW,
         block_code=None,
         package_id=package.id,
         jurisdiction_code=package.jurisdiction.code,
         library_state=package.library_state,
         support_status=package.support_status,
+        warn_code=None,
+        pending_candidate_id=None,
     )
+
+
+def _warn(
+    package: LegalContentJurisdictionPackage,
+    *,
+    warn_code: str,
+    pending_candidate_id: Optional[int] = None,
+) -> LegalContentSelection:
+    return LegalContentSelection(
+        available=True,
+        status=STATUS_WARN,
+        block_code=None,
+        package_id=package.id,
+        jurisdiction_code=package.jurisdiction.code,
+        library_state=package.library_state,
+        support_status=package.support_status,
+        warn_code=warn_code,
+        pending_candidate_id=pending_candidate_id,
+    )
+
+
+def _available(package: LegalContentJurisdictionPackage) -> LegalContentSelection:
+    return _allow(package)
+
+
+def pending_candidate_id_for_package(
+    package: LegalContentJurisdictionPackage,
+) -> Optional[int]:
+    """Return the earliest open candidate affecting this package, if any."""
+    direct = (
+        LegalContentCandidateChange.query.filter(
+            LegalContentCandidateChange.previous_package_id == package.id,
+            LegalContentCandidateChange.candidate_state.in_(OPEN_CANDIDATE_STATES),
+        )
+        .order_by(LegalContentCandidateChange.id.asc())
+        .first()
+    )
+    if direct is not None:
+        return direct.id
+    impact = (
+        LegalContentCandidateImpact.query.join(
+            LegalContentCandidateChange,
+            LegalContentCandidateImpact.candidate_id == LegalContentCandidateChange.id,
+        )
+        .filter(
+            LegalContentCandidateImpact.package_id == package.id,
+            LegalContentCandidateChange.candidate_state.in_(OPEN_CANDIDATE_STATES),
+        )
+        .order_by(LegalContentCandidateChange.id.asc())
+        .first()
+    )
+    if impact is not None:
+        return impact.candidate_id
+    return None
+
+
+def package_has_pending_candidate(package: LegalContentJurisdictionPackage) -> bool:
+    if package.support_status == "UPDATE_PENDING_REVIEW":
+        return True
+    return pending_candidate_id_for_package(package) is not None
 
 
 def _packages_for_node(node: JurisdictionDefinition, authority_class: str):
@@ -138,7 +214,14 @@ def _evaluate_active(package: LegalContentJurisdictionPackage, as_of: date):
         return _block(BLOCK_EFFECTIVE_DATE_UNRESOLVED, package=package)
     if not package.is_effective_on(as_of):
         return _block(BLOCK_PACKAGE_NOT_EFFECTIVE, package=package)
-    return _available(package)
+    pending_id = pending_candidate_id_for_package(package)
+    if pending_id is not None or package.support_status == "UPDATE_PENDING_REVIEW":
+        return _warn(
+            package,
+            warn_code=WARN_PENDING_CANDIDATE,
+            pending_candidate_id=pending_id,
+        )
+    return _allow(package)
 
 
 def select_legal_content_package_for_project(
@@ -147,10 +230,12 @@ def select_legal_content_package_for_project(
     as_of: Optional[date] = None,
     authority_class: str = AUTHORITY_PRODUCTION,
 ) -> LegalContentSelection:
-    """Return AVAILABLE or a deterministic BLOCK. Never invents legal authority.
+    """Return ALLOW, WARN, or a deterministic BLOCK. Never invents legal authority.
 
     Ordinary office/production selection uses ACTIVE + PRODUCTION only.
     SYNTHETIC_UAT never satisfies this default path.
+    Valid ACTIVE + open pending candidate is WARN; the current ACTIVE package
+    remains authority. Candidate content is never selected.
 
     Reuses ADR-037 / FG-015 ``resolve_jurisdiction``. Does not consult
     Organization.tax_jurisdiction, Permit Rules, or FG-022 presentation masters.

@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-14 — FG-024 TECH-B C1/C2/C3 generation policy
+
+| Field | Content |
+|-------|---------|
+| ID | FG-024 TECH-B C1/C2/C3 generation policy |
+| Status | **COMPLETE / NOT A GATE CLOSE.** FG-024 overall **OPEN / PARTIAL**. TECH-C/D **not started**. |
+| Branch | `main` |
+| Base commit | `bb4ddb1db07e020c02f829400e40db7e6287b718` |
+| Objective | Govern production-shaped Ontario contract generation: commercial gate, pending-candidate WARN, warranty requirement. |
+| Deliverables | Selector ALLOW/WARN/BLOCK; proposal pin; Ontario provision+warranty; Hub WARN copy; additive `f5a6b7c8d9e0` applied live; [testing/fg024-tech-b-live-migrate-bounded-uat-record.md](testing/fg024-tech-b-live-migrate-bounded-uat-record.md). |
+| Validation | Focused TECH-B + FG-024 related **150 passed** / 31.37s. Full **886 passed**, 2989 warnings, **292.71s**. Alembic current = heads `f5a6b7c8d9e0`. EST-2026-0019 occupancy unchanged. Live PRODUCTION packages **0**. |
+| Architectural findings | Candidate content is never authority. Historical Slice C contracts remain valid with nullable proposal_id. SYNTHETIC_UAT never satisfies ordinary production selection. |
+| Open decisions | TECH-C Family 05 merge. Ontario 06D. Slice D. Native Signing. V1 rescore. |
+| Next milestone | **STOP.** Recommended next chunk TECH-C — **not authorized from this note**. |
+| Commit | this TECH-B commit (`feat: govern Ontario contract generation policy`) |
+| Date | 2026-09-14 |
+
 ### 2026-09-14 — FG-024 TECH-A human activation + authority class
 
 | Field | Content |

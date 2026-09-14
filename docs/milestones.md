@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-14 — FG-033 SIGN-B secure invitation + public customer ceremony
+
+| Field | Content |
+|-------|---------|
+| ID | FG-033 SIGN-B invitation + customer ceremony |
+| Status | **COMPLETE / NOT A GATE CLOSE.** FG-033 overall **OPEN / PARTIAL**. SIGN-C/D/E **not started**. Production Native Signing **not complete**. |
+| Branch | `main` |
+| Base commit | `df383e234f30e67597b31a543c10c858eca4f16c` |
+| Objective | Implement SIGN-B only: secure invitation token, public `/sign` customer ceremony, frozen PDF review, pinned consent, typed-name SIGN & ACCEPT. |
+| Deliverables | `app/routes/sign.py`; `app/templates/signing/`; `app/static/css/signing.css`; token/rate-limit service; CLI `flask signing invite`; additive `c8d9e0f1a2b3` applied live; [testing/fg033-sign-b-live-bounded-uat-record.md](testing/fg033-sign-b-live-bounded-uat-record.md). |
+| Validation | Dedicated SIGN-B **18 passed**. Dedicated SIGN-A **11 passed**. Focused SIGN + CONTRACT + Change Order **137 passed**. Full **933 passed**, 3110 warnings, **342.95s**. Alembic current = heads `c8d9e0f1a2b3`. EST-2026-0019 occupancy unchanged. Live PRODUCTION packages **0**. SIGN-2026-0003 SIGNED. SIGN-A requests retained. |
+| Architectural findings | Raw secret never stored. Public `/sign/*` is a narrow login exemption. CSRF remains on. Countersign and EXECUTED remain SIGN-C. No customer account. |
+| Open decisions | SIGN-C. Ontario 06D. Slice D. V1 rescore. Later Project Element preflight. |
+| Next milestone | **STOP.** Recommended next chunk SIGN-C — **not authorized from this note**. |
+| Commit | this SIGN-B product commit (`feat: add secure customer signing ceremony`) |
+| Date | 2026-09-14 |
+
 ### 2026-09-14 — FG-033 SIGN-A Native Signing freeze + request engine + audit
 
 | Field | Content |

@@ -127,6 +127,8 @@ def _register_office_auth(app: Flask) -> None:
         endpoint = request.endpoint
         if endpoint in ("static", "auth.login", "auth.logout"):
             return None
+        if endpoint is not None and endpoint.startswith("sign."):
+            return None
         if _is_api_request():
             if not current_user.is_authenticated:
                 return api_error(ERROR_AUTHENTICATION_REQUIRED, 401)
@@ -208,6 +210,8 @@ def create_app(config=None):
         app.config["SIGNING_ARTIFACT_ROOT"] = tempfile.mkdtemp(
             prefix="calibai-signing-artifacts-"
         )
+    app.config.setdefault("SIGNING_TOKEN_FAIL_LIMIT", 8)
+    app.config.setdefault("SIGNING_TOKEN_FAIL_WINDOW_SECONDS", 900)
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -234,6 +238,7 @@ def create_app(config=None):
     from app.routes.supplier_package import supplier_package_bp
     from app.routes.scope_delivery import scope_delivery_bp
     from app.routes.estimate_quickbooks import estimate_quickbooks_bp
+    from app.routes.sign import sign_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(clients_bp)
@@ -256,6 +261,7 @@ def create_app(config=None):
     app.register_blueprint(supplier_package_bp)
     app.register_blueprint(scope_delivery_bp)
     app.register_blueprint(estimate_quickbooks_bp)
+    app.register_blueprint(sign_bp)
 
     _register_office_auth(app)
 

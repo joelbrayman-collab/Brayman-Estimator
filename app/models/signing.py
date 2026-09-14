@@ -1,7 +1,8 @@
-"""FG-033 SIGN-A Native Signing overlay records.
+"""FG-033 Native Signing overlay records.
 
 Not a second Change Order. Not a second generated-contract commercial entity.
-Status GENERATED on contracts is unchanged. SIGN-A stops at APPROVED_FOR_SIGNATURE.
+SIGN-A: freeze + CREATED → APPROVED_FOR_SIGNATURE.
+SIGN-B: invitation token + SENT → SIGNED. No executed artifact.
 """
 
 from datetime import datetime
@@ -80,6 +81,11 @@ SIGNING_ACTOR_KINDS = (
     ACTOR_SIGNER,
     ACTOR_SYSTEM,
 )
+
+ACCESS_FAIL = "FAIL"
+ACCESS_SUCCESS = "SUCCESS"
+ACCESS_RATE_LIMITED = "RATE_LIMITED"
+SIGNING_ACCESS_OUTCOMES = (ACCESS_FAIL, ACCESS_SUCCESS, ACCESS_RATE_LIMITED)
 
 CONSENT_SYNTHETIC_UAT_CODE = "CONSENT-SYNTHETIC-UAT-001"
 CONSENT_SYNTHETIC_UAT_BODY = (
@@ -249,7 +255,7 @@ class SigningRequest(db.Model):
 
 
 class SigningParticipant(db.Model):
-    """Signer foundation. SIGN-A does not issue tokens or store secrets."""
+    """Signer foundation. SIGN-B stores token hash-at-rest, never the raw secret."""
 
     __tablename__ = "signing_participants"
     __table_args__ = (
@@ -281,6 +287,16 @@ class SigningParticipant(db.Model):
         nullable=True,
         index=True,
     )
+    lookup_key = db.Column(db.String(80), nullable=True, unique=True, index=True)
+    token_hash = db.Column(db.String(64), nullable=True)
+    token_expires_at = db.Column(db.DateTime, nullable=True)
+    token_consumed_at = db.Column(db.DateTime, nullable=True)
+    confirmed_signer_name = db.Column(db.String(150), nullable=True)
+    signed_at = db.Column(db.DateTime, nullable=True)
+    completion_ip = db.Column(db.String(64), nullable=True)
+    user_agent = db.Column(db.String(500), nullable=True)
+    consent_accepted_at = db.Column(db.DateTime, nullable=True)
+    viewed_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     request = db.relationship("SigningRequest", back_populates="participants")
@@ -323,3 +339,24 @@ class SigningEvent(db.Model):
 
     def __repr__(self):
         return f"<SigningEvent {self.event_type} request={self.signing_request_id}>"
+
+
+class SigningTokenAccessAttempt(db.Model):
+    """Presentation attempts for token-guessing rate limits. Never stores raw secrets."""
+
+    __tablename__ = "signing_token_access_attempts"
+    __table_args__ = (
+        db.CheckConstraint(
+            "outcome IN ('FAIL', 'SUCCESS', 'RATE_LIMITED')",
+            name="ck_signing_token_access_attempts_outcome",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    presented_lookup_key = db.Column(db.String(80), nullable=False, index=True)
+    client_ip = db.Column(db.String(64), nullable=False, index=True)
+    outcome = db.Column(db.String(20), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+
+    def __repr__(self):
+        return f"<SigningTokenAccessAttempt {self.outcome} ip={self.client_ip}>"

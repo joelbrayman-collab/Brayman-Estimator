@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Signing link unavailable</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/signing.css') }}">
+</head>
+<body class="sign-body" data-sign-page="unavailable" data-sign-code="{{ code }}">
+    <main class="sign-main">
+        <section class="sign-panel">
+            <h1 class="sign-doc-title">This signing link is not available.</h1>
+            {% if rate_limited %}
+            <p class="sign-error">Too many attempts. Try again later.</p>
+            {% else %}
+            <p class="sign-muted">The invitation may be invalid, expired, or already used.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

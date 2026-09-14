@@ -1,39 +1,58 @@
-"""FG-033 SIGN-A Native Signing request engine.
+"""FG-033 Native Signing request engine.
 
-Freeze + CREATED → APPROVED_FOR_SIGNATURE + append-only audit.
-Does not send, token, sign, countersign, or produce an executed PDF.
+SIGN-A: freeze + CREATED → APPROVED_FOR_SIGNATURE.
+SIGN-B: invitation token + SENT → SIGNED. No executed PDF.
 """
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import re
+import secrets
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import NamedTuple, Optional
+
+from flask import current_app
 
 from app import db
 from app.models.legal_content import LegalContentJurisdictionPackage
 from app.models.project_contract import GeneratedProjectContract
 from app.models.signing import (
+    ACCESS_FAIL,
+    ACCESS_RATE_LIMITED,
+    ACCESS_SUCCESS,
     ACTOR_AI,
     ACTOR_AUTOMATION,
     ACTOR_HUMAN,
+    ACTOR_SIGNER,
     AUTHORITY_SYNTHETIC_UAT,
     CONSENT_SYNTHETIC_UAT_BODY,
     CONSENT_SYNTHETIC_UAT_CODE,
     DOCUMENT_FAMILY_CHANGE_ORDER,
     DOCUMENT_FAMILY_CONTRACT,
     EVENT_APPROVED_FOR_SIGNATURE,
+    EVENT_CONSENT_ACCEPTED,
     EVENT_REQUEST_CREATED,
+    EVENT_SENT,
+    EVENT_SIGNED,
+    EVENT_VIEWED,
     ROLE_CUSTOMER,
     ROLE_ORGANIZATION_COUNTERSIGN,
     SIGNING_AUTHORITY_CLASSES,
     STATUS_APPROVED_FOR_SIGNATURE,
     STATUS_CREATED,
+    STATUS_DECLINED,
+    STATUS_EXPIRED,
+    STATUS_SENT,
+    STATUS_SIGNED,
+    STATUS_VOIDED,
     SigningConsentVersion,
     SigningEvent,
     SigningFrozenArtifact,
     SigningParticipant,
     SigningRequest,
+    SigningTokenAccessAttempt,
 )
 from app.models.user import User, UserMembership
 from app.project_controls.models import ChangeOrder
@@ -79,6 +98,21 @@ BLOCK_REQUEST_NOT_FOUND = "REQUEST_NOT_FOUND"
 BLOCK_REQUEST_NOT_CREATED = "REQUEST_NOT_CREATED"
 BLOCK_PROTECTED_COMMERCIAL_RECORD = "PROTECTED_COMMERCIAL_RECORD"
 BLOCK_USER_NOT_FOUND = "USER_NOT_FOUND"
+BLOCK_REQUEST_NOT_APPROVED = "REQUEST_NOT_APPROVED"
+BLOCK_REQUEST_NOT_SENT = "REQUEST_NOT_SENT"
+BLOCK_TOKEN_INVALID = "TOKEN_INVALID"
+BLOCK_TOKEN_EXPIRED = "TOKEN_EXPIRED"
+BLOCK_TOKEN_CONSUMED = "TOKEN_CONSUMED"
+BLOCK_TOKEN_RATE_LIMITED = "TOKEN_RATE_LIMITED"
+BLOCK_CONSENT_NOT_ACCEPTED = "CONSENT_NOT_ACCEPTED"
+BLOCK_CONFIRMED_NAME_REQUIRED = "CONFIRMED_NAME_REQUIRED"
+BLOCK_CONTRACT_PDF_NOT_AVAILABLE = "CONTRACT_PDF_NOT_AVAILABLE"
+BLOCK_REQUEST_TERMINAL = "REQUEST_TERMINAL"
+
+DEFAULT_TOKEN_FAIL_LIMIT = 8
+DEFAULT_TOKEN_FAIL_WINDOW_SECONDS = 900
+_CREDENTIAL_RE = re.compile(r"^([A-Za-z0-9_-]{8,80})\.([A-Za-z0-9_-]{20,200})$")
+_TERMINAL_STATUSES = frozenset({STATUS_VOIDED, STATUS_EXPIRED, STATUS_DECLINED})
 
 _AI_OR_AUTOMATION = frozenset({ACTOR_AI, ACTOR_AUTOMATION})
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
@@ -553,6 +587,321 @@ def approve_signing_request(
         actor_kind=ACTOR_HUMAN,
         actor_identifier=identifier,
         artifact_sha256=artifact.sha256,
+    )
+    db.session.commit()
+    return request
+
+
+class InvitationIssue(NamedTuple):
+    request: SigningRequest
+    path: str
+    lookup_key: str
+    secret: str
+
+
+class ResolvedSigningAccess(NamedTuple):
+    request: SigningRequest
+    participant: SigningParticipant
+    lookup_key: str
+
+
+def hash_invitation_secret(secret: str) -> str:
+    return hashlib.sha256((secret or "").encode("utf-8")).hexdigest()
+
+
+def parse_signing_credential(credential: str) -> tuple[str, str]:
+    match = _CREDENTIAL_RE.fullmatch((credential or "").strip())
+    if match is None:
+        raise SigningServiceError(BLOCK_TOKEN_INVALID)
+    return match.group(1), match.group(2)
+
+
+def customer_signing_path(lookup_key: str, secret: str) -> str:
+    return f"/sign/{lookup_key}.{secret}"
+
+
+def _token_fail_limit() -> int:
+    try:
+        return int(current_app.config.get("SIGNING_TOKEN_FAIL_LIMIT", DEFAULT_TOKEN_FAIL_LIMIT))
+    except (TypeError, ValueError):
+        return DEFAULT_TOKEN_FAIL_LIMIT
+
+
+def _token_fail_window_seconds() -> int:
+    try:
+        return int(
+            current_app.config.get(
+                "SIGNING_TOKEN_FAIL_WINDOW_SECONDS",
+                DEFAULT_TOKEN_FAIL_WINDOW_SECONDS,
+            )
+        )
+    except (TypeError, ValueError):
+        return DEFAULT_TOKEN_FAIL_WINDOW_SECONDS
+
+
+def _client_ip(ip_address: Optional[str]) -> str:
+    value = (ip_address or "").strip()
+    return value[:64] or "unknown"
+
+
+def _user_agent(user_agent: Optional[str]) -> str:
+    return (user_agent or "").strip()[:500]
+
+
+def _record_access_attempt(*, lookup_key: str, client_ip: str, outcome: str) -> None:
+    db.session.add(
+        SigningTokenAccessAttempt(
+            presented_lookup_key=(lookup_key or "")[:80] or "invalid",
+            client_ip=_client_ip(client_ip),
+            outcome=outcome,
+            created_at=datetime.utcnow(),
+        )
+    )
+    db.session.flush()
+
+
+def _fail_count_for_ip(client_ip: str, *, now: datetime) -> int:
+    window_start = now - timedelta(seconds=_token_fail_window_seconds())
+    return SigningTokenAccessAttempt.query.filter(
+        SigningTokenAccessAttempt.client_ip == _client_ip(client_ip),
+        SigningTokenAccessAttempt.outcome == ACCESS_FAIL,
+        SigningTokenAccessAttempt.created_at >= window_start,
+    ).count()
+
+
+def _raise_if_rate_limited(client_ip: str, *, lookup_key: str, now: datetime) -> None:
+    if _fail_count_for_ip(client_ip, now=now) >= _token_fail_limit():
+        _record_access_attempt(
+            lookup_key=lookup_key,
+            client_ip=client_ip,
+            outcome=ACCESS_RATE_LIMITED,
+        )
+        db.session.commit()
+        raise SigningServiceError(BLOCK_TOKEN_RATE_LIMITED)
+
+
+def _customer_participant(request: SigningRequest) -> SigningParticipant:
+    customer = next(
+        (row for row in request.participants if row.role == ROLE_CUSTOMER),
+        None,
+    )
+    if customer is None:
+        raise SigningServiceError(BLOCK_SIGNER_NAME_REQUIRED)
+    return customer
+
+
+def issue_customer_invitation(
+    request_id: int,
+    *,
+    organization_id: str,
+    actor_kind: str,
+    actor_user_id: int,
+    actor_identifier: str,
+) -> InvitationIssue:
+    _require_human(actor_kind, creating=False)
+    user = _require_active_membership(actor_user_id, organization_id)
+    request = get_signing_request(request_id, organization_id)
+    if request.status in _TERMINAL_STATUSES:
+        raise SigningServiceError(BLOCK_REQUEST_TERMINAL)
+    if request.status != STATUS_APPROVED_FOR_SIGNATURE:
+        raise SigningServiceError(BLOCK_REQUEST_NOT_APPROVED)
+    now = datetime.utcnow()
+    if request.expires_at is None or request.expires_at <= now:
+        raise SigningServiceError(BLOCK_TOKEN_EXPIRED)
+    customer = _customer_participant(request)
+    lookup_key = secrets.token_urlsafe(16)
+    while SigningParticipant.query.filter_by(lookup_key=lookup_key).first() is not None:
+        lookup_key = secrets.token_urlsafe(16)
+    secret = secrets.token_urlsafe(32)
+    customer.lookup_key = lookup_key
+    customer.token_hash = hash_invitation_secret(secret)
+    customer.token_expires_at = request.expires_at
+    customer.token_consumed_at = None
+    request.status = STATUS_SENT
+    identifier = (actor_identifier or user.email).strip() or user.email
+    _append_event(
+        request,
+        event_type=EVENT_SENT,
+        actor_kind=ACTOR_HUMAN,
+        actor_identifier=identifier,
+        artifact_sha256=request.frozen_artifact.sha256,
+    )
+    db.session.commit()
+    return InvitationIssue(
+        request=request,
+        path=customer_signing_path(lookup_key, secret),
+        lookup_key=lookup_key,
+        secret=secret,
+    )
+
+
+def resolve_customer_access(
+    credential: str,
+    *,
+    client_ip: Optional[str],
+    user_agent: Optional[str] = None,
+    allow_completed: bool = False,
+) -> ResolvedSigningAccess:
+    now = datetime.utcnow()
+    try:
+        lookup_key, secret = parse_signing_credential(credential)
+    except SigningServiceError:
+        _raise_if_rate_limited(client_ip, lookup_key="invalid", now=now)
+        _record_access_attempt(
+            lookup_key="invalid",
+            client_ip=client_ip,
+            outcome=ACCESS_FAIL,
+        )
+        db.session.commit()
+        raise
+    _raise_if_rate_limited(client_ip, lookup_key=lookup_key, now=now)
+    participant = SigningParticipant.query.filter_by(
+        lookup_key=lookup_key,
+        role=ROLE_CUSTOMER,
+    ).first()
+    expected = (participant.token_hash if participant is not None else "") or ""
+    presented = hash_invitation_secret(secret)
+    if participant is None or not expected or not hmac.compare_digest(expected, presented):
+        _record_access_attempt(
+            lookup_key=lookup_key,
+            client_ip=client_ip,
+            outcome=ACCESS_FAIL,
+        )
+        db.session.commit()
+        raise SigningServiceError(BLOCK_TOKEN_INVALID)
+    request = participant.request
+    if request.status in _TERMINAL_STATUSES:
+        _record_access_attempt(
+            lookup_key=lookup_key,
+            client_ip=client_ip,
+            outcome=ACCESS_FAIL,
+        )
+        db.session.commit()
+        raise SigningServiceError(BLOCK_REQUEST_TERMINAL)
+    expires_at = participant.token_expires_at or request.expires_at
+    if expires_at is None or expires_at <= now:
+        _record_access_attempt(
+            lookup_key=lookup_key,
+            client_ip=client_ip,
+            outcome=ACCESS_FAIL,
+        )
+        db.session.commit()
+        raise SigningServiceError(BLOCK_TOKEN_EXPIRED)
+    if request.status == STATUS_SIGNED or participant.token_consumed_at is not None:
+        if allow_completed and request.status == STATUS_SIGNED:
+            _record_access_attempt(
+                lookup_key=lookup_key,
+                client_ip=client_ip,
+                outcome=ACCESS_SUCCESS,
+            )
+            db.session.commit()
+            return ResolvedSigningAccess(
+                request=request,
+                participant=participant,
+                lookup_key=lookup_key,
+            )
+        _record_access_attempt(
+            lookup_key=lookup_key,
+            client_ip=client_ip,
+            outcome=ACCESS_FAIL,
+        )
+        db.session.commit()
+        raise SigningServiceError(BLOCK_TOKEN_CONSUMED)
+    if request.status != STATUS_SENT:
+        _record_access_attempt(
+            lookup_key=lookup_key,
+            client_ip=client_ip,
+            outcome=ACCESS_FAIL,
+        )
+        db.session.commit()
+        raise SigningServiceError(BLOCK_REQUEST_NOT_SENT)
+    _record_access_attempt(
+        lookup_key=lookup_key,
+        client_ip=client_ip,
+        outcome=ACCESS_SUCCESS,
+    )
+    db.session.commit()
+    _ = user_agent
+    return ResolvedSigningAccess(
+        request=request,
+        participant=participant,
+        lookup_key=lookup_key,
+    )
+
+
+def record_customer_viewed(access: ResolvedSigningAccess) -> SigningRequest:
+    request = access.request
+    participant = access.participant
+    if request.status != STATUS_SENT:
+        return request
+    already = any(event.event_type == EVENT_VIEWED for event in request.events)
+    if already:
+        return request
+    now = datetime.utcnow()
+    if participant.viewed_at is None:
+        participant.viewed_at = now
+    _append_event(
+        request,
+        event_type=EVENT_VIEWED,
+        actor_kind=ACTOR_SIGNER,
+        actor_identifier=participant.invited_email,
+        artifact_sha256=request.frozen_artifact.sha256,
+    )
+    db.session.commit()
+    return request
+
+
+def frozen_pdf_bytes_for_customer(access: ResolvedSigningAccess) -> bytes:
+    request = access.request
+    if request.document_family != DOCUMENT_FAMILY_CHANGE_ORDER:
+        raise SigningServiceError(BLOCK_CONTRACT_PDF_NOT_AVAILABLE)
+    if request.frozen_artifact.media_type != PDF_MEDIA_TYPE:
+        raise SigningServiceError(BLOCK_CONTRACT_PDF_NOT_AVAILABLE)
+    return retrieve_frozen_artifact_bytes(request.frozen_artifact)
+
+
+def accept_and_sign(
+    credential: str,
+    *,
+    confirmed_signer_name: str,
+    consent_accepted: bool,
+    client_ip: Optional[str],
+    user_agent: Optional[str],
+) -> SigningRequest:
+    access = resolve_customer_access(
+        credential,
+        client_ip=client_ip,
+        user_agent=user_agent,
+        allow_completed=False,
+    )
+    if not consent_accepted:
+        raise SigningServiceError(BLOCK_CONSENT_NOT_ACCEPTED)
+    name = (confirmed_signer_name or "").strip()
+    if not name:
+        raise SigningServiceError(BLOCK_CONFIRMED_NAME_REQUIRED)
+    request = access.request
+    participant = access.participant
+    now = datetime.utcnow()
+    participant.confirmed_signer_name = name
+    participant.consent_accepted_at = now
+    participant.signed_at = now
+    participant.completion_ip = _client_ip(client_ip)
+    participant.user_agent = _user_agent(user_agent)
+    participant.token_consumed_at = now
+    request.status = STATUS_SIGNED
+    _append_event(
+        request,
+        event_type=EVENT_CONSENT_ACCEPTED,
+        actor_kind=ACTOR_SIGNER,
+        actor_identifier=participant.invited_email,
+        artifact_sha256=request.frozen_artifact.sha256,
+    )
+    _append_event(
+        request,
+        event_type=EVENT_SIGNED,
+        actor_kind=ACTOR_SIGNER,
+        actor_identifier=participant.invited_email,
+        artifact_sha256=request.frozen_artifact.sha256,
     )
     db.session.commit()
     return request

@@ -37,6 +37,7 @@ from app.models.signing import (
     SigningFrozenArtifact,
     SigningParticipant,
     SigningRequest,
+    SigningTokenAccessAttempt,
 )
 from app.models.permit_intelligence import (
     PermitAnalysis,
@@ -185,6 +186,7 @@ __all__ = [
     "SigningFrozenArtifact",
     "SigningParticipant",
     "SigningRequest",
+    "SigningTokenAccessAttempt",
     "DirectLabourCostRateStandard",
     "EstimateLabourSnapshot",
     "LabourAuditEvent",

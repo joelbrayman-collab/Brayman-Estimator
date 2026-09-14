@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-14 — FG-033 SIGN-B secure invitation + public customer ceremony
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-14 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 14 SEP 2026 |
+| Objective | Implement SIGN-B only: secure invitation, public `/sign` ceremony, frozen PDF review, pinned consent, typed-name SIGN & ACCEPT |
+| Business decision | Customer has no CalibraytAI account. Office copyable URL for technical UAT. No transactional email. Development proceeds on product/software requirements; no legal-review gate. |
+| Architectural decision | Hash-at-rest invitation; lookup_key + SHA-256(secret); `/sign/<lookup>.<secret>`; narrow login exemption; rate-limit table; one additive Alembic `c8d9e0f1a2b3`. No executed PDF. No RESEND. No new ADR. |
+| Prompt template used | Bounded SIGN-B implementation authorization (14 Sep 2026) |
+| Approved Cursor prompt summary | SIGN-B secure invitation + public customer iPhone-first ceremony; one additive migration if required; focused + migration + full pytest; live upgrade; synthetic customer UAT; commit; push; STOP before SIGN-C. |
+| Files expected to change | signing models/services/routes/templates/CSS/CLI; one migration; tests; governed continuity docs |
+| Files prohibited from changing | countersign action; executed PDF; email; LibreOffice; SIGN-C/D/E; Time/Performance; EST-2026-0019; Ontario PRODUCTION; V1 rescore |
+| Implementation result | FG-033 **OPEN / PARTIAL**. SIGN-A **PASS**. SIGN-B **PASS**. Live current `c8d9e0f1a2b3 (head)`. PRODUCTION packages **0**. EST-2026-0019 unchanged. SIGN-2026-0003 SIGNED. SIGN-C/D/E **NOT STARTED**. V1 **not rescored**. |
+| Tests | Dedicated SIGN-B **18 passed**. Dedicated SIGN-A **11 passed**. Focused SIGN + CONTRACT + Change Order **137 passed**. Full **933 passed**, 3110 warnings, **342.95s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | SIGN-C/D/E not started. Ontario production legal content empty. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin SIGN-C. |
+| Next approved prompt | SIGN-C — Countersign + executed PDF + custody (not authorized from this note). |
+| Commit hash | (this SIGN-B product commit) |
+
 ### 2026-09-14 — FG-033 SIGN-A Native Signing freeze + request engine + audit
 
 | Field | Content |

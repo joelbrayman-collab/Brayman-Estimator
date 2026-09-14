@@ -1,4 +1,6 @@
-"""Flask CLI signing group — SIGN-A office request create / inspect / approve."""
+"""Flask CLI signing group — SIGN-A office request create / inspect / approve.
+SIGN-B: issue a one-time copyable customer invitation URL.
+"""
 
 from __future__ import annotations
 
@@ -13,12 +15,13 @@ from app.services.signing import (
     create_change_order_signing_request,
     create_contract_signing_request,
     get_signing_request,
+    issue_customer_invitation,
 )
 
 
 @click.group("signing")
 def signing_cli():
-    """Native Signing office operator commands (SIGN-A)."""
+    """Native Signing office operator commands (SIGN-A / SIGN-B invite)."""
 
 
 def _fail(exc: SigningServiceError):
@@ -160,3 +163,24 @@ def show_command(request_id):
             f"  event {event.event_type} actor={event.actor_kind}:"
             f"{event.actor_identifier} sha={event.artifact_sha256 or ''}"
         )
+
+
+@signing_cli.command("invite")
+@click.option("--request-id", type=int, required=True)
+@click.option("--actor-user-id", type=int, required=True)
+@click.option("--actor-identifier", required=True)
+@with_appcontext
+def invite_command(request_id, actor_user_id, actor_identifier):
+    """Issue one copyable customer signing URL. Raw secret is not stored."""
+    try:
+        issued = issue_customer_invitation(
+            request_id,
+            organization_id=get_current_organization_id(),
+            actor_kind=ACTOR_HUMAN,
+            actor_user_id=actor_user_id,
+            actor_identifier=actor_identifier,
+        )
+    except SigningServiceError as exc:
+        _fail(exc)
+    click.echo(f"{issued.request.request_number} status={issued.request.status}")
+    click.echo(issued.path)

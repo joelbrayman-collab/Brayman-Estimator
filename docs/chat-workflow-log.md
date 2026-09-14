@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-14 — FG-033 SIGN-A Native Signing freeze + request engine + audit
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-14 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 14 SEP 2026 |
+| Objective | Create FG-033 for the complete Native Signing workstream, then implement SIGN-A only |
+| Business decision | Freeze current Change Order ReportLab PDF once. Bind generated-contract DOCX in SIGN-A. Countersign default true for COs. Invitation expiry default 7 days (SIGN-B). Any ACTIVE org member may perform V1 office signing. SYNTHETIC_UAT vs PRODUCTION. Counsel is not a development-workflow field. |
+| Architectural decision | Overlay overlay; no second CO or contract entity. One additive Alembic `b7c8d9e0f1a2`. No public `/sign`. No tokens. No executed PDF. No new ADR. |
+| Prompt template used | Bounded SIGN-A implementation authorization (14 Sep 2026) |
+| Approved Cursor prompt summary | Create next-valid FG-033; implement SIGN-A freeze + request + audit; one additive migration; focused + migration + full pytest; live upgrade; office synthetic UAT; two commits; push; STOP before SIGN-B. |
+| Files expected to change | FG-033; signing models/services/CLI/storage; one migration; tests; governed continuity docs |
+| Files prohibited from changing | `/sign` route; invitation tokens; customer ceremony; executed PDF; email; LibreOffice; SIGN-B/C/D/E; Time/Performance; EST-2026-0019; Ontario PRODUCTION; V1 rescore |
+| Implementation result | FG-033 **OPEN / PARTIAL**. SIGN-A **PASS**. Live current `b7c8d9e0f1a2 (head)`. PRODUCTION packages **0**. EST-2026-0019 unchanged. TECH-D CTR-2026-0003 / CTR-2026-0004 intact. SIGN-B/C/D/E **NOT STARTED**. V1 **not rescored**. |
+| Tests | Dedicated SIGN-A **11 passed**. Focused SIGN-A + CONTRACT + Change Order **103 passed**. Full **915 passed**, 3068 warnings, **341.52s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | SIGN-B/C/D/E not started. Ontario production legal content empty. Counsel gate outstanding. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin SIGN-B. |
+| Next approved prompt | SIGN-B — Secure invitation + customer iPhone ceremony (not authorized from this note). |
+| Commit hash | (this SIGN-A product commit; preceding docs gate commit) |
+
 ### 2026-09-14 — FG-024 TECH-D production-shaped synthetic Ontario UAT
 
 | Field | Content |

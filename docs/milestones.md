@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-14 — FG-033 SIGN-A Native Signing freeze + request engine + audit
+
+| Field | Content |
+|-------|---------|
+| ID | FG-033 SIGN-A freeze + request engine + audit |
+| Status | **COMPLETE / NOT A GATE CLOSE.** FG-033 overall **OPEN / PARTIAL**. SIGN-B/C/D/E **not started**. Production Native Signing **not complete**. |
+| Branch | `main` |
+| Base commit | `de4c2e194c71d66aaf9b81463d8d36eafe52c844` |
+| Objective | Open Native Signing Feature Gate FG-033 and implement SIGN-A freeze + request identity + HUMAN APPROVED_FOR_SIGNATURE + append-only audit. |
+| Deliverables | [FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md); `app/models/signing.py`; `app/services/signing.py`; `app/services/signing_artifact_storage.py`; `app/cli/signing.py`; additive `b7c8d9e0f1a2` applied live; [testing/fg033-sign-a-live-bounded-uat-record.md](testing/fg033-sign-a-live-bounded-uat-record.md). |
+| Validation | Dedicated SIGN-A **11 passed**. Focused SIGN-A + CONTRACT + Change Order **103 passed**. Full **915 passed**, 3068 warnings, **341.52s**. Alembic current = heads `b7c8d9e0f1a2`. EST-2026-0019 occupancy unchanged. Live PRODUCTION packages **0**. TECH-D CTR-2026-0003 / CTR-2026-0004 intact. |
+| Architectural findings | Overlay only. Frozen CO PDF bytes do not follow later live re-render. SIGN-A contract path copies retained DOCX; no LibreOffice. AI/AUTOMATION cannot approve. |
+| Open decisions | SIGN-B. Ontario 06D. Slice D. V1 rescore. Later Project Element preflight. |
+| Next milestone | **STOP.** Recommended next chunk SIGN-B — **not authorized from this note**. |
+| Commit | this SIGN-A product commit (`feat: add Native Signing request foundation`); preceding `docs: open Native Signing feature gate` |
+| Date | 2026-09-14 |
+
 ### 2026-09-14 — FG-024 TECH-D production-shaped synthetic Ontario UAT
 
 | Field | Content |

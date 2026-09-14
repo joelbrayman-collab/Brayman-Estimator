@@ -71,6 +71,8 @@ Govern construction contract language, statutory/consumer wording, warranty obli
 
 **Subsequent status (2026-09-14, TECH-D production-shaped synthetic Ontario UAT):** The TECH-A/B/C chain was proven end-to-end with labeled SYNTHETIC_UAT Ontario content (`FG024D-UAT-ON-001`). This **still does not** populate this register or approve Ontario production legal content. Live PRODUCTION packages remain **0**. Family 05 remains **COMMERCIAL_DRAFT**. GENERATED != EXECUTED. Native Signing remains **NOT IMPLEMENTED**.
 
+**Subsequent status (2026-09-14, FG-033 SIGN-A):** [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **OPEN / PARTIAL**. SIGN-A **IMPLEMENTED**. SIGN-A binds retained TECH-C DOCX for generated contracts and does **not** convert Family 05. SIGN-E owns DOCX→PDF. This **still does not** populate this register, approve Ontario production legal content, or authorize real-customer signing. Production Native Signing **NOT COMPLETE**.
+
 ## Warranty template register (governed — empty until approved)
 
 Warranty language is **governed content**.

@@ -31,6 +31,13 @@ from app.models.project_contract import (
     ProjectContractSnapshot,
     ProjectContractSnapshotObject,
 )
+from app.models.signing import (
+    SigningConsentVersion,
+    SigningEvent,
+    SigningFrozenArtifact,
+    SigningParticipant,
+    SigningRequest,
+)
 from app.models.permit_intelligence import (
     PermitAnalysis,
     PermitFinding,
@@ -173,6 +180,11 @@ __all__ = [
     "GeneratedProjectContract",
     "ProjectContractSnapshot",
     "ProjectContractSnapshotObject",
+    "SigningConsentVersion",
+    "SigningEvent",
+    "SigningFrozenArtifact",
+    "SigningParticipant",
+    "SigningRequest",
     "DirectLabourCostRateStandard",
     "EstimateLabourSnapshot",
     "LabourAuditEvent",

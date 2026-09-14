@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE / NOT IMPLEMENTED.** Recommendation **NATIVE V1**. Counsel process-review specification **PREPARED**. **Development may proceed under separate governance. Production activation / real customer use is blocked pending Ontario counsel approval of the signing process.** No Native Signing Feature Gate in this pass. No ADR. No product code. |
+| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE.** Subsequent [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **OPEN / PARTIAL**. SIGN-A **IMPLEMENTED**. SIGN-B/C/D/E **NOT STARTED**. Production / real-customer use **BLOCKED** pending Ontario counsel process approval. Recommendation **NATIVE V1**. Counsel spec **PREPARED**. |
 | Date | 2026-08-31 (recon); **2026-09-01** (counsel specification prepared) |
 | Product | The Estimator / CalibraytAI (formerly CalibAi) |
 | Canonical architecture | This document |
@@ -24,6 +24,8 @@ BLOCKED PENDING ONTARIO COUNSEL APPROVAL OF THE SIGNING PROCESS
 Separately governed Native Signing architecture, Feature Gate drafting, implementation, testing, and non-production UAT may proceed when Joel authorizes that track. Do **not** enable real customer / commercial signing until counsel decisions are reconciled and approved. The Legal Content Gate for construction Contract / Warranty templates remains **separate** and in force. Future North American legal-content lifecycle is [FG-024](../feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) (**FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**); that recording does **not** authorize Native Signing product work.
 
 **Subsequent status (2026-09-07, FG-024 recorded):** FG-024 records the future CONTRACT legal-content library, update engine, frozen generation snapshot, and change monitoring. Native Signing process recon in this document remains unchanged. Contract signing remains later and behind the Legal Content Gate.
+
+**Subsequent status (2026-09-14, FG-033 SIGN-A):** Native Signing Feature Gate [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **OPEN / PARTIAL**. SIGN-A freeze + request engine + audit **IMPLEMENTED** (`SIGN-YYYY-NNNN`; CREATED → APPROVED_FOR_SIGNATURE; HUMAN only; AI/AUTOMATION BLOCK; append-only events). Change Order V1 source is the current governed ReportLab PDF frozen once. Generated contracts bind retained TECH-C DOCX in SIGN-A; DOCX→PDF is SIGN-E. Invitation default **7 days** (SIGN-B). Change Order `countersign_required` default **true**. Copyable UAT URL is SIGN-B. Transactional email is required before normal real-customer send. LibreOffice conversion is SIGN-E. No external-review dependency in the development workflow. Production Native Signing **NOT COMPLETE**. V1 **not rescored**.
 
 Field Web remains separately governed. Parallel does **not** mean this document authorizes signing product code.
 

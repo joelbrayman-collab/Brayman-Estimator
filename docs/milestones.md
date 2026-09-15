@@ -36,6 +36,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — §105 sequencing completion + future-record close
+
+| Field | Content |
+|-------|---------|
+| Milestone | Future record only (not a coded milestone) |
+| Status | **RECORDED / COMPLETE FOR PRODUCT-DIRECTION RECORDING / NOT IMPLEMENTATION-AUTHORIZED.** MAIL-B remains **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. |
+| Branch | `main` |
+| Objective | Close the truncated §105 sequence and mark the future product-direction record complete. |
+| Deliverables | [architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md) §105 steps 9–13. |
+| Validation | Docs-only. No product tests re-run. Last MAIL-B full suite **1040 passed**. EST-2026-0019 occupancy unchanged. |
+| Architectural findings | Sequence now ends: final E2E regression → V1 governance audit → V1 rescore → production-readiness review → V1 close. |
+| Open decisions | AUTH-D; later Architect preflight of the loop. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin AUTH-D. |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — §72 remainder + LEARN/alerts/UAT/sequencing final continuation
 
 | Field | Content |

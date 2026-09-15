@@ -2,16 +2,16 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT A PREFLIGHT / NOT IMPLEMENTED** |
+| Status | **FUTURE / RECORDED / COMPLETE FOR PRODUCT-DIRECTION RECORDING / NOT IMPLEMENTATION-AUTHORIZED / NOT A PREFLIGHT / NOT IMPLEMENTED** |
 | Updated | 2026-09-15 |
 | Authority | Joel Brayman / ChatGPT Architect. Origin: FG-024 TECH-C. **15 Sep 2026 complete product-direction consolidation** recorded after FG-034 MAIL-B **PASS**. Does **not** authorize schema, product code, a Feature Gate, or AUTH-D. |
 | Later work | After FG-034 and the current CONTRACT workstream, ChatGPT Architect will perform a bounded architecture preflight covering the **one closed operational / learning loop**: Project Types / Elements / Activities; visual Dynamic Project / Crew Scheduling; field Time Entry; time approval; labour actuals; labour-budget and schedule alerts; Project Performance; MONITOR forecasting; Change Order / Extra Work lineage; Closeout data quality; LEARN evidence quality; estimate and schedule calibration; QuickBooks-ready approved time; and the mandatory platform-wide Contractor Language + UX E2E Audit before Brayman/Ben real-world UAT. |
 
 This file is the **single consolidated future record** for that loop. It is **not** an ADR, not a Feature Gate, and not a preflight. Nothing in this file is implemented. The 15 Sep 2026 visual-calendar addendum is retained below and is **subsumed** by the complete loop, not a second product.
 
-**Actual governed baseline at this recording (do not reconstruct AUTH slices):** starting HEAD / `origin/main` **`2de01f23d5e3d6819fc7a1be5525f565d7ef53d6`** (docs-only §§40–71 continuation). Prior complete-loop record **`5782043cefe030f00816aad6b2ba5e7bd79533a9`**. Product MAIL-B **`6dfc2e940456cf9c292c700e07840fac5d871df4`**. FG-034 **OPEN / PARTIAL**. MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. FG-033 **CLOSED / OPERATIONAL FOR UAT**. V1 **not rescored** (**60% / 4 of 11**). Alembic **`f2a3b4c5d6e7 (head)`**.
+**Actual governed baseline at this recording (do not reconstruct AUTH slices):** starting HEAD / `origin/main` **`e641e19709d0a9b093cc7774943a23af95284339`** (docs-only §72 remainder / §§73–104). Product MAIL-B **`6dfc2e940456cf9c292c700e07840fac5d871df4`**. FG-034 **OPEN / PARTIAL**. MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. FG-033 **CLOSED / OPERATIONAL FOR UAT**. V1 **not rescored** (**60% / 4 of 11**). Alembic **`f2a3b4c5d6e7 (head)`**.
 
-The first 15 Sep 2026 Cursor prompt was truncated at heading `40. CHANGE`. The first continuation recorded §§40–71. This **final continuation** supplies the remainder of **§72**, §§73–104, and §105 through **8. CORRECT**. Remainder of §105 after that step was **not** received. Do **not** invent remaining sequencing.
+The 15 Sep 2026 product-direction recording is now **complete** through §105. Visual-calendar direction and the complete Time / Schedule / Performance / MONITOR / LEARN / Change Order / Extra Work / Closeout / language-audit direction are **one** future workstream, not competing products. This file is product-direction / future-architecture **input**. It is **not** implementation authorization, a Feature Gate, an ADR, schema/migration authorization, a V1 rescore, or proof that any future feature is implemented. Next product workstream remains **FG-034 AUTH-D**, which this record does **not** authorize.
 
 ```text
 ONE CLOSED OPERATIONAL / LEARNING LOOP.
@@ -501,7 +501,7 @@ These are later workstream acceptance principles. They do **not** authorize impl
 
 **LEARN:** recommendations must be understandable, evidence-based, explainable, and optional. Ben should understand what CalibraytAI recommends, why, which comparable work supports it, and what happens if he accepts it. LEARN must not silently alter standards.
 
-## Complete future workstream sequencing (received through step 8; truncated)
+## Complete future workstream sequencing
 
 Current recorded sequence (not current authorization):
 
@@ -512,11 +512,14 @@ Current recorded sequence (not current authorization):
 5. Complete remaining V1 functionality / runtime hardening.
 6. Platform-wide Contractor Language + UX E2E Audit.
 7. Brayman / Ben real-world UAT (desktop; iPhone/mobile; deferred physical-device checks; real operational workflow).
-8. Correct
+8. Correct — correct defects discovered during real-world UAT; preserve governed scope; retest affected functionality; do not treat UAT defects as an excuse for unrelated scope expansion.
+9. Complete final E2E regression — after UAT corrections, run the complete governed automated suite; re-exercise critical E2E workflows affected by corrections; confirm desktop, mobile/responsive, office, field, customer-facing, document-output, security, tenant isolation, artifact custody, and data integrity remain coherent. Physical-device checks performed during Brayman / Ben real-world UAT should be recorded truthfully. Do not claim tests that were not actually performed.
+10. Complete final V1 governance / completion audit — one bounded final audit against actual V1 completion authority: what is COMPLETE, what remains PARTIAL, what is deferred beyond V1, what is operational for production/UAT, what gates can truthfully close, what documentation requires final reconciliation. Do not rely on stale historical completion percentages. Use owning Feature Gates / ADRs / current-state authority.
+11. Rescore V1 — only at this final governed stage, rescore against the actual completion register. Do not preserve historical **60% / 4 of 11** merely because it was previously pinned. Score from actual completed evidence. Every COMPLETE package must satisfy its owning completion criteria. Do not inflate completion because code exists. This record does **not** rescore V1 now.
+12. Final production readiness review — before declaring V1 ready, verify the platform can actually be handed to Brayman / Ben for normal use. At minimum confirm the final state of PLAN, PRICE, CONTRACT, BUILD, MONITOR, LEARN, Dynamic Scheduling, Time Entry, Time Approval, Change Orders, Extra Work, Closeout, Native Signing, Account Recovery, Transactional Email, runtime dependencies, backup/recovery, desktop UX, iPhone/mobile UX, customer-facing workflows, generated documents, QuickBooks-ready handoff where included in V1, contractor-language audit, and real-world UAT findings. Do not introduce new product scope during this review. Identify genuine blockers only.
+13. V1 close — if and only if governed completion evidence supports it, declare CalibraytAI V1 production ready using repository-native closure terminology. Record final V1 score, closed/open/deferred gates, known post-V1 items, real-world UAT result, production/runtime requirements, final live pin, and final test evidence. If a genuine V1 blocker remains, do **not** declare V1 complete; identify the blocker and return to the appropriate governed workstream.
 
-Remainder of §105 after **8. CORRECT** was **not** received. Do **not** invent remaining sequencing.
-
-Do not begin implementation of the loop until the future preflight has resolved the entire loop coherently.
+Do not begin implementation of the loop until the future preflight has resolved the entire loop coherently. This recording exercise is **closed**. Next product workstream remains FG-034 AUTH-D, which this record does **not** authorize.
 
 ## Platform-wide Contractor Language + UX E2E Audit (mandatory later; not implemented)
 
@@ -529,7 +532,7 @@ NOT AUTHORIZED. NOT IMPLEMENTED.
 DO NOT BEGIN FROM THIS RECORD.
 ```
 
-**Timing:** after remaining V1 functionality is substantially complete and **before** Brayman / Ben real-world UAT. Exact sequence: **Complete future workstream sequencing** above (received through **8. CORRECT**; remainder of §105 not received).
+**Timing:** after remaining V1 functionality is substantially complete and **before** Brayman / Ben real-world UAT. Exact sequence: **Complete future workstream sequencing** above (steps 1–13 complete).
 
 **Objective:** every normal user-facing surface is simple, straightforward, contractor-facing, consistent, and non-technical across desktop, iPhone/mobile, customer-facing surfaces, and generated documents. No normal user should need to understand CalibraytAI’s technical architecture to operate CalibraytAI.
 
@@ -557,7 +560,7 @@ DO NOT BEGIN FROM THIS RECORD.
 
 **Close criteria:** cannot close from a file grep alone. Required: complete user-facing surface inventory; prose, terminology, action/button, status, and error/warning review; desktop, responsive/mobile, customer-facing, and document-output walkthroughs; automated regression; complete E2E workflow walkthrough. Final question: could a competent contractor use this platform without needing to understand how CalibraytAI is engineered? Required answer: **YES**.
 
-**Recorded sequence (not current authorization):** see **Complete future workstream sequencing** above. The 15 Sep 2026 final continuation received steps 1–8 through **CORRECT** and then cut. Do **not** invent remaining §105 steps.
+**Recorded sequence (not current authorization):** see **Complete future workstream sequencing** above (steps 1–13 complete).
 
 ## Later preflight must first identify
 
@@ -631,4 +634,4 @@ Do not begin implementation until that preflight has resolved the entire loop co
 
 ## Not authorized from this record
 
-Baseline element library · Organization Element Library · project-specific elements · promotion workflow · activity taxonomy · Time UI / mobile Time page · Today view · time approval · actual labour · time entry · **Schedule UI / visual calendar / drag-drop / iPhone TODAY-WEEK-MONTH Schedule** · crew assignment product · conflict engine · labour-budget alerts · Needs Attention · MONITOR forecast expansion · LEARN · estimate/schedule calibration · Change Order scope lineage product · Extra Work / Pending Change product · Extra Work iPhone action · Closeout performance review · LEARN evidence-quality states · Contractor Language + UX E2E Audit implementation · cross-org learning · QuickBooks time export · AUTH-D · a new Feature Gate · V1 rescore · TECH-D reopen · Native Signing reopen · remainder of §105 after **8. CORRECT**.
+Baseline element library · Organization Element Library · project-specific elements · promotion workflow · activity taxonomy · Time UI / mobile Time page · Today view · time approval · actual labour · time entry · **Schedule UI / visual calendar / drag-drop / iPhone TODAY-WEEK-MONTH Schedule** · crew assignment product · conflict engine · labour-budget alerts · Needs Attention · MONITOR forecast expansion · LEARN · estimate/schedule calibration · Change Order scope lineage product · Extra Work / Pending Change product · Extra Work iPhone action · Closeout performance review · LEARN evidence-quality states · Contractor Language + UX E2E Audit implementation · cross-org learning · QuickBooks time export · AUTH-D · a new Feature Gate · ADR from this record · V1 rescore from this record · TECH-D reopen · Native Signing reopen.

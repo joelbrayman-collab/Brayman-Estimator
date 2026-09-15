@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — §105 sequencing completion + future-record close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Docs-only: complete remaining §105 steps 9–13 and close the future product-direction recording. Do not implement. Do not begin AUTH-D. |
+| Business decision | After UAT corrections: final E2E regression, V1 governance audit, V1 rescore, production-readiness review, then V1 close only if evidence supports it. |
+| Architectural decision | Recording complete. File remains future-architecture input, not implementation authorization. Visual calendar and the complete loop are one workstream. |
+| Prompt template used | Complete product-direction record final tail (15 Sep 2026); docs only |
+| Approved Cursor prompt summary | Record §105 steps 9–13. Mark record COMPLETE FOR PRODUCT-DIRECTION RECORDING. No product. No Feature Gate. No AUTH-D. No V1 rescore. |
+| Files expected to change | future-record + continuity indexes |
+| Files prohibited from changing | `app/**`, migrations, tests, AUTH-D, EST-2026-0019, V1 rescore |
+| Implementation result | Docs only. §105 complete through step 13. Recording closed. MAIL-B remains **PASS**. AUTH-D **NOT STARTED**. **Not implemented.** |
+| Tests | Product tests **not re-run** (docs-only). Last verified MAIL-B full suite **1040 passed**. `git diff --check` on this pass. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | AUTH-D not started. Physical iPhone UAT deferred. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Next product workstream remains FG-034 AUTH-D, **not** authorized by this note. |
+| Next approved prompt | None from this note. |
+| Commit hash | (this docs-only close commit) |
+
 ### 2026-09-15 — §72 remainder + LEARN/alerts/UAT/sequencing final continuation
 
 | Field | Content |

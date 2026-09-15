@@ -44,7 +44,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Help content quality/versioning/source-priority. Manual visual/procedure standards. Independent UAT blocked until §52 gate. |
 | Open decisions | None from this close. V1 remains **60% / 4 of 11**. FG-035 SCOPE **not authorized**. |
 | Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin SCOPE. |
-| Commit | this §§40–60 docs-only commit |
+| Commit | `d3079ffeec728f743195ae3e443a2dc7e41e599f` |
 | Date | 2026-09-15 |
 
 ### 2026-09-15 — Help / Voice / User Manual §§26–39

@@ -44,6 +44,7 @@ V1 NOT RESCORED
 |--------|--------|
 | Live current before upgrade | `f4c5d6e7f8a9` |
 | Upgrade | `f4c5d6e7f8a9` → **`f5d6e7f8a9b0`** **PASS** |
+| Product SHA | **`03c074fb1eb2bbca77ba86e495726c0e042c1979`** |
 | Backup | `instance/brayman_estimator-backup-before-fg035-f5d6e7f8a9b0-20260915.db` (gitignored; not committed) |
 | Backup size | 2,875,392 bytes (matches live source at backup time) |
 

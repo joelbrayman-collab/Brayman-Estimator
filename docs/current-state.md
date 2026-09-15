@@ -11,7 +11,7 @@
 | Field | Value |
 |-------|--------|
 | Branch | `main` |
-| HEAD / `origin/main` | Live Alembic current **`f5d6e7f8a9b0 (head)`**. Repository Alembic head **`f5d6e7f8a9b0`**. Prior product SCOPE **`21bf0eba47acdb19eb292c2319d675a1748c1dff`**. |
+| HEAD / `origin/main` | Product TIME **`03c074fb1eb2bbca77ba86e495726c0e042c1979`**. Live Alembic current **`f5d6e7f8a9b0 (head)`**. Repository Alembic head **`f5d6e7f8a9b0`**. Prior product SCOPE **`21bf0eba47acdb19eb292c2319d675a1748c1dff`**. |
 | FG-006 implementation | `690d755d9901e04eb783198f4b89071fbeaf472a` |
 | FG-008 implementation | `0569f25e7ff496ab637d52437d48cf815522afa1` |
 | Working tree at last verified inspect | **2026-09-15 FG-035 TIME implemented.** [FG-035](feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**. Additive **`f5d6e7f8a9b0`**. Live current **`f5d6e7f8a9b0 (head)`**. SCH / PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. PRODUCTION packages **0**. EST-2026-0019 occupancy unchanged. No V1 rescore. V1 **60% / 4 of 11**. |

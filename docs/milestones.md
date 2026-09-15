@@ -44,7 +44,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | No Draft. Online-session Time only. Self-approval fail-closed. Money actuals remain `ProjectDirectCostActual`. |
 | Open decisions | SCH / PERF remain unauthorized. Physical iPhone Time UAT deferred. |
 | Next milestone | SCH — **NOT AUTHORIZED FROM THIS RECORD** |
-| Commit | pending |
+| Commit | `03c074fb1eb2bbca77ba86e495726c0e042c1979` |
 | Date | 2026-09-15 |
 
 ### 2026-09-15 — FG-035 SCOPE original / Change Order / Extra Work lineage

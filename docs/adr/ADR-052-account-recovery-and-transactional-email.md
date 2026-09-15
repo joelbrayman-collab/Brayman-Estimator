@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-052: Web Account Recovery, Shared Transactional Email, and Supersession of ADR-041 Decision 7’s CLI-only V1 Boundary |
-| Status | **Accepted** (2026-09-15; Joel Brayman / ChatGPT Architect). MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B product implementation is authorized under [FG-034](../feature-gates/FG-034-account-recovery-and-transactional-email.md). AUTH-D remains unauthorized until a later bounded prompt. |
+| Status | **Accepted** (2026-09-15; Joel Brayman / ChatGPT Architect). MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B / AUTH-D product implementation is complete under [FG-034](../feature-gates/FG-034-account-recovery-and-transactional-email.md) **CLOSED / OPERATIONAL FOR UAT**. Live Postmark delivery remains **DEFERRED — PROVIDER CONFIGURATION REQUIRED / NOT CLAIMED AS PASS**. |
 | Date | 2026-09-15 |
 | Related | [ADR-041](ADR-041-user-membership-and-office-authentication.md) **Accepted** (Decision 7 historically CLI-only; **superseded for V1 product scope by this ADR**, not rewritten) · [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED** (SESSION-EXPIRY RECOVERY **DEFERRED**; not this ADR) · [ADR-045](ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted** |
 
@@ -46,7 +46,7 @@ Password-reset logic does not live inside the mail service. Signing lifecycle lo
 
 ### 3. Default production provider is Postmark
 
-Do not build SMTP. Development/TESTING uses local capture or an injected fake transport. Live Postmark HTTP is activated in AUTH-D after credentials exist. MAIL-A persists `FAILED_CONFIG` when `provider=postmark` but the token/from-address is missing, without crashing the application.
+Do not build SMTP. Development/TESTING uses local capture or an injected fake transport. Live Postmark HTTP is activated in AUTH-D after credentials exist. AUTH-D activated the HTTP adapter; live credentials were **not** present. MAIL-A persists `FAILED_CONFIG` when `provider=postmark` but the token/from-address is missing, without crashing the application.
 
 ### 4. Password-reset tokens are not Signing domain records
 
@@ -91,7 +91,7 @@ One responsive auth experience. No device-specific forks. Physical iPhone Accoun
 
 **Positive:** Operators can recover passwords; Native Signing can later send through the same engine; session theft after reset is mitigated; ADR-041 history preserved.
 
-**Negative:** Live Postmark, sender domain, and AUTH-D remain required before the gate closes. MAIL-B Native Signing mail is implemented locally/fake only.
+**Negative:** Live Postmark sender-domain / token configuration remains required before production mail. AUTH-D closed the technical gate as **OPERATIONAL FOR UAT** without claiming live-provider PASS.
 
 ## Module Ownership Impact
 
@@ -121,4 +121,4 @@ FG-034; this ADR; ADR-041 subsequent status; indexes; current-state; session-han
 |------|------|------|
 | Joel | Accepted via governed MAIL-A / AUTH-A prompt | 2026-09-15 |
 | ChatGPT review | Account Recovery + Transactional Email preflight accepted | 2026-09-15 |
-| Cursor implementation note | MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B implemented. AUTH-D not authorized. | 2026-09-15 |
+| Cursor implementation note | MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B / AUTH-D implemented. FG-034 **CLOSED / OPERATIONAL FOR UAT**. Live Postmark **DEFERRED**. | 2026-09-15 |

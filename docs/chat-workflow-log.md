@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — FG-034 AUTH-D complete Account Recovery + transactional email close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | AUTH-D final FG-034 validation / closure. Prove MAIL-A + AUTH-A + AUTH-B + AUTH-C + MAIL-B. Activate Postmark HTTP adapter. Close FG-034 if technical O4UAT criteria are met. |
+| Business decision | Joel / ChatGPT Architect authorized AUTH-D. Live Postmark not required to close the gate if the provider boundary is fully tested. V1 **not rescored**. |
+| Architectural decision | One transactional engine. Postmark HTTP adapter activated; missing token remains `FAILED_CONFIG`. Never `DELIVERED`. Live Postmark **DEFERRED**. |
+| Prompt template used | Bounded FG-034 AUTH-D implementation / UAT authorization (15 Sep 2026) |
+| Approved Cursor prompt summary | AUTH-D complete E2E + Postmark adapter + tests + local UAT + FG-034 close + docs + commit/push after PASS. Do not rescore V1. Do not implement Time/Schedule. |
+| Files expected to change | Postmark adapter; AUTH-D tests; UAT record; FG-034 closure docs; continuity docs |
+| Files prohibited from changing | new migration; EST-2026-0019; V1 rescore; Time/Schedule/MONITOR/LEARN; FG-033 reopen; future-record product-direction body |
+| Implementation result | FG-034 **CLOSED / OPERATIONAL FOR UAT**. AUTH-D **IMPLEMENTED / PASS**. Live Postmark **DEFERRED**. Live current `f2a3b4c5d6e7 (head)`. PRODUCTION packages **0**. EST-2026-0019 unchanged. V1 **not rescored**. Physical iPhone Account Recovery UAT **DEFERRED**. |
+| Tests | Dedicated AUTH-D **12 passed**. Focused AUTH-D + MAIL-A/AUTH-A + AUTH-B + AUTH-C + MAIL-B + FG-018 + SIGN-A–E **185 passed**, 356 warnings, **117.94s**, exit **0**. Full suite **1052 passed**, 3338 warnings, **434.60s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live Postmark token / sender domain not supplied. Physical iPhone UAT deferred. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** send live Postmark from this note. Do **not** implement Time / Schedule. |
+| Next approved prompt | None from this close. |
+| Commit hash | (this AUTH-D product commit) |
+
 ### 2026-09-15 — §105 sequencing completion + future-record close
 
 | Field | Content |

@@ -7,7 +7,7 @@
 | Target Milestone | **V1-10** (account recovery / mail secrets) and **V1-07** (transactional delivery for Native Signing). Not a 12th major V1 package. Does **not** rescore V1. |
 | Module | **Organization / office identity** owns User password reset tokens, `credentials_epoch`, and reset access attempts. **Platform** owns the shared transactional-email service and `transactional_messages`. Signing **consumes** mail (MAIL-B); it does **not** own mail. |
 | Date | 2026-09-15 |
-| Status | **OPEN / PARTIAL.** MAIL-A **IMPLEMENTED**. AUTH-A **IMPLEMENTED**. AUTH-B **IMPLEMENTED / PASS**. AUTH-C **IMPLEMENTED / PASS**. MAIL-B **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** MAIL-A **IMPLEMENTED**. AUTH-A **IMPLEMENTED**. AUTH-B **IMPLEMENTED / PASS**. AUTH-C **IMPLEMENTED / PASS**. MAIL-B **IMPLEMENTED / PASS**. AUTH-D **IMPLEMENTED / PASS**. Live Postmark delivery **DEFERRED — PROVIDER CONFIGURATION REQUIRED / NOT CLAIMED AS PASS**. |
 | Architecture | [ADR-052](../adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**. Supersedes [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) Decision 7’s CLI-only / no-mail V1 boundary **without rewriting ADR-041 historically**. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED** (not reopened). [FG-033](FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED** (not reopened). [FG-021](FG-021-field-web-v1-today-and-capture.md) SESSION-EXPIRY RECOVERY remains **DEFERRED** and is a different problem. |
 | Related ADRs | [ADR-052](../adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**. [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted** (CalibraytAI mail identity). |
 | Prerequisites | FG-018 office Users / membership **CLOSED**. FG-033 Native Signing **CLOSED / OPERATIONAL FOR UAT**. Production sender domain / Postmark token **not** required for MAIL-A / AUTH-A. |
@@ -18,33 +18,35 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **OPEN / PARTIAL** |
+| Feature Gate (this document) | **CLOSED / OPERATIONAL FOR UAT** |
 | MAIL-A | **IMPLEMENTED** — transactional message record, local/fake transport, Postmark adapter boundary, no live network send |
 | AUTH-A | **IMPLEMENTED** — `credentials_epoch`, reset tokens hash-at-rest, rate limits, 8-character new-password floor, CLI epoch bump |
 | AUTH-B | **IMPLEMENTED / PASS** — responsive Forgot Password / Reset UX |
 | AUTH-C | **IMPLEMENTED / PASS** — complete password-reset delivery E2E via public routes |
 | MAIL-B | **IMPLEMENTED / PASS** — Native Signing invitation/resend/complete through this engine |
-| AUTH-D | **NOT STARTED** — desktop/mobile automated close + Postmark UAT |
-| Schema / Alembic | Additive MAIL-A/AUTH-A **`f2a3b4c5d6e7`** revises **`e0f1a2b3c4d5`** |
+| AUTH-D | **IMPLEMENTED / PASS** — complete E2E close; Postmark HTTP adapter activated; live Postmark **DEFERRED** |
+| Schema / Alembic | Additive MAIL-A/AUTH-A **`f2a3b4c5d6e7`** revises **`e0f1a2b3c4d5`**. AUTH-D **no** migration |
 | V1 scoring | **NOT RESCORED** (**60% / 4 of 11**) |
 
 ```text
 FG-034:
-OPEN / PARTIAL
+CLOSED / OPERATIONAL FOR UAT
 MAIL-A IMPLEMENTED
 AUTH-A IMPLEMENTED
 AUTH-B IMPLEMENTED / PASS
 AUTH-C IMPLEMENTED / PASS
 MAIL-B IMPLEMENTED / PASS
-AUTH-D NOT STARTED
+AUTH-D IMPLEMENTED / PASS
 ONE TRANSACTIONAL EMAIL ENGINE
-DEFAULT PROVIDER POSTMARK (NOT ACTIVATED THIS SLICE)
-LOCAL / FAKE TRANSPORT ONLY IN MAIL-A
+DEFAULT PROVIDER POSTMARK
+LIVE POSTMARK DELIVERY DEFERRED — PROVIDER CONFIGURATION REQUIRED
+NOT CLAIMED AS PASS
+LOCAL / FAKE TRANSPORT FOR UAT
 PASSWORD RESET TTL 60 MINUTES
 CREDENTIALS_EPOCH SESSION INVALIDATION
 CLI RESET RETAINED
 8-CHARACTER MINIMUM FOR NEWLY SET / RESET PASSWORDS
-DESKTOP + IPHONE / MOBILE (AUTH-B/D)
+DESKTOP + IPHONE / MOBILE (AUTH-B/D AUTOMATED)
 PHYSICAL IPHONE UAT DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT
 NOT CLAIMED AS PASS
 FG-033 NOT REOPENED
@@ -67,7 +69,7 @@ Provide **one** transactional-email engine for:
 - `SIGNING_RESEND`
 - `SIGNING_COMPLETE`
 
-Do not build a second mail system. Do not treat a token service as the complete product. The gate does **not** close until the complete flow works, including later AUTH-B/C/D and MAIL-B.
+The gate does **not** close until the complete flow works. AUTH-B through AUTH-D are **IMPLEMENTED / PASS**. Live Postmark production send remains **DEFERRED** and is **not** claimed as PASS.
 
 ---
 
@@ -82,7 +84,7 @@ Do not build a second mail system. Do not treat a token service as the complete 
 | 5 | What data does it reference? | `User`, `UserMembership`, later Signing request identity as `related_type`/`related_id` only. |
 | 6 | What may it change? | Auth password-setting paths (8-character floor for **new** passwords); Flask-Login identity format; CLI reset epoch bump; mail config. |
 | 7 | What must it not change? | FG-033 `/sign` ceremony; EST-2026-0019; PRODUCTION legal packages; FG-021 SESSION-EXPIRY; Time / MONITOR / LEARN; inventing RBAC or SSO. |
-| 8 | What are the acceptance criteria? | Complete workstream in §Complete workstream slices. MAIL-A/AUTH-A close when service tests pass and live migrate is applied. Full gate close requires AUTH-B through AUTH-D. |
+| 8 | What are the acceptance criteria? | Complete workstream in §Complete workstream slices. MAIL-A/AUTH-A close when service tests pass and live migrate is applied. Full gate close requires AUTH-B through AUTH-D. **Satisfied 2026-09-15** as **CLOSED / OPERATIONAL FOR UAT**. Live Postmark delivery remains separately **DEFERRED**. |
 | 9 | What tests are required? | Dedicated MAIL-A/AUTH-A tests this slice; later public UX/E2E/responsive/Postmark tests; FG-018 and SIGN-A–E regression; full suite. |
 | 10 | What documentation must be updated? | This gate; ADR-052; ADR-041 subsequent status; indexes; current-state; session-handoff; chat-workflow-log; milestones; project-state-report; v1-completion-register (no rescore). |
 | 11 | Does it require an ADR? | **Yes.** ADR-052. External mail provider + supersession of ADR-041 Decision 7. |
@@ -115,7 +117,7 @@ Later slices are **not** authorized merely because this Feature Gate exists.
 
 **Status: IMPLEMENTED (this prompt).**
 
-Typed templates. Local capture + injected fake provider. Postmark adapter boundary (`FAILED_CONFIG` without token; HTTP hook not activated). No network. Statuses include `LOCAL_CAPTURED` / `ACCEPTED` / `FAILED` / `SKIPPED_ALLOWLIST` / `FAILED_CONFIG`. Never claim `DELIVERED`. Secrets not stored on message rows.
+Typed templates. Local capture + injected fake provider. Postmark adapter boundary (`FAILED_CONFIG` without token). AUTH-D later activated the HTTP adapter; live credentials remain UNSET. Statuses include `LOCAL_CAPTURED` / `ACCEPTED` / `FAILED` / `SKIPPED_ALLOWLIST` / `FAILED_CONFIG`. Never claim `DELIVERED`. Secrets not stored on message rows.
 
 **STOP:** no Forgot Password pages; no Postmark account; no Signing office delivery UX.
 
@@ -153,9 +155,9 @@ Same MAIL-A engine. Existing `/sign` ceremony unchanged. Invitation/resend use `
 
 ### AUTH-D — Complete desktop/mobile/UAT close
 
-**Status: NOT STARTED.**
+**Status: IMPLEMENTED / PASS (this prompt).**
 
-Automated viewport assertions. One real allowlisted Postmark send. Physical iPhone **DEFERRED**, not PASS. Gate close only when complete functionality works.
+Automated viewport assertions. Postmark HTTP adapter activated (payload construction, mocked success/failure, missing-config `FAILED_CONFIG`). Live Postmark send **DEFERRED — PROVIDER CONFIGURATION REQUIRED / NOT CLAIMED AS PASS**. Physical iPhone **DEFERRED**, not PASS. Evidence [testing/fg034-auth-d-complete-close-record.md](../testing/fg034-auth-d-complete-close-record.md).
 
 ---
 
@@ -173,11 +175,12 @@ Automated viewport assertions. One real allowlisted Postmark send. Physical iPho
 ## Production boundary
 
 ```text
-MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B: LOCAL / FAKE ONLY.
-POSTMARK HTTP: NOT ACTIVATED.
+MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B / AUTH-D: LOCAL / FAKE UAT PROVEN.
+POSTMARK HTTP ADAPTER: ACTIVATED.
+LIVE POSTMARK DELIVERY: DEFERRED — PROVIDER CONFIGURATION REQUIRED.
+NOT CLAIMED AS PASS.
 ACCOUNT RECOVERY WEB UX: AUTH-B IMPLEMENTED / PASS.
-ACCOUNT RECOVERY LOCAL E2E: AUTH-C IMPLEMENTED / PASS.
-NATIVE SIGNING EMAIL: MAIL-B IMPLEMENTED / PASS (LOCAL / FAKE).
+ACCOUNT RECOVERY LOCAL E2E: AUTH-C / AUTH-D IMPLEMENTED / PASS.
+NATIVE SIGNING EMAIL: MAIL-B / AUTH-D IMPLEMENTED / PASS (LOCAL / FAKE).
 PHYSICAL IPHONE ACCOUNT RECOVERY UAT: DEFERRED / NOT PASS.
-AUTH-D: NOT STARTED.
 ```

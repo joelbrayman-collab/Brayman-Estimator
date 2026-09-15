@@ -12,7 +12,7 @@
 | Related ADRs | No new ADR in SIGN-A through SIGN-E. Existing Native Signing recon remains architecture. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) / [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (contract legal content remains separate). |
 | Prerequisites | TECH-A/B/C/D **PASS**. Frozen generated-contract DOCX custody live. Change Order business record live. FG-018 office Users / membership. Development proceeds on product/software requirements. Do **not** add legal-review gates or approval states. |
 
-**Subsequent status (2026-09-15 FG-034 MAIL-B):** Transactional email for Native Signing invitation/resend/complete is [FG-034](FG-034-account-recovery-and-transactional-email.md) MAIL-B **IMPLEMENTED / PASS** (local/fake). This gate remains **CLOSED / OPERATIONAL FOR UAT**. Ceremony, token, and `/sign` are unchanged. Copyable URL remains available. SENT is not delivered.
+**Subsequent status (2026-09-15 FG-034 MAIL-B / AUTH-D):** Transactional email for Native Signing invitation/resend/complete is [FG-034](FG-034-account-recovery-and-transactional-email.md) MAIL-B / AUTH-D **IMPLEMENTED / PASS** (local/fake; Postmark HTTP adapter activated; live Postmark **DEFERRED**). This gate remains **CLOSED / OPERATIONAL FOR UAT**. Ceremony, token, and `/sign` are unchanged. Copyable URL remains available. SENT is not delivered. Physical iPhone UAT remains **DEFERRED**.
 
 ---
 

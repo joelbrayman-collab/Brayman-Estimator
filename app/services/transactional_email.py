@@ -1,7 +1,8 @@
-"""FG-034 MAIL-A shared transactional-email service.
+"""FG-034 shared transactional-email service.
 
-Owns delivery only. Password-reset and Signing consume this service later.
-MAIL-A does not perform live Postmark HTTP; the adapter is the activation boundary.
+Owns delivery only. Password-reset and Signing consume this service.
+AUTH-D activates the Postmark HTTP adapter when token and sender exist.
+Missing configuration remains FAILED_CONFIG. Status is never DELIVERED.
 """
 
 from __future__ import annotations
@@ -9,6 +10,8 @@ from __future__ import annotations
 import json
 import os
 import re
+import urllib.error
+import urllib.request
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Mapping, Optional
@@ -200,8 +203,79 @@ class LocalCaptureTransport:
         )
 
 
+POSTMARK_EMAIL_ENDPOINT = "https://api.postmarkapp.com/email"
+
+
+def postmark_request_payload(payload: TransportPayload) -> dict[str, str]:
+    """Build the Postmark /email JSON body. Never includes the server token."""
+    from_value = payload.from_email
+    if payload.from_name:
+        from_value = f"{payload.from_name} <{payload.from_email}>"
+    body = {
+        "From": from_value,
+        "To": payload.to_email,
+        "Subject": payload.subject,
+        "TextBody": payload.text_body,
+    }
+    if payload.reply_to:
+        body["ReplyTo"] = payload.reply_to
+    return body
+
+
+def postmark_http_send(payload: TransportPayload) -> TransportResult:
+    """AUTH-D production Postmark HTTP. Tests inject POSTMARK_URLOPEN or POSTMARK_HTTP_SEND."""
+    token = _config_str("POSTMARK_SERVER_TOKEN")
+    if not token or not payload.from_email:
+        return TransportResult(
+            status=STATUS_FAILED_CONFIG,
+            provider=PROVIDER_POSTMARK,
+            error_code="POSTMARK_CONFIG",
+        )
+    opener = current_app.config.get("POSTMARK_URLOPEN") or urllib.request.urlopen
+    request = urllib.request.Request(
+        POSTMARK_EMAIL_ENDPOINT,
+        data=json.dumps(postmark_request_payload(payload)).encode("utf-8"),
+        method="POST",
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "X-Postmark-Server-Token": token,
+        },
+    )
+    try:
+        with opener(request, timeout=15) as response:
+            raw = response.read() or b"{}"
+        parsed = json.loads(raw.decode("utf-8"))
+        message_id = parsed.get("MessageID")
+        return TransportResult(
+            status=STATUS_ACCEPTED,
+            provider=PROVIDER_POSTMARK,
+            provider_message_id=str(message_id) if message_id else None,
+        )
+    except urllib.error.HTTPError as exc:
+        error_code = f"POSTMARK_HTTP_{exc.code}"
+        try:
+            parsed = json.loads((exc.read() or b"").decode("utf-8") or "{}")
+            provider_code = parsed.get("ErrorCode")
+            if provider_code is not None:
+                error_code = f"POSTMARK_{provider_code}"
+        except Exception:
+            pass
+        return TransportResult(
+            status=STATUS_FAILED,
+            provider=PROVIDER_POSTMARK,
+            error_code=str(error_code)[:40],
+        )
+    except Exception:
+        return TransportResult(
+            status=STATUS_FAILED,
+            provider=PROVIDER_POSTMARK,
+            error_code="POSTMARK_TRANSPORT",
+        )
+
+
 class PostmarkTransport:
-    """MAIL-A adapter boundary. Live HTTP is AUTH-D; missing config is FAILED_CONFIG."""
+    """AUTH-D Postmark adapter. Missing config is FAILED_CONFIG. Never DELIVERED."""
 
     def send(self, payload: TransportPayload) -> TransportResult:
         token = _config_str("POSTMARK_SERVER_TOKEN")
@@ -214,11 +288,7 @@ class PostmarkTransport:
                 error_code="POSTMARK_CONFIG",
             )
         if http_send is None:
-            return TransportResult(
-                status=STATUS_FAILED_CONFIG,
-                provider=PROVIDER_POSTMARK,
-                error_code="POSTMARK_HTTP_NOT_ACTIVATED",
-            )
+            http_send = postmark_http_send
         result = http_send(payload)
         if isinstance(result, TransportResult):
             return result

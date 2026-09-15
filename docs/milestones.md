@@ -36,6 +36,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — FG-034 AUTH-D complete Account Recovery + transactional email close
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-034 AUTH-D |
+| Status | **CLOSED / OPERATIONAL FOR UAT.** [FG-034](feature-gates/FG-034-account-recovery-and-transactional-email.md) **CLOSED / OPERATIONAL FOR UAT**. MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B / AUTH-D **IMPLEMENTED / PASS**. Live Postmark **DEFERRED — PROVIDER CONFIGURATION REQUIRED / NOT CLAIMED AS PASS**. |
+| Branch | `main` |
+| Base commit | `84d32f27433363597eb12008e95932148ffe1b8a` (future-record close); product MAIL-B `6dfc2e940456cf9c292c700e07840fac5d871df4` |
+| Objective | Prove complete Account Recovery + transactional email + Native Signing delivery; activate Postmark HTTP adapter; close FG-034. |
+| Deliverables | Postmark HTTP adapter; AUTH-D tests; synthetic UAT; FG-034 closure docs |
+| Validation | Dedicated AUTH-D **12 passed**. Focused **185 passed**, 356 warnings, **117.94s**. Full suite **1052 passed**, 3338 warnings, **434.60s**. Alembic **`f2a3b4c5d6e7`**. EST-2026-0019 unchanged. PRODUCTION packages **0**. |
+| Architectural findings | One engine. Missing Postmark token → `FAILED_CONFIG`. Never `DELIVERED`. Physical iPhone UAT deferred. |
+| Open decisions | Live Postmark token / sender domain; physical iPhone UAT; PRODUCTION legal package. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** send live Postmark from this note. Do **not** implement Time / Schedule. Do **not** rescore V1. |
+| Commit | this AUTH-D product commit |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — §105 sequencing completion + future-record close
 
 | Field | Content |

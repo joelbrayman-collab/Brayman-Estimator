@@ -190,11 +190,11 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 | [ADR-050](ADR-050-north-american-legal-content-library-ownership.md) | North American Legal Content Library Ownership and Fail-Closed Boundary | **Accepted** (2026-09-13; Joel Brayman / ChatGPT Architect; subsequent Slice A **CLOSED / OPERATIONAL FOR UAT**; subsequent Slice B and Slice C **CLOSED / OPERATIONAL FOR UAT**; TECH-A **IMPLEMENTED**; TECH-B **IMPLEMENTED**; Slice D **NOT AUTHORIZED**; live current **`f5a6b7c8d9e0 (head)`**; library **empty**) |
 | [ADR-051](ADR-051-legal-content-source-and-update-lifecycle.md) | Legal Content Source Classes, Candidate-Update Lifecycle, and Slice B / Slice D Boundary | **Accepted** (2026-09-13; Joel Brayman / ChatGPT Architect; subsequent Slice B **CLOSED / OPERATIONAL FOR UAT**; subsequent Slice C **CLOSED / OPERATIONAL FOR UAT**; TECH-B **WARN** implemented for valid ACTIVE + pending candidate; Slice D **NOT AUTHORIZED**) |
 
-### Account Recovery and transactional email (Accepted; FG-034 OPEN / PARTIAL)
+### Account Recovery and transactional email (Accepted; FG-034 CLOSED / OPERATIONAL FOR UAT)
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-052](ADR-052-account-recovery-and-transactional-email.md) | Web Account Recovery, Shared Transactional Email, and Supersession of ADR-041 Decision 7’s CLI-only V1 Boundary | **Accepted** (2026-09-15; Joel / ChatGPT Architect; [FG-034](../feature-gates/FG-034-account-recovery-and-transactional-email.md) MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B **IMPLEMENTED**; AUTH-D **NOT STARTED**) |
+| [ADR-052](ADR-052-account-recovery-and-transactional-email.md) | Web Account Recovery, Shared Transactional Email, and Supersession of ADR-041 Decision 7’s CLI-only V1 Boundary | **Accepted** (2026-09-15; Joel / ChatGPT Architect; [FG-034](../feature-gates/FG-034-account-recovery-and-transactional-email.md) **CLOSED / OPERATIONAL FOR UAT**; AUTH-D **IMPLEMENTED / PASS**; live Postmark **DEFERRED**) |
 
 ### Field Web capture reliability (Accepted; FG-021 CLOSED)
 

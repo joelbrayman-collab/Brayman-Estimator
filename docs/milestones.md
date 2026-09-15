@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — FG-035 SCOPE original / Change Order / Extra Work lineage
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 SCOPE |
+| Status | **OPEN / PARTIAL.** SCOPE **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**. TIME / SCH / PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. |
+| Branch | `main` |
+| Base commit | `26f675cd4982a92f823d1e3b34d16d92b6eb589c` |
+| Objective | Original scope immutable; Change Orders modify current authorized Project work; Extra Work before CO. |
+| Deliverables | `scope_origin` + CO refs; `project_work_scope_deltas`; append-only history; Hub/Field Extra work; additive `f4c5d6e7f8a9`; synthetic UAT project **43** |
+| Validation | Dedicated SCOPE **10 passed**. Focused **23 passed**. Full suite **1075 passed**, 3531 warnings, **437.62s**. Live migrate **PASS**. EST-2026-0019 unchanged. PRODUCTION packages **0**. |
+| Architectural findings | ChangeOrder remains commercial SoR. Original hours never overwritten. Draft CO cannot authorize Project scope. Ambiguous PROJECT-created work fail-closed EXTRA_WORK. |
+| Open decisions | TIME / SCH not authorized. Physical iPhone Extra work UAT **DEFERRED**. V1 remains **60% / 4 of 11**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin TIME / SCH from this note. |
+| Commit | (pending this implementation commit) |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — Help / Voice / User Manual §§40–60 close
 
 | Field | Content |

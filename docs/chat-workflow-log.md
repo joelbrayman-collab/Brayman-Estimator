@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — FG-035 SCOPE original / Change Order / Extra Work lineage
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Implement FG-035 SCOPE: ORIGINAL / CHANGE_ORDER / EXTRA_WORK on Project work; CO deltas; Extra Work; Hub/Field. |
+| Business decision | Original scope is immutable historical evidence. Change Orders modify current authorized Project work. They do not rewrite the original Estimate. |
+| Architectural decision | Lineage on Project Element/Activity + bounded deltas. ChangeOrder remains commercial SoR. Eligible CO = Approved/Invoiced. Ambiguous historical PROJECT rows fail-closed EXTRA_WORK. |
+| Prompt template used | FG-035 SCOPE implementation (15 Sep 2026) |
+| Approved Cursor prompt summary | ORIGINAL + CHANGE_ORDER + EXTRA_WORK lineage; CO add/modify/reduce; Extra Work create/link/reclass; Hub presentation; Field Extra work; one additive Alembic parent `f3b4c5d6e7f8`; tests; live migrate; UAT; docs; commit/push after PASS. TIME/SCH/PERF/CLOSE/LEARN/QB-T not authorized. |
+| Files expected to change | work_structure models; work_scope service; Hub/Field; Alembic `f4c5d6e7f8a9`; tests; FG-035; ADR-053; continuity |
+| Files prohibited from changing | TIME/SCH/PERF/CLOSE/LEARN/QB-T; EST-2026-0019; V1 rescore; ChangeOrder commercial rewrite |
+| Implementation result | FG-035 **OPEN / PARTIAL**. SCOPE **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**. Live current `f4c5d6e7f8a9 (head)`. EST-2026-0019 unchanged. PRODUCTION packages **0**. V1 **not rescored**. |
+| Tests | Dedicated SCOPE **10 passed**. Focused **23 passed**, 193 warnings, **12.80s**. Full suite **1075 passed**, 3531 warnings, **437.62s**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | TIME / SCH not authorized. Physical iPhone Extra work UAT **DEFERRED**. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin TIME / SCH. |
+| Next approved prompt | None from this close. |
+| Commit hash | (pending this implementation commit) |
+
 ### 2026-09-15 — Help / Voice / User Manual §§40–60 close
 
 | Field | Content |

@@ -394,6 +394,19 @@
         {% else %}
         <p class="muted-copy">Build project work from a locked issued or accepted estimate that has labour hours.</p>
         {% endif %}
+        {% if hub.work_scope_totals.current_authorized_hours is not none %}
+        <p class="muted-copy">
+            {{ contractor_copy.SCOPE_ORIGINAL_LABOUR }}:
+            {{ "%.2f"|format(hub.work_scope_totals.original_hours) }}
+            · {{ contractor_copy.SCOPE_APPROVED_CHANGES }}:
+            {{ "%.2f"|format(hub.work_scope_totals.approved_change_hours) }}
+            · {{ contractor_copy.SCOPE_CURRENT_AUTHORIZED }}:
+            {{ "%.2f"|format(hub.work_scope_totals.current_authorized_hours) }}
+        </p>
+        {% endif %}
+        {% if hub.unresolved_extra_work.activities or hub.unresolved_extra_work.elements %}
+        <p class="scope-extra-work-banner">{{ contractor_copy.SCOPE_EXTRA_WORK_BANNER }}</p>
+        {% endif %}
         {% set active_work = hub.work_elements | selectattr("status", "equalto", "ACTIVE") | list %}
         {% if active_work %}
         <table class="data-table">
@@ -401,22 +414,22 @@
                 <tr>
                     <th>Work item</th>
                     <th>Activities</th>
+                    <th>Kind</th>
                     <th>Estimated hours</th>
-                    <th>Source</th>
                 </tr>
             </thead>
             <tbody>
                 {% for element in active_work %}
-                <tr>
+                <tr class="{% if element.scope_origin == 'EXTRA_WORK' %}scope-extra-work-row{% endif %}">
                     <td>{{ element.display_name }}</td>
                     <td>{{ element.activities | selectattr("status", "equalto", "ACTIVE") | list | length }}</td>
-                    <td>{% if element.estimated_hours is not none %}{{ "%.2f"|format(element.estimated_hours) }}{% else %}—{% endif %}</td>
                     <td>
-                        {% if element.source_kind == "ESTIMATE_SEED" %}From estimate
-                        {% elif element.source_kind == "PROJECT" %}This project
-                        {% elif element.source_kind == "ORGANIZATION" %}Organization
-                        {% else %}CalibraytAI{% endif %}
+                        {{ hub.scope_kind_label(element.scope_origin) }}
+                        {% if element.change_order %}
+                        · {{ hub.change_order_label(element.change_order) }}
+                        {% endif %}
                     </td>
+                    <td>{% if element.estimated_hours is not none %}{{ "%.2f"|format(element.estimated_hours) }}{% else %}—{% endif %}</td>
                 </tr>
                 {% endfor %}
             </tbody>

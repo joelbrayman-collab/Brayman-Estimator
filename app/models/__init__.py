@@ -98,6 +98,8 @@ from app.models.labour_engine import (
 from app.models.work_structure import (
     ProjectWorkActivity,
     ProjectWorkElement,
+    ProjectWorkScopeDelta,
+    ProjectWorkScopeHistory,
     ProjectWorkStructureSeed,
     WorkActivityTemplate,
     WorkElementTemplate,
@@ -206,6 +208,8 @@ __all__ = [
     "ProductionRateStandard",
     "ProjectWorkActivity",
     "ProjectWorkElement",
+    "ProjectWorkScopeDelta",
+    "ProjectWorkScopeHistory",
     "ProjectWorkStructureSeed",
     "WorkActivityTemplate",
     "WorkElementTemplate",

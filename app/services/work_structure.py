@@ -18,6 +18,8 @@ from app.models.estimate import EstimateVersion
 from app.models.labour_engine import EstimateLabourSnapshot, LabourTask
 from app.models.project import Project
 from app.models.work_structure import (
+    SCOPE_EXTRA_WORK,
+    SCOPE_ORIGINAL,
     SEED_ELIGIBLE_VERSION_STATUSES,
     SOURCE_BASELINE,
     SOURCE_ESTIMATE_SEED,
@@ -330,6 +332,7 @@ def seed_project_work_structure(
             sort_order=element_order * 10,
             source_kind=SOURCE_ESTIMATE_SEED,
             estimated_hours=hours,
+            scope_origin=SCOPE_ORIGINAL,
         )
         db.session.add(element)
         db.session.flush()
@@ -350,6 +353,7 @@ def seed_project_work_structure(
                     quantity=snapshot.quantity,
                     unit=snapshot.unit,
                     production_rate=snapshot.resolved_production_rate,
+                    scope_origin=SCOPE_ORIGINAL,
                 )
             )
 
@@ -389,6 +393,7 @@ def add_project_element(
         status=WORK_STATUS_ACTIVE,
         sort_order=int(max_order) + 10,
         source_kind=SOURCE_PROJECT,
+        scope_origin=SCOPE_EXTRA_WORK,
     )
     db.session.add(row)
     db.session.commit()
@@ -430,6 +435,7 @@ def add_project_activity(
         sort_order=int(max_order) + 10,
         source_kind=SOURCE_PROJECT,
         labour_task_id=task.id if task else None,
+        scope_origin=SCOPE_EXTRA_WORK,
     )
     db.session.add(row)
     db.session.commit()

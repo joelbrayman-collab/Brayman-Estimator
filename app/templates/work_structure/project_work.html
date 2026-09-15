@@ -13,6 +13,17 @@
     <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Project Hub</a>
 </div>
 
+{% if scope_totals.current_authorized_hours is not none %}
+<p class="muted-copy">
+    {{ contractor_copy.SCOPE_ORIGINAL_LABOUR }}:
+    {{ "%.2f"|format(scope_totals.original_hours) }}
+    · {{ contractor_copy.SCOPE_APPROVED_CHANGES }}:
+    {{ "%.2f"|format(scope_totals.approved_change_hours) }}
+    · {{ contractor_copy.SCOPE_CURRENT_AUTHORIZED }}:
+    {{ "%.2f"|format(scope_totals.current_authorized_hours) }}
+</p>
+{% endif %}
+
 {% if seed %}
 <p class="muted-copy">Project work has been built from a locked issued or accepted estimate.</p>
 {% elif eligible_versions %}
@@ -36,14 +47,52 @@
 <p class="muted-copy">Build project work from a locked issued or accepted estimate that has labour hours.</p>
 {% endif %}
 
+<article class="panel panel-wide scope-extra-work-panel">
+    <div class="panel-header">
+        <h2>{{ contractor_copy.SCOPE_EXTRA_WORK_LABEL }}</h2>
+    </div>
+    <p class="scope-extra-work-banner">{{ contractor_copy.SCOPE_EXTRA_WORK_BANNER }}</p>
+    <form method="post" action="{{ url_for('work_structure.create_project_extra_work', project_id=project.id) }}" class="form-panel">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-grid">
+            <label>
+                What changed
+                <input type="text" name="description" required>
+            </label>
+            <label>
+                Existing work item
+                <select name="project_work_element_id">
+                    <option value="">New work item</option>
+                    {% for element in elements if element.status == 'ACTIVE' %}
+                    <option value="{{ element.id }}">{{ element.display_name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                New work item name
+                <input type="text" name="new_element_name">
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Record extra work</button>
+        </div>
+    </form>
+</article>
+
 {% for element in elements %}
-<article class="panel panel-wide">
+<article class="panel panel-wide {% if element.scope_origin == 'EXTRA_WORK' %}scope-extra-work-panel{% endif %}">
     <div class="panel-header">
         <h2>{{ element.display_name }}</h2>
-        <span class="status">{{ contractor_copy.office_status_label(element.status) }}</span>
+        <span class="status {% if element.scope_origin == 'EXTRA_WORK' %}status-extra-work{% endif %}">{{ contractor_copy.office_status_label(element.status) }}</span>
     </div>
     <p class="muted-copy">
-        {{ source_label(element.source_kind) }}
+        {{ contractor_scope_label(element.scope_origin) }}
+        {% if element.source_kind == 'ESTIMATE_SEED' %}
+        · From estimate
+        {% endif %}
+        {% if element.change_order %}
+        · {{ contractor_change_order_label(element.change_order) }}
+        {% endif %}
         {% if element.estimated_hours is not none %}
         · {{ "%.2f"|format(element.estimated_hours) }} estimated hours
         {% endif %}
@@ -79,25 +128,30 @@
         <thead>
             <tr>
                 <th>Activity</th>
-                <th>Hours</th>
-                <th>Quantity</th>
-                <th>Source</th>
+                <th>Original</th>
+                <th>Approved changes</th>
+                <th>Current authorized</th>
+                <th>Kind</th>
                 <th>Status</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
             {% for activity in element.activities %}
-            <tr>
+            {% set totals = activity_scope_totals(activity) %}
+            {% set lineage = inherit_scope_lineage(activity) %}
+            <tr class="{% if lineage.effective_origin == 'EXTRA_WORK' %}scope-extra-work-row{% endif %}">
                 <td>{{ activity.display_name }}</td>
-                <td>{% if activity.estimated_hours is not none %}{{ "%.2f"|format(activity.estimated_hours) }}{% else %}—{% endif %}</td>
+                <td>{% if totals.original_hours %}{{ "%.2f"|format(totals.original_hours) }}{% elif activity.scope_origin == 'ORIGINAL' and activity.estimated_hours is not none %}{{ "%.2f"|format(totals.original_hours) }}{% else %}—{% endif %}</td>
+                <td>{% if totals.approved_change_hours %}{{ "%.2f"|format(totals.approved_change_hours) }}{% else %}—{% endif %}</td>
+                <td>{% if activity.estimated_hours is not none or activity.scope_deltas %}{{ "%.2f"|format(totals.current_authorized_hours) }}{% else %}—{% endif %}</td>
                 <td>
-                    {% if activity.quantity is not none %}
-                    {{ "%.2f"|format(activity.quantity) }}{% if activity.unit %} {{ activity.unit }}{% endif %}
-                    {% else %}—{% endif %}
+                    {{ contractor_scope_label(activity.scope_origin) }}
+                    {% if activity.change_order %}
+                    · {{ contractor_change_order_label(activity.change_order) }}
+                    {% endif %}
                 </td>
-                <td>{{ source_label(activity.source_kind) }}</td>
-                <td><span class="status">{{ contractor_copy.office_status_label(activity.status) }}</span></td>
+                <td><span class="status {% if lineage.effective_origin == 'EXTRA_WORK' %}status-extra-work{% endif %}">{{ contractor_copy.office_status_label(activity.status) }}</span></td>
                 <td>
                     {% if activity.status == 'ACTIVE' %}
                     <form method="post" action="{{ url_for('work_structure.rename_activity', activity_id=activity.id) }}">
@@ -109,12 +163,53 @@
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit">Retire</button>
                     </form>
+                    {% if activity.scope_origin == 'ORIGINAL' %}
+                    <form method="post" action="{{ url_for('work_structure.add_scope_delta', activity_id=activity.id) }}" class="form-grid">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <select name="change_order_id" required>
+                            <option value="">Approved change order</option>
+                            {% for change_order in change_orders %}
+                            <option value="{{ change_order.id }}">{{ contractor_change_order_label(change_order) }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" name="hours_delta" placeholder="Hours +/−" required>
+                        <button type="submit">Record approved change</button>
+                    </form>
+                    <form method="post" action="{{ url_for('work_structure.record_original_as_extra_work', activity_id=activity.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="text" name="reason" placeholder="Review note">
+                        <button type="submit">Review as extra work</button>
+                    </form>
+                    {% endif %}
+                    {% if activity.scope_origin == 'EXTRA_WORK' %}
+                    <form method="post" action="{{ url_for('work_structure.link_extra_work', activity_id=activity.id) }}" class="form-grid">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <select name="change_order_id" required>
+                            <option value="">Change order</option>
+                            {% for change_order in change_orders %}
+                            <option value="{{ change_order.id }}">{{ contractor_change_order_label(change_order) }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Link to change order</button>
+                    </form>
+                    <form method="post" action="{{ url_for('work_structure.extra_work_create_change_order', activity_id=activity.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="text" name="title" value="{{ activity.display_name }}" required>
+                        <button type="submit">Create change order</button>
+                    </form>
+                    <a class="button-link" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id, extra_work_activity_id=activity.id) }}">Open change order form</a>
+                    <form method="post" action="{{ url_for('work_structure.record_extra_work_as_original', activity_id=activity.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="text" name="reason" placeholder="Review note">
+                        <button type="submit">Record as original work</button>
+                    </form>
+                    {% endif %}
                     {% endif %}
                 </td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="6">No activities on this work item.</td>
+                <td colspan="7">No activities on this work item.</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -142,6 +237,31 @@
             <button type="submit">{{ contractor_copy.ADD_ACTIVITY_BUTTON }}</button>
         </div>
     </form>
+    <form method="post" action="{{ url_for('work_structure.add_change_order_activity', element_id=element.id) }}" class="form-panel">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-grid">
+            <label>
+                Approved change order
+                <select name="change_order_id" required>
+                    <option value="">Select</option>
+                    {% for change_order in change_orders %}
+                    <option value="{{ change_order.id }}">{{ contractor_change_order_label(change_order) }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                New activity
+                <input type="text" name="display_name" required>
+            </label>
+            <label>
+                Hours
+                <input type="text" name="estimated_hours">
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Add change order activity</button>
+        </div>
+    </form>
     {% endif %}
 </article>
 {% else %}
@@ -155,7 +275,7 @@
     <div class="panel-header">
         <h2>Add a project work item</h2>
     </div>
-    <p class="muted-copy">This stays on this project. It is not added to organization work types.</p>
+    <p class="muted-copy">This stays on this project. It is not added to organization work types. New items without a change order are extra work until reviewed.</p>
     <form method="post" action="{{ url_for('work_structure.add_element', project_id=project.id) }}" class="form-panel">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label>
@@ -164,6 +284,38 @@
         </label>
         <div class="form-actions">
             <button type="submit">{{ contractor_copy.ADD_WORK_ITEM_BUTTON }}</button>
+        </div>
+    </form>
+</article>
+
+<article class="panel">
+    <div class="panel-header">
+        <h2>Add change order work item</h2>
+    </div>
+    <p class="muted-copy">Use an approved or invoiced change order. Draft change orders cannot become authorized project work.</p>
+    <form method="post" action="{{ url_for('work_structure.add_change_order_element', project_id=project.id) }}" class="form-panel">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-grid">
+            <label>
+                Change order
+                <select name="change_order_id" required>
+                    <option value="">Select</option>
+                    {% for change_order in change_orders %}
+                    <option value="{{ change_order.id }}">{{ contractor_change_order_label(change_order) }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Name
+                <input type="text" name="display_name" required>
+            </label>
+            <label>
+                Hours
+                <input type="text" name="estimated_hours">
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Add change order work item</button>
         </div>
     </form>
 </article>

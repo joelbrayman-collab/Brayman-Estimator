@@ -39,6 +39,12 @@ from app.services.permit_foundation import assemble_permit_foundation_state
 from app.services.signing import overlays_for_change_orders
 from app.services.permit_intelligence import assemble_permit_intelligence_state
 from app.services.pricing_engine import as_money
+from app.services.work_scope import (
+    contractor_change_order_label,
+    contractor_scope_label,
+    list_unresolved_extra_work,
+    project_scope_totals,
+)
 from app.services.work_structure import (
     eligible_seed_versions,
     get_project_seed,
@@ -189,6 +195,12 @@ def assemble_project_hub(project, organization_id: str) -> dict:
         "work_elements": work_elements,
         "work_seed": work_seed,
         "work_seed_versions": work_seed_versions,
+        "work_scope_totals": project_scope_totals(project.id, organization_id=organization_id),
+        "unresolved_extra_work": list_unresolved_extra_work(
+            project.id, organization_id=organization_id
+        ),
+        "scope_kind_label": contractor_scope_label,
+        "change_order_label": contractor_change_order_label,
     }
 
 

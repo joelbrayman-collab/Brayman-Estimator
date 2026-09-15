@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-053: Project Work Structure and Closed Operational / Learning Loop |
-| Status | **Accepted** (2026-09-15; Joel Brayman / ChatGPT Architect). TAX/WBS product implementation is authorized under [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. SCOPE / TIME / SCH / PERF / CLOSE / LEARN / QB-T remain **NOT AUTHORIZED**. |
+| Status | **Accepted** (2026-09-15; Joel Brayman / ChatGPT Architect). TAX/WBS and SCOPE product implementation are authorized under [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TIME / SCH / PERF / CLOSE / LEARN / QB-T remain **NOT AUTHORIZED**. |
 | Date | 2026-09-15 |
 | Related | [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [ADR-021](ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-024](ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-049](ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted** · [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED** (not reopened) · [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED** (not rewritten) · product direction [project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md) |
 
@@ -67,11 +67,11 @@ Do not create a second commercial Change Order entity. Document family remains f
 
 ### L. Scope lineage overlays work structure
 
-Future SCOPE slice overlays origin (`ORIGINAL` / `CHANGE_ORDER` / `EXTRA_WORK`) on work structure and **references** `ChangeOrder`. TAX/WBS does not implement origin.
+SCOPE overlays origin (`ORIGINAL` / `CHANGE_ORDER` / `EXTRA_WORK`) on work structure and **references** `ChangeOrder`. Implemented 2026-09-15 under FG-035 SCOPE (`f4c5d6e7f8a9`).
 
 ### M. Original scope is immutable historical evidence
 
-Change Orders modify current authorized work. They do not rewrite the original estimate.
+Change Orders modify current authorized work. They do not rewrite the original estimate. Implemented 2026-09-15: original hours/quantity/pins stay on the seeded Activity; authorized deltas live on `project_work_scope_deltas`.
 
 ### N. MONITOR is a projection / consumer
 
@@ -116,15 +116,15 @@ Organizations may add Types / Elements / Activities as data. They must not creat
 
 ## Data Ownership Impact
 
-New TAX/WBS tables are organization-scoped (or baseline with `organization_id` NULL). Seeded Project Activities pin `source_estimate_version_id` and `source_estimate_labour_snapshot_id`. Rows are retired, not hard-deleted.
+New TAX/WBS tables are organization-scoped (or baseline with `organization_id` NULL). SCOPE adds `scope_origin` / `change_order_id` on Project work plus `project_work_scope_deltas` and append-only `project_work_scope_history`. Seeded Project Activities pin `source_estimate_version_id` and `source_estimate_labour_snapshot_id`. Rows are retired, not hard-deleted.
 
 ## Migration Impact
 
-Required for TAX/WBS: one additive Alembic revision parented on `f2a3b4c5d6e7`. No rewrite of existing tables.
+Required for TAX/WBS: additive Alembic **`f3b4c5d6e7f8`** parented on `f2a3b4c5d6e7`. Required for SCOPE: additive Alembic **`f4c5d6e7f8a9`** parented on `f3b4c5d6e7f8`. No rewrite of existing Estimate or ChangeOrder tables.
 
 ## Testing Impact
 
-Dedicated TAX/WBS tests: catalog layers, tenant isolation, seed eligibility/fail-closed/idempotency, pins, Hub/catalog office surfaces, migration upgrade/downgrade.
+Dedicated TAX/WBS and SCOPE tests: catalog layers, tenant isolation, seed eligibility, original immutability, CO deltas, Extra Work, Hub/Field, migration upgrade/downgrade.
 
 ## Documentation Impact
 
@@ -136,4 +136,4 @@ FG-035; this ADR; module/index/continuity docs. V1 **not rescored**.
 |------|------|------|
 | Joel | Accepted via governed FG-035 TAX/WBS prompt | 2026-09-15 |
 | ChatGPT review | Repository-aware preflight accepted; FG-035 / ADR-053 assigned | 2026-09-15 |
-| Cursor implementation note | TAX/WBS implemented under this ADR. Later slices not authorized. | 2026-09-15 |
+| Cursor implementation note | TAX/WBS and SCOPE implemented under this ADR. TIME / SCH / PERF / CLOSE / LEARN / QB-T not authorized. | 2026-09-15 |

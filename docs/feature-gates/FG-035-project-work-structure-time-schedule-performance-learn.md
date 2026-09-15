@@ -7,12 +7,12 @@
 | Target Milestone | Operational / learning loop (Time, Schedule, MONITOR labour-hours remainder, Closeout LEARN quality, calibration). Complements V1-08 / V1-11. **Does not rescore V1.** |
 | Module | **Projects** owns work-structure catalog and Project Element / Activity instances. Estimating owns `LabourTask` / snapshots (referenced). BUILD will own Time later. MONITOR remains a consumer. LEARN remains a consumer. Project Controls owns `ChangeOrder` (referenced later by SCOPE). |
 | Date | 2026-09-15 |
-| Status | **OPEN / PARTIAL.** TAX/WBS **IMPLEMENTED**. SCOPE / TIME / SCH / PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. |
+| Status | **OPEN / PARTIAL.** TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME / SCH / PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. |
 | Architecture | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. Product direction [project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md) **FUTURE / RECORDED**. [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED** (not reopened). [FG-032](FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED** (not rewritten). [FG-033](FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED**. [FG-034](FG-034-account-recovery-and-transactional-email.md) **CLOSED**. |
 | Related ADRs | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md). [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md). [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md). [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md). [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md). |
 | Prerequisites | FG-008 labour snapshots. FG-011 Project Hub. FG-018 office auth. ADR-053 Accepted. |
 
-**Subsequent status (2026-09-15):** [architecture/interactive-help-voice-and-user-manual-future-record.md](../architecture/interactive-help-voice-and-user-manual-future-record.md) is **COMPLETE FOR PRODUCT-DIRECTION RECORDING / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED**. Interactive Help / Voice / professional User Manual **do not interrupt** this gate. Do **not** implement Help, Voice, or the Manual from that record. Later FG-035 slices remain **NOT AUTHORIZED**.
+**Subsequent status (2026-09-15):** SCOPE **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**. Additive **`f4c5d6e7f8a9`**. Evidence [fg035-scope-live-bounded-uat-record.md](../testing/fg035-scope-live-bounded-uat-record.md). TIME / SCH / PERF / CLOSE / LEARN / QB-T remain **NOT AUTHORIZED**. [architecture/interactive-help-voice-and-user-manual-future-record.md](../architecture/interactive-help-voice-and-user-manual-future-record.md) remains **COMPLETE FOR PRODUCT-DIRECTION RECORDING / NOT IMPLEMENTATION-AUTHORIZED**. Do **not** implement Help, Voice, Manual, Time, or Schedule from this gate.
 
 ---
 
@@ -22,21 +22,21 @@
 |-------|--------|
 | Feature Gate (this document) | **OPEN / PARTIAL** |
 | TAX/WBS | **IMPLEMENTED** — baseline + org catalog; Project Element / Activity instances; explicit EstimateLabourSnapshot seed; Hub Project work |
-| SCOPE | **NOT AUTHORIZED** |
+| SCOPE | **IMPLEMENTED** — ORIGINAL / CHANGE_ORDER / EXTRA_WORK lineage on Project work; Change Order deltas; Extra Work; Hub/Field presentation |
 | TIME | **NOT AUTHORIZED** |
 | SCH | **NOT AUTHORIZED** |
 | PERF | **NOT AUTHORIZED** |
 | CLOSE | **NOT AUTHORIZED** |
 | LEARN | **NOT AUTHORIZED** |
 | QB-T | **NOT AUTHORIZED** |
-| Schema / Alembic | Additive TAX/WBS **`f3b4c5d6e7f8`** revises **`f2a3b4c5d6e7`** |
+| Schema / Alembic | Additive TAX/WBS **`f3b4c5d6e7f8`** revises **`f2a3b4c5d6e7`**. Additive SCOPE **`f4c5d6e7f8a9`** revises **`f3b4c5d6e7f8`** |
 | V1 scoring | **NOT RESCORED** (**60% / 4 of 11**) |
 
 ```text
 FG-035:
 OPEN / PARTIAL
 TAX/WBS IMPLEMENTED
-SCOPE NOT AUTHORIZED
+SCOPE IMPLEMENTED
 TIME NOT AUTHORIZED
 SCH NOT AUTHORIZED
 PERF NOT AUTHORIZED
@@ -70,15 +70,15 @@ TAX/WBS is the foundation every later slice consumes. Later slices are **not** a
 | 1 | What problem does this solve? | There is no Project → Element → Activity work authority. Time, Schedule, labour-hours MONITOR, Extra Work, Closeout LEARN quality, and calibration cannot share one structure. |
 | 2 | Who is the user? | Office contractor (TAX/WBS configuration and Hub seed). Later slices add field workers (Time / Extra Work) and PM approval. Not customers. |
 | 3 | Which module owns it? | Projects owns WBS catalog and instances. Estimating owns LabourTask/snapshots. BUILD will own Time. MONITOR/LEARN consume. Project Controls owns ChangeOrder. |
-| 4 | What data does it own (TAX/WBS)? | `work_types`, `work_element_templates`, `work_activity_templates`, `project_work_elements`, `project_work_activities`, `project_work_structure_seeds`. |
-| 5 | What data does it reference? | `Organization`, `Project`, `EstimateVersion`, `EstimateLabourSnapshot`, `LabourTask`. Later: `ChangeOrder` (SCOPE). |
-| 6 | What may it change? | Additive WBS schema; Hub BUILD Project work panel; Work types office catalog; navigation. |
-| 7 | What must it not change? | `ProjectCommercialContext`; `LabourTask` semantics; `ChangeOrder`; `ProjectDirectCostActual`; Field capture; FG-023 MONITOR money projection; FG-032 packages; EST-2026-0019; V1 score. |
-| 8 | What are the acceptance criteria? | TAX/WBS: three-layer taxonomy; explicit locked/Accepted snapshot seed; fail-closed; idempotent; tenant isolation; Hub usable; tests + live migrate. Full gate close requires all eight slices. |
-| 9 | What tests are required? | Dedicated TAX/WBS tests; Alembic upgrade/downgrade/fresh DB; Hub/catalog office tests; tenant isolation; focused regression; full suite. |
-| 10 | What documentation must be updated? | This gate; ADR-053; module/index/continuity docs; UAT record. No V1 rescore. |
+| 4 | What data does it own (TAX/WBS + SCOPE)? | TAX/WBS tables plus `project_work_scope_deltas`, `project_work_scope_history`, and `scope_origin` / `change_order_id` on Project work. |
+| 5 | What data does it reference? | `Organization`, `Project`, `EstimateVersion`, `EstimateLabourSnapshot`, `LabourTask`, `ChangeOrder`. |
+| 6 | What may it change? | Additive WBS + SCOPE schema; Hub BUILD Project work panel; Work types office catalog; Field Extra work surface; navigation. |
+| 7 | What must it not change? | `ProjectCommercialContext`; `LabourTask` semantics; `ChangeOrder` commercial lifecycle; `ProjectDirectCostActual`; Field capture; FG-023 MONITOR money projection; FG-032 packages; EST-2026-0019; V1 score. |
+| 8 | What are the acceptance criteria? | TAX/WBS: three-layer taxonomy; explicit locked/Accepted snapshot seed. SCOPE: original immutable; CO deltas; Extra Work; tenant CO safety; Hub/Field copy; tests + live migrate. Full gate close requires all eight slices. |
+| 9 | What tests are required? | Dedicated TAX/WBS and SCOPE tests; Alembic upgrade/downgrade/fresh DB; Hub/catalog/Field office tests; tenant isolation; focused regression; full suite. |
+| 10 | What documentation must be updated? | This gate; ADR-053; module/index/continuity docs; UAT records. No V1 rescore. |
 | 11 | Does it require an ADR? | **Yes.** ADR-053. |
-| 12 | What is explicitly out of scope for this prompt? | SCOPE, TIME, SCH, PERF, CLOSE, LEARN, QB-T, clock-in, Crew Template catalog, CPM, live Postmark, language audit, Time/Schedule UI. |
+| 12 | What is explicitly out of scope for this prompt? | TIME, SCH, PERF, CLOSE, LEARN, QB-T, clock-in, Crew Template catalog, CPM, live Postmark, language audit, Time/Schedule UI. |
 
 ---
 
@@ -90,11 +90,15 @@ TAX/WBS is the foundation every later slice consumes. Later slices are **not** a
 
 Baseline catalog + organization extensions + Project instances. Work-structure Project Type is **not** commercial `project_type`. Activity may reference LabourTask. Explicit Hub **Build project work** from locked/Accepted `EstimateVersion` with labour snapshots. Pins are immutable. Duplicate seed fail-closed. Evidence [testing/fg035-tax-wbs-live-bounded-uat-record.md](../testing/fg035-tax-wbs-live-bounded-uat-record.md).
 
-**STOP:** no SCOPE origin; no Time; no Schedule.
+**STOP:** no Time; no Schedule.
 
 ### SCOPE — Scope origin, Extra Work, Change Order overlay
 
-**Status: NOT AUTHORIZED.**
+**Status: IMPLEMENTED (this prompt).**
+
+Original Estimate-seeded work is immutable historical evidence. Eligible Change Orders (Approved / Invoiced) add work or labour/quantity deltas. Draft / unapproved COs cannot become authorized Project scope. Extra Work is operational capture before a CO exists. `ChangeOrder` remains the sole commercial SoR. Evidence [testing/fg035-scope-live-bounded-uat-record.md](../testing/fg035-scope-live-bounded-uat-record.md).
+
+**STOP:** no Time; no Schedule.
 
 ### TIME — Field duration entry and approval
 
@@ -126,6 +130,7 @@ Baseline catalog + organization extensions + Project instances. Work-structure P
 
 ```text
 TAX/WBS: LOCAL OFFICE UAT PROVEN.
+SCOPE: LOCAL OFFICE UAT PROVEN.
 LATER SLICES: NOT AUTHORIZED.
 DO NOT IMPLEMENT TIME OR SCHEDULE FROM THIS GATE ALONE.
 V1 NOT RESCORED.

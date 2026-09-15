@@ -22,6 +22,9 @@
 {% endif %}
 
 <form method="post" class="form-panel">
+    {% if extra_work_activity_id %}
+    <input type="hidden" name="extra_work_activity_id" value="{{ extra_work_activity_id }}">
+    {% endif %}
     <div class="form-grid">
         <label>
             Title *

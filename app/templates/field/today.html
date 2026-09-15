@@ -10,6 +10,7 @@
     <p class="field-muted">{{ project.project_number }}</p>
     {% endif %}
     <a class="field-btn field-btn-primary" href="{{ url_for('field.capture', project_id=project.id) }}">Capture</a>
+    <a class="field-btn field-btn-secondary" href="{{ url_for('field.extra_work', project_id=project.id) }}">{{ contractor_copy.FIELD_EXTRA_WORK_BUTTON }}</a>
     <a class="field-btn field-btn-secondary" href="{{ url_for('field.projects') }}">{{ contractor_copy.FIELD_CHANGE_PROJECT }}</a>
     {% else %}
     <p>{{ contractor_copy.FIELD_CONFIRM_BEFORE_CAPTURE }}</p>

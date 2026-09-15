@@ -27,6 +27,20 @@ WORK_SOURCE_KINDS = (
     SOURCE_PROJECT,
 )
 
+SCOPE_ORIGINAL = "ORIGINAL"
+SCOPE_CHANGE_ORDER = "CHANGE_ORDER"
+SCOPE_EXTRA_WORK = "EXTRA_WORK"
+SCOPE_ORIGINS = (SCOPE_ORIGINAL, SCOPE_CHANGE_ORDER, SCOPE_EXTRA_WORK)
+
+SCOPE_HISTORY_ELEMENT = "ELEMENT"
+SCOPE_HISTORY_ACTIVITY = "ACTIVITY"
+SCOPE_HISTORY_DELTA = "DELTA"
+
+SCOPE_DELTA_ACTIVE = "ACTIVE"
+SCOPE_DELTA_INACTIVE = "INACTIVE"
+
+SCOPE_AUTHORIZING_CHANGE_ORDER_STATUSES = frozenset({"Approved", "Invoiced"})
+
 SEED_ELIGIBLE_VERSION_STATUSES = frozenset({"Issued", "Accepted"})
 
 
@@ -198,6 +212,16 @@ class ProjectWorkElement(db.Model):
             "source_kind IN ('BASELINE', 'ORGANIZATION', 'ESTIMATE_SEED', 'PROJECT')",
             name="ck_project_work_elements_source_kind",
         ),
+        db.CheckConstraint(
+            "scope_origin IN ('ORIGINAL', 'CHANGE_ORDER', 'EXTRA_WORK')",
+            name="ck_project_work_elements_scope_origin",
+        ),
+        Index(
+            "ix_project_work_elements_project_scope",
+            "organization_id",
+            "project_id",
+            "scope_origin",
+        ),
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -225,9 +249,23 @@ class ProjectWorkElement(db.Model):
         index=True,
     )
     estimated_hours = db.Column(db.Numeric(14, 6), nullable=True)
+    scope_origin = db.Column(
+        db.String(30),
+        nullable=False,
+        default=SCOPE_EXTRA_WORK,
+        server_default=SCOPE_EXTRA_WORK,
+    )
+    change_order_id = db.Column(
+        db.Integer,
+        db.ForeignKey("change_orders.id"),
+        nullable=True,
+        index=True,
+    )
+    extra_work_created_by = db.Column(db.String(150), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     project = db.relationship("Project", backref="work_elements")
+    change_order = db.relationship("ChangeOrder")
     activities = db.relationship(
         "ProjectWorkActivity",
         back_populates="element",
@@ -247,11 +285,21 @@ class ProjectWorkActivity(db.Model):
             "source_kind IN ('BASELINE', 'ORGANIZATION', 'ESTIMATE_SEED', 'PROJECT')",
             name="ck_project_work_activities_source_kind",
         ),
+        db.CheckConstraint(
+            "scope_origin IN ('ORIGINAL', 'CHANGE_ORDER', 'EXTRA_WORK')",
+            name="ck_project_work_activities_scope_origin",
+        ),
         Index(
             "uq_project_work_activities_snapshot",
             "source_estimate_labour_snapshot_id",
             unique=True,
             sqlite_where=text("source_estimate_labour_snapshot_id IS NOT NULL"),
+        ),
+        Index(
+            "ix_project_work_activities_project_scope",
+            "organization_id",
+            "scope_origin",
+            "change_order_id",
         ),
     )
 
@@ -301,12 +349,32 @@ class ProjectWorkActivity(db.Model):
     quantity = db.Column(db.Numeric(14, 6), nullable=True)
     unit = db.Column(db.String(50), nullable=True)
     production_rate = db.Column(db.Numeric(12, 6), nullable=True)
+    scope_origin = db.Column(
+        db.String(30),
+        nullable=False,
+        default=SCOPE_EXTRA_WORK,
+        server_default=SCOPE_EXTRA_WORK,
+    )
+    change_order_id = db.Column(
+        db.Integer,
+        db.ForeignKey("change_orders.id"),
+        nullable=True,
+        index=True,
+    )
+    extra_work_created_by = db.Column(db.String(150), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     element = db.relationship("ProjectWorkElement", back_populates="activities")
     labour_task = db.relationship("LabourTask")
     source_estimate_version = db.relationship("EstimateVersion")
     source_labour_snapshot = db.relationship("EstimateLabourSnapshot")
+    change_order = db.relationship("ChangeOrder")
+    scope_deltas = db.relationship(
+        "ProjectWorkScopeDelta",
+        back_populates="activity",
+        cascade="all, delete-orphan",
+        order_by="ProjectWorkScopeDelta.id",
+    )
 
 
 class ProjectWorkStructureSeed(db.Model):
@@ -346,3 +414,117 @@ class ProjectWorkStructureSeed(db.Model):
 
     project = db.relationship("Project")
     estimate_version = db.relationship("EstimateVersion")
+
+
+class ProjectWorkScopeDelta(db.Model):
+    """Authorized Change Order labour/quantity delta against an existing Activity.
+
+    Original activity evidence is never overwritten. Current authorized hours are
+    original estimated hours plus active deltas from eligible Change Orders.
+    """
+
+    __tablename__ = "project_work_scope_deltas"
+    __table_args__ = (
+        db.CheckConstraint(
+            "status IN ('ACTIVE', 'INACTIVE')",
+            name="ck_project_work_scope_deltas_status",
+        ),
+        Index(
+            "ix_project_work_scope_deltas_activity_co",
+            "project_work_activity_id",
+            "change_order_id",
+        ),
+        Index(
+            "ix_project_work_scope_deltas_org_project",
+            "organization_id",
+            "project_id",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id"),
+        nullable=False,
+        index=True,
+    )
+    project_id = db.Column(
+        db.Integer,
+        db.ForeignKey("projects.id"),
+        nullable=False,
+        index=True,
+    )
+    project_work_activity_id = db.Column(
+        db.Integer,
+        db.ForeignKey("project_work_activities.id"),
+        nullable=False,
+        index=True,
+    )
+    change_order_id = db.Column(
+        db.Integer,
+        db.ForeignKey("change_orders.id"),
+        nullable=False,
+        index=True,
+    )
+    hours_delta = db.Column(db.Numeric(14, 6), nullable=False)
+    quantity_delta = db.Column(db.Numeric(14, 6), nullable=True)
+    status = db.Column(db.String(20), nullable=False, default=SCOPE_DELTA_ACTIVE)
+    created_by = db.Column(db.String(150), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    activity = db.relationship("ProjectWorkActivity", back_populates="scope_deltas")
+    change_order = db.relationship("ChangeOrder")
+    project = db.relationship("Project")
+
+
+class ProjectWorkScopeHistory(db.Model):
+    """Append-only material scope classification / Change Order link history."""
+
+    __tablename__ = "project_work_scope_history"
+    __table_args__ = (
+        db.CheckConstraint(
+            "work_kind IN ('ELEMENT', 'ACTIVITY', 'DELTA')",
+            name="ck_project_work_scope_history_work_kind",
+        ),
+        Index(
+            "ix_project_work_scope_history_work",
+            "organization_id",
+            "project_id",
+            "work_kind",
+            "work_id",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id"),
+        nullable=False,
+        index=True,
+    )
+    project_id = db.Column(
+        db.Integer,
+        db.ForeignKey("projects.id"),
+        nullable=False,
+        index=True,
+    )
+    work_kind = db.Column(db.String(20), nullable=False)
+    work_id = db.Column(db.Integer, nullable=False)
+    prior_scope_origin = db.Column(db.String(30), nullable=True)
+    new_scope_origin = db.Column(db.String(30), nullable=False)
+    prior_change_order_id = db.Column(
+        db.Integer,
+        db.ForeignKey("change_orders.id"),
+        nullable=True,
+    )
+    new_change_order_id = db.Column(
+        db.Integer,
+        db.ForeignKey("change_orders.id"),
+        nullable=True,
+    )
+    actor_user_id = db.Column(db.Integer, nullable=True)
+    actor_display_name = db.Column(db.String(150), nullable=True)
+    reason = db.Column(db.String(400), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    project = db.relationship("Project")

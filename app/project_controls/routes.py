@@ -125,6 +125,9 @@ def create_change_order_route():
         return redirect(url_for("projects.create_project"))
 
     preselect_project_id = request.args.get("project_id", type=int)
+    extra_work_activity_id = request.args.get("extra_work_activity_id", type=int) or request.form.get(
+        "extra_work_activity_id", type=int
+    )
 
     if request.method == "POST":
         project_id = request.form.get("project_id", type=int)
@@ -152,7 +155,24 @@ def create_change_order_route():
                 change_order=None,
                 estimate=None,
                 version=None,
+                extra_work_activity_id=extra_work_activity_id,
             )
+
+        if extra_work_activity_id:
+            from app.services.work_scope import WorkScopeError, actor_name, link_extra_work_to_change_order
+            from flask_login import current_user
+
+            try:
+                link_extra_work_to_change_order(
+                    project_work_activity_id=extra_work_activity_id,
+                    change_order_id=change_order.id,
+                    actor_user_id=getattr(current_user, "id", None),
+                    actor_display_name=actor_name(current_user),
+                    reason="Extra work linked when the change order was created.",
+                )
+            except WorkScopeError as exc:
+                flash(str(exc), "error")
+                return redirect(url_for("project_controls.view_change_order", id=change_order.id))
 
         flash("Change order created.", "success")
         return redirect(
@@ -179,6 +199,7 @@ def create_change_order_route():
         change_order=None,
         estimate=None,
         version=None,
+        extra_work_activity_id=extra_work_activity_id,
     )
 
 

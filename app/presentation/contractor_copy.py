@@ -148,6 +148,23 @@ WORK_PLAN_HEADING = "Project work"
 BUILD_WORK_PLAN_BUTTON = "Build project work"
 ADD_WORK_ITEM_BUTTON = "Add work item"
 ADD_ACTIVITY_BUTTON = "Add activity"
+SCOPE_ORIGINAL_WORK = "Original work"
+SCOPE_CHANGE_ORDER_WORK = "Change order work"
+SCOPE_EXTRA_WORK_LABEL = "Extra work"
+SCOPE_ORIGINAL_LABOUR = "Original labour"
+SCOPE_APPROVED_CHANGES = "Approved changes"
+SCOPE_CURRENT_AUTHORIZED = "Current authorized labour"
+SCOPE_EXTRA_WORK_BANNER = (
+    "This work has not yet been added to the authorized project. "
+    "If the customer asked you to add, remove, move, or change something "
+    "outside the work you were sent to do, record it as extra work."
+)
+SCOPE_EXTRA_WORK_RULE = (
+    "If the customer asks you to add, remove, move, or change something "
+    "outside the work you were sent to do: use Extra work."
+)
+FIELD_EXTRA_WORK_BUTTON = "Extra work"
+FIELD_EXTRA_WORK_HEADING = "Extra work"
 COSTING_REVIEW_HEADING = "Costing review"
 APPROVE_ALL_COSTING_BUTTON = "Approve all costing"
 COSTING_NOT_APPROVED = "Costing is not approved yet."

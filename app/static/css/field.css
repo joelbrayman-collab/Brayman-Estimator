@@ -339,3 +339,21 @@ input:focus-visible {
         margin-bottom: 4px;
     }
 }
+
+.field-panel-extra-work {
+    border-color: #8b1e1e;
+    background: #fff8e8;
+}
+
+.field-select,
+.field-input {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    margin-top: 6px;
+    padding: 12px;
+    border: 2px solid var(--black);
+    border-radius: 8px;
+    font: inherit;
+    background: var(--white);
+}

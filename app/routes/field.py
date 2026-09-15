@@ -6,6 +6,7 @@ No office sidebar. Same FG-018 session. No PWA.
 
 from flask import (
     Blueprint,
+    flash,
     redirect,
     render_template,
     request,
@@ -20,6 +21,8 @@ from app.services.build import (
 )
 from app.services.organizations import get_current_organization
 from app.services.shared_api import get_organization_project, list_organization_projects
+from app.services.work_scope import WorkScopeError, actor_name, create_extra_work
+from app.services.work_structure import list_project_work_elements
 
 field_bp = Blueprint("field", __name__, url_prefix="/field")
 
@@ -148,5 +151,37 @@ def capture(project_id):
     return render_template(
         "field/capture.html",
         project=project,
+        actor_name=current_user.display_name,
+    )
+
+
+@field_bp.route("/projects/<int:project_id>/extra-work", methods=["GET", "POST"])
+def extra_work(project_id):
+    organization = _organization()
+    project = _project_or_redirect(organization, project_id)
+    if project is None:
+        return redirect(url_for("field.projects"), code=302)
+    if _confirmed_project_id() != project.id:
+        return redirect(url_for("field.project_confirm", project_id=project.id), code=302)
+    if request.method == "POST":
+        element_id = request.form.get("project_work_element_id") or None
+        try:
+            create_extra_work(
+                project_id=project.id,
+                description=request.form.get("description", ""),
+                project_work_element_id=int(element_id) if element_id else None,
+                new_element_name=request.form.get("new_element_name") or None,
+                created_by=actor_name(current_user),
+                actor_user_id=getattr(current_user, "id", None),
+            )
+            flash("Extra work recorded.", "success")
+            return redirect(url_for("field.today"), code=302)
+        except (WorkScopeError, ValueError):
+            flash("Describe the extra work.", "error")
+    elements = list_project_work_elements(project.id, organization_id=organization.id)
+    return render_template(
+        "field/extra_work.html",
+        project=project,
+        elements=elements,
         actor_name=current_user.display_name,
     )

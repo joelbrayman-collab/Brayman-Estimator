@@ -1120,3 +1120,24 @@ body.login-page {
 .login-form .button {
     margin-top: 8px;
 }
+
+.scope-extra-work-banner {
+    background: #fff3cd;
+    border: 2px solid #c79a2b;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-weight: 600;
+}
+
+.scope-extra-work-panel {
+    border-color: #c79a2b;
+}
+
+.scope-extra-work-row {
+    background: #fff8e8;
+}
+
+.status-extra-work {
+    background: #fff3cd;
+    border-color: #c79a2b;
+}

@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — Help / Voice / User Manual §§40–60 close
+
+| Field | Content |
+|-------|---------|
+| Milestone | Help / Voice / User Manual product-direction close |
+| Status | **FUTURE / RECORDED / COMPLETE FOR PRODUCT-DIRECTION RECORDING / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED.** |
+| Branch | `main` |
+| Base commit | `040e94d4f87b218bea514238322236835e2eb825` |
+| Objective | Close the Help / Voice / User Manual future record through §60. |
+| Deliverables | Canonical future-record §§40–60; PRE-UAT RELEASE GATE; minimum continuity |
+| Validation | Docs only. `git diff --check`. Tests **NOT RERUN**. |
+| Architectural findings | Help content quality/versioning/source-priority. Manual visual/procedure standards. Independent UAT blocked until §52 gate. |
+| Open decisions | None from this close. V1 remains **60% / 4 of 11**. FG-035 SCOPE **not authorized**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin SCOPE. |
+| Commit | this §§40–60 docs-only commit |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — Help / Voice / User Manual §§26–39
 
 | Field | Content |

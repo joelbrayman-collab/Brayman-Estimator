@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FUTURE / RECORDED / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED / NOT A PREFLIGHT / NOT A FEATURE GATE / NOT AN ADR.** Recording **COMPLETE THROUGH §39**. Task-based pre-UAT script **REQUIRED**. Do **not** invent §§40+. |
+| Status | **FUTURE / RECORDED / COMPLETE FOR PRODUCT-DIRECTION RECORDING / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED.** Not a Feature Gate. Not an ADR. Not implementation, schema, or migration authorization. Task-based pre-UAT script **REQUIRED**. Voice mutation **NOT REQUIRED** for V1 Voice completion. |
 | Updated | 2026-09-15 |
 | Authority | Joel Brayman / ChatGPT Architect. Product decision: Interactive in-product Help, Voice assistance, and a professional CalibraytAI User Guide are **mandatory** before opening CalibraytAI to Ben, Ben’s father-in-law, and Kevin for real-world / independent UAT. |
 | Does not interrupt | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**; [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**; [project-element-authority-future-record.md](project-element-authority-future-record.md). TAX/WBS remains **IMPLEMENTED**. Later FG-035 slices remain **NOT AUTHORIZED** from this record. |
@@ -19,18 +19,22 @@ PROFESSIONAL END-TO-END USER MANUAL
 
 ONE GOVERNED USER HELP CONTENT AUTHORITY.
 
+CALIBRAYTAI V1 SHOULD NOT REQUIRE JOEL OR A DEVELOPER
+TO EXPLAIN HOW TO USE THE PLATFORM.
+
 NOT FEATURE-COMPLETE ALONE.
 UNDERSTANDABLE. SELF-EXPLAINING. CONTRACTOR-FACING.
 SUPPORTED. DOCUMENTED.
 USABLE WITHOUT JOEL / DEVELOPMENT TEAM COACHING THE USER.
 
+COMPLETE FOR PRODUCT-DIRECTION RECORDING.
 NOT AUTHORIZED. NOT IMPLEMENTED.
 DO NOT IMPLEMENT FROM THIS RECORD.
 DO NOT BEGIN FG-035 LATER SLICES FROM THIS RECORD.
 DO NOT RESCORE V1 FROM THIS RECORD.
 ```
 
-The originating Cursor prompt recorded **§§0–25 complete**. Subsequent **2026-09-15** continuation recorded **§§26–39**. **§26 task-based pre-UAT script = REQUIRED.** Do **not** invent §§40+. Nothing in this file is implemented.
+The originating Cursor prompt recorded **§§0–25 complete**. Subsequent **2026-09-15** continuation recorded **§§26–39**. This continuation recorded **§§40–60** and **closes** the product-direction record. **§26 task-based pre-UAT script = REQUIRED.** Nothing in this file is implemented.
 
 ---
 
@@ -551,21 +555,238 @@ Voice mutation is **NOT required** for V1 Voice completion.
 
 If later proposed, mutation requires separate governed acceptance criteria, explicit confirmation, normal service boundaries, and fail-closed ambiguity.
 
-Do **not** invent §§40+.
+---
+
+## 40. User Help Content authority — quality
+
+The future governed User Help Content authority must support sufficient structure for:
+
+- topic identity
+- contractor-facing title
+- summary
+- step-by-step procedure where useful
+- applicable product context / surface
+- related topics
+- manual placement
+- Interactive Help retrieval
+- Voice retrieval
+- version / current state
+- retirement / supersession
+
+Exact storage format is deferred to the later Help architecture/preflight.
+
+Do **not** assume this requires a database.
+
+A governed documentation/content structure may be preferable.
+
+## 41. Help content versioning
+
+Help content must match the actual V1 product version.
+
+When a product workflow, action, or contractor-facing label changes materially: the related Help content must be reviewed.
+
+Do not allow obsolete instructions to remain active merely because they still retrieve successfully.
+
+## 42. Help source priority
+
+For questions about operating CalibraytAI:
+
+**CURRENT GOVERNED CALIBRAYTAI HELP CONTENT WINS.**
+
+Interactive Help and Voice must use governed product authority before generic model knowledge.
+
+General model knowledge must not override actual CalibraytAI behavior.
+
+## 43. Help uncertainty
+
+If Interactive Help cannot confidently ground an answer in current product authority:
+
+**DO NOT FABRICATE.**
+
+Use contractor-friendly behavior meaning: I don’t have a reliable answer for that yet.
+
+Then, where possible: surface the closest relevant Help topic, or provide the future governed support path.
+
+Exact final wording belongs to the Contractor Language + UX E2E Audit.
+
+## 44. Professional User Manual standard
+
+The final CalibraytAI V1 User Guide is a real product deliverable.
+
+It must look appropriate to send directly to a contractor, a Project Manager, a field worker, or a construction business owner.
+
+It must **not** look like developer documentation, repository notes, raw AI output, or an internal technical specification.
+
+## 45. User Manual visual design
+
+The User Guide must use: generous white space; clear visual hierarchy; large readable headings; short sections; consistent screenshot sizing; clean captions; simple callouts; logical page breaks; professional cover; table of contents; page numbers; revision / version identification.
+
+Avoid: dense walls of text; tiny screenshots; excessive borders; technical metadata; unnecessary dense tables.
+
+## 46. Screenshot standard
+
+Screenshots must be: **CURRENT**; **LEGIBLE**; **INTENTIONALLY CROPPED**; **LARGE ENOUGH TO UNDERSTAND**; **FREE OF SENSITIVE REAL CUSTOMER DATA**.
+
+Where a workflow is primarily mobile: show iPhone/mobile.
+
+Where primarily desktop: show desktop.
+
+Where desktop/mobile differ materially: explain the distinction simply.
+
+Use representative synthetic/demo data.
+
+Never expose: passwords; reset links; signing secrets; API keys; confidential customer information; unnecessary internal technical identifiers.
+
+## 47. Procedure standard
+
+A normal User Guide procedure should answer:
+
+- **WHAT DOES THIS DO?**
+- **WHEN WOULD I USE IT?**
+- **HOW DO I DO IT?**
+- **WHAT HAPPENS NEXT?**
+
+Do not explain architecture unless the contractor genuinely needs to know it.
+
+Keep procedures practical.
+
+## 48. Practical tips
+
+Use short contractor tips where they improve behavior.
+
+**EXTRA WORK:** if a customer asks you to add, move, remove, or change something outside the work you were sent to do: record it as Extra Work.
+
+Explain simply: this keeps the Project accurate, helps make sure changed work is not lost, and gives CalibraytAI better information for future estimates.
+
+Do not overwhelm the manual with callout boxes.
+
+## 49. Manual / product cross-check
+
+Before User Guide release: walk **EVERY** major documented procedure against the actual final V1 build.
+
+Verify: button names; navigation; status names; screens; workflow sequence; result.
+
+If the Guide says “click X”, then X must exist and use that contractor-facing name.
+
+Do not publish aspirational documentation.
+
+Manual/product mismatch is a **PRE-UAT blocker**.
+
+## 50. Help / product cross-check
+
+Likewise, test governed Interactive Help topics against the actual V1.
+
+Do not rely only on prose review.
+
+Help must describe **CURRENT PRODUCT**, **CURRENT TERMINOLOGY**, and **CURRENT WORKFLOW**.
+
+It must not present future features, deferred features, or obsolete labels as available functionality.
+
+## 51. Voice / product cross-check
+
+Voice Help/read-only answers must use the same current product authority.
+
+If Voice contradicts the User Guide, Interactive Help, or the actual product: that discrepancy is a defect.
+
+Voice must not bypass: authorization; approval; tenant boundaries; fail-closed behavior.
+
+## 52. Pre-UAT release gate
+
+CalibraytAI must **NOT** be opened to Ben, Ben’s father-in-law, or Kevin for independent UAT until:
+
+1. remaining V1 functional work is complete
+2. runtime hardening required for UAT is complete
+3. Platform-Wide Contractor Language + UX E2E Audit is complete
+4. final User Help Content authority is complete
+5. professional CalibraytAI V1 User Guide is complete
+6. Interactive Help is implemented / validated
+7. Voice Help / read-only assistance is implemented / validated
+8. internal E2E regression is **PASS**
+
+This is a mandatory **PRE-UAT RELEASE GATE**.
+
+## 53. Updated final V1 sequence
+
+The governing later sequence (not a Cursor implementation prompt) is:
+
+1. Complete FG-035 (TAX/WBS, SCOPE, TIME, SCH, PERF, CLOSE, LEARN, QB-T)
+2. Complete any remaining BUILD / Closeout integration required by the loop
+3. Complete remaining V1 functionality / runtime hardening
+4. Platform-wide Contractor Language + UX E2E Audit
+5. Establish final User Help Content authority
+6. Create professional CalibraytAI V1 User Guide
+7. Implement / validate Interactive Help
+8. Implement / validate Voice Help + read-only assistance
+9. Internal final E2E regression
+10. Prepare Manual-first task-based UAT package
+11. Provide User Guide to Ben, Ben’s father-in-law, and Kevin
+12. Independent / real-world UAT (desktop; iPhone/mobile; Help; Voice; construction-domain review; non-technical usability)
+13. Correct defects / language / workflow issues
+14. Retest affected workflows
+15. Complete final E2E regression
+16. Complete final V1 governance / completion audit
+17. Rescore V1
+18. Complete final production readiness review
+19. V1 close
+
+This sequence **does not** authorize any of those steps from this record.
+
+TAX/WBS is already **IMPLEMENTED**. Later FG-035 slices remain **NOT AUTHORIZED** from this record.
+
+## 54. V1 completeness definition
+
+Do not declare V1 complete merely because application code exists.
+
+V1 must be: functionally complete; documented; self-supporting; contractor-facing; desktop-ready; iPhone / mobile-ready; internally validated; independently UAT-tested; operationally ready.
+
+## 55. Product law
+
+```text
+CALIBRAYTAI V1 SHOULD NOT REQUIRE JOEL OR A DEVELOPER
+TO EXPLAIN HOW TO USE THE PLATFORM.
+
+THE PRODUCT, USER GUIDE, INTERACTIVE HELP AND VOICE
+ASSISTANCE SHOULD WORK TOGETHER SO A COMPETENT
+CONTRACTOR CAN LEARN AND OPERATE IT.
+
+INDEPENDENT UAT EXISTS TO PROVE THAT CLAIM.
+```
+
+## 56. Record status
+
+This file is:
+
+**FUTURE / RECORDED / COMPLETE FOR PRODUCT-DIRECTION RECORDING / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED.**
+
+It is product direction.
+
+It is **not**: a Feature Gate; an ADR; implementation authorization; schema authorization; migration authorization; proof Help exists; proof Voice exists; proof Manual exists; a V1 rescore.
+
+## 57. FG-035 status (preserved)
+
+[FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) remains **OPEN / PARTIAL**.
+
+TAX/WBS remains **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**.
+
+SCOPE / TIME / SCH / PERF / CLOSE / LEARN / QB-T remain **NOT AUTHORIZED**.
+
+Do **not** implement any FG-035 slice from this record.
+
+## 58–60. Recording close
+
+This product-direction recording is **closed**. Do not invent §§61+.
+
+FG-035 SCOPE is the next product slice in the recorded sequence. It is **NOT AUTHORIZED** by this docs prompt.
+
+Return to ChatGPT Architect.
 
 ---
 
-## Sequencing (recorded; not authorization)
+## Sequencing (historical five-step list; superseded by §53)
+
+The five-step list recorded with §§26–39 is **superseded** by **§53**. It is retained only as earlier recording, not as competing sequence.
 
 Help / Voice / Manual **do not interrupt** the already-approved FG-035 architecture.
-
-Recorded order of later work (not a Cursor implementation prompt):
-
-1. Remaining functional V1 work, including authorized FG-035 slices when separately assigned.
-2. Platform-wide Contractor Language + UX E2E Audit.
-3. Final User Help Content authority + User Guide + in-product Help + Voice, from that one authority.
-4. Manual-first review (father-in-law reads the Guide first).
-5. Task-based independent UAT (Ben / Kevin / father-in-law). Script is **REQUIRED**. Do not coach. Final script must match actual completed V1.
 
 Do **not** implement Help, Voice, or the Manual from this record.
 
@@ -583,7 +804,6 @@ Do **not** treat this record as BRAYMAN REAL-LIFE UAT READY.
 - A chatbot knowledge base
 - Voice mutation as a V1 Voice completion requirement (explicitly **not required**)
 - FG-036 / ADR-054 invention
-- Invented §§40+
 - The actual UAT script (write only after completed V1 + Help authority)
 - FG-035 SCOPE / TIME / SCH / PERF / CLOSE / LEARN / QB-T
 - Another FG-025 slice
@@ -591,3 +811,4 @@ Do **not** treat this record as BRAYMAN REAL-LIFE UAT READY.
 - Live Postmark
 - V1 rescore
 - EST-2026-0019 mutation
+- Opening CalibraytAI to Ben / father-in-law / Kevin before the §52 PRE-UAT RELEASE GATE

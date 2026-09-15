@@ -12,7 +12,7 @@
 | Related ADRs | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md). [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md). [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md). [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md). [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md). |
 | Prerequisites | FG-008 labour snapshots. FG-011 Project Hub. FG-018 office auth. ADR-053 Accepted. |
 
-**Subsequent status (2026-09-15):** Interactive Help / Voice / professional User Manual are recorded as **mandatory PRE-UAT V1** in [interactive-help-voice-and-user-manual-future-record.md](../architecture/interactive-help-voice-and-user-manual-future-record.md). They **do not interrupt** this gate. Do **not** implement Help, Voice, or the Manual from that record. Later FG-035 slices remain **NOT AUTHORIZED**.
+**Subsequent status (2026-09-15):** [architecture/interactive-help-voice-and-user-manual-future-record.md](../architecture/interactive-help-voice-and-user-manual-future-record.md) is **COMPLETE FOR PRODUCT-DIRECTION RECORDING / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED**. Interactive Help / Voice / professional User Manual **do not interrupt** this gate. Do **not** implement Help, Voice, or the Manual from that record. Later FG-035 slices remain **NOT AUTHORIZED**.
 
 ---
 

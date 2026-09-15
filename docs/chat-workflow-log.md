@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — Help / Voice / User Manual §§40–60 close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Complete §§40–60 and close the Help / Voice / User Manual future record. Docs only. |
+| Business decision | PRE-UAT RELEASE GATE recorded. Product + Guide + Help + Voice must work together. Independent UAT proves that claim. |
+| Architectural decision | One Help authority. Governed content may be documentation structure, not necessarily a database. No FG-036. No ADR-054. |
+| Prompt template used | Documentation-only close (15 Sep 2026) |
+| Approved Cursor prompt summary | Append §§40–60. Mark record COMPLETE FOR PRODUCT-DIRECTION RECORDING. Do not implement. Do not begin SCOPE. Do not rescore V1. |
+| Files expected to change | Canonical future-record + minimum continuity |
+| Files prohibited from changing | Application code; models; migrations; tests; EST-2026-0019; V1 rescore; FG-035 product |
+| Implementation result | Record **CLOSED / COMPLETE FOR PRODUCT-DIRECTION RECORDING**. Product mutations **NONE**. FG-035 unchanged. V1 **not rescored**. |
+| Tests | **NOT RERUN.** Docs only. `git diff --check`. |
+| Project-state-report update | Yes (minimum) |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | FG-035 SCOPE not authorized. Help/Voice/Manual not implemented. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin SCOPE. |
+| Next approved prompt | None from this close. |
+| Commit hash | (this §§40–60 docs-only commit) |
+
 ### 2026-09-15 — Help / Voice / User Manual §§26–39
 
 | Field | Content |

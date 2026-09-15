@@ -1,26 +1,9 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Sign in — Brayman Construction Platform</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+{% extends "auth/layout.html" %}
+{% block auth_title %}Sign in{% endblock %}
+{% block auth_head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/opening-v1.css') }}">
-</head>
-<body class="login-page">
-    <main class="login-card">
-        <img
-            class="login-logo"
-            src="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}"
-            alt="Brayman Construction"
-            width="180"
-            height="72"
-        >
+{% endblock %}
+{% block auth_body %}
         <h1>Office sign in</h1>
         <p class="login-lede">{{ contractor_copy.LOGIN_LEDE }}</p>
 
@@ -40,15 +23,18 @@
             <input type="hidden" name="next" value="{{ request.args.get('next') }}">
             {% endif %}
             <label for="email">Email</label>
-            <input id="email" type="email" name="email" autocomplete="username" required autofocus>
+            <input id="email" type="email" name="email" autocomplete="username" inputmode="email" required autofocus>
             <label for="password">Password</label>
             <input id="password" type="password" name="password" autocomplete="current-password" required>
-            <button type="submit" class="button">Sign in</button>
+            <p class="login-forgot">
+                <a class="login-forgot-link" href="{{ url_for('auth.forgot_password') }}">{{ contractor_copy.FORGOT_PASSWORD_LINK }}</a>
+            </p>
+            <button type="submit" class="button login-primary">Sign in</button>
         </form>
-    </main>
+{% endblock %}
+{% block auth_scripts %}
     {% if opening_v1 %}
     <script type="application/json" id="opening-v1-config">{{ opening_v1 | tojson }}</script>
     <script src="{{ url_for('static', filename='js/opening-v1.js') }}" defer></script>
     {% endif %}
-</body>
-</html>
+{% endblock %}

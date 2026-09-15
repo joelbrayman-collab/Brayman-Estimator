@@ -1,0 +1,76 @@
+/* FG-034 AUTH-B — one responsive Account Recovery / login experience.
+   Desktop + iPhone. No device-specific routes or templates. */
+
+body.login-page {
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) calc(16px + env(safe-area-inset-left, 0px));
+}
+
+.login-card {
+    width: min(420px, calc(100% - 32px));
+    max-width: 420px;
+}
+
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    width: 100%;
+    min-height: 44px;
+    font-size: 1rem;
+}
+
+.login-form .button.login-primary,
+a.login-primary,
+.login-primary-link.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 48px;
+    margin-top: 8px;
+    text-align: center;
+}
+
+.login-forgot {
+    margin: 0 0 4px;
+}
+
+.login-forgot-link,
+.login-secondary-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.login-secondary {
+    margin: 16px 0 0;
+    text-align: center;
+}
+
+.login-card table {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .login-card {
+        width: 420px;
+        max-width: 420px;
+    }
+}
+
+@media (max-width: 767px) {
+    .login-card {
+        width: calc(100% - 24px);
+        max-width: none;
+        padding: 24px 18px;
+    }
+
+    .login-form .button.login-primary,
+    a.login-primary,
+    .login-primary-link.button {
+        min-height: 48px;
+    }
+}

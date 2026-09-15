@@ -36,6 +36,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — FG-034 AUTH-B responsive Forgot Password / Reset UX
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-034 AUTH-B |
+| Status | **PARTIAL.** [FG-034](feature-gates/FG-034-account-recovery-and-transactional-email.md) **OPEN / PARTIAL**. MAIL-A **IMPLEMENTED**. AUTH-A **IMPLEMENTED**. AUTH-B **IMPLEMENTED / PASS**. AUTH-C, MAIL-B, AUTH-D **NOT STARTED**. |
+| Branch | `main` |
+| Objective | Responsive Forgot Password / Reset browser UX on AUTH-A, with desktop + iPhone functional parity on one system. |
+| Deliverables | Login Forgot Password link; `/forgot-password` + `/forgot-password/sent`; `/reset-password/<credential>` + `/reset-password/complete`; `app/static/css/auth.css`; public-route exemptions; dedicated AUTH-B tests; [testing/fg034-auth-b-responsive-forgot-reset-ux-record.md](testing/fg034-auth-b-responsive-forgot-reset-ux-record.md). |
+| Validation | Dedicated AUTH-B **12 passed**. Focused AUTH-B + MAIL-A/AUTH-A + FG-018 + SIGN-A–E + FG-028 **167 passed**, 325 warnings, **92.58s**. Full suite **1021 passed**, 3300 warnings, **394.93s**, exit **0**. Alembic current = heads `f2a3b4c5d6e7`. EST-2026-0019 occupancy unchanged. Live PRODUCTION packages **0**. No new migration. |
+| Architectural findings | Thin routes over AUTH-A. Generic non-enumerating confirmation. CSRF remains on. Account-recovery exemptions are separate from `/sign/*`. `complete_password_reset` validates the credential before password-mismatch so invalid tokens fail closed. |
+| Open decisions | AUTH-C delivery E2E close; MAIL-B Native Signing mail; Postmark token / sender domain; physical iPhone Account Recovery UAT. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin AUTH-C. |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — FG-034 MAIL-A / AUTH-A Account Recovery + transactional email foundation
 
 | Field | Content |

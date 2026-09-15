@@ -1,7 +1,7 @@
 """FG-034 AUTH-A password-reset token service.
 
 Public-oriented results do not disclose whether an account exists.
-Does not implement browser routes (AUTH-B).
+Browser routes live in AUTH-B (`app/routes/auth.py`).
 """
 
 from __future__ import annotations
@@ -328,13 +328,13 @@ def complete_password_reset(
     confirm_password: Optional[str] = None,
     client_ip: Optional[str] = None,
 ) -> User:
+    token = validate_password_reset_credential(credential, client_ip=client_ip)
     if confirm_password is not None and new_password != confirm_password:
         raise PasswordResetServiceError(BLOCK_PASSWORD_MISMATCH)
     try:
         validate_new_password(new_password)
     except AuthServiceError as exc:
         raise PasswordResetServiceError(str(exc)) from exc
-    token = validate_password_reset_credential(credential, client_ip=client_ip)
     now = datetime.utcnow()
     user = db.session.get(User, token.user_id)
     if user is None or not user.is_active:

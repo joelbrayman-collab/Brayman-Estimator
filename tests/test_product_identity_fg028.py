@@ -119,11 +119,13 @@ def test_field_header_uses_v2_on_light_background():
 
 def test_office_login_sidebar_keep_tenant_logo():
     login = Path("app/templates/auth/login.html").read_text()
+    layout = Path("app/templates/auth/layout.html").read_text()
     sidebar = Path("app/templates/partials/sidebar.html").read_text()
     office = Path("app/templates/base.html").read_text()
-    assert TENANT_LOGO in login
-    assert 'alt="Brayman Construction"' in login
+    assert TENANT_LOGO in layout
+    assert 'alt="Brayman Construction"' in layout
     assert PRODUCT_LOGO_V2 not in login
+    assert PRODUCT_LOGO_V2 not in layout
     assert TENANT_LOGO in sidebar
     assert 'alt="Brayman Construction"' in sidebar
     assert PRODUCT_LOGO_V2 not in sidebar
@@ -168,9 +170,13 @@ def test_permit_generator_remains_tenant_neutral():
 
 def test_office_and_change_order_tenant_branding_unchanged():
     shell = Path("app/shell.py").read_text()
-    login = Path("app/templates/auth/login.html").read_text()
+    login = (
+        Path("app/templates/auth/login.html").read_text()
+        + Path("app/templates/auth/layout.html").read_text()
+    )
     assert 'product_name": "Brayman Construction Platform"' in shell
-    assert "Sign in — Brayman Construction Platform" in login
+    assert "{% block auth_title %}Sign in{% endblock %}" in login
+    assert "Brayman Construction Platform" in login
     assert 'alt="Brayman Construction"' in login
     assert PRODUCT_NAME == "Brayman Construction Platform"
     assert DEFAULT_LOGO_STATIC_PATH == "branding/brayman-construction-logo.png"

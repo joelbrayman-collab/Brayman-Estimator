@@ -1,0 +1,12 @@
+{% extends "auth/layout.html" %}
+{% block auth_title %}{{ contractor_copy.RESET_PASSWORD_INVALID_HEADING }}{% endblock %}
+{% block auth_body %}
+        <h1>{{ contractor_copy.RESET_PASSWORD_INVALID_HEADING }}</h1>
+        <p class="login-lede">{{ contractor_copy.RESET_PASSWORD_INVALID_BODY }}</p>
+        <p class="login-secondary">
+            <a class="login-secondary-link" href="{{ url_for('auth.forgot_password') }}">{{ contractor_copy.REQUEST_ANOTHER_RESET }}</a>
+        </p>
+        <p class="login-secondary">
+            <a class="login-secondary-link" href="{{ url_for('auth.login') }}">{{ contractor_copy.BACK_TO_SIGN_IN }}</a>
+        </p>
+{% endblock %}

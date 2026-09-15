@@ -122,6 +122,10 @@ def _register_office_auth(app: Flask) -> None:
             "static",
             "auth.login",
             "auth.logout",
+            "auth.forgot_password",
+            "auth.forgot_password_sent",
+            "auth.reset_password",
+            "auth.reset_password_complete",
             "favicon",
         ):
             return None

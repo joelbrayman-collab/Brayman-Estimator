@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — FG-034 AUTH-B responsive Forgot Password / Reset UX
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Implement AUTH-B only: responsive Forgot Password / Reset UX, public route boundaries, CSRF, desktop/iPhone parity. |
+| Business decision | Joel / Architect: Forgot Password on login; generic confirmation; reset form; 8-character floor; no auto-login; one responsive system; physical iPhone UAT deferred. |
+| Architectural decision | Thin routes over AUTH-A. Account-recovery public exemptions separate from `/sign/*`. CSRF remains on. `complete_password_reset` validates credential before password-mismatch. No new migration. |
+| Prompt template used | Bounded FG-034 AUTH-B implementation authorization (15 Sep 2026) |
+| Approved Cursor prompt summary | AUTH-B responsive Forgot Password / Reset UX + public boundaries + CSRF + desktop/iPhone parity + tests + docs + commit/push after PASS. AUTH-C, MAIL-B, AUTH-D not authorized. |
+| Files expected to change | auth routes/templates/CSS; bounded AUTH-A validator order; dedicated tests; governed continuity docs |
+| Files prohibited from changing | new migration; Postmark live HTTP; MAIL-B; AUTH-C/D; EST-2026-0019; V1 rescore |
+| Implementation result | FG-034 **OPEN / PARTIAL**. MAIL-A **IMPLEMENTED**. AUTH-A **IMPLEMENTED**. AUTH-B **IMPLEMENTED / PASS**. Live current `f2a3b4c5d6e7 (head)`. PRODUCTION packages **0**. EST-2026-0019 unchanged. V1 **not rescored**. Physical iPhone Account Recovery UAT **DEFERRED**. |
+| Tests | Dedicated AUTH-B **12 passed**. Focused AUTH-B + MAIL-A/AUTH-A + FG-018 + SIGN-A–E + FG-028 **167 passed**, 325 warnings, **92.58s**. Full suite **1021 passed**, 3300 warnings, **394.93s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | AUTH-C, MAIL-B, AUTH-D not started. Physical iPhone Account Recovery UAT deferred. Postmark token / sender domain not supplied. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin AUTH-C. |
+| Next approved prompt | None from this note. |
+| Commit hash | (this AUTH-B product commit) |
+
 ### 2026-09-15 — FG-034 MAIL-A / AUTH-A Account Recovery + transactional email foundation
 
 | Field | Content |

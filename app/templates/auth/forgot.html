@@ -1,0 +1,15 @@
+{% extends "auth/layout.html" %}
+{% block auth_title %}{{ contractor_copy.FORGOT_PASSWORD_HEADING }}{% endblock %}
+{% block auth_body %}
+        <h1>{{ contractor_copy.FORGOT_PASSWORD_HEADING }}</h1>
+        <p class="login-lede">{{ contractor_copy.FORGOT_PASSWORD_INSTRUCTION }}</p>
+        <form method="post" action="{{ url_for('auth.forgot_password') }}" class="login-form" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label for="email">Email address</label>
+            <input id="email" type="email" name="email" autocomplete="email" inputmode="email" required autofocus>
+            <button type="submit" class="button login-primary">{{ contractor_copy.FORGOT_PASSWORD_SUBMIT }}</button>
+        </form>
+        <p class="login-secondary">
+            <a class="login-secondary-link" href="{{ url_for('auth.login') }}">{{ contractor_copy.BACK_TO_SIGN_IN }}</a>
+        </p>
+{% endblock %}

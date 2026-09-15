@@ -152,6 +152,31 @@ WORKING_COSTING_CHANGED = (
     "Working costs changed. Approve all costing again before applying pricing."
 )
 LOGIN_LEDE = "Sign in with your email and password."
+FORGOT_PASSWORD_LINK = "Forgot Password?"
+FORGOT_PASSWORD_HEADING = "Forgot Password"
+FORGOT_PASSWORD_INSTRUCTION = (
+    "Enter your email address and we will send password reset instructions."
+)
+FORGOT_PASSWORD_SUBMIT = "Send Reset Instructions"
+FORGOT_PASSWORD_SENT_HEADING = "Check your email"
+FORGOT_PASSWORD_SENT_BODY = (
+    "If an account exists for that email address, password reset instructions "
+    "have been sent."
+)
+RESET_PASSWORD_HEADING = "Set New Password"
+RESET_PASSWORD_SUBMIT = "Reset Password"
+RESET_PASSWORD_NEW_LABEL = "New Password"
+RESET_PASSWORD_CONFIRM_LABEL = "Confirm New Password"
+RESET_PASSWORD_SUCCESS_HEADING = "Password Updated"
+RESET_PASSWORD_SUCCESS_BODY = "Your password has been reset."
+RESET_PASSWORD_INVALID_HEADING = "Reset link unavailable"
+RESET_PASSWORD_INVALID_BODY = (
+    "This password reset link is invalid or has expired. "
+    "Request a new password reset link."
+)
+REQUEST_ANOTHER_RESET = "Request Another Reset"
+BACK_TO_SIGN_IN = "Back to Sign In"
+RETURN_TO_SIGN_IN = "Return to Sign In"
 SIGN_OUT_LABEL = "Sign out"
 DASHBOARD_HEADING = "Office home"
 DASHBOARD_LEDE = "Open a project, start an estimate, or issue a proposal."

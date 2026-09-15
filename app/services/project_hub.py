@@ -39,6 +39,11 @@ from app.services.permit_foundation import assemble_permit_foundation_state
 from app.services.signing import overlays_for_change_orders
 from app.services.permit_intelligence import assemble_permit_intelligence_state
 from app.services.pricing_engine import as_money
+from app.services.work_structure import (
+    eligible_seed_versions,
+    get_project_seed,
+    list_project_work_elements,
+)
 
 
 def assemble_project_hub(project, organization_id: str) -> dict:
@@ -143,6 +148,9 @@ def assemble_project_hub(project, organization_id: str) -> dict:
         )
 
     legal_content_selection = _legal_content_selection(project.id)
+    work_elements = list_project_work_elements(project.id, organization_id=organization_id)
+    work_seed = get_project_seed(project.id, organization_id=organization_id)
+    work_seed_versions = eligible_seed_versions(project, organization_id=organization_id)
     change_orders = change_order_repo.list_change_orders_for_project(project.id)
     signing_overlays = overlays_for_change_orders(
         organization_id, [row.id for row in change_orders]
@@ -178,6 +186,9 @@ def assemble_project_hub(project, organization_id: str) -> dict:
         "direct_cost_actual_rows": actual_rows,
         "direct_cost_classes": COST_CLASSES,
         "legal_content_selection": legal_content_selection,
+        "work_elements": work_elements,
+        "work_seed": work_seed,
+        "work_seed_versions": work_seed_versions,
     }
 
 

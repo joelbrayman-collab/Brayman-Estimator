@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — FG-035 TAX/WBS project work structure
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Create FG-035 and ADR-053. Implement TAX/WBS only. One additive Alembic. Tests, live migrate, synthetic UAT, docs, commit/push. |
+| Business decision | Joel / ChatGPT Architect accepted the repository-aware preflight and assigned FG-035 / ADR-053. Later slices remain unauthorized. V1 **not rescored**. |
+| Architectural decision | ADR-053 Accepted. Project remains operational home. Work-structure Project Type is not commercial project_type. LabourTask remains PRICE. Explicit locked snapshot seed. Three-layer taxonomy. One platform / one codebase. |
+| Prompt template used | Bounded FG-035 TAX/WBS implementation authorization (15 Sep 2026) |
+| Approved Cursor prompt summary | Create FG-035 (complete 8-slice workstream, OPEN/PARTIAL). Create/Accept ADR-053. Implement TAX/WBS only. One additive Alembic parent `f2a3b4c5d6e7`. Tests, live migrate, synthetic UAT, docs, commit/push. Do not begin SCOPE/TIME/SCH/PERF/CLOSE/LEARN/QB-T. |
+| Files expected to change | FG-035; ADR-053; work-structure models/service/routes/templates; Hub BUILD panel; Alembic `f3b4c5d6e7f8`; tests; continuity docs |
+| Files prohibited from changing | EST-2026-0019; V1 rescore; Time/Schedule/LEARN product; FG-023 reopen; FG-032 rewrite; SCOPE origin fields |
+| Implementation result | FG-035 **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**. Live current `f3b4c5d6e7f8 (head)`. EST-2026-0019 unchanged. PRODUCTION packages **0**. V1 **not rescored**. |
+| Tests | Dedicated TAX/WBS **13 passed**. Focused **98 passed**, 400 warnings, **39.20s**, exit **0**. Full suite **1065 passed**, 3403 warnings, **456.75s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Later FG-035 slices not authorized. Live Postmark deferred. Physical iPhone UAT deferred. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin SCOPE / TIME / SCH. Do **not** rescore V1. |
+| Next approved prompt | None from this close. |
+| Commit hash | (this FG-035 TAX/WBS product commit) |
+
 ### 2026-09-15 — FG-034 AUTH-D complete Account Recovery + transactional email close
 
 | Field | Content |

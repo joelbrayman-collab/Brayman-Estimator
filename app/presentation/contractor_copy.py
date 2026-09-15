@@ -143,6 +143,11 @@ def sentence_label(value: str | None) -> str:
 
 LABOUR_RATES_HEADING = "Labour rates"
 PRICING_HEADING = "Pricing"
+WORK_TYPES_HEADING = "Work types"
+WORK_PLAN_HEADING = "Project work"
+BUILD_WORK_PLAN_BUTTON = "Build project work"
+ADD_WORK_ITEM_BUTTON = "Add work item"
+ADD_ACTIVITY_BUTTON = "Add activity"
 COSTING_REVIEW_HEADING = "Costing review"
 APPROVE_ALL_COSTING_BUTTON = "Approve all costing"
 COSTING_NOT_APPROVED = "Costing is not approved yet."
@@ -257,6 +262,7 @@ OFFICE_STATUS_LABELS = {
     "SUBCONTRACT_QUOTE_AMOUNT_DIFFERS": "Quoted amount differs from working cost",
     "WITHDRAWN": "Withdrawn",
     "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
     "ARCHIVED": "Archived",
     "APPROVED": "Approved",
     "DISCONTINUED": "Discontinued",

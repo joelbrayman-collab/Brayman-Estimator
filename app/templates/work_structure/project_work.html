@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}{{ contractor_copy.WORK_PLAN_HEADING }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.WORK_PLAN_HEADING }}{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">{{ project.name }}</p>
+        <h1>{{ contractor_copy.WORK_PLAN_HEADING }}</h1>
+        <p>Work items for this project. Building project work from an estimate does not change the estimate.</p>
+    </div>
+    <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Project Hub</a>
+</div>
+
+{% if seed %}
+<p class="muted-copy">Project work has been built from a locked issued or accepted estimate.</p>
+{% elif eligible_versions %}
+<form method="post" action="{{ url_for('work_structure.seed_work_plan', project_id=project.id) }}" class="form-panel">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+        <label>
+            Locked estimate
+            <select name="estimate_version_id" required>
+                {% for version in eligible_versions %}
+                <option value="{{ version.id }}">{{ version.estimate.estimate_number }} · {{ version.display_label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+    <div class="form-actions">
+        <button type="submit">{{ contractor_copy.BUILD_WORK_PLAN_BUTTON }}</button>
+    </div>
+</form>
+{% else %}
+<p class="muted-copy">Build project work from a locked issued or accepted estimate that has labour hours.</p>
+{% endif %}
+
+{% for element in elements %}
+<article class="panel panel-wide">
+    <div class="panel-header">
+        <h2>{{ element.display_name }}</h2>
+        <span class="status">{{ contractor_copy.office_status_label(element.status) }}</span>
+    </div>
+    <p class="muted-copy">
+        {{ source_label(element.source_kind) }}
+        {% if element.estimated_hours is not none %}
+        · {{ "%.2f"|format(element.estimated_hours) }} estimated hours
+        {% endif %}
+    </p>
+    {% if element.status == 'ACTIVE' %}
+    <form method="post" action="{{ url_for('work_structure.rename_element', element_id=element.id) }}" class="form-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>
+            Name
+            <input type="text" name="display_name" value="{{ element.display_name }}" required>
+        </label>
+        <div class="form-actions">
+            <button type="submit">Rename</button>
+        </div>
+    </form>
+    <form method="post" action="{{ url_for('work_structure.reorder_element', element_id=element.id) }}" class="form-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>
+            Order
+            <input type="number" name="sort_order" value="{{ element.sort_order }}" required>
+        </label>
+        <div class="form-actions">
+            <button type="submit">Update order</button>
+        </div>
+    </form>
+    <form method="post" action="{{ url_for('work_structure.retire_element', element_id=element.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">Retire work item</button>
+    </form>
+    {% endif %}
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Activity</th>
+                <th>Hours</th>
+                <th>Quantity</th>
+                <th>Source</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for activity in element.activities %}
+            <tr>
+                <td>{{ activity.display_name }}</td>
+                <td>{% if activity.estimated_hours is not none %}{{ "%.2f"|format(activity.estimated_hours) }}{% else %}—{% endif %}</td>
+                <td>
+                    {% if activity.quantity is not none %}
+                    {{ "%.2f"|format(activity.quantity) }}{% if activity.unit %} {{ activity.unit }}{% endif %}
+                    {% else %}—{% endif %}
+                </td>
+                <td>{{ source_label(activity.source_kind) }}</td>
+                <td><span class="status">{{ contractor_copy.office_status_label(activity.status) }}</span></td>
+                <td>
+                    {% if activity.status == 'ACTIVE' %}
+                    <form method="post" action="{{ url_for('work_structure.rename_activity', activity_id=activity.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="text" name="display_name" value="{{ activity.display_name }}" required>
+                        <button type="submit">Rename</button>
+                    </form>
+                    <form method="post" action="{{ url_for('work_structure.retire_activity', activity_id=activity.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit">Retire</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6">No activities on this work item.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if element.status == 'ACTIVE' %}
+    <form method="post" action="{{ url_for('work_structure.add_activity', element_id=element.id) }}" class="form-panel">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-grid">
+            <label>
+                Activity name
+                <input type="text" name="display_name" required>
+            </label>
+            <label>
+                Labour rate item
+                <select name="labour_task_id">
+                    <option value="">None</option>
+                    {% for task in labour_tasks %}
+                    <option value="{{ task.id }}">{{ task.canonical_name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">{{ contractor_copy.ADD_ACTIVITY_BUTTON }}</button>
+        </div>
+    </form>
+    {% endif %}
+</article>
+{% else %}
+<div class="empty-state">
+    <h3>No project work yet</h3>
+    <p>Build project work from a locked estimate, or add a work item for this project.</p>
+</div>
+{% endfor %}
+
+<article class="panel">
+    <div class="panel-header">
+        <h2>Add a project work item</h2>
+    </div>
+    <p class="muted-copy">This stays on this project. It is not added to organization work types.</p>
+    <form method="post" action="{{ url_for('work_structure.add_element', project_id=project.id) }}" class="form-panel">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>
+            Name
+            <input type="text" name="display_name" required>
+        </label>
+        <div class="form-actions">
+            <button type="submit">{{ contractor_copy.ADD_WORK_ITEM_BUTTON }}</button>
+        </div>
+    </form>
+</article>
+{% endblock %}

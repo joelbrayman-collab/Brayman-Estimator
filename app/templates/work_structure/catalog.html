@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}{{ contractor_copy.WORK_TYPES_HEADING }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.WORK_TYPES_HEADING }}{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Project work</p>
+        <h1>{{ contractor_copy.WORK_TYPES_HEADING }}</h1>
+        <p>Work types, elements, and activities this organization can use. CalibraytAI items cannot be changed here.</p>
+    </div>
+</div>
+
+<section class="dash-panels">
+    <article class="panel panel-wide">
+        <div class="panel-header">
+            <h2>Work types</h2>
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in work_types %}
+                <tr>
+                    <td>{{ row.display_name }}</td>
+                    <td>{{ catalog_layer_label(row) }}</td>
+                    <td><span class="status">{{ contractor_copy.office_status_label(row.status) }}</span></td>
+                    <td>
+                        {% if row.organization_id and row.status == 'ACTIVE' %}
+                        <form method="post" action="{{ url_for('work_structure.retire_type', type_id=row.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit">Retire</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <form method="post" action="{{ url_for('work_structure.create_type') }}" class="form-panel">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-grid">
+                <label>
+                    Name
+                    <input type="text" name="display_name" required>
+                </label>
+                <label>
+                    Short code
+                    <input type="text" name="code">
+                </label>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Add work type</button>
+            </div>
+        </form>
+    </article>
+
+    <article class="panel panel-wide">
+        <div class="panel-header">
+            <h2>Elements</h2>
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Work type</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in element_templates %}
+                <tr>
+                    <td>{{ row.display_name }}</td>
+                    <td>{{ row.work_type.display_name }}</td>
+                    <td>{{ catalog_layer_label(row) }}</td>
+                    <td><span class="status">{{ contractor_copy.office_status_label(row.status) }}</span></td>
+                    <td>
+                        {% if row.organization_id and row.status == 'ACTIVE' %}
+                        <form method="post" action="{{ url_for('work_structure.retire_element_template', template_id=row.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit">Retire</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <form method="post" action="{{ url_for('work_structure.create_element_template') }}" class="form-panel">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-grid">
+                <label>
+                    Work type
+                    <select name="work_type_id" required>
+                        {% for row in work_types if row.status == 'ACTIVE' %}
+                        <option value="{{ row.id }}">{{ row.display_name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label>
+                    Name
+                    <input type="text" name="display_name" required>
+                </label>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Add element</button>
+            </div>
+        </form>
+    </article>
+
+    <article class="panel panel-wide">
+        <div class="panel-header">
+            <h2>Activities</h2>
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Element</th>
+                    <th>Labour rate item</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in activity_templates %}
+                <tr>
+                    <td>{{ row.display_name }}</td>
+                    <td>{{ row.element_template.display_name }}</td>
+                    <td>{{ row.labour_task.canonical_name if row.labour_task else "—" }}</td>
+                    <td>{{ catalog_layer_label(row) }}</td>
+                    <td><span class="status">{{ contractor_copy.office_status_label(row.status) }}</span></td>
+                    <td>
+                        {% if row.organization_id and row.status == 'ACTIVE' %}
+                        <form method="post" action="{{ url_for('work_structure.retire_activity_template', template_id=row.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit">Retire</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <form method="post" action="{{ url_for('work_structure.create_activity_template') }}" class="form-panel">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-grid">
+                <label>
+                    Element
+                    <select name="element_template_id" required>
+                        {% for row in element_templates if row.status == 'ACTIVE' %}
+                        <option value="{{ row.id }}">{{ row.display_name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label>
+                    Name
+                    <input type="text" name="display_name" required>
+                </label>
+                <label>
+                    Labour rate item
+                    <select name="labour_task_id">
+                        <option value="">None</option>
+                        {% for task in labour_tasks %}
+                        <option value="{{ task.id }}">{{ task.canonical_name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Add activity</button>
+            </div>
+        </form>
+    </article>
+</section>
+{% endblock %}

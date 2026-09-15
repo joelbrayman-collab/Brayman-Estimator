@@ -36,6 +36,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — FG-035 TAX/WBS project work structure
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 TAX/WBS |
+| Status | **OPEN / PARTIAL.** TAX/WBS **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**. Later slices **NOT AUTHORIZED**. [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. |
+| Branch | `main` |
+| Base commit | `97719937f28c62956b2e08803cfd06f46d31224c` (FG-034 AUTH-D close) |
+| Objective | Foundational Project work-structure authority for the closed operational / learning loop. |
+| Deliverables | FG-035; ADR-053; additive `f3b4c5d6e7f8`; catalog + Hub Project work; synthetic UAT project **42** |
+| Validation | Dedicated **13 passed**. Focused **98 passed**. Full suite **1065 passed**, 3403 warnings, **456.75s**. EST-2026-0019 unchanged. PRODUCTION packages **0**. |
+| Architectural findings | Three-layer taxonomy. Explicit locked snapshot seed. LabourTask not merged. Commercial project_type unchanged. |
+| Open decisions | Later slice authorization. V1 remains **60% / 4 of 11**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin SCOPE / TIME / SCH from this note. |
+| Commit | this FG-035 TAX/WBS product commit |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — FG-034 AUTH-D complete Account Recovery + transactional email close
 
 | Field | Content |

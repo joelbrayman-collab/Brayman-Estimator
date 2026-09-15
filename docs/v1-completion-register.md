@@ -344,6 +344,8 @@ SIGN-A freeze + request + audit is live. SIGN-B invitation + public ceremony is 
 
 **Joel decision:** whether Closeout must exist before the **first** real Brayman project, or whether active-project BUILD is sufficient and Closeout may follow during UAT. Register recommendation: **active BUILD is V1-required; Closeout is V1-desired, not a BMR-demo blocker.**
 
+**Subsequent status (2026-09-15):** [FG-035](feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) TAX/WBS **IMPLEMENTED**. Work-structure foundation for later Time/Schedule/LEARN. **Do not rescore** (factor remains **0.75**). SCOPE / TIME / SCH / PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**.
+
 ### V1-09 — Contractor / customer UX completion
 
 | Field | Value |

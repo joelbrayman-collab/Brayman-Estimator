@@ -95,6 +95,14 @@ from app.models.labour_engine import (
     LabourTaskMapping,
     ProductionRateStandard,
 )
+from app.models.work_structure import (
+    ProjectWorkActivity,
+    ProjectWorkElement,
+    ProjectWorkStructureSeed,
+    WorkActivityTemplate,
+    WorkElementTemplate,
+    WorkType,
+)
 from app.models.historical_estimates import (
     HistoricalCostLineItem,
     HistoricalDataQualityFlag,
@@ -196,6 +204,12 @@ __all__ = [
     "LabourTask",
     "LabourTaskMapping",
     "ProductionRateStandard",
+    "ProjectWorkActivity",
+    "ProjectWorkElement",
+    "ProjectWorkStructureSeed",
+    "WorkActivityTemplate",
+    "WorkElementTemplate",
+    "WorkType",
     "Organization",
     "User",
     "UserMembership",

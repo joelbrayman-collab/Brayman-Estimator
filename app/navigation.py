@@ -1,6 +1,10 @@
 """Single source of truth for application shell navigation."""
 
-from app.presentation.contractor_copy import LABOUR_RATES_HEADING, PRICING_HEADING
+from app.presentation.contractor_copy import (
+    LABOUR_RATES_HEADING,
+    PRICING_HEADING,
+    WORK_TYPES_HEADING,
+)
 
 # Navigation is grouped into platform modules.
 # Each item: title, endpoint (or None), icon (Bootstrap Icons class), enabled
@@ -94,6 +98,12 @@ NAV_SECTIONS = (
                 "title": "Change Orders",
                 "endpoint": "project_controls.list_change_orders",
                 "icon": "bi-arrow-left-right",
+                "enabled": True,
+            },
+            {
+                "title": WORK_TYPES_HEADING,
+                "endpoint": "work_structure.catalog_index",
+                "icon": "bi-diagram-3",
                 "enabled": True,
             },
             {

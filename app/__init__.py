@@ -77,16 +77,9 @@ def _register_office_auth(app: Flask) -> None:
 
     @login_manager.user_loader
     def load_user(user_id):
-        from app.models.user import User
+        from app.services.auth import load_user_for_session
 
-        try:
-            uid = int(user_id)
-        except (TypeError, ValueError):
-            return None
-        user = db.session.get(User, uid)
-        if user is None or not user.is_active:
-            return None
-        return user
+        return load_user_for_session(user_id)
 
     @app.before_request
     def reject_api_mutating_methods():
@@ -215,11 +208,41 @@ def create_app(config=None):
         app.config["SIGNING_ARTIFACT_ROOT"] = tempfile.mkdtemp(
             prefix="calibai-signing-artifacts-"
         )
+    if app.config.get("TESTING") and not app.config.get("MAIL_CAPTURE_ROOT"):
+        app.config["MAIL_CAPTURE_ROOT"] = tempfile.mkdtemp(prefix="calibai-mail-capture-")
     app.config.setdefault("SIGNING_TOKEN_FAIL_LIMIT", 8)
     app.config.setdefault("SIGNING_TOKEN_FAIL_WINDOW_SECONDS", 900)
     app.config.setdefault("SIGNING_SOFFICE_PATH", None)
     app.config.setdefault("SIGNING_SOFFICE_TIMEOUT_SECONDS", 60)
     app.config.setdefault("SIGNING_DOCX_TO_PDF", None)
+    app.config.setdefault(
+        "TRANSACTIONAL_EMAIL_PROVIDER",
+        os.environ.get("TRANSACTIONAL_EMAIL_PROVIDER") or "local",
+    )
+    app.config.setdefault("POSTMARK_SERVER_TOKEN", os.environ.get("POSTMARK_SERVER_TOKEN") or "")
+    app.config.setdefault(
+        "TRANSACTIONAL_FROM_EMAIL",
+        os.environ.get("TRANSACTIONAL_FROM_EMAIL") or "noreply@localhost",
+    )
+    app.config.setdefault(
+        "TRANSACTIONAL_FROM_NAME",
+        os.environ.get("TRANSACTIONAL_FROM_NAME") or "CalibraytAI",
+    )
+    app.config.setdefault("TRANSACTIONAL_REPLY_TO", os.environ.get("TRANSACTIONAL_REPLY_TO") or "")
+    app.config.setdefault(
+        "TRANSACTIONAL_UAT_ALLOWLIST",
+        os.environ.get("TRANSACTIONAL_UAT_ALLOWLIST") or "",
+    )
+    app.config.setdefault("PUBLIC_BASE_URL", os.environ.get("PUBLIC_BASE_URL") or "")
+    app.config.setdefault("TRANSACTIONAL_EMAIL_TRANSPORT", None)
+    app.config.setdefault("POSTMARK_HTTP_SEND", None)
+    app.config.setdefault("PASSWORD_RESET_TOKEN_TTL_SECONDS", 3600)
+    app.config.setdefault("PASSWORD_RESET_REQUEST_IP_LIMIT", 5)
+    app.config.setdefault("PASSWORD_RESET_REQUEST_IP_WINDOW_SECONDS", 3600)
+    app.config.setdefault("PASSWORD_RESET_REQUEST_EMAIL_LIMIT", 3)
+    app.config.setdefault("PASSWORD_RESET_REQUEST_EMAIL_WINDOW_SECONDS", 3600)
+    app.config.setdefault("PASSWORD_RESET_PRESENT_FAIL_LIMIT", 8)
+    app.config.setdefault("PASSWORD_RESET_PRESENT_FAIL_WINDOW_SECONDS", 900)
 
     db.init_app(app)
     migrate.init_app(app, db)

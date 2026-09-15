@@ -17,6 +17,7 @@ from app.services.organizations import (
 )
 
 PASSWORD_HASH_METHOD = "pbkdf2:sha256"
+PASSWORD_MIN_LENGTH = 8
 GENERIC_LOGIN_FAILURE = "Invalid email or password."
 
 
@@ -29,6 +30,54 @@ def normalize_email(value: Optional[str]) -> str:
     if not email:
         raise AuthServiceError("Email is required.")
     return email
+
+
+def validate_new_password(password: str) -> str:
+    """Governed floor for newly set or reset passwords. Does not affect login."""
+    if password is None or password == "":
+        raise AuthServiceError("Password is required.")
+    if len(password) < PASSWORD_MIN_LENGTH:
+        raise AuthServiceError("Password must be at least 8 characters.")
+    return password
+
+
+def parse_login_identity(user_id) -> Optional[tuple]:
+    """Parse Flask-Login identity.
+
+    Current format is ``<user_id>:<credentials_epoch>``.
+    Legacy pre-FG-034 sessions stored only ``<user_id>`` and are accepted
+    as epoch 0 so live office sessions survive migrate without an outage.
+    """
+    if user_id is None:
+        return None
+    raw = str(user_id).strip()
+    if not raw:
+        return None
+    if ":" not in raw:
+        try:
+            return int(raw), 0
+        except (TypeError, ValueError):
+            return None
+    uid_str, epoch_str = raw.split(":", 1)
+    if ":" in epoch_str:
+        return None
+    try:
+        return int(uid_str), int(epoch_str)
+    except (TypeError, ValueError):
+        return None
+
+
+def load_user_for_session(user_id):
+    parsed = parse_login_identity(user_id)
+    if parsed is None:
+        return None
+    uid, epoch = parsed
+    user = db.session.get(User, uid)
+    if user is None or not user.is_active:
+        return None
+    if int(user.credentials_epoch or 0) != int(epoch):
+        return None
+    return user
 
 
 def hash_password(password: str) -> str:
@@ -85,8 +134,7 @@ def bootstrap_org_001_user(*, email: str, display_name: str, password: str) -> U
     name = (display_name or "").strip()
     if not name:
         raise AuthServiceError("Display name is required.")
-    if password is None or password == "":
-        raise AuthServiceError("Password is required.")
+    validate_new_password(password)
 
     existing = User.query.filter_by(email=normalized).first()
     if existing is not None:
@@ -119,11 +167,11 @@ def bootstrap_org_001_user(*, email: str, display_name: str, password: str) -> U
 
 def reset_password(*, email: str, password: str) -> User:
     normalized = normalize_email(email)
-    if password is None or password == "":
-        raise AuthServiceError("Password is required.")
+    validate_new_password(password)
     user = User.query.filter_by(email=normalized).first()
     if user is None:
         raise AuthServiceError("User not found.")
     user.password_hash = hash_password(password)
+    user.credentials_epoch = int(user.credentials_epoch or 0) + 1
     db.session.commit()
     return user

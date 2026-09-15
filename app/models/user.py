@@ -13,6 +13,7 @@ class User(UserMixin, db.Model):
     display_name = db.Column(db.String(150), nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
+    credentials_epoch = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(
         db.DateTime,
@@ -28,7 +29,8 @@ class User(UserMixin, db.Model):
     )
 
     def get_id(self):
-        return str(self.id)
+        epoch = int(self.credentials_epoch or 0)
+        return f"{self.id}:{epoch}"
 
     def __repr__(self):
         return f"<User {self.id} {self.email}>"

@@ -34,6 +34,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+---
+
+### 2026-09-15 — FG-034 MAIL-A / AUTH-A Account Recovery + transactional email foundation
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-034 MAIL-A / AUTH-A |
+| Status | **PARTIAL.** [FG-034](feature-gates/FG-034-account-recovery-and-transactional-email.md) **OPEN / PARTIAL**. MAIL-A **IMPLEMENTED**. AUTH-A **IMPLEMENTED**. AUTH-B/C, MAIL-B, AUTH-D **NOT AUTHORIZED**. |
+| Branch | `main` |
+| Objective | Shared transactional-email foundation (no live send) and Account Recovery security/data foundation (no Forgot Password pages). |
+| Deliverables | `app/services/transactional_email.py`; `app/services/password_reset.py`; `users.credentials_epoch`; additive `f2a3b4c5d6e7` applied live; [ADR-052](adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**; [testing/fg034-mail-a-auth-a-live-bounded-uat-record.md](testing/fg034-mail-a-auth-a-live-bounded-uat-record.md). |
+| Validation | Dedicated MAIL-A / AUTH-A **28 passed**. Focused MAIL-A/AUTH-A + FG-018 + SIGN-A–E **142 passed**. Full **1009 passed**, 3290 warnings, **344.09s**. Alembic current = heads `f2a3b4c5d6e7`. EST-2026-0019 occupancy unchanged. Live PRODUCTION packages **0**. |
+| Architectural findings | One transactional engine. Postmark is the default production provider but MAIL-A uses local/fake only. Password-reset tokens are a separate domain from Signing. Legacy Flask-Login `"<user_id>"` is accepted as `credentials_epoch` 0. |
+| Open decisions | AUTH-B Forgot Password pages; MAIL-B Native Signing mail; Postmark token / sender domain; physical iPhone Account Recovery UAT. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin AUTH-B. |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — FG-033 SIGN-E convert-once + generated-contract Native Signing + desktop/iPhone parity
 
 | Field | Content |

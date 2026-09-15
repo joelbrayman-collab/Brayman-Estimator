@@ -67,7 +67,8 @@ from app.models.estimate_quickbooks import (
 from app.models.estimate_scope_delivery import EstimateScopeDelivery
 from app.models.subcontractor import Subcontractor, SubcontractQuoteEvidence
 from app.models.organization import Organization
-from app.models.user import User, UserMembership
+from app.models.password_reset import PasswordResetAccessAttempt, PasswordResetToken
+from app.models.transactional_message import TransactionalMessage
 from app.models.brand_profile import OrganizationBrandProfile, ProposalBrandSnapshot
 from app.models.build import (
     FieldCaptureDerivedCandidate,
@@ -198,6 +199,9 @@ __all__ = [
     "Organization",
     "User",
     "UserMembership",
+    "PasswordResetAccessAttempt",
+    "PasswordResetToken",
+    "TransactionalMessage",
     "OrganizationBrandProfile",
     "OrganizationPricingPolicy",
     "ProposalBrandSnapshot",

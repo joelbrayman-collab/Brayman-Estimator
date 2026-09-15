@@ -18,7 +18,7 @@ def resolve_membership_organization_id(user) -> str:
     from app.models.user import UserMembership
 
     try:
-        user_id = int(user.get_id())
+        user_id = int(getattr(user, "id", None))
     except (TypeError, ValueError, AttributeError) as exc:
         raise OrganizationAccessError(
             "Organization context requires an authenticated user."

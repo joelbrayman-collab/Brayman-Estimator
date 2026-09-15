@@ -321,7 +321,7 @@ Deep reconciliation: **§9**. Sub-gates: **§9.4**.
 | Governing | [FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED / OPERATIONAL FOR UAT**; [contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md); [native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md) **DRAFT / NOT LEGAL APPROVAL / NOT EXTERNALLY REVIEWED**; [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED**; [modules/signing.md](modules/signing.md); [testing/fg033-sign-a-live-bounded-uat-record.md](testing/fg033-sign-a-live-bounded-uat-record.md); [testing/fg033-sign-b-live-bounded-uat-record.md](testing/fg033-sign-b-live-bounded-uat-record.md); [testing/fg033-sign-c-live-bounded-uat-record.md](testing/fg033-sign-c-live-bounded-uat-record.md); [testing/fg033-sign-d-live-bounded-uat-record.md](testing/fg033-sign-d-live-bounded-uat-record.md); [testing/fg033-sign-e-live-bounded-uat-record.md](testing/fg033-sign-e-live-bounded-uat-record.md) |
 | Next governed action | **STOP.** SIGN-A through SIGN-E **IMPLEMENTED**. Real iPhone UAT **DEFERRED**. Do not enable real customer signing. Do **not** rescore V1. |
 
-SIGN-A freeze + request + audit is live. SIGN-B invitation + public ceremony is live (SENT → SIGNED). SIGN-C countersign + executed PDF custody is live (SIGNED → EXECUTED). SIGN-D Change Order E2E + office/Hub + automated mobile UX is live. SIGN-E convert-once Family 05 PDF + generated-contract ceremony is live on the same engine. Real iPhone UAT is **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** and is **not** claimed as PASS. The V1-07 package remains incomplete for **production / real-customer use** (ACTIVE PRODUCTION package, transactional email for normal send, real-device UAT). Recommendation remains **NATIVE V1** (not DocuSign/Adobe as SoR). No external-review dependency.
+SIGN-A freeze + request + audit is live. SIGN-B invitation + public ceremony is live (SENT → SIGNED). SIGN-C countersign + executed PDF custody is live (SIGNED → EXECUTED). SIGN-D Change Order E2E + office/Hub + automated mobile UX is live. SIGN-E convert-once Family 05 PDF + generated-contract ceremony is live on the same engine. Real iPhone UAT is **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** and is **not** claimed as PASS. The V1-07 package remains incomplete for **production / real-customer use** (ACTIVE PRODUCTION package, MAIL-B transactional email for normal send, real-device UAT). MAIL-A established the shared engine only; Native Signing does **not** yet send invitation/resend/complete mail. Recommendation remains **NATIVE V1** (not DocuSign/Adobe as SoR). No external-review dependency.
 
 ### V1-08 — BUILD V1 / Project Closeout
 
@@ -369,16 +369,16 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 |-------|--------|
 | Intent | Minimum security, integrity, backup/recovery, production configuration, onboarding, operating docs, training, error/recovery, and deployment to put **real** Brayman projects into CalibraytAI safely. Not enterprise-scale infrastructure. |
 | Weight | **10%** |
-| Status | **PARTIAL** |
+| Status | **PARTIAL**. Subsequent **2026-09-15:** [FG-034](feature-gates/FG-034-account-recovery-and-transactional-email.md) MAIL-A / AUTH-A **IMPLEMENTED**. AUTH-B/C, MAIL-B, AUTH-D **NOT AUTHORIZED**. **Do not rescore** (factor remains **0.35**). |
 | Factor | 0.35 |
 | Contribution | **3.5** |
 | V1 REQUIRED? | **YES** before Brayman real-life UAT (not required for an internal BMR demo on synthetic/UAT data) |
 | BLOCKER? | **NO** until real-project entry is attempted |
 | Dependencies | FG-018 **CLOSED** (operational for UAT, **not** production-security certification) |
-| Governing | [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md); ADR-041; local `.env` `SECRET_KEY`; SQLite `instance/brayman_estimator.db` |
+| Governing | [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md); [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md); [ADR-052](adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**; [FG-034](feature-gates/FG-034-account-recovery-and-transactional-email.md) **OPEN / PARTIAL**; local `.env` `SECRET_KEY`; SQLite `instance/brayman_estimator.db` |
 | Next governed action | Separate operational-readiness prompt. Do not invent hosting/RBAC from this register. |
 
-**Exists:** office login/membership/CSRF; org isolation; SECRET_KEY fail-closed in non-dev; ad-hoc gitignored SQLite copies before some live migrations (not a product backup service); testing standards.
+**Exists:** office login/membership/CSRF; org isolation; SECRET_KEY fail-closed in non-dev; ad-hoc gitignored SQLite copies before some live migrations (not a product backup service); testing standards; MAIL-A local/fake transactional engine; AUTH-A reset-token / epoch foundation (Forgot Password pages remain AUTH-B).
 
 **Missing for real-project V1:** governed backup/restore runbook; production hosting/secrets; user onboarding/training pack; issue/feedback process; SESSION-EXPIRY / session revocation (explicitly **NOT FG-021**); office RBAC (**POST-V1**). Supplier named-user isolation is [FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) **RECORDED** (principal class, not office RBAC) and is **not** implementation-authorized from this register.
 

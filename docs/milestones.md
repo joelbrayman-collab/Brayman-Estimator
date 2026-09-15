@@ -44,7 +44,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | No-coaching UAT. Manual-first. Physical device evidence for iPhone PASS. Voice mutation not required for V1 Voice. |
 | Open decisions | None from §§26–39. V1 remains **60% / 4 of 11**. |
 | Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** implement Help / Voice / Manual. Do **not** begin SCOPE. |
-| Commit | this §§26–39 docs-only commit |
+| Commit | `872f5ec377740bdccedcf30f2c81324b6e59e48d` |
 | Date | 2026-09-15 |
 
 ### 2026-09-15 — Help / Voice / User Manual PRE-UAT record

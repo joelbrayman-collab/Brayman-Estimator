@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Later FG-035 slices not authorized. Help/Voice/Manual not implemented. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement Help / Voice / Manual. Do **not** begin SCOPE. |
 | Next approved prompt | None from this close. |
-| Commit hash | (this §§26–39 docs-only commit) |
+| Commit hash | `872f5ec377740bdccedcf30f2c81324b6e59e48d` |
 
 ### 2026-09-15 — Help / Voice / User Manual PRE-UAT record
 

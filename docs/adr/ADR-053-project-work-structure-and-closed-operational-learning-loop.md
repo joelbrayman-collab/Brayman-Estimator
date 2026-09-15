@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-053: Project Work Structure and Closed Operational / Learning Loop |
-| Status | **Accepted** (2026-09-15; Joel Brayman / ChatGPT Architect). TAX/WBS and SCOPE product implementation are authorized under [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TIME / SCH / PERF / CLOSE / LEARN / QB-T remain **NOT AUTHORIZED**. |
+| Status | **Accepted** (2026-09-15; Joel Brayman / ChatGPT Architect). TAX/WBS, SCOPE, and TIME product implementation are authorized under [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. SCH / PERF / CLOSE / LEARN / QB-T remain **NOT AUTHORIZED**. |
 | Date | 2026-09-15 |
 | Related | [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [ADR-021](ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-024](ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-049](ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted** · [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED** (not reopened) · [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED** (not rewritten) · product direction [project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md) |
 
@@ -51,11 +51,11 @@ Future Schedule must never fabricate actual labour.
 
 ### H. Submitted Time is not approved actual
 
-Future Time Entry distinguishes submitted from approved.
+Time Entry distinguishes submitted from approved. Implemented 2026-09-15 under FG-035 TIME (`labour_time_entries.status`). Submitted hours are not `approved_labour_hours()`.
 
 ### I. Approved Time is labour-hours actual
 
-Approved Time is the labour-**hours** actual for MONITOR, LEARN, and later payroll readiness.
+Approved Time is the labour-**hours** actual for later MONITOR, LEARN, and payroll readiness. Service: `app/services/time_entry.py` `approved_labour_hours()`. `ProjectDirectCostActual` remains money.
 
 ### J. ProjectDirectCostActual remains money actual
 
@@ -112,19 +112,19 @@ Organizations may add Types / Elements / Activities as data. They must not creat
 
 ## Module Ownership Impact
 
-**Projects** owns work-structure catalog and Project Element / Activity instances. Estimating continues to own `LabourTask` / `EstimateLabourSnapshot`. Project Controls continues to own `ChangeOrder`. BUILD continues to own field capture and money actuals. MONITOR continues to read. LEARN continues to consume.
+**Projects** owns work-structure catalog and Project Element / Activity instances. Estimating continues to own `LabourTask` / `EstimateLabourSnapshot`. Project Controls continues to own `ChangeOrder`. BUILD owns field capture, money actuals, and Time Entry. MONITOR continues to read. LEARN continues to consume.
 
 ## Data Ownership Impact
 
-New TAX/WBS tables are organization-scoped (or baseline with `organization_id` NULL). SCOPE adds `scope_origin` / `change_order_id` on Project work plus `project_work_scope_deltas` and append-only `project_work_scope_history`. Seeded Project Activities pin `source_estimate_version_id` and `source_estimate_labour_snapshot_id`. Rows are retired, not hard-deleted.
+New TAX/WBS tables are organization-scoped (or baseline with `organization_id` NULL). SCOPE adds `scope_origin` / `change_order_id` on Project work plus `project_work_scope_deltas` and append-only `project_work_scope_history`. TIME adds `labour_time_entries` and append-only `labour_time_history`. Seeded Project Activities pin `source_estimate_version_id` and `source_estimate_labour_snapshot_id`. Rows are retired, not hard-deleted.
 
 ## Migration Impact
 
-Required for TAX/WBS: additive Alembic **`f3b4c5d6e7f8`** parented on `f2a3b4c5d6e7`. Required for SCOPE: additive Alembic **`f4c5d6e7f8a9`** parented on `f3b4c5d6e7f8`. No rewrite of existing Estimate or ChangeOrder tables.
+Required for TAX/WBS: additive Alembic **`f3b4c5d6e7f8`** parented on `f2a3b4c5d6e7`. Required for SCOPE: additive Alembic **`f4c5d6e7f8a9`** parented on `f3b4c5d6e7f8`. Required for TIME: additive Alembic **`f5d6e7f8a9b0`** parented on `f4c5d6e7f8a9`. No rewrite of existing Estimate or ChangeOrder tables.
 
 ## Testing Impact
 
-Dedicated TAX/WBS and SCOPE tests: catalog layers, tenant isolation, seed eligibility, original immutability, CO deltas, Extra Work, Hub/Field, migration upgrade/downgrade.
+Dedicated TAX/WBS, SCOPE, and TIME tests: catalog layers, tenant isolation, seed eligibility, original immutability, CO deltas, Extra Work, duration Time Entry, approval/return/supersession, approved labour service, Hub/Field, migration upgrade/downgrade.
 
 ## Documentation Impact
 
@@ -136,4 +136,4 @@ FG-035; this ADR; module/index/continuity docs. V1 **not rescored**.
 |------|------|------|
 | Joel | Accepted via governed FG-035 TAX/WBS prompt | 2026-09-15 |
 | ChatGPT review | Repository-aware preflight accepted; FG-035 / ADR-053 assigned | 2026-09-15 |
-| Cursor implementation note | TAX/WBS and SCOPE implemented under this ADR. TIME / SCH / PERF / CLOSE / LEARN / QB-T not authorized. | 2026-09-15 |
+| Cursor implementation note | TAX/WBS, SCOPE, and TIME implemented under this ADR. SCH / PERF / CLOSE / LEARN / QB-T not authorized. | 2026-09-15 |

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}{{ contractor_copy.TIME_REVIEW_HEADING }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.TIME_REVIEW_HEADING }}{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">BUILD</p>
+        <h1>{{ contractor_copy.TIME_REVIEW_HEADING }}</h1>
+        <p>Submitted time is not approved labour until someone else reviews it.</p>
+    </div>
+    <a class="button" href="{{ url_for('time_entry.new_entry') }}">Record time</a>
+</div>
+
+<section class="form-panel" style="margin-bottom: 20px;">
+    <form method="get" class="form-grid">
+        <label>
+            From
+            <input type="date" name="from" value="{{ filters.from }}">
+        </label>
+        <label>
+            To
+            <input type="date" name="to" value="{{ filters.to }}">
+        </label>
+        <label>
+            Worker
+            <select name="worker_user_id">
+                <option value="">All workers</option>
+                {% for worker in workers %}
+                <option value="{{ worker.id }}" {% if filters.worker_user_id == worker.id %}selected{% endif %}>{{ worker.display_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Project
+            <select name="project_id">
+                <option value="">All projects</option>
+                {% for project in projects %}
+                <option value="{{ project.id }}" {% if filters.project_id == project.id %}selected{% endif %}>{{ project.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Status
+            <select name="status">
+                <option value="">Needs review and current</option>
+                {% for status in statuses %}
+                <option value="{{ status }}" {% if filters.status == status %}selected{% endif %}>{{ status_label(status) }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <div class="form-actions">
+            <button type="submit">Filter</button>
+        </div>
+    </form>
+</section>
+
+{% if rows %}
+<form method="post" action="{{ url_for('time_entry.approve_selected', status=filters.status, project_id=filters.project_id or '', worker_user_id=filters.worker_user_id or '', **{'from': filters.from, 'to': filters.to}) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <p class="muted-copy">Extra work is highlighted. Check the work and notes before approving a group.</p>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>Date</th>
+                <th>Worker</th>
+                <th>Project</th>
+                <th>Work</th>
+                <th>Hours</th>
+                <th>Kind</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr class="{% if row.is_extra_work %}scope-extra-work-row{% endif %}">
+                <td>
+                    {% if row.needs_approval %}
+                    <input type="checkbox" name="time_entry_id" value="{{ row.entry.id }}" aria-label="Select {{ row.entry.worker_display_name }} {{ row.entry.work_date }}">
+                    {% endif %}
+                </td>
+                <td><a href="{{ url_for('time_entry.detail', time_entry_id=row.entry.id) }}">{{ row.entry.work_date.isoformat() }}</a></td>
+                <td>{{ row.entry.worker_display_name }}</td>
+                <td>{{ row.entry.project_name }}</td>
+                <td>
+                    {{ row.entry.element_display_name }} — {{ row.entry.activity_display_name }}
+                    {% if row.entry.worker_note %}<div class="muted-copy">{{ row.entry.worker_note }}</div>{% endif %}
+                </td>
+                <td>{{ "%.2f"|format(row.entry.hours) }}</td>
+                <td>
+                    {{ row.scope_label }}
+                    {% if row.change_order_label %} · {{ row.change_order_label }}{% endif %}
+                </td>
+                <td><span class="status">{{ row.status_label }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if rows|selectattr('needs_approval')|list %}
+    <div class="form-actions">
+        <button type="submit">{{ contractor_copy.TIME_APPROVE_SELECTED }}</button>
+    </div>
+    {% endif %}
+</form>
+{% else %}
+<div class="empty-state">
+    <h3>No time in this view</h3>
+    <p>Record field time, or widen the date range.</p>
+</div>
+{% endif %}
+{% endblock %}

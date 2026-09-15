@@ -27,6 +27,15 @@
         </form>
     </header>
     <main class="field-main" id="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="field-flashes">
+            {% for category, message in messages %}
+            <li class="field-flash field-flash-{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
         <div class="field-status" id="field-live-status" role="status" aria-live="polite"></div>
         {% block content %}{% endblock %}
     </main>

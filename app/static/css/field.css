@@ -357,3 +357,75 @@ input:focus-visible {
     font: inherit;
     background: var(--white);
 }
+
+.field-flashes {
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+}
+
+.field-flash {
+    margin-bottom: 8px;
+    padding: 12px;
+    border: 2px solid var(--black);
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.field-flash-success {
+    background: #e7f6e7;
+}
+
+.field-flash-error {
+    background: #fde8e7;
+}
+
+.field-panel-time .field-btn-primary {
+    margin-top: 8px;
+}
+
+.field-time-recent {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.field-time-list {
+    list-style: none;
+    margin: 16px 0;
+    padding: 0;
+}
+
+.field-time-item {
+    border: 2px solid var(--black);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.field-time-item-extra,
+.field-time-returned {
+    background: #fff8e8;
+}
+
+.field-time-extra {
+    margin: 12px 0;
+}
+
+@media (orientation: landscape) {
+    .field-panel-time form > .field-muted,
+    .field-panel-time form > .field-time-recent,
+    .field-panel-time form > .field-label:has(textarea),
+    .field-panel-time form > .field-btn-danger,
+    .field-panel-time form > .field-time-extra,
+    .field-panel-time form > .field-btn-primary {
+        grid-column: 1 / -1;
+    }
+}
+
+.field-label {
+    display: block;
+    margin: 12px 0;
+    font-weight: 600;
+}

@@ -4,6 +4,8 @@ Purpose-built iPhone Safari surface. BUILD remains the system of record.
 No office sidebar. Same FG-018 session. No PWA.
 """
 
+from datetime import date
+
 from flask import (
     Blueprint,
     flash,
@@ -21,12 +23,25 @@ from app.services.build import (
 )
 from app.services.organizations import get_current_organization
 from app.services.shared_api import get_organization_project, list_organization_projects
+from app.services.time_entry import (
+    TimeEntryError,
+    TimeEntryForbiddenError,
+    TimeEntryNotFoundError,
+    get_time_entry,
+    list_time_work_choices,
+    recent_worker_activities,
+    recent_worker_time,
+    resubmit_time,
+    submit_time,
+    time_entry_presentation,
+)
 from app.services.work_scope import WorkScopeError, actor_name, create_extra_work
 from app.services.work_structure import list_project_work_elements
 
 field_bp = Blueprint("field", __name__, url_prefix="/field")
 
 CONFIRMED_PROJECT_SESSION_KEY = "field_confirmed_project_id"
+LAST_TIME_ELEMENT_SESSION_KEY = "field_last_time_element_id"
 
 
 def _organization():
@@ -129,6 +144,10 @@ def project_confirm(project_id):
             return redirect(
                 url_for("field.capture", project_id=project.id), code=302
             )
+        if nxt == "time":
+            return redirect(
+                url_for("field.time_entry", project_id=project.id), code=302
+            )
         return redirect(url_for("field.today"), code=302)
     recent = _recent_cards(organization.id, project.id)
     return render_template(
@@ -183,5 +202,112 @@ def extra_work(project_id):
         "field/extra_work.html",
         project=project,
         elements=elements,
+        actor_name=current_user.display_name,
+    )
+
+
+def _optional_int(value):
+    raw = (value or "").strip() if value is not None else ""
+    if raw == "":
+        return None
+    return int(raw)
+
+
+@field_bp.route("/time")
+def my_time():
+    organization = _organization()
+    entries = recent_worker_time(
+        worker_user_id=current_user.id,
+        organization_id=organization.id,
+    )
+    confirmed_id = _confirmed_project_id()
+    project = (
+        get_organization_project(organization.id, confirmed_id)
+        if confirmed_id is not None
+        else None
+    )
+    return render_template(
+        "field/my_time.html",
+        rows=[time_entry_presentation(entry) for entry in entries],
+        project=project,
+        actor_name=current_user.display_name,
+    )
+
+
+@field_bp.route("/projects/<int:project_id>/time", methods=["GET", "POST"])
+def time_entry(project_id):
+    organization = _organization()
+    project = _project_or_redirect(organization, project_id)
+    if project is None:
+        return redirect(url_for("field.projects"), code=302)
+    if _confirmed_project_id() != project.id:
+        return redirect(url_for("field.project_confirm", project_id=project.id), code=302)
+    returned_id = _optional_int(request.values.get("returned_id"))
+    returned = None
+    if returned_id is not None:
+        try:
+            returned = get_time_entry(returned_id, organization_id=organization.id)
+        except TimeEntryNotFoundError:
+            returned = None
+        if returned is not None and returned.worker_user_id != current_user.id:
+            returned = None
+        if returned is not None and returned.project_id != project.id:
+            returned = None
+    if request.method == "POST":
+        try:
+            if returned is not None:
+                entry = resubmit_time(
+                    time_entry_id=returned.id,
+                    hours=request.form.get("hours"),
+                    work_date=request.form.get("work_date"),
+                    project_work_activity_id=_optional_int(
+                        request.form.get("project_work_activity_id")
+                    )
+                    or 0,
+                    worker_note=request.form.get("worker_note"),
+                    organization_id=organization.id,
+                )
+            else:
+                entry = submit_time(
+                    project_id=project.id,
+                    project_work_activity_id=_optional_int(
+                        request.form.get("project_work_activity_id")
+                    )
+                    or 0,
+                    hours=request.form.get("hours"),
+                    work_date=request.form.get("work_date"),
+                    worker_note=request.form.get("worker_note"),
+                    extra_work_description=request.form.get("extra_work_description"),
+                    extra_work_element_id=_optional_int(
+                        request.form.get("extra_work_element_id")
+                    ),
+                    extra_work_element_name=request.form.get("extra_work_element_name"),
+                    organization_id=organization.id,
+                )
+            session[LAST_TIME_ELEMENT_SESSION_KEY] = entry.project_work_element_id
+            flash("Time sent for approval.", "success")
+            return redirect(url_for("field.my_time"), code=302)
+        except (TimeEntryError, TimeEntryForbiddenError, TypeError, ValueError) as exc:
+            flash(
+                str(exc) if isinstance(exc, TimeEntryError) else "Check the hours and work.",
+                "error",
+            )
+    choices = list_time_work_choices(project.id, organization_id=organization.id)
+    recent_ids = recent_worker_activities(
+        worker_user_id=current_user.id,
+        project_id=project.id,
+        organization_id=organization.id,
+    )
+    last_element_id = session.get(LAST_TIME_ELEMENT_SESSION_KEY)
+    if returned is not None:
+        last_element_id = returned.project_work_element_id
+    return render_template(
+        "field/time.html",
+        project=project,
+        choices=choices,
+        recent_activity_ids=recent_ids,
+        last_element_id=last_element_id,
+        returned=returned,
+        today=date.today().isoformat(),
         actor_name=current_user.display_name,
     )

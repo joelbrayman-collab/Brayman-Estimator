@@ -107,6 +107,12 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
+                "title": "Time",
+                "endpoint": "time_entry.review",
+                "icon": "bi-clock-history",
+                "enabled": True,
+            },
+            {
                 "title": "Purchase Orders",
                 "endpoint": None,
                 "icon": "bi-cart3",

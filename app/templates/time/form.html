@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Record time | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.TIME_HEADING }}{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">BUILD</p>
+        <h1>Record time</h1>
+        <p>Choose the project, the work, and the hours. Scope is inherited from the work.</p>
+    </div>
+    <a class="button-link" href="{{ url_for('time_entry.review') }}">{{ contractor_copy.TIME_REVIEW_HEADING }}</a>
+</div>
+
+<form method="post" class="form-panel" id="office-time-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+        <label>
+            Project
+            <select name="project_id" required onchange="this.form.method='get'; this.form.submit();">
+                <option value="">Choose project</option>
+                {% for row in projects %}
+                <option value="{{ row.id }}" {% if project and project.id == row.id %}selected{% endif %}>{{ row.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        {% if project %}
+        <label>
+            Date
+            <input type="date" name="work_date" required max="{{ today }}" value="{{ today }}">
+        </label>
+        <label>
+            Work item
+            <select name="project_work_element_id" id="office-time-element">
+                <option value="">Choose work item</option>
+                {% for group in choices %}
+                <option value="{{ group.element.id }}">{{ group.element.display_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Work
+            <select name="project_work_activity_id" id="office-time-activity">
+                <option value="">Choose work</option>
+                {% for group in choices %}
+                {% for activity in group.activities %}
+                <option value="{{ activity.id }}" data-element-id="{{ group.element.id }}">{{ activity.display_name }}</option>
+                {% endfor %}
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Hours
+            <input type="number" name="hours" min="0.25" max="16" step="0.25" required>
+        </label>
+        <label>
+            Note
+            <input type="text" name="worker_note">
+        </label>
+        {% endif %}
+    </div>
+    {% if project %}
+    <p class="scope-extra-work-banner">{{ contractor_copy.SCOPE_EXTRA_WORK_RULE }}</p>
+    <div class="form-grid">
+        <label>
+            Extra work description
+            <input type="text" name="extra_work_description">
+        </label>
+        <label>
+            Extra work item
+            <select name="extra_work_element_id">
+                <option value="">New work item</option>
+                {% for group in choices %}
+                <option value="{{ group.element.id }}">{{ group.element.display_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            New work item name
+            <input type="text" name="extra_work_element_name">
+        </label>
+    </div>
+    <div class="form-actions">
+        <button type="submit">{{ contractor_copy.FIELD_SUBMIT_TIME }}</button>
+    </div>
+    {% endif %}
+</form>
+<script>
+(function () {
+  var element = document.getElementById("office-time-element");
+  var activity = document.getElementById("office-time-activity");
+  if (!element || !activity) return;
+  function filterActivities() {
+    var selected = element.value;
+    Array.prototype.forEach.call(activity.options, function (option) {
+      if (!option.value) {
+        option.hidden = false;
+        return;
+      }
+      option.hidden = option.getAttribute("data-element-id") !== selected;
+    });
+    if (activity.selectedOptions.length && activity.selectedOptions[0].hidden) {
+      activity.value = "";
+    }
+  }
+  element.addEventListener("change", filterActivities);
+  filterActivities();
+})();
+</script>
+{% endblock %}

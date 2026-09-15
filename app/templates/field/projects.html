@@ -12,6 +12,7 @@
     <form method="post" action="{{ url_for('field.project_confirm', project_id=confirm_project.id) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit" class="field-btn field-btn-primary" name="next" value="capture">Confirm and Capture</button>
+        <button type="submit" class="field-btn field-btn-secondary" name="next" value="time">Confirm and Time</button>
         <button type="submit" class="field-btn field-btn-secondary">Confirm for Today</button>
     </form>
     <a class="field-btn field-btn-ghost" href="{{ url_for('field.projects') }}">Choose a different Project</a>

@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — FG-035 TIME field duration entry + approval + approved labour actuals
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 TIME |
+| Status | **OPEN / PARTIAL.** TIME **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**. SCH / PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. |
+| Branch | `main` |
+| Base commit | `82a2e750c4fc0915b7db648ca44a52912760b0db` |
+| Objective | Duration-based labour Time Entry with SCOPE inheritance, Extra Work, approval, and approved labour actuals. |
+| Deliverables | `labour_time_entries` + `labour_time_history`; Field Time / My time; office `/time`; Hub Time; `approved_labour_hours()`; additive `f5d6e7f8a9b0`; synthetic UAT project **44** |
+| Validation | Dedicated TIME included in focused TIME+SCOPE+TAX/WBS **31 passed**, 278 warnings, **16.29s**. Hub/Field/MONITOR+TIME **76 passed**, 258 warnings, **35.03s**. Full suite **1083 passed**, 3616 warnings, **466.85s**, exit **0**. Synthetic UAT **PASS**. Occupancy EST-2026-0019 unchanged. PRODUCTION packages **0**. |
+| Architectural findings | No Draft. Online-session Time only. Self-approval fail-closed. Money actuals remain `ProjectDirectCostActual`. |
+| Open decisions | SCH / PERF remain unauthorized. Physical iPhone Time UAT deferred. |
+| Next milestone | SCH — **NOT AUTHORIZED FROM THIS RECORD** |
+| Commit | pending |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — FG-035 SCOPE original / Change Order / Extra Work lineage
 
 | Field | Content |

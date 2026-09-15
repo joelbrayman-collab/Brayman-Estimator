@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — FG-035 TIME field duration entry + approval + approved labour actuals
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Implement FG-035 TIME: duration-based field Time Entry, SCOPE inheritance, Extra Work connection, submit/return/approve, post-approval correction, approved labour service, Hub/Field/office UX. |
+| Business decision | Worker enters Project → work → hours. Scope is inherited. Submitted is not approved actual. Extra Work remains extra work even after Time is approved. |
+| Architectural decision | BUILD owns Time. No Draft. No offline Time sync. Fail-closed self-approval. Do not overload ProjectDirectCostActual. No EXPORTED flag. Max 16 hours/entry and 24 hours/worker-day. |
+| Prompt template used | FG-035 TIME implementation (15 Sep 2026) |
+| Approved Cursor prompt summary | Field Time Entry + approval + approved labour actuals; iPhone-first / desktop-complete; inherit_scope_lineage; Extra Work via existing SCOPE; one additive Alembic parent `f4c5d6e7f8a9`; tests; live migrate; UAT; docs; commit/push after PASS. SCH/PERF/CLOSE/LEARN/QB-T not authorized. |
+| Files expected to change | time_entry model/service/routes; Field/Hub/office templates; Alembic `f5d6e7f8a9b0`; tests; FG-035; ADR-053; continuity |
+| Files prohibited from changing | SCH/PERF/CLOSE/LEARN/QB-T; EST-2026-0019; V1 rescore; clock-in/GPS; Help/Voice/Manual |
+| Implementation result | FG-035 **OPEN / PARTIAL**. TIME **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**. Live current `f5d6e7f8a9b0 (head)`. EST-2026-0019 unchanged. PRODUCTION packages **0**. V1 **not rescored**. |
+| Tests | Dedicated TIME included in focused TIME+SCOPE+TAX/WBS **31 passed**, 278 warnings, **16.29s**. Hub/Field/MONITOR+TIME **76 passed**, **35.03s**. Full suite **1083 passed**, 3616 warnings, **466.85s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | SCH / PERF not authorized. Physical iPhone Time UAT **DEFERRED**. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH / PERF. |
+| Next approved prompt | None from this close. |
+| Commit hash | (pending) |
+
 ### 2026-09-15 — FG-035 SCOPE original / Change Order / Extra Work lineage
 
 | Field | Content |

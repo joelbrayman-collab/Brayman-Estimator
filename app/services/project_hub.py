@@ -50,6 +50,7 @@ from app.services.work_structure import (
     get_project_seed,
     list_project_work_elements,
 )
+from app.services.time_entry import project_time_summary
 
 
 def assemble_project_hub(project, organization_id: str) -> dict:
@@ -201,6 +202,7 @@ def assemble_project_hub(project, organization_id: str) -> dict:
         ),
         "scope_kind_label": contractor_scope_label,
         "change_order_label": contractor_change_order_label,
+        "time_summary": project_time_summary(project.id, organization_id=organization_id),
     }
 
 

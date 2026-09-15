@@ -1,0 +1,30 @@
+{% extends "field/base.html" %}
+{% block title %}{{ contractor_copy.FIELD_MY_TIME_HEADING }} — CalibraytAI{% endblock %}
+{% block field_page %}my-time{% endblock %}
+{% block content %}
+<section class="field-panel">
+    <h1>{{ contractor_copy.FIELD_MY_TIME_HEADING }}</h1>
+    {% if project %}
+    <p class="field-project-name">{{ project.name }}</p>
+    <a class="field-btn field-btn-primary" href="{{ url_for('field.time_entry', project_id=project.id) }}">{{ contractor_copy.FIELD_TIME_BUTTON }}</a>
+    {% endif %}
+    {% if rows %}
+    <ul class="field-time-list">
+        {% for row in rows %}
+        <li class="field-time-item{% if row.is_extra_work %} field-time-item-extra{% endif %}">
+            <p class="field-recent-meta">{{ row.entry.work_date.isoformat() }} · {{ row.status_label }}</p>
+            <p>{{ row.entry.project_name }}</p>
+            <p>{{ row.entry.element_display_name }} — {{ row.entry.activity_display_name }}</p>
+            <p>{{ "%.2f"|format(row.entry.hours) }} hours</p>
+            {% if row.entry.status == 'RETURNED' %}
+            <a class="field-btn field-btn-secondary" href="{{ url_for('field.time_entry', project_id=row.entry.project_id, returned_id=row.entry.id) }}">Fix and send again</a>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="field-muted">No time recorded yet.</p>
+    {% endif %}
+    <a class="field-btn field-btn-secondary" href="{{ url_for('field.today') }}">Back to Today</a>
+</section>
+{% endblock %}

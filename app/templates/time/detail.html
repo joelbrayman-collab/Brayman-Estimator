@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Time {{ row.entry.work_date.isoformat() }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.TIME_HEADING }}{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">{{ row.entry.project_name }}</p>
+        <h1>{{ row.entry.worker_display_name }} · {{ "%.2f"|format(row.entry.hours) }} hours</h1>
+        <p>{{ row.entry.element_display_name }} — {{ row.entry.activity_display_name }}</p>
+    </div>
+    <a class="button-link" href="{{ url_for('time_entry.review') }}">{{ contractor_copy.TIME_REVIEW_HEADING }}</a>
+</div>
+
+<article class="panel panel-wide{% if row.is_extra_work %} scope-extra-work-panel{% endif %}">
+    <p>
+        <span class="status">{{ row.status_label }}</span>
+        · {{ row.scope_label }}
+        {% if row.change_order_label %} · {{ row.change_order_label }}{% endif %}
+        · {{ row.entry.work_date.isoformat() }}
+    </p>
+    {% if row.is_extra_work %}
+    <p class="scope-extra-work-banner">{{ contractor_copy.SCOPE_EXTRA_WORK_BANNER }}</p>
+    {% endif %}
+    {% if row.entry.worker_note %}
+    <p>Note: {{ row.entry.worker_note }}</p>
+    {% endif %}
+    {% if row.entry.return_reason %}
+    <p>Returned: {{ row.entry.return_reason }}</p>
+    {% endif %}
+    {% if can_review and row.needs_approval %}
+    <form method="post" action="{{ url_for('time_entry.approve', time_entry_id=row.entry.id) }}" class="form-actions">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">{{ contractor_copy.TIME_APPROVE_BUTTON }}</button>
+    </form>
+    <form method="post" action="{{ url_for('time_entry.return_entry', time_entry_id=row.entry.id) }}" class="form-panel">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>
+            Return reason
+            <input type="text" name="reason" required>
+        </label>
+        <div class="form-actions">
+            <button type="submit">{{ contractor_copy.TIME_RETURN_BUTTON }}</button>
+        </div>
+    </form>
+    {% endif %}
+    {% if can_review and row.entry.status == 'APPROVED' %}
+    <form method="post" action="{{ url_for('time_entry.correct', time_entry_id=row.entry.id) }}" class="form-panel">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <p class="muted-copy">Correcting approved time keeps the original entry and records a replacement.</p>
+        <div class="form-grid">
+            <label>
+                Corrected hours
+                <input type="number" name="hours" min="0.25" max="16" step="0.25" required value="{{ '%.2f'|format(row.entry.hours) }}">
+            </label>
+            <label>
+                Date
+                <input type="date" name="work_date" value="{{ row.entry.work_date.isoformat() }}">
+            </label>
+            <label>
+                Reason
+                <input type="text" name="reason" required>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Correct approved time</button>
+        </div>
+    </form>
+    {% endif %}
+</article>
+
+<article class="panel panel-wide">
+    <div class="panel-header">
+        <h2>History</h2>
+    </div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>When</th>
+                <th>What happened</th>
+                <th>Who</th>
+                <th>Hours</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in row.entry.history %}
+            <tr>
+                <td>{{ event.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                <td>{{ status_label(event.new_status) if event.event != 'RESUBMITTED' else 'Sent again' }}</td>
+                <td>{{ event.actor_display_name }}</td>
+                <td>{{ "%.2f"|format(event.hours_snapshot) }}</td>
+                <td>{{ event.reason or "—" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</article>
+{% endblock %}

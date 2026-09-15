@@ -105,6 +105,7 @@ from app.models.work_structure import (
     WorkElementTemplate,
     WorkType,
 )
+from app.models.time_entry import LabourTimeEntry, LabourTimeHistory
 from app.models.historical_estimates import (
     HistoricalCostLineItem,
     HistoricalDataQualityFlag,
@@ -214,6 +215,8 @@ __all__ = [
     "WorkActivityTemplate",
     "WorkElementTemplate",
     "WorkType",
+    "LabourTimeEntry",
+    "LabourTimeHistory",
     "Organization",
     "User",
     "UserMembership",

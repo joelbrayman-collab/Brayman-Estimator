@@ -441,6 +441,53 @@
         </div>
         {% endif %}
     </article>
+    <article class="panel panel-wide" id="hub-time">
+        <div class="panel-header">
+            <h2>{{ contractor_copy.TIME_HUB_HEADING }}</h2>
+            <a href="{{ url_for('time_entry.review', project_id=project.id) }}">Review time</a>
+        </div>
+        <p class="muted-copy">
+            Approved hours: {{ "%.2f"|format(hub.time_summary.approved_hours) }}
+            · Waiting for approval: {{ "%.2f"|format(hub.time_summary.pending_hours) }}
+            · Extra work hours: {{ "%.2f"|format(hub.time_summary.extra_work_hours) }}
+        </p>
+        {% if hub.time_summary.recent %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Worker</th>
+                    <th>Work</th>
+                    <th>Hours</th>
+                    <th>Kind</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in hub.time_summary.recent %}
+                <tr class="{% if entry.scope_origin == 'EXTRA_WORK' %}scope-extra-work-row{% endif %}">
+                    <td><a href="{{ url_for('time_entry.detail', time_entry_id=entry.id) }}">{{ entry.work_date.isoformat() }}</a></td>
+                    <td>{{ entry.worker_display_name }}</td>
+                    <td>{{ entry.element_display_name }} — {{ entry.activity_display_name }}</td>
+                    <td>{{ "%.2f"|format(entry.hours) }}</td>
+                    <td>
+                        {{ hub.time_summary.scope_kind_label(entry.scope_origin) }}
+                        {% if entry.change_order %}
+                        · {{ hub.time_summary.change_order_label(entry.change_order) }}
+                        {% endif %}
+                    </td>
+                    <td><span class="status">{{ hub.time_summary.status_label(entry.status) }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state empty-state-compact">
+            <h3>No time yet</h3>
+            <p>Field time for this project will appear here after it is sent.</p>
+        </div>
+        {% endif %}
+    </article>
     <article class="panel panel-wide">
         <div class="panel-header">
             <h2>Related Change Orders</h2>

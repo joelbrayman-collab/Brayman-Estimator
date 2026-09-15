@@ -812,8 +812,55 @@
     retryExisting(projectId);
   }
 
+  function initTimeForm() {
+    var element = document.getElementById("field-time-element");
+    var activity = document.getElementById("field-time-activity");
+    var extraToggle = document.getElementById("field-time-extra-toggle");
+    var extra = document.getElementById("field-time-extra");
+    if (element && activity) {
+      function filterActivities() {
+        var selected = element.value;
+        Array.prototype.forEach.call(activity.options, function (option) {
+          if (!option.value) {
+            option.hidden = false;
+            return;
+          }
+          option.hidden = option.getAttribute("data-element-id") !== selected;
+        });
+        if (activity.selectedOptions.length && activity.selectedOptions[0].hidden) {
+          activity.value = "";
+        }
+      }
+      element.addEventListener("change", filterActivities);
+      filterActivities();
+      Array.prototype.forEach.call(
+        document.querySelectorAll(".field-time-recent-btn"),
+        function (button) {
+          button.addEventListener("click", function () {
+            element.value = button.getAttribute("data-element-id") || "";
+            filterActivities();
+            activity.value = button.getAttribute("data-activity-id") || "";
+          });
+        }
+      );
+    }
+    if (extraToggle && extra) {
+      extraToggle.addEventListener("click", function () {
+        var open = extra.hasAttribute("hidden");
+        if (open) {
+          extra.removeAttribute("hidden");
+          extraToggle.setAttribute("aria-expanded", "true");
+        } else {
+          extra.setAttribute("hidden", "hidden");
+          extraToggle.setAttribute("aria-expanded", "false");
+        }
+      });
+    }
+  }
+
   function init() {
     bindLogout();
+    initTimeForm();
     openDb()
       .then(function () {
         persistenceReady = true;

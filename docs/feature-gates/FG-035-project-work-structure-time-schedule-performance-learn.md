@@ -5,14 +5,14 @@
 | Feature Gate ID | `FG-035` |
 | Feature Name | Project Work Structure, Time, Schedule, Performance, and LEARN V1 |
 | Target Milestone | Operational / learning loop (Time, Schedule, MONITOR labour-hours remainder, Closeout LEARN quality, calibration). Complements V1-08 / V1-11. **Does not rescore V1.** |
-| Module | **Projects** owns work-structure catalog and Project Element / Activity instances. Estimating owns `LabourTask` / snapshots (referenced). BUILD will own Time later. MONITOR remains a consumer. LEARN remains a consumer. Project Controls owns `ChangeOrder` (referenced later by SCOPE). |
+| Module | **Projects** owns work-structure catalog and Project Element / Activity instances. Estimating owns `LabourTask` / snapshots (referenced). BUILD owns Time Entry (`labour_time_entries`). MONITOR remains a consumer. LEARN remains a consumer. Project Controls owns `ChangeOrder` (referenced by SCOPE). |
 | Date | 2026-09-15 |
-| Status | **OPEN / PARTIAL.** TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME / SCH / PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. |
+| Status | **OPEN / PARTIAL.** TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH / PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. |
 | Architecture | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. Product direction [project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md) **FUTURE / RECORDED**. [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED** (not reopened). [FG-032](FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED** (not rewritten). [FG-033](FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED**. [FG-034](FG-034-account-recovery-and-transactional-email.md) **CLOSED**. |
 | Related ADRs | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md). [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md). [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md). [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md). [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md). |
 | Prerequisites | FG-008 labour snapshots. FG-011 Project Hub. FG-018 office auth. ADR-053 Accepted. |
 
-**Subsequent status (2026-09-15):** SCOPE **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**. Additive **`f4c5d6e7f8a9`**. Evidence [fg035-scope-live-bounded-uat-record.md](../testing/fg035-scope-live-bounded-uat-record.md). TIME / SCH / PERF / CLOSE / LEARN / QB-T remain **NOT AUTHORIZED**. [architecture/interactive-help-voice-and-user-manual-future-record.md](../architecture/interactive-help-voice-and-user-manual-future-record.md) remains **COMPLETE FOR PRODUCT-DIRECTION RECORDING / NOT IMPLEMENTATION-AUTHORIZED**. Do **not** implement Help, Voice, Manual, Time, or Schedule from this gate.
+**Subsequent status (2026-09-15):** SCOPE **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**. Additive **`f4c5d6e7f8a9`**. Evidence [fg035-scope-live-bounded-uat-record.md](../testing/fg035-scope-live-bounded-uat-record.md). TIME **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**. Additive **`f5d6e7f8a9b0`**. Evidence [fg035-time-live-bounded-uat-record.md](../testing/fg035-time-live-bounded-uat-record.md). SCH / PERF / CLOSE / LEARN / QB-T remain **NOT AUTHORIZED**. [architecture/interactive-help-voice-and-user-manual-future-record.md](../architecture/interactive-help-voice-and-user-manual-future-record.md) remains **COMPLETE FOR PRODUCT-DIRECTION RECORDING / NOT IMPLEMENTATION-AUTHORIZED**. Do **not** implement Help, Voice, Manual, or Schedule from this gate.
 
 ---
 
@@ -23,13 +23,13 @@
 | Feature Gate (this document) | **OPEN / PARTIAL** |
 | TAX/WBS | **IMPLEMENTED** — baseline + org catalog; Project Element / Activity instances; explicit EstimateLabourSnapshot seed; Hub Project work |
 | SCOPE | **IMPLEMENTED** — ORIGINAL / CHANGE_ORDER / EXTRA_WORK lineage on Project work; Change Order deltas; Extra Work; Hub/Field presentation |
-| TIME | **NOT AUTHORIZED** |
+| TIME | **IMPLEMENTED** |
 | SCH | **NOT AUTHORIZED** |
 | PERF | **NOT AUTHORIZED** |
 | CLOSE | **NOT AUTHORIZED** |
 | LEARN | **NOT AUTHORIZED** |
 | QB-T | **NOT AUTHORIZED** |
-| Schema / Alembic | Additive TAX/WBS **`f3b4c5d6e7f8`** revises **`f2a3b4c5d6e7`**. Additive SCOPE **`f4c5d6e7f8a9`** revises **`f3b4c5d6e7f8`** |
+| Schema / Alembic | Additive TAX/WBS **`f3b4c5d6e7f8`** revises **`f2a3b4c5d6e7`**. Additive SCOPE **`f4c5d6e7f8a9`** revises **`f3b4c5d6e7f8`**. Additive TIME **`f5d6e7f8a9b0`** revises **`f4c5d6e7f8a9`** |
 | V1 scoring | **NOT RESCORED** (**60% / 4 of 11**) |
 
 ```text
@@ -37,7 +37,7 @@ FG-035:
 OPEN / PARTIAL
 TAX/WBS IMPLEMENTED
 SCOPE IMPLEMENTED
-TIME NOT AUTHORIZED
+TIME IMPLEMENTED
 SCH NOT AUTHORIZED
 PERF NOT AUTHORIZED
 CLOSE NOT AUTHORIZED
@@ -98,11 +98,13 @@ Baseline catalog + organization extensions + Project instances. Work-structure P
 
 Original Estimate-seeded work is immutable historical evidence. Eligible Change Orders (Approved / Invoiced) add work or labour/quantity deltas. Draft / unapproved COs cannot become authorized Project scope. Extra Work is operational capture before a CO exists. `ChangeOrder` remains the sole commercial SoR. Evidence [testing/fg035-scope-live-bounded-uat-record.md](../testing/fg035-scope-live-bounded-uat-record.md).
 
-**STOP:** no Time; no Schedule.
+**STOP:** no Schedule.
 
 ### TIME — Field duration entry and approval
 
-**Status: NOT AUTHORIZED.**
+**Status: IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS.** Duration-based Time Entry (`labour_time_entries` / `labour_time_history`). Worker enters Project → work → hours. SCOPE lineage is inherited via `inherit_scope_lineage()`. Extra Work uses existing `create_extra_work`. No Draft. No clock-in. No offline Time sync. Submitted is not approved actual. Self-approval fail-closed. Approved labour query: `approved_labour_hours()`. Field `/field/.../time` + My time; office `/time`; Hub `#hub-time`. Additive **`f5d6e7f8a9b0`**. Evidence [testing/fg035-time-live-bounded-uat-record.md](../testing/fg035-time-live-bounded-uat-record.md).
+
+**STOP:** no Schedule; no labour-budget alerts; no QB Time export.
 
 ### SCH — Dynamic Schedule + assignment + desktop/iPhone calendar
 
@@ -131,7 +133,8 @@ Original Estimate-seeded work is immutable historical evidence. Eligible Change 
 ```text
 TAX/WBS: LOCAL OFFICE UAT PROVEN.
 SCOPE: LOCAL OFFICE UAT PROVEN.
+TIME: LOCAL OFFICE SYNTHETIC UAT PROVEN.
 LATER SLICES: NOT AUTHORIZED.
-DO NOT IMPLEMENT TIME OR SCHEDULE FROM THIS GATE ALONE.
+DO NOT IMPLEMENT SCHEDULE FROM THIS GATE ALONE.
 V1 NOT RESCORED.
 ```

@@ -50,7 +50,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Three-layer taxonomy. Explicit locked snapshot seed. LabourTask not merged. Commercial project_type unchanged. |
 | Open decisions | Later slice authorization. V1 remains **60% / 4 of 11**. |
 | Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin SCOPE / TIME / SCH from this note. |
-| Commit | this FG-035 TAX/WBS product commit |
+| Commit | `c8c01269ecbb30f6920c44af9c503eb73eec6e92` |
 | Date | 2026-09-15 |
 
 ### 2026-09-15 — FG-034 AUTH-D complete Account Recovery + transactional email close

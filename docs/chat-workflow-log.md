@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Later FG-035 slices not authorized. Live Postmark deferred. Physical iPhone UAT deferred. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin SCOPE / TIME / SCH. Do **not** rescore V1. |
 | Next approved prompt | None from this close. |
-| Commit hash | (this FG-035 TAX/WBS product commit) |
+| Commit hash | `c8c01269ecbb30f6920c44af9c503eb73eec6e92` |
 
 ### 2026-09-15 — FG-034 AUTH-D complete Account Recovery + transactional email close
 

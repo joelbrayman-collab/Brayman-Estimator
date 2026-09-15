@@ -183,3 +183,39 @@ body.sign-body {
     margin: 12px 0 4px;
     font-weight: 600;
 }
+
+/* One responsive ceremony. Desktop + iPhone / mobile. No device-specific forks. */
+
+@media (min-width: 768px) {
+    body.sign-body {
+        padding: calc(32px + var(--sign-pad-top)) calc(40px + var(--sign-pad-right)) calc(40px + var(--sign-pad-bottom)) calc(40px + var(--sign-pad-left));
+    }
+
+    .sign-main {
+        max-width: 42rem;
+    }
+
+    .sign-panel {
+        padding: 24px 28px;
+    }
+
+    .sign-doc-title {
+        font-size: 1.45rem;
+    }
+
+    .sign-org {
+        font-size: 1.35rem;
+    }
+
+    .sign-brand img {
+        height: 48px;
+    }
+}
+
+@media (max-width: 767px) {
+    .sign-btn,
+    .sign-btn-primary,
+    .sign-input {
+        width: 100%;
+    }
+}

@@ -2,9 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Partial Current.** [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **OPEN / PARTIAL**. SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C **IMPLEMENTED**. SIGN-D **IMPLEMENTED** (automated). SIGN-E **NOT STARTED**. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. Production / real-customer Native Signing **NOT COMPLETE**. No external-review dependency in the development workflow. |
+| Status | **Current.** [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED / OPERATIONAL FOR UAT**. SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C **IMPLEMENTED**. SIGN-D **IMPLEMENTED** (automated). SIGN-E **IMPLEMENTED**. Native Signing functional target: **desktop + iPhone / mobile** on one responsive ceremony. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. Production / real-customer Native Signing **NOT COMPLETE**. No external-review dependency in the development workflow. |
 | Updated | 2026-09-15 |
-| Code | `app/models/signing.py`, `app/services/signing.py`, `app/services/signing_artifact_storage.py`, `app/services/signing_executed_pdf.py`, `app/cli/signing.py`, `app/routes/sign.py`, `app/routes/signing.py`, `app/templates/signing/`, `app/static/css/signing.css` |
+| Code | `app/models/signing.py`, `app/services/signing.py`, `app/services/signing_artifact_storage.py`, `app/services/signing_executed_pdf.py`, `app/services/signing_docx_pdf.py`, `app/cli/signing.py`, `app/routes/sign.py`, `app/routes/signing.py`, `app/templates/signing/`, `app/static/css/signing.css` |
 | Feature Gate | [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) |
 | Architecture | [contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md) |
 
@@ -16,7 +16,7 @@ Native Signing is an **overlay**. It freezes a signable artifact and records a g
 
 - Request identity `SIGN-YYYY-NNNN`
 - Change Order: freeze current governed ReportLab PDF once into private `instance/signing_artifacts/<org>/<sha>.pdf`
-- Generated contract: bind retained TECH-C DOCX + SHA-256 + Family 05 provenance; **no** DOCX→PDF in SIGN-A
+- Generated contract: bind retained TECH-C DOCX + SHA-256 + Family 05 provenance; convert-once PDF is SIGN-E
 - Participants: `CUSTOMER` plus optional `ORGANIZATION_COUNTERSIGN` foundation
 - Consent version pin (`CONSENT-SYNTHETIC-UAT-001` seeded for SYNTHETIC_UAT)
 - HUMAN office create + APPROVED_FOR_SIGNATURE
@@ -33,14 +33,14 @@ Native Signing is an **overlay**. It freezes a signable artifact and records a g
 - Expiry enforced from the request pin; completed token cannot sign again
 - Presentation rate limit (`signing_token_access_attempts`; default 8 fails / 900s)
 - Frozen Change Order PDF review/download; live CO mutation does not change reviewed bytes
-- Contract customer PDF **BLOCK** (`CONTRACT_PDF_NOT_AVAILABLE`; SIGN-E)
+- Contract customer PDF is SIGN-E convert-once; historical DOCX freeze remains `CONTRACT_PDF_NOT_AVAILABLE`
 - Pinned consent version; explicit accept; typed-name SIGN & ACCEPT
 - CSRF on public SIGN & ACCEPT
 - Evidence: confirmed name, UTC `signed_at`, completion IP, basic user-agent, artifact SHA
 - Status `APPROVED_FOR_SIGNATURE` → `SENT` → `SIGNED`
 - Events `SENT` / `VIEWED` / `CONSENT_ACCEPTED` / `SIGNED` (VIEWED is an event, not a status)
 - If `countersign_required`: customer confirmation is SIGNED, awaiting organization countersignature
-- iPhone-first standalone ceremony CSS; no office chrome
+- iPhone-first standalone ceremony CSS; desktop `@media (min-width: 768px)` on the same sheet; no office chrome
 - Office CLI `flask signing invite` returns one copyable URL
 - RESEND is SIGN-C
 - Additive Alembic **`c8d9e0f1a2b3`** (parent `b7c8d9e0f1a2`)
@@ -63,7 +63,7 @@ Native Signing is an **overlay**. It freezes a signable artifact and records a g
 ## Owned data
 
 - `signing_consent_versions`
-- `signing_frozen_artifacts`
+- `signing_frozen_artifacts` (SIGN-E converter provenance nullable)
 - `signing_requests`
 - `signing_participants` (token hash-at-rest + SIGN-B evidence columns)
 - `signing_events`
@@ -72,22 +72,23 @@ Native Signing is an **overlay**. It freezes a signable artifact and records a g
 
 Private bytes: `instance/signing_artifacts/` (gitignored).
 
-## Prohibited (SIGN-D)
+## Prohibited
 
 - Transactional email
-- LibreOffice conversion (SIGN-E)
+- ReportLab / HTML Family 05 substitute
 - Customer account registration
 - Mutating `CHANGE_ORDER_STATUSES` or generated-contract `GENERATED`
 - EST-2026-0019
 - Inventing RBAC
 - Legal-review approval states / fields
 - Overwriting the pre-sign freeze
+- Device-specific signing forks
 
-## SIGN-D (current)
+## SIGN-D
 
 - Office Send for Signature on Approved Change Orders
 - Hub labels UNSIGNED / AWAITING SIGNATURE / SIGNED / EXECUTED
-- Customer `/sign` name-first copy; iPhone-first CSS; no office chrome
+- Customer `/sign` name-first copy; responsive CSS; no office chrome
 - Complete synthetic E2E: freeze → invite → SENT → customer sign → countersign → EXECUTED
 - No-countersign auto-EXECUTED path
 - VOID / RESEND / EXPIRE / DECLINE / replay / invalid token fail-closed
@@ -95,6 +96,11 @@ Private bytes: `instance/signing_artifacts/` (gitignored).
 - Automated mobile markup/CSS/copy/state assertions
 - Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**
 
-## Later slices (not started)
+## SIGN-E (current)
 
-SIGN-E Family 05 DOCX→PDF + synthetic contract signing UAT.
+- Family 05 retained DOCX → LibreOffice/soffice **once** → retain PDF + converter provenance
+- Missing converter **BLOCK**; failed conversion does not retain a PDF
+- Same signing engine, request lifecycle, `/sign` routes, token, signature evidence, and audit for CONTRACT and CHANGE_ORDER
+- Desktop + iPhone / mobile functional parity; one responsive ceremony; no device-specific forks
+- PRODUCTION contract send **BLOCK** without ACTIVE PRODUCTION package
+- Additive Alembic **`e0f1a2b3c4d5`** (parent `d9e0f1a2b3c4`)

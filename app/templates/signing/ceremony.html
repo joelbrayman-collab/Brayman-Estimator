@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/signing.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
-<body class="sign-body" data-sign-page="ceremony" data-sign-status="{{ signing_request.status }}">
+<body class="sign-body" data-sign-page="ceremony" data-sign-status="{{ signing_request.status }}" data-sign-family="{{ family_label|lower|replace(' ', '-') }}" data-sign-responsive="one-ceremony">
     <main class="sign-main" id="main-content">
         <div class="sign-brand">
             <img
@@ -58,13 +58,13 @@
             {% if executed %}
             <a class="sign-btn sign-btn-primary" href="{{ url_for('sign.executed', credential=credential) }}">Download the completed document</a>
             <p class="sign-muted">Names are on the last page. The original form lines stay blank.</p>
-            {% elif is_change_order_pdf %}
+            {% elif has_frozen_pdf %}
             <a class="sign-btn" href="{{ url_for('sign.document', credential=credential) }}">Review the document</a>
             {% endif %}
         </section>
         {% else %}
         <section class="sign-panel">
-            {% if is_change_order_pdf %}
+            {% if has_frozen_pdf %}
             <a class="sign-btn sign-btn-primary" href="{{ url_for('sign.document', credential=credential) }}">Review the document</a>
             {% else %}
             <p class="sign-muted">A document copy is not available to review in this step.</p>

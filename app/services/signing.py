@@ -4,6 +4,7 @@ SIGN-A: freeze + CREATED → APPROVED_FOR_SIGNATURE.
 SIGN-B: invitation token + SENT → SIGNED.
 SIGN-C: countersign + executed PDF custody + VOID / EXPIRE / DECLINE / RESEND.
 SIGN-D: Change Order office/Hub overlay. No schema change.
+SIGN-E: Family 05 convert-once DOCX → PDF + contract ceremony on the same engine.
 """
 
 from __future__ import annotations
@@ -29,6 +30,7 @@ from app.models.signing import (
     ACTOR_HUMAN,
     ACTOR_SIGNER,
     ACTOR_SYSTEM,
+    AUTHORITY_PRODUCTION,
     AUTHORITY_SYNTHETIC_UAT,
     CONSENT_SYNTHETIC_UAT_BODY,
     CONSENT_SYNTHETIC_UAT_CODE,
@@ -71,13 +73,14 @@ from app.project_controls.models import ChangeOrder
 from app.project_controls.pdf import generate_change_order_pdf
 from app.project_controls.repository import get_change_order
 from app.services.contract_artifact_storage import read_retained_docx
-from app.services.family_05_master import FAMILY_05_MASTER_SHA256, FAMILY_05_MEDIA_TYPE
+from app.services.family_05_master import FAMILY_05_MASTER_SHA256
 from app.services.signing_artifact_storage import (
     SigningArtifactStorageError,
     read_retained_bytes,
     sha256_hex,
     store_immutable_bytes,
 )
+from app.services.signing_docx_pdf import DocxPdfConversionError, convert_docx_to_pdf
 from app.services.signing_executed_pdf import assemble_executed_pdf
 
 PROTECTED_ESTIMATE_NUMBER = "EST-2026-0019"
@@ -122,6 +125,11 @@ BLOCK_TOKEN_RATE_LIMITED = "TOKEN_RATE_LIMITED"
 BLOCK_CONSENT_NOT_ACCEPTED = "CONSENT_NOT_ACCEPTED"
 BLOCK_CONFIRMED_NAME_REQUIRED = "CONFIRMED_NAME_REQUIRED"
 BLOCK_CONTRACT_PDF_NOT_AVAILABLE = "CONTRACT_PDF_NOT_AVAILABLE"
+BLOCK_NO_ACTIVE_PRODUCTION_PACKAGE = "NO_ACTIVE_PRODUCTION_PACKAGE"
+BLOCK_CONVERTER_UNAVAILABLE = "CONVERTER_UNAVAILABLE"
+BLOCK_CONVERSION_FAILED = "CONVERSION_FAILED"
+BLOCK_CONVERSION_EMPTY = "CONVERSION_EMPTY"
+BLOCK_CONVERSION_NOT_PDF = "CONVERSION_NOT_PDF"
 BLOCK_REQUEST_TERMINAL = "REQUEST_TERMINAL"
 BLOCK_AI_CANNOT_COUNTERSIGN = "AI_CANNOT_COUNTERSIGN"
 BLOCK_REQUEST_NOT_SIGNED = "REQUEST_NOT_SIGNED"
@@ -319,6 +327,17 @@ def _guard_protected_estimate_number(estimate_number: Optional[str]) -> None:
         raise SigningServiceError(BLOCK_PROTECTED_COMMERCIAL_RECORD)
 
 
+def _require_active_production_package_for_production(authority: str) -> None:
+    if authority != AUTHORITY_PRODUCTION:
+        return
+    count = LegalContentJurisdictionPackage.query.filter_by(
+        authority_class=AUTHORITY_PRODUCTION,
+        library_state="ACTIVE",
+    ).count()
+    if count == 0:
+        raise SigningServiceError(BLOCK_NO_ACTIVE_PRODUCTION_PACKAGE)
+
+
 def _store_frozen(
     *,
     organization_id: str,
@@ -330,6 +349,9 @@ def _store_frozen(
     source_docx_sha256: Optional[str] = None,
     presentation_master_sha256: Optional[str] = None,
     presentation_master_filename: Optional[str] = None,
+    converter_identity: Optional[str] = None,
+    converter_version: Optional[str] = None,
+    converted_at: Optional[datetime] = None,
 ) -> SigningFrozenArtifact:
     storage_key, digest = store_immutable_bytes(
         organization_id,
@@ -346,6 +368,9 @@ def _store_frozen(
         source_docx_sha256=source_docx_sha256,
         presentation_master_sha256=presentation_master_sha256,
         presentation_master_filename=presentation_master_filename,
+        converter_identity=converter_identity,
+        converter_version=converter_version,
+        converted_at=converted_at,
     )
     db.session.add(artifact)
     db.session.flush()
@@ -395,16 +420,27 @@ def bind_generated_contract_source(
     expected = (contract.artifact_sha256 or snapshot.artifact_sha256 or "").lower()
     if digest != expected:
         raise SigningServiceError(BLOCK_ARTIFACT_SHA_MISMATCH)
+    try:
+        converted = convert_docx_to_pdf(data, source_docx_sha256=digest)
+    except DocxPdfConversionError as exc:
+        raise SigningServiceError(exc.code) from exc
+    if converted.source_docx_sha256 != digest:
+        raise SigningServiceError(BLOCK_ARTIFACT_SHA_MISMATCH)
+    if not converted.pdf_bytes or not converted.pdf_bytes.startswith(b"%PDF"):
+        raise SigningServiceError(BLOCK_CONVERSION_NOT_PDF)
     return _store_frozen(
         organization_id=organization_id,
         document_family=DOCUMENT_FAMILY_CONTRACT,
         source_record_id=contract.id,
-        data=data,
-        extension=".docx",
-        media_type=FAMILY_05_MEDIA_TYPE,
+        data=converted.pdf_bytes,
+        extension=".pdf",
+        media_type=PDF_MEDIA_TYPE,
         source_docx_sha256=digest,
         presentation_master_sha256=snapshot.presentation_master_sha256,
         presentation_master_filename=snapshot.presentation_master_filename,
+        converter_identity=converted.converter_identity,
+        converter_version=converted.converter_version,
+        converted_at=converted.converted_at,
     )
 
 
@@ -541,6 +577,7 @@ def create_contract_signing_request(
     source_authority = _source_authority_class(contract)
     if source_authority != authority:
         raise SigningServiceError(BLOCK_AUTHORITY_CLASS_MISMATCH)
+    _require_active_production_package_for_production(authority)
     artifact = bind_generated_contract_source(contract, organization_id)
     request = SigningRequest(
         organization_id=organization_id,
@@ -614,6 +651,8 @@ def approve_signing_request(
             raise SigningServiceError(BLOCK_SNAPSHOT_MISSING)
         if (contract.snapshot.presentation_master_sha256 or "") != FAMILY_05_MASTER_SHA256:
             raise SigningServiceError(BLOCK_PRESENTATION_MASTER_SHA_MISMATCH)
+        if artifact.media_type != PDF_MEDIA_TYPE:
+            raise SigningServiceError(BLOCK_CONTRACT_PDF_NOT_AVAILABLE)
     else:
         raise SigningServiceError(BLOCK_DOCUMENT_FAMILY_INVALID)
     if not (request.participants or []):
@@ -802,6 +841,8 @@ def issue_customer_invitation(
         raise SigningServiceError(BLOCK_REQUEST_TERMINAL)
     if request.status != STATUS_APPROVED_FOR_SIGNATURE:
         raise SigningServiceError(BLOCK_REQUEST_NOT_APPROVED)
+    if request.document_family == DOCUMENT_FAMILY_CONTRACT:
+        _require_active_production_package_for_production(request.authority_class)
     now = datetime.utcnow()
     if request.expires_at is None or request.expires_at <= now:
         raise SigningServiceError(BLOCK_TOKEN_EXPIRED)
@@ -954,8 +995,6 @@ def record_customer_viewed(access: ResolvedSigningAccess) -> SigningRequest:
 
 def frozen_pdf_bytes_for_customer(access: ResolvedSigningAccess) -> bytes:
     request = access.request
-    if request.document_family != DOCUMENT_FAMILY_CHANGE_ORDER:
-        raise SigningServiceError(BLOCK_CONTRACT_PDF_NOT_AVAILABLE)
     if request.frozen_artifact.media_type != PDF_MEDIA_TYPE:
         raise SigningServiceError(BLOCK_CONTRACT_PDF_NOT_AVAILABLE)
     return retrieve_frozen_artifact_bytes(request.frozen_artifact)
@@ -1047,9 +1086,7 @@ def _expire_request_once(
     return True
 
 
-def _require_signed_change_order_pdf(request: SigningRequest) -> bytes:
-    if request.document_family != DOCUMENT_FAMILY_CHANGE_ORDER:
-        raise SigningServiceError(BLOCK_CONTRACT_PDF_NOT_AVAILABLE)
+def _require_frozen_signable_pdf(request: SigningRequest) -> bytes:
     if request.frozen_artifact.media_type != PDF_MEDIA_TYPE:
         raise SigningServiceError(BLOCK_CONTRACT_PDF_NOT_AVAILABLE)
     return retrieve_frozen_artifact_bytes(request.frozen_artifact)
@@ -1069,7 +1106,7 @@ def _retain_executed_artifact(
         raise SigningServiceError(BLOCK_REQUEST_NOT_SIGNED)
     _require_customer_signature(request)
     store = store_bytes or store_immutable_bytes
-    frozen_bytes = _require_signed_change_order_pdf(request)
+    frozen_bytes = _require_frozen_signable_pdf(request)
     try:
         executed_bytes = assemble_executed_pdf(
             frozen_bytes,

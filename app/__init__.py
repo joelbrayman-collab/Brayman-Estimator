@@ -217,6 +217,9 @@ def create_app(config=None):
         )
     app.config.setdefault("SIGNING_TOKEN_FAIL_LIMIT", 8)
     app.config.setdefault("SIGNING_TOKEN_FAIL_WINDOW_SECONDS", 900)
+    app.config.setdefault("SIGNING_SOFFICE_PATH", None)
+    app.config.setdefault("SIGNING_SOFFICE_TIMEOUT_SECONDS", 60)
+    app.config.setdefault("SIGNING_DOCX_TO_PDF", None)
 
     db.init_app(app)
     migrate.init_app(app, db)

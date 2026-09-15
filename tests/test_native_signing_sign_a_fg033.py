@@ -48,6 +48,7 @@ from app.services.family_05_master import FAMILY_05_MASTER_SHA256, governed_pres
 from app.services.jurisdiction import ensure_jurisdiction_seed
 from app.services.legal_content_update import activate_legal_content
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
+from tests.signing_conversion_support import injected_docx_to_pdf
 from app.services.permit_foundation import establish_project_location_and_profile
 from app.services.proposals import create_proposal, create_proposal_template
 from app.services.signing import (
@@ -104,6 +105,7 @@ def app():
             "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
             "SECRET_KEY": "test-secret-fg033-sign-a",
             "WTF_CSRF_ENABLED": False,
+            "SIGNING_DOCX_TO_PDF": injected_docx_to_pdf,
         }
     )
     with application.app_context():
@@ -220,7 +222,13 @@ def _ottawa_project():
     return project
 
 
-def _synthetic_generated_contract():
+def _synthetic_generated_contract(
+    *,
+    package_code="FG033A-UAT-ON-001",
+    estimate_number="EST-FG033A-UAT-0001",
+    proposal_number="PROP-FG033A-UAT-0001",
+    template_name="FG033A Template",
+):
     from app.models.jurisdiction import JurisdictionDefinition
     from app.models.project_contract import GeneratedProjectContract
 
@@ -228,7 +236,7 @@ def _synthetic_generated_contract():
     now = datetime.utcnow()
     node = JurisdictionDefinition.query.filter_by(code="CA-ON").one()
     package = LegalContentJurisdictionPackage(
-        package_code="FG033A-UAT-ON-001",
+        package_code=package_code,
         jurisdiction_definition_id=node.id,
         country_code="CA",
         province_or_state_code="CA-ON",
@@ -274,7 +282,7 @@ def _synthetic_generated_contract():
     )
     estimate = create_estimate(
         project_id=project.id,
-        estimate_number="EST-FG033A-UAT-0001",
+        estimate_number=estimate_number,
         title="FG033-UAT SYNTHETIC CONTRACT",
         organization_id=DEFAULT_ORGANIZATION_ID,
     )
@@ -286,7 +294,7 @@ def _synthetic_generated_contract():
     version.total = Decimal("1130.00")
     db.session.commit()
     template = create_proposal_template(
-        name="FG033A Template",
+        name=template_name,
         is_active=True,
         default_intro_text="FG033-UAT SYNTHETIC",
         default_payment_terms="Net 30",
@@ -297,7 +305,7 @@ def _synthetic_generated_contract():
         template=template,
         status="Issued",
         title="FG033-UAT SYNTHETIC — NOT FOR EXECUTION",
-        proposal_number="PROP-FG033A-UAT-0001",
+        proposal_number=proposal_number,
     )
     result = generate_project_contract(
         project.id,
@@ -518,8 +526,12 @@ def test_synthetic_contract_source_binding(app):
     assert request.authority_class == AUTHORITY_SYNTHETIC_UAT
     assert request.frozen_artifact.source_docx_sha256 == contract.artifact_sha256
     assert request.frozen_artifact.presentation_master_sha256 == FAMILY_05_MASTER_SHA256
+    assert request.frozen_artifact.media_type == "application/pdf"
+    assert request.frozen_artifact.converter_identity == "injected-test-converter"
     retained = retrieve_frozen_artifact_bytes(request.frozen_artifact)
-    assert sha256_hex(retained) == contract.artifact_sha256
+    assert retained.startswith(b"%PDF")
+    assert sha256_hex(retained) == request.frozen_artifact.sha256
+    assert sha256_hex(retained) != contract.artifact_sha256
     approved = approve_signing_request(
         request.id,
         organization_id=DEFAULT_ORGANIZATION_ID,
@@ -572,7 +584,7 @@ def test_alembic_fg033_sign_a_upgrade_and_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["d9e0f1a2b3c4"]
+        assert script.get_heads() == ["e0f1a2b3c4d5"]
 
         command.upgrade(alembic_cfg, "a6b7c8d9e0f1")
         engine = db.engine

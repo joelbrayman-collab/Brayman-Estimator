@@ -103,7 +103,7 @@ def create_contract_command(
     authority_class,
     countersign_required,
 ):
-    """Bind a GENERATED contract DOCX source and create a CREATED request."""
+    """Convert Family 05 DOCX once and create a CREATED contract signing request."""
     try:
         request = create_contract_signing_request(
             generated_contract_id,

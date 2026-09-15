@@ -147,10 +147,16 @@ class SigningFrozenArtifact(db.Model):
     source_docx_sha256 = db.Column(db.String(64), nullable=True)
     presentation_master_sha256 = db.Column(db.String(64), nullable=True)
     presentation_master_filename = db.Column(db.String(255), nullable=True)
+    converter_identity = db.Column(db.String(80), nullable=True)
+    converter_version = db.Column(db.String(120), nullable=True)
+    converted_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     def __repr__(self):
-        return f"<SigningFrozenArtifact {self.sha256[:12]} {self.document_family}>"
+        return (
+            f"<SigningFrozenArtifact {self.sha256[:12]} {self.document_family} "
+            f"conv={self.converter_identity}>"
+        )
 
 
 class SigningExecutedArtifact(db.Model):

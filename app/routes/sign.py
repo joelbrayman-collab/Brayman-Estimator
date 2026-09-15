@@ -14,12 +14,14 @@ from flask import (
 )
 
 from app import db
+from app.models.project_contract import GeneratedProjectContract
 from app.models.organization import Organization
 from app.models.project import Project
 from app.models.user import User
 from app.models.signing import (
     AUTHORITY_SYNTHETIC_UAT,
     DOCUMENT_FAMILY_CHANGE_ORDER,
+    DOCUMENT_FAMILY_CONTRACT,
     STATUS_EXECUTED,
     STATUS_SIGNED,
 )
@@ -33,6 +35,7 @@ from app.services.signing import (
     BLOCK_TOKEN_EXPIRED,
     BLOCK_TOKEN_INVALID,
     BLOCK_TOKEN_RATE_LIMITED,
+    PDF_MEDIA_TYPE,
     SigningServiceError,
     accept_and_sign,
     decline_signing_request,
@@ -83,6 +86,10 @@ def _ceremony_context(access):
         )
         if change_order is not None:
             document_title = change_order.title or document_title
+    elif signing_request.document_family == DOCUMENT_FAMILY_CONTRACT:
+        contract = db.session.get(GeneratedProjectContract, signing_request.source_record_id)
+        if contract is not None and (contract.contract_number or "").strip():
+            document_title = contract.contract_number
     customer_name = (access.participant.confirmed_signer_name or "").strip()
     if not customer_name:
         customer_name = (access.participant.invited_name or "").strip()
@@ -100,6 +107,11 @@ def _ceremony_context(access):
         "countersigned_on": _human_date(signing_request.countersigned_at),
         "is_change_order_pdf": (
             signing_request.document_family == DOCUMENT_FAMILY_CHANGE_ORDER
+            and signing_request.frozen_artifact.media_type == PDF_MEDIA_TYPE
+        ),
+        "has_frozen_pdf": (
+            signing_request.frozen_artifact is not None
+            and signing_request.frozen_artifact.media_type == PDF_MEDIA_TYPE
         ),
         "is_synthetic": signing_request.authority_class == AUTHORITY_SYNTHETIC_UAT,
         "completed": signing_request.status in (STATUS_SIGNED, STATUS_EXECUTED),

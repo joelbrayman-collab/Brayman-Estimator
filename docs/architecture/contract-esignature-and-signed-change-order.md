@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE.** Subsequent [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **OPEN / PARTIAL**. SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C **IMPLEMENTED**. SIGN-D **IMPLEMENTED** (automated). SIGN-E **NOT STARTED**. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. Production / real-customer Native Signing **NOT COMPLETE**. Recommendation **NATIVE V1**. Counsel spec **PREPARED** (historical draft; not a development gate). |
+| Status | **ARCHITECTURE RECONNAISSANCE COMPLETE.** Subsequent [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED / OPERATIONAL FOR UAT**. SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C **IMPLEMENTED**. SIGN-D **IMPLEMENTED** (automated). SIGN-E **IMPLEMENTED**. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. Production / real-customer Native Signing **NOT COMPLETE**. Recommendation **NATIVE V1**. Counsel spec **PREPARED** (historical draft; not a development gate). |
 | Date | 2026-08-31 (recon); **2026-09-01** (counsel specification prepared) |
 | Product | The Estimator / CalibraytAI (formerly CalibAi) |
 | Canonical architecture | This document |
@@ -25,7 +25,9 @@ Separately governed Native Signing architecture, Feature Gate drafting, implemen
 
 **Subsequent status (2026-09-07, FG-024 recorded):** FG-024 records the future CONTRACT legal-content library, update engine, frozen generation snapshot, and change monitoring. Native Signing process recon in this document remains unchanged. Contract signing remains later and behind the Legal Content Gate.
 
-**Subsequent status (2026-09-15, FG-033 SIGN-D):** SIGN-D Change Order E2E + office/Hub + automated customer mobile UX **IMPLEMENTED**. Automated product / E2E validation **COMPLETE**. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. SIGN-E **NOT STARTED**. No transactional email. No LibreOffice. No new Alembic. No external-review dependency. Production Native Signing **NOT COMPLETE**. V1 **not rescored**. Evidence [testing/fg033-sign-d-live-bounded-uat-record.md](../testing/fg033-sign-d-live-bounded-uat-record.md).
+**Subsequent status (2026-09-15, FG-033 SIGN-E):** SIGN-E Family 05 convert-once + generated-contract ceremony on the same engine **IMPLEMENTED**. Desktop + iPhone / mobile functional parity. Additive **`e0f1a2b3c4d5`**. PRODUCTION send **BLOCK** without ACTIVE PRODUCTION package. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. No transactional email. No external-review dependency. Production Native Signing **NOT COMPLETE**. V1 **not rescored**. Evidence [testing/fg033-sign-e-live-bounded-uat-record.md](../testing/fg033-sign-e-live-bounded-uat-record.md).
+
+**Subsequent status (2026-09-15, FG-033 SIGN-D):** SIGN-D Change Order E2E + office/Hub + automated customer mobile UX **IMPLEMENTED**. Automated product / E2E validation **COMPLETE**. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. SIGN-E **IMPLEMENTED** (subsequent). No transactional email. No new Alembic in SIGN-D. No external-review dependency. Production Native Signing **NOT COMPLETE**. V1 **not rescored**. Evidence [testing/fg033-sign-d-live-bounded-uat-record.md](../testing/fg033-sign-d-live-bounded-uat-record.md).
 
 **Subsequent status (2026-09-14, FG-033 SIGN-C):** SIGN-C countersign + executed PDF custody + VOID/EXPIRE/DECLINE/RESEND **IMPLEMENTED**. Pre-sign freeze preserved. Distinct executed SHA. Customer/office executed retrieval. Additive **`d9e0f1a2b3c4`**. Real iPhone close remains SIGN-D. LibreOffice remains SIGN-E. No transactional email. No external-review dependency. Production Native Signing **NOT COMPLETE**. V1 **not rescored**.
 

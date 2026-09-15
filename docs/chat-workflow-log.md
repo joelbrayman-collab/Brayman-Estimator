@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — FG-033 SIGN-E convert-once + generated-contract Native Signing + desktop/iPhone parity
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Implement SIGN-E only: Family 05 convert-once, contract ceremony on the same engine, desktop + iPhone functional parity, FG-033 close if complete-workstream met. |
+| Business decision | Joel / Architect: desktop + iPhone functional parity on one ceremony. Physical iPhone UAT remains DEFERRED, not PASS. Convert-once LibreOffice/soffice; missing converter BLOCK. |
+| Architectural decision | One additive Alembic `e0f1a2b3c4d5`. Convert at bind; retrieve frozen PDF; no ReportLab/HTML fallback. No device-specific signing forks. No new ADR. |
+| Prompt template used | Bounded SIGN-E implementation authorization + desktop/iPhone parity addendum (15 Sep 2026) |
+| Approved Cursor prompt summary | SIGN-E convert-once + contract E2E + one responsive ceremony + desktop/mobile viewport assertions; live migrate if needed; FG-033 close if met; commit/push. |
+| Files expected to change | signing conversion service; frozen artifact provenance; ceremony/CSS; SIGN-E tests; governed continuity docs |
+| Files prohibited from changing | Time / MONITOR / LEARN; Closeout; transactional email provider; Ontario content; V1 rescore; EST-2026-0019 |
+| Implementation result | FG-033 **CLOSED / OPERATIONAL FOR UAT**. SIGN-A–E **IMPLEMENTED**. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. Live current `e0f1a2b3c4d5 (head)`. PRODUCTION packages **0**. EST-2026-0019 unchanged. V1 **not rescored**. |
+| Tests | Dedicated SIGN-E **19 passed**. Focused SIGN-A/B/C/D/E + CO + Hub + TECH **208 passed**, 529 warnings, **85.86s**. Full **981 passed**, 3262 warnings, **371.67s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Real iPhone UAT deferred. Ontario production legal content empty. Transactional email not implemented. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | None from this note. |
+| Commit hash | (this SIGN-E product commit) |
+
 ### 2026-09-15 — FG-033 SIGN-D Change Order Native Signing E2E + automated close
 
 | Field | Content |

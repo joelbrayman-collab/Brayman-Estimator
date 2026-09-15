@@ -45,7 +45,6 @@ from app.services.signing import (
     BLOCK_AI_CANNOT_APPROVE,
     BLOCK_CONFIRMED_NAME_REQUIRED,
     BLOCK_CONSENT_NOT_ACCEPTED,
-    BLOCK_CONTRACT_PDF_NOT_AVAILABLE,
     BLOCK_PROTECTED_COMMERCIAL_RECORD,
     BLOCK_REQUEST_NOT_APPROVED,
     BLOCK_REQUEST_NOT_FOUND,
@@ -66,6 +65,7 @@ from app.services.signing import (
 )
 from app.services.signing_artifact_storage import sha256_hex
 from tests.auth_fixtures import create_membership, create_user
+from tests.signing_conversion_support import injected_docx_to_pdf
 from tests.test_native_signing_sign_a_fg033 import (
     PROTECTED_ESTIMATE_NUMBER,
     _approved_change_order,
@@ -88,6 +88,7 @@ def app():
             "WTF_CSRF_ENABLED": False,
             "SIGNING_TOKEN_FAIL_LIMIT": 3,
             "SIGNING_TOKEN_FAIL_WINDOW_SECONDS": 900,
+            "SIGNING_DOCX_TO_PDF": injected_docx_to_pdf,
         }
     )
     with application.app_context():
@@ -506,7 +507,7 @@ def test_mobile_template_has_no_office_chrome(app):
     assert "Sign &amp; Accept" in html or "Sign & Accept" in html
 
 
-def test_contract_pdf_not_invented(app):
+def test_contract_pdf_is_frozen_converted_pdf(app):
     user = _office_user(email="sign-b-contract@example.com")
     contract = _synthetic_generated_contract()
     consent = ensure_synthetic_consent_version()
@@ -524,16 +525,21 @@ def test_contract_pdf_not_invented(app):
     )
     approved = _approve(created, user)
     issued = _invite(approved, user)
-    with pytest.raises(SigningServiceError) as exc:
-        frozen_pdf_bytes_for_customer(
-            resolve_customer_access(
-                f"{issued.lookup_key}.{issued.secret}",
-                client_ip="203.0.113.90",
-            )
+    pdf = frozen_pdf_bytes_for_customer(
+        resolve_customer_access(
+            f"{issued.lookup_key}.{issued.secret}",
+            client_ip="203.0.113.90",
         )
-    assert exc.value.code == BLOCK_CONTRACT_PDF_NOT_AVAILABLE
+    )
+    assert pdf.startswith(b"%PDF")
+    assert sha256_hex(pdf) == created.frozen_artifact.sha256
+    assert created.frozen_artifact.source_docx_sha256 == contract.artifact_sha256
     document = app.test_client().get(f"{issued.path}/document")
-    assert document.status_code == 409
+    assert document.status_code == 200
+    assert document.data == pdf
+    ceremony = app.test_client().get(issued.path)
+    assert b"Review the document" in ceremony.data
+    assert b"A document copy is not available" not in ceremony.data
 
 
 def test_ai_cannot_invite_and_unapproved_cannot_send(app):
@@ -661,7 +667,7 @@ def test_alembic_fg033_sign_b_upgrade_and_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["d9e0f1a2b3c4"]
+        assert script.get_heads() == ["e0f1a2b3c4d5"]
 
         command.upgrade(alembic_cfg, "b7c8d9e0f1a2")
         engine = db.engine

@@ -555,6 +555,8 @@ def test_customer_mobile_ceremony_markup_copy_and_states(app, client):
     assert "min-height: 56px" in css
     assert "min-height: 44px" in css
     assert "-webkit-text-size-adjust" in css
+    assert "@media (min-width: 768px)" in css
+    assert "max-width: 42rem" in css
 
     signed = _sign_customer(client, path)
     signed_html = _html(signed)

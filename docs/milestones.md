@@ -34,6 +34,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — FG-033 SIGN-E convert-once + generated-contract Native Signing + desktop/iPhone parity
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-033 SIGN-E |
+| Status | **COMPLETED** (automated). [FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED / OPERATIONAL FOR UAT**. Real iPhone UAT **DEFERRED**. Production Native Signing **NOT COMPLETE**. |
+| Branch | `main` |
+| Objective | Convert-once Family 05 DOCX→PDF; generated-contract ceremony on the one signing engine; desktop + iPhone functional parity; FG-033 close. |
+| Deliverables | `app/services/signing_docx_pdf.py`; converter provenance on frozen artifacts; additive `e0f1a2b3c4d5` applied live; responsive `/sign` CSS; dedicated SIGN-E tests; [testing/fg033-sign-e-live-bounded-uat-record.md](testing/fg033-sign-e-live-bounded-uat-record.md). |
+| Validation | Dedicated SIGN-E **19 passed**. Focused SIGN-A/B/C/D/E + CO + Hub + TECH **208 passed**. Full **981 passed**, 3262 warnings, **371.67s**. Alembic current = heads `e0f1a2b3c4d5`. EST-2026-0019 occupancy unchanged. Live PRODUCTION packages **0**. |
+| Architectural findings | One signing engine. Convert once at bind. No ReportLab/HTML fallback. Same routes for CHANGE_ORDER and CONTRACT. Desktop must not be degraded; mobile must not be a compressed desktop page. |
+| Open decisions | Real-device iPhone UAT; ACTIVE PRODUCTION package; transactional email for normal real-customer send. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — FG-033 SIGN-D Change Order Native Signing E2E + automated close
 
 | Field | Content |

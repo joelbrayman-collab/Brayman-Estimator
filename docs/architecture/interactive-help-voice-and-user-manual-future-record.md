@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FUTURE / RECORDED / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED / NOT A PREFLIGHT / NOT A FEATURE GATE / NOT AN ADR.** |
+| Status | **FUTURE / RECORDED / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED / NOT A PREFLIGHT / NOT A FEATURE GATE / NOT AN ADR.** Recording **COMPLETE THROUGH §39**. Task-based pre-UAT script **REQUIRED**. Do **not** invent §§40+. |
 | Updated | 2026-09-15 |
 | Authority | Joel Brayman / ChatGPT Architect. Product decision: Interactive in-product Help, Voice assistance, and a professional CalibraytAI User Guide are **mandatory** before opening CalibraytAI to Ben, Ben’s father-in-law, and Kevin for real-world / independent UAT. |
 | Does not interrupt | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**; [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**; [project-element-authority-future-record.md](project-element-authority-future-record.md). TAX/WBS remains **IMPLEMENTED**. Later FG-035 slices remain **NOT AUTHORIZED** from this record. |
@@ -30,7 +30,7 @@ DO NOT BEGIN FG-035 LATER SLICES FROM THIS RECORD.
 DO NOT RESCORE V1 FROM THIS RECORD.
 ```
 
-The originating Cursor prompt recorded **§§0–25 complete**. **§26** arrived truncated after “Avoid giving a long developer-led demonstration that teaches them”. Remainder of §26 is **not invented**. An open question about a short task-based pre-UAT test script was received and is **not decided**.
+The originating Cursor prompt recorded **§§0–25 complete**. Subsequent **2026-09-15** continuation recorded **§§26–39**. **§26 task-based pre-UAT script = REQUIRED.** Do **not** invent §§40+. Nothing in this file is implemented.
 
 ---
 
@@ -361,19 +361,197 @@ Do not coach him through every action.
 
 The objective is to test whether CalibraytAI explains itself.
 
-### Manual-first UAT (§26 received / truncated)
+---
 
-Before introducing the platform in detail: provide the completed User Guide. Allow reviewers to read it. Then provide bounded UAT tasks.
+## 26. Task-based pre-UAT script — DECIDED
 
-Avoid giving a long developer-led demonstration that teaches them
+**JOEL / CHATGPT ARCHITECT DECISION: YES.**
 
-**Truncation:** the originating prompt ended here. Remainder of §26 is **not invented**.
+A task-based pre-UAT script is **REQUIRED**.
 
-### Open question (received / not decided)
+The objective is to give reviewers realistic contractor tasks and determine whether:
 
-Would the pre-UAT package include a short task-based test script for Ben, his father-in-law, and Kevin, with the same core workflows but different evaluation focus for each person?
+**PRODUCT + USER GUIDE + INTERACTIVE HELP + VOICE**
 
-This question is **recorded as received**. It is **not** a Joel decision in this file. Do **not** invent the script from this record.
+are sufficient for them to complete the work.
+
+Do **not** give step-by-step answers inside the test task.
+
+The final script must reflect the **ACTUAL completed V1**.
+
+Do **not** invent the script from this record. Write it only after the product and Help authority exist.
+
+## 27. Common core tasks
+
+Final UAT should evaluate realistic tasks such as:
+
+- Sign in
+- Recover a forgotten password
+- Find a Project
+- Understand Project Hub
+- Review Project work
+- Review an Estimate
+- Find Company Schedule
+- Determine what is happening this week
+- Determine what is coming over the next month
+- Record normal Time
+- Record Extra Work
+- Submit Time
+- Approve Time where role permits
+- Identify labour approaching/exceeding allowance
+- Find Needs Attention
+- Review/Create Change Order where role permits
+- Send document for signature
+- Find signing status
+- Retrieve completed documentation
+- Review Project Closeout
+- Resolve/explain material variance
+- Review LEARN recommendation
+- Use Interactive Help
+- Ask a Voice Help question
+- Ask a supported read-only Voice product question
+
+Final task list must match actual V1.
+
+## 28. No-coaching principle
+
+For selected tasks give **THE TASK**, not **THE NAVIGATION PATH**.
+
+Good: Find out what work is scheduled for next week.
+
+Bad: Click Schedule → Month → Next Week.
+
+We are testing: discoverability, terminology, navigation, Manual usefulness, Help usefulness, Voice usefulness.
+
+Do not mask UX problems with coaching.
+
+## 29. Manual-first UAT
+
+Before detailed product demonstration: provide the completed **CALIBRAYTAI V1 USER GUIDE**.
+
+Allow the reviewer to read it.
+
+Then provide task-based UAT.
+
+A brief access/login orientation is permitted.
+
+Do not provide a long developer-led walkthrough that teaches every workflow before UAT.
+
+## 30. Ben — operational UAT
+
+Ben is the primary operational contractor user.
+
+Primary question: **CAN BEN ACTUALLY RUN PROJECT WORK THROUGH CALIBRAYTAI?**
+
+Focus on: Project Hub; Estimate; Schedule; Time; Extra Work; Time Approval; Change Orders; Native Signing; MONITOR; Needs Attention; Closeout; LEARN; desktop/iPhone relationship; Help; Voice.
+
+## 31. Ben’s father-in-law — construction domain review
+
+Ben’s father-in-law brings approximately 40 years of construction experience.
+
+Focus on: construction workflow validity; terminology; missing practical steps; Schedule usefulness; Time / Extra Work; Change Orders; MONITOR usefulness; User Guide clarity; whether the product reflects how contractors actually work.
+
+He should read the User Guide before product UAT.
+
+## 32. Kevin — non-technical usability review
+
+Kevin is intentionally useful because he is not an IT/technical user.
+
+Focus on: discoverability; clarity; navigation; Help usefulness; Manual usefulness; Voice usefulness; ability to recover from mistakes; ability to complete normal tasks without technical knowledge.
+
+Do not coach Kevin through every action.
+
+Where he becomes stuck is useful product evidence.
+
+## 33. UAT observation
+
+Where practical observe:
+
+- where the reviewer first looks
+- where the reviewer hesitates
+- what they misunderstand
+- what terminology confuses them
+- what action they expected
+- whether they use Help
+- whether Help solves the issue
+- whether they use Manual
+- whether Manual solves the issue
+- whether they use Voice
+- whether Voice solves the issue
+
+Look for repeated/material friction.
+
+## 34. Simple UAT evidence
+
+Capture at minimum:
+
+Reviewer · Role/focus · Device · Task · PASS / FAIL / PARTIAL · Observed difficulty · Confusion point · Manual used? · Help used? · Voice used? · Defect/observation · Severity · Follow-up.
+
+Do not make reviewers write engineering bug reports.
+
+## 35. Device coverage
+
+Independent UAT must cover **DESKTOP** and **IPHONE / MOBILE** where the product is intended for both.
+
+Previously deferred physical-iPhone checks should be resolved here.
+
+Do **not** claim physical-device PASS from automated responsive tests.
+
+## 36. Interactive Help UAT
+
+Test Help with questions such as:
+
+- What can I do here?
+- How do I record Extra Work?
+- How do I approve Time?
+- How do I move a Project?
+- Why is this Project showing Needs Attention?
+- How do I send this for signature?
+- What should I do next?
+
+Help must describe actual V1.
+
+Hallucinated product instructions are a **V1 defect**.
+
+## 37. Context-aware Help UAT
+
+Test “What do I do here?” from different surfaces such as:
+
+Project Hub · Schedule · Time Entry · MONITOR · Closeout.
+
+The answer must reflect current context.
+
+Do not expose technical route/model names.
+
+## 38. Voice UAT
+
+Test Voice on actual supported hardware/browser combinations.
+
+At minimum:
+
+- Voice Help question
+- Voice navigation/surfacing
+- supported read-only operational question
+
+Examples:
+
+- How do I enter Extra Work?
+- What’s happening next week?
+- Show me the Schedule.
+
+Physical Voice PASS requires physical supported-device evidence.
+
+## 39. Voice mutation boundary
+
+Initial V1 Voice remains:
+
+**HELP · READ-ONLY INFORMATION · NAVIGATION / SURFACING.**
+
+Voice mutation is **NOT required** for V1 Voice completion.
+
+If later proposed, mutation requires separate governed acceptance criteria, explicit confirmation, normal service boundaries, and fail-closed ambiguity.
+
+Do **not** invent §§40+.
 
 ---
 
@@ -387,7 +565,7 @@ Recorded order of later work (not a Cursor implementation prompt):
 2. Platform-wide Contractor Language + UX E2E Audit.
 3. Final User Help Content authority + User Guide + in-product Help + Voice, from that one authority.
 4. Manual-first review (father-in-law reads the Guide first).
-5. Bounded independent UAT (Ben / Kevin), without developer coaching.
+5. Task-based independent UAT (Ben / Kevin / father-in-law). Script is **REQUIRED**. Do not coach. Final script must match actual completed V1.
 
 Do **not** implement Help, Voice, or the Manual from this record.
 
@@ -403,8 +581,10 @@ Do **not** treat this record as BRAYMAN REAL-LIFE UAT READY.
 - Voice runtime / speech APIs
 - User Manual PDF / screenshot capture
 - A chatbot knowledge base
-- A second mutation path
+- Voice mutation as a V1 Voice completion requirement (explicitly **not required**)
 - FG-036 / ADR-054 invention
+- Invented §§40+
+- The actual UAT script (write only after completed V1 + Help authority)
 - FG-035 SCOPE / TIME / SCH / PERF / CLOSE / LEARN / QB-T
 - Another FG-025 slice
 - FG-024 Slice D

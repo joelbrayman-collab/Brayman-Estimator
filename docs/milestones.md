@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — Help / Voice / User Manual §§26–39
+
+| Field | Content |
+|-------|---------|
+| Milestone | Help / Voice / User Manual §§26–39 continuation |
+| Status | **FUTURE / RECORDED THROUGH §39 / NOT IMPLEMENTATION-AUTHORIZED.** Task-based pre-UAT script **REQUIRED**. Does **not** interrupt FG-035. |
+| Branch | `main` |
+| Base commit | `d01d3d06086d7dc4ffe57537e64d3547e8ae5057` |
+| Objective | Complete truncated §26 and record §§27–39. |
+| Deliverables | Canonical future-record §§26–39; minimum continuity |
+| Validation | Docs only. `git diff --check`. Tests **NOT RERUN**. |
+| Architectural findings | No-coaching UAT. Manual-first. Physical device evidence for iPhone PASS. Voice mutation not required for V1 Voice. |
+| Open decisions | None from §§26–39. V1 remains **60% / 4 of 11**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** implement Help / Voice / Manual. Do **not** begin SCOPE. |
+| Commit | this §§26–39 docs-only commit |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — Help / Voice / User Manual PRE-UAT record
 
 | Field | Content |

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — FG-034 MAIL-B Native Signing transactional delivery
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | MAIL-B only: Native Signing invitation/resend/complete through the existing MAIL-A engine. Record visual Schedule addendum as future direction only. |
+| Business decision | Joel / Architect: same `/sign` credential; copyable URL retained; SENT ≠ delivered; SIGNING_COMPLETE after EXECUTED; no PDF attachment; office contractor copy never says Delivered. Schedule is paper-calendar / five-second-rule direction only — do not implement. |
+| Architectural decision | Signing consumes MAIL-A via `app/services/signing_mail.py`. Mail after commit. Mail failure does not roll back signing. No new migration. No new signing events. |
+| Prompt template used | Bounded FG-034 MAIL-B Native Signing transactional delivery authorization (15 Sep 2026); scheduling addendum recorded without scope change |
+| Approved Cursor prompt summary | MAIL-B Native Signing transactional delivery + tests + local UAT + docs + commit/push after PASS. AUTH-D not authorized. Do not implement Schedule. |
+| Files expected to change | signing consumer + MAIL-A copy + office overlay + dedicated MAIL-B tests; governed continuity docs; future-record Schedule addendum |
+| Files prohibited from changing | new migration; Postmark live HTTP; AUTH-D; EST-2026-0019; V1 rescore; Schedule product |
+| Implementation result | FG-034 **OPEN / PARTIAL**. MAIL-A **IMPLEMENTED**. AUTH-A **IMPLEMENTED**. AUTH-B **IMPLEMENTED / PASS**. AUTH-C **IMPLEMENTED / PASS**. MAIL-B **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. Live current `f2a3b4c5d6e7 (head)`. PRODUCTION packages **0**. EST-2026-0019 unchanged. V1 **not rescored**. Visual Schedule addendum **recorded / not implemented**. |
+| Tests | Dedicated MAIL-B **9 passed**. Focused MAIL-B + MAIL-A/AUTH-A + AUTH-B + AUTH-C + FG-018 + SIGN-A–E **173 passed**, 338 warnings, **107.18s**. Full suite **1040 passed**, 3320 warnings, **376.12s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | AUTH-D not started. Physical iPhone UAT deferred. Postmark token / sender domain not supplied. Live contract invitation converter unavailable on this machine. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin AUTH-D. |
+| Next approved prompt | None from this note. |
+| Commit hash | (this MAIL-B product commit) |
+
 ### 2026-09-15 — FG-034 AUTH-C complete Account Recovery E2E
 
 | Field | Content |

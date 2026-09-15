@@ -177,6 +177,18 @@ RESET_PASSWORD_INVALID_BODY = (
 REQUEST_ANOTHER_RESET = "Request Another Reset"
 BACK_TO_SIGN_IN = "Back to Sign In"
 RETURN_TO_SIGN_IN = "Return to Sign In"
+EMAIL_CAPTURED_FOR_TESTING = "Email captured for testing"
+EMAIL_ACCEPTED_FOR_DELIVERY = "Email accepted for delivery"
+EMAIL_NOT_SENT = "Email not sent"
+EMAIL_CONFIGURATION_MISSING = "Email configuration missing"
+SIGNING_INVITATION_ISSUED = "Invitation issued"
+SIGNING_LINK_COPY_HINT = "Copy the signing link if you need it."
+SIGNING_REVIEW_AND_SIGN = "Review & Sign"
+SIGNING_CURRENT_LINK = "Use this current signing link to review and sign."
+SIGNING_COMPLETE_CUSTOMER_BODY = (
+    "Signing is complete. Contact the office if you need a copy of the "
+    "completed document."
+)
 SIGN_OUT_LABEL = "Sign out"
 DASHBOARD_HEADING = "Office home"
 DASHBOARD_LEDE = "Open a project, start an estimate, or issue a proposal."

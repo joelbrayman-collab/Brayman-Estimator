@@ -82,6 +82,12 @@ from app.services.signing_artifact_storage import (
 )
 from app.services.signing_docx_pdf import DocxPdfConversionError, convert_docx_to_pdf
 from app.services.signing_executed_pdf import assemble_executed_pdf
+from app.services.signing_mail import (
+    office_delivery_label_for_request,
+    send_signing_complete_message,
+    send_signing_invitation_message,
+)
+from app.models.transactional_message import TEMPLATE_SIGNING_INVITATION, TEMPLATE_SIGNING_RESEND
 
 PROTECTED_ESTIMATE_NUMBER = "EST-2026-0019"
 DEFAULT_INVITATION_DAYS = 7
@@ -689,6 +695,7 @@ class InvitationIssue(NamedTuple):
     path: str
     lookup_key: str
     secret: str
+    mail_message: Optional[object] = None
 
 
 class ResolvedSigningAccess(NamedTuple):
@@ -863,11 +870,18 @@ def issue_customer_invitation(
         artifact_sha256=request.frozen_artifact.sha256,
     )
     db.session.commit()
+    db.session.refresh(request)
+    message = send_signing_invitation_message(
+        request,
+        customer_signing_path(lookup_key, secret),
+        template_id=TEMPLATE_SIGNING_INVITATION,
+    )
     return InvitationIssue(
         request=request,
         path=customer_signing_path(lookup_key, secret),
         lookup_key=lookup_key,
         secret=secret,
+        mail_message=message,
     )
 
 
@@ -1056,6 +1070,8 @@ def accept_and_sign(
         except (SigningServiceError, SigningArtifactStorageError):
             pass
     db.session.commit()
+    if request.status == STATUS_EXECUTED:
+        send_signing_complete_message(request)
     return request
 
 
@@ -1199,7 +1215,10 @@ def countersign_and_execute(
     except Exception:
         db.session.rollback()
         raise
-    return get_signing_request(request_id, organization_id)
+    executed = get_signing_request(request_id, organization_id)
+    if executed.status == STATUS_EXECUTED:
+        send_signing_complete_message(executed)
+    return executed
 
 
 def execute_signed_request(
@@ -1236,7 +1255,10 @@ def execute_signed_request(
     except Exception:
         db.session.rollback()
         raise
-    return get_signing_request(request_id, organization_id)
+    executed = get_signing_request(request_id, organization_id)
+    if executed.status == STATUS_EXECUTED:
+        send_signing_complete_message(executed)
+    return executed
 
 
 def resend_customer_invitation(
@@ -1273,11 +1295,18 @@ def resend_customer_invitation(
         artifact_sha256=request.frozen_artifact.sha256,
     )
     db.session.commit()
+    db.session.refresh(request)
+    message = send_signing_invitation_message(
+        request,
+        customer_signing_path(lookup_key, secret),
+        template_id=TEMPLATE_SIGNING_RESEND,
+    )
     return InvitationIssue(
         request=request,
         path=customer_signing_path(lookup_key, secret),
         lookup_key=lookup_key,
         secret=secret,
+        mail_message=message,
     )
 
 
@@ -1435,6 +1464,7 @@ class ChangeOrderSigningOverlay(NamedTuple):
     can_countersign: bool
     can_execute: bool
     can_download_executed: bool
+    email_delivery_label: Optional[str] = None
 
 
 def hub_signing_label(status: Optional[str]) -> str:
@@ -1496,6 +1526,7 @@ def overlay_for_change_order(
         can_countersign=status == STATUS_SIGNED and bool(active.countersign_required),
         can_execute=status == STATUS_SIGNED and not bool(active.countersign_required),
         can_download_executed=status == STATUS_EXECUTED,
+        email_delivery_label=office_delivery_label_for_request(active),
     )
 
 

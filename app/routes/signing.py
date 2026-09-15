@@ -14,6 +14,11 @@ from flask_login import current_user
 
 from app.models.signing import ACTOR_HUMAN
 from app.project_controls.repository import get_change_order
+from app.presentation.contractor_copy import (
+    EMAIL_NOT_SENT,
+    SIGNING_INVITATION_ISSUED,
+    SIGNING_LINK_COPY_HINT,
+)
 from app.services.signing import (
     BLOCK_ACTIVE_SIGNING_REQUEST,
     BLOCK_ALREADY_EXECUTED,
@@ -42,6 +47,7 @@ from app.services.signing import (
     retrieve_executed_artifact_bytes,
     void_signing_request,
 )
+from app.services.signing_mail import office_email_delivery_label
 
 signing_office_bp = Blueprint("signing_office", __name__)
 
@@ -81,6 +87,18 @@ def _actor():
 
 def _flash_error(code: str) -> None:
     flash(_OFFICE_ERROR_COPY.get(code, "That signing action could not be completed."), "error")
+
+
+def _flash_invitation(issue, *, resent=False) -> None:
+    row = getattr(issue, "mail_message", None)
+    label = office_email_delivery_label(row.status) if row is not None else EMAIL_NOT_SENT
+    if resent:
+        flash(
+            f"A new invitation link was generated. The previous link no longer works. {label}. {SIGNING_LINK_COPY_HINT}",
+            "success",
+        )
+        return
+    flash(f"{SIGNING_INVITATION_ISSUED}. {label}. {SIGNING_LINK_COPY_HINT}", "success")
 
 
 def _co_url(change_order_id: int) -> str:
@@ -140,7 +158,7 @@ def send_for_signature(change_order_id):
         _flash_error(exc.code)
         return redirect(_co_url(change_order_id))
     _store_invitation(issue)
-    flash("Invitation ready. Copy the link and send it to the signer.", "success")
+    _flash_invitation(issue)
     return redirect(_co_url(change_order_id))
 
 
@@ -179,7 +197,7 @@ def invite(request_id):
         _flash_error(exc.code)
         return _redirect_for_request(request_id, organization_id)
     _store_invitation(issue)
-    flash("Invitation ready. Copy the link and send it to the signer.", "success")
+    _flash_invitation(issue)
     return _redirect_for_request(request_id, organization_id)
 
 
@@ -199,7 +217,7 @@ def resend(request_id):
         _flash_error(exc.code)
         return _redirect_for_request(request_id, organization_id)
     _store_invitation(issue)
-    flash("A new invitation link was generated. The previous link no longer works.", "success")
+    _flash_invitation(issue, resent=True)
     return _redirect_for_request(request_id, organization_id)
 
 

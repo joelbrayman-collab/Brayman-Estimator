@@ -90,6 +90,12 @@
             <p class="eyebrow">Executed PDF</p>
             <p>{{ "Available" if signing_overlay.executed_available else "Not yet" }}</p>
         </div>
+        {% if signing_overlay.email_delivery_label %}
+        <div>
+            <p class="eyebrow">Email</p>
+            <p data-signing-email-delivery="true">{{ signing_overlay.email_delivery_label }}</p>
+        </div>
+        {% endif %}
     </div>
     {% endif %}
 

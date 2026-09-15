@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-052: Web Account Recovery, Shared Transactional Email, and Supersession of ADR-041 Decision 7’s CLI-only V1 Boundary |
-| Status | **Accepted** (2026-09-15; Joel Brayman / ChatGPT Architect). MAIL-A / AUTH-A / AUTH-B / AUTH-C product implementation is authorized under [FG-034](../feature-gates/FG-034-account-recovery-and-transactional-email.md). MAIL-B / AUTH-D remain unauthorized until later bounded prompts. |
+| Status | **Accepted** (2026-09-15; Joel Brayman / ChatGPT Architect). MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B product implementation is authorized under [FG-034](../feature-gates/FG-034-account-recovery-and-transactional-email.md). AUTH-D remains unauthorized until a later bounded prompt. |
 | Date | 2026-09-15 |
 | Related | [ADR-041](ADR-041-user-membership-and-office-authentication.md) **Accepted** (Decision 7 historically CLI-only; **superseded for V1 product scope by this ADR**, not rewritten) · [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED / OPERATIONAL FOR UAT** · [FG-021](../feature-gates/FG-021-field-web-v1-today-and-capture.md) **CLOSED** (SESSION-EXPIRY RECOVERY **DEFERRED**; not this ADR) · [ADR-045](ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted** |
 
@@ -91,13 +91,13 @@ One responsive auth experience. No device-specific forks. Physical iPhone Accoun
 
 **Positive:** Operators can recover passwords; Native Signing can later send through the same engine; session theft after reset is mitigated; ADR-041 history preserved.
 
-**Negative:** Live Postmark, sender domain, MAIL-B Native Signing mail, and AUTH-D remain required before the gate closes. AUTH-C local E2E is implemented; MAIL-B Native Signing mail is not.
+**Negative:** Live Postmark, sender domain, and AUTH-D remain required before the gate closes. MAIL-B Native Signing mail is implemented locally/fake only.
 
 ## Module Ownership Impact
 
 - Organization / identity: `User.credentials_epoch`, `password_reset_tokens`, `password_reset_access_attempts`.
 - Platform: transactional email service and `transactional_messages`.
-- Signing: consumer in MAIL-B only; ceremony ownership unchanged.
+- Signing: consumer in MAIL-B; ceremony ownership unchanged.
 
 ## Data Ownership Impact
 
@@ -121,4 +121,4 @@ FG-034; this ADR; ADR-041 subsequent status; indexes; current-state; session-han
 |------|------|------|
 | Joel | Accepted via governed MAIL-A / AUTH-A prompt | 2026-09-15 |
 | ChatGPT review | Account Recovery + Transactional Email preflight accepted | 2026-09-15 |
-| Cursor implementation note | MAIL-A / AUTH-A implemented this pass. AUTH-B/C/MAIL-B/AUTH-D not authorized. | 2026-09-15 |
+| Cursor implementation note | MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B implemented. AUTH-D not authorized. | 2026-09-15 |

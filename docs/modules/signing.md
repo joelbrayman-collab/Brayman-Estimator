@@ -104,4 +104,4 @@ Private bytes: `instance/signing_artifacts/` (gitignored).
 - Desktop + iPhone / mobile functional parity; one responsive ceremony; no device-specific forks
 - PRODUCTION contract send **BLOCK** without ACTIVE PRODUCTION package
 - Additive Alembic **`e0f1a2b3c4d5`** (parent `d9e0f1a2b3c4`)
-- MAIL-B Native Signing invitation/resend/complete through the FG-034 engine **NOT AUTHORIZED** / **NOT IMPLEMENTED**
+- MAIL-B Native Signing invitation/resend/complete through the FG-034 engine **IMPLEMENTED / PASS** (local/fake; SENT ≠ delivered; copyable URL retained)

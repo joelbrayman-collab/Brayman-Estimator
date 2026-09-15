@@ -129,26 +129,43 @@ def _render(template_id: str, variables: Mapping[str, Any]) -> tuple[str, str]:
         return subject, body
     if template_id == TEMPLATE_SIGNING_INVITATION:
         url = str(variables.get("invitation_url") or "")
-        subject = "Document ready for your signature"
+        org = str(variables.get("organization_name") or "CalibraytAI")
+        document = str(variables.get("document_label") or "a document")
+        kind = str(variables.get("document_kind") or "document")
+        expiry = str(variables.get("expires_display") or "").strip()
+        expiry_line = f"This invitation expires {expiry}.\n" if expiry else ""
+        subject = f"{org}: {kind} ready to Review & Sign"
         body = (
-            "CalibraytAI has a document ready for your signature.\n\n"
-            f"Open this secure link to review and sign:\n{url}\n"
+            f"{org} has a {kind} ready for your signature: {document}.\n\n"
+            "Review & Sign\n"
+            f"{expiry_line}"
+            f"{url}\n"
         )
         return subject, body
     if template_id == TEMPLATE_SIGNING_RESEND:
         url = str(variables.get("invitation_url") or "")
-        subject = "Signing link resent"
+        org = str(variables.get("organization_name") or "CalibraytAI")
+        document = str(variables.get("document_label") or "a document")
+        kind = str(variables.get("document_kind") or "document")
+        expiry = str(variables.get("expires_display") or "").strip()
+        expiry_line = f"This invitation expires {expiry}.\n" if expiry else ""
+        subject = f"{org}: current {kind} signing link"
         body = (
-            "CalibraytAI resent your signing link.\n\n"
-            f"Open this secure link to review and sign:\n{url}\n"
+            f"{org} sent the current signing link for {document}.\n\n"
+            "Review & Sign using this current signing link.\n"
+            f"{expiry_line}"
+            f"{url}\n"
         )
         return subject, body
     if template_id == TEMPLATE_SIGNING_COMPLETE:
-        subject = "Document signing is complete"
+        org = str(variables.get("organization_name") or "CalibraytAI")
+        document = str(variables.get("document_label") or "the document")
+        kind = str(variables.get("document_kind") or "document")
+        subject = f"{org}: {kind} signing is complete"
         body = (
-            "CalibraytAI: the document you were invited to sign is complete.\n"
-            "Contact the office if you need a copy. This message does not "
-            "include a new signing link."
+            f"{org}: signing is complete for {document}.\n"
+            "Contact the office if you need a copy of the completed document. "
+            "This message does not include a new signing link."
         )
         return subject, body
     raise TransactionalEmailError("Unsupported transactional template.")

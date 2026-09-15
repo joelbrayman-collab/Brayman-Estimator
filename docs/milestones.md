@@ -36,6 +36,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — FG-034 MAIL-B Native Signing transactional delivery
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-034 MAIL-B |
+| Status | **PARTIAL.** [FG-034](feature-gates/FG-034-account-recovery-and-transactional-email.md) **OPEN / PARTIAL**. MAIL-A **IMPLEMENTED**. AUTH-A **IMPLEMENTED**. AUTH-B **IMPLEMENTED / PASS**. AUTH-C **IMPLEMENTED / PASS**. MAIL-B **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. |
+| Branch | `main` |
+| Objective | Connect Native Signing invitation/resend/complete to the existing MAIL-A engine without changing `/sign` ceremony or adding a schema. |
+| Deliverables | `app/services/signing_mail.py`; MAIL-A templates for invitation/resend/complete; office Email captured for testing overlay; dedicated MAIL-B tests; [testing/fg034-mail-b-native-signing-delivery-record.md](testing/fg034-mail-b-native-signing-delivery-record.md). Visual Schedule addendum recorded only in [architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md). |
+| Validation | Dedicated MAIL-B **9 passed**. Focused MAIL-B + MAIL-A/AUTH-A + AUTH-B + AUTH-C + FG-018 + SIGN-A–E **173 passed**, 338 warnings, **107.18s**. Full suite **1040 passed**, 3320 warnings, **376.12s**, exit **0**. Alembic current = heads `f2a3b4c5d6e7`. EST-2026-0019 occupancy unchanged. Live PRODUCTION packages **0**. No new migration. |
+| Architectural findings | Signing consumes MAIL-A. SENT remains invitation-issued. `TransactionalMessage` is delivery authority. Copyable URL retained. Mail failure does not roll back SENT or EXECUTED. No INVITATION_EMAIL_* signing events (CHECK constraint). Live contract invitation blocked by converter unavailability; automated contract path PASS. |
+| Open decisions | AUTH-D close; Postmark token / sender domain; physical iPhone UAT; PRODUCTION legal package. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin AUTH-D. |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — FG-034 AUTH-C complete Account Recovery E2E
 
 | Field | Content |

@@ -5,9 +5,9 @@
 | Feature Gate ID | `FG-034` |
 | Feature Name | Account Recovery and Transactional Email V1 |
 | Target Milestone | **V1-10** (account recovery / mail secrets) and **V1-07** (transactional delivery for Native Signing). Not a 12th major V1 package. Does **not** rescore V1. |
-| Module | **Organization / office identity** owns User password reset tokens, `credentials_epoch`, and reset access attempts. **Platform** owns the shared transactional-email service and `transactional_messages`. Signing **consumes** mail later (MAIL-B); it does **not** own mail. |
+| Module | **Organization / office identity** owns User password reset tokens, `credentials_epoch`, and reset access attempts. **Platform** owns the shared transactional-email service and `transactional_messages`. Signing **consumes** mail (MAIL-B); it does **not** own mail. |
 | Date | 2026-09-15 |
-| Status | **OPEN / PARTIAL.** MAIL-A **IMPLEMENTED**. AUTH-A **IMPLEMENTED**. AUTH-B **IMPLEMENTED / PASS**. AUTH-C **IMPLEMENTED / PASS**. MAIL-B **NOT STARTED**. AUTH-D **NOT STARTED**. |
+| Status | **OPEN / PARTIAL.** MAIL-A **IMPLEMENTED**. AUTH-A **IMPLEMENTED**. AUTH-B **IMPLEMENTED / PASS**. AUTH-C **IMPLEMENTED / PASS**. MAIL-B **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. |
 | Architecture | [ADR-052](../adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**. Supersedes [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) Decision 7’s CLI-only / no-mail V1 boundary **without rewriting ADR-041 historically**. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED** (not reopened). [FG-033](FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED** (not reopened). [FG-021](FG-021-field-web-v1-today-and-capture.md) SESSION-EXPIRY RECOVERY remains **DEFERRED** and is a different problem. |
 | Related ADRs | [ADR-052](../adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**. [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted** (CalibraytAI mail identity). |
 | Prerequisites | FG-018 office Users / membership **CLOSED**. FG-033 Native Signing **CLOSED / OPERATIONAL FOR UAT**. Production sender domain / Postmark token **not** required for MAIL-A / AUTH-A. |
@@ -23,7 +23,7 @@
 | AUTH-A | **IMPLEMENTED** — `credentials_epoch`, reset tokens hash-at-rest, rate limits, 8-character new-password floor, CLI epoch bump |
 | AUTH-B | **IMPLEMENTED / PASS** — responsive Forgot Password / Reset UX |
 | AUTH-C | **IMPLEMENTED / PASS** — complete password-reset delivery E2E via public routes |
-| MAIL-B | **NOT STARTED** — Native Signing invitation/resend/complete through this engine |
+| MAIL-B | **IMPLEMENTED / PASS** — Native Signing invitation/resend/complete through this engine |
 | AUTH-D | **NOT STARTED** — desktop/mobile automated close + Postmark UAT |
 | Schema / Alembic | Additive MAIL-A/AUTH-A **`f2a3b4c5d6e7`** revises **`e0f1a2b3c4d5`** |
 | V1 scoring | **NOT RESCORED** (**60% / 4 of 11**) |
@@ -35,7 +35,7 @@ MAIL-A IMPLEMENTED
 AUTH-A IMPLEMENTED
 AUTH-B IMPLEMENTED / PASS
 AUTH-C IMPLEMENTED / PASS
-MAIL-B NOT STARTED
+MAIL-B IMPLEMENTED / PASS
 AUTH-D NOT STARTED
 ONE TRANSACTIONAL EMAIL ENGINE
 DEFAULT PROVIDER POSTMARK (NOT ACTIVATED THIS SLICE)
@@ -145,9 +145,11 @@ Public generic confirmation; local `PASSWORD_RESET` capture; token consume; `cre
 
 ### MAIL-B — Native Signing transactional integration
 
-**Status: NOT STARTED.**
+**Status: IMPLEMENTED / PASS (this prompt).**
 
-Same engine. Existing `/sign` ceremony unchanged. Copyable URL retained. Do not mark SENT as delivered merely because a token exists.
+Same MAIL-A engine. Existing `/sign` ceremony unchanged. Invitation/resend use `PUBLIC_BASE_URL` + the existing lookup+secret path. Copyable URL retained even if mail fails. SENT remains invitation-issued; `TransactionalMessage` is delivery authority. SIGNING_COMPLETE after EXECUTED has no new token and no PDF attachment. Mail failure does not roll back SENT or EXECUTED. No new signing events (CHECK constraint). Office copy: Email captured for testing / Email accepted for delivery / Email not sent / Email configuration missing. Evidence [testing/fg034-mail-b-native-signing-delivery-record.md](../testing/fg034-mail-b-native-signing-delivery-record.md).
+
+**STOP:** no AUTH-D; no live Postmark; no Native Signing redesign; no new migration.
 
 ### AUTH-D — Complete desktop/mobile/UAT close
 
@@ -171,10 +173,11 @@ Automated viewport assertions. One real allowlisted Postmark send. Physical iPho
 ## Production boundary
 
 ```text
-MAIL-A / AUTH-A / AUTH-B / AUTH-C: LOCAL / FAKE ONLY.
+MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B: LOCAL / FAKE ONLY.
 POSTMARK HTTP: NOT ACTIVATED.
 ACCOUNT RECOVERY WEB UX: AUTH-B IMPLEMENTED / PASS.
 ACCOUNT RECOVERY LOCAL E2E: AUTH-C IMPLEMENTED / PASS.
+NATIVE SIGNING EMAIL: MAIL-B IMPLEMENTED / PASS (LOCAL / FAKE).
 PHYSICAL IPHONE ACCOUNT RECOVERY UAT: DEFERRED / NOT PASS.
-NATIVE SIGNING EMAIL: NOT THIS SLICE.
+AUTH-D: NOT STARTED.
 ```

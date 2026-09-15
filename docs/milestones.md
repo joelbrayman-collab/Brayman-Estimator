@@ -36,6 +36,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — Change Order / Extra Work / Closeout future-record continuation
+
+| Field | Content |
+|-------|---------|
+| Milestone | Future record only (not a coded milestone) |
+| Status | **RECORDED / NOT IMPLEMENTATION-AUTHORIZED.** MAIL-B remains **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. |
+| Branch | `main` |
+| Objective | Complete the truncated Change Order / Extra Work / Closeout / LEARN data-quality rules without implementing them. |
+| Deliverables | [architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md) §§40–71. §72 checklist recorded as received (truncated after Closeout performance review). |
+| Validation | Docs-only. No product tests re-run. Last MAIL-B full suite **1040 passed**. EST-2026-0019 occupancy unchanged. |
+| Architectural findings | Original scope immutable. Three performance views. Extra Work is a field flag. Lineage belongs to work structure. Closeout is LEARN eligibility gate. |
+| Open decisions | Remainder of §72; later Architect preflight; AUTH-D; close-block vs warning at Closeout. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin AUTH-D. |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — Complete Time / Schedule / Performance / LEARN product-direction record
 
 | Field | Content |

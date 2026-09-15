@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — Change Order / Extra Work / Closeout future-record continuation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Docs-only: supply missing §§40–71 Change Order scope lineage through Closeout / LEARN data quality. Do not implement. Do not begin AUTH-D. |
+| Business decision | Original scope is immutable historical evidence. Change Orders modify current authorized project, not the original estimate. Extra Work is a field flag, not a formal CO. Closeout is the LEARN data-quality gate. Three-layer control: field discipline, MONITOR variance, Closeout review. |
+| Architectural decision | Scope lineage belongs to work structure, not timesheet tags. Three MONITOR views: original / CO / current authorized. LEARN must not treat customer-directed growth as original-estimate failure. §72 checklist truncated after Closeout performance review; remaining bullets not invented. |
+| Prompt template used | Complete product-direction record continuation (15 Sep 2026); docs only |
+| Approved Cursor prompt summary | Record §§40–71 into the canonical future record. No product. No Feature Gate. No AUTH-D. |
+| Files expected to change | future-record + continuity indexes |
+| Files prohibited from changing | `app/**`, migrations, tests, AUTH-D, EST-2026-0019, V1 rescore |
+| Implementation result | Docs only. §§40–71 recorded. §72 recorded as received (truncated). MAIL-B remains **PASS**. AUTH-D **NOT STARTED**. **Not implemented.** |
+| Tests | Product tests **not re-run** (docs-only). Last verified MAIL-B full suite **1040 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | AUTH-D not started. Remainder of §72 not received. Physical iPhone UAT deferred. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin AUTH-D. Do **not** implement the loop. |
+| Next approved prompt | None from this note. |
+| Commit hash | (this docs-only continuation commit, if committed) |
+
 ### 2026-09-15 — Complete Time / Schedule / Performance / LEARN product-direction record
 
 | Field | Content |

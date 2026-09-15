@@ -9,9 +9,9 @@
 
 This file is the **single consolidated future record** for that loop. It is **not** an ADR, not a Feature Gate, and not a preflight. Nothing in this file is implemented. The 15 Sep 2026 visual-calendar addendum is retained below and is **subsumed** by the complete loop, not a second product.
 
-**Actual governed baseline at this recording (do not reconstruct AUTH slices):** HEAD / `origin/main` **`6dfc2e940456cf9c292c700e07840fac5d871df4`**. FG-034 **OPEN / PARTIAL**. MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. FG-033 **CLOSED / OPERATIONAL FOR UAT**. V1 **not rescored** (**60% / 4 of 11**). Alembic **`f2a3b4c5d6e7 (head)`**. The Architect prompt’s expected MAIL-B **NOT STARTED** baseline was already superseded by MAIL-B **PASS**.
+**Actual governed baseline at this recording (do not reconstruct AUTH slices):** HEAD / `origin/main` **`5782043cefe030f00816aad6b2ba5e7bd79533a9`** (docs-only complete-loop record). Product MAIL-B **`6dfc2e940456cf9c292c700e07840fac5d871df4`**. FG-034 **OPEN / PARTIAL**. MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. FG-033 **CLOSED / OPERATIONAL FOR UAT**. V1 **not rescored** (**60% / 4 of 11**). Alembic **`f2a3b4c5d6e7 (head)`**.
 
-The 15 Sep 2026 Cursor prompt was **truncated at heading `40. CHANGE`**. Change Order / Extra Work / Closeout / LEARN evidence-quality detail below is recorded from the PURPOSE list only until the remainder is pasted. Do **not** invent commercial Change Order policy from the truncation.
+The first 15 Sep 2026 Cursor prompt was truncated at heading `40. CHANGE`. The **continuation prompt** supplies §§40–71 as authoritative detail. Section **72** (future preflight checklist) was received through **Closeout performance review** and then cut. Do **not** invent remaining §72 bullets.
 
 ```text
 ONE CLOSED OPERATIONAL / LEARNING LOOP.
@@ -286,16 +286,144 @@ LEARN should compare new estimates with comparable historical evidence (example:
 
 The same evidence should improve future scheduling (example: scheduled forming 2 days; comparable actual 2.7; suggested 3 days). Human accepts or rejects. Do **not** silently alter future schedules or estimates.
 
-## Change Order / Extra Work / Closeout / LEARN evidence quality (prompt truncated)
+## Change Order scope lineage through Closeout / LEARN data quality (15 Sep 2026 continuation; not implemented)
 
-Recorded from the 15 Sep 2026 PURPOSE list. Detailed section 40+ was **not received**. Later architecture must cover:
+This section supersedes the PURPOSE-list placeholder. Existing Change Order **records** remain authoritative. The Change Order **document family** remains [change-order-document-family.md](change-order-document-family.md) **FUTURE / NOT IMPLEMENTED**. Exact internal names are deferred. Exact Extra Work contractor-facing terminology is deferred to the later Contractor Language + UX E2E Audit.
 
-- Change Order **scope lineage**
-- Extra Work / Pending Change
-- Closeout performance review
-- LEARN evidence quality
+```text
+ORIGINAL SCOPE IS IMMUTABLE HISTORICAL EVIDENCE.
+CHANGE ORDERS MODIFY THE CURRENT AUTHORIZED PROJECT.
+THEY DO NOT REWRITE THE ORIGINAL ESTIMATE.
+NOT AUTHORIZED. NOT IMPLEMENTED.
+```
 
-Needs Attention already records “extra work without Change Order” and “unsigned Change Order” as candidate exceptions. Closeout remains **FUTURE** (Project Closeout / archive-and-purge is not implemented). Do **not** invent lineage schema, Extra Work states, or Closeout UX from this truncation. Existing Change Order **records** remain authoritative; the Change Order **document family** remains [change-order-document-family.md](change-order-document-family.md) **FUTURE / NOT IMPLEMENTED**.
+### Scope origin invariant
+
+Change Order work must never disappear into original Project scope in a way that corrupts performance evidence. Every relevant Element, Activity, scheduled work, Time Entry, actual, performance record, and learning record must retain sufficient **SCOPE ORIGIN**.
+
+Later architecture must conceptually distinguish:
+
+- **ORIGINAL**
+- **CHANGE_ORDER** (retain the specific Change Order identity)
+- **PENDING_CHANGE / EXTRA_WORK**
+
+### New Element created by Change Order
+
+If a Change Order introduces genuinely new work, that work becomes legitimate Project work but permanently retains source scope **CHANGE ORDER** and the specific Change Order identity. Example: CO-003 Exterior Equipment Pad may introduce Equipment Pad → Excavation / Forms / Rebar / Pour. Field workers should normally choose Project → Element → Activity; CalibraytAI should **inherit** Change Order lineage automatically. Do not make workers repeatedly select a Change Order when the selected work item already determines lineage.
+
+### Change Order modifies an existing Element
+
+If original Forms is 40 estimated hours and CO-004 adds 12 additional forming hours, **do not** rewrite the original Forms estimate from 40 to 52. Preserve:
+
+- ORIGINAL FORMS: 40 estimated hours
+- CO-004 ADDITIONAL FORMS: 12 estimated hours
+- CURRENT AUTHORIZED FORMS: 52 estimated hours
+
+Actual labour must be capable of attribution to ORIGINAL FORMS vs CO-004 ADDITIONAL FORMS even if both roll up visually under FORMS.
+
+### Three performance views
+
+Future MONITOR must support truthful separation, not one collapsed variance:
+
+1. **ORIGINAL CONTRACT PERFORMANCE** — original estimated labour vs actual approved labour attributable to original scope.
+2. **CHANGE ORDER PERFORMANCE** — Change Order estimated additions/reductions vs actual approved labour attributable to those changes.
+3. **CURRENT AUTHORIZED PROJECT PERFORMANCE** — original scope + authorized Change Orders vs total actual approved labour.
+
+### LEARNING integrity — original vs change
+
+LEARN must not interpret customer-directed scope growth as failure of the original estimate. Example: original Forms 40 estimated / 39 actual; CO additional Forms 12 estimated / 14 actual; current authorized 52; current actual 53. Correct: original 1 hour under; Change Order 2 hours over; current project 1 hour over. Incorrect: “original estimate was 13 hours over.” Future architecture must prevent the incorrect interpretation.
+
+### Change Order reductions / removed scope
+
+Change Orders may remove work. Example: original Decorative Concrete 24 estimated hours; CO-006 removes Decorative Concrete (−24 authorized hours); current authorized 0 hours. Do **not** delete the original Element / estimate evidence. Preserve original scope, authorized reduction, and current authorized scope. LEARN must understand **WORK WAS REMOVED**, not that the original estimate never existed.
+
+### Extra Work — field reality and field rule
+
+A customer may tell a worker to move a drain and add another; the worker may do the work and record hours against an existing Drainage / Plumbing Element. No software can reliably know in every case that those hours resulted from changed scope. Do **not** pretend CalibraytAI can eliminate this human-behaviour problem. The solution must combine simple field capture + training/discipline + variance detection + Closeout review + LEARNING data quality.
+
+Field operating rule: **if you are doing work that was not part of what you were originally sent to do, record it as Extra Work.** Field workers are **not** responsible for contractual entitlement, formal Change Order requirement, pricing, commercial approval, or final scope classification. Their responsibility is to flag: this is different / extra work.
+
+### iPhone Extra Work UX
+
+Future iPhone Time Entry must make Extra Work capture extremely easy. Strongly evaluate a prominent **+ EXTRA WORK** action. Example: Project Speakeasy → Extra Work → description “Move drain and add second drain” → hours. Do not require the field worker to create a formal Change Order, create taxonomy, price the work, understand scope-lineage architecture, or answer multiple administrative questions. Correct attribution must be easier than burying the hours in a vaguely related existing category.
+
+### Training / discipline
+
+Software cannot replace field discipline. Future Brayman / contractor rollout must include: **do not bury extra work in the original job.** If the customer asks to add, remove, move, or change something outside the work you were sent to perform: use Extra Work. This is an operational adoption requirement. Do not respond to the human-discipline problem by making Time Entry administratively heavy.
+
+### Pending Change / Extra Work
+
+Real work may begin before a formal Change Order exists. Future architecture must support a governed temporary attribution conceptually equivalent to PENDING CHANGE or EXTRA WORK. Time recorded here must **not** be falsely attributed to original scope.
+
+### Needs Attention — Extra Work without a Change Order
+
+When approved labour accumulates against Extra Work / Pending Change and no formal Change Order is linked, CalibraytAI should alert: extra work is accumulating without a Change Order. Potential later actions: CREATE CHANGE ORDER / LINK TO EXISTING CHANGE ORDER / RETURN TO ORIGINAL SCOPE. Exact copy/UX deferred. Do **not** automatically create a Change Order. The contractor decides.
+
+### Linking / reclassification
+
+When pending extra work is later associated with a formal Change Order, preserve history. Do **not** destructively rewrite the record as though the CO had existed before the work occurred. Retain evidence that time was originally recorded as Extra Work / Pending Change, then linked/reclassified to a specific Change Order, by actor, at timestamp. Current reporting may then attribute the labour to the formal Change Order. Historical provenance remains intact.
+
+### Misattributed Extra Work and variance as second defence
+
+The harder case is extra work recorded against an existing ORIGINAL Element. CalibraytAI cannot know this with certainty at entry time. Do **not** automatically reclassify unusual labour as Extra Work. MONITOR detects meaningful unexplained variance. Closeout gives the contractor an opportunity to explain/reclassify it. LEARN must remain cautious until the variance is understood.
+
+Example: Drainage estimated 16 hrs, actual 24 hrs, comparable historical range 15–18 hrs. CalibraytAI must **not** automatically conclude that future Drainage estimates should be 24 hours. Identify **MATERIAL / UNEXPLAINED VARIANCE** for contractor attention. Exact thresholds deferred.
+
+### Project Closeout — data-quality gate
+
+Project Closeout becomes the final data-quality checkpoint before Project performance becomes trusted LEARN evidence. At Closeout, show **material exceptions**. Do **not** require review of every normal line item. Example: Forms 4 hrs over; Drainage 8 hrs over; Concrete 2 hrs under; CO-003 3 hrs over.
+
+For material unexplained variance, evaluate contractor-simple explanations conceptually such as: EXTRA WORK / SCOPE CHANGE · ORIGINAL WORK TOOK LONGER · OTHER KNOWN REASON · NOT SURE. Exact wording deferred to the language audit. Do not expose statistical/technical terminology.
+
+If the contractor determines at Closeout that labour originally recorded against original scope was actually Extra Work, allow governed reclassification/linking. Preserve original Time Entry, original attribution, review/reclassification actor, timestamp, new current attribution, and Change Order linkage where applicable. Do not erase the historical fact that the worker originally recorded the time differently.
+
+### LEARN data confidence and protection
+
+Not every completed Project should contribute equally to LEARN. Evaluate a simple internal evidence-quality model, conceptually **CLEAN / REVIEWED / UNRESOLVED** (exact names deferred):
+
+- **CLEAN:** scope attribution is consistent and no material unexplained variance remains.
+- **REVIEWED:** material variance was reviewed/explained by the contractor.
+- **UNRESOLVED:** material variance remains unexplained.
+
+A large unexplained labour overrun must **not** automatically become a new estimating or scheduling standard. LEARN should preferentially use CLEAN + REVIEWED comparable evidence. UNRESOLVED evidence should be treated cautiously and may be excluded or down-weighted from calibration recommendations according to later architecture. Human acceptance remains mandatory before organization standards change.
+
+A Project should not enter the trusted LEARN corpus merely because its status becomes complete. Conceptual flow: PROJECT WORK COMPLETE → PERFORMANCE REVIEW → MATERIAL EXCEPTIONS RESOLVED / CLASSIFIED → PERFORMANCE EVIDENCE QUALITY ESTABLISHED → LEARN ELIGIBILITY. Keep this lightweight. Only meaningful exceptions should require contractor attention.
+
+### Change Order → Schedule
+
+Authorized Change Orders may affect labour, duration, sequence, crew assignment, and project finish date. When a CO adds work, Scheduling should identify potential impact (example: CO-005 adds 32 estimated labour hours; current planned finish Oct 16; potential revised finish Oct 20). CalibraytAI may recommend UPDATE SCHEDULE / KEEP CURRENT SCHEDULE / REVIEW IMPACT. Do **not** silently move work.
+
+If a CO creates a new Element, it may appear as new scheduled work. If a CO modifies an existing Element, additional work may extend that Element or appear as separately attributable scheduled work. The underlying schedule must retain scope lineage. The default Month calendar must **not** become visually overloaded with CO technical detail. Detailed lineage should be available through Project/work expansion.
+
+Labour alerts must understand the scope layer. Example: original Forms 40 estimated / 39 actual; CO-004 Forms 12 estimated / 14 actual. Do **not** alert “ORIGINAL FORMS 13 HOURS OVER.” Correct current information may include: original Forms on track; CO-004 additional Forms 2 hours over; current authorized Forms 1 hour over overall.
+
+### Change Order commercial performance and LEARNING
+
+Where existing pricing/cost architecture permits, future MONITOR / Closeout should distinguish original contract performance from Change Order performance (original estimating accuracy, CO estimating accuracy, small-change setup/mobilization effects, margin pressure from changed work, schedule impact of changes). Keep internal commercial performance off customer-facing surfaces.
+
+Change Orders should become useful learning evidence in their own right: whether COs consistently consume more labour than estimated; which kinds of changes run over; whether small changes carry disproportionate setup/mobilization labour; how much schedule extension particular changes actually create; whether future CO labour estimates should include learned adjustments. Human decides whether recommendations become organization standards.
+
+Where measurable quantities exist, preserve production-rate evidence for both original-scope work and Change-Order work. Do not exclude Change Order labour from learning. Where context matters, LEARN should be able to distinguish whether production rates differ between planned original work and later changed work.
+
+### QuickBooks / payroll lineage
+
+Approved labour exported toward QuickBooks / payroll must preserve internal CalibraytAI evidence: Project, Element, Activity, Scope Origin, Change Order where applicable, even if the external system cannot represent every dimension directly. Export must not destroy CalibraytAI’s learning/performance evidence.
+
+### Project Closeout summary and management signal
+
+Project Closeout must eventually summarize: original scope; authorized Change Orders; pending / unresolved Extra Work; original labour performance; Change Order labour performance; current total project performance; schedule performance / effects; material variance explanations; LEARNING evidence quality. A Project should not silently close into trusted LEARN evidence with material unresolved Pending Change / unexplained labour. Exact close-block vs warning policy is deferred.
+
+Over time CalibraytAI may provide organization-level operational insight such as: projects with unresolved labour variance; extra work captured before formal CO; recurring extra-work attribution problems; material exceptions requiring Closeout review. This exists to improve operational discipline. Do **not** create employee ranking / punitive surveillance.
+
+### Three-layer data quality control
+
+1. **FIELD DISCIPLINE** — make Extra Work easy to capture.
+2. **CALIBRAYTAI MONITORING** — detect meaningful abnormal/unexplained labour and schedule variance.
+3. **CLOSEOUT REVIEW** — contractor resolves/classifies material exceptions before LEARN treats the evidence as trusted historical performance.
+
+### Scope lineage belongs to the work structure
+
+Do **not** solve Change Order integrity merely by tagging timesheets. Scope lineage belongs at the **work structure** level. Element / Activity / scheduled work should carry or inherit scope origin. Time Entry then inherits that lineage wherever possible. This preserves evidence through ESTIMATE → SCHEDULE → TIME → ACTUALS → MONITOR → CLOSEOUT → LEARN.
 
 ## Platform-wide Contractor Language + UX E2E Audit (mandatory later; not implemented)
 
@@ -344,6 +472,42 @@ WHAT ALREADY EXISTS in PLAN / PRICE / BUILD (scope, assembly, quantity, and rela
 
 before any schema is authorized.
 
+When FG-034 is complete and ChatGPT Architect authorizes the future Time / Schedule / Performance / MONITOR / LEARN preflight, that preflight must resolve E2E (received checklist through Closeout performance review; remainder of this list was **not** received):
+
+- Project Type authority
+- Element authority
+- Activity authority
+- contractor extension points
+- project performance attributes
+- frozen Estimate relationships
+- original scope immutability
+- current authorized scope
+- scope origin
+- CO-added Elements
+- CO modification of existing Elements
+- CO reductions/removals
+- Extra Work / Pending Change
+- linking/reclassification history
+- Time inheritance
+- Time approval
+- worker/crew assignment
+- dynamic visual Schedule
+- desktop Month planning board
+- iPhone Today / Week / Month
+- schedule history
+- lightweight dependencies
+- conflict detection
+- labour budget alerts
+- schedule alerts
+- progress vs labour
+- forecasting
+- gross-margin forecast
+- original vs CO performance
+- production rates
+- Closeout performance review
+
+Do **not** invent additional preflight bullets beyond this received list.
+
 ## Not authorized from this record
 
-Baseline element library · Organization Element Library · project-specific elements · promotion workflow · activity taxonomy · Time UI / mobile Time page · Today view · time approval · actual labour · time entry · **Schedule UI / visual calendar / drag-drop / iPhone TODAY-WEEK-MONTH Schedule** · crew assignment product · conflict engine · labour-budget alerts · Needs Attention · MONITOR forecast expansion · LEARN · estimate/schedule calibration · Change Order scope lineage product · Extra Work / Pending Change product · Closeout performance review · Contractor Language + UX E2E Audit implementation · cross-org learning · QuickBooks time export · AUTH-D · a new Feature Gate · V1 rescore · TECH-D reopen · Native Signing reopen.
+Baseline element library · Organization Element Library · project-specific elements · promotion workflow · activity taxonomy · Time UI / mobile Time page · Today view · time approval · actual labour · time entry · **Schedule UI / visual calendar / drag-drop / iPhone TODAY-WEEK-MONTH Schedule** · crew assignment product · conflict engine · labour-budget alerts · Needs Attention · MONITOR forecast expansion · LEARN · estimate/schedule calibration · Change Order scope lineage product · Extra Work / Pending Change product · Extra Work iPhone action · Closeout performance review · LEARN evidence-quality states · Contractor Language + UX E2E Audit implementation · cross-org learning · QuickBooks time export · AUTH-D · a new Feature Gate · V1 rescore · TECH-D reopen · Native Signing reopen.

@@ -43,7 +43,7 @@ Dated MONITOR **comparison snapshots** and dated **forecast snapshots** only. So
 
 **Not implemented (out of V1):** MONITOR snapshot table; forecast-final GM; NET PROFIT; Field Event conversion; QuickBooks; Field Web MONITOR. LEARN remains Future on the Hub. Preflight: [fg-023-monitor-v1-implementation-preflight.md](../architecture/fg-023-monitor-v1-implementation-preflight.md) **COMPLETE**. Feature Gate: [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**.
 
-**Future recorded (not authorized):** Project Element / Time / LEARN authority — one CalibraytAI platform, organization configuration data, PROJECT → PROJECT ELEMENT → ACTIVITY → HOURS. Time Entry is **mobile-first / iPhone-primary**; do not design a desktop timesheet and compress it later. Record: [project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md). Do **not** implement from that record.
+**Future recorded (not authorized):** Project Element / Time / LEARN authority — one CalibraytAI platform, organization configuration data, PROJECT → PROJECT ELEMENT → ACTIVITY → HOURS. Time Entry is **mobile-first / iPhone-primary**. MONITOR must later separate original / Change Order / current authorized performance. Closeout is the LEARN data-quality gate. Record: [project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md) (including §§40–71). Do **not** implement from that record.
 
 ## Dependencies
 

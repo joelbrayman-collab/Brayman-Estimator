@@ -36,6 +36,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — Complete Time / Schedule / Performance / LEARN product-direction record
+
+| Field | Content |
+|-------|---------|
+| Milestone | Future record only (not a coded milestone) |
+| Status | **RECORDED / NOT IMPLEMENTATION-AUTHORIZED.** MAIL-B remains **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. |
+| Branch | `main` |
+| Objective | Preserve the complete closed operational / learning loop and the mandatory Contractor Language + UX E2E Audit without implementing them. |
+| Deliverables | [architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md) complete 15 Sep 2026 consolidation. Prompt truncated at §40. |
+| Validation | Docs-only. No product tests re-run. Last MAIL-B full suite **1040 passed**. EST-2026-0019 occupancy unchanged. |
+| Architectural findings | One loop, not unrelated features. Same Project / Element / Activity for Schedule and Time. No CalibraytAI fork per contractor. Language audit is later V1 closure, not FG-025 reopen. |
+| Open decisions | Remainder of §40+ (Change Order / Extra Work / Closeout detail); later Architect preflight; AUTH-D; V1 vs later for MONITOR forecast expansion. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin AUTH-D. |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — FG-034 MAIL-B Native Signing transactional delivery
 
 | Field | Content |

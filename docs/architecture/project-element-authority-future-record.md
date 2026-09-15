@@ -4,10 +4,22 @@
 |-----------|--------|
 | Status | **FUTURE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT A PREFLIGHT / NOT IMPLEMENTED** |
 | Updated | 2026-09-15 |
-| Authority | Joel Brayman / ChatGPT Architect product-direction record during FG-024 TECH-C, with a **15 Sep 2026 visual Schedule addendum** recorded during FG-034 MAIL-B. Does **not** authorize schema, product code, or a Feature Gate. |
-| Later work | After the current CONTRACT workstream, ChatGPT Architect will perform a bounded architecture preflight covering Project Element identity, baseline / organization / project-specific libraries, Activity, Time Entry (mobile-first / iPhone-primary), **visual Dynamic Project / Crew Scheduling**, actual approval, Project Performance Profile, MONITOR variance, LEARN, QuickBooks-ready time export, organization/platform authority boundaries, and real iPhone UAT. |
+| Authority | Joel Brayman / ChatGPT Architect. Origin: FG-024 TECH-C. **15 Sep 2026 complete product-direction consolidation** recorded after FG-034 MAIL-B **PASS**. Does **not** authorize schema, product code, a Feature Gate, or AUTH-D. |
+| Later work | After FG-034 and the current CONTRACT workstream, ChatGPT Architect will perform a bounded architecture preflight covering the **one closed operational / learning loop**: Project Types / Elements / Activities; visual Dynamic Project / Crew Scheduling; field Time Entry; time approval; labour actuals; labour-budget and schedule alerts; Project Performance; MONITOR forecasting; Change Order / Extra Work lineage; Closeout data quality; LEARN evidence quality; estimate and schedule calibration; QuickBooks-ready approved time; and the mandatory platform-wide Contractor Language + UX E2E Audit before Brayman/Ben real-world UAT. |
 
-This file records a **future** Time / Project Performance / MONITOR / LEARN / **visual Schedule** direction only. It is **not** an ADR, not a Feature Gate, and not a preflight. TECH-C did **not** implement any of it. The 14 Sep 2026 Joel / Architect notes restated: (1) one CalibraytAI platform / multiple organization configurations; (2) Time Entry is primarily a field / iPhone experience and must be designed mobile-first. The **15 Sep 2026 visual calendar addendum** further defines future Dynamic Project / Crew Scheduling. Those restatements did **not** change FG-034 MAIL-B scope and did **not** authorize Schedule implementation.
+This file is the **single consolidated future record** for that loop. It is **not** an ADR, not a Feature Gate, and not a preflight. Nothing in this file is implemented. The 15 Sep 2026 visual-calendar addendum is retained below and is **subsumed** by the complete loop, not a second product.
+
+**Actual governed baseline at this recording (do not reconstruct AUTH slices):** HEAD / `origin/main` **`6dfc2e940456cf9c292c700e07840fac5d871df4`**. FG-034 **OPEN / PARTIAL**. MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. FG-033 **CLOSED / OPERATIONAL FOR UAT**. V1 **not rescored** (**60% / 4 of 11**). Alembic **`f2a3b4c5d6e7 (head)`**. The Architect prompt’s expected MAIL-B **NOT STARTED** baseline was already superseded by MAIL-B **PASS**.
+
+The 15 Sep 2026 Cursor prompt was **truncated at heading `40. CHANGE`**. Change Order / Extra Work / Closeout / LEARN evidence-quality detail below is recorded from the PURPOSE list only until the remainder is pasted. Do **not** invent commercial Change Order policy from the truncation.
+
+```text
+ONE CLOSED OPERATIONAL / LEARNING LOOP.
+NOT SEPARATE UNRELATED FEATURES.
+NOT AUTHORIZED. NOT IMPLEMENTED.
+DO NOT IMPLEMENT FROM THIS RECORD.
+DO NOT BEGIN AUTH-D FROM THIS RECORD.
+```
 
 ```text
 ONE CALIBRAYTAI PLATFORM.
@@ -179,6 +191,153 @@ Preserve the already-recorded chain: estimated duration/labour → scheduled dur
 
 The future Scheduling workstream must include a simple contractor usability test: show Schedule without explaining it. Ask what is happening this week, what is coming next, and what the next month looks like. The contractor should answer quickly from the visual presentation. If substantial explanation is required, Schedule UX is not complete. Desktop and iPhone representations must both be tested.
 
+## Complete closed operational / learning loop (15 Sep 2026; not implemented)
+
+Do **not** design Time, Schedule, Performance, MONITOR, and LEARN as unrelated features. They are one loop:
+
+WHAT WE ESTIMATED → WHAT WE SCHEDULED → WHO WE ASSIGNED → WHAT WORK WAS ACTUALLY PERFORMED → WHAT TIME WAS LOGGED → WHAT TIME WAS APPROVED → HOW THE PROJECT ACTUALLY PROGRESSED → WHERE LABOUR / SCHEDULE VARIED → WHY IT VARIED → WHAT IT DID TO PROJECT PERFORMANCE → WHAT CALIBRAYTAI LEARNED → WHAT CALIBRAYTAI RECOMMENDS NEXT TIME → HUMAN ACCEPTS OR REJECTS.
+
+The loop must improve **future estimates** and **future schedules**. LEARN recommends. Humans decide. Never silently rewrite estimates, schedules, or estimating standards.
+
+### Governed work hierarchy
+
+Every meaningful unit of work must resolve through:
+
+**ORGANIZATION → PROJECT → PROJECT ELEMENT → ACTIVITY**
+
+Later architecture must also support/inherit where relevant: Project Type; project attributes / performance drivers; Estimate / Estimate Version; estimated labour; scheduled work; worker / crew; scope origin; Change Order; actual approved labour; actual duration; production quantity / rate; Closeout review; LEARNING evidence quality.
+
+Do **not** hard-code the architecture around Thickened Edge Slabs. TES is one example. The model must support a broad range of contractor Project Types, Elements, and Activities.
+
+### Contractor configuration / SaaS integrity
+
+Contractors must be able to add Elements / Activities that matter to how they operate. Do **not** fork CalibraytAI per contractor.
+
+**ONE PLATFORM · ONE CODEBASE · ONE UPGRADE PATH** with governed organization-level configuration:
+
+**CALIBRAYTAI BASELINE → ORGANIZATION EXTENSIONS → PROJECT-SPECIFIC USE**
+
+Later architecture must determine governance for Project Types, Elements, Activities, performance attributes, production-rate bases, crew structures, and schedule conventions without creating incompatible contractor-specific products.
+
+### Field Time Entry
+
+Used primarily on iPhone. Fast, clean, touch-first, low friction. Every **approved** labour hour must resolve to **PROJECT → ELEMENT → ACTIVITY**. The worker should not manually enter information CalibraytAI can safely derive. Support worker, date, hours, Project, Element, Activity, plus only the minimum additional context genuinely required.
+
+Attribution is mandatory because the same actual labour evidence must feed payroll / QuickBooks, project actuals, MONITOR, labour-budget alerts, schedule performance, forecasting, Closeout, LEARN, future estimating, and future scheduling. **Do not create duplicate labour-entry systems.** Workers enter time once.
+
+**SCHEDULED TIME IS NOT ACTUAL TIME.** Never fabricate actual labour from scheduled work. A scheduled assignment may **suggest** Project / Element / Activity; the worker confirms.
+
+### Time approval
+
+Distinguish **FIELD SUBMITTED TIME** from **APPROVED ACTUAL LABOUR**. Approved time is the authoritative labour actual for MONITOR, forecasting, LEARN, and QuickBooks / payroll handoff. Do not treat unapproved field entries as final labour actuals. Exact approval workflow is deferred to later preflight.
+
+### Dynamic Project / Crew Scheduling (required V1 capability; not implemented)
+
+Do **not** build a generic calendar. Build a **contractor production schedule** using the **same** Project / Element / Activity structure as Time / MONITOR / LEARN. No calendar-only taxonomy.
+
+See the visual Schedule section above for the paper month-calendar, five-second rule, desktop 4–6 week month, default Projects + major phases, drag/drop plus forms, conflict intelligence, company vs Project Hub Schedule (same data, no fork), and iPhone TODAY / WEEK / MONTH.
+
+Additional scheduling rules from the 15 Sep 2026 complete record:
+
+- Scheduling must be easy to change on the fly (weather, customer delay, material delay, inspection delay, crew availability, earlier completion, extended work, Change Order). Preserve enough schedule-change history for MONITOR, LEARN, and operational accountability without excessive event noise.
+- Assignment to **individual workers and/or crews** (Ben, Matt, Ben + Matt, Concrete Crew, Unassigned). Do not require every contractor to formally use crews.
+- **Lightweight dependencies** (example: Excavation → Forms → Reinforcing → Pour → Strip). If upstream work moves: identify affected downstream work, warn, offer adjustment. Do **not** build Primavera / Microsoft Project complexity unless later architecture demonstrates it is necessary.
+- One organization **SCHEDULE** surface is the primary office planning view. Each Project Hub **Schedule** is a Project-filtered view of the **same** records.
+
+### Estimate vs actual labour
+
+At Project, Element, and useful Activity levels, later architecture must determine: estimated labour hours; actual approved labour hours; labour hours remaining; labour variance; percent of labour allowance consumed. Example: Forms estimated 40 hrs, actual 43 hrs, variance +3 hrs.
+
+The visual Schedule should show meaningful labour variance without becoming an analytics dashboard (example: Speakeasy — Forms 43 / 40 hrs, 3 hrs over). The contractor should quickly understand ON TRACK / APPROACHING ALLOWANCE / OVER ESTIMATE / PROJECTED OVERRUN. Exact visual treatment is deferred.
+
+### Labour and schedule alerts
+
+The contractor must receive meaningful alerts when labour or schedule performance moves outside governed thresholds. Examples to evaluate: approaching labour allowance; labour allowance exceeded; projected labour overrun; schedule duration exceeded; unplanned work accumulating; crew / schedule conflict; material project forecast change.
+
+Alerts must be threshold / event based, deduplicated, acknowledgeable, and contractor-facing. Do not create noisy per-hour notifications. Later architecture should evaluate defaults such as 80% and 100% of estimated labour consumed, plus predictive thresholds. Exact defaults deferred. Allow organization configuration where sensible.
+
+**One governed performance/alert engine** must feed Schedule, Project Hub, MONITOR, and Needs Attention. Do not create competing warning calculations.
+
+### Needs Attention
+
+Evaluate one contractor-facing **NEEDS ATTENTION** summary (labour overrun, projected overrun, schedule delay, crew conflict, unplanned work, extra work without Change Order, unsigned Change Order, other meaningful exceptions). Do not create competing notification systems.
+
+### Progress vs labour consumption
+
+Raw labour consumption alone is not sufficient for predictive warning. Evaluate work progress vs labour allowance consumed (example: 80% of labour allowance used, 55% of work complete → projected overrun). Do not burden field workers with constant percentage entry. Evaluate simple progress states such as NOT STARTED / IN PROGRESS / SUBSTANTIALLY COMPLETE / COMPLETE, and determine whether any percentage model is genuinely useful.
+
+### Project forecasting and gross margin
+
+MONITOR should eventually forecast final labour (example: estimated 420 hrs, actual to date 286 hrs, projected final 468 hrs, projected overrun 48 hrs). Use deterministic / project-performance logic before unnecessary AI. Do not claim prediction precision beyond the evidence.
+
+Where existing pricing/cost architecture supports it, approved labour actuals should update **internal** projected project financial performance (estimated gross margin vs current forecast gross margin). Do **not** change governed estimate pricing. Do **not** expose internal margin to customers. This records future MONITOR expansion; it does **not** reopen [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md).
+
+### Production rates and crew / Project Type performance
+
+LEARN should preserve meaningful labour hours / unit where appropriate (hours per linear foot, square metre, cubic metre, tonne, fixture). Do not hard-code construction units globally. Production-rate basis belongs to the governed work taxonomy / organization configuration.
+
+Preserve enough worker/crew context to learn whether crew configuration affects production (effective crew size, typical duration, what to schedule next time). Objective: **operational learning**. Do **not** create employee rankings or surveillance scoring.
+
+Actual labour plus cost/revenue architecture should eventually help answer which Project Types perform well, which Elements repeatedly run over, where estimating is consistently inaccurate, and which work creates margin pressure. Internal organization intelligence only.
+
+### Estimate and schedule calibration
+
+LEARN should compare new estimates with comparable historical evidence (example: you estimated 64 forming hours; comparable completed projects average 71; suggested 70–72). Possible later actions: USE SUGGESTION / KEEP MY ESTIMATE / REVIEW COMPARABLE PROJECTS.
+
+The same evidence should improve future scheduling (example: scheduled forming 2 days; comparable actual 2.7; suggested 3 days). Human accepts or rejects. Do **not** silently alter future schedules or estimates.
+
+## Change Order / Extra Work / Closeout / LEARN evidence quality (prompt truncated)
+
+Recorded from the 15 Sep 2026 PURPOSE list. Detailed section 40+ was **not received**. Later architecture must cover:
+
+- Change Order **scope lineage**
+- Extra Work / Pending Change
+- Closeout performance review
+- LEARN evidence quality
+
+Needs Attention already records “extra work without Change Order” and “unsigned Change Order” as candidate exceptions. Closeout remains **FUTURE** (Project Closeout / archive-and-purge is not implemented). Do **not** invent lineage schema, Extra Work states, or Closeout UX from this truncation. Existing Change Order **records** remain authoritative; the Change Order **document family** remains [change-order-document-family.md](change-order-document-family.md) **FUTURE / NOT IMPLEMENTED**.
+
+## Platform-wide Contractor Language + UX E2E Audit (mandatory later; not implemented)
+
+Joel established this as a **mandatory V1 closure workstream** before Brayman / Ben real-world UAT. It was first authorized for **recording only** during FG-034 AUTH-B and is consolidated here. It is **not** a new Feature Gate. It does **not** reopen or close [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md). It does **not** authorize another FG-025 slice. Exact copy is **not** authorized by this record.
+
+```text
+CONTRACTOR LANGUAGE + UX E2E AUDIT.
+MANDATORY BEFORE BRAYMAN / BEN REAL-WORLD UAT.
+NOT AUTHORIZED. NOT IMPLEMENTED.
+DO NOT BEGIN FROM THIS RECORD.
+```
+
+**Timing:** complete remaining functional work first → full Contractor Language + UX E2E Audit → real-world UAT → defects → V1 close.
+
+**Objective:** every normal user-facing surface is simple, straightforward, contractor-facing, consistent, and non-technical across desktop, iPhone/mobile, customer-facing surfaces, and generated documents. No normal user should need to understand CalibraytAI’s technical architecture to operate CalibraytAI.
+
+**Illustrative inventory** (the later audit must discover the complete live surface list): login; Forgot Password / Account Recovery; office navigation; Project Hub; PLAN; PRICE; estimates; Construction Estimate; CONTRACT; contracts; Native Signing; Change Orders; BUILD; Field Web; Time Entry; Time Approval; MONITOR; LEARN; Closeout; suppliers; uploads; historical data; QuickBooks handoff; settings; organization configuration; Project Types / Elements / Activities; performance configuration; empty / loading / warning / error / success / confirmation states; buttons; status badges; tooltips; customer signing pages; PDFs / generated customer documents.
+
+**Jargon:** internal engineering terms must not leak into ordinary contractor UX without a genuine contractor-facing reason. Inspect/remove from ordinary UX unless context requires otherwise: `authority_class`, snapshot, artifact, hash, candidate, selector, gate, feature gate, event, epoch, runtime, schema, migration, synthetic, provenance, object/record identity, Alembic, technical status/error codes. These may remain internally. Do not mechanically replace words. Translate system state into contractor meaning.
+
+**Contractor test for every screen:** Where am I? What is happening? What do I need to do? What happens next? Prefer action language (Create Estimate, Send for Signature, Record Time, Approve Time, Add Change Order, View Contract, Close Project) over implementation-oriented operations.
+
+**Terminology dictionary:** later audit must establish and enforce one vocabulary (examples: Project, Customer, Construction Estimate, Contract, Change Order, Project Element, Activity, Time, Actual, Estimate, Monitor, Learn). One concept must not acquire different names merely by moving between modules. Internal model names do not control customer-facing terminology.
+
+**Status language:** internal lifecycle values may remain precise internally; contractor presentation should explain practical state (example: internal `APPROVED_FOR_SIGNATURE` may present as Ready to Send if accurate). Do not change underlying lifecycle semantics merely to improve copy. Use presentation mapping.
+
+**Errors / warnings:** every user-facing failure should answer what happened and what to do next. Do not expose raw technical exception codes as the primary message. Fail-closed behavior must remain fail-closed. Plain language must not weaken security or governance.
+
+**Desktop + iPhone:** one E2E audit, one product vocabulary. Responsive presentation may shorten supporting copy; meaning must stay consistent.
+
+**Customer vs office:** customers must not see internal office terminology merely because the same model powers both surfaces. Native Signing is an important example: same engine, different appropriate presentation.
+
+**Documents:** review Construction Estimate, Contract, Change Order, executed/signing completion, and other V1 customer outputs as part of the same language standard. Do not alter governed commercial/legal document bodies merely as a copy-edit without owning-feature authority.
+
+**Workflow simplicity:** the audit may identify UX complexity, not merely prose. Material workflow redesign remains separately governed. Do not silently redesign architecture during a language audit.
+
+**Automated protection:** later implementation should add bounded regression where valuable (protected contractor-facing titles, prohibited technical terms on normal customer surfaces, terminology mappings, desktop/mobile presence of primary actions, customer/office presentation separation). Do not create brittle tests for every sentence.
+
+**Close criteria:** cannot close from a file grep alone. Required: complete user-facing surface inventory; prose, terminology, action/button, status, and error/warning review; desktop, responsive/mobile, customer-facing, and document-output walkthroughs; automated regression; complete E2E workflow walkthrough. Final question: could a competent contractor use this platform without needing to understand how CalibraytAI is engineered? Required answer: **YES**.
+
+**Recorded sequence (not current authorization):** finish FG-034 → complete Time / Project Performance / MONITOR / LEARN → complete BUILD / Closeout → complete remaining V1 functionality → platform-wide Contractor Language + UX E2E Audit → Brayman / Ben real-world UAT → final defects / hardening → V1 close.
+
 ## Later preflight must first identify
 
 WHAT ALREADY EXISTS in PLAN / PRICE / BUILD (scope, assembly, quantity, and related identities) · WHAT CAN BE REFERENCED · WHAT NEEDS A NEW IDENTITY
@@ -187,4 +346,4 @@ before any schema is authorized.
 
 ## Not authorized from this record
 
-Baseline element library · Organization Element Library · project-specific elements · promotion workflow · activity taxonomy · Time UI / mobile Time page · Today view · time approval · actual labour · time entry · **Schedule UI / visual calendar / drag-drop / iPhone TODAY-WEEK-MONTH Schedule** · project-performance metadata · MONITOR expansion · LEARN · cross-org learning · QuickBooks time export · TECH-D · Native Signing.
+Baseline element library · Organization Element Library · project-specific elements · promotion workflow · activity taxonomy · Time UI / mobile Time page · Today view · time approval · actual labour · time entry · **Schedule UI / visual calendar / drag-drop / iPhone TODAY-WEEK-MONTH Schedule** · crew assignment product · conflict engine · labour-budget alerts · Needs Attention · MONITOR forecast expansion · LEARN · estimate/schedule calibration · Change Order scope lineage product · Extra Work / Pending Change product · Closeout performance review · Contractor Language + UX E2E Audit implementation · cross-org learning · QuickBooks time export · AUTH-D · a new Feature Gate · V1 rescore · TECH-D reopen · Native Signing reopen.

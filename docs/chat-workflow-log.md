@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — Complete Time / Schedule / Performance / LEARN product-direction record
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Record the complete consolidated future operational / learning loop and the Contractor Language + UX E2E Audit. No implementation. Do not interrupt FG-034. |
+| Business decision | Joel / Architect: Time, Schedule, Performance, MONITOR, and LEARN are one loop. Dynamic Scheduling is a required V1 capability (not implemented). Language E2E audit is mandatory before Brayman/Ben real-world UAT. Prompt truncated at §40. |
+| Architectural decision | One platform / one codebase / organization configuration. Same Project → Element → Activity for Schedule and Time. Submitted time ≠ approved actuals. Scheduled time ≠ actual time. One alert engine. LEARN recommends; humans accept. No new Feature Gate. |
+| Prompt template used | Complete product-direction record (15 Sep 2026); no implementation scope |
+| Approved Cursor prompt summary | Record complete Scheduling + Time + Performance + MONITOR + LEARN + Change Order/Extra Work/Closeout + language audit. MAIL-B already PASS. AUTH-D not authorized. |
+| Files expected to change | future-record + continuity indexes |
+| Files prohibited from changing | `app/**`, migrations, tests, AUTH-D, EST-2026-0019, V1 rescore |
+| Implementation result | Docs only. MAIL-B remains **IMPLEMENTED / PASS** at `6dfc2e9`. AUTH-D **NOT STARTED**. Complete loop recorded. §40 truncated. Language audit recorded. **Not implemented.** |
+| Tests | Product tests **not re-run** (docs-only). Last verified MAIL-B full suite **1040 passed**, 3320 warnings, **376.12s**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | AUTH-D not started. Remainder of §40+ not received. Physical iPhone UAT deferred. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin AUTH-D. Do **not** implement the loop. |
+| Next approved prompt | None from this note. |
+| Commit hash | (this docs-only recording commit, if committed) |
+
 ### 2026-09-15 — FG-034 MAIL-B Native Signing transactional delivery
 
 | Field | Content |

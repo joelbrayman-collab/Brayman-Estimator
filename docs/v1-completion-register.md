@@ -397,6 +397,8 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 | Governing | This register §§10–11 |
 | Next governed action | After critical-path packages are complete. Not now. |
 
+**Subsequent status (2026-09-15):** A platform-wide Contractor Language + UX E2E Audit is recorded as **mandatory before** Brayman/Ben real-world UAT ([architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md)). It is **not** started. **Do not rescore** this package.
+
 ---
 
 ## 8. Weighted readiness arithmetic

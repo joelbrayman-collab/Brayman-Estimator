@@ -194,7 +194,7 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-052](ADR-052-account-recovery-and-transactional-email.md) | Web Account Recovery, Shared Transactional Email, and Supersession of ADR-041 Decision 7’s CLI-only V1 Boundary | **Accepted** (2026-09-15; Joel / ChatGPT Architect; [FG-034](../feature-gates/FG-034-account-recovery-and-transactional-email.md) MAIL-A / AUTH-A / AUTH-B **IMPLEMENTED**; AUTH-C, MAIL-B, AUTH-D **NOT STARTED**) |
+| [ADR-052](ADR-052-account-recovery-and-transactional-email.md) | Web Account Recovery, Shared Transactional Email, and Supersession of ADR-041 Decision 7’s CLI-only V1 Boundary | **Accepted** (2026-09-15; Joel / ChatGPT Architect; [FG-034](../feature-gates/FG-034-account-recovery-and-transactional-email.md) MAIL-A / AUTH-A / AUTH-B / AUTH-C **IMPLEMENTED**; MAIL-B, AUTH-D **NOT STARTED**) |
 
 ### Field Web capture reliability (Accepted; FG-021 CLOSED)
 

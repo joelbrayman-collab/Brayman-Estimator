@@ -7,7 +7,7 @@
 | Target Milestone | **V1-10** (account recovery / mail secrets) and **V1-07** (transactional delivery for Native Signing). Not a 12th major V1 package. Does **not** rescore V1. |
 | Module | **Organization / office identity** owns User password reset tokens, `credentials_epoch`, and reset access attempts. **Platform** owns the shared transactional-email service and `transactional_messages`. Signing **consumes** mail later (MAIL-B); it does **not** own mail. |
 | Date | 2026-09-15 |
-| Status | **OPEN / PARTIAL.** MAIL-A **IMPLEMENTED**. AUTH-A **IMPLEMENTED**. AUTH-B **IMPLEMENTED / PASS**. AUTH-C **NOT STARTED**. MAIL-B **NOT STARTED**. AUTH-D **NOT STARTED**. |
+| Status | **OPEN / PARTIAL.** MAIL-A **IMPLEMENTED**. AUTH-A **IMPLEMENTED**. AUTH-B **IMPLEMENTED / PASS**. AUTH-C **IMPLEMENTED / PASS**. MAIL-B **NOT STARTED**. AUTH-D **NOT STARTED**. |
 | Architecture | [ADR-052](../adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**. Supersedes [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) Decision 7’s CLI-only / no-mail V1 boundary **without rewriting ADR-041 historically**. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED** (not reopened). [FG-033](FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED** (not reopened). [FG-021](FG-021-field-web-v1-today-and-capture.md) SESSION-EXPIRY RECOVERY remains **DEFERRED** and is a different problem. |
 | Related ADRs | [ADR-052](../adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**. [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. [ADR-045](../adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md) **Accepted** (CalibraytAI mail identity). |
 | Prerequisites | FG-018 office Users / membership **CLOSED**. FG-033 Native Signing **CLOSED / OPERATIONAL FOR UAT**. Production sender domain / Postmark token **not** required for MAIL-A / AUTH-A. |
@@ -22,7 +22,7 @@
 | MAIL-A | **IMPLEMENTED** — transactional message record, local/fake transport, Postmark adapter boundary, no live network send |
 | AUTH-A | **IMPLEMENTED** — `credentials_epoch`, reset tokens hash-at-rest, rate limits, 8-character new-password floor, CLI epoch bump |
 | AUTH-B | **IMPLEMENTED / PASS** — responsive Forgot Password / Reset UX |
-| AUTH-C | **NOT STARTED** — complete password-reset delivery E2E via public routes |
+| AUTH-C | **IMPLEMENTED / PASS** — complete password-reset delivery E2E via public routes |
 | MAIL-B | **NOT STARTED** — Native Signing invitation/resend/complete through this engine |
 | AUTH-D | **NOT STARTED** — desktop/mobile automated close + Postmark UAT |
 | Schema / Alembic | Additive MAIL-A/AUTH-A **`f2a3b4c5d6e7`** revises **`e0f1a2b3c4d5`** |
@@ -34,7 +34,7 @@ OPEN / PARTIAL
 MAIL-A IMPLEMENTED
 AUTH-A IMPLEMENTED
 AUTH-B IMPLEMENTED / PASS
-AUTH-C NOT STARTED
+AUTH-C IMPLEMENTED / PASS
 MAIL-B NOT STARTED
 AUTH-D NOT STARTED
 ONE TRANSACTIONAL EMAIL ENGINE
@@ -133,13 +133,15 @@ Typed templates. Local capture + injected fake provider. Postmark adapter bounda
 
 One responsive implementation. Desktop + iPhone. No device-specific forks. Forgot Password on login; generic confirmation; reset form; 8-character floor; CSRF; AUTH-A integration; local/fake MAIL-A only. Physical iPhone Account Recovery UAT **DEFERRED** — **NOT CLAIMED AS PASS**. Evidence [testing/fg034-auth-b-responsive-forgot-reset-ux-record.md](../testing/fg034-auth-b-responsive-forgot-reset-ux-record.md).
 
-**STOP:** no AUTH-C delivery-E2E close; no Postmark; no MAIL-B.
+**STOP:** no Postmark; no MAIL-B.
 
 ### AUTH-C — Complete password-reset delivery E2E
 
-**Status: NOT STARTED.**
+**Status: IMPLEMENTED / PASS (this prompt).**
 
-Public generic confirmation; token consume; login with new password.
+Public generic confirmation; local `PASSWORD_RESET` capture; token consume; `credentials_epoch` session invalidation; login with new password. Enumeration, token failure, CSRF, rate limits, delivery-failure generic public result, CLI break-glass, desktop/mobile automated parity. Evidence [testing/fg034-auth-c-complete-e2e-record.md](../testing/fg034-auth-c-complete-e2e-record.md).
+
+**STOP:** no MAIL-B; no AUTH-D; no live Postmark.
 
 ### MAIL-B — Native Signing transactional integration
 
@@ -169,9 +171,10 @@ Automated viewport assertions. One real allowlisted Postmark send. Physical iPho
 ## Production boundary
 
 ```text
-MAIL-A / AUTH-A / AUTH-B: LOCAL / FAKE ONLY.
+MAIL-A / AUTH-A / AUTH-B / AUTH-C: LOCAL / FAKE ONLY.
 POSTMARK HTTP: NOT ACTIVATED.
 ACCOUNT RECOVERY WEB UX: AUTH-B IMPLEMENTED / PASS.
+ACCOUNT RECOVERY LOCAL E2E: AUTH-C IMPLEMENTED / PASS.
 PHYSICAL IPHONE ACCOUNT RECOVERY UAT: DEFERRED / NOT PASS.
 NATIVE SIGNING EMAIL: NOT THIS SLICE.
 ```

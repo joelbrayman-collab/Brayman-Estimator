@@ -266,7 +266,14 @@ def send_transactional_message(
         db.session.commit()
         return row
     transport = _resolve_transport()
-    result = transport.send(payload)
+    try:
+        result = transport.send(payload)
+    except Exception:
+        result = TransportResult(
+            status=STATUS_FAILED,
+            provider=provider_name or PROVIDER_LOCAL,
+            error_code="TRANSPORT_ERROR",
+        )
     row = TransactionalMessage(
         template_id=template_id,
         to_email=recipient,

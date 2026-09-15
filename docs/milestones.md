@@ -36,6 +36,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — FG-034 AUTH-C complete Account Recovery E2E
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-034 AUTH-C |
+| Status | **PARTIAL.** [FG-034](feature-gates/FG-034-account-recovery-and-transactional-email.md) **OPEN / PARTIAL**. MAIL-A **IMPLEMENTED**. AUTH-A **IMPLEMENTED**. AUTH-B **IMPLEMENTED / PASS**. AUTH-C **IMPLEMENTED / PASS**. MAIL-B, AUTH-D **NOT STARTED**. |
+| Branch | `main` |
+| Objective | Complete Account Recovery as one local product: public flow, MAIL-A capture, token consume, session invalidation, and security failure paths. |
+| Deliverables | Bounded MAIL-A transport-exception wrap; dedicated AUTH-C tests; synthetic UAT user `authc-uat@example.invalid` (id 7, epoch 1 after reset); [testing/fg034-auth-c-complete-e2e-record.md](testing/fg034-auth-c-complete-e2e-record.md). |
+| Validation | Dedicated AUTH-C **10 passed**. Focused AUTH-C + AUTH-B + MAIL-A/AUTH-A + FG-018 + SIGN-A–E **164 passed**, 318 warnings, **96.83s**. Full suite **1031 passed**, 3300 warnings, **395.54s**, exit **0**. Alembic current = heads `f2a3b4c5d6e7`. EST-2026-0019 occupancy unchanged. Live PRODUCTION packages **0**. No new migration. |
+| Architectural findings | AUTH-C is integration/proof, not new architecture. Public confirmation stays generic on known, unknown, inactive, rate-limited, and provider-failure paths. Transport exceptions become durable FAILED / TRANSPORT_ERROR. |
+| Open decisions | MAIL-B Native Signing mail; Postmark token / sender domain; AUTH-D close; physical iPhone Account Recovery UAT. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin MAIL-B. |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — FG-034 AUTH-B responsive Forgot Password / Reset UX
 
 | Field | Content |

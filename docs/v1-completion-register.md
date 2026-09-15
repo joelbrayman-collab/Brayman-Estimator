@@ -369,7 +369,7 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 |-------|--------|
 | Intent | Minimum security, integrity, backup/recovery, production configuration, onboarding, operating docs, training, error/recovery, and deployment to put **real** Brayman projects into CalibraytAI safely. Not enterprise-scale infrastructure. |
 | Weight | **10%** |
-| Status | **PARTIAL**. Subsequent **2026-09-15:** [FG-034](feature-gates/FG-034-account-recovery-and-transactional-email.md) MAIL-A / AUTH-A / AUTH-B **IMPLEMENTED**. AUTH-C, MAIL-B, AUTH-D **NOT STARTED**. **Do not rescore** (factor remains **0.35**). |
+| Status | **PARTIAL**. Subsequent **2026-09-15:** [FG-034](feature-gates/FG-034-account-recovery-and-transactional-email.md) MAIL-A / AUTH-A / AUTH-B / AUTH-C **IMPLEMENTED**. MAIL-B, AUTH-D **NOT STARTED**. **Do not rescore** (factor remains **0.35**). |
 | Factor | 0.35 |
 | Contribution | **3.5** |
 | V1 REQUIRED? | **YES** before Brayman real-life UAT (not required for an internal BMR demo on synthetic/UAT data) |
@@ -378,7 +378,7 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 | Governing | [FG-018](feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md); [ADR-041](adr/ADR-041-user-membership-and-office-authentication.md); [ADR-052](adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**; [FG-034](feature-gates/FG-034-account-recovery-and-transactional-email.md) **OPEN / PARTIAL**; local `.env` `SECRET_KEY`; SQLite `instance/brayman_estimator.db` |
 | Next governed action | Separate operational-readiness prompt. Do not invent hosting/RBAC from this register. |
 
-**Exists:** office login/membership/CSRF; org isolation; SECRET_KEY fail-closed in non-dev; ad-hoc gitignored SQLite copies before some live migrations (not a product backup service); testing standards; MAIL-A local/fake transactional engine; AUTH-A reset-token / epoch foundation; AUTH-B responsive Forgot Password / Reset UX (local/fake mail only).
+**Exists:** office login/membership/CSRF; org isolation; SECRET_KEY fail-closed in non-dev; ad-hoc gitignored SQLite copies before some live migrations (not a product backup service); testing standards; MAIL-A local/fake transactional engine; AUTH-A reset-token / epoch foundation; AUTH-B responsive Forgot Password / Reset UX; AUTH-C complete local Account Recovery E2E (local/fake mail only).
 
 **Missing for real-project V1:** governed backup/restore runbook; production hosting/secrets; user onboarding/training pack; issue/feedback process; SESSION-EXPIRY / session revocation (explicitly **NOT FG-021**); office RBAC (**POST-V1**). Supplier named-user isolation is [FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) **RECORDED** (principal class, not office RBAC) and is **not** implementation-authorized from this register.
 

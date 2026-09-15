@@ -28,7 +28,7 @@
 
 This gate is **CLOSED / OPERATIONAL FOR UAT**. It is **not** production-security certification, SaaS readiness, or BUILD readiness beyond the authenticated office prerequisite.
 
-**Subsequent status (2026-09-15, FG-034 MAIL-A / AUTH-A / AUTH-B):** [ADR-052](../adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**. [FG-034](FG-034-account-recovery-and-transactional-email.md) **OPEN / PARTIAL**. MAIL-A / AUTH-A add `credentials_epoch`, hash-at-rest reset tokens, and a shared transactional engine. AUTH-B adds responsive Forgot Password / Reset UX. This gate is **not reopened**. SESSION-EXPIRY recovery remains a separate FG-021 deferred exception.
+**Subsequent status (2026-09-15, FG-034 MAIL-A / AUTH-A / AUTH-B / AUTH-C):** [ADR-052](../adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**. [FG-034](FG-034-account-recovery-and-transactional-email.md) **OPEN / PARTIAL**. MAIL-A / AUTH-A add `credentials_epoch`, hash-at-rest reset tokens, and a shared transactional engine. AUTH-B adds responsive Forgot Password / Reset UX. AUTH-C proves complete local E2E recovery. This gate is **not reopened**. SESSION-EXPIRY recovery remains a separate FG-021 deferred exception.
 
 ### Implementation evidence (2026-08-31)
 

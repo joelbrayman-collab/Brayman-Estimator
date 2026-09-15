@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-14 |
+| Updated | 2026-09-15 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -29,6 +29,27 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 4. “Completed pending baseline commit” means deliverables exist in the working tree awaiting Joel-approved commit.
 
 ---
+
+---
+
+---
+
+### 2026-09-15 — FG-033 SIGN-D Change Order Native Signing E2E + automated close
+
+| Field | Content |
+|-------|---------|
+| ID | FG-033 SIGN-D Change Order E2E + office/Hub + automated mobile UX |
+| Status | **COMPLETE / NOT A GATE CLOSE.** FG-033 overall **OPEN / PARTIAL**. SIGN-E **not started**. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. Production Native Signing **not complete**. |
+| Branch | `main` |
+| Base commit | `e48b074c27543bc300322362b9e174508e745d4c` |
+| Objective | Close SIGN-D on automated product validation: Change Order E2E, office/Hub, customer mobile ceremony, countersign/no-countersign, lifecycle fail-closed, tenant isolation. Real iPhone UAT deferred by Joel / Architect. |
+| Deliverables | Office Send for Signature; Hub labels; name-first `/sign` copy; iPhone-first CSS; dedicated SIGN-D tests; [testing/fg033-sign-d-live-bounded-uat-record.md](testing/fg033-sign-d-live-bounded-uat-record.md). No new Alembic. |
+| Validation | Dedicated SIGN-D **11 passed**. Focused SIGN-A/B/C/D + CO + Hub + TECH **206 passed**. Full **962 passed**, 3184 warnings, **317.78s**. Alembic current = heads `d9e0f1a2b3c4`. EST-2026-0019 occupancy unchanged. Live PRODUCTION packages **0**. |
+| Architectural findings | No new ADR. No schema change. Public `/favicon.ico` does not redirect to office login. Customer ceremony hides SHA/enums. Real-device UAT is deferred, not PASS. |
+| Open decisions | SIGN-E. Ontario 06D. Slice D. V1 rescore. Later Project Element preflight. |
+| Next milestone | **STOP.** Recommended next chunk SIGN-E — **not authorized from this note**. |
+| Commit | this SIGN-D product commit (`feat: integrate Change Order Native Signing`) |
+| Date | 2026-09-15 |
 
 ---
 

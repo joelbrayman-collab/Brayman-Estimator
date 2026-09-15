@@ -6,10 +6,10 @@
 | Feature Name | Native Signing — Document Approval, Customer Signature, Countersignature, Executed Artifact, and Audit |
 | Target Milestone | **V1-07.** Not a 12th major V1 package. Does **not** rescore V1. |
 | Module | **Signing Service** owns signing requests, frozen signable artifacts, participants, consent versions, signing events, and later executed artifacts. Change Orders remain Project Controls. Generated contracts remain FG-024 / CONTRACT. Native Signing is an **overlay**. |
-| Date | 2026-09-14 |
-| Status | **OPEN / PARTIAL.** SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C **IMPLEMENTED**. SIGN-D/E **NOT STARTED**. Production / real-customer Native Signing **NOT COMPLETE**. No external-review dependency in the development workflow. |
+| Date | 2026-09-15 |
+| Status | **OPEN / PARTIAL.** SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C **IMPLEMENTED**. SIGN-D **IMPLEMENTED** (automated product / E2E). SIGN-E **NOT STARTED**. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. Production / real-customer Native Signing **NOT COMPLETE**. No external-review dependency in the development workflow. |
 | Architecture | [contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md) **ARCHITECTURE RECONNAISSANCE COMPLETE**. [native-signing-process-counsel-review.md](../legal/native-signing-process-counsel-review.md) **DRAFT FOR ONTARIO COUNSEL REVIEW / NOT LEGAL APPROVAL**. [change-order-document-family.md](../architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED** (V1 signing freezes the current ReportLab CO PDF). [FG-024](FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **OVERALL OPEN / PARTIAL**. [ADR-002](../adr/ADR-002-accepted-proposal-immutability.md) **Accepted**. [ADR-004](../adr/ADR-004-proposal-acceptance-workflow.md) **Proposed** (Proposal e-sign out of this gate). |
-| Related ADRs | No new ADR in SIGN-A, SIGN-B, or SIGN-C. Existing Native Signing recon remains architecture. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) / [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (contract legal content remains separate). |
+| Related ADRs | No new ADR in SIGN-A, SIGN-B, SIGN-C, or SIGN-D. Existing Native Signing recon remains architecture. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) / [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (contract legal content remains separate). |
 | Prerequisites | TECH-A/B/C/D **PASS**. Frozen generated-contract DOCX custody live. Change Order business record live. FG-018 office Users / membership. Development proceeds on product/software requirements. Do **not** add legal-review gates or approval states. |
 
 ---
@@ -22,7 +22,7 @@
 | SIGN-A | **IMPLEMENTED** — freeze + request engine + audit through APPROVED_FOR_SIGNATURE |
 | SIGN-B | **IMPLEMENTED** — secure invitation + public `/sign` + iPhone-first customer ceremony through SIGNED |
 | SIGN-C | **IMPLEMENTED** — countersign + executed PDF custody + VOID/EXPIRE/DECLINE/RESEND |
-| SIGN-D | **NOT STARTED** |
+| SIGN-D | **IMPLEMENTED** — Change Order E2E + office/Hub + automated mobile UX. Real iPhone UAT **DEFERRED** (not PASS) |
 | SIGN-E | **NOT STARTED** |
 | Schema / Alembic | Additive SIGN-A **`b7c8d9e0f1a2`**. Additive SIGN-B **`c8d9e0f1a2b3`**. Additive SIGN-C **`d9e0f1a2b3c4`** revises **`c8d9e0f1a2b3`**. Live current **equals** repository head. |
 | Production Native Signing | **NOT COMPLETE** |
@@ -34,7 +34,10 @@ OPEN / PARTIAL
 SIGN-A IMPLEMENTED
 SIGN-B IMPLEMENTED
 SIGN-C IMPLEMENTED
-SIGN-D / SIGN-E NOT STARTED
+SIGN-D IMPLEMENTED (AUTOMATED)
+SIGN-E NOT STARTED
+REAL IPHONE UAT DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT
+NOT CLAIMED AS PASS
 PUBLIC /sign ROUTE NARROWLY EXEMPTED
 TOKEN HASH-AT-REST
 NO CUSTOMER ACCOUNT
@@ -68,10 +71,10 @@ Change Orders are the first overlay. Generated contracts use the same engine lat
 | 5 | What data does it reference? | Organization, User / UserMembership, Client, Project, `ChangeOrder`, `GeneratedProjectContract` / `ProjectContractSnapshot`, Family 05 master SHA, TECH-C DOCX custody. |
 | 6 | What may it change? | Signing-owned tables, frozen and executed signing-artifact bytes, SIGN-A/B/C CLI, public `/sign` (SIGN-B/C), office `/signing-requests/<id>/executed`. May freeze a **copy** of the current CO PDF. Must **not** mutate CO statuses or generated-contract `GENERATED` constraint. |
 | 7 | What must it not change? | `CHANGE_ORDER_STATUSES`; EST-2026-0019; PRODUCTION Ontario legal packages; Family 05 master; FG-024 Slice D; Proposal e-sign (ADR-004); Time / MONITOR / LEARN; inventing RBAC; DocuSign/Adobe as source of truth. |
-| 8 | What are the acceptance criteria? | Complete workstream: immutable artifact; human APPROVED_FOR_SIGNATURE; secure invite; consent; signature; countersign path; executed custody; audit; CO + synthetic contract E2E; iPhone UAT; production contract signing remains fail-closed. SIGN-A subset: freeze + CREATED → APPROVED_FOR_SIGNATURE + audit. SIGN-B subset: invitation + public ceremony through SIGNED. SIGN-C subset: countersign / no-countersign execute + executed PDF custody + VOID/EXPIRE/DECLINE/RESEND. |
-| 9 | What tests are required? | Dedicated SIGN-A, SIGN-B, and SIGN-C identity/tenancy/token/ceremony/custody tests; migration upgrade/downgrade; TECH-A/B/C/D and Change Order regressions; full suite. |
+| 8 | What are the acceptance criteria? | Complete workstream: immutable artifact; human APPROVED_FOR_SIGNATURE; secure invite; consent; signature; countersign path; executed custody; audit; CO + synthetic contract E2E; iPhone UAT; production contract signing remains fail-closed. SIGN-A subset: freeze + CREATED → APPROVED_FOR_SIGNATURE + audit. SIGN-B subset: invitation + public ceremony through SIGNED. SIGN-C subset: countersign / no-countersign execute + executed PDF custody + VOID/EXPIRE/DECLINE/RESEND. SIGN-D subset: Change Order E2E + office/Hub + automated mobile UX. Real iPhone UAT is **deferred** (Joel / Architect 15 Sep 2026) and is **not** claimed as PASS. |
+| 9 | What tests are required? | Dedicated SIGN-A, SIGN-B, SIGN-C, and SIGN-D identity/tenancy/token/ceremony/custody/mobile-UX tests; migration upgrade/downgrade; TECH-A/B/C/D and Change Order regressions; full suite. |
 | 10 | What documentation must be updated? | This gate; feature-gates README; modules; architecture; current-state; session-handoff; chat-workflow-log; milestones; project-state-report; v1-completion-register (no rescore); Native Signing recon subsequent status. |
-| 11 | Does it require an ADR? | **No new ADR for SIGN-A, SIGN-B, or SIGN-C.** Existing recon already recommends NATIVE V1. Schema follows additive org-scoped immutable-artifact pattern. |
+| 11 | Does it require an ADR? | **No new ADR for SIGN-A, SIGN-B, SIGN-C, or SIGN-D.** Existing recon already recommends NATIVE V1. Schema follows additive org-scoped immutable-artifact pattern. |
 | 12 | Does it require a database migration? | **Yes.** SIGN-A **`b7c8d9e0f1a2`**. SIGN-B additive **`c8d9e0f1a2b3`**. SIGN-C additive **`d9e0f1a2b3c4`**. |
 
 ---
@@ -118,9 +121,21 @@ Office HUMAN countersign for SIGNED + `countersign_required=true` (any ACTIVE or
 
 **STOP:** no SIGN-D Hub polish, no real iPhone UAT close, no transactional email, no LibreOffice / SIGN-E.
 
-### SIGN-D — Change Order E2E + synthetic / real-iPhone UAT
+### SIGN-D — Change Order E2E + automated product validation
 
-Hub labels UNSIGNED / AWAITING / SIGNED / EXECUTED. Synthetic CO only. Real iPhone UAT. EST-2026-0019 protected. **NOT STARTED.**
+**Status: IMPLEMENTED (this prompt). Automated product / E2E validation COMPLETE.**
+
+Hub labels UNSIGNED / AWAITING SIGNATURE / SIGNED / EXECUTED. Office Send for Signature. Customer mobile ceremony (name-first copy). Countersign + no-countersign EXECUTED. Lifecycle fail-closed. Tenant isolation. Synthetic CO only. EST-2026-0019 protected.
+
+```text
+REAL IPHONE UAT:
+DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT.
+NOT CLAIMED AS PASS.
+```
+
+A later real-device defect is normal governed corrective work. It does **not** reopen SIGN-D unless a defect is actually found.
+
+**STOP:** no SIGN-E, no LibreOffice, no transactional email, no V1 rescore.
 
 ### SIGN-E — Contract attachment + DOCX→PDF + synthetic contract UAT
 

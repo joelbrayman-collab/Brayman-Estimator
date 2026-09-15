@@ -321,6 +321,8 @@ def test_executed_pdf_preserves_freeze_and_appends_audit(app):
     executed_reader = PdfReader(BytesIO(retained))
     assert len(executed_reader.pages) == len(frozen_pages) + 1
     audit_text = executed_reader.pages[-1].extract_text() or ""
+    assert "Who signed this document" in audit_text
+    assert "Signed by" in audit_text
     assert completed.request_number in audit_text
     assert "CHANGE_ORDER" in audit_text
     assert frozen_sha in audit_text
@@ -636,8 +638,8 @@ def test_customer_ceremony_executed_and_decline_copy(app):
         actor_identifier=user.email,
     )
     html = app.test_client().get(f"/sign/{credential}").data.decode()
-    assert "Executed successfully." in html
-    assert "Download executed PDF" in html
+    assert "This document is complete." in html
+    assert "Download the completed document" in html
     assert "Dashboard" not in html
     executed = app.test_client().get(f"/sign/{credential}/executed")
     assert executed.status_code == 200

@@ -241,7 +241,7 @@ def test_cross_org_invite_and_raw_id_are_insufficient(app):
     client = app.test_client()
     raw_id = client.get(f"/sign/{issued.request.id}")
     assert raw_id.status_code == 404
-    assert b"This signing link is not available." in raw_id.data
+    assert b"This link is not available." in raw_id.data
 
 
 def test_rate_limit_triggers_and_valid_still_works_within_limit(app):
@@ -256,7 +256,8 @@ def test_rate_limit_triggers_and_valid_still_works_within_limit(app):
         environ_base={"REMOTE_ADDR": "198.51.100.9"},
     )
     assert valid.status_code == 200
-    assert issued.request.request_number.encode() in valid.data
+    assert b"Sign &amp; Accept" in valid.data
+    assert b"Review the document" in valid.data
     for _ in range(3):
         response = client.get(
             wrong,
@@ -370,7 +371,7 @@ def test_invalid_void_expired_completed_public_states(app):
     assert replay.status_code == 409
     complete = client.get(signed.path)
     assert complete.status_code == 200
-    assert b"Signed successfully." in complete.data
+    assert b"You have signed this document." in complete.data
     assert b"sign-form" not in complete.data
 
 
@@ -378,7 +379,8 @@ def test_frozen_pdf_review_sha_and_live_mutation_isolation(app):
     _user, change_order, issued = _sent_change_order(app)
     client = app.test_client()
     page = client.get(issued.path)
-    assert issued.request.frozen_artifact.sha256.encode() in page.data
+    assert issued.request.frozen_artifact.sha256.encode() not in page.data
+    assert b"SHA-256" not in page.data
     download = client.get(f"{issued.path}/document")
     assert download.status_code == 200
     assert download.mimetype == "application/pdf"
@@ -413,7 +415,7 @@ def test_consent_signature_events_and_evidence(app):
         },
     )
     html = page.data.decode()
-    assert CONSENT_SYNTHETIC_UAT_CODE in html
+    assert issued.request.consent_version.body_text in html
     assert issued.request.consent_version.version_code == CONSENT_SYNTHETIC_UAT_CODE
     missing_consent = client.post(
         f"{issued.path}/sign",
@@ -424,7 +426,7 @@ def test_consent_signature_events_and_evidence(app):
         },
     )
     assert missing_consent.status_code == 400
-    assert b"Accept the consent text before signing." in missing_consent.data
+    assert b"Please check the box before signing." in missing_consent.data
     missing_name = client.post(
         f"{issued.path}/sign",
         data={"consent_accepted": "yes", "confirmed_signer_name": "  "},
@@ -434,7 +436,7 @@ def test_consent_signature_events_and_evidence(app):
         },
     )
     assert missing_name.status_code == 400
-    assert b"Type your name to confirm before signing." in missing_name.data
+    assert b"Please type your name." in missing_name.data
     before = datetime.utcnow()
     signed = client.post(
         f"{issued.path}/sign",
@@ -449,8 +451,8 @@ def test_consent_signature_events_and_evidence(app):
     )
     after = datetime.utcnow()
     assert signed.status_code == 200
-    assert b"Signed successfully." in signed.data
-    assert b"Awaiting organization countersignature." in signed.data
+    assert b"You have signed this document." in signed.data
+    assert b"still needs to countersign." in signed.data
     db.session.expire_all()
     request = db.session.get(SigningRequest, issued.request.id)
     assert request.status == STATUS_SIGNED
@@ -640,7 +642,7 @@ def test_csrf_protected_public_sign_accept(tmp_path):
             },
         )
         assert accepted.status_code == 200
-        assert b"Signed successfully." in accepted.data
+        assert b"You have signed this document." in accepted.data
         db.session.remove()
         db.drop_all()
 

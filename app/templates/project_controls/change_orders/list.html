@@ -59,6 +59,7 @@
             <th>Project</th>
             <th>Title</th>
             <th>Status</th>
+            <th>Signature</th>
             <th>Value</th>
             <th>Updated</th>
         </tr>
@@ -70,6 +71,10 @@
             <td><a href="{{ url_for('projects.view_project', id=co.project_id) }}">{{ co.project.name }}</a></td>
             <td>{{ co.title }}</td>
             <td><span class="status status-co-{{ co.status|lower|replace(' ', '-') }}">{{ co.status }}</span></td>
+            <td>
+                {% set overlay = signing_overlays.get(co.id) %}
+                <span class="status status-sign-{{ overlay.hub_label|lower|replace(' ', '-') }}">{{ overlay.hub_label }}</span>
+            </td>
             <td>${{ "%.2f"|format(co.total) }}</td>
             <td>{{ co.updated_at.strftime("%Y-%m-%d") }}</td>
         </tr>

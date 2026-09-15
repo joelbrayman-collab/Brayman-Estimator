@@ -382,6 +382,7 @@
                     <th>Number</th>
                     <th>Title</th>
                     <th>Status</th>
+                    <th>Signature</th>
                     <th>Value</th>
                     <th>Updated</th>
                 </tr>
@@ -392,6 +393,10 @@
                     <td><a href="{{ url_for('project_controls.view_change_order', id=change_order.id) }}">{{ change_order.number }}</a></td>
                     <td>{{ change_order.title }}</td>
                     <td><span class="status">{{ change_order.status }}</span></td>
+                    <td>
+                        {% set overlay = hub.signing_overlays.get(change_order.id) %}
+                        <span class="status status-sign-{{ overlay.hub_label|lower|replace(' ', '-') }}">{{ overlay.hub_label }}</span>
+                    </td>
                     <td>${{ "%.2f"|format(change_order.total) }}</td>
                     <td>{{ change_order.updated_at.strftime("%Y-%m-%d") }}</td>
                 </tr>

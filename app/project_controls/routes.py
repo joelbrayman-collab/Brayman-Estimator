@@ -4,10 +4,12 @@ from flask import (
     Blueprint,
     abort,
     flash,
+    g,
     redirect,
     render_template,
     request,
     send_file,
+    session,
     url_for,
 )
 
@@ -20,6 +22,7 @@ from app.project_controls.pdf import (
 )
 from app.services.auth import form_actor
 from app.services.organizations import get_current_organization_id
+from app.services.signing import overlay_for_change_order, overlays_for_change_orders
 from app.project_controls.services import (
     ChangeOrderServiceError,
     add_change_order_item,
@@ -95,9 +98,13 @@ def list_change_orders():
         search=search,
     )
     projects = Project.query.filter_by(organization_id=get_current_organization_id()).order_by(Project.name).all()
+    signing_overlays = overlays_for_change_orders(
+        get_current_organization_id(), [row.id for row in change_orders]
+    )
     return render_template(
         "project_controls/change_orders/list.html",
         change_orders=change_orders,
+        signing_overlays=signing_overlays,
         projects=projects,
         statuses=CHANGE_ORDER_STATUSES,
         filters={
@@ -284,6 +291,15 @@ def view_change_order(id):
         else:
             editing_item_id = None
 
+    organization_id = getattr(g, "organization_id", None) or get_current_organization_id()
+    signing_overlay = overlay_for_change_order(change_order.id, organization_id)
+    invitation_url = ""
+    if (
+        signing_overlay.request_id
+        and session.get("signing_invitation_request_id") == signing_overlay.request_id
+    ):
+        invitation_url = session.get("signing_invitation_url") or ""
+
     return render_template(
         "project_controls/change_orders/detail.html",
         change_order=change_order,
@@ -291,6 +307,8 @@ def view_change_order(id):
         statuses=CHANGE_ORDER_STATUSES,
         editing_item_id=editing_item_id,
         item_edit_form=item_edit_form,
+        signing_overlay=signing_overlay,
+        invitation_url=invitation_url,
     )
 
 
@@ -399,6 +417,7 @@ def edit_item(id, item_id):
         )
     except ChangeOrderServiceError as exc:
         flash(str(exc), "error")
+        organization_id = getattr(g, "organization_id", None) or get_current_organization_id()
         return render_template(
             "project_controls/change_orders/detail.html",
             change_order=change_order,
@@ -411,6 +430,8 @@ def edit_item(id, item_id):
                 "unit": request.form.get("unit", ""),
                 "unit_price": request.form.get("unit_price", ""),
             },
+            signing_overlay=overlay_for_change_order(change_order.id, organization_id),
+            invitation_url="",
         )
     flash("Line item updated.", "success")
     return redirect(

@@ -2,7 +2,7 @@ import os
 import re
 import tempfile
 
-from flask import Flask, abort, g, request
+from flask import Flask, abort, g, request, send_from_directory
 from flask_login import LoginManager, current_user
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -125,7 +125,12 @@ def _register_office_auth(app: Flask) -> None:
         )
 
         endpoint = request.endpoint
-        if endpoint in ("static", "auth.login", "auth.logout"):
+        if request.path == "/favicon.ico" or endpoint in (
+            "static",
+            "auth.login",
+            "auth.logout",
+            "favicon",
+        ):
             return None
         if endpoint is not None and endpoint.startswith("sign."):
             return None
@@ -264,6 +269,15 @@ def create_app(config=None):
     app.register_blueprint(estimate_quickbooks_bp)
     app.register_blueprint(sign_bp)
     app.register_blueprint(signing_office_bp)
+
+    @app.route("/favicon.ico")
+    def favicon():
+        # Safari requests this while showing a /sign PDF. It must not 302 to office login.
+        return send_from_directory(
+            os.path.join(app.static_folder, "branding"),
+            "calibraytai-logo-v2.png",
+            mimetype="image/png",
+        )
 
     _register_office_auth(app)
 

@@ -17,6 +17,7 @@ from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 from app.models.signing import DOCUMENT_FAMILY_CHANGE_ORDER, ROLE_CUSTOMER
+from app.models.user import User
 
 
 def _escape(text) -> str:
@@ -31,10 +32,22 @@ def _escape(text) -> str:
     )
 
 
-def _format_utc(value: Optional[datetime]) -> str:
+def _format_day(value: Optional[datetime]) -> str:
     if value is None:
         return "—"
-    return value.strftime("%Y-%m-%d %H:%M:%S UTC")
+    return value.strftime("%B %d, %Y").replace(" 0", " ")
+
+
+def _countersigner_name(request) -> str:
+    user_id = getattr(request, "countersigned_by_user_id", None)
+    if user_id:
+        from app import db
+
+        user = db.session.get(User, user_id)
+        name = (user.display_name if user is not None else "") or ""
+        if name.strip():
+            return name.strip()
+    return (getattr(request, "countersigned_by_identifier", None) or "").strip()
 
 
 def _audit_page_pdf(*, rows: list[tuple[str, str]], is_synthetic: bool) -> bytes:
@@ -70,10 +83,10 @@ def _audit_page_pdf(*, rows: list[tuple[str, str]], is_synthetic: bool) -> bytes
         fontName="Helvetica-Bold",
     )
     flowables = [
-        Paragraph("Signing completion record", title),
+        Paragraph("Who signed this document", title),
         Paragraph(
-            "This page is appended to the frozen pre-sign document. "
-            "The commercial pages above were not re-rendered.",
+            "The pages above are the original document. "
+            "This last page records the names of the people who signed.",
             body,
         ),
         Spacer(1, 10),
@@ -124,41 +137,36 @@ def assemble_executed_pdf(
     consent = request.consent_version
     family = request.document_family or ""
     source_label = "Change Order" if family == DOCUMENT_FAMILY_CHANGE_ORDER else "Contract"
+    customer_name = (customer.confirmed_signer_name if customer else "") or ""
+    countersigner = _countersigner_name(request)
     rows = [
-        ("Signing request", request.request_number or ""),
+        ("Signed by", customer_name),
+        ("Signed on", _format_day(customer.signed_at if customer else None)),
+        ("Customer email", (customer.invited_email if customer else "") or ""),
+        (
+            "Countersigned by",
+            countersigner if request.countersign_required else "Not required",
+        ),
+        (
+            "Countersigned on",
+            _format_day(request.countersigned_at)
+            if request.countersign_required
+            else "—",
+        ),
+        ("Organization email", request.countersigned_by_identifier or ""),
+        ("Completed on", _format_day(executed_at)),
+        ("Document", source_label),
         ("Document family", family),
         ("Document reference", document_reference or request.request_number or ""),
-        ("Source kind", source_label),
+        ("Signing request", request.request_number or ""),
         ("Pre-sign SHA-256", request.frozen_artifact.sha256 if request.frozen_artifact else ""),
-        (
-            "Customer signer name",
-            (customer.confirmed_signer_name if customer else "") or "",
-        ),
-        ("Customer signer email", (customer.invited_email if customer else "") or ""),
-        ("Customer signed at", _format_utc(customer.signed_at if customer else None)),
         ("Consent version", consent.version_code if consent else ""),
-        (
-            "Customer IP",
-            (customer.completion_ip if customer else "") or "",
-        ),
+        ("Customer IP", (customer.completion_ip if customer else "") or ""),
         (
             "Customer user-agent",
             (customer.user_agent if customer else "") or "",
         ),
     ]
-    if request.countersign_required:
-        rows.extend(
-            [
-                (
-                    "Organization countersigner",
-                    request.countersigned_by_identifier or "",
-                ),
-                ("Countersigned at", _format_utc(request.countersigned_at)),
-            ]
-        )
-    else:
-        rows.append(("Organization countersign", "Not required"))
-    rows.append(("Executed at", _format_utc(executed_at)))
     audit_bytes = _audit_page_pdf(
         rows=rows,
         is_synthetic=(request.authority_class or "") == "SYNTHETIC_UAT",

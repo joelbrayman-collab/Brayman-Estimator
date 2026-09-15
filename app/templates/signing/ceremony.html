@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Sign document — {{ organization.display_name if organization else "CalibraytAI" }}</title>
+    <title>Sign — {{ organization.display_name if organization else "CalibraytAI" }}</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,62 +23,67 @@
         </div>
         {% if is_synthetic %}
         <div class="sign-banner" role="status">
-            SYNTHETIC TECHNICAL UAT ONLY. NOT FOR EXECUTION. NOT A CUSTOMER SEND.
+            This is a test page. It is not a real customer agreement.
         </div>
         {% endif %}
         <section class="sign-panel">
             <p class="sign-org">{{ organization.display_name if organization else "Organization" }}</p>
             <p class="sign-muted">{{ project.name if project else "Project" }}</p>
             <h1 class="sign-doc-title">{{ document_title }}</h1>
-            <p class="sign-muted">{{ signing_request.request_number }} · {{ signing_request.document_family }}</p>
-            <p class="sign-sha-label">Frozen document SHA-256</p>
-            <p class="sign-hash">{{ artifact_sha }}</p>
+            <p class="sign-muted">{{ family_label }}</p>
         </section>
 
         {% if completed %}
         <section class="sign-panel" data-sign-complete="true">
             {% if executed %}
-            <p class="sign-ok">Executed successfully.</p>
-            <p class="sign-muted">This signing request is complete.</p>
-            {% if executed_sha %}
-            <p class="sign-sha-label">Executed document SHA-256</p>
-            <p class="sign-hash">{{ executed_sha }}</p>
-            {% endif %}
+            <p class="sign-ok">This document is complete.</p>
             {% else %}
-            <p class="sign-ok">Signed successfully.</p>
+            <p class="sign-ok">You have signed this document.</p>
             {% if signing_request.countersign_required %}
-            <p class="sign-muted">Awaiting organization countersignature.</p>
+            <p class="sign-muted">{{ organization.display_name if organization else "The contractor" }} still needs to countersign.</p>
             {% endif %}
             {% endif %}
-            <p class="sign-muted">Confirmed as {{ participant.confirmed_signer_name }}.</p>
+            {% if customer_signer_name %}
+            <p class="sign-who">Signed by {{ customer_signer_name }}</p>
+            {% if customer_signed_on %}
+            <p class="sign-muted">on {{ customer_signed_on }}</p>
+            {% endif %}
+            {% endif %}
+            {% if executed and countersigner_name %}
+            <p class="sign-who">Countersigned by {{ countersigner_name }}</p>
+            {% if countersigned_on %}
+            <p class="sign-muted">on {{ countersigned_on }}</p>
+            {% endif %}
+            {% endif %}
             {% if executed %}
-            <a class="sign-btn sign-btn-primary" href="{{ url_for('sign.executed', credential=credential) }}">Download executed PDF</a>
+            <a class="sign-btn sign-btn-primary" href="{{ url_for('sign.executed', credential=credential) }}">Download the completed document</a>
+            <p class="sign-muted">Names are on the last page. The original form lines stay blank.</p>
             {% elif is_change_order_pdf %}
-            <a class="sign-btn" href="{{ url_for('sign.document', credential=credential) }}">Download signed document copy</a>
+            <a class="sign-btn" href="{{ url_for('sign.document', credential=credential) }}">Review the document</a>
             {% endif %}
         </section>
         {% else %}
         <section class="sign-panel">
             {% if is_change_order_pdf %}
-            <a class="sign-btn" href="{{ url_for('sign.document', credential=credential) }}">Review / download frozen PDF</a>
+            <a class="sign-btn sign-btn-primary" href="{{ url_for('sign.document', credential=credential) }}">Review the document</a>
             {% else %}
-            <p class="sign-muted">A PDF review copy is not available for this contract in this signing step.</p>
+            <p class="sign-muted">A document copy is not available to review in this step.</p>
             {% endif %}
         </section>
         <section class="sign-panel">
-            <h2 class="sign-doc-title">Consent {{ consent.version_code }}</h2>
+            <h2 class="sign-doc-title">Please read this before you sign</h2>
             <p class="sign-consent">{{ consent.body_text }}</p>
             {% if error_code == "CONSENT_NOT_ACCEPTED" %}
-            <p class="sign-error">Accept the consent text before signing.</p>
+            <p class="sign-error">Please check the box before signing.</p>
             {% endif %}
             {% if error_code == "CONFIRMED_NAME_REQUIRED" %}
-            <p class="sign-error">Type your name to confirm before signing.</p>
+            <p class="sign-error">Please type your name.</p>
             {% endif %}
             <form method="post" action="{{ url_for('sign.sign_accept', credential=credential) }}" class="sign-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <label class="sign-check">
                     <input type="checkbox" name="consent_accepted" value="yes" required>
-                    <span>I have reviewed the document and I accept this consent version.</span>
+                    <span>I have read the document and I agree to sign.</span>
                 </label>
                 <label class="sign-label" for="confirmed_signer_name">Type your name</label>
                 <input

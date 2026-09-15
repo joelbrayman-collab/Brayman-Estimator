@@ -36,6 +36,7 @@ from app.services.direct_cost_actuals import (
 from app.services.monitor import assemble_monitor_v1
 from app.services.legal_content import select_legal_content_package_for_project
 from app.services.permit_foundation import assemble_permit_foundation_state
+from app.services.signing import overlays_for_change_orders
 from app.services.permit_intelligence import assemble_permit_intelligence_state
 from app.services.pricing_engine import as_money
 
@@ -142,6 +143,10 @@ def assemble_project_hub(project, organization_id: str) -> dict:
         )
 
     legal_content_selection = _legal_content_selection(project.id)
+    change_orders = change_order_repo.list_change_orders_for_project(project.id)
+    signing_overlays = overlays_for_change_orders(
+        organization_id, [row.id for row in change_orders]
+    )
 
     return {
         "permit_foundation": assemble_permit_foundation_state(project),
@@ -149,7 +154,8 @@ def assemble_project_hub(project, organization_id: str) -> dict:
         "estimates": estimates,
         "estimate_rows": estimate_rows,
         "proposals": proposals,
-        "change_orders": change_order_repo.list_change_orders_for_project(project.id),
+        "change_orders": change_orders,
+        "signing_overlays": signing_overlays,
         "plan_documents": plan_documents,
         "active_revision": revision,
         "sheets": sheets,

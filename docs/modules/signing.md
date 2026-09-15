@@ -2,8 +2,8 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Partial Current.** [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **OPEN / PARTIAL**. SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C **IMPLEMENTED**. SIGN-D/E **NOT STARTED**. Production / real-customer Native Signing **NOT COMPLETE**. No external-review dependency in the development workflow. |
-| Updated | 2026-09-14 |
+| Status | **Partial Current.** [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **OPEN / PARTIAL**. SIGN-A **IMPLEMENTED**. SIGN-B **IMPLEMENTED**. SIGN-C **IMPLEMENTED**. SIGN-D **IMPLEMENTED** (automated). SIGN-E **NOT STARTED**. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. Production / real-customer Native Signing **NOT COMPLETE**. No external-review dependency in the development workflow. |
+| Updated | 2026-09-15 |
 | Code | `app/models/signing.py`, `app/services/signing.py`, `app/services/signing_artifact_storage.py`, `app/services/signing_executed_pdf.py`, `app/cli/signing.py`, `app/routes/sign.py`, `app/routes/signing.py`, `app/templates/signing/`, `app/static/css/signing.css` |
 | Feature Gate | [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) |
 | Architecture | [contract-esignature-and-signed-change-order.md](../architecture/contract-esignature-and-signed-change-order.md) |
@@ -72,11 +72,10 @@ Native Signing is an **overlay**. It freezes a signable artifact and records a g
 
 Private bytes: `instance/signing_artifacts/` (gitignored).
 
-## Prohibited (SIGN-C)
+## Prohibited (SIGN-D)
 
 - Transactional email
 - LibreOffice conversion (SIGN-E)
-- SIGN-D Hub dashboard polish / real iPhone UAT close
 - Customer account registration
 - Mutating `CHANGE_ORDER_STATUSES` or generated-contract `GENERATED`
 - EST-2026-0019
@@ -84,6 +83,18 @@ Private bytes: `instance/signing_artifacts/` (gitignored).
 - Legal-review approval states / fields
 - Overwriting the pre-sign freeze
 
+## SIGN-D (current)
+
+- Office Send for Signature on Approved Change Orders
+- Hub labels UNSIGNED / AWAITING SIGNATURE / SIGNED / EXECUTED
+- Customer `/sign` name-first copy; iPhone-first CSS; no office chrome
+- Complete synthetic E2E: freeze → invite → SENT → customer sign → countersign → EXECUTED
+- No-countersign auto-EXECUTED path
+- VOID / RESEND / EXPIRE / DECLINE / replay / invalid token fail-closed
+- Tenant isolation; public `/sign` exemption does not weaken office login
+- Automated mobile markup/CSS/copy/state assertions
+- Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**
+
 ## Later slices (not started)
 
-SIGN-D CO E2E + real iPhone UAT. SIGN-E Family 05 DOCX→PDF.
+SIGN-E Family 05 DOCX→PDF + synthetic contract signing UAT.

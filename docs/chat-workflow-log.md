@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-14 |
+| Updated | 2026-09-15 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-15 — FG-033 SIGN-D Change Order Native Signing E2E + automated close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Close SIGN-D on automated product / E2E validation. Real iPhone UAT deferred. |
+| Business decision | Joel / Architect: real iPhone UAT is no longer a hard SIGN-D implementation-close blocker. Record DEFERRED, not PASS. |
+| Architectural decision | No new Alembic. No new ADR. No SIGN-E. No V1 rescore. FG-033 remains OPEN / PARTIAL. |
+| Prompt template used | Bounded SIGN-D final automated product validation + close (15 Sep 2026) |
+| Approved Cursor prompt summary | SIGN-D final automated product validation + close; preserve uncommitted SIGN-D tree; strengthen customer mobile assertions; synthetic E2E; full suite; docs; commit; push; STOP before SIGN-E. |
+| Files expected to change | CO/Hub/signing office + customer ceremony; tests; governed continuity docs |
+| Files prohibited from changing | SIGN-E; LibreOffice; transactional email; Time / MONITOR / LEARN; EST-2026-0019; Ontario PRODUCTION; V1 rescore |
+| Implementation result | FG-033 **OPEN / PARTIAL**. SIGN-A **PASS**. SIGN-B **PASS**. SIGN-C **PASS**. SIGN-D **PASS** (automated). SIGN-E **NOT STARTED**. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. Live current `d9e0f1a2b3c4 (head)`. PRODUCTION packages **0**. EST-2026-0019 unchanged. V1 **not rescored**. |
+| Tests | Dedicated SIGN-D **11 passed**. Focused SIGN-A/B/C/D + CO + Hub + TECH **206 passed**, 486 warnings, **69.82s**. Full **962 passed**, 3184 warnings, **317.78s**, exit **0**. Prior focused engineering **187 passed**. Prior customer-copy **46 passed**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | SIGN-E not started. Real iPhone UAT deferred. Ontario production legal content empty. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin SIGN-E. |
+| Next approved prompt | SIGN-E — Contract integration + Family 05 DOCX→PDF + synthetic contract signing UAT (not authorized from this note). |
+| Commit hash | (this SIGN-D product commit) |
 
 ### 2026-09-14 — FG-033 SIGN-C countersign + executed PDF + custody
 

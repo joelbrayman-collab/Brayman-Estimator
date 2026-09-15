@@ -843,6 +843,16 @@ textarea {
 .status-co-rejected { background: #f8d7da; }
 .status-co-invoiced { background: #cff4fc; }
 .status-co-cancelled { background: #dee2e6; }
+.status-sign-unsigned { background: #e9ecef; }
+.status-sign-awaiting-signature { background: #fff3cd; }
+.status-sign-signed { background: #d1e7dd; }
+.status-sign-executed { background: #cff4fc; }
+.sign-office-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+}
 
 .hero {
     padding: 36px;

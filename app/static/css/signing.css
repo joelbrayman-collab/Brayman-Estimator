@@ -21,6 +21,8 @@ html,
 body {
     margin: 0;
     min-height: 100%;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
 }
 
 body.sign-body {
@@ -78,6 +80,12 @@ body.sign-body {
     color: var(--ok);
     font-weight: 700;
     font-size: 1.15rem;
+    margin: 0 0 8px;
+}
+
+.sign-who {
+    font-size: 1.1rem;
+    font-weight: 600;
     margin: 0 0 8px;
 }
 

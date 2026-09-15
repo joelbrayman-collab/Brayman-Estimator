@@ -16,6 +16,7 @@ from flask import (
 from app import db
 from app.models.organization import Organization
 from app.models.project import Project
+from app.models.user import User
 from app.models.signing import (
     AUTHORITY_SYNTHETIC_UAT,
     DOCUMENT_FAMILY_CHANGE_ORDER,
@@ -52,31 +53,51 @@ def _user_agent():
     return request.headers.get("User-Agent", "")
 
 
+def _human_date(value):
+    if value is None:
+        return ""
+    return value.strftime("%B %d, %Y").replace(" 0", " ")
+
+
+def _countersigner_name(signing_request):
+    user_id = signing_request.countersigned_by_user_id
+    if user_id:
+        user = db.session.get(User, user_id)
+        name = (user.display_name if user is not None else "") or ""
+        if name.strip():
+            return name.strip()
+    return (signing_request.countersigned_by_identifier or "").strip()
+
+
 def _ceremony_context(access):
     signing_request = access.request
     organization = db.session.get(Organization, signing_request.organization_id)
     project = db.session.get(Project, signing_request.project_id)
     document_title = signing_request.request_number
+    family_label = "Contract"
     if signing_request.document_family == DOCUMENT_FAMILY_CHANGE_ORDER:
+        family_label = "Change Order"
         change_order = get_change_order(
             signing_request.source_record_id,
             organization_id=signing_request.organization_id,
         )
         if change_order is not None:
             document_title = change_order.title or document_title
+    customer_name = (access.participant.confirmed_signer_name or "").strip()
+    if not customer_name:
+        customer_name = (access.participant.invited_name or "").strip()
     return {
         "signing_request": signing_request,
         "participant": access.participant,
         "organization": organization,
         "project": project,
         "document_title": document_title,
+        "family_label": family_label,
         "consent": signing_request.consent_version,
-        "artifact_sha": signing_request.frozen_artifact.sha256,
-        "executed_sha": (
-            signing_request.executed_artifact.sha256
-            if signing_request.executed_artifact is not None
-            else None
-        ),
+        "customer_signer_name": customer_name,
+        "countersigner_name": _countersigner_name(signing_request),
+        "customer_signed_on": _human_date(access.participant.signed_at),
+        "countersigned_on": _human_date(signing_request.countersigned_at),
         "is_change_order_pdf": (
             signing_request.document_family == DOCUMENT_FAMILY_CHANGE_ORDER
         ),
@@ -145,7 +166,7 @@ def document(credential):
         pdf,
         mimetype="application/pdf",
         headers={
-            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Content-Disposition": f'inline; filename="{filename}"',
             "X-Content-Type-Options": "nosniff",
         },
     )
@@ -168,7 +189,7 @@ def executed(credential):
         pdf,
         mimetype="application/pdf",
         headers={
-            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Content-Disposition": f'inline; filename="{filename}"',
             "X-Content-Type-Options": "nosniff",
         },
     )

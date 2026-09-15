@@ -3,6 +3,7 @@
 SIGN-A: freeze + CREATED → APPROVED_FOR_SIGNATURE.
 SIGN-B: invitation token + SENT → SIGNED.
 SIGN-C: countersign + executed PDF custody + VOID / EXPIRE / DECLINE / RESEND.
+SIGN-D: Change Order office/Hub overlay. No schema change.
 """
 
 from __future__ import annotations
@@ -113,6 +114,7 @@ BLOCK_PROTECTED_COMMERCIAL_RECORD = "PROTECTED_COMMERCIAL_RECORD"
 BLOCK_USER_NOT_FOUND = "USER_NOT_FOUND"
 BLOCK_REQUEST_NOT_APPROVED = "REQUEST_NOT_APPROVED"
 BLOCK_REQUEST_NOT_SENT = "REQUEST_NOT_SENT"
+BLOCK_ACTIVE_SIGNING_REQUEST = "ACTIVE_SIGNING_REQUEST"
 BLOCK_TOKEN_INVALID = "TOKEN_INVALID"
 BLOCK_TOKEN_EXPIRED = "TOKEN_EXPIRED"
 BLOCK_TOKEN_CONSUMED = "TOKEN_CONSUMED"
@@ -136,6 +138,15 @@ DEFAULT_TOKEN_FAIL_LIMIT = 8
 DEFAULT_TOKEN_FAIL_WINDOW_SECONDS = 900
 _CREDENTIAL_RE = re.compile(r"^([A-Za-z0-9_-]{8,80})\.([A-Za-z0-9_-]{20,200})$")
 _TERMINAL_STATUSES = frozenset({STATUS_VOIDED, STATUS_EXPIRED, STATUS_DECLINED})
+_ACTIVE_OVERLAY_STATUSES = frozenset(
+    {
+        STATUS_CREATED,
+        STATUS_APPROVED_FOR_SIGNATURE,
+        STATUS_SENT,
+        STATUS_SIGNED,
+        STATUS_EXECUTED,
+    }
+)
 _EXPIRE_ELIGIBLE_STATUSES = frozenset(
     {STATUS_CREATED, STATUS_APPROVED_FOR_SIGNATURE, STATUS_SENT}
 )
@@ -1360,3 +1371,147 @@ def executed_pdf_bytes_for_customer(access: ResolvedSigningAccess) -> bytes:
     if request.status != STATUS_EXECUTED:
         raise SigningServiceError(BLOCK_EXECUTED_ARTIFACT_MISSING)
     return retrieve_executed_artifact_bytes(request.id, request.organization_id)
+
+
+HUB_LABEL_UNSIGNED = "UNSIGNED"
+HUB_LABEL_AWAITING_SIGNATURE = "AWAITING SIGNATURE"
+HUB_LABEL_SIGNED = "SIGNED"
+HUB_LABEL_EXECUTED = "EXECUTED"
+
+
+class ChangeOrderSigningOverlay(NamedTuple):
+    change_order_id: int
+    hub_label: str
+    request_id: Optional[int]
+    request_number: Optional[str]
+    request_status: Optional[str]
+    signer_name: Optional[str]
+    signer_email: Optional[str]
+    expires_at: Optional[datetime]
+    countersign_required: bool
+    executed_available: bool
+    can_send: bool
+    can_approve: bool
+    can_invite: bool
+    can_resend: bool
+    can_void: bool
+    can_countersign: bool
+    can_execute: bool
+    can_download_executed: bool
+
+
+def hub_signing_label(status: Optional[str]) -> str:
+    if status == STATUS_SENT:
+        return HUB_LABEL_AWAITING_SIGNATURE
+    if status == STATUS_SIGNED:
+        return HUB_LABEL_SIGNED
+    if status == STATUS_EXECUTED:
+        return HUB_LABEL_EXECUTED
+    return HUB_LABEL_UNSIGNED
+
+
+def _latest_change_order_request(
+    change_order_id: int, organization_id: str
+) -> Optional[SigningRequest]:
+    return (
+        SigningRequest.query.filter_by(
+            organization_id=organization_id,
+            document_family=DOCUMENT_FAMILY_CHANGE_ORDER,
+            source_record_id=change_order_id,
+        )
+        .order_by(SigningRequest.id.desc())
+        .first()
+    )
+
+
+def overlay_for_change_order(
+    change_order_id: int, organization_id: str
+) -> ChangeOrderSigningOverlay:
+    change_order = get_change_order(change_order_id, organization_id=organization_id)
+    if change_order is None:
+        raise SigningServiceError(BLOCK_SOURCE_NOT_FOUND)
+    latest = _latest_change_order_request(change_order.id, organization_id)
+    active = latest if latest is not None and latest.status in _ACTIVE_OVERLAY_STATUSES else None
+    status = active.status if active is not None else None
+    customer = None
+    if active is not None:
+        try:
+            customer = _customer_participant(active)
+        except SigningServiceError:
+            customer = None
+    approved = (change_order.status or "") == "Approved"
+    return ChangeOrderSigningOverlay(
+        change_order_id=change_order.id,
+        hub_label=hub_signing_label(status),
+        request_id=active.id if active is not None else None,
+        request_number=active.request_number if active is not None else None,
+        request_status=status,
+        signer_name=customer.invited_name if customer is not None else None,
+        signer_email=customer.invited_email if customer is not None else None,
+        expires_at=active.expires_at if active is not None else None,
+        countersign_required=bool(active.countersign_required) if active is not None else True,
+        executed_available=status == STATUS_EXECUTED,
+        can_send=approved and active is None,
+        can_approve=status == STATUS_CREATED,
+        can_invite=status == STATUS_APPROVED_FOR_SIGNATURE,
+        can_resend=status == STATUS_SENT,
+        can_void=status in _VOID_ELIGIBLE_STATUSES,
+        can_countersign=status == STATUS_SIGNED and bool(active.countersign_required),
+        can_execute=status == STATUS_SIGNED and not bool(active.countersign_required),
+        can_download_executed=status == STATUS_EXECUTED,
+    )
+
+
+def overlays_for_change_orders(
+    organization_id: str, change_order_ids
+) -> dict:
+    ids = [int(row) for row in (change_order_ids or [])]
+    if not ids:
+        return {}
+    return {co_id: overlay_for_change_order(co_id, organization_id) for co_id in ids}
+
+
+def office_send_change_order_for_signature(
+    change_order_id: int,
+    *,
+    organization_id: str,
+    actor_user_id: int,
+    actor_identifier: str,
+    invited_name: str,
+    invited_email: str,
+    countersign_required,
+    expires_at: Optional[datetime] = None,
+) -> InvitationIssue:
+    overlay = overlay_for_change_order(change_order_id, organization_id)
+    if not overlay.can_send:
+        if overlay.request_id is not None:
+            raise SigningServiceError(BLOCK_ACTIVE_SIGNING_REQUEST)
+        raise SigningServiceError(BLOCK_CHANGE_ORDER_NOT_APPROVED)
+    consent = ensure_synthetic_consent_version()
+    created = create_change_order_signing_request(
+        change_order_id,
+        organization_id=organization_id,
+        actor_kind=ACTOR_HUMAN,
+        actor_user_id=actor_user_id,
+        actor_identifier=actor_identifier,
+        invited_name=invited_name,
+        invited_email=invited_email,
+        consent_version_id=consent.id,
+        countersign_required=countersign_required,
+        authority_class=AUTHORITY_SYNTHETIC_UAT,
+        expires_at=expires_at if expires_at is not None else default_expires_at(),
+    )
+    approved = approve_signing_request(
+        created.id,
+        organization_id=organization_id,
+        actor_kind=ACTOR_HUMAN,
+        actor_user_id=actor_user_id,
+        actor_identifier=actor_identifier,
+    )
+    return issue_customer_invitation(
+        approved.id,
+        organization_id=organization_id,
+        actor_kind=ACTOR_HUMAN,
+        actor_user_id=actor_user_id,
+        actor_identifier=actor_identifier,
+    )

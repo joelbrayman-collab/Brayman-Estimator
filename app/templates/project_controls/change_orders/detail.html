@@ -41,6 +41,12 @@
             <p class="eyebrow">Approved</p>
             <p>{{ change_order.approved_date or "—" }}</p>
         </div>
+        <div>
+            <p class="eyebrow">Customer signature</p>
+            <p>
+                <span class="status status-sign-{{ signing_overlay.hub_label|lower|replace(' ', '-') }}">{{ signing_overlay.hub_label }}</span>
+            </p>
+        </div>
     </div>
     <form method="post" action="{{ url_for('project_controls.update_status', id=change_order.id) }}" class="form-actions">
         <label>
@@ -53,6 +59,115 @@
         </label>
         <button type="submit">Save Status</button>
     </form>
+</section>
+
+<section class="form-panel" style="margin-bottom: 20px;" data-signing-overlay="true" data-signing-label="{{ signing_overlay.hub_label }}" data-signing-status="{{ signing_overlay.request_status or '' }}">
+    <h2>Customer signature</h2>
+    <p class="muted-copy">Office Approved is not a customer signature. Signing status is an overlay on this Change Order.</p>
+    {% if signing_overlay.request_number %}
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Request</p>
+            <p>{{ signing_overlay.request_number }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Request status</p>
+            <p>{{ signing_overlay.request_status }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Signer</p>
+            <p>{{ signing_overlay.signer_name or "—" }}{% if signing_overlay.signer_email %}<br>{{ signing_overlay.signer_email }}{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Invitation expiry</p>
+            <p>{% if signing_overlay.expires_at %}{{ signing_overlay.expires_at.strftime("%Y-%m-%d %H:%M") }} UTC{% else %}—{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Countersign required</p>
+            <p>{{ "Yes" if signing_overlay.countersign_required else "No" }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Executed PDF</p>
+            <p>{{ "Available" if signing_overlay.executed_available else "Not yet" }}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if invitation_url %}
+    <div class="form-actions" style="margin-top: 16px;">
+        <label>
+            Copy invitation
+            <input type="text" readonly data-signing-invitation="true" value="{{ invitation_url }}" onclick="this.select()">
+        </label>
+    </div>
+    {% elif signing_overlay.can_resend %}
+    <p class="muted-copy">The original invitation is not stored. Resend to create a new link.</p>
+    {% endif %}
+
+    {% if signing_overlay.can_send %}
+    <form method="post" action="{{ url_for('signing_office.send_for_signature', change_order_id=change_order.id) }}" class="form-panel" style="margin-top: 16px; box-shadow: none;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <h3>Send for Signature</h3>
+        <div class="form-grid">
+            <label>Signer name * <input type="text" name="signer_name" required autocomplete="name"></label>
+            <label>Signer email * <input type="email" name="signer_email" required autocomplete="email"></label>
+            <label>Invitation days <input type="number" name="expiry_days" value="7" min="1" max="30"></label>
+            <label class="sign-office-check">
+                <input type="checkbox" name="countersign_required" value="yes" checked>
+                <span>Require organization countersignature</span>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Send for Signature</button>
+        </div>
+    </form>
+    {% endif %}
+
+    <div class="form-actions" style="margin-top: 12px;">
+        {% if signing_overlay.can_approve %}
+        <form method="post" action="{{ url_for('signing_office.approve', request_id=signing_overlay.request_id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">Approve for Signature</button>
+        </form>
+        {% endif %}
+        {% if signing_overlay.can_invite %}
+        <form method="post" action="{{ url_for('signing_office.invite', request_id=signing_overlay.request_id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">Generate invitation</button>
+        </form>
+        {% endif %}
+        {% if signing_overlay.can_resend %}
+        <form method="post" action="{{ url_for('signing_office.resend', request_id=signing_overlay.request_id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">Resend invitation</button>
+        </form>
+        {% endif %}
+        {% if signing_overlay.can_countersign %}
+        <form method="post" action="{{ url_for('signing_office.countersign', request_id=signing_overlay.request_id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">Countersign</button>
+        </form>
+        {% endif %}
+        {% if signing_overlay.can_execute %}
+        <form method="post" action="{{ url_for('signing_office.execute', request_id=signing_overlay.request_id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">Complete execution</button>
+        </form>
+        {% endif %}
+        {% if signing_overlay.can_download_executed %}
+        <a class="button" href="{{ url_for('signing_office.download_executed', request_id=signing_overlay.request_id) }}">Download executed PDF</a>
+        {% endif %}
+    </div>
+
+    {% if signing_overlay.can_void %}
+    <form method="post" action="{{ url_for('signing_office.void', request_id=signing_overlay.request_id) }}" style="margin-top: 16px;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Void reason * <input type="text" name="void_reason" required maxlength="255"></label>
+        <div class="form-actions">
+            <button type="submit">Void signing request</button>
+        </div>
+    </form>
+    {% endif %}
 </section>
 
 <nav class="co-tabs" aria-label="Change order sections">

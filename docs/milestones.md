@@ -44,7 +44,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | One User Help Content authority. Voice mutation fail-closed. Language audit precedes final manual. |
 | Open decisions | Task-based pre-UAT script question received / not decided. §26 truncated. V1 remains **60% / 4 of 11**. |
 | Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** implement Help / Voice / Manual. Do **not** begin SCOPE / TIME / SCH. |
-| Commit | this Help / Voice / User Manual docs-only commit |
+| Commit | `2511fc55921a84bcb3618e9ce754ab9b33a38e81` |
 | Date | 2026-09-15 |
 
 ### 2026-09-15 — FG-035 TAX/WBS project work structure

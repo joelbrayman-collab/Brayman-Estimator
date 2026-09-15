@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | §26 truncated. Task-based pre-UAT script question received / not decided. Later FG-035 slices not authorized. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement Help / Voice / Manual. Do **not** begin SCOPE / TIME / SCH. |
 | Next approved prompt | None from this close. |
-| Commit hash | (this Help / Voice / User Manual docs-only commit) |
+| Commit hash | `2511fc55921a84bcb3618e9ce754ab9b33a38e81` |
 
 ### 2026-09-15 — FG-035 TAX/WBS project work structure
 

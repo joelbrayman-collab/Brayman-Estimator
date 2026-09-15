@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | TIME / SCH not authorized. Physical iPhone Extra work UAT **DEFERRED**. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin TIME / SCH. |
 | Next approved prompt | None from this close. |
-| Commit hash | (pending this implementation commit) |
+| Commit hash | `21bf0eba47acdb19eb292c2319d675a1748c1dff` |
 
 ### 2026-09-15 — Help / Voice / User Manual §§40–60 close
 

@@ -44,7 +44,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | ChangeOrder remains commercial SoR. Original hours never overwritten. Draft CO cannot authorize Project scope. Ambiguous PROJECT-created work fail-closed EXTRA_WORK. |
 | Open decisions | TIME / SCH not authorized. Physical iPhone Extra work UAT **DEFERRED**. V1 remains **60% / 4 of 11**. |
 | Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin TIME / SCH from this note. |
-| Commit | (pending this implementation commit) |
+| Commit | `21bf0eba47acdb19eb292c2319d675a1748c1dff` |
 | Date | 2026-09-15 |
 
 ### 2026-09-15 — Help / Voice / User Manual §§40–60 close

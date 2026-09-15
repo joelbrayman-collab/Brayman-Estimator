@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — FG-035 SCH Dynamic Scheduling architecture recording
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 SCH architecture |
+| Status | **OPEN / PARTIAL.** SCH **PREFLIGHT COMPLETE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. TAX/WBS / SCOPE / TIME remain **IMPLEMENTED**. PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
+| Branch | `main` |
+| Base commit | `4f99a31f50aeb9639fb2889ad56825e09320a692` |
+| Objective | Record accepted SCH overlay architecture (data model and contractor workflow) without implementing Schedule. |
+| Deliverables | [architecture/fg-035-sch-dynamic-scheduling-preflight.md](architecture/fg-035-sch-dynamic-scheduling-preflight.md); FG-035 / ADR-053 / continuity pointers |
+| Validation | Docs only. `git diff --check`. Product tests **NOT RERUN**. Historical TIME full suite **1083 passed**. |
+| Architectural findings | Overlay on existing Project work. One current scheduled window. Element grain default. Project bar derived. Optional Crew with period membership truth. Activity window integrity is a confirmed same-action constraint. |
+| Open decisions | SCH implementation not authorized. Crew effective-dating belongs to implementation preflight. V1 remains **60% / 4 of 11**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Bounded SCH implementation authorization / preflight — **NOT AUTHORIZED FROM THIS RECORD**. |
+| Commit | (pending Joel commit) |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — FG-035 TIME field duration entry + approval + approved labour actuals
 
 | Field | Content |

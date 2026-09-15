@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — FG-035 SCH Dynamic Scheduling architecture recording
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Record the accepted FG-035 SCH reconnaissance as complete architecture (data model and contractor workflow) in repository docs. |
+| Business decision | SCH is WHEN + WHO on existing Project work. TIME remains WHAT ACTUALLY HAPPENED. No second work model. |
+| Architectural decision | Projects owns schedule overlay. Organization owns optional Crew. Element is default grain; Project bar derived. One current scheduled window. Activity must stay inside Element window unless the contractor extends the Element in the same confirmed action. Crew membership must preserve period truth. No new ADR; extend ADR-053 when SCH is authorized. |
+| Prompt template used | FG-035 SCH architecture recording (15 Sep 2026) |
+| Approved Cursor prompt summary | Docs-only recording of accepted SCH recon plus Architect refinements; create fg-035-sch-dynamic-scheduling-preflight.md; continuity pointers; SCH remains NOT AUTHORIZED. |
+| Files expected to change | architecture preflight; FG-035 SCH slice; ADR-053 pointers; current-state; session-handoff; chat-workflow-log; architecture index; related continuity |
+| Files prohibited from changing | app/; tests/; migrations/; EST-2026-0019; V1 rescore; new ADR number; new Feature Gate |
+| Implementation result | FG-035 **OPEN / PARTIAL**. SCH **PREFLIGHT COMPLETE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. No product code. No migration. EST-2026-0019 unchanged. V1 **not rescored**. |
+| Tests | Not rerun (docs-only). Historical TIME close: full suite **1083 passed**. `git diff --check` on edited docs. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | SCH implementation still not authorized. Crew effective-dating belongs to implementation preflight. Physical iPhone Time UAT **DEFERRED**. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Bounded SCH implementation authorization / implementation preflight next — **not** product implementation from this recording. |
+| Next approved prompt | Bounded SCH implementation authorization / preflight after Architect review. |
+| Commit hash | (pending Joel commit) |
+
 ### 2026-09-15 — FG-035 TIME field duration entry + approval + approved labour actuals
 
 | Field | Content |

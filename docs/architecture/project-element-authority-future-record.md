@@ -9,9 +9,9 @@
 
 This file is the **single consolidated future record** for that loop. It is **not** an ADR, not a Feature Gate, and not a preflight. Nothing in this file is implemented. The 15 Sep 2026 visual-calendar addendum is retained below and is **subsumed** by the complete loop, not a second product.
 
-**Actual governed baseline at this recording (do not reconstruct AUTH slices):** HEAD / `origin/main` **`5782043cefe030f00816aad6b2ba5e7bd79533a9`** (docs-only complete-loop record). Product MAIL-B **`6dfc2e940456cf9c292c700e07840fac5d871df4`**. FG-034 **OPEN / PARTIAL**. MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. FG-033 **CLOSED / OPERATIONAL FOR UAT**. V1 **not rescored** (**60% / 4 of 11**). Alembic **`f2a3b4c5d6e7 (head)`**.
+**Actual governed baseline at this recording (do not reconstruct AUTH slices):** starting HEAD / `origin/main` **`2de01f23d5e3d6819fc7a1be5525f565d7ef53d6`** (docs-only §§40–71 continuation). Prior complete-loop record **`5782043cefe030f00816aad6b2ba5e7bd79533a9`**. Product MAIL-B **`6dfc2e940456cf9c292c700e07840fac5d871df4`**. FG-034 **OPEN / PARTIAL**. MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. FG-033 **CLOSED / OPERATIONAL FOR UAT**. V1 **not rescored** (**60% / 4 of 11**). Alembic **`f2a3b4c5d6e7 (head)`**.
 
-The first 15 Sep 2026 Cursor prompt was truncated at heading `40. CHANGE`. The **continuation prompt** supplies §§40–71 as authoritative detail. Section **72** (future preflight checklist) was received through **Closeout performance review** and then cut. Do **not** invent remaining §72 bullets.
+The first 15 Sep 2026 Cursor prompt was truncated at heading `40. CHANGE`. The first continuation recorded §§40–71. This **final continuation** supplies the remainder of **§72**, §§73–104, and §105 through **8. CORRECT**. Remainder of §105 after that step was **not** received. Do **not** invent remaining sequencing.
 
 ```text
 ONE CLOSED OPERATIONAL / LEARNING LOOP.
@@ -425,6 +425,99 @@ Over time CalibraytAI may provide organization-level operational insight such as
 
 Do **not** solve Change Order integrity merely by tagging timesheets. Scope lineage belongs at the **work structure** level. Element / Activity / scheduled work should carry or inherit scope origin. Time Entry then inherits that lineage wherever possible. This preserves evidence through ESTIMATE → SCHEDULE → TIME → ACTUALS → MONITOR → CLOSEOUT → LEARN.
 
+## LEARN comparability, calibration, alerts, and field simplicity (15 Sep 2026 final continuation; not implemented)
+
+This section records the remainder of §72 plus §§73–86. It does **not** reopen FG-023 or FG-025. It does **not** authorize implementation.
+
+```text
+LEARN RECOMMENDS. HUMAN DECIDES.
+COMPARE LIKE WORK WITH LIKE WORK.
+ONE GOVERNED ALERT / PERFORMANCE ENGINE.
+FIELD TIME ENTRY STAYS SIMPLE.
+NOT AUTHORIZED. NOT IMPLEMENTED.
+```
+
+### Comparable performance
+
+LEARN must compare genuinely comparable work. Do not compare Projects merely because they share a broad label. Later architecture must determine how comparable evidence is selected using appropriate combinations of Project Type, Element, Activity, quantity / production basis, relevant Project attributes, scope origin, crew context where meaningful, and other governed performance drivers. Purpose: **like work with like work**. Do not hard-code TES-only comparability.
+
+### Organization-specific learning
+
+CalibraytAI should learn how the specific contractor actually performs work. Brayman historical performance should inform Brayman recommendations. The future SaaS architecture must maintain organization boundaries. Do not allow one contractor's actual labour/performance data to silently rewrite another contractor's standards. Any future cross-organization benchmarking would require separate governance and is **not** authorized by this record.
+
+### LEARN recommendation model
+
+LEARN recommends. Human decides. Potential recommendation targets include estimated labour, production rate, scheduled duration, crew assumptions, and other governed organization standards. Example: current estimate 64 forming hours; comparable reviewed evidence average 71 hours; suggested 70–72 hours. The contractor may USE SUGGESTION / KEEP CURRENT ESTIMATE / REVIEW COMPARABLE WORK. Exact UX deferred. Never silently rewrite an Estimate.
+
+### Schedule learning
+
+The same historical evidence should improve future schedules. Example: planned forming duration 2 days; comparable actual duration 2.7 days; suggested 3 days. The contractor decides whether to apply the recommendation. Do not silently move or lengthen scheduled work.
+
+### Calibration provenance
+
+If a contractor accepts a LEARN recommendation that changes an organization standard, preserve sufficient provenance: what standard changed, prior value, new value, recommendation/evidence basis, actor, timestamp. Do not silently overwrite organizational calibration. Later architecture must determine whether this belongs in existing calibration/history structures or requires a bounded new model.
+
+### LEARN evidence quality and eligibility
+
+The conceptual evidence-quality states CLEAN / REVIEWED / UNRESOLVED must influence LEARN eligibility. Later architecture must determine which evidence is eligible, which is down-weighted, which is excluded from recommendations, and how resolved/reclassified variance changes evidence quality. Do not treat all completed Projects as equally trustworthy.
+
+### One governed alert / performance engine
+
+Do not independently calculate the same condition in Schedule, Project Hub, MONITOR, and Needs Attention. The underlying condition should be calculated once and presented appropriately on multiple surfaces. Examples: approaching labour allowance; labour allowance exceeded; projected overrun; schedule overrun; crew conflict; unplanned Extra Work; unlinked Change Order work; material forecast change.
+
+The contractor should be alerted when a meaningful threshold/event occurs. Later architecture must determine V1 delivery mechanisms. At minimum evaluate in-platform Needs Attention, Project Hub, and Schedule visual state, and where later notification infrastructure supports it appropriately, transactional notification. Do not create alert spam. Alerts should be meaningful, deduplicated, acknowledgeable, and escalated only when the condition materially changes or crosses another threshold.
+
+Labour-budget example: Speakeasy Forms estimated 40 hrs, approved actual 32 hrs → 80% consumed may identify APPROACHING LABOUR ALLOWANCE. If actual becomes 43 hrs, identify LABOUR ALLOWANCE EXCEEDED / 3 HRS OVER. If the work is Change Order scope, the alert must retain that lineage. Do not attribute CO overrun to original scope.
+
+### Progress / forecasting
+
+Future MONITOR must determine the simplest useful progress model for forecasting. Do not force field workers to continuously estimate percent complete. Strongly evaluate simple contractor-owned progress signals/milestones. Objective: determine when labour consumption is materially ahead of work progress, providing earlier warning than waiting for estimated hours to be fully consumed.
+
+### Project Performance Profile
+
+At appropriate Project lifecycle points, CalibraytAI should maintain a governed Project Performance Profile sufficient to summarize: original estimated labour; current authorized labour; approved actual labour; original scope variance; Change Order variance; pending/unresolved Extra Work; scheduled duration; actual duration; schedule variance; crew context; production rates where meaningful; forecast; Closeout explanations; evidence quality. Exact model/storage design is deferred. Do not duplicate authoritative data unnecessarily.
+
+### QuickBooks / payroll readiness
+
+Approved field time should be capable of becoming the authoritative labour record for later QuickBooks/payroll handoff. Workers should not have to enter the same hours again. Preserve internally: worker, date, hours, Project, Element, Activity, Scope Origin, Change Order where applicable, even if the external accounting system cannot represent all dimensions. Export state must be distinguishable from approval state. Conceptually evaluate SUBMITTED / APPROVED / READY FOR EXPORT / EXPORTED. Exact lifecycle deferred.
+
+### Time Entry / Schedule relationship
+
+Scheduled assignment may make Time Entry faster. Example: Ben is scheduled today on Speakeasy → Forms → Layout; when Ben records time, CalibraytAI may suggest those values; Ben confirms. Schedule does not create actual time. A worker must still record/confirm actual hours worked.
+
+### Field simplicity
+
+The intelligence in this future record must **not** make field Time Entry complicated. Most analytics and lineage should be derived/inherited. Field worker experience should remain approximately: WHAT PROJECT? WHAT WORK? HOW MUCH TIME? plus EXTRA WORK when necessary. Do not expose scope origin codes, learning states, estimate versions, Change Order internals, production-rate calculations, or forecast algorithms to ordinary field workers.
+
+## Future UAT principles (not implemented)
+
+These are later workstream acceptance principles. They do **not** authorize implementation or begin Brayman/Ben UAT.
+
+**Scheduling:** show Schedule without explanation. Ask: what is happening this week? what is coming next? what does the next month look like? The contractor should answer quickly from the visual presentation. Desktop and iPhone representations must both be evaluated. If substantial explanation is required, Schedule UX is not complete.
+
+**Time / Extra Work:** field UAT must prove that a worker can quickly record normal Project / Element / Activity time and record Extra Work without understanding Change Order accounting or LEARN architecture. Correct behaviour should be easier than incorrect attribution.
+
+**MONITOR:** contractor UAT must prove that Ben can quickly identify what is on track, what is approaching labour allowance, what is over, what is forecast to overrun, what is delayed, what Extra Work needs attention, and what Change Order work is affecting performance, without interpreting technical analytics.
+
+**LEARN:** recommendations must be understandable, evidence-based, explainable, and optional. Ben should understand what CalibraytAI recommends, why, which comparable work supports it, and what happens if he accepts it. LEARN must not silently alter standards.
+
+## Complete future workstream sequencing (received through step 8; truncated)
+
+Current recorded sequence (not current authorization):
+
+1. Finish FG-034 (AUTH-D remains).
+2. Architect complete Time / Schedule / Project Performance / MONITOR / LEARN workstream.
+3. Implement that complete workstream in bounded governed slices.
+4. Complete BUILD / Closeout integration required by the loop.
+5. Complete remaining V1 functionality / runtime hardening.
+6. Platform-wide Contractor Language + UX E2E Audit.
+7. Brayman / Ben real-world UAT (desktop; iPhone/mobile; deferred physical-device checks; real operational workflow).
+8. Correct
+
+Remainder of §105 after **8. CORRECT** was **not** received. Do **not** invent remaining sequencing.
+
+Do not begin implementation of the loop until the future preflight has resolved the entire loop coherently.
+
 ## Platform-wide Contractor Language + UX E2E Audit (mandatory later; not implemented)
 
 Joel established this as a **mandatory V1 closure workstream** before Brayman / Ben real-world UAT. It was first authorized for **recording only** during FG-034 AUTH-B and is consolidated here. It is **not** a new Feature Gate. It does **not** reopen or close [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md). It does **not** authorize another FG-025 slice. Exact copy is **not** authorized by this record.
@@ -436,17 +529,17 @@ NOT AUTHORIZED. NOT IMPLEMENTED.
 DO NOT BEGIN FROM THIS RECORD.
 ```
 
-**Timing:** complete remaining functional work first → full Contractor Language + UX E2E Audit → real-world UAT → defects → V1 close.
+**Timing:** after remaining V1 functionality is substantially complete and **before** Brayman / Ben real-world UAT. Exact sequence: **Complete future workstream sequencing** above (received through **8. CORRECT**; remainder of §105 not received).
 
 **Objective:** every normal user-facing surface is simple, straightforward, contractor-facing, consistent, and non-technical across desktop, iPhone/mobile, customer-facing surfaces, and generated documents. No normal user should need to understand CalibraytAI’s technical architecture to operate CalibraytAI.
 
-**Illustrative inventory** (the later audit must discover the complete live surface list): login; Forgot Password / Account Recovery; office navigation; Project Hub; PLAN; PRICE; estimates; Construction Estimate; CONTRACT; contracts; Native Signing; Change Orders; BUILD; Field Web; Time Entry; Time Approval; MONITOR; LEARN; Closeout; suppliers; uploads; historical data; QuickBooks handoff; settings; organization configuration; Project Types / Elements / Activities; performance configuration; empty / loading / warning / error / success / confirmation states; buttons; status badges; tooltips; customer signing pages; PDFs / generated customer documents.
+**Illustrative inventory** (the later audit must discover the complete live surface list): login; Forgot Password / Account Recovery; office navigation; Project Hub; PLAN; PRICE; estimates; Construction Estimate; CONTRACT; contracts; Native Signing; Change Orders; BUILD; Field Web; Time Entry; Time Approval; Schedule; Project Schedule; Company Schedule; MONITOR; LEARN; Closeout; suppliers; uploads; historical data; QuickBooks handoff; settings; organization configuration; Project Types / Elements / Activities; performance configuration; empty / loading / warning / error / success / confirmation states; buttons; status badges; tooltips; customer signing pages; PDFs / generated customer documents.
 
 **Jargon:** internal engineering terms must not leak into ordinary contractor UX without a genuine contractor-facing reason. Inspect/remove from ordinary UX unless context requires otherwise: `authority_class`, snapshot, artifact, hash, candidate, selector, gate, feature gate, event, epoch, runtime, schema, migration, synthetic, provenance, object/record identity, Alembic, technical status/error codes. These may remain internally. Do not mechanically replace words. Translate system state into contractor meaning.
 
-**Contractor test for every screen:** Where am I? What is happening? What do I need to do? What happens next? Prefer action language (Create Estimate, Send for Signature, Record Time, Approve Time, Add Change Order, View Contract, Close Project) over implementation-oriented operations.
+**Contractor test for every screen:** Where am I? What is happening? What do I need to do? What happens next? Prefer action language (Create Estimate, Send for Signature, Record Time, Add Extra Work, Approve Time, Add Change Order, View Contract, Close Project) over implementation-oriented operations.
 
-**Terminology dictionary:** later audit must establish and enforce one vocabulary (examples: Project, Customer, Construction Estimate, Contract, Change Order, Project Element, Activity, Time, Actual, Estimate, Monitor, Learn). One concept must not acquire different names merely by moving between modules. Internal model names do not control customer-facing terminology.
+**Terminology dictionary:** later audit must establish and enforce one vocabulary (examples: Project, Customer, Construction Estimate, Contract, Change Order, Project Element, Activity, Time, Actual, Schedule, Estimate, Monitor, Learn). One concept must not acquire different names merely by moving between modules. Internal model names do not control customer-facing terminology.
 
 **Status language:** internal lifecycle values may remain precise internally; contractor presentation should explain practical state (example: internal `APPROVED_FOR_SIGNATURE` may present as Ready to Send if accurate). Do not change underlying lifecycle semantics merely to improve copy. Use presentation mapping.
 
@@ -458,13 +551,13 @@ DO NOT BEGIN FROM THIS RECORD.
 
 **Documents:** review Construction Estimate, Contract, Change Order, executed/signing completion, and other V1 customer outputs as part of the same language standard. Do not alter governed commercial/legal document bodies merely as a copy-edit without owning-feature authority.
 
-**Workflow simplicity:** the audit may identify UX complexity, not merely prose. Material workflow redesign remains separately governed. Do not silently redesign architecture during a language audit.
+**Workflow simplicity:** the audit may identify UX complexity, not merely prose (too many statuses, unclear primary action, duplicate actions, hidden next step, excessive explanation, technical diagnostics dominating useful information, desktop workflow compressed badly onto mobile). Material workflow redesign remains separately governed. Do not silently redesign architecture during a language audit.
 
 **Automated protection:** later implementation should add bounded regression where valuable (protected contractor-facing titles, prohibited technical terms on normal customer surfaces, terminology mappings, desktop/mobile presence of primary actions, customer/office presentation separation). Do not create brittle tests for every sentence.
 
 **Close criteria:** cannot close from a file grep alone. Required: complete user-facing surface inventory; prose, terminology, action/button, status, and error/warning review; desktop, responsive/mobile, customer-facing, and document-output walkthroughs; automated regression; complete E2E workflow walkthrough. Final question: could a competent contractor use this platform without needing to understand how CalibraytAI is engineered? Required answer: **YES**.
 
-**Recorded sequence (not current authorization):** finish FG-034 → complete Time / Project Performance / MONITOR / LEARN → complete BUILD / Closeout → complete remaining V1 functionality → platform-wide Contractor Language + UX E2E Audit → Brayman / Ben real-world UAT → final defects / hardening → V1 close.
+**Recorded sequence (not current authorization):** see **Complete future workstream sequencing** above. The 15 Sep 2026 final continuation received steps 1–8 through **CORRECT** and then cut. Do **not** invent remaining §105 steps.
 
 ## Later preflight must first identify
 
@@ -472,7 +565,7 @@ WHAT ALREADY EXISTS in PLAN / PRICE / BUILD (scope, assembly, quantity, and rela
 
 before any schema is authorized.
 
-When FG-034 is complete and ChatGPT Architect authorizes the future Time / Schedule / Performance / MONITOR / LEARN preflight, that preflight must resolve E2E (received checklist through Closeout performance review; remainder of this list was **not** received):
+When FG-034 is complete and ChatGPT Architect authorizes the future Time / Schedule / Performance / MONITOR / LEARN preflight, that preflight must resolve E2E:
 
 - Project Type authority
 - Element authority
@@ -505,9 +598,37 @@ When FG-034 is complete and ChatGPT Architect authorizes the future Time / Sched
 - original vs CO performance
 - production rates
 - Closeout performance review
+- LEARN evidence-quality classification
+- LEARN eligibility after Closeout
+- comparable-project / comparable-work selection
+- organization-specific learning evidence
+- production-rate evidence
+- crew-context evidence
+- original-scope vs Change-Order learning separation
+- unresolved-variance treatment
+- estimate calibration recommendations
+- schedule-duration calibration recommendations
+- human accept / reject of recommendations
+- calibration provenance/history
+- approved-time QuickBooks/payroll readiness
+- preservation of Project / Element / Activity / Scope lineage through export
+- one governed alert/performance engine
+- Needs Attention integration
+- Project Hub integration
+- Company Schedule integration
+- Project Schedule integration
+- desktop Month / 4–6 week planning board
+- iPhone Today
+- iPhone Week
+- iPhone Month
+- responsive desktop/mobile functional relationship
+- complete Project Closeout → LEARN handoff
+- complete E2E desktop/mobile UAT
+- contractor adoption / field-training requirements
+- data-quality protection against misattributed Extra Work
 
-Do **not** invent additional preflight bullets beyond this received list.
+Do not begin implementation until that preflight has resolved the entire loop coherently.
 
 ## Not authorized from this record
 
-Baseline element library · Organization Element Library · project-specific elements · promotion workflow · activity taxonomy · Time UI / mobile Time page · Today view · time approval · actual labour · time entry · **Schedule UI / visual calendar / drag-drop / iPhone TODAY-WEEK-MONTH Schedule** · crew assignment product · conflict engine · labour-budget alerts · Needs Attention · MONITOR forecast expansion · LEARN · estimate/schedule calibration · Change Order scope lineage product · Extra Work / Pending Change product · Extra Work iPhone action · Closeout performance review · LEARN evidence-quality states · Contractor Language + UX E2E Audit implementation · cross-org learning · QuickBooks time export · AUTH-D · a new Feature Gate · V1 rescore · TECH-D reopen · Native Signing reopen.
+Baseline element library · Organization Element Library · project-specific elements · promotion workflow · activity taxonomy · Time UI / mobile Time page · Today view · time approval · actual labour · time entry · **Schedule UI / visual calendar / drag-drop / iPhone TODAY-WEEK-MONTH Schedule** · crew assignment product · conflict engine · labour-budget alerts · Needs Attention · MONITOR forecast expansion · LEARN · estimate/schedule calibration · Change Order scope lineage product · Extra Work / Pending Change product · Extra Work iPhone action · Closeout performance review · LEARN evidence-quality states · Contractor Language + UX E2E Audit implementation · cross-org learning · QuickBooks time export · AUTH-D · a new Feature Gate · V1 rescore · TECH-D reopen · Native Signing reopen · remainder of §105 after **8. CORRECT**.

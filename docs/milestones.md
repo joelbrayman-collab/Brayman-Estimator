@@ -36,6 +36,21 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — §72 remainder + LEARN/alerts/UAT/sequencing final continuation
+
+| Field | Content |
+|-------|---------|
+| Milestone | Future record only (not a coded milestone) |
+| Status | **RECORDED / NOT IMPLEMENTATION-AUTHORIZED.** MAIL-B remains **IMPLEMENTED / PASS**. AUTH-D **NOT STARTED**. |
+| Branch | `main` |
+| Objective | Complete remaining §72 checklist and record LEARN/alerts/UAT/sequencing without implementing them. |
+| Deliverables | [architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md) remainder of §72; §§73–104; §105 through **8. CORRECT**. |
+| Validation | Docs-only. No product tests re-run. Last MAIL-B full suite **1040 passed**. EST-2026-0019 occupancy unchanged. |
+| Architectural findings | Like-with-like LEARN comparability. Organization-specific evidence. One alert engine. Field simplicity. Language audit close criterion remains YES. |
+| Open decisions | Remainder of §105 after 8. CORRECT; later Architect preflight; AUTH-D. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin AUTH-D. |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — Change Order / Extra Work / Closeout future-record continuation
 
 | Field | Content |

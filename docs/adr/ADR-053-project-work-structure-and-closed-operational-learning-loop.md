@@ -3,9 +3,9 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-053: Project Work Structure and Closed Operational / Learning Loop |
-| Status | **Accepted** (2026-09-15; Joel Brayman / ChatGPT Architect). TAX/WBS, SCOPE, and TIME product implementation are authorized under [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. SCH architecture **PREFLIGHT COMPLETE / RECORDED / NOT IMPLEMENTATION-AUTHORIZED** ([fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md)). SCH / PERF / CLOSE / LEARN / QB-T remain **NOT AUTHORIZED**. |
+| Status | **Accepted** (2026-09-15; Joel Brayman / ChatGPT Architect). TAX/WBS, SCOPE, and TIME product implementation are authorized under [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. SCH architecture **RECORDED**. SCH implementation **PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTATION-AUTHORIZED** ([fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md)). SCH / PERF / CLOSE / LEARN / QB-T remain **NOT AUTHORIZED**. |
 | Date | 2026-09-15 |
-| Related | [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [ADR-021](ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-024](ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-049](ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted** · [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED** (not reopened) · [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED** (not rewritten) · product direction [project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md) · SCH preflight [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md) |
+| Related | [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [ADR-021](ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-024](ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-049](ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted** · [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED** (not reopened) · [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED** (not rewritten) · product direction [project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md) · SCH architecture [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md) · SCH implementation freeze [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md) |
 
 ---
 
@@ -49,7 +49,7 @@ Future Schedule and Time use the same Project → Element → Activity instances
 
 Future Schedule must never fabricate actual labour.
 
-**SCH architecture recording (2026-09-15):** Overlay architecture is recorded in [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md). SCH remains **NOT AUTHORIZED**. When implementation is authorized, extend this ADR (Projects-owned schedule items, optional org Crew, assignment, Element/Activity window integrity, warn-don’t-slide). Do **not** create a new ADR number for Schedule.
+**SCH architecture recording (2026-09-15):** Overlay architecture is recorded in [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md). Implementation freeze is recorded in [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md). SCH remains **NOT AUTHORIZED**. When SCH-A is authorized, extend this ADR (Projects-owned `work_schedule_items` / history; `scheduled_start` / `scheduled_end`; derived Project bar; Element/Activity window integrity as mutate-time validation; later USER XOR Crew; warn-don’t-slide). Do **not** create a new ADR number for Schedule.
 
 ### H. Submitted Time is not approved actual
 
@@ -114,7 +114,7 @@ Organizations may add Types / Elements / Activities as data. They must not creat
 
 ## Module Ownership Impact
 
-**Projects** owns work-structure catalog and Project Element / Activity instances. Estimating continues to own `LabourTask` / `EstimateLabourSnapshot`. Project Controls continues to own `ChangeOrder`. BUILD owns field capture, money actuals, and Time Entry. MONITOR continues to read. LEARN continues to consume. **Recorded, not implemented:** Projects will own Schedule overlay records; Organization will own optional Crew configuration; Field/iPhone Schedule is a presentation of Projects-owned data.
+**Projects** owns work-structure catalog and Project Element / Activity instances. Estimating continues to own `LabourTask` / `EstimateLabourSnapshot`. Project Controls continues to own `ChangeOrder`. BUILD owns field capture, money actuals, and Time Entry. MONITOR continues to read. LEARN continues to consume. **Recorded, not implemented:** Projects will own Schedule overlay records; Organization will own optional Crew configuration; Field/iPhone Schedule is a presentation of Projects-owned data. Design freeze: [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md).
 
 ## Data Ownership Impact
 
@@ -122,7 +122,7 @@ New TAX/WBS tables are organization-scoped (or baseline with `organization_id` N
 
 ## Migration Impact
 
-Required for TAX/WBS: additive Alembic **`f3b4c5d6e7f8`** parented on `f2a3b4c5d6e7`. Required for SCOPE: additive Alembic **`f4c5d6e7f8a9`** parented on `f3b4c5d6e7f8`. Required for TIME: additive Alembic **`f5d6e7f8a9b0`** parented on `f4c5d6e7f8a9`. SCH will require a later additive revision parented on **`f5d6e7f8a9b0`** when implementation is authorized. **Not created this recording.** No rewrite of existing Estimate or ChangeOrder tables.
+Required for TAX/WBS: additive Alembic **`f3b4c5d6e7f8`** parented on `f2a3b4c5d6e7`. Required for SCOPE: additive Alembic **`f4c5d6e7f8a9`** parented on `f3b4c5d6e7f8`. Required for TIME: additive Alembic **`f5d6e7f8a9b0`** parented on `f4c5d6e7f8a9`. SCH-A will require a later additive revision parented on **`f5d6e7f8a9b0`** when implementation is authorized (items + history only). SCH-B/C get their own later additive revisions. **Not created this freeze.** No rewrite of existing Estimate or ChangeOrder tables.
 
 ## Testing Impact
 
@@ -130,7 +130,7 @@ Dedicated TAX/WBS, SCOPE, and TIME tests: catalog layers, tenant isolation, seed
 
 ## Documentation Impact
 
-FG-035; this ADR; [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md); module/index/continuity docs. V1 **not rescored**.
+FG-035; this ADR; [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md); [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md); module/index/continuity docs. V1 **not rescored**.
 
 ## Approval
 
@@ -138,4 +138,4 @@ FG-035; this ADR; [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/f
 |------|------|------|
 | Joel | Accepted via governed FG-035 TAX/WBS prompt | 2026-09-15 |
 | ChatGPT review | Repository-aware preflight accepted; FG-035 / ADR-053 assigned | 2026-09-15 |
-| Cursor implementation note | TAX/WBS, SCOPE, and TIME implemented under this ADR. SCH architecture recorded 2026-09-15; SCH / PERF / CLOSE / LEARN / QB-T not authorized. | 2026-09-15 |
+| Cursor implementation note | TAX/WBS, SCOPE, and TIME implemented under this ADR. SCH architecture recorded and implementation-preflight frozen 2026-09-15; SCH / PERF / CLOSE / LEARN / QB-T not authorized. | 2026-09-15 |

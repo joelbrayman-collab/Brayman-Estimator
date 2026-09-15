@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — FG-035 SCH implementation preflight / design freeze
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Freeze remaining SCH implementation details against the accepted architecture. Docs only. |
+| Business decision | SCH-A first: items + history + Company/Hub forms. Crew/assignment SCH-B. Dependencies SCH-C. iPhone + Time suggestion SCH-D. |
+| Architectural decision | Keep conceptual names. Window fields `scheduled_start` / `scheduled_end` DATE inclusive–inclusive. Window integrity is mutate-time validation. Crew period membership on `organization_crew_members`. Element-only DAG in SCH-C. No new ADR. |
+| Prompt template used | FG-035 SCH implementation preflight (15 Sep 2026) |
+| Approved Cursor prompt summary | Docs-only design freeze; create fg-035-sch-implementation-preflight.md; continuity pointers; SCH remains NOT AUTHORIZED. |
+| Files expected to change | implementation preflight; FG-035 SCH slice; ADR-053 pointers; continuity/index docs |
+| Files prohibited from changing | app/; tests/; migrations/; EST-2026-0019; V1 rescore; new ADR number; new Feature Gate; architecture body rewrite |
+| Implementation result | SCH **IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTATION-AUTHORIZED**. No product code. No migration. |
+| Tests | Not rerun (docs-only). Historical TIME close: full suite **1083 passed**. `git diff --check` on edited docs. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | SCH-A product implementation still not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Bounded SCH-A implementation authorization next — **not** product implementation from this freeze. |
+| Next approved prompt | Bounded SCH-A implementation after Architect review. |
+| Commit hash | (pending Joel commit) |
+
 ### 2026-09-15 — FG-035 SCH Dynamic Scheduling architecture recording
 
 | Field | Content |

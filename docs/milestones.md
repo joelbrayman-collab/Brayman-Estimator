@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — FG-035 SCH implementation preflight / design freeze
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 SCH implementation freeze |
+| Status | **OPEN / PARTIAL.** SCH **IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTATION-AUTHORIZED**. TAX/WBS / SCOPE / TIME remain **IMPLEMENTED**. PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
+| Branch | `main` |
+| Base commit | `75d0655df8513ccfcddaccc9bb4d3a2811dbfd8b` |
+| Objective | Freeze SCH names, constraints, slices, and SCH-A test matrix without implementing Schedule. |
+| Deliverables | [architecture/fg-035-sch-implementation-preflight.md](architecture/fg-035-sch-implementation-preflight.md); FG-035 / ADR-053 / continuity pointers |
+| Validation | Docs only. `git diff --check`. Product tests **NOT RERUN**. Historical TIME full suite **1083 passed**. |
+| Architectural findings | `scheduled_start` / `scheduled_end`. Window integrity is validation. SCH-A first. Crew period membership SCH-B. Element-only DAG SCH-C. |
+| Open decisions | SCH-A implementation not authorized. V1 remains **60% / 4 of 11**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Bounded SCH-A implementation — **NOT AUTHORIZED FROM THIS RECORD**. |
+| Commit | (pending Joel commit) |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — FG-035 SCH Dynamic Scheduling architecture recording
 
 | Field | Content |

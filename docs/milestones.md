@@ -30,11 +30,22 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
----
+### 2026-09-15 — Help / Voice / User Manual PRE-UAT record
 
----
-
----
+| Field | Content |
+|-------|---------|
+| Milestone | Help / Voice / professional User Manual product-direction record |
+| Status | **FUTURE / RECORDED / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED.** Does **not** interrupt FG-035. |
+| Branch | `main` |
+| Base commit | `3d3a225edeac276e681ee18dd43ab18fff81d466` (FG-035 TAX/WBS SHA pin) |
+| Objective | Record Interactive Help, Voice, and a professional User Guide as mandatory before Ben / father-in-law / Kevin real-world UAT. |
+| Deliverables | [architecture/interactive-help-voice-and-user-manual-future-record.md](architecture/interactive-help-voice-and-user-manual-future-record.md); continuity indexes |
+| Validation | Docs only. No product tests. No Alembic. EST-2026-0019 unchanged. |
+| Architectural findings | One User Help Content authority. Voice mutation fail-closed. Language audit precedes final manual. |
+| Open decisions | Task-based pre-UAT script question received / not decided. §26 truncated. V1 remains **60% / 4 of 11**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** implement Help / Voice / Manual. Do **not** begin SCOPE / TIME / SCH. |
+| Commit | this Help / Voice / User Manual docs-only commit |
+| Date | 2026-09-15 |
 
 ### 2026-09-15 — FG-035 TAX/WBS project work structure
 

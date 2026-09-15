@@ -12,7 +12,7 @@
 | Related ADRs | **None new in this recording pass.** Visual identity remains [ADR-040](../adr/ADR-040-organization-brand-profile.md). Do **not** accept ADR-008 or ADR-010 from this gate. |
 | Prerequisites | [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) is **CLOSED / OPERATIONAL FOR UAT**. Slices 1–4 were each authorized by a bounded Joel/ChatGPT prompt. Remaining surfaces remain **NOT AUTHORIZED**. |
 
-**Subsequent status (2026-09-15):** A platform-wide **Contractor Language + UX E2E Audit** is recorded as a mandatory later V1 closure workstream **before** Brayman/Ben real-world UAT ([architecture/project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md)). It does **not** reopen this gate, does **not** close this gate, and does **not** authorize another FG-025 slice.
+**Subsequent status (2026-09-15):** A platform-wide **Contractor Language + UX E2E Audit** is recorded as a mandatory later V1 closure workstream **before** Brayman/Ben real-world UAT ([architecture/project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md)). Final User Manual / Help / Voice content must follow that audit ([interactive-help-voice-and-user-manual-future-record.md](../architecture/interactive-help-voice-and-user-manual-future-record.md)). It does **not** reopen this gate, does **not** close this gate, and does **not** authorize another FG-025 slice.
 
 ---
 

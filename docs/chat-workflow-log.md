@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — Help / Voice / User Manual PRE-UAT record
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Record Interactive Help, Voice, and a professional User Guide as mandatory PRE-UAT V1. No implementation. Do not interrupt FG-035. |
+| Business decision | Joel established Help, Voice, and User Manual as mandatory before Ben / father-in-law / Kevin real-world UAT. Feature-complete is not enough. |
+| Architectural decision | One governed User Help Content authority feeds Manual, in-product Help, contextual Help, and Voice. Voice mutation fail-closed. Language audit precedes final content. |
+| Prompt template used | Documentation-only product-direction recording (15 Sep 2026) |
+| Approved Cursor prompt summary | Record Help / Voice / User Manual as mandatory PRE-UAT V1. No product code. No FG-036. Do not interrupt FG-035. |
+| Files expected to change | Future-record + continuity indexes only |
+| Files prohibited from changing | Application code; models; migrations; EST-2026-0019; V1 rescore; FG-035 later slices |
+| Implementation result | Recorded only. **NOT IMPLEMENTED.** FG-035 unchanged. V1 **not rescored**. |
+| Tests | Docs only. No product tests run. No behaviour change. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | §26 truncated. Task-based pre-UAT script question received / not decided. Later FG-035 slices not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement Help / Voice / Manual. Do **not** begin SCOPE / TIME / SCH. |
+| Next approved prompt | None from this close. |
+| Commit hash | (this Help / Voice / User Manual docs-only commit) |
+
 ### 2026-09-15 — FG-035 TAX/WBS project work structure
 
 | Field | Content |

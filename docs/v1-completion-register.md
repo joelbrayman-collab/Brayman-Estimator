@@ -365,6 +365,8 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 
 **Joel decision #4 (2026-09-14):** customer Proposal/PDF terminology **IMPLEMENTED** as the FG-025 customer-document language slice. Existing Proposal preview/PDF reused. Customer-facing title **CONSTRUCTION ESTIMATE**. No schema/migration. FG-025 overall **NOT CLOSED**. V1 score **unchanged**.
 
+**Subsequent status (2026-09-15):** Interactive Help / Voice / professional User Manual recorded as **mandatory PRE-UAT V1** ([architecture/interactive-help-voice-and-user-manual-future-record.md](architecture/interactive-help-voice-and-user-manual-future-record.md)). Final Help content follows remaining functional V1 work **and** the Contractor Language + UX E2E Audit. **Do not rescore** (factor remains **0.70**). Do **not** start another FG-025 slice.
+
 ### V1-10 — Operational hardening / real-project readiness
 
 | Field | Value |
@@ -384,6 +386,8 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 
 **Missing for real-project V1:** governed backup/restore runbook; production hosting/secrets; user onboarding/training pack; issue/feedback process; SESSION-EXPIRY / session revocation (explicitly **NOT FG-021**); office RBAC (**POST-V1**). Supplier named-user isolation is [FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) **RECORDED** (principal class, not office RBAC) and is **not** implementation-authorized from this register.
 
+**Subsequent status (2026-09-15):** Interactive Help, Voice assistance, and a professional CalibraytAI User Guide are recorded as **mandatory PRE-UAT V1** before opening the platform to Ben, Ben’s father-in-law, and Kevin ([architecture/interactive-help-voice-and-user-manual-future-record.md](architecture/interactive-help-voice-and-user-manual-future-record.md)). **Not implemented.** **Do not rescore** (factor remains **0.35**).
+
 ### V1-11 — BMR demo certification + Brayman real-life UAT launch
 
 | Field | Value |
@@ -399,7 +403,7 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 | Governing | This register §§10–11 |
 | Next governed action | After critical-path packages are complete. Not now. |
 
-**Subsequent status (2026-09-15):** A platform-wide Contractor Language + UX E2E Audit is recorded as **mandatory before** Brayman/Ben real-world UAT ([architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md)). It is **not** started. **Do not rescore** this package.
+**Subsequent status (2026-09-15):** A platform-wide Contractor Language + UX E2E Audit is recorded as **mandatory before** Brayman/Ben real-world UAT ([architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md)). Interactive Help / Voice / professional User Manual are separately recorded as **mandatory PRE-UAT V1** ([architecture/interactive-help-voice-and-user-manual-future-record.md](architecture/interactive-help-voice-and-user-manual-future-record.md)). Neither is started. **Do not rescore** this package.
 
 ---
 

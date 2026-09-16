@@ -81,7 +81,7 @@ Focused tests + full suite expectation.
 
 ## Required Documentation Updates
 
-e.g. current-state, module doc, roadmap, handoff, chat-workflow-log, project-state-report, milestones if applicable.
+e.g. current-state, module doc, roadmap, handoff, chat-workflow-log, project-state-report, milestones if applicable. For a material contractor-facing capability: append [architecture/manual-impact-log.md](../architecture/manual-impact-log.md). Do not write the User Guide. Do not capture unstable screenshots.
 
 ## Required Validation Commands
 

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FUTURE / RECORDED / COMPLETE FOR PRODUCT-DIRECTION RECORDING / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED.** Not a Feature Gate. Not an ADR. Not implementation, schema, or migration authorization. Task-based pre-UAT script **REQUIRED**. Voice mutation **NOT REQUIRED** for V1 Voice completion. Subsequent **2026-09-16:** platform-wide **warning law** **INFORMATIONAL ONLY / NON-BLOCKING** and desktop Print / paper workflow Help topics belong in this Help authority after the Print audit; canonical Print + warning law live in [project-element-authority-future-record.md](project-element-authority-future-record.md). Do **not** implement Print, Help, or SCH-C from this record. |
+| Status | **FUTURE / RECORDED / COMPLETE FOR PRODUCT-DIRECTION RECORDING / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED.** User Guide / Help Content **FRAMEWORK START NOW** ([calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md)). **Manual Audience Law** is controlling for all future contractor-facing Manual / Help / Voice. Final authoring **AFTER** functional V1 + language audit. Not a Feature Gate. Not an ADR. Not Help / Voice / Manual product. Task-based pre-UAT script **REQUIRED**. Voice mutation **NOT REQUIRED** for V1 Voice completion. Subsequent **2026-09-16:** **Manual Impact** capture required at each material feature/slice close ([manual-impact-log.md](manual-impact-log.md)). Completed User Guide is given to Kevin and Ben **BEFORE** platform access. Subsequent **2026-09-16:** platform-wide **warning law** **INFORMATIONAL ONLY / NON-BLOCKING** and desktop Print / paper workflow Help topics belong in this Help authority after the Print audit; canonical Print + warning law live in [project-element-authority-future-record.md](project-element-authority-future-record.md). Do **not** implement Print, Help, Voice, or the finished Manual from this record. |
 | Updated | 2026-09-16 |
 | Authority | Joel Brayman / ChatGPT Architect. Product decision: Interactive in-product Help, Voice assistance, and a professional CalibraytAI User Guide are **mandatory** before opening CalibraytAI to Ben, Ben’s father-in-law, and Kevin for real-world / independent UAT. |
 | Does not interrupt | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**; [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**; [project-element-authority-future-record.md](project-element-authority-future-record.md). TAX/WBS remains **IMPLEMENTED**. Later FG-035 slices remain **NOT AUTHORIZED** from this record. |
@@ -796,6 +796,45 @@ Do **not** treat this record as BRAYMAN REAL-LIFE UAT READY.
 
 ---
 
+## Subsequent 2026-09-16 — User Guide / Help Content framework START NOW (not finished Manual)
+
+Framework recorded in [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md).
+
+**Manual Audience Law** is **CONTROLLING** and sits at the start of that framework. The contractor User Guide is for people who build, sell, supply, estimate, and manage construction work. It is not written for software developers. Internal architecture stays out of the Manual unless a user needs that fact to do the job.
+
+```text
+MANUAL FRAMEWORK: START NOW
+FINAL AUTHORING: AFTER FUNCTIONAL V1 + CONTRACTOR LANGUAGE / UX AUDIT
+BEN / KEVIN ACCESS: AFTER COMPLETED USER GUIDE / PRE-UAT GATE
+V1: 60% / 4 OF 11 / NO RESCORE
+```
+
+Do **not** write finished Manual chapters from this addendum. Do **not** capture screenshots now. Do **not** implement Help / Voice. Do **not** rescore V1.
+
+---
+
+## Subsequent 2026-09-16 — Manual Impact capture + Guide-before-access (not implemented)
+
+Joel / ChatGPT Architect product decision (16 Sep 2026): the professional CALIBRAYTAI USER GUIDE will be provided to **Kevin** and **Ben** **BEFORE** they receive independent platform access. Ben’s father-in-law remains in the already-recorded review group and still reviews the Guide **before** platform introduction.
+
+This does **not** conflict with existing §29 Manual-first UAT, §52 PRE-UAT RELEASE GATE, or §53. It **refines** §53 steps 11–12:
+
+1. Give the completed User Guide to Kevin, Ben, and Ben’s father-in-law.
+2. Allow them to review / use the Guide.
+3. Then provide platform access and realistic task-based UAT.
+4. Do not coach them through every workflow.
+5. Record where the product, Manual, Help, or Voice fails to explain itself.
+
+**MANUAL IMPACT:** beginning with current development, each material feature/slice close appends a lightweight impact entry to [manual-impact-log.md](manual-impact-log.md). First entry: **MANUAL IMPACT — SCH-C**. Do not write final Manual prose during feature implementation. Do not capture unstable screenshots.
+
+Manual status: **MANDATORY PRE-UAT V1 / FRAMEWORK / IMPACT CAPTURE NOW / FINAL AUTHORING AFTER FUNCTIONAL V1 + CONTRACTOR LANGUAGE/UX AUDIT.**
+
+Kevin / Ben platform access: **NOT YET**.
+
+This addendum does **not** interrupt FG-035 SCH-C. Do **not** implement Help, Voice, or the Manual from this addendum. V1 **not rescored**.
+
+---
+
 ## Subsequent 2026-09-16 — Print in Help / User Guide (not implemented)
 
 The platform-wide desktop **Print / paper workflow** is recorded in [project-element-authority-future-record.md](project-element-authority-future-record.md). Future User Guide and Interactive Help should explain Print where useful. Recorded examples:
@@ -824,4 +863,4 @@ Do **not** implement Help, Voice, the Manual, or Print from this addendum. This 
 - Live Postmark
 - V1 rescore
 - EST-2026-0019 mutation
-- Opening CalibraytAI to Ben / father-in-law / Kevin before the §52 PRE-UAT RELEASE GATE
+- Opening CalibraytAI to Ben / father-in-law / Kevin before the §52 PRE-UAT RELEASE GATE, including any access before they have the completed User Guide

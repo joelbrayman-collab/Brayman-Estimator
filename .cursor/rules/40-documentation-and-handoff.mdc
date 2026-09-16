@@ -11,6 +11,7 @@ alwaysApply: true
 - Distinguish: session-handoff (immediate resume) vs project-state-report (milestone state) vs milestones (history).
 - Append entries to `docs/chat-workflow-log.md` (do not overwrite history).
 - Update module docs and `docs/platform-roadmap.md` when status changes.
+- Append `docs/architecture/manual-impact-log.md` at each material contractor-facing feature/slice close. Capture only the seven impact questions. Do not write the User Guide. Do not capture unstable screenshots.
 - Create ADRs from `docs/adr/ADR-000-template.md` when required by governance.
 - Cite code paths when documenting implemented architecture.
 - Mark unverified facts as “To be verified”—never invent migration heads, test counts, or feature completeness.

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-07-25 |
+| Updated | 2026-09-16 |
 
 A feature is **not complete** until all applicable items are true:
 
@@ -27,5 +27,6 @@ A feature is **not complete** until all applicable items are true:
 18. **Approved Cursor prompt summary** recorded in [chat-workflow-log.md](chat-workflow-log.md).
 19. **Next approved step** identified (or explicitly: none approved).
 20. **Prompt template** used (from [prompts/](prompts/)), or reason documented why not.
+21. **Manual Impact** appended to [architecture/manual-impact-log.md](architecture/manual-impact-log.md) when the close creates or changes a contractor-facing capability. Capture only the seven impact questions. Do **not** write the User Guide. Do **not** capture unstable screenshots.
 
 Documentation-only sprints still require items 1–2, 7–13, and 15–20 as applicable, and must not change application behaviour.

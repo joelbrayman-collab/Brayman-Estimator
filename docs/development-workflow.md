@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-09-04 |
+| Updated | 2026-09-16 |
 
 ## Lifecycle
 
@@ -18,7 +18,7 @@
 9. **Cursor** reports changes, assumptions, risks, and exact test results.
 10. **ChatGPT** reviews the implementation report.
 11. Corrections are completed before commit.
-12. **After implementation:** update documentation, roadmap, and handoff; update [milestones.md](milestones.md) where appropriate; update [project-state-report.md](project-state-report.md); identify the **next approved prompt** or explicitly state that none is approved.
+12. **After implementation:** update documentation, roadmap, and handoff; update [milestones.md](milestones.md) where appropriate; update [project-state-report.md](project-state-report.md); append [architecture/manual-impact-log.md](architecture/manual-impact-log.md) when the close creates or changes a contractor-facing capability; identify the **next approved prompt** or explicitly state that none is approved.
 13. **Joel** approves the milestone.
 14. The work is committed with a descriptive message (and pushed when Joel directs).
 

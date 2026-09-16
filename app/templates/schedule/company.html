@@ -105,14 +105,33 @@
             {% endfor %}
         </tbody>
     </table>
-    {% if view.conflicts %}
+    {% set project_conflicts = view.conflicts | selectattr('project_id', 'equalto', row.project.id) | list %}
+    {% if project_conflicts %}
+    <p class="muted-copy">{{ contractor_copy.SCHEDULE_WARNING_HELP }}</p>
     <ul class="schedule-conflict-list">
-        {% for conflict in view.conflicts %}
-        <li><strong>{{ conflict.label }}.</strong> {{ conflict.summary }}</li>
+        {% for conflict in project_conflicts %}
+        <li>
+            <strong>{{ conflict.label }}.</strong> {{ conflict.summary }}
+            {% if conflict.kind in ['SEQUENCE', 'PREDECESSOR_UNSCHEDULED'] %}
+            <span class="schedule-warning-actions">
+                {{ conflict.keep_label }}
+                {% if conflict.move_url %}
+                · <a href="{{ conflict.move_url }}">{{ contractor_copy.SCHEDULE_MOVE }}</a>
+                {% endif %}
+                {% if conflict.review_url %}
+                · <a href="{{ conflict.review_url }}">{{ contractor_copy.SCHEDULE_REVIEW }}</a>
+                {% endif %}
+            </span>
+            {% endif %}
+        </li>
         {% endfor %}
     </ul>
     {% endif %}
     {% endif %}
+    {% set project = row.project %}
+    {% set next_view = 'company' %}
+    {% set show_form = selected_project_id == row.project.id %}
+    {% include "schedule/_work_order.html" %}
     {% if row.schedule_items %}
     <form method="post" action="{{ url_for('schedule.shift_project', project_id=row.project.id) }}" class="form-grid" style="margin-top: 12px;">
         <label>

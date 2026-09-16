@@ -108,6 +108,7 @@ from app.models.work_structure import (
 from app.models.time_entry import LabourTimeEntry, LabourTimeHistory
 from app.models.organization_crew import OrganizationCrew, OrganizationCrewMember
 from app.models.schedule import (
+    ProjectWorkDependency,
     WorkScheduleAssignment,
     WorkScheduleHistory,
     WorkScheduleItem,
@@ -254,6 +255,7 @@ __all__ = [
     "Project",
     "ProjectCommercialContext",
     "ProjectLocation",
+    "ProjectWorkDependency",
     "WorkScheduleAssignment",
     "WorkScheduleHistory",
     "WorkScheduleItem",

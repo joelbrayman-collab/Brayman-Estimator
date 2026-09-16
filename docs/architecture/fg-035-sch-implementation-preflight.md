@@ -2,12 +2,12 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **DESIGN FROZEN.** Subsequent SCH-A product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-15). Subsequent SCH-B product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-16). Subsequent **2026-09-16:** platform-wide **warning law** **INFORMATIONAL ONLY / NON-BLOCKING**; SCH-C **PREFLIGHT PASS / NOT IMPLEMENTED**. This freeze remains the design SoR. SCH overall is **OPEN / PARTIAL**. |
+| Status | **DESIGN FROZEN.** Subsequent SCH-A product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-15). Subsequent SCH-B product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-16). Subsequent SCH-C product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-16). This freeze remains the design SoR. SCH overall is **OPEN / PARTIAL**. |
 | Date | 2026-09-15 |
-| Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. |
+| Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-C **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. |
 | Governing architecture | [fg-035-sch-dynamic-scheduling-preflight.md](fg-035-sch-dynamic-scheduling-preflight.md) **PREFLIGHT COMPLETE / ARCHITECTURE RECORDED**. This file does **not** redesign that record. |
 | ADR | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
-| Alembic | SCH-A revision **`f6e7f8a9b0c1`** parented on **`f5d6e7f8a9b0`**. SCH-B revision **`f7f8a9b0c1d2`** parented on **`f6e7f8a9b0c1`**. Live current = repository head **`f7f8a9b0c1d2`**. |
+| Alembic | SCH-A revision **`f6e7f8a9b0c1`** parented on **`f5d6e7f8a9b0`**. SCH-B revision **`f7f8a9b0c1d2`** parented on **`f6e7f8a9b0c1`**. SCH-C revision **`f9b0c1d2e3f4`** parented on **`f7f8a9b0c1d2`**. Live current = repository head **`f9b0c1d2e3f4`**. |
 | Baseline | HEAD / origin/main at freeze **`94fc575a720751dadb36f9df70ae85f40b9680d3`** (`docs: freeze FG-035 SCH implementation design`). |
 
 ```text
@@ -20,13 +20,22 @@ IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS
 
 Subsequent 2026-09-16 SCH-B:
 IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS
-NO NEW ADR
-V1 NOT RESCORED
+
+Subsequent 2026-09-16 SCH-C:
+IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS
 NO NEW ADR
 V1 NOT RESCORED
 ```
 
-**Subsequent status (2026-09-16 platform-wide warning law + Print recording):** Warnings are **INFORMATIONAL ONLY / NON-BLOCKING**. Canonical [project-element-authority-future-record.md](project-element-authority-future-record.md). SCH-C sequence / predecessor-unscheduled facts must not be implemented as Save blockers. **KEEP / MOVE / REVIEW** are optional affordances. SCH-C **PREFLIGHT PASS / NOT IMPLEMENTED**. Print **RECORDED / IMPLEMENTATION SEQUENCED LATER**. This freeze remains the design SoR. Do **not** implement Print, SCH-C, or SCH-D from this file.
+**Subsequent status (2026-09-16 SCH-C live migrate + bounded synthetic UAT):** SCH-C **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Additive **`f9b0c1d2e3f4`** applied live. Live current = repository head. Evidence [fg035-sch-c-live-bounded-uat-record.md](../testing/fg035-sch-c-live-bounded-uat-record.md). This freeze remains the design SoR. Do **not** implement SCH-D from this file.
+
+**Subsequent status (2026-09-16 SCH-C resume / verify / complete):** Existing uncommitted SCH-C preserved. Additive **`f9b0c1d2e3f4`** preserved. Resume tests **1119 passed**. Manual Impact **CURRENT**. This freeze remains the design SoR. Do **not** apply live migration from this file. Do **not** implement SCH-D from this file.
+
+**Subsequent status (2026-09-16 User Manual continuity / Manual Impact):** Lightweight **MANUAL IMPACT — SCH-C** recorded in [manual-impact-log.md](manual-impact-log.md). Does **not** implement Help / Voice / Manual from this freeze. Does **not** apply live migration from this file.
+
+**Subsequent status (2026-09-16 SCH-C implementation):** SCH-C **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED**. Additive **`f9b0c1d2e3f4`**. Sequence / predecessor-unscheduled facts are informational warnings only. KEEP / MOVE / REVIEW are optional affordances. This freeze remains the design SoR. Do **not** apply live migration from this file. Do **not** implement SCH-D from this file.
+
+**Subsequent status (2026-09-16 platform-wide warning law + Print recording):** Warnings are **INFORMATIONAL ONLY / NON-BLOCKING**. Canonical [project-element-authority-future-record.md](project-element-authority-future-record.md). SCH-C sequence / predecessor-unscheduled facts must not be implemented as Save blockers. **KEEP / MOVE / REVIEW** are optional affordances. Print **RECORDED / IMPLEMENTATION SEQUENCED LATER**. This freeze remains the design SoR. Do **not** implement Print or SCH-D from this file.
 
 **Subsequent status (2026-09-16 platform-wide desktop Print / paper workflow recording):** Print is recorded as a later presentation of the **same** Schedule authority. Canonical [project-element-authority-future-record.md](project-element-authority-future-record.md). This freeze remains the design SoR. Do **not** implement Print, SCH-C, or SCH-D from this file.
 
@@ -515,7 +524,7 @@ Place on `app/services/schedule.py`. TIME calls it; TIME does not own the query.
 
 Parent: **`f5d6e7f8a9b0`**.
 
-Revision **ids assigned at implementation**. Do not mint Alembic files now. Sequential hex after TIME is likely `f6e7f8a9b0c1` then `f7f8a9b0c1d2` then `f8a9b0c1d2e3` — treat as **expected tokens only**.
+Revision **ids assigned at implementation**. Sequential hex after TIME is likely `f6e7f8a9b0c1` then `f7f8a9b0c1d2` then `f8a9b0c1d2e3` — treat as **expected tokens only**. Subsequent SCH-C minted **`f9b0c1d2e3f4`** because `f8a9b0c1d2e3` is already FG-016.
 
 Prefer **one migration per independently usable slice** (TAX/WBS, SCOPE, TIME each shipped one revision).
 

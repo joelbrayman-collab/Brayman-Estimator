@@ -1,0 +1,46 @@
+<section class="schedule-work-order" id="schedule-work-order">
+    <h2>{{ contractor_copy.SCHEDULE_WORK_ORDER }}</h2>
+    <p class="muted-copy">{{ contractor_copy.SCHEDULE_WORK_ORDER_HELP }}</p>
+    {% set project_dependencies = view.dependencies | selectattr('project_id', 'equalto', project.id) | list %}
+    {% if project_dependencies %}
+    <ul class="schedule-work-order-list">
+        {% for dependency in project_dependencies %}
+        <li>
+            {{ dependency.successor_name }} {{ contractor_copy.SCHEDULE_COMES_AFTER }} {{ dependency.predecessor_name }}
+            <form method="post" action="{{ url_for('schedule.retire_dependency', dependency_id=dependency.id) }}" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="next" value="{{ next_view }}">
+                <button type="submit" class="button secondary">{{ contractor_copy.SCHEDULE_REMOVE_DEPENDENCY }}</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% if show_form and view.dependency_choices %}
+    <form method="post" action="{{ url_for('schedule.create_dependency', project_id=project.id) }}" class="form-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="next" value="{{ next_view }}">
+        <label>
+            Prior work
+            <select name="predecessor_element_id">
+                <option value="">Choose work</option>
+                {% for element in view.dependency_choices %}
+                <option value="{{ element.id }}">{{ element.display_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            {{ contractor_copy.SCHEDULE_MUST_FOLLOW }}
+            <select name="successor_element_id">
+                <option value="">Choose work</option>
+                {% for element in view.dependency_choices %}
+                <option value="{{ element.id }}">{{ element.display_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <div class="form-actions">
+            <button type="submit" class="button">{{ contractor_copy.SCHEDULE_ADD_DEPENDENCY }}</button>
+        </div>
+    </form>
+    {% endif %}
+</section>

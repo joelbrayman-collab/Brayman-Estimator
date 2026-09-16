@@ -489,13 +489,32 @@
             </tbody>
         </table>
         {% if schedule.conflicts %}
+        <p class="muted-copy">{{ contractor_copy.SCHEDULE_WARNING_HELP }}</p>
         <ul class="schedule-conflict-list">
             {% for conflict in schedule.conflicts %}
-            <li><strong>{{ conflict.label }}.</strong> {{ conflict.summary }}</li>
+            <li>
+                <strong>{{ conflict.label }}.</strong> {{ conflict.summary }}
+                {% if conflict.kind in ['SEQUENCE', 'PREDECESSOR_UNSCHEDULED'] %}
+                <span class="schedule-warning-actions">
+                    {{ conflict.keep_label }}
+                    {% if conflict.move_url %}
+                    · <a href="{{ conflict.move_url }}{% if conflict.move_url %}?next=hub{% endif %}">{{ contractor_copy.SCHEDULE_MOVE }}</a>
+                    {% endif %}
+                    {% if conflict.review_url %}
+                    · <a href="{{ conflict.review_url }}">{{ contractor_copy.SCHEDULE_REVIEW }}</a>
+                    {% endif %}
+                </span>
+                {% endif %}
+            </li>
             {% endfor %}
         </ul>
         {% endif %}
         {% endif %}
+        {% set view = schedule %}
+        {% set project = project %}
+        {% set next_view = 'hub' %}
+        {% set show_form = true %}
+        {% include "schedule/_work_order.html" %}
         {% if schedule.unscheduled_elements %}
         <p class="muted-copy">{{ contractor_copy.SCHEDULE_UNSCHEDULED }}</p>
         <ul>

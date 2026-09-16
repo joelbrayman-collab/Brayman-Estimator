@@ -15,12 +15,14 @@ from app.services.schedule import (
     assign_crew,
     assign_user,
     create_schedule_item,
+    create_work_dependency,
     get_schedule_item,
     list_assignable_crews,
     list_assignable_people,
     list_item_assignments,
     list_schedule_work_choices,
     retire_schedule_item,
+    retire_work_dependency,
     schedule_activity_with_element_adjustment,
     shift_project_schedule,
     unassign_assignment,
@@ -279,4 +281,45 @@ def shift_project(project_id):
         flash("Enter how many days to move this project.", "error")
     except (ScheduleError, ScheduleNotFoundError) as exc:
         flash(str(exc), "error")
+    return redirect(url_for("schedule.company", project_id=project_id))
+
+
+@schedule_bp.route("/projects/<int:project_id>/dependencies", methods=["POST"])
+def create_dependency(project_id):
+    organization = _org()
+    nxt = (request.form.get("next") or "").strip()
+    try:
+        predecessor_id = _optional_int(request.form.get("predecessor_element_id"))
+        successor_id = _optional_int(request.form.get("successor_element_id"))
+        if not predecessor_id or not successor_id:
+            raise ScheduleError("Choose the prior work and the work that comes after it.")
+        create_work_dependency(
+            project_id=project_id,
+            predecessor_element_id=predecessor_id,
+            successor_element_id=successor_id,
+            organization_id=organization.id,
+        )
+        flash("Work order saved.", "success")
+    except (ScheduleError, ScheduleNotFoundError) as exc:
+        flash(str(exc), "error")
+    if nxt == "hub":
+        return redirect(url_for("projects.view_project", id=project_id) + "#hub-schedule")
+    return redirect(url_for("schedule.company", project_id=project_id))
+
+
+@schedule_bp.route("/dependencies/<int:dependency_id>/retire", methods=["POST"])
+def retire_dependency(dependency_id):
+    organization = _org()
+    nxt = (request.form.get("next") or "").strip()
+    try:
+        dependency = retire_work_dependency(
+            dependency_id, organization_id=organization.id
+        )
+        flash("Work order removed.", "success")
+        project_id = dependency.project_id
+    except (ScheduleError, ScheduleNotFoundError) as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("schedule.company"))
+    if nxt == "hub":
+        return redirect(url_for("projects.view_project", id=project_id) + "#hub-schedule")
     return redirect(url_for("schedule.company", project_id=project_id))

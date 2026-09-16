@@ -1178,6 +1178,22 @@ body.login-page {
     color: #7a4a00;
 }
 
+.schedule-warning-actions {
+    display: block;
+    margin-top: 4px;
+    color: #4a4a4a;
+    font-weight: normal;
+}
+
+.schedule-work-order {
+    margin-top: 16px;
+}
+
+.schedule-work-order-list {
+    margin: 8px 0 14px;
+    padding-left: 18px;
+}
+
 .inline-form {
     display: inline;
     margin-left: 8px;

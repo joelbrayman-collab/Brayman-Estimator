@@ -43,6 +43,78 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-16 — FG-035 SCH-C live migrate + bounded synthetic UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Live-migrate SCH-C `f7f8a9b0c1d2` → `f9b0c1d2e3f4` and complete bounded synthetic office UAT on one new Project. No SCH-D. No commit. |
+| Business decision | Sequence / predecessor-unscheduled facts remain informational warnings. Cycle/self/duplicate remain fail-closed validation. KEEP / MOVE / REVIEW remain optional. |
+| Architectural decision | Preserve **`f9b0c1d2e3f4`**. No new ADR. V1 not rescored. |
+| Prompt template used | FG-035 SCH-C LIVE MIGRATE + BOUNDED SYNTHETIC UAT (16 Sep 2026) |
+| Approved Cursor prompt summary | Backup, upgrade, create Project 47, prove work-order/warning-law/retirement, fresh tests, UAT record, required docs. STOP. No commit. |
+| Files expected to change | Live DB, SCH-C UAT record, required continuity docs |
+| Files prohibited from changing | Projects 45/46/27, EST-2026-0019, SCH-D / Print / PERF / CLOSE / LEARN / QB-T, V1 rescore, commit, push |
+| Implementation result | SCH-C **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Live current = repository head **`f9b0c1d2e3f4`**. Project **47**. FG-035 **OPEN / PARTIAL**. V1 **60% / 4 of 11**. |
+| Tests | Dedicated SCH-C **14 passed**, 0 failed, 32 warnings, **4.34s**, exit **0**. SCH-A+SCH-B **22 passed**, 0 failed, 57 warnings, **11.13s**, exit **0**. Focused **135 passed**, 0 failed, 540 warnings, **63.04s**, exit **0**. Full suite **1119 passed**, 0 failed, 3705 warnings, **507.32s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None. |
+| Unresolved issues | SCH-C not committed. SCH-D not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-D. Do **not** commit unless separately authorized. |
+| Next approved prompt | None from this close. |
+| Commit hash | (not committed) |
+
+### 2026-09-16 — FG-035 SCH-C resume / verify / complete existing implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Resume existing uncommitted SCH-C. Reconcile against the accepted SCH-C package. Preserve `f9b0c1d2e3f4` if valid. Complete only authorized SCH-C. No live migrate. No live UAT. No commit. |
+| Business decision | Existing SCH-C classified **COMPLETE / CORRECT** and **WITHIN AUTHORIZED SCH-C**. Sequence / predecessor-unscheduled facts remain informational warnings. KEEP / MOVE / REVIEW remain optional. |
+| Architectural decision | Preserve additive **`f9b0c1d2e3f4`** parented on **`f7f8a9b0c1d2`**. `f8a9b0c1d2e3` remains FG-016. No new ADR. No V1 rescore. |
+| Prompt template used | FG-035 SCH-C RESUME / VERIFY / COMPLETE EXISTING IMPLEMENTATION (16 Sep 2026) |
+| Approved Cursor prompt summary | Reconcile existing SCH-C against the accepted package, preserve the f9 revision, complete authorized SCH-C only, update Manual Impact from actual contractor copy, run dedicated + SCH-A/B + focused + full suite. STOP before live migrate / commit. |
+| Files expected to change | Existing SCH-C product/tests/docs plus Manual Impact / continuity |
+| Files prohibited from changing | Live DB, Projects 45/46/27, EST-2026-0019, SCH-D / Print / PERF / CLOSE / LEARN / QB-T, V1 rescore, commit, push |
+| Implementation result | SCH-C **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED**. Additive **`f9b0c1d2e3f4`**. Live current remains **`f7f8a9b0c1d2`**. Manual Impact **CURRENT**. Manual **FRAMEWORK ACTIVE**. FG-035 **OPEN / PARTIAL**. V1 **60% / 4 of 11**. |
+| Tests | Dedicated SCH-C `./venv/bin/python -m pytest -q tests/test_work_schedule_dependency_fg035.py` **14 passed**, 32 warnings, **4.48s**, exit **0**. SCH-A+SCH-B `./venv/bin/python -m pytest -q tests/test_work_schedule_fg035.py tests/test_work_schedule_assignment_fg035.py` **22 passed**, 57 warnings, **10.42s**, exit **0**. Focused TAX/WBS+SCOPE+TIME+SCH-A+SCH-B+SCH-C+Hub/Field/MONITOR **135 passed**, 540 warnings, **60.21s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` **1119 passed**, 3705 warnings, **453.73s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes (validation numbers on existing SCH-C milestone) |
+| Constitutional issue raised | None. Existing f9 revision correctly parented; preserved. |
+| Unresolved issues | SCH-C live migrate / bounded synthetic UAT not authorized. Not committed. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** begin live UAT. Do **not** commit unless separately authorized. |
+| Next approved prompt | None from this close. |
+| Commit hash | (not committed) |
+
+### 2026-09-16 — FG-035 SCH-C Lightweight Element dependencies + sequence warnings
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Implement FG-035 SCH-C only: Element→Element dependencies, cycle rejection, informational sequence warnings, Company/Hub presentation, Element-retirement edge cleanup, one additive Alembic FILE. No live migrate. No live UAT. No commit. |
+| Business decision | Sequence / predecessor-unscheduled facts are informational warnings only. KEEP / MOVE / REVIEW are optional affordances. Validation remains fail-closed for org/Project/ACTIVE/self-edge/duplicate/cycle. |
+| Architectural decision | Extend existing Schedule service and `list_schedule_conflicts`. Expected Alembic token `f8a9b0c1d2e3` collides with FG-016; minted **`f9b0c1d2e3f4`**. No FK from `work_schedule_history.dependency_id`. No new ADR. V1 not rescored. |
+| Prompt template used | FG-035 SCH-C LIGHTWEIGHT ELEMENT DEPENDENCIES + SEQUENCE WARNINGS IMPLEMENTATION (16 Sep 2026) |
+| Approved Cursor prompt summary | Implement SCH-C product, model, services, routes, bounded UX, Element retirement integration, one additive Alembic FILE, tests, required docs. STOP before live migration. |
+| Files expected to change | SCH-C product, migration FILE, tests, required implementation docs |
+| Files prohibited from changing | Live DB, Projects 45/46, EST-2026-0019, SCH-D / Print / PERF / CLOSE / LEARN / QB-T, V1 rescore, commit, push |
+| Implementation result | SCH-C **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED**. Additive **`f9b0c1d2e3f4`**. Repository head **`f9b0c1d2e3f4`**. Live current remains **`f7f8a9b0c1d2`**. FG-035 **OPEN / PARTIAL**. V1 **60% / 4 of 11**. |
+| Tests | Dedicated SCH-C `./venv/bin/python -m pytest -q tests/test_work_schedule_dependency_fg035.py` **14 passed**, 32 warnings, **4.52s**, exit **0**. Focused TAX/WBS+SCOPE+TIME+SCH-A+SCH-B+SCH-C+Hub/Field/MONITOR **135 passed**, 540 warnings, **62.30s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` **1119 passed**, 3705 warnings, **516.26s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None. Expected token collision with FG-016 resolved by minting unique `f9b0c1d2e3f4`. |
+| Unresolved issues | SCH-C live migrate / bounded synthetic UAT not authorized. Not committed. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** begin live UAT. Do **not** commit unless separately authorized. |
+| Next approved prompt | None from this close. |
+| Commit hash | (not committed) |
+
 ### 2026-09-16 — Platform-wide warning law + Print product-direction recording
 
 | Field | Content |

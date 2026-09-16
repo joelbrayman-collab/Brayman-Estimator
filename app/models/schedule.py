@@ -280,3 +280,82 @@ class WorkScheduleAssignment(db.Model):
 
     def __repr__(self):
         return f"<WorkScheduleAssignment {self.id}>"
+
+
+DEPENDENCY_STATUS_ACTIVE = "ACTIVE"
+DEPENDENCY_STATUS_INACTIVE = "INACTIVE"
+DEPENDENCY_STATUSES = (DEPENDENCY_STATUS_ACTIVE, DEPENDENCY_STATUS_INACTIVE)
+
+
+class ProjectWorkDependency(db.Model):
+    """Lightweight Element → Element sequence. Not CPM. Not a second work model."""
+
+    __tablename__ = "project_work_dependencies"
+    __table_args__ = (
+        db.CheckConstraint(
+            "status IN ('ACTIVE', 'INACTIVE')",
+            name="ck_project_work_dependencies_status",
+        ),
+        db.CheckConstraint(
+            "predecessor_element_id != successor_element_id",
+            name="ck_project_work_dependencies_not_self",
+        ),
+        Index(
+            "uq_project_work_dependencies_active_edge",
+            "predecessor_element_id",
+            "successor_element_id",
+            unique=True,
+            sqlite_where=text("status = 'ACTIVE'"),
+        ),
+        Index(
+            "ix_project_work_dependencies_org_project",
+            "organization_id",
+            "project_id",
+            "status",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    project_id = db.Column(
+        db.Integer,
+        db.ForeignKey("projects.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    predecessor_element_id = db.Column(
+        db.Integer,
+        db.ForeignKey("project_work_elements.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    successor_element_id = db.Column(
+        db.Integer,
+        db.ForeignKey("project_work_elements.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    status = db.Column(
+        db.String(20),
+        nullable=False,
+        default=DEPENDENCY_STATUS_ACTIVE,
+    )
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    project = db.relationship("Project")
+    predecessor = db.relationship(
+        "ProjectWorkElement",
+        foreign_keys=[predecessor_element_id],
+    )
+    successor = db.relationship(
+        "ProjectWorkElement",
+        foreign_keys=[successor_element_id],
+    )
+
+    def __repr__(self):
+        return f"<ProjectWorkDependency {self.id} {self.status}>"

@@ -56,13 +56,16 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 | Field | Content |
 |-------|---------|
 | Slice | FG-035 SCH-C Lightweight Element dependencies + sequence warnings |
-| Product status at capture | **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED.** Additive **`f9b0c1d2e3f4`**. Live current remains **`f7f8a9b0c1d2`**. Do **not** capture screenshots until after live migrate + bounded UAT and later final V1. |
-| 1. What new contractor capability exists? | The contractor can say which authorized Project work **comes after** other work. Work order does **not** move dates by itself. |
-| 2. When would the contractor use it? | When one Element should wait until prior work is finished, or when the office needs a visible work-order reminder on Company Schedule / Project Hub Schedule. |
-| 3. What workflow will the final Manual need to teach? | Open Company Schedule or Project Hub Schedule. Under **Work order**, choose prior work and the work that **must follow**. Add work order. Remove a work order when it no longer applies. If a **Schedule warning** appears: the contractor may **leave dates as they are**, **change dates** using the existing date form, or **review this project**. The contractor may also ignore the warning and continue. |
-| 4. What contractor-facing terms must be used? | Work order. Comes after. Must follow. Add work order. Schedule warning. Scheduled before prior work is finished. Scheduled, but the prior work does not have dates yet. Leave dates as they are. Change dates. Review this project. This is information only. You can continue without changing anything. Avoid in the Manual: DAG, edge, node, graph, predecessor_id, successor_id. |
-| 5. What screenshots / Print examples will eventually be needed? | Desktop Company Schedule warning in the same family as assignment conflicts, with optional Leave dates / Change dates / Review. Project Hub `#hub-schedule` work-order list and add form. Do **not** clutter Month with every work-order line. Print examples wait for the recorded Print workflow. Do **not** capture these now. |
-| 6. What warnings / validation distinctions need explanation? | **Warning (informational):** successor dates start before prior work is finished; prior work has no dates while later work is scheduled. Warnings inform. Humans decide. A warning must not, by itself, block Save, require acknowledgement, or move dates. **Validation (fail-closed, not a warning):** cannot link work across organizations or Projects; cannot use inactive/missing work; a item cannot come after itself; the same active work order cannot be added twice; circular work order is rejected. Inclusive abut (later work starts on the prior work’s end date) is **not** a warning. |
-| 7. Desktop / iPhone / Print relevance | **Desktop:** Company Schedule + Project Hub Schedule. **iPhone:** SCH-D Field Schedule is later; do not screenshot iPhone Schedule for SCH-C now. **Print:** later presentation of the same Schedule authority; not implemented. |
-
-Do **not** teach automatic Schedule movement. SCH-C does not slide dates.
+| Status | **CURRENT** — SCH-C **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS.** Additive **`f9b0c1d2e3f4`**. Live current = repository head. Live UAT on Project **47** confirmed this contractor copy. No workflow/copy change from UAT. |
+| CONTRACTOR CAPABILITY | Set which major work should come before other work. Under **Work order**, say which work **comes after** other work. This does not move dates by itself. |
+| WHEN USED | When planning the order of major Project work. |
+| FINAL MANUAL WORKFLOW TO TEACH | Add a **Comes after** / **Must follow** relationship. Remove it. Understand a **Schedule warning** when work is scheduled before prior work is finished. Understand a **Schedule warning** when work is scheduled but the prior work does not have dates yet. Optionally **Change dates** or **Review this project**. **Leave dates as they are**, or ignore the warning and continue. |
+| CONTRACTOR-FACING TERMS | Work order. Comes after. Must follow. Add work order. Prior work. Schedule warning. Scheduled before prior work is finished. Scheduled, but the prior work does not have dates yet. Leave dates as they are. Change dates. Review this project. This is information only. You can continue without changing anything. Do **not** use: DAG, edge, node, graph, ProjectWorkDependency, dependency_id. |
+| WARNINGS / VALIDATION | **Warning:** informational only; does not block work. **Validation:** an invalid relationship or a loop cannot be saved. |
+| DESKTOP | YES — Company Schedule and Project Hub Schedule. |
+| IPHONE | SCH-D / future. |
+| PRINT | Future relevance; do not implement. |
+| SCREENSHOTS NEEDED LATER | Work-order / sequence controls. Sequence warning. Project Schedule / Hub context. Do **not** capture now. |
+| EVERYDAY TASKS | How do I tell CalibraytAI what work comes first? What does this Schedule warning mean? How do I move work after reviewing a warning? |
+| HELP / VOICE | Future topics only. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. Automatic date movement. |

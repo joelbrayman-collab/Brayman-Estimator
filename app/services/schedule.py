@@ -9,19 +9,24 @@ from datetime import date, datetime, timedelta
 from typing import Optional
 
 from flask_login import current_user
-from sqlalchemy import func
+from sqlalchemy import func, or_
 
 from app import db
 from app.models.organization_crew import CREW_STATUS_ACTIVE, OrganizationCrew
 from app.models.project import Project
 from app.models.schedule import (
+    DEPENDENCY_STATUS_ACTIVE,
+    DEPENDENCY_STATUS_INACTIVE,
     SCHEDULE_EVENT_ASSIGNED,
     SCHEDULE_EVENT_CREATED,
     SCHEDULE_EVENT_DATES_CHANGED,
+    SCHEDULE_EVENT_DEPENDENCY_ADDED,
+    SCHEDULE_EVENT_DEPENDENCY_REMOVED,
     SCHEDULE_EVENT_RETIRED,
     SCHEDULE_EVENT_UNASSIGNED,
     SCHEDULE_STATUS_ACTIVE,
     SCHEDULE_STATUS_INACTIVE,
+    ProjectWorkDependency,
     WorkScheduleAssignment,
     WorkScheduleHistory,
     WorkScheduleItem,
@@ -204,6 +209,7 @@ def _record_history(
     actor_display_name=None,
     reason=None,
     assignment_id=None,
+    dependency_id=None,
 ) -> WorkScheduleHistory:
     user_id, display_name = actor_snapshot()
     row = WorkScheduleHistory(
@@ -218,6 +224,35 @@ def _record_history(
         new_scheduled_start=item.scheduled_start,
         new_scheduled_end=item.scheduled_end,
         assignment_id=assignment_id,
+        dependency_id=dependency_id,
+        reason=reason,
+    )
+    db.session.add(row)
+    return row
+
+
+def _record_dependency_history(
+    *,
+    organization_id: str,
+    project_id: int,
+    event: str,
+    dependency_id: int,
+    reason=None,
+) -> WorkScheduleHistory:
+    user_id, display_name = actor_snapshot()
+    row = WorkScheduleHistory(
+        organization_id=organization_id,
+        work_schedule_item_id=None,
+        project_id=project_id,
+        event=event,
+        actor_user_id=user_id,
+        actor_display_name=display_name,
+        prior_scheduled_start=None,
+        prior_scheduled_end=None,
+        new_scheduled_start=None,
+        new_scheduled_end=None,
+        assignment_id=None,
+        dependency_id=dependency_id,
         reason=reason,
     )
     db.session.add(row)
@@ -758,6 +793,7 @@ def list_schedule_conflicts(
                 "summary": f"{name} {contractor_copy.SCHEDULE_ALREADY_ELSEWHERE}",
                 "name": name,
                 "item_ids": [left_id, right_id],
+                "project_id": left.project_id,
             }
         )
 
@@ -792,7 +828,267 @@ def list_schedule_conflicts(
             through -= direct_users[left.id] & direct_users[right.id]
             for user_id in through:
                 _add("USER_THROUGH_CREW", _user_name(user_id), left.id, right.id)
+    conflicts.extend(
+        _dependency_conflict_facts(org_id, project_id=project_id)
+    )
     return conflicts
+
+
+def _active_dependencies(organization_id: str, *, project_id: Optional[int] = None):
+    query = ProjectWorkDependency.query.filter_by(
+        organization_id=organization_id,
+        status=DEPENDENCY_STATUS_ACTIVE,
+    )
+    if project_id is not None:
+        query = query.filter_by(project_id=project_id)
+    return query.order_by(ProjectWorkDependency.id).all()
+
+
+def _element_item_map(organization_id: str, *, project_id: Optional[int] = None) -> dict:
+    query = WorkScheduleItem.query.filter_by(
+        organization_id=organization_id,
+        status=SCHEDULE_STATUS_ACTIVE,
+        project_work_activity_id=None,
+    )
+    if project_id is not None:
+        query = query.filter_by(project_id=project_id)
+    return {item.project_work_element_id: item for item in query.all()}
+
+
+def _dependency_conflict_facts(
+    organization_id: str, *, project_id: Optional[int] = None
+) -> list[dict]:
+    facts = []
+    items_by_element = _element_item_map(organization_id, project_id=project_id)
+    for dependency in _active_dependencies(organization_id, project_id=project_id):
+        predecessor = dependency.predecessor
+        successor = dependency.successor
+        predecessor_name = predecessor.display_name if predecessor is not None else "Prior work"
+        successor_name = successor.display_name if successor is not None else "Later work"
+        predecessor_item = items_by_element.get(dependency.predecessor_element_id)
+        successor_item = items_by_element.get(dependency.successor_element_id)
+        if predecessor_item is None and successor_item is not None:
+            facts.append(
+                {
+                    "kind": "PREDECESSOR_UNSCHEDULED",
+                    "label": contractor_copy.SCHEDULE_SEQUENCE_WARNING,
+                    "summary": (
+                        f"{successor_name} {contractor_copy.SCHEDULE_PRIOR_NOT_SCHEDULED}"
+                    ),
+                    "name": successor_name,
+                    "item_ids": [successor_item.id],
+                    "project_id": dependency.project_id,
+                    "dependency_id": dependency.id,
+                    "predecessor_element_id": dependency.predecessor_element_id,
+                    "successor_element_id": dependency.successor_element_id,
+                    "predecessor_item_id": None,
+                    "successor_item_id": successor_item.id,
+                    "keep_label": contractor_copy.SCHEDULE_KEEP,
+                    "move_url": None,
+                    "review_url": (
+                        f"/projects/{dependency.project_id}#hub-schedule"
+                    ),
+                }
+            )
+            continue
+        if predecessor_item is None or successor_item is None:
+            continue
+        if successor_item.scheduled_start < predecessor_item.scheduled_end:
+            facts.append(
+                {
+                    "kind": "SEQUENCE",
+                    "label": contractor_copy.SCHEDULE_SEQUENCE_WARNING,
+                    "summary": (
+                        f"{successor_name} {contractor_copy.SCHEDULE_BEFORE_PRIOR_FINISHED} "
+                        f"({predecessor_name})."
+                    ),
+                    "name": successor_name,
+                    "item_ids": [predecessor_item.id, successor_item.id],
+                    "project_id": dependency.project_id,
+                    "dependency_id": dependency.id,
+                    "predecessor_element_id": dependency.predecessor_element_id,
+                    "successor_element_id": dependency.successor_element_id,
+                    "predecessor_item_id": predecessor_item.id,
+                    "successor_item_id": successor_item.id,
+                    "keep_label": contractor_copy.SCHEDULE_KEEP,
+                    "move_url": f"/schedule/items/{successor_item.id}",
+                    "review_url": (
+                        f"/projects/{dependency.project_id}#hub-schedule"
+                    ),
+                }
+            )
+    return facts
+
+
+def list_active_project_dependencies(
+    project_id: int, *, organization_id: Optional[str] = None
+) -> list[dict]:
+    org_id = _org_id(organization_id)
+    _project_or_404(project_id, org_id)
+    return [
+        _dependency_view(row)
+        for row in _active_dependencies(org_id, project_id=project_id)
+    ]
+
+
+def list_dependency_element_choices(
+    project_id: int, *, organization_id: Optional[str] = None
+) -> list[ProjectWorkElement]:
+    org_id = _org_id(organization_id)
+    _project_or_404(project_id, org_id)
+    return [
+        element
+        for element in list_project_work_elements(project_id, organization_id=org_id)
+        if element.status == WORK_STATUS_ACTIVE
+    ]
+
+
+def _dependency_view(dependency: ProjectWorkDependency) -> dict:
+    predecessor = dependency.predecessor
+    successor = dependency.successor
+    return {
+        "id": dependency.id,
+        "project_id": dependency.project_id,
+        "predecessor_element_id": dependency.predecessor_element_id,
+        "successor_element_id": dependency.successor_element_id,
+        "predecessor_name": predecessor.display_name if predecessor is not None else "Prior work",
+        "successor_name": successor.display_name if successor is not None else "Later work",
+        "status": dependency.status,
+    }
+
+
+def _active_edge(
+    organization_id: str,
+    predecessor_element_id: int,
+    successor_element_id: int,
+) -> Optional[ProjectWorkDependency]:
+    return ProjectWorkDependency.query.filter_by(
+        organization_id=organization_id,
+        predecessor_element_id=predecessor_element_id,
+        successor_element_id=successor_element_id,
+        status=DEPENDENCY_STATUS_ACTIVE,
+    ).first()
+
+
+def _would_create_cycle(
+    organization_id: str,
+    project_id: int,
+    predecessor_element_id: int,
+    successor_element_id: int,
+) -> bool:
+    adjacency = {}
+    for edge in _active_dependencies(organization_id, project_id=project_id):
+        adjacency.setdefault(edge.predecessor_element_id, []).append(
+            edge.successor_element_id
+        )
+    stack = [successor_element_id]
+    seen = set()
+    while stack:
+        node = stack.pop()
+        if node == predecessor_element_id:
+            return True
+        if node in seen:
+            continue
+        seen.add(node)
+        stack.extend(adjacency.get(node, []))
+    return False
+
+
+def create_work_dependency(
+    *,
+    project_id: int,
+    predecessor_element_id: int,
+    successor_element_id: int,
+    organization_id: Optional[str] = None,
+    commit: bool = True,
+) -> ProjectWorkDependency:
+    org_id = _org_id(organization_id)
+    project = _project_or_404(project_id, org_id)
+    predecessor = _element_for_org(predecessor_element_id, org_id)
+    successor = _element_for_org(successor_element_id, org_id)
+    if predecessor.project_id != project.id or successor.project_id != project.id:
+        raise ScheduleError("Both work items must belong to this project.")
+    if predecessor.status != WORK_STATUS_ACTIVE or successor.status != WORK_STATUS_ACTIVE:
+        raise ScheduleError("Both work items must be current to add this work order.")
+    if predecessor.id == successor.id:
+        raise ScheduleError("A work item cannot come after itself.")
+    if _active_edge(org_id, predecessor.id, successor.id) is not None:
+        raise ScheduleError("That work order already exists.")
+    if _would_create_cycle(org_id, project.id, predecessor.id, successor.id):
+        raise ScheduleError("That work order would loop back on itself.")
+    dependency = ProjectWorkDependency(
+        organization_id=org_id,
+        project_id=project.id,
+        predecessor_element_id=predecessor.id,
+        successor_element_id=successor.id,
+        status=DEPENDENCY_STATUS_ACTIVE,
+    )
+    db.session.add(dependency)
+    db.session.flush()
+    _record_dependency_history(
+        organization_id=org_id,
+        project_id=project.id,
+        event=SCHEDULE_EVENT_DEPENDENCY_ADDED,
+        dependency_id=dependency.id,
+    )
+    if commit:
+        db.session.commit()
+    return dependency
+
+
+def get_work_dependency(
+    dependency_id: int, *, organization_id: Optional[str] = None
+) -> ProjectWorkDependency:
+    org_id = _org_id(organization_id)
+    dependency = ProjectWorkDependency.query.filter_by(
+        id=dependency_id, organization_id=org_id
+    ).first()
+    if dependency is None:
+        raise ScheduleNotFoundError("Work order not found.")
+    return dependency
+
+
+def retire_work_dependency(
+    dependency_id: int,
+    *,
+    organization_id: Optional[str] = None,
+    commit: bool = True,
+) -> ProjectWorkDependency:
+    org_id = _org_id(organization_id)
+    dependency = get_work_dependency(dependency_id, organization_id=org_id)
+    _retire_dependency_row(dependency)
+    if commit:
+        db.session.commit()
+    return dependency
+
+
+def _retire_dependency_row(dependency: ProjectWorkDependency) -> None:
+    if dependency.status == DEPENDENCY_STATUS_INACTIVE:
+        return
+    dependency.status = DEPENDENCY_STATUS_INACTIVE
+    _record_dependency_history(
+        organization_id=dependency.organization_id,
+        project_id=dependency.project_id,
+        event=SCHEDULE_EVENT_DEPENDENCY_REMOVED,
+        dependency_id=dependency.id,
+    )
+
+
+def retire_active_dependencies_for_element(
+    element: ProjectWorkElement, *, organization_id: Optional[str] = None
+) -> None:
+    """Retire ACTIVE edges on retired Project work. No extra commit."""
+    org_id = _org_id(organization_id)
+    edges = ProjectWorkDependency.query.filter(
+        ProjectWorkDependency.organization_id == org_id,
+        ProjectWorkDependency.status == DEPENDENCY_STATUS_ACTIVE,
+        or_(
+            ProjectWorkDependency.predecessor_element_id == element.id,
+            ProjectWorkDependency.successor_element_id == element.id,
+        ),
+    ).all()
+    for edge in edges:
+        _retire_dependency_row(edge)
 
 
 def retire_schedule_item(
@@ -830,6 +1126,7 @@ def retire_active_items_for_work(row, *, organization_id: Optional[str] = None) 
         query = query.filter_by(project_work_activity_id=row.id)
     else:
         query = query.filter_by(project_work_element_id=row.id)
+        retire_active_dependencies_for_element(row, organization_id=org_id)
     for item in query.all():
         _clear_item_assignments(item)
         item.status = SCHEDULE_STATUS_INACTIVE
@@ -1013,4 +1310,13 @@ def assemble_schedule(
         "assignments": assignments,
         "assignments_by_item_id": assignments_by_item_id,
         "conflicts": conflicts,
+        "dependencies": [
+            _dependency_view(row)
+            for row in _active_dependencies(org_id, project_id=project_id)
+        ],
+        "dependency_choices": (
+            list_dependency_element_choices(project_id, organization_id=org_id)
+            if project_id is not None
+            else []
+        ),
     }

@@ -44,7 +44,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Warnings inform; humans decide. Validation remains fail-closed. KEEP / MOVE / REVIEW are optional contractor affordances, not persisted states. Architecture-principles numbered rules unchanged (no Rule 13; no ADR). |
 | Open decisions | SCH-C product not authorized. Print implementation sequenced later. |
 | Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-C product. |
-| Commit | (filled after commit) |
+| Commit | `884aae30d845b9cf4cac3e0be2de454b4da2cfe8` |
 | Date | 2026-09-16 |
 
 ### 2026-09-16 — FG-035 SCH-B CLOSE / COMMIT / PUSH

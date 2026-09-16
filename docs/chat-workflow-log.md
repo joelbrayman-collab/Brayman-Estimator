@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | SCH-C product and Print implementation not authorized. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-C product. |
 | Next approved prompt | None from this close. |
-| Commit hash | (filled after commit) |
+| Commit hash | `884aae30d845b9cf4cac3e0be2de454b4da2cfe8` |
 
 ### 2026-09-16 — FG-035 SCH-B CLOSE / COMMIT / PUSH
 

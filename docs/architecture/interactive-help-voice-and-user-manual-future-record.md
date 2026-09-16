@@ -2,8 +2,8 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FUTURE / RECORDED / COMPLETE FOR PRODUCT-DIRECTION RECORDING / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED.** Not a Feature Gate. Not an ADR. Not implementation, schema, or migration authorization. Task-based pre-UAT script **REQUIRED**. Voice mutation **NOT REQUIRED** for V1 Voice completion. |
-| Updated | 2026-09-15 |
+| Status | **FUTURE / RECORDED / COMPLETE FOR PRODUCT-DIRECTION RECORDING / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED.** Not a Feature Gate. Not an ADR. Not implementation, schema, or migration authorization. Task-based pre-UAT script **REQUIRED**. Voice mutation **NOT REQUIRED** for V1 Voice completion. Subsequent **2026-09-16:** platform-wide **warning law** **INFORMATIONAL ONLY / NON-BLOCKING** and desktop Print / paper workflow Help topics belong in this Help authority after the Print audit; canonical Print + warning law live in [project-element-authority-future-record.md](project-element-authority-future-record.md). Do **not** implement Print, Help, or SCH-C from this record. |
+| Updated | 2026-09-16 |
 | Authority | Joel Brayman / ChatGPT Architect. Product decision: Interactive in-product Help, Voice assistance, and a professional CalibraytAI User Guide are **mandatory** before opening CalibraytAI to Ben, Ben’s father-in-law, and Kevin for real-world / independent UAT. |
 | Does not interrupt | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**; [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**; [project-element-authority-future-record.md](project-element-authority-future-record.md). TAX/WBS remains **IMPLEMENTED**. Later FG-035 slices remain **NOT AUTHORIZED** from this record. |
 
@@ -796,6 +796,18 @@ Do **not** treat this record as BRAYMAN REAL-LIFE UAT READY.
 
 ---
 
+## Subsequent 2026-09-16 — Print in Help / User Guide (not implemented)
+
+The platform-wide desktop **Print / paper workflow** is recorded in [project-element-authority-future-record.md](project-element-authority-future-record.md). Future User Guide and Interactive Help should explain Print where useful. Recorded examples:
+
+- How do I print this month’s Schedule?
+- How do I print today’s work?
+- How do I print a Project Schedule?
+
+Do **not** implement Help, Voice, the Manual, or Print from this addendum. This addendum does **not** authorize SCH-C or SCH-D. V1 **not rescored**.
+
+---
+
 ## Explicitly not authorized from this record
 
 - Interactive Help product
@@ -806,6 +818,7 @@ Do **not** treat this record as BRAYMAN REAL-LIFE UAT READY.
 - FG-036 / ADR-054 invention
 - The actual UAT script (write only after completed V1 + Help authority)
 - FG-035 SCOPE / TIME / SCH / PERF / CLOSE / LEARN / QB-T
+- Desktop Print / print CSS
 - Another FG-025 slice
 - FG-024 Slice D
 - Live Postmark

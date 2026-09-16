@@ -12,6 +12,10 @@
 | Related ADRs | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md). [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md). [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md). [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md). [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md). |
 | Prerequisites | FG-008 labour snapshots. FG-011 Project Hub. FG-018 office auth. ADR-053 Accepted. |
 
+**Subsequent status (2026-09-16 platform-wide warning law + Print recording):** Warnings are **INFORMATIONAL ONLY / NON-BLOCKING**. Canonical [architecture/project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md). SCH-C sequence/unscheduled-predecessor facts remain warnings, not Save blockers. SCH-C **PREFLIGHT PASS / NOT IMPLEMENTED**. Print **RECORDED / IMPLEMENTATION SEQUENCED LATER**. This does **not** authorize SCH-C product, SCH-D, or Print. Gate remains **OPEN / PARTIAL**. V1 **not rescored**.
+
+**Subsequent status (2026-09-16 platform-wide desktop Print / paper workflow recording):** Print is a **V1 product requirement** and **not** a separate V1 scoring unit. Canonical record [architecture/project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md) (Contractor Language + UX E2E Audit). Schedule Print is a presentation of the **same** Schedule authority as SCH-D Today / Week / Month. This does **not** authorize Print product, SCH-C, or SCH-D. Gate remains **OPEN / PARTIAL**. V1 **not rescored**.
+
 **Subsequent status (2026-09-16 SCH-B live migrate + bounded synthetic UAT):** SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Additive **`f7f8a9b0c1d2`** applied live (`f6e7f8a9b0c1` → **`f7f8a9b0c1d2 (head)`**). Live current = repository head. Synthetic Project **46**. Project **45** unchanged. EST-2026-0019 unchanged. Evidence [testing/fg035-sch-b-live-bounded-uat-record.md](../testing/fg035-sch-b-live-bounded-uat-record.md). SCH overall **OPEN / PARTIAL**. SCH-C / SCH-D **NOT AUTHORIZED**. No new ADR. V1 **not rescored**.
 
 **Subsequent status (2026-09-16 SCH-B implementation):** SCH-B **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED** at that pass. Additive **`f7f8a9b0c1d2`** parented on **`f6e7f8a9b0c1`**. Live current then remained **`f6e7f8a9b0c1`**. Project **46** was not created in that pass.
@@ -28,7 +32,7 @@
 | TAX/WBS | **IMPLEMENTED** — baseline + org catalog; Project Element / Activity instances; explicit EstimateLabourSnapshot seed; Hub Project work |
 | SCOPE | **IMPLEMENTED** — ORIGINAL / CHANGE_ORDER / EXTRA_WORK lineage on Project work; Change Order deltas; Extra Work; Hub/Field presentation |
 | TIME | **IMPLEMENTED** |
-| SCH | **OPEN / PARTIAL** — SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH overall **OPEN / PARTIAL**. SCH-C / SCH-D **NOT AUTHORIZED**. Architecture **RECORDED**; design freeze [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md) |
+| SCH | **OPEN / PARTIAL** — SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-C **PREFLIGHT PASS / NOT IMPLEMENTED**. SCH-D **NOT AUTHORIZED**. Architecture **RECORDED**; design freeze [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md) |
 | PERF | **NOT AUTHORIZED** |
 | CLOSE | **NOT AUTHORIZED** |
 | LEARN | **NOT AUTHORIZED** |
@@ -45,7 +49,10 @@ TIME IMPLEMENTED
 SCH-A IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS
 SCH-B IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS
 SCH OVERALL OPEN / PARTIAL
-SCH-C / SCH-D NOT AUTHORIZED
+SCH-C PREFLIGHT PASS / NOT IMPLEMENTED
+SCH-D NOT AUTHORIZED
+WARNING LAW INFORMATIONAL ONLY / NON-BLOCKING / PLATFORM-WIDE
+PRINT RECORDED / IMPLEMENTATION SEQUENCED LATER
 PERF NOT AUTHORIZED
 CLOSE NOT AUTHORIZED
 LEARN NOT AUTHORIZED
@@ -115,7 +122,7 @@ Original Estimate-seeded work is immutable historical evidence. Eligible Change 
 
 ### SCH — Dynamic Schedule + assignment + desktop/iPhone calendar
 
-**Status: SCH-A IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS. SCH-B IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS.** SCH overall **OPEN / PARTIAL**. SCH-C / SCH-D **NOT AUTHORIZED**. Architecture **PREFLIGHT COMPLETE / RECORDED**. Design freeze [architecture/fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md). SCH-A: `WorkScheduleItem` / `work_schedule_items`, `WorkScheduleHistory` / `work_schedule_history`, `app/services/schedule.py`, Company `/schedule`, Hub `#hub-schedule`, form create/edit/retire. Additive **`f6e7f8a9b0c1`** (superseded as live current). SCH-B: `WorkScheduleAssignment` / `work_schedule_assignments`, optional `OrganizationCrew` / `OrganizationCrewMember`, dedicated `/settings/crews`, USER XOR Crew, ASSIGNED/UNASSIGNED history (Integer `assignment_id`, no FK), overlap warnings as read projection. Additive **`f7f8a9b0c1d2`** parented on **`f6e7f8a9b0c1`** (**live current = repository head**). No dependencies, iPhone, or Time suggestion. No new ADR.
+**Status: SCH-A IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS. SCH-B IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS. SCH-C PREFLIGHT PASS / NOT IMPLEMENTED.** SCH overall **OPEN / PARTIAL**. SCH-D **NOT AUTHORIZED**. Architecture **PREFLIGHT COMPLETE / RECORDED**. Design freeze [architecture/fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md). Platform-wide **warning law** **INFORMATIONAL ONLY / NON-BLOCKING** ([architecture/project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md)). SCH-A: `WorkScheduleItem` / `work_schedule_items`, `WorkScheduleHistory` / `work_schedule_history`, `app/services/schedule.py`, Company `/schedule`, Hub `#hub-schedule`, form create/edit/retire. Additive **`f6e7f8a9b0c1`** (superseded as live current). SCH-B: `WorkScheduleAssignment` / `work_schedule_assignments`, optional `OrganizationCrew` / `OrganizationCrewMember`, dedicated `/settings/crews`, USER XOR Crew, ASSIGNED/UNASSIGNED history (Integer `assignment_id`, no FK), overlap warnings as read projection. Additive **`f7f8a9b0c1d2`** parented on **`f6e7f8a9b0c1`** (**live current = repository head**). No dependencies, iPhone, or Time suggestion. No new ADR.
 
 ### PERF — Labour-hours performance, alerts, Needs Attention, three MONITOR views
 

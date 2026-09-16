@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-16 — Platform-wide warning law + Print product-direction recording
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Fold platform-wide warning law into the already-authorized docs-only Print recording, then verify, commit, and push. No SCH-C product. No Print product. |
+| Business decision | A warning is informational only. Warnings never, by themselves, block Save or control functionality. Validation / integrity failures remain fail-closed. KEEP / MOVE / REVIEW are optional affordances. Print remains DIGITAL WHEN YOU WANT IT / PAPER WHEN YOU NEED IT. |
+| Architectural decision | Canonical home remains [architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md). Minimum SCH-C freeze/architecture pointers only. Do not add architecture-principles Rule 13. No new ADR. No V1 rescore. |
+| Prompt template used | PLATFORM-WIDE WARNING BEHAVIOR ADD TO CURRENT DOCS-ONLY PRODUCT-DIRECTION RECORDING (16 Sep 2026) |
+| Approved Cursor prompt summary | Record warning law as product law; preserve SCH-B WARNING ONLY; SCH-C sequence warnings informational; KEEP/MOVE/REVIEW optional; then complete Print recording verification, commit, and push. STOP. No SCH-C product. |
+| Files expected to change | Docs only: product-direction record, SCH freeze/architecture pointers, FG-035, indexes, continuity |
+| Files prohibited from changing | `app/**`, `tests/**`, `migrations/**`, live DB, EST-2026-0019, Project 45/46 tidy, V1 rescore |
+| Implementation result | Warning law **INFORMATIONAL ONLY / NON-BLOCKING / PLATFORM-WIDE**. Print **RECORDED / IMPLEMENTATION SEQUENCED LATER**. SCH-C **PREFLIGHT PASS / NOT IMPLEMENTED**. FG-035 **OPEN / PARTIAL**. V1 **60% / 4 of 11**. |
+| Tests | Docs-only. `git diff --check`. No pytest rerun required. Authoritative SCH-B post-live-UAT remains: Dedicated SCH-B **9 passed**; Dedicated SCH-A **13 passed**; Focused **121 passed**; Full suite **1105 passed**, 3673 warnings, **450.77s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | SCH-C product and Print implementation not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-C product. |
+| Next approved prompt | None from this close. |
+| Commit hash | (filled after commit) |
+
 ### 2026-09-16 — FG-035 SCH-B CLOSE / COMMIT / PUSH
 
 | Field | Content |

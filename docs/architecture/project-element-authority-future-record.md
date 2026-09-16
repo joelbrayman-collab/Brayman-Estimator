@@ -2,8 +2,8 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FUTURE / RECORDED / COMPLETE FOR PRODUCT-DIRECTION RECORDING.** Subsequent **2026-09-15:** [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**; [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**; TAX/WBS **IMPLEMENTED**; SCOPE **IMPLEMENTED**; TIME **IMPLEMENTED**. SCH architecture **RECORDED**. SCH implementation **PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTATION-AUTHORIZED** ([fg-035-sch-implementation-preflight.md](fg-035-sch-implementation-preflight.md)). SCH / PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. Sibling PRE-UAT record [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **does not interrupt this loop**. Historical body below is not rewritten. |
-| Updated | 2026-09-15 |
+| Status | **FUTURE / RECORDED / COMPLETE FOR PRODUCT-DIRECTION RECORDING.** Subsequent **2026-09-16:** platform-wide **warning law** (**INFORMATIONAL ONLY / NON-BLOCKING**) and desktop **Print / paper workflow** **RECORDED / NOT IMPLEMENTATION-AUTHORIZED** (this file). Subsequent **2026-09-15:** [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**; [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**; TAX/WBS **IMPLEMENTED**; SCOPE **IMPLEMENTED**; TIME **IMPLEMENTED**. SCH architecture **RECORDED**. SCH implementation **PREFLIGHT COMPLETE / DESIGN FROZEN**. SCH-A / SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-C **PREFLIGHT PASS / NOT IMPLEMENTED**. SCH-D / PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. Sibling PRE-UAT record [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **does not interrupt this loop**. Historical body below is not rewritten. |
+| Updated | 2026-09-16 |
 | Authority | Joel Brayman / ChatGPT Architect. Origin: FG-024 TECH-C. **15 Sep 2026 complete product-direction consolidation** recorded after FG-034 MAIL-B **PASS**. Does **not** authorize schema, product code, a Feature Gate, or AUTH-D. |
 | Later work | After FG-034 and the current CONTRACT workstream, ChatGPT Architect will perform a bounded architecture preflight covering the **one closed operational / learning loop**: Project Types / Elements / Activities; visual Dynamic Project / Crew Scheduling; field Time Entry; time approval; labour actuals; labour-budget and schedule alerts; Project Performance; MONITOR forecasting; Change Order / Extra Work lineage; Closeout data quality; LEARN evidence quality; estimate and schedule calibration; QuickBooks-ready approved time; and the mandatory platform-wide Contractor Language + UX E2E Audit before Brayman/Ben real-world UAT. |
 
@@ -536,7 +536,9 @@ DO NOT BEGIN FROM THIS RECORD.
 
 **Objective:** every normal user-facing surface is simple, straightforward, contractor-facing, consistent, and non-technical across desktop, iPhone/mobile, customer-facing surfaces, and generated documents. No normal user should need to understand CalibraytAI’s technical architecture to operate CalibraytAI.
 
-**Illustrative inventory** (the later audit must discover the complete live surface list): login; Forgot Password / Account Recovery; office navigation; Project Hub; PLAN; PRICE; estimates; Construction Estimate; CONTRACT; contracts; Native Signing; Change Orders; BUILD; Field Web; Time Entry; Time Approval; Schedule; Project Schedule; Company Schedule; MONITOR; LEARN; Closeout; suppliers; uploads; historical data; QuickBooks handoff; settings; organization configuration; Project Types / Elements / Activities; performance configuration; empty / loading / warning / error / success / confirmation states; buttons; status badges; tooltips; customer signing pages; PDFs / generated customer documents.
+**Illustrative inventory** (the later audit must discover the complete live surface list): login; Forgot Password / Account Recovery; office navigation; Project Hub; PLAN; PRICE; estimates; Construction Estimate; CONTRACT; contracts; Native Signing; Change Orders; BUILD; Field Web; Time Entry; Time Approval; Schedule; Project Schedule; Company Schedule; Today / Week / Month Schedule; MONITOR; LEARN; Closeout; suppliers; uploads; historical data; QuickBooks handoff; settings; organization configuration; Project Types / Elements / Activities; performance configuration; empty / loading / warning / error / success / confirmation states; buttons; status badges; tooltips; customer signing pages; PDFs / generated customer documents; **desktop Print availability and print quality** on information-bearing surfaces.
+
+**Print (mandatory later; not implemented):** for each information-bearing desktop surface ask: **WOULD A CONTRACTOR REASONABLY WANT TO PRINT THIS?** If YES: a contractor-facing **Print** action exists; printed output is useful; irrelevant chrome is removed; correct governed information is included; contractor-facing terminology is used; page layout is checked. A successful browser print dialog is **not** sufficient UAT. Canonical product-direction: **Platform-wide desktop Print / paper workflow** below.
 
 **Jargon:** internal engineering terms must not leak into ordinary contractor UX without a genuine contractor-facing reason. Inspect/remove from ordinary UX unless context requires otherwise: `authority_class`, snapshot, artifact, hash, candidate, selector, gate, feature gate, event, epoch, runtime, schema, migration, synthetic, provenance, object/record identity, Alembic, technical status/error codes. These may remain internally. Do not mechanically replace words. Translate system state into contractor meaning.
 
@@ -561,6 +563,211 @@ DO NOT BEGIN FROM THIS RECORD.
 **Close criteria:** cannot close from a file grep alone. Required: complete user-facing surface inventory; prose, terminology, action/button, status, and error/warning review; desktop, responsive/mobile, customer-facing, and document-output walkthroughs; automated regression; complete E2E workflow walkthrough. Final question: could a competent contractor use this platform without needing to understand how CalibraytAI is engineered? Required answer: **YES**.
 
 **Recorded sequence (not current authorization):** see **Complete future workstream sequencing** above (steps 1–13 complete).
+
+## Platform-wide desktop Print / paper workflow (mandatory later; not implemented)
+
+Joel / ChatGPT Architect recorded this on **16 Sep 2026** as a **V1 product requirement**. It is **not** a separate V1 scoring unit. It is **not** a Feature Gate. It is **not** an ADR. It does **not** reopen or close [FG-025](../feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md). It does **not** change [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) status. It does **not** authorize SCH-C, SCH-D, Print CSS, or any product code.
+
+**Origin:** 16 Sep 2026 real-world observation — Ben was working with the existing manual contractor workflow using a paper calendar and written notes. CalibraytAI must improve that workflow without assuming contractors will stop using useful paper outputs.
+
+```text
+DIGITAL WHEN YOU WANT IT.
+PAPER WHEN YOU NEED IT.
+
+PRINT IS A PRESENTATION, NOT A SECOND DATA STORE.
+ONE GOVERNED PRODUCT AUTHORITY.
+MULTIPLE PRESENTATIONS.
+
+V1 PRODUCT REQUIREMENT.
+NOT A SEPARATE V1 SCORING UNIT.
+NOT AUTHORIZED. NOT IMPLEMENTED.
+DO NOT IMPLEMENT PRINT FROM THIS RECORD.
+DO NOT BEGIN SCH-C OR SCH-D FROM THIS RECORD.
+DO NOT RESCORE V1 FROM THIS RECORD.
+```
+
+### Product rule
+
+CalibraytAI desktop should provide a clearly visible contractor-facing **PRINT** action on nearly every **information-bearing / operational** surface where the information has practical value away from the screen.
+
+Do **not** mechanically put Print on every route.
+
+Print is generally **not** useful on: login; password reset; simple settings forms; transient confirmation pages; technical/admin-only surfaces.
+
+Print **where a contractor could reasonably want to**: carry the information; hand it to someone; put it in a truck; use it on a clipboard; put it on a jobsite wall; review it away from the computer; retain a practical paper reference.
+
+### Presentation, not a second data store
+
+Print must use the **same governed product authority** as the screen.
+
+- No duplicate Print database.
+- No parallel Schedule records.
+- No independently maintained printable task system.
+
+Concept:
+
+**GOVERNED PRODUCT DATA → DESKTOP INTERACTIVE VIEW → MOBILE VIEW where applicable → PRINT PRESENTATION**
+
+One authority. Multiple presentations.
+
+### Schedule — high-priority Print
+
+Schedule is a primary Print use case. The printed Schedule must preserve the practical advantage of the contractor’s paper calendar: **at-a-glance understanding**.
+
+Future Schedule Print should support useful contractor outputs such as **PRINT MONTH**, **PRINT WEEK**, **PRINT TODAY**. Exact controls/copy remain subject to later UX implementation.
+
+Printed Month must preserve approximately the same **4–6 week** company awareness as the digital Schedule where practical. Do **not** replace the visual calendar with a many-page technical table merely because tables are easier to print.
+
+The contractor should be able to print a Schedule and quickly understand: what is happening now; what is next; what is coming; which Projects are active; major phases/work; who is assigned where available; useful conflicts/warnings where appropriate; what remains unscheduled where appropriate.
+
+### Daily paper workflow
+
+Office contractor opens **TODAY**. CalibraytAI presents today’s governed work/assignments. Contractor may **VIEW ON SCREEN** or **PRINT**.
+
+The printed output can be carried by Ben, handed to a worker, used as a morning work sheet, or retained in the truck / clipboard / jobsite.
+
+This does **not** create a second task authority. Printed information reflects the governed current state **at print time**.
+
+### Candidate Print surfaces
+
+The later implementation audit must discover the actual final surface inventory. At minimum evaluate Print for:
+
+- Company Schedule
+- Today Schedule
+- Week Schedule
+- Month Schedule
+- Project Schedule
+- Project Hub useful summary
+- Project Work / Elements / Activities
+- daily work/tasks
+- Time Review
+- MONITOR
+- Needs Attention
+- Project Performance
+- Closeout
+- Estimate
+- Contract
+- Change Order
+- other information-bearing contractor operational views
+
+Existing generated PDF/document workflows remain authoritative where a formal document already exists. Do **not** create duplicate printable versions of governed formal documents without need.
+
+### Print presentation standard
+
+Print is **not** merely an accidental browser screenshot. Each supported surface should use an intentional print presentation.
+
+Print presentation should normally **remove**: primary navigation; sidebars; edit buttons; destructive controls; Help chrome; Voice controls; irrelevant interactive controls; screen-only decorations.
+
+Print presentation should **preserve** where relevant: CalibraytAI / organization identity; Project identity; customer/project context where appropriate; date / date range; printed/generated timestamp; clear title; readable hierarchy; useful Schedule/work information; assignments where applicable; page numbering where useful; sensible page breaks.
+
+Do **not** expose: internal model/table names; technical IDs unnecessarily; engineering status; secrets; hidden internal margin / customer-inappropriate information.
+
+### Contractor-first print quality
+
+Printed output must be readable in real contractor use. Evaluate: Letter paper; portrait vs landscape according to content; sensible margins; readable font size; avoiding clipped content; avoiding orphan headings; avoiding blank navigation pages; avoiding tiny scaled-down desktop UI.
+
+Schedule Month will likely require **LANDSCAPE**. Today/task sheets may be **PORTRAIT**. Exact print CSS/layout belongs to implementation.
+
+### Relationship to SCH-D
+
+Schedule Print is strongly related to SCH-D because SCH-D will establish Today / Week / Month representations.
+
+Architecture remains:
+
+**ONE SCHEDULE AUTHORITY**
+
+- Company desktop Schedule
+- Project Hub Schedule
+- iPhone Today / Week / Month
+- printable Today / Week / Month
+
+No data fork.
+
+This recording does **not** authorize SCH-D.
+
+### User Guide / Help
+
+The future CalibraytAI User Guide and Interactive Help should explain Print where useful. Examples: How do I print this month’s Schedule? How do I print today’s work? How do I print a Project Schedule?
+
+Do **not** implement Help / Manual from this recording. Pointer: [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md).
+
+### V1 position
+
+This is a **V1 product requirement**. It is **not** a separate V1 scoring unit. Do **not** rescore. Official V1 remains **60% / 4 of 11 COMPLETE**. This recording does **not** change FG-035 status.
+
+## Platform-wide warning behavior (product law)
+
+Joel / ChatGPT Architect recorded this on **16 Sep 2026** as **platform-wide CalibraytAI product law**. It is **not** a Feature Gate. It is **not** an ADR. It is **not** a V1 scoring unit. It does **not** authorize SCH-C product, Print, or PERF.
+
+```text
+A WARNING IS INFORMATIONAL ONLY.
+
+WARNINGS INFORM.
+HUMANS DECIDE.
+
+VALIDATION PROTECTS DATA INTEGRITY.
+WARNINGS NEVER CONTROL FUNCTIONALITY.
+
+INFORMATIONAL ONLY.
+NON-BLOCKING.
+PLATFORM-WIDE.
+```
+
+### Critical distinction
+
+Do **not** confuse **WARNING** with **VALIDATION / INTEGRITY FAILURE**.
+
+**VALIDATION** protects governed data integrity and may fail closed. Examples: cross-organization access; invalid foreign identity; end date before start date; Activity belonging to the wrong Element; USER XOR Crew constraint violation; dependency self-edge; dependency cycle where SCH-C architecture prohibits cycles; other attempts to persist structurally invalid governed state. Those are **not** warnings.
+
+**WARNINGS** inform the contractor. A warning must **never, by itself**:
+
+- block an operation
+- prevent Save / Submit / Continue
+- disable another function
+- require resolution before proceeding
+- alter Project data
+- alter Schedule dates
+- move scheduled work
+- alter assignments
+- create Time
+- alter Time
+- create a Change Order
+- alter SCOPE
+- alter pricing
+- alter actuals
+- trigger another workflow
+- automatically correct the condition
+- otherwise control platform functionality
+
+If a future workflow genuinely requires a hard business/governance gate, it must be modeled explicitly as a **VALIDATION / AUTHORIZATION / APPROVAL** rule. Do **not** disguise a blocking rule as a warning.
+
+### SCH-B
+
+Preserve existing SCH-B behavior. Worker / Crew overlap is **WARNING ONLY**. Both bookings remain valid. No automatic Schedule movement. No operation is blocked merely because an overlap warning exists.
+
+### SCH-C
+
+Apply this law to the accepted SCH-C package boundary. Sequence conditions such as successor scheduled before predecessor completion, and predecessor unscheduled while successor is scheduled, are **INFORMATIONAL WARNINGS ONLY**.
+
+They must **not**: block Schedule Save; block date editing; require warning resolution; automatically move predecessor or successor; alter assignments; alter dependencies; alter Time; trigger PERF; prevent other platform functions.
+
+The contractor may continue without acting on the warning.
+
+Self-edge and cycle remain **VALIDATION** (reject the write). Sequence / unscheduled-predecessor remain **WARNINGS**.
+
+**KEEP / MOVE / REVIEW** are **optional contractor actions / navigation affordances only**. They are **not** persisted resolution states, mandatory workflow steps, warning acknowledgements required to continue, blockers, or gates.
+
+- **KEEP** means leave the Schedule as it is. No persisted KEEP state.
+- **MOVE** offers/uses the normal governed SCH-A date-edit workflow. The contractor explicitly chooses any date change.
+- **REVIEW** surfaces relevant Schedule/Project context. No persisted REVIEW state.
+
+The contractor may also take **no action** and continue using CalibraytAI.
+
+Minimum freeze pointer: [fg-035-sch-implementation-preflight.md](fg-035-sch-implementation-preflight.md) §8 / §9.
+
+### Future PERF / Needs Attention
+
+Carry the same law forward. Approaching labour allowance, labour allowance exceeded, projected labour overrun, schedule delay, Crew conflict, Extra Work without Change Order, forecast change, and other Needs Attention conditions may inform the contractor. The warning itself must not disable or block unrelated or underlying platform functionality.
 
 ## Later preflight must first identify
 
@@ -624,6 +831,7 @@ When FG-034 is complete and ChatGPT Architect authorizes the future Time / Sched
 - iPhone Today
 - iPhone Week
 - iPhone Month
+- printable Today / Week / Month of the same Schedule authority (presentation only; not a data fork)
 - responsive desktop/mobile functional relationship
 - complete Project Closeout → LEARN handoff
 - complete E2E desktop/mobile UAT
@@ -634,4 +842,4 @@ Do not begin implementation until that preflight has resolved the entire loop co
 
 ## Not authorized from this record
 
-Baseline element library · Organization Element Library · project-specific elements · promotion workflow · activity taxonomy · Time UI / mobile Time page · Today view · time approval · actual labour · time entry · **Schedule UI / visual calendar / drag-drop / iPhone TODAY-WEEK-MONTH Schedule** · crew assignment product · conflict engine · labour-budget alerts · Needs Attention · MONITOR forecast expansion · LEARN · estimate/schedule calibration · Change Order scope lineage product · Extra Work / Pending Change product · Extra Work iPhone action · Closeout performance review · LEARN evidence-quality states · Contractor Language + UX E2E Audit implementation · cross-org learning · QuickBooks time export · AUTH-D · a new Feature Gate · ADR from this record · V1 rescore from this record · TECH-D reopen · Native Signing reopen.
+Baseline element library · Organization Element Library · project-specific elements · promotion workflow · activity taxonomy · Time UI / mobile Time page · Today view · time approval · actual labour · time entry · **Schedule UI / visual calendar / drag-drop / iPhone TODAY-WEEK-MONTH Schedule** · crew assignment product · conflict engine · labour-budget alerts · Needs Attention · MONITOR forecast expansion · LEARN · estimate/schedule calibration · Change Order scope lineage product · Extra Work / Pending Change product · Extra Work iPhone action · Closeout performance review · LEARN evidence-quality states · Contractor Language + UX E2E Audit implementation · **desktop Print / print CSS / printable Schedule** · cross-org learning · QuickBooks time export · AUTH-D · a new Feature Gate · ADR from this record · V1 rescore from this record · TECH-D reopen · Native Signing reopen · SCH-C · SCH-D.

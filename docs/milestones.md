@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-16 — Platform-wide warning law + Print product-direction recording
+
+| Field | Content |
+|-------|---------|
+| Milestone | Product-direction recording (Print + warning law). Not a coded FG-035 slice. |
+| Status | **OPEN / PARTIAL** for FG-035. Warning law **INFORMATIONAL ONLY / NON-BLOCKING / PLATFORM-WIDE**. Print **RECORDED / IMPLEMENTATION SEQUENCED LATER**. SCH-C **PREFLIGHT PASS / NOT IMPLEMENTED**. SCH-A / SCH-B remain **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. V1 **60% / 4 of 11** **NO RESCORE**. |
+| Branch | `main` |
+| Base commit | `36cdddcfe10151b5f5d2fd5b00406e0dedd0ead7` |
+| Objective | Fold the platform-wide warning law into the already-authorized docs-only Print recording, then commit and push. |
+| Deliverables | Canonical [architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md). Minimum SCH freeze/architecture pointers. Continuity. |
+| Validation | Docs-only. `git diff --check`. No app/tests/migrations/DB mutation. Authoritative SCH-B post-live-UAT full suite **1105 passed**. |
+| Architectural findings | Warnings inform; humans decide. Validation remains fail-closed. KEEP / MOVE / REVIEW are optional contractor affordances, not persisted states. Architecture-principles numbered rules unchanged (no Rule 13; no ADR). |
+| Open decisions | SCH-C product not authorized. Print implementation sequenced later. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-C product. |
+| Commit | (filled after commit) |
+| Date | 2026-09-16 |
+
 ### 2026-09-16 — FG-035 SCH-B CLOSE / COMMIT / PUSH
 
 | Field | Content |

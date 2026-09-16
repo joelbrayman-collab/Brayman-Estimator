@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **DESIGN FROZEN.** Subsequent SCH-A product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-15). Subsequent SCH-B product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-16). This freeze remains the design SoR. SCH overall is **OPEN / PARTIAL**. |
+| Status | **DESIGN FROZEN.** Subsequent SCH-A product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-15). Subsequent SCH-B product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-16). Subsequent **2026-09-16:** platform-wide **warning law** **INFORMATIONAL ONLY / NON-BLOCKING**; SCH-C **PREFLIGHT PASS / NOT IMPLEMENTED**. This freeze remains the design SoR. SCH overall is **OPEN / PARTIAL**. |
 | Date | 2026-09-15 |
 | Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. |
 | Governing architecture | [fg-035-sch-dynamic-scheduling-preflight.md](fg-035-sch-dynamic-scheduling-preflight.md) **PREFLIGHT COMPLETE / ARCHITECTURE RECORDED**. This file does **not** redesign that record. |
@@ -25,6 +25,10 @@ V1 NOT RESCORED
 NO NEW ADR
 V1 NOT RESCORED
 ```
+
+**Subsequent status (2026-09-16 platform-wide warning law + Print recording):** Warnings are **INFORMATIONAL ONLY / NON-BLOCKING**. Canonical [project-element-authority-future-record.md](project-element-authority-future-record.md). SCH-C sequence / predecessor-unscheduled facts must not be implemented as Save blockers. **KEEP / MOVE / REVIEW** are optional affordances. SCH-C **PREFLIGHT PASS / NOT IMPLEMENTED**. Print **RECORDED / IMPLEMENTATION SEQUENCED LATER**. This freeze remains the design SoR. Do **not** implement Print, SCH-C, or SCH-D from this file.
+
+**Subsequent status (2026-09-16 platform-wide desktop Print / paper workflow recording):** Print is recorded as a later presentation of the **same** Schedule authority. Canonical [project-element-authority-future-record.md](project-element-authority-future-record.md). This freeze remains the design SoR. Do **not** implement Print, SCH-C, or SCH-D from this file.
 
 **Subsequent status (2026-09-16 SCH-B live migrate + bounded synthetic UAT):** SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Live current = repository head **`f7f8a9b0c1d2`**. Evidence [fg035-sch-b-live-bounded-uat-record.md](../testing/fg035-sch-b-live-bounded-uat-record.md). This freeze remains the design SoR. Do **not** implement SCH-C / SCH-D from this file.
 
@@ -400,6 +404,8 @@ Unique ACTIVE edge: `uq_project_work_dependencies_active_edge` unique (`predeces
 - Retire (`INACTIVE`) rather than hard-delete. History `DEPENDENCY_REMOVED`.
 - Dependencies hang on Element identity, so they survive reschedule of bars.
 
+**Subsequent 2026-09-16 warning-law clarification (do not treat as SCH-C implementation):** Sequence conflict and predecessor-unscheduled facts are **INFORMATIONAL WARNINGS ONLY**. They must not block Save, block date editing, require resolution, auto-move work, or control other functions. Self-edge and cycle remain **VALIDATION** (reject the write). **KEEP / MOVE / REVIEW** are optional contractor actions / navigation affordances, not persisted states, not mandatory steps, not gates. The contractor may take no action and continue. Canonical law: [project-element-authority-future-record.md](project-element-authority-future-record.md) **Platform-wide warning behavior**.
+
 ---
 
 ## 9. Deterministic SCH conflict service
@@ -425,7 +431,7 @@ Returns deterministic facts. **Not** PERF. **Not** Needs Attention.
 | Dependency sequence | SCH-C | Exposed warning |
 | Predecessor unscheduled / successor scheduled | SCH-C | Exposed warning |
 
-Contractor resolves warnings. System does not auto-move.
+Contractor may act on warnings. System does not auto-move. A warning does **not** require resolution and does **not** block Save or other functions. Canonical: [project-element-authority-future-record.md](project-element-authority-future-record.md) **Platform-wide warning behavior**.
 
 PERF remains forbidden: no labour allowance consumption, overrun, progress vs labour, GM forecast, global Needs Attention.
 
@@ -581,7 +587,7 @@ User assignment; optional Crew + period membership; overlap conflicts using peri
 
 ### SCH-C — Dependencies + SCH conflict presentation
 
-Element→Element DAG; sequence / predecessor-unscheduled warnings; KEEP/MOVE/REVIEW. No auto-slide. No PERF.
+Element→Element DAG; sequence / predecessor-unscheduled **informational warnings**; optional KEEP/MOVE/REVIEW affordances. No auto-slide. No PERF. Warnings do not block Save.
 
 ### SCH-D — iPhone + Time connection
 

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE / ARCHITECTURE RECORDED.** Subsequent SCH-A is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Subsequent SCH-B is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. This file remains the architecture SoR and does not authorize SCH-C / SCH-D. |
+| Status | **PREFLIGHT COMPLETE / ARCHITECTURE RECORDED.** Subsequent SCH-A is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Subsequent SCH-B is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Subsequent **2026-09-16:** platform-wide **warning law** **INFORMATIONAL ONLY / NON-BLOCKING**; SCH-C **PREFLIGHT PASS / NOT IMPLEMENTED**. This file remains the architecture SoR and does not authorize SCH-C product or SCH-D. |
 | Date | 2026-09-15 |
 | Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. |
 | ADR | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. When SCH implementation is later authorized, extend ADR-053. Do **not** invent ADR-054 for Schedule. |
@@ -139,7 +139,7 @@ Lightweight same-Project directed dependency. V1 default: **Element → Element*
 
 Requirements: same organization; same Project; no self-edge; cycles forbidden; no CPM; no lag/float engine; **no automatic schedule movement**.
 
-Dependencies **WARN**. The contractor decides KEEP / MOVE / REVIEW.
+Dependencies **WARN**. Sequence / unscheduled-predecessor facts are informational only and never control functionality. Self-edge and cycle remain validation failures. **KEEP / MOVE / REVIEW** are optional contractor actions / navigation affordances, not persisted states and not required to continue. Canonical: [project-element-authority-future-record.md](project-element-authority-future-record.md) **Platform-wide warning behavior**.
 
 Dependencies hang on **work identity**, not on a dated bar, so they survive reschedule.
 
@@ -177,8 +177,8 @@ SCH owns deterministic scheduling facts and **exposes** them. It does **not** be
 1. Worker overlapping ACTIVE scheduled work.
 2. Crew overlapping ACTIVE scheduled work.
 3. Worker overlap through Crew membership versus another USER/CREW booking, using membership **effective for the scheduled period**.
-4. Dependency sequencing conflict (successor starts before predecessor finishes).
-5. Predecessor unscheduled while successor is scheduled.
+4. Dependency sequencing conflict (successor starts before predecessor finishes) — **WARNING ONLY**; does not block Save.
+5. Predecessor unscheduled while successor is scheduled — **WARNING ONLY**; does not block Save.
 6. Authorized ACTIVE work not yet scheduled (awareness).
 7. Invalid assignment to retired / inactive / cross-org identity.
 8. Parent/child window violation on a **proposed** edit (must be resolved by §5, not left as a standing contradictory schedule).
@@ -275,9 +275,9 @@ The contractor confirms:
 - bulk movement of child schedule items
 - whether to extend the Element window when an Activity would exceed it
 - dependency response
-- conflict resolution (KEEP / MOVE / REVIEW)
+- optional KEEP / MOVE / REVIEW affordances (not persisted, not required)
 
-The system may warn or suggest.
+The system may warn or suggest. A warning does not require action.
 
 The system does **not** silently move downstream work.  
 The system does **not** silently resolve conflicts.  

@@ -36,9 +36,10 @@ V1 NOT RESCORED
 
 | Field | Value |
 |--------|--------|
-| Committed HEAD / `origin/main` | **`d3352509b708482ac9bbacce8cea0860b2d8cfcf`** (`docs: pin FG-035 SCH-A SHA`) |
+| Committed HEAD / `origin/main` | **`d3352509b708482ac9bbacce8cea0860b2d8cfcf`** (`docs: pin FG-035 SCH-A SHA`) at UAT start |
+| Product SCH-B SHA | **`374798d7338a4c00d90a9c7a2b2efa310bc7e355`** (`feat: implement FG-035 SCH-B assignment and crews`) |
 | Product SCH-A SHA | **`fd8a66990df8286e54151b80b6f3cd5be5dd3ad1`** |
-| Working tree | DIRTY with SCH-B product + tests + docs + this UAT record. **Not committed. Not pushed.** |
+| Working tree at UAT | SCH-B product + tests + docs + this UAT record (committed in the product SHA) |
 | Live current before upgrade | **`f6e7f8a9b0c1`** |
 | Repository head before upgrade | **`f7f8a9b0c1d2 (head)`** |
 | Upgrade | `f6e7f8a9b0c1` → **`f7f8a9b0c1d2`** **PASS** |

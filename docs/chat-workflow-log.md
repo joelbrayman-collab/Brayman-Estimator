@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-16 — FG-035 SCH-B CLOSE / COMMIT / PUSH
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Commit and push the accepted SCH-B product, migration, tests, UAT, and governance package. Pin product SHA. No SCH-C. |
+| Business decision | SCH-B accepted as IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS. Completeness YES. |
+| Architectural decision | No additional product development. Pin SHA after product commit. Do not begin SCH-C. |
+| Prompt template used | FG-035 SCH-B CLOSE / COMMIT / PUSH (16 Sep 2026) |
+| Approved Cursor prompt summary | Final read-only review; stage accepted SCH-B package; commit feat SCH-B; optional SHA pin; push main; verify CLEAN + Alembic f7. No SCH-C. No V1 rescore. |
+| Files expected to change | SCH-B product/tests/migration/UAT/governance (product commit); pin docs (pin commit) |
+| Files prohibited from changing | live DB; Project 45; Project 46 tidy; EST-2026-0019; SCH-C/D; PERF/CLOSE/LEARN/QB-T; Help/Voice/Manual; V1 rescore |
+| Implementation result | FG-035 **OPEN / PARTIAL**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS / COMMITTED / PUSHED**. Product SHA **`374798d7338a4c00d90a9c7a2b2efa310bc7e355`**. Live current = repository head **`f7f8a9b0c1d2 (head)`**. Project **46**. Project **45** unchanged. EST-2026-0019 unchanged. PRODUCTION packages **0**. V1 **not rescored**. |
+| Tests | Not rerun for this commit. Authoritative post-live-UAT: Dedicated SCH-B **9 passed**, 26 warnings, **6.28s**, exit **0**. Dedicated SCH-A **13 passed**, 31 warnings, **3.85s**, exit **0**. Focused **121 passed**, 508 warnings, **54.70s**, exit **0**. Full suite **1105 passed**, 3673 warnings, **450.77s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | SCH-C / SCH-D not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. No SCH-C. |
+| Next approved prompt | None from this close. |
+| Commit hash | `374798d7338a4c00d90a9c7a2b2efa310bc7e355` |
+
 ### 2026-09-16 — FG-035 SCH-B live migrate + bounded synthetic UAT
 
 | Field | Content |
@@ -57,15 +81,15 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Approved Cursor prompt summary | Verify SCH-B package; backup live SQLite; upgrade f6→f7; create Project 46; prove USER/Crew/Unassigned/unassign/period membership/overlap/false historical through-Crew/retire transaction/Company+Hub/CSRF; fresh dedicated/focused/full tests; UAT record; governance LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS. No commit/push. |
 | Files expected to change | live DB; UAT record; FG-035 / ADR-053 / freeze / architecture / modules / continuity |
 | Files prohibited from changing | Project 45; EST-2026-0019 / Project 27; SCH-C/D; PERF/CLOSE/LEARN/QB-T; Help/Voice/Manual; V1 rescore; commit/push |
-| Implementation result | FG-035 **OPEN / PARTIAL**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Live current = repository head **`f7f8a9b0c1d2 (head)`**. Project **46**. Project **45** unchanged. EST-2026-0019 unchanged. PRODUCTION packages **0**. Working tree **DIRTY**. V1 **not rescored**. |
+| Implementation result | FG-035 **OPEN / PARTIAL**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Live current = repository head **`f7f8a9b0c1d2 (head)`**. Project **46**. Project **45** unchanged. EST-2026-0019 unchanged. PRODUCTION packages **0**. Working tree at that pass **DIRTY**; later committed as **`374798d7338a4c00d90a9c7a2b2efa310bc7e355`**. V1 **not rescored**. |
 | Tests | Dedicated SCH-B **9 passed**, 26 warnings, **6.28s**, exit **0**. Dedicated SCH-A **13 passed**, 31 warnings, **3.85s**, exit **0**. Focused TAX/WBS+SCOPE+TIME+SCH-A+SCH-B+Hub/Field/MONITOR **121 passed**, 508 warnings, **54.70s**, exit **0**. Full suite **1105 passed**, 3673 warnings, **450.77s**, exit **0**. |
 | Project-state-report update | Yes |
 | Milestone entry update | Yes |
 | Constitutional issue raised | None |
-| Unresolved issues | SCH-B not committed. SCH-C / SCH-D not authorized. |
-| Next approved step | **STOP.** Return to ChatGPT Architect. No commit/push. No SCH-C. |
+| Unresolved issues | SCH-C / SCH-D not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. No SCH-C. |
 | Next approved prompt | None from this live-UAT pass. |
-| Commit hash | **NOT COMMITTED** (HEAD remains `d3352509b708482ac9bbacce8cea0860b2d8cfcf`) |
+| Commit hash | `374798d7338a4c00d90a9c7a2b2efa310bc7e355` |
 
 ### 2026-09-16 — FG-035 SCH-B Assignment + optional Crew implementation
 
@@ -89,7 +113,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Live migrate not authorized. Live UAT not performed. SCH-C / SCH-D not authorized. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. No live-migrate / UAT authorization. |
 | Next approved prompt | None from this implementation. |
-| Commit hash | **NOT COMMITTED** (HEAD remains `d3352509b708482ac9bbacce8cea0860b2d8cfcf`) |
+| Commit hash | `374798d7338a4c00d90a9c7a2b2efa310bc7e355` |
 
 ### 2026-09-15 — FG-035 SCH-A existing live-UAT reconciliation + completion
 

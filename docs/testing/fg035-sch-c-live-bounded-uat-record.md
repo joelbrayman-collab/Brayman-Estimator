@@ -38,8 +38,9 @@ V1 NOT RESCORED
 
 | Field | Value |
 |--------|--------|
-| Committed HEAD / `origin/main` | **`d59bc716fa6c1ff2e173107500e6178dc0489a5d`** (`docs: record User Guide framework and audience law`) |
-| Working tree at UAT | Reviewed SCH-C product + tests + migration FILE + implementation docs + this UAT record (**not committed**) |
+| Committed HEAD / `origin/main` | **`d59bc716fa6c1ff2e173107500e6178dc0489a5d`** (`docs: record User Guide framework and audience law`) at UAT start |
+| Product SCH-C SHA | **`c57e23c55260b44fc88cadfe2fc40924aa58dde7`** (`feat: implement FG-035 SCH-C work sequencing`) |
+| Working tree at UAT | Reviewed SCH-C product + tests + migration FILE + implementation docs + this UAT record (committed in the product SHA) |
 | Live current before upgrade | **`f7f8a9b0c1d2`** |
 | Repository head before upgrade | **`f9b0c1d2e3f4 (head)`** |
 | Upgrade | `f7f8a9b0c1d2` → **`f9b0c1d2e3f4`** **PASS** |

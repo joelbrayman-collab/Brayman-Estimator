@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-16 — FG-035 SCH-C CLOSE / COMMIT / PUSH
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 SCH-C |
+| Status | **OPEN / PARTIAL.** SCH-C **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS / COMMITTED / PUSHED**. SCH overall **OPEN / PARTIAL**. SCH-D **NOT AUTHORIZED**. SCH-A / SCH-B remain **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. TAX/WBS / SCOPE / TIME remain **IMPLEMENTED**. Warning law **INFORMATIONAL ONLY / NON-BLOCKING**. Print **RECORDED / IMPLEMENTATION SEQUENCED LATER**. Manual **FRAMEWORK ACTIVE / SCH-C MANUAL IMPACT CAPTURED**. [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. V1 **60% / 4 of 11** **NO RESCORE**. |
+| Branch | `main` |
+| Base commit | `d59bc716fa6c1ff2e173107500e6178dc0489a5d` |
+| Objective | Commit and push the accepted SCH-C package. Pin product SHA. Do not begin SCH-D. |
+| Deliverables | Product SHA **`c57e23c55260b44fc88cadfe2fc40924aa58dde7`**. Additive **`f9b0c1d2e3f4`**. Evidence [testing/fg035-sch-c-live-bounded-uat-record.md](testing/fg035-sch-c-live-bounded-uat-record.md). |
+| Validation | Not rerun for this commit. Authoritative post-live-UAT: Dedicated SCH-C **14 passed**. SCH-A+SCH-B **22 passed**. Focused **135 passed**. Full suite **1119 passed**, 3705 warnings, **507.32s**, exit **0**. Live current = repository head **`f9b0c1d2e3f4 (head)`**. |
+| Architectural findings | No additional product development during close. `dependency_id` remains Integer with no FK. Warning law preserved. |
+| Open decisions | SCH-D not authorized. V1 remains **60% / 4 of 11**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-D. |
+| Commit | `c57e23c55260b44fc88cadfe2fc40924aa58dde7` |
+| Date | 2026-09-16 |
+
 ### 2026-09-16 — FG-035 SCH-C live migrate + bounded synthetic UAT
 
 | Field | Content |
@@ -42,9 +59,9 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Deliverables | Live current = repository head **`f9b0c1d2e3f4`**. Project **47**. [testing/fg035-sch-c-live-bounded-uat-record.md](testing/fg035-sch-c-live-bounded-uat-record.md). |
 | Validation | Dedicated SCH-C **14 passed**. SCH-A+SCH-B **22 passed**. Focused **135 passed**. Full suite **1119 passed**, 3705 warnings, **507.32s**, exit **0**. |
 | Architectural findings | Cycle remains validation. Sequence / predecessor-unscheduled remain informational. KEEP / MOVE / REVIEW remain optional. `f9b0c1d2e3f4` preserved. |
-| Open decisions | SCH-D. Print implementation. SCH-C commit/push. |
-| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-D. Do **not** commit unless separately authorized. |
-| Commit | **not committed** |
+| Open decisions | SCH-D. Print implementation. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-D. |
+| Commit | `c57e23c55260b44fc88cadfe2fc40924aa58dde7`
 | Date | 2026-09-16 |
 
 ### 2026-09-16 — FG-035 SCH-C Lightweight Element dependencies + sequence warnings
@@ -59,9 +76,9 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Deliverables | `ProjectWorkDependency`; `app/services/schedule.py` create/retire/cycle/warnings; Company/Hub work-order UX; Element-retirement edge cleanup; additive **`f9b0c1d2e3f4`**; `tests/test_work_schedule_dependency_fg035.py`; required docs. |
 | Validation | Resume/verify 16 Sep 2026: Dedicated SCH-C **14 passed**, 32 warnings, **4.48s**. SCH-A+SCH-B **22 passed**, 57 warnings, **10.42s**. Focused **135 passed**, 540 warnings, **60.21s**. Full suite **1119 passed**, 3705 warnings, **453.73s**, exit **0**. Live DB not upgraded. |
 | Architectural findings | Expected Alembic token `f8a9b0c1d2e3` collides with FG-016; minted **`f9b0c1d2e3f4`**. Warnings do not block Save. KEEP / MOVE / REVIEW are optional. |
-| Open decisions | SCH-C live migrate / bounded synthetic UAT. SCH-D. Print implementation. |
+| Open decisions | SCH-C live migrate / bounded synthetic UAT (later completed). SCH-D. Print implementation. |
 | Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** begin live UAT. Do **not** commit unless separately authorized. |
-| Commit | **not committed** |
+| Commit | `c57e23c55260b44fc88cadfe2fc40924aa58dde7`
 | Date | 2026-09-16 |
 
 ### 2026-09-16 — Platform-wide warning law + Print product-direction recording

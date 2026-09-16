@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-16 — FG-035 SCH-C CLOSE / COMMIT / PUSH
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Commit and push the accepted SCH-C product, migration, tests, UAT, and governance package. Pin product SHA. No SCH-D. |
+| Business decision | SCH-C accepted as IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS. |
+| Architectural decision | No additional product development. Pin SHA after product commit. Do not begin SCH-D. |
+| Prompt template used | FG-035 SCH-C CLOSE / COMMIT / SHA-PIN / PUSH (16 Sep 2026) |
+| Approved Cursor prompt summary | Final review; stage accepted SCH-C package; commit feat SCH-C; pin SHA; push main; verify CLEAN + Alembic f9. No SCH-D. No V1 rescore. |
+| Files expected to change | SCH-C product/tests/migration/UAT/governance (product commit); pin docs (pin commit) |
+| Files prohibited from changing | live DB; Projects 45/46/47 occupancy; EST-2026-0019; SCH-D; PERF/CLOSE/LEARN/QB-T; Print; Help/Voice/Manual; V1 rescore |
+| Implementation result | FG-035 **OPEN / PARTIAL**. SCH-C **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS / COMMITTED / PUSHED**. Product SHA **`c57e23c55260b44fc88cadfe2fc40924aa58dde7`**. Live current = repository head **`f9b0c1d2e3f4 (head)`**. Project **47**. Projects **45** / **46** unchanged. EST-2026-0019 unchanged. PRODUCTION packages **0**. V1 **not rescored**. |
+| Tests | Not rerun for this commit. Authoritative post-live-UAT: Dedicated SCH-C **14 passed**, 32 warnings, **4.34s**, exit **0**. SCH-A+SCH-B **22 passed**, 57 warnings, **11.13s**, exit **0**. Focused **135 passed**, 540 warnings, **63.04s**, exit **0**. Full suite **1119 passed**, 3705 warnings, **507.32s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | SCH-D not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-D. |
+| Next approved prompt | None from this close. |
+| Commit hash | `c57e23c55260b44fc88cadfe2fc40924aa58dde7` |
+
 ### 2026-09-16 — FG-035 SCH-C live migrate + bounded synthetic UAT
 
 | Field | Content |
@@ -62,10 +86,10 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Project-state-report update | Yes |
 | Milestone entry update | Yes |
 | Constitutional issue raised | None. |
-| Unresolved issues | SCH-C not committed. SCH-D not authorized. |
-| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-D. Do **not** commit unless separately authorized. |
-| Next approved prompt | None from this close. |
-| Commit hash | (not committed) |
+| Unresolved issues | SCH-D not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-D. |
+| Next approved prompt | None from this live-UAT pass. |
+| Commit hash | `c57e23c55260b44fc88cadfe2fc40924aa58dde7` |
 
 ### 2026-09-16 — FG-035 SCH-C resume / verify / complete existing implementation
 
@@ -86,10 +110,10 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Project-state-report update | Yes |
 | Milestone entry update | Yes (validation numbers on existing SCH-C milestone) |
 | Constitutional issue raised | None. Existing f9 revision correctly parented; preserved. |
-| Unresolved issues | SCH-C live migrate / bounded synthetic UAT not authorized. Not committed. |
+| Unresolved issues | SCH-C live migrate / bounded synthetic UAT not authorized at that pass. Later live-migrated and committed as **`c57e23c55260b44fc88cadfe2fc40924aa58dde7`**. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** begin live UAT. Do **not** commit unless separately authorized. |
 | Next approved prompt | None from this close. |
-| Commit hash | (not committed) |
+| Commit hash | `c57e23c55260b44fc88cadfe2fc40924aa58dde7` |
 
 ### 2026-09-16 — FG-035 SCH-C Lightweight Element dependencies + sequence warnings
 
@@ -110,10 +134,10 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Project-state-report update | Yes |
 | Milestone entry update | Yes |
 | Constitutional issue raised | None. Expected token collision with FG-016 resolved by minting unique `f9b0c1d2e3f4`. |
-| Unresolved issues | SCH-C live migrate / bounded synthetic UAT not authorized. Not committed. |
+| Unresolved issues | SCH-C live migrate / bounded synthetic UAT not authorized at that pass. Later live-migrated and committed as **`c57e23c55260b44fc88cadfe2fc40924aa58dde7`**. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** begin live UAT. Do **not** commit unless separately authorized. |
 | Next approved prompt | None from this close. |
-| Commit hash | (not committed) |
+| Commit hash | `c57e23c55260b44fc88cadfe2fc40924aa58dde7` |
 
 ### 2026-09-16 — Platform-wide warning law + Print product-direction recording
 

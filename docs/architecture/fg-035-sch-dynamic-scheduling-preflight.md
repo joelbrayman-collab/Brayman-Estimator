@@ -2,9 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE / ARCHITECTURE RECORDED / NOT IMPLEMENTATION-AUTHORIZED.** |
+| Status | **PREFLIGHT COMPLETE / ARCHITECTURE RECORDED.** Subsequent SCH-A is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Subsequent SCH-B is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. This file remains the architecture SoR and does not authorize SCH-C / SCH-D. |
 | Date | 2026-09-15 |
-| Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH **NOT AUTHORIZED**. |
+| Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. |
 | ADR | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. When SCH implementation is later authorized, extend ADR-053. Do **not** invent ADR-054 for Schedule. |
 | Alembic | Live current = repository head **`f5d6e7f8a9b0 (head)`**. Expected SCH parent when later authorized: **`f5d6e7f8a9b0`**. **No migration this recording.** |
 | Product | CalibraytAI |

@@ -12,12 +12,18 @@ from app.services.schedule import (
     ScheduleError,
     ScheduleNotFoundError,
     assemble_schedule,
+    assign_crew,
+    assign_user,
     create_schedule_item,
     get_schedule_item,
+    list_assignable_crews,
+    list_assignable_people,
+    list_item_assignments,
     list_schedule_work_choices,
     retire_schedule_item,
     schedule_activity_with_element_adjustment,
     shift_project_schedule,
+    unassign_assignment,
     update_schedule_window,
     active_element_schedule_item,
 )
@@ -44,6 +50,13 @@ def _optional_date(value):
     return date.fromisoformat(raw)
 
 
+def _return_after_item(item):
+    nxt = (request.values.get("next") or "").strip()
+    if nxt == "hub":
+        return url_for("projects.view_project", id=item.project_id) + "#hub-schedule"
+    return url_for("schedule.company", project_id=item.project_id)
+
+
 @schedule_bp.route("")
 def company():
     organization = _org()
@@ -62,6 +75,7 @@ def company():
             window_start=window_start,
             window_end=window_end,
             include_activities=False,
+            include_conflicts=True,
         )
     except (ScheduleError, ScheduleNotFoundError) as exc:
         flash(str(exc), "error")
@@ -183,7 +197,59 @@ def edit_item(item_id):
         selected_project_id=item.project_id,
         choices=[],
         confirm_element=bool(item.project_work_activity_id),
+        assignments=list_item_assignments(item.id, organization_id=organization.id),
+        people=list_assignable_people(organization.id),
+        crews=list_assignable_crews(organization.id),
+        next_view=request.args.get("next") or "company",
     )
+
+
+@schedule_bp.route("/items/<int:item_id>/assignments", methods=["POST"])
+def create_assignment(item_id):
+    organization = _org()
+    try:
+        item = get_schedule_item(item_id, organization_id=organization.id)
+        worker_id = _optional_int(request.form.get("worker_user_id"))
+        crew_id = _optional_int(request.form.get("crew_id"))
+        if worker_id and crew_id:
+            raise ScheduleError("Assign a person or a crew, not both.")
+        if worker_id:
+            assign_user(item.id, worker_user_id=worker_id, organization_id=organization.id)
+        elif crew_id:
+            assign_crew(item.id, crew_id=crew_id, organization_id=organization.id)
+        else:
+            raise ScheduleError("Choose a person or a crew.")
+        flash("Assignment saved.", "success")
+        return redirect(_return_after_item(item))
+    except ScheduleNotFoundError as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("schedule.company"))
+    except ScheduleError as exc:
+        flash(str(exc), "error")
+        try:
+            item = get_schedule_item(item_id, organization_id=organization.id)
+            return redirect(url_for("schedule.edit_item", item_id=item.id))
+        except ScheduleNotFoundError:
+            return redirect(url_for("schedule.company"))
+
+
+@schedule_bp.route(
+    "/items/<int:item_id>/assignments/<int:assignment_id>/remove",
+    methods=["POST"],
+)
+def remove_assignment(item_id, assignment_id):
+    organization = _org()
+    try:
+        item = unassign_assignment(
+            item_id,
+            assignment_id,
+            organization_id=organization.id,
+        )
+        flash("Assignment removed.", "success")
+        return redirect(_return_after_item(item))
+    except (ScheduleError, ScheduleNotFoundError) as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("schedule.company"))
 
 
 @schedule_bp.route("/items/<int:item_id>/retire", methods=["POST"])

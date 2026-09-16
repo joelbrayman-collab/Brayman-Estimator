@@ -5,12 +5,16 @@
 | Feature Gate ID | `FG-035` |
 | Feature Name | Project Work Structure, Time, Schedule, Performance, and LEARN V1 |
 | Target Milestone | Operational / learning loop (Time, Schedule, MONITOR labour-hours remainder, Closeout LEARN quality, calibration). Complements V1-08 / V1-11. **Does not rescore V1.** |
-| Module | **Projects** owns work-structure catalog and Project Element / Activity instances. Estimating owns `LabourTask` / snapshots (referenced). BUILD owns Time Entry (`labour_time_entries`). Projects owns Schedule overlay (`work_schedule_items` / `work_schedule_history`) for **SCH-A**. SCH architecture [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md) **RECORDED**. Design freeze [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md). MONITOR remains a consumer. LEARN remains a consumer. Project Controls owns `ChangeOrder` (referenced by SCOPE). |
+| Module | **Projects** owns work-structure catalog and Project Element / Activity instances. Estimating owns `LabourTask` / snapshots (referenced). BUILD owns Time Entry (`labour_time_entries`). Projects owns Schedule overlay (`work_schedule_items` / `work_schedule_history`) for **SCH-A** and SCH-B assignments (`work_schedule_assignments`). Organization owns optional Crew (`organization_crews` / `organization_crew_members`). SCH architecture [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md) **RECORDED**. Design freeze [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md). MONITOR remains a consumer. LEARN remains a consumer. Project Controls owns `ChangeOrder` (referenced by SCOPE). |
 | Date | 2026-09-15 |
-| Status | **OPEN / PARTIAL.** TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH overall **OPEN / PARTIAL**. SCH-B / SCH-C / SCH-D **NOT AUTHORIZED**. PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. |
+| Status | **OPEN / PARTIAL.** TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH overall **OPEN / PARTIAL**. SCH-C / SCH-D **NOT AUTHORIZED**. PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. |
 | Architecture | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. SCH architecture [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md) **RECORDED**. SCH implementation freeze [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md) remains the design freeze. SCH-A product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Live migration is proven/reconciled from durable evidence; the 15 Sep 2026 reconciliation prompt did **not** apply it. Product direction [project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md) **FUTURE / RECORDED**. [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED** (not reopened). [FG-032](FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED** (not rewritten). [FG-033](FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED**. [FG-034](FG-034-account-recovery-and-transactional-email.md) **CLOSED**. |
 | Related ADRs | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md). [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md). [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md). [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md). [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md). |
 | Prerequisites | FG-008 labour snapshots. FG-011 Project Hub. FG-018 office auth. ADR-053 Accepted. |
+
+**Subsequent status (2026-09-16 SCH-B live migrate + bounded synthetic UAT):** SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Additive **`f7f8a9b0c1d2`** applied live (`f6e7f8a9b0c1` → **`f7f8a9b0c1d2 (head)`**). Live current = repository head. Synthetic Project **46**. Project **45** unchanged. EST-2026-0019 unchanged. Evidence [testing/fg035-sch-b-live-bounded-uat-record.md](../testing/fg035-sch-b-live-bounded-uat-record.md). SCH overall **OPEN / PARTIAL**. SCH-C / SCH-D **NOT AUTHORIZED**. No new ADR. V1 **not rescored**.
+
+**Subsequent status (2026-09-16 SCH-B implementation):** SCH-B **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED** at that pass. Additive **`f7f8a9b0c1d2`** parented on **`f6e7f8a9b0c1`**. Live current then remained **`f6e7f8a9b0c1`**. Project **46** was not created in that pass.
 
 **Subsequent status (2026-09-15 SCH-A live-UAT reconciliation):** SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Live current = repository head **`f6e7f8a9b0c1`**. Live migration is proven/reconciled from the pre-SCH-A backup (`f5d6e7f8a9b0`, no schedule tables) versus current live `f6` with schedule tables present. The reconciliation prompt did **not** apply the migration and did **not** create a second UAT project. Existing Project **45** was preserved. Evidence [testing/fg035-sch-a-live-bounded-uat-record.md](../testing/fg035-sch-a-live-bounded-uat-record.md). SCH overall **OPEN / PARTIAL**. SCH-B / SCH-C / SCH-D **NOT AUTHORIZED**. SCOPE **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**. Additive **`f4c5d6e7f8a9`**. TIME **IMPLEMENTED / LIVE-MIGRATED / SYNTHETIC UAT PASS**. Additive **`f5d6e7f8a9b0`**. SCH architecture **PREFLIGHT COMPLETE / RECORDED**. Design freeze remains [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md). PERF / CLOSE / LEARN / QB-T remain **NOT AUTHORIZED**. [architecture/interactive-help-voice-and-user-manual-future-record.md](../architecture/interactive-help-voice-and-user-manual-future-record.md) remains **COMPLETE FOR PRODUCT-DIRECTION RECORDING / NOT IMPLEMENTATION-AUTHORIZED**. Do **not** implement Help, Voice, Manual, or SCH-B/C/D from this gate.
 
@@ -24,12 +28,12 @@
 | TAX/WBS | **IMPLEMENTED** — baseline + org catalog; Project Element / Activity instances; explicit EstimateLabourSnapshot seed; Hub Project work |
 | SCOPE | **IMPLEMENTED** — ORIGINAL / CHANGE_ORDER / EXTRA_WORK lineage on Project work; Change Order deltas; Extra Work; Hub/Field presentation |
 | TIME | **IMPLEMENTED** |
-| SCH | **OPEN / PARTIAL** — SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH overall **OPEN / PARTIAL**. SCH-B / SCH-C / SCH-D **NOT AUTHORIZED**. Architecture **RECORDED**; design freeze [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md) |
+| SCH | **OPEN / PARTIAL** — SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH overall **OPEN / PARTIAL**. SCH-C / SCH-D **NOT AUTHORIZED**. Architecture **RECORDED**; design freeze [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md) |
 | PERF | **NOT AUTHORIZED** |
 | CLOSE | **NOT AUTHORIZED** |
 | LEARN | **NOT AUTHORIZED** |
 | QB-T | **NOT AUTHORIZED** |
-| Schema / Alembic | Additive TAX/WBS **`f3b4c5d6e7f8`** revises **`f2a3b4c5d6e7`**. Additive SCOPE **`f4c5d6e7f8a9`** revises **`f3b4c5d6e7f8`**. Additive TIME **`f5d6e7f8a9b0`** revises **`f4c5d6e7f8a9`**. Additive SCH-A **`f6e7f8a9b0c1`** revises **`f5d6e7f8a9b0`** (**live current = repository head**; proven/reconciled, not applied by the reconciliation prompt) |
+| Schema / Alembic | Additive TAX/WBS **`f3b4c5d6e7f8`** revises **`f2a3b4c5d6e7`**. Additive SCOPE **`f4c5d6e7f8a9`** revises **`f3b4c5d6e7f8`**. Additive TIME **`f5d6e7f8a9b0`** revises **`f4c5d6e7f8a9`**. Additive SCH-A **`f6e7f8a9b0c1`** revises **`f5d6e7f8a9b0`**. Additive SCH-B **`f7f8a9b0c1d2`** revises **`f6e7f8a9b0c1`** (**live current = repository head**) |
 | V1 scoring | **NOT RESCORED** (**60% / 4 of 11**) |
 
 ```text
@@ -39,8 +43,9 @@ TAX/WBS IMPLEMENTED
 SCOPE IMPLEMENTED
 TIME IMPLEMENTED
 SCH-A IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS
+SCH-B IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS
 SCH OVERALL OPEN / PARTIAL
-SCH-B / SCH-C / SCH-D NOT AUTHORIZED
+SCH-C / SCH-D NOT AUTHORIZED
 PERF NOT AUTHORIZED
 CLOSE NOT AUTHORIZED
 LEARN NOT AUTHORIZED
@@ -110,7 +115,7 @@ Original Estimate-seeded work is immutable historical evidence. Eligible Change 
 
 ### SCH — Dynamic Schedule + assignment + desktop/iPhone calendar
 
-**Status: SCH-A IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS.** SCH overall **OPEN / PARTIAL**. SCH-B / SCH-C / SCH-D **NOT AUTHORIZED**. Architecture **PREFLIGHT COMPLETE / RECORDED**. Design freeze [architecture/fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md). SCH-A: `WorkScheduleItem` / `work_schedule_items`, `WorkScheduleHistory` / `work_schedule_history`, `app/services/schedule.py`, Company `/schedule`, Hub `#hub-schedule`, form create/edit/retire. Additive **`f6e7f8a9b0c1`** parented on **`f5d6e7f8a9b0`**. Live current = repository head. Live migration is proven/reconciled from durable evidence; this reconciliation did **not** apply it. Evidence [testing/fg035-sch-a-live-bounded-uat-record.md](../testing/fg035-sch-a-live-bounded-uat-record.md). No Crew, assignment, dependencies, iPhone, or Time suggestion. No new ADR.
+**Status: SCH-A IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS. SCH-B IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS.** SCH overall **OPEN / PARTIAL**. SCH-C / SCH-D **NOT AUTHORIZED**. Architecture **PREFLIGHT COMPLETE / RECORDED**. Design freeze [architecture/fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md). SCH-A: `WorkScheduleItem` / `work_schedule_items`, `WorkScheduleHistory` / `work_schedule_history`, `app/services/schedule.py`, Company `/schedule`, Hub `#hub-schedule`, form create/edit/retire. Additive **`f6e7f8a9b0c1`** (superseded as live current). SCH-B: `WorkScheduleAssignment` / `work_schedule_assignments`, optional `OrganizationCrew` / `OrganizationCrewMember`, dedicated `/settings/crews`, USER XOR Crew, ASSIGNED/UNASSIGNED history (Integer `assignment_id`, no FK), overlap warnings as read projection. Additive **`f7f8a9b0c1d2`** parented on **`f6e7f8a9b0c1`** (**live current = repository head**). No dependencies, iPhone, or Time suggestion. No new ADR.
 
 ### PERF — Labour-hours performance, alerts, Needs Attention, three MONITOR views
 
@@ -137,8 +142,9 @@ TAX/WBS: LOCAL OFFICE UAT PROVEN.
 SCOPE: LOCAL OFFICE UAT PROVEN.
 TIME: LOCAL OFFICE SYNTHETIC UAT PROVEN.
 SCH-A: IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS.
+SCH-B: IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS.
 SCH OVERALL OPEN / PARTIAL.
-SCH-B / SCH-C / SCH-D: NOT AUTHORIZED.
-DO NOT BEGIN SCH-B FROM THIS GATE ALONE.
+SCH-C / SCH-D: NOT AUTHORIZED.
+DO NOT BEGIN SCH-C FROM THIS GATE ALONE.
 V1 NOT RESCORED.
 ```

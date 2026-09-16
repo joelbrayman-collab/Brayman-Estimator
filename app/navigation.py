@@ -153,6 +153,12 @@ NAV_SECTIONS = (
                 "icon": "bi-gear",
                 "enabled": True,
             },
+            {
+                "title": "Crews",
+                "endpoint": "organization_crew.index",
+                "icon": "bi-people-fill",
+                "enabled": True,
+            },
         ),
     },
 )

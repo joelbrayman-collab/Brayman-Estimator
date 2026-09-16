@@ -136,6 +136,11 @@ class WorkScheduleItem(db.Model):
         back_populates="schedule_item",
         order_by="WorkScheduleHistory.id.asc()",
     )
+    assignments = db.relationship(
+        "WorkScheduleAssignment",
+        back_populates="schedule_item",
+        order_by="WorkScheduleAssignment.id.asc()",
+    )
 
     def duration_days(self) -> int:
         return (self.scheduled_end - self.scheduled_start).days + 1
@@ -202,3 +207,76 @@ class WorkScheduleHistory(db.Model):
 
     def __repr__(self):
         return f"<WorkScheduleHistory {self.id} {self.event}>"
+
+
+class WorkScheduleAssignment(db.Model):
+    """Current WHO on a SCH-A WHEN. Zero rows = Unassigned. Not historical SoR."""
+
+    __tablename__ = "work_schedule_assignments"
+    __table_args__ = (
+        db.CheckConstraint(
+            "("
+            "(worker_user_id IS NOT NULL AND crew_id IS NULL) OR "
+            "(worker_user_id IS NULL AND crew_id IS NOT NULL)"
+            ")",
+            name="ck_work_schedule_assignments_xor",
+        ),
+        Index(
+            "uq_work_schedule_assignments_item_user",
+            "work_schedule_item_id",
+            "worker_user_id",
+            unique=True,
+            sqlite_where=text("worker_user_id IS NOT NULL"),
+        ),
+        Index(
+            "uq_work_schedule_assignments_item_crew",
+            "work_schedule_item_id",
+            "crew_id",
+            unique=True,
+            sqlite_where=text("crew_id IS NOT NULL"),
+        ),
+        Index(
+            "ix_work_schedule_assignments_org_worker",
+            "organization_id",
+            "worker_user_id",
+        ),
+        Index(
+            "ix_work_schedule_assignments_org_crew",
+            "organization_id",
+            "crew_id",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    work_schedule_item_id = db.Column(
+        db.Integer,
+        db.ForeignKey("work_schedule_items.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    worker_user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
+    crew_id = db.Column(
+        db.Integer,
+        db.ForeignKey("organization_crews.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    schedule_item = db.relationship("WorkScheduleItem", back_populates="assignments")
+    worker = db.relationship("User")
+    crew = db.relationship("OrganizationCrew")
+
+    def __repr__(self):
+        return f"<WorkScheduleAssignment {self.id}>"

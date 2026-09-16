@@ -82,6 +82,7 @@
                 <th>Work item</th>
                 <th>Start</th>
                 <th>End</th>
+                <th>{{ contractor_copy.SCHEDULE_ASSIGNED }}</th>
                 <th></th>
             </tr>
         </thead>
@@ -91,11 +92,26 @@
                 <td>{{ item.element.display_name }}</td>
                 <td>{{ item.scheduled_start.isoformat() }}</td>
                 <td>{{ item.scheduled_end.isoformat() }}</td>
+                <td>
+                    {% set assigned = view.assignments_by_item_id.get(item.id, []) %}
+                    {% if assigned %}
+                    {{ assigned | map(attribute='name') | join(', ') }}
+                    {% else %}
+                    {{ contractor_copy.SCHEDULE_UNASSIGNED }}
+                    {% endif %}
+                </td>
                 <td><a href="{{ url_for('schedule.edit_item', item_id=item.id) }}">Edit dates</a></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% if view.conflicts %}
+    <ul class="schedule-conflict-list">
+        {% for conflict in view.conflicts %}
+        <li><strong>{{ conflict.label }}.</strong> {{ conflict.summary }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     {% endif %}
     {% if row.schedule_items %}
     <form method="post" action="{{ url_for('schedule.shift_project', project_id=row.project.id) }}" class="form-grid" style="margin-top: 12px;">

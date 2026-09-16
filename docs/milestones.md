@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-15 |
+| Updated | 2026-09-16 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -29,6 +29,40 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 4. “Completed pending baseline commit” means deliverables exist in the working tree awaiting Joel-approved commit.
 
 ---
+
+### 2026-09-16 — FG-035 SCH-B live migrate + bounded synthetic UAT
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 SCH-B |
+| Status | **OPEN / PARTIAL.** SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH overall **OPEN / PARTIAL**. SCH-C / SCH-D **NOT AUTHORIZED**. SCH-A remains **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. TAX/WBS / SCOPE / TIME remain **IMPLEMENTED**. [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
+| Branch | `main` |
+| Base commit | `d3352509b708482ac9bbacce8cea0860b2d8cfcf` |
+| Objective | Apply SCH-B live migration and prove bounded synthetic office UAT on a new vessel without mutating Project 45 or EST-2026-0019. |
+| Deliverables | Live upgrade `f6e7f8a9b0c1` → **`f7f8a9b0c1d2`**. Backup `instance/brayman_estimator-backup-before-fg035-sch-b-f7f8a9b0c1d2-20260916-062918.db`. Synthetic Project **46**. Authoritative [testing/fg035-sch-b-live-bounded-uat-record.md](testing/fg035-sch-b-live-bounded-uat-record.md). Governance LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS. |
+| Validation | Dedicated SCH-B **9 passed**, 26 warnings, **6.28s**. Dedicated SCH-A **13 passed**, 31 warnings, **3.85s**. Focused TAX/WBS+SCOPE+TIME+SCH-A+SCH-B+Hub/Field/MONITOR **121 passed**, 508 warnings, **54.70s**. Full suite **1105 passed**, 3673 warnings, **450.77s**, exit **0**. Live current = repository head **`f7f8a9b0c1d2 (head)`**. |
+| Architectural findings | USER XOR Crew. Zero rows = Unassigned. History `assignment_id` remains Integer with no FK (SQLite reused assignment id 8 after delete). Item retire unassigns then retires in the same transaction. Crew membership evaluated against the scheduled window. Conflicts are a read projection. USER-THROUGH-CREW detected when membership overlaps the scheduled window; no false historical conflict when membership begins after the window. |
+| Open decisions | SCH-B commit/push not authorized from this record. SCH-C not authorized. V1 remains **60% / 4 of 11**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** commit. Do **not** push. Do **not** begin SCH-C. |
+| Commit | **NOT COMMITTED** |
+| Date | 2026-09-16 |
+
+### 2026-09-16 — FG-035 SCH-B Assignment + optional Crew implementation
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 SCH-B |
+| Status | **OPEN / PARTIAL.** SCH-B **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED**. Live UAT **NOT YET PERFORMED**. SCH overall **OPEN / PARTIAL**. SCH-C / SCH-D **NOT AUTHORIZED**. SCH-A remains **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. TAX/WBS / SCOPE / TIME remain **IMPLEMENTED**. [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
+| Branch | `main` |
+| Base commit | `d3352509b708482ac9bbacce8cea0860b2d8cfcf` |
+| Objective | Implement SCH-B WHO on the existing SCH-A WHEN without live migration or live UAT. |
+| Deliverables | `WorkScheduleAssignment`; `OrganizationCrew` / `OrganizationCrewMember`; `app/services/organization_crew.py`; dedicated `/settings/crews`; assignment POST routes; overlap projection; additive Alembic **`f7f8a9b0c1d2`**; `tests/test_work_schedule_assignment_fg035.py`; FG-035 / ADR-053 / continuity |
+| Validation | Dedicated SCH-B **9 passed**, 26 warnings, **6.28s**. Focused TAX/WBS+SCOPE+TIME+SCH-A+SCH-B+Hub/Field/MONITOR **121 passed**, 508 warnings, **53.45s**. Full suite **1105 passed**, 3673 warnings, **445.16s**, exit **0**. Live `flask db current` remained **`f6e7f8a9b0c1`** (no longer Alembic head). |
+| Architectural findings | USER XOR Crew. Zero rows = Unassigned. History `assignment_id` remains Integer with no FK. Item retire unassigns then retires in the same transaction. Crew membership evaluated against the scheduled window. Conflicts are a read projection. New SCH-B POST forms use CSRF; SCH-A forms were not swept. |
+| Open decisions | Live migrate / live UAT not authorized. V1 remains **60% / 4 of 11**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect for live-migrate / UAT authorization. |
+| Commit | **NOT COMMITTED** |
+| Date | 2026-09-16 |
 
 ### 2026-09-15 — FG-035 SCH-A existing live-UAT reconciliation + completion
 

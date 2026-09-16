@@ -2,12 +2,12 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **DESIGN FROZEN.** Subsequent SCH-A product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-15). This freeze remains the design SoR. SCH overall is **OPEN / PARTIAL**. |
+| Status | **DESIGN FROZEN.** Subsequent SCH-A product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-15). Subsequent SCH-B product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-16). This freeze remains the design SoR. SCH overall is **OPEN / PARTIAL**. |
 | Date | 2026-09-15 |
-| Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. |
+| Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. |
 | Governing architecture | [fg-035-sch-dynamic-scheduling-preflight.md](fg-035-sch-dynamic-scheduling-preflight.md) **PREFLIGHT COMPLETE / ARCHITECTURE RECORDED**. This file does **not** redesign that record. |
 | ADR | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
-| Alembic | SCH-A revision **`f6e7f8a9b0c1`** parented on **`f5d6e7f8a9b0`**. Live current = repository head **`f6e7f8a9b0c1`**. Live migration proven/reconciled 2026-09-15; the reconciliation prompt did **not** apply it. |
+| Alembic | SCH-A revision **`f6e7f8a9b0c1`** parented on **`f5d6e7f8a9b0`**. SCH-B revision **`f7f8a9b0c1d2`** parented on **`f6e7f8a9b0c1`**. Live current = repository head **`f7f8a9b0c1d2`**. |
 | Baseline | HEAD / origin/main at freeze **`94fc575a720751dadb36f9df70ae85f40b9680d3`** (`docs: freeze FG-035 SCH implementation design`). |
 
 ```text
@@ -17,15 +17,22 @@ DESIGN FROZEN
 
 Subsequent 2026-09-15 SCH-A:
 IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS
+
+Subsequent 2026-09-16 SCH-B:
+IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS
+NO NEW ADR
+V1 NOT RESCORED
 NO NEW ADR
 V1 NOT RESCORED
 ```
 
-**Subsequent status (2026-09-15 reconciliation):** Live current = repository head **`f6e7f8a9b0c1`**. Evidence [fg035-sch-a-live-bounded-uat-record.md](../testing/fg035-sch-a-live-bounded-uat-record.md). This freeze remains the design SoR. Do **not** implement SCH-B from this file.
+**Subsequent status (2026-09-16 SCH-B live migrate + bounded synthetic UAT):** SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Live current = repository head **`f7f8a9b0c1d2`**. Evidence [fg035-sch-b-live-bounded-uat-record.md](../testing/fg035-sch-b-live-bounded-uat-record.md). This freeze remains the design SoR. Do **not** implement SCH-C / SCH-D from this file.
+
+**Subsequent status (2026-09-15 reconciliation):** Live current then = repository head **`f6e7f8a9b0c1`**. Evidence [fg035-sch-a-live-bounded-uat-record.md](../testing/fg035-sch-a-live-bounded-uat-record.md). This freeze remains the design SoR.
 
 This document freezes names, constraints, service boundaries, slice cuts, and the SCH-A test matrix so ChatGPT Architect can issue bounded implementation prompts without reopening architecture.
 
-Do **not** implement SCH-B / SCH-C / SCH-D from this file.
+Do **not** implement SCH-C / SCH-D from this file.
 
 ---
 

@@ -208,6 +208,7 @@ def assemble_project_hub(project, organization_id: str) -> dict:
             organization_id,
             project_id=project.id,
             include_activities=True,
+            include_conflicts=True,
         ),
     }
 

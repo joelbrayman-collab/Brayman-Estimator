@@ -1167,3 +1167,18 @@ body.login-page {
 .schedule-unscheduled-list li {
     margin: 4px 0;
 }
+
+.schedule-assignment-list,
+.schedule-conflict-list {
+    margin: 8px 0 14px;
+    padding-left: 18px;
+}
+
+.schedule-conflict-list {
+    color: #7a4a00;
+}
+
+.inline-form {
+    display: inline;
+    margin-left: 8px;
+}

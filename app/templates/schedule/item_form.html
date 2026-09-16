@@ -82,4 +82,52 @@
     </form>
     {% endif %}
 </section>
+{% if item %}
+<section class="form-panel" id="schedule-assignments">
+    <h2>{{ contractor_copy.SCHEDULE_ASSIGNED }}</h2>
+    <p class="muted-copy">{{ contractor_copy.SCHEDULE_ASSIGN_HELP }}</p>
+    {% if assignments %}
+    <ul class="schedule-assignment-list">
+        {% for assignment in assignments %}
+        <li>
+            {{ assignment.name }}
+            {% if assignment.kind == "CREW" %} · {{ contractor_copy.SCHEDULE_CREW }}{% endif %}
+            <form method="post" action="{{ url_for('schedule.remove_assignment', item_id=item.id, assignment_id=assignment.id) }}" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="next" value="{{ next_view or 'company' }}">
+                <button type="submit" class="button secondary">{{ contractor_copy.SCHEDULE_REMOVE_ASSIGNMENT }}</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>{{ contractor_copy.SCHEDULE_UNASSIGNED }}</p>
+    {% endif %}
+    <form method="post" action="{{ url_for('schedule.create_assignment', item_id=item.id) }}" class="form-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="next" value="{{ next_view or 'company' }}">
+        <label>
+            Person
+            <select name="worker_user_id">
+                <option value="">Choose a person</option>
+                {% for person in people %}
+                <option value="{{ person.id }}">{{ person.display_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            {{ contractor_copy.SCHEDULE_CREW }}
+            <select name="crew_id">
+                <option value="">No crew</option>
+                {% for crew in crews %}
+                <option value="{{ crew.id }}">{{ crew.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <div class="form-actions">
+            <button type="submit" class="button">{{ contractor_copy.SCHEDULE_ASSIGN }}</button>
+        </div>
+    </form>
+</section>
+{% endif %}
 {% endblock %}

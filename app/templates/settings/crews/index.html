@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{ contractor_copy.SCHEDULE_CREWS_HEADING }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.SCHEDULE_CREWS_HEADING }}{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Settings</p>
+        <h1>{{ contractor_copy.SCHEDULE_CREWS_HEADING }}</h1>
+        <p>{{ contractor_copy.SCHEDULE_CREWS_LEDE }}</p>
+    </div>
+    <a class="button" href="{{ url_for('organization_crew.new') }}">{{ contractor_copy.SCHEDULE_ADD_CREW }}</a>
+</div>
+
+{% if crews %}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for crew in crews %}
+        <tr>
+            <td>{{ crew.name }}{% if crew.status != 'ACTIVE' %} · Retired{% endif %}</td>
+            <td><a href="{{ url_for('organization_crew.detail', crew_id=crew.id) }}">Open</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <h3>No crews yet</h3>
+    <p>{{ contractor_copy.SCHEDULE_CREWS_LEDE }}</p>
+</div>
+{% endif %}
+{% endblock %}

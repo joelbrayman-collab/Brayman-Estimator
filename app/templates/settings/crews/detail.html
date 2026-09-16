@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}{{ crew.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ crew.name }}{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Settings</p>
+        <h1>{{ crew.name }}</h1>
+        <p>{{ contractor_copy.SCHEDULE_CREWS_LEDE }}</p>
+    </div>
+    <a href="{{ url_for('organization_crew.index') }}">Back to crews</a>
+</div>
+
+{% if crew.status == 'ACTIVE' %}
+<form method="post" action="{{ url_for('organization_crew.retire', crew_id=crew.id) }}" style="margin-bottom: 16px;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="button secondary">{{ contractor_copy.SCHEDULE_RETIRE_CREW }}</button>
+</form>
+{% endif %}
+
+<section class="form-panel">
+    <h2>People on this crew</h2>
+    {% if crew.members %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Person</th>
+                <th>From</th>
+                <th>Last day</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in crew.members %}
+            <tr>
+                <td>{{ member.user.display_name }}</td>
+                <td>{{ member.effective_from.isoformat() }}</td>
+                <td>{% if member.effective_to %}{{ member.effective_to.isoformat() }}{% else %}Open{% endif %}</td>
+                <td>
+                    {% if member.effective_to is none %}
+                    <form method="post" action="{{ url_for('organization_crew.close_member', crew_id=crew.id, member_id=member.id) }}" class="form-grid">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <label>
+                            Last day
+                            <input type="date" name="effective_to" required>
+                        </label>
+                        <button type="submit" class="button secondary">{{ contractor_copy.SCHEDULE_CLOSE_MEMBERSHIP }}</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="muted-copy">No dates on this crew yet.</p>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('organization_crew.add_member', crew_id=crew.id) }}" class="form-grid" style="margin-top: 16px;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>
+            Person
+            <select name="user_id" required>
+                <option value="">Choose a person</option>
+                {% for person in people %}
+                <option value="{{ person.id }}">{{ person.display_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            From
+            <input type="date" name="effective_from" required>
+        </label>
+        <label>
+            Last day (optional)
+            <input type="date" name="effective_to">
+        </label>
+        <div class="form-actions">
+            <button type="submit" class="button">{{ contractor_copy.SCHEDULE_ADD_CREW_MEMBER }}</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

@@ -12,16 +12,21 @@ from flask_login import current_user
 from sqlalchemy import func
 
 from app import db
+from app.models.organization_crew import CREW_STATUS_ACTIVE, OrganizationCrew
 from app.models.project import Project
 from app.models.schedule import (
+    SCHEDULE_EVENT_ASSIGNED,
     SCHEDULE_EVENT_CREATED,
     SCHEDULE_EVENT_DATES_CHANGED,
     SCHEDULE_EVENT_RETIRED,
+    SCHEDULE_EVENT_UNASSIGNED,
     SCHEDULE_STATUS_ACTIVE,
     SCHEDULE_STATUS_INACTIVE,
+    WorkScheduleAssignment,
     WorkScheduleHistory,
     WorkScheduleItem,
 )
+from app.models.user import User, UserMembership
 from app.models.work_structure import (
     SCOPE_CHANGE_ORDER,
     WORK_STATUS_ACTIVE,
@@ -31,6 +36,7 @@ from app.models.work_structure import (
 from app.services.organizations import get_current_organization_id
 from app.services.work_scope import change_order_is_scope_authorizing
 from app.services.work_structure import list_project_work_elements
+from app.presentation import contractor_copy
 
 
 class ScheduleError(Exception):
@@ -197,6 +203,7 @@ def _record_history(
     actor_user_id=None,
     actor_display_name=None,
     reason=None,
+    assignment_id=None,
 ) -> WorkScheduleHistory:
     user_id, display_name = actor_snapshot()
     row = WorkScheduleHistory(
@@ -210,6 +217,7 @@ def _record_history(
         prior_scheduled_end=prior_end,
         new_scheduled_start=item.scheduled_start,
         new_scheduled_end=item.scheduled_end,
+        assignment_id=assignment_id,
         reason=reason,
     )
     db.session.add(row)
@@ -519,6 +527,274 @@ def shift_project_schedule(
     return items
 
 
+def _require_active_org_user(user_id: int, organization_id: str) -> User:
+    user = db.session.get(User, user_id)
+    if user is None or not user.is_active:
+        raise ScheduleNotFoundError("That person was not found.")
+    membership = UserMembership.query.filter_by(
+        user_id=user.id,
+        organization_id=organization_id,
+        is_active=True,
+    ).first()
+    if membership is None:
+        raise ScheduleError("That person does not belong to this organization.")
+    return user
+
+
+def _assignment_view(assignment: WorkScheduleAssignment) -> dict:
+    if assignment.worker_user_id is not None:
+        worker = assignment.worker
+        name = worker.display_name if worker is not None else "Assigned"
+        return {
+            "id": assignment.id,
+            "item_id": assignment.work_schedule_item_id,
+            "kind": "USER",
+            "name": name,
+        }
+    crew = assignment.crew
+    name = crew.name if crew is not None else contractor_copy.SCHEDULE_CREW
+    return {
+        "id": assignment.id,
+        "item_id": assignment.work_schedule_item_id,
+        "kind": "CREW",
+        "name": name,
+    }
+
+
+def list_item_assignments(item_id: int, *, organization_id: Optional[str] = None) -> list[dict]:
+    item = get_schedule_item(item_id, organization_id=organization_id)
+    return [_assignment_view(row) for row in item.assignments]
+
+
+def list_assignable_people(organization_id: Optional[str] = None) -> list[User]:
+    org_id = _org_id(organization_id)
+    return (
+        User.query.join(UserMembership, UserMembership.user_id == User.id)
+        .filter(
+            UserMembership.organization_id == org_id,
+            UserMembership.is_active.is_(True),
+            User.is_active.is_(True),
+        )
+        .order_by(User.display_name, User.id)
+        .all()
+    )
+
+
+def list_assignable_crews(organization_id: Optional[str] = None) -> list[OrganizationCrew]:
+    org_id = _org_id(organization_id)
+    return (
+        OrganizationCrew.query.filter_by(
+            organization_id=org_id,
+            status=CREW_STATUS_ACTIVE,
+        )
+        .order_by(OrganizationCrew.name, OrganizationCrew.id)
+        .all()
+    )
+
+
+def _unassign_row(item: WorkScheduleItem, assignment: WorkScheduleAssignment) -> None:
+    assignment_id = assignment.id
+    _record_history(item, SCHEDULE_EVENT_UNASSIGNED, assignment_id=assignment_id)
+    db.session.delete(assignment)
+    db.session.flush()
+
+
+def _clear_item_assignments(item: WorkScheduleItem) -> None:
+    for assignment in list(item.assignments):
+        _unassign_row(item, assignment)
+
+
+def assign_user(
+    item_id: int,
+    *,
+    worker_user_id: int,
+    organization_id: Optional[str] = None,
+    commit: bool = True,
+) -> WorkScheduleAssignment:
+    org_id = _org_id(organization_id)
+    item = get_schedule_item(item_id, organization_id=org_id)
+    if item.status != SCHEDULE_STATUS_ACTIVE:
+        raise ScheduleError("Assign people to current schedule dates.")
+    user = _require_active_org_user(int(worker_user_id), org_id)
+    existing = WorkScheduleAssignment.query.filter_by(
+        organization_id=org_id,
+        work_schedule_item_id=item.id,
+        worker_user_id=user.id,
+    ).first()
+    if existing is not None:
+        raise ScheduleError("That person is already assigned to these dates.")
+    assignment = WorkScheduleAssignment(
+        organization_id=org_id,
+        work_schedule_item_id=item.id,
+        worker_user_id=user.id,
+        crew_id=None,
+    )
+    db.session.add(assignment)
+    db.session.flush()
+    _record_history(item, SCHEDULE_EVENT_ASSIGNED, assignment_id=assignment.id)
+    if commit:
+        db.session.commit()
+    return assignment
+
+
+def assign_crew(
+    item_id: int,
+    *,
+    crew_id: int,
+    organization_id: Optional[str] = None,
+    commit: bool = True,
+) -> WorkScheduleAssignment:
+    org_id = _org_id(organization_id)
+    item = get_schedule_item(item_id, organization_id=org_id)
+    if item.status != SCHEDULE_STATUS_ACTIVE:
+        raise ScheduleError("Assign a crew to current schedule dates.")
+    crew = OrganizationCrew.query.filter_by(id=int(crew_id), organization_id=org_id).first()
+    if crew is None:
+        raise ScheduleNotFoundError("Crew not found.")
+    if crew.status != CREW_STATUS_ACTIVE:
+        raise ScheduleError("That crew is no longer in use.")
+    existing = WorkScheduleAssignment.query.filter_by(
+        organization_id=org_id,
+        work_schedule_item_id=item.id,
+        crew_id=crew.id,
+    ).first()
+    if existing is not None:
+        raise ScheduleError("That crew is already assigned to these dates.")
+    assignment = WorkScheduleAssignment(
+        organization_id=org_id,
+        work_schedule_item_id=item.id,
+        worker_user_id=None,
+        crew_id=crew.id,
+    )
+    db.session.add(assignment)
+    db.session.flush()
+    _record_history(item, SCHEDULE_EVENT_ASSIGNED, assignment_id=assignment.id)
+    if commit:
+        db.session.commit()
+    return assignment
+
+
+def unassign_assignment(
+    item_id: int,
+    assignment_id: int,
+    *,
+    organization_id: Optional[str] = None,
+    commit: bool = True,
+) -> WorkScheduleItem:
+    org_id = _org_id(organization_id)
+    item = get_schedule_item(item_id, organization_id=org_id)
+    assignment = WorkScheduleAssignment.query.filter_by(
+        id=assignment_id,
+        organization_id=org_id,
+        work_schedule_item_id=item.id,
+    ).first()
+    if assignment is None:
+        raise ScheduleNotFoundError("Assignment not found.")
+    _unassign_row(item, assignment)
+    if commit:
+        db.session.commit()
+    return item
+
+
+def list_schedule_conflicts(
+    organization_id: str,
+    *,
+    project_id: Optional[int] = None,
+    window_start: Optional[date] = None,
+    window_end: Optional[date] = None,
+) -> list[dict]:
+    from app.services.organization_crew import users_on_crew_during_window
+
+    org_id = _org_id(organization_id)
+    query = WorkScheduleItem.query.filter_by(
+        organization_id=org_id,
+        status=SCHEDULE_STATUS_ACTIVE,
+    )
+    if project_id is not None:
+        _project_or_404(project_id, org_id)
+        query = query.filter_by(project_id=project_id)
+    items = query.order_by(WorkScheduleItem.id).all()
+    if window_start is not None and window_end is not None:
+        items = [
+            item
+            for item in items
+            if _item_overlaps_window(item, window_start, window_end)
+        ]
+    direct_users = {}
+    crew_ids = {}
+    via_crew_users = {}
+    via_crew_by_crew = {}
+    for item in items:
+        direct_users[item.id] = set()
+        crew_ids[item.id] = set()
+        via_crew_users[item.id] = set()
+        via_crew_by_crew[item.id] = {}
+        for assignment in item.assignments:
+            if assignment.worker_user_id is not None:
+                direct_users[item.id].add(assignment.worker_user_id)
+            elif assignment.crew_id is not None:
+                crew_ids[item.id].add(assignment.crew_id)
+                members = users_on_crew_during_window(
+                    assignment.crew_id,
+                    item.scheduled_start,
+                    item.scheduled_end,
+                    organization_id=org_id,
+                )
+                member_ids = {user.id for user in members}
+                via_crew_by_crew[item.id][assignment.crew_id] = member_ids
+                via_crew_users[item.id].update(member_ids)
+    conflicts = []
+    seen = set()
+
+    def _add(kind, name, left_id, right_id):
+        key = (kind, name, left_id, right_id)
+        if key in seen:
+            return
+        seen.add(key)
+        conflicts.append(
+            {
+                "kind": kind,
+                "label": contractor_copy.SCHEDULE_CONFLICT,
+                "summary": f"{name} {contractor_copy.SCHEDULE_ALREADY_ELSEWHERE}",
+                "name": name,
+                "item_ids": [left_id, right_id],
+            }
+        )
+
+    def _user_name(user_id):
+        user = db.session.get(User, user_id)
+        return user.display_name if user is not None else "Assigned"
+
+    def _crew_name(crew_id):
+        crew = db.session.get(OrganizationCrew, crew_id)
+        return crew.name if crew is not None else contractor_copy.SCHEDULE_CREW
+
+    for i, left in enumerate(items):
+        for right in items[i + 1 :]:
+            if not (
+                left.scheduled_start <= right.scheduled_end
+                and right.scheduled_start <= left.scheduled_end
+            ):
+                continue
+            for user_id in direct_users[left.id] & direct_users[right.id]:
+                _add("USER", _user_name(user_id), left.id, right.id)
+            for crew_id in crew_ids[left.id] & crew_ids[right.id]:
+                _add("CREW", _crew_name(crew_id), left.id, right.id)
+            through = (
+                (via_crew_users[left.id] & direct_users[right.id])
+                | (direct_users[left.id] & via_crew_users[right.id])
+            )
+            for left_crew_id, left_members in via_crew_by_crew[left.id].items():
+                for right_crew_id, right_members in via_crew_by_crew[right.id].items():
+                    if left_crew_id == right_crew_id:
+                        continue
+                    through |= left_members & right_members
+            through -= direct_users[left.id] & direct_users[right.id]
+            for user_id in through:
+                _add("USER_THROUGH_CREW", _user_name(user_id), left.id, right.id)
+    return conflicts
+
+
 def retire_schedule_item(
     item_id: int,
     *,
@@ -535,6 +811,7 @@ def retire_schedule_item(
             raise ScheduleError(
                 "Retire scheduled activities on this work item before retiring the work item dates."
             )
+    _clear_item_assignments(item)
     item.status = SCHEDULE_STATUS_INACTIVE
     _record_history(item, SCHEDULE_EVENT_RETIRED)
     if commit:
@@ -554,6 +831,7 @@ def retire_active_items_for_work(row, *, organization_id: Optional[str] = None) 
     else:
         query = query.filter_by(project_work_element_id=row.id)
     for item in query.all():
+        _clear_item_assignments(item)
         item.status = SCHEDULE_STATUS_INACTIVE
         _record_history(item, SCHEDULE_EVENT_RETIRED)
 
@@ -695,20 +973,32 @@ def assemble_schedule(
             bucket["scheduled_end"] = derived["scheduled_end"]
     window_days = (window_end - window_start).days + 1
     project_rows = []
+    assignments = []
+    assignments_by_item_id = {}
     for bucket in sorted(projects.values(), key=lambda row: (row["project"].name or "", row["project"].id)):
         bars = []
         for item in bucket["schedule_items"]:
             left = max((item.scheduled_start - window_start).days, 0)
             right = min((item.scheduled_end - window_start).days + 1, window_days)
             width = max(right - left, 1)
+            item_assignments = [_assignment_view(row) for row in item.assignments]
+            assignments.extend(item_assignments)
+            assignments_by_item_id[item.id] = item_assignments
             bars.append(
                 {
                     "item": item,
                     "left_pct": round(100.0 * left / window_days, 2),
                     "width_pct": round(100.0 * width / window_days, 2),
+                    "assignments": item_assignments,
                 }
             )
         project_rows.append({**bucket, "bars": bars})
+    conflicts = []
+    if include_conflicts:
+        conflicts = list_schedule_conflicts(
+            org_id,
+            project_id=project_id,
+        )
     return {
         "organization_id": org_id,
         "project_id": project_id,
@@ -720,6 +1010,7 @@ def assemble_schedule(
         "unscheduled_elements": list_unscheduled_elements(
             organization_id=org_id, project_id=project_id
         ),
-        "assignments": [],
-        "conflicts": [],
+        "assignments": assignments,
+        "assignments_by_item_id": assignments_by_item_id,
+        "conflicts": conflicts,
     }

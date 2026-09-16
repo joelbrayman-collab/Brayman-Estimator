@@ -106,7 +106,12 @@ from app.models.work_structure import (
     WorkType,
 )
 from app.models.time_entry import LabourTimeEntry, LabourTimeHistory
-from app.models.schedule import WorkScheduleHistory, WorkScheduleItem
+from app.models.organization_crew import OrganizationCrew, OrganizationCrewMember
+from app.models.schedule import (
+    WorkScheduleAssignment,
+    WorkScheduleHistory,
+    WorkScheduleItem,
+)
 from app.models.historical_estimates import (
     HistoricalCostLineItem,
     HistoricalDataQualityFlag,
@@ -244,9 +249,14 @@ __all__ = [
     "PermitProfile",
     "PermitRule",
     "ProjectPermitFact",
+    "OrganizationCrew",
+    "OrganizationCrewMember",
     "Project",
     "ProjectCommercialContext",
     "ProjectLocation",
+    "WorkScheduleAssignment",
+    "WorkScheduleHistory",
+    "WorkScheduleItem",
     "Proposal",
     "ProposalLineItem",
     "ProposalSection",

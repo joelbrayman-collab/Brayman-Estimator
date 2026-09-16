@@ -509,7 +509,7 @@ def test_alembic_fg035_sch_a_upgrade_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["f6e7f8a9b0c1"]
+        assert script.get_heads() == ["f7f8a9b0c1d2"]
 
         command.upgrade(alembic_cfg, "f5d6e7f8a9b0")
         engine = db.engine
@@ -555,6 +555,15 @@ def test_alembic_fg035_sch_a_upgrade_downgrade(tmp_path):
 
         command.upgrade(alembic_cfg, "head")
         with engine.begin() as conn:
+            tables = {
+                row[0]
+                for row in conn.execute(
+                    sa.text("SELECT name FROM sqlite_master WHERE type='table'")
+                )
+            }
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
-            assert [row[0] for row in heads] == ["f6e7f8a9b0c1"]
-            assert script.get_heads() == ["f6e7f8a9b0c1"]
+            assert [row[0] for row in heads] == ["f7f8a9b0c1d2"]
+            assert script.get_heads() == ["f7f8a9b0c1d2"]
+            assert "work_schedule_assignments" in tables
+            assert "organization_crews" in tables
+            assert "organization_crew_members" in tables

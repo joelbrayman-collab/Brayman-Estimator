@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-15 |
+| Updated | 2026-09-16 |
 
 ## Purpose
 
@@ -42,6 +42,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-16 — FG-035 SCH-B live migrate + bounded synthetic UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Apply SCH-B live migration and prove bounded synthetic office UAT. No commit. No push. No SCH-C. |
+| Business decision | SCH-B live-migrated. Synthetic Project 46 is the SCH-B vessel. Project 45 remains sealed. EST-2026-0019 / Project 27 untouched. |
+| Architectural decision | Live current = repository head `f7f8a9b0c1d2`. WHO remains overlay on SCH-A WHEN. Conflicts are a read projection. Crew membership evaluated against scheduled windows, not today's roster. |
+| Prompt template used | FG-035 SCH-B live migrate + bounded synthetic UAT (16 Sep 2026) |
+| Approved Cursor prompt summary | Verify SCH-B package; backup live SQLite; upgrade f6→f7; create Project 46; prove USER/Crew/Unassigned/unassign/period membership/overlap/false historical through-Crew/retire transaction/Company+Hub/CSRF; fresh dedicated/focused/full tests; UAT record; governance LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS. No commit/push. |
+| Files expected to change | live DB; UAT record; FG-035 / ADR-053 / freeze / architecture / modules / continuity |
+| Files prohibited from changing | Project 45; EST-2026-0019 / Project 27; SCH-C/D; PERF/CLOSE/LEARN/QB-T; Help/Voice/Manual; V1 rescore; commit/push |
+| Implementation result | FG-035 **OPEN / PARTIAL**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Live current = repository head **`f7f8a9b0c1d2 (head)`**. Project **46**. Project **45** unchanged. EST-2026-0019 unchanged. PRODUCTION packages **0**. Working tree **DIRTY**. V1 **not rescored**. |
+| Tests | Dedicated SCH-B **9 passed**, 26 warnings, **6.28s**, exit **0**. Dedicated SCH-A **13 passed**, 31 warnings, **3.85s**, exit **0**. Focused TAX/WBS+SCOPE+TIME+SCH-A+SCH-B+Hub/Field/MONITOR **121 passed**, 508 warnings, **54.70s**, exit **0**. Full suite **1105 passed**, 3673 warnings, **450.77s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | SCH-B not committed. SCH-C / SCH-D not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. No commit/push. No SCH-C. |
+| Next approved prompt | None from this live-UAT pass. |
+| Commit hash | **NOT COMMITTED** (HEAD remains `d3352509b708482ac9bbacce8cea0860b2d8cfcf`) |
+
+### 2026-09-16 — FG-035 SCH-B Assignment + optional Crew implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Implement FG-035 SCH-B WHO on the sealed SCH-A WHEN. No live migrate. No live UAT. No commit. No push. |
+| Business decision | USER assignment and Crew in the same SCH-B slice. Crew optional to the contractor, required in the data model. Zero assignment rows = Unassigned. Project 46 is the later UAT vessel; Project 45 remains sealed. |
+| Architectural decision | Assignment routes on existing `schedule_bp` as POST create + POST remove. Dedicated `/settings/crews` blueprint. Item retire unassigns then retires in the same transaction. History `assignment_id` remains Integer with no FK. New SCH-B POST forms use CSRF; SCH-A forms not swept. |
+| Prompt template used | FG-035 SCH-B Assignment + optional Crew + overlap warnings implementation (16 Sep 2026) |
+| Approved Cursor prompt summary | Implement WorkScheduleAssignment, optional Organization Crew, effective-dated membership, assign/unassign, ASSIGNED/UNASSIGNED history, overlap warnings, Company/Hub presentation, dedicated Crew settings, one additive migration FILE, dedicated/focused/full tests, required docs. No live migrate. No live UAT. No commit/push. |
+| Files expected to change | models, services, routes, templates, contractor copy, CSS, Alembic file, tests, FG-035 / ADR-053 / freeze / continuity |
+| Files prohibited from changing | live DB; flask db upgrade; Project 45; Project 46; EST-2026-0019; SCH-C/D; PERF/CLOSE/LEARN/QB-T; Help/Voice/Manual; FG-008 Crew Template; V1 rescore; commit/push |
+| Implementation result | FG-035 **OPEN / PARTIAL**. SCH-B **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED**. Additive **`f7f8a9b0c1d2`**. Live current remains **`f6e7f8a9b0c1`**. Working tree **DIRTY**. SCH-C / SCH-D **NOT AUTHORIZED**. PRODUCTION packages **0**. V1 **not rescored**. |
+| Tests | Dedicated SCH-B **9 passed**, 26 warnings, **6.28s**, exit **0**. Focused TAX/WBS+SCOPE+TIME+SCH-A+SCH-B+Hub/Field/MONITOR **121 passed**, 508 warnings, **53.45s**, exit **0**. Full suite **1105 passed**, 3673 warnings, **445.16s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate not authorized. Live UAT not performed. SCH-C / SCH-D not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. No live-migrate / UAT authorization. |
+| Next approved prompt | None from this implementation. |
+| Commit hash | **NOT COMMITTED** (HEAD remains `d3352509b708482ac9bbacce8cea0860b2d8cfcf`) |
 
 ### 2026-09-15 — FG-035 SCH-A existing live-UAT reconciliation + completion
 

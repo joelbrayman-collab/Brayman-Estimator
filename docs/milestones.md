@@ -43,8 +43,8 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Validation | Dedicated SCH-A **13 passed**, 31 warnings, **4.12s**. Focused TAX/WBS+SCOPE+TIME+SCH-A+Hub/Field/MONITOR **112 passed**, 482 warnings, **51.94s**. Full suite **1096 passed**, 3647 warnings, **514.43s**, exit **0**. Live `flask db current` **`f6e7f8a9b0c1 (head)`**. |
 | Architectural findings | Live migration proven/reconciled from backup `f5d6e7f8a9b0` vs live `f6e7f8a9b0c1`. This reconciliation did **not** apply the migration. Window integrity FAIL CLOSED re-proven on Project 45. |
 | Open decisions | SCH-B not authorized. V1 remains **60% / 4 of 11**. |
-| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-B. Do **not** commit. |
-| Commit | (pending Joel / Architect review; do not commit from this prompt) |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-B. |
+| Commit | `fd8a66990df8286e54151b80b6f3cd5be5dd3ad1` |
 | Date | 2026-09-15 |
 
 ### 2026-09-15 — FG-035 SCH-A Schedule Core implementation
@@ -61,7 +61,7 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Architectural findings | Overlay on Project work. One current scheduled window. Project range derived. Activity-inside-Element invariant. Schedule does not create Time. |
 | Open decisions | Live migrate / live UAT not authorized. V1 remains **60% / 4 of 11**. |
 | Next milestone | **STOP.** Return to ChatGPT Architect for live-migrate / UAT authorization. |
-| Commit | (pending Joel / Architect review; not committed) |
+| Commit | `fd8a66990df8286e54151b80b6f3cd5be5dd3ad1` |
 | Date | 2026-09-15 |
 
 ### 2026-09-15 — FG-035 SCH implementation preflight / design freeze

@@ -62,10 +62,10 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Project-state-report update | Yes |
 | Milestone entry update | Yes |
 | Constitutional issue raised | None |
-| Unresolved issues | SCH-B / SCH-C / SCH-D not authorized. Working tree not committed. |
+| Unresolved issues | SCH-B / SCH-C / SCH-D not authorized. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. No SCH-B implementation authorization. |
 | Next approved prompt | None from this reconciliation. |
-| Commit hash | (pending Joel / Architect review; do not commit from this prompt) |
+| Commit hash | `fd8a66990df8286e54151b80b6f3cd5be5dd3ad1` |
 
 ### 2026-09-15 — FG-035 SCH-A Schedule Core implementation
 
@@ -89,7 +89,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Live migrate not authorized. Live UAT not performed. SCH-B / SCH-C / SCH-D not authorized. Physical iPhone Schedule **NOT THIS SLICE**. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Separate live-migrate / UAT authorization required. |
 | Next approved prompt | None from this implementation. Architect issues live-migrate/UAT next if approved. |
-| Commit hash | (pending Joel / Architect review; do not commit from this prompt) |
+| Commit hash | `fd8a66990df8286e54151b80b6f3cd5be5dd3ad1` |
 
 ### 2026-09-15 — FG-035 SCH implementation preflight / design freeze
 

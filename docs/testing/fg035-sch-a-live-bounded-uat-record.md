@@ -49,7 +49,8 @@ Do **not** pretend the reconciliation prompt applied `f6e7f8a9b0c1`.
 | Field | Value |
 |--------|--------|
 | HEAD / `origin/main` | **`94fc575a720751dadb36f9df70ae85f40b9680d3`** (`docs: freeze FG-035 SCH implementation design`) |
-| Working tree | SCH-A implementation + tests + migration file + this UAT/governance reconciliation (**not committed**) |
+| Product SHA | **`fd8a66990df8286e54151b80b6f3cd5be5dd3ad1`** (`feat: implement FG-035 SCH-A schedule core`) |
+| Working tree at UAT | SCH-A implementation + tests + migration file + UAT/governance reconciliation (committed in the product SHA) |
 | Live current at reconciliation start | **`f6e7f8a9b0c1 (head)`** |
 | Repository head | **`f6e7f8a9b0c1 (head)`** |
 | Live current after reconciliation | **`f6e7f8a9b0c1 (head)`** |
@@ -74,7 +75,7 @@ This is durable **pre-SCH-A** provenance. This reconciliation did **not** modify
 |-------|---------|-----------------|
 | Pre-SCH-A live (backup) | `f5d6e7f8a9b0` | absent |
 | Current live | `f6e7f8a9b0c1` | present |
-| Repository head | `f6e7f8a9b0c1` | file in working tree |
+| Repository head | `f6e7f8a9b0c1` | committed in product SHA |
 
 **SCH-A LIVE MIGRATION IS DURABLY PROVEN.** This reconciliation did **not** apply it.
 
@@ -201,4 +202,4 @@ SCH-A did not create Time, change approved labour actuals, create money actuals,
 
 ## Result
 
-**SCH-A LIVE BOUNDED SYNTHETIC UAT PASS.** Gate remains **OPEN / PARTIAL**. SCH overall **OPEN / PARTIAL**. SCH-B / SCH-C / SCH-D **NOT AUTHORIZED**. V1 **60% / 4 of 11** **NOT RESCORED**. Working tree **not committed**.
+**SCH-A LIVE BOUNDED SYNTHETIC UAT PASS.** Gate remains **OPEN / PARTIAL**. SCH overall **OPEN / PARTIAL**. SCH-B / SCH-C / SCH-D **NOT AUTHORIZED**. V1 **60% / 4 of 11** **NOT RESCORED**. Product SHA **`fd8a66990df8286e54151b80b6f3cd5be5dd3ad1`**.

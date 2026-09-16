@@ -468,6 +468,9 @@ def deactivate_project_work_row(row, *, organization_id: Optional[str] = None):
     if row.organization_id != org_id:
         raise WorkStructureError("Work item not found.")
     row.status = WORK_STATUS_INACTIVE
+    from app.services.schedule import retire_active_items_for_work
+
+    retire_active_items_for_work(row, organization_id=org_id)
     db.session.commit()
     return row
 

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}{% if item %}{{ contractor_copy.SCHEDULE_EDIT }}{% else %}{{ contractor_copy.SCHEDULE_ADD }}{% endif %} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{% if item %}{{ contractor_copy.SCHEDULE_EDIT }}{% else %}{{ contractor_copy.SCHEDULE_ADD }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">BUILD</p>
+        <h1>{% if item %}{{ contractor_copy.SCHEDULE_EDIT }}{% else %}{{ contractor_copy.SCHEDULE_ADD }}{% endif %}</h1>
+        <p>{{ contractor_copy.SCHEDULE_FORM_HELP }}</p>
+    </div>
+    <a href="{{ url_for('schedule.company') }}">Back to schedule</a>
+</div>
+
+<section class="form-panel">
+    <form method="post" class="form-grid">
+        {% if item %}
+        <p><strong>{{ item.project.name }}</strong> · {{ item.element.display_name }}{% if item.activity %} · {{ item.activity.display_name }}{% endif %}</p>
+        {% else %}
+        <label>
+            Project
+            <select name="project_id" onchange="this.form.method='get'; this.form.submit();">
+                <option value="">Choose a project</option>
+                {% for project in projects %}
+                <option value="{{ project.id }}" {% if selected_project_id == project.id %}selected{% endif %}>{{ project.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        {% if choices %}
+        <label>
+            Work item
+            <select name="project_work_element_id">
+                <option value="">Choose work</option>
+                {% for choice in choices %}
+                <option value="{{ choice.element.id }}">{{ choice.element.display_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Activity (optional)
+            <select name="project_work_activity_id">
+                <option value="">Work item only</option>
+                {% for choice in choices %}
+                {% for activity in choice.activities %}
+                <option value="{{ activity.id }}">{{ choice.element.display_name }} · {{ activity.display_name }}</option>
+                {% endfor %}
+                {% endfor %}
+            </select>
+        </label>
+        {% endif %}
+        {% endif %}
+        <label>
+            Start
+            <input type="date" name="scheduled_start" value="{% if item %}{{ item.scheduled_start.isoformat() }}{% endif %}" required>
+        </label>
+        <label>
+            End
+            <input type="date" name="scheduled_end" value="{% if item %}{{ item.scheduled_end.isoformat() }}{% endif %}" required>
+        </label>
+        {% if confirm_element or (not item) %}
+        <label>
+            Work item start (if you also need to extend the work item)
+            <input type="date" name="element_scheduled_start" value="{% if parent_item %}{{ parent_item.scheduled_start.isoformat() }}{% endif %}">
+        </label>
+        <label>
+            Work item end
+            <input type="date" name="element_scheduled_end" value="{% if parent_item %}{{ parent_item.scheduled_end.isoformat() }}{% endif %}">
+        </label>
+        <label class="checkbox-row">
+            <input type="checkbox" name="confirm_element_adjustment" value="1">
+            {{ contractor_copy.SCHEDULE_CONFIRM_ELEMENT }}
+        </label>
+        {% endif %}
+        <div class="form-actions">
+            <button type="submit" class="button">{% if item %}Save dates{% else %}{{ contractor_copy.SCHEDULE_ADD }}{% endif %}</button>
+        </div>
+    </form>
+    {% if item %}
+    <form method="post" action="{{ url_for('schedule.retire', item_id=item.id) }}" style="margin-top: 16px;">
+        <button type="submit" class="button secondary">{{ contractor_copy.SCHEDULE_RETIRE }}</button>
+    </form>
+    {% endif %}
+</section>
+{% endblock %}

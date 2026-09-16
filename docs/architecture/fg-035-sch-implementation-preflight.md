@@ -2,28 +2,30 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTATION-AUTHORIZED.** |
+| Status | **DESIGN FROZEN.** Subsequent SCH-A product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-15). This freeze remains the design SoR. SCH overall is **OPEN / PARTIAL**. |
 | Date | 2026-09-15 |
-| Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH **NOT AUTHORIZED**. |
+| Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. |
 | Governing architecture | [fg-035-sch-dynamic-scheduling-preflight.md](fg-035-sch-dynamic-scheduling-preflight.md) **PREFLIGHT COMPLETE / ARCHITECTURE RECORDED**. This file does **not** redesign that record. |
-| ADR | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. Extend ADR-053 when the first SCH product slice is authorized. |
-| Alembic | Live current = repository head **`f5d6e7f8a9b0 (head)`**. SCH parent when later authorized: **`f5d6e7f8a9b0`**. **No migration this freeze.** |
-| Baseline | HEAD / origin/main **`75d0655df8513ccfcddaccc9bb4d3a2811dbfd8b`** (`docs: record FG-035 SCH dynamic scheduling architecture`). |
+| ADR | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
+| Alembic | SCH-A revision **`f6e7f8a9b0c1`** parented on **`f5d6e7f8a9b0`**. Live current = repository head **`f6e7f8a9b0c1`**. Live migration proven/reconciled 2026-09-15; the reconciliation prompt did **not** apply it. |
+| Baseline | HEAD / origin/main at freeze **`94fc575a720751dadb36f9df70ae85f40b9680d3`** (`docs: freeze FG-035 SCH implementation design`). |
 
 ```text
-FG-035 SCH:
+FG-035 SCH (this freeze, historical):
 IMPLEMENTATION PREFLIGHT COMPLETE
 DESIGN FROZEN
-NOT IMPLEMENTATION-AUTHORIZED
-NO PRODUCT CODE
-NO MIGRATION
+
+Subsequent 2026-09-15 SCH-A:
+IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS
 NO NEW ADR
 V1 NOT RESCORED
 ```
 
+**Subsequent status (2026-09-15 reconciliation):** Live current = repository head **`f6e7f8a9b0c1`**. Evidence [fg035-sch-a-live-bounded-uat-record.md](../testing/fg035-sch-a-live-bounded-uat-record.md). This freeze remains the design SoR. Do **not** implement SCH-B from this file.
+
 This document freezes names, constraints, service boundaries, slice cuts, and the SCH-A test matrix so ChatGPT Architect can issue bounded implementation prompts without reopening architecture.
 
-Do **not** implement Schedule from this file.
+Do **not** implement SCH-B / SCH-C / SCH-D from this file.
 
 ---
 
@@ -31,8 +33,9 @@ Do **not** implement Schedule from this file.
 
 | Layer | State |
 |-------|--------|
-| **Current** | Architecture recorded. No schedule tables. `Project` has no start/end dates. `ProjectCommercialContext.schedule_condition` is commercial posture. TIME uses `work_date` (`Date`) and `worker_user_id`. |
-| **Intended (when later authorized)** | Overlay identities and services frozen below, sliced SCH-A → SCH-D. |
+| **Current (at freeze)** | Architecture recorded. No schedule tables. `Project` has no start/end dates. `ProjectCommercialContext.schedule_condition` is commercial posture. TIME uses `work_date` (`Date`) and `worker_user_id`. |
+| **Subsequent Current (SCH-A)** | Overlay tables `work_schedule_items` / `work_schedule_history` live at **`f6e7f8a9b0c1`**. `Project` still has no start/end dates. |
+| **Intended (SCH-B–D when later authorized)** | Overlay identities and services frozen below, sliced SCH-B → SCH-D. |
 | **Future (not SCH)** | PERF, Needs Attention, CPM, FG-008 Crew Template, Help / Voice / Manual, QB-T. |
 
 Repository conventions this freeze follows:

@@ -30,6 +30,40 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-15 — FG-035 SCH-A existing live-UAT reconciliation + completion
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 SCH-A |
+| Status | **OPEN / PARTIAL.** SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH overall **OPEN / PARTIAL**. SCH-B / SCH-C / SCH-D **NOT AUTHORIZED**. TAX/WBS / SCOPE / TIME remain **IMPLEMENTED**. [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
+| Branch | `main` |
+| Base commit | `94fc575a720751dadb36f9df70ae85f40b9680d3` |
+| Objective | Preserve existing live f6 / Project 45. Reconstruct durable evidence. Complete only unprovable UAT steps. Fresh post-UAT tests. Authoritative UAT record. |
+| Deliverables | [testing/fg035-sch-a-live-bounded-uat-record.md](testing/fg035-sch-a-live-bounded-uat-record.md); FG-035 / ADR-053 / continuity updates. No second migration. No second UAT project. |
+| Validation | Dedicated SCH-A **13 passed**, 31 warnings, **4.12s**. Focused TAX/WBS+SCOPE+TIME+SCH-A+Hub/Field/MONITOR **112 passed**, 482 warnings, **51.94s**. Full suite **1096 passed**, 3647 warnings, **514.43s**, exit **0**. Live `flask db current` **`f6e7f8a9b0c1 (head)`**. |
+| Architectural findings | Live migration proven/reconciled from backup `f5d6e7f8a9b0` vs live `f6e7f8a9b0c1`. This reconciliation did **not** apply the migration. Window integrity FAIL CLOSED re-proven on Project 45. |
+| Open decisions | SCH-B not authorized. V1 remains **60% / 4 of 11**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin SCH-B. Do **not** commit. |
+| Commit | (pending Joel / Architect review; do not commit from this prompt) |
+| Date | 2026-09-15 |
+
+### 2026-09-15 — FG-035 SCH-A Schedule Core implementation
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 SCH-A |
+| Status | **OPEN / PARTIAL.** SCH-A **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED**. Live UAT **NOT YET PERFORMED**. SCH overall **NOT CLOSED**. SCH-B / SCH-C / SCH-D **NOT AUTHORIZED**. TAX/WBS / SCOPE / TIME remain **IMPLEMENTED**. [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
+| Branch | `main` |
+| Base commit | `94fc575a720751dadb36f9df70ae85f40b9680d3` |
+| Objective | Implement SCH-A Schedule Core without live migration or live UAT. |
+| Deliverables | `WorkScheduleItem` / `WorkScheduleHistory`; `app/services/schedule.py`; `/schedule`; Hub `#hub-schedule`; additive Alembic **`f6e7f8a9b0c1`**; `tests/test_work_schedule_fg035.py`; FG-035 / ADR-053 / continuity |
+| Validation | Dedicated SCH-A **13 passed**, 31 warnings, **3.77s**. Focused TAX/WBS+SCOPE+TIME+Hub/Field/MONITOR **99 passed**, 451 warnings, **43.00s**. Full suite **1096 passed**, 3647 warnings, **413.66s**, exit **0**. Live `flask db current` remained **`f5d6e7f8a9b0`**. |
+| Architectural findings | Overlay on Project work. One current scheduled window. Project range derived. Activity-inside-Element invariant. Schedule does not create Time. |
+| Open decisions | Live migrate / live UAT not authorized. V1 remains **60% / 4 of 11**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect for live-migrate / UAT authorization. |
+| Commit | (pending Joel / Architect review; not committed) |
+| Date | 2026-09-15 |
+
 ### 2026-09-15 — FG-035 SCH implementation preflight / design freeze
 
 | Field | Content |

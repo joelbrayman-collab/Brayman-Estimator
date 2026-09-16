@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-15 — FG-035 SCH-A existing live-UAT reconciliation + completion
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Preserve existing SCH-A live/UAT state. Reconstruct durable evidence. Complete only missing UAT. Fresh post-UAT tests. Authoritative UAT record. Reconcile governance. |
+| Business decision | Do not restore the backup. Do not apply the migration again. Do not create a second SCH-A UAT project. Existing Project 45 is the vessel. |
+| Architectural decision | Live f6 is the reconciliation baseline. Distinguish OBSERVED/RECONSTRUCTED from EXERCISED THIS PROMPT. Rejected Activity-outside-Element must be re-proven. |
+| Prompt template used | FG-035 SCH-A existing live-UAT reconciliation + completion (15 Sep 2026) |
+| Approved Cursor prompt summary | Reconstruct Project 45; classify 25 criteria; re-exercise B + window integrity + Company/Hub; fresh dedicated/focused/full tests; UAT record; governance LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS. No commit/push. No SCH-B. |
+| Files expected to change | UAT record; FG-035; ADR-053; architecture/modules/continuity indexes |
+| Files prohibited from changing | backup restore; flask db upgrade/downgrade/stamp; Project 46; EST-2026-0019; SCH-B/C/D; V1 rescore; commit/push |
+| Implementation result | FG-035 **OPEN / PARTIAL**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Live current = repo head `f6e7f8a9b0c1`. This prompt did **not** apply the migration. Project 45 preserved. EST-2026-0019 unchanged. PRODUCTION packages **0**. V1 **not rescored**. |
+| Tests | Dedicated SCH-A **13 passed**, 31 warnings, **4.12s**, exit **0**. Focused TAX/WBS+SCOPE+TIME+SCH-A+Hub/Field/MONITOR **112 passed**, 482 warnings, **51.94s**, exit **0**. Full suite **1096 passed**, 3647 warnings, **514.43s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | SCH-B / SCH-C / SCH-D not authorized. Working tree not committed. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. No SCH-B implementation authorization. |
+| Next approved prompt | None from this reconciliation. |
+| Commit hash | (pending Joel / Architect review; do not commit from this prompt) |
+
+### 2026-09-15 — FG-035 SCH-A Schedule Core implementation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-15 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Implement FG-035 SCH-A: WorkScheduleItem / history, Schedule services, Company Schedule, Hub `#hub-schedule`, form create/edit/retire, derived Project range, unscheduled authorized Elements. |
+| Business decision | SCH is WHEN. Overlay existing Project work. One current scheduled window. Activity stays inside Element unless the same action confirms the Element move. Scheduled is not actual. |
+| Architectural decision | Projects owns Schedule. DATE inclusive–inclusive. No Project.start/end storage. Retire, do not hard-delete. One additive Alembic file parented on `f5d6e7f8a9b0`. Do not apply it live. |
+| Prompt template used | FG-035 SCH-A implementation (15 Sep 2026) |
+| Approved Cursor prompt summary | SCH-A product code/models/services/routes/templates/nav/Hub; one additive Alembic file; dedicated + focused + full tests; docs. No live migrate. No live UAT. No SCH-B/C/D. No commit/push. |
+| Files expected to change | schedule models/services/routes/templates; Hub `#hub-schedule`; nav/copy; Alembic `f6e7f8a9b0c1`; tests; FG-035; ADR-053; continuity |
+| Files prohibited from changing | live DB; EST-2026-0019; SCH-B/C/D schema; PERF/CLOSE/LEARN/QB-T; Help/Voice/Manual; V1 rescore; commit/push |
+| Implementation result | FG-035 **OPEN / PARTIAL**. SCH-A **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED**. Live UAT **NOT YET PERFORMED**. Repository Alembic head `f6e7f8a9b0c1`. Live current `f5d6e7f8a9b0`. EST-2026-0019 unchanged. PRODUCTION packages **0**. V1 **not rescored**. |
+| Tests | Dedicated SCH-A **13 passed**, 31 warnings, **3.77s**, exit **0**. Focused TAX/WBS+SCOPE+TIME+Hub/Field/MONITOR **99 passed**, 451 warnings, **43.00s**, exit **0**. Full suite **1096 passed**, 3647 warnings, **413.66s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate not authorized. Live UAT not performed. SCH-B / SCH-C / SCH-D not authorized. Physical iPhone Schedule **NOT THIS SLICE**. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Separate live-migrate / UAT authorization required. |
+| Next approved prompt | None from this implementation. Architect issues live-migrate/UAT next if approved. |
+| Commit hash | (pending Joel / Architect review; do not commit from this prompt) |
+
 ### 2026-09-15 — FG-035 SCH implementation preflight / design freeze
 
 | Field | Content |

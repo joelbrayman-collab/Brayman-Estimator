@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}{{ contractor_copy.SCHEDULE_HEADING }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.SCHEDULE_HEADING }}{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">BUILD</p>
+        <h1>{{ contractor_copy.SCHEDULE_HEADING }}</h1>
+        <p>{{ contractor_copy.SCHEDULE_LEDE }}</p>
+    </div>
+    <a class="button" href="{{ url_for('schedule.new_item', project_id=selected_project_id) }}">{{ contractor_copy.SCHEDULE_ADD }}</a>
+</div>
+
+<section class="form-panel" style="margin-bottom: 20px;">
+    <form method="get" class="form-grid">
+        <label>
+            From
+            <input type="date" name="from" value="{{ view.window_start.isoformat() }}">
+        </label>
+        <label>
+            To
+            <input type="date" name="to" value="{{ view.window_end.isoformat() }}">
+        </label>
+        <label>
+            Project
+            <select name="project_id">
+                <option value="">All projects</option>
+                {% for project in projects %}
+                <option value="{{ project.id }}" {% if selected_project_id == project.id %}selected{% endif %}>{{ project.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <div class="form-actions">
+            <button type="submit" class="button">Show dates</button>
+        </div>
+    </form>
+</section>
+
+{% if view.unscheduled_elements %}
+<section class="panel" style="margin-bottom: 20px;">
+    <div class="panel-header">
+        <h2>{{ contractor_copy.SCHEDULE_UNSCHEDULED }}</h2>
+    </div>
+    <p class="muted-copy">{{ contractor_copy.SCHEDULE_UNSCHEDULED_HELP }}</p>
+    <ul class="schedule-unscheduled-list">
+        {% for element in view.unscheduled_elements %}
+        <li>
+            {{ element.project.name }} — {{ element.display_name }}
+            <a href="{{ url_for('schedule.new_item', project_id=element.project_id) }}">Set dates</a>
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
+
+{% if view.projects %}
+{% for row in view.projects %}
+<article class="panel panel-wide" style="margin-bottom: 16px;">
+    <div class="panel-header">
+        <h2>{{ row.project.name }}</h2>
+        <a href="{{ url_for('projects.view_project', id=row.project.id) }}#hub-schedule">Project</a>
+    </div>
+    <p class="muted-copy">
+        {% if row.scheduled_start and row.scheduled_end %}
+        {{ contractor_copy.SCHEDULE_PROJECT_RANGE }}:
+        {{ row.scheduled_start.isoformat() }} → {{ row.scheduled_end.isoformat() }}
+        {% else %}
+        {{ contractor_copy.SCHEDULE_UNSCHEDULED }}
+        {% endif %}
+    </p>
+    <div class="schedule-bar-track" aria-hidden="true">
+        {% for bar in row.bars %}
+        <span class="schedule-bar-fill" style="left: {{ bar.left_pct }}%; width: {{ bar.width_pct }}%;"></span>
+        {% endfor %}
+    </div>
+    {% if row.schedule_items %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Work item</th>
+                <th>Start</th>
+                <th>End</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in row.schedule_items %}
+            <tr>
+                <td>{{ item.element.display_name }}</td>
+                <td>{{ item.scheduled_start.isoformat() }}</td>
+                <td>{{ item.scheduled_end.isoformat() }}</td>
+                <td><a href="{{ url_for('schedule.edit_item', item_id=item.id) }}">Edit dates</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    {% if row.schedule_items %}
+    <form method="post" action="{{ url_for('schedule.shift_project', project_id=row.project.id) }}" class="form-grid" style="margin-top: 12px;">
+        <label>
+            Move this project by days
+            <input type="number" name="days" value="0" step="1">
+        </label>
+        <div class="form-actions">
+            <button type="submit" class="button secondary">{{ contractor_copy.SCHEDULE_MOVE_PROJECT }}</button>
+        </div>
+    </form>
+    {% endif %}
+</article>
+{% endfor %}
+{% else %}
+<div class="empty-state">
+    <h3>{{ contractor_copy.SCHEDULE_EMPTY }}</h3>
+    <p>{{ contractor_copy.SCHEDULE_UNSCHEDULED_HELP }}</p>
+</div>
+{% endif %}
+{% endblock %}

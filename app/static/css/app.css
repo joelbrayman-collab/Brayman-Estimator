@@ -1141,3 +1141,29 @@ body.login-page {
     background: #fff3cd;
     border-color: #c79a2b;
 }
+
+.schedule-bar-track {
+    position: relative;
+    height: 12px;
+    background: #ece8df;
+    border-radius: 6px;
+    margin: 8px 0 14px;
+    overflow: hidden;
+}
+
+.schedule-bar-fill {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background: var(--gold);
+    border-radius: 6px;
+}
+
+.schedule-unscheduled-list {
+    margin: 8px 0 0;
+    padding-left: 18px;
+}
+
+.schedule-unscheduled-list li {
+    margin: 4px 0;
+}

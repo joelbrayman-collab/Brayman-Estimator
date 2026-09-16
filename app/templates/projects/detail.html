@@ -441,6 +441,55 @@
         </div>
         {% endif %}
     </article>
+    <article class="panel panel-wide" id="hub-schedule">
+        <div class="panel-header">
+            <h2>{{ contractor_copy.SCHEDULE_HUB_HEADING }}</h2>
+            <a href="{{ url_for('schedule.company', project_id=project.id) }}">Open schedule</a>
+        </div>
+        {% set schedule = hub.schedule %}
+        <p class="muted-copy">
+            {% if schedule.projects and schedule.projects[0].scheduled_start and schedule.projects[0].scheduled_end %}
+            {{ contractor_copy.SCHEDULE_PROJECT_RANGE }}:
+            {{ schedule.projects[0].scheduled_start.isoformat() }} → {{ schedule.projects[0].scheduled_end.isoformat() }}
+            {% else %}
+            {{ contractor_copy.SCHEDULE_UNSCHEDULED }}
+            {% endif %}
+        </p>
+        {% if schedule.projects and schedule.projects[0].schedule_items %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Work</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in schedule.projects[0].schedule_items %}
+                <tr>
+                    <td>
+                        {{ item.element.display_name }}
+                        {% if item.activity %} · {{ item.activity.display_name }}{% endif %}
+                    </td>
+                    <td>{{ item.scheduled_start.isoformat() }}</td>
+                    <td>{{ item.scheduled_end.isoformat() }}</td>
+                    <td><a href="{{ url_for('schedule.edit_item', item_id=item.id) }}">Edit dates</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        {% if schedule.unscheduled_elements %}
+        <p class="muted-copy">{{ contractor_copy.SCHEDULE_UNSCHEDULED }}</p>
+        <ul>
+            {% for element in schedule.unscheduled_elements %}
+            <li>{{ element.display_name }} · <a href="{{ url_for('schedule.new_item', project_id=project.id) }}">Set dates</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <p><a class="button" href="{{ url_for('schedule.new_item', project_id=project.id) }}">{{ contractor_copy.SCHEDULE_ADD }}</a></p>
+    </article>
     <article class="panel panel-wide" id="hub-time">
         <div class="panel-header">
             <h2>{{ contractor_copy.TIME_HUB_HEADING }}</h2>

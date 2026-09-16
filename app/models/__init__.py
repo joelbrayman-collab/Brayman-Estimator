@@ -106,6 +106,7 @@ from app.models.work_structure import (
     WorkType,
 )
 from app.models.time_entry import LabourTimeEntry, LabourTimeHistory
+from app.models.schedule import WorkScheduleHistory, WorkScheduleItem
 from app.models.historical_estimates import (
     HistoricalCostLineItem,
     HistoricalDataQualityFlag,

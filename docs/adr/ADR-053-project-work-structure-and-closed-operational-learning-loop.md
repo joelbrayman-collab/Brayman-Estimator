@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|--------|
 | Title | ADR-053: Project Work Structure and Closed Operational / Learning Loop |
-| Status | **Accepted** (2026-09-15; Joel Brayman / ChatGPT Architect). TAX/WBS, SCOPE, and TIME product implementation are authorized under [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. SCH architecture **RECORDED**. SCH implementation **PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTATION-AUTHORIZED** ([fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md)). SCH / PERF / CLOSE / LEARN / QB-T remain **NOT AUTHORIZED**. |
+| Status | **Accepted** (2026-09-15; Joel Brayman / ChatGPT Architect). TAX/WBS, SCOPE, TIME, and SCH-A product implementation are authorized under [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Live migration is proven/reconciled from durable evidence. SCH overall **OPEN / PARTIAL**. SCH-B / SCH-C / SCH-D / PERF / CLOSE / LEARN / QB-T remain **NOT AUTHORIZED**. |
 | Date | 2026-09-15 |
 | Related | [ADR-019](ADR-019-calibai-lifecycle-and-project-hub.md) **Accepted** · [ADR-020](ADR-020-build-module-boundary.md) **Accepted** · [ADR-021](ADR-021-monitor-commercial-baseline.md) **Accepted** · [ADR-024](ADR-024-learn-recommendation-boundary.md) **Accepted** · [ADR-028](ADR-028-organization-foundation-and-project-commercial-context.md) **Accepted** · [ADR-029](ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md) **Accepted** · [ADR-049](ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted** · [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED** (not reopened) · [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED** (not rewritten) · product direction [project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md) · SCH architecture [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md) · SCH implementation freeze [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md) |
 
@@ -43,13 +43,13 @@ Projects owns catalog and Project instances for work-structure Project Type, Ele
 
 ### F. Schedule and Time share the same work authority
 
-Future Schedule and Time use the same Project → Element → Activity instances. TAX/WBS does not implement those consumers.
+Schedule and Time use the same Project → Element → Activity instances. TAX/WBS does not implement those consumers. SCH-A overlays those instances; it does not copy or replace them.
 
 ### G. Scheduled time is not actual time
 
-Future Schedule must never fabricate actual labour.
+Schedule must never fabricate actual labour. SCH-A does not create `LabourTimeEntry`. Scheduled windows are not TIME actuals.
 
-**SCH architecture recording (2026-09-15):** Overlay architecture is recorded in [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md). Implementation freeze is recorded in [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md). SCH remains **NOT AUTHORIZED**. When SCH-A is authorized, extend this ADR (Projects-owned `work_schedule_items` / history; `scheduled_start` / `scheduled_end`; derived Project bar; Element/Activity window integrity as mutate-time validation; later USER XOR Crew; warn-don’t-slide). Do **not** create a new ADR number for Schedule.
+**SCH-A implementation (2026-09-15):** Projects owns Schedule overlay records `work_schedule_items` / `work_schedule_history`. One current scheduled window per Element grain and per optional Activity. Project range is derived (`MIN(scheduled_start)` → `MAX(scheduled_end)` of ACTIVE items). Activity windows must stay inside the Element window unless the same service transaction explicitly confirms the Element move/extension. Schedule does not implement PERF. SCH-B/C/D remain **NOT AUTHORIZED**. Design freeze: [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md). Do **not** create a new ADR number for Schedule.
 
 ### H. Submitted Time is not approved actual
 
@@ -114,19 +114,19 @@ Organizations may add Types / Elements / Activities as data. They must not creat
 
 ## Module Ownership Impact
 
-**Projects** owns work-structure catalog and Project Element / Activity instances. Estimating continues to own `LabourTask` / `EstimateLabourSnapshot`. Project Controls continues to own `ChangeOrder`. BUILD owns field capture, money actuals, and Time Entry. MONITOR continues to read. LEARN continues to consume. **Recorded, not implemented:** Projects will own Schedule overlay records; Organization will own optional Crew configuration; Field/iPhone Schedule is a presentation of Projects-owned data. Design freeze: [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md).
+**Projects** owns work-structure catalog and Project Element / Activity instances. Projects owns SCH-A Schedule overlay (`app/models/schedule.py`, `app/services/schedule.py`, `app/routes/schedule.py`). Estimating continues to own `LabourTask` / `EstimateLabourSnapshot`. Project Controls continues to own `ChangeOrder`. BUILD owns field capture, money actuals, and Time Entry. MONITOR continues to read. LEARN continues to consume. Organization will own optional Crew configuration in SCH-B. Field/iPhone Schedule remains a later presentation of Projects-owned data. Design freeze: [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md).
 
 ## Data Ownership Impact
 
-New TAX/WBS tables are organization-scoped (or baseline with `organization_id` NULL). SCOPE adds `scope_origin` / `change_order_id` on Project work plus `project_work_scope_deltas` and append-only `project_work_scope_history`. TIME adds `labour_time_entries` and append-only `labour_time_history`. Seeded Project Activities pin `source_estimate_version_id` and `source_estimate_labour_snapshot_id`. Rows are retired, not hard-deleted.
+New TAX/WBS tables are organization-scoped (or baseline with `organization_id` NULL). SCOPE adds `scope_origin` / `change_order_id` on Project work plus `project_work_scope_deltas` and append-only `project_work_scope_history`. TIME adds `labour_time_entries` and append-only `labour_time_history`. SCH-A adds `work_schedule_items` and append-only `work_schedule_history`. Seeded Project Activities pin `source_estimate_version_id` and `source_estimate_labour_snapshot_id`. Rows are retired, not hard-deleted. Project start/end dates are not stored; Project range is derived.
 
 ## Migration Impact
 
-Required for TAX/WBS: additive Alembic **`f3b4c5d6e7f8`** parented on `f2a3b4c5d6e7`. Required for SCOPE: additive Alembic **`f4c5d6e7f8a9`** parented on `f3b4c5d6e7f8`. Required for TIME: additive Alembic **`f5d6e7f8a9b0`** parented on `f4c5d6e7f8a9`. SCH-A will require a later additive revision parented on **`f5d6e7f8a9b0`** when implementation is authorized (items + history only). SCH-B/C get their own later additive revisions. **Not created this freeze.** No rewrite of existing Estimate or ChangeOrder tables.
+Required for TAX/WBS: additive Alembic **`f3b4c5d6e7f8`** parented on `f2a3b4c5d6e7`. Required for SCOPE: additive Alembic **`f4c5d6e7f8a9`** parented on `f3b4c5d6e7f8`. Required for TIME: additive Alembic **`f5d6e7f8a9b0`** parented on `f4c5d6e7f8a9`. Required for SCH-A: additive Alembic **`f6e7f8a9b0c1`** parented on **`f5d6e7f8a9b0`** (items + history only; **live current = repository head**; proven/reconciled 2026-09-15; the reconciliation prompt did **not** apply it). SCH-B/C get their own later additive revisions. No rewrite of existing Estimate or ChangeOrder tables.
 
 ## Testing Impact
 
-Dedicated TAX/WBS, SCOPE, and TIME tests: catalog layers, tenant isolation, seed eligibility, original immutability, CO deltas, Extra Work, duration Time Entry, approval/return/supersession, approved labour service, Hub/Field, migration upgrade/downgrade.
+Dedicated TAX/WBS, SCOPE, TIME, and SCH-A tests: catalog layers, tenant isolation, seed eligibility, original immutability, CO deltas, Extra Work, duration Time Entry, approval/return/supersession, approved labour service, Schedule window integrity, derived Project range, Hub/Field, migration upgrade/downgrade.
 
 ## Documentation Impact
 
@@ -138,4 +138,4 @@ FG-035; this ADR; [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/f
 |------|------|------|
 | Joel | Accepted via governed FG-035 TAX/WBS prompt | 2026-09-15 |
 | ChatGPT review | Repository-aware preflight accepted; FG-035 / ADR-053 assigned | 2026-09-15 |
-| Cursor implementation note | TAX/WBS, SCOPE, and TIME implemented under this ADR. SCH architecture recorded and implementation-preflight frozen 2026-09-15; SCH / PERF / CLOSE / LEARN / QB-T not authorized. | 2026-09-15 |
+| Cursor implementation note | TAX/WBS, SCOPE, TIME, and SCH-A implemented under this ADR. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Live migration proven/reconciled from durable evidence. SCH-B / SCH-C / SCH-D / PERF / CLOSE / LEARN / QB-T not authorized. | 2026-09-15 |

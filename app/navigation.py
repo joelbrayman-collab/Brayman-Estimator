@@ -30,6 +30,12 @@ NAV_SECTIONS = (
                 "icon": "bi-building",
                 "enabled": True,
             },
+            {
+                "title": "Schedule",
+                "endpoint": "schedule.company",
+                "icon": "bi-calendar3",
+                "enabled": True,
+            },
         ),
     },
     {

@@ -69,6 +69,13 @@ The user should be able to ask questions such as:
 - How do I create an estimate?
 - How do I record Extra Work?
 - How do I approve time?
+- How do I see my Banked Hours?
+- How are Banked Hours earned?
+- How do I use Banked Hours?
+- Why did my Banked Hours balance change?
+- How do I enter Shop time?
+- What if the work was for a customer job, not general Shop work?
+- What if Ben sends me to another job?
 - How do I move a project on the Schedule?
 - Why is this project showing Needs Attention?
 - How do I send this for signature?

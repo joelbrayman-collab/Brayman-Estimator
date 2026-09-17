@@ -4,14 +4,14 @@
 |-----------|--------|
 | Date | 2026-09-17 |
 | Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL** |
-| Slice | PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS** |
+| Slice | PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED** |
 | ADR | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
 | Alembic | Live current = repository head **`f9b0c1d2e3f4 (head)`**. **No PERF-A migration.** |
 | Freeze | [architecture/fg-035-perf-a-implementation-preflight.md](../architecture/fg-035-perf-a-implementation-preflight.md) |
 
 ## Scope
 
-Prove Project Hub Labour Allowed · Used · Remaining · Waiting for approval · Extra Work on one new synthetic Project using existing SCOPE and TIME authority. Do **not** implement PERF-B, Needs Attention, 80%/100% alerts, Field PERF, MONITOR money changes, Print, Shop, Banked Hours, QB-T, CLOSE, or LEARN. Do **not** mutate Projects **45 / 46 / 47 / 48** or EST-2026-0019. V1 **not rescored**. Not committed.
+Prove Project Hub Labour Allowed · Used · Remaining · Waiting for approval · Extra Work on one new synthetic Project using existing SCOPE and TIME authority. Do **not** implement PERF-B, Needs Attention, 80%/100% alerts, Field PERF, MONITOR money changes, Print, Shop, Banked Hours, QB-T, CLOSE, or LEARN. Do **not** mutate Projects **45 / 46 / 47 / 48** or EST-2026-0019. V1 **not rescored**.
 
 ```text
 FG-035:
@@ -21,6 +21,7 @@ SCOPE IMPLEMENTED
 TIME IMPLEMENTED
 SCH-A/B/C/D IMPLEMENTED
 PERF-A IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS
+COMMITTED / SHA-PINNED / PUSHED
 PERF-B / PERF-C NOT AUTHORIZED
 CLOSE NOT AUTHORIZED
 LEARN NOT AUTHORIZED
@@ -33,9 +34,10 @@ V1 NOT RESCORED
 
 | Field | Value |
 |-------|--------|
-| HEAD / `origin/main` | **`8187d88d9a7695d009b4e8610ab2468831ec4fe3`** (`docs: freeze FG-035 PERF-A implementation design`) |
-| Divergence | **0 0** |
-| Working tree | DIRTY — reviewed PERF-A product + tests + docs + this UAT record. **Not committed. Not pushed.** |
+| HEAD / `origin/main` at UAT inspect | **`8187d88d9a7695d009b4e8610ab2468831ec4fe3`** (`docs: freeze FG-035 PERF-A implementation design`) |
+| Product PERF-A SHA | **`7a4b7000e2650eadf68b4ea44d48f75c65830c1f`** (`feat: implement FG-035 PERF-A labour performance`) |
+| Divergence at UAT inspect | **0 0** |
+| Working tree at UAT inspect | DIRTY — reviewed PERF-A product + tests + docs + this UAT record. Later **COMMITTED / SHA-PINNED / PUSHED**. |
 | Live current | **`f9b0c1d2e3f4 (head)`** unchanged |
 | PERF alert tables | **none** |
 
@@ -198,9 +200,8 @@ Every required PERF-A engineering + bounded live-UAT acceptance criterion is sup
 
 ```text
 PERF-A IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS.
+COMMITTED / SHA-PINNED / PUSHED.
 NO SCHEMA.
-NO COMMIT.
-NO PUSH.
 NO PERF-B.
 V1 NOT RESCORED.
 RETURN TO CHATGPT ARCHITECT.

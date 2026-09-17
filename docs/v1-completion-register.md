@@ -365,6 +365,8 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 
 **Joel decision #4 (2026-09-14):** customer Proposal/PDF terminology **IMPLEMENTED** as the FG-025 customer-document language slice. Existing Proposal preview/PDF reused. Customer-facing title **CONSTRUCTION ESTIMATE**. No schema/migration. FG-025 overall **NOT CLOSED**. V1 score **unchanged**.
 
+**Subsequent status (2026-09-17 PERF-A CLOSE / COMMIT / SHA-PIN / PUSH):** FG-035 PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED**. Product SHA **`7a4b7000e2650eadf68b4ea44d48f75c65830c1f`**. **Do not rescore**. Do **not** start PERF-B. Do **not** close FG-035.
+
 **Subsequent status (2026-09-17 PERF-A bounded synthetic live UAT):** FG-035 PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **49**. Dedicated **14 passed**. Full suite **1154 passed**, 3873 warnings, **633.10s**. **Do not rescore**. Do **not** start PERF-B. Do **not** close FG-035.
 
 **Subsequent status (2026-09-17 PERF-A engineering implementation):** FG-035 PERF-A **IMPLEMENTED / TESTED / NOT LIVE-UAT**. Hub `#hub-labour`. No schema. Dedicated **14 passed**. Full suite **1154 passed**. **Do not rescore**. Do **not** live-UAT from this register. Do **not** start PERF-B. Do **not** close FG-035.

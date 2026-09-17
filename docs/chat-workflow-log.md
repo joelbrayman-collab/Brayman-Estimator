@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — FG-035 PERF-A CLOSE / COMMIT / SHA-PIN / PUSH
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Commit, SHA-pin, and push accepted FG-035 PERF-A. No PERF-B. |
+| Business decision | PERF-A accepted as IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS. Home Office / Desktop Contractor Experience direction was **not** in the working tree; not invented. |
+| Architectural decision | No schema. MONITOR money unchanged. Field unchanged. Current-lineage Extra Work classification preserved. |
+| Prompt template used | FG-035 PERF-A FINAL CLOSE / COMMIT / SHA-PIN / PUSH / NO PERF-B |
+| Approved Cursor prompt summary | Classify dirt. Stage PERF-A only. Product commit. Pin SHA. Push origin/main. STOP. Do not begin PERF-B. |
+| Files expected to change | PERF-A product / tests / UAT / governance / Manual Impact; pin continuity |
+| Files prohibited from changing | Alembic; Field SCH-D; `assemble_monitor_v1` formulas; live Projects 45–48; EST-2026-0019 |
+| Implementation result | Product SHA **`7a4b7000e2650eadf68b4ea44d48f75c65830c1f`**. This pin follows. PERF-A **COMMITTED / SHA-PINNED / PUSHED**. |
+| Tests | Not rerun (docs pin after accepted post-live-UAT). Dedicated **14 passed**. Focused **170 passed**. Full **1154 passed**, 3873 warnings, **633.10s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | yes |
+| Constitutional issue raised | no |
+| Unresolved issues | PERF-B not authorized. Desktop Contractor Experience / Home Office direction not yet recorded. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin PERF-B. |
+| Next approved prompt | none — STOP |
+| Commit hash | product `7a4b7000e2650eadf68b4ea44d48f75c65830c1f`; this pin |
+
 ### 2026-09-17 — FG-035 PERF-A bounded synthetic live UAT (no commit)
 
 | Field | Content |

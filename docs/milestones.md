@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-17 — FG-035 PERF-A CLOSE / COMMIT / SHA-PIN / PUSH
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 PERF-A |
+| Status | **OPEN / PARTIAL.** PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED**. SCH-D remains **IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / COMMITTED / SHA-PINNED / PUSHED**. SCH overall **OPEN / PARTIAL**. PERF-B / PERF-C / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. V1 **60% / 4 of 11** **NO RESCORE**. |
+| Branch | `main` |
+| Base commit | `8187d88d9a7695d009b4e8610ab2468831ec4fe3` |
+| Objective | Commit accepted PERF-A labour Allowed · Used · Remaining on Project Hub. SHA-pin. Push. |
+| Deliverables | Product SHA **`7a4b7000e2650eadf68b4ea44d48f75c65830c1f`**. No PERF-A migration. Evidence [testing/fg035-perf-a-live-bounded-uat-record.md](testing/fg035-perf-a-live-bounded-uat-record.md). |
+| Validation | Dedicated **14 passed**. Focused **170 passed**. Full suite **1154 passed**, 3873 warnings, **633.10s**, exit **0**. Bounded synthetic live UAT Project **49**. |
+| Architectural findings | Activity grain. Used = APPROVED. Waiting = SUBMITTED. Extra Work by current SCOPE lineage. Stale Time `scope_origin` not rewritten. MONITOR money unchanged. Field unchanged. |
+| Open decisions | PERF-B. Desktop Contractor Experience / Home Office (not recorded this close). Print. Help/Voice/Manual. |
+| Next milestone | **STOP.** PERF-B **NOT AUTHORIZED**. |
+| Commit | `7a4b7000e2650eadf68b4ea44d48f75c65830c1f` |
+| Date | 2026-09-17 |
+
 ### 2026-09-17 — FG-035 SCH-D CLOSE / COMMIT / SHA-PIN / PUSH
 
 | Field | Content |

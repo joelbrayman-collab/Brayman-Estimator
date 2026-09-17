@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — FG-035 PERF-C owner-decision freeze correction (docs-only / not committed)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 17 SEP 2026 |
+| Objective | Correct the uncommitted PERF-C freeze. Replace superseded contractor question. Freeze permission/security owner decisions. Docs-only. No implementation. |
+| Business decision | Contractor question is exactly **Where does my business need attention?** Not Home Office. **NO COMPANY ATTENTION IN THE FIELD APP.** Permission domains A/B/C recorded. Contractor controls access. Project ≠ Company Attention ≠ sensitive financial. |
+| Architectural decision | Initial facts remain sealed PERF-B only. Broader question does not authorize new fact types. Identity vs bounded surfaces recorded. Warning/redaction principles recorded, not implemented. |
+| Prompt template used | FG-035 PERF-C OWNER-DECISION FREEZE CORRECTION / DOCS-ONLY / NO IMPLEMENTATION |
+| Approved Cursor prompt summary | Correct working-tree freeze. Do not reset accepted PERF-C docs. Do not commit. Do not implement. |
+| Files expected to change | Freeze record + already-modified PERF-C indexes that still showed the superseded question |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; Field; MONITOR money; PERF-A/B product |
+| Implementation result | Contractor question corrected. Owner decisions 1–16 ACCEPTED. PERF-C DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED. No product. |
+| Tests | NOT RERUN. Last accepted full suite remains **1190 passed**, 4212 warnings, **746.12s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | yes |
+| Constitutional issue raised | no |
+| Unresolved issues | PERF-C not implementation-authorized. Permission matrix / RBAC / redaction model unresolved. Home Office not implemented. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement PERF-C. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — not committed |
+
+### 2026-09-17 — FG-035 PERF-C product definition / owner-decision freeze (docs-only / not committed)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 17 SEP 2026 |
+| Objective | Freeze PERF-C owner decisions as Company Attention product definition. Docs-only. No implementation. |
+| Business decision | PERF-C answers **Where does my business need attention?** Not Home Office. Dedicated Company Attention office/management surface later. Quiet copy **Nothing needs attention right now.** Organization-wide V1. No Field Company Attention. |
+| Architectural decision | Derived read-only aggregation of sealed PERF-B DTO including `project_id`. No new fact types. No schema. No acknowledgement / resolution. PERF-A / PERF-B remain SEALED. |
+| Prompt template used | FG-035 PERF-C PRODUCT-DEFINITION / OWNER-DECISION FREEZE / DOCS-ONLY / NO IMPLEMENTATION |
+| Approved Cursor prompt summary | Create fg-035-perf-c-product-definition.md analogous to PERF-B freeze. Minimum indexes. DEFINED / NOT IMPLEMENTATION-AUTHORIZED. Do not implement. Do not commit. |
+| Files expected to change | Freeze record + minimum indexes / continuity |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; Field; MONITOR money; PERF-A/B product |
+| Implementation result | Owner decisions later corrected same day. PERF-C DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED. No product. |
+| Tests | NOT RERUN. Last accepted full suite remains **1190 passed**, 4212 warnings, **746.12s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | yes |
+| Constitutional issue raised | no |
+| Unresolved issues | PERF-C not implementation-authorized. Home Office not implemented. Future-boundary items recorded in freeze §6. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement PERF-C. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — not committed |
+
 ### 2026-09-17 — FG-035 PERF-B CLOSE / COMMIT / SHA-PIN / PUSH
 
 | Field | Content |

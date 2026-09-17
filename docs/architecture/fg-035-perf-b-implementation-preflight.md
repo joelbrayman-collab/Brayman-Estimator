@@ -29,6 +29,8 @@ NO FIELD
 NO MONITOR MONEY CHANGE
 ```
 
+**Subsequent status (2026-09-17 PERF-C product definition / owner-decision freeze):** PERF-C **DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Contractor question: **Where does my business need attention?** Freeze [fg-035-perf-c-product-definition.md](fg-035-perf-c-product-definition.md). PERF-B remains **SEALED**. No schema. No product. V1 **not rescored**.
+
 **Subsequent status (2026-09-17 PERF-B CLOSE / COMMIT / SHA-PIN / PUSH):** PERF-B **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED**. Product SHA **`dcde4adfe4a475932b7f144b0220b2b60e4bd75c`**. Project **50**. No schema. PERF-C **NOT AUTHORIZED**. V1 **not rescored**. Evidence [testing/fg035-perf-b-live-bounded-uat-record.md](../testing/fg035-perf-b-live-bounded-uat-record.md).
 
 **Subsequent status (2026-09-17 PERF-B bounded synthetic live UAT):** PERF-B **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **50**. Office Hub `http://127.0.0.1:5461/projects/50#hub-labour`. Dedicated **36 passed**. Focused **206 passed**. Full suite **1190 passed**, 4212 warnings, **746.12s**, exit **0**. No schema. Not committed. Not pushed. PERF-C **NOT AUTHORIZED**. V1 **not rescored**. Evidence [testing/fg035-perf-b-live-bounded-uat-record.md](../testing/fg035-perf-b-live-bounded-uat-record.md).

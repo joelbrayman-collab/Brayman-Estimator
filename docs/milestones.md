@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-17 — FG-035 PERF-C product definition / owner-decision freeze (docs-only / not committed)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 PERF-C |
+| Status | **OPEN / PARTIAL.** PERF-C **DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. PERF-A / PERF-B remain **SEALED**. No new ADR. No schema. V1 **60% / 4 of 11** **NO RESCORE**. |
+| Branch | `main` |
+| Base commit | `1b80d244e3efb0c65d3a02dd247d923dfd95166c` |
+| Objective | Freeze Company Attention owner decisions. Docs-only. No product. |
+| Deliverables | [architecture/fg-035-perf-c-product-definition.md](architecture/fg-035-perf-c-product-definition.md). Minimum index / continuity updates. |
+| Validation | Docs-only. Tests **not rerun**. Last accepted full suite **1190 passed**, 4212 warnings, **746.12s**, exit **0**. Alembic **`f9b0c1d2e3f4 (head)`**. |
+| Architectural findings | Business-level attention: **Where does my business need attention?** Initial facts = sealed PERF-B only. Not a new risk engine. No persistence. Not Home Office. **NO COMPANY ATTENTION IN THE FIELD APP.** Permission domains A/B/C recorded, not implemented. Organization-wide V1. |
+| Open decisions | PERF-C implementation authorization. Home Office. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** implement PERF-C. |
+| Commit | none — not committed |
+| Date | 2026-09-17 |
+
 ### 2026-09-17 — FG-035 PERF-B CLOSE / COMMIT / SHA-PIN / PUSH
 
 | Field | Content |

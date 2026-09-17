@@ -365,6 +365,8 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 
 **Joel decision #4 (2026-09-14):** customer Proposal/PDF terminology **IMPLEMENTED** as the FG-025 customer-document language slice. Existing Proposal preview/PDF reused. Customer-facing title **CONSTRUCTION ESTIMATE**. No schema/migration. FG-025 overall **NOT CLOSED**. V1 score **unchanged**.
 
+**Subsequent status (2026-09-17 PERF-B CLOSE / COMMIT / SHA-PIN / PUSH):** FG-035 PERF-B **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED**. Product SHA **`dcde4adfe4a475932b7f144b0220b2b60e4bd75c`**. Project **50**. No schema. **Do not rescore**. Do **not** start PERF-C. Do **not** close FG-035. Evidence [testing/fg035-perf-b-live-bounded-uat-record.md](testing/fg035-perf-b-live-bounded-uat-record.md).
+
 **Subsequent status (2026-09-17 PERF-B bounded synthetic live UAT):** FG-035 PERF-B **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **50**. Dedicated **36 passed**. Focused **206 passed**. Full suite **1190 passed**, 4212 warnings, **746.12s**, exit **0**. No schema. Not committed. Not pushed. **Do not rescore**. Do **not** start PERF-C. Do **not** close FG-035. Evidence [testing/fg035-perf-b-live-bounded-uat-record.md](testing/fg035-perf-b-live-bounded-uat-record.md).
 
 **Subsequent status (2026-09-17 PERF-B engineering implementation):** FG-035 PERF-B **IMPLEMENTED / TESTED / NOT LIVE-UAT**. Dedicated **36 passed**. Focused **206 passed**. Full suite **1190 passed**, 4212 warnings, **619.11s**, exit **0**. No schema. Not committed. Not pushed. No live UAT. **Do not rescore**. Do **not** start PERF-C. Do **not** close FG-035.

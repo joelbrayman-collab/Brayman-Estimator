@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-17 — FG-035 PERF-B CLOSE / COMMIT / SHA-PIN / PUSH
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 PERF-B |
+| Status | **OPEN / PARTIAL.** PERF-B **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED**. PERF-A remains **SEALED**. No new ADR. No schema. V1 **60% / 4 of 11** **NO RESCORE**. |
+| Branch | `main` |
+| Base commit | `11a11cb33e8bc7c185557980a1852af66d53b367` |
+| Objective | Commit accepted Project Needs Attention. SHA-pin. Push. |
+| Deliverables | Product SHA **`dcde4adfe4a475932b7f144b0220b2b60e4bd75c`**. No PERF-B migration. Evidence [testing/fg035-perf-b-live-bounded-uat-record.md](testing/fg035-perf-b-live-bounded-uat-record.md). |
+| Validation | Dedicated **36 passed**. Focused **206 passed**. Full suite **1190 passed**, 4212 warnings, **746.12s**, exit **0**. Bounded synthetic live UAT Project **50**. |
+| Architectural findings | No schema. SEQUENCE consumed from SCH. Waiting is not its own fact. Field and MONITOR money unchanged. Warning law informational / non-blocking. |
+| Open decisions | PERF-C. Home Office. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin PERF-C. |
+| Commit | `dcde4adfe4a475932b7f144b0220b2b60e4bd75c` |
+| Date | 2026-09-17 |
+
 ### 2026-09-17 — FG-035 PERF-B bounded synthetic live UAT (uncommitted)
 
 | Field | Content |

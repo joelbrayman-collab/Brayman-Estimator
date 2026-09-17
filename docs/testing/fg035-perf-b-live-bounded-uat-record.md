@@ -4,14 +4,14 @@
 |-----------|--------|
 | Date | 2026-09-17 |
 | Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL** |
-| Slice | PERF-B **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS** |
+| Slice | PERF-B **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED** |
 | ADR | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
 | Alembic | Live current = repository head **`f9b0c1d2e3f4 (head)`**. **No PERF-B migration.** |
 | Freeze | [architecture/fg-035-perf-b-implementation-preflight.md](../architecture/fg-035-perf-b-implementation-preflight.md) |
 
 ## Scope
 
-Prove Project Hub `#hub-labour` Needs Attention on **one** new synthetic Project using existing SCOPE, TIME, Schedule, and Change Order authority. Do **not** persist attention rows. Do **not** implement PERF-C, Home Office, Field PERF, MONITOR money changes, Print, Shop, Banked Hours, QB-T, CLOSE, or LEARN. Do **not** mutate Projects **45 / 46 / 47 / 48 / 49** or EST-2026-0019. V1 **not rescored**. **No commit. No push.**
+Prove Project Hub `#hub-labour` Needs Attention on **one** new synthetic Project using existing SCOPE, TIME, Schedule, and Change Order authority. Do **not** persist attention rows. Do **not** implement PERF-C, Home Office, Field PERF, MONITOR money changes, Print, Shop, Banked Hours, QB-T, CLOSE, or LEARN. Do **not** mutate Projects **45 / 46 / 47 / 48 / 49** or EST-2026-0019. V1 **not rescored**. Later **COMMITTED / SHA-PINNED / PUSHED**.
 
 ```text
 FG-035:
@@ -22,8 +22,7 @@ TIME IMPLEMENTED
 SCH-A/B/C/D IMPLEMENTED
 PERF-A IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS
 PERF-B IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS
-NOT COMMITTED
-NOT PUSHED
+COMMITTED / SHA-PINNED / PUSHED
 PERF-C / CLOSE / LEARN / QB-T NOT AUTHORIZED
 NO SCHEMA
 V1 NOT RESCORED
@@ -34,8 +33,9 @@ V1 NOT RESCORED
 | Field | Value |
 |-------|--------|
 | HEAD / `origin/main` at UAT inspect | **`11a11cb33e8bc7c185557980a1852af66d53b367`** (`docs: freeze FG-035 PERF-B implementation design`) |
-| Divergence | **0 0** |
-| Working tree | DIRTY — reviewed PERF-B product + tests + docs + this UAT record. **Not committed.** |
+| Product PERF-B SHA | **`dcde4adfe4a475932b7f144b0220b2b60e4bd75c`** (`feat: implement FG-035 PERF-B needs attention`) |
+| Divergence at UAT inspect | **0 0** |
+| Working tree at UAT inspect | DIRTY — reviewed PERF-B product + tests + docs + this UAT record. Later **COMMITTED / SHA-PINNED / PUSHED**. |
 | Live current | **`f9b0c1d2e3f4 (head)`** unchanged |
 | PERF alert tables | **none** (131 SQLite tables; no attention/alert persistence) |
 
@@ -265,8 +265,7 @@ Every required PERF-B bounded live-UAT acceptance criterion is supported by dura
 
 ```text
 PERF-B IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS.
-NOT COMMITTED.
-NOT PUSHED.
+COMMITTED / SHA-PINNED / PUSHED.
 NO SCHEMA.
 NO PERF-C.
 V1 NOT RESCORED.

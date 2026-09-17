@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — FG-035 PERF-B CLOSE / COMMIT / SHA-PIN / PUSH
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Commit, SHA-pin, and push accepted FG-035 PERF-B. No PERF-C. |
+| Business decision | PERF-B accepted as IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS. Completeness YES. |
+| Architectural decision | No schema. Consume existing SCOPE / TIME / SCH SEQUENCE. Do not persist attention. MONITOR money unchanged. Field unchanged. |
+| Prompt template used | FG-035 PERF-B PROJECT NEEDS ATTENTION FINAL CLOSE / COMMIT / SHA-PIN / PUSH / NO PERF-C |
+| Approved Cursor prompt summary | Classify dirt. Stage PERF-B only. Product commit. Pin SHA. Push origin/main. STOP. Do not begin PERF-C. |
+| Files expected to change | PERF-B product / tests / UAT / governance / Manual Impact; pin continuity |
+| Files prohibited from changing | Alembic; Field product; `assemble_monitor_v1` formulas; live Projects 45–49; EST-2026-0019 |
+| Implementation result | Product SHA **`dcde4adfe4a475932b7f144b0220b2b60e4bd75c`**. This pin follows. PERF-B **COMMITTED / SHA-PINNED / PUSHED**. |
+| Tests | Not rerun (docs pin after accepted post-live-UAT). Dedicated **36 passed**. Focused **206 passed**. Full **1190 passed**, 4212 warnings, **746.12s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | yes |
+| Constitutional issue raised | no |
+| Unresolved issues | PERF-C not authorized. Desktop Contractor Experience / Home Office not implemented. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** begin PERF-C. |
+| Next approved prompt | none — STOP |
+| Commit hash | product `dcde4adfe4a475932b7f144b0220b2b60e4bd75c`; this pin |
+
 ### 2026-09-17 — FG-035 PERF-B bounded synthetic live UAT (uncommitted)
 
 | Field | Content |

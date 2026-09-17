@@ -365,6 +365,10 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 
 **Joel decision #4 (2026-09-14):** customer Proposal/PDF terminology **IMPLEMENTED** as the FG-025 customer-document language slice. Existing Proposal preview/PDF reused. Customer-facing title **CONSTRUCTION ESTIMATE**. No schema/migration. FG-025 overall **NOT CLOSED**. V1 score **unchanged**.
 
+**Subsequent status (2026-09-17 PERF-A design freeze sealed):** FG-035 PERF-A **IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTED**. Freeze committed / pushed. No schema. No product. **Do not rescore**. Do **not** implement PERF-A from this register. Do **not** start PERF-B. Do **not** close FG-035.
+
+**Subsequent status (2026-09-17 PERF-A implementation preflight):** FG-035 PERF-A **IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTED**. Freeze [architecture/fg-035-perf-a-implementation-preflight.md](architecture/fg-035-perf-a-implementation-preflight.md). No schema. No product. **Do not rescore**. Do **not** implement PERF-A from this register. Do **not** start PERF-B. Do **not** close FG-035.
+
 **Subsequent status (2026-09-17 SCH-D physical iPhone UAT PASS):** FG-035 SCH-D **IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / NOT COMMITTED / NOT PUSHED**. No migration. G1–G6 **PHYSICAL PASS**. Directions + native iOS return **PHYSICAL PASS**. Full suite **1140 passed**. **Do not rescore**. Do **not** start PERF from this register. Do **not** close FG-035.
 
 **Subsequent status (2026-09-16 SCH-D):** FG-035 SCH-D **IMPLEMENTED / TESTED / NOT LIVE-UAT / PHYSICAL IPHONE UAT NOT CLAIMED**. No migration. Field Today / Week / Month + schedule-assisted Time. **Do not rescore**. Do **not** start another FG-025 slice. Do **not** implement Print or PERF from this register. Do **not** claim physical iPhone PASS.

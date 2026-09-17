@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — FG-035 PERF-A design freeze sealed (docs-only commit / push)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Commit and push the accepted PERF-A implementation preflight. Docs-only. No product. |
+| Business decision | PERF-A preflight **ACCEPTED / DESIGN FROZEN / NOT IMPLEMENTED**. Needs review is informational attention copy, not a red error. |
+| Architectural decision | Preserve freeze: Used=APPROVED; Waiting=SUBMITTED; Activity grain; Extra Work separate; Hub `#hub-labour`; `assemble_project_performance` MONITOR sibling; schema none. No separate pin (SCH freeze convention). |
+| Prompt template used | FG-035 PERF-A SEAL IMPLEMENTATION PREFLIGHT — DOCS-ONLY COMMIT / PUSH |
+| Approved Cursor prompt summary | Review docs-only diff. Commit `docs: freeze FG-035 PERF-A implementation design`. Push `origin/main`. STOP. Do not implement PERF-A. |
+| Files expected to change | Docs only |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; live DB |
+| Implementation result | This commit seals freeze [architecture/fg-035-perf-a-implementation-preflight.md](architecture/fg-035-perf-a-implementation-preflight.md). |
+| Tests | Not rerun (docs-only). Last sealed full suite remains SCH-D post-physical **1140 passed** / 0 failed / exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | no — not a coded milestone |
+| Constitutional issue raised | no |
+| Unresolved issues | PERF-A product not implemented. PERF-B / PERF-C not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement PERF-A unless separately authorized. |
+| Next approved prompt | none — STOP |
+| Commit hash | this commit |
+
+### 2026-09-17 — FG-035 PERF-A implementation preflight (docs-only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Freeze PERF-A Project / Element labour Allowed · Used · Remaining using existing SCOPE + TIME authority. Docs-only. No product. |
+| Business decision | PERF reconciliation **ACCEPTED**. Used = APPROVED only. Extra Work not in Allowed. Waiting = SUBMITTED. Over by rather than negative Remaining. Needs Attention / progress / Forecast Finish / 80%–100% / company attention **not** PERF-A. |
+| Architectural decision | Consume `current_authorized_hours()` / `inherit_scope_lineage()` / `approved_labour_hours()`. Activity grain. Element/Project sums. Planned `app/services/project_performance.py` `assemble_project_performance`. Hub `#hub-labour` after Time before MONITOR. No schema. No MONITOR money change. No Field. |
+| Prompt template used | FG-035 PERF-A PROJECT LABOUR PERFORMANCE IMPLEMENTATION PREFLIGHT — DOCS-ONLY / NO PRODUCT IMPLEMENTATION |
+| Approved Cursor prompt summary | Freeze PERF-A arithmetic, Hub placement, copy, tests, Feature Gate answers. STOP. Do not implement. |
+| Files expected to change | Docs only: freeze file, FG-035, indexes, continuity |
+| Files prohibited from changing | `app/`; `tests/`; Alembic; live DB; UAT Projects 45–48; EST-2026-0019; PERF-B product; MONITOR assembler |
+| Implementation result | Freeze [architecture/fg-035-perf-a-implementation-preflight.md](architecture/fg-035-perf-a-implementation-preflight.md) **DESIGN FROZEN / NOT IMPLEMENTED**. Schema **NONE**. V1 **not rescored**. Working tree docs-only dirty; **not committed**. |
+| Tests | Not run (docs-only; no product). Last governed full suite remains SCH-D post-physical **1140 passed**. |
+| Project-state-report update | yes |
+| Milestone entry update | no — not a coded milestone |
+| Constitutional issue raised | no |
+| Unresolved issues | PERF-A not implemented. PERF-B / PERF-C / CLOSE / LEARN / QB-T not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement PERF-A unless separately authorized. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — docs-only working tree; not committed |
+
 ### 2026-09-17 — FG-035 SCH-D final close / commit / SHA-pin / push
 
 | Field | Content |

@@ -15,7 +15,7 @@
 
 **Subsequent status (2026-09-17 Company/Management access-domain seam):** Owner freeze [company-management-access-domain-seam.md](../architecture/company-management-access-domain-seam.md). This **narrowly amends Decision 4**: job-title RBAC remains **rejected**. Explicitly governed information/access domains associated with organization membership are **permitted**. Decision 4 remains the historical FG-018 close record and is **not rewritten**. This does **not** reopen [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md).
 
-**Subsequent status (2026-09-17 FG-037 Slice A):** [FG-037](../feature-gates/FG-037-company-management-access-domain-authorization.md) **OPEN / SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO LIVE GRANT**. Product SHA **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`**. Additive **`a0b1c2d3e4f5`** not applied live. No live grant. This ADR is **not rewritten**. This does **not** authorize PERF-C product, Sensitive Financial, Settings Members, or a generic RBAC platform.
+**Subsequent status (2026-09-17 FG-037 Slice A):** [FG-037](../feature-gates/FG-037-company-management-access-domain-authorization.md) **OPEN / SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / NO LIVE GRANT / NOT CLOSED**. Product SHA **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`**. Additive **`a0b1c2d3e4f5`** applied live. No live grant. This ADR is **not rewritten**. This does **not** authorize PERF-C product, Sensitive Financial, Settings Members, or a generic RBAC platform.
 
 ---
 

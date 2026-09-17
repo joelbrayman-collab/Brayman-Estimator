@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — FG-037 Slice B live migration (docs-only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 17 SEP 2026 |
+| Objective | Apply authorized live upgrade `f9b0c1d2e3f4` → `a0b1c2d3e4f5` and record schema / zero-grant / Domain A non-regression. |
+| Business decision | Schema only. No live `COMPANY_MANAGEMENT` grant. First recipient UNRESOLVED. |
+| Architectural decision | Live current = graph head **`a0b1c2d3e4f5 (head)`**. A remains active membership. B remains default deny until explicit grant. |
+| Prompt template used | FG-037 SLICE B — LIVE MIGRATION + SCHEMA / NON-REGRESSION VERIFICATION |
+| Approved Cursor prompt summary | Pre-migration verify; `flask db upgrade` only; verify schema/zero grants/membership fingerprints; Domain A tests; docs; commit/push. No live grant. No PERF-C. |
+| Files expected to change | Minimum FG-037 / current-state / handoff / workflow / indexes |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; stash; Field; PERF-C; memberships |
+| Implementation result | Upgrade applied. Table exists. Grant count **0**. User 14 / membership 13 fingerprints unchanged. Domain A/Field **154 passed**. Stash preserved. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_access_domains.py tests/test_auth_fg018.py tests/test_organization_foundation.py tests/test_project_hub.py tests/test_work_time_fg035.py tests/test_work_schedule_fg035.py tests/test_work_schedule_field_fg035.py tests/test_field_web_fg021.py` → **154 passed**, 435 warnings, **79.02s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | no — not closed / no live grant UAT |
+| Constitutional issue raised | no |
+| Unresolved issues | First live grant UNRESOLVED. PERF-C not implementation-authorized. Recovery stash drop later. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-grant. |
+| Next approved prompt | none — STOP |
+| Commit hash | this live-migration docs commit |
+
 ### 2026-09-17 — FG-037 Slice A product SHA pin (docs-only)
 
 | Field | Content |

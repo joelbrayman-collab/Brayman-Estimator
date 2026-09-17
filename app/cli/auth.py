@@ -1,4 +1,4 @@
-"""Flask CLI auth group — bootstrap and password reset. No credentials in Git."""
+"""Flask CLI auth group — bootstrap, password reset, and access-domain grants."""
 
 from __future__ import annotations
 
@@ -8,6 +8,13 @@ import os
 import click
 from flask.cli import with_appcontext
 
+from app.services.access_domains import (
+    ACCESS_DOMAIN_COMPANY_MANAGEMENT,
+    AccessDomainError,
+    describe_access_domains,
+    grant_access_domain,
+    revoke_access_domain,
+)
 from app.services.auth import AuthServiceError, bootstrap_org_001_user, reset_password
 
 
@@ -61,3 +68,53 @@ def reset_password_command(email):
     except AuthServiceError as exc:
         raise click.ClickException(str(exc)) from exc
     click.echo(f"Password updated for {user.email}.")
+
+
+@auth_cli.command("grant-access-domain")
+@click.option("--membership-id", "membership_id", required=True, type=int)
+@click.option("--domain", "domain_key", required=True)
+@with_appcontext
+def grant_access_domain_command(membership_id, domain_key):
+    """Grant a recognized stored access domain onto one membership. Idempotent."""
+    try:
+        grant_access_domain(membership_id=membership_id, domain_key=domain_key)
+    except AccessDomainError as exc:
+        raise click.ClickException(str(exc)) from exc
+    click.echo(
+        f"Access domain {domain_key} is present on membership {membership_id}."
+    )
+
+
+@auth_cli.command("revoke-access-domain")
+@click.option("--membership-id", "membership_id", required=True, type=int)
+@click.option("--domain", "domain_key", required=True)
+@with_appcontext
+def revoke_access_domain_command(membership_id, domain_key):
+    """Revoke a recognized stored access domain from one membership. Idempotent."""
+    try:
+        revoke_access_domain(membership_id=membership_id, domain_key=domain_key)
+    except AccessDomainError as exc:
+        raise click.ClickException(str(exc)) from exc
+    click.echo(
+        f"Access domain {domain_key} is absent on membership {membership_id}."
+    )
+
+
+@auth_cli.command("show-access-domains")
+@click.option("--membership-id", "membership_id", required=True, type=int)
+@with_appcontext
+def show_access_domains_command(membership_id):
+    """Show stored grants and whether COMPANY_MANAGEMENT is currently effective."""
+    try:
+        info = describe_access_domains(membership_id=membership_id)
+    except AccessDomainError as exc:
+        raise click.ClickException(str(exc)) from exc
+    stored = ", ".join(info["stored_domains"]) or "(none)"
+    effective = "yes" if info["effective_COMPANY_MANAGEMENT"] else "no"
+    click.echo(f"membership_id: {info['membership_id']}")
+    click.echo(f"organization_id: {info['organization_id']}")
+    click.echo(f"user_id: {info['user_id']}")
+    click.echo(f"user_active: {'yes' if info['user_active'] else 'no'}")
+    click.echo(f"membership_active: {'yes' if info['membership_active'] else 'no'}")
+    click.echo(f"stored_domains: {stored}")
+    click.echo(f"effective_{ACCESS_DOMAIN_COMPANY_MANAGEMENT}: {effective}")

@@ -64,6 +64,45 @@ class UserMembership(db.Model):
 
     user = db.relationship("User", back_populates="memberships")
     organization = db.relationship("Organization")
+    access_domain_grants = db.relationship(
+        "UserMembershipAccessDomainGrant",
+        back_populates="membership",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self):
         return f"<UserMembership user={self.user_id} org={self.organization_id}>"
+
+
+class UserMembershipAccessDomainGrant(db.Model):
+    """Explicit information/access domain grant on one organization membership."""
+
+    __tablename__ = "user_membership_access_domain_grants"
+    __table_args__ = (
+        db.UniqueConstraint(
+            "user_membership_id",
+            "domain_key",
+            name="uq_user_membership_access_domain_grants_membership_domain",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_membership_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user_memberships.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    domain_key = db.Column(db.String(64), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    membership = db.relationship(
+        "UserMembership",
+        back_populates="access_domain_grants",
+    )
+
+    def __repr__(self):
+        return (
+            f"<UserMembershipAccessDomainGrant "
+            f"membership={self.user_membership_id} domain={self.domain_key}>"
+        )

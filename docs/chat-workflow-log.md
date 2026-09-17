@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — FG-037 Slice A restore / complete (working tree / not committed)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 17 SEP 2026 |
+| Objective | Restore preserved FG-037 WIP and finish Slice A: model, service, CLI, additive migration FILE, dedicated tests, FG-037 record. |
+| Business decision | A = active membership. B = explicit `COMPANY_MANAGEMENT` / default deny. C = future. No live grant. No live migrate. No PERF-C. |
+| Architectural decision | Membership grant rows. Application owns recognized keys. Server-side helper; not a global `protect_office_routes` B gate. CLI by `--membership-id`. |
+| Prompt template used | FG-037 SLICE A — RESTORE / RECONCILE / COMPLETE |
+| Approved Cursor prompt summary | Verify stash; apply without drop; complete Slice A; tests; no commit/push/live migrate/live grant. |
+| Files expected to change | user model; access_domains service; flask auth CLI; one Alembic file; tests; FG-037 + minimum indexes |
+| Files prohibited from changing | Field product; PERF-C; Schedule/TIME rules; live DB |
+| Implementation result | Slice A implemented in working tree. Additive **`a0b1c2d3e4f5`** not applied live. Stash preserved. |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_access_domains.py` → **23 passed**, 75 warnings, **18.72s**, exit **0**. Focused auth/org/Project/Schedule/Time/Field `./venv/bin/python -m pytest -q tests/test_auth_fg018.py tests/test_organization_foundation.py tests/test_project_hub.py tests/test_work_time_fg035.py tests/test_work_schedule_fg035.py tests/test_work_schedule_assignment_fg035.py tests/test_work_schedule_dependency_fg035.py tests/test_work_schedule_field_fg035.py tests/test_field_web_fg021.py` → **154 passed**, 418 warnings, **106.05s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` → **1213 passed**, 4287 warnings, **638.51s**, exit **0**. Historical Alembic graph-head pins updated to **`a0b1c2d3e4f5`**. |
+| Project-state-report update | yes |
+| Milestone entry update | no — not live-migrated / not closed |
+| Constitutional issue raised | no |
+| Unresolved issues | Live migrate separately authorized. First live grant UNRESOLVED. PERF-C not implementation-authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** commit. Do **not** live-migrate. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — not committed |
+
 ### 2026-09-17 — Official V1 rescore 65% (docs-only / COMMIT / PUSH)
 
 | Field | Content |

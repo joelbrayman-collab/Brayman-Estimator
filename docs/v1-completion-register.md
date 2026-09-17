@@ -202,7 +202,7 @@ Remaining functional software (not counted as built):
 5. Interactive in-product Help
 6. Voice assistance
 
-Do **not** count legal approval, deployment, documentation, training, or V1-11 certification as missing software in this secondary measure. Stashed FG-037 WIP is **not** counted as built. **Subsequent (2026-09-17 FG-037 close):** FG-037 is **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION**; this secondary **79% / 22 of 28** is **not rescored** here.
+Do **not** count legal approval, deployment, documentation, training, or V1-11 certification as missing software in this secondary measure. Stashed FG-037 WIP is **not** counted as built. **Subsequent (2026-09-17 FG-037 close):** FG-037 is **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION**; this secondary **79% / 22 of 28** is **not rescored** here. **Subsequent (2026-09-17 PERF-C LIVE UAT / SEAL):** PERF-C is **SEALED** and **eligible** for subsequent Functional V1 Build score reconciliation; this secondary **79% / 22 of 28** is **not rescored** here.
 
 ---
 
@@ -390,6 +390,8 @@ SIGN-A freeze + request + audit is live. SIGN-B invitation + public ceremony is 
 Remaining unauthorized candidates: Historical Evidence nav/screens; standalone Permit screens; Hub PRICE leftover `TRUE_GROSS_MARGIN`; final product-wide sweep.
 
 **Joel decision #4 (2026-09-14):** customer Proposal/PDF terminology **IMPLEMENTED** as the FG-025 customer-document language slice. Existing Proposal preview/PDF reused. Customer-facing title **CONSTRUCTION ESTIMATE**. No schema/migration. FG-025 overall **NOT CLOSED**. V1 score **unchanged**.
+
+**Subsequent status (2026-09-17 PERF-C LIVE UAT / SEAL):** FG-035 PERF-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE UAT PASS / SEALED**. Product SHA **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**. Evidence [testing/fg035-perf-c-live-uat-record.md](testing/fg035-perf-c-live-uat-record.md). **Do not rescore**. PERF-C is now **eligible** for subsequent Functional V1 Build score reconciliation. Do **not** close FG-035. Do **not** implement Home Office or Project lifecycle from this register.
 
 **Subsequent status (2026-09-17 PERF-C Slice A COMMIT / PUSH / SHA-PIN):** FG-035 PERF-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-UATed**. Product SHA **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**. Office `/company-attention`. Requires `COMPANY_MANAGEMENT`. No schema. No live UAT. **Do not rescore**. Do **not** close FG-035. Do **not** implement Home Office from this register.
 

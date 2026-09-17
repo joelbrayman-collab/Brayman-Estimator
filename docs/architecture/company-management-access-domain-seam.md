@@ -14,6 +14,8 @@
 
 **Subsequent status (2026-09-17 People & Access freeze):** [people-and-access-product-direction.md](people-and-access-product-direction.md) **RECORDED MANDATORY PRODUCT DIRECTION / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Future contractor-facing administration of people, access, Sys Admin, and Delete User. This freeze remains the Domain B owner-decision contract and is **not rewritten**. FG-037 remains **CLOSED**. Do **not** implement People & Access from this file.
 
+**Subsequent status (2026-09-17 PERF-C LIVE UAT / SEAL):** PERF-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE UAT PASS / SEALED**. Product SHA **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**. First consumer of this seam: office `/company-attention`. This freeze remains the owner-decision contract and is **not rewritten**. Do **not** implement Sensitive Financial or People & Access from this file.
+
 **Subsequent status (2026-09-17 PERF-C Slice A COMMIT / PUSH / SHA-PIN):** PERF-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-UATed**. Product SHA **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**. First consumer of this seam: office `/company-attention`. This freeze remains the owner-decision contract and is **not rewritten**. Do **not** implement Sensitive Financial or People & Access from this file.
 
 **Subsequent status (2026-09-17 PERF-C Slice A working tree):** PERF-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-UATed**. First consumer of this seam: office `/company-attention` via `require_access_domain(ACCESS_DOMAIN_COMPANY_MANAGEMENT)`. This freeze remains the owner-decision contract and is **not rewritten**. Do **not** implement Sensitive Financial or People & Access from this file.

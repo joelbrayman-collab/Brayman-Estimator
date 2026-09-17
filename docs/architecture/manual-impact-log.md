@@ -53,6 +53,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PERF-C LIVE UAT / SEAL (2026-09-17)
+
+| Field | Content |
+|-------|---------|
+| Slice | FG-035 PERF-C Company Attention live UAT / seal |
+| Product status at capture | **CURRENT** — PERF-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE UAT PASS / SEALED**. Product SHA **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**. Evidence [testing/fg035-perf-c-live-uat-record.md](../testing/fg035-perf-c-live-uat-record.md). |
+| 1. What new contractor capability exists? | Joel can open office Company Attention and see where the business needs attention across the company’s Projects. Another office user without Company / Management permission cannot. Field does not show Company Attention. |
+| 2. When would the contractor use it? | Opening the office to ask: Where does my business need attention? Then following Review to the existing Project destination. |
+| 3. What workflow will the final Manual need to teach? | What is Company Attention? Why can Joel see it and AUTH-B cannot? Why is it not in Field? What does each Needs Attention item mean (reuse PERF-B language)? Why leftover test Projects can currently appear in the list until a later Project lifecycle exists. |
+| 4. What contractor-facing terms must be used? | Company Attention. Where does my business need attention? Nothing needs attention right now. Extra work needs review. Labour getting close. Labour allowance used. Labour over allowance. Scheduled finish passed. Scheduled work has no approved Time. Do **not** use: Home Office, scorecard, health, risk, severity, RBAC, Active/Archived. |
+| 5. What screenshots / Print examples will eventually be needed? | Quiet positive. Several Projects. One Project with several items. Capture later against finished Manual sequencing. Do **not** treat current UAT-vessel occupancy as the customer screenshot set. |
+| 6. What warnings / validation distinctions need explanation? | Company Attention does **not** stop work. It does **not** acknowledge or resolve items. Project access does **not** give Company Attention. Company Attention does **not** give Sensitive Financial. Field Company Today is a different screen. Historical / test Projects may currently appear because Company Attention is organization-wide. |
+| 7. Desktop / iPhone / Print relevance | Office / management desktop first. Adaptive office layout. Field unchanged. Print later. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. Claim Home Office. Claim Sensitive Financial. Claim People & Access. Claim FG-035 closed. Invent Active/Archived filtering. |
+
 ### MANUAL IMPACT — PERF-C (2026-09-17)
 
 | Field | Content |

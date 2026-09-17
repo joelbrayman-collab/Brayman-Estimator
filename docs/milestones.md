@@ -34,6 +34,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-17 — FG-035 PERF-C LIVE UAT / SEAL (docs-only)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 PERF-C |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE UAT PASS / SEALED.** No schema. No live occupancy mutation. |
+| Branch | `main` |
+| Base commit | `d6febfcac0687584f631987205282a8202fa99ef` |
+| Objective | Record Architect live-UAT disposition and seal PERF-C. |
+| Deliverables | [testing/fg035-perf-c-live-uat-record.md](testing/fg035-perf-c-live-uat-record.md); minimum PERF-C / FG-035 governance. |
+| Validation | Architect-accepted existing-occupancy UAT: Joel `/company-attention` **200**; AUTH-B **403**; 49 Projects considered; 6 with attention; 27 sealed facts; 0 unsupported; 0 duplicates. |
+| Architectural findings | Organization-wide UAT-vessel dominance is valid occupancy noise / future Project lifecycle, not a PERF-C defect. No filtering implemented. |
+| Open decisions | Functional V1 Build score reconciliation. Project lifecycle. FG-035 remains OPEN (CLOSE / LEARN / QB-T). |
+| Next milestone | Architect-governed next product. STOP. |
+| Commit | this docs close (`docs: seal FG-035 PERF-C after live UAT`) |
+| Date | 2026-09-17 |
+
 ### 2026-09-17 — FG-035 PERF-C Company Attention Slice A COMMIT / PUSH / SHA-PIN
 
 | Field | Content |

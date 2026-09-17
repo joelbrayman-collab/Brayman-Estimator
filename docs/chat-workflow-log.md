@@ -45,6 +45,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — FG-035 PERF-C LIVE UAT / SEAL (docs-only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 17 SEP 2026 |
+| Objective | Record Architect live-UAT disposition and seal PERF-C. Docs-only. No product change. No Project filtering. |
+| Business decision | PERF-C LIVE UAT **PASS**. Existing occupancy **SUFFICIENT**. Additional synthetic vessel **NOT REQUIRED**. Product correction **NONE REQUIRED**. Organization-wide UAT-vessel dominance is **VALID** and is **not** a PERF-C defect; record as future Project lifecycle / Active-Archived decision. |
+| Architectural decision | PERF-C remains organization-wide. No filtering. No lifecycle states. No new ADR / Feature Gate. FG-035 remains **OPEN / PARTIAL**. Scores not rescored; PERF-C now eligible for later Functional Build reconciliation. |
+| Prompt template used | Architect PERF-C live UAT disposition + seal |
+| Approved Cursor prompt summary | Docs-only close: record live UAT PASS, seal PERF-C, commit `docs: seal FG-035 PERF-C after live UAT`, push. No product change. Preserve stash. |
+| Files expected to change | minimum PERF-C / FG-035 governance + UAT evidence record |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; Field; PERF-A/B engines; recovery stash |
+| Implementation result | PERF-C **SEALED**. Evidence [testing/fg035-perf-c-live-uat-record.md](testing/fg035-perf-c-live-uat-record.md). No product files. |
+| Tests | Docs-only. Product tests not rerun. Prior dedicated **13** / focused **115** / full **1226** remain the last product-suite evidence. |
+| Project-state-report update | yes |
+| Milestone entry update | yes — PERF-C seal; not FG-035 close |
+| Constitutional issue raised | no |
+| Unresolved issues | Project lifecycle / Active-Archived. Functional V1 Build score reconciliation. People & Access. Home Office. CLOSE / LEARN / QB-T. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | none — STOP |
+| Commit hash | this docs close |
+
 ### 2026-09-17 — FG-035 PERF-C Company Attention Slice A COMMIT / PUSH / SHA-PIN
 
 | Field | Content |

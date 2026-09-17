@@ -664,8 +664,9 @@ def get_time_entry(time_entry_id: int, *, organization_id: Optional[str] = None)
     return entry
 
 
-def approved_labour_hours(
+def _sum_labour_hours(
     *,
+    status: str,
     organization_id: Optional[str] = None,
     project_id: Optional[int] = None,
     project_work_element_id: Optional[int] = None,
@@ -676,11 +677,10 @@ def approved_labour_hours(
     work_date_from: Optional[date] = None,
     work_date_to: Optional[date] = None,
 ) -> Decimal:
-    """Authoritative APPROVED effective labour hours for later PERF / LEARN / QB-T."""
     org_id = _org_id(organization_id)
     query = LabourTimeEntry.query.filter_by(
         organization_id=org_id,
-        status=TIME_STATUS_APPROVED,
+        status=status,
     )
     if project_id is not None:
         query = query.filter_by(project_id=project_id)
@@ -702,19 +702,65 @@ def approved_labour_hours(
     return Decimal(str(total or 0)).quantize(HOURS_QUANTUM)
 
 
+def approved_labour_hours(
+    *,
+    organization_id: Optional[str] = None,
+    project_id: Optional[int] = None,
+    project_work_element_id: Optional[int] = None,
+    project_work_activity_id: Optional[int] = None,
+    scope_origin: Optional[str] = None,
+    change_order_id: Optional[int] = None,
+    worker_user_id: Optional[int] = None,
+    work_date_from: Optional[date] = None,
+    work_date_to: Optional[date] = None,
+) -> Decimal:
+    """Authoritative APPROVED effective labour hours for later PERF / LEARN / QB-T."""
+    return _sum_labour_hours(
+        status=TIME_STATUS_APPROVED,
+        organization_id=organization_id,
+        project_id=project_id,
+        project_work_element_id=project_work_element_id,
+        project_work_activity_id=project_work_activity_id,
+        scope_origin=scope_origin,
+        change_order_id=change_order_id,
+        worker_user_id=worker_user_id,
+        work_date_from=work_date_from,
+        work_date_to=work_date_to,
+    )
+
+
+def pending_labour_hours(
+    *,
+    organization_id: Optional[str] = None,
+    project_id: Optional[int] = None,
+    project_work_element_id: Optional[int] = None,
+    project_work_activity_id: Optional[int] = None,
+    scope_origin: Optional[str] = None,
+    change_order_id: Optional[int] = None,
+    worker_user_id: Optional[int] = None,
+    work_date_from: Optional[date] = None,
+    work_date_to: Optional[date] = None,
+) -> Decimal:
+    """Authoritative SUBMITTED labour hours waiting for approval."""
+    return _sum_labour_hours(
+        status=TIME_STATUS_SUBMITTED,
+        organization_id=organization_id,
+        project_id=project_id,
+        project_work_element_id=project_work_element_id,
+        project_work_activity_id=project_work_activity_id,
+        scope_origin=scope_origin,
+        change_order_id=change_order_id,
+        worker_user_id=worker_user_id,
+        work_date_from=work_date_from,
+        work_date_to=work_date_to,
+    )
+
+
 def project_time_summary(project_id: int, *, organization_id: Optional[str] = None) -> dict:
     org_id = _org_id(organization_id)
     _project_or_404(project_id, org_id)
     approved = approved_labour_hours(organization_id=org_id, project_id=project_id)
-    pending = (
-        LabourTimeEntry.query.filter_by(
-            organization_id=org_id,
-            project_id=project_id,
-            status=TIME_STATUS_SUBMITTED,
-        )
-        .with_entities(func.coalesce(func.sum(LabourTimeEntry.hours), 0))
-        .scalar()
-    )
+    pending = pending_labour_hours(organization_id=org_id, project_id=project_id)
     extra_work = approved_labour_hours(
         organization_id=org_id,
         project_id=project_id,
@@ -728,7 +774,7 @@ def project_time_summary(project_id: int, *, organization_id: Optional[str] = No
     )
     return {
         "approved_hours": approved,
-        "pending_hours": Decimal(str(pending or 0)).quantize(HOURS_QUANTUM),
+        "pending_hours": pending,
         "extra_work_hours": extra_work,
         "recent": recent,
         "scope_kind_label": contractor_scope_label,

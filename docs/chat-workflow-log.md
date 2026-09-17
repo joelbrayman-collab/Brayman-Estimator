@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — FG-035 PERF-A bounded synthetic live UAT (no commit)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Bounded synthetic live UAT of FG-035 PERF-A on one new Project. Fresh tests. UAT record. Governance. No commit. |
+| Business decision | Waiting does not reduce Remaining. Over by is not negative Remaining. Extra Work stays separate until current SCOPE lineage authorizes. Historical Time `scope_origin=EXTRA_WORK` still classified by current Activity lineage. Ben five-second **YES**. |
+| Architectural decision | Consume existing SCOPE/TIME/CO. No schema. MONITOR money unchanged. Field unchanged. No PERF-B. |
+| Prompt template used | FG-035 PERF-A PROJECT LABOUR PERFORMANCE LIVE BOUNDED SYNTHETIC UAT / NO COMMIT / NO PERF-B |
+| Approved Cursor prompt summary | Verify reviewed PERF-A package; create Project 49-class vessel; 100h Allowed; Approved/Submitted/Returned/Over-by/Extra Work/CO lineage; Hub Labour; MONITOR/Field firewalls; fresh dedicated/focused/full; UAT record; Manual Impact if needed. STOP. Do not commit. Do not start PERF-B. |
+| Files expected to change | `docs/testing/fg035-perf-a-live-bounded-uat-record.md`; PERF-A governance/Manual Impact from actual UAT |
+| Files prohibited from changing | Alembic; Field SCH-D product; `assemble_monitor_v1` formulas; live Projects 45–48; EST-2026-0019 |
+| Implementation result | PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **49**. Uncommitted. |
+| Tests | Dedicated `tests/test_project_labour_performance_fg035.py`: **14 passed**, 124 warnings, **10.69s**, exit **0**. Focused TAX/WBS+SCOPE+TIME+SCH-A/B/C/D+PERF-A+Hub/Field/MONITOR: **170 passed**, 708 warnings, **110.65s**, exit **0**. Full suite: **1154 passed**, 3873 warnings, **633.10s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | no — not committed; not a V1 rescore |
+| Constitutional issue raised | no |
+| Unresolved issues | PERF-B not authorized. Uncommitted working tree. Unknown-allowance live case satisfied by dedicated automated evidence. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** commit. Do **not** begin PERF-B. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — not committed |
+
+### 2026-09-17 — FG-035 PERF-A engineering implementation (no commit)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Implement FG-035 PERF-A Project labour Allowed · Used · Remaining on Hub. Engineering tests + docs. No live UAT. No commit. |
+| Business decision | Used = APPROVED. Waiting = SUBMITTED. Extra Work separate until current SCOPE lineage authorizes. Over by, not negative Remaining. Waiting does not reduce Remaining. Needs review is informational copy, not PERF-B. |
+| Architectural decision | Derived `assemble_project_performance`. TIME sibling `pending_labour_hours`. Activity grain. Consume `current_authorized_hours` / `inherit_scope_lineage` / `approved_labour_hours`. Hub `#hub-labour` after Time before MONITOR. No schema. MONITOR money and Field unchanged. |
+| Prompt template used | FG-035 PERF-A PROJECT LABOUR PERFORMANCE IMPLEMENTATION / NO LIVE UAT / NO COMMIT / NO PERF-B |
+| Approved Cursor prompt summary | Implement service, Hub Labour, contractor copy, dedicated tests, focused + full suite, governance docs, Manual Impact. STOP. Return to Architect. Do not live-UAT. Do not commit. Do not start PERF-B. |
+| Files expected to change | `app/services/project_performance.py`; TIME `pending_labour_hours`; Hub; contractor copy; Hub template; dedicated tests; required docs |
+| Files prohibited from changing | Alembic; Field SCH-D; `assemble_monitor_v1` formulas; live Projects 45–48; EST-2026-0019 |
+| Implementation result | PERF-A **IMPLEMENTED / TESTED / NOT LIVE-UAT**. Uncommitted. |
+| Tests | Dedicated `tests/test_project_labour_performance_fg035.py`: **14 passed**, 124 warnings, **8.26s**, exit **0**. Focused TAX/WBS+SCOPE+TIME+SCH-A/B/C/D+PERF-A+Hub/Field/MONITOR: **170 passed**, 708 warnings, **89.80s**, exit **0**. Full suite: **1154 passed**, 3873 warnings, **473.49s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | no — not committed; live UAT not performed |
+| Constitutional issue raised | no |
+| Unresolved issues | Live UAT not performed. PERF-B not authorized. Uncommitted working tree. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** commit. Do **not** live-UAT. Do **not** begin PERF-B. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — not committed |
+
 ### 2026-09-17 — FG-035 PERF-A design freeze sealed (docs-only commit / push)
 
 | Field | Content |

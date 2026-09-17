@@ -7,10 +7,14 @@
 | Target Milestone | Operational / learning loop (Time, Schedule, MONITOR labour-hours remainder, Closeout LEARN quality, calibration). Complements V1-08 / V1-11. **Does not rescore V1.** |
 | Module | **Projects** owns work-structure catalog and Project Element / Activity instances. Estimating owns `LabourTask` / snapshots (referenced). BUILD owns Time Entry (`labour_time_entries`). Projects owns Schedule overlay (`work_schedule_items` / `work_schedule_history`) for **SCH-A** and SCH-B assignments (`work_schedule_assignments`). Organization owns optional Crew (`organization_crews` / `organization_crew_members`). SCH architecture [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md) **RECORDED**. Design freeze [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md). MONITOR remains a consumer. LEARN remains a consumer. Project Controls owns `ChangeOrder` (referenced by SCOPE). |
 | Date | 2026-09-15 |
-| Status | **OPEN / PARTIAL.** TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-C **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-D **IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / COMMITTED / SHA-PINNED / PUSHED.** SCH overall **OPEN / PARTIAL**. PERF-A **IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTED**. PERF-B / PERF-C / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. |
+| Status | **OPEN / PARTIAL.** TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-C **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-D **IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / COMMITTED / SHA-PINNED / PUSHED.** SCH overall **OPEN / PARTIAL**. PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. PERF-B / PERF-C / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. |
 | Architecture | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. SCH architecture [fg-035-sch-dynamic-scheduling-preflight.md](../architecture/fg-035-sch-dynamic-scheduling-preflight.md) **RECORDED**. SCH implementation freeze [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md) remains the design freeze. SCH-A product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Live migration is proven/reconciled from durable evidence; the 15 Sep 2026 reconciliation prompt did **not** apply it. Product direction [project-element-authority-future-record.md](../architecture/project-element-authority-future-record.md) **FUTURE / RECORDED**. [FG-023](FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED** (not reopened). [FG-032](FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED** (not rewritten). [FG-033](FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED**. [FG-034](FG-034-account-recovery-and-transactional-email.md) **CLOSED**. |
 | Related ADRs | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md). [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md). [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md). [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md). [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md). |
 | Prerequisites | FG-008 labour snapshots. FG-011 Project Hub. FG-018 office auth. ADR-053 Accepted. |
+
+**Subsequent status (2026-09-17 PERF-A bounded synthetic live UAT):** PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **49**. Dedicated **14 passed**. Focused **170 passed**. Full suite **1154 passed**, 3873 warnings, **633.10s**, exit **0**. No schema. Not committed. Not pushed. No PERF-B. V1 **not rescored**. Evidence [testing/fg035-perf-a-live-bounded-uat-record.md](../testing/fg035-perf-a-live-bounded-uat-record.md).
+
+**Subsequent status (2026-09-17 PERF-A engineering implementation):** PERF-A **IMPLEMENTED / TESTED / NOT LIVE-UAT**. `assemble_project_performance` + Hub `#hub-labour`. Dedicated **14 passed**. Focused **170 passed**. Full suite **1154 passed**, 3873 warnings, **473.49s**, exit **0**. No schema. Not committed. Not pushed. No live UAT. No PERF-B. V1 **not rescored**.
 
 **Subsequent status (2026-09-17 PERF-A design freeze sealed):** PERF-A **IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTED**. Freeze [architecture/fg-035-perf-a-implementation-preflight.md](../architecture/fg-035-perf-a-implementation-preflight.md) committed / pushed. No schema. No product. No PERF-B. V1 **not rescored**.
 
@@ -79,7 +83,7 @@
 | SCOPE | **IMPLEMENTED** — ORIGINAL / CHANGE_ORDER / EXTRA_WORK lineage on Project work; Change Order deltas; Extra Work; Hub/Field presentation |
 | TIME | **IMPLEMENTED** |
 | SCH | **OPEN / PARTIAL** — SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-C **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-D **IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / COMMITTED / SHA-PINNED / PUSHED**. Architecture **RECORDED**; design freeze [fg-035-sch-implementation-preflight.md](../architecture/fg-035-sch-implementation-preflight.md) |
-| PERF | **OPEN / PARTIAL** — PERF-A **IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTED**. PERF-B / PERF-C **NOT AUTHORIZED** |
+| PERF | **OPEN / PARTIAL** — PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. PERF-B / PERF-C **NOT AUTHORIZED** |
 | CLOSE | **NOT AUTHORIZED** |
 | LEARN | **NOT AUTHORIZED** |
 | QB-T | **NOT AUTHORIZED** |
@@ -99,9 +103,8 @@ SCH-C IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS
 SCH-D IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / COMMITTED / SHA-PINNED / PUSHED
 WARNING LAW INFORMATIONAL ONLY / NON-BLOCKING / PLATFORM-WIDE
 PRINT RECORDED / IMPLEMENTATION SEQUENCED LATER
-PERF-A IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTED
+PERF-A IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS
 PERF-B / PERF-C NOT AUTHORIZED
-PERF PRODUCT NOT AUTHORIZED
 CLOSE NOT AUTHORIZED
 LEARN NOT AUTHORIZED
 QB-T NOT AUTHORIZED
@@ -174,7 +177,7 @@ Original Estimate-seeded work is immutable historical evidence. Eligible Change 
 
 ### PERF — Labour-hours performance, alerts, Needs Attention, three MONITOR views
 
-**Status: OPEN / PARTIAL.** PERF-A **IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTED** (2026-09-17). Freeze [architecture/fg-035-perf-a-implementation-preflight.md](../architecture/fg-035-perf-a-implementation-preflight.md). Project / Element labour Allowed · Used · Remaining on Hub. No schema. PERF-B (Needs Attention / 80%–100%) and PERF-C (company attention) **NOT AUTHORIZED**. Do **not** implement from the freeze file.
+**Status: OPEN / PARTIAL.** PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS** (2026-09-17). Freeze [architecture/fg-035-perf-a-implementation-preflight.md](../architecture/fg-035-perf-a-implementation-preflight.md). Project **49**. Evidence [testing/fg035-perf-a-live-bounded-uat-record.md](../testing/fg035-perf-a-live-bounded-uat-record.md). PERF-B (Needs Attention / 80%–100%) and PERF-C (company attention) **NOT AUTHORIZED**.
 
 ### CLOSE — Closeout review and LEARN evidence quality
 
@@ -201,9 +204,9 @@ SCH-B: IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS.
 SCH-C: IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS.
 SCH-D: IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / COMMITTED / SHA-PINNED / PUSHED.
 SCH OVERALL OPEN / PARTIAL.
-PERF-A: IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTED.
+PERF-A: IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS.
 FG-035 REMAINS OPEN / PARTIAL.
-PHYSICAL IPHONE UAT PASS.
-DO NOT IMPLEMENT PERF-A / PERF-B / CLOSE / LEARN / QB-T FROM THIS GATE ALONE.
+PHYSICAL IPHONE UAT PASS (SCH-D).
+DO NOT IMPLEMENT PERF-B / CLOSE / LEARN / QB-T FROM THIS GATE ALONE.
 V1 NOT RESCORED.
 ```

@@ -572,6 +572,73 @@
         </div>
         {% endif %}
     </article>
+    <article class="panel panel-wide" id="hub-labour">
+        <div class="panel-header">
+            <h2>{{ contractor_copy.LABOUR_HUB_HEADING }}</h2>
+            <a href="{{ url_for('time_entry.review', project_id=project.id) }}">Review time</a>
+        </div>
+        {% set labour = hub.labour %}
+        {% set labour_project = labour.project %}
+        <h3>{{ contractor_copy.LABOUR_AUTHORIZED_HEADING }}</h3>
+        <p>
+            {% if labour_project.allowance_known %}
+            {{ contractor_copy.LABOUR_ALLOWED }} {{ "%.2f"|format(labour_project.allowed_hours) }}
+            · {{ contractor_copy.LABOUR_USED }} {{ "%.2f"|format(labour_project.used_hours) }}
+            {% if labour_project.remaining_hours is not none %}
+            · {{ contractor_copy.LABOUR_REMAINING }} {{ "%.2f"|format(labour_project.remaining_hours) }}
+            {% endif %}
+            {% if labour_project.over_hours is not none %}
+            · {{ contractor_copy.LABOUR_OVER_BY }} {{ "%.2f"|format(labour_project.over_hours) }}
+            {% endif %}
+            {% else %}
+            {{ contractor_copy.LABOUR_USED }} {{ "%.2f"|format(labour_project.used_hours) }}
+            · {{ contractor_copy.LABOUR_ALLOWANCE_UNAVAILABLE }}
+            {% endif %}
+        </p>
+        <p class="muted-copy">{{ contractor_copy.LABOUR_WAITING }} {{ "%.2f"|format(labour_project.waiting_hours) }}</p>
+        {% if labour.elements %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Work</th>
+                    <th>{{ contractor_copy.LABOUR_ALLOWED }}</th>
+                    <th>{{ contractor_copy.LABOUR_USED }}</th>
+                    <th>{{ contractor_copy.LABOUR_REMAINING }}</th>
+                    <th>{{ contractor_copy.LABOUR_WAITING }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in labour.elements %}
+                <tr>
+                    <td>{{ row.display_name }}</td>
+                    <td>
+                        {% if row.allowance_known %}{{ "%.2f"|format(row.allowed_hours) }}{% else %}{{ contractor_copy.LABOUR_ALLOWANCE_UNAVAILABLE }}{% endif %}
+                    </td>
+                    <td>{{ "%.2f"|format(row.used_hours) }}</td>
+                    <td>
+                        {% if row.over_hours is not none %}
+                        {{ contractor_copy.LABOUR_OVER_BY }} {{ "%.2f"|format(row.over_hours) }}
+                        {% elif row.remaining_hours is not none %}
+                        {{ "%.2f"|format(row.remaining_hours) }}
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td>{{ "%.2f"|format(row.waiting_hours) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        {% if labour.extra_work.needs_review %}
+        <h3>{{ contractor_copy.SCOPE_EXTRA_WORK_LABEL }}</h3>
+        <p>
+            {{ "%.2f"|format(labour.extra_work.used_hours) }} {{ contractor_copy.LABOUR_HOURS_USED }}
+            · {{ "%.2f"|format(labour.extra_work.waiting_hours) }} {{ contractor_copy.LABOUR_HOURS_WAITING }}
+        </p>
+        <p class="muted-copy">{{ contractor_copy.LABOUR_EXTRA_NEEDS_REVIEW }}</p>
+        {% endif %}
+    </article>
     <article class="panel panel-wide">
         <div class="panel-header">
             <h2>Related Change Orders</h2>

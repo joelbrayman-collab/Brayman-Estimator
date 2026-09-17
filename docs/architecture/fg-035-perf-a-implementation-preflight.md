@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **DESIGN FROZEN / NOT IMPLEMENTED.** PERF-A is Project / Element labour Allowed · Used · Remaining on Project Hub. No product code in this pass. |
+| Status | **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS.** PERF-A is Project / Element labour Allowed · Used · Remaining on Project Hub. Design below remains the frozen contract. |
 | Date | 2026-09-17 |
 | Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL** |
 | ADR | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
@@ -13,20 +13,23 @@
 
 ```text
 FG-035 PERF-A:
-IMPLEMENTATION PREFLIGHT COMPLETE
-DESIGN FROZEN
-NOT IMPLEMENTED
+IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS
 NO SCHEMA
 NO MIGRATION
 NO NEW ADR
 NO NEW FEATURE GATE
 V1 NOT RESCORED
+NO COMMIT
+NO PUSH
+NO PERF-B
 PERF-B / PERF-C / CLOSE / LEARN / QB-T NOT AUTHORIZED
 ```
 
-This file freezes names, authority, aggregation, Hub placement, copy, tests, and UAT so ChatGPT Architect can issue a bounded implementation prompt without reopening architecture.
+**Subsequent status (2026-09-17 PERF-A bounded synthetic live UAT):** PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **49**. Dedicated **14 passed**. Focused **170 passed**. Full suite **1154 passed**, 3873 warnings, **633.10s**, exit **0**. Evidence [testing/fg035-perf-a-live-bounded-uat-record.md](../testing/fg035-perf-a-live-bounded-uat-record.md). Alembic unchanged **`f9b0c1d2e3f4 (head)`**. Not committed. Not pushed. No PERF-B. V1 **not rescored**.
 
-Do **not** implement PERF-A from this file. Do **not** implement PERF-B, Needs Attention, company attention, explicit progress, Forecast Finish, Print, Shop, Banked Hours, or QB-T from this file.
+**Subsequent status (2026-09-17 PERF-A engineering implementation):** PERF-A **IMPLEMENTED / TESTED / NOT LIVE-UAT**. Service `app/services/project_performance.py` `assemble_project_performance`. TIME sibling `pending_labour_hours`. Hub `#hub-labour` after Time before MONITOR. Dedicated **14 passed**. Focused **170 passed**. Full suite **1154 passed**, 3873 warnings, **473.49s**, exit **0**. Alembic unchanged **`f9b0c1d2e3f4 (head)`**. Not committed. Not pushed. No live UAT. No PERF-B. V1 **not rescored**.
+
+This file remains the frozen PERF-A design contract. Product implementation is **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Do **not** implement PERF-B, Needs Attention, company attention, explicit progress, Forecast Finish, Print, Shop, Banked Hours, or QB-T from this file.
 
 ---
 
@@ -34,8 +37,8 @@ Do **not** implement PERF-A from this file. Do **not** implement PERF-B, Needs A
 
 | Layer | State |
 |-------|--------|
-| **Current** | TIME Approved hours + Hub Time summary. SCOPE `current_authorized_hours()` / `inherit_scope_lineage()`. Hub BUILD has Project work, Schedule, Time. MONITOR money `#hub-monitor` unchanged. SCH-D Field physically accepted. |
-| **Intended (PERF-A)** | Office Hub **Labour** panel: Authorized Allowed / Used / Remaining / Waiting for approval; Extra Work separate. Schema-free read projection. |
+| **Current** | PERF-A Hub `#hub-labour` from `assemble_project_performance` (**IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**). TIME Approved hours + Hub Time summary. SCOPE `current_authorized_hours()` / `inherit_scope_lineage()`. Hub BUILD has Project work, Schedule, Time, Labour. MONITOR money `#hub-monitor` unchanged. SCH-D Field physically accepted. Project **49**. |
+| **Intended (PERF-A live UAT)** | Office bounded synthetic live UAT of Labour Allowed / Used / Remaining / Waiting for approval / Extra Work. **PASS** 2026-09-17. |
 | **Future (not PERF-A)** | PERF-B/C Needs Attention (80%/100%, schedule facts). Explicit progress. Forecast Finish. Original / CO / Current three-view. Company attention. Print. Field owner view. |
 
 ---
@@ -416,17 +419,17 @@ Later contractor questions (Manual Audience Law; no Time-state / SCOPE / aggrega
 | `tests/test_project_labour_performance_fg035.py` | **New** dedicated tests |
 | Docs | FG-035 / freeze subsequent status at close |
 
-Do **not** create these files in this preflight.
+**Subsequent:** these files exist after the 2026-09-17 engineering implementation. Bounded synthetic live UAT **PASS** 2026-09-17. Evidence [testing/fg035-perf-a-live-bounded-uat-record.md](../testing/fg035-perf-a-live-bounded-uat-record.md).
 
 ---
 
 ## 19. STOP
 
 ```text
-PERF-A DESIGN FROZEN.
-NOT IMPLEMENTED.
+PERF-A IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS.
 NO SCHEMA.
-NO PRODUCT.
+NO COMMIT.
+NO PUSH.
 NO PERF-B.
 NO FIELD.
 NO MONITOR MONEY CHANGE.

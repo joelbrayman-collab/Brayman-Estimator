@@ -51,12 +51,27 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PERF-A (2026-09-17)
+
+| Field | Content |
+|-------|---------|
+| Slice | FG-035 PERF-A Project Hub Labour Allowed · Used · Remaining |
+| Product status at capture | **CURRENT** — PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **49**. Not committed. |
+| 1. What new contractor capability exists? | On the Project page, after Time and before MONITOR, a Labour section shows how many hours are Allowed, Used, and Remaining (or Over by). It also shows hours Waiting for approval. Extra work is listed separately while it is still extra work. After a Change Order authorizes that extra work, those hours move into Authorized labour. |
+| 2. When would the contractor use it? | Checking how a job is doing on labour. Asking how many hours are left. Seeing whether extra work time is sitting outside the authorized allowance. Checking labour again after extra work is authorized. |
+| 3. What workflow will the final Manual need to teach? | How many labour hours do we have left? What is Used? What is Waiting for approval? What does Over by mean? Why is Extra Work shown separately? What happens after Extra Work is authorized? What does Allowance not available mean? |
+| 4. What contractor-facing terms must be used? | Labour. Allowed. Used. Remaining. Waiting for approval. Over by. Extra work. Allowance not available. Needs review. Do **not** use: current_authorized_hours, scope_origin, hours_delta, DTO, performance engine, variance denominator. |
+| 5. What screenshots / Print examples will eventually be needed? | Project Labour with Allowed / Used / Remaining. Over by example. Extra work with Needs review. Same job after Extra Work is authorized (Extra Work gone; hours in Authorized). Allowance not available. Do **not** capture now. Final Manual later. |
+| 6. What warnings / validation distinctions need explanation? | Over by and Needs review are information only. They do not stop Time, Schedule, Change Orders, or Project work. Waiting for approval does not reduce Remaining. Used is approved hours only. Extra work stays separate until that work is authorized; then it is no longer Extra Work on Labour. Time Extra work hours can still show frozen extra-work time until Time’s own summary catches up — that is Time, not Labour. Allowance not available means there is no governed allowance to compare against, not that Allowed is zero. Allowed zero is a known allowance. |
+| 7. Desktop / iPhone / Print relevance | Desktop / office Project Hub. Field is unchanged. Print later. Bounded synthetic live UAT **PASS** on Project **49**. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. Claim FG-035 closed. PERF-B Needs Attention. |
+
 ### MANUAL IMPACT — SCH-D PHYSICAL IPHONE UAT PASS (2026-09-17)
 
 | Field | Content |
 |-------|---------|
 | Slice | FG-035 SCH-D Field Today / Week / Month + schedule-assisted Time + job-site Directions |
-| Product status at capture | **CURRENT** — SCH-D **PHYSICAL IPHONE UAT PASS**. G1–G6 **PHYSICAL PASS**. Directions + native iOS return **PHYSICAL PASS**. Not committed. |
+| Product status at capture | **SUPERSEDED AS CURRENT** for newest Manual Impact by PERF-A. SCH-D Field product remains **PHYSICAL IPHONE UAT PASS**. G1–G6 **PHYSICAL PASS**. Directions + native iOS return **PHYSICAL PASS**. |
 | 1. What new contractor capability exists? | See today’s work, this week, this month, and company today. See the job-site address. Tap Directions to open the phone’s maps. Enter Time from scheduled work, or choose the work actually done. Native iPhone return brings the worker back to CalibraytAI. |
 | 2. When would the contractor use it? | Opening Field in the morning. Driving to the job. Checking what others are doing today. Entering hours. Looking at the month calendar. |
 | 3. What workflow will the final Manual need to teach? | What am I doing today? What is coming this week? What is coming this month? How do I see what the company is doing today? What does Assigned to me mean? What does Crew work mean? How do I enter Time from today’s work? What if I have more than one scheduled job? What if the work I did was not scheduled? What does a Schedule warning mean? How do I get directions to today’s job? How do I return to CalibraytAI after opening Directions? How do I add CalibraytAI to my iPhone Home Screen? After opening Directions, use the iPhone’s native return-to-Safari control to return to CalibraytAI. |

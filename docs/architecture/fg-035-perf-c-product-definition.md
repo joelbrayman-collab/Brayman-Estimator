@@ -13,6 +13,8 @@
 | Baseline | HEAD / `origin/main` **`1b80d244e3efb0c65d3a02dd247d923dfd95166c`**. Alembic **`f9b0c1d2e3f4 (head)`**. |
 | V1 | **NOT RESCORED** (**60% / 4 of 11**). PERF-C definition alone is **not** a scoring event. |
 
+**Subsequent status (2026-09-17 People & Access freeze):** [people-and-access-product-direction.md](people-and-access-product-direction.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. Future contractor-facing administration of Domain B grants. PERF-C remains **DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Subsequent [FG-037](../feature-gates/FG-037-company-management-access-domain-authorization.md) **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION**. This freeze is **not rewritten**. Do **not** implement Company Attention from that record.
+
 ```text
 FG-035 PERF-C:
 DEFINED

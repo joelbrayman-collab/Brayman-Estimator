@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — People & Access freeze Architect acceptance / commit / push
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 17 SEP 2026 |
+| Objective | Validate accepted People & Access docs-only freeze; commit; push. No implementation. No SHA-pin follow-up (docs-only freeze precedent). |
+| Business decision | Freeze ACCEPTED. No owner decision reopened. |
+| Architectural decision | No new ADR. No new Feature Gate. FG-037 unchanged/CLOSED. PERF-C unchanged. Scores not rescored. |
+| Prompt template used | cursor-documentation-template.md (Architect ACCEPTANCE / COMMIT / PUSH) |
+| Approved Cursor prompt summary | Verify dirty files are freeze-only; app/tests/migrations empty; live grant still 1; canonical freeze complete; commit `docs: freeze People & Access product direction`; push origin/main; do not pin; preserve stash. |
+| Files expected to change | accepted People & Access documentation only |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; stash |
+| Implementation result | Docs-only commit/push. No product. No grants. Stash preserved. |
+| Tests | not rerun (docs-only; no behaviour change) |
+| Project-state-report update | yes |
+| Milestone entry update | yes — freeze sealed, not product close |
+| Constitutional issue raised | no |
+| Unresolved issues | Scorecard. Ben membership. Ben Sys Admin. PERF-C. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | none — STOP |
+| Commit hash | this documentation freeze |
+
+### 2026-09-17 — People & Access owner product-direction freeze (docs-only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 17 SEP 2026 |
+| Objective | Record complete People & Access / Instance Owner / Sys Admin / user lifecycle / desktop UX freeze. Docs-only. No implementation. |
+| Business decision | Instance Owner is protected root authority. Sys Admin is owner-designated broad/full admin. Person ≠ Platform User. Delete User = remove access, not history. Hourly wage mandatory and sensitive. Joel is Instance Owner with live B. Ben B when genuine membership exists; Sys Admin not yet decided. |
+| Architectural decision | No new ADR. No new Feature Gate. FG-037 unchanged/CLOSED. A does not imply B. B does not imply C. Desktop: use space generously, not densely. |
+| Prompt template used | cursor-documentation-template.md (People & Access complete freeze) |
+| Approved Cursor prompt summary | Verify HEAD f1940eb / grant 1 / FG-037 CLOSED; create people-and-access-product-direction.md; minimum indexes; no product; no ADR unless required (not required); do not rescore. |
+| Files expected to change | architecture freeze + minimum current-authority pointers |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; stash; FG-037 reopen |
+| Implementation result | Freeze recorded. Later Architect-accepted and sealed by the documentation freeze commit. No product. No grants. Stash preserved. |
+| Tests | not rerun (docs-only; no behaviour change) |
+| Project-state-report update | yes |
+| Milestone entry update | yes — recorded freeze, not product close |
+| Constitutional issue raised | no |
+| Unresolved issues | Scorecard. Ben membership. Ben Sys Admin. PERF-C. |
+| Next approved step | Architect acceptance / commit / push (subsequent entry). |
+| Next approved prompt | Architect ACCEPTANCE / COMMIT / PUSH |
+| Commit hash | subsequent documentation freeze |
+
 ### 2026-09-17 — FG-037 owner policy + first live grant + bounded seam UAT + close
 
 | Field | Content |

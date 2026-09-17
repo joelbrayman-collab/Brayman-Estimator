@@ -7,9 +7,11 @@
 | Authority | Joel Brayman / ChatGPT Architect |
 | Centrepiece | Context-aware **Home Office** — a calm operational briefing, not a static dashboard |
 | Does not interrupt | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. PERF-A **SEALED**. PERF-B / PERF-C **NOT AUTHORIZED**. |
-| Siblings | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) · [project-element-authority-future-record.md](project-element-authority-future-record.md) (Print + warning law) · [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) |
+| Siblings | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) · [project-element-authority-future-record.md](project-element-authority-future-record.md) (Print + warning law) · [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) · [people-and-access-product-direction.md](people-and-access-product-direction.md) (People & Access + desktop UX law) |
 
 This is **not** an ADR, Feature Gate, preflight, schema, or product implementation. Do **not** implement Home Office, dashboard changes, PERF-B/C, Needs Attention, notifications, payroll, cash-flow product, banking, QuickBooks connection, QB-T, Print, Help, Voice, or the Manual from this file. Do **not** invent FG-036. Do **not** rescore V1 (**60% / 4 of 11**).
+
+**Subsequent status (2026-09-17 People & Access / desktop UX law):** [people-and-access-product-direction.md](people-and-access-product-direction.md) records: **USE AVAILABLE SPACE GENEROUSLY, NOT DENSELY.** Desktop should feel as clean and legible as Field / iPhone while using additional desktop real estate intelligently. This Home Office record is **not rewritten**. Do **not** redesign existing desktop from that freeze.
 
 **Governed baseline at this recording:** HEAD / `origin/main` **`618dfaefbff1d5926bafa39c438075dc9c26055b`** (`docs: pin FG-035 PERF-A SHA`). Product PERF-A **`7a4b7000e2650eadf68b4ea44d48f75c65830c1f`**. Alembic **`f9b0c1d2e3f4 (head)`**. Working tree was **CLEAN** before this docs-only recording.
 

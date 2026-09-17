@@ -32,6 +32,8 @@ This gate is **CLOSED / OPERATIONAL FOR UAT**. It is **not** production-security
 
 **Subsequent status (2026-09-17 Company/Management access-domain seam):** [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) Decision 4 is **narrowly amended**. Job-title RBAC remains **rejected**. Named membership access domains are **permitted**. Freeze [architecture/company-management-access-domain-seam.md](../architecture/company-management-access-domain-seam.md) **DEFINED**. This gate is **not reopened**.
 
+**Subsequent status (2026-09-17 People & Access freeze):** [architecture/people-and-access-product-direction.md](../architecture/people-and-access-product-direction.md) **RECORDED MANDATORY PRODUCT DIRECTION / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. This gate is **not reopened**. Do **not** implement Settings Members from this gate.
+
 **Subsequent status (2026-09-17 FG-037 close):** [FG-037](FG-037-company-management-access-domain-authorization.md) **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION**. First live grant: ORG-001 Membership **1** / Joel Brayman / `COMPANY_MANAGEMENT`. This gate is **not reopened**. Do **not** implement Settings Members, Sensitive Financial, or PERF-C from this gate.
 
 **Subsequent status (2026-09-17 FG-037 Slice A):** [FG-037](FG-037-company-management-access-domain-authorization.md) was **OPEN / SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / NO LIVE GRANT / NOT CLOSED**. Product SHA **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`**. This gate is **not reopened**. Do **not** implement Settings Members, Sensitive Financial, or PERF-C from this gate.

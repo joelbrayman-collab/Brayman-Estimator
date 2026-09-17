@@ -12,6 +12,8 @@
 | Related ADRs | [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. No new ADR. |
 | Prerequisites | FG-018 office Users / membership **CLOSED**. Company/Management seam freeze **DEFINED**. |
 
+**Subsequent status (2026-09-17 People & Access freeze):** [people-and-access-product-direction.md](../architecture/people-and-access-product-direction.md) **RECORDED MANDATORY PRODUCT DIRECTION / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Future Settings → People & Access. This gate is **not reopened**. Operator CLI remains bootstrap infrastructure. Do **not** add People & Access product to this gate.
+
 ---
 
 ## Status

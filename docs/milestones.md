@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-17 — People & Access owner product-direction freeze (docs-only)
+
+| Field | Content |
+|-------|---------|
+| Milestone | People & Access |
+| Status | **RECORDED MANDATORY PRODUCT DIRECTION / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** No new ADR. No new Feature Gate. Architect-accepted; sealed by this documentation freeze. |
+| Branch | `main` |
+| Base commit | `f1940ebe1d80ab0e6e4feb795b7f97402a652bae` |
+| Objective | Freeze Instance Owner, System Administrator, Person vs User, A/B/C, Delete User, hourly-wage sensitivity, and desktop UX law. |
+| Deliverables | [architecture/people-and-access-product-direction.md](architecture/people-and-access-product-direction.md) plus minimum index/current-authority pointers. |
+| Validation | Baseline HEAD f1940eb / FG-037 CLOSED / live grant 1 / Joel Membership 1. Docs-only. |
+| Architectural findings | No new ADR required (same pattern as desktop contractor experience and access-domain seam freezes). FG-037 not reopened. PERF-C unchanged. |
+| Open decisions | Ben Sys Admin. Scorecard. Ownership transfer rules later. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. |
+| Commit | this documentation freeze (`docs: freeze People & Access product direction`) |
+| Date | 2026-09-17 |
+
 ### 2026-09-17 — FG-037 Company / Management access-domain authorization close
 
 | Field | Content |

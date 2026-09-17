@@ -1,0 +1,26 @@
+{% extends "field/base.html" %}
+{% block title %}{{ contractor_copy.FIELD_NAV_WEEK }} — CalibraytAI{% endblock %}
+{% block field_page %}week{% endblock %}
+{% block content %}
+{% set nav_current = 'week' %}
+{% include "field/_field_nav.html" %}
+<section class="field-panel">
+    <h1>{{ contractor_copy.FIELD_NAV_WEEK }}</h1>
+    <p class="field-muted">{{ view.window_label }}</p>
+    {% if not view.cards %}
+    <p>{{ contractor_copy.FIELD_NO_WORK_WEEK }}</p>
+    {% endif %}
+    {% for day in view.days %}
+    <section class="field-schedule-day{% if day.is_today %} is-today{% endif %}">
+        <h2>{{ day.date_label }}</h2>
+        {% if day.cards %}
+        {% set groups = day.groups %}
+        {% set show_time = true %}
+        {% include "field/_schedule_groups.html" %}
+        {% else %}
+        <p class="field-muted">—</p>
+        {% endif %}
+    </section>
+    {% endfor %}
+</section>
+{% endblock %}

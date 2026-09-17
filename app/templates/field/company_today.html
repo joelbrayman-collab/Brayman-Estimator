@@ -1,0 +1,18 @@
+{% extends "field/base.html" %}
+{% block title %}{{ contractor_copy.FIELD_COMPANY_TODAY }} — CalibraytAI{% endblock %}
+{% block field_page %}company-today{% endblock %}
+{% block content %}
+{% set nav_current = 'company' %}
+{% include "field/_field_nav.html" %}
+<section class="field-panel">
+    <h1>{{ contractor_copy.FIELD_COMPANY_TODAY }}</h1>
+    <p class="field-muted">{{ contractor_copy.FIELD_COMPANY_TODAY_HELP }}</p>
+    {% if not view.cards %}
+    <p>{{ contractor_copy.FIELD_NO_COMPANY_TODAY }}</p>
+    {% else %}
+    {% set groups = view.groups %}
+    {% set show_time = false %}
+    {% include "field/_schedule_groups.html" %}
+    {% endif %}
+</section>
+{% endblock %}

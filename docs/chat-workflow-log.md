@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-16 |
+| Updated | 2026-09-17 |
 
 ## Purpose
 
@@ -42,6 +42,462 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-17 — FG-035 SCH-D final close / commit / SHA-pin / push
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Preserve local Darcy docs commit. Commit accepted future-direction docs separately. Commit SCH-D product/test/UAT/governance/Manual Impact. SHA-pin. Push linear `main`. |
+| Business decision | SCH-D **ACCEPTED** as IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS. Completeness **YES**. Shop / Company Work and Banked Hours remain recorded-only. |
+| Architectural decision | Preserve Darcy `61a92d0ae1541e1fb70bed1867b0c0a12c6e0a0a`. No reset/rebase/amend. Future-direction docs first, then SCH-D product, then SHA-pin. No PERF. No test rerun. |
+| Prompt template used | FG-035 SCH-D FINAL CLOSE / COMMIT / SHA-PIN / PUSH — SEPARATE FUTURE-DIRECTION DOCS — NO PERF |
+| Approved Cursor prompt summary | Inspect Darcy. Separate future-direction docs commit. SCH-D feat commit. SHA-pin. `git push origin main`. STOP. |
+| Files expected to change | Future-direction docs; SCH-D product/test/UAT/governance/Manual Impact; then pin docs only |
+| Files prohibited from changing | Alembic; live DB; PERF/CLOSE/LEARN/QB-T; Print/Shop/Banked Hours implementation; history rewrite |
+| Implementation result | Future-direction SHA **`78ca4f7934495538e2c6c6c256547369577f6258`**. SCH-D product SHA pending this commit. |
+| Tests | Authoritative post-physical evidence reused (not rerun): SCH-D **21 passed**; TIME+Field+SCH-D **49 passed**; SCH-A/B/C **36 passed**; focused **156 passed**; full **1140 passed** / 0 failed / exit **0**. |
+| Project-state-report update | yes — pin commit |
+| Milestone entry update | yes — pin commit |
+| Constitutional issue raised | no |
+| Unresolved issues | FG-035 remains OPEN / PARTIAL. PERF / CLOSE / LEARN / QB-T not authorized. |
+| Next approved step | **STOP.** Do **not** begin PERF. |
+| Next approved prompt | none — STOP |
+| Commit hash | pending product + pin |
+
+### 2026-09-17 — FG-035 SCH-D final physical iPhone UAT reconciliation + post-physical regression
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Reconcile Joel physical SCH-D PASS, align governance, run post-physical automated regression. No product change. No commit. |
+| Business decision | SCH-D physical iPhone UAT COMPLETE. Native iOS return after Directions is accepted. No CalibraytAI return-navigation feature. |
+| Architectural decision | No additional SCH-D UX. No PERF. Shop / Company Work and Banked Hours remain docs-only. |
+| Prompt template used | FG-035 SCH-D FINAL PHYSICAL IPHONE UAT RECONCILIATION + POST-PHYSICAL REGRESSION |
+| Approved Cursor prompt summary | Record Joel G1–G6 PASS. Inspect live state read-only. Manual Impact. Post-physical tests including full suite. Align governance. Classify working tree. STOP. No commit. |
+| Files expected to change | UAT record, Manual Impact, lagging SCH-D governance/continuity. Trivial field.css EOF whitespace. |
+| Files prohibited from changing | SCH-D product UX, schema/migration, sealed SCH-A/B/C, occupancy, PERF, commit/push |
+| Implementation result | Physical evidence recorded. Time id 6 preserved. Occupancy preserved. Governance aligned. SCH-D **IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / NOT COMMITTED / NOT PUSHED**. |
+| Tests | Dedicated SCH-D **21 passed**, 44 warnings, **15.53s**, exit **0**. TIME+Field+SCH-D **49 passed**, 190 warnings, **28.96s**, exit **0**. SCH-A/B/C **36 passed**, 89 warnings, **14.91s**, exit **0**. Focused **156 passed**, 584 warnings, **83.01s**, exit **0**. Full suite **1140 passed**, 3749 warnings, **665.58s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | SCH-D not committed. Landscape FAIL unresolved / out of this close. FG-035 remains OPEN / PARTIAL. |
+| Next approved step | **STOP.** Return to ChatGPT Architect for commit packaging. Do **not** begin PERF. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-17 — FG-035 SCH-D job-site location + Directions physical UAT correction
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Bounded SCH-D UAT correction so Today / Company Today / Week show job-site location + Directions. Preserve Month and Time physical PASSes. |
+| Business decision | Job-site location + Directions are mandatory Field information. Not a new Feature Gate. Not a Project/address redesign. |
+| Architectural decision | Reuse `Project.address` and civic `ProjectLocation` when street exists. No second store. No migration. Project **48** received bounded synthetic `Project.address` only. |
+| Prompt template used | FG-035 SCH-D PHYSICAL IPHONE UAT CORRECTION JOB-SITE LOCATION + DIRECTIONS |
+| Approved Cursor prompt summary | Inspect authority. Project location into SCH-D. Directions handoff. Synthetic Project 48 address. Tests. HTTPS. STOP G2/G3/G4. Preserve G1/G5/G6. No commit. |
+| Files expected to change | Field presentation, SCH-D tests, Manual Impact / UAT docs, live Project 48 address only |
+| Files prohibited from changing | Month redesign, Time presentation, Projects 45/46/47/27, EST-2026-0019, schema/migration, PERF, commit/push |
+| Implementation result | Civic location preferred when street exists; else `Project.address`. Directions encoded `maps.apple.com/?daddr=`. Project **48** address set to `48 Synthetic UAT Job-Site Road, North Gower, ON`. Month/Time unchanged. HTTPS wrapper **85906**, Python **85913**, `/login` **200**. |
+| Tests | Dedicated SCH-D **21 passed**. TIME+Field+SCH-A/B/C+SCH-D **85 passed**, 279 warnings, **44.32s**, exit **0**. Full suite not run. |
+| Project-state-report update | no |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | G2/G3/G4 not yet physically retested. Landscape FAIL unresolved. |
+| Next approved step | **STOP.** Joel G2/G3/G4 only. Do **not** repeat G1/G5/G6. Do **not** submit Time. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-17 — FG-035 SCH-D Address + Directions + Month calendar
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Bounded SCH-D correction: expose `Project.address`, Field Directions handoff, replace Month list with calendar + selected-day detail. |
+| Business decision | Project address + Directions is a **V1 Field requirement** because Ben UAT and Brayman Field workers will use real jobs. F1 Company Today **PASS**. F2 This Week **PASS**. F3 This Month **FAIL / too busy**. F4 Back to Today **PASS / IMMEDIATE**. No V1 rescore. |
+| Architectural decision | Authority is existing `projects.address`. No Field address store. No migration. Directions = `https://maps.apple.com/?daddr=` address handoff. No GPS. No maps SDK. Month = real calendar month + tap day + detail below. Worker Month remains USER + Crew date-D. |
+| Prompt template used | FG-035 SCH-D PHYSICAL UAT PRODUCT CORRECTION PROJECT ADDRESS + DIRECTIONS + MOBILE MONTH CALENDAR / DAY DETAIL |
+| Approved Cursor prompt summary | Expose Project address; Directions; Month calendar + day detail; tests; Manual Impact/UAT; threaded HTTPS restart; STOP G1–G6. No landscape. No commit. |
+| Files expected to change | Field presentation/routes/templates/CSS; schedule Field projection; SCH-D tests; Manual Impact / UAT / continuity docs |
+| Files prohibited from changing | landscape CSS as a fix; maps SDK; GPS; schema/migration unless hard stop; PERF; Print; Shop; Banked Hours; TIME EXPANSION; commit/push |
+| Implementation result | `Project.address` used. Directions rendered only when address is usable. Month calendar + selected-day detail. No migration. Project **48** still has no stored address (Directions absent until office Address is filled). HTTPS restart `--with-threads` Python **83080** / wrapper **83073** start **2026-09-17 07:57:06**. |
+| Tests | Dedicated SCH-D **19 passed**. TIME + Field + SCH-D **47 passed**, 186 warnings, **54.14s**, exit **0**. Full suite not run. |
+| Project-state-report update | no |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | Month / Directions physical PASS not claimed. Project **48** address empty. Landscape FAIL unresolved. |
+| Next approved step | **STOP.** Joel G1–G6 portrait only. Do **not** test landscape. Do **not** submit Time. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-16/17 — FG-035 SCH-D HTTPS UAT harness recovery
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16/17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Recycle unhealthy 5443. Restart same SCH-D product with flask run --with-threads. No product change. |
+| Business decision | Post-C3 blanks are UAT harness failure, not Today/Time render defects. C1/C2 remain PASS. Landscape unresolved. |
+| Architectural decision | flask run --with-threads on existing cert. No Gunicorn/nginx. No CSS/JS/template edits. |
+| Prompt template used | FG-035 SCH-D HTTPS UAT HARNESS RECOVERY THREADED DEVELOPMENT SERVER |
+| Approved Cursor prompt summary | Terminate 2556. Threaded restart. Health + concurrency. STOP E1/E2. |
+| Files expected to change | UAT/continuity docs only |
+| Files prohibited from changing | field.css/js, Today/Time templates, Schedule/TIME services |
+| Implementation result | 2556 terminated. Python **78027** `--with-threads`. Login **200**. Concurrency **200** while TLS held. |
+| Tests | no pytest (no product change) |
+| Project-state-report update | no |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | Landscape FAIL. E1/E2 not yet performed. |
+| Next approved step | **STOP.** Joel E1 portrait Today, E2 portrait Time once. Do **not** rotate. Do **not** submit Time. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-16 — FG-035 SCH-D fresh Safari tab /field/today blank
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Capture fresh-tab /field/today blank. Classify whether it reached Flask. No product patch until classified. |
+| Business decision | Current physical Field availability FAIL. Damaged-tab-only hypothesis INSUFFICIENT. |
+| Architectural decision | HTTP did not complete. Flask 2556 listening but blocked by hung iPhone TCP 192.168.2.160:61619. Localhost login timeout. No CSS/JS/Time patch. HTTPS not restarted. |
+| Prompt template used | FG-035 SCH-D FRESH SAFARI TAB /FIELD/TODAY BLANK-SCREEN INCIDENT |
+| Approved Cursor prompt summary | Capture just-completed request. Classify. No patch unless conclusive product cause. |
+| Files expected to change | UAT/continuity docs |
+| Files prohibited from changing | CSS/JS/Time/Today/landscape; migrations; commit; push |
+| Implementation result | **NO PRODUCT PATCH.** Fresh Today HTTP **NO**. HTTPS **not healthy for new HTTP**. |
+| Tests | not rerun |
+| Project-state-report update | no |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | Hung 5443 connection. Fresh Today blank. Landscape crash. Time not retested. |
+| Next approved step | **STOP.** Architect review. Possible 5443 recycle is operational, not a product patch, not done this pass. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-16 — FG-035 SCH-D current UX #5 Time blank-screen diagnostic
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Diagnose reproducible iPhone Time blank screen after UX #5 / C3. Do not guess a landscape or Date CSS patch. |
+| Business decision | Current Time page is PHYSICAL FAIL. Historical earlier Time PASS is prior-build / pre-C3 evidence only. |
+| Architectural decision | Flask 2556 healthy. Only iPhone Time GET 17:48:48 200. Post-C3 Time taps: no Flask request. Time HTML 200/7846. Date appearance:none not demonstrated as cause. No product patch. |
+| Prompt template used | FG-035 SCH-D CURRENT UX #5 PHYSICAL IPHONE TIME BLANK-SCREEN REGRESSION |
+| Approved Cursor prompt summary | Capture HTTPS evidence. Classify Time blank. Patch only if demonstrated. Else STOP. |
+| Files expected to change | UAT/continuity docs unless demonstrated correction |
+| Files prohibited from changing | Landscape CSS this pass; migrations; commit; push; PERF |
+| Implementation result | **NO PRODUCT PATCH.** Classification: client navigation failure after C3. Working tree **DIRTY**. |
+| Tests | not rerun (no product change) |
+| Project-state-report update | no |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | Time blank after C3. Landscape crash mechanism. C4/C5 not tested. |
+| Next approved step | **STOP.** Architect review. Do **not** rotate. Do **not** submit Time. Do **not** commit. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-16 — FG-035 SCH-D C3 landscape crash diagnostic
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Determine whether C3 “entire app crashed” was Flask HTTPS or iPhone Safari/WebKit. No landscape guessing. |
+| Business decision | Preserve Date PASS and portrait PASS. Do not rotate the phone again until Architect review. |
+| Architectural decision | Flask Python 2556 did not crash. Last iPhone HTTP 17:48:48 Time 200. Rotation produced no request. Field.js has no orientation/resize handlers. iPhone WebKit logs unavailable. No product patch. |
+| Prompt template used | FG-035 SCH-D PHYSICAL IPHONE C3 LANDSCAPE CRASH INCIDENT DIAGNOSTIC FIRST |
+| Approved Cursor prompt summary | Classify C3 crash. Patch only if demonstrated and bounded. Else STOP. |
+| Files expected to change | UAT/continuity docs only unless demonstrated correction |
+| Files prohibited from changing | Date/portrait CSS unless shared root cause; migrations; commit; push; PERF; AiRIA |
+| Implementation result | **NO PRODUCT PATCH.** Server **did not crash**. Classification: not SERVER CRASH; client WebKit vs reload **UNKNOWN**. Working tree **DIRTY**. |
+| Tests | not rerun (no product change) |
+| Project-state-report update | no |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | C3 landscape FAIL + crash mechanism. C4/C5 not tested. |
+| Next approved step | **STOP.** Architect review. Do **not** rotate the phone. Do **not** commit. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-16 — FG-035 SCH-D physical UAT UX #5 Date native chrome
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Complete UX #5 Date removal of native Safari calendar chrome so the blank top-right box cannot remain on iPhone. Preserve landscape shell and Back to Today IDB skip. No PERF. No commit. |
+| Business decision | Blank adjacent Date box has no contractor purpose on iPhone. Remove it. Preserve portrait PASS and Enter Time QUICK. |
+| Architectural decision | One `input[type=date]`. Native calendar button is not a second Field control. `appearance: none` plus collapsed indicator. Cache-bust `schd-ux5b`. |
+| Prompt template used | FG-035 SCH-D PHYSICAL IPHONE UX CORRECTION #5 |
+| Approved Cursor prompt summary | Root-cause Date, landscape shell, Back to Today; tests; UAT; HTTPS; STOP C1–C5. |
+| Files expected to change | field.css; field/base.html; SCH-D tests; UAT/continuity docs |
+| Files prohibited from changing | Schedule/TIME authority; migrations; commit; push; PERF |
+| Implementation result | SCH-D **UX #5 APPLIED / UX #5 NOT PHYSICAL PASS**. Working tree **DIRTY**. Darcy legal commit remains local HEAD. |
+| Tests | TIME+Field+SCH-D **43 passed**, 172 warnings, **25.14s**, exit **0**. SCH-A+B not rerun. Full suite not run. Cursor Terminal. |
+| Project-state-report update | no (SCH-D not closed) |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | Physical retest C1–C5. |
+| Next approved step | **STOP.** Joel physically retests C1–C5. Do **not** claim UX #5 physical PASS. Do **not** commit. Do **not** begin PERF. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-16 — FG-035 SCH-D physical UAT UX #5
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Bounded SCH-D UX #5: Date blank box root cause; Field landscape shell for Today and Time; Time → Back to Today 2–3s. No PERF. No commit. |
+| Business decision | Preserve portrait PASS and Enter Time QUICK. Do not treat Enter Time as still slow. |
+| Architectural decision | Blank box = Safari calendar-picker-indicator, not a second Field control. Landscape 2-col scoped to Capture. Back to Today is GET /field/today; delay was Today IndexedDB via always-present retry panel. |
+| Prompt template used | FG-035 SCH-D PHYSICAL IPHONE UX CORRECTION #5 |
+| Approved Cursor prompt summary | Root-cause Date, landscape shell, Back to Today; tests; UAT; HTTPS; STOP C1–C5. |
+| Files expected to change | field.css; field.js; field/base.html; SCH-D tests; UAT/Manual Impact/continuity docs |
+| Files prohibited from changing | Schedule/TIME authority; migrations; commit; push; PERF |
+| Implementation result | SCH-D **PORTRAIT PASS / ENTER TIME SPEED PASS / UX #5 APPLIED / UX #5 NOT PHYSICAL PASS**. Working tree **DIRTY**. |
+| Tests | TIME+Field+SCH-D **43 passed**, 172 warnings, **24.13s**, exit **0**. SCH-A+B not rerun. Full suite not run. Cursor Terminal. |
+| Project-state-report update | no (SCH-D not closed) |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | Physical retest C1–C5. |
+| Next approved step | **STOP.** Joel physically retests C1–C5. Do **not** claim UX #5 physical PASS. Do **not** commit. Do **not** begin PERF. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-16 — FG-035 SCH-D physical UAT UX #4 measure-then-correct
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Bounded SCH-D UX #4: Date containment; useful landscape; MEASURE Field action/navigation performance; correct demonstrated cause if bounded. No PERF. No commit. |
+| Business decision | Do **not** record “landscape is slow.” Field is slow on some iPhone actions, especially Enter Time. Landscape is a separate layout FAIL. Preserve My Work — Joel. |
+| Architectural decision | Flask Enter Time **12–20 ms**. Bottleneck is client first-paint: render-blocking Google Fonts + idle IndexedDB on Time/Week/Month. No Schedule redesign. Date: min-width 0. Landscape: 36rem shell. |
+| Prompt template used | FG-035 SCH-D PHYSICAL IPHONE UX CORRECTION #4 MEASURE FIRST / THEN CORRECT |
+| Approved Cursor prompt summary | Date inside Time card; useful landscape; measure Enter Time and Field nav; identify bottleneck; bounded correction; tests; UAT; HTTPS; STOP B1–B5. |
+| Files expected to change | field.css; field.js; field/base.html; SCH-D tests; UAT/Manual Impact/continuity docs |
+| Files prohibited from changing | identity heading; Schedule/TIME authority; migrations; commit; push; PERF workstream |
+| Implementation result | SCH-D **MY WORK — JOEL PHYSICAL PASS / UX #4 MEASURE-THEN-CORRECT APPLIED / UX #4 NOT PHYSICAL PASS**. Working tree **DIRTY**. |
+| Tests | TIME+Field+SCH-D **43 passed**, 172 warnings, **28.40s**, exit **0**. Dedicated SCH-D **15** in that bundle. SCH-A+B not rerun. Full suite not run. Cursor Terminal. |
+| Project-state-report update | no (SCH-D not closed) |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | Physical retest B1–B5. Header logo 439 KB remains a contributing client cost. |
+| Next approved step | **STOP.** Joel physically retests B1–B5. Do **not** claim UX #4 physical PASS. Do **not** commit. Do **not** begin PERF. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-16 — FG-035 SCH-D physical UAT UX #4
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Bounded SCH-D UX #4: Date containment; useful landscape width; diagnose landscape slowness. No PERF. No commit. |
+| Business decision | Physical screenshots control. Preserve My Work — Joel. Useful landscape width, not a scrollbar. |
+| Architectural decision | Date overflow = WebKit datetime-edit width 100% + date min-content + grid min-width auto. Landscape unused space = 42rem field-main unless orientation query matches. No Field JS orientation/resize loop. |
+| Prompt template used | FG-035 SCH-D PHYSICAL IPHONE UX CORRECTION #4 |
+| Approved Cursor prompt summary | Date inside Time card; landscape uses width; diagnose landscape performance; tests; UAT; HTTPS; STOP B1–B4. |
+| Files expected to change | field.css; SCH-D tests; UAT/Manual Impact/continuity docs |
+| Files prohibited from changing | identity heading; Schedule/TIME authority; migrations; commit; push |
+| Implementation result | SCH-D **MY WORK — JOEL PHYSICAL PASS / UX #4 APPLIED / UX #4 NOT PHYSICAL PASS**. Working tree **DIRTY**. |
+| Tests | dedicated SCH-D **14 passed**, 26 warnings, **8.43s**, exit **0**. TIME+Field **28 passed**, 146 warnings, **16.64s**, exit **0**. SCH-A+B not rerun. Cursor Terminal. |
+| Project-state-report update | no (SCH-D not closed) |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | Date/landscape physical retest B1–B4. Landscape slowness has no SCH-D JS cause. |
+| Next approved step | **STOP.** Joel physically retests B1–B4. Do **not** claim UX #4 physical PASS. Do **not** commit. Do **not** begin PERF. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-16 — FG-035 SCH-D physical UAT UX #3
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Bounded SCH-D physical-UAT UX #3: My Work first-name identity, Time Date root-cause alignment, restore useful FG-021 landscape. No PERF. No commit. |
+| Business decision | Physical iPhone evidence controls. Portrait overflow must not be solved by killing landscape. Schedule-assisted Time physical PASS is preserved. |
+| Architectural decision | Identity from first token of `display_name` at section heading only. Date label/input siblings. Restore FG-021 landscape two-column. No `overflow-x: hidden` on Field html/body. No week-strip invented. Chrome crash loop was AiRIA pytest, no CalibraytAI product change. |
+| Prompt template used | FG-035 SCH-D PHYSICAL IPHONE UX CORRECTION #3 — REVISED; resume after Chrome diagnostic close |
+| Approved Cursor prompt summary | Identity My Work — first name; Date root-cause; restore useful landscape; tests; UAT; HTTPS restart; STOP for A1–A4. |
+| Files expected to change | Field Today/Time templates; field.css; field_format; field routes; SCH-D tests; UAT/Manual Impact/continuity docs |
+| Files prohibited from changing | live DB occupancy Projects 45/46/47/27; EST-2026-0019; PERF/Print/migrations; commit; push |
+| Implementation result | SCH-D **SCHEDULED TIME PHYSICAL PASS / OVERALL PHYSICAL UAT NOT CLOSED / UX #3 APPLIED / UX #3 NOT PHYSICAL PASS**. Working tree **DIRTY**. |
+| Tests | dedicated SCH-D **14 passed**, 26 warnings, **8.11s**, exit **0**. TIME+Field **28 passed**, 146 warnings, **17.68s**, exit **0**. SCH-A+SCH-B **22 passed**, 57 warnings, **10.82s**, exit **0**. Cursor Terminal. |
+| Project-state-report update | no (SCH-D not closed) |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | Overall physical UAT not closed. Joel retests A1–A4. Landscape physical retest required. |
+| Next approved step | **STOP.** Joel physically retests A1–A4. Do **not** claim UX #3 physical PASS. Do **not** commit. Do **not** begin PERF. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-16 — Continuity + live/UAT deployment audit (docs-only Shop capture)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Read-only documentation + HTTPS/UAT deployment audit. Docs-only capture of Shop / Company Work if chat-only. |
+| Business decision | Shop vs job Time is product direction only. Banked Hours already recorded. No implementation. |
+| Architectural decision | No fake SHOP Project. No `shop_time` boolean. Later TIME EXPANSION preflight not started. |
+| Prompt template used | Full current-work continuity + live/UAT deployment audit |
+| Approved Cursor prompt summary | Audit sealed vs uncommitted vs running vs physical. Capture Shop if chat-only. No product code. No commit. |
+| Files expected to change | company-work product-direction + indexes / Help topics / Banked Hours pointer / this log |
+| Files prohibited from changing | product code; tests; migrations; live DB; HTTPS restart; commit; push |
+| Implementation result | Shop/Company Work + TIME EXPANSION recorded uncommitted. HTTPS not restarted. SCH-D not committed. |
+| Tests | not rerun (audit prohibition) |
+| Project-state-report update | no (milestone report lags UAT record; not rewritten this audit) |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | SCH-D overall physical UAT not closed. PSR/v1 subsequent status lag engineering vs physical. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** commit. Do **not** begin PERF. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-16 — FG-035 SCH-D physical UAT UX #2
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Bounded SCH-D physical-UAT UX #2: Today weekday, My work own-name, Time date alignment, obvious ad-hoc Time path. No PERF. No commit. |
+| Business decision | Schedule is the plan. Time is what actually happened. Worker must record actual work without waiting for Schedule to change. |
+| Architectural decision | No second Time picker. No ad-hoc assignment record. Time does not update Schedule. Weekday derived from `date.today()`. |
+| Prompt template used | FG-035 SCH-D physical iPhone UAT bounded UX correction #2 |
+| Approved Cursor prompt summary | Weekday/natural date; omit current-user My work name; Time date alignment; Working somewhere else / Choose different work; tests; UAT record; HTTPS restart; STOP. |
+| Files expected to change | Field templates/CSS/JS; field_format; contractor_copy; schedule Field projection; SCH-D tests; UAT/Manual Impact/continuity docs |
+| Files prohibited from changing | live DB occupancy Projects 45/46/47/27; EST-2026-0019; PERF/Print/migrations; commit; push |
+| Implementation result | SCH-D **SCHEDULED TIME PHYSICAL PASS / OVERALL PHYSICAL UAT NOT CLOSED / UX #2 APPLIED**. Working tree **DIRTY**. |
+| Tests | dedicated SCH-D **13 passed**, 26 warnings, **8.42s**. SCH-D+TIME+Field **41 passed**, 172 warnings, **23.53s**. SCH-A+SCH-B **22 passed**, 57 warnings, **10.73s**. Cursor Terminal. |
+| Project-state-report update | no (SCH-D not closed) |
+| Milestone entry update | no |
+| Constitutional issue raised | no |
+| Unresolved issues | Overall physical UAT not closed. Joel retests A–E. |
+| Next approved step | **STOP.** Joel physically retests A–E. Do **not** claim overall physical PASS. Do **not** commit. Do **not** begin PERF. |
+| Next approved prompt | none — STOP |
+| Commit hash | uncommitted |
+
+### 2026-09-16 — FG-035 SCH-D Time-entry correction + Banked Hours recorded
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Diagnose/correct physical iPhone Time-entry failure. Record Banked Hours as future product direction only. |
+| Business decision | Schedule must not be a Time gate. Banked Hours not implemented. |
+| Architectural decision | Time URL confirms the project and renders the existing Time form. `submit_time()` / `list_time_work_choices()` unchanged. Capture confirm unchanged. Banked Hours likely needs an auditable ledger later; TIME remains earned-hours authority. |
+| Prompt template used | FG-035 SCH-D physical iPhone UAT failure Time entry + Today UX bounded diagnosis/correction; Banked Hours continuity note |
+| Approved Cursor prompt summary | Reproduce Time failure; correct SCH-D integration; bounded Today UX; tests; HTTPS restart; STOP. Do not implement Banked Hours. |
+| Files expected to change | field Time route; Field templates/CSS; field_format; SCH-D tests; UAT/continuity docs; Banked Hours record |
+| Files prohibited from changing | TIME authority; SCOPE; SCH-A/B/C; Alembic; commit; push; Banked Hours product; V1 rescore |
+| Implementation result | Time 302-to-confirm removed. Today dates/warnings/name/icon bounded. Physical Test 1 still **FAIL** until Joel retests. Banked Hours **RECORDED / NOT AUTHORIZED**. |
+| Tests | dedicated SCH-D **12 passed**, 24 warnings, **8.51s**. SCH-D+TIME+Field **40 passed**, 170 warnings, **23.13s**. Focused **147 passed**, 564 warnings, **65.23s**. Cursor Terminal. |
+| Project-state-report update | no |
+| Milestone entry update | no |
+| Constitutional issue raised | none |
+| Unresolved issues | Physical retest of Test 1 and Test 5. Tests 2–8 stopped. Not committed. |
+| Next approved step | **STOP.** Joel repeats Test 1 and Test 5. Do not claim physical PASS. Do not begin PERF. Do not implement Banked Hours. |
+| Next approved prompt | none until Joel retests |
+| Commit hash | none |
+
+### 2026-09-16 — FG-035 SCH-D physical iPhone UAT Joel observations
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Record Joel physical iPhone UAT notes. Do not implement product wishlist. Do not claim PASS. |
+| Business decision | SCH-D owner A/B/C unchanged. No new RBAC. Contractor-facing noise removal / Today-Tuesday / week day picker / month project rollup parked for Architect. |
+| Architectural decision | Enter Time → Confirm Project is existing FG-021 confirmed-project gate reused by TIME. Not repaired this turn. |
+| Prompt template used | UAT observation record (no new implementation prompt executed) |
+| Approved Cursor prompt summary | Record Joel notes; do not implement Today-Tuesday, week picker, month rollup, or employee-only schedule permission. |
+| Files expected to change | UAT record; continuity docs |
+| Files prohibited from changing | app product; Alembic; Projects 45/46/47/27; EST-2026-0019; commit; push; Manual Impact rewrite; V1 rescore |
+| Implementation result | Physical iPhone UAT **IN PROGRESS / NOT PASS**. Pour Enter time **FAIL** (Confirm Project). Layout compliment recorded. Working tree remains **DIRTY** SCH-D. |
+| Tests | Not rerun. Post-physical suite still deferred. |
+| Project-state-report update | no (not a milestone close) |
+| Milestone entry update | no |
+| Constitutional issue raised | none |
+| Unresolved issues | Pour Time blocked on Confirm Project. Extra work label not found. Wishlist not authorized. |
+| Next approved step | **STOP.** Joel retries Pour via Confirm and Time, or Architect authorizes a bounded confirm-path repair. Do not begin PERF. |
+| Next approved prompt | Architect decision: record-only vs bounded Time confirm-path repair. No Today-Tuesday / week picker / month rollup / RBAC unless separately authorized. |
+| Commit hash | none |
+
+### 2026-09-16 — FG-035 SCH-D live bounded UAT + physical iPhone UAT preparation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Live bounded SCH-D UAT vessel + server-side Field/Time proof + HTTPS Field environment + Joel physical iPhone script. No physical PASS claim. No commit. |
+| Business decision | Two UAT layers: live synthetic office/server, then Joel-operated physical iPhone. Desktop narrow-screen is not a substitute. |
+| Architectural decision | No migration. Same Schedule rows. TIME remains authoritative. Physical taps are Joel-only. |
+| Prompt template used | FG-035 SCH-D live + physical iPhone UAT (16 Sep 2026) |
+| Approved Cursor prompt summary | Verify package; create one SCH-D vessel; live server UAT; restart FG-021 HTTPS; STOP with Joel iPhone script. Do not claim physical PASS. No commit. |
+| Files expected to change | live DB synthetic vessel only; UAT record; continuity docs |
+| Files prohibited from changing | Projects 45/46/47/27; EST-2026-0019; Alembic; Print; PERF; commit; push; fabricated iPhone evidence |
+| Implementation result | Vessel Project **48**. Server-side live UAT **PASS**. HTTPS **5443** running. Physical iPhone UAT **NOT YET PERFORMED**. SCH-D **not closed**. Working tree **DIRTY**. |
+| Tests | Not rerun this UAT-setup pass. Authoritative engineering remains dedicated **10** / focused **145** / full **1129**. Post-physical suite **deferred**. |
+| Project-state-report update | yes (awaiting physical) |
+| Milestone entry update | no |
+| Constitutional issue raised | none |
+| Unresolved issues | Physical iPhone UAT awaiting Joel. Cert SAN IP is historical 192.168.134.223; current LAN is 192.168.2.88. Not committed. |
+| Next approved step | **STOP.** Joel performs physical iPhone tests 1–8 and reports PASS/FAIL. |
+| Next approved prompt | none until Joel reports |
+| Commit hash | none |
+
+### 2026-09-16 — FG-035 SCH-D Field Today / Week / Month + schedule-assisted Time
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-16 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Implement FG-035 SCH-D Field Today / Week / Month + schedule-assisted Time. No live UAT. No physical iPhone UAT. No commit. |
+| Business decision | A: worker My work + Crew work only. B: My work default; secondary read-only Company Today; no new RBAC. C: no iPhone Schedule editing. |
+| Architectural decision | Same Schedule rows. No second store. No migration. No Field Schedule POSTs. TIME remains authoritative. Warnings informational. Physical iPhone UAT mandatory before later close; this pass must not claim PASS. |
+| Prompt template used | FG-035 SCH-D implementation (16 Sep 2026) |
+| Approved Cursor prompt summary | Implement SCH-D; dedicated tests; SCH-A/B/C + TIME/Field/Hub/MONITOR regression; full suite; Manual Impact; STOP. No live UAT. No physical iPhone UAT. No commit. No V1 rescore. |
+| Files expected to change | schedule service; field routes/templates/CSS; contractor_copy; dedicated tests; governance docs; Manual Impact |
+| Files prohibited from changing | live DB; Projects 45/46/47 occupancy; EST-2026-0019; Alembic; Print; PERF/CLOSE/LEARN/QB-T; Help/Voice/Manual product; V1 rescore; commit; push |
+| Implementation result | SCH-D **IMPLEMENTED / TESTED / NOT LIVE-UAT / PHYSICAL IPHONE UAT NOT CLAIMED**. SCH overall **OPEN / PARTIAL**. SCH-D **not closed**. Manual Impact **CURRENT**. FG-035 **OPEN / PARTIAL**. V1 **60% / 4 of 11**. Working tree **DIRTY**. |
+| Tests | dedicated `tests/test_work_schedule_field_fg035.py` **10 passed**, 18 warnings, **6.06s**, exit **0**. Focused TAX/WBS+SCOPE+TIME+SCH-A+SCH-B+SCH-C+SCH-D+Hub/Field/MONITOR **145 passed**, 558 warnings, **65.27s**, exit **0**. Full suite **1129 passed**, 3723 warnings, **455.69s**, exit **0**. Cursor Terminal. |
+| Project-state-report update | yes |
+| Milestone entry update | no (SCH-D not closed) |
+| Constitutional issue raised | none |
+| Unresolved issues | Live / physical iPhone UAT not authorized. Not committed. Physical iPhone UAT not claimed. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | none this pass |
+| Commit hash | none |
 
 ### 2026-09-16 — FG-035 SCH-C CLOSE / COMMIT / PUSH
 

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **DESIGN FROZEN.** Subsequent SCH-A product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-15). Subsequent SCH-B product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-16). Subsequent SCH-C product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-16). This freeze remains the design SoR. SCH overall is **OPEN / PARTIAL**. |
+| Status | **DESIGN FROZEN.** Subsequent SCH-A product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-15). Subsequent SCH-B product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-16). Subsequent SCH-C product is **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS** (2026-09-16). Subsequent SCH-D product is **IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / NOT COMMITTED / NOT PUSHED** (2026-09-17). This freeze remains the design SoR. SCH overall is **OPEN / PARTIAL**. |
 | Date | 2026-09-15 |
 | Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED**. SCOPE **IMPLEMENTED**. TIME **IMPLEMENTED**. SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. SCH-C **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. |
 | Governing architecture | [fg-035-sch-dynamic-scheduling-preflight.md](fg-035-sch-dynamic-scheduling-preflight.md) **PREFLIGHT COMPLETE / ARCHITECTURE RECORDED**. This file does **not** redesign that record. |
@@ -25,7 +25,19 @@ Subsequent 2026-09-16 SCH-C:
 IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS
 NO NEW ADR
 V1 NOT RESCORED
+
+Subsequent 2026-09-16 SCH-D:
+IMPLEMENTED / TESTED / NOT LIVE-UAT / PHYSICAL IPHONE UAT NOT CLAIMED
+NO MIGRATION
+NO NEW ADR
+V1 NOT RESCORED
 ```
+
+**Subsequent status (2026-09-17 SCH-D physical iPhone UAT PASS):** SCH-D **IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / NOT COMMITTED / NOT PUSHED**. No migration. This freeze remains the design SoR. Do **not** implement Print or PERF from this file.
+
+**Subsequent status (2026-09-17 SCH-D address + Directions + Month calendar):** Field presents existing `Project.address` and Directions phone-maps handoff. Month is a real calendar month + selected-day detail. No migration. F1/F2/F4 physical PASS. F3 FAIL replaced, not physically passed. This freeze remains the design SoR. Do **not** implement Print or PERF from this file.
+
+**Subsequent status (2026-09-16 SCH-D implementation):** SCH-D **IMPLEMENTED / TESTED / NOT LIVE-UAT / PHYSICAL IPHONE UAT NOT CLAIMED**. No migration. Field presentation of the same Schedule rows. Time suggestion does not create Time. This freeze remains the design SoR. Do **not** implement Print or PERF from this file. Physical iPhone UAT **NOT CLAIMED**.
 
 **Subsequent status (2026-09-16 SCH-C live migrate + bounded synthetic UAT):** SCH-C **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Additive **`f9b0c1d2e3f4`** applied live. Live current = repository head. Evidence [fg035-sch-c-live-bounded-uat-record.md](../testing/fg035-sch-c-live-bounded-uat-record.md). This freeze remains the design SoR. Do **not** implement SCH-D from this file.
 

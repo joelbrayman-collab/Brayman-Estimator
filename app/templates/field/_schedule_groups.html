@@ -1,0 +1,40 @@
+{% if groups %}
+{% for group in groups %}
+<section class="field-schedule-group">
+    <p class="field-project-name" title="{{ group.project_name }}">{{ group.project_label }}</p>
+    {% if group.address %}
+    <p class="field-project-address">
+        {% if group.directions_url %}
+        <a href="{{ group.directions_url }}" target="_blank" rel="noopener noreferrer">{{ group.address }}</a>
+        {% else %}
+        {{ group.address }}
+        {% endif %}
+    </p>
+    {% if group.directions_url %}
+    <a class="field-btn field-btn-secondary field-directions" href="{{ group.directions_url }}" target="_blank" rel="noopener noreferrer">{{ contractor_copy.FIELD_DIRECTIONS }}</a>
+    {% endif %}
+    {% endif %}
+    <ul class="field-schedule-list">
+        {% for card in group.cards %}
+        <li class="field-schedule-card">
+            <p class="field-schedule-work">
+                {{ card.element_name }}{% if card.activity_name %} — {{ card.activity_name }}{% endif %}
+            </p>
+            {% if show_date %}
+            <p class="field-muted">{{ card.date_label }}</p>
+            {% endif %}
+            {% if card.relation %}<p class="field-schedule-relation">{{ card.relation }}</p>{% endif %}
+            {% if card.who %}<p class="field-muted">{{ card.who }}</p>{% endif %}
+            {% for warning in card.warnings %}
+            <p class="field-schedule-warning" role="status">{{ warning.label }}: {{ warning.summary }}</p>
+            <p class="field-muted">{{ contractor_copy.FIELD_SCHEDULE_WARNING_HELP }}</p>
+            {% endfor %}
+            {% if show_time %}
+            <a class="field-btn field-btn-primary" href="{{ url_for('field.time_entry', project_id=card.project_id) }}">{{ contractor_copy.FIELD_ENTER_TIME }}</a>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endfor %}
+{% endif %}

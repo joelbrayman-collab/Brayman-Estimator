@@ -1,0 +1,22 @@
+{% if cards %}
+<ul class="field-schedule-list">
+    {% for card in cards %}
+    <li class="field-schedule-card">
+        <p class="field-project-name" title="{{ card.project_name }}">{{ card.project_label }}</p>
+        <p class="field-schedule-work">
+            {{ card.element_name }}{% if card.activity_name %} — {{ card.activity_name }}{% endif %}
+        </p>
+        <p class="field-muted">{{ card.date_label }}</p>
+        {% if card.relation %}<p class="field-schedule-relation">{{ card.relation }}</p>{% endif %}
+        {% if card.who %}<p class="field-muted">{{ card.who }}</p>{% endif %}
+        {% for warning in card.warnings %}
+        <p class="field-schedule-warning" role="status">{{ warning.label }}: {{ warning.summary }}</p>
+        <p class="field-muted">{{ contractor_copy.FIELD_SCHEDULE_WARNING_HELP }}</p>
+        {% endfor %}
+        {% if show_time %}
+        <a class="field-btn field-btn-primary" href="{{ url_for('field.time_entry', project_id=card.project_id) }}">{{ contractor_copy.FIELD_ENTER_TIME }}</a>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}

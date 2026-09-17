@@ -2,6 +2,8 @@
 {% block title %}{{ contractor_copy.FIELD_TIME_BUTTON }} — CalibraytAI{% endblock %}
 {% block field_page %}time{% endblock %}
 {% block content %}
+{% set nav_current = '' %}
+{% include "field/_field_nav.html" %}
 <section class="field-panel field-panel-time">
     <h1>{{ contractor_copy.FIELD_TIME_BUTTON }}</h1>
     <p class="field-project-name">{{ project.name }}</p>
@@ -13,17 +15,31 @@
         {% if returned %}
         <input type="hidden" name="returned_id" value="{{ returned.id }}">
         {% endif %}
-        <label class="field-label">
-            Date
+        <div class="field-time-date">
+            <label class="field-label" for="field-time-date">Date</label>
             <input
                 type="date"
+                id="field-time-date"
                 name="work_date"
                 class="field-input"
                 required
                 max="{{ today }}"
                 value="{{ returned.work_date.isoformat() if returned else today }}"
             >
-        </label>
+        </div>
+        {% if suggestions %}
+        <p class="field-muted">{{ contractor_copy.FIELD_SCHEDULED_TODAY }}</p>
+        {% if suggestions|length > 1 %}
+        <p class="field-muted">{{ contractor_copy.FIELD_TWO_JOBS_HELP }}</p>
+        {% endif %}
+        <div class="field-time-recent">
+            {% for suggestion in suggestions %}
+            <button type="button" class="field-btn field-btn-secondary field-time-recent-btn" data-element-id="{{ suggestion.element_id }}" data-activity-id="{{ suggestion.activity_id or '' }}">{{ suggestion.element_name }}{% if suggestion.activity_name %} — {{ suggestion.activity_name }}{% endif %}</button>
+            {% endfor %}
+        </div>
+        <p class="field-muted">{{ contractor_copy.FIELD_WORKING_ELSEWHERE }}</p>
+        <button type="button" class="field-btn field-btn-secondary" id="field-time-other-toggle" aria-expanded="false">{{ contractor_copy.FIELD_CHOOSE_DIFFERENT_WORK }}</button>
+        {% endif %}
         {% if recent_activity_ids %}
         <p class="field-muted">Recent work</p>
         <div class="field-time-recent">
@@ -34,6 +50,7 @@
             {% endfor %}
         </div>
         {% endif %}
+        <div id="field-time-other-work"{% if suggestions and not returned %} hidden{% endif %}>
         <label class="field-label">
             Work item
             <select name="project_work_element_id" id="field-time-element" class="field-select">
@@ -61,6 +78,7 @@
                 {% endfor %}
             </select>
         </label>
+        </div>
         <label class="field-label">
             Hours
             <input

@@ -22,6 +22,25 @@ from app.services.build import (
     list_originals,
 )
 from app.services.organizations import get_current_organization
+from app.presentation.field_format import (
+    field_adjacent_month,
+    field_calendar_weekday_headings,
+    field_month_calendar,
+    field_month_title,
+    field_my_work_heading,
+    field_today_heading,
+    field_today_natural_date,
+    field_today_weekday,
+)
+from app.services.schedule import (
+    FIELD_SCOPE_COMPANY,
+    FIELD_SCOPE_WORKER,
+    assemble_field_schedule,
+    calendar_month_bounds,
+    calendar_week_bounds,
+    field_month_bounds,
+    suggest_time_attribution,
+)
 from app.services.shared_api import get_organization_project, list_organization_projects
 from app.services.time_entry import (
     TimeEntryError,
@@ -116,6 +135,111 @@ def today():
         project=project,
         projects=projects,
         recent=recent,
+        schedule=assemble_field_schedule(
+            organization.id,
+            worker_user_id=current_user.id,
+            window_start=date.today(),
+            window_end=date.today(),
+            scope=FIELD_SCOPE_WORKER,
+            today=date.today(),
+        ),
+        today_heading=field_today_heading(),
+        today_weekday=field_today_weekday(),
+        today_natural_date=field_today_natural_date(),
+        my_work_heading=field_my_work_heading(current_user.display_name),
+        actor_name=current_user.display_name,
+    )
+
+
+@field_bp.route("/week")
+def week():
+    organization = _organization()
+    start, end = calendar_week_bounds()
+    return render_template(
+        "field/week.html",
+        view=assemble_field_schedule(
+            organization.id,
+            worker_user_id=current_user.id,
+            window_start=start,
+            window_end=end,
+            scope=FIELD_SCOPE_WORKER,
+        ),
+        actor_name=current_user.display_name,
+    )
+
+
+@field_bp.route("/month")
+def month():
+    organization = _organization()
+    today = date.today()
+    try:
+        year = int(request.args.get("year") or today.year)
+        month_number = int(request.args.get("month") or today.month)
+        start, end = calendar_month_bounds(year, month_number)
+    except (TypeError, ValueError):
+        year, month_number = today.year, today.month
+        start, end = field_month_bounds(today)
+    try:
+        requested_day = int(request.args.get("day")) if request.args.get("day") else None
+        selected = date(year, month_number, requested_day) if requested_day else None
+    except (TypeError, ValueError):
+        selected = None
+    if selected is None or not (start <= selected <= end):
+        selected = today if start <= today <= end else start
+    view = assemble_field_schedule(
+        organization.id,
+        worker_user_id=current_user.id,
+        window_start=start,
+        window_end=end,
+        scope=FIELD_SCOPE_WORKER,
+        today=today,
+    )
+    work_dates = {day["date"] for day in view["days"] if day["cards"]}
+    selected_day = next(day for day in view["days"] if day["date"] == selected)
+    prev_year, prev_month = field_adjacent_month(year, month_number, -1)
+    next_year, next_month = field_adjacent_month(year, month_number, 1)
+    return render_template(
+        "field/month.html",
+        view=view,
+        actor_name=current_user.display_name,
+        calendar_year=year,
+        calendar_month=month_number,
+        month_title=field_month_title(year, month_number),
+        weekday_headings=field_calendar_weekday_headings(),
+        calendar_weeks=field_month_calendar(
+            year=year,
+            month=month_number,
+            today=today,
+            selected=selected,
+            work_dates=work_dates,
+        ),
+        selected_day=selected_day,
+        selected_heading=field_today_heading(selected),
+        prev_year=prev_year,
+        prev_month=prev_month,
+        next_year=next_year,
+        next_month=next_month,
+    )
+
+
+@field_bp.route("/schedule/today")
+def schedule_today():
+    return redirect(url_for("field.today"), code=302)
+
+
+@field_bp.route("/company-today")
+def company_today():
+    organization = _organization()
+    today = date.today()
+    return render_template(
+        "field/company_today.html",
+        view=assemble_field_schedule(
+            organization.id,
+            window_start=today,
+            window_end=today,
+            scope=FIELD_SCOPE_COMPANY,
+            today=today,
+        ),
         actor_name=current_user.display_name,
     )
 
@@ -240,8 +364,7 @@ def time_entry(project_id):
     project = _project_or_redirect(organization, project_id)
     if project is None:
         return redirect(url_for("field.projects"), code=302)
-    if _confirmed_project_id() != project.id:
-        return redirect(url_for("field.project_confirm", project_id=project.id), code=302)
+    _set_confirmed_project(project.id)
     returned_id = _optional_int(request.values.get("returned_id"))
     returned = None
     if returned_id is not None:
@@ -301,6 +424,16 @@ def time_entry(project_id):
     last_element_id = session.get(LAST_TIME_ELEMENT_SESSION_KEY)
     if returned is not None:
         last_element_id = returned.project_work_element_id
+    work_date = returned.work_date if returned is not None else date.today()
+    suggestions = [
+        row
+        for row in suggest_time_attribution(
+            organization.id,
+            current_user.id,
+            work_date,
+        )
+        if row["project_id"] == project.id
+    ]
     return render_template(
         "field/time.html",
         project=project,
@@ -308,6 +441,7 @@ def time_entry(project_id):
         recent_activity_ids=recent_ids,
         last_element_id=last_element_id,
         returned=returned,
+        suggestions=suggestions,
         today=date.today().isoformat(),
         actor_name=current_user.display_name,
     )

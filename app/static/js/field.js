@@ -5,6 +5,7 @@
   var DB_VERSION = 1;
   var LAST_PROJECT_KEY = "calibai-field-last-project-id";
   var SESSION_PROJECT_KEY = "calibai-field-project-id";
+  var PENDING_KEY = "calibai-field-has-pending";
   var AUDIO_TYPES = [
     "audio/mp4",
     "audio/mp4;codecs=mp4a.40.2",
@@ -381,8 +382,10 @@
         });
         if (!retry.length) {
           panel.hidden = true;
+          rememberPending(false);
           return;
         }
+        rememberPending(true);
         panel.hidden = false;
         count.textContent =
           retry.length === 1
@@ -396,6 +399,18 @@
       .catch(function () {
         panel.hidden = true;
       });
+  }
+
+  function rememberPending(hasPending) {
+    try {
+      if (hasPending) {
+        localStorage.setItem(PENDING_KEY, "1");
+      } else {
+        localStorage.removeItem(PENDING_KEY);
+      }
+    } catch (err) {
+      /* hint only */
+    }
   }
 
   function rememberProject(projectId) {
@@ -556,6 +571,7 @@
 
   function markNeedsRetry(capture, originals) {
     capture.state = "needs_retry";
+    rememberPending(true);
     var chain = putStore("pending_captures", capture);
     originals.forEach(function (row) {
       if (row.state !== "acked") {
@@ -844,6 +860,15 @@
         }
       );
     }
+    var otherToggle = document.getElementById("field-time-other-toggle");
+    var otherWork = document.getElementById("field-time-other-work");
+    if (otherToggle && otherWork) {
+      otherToggle.addEventListener("click", function () {
+        otherWork.removeAttribute("hidden");
+        otherToggle.setAttribute("aria-expanded", "true");
+        otherToggle.setAttribute("hidden", "hidden");
+      });
+    }
     if (extraToggle && extra) {
       extraToggle.addEventListener("click", function () {
         var open = extra.hasAttribute("hidden");
@@ -861,23 +886,45 @@
   function init() {
     bindLogout();
     initTimeForm();
-    openDb()
-      .then(function () {
-        persistenceReady = true;
-        setStatus("");
-        updateRetryPanel();
-        initCapture();
-      })
-      .catch(function (err) {
-        persistenceReady = false;
-        logFieldPersistFailure(persistFailure("idb_open", err));
-        setFeedback("Cannot safely keep this capture on this phone. Try photo or text later, or free storage.");
-        var save = document.getElementById("field-save");
-        if (save) save.disabled = true;
-        bindLogout();
-        enableVoice();
-        bindFiles();
-      });
+    if (document.querySelector(".field-capture")) {
+      openDb()
+        .then(function () {
+          persistenceReady = true;
+          setStatus("");
+          updateRetryPanel();
+          initCapture();
+        })
+        .catch(function (err) {
+          persistenceReady = false;
+          logFieldPersistFailure(persistFailure("idb_open", err));
+          setFeedback("Cannot safely keep this capture on this phone. Try photo or text later, or free storage.");
+          var save = document.getElementById("field-save");
+          if (save) save.disabled = true;
+          bindLogout();
+          enableVoice();
+          bindFiles();
+        });
+      return;
+    }
+    var retryPanel = document.getElementById("field-retry-panel");
+    if (!retryPanel) return;
+    var hasPending = false;
+    try {
+      hasPending = window.localStorage.getItem(PENDING_KEY) === "1";
+    } catch (err) {
+      hasPending = false;
+    }
+    if (!hasPending) return;
+    window.setTimeout(function () {
+      openDb()
+        .then(function () {
+          persistenceReady = true;
+          updateRetryPanel();
+        })
+        .catch(function () {
+          retryPanel.hidden = true;
+        });
+    }, 0);
   }
 
   if (document.readyState === "loading") {

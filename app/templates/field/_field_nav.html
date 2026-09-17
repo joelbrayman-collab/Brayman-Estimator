@@ -1,0 +1,13 @@
+<nav class="field-schedule-nav" aria-label="Field">
+    <a class="field-schedule-nav-link{% if nav_current == 'today' %} is-current{% endif %}" href="{{ url_for('field.today') }}">
+        <svg class="field-nav-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+            <rect x="3" y="4" width="14" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.75"></rect>
+            <path d="M3 8h14" fill="none" stroke="currentColor" stroke-width="1.75"></path>
+            <path d="M7 2.5v3M13 2.5v3" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"></path>
+        </svg>
+        {{ contractor_copy.FIELD_NAV_TODAY }}
+    </a>
+    <a class="field-schedule-nav-link{% if nav_current == 'week' %} is-current{% endif %}" href="{{ url_for('field.week') }}">{{ contractor_copy.FIELD_NAV_WEEK }}</a>
+    <a class="field-schedule-nav-link{% if nav_current == 'month' %} is-current{% endif %}" href="{{ url_for('field.month') }}">{{ contractor_copy.FIELD_NAV_MONTH }}</a>
+    <a class="field-schedule-nav-link field-schedule-nav-secondary{% if nav_current == 'company' %} is-current{% endif %}" href="{{ url_for('field.company_today') }}">{{ contractor_copy.FIELD_COMPANY_TODAY }}</a>
+</nav>

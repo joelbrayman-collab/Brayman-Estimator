@@ -21,6 +21,7 @@ html,
 body {
     margin: 0;
     min-height: 100%;
+    width: 100%;
 }
 
 body.field-body {
@@ -217,7 +218,14 @@ input:focus-visible {
     }
 }
 
-@media (orientation: landscape) {
+@media (min-width: 36rem) {
+    .field-main {
+        max-width: none;
+        width: 100%;
+    }
+}
+
+@media (orientation: landscape), (min-width: 36rem) and (max-height: 32rem) {
     body.field-body {
         padding: calc(8px + var(--field-pad-top)) calc(16px + var(--field-pad-right)) calc(12px + var(--field-pad-bottom)) calc(16px + var(--field-pad-left));
     }
@@ -232,34 +240,40 @@ input:focus-visible {
 
     .field-main {
         max-width: none;
+        width: 100%;
     }
 
     .field-panel {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
         padding: 10px 12px;
         margin-bottom: 8px;
     }
 
-    .field-panel > :not(.field-btn):not(.field-file-btn) {
-        grid-column: 1 / -1;
-    }
-
-    .field-panel > form {
+    .field-panel.field-capture {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 8px;
     }
 
-    .field-panel > form > .field-btn {
+    .field-panel.field-capture > :not(.field-btn):not(.field-file-btn) {
+        grid-column: 1 / -1;
+    }
+
+    .field-panel.field-capture > form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .field-panel.field-capture > form > .field-btn {
         width: 100%;
         margin: 0;
         min-height: 44px;
     }
 
-    .field-panel > .field-btn-ghost,
-    .field-panel > form > .field-btn-ghost {
+    .field-panel.field-capture > .field-btn-ghost,
+    .field-panel.field-capture > form > .field-btn-ghost {
         grid-column: 1 / -1;
     }
 
@@ -338,11 +352,40 @@ input:focus-visible {
         min-height: 1em;
         margin-bottom: 4px;
     }
+
+    .field-schedule-nav,
+    .field-schedule-list,
+    .field-schedule-day,
+    .field-schedule-week,
+    .field-schedule-card {
+        grid-column: 1 / -1;
+    }
 }
 
 .field-panel-extra-work {
     border-color: #8b1e1e;
     background: #fff8e8;
+}
+
+.field-today-orientation {
+    margin: 0 0 16px;
+}
+
+.field-today-weekday,
+.field-today-date {
+    display: block;
+}
+
+.field-today-weekday {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.field-today-date {
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 2px;
 }
 
 .field-select,
@@ -356,6 +399,59 @@ input:focus-visible {
     border-radius: 8px;
     font: inherit;
     background: var(--white);
+}
+
+.field-panel > form > input[type="hidden"],
+.field-panel-time form > input[type="hidden"] {
+    display: none;
+}
+
+.field-panel-time,
+.field-panel-time form {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.field-time-date {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.field-time-date .field-input[type="date"] {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    text-align: left;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.field-time-date .field-input[type="date"]::-webkit-datetime-edit,
+.field-time-date .field-input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+.field-time-date .field-input[type="date"]::-webkit-date-and-time-value {
+    text-align: left;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.field-time-date .field-input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+    appearance: none;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+}
+
+#field-time-other-work:not([hidden]) {
+    display: contents;
 }
 
 .field-flashes {
@@ -413,7 +509,8 @@ input:focus-visible {
     margin: 12px 0;
 }
 
-@media (orientation: landscape) {
+@media (orientation: landscape), (min-width: 36rem) and (max-height: 32rem) {
+    .field-panel-time form > .field-time-date,
     .field-panel-time form > .field-muted,
     .field-panel-time form > .field-time-recent,
     .field-panel-time form > .field-label:has(textarea),
@@ -428,4 +525,189 @@ input:focus-visible {
     display: block;
     margin: 12px 0;
     font-weight: 600;
+}
+
+.field-schedule-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.field-schedule-nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px 12px;
+    border: 2px solid var(--black);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.field-nav-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.field-schedule-card .field-project-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.field-schedule-nav-link.is-current {
+    background: var(--black);
+    color: var(--white);
+}
+
+.field-schedule-nav-secondary {
+    font-weight: 500;
+}
+
+.field-schedule-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.field-schedule-card {
+    border: 2px solid var(--black);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.field-schedule-work {
+    margin: 0 0 8px;
+    font-weight: 600;
+}
+
+.field-schedule-relation {
+    margin: 0 0 8px;
+    font-weight: 600;
+}
+
+.field-schedule-warning {
+    margin: 8px 0 4px;
+    font-weight: 600;
+}
+
+.field-schedule-day,
+.field-schedule-week {
+    margin-top: 16px;
+}
+
+.field-schedule-group {
+    margin-bottom: 16px;
+}
+
+.field-schedule-group .field-project-name {
+    margin: 0 0 4px;
+}
+
+.field-project-address {
+    margin: 0 0 8px;
+    color: var(--muted);
+    white-space: pre-line;
+}
+
+.field-project-address a {
+    color: inherit;
+}
+
+.field-directions {
+    margin: 0 0 10px;
+}
+
+.field-month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0 0 12px;
+}
+
+.field-month-nav h2 {
+    margin: 0;
+    flex: 1;
+    text-align: center;
+    font-size: 1.05rem;
+}
+
+.field-month-nav .field-btn {
+    flex: 0 1 auto;
+    min-width: 0;
+    padding: 8px 10px;
+    font-size: 0.9rem;
+}
+
+.field-calendar {
+    margin-bottom: 16px;
+}
+
+.field-calendar-weekdays,
+.field-calendar-week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+}
+
+.field-calendar-weekdays span {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 0;
+}
+
+.field-calendar-day {
+    position: relative;
+    min-height: 44px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 0 10px;
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.field-calendar-day.is-outside {
+    visibility: hidden;
+}
+
+.field-calendar-day.is-today {
+    font-weight: 700;
+    box-shadow: inset 0 0 0 2px var(--black);
+}
+
+.field-calendar-day.is-selected {
+    background: var(--black);
+    color: var(--white);
+}
+
+.field-calendar-dot {
+    position: absolute;
+    bottom: 4px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+}
+
+.field-calendar-day.is-selected .field-calendar-dot {
+    background: var(--white);
+}
+
+.field-day-detail {
+    margin-top: 8px;
 }

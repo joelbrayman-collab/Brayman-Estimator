@@ -5,6 +5,7 @@ Projects owns Schedule. Overlay on existing Project work. Never creates Time.
 
 from __future__ import annotations
 
+import calendar
 from datetime import date, datetime, timedelta
 from typing import Optional
 
@@ -42,6 +43,13 @@ from app.services.organizations import get_current_organization_id
 from app.services.work_scope import change_order_is_scope_authorizing
 from app.services.work_structure import list_project_work_elements
 from app.presentation import contractor_copy
+from app.presentation.field_format import (
+    field_date_phrase,
+    field_date_range,
+    field_group_schedule_cards,
+    field_job_site,
+    field_project_label,
+)
 
 
 class ScheduleError(Exception):
@@ -585,6 +593,8 @@ def _assignment_view(assignment: WorkScheduleAssignment) -> dict:
             "item_id": assignment.work_schedule_item_id,
             "kind": "USER",
             "name": name,
+            "worker_user_id": assignment.worker_user_id,
+            "crew_id": None,
         }
     crew = assignment.crew
     name = crew.name if crew is not None else contractor_copy.SCHEDULE_CREW
@@ -593,6 +603,8 @@ def _assignment_view(assignment: WorkScheduleAssignment) -> dict:
         "item_id": assignment.work_schedule_item_id,
         "kind": "CREW",
         "name": name,
+        "worker_user_id": None,
+        "crew_id": assignment.crew_id,
     }
 
 
@@ -1320,3 +1332,291 @@ def assemble_schedule(
             else []
         ),
     }
+
+
+FIELD_SCOPE_WORKER = "worker"
+FIELD_SCOPE_COMPANY = "company"
+
+
+def calendar_week_bounds(today: Optional[date] = None) -> tuple[date, date]:
+    today = today or date.today()
+    start = today - timedelta(days=today.weekday())
+    return start, start + timedelta(days=6)
+
+
+def calendar_month_bounds(year: int, month: int) -> tuple[date, date]:
+    last_day = calendar.monthrange(year, month)[1]
+    return date(year, month, 1), date(year, month, last_day)
+
+
+def field_month_bounds(today: Optional[date] = None) -> tuple[date, date]:
+    today = today or date.today()
+    return calendar_month_bounds(today.year, today.month)
+
+
+def _dates_in_range(window_start: date, window_end: date):
+    current = window_start
+    while current <= window_end:
+        yield current
+        current += timedelta(days=1)
+
+
+def worker_assigned_on_date(
+    item: WorkScheduleItem,
+    worker_user_id: int,
+    work_date: date,
+    *,
+    organization_id: Optional[str] = None,
+) -> bool:
+    from app.services.organization_crew import users_on_crew_during_window
+
+    org_id = _org_id(organization_id)
+    if not _item_overlaps_window(item, work_date, work_date):
+        return False
+    for assignment in item.assignments:
+        if assignment.worker_user_id == worker_user_id:
+            return True
+        if assignment.crew_id is not None:
+            members = users_on_crew_during_window(
+                assignment.crew_id,
+                work_date,
+                work_date,
+                organization_id=org_id,
+            )
+            if any(user.id == worker_user_id for user in members):
+                return True
+    return False
+
+
+def _field_warning_view(fact: dict, *, worker_user_id=None) -> dict:
+    summary = fact.get("summary") or ""
+    if worker_user_id is not None and fact.get("kind") in ("USER", "USER_THROUGH_CREW"):
+        user = db.session.get(User, int(worker_user_id))
+        if user is not None and user.display_name and summary.startswith(f"{user.display_name} "):
+            summary = contractor_copy.FIELD_YOU_ALREADY_ELSEWHERE
+    return {
+        "kind": fact.get("kind"),
+        "label": fact.get("label") or contractor_copy.SCHEDULE_SEQUENCE_WARNING,
+        "summary": summary,
+        "item_ids": list(fact.get("item_ids") or []),
+        "project_id": fact.get("project_id"),
+    }
+
+
+def _dedupe_field_warnings(warnings) -> list:
+    seen = set()
+    unique = []
+    for fact in warnings:
+        key = (fact.get("label"), fact.get("summary"))
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(fact)
+    return unique
+
+
+def _field_who_names(assignments, *, worker_user_id=None) -> list[str]:
+    names = []
+    for row in assignments:
+        if worker_user_id is not None and row.get("worker_user_id") == worker_user_id:
+            continue
+        names.append(row["name"])
+    return names
+
+
+def _field_card(item: WorkScheduleItem, *, visible_dates, warnings, worker_user_id=None, today=None) -> dict:
+    assignments = [_assignment_view(row) for row in item.assignments]
+    element = item.element
+    activity = item.activity
+    relation = None
+    if worker_user_id is not None:
+        names = _field_who_names(assignments, worker_user_id=int(worker_user_id))
+        who = ", ".join(names)
+    else:
+        if any(row["kind"] == "CREW" for row in assignments):
+            relation = contractor_copy.FIELD_CREW_WORK
+        who = ", ".join(row["name"] for row in assignments) or contractor_copy.FIELD_NOT_ASSIGNED
+    project_name = item.project.name if item.project is not None else ""
+    site = field_job_site(item.project)
+    return {
+        "item_id": item.id,
+        "project_id": item.project_id,
+        "project_name": project_name,
+        "project_label": field_project_label(project_name),
+        "address": site["address"],
+        "destination": site["destination"],
+        "directions_url": site["directions_url"],
+        "element_id": item.project_work_element_id,
+        "element_name": element.display_name if element is not None else "",
+        "activity_id": item.project_work_activity_id,
+        "activity_name": activity.display_name if activity is not None else None,
+        "scheduled_start": item.scheduled_start,
+        "scheduled_end": item.scheduled_end,
+        "date_label": field_date_range(
+            item.scheduled_start, item.scheduled_end, today=today
+        ),
+        "assignments": assignments,
+        "who": who,
+        "relation": relation,
+        "visible_dates": list(visible_dates),
+        "warnings": _dedupe_field_warnings(warnings),
+    }
+
+
+def assemble_field_schedule(
+    organization_id: str,
+    *,
+    worker_user_id: Optional[int] = None,
+    window_start: Optional[date] = None,
+    window_end: Optional[date] = None,
+    scope: str = FIELD_SCOPE_WORKER,
+    today: Optional[date] = None,
+) -> dict:
+    """Same Schedule rows as Company/Hub. Field projection only. No second store."""
+    org_id = _org_id(organization_id)
+    today = today or date.today()
+    if window_start is None:
+        window_start = today
+    if window_end is None:
+        window_end = today
+    if window_end < window_start:
+        raise ScheduleError("The schedule end date cannot be before the start date.")
+    if scope not in (FIELD_SCOPE_WORKER, FIELD_SCOPE_COMPANY):
+        raise ScheduleError("Choose my work or company today.")
+    if scope == FIELD_SCOPE_WORKER:
+        if worker_user_id is None:
+            raise ScheduleError("Sign in to see your work.")
+        _require_active_org_user(int(worker_user_id), org_id)
+    items = (
+        WorkScheduleItem.query.filter_by(
+            organization_id=org_id,
+            status=SCHEDULE_STATUS_ACTIVE,
+        )
+        .order_by(
+            WorkScheduleItem.scheduled_start,
+            WorkScheduleItem.project_id,
+            WorkScheduleItem.id,
+        )
+        .all()
+    )
+    conflicts = list_schedule_conflicts(
+        org_id,
+        window_start=window_start,
+        window_end=window_end,
+    )
+    cards = []
+    for item in items:
+        if not _item_overlaps_window(item, window_start, window_end):
+            continue
+        visible = []
+        for day in _dates_in_range(
+            max(item.scheduled_start, window_start),
+            min(item.scheduled_end, window_end),
+        ):
+            if scope == FIELD_SCOPE_WORKER:
+                if worker_assigned_on_date(
+                    item, int(worker_user_id), day, organization_id=org_id
+                ):
+                    visible.append(day)
+            else:
+                visible.append(day)
+        if not visible:
+            continue
+        item_warnings = [
+            _field_warning_view(fact, worker_user_id=worker_user_id)
+            for fact in conflicts
+            if item.id in (fact.get("item_ids") or [])
+        ]
+        if scope == FIELD_SCOPE_WORKER:
+            item_warnings = [
+                fact
+                for fact in item_warnings
+                if fact["kind"] in ("USER", "CREW", "USER_THROUGH_CREW", "SEQUENCE", "PREDECESSOR_UNSCHEDULED")
+            ]
+        cards.append(
+            _field_card(
+                item,
+                visible_dates=visible,
+                warnings=item_warnings,
+                worker_user_id=worker_user_id if scope == FIELD_SCOPE_WORKER else None,
+                today=today,
+            )
+        )
+    days = []
+    for day in _dates_in_range(window_start, window_end):
+        day_cards = [card for card in cards if day in card["visible_dates"]]
+        days.append(
+            {
+                "date": day,
+                "date_label": field_date_phrase(day, today=today),
+                "is_today": day == today,
+                "cards": day_cards,
+                "groups": field_group_schedule_cards(day_cards),
+            }
+        )
+    weeks = []
+    week_start, _week_end = calendar_week_bounds(window_start)
+    while week_start <= window_end:
+        week_end = week_start + timedelta(days=6)
+        week_days = [
+            row
+            for row in days
+            if week_start <= row["date"] <= min(week_end, window_end)
+        ]
+        if week_days:
+            weeks.append(
+                {
+                    "week_start": week_start,
+                    "week_end": week_end,
+                    "week_label": field_date_range(week_start, week_end, today=today),
+                    "days": week_days,
+                }
+            )
+        week_start = week_end + timedelta(days=1)
+    return {
+        "organization_id": org_id,
+        "scope": scope,
+        "worker_user_id": worker_user_id,
+        "today": today,
+        "window_start": window_start,
+        "window_end": window_end,
+        "window_label": field_date_range(window_start, window_end, today=today),
+        "cards": cards,
+        "groups": field_group_schedule_cards(cards),
+        "days": days,
+        "weeks": weeks,
+        "unscheduled_elements": [],
+    }
+
+
+def suggest_time_attribution(
+    organization_id: str,
+    worker_user_id: int,
+    work_date,
+) -> list[dict]:
+    """Suggest scheduled work for Time. Does not create Time or hours."""
+    org_id = _org_id(organization_id)
+    parsed = work_date if isinstance(work_date, date) and not isinstance(work_date, datetime) else parse_schedule_date(work_date)
+    _require_active_org_user(int(worker_user_id), org_id)
+    view = assemble_field_schedule(
+        org_id,
+        worker_user_id=int(worker_user_id),
+        window_start=parsed,
+        window_end=parsed,
+        scope=FIELD_SCOPE_WORKER,
+        today=parsed,
+    )
+    suggestions = []
+    for card in view["cards"]:
+        suggestions.append(
+            {
+                "project_id": card["project_id"],
+                "project_name": card["project_name"],
+                "element_id": card["element_id"],
+                "element_name": card["element_name"],
+                "activity_id": card["activity_id"],
+                "activity_name": card["activity_name"],
+                "schedule_item_id": card["item_id"],
+            }
+        )
+    return suggestions

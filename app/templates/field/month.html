@@ -1,0 +1,49 @@
+{% extends "field/base.html" %}
+{% block title %}{{ contractor_copy.FIELD_NAV_MONTH }} — CalibraytAI{% endblock %}
+{% block field_page %}month{% endblock %}
+{% block content %}
+{% set nav_current = 'month' %}
+{% include "field/_field_nav.html" %}
+<section class="field-panel">
+    <h1>{{ contractor_copy.FIELD_NAV_MONTH }}</h1>
+    <nav class="field-month-nav" aria-label="{{ contractor_copy.FIELD_NAV_MONTH }}">
+        <a class="field-btn field-btn-secondary" href="{{ url_for('field.month', year=prev_year, month=prev_month) }}">{{ contractor_copy.FIELD_MONTH_PREV }}</a>
+        <h2>{{ month_title }}</h2>
+        <a class="field-btn field-btn-secondary" href="{{ url_for('field.month', year=next_year, month=next_month) }}">{{ contractor_copy.FIELD_MONTH_NEXT }}</a>
+    </nav>
+    <div class="field-calendar">
+        <div class="field-calendar-weekdays">
+            {% for heading in weekday_headings %}
+            <span>{{ heading }}</span>
+            {% endfor %}
+        </div>
+        {% for week in calendar_weeks %}
+        <div class="field-calendar-week">
+            {% for cell in week %}
+            {% if cell.in_month %}
+            <a
+                class="field-calendar-day{% if cell.is_today %} is-today{% endif %}{% if cell.is_selected %} is-selected{% endif %}"
+                href="{{ url_for('field.month', year=calendar_year, month=calendar_month, day=cell.day) }}"
+            >
+                <span class="field-calendar-num">{{ cell.label }}</span>
+                {% if cell.has_work %}<span class="field-calendar-dot" aria-hidden="true"></span>{% endif %}
+            </a>
+            {% else %}
+            <span class="field-calendar-day is-outside"></span>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    <section class="field-day-detail{% if selected_day.is_today %} is-today{% endif %}">
+        <h2>{{ selected_heading }}</h2>
+        {% if selected_day.cards %}
+        {% set groups = selected_day.groups %}
+        {% set show_time = true %}
+        {% include "field/_schedule_groups.html" %}
+        {% else %}
+        <p>{{ contractor_copy.FIELD_NO_WORK_DAY }}</p>
+        {% endif %}
+    </section>
+</section>
+{% endblock %}

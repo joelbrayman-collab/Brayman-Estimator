@@ -365,6 +365,10 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 
 **Joel decision #4 (2026-09-14):** customer Proposal/PDF terminology **IMPLEMENTED** as the FG-025 customer-document language slice. Existing Proposal preview/PDF reused. Customer-facing title **CONSTRUCTION ESTIMATE**. No schema/migration. FG-025 overall **NOT CLOSED**. V1 score **unchanged**.
 
+**Subsequent status (2026-09-17 SCH-D physical iPhone UAT PASS):** FG-035 SCH-D **IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / NOT COMMITTED / NOT PUSHED**. No migration. G1–G6 **PHYSICAL PASS**. Directions + native iOS return **PHYSICAL PASS**. Full suite **1140 passed**. **Do not rescore**. Do **not** start PERF from this register. Do **not** close FG-035.
+
+**Subsequent status (2026-09-16 SCH-D):** FG-035 SCH-D **IMPLEMENTED / TESTED / NOT LIVE-UAT / PHYSICAL IPHONE UAT NOT CLAIMED**. No migration. Field Today / Week / Month + schedule-assisted Time. **Do not rescore**. Do **not** start another FG-025 slice. Do **not** implement Print or PERF from this register. Do **not** claim physical iPhone PASS.
+
 **Subsequent status (2026-09-16):** FG-035 SCH-C **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. Additive **`f9b0c1d2e3f4`**. Sequence / predecessor-unscheduled facts remain informational warnings. **Do not rescore**. Do **not** start another FG-025 slice. Do **not** implement Print or SCH-D from this register.
 
 **Subsequent status (2026-09-16 warning law + Print):** Platform-wide **warning law** recorded as **INFORMATIONAL ONLY / NON-BLOCKING / PLATFORM-WIDE** ([architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md)). Desktop Print / paper workflow recorded as a **V1 product requirement** and **not** a separate V1 scoring unit. Print availability/quality is part of the Contractor Language + UX E2E Audit. Warning law is **not** a scoring unit. **Do not rescore** (factor remains **0.70**). Do **not** start another FG-025 slice. Do **not** implement Print from this register.

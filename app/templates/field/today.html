@@ -2,8 +2,25 @@
 {% block title %}Today — CalibraytAI{% endblock %}
 {% block field_page %}today{% endblock %}
 {% block content %}
+{% set nav_current = 'today' %}
+{% include "field/_field_nav.html" %}
+<p class="field-today-orientation">
+    <span class="field-today-weekday">{{ today_weekday }}</span>
+    <span class="field-today-date">{{ today_natural_date }}</span>
+</p>
 <section class="field-panel">
-    <h1>Today</h1>
+    <h1>{{ my_work_heading }}</h1>
+    {% if not schedule.cards %}
+    <p>{{ contractor_copy.FIELD_NO_WORK_TODAY }}</p>
+    {% else %}
+    {% set groups = schedule.groups %}
+    {% set show_time = true %}
+    {% include "field/_schedule_groups.html" %}
+    {% endif %}
+</section>
+
+<section class="field-panel">
+    <h2>{{ contractor_copy.FIELD_NAV_TODAY }}</h2>
     {% if project %}
     <p class="field-project-name">{{ project.name }}</p>
     {% if project.project_number %}

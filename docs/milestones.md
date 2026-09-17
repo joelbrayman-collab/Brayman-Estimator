@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-17 — V1 Desktop Contractor Experience / context-aware Home Office product-direction recording
+
+| Field | Content |
+|-------|---------|
+| Milestone | V1 Desktop Contractor Experience (product-direction recording) |
+| Status | **RECORDED / MANDATORY V1 / MANDATORY PRE-BEN/TEAM REAL-WORLD UAT / IMPLEMENTATION SEQUENCED AFTER PERF ATTENTION / NOT IMPLEMENTED.** Context-aware Home Office **RECORDED / NOT IMPLEMENTED**. PERF-A remains **SEALED**. PERF-B / PERF-C **NOT AUTHORIZED**. No new ADR. No new Feature Gate. V1 **60% / 4 of 11** **NO RESCORE**. |
+| Branch | `main` |
+| Base commit | `618dfaefbff1d5926bafa39c438075dc9c26055b` |
+| Objective | Record accepted future V1 desktop direction so it cannot be lost while FG-035 continues. Do not implement product. |
+| Deliverables | [architecture/v1-desktop-contractor-experience-product-direction.md](architecture/v1-desktop-contractor-experience-product-direction.md). Minimum index/roadmap/register/continuity updates. |
+| Validation | Docs-only. Tests **NOT RERUN**. Last accepted full suite **1154 passed**, 0 failed. Alembic unchanged **`f9b0c1d2e3f4 (head)`**. |
+| Architectural findings | Home Office is a calm operational briefing. Context changes emphasis only. Cash awareness, not cash anxiety. Desktop UX audit is broader than Home Office. Ben test not claimed PASS. |
+| Open decisions | Home Office implementation. PERF-B. QuickBooks/banking. Print. Help/Voice/Manual. |
+| Next milestone | **STOP.** Home Office **NOT AUTHORIZED**. PERF-B **NOT AUTHORIZED**. |
+| Commit | this recording |
+| Date | 2026-09-17 |
+
 ### 2026-09-17 — FG-035 PERF-A CLOSE / COMMIT / SHA-PIN / PUSH
 
 | Field | Content |

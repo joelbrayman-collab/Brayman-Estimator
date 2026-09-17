@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — V1 Desktop Contractor Experience / context-aware Home Office product-direction recording
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Docs-only recording of accepted V1 desktop direction with context-aware Home Office as centrepiece so it cannot be lost while FG-035 continues. Commit and push. |
+| Business decision | V1 Desktop Contractor Experience is mandatory V1 and mandatory before Ben/team real-world UAT. Home Office is a calm operational briefing, not a dashboard of accumulated feature cards. Context changes emphasis; it never changes access, authority, or functionality. Cash awareness, not cash anxiety. Sequenced after PERF attention. |
+| Architectural decision | No new ADR. No new Feature Gate. No product. No PERF-B. No QuickBooks/banking. No V1 rescore. |
+| Prompt template used | V1 DESKTOP CONTRACTOR EXPERIENCE / CONTEXT-AWARE HOME OFFICE / PRODUCT DIRECTION RECORDING / DOCS-ONLY / COMMIT / PUSH / NO PRODUCT |
+| Approved Cursor prompt summary | Create architecture/v1-desktop-contractor-experience-product-direction.md. Update minimum indexes. Docs-only commit `docs: record V1 desktop contractor experience`. Push origin/main. STOP. Do not implement Home Office. Do not begin PERF-B. |
+| Files expected to change | New architecture recording + docs indexes / roadmap / V1 register / current-state / session-handoff / project-state-report / chat-workflow-log / milestones |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; PERF-B; Home Office product |
+| Implementation result | Architecture recording created. Indexes updated. Docs-only commit and push. PERF-A remains SEALED. Home Office NOT IMPLEMENTED. |
+| Tests | NOT RERUN. Last accepted full suite remains **1154 passed**, 0 failed. |
+| Project-state-report update | yes |
+| Milestone entry update | yes |
+| Constitutional issue raised | no |
+| Unresolved issues | Home Office not implemented. PERF-B not authorized. V1 remains **60% / 4 of 11**. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement Home Office. Do **not** begin PERF-B. |
+| Next approved prompt | none — STOP |
+| Commit hash | this recording |
+
 ### 2026-09-17 — FG-035 PERF-A CLOSE / COMMIT / SHA-PIN / PUSH
 
 | Field | Content |

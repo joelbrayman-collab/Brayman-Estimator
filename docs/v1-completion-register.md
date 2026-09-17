@@ -365,6 +365,8 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 
 **Joel decision #4 (2026-09-14):** customer Proposal/PDF terminology **IMPLEMENTED** as the FG-025 customer-document language slice. Existing Proposal preview/PDF reused. Customer-facing title **CONSTRUCTION ESTIMATE**. No schema/migration. FG-025 overall **NOT CLOSED**. V1 score **unchanged**.
 
+**Subsequent status (2026-09-17 V1 Desktop Contractor Experience recording):** V1 Desktop Contractor Experience / context-aware Home Office recorded as **mandatory V1** and **mandatory before Ben/team real-world UAT** ([architecture/v1-desktop-contractor-experience-product-direction.md](architecture/v1-desktop-contractor-experience-product-direction.md)). Implementation sequenced after PERF attention. **Not implemented.** **Do not rescore** (factor remains **0.70**). Do **not** implement Home Office. Do **not** start PERF-B. Do **not** start another FG-025 slice.
+
 **Subsequent status (2026-09-17 PERF-A CLOSE / COMMIT / SHA-PIN / PUSH):** FG-035 PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED**. Product SHA **`7a4b7000e2650eadf68b4ea44d48f75c65830c1f`**. **Do not rescore**. Do **not** start PERF-B. Do **not** close FG-035.
 
 **Subsequent status (2026-09-17 PERF-A bounded synthetic live UAT):** FG-035 PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **49**. Dedicated **14 passed**. Full suite **1154 passed**, 3873 warnings, **633.10s**. **Do not rescore**. Do **not** start PERF-B. Do **not** close FG-035.
@@ -420,6 +422,8 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 | Dependencies | V1-01 through V1-10 to the V1-required bar |
 | Governing | This register §§10–11 |
 | Next governed action | After critical-path packages are complete. Not now. |
+
+**Subsequent status (2026-09-17 V1 Desktop Contractor Experience recording):** V1 Desktop Contractor Experience / context-aware Home Office is recorded as **mandatory before** Ben/team real-world UAT ([architecture/v1-desktop-contractor-experience-product-direction.md](architecture/v1-desktop-contractor-experience-product-direction.md)). Sequenced after PERF attention. **Not implemented.** **Do not rescore** this package.
 
 **Subsequent status (2026-09-15):** A platform-wide Contractor Language + UX E2E Audit is recorded as **mandatory before** Brayman/Ben real-world UAT ([architecture/project-element-authority-future-record.md](architecture/project-element-authority-future-record.md)). Interactive Help / Voice / professional User Manual are separately recorded as **mandatory PRE-UAT V1** ([architecture/interactive-help-voice-and-user-manual-future-record.md](architecture/interactive-help-voice-and-user-manual-future-record.md)). Neither is started. **Do not rescore** this package.
 

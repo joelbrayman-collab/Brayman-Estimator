@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — V1 Desktop Contractor Experience organization scale / operating-scope amendment
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Bounded verification of Organization scale / operating-scope principle. Record it if missing. Docs-only. |
+| Business decision | Organization remains the hard tenancy / security boundary. Division / Operating Unit is optional and subordinate. Crew is not Division. Shared resources across scopes remain possible. |
+| Architectural decision | Preserve a future scoping seam for PERF-C / Home Office / company Schedule. Operational Division does not equal bank / QuickBooks / accounting entity. No schema. No RBAC. PERF-B does not require Division. |
+| Prompt template used | V1 DESKTOP CONTRACTOR EXPERIENCE / ORGANIZATION SCALE / OPERATING SCOPE / BOUNDED VERIFICATION / DOCS-ONLY IF MISSING |
+| Approved Cursor prompt summary | Verify operating-scope principle in v1-desktop-contractor-experience-product-direction.md. If missing, minimum docs-only amendment, commit, push. Do not begin PERF-B. |
+| Files expected to change | Product-direction record + minimum continuity |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; PERF-B; Home Office product |
+| Implementation result | Principle was absent. Added §23 Organization scale / operating scope plus PERF-B/C constraint in §22. Continuity aligned. |
+| Tests | NOT RERUN. Last accepted full suite remains **1154 passed**, 0 failed. |
+| Project-state-report update | yes |
+| Milestone entry update | no — amendment to existing recording |
+| Constitutional issue raised | no |
+| Unresolved issues | Home Office not implemented. PERF-B not authorized. No Division schema. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement Home Office. Do **not** begin PERF-B. |
+| Next approved prompt | none — STOP |
+| Commit hash | this amendment |
+
 ### 2026-09-17 — V1 Desktop Contractor Experience / context-aware Home Office product-direction recording
 
 | Field | Content |

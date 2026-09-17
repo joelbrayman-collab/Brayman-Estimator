@@ -34,6 +34,15 @@ CONTEXT NEVER CHANGES ACCESS, AUTHORITY, OR FUNCTIONALITY
 
 PERF-A: SEALED
 PERF-B / PERF-C: NOT AUTHORIZED
+
+ORGANIZATION SCALE / OPERATING SCOPE:
+RECORDED
+ORGANIZATION REMAINS THE HARD TENANCY / SECURITY BOUNDARY
+DIVISION / OPERATING UNIT IS OPTIONAL AND SUBORDINATE
+CREW IS NOT DIVISION
+NO SCHEMA
+NO RBAC
+NOT IMPLEMENTED
 ```
 
 ---
@@ -362,7 +371,71 @@ The Desktop pass should consume real Needs Attention facts rather than invent hy
 
 This recording does **not** authorize PERF-B.
 
-## 23. Print
+PERF-B Project-level attention does **not** require Division.
+
+PERF-C / company attention must avoid an architecture that makes future operating-scope filtering unnecessarily difficult.
+
+Do **not** implement PERF-B/C from this file.
+
+Do **not** redesign current Organization isolation.
+
+## 23. Organization scale / operating scope
+
+Organization remains the **hard tenancy / security boundary**.
+
+Do **not** redefine Division as another tenant merely to support larger contractors.
+
+Future **Division / Operating Unit** is **optional** and **subordinate** to Organization.
+
+Small contractors must remain valid without division overhead.
+
+A Brayman-sized contractor must not be forced into artificial hierarchy merely to use CalibraytAI.
+
+**Crew is not Division.**
+
+Crew answers: **Who works together?**
+
+Division / Operating Unit answers: **Which part of the company owns / operates this work?**
+
+Do **not** use Crew as a substitute for future organizational scope.
+
+Projects, Users, and Crews may later have operating-scope affiliations.
+
+Do **not** freeze exact schema now.
+
+Shared resources across operating scopes must remain possible. Examples may include estimators serving multiple divisions, project managers spanning divisions, specialized workers shared across operating units, and temporary cross-division Crews.
+
+Do **not** impose a rigid one-user-one-division tree now.
+
+Future derived experiences such as PERF-C / Company Needs Attention, context-aware Home Office, company Schedule awareness, and other company-wide projections should preserve a **future scoping seam**.
+
+Do **not** unnecessarily hard-code that organization-wide is the only useful view.
+
+Today, organization-wide remains valid.
+
+Future views may conceptually support All Company, Division / Operating Unit, and Team / governed Project set, without creating separate CalibraytAI products.
+
+This is architectural direction only.
+
+Future Home Office may eventually present an operating-scope selector or derive scope from the user/context.
+
+Do **not** design or implement that selector now.
+
+For a small contractor, whole-company remains the natural default.
+
+Operational Division does **not** necessarily equal bank account, QuickBooks company, accounting entity, or P&L / cost centre.
+
+Do **not** assume a one-to-one mapping.
+
+Future QuickBooks / banking / financial mappings must be separately governed.
+
+Do **not** implement new RBAC now.
+
+Future operating scope may affect visibility/authority, but exact permissions require a separately governed design.
+
+This recording does **not** authorize a Division table, OperatingUnit table, `division_id` on Project, user-division membership, crew-division membership, scope selector, RBAC changes, migration, or a new tenant model.
+
+## 24. Print
 
 Print remains separately recorded / sequenced later ([project-element-authority-future-record.md](project-element-authority-future-record.md)).
 
@@ -370,7 +443,7 @@ The future Desktop UX audit should consider Print where useful.
 
 Do **not** implement Print here.
 
-## 24. Manual
+## 25. Manual
 
 The Desktop Contractor Experience must align with the Manual Audience Law ([calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md)).
 
@@ -380,7 +453,7 @@ The eventual User Guide should reflect the final accepted desktop workflow after
 
 Do **not** write final Manual now.
 
-## 25. V1 gate
+## 26. V1 gate
 
 **V1 Desktop Contractor Experience** is **mandatory V1** and **mandatory before Ben/team real-world UAT**.
 
@@ -388,7 +461,7 @@ This does **not** rescore V1.
 
 Official: **60% / 4 of 11**. **NO RESCORE**.
 
-## 26. STOP
+## 27. STOP
 
 ```text
 DOCS-ONLY PRODUCT-DIRECTION RECORDING.
@@ -396,6 +469,8 @@ NOT IMPLEMENTED.
 DO NOT IMPLEMENT HOME OFFICE FROM THIS FILE.
 DO NOT BEGIN PERF-B FROM THIS FILE.
 DO NOT CONNECT QUICKBOOKS.
+DO NOT CREATE DIVISION SCHEMA.
+DO NOT IMPLEMENT RBAC.
 DO NOT RESCORE V1.
 RETURN TO CHATGPT ARCHITECT.
 ```

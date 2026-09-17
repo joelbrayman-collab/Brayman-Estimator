@@ -1,10 +1,12 @@
 """Single source of truth for application shell navigation."""
 
 from app.presentation.contractor_copy import (
+    COMPANY_ATTENTION_HEADING,
     LABOUR_RATES_HEADING,
     PRICING_HEADING,
     WORK_TYPES_HEADING,
 )
+from app.services.access_domains import ACCESS_DOMAIN_COMPANY_MANAGEMENT
 
 # Navigation is grouped into platform modules.
 # Each item: title, endpoint (or None), icon (Bootstrap Icons class), enabled
@@ -35,6 +37,13 @@ NAV_SECTIONS = (
                 "endpoint": "schedule.company",
                 "icon": "bi-calendar3",
                 "enabled": True,
+            },
+            {
+                "title": COMPANY_ATTENTION_HEADING,
+                "endpoint": "company_attention.index",
+                "icon": "bi-exclamation-circle",
+                "enabled": True,
+                "requires_access_domain": ACCESS_DOMAIN_COMPANY_MANAGEMENT,
             },
         ),
     },

@@ -51,6 +51,23 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+## Entries
+
+### MANUAL IMPACT — PERF-C (2026-09-17)
+
+| Field | Content |
+|-------|---------|
+| Slice | FG-035 PERF-C Company Attention |
+| Product status at capture | **WORKING TREE** — PERF-C **IMPLEMENTED IN WORKING TREE / TESTED / NOT COMMITTED / NOT PUSHED / NOT LIVE-UATed**. Not live-UATed. Parent HEAD **`d32aa14c13bf3149fc1c3dd8c9024761d8cdda29`**. |
+| 1. What new contractor capability exists? | Office Company Attention lists where the business needs attention across the company’s Projects, or says nothing needs attention right now. It is not Field Company Today. It is not Home Office. |
+| 2. When would the contractor use it? | Opening the office to ask: Where does my business need attention? Then following the existing Project review link for that item. |
+| 3. What workflow will the final Manual need to teach? | What is Company Attention? Why can Joel see it and another office user cannot? Why is it not in Field? What does each Needs Attention item mean (reuse PERF-B language)? What happens when nothing needs attention? |
+| 4. What contractor-facing terms must be used? | Company Attention. Where does my business need attention? Nothing needs attention right now. Extra work needs review. Labour getting close. Labour allowance used. Labour over allowance. Scheduled finish passed. Scheduled work has no approved Time. Do **not** use: Home Office, scorecard, health, risk, severity, RBAC. |
+| 5. What screenshots / Print examples will eventually be needed? | Quiet positive. One Project with several items. Several Projects. Do **not** capture now. Surface is uncommitted and not live-UATed. |
+| 6. What warnings / validation distinctions need explanation? | Company Attention does **not** stop work. It does **not** acknowledge or resolve items. Project access does **not** give Company Attention. Company Attention does **not** give Sensitive Financial. Field Company Today is a different screen. |
+| 7. Desktop / iPhone / Print relevance | Office / management desktop first. Adaptive layout. Field unchanged. Print later. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. Claim live UAT. Claim Home Office. Claim Sensitive Financial. Claim People & Access. |
+
 ### MANUAL IMPACT — FG-037 (2026-09-17)
 
 | Field | Content |

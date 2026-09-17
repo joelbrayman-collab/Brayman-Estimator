@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{{ contractor_copy.COMPANY_ATTENTION_HEADING }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.COMPANY_ATTENTION_HEADING }}{% endblock %}
+
+{% block content %}
+<div class="page-heading company-attention-heading">
+    <div>
+        <p class="eyebrow">{{ contractor_copy.COMPANY_ATTENTION_EYEBROW }}</p>
+        <h1>{{ contractor_copy.COMPANY_ATTENTION_QUESTION }}</h1>
+    </div>
+</div>
+
+{% if view.positive %}
+<p class="company-attention-positive">{{ view.positive_title }}</p>
+{% else %}
+<div class="company-attention-list">
+    {% for group in view.projects %}
+    <section class="company-attention-project">
+        <header class="company-attention-project-identity">
+            <h2>{{ group.project.name }}</h2>
+            {% if group.project.project_number %}
+            <p class="muted-copy">{{ group.project.project_number }}</p>
+            {% endif %}
+        </header>
+        <ul class="company-attention-items">
+            {% for fact in group['items'] %}
+            <li>
+                <strong>{{ fact.title }}</strong>
+                {% if fact.detail %}
+                <p>{{ fact.detail }}</p>
+                {% endif %}
+                {% if fact.destination and fact.destination.href %}
+                <p><a href="{{ fact.destination.href }}">{{ fact.destination.label }}</a></p>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

@@ -12,10 +12,13 @@ def register_shell_context(app):
     @app.context_processor
     def inject_shell_context():
         endpoint = request.endpoint
+        authenticated = getattr(current_user, "is_authenticated", False)
         nav_sections = []
         for section in NAV_SECTIONS:
             links = []
             for item in section["links"]:
+                if not _nav_item_visible(item, authenticated):
+                    continue
                 links.append(
                     {
                         **item,
@@ -31,7 +34,6 @@ def register_shell_context(app):
 
         recent_estimates = []
         recent_proposals = []
-        authenticated = getattr(current_user, "is_authenticated", False)
         if authenticated and endpoint not in ("auth.login", "auth.logout"):
             try:
                 from app.models import Estimate, Project, Proposal, ProposalTemplate
@@ -73,3 +75,19 @@ def register_shell_context(app):
             "product_name": "Brayman Construction Platform",
             "contractor_copy": contractor_copy,
         }
+
+
+def _nav_item_visible(item, authenticated) -> bool:
+    domain = item.get("requires_access_domain")
+    if not domain:
+        return True
+    if not authenticated:
+        return False
+    try:
+        from app.services.access_domains import membership_has_access_domain
+        from app.services.organizations import get_current_organization_id
+
+        org_id = get_current_organization_id()
+        return membership_has_access_domain(current_user, org_id, domain)
+    except Exception:
+        return False

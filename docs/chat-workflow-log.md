@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — FG-035 PERF-C Company Attention Slice A implementation (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 17 SEP 2026 |
+| Objective | Implement PERF-C Slice A: derived Company Attention aggregation, office route/template, COMPANY_MANAGEMENT gate, permission-aware nav, dedicated tests, minimum governance. No migration. No live UAT. No commit. |
+| Business decision | Contractor question remains **Where does my business need attention?** Company Attention is not Home Office. |
+| Architectural decision | Consume sealed `assemble_project_attention` once per `list_organization_projects` Project. Order: `created_at` desc, `id` desc tiebreaker, then sealed PERF-B item order. Gate via existing `require_access_domain(ACCESS_DOMAIN_COMPANY_MANAGEMENT)`. No schema. No Field. No financial facts. |
+| Prompt template used | Cursor implementation prompt (Architect PERF-C Slice A) |
+| Approved Cursor prompt summary | PERF-C Slice A derived aggregation + office surface + authorization + tests; no migration; no live UAT data; no PERF-A/B reopen; no commit/push; return A–AB. |
+| Files expected to change | `app/services/company_attention.py`; `app/routes/company_attention.py`; `app/templates/company_attention/index.html`; nav/shell/CSS; dedicated tests; minimum governance docs |
+| Files prohibited from changing | migrations; live DB; Field product; PERF-A/B engines; MONITOR money; People & Access; recovery stash |
+| Implementation result | Working-tree implementation. Not committed. Not pushed. Not live-UATed. |
+| Tests | Cursor Terminal. Dedicated `./venv/bin/python -m pytest -q tests/test_company_attention_fg035.py` → **13 passed**, 79 warnings, **10.06s**, exit **0**. Focused PERF-A/B + FG-037 + Field + office nav `./venv/bin/python -m pytest -q tests/test_project_labour_performance_fg035.py tests/test_project_needs_attention_fg035.py tests/test_access_domains.py tests/test_work_schedule_field_fg035.py tests/test_field_web_fg021.py tests/test_fg025_contractor_copy.py::test_slice4_nav_routes_and_engine_labels` → **115 passed**, 648 warnings, **68.73s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` → **1226 passed**, 4366 warnings, **610.51s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | yes — working-tree implementation, not product close |
+| Constitutional issue raised | no |
+| Unresolved issues | Commit authorization. Live UAT. Scorecard unchanged. Occupancy noise from historical ORG-001 Projects (no ungoverned filter added). |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — not committed |
+
 ### 2026-09-17 — People & Access freeze Architect acceptance / commit / push
 
 | Field | Content |

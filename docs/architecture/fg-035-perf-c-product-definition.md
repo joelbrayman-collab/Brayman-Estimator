@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED** |
+| Status | **IMPLEMENTED IN WORKING TREE / TESTED / NOT COMMITTED / NOT PUSHED / NOT LIVE-UATed.** Freeze body below remains the owner-decision contract. |
 | Date | 2026-09-17 |
 | Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL** |
 | ADR | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
@@ -12,6 +12,8 @@
 | Schema | **NONE.** No attention table. No acknowledgement / resolution / escalation state. If implementation analysis later concludes persistence is required: **STOP AND RETURN TO ARCHITECT**. |
 | Baseline | HEAD / `origin/main` **`1b80d244e3efb0c65d3a02dd247d923dfd95166c`**. Alembic **`f9b0c1d2e3f4 (head)`**. |
 | V1 | **NOT RESCORED** (**60% / 4 of 11**). PERF-C definition alone is **not** a scoring event. |
+
+**Subsequent status (2026-09-17 PERF-C Slice A implementation):** PERF-C **IMPLEMENTED IN WORKING TREE / TESTED / NOT COMMITTED / NOT PUSHED / NOT LIVE-UATed**. Service `app/services/company_attention.py`. Office `/company-attention`. Requires `COMPANY_MANAGEMENT`. No schema. No live UAT data. Dedicated **13 passed**. Focused **115 passed**. Full suite **1226 passed**, 4366 warnings, **610.51s**, exit **0**. PERF-A / PERF-B remain **SEALED**. FG-037 remains **CLOSED**. Official V1 **65% / 4 of 11** (not rescored). Secondary Functional V1 Build **79% / 22 of 28** (not rescored).
 
 **Subsequent status (2026-09-17 People & Access freeze):** [people-and-access-product-direction.md](people-and-access-product-direction.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED**. Future contractor-facing administration of Domain B grants. PERF-C remains **DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Subsequent [FG-037](../feature-gates/FG-037-company-management-access-domain-authorization.md) **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION**. This freeze is **not rewritten**. Do **not** implement Company Attention from that record.
 

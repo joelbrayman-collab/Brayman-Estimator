@@ -279,6 +279,7 @@ def create_app(config=None):
     from app.routes.time_entry import time_entry_bp
     from app.routes.schedule import schedule_bp
     from app.routes.organization_crew import organization_crew_bp
+    from app.routes.company_attention import company_attention_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(clients_bp)
@@ -307,6 +308,7 @@ def create_app(config=None):
     app.register_blueprint(time_entry_bp)
     app.register_blueprint(schedule_bp)
     app.register_blueprint(organization_crew_bp)
+    app.register_blueprint(company_attention_bp)
 
     @app.route("/favicon.ico")
     def favicon():

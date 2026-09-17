@@ -30,6 +30,25 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+## Entries
+
+### 2026-09-17 — FG-035 PERF-C Company Attention Slice A (working tree)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 PERF-C Slice A |
+| Status | **IMPLEMENTED IN WORKING TREE / TESTED / NOT COMMITTED / NOT PUSHED / NOT LIVE-UATed.** No schema. No live UAT data. |
+| Branch | `main` |
+| Base commit | `d32aa14c13bf3149fc1c3dd8c9024761d8cdda29` |
+| Objective | Derived Company Attention aggregation + office surface + COMPANY_MANAGEMENT gate + tests. |
+| Deliverables | `app/services/company_attention.py`; `/company-attention`; office template; permission-aware nav; dedicated tests; minimum governance. |
+| Validation | Dedicated **13 passed**, 79 warnings, **10.06s**. Focused **115 passed**, 648 warnings, **68.73s**. Full suite **1226 passed**, 4366 warnings, **610.51s**, exit **0**. Synthetic fixtures only. |
+| Architectural findings | Consumes sealed `assemble_project_attention` once per Project. Order = existing `list_organization_projects` `created_at` desc plus `id` desc tiebreaker, then sealed PERF-B item order. No archive filter. No persistence. |
+| Open decisions | Commit / live UAT separately authorized. Scores not rescored. |
+| Next milestone | Architect review. STOP. |
+| Commit | none |
+| Date | 2026-09-17 |
+
 ### 2026-09-17 — People & Access owner product-direction freeze (docs-only)
 
 | Field | Content |

@@ -32,7 +32,7 @@ This gate is **CLOSED / OPERATIONAL FOR UAT**. It is **not** production-security
 
 **Subsequent status (2026-09-17 Company/Management access-domain seam):** [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) Decision 4 is **narrowly amended**. Job-title RBAC remains **rejected**. Named membership access domains are **permitted**. Freeze [architecture/company-management-access-domain-seam.md](../architecture/company-management-access-domain-seam.md) **DEFINED**. This gate is **not reopened**.
 
-**Subsequent status (2026-09-17 FG-037 Slice A):** [FG-037](FG-037-company-management-access-domain-authorization.md) **OPEN / SLICE A IMPLEMENTED / TESTED / NOT LIVE-MIGRATED / NO LIVE GRANT**. This gate is **not reopened**. Do **not** implement Settings Members, Sensitive Financial, or PERF-C from this gate.
+**Subsequent status (2026-09-17 FG-037 Slice A):** [FG-037](FG-037-company-management-access-domain-authorization.md) **OPEN / SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO LIVE GRANT**. Product SHA **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`**. This gate is **not reopened**. Do **not** implement Settings Members, Sensitive Financial, or PERF-C from this gate.
 
 ### Implementation evidence (2026-08-31)
 

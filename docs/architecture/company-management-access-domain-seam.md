@@ -12,7 +12,7 @@
 | Baseline | HEAD / `origin/main` **`c9c4f2f83e30a35e6cff1d38a91ee9b61aae41bf`**. Alembic **`f9b0c1d2e3f4 (head)`**. |
 | V1 | **NOT RESCORED** (**60% / 4 of 11**). This freeze is **not** a scoring event. |
 
-**Subsequent status (2026-09-17 FG-037 Slice A):** [FG-037](../feature-gates/FG-037-company-management-access-domain-authorization.md) **OPEN / SLICE A IMPLEMENTED / TESTED / NOT LIVE-MIGRATED / NO LIVE GRANT**. Model, service, CLI, and additive file **`a0b1c2d3e4f5`** exist in working tree. Live migrate and first live grant remain separately authorized. This freeze remains the owner-decision contract and is **not rewritten**.
+**Subsequent status (2026-09-17 FG-037 Slice A):** [FG-037](../feature-gates/FG-037-company-management-access-domain-authorization.md) **OPEN / SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO LIVE GRANT**. Product SHA **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`**. Additive **`a0b1c2d3e4f5`** not applied live. Live migrate and first live grant remain separately authorized. This freeze remains the owner-decision contract and is **not rewritten**.
 
 ```text
 COMPANY / MANAGEMENT ACCESS-DOMAIN SEAM:

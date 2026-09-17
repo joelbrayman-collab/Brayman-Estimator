@@ -7,7 +7,7 @@
 | Target Milestone | Organization / office identity. Prerequisite for FG-035 PERF-C Company Attention. Not a 12th major V1 package. Does **not** rescore V1. |
 | Module | **Organization subsystem** owns `UserMembershipAccessDomainGrant` on `UserMembership`. Office / platform consumes `require_access_domain`. No new product module. |
 | Date | 2026-09-17 |
-| Status | **OPEN / SLICE A IMPLEMENTED / TESTED / NOT LIVE-MIGRATED / NO LIVE GRANT.** PERF-C **NOT IMPLEMENTED**. Company Attention **NOT IMPLEMENTED**. Sensitive Financial **NOT IMPLEMENTED**. |
+| Status | **OPEN / SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO LIVE GRANT.** Product SHA **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`**. PERF-C **NOT IMPLEMENTED**. Company Attention **NOT IMPLEMENTED**. Sensitive Financial **NOT IMPLEMENTED**. Not CLOSED. Not OPERATIONAL FOR UAT. |
 | Architecture | [company-management-access-domain-seam.md](../architecture/company-management-access-domain-seam.md) owner freeze. [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**; Decision 4 **narrowly amended** (job-title RBAC still rejected). [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED** (not reopened). [FG-035](FG-035-project-work-structure-time-schedule-performance-learn.md) PERF-C remains **DEFINED / NOT IMPLEMENTATION-AUTHORIZED**. |
 | Related ADRs | [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. No new ADR. |
 | Prerequisites | FG-018 office Users / membership **CLOSED**. Company/Management seam freeze **DEFINED**. |
@@ -18,13 +18,14 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **OPEN / SLICE A IMPLEMENTED / TESTED** |
+| Feature Gate (this document) | **OPEN / SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED** |
 | Owner law A/B/C | **RECORDED** |
 | Model | **IMPLEMENTED** — `UserMembershipAccessDomainGrant` / `user_membership_access_domain_grants` |
 | Domain service | **IMPLEMENTED** — `app/services/access_domains.py` |
 | Server-side helper | **IMPLEMENTED** — `require_access_domain(...)` (not wired into global `protect_office_routes`) |
 | CLI | **IMPLEMENTED** — `flask auth grant-access-domain` / `revoke-access-domain` / `show-access-domains` |
-| Schema / Alembic | Additive file **`a0b1c2d3e4f5`** revises **`f9b0c1d2e3f4`**. **NOT APPLIED LIVE** |
+| Schema / Alembic | Additive file **`a0b1c2d3e4f5`** revises **`f9b0c1d2e3f4`**. Repository graph head **`a0b1c2d3e4f5`**. Live current **`f9b0c1d2e3f4`**. **NOT APPLIED LIVE** |
+| Product SHA | **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`** (`feat: implement FG-037 company-management access-domain grants`) |
 | Live grant | **NONE.** First `COMPANY_MANAGEMENT` recipient remains **UNRESOLVED** |
 | Live migration / UAT | **SEPARATELY AUTHORIZED** |
 | V1 scoring | **NOT RESCORED** (official **65% / 4 of 11**; secondary Functional V1 Build remains **79% / 22 of 28**) |
@@ -32,8 +33,10 @@
 ```text
 FG-037:
 OPEN / SLICE A IMPLEMENTED / TESTED
+COMMITTED / PUSHED / SHA-PINNED
 NOT LIVE-MIGRATED
 NO LIVE GRANT
+PRODUCT SHA 1649b6fab6d362c19088290a6f3cb52f2a0b3d92
 A = ACTIVE USERMEMBERSHIP (NOT STORED)
 B = EXPLICIT COMPANY_MANAGEMENT GRANT / DEFAULT DENY
 C = SENSITIVE_FINANCIAL FUTURE / NOT IMPLEMENTED
@@ -174,6 +177,7 @@ Do **not** implement:
 | CLI | **IMPLEMENTED** |
 | Additive migration file | **CREATED / NOT APPLIED LIVE** |
 | Dedicated tests | `tests/test_access_domains.py` — **23 passed**, 75 warnings, **18.72s**, exit **0** |
+| Product SHA | **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`** |
 | Live migration | **NOT RUN** |
 | Live grant | **NONE** |
 | Live UAT | **NOT AUTHORIZED** |

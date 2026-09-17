@@ -43,7 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
-### 2026-09-17 — FG-037 Slice A restore / complete (working tree / not committed)
+### 2026-09-17 — FG-037 Slice A product SHA pin (docs-only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 17 SEP 2026 |
+| Objective | Pin FG-037 Slice A product SHA after commit/push. No live migrate. No live grant. |
+| Business decision | A = active membership. B = explicit `COMPANY_MANAGEMENT` / default deny. C = future. First live recipient UNRESOLVED. |
+| Architectural decision | Product SHA recorded. Gate remains OPEN. Not CLOSED. Not OPERATIONAL FOR UAT. |
+| Prompt template used | FG-037 SLICE A PRODUCT CLOSE COMMIT / PUSH / SHA PIN |
+| Approved Cursor prompt summary | Pre-commit validate; commit exact subject; push; pin SHA; do not drop stash; do not live-migrate or live-grant. |
+| Files expected to change | Minimum FG-037 / current-state / handoff / workflow / indexes |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; stash; PERF-C; Field |
+| Implementation result | Product SHA **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`**. State **SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO LIVE GRANT**. Stash preserved. |
+| Tests | Not rerun on this pin. Product close evidence: dedicated **23 passed**; focused **154 passed**; full **1213 passed**. |
+| Project-state-report update | yes |
+| Milestone entry update | no — not live-migrated / not closed |
+| Constitutional issue raised | no |
+| Unresolved issues | Live migrate separately authorized. First live grant UNRESOLVED. PERF-C not implementation-authorized. Recovery stash drop later. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** live-grant. |
+| Next approved prompt | none — STOP |
+| Commit hash | this pin commit |
+
+### 2026-09-17 — FG-037 Slice A restore / complete (working tree / then product-committed)
 
 | Field | Content |
 |-------|---------|
@@ -63,9 +87,9 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Milestone entry update | no — not live-migrated / not closed |
 | Constitutional issue raised | no |
 | Unresolved issues | Live migrate separately authorized. First live grant UNRESOLVED. PERF-C not implementation-authorized. |
-| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** commit. Do **not** live-migrate. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Product later committed as **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`**. |
 | Next approved prompt | none — STOP |
-| Commit hash | none — not committed |
+| Commit hash | product SHA **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`** |
 
 ### 2026-09-17 — Official V1 rescore 65% (docs-only / COMMIT / PUSH)
 

@@ -32,6 +32,25 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+## Entries
+
+### 2026-09-17 — FG-035 PERF-C Company Attention Slice A COMMIT / PUSH / SHA-PIN
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 PERF-C Slice A |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-UATed.** No schema. No live UAT data. |
+| Branch | `main` |
+| Base commit | `d32aa14c13bf3149fc1c3dd8c9024761d8cdda29` |
+| Objective | Commit, push, and pin accepted PERF-C Slice A. |
+| Deliverables | Product SHA **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**. This pin. |
+| Validation | Accepted tests: dedicated **13 passed**; focused **115 passed**; full suite **1226 passed**. No code change during close. |
+| Architectural findings | No persistence. No migration. Live grants **1**. Occupancy Projects 45–50 / 27 / EST-2026-0019 unchanged. |
+| Open decisions | Live UAT separately governed. Scores not rescored. |
+| Next milestone | Architect-governed PERF-C live UAT. STOP. |
+| Commit | product **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**; this pin |
+| Date | 2026-09-17 |
+
 ### 2026-09-17 — FG-035 PERF-C Company Attention Slice A (working tree)
 
 | Field | Content |

@@ -12,6 +12,8 @@
 | Related ADRs | [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. No new ADR. |
 | Prerequisites | FG-018 office Users / membership **CLOSED**. Company/Management seam freeze **DEFINED**. |
 
+**Subsequent status (2026-09-17 PERF-C Slice A COMMIT / PUSH / SHA-PIN):** FG-035 PERF-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-UATed**. Product SHA **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**. Office `/company-attention` consumes `require_access_domain(ACCESS_DOMAIN_COMPANY_MANAGEMENT)`. This gate remains **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION**. Sensitive Financial remains **NOT IMPLEMENTED**. People & Access remains **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11** (not rescored).
+
 **Subsequent status (2026-09-17 PERF-C Slice A working tree):** FG-035 PERF-C **IMPLEMENTED IN WORKING TREE / TESTED / NOT COMMITTED / NOT PUSHED / NOT LIVE-UATed**. Office `/company-attention` consumes `require_access_domain(ACCESS_DOMAIN_COMPANY_MANAGEMENT)`. This gate remains **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION**. Sensitive Financial remains **NOT IMPLEMENTED**. People & Access remains **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11** (not rescored).
 
 **Subsequent status (2026-09-17 People & Access freeze):** [people-and-access-product-direction.md](../architecture/people-and-access-product-direction.md) **RECORDED MANDATORY PRODUCT DIRECTION / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Future Settings → People & Access. This gate is **not reopened**. Operator CLI remains bootstrap infrastructure. Do **not** add People & Access product to this gate.

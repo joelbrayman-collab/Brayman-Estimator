@@ -391,6 +391,8 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 
 **Joel decision #4 (2026-09-14):** customer Proposal/PDF terminology **IMPLEMENTED** as the FG-025 customer-document language slice. Existing Proposal preview/PDF reused. Customer-facing title **CONSTRUCTION ESTIMATE**. No schema/migration. FG-025 overall **NOT CLOSED**. V1 score **unchanged**.
 
+**Subsequent status (2026-09-17 PERF-C Slice A COMMIT / PUSH / SHA-PIN):** FG-035 PERF-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-UATed**. Product SHA **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**. Office `/company-attention`. Requires `COMPANY_MANAGEMENT`. No schema. No live UAT. **Do not rescore**. Do **not** close FG-035. Do **not** implement Home Office from this register.
+
 **Subsequent status (2026-09-17 Company/Management access-domain seam):** Company/Management seam **DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Freeze [architecture/company-management-access-domain-seam.md](architecture/company-management-access-domain-seam.md). ADR-041 Decision 4 **narrowly amended**. No schema. No product. **Do not rescore**. Do **not** implement the seam. Do **not** implement Company Attention. Do **not** close FG-035.
 
 **Subsequent status (2026-09-17 PERF-C product definition / owner-decision freeze):** FG-035 PERF-C **DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Contractor question: **Where does my business need attention?** Freeze [architecture/fg-035-perf-c-product-definition.md](architecture/fg-035-perf-c-product-definition.md). No schema. No product. **Do not rescore**. Do **not** implement Company Attention. Do **not** implement Home Office. Do **not** close FG-035.

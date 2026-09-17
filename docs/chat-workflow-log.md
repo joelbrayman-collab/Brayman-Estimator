@@ -43,6 +43,32 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+## Entries
+
+### 2026-09-17 — FG-035 PERF-C Company Attention Slice A COMMIT / PUSH / SHA-PIN
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 17 SEP 2026 |
+| Objective | Validate accepted PERF-C Slice A; commit; push; pin product SHA. No live UAT. No product expansion. |
+| Business decision | Implementation review PASS. Close product without live UAT. |
+| Architectural decision | No schema. No new fact types. FG-035 remains OPEN / PARTIAL. PERF-C not SEALED until live UAT. Scores not rescored. |
+| Prompt template used | Architect PERF-C Slice A product close |
+| Approved Cursor prompt summary | Validate / commit `feat: implement FG-035 PERF-C company attention` / push / pin `docs: pin FG-035 PERF-C SHA` / push. No live UAT. Preserve stash. |
+| Files expected to change | accepted PERF-C product/tests/governance; then minimum pin docs |
+| Files prohibited from changing | migrations; live DB; Field; PERF-A/B engines; People & Access; recovery stash |
+| Implementation result | Product SHA **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**. This pin follows. Not live-UATed. |
+| Tests | Accepted prior Cursor Terminal results. Dedicated **13 passed**. Focused **115 passed**. Full suite **1226 passed**. No code change during close; suite not rerun. |
+| Project-state-report update | yes |
+| Milestone entry update | yes — product close / SHA pin, not FG-035 close |
+| Constitutional issue raised | no |
+| Unresolved issues | Live UAT. Scorecard. Occupancy noise from historical ORG-001 Projects. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | none — STOP |
+| Commit hash | product **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**; this pin |
+
 ### 2026-09-17 — FG-035 PERF-C Company Attention Slice A implementation (working tree)
 
 | Field | Content |

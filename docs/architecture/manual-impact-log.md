@@ -58,7 +58,7 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 | Field | Content |
 |-------|---------|
 | Slice | FG-035 PERF-C Company Attention |
-| Product status at capture | **WORKING TREE** — PERF-C **IMPLEMENTED IN WORKING TREE / TESTED / NOT COMMITTED / NOT PUSHED / NOT LIVE-UATed**. Not live-UATed. Parent HEAD **`d32aa14c13bf3149fc1c3dd8c9024761d8cdda29`**. |
+| Product status at capture | **CURRENT** — PERF-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-UATed**. Product SHA **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**. Not live-UATed. |
 | 1. What new contractor capability exists? | Office Company Attention lists where the business needs attention across the company’s Projects, or says nothing needs attention right now. It is not Field Company Today. It is not Home Office. |
 | 2. When would the contractor use it? | Opening the office to ask: Where does my business need attention? Then following the existing Project review link for that item. |
 | 3. What workflow will the final Manual need to teach? | What is Company Attention? Why can Joel see it and another office user cannot? Why is it not in Field? What does each Needs Attention item mean (reuse PERF-B language)? What happens when nothing needs attention? |

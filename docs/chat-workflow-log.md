@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — FG-037 owner policy + first live grant + bounded seam UAT + close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 17 SEP 2026 |
+| Objective | Record Joel’s initial access policy; grant `COMPANY_MANAGEMENT` only to ORG-001 Membership 1 / Joel Brayman; prove bounded seam UAT; close FG-037; docs commit/push. |
+| Business decision | Joel A+B now, future C. Ben A+B when genuine membership exists, future C. Others A by default; B/C explicit later. B does not imply C. |
+| Architectural decision | Owner policy is not architectural coupling. Only Domain B is implemented. No Sensitive Financial. No Ben account. No PERF-C. |
+| Prompt template used | FG-037 — OWNER ACCESS POLICY + FIRST LIVE GRANT + BOUNDED SEAM UAT |
+| Approved Cursor prompt summary | Baseline; grant Membership 1 only; verify; UAT A–H; record policy; close FG-037; docs commit/push; keep stash; do not rescore. |
+| Files expected to change | Minimum FG-037 close / owner-policy documentation |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; stash drop; Field; PERF-C; Ben account; extra grants |
+| Implementation result | Grant PASS. Live rows **1**. Joel effective B YES. AUTH-B deny PASS. Domain A/Field non-regression PASS. C firewall PASS. FG-037 CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_access_domains.py tests/test_auth_fg018.py tests/test_organization_foundation.py tests/test_project_hub.py tests/test_work_time_fg035.py tests/test_work_schedule_fg035.py tests/test_work_schedule_field_fg035.py tests/test_field_web_fg021.py` → **154 passed**, 435 warnings, **82.70s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | yes |
+| Constitutional issue raised | no |
+| Unresolved issues | Ben genuine membership. Architect scorecard. PERF-C not implementation-authorized. Recovery stash drop later. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | none — STOP |
+| Commit hash | this FG-037 close docs commit |
+
 ### 2026-09-17 — FG-037 Slice B live migration (docs-only)
 
 | Field | Content |

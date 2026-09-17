@@ -8,6 +8,8 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-09-17 FG-037 close):** [FG-037](feature-gates/FG-037-company-management-access-domain-authorization.md) **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION**. Official Governed V1 Readiness remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. This close **does not rescore** the register. Architect decides separately whether FG-037 counts as a completed functional capability.
+
 ```text
 CALIBRAYTAI V1 READINESS: 65%
 
@@ -200,7 +202,7 @@ Remaining functional software (not counted as built):
 5. Interactive in-product Help
 6. Voice assistance
 
-Do **not** count legal approval, deployment, documentation, training, or V1-11 certification as missing software in this secondary measure. Stashed FG-037 WIP is **not** counted as built. FG-037 remains **NOT YET IMPLEMENTED**. Company/Management access-domain seam remains **DEFINED / NOT IMPLEMENTED**.
+Do **not** count legal approval, deployment, documentation, training, or V1-11 certification as missing software in this secondary measure. Stashed FG-037 WIP is **not** counted as built. **Subsequent (2026-09-17 FG-037 close):** FG-037 is **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION**; this secondary **79% / 22 of 28** is **not rescored** here.
 
 ---
 

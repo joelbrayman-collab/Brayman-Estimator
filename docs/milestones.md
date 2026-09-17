@@ -30,6 +30,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-17 — FG-037 Company / Management access-domain authorization close
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-037 |
+| Status | **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION.** Live migration **PASS**. First explicit grant **PASS**. Default deny **PASS**. Granted user allow **PASS**. Ungranted user deny **PASS**. Project/Operational non-regression **PASS**. Field firewall **PASS**. Sensitive Financial firewall **PASS**. PERF-C **NOT IMPLEMENTED**. |
+| Branch | `main` |
+| Base commit | `967fea285bb8fc3cb7abefdba9153bbf717d3dcd` |
+| Objective | Record owner access policy; grant `COMPANY_MANAGEMENT` only to ORG-001 Membership 1 / Joel Brayman; prove bounded seam UAT; close FG-037. |
+| Deliverables | Live grant row 1; owner-policy documentation; FG-037 close. |
+| Validation | CLI show Membership 1 effective yes; Membership 2/5 effective no; `require_access_domain` Joel 200 / AUTH-B 403; `/projects/` 200; Field Today 200 with no Company Attention; C rejected; focused **154 passed**, 435 warnings, **82.70s**. |
+| Architectural findings | A does not imply B. B does not imply C. Joel+Ben both receiving B/future C is owner policy, not architectural coupling. Ben genuine ORG-001 membership is absent. |
+| Open decisions | Architect scorecard (eligibility vs 79%/22 of 28). Ben membership then Ben grant. PERF-C implementation. Recovery stash drop. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. |
+| Commit | this FG-037 close docs commit |
+| Date | 2026-09-17 |
+
 ### 2026-09-17 — FG-035 PERF-C product definition / owner-decision freeze (docs-only / not committed)
 
 | Field | Content |

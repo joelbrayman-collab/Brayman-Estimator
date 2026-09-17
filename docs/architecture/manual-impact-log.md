@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — FG-037 (2026-09-17)
+
+| Field | Content |
+|-------|---------|
+| Slice | FG-037 Company / Management access-domain authorization |
+| Product status at capture | **CURRENT** — FG-037 **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION**. Product SHA **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`**. No Company Attention screen. |
+| 1. What new contractor capability exists? | Company / Management information is now a separate permission. Joel Brayman (Membership 1) has it. Other current users do not, unless Joel later grants them. |
+| 2. When would the contractor use it? | Later, when Company Attention / company screens exist. Today there is no Company screen. The permission is already stored so those screens can be added later without giving every office user company access. |
+| 3. What workflow will the final Manual need to teach? | Who can see company / management information? Why can Joel see it and another office user cannot? Why does Field still not show Company Attention? How is permission granted later (not a Settings Members screen today)? |
+| 4. What contractor-facing terms must be used? | Company / Management. Project / Operational. Do **not** use: RBAC, role, admin, manager permission, Sensitive Financial (not implemented). |
+| 5. What screenshots / Print examples will eventually be needed? | None now. Capture Company Attention later when PERF-C exists. Do **not** screenshot Field as if Company Attention lives there. |
+| 6. What warnings / validation distinctions need explanation? | Having Project access does **not** give Company / Management access. Having Company / Management access does **not** give Sensitive Financial access. Ben is intended to have the same company permission later, after a real Ben account exists. |
+| 7. Desktop / iPhone / Print relevance | Office / management only. Field unchanged. Print later. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. Claim PERF-C exists. Claim Sensitive Financial exists. Claim Ben already has access. |
+
 ### MANUAL IMPACT — PERF-B (2026-09-17)
 
 | Field | Content |

@@ -30,6 +30,40 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-17 — FG-035 PERF-B design freeze sealed (docs-only commit / push)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 PERF-B |
+| Status | **OPEN / PARTIAL.** PERF-B **IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Owner decisions A–G **ACCEPTED**. PERF-A remains **SEALED**. No new ADR. No schema. V1 **60% / 4 of 11** **NO RESCORE**. |
+| Branch | `main` |
+| Base commit | `e809dcdbc3735aa91033f968a9ed562e749e6a0c` |
+| Objective | Seal accepted PERF-B Project Needs Attention design. Do not implement product. |
+| Deliverables | [architecture/fg-035-perf-b-implementation-preflight.md](architecture/fg-035-perf-b-implementation-preflight.md). Minimum index/continuity updates. |
+| Validation | Docs-only. Tests **NOT RERUN**. Last accepted full suite **1154 passed**, 0 failed. Alembic unchanged **`f9b0c1d2e3f4 (head)`**. |
+| Architectural findings | 80% module constant. SEQUENCE consumed not recalculated. Unassigned not PERF-B. Positive copy: Nothing needs attention right now. Needs Attention above labour summary in `#hub-labour`. No alert table. |
+| Open decisions | PERF-B implementation not authorized. |
+| Next milestone | **STOP.** PERF-B **NOT IMPLEMENTATION-AUTHORIZED**. |
+| Commit | this freeze |
+| Date | 2026-09-17 |
+
+### 2026-09-17 — FG-035 PERF-B implementation preflight (docs-only / not committed)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 PERF-B |
+| Status | **OPEN / PARTIAL.** PERF-B **PREFLIGHT COMPLETE / OWNER DECISIONS REQUIRED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. PERF-A remains **SEALED**. No new ADR. No schema. V1 **60% / 4 of 11** **NO RESCORE**. |
+| Branch | `main` |
+| Base commit | `e809dcdbc3735aa91033f968a9ed562e749e6a0c` |
+| Objective | Freeze PERF-B Project Needs Attention design enough for owner decisions. Do not implement product. |
+| Deliverables | [architecture/fg-035-perf-b-implementation-preflight.md](architecture/fg-035-perf-b-implementation-preflight.md). Minimum index/continuity updates. |
+| Validation | Docs-only. Tests **NOT RERUN**. Last accepted full suite **1154 passed**, 0 failed. Alembic unchanged **`f9b0c1d2e3f4 (head)`**. |
+| Architectural findings | Consume PERF-A labour. Extra Work by current lineage. Schedule date-grain. Reuse SCH conflicts; do not duplicate the engine. No alert table. |
+| Open decisions | Owner A–G (80% threshold, finish passed, no-Time start rule, SCH promotion, unassigned, positive state, Hub placement). |
+| Next milestone | **STOP.** PERF-B **NOT IMPLEMENTATION-AUTHORIZED**. |
+| Commit | none — not committed |
+| Date | 2026-09-17 |
+
 ### 2026-09-17 — V1 Desktop Contractor Experience / context-aware Home Office product-direction recording
 
 | Field | Content |

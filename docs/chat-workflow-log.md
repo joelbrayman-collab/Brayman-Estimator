@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — FG-035 PERF-B design freeze sealed (docs-only commit / push)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Incorporate accepted owner decisions A–G. Change PERF-B preflight to DESIGN FROZEN. Docs-only commit and push. No product. |
+| Business decision | A 80% constant accepted. B scheduled finish passed accepted. C start < today + no Approved Time accepted. D SEQUENCE only. E unassigned not PERF-B. F quiet copy “Nothing needs attention right now.” G Needs Attention above labour summary inside #hub-labour. |
+| Architectural decision | Design frozen. No schema. Consume PERF-A / SCOPE lineage / TIME Approved / existing SCH SEQUENCE. No second warning engine. No Field. MONITOR money unchanged. |
+| Prompt template used | FG-035 PERF-B OWNER DECISIONS / DESIGN FREEZE / SEAL / DOCS-ONLY / COMMIT / PUSH / NO PRODUCT |
+| Approved Cursor prompt summary | Seal fg-035-perf-b-implementation-preflight.md with A–G. Continuity. Docs-only commit. Push origin/main. Do not implement PERF-B. |
+| Files expected to change | Preflight + minimum indexes / continuity |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; Field; MONITOR money |
+| Implementation result | Design FROZEN. Owner A–G ACCEPTED. Not implementation-authorized. |
+| Tests | NOT RERUN. Last accepted full suite remains **1154 passed**, 0 failed. |
+| Project-state-report update | yes |
+| Milestone entry update | yes |
+| Constitutional issue raised | no |
+| Unresolved issues | PERF-B not implemented. PERF-C not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement PERF-B. |
+| Next approved prompt | none — STOP |
+| Commit hash | this freeze |
+
+### 2026-09-17 — FG-035 PERF-B implementation preflight (docs-only / no product)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Bounded FG-035 PERF-B Project Needs Attention implementation preflight. Docs-only. No product. |
+| Business decision | PERF-B answers: is there something about this Project I should look at? Owner decisions A–G required before implementation authorization. |
+| Architectural decision | Derived projection. No schema. Consume PERF-A labour + current SCOPE lineage + ACTIVE Schedule dates + existing SCH conflict facts. No second warning engine. No Field. MONITOR money unchanged. |
+| Prompt template used | FG-035 PERF-B PROJECT NEEDS ATTENTION IMPLEMENTATION PREFLIGHT / DOCS-ONLY / NO PRODUCT IMPLEMENTATION |
+| Approved Cursor prompt summary | Inspect PERF-A/SCOPE/TIME/SCH/Hub. Freeze labour/Extra Work/schedule candidates. Return owner decisions. Create fg-035-perf-b-implementation-preflight.md. Do not implement PERF-B. |
+| Files expected to change | Preflight + minimum indexes / continuity |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; Field; MONITOR money |
+| Implementation result | Preflight written. Status OWNER DECISIONS REQUIRED / NOT IMPLEMENTATION-AUTHORIZED. Not committed. Not pushed. |
+| Tests | NOT RERUN. Last accepted full suite remains **1154 passed**, 0 failed. |
+| Project-state-report update | yes |
+| Milestone entry update | yes |
+| Constitutional issue raised | no |
+| Unresolved issues | Owner decisions A–G. PERF-B not implemented. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement PERF-B. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — not committed |
+
 ### 2026-09-17 — V1 Desktop Contractor Experience organization scale / operating-scope amendment
 
 | Field | Content |

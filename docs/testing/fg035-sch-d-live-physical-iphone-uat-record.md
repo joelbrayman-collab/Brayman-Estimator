@@ -4,7 +4,7 @@
 |-----------|--------|
 | Date | 2026-09-16 |
 | Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL** |
-| Slice | SCH-D **IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / NOT COMMITTED / NOT PUSHED.** Landscape remains **FAIL / unresolved / out of this close**. |
+| Slice | SCH-D **IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / COMMITTED / NOT PUSHED.** Landscape remains **FAIL / unresolved / out of this close**. |
 | ADR | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
 | Alembic | Unchanged. Live current = repository head **`f9b0c1d2e3f4 (head)`**. No SCH-D migration. |
 
@@ -110,9 +110,10 @@ Historical G2/G3/G4 first pass **FAIL** (no job-site address on live Project 48)
 
 | Field | Value |
 |--------|--------|
-| Committed HEAD / `origin/main` | **`398db63ba9612c18915959556d49e01ddc9f1ea0`** (`docs: pin FG-035 SCH-C SHA`) |
+| Committed HEAD / `origin/main` | **`398db63ba9612c18915959556d49e01ddc9f1ea0`** (`docs: pin FG-035 SCH-C SHA`) at UAT start |
+| Product SCH-D SHA | **`59d36b8f0b3a86eb41aee03890cb432d0fc58e52`** (`feat: implement FG-035 SCH-D field schedule`) |
 | Product SCH-C | **`c57e23c55260b44fc88cadfe2fc40924aa58dde7`** |
-| Working tree | **DIRTY** — reviewed uncommitted SCH-D product / tests / docs + this UAT record |
+| Working tree at UAT | Reviewed SCH-D product + tests + UAT/governance (committed in the product SHA) |
 | Live current | **`f9b0c1d2e3f4 (head)`** |
 | Repository head | **`f9b0c1d2e3f4 (head)`** |
 | Migration this UAT | **None** |

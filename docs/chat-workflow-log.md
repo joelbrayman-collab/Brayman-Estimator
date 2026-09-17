@@ -57,7 +57,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Approved Cursor prompt summary | Inspect Darcy. Separate future-direction docs commit. SCH-D feat commit. SHA-pin. `git push origin main`. STOP. |
 | Files expected to change | Future-direction docs; SCH-D product/test/UAT/governance/Manual Impact; then pin docs only |
 | Files prohibited from changing | Alembic; live DB; PERF/CLOSE/LEARN/QB-T; Print/Shop/Banked Hours implementation; history rewrite |
-| Implementation result | Future-direction SHA **`78ca4f7934495538e2c6c6c256547369577f6258`**. SCH-D product SHA pending this commit. |
+| Implementation result | Future-direction SHA **`78ca4f7934495538e2c6c6c256547369577f6258`**. SCH-D product SHA **`59d36b8f0b3a86eb41aee03890cb432d0fc58e52`**. Pin pending this commit. SCH-D **COMMITTED / NOT PUSHED**. |
 | Tests | Authoritative post-physical evidence reused (not rerun): SCH-D **21 passed**; TIME+Field+SCH-D **49 passed**; SCH-A/B/C **36 passed**; focused **156 passed**; full **1140 passed** / 0 failed / exit **0**. |
 | Project-state-report update | yes — pin commit |
 | Milestone entry update | yes — pin commit |
@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | FG-035 remains OPEN / PARTIAL. PERF / CLOSE / LEARN / QB-T not authorized. |
 | Next approved step | **STOP.** Do **not** begin PERF. |
 | Next approved prompt | none — STOP |
-| Commit hash | pending product + pin |
+| Commit hash | `59d36b8f0b3a86eb41aee03890cb432d0fc58e52`
 
 ### 2026-09-17 — FG-035 SCH-D final physical iPhone UAT reconciliation + post-physical regression
 

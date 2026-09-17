@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-16 |
+| Updated | 2026-09-17 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -29,6 +29,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 4. “Completed pending baseline commit” means deliverables exist in the working tree awaiting Joel-approved commit.
 
 ---
+
+### 2026-09-17 — FG-035 SCH-D CLOSE / COMMIT / SHA-PIN / PUSH
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 SCH-D |
+| Status | **OPEN / PARTIAL.** SCH-D **IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / COMMITTED / NOT PUSHED**. SCH overall **OPEN / PARTIAL**. SCH-A / SCH-B / SCH-C remain **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**. TAX/WBS / SCOPE / TIME remain **IMPLEMENTED**. Warning law **INFORMATIONAL ONLY / NON-BLOCKING**. Print **RECORDED / IMPLEMENTATION SEQUENCED LATER**. Manual **FRAMEWORK ACTIVE / SCH-D MANUAL IMPACT CURRENT**. Shop / Company Work **RECORDED / NOT IMPLEMENTED**. Banked Hours **RECORDED / NOT IMPLEMENTED**. [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. V1 **60% / 4 of 11** **NO RESCORE**. |
+| Branch | `main` |
+| Base commit | `61a92d0ae1541e1fb70bed1867b0c0a12c6e0a0a` |
+| Objective | Preserve Darcy docs. Commit future-direction docs separately. Commit and pin the accepted SCH-D package. Push linear `main`. Do not begin PERF. |
+| Deliverables | Product SHA **`59d36b8f0b3a86eb41aee03890cb432d0fc58e52`**. Future-direction SHA **`78ca4f7934495538e2c6c6c256547369577f6258`**. No SCH-D migration. Evidence [testing/fg035-sch-d-live-physical-iphone-uat-record.md](testing/fg035-sch-d-live-physical-iphone-uat-record.md). |
+| Validation | Not rerun for this commit. Authoritative post-physical: Dedicated SCH-D **21 passed**. TIME+Field+SCH-D **49 passed**. SCH-A/B/C **36 passed**. Focused **156 passed**. Full suite **1140 passed**, 3749 warnings, **665.58s**, exit **0**. Live current = repository head **`f9b0c1d2e3f4 (head)`**. |
+| Architectural findings | No new Schedule store. No Field Schedule POSTs. Directions is phone-maps handoff. Native iOS return accepted. Warning law preserved. |
+| Open decisions | PERF / CLOSE / LEARN / QB-T not authorized. V1 remains **60% / 4 of 11**. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** begin PERF. |
+| Commit | `59d36b8f0b3a86eb41aee03890cb432d0fc58e52` |
+| Date | 2026-09-17 |
 
 ### 2026-09-16 — FG-035 SCH-C CLOSE / COMMIT / PUSH
 

@@ -579,6 +579,23 @@
         </div>
         {% set labour = hub.labour %}
         {% set labour_project = labour.project %}
+        {% set attention = labour.attention %}
+        <h3>{{ contractor_copy.LABOUR_NEEDS_ATTENTION_HEADING }}</h3>
+        {% if attention['items'] %}
+        <ul class="attention-list">
+            {% for fact in attention['items'] %}
+            <li>
+                <strong>{{ fact.title }}</strong>
+                <p>{{ fact.detail }}</p>
+                {% if fact.destination and fact.destination.href %}
+                <p><a href="{{ fact.destination.href }}">{{ fact.destination.label }}</a></p>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>{{ attention.positive_title }}</p>
+        {% endif %}
         <h3>{{ contractor_copy.LABOUR_AUTHORIZED_HEADING }}</h3>
         <p>
             {% if labour_project.allowance_known %}
@@ -636,7 +653,6 @@
             {{ "%.2f"|format(labour.extra_work.used_hours) }} {{ contractor_copy.LABOUR_HOURS_USED }}
             · {{ "%.2f"|format(labour.extra_work.waiting_hours) }} {{ contractor_copy.LABOUR_HOURS_WAITING }}
         </p>
-        <p class="muted-copy">{{ contractor_copy.LABOUR_EXTRA_NEEDS_REVIEW }}</p>
         {% endif %}
     </article>
     <article class="panel panel-wide">

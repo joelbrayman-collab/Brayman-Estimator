@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED** |
+| Status | **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS** |
 | Date | 2026-09-17 |
 | Gate | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL** |
 | ADR | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
@@ -14,26 +14,29 @@
 
 ```text
 FG-035 PERF-B:
-IMPLEMENTATION PREFLIGHT COMPLETE
-DESIGN FROZEN
-OWNER DECISIONS A–G ACCEPTED
-NOT IMPLEMENTATION-AUTHORIZED
-NOT IMPLEMENTED
+IMPLEMENTED
+TESTED
+BOUNDED SYNTHETIC LIVE UAT PASS
 NO SCHEMA
 NO MIGRATION
 NO NEW ADR
 NO NEW FEATURE GATE
 V1 NOT RESCORED
-NO PRODUCT
 NO PERF-C
 NO HOME OFFICE
 NO FIELD
 NO MONITOR MONEY CHANGE
+NO COMMIT
+NO PUSH
 ```
+
+**Subsequent status (2026-09-17 PERF-B bounded synthetic live UAT):** PERF-B **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **50**. Office Hub `http://127.0.0.1:5461/projects/50#hub-labour`. Dedicated **36 passed**. Focused **206 passed**. Full suite **1190 passed**, 4212 warnings, **746.12s**, exit **0**. No schema. Not committed. Not pushed. PERF-C **NOT AUTHORIZED**. V1 **not rescored**. Evidence [testing/fg035-perf-b-live-bounded-uat-record.md](../testing/fg035-perf-b-live-bounded-uat-record.md).
+
+**Subsequent status (2026-09-17 PERF-B engineering implementation):** PERF-B **IMPLEMENTED / TESTED / NOT LIVE-UAT**. `assemble_project_performance` + `assemble_project_attention` + Hub `#hub-labour` Needs Attention. Dedicated **36 passed**. Focused **206 passed**. Full suite **1190 passed**, 4212 warnings, **619.11s**, exit **0**. No schema. Not committed. Not pushed. Live UAT **not performed**. PERF-C **NOT AUTHORIZED**. V1 **not rescored**.
 
 **Subsequent status (2026-09-17 owner decisions / design freeze / seal):** Owner decisions **A–G ACCEPTED**. Design **FROZEN**. This file is the frozen PERF-B contract. Product implementation remains **NOT AUTHORIZED** until a separate implementation prompt.
 
-Do **not** implement PERF-B, PERF-C, Home Office, notifications, progress, Forecast Finish, Print, QuickBooks, or banking from this file.
+Do **not** implement PERF-C, Home Office, notifications, progress, Forecast Finish, Print, QuickBooks, or banking from this file. Do **not** commit from this file.
 
 ---
 
@@ -41,8 +44,8 @@ Do **not** implement PERF-B, PERF-C, Home Office, notifications, progress, Forec
 
 | Layer | State |
 |-------|--------|
-| **Current** | PERF-A `assemble_project_performance` on Hub `#hub-labour` after `#hub-time` before MONITOR. Extra Work hours + `needs_review` copy already exist as labour arithmetic, **not** a Needs Attention engine. SCH-B/C `list_schedule_conflicts` already derives overlap + sequence / predecessor-unscheduled facts on `#hub-schedule`. TIME Waiting is already on Time and Labour. Warning law **INFORMATIONAL ONLY / NON-BLOCKING**. |
-| **Intended (PERF-B, after separate implementation authorization)** | Project Hub derived **Needs Attention** answering: is there something about this Project I should look at? Design frozen below. |
+| **Current** | PERF-A labour Allowed / Used / Remaining plus PERF-B derived Needs Attention on Hub `#hub-labour` after `#hub-time` before MONITOR. Extra Work hours remain in the labour Extra Work block; the look-at signal is the Needs Attention item. SCH-B/C `list_schedule_conflicts` remains the SEQUENCE authority. TIME Waiting remains on Time and Labour. Warning law **INFORMATIONAL ONLY / NON-BLOCKING**. |
+| **Intended (this bounded live UAT)** | **DONE** on synthetic Project **50**. Evidence [../testing/fg035-perf-b-live-bounded-uat-record.md](../testing/fg035-perf-b-live-bounded-uat-record.md). Commit / PERF-C remain separately authorized. |
 | **Future (not PERF-B)** | PERF-C / company attention. Context-aware Home Office. Tomorrow readiness. Team notify. Week Ahead. Cash/payroll. Explicit progress. Forecast Finish. Unassigned upcoming work. |
 
 ---

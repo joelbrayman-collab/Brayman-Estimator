@@ -365,6 +365,10 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 
 **Joel decision #4 (2026-09-14):** customer Proposal/PDF terminology **IMPLEMENTED** as the FG-025 customer-document language slice. Existing Proposal preview/PDF reused. Customer-facing title **CONSTRUCTION ESTIMATE**. No schema/migration. FG-025 overall **NOT CLOSED**. V1 score **unchanged**.
 
+**Subsequent status (2026-09-17 PERF-B bounded synthetic live UAT):** FG-035 PERF-B **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **50**. Dedicated **36 passed**. Focused **206 passed**. Full suite **1190 passed**, 4212 warnings, **746.12s**, exit **0**. No schema. Not committed. Not pushed. **Do not rescore**. Do **not** start PERF-C. Do **not** close FG-035. Evidence [testing/fg035-perf-b-live-bounded-uat-record.md](testing/fg035-perf-b-live-bounded-uat-record.md).
+
+**Subsequent status (2026-09-17 PERF-B engineering implementation):** FG-035 PERF-B **IMPLEMENTED / TESTED / NOT LIVE-UAT**. Dedicated **36 passed**. Focused **206 passed**. Full suite **1190 passed**, 4212 warnings, **619.11s**, exit **0**. No schema. Not committed. Not pushed. No live UAT. **Do not rescore**. Do **not** start PERF-C. Do **not** close FG-035.
+
 **Subsequent status (2026-09-17 PERF-B design freeze sealed):** FG-035 PERF-B **IMPLEMENTATION PREFLIGHT COMPLETE / DESIGN FROZEN / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Owner decisions A–G **ACCEPTED**. Freeze [architecture/fg-035-perf-b-implementation-preflight.md](architecture/fg-035-perf-b-implementation-preflight.md). No schema. No product. **Do not rescore**. Do **not** implement PERF-B from this register. Do **not** start PERF-C. Do **not** close FG-035.
 
 **Subsequent status (2026-09-17 PERF-B implementation preflight):** FG-035 PERF-B **PREFLIGHT COMPLETE / OWNER DECISIONS REQUIRED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Freeze [architecture/fg-035-perf-b-implementation-preflight.md](architecture/fg-035-perf-b-implementation-preflight.md). No schema. No product. **Do not rescore**. Do **not** implement PERF-B from this register. Do **not** start PERF-C. Do **not** close FG-035.

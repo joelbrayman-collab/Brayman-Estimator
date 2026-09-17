@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — FG-035 PERF-B bounded synthetic live UAT (uncommitted)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Bounded synthetic live UAT of FG-035 PERF-B Project Needs Attention. No commit. No PERF-C. |
+| Business decision | Prove Hub `#hub-labour` Needs Attention live on one synthetic Project. Informational / non-blocking. |
+| Architectural decision | No schema. Consume existing SCOPE / TIME / SCH SEQUENCE. Do not persist attention. Do not mutate Projects 45–49 or EST-2026-0019. |
+| Prompt template used | FG-035 PERF-B PROJECT NEEDS ATTENTION LIVE BOUNDED SYNTHETIC UAT / NO COMMIT / NO PERF-C |
+| Approved Cursor prompt summary | Verify reviewed uncommitted PERF-B package. Create one synthetic Project. Exercise Hub Needs Attention. Warning Law. Field + MONITOR firewalls. Fresh tests. UAT record. Governance. STOP. Do not commit. |
+| Files expected to change | `docs/testing/fg035-perf-b-live-bounded-uat-record.md`; PERF-B governance / Manual Impact from actual UAT |
+| Files prohibited from changing | `migrations/`; Projects 45–49; EST-2026-0019; PERF-C; Field product; MONITOR money |
+| Implementation result | PERF-B **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **50**. Hub `http://127.0.0.1:5461/projects/50#hub-labour`. |
+| Tests | Dedicated **36 passed**, 339 warnings, **18.78s**, exit **0**. PERF-A+B **50 passed**, 463 warnings, **26.40s**, exit **0**. Focused **206 passed**, 1047 warnings, **116.29s**, exit **0**. Full suite **1190 passed**, 4212 warnings, **746.12s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | yes |
+| Constitutional issue raised | no |
+| Unresolved issues | Not committed. PERF-C not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** commit. Do **not** begin PERF-C. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — not committed |
+
+### 2026-09-17 — FG-035 PERF-B engineering implementation (uncommitted)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026 |
+| Objective | Implement FG-035 PERF-B Project Needs Attention from the frozen design. No live UAT. No commit. No PERF-C. |
+| Business decision | Answer: is there something about this Project I should look at? Factual attention only. Informational / non-blocking. |
+| Architectural decision | Extend `assemble_project_performance`. Consume PERF-A labour, current SCOPE lineage, TIME Approved, ACTIVE Schedule dates, existing SCH SEQUENCE. No schema. No Field. MONITOR money unchanged. |
+| Prompt template used | FG-035 PERF-B PROJECT NEEDS ATTENTION IMPLEMENTATION / NO LIVE UAT / NO COMMIT / NO PERF-C |
+| Approved Cursor prompt summary | Implement PERF-B only. Dedicated tests. Focused + full suite. Manual Impact. Governance docs. STOP before live UAT. Do not commit. |
+| Files expected to change | `app/services/project_performance.py`; `app/presentation/contractor_copy.py`; `app/templates/projects/detail.html`; `tests/test_project_needs_attention_fg035.py`; PERF-A Hub regression; required docs |
+| Files prohibited from changing | `migrations/`; live DB; Field product; MONITOR money assembler; Projects 45–49; EST-2026-0019 |
+| Implementation result | PERF-B **IMPLEMENTED / TESTED / NOT LIVE-UAT**. Hub `#hub-labour` Needs Attention above labour summary. |
+| Tests | Dedicated **36 passed**, 339 warnings, **22.96s**, exit **0**. Focused **206 passed**, 1047 warnings, **157.66s**, exit **0**. Full suite **1190 passed**, 4212 warnings, **619.11s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | yes |
+| Constitutional issue raised | no |
+| Unresolved issues | Live PERF-B UAT not performed. Not committed. PERF-C not authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** commit. Do **not** live-UAT. Do **not** begin PERF-C. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — not committed |
+
 ### 2026-09-17 — FG-035 PERF-B design freeze sealed (docs-only commit / push)
 
 | Field | Content |

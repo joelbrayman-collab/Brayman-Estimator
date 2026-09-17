@@ -51,12 +51,27 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PERF-B (2026-09-17)
+
+| Field | Content |
+|-------|---------|
+| Slice | FG-035 PERF-B Project Needs Attention |
+| Product status at capture | **CURRENT** — PERF-B **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **50**. Not committed. |
+| 1. What new contractor capability exists? | On the Project Labour section, Needs Attention lists factual things to look at, or says nothing needs attention right now. It sits above Allowed / Used / Remaining. |
+| 2. When would the contractor use it? | Opening a Project and asking whether anything about this job needs a look. Checking labour getting close, extra work, a scheduled finish that has already passed, scheduled work with no approved Time, or a schedule warning. |
+| 3. What workflow will the final Manual need to teach? | What does Needs Attention mean? Does Needs Attention stop me from working? Why does Labour getting close appear? What does Labour allowance used mean? What does Labour over allowance mean? Why does Extra Work need review? What does Scheduled finish passed mean? Why does CalibraytAI say scheduled work has no approved Time? |
+| 4. What contractor-facing terms must be used? | Needs attention. Extra work needs review. Labour getting close. Labour allowance used. Labour over allowance. Scheduled finish passed. Scheduled work has no approved Time. Nothing needs attention right now. Do **not** use: threshold breach, attention DTO, risk, severity, scope lineage, schedule conflict algorithm. |
+| 5. What screenshots / Print examples will eventually be needed? | Quiet positive state. Labour getting close. Labour over allowance. Extra work needs review. Scheduled finish passed. Scheduled work has no approved Time. Schedule warning. Do **not** capture now. Final Manual later. |
+| 6. What warnings / validation distinctions need explanation? | Needs Attention does **not** stop Time, Schedule, Change Orders, or Project work. It is information only. Waiting for approval is not its own Needs Attention item. Labour getting close means Used has reached 80% of Allowed; it is not a verdict that the job is going badly. Labour allowance used means Used equals Allowed. Labour over allowance means Used is more than Allowed. Extra work needs review while extra work still has used or waiting hours and is not yet authorized. Scheduled finish passed means the scheduled end date is before today; it does not mean the work is late or incomplete. Scheduled work has no approved Time means the scheduled start is before today and that scheduled work still has no approved Time; it does not mean the work has not started. |
+| 7. Desktop / iPhone / Print relevance | Desktop / office Project Hub Labour. Field is unchanged. Print later. Bounded synthetic live UAT **PASS** on Project **50**. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. Claim FG-035 closed. PERF-C. Commit. |
+
 ### MANUAL IMPACT — PERF-A (2026-09-17)
 
 | Field | Content |
 |-------|---------|
 | Slice | FG-035 PERF-A Project Hub Labour Allowed · Used · Remaining |
-| Product status at capture | **CURRENT** — PERF-A **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **49**. Not committed. |
+| Product status at capture | **SUPERSEDED AS CURRENT** for newest Manual Impact by PERF-B. PERF-A product remains **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. Project **49**. |
 | 1. What new contractor capability exists? | On the Project page, after Time and before MONITOR, a Labour section shows how many hours are Allowed, Used, and Remaining (or Over by). It also shows hours Waiting for approval. Extra work is listed separately while it is still extra work. After a Change Order authorizes that extra work, those hours move into Authorized labour. |
 | 2. When would the contractor use it? | Checking how a job is doing on labour. Asking how many hours are left. Seeing whether extra work time is sitting outside the authorized allowance. Checking labour again after extra work is authorized. |
 | 3. What workflow will the final Manual need to teach? | How many labour hours do we have left? What is Used? What is Waiting for approval? What does Over by mean? Why is Extra Work shown separately? What happens after Extra Work is authorized? What does Allowance not available mean? |

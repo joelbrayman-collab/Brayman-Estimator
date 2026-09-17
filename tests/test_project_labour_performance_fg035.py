@@ -534,7 +534,13 @@ def test_hub_labour_copy_and_monitor_firewall(client, app):
     assert contractor_copy.LABOUR_REMAINING in html
     assert contractor_copy.LABOUR_WAITING in html
     assert contractor_copy.SCOPE_EXTRA_WORK_LABEL in html
-    assert contractor_copy.LABOUR_EXTRA_NEEDS_REVIEW in html
+    assert contractor_copy.LABOUR_EXTRA_WORK_NEEDS_REVIEW in html
+    assert contractor_copy.LABOUR_NEEDS_ATTENTION_HEADING in html
+    assert html.find(contractor_copy.LABOUR_NEEDS_ATTENTION_HEADING) < html.find(
+        contractor_copy.LABOUR_AUTHORIZED_HEADING
+    )
+    labour_html = html[html.find('id="hub-labour"') : html.find('id="hub-monitor"')]
+    assert contractor_copy.LABOUR_EXTRA_NEEDS_REVIEW not in labour_html
     assert 'id="hub-monitor"' in html
     assert "current_authorized_hours" not in html
     assert "scope_origin" not in html

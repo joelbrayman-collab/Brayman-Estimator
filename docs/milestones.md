@@ -30,6 +30,40 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ---
 
+### 2026-09-17 — FG-035 PERF-B bounded synthetic live UAT (uncommitted)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 PERF-B |
+| Status | **OPEN / PARTIAL.** PERF-B **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. PERF-A remains **SEALED**. No new ADR. No schema. V1 **60% / 4 of 11** **NO RESCORE**. |
+| Branch | `main` |
+| Base commit | `11a11cb33e8bc7c185557980a1852af66d53b367` |
+| Objective | Bounded synthetic live UAT of Project Needs Attention on one new Project. |
+| Deliverables | Project **50**; [testing/fg035-perf-b-live-bounded-uat-record.md](testing/fg035-perf-b-live-bounded-uat-record.md); Manual Impact from live workflow; governance |
+| Validation | Dedicated **36 passed**. Focused **206 passed**. Full suite **1190 passed**, 4212 warnings, **746.12s**, exit **0**. Alembic **`f9b0c1d2e3f4 (head)`**. Projects **45–49** and EST-2026-0019 unchanged. |
+| Architectural findings | No schema. SEQUENCE consumed from SCH. Waiting is not its own fact. Field and MONITOR money unchanged. Warning law informational / non-blocking. |
+| Open decisions | Commit/push. PERF-C. Home Office. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** commit. Do **not** begin PERF-C. |
+| Commit | none — not committed |
+| Date | 2026-09-17 |
+
+### 2026-09-17 — FG-035 PERF-B engineering implementation (uncommitted)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 PERF-B |
+| Status | **OPEN / PARTIAL.** PERF-B **IMPLEMENTED / TESTED / NOT LIVE-UAT**. PERF-A remains **SEALED**. No new ADR. No schema. V1 **60% / 4 of 11** **NO RESCORE**. |
+| Branch | `main` |
+| Base commit | `11a11cb33e8bc7c185557980a1852af66d53b367` |
+| Objective | Project Needs Attention derived projection on Hub `#hub-labour`. |
+| Deliverables | `assemble_project_attention`; contractor copy; Hub Needs Attention; dedicated tests; Manual Impact; governance docs |
+| Validation | Dedicated **36 passed**. Focused **206 passed**. Full suite **1190 passed**, 4212 warnings, **619.11s**, exit **0**. Alembic **`f9b0c1d2e3f4 (head)`**. |
+| Architectural findings | No schema. SEQUENCE consumed from SCH. Waiting is not its own fact. Field and MONITOR money unchanged. |
+| Open decisions | Live UAT authorization. PERF-C. Home Office. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** commit. Do **not** live-UAT. |
+| Commit | none — not committed |
+| Date | 2026-09-17 |
+
 ### 2026-09-17 — FG-035 PERF-B design freeze sealed (docs-only commit / push)
 
 | Field | Content |

@@ -49,6 +49,8 @@ ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
 
 Joel/ChatGPT recorded this gate on **2026-09-07** as durable product/governance authority only. Recording is **not** implementation approval.
 
+**Subsequent status (2026-09-17 official V1 rescore):** [v1-completion-register.md](../v1-completion-register.md) official readiness **65% / 4 of 11**. V1-06 remains **PARTIAL** with factor **0.40** (generation / snapshot / fail-closed / TECH-A–D exist; Ontario 06D still BLOCKED; PRODUCTION packages **0**). This gate remains **OVERALL OPEN / PARTIAL**. Do **not** begin Slice D. Do **not** populate Ontario legal content.
+
 **Subsequent status (2026-09-12, Slice A preflight):** Architecture preflight **COMPLETE**. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) drafted **Proposed**. Product implementation remains **NOT AUTHORIZED**. Do **not** begin Slice A product code from the preflight.
 
 **Subsequent status (2026-09-13):** [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted** by Joel Brayman / ChatGPT Architect (architecture / fail-closed ownership only). Slice A architecture prerequisite **satisfied**. Product implementation remains **NOT AUTHORIZED / NOT IMPLEMENTED**. Do **not** rescore V1.

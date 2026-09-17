@@ -2,14 +2,14 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (2026-09-11). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **COMPLETE**. V1-03 / [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**). V1-05 / [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**; Option A). Readiness **60%** (V1-05 factor **1.00**; 55.05 − 0.9 + 6.0 = 60.15 → **60%**). **4 / 11** COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. Does **not** authorize FG-024, FG-030 implementation, or V1-04 product work. [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** (supporting gate; **not** a 12th package; does **not** rescore). [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT**. FG-028 **CLOSED / OPERATIONAL FOR UAT** (does **not** rescore this register). |
+| Status | **GOVERNING PRODUCT-COMPLETION INSTRUMENT** (official rescore **2026-09-17**). V1-01 / FG-026 **COMPLETE**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **COMPLETE**. V1-03 / [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**). V1-05 / [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **COMPLETE** (**CLOSED / OPERATIONAL FOR UAT**; Option A). Governed V1 Readiness **65%** (V1-06 factor **0.40**; V1-07 factor **0.40**; 64.55 → **65%**). Secondary Functional V1 Build **79% / 22 of 28** (labelled secondary; not averaged). Prior official score **60%** (2026-09-11; V1-05 COMPLETE). **4 / 11** COMPLETE. No new package COMPLETE. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. FG-037 **NOT YET IMPLEMENTED**. Company/Management seam **DEFINED / NOT IMPLEMENTED**. [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. Does **not** authorize FG-024, FG-030 implementation, or V1-04 product work. [FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** (supporting gate; **not** a 12th package). [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT**. FG-028 **CLOSED / OPERATIONAL FOR UAT**. |
 | Product | CalibraytAI / The Estimator (formerly CalibAi) |
 | Date | 2026-09-08 |
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
 ```text
-CALIBRAYTAI V1 READINESS: 60%
+CALIBRAYTAI V1 READINESS: 65%
 
 MAJOR PACKAGES:
 4 / 11 COMPLETE
@@ -28,6 +28,9 @@ NO
 
 BRAYMAN REAL-LIFE UAT READY:
 NO
+
+FUNCTIONAL V1 BUILD (SECONDARY / NOT OFFICIAL SCORING):
+79% / 22 OF 28
 
 ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION
 THIS REGISTER DOES NOT AUTHORIZE FG-024, FG-030 IMPLEMENTATION, OR V1-04 PRODUCT WORK
@@ -163,13 +166,13 @@ No package from Joel’s list is rejected. No existing August 2026 four-output /
 
 | Field | Value |
 |-------|--------|
-| **CALIBRAYTAI V1 READINESS** | **60%** |
+| **CALIBRAYTAI V1 READINESS** | **65%** |
 | **MAJOR PACKAGES COMPLETE** | **4 / 11** |
 | COMPLETE | **4** (V1-01, V1-02, V1-03, V1-05) |
 | SUBSTANTIALLY COMPLETE | **2** (V1-08, V1-09) |
-| PARTIAL | **3** (V1-04, V1-06, V1-10) |
+| PARTIAL | **4** (V1-04, V1-06, V1-07, V1-10) |
 | IMPLEMENTED / NOT CLOSED | **0** |
-| ARCHITECTURE COMPLETE / NOT IMPLEMENTED | **1** (V1-07) |
+| ARCHITECTURE COMPLETE / NOT IMPLEMENTED | **0** |
 | NOT STARTED | **1** (V1-11) |
 | **CURRENT V1 PACKAGE** | **V1-04** |
 | **CRITICAL PATH** | V1-04; V1-06 parallel; V1-10 before real UAT; V1-11 last |
@@ -177,6 +180,27 @@ No package from Joel’s list is rejected. No existing August 2026 four-output /
 | **BRAYMAN REAL-LIFE UAT READY** | **NO** |
 
 Scoring arithmetic is in §8.
+
+### 6.1 Secondary progress measure (not official scoring)
+
+This measure does **not** replace the official **65%**. Do **not** average it with the official score. It does **not** change §3 methodology or §8 arithmetic.
+
+| Field | Value |
+|-------|--------|
+| **GOVERNED V1 READINESS** | **65%** / **4 of 11** COMPLETE (official) |
+| **FUNCTIONAL V1 BUILD** | **79%** / **22 of 28** V1-required functional capabilities built |
+| Remaining functional software | **21%** / **6 of 28** |
+
+Remaining functional software (not counted as built):
+
+1. Company/Management access-domain authorization
+2. PERF-C Company Attention
+3. Context-aware Home Office
+4. Desktop Print / paper workflow
+5. Interactive in-product Help
+6. Voice assistance
+
+Do **not** count legal approval, deployment, documentation, training, or V1-11 certification as missing software in this secondary measure. Stashed FG-037 WIP is **not** counted as built. FG-037 remains **NOT YET IMPLEMENTED**. Company/Management access-domain seam remains **DEFINED / NOT IMPLEMENTED**.
 
 ---
 
@@ -296,13 +320,13 @@ Estimator remains the authoritative commercial record. QuickBooks must not becom
 | Intent | Architecture and engine to select/generate the governed construction contract/warranty package from project jurisdiction. Ontario operational for Brayman real-life UAT. Not an Ontario one-off. Not every NA jurisdiction populated. |
 | Weight | **16%** (major V1 package) |
 | Status | **PARTIAL** |
-| Factor | **0.25** (jurisdiction identity implemented + FG-024 architecture recorded; no generation, no Ontario legal package) |
-| Contribution | **4.0** |
+| Factor | **0.40** (generation, frozen snapshot, fail-closed Hub behaviour, and TECH-A–D exist; no Ontario legal package; prior 0.25 “no generation” rationale is stale). **Official rescore 2026-09-17.** |
+| Contribution | **6.4** |
 | V1 REQUIRED? | **YES** (06A–06I). 06J **POST-V1**. |
 | BLOCKER? | **YES** for production contract use: Legal Content Gate **empty**; Family 05 **NOT LEGALLY APPROVED**; AI cannot mark legal content APPROVED |
 | Dependencies | ADR-037 / FG-015 jurisdiction identity; Legal Content Gate; V1-07 for 06I |
 | Governing | [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **FUTURE / RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C CLOSED / OPERATIONAL FOR UAT / TECH-A IMPLEMENTED / TECH-B IMPLEMENTED / TECH-C IMPLEMENTED / TECH-D IMPLEMENTED / OVERALL OPEN / PARTIAL**; [fg-024-slice-a-legal-content-library-preflight.md](architecture/fg-024-slice-a-legal-content-library-preflight.md); [fg-024-slice-b-legal-content-source-lifecycle-preflight.md](architecture/fg-024-slice-b-legal-content-source-lifecycle-preflight.md); [fg-024-slice-c-contract-generation-snapshot-preflight.md](architecture/fg-024-slice-c-contract-generation-snapshot-preflight.md); [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**; [ADR-051](adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**; [legal-content-and-templates.md](governance/legal-content-and-templates.md); [testing/fg024-slice-a-live-migrate-bounded-uat-record.md](testing/fg024-slice-a-live-migrate-bounded-uat-record.md); [testing/fg024-slice-b-live-migrate-bounded-uat-record.md](testing/fg024-slice-b-live-migrate-bounded-uat-record.md); [testing/fg024-slice-c-live-migrate-bounded-uat-record.md](testing/fg024-slice-c-live-migrate-bounded-uat-record.md); [testing/fg024-tech-a-live-migrate-bounded-uat-record.md](testing/fg024-tech-a-live-migrate-bounded-uat-record.md); [testing/fg024-tech-b-live-migrate-bounded-uat-record.md](testing/fg024-tech-b-live-migrate-bounded-uat-record.md); [testing/fg024-tech-c-live-migrate-bounded-uat-record.md](testing/fg024-tech-c-live-migrate-bounded-uat-record.md) |
-| Next governed action | **STOP.** Slice A is **CLOSED / OPERATIONAL FOR UAT** (live / empty of PRODUCTION). Slice B is **CLOSED / OPERATIONAL FOR UAT**. Slice C is **CLOSED / OPERATIONAL FOR UAT**. TECH-A **IMPLEMENTED**. TECH-B **IMPLEMENTED**. TECH-C **IMPLEMENTED**. TECH-D **IMPLEMENTED**. Hub CONTRACT fail-closed UX is **IMPLEMENTED**. Native Signing SIGN-A through SIGN-E **IMPLEMENTED** under [FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED / OPERATIONAL FOR UAT**. Do **not** begin Slice D. Do **not** populate Ontario legal content. Do **not** rescore V1. Factor remains **0.25**. |
+| Next governed action | **STOP.** Slice A is **CLOSED / OPERATIONAL FOR UAT** (live / empty of PRODUCTION). Slice B is **CLOSED / OPERATIONAL FOR UAT**. Slice C is **CLOSED / OPERATIONAL FOR UAT**. TECH-A **IMPLEMENTED**. TECH-B **IMPLEMENTED**. TECH-C **IMPLEMENTED**. TECH-D **IMPLEMENTED**. Hub CONTRACT fail-closed UX is **IMPLEMENTED**. Native Signing SIGN-A through SIGN-E **IMPLEMENTED** under [FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED / OPERATIONAL FOR UAT**. Do **not** begin Slice D. Do **not** populate Ontario legal content. Do **not** mark V1-06 SUBSTANTIALLY COMPLETE. Primary remaining blocker remains Ontario **06D**. PRODUCTION legal packages remain **0**. |
 
 Deep reconciliation: **§9**. Sub-gates: **§9.4**.
 
@@ -312,14 +336,14 @@ Deep reconciliation: **§9**. Sub-gates: **§9.4**.
 |-------|--------|
 | Intent | Native electronic signing of frozen customer documents. Change Orders first. Contract signing later, behind Legal Content Gate. |
 | Weight | **8%** |
-| Status | **ARCHITECTURE COMPLETE / WORKSTREAM IMPLEMENTED / PRODUCTION NOT COMPLETE**. Subsequent **2026-09-15:** [FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED / OPERATIONAL FOR UAT**. SIGN-A through SIGN-E **IMPLEMENTED**. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. Production / real-customer Native Signing **NOT COMPLETE**. **Do not rescore** (factor remains **0.15**). |
-| Factor | 0.15 |
-| Contribution | **1.2** |
+| Status | **PARTIAL**. [FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED / OPERATIONAL FOR UAT**. SIGN-A through SIGN-E **IMPLEMENTED**. Real iPhone UAT **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** — **NOT CLAIMED AS PASS**. Production / real-customer Native Signing **NOT COMPLETE**. **Official rescore 2026-09-17** (prior ARCHITECTURE COMPLETE / 0.15 retired because the workstream is implemented). Do **not** mark SUBSTANTIALLY COMPLETE or COMPLETE. |
+| Factor | **0.40** |
+| Contribution | **3.2** |
 | V1 REQUIRED? | **YES** for signed Change Orders in real Brayman use. Contract signing required for V1 contract execution after 06D. |
 | BLOCKER? | **YES** for **production / real customer use** until remaining SIGN slices and product requirements are satisfied. Development **may proceed** under [FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md). No external-review dependency. |
 | Dependencies | Existing Change Order record (do not create a second entity); frozen PDF snapshot; Legal Content Gate for **contract** signing |
 | Governing | [FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED / OPERATIONAL FOR UAT**; [contract-esignature-and-signed-change-order.md](architecture/contract-esignature-and-signed-change-order.md); [native-signing-process-counsel-review.md](legal/native-signing-process-counsel-review.md) **DRAFT / NOT LEGAL APPROVAL / NOT EXTERNALLY REVIEWED**; [change-order-document-family.md](architecture/change-order-document-family.md) **FUTURE / NOT IMPLEMENTED**; [modules/signing.md](modules/signing.md); [testing/fg033-sign-a-live-bounded-uat-record.md](testing/fg033-sign-a-live-bounded-uat-record.md); [testing/fg033-sign-b-live-bounded-uat-record.md](testing/fg033-sign-b-live-bounded-uat-record.md); [testing/fg033-sign-c-live-bounded-uat-record.md](testing/fg033-sign-c-live-bounded-uat-record.md); [testing/fg033-sign-d-live-bounded-uat-record.md](testing/fg033-sign-d-live-bounded-uat-record.md); [testing/fg033-sign-e-live-bounded-uat-record.md](testing/fg033-sign-e-live-bounded-uat-record.md) |
-| Next governed action | **STOP.** SIGN-A through SIGN-E **IMPLEMENTED**. Real iPhone UAT **DEFERRED**. Do not enable real customer signing. Do **not** rescore V1. |
+| Next governed action | **STOP.** SIGN-A through SIGN-E **IMPLEMENTED**. Real iPhone UAT **DEFERRED**. Remaining production bar: live Postmark; ACTIVE PRODUCTION package; real-device UAT; real-customer signing. Do not enable real customer signing from this register. |
 
 SIGN-A freeze + request + audit is live. SIGN-B invitation + public ceremony is live (SENT → SIGNED). SIGN-C countersign + executed PDF custody is live (SIGNED → EXECUTED). SIGN-D Change Order E2E + office/Hub + automated mobile UX is live. SIGN-E convert-once Family 05 PDF + generated-contract ceremony is live on the same engine. Real iPhone UAT is **DEFERRED TO BRAYMAN / BEN REAL-WORLD UAT** and is **not** claimed as PASS. The V1-07 package remains incomplete for **production / real-customer use** (ACTIVE PRODUCTION package, live Postmark sender configuration, real-device UAT). AUTH-D closed FG-034 as **OPERATIONAL FOR UAT**; live Postmark delivery is **DEFERRED / NOT CLAIMED AS PASS**. MAIL-B/AUTH-D send invitation/resend/complete through the shared engine locally/fake; SENT is not delivered. Recommendation remains **NATIVE V1** (not DocuSign/Adobe as SoR). No external-review dependency.
 
@@ -452,13 +476,13 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 | V1-03 | 12 | 1.00 | 12.0 |
 | V1-04 | 8 | 0.50 | 4.0 |
 | V1-05 | 6 | 1.00 | 6.0 |
-| V1-06 | 16 | 0.25 | 4.0 |
-| V1-07 | 8 | 0.15 | 1.2 |
+| V1-06 | 16 | 0.40 | 6.4 |
+| V1-07 | 8 | 0.40 | 3.2 |
 | V1-08 | 7 | 0.75 | 5.25 |
 | V1-09 | 6 | 0.70 | 4.2 |
 | V1-10 | 10 | 0.35 | 3.5 |
 | V1-11 | 7 | 0.00 | 0.0 |
-| **Total** | **100** | | **60.15 → 60%** |
+| **Total** | **100** | | **64.55 → 65%** |
 
 Round the published readiness to the **nearest whole percent**. Recalculate from this table when a package status changes. Do not average Feature Gate counts.
 
@@ -508,15 +532,15 @@ Round the published readiness to the **nearest whole percent**. Recalculate from
 
 | ID | Name | V1 REQUIRED? | Status | Notes |
 |----|------|--------------|--------|-------|
-| 06A | Contract library architecture / engine | **YES** | **ENGINE LIVE / EMPTY LIBRARY** | Slice A empty-library persistence + selection **CLOSED / OPERATIONAL FOR UAT**; Alembic `b1c2d3e4f5a6` applied live; no Ontario content; V1-06 factor **unchanged** |
+| 06A | Contract library architecture / engine | **YES** | **ENGINE LIVE / EMPTY LIBRARY** | Slice A empty-library persistence + selection **CLOSED / OPERATIONAL FOR UAT**; Alembic `b1c2d3e4f5a6` applied live; no Ontario content; V1-06 factor later official-rescored **0.40** (2026-09-17) |
 | 06B | Project jurisdiction → correct legal package | **YES** | **PARTIAL** | Identity/resolver **COMPLETE** (FG-015). Package **selection live**; empty library fail-closed office UAT **PASS**; no ACTIVE package |
 | 06C | Versioned contract/warranty content + provenance/approval states | **YES** | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** | Legal Content Gate states + FG-024 library states recorded; object table exists; bodies unpopulated |
 | 06D | Ontario approved contract + warranty package | **YES** | **BLOCKED** | Counsel/legal approval. Empty register. |
-| 06E | Contract generation from approved project/estimate | **YES** | **ENGINE LIVE / TECH-B POLICY IMPLEMENTED / TECH-C FAMILY 05 MERGE LIVE / TECH-D SYNTHETIC E2E PROVEN / NO REAL JURISDICTIONAL CONTENT** | FG-024 Slice C **CLOSED / OPERATIONAL FOR UAT**; TECH-B generation policy **IMPLEMENTED**; TECH-C Family 05 merge **IMPLEMENTED**; TECH-D synthetic Ontario UAT **PASS**; Alembic `a6b7c8d9e0f1`; no real customer contract; V1-06 factor **unchanged** |
-| 06F | Frozen generated-contract snapshot | **YES** | **ENGINE LIVE / SYNTHETIC-UAT PROVEN / DOCX CUSTODY LIVE / TECH-D E2E PROVEN / NO REAL JURISDICTIONAL CONTENT** | Immutable `ProjectContractSnapshot`; TECH-C retained DOCX bytes + SHA-256; TECH-D live UAT PASS; V1-06 factor **unchanged** |
+| 06E | Contract generation from approved project/estimate | **YES** | **ENGINE LIVE / TECH-B POLICY IMPLEMENTED / TECH-C FAMILY 05 MERGE LIVE / TECH-D SYNTHETIC E2E PROVEN / NO REAL JURISDICTIONAL CONTENT** | FG-024 Slice C **CLOSED / OPERATIONAL FOR UAT**; TECH-B generation policy **IMPLEMENTED**; TECH-C Family 05 merge **IMPLEMENTED**; TECH-D synthetic Ontario UAT **PASS**; Alembic `a6b7c8d9e0f1`; no real customer contract; V1-06 factor later official-rescored **0.40** (2026-09-17) |
+| 06F | Frozen generated-contract snapshot | **YES** | **ENGINE LIVE / SYNTHETIC-UAT PROVEN / DOCX CUSTODY LIVE / TECH-D E2E PROVEN / NO REAL JURISDICTIONAL CONTENT** | Immutable `ProjectContractSnapshot`; TECH-C retained DOCX bytes + SHA-256; TECH-D live UAT PASS; V1-06 factor later official-rescored **0.40** (2026-09-17) |
 | 06G | Fail-closed when approved jurisdiction package unavailable | **YES** | **LIVE / OFFICE UAT PASS / HUB UX EXPOSED** | Empty library BLOCK; no generic fallback; live proven 2026-09-13; Hub CONTRACT exposes BLOCK 2026-09-14; Family 05 not substituted |
-| 06H | Effective-date / supersession / update architecture | **YES** | **ENGINE LIVE / EMPTY LIBRARY** | V1 = versioning + supersession + effective dates. Slice B source/snapshot/candidate/review foundation **CLOSED / OPERATIONAL FOR UAT**; Alembic `c2d3e4f5a6b7` applied live. TECH-A HUMAN/COUNSEL activation + explicit supersession **IMPLEMENTED**; Alembic `e4f5a6b7c8d9` applied live. TECH-B generation-while-pending = **WARN** (current ACTIVE remains authority). Live source monitoring = recommended POST-V1. V1-06 factor **unchanged** |
-| 06I | Contract package → Native Signing handoff | **YES** | **ARCHITECTURE COMPLETE / SIGN-E CONVERT-ONCE LIVE / PRODUCTION SEND FAIL-CLOSED** | [FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) SIGN-E converts retained DOCX once; PRODUCTION send BLOCKs without ACTIVE PRODUCTION package; V1-07 factor **unchanged** |
+| 06H | Effective-date / supersession / update architecture | **YES** | **ENGINE LIVE / EMPTY LIBRARY** | V1 = versioning + supersession + effective dates. Slice B source/snapshot/candidate/review foundation **CLOSED / OPERATIONAL FOR UAT**; Alembic `c2d3e4f5a6b7` applied live. TECH-A HUMAN/COUNSEL activation + explicit supersession **IMPLEMENTED**; Alembic `e4f5a6b7c8d9` applied live. TECH-B generation-while-pending = **WARN** (current ACTIVE remains authority). Live source monitoring = recommended POST-V1. V1-06 factor later official-rescored **0.40** (2026-09-17) |
+| 06I | Contract package → Native Signing handoff | **YES** | **ARCHITECTURE COMPLETE / SIGN-E CONVERT-ONCE LIVE / PRODUCTION SEND FAIL-CLOSED** | [FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) SIGN-E converts retained DOCX once; PRODUCTION send BLOCKs without ACTIVE PRODUCTION package; V1-07 factor later official-rescored **0.40** (2026-09-17) |
 | 06J | Additional province/state population | **NO** | **POST-V1** | Unless Joel names another launch jurisdiction |
 
 Canada (provinces/territories) and United States (states) remain the commercial destination architecture. Adding a jurisdiction must extend the library **without product redesign**.
@@ -576,7 +600,7 @@ Real-life UAT means V1 is complete and controlled enough to operate **real Braym
 | Criterion | V1 bar | Current |
 |-----------|--------|---------|
 | Data safety / tenant integrity | Org isolation; no cross-org writes | **PARTIAL** (UAT-operational; not production-certified) |
-| Migration state | Live current = heads; known residue labeled | **YES** (`c2d3e4f5a6b7 (head)`; labeled synthetics remain including `FG029-UAT-BMR-DEMO`, `FG031-UAT-SCOPE-ROUTING`, Slice B project **id 25**, FG-032 project **id 26**, FG-024 reuse of projects **9** / **13**, and FG-024 Slice B UAT source `FG024B-UAT-SRC-001`) |
+| Migration state | Live current = heads; known residue labeled | **YES** (`f9b0c1d2e3f4 (head)`; labeled synthetics remain including `FG029-UAT-BMR-DEMO`, `FG031-UAT-SCOPE-ROUTING`, Slice B project **id 25**, FG-032 project **id 26**, FG-024 reuse of projects **9** / **13**, and FG-024 Slice B UAT source `FG024B-UAT-SRC-001`) |
 | Backups | Governed backup/restore before real projects | **NO** (ad-hoc gitignored copies only) |
 | Authentication | Office login; SECRET_KEY not the committed dev secret | **UAT YES / production not certified** |
 | User onboarding + Ben/Brayman training | Written operating/training pack | **NO** |
@@ -643,7 +667,7 @@ Do **not** block V1 on:
 Copy this block into later implementation reports and fill from this register:
 
 ```text
-CALIBRAYTAI V1 READINESS: 60%
+CALIBRAYTAI V1 READINESS: 65%
 
 MAJOR PACKAGES:
 4 / 11 COMPLETE
@@ -662,6 +686,9 @@ NO
 
 BRAYMAN REAL-LIFE UAT READY:
 NO
+
+FUNCTIONAL V1 BUILD (SECONDARY / NOT OFFICIAL SCORING):
+79% / 22 OF 28
 ```
 
 ---

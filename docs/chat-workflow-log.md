@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — Official V1 rescore 65% (docs-only / COMMIT / PUSH)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 17 SEP 2026 |
+| Objective | Write the accepted official V1 readiness rescore as **65% / 4 of 11**. Record labelled secondary Functional V1 Build **79% / 22 of 28**. Preserve interrupted FG-037 stash. Docs-only. |
+| Business decision | Official governed V1 readiness is **65%**. Arithmetic 64.55 → 65%. Still **4 of 11** COMPLETE. Secondary Functional V1 Build **79% / 22 of 28** is labelled secondary only and is **not** averaged with 65%. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+| Architectural decision | V1-06 remains PARTIAL; factor **0.25 → 0.40**. V1-07 becomes PARTIAL; factor **0.15 → 0.40**. No other package factor changes. No new COMPLETE package. FG-037 **NOT YET IMPLEMENTED**. Stashed WIP is not product. PERF-C remains DEFINED / NOT IMPLEMENTATION-AUTHORIZED. |
+| Prompt template used | V1 COMPLETION REGISTER / 65% OFFICIAL RESCORE CLOSE / COMMIT / PUSH / PRESERVE FG-037 STASH / NO PRODUCT IMPLEMENTATION |
+| Approved Cursor prompt summary | Validate Class B docs only; add minimum chat-workflow-log entry; record secondary 79% as labelled measure; commit exact subject; push origin/main; do not pop FG-037 stash. |
+| Files expected to change | V1 register + current-state / handoff / project-state / roadmap / FG pointers / chat-workflow-log |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; FG-037 stash; PERF-C product |
+| Implementation result | Official V1 **65% / 4 of 11** written. Secondary **79% / 22 of 28** labelled. FG-037 stash preserved / unapplied. No product. No live migrate. No live grant. |
+| Tests | NOT RERUN. Last accepted full suite remains **1190 passed**, 4212 warnings, **746.12s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | no — docs rescore, not a coded milestone close |
+| Constitutional issue raised | no |
+| Unresolved issues | FG-037 stash restore remains Architect-authorized. First live COMPANY_MANAGEMENT recipient UNRESOLVED. PERF-C not implementation-authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** pop the FG-037 stash from this record. |
+| Next approved prompt | none — STOP |
+| Commit hash | this commit — `docs: rescore V1 readiness to 65 percent` |
+
 ### 2026-09-17 — Company/Management access-domain seam owner-decision freeze (docs-only / not committed)
 
 | Field | Content |

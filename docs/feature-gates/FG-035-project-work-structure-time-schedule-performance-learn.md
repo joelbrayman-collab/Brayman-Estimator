@@ -12,6 +12,8 @@
 | Related ADRs | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. [ADR-019](../adr/ADR-019-calibai-lifecycle-and-project-hub.md). [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md). [ADR-024](../adr/ADR-024-learn-recommendation-boundary.md). [ADR-028](../adr/ADR-028-organization-foundation-and-project-commercial-context.md). [ADR-029](../adr/ADR-029-canonical-labour-task-production-standard-and-calibration-lifecycle.md). |
 | Prerequisites | FG-008 labour snapshots. FG-011 Project Hub. FG-018 office auth. ADR-053 Accepted. |
 
+**Subsequent status (2026-09-17 official V1 rescore):** Register rescored to **65% / 4 of 11**. V1-06 **0.40**. V1-07 **PARTIAL / 0.40**. Secondary Functional V1 Build **79% / 22 of 28** (labelled secondary; not averaged). This gate remains **OPEN / PARTIAL**. PERF-C **DEFINED / NOT IMPLEMENTATION-AUTHORIZED**. Company/Management seam **DEFINED / NOT IMPLEMENTED**. FG-037 **NOT YET IMPLEMENTED**. Stashed FG-037 WIP is **not** product. No product change from the rescore.
+
 **Subsequent status (2026-09-17 Company/Management access-domain seam):** Separate authorization freeze [architecture/company-management-access-domain-seam.md](../architecture/company-management-access-domain-seam.md) **DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Active membership remains Project/Operational. `COMPANY_MANAGEMENT` is explicit default-deny. PERF-C remains **DEFINED / NOT IMPLEMENTATION-AUTHORIZED** and must **not** ship until that seam is separately implemented and proven. ADR-041 Decision 4 **narrowly amended** (job-title RBAC still rejected). No schema. No product. V1 **not rescored**.
 
 **Subsequent status (2026-09-17 PERF-C product definition / owner-decision freeze):** PERF-C **DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Contractor question: **Where does my business need attention?** Owner decisions 1–16 **ACCEPTED**. Freeze [architecture/fg-035-perf-c-product-definition.md](../architecture/fg-035-perf-c-product-definition.md). No Field Company Attention. Permission domains later frozen as the Company/Management seam (see subsequent status above). PERF-A / PERF-B remain **SEALED**. No schema. No product. V1 **not rescored**.
@@ -104,7 +106,7 @@
 | LEARN | **NOT AUTHORIZED** |
 | QB-T | **NOT AUTHORIZED** |
 | Schema / Alembic | Additive TAX/WBS **`f3b4c5d6e7f8`** revises **`f2a3b4c5d6e7`**. Additive SCOPE **`f4c5d6e7f8a9`** revises **`f3b4c5d6e7f8`**. Additive TIME **`f5d6e7f8a9b0`** revises **`f4c5d6e7f8a9`**. Additive SCH-A **`f6e7f8a9b0c1`** revises **`f5d6e7f8a9b0`**. Additive SCH-B **`f7f8a9b0c1d2`** revises **`f6e7f8a9b0c1`**. Additive SCH-C **`f9b0c1d2e3f4`** revises **`f7f8a9b0c1d2`** (**live current = repository head**) |
-| V1 scoring | **NOT RESCORED** (**60% / 4 of 11**) |
+| V1 scoring | **OFFICIAL RESCORE 2026-09-17: 65% / 4 of 11** (this gate did not itself change the score; TIME/SCH/PERF remain inside existing V1-08/V1-09 factors) |
 
 ```text
 FG-035:

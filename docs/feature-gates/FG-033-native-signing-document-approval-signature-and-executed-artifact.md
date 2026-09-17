@@ -12,6 +12,8 @@
 | Related ADRs | No new ADR in SIGN-A through SIGN-E. Existing Native Signing recon remains architecture. [ADR-050](../adr/ADR-050-north-american-legal-content-library-ownership.md) / [ADR-051](../adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted** (contract legal content remains separate). |
 | Prerequisites | TECH-A/B/C/D **PASS**. Frozen generated-contract DOCX custody live. Change Order business record live. FG-018 office Users / membership. Development proceeds on product/software requirements. Do **not** add legal-review gates or approval states. |
 
+**Subsequent status (2026-09-17 official V1 rescore):** [v1-completion-register.md](../v1-completion-register.md) official readiness **65% / 4 of 11**. V1-07 is now **PARTIAL / 0.40**. This gate remains **CLOSED / OPERATIONAL FOR UAT**. Production / real-customer Native Signing remains **NOT COMPLETE**. Live Postmark **DEFERRED**. Real iPhone UAT **DEFERRED**.
+
 **Subsequent status (2026-09-15 FG-034 MAIL-B / AUTH-D):** Transactional email for Native Signing invitation/resend/complete is [FG-034](FG-034-account-recovery-and-transactional-email.md) MAIL-B / AUTH-D **IMPLEMENTED / PASS** (local/fake; Postmark HTTP adapter activated; live Postmark **DEFERRED**). This gate remains **CLOSED / OPERATIONAL FOR UAT**. Ceremony, token, and `/sign` are unchanged. Copyable URL remains available. SENT is not delivered. Physical iPhone UAT remains **DEFERRED**.
 
 ---
@@ -28,7 +30,7 @@
 | SIGN-E | **IMPLEMENTED** — Family 05 convert-once + contract ceremony on the same engine + desktop/iPhone parity |
 | Schema / Alembic | Additive SIGN-A **`b7c8d9e0f1a2`**. Additive SIGN-B **`c8d9e0f1a2b3`**. Additive SIGN-C **`d9e0f1a2b3c4`**. Additive SIGN-E **`e0f1a2b3c4d5`** revises **`d9e0f1a2b3c4`**. Live current **equals** repository head after migrate. |
 | Production Native Signing | **NOT COMPLETE** |
-| V1 scoring | **NOT RESCORED** (**60% / 4 of 11**) |
+| V1 scoring | **OFFICIAL RESCORE 2026-09-17: 65% / 4 of 11.** V1-07 is now **PARTIAL / 0.40**. Production / real-customer Native Signing remains **NOT COMPLETE**. |
 
 ```text
 FG-033:

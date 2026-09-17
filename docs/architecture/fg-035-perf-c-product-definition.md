@@ -8,6 +8,7 @@
 | ADR | [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. No new ADR. |
 | Parent | PERF-B **SEALED** ([fg-035-perf-b-implementation-preflight.md](fg-035-perf-b-implementation-preflight.md)). Product PERF-B **`dcde4adfe4a475932b7f144b0220b2b60e4bd75c`**. Pin **`1b80d244e3efb0c65d3a02dd247d923dfd95166c`**. PERF-A **SEALED** ([fg-035-perf-a-implementation-preflight.md](fg-035-perf-a-implementation-preflight.md)). |
 | Desktop sibling | [v1-desktop-contractor-experience-product-direction.md](v1-desktop-contractor-experience-product-direction.md) **RECORDED / NOT IMPLEMENTED**. Home Office is a **later, broader** contractor operating experience. It is **not** Company Attention. |
+| Authorization seam | Separate freeze [company-management-access-domain-seam.md](company-management-access-domain-seam.md) **DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. PERF-C must **not** ship until that seam is separately implemented and proven. |
 | Schema | **NONE.** No attention table. No acknowledgement / resolution / escalation state. If implementation analysis later concludes persistence is required: **STOP AND RETURN TO ARCHITECT**. |
 | Baseline | HEAD / `origin/main` **`1b80d244e3efb0c65d3a02dd247d923dfd95166c`**. Alembic **`f9b0c1d2e3f4 (head)`**. |
 | V1 | **NOT RESCORED** (**60% / 4 of 11**). PERF-C definition alone is **not** a scoring event. |
@@ -26,7 +27,8 @@ PERF-A SEALED
 PERF-B SEALED
 NO HOME OFFICE
 NO FIELD COMPANY ATTENTION
-NO RBAC
+NO JOB-TITLE RBAC
+COMPANY/MANAGEMENT SEAM DEFINED / NOT IMPLEMENTATION-AUTHORIZED
 NO FINANCIAL PERMISSIONS
 NO BANK / CASH / PAYROLL
 NO MONITOR MONEY
@@ -45,7 +47,7 @@ This file is the frozen PERF-C **owner-decision** contract. It is **not** an imp
 |-------|--------|
 | **Current** | PERF-A labour and PERF-B Project Needs Attention on Hub `#hub-labour`. Derived DTO from `assemble_project_performance` / `assemble_project_attention` in `app/services/project_performance.py`. Items already carry `project_id`. No company aggregation. No Company Attention surface. |
 | **Intended (this freeze)** | Owner decisions in §§2–16 **ACCEPTED**. Company Attention is defined as the company/business-level attention layer. Initial factual scope is sealed PERF-B Project attention facts, organization-wide. Dedicated office/management **Company Attention** surface is defined, **not implemented**. **Not implementation-authorized.** |
-| **Future (not this freeze)** | Implementation preflight (separate prompt). Home Office. Tomorrow readiness. Review + Notify Team. Week Ahead. Permission-domain architecture. Sensitive-financial facts / redaction. Bank / cash / payroll. CLOSE. LEARN. QB-T. Unresolved items in §17. |
+| **Future (not this freeze)** | Implementation preflight (separate prompt). Home Office. Tomorrow readiness. Review + Notify Team. Week Ahead. Company/Management seam **implementation** (separate governed slice; freeze [company-management-access-domain-seam.md](company-management-access-domain-seam.md)). Sensitive-financial facts / redaction. Bank / cash / payroll. CLOSE. LEARN. QB-T. Unresolved items in §17. |
 
 ---
 
@@ -60,7 +62,7 @@ This file is the frozen PERF-C **owner-decision** contract. It is **not** an imp
 | 5 | Derived / read-only | **ACCEPTED.** Derived read-only. No persisted PERF-C attention authority. No attention table. No acknowledgement / resolution / escalation state. No migration. If persistence later appears necessary: **STOP AND RETURN TO ARCHITECT.** |
 | 6 | Field App | **ACCEPTED.** **NO COMPANY ATTENTION IN THE FIELD APP.** Explicit product decision. Field remains the governed operational worker experience. Do **not** add a Company Attention screen, section, card, or navigation destination to Field as part of PERF-C. Field-originating governed facts may still contribute through existing SCOPE / TIME / SCHEDULE / PERF authorities. This firewall concerns the **application surface**, not the origin of underlying facts. Do **not** alter sealed SCH-D Field behaviour. |
 | 7 | Identity vs surface | **ACCEPTED.** Permissions follow the authenticated user and the contractor’s explicit authorization — **not** the device being used. Application surfaces remain intentionally bounded. A contractor/manager (for example Ben) may have permission to access Company Attention through the office/management CalibraytAI experience, including on a mobile device. That permission does **not** cause Company Attention to appear inside the Field App. Do **not** implement responsive/mobile office behaviour from this file. Record the distinction only. |
-| 8 | Permission domains | **ACCEPTED as a future platform requirement.** Record the need for explicit contractor-controlled permission boundaries between at least: **A. PROJECT / OPERATIONAL**; **B. COMPANY / MANAGEMENT**; **C. SENSITIVE FINANCIAL**. Do **not** design the permission matrix here. Do **not** implement RBAC. Do **not** create schema. |
+| 8 | Permission domains | **ACCEPTED as owner law.** Explicit contractor-controlled boundaries between **A. PROJECT / OPERATIONAL**; **B. COMPANY / MANAGEMENT**; **C. SENSITIVE FINANCIAL**. Minimum seam freeze: [company-management-access-domain-seam.md](company-management-access-domain-seam.md) (**DEFINED / NOT IMPLEMENTATION-AUTHORIZED**). Do **not** implement job-title RBAC. Do **not** implement the seam or schema from this PERF-C file. |
 | 9 | Contractor controls permissions | **ACCEPTED.** The contractor / company owner controls who may access company and sensitive business information. Do **not** assume a generic title (admin, manager, supervisor, employee) automatically confers access to every information category. Do **not** design that architecture here. |
 | 10 | Project / Company / Financial firewall | **ACCEPTED.** **PROJECT / OPERATIONAL ACCESS DOES NOT AUTOMATICALLY CONFER COMPANY ATTENTION ACCESS.** **COMPANY ATTENTION ACCESS DOES NOT AUTOMATICALLY CONFER ACCESS TO SENSITIVE FINANCIAL INFORMATION.** **SENSITIVE FINANCIAL ACCESS REQUIRES SEPARATELY GOVERNED, CONTRACTOR-CONTROLLED AUTHORIZATION.** A user may eventually have Project access without Company Attention; Company Attention without sensitive financial detail; sensitive financial access only when separately authorized. Exact future matrix remains separately governed. |
 | 11 | Sensitive-information warning | **ACCEPTED as future principle.** When future functionality allows the contractor to grant access to sensitive financial/business information, CalibraytAI must clearly warn that the permission exposes sensitive information (bank accounts, balances, cash flow, payroll-sensitive information). The warning informs. The contractor decides. Preserve WARNINGS INFORM. HUMANS DECIDE. Do **not** implement this warning now. |
@@ -186,9 +188,9 @@ Do **not** implement responsive/mobile office behaviour from this file. Record t
 
 ---
 
-## 8. Permission domains — future platform requirement
+## 8. Permission domains — owner law; seam freeze is separate
 
-Record the need for explicit contractor-controlled permission boundaries between at least these conceptual information domains:
+Explicit contractor-controlled permission boundaries exist between at least these conceptual information domains. The **minimum Company / Management seam** is frozen in [company-management-access-domain-seam.md](company-management-access-domain-seam.md) (**DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**). Do **not** implement that seam from this PERF-C file.
 
 | Domain | Examples (illustrative, not a matrix) |
 |--------|----------------------------------------|
@@ -196,9 +198,9 @@ Record the need for explicit contractor-controlled permission boundaries between
 | **B. COMPANY / MANAGEMENT** | Company Attention; cross-Project management information; broader company operating information |
 | **C. SENSITIVE FINANCIAL** | bank-account information; bank balances; cash position; company cash flow; payroll-sensitive information; other sensitive financial/business information |
 
-These are product/security permission domains.
+These are product/security permission domains, **not** job titles.
 
-Do **not** design the actual permission matrix in this file. Do **not** implement RBAC. Do **not** create schema.
+Do **not** implement job-title RBAC, the access-domain grant model, or schema from this PERF-C file. Domain C remains future. The exact future Sensitive Financial matrix remains separately governed.
 
 ---
 
@@ -236,7 +238,7 @@ A user may eventually have:
 - Company Attention without sensitive financial detail
 - sensitive financial access only when separately authorized
 
-The exact future permission matrix remains separately governed.
+The exact future Sensitive Financial matrix remains separately governed. Domain B seam: [company-management-access-domain-seam.md](company-management-access-domain-seam.md).
 
 ---
 
@@ -312,7 +314,7 @@ Every PERF-C attention fact is **informational only**. It must never block Time,
 | Tomorrow / Review + Notify / Week Ahead | Desktop later. Not PERF-C. |
 | Field Company Attention | **Forbidden.** No Company Attention screen/section/card/nav in the Field App. |
 | Bank integration / cash flow / payroll | Not PERF-C. Not current financial-attention facts. |
-| Financial permissions / RBAC | Future requirement recorded. Not designed. Not implemented. |
+| Financial permissions / job-title RBAC | Sensitive Financial remains future. Job-title RBAC remains forbidden. Company/Management seam **DEFINED / NOT IMPLEMENTATION-AUTHORIZED** ([company-management-access-domain-seam.md](company-management-access-domain-seam.md)). |
 | MONITOR money | Money remains MONITOR. Initial PERF-C adds **no** financial-attention facts. |
 | CLOSE / LEARN | Separately governed. Not PERF-C. |
 | QB-T | Not PERF-C. |
@@ -328,9 +330,10 @@ Every PERF-C attention fact is **informational only**. It must never block Time,
 
 Do **not** solve the following in this freeze:
 
-- the actual permission matrix across domains A / B / C
-- RBAC schema or role catalog
+- the Sensitive Financial matrix (domain C)
+- job-title RBAC schema or role catalog
 - title-to-permission mapping
+- implementing the Company/Management seam from this PERF-C file (that freeze is separate and also not implementation-authorized)
 - mobile office/management Company Attention chrome (identity vs Field surface is recorded only)
 - redaction / visibility model when an attention fact points at sensitive underlying information
 - the future warning UX for granting sensitive-financial permission
@@ -373,7 +376,7 @@ Do **not** from this file:
 - create a migration
 - implement Home Office, Tomorrow, Review + Notify Team, Week Ahead
 - implement Field Company Attention
-- implement permission architecture, new RBAC, or financial permissions
+- implement permission architecture, job-title RBAC, the Company/Management seam, or financial permissions
 - implement bank integration, cash flow, payroll, or MONITOR expansion
 - implement CLOSE, LEARN, or QB-T
 - reopen PERF-A or PERF-B
@@ -394,7 +397,7 @@ PERF-C DEFINED / NOT IMPLEMENTATION-AUTHORIZED.
 DO NOT IMPLEMENT PERF-C FROM THIS FILE.
 DO NOT IMPLEMENT HOME OFFICE.
 DO NOT PUT COMPANY ATTENTION IN THE FIELD APP.
-DO NOT IMPLEMENT RBAC OR FINANCIAL PERMISSIONS.
+DO NOT IMPLEMENT JOB-TITLE RBAC, THE COMPANY/MANAGEMENT SEAM, OR FINANCIAL PERMISSIONS.
 DO NOT REOPEN PERF-A OR PERF-B.
 RETURN TO CHATGPT ARCHITECT.
 ```

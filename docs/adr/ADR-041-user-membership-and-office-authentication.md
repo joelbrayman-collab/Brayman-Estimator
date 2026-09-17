@@ -13,6 +13,8 @@
 
 **Subsequent status (2026-09-09 FG-030 — not authorized by this ADR):** [ADR-047](ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only). Supplier named-users remain the same durable `User`. They must **not** receive contractor `UserMembership`. Supplier vs contractor is a **principal class / workspace**, not V1 office RBAC. [FG-030](../feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) is **NOT IMPLEMENTATION-AUTHORIZED**. This ADR’s Decision 1–4 for contractor office remains unchanged.
 
+**Subsequent status (2026-09-17 Company/Management access-domain seam):** Owner freeze [company-management-access-domain-seam.md](../architecture/company-management-access-domain-seam.md). This **narrowly amends Decision 4**: job-title RBAC remains **rejected**. Explicitly governed information/access domains associated with organization membership are **permitted**. Decision 4 remains the historical FG-018 close record and is **not rewritten**. The seam is **DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. This does **not** reopen [FG-018](../feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md). This does **not** authorize PERF-C product, Sensitive Financial, Settings Members, live grants, or a generic RBAC platform.
+
 ---
 
 ## Problem
@@ -74,6 +76,8 @@ Keep these concepts separate:
 | **Audit provenance** | Logged-in User identity + preserved human-readable snapshot where applicable |
 
 Do **not** create RBAC, administrator / estimator / field-user / reviewer roles, or a permissions matrix. The initial ORG-001 user is **not** an “administrator” schema role. Office vs field is a **client surface** (HTML office now; field web later), not two role tables.
+
+**Decision 4 narrow amendment (2026-09-17).** This paragraph does **not** rewrite the Decision 4 table above. Job-title RBAC remains **rejected**. Named **information / access domains** associated with `UserMembership` are **permitted**. They are not administrator / manager / employee / estimator / field / reviewer roles. Governing freeze: [company-management-access-domain-seam.md](../architecture/company-management-access-domain-seam.md) (**DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**). Active membership continues to provide Project / Operational access. `COMPANY_MANAGEMENT` requires an explicit later grant. `SENSITIVE_FINANCIAL` remains future.
 
 ### 5. Authentication technology and session
 
@@ -147,7 +151,7 @@ This ADR does **not** certify production security. Login throttling, credential-
 - **Magic link / email-only login** — Rejected: no mail infrastructure in this repository.
 - **External identity provider / SSO in V1** — Rejected: not required by architecture; separately gated later if Joel authorizes.
 - **Shared API / `/api/v1/me` inside FG-018** — Rejected: ADR-022 places JSON API when field is authorized; field is items 11–12.
-- **RBAC (admin / estimator / field / reviewer)** — Rejected for V1: Phase A conceptual RBAC is not Feature-Gated; FG-008 forbade pretending RBAC exists; Item-10 reconnaissance found no V1 requirement.
+- **RBAC (admin / estimator / field / reviewer)** — Rejected for V1: Phase A conceptual RBAC is not Feature-Gated; FG-008 forbade pretending RBAC exists; Item-10 reconnaissance found no V1 requirement. **2026-09-17:** job-title RBAC remains rejected. Named membership access domains are a **later separately frozen** seam, not a reversal of this alternative ([company-management-access-domain-seam.md](../architecture/company-management-access-domain-seam.md)).
 - **Permanent unauthenticated office mode after activation** — Rejected: would defeat Item 10.
 - **Rewrite historical actor strings onto User FKs** — Rejected: invents identity; violates historical snapshot preservation (Constitution Article 5).
 - **Hardcode ORG-001 bootstrap credentials in Git** — Rejected: credential leakage; forbidden by this ADR.
@@ -166,7 +170,7 @@ BUILD Field Capture; Field Web; shared API; MONITOR; LEARN; Phase D; supplier in
 
 ## Module Ownership Impact
 
-- **Organization subsystem** owns `User` and `UserMembership` (identity and tenant membership). No new product module.
+- **Organization subsystem** owns `User` and `UserMembership` (identity and tenant membership). No new product module. Later Company / Management access-domain grant rows, when separately implemented, remain Organization-owned ([company-management-access-domain-seam.md](../architecture/company-management-access-domain-seam.md); **DEFINED / NOT IMPLEMENTATION-AUTHORIZED**).
 - **Office / platform** owns login, logout, session, CSRF, and SECRET_KEY/config fail-closed behaviour when FG-018 is implemented.
 - Existing owning modules keep their records. They **consume** authenticated actor identity on **new** writes within the later implementation’s bounded scope. They do **not** become identity owners.
 

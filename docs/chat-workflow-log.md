@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-17 — Company/Management access-domain seam owner-decision freeze (docs-only / not committed)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-17 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 17 SEP 2026 |
+| Objective | Freeze the minimum Company / Management authorization seam as owner-decision documentation. Docs-only. No implementation. |
+| Business decision | Access domains, not job titles. Active membership = Project/Operational. Explicit `COMPANY_MANAGEMENT` grant = Company/Management. Default deny. Contractor controls access. V1 grant path may be governed CLI. Company Attention is first consumer later. Sensitive Financial remains future. |
+| Architectural decision | Membership access-domain grant rows. Application owns recognized keys. Unknown domains fail closed. Server-side 403 required. Nav is UX only. ADR-041 Decision 4 narrowly amended; not rewritten. Seam implemented as a separate slice **before** PERF-C. |
+| Prompt template used | COMPANY / MANAGEMENT ACCESS-DOMAIN SEAM / OWNER-DECISION FREEZE / DOCS-ONLY / NO IMPLEMENTATION |
+| Approved Cursor prompt summary | Verify baseline; create dedicated freeze; amend ADR-041 without rewriting history; update indexes only as needed; do not implement; do not commit. |
+| Files expected to change | Dedicated freeze + ADR-041 subsequent status + necessary indexes / current-state / handoff / roadmap / FG pointers |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; Field; PERF-A/B product; PERF-C product |
+| Implementation result | Seam **DEFINED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. PERF-C remains **DEFINED / NOT IMPLEMENTATION-AUTHORIZED**. No product. No live grants. |
+| Tests | NOT RERUN. Last accepted full suite remains **1190 passed**, 4212 warnings, **746.12s**, exit **0**. |
+| Project-state-report update | yes |
+| Milestone entry update | no — not a coded milestone close |
+| Constitutional issue raised | no |
+| Unresolved issues | Seam not implementation-authorized. Initial live grant recipient not identified. Settings Members not designed. PERF-C not implementation-authorized. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement the seam. Do **not** implement PERF-C. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — not committed |
+
 ### 2026-09-17 — FG-035 PERF-C owner-decision freeze correction (docs-only / not committed)
 
 | Field | Content |

@@ -2,8 +2,8 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Current (V1)** — Slice A comparison service **implemented**. Slice B Hub `#hub-monitor` + office actuals writes **implemented**. Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. **LIVE-MIGRATED**. **OFFICE-UAT-VERIFIED**. V1 recon **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**. FG-035 PERF-A labour-hours Hub panel **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. FG-035 PERF-B Needs Attention **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED**. |
-| Updated | 2026-09-17 |
+| Status | **Current (V1)** — Slice A comparison service **implemented**. Slice B Hub `#hub-monitor` + office actuals writes **implemented**. Slice C **MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS**. **LIVE-MIGRATED**. **OFFICE-UAT-VERIFIED**. V1 recon **COMPLETE**. [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) **CLOSED / OPERATIONAL FOR UAT**. FG-035 PERF-A labour-hours Hub panel **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS**. FG-035 PERF-B Needs Attention **IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED**. Historical MONITOR remains viewable on a CLOSED Project under CORE CLOSE direction ([architecture/core-close-project-lifecycle-product-direction.md](../architecture/core-close-project-lifecycle-product-direction.md) **RECORDED / NOT IMPLEMENTED**). |
+| Updated | 2026-09-18 |
 | Code | `app/services/monitor.py` (`assemble_monitor_v1`). BUILD actuals: `app/models/direct_cost_actual.py`, `app/services/direct_cost_actuals.py`, `app/routes/build.py` create/supersede. Hub: `app/services/project_hub.py`, `app/templates/projects/detail.html` `#hub-monitor`. |
 | ADR | [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (baseline and Project Gross Margin; Slice A projection + Slice B Hub display implemented; live-migrated; office-UAT-verified) |
 | Recon | [monitor-v1-implementation-reconnaissance.md](../architecture/monitor-v1-implementation-reconnaissance.md) **COMPLETE** |

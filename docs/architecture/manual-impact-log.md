@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. Not Interactive Help. Not Voice. **NOT IMPLEMENTATION-AUTHORIZED.** |
-| Updated | 2026-09-17 |
+| Updated | 2026-09-18 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **FUTURE / RECORDED / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -52,6 +52,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ## Entries
 
 ## Entries
+
+### MANUAL IMPACT — CORE CLOSE OWNER FREEZE (2026-09-18)
+
+| Field | Content |
+|-------|---------|
+| Slice | FG-035 CORE CLOSE / Project lifecycle owner freeze |
+| Product status at capture | **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** Canonical [core-close-project-lifecycle-product-direction.md](core-close-project-lifecycle-product-direction.md). No Close UI. No Punch List. No Completion Sign-Off. |
+| 1. What new contractor capability exists? | None now. Direction recorded: Projects can later leave current operating work without deleting history. Punch List then Project Completion Sign-Off then Close Project. |
+| 2. When would the contractor use it? | After work is substantially complete: walkthrough, Punch List, customer/contractor Completion Sign-Off, then Instance Owner / Sys Admin Close. Reopen if the Project must return to current work. |
+| 3. What workflow will the final Manual need to teach? | What is current operating work vs historical Project? Who may Close/Reopen? Why Punch List must be complete before Completion Sign-Off can be signed. Why Close can still proceed with a strong warning if the customer has not signed. Why history remains. |
+| 4. What contractor-facing terms must be used? | Close Project. Reopen Project. Punch List. Project Completion Sign-Off. Current operating work. Historical Project. Do **not** use: archive (as a third operating state), delete Project, release, waiver, LEARN Closeout, paid in full as a Close rule. |
+| 5. What screenshots / Print examples will eventually be needed? | None now. Capture later against the finished Close / Punch List / Completion Sign-Off surfaces. |
+| 6. What warnings / validation distinctions need explanation? | Open Punch List blocks Completion Sign-Off signature eligibility. Missing executed Completion Sign-Off warns on Close and does not hard-block Close. Other pending Time/CO warnings inform. Close does not rewrite history. |
+| 7. Desktop / iPhone / Print relevance | Completion Sign-Off is intended for desktop/tablet review and generated PDF. Field Punch List is **not frozen**. Print later. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. Claim Close exists. Claim Punch List exists. Claim LEARN Closeout exists. Claim ARCHIVED operating state. |
 
 ### MANUAL IMPACT — PERF-C LIVE UAT / SEAL (2026-09-17)
 

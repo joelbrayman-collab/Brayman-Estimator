@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-17 |
+| Updated | 2026-09-18 |
 
 ## Purpose
 
@@ -44,6 +44,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ## Entries
 
 ## Entries
+
+### 2026-09-18 — FG-035 CORE CLOSE / Project lifecycle owner freeze (docs-only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Docs-only owner decision freeze for CORE CLOSE / Project lifecycle including Punch List and Project Completion Sign-Off. No implementation. |
+| Business decision | V1 CORE CLOSE distinguishes current operating work from completed/historical work. ACTIVE / CLOSED only. No ARCHIVED third state. Do not reuse `Project.status`. Punch List hard-gates Completion Sign-Off. Unsigned Completion Sign-Off is a strong Close warning, not a hard Close gate. Instance Owner / Sys Admin Close/Reopen. Existing Projects migrate ACTIVE. No UAT flag. |
+| Architectural decision | CORE CLOSE is distinct from FG-035 historical CLOSE / LEARN Closeout. Shared current-operating-Project authority. History law: Close is a state change, not a purge. No new ADR. No new Feature Gate. No schema. PERF-C may later consume the shared authority without reopening fact types. Prompt §36 DESKTOP body was truncated; no extra desktop/Field Close product invented. |
+| Prompt template used | [prompts/cursor-documentation-template.md](prompts/cursor-documentation-template.md) |
+| Approved Cursor prompt summary | FG-035 CORE CLOSE / Project lifecycle owner decision freeze including Punch List + Project Completion Sign-Off. Docs-only. No implementation. |
+| Files expected to change | freeze record + FG-035 subsequent status + indexes + current-state / session-handoff / chat-workflow-log / roadmap / modules / architecture / project-state-report / milestones / Manual Impact / v1 subsequent status |
+| Files prohibited from changing | `app/`; `tests/`; `migrations/`; live DB; recovery stash |
+| Implementation result | Freeze recorded. No product files. No live Project Close. |
+| Tests | Docs-only. Product tests not rerun. Last product-suite evidence remains dedicated PERF-C **13** / focused **115** / full **1226**. |
+| Project-state-report update | yes |
+| Milestone entry update | yes — CORE CLOSE freeze recorded; not FG-035 close |
+| Constitutional issue raised | Punch List hard gate is a document-eligibility exception to warnings-never-block; recorded as such, not a general blocking-warning engine. |
+| Unresolved issues | Implementation authorization. People & Access product. Home Office. LEARN. Functional V1 Build score reconciliation. Prompt §36 DESKTOP body missing. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. |
+| Next approved prompt | none — STOP pending Architect ACCEPT COMMIT |
+| Commit hash | pending |
 
 ### 2026-09-17 — FG-035 PERF-C LIVE UAT / SEAL (docs-only)
 

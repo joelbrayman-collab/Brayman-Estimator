@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-17 |
+| Updated | 2026-09-18 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -33,6 +33,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 ## Entries
 
 ## Entries
+
+### 2026-09-18 — FG-035 CORE CLOSE / Project lifecycle owner freeze (docs-only)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 CORE CLOSE |
+| Status | **RECORDED MANDATORY PRODUCT DIRECTION / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** No schema. No product. No live Project Close. |
+| Branch | `main` |
+| Base commit | `9765c7da56d96a3dafd431fef5901e0d821c3393` |
+| Objective | Freeze Joel owner decisions for CORE CLOSE / Project operating lifecycle, Punch List, and Project Completion Sign-Off. |
+| Deliverables | [architecture/core-close-project-lifecycle-product-direction.md](architecture/core-close-project-lifecycle-product-direction.md) plus minimum FG-035 / index / handoff updates. |
+| Validation | Docs-only. Baseline HEAD = origin/main `9765c7d`. Alembic `a0b1c2d3e4f5 (head)`. No app/test/migration change. Prompt §36 DESKTOP body truncated; no extra desktop/Field Close product invented. |
+| Architectural findings | CORE CLOSE is distinct from LEARN Closeout. V1 operating lifecycle is ACTIVE / CLOSED. Do not reuse `Project.status`. Shared current-operating-Project authority. History law. Instance Owner / Sys Admin Close/Reopen. Punch List hard-gates Completion Sign-Off. Unsigned Completion Sign-Off warns on Close. |
+| Open decisions | Implementation authorization. People & Access product. Home Office. LEARN. Scores not rescored. |
+| Next milestone | Architect review / ACCEPT COMMIT. STOP. |
+| Commit | pending Joel-approved docs commit |
+| Date | 2026-09-18 |
 
 ### 2026-09-17 — FG-035 PERF-C LIVE UAT / SEAL (docs-only)
 

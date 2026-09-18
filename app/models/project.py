@@ -26,6 +26,14 @@ PERMIT_CONTEXT_CLASSES = (
 )
 DEFAULT_PERMIT_CONTEXT_CLASS = "Other/unspecified"
 
+OPERATING_STATE_ACTIVE = "ACTIVE"
+OPERATING_STATE_CLOSED = "CLOSED"
+OPERATING_STATES = (OPERATING_STATE_ACTIVE, OPERATING_STATE_CLOSED)
+
+OPERATING_EVENT_CLOSE = "CLOSE"
+OPERATING_EVENT_REOPEN = "REOPEN"
+OPERATING_STATE_EVENTS = (OPERATING_EVENT_CLOSE, OPERATING_EVENT_REOPEN)
+
 
 class ProjectCommercialContext(db.Model):
     __tablename__ = "project_commercial_contexts"
@@ -87,6 +95,17 @@ class ProjectCommercialContext(db.Model):
 
 class Project(db.Model):
     __tablename__ = "projects"
+    __table_args__ = (
+        db.CheckConstraint(
+            "operating_state IN ('ACTIVE', 'CLOSED')",
+            name="ck_projects_operating_state",
+        ),
+        db.Index(
+            "ix_projects_organization_id_operating_state",
+            "organization_id",
+            "operating_state",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     organization_id = db.Column(
@@ -107,6 +126,23 @@ class Project(db.Model):
         nullable=False,
     )
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    operating_state = db.Column(
+        db.String(20),
+        nullable=False,
+        default=OPERATING_STATE_ACTIVE,
+        server_default=OPERATING_STATE_ACTIVE,
+    )
+    operating_state_changed_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False,
+    )
+    operating_state_changed_by_user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
 
     organization = db.relationship("Organization", back_populates="projects")
     client = db.relationship("Client", back_populates="projects")
@@ -143,6 +179,15 @@ class Project(db.Model):
         cascade="all, delete-orphan",
         order_by="desc(PermitProfile.version_number)",
     )
+    operating_state_changed_by = db.relationship(
+        "User",
+        foreign_keys=[operating_state_changed_by_user_id],
+    )
+    operating_state_events = db.relationship(
+        "ProjectOperatingStateEvent",
+        back_populates="project",
+        order_by="ProjectOperatingStateEvent.id.asc()",
+    )
 
     @property
     def current_commercial_context(self):
@@ -160,6 +205,66 @@ class Project(db.Model):
 
     def __repr__(self):
         return f"<Project {self.name}>"
+
+
+class ProjectOperatingStateEvent(db.Model):
+    """Append-only CORE CLOSE lifecycle audit. Future Close/Reopen only."""
+
+    __tablename__ = "project_operating_state_events"
+    __table_args__ = (
+        db.CheckConstraint(
+            "event IN ('CLOSE', 'REOPEN')",
+            name="ck_project_operating_state_events_event",
+        ),
+        db.CheckConstraint(
+            "previous_state IN ('ACTIVE', 'CLOSED')",
+            name="ck_project_operating_state_events_previous_state",
+        ),
+        db.CheckConstraint(
+            "new_state IN ('ACTIVE', 'CLOSED')",
+            name="ck_project_operating_state_events_new_state",
+        ),
+        db.Index(
+            "ix_project_operating_state_events_org_project",
+            "organization_id",
+            "project_id",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    project_id = db.Column(
+        db.Integer,
+        db.ForeignKey("projects.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    event = db.Column(db.String(20), nullable=False)
+    previous_state = db.Column(db.String(20), nullable=False)
+    new_state = db.Column(db.String(20), nullable=False)
+    actor_user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    actor_identifier = db.Column(db.String(150), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    organization = db.relationship("Organization")
+    project = db.relationship("Project", back_populates="operating_state_events")
+    actor = db.relationship("User")
+
+    def __repr__(self):
+        return (
+            f"<ProjectOperatingStateEvent {self.id} {self.event} "
+            f"p={self.project_id}>"
+        )
 
 
 class ProjectLocation(db.Model):

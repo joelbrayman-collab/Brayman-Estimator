@@ -53,7 +53,23 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — CORE CLOSE SLICE A (2026-09-18)
+
+| Field | Content |
+|-------|---------|
+| Slice | FG-035 CORE CLOSE Slice A foundation |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT LIVE-MIGRATED / NOT COMMITTED.** No Close UI. No Punch List. No Completion Sign-Off. No contractor-facing lifecycle change. |
+| 1. What new contractor capability exists? | None now. Foundation only. |
+| 2. When would the contractor use it? | Not yet. Later Close / Punch List / Completion Sign-Off surfaces. |
+| 3. What workflow will the final Manual need to teach? | Same as the owner freeze: current vs historical work; Punch List before Completion Sign-Off; physical work vs administrative Change Order completion. |
+| 4. What contractor-facing terms must be used? | Close Project. Reopen Project. Punch List. Project Completion Sign-Off. Current operating work. Do **not** treat Change Order status as physical completion. |
+| 5. What screenshots / Print examples will eventually be needed? | None now. Capture later against finished Close / Punch List / Completion Sign-Off surfaces. |
+| 6. What warnings / validation distinctions need explanation? | Open Punch List blocks Completion Sign-Off. Incomplete physical work on Original Scope or an existing Change Order is Punch List work, not administrative completion. NEW Change Order after Close requires Reopen. |
+| 7. Desktop / iPhone / Print relevance | None now. |
+| Do not | Final Manual prose. Unstable screenshots. Claim Close exists. Claim Punch List exists. |
+
 ### MANUAL IMPACT — CORE CLOSE OWNER FREEZE (2026-09-18)
+
 
 | Field | Content |
 |-------|---------|

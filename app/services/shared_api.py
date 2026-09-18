@@ -8,7 +8,7 @@ from flask import jsonify
 
 from app.models.client import Client
 from app.models.organization import Organization
-from app.models.project import Project
+from app.models.project import OPERATING_STATE_ACTIVE, Project
 
 ME_FIELDS = (
     "user_id",
@@ -69,10 +69,22 @@ def serialize_project(project: Project, organization_id: str) -> dict:
 
 
 def list_organization_projects(organization_id: str):
-    """Current-org project identity list. Same filter as office project list."""
+    """All current-org project identity rows. Includes CLOSED historical Projects."""
     return (
         Project.query.filter_by(organization_id=organization_id)
         .order_by(Project.created_at.desc())
+        .all()
+    )
+
+
+def list_current_operating_projects(organization_id: str):
+    """ACTIVE operating Projects only. Future current-work authority. Unused by Slice A consumers."""
+    return (
+        Project.query.filter_by(
+            organization_id=organization_id,
+            operating_state=OPERATING_STATE_ACTIVE,
+        )
+        .order_by(Project.created_at.desc(), Project.id.desc())
         .all()
     )
 

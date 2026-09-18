@@ -46,7 +46,13 @@ from app.models.permit_intelligence import (
     PermitRule,
     ProjectPermitFact,
 )
-from app.models.project import PermitProfile, Project, ProjectCommercialContext, ProjectLocation
+from app.models.project import (
+    PermitProfile,
+    Project,
+    ProjectCommercialContext,
+    ProjectLocation,
+    ProjectOperatingStateEvent,
+)
 from app.models.estimate import (
     Estimate,
     EstimateLineItem,
@@ -257,6 +263,7 @@ __all__ = [
     "Project",
     "ProjectCommercialContext",
     "ProjectLocation",
+    "ProjectOperatingStateEvent",
     "ProjectWorkDependency",
     "WorkScheduleAssignment",
     "WorkScheduleHistory",

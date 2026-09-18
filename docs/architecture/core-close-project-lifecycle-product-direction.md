@@ -16,6 +16,77 @@
 | V1 | **NOT RESCORED** (official **65% / 4 of 11**; secondary Functional V1 Build **79% / 22 of 28**). |
 | Prompt completeness | Freeze prompt §§0–35 **ACCEPTED**. Heading **§36 DESKTOP** arrived with **no body**. This freeze does **not** invent additional desktop-shell redesign or a Field Punch List product. Presentation already frozen in §§21–24 is recorded below. |
 
+**Subsequent status (2026-09-18 CORE CLOSE Slice A):** **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NOT COMMITTED / NOT PUSHED.** Revision **`b2c3d4e5f6a7`** (down_revision **`a0b1c2d3e4f5`**). Live Alembic remains **`a0b1c2d3e4f5`**. `Project.operating_state` **ACTIVE / CLOSED**. `ProjectOperatingStateEvent`. `list_current_operating_projects`. No Close/Reopen action. No consumer switches. CORE CLOSE overall remains **PARTIAL / NOT OPERATIONAL**.
+
+**Subsequent Current vs Intended (Slice A working tree):** Shared query `list_current_operating_projects` exists in `app/services/shared_api.py` and returns `operating_state=ACTIVE` only. `list_organization_projects` still returns all organization Projects and remains the live consumer path. Live DB is **not** migrated. Close / Reopen / Punch List / Completion Sign-Off remain **NOT IMPLEMENTED**.
+
+**Subsequent owner decisions (2026-09-18 Slice A authorization; later slices only):**
+
+1. **CLOSED PROJECT DISCOVERY.** Future Projects UI: **Current | Closed**. Default **Current**. Closed provides historical discovery. No Archive product.
+2. **RETURNED TIME AFTER CLOSE.** Existing Time submitted before Close and later RETURNED may be corrected/resubmitted after Close as administrative completion of an existing record. NEW Time remains blocked.
+3. **EXISTING CHANGE ORDER / PUNCH LIST AFTER CLOSE.** This subsequent freeze **supersedes** any earlier Slice A authorization note that would have allowed substantive Draft Change Order scope / line-item edits after Close.
+
+```text
+PHYSICAL WORK COMPLETION
+is not the same thing as:
+ADMINISTRATIVE CHANGE ORDER COMPLETION.
+
+A Project must NOT reach an executable Project Completion Sign-Off
+while known physical work associated with Original Scope or an
+existing Change Order remains incomplete.
+
+If an existing Change Order contains physical work that has NOT been
+completed:
+- the incomplete work must be represented on the Project Punch List;
+- the Punch List remains OPEN until that work is completed;
+- Project Completion Sign-Off remains NOT ELIGIBLE FOR SIGNATURE while
+  that Punch List item remains open.
+
+OPEN PUNCH LIST
+=
+HARD GATE ON PROJECT COMPLETION SIGN-OFF SIGNATURE ELIGIBILITY.
+
+Once the physical work associated with an existing Change Order has
+been completed, remaining ADMINISTRATIVE processing of that already-
+existing Change Order may continue as necessary to preserve an honest
+Project record.
+
+Examples of administrative completion may include:
+- approval/rejection of an already-existing Change Order;
+- completion of an already-authorized signing ceremony;
+- completion of an existing governed status workflow;
+- other non-scope-changing administrative processing of that existing
+  record.
+
+Do NOT broadly authorize substantive editing of Draft Change Order
+scope or line items after Project Close.
+
+If the scope, pricing, quantities, or substantive work definition of a
+Change Order still needs to be created or materially changed, the
+Project should not be treated as operationally complete.
+
+A CLOSED Project may NOT receive a NEW Change Order.
+
+If genuinely new Change Order scope is required after Project Close:
+REOPEN PROJECT FIRST.
+Then normal governed Change Order workflow may resume.
+
+CLOSE BLOCKS NEW OPERATIONAL RECORDS.
+IT DOES NOT STRAND LEGITIMATE ADMINISTRATIVE COMPLETION OF RECORDS
+THAT ALREADY EXIST.
+
+BUT:
+INCOMPLETE PHYSICAL WORK IS NOT ADMINISTRATIVE COMPLETION.
+INCOMPLETE PHYSICAL WORK MUST BE COMPLETED THROUGH THE PUNCH LIST
+BEFORE PROJECT COMPLETION SIGN-OFF MAY BE EXECUTED.
+
+Do not infer physical completion merely from Change Order status.
+Change Order administrative status and physical completion are
+different facts.
+```
+
+This decision does **not** authorize Punch List, Change Order, Close, Reopen, or Completion Sign-Off implementation in Slice A.
+
 This file is the frozen **owner product-direction** contract for CORE CLOSE / Project operating lifecycle, Punch List, and Project Completion Sign-Off. It is **not** an implementation prompt. It supersedes unexecuted Close / archive-filter discussion, including the PERF-C live-UAT note that treated lifecycle as an unspecified Active/Archived future.
 
 Do **not** implement CORE CLOSE, Punch List, Completion Sign-Off, Native Signing changes, People & Access, Home Office, LEARN, QB-T, UAT Project Close, filtering, or schema from this file.
@@ -236,6 +307,8 @@ At minimum directionally permit:
 Those actions must **not** become a route for creating **NEW** operational work.
 
 Exact service-level guard matrix is implementation design.
+
+**Subsequent owner freeze (2026-09-18, supersedes any Draft-CO line-item-edit-after-Close reading of this section):** incomplete physical work on Original Scope or an existing Change Order is **Punch List work**, not administrative Change Order completion. Do **not** infer physical completion from Change Order administrative status. Do **not** broadly authorize substantive Draft Change Order scope / pricing / quantity / work-definition edits after Close. NEW Change Order after Close requires Reopen. Remaining administrative processing of an already-existing Change Order (approval/rejection, existing signing ceremony, governed status workflow) may continue after physical work is complete. This does **not** implement Punch List, Change Order, Close, Reopen, or Completion Sign-Off.
 
 ---
 

@@ -45,7 +45,32 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-18 — FG-035 CORE CLOSE Slice A foundation (working tree / not committed)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Implement CORE CLOSE Slice A foundation: operating_state, events, list_current_operating_projects, additive migration FILE. Record subsequent owner freeze that physical work completion ≠ administrative Change Order completion. No Close/Reopen action. No consumer switches. No live migrate. No commit. |
+| Business decision | ACTIVE/CLOSED persistence. Existing Projects migrate ACTIVE. Incomplete physical work is Punch List. Open Punch List hard-gates Completion Sign-Off. NEW CO after Close requires Reopen. Do not infer physical completion from CO status. |
+| Architectural decision | Do not reuse `Project.status`. No ARCHIVED third state. No UAT flag. Events record future human CLOSE/REOPEN only. `list_organization_projects` remains all-Projects. No close_project/reopen_project. Graph head **`b2c3d4e5f6a7`**; live current remains **`a0b1c2d3e4f5`**. |
+| Prompt template used | Architect CORE CLOSE Slice A implementation prompt + subsequent owner freeze #3 |
+| Approved Cursor prompt summary | Slice A foundation + Rule 7 additive migration FILE; no Close/Reopen; no consumer switches; no live migrate; no commit. Subsequent freeze: physical vs administrative CO; Punch List hard gate; no substantive Draft CO edits after Close. |
+| Files expected to change | Project model; shared_api; Alembic file; dedicated tests; Alembic graph-head tests; FG-035 / freeze / current-state / handoff / roadmap / governance |
+| Files prohibited from changing | Close/Reopen services/routes/UI; consumer switches; Punch List; Completion Sign-Off; People & Access; live flask db upgrade; EST-2026-0019; recovery stash drop |
+| Implementation result | Slice A implemented in working tree. Additive **`b2c3d4e5f6a7`** not applied live. Stash preserved. Not committed. |
+| Tests | Dedicated `tests/test_core_close_slice_a_fg035.py` **18 passed**. Focused Time/Schedule/Field/shared API/PERF-C/FG-037 **176 passed**, 670 warnings, **110.43s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` — **1244 passed**, 4390 warnings, **640.57s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Close/Reopen waits persisted Instance Owner. Consumer switches later. Punch List later. Completion Sign-Off later. Live migrate later. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** commit unless Architect ACCEPT COMMIT. Do **not** live-migrate. |
+| Next approved prompt | Architect ACCEPT COMMIT of CORE CLOSE Slice A — not this note |
+| Commit hash | **NOT COMMITTED** |
+
 ### 2026-09-18 — FG-035 CORE CLOSE / Project lifecycle owner freeze (docs-only)
+
 
 | Field | Content |
 |-------|---------|

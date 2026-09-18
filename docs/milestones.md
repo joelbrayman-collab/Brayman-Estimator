@@ -34,7 +34,25 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-18 — FG-035 CORE CLOSE Slice A foundation (working tree / not committed)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 CORE CLOSE Slice A |
+| Status | **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NOT COMMITTED.** Close/Reopen **NOT IMPLEMENTED**. Punch List **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. |
+| Branch | `main` |
+| Base commit | `2d173b512a5be87b0ee24ce1b5ce0dfbb3ede125` |
+| Objective | Persist Project operating lifecycle foundation without Close/Reopen action or consumer switches. |
+| Deliverables | `Project.operating_state` ACTIVE/CLOSED; `ProjectOperatingStateEvent`; `list_current_operating_projects`; additive **`b2c3d4e5f6a7`**; dedicated tests; subsequent owner freeze that physical work completion ≠ administrative Change Order completion. |
+| Validation | Dedicated **18 passed**. Focused **176 passed**, 670 warnings, **110.43s**, exit **0**. Full suite **1244 passed**, 4390 warnings, **640.57s**, exit **0**. Live `flask db current` remains **`a0b1c2d3e4f5`**. Stash **`840dba8320b59ff9464410fec390d755a31a56aa`** preserved. |
+| Architectural findings | Do not reuse `Project.status`. Do not infer physical completion from Change Order status. Incomplete physical work is Punch List, not admin CO. NEW CO after Close requires Reopen. |
+| Open decisions | Architect ACCEPT COMMIT. Live migrate. Close/Reopen action waits persisted Instance Owner. Consumer switches. Punch List. Completion Sign-Off. |
+| Next milestone | Architect review / ACCEPT COMMIT. Do **not** live-migrate from this record. |
+| Commit | **NOT COMMITTED** |
+| Date | 2026-09-18 |
+
 ### 2026-09-18 — FG-035 CORE CLOSE / Project lifecycle owner freeze (docs-only)
+
 
 | Field | Content |
 |-------|---------|

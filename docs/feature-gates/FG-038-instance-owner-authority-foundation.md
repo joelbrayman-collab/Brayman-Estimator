@@ -1,8 +1,10 @@
 # Feature Gate FG-038: Instance Owner Authority Foundation (PA-A)
 
-**Subsequent status (2026-09-18 Stage 1 live migration):** [testing/fg038-pa-a-live-migration-ownerless-checkpoint.md](../testing/fg038-pa-a-live-migration-ownerless-checkpoint.md) **PASS / LIVE-MIGRATED / NO OWNER ASSIGNED.** Live Alembic **`c3d4e5f6a7b8 (head)`**. All organizations remain ownerless. Owner SET events **0**. This gate is **not closed**.
+**Subsequent status (2026-09-18 Stage 2 first Owner SET):** [testing/fg038-pa-a-first-instance-owner-authority-uat.md](../testing/fg038-pa-a-first-instance-owner-authority-uat.md) **PASS / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS.** ORG-001 Owner = Membership **1** / User **1** / Joel Brayman. SET events **1**. Isolation orgs ownerless. This gate is **not closed**.
 
-**Subsequent status (2026-09-18 live-migration + first-Owner preflight):** [fg-038-pa-a-live-migration-owner-preflight.md](../architecture/fg-038-pa-a-live-migration-owner-preflight.md) **PREFLIGHT COMPLETE.** Subsequent Stage 1 applied. Owner assignment **NOT AUTHORIZED**. This gate is **not closed**.
+**Subsequent status (2026-09-18 Stage 1 live migration):** [testing/fg038-pa-a-live-migration-ownerless-checkpoint.md](../testing/fg038-pa-a-live-migration-ownerless-checkpoint.md) **PASS / LIVE-MIGRATED.** Subsequent Stage 2 assigned the first Owner. This gate is **not closed**.
+
+**Subsequent status (2026-09-18 live-migration + first-Owner preflight):** [fg-038-pa-a-live-migration-owner-preflight.md](../architecture/fg-038-pa-a-live-migration-owner-preflight.md) **PREFLIGHT COMPLETE.** Subsequent Stage 1 migrated. Subsequent Stage 2 assigned the first Owner. This gate is **not closed**.
 
 | Attribute | Value |
 |----------|--------|
@@ -11,7 +13,7 @@
 | Target Milestone | Organization / office identity. Prerequisite for CORE CLOSE Close/Reopen authorization. Not a 12th major V1 package. Does **not** rescore V1. |
 | Module | **Organization subsystem** owns `Organization.instance_owner_membership_id` and `OrganizationInstanceOwnerEvent`. Office / platform later consumes `require_instance_owner_or_system_administrator`. No People & Access UI module. |
 | Date | 2026-09-18 |
-| Status | **OPEN / PARTIAL / PA-A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / NO OWNER ASSIGNED.** Product SHA **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`**. Additive **`c3d4e5f6a7b8`** revises **`b2c3d4e5f6a7`**. Live Alembic **`c3d4e5f6a7b8 (head)`**. All existing organizations remain **OWNERLESS**. Owner SET events **0**. System Administrator **DEFERRED TO PA-B**. People & Access UI **NOT IMPLEMENTED**. Close/Reopen **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11** (not rescored). Secondary Functional V1 Build **79% / 22 of 28** (not rescored). |
+| Status | **OPEN / PARTIAL / PA-A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS.** Product SHA **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`**. Live Alembic **`c3d4e5f6a7b8 (head)`**. ORG-001 Instance Owner = Membership **1** / User **1** / Joel Brayman. Owner SET events **1**. Isolation organizations **OWNERLESS**. System Administrator **DEFERRED TO PA-B**. People & Access UI **NOT IMPLEMENTED**. Close/Reopen **NOT IMPLEMENTED**. CORE CLOSE owner-authority blocker **CLEARED FOR ORG-001**. Official V1 **65% / 4 of 11** (not rescored). Secondary Functional V1 Build **79% / 22 of 28** (not rescored). |
 | Architecture | [people-and-access-product-direction.md](../architecture/people-and-access-product-direction.md) owner freeze. [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. **No new ADR.** [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED** (not reopened). [FG-037](FG-037-company-management-access-domain-authorization.md) **CLOSED** (not reopened). [FG-035](FG-035-project-work-structure-time-schedule-performance-learn.md) CORE CLOSE remains **PARTIAL / NOT OPERATIONAL**. |
 | Related ADRs | [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. No new ADR. |
 | Prerequisites | FG-018 office Users / membership **CLOSED**. People & Access freeze **RECORDED**. Authority-foundation preflight **PASS**. |
@@ -23,11 +25,11 @@
 | Layer | State |
 |-------|--------|
 | Feature Gate (this document) | **OPEN / PARTIAL** — PA-A foundation only |
-| Instance Owner pointer | **IMPLEMENTED / LIVE / OWNERLESS** — nullable `organizations.instance_owner_membership_id` |
-| SET events | **IMPLEMENTED / LIVE / EMPTY** — append-only `organization_instance_owner_events` count **0** |
-| Authority service | **IMPLEMENTED / LIVE / OWNERLESS FAIL CLOSED** — `app/services/instance_authority.py` |
-| CLI | **IMPLEMENTED / NOT RUN LIVE** — `flask auth set-instance-owner --organization-id --membership-id --actor-user-id` |
-| Live Owner assignment | **NOT AUTHORIZED / NOT PERFORMED** |
+| Instance Owner pointer | **IMPLEMENTED / LIVE / OPERATIONAL** — ORG-001 `instance_owner_membership_id` = **1** |
+| SET events | **IMPLEMENTED / LIVE** — append-only count **1** (`SET`, previous NULL, new **1**, actor **1**) |
+| Authority service | **IMPLEMENTED / LIVE / OPERATIONAL** — `app/services/instance_authority.py` |
+| CLI | **IMPLEMENTED / RUN LIVE ONCE** — ORG-001 / membership 1 / actor 1 |
+| Live Owner assignment | **ASSIGNED** — ORG-001 Membership 1 / User 1 / Joel Brayman. Isolation orgs **OWNERLESS**. |
 | System Administrator | **DEFERRED TO PA-B** — `is_system_administrator` returns False |
 | People & Access UI | **NOT IMPLEMENTED** |
 | Close/Reopen | **NOT IMPLEMENTED** |
@@ -43,7 +45,8 @@ COMMITTED
 PUSHED
 SHA-PINNED
 LIVE-MIGRATED
-NO OWNER ASSIGNED
+FIRST OWNER ASSIGNED
+LIVE AUTHORITY UAT PASS
 PRODUCT SHA 01e7463082b84b2fcd9d61ff7125a5012b7f8043
 OWNERLESS FAIL CLOSED
 SYS ADMIN DEFERRED TO PA-B

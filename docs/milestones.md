@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-18 — FG-038 PA-A Stage 2 first Instance Owner SET
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-038 PA-A Stage 2 first Owner SET |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS.** Product SHA **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`**. Live Alembic **`c3d4e5f6a7b8 (head)`**. ORG-001 Owner = Membership **1** / User **1** / Joel Brayman. Isolation orgs **OWNERLESS**. Owner SET events **1**. Sys Admin **NOT IMPLEMENTED**. People & Access UI **NOT IMPLEMENTED**. Close/Reopen **NOT IMPLEMENTED**. CORE CLOSE owner-authority blocker **CLEARED FOR ORG-001**. |
+| Branch | `main` |
+| Base commit | `b434b041b4c873d62a2f2e8926c16e563e786e6d` |
+| Objective | Explicit live SET ORG-001 Membership 1 / actor 1. Prove authority. No Close/Reopen. |
+| Deliverables | Live pointer + one SET event; [testing/fg038-pa-a-first-instance-owner-authority-uat.md](testing/fg038-pa-a-first-instance-owner-authority-uat.md); minimum governance. |
+| Validation | CLI exit **0**. Dedicated **35 passed**. Focused **113 passed**. Full **1316 passed**, 4597 warnings, **683.84s**, exit **0**. Occupancy **50 / 50 ACTIVE / 0 CLOSED / 0 events**. Grants **1**. |
+| Architectural findings | Owner is not Domain B. Isolation orgs remain ownerless. CORE CLOSE may later consume `require_instance_owner_or_system_administrator` for ORG-001. Close/Reopen still unimplemented. |
+| Open decisions | PA-B Sys Admin. Close/Reopen. People & Access UI. |
+| Next milestone | Architect review. Do **not** implement Close/Reopen from this record. |
+| Commit | this Stage 2 governance commit |
+| Date | 2026-09-18 |
+
 ### 2026-09-18 — FG-038 PA-A Stage 1 live migration (ownerless checkpoint)
 
 | Field | Content |

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PASS.** **LIVE-MIGRATED / NO OWNER ASSIGNED.** Instance Owner foundation **LIVE / OWNERLESS**. [FG-038](../feature-gates/FG-038-instance-owner-authority-foundation.md) remains **OPEN / PARTIAL**. |
+| Status | **PASS.** **LIVE-MIGRATED.** Subsequent Stage 2 **FIRST OWNER ASSIGNED** ([fg038-pa-a-first-instance-owner-authority-uat.md](fg038-pa-a-first-instance-owner-authority-uat.md)). [FG-038](../feature-gates/FG-038-instance-owner-authority-foundation.md) remains **OPEN / PARTIAL**. |
 | Date | 2026-09-18 |
 | Gate | FG-038 PA-A Stage 1 only |
 | Product SHA | **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`** |
@@ -26,7 +26,7 @@ NO CLOSE / REOPEN
 V1 NOT RESCORED
 ```
 
-This file records Stage 1 live migration and ownerless proof only. It does **not** authorize `flask auth set-instance-owner`. It does **not** assign Joel Brayman, Membership 1, User 1, or anyone else.
+This file records Stage 1 live migration and ownerless proof only. Subsequent Stage 2 assigned the first Owner. This file does **not** implement Close/Reopen, Sys Admin, or People & Access UI.
 
 Canonical preflight: [fg-038-pa-a-live-migration-owner-preflight.md](../architecture/fg-038-pa-a-live-migration-owner-preflight.md).
 

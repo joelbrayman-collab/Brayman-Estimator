@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-18 — FG-038 PA-A Stage 2 first Instance Owner SET
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Explicit live SET ORG-001 Membership 1 / User 1 / actor 1. Bounded authority UAT. No other Owner. No Close/Reopen. |
+| Business decision | First governed Instance Owner is Joel Brayman. Owner is not Domain B. Isolation orgs remain ownerless. |
+| Architectural decision | One SET event. Ownerless fail-closed remains for isolation orgs. CORE CLOSE owner-authority blocker cleared for ORG-001. Close/Reopen still unimplemented. |
+| Prompt template used | Architect PA-A Stage 2 explicit Owner SET |
+| Approved Cursor prompt summary | Run exact CLI with authorized ids. Verify pointer/event/helpers/B independence/deactivation. Tests. Docs commit/push. |
+| Files expected to change | live ORG-001 owner pointer + one SET event; minimum governance docs |
+| Files prohibited from changing | isolation Owners; Sys Admin; People UI; Close/Reopen; COMPANY_MANAGEMENT; recovery stash; scorecard |
+| Implementation result | ORG-001 Owner Membership 1. Events 1. Isolation ownerless. Grants 1. Occupancy 50/50/0/0. Stash preserved. |
+| Tests | Dedicated 35 passed / 16.83s. Focused 113 passed / 45.72s. Full 1316 passed, 4597 warnings, 683.84s, exit 0. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | PA-B. People UI. Close/Reopen. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement Close/Reopen from this record. |
+| Next approved prompt | none — STOP |
+| Commit hash | this Stage 2 governance commit |
+
 ### 2026-09-18 — FG-038 PA-A Stage 1 live migration (ownerless checkpoint)
 
 | Field | Content |

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE.** Subsequent Stage 1 **PASS / LIVE-MIGRATED / NO OWNER ASSIGNED** ([testing/fg038-pa-a-live-migration-ownerless-checkpoint.md](../testing/fg038-pa-a-live-migration-ownerless-checkpoint.md)). Owner assignment **NOT AUTHORIZED**. |
+| Status | **PREFLIGHT COMPLETE.** Subsequent Stage 1 **PASS / LIVE-MIGRATED**. Subsequent Stage 2 **PASS / FIRST OWNER ASSIGNED** ([testing/fg038-pa-a-first-instance-owner-authority-uat.md](../testing/fg038-pa-a-first-instance-owner-authority-uat.md)). |
 | Date | 2026-09-18 |
 | Gate | [FG-038](../feature-gates/FG-038-instance-owner-authority-foundation.md) **OPEN / PARTIAL** |
 | Product SHA | **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`** |

@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-18 — FG-038 PA-A product SHA pin
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-038 PA-A pin |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO OWNER ASSIGNED.** Product SHA **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`**. Additive **`c3d4e5f6a7b8`**. Live Alembic remains **`b2c3d4e5f6a7`**. Graph head **`c3d4e5f6a7b8`**. All organizations **OWNERLESS**. Sys Admin **NOT IMPLEMENTED**. People & Access UI **NOT IMPLEMENTED**. Close/Reopen **NOT IMPLEMENTED**. |
+| Branch | `main` |
+| Base commit | `01e7463082b84b2fcd9d61ff7125a5012b7f8043` |
+| Objective | Pin PA-A product SHA. No live migrate. No Owner assignment. |
+| Deliverables | Minimum governance SHA pin. |
+| Validation | Product tests not rerun. Accepted dedicated **35** / focused **150** / full **1316**. Live occupancy **50 / 50 ACTIVE / 0 CLOSED / 0 events**. Grants **1**. Live Instance Owners **0**. |
+| Architectural findings | Graph head vs live current mismatch is intentional until separately authorized live migrate. Owner is not Domain B. |
+| Open decisions | Live migrate. Explicit Owner assignment. PA-B Sys Admin. Close/Reopen. |
+| Next milestone | Architect review. Do **not** live-migrate from this pin. Do **not** assign Owner from this pin. |
+| Commit | this pin |
+| Date | 2026-09-18 |
+
 ### 2026-09-18 — FG-038 PA-A Instance Owner authority foundation (working tree)
 
 | Field | Content |

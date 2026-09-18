@@ -43,7 +43,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
-## Entries
+### 2026-09-18 — FG-038 PA-A product SHA pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Architect ACCEPT COMMIT / PUSH / SHA PIN for FG-038 PA-A. No live migrate. No Owner assignment. |
+| Business decision | Architect review PASS. Pin product SHA. Live remains ownerless. |
+| Architectural decision | Unchanged. Instance Owner foundation is implemented and not live. Graph head `c3d4e5f6a7b8` vs live current `b2c3d4e5f6a7` remains intentional. |
+| Prompt template used | Architect PA-A ACCEPT COMMIT / PUSH / SHA PIN |
+| Approved Cursor prompt summary | Validate accepted PA-A; product commit; push; minimum SHA pin; push; STOP. No flask db upgrade. No set-instance-owner against live data. |
+| Files expected to change | Minimum governance pin only |
+| Files prohibited from changing | Live DB; Close/Reopen; Sys Admin; People & Access UI; access_domains.py; recovery stash; scorecard |
+| Implementation result | Product SHA `01e7463082b84b2fcd9d61ff7125a5012b7f8043`. Live Alembic remains `b2c3d4e5f6a7`. Graph head `c3d4e5f6a7b8`. All organizations ownerless. Grants 1. Stash preserved. |
+| Tests | Accepted evidence reused. Dedicated **35 passed**. Focused **150 passed**. Full suite **1316 passed**, 4597 warnings, **561.70s**, exit **0**. Product tests not rerun for this pin. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate. Explicit Owner assignment. PA-B Sys Admin. People & Access UI. Close/Reopen. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** assign Owner. |
+| Next approved prompt | none — STOP |
+| Commit hash | this pin |
 
 ### 2026-09-18 — FG-038 PA-A Instance Owner authority foundation (working tree)
 

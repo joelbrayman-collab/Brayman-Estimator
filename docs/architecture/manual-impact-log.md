@@ -51,14 +51,12 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
-## Entries
-
 ### MANUAL IMPACT — CORE CLOSE CLOSE/REOPEN OPTION A (2026-09-18)
 
 | Field | Content |
 |-------|---------|
 | Slice | FG-035 CORE CLOSE Close/Reopen Option A |
-| Product status at capture | **IMPLEMENTED IN WORKING TREE / TESTED / NO MIGRATION / NOT COMMITTED / NOT PUSHED / NOT LIVE-UATed.** No live Close. All live Projects remain ACTIVE. Authorization is Instance Owner / future System Administrator. `COMPANY_MANAGEMENT` is not Close/Reopen authority. |
+| Product status at capture | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NO MIGRATION / NOT LIVE-UATed.** Product SHA **`172f0786aaa9e668f30be28c3cee30ac4fce5b1f`**. No live Close. All live Projects remain ACTIVE. Authorization is Instance Owner / future System Administrator. `COMPANY_MANAGEMENT` is not Close/Reopen authority. |
 | 1. What new contractor capability exists? | Authorized Instance Owner can **Close Project** and **Reopen Project** from the Project Hub after a dedicated confirmation page. Hub shows lifecycle identity **Current** or **Closed**. Closed Hub hides **New Change Order**. Projects list **Current \| Closed** already existed from Slice B and now actually receives Closed Projects after Close. |
 | 2. When would the contractor use it? | When a Project should leave current operating work, or when a Closed Project must return to current operating work. Not after Punch List / Completion Sign-Off (those products do not exist yet). |
 | 3. What workflow will the final Manual need to teach? | Open the Project Hub. Confirm Close. Find the Project under Closed. Open it historically. Reopen from the Closed Hub when new work is required. Ordinary users do not see Close/Reopen. |

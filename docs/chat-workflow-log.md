@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-18 — FG-035 CORE CLOSE Close/Reopen Option A SHA pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Validate accepted Close/Reopen Option A; product commit; push; SHA pin; push. No live Close. |
+| Business decision | Architect ACCEPT COMMIT / PUSH. Option A remains Hub-only Owner/Sys Admin Close/Reopen. COMPANY_MANAGEMENT is not Close authority. No live Close/Reopen. |
+| Architectural decision | No product change. No migration. Pin product SHA **`172f0786aaa9e668f30be28c3cee30ac4fce5b1f`**. CORE CLOSE remains PARTIAL / NOT YET SEALED. Punch List remains NOT IMPLEMENTED. |
+| Prompt template used | Architect CORE CLOSE CLOSE/REOPEN OPTION A ACCEPTANCE / PRODUCT COMMIT / PUSH / SHA PIN |
+| Approved Cursor prompt summary | Validate accepted Option A; commit `feat: implement FG-035 CORE CLOSE Close Reopen`; push; pin `docs: pin FG-035 CORE CLOSE Close Reopen SHA`; push. Preserve stash. No live Close. |
+| Files expected to change | accepted Option A product/tests/governance (product commit); minimum SHA-pin governance (pin commit) |
+| Files prohibited from changing | live Projects; live Owner; COMPANY_MANAGEMENT grants; migrations; Punch List; Sign-Off; Sys Admin; recovery stash; scorecard |
+| Implementation result | Product SHA **`172f0786aaa9e668f30be28c3cee30ac4fce5b1f`**. This pin follows. Option A **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NO MIGRATION / NOT LIVE-UATed**. Live occupancy 50/50/0/0. Owner Membership 1. Events 1. Grants 1. Stash preserved. |
+| Tests | Accepted evidence reused (no code/test change): Dedicated 22 passed / 18.23s. Slice A+B 55 passed / 18.54s. FG-038 35 passed / 18.61s. Full 1338 passed, 4730 warnings, 966.45s, exit 0. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Punch List. Completion Sign-Off. Labeled live Close/Reopen UAT. PA-B. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Recommended next: FG-035 CORE CLOSE PUNCH LIST. |
+| Next approved prompt | none — STOP |
+| Commit hash | product **`172f0786aaa9e668f30be28c3cee30ac4fce5b1f`**; this pin follows |
+
 ### 2026-09-18 — FG-035 CORE CLOSE Close/Reopen Option A (working tree / not committed)
 
 | Field | Content |

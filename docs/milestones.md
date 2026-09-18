@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-18 — FG-035 CORE CLOSE Close/Reopen Option A SHA pin
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 CORE CLOSE Close/Reopen Option A SHA pin |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NO MIGRATION / NOT LIVE-UATed.** Product SHA **`172f0786aaa9e668f30be28c3cee30ac4fce5b1f`**. Authorization = Instance Owner / future System Administrator. `COMPANY_MANAGEMENT` is **not** Close/Reopen authority. Close and Reopen **NOT LIVE-EXECUTED**. Punch List **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE overall **PARTIAL / NOT YET SEALED**. |
+| Branch | `main` |
+| Base commit | `172f0786aaa9e668f30be28c3cee30ac4fce5b1f` |
+| Objective | Pin accepted Option A product SHA. No live Close. No product expansion. |
+| Deliverables | Minimum SHA-pin governance. Product already committed. |
+| Validation | Accepted full suite **1338 passed**, 4730 warnings, **966.45s**, exit **0**. Live occupancy 50 / 50 ACTIVE / 0 CLOSED / 0 events. |
+| Architectural findings | No migration. Domain B remains not Close authority. Invalid repeats remain fail-and-flash. |
+| Open decisions | Punch List. Completion Sign-Off. Labeled live Close/Reopen UAT. PA-B. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Recommended next: FG-035 CORE CLOSE PUNCH LIST. Do **not** Close a live Project from this record. |
+| SHA / tag | product **`172f0786aaa9e668f30be28c3cee30ac4fce5b1f`**; this pin follows |
+| Date | 2026-09-18 |
+
 ### 2026-09-18 — FG-035 CORE CLOSE Close/Reopen Option A (working tree / not committed)
 
 | Field | Content |

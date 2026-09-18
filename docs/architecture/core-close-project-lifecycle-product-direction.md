@@ -16,11 +16,13 @@
 | V1 | **NOT RESCORED** (official **65% / 4 of 11**; secondary Functional V1 Build **79% / 22 of 28**). |
 | Prompt completeness | Freeze prompt §§0–35 **ACCEPTED**. Heading **§36 DESKTOP** arrived with **no body**. This freeze does **not** invent additional desktop-shell redesign or a Field Punch List product. Presentation already frozen in §§21–24 is recorded below. |
 
+**Subsequent status (2026-09-18 CORE CLOSE Slice A LIVE MIGRATION):** Slice A **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED**. Product SHA **`f4b7515664c51850f3d87ed79f4a7e1226886fbd`**. Live Alembic **`b2c3d4e5f6a7 (head)`**. All existing Projects **ACTIVE**. Lifecycle event rows **0**. Close/Reopen **NOT IMPLEMENTED**. Consumer switches **NOT IMPLEMENTED**. Punch List **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE overall remains **PARTIAL / NOT OPERATIONAL**.
+
 **Subsequent status (2026-09-18 CORE CLOSE Slice A PIN):** Slice A **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED**. Product SHA **`f4b7515664c51850f3d87ed79f4a7e1226886fbd`**. Revision **`b2c3d4e5f6a7`**. Live Alembic remains **`a0b1c2d3e4f5`**. Close/Reopen **NOT IMPLEMENTED**. Punch List **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE overall remains **PARTIAL / NOT OPERATIONAL**.
 
 **Subsequent status (2026-09-18 CORE CLOSE Slice A):** **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NOT COMMITTED / NOT PUSHED.** Revision **`b2c3d4e5f6a7`** (down_revision **`a0b1c2d3e4f5`**). Live Alembic remains **`a0b1c2d3e4f5`**. `Project.operating_state` **ACTIVE / CLOSED**. `ProjectOperatingStateEvent`. `list_current_operating_projects`. No Close/Reopen action. No consumer switches. CORE CLOSE overall remains **PARTIAL / NOT OPERATIONAL**.
 
-**Subsequent Current vs Intended (Slice A working tree):** Shared query `list_current_operating_projects` exists in `app/services/shared_api.py` and returns `operating_state=ACTIVE` only. `list_organization_projects` still returns all organization Projects and remains the live consumer path. Live DB is **not** migrated. Close / Reopen / Punch List / Completion Sign-Off remain **NOT IMPLEMENTED**.
+**Subsequent Current vs Intended (Slice A live-migrated):** Shared query `list_current_operating_projects` exists in `app/services/shared_api.py` and returns `operating_state=ACTIVE` only. `list_organization_projects` still returns all organization Projects and remains the live consumer path. Live DB **is** migrated: every Project is **ACTIVE**; event rows **0**. Close / Reopen / Punch List / Completion Sign-Off remain **NOT IMPLEMENTED**.
 
 **Subsequent owner decisions (2026-09-18 Slice A authorization; later slices only):**
 

@@ -53,6 +53,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — CORE CLOSE SLICE A LIVE MIGRATION (2026-09-18)
+
+| Field | Content |
+|-------|---------|
+| Slice | FG-035 CORE CLOSE Slice A live migration |
+| Product status at capture | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED.** Product SHA **`f4b7515664c51850f3d87ed79f4a7e1226886fbd`**. Live Alembic **`b2c3d4e5f6a7 (head)`**. All existing Projects **ACTIVE**. Event rows **0**. No Close UI. No Punch List. No Completion Sign-Off. No contractor-facing lifecycle change. |
+| 1. What new contractor capability exists? | None now. Schema is live. Close remains unimplemented. |
+| 2. When would the contractor use it? | Not yet. Later Close / Punch List / Completion Sign-Off surfaces. |
+| 3. What workflow will the final Manual need to teach? | Same as the owner freeze. |
+| 4. What contractor-facing terms must be used? | Close Project. Reopen Project. Punch List. Project Completion Sign-Off. Current operating work. |
+| 5. What screenshots / Print examples will eventually be needed? | None now. |
+| 6. What warnings / validation distinctions need explanation? | Open Punch List blocks Completion Sign-Off. Incomplete physical work is Punch List work. NEW Change Order after Close requires Reopen. |
+| 7. Desktop / iPhone / Print relevance | None now. |
+| Do not | Final Manual prose. Unstable screenshots. Claim Close exists. Claim Punch List exists. |
+
 ### MANUAL IMPACT — CORE CLOSE SLICE A (2026-09-18)
 
 | Field | Content |

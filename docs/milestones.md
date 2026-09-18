@@ -34,6 +34,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-18 — FG-035 CORE CLOSE Slice A live migration
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 CORE CLOSE Slice A live migration |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED.** Product SHA **`f4b7515664c51850f3d87ed79f4a7e1226886fbd`**. Live Alembic **`b2c3d4e5f6a7 (head)`**. All existing Projects **ACTIVE**. Event rows **0**. Close/Reopen **NOT IMPLEMENTED**. Punch List **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. |
+| Branch | `main` |
+| Base commit | `cdb107058cc475cfd2ef960593939226df6ad02b` |
+| Objective | Apply additive `b2c3d4e5f6a7` live. Prove ACTIVE baseline. No Slice B. |
+| Deliverables | Live schema/data; minimum governance record. |
+| Validation | `flask db upgrade` exit **0**. Focused **176 passed**, 670 warnings, **91.05s**, exit **0**. Occupancy fingerprint unchanged. EST-2026-0019 unchanged. Grants **1**. |
+| Architectural findings | Live current now equals graph head. Intentional mismatch is resolved. Close/Reopen still unimplemented. |
+| Open decisions | Slice B / consumer switches. Close/Reopen action. Punch List. Completion Sign-Off. |
+| Next milestone | Architect review. Do **not** implement Slice B from this record. |
+| Commit | this live-migration docs commit |
+| Date | 2026-09-18 |
+
 ### 2026-09-18 — FG-035 CORE CLOSE Slice A SHA pin
 
 | Field | Content |

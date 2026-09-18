@@ -45,6 +45,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-18 — FG-035 CORE CLOSE Slice A live migration
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Live-apply additive `b2c3d4e5f6a7`. Prove every existing Project ACTIVE. Record docs-only live-migration status. No Slice B. No Close/Reopen. |
+| Business decision | None. Existing Projects remain ACTIVE. No Project Closed. |
+| Architectural decision | Live current = graph head `b2c3d4e5f6a7`. Event rows 0. `list_organization_projects` remains all-Projects. Consumers not switched. |
+| Prompt template used | Architect CORE CLOSE Slice A LIVE MIGRATION |
+| Approved Cursor prompt summary | Pre-migration verify; flask db upgrade; post-verify ACTIVE baseline; focused non-regression; docs record; commit/push if PASS. No Slice B. Preserve stash. |
+| Files expected to change | live SQLite schema/data (additive only); minimum governance docs |
+| Files prohibited from changing | Close/Reopen; Punch List; Sign-Off; consumer switches; recovery stash; scorecard |
+| Implementation result | `a0b1c2d3e4f5` → `b2c3d4e5f6a7`. Projects 50/50 ACTIVE. CLOSED 0. Events 0. EST-2026-0019 unchanged. Grants 1. |
+| Tests | Focused `tests/test_core_close_slice_a_fg035.py tests/test_work_time_fg035.py tests/test_work_schedule_fg035.py tests/test_work_schedule_assignment_fg035.py tests/test_work_schedule_dependency_fg035.py tests/test_work_scope_fg035.py tests/test_work_structure_tax_wbs_fg035.py tests/test_work_schedule_field_fg035.py tests/test_company_attention_fg035.py tests/test_shared_api_fg019.py tests/test_access_domains.py` → **176 passed**, 670 warnings, **91.05s**, exit **0**. HISTORICAL dedicated **18** / focused **176** / full **1244**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Slice B / consumer switches. Close/Reopen. Punch List. Completion Sign-Off. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement Slice B. |
+| Next approved prompt | none — STOP |
+| Commit hash | this live-migration docs commit |
+
 ### 2026-09-18 — FG-035 CORE CLOSE Slice A SHA pin (docs-only)
 
 | Field | Content |

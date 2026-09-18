@@ -15,6 +15,10 @@ from app.services.access_domains import (
     grant_access_domain,
     revoke_access_domain,
 )
+from app.services.instance_authority import (
+    InstanceAuthorityError,
+    set_instance_owner,
+)
 from app.services.auth import AuthServiceError, bootstrap_org_001_user, reset_password
 
 
@@ -97,6 +101,27 @@ def revoke_access_domain_command(membership_id, domain_key):
         raise click.ClickException(str(exc)) from exc
     click.echo(
         f"Access domain {domain_key} is absent on membership {membership_id}."
+    )
+
+
+@auth_cli.command("set-instance-owner")
+@click.option("--organization-id", "organization_id", required=True)
+@click.option("--membership-id", "membership_id", required=True, type=int)
+@click.option("--actor-user-id", "actor_user_id", required=True, type=int)
+@with_appcontext
+def set_instance_owner_command(organization_id, membership_id, actor_user_id):
+    """Set the Instance Owner for one organization. Explicit ids only. No inference."""
+    try:
+        org = set_instance_owner(
+            organization_id,
+            membership_id,
+            actor_user_id,
+        )
+    except InstanceAuthorityError as exc:
+        raise click.ClickException(str(exc)) from exc
+    click.echo(
+        f"Instance Owner membership {org.instance_owner_membership_id} "
+        f"is set for organization {org.id}."
     )
 
 

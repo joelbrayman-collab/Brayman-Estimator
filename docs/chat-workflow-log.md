@@ -45,6 +45,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-18 — FG-038 PA-A Instance Owner authority foundation (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Persist Contractor Instance Owner pointer + SET events + authority helpers + governed operator CLI. Ownerless fail-closed. No live Owner assignment. No Sys Admin. No People & Access UI. No Close/Reopen. Migration FILE only. |
+| Business decision | Architect ACCEPT: `organizations.instance_owner_membership_id` + append-only SET events; no seed; later explicit CLI; Sys Admin deferred to PA-B; ownerless 403; minimum FG-038; no new ADR; B/C inheritance deferred. |
+| Architectural decision | Instance Owner is organization-scoped protected root, not Domain B, not inferred from name/email/membership order. Effective Owner requires pointer + same-org + active membership + active user. Transfer is a later SET. `is_system_administrator` returns False. Combined helper exists for later PA-B. |
+| Prompt template used | Architect PA-A implementation prompt |
+| Approved Cursor prompt summary | PA-A Instance Owner foundation; Rule 7 additive migration file `c3d4e5f6a7b8`; no live upgrade; no Owner assignment; dedicated tests; min FG-038; STOP without commit. |
+| Files expected to change | Organization model; instance_authority service; auth CLI; migration file; dedicated tests; alembic heads assertions; FG-038 + min governance |
+| Files prohibited from changing | Close/Reopen; Punch List; Completion Sign-Off; People & Access UI; Sys Admin schema; access_domains.py grant logic; live flask db upgrade; live Owner CLI run; recovery stash; scorecard |
+| Implementation result | Working tree only. All organizations remain ownerless. Live Alembic remains `b2c3d4e5f6a7`. Graph head `c3d4e5f6a7b8`. Grants 1 unchanged. Stash preserved. |
+| Tests | Dedicated `tests/test_instance_owner_authority_fg038.py` **35 passed**, 88 warnings, **15.49s**, exit **0**. Focused FG-038+FG-037+FG-018+CORE CLOSE A/B **150 passed**, 364 warnings, **60.60s**, exit **0**. Full suite **1316 passed**, 4597 warnings, **561.70s**, exit **0**. Cursor Terminal pytest. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate. Explicit Owner assignment. PA-B Sys Admin. People & Access UI. Close/Reopen. Punch List. Completion Sign-Off. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** assign Owner. Do **not** commit unless Architect ACCEPT COMMIT. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — not committed |
+
 ### 2026-09-18 — FG-035 CORE CLOSE Slice B SHA pin (docs-only)
 
 | Field | Content |

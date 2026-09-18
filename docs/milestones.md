@@ -32,7 +32,22 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
-## Entries
+### 2026-09-18 — FG-038 PA-A Instance Owner authority foundation (working tree)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-038 PA-A Instance Owner authority foundation |
+| Status | **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NOT COMMITTED / NO OWNER ASSIGNED.** Additive **`c3d4e5f6a7b8`**. Live Alembic remains **`b2c3d4e5f6a7`**. Graph head **`c3d4e5f6a7b8`**. All organizations **OWNERLESS**. Sys Admin **DEFERRED**. People & Access UI **NOT IMPLEMENTED**. Close/Reopen **NOT IMPLEMENTED**. |
+| Branch | `main` |
+| Base commit | `46939919a83f6952680eff80d990521937ba4f21` |
+| Objective | Persist Contractor Instance Owner as protected organization-scoped administrative root. No live assignment. |
+| Deliverables | Owner pointer + SET events; `instance_authority` service; `flask auth set-instance-owner`; deactivation guards; dedicated tests; FG-038; additive migration file only. |
+| Validation | Dedicated **35 passed**, 88 warnings, **15.49s**. Focused **150 passed**, 364 warnings, **60.60s**. Full suite **1316 passed**, 4597 warnings, **561.70s**, exit **0**. Live occupancy **50 / 50 ACTIVE / 0 CLOSED / 0 events**. Grants **1**. |
+| Architectural findings | Owner is not Domain B. Ownerless 403. Combined helper ready for later PA-B. No new ADR. |
+| Open decisions | Live migrate. Explicit Owner assignment (org-id + membership-id). PA-B Sys Admin. Close/Reopen. |
+| Next milestone | Architect-governed live migrate and/or Owner assignment — **NOT THIS WORKING TREE**. |
+| Commit | none — not committed |
+| Date | 2026-09-18 |
 
 ### 2026-09-18 — FG-035 CORE CLOSE Slice B SHA pin
 

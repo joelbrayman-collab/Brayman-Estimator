@@ -471,7 +471,7 @@ def test_alembic_fg024_tech_a_upgrade_and_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["b2c3d4e5f6a7"]
+        assert script.get_heads() == ["c3d4e5f6a7b8"]
 
         command.upgrade(alembic_cfg, "d3e4f5a6b7c8")
         engine = db.engine

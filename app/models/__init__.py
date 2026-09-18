@@ -72,7 +72,7 @@ from app.models.estimate_quickbooks import (
 )
 from app.models.estimate_scope_delivery import EstimateScopeDelivery
 from app.models.subcontractor import Subcontractor, SubcontractQuoteEvidence
-from app.models.organization import Organization
+from app.models.organization import Organization, OrganizationInstanceOwnerEvent
 from app.models.user import User, UserMembership, UserMembershipAccessDomainGrant
 from app.models.password_reset import PasswordResetAccessAttempt, PasswordResetToken
 from app.models.transactional_message import TransactionalMessage
@@ -232,6 +232,7 @@ __all__ = [
     "LabourTimeEntry",
     "LabourTimeHistory",
     "Organization",
+    "OrganizationInstanceOwnerEvent",
     "User",
     "UserMembership",
     "UserMembershipAccessDomainGrant",

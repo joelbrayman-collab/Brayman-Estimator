@@ -12,6 +12,8 @@
 | Related ADRs | [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. No new ADR. |
 | Prerequisites | FG-018 office Users / membership **CLOSED**. Company/Management seam freeze **DEFINED**. |
 
+**Subsequent status (2026-09-18 FG-038 PA-A working tree):** [FG-038](FG-038-instance-owner-authority-foundation.md) **OPEN / PARTIAL / PA-A IMPLEMENTED IN WORKING TREE**. Instance Owner pointer + SET events + operator CLI exist in the working tree. This gate is **not reopened**. Operator CLI remains bootstrap infrastructure. Domain B grants remain unchanged. Do **not** add People & Access product to this gate.
+
 **Subsequent status (2026-09-17 PERF-C LIVE UAT / SEAL):** FG-035 PERF-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE UAT PASS / SEALED**. Product SHA **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**. Office `/company-attention` consumes `require_access_domain(ACCESS_DOMAIN_COMPANY_MANAGEMENT)`. This gate remains **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION**. Sensitive Financial remains **NOT IMPLEMENTED**. People & Access remains **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11** (not rescored).
 
 **Subsequent status (2026-09-17 PERF-C Slice A COMMIT / PUSH / SHA-PIN):** FG-035 PERF-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-UATed**. Product SHA **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**. Office `/company-attention` consumes `require_access_domain(ACCESS_DOMAIN_COMPANY_MANAGEMENT)`. This gate remains **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION**. Sensitive Financial remains **NOT IMPLEMENTED**. People & Access remains **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11** (not rescored).

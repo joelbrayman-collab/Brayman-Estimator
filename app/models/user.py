@@ -63,7 +63,7 @@ class UserMembership(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     user = db.relationship("User", back_populates="memberships")
-    organization = db.relationship("Organization")
+    organization = db.relationship("Organization", foreign_keys=[organization_id])
     access_domain_grants = db.relationship(
         "UserMembershipAccessDomainGrant",
         back_populates="membership",

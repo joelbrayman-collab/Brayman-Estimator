@@ -58,7 +58,7 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 | Field | Content |
 |-------|---------|
 | Slice | FG-035 CORE CLOSE Slice B current-operating consumers + CLOSED guards |
-| Product status at capture | **IMPLEMENTED IN WORKING TREE / TESTED / NO MIGRATION / NOT COMMITTED / NOT PUSHED.** No live Close. All live Projects remain ACTIVE. Close/Reopen UI does not exist. |
+| Product status at capture | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NO MIGRATION.** Product SHA **`9360b706ab66f2588306b201ca0c4c45645fcb9a`**. No live Close. All live Projects remain ACTIVE. Close/Reopen UI does not exist. |
 | 1. What new contractor capability exists? | Projects list **Current \| Closed** (default Current). CLOSED Projects stay reachable from Closed and from the Project Hub. New work on a closed Project is refused with: “This Project is closed. Reopen it before adding new work.” |
 | 2. When would the contractor use it? | After a Project is Closed (not yet possible from the product). Until then Current looks like today’s Projects list. |
 | 3. What workflow will the final Manual need to teach? | Find a closed Project under Closed. Open the Hub historically. Do not add new Time, Schedule, Extra Work, Change Orders, or Field capture until Reopen exists. Finish existing Time / Change Order paperwork. |

@@ -34,6 +34,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-18 — FG-035 CORE CLOSE Slice B SHA pin
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 CORE CLOSE Slice B pin |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NO MIGRATION.** Product SHA **`9360b706ab66f2588306b201ca0c4c45645fcb9a`**. Close/Reopen **NOT IMPLEMENTED**. Punch List **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE overall **PARTIAL / NOT OPERATIONAL**. |
+| Branch | `main` |
+| Base commit | `9360b706ab66f2588306b201ca0c4c45645fcb9a` |
+| Objective | Pin Slice B product SHA. No Close/Reopen. No Punch List. |
+| Deliverables | Minimum governance SHA pin. |
+| Validation | Product tests not rerun. Accepted dedicated **37** / A+B **55** / focused **234** / scope **23** / full **1281**. Alembic remains **`b2c3d4e5f6a7`**. Live occupancy **50 / 50 ACTIVE / 0 CLOSED / 0 events**. |
+| Architectural findings | CLOSE blocks NEW operational records. It does not strand administrative completion of existing Time / CO / actuals. Incomplete physical work is Punch List later. |
+| Open decisions | Close/Reopen action. Punch List. Completion Sign-Off. |
+| Next milestone | Architect review. Do **not** implement Close/Reopen from this pin. |
+| Commit | this pin |
+| Date | 2026-09-18 |
+
 ### 2026-09-18 — FG-035 CORE CLOSE Slice A live migration
 
 | Field | Content |

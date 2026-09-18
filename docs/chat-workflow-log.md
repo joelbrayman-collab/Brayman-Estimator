@@ -45,6 +45,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-18 — FG-035 CORE CLOSE Slice B SHA pin (docs-only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Pin accepted CORE CLOSE Slice B product SHA after commit/push. No product change. No migration. No Close/Reopen. |
+| Business decision | Architect ACCEPT COMMIT / PUSH / SHA PIN for accepted Slice B. |
+| Architectural decision | Slice B is PRODUCT IMPLEMENTATION. Pin product SHA. CORE CLOSE overall remains PARTIAL / NOT OPERATIONAL. |
+| Prompt template used | Architect CORE CLOSE Slice B ACCEPT COMMIT / PUSH / SHA PIN |
+| Approved Cursor prompt summary | Validate accepted Slice B; commit `feat: implement FG-035 CORE CLOSE Slice B current-work guards`; push; pin `docs: pin FG-035 CORE CLOSE Slice B SHA`; push. Preserve stash. |
+| Files expected to change | Minimum governance SHA pin |
+| Files prohibited from changing | Product runtime; Alembic; Close/Reopen; Punch List; Completion Sign-Off; recovery stash; scorecard |
+| Implementation result | Product SHA **`9360b706ab66f2588306b201ca0c4c45645fcb9a`**. No migration. Stash preserved. Live occupancy 50/50 ACTIVE/0 CLOSED/0 events. |
+| Tests | Accepted evidence reused. Dedicated Slice B **37 passed**. Slice A+B **55 passed**. Focused **234 passed**. Scope **23 passed**. Full suite **1281 passed**, 4509 warnings, **644.63s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Close/Reopen. Punch List. Completion Sign-Off. People & Access. CORE CLOSE overall PARTIAL / NOT OPERATIONAL. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** implement Close/Reopen/Punch List/Sign-Off. |
+| Next approved prompt | none — STOP |
+| Commit hash | this pin |
+
 ### 2026-09-18 — FG-035 CORE CLOSE Slice B current-operating consumers + CLOSED guards (working tree)
 
 | Field | Content |
@@ -62,12 +86,12 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Implementation result | Working tree only. Live occupancy 50/50 ACTIVE/0 CLOSED/0 events. EST-2026-0019 unchanged. Grants 1. Stash preserved. |
 | Tests | Dedicated Slice B `tests/test_core_close_slice_b_fg035.py` **37 passed**. Slice A+B `tests/test_core_close_slice_b_fg035.py tests/test_core_close_slice_a_fg035.py` **55 passed**, 143 warnings, **20.67s**, exit **0**. Focused Schedule/Field/Time/CO/MONITOR/PERF-C/shared API/FG-037 **234 passed**, 745 warnings, **146.85s**, exit **0**. Focused Scope/work-structure **23 passed**, 193 warnings, **15.62s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` **1281 passed**, 4509 warnings, **644.63s**, exit **0**. |
 | Project-state-report update | Yes |
-| Milestone entry update | No — not committed |
+| Milestone entry update | Yes — product later committed as **`9360b706ab66f2588306b201ca0c4c45645fcb9a`** |
 | Constitutional issue raised | None |
 | Unresolved issues | Close/Reopen. Punch List. Completion Sign-Off. People & Access. CORE CLOSE overall PARTIAL / NOT OPERATIONAL. |
-| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** commit unless Architect ACCEPT COMMIT. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Product later committed/pushed/pinned. |
 | Next approved prompt | none — STOP |
-| Commit hash | none — NOT COMMITTED / NOT PUSHED |
+| Commit hash | product SHA **`9360b706ab66f2588306b201ca0c4c45645fcb9a`** |
 
 ### 2026-09-18 — FG-035 CORE CLOSE Slice A live migration
 

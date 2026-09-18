@@ -37,7 +37,7 @@ from app.services.shared_api import (
     ERROR_NOT_FOUND,
     api_error,
     get_organization_project,
-    list_organization_projects,
+    list_current_operating_projects,
     serialize_me,
     serialize_project,
 )
@@ -86,7 +86,7 @@ def me():
 @api_v1_bp.route("/projects", methods=["GET"])
 def list_projects():
     organization = get_current_organization()
-    projects = list_organization_projects(organization.id)
+    projects = list_current_operating_projects(organization.id)
     return jsonify(
         [serialize_project(project, organization.id) for project in projects]
     )

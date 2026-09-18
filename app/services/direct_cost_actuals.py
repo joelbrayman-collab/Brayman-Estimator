@@ -22,6 +22,7 @@ from app.models.direct_cost_actual import (
 from app.models.project import Project
 from app.services.auth import current_actor_display_name
 from app.services.organizations import get_current_organization_id
+from app.services.project_operating_lifecycle import raise_if_project_closed
 from app.services.pricing_engine import as_money
 
 
@@ -222,6 +223,7 @@ def create_direct_cost_actual(
     scoped = _organization_project(org_id, project.id if project is not None else None)
     if scoped is None or project is None or project.organization_id != org_id:
         raise DirectCostActualNotFoundError("Project was not found.")
+    raise_if_project_closed(project, DirectCostActualError)
     row = ProjectDirectCostActual(
         organization_id=org_id,
         project_id=project.id,

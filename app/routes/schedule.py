@@ -29,7 +29,7 @@ from app.services.schedule import (
     update_schedule_window,
     active_element_schedule_item,
 )
-from app.services.shared_api import list_organization_projects
+from app.services.shared_api import list_current_operating_projects
 
 schedule_bp = Blueprint("schedule", __name__, url_prefix="/schedule")
 
@@ -85,7 +85,7 @@ def company():
     return render_template(
         "schedule/company.html",
         view=view,
-        projects=list_organization_projects(organization.id),
+        projects=list_current_operating_projects(organization.id),
         selected_project_id=project_id,
     )
 
@@ -93,7 +93,7 @@ def company():
 @schedule_bp.route("/items/new", methods=["GET", "POST"])
 def new_item():
     organization = _org()
-    projects = list_organization_projects(organization.id)
+    projects = list_current_operating_projects(organization.id)
     try:
         project_id = _optional_int(request.values.get("project_id"))
     except (TypeError, ValueError):

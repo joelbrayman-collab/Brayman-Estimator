@@ -20,7 +20,7 @@ from app.services.project_performance import (
     FACT_SEQUENCE,
     assemble_project_attention,
 )
-from app.services.shared_api import list_organization_projects
+from app.services.shared_api import list_current_operating_projects
 
 SEALED_FACT_TYPES = frozenset(
     {
@@ -70,8 +70,8 @@ def assemble_company_attention(
 
 
 def _ordered_organization_projects(organization_id):
-    """Preserve list_organization_projects created_at desc, with id desc tiebreaker."""
-    projects = list(list_organization_projects(organization_id))
+    """Current-operating Projects only. Preserve created_at desc, id desc tiebreaker."""
+    projects = list(list_current_operating_projects(organization_id))
     return sorted(
         projects,
         key=lambda project: (project.created_at, project.id),

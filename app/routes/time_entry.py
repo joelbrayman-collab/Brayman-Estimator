@@ -21,7 +21,7 @@ from app.models.time_entry import (
     TIME_STATUS_SUBMITTED,
 )
 from app.services.organizations import get_current_organization
-from app.services.shared_api import list_organization_projects
+from app.services.shared_api import list_current_operating_projects, list_organization_projects
 from app.services.time_entry import (
     TimeEntryError,
     TimeEntryForbiddenError,
@@ -111,7 +111,7 @@ def review():
 @time_entry_bp.route("/new", methods=["GET", "POST"])
 def new_entry():
     organization = _org()
-    projects = list_organization_projects(organization.id)
+    projects = list_current_operating_projects(organization.id)
     project_id = None
     try:
         project_id = _optional_int(request.values.get("project_id"))

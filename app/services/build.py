@@ -42,6 +42,7 @@ from app.services.build_storage import (
     validate_image_bytes,
 )
 from app.services.organizations import get_current_organization_id
+from app.services.project_operating_lifecycle import raise_if_project_closed
 
 DERIVED_SOURCES = (DERIVED_SOURCE_TEST_FIXTURE, DERIVED_SOURCE_UAT_CLI, "PROCESSOR")
 
@@ -191,6 +192,7 @@ def create_field_event(
     org_id = organization_id or get_current_organization_id()
     if project is None or project.organization_id != org_id:
         raise BuildNotFoundError("Project was not found.")
+    raise_if_project_closed(project, BuildServiceError)
     uuid_norm = normalize_client_uuid(
         client_capture_uuid, field_name="client_capture_uuid"
     )
@@ -309,6 +311,7 @@ def add_text_original(
     *,
     client_original_uuid=None,
 ) -> FieldCaptureOriginal:
+    raise_if_project_closed(event.project, BuildServiceError)
     body = (text or "").strip()
     if not body:
         raise BuildServiceError("Text observation content is required.")
@@ -346,6 +349,7 @@ def add_binary_original(
     filename: str | None,
     client_original_uuid=None,
 ) -> FieldCaptureOriginal:
+    raise_if_project_closed(event.project, BuildServiceError)
     kind_norm = (kind or "").strip().lower()
     if kind_norm not in {ORIGINAL_KIND_AUDIO, ORIGINAL_KIND_IMAGE}:
         raise BuildServiceError("Original kind must be text, audio, or image.")

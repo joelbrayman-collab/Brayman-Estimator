@@ -9,6 +9,10 @@
     <div>
         <p class="eyebrow">Construction</p>
         <h1>Projects</h1>
+        <nav class="project-lifecycle-view" aria-label="Project list">
+            <a class="{% if list_view == 'current' %}is-current{% endif %}" href="{{ url_for('projects.list_projects', view='current') }}">{{ contractor_copy.PROJECT_LIST_CURRENT }}</a>
+            <a class="{% if list_view == 'closed' %}is-current{% endif %}" href="{{ url_for('projects.list_projects', view='closed') }}">{{ contractor_copy.PROJECT_LIST_CLOSED }}</a>
+        </nav>
     </div>
 
     <a class="button" href="{{ url_for('projects.create_project') }}">New Project</a>
@@ -39,8 +43,8 @@
 </table>
 {% else %}
 <div class="empty-state">
-    <h2>No projects yet</h2>
-    <p>Create a client first, then create the first construction project.</p>
+    <h2>{{ empty_title }}</h2>
+    <p>{{ empty_help }}</p>
 </div>
 {% endif %}
 {% endblock %}

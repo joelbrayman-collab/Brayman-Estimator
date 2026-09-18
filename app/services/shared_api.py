@@ -8,7 +8,7 @@ from flask import jsonify
 
 from app.models.client import Client
 from app.models.organization import Organization
-from app.models.project import OPERATING_STATE_ACTIVE, Project
+from app.models.project import OPERATING_STATE_ACTIVE, OPERATING_STATE_CLOSED, Project
 
 ME_FIELDS = (
     "user_id",
@@ -78,11 +78,23 @@ def list_organization_projects(organization_id: str):
 
 
 def list_current_operating_projects(organization_id: str):
-    """ACTIVE operating Projects only. Future current-work authority. Unused by Slice A consumers."""
+    """ACTIVE operating Projects only. Shared current-work authority."""
     return (
         Project.query.filter_by(
             organization_id=organization_id,
             operating_state=OPERATING_STATE_ACTIVE,
+        )
+        .order_by(Project.created_at.desc(), Project.id.desc())
+        .all()
+    )
+
+
+def list_closed_projects(organization_id: str):
+    """CLOSED operating Projects only. Historical discovery. Not an Archive product."""
+    return (
+        Project.query.filter_by(
+            organization_id=organization_id,
+            operating_state=OPERATING_STATE_CLOSED,
         )
         .order_by(Project.created_at.desc(), Project.id.desc())
         .all()

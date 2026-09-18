@@ -35,6 +35,7 @@ from app.models.work_structure import (
     WorkType,
 )
 from app.services.organizations import get_current_organization_id
+from app.services.project_operating_lifecycle import raise_if_project_closed
 
 
 class WorkStructureError(ValueError):
@@ -291,6 +292,7 @@ def seed_project_work_structure(
 ) -> ProjectWorkStructureSeed:
     org_id = _org_id(organization_id)
     project = _project_or_404(project_id, org_id)
+    raise_if_project_closed(project, WorkStructureError)
     if get_project_seed(project.id, organization_id=org_id):
         raise WorkStructureError("This project's work plan is already built.")
 
@@ -377,6 +379,7 @@ def add_project_element(
 ) -> ProjectWorkElement:
     org_id = _org_id(organization_id)
     project = _project_or_404(project_id, org_id)
+    raise_if_project_closed(project, WorkStructureError)
     name = (display_name or "").strip()
     if not name:
         raise WorkStructureError("Name is required.")
@@ -413,6 +416,7 @@ def add_project_activity(
     ).first()
     if not element:
         raise WorkStructureError("Work item not found.")
+    raise_if_project_closed(_project_or_404(element.project_id, org_id), WorkStructureError)
     name = (display_name or "").strip()
     if not name:
         raise WorkStructureError("Name is required.")

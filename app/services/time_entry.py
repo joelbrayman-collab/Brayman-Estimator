@@ -41,6 +41,7 @@ from app.models.work_structure import (
 )
 from app.services.auth import current_actor_display_name
 from app.services.organizations import get_current_organization_id
+from app.services.project_operating_lifecycle import raise_if_project_closed
 from app.services.work_scope import (
     WorkScopeError,
     actor_name,
@@ -313,6 +314,7 @@ def submit_time(
     """Create a SUBMITTED Time Entry. No draft. Worker confirms by submitting."""
     org_id = _org_id(organization_id)
     project = _project_or_404(project_id, org_id)
+    raise_if_project_closed(project, TimeEntryError)
     actor_id = worker_user_id if worker_user_id is not None else _actor_user_id()
     if actor_id is None:
         raise TimeEntryForbiddenError("Sign in to record time.")

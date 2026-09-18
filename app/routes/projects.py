@@ -4,6 +4,7 @@ from app import db
 from app.models import Client, Project
 from app.models.permit_intelligence import ADVISORY_AUTHORITY_LANGUAGE
 from app.models.project import DEFAULT_PERMIT_CONTEXT_CLASS, PERMIT_CONTEXT_CLASSES
+from app.presentation import contractor_copy
 from app.services.commercial_context import (
     DELIVERY_MODELS,
     ESTIMATE_STAGES,
@@ -32,6 +33,7 @@ from app.services.permit_intelligence import (
 )
 from app.services.permit_report_pdf import generate_permit_report_pdf
 from app.services.project_hub import assemble_project_hub
+from app.services.shared_api import list_closed_projects, list_current_operating_projects
 
 projects_bp = Blueprint("projects", __name__, url_prefix="/projects")
 
@@ -53,8 +55,24 @@ def _context_options():
 @projects_bp.route("/")
 def list_projects():
     org_id = get_current_organization_id()
-    projects = Project.query.filter_by(organization_id=org_id).order_by(Project.created_at.desc()).all()
-    return render_template("projects/list.html", projects=projects)
+    view = (request.args.get("view") or "current").strip().lower()
+    if view not in ("current", "closed"):
+        view = "current"
+    if view == "closed":
+        projects = list_closed_projects(org_id)
+        empty_title = contractor_copy.PROJECT_LIST_CLOSED_EMPTY
+        empty_help = "Closed Projects stay available from this list and from the Project Hub."
+    else:
+        projects = list_current_operating_projects(org_id)
+        empty_title = contractor_copy.PROJECT_LIST_CURRENT_EMPTY
+        empty_help = "Create a client first, then create the first construction project."
+    return render_template(
+        "projects/list.html",
+        projects=projects,
+        list_view=view,
+        empty_title=empty_title,
+        empty_help=empty_help,
+    )
 
 
 @projects_bp.route("/<int:id>")

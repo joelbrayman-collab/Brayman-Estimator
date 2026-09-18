@@ -10,6 +10,11 @@ from app.project_controls.models import (
     ChangeOrder,
     ChangeOrderItem,
 )
+from app.services.project_operating_lifecycle import (
+    project_is_closed,
+    raise_if_project_closed,
+)
+from app.presentation.contractor_copy import PROJECT_CLOSED_NEW_WORK
 
 MONEY = Decimal("0.01")
 HUNDRED = Decimal("100")
@@ -17,6 +22,9 @@ HUNDRED = Decimal("100")
 
 class ChangeOrderServiceError(Exception):
     pass
+
+
+ADMINISTRATIVE_CO_FIELDS = frozenset({"status", "notes"})
 
 
 def as_decimal(value, default="0"):
@@ -97,6 +105,7 @@ def create_change_order(
         raise ChangeOrderServiceError("Title is required.")
     if project is None:
         raise ChangeOrderServiceError("Project is required.")
+    raise_if_project_closed(project, ChangeOrderServiceError)
     if status not in CHANGE_ORDER_STATUSES:
         raise ChangeOrderServiceError("Select a valid status.")
 
@@ -170,6 +179,10 @@ def create_change_order(
 
 
 def update_change_order(change_order, **fields):
+    if project_is_closed(change_order.project):
+        extra = set(fields) - ADMINISTRATIVE_CO_FIELDS
+        if extra:
+            raise ChangeOrderServiceError(PROJECT_CLOSED_NEW_WORK)
     if "title" in fields:
         title = (fields["title"] or "").strip()
         if not title:
@@ -231,6 +244,7 @@ def add_change_order_item(
     unit="ea",
     unit_price=0,
 ):
+    raise_if_project_closed(change_order.project, ChangeOrderServiceError)
     description = (description or "").strip()
     unit = (unit or "").strip()
     if not description:
@@ -265,6 +279,7 @@ def update_change_order_item(
     unit=None,
     unit_price=None,
 ):
+    raise_if_project_closed(item.change_order.project, ChangeOrderServiceError)
     if description is not None:
         description = description.strip()
         if not description:
@@ -294,6 +309,7 @@ def update_change_order_item(
 
 def delete_change_order_item(item):
     change_order = item.change_order
+    raise_if_project_closed(change_order.project, ChangeOrderServiceError)
     change_order_id = change_order.id
     repo.delete_change_order_item(item)
     db.session.flush()

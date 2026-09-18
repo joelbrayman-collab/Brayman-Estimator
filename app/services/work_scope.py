@@ -32,6 +32,7 @@ from app.models.work_structure import (
 )
 from app.project_controls.models import ChangeOrder
 from app.services.work_structure import WorkStructureError, _org_id, _project_or_404
+from app.services.project_operating_lifecycle import raise_if_project_closed
 
 
 class WorkScopeError(WorkStructureError):
@@ -394,6 +395,7 @@ def add_authorized_change_order_element(
 ) -> ProjectWorkElement:
     org_id = _org_id(organization_id)
     project = _project_or_404(project_id, org_id)
+    raise_if_project_closed(project, WorkScopeError)
     change_order = require_project_change_order(
         change_order_id=change_order_id,
         project=project,
@@ -459,6 +461,7 @@ def add_authorized_change_order_activity(
     if not element:
         raise WorkScopeError("Work item not found.")
     project = _project_or_404(element.project_id, org_id)
+    raise_if_project_closed(project, WorkScopeError)
     change_order = require_project_change_order(
         change_order_id=change_order_id,
         project=project,
@@ -527,6 +530,7 @@ def apply_change_order_delta(
         raise WorkScopeError("Activity not found.")
     evidence = _activity_evidence_snapshot(activity)
     project = _project_or_404(activity.element.project_id, org_id)
+    raise_if_project_closed(project, WorkScopeError)
     change_order = require_project_change_order(
         change_order_id=change_order_id,
         project=project,
@@ -592,6 +596,7 @@ def create_extra_work(
 ) -> ProjectWorkActivity:
     org_id = _org_id(organization_id)
     project = _project_or_404(project_id, org_id)
+    raise_if_project_closed(project, WorkScopeError)
     name = (description or "").strip()
     if not name:
         raise WorkScopeError("Describe the extra work.")
@@ -759,6 +764,7 @@ def create_change_order_from_extra_work(
     if not activity:
         raise WorkScopeError("Activity not found.")
     project = _project_or_404(activity.element.project_id, org_id)
+    raise_if_project_closed(project, WorkScopeError)
     try:
         change_order = create_change_order(
             project=project,
@@ -796,6 +802,10 @@ def reclassify_extra_work_to_original(
         raise WorkScopeError("Activity not found.")
     if activity.scope_origin != SCOPE_EXTRA_WORK:
         raise WorkScopeError("Only extra work can be recorded as original work this way.")
+    raise_if_project_closed(
+        _project_or_404(activity.element.project_id, org_id),
+        WorkScopeError,
+    )
     evidence = _activity_evidence_snapshot(activity)
     prior_co = activity.change_order_id
     activity.scope_origin = SCOPE_ORIGINAL

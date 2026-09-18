@@ -189,6 +189,13 @@ LABOUR_NEEDS_ATTENTION_HEADING = "Needs attention"
 COMPANY_ATTENTION_HEADING = "Company Attention"
 COMPANY_ATTENTION_EYEBROW = "Company"
 COMPANY_ATTENTION_QUESTION = "Where does my business need attention?"
+PROJECT_CLOSED_NEW_WORK = (
+    "This Project is closed. Reopen it before adding new work."
+)
+PROJECT_LIST_CURRENT = "Current"
+PROJECT_LIST_CLOSED = "Closed"
+PROJECT_LIST_CURRENT_EMPTY = "No current projects."
+PROJECT_LIST_CLOSED_EMPTY = "No closed projects."
 LABOUR_GETTING_CLOSE = "Labour getting close"
 LABOUR_ALLOWANCE_USED = "Labour allowance used"
 LABOUR_OVER_ALLOWANCE = "Labour over allowance"

@@ -45,6 +45,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-18 — FG-035 CORE CLOSE Slice B current-operating consumers + CLOSED guards (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Switch current-operating Project consumers to shared lifecycle authority. Install service-level CLOSED guards on NEW operational work. Preserve historical Hub/direct access and administrative completion of existing Time/CO records. PERF-C enumeration only. No Close/Reopen. No live Close. No Punch List. No Completion Sign-Off. No migration. No commit. |
+| Business decision | Current \| Closed discovery. Default Current. CLOSED blocks NEW operational work. Existing Time approve/return/resubmit and CO status processing remain. Substantive Draft CO scope mutation blocked. |
+| Architectural decision | One reusable `raise_if_project_closed` helper. Consumers use `list_current_operating_projects`. `list_organization_projects` remains ALL. `get_organization_project` remains unfiltered. No Close/Reopen action. Alembic remains `b2c3d4e5f6a7`. |
+| Prompt template used | Architect CORE CLOSE Slice B implementation prompt |
+| Approved Cursor prompt summary | Slice B consumers + CLOSED guards; Current \| Closed; dedicated tests A–AJ; focused + full suite; min governance; no Close/Reopen; no live Close; no Punch List; no Sign-Off; no migration; no commit. |
+| Files expected to change | shared queries; Projects list; Schedule/Field/Time/API/PERF-C consumers; Schedule/Field/Time/Scope/CO/actuals services; dedicated tests; min governance |
+| Files prohibited from changing | Close/Reopen services/routes/UI; Punch List; Completion Sign-Off; People & Access; live operating_state; recovery stash; scorecard |
+| Implementation result | Working tree only. Live occupancy 50/50 ACTIVE/0 CLOSED/0 events. EST-2026-0019 unchanged. Grants 1. Stash preserved. |
+| Tests | Dedicated Slice B `tests/test_core_close_slice_b_fg035.py` **37 passed**. Slice A+B `tests/test_core_close_slice_b_fg035.py tests/test_core_close_slice_a_fg035.py` **55 passed**, 143 warnings, **20.67s**, exit **0**. Focused Schedule/Field/Time/CO/MONITOR/PERF-C/shared API/FG-037 **234 passed**, 745 warnings, **146.85s**, exit **0**. Focused Scope/work-structure **23 passed**, 193 warnings, **15.62s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` **1281 passed**, 4509 warnings, **644.63s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | No — not committed |
+| Constitutional issue raised | None |
+| Unresolved issues | Close/Reopen. Punch List. Completion Sign-Off. People & Access. CORE CLOSE overall PARTIAL / NOT OPERATIONAL. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** commit unless Architect ACCEPT COMMIT. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — NOT COMMITTED / NOT PUSHED |
+
 ### 2026-09-18 — FG-035 CORE CLOSE Slice A live migration
 
 | Field | Content |

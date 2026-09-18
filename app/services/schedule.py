@@ -50,6 +50,10 @@ from app.presentation.field_format import (
     field_job_site,
     field_project_label,
 )
+from app.services.project_operating_lifecycle import (
+    project_is_current_operating,
+    raise_if_project_closed,
+)
 
 
 class ScheduleError(Exception):
@@ -71,6 +75,16 @@ def _project_or_404(project_id: int, organization_id: str) -> Project:
     if project is None:
         raise ScheduleNotFoundError("Project not found.")
     return project
+
+
+def _require_current_operating_project(project: Project) -> None:
+    raise_if_project_closed(project, ScheduleError)
+
+
+def _current_operating_items(items, *, project_id: Optional[int] = None):
+    if project_id is not None:
+        return items
+    return [item for item in items if project_is_current_operating(item.project)]
 
 
 def actor_snapshot(user=None) -> tuple[Optional[int], str]:
@@ -314,6 +328,7 @@ def create_schedule_item(
 ) -> WorkScheduleItem:
     org_id = _org_id(organization_id)
     project = _project_or_404(project_id, org_id)
+    _require_current_operating_project(project)
     element = _element_for_org(project_work_element_id, org_id)
     if element.project_id != project.id:
         raise ScheduleError("That work item does not belong to this project.")
@@ -365,6 +380,7 @@ def update_schedule_window(
 ) -> WorkScheduleItem:
     org_id = _org_id(organization_id)
     item = get_schedule_item(item_id, organization_id=org_id)
+    _require_current_operating_project(item.project)
     if item.status != SCHEDULE_STATUS_ACTIVE:
         raise ScheduleError("Retired schedule cannot be edited. Create a new schedule.")
     start, end = parse_schedule_window(scheduled_start, scheduled_end)
@@ -436,6 +452,7 @@ def schedule_activity_with_element_adjustment(
     """Confirmed same-action Element window change plus Activity window."""
     org_id = _org_id(organization_id)
     project = _project_or_404(project_id, org_id)
+    _require_current_operating_project(project)
     element = _element_for_org(project_work_element_id, org_id)
     if element.project_id != project.id:
         raise ScheduleError("That work item does not belong to this project.")
@@ -522,7 +539,7 @@ def shift_project_schedule(
     organization_id: Optional[str] = None,
 ) -> list[WorkScheduleItem]:
     org_id = _org_id(organization_id)
-    _project_or_404(project_id, org_id)
+    _require_current_operating_project(_project_or_404(project_id, org_id))
     try:
         delta = timedelta(days=int(days))
     except (TypeError, ValueError) as exc:
@@ -660,6 +677,7 @@ def assign_user(
 ) -> WorkScheduleAssignment:
     org_id = _org_id(organization_id)
     item = get_schedule_item(item_id, organization_id=org_id)
+    _require_current_operating_project(item.project)
     if item.status != SCHEDULE_STATUS_ACTIVE:
         raise ScheduleError("Assign people to current schedule dates.")
     user = _require_active_org_user(int(worker_user_id), org_id)
@@ -693,6 +711,7 @@ def assign_crew(
 ) -> WorkScheduleAssignment:
     org_id = _org_id(organization_id)
     item = get_schedule_item(item_id, organization_id=org_id)
+    _require_current_operating_project(item.project)
     if item.status != SCHEDULE_STATUS_ACTIVE:
         raise ScheduleError("Assign a crew to current schedule dates.")
     crew = OrganizationCrew.query.filter_by(id=int(crew_id), organization_id=org_id).first()
@@ -730,6 +749,7 @@ def unassign_assignment(
 ) -> WorkScheduleItem:
     org_id = _org_id(organization_id)
     item = get_schedule_item(item_id, organization_id=org_id)
+    _require_current_operating_project(item.project)
     assignment = WorkScheduleAssignment.query.filter_by(
         id=assignment_id,
         organization_id=org_id,
@@ -761,6 +781,7 @@ def list_schedule_conflicts(
         _project_or_404(project_id, org_id)
         query = query.filter_by(project_id=project_id)
     items = query.order_by(WorkScheduleItem.id).all()
+    items = _current_operating_items(items, project_id=project_id)
     if window_start is not None and window_end is not None:
         items = [
             item
@@ -853,7 +874,10 @@ def _active_dependencies(organization_id: str, *, project_id: Optional[int] = No
     )
     if project_id is not None:
         query = query.filter_by(project_id=project_id)
-    return query.order_by(ProjectWorkDependency.id).all()
+    rows = query.order_by(ProjectWorkDependency.id).all()
+    if project_id is None:
+        rows = [row for row in rows if project_is_current_operating(row.project)]
+    return rows
 
 
 def _element_item_map(organization_id: str, *, project_id: Optional[int] = None) -> dict:
@@ -864,7 +888,8 @@ def _element_item_map(organization_id: str, *, project_id: Optional[int] = None)
     )
     if project_id is not None:
         query = query.filter_by(project_id=project_id)
-    return {item.project_work_element_id: item for item in query.all()}
+    items = _current_operating_items(query.all(), project_id=project_id)
+    return {item.project_work_element_id: item for item in items}
 
 
 def _dependency_conflict_facts(
@@ -1016,6 +1041,7 @@ def create_work_dependency(
 ) -> ProjectWorkDependency:
     org_id = _org_id(organization_id)
     project = _project_or_404(project_id, org_id)
+    _require_current_operating_project(project)
     predecessor = _element_for_org(predecessor_element_id, org_id)
     successor = _element_for_org(successor_element_id, org_id)
     if predecessor.project_id != project.id or successor.project_id != project.id:
@@ -1068,6 +1094,7 @@ def retire_work_dependency(
 ) -> ProjectWorkDependency:
     org_id = _org_id(organization_id)
     dependency = get_work_dependency(dependency_id, organization_id=org_id)
+    _require_current_operating_project(_project_or_404(dependency.project_id, org_id))
     _retire_dependency_row(dependency)
     if commit:
         db.session.commit()
@@ -1111,6 +1138,7 @@ def retire_schedule_item(
 ) -> WorkScheduleItem:
     org_id = _org_id(organization_id)
     item = get_schedule_item(item_id, organization_id=org_id)
+    _require_current_operating_project(item.project)
     if item.status == SCHEDULE_STATUS_INACTIVE:
         return item
     if item.project_work_activity_id is None:
@@ -1202,6 +1230,11 @@ def list_unscheduled_elements(
             .order_by(ProjectWorkElement.project_id, ProjectWorkElement.sort_order, ProjectWorkElement.id)
             .all()
         )
+        elements = [
+            element
+            for element in elements
+            if project_is_current_operating(element.project)
+        ]
     unscheduled = []
     for element in elements:
         if not element_is_schedulable(element):
@@ -1244,6 +1277,7 @@ def assemble_schedule(
         WorkScheduleItem.project_id,
         WorkScheduleItem.id,
     ).all()
+    items = _current_operating_items(items, project_id=project_id)
     visible = [
         item
         for item in items
@@ -1499,6 +1533,7 @@ def assemble_field_schedule(
         )
         .all()
     )
+    items = _current_operating_items(items)
     conflicts = list_schedule_conflicts(
         org_id,
         window_start=window_start,

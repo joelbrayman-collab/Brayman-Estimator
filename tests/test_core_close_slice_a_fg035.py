@@ -38,14 +38,6 @@ MIGRATION_PATH = (
     / "versions"
     / "b2c3d4e5f6a7_fg035_core_close_operating_state.py"
 )
-CONSUMER_MODULES = (
-    "app.routes.projects",
-    "app.routes.schedule",
-    "app.routes.field",
-    "app.routes.time_entry",
-    "app.routes.api_v1",
-    "app.services.company_attention",
-)
 
 
 @pytest.fixture
@@ -317,18 +309,11 @@ def test_get_organization_project_retrieves_closed(app, client_row):
     assert loaded.status == "Completed"
 
 
-def test_no_production_consumer_switched_to_current_only():
-    for module_name in CONSUMER_MODULES:
-        module = __import__(module_name, fromlist=["*"])
-        source = inspect.getsource(module)
-        assert "list_current_operating_projects" not in source
-        if module_name != "app.routes.projects":
-            assert "list_organization_projects" in source
-    from app.routes import projects as projects_routes
-
-    list_source = inspect.getsource(projects_routes.list_projects)
-    assert "list_current_operating_projects" not in list_source
-    assert "operating_state" not in list_source
+def test_slice_b_owns_current_operating_consumers():
+    """Slice B switches current-operating consumers. Slice A shared queries remain."""
+    assert callable(list_current_operating_projects)
+    assert callable(list_organization_projects)
+    assert callable(get_organization_project)
 
 
 def test_no_close_reopen_action_or_company_management_close():

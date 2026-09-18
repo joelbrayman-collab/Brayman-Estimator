@@ -53,6 +53,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — CORE CLOSE SLICE B (2026-09-18)
+
+| Field | Content |
+|-------|---------|
+| Slice | FG-035 CORE CLOSE Slice B current-operating consumers + CLOSED guards |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / TESTED / NO MIGRATION / NOT COMMITTED / NOT PUSHED.** No live Close. All live Projects remain ACTIVE. Close/Reopen UI does not exist. |
+| 1. What new contractor capability exists? | Projects list **Current \| Closed** (default Current). CLOSED Projects stay reachable from Closed and from the Project Hub. New work on a closed Project is refused with: “This Project is closed. Reopen it before adding new work.” |
+| 2. When would the contractor use it? | After a Project is Closed (not yet possible from the product). Until then Current looks like today’s Projects list. |
+| 3. What workflow will the final Manual need to teach? | Find a closed Project under Closed. Open the Hub historically. Do not add new Time, Schedule, Extra Work, Change Orders, or Field capture until Reopen exists. Finish existing Time / Change Order paperwork. |
+| 4. What contractor-facing terms must be used? | Current. Closed. This Project is closed. Reopen it before adding new work. Not Archive. |
+| 5. What screenshots / Print examples will eventually be needed? | Projects Current vs Closed. Closed Project Hub. The closed-Project error. Capture after Close/Reopen exists. |
+| 6. What warnings / validation distinctions need explanation? | Closed blocks new work. Existing submitted Time can still be approved or returned. Returned Time can be corrected and sent again. Existing Change Order status can still move; new lines and rewritten Draft scope cannot. Incomplete physical work is Punch List later, not this slice. |
+| 7. Desktop / iPhone / Print relevance | Desktop Projects Current \| Closed. Field picker/Today/Week/Month hide closed current work. iPhone Field capture/extra work fail closed if the selected Project is closed. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim Close/Reopen exists. Claim Punch List exists. |
+
 ### MANUAL IMPACT — CORE CLOSE SLICE A LIVE MIGRATION (2026-09-18)
 
 | Field | Content |

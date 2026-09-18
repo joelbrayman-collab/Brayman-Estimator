@@ -41,7 +41,7 @@ from app.services.schedule import (
     field_month_bounds,
     suggest_time_attribution,
 )
-from app.services.shared_api import get_organization_project, list_organization_projects
+from app.services.shared_api import get_organization_project, list_current_operating_projects
 from app.services.time_entry import (
     TimeEntryError,
     TimeEntryForbiddenError,
@@ -120,7 +120,7 @@ def field_root():
 @field_bp.route("/today")
 def today():
     organization = _organization()
-    projects = list_organization_projects(organization.id)
+    projects = list_current_operating_projects(organization.id)
     confirmed_id = _confirmed_project_id()
     project = None
     recent = []
@@ -247,7 +247,7 @@ def company_today():
 @field_bp.route("/projects")
 def projects():
     organization = _organization()
-    rows = list_organization_projects(organization.id)
+    rows = list_current_operating_projects(organization.id)
     return render_template(
         "field/projects.html",
         projects=rows,
@@ -319,8 +319,11 @@ def extra_work(project_id):
             )
             flash("Extra work recorded.", "success")
             return redirect(url_for("field.today"), code=302)
-        except (WorkScopeError, ValueError):
-            flash("Describe the extra work.", "error")
+        except (WorkScopeError, ValueError) as exc:
+            flash(
+                str(exc) if isinstance(exc, WorkScopeError) else "Describe the extra work.",
+                "error",
+            )
     elements = list_project_work_elements(project.id, organization_id=organization.id)
     return render_template(
         "field/extra_work.html",

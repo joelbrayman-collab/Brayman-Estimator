@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-18 — FG-038 PA-A Stage 1 live migration (ownerless checkpoint)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Commit accepted preflight docs; backup; live-apply `c3d4e5f6a7b8`; prove ownerless; test; record Stage 1. No Owner SET. |
+| Business decision | Stage 1 must remain ownerless. Intended future Owner Joel Brayman is recorded but not assigned. |
+| Architectural decision | Two-stage law held. Live current = graph head `c3d4e5f6a7b8`. Owner schema additive. Domain B unchanged. |
+| Prompt template used | Architect PA-A preflight ACCEPT + Stage 1 live migration |
+| Approved Cursor prompt summary | Commit/push preflight docs. Backup. flask db upgrade c3d4e5f6a7b8. Ownerless proof. Tests. Stage 1 docs commit/push. Do not run set-instance-owner. |
+| Files expected to change | live SQLite schema (additive); minimum governance docs |
+| Files prohibited from changing | Owner assignment; Sys Admin; People UI; Close/Reopen; recovery stash; scorecard |
+| Implementation result | `b2c3d4e5f6a7` → `c3d4e5f6a7b8 (head)`. Organizations 3 OWNERLESS. Events 0. Grants 1. Occupancy 50/50/0/0. SET CLI not run. Stash preserved. |
+| Tests | Dedicated 35 passed / 16.09s. Focused 113 passed / 46.06s. Full 1316 passed, 4597 warnings, 574.01s, exit 0. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Stage 2 explicit SET. PA-B. Close/Reopen. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Stage 2 requires a separate prompt. |
+| Next approved prompt | none — STOP |
+| Commit hash | this Stage 1 governance commit |
+
 ### 2026-09-18 — FG-038 PA-A live-migration + first-Owner preflight (docs-only)
 
 | Field | Content |

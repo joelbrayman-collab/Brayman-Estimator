@@ -1,6 +1,8 @@
 # Feature Gate FG-038: Instance Owner Authority Foundation (PA-A)
 
-**Subsequent status (2026-09-18 live-migration + first-Owner preflight):** [fg-038-pa-a-live-migration-owner-preflight.md](../architecture/fg-038-pa-a-live-migration-owner-preflight.md) **PREFLIGHT COMPLETE / LIVE MIGRATION NOT AUTHORIZED / OWNER ASSIGNMENT NOT AUTHORIZED.** Two-stage future operation. Live Alembic remains **`b2c3d4e5f6a7`**. All organizations remain ownerless. This gate is **not closed**.
+**Subsequent status (2026-09-18 Stage 1 live migration):** [testing/fg038-pa-a-live-migration-ownerless-checkpoint.md](../testing/fg038-pa-a-live-migration-ownerless-checkpoint.md) **PASS / LIVE-MIGRATED / NO OWNER ASSIGNED.** Live Alembic **`c3d4e5f6a7b8 (head)`**. All organizations remain ownerless. Owner SET events **0**. This gate is **not closed**.
+
+**Subsequent status (2026-09-18 live-migration + first-Owner preflight):** [fg-038-pa-a-live-migration-owner-preflight.md](../architecture/fg-038-pa-a-live-migration-owner-preflight.md) **PREFLIGHT COMPLETE.** Subsequent Stage 1 applied. Owner assignment **NOT AUTHORIZED**. This gate is **not closed**.
 
 | Attribute | Value |
 |----------|--------|
@@ -9,7 +11,7 @@
 | Target Milestone | Organization / office identity. Prerequisite for CORE CLOSE Close/Reopen authorization. Not a 12th major V1 package. Does **not** rescore V1. |
 | Module | **Organization subsystem** owns `Organization.instance_owner_membership_id` and `OrganizationInstanceOwnerEvent`. Office / platform later consumes `require_instance_owner_or_system_administrator`. No People & Access UI module. |
 | Date | 2026-09-18 |
-| Status | **OPEN / PARTIAL / PA-A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO OWNER ASSIGNED.** Product SHA **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`**. Additive **`c3d4e5f6a7b8`** revises **`b2c3d4e5f6a7`**. Live Alembic remains **`b2c3d4e5f6a7`**. All existing organizations remain **OWNERLESS**. System Administrator **DEFERRED TO PA-B**. People & Access UI **NOT IMPLEMENTED**. Close/Reopen **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11** (not rescored). Secondary Functional V1 Build **79% / 22 of 28** (not rescored). |
+| Status | **OPEN / PARTIAL / PA-A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / NO OWNER ASSIGNED.** Product SHA **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`**. Additive **`c3d4e5f6a7b8`** revises **`b2c3d4e5f6a7`**. Live Alembic **`c3d4e5f6a7b8 (head)`**. All existing organizations remain **OWNERLESS**. Owner SET events **0**. System Administrator **DEFERRED TO PA-B**. People & Access UI **NOT IMPLEMENTED**. Close/Reopen **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11** (not rescored). Secondary Functional V1 Build **79% / 22 of 28** (not rescored). |
 | Architecture | [people-and-access-product-direction.md](../architecture/people-and-access-product-direction.md) owner freeze. [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. **No new ADR.** [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) **CLOSED** (not reopened). [FG-037](FG-037-company-management-access-domain-authorization.md) **CLOSED** (not reopened). [FG-035](FG-035-project-work-structure-time-schedule-performance-learn.md) CORE CLOSE remains **PARTIAL / NOT OPERATIONAL**. |
 | Related ADRs | [ADR-041](../adr/ADR-041-user-membership-and-office-authentication.md) **Accepted**. No new ADR. |
 | Prerequisites | FG-018 office Users / membership **CLOSED**. People & Access freeze **RECORDED**. Authority-foundation preflight **PASS**. |
@@ -21,15 +23,15 @@
 | Layer | State |
 |-------|--------|
 | Feature Gate (this document) | **OPEN / PARTIAL** — PA-A foundation only |
-| Instance Owner pointer | **IMPLEMENTED / SHA-PINNED / NOT LIVE** — nullable `organizations.instance_owner_membership_id` |
-| SET events | **IMPLEMENTED / SHA-PINNED / NOT LIVE** — append-only `organization_instance_owner_events` |
-| Authority service | **IMPLEMENTED / SHA-PINNED / NOT LIVE** — `app/services/instance_authority.py` |
-| CLI | **IMPLEMENTED / SHA-PINNED / NOT LIVE** — `flask auth set-instance-owner --organization-id --membership-id --actor-user-id` |
+| Instance Owner pointer | **IMPLEMENTED / LIVE / OWNERLESS** — nullable `organizations.instance_owner_membership_id` |
+| SET events | **IMPLEMENTED / LIVE / EMPTY** — append-only `organization_instance_owner_events` count **0** |
+| Authority service | **IMPLEMENTED / LIVE / OWNERLESS FAIL CLOSED** — `app/services/instance_authority.py` |
+| CLI | **IMPLEMENTED / NOT RUN LIVE** — `flask auth set-instance-owner --organization-id --membership-id --actor-user-id` |
 | Live Owner assignment | **NOT AUTHORIZED / NOT PERFORMED** |
 | System Administrator | **DEFERRED TO PA-B** — `is_system_administrator` returns False |
 | People & Access UI | **NOT IMPLEMENTED** |
 | Close/Reopen | **NOT IMPLEMENTED** |
-| Schema / Alembic | Additive **`c3d4e5f6a7b8`** file created. **Not applied live.** Live current remains **`b2c3d4e5f6a7`**. Graph head **`c3d4e5f6a7b8`**. |
+| Schema / Alembic | Additive **`c3d4e5f6a7b8`** **applied live** 2026-09-18. Live current = graph head **`c3d4e5f6a7b8 (head)`**. |
 | V1 scoring | **NOT RESCORED** |
 
 ```text
@@ -40,7 +42,7 @@ TESTED
 COMMITTED
 PUSHED
 SHA-PINNED
-NOT LIVE-MIGRATED
+LIVE-MIGRATED
 NO OWNER ASSIGNED
 PRODUCT SHA 01e7463082b84b2fcd9d61ff7125a5012b7f8043
 OWNERLESS FAIL CLOSED

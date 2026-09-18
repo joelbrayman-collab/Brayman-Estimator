@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-18 — FG-038 PA-A Stage 1 live migration (ownerless checkpoint)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-038 PA-A Stage 1 live migration |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / NO OWNER ASSIGNED.** Product SHA **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`**. Live Alembic **`c3d4e5f6a7b8 (head)`**. Organizations **3 OWNERLESS**. Owner SET events **0**. Sys Admin **NOT IMPLEMENTED**. People & Access UI **NOT IMPLEMENTED**. Close/Reopen **NOT IMPLEMENTED**. |
+| Branch | `main` |
+| Base commit | `a42ffe59005f8e282d4dbbfcbcbc0b5bbb86db8d` |
+| Objective | Apply additive `c3d4e5f6a7b8` live. Prove ownerless. No Owner SET. |
+| Deliverables | Live schema; [testing/fg038-pa-a-live-migration-ownerless-checkpoint.md](testing/fg038-pa-a-live-migration-ownerless-checkpoint.md); minimum governance. |
+| Validation | `flask db upgrade c3d4e5f6a7b8` exit **0**. Dedicated **35 passed**. Focused **113 passed**. Full **1316 passed**, 4597 warnings, **574.01s**, exit **0**. Occupancy **50 / 50 ACTIVE / 0 CLOSED / 0 events**. Grants **1**. |
+| Architectural findings | Live current now equals graph head. Ownerless fail-closed proven. Domain B unchanged. Owner is not Domain B. |
+| Open decisions | Stage 2 explicit Owner SET. PA-B Sys Admin. Close/Reopen. |
+| Next milestone | Architect review. Do **not** assign Owner from this record. |
+| Commit | this Stage 1 governance commit |
+| Date | 2026-09-18 |
+
 ### 2026-09-18 — FG-038 PA-A product SHA pin
 
 | Field | Content |

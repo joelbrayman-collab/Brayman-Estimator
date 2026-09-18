@@ -2,18 +2,19 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PREFLIGHT COMPLETE / LIVE MIGRATION NOT AUTHORIZED / OWNER ASSIGNMENT NOT AUTHORIZED** |
+| Status | **PREFLIGHT COMPLETE.** Subsequent Stage 1 **PASS / LIVE-MIGRATED / NO OWNER ASSIGNED** ([testing/fg038-pa-a-live-migration-ownerless-checkpoint.md](../testing/fg038-pa-a-live-migration-ownerless-checkpoint.md)). Owner assignment **NOT AUTHORIZED**. |
 | Date | 2026-09-18 |
 | Gate | [FG-038](../feature-gates/FG-038-instance-owner-authority-foundation.md) **OPEN / PARTIAL** |
 | Product SHA | **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`** |
 | Pin SHA | **`bc084f96a868692b46c39ddaffcbf992ddedca03`** |
-| Alembic | Live current **`b2c3d4e5f6a7`**. Graph head **`c3d4e5f6a7b8`**. Mismatch **intentional**. |
+| Alembic | Live current = graph head **`c3d4e5f6a7b8 (head)`**. Subsequent Stage 1 applied **`b2c3d4e5f6a7` → `c3d4e5f6a7b8`**. |
 | V1 | **NOT RESCORED** (**65% / 4 of 11**; secondary **79% / 22 of 28**) |
 
 ```text
 FG-038 PA-A LIVE MIGRATION + FIRST OWNER PREFLIGHT:
 PREFLIGHT COMPLETE
-LIVE MIGRATION NOT AUTHORIZED
+STAGE 1 LIVE-MIGRATED
+NO OWNER ASSIGNED
 OWNER ASSIGNMENT NOT AUTHORIZED
 TWO-STAGE: MIGRATE THEN STOP THEN EXPLICIT SET
 NO SYS ADMIN
@@ -23,7 +24,7 @@ OWNER IS NOT DOMAIN B
 V1 NOT RESCORED
 ```
 
-This file freezes the **future operational sequence** only. It does **not** authorize `flask db upgrade`. It does **not** authorize `flask auth set-instance-owner` against live data. It does **not** choose the first Instance Owner.
+This file froze the two-stage operational sequence. Subsequent Stage 1 live migration is recorded in [testing/fg038-pa-a-live-migration-ownerless-checkpoint.md](../testing/fg038-pa-a-live-migration-ownerless-checkpoint.md). This file still does **not** authorize `flask auth set-instance-owner`. It does **not** choose the first Instance Owner.
 
 ---
 

@@ -15,6 +15,8 @@
 | Baseline | HEAD / `origin/main` **`f1940ebe1d80ab0e6e4feb795b7f97402a652bae`**. Live Alembic **`a0b1c2d3e4f5 (head)`**. Live `COMPANY_MANAGEMENT` grant rows **1** (ORG-001 Membership 1 / Joel Brayman). |
 | V1 | **NOT RESCORED** (official **65% / 4 of 11**; secondary Functional V1 Build **79% / 22 of 28**). Scorecard reconciliation is separate. |
 
+**Subsequent status (2026-09-18 live-migration + first-Owner preflight):** [fg-038-pa-a-live-migration-owner-preflight.md](fg-038-pa-a-live-migration-owner-preflight.md) **PREFLIGHT COMPLETE / LIVE MIGRATION NOT AUTHORIZED / OWNER ASSIGNMENT NOT AUTHORIZED.** This freeze is **not rewritten**. Live Owner assignment remains **NOT IMPLEMENTED**.
+
 **Subsequent status (2026-09-18 PA-A Instance Owner authority foundation):** [FG-038](../feature-gates/FG-038-instance-owner-authority-foundation.md) **OPEN / PARTIAL / PA-A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO OWNER ASSIGNED.** Product SHA **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`**. Additive **`c3d4e5f6a7b8`**. Live Alembic remains **`b2c3d4e5f6a7`**. All organizations remain ownerless. This freeze is **not rewritten**. People & Access UI, Sys Admin, and live Owner assignment remain **NOT IMPLEMENTED**.
 
 **Subsequent status (2026-09-18 CORE CLOSE freeze):** [core-close-project-lifecycle-product-direction.md](core-close-project-lifecycle-product-direction.md) **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED**. Close / Reopen is Instance Owner or System Administrator only. This People & Access freeze is **not rewritten**. Do **not** implement People & Access or CORE CLOSE from either file.

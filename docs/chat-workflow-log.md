@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-18 — FG-038 PA-A live-migration + first-Owner preflight (docs-only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Freeze two-stage live migrate then explicit first ORG-001 SET. No live mutation. |
+| Business decision | Preflight only. Architect/Joel must still choose membership-id and actor-user-id. Product-direction §19 Joel YES is not Stage 2 authorization. |
+| Architectural decision | Stage 1 migrate `c3d4e5f6a7b8` then ownerless STOP. Stage 2 explicit CLI SET. PA-A CLI actor is any active User; not Owner/Sys Admin/B. Owner is not Domain B. |
+| Prompt template used | Architect PA-A live-migration + first Owner implementation preflight |
+| Approved Cursor prompt summary | READ-ONLY / DOCS-ONLY. No flask db upgrade. No set-instance-owner. Record ORG-001 membership facts without choosing Owner. |
+| Files expected to change | Preflight record + minimum index pointers |
+| Files prohibited from changing | Live DB; product code; Close/Reopen; Sys Admin; People UI; recovery stash; scorecard |
+| Implementation result | Preflight recorded. Live Alembic remains `b2c3d4e5f6a7`. Instance Owners 0. Grants 1. Stash preserved. |
+| Tests | None this preflight. Historical dedicated 35 / focused 150 / full 1316 remain product-close evidence only. |
+| Project-state-report update | No (not a coded milestone) |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Stage 1 live migrate. Stage 2 explicit Owner SET. PA-B. Close/Reopen. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** assign Owner. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — docs-only working tree |
+
 ### 2026-09-18 — FG-038 PA-A product SHA pin
 
 | Field | Content |

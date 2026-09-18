@@ -1,5 +1,7 @@
 # Feature Gate FG-038: Instance Owner Authority Foundation (PA-A)
 
+**Subsequent status (2026-09-18 live-migration + first-Owner preflight):** [fg-038-pa-a-live-migration-owner-preflight.md](../architecture/fg-038-pa-a-live-migration-owner-preflight.md) **PREFLIGHT COMPLETE / LIVE MIGRATION NOT AUTHORIZED / OWNER ASSIGNMENT NOT AUTHORIZED.** Two-stage future operation. Live Alembic remains **`b2c3d4e5f6a7`**. All organizations remain ownerless. This gate is **not closed**.
+
 | Attribute | Value |
 |----------|--------|
 | Feature Gate ID | `FG-038` |

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ contractor_copy.PROJECT_CLOSE_ACTION }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.PROJECT_CLOSE_ACTION }}{% endblock %}
+
+{% block content %}
+<div class="lifecycle-confirm form-panel">
+    <p class="eyebrow">{{ project.name }}</p>
+    <h1>{{ contractor_copy.PROJECT_CLOSE_CONFIRM_TITLE }}</h1>
+    <p class="lede">{{ contractor_copy.PROJECT_CLOSE_CONFIRM_LEDE }}</p>
+    <form method="post" action="{{ url_for('projects.close_project', id=project.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-actions">
+            <button type="submit">{{ contractor_copy.PROJECT_CLOSE_ACTION }}</button>
+            <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">{{ contractor_copy.PROJECT_LIFECYCLE_CANCEL }}</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

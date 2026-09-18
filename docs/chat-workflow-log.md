@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-18 — FG-035 CORE CLOSE Close/Reopen Option A (working tree / not committed)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Implement CORE CLOSE Close/Reopen Option A in working tree. No live Close. No commit. |
+| Business decision | Close/Reopen is Instance Owner / future Sys Admin. COMPANY_MANAGEMENT is not Close authority. Invalid repeats fail-and-flash. No Punch List / Sign-Off. |
+| Architectural decision | Use existing PA-A helper and `ProjectOperatingStateEvent`. No migration. Hub confirmation GET then POST. Hide New Change Order on CLOSED Hub. |
+| Prompt template used | Architect CORE CLOSE CLOSE/REOPEN OPTION A implementation |
+| Approved Cursor prompt summary | Implement Close/Reopen Option A code + tests + minimum governance in working tree only. No live Close. No commit/push. |
+| Files expected to change | lifecycle service, Projects routes/templates, Hub, dedicated tests, Slice A/B/FG-038 absence assertions, minimum governance, Manual Impact |
+| Files prohibited from changing | live Projects; live Owner; COMPANY_MANAGEMENT grants; migrations; Punch List; Sign-Off; Sys Admin; recovery stash; scorecard |
+| Implementation result | Option A in working tree. Live occupancy unchanged 50/50/0/0. Owner Membership 1. Events 1. Grants 1. Stash preserved. |
+| Tests | Dedicated 22 passed / 18.23s. Slice A+B 55 passed / 18.54s. FG-038 35 passed / 18.61s. Full 1338 passed, 4730 warnings, 966.45s, exit 0. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Architect ACCEPT COMMIT. Live Close UAT. Punch List. Completion Sign-Off. PA-B. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** commit or Close a live Project. |
+| Next approved prompt | none — STOP |
+| Commit hash | none — not committed |
+
 ### 2026-09-18 — FG-038 PA-A Stage 2 first Instance Owner SET
 
 | Field | Content |

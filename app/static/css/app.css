@@ -675,6 +675,40 @@ button:hover,
     padding: 28px;
 }
 
+.hub-heading-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.hub-operating-identity {
+    margin: 12px 0 0;
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.lifecycle-confirm {
+    max-width: 760px;
+    padding: 40px 44px;
+}
+
+.lifecycle-confirm h1 {
+    margin: 8px 0 0;
+    font-size: 2.1rem;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+}
+
+.lifecycle-confirm .lede {
+    margin: 20px 0 32px;
+    font-size: 1.22rem;
+    line-height: 1.6;
+    max-width: 42rem;
+}
+
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

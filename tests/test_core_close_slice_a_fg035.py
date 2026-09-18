@@ -316,26 +316,17 @@ def test_slice_b_owns_current_operating_consumers():
     assert callable(get_organization_project)
 
 
-def test_no_close_reopen_action_or_company_management_close():
-    app_root = REPO_ROOT / "app"
-    forbidden = (
-        "def close_project",
-        "def reopen_project",
-        "close_project(",
-        "reopen_project(",
-    )
-    hits = []
-    for path in app_root.rglob("*.py"):
-        text = path.read_text(encoding="utf-8")
-        for token in forbidden:
-            if token in text:
-                hits.append(f"{path.relative_to(REPO_ROOT)}:{token}")
-    assert hits == []
+def test_no_close_reopen_via_company_management():
+    """Close/Reopen exists, but Domain B still does not confer it."""
     from app.services import access_domains
+    from app.services import project_operating_lifecycle as lifecycle
 
+    assert callable(lifecycle.close_project)
+    assert callable(lifecycle.reopen_project)
     access_source = inspect.getsource(access_domains)
     assert "close_project" not in access_source
     assert "operating_state" not in access_source
+    assert "reopen_project" not in access_source
 
 
 def test_no_archived_operating_state_or_uat_flag_or_status_reuse():

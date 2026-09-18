@@ -1,9 +1,15 @@
-from flask import Blueprint, flash, redirect, render_template, request, send_file, url_for
+from flask import Blueprint, abort, flash, redirect, render_template, request, send_file, url_for
+from flask_login import current_user
 
 from app import db
 from app.models import Client, Project
 from app.models.permit_intelligence import ADVISORY_AUTHORITY_LANGUAGE
-from app.models.project import DEFAULT_PERMIT_CONTEXT_CLASS, PERMIT_CONTEXT_CLASSES
+from app.models.project import (
+    DEFAULT_PERMIT_CONTEXT_CLASS,
+    OPERATING_STATE_ACTIVE,
+    OPERATING_STATE_CLOSED,
+    PERMIT_CONTEXT_CLASSES,
+)
 from app.presentation import contractor_copy
 from app.services.commercial_context import (
     DELIVERY_MODELS,
@@ -18,7 +24,15 @@ from app.services.commercial_context import (
     update_commercial_context,
 )
 from app.services.auth import current_actor_display_name, form_actor
+from app.services.instance_authority import require_instance_owner_or_system_administrator
 from app.services.organizations import get_current_organization_id
+from app.services.project_operating_lifecycle import (
+    ProjectLifecycleError,
+    ProjectLifecycleUnauthorizedError,
+    close_project,
+    hub_operating_template_vars,
+    reopen_project,
+)
 from app.services.permit_foundation import (
     PermitFoundationError,
     establish_project_location_and_profile,
@@ -87,7 +101,70 @@ def view_project(id):
         estimates=hub["estimates"],
         proposals=hub["proposals"],
         change_orders=hub["change_orders"],
+        **hub_operating_template_vars(project, org_id, current_user),
     )
+
+
+def _lifecycle_gate():
+    gate = require_instance_owner_or_system_administrator()
+    if gate is not None:
+        return gate
+    return None
+
+
+def _scoped_project(project_id):
+    org_id = get_current_organization_id()
+    return Project.query.filter_by(id=project_id, organization_id=org_id).first_or_404()
+
+
+@projects_bp.route("/<int:id>/close", methods=["GET", "POST"], endpoint="close_project")
+def close_project_action(id):
+    denied = _lifecycle_gate()
+    if denied is not None:
+        return denied
+    project = _scoped_project(id)
+    if request.method == "GET":
+        if project.operating_state != OPERATING_STATE_ACTIVE:
+            flash(contractor_copy.PROJECT_ALREADY_CLOSED, "error")
+            return redirect(url_for("projects.view_project", id=project.id))
+        return render_template(
+            "projects/close_confirm.html",
+            project=project,
+        )
+    try:
+        close_project(project, current_user)
+    except ProjectLifecycleUnauthorizedError:
+        abort(403)
+    except ProjectLifecycleError as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("projects.view_project", id=project.id))
+    flash(contractor_copy.PROJECT_CLOSED_FLASH, "success")
+    return redirect(url_for("projects.view_project", id=project.id))
+
+
+@projects_bp.route("/<int:id>/reopen", methods=["GET", "POST"], endpoint="reopen_project")
+def reopen_project_action(id):
+    denied = _lifecycle_gate()
+    if denied is not None:
+        return denied
+    project = _scoped_project(id)
+    if request.method == "GET":
+        if project.operating_state != OPERATING_STATE_CLOSED:
+            flash(contractor_copy.PROJECT_ALREADY_CURRENT, "error")
+            return redirect(url_for("projects.view_project", id=project.id))
+        return render_template(
+            "projects/reopen_confirm.html",
+            project=project,
+        )
+    try:
+        reopen_project(project, current_user)
+    except ProjectLifecycleUnauthorizedError:
+        abort(403)
+    except ProjectLifecycleError as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("projects.view_project", id=project.id))
+    flash(contractor_copy.PROJECT_REOPENED_FLASH, "success")
+    return redirect(url_for("projects.view_project", id=project.id))
 
 
 @projects_bp.route("/new", methods=["GET", "POST"])

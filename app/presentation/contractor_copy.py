@@ -194,6 +194,25 @@ PROJECT_CLOSED_NEW_WORK = (
 )
 PROJECT_LIST_CURRENT = "Current"
 PROJECT_LIST_CLOSED = "Closed"
+PROJECT_CLOSE_ACTION = "Close Project"
+PROJECT_REOPEN_ACTION = "Reopen Project"
+PROJECT_ALREADY_CLOSED = "This Project is already closed."
+PROJECT_ALREADY_CURRENT = "This Project is already current."
+PROJECT_CLOSED_FLASH = "This Project is closed."
+PROJECT_REOPENED_FLASH = "This Project is current."
+PROJECT_CLOSE_CONFIRM_LEDE = (
+    "Closing removes this Project from current operating work. "
+    "Historical Project information remains available. "
+    "New work cannot be added unless the Project is reopened."
+)
+PROJECT_REOPEN_CONFIRM_LEDE = (
+    "Reopening returns this Project to current operating work. "
+    "Existing Project history remains unchanged. "
+    "New operating work may again be added under existing product rules."
+)
+PROJECT_CLOSE_CONFIRM_TITLE = "Close this Project?"
+PROJECT_REOPEN_CONFIRM_TITLE = "Reopen this Project?"
+PROJECT_LIFECYCLE_CANCEL = "Cancel"
 PROJECT_LIST_CURRENT_EMPTY = "No current projects."
 PROJECT_LIST_CLOSED_EMPTY = "No closed projects."
 LABOUR_GETTING_CLOSE = "Labour getting close"

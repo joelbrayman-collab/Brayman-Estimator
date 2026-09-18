@@ -1,7 +1,8 @@
 """Dedicated FG-035 CORE CLOSE Slice B consumer + CLOSED-guard tests.
 
 Synthetic CLOSED Projects in the memory TEST DB only. No live Close.
-No Close/Reopen product. No Punch List. No Completion Sign-Off.
+Close/Reopen Option A is covered in test_core_close_close_reopen_fg035.py.
+No Punch List. No Completion Sign-Off.
 """
 
 from __future__ import annotations
@@ -734,19 +735,16 @@ def test_list_current_operating_projects_remains_active_only(app):
     assert all(row.operating_state != OPERATING_STATE_CLOSED for row in rows)
 
 
-def test_no_close_reopen_product_exists():
-    hits = []
-    for path in (REPO_ROOT / "app").rglob("*.py"):
-        text = path.read_text(encoding="utf-8")
-        for token in ("def close_project", "def reopen_project"):
-            if token in text:
-                hits.append(f"{path.relative_to(REPO_ROOT)}:{token}")
-    assert hits == []
+def test_close_reopen_exists_outside_company_management():
+    from app.services import project_operating_lifecycle as lifecycle
     from app.routes import projects as projects_routes
 
+    assert callable(lifecycle.close_project)
+    assert callable(lifecycle.reopen_project)
     source = inspect.getsource(projects_routes)
-    assert "close_project" not in source
-    assert "reopen_project" not in source
+    assert "endpoint=\"close_project\"" in source or "close_project" in source
+    assert "endpoint=\"reopen_project\"" in source or "reopen_project" in source
+    assert "require_instance_owner_or_system_administrator" in source
 
 
 def test_no_company_management_close_authority():

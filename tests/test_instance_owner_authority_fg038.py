@@ -567,11 +567,9 @@ def test_no_http_set_owner_route():
     assert hits == []
 
 
-def test_no_close_reopen_or_sys_admin_schema():
+def test_no_sys_admin_schema_close_uses_owner_helper():
     app_root = REPO_ROOT / "app"
     forbidden = (
-        "def close_project",
-        "def reopen_project",
         "SYSTEM_ADMIN",
         "system_administrator_membership_id",
     )
@@ -582,6 +580,17 @@ def test_no_close_reopen_or_sys_admin_schema():
             if token in text:
                 hits.append(f"{path}: {token}")
     assert hits == []
+    authority = (REPO_ROOT / "app" / "services" / "instance_authority.py").read_text(
+        encoding="utf-8"
+    )
+    assert "def close_project" not in authority
+    assert "def reopen_project" not in authority
+    lifecycle = (
+        REPO_ROOT / "app" / "services" / "project_operating_lifecycle.py"
+    ).read_text(encoding="utf-8")
+    assert "def close_project" in lifecycle
+    assert "def reopen_project" in lifecycle
+    assert "COMPANY_MANAGEMENT" not in lifecycle
     assert RECOGNIZED_STORED_DOMAINS == frozenset({ACCESS_DOMAIN_COMPANY_MANAGEMENT})
     assert callable(require_access_domain)
 

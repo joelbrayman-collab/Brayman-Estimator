@@ -15,6 +15,8 @@ from flask import (
     url_for,
 )
 
+from flask_login import current_user
+
 from app.models.project import Project
 from app.services.build import (
     BuildConflictError,
@@ -47,6 +49,7 @@ from app.services.direct_cost_actuals import (
 )
 from app.services.organizations import get_current_organization_id
 from app.services.project_hub import assemble_project_hub
+from app.services.project_operating_lifecycle import hub_operating_template_vars
 
 build_bp = Blueprint("build", __name__)
 
@@ -92,7 +95,8 @@ def _hub_monitor_redirect(project):
 
 
 def _render_hub_with_actuals_form(project, form, *, supersede_actual_id=None, status=400):
-    hub = assemble_project_hub(project, get_current_organization_id())
+    org_id = get_current_organization_id()
+    hub = assemble_project_hub(project, org_id)
     return (
         render_template(
             "projects/detail.html",
@@ -103,6 +107,7 @@ def _render_hub_with_actuals_form(project, form, *, supersede_actual_id=None, st
             change_orders=hub["change_orders"],
             actuals_form=form,
             supersede_actual_id=supersede_actual_id,
+            **hub_operating_template_vars(project, org_id, current_user),
         ),
         status,
     )

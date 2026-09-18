@@ -32,6 +32,22 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-18 — FG-035 CORE CLOSE Close/Reopen Option A (working tree / not committed)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 CORE CLOSE Close/Reopen Option A |
+| Status | **IMPLEMENTED IN WORKING TREE / TESTED / NO MIGRATION / NOT COMMITTED / NOT PUSHED / NOT LIVE-UATed.** Authorization = Instance Owner / future System Administrator. `COMPANY_MANAGEMENT` is **not** Close/Reopen authority. Close and Reopen **NOT LIVE-EXECUTED**. Punch List **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE overall **PARTIAL / NOT YET SEALED**. |
+| Branch | `main` |
+| Base commit | `acb6e1e0df7c84047e8cfa748cea160108b24b9e` |
+| Objective | Implement Hub Close/Reopen Option A using existing PA-A authority and lifecycle schema. No live Close. No commit. |
+| Deliverables | `close_project` / `reopen_project`; GET/POST confirmation; Hub Current/Closed identity; hide New Change Order on CLOSED Hub; dedicated tests; minimum governance; Manual Impact. |
+| Validation | Dedicated **22 passed**, 133 warnings, **18.23s**, exit **0**. Slice A+B **55 passed**, 143 warnings, **18.54s**. FG-038 **35 passed**, 88 warnings, **18.61s**. Full suite **1338 passed**, 4730 warnings, **966.45s**, exit **0**. Live occupancy 50 / 50 ACTIVE / 0 CLOSED / 0 events. |
+| Architectural findings | Existing `ProjectOperatingStateEvent` is sufficient. Domain B is not Close authority. Invalid repeats fail-and-flash. No migration. |
+| Open decisions | Architect ACCEPT COMMIT. Labeled live Close/Reopen UAT. Punch List. Completion Sign-Off. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Do **not** commit, push, SHA-pin, or Close a live Project from this record. |
+| SHA / tag | none — not committed |
+
 ### 2026-09-18 — FG-038 PA-A Stage 2 first Instance Owner SET
 
 | Field | Content |

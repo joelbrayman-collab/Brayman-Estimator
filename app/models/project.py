@@ -208,7 +208,7 @@ class Project(db.Model):
 
 
 class ProjectOperatingStateEvent(db.Model):
-    """Append-only CORE CLOSE lifecycle audit. Future Close/Reopen only."""
+    """Append-only CORE CLOSE lifecycle audit. Close / Reopen Option A."""
 
     __tablename__ = "project_operating_state_events"
     __table_args__ = (

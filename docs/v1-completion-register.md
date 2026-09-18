@@ -8,6 +8,8 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-09-18 CORE CLOSE CLOSE/REOPEN OPTION A working tree):** Close/Reopen Option A **IMPLEMENTED IN WORKING TREE / TESTED / NO MIGRATION / NOT COMMITTED / NOT PUSHED / NOT LIVE-UATed.** This record **does not rescore** V1. CORE CLOSE overall remains **PARTIAL / NOT YET SEALED**.
+
 **Subsequent status (2026-09-18 FG-038 PA-A Stage 2 first Owner SET):** [testing/fg038-pa-a-first-instance-owner-authority-uat.md](testing/fg038-pa-a-first-instance-owner-authority-uat.md) **PASS / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS.** ORG-001 Owner = Membership **1** / User **1** / Joel Brayman. This record **does not rescore** V1.
 
 **Subsequent status (2026-09-18 FG-038 PA-A Stage 1 live migration):** [testing/fg038-pa-a-live-migration-ownerless-checkpoint.md](testing/fg038-pa-a-live-migration-ownerless-checkpoint.md) **PASS / LIVE-MIGRATED.** Subsequent Stage 2 assigned the first Owner. This record **does not rescore** V1.

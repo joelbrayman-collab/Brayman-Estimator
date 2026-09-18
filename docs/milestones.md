@@ -34,7 +34,24 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
-### 2026-09-18 — FG-035 CORE CLOSE Slice A foundation (working tree / not committed)
+### 2026-09-18 — FG-035 CORE CLOSE Slice A SHA pin
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 CORE CLOSE Slice A pin |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED.** Product SHA **`f4b7515664c51850f3d87ed79f4a7e1226886fbd`**. Close/Reopen **NOT IMPLEMENTED**. Punch List **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. |
+| Branch | `main` |
+| Base commit | `f4b7515664c51850f3d87ed79f4a7e1226886fbd` |
+| Objective | Pin Slice A product SHA. No live migrate. |
+| Deliverables | Minimum governance SHA pin. |
+| Validation | Product tests not rerun. Accepted dedicated **18** / focused **176** / full **1244**. Live current remains **`a0b1c2d3e4f5`**. |
+| Architectural findings | Graph head `b2c3d4e5f6a7` vs live current `a0b1c2d3e4f5` is intentional. |
+| Open decisions | Live migrate. Close/Reopen action. Consumer switches. Punch List. Completion Sign-Off. |
+| Next milestone | Architect review. Do **not** live-migrate from this pin. |
+| Commit | this pin |
+| Date | 2026-09-18 |
+
+### 2026-09-18 — FG-035 CORE CLOSE Slice A foundation (working tree / then product-committed)
 
 | Field | Content |
 |-------|---------|

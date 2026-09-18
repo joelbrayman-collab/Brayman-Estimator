@@ -45,7 +45,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
-### 2026-09-18 — FG-035 CORE CLOSE Slice A foundation (working tree / not committed)
+### 2026-09-18 — FG-035 CORE CLOSE Slice A SHA pin (docs-only)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Pin CORE CLOSE Slice A product SHA after commit/push. No live migrate. No product expansion. |
+| Business decision | None. |
+| Architectural decision | Slice A remains foundation only. Close/Reopen/Punch List/Sign-Off not implemented. Live Alembic remains `a0b1c2d3e4f5`. |
+| Prompt template used | Architect CORE CLOSE Slice A ACCEPT COMMIT / PUSH / SHA PIN |
+| Approved Cursor prompt summary | Validate accepted Slice A; commit `feat: implement FG-035 CORE CLOSE Slice A operating state`; push; pin `docs: pin FG-035 CORE CLOSE Slice A SHA`; push. No live migrate. Preserve stash. |
+| Files expected to change | minimum CORE CLOSE / FG-035 governance SHA pin |
+| Files prohibited from changing | Close/Reopen services; Punch List; Completion Sign-Off; live flask db upgrade; recovery stash |
+| Implementation result | Product SHA **`f4b7515664c51850f3d87ed79f4a7e1226886fbd`**. Not live-migrated. Stash preserved. |
+| Tests | Not rerun. Accepted evidence remains dedicated **18** / focused **176** / full **1244**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate. Close/Reopen waits persisted Instance Owner. Consumer switches. Punch List. Completion Sign-Off. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. |
+| Next approved prompt | none — STOP |
+| Commit hash | this pin |
+
+### 2026-09-18 — FG-035 CORE CLOSE Slice A foundation (working tree / then product-committed)
 
 | Field | Content |
 |-------|---------|
@@ -67,7 +91,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Close/Reopen waits persisted Instance Owner. Consumer switches later. Punch List later. Completion Sign-Off later. Live migrate later. |
 | Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** commit unless Architect ACCEPT COMMIT. Do **not** live-migrate. |
 | Next approved prompt | Architect ACCEPT COMMIT of CORE CLOSE Slice A — not this note |
-| Commit hash | **NOT COMMITTED** |
+| Commit hash | product SHA **`f4b7515664c51850f3d87ed79f4a7e1226886fbd`** |
 
 ### 2026-09-18 — FG-035 CORE CLOSE / Project lifecycle owner freeze (docs-only)
 

@@ -58,7 +58,7 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 | Field | Content |
 |-------|---------|
 | Slice | FG-035 CORE CLOSE Slice A foundation |
-| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT LIVE-MIGRATED / NOT COMMITTED.** No Close UI. No Punch List. No Completion Sign-Off. No contractor-facing lifecycle change. |
+| Product status at capture | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED.** Product SHA **`f4b7515664c51850f3d87ed79f4a7e1226886fbd`**. No Close UI. No Punch List. No Completion Sign-Off. No contractor-facing lifecycle change. |
 | 1. What new contractor capability exists? | None now. Foundation only. |
 | 2. When would the contractor use it? | Not yet. Later Close / Punch List / Completion Sign-Off surfaces. |
 | 3. What workflow will the final Manual need to teach? | Same as the owner freeze: current vs historical work; Punch List before Completion Sign-Off; physical work vs administrative Change Order completion. |

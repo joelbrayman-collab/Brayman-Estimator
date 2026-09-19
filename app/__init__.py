@@ -258,6 +258,7 @@ def create_app(config=None):
     from app.routes.estimates import estimates_bp
     from app.routes.main import main_bp
     from app.routes.projects import projects_bp
+    from app.routes.punch_list import punch_list_bp
     from app.routes.proposal_templates import proposal_templates_bp
     from app.routes.proposals import proposals_bp
     from app.routes.historical_estimates import bp as historical_estimates_bp
@@ -284,6 +285,7 @@ def create_app(config=None):
     app.register_blueprint(main_bp)
     app.register_blueprint(clients_bp)
     app.register_blueprint(projects_bp)
+    app.register_blueprint(punch_list_bp)
     app.register_blueprint(cost_library_bp)
     app.register_blueprint(assemblies_bp)
     app.register_blueprint(estimates_bp)

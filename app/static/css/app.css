@@ -690,6 +690,84 @@ button:hover,
     letter-spacing: -0.01em;
 }
 
+.punch-list-summary {
+    margin: 8px 0 16px;
+    font-size: 1.7rem;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+}
+
+.punch-list {
+    list-style: none;
+    margin: 28px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 28px;
+}
+
+.punch-list-item {
+    padding: 28px 32px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--white);
+}
+
+.punch-list-item-description {
+    margin: 0;
+    font-size: 1.28rem;
+    line-height: 1.5;
+    max-width: 46rem;
+}
+
+.punch-list-item-meta {
+    margin: 12px 0 0;
+    font-size: 1.05rem;
+    color: var(--muted, #5c6570);
+}
+
+.punch-list-item.is-complete .punch-list-item-description {
+    color: var(--muted, #5c6570);
+}
+
+.punch-list-add,
+.punch-list-edit {
+    margin-top: 28px;
+    max-width: 42rem;
+}
+
+.punch-list-add h3 {
+    margin: 0 0 20px;
+    font-size: 1.45rem;
+    letter-spacing: -0.02em;
+}
+
+.punch-list-add textarea,
+.punch-list-edit textarea {
+    min-height: 8rem;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.punch-list-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.punch-list-action {
+    margin-top: 20px;
+}
+
+.button-secondary,
+a.button-secondary {
+    background: transparent;
+    color: inherit;
+    border: 1px solid var(--border);
+}
+
 .lifecycle-confirm {
     max-width: 760px;
     padding: 40px 44px;

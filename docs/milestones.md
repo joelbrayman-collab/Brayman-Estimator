@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-18 — FG-035 CORE CLOSE C1 Contractor Punch List (working tree / not committed)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 CORE CLOSE C1 Contractor Punch List |
+| Status | **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NOT COMMITTED / NOT PUSHED.** Additive **`d4e5f6a7b8c9`**. Graph head **`d4e5f6a7b8c9`**. Live Alembic remains **`c3d4e5f6a7b8`**. No live Punch List rows. Client Final Walkthrough **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE overall **PARTIAL / NOT YET SEALED**. |
+| Branch | `main` |
+| Base commit | HEAD / `origin/main` **`098616284cfb468a5ebecb49c25a30ebd2a621e2`** |
+| Objective | Authoritative contractor Punch List with OPEN/COMPLETE, work source vs origin, Hub surface, derived zero-open Sign-Off seam, C2-ready architecture without C2 implementation. |
+| Deliverables | Model + events; additive migration FILE; service; Hub `#hub-punch-list`; dedicated tests; minimum governance; Manual Impact. |
+| Validation | Dedicated `tests/test_core_close_punch_list_c1_fg035.py` **26 passed**, 56 warnings, **17.71s**. Focused CORE CLOSE/work/FG-038 **228 passed**, 862 warnings, **148.71s**. Full suite **1364 passed**, 4786 warnings, **719.07s**, exit **0**. Live occupancy 50/50 ACTIVE/0 CLOSED/0 events. |
+| Architectural findings | Contractor origin only. Client input ≠ Punch List item. Open Punch List does not hard-block Close. Future C2 photo may reuse FG-020 Originals. |
+| Open decisions | Architect ACCEPT COMMIT. Live migrate separately. C2 Client Final Walkthrough. Completion Sign-Off. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. |
+| Commit | none |
+| Date | 2026-09-18 |
+
 ### 2026-09-18 — FG-035 CORE CLOSE Close/Reopen Option A SHA pin
 
 | Field | Content |

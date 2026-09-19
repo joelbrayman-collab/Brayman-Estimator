@@ -53,6 +53,7 @@ from app.models.project import (
     ProjectLocation,
     ProjectOperatingStateEvent,
 )
+from app.models.punch_list import ProjectPunchListItem, ProjectPunchListItemEvent
 from app.models.estimate import (
     Estimate,
     EstimateLineItem,
@@ -265,6 +266,8 @@ __all__ = [
     "ProjectCommercialContext",
     "ProjectLocation",
     "ProjectOperatingStateEvent",
+    "ProjectPunchListItem",
+    "ProjectPunchListItemEvent",
     "ProjectWorkDependency",
     "WorkScheduleAssignment",
     "WorkScheduleHistory",

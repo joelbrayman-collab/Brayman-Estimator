@@ -450,6 +450,116 @@
         </div>
         {% endif %}
     </article>
+    <article class="panel panel-wide" id="hub-punch-list">
+        <div class="panel-header">
+            <h2>{{ contractor_copy.PUNCH_LIST_HEADING }}</h2>
+        </div>
+        <p class="punch-list-summary">{{ punch_list_summary }}</p>
+        <p class="muted-copy">{{ contractor_copy.PUNCH_LIST_LEDE }}</p>
+        {% if not punch_list_can_mutate %}
+        <p class="muted-copy">{{ contractor_copy.PUNCH_LIST_CLOSED_VIEW }}</p>
+        {% endif %}
+        {% if punch_list_items %}
+        <ul class="punch-list">
+            {% for item in punch_list_items %}
+            <li class="punch-list-item {% if item.status == 'COMPLETE' %}is-complete{% endif %}">
+                <p class="punch-list-item-description">{{ item.description }}</p>
+                <p class="punch-list-item-meta">
+                    {{ punch_list_work_source_label(item) }}
+                    · {{ punch_list_status_label(item.status) }}
+                </p>
+                {% if punch_list_can_mutate and item.status == 'OPEN' %}
+                <form method="post" action="{{ url_for('punch_list.update_item', project_id=project.id, item_id=item.id) }}" class="punch-list-edit">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <label>
+                        {{ contractor_copy.PUNCH_LIST_DESCRIPTION }}
+                        <textarea name="description" rows="3" required>{{ item.description }}</textarea>
+                    </label>
+                    <label>
+                        {{ contractor_copy.PUNCH_LIST_WORK_SOURCE }}
+                        <select name="work_source_type" required>
+                            <option value="ORIGINAL_SCOPE"{% if item.work_source_type == 'ORIGINAL_SCOPE' %} selected{% endif %}>{{ contractor_copy.PUNCH_LIST_ORIGINAL_SCOPE }}</option>
+                            <option value="CHANGE_ORDER"{% if item.work_source_type == 'CHANGE_ORDER' %} selected{% endif %}>{{ contractor_copy.PUNCH_LIST_CHANGE_ORDER }}</option>
+                            <option value="OTHER"{% if item.work_source_type == 'OTHER' %} selected{% endif %}>{{ contractor_copy.PUNCH_LIST_OTHER }}</option>
+                        </select>
+                    </label>
+                    <label>
+                        {{ contractor_copy.PUNCH_LIST_ORIGINAL_SCOPE_OPTIONAL }}
+                        <select name="source_project_work_id">
+                            <option value="">{{ contractor_copy.PUNCH_LIST_NONE_OPTION }}</option>
+                            {% for element in punch_list_original_work %}
+                            <option value="{{ element.id }}"{% if item.source_project_work_id == element.id %} selected{% endif %}>{{ element.display_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>
+                        {{ contractor_copy.PUNCH_LIST_CHANGE_ORDER_SELECTOR }}
+                        <select name="source_change_order_id">
+                            <option value="">{{ contractor_copy.PUNCH_LIST_NONE_OPTION }}</option>
+                            {% for change_order in punch_list_change_orders %}
+                            <option value="{{ change_order.id }}"{% if item.source_change_order_id == change_order.id %} selected{% endif %}>{{ change_order.number }} · {{ change_order.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <div class="punch-list-actions">
+                        <button type="submit">{{ contractor_copy.PUNCH_LIST_SAVE }}</button>
+                    </div>
+                </form>
+                <form method="post" action="{{ url_for('punch_list.complete_item', project_id=project.id, item_id=item.id) }}" class="punch-list-action">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit">{{ contractor_copy.PUNCH_LIST_COMPLETE }}</button>
+                </form>
+                {% elif punch_list_can_mutate and item.status == 'COMPLETE' %}
+                <form method="post" action="{{ url_for('punch_list.reopen_item', project_id=project.id, item_id=item.id) }}" class="punch-list-action">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="button-secondary">{{ contractor_copy.PUNCH_LIST_REOPEN }}</button>
+                </form>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% if punch_list_can_mutate %}
+        <form method="post" action="{{ url_for('punch_list.create_item', project_id=project.id) }}" class="punch-list-add">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <h3>{{ contractor_copy.PUNCH_LIST_ADD }}</h3>
+            <label>
+                {{ contractor_copy.PUNCH_LIST_DESCRIPTION }}
+                <textarea name="description" rows="4" required></textarea>
+            </label>
+            <label>
+                {{ contractor_copy.PUNCH_LIST_WORK_SOURCE }}
+                <select name="work_source_type" required>
+                    <option value="ORIGINAL_SCOPE">{{ contractor_copy.PUNCH_LIST_ORIGINAL_SCOPE }}</option>
+                    <option value="CHANGE_ORDER">{{ contractor_copy.PUNCH_LIST_CHANGE_ORDER }}</option>
+                    <option value="OTHER">{{ contractor_copy.PUNCH_LIST_OTHER }}</option>
+                </select>
+            </label>
+            <label>
+                {{ contractor_copy.PUNCH_LIST_ORIGINAL_SCOPE_OPTIONAL }}
+                <select name="source_project_work_id">
+                    <option value="">{{ contractor_copy.PUNCH_LIST_NONE_OPTION }}</option>
+                    {% for element in punch_list_original_work %}
+                    <option value="{{ element.id }}">{{ element.display_name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                {{ contractor_copy.PUNCH_LIST_CHANGE_ORDER_SELECTOR }}
+                <select name="source_change_order_id">
+                    <option value="">{{ contractor_copy.PUNCH_LIST_NONE_OPTION }}</option>
+                    {% for change_order in punch_list_change_orders %}
+                    <option value="{{ change_order.id }}">{{ change_order.number }} · {{ change_order.title }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <div class="punch-list-actions">
+                <button type="submit">{{ contractor_copy.PUNCH_LIST_ADD }}</button>
+                <a class="button-link button-secondary" href="{{ url_for('projects.view_project', id=project.id) }}">{{ contractor_copy.PUNCH_LIST_CANCEL }}</a>
+            </div>
+        </form>
+        {% endif %}
+    </article>
     <article class="panel panel-wide" id="hub-schedule">
         <div class="panel-header">
             <h2>{{ contractor_copy.SCHEDULE_HUB_HEADING }}</h2>

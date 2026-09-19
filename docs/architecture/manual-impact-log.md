@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — CORE CLOSE C1 CONTRACTOR PUNCH LIST (2026-09-18)
+
+| Field | Content |
+|-------|---------|
+| Slice | FG-035 CORE CLOSE C1 Contractor Punch List |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NOT COMMITTED.** Additive **`d4e5f6a7b8c9`**. Live Hub cannot show Punch List until live migrate. No live Punch List rows. |
+| 1. What new contractor capability exists? | On an ACTIVE Project Hub, authorized Project users can add Punch List items describing unfinished physical work, associate them with Original Scope or an existing Change Order or Other closeout work, mark them Complete, and Reopen if the work is not actually done. Summary states open/complete counts, Punch List complete, or Nothing is on the Punch List. |
+| 2. When would the contractor use it? | When physical work still needs to be completed before later Completion Sign-Off. Not for Change Order paperwork, invoices, or client communication history. |
+| 3. What workflow will the final Manual need to teach? | Open Project Hub BUILD Punch List. Add an item with a plain description and work source. Mark Complete when the physical work is done. Reopen if it was marked complete too soon. Closed Projects show Punch List history only. |
+| 4. What contractor-facing terms must be used? | Punch List. Open. Complete. Add Punch List Item. Mark Complete. Reopen. Original Scope. Change Order. Other closeout work. Punch List complete. Nothing is on the Punch List. |
+| 5. What screenshots / Print examples will eventually be needed? | Active Hub Punch List empty, with open items, and complete. Add form. Closed Hub history view. Capture after live migrate / UAT. |
+| 6. What warnings / validation distinctions need explanation? | Closed Project blocks Punch List changes until Reopen Project. Completing a Punch List item does not complete the Change Order. Client comments later are not Punch List items until the contractor accepts them. Zero items is not a fake “no deficiencies” row. |
+| 7. Desktop / iPhone / Print relevance | Office desktop/tablet Hub only. No Field Punch List. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim Client Final Walkthrough exists. Claim Completion Sign-Off exists. Claim live migrate happened. |
+
 ### MANUAL IMPACT — CORE CLOSE CLOSE/REOPEN OPTION A (2026-09-18)
 
 | Field | Content |

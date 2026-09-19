@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-18 — FG-035 CORE CLOSE C1 Contractor Punch List (working tree / not committed)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-18 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026 |
+| Objective | Implement CORE CLOSE C1 Contractor Punch List in working tree. Preserve C2 Client Final Walkthrough architecture without implementing it. No live migrate. No commit. |
+| Business decision | Contractor controls the Punch List. Client participates later. Client input ≠ Punch List item until accepted. Client response is not a hard gate. Open Punch List does not hard-block Project Close. ZERO OPEN items satisfies the Punch List prerequisite, including a Project with no items. |
+| Architectural decision | Separate `punch_list` blueprint so sealed Close/Reopen stays Punch-List-free. Same additive migration includes append-only complete/reopen events. Origin CONTRACTOR only; schema may recognize CLIENT_WALKTHROUGH. No C2 FKs. Auth = existing Project operational membership. Graph head **`d4e5f6a7b8c9`**; live current remains **`c3d4e5f6a7b8`**. |
+| Prompt template used | Architect COMPLETE CURSOR PROMPT — C1 CONTRACTOR PUNCH LIST |
+| Approved Cursor prompt summary | C1 Contractor Punch List only; C2-ready seam; no C2/Sign-Off/Native Signing/Field Punch List; one additive migration FILE; no live migrate; no commit/push. |
+| Files expected to change | punch list model/service/routes; Hub panel; copy/CSS; additive `d4e5f6a7b8c9`; dedicated tests; graph-head pins; min governance; Manual Impact |
+| Files prohibited from changing | close_project/reopen_project; Close/Reopen confirmations; live flask db upgrade; live data; Native Signing; MONITOR/PERF; Field Punch List; recovery stash; scorecard |
+| Implementation result | Working tree only. Live occupancy 50/50 ACTIVE/0 CLOSED/0 events. EST-2026-0019 unchanged. Grants 1. Stash preserved. Live Punch List tables absent. |
+| Tests | Dedicated `tests/test_core_close_punch_list_c1_fg035.py` **26 passed**, 56 warnings, **17.71s**, exit **0**. Focused C1+Close/Reopen+Slice A/B+FG-038+work/schedule/time/access **228 passed**, 862 warnings, **148.71s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` **1364 passed**, 4786 warnings, **719.07s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes — working tree; not committed |
+| Constitutional issue raised | None |
+| Unresolved issues | Architect ACCEPT COMMIT. Live migrate. C2 Client Final Walkthrough. Completion Sign-Off. Labeled live Close/Reopen UAT. PA-B. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** commit. |
+| Next approved prompt | none — STOP |
+| Commit hash | none |
+
 ### 2026-09-18 — FG-035 CORE CLOSE Close/Reopen Option A SHA pin
 
 | Field | Content |

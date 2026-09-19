@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}{{ estimate.project_name or estimate.client_name }} — Historical Evidence Detail{% endblock %}
-{% block page_title %}Historical Evidence Detail{% endblock %}
+{% block title %}{{ estimate.project_name or estimate.client_name }} — {{ contractor_copy.HISTORICAL_PAGE_TITLE }}{% endblock %}
+{% block page_title %}{{ contractor_copy.HISTORICAL_PAGE_TITLE }}{% endblock %}
 
 {% block content %}
 <div class="content-container" style="max-width: 1200px; margin: 0 auto; padding: 24px;">
     <div style="margin-bottom: 16px;">
         <a href="{{ url_for('historical_estimates.index') }}" style="color: #4b5563; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
-            <i class="bi bi-arrow-left"></i> Back to Historical Evidence
+            <i class="bi bi-arrow-left"></i> Back to previous estimates
         </a>
     </div>
 
@@ -30,7 +30,7 @@
                         {{ estimate.source_workbook.source_id }}
                     </span>
                     <span style="font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: #e0f2fe; color: #0369a1;">
-                        {{ estimate.template_family }}
+                        {{ contractor_copy.historical_family_label(estimate.template_family) }}
                     </span>
                     <span style="font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: #fef3c7; color: #b45309;">
                         {{ review_status_labels.get(estimate.review_status, estimate.review_status) if review_status_labels else estimate.review_status }}
@@ -38,7 +38,7 @@
                 </div>
                 <h1 style="margin: 0; font-size: 1.6rem; font-weight: 700; color: #111827;">{{ estimate.project_name or estimate.client_name }}</h1>
                 <p class="muted-copy" style="margin: 4px 0 0 0; font-size: 0.95rem; color: #6b7280;">
-                    Source File: <strong>{{ estimate.source_workbook.original_filename }}</strong> (SHA-256: <code>{{ estimate.source_workbook.sha256[:12] }}...</code>)
+                    {{ contractor_copy.HISTORICAL_FILE_LABEL }}: <strong>{{ estimate.source_workbook.original_filename }}</strong>
                 </p>
             </div>
             <div style="text-align: right;">
@@ -88,8 +88,8 @@
                     <strong style="color: #111827;">{{ estimate.project_address or "—" }}</strong>
                 </div>
                 <div>
-                    <span style="color: #6b7280; display: block; font-size: 0.8rem;">Pricing Method</span>
-                    <strong style="color: #111827;">{{ estimate.pricing_method }}</strong>
+                    <span style="color: #6b7280; display: block; font-size: 0.8rem;">How it is priced</span>
+                    <strong style="color: #111827;">{{ contractor_copy.pricing_method_label(estimate.pricing_method) }}</strong>
                 </div>
                 <div>
                     <span style="color: #6b7280; display: block; font-size: 0.8rem;">Extracted Margin / Markup %</span>
@@ -249,9 +249,9 @@
     <!-- Source Observations Provenance Table -->
     <div class="card" style="background: #fff; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
         <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
-            <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">Source-Cell Provenance Observations ({{ estimate.source_workbook.observations|length }})</h3>
+            <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">{{ contractor_copy.HISTORICAL_SOURCE_HEADING }} ({{ estimate.source_workbook.observations|length }})</h3>
             <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: #6b7280;">
-                Full lineage from source workbook worksheets and cells to normalized CalibraytAI entities.
+                These notes show which worksheet and cell each number came from in CalibraytAI.
             </p>
         </div>
         <div style="max-height: 400px; overflow-y: auto;">

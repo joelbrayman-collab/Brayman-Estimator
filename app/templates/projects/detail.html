@@ -99,7 +99,7 @@
         {% set pf = hub.permit_foundation %}
         {% set pi = hub.permit_intelligence %}
         <p class="eyebrow">{{ contractor_copy.PERMIT_FOUNDATION_EYEBROW }}{% if pi.report_available %} · {{ contractor_copy.PERMIT_ADVISORY_EYEBROW }}{% endif %}</p>
-        <p class="muted-copy">This is not zoning compliant, permit ready, permit approved, building-code compliant, or reviewed by the authority having jurisdiction (AHJ). A PASS finding never means AHJ approval.</p>
+        <p class="muted-copy">{{ contractor_copy.PERMIT_NOT_MUNICIPAL_APPROVAL }}</p>
         {% if pi.recheck_required %}
         <p class="muted-copy"><strong>{{ contractor_copy.PERMIT_RECHECK_HEADING }}</strong> — {{ contractor_copy.PERMIT_RECHECK_WHY }}</p>
         {% endif %}
@@ -267,7 +267,7 @@
             <h2>Related Estimates</h2>
             <a href="{{ url_for('estimates.list_estimates') }}">All estimates</a>
         </div>
-        <p class="muted-copy">Snapshot presence and stored pricing method only. This hub does not recompute selling price, margin, or labour cost.</p>
+        <p class="muted-copy">{{ contractor_copy.HUB_PRICE_LIST_NOTE }}</p>
         {% if hub.estimate_rows %}
         <table class="data-table">
             <thead>
@@ -275,8 +275,8 @@
                     <th>Estimate</th>
                     <th>Status</th>
                     <th>Current version</th>
-                    <th>Pricing snapshot</th>
-                    <th>Labour snapshot</th>
+                    <th>{{ contractor_copy.HUB_PRICING_RECORDED_HEADING }}</th>
+                    <th>{{ contractor_copy.HUB_LABOUR_RECORDED_HEADING }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -296,12 +296,12 @@
                     </td>
                     <td>
                         {% if row.pricing_snapshot_present %}
-                        Present · {{ row.pricing_method }}
+                        {{ contractor_copy.HUB_RECORDED_LABEL }} · {{ contractor_copy.pricing_method_label(row.pricing_method) }}
                         {% else %}
-                        Not present
+                        {{ contractor_copy.HUB_NOT_RECORDED_LABEL }}
                         {% endif %}
                     </td>
-                    <td>{{ "Present" if row.labour_snapshot_present else "Not present" }}</td>
+                    <td>{{ contractor_copy.HUB_RECORDED_LABEL if row.labour_snapshot_present else contractor_copy.HUB_NOT_RECORDED_LABEL }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

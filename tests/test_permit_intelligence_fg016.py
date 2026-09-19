@@ -485,8 +485,10 @@ def test_deterministic_boolean_pass_and_pass_semantics(app):
     assert same_lot.status == "PASS"
     assert "AHJ issuance" not in same_lot.explanation
     assert "permit approved" not in same_lot.explanation.lower()
-    assert "This is not AHJ" in same_lot.advisory_language or "does not mean permit approved" in same_lot.advisory_language
-    assert "no issue identified" in same_lot.advisory_language.lower()
+    assert "This is not AHJ" not in same_lot.advisory_language
+    assert "AHJ" not in same_lot.advisory_language
+    assert "permit is approved" in same_lot.advisory_language
+    assert "no issue was identified" in same_lot.advisory_language.lower()
 
 
 def test_deterministic_numeric_potential_non_conformance(app):
@@ -649,20 +651,22 @@ def test_office_html_report_and_hub_truth(client, app):
     assert hub.status_code == 200
     assert "available" in html
     assert "RECHECK REQUIRED" not in html or "recheck required" in html.lower()
-    assert "AHJ reviewed" in html or "AHJ" in html
+    assert "AHJ" not in html
+    assert "municipality" in html.lower()
     report = client.get(f"/projects/{project.id}/permit-report")
     body = report.data.decode("utf-8")
     assert report.status_code == 200
     assert "Permit" in body
-    assert "ADVISORY ONLY" in body
-    assert "Governed requirement" in body
+    assert "Advisory only" in body
+    assert "Requirement" in body
     assert "Recommended action" in body
     pdf = client.get(f"/projects/{project.id}/permit-report.pdf")
     assert pdf.status_code == 200
     assert pdf.data.startswith(b"%PDF")
     text = _pdf_text(pdf.data)
     assert "CalibraytAI" in text
-    assert "ADVISORY ONLY" in text
+    assert "Advisory only" in text
+    assert "not municipal permit approval" in text
     assert "Brayman Proposal" not in text
 
 
@@ -675,8 +679,8 @@ def test_pdf_is_same_snapshot_neutral_calibai(app):
     assert data.startswith(b"%PDF")
     text = _pdf_text(data)
     assert "CalibraytAI" in text
-    assert "ADVISORY ONLY" in text
-    assert "not AHJ approval" in text
+    assert "Advisory only" in text
+    assert "not municipal permit approval" in text
 
 
 def test_no_estimate_mutation(app):

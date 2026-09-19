@@ -50,6 +50,61 @@ PERMIT_RECHECK_HEADING = "Recheck required"
 PERMIT_RECHECK_WHY = (
     "Location, plan/site facts, or rules have changed since the last report."
 )
+PERMIT_NOT_MUNICIPAL_APPROVAL = (
+    "This is not zoning approved, permit-ready, permit approved, or building-code "
+    "approved. A passing check never means the municipality has issued a permit."
+)
+PERMIT_LOCATION_NOT_APPROVAL = (
+    "This records the job address and permit context. It does not mean zoning "
+    "approved, permit-ready, permit approved, building-code approved, or reviewed "
+    "by the municipality or permit office."
+)
+PERMIT_GENERATE_HEADING = "Create permit report"
+PERMIT_GENERATE_HELP = (
+    "Creates a new saved report from the current reviewed facts. Earlier reports "
+    "are not changed."
+)
+PERMIT_GENERATE_BUTTON = "Create permit report"
+PERMIT_REQUIREMENT_LABEL = "Requirement"
+PERMIT_PDF_BANNER = "Advisory only — this is not municipal permit approval"
+
+COST_LIBRARY_NAV_TITLE = "Cost library"
+HISTORICAL_NAV_TITLE = "Previous estimates"
+HISTORICAL_PAGE_TITLE = "Previous estimates"
+HISTORICAL_HEADING = "Upload previous estimates"
+HISTORICAL_READY_BADGE = "Uploaded — review before using in pricing"
+HISTORICAL_UPLOAD_HELP = (
+    "Select many workbooks, drag and drop files, or choose a folder where this "
+    "browser supports it. Each file is checked on its own. Supported: .xlsx and "
+    ".xlsm Excel workbooks. Macros and formulas are not run."
+)
+HISTORICAL_RECORDS_HEADING = "Previous estimate records"
+HISTORICAL_SOURCE_HEADING = "Where these numbers came from"
+HISTORICAL_FILE_LABEL = "Source file"
+HUB_PRICING_RECORDED_HEADING = "Pricing recorded"
+HUB_LABOUR_RECORDED_HEADING = "Labour rates recorded"
+HUB_RECORDED_LABEL = "Recorded"
+HUB_NOT_RECORDED_LABEL = "Not recorded"
+HUB_PRICE_LIST_NOTE = (
+    "This list shows whether pricing and labour rates have been recorded for each "
+    "estimate. This page does not recalculate selling price, margin, or labour cost."
+)
+
+HISTORICAL_FAMILY_LABELS = {
+    "FAMILY_A": "Workbook A",
+    "FAMILY_B": "Workbook B",
+    "FAMILY_C": "Workbook C",
+    "FAMILY_D": "Workbook D",
+    "FAMILY_E": "Workbook E",
+}
+
+HISTORICAL_UPLOAD_OUTCOME_LABELS = {
+    "INGESTED": "Loaded",
+    "DUPLICATE": "Already uploaded",
+    "QUARANTINED": "Needs review",
+    "UNSUPPORTED": "Not supported",
+    "FAILED": "Could not load",
+}
 
 EMPTY_COPY = {
     "MISSING_ACTUALS": {
@@ -581,6 +636,34 @@ def pricing_method_label(method: str | None) -> str:
     if mapped:
         return mapped
     return office_status_label(method)
+
+
+def historical_family_label(family: str | None) -> str:
+    if not family:
+        return ""
+    return HISTORICAL_FAMILY_LABELS.get(family, family.replace("FAMILY_", "Workbook "))
+
+
+def historical_upload_outcome_label(outcome: str | None) -> str:
+    if not outcome:
+        return ""
+    return HISTORICAL_UPLOAD_OUTCOME_LABELS.get(outcome, office_status_label(outcome))
+
+
+def permit_office_language(text: str | None) -> str:
+    """Replace internal AHJ wording in contractor-facing permit copy."""
+    if not text:
+        return ""
+    result = text
+    for old, new in (
+        ("authority having jurisdiction (AHJ)", "municipality or permit office"),
+        ("The authority having jurisdiction", "The municipality or permit office"),
+        ("the authority having jurisdiction", "the municipality or permit office"),
+        ("the AHJ", "the municipality or permit office"),
+        ("AHJ", "the municipality or permit office"),
+    ):
+        result = result.replace(old, new)
+    return result
 
 
 CUSTOMER_DOCUMENT_TITLE = "CONSTRUCTION ESTIMATE"

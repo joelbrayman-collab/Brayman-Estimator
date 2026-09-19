@@ -412,7 +412,7 @@ def test_slice3_labour_and_pricing_office_copy(client, project):
     assert ">GENERIC<" not in catalogue
     assert ">ACTIVE<" not in catalogue
     library = _html(client.get("/cost-library/"))
-    assert "Cost Library" in library
+    assert "Cost library" in library
     assemblies = _html(client.get("/assemblies/"))
     assert "Assemblies" in assemblies
     hub = _html(client.get(f"/projects/{project.id}"))

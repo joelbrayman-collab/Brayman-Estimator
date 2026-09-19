@@ -36,12 +36,12 @@ EVIDENCE_TIER_LABELS = {
 }
 
 REVIEW_STATUS_LABELS = {
-    "EXTRACTED": "EXTRACTED",
-    "REVIEW_REQUIRED": "REVIEW REQUIRED",
-    "REVIEWED": "REVIEWED",
-    "ACCEPTED_AS_EVIDENCE": "ACCEPTED AS EVIDENCE",
-    "REJECTED": "REJECTED",
-    "SUPERSEDED": "SUPERSEDED",
+    "EXTRACTED": "Extracted",
+    "REVIEW_REQUIRED": "Needs review",
+    "REVIEWED": "Reviewed",
+    "ACCEPTED_AS_EVIDENCE": "Accepted as evidence",
+    "REJECTED": "Not used",
+    "SUPERSEDED": "Replaced",
 }
 
 

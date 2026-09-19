@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-19 — D2 bounded contractor-language residuals
+
+| Field | Content |
+|-------|---------|
+| Milestone | D2 — Bounded contractor-language residuals |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Presentation only. D1 Help preserved. Help product overall **PARTIAL**. LEARN remains Future. Official V1 **not rescored**. Completion Sign-Off **NOT IMPLEMENTED**. |
+| Branch | `main` |
+| Base commit | `76749bb4fd301c928e88b092226fb8a7a0d29e20` (`feat: add Project Hub contextual Help`) |
+| Objective | Remove bounded contractor-facing language/navigation residuals on Hub PRICE, Previous estimates, Permit screens, header Settings, and Cost library. |
+| Deliverables | contractor_copy labels; Hub PRICE display; header Settings link; nav/page titles; permit chrome/PDF banner; dedicated D2 tests |
+| Validation | Dedicated D2 **6 passed**. Focused/regression **357 passed**, 1040 warnings, **150.18s**. Full suite **1413 passed**, 4891 warnings, **613.33s**, exit **0**. |
+| Architectural findings | No pricing/estimate/permit-logic/C2/schema change. Internal method keys unchanged. |
+| Open decisions | D3 Office Help. D4 Field Help. Voice. People & Access. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next milestone | **STOP.** Recommended next: **D3 — Office Help**. Do **not** implement D3 from this record. |
+| Commit | this D2 commit follows |
+| Date | 2026-09-19 |
+
 ### 2026-09-19 — D1 Project Hub contextual Help
 
 | Field | Content |

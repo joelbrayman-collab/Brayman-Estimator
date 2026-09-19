@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-19 — D2 bounded contractor-language residuals
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-19 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026 |
+| Objective | Implement D2 bounded contractor-language residuals only. Presentation/navigation. Preserve D1 Help. No schema. No Voice. No C2 change. |
+| Business decision | A contractor should understand Hub PRICE, previous estimates, permit screens, Settings, and the cost library without Joel explaining internal identifiers. |
+| Architectural decision | Reuse `contractor_copy` display mapping. Internal `TRUE_GROSS_MARGIN` unchanged. Header Settings links to existing `/settings/brand-profile`. Permit AHJ wording replaced at display, not in analysis formulas. |
+| Prompt template used | Architect D2 IMPLEMENTATION |
+| Approved Cursor prompt summary | Implement D2 language residuals. Tests. Docs. Commit. Push. Controlled office restart if required. STOP. Do not implement D3–D9. |
+| Files expected to change | contractor_copy, Hub/historical/permit/header/nav/cost-library templates, PDF banner, D2 tests, D2 governance pointers |
+| Files prohibited from changing | pricing formulas; estimate identities; historical upload behaviour; permit analysis logic; C2; schema; D1 Help architecture; LEARN; Voice; scorecard |
+| Implementation result | D2 **IMPLEMENTED**. D1 Help preserved. C2 **SEALED**. Alembic **`e5f6a7b8c9d0 (head)`**. Official V1 **not rescored**. This commit follows. |
+| Tests | Dedicated 6 passed. Focused/regression 357 passed / 150.18s. Full suite 1413 passed / 613.33s, exit 0. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | D3 Office Help. Voice. People & Access. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next approved step | **STOP.** Recommended next: **D3 — Office Help**. Do **not** implement D3 from this record. |
+| Next approved prompt | none — STOP |
+| Commit hash | this D2 commit follows |
+
 ### 2026-09-19 — D1 Project Hub contextual Help
 
 | Field | Content |

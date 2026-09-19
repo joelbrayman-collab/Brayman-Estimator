@@ -38,9 +38,10 @@ FORBIDDEN_FACT_TYPES = frozenset(
 )
 
 ADVISORY_AUTHORITY_LANGUAGE = (
-    "CalibraytAI advisory preflight only. PASS means no issue identified against the "
-    "governed checks performed. It does not mean permit approved, zoning approved, "
-    "or AHJ approved. The authority having jurisdiction remains final."
+    "CalibraytAI advisory preflight only. A passing check means no issue was "
+    "identified against the checks performed. It does not mean a permit is "
+    "approved or that zoning is approved. The municipality or permit office "
+    "remains final."
 )
 
 # Bounded APPROVED corpus. Numeric PASS is not claimed for zone-specific

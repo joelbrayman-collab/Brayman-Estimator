@@ -6,9 +6,9 @@
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">ADVISORY ONLY</p>
+        <p class="eyebrow">{{ contractor_copy.PERMIT_ADVISORY_EYEBROW }}</p>
         <h1>{{ project.name }}</h1>
-        <p class="muted-copy">Bounded Ontario / City of Ottawa coach-house preflight. PASS never means AHJ, zoning, or permit approval.</p>
+        <p class="muted-copy">Ontario / City of Ottawa coach-house preflight. {{ contractor_copy.PERMIT_NOT_MUNICIPAL_APPROVAL }}</p>
     </div>
     <div>
         <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
@@ -20,8 +20,8 @@
 
 {% if pi.recheck_required %}
 <div class="form-panel" style="margin-bottom: 16px;">
-    <p class="eyebrow">RECHECK REQUIRED</p>
-    <p>Inputs have changed since this snapshot. Generate a new report. This version is not rewritten.</p>
+    <p class="eyebrow">{{ contractor_copy.PERMIT_RECHECK_HEADING }}</p>
+    <p>Inputs have changed since this report. Create a new report. This version is not rewritten.</p>
 </div>
 {% endif %}
 
@@ -36,7 +36,7 @@
     <h3>Project / location / jurisdiction</h3>
     {% if analysis %}
     <p>Location: {{ analysis.street_snapshot or '—' }}{% if analysis.municipality_snapshot %}, {{ analysis.municipality_snapshot }}{% endif %} {{ analysis.province_state_snapshot or '' }} {{ analysis.country_snapshot or '' }}</p>
-    <p>Jurisdiction: {{ analysis.resolved_jurisdiction_name or '—' }} ({{ analysis.resolved_jurisdiction_code or 'unresolved' }})</p>
+    <p>Jurisdiction: {{ analysis.resolved_jurisdiction_name or '—' }}</p>
     <p>Permit context: {{ analysis.permit_context_class or '—' }}</p>
     <p>Coverage: {{ analysis.coverage_status }}</p>
     <p>Plan / site basis: {{ analysis.plan_revision_label or analysis.plan_document_names or analysis.site_plan_identity or 'not identified' }}</p>
@@ -48,13 +48,13 @@
     <p>Coverage: no report</p>
     <p>Plan / site basis: not identified</p>
     {% endif %}
-    <p class="muted-copy">{{ advisory }}</p>
+    <p class="muted-copy">{{ contractor_copy.permit_office_language(advisory) }}</p>
 </div>
 
 <form method="post" action="{{ url_for('projects.run_permit_analysis', id=project.id) }}" class="form-panel" style="margin-bottom: 16px;">
-    <p class="eyebrow">Generate analysis</p>
-    <p class="muted-copy">Creates a new immutable snapshot from approved currently-effective rules and reviewed project facts. Does not rewrite prior reports.</p>
-    <button type="submit">Run Permit analysis</button>
+    <p class="eyebrow">{{ contractor_copy.PERMIT_GENERATE_HEADING }}</p>
+    <p class="muted-copy">{{ contractor_copy.PERMIT_GENERATE_HELP }}</p>
+    <button type="submit">{{ contractor_copy.PERMIT_GENERATE_BUTTON }}</button>
 </form>
 
 <form method="post" action="{{ url_for('projects.add_permit_fact', id=project.id) }}" class="form-panel" style="margin-bottom: 16px;">
@@ -63,7 +63,7 @@
     <div class="form-grid">
         <label>
             Fact type
-            <input type="text" name="fact_type" required placeholder="building_footprint_m2">
+            <input type="text" name="fact_type" required placeholder="e.g. building size">
         </label>
         <label>
             Numeric value
@@ -88,9 +88,9 @@
         <label>
             Review status
             <select name="review_status">
-                <option value="REVIEWED">REVIEWED</option>
-                <option value="AMBIGUOUS">AMBIGUOUS</option>
-                <option value="UNREVIEWED">UNREVIEWED</option>
+                <option value="REVIEWED">Reviewed</option>
+                <option value="AMBIGUOUS">Needs a second look</option>
+                <option value="UNREVIEWED">Not reviewed yet</option>
             </select>
         </label>
         <label>
@@ -108,11 +108,11 @@
     <article style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #ddd;">
         <p class="eyebrow">{{ finding.topic }} · {{ finding.status.replace('_', ' ') }}{% if finding.potential_cost_implication %} · POTENTIAL COST / SCOPE IMPLICATION{% endif %}</p>
         {% if finding.requirement_snapshot %}
-        <p><strong>Governed requirement:</strong> {{ finding.requirement_snapshot }}</p>
+        <p><strong>{{ contractor_copy.PERMIT_REQUIREMENT_LABEL }}:</strong> {{ contractor_copy.permit_office_language(finding.requirement_snapshot) }}</p>
         {% endif %}
-        <p><strong>Project evidence:</strong> {{ finding.evidence_snapshot }}</p>
-        <p>{{ finding.explanation }}</p>
-        <p><strong>Recommended action:</strong> {{ finding.recommended_action }}</p>
+        <p><strong>Project evidence:</strong> {{ contractor_copy.permit_office_language(finding.evidence_snapshot) }}</p>
+        <p>{{ contractor_copy.permit_office_language(finding.explanation) }}</p>
+        <p><strong>Recommended action:</strong> {{ contractor_copy.permit_office_language(finding.recommended_action) }}</p>
         {% if finding.citation_snapshot %}
         <p class="muted-copy">{{ finding.citation_snapshot }}</p>
         {% endif %}
@@ -124,7 +124,7 @@
     <h3>Missing / verify items</h3>
     {% for finding in analysis.findings %}
         {% if finding.status in ['MISSING_INFORMATION', 'VERIFY'] %}
-        <p><strong>{{ finding.topic }}</strong> — {{ finding.status.replace('_', ' ') }}: {{ finding.explanation }}</p>
+        <p><strong>{{ finding.topic }}</strong> — {{ finding.status.replace('_', ' ') }}: {{ contractor_copy.permit_office_language(finding.explanation) }}</p>
         {% endif %}
     {% endfor %}
 </section>
@@ -133,12 +133,12 @@
     <h3>Recommended next actions</h3>
     {% for finding in analysis.findings %}
         {% if finding.status != 'PASS' and finding.status != 'NOT_APPLICABLE' %}
-        <p>{{ finding.topic }}: {{ finding.recommended_action }}</p>
+        <p>{{ finding.topic }}: {{ contractor_copy.permit_office_language(finding.recommended_action) }}</p>
         {% endif %}
     {% endfor %}
-    <p class="muted-copy">{{ advisory }}</p>
+    <p class="muted-copy">{{ contractor_copy.permit_office_language(advisory) }}</p>
 </section>
 {% else %}
-<p class="muted-copy">No substantive Permit Report yet. Record reviewed facts and run analysis.</p>
+<p class="muted-copy">No permit report yet. Record reviewed facts and create a report.</p>
 {% endif %}
 {% endblock %}

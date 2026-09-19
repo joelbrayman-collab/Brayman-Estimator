@@ -218,7 +218,7 @@ def test_multi_file_upload_one_request(client, app, legacy_lock):
     )
     assert res.status_code == 200
     assert b"FILES RECEIVED" in res.data
-    assert b"HISTORICAL EVIDENCE LOADED" in res.data
+    assert b"LOADED:" in res.data
     assert b"COST MODEL COMPLETE" not in res.data
     with app.app_context():
         assert HistoricalSourceWorkbook.query.count() == 2
@@ -516,7 +516,7 @@ def test_review_lifecycle_and_accepted_as_evidence_does_not_create_standards(
     assert OrganizationPricingPolicy.query.count() == 0
     page = client.get(f"/historical-estimates/{result.estimate_id}")
     assert page.status_code == 200
-    assert b"ACCEPTED AS EVIDENCE" in page.data
+    assert b"Accepted as evidence" in page.data
     assert b"Estimate associated with a completed project" in page.data
     assert b"Actual completed job" not in page.data
 
@@ -537,7 +537,7 @@ def test_upload_does_not_mutate_pricing_or_create_candidates(app, legacy_lock):
 def test_index_has_multi_file_controls_and_no_cost_model_claim(client, legacy_lock):
     page = client.get("/historical-estimates/")
     assert page.status_code == 200
-    assert b"UPLOAD PREVIOUS ESTIMATES" in page.data
+    assert b"Upload previous estimates" in page.data
     assert b'multiple' in page.data
     assert b"webkitdirectory" in page.data
     assert b"COST MODEL COMPLETE" not in page.data

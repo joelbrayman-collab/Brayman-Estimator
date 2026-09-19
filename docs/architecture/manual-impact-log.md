@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — D2 BOUNDED CONTRACTOR-LANGUAGE RESIDUALS (2026-09-19)
+
+| Field | Content |
+|-------|---------|
+| Slice | D2 bounded contractor-language residuals |
+| Product status at capture | **IMPLEMENTED.** Presentation/language/navigation only. D1 Help unchanged. Help product overall **PARTIAL**. |
+| 1. What new contractor capability exists? | The Project Hub PRICE list, previous-estimate screens, permit screens, header Settings, and cost library now use ordinary construction/business wording. |
+| 2. When would the contractor use it? | Whenever opening those existing screens. No new workflow. |
+| 3. What workflow will the final Manual need to teach? | Header gear opens Settings. Cost library holds reusable unit costs. Previous estimates are uploaded past jobs, not live pricing. Permit report is advisory, not municipal approval. Hub PRICE shows whether pricing was recorded, not the internal method key. |
+| 4. What contractor-facing terms must be used? | Gross Margin Pricing. Pricing recorded. Labour rates recorded. Previous estimates. Cost library. Settings. Advisory only. Municipality or permit office. Job location. |
+| 5. What screenshots / Print examples will eventually be needed? | Hub PRICE table. Header Settings gear. Previous estimates list. Cost library. Permit report banner. Capture after office restart onto this SHA. |
+| 6. What warnings / validation distinctions need explanation? | Recorded pricing is not a recalculation. A passing permit check is not a permit. Previous estimates are evidence, not the live cost model. |
+| 7. Desktop / iPhone / Print relevance | Office desktop. Permit PDF banner updated. Field unchanged. |
+| Do not | Final Manual prose. Claim Voice exists. Claim office/Field Help exists. Claim LEARN is live. Claim FG-025 closed. |
+
 ### MANUAL IMPACT — D1 PROJECT HUB CONTEXTUAL HELP (2026-09-19)
 
 | Field | Content |

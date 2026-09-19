@@ -2,6 +2,8 @@
 
 from app.presentation.contractor_copy import (
     COMPANY_ATTENTION_HEADING,
+    COST_LIBRARY_NAV_TITLE,
+    HISTORICAL_NAV_TITLE,
     LABOUR_RATES_HEADING,
     PRICING_HEADING,
     WORK_TYPES_HEADING,
@@ -57,7 +59,7 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
-                "title": "Cost Items",
+                "title": COST_LIBRARY_NAV_TITLE,
                 "endpoint": "cost_library.list_cost_items",
                 "icon": "bi-box-seam",
                 "enabled": True,
@@ -75,7 +77,7 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
-                "title": "Historical Evidence",
+                "title": HISTORICAL_NAV_TITLE,
                 "endpoint": "historical_estimates.index",
                 "icon": "bi-archive",
                 "enabled": True,

@@ -16,9 +16,9 @@
         <button type="button" class="header-icon-btn" disabled aria-label="Notifications (coming soon)">
             <i class="bi bi-bell" aria-hidden="true"></i>
         </button>
-        <button type="button" class="header-icon-btn" disabled aria-label="Settings (coming soon)">
+        <a class="header-icon-btn" href="{{ url_for('settings.brand_profile') }}" aria-label="Settings" title="Settings">
             <i class="bi bi-gear" aria-hidden="true"></i>
-        </button>
+        </a>
         <button type="button" class="header-user-btn" disabled aria-label="User menu (coming soon)">
             <span class="header-user-avatar" aria-hidden="true">B</span>
             <span class="header-user-label">User</span>

@@ -332,6 +332,10 @@ body[data-sidebar-collapsed="true"] .sidebar-section-label {
     border-color: #d2cbbf;
 }
 
+a.header-icon-btn {
+    text-decoration: none;
+}
+
 .header-icon-btn:disabled,
 .header-user-btn:disabled {
     opacity: 0.55;

@@ -142,8 +142,8 @@ def test_project_hub_lifecycle_aria_and_office_chrome(client, project):
 
 def test_historical_estimates_copy_uses_calibraytai():
     source = Path("app/templates/historical_estimates/detail.html").read_text()
-    assert "normalized CalibraytAI entities" in source
-    assert "normalized CalibAi entities" not in source
+    assert "CalibraytAI" in source
+    assert "CalibAi" not in source
 
 
 def test_permit_pdf_title_and_advisory_are_calibraytai(app):

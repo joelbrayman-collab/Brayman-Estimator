@@ -394,8 +394,11 @@ def test_estimates_linked_and_snapshot_presence_read_only(client, project):
     assert "EST-HUB-0001" in html
     assert f"/estimates/{estimate.id}" in html
     assert f"/estimates/{estimate.id}/versions/{version.id}" in html
-    assert "TRUE_GROSS_MARGIN" in html
-    assert "Present" in html
+    assert "Gross Margin Pricing" in html
+    assert "TRUE_GROSS_MARGIN" not in html
+    assert "Pricing snapshot" not in html
+    assert "Labour snapshot" not in html
+    assert "Recorded" in html
     assert "88888.12" not in html
     assert "77777" not in html
 

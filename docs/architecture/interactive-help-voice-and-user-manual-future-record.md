@@ -9,6 +9,8 @@
 
 This file is the **single consolidated future record** for Help / Voice / User Manual. It is **not** an ADR, not a Feature Gate, and not a preflight. Do **not** invent FG-036 or ADR-054 from this recording.
 
+**Subsequent status (2026-09-19 D2 BOUNDED CONTRACTOR-LANGUAGE RESIDUALS):** D2 **IMPLEMENTED**. Presentation/language/navigation only. D1 Hub Help preserved. LEARN Future. No schema. No Voice. Help product overall **PARTIAL**. Official V1 **not rescored**.
+
 **Subsequent status (2026-09-19 D1 PROJECT HUB CONTEXTUAL HELP):** D1 **IMPLEMENTED**. Static Help content authority `app/presentation/help_content.py`. Native `<details>` Help on Project Hub PLAN / PRICE / CONTRACT / BUILD / MONITOR. LEARN Help is Future-only. Informational GET-only. No schema. No Voice. No office/Field Help. Help product overall remains **PARTIAL**. Official V1 **not rescored**.
 
 **Actual governed baseline at this recording:** starting HEAD / `origin/main` **`3d3a225edeac276e681ee18dd43ab18fff81d466`** (`docs: pin FG-035 TAX/WBS SHA`). Product TAX/WBS **`c8c01269ecbb30f6920c44af9c503eb73eec6e92`**. [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. TAX/WBS **IMPLEMENTED**. SCOPE / TIME / SCH / PERF / CLOSE / LEARN / QB-T **NOT AUTHORIZED**. [FG-034](../feature-gates/FG-034-account-recovery-and-transactional-email.md) **CLOSED / OPERATIONAL FOR UAT**. Live Postmark **DEFERRED**. V1 **not rescored** (**60% / 4 of 11**). Alembic **`f3b4c5d6e7f8 (head)`**. EST-2026-0019 **untouched**. PRODUCTION packages **0**.

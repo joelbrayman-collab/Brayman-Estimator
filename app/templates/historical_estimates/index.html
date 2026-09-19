@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Historical Estimate Evidence — Brayman Construction Platform{% endblock %}
-{% block page_title %}Historical Estimate Evidence{% endblock %}
+{% block title %}{{ contractor_copy.HISTORICAL_PAGE_TITLE }} — Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.HISTORICAL_PAGE_TITLE }}{% endblock %}
 
 {% block content %}
 <div class="content-container" style="max-width: 1200px; margin: 0 auto; padding: 24px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <div>
-            <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">UPLOAD PREVIOUS ESTIMATES</h2>
+            <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">{{ contractor_copy.HISTORICAL_HEADING }}</h2>
             <p class="muted-copy" style="margin: 4px 0 0 0; font-size: 0.95rem;">
-                Load about 20–25 representative recent estimates in one action. Upload success is historical evidence loaded — not a completed cost model.
+                Load about 20–25 representative recent estimates in one action. Upload success is previous-job evidence loaded — not a completed cost model.
             </p>
         </div>
         <div style="background: #eef2ff; color: #3730a3; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.85rem;">
-            Historical evidence · calibration review ready
+            {{ contractor_copy.HISTORICAL_READY_BADGE }}
         </div>
     </div>
 
@@ -30,8 +30,7 @@
     <div class="card" style="background: #fff; border-radius: 8px; border: 1px solid #e5e7eb; padding: 20px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
         <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 600;">Upload previous estimates</h3>
         <p style="margin: 0 0 16px 0; font-size: 0.9rem; color: #6b7280;">
-            Select many workbooks, drag and drop files, or choose a folder where this browser supports it.
-            Each file is validated on its own. Supported: <strong>.xlsx</strong> and <strong>.xlsm</strong> (valid OpenXML). Macros and formulas are not executed.
+            {{ contractor_copy.HISTORICAL_UPLOAD_HELP }}
         </p>
         <form id="historical-upload-form" action="{{ url_for('historical_estimates.upload') }}" method="POST" enctype="multipart/form-data">
             <div id="historical-dropzone" style="border: 2px dashed #c7d2fe; border-radius: 8px; padding: 24px; text-align: center; background: #f8fafc; margin-bottom: 16px;">
@@ -60,11 +59,11 @@
         <h3 style="margin: 0 0 12px 0; font-size: 1.1rem; font-weight: 600;">Upload results</h3>
         <p style="margin: 0 0 12px 0; font-size: 0.9rem; color: #374151;">
             FILES RECEIVED: <strong>{{ upload_summary.files_received }}</strong>
-            · HISTORICAL EVIDENCE LOADED: <strong>{{ upload_summary.ingested_count }}</strong>
-            · DUPLICATES: <strong>{{ upload_summary.duplicate_count }}</strong>
-            · REVIEW REQUIRED: <strong>{{ upload_summary.quarantined_count }}</strong>
-            · UNSUPPORTED: <strong>{{ upload_summary.unsupported_count }}</strong>
-            · FAILED: <strong>{{ upload_summary.failed_count }}</strong>
+            · LOADED: <strong>{{ upload_summary.ingested_count }}</strong>
+            · ALREADY UPLOADED: <strong>{{ upload_summary.duplicate_count }}</strong>
+            · NEEDS REVIEW: <strong>{{ upload_summary.quarantined_count }}</strong>
+            · NOT SUPPORTED: <strong>{{ upload_summary.unsupported_count }}</strong>
+            · COULD NOT LOAD: <strong>{{ upload_summary.failed_count }}</strong>
         </p>
         <p style="margin: 0 0 16px 0; font-size: 0.85rem; color: #6b7280;">
             Uploading files does not complete the cost model. Accepted as evidence is historical evidence, not an approved operating standard.
@@ -83,11 +82,7 @@
                 <tr style="border-bottom: 1px solid #f3f4f6;">
                     <td style="padding: 8px 10px; font-weight: 600;">{{ row.original_filename }}</td>
                     <td style="padding: 8px 10px;">
-                        {% if row.outcome == 'INGESTED' %}HISTORICAL EVIDENCE LOADED
-                        {% elif row.outcome == 'DUPLICATE' %}DUPLICATE
-                        {% elif row.outcome == 'QUARANTINED' %}REVIEW REQUIRED
-                        {% elif row.outcome == 'UNSUPPORTED' %}UNSUPPORTED
-                        {% else %}FAILED{% endif %}
+                        {{ contractor_copy.historical_upload_outcome_label(row.outcome) }}
                     </td>
                     <td style="padding: 8px 10px; color: #4b5563;">{{ row.message }}</td>
                     <td style="padding: 8px 10px; text-align: right;">
@@ -104,15 +99,14 @@
 
     <div class="card" style="background: #fff; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
         <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; background: #f9fafb; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 600; color: #374151;">Historical evidence records ({{ estimates|length }})</span>
-            <span style="font-size: 0.85rem; color: #6b7280;">Organization-scoped · ORG-HISTORICAL</span>
+            <span style="font-weight: 600; color: #374151;">{{ contractor_copy.HISTORICAL_RECORDS_HEADING }} ({{ estimates|length }})</span>
         </div>
 
         {% if not estimates %}
         <div style="padding: 48px; text-align: center; color: #6b7280;">
             <i class="bi bi-inbox" style="font-size: 2.5rem; display: block; margin-bottom: 12px;"></i>
             <p style="margin: 0; font-size: 1.1rem; font-weight: 500;">No historical estimate records yet.</p>
-            <p style="margin: 4px 0 0 0; font-size: 0.9rem;">Upload previous estimates above to load historical evidence for review.</p>
+            <p style="margin: 4px 0 0 0; font-size: 0.9rem;">Upload previous estimates above to load them for review.</p>
         </div>
         {% else %}
         <div style="overflow-x: auto;">
@@ -121,7 +115,7 @@
                     <tr style="border-bottom: 1px solid #e5e7eb; background: #fafafa; color: #4b5563;">
                         <th style="padding: 12px 16px; font-weight: 600;">Source ID</th>
                         <th style="padding: 12px 16px; font-weight: 600;">Project / Client</th>
-                        <th style="padding: 12px 16px; font-weight: 600;">Family</th>
+                        <th style="padding: 12px 16px; font-weight: 600;">Workbook</th>
                         <th style="padding: 12px 16px; font-weight: 600;">Tier</th>
                         <th style="padding: 12px 16px; font-weight: 600;">Pricing Method</th>
                         <th style="padding: 12px 16px; font-weight: 600; text-align: right;">Direct Cost</th>
@@ -142,16 +136,16 @@
                         </td>
                         <td style="padding: 12px 16px;">
                             <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; background: #e0f2fe; color: #0369a1;">
-                                {{ est.template_family }}
+                                {{ contractor_copy.historical_family_label(est.template_family) }}
                             </span>
                         </td>
                         <td style="padding: 12px 16px;">
                             <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; {% if est.evidence_tier == 'TIER_A' %}background: #dcfce7; color: #15803d;{% elif est.evidence_tier == 'TIER_B' %}background: #fef9c3; color: #a16207;{% elif est.evidence_tier == 'TIER_C' %}background: #f3e8ff; color: #7e22ce;{% else %}background: #f3f4f6; color: #4b5563;{% endif %}">
-                                {{ est.evidence_tier }}{% if evidence_tier_labels %} — {{ evidence_tier_labels.get(est.evidence_tier, '') }}{% endif %}
+                                {% if evidence_tier_labels %}{{ evidence_tier_labels.get(est.evidence_tier, est.evidence_tier) }}{% else %}{{ est.evidence_tier }}{% endif %}
                             </span>
                         </td>
                         <td style="padding: 12px 16px; font-size: 0.8rem; color: #4b5563;">
-                            {{ est.pricing_method }}
+                            {{ contractor_copy.pricing_method_label(est.pricing_method) }}
                         </td>
                         <td style="padding: 12px 16px; text-align: right; font-family: monospace;">
                             {% if est.direct_cost_total %}${{ "{:,.2f}".format(est.direct_cost_total) }}{% else %}—{% endif %}

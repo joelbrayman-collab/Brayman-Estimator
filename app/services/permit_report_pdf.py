@@ -12,6 +12,7 @@ from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 from app.models.permit_intelligence import ADVISORY_AUTHORITY_LANGUAGE, PermitAnalysis
+from app.presentation.contractor_copy import PERMIT_PDF_BANNER, permit_office_language
 
 
 def generate_permit_report_pdf(analysis: PermitAnalysis) -> BytesIO:
@@ -52,7 +53,7 @@ def generate_permit_report_pdf(analysis: PermitAnalysis) -> BytesIO:
     )
     story = []
     story.append(Paragraph("CalibraytAI — Permit &amp; Approvals Report", title))
-    story.append(Paragraph("ADVISORY ONLY — not AHJ approval", small))
+    story.append(Paragraph(escape(PERMIT_PDF_BANNER), small))
     story.append(Spacer(1, 8))
     meta = [
         ["Project", str(analysis.project.name if analysis.project else analysis.project_id)],
@@ -97,7 +98,7 @@ def generate_permit_report_pdf(analysis: PermitAnalysis) -> BytesIO:
     )
     story.append(table)
     story.append(Paragraph("Authority", heading))
-    story.append(Paragraph(ADVISORY_AUTHORITY_LANGUAGE, body))
+    story.append(Paragraph(escape(permit_office_language(ADVISORY_AUTHORITY_LANGUAGE)), body))
     story.append(Paragraph("Checks / findings", heading))
     for finding in analysis.findings:
         topic = escape(finding.topic or "")
@@ -105,17 +106,30 @@ def generate_permit_report_pdf(analysis: PermitAnalysis) -> BytesIO:
         story.append(Paragraph(f"<b>{topic}</b> — {status}", body))
         if finding.requirement_snapshot:
             story.append(
-                Paragraph(f"Requirement: {escape(finding.requirement_snapshot)}", small)
+                Paragraph(
+                    f"Requirement: {escape(permit_office_language(finding.requirement_snapshot))}",
+                    small,
+                )
             )
         if finding.evidence_snapshot:
-            story.append(Paragraph(f"Evidence: {escape(finding.evidence_snapshot)}", small))
-        story.append(Paragraph(escape(finding.explanation or ""), small))
-        story.append(Paragraph(f"Action: {escape(finding.recommended_action or '')}", small))
+            story.append(
+                Paragraph(
+                    f"Evidence: {escape(permit_office_language(finding.evidence_snapshot))}",
+                    small,
+                )
+            )
+        story.append(Paragraph(escape(permit_office_language(finding.explanation)), small))
+        story.append(
+            Paragraph(
+                f"Action: {escape(permit_office_language(finding.recommended_action))}",
+                small,
+            )
+        )
         if finding.citation_snapshot:
             story.append(Paragraph(f"Source: {escape(finding.citation_snapshot)}", small))
         story.append(Spacer(1, 6))
     story.append(Paragraph("Disclaimer", heading))
-    story.append(Paragraph(ADVISORY_AUTHORITY_LANGUAGE, small))
+    story.append(Paragraph(escape(permit_office_language(ADVISORY_AUTHORITY_LANGUAGE)), small))
     doc.build(story)
     buffer.seek(0)
     return buffer

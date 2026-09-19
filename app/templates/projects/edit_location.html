@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
 {% block title %}Edit Project Location | {{ project.name }}{% endblock %}
-{% block page_title %}Structured Location{% endblock %}
+{% block page_title %}Job location{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Permit Foundation</p>
+        <p class="eyebrow">{{ contractor_copy.PERMIT_FOUNDATION_EYEBROW }}</p>
         <h1>{{ project.name }}</h1>
-        <p class="muted-copy">Review structured location and permit context class. Free-text project address is not parsed or overwritten.</p>
+        <p class="muted-copy">Review the job address and permit context. The free-text project address is not parsed or overwritten.</p>
     </div>
     <div>
         <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
@@ -16,13 +16,13 @@
 </div>
 
 <div class="form-panel" style="margin-bottom: 16px;">
-    <p class="eyebrow">PRELIMINARY / FOUNDATION ONLY</p>
-    <p>This workflow records location and jurisdiction foundation state. It does not mean zoning compliant, permit ready, permit approved, building-code compliant, or AHJ reviewed.</p>
+    <p class="eyebrow">{{ contractor_copy.PERMIT_FOUNDATION_EYEBROW }}</p>
+    <p>{{ contractor_copy.PERMIT_LOCATION_NOT_APPROVAL }}</p>
     <p class="muted-copy">Stored project address: {{ project.address or "—" }}</p>
 </div>
 
 <form method="post" class="form-panel">
-    <h3>Structured project location</h3>
+    <h3>Job address</h3>
     <p class="muted-copy" style="margin-bottom: 16px;">
         Civic fields only. Incomplete location is allowed. Postal / ZIP is optional. A material change supersedes the current preliminary profile without rewriting the prior snapshot.
     </p>

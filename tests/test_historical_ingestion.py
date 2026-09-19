@@ -337,14 +337,14 @@ def test_ui_historical_routes(client, source_dir):
     # List page
     res_list = client.get("/historical-estimates/")
     assert res_list.status_code == 200
-    assert b"UPLOAD PREVIOUS ESTIMATES" in res_list.data
+    assert b"Upload previous estimates" in res_list.data
     assert b"Alberton Garage" in res_list.data
 
     # Detail page
     res_detail = client.get(f"/historical-estimates/{est.id}")
     assert res_detail.status_code == 200
     assert b"Alberton Garage" in res_detail.data
-    assert b"Source-Cell Provenance Observations" in res_detail.data
+    assert b"Where these numbers came from" in res_detail.data
 
     # Review POST
     res_post = client.post(

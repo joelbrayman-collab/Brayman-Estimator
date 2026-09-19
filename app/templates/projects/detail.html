@@ -4,6 +4,7 @@
 {% block page_title %}{{ project.name }}{% endblock %}
 
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">Project Hub</p>
@@ -86,6 +87,7 @@
 </section>
 
 <p class="hub-section-label" id="hub-plan">PLAN</p>
+{{ contextual_help(help_content.hub_topic("plan")) }}
 <section class="dash-panels">
     <article class="panel">
         <div class="panel-header">
@@ -258,6 +260,7 @@
 </section>
 
 <p class="hub-section-label" id="hub-price">PRICE</p>
+{{ contextual_help(help_content.hub_topic("price")) }}
 <section class="dash-panels">
     <article class="panel panel-wide">
         <div class="panel-header">
@@ -327,6 +330,7 @@
 </section>
 
 <p class="hub-section-label" id="hub-contract">CONTRACT</p>
+{{ contextual_help(help_content.hub_topic("contract")) }}
 {% set contract_copy = contractor_copy.contract_selection_copy(hub.legal_content_selection) %}
 <section class="dash-panels">
     <article class="panel panel-wide" id="hub-contract-legal">
@@ -378,6 +382,7 @@
 </section>
 
 <p class="hub-section-label" id="hub-build">BUILD</p>
+{{ contextual_help(help_content.hub_topic("build")) }}
 <section class="dash-panels">
     <article class="panel panel-wide" id="hub-project-work">
         <div class="panel-header">
@@ -964,6 +969,7 @@
 </section>
 
 <p class="hub-section-label" id="hub-monitor">MONITOR</p>
+{{ contextual_help(help_content.hub_topic("monitor")) }}
 {% set monitor = hub.monitor %}
 {% set gm_percent = hub.monitor_gm_percent %}
 {% set actuals_form = actuals_form if actuals_form is defined else {"cost_class": "", "amount": "", "incurred_on": "", "note": ""} %}
@@ -1159,6 +1165,7 @@
 </section>
 
 <p class="hub-section-label" id="hub-learn">LEARN</p>
+{{ contextual_help(help_content.hub_topic("learn")) }}
 <div class="hub-future-note">
     <p class="eyebrow">Future</p>
     <p>LEARN is not operational. This hub does not generate AI recommendations or treat historical labour evidence as this project’s operating data.</p>

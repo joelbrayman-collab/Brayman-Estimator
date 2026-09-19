@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-19 — D1 Project Hub contextual Help
+
+| Field | Content |
+|-------|---------|
+| Milestone | D1 — Project Hub contextual Help |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Help product overall **PARTIAL**. LEARN remains Future. Voice / office/Field Help / User Guide **NOT IMPLEMENTED**. Official V1 **not rescored** (**65% / 4 of 11**). Secondary Functional V1 Build **79% / 22 of 28**. Completion Sign-Off **NOT IMPLEMENTED**. |
+| Branch | `main` |
+| Base commit | `4b9c456698370da67a91705b703ea0cbcfed986c` (`docs: record FG-035 Client Final Walkthrough live migration`) |
+| Objective | First in-product Help on Project Hub PLAN / PRICE / CONTRACT / BUILD / MONITOR. Reusable static Help content authority. Informational only. |
+| Deliverables | `app/presentation/help_content.py`; `app/templates/partials/contextual_help.html`; Hub `projects/detail.html` Help controls; CSS; dedicated tests |
+| Validation | Dedicated D1 **9 passed**. Focused Hub/C2/C1/Close **169 passed**. Full suite **1407 passed**, 4875 warnings, **670.37s**, exit **0**. |
+| Architectural findings | Native `<details>` / `<summary>`. Shell injects `help_content`. No schema. No Voice. C2 remained sealed. |
+| Open decisions | D2 language residuals. D3 office Help. D4 Field Help. Voice. People & Access. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next milestone | **STOP.** Recommended next: **D2 — bounded contractor-language residuals**. Do **not** implement D2 from this record. |
+| Commit | this D1 commit follows |
+| Date | 2026-09-19 |
+
 ### 2026-09-19 — FG-035 CORE CLOSE C2 Client Final Walkthrough live migration
 
 | Field | Content |

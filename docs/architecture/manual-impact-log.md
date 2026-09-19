@@ -2,9 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. Not Interactive Help. Not Voice. **NOT IMPLEMENTATION-AUTHORIZED.** |
+| Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. Not Voice. D1 Hub Help is **IMPLEMENTED**; this log remains Manual Impact only. |
 | Updated | 2026-09-19 |
-| Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **FUTURE / RECORDED / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED** |
+| Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; Voice / office/Field Help / User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
 
@@ -12,7 +12,7 @@ This file is **not** the professional CALIBRAYTAI V1 USER GUIDE. It is a lightwe
 
 Do **not** write final Manual prose here.
 Do **not** capture screenshots against unfinished surfaces.
-Do **not** implement Help / Voice / Manual from this file.
+Do **not** implement Voice / office/Field Help / finished Manual from this file.
 
 **Final authoring sequence** remains: remaining functional V1 → Contractor Language + UX E2E Audit → one User Help Content authority → User Guide from the finished product → procedure cross-check → final desktop/iPhone screenshots → Help → Voice → internal E2E → task-based UAT package → **give the completed Guide to Kevin and Ben (and already-recorded Ben’s father-in-law) BEFORE platform access** → allow Guide review → then platform access and realistic task-based UAT without coaching.
 
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — D1 PROJECT HUB CONTEXTUAL HELP (2026-09-19)
+
+| Field | Content |
+|-------|---------|
+| Slice | D1 Project Hub contextual Help |
+| Product status at capture | **IMPLEMENTED.** Static Help content authority. Native expandable Help on Project Hub PLAN / PRICE / CONTRACT / BUILD / MONITOR. LEARN remains Future. Informational only. No schema. No Voice. Help product overall **PARTIAL**. |
+| 1. What new contractor capability exists? | On the Project Hub, the contractor can open Help beside each lifecycle area and read what the area is, what to do there, and what normally follows. |
+| 2. When would the contractor use it? | When first using a Project, or when unsure which Hub area to work in next. |
+| 3. What workflow will the final Manual need to teach? | Open a Project. Use Help on PLAN, PRICE, CONTRACT, BUILD, and MONITOR. Treat LEARN as Future. Help does not save work. |
+| 4. What contractor-facing terms must be used? | Help. What is this? What should I do here? What happens next? PLAN. PRICE. CONTRACT. BUILD. MONITOR. LEARN · Future. Permit report is not municipal approval. Client comments are not the Punch List until accepted. Monitor is not a profit figure. |
+| 5. What screenshots / Print examples will eventually be needed? | Hub with Help closed. One Help panel open on PLAN. LEARN Future Help. Capture after office restart onto this SHA. |
+| 6. What warnings / validation distinctions need explanation? | Opening Help does not change the job. Production contract generation is not available. LEARN does not recommend or calibrate. |
+| 7. Desktop / iPhone / Print relevance | Office desktop Project Hub. Not Field. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim Voice exists. Claim office/Field Help exists. Claim LEARN is live. |
 
 ### MANUAL IMPACT — CORE CLOSE C2 CLIENT FINAL WALKTHROUGH (2026-09-19)
 

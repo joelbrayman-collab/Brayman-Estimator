@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-19 — D1 Project Hub contextual Help
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-19 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026 |
+| Objective | Implement D1 Project Hub contextual Help only. Reusable static Help content. Native Hub Help. LEARN remains Future. Informational only. No Voice. No schema. No C2 change. |
+| Business decision | Contractor Help answers What / Do / Next on PLAN, PRICE, CONTRACT, BUILD, MONITOR. LEARN is Future. Help does not mutate records. Governing completion order: product completion work → People & Access → whole-product UAT → Project Completion Sign-Off. |
+| Architectural decision | Frozen `HelpTopic` in `app/presentation/help_content.py`. Native HTML `<details>`. Shell injects `help_content`. Office/Field surfaces return empty topics for later D3/D4. No CMS. No LLM. |
+| Prompt template used | Architect D1 IMPLEMENTATION |
+| Approved Cursor prompt summary | Implement D1 Project Hub contextual Help. Tests. Docs. Commit `feat: add Project Hub contextual Help`. Push. STOP. Do not implement D2–D9, Voice, LEARN, People & Access, UAT, or Sign-Off. |
+| Files expected to change | Help authority, Hub template, CSS, tests, D1 governance pointers |
+| Files prohibited from changing | C2 data/behaviour; pricing; estimates; contracts; Field Voice; MONITOR calculations; Punch List/Walkthrough business logic; LEARN product; migrations; scorecard |
+| Implementation result | D1 **IMPLEMENTED**. C2 remains **SEALED / 0 INVITATIONS**. Alembic **`e5f6a7b8c9d0 (head)`**. No Voice. LEARN Future. Official V1 **not rescored**. This commit follows. |
+| Tests | Dedicated 9 passed. Focused Hub/C2/C1/Close 169 passed / 93.36s. Full suite 1407 passed / 670.37s, exit 0. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | D2 language residuals. Office/Field Help. Voice. People & Access. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next approved step | **STOP.** Recommended next: **D2 — bounded contractor-language residuals**. Do **not** implement D2 from this record. |
+| Next approved prompt | none — STOP |
+| Commit hash | this D1 commit follows |
+
 ### 2026-09-19 — FG-035 CORE CLOSE C2 Client Final Walkthrough live migration
 
 | Field | Content |

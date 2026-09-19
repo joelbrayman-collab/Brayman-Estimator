@@ -1171,6 +1171,57 @@ textarea {
     color: var(--gold);
 }
 
+.contextual-help {
+    margin: 0 0 12px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+}
+
+.contextual-help > summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.contextual-help > summary::-webkit-details-marker {
+    display: none;
+}
+
+.contextual-help > summary::after {
+    content: "Show";
+    float: right;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+}
+
+.contextual-help[open] > summary::after {
+    content: "Hide";
+}
+
+.contextual-help-body {
+    padding: 0 12px 12px;
+}
+
+.contextual-help-body p {
+    margin: 0 0 8px;
+    font-size: 0.92rem;
+    line-height: 1.45;
+}
+
+.contextual-help-body p:last-child {
+    margin-bottom: 0;
+}
+
+.contextual-help.is-future {
+    background: var(--cream);
+}
+
 .hub-future-note {
     margin-top: 16px;
     padding: 14px 16px;

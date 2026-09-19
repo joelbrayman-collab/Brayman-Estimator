@@ -1,0 +1,18 @@
+{% macro contextual_help(topic) %}
+<details class="contextual-help{% if topic.future %} is-future{% endif %}"
+          id="help-{{ topic.key }}"
+          data-help-surface="{{ topic.surface }}"
+          data-help-topic="{{ topic.key }}">
+    <summary>{{ help_content.HELP_CONTROL_LABEL }}</summary>
+    <div class="contextual-help-body">
+        <p class="eyebrow">{{ topic.title }}{% if topic.future %} · {{ help_content.FUTURE_LABEL }}{% endif %}</p>
+        {% if topic.future %}
+        <p>{{ topic.what }}</p>
+        {% else %}
+        <p><strong>{{ help_content.WHAT_LABEL }}</strong> {{ topic.what }}</p>
+        <p><strong>{{ help_content.DO_LABEL }}</strong> {{ topic.do }}</p>
+        <p><strong>{{ help_content.NEXT_LABEL }}</strong> {{ topic.next }}</p>
+        {% endif %}
+    </div>
+</details>
+{% endmacro %}

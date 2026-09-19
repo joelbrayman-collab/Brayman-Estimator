@@ -4,6 +4,8 @@
 {% block content %}
 {% set nav_current = 'today' %}
 {% include "field/_field_nav.html" %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.field_topic("today")) }}
 <p class="field-today-orientation">
     <span class="field-today-weekday">{{ today_weekday }}</span>
     <span class="field-today-date">{{ today_natural_date }}</span>

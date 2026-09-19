@@ -1,9 +1,9 @@
 """Reusable contractor-facing Help content authority.
 
 Presentation only. Static copy. No database, CMS, schema, LLM, or mutation.
-D1 ships Project Hub topics. D3 ships office topics on the same authority.
-Later Voice must consume this module rather than invent a second knowledge base.
-Field (D4) remains empty.
+D1 ships Project Hub topics. D3 ships office topics. D4 ships Field topics.
+All three use this same authority. Later Voice must consume this module
+rather than invent a second knowledge base.
 """
 
 from __future__ import annotations
@@ -380,10 +380,112 @@ OFFICE_TOPICS: dict[str, HelpTopic] = {
     )
 }
 
+FIELD_TODAY = HelpTopic(
+    key="today",
+    title="Today",
+    what="Today shows the work scheduled for you today.",
+    do=(
+        "Confirm the Project you are standing on. Capture notes or photos, "
+        "enter Time, or record Extra work. This screen does not change dates."
+    ),
+    next="If nothing is listed, open This week or choose a Project.",
+    surface=SURFACE_FIELD,
+)
+
+FIELD_WEEK = HelpTopic(
+    key="week",
+    title="This week",
+    what="This week shows your scheduled work for the current week.",
+    do="Open a day to see assigned work. Enter Time from a listed job. This view does not move dates.",
+    next="Use Today for today’s jobs, or This month for a wider look.",
+    surface=SURFACE_FIELD,
+)
+
+FIELD_MONTH = HelpTopic(
+    key="month",
+    title="This month",
+    what="This month shows your scheduled work on a calendar.",
+    do="Tap a day to see that day’s work. Marks show days with scheduled work. This does not change dates.",
+    next="Open Today or a Project when you are ready to capture or enter Time.",
+    surface=SURFACE_FIELD,
+)
+
+FIELD_COMPANY_TODAY = HelpTopic(
+    key="company_today",
+    title="Company today",
+    what="Company today shows what the company has scheduled today. It does not change dates.",
+    do="Review who is planned where. This is a schedule view, not a place to edit dates.",
+    next="Your own jobs remain on Today.",
+    surface=SURFACE_FIELD,
+)
+
+FIELD_PROJECTS = HelpTopic(
+    key="projects",
+    title="Projects",
+    what="Choose the Project you are standing on. Capture and Time apply to that Project.",
+    do="Select a current job, then confirm it. Closed jobs are not operated from Field.",
+    next="After you confirm, Capture, enter Time, or return to Today.",
+    surface=SURFACE_FIELD,
+)
+
+FIELD_CAPTURE = HelpTopic(
+    key="capture",
+    title="Capture",
+    what="Capture saves notes, photos, and recordings to this Project’s job record.",
+    do="Add a note, take or choose a photo, or record audio, then save. Confirm the Project first.",
+    next="Saved observations stay on this Project. Return to Today when you are done.",
+    surface=SURFACE_FIELD,
+)
+
+FIELD_TIME = HelpTopic(
+    key="time",
+    title="Time",
+    what="Time is where you send hours for the work you did on this Project.",
+    do=(
+        "Choose the work, enter hours, and send time. Returned time can be fixed "
+        "and sent again. This screen records hours only."
+    ),
+    next="Open My time to see what you sent.",
+    surface=SURFACE_FIELD,
+)
+
+FIELD_MY_TIME = HelpTopic(
+    key="my_time",
+    title="My time",
+    what="My time lists hours you already sent, including items waiting or returned.",
+    do="Open Time to send more hours. Fix returned items and send again.",
+    next="Return to Today when you are done.",
+    surface=SURFACE_FIELD,
+)
+
+FIELD_EXTRA_WORK = HelpTopic(
+    key="extra_work",
+    title="Extra work",
+    what="Extra work records something the customer asked for that is not already on this Project.",
+    do="Describe the request. You may attach it to an existing work item or name a new one.",
+    next="Extra work is recorded on this Project. Time is entered separately.",
+    surface=SURFACE_FIELD,
+)
+
+FIELD_TOPICS: dict[str, HelpTopic] = {
+    topic.key: topic
+    for topic in (
+        FIELD_TODAY,
+        FIELD_WEEK,
+        FIELD_MONTH,
+        FIELD_COMPANY_TODAY,
+        FIELD_PROJECTS,
+        FIELD_CAPTURE,
+        FIELD_TIME,
+        FIELD_MY_TIME,
+        FIELD_EXTRA_WORK,
+    )
+}
+
 _SURFACE_TOPICS: dict[str, dict[str, HelpTopic]] = {
     SURFACE_HUB: HUB_TOPICS,
     SURFACE_OFFICE: OFFICE_TOPICS,
-    SURFACE_FIELD: {},
+    SURFACE_FIELD: FIELD_TOPICS,
 }
 
 
@@ -401,6 +503,14 @@ def office_topic(key: str) -> HelpTopic:
         return OFFICE_TOPICS[key]
     except KeyError as exc:
         raise KeyError(f"Unknown office Help topic: {key}") from exc
+
+
+def field_topic(key: str) -> HelpTopic:
+    """Return one Field Help topic. Fail closed on unknown keys."""
+    try:
+        return FIELD_TOPICS[key]
+    except KeyError as exc:
+        raise KeyError(f"Unknown Field Help topic: {key}") from exc
 
 
 def topic_for_context(surface: str, key: str) -> HelpTopic | None:
@@ -442,13 +552,32 @@ def topics_for_surface(surface: str) -> tuple[HelpTopic, ...]:
         )
     if surface == SURFACE_OFFICE:
         return tuple(OFFICE_TOPICS.values())
+    if surface == SURFACE_FIELD:
+        return tuple(
+            FIELD_TOPICS[key]
+            for key in (
+                "today",
+                "week",
+                "month",
+                "company_today",
+                "projects",
+                "capture",
+                "time",
+                "my_time",
+                "extra_work",
+            )
+        )
     return ()
 
 
 def all_help_text() -> str:
     """Concatenated Help copy for governance/language tests."""
     parts: list[str] = []
-    for topic in (*HUB_TOPICS.values(), *OFFICE_TOPICS.values()):
+    for topic in (
+        *HUB_TOPICS.values(),
+        *OFFICE_TOPICS.values(),
+        *FIELD_TOPICS.values(),
+    ):
         parts.extend(
             part
             for part in (topic.title, topic.what, topic.do, topic.next)

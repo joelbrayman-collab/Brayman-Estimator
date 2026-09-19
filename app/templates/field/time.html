@@ -4,6 +4,8 @@
 {% block content %}
 {% set nav_current = '' %}
 {% include "field/_field_nav.html" %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.field_topic("time")) }}
 <section class="field-panel field-panel-time">
     <h1>{{ contractor_copy.FIELD_TIME_BUTTON }}</h1>
     <p class="field-project-name">{{ project.name }}</p>

@@ -144,7 +144,10 @@ def test_one_help_authority_and_voice_ready_seam():
     assert {topic.key for topic in help_content.topics_for_surface("office")} == set(
         OFFICE_HELP_KEYS
     )
-    assert help_content.topics_for_surface("field") == ()
+    assert help_content.topics_for_surface("field")
+    assert {topic.surface for topic in help_content.topics_for_surface("field")} == {
+        help_content.SURFACE_FIELD
+    }
     assert help_content.topic_for_context("office", "missing-key") is None
     assert help_content.topic_for_context("unknown-surface", "dashboard") is None
     assert help_content.help_payload("office", "missing-key") is None
@@ -300,13 +303,14 @@ def test_help_does_not_bypass_authentication(client, project):
     assert b'data-help-topic=' not in response.data
 
 
-def test_missing_help_fails_quietly_and_field_is_unchanged(client, project):
+def test_missing_help_fails_quietly_and_field_is_not_office(client, project):
     assert help_content.topic_for_context("office", "does-not-exist") is None
     field = client.get("/field", follow_redirects=True)
     assert field.status_code == 200
     field_html = _html(field)
-    assert "contextual-help" not in field_html
+    assert 'data-help-surface="field"' in field_html
     assert 'data-help-surface="office"' not in field_html
+    assert 'data-help-surface="hub"' not in field_html
     walkthrough = client.get("/walkthrough/not-a-real-token")
     assert b"contextual-help" not in walkthrough.data
     assert b'data-help-surface="office"' not in walkthrough.data

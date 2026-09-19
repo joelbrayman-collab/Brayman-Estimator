@@ -4,6 +4,8 @@
 {% block content %}
 {% set nav_current = 'month' %}
 {% include "field/_field_nav.html" %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.field_topic("month")) }}
 <section class="field-panel">
     <h1>{{ contractor_copy.FIELD_NAV_MONTH }}</h1>
     <nav class="field-month-nav" aria-label="{{ contractor_copy.FIELD_NAV_MONTH }}">

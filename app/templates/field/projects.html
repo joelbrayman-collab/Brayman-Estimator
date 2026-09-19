@@ -2,6 +2,8 @@
 {% block title %}Projects — CalibraytAI{% endblock %}
 {% block field_page %}projects{% endblock %}
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.field_topic("projects")) }}
 {% if confirm_project %}
 <section class="field-panel">
     <h1>Confirm Project</h1>

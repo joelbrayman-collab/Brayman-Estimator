@@ -711,3 +711,45 @@ input:focus-visible {
 .field-day-detail {
     margin-top: 8px;
 }
+
+.field-body .contextual-help {
+    margin: 0 0 16px;
+    padding: 0;
+    border: 2px solid var(--black);
+    border-radius: 10px;
+    background: var(--white);
+}
+
+.field-body .contextual-help > summary {
+    cursor: pointer;
+    list-style: none;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.field-body .contextual-help > summary::-webkit-details-marker {
+    display: none;
+}
+
+.field-body .contextual-help-body {
+    padding: 0 16px 16px;
+}
+
+.field-body .contextual-help-body .eyebrow {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.field-body .contextual-help-body p {
+    margin: 0 0 10px;
+    font-size: 1.05rem;
+    line-height: 1.4;
+}
+
+.field-body .contextual-help-body p:last-child {
+    margin-bottom: 0;
+}

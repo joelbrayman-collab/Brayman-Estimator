@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-19 — D4 Field Help
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-19 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026 |
+| Objective | After D3 ACCEPT COMMIT / PUSH / SHA-PIN, implement D4 Field Help in working tree only. Extend the same Help authority to high-value Field surfaces. No Voice. No schema. Return before commit/push. |
+| Business decision | A contractor on iPhone Field should understand Today, This week, This month, Company today, Project context, Capture, and Time without Joel explaining the software. Help stays short and collapsed. |
+| Architectural decision | One Help authority in `app/presentation/help_content.py`. `field_topic()` plus existing `topic_for_context` / `help_payload`. Native `<details>` Help with Field CSS. Company today remains SCH-D, not Company Attention. |
+| Prompt template used | Architect D3 ACCEPT COMMIT then D4 FIELD HELP IMPLEMENTATION AUTHORIZATION |
+| Approved Cursor prompt summary | Commit/push/pin D3. Then implement D4 Field Help. Tests. Docs. Read-only Field Help smoke. STOP and return to Architect before D4 commit/push. Do not implement Voice, People & Access, LEARN, or Sign-Off. |
+| Files expected to change | help_content Field topics, Field templates, field.css, D1/D3 empty-field tests, D4 tests, D4 governance pointers |
+| Files prohibited from changing | C2 behaviour; pricing/estimate formulas; schema; Voice; LEARN; People & Access; scorecard; Field redesign |
+| Implementation result | D4 **IMPLEMENTED IN WORKING TREE / TESTED / NOT COMMITTED**. D1/D3 preserved. C2 **SEALED**. Alembic **`e5f6a7b8c9d0 (head)`**. Official V1 **not rescored**. |
+| Tests | Dedicated D4 9 passed / 5.11s. D1 9 passed. D3 8 passed. D2 6 passed. Focused Help/Field 281 passed / 148.96s. Full suite 1430 passed / 698.92s, exit 0. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Architect review then D4 commit/push. Voice-with-Help. People & Access. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next approved step | **STOP.** Return to ChatGPT Architect **before commit/push**. Recommended next after review: **Voice-with-Help**. |
+| Next approved prompt | none — STOP |
+| Commit hash | not committed |
+
 ### 2026-09-19 — D3 office Help
 
 | Field | Content |

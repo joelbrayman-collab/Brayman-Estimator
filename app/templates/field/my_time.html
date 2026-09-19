@@ -2,6 +2,8 @@
 {% block title %}{{ contractor_copy.FIELD_MY_TIME_HEADING }} — CalibraytAI{% endblock %}
 {% block field_page %}my-time{% endblock %}
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.field_topic("my_time")) }}
 <section class="field-panel">
     <h1>{{ contractor_copy.FIELD_MY_TIME_HEADING }}</h1>
     {% if project %}

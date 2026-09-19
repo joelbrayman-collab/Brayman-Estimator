@@ -2,9 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. Not Voice. D1 Hub Help and D3 office Help are **IMPLEMENTED**; this log remains Manual Impact only. |
+| Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. Not Voice. D1 Hub Help, D3 office Help, and D4 Field Help (working tree) are **IMPLEMENTED**; this log remains Manual Impact only. |
 | Updated | 2026-09-19 |
-| Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; Voice / Field Help / User Guide **NOT IMPLEMENTED** |
+| Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED IN WORKING TREE**; Voice / User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
 
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — D4 FIELD HELP (2026-09-19)
+
+| Field | Content |
+|-------|---------|
+| Slice | D4 Field Help |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / TESTED / NOT COMMITTED.** Same Help authority as D1/D3. Native expandable Help on high-value Field screens. LEARN remains Future. Informational only. No schema. No Voice. Contextual Help coverage complete for Hub / Office / Field. Voice and User Guide remain outstanding. |
+| 1. What new contractor capability exists? | On Field Today, This week, This month, Company today, Projects, Capture, Time, My time, and Extra work, the contractor can open Help and read what the screen is, what to do there, and what normally follows. |
+| 2. When would the contractor use it? | When first using a Field screen on iPhone, or when unsure what the screen is for or what to do next. |
+| 3. What workflow will the final Manual need to teach? | Open Help on the Field screen being used. Help stays collapsed until opened. Help does not save work, change dates, or capture media. Company today is a schedule view and is not Company Attention. |
+| 4. What contractor-facing terms must be used? | Help. Today. This week. This month. Company today. Projects. Capture. Time. My time. Extra work. |
+| 5. What screenshots / Print examples will eventually be needed? | Field Today Help open on a narrow iPhone viewport. Company today Help. Capture Help. Time Help. Capture after Field restart onto this working tree / later SHA. |
+| 6. What warnings / validation distinctions need explanation? | Company today does not change dates. Closed jobs are not operated from Field. Time records hours only. Capture saves observations to the confirmed Project. |
+| 7. Desktop / iPhone / Print relevance | iPhone Field first. Office Help unchanged. Print unchanged. |
+| Do not | Final Manual prose. Claim Voice exists. Claim LEARN is live. Claim People & Access exists. Claim Completion Sign-Off exists. Claim Company Attention exists in Field. |
 
 ### MANUAL IMPACT — D3 OFFICE HELP (2026-09-19)
 

@@ -2,6 +2,8 @@
 {% block title %}Capture — CalibraytAI{% endblock %}
 {% block field_page %}capture{% endblock %}
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.field_topic("capture")) }}
 <section class="field-panel field-capture" data-project-id="{{ project.id }}">
     <h1>Capture</h1>
     <p class="field-project-name" id="field-capture-project">{{ project.name }}</p>

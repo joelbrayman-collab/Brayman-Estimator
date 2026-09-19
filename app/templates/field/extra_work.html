@@ -2,6 +2,8 @@
 {% block title %}{{ contractor_copy.FIELD_EXTRA_WORK_HEADING }} — CalibraytAI{% endblock %}
 {% block field_page %}extra-work{% endblock %}
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.field_topic("extra_work")) }}
 <section class="field-panel field-panel-extra-work">
     <h1>{{ contractor_copy.FIELD_EXTRA_WORK_HEADING }}</h1>
     <p class="field-project-name">{{ project.name }}</p>

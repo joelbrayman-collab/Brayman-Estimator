@@ -94,7 +94,10 @@ def test_help_content_authority_is_static_and_reusable():
     plan = help_content.hub_topic("plan")
     assert plan.surface == help_content.SURFACE_HUB
     assert help_content.topics_for_surface(help_content.SURFACE_HUB)
-    assert help_content.topics_for_surface("field") == ()
+    assert help_content.topics_for_surface("field")
+    assert {topic.surface for topic in help_content.topics_for_surface("field")} == {
+        help_content.SURFACE_FIELD
+    }
     source = Path(help_content.__file__).read_text(encoding="utf-8")
     assert "db." not in source
     assert "sqlalchemy" not in source.lower()

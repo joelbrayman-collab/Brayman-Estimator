@@ -4,6 +4,8 @@
 {% block content %}
 {% set nav_current = 'week' %}
 {% include "field/_field_nav.html" %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.field_topic("week")) }}
 <section class="field-panel">
     <h1>{{ contractor_copy.FIELD_NAV_WEEK }}</h1>
     <p class="field-muted">{{ view.window_label }}</p>

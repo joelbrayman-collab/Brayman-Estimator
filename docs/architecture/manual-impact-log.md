@@ -56,7 +56,7 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 | Field | Content |
 |-------|---------|
 | Slice | FG-035 CORE CLOSE C2 Client Final Walkthrough |
-| Product status at capture | **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NOT COMMITTED / NOT PUSHED.** Additive **`e5f6a7b8c9d0`**. No live invitations. |
+| Product status at capture | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NOT LIVE-UATed.** Product SHA **`ec4ef9956025fd8e281c12c17d84493b121f8337`**. Additive **`e5f6a7b8c9d0`**. No live invitations. |
 | 1. What new contractor capability exists? | On an ACTIVE Project Hub, authorized Project users can Invite Client to Final Walkthrough, copy a secure no-login link, see client response state, and review each client-submitted item. Actions: Add to Punch List (after choosing Original Scope / Change Order / Other), Already Addressed, or Discuss / Not Part of Current Work. |
 | 2. When would the contractor use it? | Near Project completion, to give the client a simple chance to say what still needs attention. Client comments are not the Punch List until the contractor accepts them. |
 | 3. What workflow will the final Manual need to teach? | Open Project Hub Client Final Walkthrough. Invite. Copy the link and send it outside the product if email is not configured. Review each item. Add accepted items to Punch List with a work source. Manage those items on the existing Punch List. Closed Projects show history only. |

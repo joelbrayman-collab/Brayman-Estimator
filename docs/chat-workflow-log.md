@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-19 — FG-035 CORE CLOSE C2 Client Final Walkthrough SHA pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-19 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026 |
+| Objective | Pin accepted C2 product SHA. No live C2 data. No Completion Sign-Off. |
+| Business decision | Architect ACCEPT COMMIT / PUSH / SHA PIN then live migrate in the same authorized prompt. Client input is not the Punch List. No live invitation. |
+| Architectural decision | No product change in this pin. Pin product SHA **`ec4ef9956025fd8e281c12c17d84493b121f8337`**. Live Alembic remains **`d4e5f6a7b8c9`**. Graph head **`e5f6a7b8c9d0`**. C2 **IMPLEMENTED / NOT LIVE**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE **PARTIAL**. FG-035 **OPEN / PARTIAL**. No rescore. |
+| Prompt template used | Architect ACCEPTANCE PRODUCT COMMIT / PUSH / SHA PIN THEN LIVE MIGRATION EMPTY-LIVE-BASELINE |
+| Approved Cursor prompt summary | Validate accepted C2; commit `feat: implement FG-035 Client Final Walkthrough`; push; pin `docs: pin FG-035 Client Final Walkthrough SHA`; push; then live migrate after clean checkpoint. Preserve stash. No live invitation. |
+| Files expected to change | minimum SHA-pin governance (this pin); product already committed |
+| Files prohibited from changing | live C2 rows; Close/Reopen rewrite; Completion Sign-Off; Native Signing; recovery stash; scorecard |
+| Implementation result | Product SHA **`ec4ef9956025fd8e281c12c17d84493b121f8337`**. This pin follows. C2 **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED**. Stash preserved. |
+| Tests | Accepted evidence reused (no code/test change): Dedicated 34 passed / 19.71s. Focused 352 passed / 197.04s. Full 1398 passed, 4860 warnings, 767.57s, exit 0. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate `e5f6a7b8c9d0`. Completion Sign-Off. Labeled live Close/Reopen UAT. PA-B. |
+| Next approved step | Same authorized prompt continues to live migrate after a hard clean checkpoint. Do **not** send a live client invitation. |
+| Next approved prompt | none — continue same authorized prompt |
+| Commit hash | product **`ec4ef9956025fd8e281c12c17d84493b121f8337`**; this pin follows |
+
 ### 2026-09-19 — FG-035 CORE CLOSE C2 Client Final Walkthrough (working tree / not committed)
 
 | Field | Content |

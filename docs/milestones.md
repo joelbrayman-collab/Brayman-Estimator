@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-19 — FG-035 CORE CLOSE C2 Client Final Walkthrough SHA pin
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 CORE CLOSE C2 Client Final Walkthrough SHA pin |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NOT LIVE-UATed.** Product SHA **`ec4ef9956025fd8e281c12c17d84493b121f8337`**. Additive **`e5f6a7b8c9d0`**. Graph head **`e5f6a7b8c9d0`**. Live Alembic remains **`d4e5f6a7b8c9`**. C2 **IMPLEMENTED / NOT LIVE**. C1 Punch List remains **LIVE / 0 ITEMS**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE overall **PARTIAL**. FG-035 **OPEN / PARTIAL**. |
+| Branch | `main` |
+| Base commit | `ec4ef9956025fd8e281c12c17d84493b121f8337` |
+| Objective | Pin accepted C2 product SHA. No live C2 data. No Completion Sign-Off. |
+| Deliverables | Minimum SHA-pin governance. Product already committed. |
+| Validation | Accepted evidence reused: Dedicated **34 passed**, 74 warnings, **19.71s**. Focused **352 passed**, 1303 warnings, **197.04s**. Full suite **1398 passed**, 4860 warnings, **767.57s**, exit **0**. |
+| Architectural findings | Hashed no-login invitation. Client input ≠ Punch List. Accept requires work source. Origin CLIENT_WALKTHROUGH. Photos DEFERRED. Email copyable-link. |
+| Open decisions | Live migrate `e5f6a7b8c9d0` (same authorized prompt). Completion Sign-Off. Labeled live Close/Reopen UAT. PA-B. |
+| Next milestone | Same authorized prompt continues to live migrate after a hard clean checkpoint. Do **not** send a live client invitation. |
+| SHA / tag | product **`ec4ef9956025fd8e281c12c17d84493b121f8337`**; this pin follows |
+| Date | 2026-09-19 |
+
 ### 2026-09-19 — FG-035 CORE CLOSE C2 Client Final Walkthrough (working tree / not committed)
 
 | Field | Content |

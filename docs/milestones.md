@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-19 — FG-035 CORE CLOSE C2 Client Final Walkthrough live migration
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 CORE CLOSE C2 Client Final Walkthrough live migration |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / EMPTY LIVE BASELINE VERIFIED / NOT LIVE-UATed WITH CLIENT DATA.** Product SHA **`ec4ef9956025fd8e281c12c17d84493b121f8337`**. Pin SHA **`14bd00b88c3a25ea7576be1d3dd2bbe288d272de`**. Additive **`e5f6a7b8c9d0` applied live**. Live Alembic **`e5f6a7b8c9d0 (head)`**. C2 **LIVE / 0 INVITATIONS**. C1 Punch List remains **LIVE / 0 ITEMS**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE overall **PARTIAL**. FG-035 **OPEN / PARTIAL**. |
+| Branch | `main` |
+| Base commit | `14bd00b88c3a25ea7576be1d3dd2bbe288d272de` |
+| Objective | Live migrate accepted C2 schema. Prove empty Final Walkthrough baseline. No live client invitation. No Completion Sign-Off. |
+| Deliverables | Backup; `flask db upgrade e5f6a7b8c9d0`; empty baseline proof; office restart; read-only Hub smoke; minimum governance. Evidence [testing/fg035-core-close-c2-client-final-walkthrough-live-migration-empty-baseline.md](testing/fg035-core-close-c2-client-final-walkthrough-live-migration-empty-baseline.md). |
+| Validation | Dedicated **34 passed**, 74 warnings, **18.70s**. Focused **352 passed**, 1303 warnings, **198.21s**. Full suite **1398 passed**, 4860 warnings, **779.71s**, exit **0**. Live occupancy 50/50 ACTIVE/0 CLOSED/0 events. C2 invitations **0**. Punch List items **0**. |
+| Architectural findings | Additive schema only. No seed. No automatic invitation. Client input remains CLIENT INPUT. Pending C2 is not a Sign-Off hard gate. |
+| Open decisions | Completion Sign-Off. Labeled live Close/Reopen UAT. PA-B. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Recommended next: **D — PROJECT COMPLETION SIGN-OFF**. |
+| SHA / tag | product **`ec4ef9956025fd8e281c12c17d84493b121f8337`**; pin **`14bd00b88c3a25ea7576be1d3dd2bbe288d272de`**; this live-migration record follows |
+| Date | 2026-09-19 |
+
 ### 2026-09-19 — FG-035 CORE CLOSE C2 Client Final Walkthrough SHA pin
 
 | Field | Content |

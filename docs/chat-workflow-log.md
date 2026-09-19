@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-19 — FG-035 CORE CLOSE C1 Contractor Punch List live migration
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-19 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026 |
+| Objective | Live migrate accepted C1 Punch List schema. Prove empty baseline. Restart office. Read-only Hub smoke. Record migration. No mutating live UAT. No C2. |
+| Business decision | Open Punch List does not hard-block Close. Zero OPEN items satisfies the Punch List prerequisite. Do not create live Punch List data. |
+| Architectural decision | `c3d4e5f6a7b8` → `d4e5f6a7b8c9 (head)`. No seed. No stamp. No downgrade. Punch List **LIVE / 0 ITEMS**. C2 **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE **PARTIAL**. FG-035 **OPEN / PARTIAL**. No rescore. |
+| Prompt template used | Architect ACCEPTANCE PRODUCT COMMIT / PUSH / SHA PIN THEN LIVE MIGRATION EMPTY-LIVE-BASELINE VERIFICATION |
+| Approved Cursor prompt summary | After SHA pin and clean checkpoint: backup; live migrate `d4e5f6a7b8c9`; empty baseline; restart office; read-only Hub smoke; tests; docs `docs: record FG-035 Punch List live migration`; push; STOP. |
+| Files expected to change | minimum live-migration governance only |
+| Files prohibited from changing | live Punch List rows; Close/Reopen rewrite; C2; Completion Sign-Off; Native Signing; recovery stash; scorecard |
+| Implementation result | Product SHA **`81b6d802ccf15c10b01a1f63337ef4d0d5a26d6c`**. Pin SHA **`7bdbf191fe062f43550a9ccb81abf6eb21db8691`**. Live Alembic **`d4e5f6a7b8c9 (head)`**. Punch List items **0**. Occupancy 50/50/0/0. Owner Membership 1. SET events 1. Grants 1. Stash preserved. This governance commit follows. |
+| Tests | Dedicated 26 passed / 14.51s. Focused 228 passed / 110.42s. Full suite 1364 passed / 808.82s, exit 0. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | C2 Client Final Walkthrough. Completion Sign-Off. Labeled live Close/Reopen UAT. PA-B. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Recommended next: **C2 CLIENT FINAL WALKTHROUGH**. |
+| Next approved prompt | none — STOP |
+| Commit hash | product **`81b6d802ccf15c10b01a1f63337ef4d0d5a26d6c`**; pin **`7bdbf191fe062f43550a9ccb81abf6eb21db8691`**; this live-migration record follows |
+
 ### 2026-09-19 — FG-035 CORE CLOSE C1 Contractor Punch List SHA pin
 
 | Field | Content |

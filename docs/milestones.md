@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-19 — FG-035 CORE CLOSE C1 Contractor Punch List live migration
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 CORE CLOSE C1 Contractor Punch List live migration |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / EMPTY LIVE BASELINE VERIFIED / NOT LIVE-UATed WITH MUTATING DATA.** Product SHA **`81b6d802ccf15c10b01a1f63337ef4d0d5a26d6c`**. Pin SHA **`7bdbf191fe062f43550a9ccb81abf6eb21db8691`**. Additive **`d4e5f6a7b8c9` applied live**. Live Alembic **`d4e5f6a7b8c9 (head)`**. Punch List **LIVE / 0 ITEMS**. C2 Client Final Walkthrough **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE overall **PARTIAL**. FG-035 **OPEN / PARTIAL**. |
+| Branch | `main` |
+| Base commit | `7bdbf191fe062f43550a9ccb81abf6eb21db8691` |
+| Objective | Live migrate accepted C1 schema. Prove empty Punch List baseline. No mutating live UAT. |
+| Deliverables | Backup; `flask db upgrade d4e5f6a7b8c9`; empty baseline proof; office restart; read-only Hub smoke; minimum governance. Evidence [testing/fg035-core-close-c1-punch-list-live-migration-empty-baseline.md](testing/fg035-core-close-c1-punch-list-live-migration-empty-baseline.md). |
+| Validation | Dedicated **26 passed**, 56 warnings, **14.51s**. Focused **228 passed**, 862 warnings, **110.42s**. Full suite **1364 passed**, 4786 warnings, **808.82s**, exit **0**. Live occupancy 50/50 ACTIVE/0 CLOSED/0 events. Punch List items **0**. |
+| Architectural findings | Additive schema only. No seed. Open Punch List does not hard-block Close. Zero OPEN items satisfies the Punch List prerequisite. |
+| Open decisions | C2 Client Final Walkthrough. Completion Sign-Off. Labeled live Close/Reopen UAT. PA-B. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Recommended next: **C2 CLIENT FINAL WALKTHROUGH**. |
+| SHA / tag | product **`81b6d802ccf15c10b01a1f63337ef4d0d5a26d6c`**; pin **`7bdbf191fe062f43550a9ccb81abf6eb21db8691`**; this live-migration record follows |
+| Date | 2026-09-19 |
+
 ### 2026-09-19 — FG-035 CORE CLOSE C1 Contractor Punch List SHA pin
 
 | Field | Content |

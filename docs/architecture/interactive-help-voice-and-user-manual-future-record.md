@@ -9,7 +9,7 @@
 
 This file is the **single consolidated future record** for Help / Voice / User Manual. It is **not** an ADR, not a Feature Gate, and not a preflight. Do **not** invent FG-036 or ADR-054 from this recording.
 
-**Subsequent status (2026-09-19 D3 OFFICE HELP):** D3 **IMPLEMENTED / TESTED / NOT COMMITTED**. Same Help authority as D1. Native `<details>` Help on high-value office screens. `help_payload()` is the later Voice seam. Field Help empty. LEARN Future. No schema. No Voice. Help product overall **PARTIAL**. Official V1 **not rescored**.
+**Subsequent status (2026-09-19 D3 OFFICE HELP):** D3 **IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Product SHA **`61f86789ae4e755fb39b3d65cbfee6a481ab15e8`**. Same Help authority as D1. Native `<details>` Help on high-value office screens. `help_payload()` is the later Voice seam. Field Help empty. LEARN Future. No schema. No Voice. Help product overall **PARTIAL**. Official V1 **not rescored**.
 
 **Subsequent status (2026-09-19 D2 BOUNDED CONTRACTOR-LANGUAGE RESIDUALS):** D2 **IMPLEMENTED**. Presentation/language/navigation only. D1 Hub Help preserved. LEARN Future. No schema. No Voice. Help product overall **PARTIAL**. Official V1 **not rescored**.
 

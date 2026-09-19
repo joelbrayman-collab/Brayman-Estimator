@@ -56,7 +56,7 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 | Field | Content |
 |-------|---------|
 | Slice | D3 office Help |
-| Product status at capture | **IMPLEMENTED / TESTED / NOT COMMITTED.** Same Help authority as D1. Native expandable Help on high-value office screens. LEARN remains Future. Informational only. No schema. No Voice. Help product overall **PARTIAL**. |
+| Product status at capture | **IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Product SHA **`61f86789ae4e755fb39b3d65cbfee6a481ab15e8`**. Same Help authority as D1. Native expandable Help on high-value office screens. LEARN remains Future. Informational only. No schema. No Voice. Help product overall **PARTIAL**. |
 | 1. What new contractor capability exists? | On Dashboard, Clients, Projects Current/Closed, Schedule, Company Attention, Estimates, Previous estimates, Cost library, Settings/Brand Profile, Permit report, Job location, Time, and Change Orders, the contractor can open Help and read what the screen is, what to do there, and what normally follows. |
 | 2. When would the contractor use it? | When first using an office screen, or when unsure what the screen is for or what to do next. |
 | 3. What workflow will the final Manual need to teach? | Open Help on the office screen being used. Treat LEARN as Future. Help does not save work. Company Attention Help appears only with Company/Management access. Punch List and Final Walkthrough Help remain on the Project Hub BUILD section. |

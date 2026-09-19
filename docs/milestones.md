@@ -37,16 +37,16 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 | Field | Content |
 |-------|---------|
 | Milestone | D4 — Field Help |
-| Status | **IMPLEMENTED IN WORKING TREE / TESTED / NO MIGRATION / NO DB MUTATION / NOT COMMITTED / NOT PUSHED.** Presentation only. Same Help authority as D1/D3. Contextual Help coverage complete for Hub / Office / Field. Voice and User Guide remain outstanding. LEARN remains Future. Official V1 **not rescored**. Completion Sign-Off **NOT IMPLEMENTED**. |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE FIELD HELP SMOKE PASS / NO MIGRATION / NO DB MUTATION.** Presentation only. Same Help authority as D1/D3. Contextual Help coverage complete for Hub / Office / Field. Voice and User Guide remain outstanding. LEARN remains Future. Official V1 **not rescored**. Completion Sign-Off **NOT IMPLEMENTED**. |
 | Branch | `main` |
 | Base commit | `1ab6cf09328e84915b306dd91a601dd4eb5a0c71` (`docs: pin D3 Office Help SHA`) |
 | Objective | Extend the existing D1/D3 Help authority to high-value contractor-facing Field/iPhone surfaces. Voice-ready `help_payload()` unchanged. |
 | Deliverables | Field topics in `help_content.py`; native `<details>` Help on Today, This week, This month, Company today, Projects, Capture, Time, My time, Extra work; Field-native CSS; dedicated D4 tests |
 | Validation | Dedicated D4 **9 passed**, 35 warnings, **5.11s**. D1 **9 passed**. D3 **8 passed**. D2 **6 passed**. Focused Help/Field **281 passed**, 884 warnings, **148.96s**. Full suite **1430 passed**, 4945 warnings, **698.92s**, exit **0**. Live Field GET Help smoke **PASS**. iPhone/browser visual smoke **unavailable**. |
 | Architectural findings | Single Help authority. Voice seam remains `topic_for_context` / `help_payload`. Company today ≠ Company Attention. No Field Punch List or client Walkthrough product. No schema. No Voice. C2 sealed. |
-| Open decisions | Architect review then commit/push. Voice-with-Help. People & Access. Whole-product UAT. Completion Sign-Off after UAT. |
-| Next milestone | **STOP.** Return to ChatGPT Architect **before commit/push**. Recommended next after review: **Voice-with-Help**. |
-| Commit | not committed |
+| Open decisions | Voice-with-Help. People & Access. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next milestone | **D5 — Voice with Help.** |
+| Commit | `e7c3fb35a1b1c4519c387a71eb8f7e81a6cc1169` (`feat: extend contextual Help across Field`) |
 | Date | 2026-09-19 |
 
 ### 2026-09-19 — D3 office Help

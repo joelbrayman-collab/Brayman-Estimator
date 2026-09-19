@@ -57,15 +57,39 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Approved Cursor prompt summary | Commit/push/pin D3. Then implement D4 Field Help. Tests. Docs. Read-only Field Help smoke. STOP and return to Architect before D4 commit/push. Do not implement Voice, People & Access, LEARN, or Sign-Off. |
 | Files expected to change | help_content Field topics, Field templates, field.css, D1/D3 empty-field tests, D4 tests, D4 governance pointers |
 | Files prohibited from changing | C2 behaviour; pricing/estimate formulas; schema; Voice; LEARN; People & Access; scorecard; Field redesign |
-| Implementation result | D4 **IMPLEMENTED IN WORKING TREE / TESTED / NOT COMMITTED**. D1/D3 preserved. C2 **SEALED**. Alembic **`e5f6a7b8c9d0 (head)`**. Official V1 **not rescored**. |
+| Implementation result | D4 **IMPLEMENTED / TESTED / COMMITTED / PUSHED**. Product SHA **`e7c3fb35a1b1c4519c387a71eb8f7e81a6cc1169`**. D1/D3 preserved. C2 **SEALED**. Alembic **`e5f6a7b8c9d0 (head)`**. Official V1 **not rescored**. |
 | Tests | Dedicated D4 9 passed / 5.11s. D1 9 passed. D3 8 passed. D2 6 passed. Focused Help/Field 281 passed / 148.96s. Full suite 1430 passed / 698.92s, exit 0. |
 | Project-state-report update | Yes |
 | Milestone entry update | Yes |
 | Constitutional issue raised | None |
-| Unresolved issues | Architect review then D4 commit/push. Voice-with-Help. People & Access. Whole-product UAT. Completion Sign-Off after UAT. |
-| Next approved step | **STOP.** Return to ChatGPT Architect **before commit/push**. Recommended next after review: **Voice-with-Help**. |
-| Next approved prompt | none — STOP |
-| Commit hash | not committed |
+| Unresolved issues | D5 Voice with Help. People & Access. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next approved step | **D5 — Voice with Help.** |
+| Next approved prompt | this prompt already authorizes D5 after D4 pin |
+| Commit hash | `e7c3fb35a1b1c4519c387a71eb8f7e81a6cc1169` |
+
+### 2026-09-19 — D4 Field Help SHA pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-19 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026 |
+| Objective | Pin D4 Field Help product SHA after Architect ACCEPT COMMIT. |
+| Business decision | Record D4 as IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE FIELD HELP SMOKE PASS / NO MIGRATION / NO DB MUTATION. |
+| Architectural decision | No product change. Documentation SHA pin only. Contextual Help coverage complete for Hub / Office / Field. Voice remains NOT IMPLEMENTED. |
+| Prompt template used | Architect D4 ACCEPT COMMIT / PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Commit D4 product. Push. Pin SHA. Then D5 Voice with Help in working tree only. |
+| Files expected to change | D4 governance SHA pointers |
+| Files prohibited from changing | D4 product code; C2; schema; Voice; LEARN; People & Access; scorecard |
+| Implementation result | D4 product SHA **`e7c3fb35a1b1c4519c387a71eb8f7e81a6cc1169`**. This pin commit follows. |
+| Tests | Not re-run for pin. D4 product tests already accepted. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | D5 Voice with Help. People & Access. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next approved step | **D5 — Voice with Help.** |
+| Next approved prompt | this prompt already authorizes D5 after D4 pin |
+| Commit hash | this D4 pin commit follows |
 
 ### 2026-09-19 — D3 office Help
 

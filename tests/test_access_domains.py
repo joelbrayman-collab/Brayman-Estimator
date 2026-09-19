@@ -582,7 +582,7 @@ def test_alembic_fg037_upgrade_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["d4e5f6a7b8c9"]
+        assert script.get_heads() == ["e5f6a7b8c9d0"]
 
         command.upgrade(alembic_cfg, "f9b0c1d2e3f4")
         engine = db.engine
@@ -638,4 +638,4 @@ def test_alembic_fg037_upgrade_downgrade(tmp_path):
             }
             assert "user_membership_access_domain_grants" in tables
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
-            assert [row[0] for row in heads] == ["d4e5f6a7b8c9"]
+            assert [row[0] for row in heads] == ["e5f6a7b8c9d0"]

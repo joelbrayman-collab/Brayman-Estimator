@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-19 — FG-035 CORE CLOSE C2 Client Final Walkthrough (working tree / not committed)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-19 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026 |
+| Objective | Implement CORE CLOSE C2 Client Final Walkthrough in working tree. Client input is not the Punch List. No client account/portal. No live invitation. No commit. |
+| Business decision | Contractor remains authoritative. Client may submit items XOR nothing-to-add. Only Add to Punch List creates an authoritative item. Pending client input does not hard-gate Sign-Off. Non-response does not block Close. |
+| Architectural decision | Native Signing hashed-token + lookup_key pattern. One governed response per invitation. Resend revokes previous OPEN. Accept-to-Punch-List requires contractor work source. Origin CLIENT_WALKTHROUGH. Photos DEFERRED. Email copyable-link pending configuration. Graph head **`e5f6a7b8c9d0`**; live current remains **`d4e5f6a7b8c9`**. |
+| Prompt template used | Architect COMPLETE CURSOR PROMPT — C2 CLIENT FINAL WALKTHROUGH |
+| Approved Cursor prompt summary | C2 Client Final Walkthrough only; no client account; no automatic Punch List; no Completion Sign-Off; one additive migration FILE; TEST DB only; no live migrate; no commit/push. |
+| Files expected to change | walkthrough model/service/routes/templates/CSS; Hub panel; punch-list origin helper; additive `e5f6a7b8c9d0`; dedicated tests; graph-head pins; min governance; Manual Impact |
+| Files prohibited from changing | Close/Reopen; Native Signing; live flask db upgrade; live data; client User/membership; recovery stash; scorecard |
+| Implementation result | Working tree only. Live occupancy unchanged. EST-2026-0019 unchanged. Live C2 tables absent. Punch List remains 0. Stash preserved. |
+| Tests | Dedicated `tests/test_core_close_client_final_walkthrough_c2_fg035.py` **34 passed**, 74 warnings, **19.71s**, exit **0**. C1 **26 passed**, 56 warnings, **14.65s**, exit **0**. Focused CORE CLOSE/Hub/CO/work/auth/Field/MONITOR/PERF **352 passed**, 1303 warnings, **197.04s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` **1398 passed**, 4860 warnings, **767.57s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes — working tree; not committed |
+| Constitutional issue raised | None |
+| Unresolved issues | Architect ACCEPT COMMIT C2. Live migrate. Completion Sign-Off. Labeled live Close/Reopen UAT. PA-B. |
+| Next approved step | **STOP.** Return to ChatGPT Architect. Do **not** live-migrate. Do **not** commit. |
+| Next approved prompt | none — STOP |
+| Commit hash | none |
+
 ### 2026-09-19 — FG-035 CORE CLOSE C1 Contractor Punch List live migration
 
 | Field | Content |

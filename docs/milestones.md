@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-19 — FG-035 CORE CLOSE C2 Client Final Walkthrough (working tree / not committed)
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 CORE CLOSE C2 Client Final Walkthrough |
+| Status | **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NOT COMMITTED / NOT PUSHED.** Additive **`e5f6a7b8c9d0`**. Graph head **`e5f6a7b8c9d0`**. Live Alembic remains **`d4e5f6a7b8c9`**. No live C2 data. Photo **DEFERRED**. Email **copyable link / pending configuration**. C1 Punch List remains **LIVE / 0 ITEMS**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE overall **PARTIAL**. FG-035 **OPEN / PARTIAL**. |
+| Branch | `main` |
+| Base commit | HEAD / `origin/main` **`2fdc89b47230d1389309a415373c2742610efcd2`** |
+| Objective | Bounded no-login Client Final Walkthrough. Client input is not the Punch List. Contractor remains authoritative. |
+| Deliverables | Invitation + item + access-attempt models; additive migration FILE; service; Hub `#hub-final-walkthrough`; public `/walkthrough/<credential>` form; dedicated tests; minimum governance; Manual Impact. |
+| Validation | Dedicated `tests/test_core_close_client_final_walkthrough_c2_fg035.py` **34 passed**, 74 warnings, **19.71s**. C1 **26 passed**, 56 warnings, **14.65s**. Focused **352 passed**, 1303 warnings, **197.04s**. Full suite **1398 passed**, 4860 warnings, **767.57s**, exit **0**. |
+| Architectural findings | Hashed token + lookup_key. One response per invitation. Accept-to-Punch-List requires contractor work source. Origin CLIENT_WALKTHROUGH. Pending client input is not a Sign-Off hard gate. Unanswered invitation does not block Close. |
+| Open decisions | Architect ACCEPT COMMIT C2. Live migrate separately. Completion Sign-Off. |
+| Next milestone | **STOP.** Return to ChatGPT Architect. Expected: **ACCEPT COMMIT C2**. After C2 close: **D — COMPLETION SIGN-OFF**. |
+| Commit | none |
+| Date | 2026-09-19 |
+
 ### 2026-09-19 — FG-035 CORE CLOSE C1 Contractor Punch List live migration
 
 | Field | Content |

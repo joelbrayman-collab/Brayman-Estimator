@@ -526,10 +526,9 @@ def test_hub_surface_has_punch_list_not_origin_selector_or_client_invite(app, cl
     assert "Hub visible item." in html
     assert "1 open · 0 complete" in html
     assert 'name="origin_type"' not in html
-    assert "Invite Client" not in html
-    assert "Final Walkthrough" not in html
+    assert contractor_copy.WALKTHROUGH_HUB_HEADING in html
+    assert contractor_copy.WALKTHROUGH_INVITE in html
     assert "Completion Sign-Off" not in html
-    assert "Everything looks complete" not in html
 
 
 def test_hub_create_complete_reopen_routes(app, client):
@@ -748,7 +747,7 @@ def test_additive_migration_is_new_graph_head(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["d4e5f6a7b8c9"]
+        assert script.get_heads() == ["e5f6a7b8c9d0"]
         revision = script.get_revision("d4e5f6a7b8c9")
         assert revision.down_revision == "c3d4e5f6a7b8"
 
@@ -778,7 +777,7 @@ def test_additive_migration_is_new_graph_head(tmp_path):
             heads = conn.execute(
                 sa.text("SELECT version_num FROM alembic_version")
             ).fetchall()
-            assert [row[0] for row in heads] == ["d4e5f6a7b8c9"]
+            assert [row[0] for row in heads] == ["e5f6a7b8c9d0"]
             assert "project_punch_list_items" in tables
             assert "project_punch_list_item_events" in tables
             item_count = conn.execute(

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>This link is not available</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/walkthrough.css') }}">
+</head>
+<body class="walk-body" data-walkthrough-page="unavailable" data-walkthrough-code="{{ code }}">
+    <main class="walk-main">
+        <section class="walk-panel">
+            <h1 class="walk-title">This link is not available.</h1>
+            {% if rate_limited %}
+            <p class="walk-error">Too many tries. Please wait and try again later.</p>
+            {% else %}
+            <p class="walk-muted">This link is invalid, expired, or already used.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

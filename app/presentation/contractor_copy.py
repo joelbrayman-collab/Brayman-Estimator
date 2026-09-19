@@ -254,6 +254,60 @@ PUNCH_LIST_NONE_OPTION = "None"
 PUNCH_LIST_CLOSED_VIEW = (
     "This Project is closed. Punch List history remains available."
 )
+WALKTHROUGH_HUB_HEADING = "Client Final Walkthrough"
+WALKTHROUGH_LEDE = (
+    "Ask the client if anything still needs attention. Client input is not the Punch List."
+)
+WALKTHROUGH_INVITE = "Invite Client to Final Walkthrough"
+WALKTHROUGH_SEND_ANOTHER = "Send another invitation"
+WALKTHROUGH_COPY_LINK_HINT = (
+    "Copy this Final Walkthrough link and send it to the client. "
+    "Email delivery is not configured for this step."
+)
+WALKTHROUGH_INVITED_FLASH = "Final Walkthrough invitation is ready."
+WALKTHROUGH_STATE_NOT_SENT = "Final Walkthrough not sent"
+WALKTHROUGH_STATE_SENT = "Final Walkthrough sent"
+WALKTHROUGH_STATE_RESPONDED = "Client responded"
+WALKTHROUGH_STATE_AWAITING = "Client input awaiting review"
+WALKTHROUGH_STATE_NOTHING = "Client had nothing to add"
+WALKTHROUGH_ADD_TO_PUNCH_LIST = "Add to Punch List"
+WALKTHROUGH_ALREADY_ADDRESSED = "Already Addressed"
+WALKTHROUGH_DISCUSS = "Discuss / Not Part of Current Work"
+WALKTHROUGH_WORK_SOURCE = "Work Source"
+WALKTHROUGH_CLIENT_HEADING = "Final Walkthrough"
+WALKTHROUGH_CLIENT_LEDE = (
+    "Your project is nearing completion. Please let us know if there is "
+    "anything you believe still needs attention."
+)
+WALKTHROUGH_WHAT_NEEDS_ATTENTION = "What needs attention?"
+WALKTHROUGH_ADD_ANOTHER = "Add another item"
+WALKTHROUGH_NOTHING_TO_ADD = "Everything looks complete — I have nothing to add."
+WALKTHROUGH_SUBMIT = "Submit"
+WALKTHROUGH_RECEIVED = "Thank you. We received your response."
+WALKTHROUGH_CLOSED_VIEW = (
+    "This Project is closed. Final Walkthrough history remains available."
+)
+WALKTHROUGH_DESCRIPTION_REQUIRED = "Describe what still needs attention."
+WALKTHROUGH_RESPONSE_REQUIRED = (
+    "Tell us what still needs attention, or choose that everything looks complete."
+)
+WALKTHROUGH_CONTRADICTORY_RESPONSE = (
+    "Choose either items that need attention, or that everything looks complete — not both."
+)
+WALKTHROUGH_ITEM_NOT_FOUND = "That client input was not found."
+WALKTHROUGH_INVITATION_NOT_FOUND = "That Final Walkthrough invitation was not found."
+WALKTHROUGH_ALREADY_REVIEWED = "That client input has already been reviewed."
+WALKTHROUGH_WORK_SOURCE_REQUIRED = (
+    "Choose Original Scope, Change Order, or Other closeout work before adding this to the Punch List."
+)
+WALKTHROUGH_TOKEN_INVALID = "This link is invalid, expired, or already used."
+WALKTHROUGH_TOKEN_EXPIRED = "This link is invalid, expired, or already used."
+WALKTHROUGH_TOKEN_CONSUMED = "This link is invalid, expired, or already used."
+WALKTHROUGH_TOKEN_RATE_LIMITED = "Too many tries. Please wait and try again later."
+WALKTHROUGH_ACCEPTED_FLASH = "Client input added to the Punch List."
+WALKTHROUGH_ADDRESSED_FLASH = "Client input marked already addressed."
+WALKTHROUGH_DISCUSS_FLASH = "Client input marked discuss / not part of current work."
+WALKTHROUGH_ORIGIN_CLIENT = "Client Walkthrough"
 LABOUR_GETTING_CLOSE = "Labour getting close"
 LABOUR_ALLOWANCE_USED = "Labour allowance used"
 LABOUR_OVER_ALLOWANCE = "Labour over allowance"

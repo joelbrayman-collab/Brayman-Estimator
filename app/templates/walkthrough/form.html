@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{{ heading }} — {{ company_name }}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='branding/calibraytai-logo-v2.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/walkthrough.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body class="walk-body" data-walkthrough-page="{% if responded %}received{% else %}form{% endif %}">
+    <main class="walk-main" id="main-content">
+        <div class="walk-brand">
+            <img
+                src="{{ url_for('static', filename='branding/calibraytai-logo-v2.png') }}"
+                alt="{{ company_name }}"
+                width="120"
+                height="44"
+            >
+        </div>
+        <section class="walk-panel">
+            <p class="walk-org">{{ company_name }}</p>
+            <p class="walk-project">{{ project_name }}</p>
+            {% if client_name %}
+            <p class="walk-muted">{{ client_name }}</p>
+            {% endif %}
+            <h1 class="walk-title">{{ heading }}</h1>
+            <p class="walk-lede">{{ lede }}</p>
+            {% if responded %}
+            <p class="walk-ok">{{ received_label }}</p>
+            {% else %}
+            {% if error %}
+            <p class="walk-error">{{ error }}</p>
+            {% endif %}
+            <form method="post" action="{{ url_for('walkthrough.submit', credential=credential) }}" id="walkthrough-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div id="walkthrough-items">
+                    <div class="walk-item">
+                        <label class="walk-label" for="item-0">{{ what_needs_attention }}</label>
+                        <textarea class="walk-textarea" id="item-0" name="item" rows="5"></textarea>
+                    </div>
+                </div>
+                <button type="button" class="walk-btn walk-btn-secondary" id="add-item">{{ add_another }}</button>
+                <label class="walk-check">
+                    <input type="checkbox" name="nothing_to_add" value="1" id="nothing-to-add">
+                    <span>{{ nothing_to_add_label }}</span>
+                </label>
+                <button type="submit" class="walk-btn">{{ submit_label }}</button>
+            </form>
+            {% endif %}
+        </section>
+    </main>
+    {% if not responded %}
+    <script>
+    (function () {
+        var items = document.getElementById("walkthrough-items");
+        var add = document.getElementById("add-item");
+        var nothing = document.getElementById("nothing-to-add");
+        if (add && items) {
+            add.addEventListener("click", function () {
+                var count = items.querySelectorAll(".walk-item").length;
+                var wrap = document.createElement("div");
+                wrap.className = "walk-item";
+                var label = document.createElement("label");
+                label.className = "walk-label";
+                label.setAttribute("for", "item-" + count);
+                label.textContent = {{ what_needs_attention|tojson }};
+                var area = document.createElement("textarea");
+                area.className = "walk-textarea";
+                area.id = "item-" + count;
+                area.name = "item";
+                area.rows = 5;
+                wrap.appendChild(label);
+                wrap.appendChild(area);
+                items.appendChild(wrap);
+                area.focus();
+            });
+        }
+        if (nothing) {
+            nothing.addEventListener("change", function () {
+                var areas = items.querySelectorAll("textarea");
+                for (var i = 0; i < areas.length; i++) {
+                    areas[i].disabled = nothing.checked;
+                }
+            });
+        }
+    })();
+    </script>
+    {% endif %}
+</body>
+</html>

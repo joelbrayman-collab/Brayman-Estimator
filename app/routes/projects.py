@@ -33,6 +33,7 @@ from app.services.project_operating_lifecycle import (
     hub_operating_template_vars,
     reopen_project,
 )
+from app.services.project_final_walkthrough import hub_walkthrough_template_vars
 from app.services.project_punch_list import hub_punch_list_template_vars
 from app.services.permit_foundation import (
     PermitFoundationError,
@@ -104,6 +105,7 @@ def view_project(id):
         change_orders=hub["change_orders"],
         **hub_operating_template_vars(project, org_id, current_user),
         **hub_punch_list_template_vars(project, org_id, current_user),
+        **hub_walkthrough_template_vars(project, org_id, current_user),
     )
 
 

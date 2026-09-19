@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. Not Interactive Help. Not Voice. **NOT IMPLEMENTATION-AUTHORIZED.** |
-| Updated | 2026-09-18 |
+| Updated | 2026-09-19 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **FUTURE / RECORDED / MANDATORY PRE-UAT V1 / NOT IMPLEMENTATION-AUTHORIZED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — CORE CLOSE C2 CLIENT FINAL WALKTHROUGH (2026-09-19)
+
+| Field | Content |
+|-------|---------|
+| Slice | FG-035 CORE CLOSE C2 Client Final Walkthrough |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NOT COMMITTED / NOT PUSHED.** Additive **`e5f6a7b8c9d0`**. No live invitations. |
+| 1. What new contractor capability exists? | On an ACTIVE Project Hub, authorized Project users can Invite Client to Final Walkthrough, copy a secure no-login link, see client response state, and review each client-submitted item. Actions: Add to Punch List (after choosing Original Scope / Change Order / Other), Already Addressed, or Discuss / Not Part of Current Work. |
+| 2. When would the contractor use it? | Near Project completion, to give the client a simple chance to say what still needs attention. Client comments are not the Punch List until the contractor accepts them. |
+| 3. What workflow will the final Manual need to teach? | Open Project Hub Client Final Walkthrough. Invite. Copy the link and send it outside the product if email is not configured. Review each item. Add accepted items to Punch List with a work source. Manage those items on the existing Punch List. Closed Projects show history only. |
+| 4. What contractor-facing terms must be used? | Final Walkthrough. Invite Client to Final Walkthrough. Client input awaiting review. Add to Punch List. Already Addressed. Discuss / Not Part of Current Work. Everything looks complete — I have nothing to add. Not Punch List for the client-facing form. |
+| 5. What screenshots / Print examples will eventually be needed? | Hub not-sent / sent / awaiting review / nothing-to-add. Copyable invite link. Client phone form. Capture after live migrate / UAT. |
+| 6. What warnings / validation distinctions need explanation? | Client response is not Completion Sign-Off. Nothing-to-add does not close the Punch List. Pending client input does not block Close. Closed Project blocks new invitations until Reopen. |
+| 7. Desktop / iPhone / Print relevance | Office desktop Hub invite/review. Client form is mobile-first in the browser. No Field chrome. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim Completion Sign-Off exists. Claim email/SMS delivery is live. Claim live invitations happened. |
 
 ### MANUAL IMPACT — CORE CLOSE C1 CONTRACTOR PUNCH LIST (2026-09-18)
 

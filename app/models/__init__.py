@@ -54,6 +54,11 @@ from app.models.project import (
     ProjectOperatingStateEvent,
 )
 from app.models.punch_list import ProjectPunchListItem, ProjectPunchListItemEvent
+from app.models.final_walkthrough import (
+    ProjectFinalWalkthroughAccessAttempt,
+    ProjectFinalWalkthroughInvitation,
+    ProjectFinalWalkthroughItem,
+)
 from app.models.estimate import (
     Estimate,
     EstimateLineItem,
@@ -266,6 +271,9 @@ __all__ = [
     "ProjectCommercialContext",
     "ProjectLocation",
     "ProjectOperatingStateEvent",
+    "ProjectFinalWalkthroughAccessAttempt",
+    "ProjectFinalWalkthroughInvitation",
+    "ProjectFinalWalkthroughItem",
     "ProjectPunchListItem",
     "ProjectPunchListItemEvent",
     "ProjectWorkDependency",

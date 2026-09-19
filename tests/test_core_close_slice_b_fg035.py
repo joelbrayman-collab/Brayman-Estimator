@@ -765,7 +765,7 @@ def test_no_live_schema_change():
     alembic_cfg = Config(cfg_path)
     alembic_cfg.set_main_option("script_location", "migrations")
     script = ScriptDirectory.from_config(alembic_cfg)
-    assert script.get_heads() == ["d4e5f6a7b8c9"]
+    assert script.get_heads() == ["e5f6a7b8c9d0"]
     versions = Path("migrations/versions")
     newest = sorted(versions.glob("*.py"))
     assert any(path.name.startswith("b2c3d4e5f6a7") for path in newest)
@@ -777,9 +777,13 @@ def test_no_live_schema_change():
 
 ALLOWED_PUNCH_LIST_PATHS = {
     "app/models/punch_list.py",
+    "app/models/final_walkthrough.py",
     "app/models/__init__.py",
     "app/services/project_punch_list.py",
+    "app/services/project_final_walkthrough.py",
     "app/routes/punch_list.py",
+    "app/routes/final_walkthrough.py",
+    "app/routes/walkthrough.py",
     "app/routes/projects.py",
     "app/routes/build.py",
     "app/__init__.py",

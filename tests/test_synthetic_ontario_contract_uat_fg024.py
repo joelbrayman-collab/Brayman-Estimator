@@ -315,7 +315,7 @@ def test_alembic_heads_unchanged_no_tech_d_migration():
     alembic_cfg = Config(cfg_path)
     alembic_cfg.set_main_option("script_location", "migrations")
     script = ScriptDirectory.from_config(alembic_cfg)
-    assert script.get_heads() == ["d4e5f6a7b8c9"]
+    assert script.get_heads() == ["e5f6a7b8c9d0"]
 
 
 def test_tech_d_end_to_end_synthetic_ontario_contract_chain(app):

@@ -450,6 +450,107 @@
         </div>
         {% endif %}
     </article>
+    <article class="panel panel-wide" id="hub-final-walkthrough">
+        <div class="panel-header">
+            <h2>{{ contractor_copy.WALKTHROUGH_HUB_HEADING }}</h2>
+        </div>
+        <p class="punch-list-summary">{{ walkthrough_summary }}</p>
+        <p class="muted-copy">{{ contractor_copy.WALKTHROUGH_LEDE }}</p>
+        {% if not walkthrough_can_mutate %}
+        <p class="muted-copy">{{ contractor_copy.WALKTHROUGH_CLOSED_VIEW }}</p>
+        {% endif %}
+        {% if session.get('walkthrough_invitation_project_id') == project.id and session.get('walkthrough_invitation_url') %}
+        <p class="walkthrough-copy-link">
+            <label>
+                {{ contractor_copy.WALKTHROUGH_COPY_LINK_HINT }}
+                <input type="text" readonly value="{{ session.get('walkthrough_invitation_url') }}">
+            </label>
+        </p>
+        {% endif %}
+        {% if walkthrough_pending_items %}
+        <h3>{{ contractor_copy.WALKTHROUGH_STATE_AWAITING }}</h3>
+        <ul class="punch-list walkthrough-review-list">
+            {% for item in walkthrough_pending_items %}
+            <li class="punch-list-item">
+                <p class="punch-list-item-description">{{ item.description }}</p>
+                {% if walkthrough_can_mutate %}
+                <form method="post" action="{{ url_for('final_walkthrough.accept_item', project_id=project.id, item_id=item.id) }}" class="punch-list-edit">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <label>
+                        {{ contractor_copy.WALKTHROUGH_WORK_SOURCE }}
+                        <select name="work_source_type" required>
+                            <option value="">{{ contractor_copy.PUNCH_LIST_NONE_OPTION }}</option>
+                            <option value="ORIGINAL_SCOPE">{{ contractor_copy.PUNCH_LIST_ORIGINAL_SCOPE }}</option>
+                            <option value="CHANGE_ORDER">{{ contractor_copy.PUNCH_LIST_CHANGE_ORDER }}</option>
+                            <option value="OTHER">{{ contractor_copy.PUNCH_LIST_OTHER }}</option>
+                        </select>
+                    </label>
+                    <label>
+                        {{ contractor_copy.PUNCH_LIST_ORIGINAL_SCOPE_OPTIONAL }}
+                        <select name="source_project_work_id">
+                            <option value="">{{ contractor_copy.PUNCH_LIST_NONE_OPTION }}</option>
+                            {% for element in walkthrough_original_work %}
+                            <option value="{{ element.id }}">{{ element.display_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>
+                        {{ contractor_copy.PUNCH_LIST_CHANGE_ORDER_SELECTOR }}
+                        <select name="source_change_order_id">
+                            <option value="">{{ contractor_copy.PUNCH_LIST_NONE_OPTION }}</option>
+                            {% for change_order in walkthrough_change_orders %}
+                            <option value="{{ change_order.id }}">{{ change_order.number }} · {{ change_order.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <div class="punch-list-actions">
+                        <button type="submit">{{ contractor_copy.WALKTHROUGH_ADD_TO_PUNCH_LIST }}</button>
+                    </div>
+                </form>
+                <form method="post" action="{{ url_for('final_walkthrough.already_addressed', project_id=project.id, item_id=item.id) }}" class="punch-list-action">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="button-secondary">{{ contractor_copy.WALKTHROUGH_ALREADY_ADDRESSED }}</button>
+                </form>
+                <form method="post" action="{{ url_for('final_walkthrough.discuss', project_id=project.id, item_id=item.id) }}" class="punch-list-action">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="button-secondary">{{ contractor_copy.WALKTHROUGH_DISCUSS }}</button>
+                </form>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% if walkthrough_reviewed_items %}
+        <ul class="punch-list">
+            {% for item in walkthrough_reviewed_items %}
+            <li class="punch-list-item">
+                <p class="punch-list-item-description">{{ item.description }}</p>
+                <p class="punch-list-item-meta">
+                    {% if item.review_status == 'ACCEPTED_TO_PUNCH_LIST' %}
+                    {{ contractor_copy.WALKTHROUGH_ADD_TO_PUNCH_LIST }}
+                    {% elif item.review_status == 'ALREADY_ADDRESSED' %}
+                    {{ contractor_copy.WALKTHROUGH_ALREADY_ADDRESSED }}
+                    {% else %}
+                    {{ contractor_copy.WALKTHROUGH_DISCUSS }}
+                    {% endif %}
+                </p>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% if walkthrough_can_mutate %}
+        <form method="post" action="{{ url_for('final_walkthrough.invite', project_id=project.id) }}" class="punch-list-action">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">
+                {% if walkthrough_latest_invitation %}
+                {{ contractor_copy.WALKTHROUGH_SEND_ANOTHER }}
+                {% else %}
+                {{ contractor_copy.WALKTHROUGH_INVITE }}
+                {% endif %}
+            </button>
+        </form>
+        {% endif %}
+    </article>
     <article class="panel panel-wide" id="hub-punch-list">
         <div class="panel-header">
             <h2>{{ contractor_copy.PUNCH_LIST_HEADING }}</h2>
@@ -467,6 +568,7 @@
                 <p class="punch-list-item-meta">
                     {{ punch_list_work_source_label(item) }}
                     · {{ punch_list_status_label(item.status) }}
+                    · {{ punch_list_origin_label(item.origin_type) }}
                 </p>
                 {% if punch_list_can_mutate and item.status == 'OPEN' %}
                 <form method="post" action="{{ url_for('punch_list.update_item', project_id=project.id, item_id=item.id) }}" class="punch-list-edit">

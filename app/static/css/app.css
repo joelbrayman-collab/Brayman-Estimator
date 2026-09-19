@@ -761,6 +761,18 @@ button:hover,
     margin-top: 20px;
 }
 
+.walkthrough-copy-link input {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 10px 12px;
+    font: inherit;
+}
+
+.walkthrough-review-list {
+    margin-bottom: 24px;
+}
+
 .button-secondary,
 a.button-secondary {
     background: transparent;

@@ -129,7 +129,9 @@ def _register_office_auth(app: Flask) -> None:
             "favicon",
         ):
             return None
-        if endpoint is not None and endpoint.startswith("sign."):
+        if endpoint is not None and (
+            endpoint.startswith("sign.") or endpoint.startswith("walkthrough.")
+        ):
             return None
         if _is_api_request():
             if not current_user.is_authenticated:
@@ -259,6 +261,8 @@ def create_app(config=None):
     from app.routes.main import main_bp
     from app.routes.projects import projects_bp
     from app.routes.punch_list import punch_list_bp
+    from app.routes.final_walkthrough import final_walkthrough_bp
+    from app.routes.walkthrough import walkthrough_bp
     from app.routes.proposal_templates import proposal_templates_bp
     from app.routes.proposals import proposals_bp
     from app.routes.historical_estimates import bp as historical_estimates_bp
@@ -286,6 +290,8 @@ def create_app(config=None):
     app.register_blueprint(clients_bp)
     app.register_blueprint(projects_bp)
     app.register_blueprint(punch_list_bp)
+    app.register_blueprint(final_walkthrough_bp)
+    app.register_blueprint(walkthrough_bp)
     app.register_blueprint(cost_library_bp)
     app.register_blueprint(assemblies_bp)
     app.register_blueprint(estimates_bp)

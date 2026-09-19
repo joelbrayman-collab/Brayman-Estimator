@@ -348,6 +348,56 @@ def create_punch_list_item(
     return item
 
 
+def create_punch_list_item_from_client_walkthrough(
+    project,
+    actor,
+    *,
+    description,
+    work_source_type,
+    source_project_work_id=None,
+    source_change_order_id=None,
+    organization_id=None,
+):
+    """C2 accept-to-Punch-List. Origin is CLIENT_WALKTHROUGH. C1 create stays CONTRACTOR."""
+    loaded = _require_project(project, organization_id)
+    raise_if_project_closed(loaded, PunchListError)
+    user = _load_actor(actor)
+    text = (description or "").strip()
+    if not text:
+        raise PunchListError(PUNCH_LIST_DESCRIPTION_REQUIRED)
+    source_type, work_id, co_id = _resolve_sources(
+        loaded,
+        work_source_type,
+        source_project_work_id,
+        source_change_order_id,
+    )
+    now = datetime.utcnow()
+    item = ProjectPunchListItem(
+        organization_id=loaded.organization_id,
+        project_id=loaded.id,
+        description=text,
+        status=PUNCH_LIST_STATUS_OPEN,
+        work_source_type=source_type,
+        source_project_work_id=work_id,
+        source_change_order_id=co_id,
+        origin_type=PUNCH_LIST_ORIGIN_CLIENT_WALKTHROUGH,
+        created_by_user_id=user.id,
+        created_at=now,
+        updated_at=now,
+    )
+    db.session.add(item)
+    db.session.flush()
+    _append_event(
+        item,
+        event=PUNCH_LIST_EVENT_CREATED,
+        actor=user,
+        previous_status=None,
+        new_status=PUNCH_LIST_STATUS_OPEN,
+    )
+    db.session.commit()
+    return item
+
+
 def update_punch_list_item(
     project,
     item_id,

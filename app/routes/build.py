@@ -49,6 +49,7 @@ from app.services.direct_cost_actuals import (
 )
 from app.services.organizations import get_current_organization_id
 from app.services.project_hub import assemble_project_hub
+from app.services.project_final_walkthrough import hub_walkthrough_template_vars
 from app.services.project_operating_lifecycle import hub_operating_template_vars
 from app.services.project_punch_list import hub_punch_list_template_vars
 
@@ -110,6 +111,7 @@ def _render_hub_with_actuals_form(project, form, *, supersede_actual_id=None, st
             supersede_actual_id=supersede_actual_id,
             **hub_operating_template_vars(project, org_id, current_user),
             **hub_punch_list_template_vars(project, org_id, current_user),
+            **hub_walkthrough_template_vars(project, org_id, current_user),
         ),
         status,
     )

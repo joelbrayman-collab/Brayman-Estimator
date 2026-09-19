@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-18 |
+| Updated | 2026-09-19 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -31,6 +31,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 ---
 
 ## Entries
+
+### 2026-09-19 — FG-035 CORE CLOSE C1 Contractor Punch List SHA pin
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-035 CORE CLOSE C1 Contractor Punch List SHA pin |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED.** Product SHA **`81b6d802ccf15c10b01a1f63337ef4d0d5a26d6c`**. Additive **`d4e5f6a7b8c9`**. Graph head **`d4e5f6a7b8c9`**. Live Alembic remains **`c3d4e5f6a7b8`**. Punch List **IMPLEMENTED / NOT LIVE**. C2 Client Final Walkthrough **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE overall **PARTIAL**. FG-035 **OPEN / PARTIAL**. |
+| Branch | `main` |
+| Base commit | `81b6d802ccf15c10b01a1f63337ef4d0d5a26d6c` |
+| Objective | Pin accepted C1 product SHA. No live Punch List data. No C2. |
+| Deliverables | Minimum SHA-pin governance. Product already committed. |
+| Validation | Accepted evidence reused: Dedicated **26 passed**, 56 warnings, **17.71s**. Focused **228 passed**, 862 warnings, **148.71s**. Full suite **1364 passed**, 4786 warnings, **719.07s**, exit **0**. |
+| Architectural findings | OPEN/COMPLETE only. CONTRACTOR origin only. Open Punch List does not hard-block Close. Zero OPEN items satisfies the Punch List prerequisite. |
+| Open decisions | Live migrate `d4e5f6a7b8c9` (same authorized prompt). C2 Client Final Walkthrough. Completion Sign-Off. Labeled live Close/Reopen UAT. PA-B. |
+| Next milestone | Same authorized prompt continues to live migrate after a hard clean checkpoint. Do **not** create live Punch List data. |
+| SHA / tag | product **`81b6d802ccf15c10b01a1f63337ef4d0d5a26d6c`**; this pin follows |
+| Date | 2026-09-19 |
 
 ### 2026-09-18 — FG-035 CORE CLOSE C1 Contractor Punch List (working tree / not committed)
 

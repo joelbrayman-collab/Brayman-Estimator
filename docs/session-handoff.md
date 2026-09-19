@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-035 CORE CLOSE C1 CONTRACTOR PUNCH LIST IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NOT COMMITTED / NOT PUSHED.** Additive **`d4e5f6a7b8c9`**. Graph head **`d4e5f6a7b8c9`**. Live Alembic remains **`c3d4e5f6a7b8`**. No live Punch List rows. Close/Reopen Option A remains **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NO MIGRATION / NOT LIVE-UATed.** Product SHA **`172f0786aaa9e668f30be28c3cee30ac4fce5b1f`**. Authorization = Instance Owner / future System Administrator. `COMPANY_MANAGEMENT` is **not** Close/Reopen authority. Close and Reopen **NOT LIVE-EXECUTED**. Client Final Walkthrough **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. People & Access **PARTIAL / NOT OPERATIONAL**. FG-038 PA-A **LIVE / OPERATIONAL**. Sys Admin **NOT IMPLEMENTED**. CORE CLOSE overall **PARTIAL / NOT YET SEALED**. FG-038 PA-A remains **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS.** Instance Owner foundation **LIVE / OPERATIONAL**. ORG-001 Owner = Membership **1** / User **1** / Joel Brayman. Isolation orgs **OWNERLESS**. Product SHA **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`**. Owner SET events **1**. CORE CLOSE Slice B remains **COMMITTED / PUSHED / SHA-PINNED**. Slice A remains **LIVE-MIGRATED**. Live occupancy **50 / 50 ACTIVE / 0 CLOSED / 0 events**. PERF-C **SEALED — enumeration seam updated only.** Canonical [testing/fg038-pa-a-first-instance-owner-authority-uat.md](testing/fg038-pa-a-first-instance-owner-authority-uat.md). [FG-038](feature-gates/FG-038-instance-owner-authority-foundation.md) **OPEN / PARTIAL**. FG-037 **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION.** Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). Grant rows **1**. Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. [FG-035](feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. LEARN Closeout / LEARN / QB-T **NOT AUTHORIZED**. EST-2026-0019 untouched. PRODUCTION packages **0**. |
-| Updated | 2026-09-18 |
+| Status | **FG-035 CORE CLOSE C1 CONTRACTOR PUNCH LIST IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED.** Product SHA **`81b6d802ccf15c10b01a1f63337ef4d0d5a26d6c`**. Additive **`d4e5f6a7b8c9`**. Graph head **`d4e5f6a7b8c9`**. Live Alembic remains **`c3d4e5f6a7b8`**. Punch List **IMPLEMENTED / NOT LIVE**. No live Punch List rows. Close/Reopen Option A remains **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NO MIGRATION / NOT LIVE-UATed.** Product SHA **`172f0786aaa9e668f30be28c3cee30ac4fce5b1f`**. Authorization = Instance Owner / future System Administrator. `COMPANY_MANAGEMENT` is **not** Close/Reopen authority. Close and Reopen **NOT LIVE-EXECUTED**. Client Final Walkthrough **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. People & Access **PARTIAL / NOT OPERATIONAL**. FG-038 PA-A **LIVE / OPERATIONAL**. Sys Admin **NOT IMPLEMENTED**. CORE CLOSE overall **PARTIAL / NOT YET SEALED**. FG-038 PA-A remains **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS.** Instance Owner foundation **LIVE / OPERATIONAL**. ORG-001 Owner = Membership **1** / User **1** / Joel Brayman. Isolation orgs **OWNERLESS**. Product SHA **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`**. Owner SET events **1**. CORE CLOSE Slice B remains **COMMITTED / PUSHED / SHA-PINNED**. Slice A remains **LIVE-MIGRATED**. Live occupancy **50 / 50 ACTIVE / 0 CLOSED / 0 events**. PERF-C **SEALED — enumeration seam updated only.** Canonical [testing/fg038-pa-a-first-instance-owner-authority-uat.md](testing/fg038-pa-a-first-instance-owner-authority-uat.md). [FG-038](feature-gates/FG-038-instance-owner-authority-foundation.md) **OPEN / PARTIAL**. FG-037 **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION.** Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). Grant rows **1**. Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. [FG-035](feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. LEARN Closeout / LEARN / QB-T **NOT AUTHORIZED**. EST-2026-0019 untouched. PRODUCTION packages **0**. |
+| Updated | 2026-09-19 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [v1-completion-register.md](v1-completion-register.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
-| Active ChatGPT development chat title | **BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026** |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026** |
 
 Authority order for the next session: repository governance → current-state records → accepted ADRs / Feature Gates → implementation/migration/test evidence → conversation memory only as supplementary context.
 
@@ -16,7 +16,7 @@ Authority order for the next session: repository governance → current-state re
 
 ```text
 ACTIVE CHAT TITLE:
-BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026
+BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026
 
 CONTINUITY DISPLAY RULE:
 Every CalibraytAI development response begins with the exact active ChatGPT
@@ -38,7 +38,7 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 - **Product:** CalibraytAI / Brayman Estimator (The Estimator). Formerly CalibAi. Do not confuse with office chrome (Brayman Construction Platform) or tenant Brand Profile.
 - **Path:** `/Users/joelbrayman/Desktop/Brayman-Estimator` (`~/Desktop/Brayman-Estimator`)
 - **Environment:** local Flask office app; SQLite development/UAT DB (`sqlite:///brayman_estimator.db` → `instance/brayman_estimator.db`)
-- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 18 SEP 2026`
+- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026`
 - **Cursor / IDE workspace chat titles:** must start with `BRAYMAN — <Topic>`
 
 ## 2. VERIFIED BASELINE

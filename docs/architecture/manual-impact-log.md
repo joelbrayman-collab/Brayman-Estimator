@@ -56,7 +56,7 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 | Field | Content |
 |-------|---------|
 | Slice | FG-035 CORE CLOSE C1 Contractor Punch List |
-| Product status at capture | **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NOT COMMITTED.** Additive **`d4e5f6a7b8c9`**. Live Hub cannot show Punch List until live migrate. No live Punch List rows. |
+| Product status at capture | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED.** Product SHA **`81b6d802ccf15c10b01a1f63337ef4d0d5a26d6c`**. Additive **`d4e5f6a7b8c9`**. Live Hub cannot show Punch List until live migrate. No live Punch List rows. |
 | 1. What new contractor capability exists? | On an ACTIVE Project Hub, authorized Project users can add Punch List items describing unfinished physical work, associate them with Original Scope or an existing Change Order or Other closeout work, mark them Complete, and Reopen if the work is not actually done. Summary states open/complete counts, Punch List complete, or Nothing is on the Punch List. |
 | 2. When would the contractor use it? | When physical work still needs to be completed before later Completion Sign-Off. Not for Change Order paperwork, invoices, or client communication history. |
 | 3. What workflow will the final Manual need to teach? | Open Project Hub BUILD Punch List. Add an item with a plain description and work source. Mark Complete when the physical work is done. Reopen if it was marked complete too soon. Closed Projects show Punch List history only. |

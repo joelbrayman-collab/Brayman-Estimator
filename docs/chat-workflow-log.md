@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-18 |
+| Updated | 2026-09-19 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-19 — FG-035 CORE CLOSE C1 Contractor Punch List SHA pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-19 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026 |
+| Objective | Pin accepted C1 product SHA. No live Punch List data. No C2. |
+| Business decision | Architect ACCEPT COMMIT / PUSH / SHA PIN then live migrate in the same authorized prompt. Open Punch List does not hard-block Close. Zero OPEN items satisfies the Punch List prerequisite. |
+| Architectural decision | No product change in this pin. Pin product SHA **`81b6d802ccf15c10b01a1f63337ef4d0d5a26d6c`**. Live Alembic remains **`c3d4e5f6a7b8`**. Graph head **`d4e5f6a7b8c9`**. Punch List **IMPLEMENTED / NOT LIVE**. C2 **NOT IMPLEMENTED**. Completion Sign-Off **NOT IMPLEMENTED**. CORE CLOSE **PARTIAL**. FG-035 **OPEN / PARTIAL**. No rescore. |
+| Prompt template used | Architect ACCEPTANCE PRODUCT COMMIT / PUSH / SHA PIN THEN LIVE MIGRATION EMPTY-LIVE-BASELINE VERIFICATION |
+| Approved Cursor prompt summary | Validate accepted C1; commit `feat: implement FG-035 CORE CLOSE Contractor Punch List`; push; pin `docs: pin FG-035 CORE CLOSE Punch List SHA`; push; then live migrate after clean checkpoint. Preserve stash. No live Punch List data. No C2. |
+| Files expected to change | minimum SHA-pin governance (this pin); product already committed |
+| Files prohibited from changing | live Punch List rows; Close/Reopen rewrite; C2; Completion Sign-Off; Native Signing; recovery stash; scorecard |
+| Implementation result | Product SHA **`81b6d802ccf15c10b01a1f63337ef4d0d5a26d6c`**. This pin follows. C1 **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED**. Live occupancy 50/50/0/0. Owner Membership 1. Events 1. Grants 1. Stash preserved. |
+| Tests | Accepted evidence reused (no code/test change): Dedicated 26 passed / 17.71s. Focused 228 passed / 148.71s. Full 1364 passed, 4786 warnings, 719.07s, exit 0. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Live migrate `d4e5f6a7b8c9`. C2 Client Final Walkthrough. Completion Sign-Off. Labeled live Close/Reopen UAT. PA-B. |
+| Next approved step | Same authorized prompt continues to live migrate after a hard clean checkpoint. Do **not** create live Punch List data. |
+| Next approved prompt | none — continue same authorized prompt |
+| Commit hash | product **`81b6d802ccf15c10b01a1f63337ef4d0d5a26d6c`**; this pin follows |
 
 ### 2026-09-18 — FG-035 CORE CLOSE C1 Contractor Punch List (working tree / not committed)
 

@@ -4,6 +4,7 @@
 {% block page_title %}{{ contractor_copy.SCHEDULE_HEADING }}{% endblock %}
 
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">BUILD</p>
@@ -12,6 +13,8 @@
     </div>
     <a class="button" href="{{ url_for('schedule.new_item', project_id=selected_project_id) }}">{{ contractor_copy.SCHEDULE_ADD }}</a>
 </div>
+
+{{ contextual_help(help_content.office_topic("schedule")) }}
 
 <section class="form-panel" style="margin-bottom: 20px;">
     <form method="get" class="form-grid">

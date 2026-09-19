@@ -2,12 +2,14 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **OPEN / PARTIAL FOR HELP PRODUCT.** D1 Project Hub contextual Help **IMPLEMENTED**. Voice, User Guide, office/Field Help remain **NOT IMPLEMENTED**. User Guide / Help Content **FRAMEWORK START NOW** ([calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md)). **Manual Audience Law** is controlling. Not a Feature Gate. Not an ADR. Task-based pre-UAT script **REQUIRED**. Voice mutation **NOT REQUIRED** for V1 Voice completion. Subsequent **2026-09-16:** **Manual Impact** capture required at each material feature/slice close ([manual-impact-log.md](manual-impact-log.md)). Completed User Guide is given to Kevin and Ben **BEFORE** platform access. Do **not** implement Print, Voice, office/Field Help, or the finished Manual from this record. |
+| Status | **OPEN / PARTIAL FOR HELP PRODUCT.** D1 Project Hub contextual Help **IMPLEMENTED**. D3 office Help **IMPLEMENTED**. Voice, User Guide, Field Help remain **NOT IMPLEMENTED**. User Guide / Help Content **FRAMEWORK START NOW** ([calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md)). **Manual Audience Law** is controlling. Not a Feature Gate. Not an ADR. Task-based pre-UAT script **REQUIRED**. Voice mutation **NOT REQUIRED** for V1 Voice completion. Subsequent **2026-09-16:** **Manual Impact** capture required at each material feature/slice close ([manual-impact-log.md](manual-impact-log.md)). Completed User Guide is given to Kevin and Ben **BEFORE** platform access. Do **not** implement Print, Voice, Field Help, or the finished Manual from this record. |
 | Updated | 2026-09-19 |
 | Authority | Joel Brayman / ChatGPT Architect. Product decision: Interactive in-product Help, Voice assistance, and a professional CalibraytAI User Guide are **mandatory** before opening CalibraytAI to Ben, Ben’s father-in-law, and Kevin for real-world / independent UAT. |
 | Does not interrupt | [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**; [ADR-053](../adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**; [project-element-authority-future-record.md](project-element-authority-future-record.md). TAX/WBS remains **IMPLEMENTED**. Later FG-035 slices remain **NOT AUTHORIZED** from this record. |
 
 This file is the **single consolidated future record** for Help / Voice / User Manual. It is **not** an ADR, not a Feature Gate, and not a preflight. Do **not** invent FG-036 or ADR-054 from this recording.
+
+**Subsequent status (2026-09-19 D3 OFFICE HELP):** D3 **IMPLEMENTED / TESTED / NOT COMMITTED**. Same Help authority as D1. Native `<details>` Help on high-value office screens. `help_payload()` is the later Voice seam. Field Help empty. LEARN Future. No schema. No Voice. Help product overall **PARTIAL**. Official V1 **not rescored**.
 
 **Subsequent status (2026-09-19 D2 BOUNDED CONTRACTOR-LANGUAGE RESIDUALS):** D2 **IMPLEMENTED**. Presentation/language/navigation only. D1 Hub Help preserved. LEARN Future. No schema. No Voice. Help product overall **PARTIAL**. Official V1 **not rescored**.
 

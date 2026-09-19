@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-19 — D3 office Help
+
+| Field | Content |
+|-------|---------|
+| Milestone | D3 — Office Help |
+| Status | **IMPLEMENTED / TESTED / NOT COMMITTED.** Presentation only. D1 Hub Help preserved. D2 terminology reused. Help product overall **PARTIAL**. LEARN remains Future. Official V1 **not rescored**. Completion Sign-Off **NOT IMPLEMENTED**. |
+| Branch | `main` |
+| Base commit | `95dfe22dab338e6302e8820dfe4017435bad5e41` (`feat: clarify remaining contractor-facing language residuals`) |
+| Objective | Extend the existing D1 Help authority to high-value contractor-facing office screens outside the Project Hub. One reusable Help/context payload for later Voice. |
+| Deliverables | Office topics in `help_content.py`; native `<details>` Help on Dashboard, Clients, Projects Current/Closed, Schedule, Company Attention, Estimates, Previous estimates, Cost library, Settings/Brand Profile, Permit report, Job location, Time, Change Orders; `help_payload()`; dedicated D3 tests |
+| Validation | Dedicated D3 **8 passed**. D1 Help **9 passed**. Focused/regression **348 passed**, 966 warnings, **161.81s**. Full suite **1421 passed**, 4910 warnings, **678.61s**, exit **0**. |
+| Architectural findings | Single Help authority. Voice seam is `topic_for_context` / `help_payload`. C1/C2 contractor UI remains on Hub BUILD Help. Field Help empty. No schema. No Voice. C2 sealed. |
+| Open decisions | Architect review then commit/push. Voice-with-Help. D4 Field Help. People & Access. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next milestone | **STOP.** Return to ChatGPT Architect **before commit/push**. Recommended next after review: **Voice-with-Help**. |
+| Commit | not committed |
+| Date | 2026-09-19 |
+
 ### 2026-09-19 — D2 bounded contractor-language residuals
 
 | Field | Content |

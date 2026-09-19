@@ -4,6 +4,7 @@
 {% block page_title %}Change Orders{% endblock %}
 
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">Project Controls</p>
@@ -11,6 +12,8 @@
     </div>
     <a class="button" href="{{ url_for('project_controls.create_change_order_route') }}">New Change Order</a>
 </div>
+
+{{ contextual_help(help_content.office_topic("change_orders")) }}
 
 <section class="form-panel" style="margin-bottom: 20px;">
     <form method="get" class="form-grid">

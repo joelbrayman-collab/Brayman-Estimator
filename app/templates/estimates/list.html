@@ -5,6 +5,7 @@
 {% block page_title %}Estimates{% endblock %}
 
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">Estimating</p>
@@ -13,6 +14,8 @@
 
     <a class="button" href="{{ url_for('estimates.create_estimate_route') }}">New Estimate</a>
 </div>
+
+{{ contextual_help(help_content.office_topic("estimating")) }}
 
 {% if estimates %}
 <table class="data-table">

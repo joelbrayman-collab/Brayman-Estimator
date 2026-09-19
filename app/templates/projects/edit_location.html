@@ -4,6 +4,7 @@
 {% block page_title %}Job location{% endblock %}
 
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">{{ contractor_copy.PERMIT_FOUNDATION_EYEBROW }}</p>
@@ -14,6 +15,8 @@
         <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
     </div>
 </div>
+
+{{ contextual_help(help_content.office_topic("job_location")) }}
 
 <div class="form-panel" style="margin-bottom: 16px;">
     <p class="eyebrow">{{ contractor_copy.PERMIT_FOUNDATION_EYEBROW }}</p>

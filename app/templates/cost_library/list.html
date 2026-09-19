@@ -5,6 +5,7 @@
 {% block page_title %}{{ contractor_copy.COST_LIBRARY_NAV_TITLE }}{% endblock %}
 
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">Estimating</p>
@@ -13,6 +14,8 @@
 
     <a class="button" href="{{ url_for('cost_library.create_cost_item') }}">New Cost Item</a>
 </div>
+
+{{ contextual_help(help_content.office_topic("cost_library")) }}
 
 {% if cost_items %}
 <table class="data-table">

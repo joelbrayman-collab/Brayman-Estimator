@@ -5,6 +5,7 @@
 {% block page_title %}{{ contractor_copy.BRAND_PROFILE_HEADING }}{% endblock %}
 
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">Settings</p>
@@ -12,6 +13,8 @@
         <p>{{ contractor_copy.BRAND_PROFILE_LEDE }}</p>
     </div>
 </div>
+
+{{ contextual_help(help_content.office_topic("settings_brand_profile")) }}
 
 <form method="post" class="form-panel" enctype="multipart/form-data">
     <div class="form-grid">

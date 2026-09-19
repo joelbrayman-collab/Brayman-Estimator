@@ -4,12 +4,15 @@
 {% block page_title %}{{ contractor_copy.COMPANY_ATTENTION_HEADING }}{% endblock %}
 
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="page-heading company-attention-heading">
     <div>
         <p class="eyebrow">{{ contractor_copy.COMPANY_ATTENTION_EYEBROW }}</p>
         <h1>{{ contractor_copy.COMPANY_ATTENTION_QUESTION }}</h1>
     </div>
 </div>
+
+{{ contextual_help(help_content.office_topic("company_attention")) }}
 
 {% if view.positive %}
 <p class="company-attention-positive">{{ view.positive_title }}</p>

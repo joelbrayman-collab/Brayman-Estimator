@@ -4,6 +4,7 @@
 {% block page_title %}Permit &amp; Approvals Report{% endblock %}
 
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">{{ contractor_copy.PERMIT_ADVISORY_EYEBROW }}</p>
@@ -17,6 +18,8 @@
         {% endif %}
     </div>
 </div>
+
+{{ contextual_help(help_content.office_topic("permit_report")) }}
 
 {% if pi.recheck_required %}
 <div class="form-panel" style="margin-bottom: 16px;">

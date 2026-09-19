@@ -5,6 +5,7 @@
 {% block page_title %}Projects{% endblock %}
 
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">Construction</p>
@@ -17,6 +18,12 @@
 
     <a class="button" href="{{ url_for('projects.create_project') }}">New Project</a>
 </div>
+
+{% if list_view == "closed" %}
+{{ contextual_help(help_content.office_topic("projects_closed")) }}
+{% else %}
+{{ contextual_help(help_content.office_topic("projects_current")) }}
+{% endif %}
 
 {% if projects %}
 <table class="data-table">

@@ -5,6 +5,7 @@
 {% block page_title %}Clients{% endblock %}
 
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">CRM</p>
@@ -13,6 +14,8 @@
 
     <a class="button" href="{{ url_for('clients.create_client') }}">New Client</a>
 </div>
+
+{{ contextual_help(help_content.office_topic("clients")) }}
 
 {% if clients %}
 <table class="data-table">

@@ -4,6 +4,7 @@
 {% block page_title %}{{ contractor_copy.HISTORICAL_PAGE_TITLE }}{% endblock %}
 
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="content-container" style="max-width: 1200px; margin: 0 auto; padding: 24px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <div>
@@ -16,6 +17,8 @@
             {{ contractor_copy.HISTORICAL_READY_BADGE }}
         </div>
     </div>
+
+    {{ contextual_help(help_content.office_topic("previous_estimates")) }}
 
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

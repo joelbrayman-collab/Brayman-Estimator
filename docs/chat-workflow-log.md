@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-20 — FG-038 PA-B Stage 2 first System Administrator authority UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-20 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 20 SEP 2026 |
+| Objective | Bounded synthetic first live Sys Admin UAT: appoint Membership **5**, prove, remove, leave current **0**. |
+| Business decision | Temporary live Sys Admin is allowed for UAT. Final current authority must be **0**. APPOINT/REMOVE audit history is permanent. AUTH-B is a display name, not Domain B. |
+| Architectural decision | Option A candidate Membership **5** / User **6**. Actor Owner User **1**. No People UI. No Person foundation. No extra grants. No Owner change. No live Close/Reopen. |
+| Prompt template used | Architect PA-B Stage 2 OPTION A bounded first live Sys Admin UAT |
+| Approved Cursor prompt summary | Appoint Membership 5 by User 1. Prove helpers, Owner, A/B/C, Close/Reopen seam, cannot-appoint, Owner protection, same-current appoint. Remove. Prove current 0 with APPOINT 1 / REMOVE 1. Docs-only commit. Do not implement PA-C. |
+| Files expected to change | Stage 2 testing record and subsequent PA-B UAT governance |
+| Files prohibited from changing | PA-B product code; People UI; Person schema; LEARN; scorecard; recovery stash; live Owner; live grants except authorized appoint/remove |
+| Implementation result | PA-B **LIVE APPOINT UAT PASS / LIVE REMOVE UAT PASS / ZERO CURRENT SYS ADMINS**. Current Sys Admin **0**. APPOINT **1**. REMOVE **1**. Owner **UNCHANGED**. Next **PA-C**. |
+| Tests | Focused PA-B/PA-A/Close/Reopen/FG-018/FG-037 **155 passed**, 462 warnings, **88.17s**, exit **0**. Full suite **not run** (no product/code change). |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | Person/Worker ≠ Platform User is not represented. People UI cannot correctly implement frozen Person law yet. |
+| Unresolved issues | PA-C Person / Worker identity. People & Access UI. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next approved step | **STOP. Architect PA-C Person / Worker identity foundation implementation-readiness / implementation authorization.** |
+| Next approved prompt | Architect PA-C implementation-readiness / implementation authorization |
+| Commit hash | this Stage 2 UAT governance commit follows |
+
 ### 2026-09-20 — FG-038 PA-B Stage 1 live migration / zero-Sys-Admin checkpoint
 
 | Field | Content |

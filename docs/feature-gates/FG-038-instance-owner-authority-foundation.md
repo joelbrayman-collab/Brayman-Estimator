@@ -1,5 +1,7 @@
 # Feature Gate FG-038: Instance Owner Authority Foundation (PA-A)
 
+**Subsequent status (2026-09-20 PA-B Stage 2 first Sys Admin UAT):** [testing/fg038-pa-b-first-system-administrator-authority-uat.md](../testing/fg038-pa-b-first-system-administrator-authority-uat.md) **PASS / LIVE APPOINT UAT PASS / LIVE REMOVE UAT PASS / ZERO CURRENT SYS ADMINS.** Product SHA **`2b25ec99b010c0c66d58d6aa08fdbab55b077e08`**. Temporary candidate Membership **5** / User **6** / AUTH-B UAT User; actor User **1**. Current Sys Admin **0**. APPOINT **1**. REMOVE **1**. Owner **UNCHANGED**. People UI **NOT IMPLEMENTED**. Next product block **PA-C Person / Worker identity**. This gate is **not closed**.
+
 **Subsequent status (2026-09-20 PA-B Stage 1 live migration):** [testing/fg038-pa-b-live-migration-zero-sys-admin-checkpoint.md](../testing/fg038-pa-b-live-migration-zero-sys-admin-checkpoint.md) **PASS / LIVE-MIGRATED / ZERO-SYS-ADMIN CHECKPOINT PASS / NO LIVE SYS ADMIN.** Product SHA **`2b25ec99b010c0c66d58d6aa08fdbab55b077e08`**. Pin SHA **`3a4735b40ee4580ad3ae419569cafb7bdec32352`**. Additive **`f6a7b8c9d0e1` applied live**. Live Alembic **`f6a7b8c9d0e1 (head)`**. Live Sys Admin **0**. APPOINT **0**. REMOVE **0**. Owner **UNCHANGED**. People UI **NOT IMPLEMENTED**. D5 remains **SEALED**. This gate is **not closed**.
 
 **Subsequent status (2026-09-20 PA-B SHA pin):** PA-B **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO LIVE SYS ADMIN.** Product SHA **`2b25ec99b010c0c66d58d6aa08fdbab55b077e08`**. Additive **`f6a7b8c9d0e1`**. Graph head **`f6a7b8c9d0e1`**. Live Alembic remains **`e5f6a7b8c9d0`**. Live Sys Admin **0**. Owner **UNCHANGED**. People UI **NOT IMPLEMENTED**. D5 remains **SEALED**. This gate is **not closed**.
@@ -36,7 +38,7 @@
 | Authority service | **IMPLEMENTED / LIVE / OPERATIONAL** — `app/services/instance_authority.py` |
 | CLI | **IMPLEMENTED / RUN LIVE ONCE** — ORG-001 / membership 1 / actor 1 |
 | Live Owner assignment | **ASSIGNED** — ORG-001 Membership 1 / User 1 / Joel Brayman. Isolation orgs **OWNERLESS**. |
-| System Administrator | **IMPLEMENTED / LIVE / OPERATIONAL / NO ADMIN APPOINTED** — tables live; current rows **0**; APPOINT **0**; REMOVE **0**; `is_system_administrator` fail-closed |
+| System Administrator | **IMPLEMENTED / LIVE / OPERATIONAL / ZERO CURRENT** — live APPOINT/REMOVE UAT **PASS**; current rows **0**; APPOINT **1**; REMOVE **1**; `is_system_administrator` fail-closed |
 | People & Access UI | **NOT IMPLEMENTED** |
 | Close/Reopen | **NOT IMPLEMENTED** |
 | Schema / Alembic | PA-A additive **`c3d4e5f6a7b8` applied live**. PA-B additive **`f6a7b8c9d0e1` applied live**. Live current = heads **`f6a7b8c9d0e1 (head)`**. |

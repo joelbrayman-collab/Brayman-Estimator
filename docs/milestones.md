@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-20 — FG-038 PA-B Stage 2 first System Administrator authority UAT
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-038 PA-B Stage 2 first Sys Admin UAT |
+| Status | **LIVE APPOINT UAT PASS / LIVE REMOVE UAT PASS / ZERO CURRENT SYS ADMINS.** Product SHA **`2b25ec99b010c0c66d58d6aa08fdbab55b077e08`**. Pin SHA **`3a4735b40ee4580ad3ae419569cafb7bdec32352`**. Stage 1 governance SHA **`162bcb60d09bb32bd231ed0753c020e5c0720a81`**. Live Alembic **`f6a7b8c9d0e1 (head)`**. System Administrator foundation **LIVE / OPERATIONAL**. Current Sys Admin **0**. APPOINT **1**. REMOVE **1**. Instance Owner **LIVE / OPERATIONAL / UNCHANGED**. People UI **NOT IMPLEMENTED**. Official V1 **not rescored**. |
+| Branch | `main` |
+| Base commit | Stage 1 governance **`162bcb60d09bb32bd231ed0753c020e5c0720a81`** |
+| Objective | Appoint Membership **5** / User **6** / AUTH-B UAT User as temporary Sys Admin by Owner User **1**, prove authority, then remove, leaving current **0** and permanent APPOINT/REMOVE history. |
+| Deliverables | Bounded live CLI appoint/remove; helper proofs; docs-only UAT evidence [testing/fg038-pa-b-first-system-administrator-authority-uat.md](testing/fg038-pa-b-first-system-administrator-authority-uat.md). |
+| Validation | Dedicated PA-B **38**, PA-A **35**, Close/Reopen **22**, FG-018 **37**, FG-037 **23** — focused **155 passed**, 462 warnings, **88.17s**, exit **0**. Full suite **not run** (no product/code change). Final live current Sys Admin **0**. APPOINT **1**. REMOVE **1**. |
+| Architectural findings | AUTH-B is a UAT display name, not Domain B. Membership **5** received no B/C grant. Owner pointer unchanged. Same-current appoint is a governed no-op (exit **0**, no extra event). Sys Admin cannot appoint. Sys Admin cannot impair Owner. Close/Reopen helper authorized Membership **5** while appointed and not after remove. No live Close/Reopen. Person ≠ User remains unsolved. |
+| Open decisions | Architect: PA-C Person / Worker identity foundation. |
+| Next milestone | **PA-C Person / Worker identity foundation.** |
+| Commit | this Stage 2 UAT governance commit follows |
+| Date | 2026-09-20 |
+
 ### 2026-09-20 — FG-038 PA-B Stage 1 live migration / zero-Sys-Admin checkpoint
 
 | Field | Content |

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-19 |
+| Updated | 2026-09-20 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -31,6 +31,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 ---
 
 ## Entries
+
+### 2026-09-20 — FG-038 PA-B SHA pin
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-038 PA-B pin |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO LIVE SYS ADMIN.** Product SHA **`2b25ec99b010c0c66d58d6aa08fdbab55b077e08`**. Instance Owner **LIVE / OPERATIONAL / UNCHANGED**. People UI **NOT IMPLEMENTED**. Official V1 **not rescored**. |
+| Branch | `main` |
+| Base commit | PA-B product **`2b25ec99b010c0c66d58d6aa08fdbab55b077e08`** |
+| Objective | Pin the accepted PA-B System Administrator product SHA before Stage 1 live migration. |
+| Deliverables | Governance SHA pointers only. |
+| Validation | Reused accepted PA-B evidence. No product change. |
+| Architectural findings | No product change. |
+| Open decisions | Stage 1 live migrate (this prompt). First Sys Admin UAT. People & Access UI. |
+| Next milestone | **Stage 1 live migration / zero-Sys-Admin checkpoint.** |
+| Commit | this pin commit follows |
+| Date | 2026-09-20 |
 
 ### 2026-09-19 — FG-038 PA-B System Administrator authority foundation
 

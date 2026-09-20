@@ -1,5 +1,7 @@
 # Feature Gate FG-038: Instance Owner Authority Foundation (PA-A)
 
+**Subsequent status (2026-09-20 PA-B SHA pin):** PA-B **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO LIVE SYS ADMIN.** Product SHA **`2b25ec99b010c0c66d58d6aa08fdbab55b077e08`**. Additive **`f6a7b8c9d0e1`**. Graph head **`f6a7b8c9d0e1`**. Live Alembic remains **`e5f6a7b8c9d0`**. Live Sys Admin **0**. Owner **UNCHANGED**. People UI **NOT IMPLEMENTED**. D5 remains **SEALED**. This gate is **not closed**.
+
 **Subsequent status (2026-09-19 PA-B System Administrator authority foundation):** PA-B **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NO LIVE SYS ADMIN / NOT COMMITTED / NOT PUSHED.** Additive **`f6a7b8c9d0e1`** revises **`e5f6a7b8c9d0`**. Graph head **`f6a7b8c9d0e1`**. Live Alembic remains **`e5f6a7b8c9d0`**. Live Sys Admin rows **0**. ORG-001 Instance Owner **UNCHANGED** (Membership **1** / User **1** / Joel Brayman). People & Access UI **NOT IMPLEMENTED**. Sensitive Financial **NOT IMPLEMENTED**. D5 remains **SEALED**. This gate is **not closed**.
 
 **Subsequent status (2026-09-18 Stage 2 first Owner SET):** [testing/fg038-pa-a-first-instance-owner-authority-uat.md](../testing/fg038-pa-a-first-instance-owner-authority-uat.md) **PASS / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS.** ORG-001 Owner = Membership **1** / User **1** / Joel Brayman. SET events **1**. Isolation orgs ownerless. This gate is **not closed**.

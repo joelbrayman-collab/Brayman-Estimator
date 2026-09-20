@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-19 |
+| Updated | 2026-09-20 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-20 — FG-038 PA-B SHA pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-20 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 20 SEP 2026 |
+| Objective | Pin FG-038 PA-B product SHA after Architect ACCEPT COMMIT. |
+| Business decision | Record PA-B as IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO LIVE SYS ADMIN. |
+| Architectural decision | No product change. Documentation SHA pin only. Stage 1 live migration follows in the same prompt. |
+| Prompt template used | Architect PA-B ACCEPT COMMIT / PUSH / SHA-PIN then Stage 1 live migration |
+| Approved Cursor prompt summary | Commit PA-B. Push. Pin SHA. Then Stage 1 live migrate to f6a7b8c9d0e1 with zero-Sys-Admin checkpoint. Do not appoint live Sys Admin. |
+| Files expected to change | PA-B governance SHA pointers |
+| Files prohibited from changing | PA-B product code; live DB; People UI; LEARN; scorecard; recovery stash |
+| Implementation result | PA-B product SHA **`2b25ec99b010c0c66d58d6aa08fdbab55b077e08`**. This pin commit follows. |
+| Tests | Not re-run for pin. PA-B product tests already accepted. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Stage 1 live migrate. First Sys Admin UAT. People & Access UI. |
+| Next approved step | **Stage 1 live migration / zero-Sys-Admin checkpoint** (this prompt). |
+| Next approved prompt | this prompt already authorizes Stage 1 after pin |
+| Commit hash | this PA-B pin commit follows |
 
 ### 2026-09-19 — FG-038 PA-B System Administrator authority foundation
 

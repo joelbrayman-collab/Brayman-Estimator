@@ -1,5 +1,7 @@
 # Feature Gate FG-038: Instance Owner Authority Foundation (PA-A)
 
+**Subsequent status (2026-09-20 PA-B Stage 1 live migration):** [testing/fg038-pa-b-live-migration-zero-sys-admin-checkpoint.md](../testing/fg038-pa-b-live-migration-zero-sys-admin-checkpoint.md) **PASS / LIVE-MIGRATED / ZERO-SYS-ADMIN CHECKPOINT PASS / NO LIVE SYS ADMIN.** Product SHA **`2b25ec99b010c0c66d58d6aa08fdbab55b077e08`**. Pin SHA **`3a4735b40ee4580ad3ae419569cafb7bdec32352`**. Additive **`f6a7b8c9d0e1` applied live**. Live Alembic **`f6a7b8c9d0e1 (head)`**. Live Sys Admin **0**. APPOINT **0**. REMOVE **0**. Owner **UNCHANGED**. People UI **NOT IMPLEMENTED**. D5 remains **SEALED**. This gate is **not closed**.
+
 **Subsequent status (2026-09-20 PA-B SHA pin):** PA-B **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO LIVE SYS ADMIN.** Product SHA **`2b25ec99b010c0c66d58d6aa08fdbab55b077e08`**. Additive **`f6a7b8c9d0e1`**. Graph head **`f6a7b8c9d0e1`**. Live Alembic remains **`e5f6a7b8c9d0`**. Live Sys Admin **0**. Owner **UNCHANGED**. People UI **NOT IMPLEMENTED**. D5 remains **SEALED**. This gate is **not closed**.
 
 **Subsequent status (2026-09-19 PA-B System Administrator authority foundation):** PA-B **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NO LIVE SYS ADMIN / NOT COMMITTED / NOT PUSHED.** Additive **`f6a7b8c9d0e1`** revises **`e5f6a7b8c9d0`**. Graph head **`f6a7b8c9d0e1`**. Live Alembic remains **`e5f6a7b8c9d0`**. Live Sys Admin rows **0**. ORG-001 Instance Owner **UNCHANGED** (Membership **1** / User **1** / Joel Brayman). People & Access UI **NOT IMPLEMENTED**. Sensitive Financial **NOT IMPLEMENTED**. D5 remains **SEALED**. This gate is **not closed**.
@@ -34,10 +36,10 @@
 | Authority service | **IMPLEMENTED / LIVE / OPERATIONAL** — `app/services/instance_authority.py` |
 | CLI | **IMPLEMENTED / RUN LIVE ONCE** — ORG-001 / membership 1 / actor 1 |
 | Live Owner assignment | **ASSIGNED** — ORG-001 Membership 1 / User 1 / Joel Brayman. Isolation orgs **OWNERLESS**. |
-| System Administrator | **IMPLEMENTED IN WORKING TREE / NOT LIVE** — explicit org-scoped membership rows + APPOINT/REMOVE events; `is_system_administrator` fail-closed; live rows **0** |
+| System Administrator | **IMPLEMENTED / LIVE / OPERATIONAL / NO ADMIN APPOINTED** — tables live; current rows **0**; APPOINT **0**; REMOVE **0**; `is_system_administrator` fail-closed |
 | People & Access UI | **NOT IMPLEMENTED** |
 | Close/Reopen | **NOT IMPLEMENTED** |
-| Schema / Alembic | PA-A additive **`c3d4e5f6a7b8` applied live**. PA-B additive **`f6a7b8c9d0e1` FILE ONLY**. Graph head **`f6a7b8c9d0e1`**. Live current **`e5f6a7b8c9d0`**. |
+| Schema / Alembic | PA-A additive **`c3d4e5f6a7b8` applied live**. PA-B additive **`f6a7b8c9d0e1` applied live**. Live current = heads **`f6a7b8c9d0e1 (head)`**. |
 | V1 scoring | **NOT RESCORED** |
 
 ```text

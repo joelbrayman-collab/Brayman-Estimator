@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-20 — FG-038 PA-B Stage 1 live migration / zero-Sys-Admin checkpoint
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-20 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 20 SEP 2026 |
+| Objective | After PA-B ACCEPT COMMIT / PUSH / SHA-PIN, run Stage 1 live migration to f6a7b8c9d0e1 and prove zero live Sys Admins. |
+| Business decision | System Administrator foundation may go live without appointing anyone. Instance Owner remains distinct. |
+| Architectural decision | Additive upgrade only. No seed. No stamp. No appoint CLI against ORG-001. |
+| Prompt template used | Architect PA-B ACCEPT COMMIT / PUSH / SHA-PIN then Stage 1 live migration |
+| Approved Cursor prompt summary | Commit PA-B. Push. Pin SHA. Backup. Live migrate f6a7b8c9d0e1. Zero-Sys-Admin checkpoint. Do not appoint live Sys Admin. |
+| Files expected to change | Stage 1 testing record and subsequent PA-B live-migration governance |
+| Files prohibited from changing | PA-B product code; People UI; LEARN; scorecard; recovery stash; live Owner; live grants |
+| Implementation result | PA-B **LIVE-MIGRATED / ZERO-SYS-ADMIN CHECKPOINT PASS / NO LIVE SYS ADMIN**. Live Alembic **`f6a7b8c9d0e1 (head)`**. Live Sys Admin **0**. |
+| Tests | Dedicated PA-B **38 passed**, 108 warnings, **29.18s**. Authority/CORE CLOSE **210 passed**, 605 warnings, **159.36s**. Help+C1/C2 **95 passed**, 208 warnings, **176.07s**. Full suite **1477 passed**, 5062 warnings, **969.59s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | First Sys Admin UAT. People & Access UI. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next approved step | **STOP. Architect decides bounded first Sys Admin UAT or People & Access UI.** |
+| Next approved prompt | Architect decision: bounded first Sys Admin authority UAT OR proceed directly to People & Access |
+| Commit hash | this Stage 1 governance commit follows |
+
 ### 2026-09-20 — FG-038 PA-B SHA pin
 
 | Field | Content |

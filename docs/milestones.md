@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-20 — FG-038 PA-B Stage 1 live migration / zero-Sys-Admin checkpoint
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-038 PA-B Stage 1 live migration |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / ZERO-SYS-ADMIN CHECKPOINT PASS / NO LIVE SYS ADMIN.** Product SHA **`2b25ec99b010c0c66d58d6aa08fdbab55b077e08`**. Pin SHA **`3a4735b40ee4580ad3ae419569cafb7bdec32352`**. Additive **`f6a7b8c9d0e1` applied live**. Live Alembic **`f6a7b8c9d0e1 (head)`**. System Administrator foundation **LIVE / OPERATIONAL / NO ADMIN APPOINTED**. Instance Owner **LIVE / OPERATIONAL / UNCHANGED**. People UI **NOT IMPLEMENTED**. Official V1 **not rescored**. |
+| Branch | `main` |
+| Base commit | PA-B pin **`3a4735b40ee4580ad3ae419569cafb7bdec32352`** |
+| Objective | Apply additive `f6a7b8c9d0e1` live and prove zero Sys Admins, with Owner and A/B/C occupancy unchanged. |
+| Deliverables | Timestamped SQLite backup; live upgrade; zero-Sys-Admin checkpoint; read-only helper proof; Stage 1 governance record. |
+| Validation | Dedicated PA-B **38 passed**, 108 warnings, **29.18s**. Authority/CORE CLOSE bundle **210 passed**, 605 warnings, **159.36s**. Help+C1/C2 **95 passed**, 208 warnings, **176.07s**. Full suite **1477 passed**, 5062 warnings, **969.59s**, exit **0**. Live Sys Admin **0**. APPOINT **0**. REMOVE **0**. |
+| Architectural findings | Migration created empty authority tables. Owner was not auto-converted. B did not become Sys Admin. Combined helper remains true for Joel because he is Instance Owner. |
+| Open decisions | Architect: bounded first Sys Admin UAT **or** People & Access UI. |
+| Next milestone | **Architect decision — bounded first Sys Admin authority UAT or proceed directly to People & Access.** |
+| Commit | this Stage 1 governance commit follows |
+| Date | 2026-09-20 |
+
 ### 2026-09-20 — FG-038 PA-B SHA pin
 
 | Field | Content |

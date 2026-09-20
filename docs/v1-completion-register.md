@@ -8,6 +8,8 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-09-20 FG-038 PA-C PIN):** PA-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO LIVE PERSON DATA.** Product SHA **`0698f9d2a4ccabcef53ebcef9cb1415bfcd470f7`**. Additive **`g7b8c9d0e1f2`**. Graph head **`g7b8c9d0e1f2`**. Live Alembic remains **`f6a7b8c9d0e1`**. People UI **NOT IMPLEMENTED**. Sensitive Financial **NOT IMPLEMENTED**. This record **does not rescore** V1.
+
 **Subsequent status (2026-09-20 FG-038 PA-C PERSON / WORKER IDENTITY):** PA-C **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NO LIVE PERSON / NOT COMMITTED / NOT PUSHED.** Additive **`g7b8c9d0e1f2`**. Graph head **`g7b8c9d0e1f2`**. Live Alembic remains **`f6a7b8c9d0e1`**. People UI **NOT IMPLEMENTED**. Sensitive Financial **NOT IMPLEMENTED**. This record **does not rescore** V1.
 
 **Subsequent status (2026-09-20 FG-038 PA-B STAGE 2 FIRST SYS ADMIN UAT):** PA-B **LIVE APPOINT UAT PASS / LIVE REMOVE UAT PASS / ZERO CURRENT SYS ADMINS.** Temporary Membership **5** / User **6**. Current Sys Admin **0**. APPOINT **1**. REMOVE **1**. Owner **UNCHANGED**. People UI **NOT IMPLEMENTED**. Next product block **PA-C Person / Worker identity**. This record **does not rescore** V1.

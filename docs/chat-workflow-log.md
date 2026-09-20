@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-20 — FG-038 PA-C SHA pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-20 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 20 SEP 2026 |
+| Objective | Pin FG-038 PA-C product SHA after Architect ACCEPT COMMIT. |
+| Business decision | Record PA-C as IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO LIVE PERSON DATA. |
+| Architectural decision | No product change. Documentation SHA pin only. Stage 1 live migration follows in the same prompt. |
+| Prompt template used | Architect PA-C ACCEPT COMMIT / PUSH / SHA-PIN then Stage 1 live migration |
+| Approved Cursor prompt summary | Commit PA-C. Push. Pin SHA. Then Stage 1 live migrate to g7b8c9d0e1f2 with empty-Person checkpoint. Do not create a live Person. |
+| Files expected to change | PA-C governance SHA pointers |
+| Files prohibited from changing | PA-C product code; live DB; People UI; LEARN; scorecard; recovery stash |
+| Implementation result | PA-C product SHA **`0698f9d2a4ccabcef53ebcef9cb1415bfcd470f7`**. This pin commit follows. |
+| Tests | Not re-run for pin. Reused accepted dedicated **37** / focused **192** / full **1514**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Stage 1 live migrate. Bounded Person UAT. PA-D. People & Access UI. |
+| Next approved step | **Stage 1 live migration / empty-Person checkpoint** (this prompt). |
+| Next approved prompt | this prompt already authorizes Stage 1 after pin |
+| Commit hash | this PA-C pin commit follows |
+
 ### 2026-09-20 — FG-038 PA-C Person / Worker identity foundation
 
 | Field | Content |

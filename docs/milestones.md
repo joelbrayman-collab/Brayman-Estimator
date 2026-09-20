@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-20 — FG-038 PA-C SHA pin
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-038 PA-C pin |
+| Status | **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO LIVE PERSON DATA.** Product SHA **`0698f9d2a4ccabcef53ebcef9cb1415bfcd470f7`**. Additive **`g7b8c9d0e1f2`**. Graph head **`g7b8c9d0e1f2`**. Live Alembic remains **`f6a7b8c9d0e1`**. Instance Owner **LIVE / OPERATIONAL / UNCHANGED**. Sys Admin current **0**. People UI **NOT IMPLEMENTED**. Official V1 **not rescored**. |
+| Branch | `main` |
+| Base commit | PA-C product **`0698f9d2a4ccabcef53ebcef9cb1415bfcd470f7`** |
+| Objective | Pin the accepted PA-C Person / Worker product SHA before Stage 1 live migration. |
+| Deliverables | Governance SHA pointers only. |
+| Validation | Reused accepted PA-C evidence. No product change. |
+| Architectural findings | No product change. |
+| Open decisions | Stage 1 live migrate (this prompt). Bounded Person UAT. PA-D. People & Access UI. |
+| Next milestone | **Stage 1 live migration / empty-Person checkpoint.** |
+| Commit | this pin commit follows |
+| Date | 2026-09-20 |
+
 ### 2026-09-20 — FG-038 PA-C Person / Worker identity foundation
 
 | Field | Content |

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-19 — D5 Voice with Help SHA pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-19 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026 |
+| Objective | Pin D5 Voice-with-Help product SHA after Architect ACCEPT COMMIT. |
+| Business decision | Record D5 as IMPLEMENTED / TESTED / COMMITTED / PUSHED / NO MIGRATION / NO DB MUTATION. Voice is an interface to Help. Voice actions remain NOT V1. |
+| Architectural decision | No product change. Documentation SHA pin only. People & Access is the next V1 product block. |
+| Prompt template used | Architect D5 ACCEPT COMMIT / PUSH / SHA-PIN then FG-038 PA-B |
+| Approved Cursor prompt summary | Commit D5 product. Push. Pin SHA. Then implement PA-B System Administrator foundation in working tree only. |
+| Files expected to change | D5 governance SHA pointers |
+| Files prohibited from changing | D5 product code; C2; schema; People UI; LEARN; scorecard |
+| Implementation result | D5 product SHA **`021a893104260baa543e1f791b24d671562f40dd`**. This pin commit follows. |
+| Tests | Not re-run for pin. D5 product tests already accepted. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | FG-038 PA-B. People & Access UI. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next approved step | **FG-038 PA-B — System Administrator authority foundation.** |
+| Next approved prompt | this prompt already authorizes PA-B after D5 pin |
+| Commit hash | this D5 pin commit follows |
+
 ### 2026-09-19 — D5 Voice with Help
 
 | Field | Content |

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, and D4 Field Help are **IMPLEMENTED**; D5 Voice-with-Help is **IMPLEMENTED IN WORKING TREE** as a Help interface. This log remains Manual Impact only. |
+| Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
 | Updated | 2026-09-19 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
@@ -56,7 +56,7 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 | Field | Content |
 |-------|---------|
 | Slice | D5 Voice with Help |
-| Product status at capture | **IMPLEMENTED IN WORKING TREE / TESTED / NOT COMMITTED / NOT PUSHED.** Same Help authority as D1–D4. Typed and spoken questions share `answer_help_question()`. Browser speech only. No provider. No schema. Voice does not change the job. User Guide remains outstanding. |
+| Product status at capture | **IMPLEMENTED / TESTED / COMMITTED / PUSHED.** Product SHA **`021a893104260baa543e1f791b24d671562f40dd`**. Same Help authority as D1–D4. Typed and spoken questions share `answer_help_question()`. Browser speech only. No provider. No schema. Voice does not change the job. User Guide remains outstanding. |
 | 1. What new contractor capability exists? | After opening Help, the contractor can type a question or tap Ask by speaking. Help answers from the current screen. The answer is shown as text. Speak answer is optional where the browser can speak. |
 | 2. When would the contractor use it? | When the static Help is not enough and they want to ask what this screen is, what they can do, why something is blocked, or what is next. |
 | 3. What workflow will the final Manual need to teach? | Open Help. Read it, or type/ask by speaking. Help explains. It does not close a Project, approve Time, or add Punch List items. If the microphone is not available, type instead. |

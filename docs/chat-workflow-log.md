@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-20 — FG-038 PA-C bounded live Person UAT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-20 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 20 SEP 2026 |
+| Objective | Create one synthetic live Person and prove Person ≠ User, wage protection, and lifecycle, ending INACTIVE. |
+| Business decision | First live Person is synthetic UAT evidence and is retained inactive. Creating Person creates no login. |
+| Architectural decision | Live UAT only. No PA-D. No People UI. No Sensitive Financial. No schema/migration. Bounded live occupancy test update only. |
+| Prompt template used | Architect PA-C BOUNDED LIVE PERSON UAT |
+| Approved Cursor prompt summary | Create FG038 PA-C UAT Worker as Owner User 1. Prove separation and wage. Update mobile. Deactivate/reactivate/final deactivate. Do not implement PA-D. |
+| Files expected to change | UAT evidence and subsequent FG-038 governance; bounded live occupancy test |
+| Files prohibited from changing | Product service/model/CLI; schema; People UI; PA-D; Owner; Sys Admin; scorecard; recovery stash |
+| Implementation result | PA-C **LIVE / OPERATIONAL / LIVE PERSON UAT PASS**. Person **1** INACTIVE retained. Users **14** / Memberships **13** unchanged. |
+| Tests | Dedicated PA-C **37 passed**, 101 warnings, **17.00s**, exit **0**. PA-B **38**. PA-A **35**. Focused identity **192 passed**, 563 warnings, **107.20s**, exit **0**. Full suite **1514 passed**, 5163 warnings, **691.64s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | PA-D Person-User linkage. People UI. |
+| Next approved step | **STOP. Architect PA-D Platform Access / Person-User linkage.** |
+| Next approved prompt | Architect PA-D architecture / implementation authorization |
+| Commit hash | this UAT governance commit follows |
+
 ### 2026-09-20 — FG-038 PA-C Stage 1 live migration / empty-Person checkpoint
 
 | Field | Content |

@@ -567,7 +567,7 @@ def test_existing_worker_fks_not_retargeted():
     assert "person_id" not in OrganizationCrewMember.__table__.columns
 
 
-def test_live_db_person_table_exists_empty():
+def test_live_db_person_foundation_occupancy():
     live_path = REPO_ROOT / "instance" / "brayman_estimator.db"
     if not live_path.exists():
         return
@@ -580,6 +580,8 @@ def test_live_db_person_table_exists_empty():
         for row in cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
     }
     assert "organization_people" in tables
+    columns = {row[1] for row in cur.execute("PRAGMA table_info(organization_people)")}
+    assert "user_id" not in columns
     total = cur.execute("SELECT COUNT(*) FROM organization_people").fetchone()[0]
     active = cur.execute(
         "SELECT COUNT(*) FROM organization_people WHERE is_active = 1"
@@ -587,10 +589,33 @@ def test_live_db_person_table_exists_empty():
     inactive = cur.execute(
         "SELECT COUNT(*) FROM organization_people WHERE is_active = 0"
     ).fetchone()[0]
-    con.close()
-    assert total == 0
+    if total == 0:
+        assert active == 0
+        assert inactive == 0
+        con.close()
+        return
+    assert total == 1
     assert active == 0
-    assert inactive == 0
+    assert inactive == 1
+    row = cur.execute(
+        """
+        SELECT full_name, email_address, mobile_number, is_active, organization_id
+        FROM organization_people
+        """
+    ).fetchone()
+    email_users = cur.execute(
+        "SELECT COUNT(*) FROM users WHERE email = ?",
+        ("fg038-pac-uat-worker@example.invalid",),
+    ).fetchone()[0]
+    con.close()
+    assert row == (
+        "FG038 PA-C UAT Worker",
+        "fg038-pac-uat-worker@example.invalid",
+        "613-555-0199",
+        0,
+        "ORG-001",
+    )
+    assert email_users == 0
 
 
 def test_no_people_ui_routes():

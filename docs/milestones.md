@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-20 — FG-038 PA-C bounded live Person UAT
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-038 PA-C bounded live Person UAT |
+| Status | **LIVE PERSON UAT PASS / 1 INACTIVE SYNTHETIC UAT PERSON RETAINED.** Product SHA **`0698f9d2a4ccabcef53ebcef9cb1415bfcd470f7`**. Pin SHA **`bc0ce7f541728262df0573a6096b5948d7abe6ed`**. Live Alembic **`g7b8c9d0e1f2 (head)`**. Person **1** / FG038 PA-C UAT Worker / INACTIVE. Instance Owner **UNCHANGED**. Sys Admin current **0**. People UI **NOT IMPLEMENTED**. Official V1 **not rescored**. |
+| Branch | `main` |
+| Base commit | Stage 1 governance **`433c46f2ae08dfe5513ee2ad86ad72347b8c47e3`** |
+| Objective | Prove live Person authority: create, identity read, protected wage, update, deactivate, reactivate, final deactivate. |
+| Deliverables | One synthetic Person via governed CLI; [testing/fg038-pa-c-person-worker-live-uat.md](testing/fg038-pa-c-person-worker-live-uat.md); bounded live occupancy test update. |
+| Validation | Dedicated PA-C **37 passed**. PA-B **38**. PA-A **35**. Focused identity **192 passed**, 563 warnings, **107.20s**, exit **0**. Full suite **1514 passed**, 5163 warnings, **691.64s**, exit **0**. |
+| Architectural findings | Creating Person created no User, Membership, login, A/B/C, Owner, or Sys Admin. Wage omitted from PersonIdentity. Owner wage ALLOW 37.50. Ordinary AUTH-B User 6 DENY. No safe live B-only non-Owner identity without creating a grant. Historical User FKs unchanged. |
+| Open decisions | Architect PA-D Platform Access / Person-User linkage. |
+| Next milestone | **PA-D Platform Access / Person-User linkage.** |
+| Commit | this UAT governance commit follows |
+| Date | 2026-09-20 |
+
 ### 2026-09-20 — FG-038 PA-C Stage 1 live migration / empty-Person checkpoint
 
 | Field | Content |

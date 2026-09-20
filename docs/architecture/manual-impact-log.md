@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — FG-038 PA-B SYSTEM ADMINISTRATOR FOUNDATION (2026-09-19)
+
+| Field | Content |
+|-------|---------|
+| Slice | FG-038 PA-B System Administrator authority foundation |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT LIVE.** No People & Access UI. No live Sys Admin. Owner unchanged. Close/Reopen can accept a Sys Admin only after a later live appointment. User Guide remains outstanding. |
+| 1. What new contractor capability exists? | None on a live screen. This slice stores later System Administrator authority. Settings still has no People & Access page. |
+| 2. When would the contractor use it? | Not yet. Later, after People & Access UI and a live appointment, the Owner designates a System Administrator. |
+| 3. What workflow will the final Manual need to teach? | Later: only the Instance Owner appoints a System Administrator. A System Administrator cannot appoint another. A System Administrator cannot remove or replace the Instance Owner. Close/Reopen remains Owner or System Administrator, not ordinary company management. |
+| 4. What contractor-facing terms must be used? | Instance Owner. System Administrator. People & Access (future). Do not say Platform Owner. |
+| 5. What screenshots / Print examples will eventually be needed? | None from this slice. Capture People & Access after that UI exists. |
+| 6. What warnings / validation distinctions need explanation? | Domain B (Company / Management) is not System Administrator. Inactive people are not administrators. History of appointment and removal is kept. |
+| 7. Desktop / iPhone / Print relevance | No current screen change. Print unchanged. |
+| Do not | Final Manual prose. Claim People & Access exists. Claim a live System Administrator exists. Claim Completion Sign-Off exists. |
+
 ### MANUAL IMPACT — D5 VOICE WITH HELP (2026-09-19)
 
 | Field | Content |

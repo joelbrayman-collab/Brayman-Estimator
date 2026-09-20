@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-19 — FG-038 PA-B System Administrator authority foundation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-19 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026 |
+| Objective | After D5 ACCEPT COMMIT / PUSH / SHA-PIN, implement FG-038 PA-B System Administrator authority foundation in working tree only. Return before commit/push. |
+| Business decision | System Administrator is Owner-designated broad administrative authority, distinct from Instance Owner and from A/B/C. |
+| Architectural decision | Explicit org-scoped membership rows plus append-only APPOINT/REMOVE events. `is_system_administrator` fail-closed. Existing Close/Reopen Owner-or-Sys-Admin seam made effective. One additive migration file **`f6a7b8c9d0e1`**. No live migrate. No live Sys Admin. No People UI. |
+| Prompt template used | Architect D5 ACCEPT COMMIT then FG-038 PA-B IMPLEMENTATION AUTHORIZATION |
+| Approved Cursor prompt summary | Seal D5. Then implement PA-B Sys Admin foundation in working tree. Tests A–AF. Do not live-migrate. Do not commit PA-B. Return A–BE. |
+| Files expected to change | models, instance_authority, CLI, one Alembic file, dedicated tests, bounded graph-head tests, FG-038/governance docs |
+| Files prohibited from changing | People UI; Person/wage; live DB; Owner identity; A/B/C law; D5 product; LEARN; scorecard; recovery stash |
+| Implementation result | PA-B **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NO LIVE SYS ADMIN / NOT COMMITTED / NOT PUSHED**. Live Owner **UNCHANGED**. |
+| Tests | Dedicated PA-B **38 passed**, 108 warnings, **26.16s**. Combined PA-A/FG-037/FG-018/Close/A/B **172 passed**, 497 warnings, **81.75s**. Combined Help+C1/C2 **95 passed**, 208 warnings, **48.99s**. Full suite **1477 passed**, 5062 warnings, **676.28s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Architect ACCEPT COMMIT PA-B. Live migrate. First Sys Admin UAT. People & Access UI. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next approved step | **STOP. Return to Architect ACCEPT COMMIT PA-B.** |
+| Next approved prompt | Architect ACCEPT COMMIT / PUSH / SHA-PIN PA-B |
+| Commit hash | **NOT COMMITTED** |
+
 ### 2026-09-19 — D5 Voice with Help SHA pin
 
 | Field | Content |

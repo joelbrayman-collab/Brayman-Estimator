@@ -1,5 +1,7 @@
 # Feature Gate FG-038: Instance Owner Authority Foundation (PA-A)
 
+**Subsequent status (2026-09-19 PA-B System Administrator authority foundation):** PA-B **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NO LIVE SYS ADMIN / NOT COMMITTED / NOT PUSHED.** Additive **`f6a7b8c9d0e1`** revises **`e5f6a7b8c9d0`**. Graph head **`f6a7b8c9d0e1`**. Live Alembic remains **`e5f6a7b8c9d0`**. Live Sys Admin rows **0**. ORG-001 Instance Owner **UNCHANGED** (Membership **1** / User **1** / Joel Brayman). People & Access UI **NOT IMPLEMENTED**. Sensitive Financial **NOT IMPLEMENTED**. D5 remains **SEALED**. This gate is **not closed**.
+
 **Subsequent status (2026-09-18 Stage 2 first Owner SET):** [testing/fg038-pa-a-first-instance-owner-authority-uat.md](../testing/fg038-pa-a-first-instance-owner-authority-uat.md) **PASS / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS.** ORG-001 Owner = Membership **1** / User **1** / Joel Brayman. SET events **1**. Isolation orgs ownerless. This gate is **not closed**.
 
 **Subsequent status (2026-09-18 Stage 1 live migration):** [testing/fg038-pa-a-live-migration-ownerless-checkpoint.md](../testing/fg038-pa-a-live-migration-ownerless-checkpoint.md) **PASS / LIVE-MIGRATED.** Subsequent Stage 2 assigned the first Owner. This gate is **not closed**.
@@ -30,10 +32,10 @@
 | Authority service | **IMPLEMENTED / LIVE / OPERATIONAL** — `app/services/instance_authority.py` |
 | CLI | **IMPLEMENTED / RUN LIVE ONCE** — ORG-001 / membership 1 / actor 1 |
 | Live Owner assignment | **ASSIGNED** — ORG-001 Membership 1 / User 1 / Joel Brayman. Isolation orgs **OWNERLESS**. |
-| System Administrator | **DEFERRED TO PA-B** — `is_system_administrator` returns False |
+| System Administrator | **IMPLEMENTED IN WORKING TREE / NOT LIVE** — explicit org-scoped membership rows + APPOINT/REMOVE events; `is_system_administrator` fail-closed; live rows **0** |
 | People & Access UI | **NOT IMPLEMENTED** |
 | Close/Reopen | **NOT IMPLEMENTED** |
-| Schema / Alembic | Additive **`c3d4e5f6a7b8`** **applied live** 2026-09-18. Live current = graph head **`c3d4e5f6a7b8 (head)`**. |
+| Schema / Alembic | PA-A additive **`c3d4e5f6a7b8` applied live**. PA-B additive **`f6a7b8c9d0e1` FILE ONLY**. Graph head **`f6a7b8c9d0e1`**. Live current **`e5f6a7b8c9d0`**. |
 | V1 scoring | **NOT RESCORED** |
 
 ```text

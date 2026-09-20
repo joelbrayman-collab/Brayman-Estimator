@@ -17,6 +17,8 @@ from app.services.access_domains import (
 )
 from app.services.instance_authority import (
     InstanceAuthorityError,
+    appoint_system_administrator,
+    remove_system_administrator,
     set_instance_owner,
 )
 from app.services.auth import AuthServiceError, bootstrap_org_001_user, reset_password
@@ -122,6 +124,48 @@ def set_instance_owner_command(organization_id, membership_id, actor_user_id):
     click.echo(
         f"Instance Owner membership {org.instance_owner_membership_id} "
         f"is set for organization {org.id}."
+    )
+
+
+@auth_cli.command("appoint-system-administrator")
+@click.option("--organization-id", "organization_id", required=True)
+@click.option("--membership-id", "membership_id", required=True, type=int)
+@click.option("--actor-user-id", "actor_user_id", required=True, type=int)
+@with_appcontext
+def appoint_system_administrator_command(organization_id, membership_id, actor_user_id):
+    """Appoint a System Administrator. Explicit ids only. Owner actor only."""
+    try:
+        row = appoint_system_administrator(
+            organization_id,
+            membership_id,
+            actor_user_id,
+        )
+    except InstanceAuthorityError as exc:
+        raise click.ClickException(str(exc)) from exc
+    click.echo(
+        f"System Administrator membership {row.membership_id} "
+        f"is appointed for organization {row.organization_id}."
+    )
+
+
+@auth_cli.command("remove-system-administrator")
+@click.option("--organization-id", "organization_id", required=True)
+@click.option("--membership-id", "membership_id", required=True, type=int)
+@click.option("--actor-user-id", "actor_user_id", required=True, type=int)
+@with_appcontext
+def remove_system_administrator_command(organization_id, membership_id, actor_user_id):
+    """Remove a System Administrator. Explicit ids only. No inference."""
+    try:
+        remove_system_administrator(
+            organization_id,
+            membership_id,
+            actor_user_id,
+        )
+    except InstanceAuthorityError as exc:
+        raise click.ClickException(str(exc)) from exc
+    click.echo(
+        f"System Administrator membership {membership_id} "
+        f"is removed for organization {organization_id}."
     )
 
 

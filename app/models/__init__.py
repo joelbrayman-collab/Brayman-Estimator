@@ -78,7 +78,12 @@ from app.models.estimate_quickbooks import (
 )
 from app.models.estimate_scope_delivery import EstimateScopeDelivery
 from app.models.subcontractor import Subcontractor, SubcontractQuoteEvidence
-from app.models.organization import Organization, OrganizationInstanceOwnerEvent
+from app.models.organization import (
+    Organization,
+    OrganizationInstanceOwnerEvent,
+    OrganizationSystemAdministratorEvent,
+    OrganizationSystemAdministratorMembership,
+)
 from app.models.user import User, UserMembership, UserMembershipAccessDomainGrant
 from app.models.password_reset import PasswordResetAccessAttempt, PasswordResetToken
 from app.models.transactional_message import TransactionalMessage
@@ -239,6 +244,8 @@ __all__ = [
     "LabourTimeHistory",
     "Organization",
     "OrganizationInstanceOwnerEvent",
+    "OrganizationSystemAdministratorEvent",
+    "OrganizationSystemAdministratorMembership",
     "User",
     "UserMembership",
     "UserMembershipAccessDomainGrant",

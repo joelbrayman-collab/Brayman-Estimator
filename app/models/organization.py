@@ -4,6 +4,12 @@ from app import db
 
 INSTANCE_OWNER_EVENT_SET = "SET"
 INSTANCE_OWNER_EVENTS = (INSTANCE_OWNER_EVENT_SET,)
+ADMINISTRATOR_EVENT_APPOINT = "APPOINT"
+ADMINISTRATOR_EVENT_REMOVE = "REMOVE"
+ADMINISTRATOR_EVENTS = (
+    ADMINISTRATOR_EVENT_APPOINT,
+    ADMINISTRATOR_EVENT_REMOVE,
+)
 
 
 class Organization(db.Model):
@@ -150,4 +156,93 @@ class OrganizationInstanceOwnerEvent(db.Model):
         return (
             f"<OrganizationInstanceOwnerEvent {self.id} {self.event} "
             f"org={self.organization_id}>"
+        )
+
+
+class OrganizationSystemAdministratorMembership(db.Model):
+    """Current org-scoped System Administrator appointment (membership identity)."""
+
+    __tablename__ = "organization_system_administrator_memberships"
+    __table_args__ = (
+        db.UniqueConstraint(
+            "organization_id",
+            "membership_id",
+            name="uq_org_system_administrator_membership",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    membership_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user_memberships.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    appointed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    appointed_by_user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
+
+    organization = db.relationship("Organization", foreign_keys=[organization_id])
+    membership = db.relationship("UserMembership", foreign_keys=[membership_id])
+    appointed_by_user = db.relationship("User", foreign_keys=[appointed_by_user_id])
+
+    def __repr__(self):
+        return (
+            f"<OrganizationSystemAdministratorMembership {self.id} "
+            f"org={self.organization_id} membership={self.membership_id}>"
+        )
+
+
+class OrganizationSystemAdministratorEvent(db.Model):
+    """Append-only System Administrator APPOINT / REMOVE history."""
+
+    __tablename__ = "organization_system_administrator_events"
+    __table_args__ = (
+        db.CheckConstraint(
+            "event IN ('APPOINT', 'REMOVE')",
+            name="ck_organization_system_administrator_events_event",
+        ),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50),
+        db.ForeignKey("organizations.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    membership_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user_memberships.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    event = db.Column(db.String(20), nullable=False)
+    actor_user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    actor_identifier = db.Column(db.String(150), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    organization = db.relationship("Organization", foreign_keys=[organization_id])
+    membership = db.relationship("UserMembership", foreign_keys=[membership_id])
+    actor = db.relationship("User", foreign_keys=[actor_user_id])
+
+    def __repr__(self):
+        return (
+            f"<OrganizationSystemAdministratorEvent {self.id} {self.event} "
+            f"org={self.organization_id} membership={self.membership_id}>"
         )

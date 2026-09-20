@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-19 — FG-038 PA-B System Administrator authority foundation
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-038 PA-B — System Administrator authority foundation |
+| Status | **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NO LIVE SYS ADMIN / NOT COMMITTED / NOT PUSHED.** Instance Owner **LIVE / OPERATIONAL / UNCHANGED**. People & Access **PARTIAL / NOT OPERATIONAL**. People UI **NOT IMPLEMENTED**. Official V1 **not rescored**. |
+| Branch | `main` |
+| Base commit | D5 pin **`c670dc2e35178ad18f02f53683098ee330c4dd7b`** |
+| Objective | Persist explicit org-scoped System Administrator authority distinct from Instance Owner and from A/B/C, with append-only APPOINT/REMOVE history, without live mutation or People UI. |
+| Deliverables | Current Sys Admin membership rows; APPOINT/REMOVE events; `is_system_administrator`; appoint/remove services; Owner protection; bounded CLI; dedicated tests A–AF; additive **`f6a7b8c9d0e1`** file only. |
+| Validation | Dedicated PA-B **38 passed**, 108 warnings, **26.16s**. PA-A **35**. FG-037 **23**. FG-018 **37**. Close/Reopen **22**. Slice A **18**. Slice B **37**. Help D1/D3/D4/D5 **35**. C1 **26**. C2 **34**. Full suite **1477 passed**, 5062 warnings, **676.28s**, exit **0**. Live Alembic **`e5f6a7b8c9d0`**. Graph head **`f6a7b8c9d0e1`**. Live Sys Admin **0**. |
+| Architectural findings | Sys Admin is not Domain B. Owner-only appoint. Owner/Sys Admin remove. Self-removal allowed. Owner cannot be appointed or impaired. Same-state appoint/remove does not duplicate events. Existing Close/Reopen helper now authorizes effective Sys Admin in TEST DB. No new ADR. |
+| Open decisions | Architect ACCEPT COMMIT PA-B. Live migrate. First Sys Admin UAT. People & Access UI. |
+| Next milestone | **Architect ACCEPT COMMIT / PUSH / SHA-PIN PA-B**, then live migration / ownerless-Sys-Admin checkpoint if separately authorized. |
+| Commit | **NOT COMMITTED** |
+| Date | 2026-09-19 |
+
 ### 2026-09-19 — D5 Voice with Help
 
 | Field | Content |

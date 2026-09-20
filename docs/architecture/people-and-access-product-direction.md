@@ -15,6 +15,8 @@
 | Baseline | HEAD / `origin/main` **`f1940ebe1d80ab0e6e4feb795b7f97402a652bae`**. Live Alembic **`a0b1c2d3e4f5 (head)`**. Live `COMPANY_MANAGEMENT` grant rows **1** (ORG-001 Membership 1 / Joel Brayman). |
 | V1 | **NOT RESCORED** (official **65% / 4 of 11**; secondary Functional V1 Build **79% / 22 of 28**). Scorecard reconciliation is separate. |
 
+**Subsequent status (2026-09-19 PA-B System Administrator authority foundation):** PA-B **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NO LIVE SYS ADMIN / NOT COMMITTED / NOT PUSHED.** Additive **`f6a7b8c9d0e1`**. Live Alembic remains **`e5f6a7b8c9d0`**. Live Sys Admin **0**. Owner **UNCHANGED**. This freeze is **not rewritten**. People & Access UI remains **NOT IMPLEMENTED**.
+
 **Subsequent status (2026-09-18 Stage 2 first Owner SET):** [testing/fg038-pa-a-first-instance-owner-authority-uat.md](../testing/fg038-pa-a-first-instance-owner-authority-uat.md) **PASS / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS.** ORG-001 Owner = Membership **1** / User **1** / Joel Brayman. This freeze is **not rewritten**. People & Access UI and Sys Admin remain **NOT IMPLEMENTED**.
 
 **Subsequent status (2026-09-18 Stage 1 live migration):** [testing/fg038-pa-a-live-migration-ownerless-checkpoint.md](../testing/fg038-pa-a-live-migration-ownerless-checkpoint.md) **PASS / LIVE-MIGRATED.** Subsequent Stage 2 assigned the first Owner. This freeze is **not rewritten**.

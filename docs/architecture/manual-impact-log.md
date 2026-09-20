@@ -2,9 +2,9 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. Not Voice. D1 Hub Help, D3 office Help, and D4 Field Help are **IMPLEMENTED**; this log remains Manual Impact only. |
+| Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, and D4 Field Help are **IMPLEMENTED**; D5 Voice-with-Help is **IMPLEMENTED IN WORKING TREE** as a Help interface. This log remains Manual Impact only. |
 | Updated | 2026-09-19 |
-| Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; Voice / User Guide **NOT IMPLEMENTED** |
+| Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
 
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — D5 VOICE WITH HELP (2026-09-19)
+
+| Field | Content |
+|-------|---------|
+| Slice | D5 Voice with Help |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / TESTED / NOT COMMITTED / NOT PUSHED.** Same Help authority as D1–D4. Typed and spoken questions share `answer_help_question()`. Browser speech only. No provider. No schema. Voice does not change the job. User Guide remains outstanding. |
+| 1. What new contractor capability exists? | After opening Help, the contractor can type a question or tap Ask by speaking. Help answers from the current screen. The answer is shown as text. Speak answer is optional where the browser can speak. |
+| 2. When would the contractor use it? | When the static Help is not enough and they want to ask what this screen is, what they can do, why something is blocked, or what is next. |
+| 3. What workflow will the final Manual need to teach? | Open Help. Read it, or type/ask by speaking. Help explains. It does not close a Project, approve Time, or add Punch List items. If the microphone is not available, type instead. |
+| 4. What contractor-facing terms must be used? | Help. Ask about this screen. Ask by speaking. Speak answer. Stop speaking. |
+| 5. What screenshots / Print examples will eventually be needed? | Office Help with the question box open. Field Help with Ask by speaking. An example typed answer. Capture after later SHA, not this working tree. |
+| 6. What warnings / validation distinctions need explanation? | Microphone is requested only when Ask by speaking is used. Help does not change the job. Field Company today is not Company Attention. This is not general construction advice. |
+| 7. Desktop / iPhone / Print relevance | Office desktop and Field iPhone both use the same Help question path. Print unchanged. |
+| Do not | Final Manual prose. Claim Voice is a chatbot or action engine. Claim LEARN is live. Claim People & Access exists. Claim Completion Sign-Off exists. Claim a new Help knowledge base exists. |
 
 ### MANUAL IMPACT — D4 FIELD HELP (2026-09-19)
 

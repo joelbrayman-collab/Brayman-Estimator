@@ -874,8 +874,14 @@ def test_no_field_web_or_ai_surfaces(client, app):
     project = _add_project(name="Boundary")
     html = client.get(f"/projects/{project.id}").get_data(as_text=True)
     assert "Today" not in html or "not operational" in html
-    assert "microphone" not in html.lower()
-    assert "camera" not in html.lower()
+    hub_without_help = re.sub(
+        r'<details class="contextual-help.*?</details>',
+        "",
+        html,
+        flags=re.S,
+    )
+    assert "microphone" not in hub_without_help.lower()
+    assert "camera" not in hub_without_help.lower()
     assert "iPhone Capture" not in html
     assert client.get("/today").status_code == 404
     field = client.get("/field", follow_redirects=False)

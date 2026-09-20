@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-19 — D5 Voice with Help
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-19 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 19 SEP 2026 |
+| Objective | After D4 ACCEPT COMMIT / PUSH / SHA-PIN, implement D5 Voice-with-Help in working tree only. Voice is an interface to existing Help. No action engine. No provider. No schema. Return before commit/push. |
+| Business decision | A contractor can ask the current screen’s Help by typing or speaking. Help explains. It does not change the job. |
+| Architectural decision | One Help authority. `answer_help_question()` consumes `help_payload()`. Browser Web Speech only. Bounded intent matching. `POST /help/ask` JSON. No `voice_help.py`. |
+| Prompt template used | Architect D4 ACCEPT COMMIT then D5 VOICE WITH HELP IMPLEMENTATION AUTHORIZATION |
+| Approved Cursor prompt summary | Commit/push/pin D4. Then implement D5 Voice with Help. Tests. Docs. Read-only Help smoke. STOP and return to Architect before D5 commit/push. Do not implement People & Access, LEARN, or Sign-Off. |
+| Files expected to change | help_content Q&A, help route, contextual Help partial/JS/CSS, D5 tests, bounded FG-020 assertion, D5 governance pointers |
+| Files prohibited from changing | C2 behaviour; pricing/estimate formulas; schema; People & Access; LEARN product; scorecard; Voice action execution |
+| Implementation result | D5 **IMPLEMENTED IN WORKING TREE / TESTED / NOT COMMITTED / NOT PUSHED**. D1–D4 preserved. C2 **SEALED**. Alembic **`e5f6a7b8c9d0 (head)`**. Official V1 **not rescored**. |
+| Tests | Dedicated D5 9 passed / 2.91s. D1 9. D3 8. D4 9. D2 6. Combined Help 41 passed / 19.71s. Focused 246 passed / 148.85s. Full suite 1439 passed / 650.95s, exit 0. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Architect ACCEPT COMMIT for D5. People & Access. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next approved step | **STOP.** Return to Architect. Do not commit D5. |
+| Next approved prompt | Architect D5 ACCEPT COMMIT / PUSH / SHA-PIN, then People & Access only if separately authorized |
+| Commit hash | **None.** Working tree only. |
+
 ### 2026-09-19 — D4 Field Help
 
 | Field | Content |

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>{% block title %}Field — CalibraytAI{% endblock %}</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='branding/brayman-construction-logo.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/field.css', v='d4-help') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/field.css', v='d5-voice') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="field-body" data-field-page="{% block field_page %}today{% endblock %}">
@@ -37,5 +37,6 @@
         {% block content %}{% endblock %}
     </main>
     <script src="{{ url_for('static', filename='js/field.js', v='schd-addr2') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/contextual_help.js', v='d5-voice') }}" defer></script>
 </body>
 </html>

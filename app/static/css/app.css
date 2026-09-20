@@ -1226,6 +1226,62 @@ textarea {
     background: var(--cream);
 }
 
+.contextual-help-ask {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.contextual-help-ask-label {
+    display: block;
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.contextual-help-ask-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: stretch;
+}
+
+.contextual-help-question {
+    flex: 1 1 12rem;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font: inherit;
+}
+
+.contextual-help-ask-btn,
+.contextual-help-voice-btn,
+.contextual-help-speak-btn,
+.contextual-help-stop-btn {
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.contextual-help-answer {
+    margin: 10px 0 0;
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+.contextual-help-speak-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
 .hub-future-note {
     margin-top: 16px;
     padding: 14px 16px;

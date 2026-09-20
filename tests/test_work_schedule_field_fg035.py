@@ -664,7 +664,7 @@ def test_field_action_client_path_does_not_block_on_webfonts_or_idle_idb():
     )
     assert "fonts.googleapis.com" not in base
     assert "fonts.gstatic.com" not in base
-    assert "d4-help" in base
+    assert "d5-voice" in base
     assert "url_for('field.today')" in time_template
     assert "Back to Today" in time_template
     assert time_template.count('type="date"') == 1

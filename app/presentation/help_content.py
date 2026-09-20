@@ -2,8 +2,8 @@
 
 Presentation only. Static copy. No database, CMS, schema, LLM, or mutation.
 D1 ships Project Hub topics. D3 ships office topics. D4 ships Field topics.
-All three use this same authority. Later Voice must consume this module
-rather than invent a second knowledge base.
+D5 Voice is an interface to this same authority via answer_help_question().
+Do not invent a second knowledge base.
 """
 
 from __future__ import annotations
@@ -15,6 +15,34 @@ WHAT_LABEL = "What is this?"
 DO_LABEL = "What should I do here?"
 NEXT_LABEL = "What happens next?"
 FUTURE_LABEL = "Future"
+HELP_ASK_LABEL = "Ask about this screen"
+HELP_ASK_PLACEHOLDER = "Type a question"
+HELP_ASK_BUTTON = "Ask"
+HELP_VOICE_LABEL = "Ask by speaking"
+HELP_SPEAK_LABEL = "Speak answer"
+HELP_STOP_SPEAK_LABEL = "Stop speaking"
+HELP_MIC_DENIED = (
+    "Microphone access isn't available. You can type your question instead."
+)
+HELP_MIC_UNSUPPORTED = (
+    "Voice isn't available in this browser. You can type your question instead."
+)
+HELP_NO_SPEECH = "No speech was heard. You can type your question instead."
+HELP_VOICE_ERROR = "Voice couldn't be used. You can type your question instead."
+HELP_ASK_UNAVAILABLE = (
+    "Help couldn't answer right now. You can still read the Help on this screen."
+)
+HELP_EMPTY_QUESTION = "Type a question about this screen."
+HELP_MISSING_CONTEXT = "Help isn't available for this screen."
+HELP_GENERIC_REFUSAL = (
+    "This Help answers questions about this Calibrayt screen, not general "
+    "construction work."
+)
+HELP_NO_MUTATION = "Help explains. It does not change the job."
+HELP_FIELD_ATTENTION = (
+    "Company today shows what the company has scheduled today. It does not "
+    "change dates. That is not the office Company Attention screen."
+)
 
 SURFACE_HUB = "hub"
 SURFACE_OFFICE = "office"
@@ -584,3 +612,155 @@ def all_help_text() -> str:
             if part
         )
     return "\n".join(parts)
+
+
+def _normalize_question(question: str) -> str:
+    return " ".join((question or "").lower().split())
+
+
+def _question_intent(normalized: str) -> str:
+    if not normalized:
+        return "empty"
+    if "company attention" in normalized:
+        return "company_attention"
+    if "close" in normalized and "project" in normalized:
+        return "close_project"
+    if "reopen" in normalized and "project" in normalized:
+        return "reopen_project"
+    if "approve" in normalized and "time" in normalized:
+        return "approve_time"
+    if "punch list" in normalized and any(
+        word in normalized for word in ("add", "create", "complete")
+    ):
+        return "punch"
+    if "walkthrough" in normalized and any(
+        word in normalized for word in ("send", "invite", "create")
+    ):
+        return "walkthrough"
+    if any(
+        phrase in normalized
+        for phrase in ("how do i frame", "how to frame", "pour concrete", "build a wall")
+    ):
+        return "generic"
+    if any(
+        phrase in normalized
+        for phrase in ("why can't", "why cant", "why can i not", "blocked", "not allowed")
+    ):
+        return "why"
+    if any(
+        phrase in normalized
+        for phrase in ("what next", "what should i do next", "what happens next", "do next")
+    ):
+        return "next"
+    if any(
+        phrase in normalized
+        for phrase in ("what can i do", "what do i do", "how do i", "how can i")
+    ):
+        return "do"
+    if any(
+        phrase in normalized
+        for phrase in ("what is this", "what's this", "what is this screen", "what does this")
+    ):
+        return "what"
+    if "learn" in normalized:
+        return "learn"
+    if "completion sign-off" in normalized or "completion sign off" in normalized:
+        return "sign_off"
+    if "people & access" in normalized or "people and access" in normalized:
+        return "people_access"
+    return "grounded"
+
+
+def answer_help_question(surface: str, key: str, question: str) -> dict:
+    """Bounded Help question layer. Voice and typed questions share this path.
+
+    Grounded in help_payload() only. Does not mutate product state.
+    Does not call a provider. Does not create a second knowledge base.
+    """
+    normalized = _normalize_question(question)
+    intent = _question_intent(normalized)
+    payload = help_payload(surface, key)
+    result = {
+        "surface": surface,
+        "key": key,
+        "title": None if payload is None else payload["title"],
+        "intent": intent,
+        "mutates": False,
+        "answer": HELP_MISSING_CONTEXT,
+    }
+    if intent == "empty":
+        result["answer"] = HELP_EMPTY_QUESTION
+        return result
+    if payload is None:
+        return result
+    purpose = payload["purpose"] or ""
+    capability = payload["capability"] or ""
+    next_step = payload["next_step"] or ""
+    future = bool(payload["future"])
+
+    if surface == SURFACE_FIELD and intent == "company_attention":
+        result["answer"] = HELP_FIELD_ATTENTION
+        return result
+
+    if intent == "close_project":
+        result["answer"] = (
+            f"{next_step or purpose} Help does not close a Project. {HELP_NO_MUTATION}"
+        )
+        return result
+    if intent == "reopen_project":
+        result["answer"] = (
+            f"{capability or purpose} Help does not reopen a Project. {HELP_NO_MUTATION}"
+        )
+        return result
+    if intent == "approve_time":
+        result["answer"] = (
+            f"{capability or purpose} Help does not approve Time. {HELP_NO_MUTATION}"
+        )
+        return result
+    if intent == "punch":
+        result["answer"] = (
+            f"{capability or purpose} Help does not add or complete Punch List "
+            f"items. {HELP_NO_MUTATION}"
+        )
+        return result
+    if intent == "walkthrough":
+        result["answer"] = (
+            f"{capability or purpose} Help does not send Final Walkthrough. "
+            f"{HELP_NO_MUTATION}"
+        )
+        return result
+    if intent == "learn":
+        if future or key == "learn":
+            result["answer"] = purpose
+        else:
+            result["answer"] = "LEARN is not available on this screen yet."
+        return result
+    if intent == "sign_off":
+        result["answer"] = "Project Completion Sign-Off is not on this screen."
+        return result
+    if intent == "people_access":
+        if "People & Access" in f"{purpose} {capability} {next_step}":
+            result["answer"] = capability or purpose
+        else:
+            result["answer"] = "People & Access is not on this screen."
+        return result
+    if intent == "generic":
+        result["answer"] = HELP_GENERIC_REFUSAL
+        return result
+    if intent == "what" or "what does" in normalized:
+        result["answer"] = purpose
+        return result
+    if intent == "do":
+        result["answer"] = capability or purpose
+        return result
+    if intent == "why":
+        result["answer"] = capability or purpose
+        return result
+    if intent == "next":
+        result["answer"] = next_step or purpose
+        return result
+    if future:
+        result["answer"] = purpose
+        return result
+    result["answer"] = " ".join(part for part in (purpose, next_step) if part)
+    return result

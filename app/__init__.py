@@ -259,6 +259,7 @@ def create_app(config=None):
     from app.routes.cost_library import cost_library_bp
     from app.routes.estimates import estimates_bp
     from app.routes.main import main_bp
+    from app.routes.help import help_bp
     from app.routes.projects import projects_bp
     from app.routes.punch_list import punch_list_bp
     from app.routes.final_walkthrough import final_walkthrough_bp
@@ -287,6 +288,7 @@ def create_app(config=None):
     from app.routes.company_attention import company_attention_bp
 
     app.register_blueprint(main_bp)
+    app.register_blueprint(help_bp)
     app.register_blueprint(clients_bp)
     app.register_blueprint(projects_bp)
     app.register_blueprint(punch_list_bp)

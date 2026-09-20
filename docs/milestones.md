@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-19 — D5 Voice with Help
+
+| Field | Content |
+|-------|---------|
+| Milestone | D5 — Voice with Help |
+| Status | **IMPLEMENTED IN WORKING TREE / TESTED / NO MIGRATION / NO DB MUTATION / NOT COMMITTED / NOT PUSHED.** Voice is an interface to the existing Help authority. Voice actions **NOT IMPLEMENTED / NOT V1**. User Guide remains outstanding. LEARN remains Future. Official V1 **not rescored**. Completion Sign-Off **NOT IMPLEMENTED**. |
+| Branch | `main` |
+| Base commit | `adcc78a0d15ee17971878c848038e035b12b9fca` (`docs: pin D4 Field Help SHA`) |
+| Objective | Let a contractor ask the current contextual Help by typing or speaking, without a second knowledge base or an action engine. |
+| Deliverables | Shared `answer_help_question()`; `POST /help/ask`; one Help question box + Ask by speaking inside contextual Help; optional Speak answer; dedicated D5 tests |
+| Validation | Dedicated D5 **9 passed**, 9 warnings, **2.91s**. D1 **9 passed**. D3 **8 passed**. D4 **9 passed**. D2 **6 passed**. Combined Help **41 passed**, 94 warnings, **19.71s**. Focused **246 passed**, 743 warnings, **148.85s**. Full suite **1439 passed**, 4954 warnings, **650.95s**, exit **0**. Live text Help smoke **PASS** on **5462**. Voice browser smoke **UNAVAILABLE**. |
+| Architectural findings | One Help authority. Browser Web Speech only. No provider. Bounded intent matching, not open-ended AI. Field cannot retrieve Company Attention. `/help/ask` does not mutate. No schema. |
+| Open decisions | Architect ACCEPT COMMIT for D5. People & Access. Whole-product UAT. Completion Sign-Off after UAT. |
+| Next milestone | **STOP.** Return to Architect before D5 commit. Recommended next after accept: D5 commit/push/pin, then **People & Access**. |
+| Commit | **None.** Working tree only. |
+| Date | 2026-09-19 |
+
 ### 2026-09-19 — D4 Field Help
 
 | Field | Content |

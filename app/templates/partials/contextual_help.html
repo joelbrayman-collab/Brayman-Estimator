@@ -13,6 +13,42 @@
         <p><strong>{{ help_content.DO_LABEL }}</strong> {{ topic.do }}</p>
         <p><strong>{{ help_content.NEXT_LABEL }}</strong> {{ topic.next }}</p>
         {% endif %}
+        <form
+            class="contextual-help-ask"
+            action="{{ url_for('help.ask_help') }}"
+            method="post"
+            data-help-mic-denied="{{ help_content.HELP_MIC_DENIED }}"
+            data-help-mic-unsupported="{{ help_content.HELP_MIC_UNSUPPORTED }}"
+            data-help-no-speech="{{ help_content.HELP_NO_SPEECH }}"
+            data-help-voice-error="{{ help_content.HELP_VOICE_ERROR }}"
+            data-help-ask-unavailable="{{ help_content.HELP_ASK_UNAVAILABLE }}"
+        >
+            <label class="contextual-help-ask-label" for="help-question-{{ topic.surface }}-{{ topic.key }}">{{ help_content.HELP_ASK_LABEL }}</label>
+            <div class="contextual-help-ask-row">
+                <input
+                    id="help-question-{{ topic.surface }}-{{ topic.key }}"
+                    class="contextual-help-question"
+                    type="text"
+                    name="question"
+                    maxlength="400"
+                    autocomplete="off"
+                    placeholder="{{ help_content.HELP_ASK_PLACEHOLDER }}"
+                >
+                <button type="submit" class="contextual-help-ask-btn">{{ help_content.HELP_ASK_BUTTON }}</button>
+                <button
+                    type="button"
+                    class="contextual-help-voice-btn"
+                    aria-label="{{ help_content.HELP_VOICE_LABEL }}"
+                    title="{{ help_content.HELP_VOICE_LABEL }}"
+                    data-help-voice
+                >{{ help_content.HELP_VOICE_LABEL }}</button>
+            </div>
+            <p class="contextual-help-answer" role="status" aria-live="polite" hidden></p>
+            <div class="contextual-help-speak-row" hidden>
+                <button type="button" class="contextual-help-speak-btn" data-help-speak>{{ help_content.HELP_SPEAK_LABEL }}</button>
+                <button type="button" class="contextual-help-stop-btn" data-help-stop hidden>{{ help_content.HELP_STOP_SPEAK_LABEL }}</button>
+            </div>
+        </form>
     </div>
 </details>
 {% endmacro %}

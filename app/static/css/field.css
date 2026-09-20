@@ -753,3 +753,39 @@ input:focus-visible {
 .field-body .contextual-help-body p:last-child {
     margin-bottom: 0;
 }
+
+.field-body .contextual-help-ask {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 2px solid var(--black);
+}
+
+.field-body .contextual-help-ask-label {
+    font-size: 1.05rem;
+}
+
+.field-body .contextual-help-ask-row {
+    display: flex;
+    flex-direction: column;
+}
+
+.field-body .contextual-help-question,
+.field-body .contextual-help-ask-btn,
+.field-body .contextual-help-voice-btn,
+.field-body .contextual-help-speak-btn,
+.field-body .contextual-help-stop-btn {
+    width: 100%;
+    min-height: 48px;
+    font-size: 1.05rem;
+    border: 2px solid var(--black);
+    border-radius: 10px;
+    background: var(--white);
+}
+
+.field-body .contextual-help-ask-btn {
+    background: var(--gold);
+}
+
+.field-body .contextual-help-answer {
+    font-size: 1.05rem;
+}

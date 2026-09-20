@@ -567,7 +567,7 @@ def test_existing_worker_fks_not_retargeted():
     assert "person_id" not in OrganizationCrewMember.__table__.columns
 
 
-def test_live_db_has_no_person_table_yet():
+def test_live_db_person_table_exists_empty():
     live_path = REPO_ROOT / "instance" / "brayman_estimator.db"
     if not live_path.exists():
         return
@@ -579,8 +579,18 @@ def test_live_db_has_no_person_table_yet():
         row[0]
         for row in cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
     }
-    assert "organization_people" not in tables
+    assert "organization_people" in tables
+    total = cur.execute("SELECT COUNT(*) FROM organization_people").fetchone()[0]
+    active = cur.execute(
+        "SELECT COUNT(*) FROM organization_people WHERE is_active = 1"
+    ).fetchone()[0]
+    inactive = cur.execute(
+        "SELECT COUNT(*) FROM organization_people WHERE is_active = 0"
+    ).fetchone()[0]
     con.close()
+    assert total == 0
+    assert active == 0
+    assert inactive == 0
 
 
 def test_no_people_ui_routes():

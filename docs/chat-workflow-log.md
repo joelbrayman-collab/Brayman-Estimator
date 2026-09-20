@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-20 — FG-038 PA-C Stage 1 live migration / empty-Person checkpoint
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-20 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 20 SEP 2026 |
+| Objective | Commit/pin accepted PA-C, then live-migrate `g7b8c9d0e1f2` and prove zero Persons. |
+| Business decision | Person foundation may go live empty. First live Person is a later bounded UAT decision. |
+| Architectural decision | Additive live schema only. No seed. No User backfill. No Time/Crew/Field retarget. No Person CLI. |
+| Prompt template used | Architect PA-C ACCEPT COMMIT / PUSH / SHA-PIN then Stage 1 live migration / empty-Person checkpoint |
+| Approved Cursor prompt summary | Validate. Commit product. Push. Pin. Backup. Migrate f6a7b8c9d0e1 → g7b8c9d0e1f2. Prove 0 Persons. Test. Record. Do not create a Person. |
+| Files expected to change | Governance SHA pointers; Stage 1 testing record; bounded live empty-Person test assertion |
+| Files prohibited from changing | Live Person rows; People UI; PA-D; Time/Crew/Field FKs; Owner; Sys Admin; scorecard; recovery stash |
+| Implementation result | PA-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / EMPTY-PERSON CHECKPOINT PASS / NO LIVE PERSON DATA**. Product SHA **`0698f9d2a4ccabcef53ebcef9cb1415bfcd470f7`**. Pin SHA **`bc0ce7f541728262df0573a6096b5948d7abe6ed`**. Live Alembic **`g7b8c9d0e1f2 (head)`**. Person rows **0**. |
+| Tests | Dedicated PA-C after correction **37 passed**, 101 warnings, **16.66s**, exit **0**. Focused identity **192 passed**, 563 warnings, **103.59s**, exit **0**. Full suite **1514 passed**, 5163 warnings, **680.24s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | Bounded Person UAT. PA-D Person-User linkage. People UI. |
+| Next approved step | **STOP. Architect bounded Person UAT decision.** |
+| Next approved prompt | Architect bounded Person UAT decision |
+| Commit hash | this Stage 1 governance commit follows |
+
 ### 2026-09-20 — FG-038 PA-C SHA pin
 
 | Field | Content |

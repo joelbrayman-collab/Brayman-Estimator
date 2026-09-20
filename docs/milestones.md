@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-20 — FG-038 PA-C Stage 1 live migration / empty-Person checkpoint
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-038 PA-C Stage 1 live migration |
+| Status | **LIVE-MIGRATED / EMPTY-PERSON CHECKPOINT PASS / NO LIVE PERSON DATA.** Product SHA **`0698f9d2a4ccabcef53ebcef9cb1415bfcd470f7`**. Pin SHA **`bc0ce7f541728262df0573a6096b5948d7abe6ed`**. Live Alembic **`g7b8c9d0e1f2 (head)`**. Live Person rows **0**. Instance Owner **LIVE / OPERATIONAL / UNCHANGED**. Sys Admin current **0**. APPOINT **1**. REMOVE **1**. People UI **NOT IMPLEMENTED**. Official V1 **not rescored**. |
+| Branch | `main` |
+| Base commit | PA-C pin **`bc0ce7f541728262df0573a6096b5948d7abe6ed`** |
+| Objective | Apply additive Person schema live and prove an empty Person baseline before any live Person creation. |
+| Deliverables | Live `organization_people`; empty-Person checkpoint; [testing/fg038-pa-c-live-migration-empty-person-checkpoint.md](testing/fg038-pa-c-live-migration-empty-person-checkpoint.md); bounded live empty-Person test assertion. |
+| Validation | Dedicated PA-C **37 passed**, 101 warnings, **16.66s**, exit **0**. Focused identity **192 passed**, 563 warnings, **103.59s**, exit **0**. Full suite **1514 passed**, 5163 warnings, **680.24s**, exit **0**. Live Person rows **0**. |
+| Architectural findings | Creating the table does not create a Person, User, Membership, A/B/C, Owner, or Sys Admin. Historical User FKs unchanged. |
+| Open decisions | Architect bounded Person UAT decision. Then PA-D. Then People UI. |
+| Next milestone | **Architect bounded Person UAT decision.** |
+| Commit | this Stage 1 governance commit follows |
+| Date | 2026-09-20 |
+
 ### 2026-09-20 — FG-038 PA-C SHA pin
 
 | Field | Content |

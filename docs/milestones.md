@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-20 — FG-038 PA-C Person / Worker identity foundation
+
+| Field | Content |
+|-------|---------|
+| Milestone | FG-038 PA-C — Person / Worker identity foundation |
+| Status | **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NO LIVE PERSON / NOT COMMITTED / NOT PUSHED.** Additive **`g7b8c9d0e1f2`**. Graph head **`g7b8c9d0e1f2`**. Live Alembic remains **`f6a7b8c9d0e1`**. Instance Owner **LIVE / OPERATIONAL / UNCHANGED**. Sys Admin current **0**. People UI **NOT IMPLEMENTED**. Official V1 **not rescored**. |
+| Branch | `main` |
+| Base commit | Stage 2 UAT governance **`6ad1410db5dbbccb6a4728b7c7b7ae442b935227`** |
+| Objective | Additive Person / Worker identity distinct from User, without login, membership, A/B/C, Owner, or Sys Admin, and without retargeting Time/Crew/Field FKs. |
+| Deliverables | `organization_people`; `OrganizationPerson`; `app/services/organization_people.py`; protected wage-read seam; bounded CLI; dedicated tests; additive **`g7b8c9d0e1f2`** file only. |
+| Validation | Dedicated PA-C **37 passed**. Focused PA-C/PA-B/PA-A/Close/Reopen/FG-018/FG-037 **192 passed**, 563 warnings, **107.11s**, exit **0**. Full suite **1514 passed**, 5163 warnings, **723.80s**, exit **0**. Live Person table **absent**. Live Sys Admin **0**. |
+| Architectural findings | Person ≠ User. No Person↔User FK. Matching email does not auto-link. Wage is mandatory Numeric(10,2) compensation data readable only by effective Owner or Sys Admin. Not Domain C. Historical User FKs unchanged. |
+| Open decisions | Architect ACCEPT COMMIT / PUSH / SHA-PIN. Then live empty-Person checkpoint. Then bounded Person UAT. Then PA-D. |
+| Next milestone | **Architect ACCEPT COMMIT / PUSH / SHA-PIN PA-C.** |
+| Commit | working tree only; this implementation is not committed |
+| Date | 2026-09-20 |
+
 ### 2026-09-20 — FG-038 PA-B Stage 2 first System Administrator authority UAT
 
 | Field | Content |

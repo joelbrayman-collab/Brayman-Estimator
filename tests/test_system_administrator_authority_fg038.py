@@ -691,7 +691,8 @@ def test_ae_no_destructive_user_delete(app):
     for path in (REPO_ROOT / "app" / "models").rglob("*.py"):
         text = path.read_text(encoding="utf-8")
         assert "class Person(" not in text
-        assert "hourly_wage" not in text
+        if path.name != "person.py":
+            assert "hourly_wage" not in text
 
 
 def test_af_no_live_db_mutation_and_memory_only(app):
@@ -856,7 +857,7 @@ def test_alembic_pab_upgrade_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["f6a7b8c9d0e1"]
+        assert script.get_heads() == ["g7b8c9d0e1f2"]
 
         command.upgrade(alembic_cfg, "e5f6a7b8c9d0")
         engine = db.engine
@@ -913,8 +914,8 @@ def test_alembic_pab_upgrade_downgrade(tmp_path):
         command.upgrade(alembic_cfg, "head")
         with engine.begin() as conn:
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
-            assert [row[0] for row in heads] == ["f6a7b8c9d0e1"]
-            assert script.get_heads() == ["f6a7b8c9d0e1"]
+            assert [row[0] for row in heads] == ["g7b8c9d0e1f2"]
+            assert script.get_heads() == ["g7b8c9d0e1f2"]
             event_count = conn.execute(
                 sa.text(
                     "SELECT COUNT(*) FROM organization_system_administrator_events"

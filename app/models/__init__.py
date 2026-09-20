@@ -84,6 +84,7 @@ from app.models.organization import (
     OrganizationSystemAdministratorEvent,
     OrganizationSystemAdministratorMembership,
 )
+from app.models.person import OrganizationPerson
 from app.models.user import User, UserMembership, UserMembershipAccessDomainGrant
 from app.models.password_reset import PasswordResetAccessAttempt, PasswordResetToken
 from app.models.transactional_message import TransactionalMessage
@@ -274,6 +275,7 @@ __all__ = [
     "ProjectPermitFact",
     "OrganizationCrew",
     "OrganizationCrewMember",
+    "OrganizationPerson",
     "Project",
     "ProjectCommercialContext",
     "ProjectLocation",

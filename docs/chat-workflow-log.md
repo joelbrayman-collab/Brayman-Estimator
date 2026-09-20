@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-20 — FG-038 PA-C Person / Worker identity foundation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-20 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 20 SEP 2026 |
+| Objective | Implement additive Person / Worker identity foundation in working tree only. |
+| Business decision | Person ≠ User. Creating Person creates no login. Wage is mandatory and sensitive. Owner/Sys Admin wage-read is not Domain C. |
+| Architectural decision | `organization_people` with no Person↔User FK. Do not retarget Time/Crew/Field. One additive migration file **`g7b8c9d0e1f2`**. No live migrate. No live Person. |
+| Prompt template used | Architect PA-C FULL IMPLEMENTATION AUTHORIZATION |
+| Approved Cursor prompt summary | Additive Person authority. No existing worker-FK retarget. Mandatory wage stored/protected. No People UI. No Sensitive Financial. Test DB only. |
+| Files expected to change | Person model/service/CLI/migration/tests and subsequent FG-038 governance |
+| Files prohibited from changing | Live DB; People UI; Time/Crew/Field FKs; Owner; Sys Admin law; scorecard; recovery stash |
+| Implementation result | PA-C **IMPLEMENTED IN WORKING TREE / TESTED / MIGRATION FILE CREATED / NOT LIVE-MIGRATED / NO LIVE PERSON / NOT COMMITTED / NOT PUSHED**. Graph head **`g7b8c9d0e1f2`**. Live Alembic **`f6a7b8c9d0e1`**. |
+| Tests | Dedicated PA-C **37 passed**. Focused PA-C/PA-B/PA-A/Close/Reopen/FG-018/FG-037 **192 passed**, 563 warnings, **107.11s**, exit **0**. Full suite **1514 passed**, 5163 warnings, **723.80s**, exit **0**. |
+| Project-state-report update | Yes |
+| Milestone entry update | Yes |
+| Constitutional issue raised | None |
+| Unresolved issues | ACCEPT COMMIT. Live empty-Person checkpoint. Bounded Person UAT. PA-D Person-User linkage. People UI. |
+| Next approved step | **STOP. Architect ACCEPT COMMIT / PUSH / SHA-PIN PA-C.** |
+| Next approved prompt | Architect PA-C ACCEPT COMMIT / PUSH / SHA-PIN then Stage 1 live migration / empty-Person checkpoint |
+| Commit hash | not committed |
+
 ### 2026-09-20 — FG-038 PA-B Stage 2 first System Administrator authority UAT
 
 | Field | Content |

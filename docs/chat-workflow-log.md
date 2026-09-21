@@ -43,6 +43,78 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-21 — Pre-E2E-UAT reconciliation / VISUAL-2 commit
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-21 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 21 SEP 2026 |
+| Objective | Commit accepted VISUAL-2 Projects V2 as origin/main baseline. Identify production. |
+| Business decision | Projects V2 acceptable enough to continue. Do not smuggle Hub work. Do not call localhost production. |
+| Architectural decision | VISUAL-2 is presentation-only. HostPapa app deploy does not exist. No production URL in this repository. |
+| Prompt template used | Architect PRE-E2E-UAT PRODUCTION RECONCILIATION |
+| Approved Cursor prompt summary | Inspect, classify, commit accepted hanging work, push, deploy production. |
+| Files expected to change | VISUAL-2 product/docs/tests already in tree; then commit/push |
+| Files prohibited from changing | Schema, Field, Hub, recovery stash, V1 score |
+| Implementation result | VISUAL-2 committed/pushed as origin/main. Production deploy STOPPED: no production app target. |
+| Tests | Pre-commit **125 passed**, 361 warnings, **61.14s**. Full suite after commit. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | Production hosting/secrets remain platform debt; E2E UAT cannot run against a production URL that does not exist. |
+| Unresolved issues | No HostPapa/production app. Project Hub not swept. |
+| Next approved step | STOP. Architect production-hosting / E2E target decision. |
+| Next approved prompt | Architect: where is production, or is local the UAT instance? |
+| Commit hash | this feat commit |
+
+### 2026-09-21 — VISUAL-2 Projects V2 register (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-21 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 21 SEP 2026 |
+| Objective | Owner visual correction: keep Projects structure; polish register presentation. |
+| Business decision | Structure accepted. First presentation too utilitarian. No card grid. No feature change. |
+| Architectural decision | Register columns: identity (name/client/location), stage, Open. Counts from existing list lengths. Candidate reusable register CSS. Hub/Field/schema untouched. No commit. |
+| Prompt template used | Architect VISUAL-2 owner visual review correction |
+| Approved Cursor prompt summary | Polish Projects register. Preserve IA. Restart Flask. Do not commit. |
+| Files expected to change | list template/CSS, copy, list route count pass-through, tests, handoff docs |
+| Files prohibited from changing | Current/Closed membership logic, CRM, create, Hub behaviour, Field, schema, recovery stash |
+| Implementation result | Working-tree Projects V2 register. No commit. No push. |
+| Tests | Bounded presentation **81 passed**, 288 warnings, **37.97s**, exit **0**. Full suite not required. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Project Hub still Construction-era; create form still “New Project”; UAT synthetic names remain in live DB |
+| Next approved step | Joel visual review of Projects V2 |
+| Next approved prompt | If accepted: commit/push then Project Hub visual sweep |
+| Commit hash | NONE |
+
+### 2026-09-21 — VISUAL-2 Projects list presentation (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-21 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 21 SEP 2026 |
+| Objective | Make office `/projects/` feel like the same application as Home V2.2. Presentation only. |
+| Business decision | Home V2.2 is the frozen desktop reference. Projects is the next Office destination. No feature development. |
+| Architectural decision | Persistent shell + centre workspace. Structured list over cards. Reuse `/projects/new`. Preserve Current \| Closed. Omit attention. Do not sweep Project Hub or Field. No schema. No commit before owner review. |
+| Prompt template used | Architect VISUAL-2 — PROJECTS inspect → refine → live review |
+| Approved Cursor prompt summary | Inspect Projects. Restyle list to Home V2.2 shell. Restart Flask. Do not commit. |
+| Files expected to change | Projects list template/CSS, contractor copy, bounded tests, handoff docs |
+| Files prohibited from changing | Schema, Alembic, Field Projects, operating-state/CRM/create/Close/Reopen/Attention logic, Project Hub (except tiny shell if required), recovery stash |
+| Implementation result | Working-tree Projects workspace list. Hub recorded for later. No commit. No push. |
+| Tests | Dedicated + bounded Current/Closed/Help/Voice/auth/Home **125 passed**, 361 warnings, **143.78s**, exit **0**. Presentation-only; full suite not required. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Project Hub still Construction-era cards; create form still “New Project”; remaining Office destinations; Field visual pass |
+| Next approved step | Joel visual review of the real Projects workspace |
+| Next approved prompt | Architect after Joel review (commit/push only if accepted) |
+| Commit hash | NONE |
+
 ### 2026-09-21 — Home V2.2 accepted as desktop reference design
 
 | Field | Content |

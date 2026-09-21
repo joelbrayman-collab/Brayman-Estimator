@@ -82,10 +82,18 @@ def list_projects():
         projects = list_current_operating_projects(org_id)
         empty_title = contractor_copy.PROJECT_LIST_CURRENT_EMPTY
         empty_help = "Create a client first, then create the first construction project."
+    if view == "closed":
+        current_count = len(list_current_operating_projects(org_id))
+        closed_count = len(projects)
+    else:
+        current_count = len(projects)
+        closed_count = len(list_closed_projects(org_id))
     return render_template(
         "projects/list.html",
         projects=projects,
         list_view=view,
+        current_count=current_count,
+        closed_count=closed_count,
         empty_title=empty_title,
         empty_help=empty_help,
     )

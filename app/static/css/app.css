@@ -1853,3 +1853,144 @@ body.login-page {
     }
 }
 
+/* Calibrayt register pattern — first use: office Projects. Later Clients / Estimates may inherit. */
+
+.projects-intro {
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.projects-view {
+    display: flex;
+    gap: 28px;
+    margin: 0 0 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.projects-view a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 0 0 9px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.projects-view a.is-current {
+    color: var(--text);
+    border-bottom: 2px solid var(--gold);
+}
+
+.projects-view-count {
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+}
+
+.projects-view a.is-current .projects-view-count {
+    color: var(--text);
+}
+
+.projects-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(7.5rem, 12rem) 4.25rem;
+    gap: 12px 40px;
+    align-items: center;
+    padding: 18px 4px 18px 0;
+    border-bottom: 1px solid var(--border);
+    color: inherit;
+    text-decoration: none;
+}
+
+.projects-row:hover .projects-row-name {
+    color: var(--gold);
+}
+
+.projects-row:hover .projects-row-go {
+    color: var(--text);
+}
+
+.projects-row-identity {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.projects-row-name {
+    font-size: 1.12rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+}
+
+.projects-row-client {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.projects-row-location {
+    color: #8a8e95;
+    font-size: 0.84rem;
+}
+
+.projects-row-stage {
+    justify-self: start;
+    color: var(--text);
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+
+.projects-row-go {
+    justify-self: end;
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.projects-row-go::after {
+    content: " ›";
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.projects-workspace.is-closed-view .projects-row-name {
+    color: #3d4148;
+}
+
+.projects-empty-title {
+    margin-top: 10px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+@media (max-width: 720px) {
+    .projects-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "identity go"
+            "stage go";
+        gap: 4px 16px;
+        padding: 16px 0;
+    }
+
+    .projects-row-identity {
+        grid-area: identity;
+    }
+
+    .projects-row-stage {
+        grid-area: stage;
+    }
+
+    .projects-row-go {
+        grid-area: go;
+        align-self: start;
+        padding-top: 4px;
+    }
+}
+

@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **2026-09-21 HOME V2.2 OWNER VISUAL DIRECTION ACCEPTED / CURRENT CALIBRAYT DESKTOP REFERENCE DESIGN.** Office `/` planning desk. Week identity only. No HOL. No drag handle. Desktop shell law recorded. Whole-product Office visual sweep **NOT YET IMPLEMENTED**. Field Month **UNCHANGED**. Alembic **`g7b8c9d0e1f2 (head)`**. PA-D **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. Next: return to Calibrayt V1 development. People & Access remains separately governed. |
+| Status | **2026-09-21 VISUAL-2 PROJECTS V2 REGISTER COMMITTED IN THIS SLICE.** Owner accepted Projects structure and accepted the register direction as good enough to continue. Home V2.2 remains desktop reference (`9ba1580a369e8550f027ab2bb346df8ae6aaac18`). Project Hub not swept. Field Projects **UNCHANGED**. No schema. Alembic **`g7b8c9d0e1f2 (head)`**. PA-D **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. HostPapa app deploy **does not exist** in this repository. |
 | Updated | 2026-09-21 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [v1-completion-register.md](v1-completion-register.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -40,7 +40,7 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 - **Environment:** local Flask office app; SQLite development/UAT DB (`sqlite:///brayman_estimator.db` → `instance/brayman_estimator.db`)
 - **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 21 SEP 2026`
 - **Cursor / IDE workspace chat titles:** must start with `BRAYMAN — <Topic>`
-- **Current work:** Home V2.2 accepted as current Calibrayt desktop reference. Return to V1 development. People & Access remains separately governed. Whole-product Office visual sweep is not yet implemented.
+- **Current work:** VISUAL-2 Projects V2 register committed as local `origin/main` baseline. Project Hub visual sweep not done. HostPapa / production app deploy **does not exist**. People & Access remains separately governed.
 
 ## 2. VERIFIED BASELINE
 
@@ -118,7 +118,13 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **2026-09-21 HOME V2.2 accepted as current Calibrayt desktop reference design.** Live office `/` planning desk. Week rail is identity only. Unsupported HOL not shown. No drag handle. Desktop shell + centre-workspace law recorded. Whole-product Office visual sweep **NOT YET IMPLEMENTED**. Field Month **UNCHANGED**. No schema. Next action **STOP. RETURN TO CALIBRAYT V1 DEVELOPMENT.** People & Access remains separately governed.
+**Last authorized delta:** **2026-09-21 VISUAL-2 Projects V2 register COMMIT.** Owner: structure accepted; later “looks better now” / acceptable enough to continue. Presentation-only register on `/projects/`. No schema. No Field. No Hub sweep. SHA recorded in the following pin if this commit is the product SHA.
+
+**Prior:** **2026-09-21 VISUAL-2 Projects V2 register (working tree / not committed).** Owner accepted structure; rejected utilitarian report-list presentation. Register now: stacked identity (name / client / location), stage, Open affordance; Current n \| Closed n from existing list lengths; tighter header. Same Current/Closed membership. No card grid. Field/Hub unchanged. Next **STOP for Joel visual review of live `/projects/`.** Do **not** commit unless Architect ACCEPT COMMIT.
+
+**Prior:** **2026-09-21 VISUAL-2 Projects list presentation (working tree / not committed).** Office `/projects/` matches Home V2.2 shell: workspace identity, `+ Start New Project` → `/projects/new`, restrained Current \| Closed, typographic rows (name first; client / location / CRM status / job number secondary). No attention column. No operating-state logic change. Field Projects unchanged. Project Hub not swept. Next action **STOP for Joel visual review of live `/projects/`.** Do **not** commit unless Architect ACCEPT COMMIT.
+
+**Prior:** **2026-09-21 HOME V2.2 accepted as current Calibrayt desktop reference design.** Live office `/` planning desk. Week rail is identity only. Unsupported HOL not shown. No drag handle. Desktop shell + centre-workspace law recorded. Whole-product Office visual sweep **NOT YET IMPLEMENTED** (Projects list now in working-tree review). Field Month **UNCHANGED**. No schema.
 
 **Prior:** **2026-09-21 HOME V2.2 live desktop presentation (working tree / not committed).** Office `/` uses the accepted V2.2 planning-desk composition against real Schedule / current-operating Project / pulse counts / Company Attention. No schema. No migration. No Field Month change. No new permission domain. Prototype sample facts are not live. Isolated prototype `docs/branding/home-reference-design-v2/` remains untracked provenance. Next action **STOP for Joel visual review of the real development Home.** Do **not** commit unless Architect ACCEPT COMMIT. Do **not** implement drag-to-impact, payday/holiday authority, capacity, readiness, PA-D, or Field Month from this slice.
 
@@ -691,7 +697,7 @@ Do **not** send live Postmark from this note. Do **not** create a Postmark accou
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP.** PA-C **LIVE / OPERATIONAL / LIVE PERSON UAT PASS.** Product SHA **`0698f9d2a4ccabcef53ebcef9cb1415bfcd470f7`**. Live Alembic **`g7b8c9d0e1f2 (head)`**. Live Person rows **1** INACTIVE synthetic UAT Person retained. Next Architect action is **PA-D Platform Access / Person-User linkage**. Do **not** implement People UI, Sensitive Financial, LEARN, or Completion Sign-Off from this record. Official V1 **65% / 4 of 11**. Secondary Functional V1 Build **79% / 22 of 28**.
+**Next governed action:** **STOP.** VISUAL-2 is committed on `main`. HostPapa app deploy **does not exist** in this repository. Do **not** call localhost production. Do **not** rescore V1. People-track next remains **PA-D** and is separately governed. Official V1 **65% / 4 of 11**. Secondary Functional V1 Build **79% / 22 of 28**.
 
 **Roadmap direction (not authorization):** Item 12 Field Web is **CLOSED**. Item 13 **CLOSED / OPERATIONAL FOR UAT**. [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) is **SLICE 1, SLICE 2, SLICE 3, SLICE 4, SLICE 5, AND SLICE 6 IMPLEMENTED / NOT CLOSED** (remaining surfaces not authorized). [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Item 15 / [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) is **FUTURE / RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C CLOSED / OPERATIONAL FOR UAT / TECH-A IMPLEMENTED / TECH-B IMPLEMENTED / TECH-C IMPLEMENTED / TECH-D IMPLEMENTED / OVERALL OPEN / PARTIAL**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 

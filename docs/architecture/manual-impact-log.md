@@ -51,6 +51,36 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — VISUAL-2 PROJECTS V2 REGISTER (2026-09-21)
+
+| Field | Content |
+|-------|---------|
+| Slice | VISUAL-2 Projects V2 register presentation |
+| Product status at capture | **COMMITTED IN THIS SLICE.** Structure accepted. User Guide remains outstanding. |
+| 1. What new contractor capability exists? | None new. The Projects list is a calmer register: name, then client and location, then stage, then Open. Current and Closed show how many Projects are in each. |
+| 2. When would the contractor use it? | After clicking Projects, to scan current or closed work and open a Project. |
+| 3. What workflow will the final Manual need to teach? | Same as the first Projects visual: Current vs Closed is operating state, not CRM status. Start New Project is unchanged. Closed Projects stay reachable. |
+| 4. What contractor-facing terms must be used? | Projects. Current. Closed. Start New Project. Open. Client. Location. |
+| 5. What screenshots / Print examples will eventually be needed? | Desktop Current and Closed registers after Joel accepts the live visual. |
+| 6. What warnings / validation distinctions need explanation? | Counts are operating-state counts. Stage on the row is CRM status. No attention badges. |
+| 7. Desktop / iPhone / Print relevance | Desktop office Projects only. Field Projects unchanged. Print unchanged. |
+| Do not | Final Manual prose. Claim Hub redesigned. Claim UAT Project names were cleaned up. |
+
+### MANUAL IMPACT — VISUAL-2 OFFICE PROJECTS LIST (2026-09-21)
+
+| Field | Content |
+|-------|---------|
+| Slice | VISUAL-2 office Projects list presentation (working tree / not committed) |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** Home V2.2 remains the desktop reference. User Guide remains outstanding. |
+| 1. What new contractor capability exists? | None new. The existing Projects list is easier to scan: Project name first, Current or Closed, and + Start New Project in the same language as Home. |
+| 2. When would the contractor use it? | After clicking Projects in the left navigation, to find a current or closed Project and open it, or to start a new Project. |
+| 3. What workflow will the final Manual need to teach? | Projects is the list of work, not the Project Hub. Current vs Closed is operating state, not CRM status. Closed Projects stay reachable. Start New Project still uses the existing form. |
+| 4. What contractor-facing terms must be used? | Projects. Current. Closed. Start New Project. Client. Location. Do not say database, archive, or deleted for Closed. |
+| 5. What screenshots / Print examples will eventually be needed? | Desktop Projects Current list and Closed list after Joel accepts the live visual, not this working tree. |
+| 6. What warnings / validation distinctions need explanation? | Current / Closed is not CRM Project status. Closed does not mean financially complete, LEARN complete, or deleted. Company Attention is not shown on this list. |
+| 7. Desktop / iPhone / Print relevance | Desktop office Projects only. Field Projects unchanged. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim attention scores. Claim Hub was redesigned. Claim Field Projects changed. |
+
 ### MANUAL IMPACT — HOME V2.2 DESKTOP PLANNING PRESENTATION (2026-09-21)
 
 | Field | Content |

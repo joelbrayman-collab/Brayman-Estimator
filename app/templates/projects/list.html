@@ -6,52 +6,53 @@
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
-<div class="page-heading">
-    <div>
-        <p class="eyebrow">Construction</p>
-        <h1>Projects</h1>
-        <nav class="project-lifecycle-view" aria-label="Project list">
-            <a class="{% if list_view == 'current' %}is-current{% endif %}" href="{{ url_for('projects.list_projects', view='current') }}">{{ contractor_copy.PROJECT_LIST_CURRENT }}</a>
-            <a class="{% if list_view == 'closed' %}is-current{% endif %}" href="{{ url_for('projects.list_projects', view='closed') }}">{{ contractor_copy.PROJECT_LIST_CLOSED }}</a>
-        </nav>
-    </div>
-
-    <a class="button" href="{{ url_for('projects.create_project') }}">New Project</a>
-</div>
-
 {% if list_view == "closed" %}
 {{ contextual_help(help_content.office_topic("projects_closed")) }}
 {% else %}
 {{ contextual_help(help_content.office_topic("projects_current")) }}
 {% endif %}
 
+<section class="home-intro projects-intro">
+    <div>
+        <h2 class="home-greeting">Projects</h2>
+        <p class="muted-copy">{{ contractor_copy.PROJECTS_LEDE }}</p>
+    </div>
+    <a class="home-start" href="{{ url_for('projects.create_project') }}">{{ contractor_copy.HOME_START_PROJECT }}</a>
+</section>
+
+<nav class="projects-view" aria-label="{{ contractor_copy.PROJECT_LIST_CURRENT }} or {{ contractor_copy.PROJECT_LIST_CLOSED }}">
+    <a class="{% if list_view == 'current' %}is-current{% endif %}" href="{{ url_for('projects.list_projects', view='current') }}">
+        {{ contractor_copy.PROJECT_LIST_CURRENT }}
+        <span class="projects-view-count">{{ current_count }}</span>
+    </a>
+    <a class="{% if list_view == 'closed' %}is-current{% endif %}" href="{{ url_for('projects.list_projects', view='closed') }}">
+        {{ contractor_copy.PROJECT_LIST_CLOSED }}
+        <span class="projects-view-count">{{ closed_count }}</span>
+    </a>
+</nav>
+
 {% if projects %}
-<table class="data-table">
-    <thead>
-        <tr>
-            <th>Project</th>
-            <th>Number</th>
-            <th>Client</th>
-            <th>Status</th>
-            <th>Address</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for project in projects %}
-        <tr>
-            <td><a href="{{ url_for('projects.view_project', id=project.id) }}">{{ project.name }}</a></td>
-            <td>{{ project.project_number or "—" }}</td>
-            <td>{{ project.client.name }}</td>
-            <td><span class="status">{{ project.status }}</span></td>
-            <td>{{ project.address or "—" }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<div class="empty-state">
-    <h2>{{ empty_title }}</h2>
-    <p>{{ empty_help }}</p>
+<div class="projects-workspace{% if list_view == 'closed' %} is-closed-view{% endif %}">
+    {% for project in projects %}
+    <a class="projects-row" href="{{ url_for('projects.view_project', id=project.id) }}">
+        <span class="projects-row-identity">
+            <span class="projects-row-name">{{ project.name }}</span>
+            <span class="projects-row-client">{{ project.client.name }}</span>
+            {% if project.address %}
+            <span class="projects-row-location">{{ project.address }}</span>
+            {% endif %}
+        </span>
+        {% if project.status %}
+        <span class="projects-row-stage">{{ project.status }}</span>
+        {% else %}
+        <span class="projects-row-stage"></span>
+        {% endif %}
+        <span class="projects-row-go">{{ contractor_copy.PROJECTS_OPEN }}</span>
+    </a>
+    {% endfor %}
 </div>
+{% else %}
+<p class="muted-copy projects-empty-title">{{ empty_title }}</p>
+<p class="muted-copy">{{ empty_help }}</p>
 {% endif %}
 {% endblock %}

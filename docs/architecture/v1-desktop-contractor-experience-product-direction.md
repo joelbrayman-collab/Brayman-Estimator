@@ -11,7 +11,11 @@
 
 This is **not** an ADR, Feature Gate, preflight, schema, or product implementation. Do **not** implement Home Office, dashboard changes, PERF-B/C, Needs Attention, notifications, payroll, cash-flow product, banking, QuickBooks connection, QB-T, Print, Help, Voice, or the Manual from this file. Do **not** invent FG-036. Do **not** rescore V1 (**60% / 4 of 11**).
 
-**Subsequent status (2026-09-21 Home V2.2 accepted as current Calibrayt desktop reference):** Owner reviewed live office `/` and accepted the Home V2.2 composition. Bounded corrections: week rail is week identity only (no percentage); unsupported HOL is not shown; no drag-handle affordance. Home V2.2 is the current Calibrayt desktop reference design. Desktop shell law and centre-workspace law are recorded below. Whole-product Office visual sweep is **NOT YET IMPLEMENTED**. Field Month **UNCHANGED**. Isolated prototype `docs/branding/home-reference-design-v2/` remains design provenance. Do **not** invent FG-036. Do **not** rescore V1.
+**Subsequent status (2026-09-21 VISUAL-2 Projects V2 register committed):** Owner accepted Projects structure and accepted the register direction as good enough to continue. Office `/projects/` is a register: stacked identity, stage, Open; Current n / Closed n. Project Hub is **not** swept. Field unchanged. HostPapa app deploy **does not exist**. Do **not** invent FG-036. Do **not** rescore V1.
+
+**Subsequent status (2026-09-21 VISUAL-2 Projects working tree):** Architect authorized the Projects list as the next Office destination after Home V2.2. Presentation only. Office `/projects/` uses the Home V2.2 shell (workspace identity, `+ Start New Project`, restrained Current \| Closed, typographic list). Project Hub is **not** swept in this slice. Field Projects unchanged. Working tree only; **not committed**. Do **not** invent FG-036. Do **not** rescore V1.
+
+**Subsequent status (2026-09-21 Home V2.2 accepted as current Calibrayt desktop reference):** Owner reviewed live office `/` and accepted the Home V2.2 composition. Bounded corrections: week rail is week identity only (no percentage); unsupported HOL is not shown; no drag-handle affordance. Home V2.2 is the current Calibrayt desktop reference design. Desktop shell law and centre-workspace law are recorded below. Whole-product Office visual sweep is **NOT YET IMPLEMENTED** except the Projects list now in owner visual review. Field Month **UNCHANGED**. Isolated prototype `docs/branding/home-reference-design-v2/` remains design provenance. Do **not** invent FG-036. Do **not** rescore V1.
 
 **Subsequent status (2026-09-21 Home V2.2 live desktop presentation):** Owner authorized bounded presentation of accepted Home V2.2 on live office `/`. This is **not** the full Home Office product from this record. No payroll, cash-flow, payday/holiday authority, capacity engine, readiness engine, or drag-to-impact. Field Month unchanged. Isolated prototype `docs/branding/home-reference-design-v2/` remains design provenance. Working tree only; **not committed**. Do **not** invent FG-036. Do **not** rescore V1.
 
@@ -509,4 +513,4 @@ Each destination should be designed around the actual job of that business funct
 - Financials: business-financial workspace
 - Estimates: estimating workspace
 
-Do **not** implement those page sweeps from this recording. Whole-product Office visual sweep remains **NOT YET IMPLEMENTED**.
+Do **not** implement those remaining page sweeps from this recording. VISUAL-2 office `/projects/` is in working-tree owner review. Remaining destinations (Project Hub, Schedule, People, Financials, Estimates) remain **NOT YET IMPLEMENTED**.

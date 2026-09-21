@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
-| Updated | 2026-09-19 |
+| Updated | 2026-09-21 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — HOME V2.2 DESKTOP PLANNING PRESENTATION (2026-09-21)
+
+| Field | Content |
+|-------|---------|
+| Slice | Home V2.2 live desktop presentation (working tree / not committed) |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** Office `/` is the contractor planning desk. Isolated prototype remains provenance. User Guide remains outstanding. |
+| 1. What new contractor capability exists? | Opening Office home now shows a large month calendar of scheduled work, a Start New Project action, truthful work counts, work waiting for dates, and the selected day's scheduled work. |
+| 2. When would the contractor use it? | First thing in the office: plan the week, see what occupies a day, start a new Project, or open Company Attention when authorized. |
+| 3. What workflow will the final Manual need to teach? | Home is the planning desk, not a scorecard. Click a day to see that day's work. Start New Project uses the existing Project form. Counts are live work counts, not money. Capacity, payday, holidays, and drag-to-reschedule are not available yet. |
+| 4. What contractor-facing terms must be used? | Office home. Start New Project. Current projects. Estimates outstanding. Proposals outstanding. Open change orders. Need attention. Not scheduled yet. Day. |
+| 5. What screenshots / Print examples will eventually be needed? | Desktop Home with a real occupied month and an empty month. Capture after Joel accepts the live visual, not this working tree. |
+| 6. What warnings / validation distinctions need explanation? | Home does not invent money, capacity, payday, holidays, or ready-to-schedule. Closed Projects stay off this calendar. Company Attention still requires Company / Management. Help/Voice are the same as other office screens. |
+| 7. Desktop / iPhone / Print relevance | Desktop Home only. Field Month is unchanged. Print unchanged. |
+| Do not | Final Manual prose. Claim payday/holiday tints exist. Claim capacity percentages. Claim Financials. Claim drag-and-drop reschedule. Claim Field Month changed. |
 
 ### MANUAL IMPACT — FG-038 PA-B SYSTEM ADMINISTRATOR FOUNDATION (2026-09-19)
 

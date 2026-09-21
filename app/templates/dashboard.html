@@ -1,107 +1,133 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard | Brayman Construction Platform{% endblock %}
-{% block page_title %}Dashboard{% endblock %}
+{% block title %}{{ contractor_copy.DASHBOARD_HEADING }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.DASHBOARD_HEADING }}{% endblock %}
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
 {{ contextual_help(help_content.office_topic("dashboard")) }}
-<section class="dash-intro">
+
+<section class="home-intro">
     <div>
-        <p class="eyebrow">Brayman Construction Co.</p>
-        <h2 class="dash-heading">{{ contractor_copy.DASHBOARD_HEADING }}</h2>
+        {% if view.first_name %}
+        <h2 class="home-greeting">Good morning, {{ view.first_name }}.</h2>
+        {% else %}
+        <h2 class="home-greeting">{{ contractor_copy.DASHBOARD_HEADING }}</h2>
+        {% endif %}
         <p class="muted-copy">{{ contractor_copy.DASHBOARD_LEDE }}</p>
     </div>
-    <div class="dash-intro-actions">
-        <a class="button" href="{{ url_for('estimates.create_estimate_route') }}">New estimate</a>
-        <a class="button-link" href="{{ url_for('proposals.list_proposals') }}">View proposals</a>
-    </div>
+    <a class="home-start" href="{{ url_for('projects.create_project') }}">{{ contractor_copy.HOME_START_PROJECT }}</a>
 </section>
 
-{% include "partials/dashboard_cards.html" %}
+<div class="home-pulse" aria-label="Business pulse">
+    {% for item in view.pulse %}
+    {% if not loop.first %}<span class="home-pulse-sep" aria-hidden="true">·</span>{% endif %}
+    <a href="{{ item.href }}"><b>{{ item.value }}</b> {{ item.label }}</a>
+    {% endfor %}
+</div>
 
-<section class="dash-panels" aria-label="Recent activity">
-    <article class="panel">
-        <div class="panel-header">
-            <h2>Recent Estimates</h2>
-            <a href="{{ url_for('estimates.list_estimates') }}">All estimates</a>
+<section class="home-planning">
+    <div>
+        <div class="home-cal-head">
+            <h2>{{ view.month_label }}</h2>
+            <nav class="home-cal-nav" aria-label="Month">
+                <a href="{{ url_for('main.dashboard', year=view.prev.year, month=view.prev.month) }}">‹</a>
+                <a class="home-cal-today" href="{{ url_for('main.dashboard', year=view.today.year, month=view.today.month, day=view.today.day) }}">Today</a>
+                <a href="{{ url_for('main.dashboard', year=view.next.year, month=view.next.month) }}">›</a>
+            </nav>
         </div>
-        {% if shell_recent_estimates %}
-        <ul class="activity-list">
-            {% for estimate in shell_recent_estimates %}
-            <li>
-                <a href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">
-                    <span class="activity-title">{{ estimate.title }}</span>
-                    <span class="activity-meta">{{ estimate.estimate_number }} · {{ contractor_copy.office_status_label(estimate.status) }}</span>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <div class="empty-state empty-state-compact">
-            <h3>No estimates yet</h3>
-            <p>Create an estimate from a project to start building pricing.</p>
-            <a class="button-link" href="{{ url_for('estimates.create_estimate_route') }}">Add estimate</a>
-        </div>
-        {% endif %}
-    </article>
 
-    <article class="panel">
-        <div class="panel-header">
-            <h2>Recent Proposals</h2>
-            <a href="{{ url_for('proposals.list_proposals') }}">All proposals</a>
-        </div>
-        {% if shell_recent_proposals %}
-        <ul class="activity-list">
-            {% for proposal in shell_recent_proposals %}
-            <li>
-                <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">
-                    <span class="activity-title">{{ proposal.title }}</span>
-                    <span class="activity-meta">{{ proposal.proposal_number }} · {{ contractor_copy.office_status_label(proposal.status) }}</span>
-                </a>
-            </li>
+        <div class="home-month" id="home-month">
+            <div class="home-dow">
+                <span></span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            </div>
+            {% for week in view.weeks %}
+            <div class="home-week">
+                <div class="home-week-rail">{{ week.label }}</div>
+                <div class="home-week-grid">
+                    {% for day in week.days %}
+                    <a
+                        class="home-day{% if not day.in_month %} is-out{% endif %}{% if day.weekend %} is-weekend{% endif %}{% if day.selected %} is-selected{% endif %}{% if day.today %} is-today{% endif %}"
+                        href="{{ url_for('main.dashboard', year=view.year, month=view.month, day=day.date.day) if day.in_month else url_for('main.dashboard', year=day.date.year, month=day.date.month, day=day.date.day) }}"
+                    >
+                        <span class="home-day-num">{{ day.number }}</span>
+                        {% if day.overflow %}
+                        <span class="home-overflow">+{{ day.overflow }} {{ contractor_copy.HOME_OVERFLOW_MORE }}</span>
+                        {% endif %}
+                    </a>
+                    {% endfor %}
+                    <div class="home-bands">
+                        {% for band in week.bands %}
+                        <a
+                            class="home-band accent-{{ band.accent }}{% if band.conflict %} is-conflict{% endif %}"
+                            style="grid-column: {{ band.col_start }} / {{ band.col_end }}; grid-row: {{ band.lane + 1 }};"
+                            href="{{ url_for('projects.view_project', id=band.project_id) }}#hub-schedule"
+                        >
+                            {% if band.crew_letter %}<span class="home-band-crew">{{ band.crew_letter }}</span>{% endif %}
+                            <span class="home-band-ttl">{{ band.label }}</span>
+                            {% if band.conflict %}<span class="home-band-mark" title="{{ contractor_copy.SCHEDULE_CONFLICT }}"></span>{% endif %}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
             {% endfor %}
-        </ul>
-        {% else %}
-        <div class="empty-state empty-state-compact">
-            <h3>No proposals yet</h3>
-            <p>Generate a proposal from an estimate version when you are ready to issue.</p>
-            <a class="button-link" href="{{ url_for('proposals.list_proposals') }}">View proposals</a>
         </div>
+        {% if not view.has_scheduled_work %}
+        <p class="muted-copy home-cal-empty">{{ contractor_copy.HOME_CALENDAR_EMPTY }}</p>
         {% endif %}
-    </article>
+    </div>
 
-    <article class="panel panel-wide">
-        <div class="panel-header">
-            <h2>Recent Activity</h2>
-        </div>
-        {% if shell_recent_estimates or shell_recent_proposals %}
-        <ul class="activity-list">
-            {% for estimate in shell_recent_estimates[:3] %}
-            <li>
-                <a href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">
-                    <span class="activity-kind">Estimate</span>
-                    <span class="activity-title">{{ estimate.title }}</span>
-                    <span class="activity-meta">{{ estimate.estimate_number }} · updated {{ estimate.updated_at.strftime("%Y-%m-%d") }}</span>
-                </a>
-            </li>
+    <aside class="home-aside">
+        <div class="home-unscheduled">
+            <h3>{{ contractor_copy.SCHEDULE_UNSCHEDULED }}</h3>
+            {% if view.unscheduled %}
+            <p class="muted-copy">{{ contractor_copy.SCHEDULE_UNSCHEDULED_HELP }}</p>
+            {% for row in view.unscheduled %}
+            <div class="home-unscheduled-item">
+                <div class="home-unscheduled-name">{{ row.project_name }}</div>
+                <div class="home-unscheduled-meta">{{ row.element_name }}</div>
+                <a href="{{ url_for('schedule.new_item', project_id=row.project_id) }}">{{ contractor_copy.SCHEDULE_ADD }}</a>
+            </div>
             {% endfor %}
-            {% for proposal in shell_recent_proposals[:3] %}
-            <li>
-                <a href="{{ url_for('proposals.view_proposal', id=proposal.id) }}">
-                    <span class="activity-kind">Proposal</span>
-                    <span class="activity-title">{{ proposal.title }}</span>
-                    <span class="activity-meta">{{ proposal.proposal_number }} · updated {{ proposal.updated_at.strftime("%Y-%m-%d") }}</span>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <div class="empty-state empty-state-compact">
-            <h3>No recent activity</h3>
-            <p>Activity from estimates and proposals will appear here as you work.</p>
+            {% if view.unscheduled_more %}
+            <p class="muted-copy"><a href="{{ url_for('schedule.company') }}">+{{ view.unscheduled_more }} {{ contractor_copy.HOME_OVERFLOW_MORE }}</a></p>
+            {% endif %}
+            {% else %}
+            <p class="muted-copy">{{ contractor_copy.HOME_NO_UNSCHEDULED }}</p>
+            {% endif %}
         </div>
-        {% endif %}
-    </article>
+
+        <div class="home-detail">
+            <h3>{{ contractor_copy.HOME_DAY_HEADING }}</h3>
+            <p class="home-detail-date">{{ view.detail.title }}</p>
+            <div class="home-block">
+                <h4>{{ contractor_copy.SCHEDULE_HEADING }}</h4>
+                {% if view.detail.work %}
+                {% for row in view.detail.work %}
+                <p><a href="{{ url_for('projects.view_project', id=row.project_id) }}#hub-schedule">{{ row.label }}</a></p>
+                {% endfor %}
+                {% else %}
+                <p>{{ contractor_copy.HOME_NO_SCHEDULED_WORK }}</p>
+                {% endif %}
+            </div>
+            {% if view.detail.people %}
+            <div class="home-block">
+                <h4>{{ contractor_copy.SCHEDULE_ASSIGNED }}</h4>
+                {% for name in view.detail.people %}
+                <p>{{ name }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if view.detail.attention %}
+            <div class="home-block">
+                <h4>{{ contractor_copy.SCHEDULE_CONFLICT }}</h4>
+                {% for line in view.detail.attention %}
+                <p class="home-attn">{{ line }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </aside>
 </section>
 {% endblock %}

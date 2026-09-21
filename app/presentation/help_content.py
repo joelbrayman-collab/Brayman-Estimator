@@ -168,13 +168,13 @@ OFFICE_DASHBOARD = HelpTopic(
     key="dashboard",
     title="Dashboard",
     what=(
-        "You are on the office home. It is a snapshot of clients, projects, "
-        "estimates, and proposals so you can see current work at a glance. It is "
-        "not a report and not a score."
+        "You are on the office home. It is the business planning desk: "
+        "current work counts, work waiting for dates, and the schedule "
+        "for this month. It is not a report and not a score."
     ),
     do=(
-        "Open a recent estimate or proposal, or start from Clients and Projects. "
-        "Side-menu items marked coming soon are not available."
+        "Start a new Project, open a day on the calendar, or continue from "
+        "Clients and Projects. Side-menu items marked coming soon are not available."
     ),
     next="Open a current Project to plan, price, and run the job from the Project Hub.",
     surface=SURFACE_OFFICE,

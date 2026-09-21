@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1440">
+  <title>CalibraytAI — Home · Smart Business Calendar · V2.2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #141a24;
+      --navy-2: #1c2430;
+      --ink: #1a1f28;
+      --muted: #6a6f78;
+      --rule: #e4dfd6;
+      --paper: #f7f5f1;
+      --white: #fffcf8;
+      --gold: #c79a2b;
+      --gold-line: #d4b56a;
+      --payday: #dcefe0;
+      --closed: #f0d9d9;
+      --holiday: #e2d4c0;
+      --crew-a: #1d2a3a;
+      --crew-b: #6a5f52;
+      --crew-c: #3d4a3f;
+      --warn: #8a3b32;
+      --rail: 212px;
+      --band: rgba(26, 31, 40, 0.055);
+      --band-line: rgba(26, 31, 40, 0.18);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.45 "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      min-width: 1280px;
+    }
+    button { font: inherit; }
+    .shell { display: grid; grid-template-columns: var(--rail) 1fr; min-height: 100%; }
+    .rail {
+      background: var(--navy);
+      color: #ece7dc;
+      padding: 28px 22px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+    .rail-mark {
+      font-family: "IBM Plex Serif", Georgia, serif;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+      color: #f4efe4;
+    }
+    .rail-mark span { color: var(--gold); font-style: italic; padding-left: 1px; }
+    .rail-lockup {
+      margin-top: 8px;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      color: #b7b1a4;
+      text-transform: uppercase;
+    }
+    .rail nav { display: flex; flex-direction: column; gap: 4px; }
+    .rail a {
+      color: #c9c3b6;
+      text-decoration: none;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      letter-spacing: 0.01em;
+    }
+    .rail a.current { color: #fff; }
+    .rail a.current::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 1px;
+      background: var(--gold);
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .rail-foot { margin-top: auto; color: #8e887c; font-size: 12px; }
+    .workspace { padding: 28px 40px 40px; }
+    .top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+    .greet h1 {
+      font-family: "IBM Plex Serif", Georgia, serif;
+      font-size: 30px;
+      font-weight: 500;
+      margin: 0 0 6px;
+      letter-spacing: -0.03em;
+    }
+    .greet p { margin: 0; color: var(--muted); }
+    .start {
+      background: var(--navy);
+      color: #fff;
+      border: 0;
+      padding: 13px 18px 12px;
+      letter-spacing: 0.08em;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: inset 0 -2px 0 var(--gold);
+    }
+    .pulse {
+      display: flex;
+      align-items: baseline;
+      gap: 22px;
+      padding: 10px 0 16px;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 22px;
+      color: var(--ink);
+      font-size: 13px;
+    }
+    .pulse b { font-weight: 600; }
+    .pulse .sep { color: var(--gold-line); }
+    .pulse a { color: var(--ink); margin-left: auto; text-decoration: none; border-bottom: 1px solid var(--gold); padding-bottom: 1px; }
+
+    .planning {
+      display: grid;
+      grid-template-columns: minmax(0, 1.72fr) minmax(320px, 0.72fr);
+      gap: 36px;
+      align-items: start;
+    }
+    .cal-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    .cal-head h2 {
+      margin: 0;
+      font-family: "IBM Plex Serif", Georgia, serif;
+      font-size: 26px;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+    }
+    .cal-nav { display: flex; gap: 8px; color: var(--muted); font-size: 13px; }
+    .cal-nav button {
+      background: none;
+      border: 0;
+      color: inherit;
+      cursor: pointer;
+      padding: 0 6px;
+    }
+    .cal-nav .today { color: var(--ink); border-bottom: 1px solid var(--gold); }
+    .layers { display: flex; gap: 14px; font-size: 12px; color: var(--muted); }
+    .layers label { cursor: pointer; display: flex; gap: 6px; align-items: center; }
+    .layers input { accent-color: var(--navy); }
+
+    .month {
+      background: var(--white);
+      border-top: 1px solid var(--ink);
+    }
+    .dow {
+      display: grid;
+      grid-template-columns: 68px repeat(7, 1fr);
+      border-bottom: 1px solid var(--rule);
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .dow span { padding: 8px 10px; }
+    .week {
+      display: grid;
+      grid-template-columns: 68px 1fr;
+      border-bottom: 1px solid var(--rule);
+      min-height: 118px;
+    }
+    .week.lanes-4 { min-height: 128px; }
+    .week-rail {
+      padding: 10px 8px 8px 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .week-rail strong {
+      display: block;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .cap {
+      margin-top: 8px;
+      height: 3px;
+      background: #ece8e0;
+      position: relative;
+    }
+    .cap i {
+      display: block;
+      height: 100%;
+      background: var(--navy);
+    }
+    .week.tight .cap i { background: var(--warn); }
+    .week-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      position: relative;
+    }
+    .day {
+      min-height: 118px;
+      padding: 7px 8px 24px;
+      border-left: 1px solid var(--rule);
+      cursor: pointer;
+      position: relative;
+    }
+    .week.lanes-4 .day { min-height: 128px; }
+    .day:first-child { border-left: 0; }
+    .day.out { color: #b7b3ab; }
+    .day.payday { background: var(--payday); }
+    .day.closed { background: var(--closed); }
+    .day.holiday { background: var(--holiday); }
+    .day.weekend { background: #fbfaf7; }
+    .day.selected { box-shadow: inset 0 2px 0 var(--gold); }
+    .num { font-size: 15px; font-weight: 500; }
+    .hol-cue {
+      display: inline;
+      margin-left: 6px;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #6f675c;
+      font-weight: 600;
+      vertical-align: 1px;
+    }
+    .flag {
+      position: absolute;
+      top: 9px;
+      right: 7px;
+      width: 7px;
+      height: 7px;
+      border: 1px solid var(--warn);
+      background: transparent;
+      border-radius: 50%;
+    }
+    .people-cue {
+      position: absolute;
+      top: 12px;
+      right: 8px;
+      width: 8px;
+      height: 1px;
+      background: #8f8a82;
+    }
+    .people-cue::after {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 3px;
+      width: 4px;
+      height: 1px;
+      background: #8f8a82;
+    }
+    .dots {
+      position: absolute;
+      left: 8px;
+      bottom: 7px;
+      display: flex;
+      gap: 4px;
+    }
+    .dots i {
+      width: 5px;
+      height: 5px;
+      background: var(--navy);
+      border-radius: 50%;
+      display: block;
+    }
+    .dots i.gold { background: var(--gold); }
+    .overflow {
+      position: absolute;
+      right: 7px;
+      bottom: 6px;
+      font-size: 10px;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .bands {
+      position: absolute;
+      inset: 32px 0 20px;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-auto-rows: 15px;
+      row-gap: 3px;
+      align-content: start;
+      pointer-events: none;
+    }
+    .band {
+      pointer-events: auto;
+      height: 15px;
+      margin: 0 4px;
+      padding: 0 6px 0 7px;
+      background: var(--band);
+      border: 1px solid var(--band-line);
+      border-left-width: 2px;
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      cursor: grab;
+      user-select: none;
+    }
+    .band .ttl {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+      flex: 1;
+    }
+    .band .crew {
+      flex: none;
+      font-size: 9px;
+      letter-spacing: 0.06em;
+      color: var(--ink);
+      font-weight: 600;
+      padding-right: 6px;
+      border-right: 1px solid var(--band-line);
+    }
+    .band .grip {
+      display: none;
+      flex: none;
+      width: 6px;
+      height: 8px;
+      background:
+        radial-gradient(circle, #8a8680 0.7px, transparent 0.8px) 0 0 / 3px 4px,
+        radial-gradient(circle, #8a8680 0.7px, transparent 0.8px) 3px 0 / 3px 4px;
+      opacity: 0.7;
+    }
+    .band.a { border-left-color: var(--crew-a); }
+    .band.b { border-left-color: var(--crew-b); }
+    .band.c { border-left-color: var(--crew-c); }
+    .band:hover {
+      background: rgba(26, 31, 40, 0.09);
+      border-color: rgba(26, 31, 40, 0.34);
+    }
+    .band:hover .grip,
+    .band.selected .grip { display: block; }
+    .band.selected {
+      background: rgba(26, 31, 40, 0.11);
+      border-color: var(--gold);
+      box-shadow: 0 0 0 1px var(--gold);
+      font-weight: 600;
+    }
+    .band.conflict { border-left-color: var(--warn); }
+    .band.conflict .mark {
+      flex: none;
+      width: 5px;
+      height: 5px;
+      border: 1px solid var(--warn);
+      border-radius: 50%;
+    }
+    .hide-projects .band,
+    .hide-projects .overflow { display: none; }
+    .hide-crews .band .crew,
+    .hide-crews .people-cue { display: none; }
+    .hide-business .payday,
+    .hide-business .closed,
+    .hide-business .holiday { background: var(--white); }
+    .hide-business .hol-cue,
+    .hide-business .flag { display: none; }
+    .hide-milestones .dots { display: none; }
+
+    .aside h3,
+    aside h3 {
+      margin: 0 0 10px;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .ready { margin-bottom: 28px; }
+    .ready-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2px 16px;
+      padding: 10px 0;
+      border-top: 1px solid var(--rule);
+    }
+    .ready-item:last-child { border-bottom: 1px solid var(--rule); }
+    .ready-item .name { font-weight: 600; }
+    .ready-item .meta { color: var(--muted); font-size: 13px; grid-column: 1; }
+    .state { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; align-self: center; }
+    .state.ready { color: #2f5a38; }
+    .state.need { color: var(--warn); }
+
+    .detail-date {
+      font-family: "IBM Plex Serif", Georgia, serif;
+      font-size: 22px;
+      margin: 0 0 18px;
+      letter-spacing: -0.03em;
+    }
+    .block { margin-bottom: 16px; }
+    .block h4 {
+      margin: 0 0 6px;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .block p { margin: 0 0 3px; }
+    .attn { color: var(--warn); }
+
+    .legend {
+      margin-top: 26px;
+      padding-top: 14px;
+      border-top: 1px solid var(--rule);
+      color: var(--muted);
+      font-size: 12px;
+      display: grid;
+      gap: 6px;
+    }
+    .swatch { display: inline-block; width: 18px; height: 11px; margin-right: 8px; vertical-align: middle; border: 1px solid var(--rule); }
+    .swatch.pay { background: var(--payday); }
+    .swatch.off { background: var(--closed); }
+    .swatch.hol { background: var(--holiday); }
+
+    .impact {
+      position: fixed;
+      inset: 0;
+      background: rgba(20,26,36,0.28);
+      display: none;
+      align-items: stretch;
+      justify-content: flex-end;
+      z-index: 20;
+    }
+    .impact.open { display: flex; }
+    .sheet {
+      width: 420px;
+      background: var(--white);
+      padding: 28px 28px 24px;
+      border-left: 1px solid var(--ink);
+      overflow: auto;
+    }
+    .sheet h2 {
+      font-family: "IBM Plex Serif", Georgia, serif;
+      font-size: 22px;
+      font-weight: 500;
+      margin: 0 0 8px;
+    }
+    .sheet .sub { color: var(--muted); margin-bottom: 18px; }
+    .group { margin: 0 0 14px; }
+    .group h4 {
+      margin: 0 0 4px;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .actions { display: flex; gap: 12px; margin-top: 22px; }
+    .actions button { border: 0; padding: 10px 12px; cursor: pointer; }
+    .ghost { background: none; color: var(--muted); }
+    .review { background: none; color: var(--ink); border-bottom: 1px solid var(--gold) !important; border-radius: 0; }
+    .confirm { background: var(--navy); color: #fff; }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--navy);
+      color: #fff;
+      padding: 10px 16px;
+      font-size: 13px;
+      display: none;
+      z-index: 30;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="rail">
+      <div>
+        <div class="rail-mark">Calibrayt<span>AI</span></div>
+        <div class="rail-lockup">Plan · Price · Build</div>
+      </div>
+      <nav>
+        <a class="current" href="#">Home</a>
+        <a href="#">Projects</a>
+        <a href="#">People</a>
+        <a href="#">Estimates</a>
+        <a href="#">Settings</a>
+      </nav>
+      <div class="rail-foot">Brayman Construction<br>October planning</div>
+    </aside>
+
+    <main class="workspace">
+      <div class="top">
+        <div class="greet">
+          <h1>Good morning, Ben.</h1>
+          <p>Monday, 21 September 2026 · October is the month to schedule.</p>
+        </div>
+        <button class="start" type="button" id="startProject">+ Start New Project</button>
+      </div>
+
+      <div class="pulse">
+        <span><b>12</b> Active Projects</span>
+        <span class="sep">·</span>
+        <span><b>$1.42M</b> Under Contract</span>
+        <span class="sep">·</span>
+        <span><b>$386K</b> Pending / Pipeline</span>
+        <span class="sep">·</span>
+        <span><b>4</b> Estimates Outstanding</span>
+        <span class="sep">·</span>
+        <span><b>3</b> Items Need Attention</span>
+        <a href="#">View Financials →</a>
+      </div>
+
+      <section class="planning">
+        <div>
+          <div class="cal-head">
+            <h2>October 2026</h2>
+            <div class="cal-nav">
+              <button type="button">‹</button>
+              <button class="today" type="button">Today</button>
+              <button type="button">›</button>
+            </div>
+            <div class="layers">
+              <label><input type="checkbox" data-layer="projects" checked> Projects</label>
+              <label><input type="checkbox" data-layer="crews" checked> Crews</label>
+              <label><input type="checkbox" data-layer="business" checked> Business</label>
+              <label><input type="checkbox" data-layer="milestones" checked> Milestones</label>
+            </div>
+          </div>
+
+          <div class="month" id="month">
+            <div class="dow">
+              <span></span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            </div>
+
+            <div class="week">
+              <div class="week-rail">Wk 1<strong>65%</strong><div class="cap"><i style="width:65%"></i></div></div>
+              <div class="week-grid">
+                <div class="day out" data-date="2026-09-28"><div class="num">28</div></div>
+                <div class="day out" data-date="2026-09-29"><div class="num">29</div></div>
+                <div class="day out" data-date="2026-09-30"><div class="num">30</div></div>
+                <div class="day" data-date="2026-10-01"><div class="num">1</div></div>
+                <div class="day payday" data-date="2026-10-02"><div class="num">2</div></div>
+                <div class="day weekend" data-date="2026-10-03"><div class="num">3</div></div>
+                <div class="day weekend" data-date="2026-10-04"><div class="num">4</div></div>
+                <div class="bands">
+                  <div class="band a" style="grid-column:2 / 6; grid-row:1" data-job="pratt-site"><span class="crew">A</span><span class="ttl">Pratt Coach House · Site work</span><span class="grip"></span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="week tight">
+              <div class="week-rail">Wk 2<strong>92%</strong><div class="cap"><i style="width:92%"></i></div></div>
+              <div class="week-grid">
+                <div class="day" data-date="2026-10-05"><div class="num">5</div></div>
+                <div class="day" data-date="2026-10-06"><div class="num">6</div></div>
+                <div class="day" data-date="2026-10-07"><div class="num">7</div><div class="dots"><i></i></div></div>
+                <div class="day" data-date="2026-10-08"><div class="num">8</div></div>
+                <div class="day closed" data-date="2026-10-09"><div class="num">9</div><span class="flag" title="Work scheduled on a closed day"></span></div>
+                <div class="day weekend" data-date="2026-10-10"><div class="num">10</div></div>
+                <div class="day weekend" data-date="2026-10-11"><div class="num">11</div></div>
+                <div class="bands">
+                  <div class="band a" style="grid-column:1 / 5; grid-row:1" data-job="pratt-slab"><span class="crew">A</span><span class="ttl">Pratt Coach House · Slab</span><span class="grip"></span></div>
+                  <div class="band b conflict" style="grid-column:1 / 6; grid-row:2" data-job="jones-roof"><span class="crew">B</span><span class="ttl">Jones Addition · Roofing</span><span class="mark" title="Scheduled on a closed day"></span><span class="grip"></span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="week tight">
+              <div class="week-rail">Wk 3<strong>100%</strong><div class="cap"><i style="width:100%"></i></div></div>
+              <div class="week-grid">
+                <div class="day holiday" data-date="2026-10-12"><div class="num">12<span class="hol-cue">Hol</span></div><span class="flag" title="Work scheduled on a statutory holiday"></span></div>
+                <div class="day" data-date="2026-10-13"><div class="num">13</div></div>
+                <div class="day" data-date="2026-10-14"><div class="num">14</div><span class="people-cue" title="Individual availability"></span></div>
+                <div class="day" data-date="2026-10-15"><div class="num">15</div></div>
+                <div class="day payday selected" data-date="2026-10-16"><div class="num">16</div><div class="dots"><i></i><i></i><i class="gold"></i></div></div>
+                <div class="day weekend" data-date="2026-10-17"><div class="num">17</div></div>
+                <div class="day weekend" data-date="2026-10-18"><div class="num">18</div></div>
+                <div class="bands">
+                  <div class="band a selected conflict" style="grid-column:1 / 6; grid-row:1" data-job="smith-frame" id="smithBand"><span class="crew">A</span><span class="ttl">Smith Residence · Framing</span><span class="mark" title="Needs review"></span><span class="grip"></span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="week lanes-4 tight">
+              <div class="week-rail">Wk 4<strong>94%</strong><div class="cap"><i style="width:94%"></i></div></div>
+              <div class="week-grid">
+                <div class="day" data-date="2026-10-19"><div class="num">19</div></div>
+                <div class="day" data-date="2026-10-20"><div class="num">20</div></div>
+                <div class="day" data-date="2026-10-21"><div class="num">21</div><div class="dots"><i></i></div><div class="overflow">+2 more</div></div>
+                <div class="day" data-date="2026-10-22"><div class="num">22</div></div>
+                <div class="day" data-date="2026-10-23"><div class="num">23</div></div>
+                <div class="day weekend" data-date="2026-10-24"><div class="num">24</div></div>
+                <div class="day weekend" data-date="2026-10-25"><div class="num">25</div></div>
+                <div class="bands">
+                  <div class="band a" style="grid-column:1 / 5; grid-row:1" data-job="pratt-frame"><span class="crew">A</span><span class="ttl">Pratt Coach House · Framing</span><span class="grip"></span></div>
+                  <div class="band b" style="grid-column:1 / 6; grid-row:2" data-job="johnson-mech"><span class="crew">B</span><span class="ttl">Johnson Garage · Mechanical</span><span class="grip"></span></div>
+                  <div class="band c" style="grid-column:1 / 6; grid-row:3" data-job="riverside"><span class="crew">C</span><span class="ttl">Riverside Renovation · Finishing</span><span class="grip"></span></div>
+                  <div class="band b" style="grid-column:1 / 5; grid-row:4" data-job="jones-int"><span class="crew">B</span><span class="ttl">Jones Addition · Interior</span><span class="grip"></span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="week">
+              <div class="week-rail">Wk 5<strong>40%</strong><div class="cap"><i style="width:40%"></i></div></div>
+              <div class="week-grid">
+                <div class="day" data-date="2026-10-26"><div class="num">26</div></div>
+                <div class="day" data-date="2026-10-27"><div class="num">27</div></div>
+                <div class="day" data-date="2026-10-28"><div class="num">28</div><div class="dots"><i class="gold"></i></div></div>
+                <div class="day" data-date="2026-10-29"><div class="num">29</div></div>
+                <div class="day" data-date="2026-10-30"><div class="num">30</div></div>
+                <div class="day weekend" data-date="2026-10-31"><div class="num">31</div></div>
+                <div class="day out weekend" data-date="2026-11-01"><div class="num">1</div></div>
+                <div class="bands">
+                  <div class="band c" style="grid-column:1 / 5; grid-row:1" data-job="riverside"><span class="crew">C</span><span class="ttl">Riverside Renovation · Finishing</span><span class="grip"></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="ready">
+            <h3>Ready to Schedule</h3>
+            <div class="ready-item">
+              <div class="name">Miller Addition</div>
+              <div class="state ready">Ready</div>
+              <div class="meta">Contract signed · 5 working days</div>
+            </div>
+            <div class="ready-item">
+              <div class="name">Brown Deck</div>
+              <div class="state ready">Ready</div>
+              <div class="meta">Approved · 2 working days</div>
+            </div>
+            <div class="ready-item">
+              <div class="name">Wilson Garage</div>
+              <div class="state need">Needs attention</div>
+              <div class="meta">Contract signed · 4 working days · Permit outstanding</div>
+            </div>
+          </div>
+
+          <div class="detail" id="detail"></div>
+
+          <div class="legend">
+            <div><span class="swatch pay"></span>Payday tints the day</div>
+            <div><span class="swatch off"></span>Company closed tints the day</div>
+            <div><span class="swatch hol"></span>Statutory holiday tints the day</div>
+            <div>Work occupies time as a light band. Events mark the date.</div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <div class="impact" id="impact">
+    <div class="sheet">
+      <h2>Move Smith Residence — Framing?</h2>
+      <p class="sub">Oct 12–16 → Oct 19–23</p>
+      <div class="group">
+        <h4>Capacity</h4>
+        <p>Week of Oct 12: 100% → 72%</p>
+        <p>Week of Oct 19: 94% → 100%</p>
+      </div>
+      <div class="group">
+        <h4>Will move</h4>
+        <p>Smith Residence — Framing<br>Crew A commitment</p>
+      </div>
+      <div class="group">
+        <h4>May need to move</h4>
+        <p>Inspection currently Oct 16</p>
+        <p>Drywall currently starts Oct 19</p>
+      </div>
+      <div class="group">
+        <h4>Will not move</h4>
+        <p>Material delivery Oct 12</p>
+      </div>
+      <div class="actions">
+        <button class="ghost" type="button" id="cancelMove">Cancel</button>
+        <button class="review" type="button">Review impacts</button>
+        <button class="confirm" type="button" id="confirmMove">Confirm move</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const days = {
+      "2026-10-02": {
+        title: "Friday · October 2",
+        work: ["Pratt Coach House — Site work"],
+        people: ["Crew A — Pratt"],
+        business: ["Payday"],
+        milestones: [],
+        attention: []
+      },
+      "2026-10-07": {
+        title: "Wednesday · October 7",
+        work: ["Pratt Coach House — Slab", "Jones Addition — Roofing"],
+        people: ["Crew A — Pratt", "Crew B — Jones"],
+        business: [],
+        milestones: ["Pratt Coach House — rebar delivery"],
+        attention: []
+      },
+      "2026-10-09": {
+        title: "Friday · October 9",
+        work: ["Jones Addition — Roofing"],
+        people: ["Crew B — Jones"],
+        business: ["Company day — shop closed"],
+        milestones: [],
+        attention: ["Jones Addition is scheduled on a closed day"]
+      },
+      "2026-10-12": {
+        title: "Monday · October 12",
+        work: ["Smith Residence — Framing"],
+        people: ["Crew A — Smith"],
+        business: ["Thanksgiving — statutory holiday"],
+        milestones: ["Smith Residence — lumber delivery"],
+        attention: ["Smith Residence is scheduled on a statutory holiday"]
+      },
+      "2026-10-14": {
+        title: "Wednesday · October 14",
+        work: ["Smith Residence — Framing"],
+        people: ["Crew A — Smith", "Ben — Away"],
+        business: [],
+        milestones: [],
+        attention: []
+      },
+      "2026-10-16": {
+        title: "Friday · October 16",
+        work: ["Smith Residence — Framing"],
+        people: ["Crew A — Smith"],
+        business: ["Payday"],
+        milestones: ["Johnson Garage — Permit expected", "Miller Addition — Proposal expires", "Smith Residence — Framing inspection"],
+        attention: ["Smith Residence — inspection timing conflict"]
+      },
+      "2026-10-19": {
+        title: "Monday · October 19",
+        work: [
+          "Pratt Coach House — Framing",
+          "Johnson Garage — Mechanical",
+          "Riverside Renovation — Finishing",
+          "Jones Addition — Interior"
+        ],
+        people: ["Crew A — Pratt", "Crew B — Johnson and Jones", "Crew C — Riverside"],
+        business: [],
+        milestones: [],
+        attention: []
+      },
+      "2026-10-21": {
+        title: "Wednesday · October 21",
+        work: [
+          "Pratt Coach House — Framing",
+          "Johnson Garage — Mechanical",
+          "Riverside Renovation — Finishing",
+          "Jones Addition — Interior",
+          "Smith Residence — Drywall",
+          "Pratt Coach House — Electrical"
+        ],
+        people: ["Crew A — Pratt", "Crew B — Johnson and Jones", "Crew C — Riverside"],
+        business: [],
+        milestones: ["Riverside Renovation — client meeting"],
+        attention: []
+      },
+      "2026-10-22": {
+        title: "Thursday · October 22",
+        work: [
+          "Pratt Coach House — Framing",
+          "Johnson Garage — Mechanical",
+          "Riverside Renovation — Finishing",
+          "Jones Addition — Interior"
+        ],
+        people: ["Crew A — Pratt", "Crew B — Johnson and Jones", "Crew C — Riverside"],
+        business: [],
+        milestones: [],
+        attention: []
+      },
+      "2026-10-28": {
+        title: "Wednesday · October 28",
+        work: ["Riverside Renovation — Finishing"],
+        people: ["Crew C — Riverside"],
+        business: [],
+        milestones: ["Johnson Garage — client walkthrough"],
+        attention: []
+      }
+    };
+
+    const fallback = (iso) => {
+      const d = new Date(iso + "T12:00:00");
+      const name = d.toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" });
+      return { title: name, work: ["No scheduled work occupying this day."], people: [], business: [], milestones: [], attention: [] };
+    };
+
+    const detail = document.getElementById("detail");
+    function renderDetail(iso) {
+      const data = days[iso] || fallback(iso);
+      const line = (arr) => arr.length ? arr.map(x => `<p>${x}</p>`).join("") : "<p>—</p>";
+      detail.innerHTML = `
+        <h3>Day</h3>
+        <p class="detail-date">${data.title}</p>
+        <div class="block"><h4>Work</h4>${line(data.work)}</div>
+        <div class="block"><h4>People</h4>${line(data.people)}</div>
+        <div class="block"><h4>Business</h4>${line(data.business)}</div>
+        <div class="block"><h4>Milestones</h4>${line(data.milestones)}</div>
+        <div class="block"><h4>Attention</h4>${data.attention.length ? data.attention.map(x => `<p class="attn">${x}</p>`).join("") : "<p>—</p>"}</div>
+      `;
+    }
+
+    const params = new URLSearchParams(location.search);
+    const startDay = params.get("day") || (params.has("stress") ? "2026-10-21" : "2026-10-16");
+    document.querySelectorAll(".day").forEach((d) => d.classList.toggle("selected", d.dataset.date === startDay));
+    document.querySelectorAll(".band").forEach((b) => b.classList.toggle("selected", startDay === "2026-10-16" && b.id === "smithBand"));
+    renderDetail(startDay);
+
+    document.querySelectorAll(".day").forEach((el) => {
+      el.addEventListener("click", () => {
+        document.querySelectorAll(".day").forEach((d) => d.classList.remove("selected"));
+        el.classList.add("selected");
+        renderDetail(el.dataset.date);
+      });
+    });
+
+    const month = document.getElementById("month");
+    document.querySelectorAll("[data-layer]").forEach((box) => {
+      box.addEventListener("change", () => {
+        month.classList.toggle("hide-" + box.dataset.layer, !box.checked);
+      });
+    });
+
+    const toast = document.getElementById("toast");
+    function flash(msg) {
+      toast.textContent = msg;
+      toast.style.display = "block";
+      setTimeout(() => toast.style.display = "none", 2200);
+    }
+    document.getElementById("startProject").addEventListener("click", () => {
+      flash("Prototype only — Start New Project is not connected.");
+    });
+
+    const impact = document.getElementById("impact");
+    const smith = document.getElementById("smithBand");
+    let drag = null;
+    function selectBand(band) {
+      document.querySelectorAll(".band").forEach((b) => b.classList.remove("selected"));
+      band.classList.add("selected");
+    }
+    document.querySelectorAll(".band").forEach((band) => {
+      band.addEventListener("click", (e) => {
+        e.stopPropagation();
+        selectBand(band);
+      });
+    });
+    smith.addEventListener("pointerdown", (e) => {
+      drag = { x: e.clientX, moved: false };
+      smith.style.opacity = "0.72";
+      smith.setPointerCapture(e.pointerId);
+    });
+    smith.addEventListener("pointermove", (e) => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x;
+      if (Math.abs(dx) > 8) drag.moved = true;
+      if (drag.moved) smith.style.transform = `translateX(${dx}px)`;
+    });
+    function endDrag() {
+      if (!drag) return;
+      smith.style.opacity = "";
+      smith.style.transform = "";
+      if (drag.moved) impact.classList.add("open");
+      drag = null;
+    }
+    smith.addEventListener("pointerup", endDrag);
+    smith.addEventListener("pointercancel", endDrag);
+    document.getElementById("cancelMove").addEventListener("click", () => impact.classList.remove("open"));
+    document.getElementById("confirmMove").addEventListener("click", () => {
+      impact.classList.remove("open");
+      flash("Prototype only — the move is a proposal, not a save.");
+    });
+    impact.addEventListener("click", (e) => { if (e.target === impact) impact.classList.remove("open"); });
+    if (params.has("impact")) impact.classList.add("open");
+  </script>
+</body>
+</html>

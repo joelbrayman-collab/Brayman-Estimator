@@ -5,6 +5,7 @@ import pytest
 
 from app import create_app, db
 from app.models import Client, Project, Proposal, ProposalTemplate
+from app.presentation import contractor_copy
 from app.services import create_estimate
 from app.services.estimate_builder import (
     add_manual_line,
@@ -245,9 +246,11 @@ def test_proposal_list_detail_and_dashboard(client, estimate, template):
 
     dashboard = client.get("/")
     assert dashboard.status_code == 200
-    assert b"1 proposals" in dashboard.data
-    assert b"1 draft" in dashboard.data
-    assert b"0 issued" in dashboard.data
+    assert contractor_copy.HOME_PULSE_PROPOSALS.encode() in dashboard.data
+    assert b"<b>1</b>" in dashboard.data
+    assert b"1 proposals" not in dashboard.data
+    assert b"1 draft" not in dashboard.data
+    assert b"0 issued" not in dashboard.data
 
 
 def test_create_proposal_from_estimate_version_route(client, estimate, template):

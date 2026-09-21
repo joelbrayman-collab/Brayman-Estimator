@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **FG-038 PA-C PERSON / WORKER IDENTITY FOUNDATION LIVE / OPERATIONAL / LIVE PERSON UAT PASS.** Product SHA **`0698f9d2a4ccabcef53ebcef9cb1415bfcd470f7`**. Pin SHA **`bc0ce7f541728262df0573a6096b5948d7abe6ed`**. Additive **`g7b8c9d0e1f2` applied live**. Live Alembic **`g7b8c9d0e1f2 (head)`**. Live Person rows **1** (INACTIVE synthetic UAT Person retained). PA-B remains **LIVE / OPERATIONAL / ZERO CURRENT SYS ADMINS**. Product SHA **`2b25ec99b010c0c66d58d6aa08fdbab55b077e08`**. Current Sys Admin **0**. APPOINT **1**. REMOVE **1**. ORG-001 Owner **LIVE / OPERATIONAL / UNCHANGED**. D5 Voice-with-Help remains **SEALED.** C2 remains **SEALED / LIVE-MIGRATED / EMPTY LIVE BASELINE / 0 INVITATIONS**. C1 Punch List **LIVE / 0 ITEMS**. Completion Sign-Off **NOT IMPLEMENTED / BLOCKED UNTIL WHOLE-PRODUCT UAT**. CORE CLOSE overall **PARTIAL**. People & Access **PARTIAL / NOT OPERATIONAL**. People UI **NOT IMPLEMENTED**. PA-D **NOT IMPLEMENTED**. Sensitive Financial **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. [FG-035](feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**. LEARN **Future**. EST-2026-0019 untouched. PRODUCTION packages **0**. |
-| Updated | 2026-09-20 |
+| Status | **2026-09-21 HOME V2.2 OWNER VISUAL DIRECTION ACCEPTED / CURRENT CALIBRAYT DESKTOP REFERENCE DESIGN.** Office `/` planning desk. Week identity only. No HOL. No drag handle. Desktop shell law recorded. Whole-product Office visual sweep **NOT YET IMPLEMENTED**. Field Month **UNCHANGED**. Alembic **`g7b8c9d0e1f2 (head)`**. PA-D **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. Next: return to Calibrayt V1 development. People & Access remains separately governed. |
+| Updated | 2026-09-21 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [v1-completion-register.md](v1-completion-register.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
-| Active ChatGPT development chat title | **BRAYMAN — CALIBRAYTAI DEVELOPMENT 20 SEP 2026** |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBRAYTAI DEVELOPMENT 21 SEP 2026** |
 
 Authority order for the next session: repository governance → current-state records → accepted ADRs / Feature Gates → implementation/migration/test evidence → conversation memory only as supplementary context.
 
@@ -16,7 +16,7 @@ Authority order for the next session: repository governance → current-state re
 
 ```text
 ACTIVE CHAT TITLE:
-BRAYMAN — CALIBRAYTAI DEVELOPMENT 20 SEP 2026
+BRAYMAN — CALIBRAYTAI DEVELOPMENT 21 SEP 2026
 
 CONTINUITY DISPLAY RULE:
 Every CalibraytAI development response begins with the exact active ChatGPT
@@ -38,8 +38,9 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 - **Product:** CalibraytAI / Brayman Estimator (The Estimator). Formerly CalibAi. Do not confuse with office chrome (Brayman Construction Platform) or tenant Brand Profile.
 - **Path:** `/Users/joelbrayman/Desktop/Brayman-Estimator` (`~/Desktop/Brayman-Estimator`)
 - **Environment:** local Flask office app; SQLite development/UAT DB (`sqlite:///brayman_estimator.db` → `instance/brayman_estimator.db`)
-- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 20 SEP 2026`
+- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 21 SEP 2026`
 - **Cursor / IDE workspace chat titles:** must start with `BRAYMAN — <Topic>`
+- **Current work:** Home V2.2 accepted as current Calibrayt desktop reference. Return to V1 development. People & Access remains separately governed. Whole-product Office visual sweep is not yet implemented.
 
 ## 2. VERIFIED BASELINE
 
@@ -117,7 +118,11 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **2026-09-18 FG-038 PA-A Stage 2 first Owner SET.** [testing/fg038-pa-a-first-instance-owner-authority-uat.md](testing/fg038-pa-a-first-instance-owner-authority-uat.md) **PASS / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS.** ORG-001 Membership **1** / User **1** / Joel Brayman. SET events **1**. Isolation orgs **OWNERLESS**. Grants **1**. Occupancy **50 / 50 ACTIVE / 0 CLOSED / 0 events**. Dedicated **35 passed**. Focused **113 passed**. Full **1316 passed**, 4597 warnings, **683.84s**, exit **0**. CORE CLOSE owner-authority blocker **CLEARED FOR ORG-001**. Next action **STOP.** Return to ChatGPT Architect. Do **not** implement Close, Reopen, Punch List, Completion Sign-Off, Sys Admin, or People & Access UI. Do **not** drop the recovery stash.
+**Last authorized delta:** **2026-09-21 HOME V2.2 accepted as current Calibrayt desktop reference design.** Live office `/` planning desk. Week rail is identity only. Unsupported HOL not shown. No drag handle. Desktop shell + centre-workspace law recorded. Whole-product Office visual sweep **NOT YET IMPLEMENTED**. Field Month **UNCHANGED**. No schema. Next action **STOP. RETURN TO CALIBRAYT V1 DEVELOPMENT.** People & Access remains separately governed.
+
+**Prior:** **2026-09-21 HOME V2.2 live desktop presentation (working tree / not committed).** Office `/` uses the accepted V2.2 planning-desk composition against real Schedule / current-operating Project / pulse counts / Company Attention. No schema. No migration. No Field Month change. No new permission domain. Prototype sample facts are not live. Isolated prototype `docs/branding/home-reference-design-v2/` remains untracked provenance. Next action **STOP for Joel visual review of the real development Home.** Do **not** commit unless Architect ACCEPT COMMIT. Do **not** implement drag-to-impact, payday/holiday authority, capacity, readiness, PA-D, or Field Month from this slice.
+
+**Prior:** **2026-09-18 FG-038 PA-A Stage 2 first Owner SET.** [testing/fg038-pa-a-first-instance-owner-authority-uat.md](testing/fg038-pa-a-first-instance-owner-authority-uat.md) **PASS / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS.** ORG-001 Membership **1** / User **1** / Joel Brayman. SET events **1**. Isolation orgs **OWNERLESS**. Grants **1**. Occupancy **50 / 50 ACTIVE / 0 CLOSED / 0 events**. Dedicated **35 passed**. Focused **113 passed**. Full **1316 passed**, 4597 warnings, **683.84s**, exit **0**. CORE CLOSE owner-authority blocker **CLEARED FOR ORG-001**. Next action **STOP.** Return to ChatGPT Architect. Do **not** implement Close, Reopen, Punch List, Completion Sign-Off, Sys Admin, or People & Access UI. Do **not** drop the recovery stash.
 
 **Prior:** **2026-09-18 FG-035 CORE CLOSE Slice B COMMIT / PUSH / SHA-PIN.** Product SHA **`9360b706ab66f2588306b201ca0c4c45645fcb9a`**. Current-operating consumers switched to `list_current_operating_projects`. CLOSED guards on NEW operational work. Projects **Current | Closed**. PERF-C enumeration seam only. No migration. No live Close. No Close/Reopen product. Live occupancy **50 / 50 ACTIVE / 0 CLOSED / 0 events**. EST-2026-0019 / Project 27 / Estimate 28 / Version 34 unchanged. Grants **1**. Alembic **`b2c3d4e5f6a7 (head)`**. Next action **STOP.** Return to ChatGPT Architect. Do **not** implement Close, Reopen, Punch List, or Completion Sign-Off. Do **not** drop the recovery stash.
 

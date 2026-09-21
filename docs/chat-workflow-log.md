@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-20 |
+| Updated | 2026-09-21 |
 
 ## Purpose
 
@@ -42,6 +42,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-21 — Home V2.2 accepted as desktop reference design
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-21 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 21 SEP 2026 |
+| Objective | Bounded Home visual corrections, then commit/push Home V2.2 as current Calibrayt desktop reference. Record desktop shell law. |
+| Business decision | General Home layout accepted. Remove week %. Remove unsupported HOL. Remove false drag affordance. No Home redesign. |
+| Architectural decision | Presentation only. Week rail is identity. HOL was prototype-only, not live authority. No grip on live Home. Desktop = persistent shell + central workspace. No SPA conversion. No schema. Field unchanged. |
+| Prompt template used | Architect Home V2.2 final visual corrections / commit / push / desktop shell law |
+| Approved Cursor prompt summary | Remove week %. Inspect HOL. Remove false drag handle. Record shell law. Commit/push if clean. |
+| Files expected to change | Home template/CSS/service, Home tests, desktop-direction docs, handoff |
+| Files prohibited from changing | Schema, Alembic, Field Month, Schedule mutation, PA-D, V1 score, recovery stash |
+| Implementation result | Week % removed. HOL not on live Home. No drag handle. Shell law recorded. Home V2.2 committed/pushed as current desktop reference. |
+| Tests | Dedicated Home + Schedule + D3/D5 Help + auth/Home/FG-025/proposals/CO dashboard **69 passed**, 147 warnings, **67.64s**, exit **0**. Presentation-only; full suite not re-run this correction slice. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Capacity, payday/holiday authority, readiness, drag-to-impact, whole-product Office visual sweep, Field visual pass |
+| Next approved step | STOP. Return to Calibrayt V1 development. People & Access separately governed. Visual sweep later, destination by destination. |
+| Next approved prompt | Architect V1 continuation |
+| Commit hash | pending |
+
+### 2026-09-21 — Home V2.2 live desktop presentation (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-21 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 21 SEP 2026 |
+| Objective | Install accepted Home V2.2 presentation on live office `/` against real Calibrayt authority. |
+| Business decision | The development App is the visual working surface. Isolated prototype remains provenance only. Prototype sample facts must not appear as live business facts. |
+| Architectural decision | Presentation/integration only. `assemble_home_planning` reads `assemble_schedule`, current-operating Projects, Estimate/Proposal/CO counts, and Company Attention. No schema. No calendar table. No new permission. No Field Month change. Drag omitted. Capacity/payday/holiday/readiness omitted. |
+| Prompt template used | Architect Home V2.2 install into live development App |
+| Approved Cursor prompt summary | Put Home V2.2 on real `/`. Wire only real/derivable facts. Restart Flask. Do not commit. |
+| Files expected to change | Home route/template/CSS, home_planning service, contractor/help copy, Home tests, handoff docs |
+| Files prohibited from changing | Schema, Alembic, Field Month, Schedule mutation, Company Attention engine, PA-D, V1 score, recovery stash |
+| Implementation result | Working-tree Home V2.2 on `/`. Prototype preserved untracked. No commit. No push. |
+| Tests | Dedicated Home `tests/test_home_planning.py` **7 passed**. Focused Home+Schedule+Attention+Help+auth+Projects **164 passed**, 395 warnings, **231.43s**. Field Month `tests/test_work_schedule_field_fg035.py` **21 passed**. Full suite **1521 passed**, 5178 warnings, **883.03s**, exit **0**. |
+| Project-state-report update | No (not a milestone close) |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Payday/holiday/closed tints; capacity; readiness; drag-to-impact; Field Month visual pass; live visual refinement |
+| Next approved step | Joel visual review of the real development Home |
+| Next approved prompt | Architect after Joel review |
+| Commit hash | NONE |
 
 ### 2026-09-20 — FG-038 PA-C bounded live Person UAT
 

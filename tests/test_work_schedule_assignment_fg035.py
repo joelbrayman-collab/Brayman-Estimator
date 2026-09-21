@@ -129,7 +129,12 @@ def test_zero_rows_are_unassigned_and_multi_user_without_crew(app):
     project = _project()
     element = _element(project)
     item = _item(project, element, TODAY, TODAY + timedelta(days=4))
-    view = assemble_schedule(DEFAULT_ORGANIZATION_ID, project_id=project.id)
+    view = assemble_schedule(
+        DEFAULT_ORGANIZATION_ID,
+        project_id=project.id,
+        window_start=TODAY,
+        window_end=TODAY + timedelta(days=4),
+    )
     assert view["assignments_by_item_id"][item.id] == []
     ben = create_user(email="ben@example.com", password="x", display_name="Ben")
     matt = create_user(email="matt@example.com", password="x", display_name="Matt")

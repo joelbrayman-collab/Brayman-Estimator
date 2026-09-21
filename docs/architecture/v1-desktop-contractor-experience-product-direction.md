@@ -11,6 +11,10 @@
 
 This is **not** an ADR, Feature Gate, preflight, schema, or product implementation. Do **not** implement Home Office, dashboard changes, PERF-B/C, Needs Attention, notifications, payroll, cash-flow product, banking, QuickBooks connection, QB-T, Print, Help, Voice, or the Manual from this file. Do **not** invent FG-036. Do **not** rescore V1 (**60% / 4 of 11**).
 
+**Subsequent status (2026-09-21 Home V2.2 accepted as current Calibrayt desktop reference):** Owner reviewed live office `/` and accepted the Home V2.2 composition. Bounded corrections: week rail is week identity only (no percentage); unsupported HOL is not shown; no drag-handle affordance. Home V2.2 is the current Calibrayt desktop reference design. Desktop shell law and centre-workspace law are recorded below. Whole-product Office visual sweep is **NOT YET IMPLEMENTED**. Field Month **UNCHANGED**. Isolated prototype `docs/branding/home-reference-design-v2/` remains design provenance. Do **not** invent FG-036. Do **not** rescore V1.
+
+**Subsequent status (2026-09-21 Home V2.2 live desktop presentation):** Owner authorized bounded presentation of accepted Home V2.2 on live office `/`. This is **not** the full Home Office product from this record. No payroll, cash-flow, payday/holiday authority, capacity engine, readiness engine, or drag-to-impact. Field Month unchanged. Isolated prototype `docs/branding/home-reference-design-v2/` remains design provenance. Working tree only; **not committed**. Do **not** invent FG-036. Do **not** rescore V1.
+
 **Subsequent status (2026-09-17 People & Access / desktop UX law):** [people-and-access-product-direction.md](people-and-access-product-direction.md) records: **USE AVAILABLE SPACE GENEROUSLY, NOT DENSELY.** Desktop should feel as clean and legible as Field / iPhone while using additional desktop real estate intelligently. This Home Office record is **not rewritten**. Do **not** redesign existing desktop from that freeze.
 
 **Governed baseline at this recording:** HEAD / `origin/main` **`618dfaefbff1d5926bafa39c438075dc9c26055b`** (`docs: pin FG-035 PERF-A SHA`). Product PERF-A **`7a4b7000e2650eadf68b4ea44d48f75c65830c1f`**. Alembic **`f9b0c1d2e3f4 (head)`**. Working tree was **CLEAN** before this docs-only recording.
@@ -476,3 +480,33 @@ DO NOT IMPLEMENT RBAC.
 DO NOT RESCORE V1.
 RETURN TO CHATGPT ARCHITECT.
 ```
+
+## 28. Desktop shell law (2026-09-21)
+
+Calibrayt desktop is:
+
+**PERSISTENT APPLICATION SHELL + CHANGING CENTRAL BUSINESS WORKSPACE.**
+
+The left navigation is the stable business navigation.
+
+When the user selects a major left-nav destination such as Home, Projects, Clients, Estimates, Schedule, People / People & Access when implemented, Financials when implemented, Previous estimates, Cost library, or Settings, the user should experience **the same Calibrayt application shell** while the large centre workspace renders the selected business function.
+
+This is UX / visual architecture law. It does **not** require conversion to a JavaScript SPA. Normal Flask page navigation may remain. The requirement is experiential and visual consistency.
+
+Home V2.2 on office `/` is the current visual reference for that shell, spacing, hierarchy, and restraint.
+
+## 29. Centre-workspace law (2026-09-21)
+
+Major business destinations should **use the centre workspace**.
+
+Do **not** default future visual-sweep pages to small cards floating in large empty space, unnecessarily narrow panels, dashboard-card grids, or multiple equal-weight boxes merely because data exists.
+
+Each destination should be designed around the actual job of that business function:
+
+- Projects: project-management workspace
+- Schedule: planning/calendar workspace
+- People: people-management workspace
+- Financials: business-financial workspace
+- Estimates: estimating workspace
+
+Do **not** implement those page sweeps from this recording. Whole-product Office visual sweep remains **NOT YET IMPLEMENTED**.

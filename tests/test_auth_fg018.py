@@ -12,6 +12,7 @@ from sqlalchemy.exc import IntegrityError
 from app import SecretKeyConfigError, create_app, db
 from app.models import Client, Organization, Project
 from app.models.user import User, UserMembership
+from app.presentation import contractor_copy
 from app.services.auth import (
     GENERIC_LOGIN_FAILURE,
     PASSWORD_HASH_METHOD,
@@ -691,12 +692,11 @@ def test_shell_context_estimate_proposal_org_isolation(app, client, org_b):
     dashboard = client.get("/")
     assert dashboard.status_code == 200
     html = dashboard.get_data(as_text=True)
-    assert "Brayman Visible Estimate" in html
-    assert "EST-SHELL-001" in html
     assert "Apex Hidden Estimate" not in html
     assert "EST-SHELL-002" not in html
-    assert "Brayman Visible Proposal" in html
     assert "Apex Hidden Proposal" not in html
+    assert "Apex Shell Project" not in html
+    assert contractor_copy.HOME_PULSE_ESTIMATES in html
     assert other_proposal.title == "Apex Hidden Proposal"
     assert home_proposal.title == "Brayman Visible Proposal"
 

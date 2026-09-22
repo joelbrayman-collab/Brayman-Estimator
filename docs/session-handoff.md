@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **2026-09-22 PKG-T01 / R01 + date-window test reconciliation in working tree on VISUAL-2 SHA `01771845ce594449acb889b5664d094b8d31604d`. NOT COMMITTED.** Full suite **1537 passed**. Pre-existing Phase 10 dirt in the three occupancy docs is distinct from this package. Other Rule 16 roots **UNCORRECTED**. Home V2.2 remains desktop reference (`9ba1580a369e8550f027ab2bb346df8ae6aaac18`). Alembic **`g7b8c9d0e1f2 (head)`**. PA-D **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). Whole-system Rule 16 **not scored**. Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. Flask 5460 **STOPPED**. HostPapa app deploy **does not exist**. |
+| Status | **2026-09-22 PKG-T01 / R01 COMMITTED / PUSHED / SHA-PINNED.** Product SHA **`6e816a440d7118b1ca3e8a971c49fa669829d05a`**. No migration. No live DB mutation. Other Rule 16 roots **UNCORRECTED**. Whole-system Rule 16 **OPEN**. Home V2.2 remains desktop reference (`9ba1580a369e8550f027ab2bb346df8ae6aaac18`). VISUAL-2 ancestor **`01771845ce594449acb889b5664d094b8d31604d`**. Alembic **`g7b8c9d0e1f2 (head)`**. PA-D **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. Flask 5460 **STOPPED**. HostPapa app deploy **does not exist**. |
 | Updated | 2026-09-22 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [v1-completion-register.md](v1-completion-register.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -118,7 +118,9 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **2026-09-22 PKG-T01 full-suite closure + date-window test reconciliation (working tree / not committed).** Sole full-suite failure proven **Class A** stale fixture (`TODAY=2026-09-16` vs Company window from `date.today()`). Schedule product unchanged (`fd8a669` window law). Test-only `TODAY = date.today()` in `tests/test_work_schedule_assignment_fg035.py`. Additional P9-04 DATE/TIME TEST ARCHITECTURE evidence; P9-04 product clock **not** implemented. Full suite **1537 passed**, 5195 warnings, **678.46s**, exit **0**. R01 remains green. Live DB unchanged. No migration. No commit. No push. Next **STOP for ChatGPT Architect ACCEPT COMMIT PKG-T01.** Do **not** start R04.
+**Last authorized delta:** **2026-09-22 PKG-T01 / R01 COMMITTED / PUSHED / SHA-PINNED.** Product SHA **`6e816a440d7118b1ca3e8a971c49fa669829d05a`**. Mutating services reload organization-owned records against the acting organization. P7-10 fails closed. Assignment schedule test dates are execution-relative; Schedule product unchanged. Full suite **1537 passed**. No migration. Live DB unchanged. V1 scores unchanged (**65% / 4 of 11**, **79% / 22 of 28**). Whole-system Rule 16 remains **OPEN**. Next planned root **R04 — PROJECT CLOSE WRITE INVARIANT** is **NOT implemented** from this pin. Next **STOP for ChatGPT Architect / PKG-L01 R04 authorization.**
+
+**Prior:** **2026-09-22 PKG-T01 full-suite closure + date-window test reconciliation (working tree / then committed as the product SHA above).** Sole full-suite failure proven **Class A** stale fixture. Test-only `TODAY = date.today()` in `tests/test_work_schedule_assignment_fg035.py`.
 
 **Prior:** **2026-09-22 PKG-T01 R01 service-boundary tenancy (working tree / not committed).** Mutating services reload organization-owned records against the acting organization (`app/services/organization_records.py`). Dedicated SERVICE TENANCY INVARIANT **11 passed**. Focused **161 passed**. Targeted R01 re-audit **PASS** (not whole-system Rule 16).
 

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-22 — PKG-T01 / R01 SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | SHA-pin PKG-T01 / R01 after Architect ACCEPT COMMIT / PUSH. |
+| Business decision | R01 closed as a Rule 16 correction. Whole-system Rule 16 remains OPEN. Do not rescore V1. Do not start R04 from this pin. |
+| Architectural decision | None new. Pin only. |
+| Prompt template used | Architect PKG-T01 ACCEPT COMMIT / PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Commit authorized package, push, docs-only SHA-pin, push pin. No live DB. No migration. No R04. |
+| Files expected to change | Occupancy docs only for this pin commit |
+| Files prohibited from changing | Product code, tests, migrations, live DB, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | Product commit **`6e816a440d7118b1ca3e8a971c49fa669829d05a`** pushed. This pin records that SHA. |
+| Tests | Not re-run for pin. Prior full suite **1537 passed**, 5195 warnings, **678.46s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Remaining Rule 16 roots. Next planned **R04**. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not implement R04 until a new authorized prompt. |
+| Next approved prompt | PKG-L01 / R04 — PROJECT CLOSE WRITE INVARIANT |
+| Commit hash | PRODUCT `6e816a440d7118b1ca3e8a971c49fa669829d05a`; PIN hash filled after this commit |
+
 ### 2026-09-22 — PKG-T01 full-suite closure + date-window test reconciliation (working tree; not committed)
 
 | Field | Content |

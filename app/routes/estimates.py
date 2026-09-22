@@ -748,6 +748,7 @@ def create_line_item_route(id, version_id, section_id):
                 quantity=form.get("quantity", "1"),
                 waste_percent=form.get("waste_percent", "0"),
                 notes=form.get("notes"),
+                organization_id=get_current_organization_id(),
             )
         elif line_type == "Assembly":
             add_assembly_line(
@@ -756,6 +757,7 @@ def create_line_item_route(id, version_id, section_id):
                 quantity=form.get("quantity", "1"),
                 waste_percent=form.get("waste_percent", "0"),
                 notes=form.get("notes"),
+                organization_id=get_current_organization_id(),
             )
         elif line_type in ("Custom", "Allowance"):
             add_manual_line(

@@ -16,6 +16,12 @@ from app.services.brand_profile import (
     maybe_freeze_proposal_brand_snapshot,
 )
 from app.services.estimate_output import named_method_governs
+from app.services.organization_records import (
+    acting_organization_id,
+    require_organization_estimate,
+    require_organization_estimate_version,
+    require_organization_owned,
+)
 from app.services.organizations import get_current_organization_id
 
 
@@ -476,7 +482,28 @@ def create_proposal(
     status="Draft",
     valid_until=None,
     overrides=None,
+    organization_id=None,
 ):
+    org_id = acting_organization_id(organization_id)
+    estimate = require_organization_estimate(
+        estimate,
+        organization_id=org_id,
+        error_class=ProposalServiceError,
+        message="Not found.",
+    )
+    version = require_organization_estimate_version(
+        version,
+        organization_id=org_id,
+        error_class=ProposalServiceError,
+        message="Not found.",
+    )
+    template = require_organization_owned(
+        ProposalTemplate,
+        template,
+        organization_id=org_id,
+        error_class=ProposalServiceError,
+        message="Not found.",
+    )
     if version.estimate_id != estimate.id:
         raise ProposalServiceError("Version does not belong to this estimate.")
     if not template.is_active:

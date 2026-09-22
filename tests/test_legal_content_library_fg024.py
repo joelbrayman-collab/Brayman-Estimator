@@ -96,7 +96,11 @@ def _make_project(
     )
     db.session.add(project)
     db.session.flush()
-    create_initial_commercial_context(project_id=project.id, data=COMMERCIAL_CREATE)
+    create_initial_commercial_context(
+        project_id=project.id,
+        data=COMMERCIAL_CREATE,
+        organization_id=org_id,
+    )
     db.session.commit()
     return project
 

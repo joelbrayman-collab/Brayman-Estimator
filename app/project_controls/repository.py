@@ -11,19 +11,26 @@ from app.project_controls.models import (
     ChangeOrder,
     ChangeOrderItem,
 )
-from app.services.organizations import get_current_organization_id
+from app.services.organization_records import acting_organization_id
 
 
 def get_change_order(change_order_id, organization_id=None):
-    org_id = organization_id or get_current_organization_id()
-    co = db.session.get(ChangeOrder, change_order_id)
-    if co and co.project and co.project.organization_id != org_id:
-        return None
-    return co
+    org_id = acting_organization_id(organization_id)
+    return (
+        ChangeOrder.query.join(Project)
+        .filter(ChangeOrder.id == change_order_id, Project.organization_id == org_id)
+        .first()
+    )
 
 
-def get_change_order_item(item_id):
-    return db.session.get(ChangeOrderItem, item_id)
+def get_change_order_item(item_id, organization_id=None):
+    org_id = acting_organization_id(organization_id)
+    return (
+        ChangeOrderItem.query.join(ChangeOrder)
+        .join(Project)
+        .filter(ChangeOrderItem.id == item_id, Project.organization_id == org_id)
+        .first()
+    )
 
 
 def list_change_orders(
@@ -35,7 +42,7 @@ def list_change_orders(
     search=None,
     organization_id=None,
 ):
-    org_id = organization_id or get_current_organization_id()
+    org_id = acting_organization_id(organization_id)
     query = ChangeOrder.query.join(Project).filter(Project.organization_id == org_id)
 
     if project_id:
@@ -60,9 +67,14 @@ def list_change_orders(
     return query.order_by(ChangeOrder.updated_at.desc()).all()
 
 
-def list_change_orders_for_project(project_id):
+def list_change_orders_for_project(project_id, organization_id=None):
+    org_id = acting_organization_id(organization_id)
     return (
-        ChangeOrder.query.filter_by(project_id=project_id)
+        ChangeOrder.query.join(Project)
+        .filter(
+            ChangeOrder.project_id == project_id,
+            Project.organization_id == org_id,
+        )
         .order_by(ChangeOrder.updated_at.desc())
         .all()
     )

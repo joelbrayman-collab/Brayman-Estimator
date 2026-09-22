@@ -687,6 +687,7 @@ def test_shell_context_estimate_proposal_org_isolation(app, client, org_b):
         version=other_estimate.current_version,
         template=other_template,
         title="Apex Hidden Proposal",
+        organization_id="ORG-002",
     )
     db.session.commit()
     dashboard = client.get("/")

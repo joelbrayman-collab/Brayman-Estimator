@@ -10,6 +10,11 @@ from app.models.estimate import (
     EstimateVersion,
 )
 from app.services.estimates import EstimateServiceError, ensure_version_editable
+from app.services.organization_records import (
+    acting_organization_id,
+    require_organization_owned,
+    require_organization_project,
+)
 
 MONEY = Decimal("0.01")
 HUNDRED = Decimal("100")
@@ -190,14 +195,27 @@ def add_cost_item_line_uncommitted(
     waste_percent=0,
     notes=None,
     unit=None,
+    organization_id=None,
 ):
     """Create a cost-item line without committing. Caller owns the transaction."""
     version = section.estimate_version
     ensure_version_editable(version)
+    org_id = acting_organization_id(organization_id)
+    require_organization_project(
+        version.estimate.project_id,
+        organization_id=org_id,
+        error_class=EstimateServiceError,
+        message="Not found.",
+    )
 
-    cost_item = CostItem.query.filter_by(id=cost_item_id, is_active=True).first()
-    if cost_item is None:
-        raise EstimateServiceError("Select an active cost item.")
+    cost_item = require_organization_owned(
+        CostItem,
+        cost_item_id,
+        organization_id=org_id,
+        error_class=EstimateServiceError,
+        message="Select an active cost item.",
+        extra_filters={"is_active": True},
+    )
 
     quantity = _validate_non_negative(quantity, "Quantity")
     waste_percent = _validate_non_negative(waste_percent, "Waste percent")
@@ -232,13 +250,16 @@ def add_cost_item_line_uncommitted(
     return line_item
 
 
-def add_cost_item_line(section, *, cost_item_id, quantity=1, waste_percent=0, notes=None):
+def add_cost_item_line(
+    section, *, cost_item_id, quantity=1, waste_percent=0, notes=None, organization_id=None
+):
     line_item = add_cost_item_line_uncommitted(
         section,
         cost_item_id=cost_item_id,
         quantity=quantity,
         waste_percent=waste_percent,
         notes=notes,
+        organization_id=organization_id,
     )
     db.session.commit()
     return line_item
@@ -252,14 +273,27 @@ def add_assembly_line_uncommitted(
     waste_percent=0,
     notes=None,
     unit=None,
+    organization_id=None,
 ):
     """Create an assembly line without committing. Caller owns the transaction."""
     version = section.estimate_version
     ensure_version_editable(version)
+    org_id = acting_organization_id(organization_id)
+    require_organization_project(
+        version.estimate.project_id,
+        organization_id=org_id,
+        error_class=EstimateServiceError,
+        message="Not found.",
+    )
 
-    assembly = Assembly.query.filter_by(id=assembly_id, is_active=True).first()
-    if assembly is None:
-        raise EstimateServiceError("Select an active assembly.")
+    assembly = require_organization_owned(
+        Assembly,
+        assembly_id,
+        organization_id=org_id,
+        error_class=EstimateServiceError,
+        message="Select an active assembly.",
+        extra_filters={"is_active": True},
+    )
 
     quantity = _validate_non_negative(quantity, "Quantity")
     waste_percent = _validate_non_negative(waste_percent, "Waste percent")
@@ -294,13 +328,16 @@ def add_assembly_line_uncommitted(
     return line_item
 
 
-def add_assembly_line(section, *, assembly_id, quantity=1, waste_percent=0, notes=None):
+def add_assembly_line(
+    section, *, assembly_id, quantity=1, waste_percent=0, notes=None, organization_id=None
+):
     line_item = add_assembly_line_uncommitted(
         section,
         assembly_id=assembly_id,
         quantity=quantity,
         waste_percent=waste_percent,
         notes=notes,
+        organization_id=organization_id,
     )
     db.session.commit()
     return line_item

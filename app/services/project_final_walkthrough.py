@@ -54,6 +54,7 @@ from app.presentation.contractor_copy import (
     WALKTHROUGH_WORK_SOURCE_REQUIRED,
 )
 from app.services.brand_profile import get_current_brand_profile
+from app.services.organization_records import require_organization_project
 from app.services.project_operating_lifecycle import (
     project_is_closed,
     raise_if_project_closed,
@@ -134,12 +135,12 @@ def _load_actor(actor) -> User:
 
 
 def _require_project(project, organization_id=None) -> Project:
-    if project is None:
-        raise WalkthroughNotFoundError("Project not found.")
-    org_id = organization_id or project.organization_id
-    if project.organization_id != org_id:
-        raise WalkthroughNotFoundError("Project not found.")
-    return project
+    return require_organization_project(
+        project,
+        organization_id=organization_id,
+        error_class=WalkthroughNotFoundError,
+        message="Project not found.",
+    )
 
 
 def _token_fail_limit() -> int:

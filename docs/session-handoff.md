@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **2026-09-21 VISUAL-2 PROJECTS V2 REGISTER COMMITTED IN THIS SLICE.** Owner accepted Projects structure and accepted the register direction as good enough to continue. Home V2.2 remains desktop reference (`9ba1580a369e8550f027ab2bb346df8ae6aaac18`). Project Hub not swept. Field Projects **UNCHANGED**. No schema. Alembic **`g7b8c9d0e1f2 (head)`**. PA-D **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. HostPapa app deploy **does not exist** in this repository. |
-| Updated | 2026-09-21 |
+| Status | **2026-09-22 PKG-T01 / R01 + date-window test reconciliation in working tree on VISUAL-2 SHA `01771845ce594449acb889b5664d094b8d31604d`. NOT COMMITTED.** Full suite **1537 passed**. Pre-existing Phase 10 dirt in the three occupancy docs is distinct from this package. Other Rule 16 roots **UNCORRECTED**. Home V2.2 remains desktop reference (`9ba1580a369e8550f027ab2bb346df8ae6aaac18`). Alembic **`g7b8c9d0e1f2 (head)`**. PA-D **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). Whole-system Rule 16 **not scored**. Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. Flask 5460 **STOPPED**. HostPapa app deploy **does not exist**. |
+| Updated | 2026-09-22 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [v1-completion-register.md](v1-completion-register.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
-| Active ChatGPT development chat title | **BRAYMAN — CALIBRAYTAI DEVELOPMENT 21 SEP 2026** |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026** |
 
 Authority order for the next session: repository governance → current-state records → accepted ADRs / Feature Gates → implementation/migration/test evidence → conversation memory only as supplementary context.
 
@@ -16,7 +16,7 @@ Authority order for the next session: repository governance → current-state re
 
 ```text
 ACTIVE CHAT TITLE:
-BRAYMAN — CALIBRAYTAI DEVELOPMENT 21 SEP 2026
+BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026
 
 CONTINUITY DISPLAY RULE:
 Every CalibraytAI development response begins with the exact active ChatGPT
@@ -38,7 +38,7 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 - **Product:** CalibraytAI / Brayman Estimator (The Estimator). Formerly CalibAi. Do not confuse with office chrome (Brayman Construction Platform) or tenant Brand Profile.
 - **Path:** `/Users/joelbrayman/Desktop/Brayman-Estimator` (`~/Desktop/Brayman-Estimator`)
 - **Environment:** local Flask office app; SQLite development/UAT DB (`sqlite:///brayman_estimator.db` → `instance/brayman_estimator.db`)
-- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 21 SEP 2026`
+- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026`
 - **Cursor / IDE workspace chat titles:** must start with `BRAYMAN — <Topic>`
 - **Current work:** VISUAL-2 Projects V2 register committed as local `origin/main` baseline. Project Hub visual sweep not done. HostPapa / production app deploy **does not exist**. People & Access remains separately governed.
 
@@ -118,7 +118,19 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **2026-09-21 VISUAL-2 Projects V2 register COMMIT.** Owner: structure accepted; later “looks better now” / acceptable enough to continue. Presentation-only register on `/projects/`. No schema. No Field. No Hub sweep. SHA recorded in the following pin if this commit is the product SHA.
+**Last authorized delta:** **2026-09-22 PKG-T01 full-suite closure + date-window test reconciliation (working tree / not committed).** Sole full-suite failure proven **Class A** stale fixture (`TODAY=2026-09-16` vs Company window from `date.today()`). Schedule product unchanged (`fd8a669` window law). Test-only `TODAY = date.today()` in `tests/test_work_schedule_assignment_fg035.py`. Additional P9-04 DATE/TIME TEST ARCHITECTURE evidence; P9-04 product clock **not** implemented. Full suite **1537 passed**, 5195 warnings, **678.46s**, exit **0**. R01 remains green. Live DB unchanged. No migration. No commit. No push. Next **STOP for ChatGPT Architect ACCEPT COMMIT PKG-T01.** Do **not** start R04.
+
+**Prior:** **2026-09-22 PKG-T01 R01 service-boundary tenancy (working tree / not committed).** Mutating services reload organization-owned records against the acting organization (`app/services/organization_records.py`). Dedicated SERVICE TENANCY INVARIANT **11 passed**. Focused **161 passed**. Targeted R01 re-audit **PASS** (not whole-system Rule 16).
+
+**Prior:** **2026-09-22 Rule 16 Phase 10 root reconciliation (forensic; no product change).** Findings collapsed to root families and correction architecture. No implementation. Live DB unchanged. Next **STOP for ChatGPT Architect.** First correction requires a new authorized prompt.
+
+**Prior:** **2026-09-22 Rule 16 Phase 9 residual sweep + test architecture (forensic; no product change).** Static tests/DoD/residual inspection. Live DB unchanged. P9 findings uncorrected. No commit. No push. Next **STOP for ChatGPT Architect / Phase 10 root reconciliation (no implementation).**
+
+**Prior:** **2026-09-22 Rule 16 Phase 8 presentation / Help / product-truth audit (forensic; no product change).** Static read of presentation authority, templates, Help, flashes, errorhandlers. Live DB unchanged. P8 findings uncorrected. No commit. No push. Next **STOP for ChatGPT Architect / Phase 9 READ ONLY.**
+
+**Prior:** **2026-09-22 Rule 16 Phase 7 adversarial proof (forensic; no product change).** Isolated `/tmp` sqlite only. Live `instance/brayman_estimator.db` fingerprint unchanged. Proofs A–L + P/Q completed. Material P7 findings uncorrected. No commit. No push. Next **STOP for ChatGPT Architect / Phase 8 READ ONLY.**
+
+**Prior:** **2026-09-21 VISUAL-2 Projects V2 register COMMIT.** Product SHA **`01771845ce594449acb889b5664d094b8d31604d`**. Owner: structure accepted; later “looks better now” / acceptable enough to continue. Presentation-only register on `/projects/`. No schema. No Field. No Hub sweep.
 
 **Prior:** **2026-09-21 VISUAL-2 Projects V2 register (working tree / not committed).** Owner accepted structure; rejected utilitarian report-list presentation. Register now: stacked identity (name / client / location), stage, Open affordance; Current n \| Closed n from existing list lengths; tighter header. Same Current/Closed membership. No card grid. Field/Hub unchanged. Next **STOP for Joel visual review of live `/projects/`.** Do **not** commit unless Architect ACCEPT COMMIT.
 

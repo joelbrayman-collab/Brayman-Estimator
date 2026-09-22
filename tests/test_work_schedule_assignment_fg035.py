@@ -48,7 +48,8 @@ from tests.auth_fixtures import (
     login_office_user,
 )
 
-TODAY = date(2026, 9, 16)
+# Execution-relative: Company Schedule default window starts at date.today() (FG-035 SCH-A).
+TODAY = date.today()
 
 
 @pytest.fixture

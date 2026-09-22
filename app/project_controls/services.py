@@ -10,6 +10,13 @@ from app.project_controls.models import (
     ChangeOrder,
     ChangeOrderItem,
 )
+from app.services.organization_records import (
+    acting_organization_id,
+    require_organization_change_order,
+    require_organization_change_order_item,
+    require_organization_estimate_version,
+    require_organization_project,
+)
 from app.services.project_operating_lifecycle import (
     project_is_closed,
     raise_if_project_closed,
@@ -99,17 +106,31 @@ def create_change_order(
     copy_estimate_lines=False,
     number=None,
     status="Draft",
+    organization_id=None,
 ):
     title = (title or "").strip()
     if not title:
         raise ChangeOrderServiceError("Title is required.")
     if project is None:
         raise ChangeOrderServiceError("Project is required.")
+    org_id = acting_organization_id(organization_id)
+    project = require_organization_project(
+        project,
+        organization_id=org_id,
+        error_class=ChangeOrderServiceError,
+        message="Project not found.",
+    )
     raise_if_project_closed(project, ChangeOrderServiceError)
     if status not in CHANGE_ORDER_STATUSES:
         raise ChangeOrderServiceError("Select a valid status.")
 
     if estimate_version is not None:
+        estimate_version = require_organization_estimate_version(
+            estimate_version,
+            organization_id=org_id,
+            error_class=ChangeOrderServiceError,
+            message="Not found.",
+        )
         estimate = estimate_version.estimate
         if estimate.project_id != project.id:
             raise ChangeOrderServiceError(
@@ -179,6 +200,14 @@ def create_change_order(
 
 
 def update_change_order(change_order, **fields):
+    organization_id = fields.pop("organization_id", None)
+    org_id = acting_organization_id(organization_id)
+    change_order = require_organization_change_order(
+        change_order,
+        organization_id=org_id,
+        error_class=ChangeOrderServiceError,
+        message="Not found.",
+    )
     if project_is_closed(change_order.project):
         extra = set(fields) - ADMINISTRATIVE_CO_FIELDS
         if extra:
@@ -198,10 +227,30 @@ def update_change_order(change_order, **fields):
         change_order.requested_date = fields["requested_date"]
 
     if "project_id" in fields and fields["project_id"]:
-        change_order.project_id = fields["project_id"]
+        moved = require_organization_project(
+            fields["project_id"],
+            organization_id=org_id,
+            error_class=ChangeOrderServiceError,
+            message="Project not found.",
+        )
+        change_order.project_id = moved.id
 
     if "estimate_version_id" in fields:
-        change_order.estimate_version_id = fields["estimate_version_id"] or None
+        version_id = fields["estimate_version_id"] or None
+        if version_id:
+            version = require_organization_estimate_version(
+                version_id,
+                organization_id=org_id,
+                error_class=ChangeOrderServiceError,
+                message="Not found.",
+            )
+            if version.estimate.project_id != change_order.project_id:
+                raise ChangeOrderServiceError(
+                    "Estimate version does not belong to this project."
+                )
+            change_order.estimate_version_id = version.id
+        else:
+            change_order.estimate_version_id = None
 
     if "markup_percent" in fields:
         change_order.markup_percent = as_decimal(fields["markup_percent"])
@@ -216,7 +265,13 @@ def update_change_order(change_order, **fields):
     return change_order
 
 
-def update_change_order_status(change_order, status, *, commit=True):
+def update_change_order_status(change_order, status, *, commit=True, organization_id=None):
+    change_order = require_organization_change_order(
+        change_order,
+        organization_id=acting_organization_id(organization_id),
+        error_class=ChangeOrderServiceError,
+        message="Not found.",
+    )
     if status not in CHANGE_ORDER_STATUSES:
         raise ChangeOrderServiceError("Select a valid status.")
     previous = change_order.status
@@ -243,7 +298,14 @@ def add_change_order_item(
     quantity=1,
     unit="ea",
     unit_price=0,
+    organization_id=None,
 ):
+    change_order = require_organization_change_order(
+        change_order,
+        organization_id=acting_organization_id(organization_id),
+        error_class=ChangeOrderServiceError,
+        message="Not found.",
+    )
     raise_if_project_closed(change_order.project, ChangeOrderServiceError)
     description = (description or "").strip()
     unit = (unit or "").strip()
@@ -278,7 +340,15 @@ def update_change_order_item(
     quantity=None,
     unit=None,
     unit_price=None,
+    organization_id=None,
 ):
+    org_id = acting_organization_id(organization_id)
+    item = require_organization_change_order_item(
+        item,
+        organization_id=org_id,
+        error_class=ChangeOrderServiceError,
+        message="Not found.",
+    )
     raise_if_project_closed(item.change_order.project, ChangeOrderServiceError)
     if description is not None:
         description = description.strip()
@@ -307,14 +377,21 @@ def update_change_order_item(
     return item
 
 
-def delete_change_order_item(item):
+def delete_change_order_item(item, *, organization_id=None):
+    org_id = acting_organization_id(organization_id)
+    item = require_organization_change_order_item(
+        item,
+        organization_id=org_id,
+        error_class=ChangeOrderServiceError,
+        message="Not found.",
+    )
     change_order = item.change_order
     raise_if_project_closed(change_order.project, ChangeOrderServiceError)
     change_order_id = change_order.id
     repo.delete_change_order_item(item)
     db.session.flush()
     db.session.expire(change_order, ["items"])
-    change_order = repo.get_change_order(change_order_id)
+    change_order = repo.get_change_order(change_order_id, organization_id=org_id)
     recalculate_change_order(change_order)
     db.session.commit()
     return change_order

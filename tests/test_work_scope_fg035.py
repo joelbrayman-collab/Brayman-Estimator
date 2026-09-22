@@ -256,7 +256,12 @@ def test_wrong_project_and_org_and_ineligible_co_blocked(app, org_b):
     activity_a = ProjectWorkActivity.query.join(ProjectWorkElement).filter(
         ProjectWorkElement.project_id == project_a.id
     ).one()
-    co_b = create_change_order(project=project_b, title="Other project", status="Approved")
+    co_b = create_change_order(
+        project=project_b,
+        title="Other project",
+        status="Approved",
+        organization_id="ORG-002",
+    )
     with pytest.raises(WorkScopeError, match="does not belong to this project"):
         apply_change_order_delta(
             project_work_activity_id=activity_a.id,

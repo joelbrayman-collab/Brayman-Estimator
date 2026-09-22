@@ -29,6 +29,7 @@ from app.services.instance_authority import (
     is_instance_owner,
     is_system_administrator,
 )
+from app.services.organization_records import require_organization_project
 
 
 class ProjectClosedError(Exception):
@@ -115,22 +116,24 @@ def _actor_identifier(user: User) -> str:
 
 def close_project(project, actor, *, organization_id=None):
     """ACTIVE → CLOSED. Appends exactly one CLOSE event. Not idempotent."""
-    if project is None:
-        raise ProjectLifecycleError("Project not found.")
-    org_id = organization_id or project.organization_id
-    if project.organization_id != org_id:
-        raise ProjectLifecycleError("Project not found.")
+    loaded = require_organization_project(
+        project,
+        organization_id=organization_id,
+        error_class=ProjectLifecycleError,
+        message="Project not found.",
+    )
+    org_id = loaded.organization_id
     user = _require_lifecycle_authority(actor, org_id)
-    if project.operating_state != OPERATING_STATE_ACTIVE:
+    if loaded.operating_state != OPERATING_STATE_ACTIVE:
         raise ProjectLifecycleError(PROJECT_ALREADY_CLOSED)
     now = datetime.utcnow()
-    project.operating_state = OPERATING_STATE_CLOSED
-    project.operating_state_changed_at = now
-    project.operating_state_changed_by_user_id = user.id
+    loaded.operating_state = OPERATING_STATE_CLOSED
+    loaded.operating_state_changed_at = now
+    loaded.operating_state_changed_by_user_id = user.id
     db.session.add(
         ProjectOperatingStateEvent(
             organization_id=org_id,
-            project_id=project.id,
+            project_id=loaded.id,
             event=OPERATING_EVENT_CLOSE,
             previous_state=OPERATING_STATE_ACTIVE,
             new_state=OPERATING_STATE_CLOSED,
@@ -140,28 +143,30 @@ def close_project(project, actor, *, organization_id=None):
         )
     )
     db.session.commit()
-    db.session.refresh(project)
-    return project
+    db.session.refresh(loaded)
+    return loaded
 
 
 def reopen_project(project, actor, *, organization_id=None):
     """CLOSED → ACTIVE. Appends exactly one REOPEN event. Not idempotent."""
-    if project is None:
-        raise ProjectLifecycleError("Project not found.")
-    org_id = organization_id or project.organization_id
-    if project.organization_id != org_id:
-        raise ProjectLifecycleError("Project not found.")
+    loaded = require_organization_project(
+        project,
+        organization_id=organization_id,
+        error_class=ProjectLifecycleError,
+        message="Project not found.",
+    )
+    org_id = loaded.organization_id
     user = _require_lifecycle_authority(actor, org_id)
-    if project.operating_state != OPERATING_STATE_CLOSED:
+    if loaded.operating_state != OPERATING_STATE_CLOSED:
         raise ProjectLifecycleError(PROJECT_ALREADY_CURRENT)
     now = datetime.utcnow()
-    project.operating_state = OPERATING_STATE_ACTIVE
-    project.operating_state_changed_at = now
-    project.operating_state_changed_by_user_id = user.id
+    loaded.operating_state = OPERATING_STATE_ACTIVE
+    loaded.operating_state_changed_at = now
+    loaded.operating_state_changed_by_user_id = user.id
     db.session.add(
         ProjectOperatingStateEvent(
             organization_id=org_id,
-            project_id=project.id,
+            project_id=loaded.id,
             event=OPERATING_EVENT_REOPEN,
             previous_state=OPERATING_STATE_CLOSED,
             new_state=OPERATING_STATE_ACTIVE,
@@ -171,5 +176,5 @@ def reopen_project(project, actor, *, organization_id=None):
         )
     )
     db.session.commit()
-    db.session.refresh(project)
-    return project
+    db.session.refresh(loaded)
+    return loaded

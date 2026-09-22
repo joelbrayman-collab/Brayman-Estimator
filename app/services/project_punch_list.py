@@ -54,6 +54,7 @@ from app.services.project_operating_lifecycle import (
     project_is_closed,
     raise_if_project_closed,
 )
+from app.services.organization_records import require_organization_project
 
 
 class PunchListError(Exception):
@@ -86,12 +87,12 @@ def _actor_identifier(user: User) -> str:
 
 
 def _require_project(project, organization_id=None) -> Project:
-    if project is None:
-        raise PunchListNotFoundError("Project not found.")
-    org_id = organization_id or project.organization_id
-    if project.organization_id != org_id:
-        raise PunchListNotFoundError("Project not found.")
-    return project
+    return require_organization_project(
+        project,
+        organization_id=organization_id,
+        error_class=PunchListNotFoundError,
+        message="Project not found.",
+    )
 
 
 def _optional_int(value):

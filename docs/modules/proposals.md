@@ -33,7 +33,7 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 
 - `estimates` / `estimate_versions` (nullable FKs; may clear if version deleted while keeping snapshot — covered by tests)
 - Optional `estimate_line_items.id` via `source_line_item_id` (`ON DELETE SET NULL` in migration)
-- Template FK required
+- Template FK required. **R01 (PKG-T01):** `create_proposal` reloads Estimate, EstimateVersion, and ProposalTemplate against the acting organization before snapshot.
 - Live `Client` / `Project` only at snapshot time (no `client_id` / `project_id` on proposals today — see ADR-003)
 
 ## Prohibited responsibilities

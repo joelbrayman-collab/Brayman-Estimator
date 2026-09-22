@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-21 |
+| Updated | 2026-09-22 |
 
 ## Purpose
 
@@ -43,6 +43,150 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-22 — PKG-T01 full-suite closure + date-window test reconciliation (working tree; not committed)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` @ `01771845ce594449acb889b5664d094b8d31604d` (ahead of `origin/main` `9ba1580a369e8550f027ab2bb346df8ae6aaac18`) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | Prove sole full-suite failure; test-only date-relative correction if stale fixture; full suite green for Architect ACCEPT COMMIT. |
+| Business decision | Class A stale calendar-dependent TEST DATA. Additional evidence for DATE/TIME TEST ARCHITECTURE (P9-04 / R16 clock). Do **not** implement P9-04 product clock. Do not change Schedule product. |
+| Architectural decision | None in product. `TODAY = date.today()` in `tests/test_work_schedule_assignment_fg035.py` only. Company default window remains `date.today()` → `today+41` (FG-035 SCH-A). |
+| Prompt template used | Architect PKG-T01 FULL-SUITE CLOSURE + DATE-WINDOW TEST RECONCILIATION |
+| Approved Cursor prompt summary | Prove cause. Test-only correction if stale. Re-run Schedule, R01, full suite. No commit/push/deploy/migration/live DB. |
+| Files expected to change | Assignment test file + occupancy docs |
+| Files prohibited from changing | Schedule product, live DB, migrations, recovery stash, V1 scores, Flask 5460, other Rule 16 roots |
+| Implementation result | Proven class A. Test-only TODAY made execution-relative. Full suite **1537 passed**. NOT COMMITTED. |
+| Tests | Dedicated office-surfaces + Schedule suites **58 passed**. R01 dedicated/focused **161 passed** (includes 11 R01). Full suite `./venv/bin/python -m pytest -q` — **1537 passed**, 5195 warnings, **678.46s**, exit **0**. `git diff --check` pass. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Remaining Rule 16 roots. Other schedule test files still use frozen calendar constants (latent P9-04). HostPapa deploy does not exist. |
+| Next approved step | STOP for Architect ACCEPT COMMIT PKG-T01. Do not start R04. |
+| Next approved prompt | PKG-T01 ACCEPT COMMIT / PUSH / SHA-PIN |
+| Commit hash | NONE |
+
+### 2026-09-22 — PKG-T01 R01 service-boundary tenancy (working tree; not committed)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` @ `01771845ce594449acb889b5664d094b8d31604d` (ahead of `origin/main` `9ba1580a369e8550f027ab2bb346df8ae6aaac18`) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | PKG-T01 / R01: mutating services re-establish acting organization + target record. SERVICE TENANCY INVARIANT tests. Targeted Phase 2/7 re-audit of R01 only. |
+| Business decision | First Rule 16 root correction. Other roots remain uncorrected. No rescore. No commit/push until Architect ACCEPT COMMIT. |
+| Architectural decision | Shared helper `app/services/organization_records.py` reloads by `(id, organization_id)`. Authenticated HTTP uses membership org; CLI/tests may pass `organization_id`. Do not trust caller-loaded ORM identity. |
+| Prompt template used | cursor-bugfix-template + Architect PKG-T01 R01 prompt |
+| Approved Cursor prompt summary | Implement R01 service-boundary tenancy only. No other Rule 16 roots. No live DB. No migration. No commit/push/deploy. |
+| Files expected to change | Mutating services + helper + R01 tests + minimum governance |
+| Files prohibited from changing | Live DB, migrations, recovery stash, V1 scores, Flask 5460, other Rule 16 roots |
+| Implementation result | Working-tree implementation + dedicated SERVICE TENANCY INVARIANT tests. Other Rule 16 findings remain open. NOT COMMITTED. |
+| Tests | Cursor Terminal: dedicated R01 **11 passed** (inside focused **161 passed**). Schedule assignment/SCH suites after test-only TODAY fix **58 passed**. Full suite `./venv/bin/python -m pytest -q` — **1537 passed**, 5195 warnings, **678.46s**, exit **0**. Prior sole failure was stale `TODAY=2026-09-16` vs Company window from `date.today()`. Schedule product **not modified**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Remaining Rule 16 roots R02–R27. Owner decisions from Phase 10. HostPapa deploy does not exist. |
+| Next approved step | STOP for Architect working-tree close. Do not commit unless Architect ACCEPT COMMIT. |
+| Next approved prompt | NONE until Architect authorizes commit or the next package. |
+| Commit hash | NONE |
+
+### 2026-09-22 — Rule 16 Phase 10 root reconciliation + correction architecture (forensic; no product change)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` @ `01771845ce594449acb889b5664d094b8d31604d` (ahead of `origin/main` `9ba1580a369e8550f027ab2bb346df8ae6aaac18`) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | Rule 16 Phase 10 of 10: collapse findings into root families; correction architecture; dependency order; regression classes. NO IMPLEMENTATION. |
+| Business decision | Forensic freeze remains. Do not implement P2–P9. Do not rescore V1. Do not restart Flask 5460. Whole-system Rule 16 PASS/FAIL **not** declared. |
+| Architectural decision | None coded. Reconciliation only: service-boundary tenancy; Field confirm vs Closed identity; business-action atomicity; Close write invariant; public token vs Close (owner decision); additional-work commercial (not one Value); Project-child workspace; Time transition vs identity policy; remaining MAY-FIX / POST-V1 split. |
+| Prompt template used | Architect RULE 16 PHASE 10 OF 10 ROOT RECONCILIATION + CORRECTION ARCHITECTURE |
+| Approved Cursor prompt summary | READ ONLY reconcile Phases 1–9. No implementation, tests, schema, migration, live DB, commit, push, deploy, scorecard, Flask 5460. No whole-system PASS/FAIL yet. |
+| Files expected to change | Governance occupancy only. |
+| Files prohibited from changing | `app/**`, `migrations/**`, tests, models, recovery stash, V1 scores, live DB, Flask 5460 |
+| Implementation result | Root catalog, must-fix order, packages, test classes recorded in ChatGPT return. No product files changed. |
+| Tests | None this session. Historical **1526 passed** = sequential baseline, not Rule 16 PASS. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None new. Correction remains unauthorized until Architect issues a bounded package prompt. |
+| Unresolved issues | All Rule 16 roots uncorrected. Owner decisions listed in Phase 10 return. HostPapa app deploy does not exist. Flask 5460 STOPPED. |
+| Next approved step | STOP. Return to ChatGPT Architect. No implementation prompt until Architect authorizes the first correction package. |
+| Next approved prompt | NONE — Phase 10 is the final forensic phase. First correction requires a new Architect-authorized prompt. |
+| Commit hash | NONE |
+
+### 2026-09-22 — Rule 16 Phase 9 residual sweep + test architecture (forensic; no product change)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` @ `01771845ce594449acb889b5664d094b8d31604d` (ahead of `origin/main` `9ba1580a369e8550f027ab2bb346df8ae6aaac18`) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | Rule 16 Phase 9 of 10: unknown-unknown residual sweep + what tests actually prove. READ ONLY. |
+| Business decision | Do not add tests. Do not rewrite DoD. Do not implement P2–P8 or P9. Do not rescore V1. Do not restart Flask 5460. |
+| Architectural decision | None (no product change). Static inspection of tests/, DoD, residuals. Pytest not re-run. Historical 1526 passed remains architecture evidence, not Rule 16 PASS. |
+| Prompt template used | Architect RULE 16 PHASE 9 OF 10 UNKNOWN-UNKNOWN / TEST ARCHITECTURE / DoD |
+| Approved Cursor prompt summary | READ ONLY residual + test-class audit. No implementation, correction, test repair, schema, migration, live DB, commit, push, deploy, scorecard, Flask 5460. |
+| Files expected to change | Governance occupancy only (`current-state`, `session-handoff`, this log). |
+| Files prohibited from changing | `app/**`, `migrations/**`, tests, models, recovery stash, V1 scores, live DB, Flask 5460 |
+| Implementation result | Test-class map, false-confidence map, residual inventory, P9 findings, likely same-root families recorded in ChatGPT return. No product files changed. |
+| Tests | None this session. Isolation of product pytest is sqlite:///:memory: (proven by module fixtures). Historical full suite **1526 passed** at this SHA (21 Sep). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | DoD/testing-standards require sequential negative tests, not TOCTOU/atomicity/session-GET classes. Prior SEALED statements can be valid under that DoD while P7 defects exist. |
+| Unresolved issues | P2–P8 uncorrected. P9 residuals uncorrected. HostPapa app deploy does not exist. Flask 5460 STOPPED. |
+| Next approved step | STOP. Return to ChatGPT Architect. Phase 10 root reconciliation + correction architecture. NO IMPLEMENTATION unless Phase 10 prompt later says otherwise. |
+| Next approved prompt | RULE 16 PHASE 10 OF 10 — ROOT RECONCILIATION + CORRECTION ARCHITECTURE (NO IMPLEMENTATION) |
+| Commit hash | NONE (Phase 9 forbids commit) |
+
+### 2026-09-22 — Rule 16 Phase 8 presentation / Help / product-truth audit (forensic; no product change)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` @ `01771845ce594449acb889b5664d094b8d31604d` (ahead of `origin/main` `9ba1580a369e8550f027ab2bb346df8ae6aaac18`) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | Rule 16 Phase 8 of 10: compare contractor-facing presentation/Help/error signals to Phases 1–7 proven behaviour. READ ONLY. |
+| Business decision | Do not rewrite copy. Do not implement P2–P7 or P8 findings. Do not rescore V1. Do not restart Flask 5460. |
+| Architectural decision | None (no product change). Static inspection of `app/presentation/contractor_copy.py`, `help_content.py`, templates, flashes, errorhandlers. No isolated render required. Live DB untouched. |
+| Prompt template used | Architect RULE 16 PHASE 8 OF 10 PRESENTATION ARCHITECTURE + HELP + CONTRACTOR LANGUAGE + PRODUCT TRUTH + ERROR SIGNALS |
+| Approved Cursor prompt summary | READ ONLY product-truth audit. No implementation, correction, tests, schema, migration, live DB, commit, push, deploy, scorecard, Flask 5460. |
+| Files expected to change | Governance occupancy only (`current-state`, `session-handoff`, this log). |
+| Files prohibited from changing | `app/**`, `migrations/**`, tests, models, recovery stash, V1 scores, live DB, Flask 5460 |
+| Implementation result | Presentation authority inventoried. Claim vs proof matrix recorded as P8 findings in ChatGPT return. No product files changed. |
+| Tests | None (read-only). Live DB unchanged. Historical full suite at this SHA remains **1526 passed** (21 Sep). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | Close/Field/Walkthrough/Time+Extra contractor copy overstates proven failure modes. |
+| Unresolved issues | P2–P7 uncorrected. P8 presentation-truth findings uncorrected. Flask 5460 STOPPED. HostPapa app deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Phase 9 READ-ONLY test architecture / definition-of-done / what tests proved vs missing classes. |
+| Next approved prompt | RULE 16 PHASE 9 OF 10 — TEST ARCHITECTURE + DEFINITION OF DONE (READ ONLY) |
+| Commit hash | NONE (Phase 8 forbids commit) |
+
+### 2026-09-22 — Rule 16 Phase 7 adversarial / failure-mode proof (forensic; no product change)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` @ `01771845ce594449acb889b5664d094b8d31604d` (ahead of `origin/main` `9ba1580a369e8550f027ab2bb346df8ae6aaac18`) |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | Rule 16 Phase 7 of 10: prove or refute selected failure hypotheses on isolated test/throwaway SQLite only. |
+| Business decision | Phases 1–9 remain forensic evidence. Do not implement P2–P6 or P7 findings. Do not rescore V1. Do not restart Flask 5460. |
+| Architectural decision | None (no product change). Isolation: `/tmp/r16p7_*.sqlite` via `create_app({"TESTING": True})`. Live `instance/brayman_estimator.db` fingerprint unchanged (`mtime` 1790020245.9238403, size 3457024). |
+| Prompt template used | Architect RULE 16 PHASE 7 OF 10 ADVERSARIAL / FAILURE-MODE PROOF |
+| Approved Cursor prompt summary | Prove A–L plus bypass/stale-id/double-submit on isolated DB only. No product implementation, correction, test repair, schema, migration, live DB mutation, commit, push, deploy, scorecard, or whole-system Rule 16 PASS/FAIL. |
+| Files expected to change | Governance occupancy only (`current-state`, `session-handoff`, this log). |
+| Files prohibited from changing | `app/**`, `migrations/**`, tests, models, recovery stash, V1 scores, live DB, Flask 5460 |
+| Implementation result | Isolated harness `/tmp/r16_phase7_proof.py` (untracked; not in repo). Proofs A–L, P, Q completed. Material P7 findings recorded in ChatGPT return. No product files changed. Temp sqlite removed. Leftover failed-run sqlite cleaned from `/tmp`. |
+| Tests | Throwaway harness only. Product pytest **not** run (out of Phase 7 scope; no product change). Live DB unchanged. Historical full suite at this SHA remains **1526 passed** (21 Sep). |
+| Project-state-report update | No (not a product milestone) |
+| Milestone entry update | No |
+| Constitutional issue raised | None new; proven races/partial commits remain uncorrected pending Phase 10. |
+| Unresolved issues | P2–P6 uncorrected. P7 confirmed defects uncorrected. Concurrent true multi-request races remain SQLite-limited (D1 both-OPEN; H two-successor; C7 inner-check window). Flask 5460 STOPPED. HostPapa app deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Phase 8 READ-ONLY presentation / Help / contractor language / product truth / error signals. |
+| Next approved prompt | RULE 16 PHASE 8 OF 10 — PRESENTATION ARCHITECTURE + HELP + CONTRACTOR LANGUAGE + PRODUCT TRUTH + ERROR SIGNALS (READ ONLY) |
+| Commit hash | NONE (Phase 7 forbids commit) |
+
 ### 2026-09-21 — Pre-E2E-UAT reconciliation / VISUAL-2 commit
 
 | Field | Content |
@@ -65,7 +209,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | No HostPapa/production app. Project Hub not swept. |
 | Next approved step | STOP. Architect production-hosting / E2E target decision. |
 | Next approved prompt | Architect: where is production, or is local the UAT instance? |
-| Commit hash | this feat commit |
+| Commit hash | `01771845ce594449acb889b5664d094b8d31604d` |
 
 ### 2026-09-21 — VISUAL-2 Projects V2 register (working tree)
 

@@ -22,6 +22,7 @@ from app.project_controls.pdf import (
 )
 from app.services.auth import form_actor
 from app.services.organizations import get_current_organization_id
+from app.services.shared_api import get_organization_project
 from app.services.signing import overlay_for_change_order, overlays_for_change_orders
 from app.project_controls.services import (
     ChangeOrderServiceError,
@@ -131,7 +132,8 @@ def create_change_order_route():
 
     if request.method == "POST":
         project_id = request.form.get("project_id", type=int)
-        project = Project.query.get(project_id) if project_id else None
+        org_id = get_current_organization_id()
+        project = get_organization_project(org_id, project_id) if project_id else None
         try:
             change_order = create_change_order(
                 project=project,
@@ -144,6 +146,7 @@ def create_change_order_route():
                 tax_percent=request.form.get("tax_percent") or 0,
                 notes=request.form.get("notes", ""),
                 status=request.form.get("status") or "Draft",
+                organization_id=org_id,
             )
         except (ChangeOrderServiceError, ValueError) as exc:
             flash(str(exc), "error")
@@ -208,13 +211,18 @@ def create_change_order_route():
     methods=["GET", "POST"],
 )
 def create_from_estimate_version(estimate_id, version_id):
-    estimate = Estimate.query.get_or_404(estimate_id)
+    org_id = get_current_organization_id()
+    estimate = (
+        Estimate.query.join(Project, Estimate.project_id == Project.id)
+        .filter(Estimate.id == estimate_id, Project.organization_id == org_id)
+        .first_or_404()
+    )
     version = EstimateVersion.query.filter_by(
         id=version_id,
         estimate_id=estimate.id,
     ).first_or_404()
     project = estimate.project
-    projects = Project.query.filter_by(organization_id=get_current_organization_id()).order_by(Project.name).all()
+    projects = Project.query.filter_by(organization_id=org_id).order_by(Project.name).all()
 
     if request.method == "POST":
         copy_lines = request.form.get("copy_estimate_lines") == "on"
@@ -241,6 +249,7 @@ def create_from_estimate_version(estimate_id, version_id):
                 notes=request.form.get("notes", ""),
                 copy_estimate_lines=copy_lines,
                 status=request.form.get("status") or "Draft",
+                organization_id=org_id,
             )
         except (ChangeOrderServiceError, ValueError) as exc:
             flash(str(exc), "error")

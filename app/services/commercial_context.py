@@ -3,7 +3,11 @@
 from typing import Any, Dict, List, Optional
 
 from app import db
-from app.models.project import Project, ProjectCommercialContext
+from app.models.project import ProjectCommercialContext
+from app.services.organization_records import (
+    acting_organization_id,
+    require_organization_project,
+)
 from app.services.organizations import get_current_organization_id
 
 PROJECT_TYPES = (
@@ -154,7 +158,13 @@ def create_initial_commercial_context(
     commit: bool = True,
 ) -> ProjectCommercialContext:
     """Create version 1 of commercial context for a newly created project."""
-    org_id = organization_id or get_current_organization_id()
+    org_id = acting_organization_id(organization_id)
+    require_organization_project(
+        project_id,
+        organization_id=org_id,
+        error_class=CommercialContextValidationError,
+        message="Project not found.",
+    )
     validated = validate_commercial_context_data(data, organization_id=org_id)
 
     ctx = ProjectCommercialContext(
@@ -187,11 +197,13 @@ def update_commercial_context(
     commit: bool = True,
 ) -> ProjectCommercialContext:
     """Create a new version of commercial context, leaving historical versions immutable."""
-    project = Project.query.get(project_id)
-    if not project:
-        raise ValueError(f"Project {project_id} not found.")
-
-    org_id = organization_id or project.organization_id or get_current_organization_id()
+    org_id = acting_organization_id(organization_id)
+    project = require_organization_project(
+        project_id,
+        organization_id=org_id,
+        error_class=CommercialContextValidationError,
+        message="Project not found.",
+    )
     validated = validate_commercial_context_data(data, organization_id=org_id)
 
     # Deactivate current version(s)

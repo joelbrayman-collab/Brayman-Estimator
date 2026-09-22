@@ -15,7 +15,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 ## Responsibilities
 
-- Cost item library (org costing; Material-category items may later link to a canonical material)
+- Cost item library (org costing; Material-category items may later link to a canonical material). **R01 (PKG-T01):** `add_cost_item_line` / `add_assembly_line` reload the destination Estimate's Project and the library row against the acting organization before copying commercial identity.
 - Assemblies and assembly items (commercial composition; may remain one rolled-up estimate line)
 - Estimates and estimate versions
 - Sections and line items
@@ -91,6 +91,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 - `tests/test_estimates.py`
 - `tests/test_estimate_builder.py`
+- `tests/test_service_tenancy_invariant_r01.py` (R01 library attach)
 - `tests/test_assemblies.py`
 - `tests/test_estimate_output_consistency.py` (FG-012)
 

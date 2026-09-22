@@ -176,6 +176,7 @@ def _make_proposal(status="Draft", org_id=DEFAULT_ORGANIZATION_ID, number=None):
         status=status,
         proposal_number=number,
         valid_until=date(2026, 12, 31),
+        organization_id=org_id,
     )
 
 

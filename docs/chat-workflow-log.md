@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-22 — PKG-T03A / R03A SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | SHA-pin PKG-T03A / R03A after Architect ACCEPT COMMIT / PUSH. |
+| Business decision | R03A closed as a Rule 16 correction. R01, R04, R05 remain CLOSED. Whole-system Rule 16 remains OPEN. Do not rescore V1. Do not start R03B from this pin. |
+| Architectural decision | None new. Pin only. |
+| Prompt template used | Architect PKG-T03A ACCEPT COMMIT / PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Commit authorized R03A package, push, docs-only SHA-pin, push pin. No live DB. No migration. No live Accept. No R03B. |
+| Files expected to change | Occupancy docs only for this pin commit |
+| Files prohibited from changing | Product code, tests, migrations, live DB, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | Product commit **`424493b6286e8f59acba206e9c55fd410ced9318`** pushed. This pin records that SHA. |
+| Tests | Not re-run for pin. Prior full suite **1573 passed**, 5302 warnings, **694.25s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Remaining Rule 16 roots. Next numbered must-fix is PKG-T03B / R03B. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not implement R03B until a new authorized prompt. |
+| Next approved prompt | Architect authorization of PKG-T03B / R03B — TIME + EXTRA WORK ATOMICITY |
+| Commit hash | PRODUCT `424493b6286e8f59acba206e9c55fd410ced9318`; PIN hash filled after this commit |
+
 ### 2026-09-22 — PKG-T03A / R03A WALKTHROUGH ACCEPT → PUNCH ATOMICITY (working tree)
 
 | Field | Content |

@@ -9,12 +9,15 @@ from __future__ import annotations
 
 from datetime import datetime
 
+from sqlalchemy import update
+
 from app import db
 from app.models.project import (
     OPERATING_EVENT_CLOSE,
     OPERATING_EVENT_REOPEN,
     OPERATING_STATE_ACTIVE,
     OPERATING_STATE_CLOSED,
+    Project,
     ProjectOperatingStateEvent,
 )
 from app.models.user import User
@@ -61,10 +64,54 @@ def project_is_current_operating(project) -> bool:
     )
 
 
-def raise_if_project_closed(project, error_cls=ProjectClosedError):
-    """Fail closed for NEW operational work on a CLOSED Project."""
-    if project_is_closed(project):
+def _begin_immediate_sqlite():
+    """Take a SQLite RESERVED lock before Close and operational writers contend."""
+    bind = db.session.get_bind()
+    if bind is None or bind.dialect.name != "sqlite":
+        return
+    try:
+        db.session.connection().exec_driver_sql("BEGIN IMMEDIATE")
+    except Exception:
+        # SQLAlchemy already opened a deferred transaction; the predicate UPDATE
+        # is the first DML and upgrades the lock.
+        return
+
+
+def claim_active_project_for_write(project, error_cls=ProjectClosedError):
+    """Same-transaction predicate: the Project is still ACTIVE.
+
+    UPDATE ... WHERE operating_state='ACTIVE' contends with Close. A Python
+    read of project.operating_state is not sufficient (P7-03 / P6-07).
+    """
+    pk = getattr(project, "id", None)
+    if pk is None:
         raise error_cls(PROJECT_CLOSED_NEW_WORK)
+    _begin_immediate_sqlite()
+    result = db.session.execute(
+        update(Project)
+        .where(
+            Project.id == int(pk),
+            Project.operating_state == OPERATING_STATE_ACTIVE,
+        )
+        .values(operating_state=OPERATING_STATE_ACTIVE)
+        .execution_options(synchronize_session=False)
+    )
+    if result.rowcount != 1:
+        db.session.rollback()
+        raise error_cls(PROJECT_CLOSED_NEW_WORK)
+    try:
+        db.session.expire(project, ["operating_state"])
+    except Exception:
+        pass
+
+
+def raise_if_project_closed(project, error_cls=ProjectClosedError):
+    """Fail closed for NEW operational work on a CLOSED Project.
+
+    Claims ACTIVE in the current transaction so a concurrent Close cannot
+    commit first while this write still proceeds.
+    """
+    claim_active_project_for_write(project, error_cls)
 
 
 def actor_can_close_or_reopen(user, organization_id: str) -> bool:
@@ -124,12 +171,24 @@ def close_project(project, actor, *, organization_id=None):
     )
     org_id = loaded.organization_id
     user = _require_lifecycle_authority(actor, org_id)
-    if loaded.operating_state != OPERATING_STATE_ACTIVE:
-        raise ProjectLifecycleError(PROJECT_ALREADY_CLOSED)
+    _begin_immediate_sqlite()
     now = datetime.utcnow()
-    loaded.operating_state = OPERATING_STATE_CLOSED
-    loaded.operating_state_changed_at = now
-    loaded.operating_state_changed_by_user_id = user.id
+    result = db.session.execute(
+        update(Project)
+        .where(
+            Project.id == loaded.id,
+            Project.operating_state == OPERATING_STATE_ACTIVE,
+        )
+        .values(
+            operating_state=OPERATING_STATE_CLOSED,
+            operating_state_changed_at=now,
+            operating_state_changed_by_user_id=user.id,
+        )
+        .execution_options(synchronize_session=False)
+    )
+    if result.rowcount != 1:
+        db.session.rollback()
+        raise ProjectLifecycleError(PROJECT_ALREADY_CLOSED)
     db.session.add(
         ProjectOperatingStateEvent(
             organization_id=org_id,
@@ -157,12 +216,24 @@ def reopen_project(project, actor, *, organization_id=None):
     )
     org_id = loaded.organization_id
     user = _require_lifecycle_authority(actor, org_id)
-    if loaded.operating_state != OPERATING_STATE_CLOSED:
-        raise ProjectLifecycleError(PROJECT_ALREADY_CURRENT)
+    _begin_immediate_sqlite()
     now = datetime.utcnow()
-    loaded.operating_state = OPERATING_STATE_ACTIVE
-    loaded.operating_state_changed_at = now
-    loaded.operating_state_changed_by_user_id = user.id
+    result = db.session.execute(
+        update(Project)
+        .where(
+            Project.id == loaded.id,
+            Project.operating_state == OPERATING_STATE_CLOSED,
+        )
+        .values(
+            operating_state=OPERATING_STATE_ACTIVE,
+            operating_state_changed_at=now,
+            operating_state_changed_by_user_id=user.id,
+        )
+        .execution_options(synchronize_session=False)
+    )
+    if result.rowcount != 1:
+        db.session.rollback()
+        raise ProjectLifecycleError(PROJECT_ALREADY_CURRENT)
     db.session.add(
         ProjectOperatingStateEvent(
             organization_id=org_id,

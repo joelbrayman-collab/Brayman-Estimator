@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-22 — PKG-L01 / R04 PROJECT CLOSE WRITE INVARIANT (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | PKG-L01 R04 — PROJECT CLOSE WRITE INVARIANT. Close the `raise_if_project_closed` then later write TOCTOU. Working tree only. |
+| Business decision | Operational writes and Close writes contend on a conditional operating-state predicate in the same transaction as the business write. Lost races fail closed. Owner/System Administrator Close authority unchanged. No Domain B Close. No live Close. |
+| Architectural decision | Bounded helper `claim_active_project_for_write`: `UPDATE projects SET operating_state='ACTIVE' WHERE id=? AND operating_state='ACTIVE'` plus `BEGIN IMMEDIATE` when SQLite allows. Close: `UPDATE … SET CLOSED WHERE ACTIVE` then event then commit. Reopen: `UPDATE … SET ACTIVE WHERE CLOSED`. `raise_if_project_closed` now claims; Hub GET `project_is_closed` remains a read. No schema. No second lifecycle. Not a second Python `if`. |
+| Prompt template used | Architect PKG-L01 implementation prompt |
+| Approved Cursor prompt summary | Implement / test / targeted Phase 6 + Phase 7 P7-03 re-audit of R04 in the working tree. No commit, push, deploy, migration, live DB mutation, live Close, R01 rewrite, R05 public Walkthrough, R02 Field confirm, R03 atomicity, V1 rescore. |
+| Files expected to change | `app/services/project_operating_lifecycle.py`; `tests/test_closed_project_toctou_r04.py`; occupancy docs |
+| Files prohibited from changing | Live DB, migrations, recovery stash, V1 scores, Flask 5460, R01, R02, R03, R05–R27, P8-01 copy, People & Access, Completion Sign-Off, LEARN |
+| Implementation result | Working-tree implementation. Callers of `raise_if_project_closed` inherit the predicate when they share the session through commit. Sequential already-closed law preserved. Time approve/return/resubmit and actual supersede left unguarded (existing-identity law). Public Walkthrough submit unchanged (R05). NOT COMMITTED. |
+| Tests | Dedicated CLOSED-PROJECT TOCTOU **15 passed**, 43 warnings, **12.62s**. Focused Close/Time/Extra/Schedule/CO/MONITOR/Punch/Walkthrough/Field/Owner/R01 **320 passed**, 1071 warnings, **167.35s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` **1552 passed**, 5238 warnings, **728.52s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Remaining Rule 16 roots R02, R03, R05–R27. Whole-system Rule 16 OPEN. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not commit until ACCEPT COMMIT PKG-L01. |
+| Next approved prompt | ACCEPT COMMIT PKG-L01 / R04 (Architect after review) |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-22 — PKG-T01 / R01 SHA-pin
 
 | Field | Content |

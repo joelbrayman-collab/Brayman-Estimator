@@ -462,6 +462,9 @@ def submit_walkthrough_response(
     descriptions = _cleaned_item_descriptions(item_descriptions)
     if nothing_to_add and descriptions:
         raise WalkthroughError(WALKTHROUGH_CONTRADICTORY_RESPONSE)
+    if not nothing_to_add and not descriptions:
+        raise WalkthroughError(WALKTHROUGH_RESPONSE_REQUIRED)
+    raise_if_project_closed(access.project, WalkthroughError)
     if nothing_to_add:
         now = datetime.utcnow()
         invitation.status = WALKTHROUGH_STATUS_RESPONDED
@@ -469,8 +472,6 @@ def submit_walkthrough_response(
         invitation.response_mode = WALKTHROUGH_RESPONSE_NOTHING_TO_ADD
         db.session.commit()
         return invitation
-    if not descriptions:
-        raise WalkthroughError(WALKTHROUGH_RESPONSE_REQUIRED)
     now = datetime.utcnow()
     invitation.status = WALKTHROUGH_STATUS_RESPONDED
     invitation.responded_at = now

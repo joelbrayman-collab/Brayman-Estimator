@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-22 — PKG-L02 / R05 PUBLIC WALKTHROUGH SUBMIT-ON-CLOSED (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | PKG-L02 R05 — public client Walkthrough submit must not commit after Project Close. Working tree only. |
+| Business decision | Public Walkthrough submission is NEW operational work. If Close commits first, public submit loses. Token GET / expiry remains R06. |
+| Architectural decision | Reuse R04 `raise_if_project_closed` / `claim_active_project_for_write` inside `submit_walkthrough_response` after token OPEN validation and before RESPONDED / item writes. No second Close engine. No schema. No client User. |
+| Prompt template used | Architect PKG-L02 implementation prompt |
+| Approved Cursor prompt summary | Implement / test / targeted Phase 6 + Phase 7 re-audit of R05 in the working tree. No commit, push, deploy, migration, live Close, R04 rewrite, R06 GET expiry, R03 accept-to-punch atomicity, V1 rescore. |
+| Files expected to change | `app/services/project_final_walkthrough.py`; `tests/test_public_walkthrough_submit_on_closed_r05.py`; occupancy docs |
+| Files prohibited from changing | Live DB, migrations, recovery stash, V1 scores, Flask 5460, R01, R04, R02, R03, R06, R07–R27 |
+| Implementation result | Public submit claims ACTIVE in the same transaction as RESPONDED + items, including nothing-to-add. GET-on-CLOSED left unchanged. NOT COMMITTED. |
+| Tests | Dedicated PUBLIC-WALKTHROUGH-SUBMIT-ON-CLOSED **12 passed**, 36 warnings, **11.64s**. Focused R05/C2/Close/R04/R01/Punch **120 passed**, 356 warnings, **70.84s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` **1564 passed**, 5274 warnings, **689.33s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Remaining Rule 16 roots R02, R03, R06–R27. Whole-system Rule 16 OPEN. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not commit until ACCEPT COMMIT PKG-L02. |
+| Next approved prompt | ACCEPT COMMIT PKG-L02 / R05 (Architect after review) |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-22 — PKG-L01 / R04 SHA-pin
 
 | Field | Content |

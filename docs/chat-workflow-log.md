@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-22 — PKG-T03A / R03A WALKTHROUGH ACCEPT → PUNCH ATOMICITY (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` @ `3472ad6f96e476a885b9a3ea64f08232dc7b13a5` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | PKG-T03A / R03A: one transaction for contractor Accept-to-Punch (Punch create + CREATED event + Walkthrough link + ACCEPTED_TO_PUNCH_LIST). BUSINESS-ACTION-ATOMICITY tests. Targeted Phase 6 P6-01 and Phase 7 P7-01 re-audit of R03A only. |
+| Business decision | Existing review/disposition state plus pending-item predicate is sufficient idempotency. No schema. No unique constraint. Concurrent double-Accept proven one Punch. P8-04 copy rewrite deferred (existing Accept failure flashes the domain error; not newly false after rollback). |
+| Architectural decision | Pattern A: `create_punch_list_item_from_client_walkthrough(..., commit=False)` participates in Accept's caller-owned transaction. Standalone `create_punch_list_item` still commits. `_claim_pending_walkthrough_item` uses `UPDATE … WHERE review_status='PENDING_REVIEW'` in the same transaction as Punch + link. Original two-commit seam was Punch helper `commit()` then Walkthrough `commit()`. |
+| Prompt template used | Architect PKG-T03A IMPLEMENT / TEST / TARGETED RE-AUDIT working tree only |
+| Approved Cursor prompt summary | Implement / test / targeted P6-01 + P7-01 re-audit of R03A in the working tree. No commit, push, deploy, migration, live Accept, R03B, R02, R06, R04/R01/R05 rewrite, V1 rescore. |
+| Files expected to change | Punch walkthrough-create helper; Accept service; dedicated atomicity tests; occupancy docs |
+| Files prohibited from changing | Migrations, live DB, R04 Close engine, R05 public submit, token GET, Time+Extra, Field context, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | Accept is one commit. Injected post-Punch failure rolls back Punch 0 / events 0 / unlinked PENDING. Retry after failure: 1 Punch. Retry after success: ALREADY_REVIEWED, still 1 Punch. Concurrent: 1 Punch. NOT COMMITTED. |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_walkthrough_accept_atomicity_r03a.py` → **9 passed**, 28 warnings, **6.61s**, exit **0**. Focused R03A/C2/C1/Close/R04/R05/R01 → **129 passed**, 384 warnings, **76.96s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` → **1573 passed**, 5302 warnings, **694.25s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None. Concurrent protection did not require schema. |
+| Unresolved issues | Remaining Rule 16 roots. P8-04 presentation still deferred. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not commit. Do not start R03B. |
+| Next approved prompt | ACCEPT COMMIT PKG-T03A / R03A (Architect after review) |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-22 — PKG-L02 / R05 SHA-pin
 
 | Field | Content |

@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 from typing import NamedTuple, Optional
 
 from flask import current_app
+from sqlalchemy import update
 
 from app import db
 from app.models.final_walkthrough import (
@@ -504,6 +505,45 @@ def _require_pending_item(project, item_id):
     return item
 
 
+def _claim_pending_walkthrough_item(project, item_id):
+    """Same-transaction predicate: this item is still PENDING_REVIEW.
+
+    Contends with a concurrent Accept of the same source item. A Python
+    read of review_status is not sufficient (P7-01 concurrent double-Accept).
+    """
+    result = db.session.execute(
+        update(ProjectFinalWalkthroughItem)
+        .where(
+            ProjectFinalWalkthroughItem.id == int(item_id),
+            ProjectFinalWalkthroughItem.organization_id == project.organization_id,
+            ProjectFinalWalkthroughItem.project_id == project.id,
+            ProjectFinalWalkthroughItem.review_status == WALKTHROUGH_REVIEW_PENDING,
+        )
+        .values(review_status=WALKTHROUGH_REVIEW_PENDING)
+        .execution_options(synchronize_session=False)
+    )
+    if result.rowcount != 1:
+        existing = ProjectFinalWalkthroughItem.query.filter_by(
+            id=item_id,
+            organization_id=project.organization_id,
+            project_id=project.id,
+        ).first()
+        db.session.rollback()
+        if existing is None:
+            raise WalkthroughNotFoundError(WALKTHROUGH_ITEM_NOT_FOUND)
+        raise WalkthroughError(WALKTHROUGH_ALREADY_REVIEWED)
+    item = ProjectFinalWalkthroughItem.query.filter_by(
+        id=item_id,
+        organization_id=project.organization_id,
+        project_id=project.id,
+    ).one()
+    try:
+        db.session.expire(item, ["review_status", "punch_list_item_id"])
+    except Exception:
+        pass
+    return item
+
+
 def accept_walkthrough_item_to_punch_list(
     project,
     item_id,
@@ -519,7 +559,7 @@ def accept_walkthrough_item_to_punch_list(
     user = _load_actor(actor)
     if not (work_source_type or "").strip():
         raise WalkthroughError(WALKTHROUGH_WORK_SOURCE_REQUIRED)
-    item = _require_pending_item(loaded, item_id)
+    item = _claim_pending_walkthrough_item(loaded, item_id)
     original = item.description
     try:
         punch_item = create_punch_list_item_from_client_walkthrough(
@@ -530,16 +570,21 @@ def accept_walkthrough_item_to_punch_list(
             source_project_work_id=source_project_work_id,
             source_change_order_id=source_change_order_id,
             organization_id=loaded.organization_id,
+            commit=False,
         )
+        now = datetime.utcnow()
+        item.review_status = WALKTHROUGH_REVIEW_ACCEPTED
+        item.reviewed_at = now
+        item.reviewed_by_user_id = user.id
+        item.punch_list_item_id = punch_item.id
+        item.description = original
+        db.session.commit()
     except PunchListError as exc:
+        db.session.rollback()
         raise WalkthroughError(str(exc)) from exc
-    now = datetime.utcnow()
-    item.review_status = WALKTHROUGH_REVIEW_ACCEPTED
-    item.reviewed_at = now
-    item.reviewed_by_user_id = user.id
-    item.punch_list_item_id = punch_item.id
-    item.description = original
-    db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
     return item, punch_item
 
 

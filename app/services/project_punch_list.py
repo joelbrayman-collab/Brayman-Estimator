@@ -358,8 +358,14 @@ def create_punch_list_item_from_client_walkthrough(
     source_project_work_id=None,
     source_change_order_id=None,
     organization_id=None,
+    commit=True,
 ):
-    """C2 accept-to-Punch-List. Origin is CLIENT_WALKTHROUGH. C1 create stays CONTRACTOR."""
+    """C2 accept-to-Punch-List. Origin is CLIENT_WALKTHROUGH. C1 create stays CONTRACTOR.
+
+    Walkthrough Accept owns the transaction (R03A). Pass commit=False so Punch
+    create/event participate in the caller commit. Standalone C1 create still
+    commits itself.
+    """
     loaded = _require_project(project, organization_id)
     raise_if_project_closed(loaded, PunchListError)
     user = _load_actor(actor)
@@ -395,7 +401,8 @@ def create_punch_list_item_from_client_walkthrough(
         previous_status=None,
         new_status=PUNCH_LIST_STATUS_OPEN,
     )
-    db.session.commit()
+    if commit:
+        db.session.commit()
     return item
 
 

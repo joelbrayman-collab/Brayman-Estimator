@@ -593,6 +593,7 @@ def create_extra_work(
     created_by: Optional[str] = None,
     actor_user_id: Optional[int] = None,
     organization_id: Optional[str] = None,
+    commit: bool = True,
 ) -> ProjectWorkActivity:
     org_id = _org_id(organization_id)
     project = _project_or_404(project_id, org_id)
@@ -673,7 +674,8 @@ def create_extra_work(
         actor_display_name=created_by,
         reason="Extra work created.",
     )
-    db.session.commit()
+    if commit:
+        db.session.commit()
     return activity
 
 

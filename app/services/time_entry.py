@@ -331,53 +331,58 @@ def submit_time(
             f"Hours for one day cannot be more than {MAX_HOURS_PER_WORKER_DAY}."
         )
     description = (extra_work_description or "").strip()
-    if description:
-        try:
-            activity = create_extra_work(
-                project_id=project.id,
-                description=description,
-                project_work_element_id=extra_work_element_id,
-                new_element_name=extra_work_element_name,
-                created_by=actor_name(worker),
-                actor_user_id=worker.id,
+    try:
+        if description:
+            try:
+                activity = create_extra_work(
+                    project_id=project.id,
+                    description=description,
+                    project_work_element_id=extra_work_element_id,
+                    new_element_name=extra_work_element_name,
+                    created_by=actor_name(worker),
+                    actor_user_id=worker.id,
+                    organization_id=org_id,
+                    commit=False,
+                )
+            except WorkScopeError as exc:
+                raise TimeEntryError(str(exc)) from exc
+        else:
+            activity = _active_activity_for_project(
+                project_work_activity_id=int(project_work_activity_id),
+                project=project,
                 organization_id=org_id,
             )
-        except WorkScopeError as exc:
-            raise TimeEntryError(str(exc)) from exc
-    else:
-        activity = _active_activity_for_project(
-            project_work_activity_id=int(project_work_activity_id),
-            project=project,
+        entry = LabourTimeEntry(
             organization_id=org_id,
+            worker_user_id=worker.id,
+            worker_display_name=worker.display_name,
+            work_date=parsed_date,
+            hours=parsed_hours,
+            project_id=project.id,
+            project_work_element_id=activity.project_work_element_id,
+            project_work_activity_id=activity.id,
+            project_name=project.name,
+            element_display_name=activity.element.display_name,
+            activity_display_name=activity.display_name,
+            status=TIME_STATUS_SUBMITTED,
+            worker_note=(worker_note or "").strip() or None,
+            submitted_at=datetime.utcnow(),
         )
-    entry = LabourTimeEntry(
-        organization_id=org_id,
-        worker_user_id=worker.id,
-        worker_display_name=worker.display_name,
-        work_date=parsed_date,
-        hours=parsed_hours,
-        project_id=project.id,
-        project_work_element_id=activity.project_work_element_id,
-        project_work_activity_id=activity.id,
-        project_name=project.name,
-        element_display_name=activity.element.display_name,
-        activity_display_name=activity.display_name,
-        status=TIME_STATUS_SUBMITTED,
-        worker_note=(worker_note or "").strip() or None,
-        submitted_at=datetime.utcnow(),
-    )
-    _apply_lineage(entry, activity)
-    db.session.add(entry)
-    db.session.flush()
-    _record_history(
-        entry=entry,
-        event=TIME_EVENT_SUBMITTED,
-        actor_user_id=worker.id,
-        actor_display_name=worker.display_name,
-        prior_status=None,
-        new_status=TIME_STATUS_SUBMITTED,
-    )
-    db.session.commit()
+        _apply_lineage(entry, activity)
+        db.session.add(entry)
+        db.session.flush()
+        _record_history(
+            entry=entry,
+            event=TIME_EVENT_SUBMITTED,
+            actor_user_id=worker.id,
+            actor_display_name=worker.display_name,
+            prior_status=None,
+            new_status=TIME_STATUS_SUBMITTED,
+        )
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
     return entry
 
 

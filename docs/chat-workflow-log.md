@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-22 — PKG-T03B / R03B TIME + EXTRA WORK ATOMICITY (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` @ `0b46dd5d6123e754b4fa8b394f934cb424e65387` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | PKG-T03B / R03B: one transaction for combined Time Submit + Extra Work. Extra-only and Time-only preserved. BUSINESS-ACTION-ATOMICITY tests. Targeted Phase 6 P6-02 and Phase 7 P7-02 re-audit of R03B only. |
+| Business decision | Extra-only Field/office remain independent actions. R11 duplicate Time identity not decided. A second deliberate combined Send after success is not treated as a defect. P8-05 copy rewrite deferred. |
+| Architectural decision | Pattern A: `create_extra_work(..., commit=False)` participates in `submit_time`'s caller-owned transaction. Extra-only callers keep default commit=True. Original two-commit seam was Extra `commit()` then Time `commit()`. |
+| Prompt template used | Architect PKG-T03B IMPLEMENT / TEST / TARGETED RE-AUDIT working tree only |
+| Approved Cursor prompt summary | Implement / test / targeted P6-02 + P7-02 re-audit of R03B in the working tree. No commit, push, deploy, migration, live Time/Extra, R03A rewrite, R02, R06, R10, R11, V1 rescore. |
+| Files expected to change | Extra create helper; Time submit; dedicated atomicity tests; occupancy docs |
+| Files prohibited from changing | Migrations, live DB, R04 Close engine, R03A Accept, R05 public submit, Time uniqueness, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | Combined Send is one commit. Injected post-Extra failure rolls Extra 0 / history 0 / Time 0. Retry after failure: 1 Extra + 1 Time. Extra-only and Time-only preserved. NOT COMMITTED. |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_time_extra_atomicity_r03b.py` → **9 passed**, 32 warnings, **6.67s**, exit **0**. Focused Time/Extra/R03A/C2/C1/Close/R04/R05/R01/Slice B → **193 passed**, 748 warnings, **105.93s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` → **1582 passed**, 5334 warnings, **696.45s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None. No schema required for combined atomicity. |
+| Unresolved issues | Remaining Rule 16 roots. P8-05 presentation still deferred. R11 owner decision still open. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not commit. Do not start R02. |
+| Next approved prompt | ACCEPT COMMIT PKG-T03B / R03B (Architect after review) |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-22 — PKG-T03A / R03A SHA-pin
 
 | Field | Content |

@@ -13,7 +13,7 @@ from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from typing import Optional
 
 from flask_login import current_user
-from sqlalchemy import func
+from sqlalchemy import func, update
 
 from app import db
 from app.models.project import Project
@@ -262,6 +262,54 @@ def _day_hours(
     return Decimal(str(total or 0))
 
 
+def _begin_immediate_sqlite():
+    """Take a SQLite RESERVED lock before concurrent Time transitions contend."""
+    bind = db.session.get_bind()
+    if bind is None or bind.dialect.name != "sqlite":
+        return
+    try:
+        db.session.connection().exec_driver_sql("BEGIN IMMEDIATE")
+    except Exception:
+        return
+
+
+def _claim_time_status_transition(
+    entry: LabourTimeEntry,
+    *,
+    expected_status: str,
+    new_status: str,
+    error_message: str,
+    values: Optional[dict] = None,
+) -> None:
+    """Same-transaction predicate: the Time row is still in expected_status.
+
+    UPDATE ... WHERE status=<expected> contends with another transition.
+    A Python read of entry.status is not sufficient.
+    """
+    pk = getattr(entry, "id", None)
+    org_id = getattr(entry, "organization_id", None)
+    if pk is None or not org_id:
+        raise TimeEntryError(error_message)
+    payload = {"status": new_status}
+    if values:
+        payload.update(values)
+    _begin_immediate_sqlite()
+    result = db.session.execute(
+        update(LabourTimeEntry)
+        .where(
+            LabourTimeEntry.id == int(pk),
+            LabourTimeEntry.organization_id == org_id,
+            LabourTimeEntry.status == expected_status,
+        )
+        .values(**payload)
+        .execution_options(synchronize_session=False)
+    )
+    if result.rowcount != 1:
+        db.session.rollback()
+        raise TimeEntryError(error_message)
+    db.session.expire(entry)
+
+
 def _record_history(
     *,
     entry: LabourTimeEntry,
@@ -428,28 +476,46 @@ def resubmit_time(
         project=project,
         organization_id=org_id,
     )
-    prior_status = entry.status
-    entry.hours = parsed_hours
-    entry.work_date = parsed_date
-    entry.project_work_element_id = activity.project_work_element_id
-    entry.project_work_activity_id = activity.id
-    entry.project_name = project.name
-    entry.worker_note = (worker_note or "").strip() or None
-    entry.return_reason = None
-    entry.status = TIME_STATUS_SUBMITTED
-    entry.submitted_at = datetime.utcnow()
-    entry.reviewed_by_user_id = None
-    entry.reviewed_at = None
-    _apply_lineage(entry, activity)
-    _record_history(
-        entry=entry,
-        event=TIME_EVENT_RESUBMITTED,
-        actor_user_id=worker.id,
-        actor_display_name=worker.display_name,
-        prior_status=prior_status,
-        new_status=TIME_STATUS_SUBMITTED,
-    )
-    db.session.commit()
+    lineage = inherit_scope_lineage(activity)
+    origin = lineage["effective_origin"]
+    if origin not in (SCOPE_ORIGINAL, SCOPE_CHANGE_ORDER, SCOPE_EXTRA_WORK):
+        origin = SCOPE_EXTRA_WORK
+    now = datetime.utcnow()
+    try:
+        _claim_time_status_transition(
+            entry,
+            expected_status=TIME_STATUS_RETURNED,
+            new_status=TIME_STATUS_SUBMITTED,
+            error_message="Only returned time can be corrected and sent again.",
+            values={
+                "hours": parsed_hours,
+                "work_date": parsed_date,
+                "project_work_element_id": activity.project_work_element_id,
+                "project_work_activity_id": activity.id,
+                "project_name": project.name,
+                "worker_note": (worker_note or "").strip() or None,
+                "return_reason": None,
+                "submitted_at": now,
+                "reviewed_by_user_id": None,
+                "reviewed_at": None,
+                "scope_origin": origin,
+                "change_order_id": lineage.get("change_order_id"),
+                "element_display_name": activity.element.display_name,
+                "activity_display_name": activity.display_name,
+            },
+        )
+        _record_history(
+            entry=entry,
+            event=TIME_EVENT_RESUBMITTED,
+            actor_user_id=worker.id,
+            actor_display_name=worker.display_name,
+            prior_status=TIME_STATUS_RETURNED,
+            new_status=TIME_STATUS_SUBMITTED,
+        )
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
     return entry
 
 
@@ -484,20 +550,31 @@ def approve_time(
     )
     if entry.status != TIME_STATUS_SUBMITTED:
         raise TimeEntryError("Only submitted time can be approved.")
-    prior_status = entry.status
-    entry.status = TIME_STATUS_APPROVED
-    entry.reviewed_by_user_id = reviewer.id
-    entry.reviewed_at = datetime.utcnow()
-    entry.return_reason = None
-    _record_history(
-        entry=entry,
-        event=TIME_EVENT_APPROVED,
-        actor_user_id=reviewer.id,
-        actor_display_name=reviewer.display_name,
-        prior_status=prior_status,
-        new_status=TIME_STATUS_APPROVED,
-    )
-    db.session.commit()
+    now = datetime.utcnow()
+    try:
+        _claim_time_status_transition(
+            entry,
+            expected_status=TIME_STATUS_SUBMITTED,
+            new_status=TIME_STATUS_APPROVED,
+            error_message="Only submitted time can be approved.",
+            values={
+                "reviewed_by_user_id": reviewer.id,
+                "reviewed_at": now,
+                "return_reason": None,
+            },
+        )
+        _record_history(
+            entry=entry,
+            event=TIME_EVENT_APPROVED,
+            actor_user_id=reviewer.id,
+            actor_display_name=reviewer.display_name,
+            prior_status=TIME_STATUS_SUBMITTED,
+            new_status=TIME_STATUS_APPROVED,
+        )
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
     return entry
 
 
@@ -518,21 +595,32 @@ def return_time(
     note = (reason or "").strip()
     if not note:
         raise TimeEntryError("Say why the time is being returned.")
-    prior_status = entry.status
-    entry.status = TIME_STATUS_RETURNED
-    entry.return_reason = note
-    entry.reviewed_by_user_id = reviewer.id
-    entry.reviewed_at = datetime.utcnow()
-    _record_history(
-        entry=entry,
-        event=TIME_EVENT_RETURNED,
-        actor_user_id=reviewer.id,
-        actor_display_name=reviewer.display_name,
-        prior_status=prior_status,
-        new_status=TIME_STATUS_RETURNED,
-        reason=note,
-    )
-    db.session.commit()
+    now = datetime.utcnow()
+    try:
+        _claim_time_status_transition(
+            entry,
+            expected_status=TIME_STATUS_SUBMITTED,
+            new_status=TIME_STATUS_RETURNED,
+            error_message="Only submitted time can be returned.",
+            values={
+                "return_reason": note,
+                "reviewed_by_user_id": reviewer.id,
+                "reviewed_at": now,
+            },
+        )
+        _record_history(
+            entry=entry,
+            event=TIME_EVENT_RETURNED,
+            actor_user_id=reviewer.id,
+            actor_display_name=reviewer.display_name,
+            prior_status=TIME_STATUS_SUBMITTED,
+            new_status=TIME_STATUS_RETURNED,
+            reason=note,
+        )
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
     return entry
 
 
@@ -581,48 +669,62 @@ def correct_approved_time(
         organization_id=org_id,
         allow_inactive=True,
     )
-    original.status = TIME_STATUS_SUPERSEDED
-    _record_history(
-        entry=original,
-        event=TIME_EVENT_SUPERSEDED,
-        actor_user_id=reviewer.id,
-        actor_display_name=reviewer.display_name,
-        prior_status=TIME_STATUS_APPROVED,
-        new_status=TIME_STATUS_SUPERSEDED,
-        reason=note,
-    )
-    correction = LabourTimeEntry(
-        organization_id=org_id,
-        worker_user_id=original.worker_user_id,
-        worker_display_name=original.worker_display_name,
-        work_date=parsed_date,
-        hours=parsed_hours,
-        project_id=project.id,
-        project_work_element_id=activity.project_work_element_id,
-        project_work_activity_id=activity.id,
-        project_name=project.name,
-        element_display_name=activity.element.display_name,
-        activity_display_name=activity.display_name,
-        status=TIME_STATUS_APPROVED,
-        worker_note=original.worker_note,
-        submitted_at=original.submitted_at,
-        reviewed_by_user_id=reviewer.id,
-        reviewed_at=datetime.utcnow(),
-        supersedes_id=original.id,
-    )
-    _apply_lineage(correction, activity)
-    db.session.add(correction)
-    db.session.flush()
-    _record_history(
-        entry=correction,
-        event=TIME_EVENT_APPROVED,
-        actor_user_id=reviewer.id,
-        actor_display_name=reviewer.display_name,
-        prior_status=None,
-        new_status=TIME_STATUS_APPROVED,
-        reason=note,
-    )
-    db.session.commit()
+    worker_user_id = original.worker_user_id
+    worker_display_name = original.worker_display_name
+    worker_note = original.worker_note
+    submitted_at = original.submitted_at
+    original_id = original.id
+    try:
+        _claim_time_status_transition(
+            original,
+            expected_status=TIME_STATUS_APPROVED,
+            new_status=TIME_STATUS_SUPERSEDED,
+            error_message="Only approved time can be corrected this way.",
+        )
+        _record_history(
+            entry=original,
+            event=TIME_EVENT_SUPERSEDED,
+            actor_user_id=reviewer.id,
+            actor_display_name=reviewer.display_name,
+            prior_status=TIME_STATUS_APPROVED,
+            new_status=TIME_STATUS_SUPERSEDED,
+            reason=note,
+        )
+        correction = LabourTimeEntry(
+            organization_id=org_id,
+            worker_user_id=worker_user_id,
+            worker_display_name=worker_display_name,
+            work_date=parsed_date,
+            hours=parsed_hours,
+            project_id=project.id,
+            project_work_element_id=activity.project_work_element_id,
+            project_work_activity_id=activity.id,
+            project_name=project.name,
+            element_display_name=activity.element.display_name,
+            activity_display_name=activity.display_name,
+            status=TIME_STATUS_APPROVED,
+            worker_note=worker_note,
+            submitted_at=submitted_at,
+            reviewed_by_user_id=reviewer.id,
+            reviewed_at=datetime.utcnow(),
+            supersedes_id=original_id,
+        )
+        _apply_lineage(correction, activity)
+        db.session.add(correction)
+        db.session.flush()
+        _record_history(
+            entry=correction,
+            event=TIME_EVENT_APPROVED,
+            actor_user_id=reviewer.id,
+            actor_display_name=reviewer.display_name,
+            prior_status=None,
+            new_status=TIME_STATUS_APPROVED,
+            reason=note,
+        )
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
     return correction
 
 

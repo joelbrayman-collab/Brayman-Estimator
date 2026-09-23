@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-22 — PKG-T10 / R10 TIME CONCURRENT TRANSITION (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` @ `eae94abda19d0223d50df98c2cf0f40ee4427dde` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | PKG-T10 / R10: existing Time row status transitions must be conditional DB updates, not stale Python reads. CONCURRENT-TRANSITION tests. Targeted Phase 6 + Phase 7 Time lost-update re-audit of R10 only. |
+| Business decision | R10 governs state transitions on one existing Time row. R11 duplicate-Time identity was not invented. R04 post-Close existing-identity approve/return/resubmit law preserved. R03B submit_time transaction ownership unchanged. |
+| Architectural decision | One Time-owned `_claim_time_status_transition` helper: `UPDATE labour_time_entries SET status=<target>, … WHERE id AND organization_id AND status=<expected>`; fail closed if rowcount != 1; history in the same transaction. Wired on approve, return, resubmit, and approved correction (APPROVED→SUPERSEDED). `submit_time` remains INSERT. No schema. |
+| Prompt template used | Architect PKG-T10 IMPLEMENT / TEST / TARGETED RE-AUDIT working tree only |
+| Approved Cursor prompt summary | Implement / test / targeted Phase 6 + Phase 7 re-audit of R10 in the working tree. No commit, push, deploy, migration, live Time transitions, live Close, R01/R04/R05/R03A/R03B/R02 rewrite, R11/R06/R13, V1 rescore. |
+| Files expected to change | Time service transitions; dedicated concurrent-transition tests; occupancy docs |
+| Files prohibited from changing | Migrations, live DB, Time uniqueness, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | Concurrent approve vs return: one wins. Double-approve / double-return / competing resubmit / competing correction fail closed. History matches winner. R11 POLICY: NOT INVENTED. NOT COMMITTED. |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_time_concurrent_transition_r10.py` → **7 passed**, 18 warnings, **5.82s**, exit **0**. Focused Time/Field/Extra/Close/tenancy → **244 passed**, 1028 warnings, **136.15s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` → **1599 passed**, 5429 warnings, **732.26s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None. Conditional UPDATE on existing id/org/status required no schema. |
+| Unresolved issues | Remaining Rule 16 roots. R11 owner decision still open. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not commit. Do not start R11/R06/R13. |
+| Next approved prompt | ACCEPT COMMIT PKG-T10 / R10 (Architect after review) |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-22 — PKG-T02 / R02 SHA-pin
 
 | Field | Content |

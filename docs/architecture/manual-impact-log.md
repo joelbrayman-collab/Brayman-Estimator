@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PKG-T10 / R10 TIME CONCURRENT TRANSITION (2026-09-22)
+
+| Field | Content |
+|-------|---------|
+| Slice | PKG-T10 / R10 Time concurrent status transition |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** User Guide remains outstanding. |
+| 1. What new contractor capability exists? | None new. Approve, Return, Send again, and approved Time correction still do the same contractor work. Two people can no longer both finish a conflicting change on the same Time row. |
+| 2. When would the contractor use it? | When office Approves or Returns submitted Time, when a worker Sends again after a Return, or when office corrects approved Time. |
+| 3. What workflow will the final Manual need to teach? | Same Time review workflow. If the Time is no longer waiting for that action, the later person is told it cannot be done that way. They should open the Time again. |
+| 4. What contractor-facing terms must be used? | Time. Submitted. Returned. Approved. Send. Send again. Correct. Do not say concurrent, rowcount, or UPDATE. |
+| 5. What screenshots / Print examples will eventually be needed? | Office Time detail after Approve. Office Time detail after Return. Field Send again after Return. |
+| 6. What warnings / validation distinctions need explanation? | “Only submitted time can be approved.” “Only submitted time can be returned.” “Only returned time can be corrected and sent again.” “Only approved time can be corrected this way.” Those messages now also cover a Time that another person already moved. |
+| 7. Desktop / iPhone / Print relevance | Office Time review and Field Time Send again. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim whole-system Rule 16 PASS. Invent a duplicate-Time rule. |
+
 ### MANUAL IMPACT — PKG-T02 / R02 FIELD PROJECT CONTEXT (2026-09-22)
 
 | Field | Content |

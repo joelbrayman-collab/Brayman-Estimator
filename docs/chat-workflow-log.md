@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — PKG-F08 R08 SCOPE_ORIGIN IMMUTABILITY AFTER OPERATIONAL USE (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | PKG-F08 / R08: live `scope_origin` must not be rewritten Extra→ORIGINAL or ORIGINAL→Extra after operational use. Historical Time snapshots must retain stored origin. |
+| Business decision | Operational use is any `LabourTimeEntry` on the activity. Pre-use Extra may still be recorded as original. Draft-linked Extra remains EXTRA_WORK. Do not rescore V1. Whole-system Rule 16 remains OPEN. Do not start F09. |
+| Architectural decision | Smallest existing operational-use boundary is Time existence. `_apply_lineage` already copies origin onto Time at submit. Punch/Schedule/MONITOR consume origin without storing an origin snapshot, so they are not F08 owners. Extra→CO authorizing rewrite is preserved T03C law, not the F08 defect. Birth assignment is not blocked. No schema. No second origin column. |
+| Prompt template used | Architect PKG-F08 IMPLEMENT / TEST / TARGETED RE-AUDIT working tree only |
+| Approved Cursor prompt summary | Map every scope_origin write path. Derive operational-use boundary from repository evidence. Block Extra→ORIGINAL and ORIGINAL→Extra after Time. Preserve historical Time, T03C Draft-linked EXTRA_WORK, Extra→CO atomicity. Permanent SCOPE-ORIGIN IMMUTABLE AFTER OPERATIONAL USE regression. Full suite. No commit, push, deploy, schema, migration, live DB, Flask restart, stash pop, V1 rescore, F09/S16/F14/F07. |
+| Files expected to change | `app/services/work_scope.py`, F08 tests, occupancy docs |
+| Files prohibited from changing | Live DB, Alembic, Flask 5460, recovery stash, V1 scores, T03C Extra→CO atomicity, F06/L05 law, other Rule 16 roots |
+| Implementation result | IMPLEMENTED IN WORKING TREE / TESTED / OPERATIONAL-USE BOUNDARY DERIVED FROM REPOSITORY EVIDENCE / ORIGIN IMMUTABLE AFTER OPERATIONAL USE PROVEN / HISTORICAL TIME SNAPSHOTS PRESERVED / DRAFT-LINKED EXTRA REMAINS EXTRA_WORK / T03C NON-REGRESSION PASS / R03B NON-REGRESSION PASS / R03A NON-REGRESSION PASS / R04 NON-REGRESSION PASS / R05 NON-REGRESSION PASS / R01 NON-REGRESSION PASS / F06 NON-REGRESSION PASS / L05 NON-REGRESSION PASS / TARGETED RE-AUDIT PASS / FULL SUITE PASS / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / NOT COMMITTED / NOT PUSHED |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_scope_origin_immutability_f08.py` → **11 passed**, 35 warnings, **3.77s**, exit **0**. Existing work_scope + Time + T03C + sealed roots → **114 passed**, 512 warnings, **74.83s**, exit **0** (work_scope **10**, Time **8**, T03C **14**, R03B **9**, R03A **9**, R04 **15**, R05 **12**, R01 **11**, F06 **11**, L05 **15**). Focused Extra/CO/Time/Walkthrough/Close/tenancy + F08 → **173 passed**, 672 warnings, **95.87s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` → **1668 passed**, 5661 warnings, **813.45s**, exit **0**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. Draft-linked Extra remains EXTRA_WORK. Authorizing Extra→CO rewrite remains CHANGE_ORDER. Time existence is the proven operational-use boundary; schedule/punch/MONITOR were not added as rewrite gates. |
+| Unresolved issues | PKG-F08 not committed. Remaining Rule 16 roots. Whole-system Rule 16 OPEN. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not commit. Do not start F09. |
+| Next approved prompt | Architect ACCEPT COMMIT PKG-F08 |
+| Commit hash | (none — working tree only) |
+
 ### 2026-09-23 — REVIEW TURNOVER SHA-pin
 
 | Field | Content |

@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PKG-F08 SCOPE ORIGIN AFTER TIME (2026-09-23)
+
+| Field | Content |
+|-------|---------|
+| Slice | PKG-F08 / R08 live origin immutability after Time |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** User Guide remains outstanding. |
+| 1. What new contractor capability exists? | None new for ordinary office work. Extra Work that already has time recorded against it cannot later be treated as original work, and original work that already has time recorded against it cannot later be reviewed into Extra Work. |
+| 2. When would the contractor use it? | When office tries Record as original work or Review as extra work after time has already been entered on that work. |
+| 3. What workflow will the final Manual need to teach? | Extra Work can be recorded as original work only before time is entered. After time exists, that classification stays. Time already entered keeps the origin it had when it was submitted. |
+| 4. What contractor-facing terms must be used? | Extra Work. Original work. Change Order work. Time. Do not say scope_origin, EXTRA_WORK, or operational-use boundary. |
+| 5. What screenshots / Print examples will eventually be needed? | Project work Extra Work row with Record as original work. The error after time already exists. |
+| 6. What warnings / validation distinctions need explanation? | The work can no longer be reclassified because time has already been recorded against it. Creating Extra Work, seeding original work, and linking Extra Work to a Change Order are different actions. |
+| 7. Desktop / iPhone / Print relevance | Office Project work. Field Extra Work create unchanged. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim whole-system Rule 16 PASS. Start F09 Project-child context. Change Change Order numbering (F14). |
+
 ### MANUAL IMPACT — PKG-T03C EXTRA WORK → CHANGE ORDER (2026-09-23)
 
 | Field | Content |

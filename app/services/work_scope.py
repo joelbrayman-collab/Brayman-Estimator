@@ -30,6 +30,7 @@ from app.models.work_structure import (
     ProjectWorkScopeDelta,
     ProjectWorkScopeHistory,
 )
+from app.models.time_entry import LabourTimeEntry
 from app.project_controls.models import ChangeOrder
 from app.services.work_structure import WorkStructureError, _org_id, _project_or_404
 from app.services.project_operating_lifecycle import raise_if_project_closed
@@ -37,6 +38,11 @@ from app.services.project_operating_lifecycle import raise_if_project_closed
 
 class WorkScopeError(WorkStructureError):
     """Raised when a SCOPE lineage operation cannot complete."""
+
+
+ORIGIN_REWRITE_BLOCKED_AFTER_TIME = (
+    "This work can no longer be reclassified because time has already been recorded against it."
+)
 
 
 def _as_hours(value) -> Decimal:
@@ -752,6 +758,26 @@ def link_extra_work_to_change_order(
     return activity
 
 
+def _activity_has_recorded_time(activity: ProjectWorkActivity, organization_id: str) -> bool:
+    """True when Time has already copied origin onto a labour Time row."""
+    return (
+        db.session.query(LabourTimeEntry.id)
+        .filter_by(
+            project_work_activity_id=activity.id,
+            organization_id=organization_id,
+        )
+        .first()
+        is not None
+    )
+
+
+def _raise_if_origin_used_operationally(
+    activity: ProjectWorkActivity, organization_id: str
+) -> None:
+    if _activity_has_recorded_time(activity, organization_id):
+        raise WorkScopeError(ORIGIN_REWRITE_BLOCKED_AFTER_TIME)
+
+
 def create_change_order_from_extra_work(
     *,
     project_work_activity_id: int,
@@ -845,6 +871,7 @@ def reclassify_extra_work_to_original(
         _project_or_404(activity.element.project_id, org_id),
         WorkScopeError,
     )
+    _raise_if_origin_used_operationally(activity, org_id)
     evidence = _activity_evidence_snapshot(activity)
     prior_co = activity.change_order_id
     activity.scope_origin = SCOPE_ORIGINAL
@@ -885,6 +912,7 @@ def reclassify_original_to_extra_work(
         raise WorkScopeError("Activity not found.")
     if activity.scope_origin != SCOPE_ORIGINAL:
         raise WorkScopeError("Only original work can be reviewed into extra work this way.")
+    _raise_if_origin_used_operationally(activity, org_id)
     evidence = _activity_evidence_snapshot(activity)
     activity.scope_origin = SCOPE_EXTRA_WORK
     _record_history(

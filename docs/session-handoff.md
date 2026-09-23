@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **2026-09-23 PKG-T03C R03C EXTRA WORK → CHANGE ORDER ATOMICITY COMMITTED / PUSHED / SHA-PINNED / CLOSED.** Product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`**. Combined Extra→CO is one transaction in `create_change_order_from_extra_work`. PKG-F06 remains **CLOSED** (product SHA **`aedc8ae2058842c3def709a333d407c47c1af089`**, pin SHA **`ceb40bc391aa24d0f2bc06666802fddd190e2984`**). PKG-L05 remains **CLOSED** (product SHA **`4682fc544ccdd3811be9f73488ad6f5a8c0777e6`**, pin SHA **`065649e75f741097064f1de5df5d24200c3fe370`**). PKG-T13 / R13 remains **CLOSED**. PKG-T10 / R10 remains **CLOSED**. PKG-T02 / R02 remains **CLOSED**. PKG-T03B / R03B remains **CLOSED**. PKG-T03A / R03A remains **CLOSED**. PKG-L02 / R05 remains **CLOSED**. PKG-L01 / R04 remains **CLOSED**. PKG-T01 / R01 remains **CLOSED**. No migration. No live DB mutation. No live Change Order / Extra Work / Project Close. Other Rule 16 roots **UNCORRECTED**. Whole-system Rule 16 **OPEN**. Home V2.2 remains desktop reference (`9ba1580a369e8550f027ab2bb346df8ae6aaac18`). VISUAL-2 ancestor **`01771845ce594449acb889b5664d094b8d31604d`**. Alembic **`g7b8c9d0e1f2 (head)`**. PA-D **NOT IMPLEMENTED**. Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. Flask 5460 **STOPPED**. HostPapa app deploy **does not exist**. |
+| Status | **2026-09-23 REVIEW TURNOVER CURSOR PHASE 2 — T03C-SEALED RESUME PACKAGE REBUILT IN WORKING TREE / NOT COMMITTED.** Active resume authority is PKG-T03C pin SHA **`c57cf5f4e1cfa55edb654af4b8599e53176300c8`**. T03C product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`**. F06 product **`aedc8ae2058842c3def709a333d407c47c1af089`** / pin **`ceb40bc391aa24d0f2bc06666802fddd190e2984`**. L05 product **`4682fc544ccdd3811be9f73488ad6f5a8c0777e6`** / pin **`065649e75f741097064f1de5df5d24200c3fe370`**. R01, R04, R05, R03A, R03B, R02, R10, R13, L05, F06, T03C remain **CLOSED**. Whole-system Rule 16 **OPEN**. Next package **PKG-F08 / R08 NOT STARTED / NOT AUTHORIZED** from this turnover. Draft-linked Extra remains **EXTRA_WORK** under sealed T03C law. No product code. No schema. No migration. No live DB mutation. Alembic **`g7b8c9d0e1f2 (head)`**. Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. Flask 5460 **STOPPED**. Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). HostPapa app deploy **does not exist**. Home V2.2 remains desktop reference (`9ba1580a369e8550f027ab2bb346df8ae6aaac18`). VISUAL-2 ancestor **`01771845ce594449acb889b5664d094b8d31604d`** is **historical**, not current resume authority. PA-D **NOT IMPLEMENTED**. |
 | Updated | 2026-09-23 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [v1-completion-register.md](v1-completion-register.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -38,18 +38,23 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 - **Product:** CalibraytAI / Brayman Estimator (The Estimator). Formerly CalibAi. Do not confuse with office chrome (Brayman Construction Platform) or tenant Brand Profile.
 - **Path:** `/Users/joelbrayman/Desktop/Brayman-Estimator` (`~/Desktop/Brayman-Estimator`)
 - **Environment:** local Flask office app; SQLite development/UAT DB (`sqlite:///brayman_estimator.db` → `instance/brayman_estimator.db`)
-- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026`
+- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026`
 - **Cursor / IDE workspace chat titles:** must start with `BRAYMAN — <Topic>`
-- **Current work:** VISUAL-2 Projects V2 register committed as local `origin/main` baseline. Project Hub visual sweep not done. HostPapa / production app deploy **does not exist**. People & Access remains separately governed.
+- **Roles:** Joel = Product Owner. ChatGPT = Architect. Cursor = Executor. Cursor does not choose product law, the next Rule 16 root, or scope.
+- **Current work:** Rule 16 final correction programme. Sealed checkpoint is **PKG-T03C pin** `c57cf5f4e1cfa55edb654af4b8599e53176300c8`. Next package **PKG-F08 / R08** is **NOT STARTED / NOT AUTHORIZED** until Architect authorizes it after this turnover is sealed. HostPapa / production app deploy **does not exist**. People & Access remains separately governed. VISUAL-2 Projects V2 register is a **historical** presentation ancestor, not current resume authority.
 
 ## 2. VERIFIED BASELINE
+
+**CURRENT SEALED CHECKPOINT (active resume authority, 2026-09-23):** Branch `main`. HEAD / `origin/main` **`c57cf5f4e1cfa55edb654af4b8599e53176300c8`** (`docs: pin PKG-T03C extra-work change-order SHA`). T03C product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`**. F06 product **`aedc8ae2058842c3def709a333d407c47c1af089`** / pin **`ceb40bc391aa24d0f2bc06666802fddd190e2984`**. L05 product **`4682fc544ccdd3811be9f73488ad6f5a8c0777e6`** / pin **`065649e75f741097064f1de5df5d24200c3fe370`**. Working tree at this turnover inspect: **CLEAN** at T03C pin; this Phase 2 package is docs-only dirt until Architect ACCEPT COMMIT. Alembic live current = graph head **`g7b8c9d0e1f2 (head)`**. Live DB UNCHANGED size `3457024` / mtime `1790020245.9238403`. Flask 5460 **STOPPED**. Recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**. Latest governed full suite (T03C product close): **1657 passed**, 5626 warnings, **789.32s**, exit **0**. Official V1 **65% / 4 of 11**. Secondary Functional V1 Build **79% / 22 of 28**. Whole-system Rule 16 **OPEN**. HostPapa app deploy **does not exist**.
+
+Historical SHA chain below is **not** current resume authority.
 
 - Branch: `main`
 - FG-017 close SHA: `620dec1a9612e87a1ede20cfa6aa46c6d72a8dd5` (`docs: close FG-017 live migration and office UAT`). Docs-reconciliation content: `dd30d752190e56ed687e270950df9bf9a06d7a26`. SHA-pin: `07cb46c501d968542dff567943044dc1db870f01`. Implementation parent `00ca492e28118d75757e9a9c82384978b5decd92`. FG-016 close `fa591f14b2eb99db75c4e3720fdeb30d14a8f77a`.
 - FG-016 implementation commit: `a709829d32d94ab2baf36f142ad0095254ba3d3a` (`feat: implement FG-016 Ontario Ottawa Permit Intelligence POC`)
 - FG-032 Slices A+B product SHA **`70e571140e12377aa5bd009b598530576401113b`** (`feat: implement FG-032 QuickBooks-ready artifacts`). Product parent / architecture errata **`010f6d641a756ceb2ab67475a284d3b8426c7b20`** (`docs: correct FG-032 Issued vs Accepted freeze`). Architecture **`93773820e410e327cd81919172c49a6f661def9e`** (`docs: define V1-05 QuickBooks Option A`). Docs pin **`9c254a38c39ef866cad3c5aca1f01cae4907f376`** (`docs: pin FG-032 Slices A+B SHA`). FG-031 Slice B UAT start pin **`314ced5699688a329dbdd7ab2484ef552dd447db`**. FG-031 Slice B product SHA **`5e1082af68e0eb145d9da01c0fa26585f6b8b9d1`** (`feat: implement FG-031 subcontract quote evidence`). Slice B UAT close **`8629f0459e51a94ee42cb475a536570cfbc21639`**. FG-031 docs close **`1a473d15c4cefb99a519f0b797f1772844206074`**. Start pin **`0d98b87112e8dda3537fe125d25f0737212bfe1c`**. FG-031 Slice A live-migrate/UAT close **`b50b0dcd1ea24f1a37ed32d04325ce09127fd203`**. Product SHA **`54120608df98432b9be80faf8c2a3a08cdb5679c`** (`feat: implement FG-031 scope delivery routing`). Confirmation-gate repair **`ec8dcf35f0da109b75422504e1a104c1623d186c`**. Start pin **`bbe22f2a10ba9ba827e50c92688774a025b95d34`**. FG-031 architecture SHA **`1c6c8c492b92f11cc80ad1b6e8689f0e42523bcd`** (`docs: record scope delivery routing architecture`). FG-028 Slice 3 product SHA **`502035fa70ced1d0ff042db3077cc66f50e68de4`** (`feat: install approved CalibraytAI product logo assets`). FG-029 close SHA **`880697a246de7e901a81f89584168a9a9fb1dd67`** (`docs: reconcile FG-029 close and current authority`). FG-029 product SHA **`ee578dcb5a688842ebedaff0682131826e6c7188`** (`feat: implement FG-029 BMR supplier workflow`). Parent architecture pin **`a077ba9f30c5925542fdf2663081f60a10241066`**. FG-029 architecture SHA **`07039c8dabfeba7b6ef4714d2cee50abf648bc4f`** (`docs: record V1-03 BMR supplier workflow architecture`). Parent FG-028 pin **`b8d74a4cbe2e25d2fce795cdb15aab7b4f76cc8f`** (`docs: pin FG-028 Slices 1-2 SHA`). FG-028 Slices 1–2 SHA **`e06fa92c4543ae641ba5067b1d277af048d97139`** (`feat: transition current product identity to CalibraytAI`). Parent pin **`3e15aeea065f74aae2a9036e1709ae5e76948e4e`**. FG-027 close SHA **`c348bcfb41daead674aaf75050fc0a6847a8c0c0`**. Parent pin **`cf282bc6ea5cb8c917b9bae052c84a31cae65445`**. FG-027 repair docs SHA **`020bb55cfb87222ed6dfb1b6fd6770f3b0e3b6be`**. FG-027 legacy override-provenance repair SHA **`72949f99da2b56ec06e95e16e29fa194a6730bbd`** (`fix: preserve FG-027 legacy override provenance`). FG-027 live-migrate / first-UAT-stop SHA **`3bf832b2fea5e1ade8c3e412dc7635a4a15c42b1`**. Pin **`db43d54e57a884de491cffa3bcda9119efde0c7a`**. FG-027 product SHA **`c751d72b32f1ed415375719df2fd69936ace64d7`** (`feat: implement FG-027 costing approval`). Start pin **`28fb5c0445fafabb2924d5d43bce46bf5fca3d0e`**. FG-026 product SHA **`aa4c71800586e0b8e2a63931bcdc8bc44d87a489`** (`feat: implement FG-026 takeoff-to-estimate mapping`). Parent **`73253c46b5fcb54a96345107ac49fe1162063369`** (`docs: establish CalibAi V1 completion register`). Slice 5 product SHA **`5b497905086554214e85f69afd8101d88f89161c`** (`feat: continue FG-025 contractor-facing Field Web language`). Parent **`0ed4d67282551d75b4204e33d367f3f3baba023a`** (`docs: reconcile FG-025 Slice 4 close record`). Slice 4 product SHA remains **`56e16f03446f982d577d2a3f0d3375ef865e1dc9`**. Slice 3 product SHA remains **`071f5f923515c6405298bf96b0af249a20f81358`**.
 - Alembic graph head (repository): **`g7b8c9d0e1f2`**. Live `flask db current`: **`g7b8c9d0e1f2 (head)`**. PA-C additive **applied live** 2026-09-20 (`f6a7b8c9d0e1` → `g7b8c9d0e1f2`). Live Person rows **1** (INACTIVE synthetic UAT Person retained). PA-B additive **applied live** 2026-09-20 (`e5f6a7b8c9d0` → `f6a7b8c9d0e1`; superseded as live current). Current Sys Admin **0**. APPOINT **1**. REMOVE **1**. C2 Client Final Walkthrough additive **applied live** 2026-09-19 (`d4e5f6a7b8c9` → `e5f6a7b8c9d0`; superseded as live current). No live C2 data. C1 Punch List additive **applied live** 2026-09-19 (`c3d4e5f6a7b8` → `d4e5f6a7b8c9`; superseded as live current). Punch List **LIVE / 0 ITEMS**. FG-038 PA-A additive **applied live** 2026-09-18 (`b2c3d4e5f6a7` → `c3d4e5f6a7b8`; superseded as live current). Stage 2 assigned ORG-001 Owner Membership **1** / User **1** / Joel Brayman. Owner SET events **1**. Isolation orgs **OWNERLESS**. All existing Projects **ACTIVE**. Event rows **0**. CORE CLOSE Slice A additive is superseded as live current. FG-037 additive **applied live** 2026-09-17 (`f9b0c1d2e3f4` → `a0b1c2d3e4f5`; superseded as live current). SCH-C **`f9b0c1d2e3f4` applied live** 2026-09-16 and is superseded as live current. SCH-B **`f7f8a9b0c1d2`** is superseded as live current. SCH-A **`f6e7f8a9b0c1`** is superseded as live current. FG-035 TIME **`f5d6e7f8a9b0` applied live** 2026-09-15 (superseded as live current). FG-035 SCOPE **`f4c5d6e7f8a9` applied live** 2026-09-15. FG-035 TAX/WBS **`f3b4c5d6e7f8` applied live** 2026-09-15. FG-034 MAIL-A/AUTH-A **`f2a3b4c5d6e7` applied live** 2026-09-15. Remaining applied-live chain through FG-033 / FG-024 / FG-032 is unchanged.
-- HEAD / `origin/main`: This FG-037 close docs commit follows live-migration **`967fea285bb8fc3cb7abefdba9153bbf717d3dcd`**. Product SHA **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`**. Official V1 rescore **`a15adb66fa80227075666e032c08d11eaf1c2aeb`**. Recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa`** remains available and was **not dropped**. Product PERF-B **`dcde4adfe4a475932b7f144b0220b2b60e4bd75c`**.
+- Historical HEAD / `origin/main` (not current resume): This FG-037 close docs commit follows live-migration **`967fea285bb8fc3cb7abefdba9153bbf717d3dcd`**. Product SHA **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`**. Official V1 rescore **`a15adb66fa80227075666e032c08d11eaf1c2aeb`**. Recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa`** remains available and was **not dropped**. Product PERF-B **`dcde4adfe4a475932b7f144b0220b2b60e4bd75c`**.
 - Latest governed full suite (this 19 Sep 2026 D3 office Help working-tree close): **1421 passed**, 4910 warnings, **678.61s**, exit **0**. Dedicated D3 **8 passed**. D1 Help **9 passed**. Focused/regression **348 passed**, 966 warnings, **161.81s**. HISTORICAL D2 full suite **1413 passed**, 4891 warnings, **613.33s**, exit **0**. Dedicated D2 **6 passed**. Focused/regression **357 passed**, 1040 warnings, **150.18s**. HISTORICAL D1 full suite **1407 passed**, 4875 warnings, **670.37s**, exit **0**. Dedicated C2 **34 passed**, 74 warnings, **18.70s**. Focused CORE CLOSE/Hub/CO/work/auth/Field/MONITOR/PERF **352 passed**, 1303 warnings, **198.21s**. HISTORICAL C2 working-tree/pin full suite **1398 passed**, 4860 warnings, **767.57s**. HISTORICAL C1 live-migration full suite **1364 passed**, 4786 warnings, **808.82s**, exit **0**. HISTORICAL FG-037 Slice A product close: **1213 passed**, 4287 warnings, **638.51s**, exit **0**. Dedicated FG-037 **23 passed**, 75 warnings, **18.72s**. Focused auth/org/Project/Schedule/Time/Field **154 passed**, 418 warnings, **106.05s**. HISTORICAL FG-035 PERF-B post-live-UAT full suite **1190 passed**, 4212 warnings, **746.12s**, exit **0**. Dedicated PERF-B **36 passed**, 339 warnings, **18.78s**. PERF-A+B **50 passed**, 463 warnings, **26.40s**. Focused TAX/WBS+SCOPE+TIME+SCH-A+SCH-B+SCH-C+SCH-D+PERF-A+PERF-B+Hub/Field/MONITOR **206 passed**, 1047 warnings, **116.29s**. HISTORICAL PERF-A post-live-UAT full suite **1154 passed**, 3873 warnings, **633.10s**. HISTORICAL PERF-B engineering full suite **1190 passed**, 4212 warnings, **619.11s**. HISTORICAL SCH-D post-physical full suite **1140 passed**, 3749 warnings, **665.58s**.
 - Chain: … → **`c1d2e3f4a5b6` (FG-020)** → **`d2e3f4a5b6c7` (FG-021)** → **`e3f4a5b6c7d8` (FG-023 Slice A; applied live 2026-09-07 Slice C)** → **`f4a5b6c7d8e9` (FG-026; applied live 2026-09-08)**
 - Historical Slice 5 full suite remains **612 passed**. Slice 4 dedicated **16** / Slice-4 focused **114** / governed **226** / full **609** remain historical. Close-time FG-023 dedicated **35** / focused **149** / full **593** remain historical.
@@ -114,11 +119,15 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**[FG-035](feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) OPEN / PARTIAL / TAX/WBS IMPLEMENTED / SCOPE IMPLEMENTED / TIME IMPLEMENTED / SCH-A IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS / SCH-B IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS / SCH-C IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS / SCH-D IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / COMMITTED / SHA-PINNED / PUSHED / PERF-A IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED / PERF-B IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED / PERF-C IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE UAT PASS / SEALED / CORE CLOSE SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / CORE CLOSE SLICE B IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NO MIGRATION / FG-038 PA-A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS / SCH OVERALL OPEN / PARTIAL.** [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. Repository Alembic head **`c3d4e5f6a7b8`**. Live current **`c3d4e5f6a7b8 (head)`**. **[FG-034](feature-gates/FG-034-account-recovery-and-transactional-email.md) CLOSED / OPERATIONAL FOR UAT / MAIL-A IMPLEMENTED / AUTH-A IMPLEMENTED / AUTH-B IMPLEMENTED / AUTH-C IMPLEMENTED / MAIL-B IMPLEMENTED / AUTH-D IMPLEMENTED / PASS.** [ADR-052](adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**. Live MAIL-A/AUTH-A revision **`f2a3b4c5d6e7`** (superseded as live current). **[FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) CLOSED / OPERATIONAL FOR UAT / SIGN-A IMPLEMENTED / SIGN-B IMPLEMENTED / SIGN-C IMPLEMENTED / SIGN-D IMPLEMENTED / SIGN-E IMPLEMENTED.** [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C CLOSED / OPERATIONAL FOR UAT / TECH-A IMPLEMENTED / TECH-B IMPLEMENTED / TECH-C IMPLEMENTED / TECH-D IMPLEMENTED / OVERALL OPEN / PARTIAL.** [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**. [ADR-051](adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. **[FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) CLOSED / OPERATIONAL FOR UAT.** [ADR-049](adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**. Product SHA **`70e571140e12377aa5bd009b598530576401113b`**. Product parent **`010f6d641a756ceb2ab67475a284d3b8426c7b20`**. Canonical UAT project **id 26**. V1-05 **COMPLETE**. **[FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) CLOSED / OPERATIONAL FOR UAT.** [ADR-048](adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. **[FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) CLOSED / OPERATIONAL FOR UAT.** **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / BOUNDED BMR DEMO OFFICE UAT PASS.** [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. V1 **65% / 4 of 11**. V1-03 **COMPLETE**. V1-04 **PARTIAL**. V1-05 **COMPLETE**. V1-06 **PARTIAL / 0.40**. V1-07 **PARTIAL / SIGN-A THROUGH SIGN-E IMPLEMENTED / PRODUCTION NOT COMPLETE**. **[FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** [ADR-047](adr/ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only). **[FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) CLOSED / OPERATIONAL FOR UAT.** [FG-028](feature-gates/FG-028-calibai-to-calibraytai-product-identity-transition.md) **SLICES 1–3 COMPLETE / CLOSED / OPERATIONAL FOR UAT.** [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) remains **CLOSED / OPERATIONAL FOR UAT.** [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) remains **CLOSED / OPERATIONAL FOR UAT.** [FG-021 CLOSED.]
+**CURRENT (2026-09-23):** Rule 16 final correction programme is **OPEN**. Sealed packages at this checkpoint: R01, R04, R05, R03A, R03B, R02, R10, R13, PKG-L05, PKG-F06, PKG-T03C. Current HEAD is the T03C pin **`c57cf5f4e1cfa55edb654af4b8599e53176300c8`**. Next package **PKG-F08 / R08 — SCOPE_ORIGIN IMMUTABILITY AFTER OPERATIONAL USE** is **NOT STARTED / NOT AUTHORIZED** from this turnover. Alembic authority **`g7b8c9d0e1f2 (head)`**. V1 scores **unchanged**.
+
+**[FG-035](feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) OPEN / PARTIAL / TAX/WBS IMPLEMENTED / SCOPE IMPLEMENTED / TIME IMPLEMENTED / SCH-A IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS / SCH-B IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS / SCH-C IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS / SCH-D IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / COMMITTED / SHA-PINNED / PUSHED / PERF-A IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED / PERF-B IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED / PERF-C IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE UAT PASS / SEALED / CORE CLOSE SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / CORE CLOSE SLICE B IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NO MIGRATION / FG-038 PA-A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS / SCH OVERALL OPEN / PARTIAL.** [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. Repository Alembic head **`g7b8c9d0e1f2`**. Live current **`g7b8c9d0e1f2 (head)`**. Historical PA-A/C1 current **`c3d4e5f6a7b8`** is superseded. **[FG-034](feature-gates/FG-034-account-recovery-and-transactional-email.md) CLOSED / OPERATIONAL FOR UAT / MAIL-A IMPLEMENTED / AUTH-A IMPLEMENTED / AUTH-B IMPLEMENTED / AUTH-C IMPLEMENTED / MAIL-B IMPLEMENTED / AUTH-D IMPLEMENTED / PASS.** [ADR-052](adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**. Live MAIL-A/AUTH-A revision **`f2a3b4c5d6e7`** (superseded as live current). **[FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) CLOSED / OPERATIONAL FOR UAT / SIGN-A IMPLEMENTED / SIGN-B IMPLEMENTED / SIGN-C IMPLEMENTED / SIGN-D IMPLEMENTED / SIGN-E IMPLEMENTED.** [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C CLOSED / OPERATIONAL FOR UAT / TECH-A IMPLEMENTED / TECH-B IMPLEMENTED / TECH-C IMPLEMENTED / TECH-D IMPLEMENTED / OVERALL OPEN / PARTIAL.** [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**. [ADR-051](adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. **[FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) CLOSED / OPERATIONAL FOR UAT.** [ADR-049](adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**. Product SHA **`70e571140e12377aa5bd009b598530576401113b`**. Product parent **`010f6d641a756ceb2ab67475a284d3b8426c7b20`**. Canonical UAT project **id 26**. V1-05 **COMPLETE**. **[FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) CLOSED / OPERATIONAL FOR UAT.** [ADR-048](adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. **[FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) CLOSED / OPERATIONAL FOR UAT.** **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / BOUNDED BMR DEMO OFFICE UAT PASS.** [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. V1 **65% / 4 of 11**. V1-03 **COMPLETE**. V1-04 **PARTIAL**. V1-05 **COMPLETE**. V1-06 **PARTIAL / 0.40**. V1-07 **PARTIAL / SIGN-A THROUGH SIGN-E IMPLEMENTED / PRODUCTION NOT COMPLETE**. **[FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** [ADR-047](adr/ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only). **[FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) CLOSED / OPERATIONAL FOR UAT.** [FG-028](feature-gates/FG-028-calibai-to-calibraytai-product-identity-transition.md) **SLICES 1–3 COMPLETE / CLOSED / OPERATIONAL FOR UAT.** [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) remains **CLOSED / OPERATIONAL FOR UAT.** [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) remains **CLOSED / OPERATIONAL FOR UAT.** [FG-021 CLOSED.]
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **2026-09-23 PKG-T03C COMMITTED / PUSHED / SHA-PINNED / CLOSED.** Product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`**. Combined Extra→CO is one transaction. PATH 1 `create_change_order_from_extra_work` and PATH 2 office new-CO form with `extra_work_activity_id` share that owner. `create_change_order(..., commit=False)` and `link_extra_work_to_change_order(..., commit=False)` participate. Injected post-CO/pre-link failure rolls CO back; Extra remains unlinked; retry creates exactly one CO and one link. PATH 2 does not redirect to an orphan CO. Standalone CO, Extra-only, and Extra→existing-CO remain separate. Authorizing-linked Extra cannot create another CO. Draft-linked Extra remains eligible under existing EXTRA_WORK origin law; that origin law is deferred to F08. Dedicated T03C **14 passed**, 63 warnings, **11.04s**. Focused **162 passed**, 637 warnings, **94.83s**. Dedicated R03B+R03A+R04+R05+R01+F06+L05 **82 passed**, 236 warnings, **56.39s**. Full suite **1657 passed**, 5626 warnings, **789.32s**, exit **0**. No schema. No migration. Live DB unchanged (`3457024` / mtime `1790020245.9238403`). No live Change Order / Extra Work / Project Close. V1 scores unchanged (**65% / 4 of 11**, **79% / 22 of 28**). R01, R04, R05, R03A, R03B, R02, R10, R13, L05, F06 remain **CLOSED**. T03C **CLOSED**. Whole-system Rule 16 remains **OPEN**. Next Rule 16 package **PKG-F08 / R08** is **NOT implemented** from this pin. Next **STOP for ChatGPT Architect authorization of PKG-F08.** Do **not** start F08, F09, S16, F14, F07, R07, R11, or R14 from this pin.
+**Last authorized delta:** **2026-09-23 REVIEW TURNOVER CURSOR PHASE 2 (working tree / not committed).** Docs/governance only. Rebuilt active resume authority in `docs/session-handoff.md` §§1–2, §7, §10, §15, §§20–22 to the T03C pin. VISUAL-2 / FG-034 / 15 SEP startup material is **historical**, not current resume authority. No product code. No schema. No migration. No live DB mutation. F08 **NOT STARTED**. Next **STOP for ChatGPT Architect ACCEPT COMMIT of this turnover documentation.**
+
+**Prior:** **2026-09-23 PKG-T03C COMMITTED / PUSHED / SHA-PINNED / CLOSED.** Product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`**. Combined Extra→CO is one transaction. PATH 1 `create_change_order_from_extra_work` and PATH 2 office new-CO form with `extra_work_activity_id` share that owner. `create_change_order(..., commit=False)` and `link_extra_work_to_change_order(..., commit=False)` participate. Injected post-CO/pre-link failure rolls CO back; Extra remains unlinked; retry creates exactly one CO and one link. PATH 2 does not redirect to an orphan CO. Standalone CO, Extra-only, and Extra→existing-CO remain separate. Authorizing-linked Extra cannot create another CO. Draft-linked Extra remains eligible under existing EXTRA_WORK origin law; that origin law is deferred to F08. Dedicated T03C **14 passed**, 63 warnings, **11.04s**. Focused **162 passed**, 637 warnings, **94.83s**. Dedicated R03B+R03A+R04+R05+R01+F06+L05 **82 passed**, 236 warnings, **56.39s**. Full suite **1657 passed**, 5626 warnings, **789.32s**, exit **0**. No schema. No migration. Live DB unchanged (`3457024` / mtime `1790020245.9238403`). No live Change Order / Extra Work / Project Close. V1 scores unchanged (**65% / 4 of 11**, **79% / 22 of 28**). R01, R04, R05, R03A, R03B, R02, R10, R13, L05, F06 remain **CLOSED**. T03C **CLOSED**. Whole-system Rule 16 remains **OPEN**. Next Rule 16 package **PKG-F08 / R08** is **NOT implemented** from this pin. Next **STOP for ChatGPT Architect authorization of PKG-F08.** Do **not** start F08, F09, S16, F14, F07, R07, R11, or R14 from this pin.
 
 **Prior:** **2026-09-23 PKG-T03C R03C EXTRA WORK → CHANGE ORDER ATOMICITY (working tree / then committed as the product SHA above).** Combined Extra→CO is one transaction. PATH 1 `create_change_order_from_extra_work` and PATH 2 office new-CO form with `extra_work_activity_id` share that owner. `create_change_order(..., commit=False)` and `link_extra_work_to_change_order(..., commit=False)` participate. Injected post-CO/pre-link failure rolls CO back; Extra remains unlinked; retry creates exactly one CO and one link. PATH 2 does not redirect to an orphan CO. Standalone CO, Extra-only, and Extra→existing-CO remain separate. Dedicated T03C **14 passed**, 63 warnings, **11.04s**. Focused **162 passed**, 637 warnings, **94.83s**. Dedicated R03B+R03A+R04+R05+R01+F06+L05 **82 passed**, 236 warnings, **56.39s**. Full suite **1657 passed**, 5626 warnings, **789.32s**, exit **0**. No schema. No migration. Live DB unchanged (`3457024` / mtime `1790020245.9238403`). No live Change Order / Extra Work / Project Close. V1 scores unchanged (**65% / 4 of 11**, **79% / 22 of 28**). R01, R04, R05, R03A, R03B, R02, R10, R13, L05, F06 remain **CLOSED**. Whole-system Rule 16 remains **OPEN**. Next **STOP for ChatGPT Architect ACCEPT COMMIT PKG-T03C.** Do **not** commit, push, deploy, or start F08/F09/S16 from this working tree.
 
@@ -572,7 +581,8 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 
 ## 10. TEST / UAT / MIGRATION STATUS
 
-- Latest CORE CLOSE Slice B: product SHA **`9360b706ab66f2588306b201ca0c4c45645fcb9a`**. Dedicated **37 passed**. Slice A+B **55 passed**, 143 warnings, **20.67s**, exit **0**. Focused Schedule/Field/Time/CO/MONITOR/PERF-C/shared API/FG-037 **234 passed**, 745 warnings, **146.85s**, exit **0**. Focused Scope/work-structure **23 passed**, 193 warnings, **15.62s**. Full suite **1281 passed**, 4509 warnings, **644.63s**, exit **0**. No migration. Live occupancy **50 / 50 ACTIVE / 0 CLOSED / 0 events**.
+- **CURRENT (T03C product close, 2026-09-23):** full suite **1657 passed**, 5626 warnings, **789.32s**, exit **0**. Dedicated T03C **14 passed**, 63 warnings, **11.04s**. Focused Extra/CO/Time/Walkthrough/Close/tenancy **162 passed**, 637 warnings, **94.83s**. Dedicated R03B+R03A+R04+R05+R01+F06+L05 **82 passed**, 236 warnings, **56.39s**. Alembic **`g7b8c9d0e1f2 (head)`**. No T03C/F06/L05 migration. Live DB UNCHANGED (`3457024` / `1790020245.9238403`). This turnover did **not** rerun the suite.
+- Historical CORE CLOSE Slice B: product SHA **`9360b706ab66f2588306b201ca0c4c45645fcb9a`**. Dedicated **37 passed**. Slice A+B **55 passed**, 143 warnings, **20.67s**, exit **0**. Focused Schedule/Field/Time/CO/MONITOR/PERF-C/shared API/FG-037 **234 passed**, 745 warnings, **146.85s**, exit **0**. Focused Scope/work-structure **23 passed**, 193 warnings, **15.62s**. Full suite **1281 passed**, 4509 warnings, **644.63s**, exit **0**. No migration. Live occupancy **50 / 50 ACTIVE / 0 CLOSED / 0 events**.
 - Latest CORE CLOSE Slice A: live current = graph head **`b2c3d4e5f6a7 (head)`**. Product SHA **`f4b7515664c51850f3d87ed79f4a7e1226886fbd`**. Applied live 2026-09-18 (`a0b1c2d3e4f5` → `b2c3d4e5f6a7`). All existing Projects **ACTIVE**. Event rows **0**. Dedicated **18 passed**. Focused live-migration regression **176 passed**, 670 warnings, **91.05s**, exit **0**. HISTORICAL product-close focused **176 passed**, 670 warnings, **110.43s**. HISTORICAL full suite **1244 passed**, 4390 warnings, **640.57s**, exit **0**.
 - Live current **`b2c3d4e5f6a7 (head)`**. Repository graph head **`b2c3d4e5f6a7`**. One graph head. CORE CLOSE Slice A **`b2c3d4e5f6a7` applied live** 2026-09-18. FG-037 **`a0b1c2d3e4f5` applied live** 2026-09-17 (superseded as live current). Historical FG-024 Slice C **`d3e4f5a6b7c8` applied live** 2026-09-13. FG-024 Slice B **`c2d3e4f5a6b7` applied live** 2026-09-13. FG-024 Slice A **`b1c2d3e4f5a6` applied live** 2026-09-13. FG-032 A+B **`e9f0a1b2c3d4` applied live** 2026-09-11. Slice C events **`f0a1b2c3d4e5`** and occupancy **`f1a2b3c4d5e6` applied live** 2026-09-11 (historical **gate-at-close** live current for FG-032; superseded as live current today). Canonical DEMO UAT project **id 26**. Latest governed full suite (this 14 Sep 2026 docs-only reconciliation): **825 passed**, 2771 warnings, **258.44s**. HISTORICAL FG-024 Slice C live-UAT close: **825 passed**, 2771 warnings, **266.33s**. HISTORICAL FG-032 Slice C UAT: dedicated **37 passed** / 16.61s; regressions **256 passed** / 88.48s; full **765 passed** / 299.75s; office UAT **97 cases PASS**. Historical occupancy-repair full **765** / 422.30s remain historical. Historical Slice C implementation dedicated **36 passed** / full **764 passed**. Historical A+B post-migrate dedicated **23 passed** (12.96s) / full **751 passed**. Evidence [testing/fg024-slice-c-live-migrate-bounded-uat-record.md](testing/fg024-slice-c-live-migrate-bounded-uat-record.md), [testing/fg032-slice-c-live-migrate-bounded-uat-record.md](testing/fg032-slice-c-live-migrate-bounded-uat-record.md) and [testing/fg032-slices-ab-live-migrate-bounded-uat-record.md](testing/fg032-slices-ab-live-migrate-bounded-uat-record.md).
 - Historical FG-027-era note (superseded as live current): Repository graph head `a5b6c7d8e9f0`. Live current `a5b6c7d8e9f0`. Applied `f4a5b6c7d8e9` → `a5b6c7d8e9f0` (2026-09-08 FG-027). No new revision in the override-provenance repair. Live costing snapshot tables exist; no CURRENT snapshot on EstimateVersion 9. Live UAT line 7 residue: working unit_cost **250**, `library_unit_cost_reference` **NULL**.
@@ -625,6 +635,22 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - **FG-027:** **CLOSED / OPERATIONAL FOR UAT**. **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE UAT PASS**. Repair SHA **`72949f99da2b56ec06e95e16e29fa194a6730bbd`**. V1-02 **COMPLETE**. [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Approve All = costing approval only. Additive `a5b6c7d8e9f0` **applied live**. Does **not** accept ADR-008.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
+
+**2026-09-23 REVIEW TURNOVER CURSOR PHASE 2 (working tree / not committed).** Chat history is not the system of record. Active resume authority is rebuilt to the T03C pin. Classifications:
+
+| Item | Classification |
+|------|----------------|
+| PKG-T03C product SHA `95659c8432761815cbd9825969cc5b6cc683042d` / pin SHA `c57cf5f4e1cfa55edb654af4b8599e53176300c8` / Extra→CO one transaction / Draft-linked Extra remains EXTRA_WORK | **ALREADY IN REPOSITORY** (product + pin) |
+| PKG-F06 product `aedc8ae2058842c3def709a333d407c47c1af089` / pin `ceb40bc391aa24d0f2bc06666802fddd190e2984` | **ALREADY IN REPOSITORY** |
+| PKG-L05 product `4682fc544ccdd3811be9f73488ad6f5a8c0777e6` / pin `065649e75f741097064f1de5df5d24200c3fe370` | **ALREADY IN REPOSITORY** |
+| Alembic `g7b8c9d0e1f2 (head)`; live DB size `3457024` / mtime `1790020245.9238403`; Flask 5460 STOPPED; recovery stash `840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED | **ALREADY IN REPOSITORY** (verified this pass) |
+| Official V1 65% / 4 of 11; secondary Functional V1 Build 79% / 22 of 28; whole-system Rule 16 OPEN | **ALREADY IN REPOSITORY** (not rescored) |
+| Next package PKG-F08 / R08 NOT STARTED / NOT AUTHORIZED from this turnover | **ALREADY IN REPOSITORY** (recorded this pass) |
+| HostPapa app deploy does not exist | **ALREADY IN REPOSITORY** |
+| session-handoff §§20–22, §21 expected HEAD, and §22 Fresh Chat Startup Prompt still pointing at VISUAL-2 / FG-034 / 15 SEP 2026 | **SUPERSEDED** — rebuilt this pass |
+| Historical VISUAL-2 / FG-034 / 15 SEP entries in §8 Prior and chat-workflow-log | **ALREADY IN REPOSITORY** (historical; not rewritten as current) |
+
+**Completeness test:** Is there any material approved decision, requirement, implementation fact, protected baseline, unresolved decision, or current authorization present in the active Turnover Delta Ledger that is not represented in the repository? **NO — verified through Turnover Delta Ledger reconciliation for this Phase 2 package.** Remaining Rule 16 roots stay OPEN. F08 is identified as next and is **not** authorized.
 
 **2026-09-08 V1-02 / FG-027 bounded office UAT continuation + close.** Remaining office UAT **PASS** on EstimateVersion **id 9** / port **5016**. Legacy override freeze **PASS**. Approve All / supersession / Pricing consume / STALE / re-apply **PASS**. Gate **CLOSED / OPERATIONAL FOR UAT**. V1-02 **COMPLETE**. Readiness **45%**. No new migration. No product-code change. Product tests **not** rerun (last verified dedicated **20** / full **652**).
 
@@ -698,6 +724,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 
 ## 16. OPEN DECISIONS
 
+- **CURRENT (2026-09-23):** Whole-system Rule 16 remains **OPEN**. Next numbered package **PKG-F08 / R08 — SCOPE_ORIGIN IMMUTABILITY AFTER OPERATIONAL USE** is **NOT STARTED / NOT AUTHORIZED** from this turnover. Draft-linked Extra remains **EXTRA_WORK** under sealed T03C law. Do **not** silently rewrite that origin law here.
 - Real external AI provider / ADR-010 (not authorized)
 - Phase D reviewed quantity → estimate mapping — [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**.
 - Project Hub UX (roadmap item 8; **CLOSED / OPERATIONAL FOR UAT**)
@@ -743,17 +770,17 @@ No product-code defects were opened for repair in this turnover. Do not fix them
 
 ## 19. EXPLICITLY PROHIBITED NEXT ACTIONS
 
-Do **not** send live Postmark from this note. Do **not** create a Postmark account from this note. Do **not** reopen FG-032. Do **not** implement live QuickBooks API. Do **not** implement [FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md). Do **not** reopen PERF-C. Do **not** invent a PERF-C-only Project filter. Do **not** implement Completion Sign-Off, Native Signing changes, or live Project Close. Do **not** manually mutate `operating_state`. Do **not** run `flask db upgrade` / `downgrade` / `stamp`. Do **not** alter the live Instance Owner. Do **not** appoint a live System Administrator. Do **not** implement Home Office. Do **not** implement People & Access UI. Do **not** begin LEARN / QB-T. Do **not** mutate Project **45**, Project **46**, Project **47**, Project **48**, Project **49**, Project **50**, or EST-2026-0019. Do **not** classify UAT Projects from names. Do **not** implement visual Schedule / MONITOR forecast / LEARN Closeout / Contractor Language + UX E2E Audit. Do **not** implement desktop Print / print CSS. Do **not** implement a Voice action engine or the professional User Manual. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**. Do **not** invent FG-036. Do **not** begin FG-024 Slice D. Do **not** populate Ontario production legal content. Do **not** implement remaining FG-025 surfaces. Do **not** implement Observation Delete. Do **not** accept ADR-008. Do **not** publish the marketing website from this repository. Do **not** drop recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa`**. Do **not** create Ben’s account. Do **not** grant `SENSITIVE_FINANCIAL`. Do **not** add further live `COMPANY_MANAGEMENT` grants from this record.
+Do **not** start PKG-F08 / R08 from this turnover. Do **not** start F09, S16, F14, F07, R07, R11, or R14 from this record. Do **not** reopen T03C except for later authorized non-regression testing. Do **not** silently rewrite Draft-linked Extra remaining EXTRA_WORK. Do **not** mutate the live DB. Do **not** restart Flask 5460. Do **not** pop recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa`**. Do **not** rescore V1. Do **not** deploy. Do **not** invent a HostPapa app deploy. Do **not** send live Postmark from this note. Do **not** create a Postmark account from this note. Do **not** reopen FG-032. Do **not** implement live QuickBooks API. Do **not** implement [FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md). Do **not** reopen PERF-C. Do **not** invent a PERF-C-only Project filter. Do **not** implement Completion Sign-Off, Native Signing changes, or live Project Close. Do **not** manually mutate `operating_state`. Do **not** run `flask db upgrade` / `downgrade` / `stamp`. Do **not** alter the live Instance Owner. Do **not** appoint a live System Administrator. Do **not** implement Home Office. Do **not** implement People & Access UI. Do **not** begin LEARN / QB-T. Do **not** mutate Project **45**, Project **46**, Project **47**, Project **48**, Project **49**, Project **50**, or EST-2026-0019. Do **not** classify UAT Projects from names. Do **not** implement visual Schedule / MONITOR forecast / LEARN Closeout / Contractor Language + UX E2E Audit. Do **not** implement desktop Print / print CSS. Do **not** implement a Voice action engine or the professional User Manual. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**. Do **not** invent FG-036. Do **not** begin FG-024 Slice D. Do **not** populate Ontario production legal content. Do **not** implement remaining FG-025 surfaces. Do **not** implement Observation Delete. Do **not** accept ADR-008. Do **not** publish the marketing website from this repository. Do **not** drop recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa`**. Do **not** create Ben’s account. Do **not** grant `SENSITIVE_FINANCIAL`. Do **not** add further live `COMPANY_MANAGEMENT` grants from this record.
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP.** VISUAL-2 is committed on `main`. HostPapa app deploy **does not exist** in this repository. Do **not** call localhost production. Do **not** rescore V1. People-track next remains **PA-D** and is separately governed. Official V1 **65% / 4 of 11**. Secondary Functional V1 Build **79% / 22 of 28**.
+**Next governed action:** **STOP.** Sealed checkpoint is **PKG-T03C pin** `c57cf5f4e1cfa55edb654af4b8599e53176300c8`. T03C product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`**. Whole-system Rule 16 remains **OPEN**. Next numbered package is **PKG-F08 / R08 — SCOPE_ORIGIN IMMUTABILITY AFTER OPERATIONAL USE**. F08 is **NOT STARTED / NOT AUTHORIZED** from this turnover. A brand-new ChatGPT Architect chat and Cursor Executor chat must start from §22. Do **not** resume from VISUAL-2, FG-034, or the 15 SEP 2026 startup prompt. HostPapa app deploy **does not exist**. Do **not** call localhost production. Do **not** rescore V1. Official V1 **65% / 4 of 11**. Secondary Functional V1 Build **79% / 22 of 28**. Draft-linked Extra remains **EXTRA_WORK** under sealed T03C law. People-track next remains **PA-D** and is separately governed.
 
 **Roadmap direction (not authorization):** Item 12 Field Web is **CLOSED**. Item 13 **CLOSED / OPERATIONAL FOR UAT**. [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) is **SLICE 1, SLICE 2, SLICE 3, SLICE 4, SLICE 5, AND SLICE 6 IMPLEMENTED / NOT CLOSED** (remaining surfaces not authorized). [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Item 15 / [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) is **FUTURE / RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C CLOSED / OPERATIONAL FOR UAT / TECH-A IMPLEMENTED / TECH-B IMPLEMENTED / TECH-C IMPLEMENTED / TECH-D IMPLEMENTED / OVERALL OPEN / PARTIAL**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
-Run in **Cursor Terminal**:
+Run in **Cursor Terminal**. These commands are **READ / VERIFY** only. Do **not** reset, pull, merge, rebase, amend, stash pop, clean unexpected dirt, restart Flask, or mutate the live DB.
 
 ```bash
 cd /Users/joelbrayman/Desktop/Brayman-Estimator
@@ -763,40 +790,47 @@ git branch --show-current
 git log -1 --oneline
 git rev-parse HEAD
 git rev-parse origin/main
+git rev-parse --abbrev-ref @{u}
+git rev-list --left-right --count origin/main...HEAD
 git diff --check
+git stash list
+stat -f '%z %m %Sm' -t '%Y-%m-%d %H:%M:%S' instance/brayman_estimator.db
+lsof -nP -iTCP:5460 -sTCP:LISTEN || true
 ./venv/bin/flask db current
 ./venv/bin/flask db heads
-./venv/bin/python -m pytest -q tests/test_contract_generation_policy_fg024.py
-./venv/bin/python -m pytest -q tests/test_contract_generation_fg024.py
-./venv/bin/python -m pytest -q tests/test_legal_content_activation_fg024.py
-./venv/bin/python -m pytest -q tests/test_legal_content_update_fg024.py
-./venv/bin/python -m pytest -q tests/test_legal_content_library_fg024.py
-./venv/bin/python -m pytest -q tests/test_monitor_v1_fg023.py
-./venv/bin/python -m pytest -q tests/test_monitor_v1_fg023.py tests/test_project_hub.py tests/test_auth_fg018.py tests/test_build_field_observation_fg020.py tests/test_build_media_compatibility_fg020.py tests/test_field_web_fg021.py
-./venv/bin/python -m pytest -q tests/test_build_field_observation_fg020.py tests/test_build_media_compatibility_fg020.py
-./venv/bin/python -m pytest -q tests/test_auth_fg018.py tests/test_shared_api_fg019.py
-./venv/bin/python -m pytest -q tests/test_estimate_output_consistency.py
-./venv/bin/python -m pytest -q tests/test_project_hub.py
-./venv/bin/python -m pytest -q tests/test_takeoff.py
-./venv/bin/python -m pytest -q tests/test_plan_upload.py tests/test_plan_indexing.py tests/test_sheet_intelligence.py tests/test_scale_measurement.py
-./venv/bin/python -m pytest -q tests/test_pricing_engine.py
-./venv/bin/python -m pytest -q tests/test_labour_engine.py
-./venv/bin/python -m pytest -q tests/test_historical_ingestion.py
-./venv/bin/python -m pytest -q tests/test_historical_upload_fg013.py
-./venv/bin/python -m pytest -q
 ```
 
-Expected: branch `main`; HEAD = `origin/main` = this FG-034 MAIL-A / AUTH-A product commit (parent SIGN-E **`3062c67ce3706b4341394d05c3eddb4df9b54c22`**); working tree clean; Alembic **live current `f2a3b4c5d6e7 (head)`**; **repository head `f2a3b4c5d6e7`**; dedicated MAIL-A / AUTH-A **28**; focused MAIL-A/AUTH-A + FG-018 + SIGN-A–E **142**; dedicated SIGN-E **19**; dedicated SIGN-D **11**; dedicated SIGN-C **18**; dedicated SIGN-A **11**; dedicated SIGN-B **18**; full suite **1009 passed**. PRODUCTION packages **0**. PRODUCTION packages **0**. Labeled SYNTHETIC_UAT package `FG024D-UAT-ON-001` ACTIVE retained as technical evidence. Labeled Slice B UAT source `FG024B-UAT-SRC-001` retained. Labeled Slice C contracts `CTR-2026-0001` / `CTR-2026-0002` retained. TECH-D contracts `CTR-2026-0003` / `CTR-2026-0004` retained (GENERATED; not executed). SIGN-A `SIGN-2026-0001` / `SIGN-2026-0002` / `CTR-2026-0005` retained (APPROVED_FOR_SIGNATURE only). SIGN-B `SIGN-2026-0003` retained (SIGNED; not EXECUTED). SIGN-C `SIGN-2026-0004` EXECUTED (countersign) and `SIGN-2026-0005` EXECUTED (no-countersign). SIGN-D live residue `SIGN-2026-0010` EXECUTED / `0011` VOIDED / `0012` VOIDED (synthetic; **not** real iPhone UAT PASS). Private signing artifacts under gitignored `instance/signing_artifacts/`. EST-2026-0019 occupancy unchanged. Non-development `flask` CLI requires local-only `SECRET_KEY` (gitignored `.env`).
+Expected at a clean post-pin inspect (before this turnover's docs dirt, and again after Architect ACCEPT COMMIT of this turnover):
+
+- repository path `/Users/joelbrayman/Desktop/Brayman-Estimator`
+- branch `main`
+- HEAD = `origin/main` = **`c57cf5f4e1cfa55edb654af4b8599e53176300c8`**
+- ahead 0 / behind 0
+- working tree **CLEAN** after this turnover is committed; this Phase 2 package is **docs-only dirt** until Architect ACCEPT COMMIT
+- staging **EMPTY** except the authorized turnover docs when committing
+- T03C product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`** is an ancestor of HEAD
+- F06 product **`aedc8ae2058842c3def709a333d407c47c1af089`** / pin **`ceb40bc391aa24d0f2bc06666802fddd190e2984`**
+- L05 product **`4682fc544ccdd3811be9f73488ad6f5a8c0777e6`** / pin **`065649e75f741097064f1de5df5d24200c3fe370`**
+- Alembic live current = graph head **`g7b8c9d0e1f2 (head)`**
+- live DB UNCHANGED size **`3457024`** / mtime **`1790020245.9238403`**
+- Flask 5460 **STOPPED**
+- recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**
+- latest governed full suite (T03C product close, not rerun this turnover): **1657 passed**, 5626 warnings, **789.32s**, exit **0**
+
+If identity materially differs: **STOP**. Do not force a match. Do not reset. Do not pull. Do not merge. Do not rebase. Do not amend. Do not stash pop. Do not clean unexpected dirt. Do not restart Flask. Do not mutate live DB.
+
+Do **not** run a full pytest suite from this resume unless a later Architect prompt authorizes it. Historical FG-034 MAIL-A resume commands and expected HEAD `f2a3b4c5d6e7` / full suite **1009** are **not** current resume authority.
 
 ## 22. FRESH CHAT STARTUP PROMPT
 
-Canonical location for the next conversation. Paste into a **new** ChatGPT or Cursor chat. Do **not** continue from an old prompt without preflight.
+Canonical location for the next conversation. Paste into a **new** ChatGPT Architect chat and a **new** Cursor Executor chat. Do **not** continue from an old prompt without preflight. Do **not** reconstruct state from memory of VISUAL-2 / FG-034 / 15 SEP.
 
 ```text
 BRAYMAN — RESUME FROM REVIEW TURNOVER
 CONTINUITY / REPOSITORY-FIRST INITIALIZATION
+23 SEP 2026
 
-You are starting a FRESH conversation on the Brayman-Estimator (CalibraytAI / The Estimator) platform following a successful Review Turnover (2026-09-09).
+You are starting a FRESH conversation on the Brayman-Estimator (CalibraytAI / The Estimator) platform following Cursor Phase 2 Review Turnover against the T03C-sealed Architect checkpoint.
 The prior conversation has been discarded. You have ZERO reliable conversation memory.
 Chat history is supplemental only. The repository is the ONE SOURCE OF TRUTH.
 ChatGPT / Cursor memory is never corporate memory.
@@ -804,7 +838,7 @@ ChatGPT / Cursor memory is never corporate memory.
 Conversation titles in this Cursor/IDE workspace must start with: BRAYMAN — <Topic>.
 
 ACTIVE CHAT TITLE (ChatGPT originating development chat):
-BRAYMAN — CALIBRAYTAI DEVELOPMENT 15 SEP 2026
+BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026
 (Record the exact title of the NEW ChatGPT development chat once Joel names it. Until then, keep using this title.)
 
 CONTINUITY DISPLAY RULE:
@@ -817,91 +851,114 @@ When a Cursor prompt is present, the END line follows the complete prompt.
 Every CalibraytAI development response ends with the next complete ready-to-paste
 Cursor prompt unless Joel explicitly says no prompt is required.
 
-DO NOT reopen FG-021.
-DO NOT convert SESSION-EXPIRY RECOVERY to PASS / N/A / WAIVED.
-DO NOT begin V1-02.
-DO NOT run flask db upgrade against the live UAT DB.
-DO NOT implement Observation Delete.
-DO NOT implement session revocation / idle timeout.
-DO NOT invent iPhone UAT results.
-DO NOT implement Native Signing for real customer / commercial use.
-DO NOT weaken the Legal Content Gate.
-DO NOT implement Project Closeout.
-DO NOT add tokens or API keys.
-DO NOT start RBAC or an org-switcher.
-DO NOT start Change Order document work.
-DO NOT reopen FG-026.
-DO NOT start LEARN.
-DO NOT start supplier integration.
-DO NOT enable external AI or runtime web lookup.
-DO NOT create another migration.
-DO NOT amend the frozen FG-023 commercial contract.
-DO NOT start another FG-025 slice.
-DO NOT start FG-024 product (Slice A preflight is COMPLETE; ADR-050 is Accepted; product remains unauthorized).
+ROLES (do not invert):
+Joel = Product Owner
+ChatGPT = Architect
+Cursor = Executor
+Cursor does not choose product law.
+Cursor does not choose the next Rule 16 root.
+Cursor does not broaden scope.
 
-ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.
-Last product-changing commit:
-aa4c71800586e0b8e2a63931bcdc8bc44d87a489
-feat: implement FG-026 takeoff-to-estimate mapping
-This live-migrate / UAT close is docs-only. Its commit is NOT the FG-026 product SHA.
-Slice 5 product SHA remains 5b497905086554214e85f69afd8101d88f89161c.
-Ancestor FG-023 Slice B product SHA remains 7dd4d82c927ec2c38a0562e7e1cdedbccabb6662.
-Item 10 is COMPLETE (FG-018 + FG-019 both CLOSED / OPERATIONAL FOR UAT).
-Item 11 BUILD Field Observation foundation is COMPLETE.
-Image-only Compatible Renditions (HEIC/HEIF → JPEG) are IMPLEMENTED.
-ADR-042 is Accepted. FG-020 is CLOSED / OPERATIONAL FOR UAT.
-Live Alembic current = f4a5b6c7d8e9 (EQUALS repository head).
-Repository Alembic head = f4a5b6c7d8e9 (FG-026; applied live 2026-09-08).
-Item 12 Field Web is CLOSED.
-ADR-043 is Accepted. FG-021 is CLOSED.
-SESSION-EXPIRY RECOVERY is DEFERRED / NOT YET EXERCISED (NOT PASS / NOT FAIL / NOT N/A / NOT WAIVED).
-OLDER SUPPORTED IPHONE / SAFARI is WAIVED AS NOT PRACTICAL.
-Event 37 / Original 37 = authenticated UAT residue, NOT session-expiry recovery. Do not delete.
-Event 38 = interrupted CSRF residue. Do not delete.
-Event 39 / Original 39 = CSRF PASS.
-Live 39 Events / 39 Originals.
-Observation Delete is QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING.
-FG-022 is CLOSED / APPROVED REUSABLE MASTER FAMILY V1. Family 05 remains COMMERCIAL_DRAFT / NOT LEGALLY APPROVED.
-Native Signing DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE.
-Native Signing PRODUCTION ACTIVATION is BLOCKED PENDING COUNSEL PROCESS APPROVAL.
-Project Closeout is FUTURE.
-FG-023 is CLOSED / OPERATIONAL FOR UAT.
-Slice A is IMPLEMENTED / LIVE-MIGRATED.
-MONITOR V1 is IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED.
-Hub #hub-monitor is LIVE / OFFICE-UAT-VERIFIED.
-Office write routes/forms are LIVE / OFFICE-UAT-VERIFIED.
-Office UAT is COMPLETE / PASS (project id 13 FG023-UAT-MONITOR, port 5014).
-Item 13 is CLOSED / OPERATIONAL FOR UAT.
-FG-025 Slice 5 dedicated 19. Field-focused 83. Prompt governed 190. Full suite 612.
-Historical Slice 4 dedicated 16 / Slice-4 focused 114 / governed 226 / full 609.
-Historical Slice 3 dedicated 13 / PRICE-focused 167 / governed 303 / full 606.
-Historical Slice 2 dedicated 10 / focused 159 / full 603.
-Dedicated FG-023 35. Focused 149. Historical Slice A close focused 126. Pre-Slice-B focused 137. Full suite at close 593.
-Prior FG-021 close bundle (historical): dedicated 20 / focused 148 / full 558.
+REPOSITORY IDENTITY (expected starting identity after this turnover is committed):
+Path: /Users/joelbrayman/Desktop/Brayman-Estimator
+Branch: main
+HEAD / origin/main: c57cf5f4e1cfa55edb654af4b8599e53176300c8
+Divergence: ahead 0 / behind 0
+Working tree: CLEAN
+Staging: EMPTY
 
-FROZEN FG-023 CONTRACT (do not amend):
-Locked source = Accepted Proposal estimate_version_id.
-Zero Accepted → MISSING_CUSTOMER_COMMITMENT.
-More than one → AMBIGUOUS_COMMITMENT (do not pick latest).
-Snapshot DC/selling when present; else Σ extended_cost and Proposal subtotal + overhead + profit.
-Authorized COs: Approved or Invoiced; delta = subtotal + markup; exclude tax.
-Current Authorized Estimated Cost = Original Estimated Direct Cost.
-MISSING_ACTUALS ≠ zero. Explicit 0.00 ACTIVE row is present.
-incurred_on accepts any parseable calendar date (no today cutoff).
-Field Events evidence only. No NET PROFIT. No forecast-final GM.
-Money: existing as_money ROUND_HALF_UP 0.01.
+PKG-T03C PRODUCT SHA:
+95659c8432761815cbd9825969cc5b6cc683042d
+PKG-T03C PIN SHA / CURRENT CHECKPOINT:
+c57cf5f4e1cfa55edb654af4b8599e53176300c8
 
-Next governed action = STOP. Do NOT begin V1-02.
-FG-026 is CLOSED / OPERATIONAL FOR UAT.
-Live migrate f4a5b6c7d8e9 PASS. Office UAT PASS on port 5015.
-Do NOT flask db upgrade live.
-Do NOT begin V1-02 / Approve All Costing / V1-03.
-Slice C MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS.
-Slice A + Slice B IMPLEMENTED / LIVE-MIGRATED.
-FG-025 is IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / SLICE 2 IMPLEMENTED / SLICE 3 IMPLEMENTED / SLICE 4 IMPLEMENTED / SLICE 5 IMPLEMENTED / NOT CLOSED.
-Remaining FG-025 surfaces are NOT AUTHORIZED.
-Do not begin V1-02. Do not begin another FG-025 slice. Do not begin FG-024. Do not begin LEARN.
-Do NOT re-run flask db upgrade f4a5b6c7d8e9.
+PKG-F06 PRODUCT SHA:
+aedc8ae2058842c3def709a333d407c47c1af089
+PKG-F06 PIN SHA:
+ceb40bc391aa24d0f2bc06666802fddd190e2984
+
+PKG-L05 PRODUCT SHA:
+4682fc544ccdd3811be9f73488ad6f5a8c0777e6
+PKG-L05 PIN SHA:
+065649e75f741097064f1de5df5d24200c3fe370
+
+Alembic current/head: g7b8c9d0e1f2 (head)
+No migration is authorized from this startup.
+
+Live DB: UNCHANGED
+instance/brayman_estimator.db
+Expected size: 3457024
+Expected mtime: 1790020245.9238403
+
+Flask 5460: STOPPED
+Do not restart Flask.
+
+Recovery stash: 840dba8320b59ff9464410fec390d755a31a56aa
+PRESERVED. Do not pop it. Do not drop it.
+
+HostPapa application deploy: DOES NOT EXIST
+Do not invent a deployment state. Do not call localhost production.
+
+Whole-system Rule 16: OPEN
+Official V1: 65% / 4 of 11
+Secondary Functional V1 Build: 79% / 22 of 28
+Do not rescore V1.
+
+SEALED PROGRAMME STATE:
+PKG-T03C / R03C is IMPLEMENTED / TESTED / EXTRA→CHANGE ORDER ONE TRANSACTION PROVEN / FAILURE ROLLS CHANGE ORDER BACK / RETRY DOES NOT DUPLICATE CHANGE ORDER / STANDALONE CHANGE ORDER PRESERVED / STANDALONE EXTRA→EXISTING-CO LINK PRESERVED / EXTRA-ONLY PRESERVED / R03A R03B R04 R05 R01 F06 L05 NON-REGRESSION PASS / TARGETED RE-AUDIT PASS / FULL SUITE PASS / COMMITTED / PUSHED / SHA-PINNED / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / CLOSED.
+Do not reopen T03C except for later authorized non-regression testing or a newly proven dependency.
+
+T03C ORIGIN LAW (carried forward; do not silently rewrite):
+A. Draft-linked Extra remains EXTRA_WORK while the Change Order is not authorizing.
+B. Authorizing-linked Extra becomes CHANGE_ORDER and cannot create another Change Order from Extra.
+C. Extra→CO create+link is one transaction.
+Draft-linked Extra remaining EXTRA_WORK is existing law at the T03C pin.
+The possible immutability consequences of that law belong to PKG-F08.
+
+NEXT PROGRAMME PACKAGE:
+PKG-F08 / R08 — SCOPE_ORIGIN IMMUTABILITY AFTER OPERATIONAL USE
+STATUS: NOT STARTED / NOT AUTHORIZED merely by this startup.
+Do not start F08 until ChatGPT Architect explicitly authorizes the F08 implementation package after this turnover is sealed and fresh chats are seated.
+Do not start F09. Do not generate or execute S16. Do not start F14. Do not start F07. Do not select another Rule 16 root.
+
+DO NOT:
+- implement product code from this startup prompt
+- alter schema or create a migration
+- mutate the live DB
+- create live Extra Work, reclassify live Extra Work, create live Change Order, submit live Time, or close a live Project
+- restart Flask 5460
+- deploy
+- pop the recovery stash
+- rescore V1
+- resume from VISUAL-2 / FG-034 / 15 SEP 2026 / FG-026 / any checkpoint older than the T03C pin
+- reset / pull / merge / rebase / amend / stash pop / clean unexpected dirt
+- force a git identity match
+
+If starting identity materially differs: STOP. Do not force a match. Report the actual identity. Return to ChatGPT Architect.
+
+PREFLIGHT (Cursor Terminal; READ / VERIFY only):
+cd /Users/joelbrayman/Desktop/Brayman-Estimator
+pwd
+git status
+git branch --show-current
+git log -1 --oneline
+git rev-parse HEAD
+git rev-parse origin/main
+git rev-list --left-right --count origin/main...HEAD
+git stash list
+stat -f '%z %m' instance/brayman_estimator.db
+lsof -nP -iTCP:5460 -sTCP:LISTEN || true
+./venv/bin/flask db current
+./venv/bin/flask db heads
+
+Confirm:
+- branch = main
+- HEAD = origin/main = c57cf5f4e1cfa55edb654af4b8599e53176300c8
+- working tree CLEAN
+- Alembic current = heads = g7b8c9d0e1f2
+- live DB size 3457024 / mtime 1790020245.9238403
+- Flask 5460 STOPPED
+- recovery stash 840dba8320b59ff9464410fec390d755a31a56aa PRESERVED
 
 1. REVIEW REPOSITORY GOVERNANCE FIRST
 Read and comply with:
@@ -914,111 +971,25 @@ Read and comply with:
 - docs/current-state.md
 - docs/project-state-report.md
 - docs/platform-roadmap.md
-- docs/feature-gates/README.md
-- docs/adr/README.md
-- docs/feature-gates/FG-023-monitor-v1-estimated-versus-actual.md
-- docs/feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md
-- docs/architecture/fg-023-monitor-v1-implementation-preflight.md
-- docs/architecture/monitor-v1-implementation-reconnaissance.md
-- docs/adr/ADR-021-monitor-commercial-baseline.md
-- docs/modules/monitor.md
-- docs/architecture/field-web-today-and-capture.md
-- docs/adr/ADR-043-field-web-capture-reliability-local-pending-and-idempotent-replay.md
-- docs/feature-gates/FG-021-field-web-v1-today-and-capture.md
-- docs/adr/ADR-042-build-field-evidence-and-iphone-first-capture.md
-- docs/feature-gates/FG-020-build-field-capture-v1-project-field-observation-foundation.md
-- docs/adr/ADR-041-user-membership-and-office-authentication.md
-- docs/feature-gates/FG-018-organization-authentication-actor-identity-and-membership-v1.md
-- docs/feature-gates/FG-019-shared-api-foundation-v1.md
-- docs/adr/ADR-022-field-client-and-shared-api.md
-- docs/adr/ADR-020-build-module-boundary.md
+- docs/chat-workflow-log.md
+- docs/architecture-principles.md
+- docs/modules/projects.md
 
-2. VERIFY BASELINE (Cursor Terminal)
-cd /Users/joelbrayman/Desktop/Brayman-Estimator
-git status
-git branch --show-current
-git log -1 --oneline
-git rev-parse HEAD
-git rev-parse origin/main
-git diff --check
-./venv/bin/flask db current
-./venv/bin/flask db heads
+2. IDENTIFY CURRENT STOP STATE FROM THE REPOSITORY
+Independently reconstruct:
+- Active resume authority is the T03C pin, not FG-034 / VISUAL-2 / 15 SEP
+- R01, R04, R05, R03A, R03B, R02, R10, R13, L05, F06, T03C are CLOSED
+- Whole-system Rule 16 is OPEN
+- Next package is PKG-F08 / R08 and is NOT AUTHORIZED from startup
+- Draft-linked Extra remains EXTRA_WORK under sealed T03C law
+- Latest governed full suite at T03C product close: 1657 passed / 5626 warnings / 789.32s / exit 0
+- Official V1 65% / 4 of 11; secondary 79% / 22 of 28; unchanged
 
-Confirm:
-- branch = main
-- HEAD = origin/main
-- working tree clean
-- last product-changing commit is ancestor aa4c71800586e0b8e2a63931bcdc8bc44d87a489
-- Alembic current = f4a5b6c7d8e9
-- Alembic heads = f4a5b6c7d8e9 (one graph head; live current EQUALS repository head)
-- live project_direct_cost_actuals table EXISTS
-- live Field Events / Originals = 39 / 39
-- FG023-UAT-MONITOR project id 13 exists; no UAT actuals on projects 1, 2, 9, 11, 12
-
-3. IDENTIFY CURRENT STOP STATE
-Independently reconstruct from the repository:
-- FG-008 through FG-021 CLOSED (FG-021 subject to SESSION-EXPIRY deferred exception)
-- FG-022 CLOSED / APPROVED REUSABLE MASTER FAMILY V1
-- FG-023 CLOSED / OPERATIONAL FOR UAT
-- Slice A + Slice B IMPLEMENTED / LIVE-MIGRATED
-- Slice C MIGRATION COMPLETE / OFFICE UAT COMPLETE / PASS
-- Hub #hub-monitor LIVE / OFFICE-UAT-VERIFIED
-- MONITOR V1 IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED
-- Live current = heads f4a5b6c7d8e9
-- FG-026 CLOSED / OPERATIONAL FOR UAT
-- FG-025 IMPLEMENTATION PREFLIGHT COMPLETE / SLICE 1 IMPLEMENTED / SLICE 2 IMPLEMENTED / SLICE 3 IMPLEMENTED / SLICE 4 IMPLEMENTED / SLICE 5 IMPLEMENTED / NOT CLOSED
-- Remaining FG-025 surfaces NOT AUTHORIZED
-- Dedicated FG-025 19; Field-focused 83; prompt governed 190; full suite 612
-- Historical Slice 4 dedicated FG-025 16; Slice-4 focused 114; governed 226; full suite 609
-- Historical Slice 3 dedicated FG-025 13; PRICE-focused 167; governed 303; full suite 606
-- Dedicated FG-023 35; focused 149; historical Slice A focused 126; pre-Slice-B focused 137; full suite 593 (close-time rerun 2026-09-07)
-- Pratt UAT project id 9 / FG016-UAT-PRATT / analysis v3 / advisory only
-- FG-018 office UAT PASSED on port 5011
-- FG-019 API UAT PASSED on port 5012
-- FG-020 office UAT PASSED on port 5013
-- ADR-021 Accepted (Slice A projection + Slice B Hub implemented / live-migrated / office-UAT-verified)
-- ADR-040 / ADR-041 / ADR-042 / ADR-043 Accepted
-- Roadmap item 10 COMPLETE
-- Item 11 BUILD COMPLETE
-- Item 12 Field Web CLOSED
-- Item 13 CLOSED / OPERATIONAL FOR UAT
-- SESSION-EXPIRY RECOVERY DEFERRED / NOT YET EXERCISED
-- OLDER SUPPORTED IPHONE / SAFARI WAIVED AS NOT PRACTICAL
-- Observation Delete QUEUED / NOT AUTHORIZED / NOT IMPLEMENTED / NON-BLOCKING
-- Native Signing DEVELOPMENT MAY PROCEED UNDER SEPARATE GOVERNANCE; PRODUCTION ACTIVATION BLOCKED PENDING COUNSEL
-- ADR-008 and ADR-010 remain Proposed
-- CalibraytAI V1 readiness 60%; 4 / 11 COMPLETE (V1-01, V1-02, V1-03, V1-05); BMR DEMO READY NO; BRAYMAN REAL-LIFE UAT READY NO
-- Real external AI NOT AUTHORIZED
-- Runtime permit web lookup NOT AUTHORIZED
-
-4. RETURN A CONCISE CURRENT STATE REVIEW
-FG-023 is CLOSED / OPERATIONAL FOR UAT.
-MONITOR V1 is IMPLEMENTED / LIVE-MIGRATED / OFFICE-UAT-VERIFIED / CLOSED.
-FG-025 is SLICE 1, SLICE 2, SLICE 3, SLICE 4, AND SLICE 5 IMPLEMENTED / NOT CLOSED.
-Remaining FG-025 surfaces are NOT AUTHORIZED.
-FG-026 is CLOSED / OPERATIONAL FOR UAT.
-FG-027 is CLOSED / OPERATIONAL FOR UAT.
-FG-028 is SLICES 1–3 COMPLETE / CLOSED / OPERATIONAL FOR UAT.
-FG-029 is CLOSED / OPERATIONAL FOR UAT. LIVE-MIGRATED / BOUNDED BMR DEMO OFFICE UAT PASS.
-FG-030 is RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.
-ADR-047 is Accepted (architecture only). ADR-046 is Accepted. ADR-008 remains Proposed.
-FG-031 is CLOSED / OPERATIONAL FOR UAT. Slice A and Slice B are OPERATIONAL FOR UAT.
-ADR-048 is Accepted.
-FG-032 is CLOSED / OPERATIONAL FOR UAT.
-ADR-049 is Accepted by Joel Brayman, 10 Sep 2026. Product SHA 70e571140e12377aa5bd009b598530576401113b. Product parent 010f6d641a756ceb2ab67475a284d3b8426c7b20. Joel selected V1-05 Option A. Live QuickBooks API is POST-V1.
-Subcontract RFQ/package is MATURATION DURING UAT / NOT IMPLEMENTED.
-CalibraytAI V1 readiness is 60%. 4 / 11 COMPLETE (V1-01, V1-02, V1-03, V1-05). V1-03 COMPLETE. Current scored package V1-04 PARTIAL. V1-05 COMPLETE. BMR DEMO READY NO. BRAYMAN REAL-LIFE UAT READY NO.
-Website Version 15 CalibraytAI identity is published / live QA PASS (external). HostPapa migration is QUEUED POST-BETA.
-The next governed action is STOP and return to ChatGPT Architect. Do NOT implement live QuickBooks API. Do NOT implement FG-030. Do NOT begin V1-04 product work. Do NOT implement subcontract RFQ/package.
-STOP. Do NOT implement supplier login. Do NOT begin V1-04. Do NOT implement subcontract RFQ/package. Do NOT start another FG-025 slice. Do NOT start FG-024 product. ADR-050 is Accepted / architecture only. Do NOT start LEARN.
-Do NOT reopen FG-021.
-Do NOT convert SESSION-EXPIRY RECOVERY to PASS / N/A / WAIVED.
-Do NOT invent iPhone UAT results.
-Do NOT implement Project Closeout.
-Do NOT enable Native Signing for real customer use.
-
-Do NOT rely on AI memory. Do NOT guess missing product rules.
-Do NOT create another migration.
+3. RETURN A CONCISE CURRENT STATE REVIEW
+Then STOP and wait for ChatGPT Architect authorization.
+Do not implement F08 from this startup.
+Do not choose the next root.
+Do not invent construction business rules.
 
 PRESERVE → SEARCH → VERIFY → EXECUTE.
 Existing before new. No unauthorized redesign. No arbitrary policy invention.

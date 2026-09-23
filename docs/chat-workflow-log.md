@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — REVIEW TURNOVER CURSOR PHASE 2 (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | Cursor Phase 2 Review Turnover: independently reconcile the repository against the T03C-sealed Architect checkpoint and rebuild stale resume / fresh-chat documentation. Docs/governance only. |
+| Business decision | A new chat must not resume from VISUAL-2 / FG-034 / 15 SEP. Active resume authority is the T03C pin. F08 is next and is not authorized from this turnover. Draft-linked Extra remains EXTRA_WORK under sealed T03C law. |
+| Architectural decision | None. No product law change. T03C origin law is carried forward, not rewritten. |
+| Prompt template used | REVIEW TURNOVER CURSOR PHASE 2 T03C-SEALED ARCHITECT → EXECUTOR TURNOVER RECONCILIATION |
+| Approved Cursor prompt summary | Read, reconcile, edit turnover/governance documentation, verify in the working tree only. No F08. No product code. No commit. No push. |
+| Files expected to change | session-handoff §§20–22 and associated occupancy/current-state/roadmap/workflow-log references |
+| Files prohibited from changing | Product code, tests, migrations, live DB, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | Active resume rebuilt to T03C pin `c57cf5f4e1cfa55edb654af4b8599e53176300c8`. Fresh Chat Startup Prompt rebuilt and self-contained. VISUAL-2 / FG-034 / 15 SEP remain historical. Working tree only. Not committed. |
+| Tests | Not rerun. Turnover did not authorize a suite. Accepted T03C evidence remains dedicated **14** / focused **162** / sealed-root **82** / full **1657 passed**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining Rule 16 roots. Next numbered package PKG-F08 / R08 is NOT AUTHORIZED from this turnover. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not commit. Do not push. Do not start F08. |
+| Next approved prompt | Architect ACCEPT COMMIT / PUSH / SHA-PIN of this turnover documentation only. |
+| Commit hash | Working tree only. Product pin remains **`c57cf5f4e1cfa55edb654af4b8599e53176300c8`**. |
+
 ### 2026-09-23 — PKG-T03C SHA-pin
 
 | Field | Content |

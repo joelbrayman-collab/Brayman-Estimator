@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — PKG-T13 / R13 SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | SHA-pin PKG-T13 / R13 after Architect ACCEPT COMMIT / PUSH. |
+| Business decision | R13 closed as a Rule 16 correction. R01, R04, R05, R03A, R03B, R02, R10 remain CLOSED. Whole-system Rule 16 remains OPEN. Do not rescore V1. Do not start R11, R14, or R06 from this pin. Time correction CLASS C after R10. Extra Work same-name permitted. R11 NOT INVENTED. R14 NOT DECIDED. |
+| Architectural decision | None new. Pin only. |
+| Prompt template used | Architect PKG-T13 ACCEPT COMMIT / PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Commit authorized R13 package, push, docs-only SHA-pin, push pin. No live DB. No migration. No R11/R14/R06. Remaining-root inventory only; do not implement another root. |
+| Files expected to change | Occupancy docs only for this pin commit |
+| Files prohibited from changing | Product code, tests, migrations, live DB, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | Product commit **`40bfd68606ab402a63fb72f1239f4dc47e64e436`** pushed. This pin records that SHA. |
+| Tests | Not re-run for pin. Prior full suite **1617 passed**, 5480 warnings, **732.76s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Remaining Rule 16 roots. Next is Architect remaining-root reconciliation, not automatic R11/R14/R06. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not implement another root until a new authorized prompt. |
+| Next approved prompt | Architect remaining-root reconciliation (MUST-FIX vs OWNER DECISION vs PRESENTATION vs HOSTED-E2E vs DEFERRED) |
+| Commit hash | PRODUCT `40bfd68606ab402a63fb72f1239f4dc47e64e436`; PIN hash filled after this commit |
+
 ### 2026-09-23 — PKG-T13 / R13 INTEGRITYERROR → CONTRACTOR DOMAIN ERROR (working tree)
 
 | Field | Content |

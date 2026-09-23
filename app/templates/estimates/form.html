@@ -30,6 +30,12 @@
 
         <label>
             Project *
+            {% if lock_project %}
+            <input type="hidden" name="project_id" value="{{ form.project_id }}">
+            {% for project in projects if project.id|string == form.project_id %}
+            <p>{{ project.name }} — {{ project.client.name }}</p>
+            {% endfor %}
+            {% else %}
             <select name="project_id" required>
                 <option value="">Select a project</option>
                 {% for project in projects %}
@@ -38,6 +44,7 @@
                 </option>
                 {% endfor %}
             </select>
+            {% endif %}
         </label>
 
         <label>
@@ -104,7 +111,7 @@
         {% if estimate %}
         <a href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">Cancel</a>
         {% else %}
-        <a href="{{ url_for('estimates.list_estimates') }}">Cancel</a>
+        <a href="{{ cancel_url|default(url_for('estimates.list_estimates')) }}">Cancel</a>
         {% endif %}
     </div>
 </form>

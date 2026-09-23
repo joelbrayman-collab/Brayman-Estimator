@@ -15,7 +15,7 @@
     <div class="hub-heading-actions">
         <a class="button" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Plan Documents</a>
         {% if not project_is_closed %}
-        <a class="button" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id) }}">New Change Order</a>
+        <a class="button" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id, next='hub') }}">New Change Order</a>
         {% endif %}
         {% if can_manage_operating_lifecycle and not project_is_closed %}
         <a class="button" href="{{ url_for('projects.close_project', id=project.id) }}">{{ contractor_copy.PROJECT_CLOSE_ACTION }}</a>
@@ -265,6 +265,7 @@
     <article class="panel panel-wide">
         <div class="panel-header">
             <h2>Related Estimates</h2>
+            <a href="{{ url_for('estimates.create_estimate_route', project_id=project.id, next='hub') }}">New estimate</a>
             <a href="{{ url_for('estimates.list_estimates') }}">All estimates</a>
         </div>
         <p class="muted-copy">{{ contractor_copy.HUB_PRICE_LIST_NOTE }}</p>
@@ -310,7 +311,7 @@
         <div class="empty-state empty-state-compact">
             <h3>No estimates</h3>
             <p>Create an estimate for this project to begin pricing.</p>
-            <a class="button-link" href="{{ url_for('estimates.create_estimate_route') }}">New estimate</a>
+            <a class="button-link" href="{{ url_for('estimates.create_estimate_route', project_id=project.id, next='hub') }}">New estimate</a>
         </div>
         {% endif %}
         <p class="muted-copy" style="margin-top: 12px;">
@@ -745,15 +746,16 @@
         <p class="muted-copy">{{ contractor_copy.SCHEDULE_UNSCHEDULED }}</p>
         <ul>
             {% for element in schedule.unscheduled_elements %}
-            <li>{{ element.display_name }} · <a href="{{ url_for('schedule.new_item', project_id=project.id) }}">Set dates</a></li>
+            <li>{{ element.display_name }} · <a href="{{ url_for('schedule.new_item', project_id=project.id, next='hub') }}">Set dates</a></li>
             {% endfor %}
         </ul>
         {% endif %}
-        <p><a class="button" href="{{ url_for('schedule.new_item', project_id=project.id) }}">{{ contractor_copy.SCHEDULE_ADD }}</a></p>
+        <p><a class="button" href="{{ url_for('schedule.new_item', project_id=project.id, next='hub') }}">{{ contractor_copy.SCHEDULE_ADD }}</a></p>
     </article>
     <article class="panel panel-wide" id="hub-time">
         <div class="panel-header">
             <h2>{{ contractor_copy.TIME_HUB_HEADING }}</h2>
+            <a href="{{ url_for('time_entry.new_entry', project_id=project.id, next='hub') }}">Record time</a>
             <a href="{{ url_for('time_entry.review', project_id=project.id) }}">Review time</a>
         </div>
         <p class="muted-copy">
@@ -776,7 +778,7 @@
             <tbody>
                 {% for entry in hub.time_summary.recent %}
                 <tr class="{% if entry.scope_origin == 'EXTRA_WORK' %}scope-extra-work-row{% endif %}">
-                    <td><a href="{{ url_for('time_entry.detail', time_entry_id=entry.id) }}">{{ entry.work_date.isoformat() }}</a></td>
+                    <td><a href="{{ url_for('time_entry.detail', time_entry_id=entry.id, next='hub') }}">{{ entry.work_date.isoformat() }}</a></td>
                     <td>{{ entry.worker_display_name }}</td>
                     <td>{{ entry.element_display_name }} — {{ entry.activity_display_name }}</td>
                     <td>{{ "%.2f"|format(entry.hours) }}</td>

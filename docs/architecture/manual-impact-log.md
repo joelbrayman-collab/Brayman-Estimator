@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PKG-F09 PROJECT-CHILD CONTEXT (2026-09-23)
+
+| Field | Content |
+|-------|---------|
+| Slice | PKG-F09 / R09 Project-child context / wrong-Project prevention |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** User Guide remains outstanding. |
+| 1. What new contractor capability exists? | Opening New Change Order or New Estimate from a Project Hub stays on that Project. Global New Change Order no longer silently picks the first Project. An existing Change Order cannot be moved to another Project. |
+| 2. When would the contractor use it? | When creating a Change Order, Estimate, Time entry, or Schedule item from a Project, or when creating a Change Order from the company-wide list. |
+| 3. What workflow will the final Manual need to teach? | From a Project, New stays on that Project and Cancel/Back return to that Project. From the company-wide list, the contractor must choose the Project before a Change Order or Estimate can be created. Extra Work still cannot become a Change Order for a different Project. |
+| 4. What contractor-facing terms must be used? | Project. Change Order. Estimate. Extra Work. Time. Schedule. Do not say projects[0], operating Project bind, or reparent. |
+| 5. What screenshots / Print examples will eventually be needed? | Project Hub New Change Order and New Estimate. Global New Change Order with Choose a project. The message when no Project is chosen. |
+| 6. What warnings / validation distinctions need explanation? | A Change Order cannot be created until a Project is chosen. Extra Work from another Project cannot be turned into this Project’s Change Order. An existing Change Order cannot be moved to another Project. |
+| 7. Desktop / iPhone / Print relevance | Office Project Hub and office Change Order / Estimate / Time / Schedule forms. Field Project confirm (R02) unchanged. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim whole-system Rule 16 PASS. Start S16. Change Estimate edit Project selection. Redesign Hub visual / left-nav. |
+
 ### MANUAL IMPACT — PKG-F08 SCOPE ORIGIN AFTER TIME (2026-09-23)
 
 | Field | Content |

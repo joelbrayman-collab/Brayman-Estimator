@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — PKG-F09 R09 PROJECT-CHILD CONTEXT (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | PKG-F09 / R09: Project-entered child keeps Project; global create requires explicit Project; no silent first-Project CO default; existing CO cannot be reparented. |
+| Business decision | F09 derivation accepted. Owner decision not required. Global lists remain valid. Estimate edit Project reparent remains out of scope. Do not rescore V1. Whole-system Rule 16 remains OPEN. Do not start S16/F14/F07. |
+| Architectural decision | Operating Project bind is request query `project_id`. Global GET empty select. Project-entered GET/POST locked to that Project. Tampered POST fails closed with existing domain/flash copy. `update_change_order` refuses posted `project_id` change before other field mutation. Hub transport uses existing `next=hub`. Time/Schedule service ownership checks not rewritten. No schema. No generic authorization framework. No Hub visual redesign. |
+| Prompt template used | Architect PKG-F09 IMPLEMENT / TEST / TARGETED RE-AUDIT / MINIMUM GOVERNANCE OCCUPANCY working tree only |
+| Approved Cursor prompt summary | Implement F09 product law, dedicated regression class, targeted re-audit, occupancy. Working tree only. No commit/push/deploy. No schema/migration/live DB/Flask restart/stash pop/V1 rescore. |
+| Files expected to change | CO/Estimate/Time/Schedule routes and templates, Hub New Estimate, `update_change_order`, dedicated F09 tests, occupancy docs |
+| Files prohibited from changing | Models/migrations, live DB, recovery stash, V1 scores, Flask 5460, Estimate edit reparent, R01/R02/T03C/F08 product law, generic auth framework, Hub visual/left-nav |
+| Implementation result | IMPLEMENTED IN WORKING TREE / TESTED / NO SILENT FIRST-PROJECT CO DEFAULT / PROJECT-ENTERED CHILD KEEPS PROJECT / GLOBAL ENTRY REQUIRES EXPLICIT PROJECT / WRONG-PROJECT CREATE FAILS CLOSED / CO REPARENT FAILS CLOSED / HUB ESTIMATE CONTEXT PRESERVED / TIME CONTEXT PRESERVED / SCHEDULE CONTEXT PRESERVED / EXISTING PROJECT-OWNERSHIP CHECKS PRESERVED / R01 NON-REGRESSION PASS / R02 SEALED / T03C NON-REGRESSION PASS / F08 SEALED / TARGETED RE-AUDIT PASS / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / NOT COMMITTED |
+| Tests | Dedicated F09 `./venv/bin/python -m pytest -q tests/test_project_child_context_f09.py` → **12 passed**, 53 warnings, **8.37s**, exit 0. Focused F09+T03C+R01+Time+work_scope+estimates **65 passed**, 347 warnings, **35.09s**. Dedicated T03C+R01 **25 passed**, 77 warnings, **13.27s**. Change Order + Schedule **24 passed**, 37 warnings, **9.53s**. Full suite `./venv/bin/python -m pytest -q` → **1680 passed**, 5714 warnings, **773.80s**, exit **0**. |
+| Project-state-report update | Not a milestone close. Occupancy only. V1 not rescored. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | PKG-F09 not committed. Remaining Rule 16 roots S16/F14/F07/F15 not authorized. Estimate edit reparent remains out of scope. HostPapa deploy does not exist. |
+| Next approved step | STOP for ChatGPT Architect ACCEPT COMMIT PKG-F09. Do not commit from this working tree without that prompt. Do not start S16. |
+| Next approved prompt | Architect ACCEPT COMMIT PKG-F09 (not issued in this implementation prompt). |
+| Commit hash | Not committed. Parent HEAD **`3cb85e0931a30aadb9660b40db7a8a657c3f1839`**. |
+
 ### 2026-09-23 — PKG-F08 SHA-pin
 
 | Field | Content |

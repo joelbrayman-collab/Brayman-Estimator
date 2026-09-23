@@ -11,7 +11,7 @@
         <h1>{{ contractor_copy.TIME_REVIEW_HEADING }}</h1>
         <p>Submitted time is not approved labour until someone else reviews it.</p>
     </div>
-    <a class="button" href="{{ url_for('time_entry.new_entry') }}">Record time</a>
+    <a class="button" href="{{ url_for('time_entry.new_entry', project_id=filters.project_id) }}">Record time</a>
 </div>
 
 {{ contextual_help(help_content.office_topic("time_review")) }}

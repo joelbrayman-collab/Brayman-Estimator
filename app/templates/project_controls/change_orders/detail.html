@@ -19,7 +19,7 @@
     <div>
         <a class="button" href="{{ url_for('project_controls.download_change_order_pdf', id=change_order.id) }}">Download PDF</a>
         <a class="button" href="{{ url_for('project_controls.edit_change_order', id=change_order.id) }}">Edit</a>
-        <a class="button-link" href="{{ url_for('project_controls.list_change_orders') }}">Back to list</a>
+        <a class="button-link" href="{{ back_url|default(url_for('project_controls.list_change_orders')) }}">{% if next_view == 'hub' %}Back to project{% else %}Back to list{% endif %}</a>
     </div>
 </div>
 

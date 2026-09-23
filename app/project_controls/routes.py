@@ -34,6 +34,8 @@ from app.project_controls.services import (
     update_change_order_status,
 )
 
+CHANGE_ORDER_PROJECT_MISMATCH = "That project is not the project for this change order."
+
 project_controls_bp = Blueprint("project_controls", __name__)
 
 
@@ -56,6 +58,24 @@ def _parse_datetime_end(value):
     if d is None:
         return None
     return datetime.combine(d, datetime.max.time())
+
+
+def _operating_project_id():
+    return request.args.get("project_id", type=int)
+
+
+def _next_view():
+    return (request.args.get("next") or request.form.get("next") or "").strip()
+
+
+def _change_order_cancel_url(*, operating_project_id=None, next_view=""):
+    if next_view == "hub" and operating_project_id:
+        return url_for("projects.view_project", id=operating_project_id)
+    if operating_project_id:
+        return url_for(
+            "project_controls.list_change_orders", project_id=operating_project_id
+        )
+    return url_for("project_controls.list_change_orders")
 
 
 def _form_from_change_order(change_order):
@@ -118,17 +138,56 @@ def list_change_orders():
     )
 
 
+def _render_change_order_form(
+    *,
+    form,
+    projects,
+    extra_work_activity_id=None,
+    change_order=None,
+    estimate=None,
+    version=None,
+    operating_project_id=None,
+    lock_project=False,
+    next_view="",
+):
+    return render_template(
+        "project_controls/change_orders/form.html",
+        form=form,
+        projects=projects,
+        statuses=CHANGE_ORDER_STATUSES,
+        change_order=change_order,
+        estimate=estimate,
+        version=version,
+        extra_work_activity_id=extra_work_activity_id,
+        operating_project_id=operating_project_id,
+        lock_project=lock_project,
+        next_view=next_view,
+        cancel_url=_change_order_cancel_url(
+            operating_project_id=operating_project_id,
+            next_view=next_view,
+        ),
+    )
+
+
 @project_controls_bp.route("/project-controls/change-orders/new", methods=["GET", "POST"])
 def create_change_order_route():
-    projects = Project.query.filter_by(organization_id=get_current_organization_id()).order_by(Project.name).all()
+    org_id = get_current_organization_id()
+    projects = Project.query.filter_by(organization_id=org_id).order_by(Project.name).all()
     if not projects:
         flash("Create a project before adding a change order.", "error")
         return redirect(url_for("projects.create_project"))
 
-    preselect_project_id = request.args.get("project_id", type=int)
+    operating_project_id = _operating_project_id()
+    next_view = _next_view()
+    bound_project = (
+        get_organization_project(org_id, operating_project_id)
+        if operating_project_id
+        else None
+    )
     extra_work_activity_id = request.args.get("extra_work_activity_id", type=int) or request.form.get(
         "extra_work_activity_id", type=int
     )
+    lock_project = bound_project is not None
 
     if request.method == "POST":
         from flask_login import current_user
@@ -139,10 +198,16 @@ def create_change_order_route():
             create_change_order_from_extra_work,
         )
 
-        project_id = request.form.get("project_id", type=int)
-        org_id = get_current_organization_id()
-        project = get_organization_project(org_id, project_id) if project_id else None
+        posted_id = request.form.get("project_id", type=int)
         try:
+            if operating_project_id:
+                if bound_project is None:
+                    raise ChangeOrderServiceError("Project not found.")
+                if posted_id != bound_project.id:
+                    raise ChangeOrderServiceError(CHANGE_ORDER_PROJECT_MISMATCH)
+                project = bound_project
+            else:
+                project = get_organization_project(org_id, posted_id) if posted_id else None
             if extra_work_activity_id:
                 change_order, _linked = create_change_order_from_extra_work(
                     project_work_activity_id=extra_work_activity_id,
@@ -177,21 +242,20 @@ def create_change_order_route():
                 )
         except (ChangeOrderServiceError, WorkScopeError, ValueError) as exc:
             flash(str(exc), "error")
-            return render_template(
-                "project_controls/change_orders/form.html",
+            return _render_change_order_form(
                 form=request.form,
                 projects=projects,
-                statuses=CHANGE_ORDER_STATUSES,
-                change_order=None,
-                estimate=None,
-                version=None,
                 extra_work_activity_id=extra_work_activity_id,
+                operating_project_id=operating_project_id if bound_project else None,
+                lock_project=lock_project,
+                next_view=next_view,
             )
 
         flash("Change order created.", "success")
-        return redirect(
-            url_for("project_controls.view_change_order", id=change_order.id)
-        )
+        detail_kwargs = {"id": change_order.id}
+        if next_view == "hub":
+            detail_kwargs["next"] = "hub"
+        return redirect(url_for("project_controls.view_change_order", **detail_kwargs))
 
     form = {
         "title": "",
@@ -200,20 +264,18 @@ def create_change_order_route():
         "status": "Draft",
         "requested_by": "",
         "requested_date": datetime.utcnow().date().isoformat(),
-        "project_id": str(preselect_project_id or projects[0].id),
+        "project_id": str(bound_project.id) if bound_project else "",
         "markup_percent": "0.00",
         "tax_percent": "0.00",
         "notes": "",
     }
-    return render_template(
-        "project_controls/change_orders/form.html",
+    return _render_change_order_form(
         form=form,
         projects=projects,
-        statuses=CHANGE_ORDER_STATUSES,
-        change_order=None,
-        estimate=None,
-        version=None,
         extra_work_activity_id=extra_work_activity_id,
+        operating_project_id=operating_project_id if bound_project else None,
+        lock_project=lock_project,
+        next_view=next_view,
     )
 
 
@@ -341,6 +403,7 @@ def view_change_order(id):
     ):
         invitation_url = session.get("signing_invitation_url") or ""
 
+    next_view = _next_view()
     return render_template(
         "project_controls/change_orders/detail.html",
         change_order=change_order,
@@ -350,6 +413,12 @@ def view_change_order(id):
         item_edit_form=item_edit_form,
         signing_overlay=signing_overlay,
         invitation_url=invitation_url,
+        next_view=next_view,
+        back_url=(
+            url_for("projects.view_project", id=change_order.project_id)
+            if next_view == "hub"
+            else url_for("project_controls.list_change_orders")
+        ),
     )
 
 
@@ -377,26 +446,22 @@ def edit_change_order(id):
             )
         except (ChangeOrderServiceError, ValueError) as exc:
             flash(str(exc), "error")
-            return render_template(
-                "project_controls/change_orders/form.html",
+            return _render_change_order_form(
                 form=request.form,
                 projects=projects,
-                statuses=CHANGE_ORDER_STATUSES,
                 change_order=change_order,
-                estimate=None,
-                version=None,
+                lock_project=True,
+                operating_project_id=change_order.project_id,
             )
         flash("Change order updated.", "success")
         return redirect(url_for("project_controls.view_change_order", id=change_order.id))
 
-    return render_template(
-        "project_controls/change_orders/form.html",
+    return _render_change_order_form(
         form=_form_from_change_order(change_order),
         projects=projects,
-        statuses=CHANGE_ORDER_STATUSES,
         change_order=change_order,
-        estimate=None,
-        version=None,
+        lock_project=True,
+        operating_project_id=change_order.project_id,
     )
 
 

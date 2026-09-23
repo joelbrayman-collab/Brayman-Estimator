@@ -10,7 +10,7 @@
         <h1>{{ row.entry.worker_display_name }} · {{ "%.2f"|format(row.entry.hours) }} hours</h1>
         <p>{{ row.entry.element_display_name }} — {{ row.entry.activity_display_name }}</p>
     </div>
-    <a class="button-link" href="{{ url_for('time_entry.review') }}">{{ contractor_copy.TIME_REVIEW_HEADING }}</a>
+    <a class="button-link" href="{{ back_url|default(url_for('time_entry.review')) }}">{{ contractor_copy.TIME_REVIEW_HEADING }}</a>
 </div>
 
 <article class="panel panel-wide{% if row.is_extra_work %} scope-extra-work-panel{% endif %}">

@@ -59,6 +59,14 @@ def _return_after_item(item):
     return url_for("schedule.company", project_id=item.project_id)
 
 
+def _schedule_cancel_url(*, project_id=None, next_view=""):
+    if next_view == "hub" and project_id:
+        return url_for("projects.view_project", id=project_id) + "#hub-schedule"
+    if project_id:
+        return url_for("schedule.company", project_id=project_id)
+    return url_for("schedule.company")
+
+
 @schedule_bp.route("")
 def company():
     organization = _org()
@@ -94,11 +102,16 @@ def company():
 def new_item():
     organization = _org()
     projects = list_current_operating_projects(organization.id)
+    next_view = (request.args.get("next") or request.form.get("next") or "").strip()
     try:
-        project_id = _optional_int(request.values.get("project_id"))
+        query_project_id = _optional_int(request.args.get("project_id"))
+        project_id = query_project_id
+        if project_id is None:
+            project_id = _optional_int(request.form.get("project_id"))
     except (TypeError, ValueError):
         flash("Choose a project.", "error")
         return redirect(url_for("schedule.new_item"))
+    lock_project = query_project_id is not None
     choices = []
     if project_id:
         try:
@@ -109,13 +122,17 @@ def new_item():
     if request.method == "POST":
         confirm_element = (request.form.get("confirm_element_adjustment") or "").strip() == "1"
         try:
+            posted_id = _optional_int(request.form.get("project_id"))
+            if lock_project and posted_id != query_project_id:
+                raise ScheduleError("That work item does not belong to this project.")
+            write_project_id = query_project_id if lock_project else posted_id
             activity_id = _optional_int(request.form.get("project_work_activity_id"))
             element_id = _optional_int(request.form.get("project_work_element_id"))
-            if not project_id or not element_id:
+            if not write_project_id or not element_id:
                 raise ScheduleError("Choose the project and work item.")
             if activity_id and confirm_element:
                 schedule_activity_with_element_adjustment(
-                    project_id=project_id,
+                    project_id=write_project_id,
                     project_work_element_id=element_id,
                     project_work_activity_id=activity_id,
                     activity_scheduled_start=request.form.get("scheduled_start"),
@@ -128,7 +145,7 @@ def new_item():
                 )
             else:
                 create_schedule_item(
-                    project_id=project_id,
+                    project_id=write_project_id,
                     project_work_element_id=element_id,
                     project_work_activity_id=activity_id,
                     scheduled_start=request.form.get("scheduled_start"),
@@ -136,7 +153,11 @@ def new_item():
                     organization_id=organization.id,
                 )
             flash("Schedule saved.", "success")
-            return redirect(url_for("schedule.company", project_id=project_id))
+            if next_view == "hub":
+                return redirect(
+                    url_for("projects.view_project", id=write_project_id) + "#hub-schedule"
+                )
+            return redirect(url_for("schedule.company", project_id=write_project_id))
         except (ScheduleError, ScheduleNotFoundError) as exc:
             flash(str(exc), "error")
     return render_template(
@@ -147,6 +168,9 @@ def new_item():
         choices=choices,
         confirm_element=False,
         parent_item=None,
+        lock_project=lock_project,
+        next_view=next_view,
+        cancel_url=_schedule_cancel_url(project_id=project_id, next_view=next_view),
     )
 
 
@@ -202,7 +226,8 @@ def edit_item(item_id):
         assignments=list_item_assignments(item.id, organization_id=organization.id),
         people=list_assignable_people(organization.id),
         crews=list_assignable_crews(organization.id),
-        next_view=request.args.get("next") or "company",
+        next_view=request.args.get("next") or request.form.get("next") or "company",
+        cancel_url=_return_after_item(item),
     )
 
 

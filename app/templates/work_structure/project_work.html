@@ -197,7 +197,7 @@
                         <input type="text" name="title" value="{{ activity.display_name }}" required>
                         <button type="submit">Create change order</button>
                     </form>
-                    <a class="button-link" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id, extra_work_activity_id=activity.id) }}">Open change order form</a>
+                    <a class="button-link" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id, extra_work_activity_id=activity.id, next='hub') }}">Open change order form</a>
                     <form method="post" action="{{ url_for('work_structure.record_extra_work_as_original', activity_id=activity.id) }}">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="text" name="reason" placeholder="Review note">

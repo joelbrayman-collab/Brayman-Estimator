@@ -10,20 +10,28 @@
         <h1>Record time</h1>
         <p>Choose the project, the work, and the hours. Scope is inherited from the work.</p>
     </div>
-    <a class="button-link" href="{{ url_for('time_entry.review') }}">{{ contractor_copy.TIME_REVIEW_HEADING }}</a>
+    <a class="button-link" href="{{ cancel_url|default(url_for('time_entry.review')) }}">{{ contractor_copy.TIME_REVIEW_HEADING }}</a>
 </div>
 
 <form method="post" class="form-panel" id="office-time-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% if next_view %}
+    <input type="hidden" name="next" value="{{ next_view }}">
+    {% endif %}
     <div class="form-grid">
         <label>
             Project
+            {% if lock_project and project %}
+            <input type="hidden" name="project_id" value="{{ project.id }}">
+            <p><strong>{{ project.name }}</strong></p>
+            {% else %}
             <select name="project_id" required onchange="this.form.method='get'; this.form.submit();">
                 <option value="">Choose project</option>
                 {% for row in projects %}
                 <option value="{{ row.id }}" {% if project and project.id == row.id %}selected{% endif %}>{{ row.name }}</option>
                 {% endfor %}
             </select>
+            {% endif %}
         </label>
         {% if project %}
         <label>

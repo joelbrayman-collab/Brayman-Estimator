@@ -10,7 +10,7 @@
         <p class="eyebrow">Project Controls</p>
         <h1>Change Orders</h1>
     </div>
-    <a class="button" href="{{ url_for('project_controls.create_change_order_route') }}">New Change Order</a>
+    <a class="button" href="{{ url_for('project_controls.create_change_order_route', project_id=filters.project_id or none) }}">New Change Order</a>
 </div>
 
 {{ contextual_help(help_content.office_topic("change_orders")) }}
@@ -88,7 +88,7 @@
 <div class="empty-state">
     <h2>No change orders found</h2>
     <p>Create a change order from a project or estimate version to track scope adjustments.</p>
-    <a class="button-link" href="{{ url_for('project_controls.create_change_order_route') }}">New Change Order</a>
+    <a class="button-link" href="{{ url_for('project_controls.create_change_order_route', project_id=filters.project_id or none) }}">New Change Order</a>
 </div>
 {% endif %}
 {% endblock %}

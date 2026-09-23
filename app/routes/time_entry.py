@@ -113,13 +113,17 @@ def new_entry():
     organization = _org()
     projects = list_current_operating_projects(organization.id)
     project_id = None
+    next_view = (request.args.get("next") or request.form.get("next") or "").strip()
     try:
-        project_id = _optional_int(request.values.get("project_id"))
+        project_id = _optional_int(request.args.get("project_id"))
+        if project_id is None:
+            project_id = _optional_int(request.form.get("project_id"))
     except (TypeError, ValueError):
         flash("Choose a project.", "error")
         return redirect(url_for("time_entry.new_entry"))
     project = None
     choices = []
+    bound_from_query = _optional_int(request.args.get("project_id")) is not None
     if project_id is not None:
         project = next((row for row in projects if row.id == project_id), None)
         if project is None:
@@ -128,8 +132,11 @@ def new_entry():
         choices = list_time_work_choices(project.id, organization_id=organization.id)
     if request.method == "POST":
         try:
+            posted_id = int(request.form.get("project_id") or 0)
+            if bound_from_query and posted_id != project.id:
+                raise TimeEntryError("That work does not belong to this project.")
             entry = submit_time(
-                project_id=int(request.form.get("project_id") or 0),
+                project_id=project.id if bound_from_query else posted_id,
                 project_work_activity_id=_optional_int(
                     request.form.get("project_work_activity_id")
                 )
@@ -145,15 +152,26 @@ def new_entry():
                 organization_id=organization.id,
             )
             flash("Time sent for approval.", "success")
-            return redirect(url_for("time_entry.detail", time_entry_id=entry.id))
+            detail_kwargs = {"time_entry_id": entry.id}
+            if next_view == "hub":
+                detail_kwargs["next"] = "hub"
+            return redirect(url_for("time_entry.detail", **detail_kwargs))
         except (TimeEntryError, TypeError, ValueError) as exc:
             flash(str(exc) if isinstance(exc, TimeEntryError) else "Check the time entry.", "error")
+    cancel_url = url_for("time_entry.review")
+    if next_view == "hub" and project is not None:
+        cancel_url = url_for("projects.view_project", id=project.id) + "#hub-time"
+    elif project is not None:
+        cancel_url = url_for("time_entry.review", project_id=project.id)
     return render_template(
         "time/form.html",
         projects=projects,
         project=project,
         choices=choices,
         today=date.today().isoformat(),
+        lock_project=bound_from_query and project is not None,
+        next_view=next_view,
+        cancel_url=cancel_url,
     )
 
 
@@ -165,11 +183,19 @@ def detail(time_entry_id):
     except TimeEntryNotFoundError as exc:
         flash(str(exc), "error")
         return redirect(url_for("time_entry.review"))
+    next_view = (request.args.get("next") or "").strip()
+    back_url = url_for("time_entry.review")
+    if next_view == "hub":
+        back_url = url_for("projects.view_project", id=entry.project_id) + "#hub-time"
+    elif entry.project_id:
+        back_url = url_for("time_entry.review", project_id=entry.project_id)
     return render_template(
         "time/detail.html",
         row=time_entry_presentation(entry),
         can_review=current_user.id != entry.worker_user_id,
         status_label=contractor_time_status_label,
+        next_view=next_view,
+        back_url=back_url,
     )
 
 

@@ -8,6 +8,11 @@
     <div>
         <p class="eyebrow">Project Controls</p>
         <h1>{{ "Edit Change Order" if change_order else "New Change Order" }}</h1>
+        {% if lock_project and operating_project_id %}
+            {% for project in projects if project.id == operating_project_id %}
+            <p class="muted-copy">{{ project.name }}</p>
+            {% endfor %}
+        {% endif %}
     </div>
 </div>
 
@@ -25,21 +30,28 @@
     {% if extra_work_activity_id %}
     <input type="hidden" name="extra_work_activity_id" value="{{ extra_work_activity_id }}">
     {% endif %}
+    {% if next_view %}
+    <input type="hidden" name="next" value="{{ next_view }}">
+    {% endif %}
     <div class="form-grid">
         <label>
             Title *
             <input type="text" name="title" value="{{ form.title }}" required>
         </label>
         {% if not estimate %}
+        {% if lock_project %}
+        <input type="hidden" name="project_id" value="{{ form.project_id }}">
+        {% else %}
         <label>
             Project *
-            <select name="project_id" required {% if change_order %}disabled{% endif %}>
+            <select name="project_id" required>
+                <option value="">Choose a project</option>
                 {% for project in projects %}
                 <option value="{{ project.id }}" {% if form.project_id == project.id|string %}selected{% endif %}>{{ project.name }}</option>
                 {% endfor %}
             </select>
-            {% if change_order %}<input type="hidden" name="project_id" value="{{ form.project_id }}">{% endif %}
         </label>
+        {% endif %}
         {% else %}
         <input type="hidden" name="project_id" value="{{ form.project_id }}">
         {% endif %}
@@ -94,7 +106,7 @@
         {% if change_order %}
         <a href="{{ url_for('project_controls.view_change_order', id=change_order.id) }}">Cancel</a>
         {% else %}
-        <a href="{{ url_for('project_controls.list_change_orders') }}">Cancel</a>
+        <a href="{{ cancel_url|default(url_for('project_controls.list_change_orders')) }}">Cancel</a>
         {% endif %}
     </div>
 </form>

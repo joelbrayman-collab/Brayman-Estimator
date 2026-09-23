@@ -51,6 +51,8 @@ from app.services.organizations import get_current_organization_id
 
 estimates_bp = Blueprint("estimates", __name__, url_prefix="/estimates")
 
+ESTIMATE_PROJECT_MISMATCH = "That project is not the project for this estimate."
+
 
 def _get_scoped_estimate_or_404(id):
     org_id = get_current_organization_id()
@@ -245,7 +247,15 @@ def list_estimates():
 @estimates_bp.route("/new", methods=["GET", "POST"])
 def create_estimate_route():
     projects = _projects()
+    operating_project_id = request.args.get("project_id", type=int)
+    next_view = (request.args.get("next") or request.form.get("next") or "").strip()
+    bound_project = None
+    if operating_project_id:
+        bound_project = next((row for row in projects if row.id == operating_project_id), None)
+    lock_project = bound_project is not None
     form = _estimate_form_values()
+    if bound_project is not None and request.method != "POST":
+        form["project_id"] = str(bound_project.id)
 
     if not projects:
         return render_template(
@@ -254,11 +264,21 @@ def create_estimate_route():
             projects=projects,
             estimate=None,
             statuses=ESTIMATE_STATUSES,
+            lock_project=False,
+            operating_project_id=None,
+            next_view="",
+            cancel_url=url_for("estimates.list_estimates"),
         )
 
     if request.method == "POST":
         project_id = request.form.get("project_id", type=int)
         try:
+            if operating_project_id:
+                if bound_project is None:
+                    raise EstimateServiceError("Project not found.")
+                if project_id != bound_project.id:
+                    raise EstimateServiceError(ESTIMATE_PROJECT_MISMATCH)
+                project_id = bound_project.id
             estimate = create_estimate(
                 project_id=project_id,
                 estimate_number=form["estimate_number"],
@@ -273,6 +293,14 @@ def create_estimate_route():
                 projects=projects,
                 estimate=None,
                 statuses=ESTIMATE_STATUSES,
+                lock_project=lock_project,
+                operating_project_id=operating_project_id if bound_project else None,
+                next_view=next_view,
+                cancel_url=(
+                    url_for("projects.view_project", id=bound_project.id)
+                    if next_view == "hub" and bound_project
+                    else url_for("estimates.list_estimates")
+                ),
             )
 
         flash("Estimate created with Version 1.", "success")
@@ -284,6 +312,14 @@ def create_estimate_route():
         projects=projects,
         estimate=None,
         statuses=ESTIMATE_STATUSES,
+        lock_project=lock_project,
+        operating_project_id=operating_project_id if bound_project else None,
+        next_view=next_view,
+        cancel_url=(
+            url_for("projects.view_project", id=bound_project.id)
+            if next_view == "hub" and bound_project
+            else url_for("estimates.list_estimates")
+        ),
     )
 
 

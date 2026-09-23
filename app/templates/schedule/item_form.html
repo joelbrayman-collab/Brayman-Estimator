@@ -10,13 +10,22 @@
         <h1>{% if item %}{{ contractor_copy.SCHEDULE_EDIT }}{% else %}{{ contractor_copy.SCHEDULE_ADD }}{% endif %}</h1>
         <p>{{ contractor_copy.SCHEDULE_FORM_HELP }}</p>
     </div>
-    <a href="{{ url_for('schedule.company') }}">Back to schedule</a>
+    <a href="{{ cancel_url|default(url_for('schedule.company')) }}">{% if next_view == 'hub' %}Back to project{% else %}Back to schedule{% endif %}</a>
 </div>
 
 <section class="form-panel">
     <form method="post" class="form-grid">
         {% if item %}
         <p><strong>{{ item.project.name }}</strong> · {{ item.element.display_name }}{% if item.activity %} · {{ item.activity.display_name }}{% endif %}</p>
+        {% else %}
+        {% if next_view %}
+        <input type="hidden" name="next" value="{{ next_view }}">
+        {% endif %}
+        {% if lock_project and selected_project_id %}
+        <input type="hidden" name="project_id" value="{{ selected_project_id }}">
+        {% for project in projects if project.id == selected_project_id %}
+        <p><strong>{{ project.name }}</strong></p>
+        {% endfor %}
         {% else %}
         <label>
             Project
@@ -27,6 +36,7 @@
                 {% endfor %}
             </select>
         </label>
+        {% endif %}
         {% if choices %}
         <label>
             Work item

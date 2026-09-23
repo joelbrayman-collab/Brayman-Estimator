@@ -31,6 +31,9 @@ class ChangeOrderServiceError(Exception):
     pass
 
 
+CHANGE_ORDER_CANNOT_MOVE = "That change order cannot be moved to another project."
+
+
 ADMINISTRATIVE_CO_FIELDS = frozenset({"status", "notes"})
 
 
@@ -216,6 +219,10 @@ def update_change_order(change_order, **fields):
         extra = set(fields) - ADMINISTRATIVE_CO_FIELDS
         if extra:
             raise ChangeOrderServiceError(PROJECT_CLOSED_NEW_WORK)
+    if "project_id" in fields and fields["project_id"]:
+        posted_id = int(fields["project_id"])
+        if posted_id != change_order.project_id:
+            raise ChangeOrderServiceError(CHANGE_ORDER_CANNOT_MOVE)
     if "title" in fields:
         title = (fields["title"] or "").strip()
         if not title:
@@ -229,15 +236,6 @@ def update_change_order(change_order, **fields):
 
     if "requested_date" in fields:
         change_order.requested_date = fields["requested_date"]
-
-    if "project_id" in fields and fields["project_id"]:
-        moved = require_organization_project(
-            fields["project_id"],
-            organization_id=org_id,
-            error_class=ChangeOrderServiceError,
-            message="Project not found.",
-        )
-        change_order.project_id = moved.id
 
     if "estimate_version_id" in fields:
         version_id = fields["estimate_version_id"] or None

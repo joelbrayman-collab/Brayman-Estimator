@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — PKG-F06 SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | SHA-pin PKG-F06 after Architect ACCEPT COMMIT / PUSH. |
+| Business decision | F06 closed as a Rule 16 correction. OD-02 IMPLEMENTED. PKG-L05 CLOSED. R01, R04, R05, R03A, R03B, R02, R10, R13 remain CLOSED. Whole-system Rule 16 remains OPEN. Do not rescore V1. Do not start PKG-T03C from this pin. |
+| Architectural decision | None new. Pin only. |
+| Prompt template used | Architect PKG-F06 ACCEPT COMMIT / PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Commit authorized F06 package, push, docs-only SHA-pin, push pin. No live DB. No migration. No T03C/F08/F09/S16/R07/R11/R14. |
+| Files expected to change | Occupancy docs only for this pin commit |
+| Files prohibited from changing | Product code, tests, migrations, live DB, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | PKG-F06 PRODUCT SHA **`aedc8ae2058842c3def709a333d407c47c1af089`**. IMPLEMENTED / TESTED / GET EXPIRY READ-ONLY PROVEN / DERIVED EXPIRY PROVEN / POST EXPIRY ENFORCEMENT PROVEN / SECURITY INSTRUMENTATION PRESERVED / L05 CLOSE→REVOKED PRECEDENCE PROVEN / R05 R04 R03A R01 NON-REGRESSION PASS / TARGETED RE-AUDIT PASS / FULL SUITE PASS / COMMITTED / PUSHED / SHA-PINNED / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / CLOSED. OD-02 IMPLEMENTED. |
+| Tests | Not rerun for pin. Accepted evidence: dedicated F06 **11 passed**; focused **129 passed**; R04+R05+R03A+R01+L05 **62 passed**; full suite **1643 passed**, 5563 warnings, **758.74s**, exit **0**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining Rule 16 roots. Next numbered package is PKG-T03C / R03C. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not implement T03C until a new authorized prompt. |
+| Next approved prompt | Architect authorization of PKG-T03C / R03C — EXTRA WORK → CHANGE ORDER ATOMICITY |
+| Commit hash | Product **`aedc8ae2058842c3def709a333d407c47c1af089`**. Pin SHA recorded by this commit. |
+
 ### 2026-09-23 — PKG-F06 R06 PUBLIC WALKTHROUGH GET EXPIRY READ-ONLY (working tree)
 
 | Field | Content |

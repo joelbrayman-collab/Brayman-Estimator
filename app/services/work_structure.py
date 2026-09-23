@@ -12,6 +12,7 @@ from decimal import Decimal
 from typing import Optional
 
 from sqlalchemy import or_
+from sqlalchemy.exc import IntegrityError
 
 from app import db
 from app.models.estimate import EstimateVersion
@@ -367,7 +368,18 @@ def seed_project_work_structure(
         seeded_at=datetime.utcnow(),
     )
     db.session.add(seed)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except IntegrityError as exc:
+        db.session.rollback()
+        fp = f"{exc} {getattr(exc, 'orig', '')}".lower()
+        if (
+            "project_work_activities.source_estimate_labour_snapshot_id" in fp
+            or "project_work_structure_seeds.project_id" in fp
+            or "uq_project_work_structure_seeds_project" in fp
+        ):
+            raise WorkStructureError("This project's work plan is already built.") from exc
+        raise
     return seed
 
 

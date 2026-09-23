@@ -9,6 +9,8 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Optional
 
+from sqlalchemy.exc import IntegrityError
+
 from app import db
 from app.models.organization_crew import (
     CREW_STATUS_ACTIVE,
@@ -104,10 +106,22 @@ def create_crew(*, name: str, organization_id: Optional[str] = None, commit: boo
         status=CREW_STATUS_ACTIVE,
     )
     db.session.add(crew)
-    if commit:
-        db.session.commit()
-    else:
-        db.session.flush()
+    try:
+        if commit:
+            db.session.commit()
+        else:
+            db.session.flush()
+    except IntegrityError as exc:
+        db.session.rollback()
+        fp = f"{exc} {getattr(exc, 'orig', '')}".lower()
+        if (
+            "organization_crews.organization_id" in fp
+            and "organization_crews.name" in fp
+        ):
+            raise CrewError(
+                "A crew with that name already exists. Rename the retired crew first."
+            ) from exc
+        raise
     return crew
 
 

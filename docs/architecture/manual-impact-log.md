@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
-| Updated | 2026-09-22 |
+| Updated | 2026-09-23 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — PKG-T13 / R13 INTEGRITYERROR → CONTRACTOR DOMAIN ERROR (2026-09-23)
+
+| Field | Content |
+|-------|---------|
+| Slice | PKG-T13 / R13 expected integrity collision → contractor domain error |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** User Guide remains outstanding. |
+| 1. What new contractor capability exists? | None new. Saving a schedule that is already current, assigning a person or crew already on those dates, adding a work order that already exists, building a work plan that is already built, or saving a crew name that already exists still does the same contractor work. If another save won first, the later person is told that in ordinary product language. |
+| 2. When would the contractor use it? | When two people save the same Schedule item, assignment, or work order; when they rebuild a work plan that is already built; or when they save a crew name that already exists. |
+| 3. What workflow will the final Manual need to teach? | Same Schedule / work-plan / crew workflows. If the later save cannot complete, open the current dates or list again. Do not treat a database error page as the product. |
+| 4. What contractor-facing terms must be used? | Schedule. Work item. Activity. Assignment. Work order. Work plan. Crew. Already scheduled. Already assigned. Already exists. Already built. Do not say IntegrityError, unique constraint, or SQLite. |
+| 5. What screenshots / Print examples will eventually be needed? | Company Schedule after a rejected duplicate save. Crew settings after a rejected duplicate name. Project work after a rejected second seed. |
+| 6. What warnings / validation distinctions need explanation? | “That work item is already scheduled. Edit the current dates.” “That activity is already scheduled. Edit the current dates.” “That person is already assigned to these dates.” “That crew is already assigned to these dates.” “That work order already exists.” “This project's work plan is already built.” “A crew with that name already exists. Rename the retired crew first.” Those messages now also cover a save that lost to another completed save. A broken database is not described as a duplicate. |
+| 7. Desktop / iPhone / Print relevance | Office Schedule, Project work, and Crew settings. Field Schedule POSTs unchanged. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim whole-system Rule 16 PASS. Invent a duplicate-Time rule. Decide commercial document numbering. |
 
 ### MANUAL IMPACT — PKG-T10 / R10 TIME CONCURRENT TRANSITION (2026-09-22)
 

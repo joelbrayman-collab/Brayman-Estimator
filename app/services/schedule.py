@@ -11,6 +11,7 @@ from typing import Optional
 
 from flask_login import current_user
 from sqlalchemy import func, or_
+from sqlalchemy.exc import IntegrityError
 
 from app import db
 from app.models.organization_crew import CREW_STATUS_ACTIVE, OrganizationCrew
@@ -62,6 +63,48 @@ class ScheduleError(Exception):
 
 class ScheduleNotFoundError(ScheduleError):
     """Raised when a Schedule row is missing or cross-org."""
+
+
+def _integrity_fingerprint(exc: IntegrityError) -> str:
+    orig = getattr(exc, "orig", None)
+    return f"{exc} {orig or ''}".lower()
+
+
+def _raise_if_expected_schedule_integrity(exc: IntegrityError) -> None:
+    """Translate known one-current Schedule collisions; otherwise fail as technical."""
+    db.session.rollback()
+    fp = _integrity_fingerprint(exc)
+    if "work_schedule_items.project_work_activity_id" in fp:
+        raise ScheduleError(
+            "That activity is already scheduled. Edit the current dates."
+        ) from exc
+    if "work_schedule_items.project_work_element_id" in fp:
+        raise ScheduleError(
+            "That work item is already scheduled. Edit the current dates."
+        ) from exc
+    if (
+        "work_schedule_assignments.work_schedule_item_id" in fp
+        and "work_schedule_assignments.worker_user_id" in fp
+    ):
+        raise ScheduleError("That person is already assigned to these dates.") from exc
+    if (
+        "work_schedule_assignments.work_schedule_item_id" in fp
+        and "work_schedule_assignments.crew_id" in fp
+    ):
+        raise ScheduleError("That crew is already assigned to these dates.") from exc
+    if (
+        "project_work_dependencies.predecessor_element_id" in fp
+        and "project_work_dependencies.successor_element_id" in fp
+    ):
+        raise ScheduleError("That work order already exists.") from exc
+    raise exc
+
+
+def _flush_expected_schedule_write() -> None:
+    try:
+        db.session.flush()
+    except IntegrityError as exc:
+        _raise_if_expected_schedule_integrity(exc)
 
 
 def _org_id(organization_id: Optional[str] = None) -> str:
@@ -311,7 +354,7 @@ def _new_item(
         created_by_display_name=display_name,
     )
     db.session.add(item)
-    db.session.flush()
+    _flush_expected_schedule_write()
     _record_history(item, SCHEDULE_EVENT_CREATED)
     return item
 
@@ -695,7 +738,7 @@ def assign_user(
         crew_id=None,
     )
     db.session.add(assignment)
-    db.session.flush()
+    _flush_expected_schedule_write()
     _record_history(item, SCHEDULE_EVENT_ASSIGNED, assignment_id=assignment.id)
     if commit:
         db.session.commit()
@@ -733,7 +776,7 @@ def assign_crew(
         crew_id=crew.id,
     )
     db.session.add(assignment)
-    db.session.flush()
+    _flush_expected_schedule_write()
     _record_history(item, SCHEDULE_EVENT_ASSIGNED, assignment_id=assignment.id)
     if commit:
         db.session.commit()
@@ -1062,7 +1105,7 @@ def create_work_dependency(
         status=DEPENDENCY_STATUS_ACTIVE,
     )
     db.session.add(dependency)
-    db.session.flush()
+    _flush_expected_schedule_write()
     _record_dependency_history(
         organization_id=org_id,
         project_id=project.id,

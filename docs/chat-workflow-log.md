@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — PKG-T13 / R13 INTEGRITYERROR → CONTRACTOR DOMAIN ERROR (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` @ `bcb4e0e9f9b639b1d52e3ba3f77239699f0a8824` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | PKG-T13 / R13: expected IntegrityError collisions already owned by V1 invariants must fail closed as existing contractor domain errors. INTEGRITY-RACE tests. Targeted Rule 16 re-audit of R13 only. |
+| Business decision | Translate only proven CLASS A races. Do not invent R11 duplicate-Time identity. Do not decide R14 commercial numbering. Unmatched database failure stays a technical failure. |
+| Architectural decision | Constraint-specific fingerprint translation after rollback: Schedule unique-active item/activity/assignment/dependency → existing `ScheduleError`; work-plan seed snapshot/seed unique → existing `WorkStructureError`; crew org+name unique → existing `CrewError`. No schema. No nested commits. No blanket `except IntegrityError`. |
+| Prompt template used | Architect PKG-T13 IMPLEMENT / TEST / TARGETED RE-AUDIT working tree only |
+| Approved Cursor prompt summary | Inventory first; prove CLASS A reachability; implement constraint-specific translation only; INTEGRITY-RACE tests; unmatched firewall; preserve R01/R04/R05/R03A/R03B/R02/R10. No commit, push, deploy, migration, live Time/Close, R11/R14/R06, V1 rescore. |
+| Files expected to change | Schedule / work-structure seed / crew services; dedicated integrity-race tests; occupancy docs |
+| Files prohibited from changing | Migrations, live DB, Time uniqueness, commercial numbering, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | CLASS A proven and translated. Losing action rolls back; route flashes existing domain copy; no SQLite/SQLAlchemy/constraint names; no success flash. Unmatched IntegrityError not recast. R11 POLICY: NOT INVENTED. R14: NOT DECIDED. NOT COMMITTED. |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_integrity_race_r13.py` → **18 passed**, 51 warnings, **7.74s**, exit **0**. Focused R13+R10+R03B+R02+R04+R03A+R05+R01+Time/Schedule/TAX-WBS/MONITOR → **204 passed**, 654 warnings, **110.02s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` → **1617 passed**, 5480 warnings, **732.76s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None. Existing constraints translated; no migration. |
+| Unresolved issues | Remaining Rule 16 roots. R11 and R14 remain owner decisions. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not commit. Do not start R11/R14/R06. |
+| Next approved prompt | ACCEPT COMMIT PKG-T13 / R13 (Architect after review) |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-23 — PKG-T10 / R10 SHA-pin
 
 | Field | Content |

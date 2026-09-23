@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — PKG-F09 SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | SHA-pin PKG-F09 after Architect ACCEPT COMMIT / PUSH. |
+| Business decision | F09 closed as a Rule 16 correction. Project-entered child keeps Project. Global create requires explicit Project. Existing CO cannot be reparented. Estimate edit reparent remains out of scope. Whole-system Rule 16 remains OPEN. Do not rescore V1. Do not start PKG-S16 from this pin. |
+| Architectural decision | None new. Pin only. F09 product law is not broadened. |
+| Prompt template used | Architect PKG-F09 ACCEPT COMMIT / PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Commit authorized F09 package, push, docs-only SHA-pin, push pin. No live DB. No migration. No S16/F14/F07/F15. |
+| Files expected to change | Occupancy docs only for this pin commit |
+| Files prohibited from changing | Product code, tests, migrations, live DB, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | PRODUCT SHA **`e445e641789efd71b44d456b202b560649879c37`**. IMPLEMENTED / TESTED / NO SILENT FIRST-PROJECT CO DEFAULT / PROJECT-ENTERED CHILD KEEPS PROJECT / GLOBAL ENTRY REQUIRES EXPLICIT PROJECT / WRONG-PROJECT CREATE FAILS CLOSED / CO REPARENT FAILS CLOSED / HUB ESTIMATE CONTEXT PRESERVED / TIME CONTEXT PRESERVED / SCHEDULE CONTEXT PRESERVED / EXISTING PROJECT-OWNERSHIP CHECKS PRESERVED / R01 NON-REGRESSION PASS / R02 SEALED / T03C NON-REGRESSION PASS / F08 SEALED / TARGETED RE-AUDIT PASS / FULL SUITE PASS / COMMITTED / PUSHED / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / CLOSED |
+| Tests | Not rerun. Accepted F09 evidence remains dedicated **12** / focused **65** / T03C+R01 **25** / Change Order+Schedule **24** / full **1680 passed**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining Rule 16 roots. Next numbered package PKG-S16 is NOT AUTHORIZED from this pin. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not start S16. |
+| Next approved prompt | Architect authorization of PKG-S16 derivation / migration-dependency reconciliation only. S16 is not authorized from this pin. |
+| Commit hash | Product **`e445e641789efd71b44d456b202b560649879c37`**. Pin SHA recorded by this commit. |
+
 ### 2026-09-23 — PKG-F09 R09 PROJECT-CHILD CONTEXT (working tree)
 
 | Field | Content |

@@ -56,7 +56,7 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 | Field | Content |
 |-------|---------|
 | Slice | PKG-F09 / R09 Project-child context / wrong-Project prevention |
-| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** User Guide remains outstanding. |
+| Product status at capture | **COMMITTED / PUSHED / SHA-PINNED / CLOSED** at product SHA **`e445e641789efd71b44d456b202b560649879c37`**. User Guide remains outstanding. |
 | 1. What new contractor capability exists? | Opening New Change Order or New Estimate from a Project Hub stays on that Project. Global New Change Order no longer silently picks the first Project. An existing Change Order cannot be moved to another Project. |
 | 2. When would the contractor use it? | When creating a Change Order, Estimate, Time entry, or Schedule item from a Project, or when creating a Change Order from the company-wide list. |
 | 3. What workflow will the final Manual need to teach? | From a Project, New stays on that Project and Cancel/Back return to that Project. From the company-wide list, the contractor must choose the Project before a Change Order or Estimate can be created. Extra Work still cannot become a Change Order for a different Project. |

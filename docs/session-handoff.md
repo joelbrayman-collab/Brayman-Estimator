@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **2026-09-23 REVIEW TURNOVER CURSOR PHASE 2 — T03C-SEALED RESUME PACKAGE REBUILT IN WORKING TREE / NOT COMMITTED.** Active resume authority is PKG-T03C pin SHA **`c57cf5f4e1cfa55edb654af4b8599e53176300c8`**. T03C product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`**. F06 product **`aedc8ae2058842c3def709a333d407c47c1af089`** / pin **`ceb40bc391aa24d0f2bc06666802fddd190e2984`**. L05 product **`4682fc544ccdd3811be9f73488ad6f5a8c0777e6`** / pin **`065649e75f741097064f1de5df5d24200c3fe370`**. R01, R04, R05, R03A, R03B, R02, R10, R13, L05, F06, T03C remain **CLOSED**. Whole-system Rule 16 **OPEN**. Next package **PKG-F08 / R08 NOT STARTED / NOT AUTHORIZED** from this turnover. Draft-linked Extra remains **EXTRA_WORK** under sealed T03C law. No product code. No schema. No migration. No live DB mutation. Alembic **`g7b8c9d0e1f2 (head)`**. Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. Flask 5460 **STOPPED**. Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). HostPapa app deploy **does not exist**. Home V2.2 remains desktop reference (`9ba1580a369e8550f027ab2bb346df8ae6aaac18`). VISUAL-2 ancestor **`01771845ce594449acb889b5664d094b8d31604d`** is **historical**, not current resume authority. PA-D **NOT IMPLEMENTED**. |
+| Status | **2026-09-23 REVIEW TURNOVER CURSOR PHASE 2 — T03C-SEALED RESUME PACKAGE COMMITTED / PUSHED / SHA-PINNED.** Turnover docs SHA **`5b00172e10615f9c0d8d95d10bb636dd310b422d`**. Pin SHA recorded after this docs commit. Active resume authority is the T03C-sealed turnover package. T03C product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`**. T03C pin SHA **`c57cf5f4e1cfa55edb654af4b8599e53176300c8`**. F06 product **`aedc8ae2058842c3def709a333d407c47c1af089`** / pin **`ceb40bc391aa24d0f2bc06666802fddd190e2984`**. L05 product **`4682fc544ccdd3811be9f73488ad6f5a8c0777e6`** / pin **`065649e75f741097064f1de5df5d24200c3fe370`**. R01, R04, R05, R03A, R03B, R02, R10, R13, L05, F06, T03C remain **CLOSED**. Whole-system Rule 16 **OPEN**. Next package **PKG-F08 / R08 NOT STARTED / NOT AUTHORIZED**. Draft-linked Extra remains **EXTRA_WORK** under sealed T03C law. No product code. No schema. No migration. No live DB mutation. Alembic **`g7b8c9d0e1f2 (head)`**. Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa`**. Flask 5460 **STOPPED**. Official V1 **65% / 4 of 11.** Secondary Functional V1 Build **79% / 22 of 28** (not rescored). HostPapa app deploy **does not exist**. Home V2.2 remains desktop reference (`9ba1580a369e8550f027ab2bb346df8ae6aaac18`). VISUAL-2 ancestor **`01771845ce594449acb889b5664d094b8d31604d`** is **historical**, not current resume authority. PA-D **NOT IMPLEMENTED**. |
 | Updated | 2026-09-23 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [v1-completion-register.md](v1-completion-register.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -45,7 +45,7 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 
 ## 2. VERIFIED BASELINE
 
-**CURRENT SEALED CHECKPOINT (active resume authority, 2026-09-23):** Branch `main`. HEAD / `origin/main` **`c57cf5f4e1cfa55edb654af4b8599e53176300c8`** (`docs: pin PKG-T03C extra-work change-order SHA`). T03C product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`**. F06 product **`aedc8ae2058842c3def709a333d407c47c1af089`** / pin **`ceb40bc391aa24d0f2bc06666802fddd190e2984`**. L05 product **`4682fc544ccdd3811be9f73488ad6f5a8c0777e6`** / pin **`065649e75f741097064f1de5df5d24200c3fe370`**. Working tree at this turnover inspect: **CLEAN** at T03C pin; this Phase 2 package is docs-only dirt until Architect ACCEPT COMMIT. Alembic live current = graph head **`g7b8c9d0e1f2 (head)`**. Live DB UNCHANGED size `3457024` / mtime `1790020245.9238403`. Flask 5460 **STOPPED**. Recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**. Latest governed full suite (T03C product close): **1657 passed**, 5626 warnings, **789.32s**, exit **0**. Official V1 **65% / 4 of 11**. Secondary Functional V1 Build **79% / 22 of 28**. Whole-system Rule 16 **OPEN**. HostPapa app deploy **does not exist**.
+**CURRENT SEALED CHECKPOINT (active resume authority, 2026-09-23):** Branch `main`. Turnover docs SHA **`5b00172e10615f9c0d8d95d10bb636dd310b422d`** (`docs: rebuild T03C-sealed Review Turnover resume package`). Pin SHA recorded after this docs commit. T03C product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`**. T03C pin SHA **`c57cf5f4e1cfa55edb654af4b8599e53176300c8`**. F06 product **`aedc8ae2058842c3def709a333d407c47c1af089`** / pin **`ceb40bc391aa24d0f2bc06666802fddd190e2984`**. L05 product **`4682fc544ccdd3811be9f73488ad6f5a8c0777e6`** / pin **`065649e75f741097064f1de5df5d24200c3fe370`**. Working tree **CLEAN** after this pin. Alembic live current = graph head **`g7b8c9d0e1f2 (head)`**. Live DB UNCHANGED size `3457024` / mtime `1790020245.9238403`. Flask 5460 **STOPPED**. Recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**. Latest governed full suite (T03C product close): **1657 passed**, 5626 warnings, **789.32s**, exit **0**. Official V1 **65% / 4 of 11**. Secondary Functional V1 Build **79% / 22 of 28**. Whole-system Rule 16 **OPEN**. HostPapa app deploy **does not exist**.
 
 Historical SHA chain below is **not** current resume authority.
 
@@ -125,7 +125,9 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **2026-09-23 REVIEW TURNOVER CURSOR PHASE 2 (working tree / not committed).** Docs/governance only. Rebuilt active resume authority in `docs/session-handoff.md` §§1–2, §7, §10, §15, §§20–22 to the T03C pin. VISUAL-2 / FG-034 / 15 SEP startup material is **historical**, not current resume authority. No product code. No schema. No migration. No live DB mutation. F08 **NOT STARTED**. Next **STOP for ChatGPT Architect ACCEPT COMMIT of this turnover documentation.**
+**Last authorized delta:** **2026-09-23 REVIEW TURNOVER CURSOR PHASE 2 COMMITTED / PUSHED / SHA-PINNED.** Turnover docs SHA **`5b00172e10615f9c0d8d95d10bb636dd310b422d`**. Pin SHA recorded after this docs commit. Docs/governance only. Active resume authority is the T03C-sealed turnover package. VISUAL-2 / FG-034 / 15 SEP startup material is **historical**. No product code. No schema. No migration. No live DB mutation. F08 **NOT STARTED / NOT AUTHORIZED**. Next **STOP.** Seat fresh ChatGPT Architect and Cursor Executor chats from §22. Do **not** start F08 from this pin.
+
+**Prior:** **2026-09-23 REVIEW TURNOVER CURSOR PHASE 2 (working tree / then committed as the turnover docs SHA above).** Docs/governance only. Rebuilt active resume authority in `docs/session-handoff.md` §§1–2, §7, §10, §15, §§20–22 to the T03C pin. VISUAL-2 / FG-034 / 15 SEP startup material is **historical**, not current resume authority. No product code. No schema. No migration. No live DB mutation. F08 **NOT STARTED**. Next **STOP for ChatGPT Architect ACCEPT COMMIT of this turnover documentation.**
 
 **Prior:** **2026-09-23 PKG-T03C COMMITTED / PUSHED / SHA-PINNED / CLOSED.** Product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`**. Combined Extra→CO is one transaction. PATH 1 `create_change_order_from_extra_work` and PATH 2 office new-CO form with `extra_work_activity_id` share that owner. `create_change_order(..., commit=False)` and `link_extra_work_to_change_order(..., commit=False)` participate. Injected post-CO/pre-link failure rolls CO back; Extra remains unlinked; retry creates exactly one CO and one link. PATH 2 does not redirect to an orphan CO. Standalone CO, Extra-only, and Extra→existing-CO remain separate. Authorizing-linked Extra cannot create another CO. Draft-linked Extra remains eligible under existing EXTRA_WORK origin law; that origin law is deferred to F08. Dedicated T03C **14 passed**, 63 warnings, **11.04s**. Focused **162 passed**, 637 warnings, **94.83s**. Dedicated R03B+R03A+R04+R05+R01+F06+L05 **82 passed**, 236 warnings, **56.39s**. Full suite **1657 passed**, 5626 warnings, **789.32s**, exit **0**. No schema. No migration. Live DB unchanged (`3457024` / mtime `1790020245.9238403`). No live Change Order / Extra Work / Project Close. V1 scores unchanged (**65% / 4 of 11**, **79% / 22 of 28**). R01, R04, R05, R03A, R03B, R02, R10, R13, L05, F06 remain **CLOSED**. T03C **CLOSED**. Whole-system Rule 16 remains **OPEN**. Next Rule 16 package **PKG-F08 / R08** is **NOT implemented** from this pin. Next **STOP for ChatGPT Architect authorization of PKG-F08.** Do **not** start F08, F09, S16, F14, F07, R07, R11, or R14 from this pin.
 
@@ -800,14 +802,16 @@ lsof -nP -iTCP:5460 -sTCP:LISTEN || true
 ./venv/bin/flask db heads
 ```
 
-Expected at a clean post-pin inspect (before this turnover's docs dirt, and again after Architect ACCEPT COMMIT of this turnover):
+Expected at a clean post-pin inspect:
 
 - repository path `/Users/joelbrayman/Desktop/Brayman-Estimator`
 - branch `main`
-- HEAD = `origin/main` = **`c57cf5f4e1cfa55edb654af4b8599e53176300c8`**
+- HEAD = `origin/main` = the Review Turnover SHA-pin commit (`docs: pin Review Turnover T03C resume-package SHA`)
+- Turnover docs SHA **`5b00172e10615f9c0d8d95d10bb636dd310b422d`** is an ancestor of HEAD
+- T03C pin **`c57cf5f4e1cfa55edb654af4b8599e53176300c8`** is an ancestor of HEAD
 - ahead 0 / behind 0
-- working tree **CLEAN** after this turnover is committed; this Phase 2 package is **docs-only dirt** until Architect ACCEPT COMMIT
-- staging **EMPTY** except the authorized turnover docs when committing
+- working tree **CLEAN**
+- staging **EMPTY**
 - T03C product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`** is an ancestor of HEAD
 - F06 product **`aedc8ae2058842c3def709a333d407c47c1af089`** / pin **`ceb40bc391aa24d0f2bc06666802fddd190e2984`**
 - L05 product **`4682fc544ccdd3811be9f73488ad6f5a8c0777e6`** / pin **`065649e75f741097064f1de5df5d24200c3fe370`**
@@ -859,17 +863,18 @@ Cursor does not choose product law.
 Cursor does not choose the next Rule 16 root.
 Cursor does not broaden scope.
 
-REPOSITORY IDENTITY (expected starting identity after this turnover is committed):
+REPOSITORY IDENTITY (expected starting identity after this turnover is SHA-pinned):
 Path: /Users/joelbrayman/Desktop/Brayman-Estimator
 Branch: main
-HEAD / origin/main: c57cf5f4e1cfa55edb654af4b8599e53176300c8
-Divergence: ahead 0 / behind 0
-Working tree: CLEAN
-Staging: EMPTY
+HEAD / origin/main: the Review Turnover SHA-pin commit
+  (docs: pin Review Turnover T03C resume-package SHA)
+Confirm HEAD = origin/main, ahead 0 / behind 0, working tree CLEAN, staging EMPTY.
+TURNOVER DOCS SHA (resume-package content; ancestor of HEAD):
+5b00172e10615f9c0d8d95d10bb636dd310b422d
 
 PKG-T03C PRODUCT SHA:
 95659c8432761815cbd9825969cc5b6cc683042d
-PKG-T03C PIN SHA / CURRENT CHECKPOINT:
+PKG-T03C PIN SHA (product checkpoint; ancestor of HEAD):
 c57cf5f4e1cfa55edb654af4b8599e53176300c8
 
 PKG-F06 PRODUCT SHA:
@@ -953,7 +958,9 @@ lsof -nP -iTCP:5460 -sTCP:LISTEN || true
 
 Confirm:
 - branch = main
-- HEAD = origin/main = c57cf5f4e1cfa55edb654af4b8599e53176300c8
+- HEAD = origin/main = the Review Turnover SHA-pin commit
+- TURNOVER DOCS SHA 5b00172e10615f9c0d8d95d10bb636dd310b422d is an ancestor of HEAD
+- T03C pin c57cf5f4e1cfa55edb654af4b8599e53176300c8 is an ancestor of HEAD
 - working tree CLEAN
 - Alembic current = heads = g7b8c9d0e1f2
 - live DB size 3457024 / mtime 1790020245.9238403

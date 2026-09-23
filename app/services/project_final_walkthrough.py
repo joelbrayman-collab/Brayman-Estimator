@@ -207,6 +207,11 @@ def _raise_if_rate_limited(client_ip: str, *, lookup_key: str, now: datetime) ->
         )
 
 
+def _invitation_clock_expired(invitation, now: datetime) -> bool:
+    expires_at = getattr(invitation, "expires_at", None)
+    return expires_at is not None and expires_at <= now
+
+
 def _new_lookup_key() -> str:
     lookup_key = secrets.token_urlsafe(16)
     while ProjectFinalWalkthroughInvitation.query.filter_by(
@@ -364,9 +369,9 @@ def resolve_walkthrough_access(
         )
         db.session.commit()
         raise WalkthroughTokenError(WALKTHROUGH_TOKEN_INVALID, code=BLOCK_TOKEN_INVALID)
-    if invitation.expires_at is not None and invitation.expires_at <= now:
-        if invitation.status == WALKTHROUGH_STATUS_OPEN:
-            invitation.status = WALKTHROUGH_STATUS_EXPIRED
+    if invitation.status == WALKTHROUGH_STATUS_OPEN and _invitation_clock_expired(
+        invitation, now
+    ):
         _record_access_attempt(
             lookup_key=lookup_key,
             client_ip=ip,
@@ -461,6 +466,8 @@ def submit_walkthrough_response(
         raise WalkthroughTokenError(
             WALKTHROUGH_TOKEN_CONSUMED, code=BLOCK_TOKEN_CONSUMED
         )
+    if _invitation_clock_expired(invitation, datetime.utcnow()):
+        raise WalkthroughTokenError(WALKTHROUGH_TOKEN_EXPIRED, code=BLOCK_TOKEN_EXPIRED)
     descriptions = _cleaned_item_descriptions(item_descriptions)
     if nothing_to_add and descriptions:
         raise WalkthroughError(WALKTHROUGH_CONTRADICTORY_RESPONSE)

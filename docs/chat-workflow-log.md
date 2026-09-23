@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — PKG-F06 R06 PUBLIC WALKTHROUGH GET EXPIRY READ-ONLY (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | PKG-F06 / R06: public Walkthrough GET must not persist OPEN→EXPIRED merely because the link was viewed. Expiry is derived from expires_at. Security instrumentation remains. |
+| Business decision | OD-02 implemented. GET is read-only for expiry, not necessarily zero-write. Access-attempt / rate-limit writes preserved. Do not rescore V1. Whole-system Rule 16 remains OPEN. |
+| Architectural decision | `resolve_walkthrough_access` treats OPEN + past expires_at as expired without rewriting status. `submit_walkthrough_response` independently refuses clock-expired OPEN. Persisted EXPIRED remains valid historical state. L05 Close still REVOKES persisted OPEN. |
+| Prompt template used | Architect PKG-F06 IMPLEMENT / TEST / TARGETED RE-AUDIT working tree only |
+| Approved Cursor prompt summary | Remove GET-driven OPEN→EXPIRED. Keep security instrumentation. POST independent expiry. L05 Close→REVOKED precedence. Permanent F06 regression class. No commit, push, deploy, migration, live invite/submit/Close, T03C/F08/F09/S16, V1 rescore. |
+| Files expected to change | `app/services/project_final_walkthrough.py`, F06 tests, occupancy docs |
+| Files prohibited from changing | Live DB, Alembic, Flask 5460, recovery stash, V1 scores, L05 Close law, other Rule 16 roots |
+| Implementation result | IMPLEMENTED IN WORKING TREE / TESTED / GET EXPIRY READ-ONLY PROVEN / DERIVED EXPIRY PROVEN / POST EXPIRY ENFORCEMENT PROVEN / SECURITY INSTRUMENTATION PRESERVED / L05 CLOSE→REVOKED PRECEDENCE PROVEN / R05 R04 R03A R01 NON-REGRESSION PASS / TARGETED RE-AUDIT PASS / FULL SUITE PASS / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / NOT COMMITTED / NOT PUSHED |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_walkthrough_get_expiry_f06.py` → **11 passed**, 30 warnings, **7.10s**, exit **0**. Focused Walkthrough/Close/tenancy + L05/R05/R04/R03A/R01 → **129 passed**, 411 warnings, **82.41s**, exit **0**. Dedicated R04+R05+R03A+R01+L05 → **62 passed**, 174 warnings, **41.28s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` → **1643 passed**, 5563 warnings, **758.74s**, exit **0**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | PKG-F06 not committed. Remaining Rule 16 roots. Whole-system Rule 16 OPEN. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not commit. Do not start T03C. |
+| Next approved prompt | Architect ACCEPT COMMIT PKG-F06 |
+| Commit hash | (none — working tree only) |
+
 ### 2026-09-23 — PKG-L05 SHA-pin
 
 | Field | Content |

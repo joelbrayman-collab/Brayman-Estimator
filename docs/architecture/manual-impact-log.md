@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PKG-F06 PUBLIC WALKTHROUGH GET EXPIRY (2026-09-23)
+
+| Field | Content |
+|-------|---------|
+| Slice | PKG-F06 / R06 public Walkthrough GET expiry read-only |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** User Guide remains outstanding. |
+| 1. What new contractor capability exists? | None new for office work. A client Walkthrough link that has passed its expiry time is no longer usable, and opening that link does not itself change the invitation record to Expired. |
+| 2. When would the contractor use it? | When a client opens or tries to submit a Final Walkthrough link after its expiry time, or when office Closes a Project that still has an unused invitation. |
+| 3. What workflow will the final Manual need to teach? | Send the Walkthrough invitation as today. After the expiry time, the client sees that the link is not available. Closing the Project still ends unused invitations. Opening an expired link does not create a new office status of Expired. |
+| 4. What contractor-facing terms must be used? | Final Walkthrough. Invitation. Link. Expired. Close. Do not say OPEN→EXPIRED, GET side effect, or expires_at. |
+| 5. What screenshots / Print examples will eventually be needed? | Public Walkthrough unavailable page for an expired link. Office Walkthrough after Close. |
+| 6. What warnings / validation distinctions need explanation? | The link is not available because the expiry time passed, not because the client opened it. Closing the Project still ends an unused invitation even if that expiry time already passed. |
+| 7. Desktop / iPhone / Print relevance | Public Walkthrough page. Office Close. Field unchanged. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim whole-system Rule 16 PASS. Wholesale C08 copy sweep. Remove access-attempt recording. |
+
 ### MANUAL IMPACT — PKG-L05 PROJECT CLOSE / WALKTHROUGH REVOCATION / OPEN PUNCH CONFIRMATION (2026-09-23)
 
 | Field | Content |

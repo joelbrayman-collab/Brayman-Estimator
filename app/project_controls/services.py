@@ -107,6 +107,7 @@ def create_change_order(
     number=None,
     status="Draft",
     organization_id=None,
+    commit=True,
 ):
     title = (title or "").strip()
     if not title:
@@ -195,7 +196,10 @@ def create_change_order(
                 sort_order += 1
 
     recalculate_change_order(change_order)
-    db.session.commit()
+    if commit:
+        db.session.commit()
+    else:
+        db.session.flush()
     return change_order
 
 

@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PKG-T03C EXTRA WORK → CHANGE ORDER (2026-09-23)
+
+| Field | Content |
+|-------|---------|
+| Slice | PKG-T03C / R03C Extra Work → Change Order atomicity |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** User Guide remains outstanding. |
+| 1. What new contractor capability exists? | None new for ordinary office work. Creating a Change Order from Extra Work now either completes both steps together or does neither. |
+| 2. When would the contractor use it? | When turning Extra Work into a Change Order from Project work or from the new Change Order form with Extra Work selected. |
+| 3. What workflow will the final Manual need to teach? | Extra Work is recorded first. Creating a Change Order from that Extra Work is one action. If it fails, no leftover Change Order is left to clean up. Linking Extra Work to an already-existing Change Order remains a separate action. |
+| 4. What contractor-facing terms must be used? | Extra Work. Change Order. Do not say PATH 1, commit=False, or orphan CO. |
+| 5. What screenshots / Print examples will eventually be needed? | Project work Extra Work → create Change Order. Office new Change Order form. |
+| 6. What warnings / validation distinctions need explanation? | If creating a Change Order from Extra Work cannot finish, the Extra Work stays Extra Work and no Change Order is left behind. Linking Extra Work to a Change Order that already exists is a different action. |
+| 7. Desktop / iPhone / Print relevance | Office Change Orders and Project work. Field Extra Work create unchanged. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim whole-system Rule 16 PASS. Redesign scope-origin (F08). Change Change Order numbering (F14). |
+
 ### MANUAL IMPACT — PKG-F06 PUBLIC WALKTHROUGH GET EXPIRY (2026-09-23)
 
 | Field | Content |

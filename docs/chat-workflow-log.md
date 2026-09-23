@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — PKG-T03C R03C EXTRA WORK → CHANGE ORDER ATOMICITY (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | PKG-T03C / R03C: Extra Work → Change Order create+link must be one transaction. Failure after CO create must roll the CO back. Retry must not duplicate CO residue. |
+| Business decision | One contractor Extra→CO action is one database transaction. Standalone CO, Extra-only, and Extra→existing-CO remain separate. Do not rescore V1. Whole-system Rule 16 remains OPEN. Do not start F08/F14. |
+| Architectural decision | `create_change_order` and `link_extra_work_to_change_order` accept `commit=False`. `create_change_order_from_extra_work` owns PATH 1 and PATH 2. Office new-CO form with extra_work_activity_id no longer split-commits. |
+| Prompt template used | Architect PKG-T03C IMPLEMENT / TEST / TARGETED RE-AUDIT working tree only |
+| Approved Cursor prompt summary | One Extra→CO transaction. Both entry paths. Failure-injection rollback. Retry-idempotence. Preserve standalone CO / Extra / existing-CO link. R03A/R03B pattern. No commit, push, deploy, migration, live Extra/CO, F08/F09/S16, V1 rescore. |
+| Files expected to change | `app/project_controls/services.py`, `app/services/work_scope.py`, `app/project_controls/routes.py`, T03C tests, occupancy docs |
+| Files prohibited from changing | Live DB, Alembic, Flask 5460, recovery stash, V1 scores, F06/L05 law, other Rule 16 roots |
+| Implementation result | IMPLEMENTED IN WORKING TREE / TESTED / EXTRA→CO ONE TRANSACTION PROVEN / FAILURE ROLLS CO BACK / RETRY DOES NOT DUPLICATE CO / STANDALONE CO PRESERVED / STANDALONE EXTRA LINK PRESERVED / EXTRA-ONLY PRESERVED / R03A R03B R04 R05 R01 F06 L05 NON-REGRESSION PASS / TARGETED RE-AUDIT PASS / FULL SUITE PASS / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / NOT COMMITTED / NOT PUSHED |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_extra_work_change_order_atomicity_t03c.py` → **14 passed**, 63 warnings, **11.04s**, exit **0**. Focused Extra/CO/Time/Walkthrough/Close/tenancy → **162 passed**, 637 warnings, **94.83s**, exit **0**. Dedicated R03B+R03A+R04+R05+R01+F06+L05 → **82 passed**, 236 warnings, **56.39s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` → **1657 passed**, 5626 warnings, **789.32s**, exit **0**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. Draft-linked Extra remains eligible to create another CO under existing `scope_origin == EXTRA_WORK` law; authorizing-linked Extra cannot. Not F08. Not R11. |
+| Unresolved issues | PKG-T03C not committed. Remaining Rule 16 roots. Whole-system Rule 16 OPEN. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not commit. Do not start F08. |
+| Next approved prompt | Architect ACCEPT COMMIT PKG-T03C |
+| Commit hash | (none — working tree only) |
+
 ### 2026-09-23 — PKG-F06 SHA-pin
 
 | Field | Content |

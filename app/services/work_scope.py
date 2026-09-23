@@ -687,6 +687,7 @@ def link_extra_work_to_change_order(
     actor_display_name: Optional[str] = None,
     reason: Optional[str] = None,
     organization_id: Optional[str] = None,
+    commit: bool = True,
 ) -> ProjectWorkActivity:
     org_id = _org_id(organization_id)
     activity = ProjectWorkActivity.query.filter_by(
@@ -742,7 +743,10 @@ def link_extra_work_to_change_order(
             actor_display_name=actor_display_name,
             reason=reason or "Extra work linked to a change order.",
         )
-    db.session.commit()
+    if commit:
+        db.session.commit()
+    else:
+        db.session.flush()
     db.session.refresh(activity)
     _assert_original_evidence_unchanged(activity, evidence)
     return activity
@@ -755,8 +759,18 @@ def create_change_order_from_extra_work(
     actor_user_id: Optional[int] = None,
     actor_display_name: Optional[str] = None,
     organization_id: Optional[str] = None,
+    project=None,
+    description=None,
+    reason=None,
+    requested_by=None,
+    requested_date=None,
+    markup_percent=0,
+    tax_percent=0,
+    notes=None,
+    status="Draft",
+    link_reason: Optional[str] = None,
 ) -> tuple[ChangeOrder, ProjectWorkActivity]:
-    """Use the existing Change Order service; then link Extra Work to it."""
+    """Create a Change Order and link Extra Work in one transaction."""
     from app.project_controls.services import ChangeOrderServiceError, create_change_order
 
     org_id = _org_id(organization_id)
@@ -765,26 +779,49 @@ def create_change_order_from_extra_work(
     ).first()
     if not activity:
         raise WorkScopeError("Activity not found.")
-    project = _project_or_404(activity.element.project_id, org_id)
-    raise_if_project_closed(project, WorkScopeError)
+    if activity.scope_origin != SCOPE_EXTRA_WORK:
+        raise WorkScopeError("Only extra work can be linked to a change order this way.")
+    extra_project = _project_or_404(activity.element.project_id, org_id)
+    raise_if_project_closed(extra_project, WorkScopeError)
+    if project is not None:
+        selected_id = project.id if hasattr(project, "id") else project
+        if selected_id != extra_project.id:
+            raise WorkScopeError("That extra work does not belong to this project.")
     try:
         change_order = create_change_order(
-            project=project,
+            project=extra_project,
             title=title or activity.display_name,
-            description=activity.display_name,
-            requested_by=actor_display_name,
-            status="Draft",
+            description=(
+                activity.display_name if description is None else description
+            ),
+            reason=reason,
+            requested_by=(
+                actor_display_name if requested_by is None else requested_by
+            ),
+            requested_date=requested_date,
+            markup_percent=markup_percent,
+            tax_percent=tax_percent,
+            notes=notes,
+            status=status,
+            organization_id=org_id,
+            commit=False,
         )
+        activity = link_extra_work_to_change_order(
+            project_work_activity_id=activity.id,
+            change_order_id=change_order.id,
+            actor_user_id=actor_user_id,
+            actor_display_name=actor_display_name,
+            reason=link_reason or "Extra work used to create a change order.",
+            organization_id=org_id,
+            commit=False,
+        )
+        db.session.commit()
     except ChangeOrderServiceError as exc:
+        db.session.rollback()
         raise WorkScopeError(str(exc)) from exc
-    activity = link_extra_work_to_change_order(
-        project_work_activity_id=activity.id,
-        change_order_id=change_order.id,
-        actor_user_id=actor_user_id,
-        actor_display_name=actor_display_name,
-        reason="Extra work used to create a change order.",
-        organization_id=org_id,
-    )
+    except Exception:
+        db.session.rollback()
+        raise
     return change_order, activity
 
 

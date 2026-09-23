@@ -131,24 +131,51 @@ def create_change_order_route():
     )
 
     if request.method == "POST":
+        from flask_login import current_user
+
+        from app.services.work_scope import (
+            WorkScopeError,
+            actor_name,
+            create_change_order_from_extra_work,
+        )
+
         project_id = request.form.get("project_id", type=int)
         org_id = get_current_organization_id()
         project = get_organization_project(org_id, project_id) if project_id else None
         try:
-            change_order = create_change_order(
-                project=project,
-                title=request.form.get("title", ""),
-                description=request.form.get("description", ""),
-                reason=request.form.get("reason", ""),
-                requested_by=form_actor("requested_by"),
-                requested_date=_parse_date(request.form.get("requested_date")),
-                markup_percent=request.form.get("markup_percent") or 0,
-                tax_percent=request.form.get("tax_percent") or 0,
-                notes=request.form.get("notes", ""),
-                status=request.form.get("status") or "Draft",
-                organization_id=org_id,
-            )
-        except (ChangeOrderServiceError, ValueError) as exc:
+            if extra_work_activity_id:
+                change_order, _linked = create_change_order_from_extra_work(
+                    project_work_activity_id=extra_work_activity_id,
+                    title=request.form.get("title", ""),
+                    description=request.form.get("description", ""),
+                    reason=request.form.get("reason", ""),
+                    requested_by=form_actor("requested_by"),
+                    requested_date=_parse_date(request.form.get("requested_date")),
+                    markup_percent=request.form.get("markup_percent") or 0,
+                    tax_percent=request.form.get("tax_percent") or 0,
+                    notes=request.form.get("notes", ""),
+                    status=request.form.get("status") or "Draft",
+                    actor_user_id=getattr(current_user, "id", None),
+                    actor_display_name=actor_name(current_user),
+                    organization_id=org_id,
+                    project=project,
+                    link_reason="Extra work linked when the change order was created.",
+                )
+            else:
+                change_order = create_change_order(
+                    project=project,
+                    title=request.form.get("title", ""),
+                    description=request.form.get("description", ""),
+                    reason=request.form.get("reason", ""),
+                    requested_by=form_actor("requested_by"),
+                    requested_date=_parse_date(request.form.get("requested_date")),
+                    markup_percent=request.form.get("markup_percent") or 0,
+                    tax_percent=request.form.get("tax_percent") or 0,
+                    notes=request.form.get("notes", ""),
+                    status=request.form.get("status") or "Draft",
+                    organization_id=org_id,
+                )
+        except (ChangeOrderServiceError, WorkScopeError, ValueError) as exc:
             flash(str(exc), "error")
             return render_template(
                 "project_controls/change_orders/form.html",
@@ -160,22 +187,6 @@ def create_change_order_route():
                 version=None,
                 extra_work_activity_id=extra_work_activity_id,
             )
-
-        if extra_work_activity_id:
-            from app.services.work_scope import WorkScopeError, actor_name, link_extra_work_to_change_order
-            from flask_login import current_user
-
-            try:
-                link_extra_work_to_change_order(
-                    project_work_activity_id=extra_work_activity_id,
-                    change_order_id=change_order.id,
-                    actor_user_id=getattr(current_user, "id", None),
-                    actor_display_name=actor_name(current_user),
-                    reason="Extra work linked when the change order was created.",
-                )
-            except WorkScopeError as exc:
-                flash(str(exc), "error")
-                return redirect(url_for("project_controls.view_change_order", id=change_order.id))
 
         flash("Change order created.", "success")
         return redirect(

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — PKG-L05 SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | SHA-pin PKG-L05 after Architect ACCEPT COMMIT / PUSH. |
+| Business decision | L05 closed as a Rule 16 correction. OD-01 IMPLEMENTED. OD-06 IMPLEMENTED. R01, R04, R05, R03A, R03B, R02, R10, R13 remain CLOSED. Whole-system Rule 16 remains OPEN. Do not rescore V1. Do not start PKG-F06 from this pin. |
+| Architectural decision | None new. Pin only. |
+| Prompt template used | Architect PKG-L05 ACCEPT COMMIT / PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Commit authorized L05 package, push, docs-only SHA-pin, push pin. No live DB. No migration. No F06/T03C/F08/F09/S16/R07/R11/R14. |
+| Files expected to change | Occupancy docs only for this pin commit |
+| Files prohibited from changing | Product code, tests, migrations, live DB, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | PKG-L05 PRODUCT SHA **`4682fc544ccdd3811be9f73488ad6f5a8c0777e6`**. IMPLEMENTED / TESTED / CLOSE+REVOCATION ATOMICITY PROVEN / OPEN-PUNCH DELIBERATE CONFIRMATION PROVEN / REOPEN DOES NOT REVIVE / NEW INVITE AFTER REOPEN PROVEN / R04 R05 R03A R01 NON-REGRESSION PASS / TARGETED RE-AUDIT PASS / FULL SUITE PASS / COMMITTED / PUSHED / SHA-PINNED / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / CLOSED |
+| Tests | Not rerun for pin. Accepted evidence: dedicated L05 **15 passed**; focused **259 passed**; R04+R05+R03A+R01 **47 passed**; full suite **1632 passed**, 5533 warnings, **740.89s**, exit **0**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining Rule 16 roots. Next numbered package is PKG-F06 / R06. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not implement F06 until a new authorized prompt. |
+| Next approved prompt | Architect authorization of PKG-F06 / R06 — PUBLIC WALKTHROUGH GET EXPIRY READ-ONLY |
+| Commit hash | Product **`4682fc544ccdd3811be9f73488ad6f5a8c0777e6`**. Pin SHA recorded by this commit. |
+
 ### 2026-09-23 — PKG-L05 PROJECT CLOSE — WALKTHROUGH REVOCATION + OPEN PUNCH CONFIRMATION (working tree)
 
 | Field | Content |

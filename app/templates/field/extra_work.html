@@ -7,6 +7,9 @@
 <section class="field-panel field-panel-extra-work">
     <h1>{{ contractor_copy.FIELD_EXTRA_WORK_HEADING }}</h1>
     <p class="field-project-name">{{ project.name }}</p>
+    {% if project.operating_state != 'ACTIVE' %}
+    <p class="field-muted">{{ contractor_copy.PROJECT_LIST_CLOSED }}</p>
+    {% endif %}
     <p class="field-muted">{{ contractor_copy.SCOPE_EXTRA_WORK_RULE }}</p>
     <form method="post" action="{{ url_for('field.extra_work', project_id=project.id) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

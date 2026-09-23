@@ -41,6 +41,8 @@ from app.services.schedule import (
     field_month_bounds,
     suggest_time_attribution,
 )
+from app.models.project import OPERATING_STATE_ACTIVE
+from app.presentation.contractor_copy import PROJECT_CLOSED_FLASH
 from app.services.shared_api import get_organization_project, list_current_operating_projects
 from app.services.time_entry import (
     TimeEntryError,
@@ -74,8 +76,44 @@ def _confirmed_project_id():
         return None
 
 
-def _set_confirmed_project(project_id: int) -> None:
-    session[CONFIRMED_PROJECT_SESSION_KEY] = int(project_id)
+def _clear_confirmed_project() -> None:
+    session.pop(CONFIRMED_PROJECT_SESSION_KEY, None)
+
+
+def _set_confirmed_project(organization_id: str, project_id: int) -> bool:
+    """Confirm a Project as the current operating Field Project.
+
+    Fail-closed: same organization, Project exists, operating_state=ACTIVE.
+    CLOSED and missing Projects are never written to session.
+    """
+    project = get_organization_project(organization_id, project_id)
+    if project is None:
+        return False
+    if getattr(project, "operating_state", None) != OPERATING_STATE_ACTIVE:
+        return False
+    session[CONFIRMED_PROJECT_SESSION_KEY] = int(project.id)
+    return True
+
+
+def _confirmed_operating_project(organization):
+    """Session operating context. Clears missing or CLOSED confirmed ids."""
+    confirmed_id = _confirmed_project_id()
+    if confirmed_id is None:
+        return None
+    project = get_organization_project(organization.id, confirmed_id)
+    if project is None or getattr(project, "operating_state", None) != OPERATING_STATE_ACTIVE:
+        _clear_confirmed_project()
+        return None
+    return project
+
+
+def _is_confirmed_operating(organization, project_id: int) -> bool:
+    operating = _confirmed_operating_project(organization)
+    return operating is not None and operating.id == int(project_id)
+
+
+def _project_is_active(project) -> bool:
+    return getattr(project, "operating_state", None) == OPERATING_STATE_ACTIVE
 
 
 def _project_or_redirect(organization, project_id: int):
@@ -121,15 +159,10 @@ def field_root():
 def today():
     organization = _organization()
     projects = list_current_operating_projects(organization.id)
-    confirmed_id = _confirmed_project_id()
-    project = None
+    project = _confirmed_operating_project(organization)
     recent = []
-    if confirmed_id is not None:
-        project = get_organization_project(organization.id, confirmed_id)
-        if project is None:
-            session.pop(CONFIRMED_PROJECT_SESSION_KEY, None)
-        else:
-            recent = _recent_cards(organization.id, project.id)
+    if project is not None:
+        recent = _recent_cards(organization.id, project.id)
     return render_template(
         "field/today.html",
         project=project,
@@ -248,10 +281,11 @@ def company_today():
 def projects():
     organization = _organization()
     rows = list_current_operating_projects(organization.id)
+    operating = _confirmed_operating_project(organization)
     return render_template(
         "field/projects.html",
         projects=rows,
-        confirmed_id=_confirmed_project_id(),
+        confirmed_id=operating.id if operating is not None else None,
     )
 
 
@@ -262,7 +296,9 @@ def project_confirm(project_id):
     if project is None:
         return redirect(url_for("field.projects"), code=302)
     if request.method == "POST":
-        _set_confirmed_project(project.id)
+        if not _set_confirmed_project(organization.id, project.id):
+            flash(PROJECT_CLOSED_FLASH, "error")
+            return redirect(url_for("field.projects"), code=302)
         nxt = (request.form.get("next") or "").strip()
         if nxt == "capture":
             return redirect(
@@ -273,12 +309,13 @@ def project_confirm(project_id):
                 url_for("field.time_entry", project_id=project.id), code=302
             )
         return redirect(url_for("field.today"), code=302)
-    recent = _recent_cards(organization.id, project.id)
+    operating = _confirmed_operating_project(organization)
+    recent = _recent_cards(organization.id, project.id) if _project_is_active(project) else []
     return render_template(
         "field/projects.html",
         projects=[project],
         confirm_project=project,
-        confirmed_id=_confirmed_project_id(),
+        confirmed_id=operating.id if operating is not None else None,
         recent=recent,
     )
 
@@ -289,7 +326,9 @@ def capture(project_id):
     project = _project_or_redirect(organization, project_id)
     if project is None:
         return redirect(url_for("field.projects"), code=302)
-    if _confirmed_project_id() != project.id:
+    if not _project_is_active(project) or not _is_confirmed_operating(
+        organization, project.id
+    ):
         return redirect(url_for("field.project_confirm", project_id=project.id), code=302)
     return render_template(
         "field/capture.html",
@@ -304,7 +343,13 @@ def extra_work(project_id):
     project = _project_or_redirect(organization, project_id)
     if project is None:
         return redirect(url_for("field.projects"), code=302)
-    if _confirmed_project_id() != project.id:
+    is_active = _project_is_active(project)
+    if request.method == "POST":
+        if is_active and not _is_confirmed_operating(organization, project.id):
+            return redirect(
+                url_for("field.project_confirm", project_id=project.id), code=302
+            )
+    elif not is_active or not _is_confirmed_operating(organization, project.id):
         return redirect(url_for("field.project_confirm", project_id=project.id), code=302)
     if request.method == "POST":
         element_id = request.form.get("project_work_element_id") or None
@@ -347,12 +392,7 @@ def my_time():
         worker_user_id=current_user.id,
         organization_id=organization.id,
     )
-    confirmed_id = _confirmed_project_id()
-    project = (
-        get_organization_project(organization.id, confirmed_id)
-        if confirmed_id is not None
-        else None
-    )
+    project = _confirmed_operating_project(organization)
     return render_template(
         "field/my_time.html",
         rows=[time_entry_presentation(entry) for entry in entries],
@@ -367,7 +407,7 @@ def time_entry(project_id):
     project = _project_or_redirect(organization, project_id)
     if project is None:
         return redirect(url_for("field.projects"), code=302)
-    _set_confirmed_project(project.id)
+    _set_confirmed_project(organization.id, project.id)
     returned_id = _optional_int(request.values.get("returned_id"))
     returned = None
     if returned_id is not None:

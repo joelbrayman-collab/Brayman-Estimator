@@ -9,6 +9,9 @@
 <section class="field-panel field-panel-time">
     <h1>{{ contractor_copy.FIELD_TIME_BUTTON }}</h1>
     <p class="field-project-name">{{ project.name }}</p>
+    {% if project.operating_state != 'ACTIVE' %}
+    <p class="field-muted">{{ contractor_copy.PROJECT_LIST_CLOSED }}</p>
+    {% endif %}
     {% if returned %}
     <p class="field-time-returned">Returned: {{ returned.return_reason }}</p>
     {% endif %}

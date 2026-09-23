@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
-| Updated | 2026-09-21 |
+| Updated | 2026-09-22 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — PKG-T02 / R02 FIELD PROJECT CONTEXT (2026-09-22)
+
+| Field | Content |
+|-------|---------|
+| Slice | PKG-T02 / R02 Field Project operating context |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** User Guide remains outstanding. |
+| 1. What new contractor capability exists? | None new. Field now keeps the current job as a current (ACTIVE) job only. Opening Time for a current job still does not ask for a second confirm. A Closed job cannot become the current Field job. |
+| 2. When would the contractor use it? | On Field Today, Time, Extra work, Capture, and Projects, whenever they choose or switch the job they are standing on. |
+| 3. What workflow will the final Manual need to teach? | Open Time from Today for a current job and work immediately. Switching to another current job’s Time makes that job current. A Closed job is labeled Closed and is not operated from Field. After a job is Closed, Today no longer treats it as the current job. |
+| 4. What contractor-facing terms must be used? | Today. Time. Extra work. Capture. Confirm Project. Current. Closed. Project. Do not say session key, operating_state, or confirm authority. |
+| 5. What screenshots / Print examples will eventually be needed? | Field Today with a current job. Field Time after Today→Time with the Project name visible. Field Time or confirm surface showing Closed. |
+| 6. What warnings / validation distinctions need explanation? | Closed jobs are not operated from Field. That is now true for the confirmed Field job. New Time or Extra work on a Closed job still fails closed. Help copy was not rewritten. |
+| 7. Desktop / iPhone / Print relevance | Field / iPhone. Office Close law unchanged. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim whole-system Rule 16 PASS. |
 
 ### MANUAL IMPACT — VISUAL-2 PROJECTS V2 REGISTER (2026-09-21)
 

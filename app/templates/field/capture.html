@@ -7,6 +7,9 @@
 <section class="field-panel field-capture" data-project-id="{{ project.id }}">
     <h1>Capture</h1>
     <p class="field-project-name" id="field-capture-project">{{ project.name }}</p>
+    {% if project.operating_state != 'ACTIVE' %}
+    <p class="field-muted">{{ contractor_copy.PROJECT_LIST_CLOSED }}</p>
+    {% endif %}
     {% if project.project_number %}
     <p class="field-muted">{{ project.project_number }}</p>
     {% endif %}

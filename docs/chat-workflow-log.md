@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-22 — PKG-T02 / R02 FIELD PROJECT CONTEXT (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-22 |
+| Branch | `main` @ `c4f15381121a3300073fe9eb656668681db5498f` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 22 SEP 2026 |
+| Objective | PKG-T02 / R02: Field session operating context must be ACTIVE only. Preserve Today→Time GET convenience. SESSION-CONTEXT ISOLATION tests. Targeted Phase 5 P5-05 and Phase 7 P7-05 re-audit of R02 only. |
+| Business decision | Confirm is convenience only for ACTIVE. CLOSED never auto-confirms. Today clears stale CLOSED `field_confirmed_project_id`. Help “Closed jobs are not operated from Field” is now behaviourally true for confirmed operating context; Help copy not rewritten. |
+| Architectural decision | `_set_confirmed_project(organization_id, project_id)` owns the confirm write and fail-closes unless `get_organization_project` returns ACTIVE. Load remains `get_organization_project` (includes CLOSED). Picker remains `list_current_operating_projects`. Time GET still confirms ACTIVE. Confirm POST, Extra, Capture, and Time do not write CLOSED. R04 remains write-invariant authority. |
+| Prompt template used | Architect PKG-T02 IMPLEMENT / TEST / TARGETED RE-AUDIT working tree only |
+| Approved Cursor prompt summary | Implement / test / targeted P5-05 + P7-05 re-audit of R02 in the working tree. No commit, push, deploy, migration, live Field confirm, live Time/Extra/Close, R01/R04/R05/R03A/R03B rewrite, R06/R10/R11/R13, V1 rescore. |
+| Files expected to change | Field confirm helpers/routes; Field identity labels for CLOSED; dedicated isolation tests; occupancy docs |
+| Files prohibited from changing | Migrations, live DB, R04 Close engine, R03A/R03B transaction ownership, token GET, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | ACTIVE Today→Time confirms without extra UI. ACTIVE A→B confirms B with visible name. CLOSED Time/Extra/Capture/confirm do not write session. Today clears stale CLOSED. R04 writes remain blocked. NOT COMMITTED. |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_field_project_context_r02.py` → **10 passed**, 77 warnings, **9.72s**, exit **0**. Focused Field/Time/Extra/Capture/Close/R04/R03B/R03A/R05/R01 → **193 passed**, 835 warnings, **106.86s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` → **1592 passed**, 5411 warnings, **747.32s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Remaining Rule 16 roots. Next numbered must-fix after R02 seal is R10 — Time concurrent transition. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not commit. Do not start R06/R10. |
+| Next approved prompt | ACCEPT COMMIT PKG-T02 / R02 (Architect after review) |
+| Commit hash | (working tree / not committed) |
+
 ### 2026-09-22 — PKG-T03B / R03B SHA-pin
 
 | Field | Content |

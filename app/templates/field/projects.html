@@ -6,11 +6,17 @@
 {{ contextual_help(help_content.field_topic("projects")) }}
 {% if confirm_project %}
 <section class="field-panel">
-    <h1>Confirm Project</h1>
+    <h1>{% if confirm_project.operating_state != 'ACTIVE' %}{{ confirm_project.name }}{% else %}Confirm Project{% endif %}</h1>
+    {% if confirm_project.operating_state == 'ACTIVE' %}
     <p class="field-project-name">{{ confirm_project.name }}</p>
+    {% endif %}
     {% if confirm_project.project_number %}
     <p class="field-muted">{{ confirm_project.project_number }}</p>
     {% endif %}
+    {% if confirm_project.operating_state != 'ACTIVE' %}
+    <p class="field-muted">{{ contractor_copy.PROJECT_LIST_CLOSED }}</p>
+    <a class="field-btn field-btn-ghost" href="{{ url_for('field.projects') }}">Choose a different Project</a>
+    {% else %}
     <form method="post" action="{{ url_for('field.project_confirm', project_id=confirm_project.id) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit" class="field-btn field-btn-primary" name="next" value="capture">Confirm and Capture</button>
@@ -18,6 +24,7 @@
         <button type="submit" class="field-btn field-btn-secondary">Confirm for Today</button>
     </form>
     <a class="field-btn field-btn-ghost" href="{{ url_for('field.projects') }}">Choose a different Project</a>
+    {% endif %}
 </section>
 {% if recent %}
 <section class="field-panel">

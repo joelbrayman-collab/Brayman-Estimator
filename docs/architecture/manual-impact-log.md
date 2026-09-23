@@ -56,7 +56,7 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 | Field | Content |
 |-------|---------|
 | Slice | PKG-F08 / R08 live origin immutability after Time |
-| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** User Guide remains outstanding. |
+| Product status at capture | **COMMITTED / PUSHED / SHA-PINNED / CLOSED** at product SHA **`94928ab58de232be4e26a129626279f5270a6ef1`**. User Guide remains outstanding. |
 | 1. What new contractor capability exists? | None new for ordinary office work. Extra Work that already has time recorded against it cannot later be treated as original work, and original work that already has time recorded against it cannot later be reviewed into Extra Work. |
 | 2. When would the contractor use it? | When office tries Record as original work or Review as extra work after time has already been entered on that work. |
 | 3. What workflow will the final Manual need to teach? | Extra Work can be recorded as original work only before time is entered. After time exists, that classification stays. Time already entered keeps the origin it had when it was submitted. |

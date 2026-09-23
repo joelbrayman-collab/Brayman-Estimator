@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — PKG-F08 SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | SHA-pin PKG-F08 after Architect ACCEPT COMMIT / PUSH. |
+| Business decision | F08 closed as a Rule 16 correction. Operational use is any Time row on the activity. Draft-linked Extra remains EXTRA_WORK. Whole-system Rule 16 remains OPEN. Do not rescore V1. Do not start PKG-F09 from this pin. |
+| Architectural decision | None new. Pin only. F08 origin law is not broadened. |
+| Prompt template used | Architect PKG-F08 ACCEPT COMMIT / PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Commit authorized F08 package, push, docs-only SHA-pin, push pin. No live DB. No migration. No F09/S16/F14/F07. |
+| Files expected to change | Occupancy docs only for this pin commit |
+| Files prohibited from changing | Product code, tests, migrations, live DB, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | PRODUCT SHA **`94928ab58de232be4e26a129626279f5270a6ef1`**. IMPLEMENTED / TESTED / OPERATIONAL-USE BOUNDARY DERIVED FROM REPOSITORY EVIDENCE / ORIGIN IMMUTABLE AFTER OPERATIONAL USE PROVEN / HISTORICAL TIME SNAPSHOTS PRESERVED / DRAFT-LINKED EXTRA REMAINS EXTRA_WORK / T03C NON-REGRESSION PASS / R03B NON-REGRESSION PASS / R03A NON-REGRESSION PASS / R04 NON-REGRESSION PASS / R05 NON-REGRESSION PASS / R01 NON-REGRESSION PASS / F06 NON-REGRESSION PASS / L05 NON-REGRESSION PASS / TARGETED RE-AUDIT PASS / FULL SUITE PASS / COMMITTED / PUSHED / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / CLOSED |
+| Tests | Not rerun. Accepted F08 evidence remains dedicated **11** / focused **173** / work_scope+Time+T03C+sealed **114** / full **1668 passed**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining Rule 16 roots. Next numbered package PKG-F09 is NOT AUTHORIZED from this pin. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not start F09. |
+| Next approved prompt | Architect authorization of the next selected Rule 16 package. F09 is next in sequence and is not authorized from this pin. |
+| Commit hash | Product **`94928ab58de232be4e26a129626279f5270a6ef1`**. Pin SHA recorded by this commit. |
+
 ### 2026-09-23 — PKG-F08 R08 SCOPE_ORIGIN IMMUTABILITY AFTER OPERATIONAL USE (working tree)
 
 | Field | Content |
@@ -62,10 +86,10 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Project-state-report update | Not a milestone close. Occupancy only. |
 | Milestone entry update | Not a milestone close. |
 | Constitutional issue raised | None. Draft-linked Extra remains EXTRA_WORK. Authorizing Extra→CO rewrite remains CHANGE_ORDER. Time existence is the proven operational-use boundary; schedule/punch/MONITOR were not added as rewrite gates. |
-| Unresolved issues | PKG-F08 not committed. Remaining Rule 16 roots. Whole-system Rule 16 OPEN. HostPapa deploy does not exist. |
-| Next approved step | STOP. Return to ChatGPT Architect. Do not commit. Do not start F09. |
+| Unresolved issues | PKG-F08 committed as product SHA `94928ab58de232be4e26a129626279f5270a6ef1`. Remaining Rule 16 roots. Whole-system Rule 16 OPEN. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not start F09. |
 | Next approved prompt | Architect ACCEPT COMMIT PKG-F08 |
-| Commit hash | (none — working tree only) |
+| Commit hash | Product **`94928ab58de232be4e26a129626279f5270a6ef1`** |
 
 ### 2026-09-23 — REVIEW TURNOVER SHA-pin
 

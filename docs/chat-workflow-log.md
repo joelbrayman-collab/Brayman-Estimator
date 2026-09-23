@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — PKG-T03C SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | SHA-pin PKG-T03C after Architect ACCEPT COMMIT / PUSH. |
+| Business decision | T03C closed as a Rule 16 correction. PKG-F06 CLOSED. PKG-L05 CLOSED. R01, R04, R05, R03A, R03B, R02, R10, R13 remain CLOSED. Whole-system Rule 16 remains OPEN. Do not rescore V1. Do not start PKG-F08 from this pin. Draft-linked Extra origin law is deferred to F08. |
+| Architectural decision | None new. Pin only. |
+| Prompt template used | Architect PKG-T03C ACCEPT COMMIT / PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Commit authorized T03C package, push, docs-only SHA-pin, push pin. No live DB. No migration. No F08/F09/S16/F14/F07/R07/R11/R14. |
+| Files expected to change | Occupancy docs only for this pin commit |
+| Files prohibited from changing | Product code, tests, migrations, live DB, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | PKG-T03C PRODUCT SHA **`95659c8432761815cbd9825969cc5b6cc683042d`**. IMPLEMENTED / TESTED / EXTRA→CO ONE TRANSACTION PROVEN / FAILURE ROLLS CO BACK / RETRY DOES NOT DUPLICATE CO / STANDALONE CO PRESERVED / STANDALONE EXTRA LINK PRESERVED / EXTRA-ONLY PRESERVED / R03A R03B R04 R05 R01 F06 L05 NON-REGRESSION PASS / TARGETED RE-AUDIT PASS / FULL SUITE PASS / COMMITTED / PUSHED / SHA-PINNED / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / CLOSED |
+| Tests | Not rerun for pin. Accepted evidence: dedicated T03C **14 passed**; focused **162 passed**; R03B+R03A+R04+R05+R01+F06+L05 **82 passed**; full suite **1657 passed**, 5626 warnings, **789.32s**, exit **0**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining Rule 16 roots. Next numbered package is PKG-F08 / R08. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not implement F08 until a new authorized prompt. |
+| Next approved prompt | Architect authorization of PKG-F08 / R08 — SCOPE_ORIGIN IMMUTABILITY AFTER OPERATIONAL USE |
+| Commit hash | Product **`95659c8432761815cbd9825969cc5b6cc683042d`**. Pin SHA recorded by this commit. |
+
 ### 2026-09-23 — PKG-T03C R03C EXTRA WORK → CHANGE ORDER ATOMICITY (working tree)
 
 | Field | Content |

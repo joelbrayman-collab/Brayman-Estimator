@@ -410,7 +410,7 @@ def test_closed_project_blocks_punch_list_mutation_and_allows_history_view(app, 
         description="Open before close.",
         work_source_type=PUNCH_LIST_SOURCE_OTHER,
     )
-    close_project(project, owner)
+    close_project(project, owner, confirm_open_punch=True)
     db.session.refresh(project)
     with pytest.raises(PunchListError, match="closed"):
         create_punch_list_item(
@@ -450,7 +450,7 @@ def test_open_punch_list_does_not_block_project_close(app):
         description="Still open.",
         work_source_type=PUNCH_LIST_SOURCE_OTHER,
     )
-    close_project(project, owner)
+    close_project(project, owner, confirm_open_punch=True)
     db.session.refresh(project)
     assert project.operating_state == "CLOSED"
     assert project_has_open_punch_list_items(project) is True

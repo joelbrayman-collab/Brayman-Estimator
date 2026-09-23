@@ -547,7 +547,7 @@
         <form method="post" action="{{ url_for('final_walkthrough.invite', project_id=project.id) }}" class="punch-list-action">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit">
-                {% if walkthrough_latest_invitation %}
+                {% if walkthrough_latest_invitation and walkthrough_latest_invitation.status in ['OPEN', 'RESPONDED'] %}
                 {{ contractor_copy.WALKTHROUGH_SEND_ANOTHER }}
                 {% else %}
                 {{ contractor_copy.WALKTHROUGH_INVITE }}

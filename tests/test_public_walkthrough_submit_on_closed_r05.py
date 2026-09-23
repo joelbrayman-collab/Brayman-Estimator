@@ -16,17 +16,20 @@ from app.models import Client, Project, ProjectOperatingStateEvent
 from app.models.final_walkthrough import (
     WALKTHROUGH_STATUS_OPEN,
     WALKTHROUGH_STATUS_RESPONDED,
+    WALKTHROUGH_STATUS_REVOKED,
     ProjectFinalWalkthroughInvitation,
     ProjectFinalWalkthroughItem,
 )
 from app.models.project import OPERATING_EVENT_CLOSE, OPERATING_STATE_CLOSED
 from app.models.punch_list import PUNCH_LIST_SOURCE_OTHER
 from app.models.user import UserMembership
-from app.presentation.contractor_copy import PROJECT_CLOSED_NEW_WORK
+from app.presentation.contractor_copy import PROJECT_CLOSED_NEW_WORK, WALKTHROUGH_TOKEN_INVALID
 from app.services.instance_authority import set_instance_owner
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
 from app.services.project_final_walkthrough import (
+    BLOCK_TOKEN_INVALID,
     WalkthroughError,
+    WalkthroughTokenError,
     create_walkthrough_invitation,
     resolve_walkthrough_access,
     submit_walkthrough_response,
@@ -157,14 +160,13 @@ def test_sequential_closed_public_submit_fails(app):
     project = _add_project("Seq Closed Items")
     issue = _issue(project, owner)
     close_project(project, owner)
-    access = resolve_walkthrough_access(_credential(issue))
-    with pytest.raises(WalkthroughError, match=PROJECT_CLOSED_NEW_WORK):
-        submit_walkthrough_response(
-            access, nothing_to_add=False, item_descriptions=["After close item."]
-        )
+    with pytest.raises(WalkthroughTokenError) as exc:
+        resolve_walkthrough_access(_credential(issue))
+    assert exc.value.code == BLOCK_TOKEN_INVALID
+    assert WALKTHROUGH_TOKEN_INVALID in str(exc.value)
     db.session.expire_all()
     invitation = db.session.get(ProjectFinalWalkthroughInvitation, issue.invitation.id)
-    assert invitation.status == WALKTHROUGH_STATUS_OPEN
+    assert invitation.status == WALKTHROUGH_STATUS_REVOKED
     assert ProjectFinalWalkthroughItem.query.filter_by(project_id=project.id).count() == 0
     assert _close_events(project.id) == 1
 
@@ -174,12 +176,12 @@ def test_sequential_closed_nothing_to_add_fails(app):
     project = _add_project("Seq Closed Nothing")
     issue = _issue(project, owner)
     close_project(project, owner)
-    access = resolve_walkthrough_access(_credential(issue))
-    with pytest.raises(WalkthroughError, match=PROJECT_CLOSED_NEW_WORK):
-        submit_walkthrough_response(access, nothing_to_add=True, item_descriptions=[])
+    with pytest.raises(WalkthroughTokenError) as exc:
+        resolve_walkthrough_access(_credential(issue))
+    assert exc.value.code == BLOCK_TOKEN_INVALID
     db.session.expire_all()
     invitation = db.session.get(ProjectFinalWalkthroughInvitation, issue.invitation.id)
-    assert invitation.status == WALKTHROUGH_STATUS_OPEN
+    assert invitation.status == WALKTHROUGH_STATUS_REVOKED
     assert invitation.response_mode is None
     assert _close_events(project.id) == 1
 
@@ -190,9 +192,10 @@ def test_token_get_after_close_does_not_expire_or_respond(app, client):
     issue = _issue(project, owner)
     close_project(project, owner)
     response = client.get(issue.path, follow_redirects=False)
-    assert response.status_code == 200
+    assert response.status_code == 404
+    assert WALKTHROUGH_TOKEN_INVALID in response.get_data(as_text=True) or "not available" in response.get_data(as_text=True)
     invitation = ProjectFinalWalkthroughInvitation.query.one()
-    assert invitation.status == WALKTHROUGH_STATUS_OPEN
+    assert invitation.status == WALKTHROUGH_STATUS_REVOKED
     assert invitation.response_mode is None
 
 
@@ -206,25 +209,35 @@ def test_http_submit_after_close_fails_closed(app, client):
         data={"item": ["After close HTTP."]},
         follow_redirects=False,
     )
-    assert posted.status_code == 400
-    assert PROJECT_CLOSED_NEW_WORK in posted.get_data(as_text=True)
+    assert posted.status_code == 404
     invitation = ProjectFinalWalkthroughInvitation.query.one()
-    assert invitation.status == WALKTHROUGH_STATUS_OPEN
+    assert invitation.status == WALKTHROUGH_STATUS_REVOKED
     assert ProjectFinalWalkthroughItem.query.count() == 0
 
 
-def test_reopen_preserves_still_open_invitation_submit(app):
+def test_reopen_does_not_revive_revoked_invitation(app):
     owner, _membership = _make_owner()
     project = _add_project("Reopen Submit")
     issue = _issue(project, owner)
     close_project(project, owner)
     reopen_project(project, owner)
-    access = resolve_walkthrough_access(_credential(issue))
+    with pytest.raises(WalkthroughTokenError) as exc:
+        resolve_walkthrough_access(_credential(issue))
+    assert exc.value.code == BLOCK_TOKEN_INVALID
+    db.session.expire_all()
+    old = db.session.get(ProjectFinalWalkthroughInvitation, issue.invitation.id)
+    assert old.status == WALKTHROUGH_STATUS_REVOKED
+    fresh = _issue(project, owner)
+    assert fresh.lookup_key != issue.lookup_key
+    assert fresh.secret != issue.secret
+    access = resolve_walkthrough_access(_credential(fresh))
     invitation = submit_walkthrough_response(
-        access, nothing_to_add=False, item_descriptions=["After reopen."]
+        access, nothing_to_add=False, item_descriptions=["After new invite."]
     )
     assert invitation.status == WALKTHROUGH_STATUS_RESPONDED
-    assert ProjectFinalWalkthroughItem.query.filter_by(project_id=project.id).count() == 1
+    assert invitation.id != old.id
+    with pytest.raises(WalkthroughTokenError):
+        resolve_walkthrough_access(_credential(issue))
 
 
 def test_contractor_invitation_issue_remains_fail_closed_on_closed(app):
@@ -355,10 +368,14 @@ def test_concurrent_close_vs_public_item_submit_fails_closed(app, monkeypatch):
     assert result["close_errors"] == []
     assert result["project"].operating_state == OPERATING_STATE_CLOSED
     assert result["events"] == 1
-    assert result["invitation"].status == WALKTHROUGH_STATUS_OPEN
+    assert result["invitation"].status == WALKTHROUGH_STATUS_REVOKED
     assert result["items"] == 0
     assert result["write_errors"]
-    assert any(PROJECT_CLOSED_NEW_WORK in str(exc) for exc in result["write_errors"])
+    assert any(
+        PROJECT_CLOSED_NEW_WORK in str(exc)
+        or getattr(exc, "code", None) in {BLOCK_TOKEN_INVALID, "TOKEN_CONSUMED"}
+        for exc in result["write_errors"]
+    )
 
 
 def test_concurrent_close_vs_nothing_to_add_fails_closed(app, monkeypatch):
@@ -368,8 +385,12 @@ def test_concurrent_close_vs_nothing_to_add_fails_closed(app, monkeypatch):
     assert result["close_errors"] == []
     assert result["project"].operating_state == OPERATING_STATE_CLOSED
     assert result["events"] == 1
-    assert result["invitation"].status == WALKTHROUGH_STATUS_OPEN
+    assert result["invitation"].status == WALKTHROUGH_STATUS_REVOKED
     assert result["invitation"].response_mode is None
     assert result["items"] == 0
     assert result["write_errors"]
-    assert any(PROJECT_CLOSED_NEW_WORK in str(exc) for exc in result["write_errors"])
+    assert any(
+        PROJECT_CLOSED_NEW_WORK in str(exc)
+        or getattr(exc, "code", None) in {BLOCK_TOKEN_INVALID, "TOKEN_CONSUMED"}
+        for exc in result["write_errors"]
+    )

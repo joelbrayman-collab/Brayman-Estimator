@@ -803,6 +803,25 @@ a.button-secondary {
     max-width: 42rem;
 }
 
+.lifecycle-confirm .warning-copy {
+    margin: 0 0 24px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    background: #fff8e8;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    max-width: 42rem;
+}
+
+.lifecycle-confirm-check {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    font-weight: 700;
+    max-width: 42rem;
+}
+
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

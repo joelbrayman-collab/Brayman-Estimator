@@ -47,6 +47,7 @@ from app.presentation.contractor_copy import (
     WALKTHROUGH_STATE_NOT_SENT,
     WALKTHROUGH_STATE_NOTHING,
     WALKTHROUGH_STATE_RESPONDED,
+    WALKTHROUGH_STATE_REVOKED,
     WALKTHROUGH_STATE_SENT,
     WALKTHROUGH_TOKEN_CONSUMED,
     WALKTHROUGH_TOKEN_EXPIRED,
@@ -646,7 +647,7 @@ def walkthrough_summary_copy(project, *, organization_id=None) -> str:
             return WALKTHROUGH_STATE_NOTHING
         return WALKTHROUGH_STATE_RESPONDED
     if latest.status == WALKTHROUGH_STATUS_REVOKED:
-        return WALKTHROUGH_STATE_NOT_SENT
+        return WALKTHROUGH_STATE_REVOKED
     return WALKTHROUGH_STATE_SENT
 
 

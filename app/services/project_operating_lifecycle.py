@@ -24,6 +24,7 @@ from app.models.user import User
 from app.presentation.contractor_copy import (
     PROJECT_ALREADY_CLOSED,
     PROJECT_ALREADY_CURRENT,
+    PROJECT_CLOSE_OPEN_PUNCH_REQUIRED,
     PROJECT_CLOSED_NEW_WORK,
     PROJECT_LIST_CLOSED,
     PROJECT_LIST_CURRENT,
@@ -161,8 +162,29 @@ def _actor_identifier(user: User) -> str:
     return f"user-{user.id}"[:150]
 
 
-def close_project(project, actor, *, organization_id=None):
-    """ACTIVE → CLOSED. Appends exactly one CLOSE event. Not idempotent."""
+def _explicit_open_punch_confirmation(value) -> bool:
+    if value is True:
+        return True
+    if value is False or value is None:
+        return False
+    return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+
+def close_project(
+    project,
+    actor,
+    *,
+    organization_id=None,
+    confirm_open_punch=False,
+):
+    """ACTIVE → CLOSED. Appends exactly one CLOSE event. Not idempotent.
+
+    Unused OPEN public invitations are REVOKED in this same transaction.
+    Open Punch does not hard-block; it requires explicit confirmation.
+    """
+    from app.services.project_final_walkthrough import _revoke_open_invitations
+    from app.services.project_punch_list import project_has_open_punch_list_items
+
     loaded = require_organization_project(
         project,
         organization_id=organization_id,
@@ -172,6 +194,11 @@ def close_project(project, actor, *, organization_id=None):
     org_id = loaded.organization_id
     user = _require_lifecycle_authority(actor, org_id)
     _begin_immediate_sqlite()
+    if project_has_open_punch_list_items(
+        loaded, organization_id=org_id
+    ) and not _explicit_open_punch_confirmation(confirm_open_punch):
+        db.session.rollback()
+        raise ProjectLifecycleError(PROJECT_CLOSE_OPEN_PUNCH_REQUIRED)
     now = datetime.utcnow()
     result = db.session.execute(
         update(Project)
@@ -201,7 +228,12 @@ def close_project(project, actor, *, organization_id=None):
             created_at=now,
         )
     )
-    db.session.commit()
+    try:
+        _revoke_open_invitations(loaded, now=now)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
     db.session.refresh(loaded)
     return loaded
 

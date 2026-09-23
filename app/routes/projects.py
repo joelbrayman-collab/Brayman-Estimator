@@ -34,7 +34,10 @@ from app.services.project_operating_lifecycle import (
     reopen_project,
 )
 from app.services.project_final_walkthrough import hub_walkthrough_template_vars
-from app.services.project_punch_list import hub_punch_list_template_vars
+from app.services.project_punch_list import (
+    hub_punch_list_template_vars,
+    list_open_punch_list_items,
+)
 from app.services.permit_foundation import (
     PermitFoundationError,
     establish_project_location_and_profile,
@@ -135,6 +138,10 @@ def close_project_action(id):
     if denied is not None:
         return denied
     project = _scoped_project(id)
+    open_punch_items = list_open_punch_list_items(
+        project, organization_id=project.organization_id
+    )
+    open_punch_count = len(open_punch_items)
     if request.method == "GET":
         if project.operating_state != OPERATING_STATE_ACTIVE:
             flash(contractor_copy.PROJECT_ALREADY_CLOSED, "error")
@@ -142,13 +149,24 @@ def close_project_action(id):
         return render_template(
             "projects/close_confirm.html",
             project=project,
+            open_punch_count=open_punch_count,
         )
     try:
-        close_project(project, current_user)
+        close_project(
+            project,
+            current_user,
+            confirm_open_punch=request.form.get("confirm_open_punch"),
+        )
     except ProjectLifecycleUnauthorizedError:
         abort(403)
     except ProjectLifecycleError as exc:
         flash(str(exc), "error")
+        if str(exc) == contractor_copy.PROJECT_CLOSE_OPEN_PUNCH_REQUIRED:
+            return render_template(
+                "projects/close_confirm.html",
+                project=project,
+                open_punch_count=open_punch_count,
+            ), 400
         return redirect(url_for("projects.view_project", id=project.id))
     flash(contractor_copy.PROJECT_CLOSED_FLASH, "success")
     return redirect(url_for("projects.view_project", id=project.id))

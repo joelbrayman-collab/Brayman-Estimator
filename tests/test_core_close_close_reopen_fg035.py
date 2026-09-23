@@ -777,12 +777,15 @@ def test_no_punch_list_sign_off_sys_admin_or_migration():
     reopen_html = (
         REPO_ROOT / "app" / "templates" / "projects" / "reopen_confirm.html"
     ).read_text(encoding="utf-8")
-    for blob in (lifecycle, routes, close_html, reopen_html):
+    for blob in (lifecycle, routes, reopen_html):
         assert "Punch List" not in blob
+    for blob in (lifecycle, routes, close_html, reopen_html):
         assert "Completion Sign-Off" not in blob
         assert "SYSTEM_ADMIN" not in blob
         assert "quickbooks" not in blob.lower()
         assert "learn closeout" not in blob.lower()
+    assert "confirm_open_punch" in close_html
+    assert "open_punch_count" in close_html
     assert "require_access_domain" not in lifecycle
     assert "COMPANY_MANAGEMENT" not in lifecycle
     assert is_system_administrator(object(), DEFAULT_ORGANIZATION_ID) is False

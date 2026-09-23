@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — PKG-L05 PROJECT CLOSE — WALKTHROUGH REVOCATION + OPEN PUNCH CONFIRMATION (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | PKG-L05: Close REVOKES unused OPEN public Walkthrough invitations in the same Close transaction. Open Punch requires deliberate confirmation. Reopen does not revive. Targeted Rule 16 re-audit of L05 only. |
+| Business decision | OD-01 and OD-06 implemented. Open Punch is not a hard Close block. Do not silently EXPIRE instead of REVOKING. Do not rescore V1. Whole-system Rule 16 remains OPEN. |
+| Architectural decision | `close_project` is the transaction owner. `_revoke_open_invitations` participates with no inner commit. `confirm_open_punch` is a service-boundary argument, not a route-only illusion. R04 predicate remains authoritative. R06 GET expiry law unchanged. |
+| Prompt template used | Architect PKG-L05 IMPLEMENT / TEST / TARGETED RE-AUDIT working tree only |
+| Approved Cursor prompt summary | Implement Close+revocation atomicity and open-Punch confirmation. Permanent L05 regression class. Targeted re-audit. No commit, push, deploy, migration, live Close/invite/submit, R06/R07/R11/R14/C08 wholesale, V1 rescore. |
+| Files expected to change | `app/services/project_operating_lifecycle.py`, `app/routes/projects.py`, `app/templates/projects/close_confirm.html`, `app/services/project_final_walkthrough.py`, `app/presentation/contractor_copy.py`, Hub Walkthrough copy, L05 tests, occupancy docs |
+| Files prohibited from changing | Live DB, Alembic, Flask 5460, recovery stash, V1 scores, other Rule 16 roots |
+| Implementation result | IMPLEMENTED IN WORKING TREE / TESTED / CLOSE+REVOCATION ATOMICITY PROVEN / OPEN-PUNCH DELIBERATE CONFIRMATION PROVEN / REOPEN DOES NOT REVIVE / NEW INVITE AFTER REOPEN PROVEN / R04 R05 R03A R01 NON-REGRESSION PASS / TARGETED RE-AUDIT PASS / FULL SUITE PASS / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / NOT COMMITTED / NOT PUSHED |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_close_invitation_punch_l05.py` → **15 passed**, 53 warnings, **12.45s**, exit **0**. Focused Close/Reopen/Punch/Walkthrough/Hub/tenancy + R04/R05/R03A/R01 → **259 passed**, 743 warnings, **143.69s**, exit **0**. Dedicated R04+R05+R03A+R01 → **47 passed**, 121 warnings, **27.76s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` → **1632 passed**, 5533 warnings, **740.89s**, exit **0**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | PKG-L05 not committed. Remaining Rule 16 roots. Whole-system Rule 16 OPEN. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not commit. Do not start PKG-F06. |
+| Next approved prompt | Architect ACCEPT COMMIT PKG-L05 |
+| Commit hash | (none — working tree only) |
+
 ### 2026-09-23 — PKG-T13 / R13 SHA-pin
 
 | Field | Content |

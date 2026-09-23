@@ -786,6 +786,7 @@ ALLOWED_PUNCH_LIST_PATHS = {
     "app/routes/walkthrough.py",
     "app/routes/projects.py",
     "app/routes/build.py",
+    "app/services/project_operating_lifecycle.py",
     "app/__init__.py",
     "app/presentation/contractor_copy.py",
 }

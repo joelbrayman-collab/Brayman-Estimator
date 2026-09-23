@@ -322,7 +322,7 @@ def _close_during_stale_window(app, owner_id, project_id, started, close_done, e
                 close_done.set()
                 return
             try:
-                close_project(project_id, owner_id)
+                close_project(project_id, owner_id, confirm_open_punch=True)
             except Exception as exc:
                 errors.append(("close", exc))
             finally:

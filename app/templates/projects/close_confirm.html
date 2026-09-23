@@ -8,8 +8,20 @@
     <p class="eyebrow">{{ project.name }}</p>
     <h1>{{ contractor_copy.PROJECT_CLOSE_CONFIRM_TITLE }}</h1>
     <p class="lede">{{ contractor_copy.PROJECT_CLOSE_CONFIRM_LEDE }}</p>
+    {% if open_punch_count %}
+    <p class="warning-copy" data-open-punch-count="{{ open_punch_count }}">
+        {{ contractor_copy.PROJECT_CLOSE_OPEN_PUNCH_WARNING }}
+        Open Punch List items: {{ open_punch_count }}.
+    </p>
+    {% endif %}
     <form method="post" action="{{ url_for('projects.close_project', id=project.id) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {% if open_punch_count %}
+        <label class="lifecycle-confirm-check">
+            <input type="checkbox" name="confirm_open_punch" value="1" required>
+            {{ contractor_copy.PROJECT_CLOSE_OPEN_PUNCH_CONFIRM }}
+        </label>
+        {% endif %}
         <div class="form-actions">
             <button type="submit">{{ contractor_copy.PROJECT_CLOSE_ACTION }}</button>
             <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">{{ contractor_copy.PROJECT_LIFECYCLE_CANCEL }}</a>

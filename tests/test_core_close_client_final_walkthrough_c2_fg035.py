@@ -503,7 +503,7 @@ def test_non_response_does_not_block_project_close(app):
     close_project(project, owner)
     db.session.refresh(project)
     assert project.operating_state == "CLOSED"
-    assert ProjectFinalWalkthroughInvitation.query.one().status == WALKTHROUGH_STATUS_OPEN
+    assert ProjectFinalWalkthroughInvitation.query.one().status == WALKTHROUGH_STATUS_REVOKED
 
 
 def test_pending_client_input_does_not_hard_gate_sign_off_seam(app):
@@ -615,8 +615,8 @@ def test_no_completion_sign_off_or_native_signing_or_close_rewrite():
     assert "password" not in walk_routes.lower()
     assert "close_project" not in blob
     assert "reopen_project" not in blob
-    assert "Final Walkthrough" not in lifecycle
-    assert "walkthrough" not in lifecycle.lower()
+    assert "_revoke_open_invitations" in lifecycle
+    assert "completion_sign_off" not in lifecycle.lower()
     assert "close_project" in projects
     assert "require_instance_owner_or_system_administrator" in projects
     assert "issue_customer_invitation" in signing

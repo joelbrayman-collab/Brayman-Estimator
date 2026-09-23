@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PKG-L05 PROJECT CLOSE / WALKTHROUGH REVOCATION / OPEN PUNCH CONFIRMATION (2026-09-23)
+
+| Field | Content |
+|-------|---------|
+| Slice | PKG-L05 Project Close — Walkthrough revocation + open Punch confirmation |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** User Guide remains outstanding. |
+| 1. What new contractor capability exists? | Closing a Project now ends unused Final Walkthrough invitations so the old link cannot be used. If Punch List items are still open, Close still works, but the office must confirm that those items will stay open. |
+| 2. When would the contractor use it? | When the Instance Owner or System Administrator Closes a Project that had a client Walkthrough invitation still unused, or that still has open Punch List items. |
+| 3. What workflow will the final Manual need to teach? | Close as today. If Punch List items are open, read the warning, see the count, and confirm Close anyway. After Close, the old Walkthrough link is no longer usable. After Reopen, send a new invitation if the client should respond again. |
+| 4. What contractor-facing terms must be used? | Close. Reopen. Punch List. Final Walkthrough. Invitation. Open. Send a new invitation. Do not say REVOKED, TOCTOU, or transaction. |
+| 5. What screenshots / Print examples will eventually be needed? | Close confirmation with open Punch warning and count. Project Hub Walkthrough after Close / after Reopen, showing that a new invitation is required. |
+| 6. What warnings / validation distinctions need explanation? | Closing does not complete or delete open Punch List items. Missing confirmation does not Close. An unused invitation is no longer usable after Close. Reopen does not bring the old link back. |
+| 7. Desktop / iPhone / Print relevance | Office Close confirmation and Project Hub Walkthrough. Public Walkthrough link fail-closed. Field unchanged. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim whole-system Rule 16 PASS. Wholesale C08 copy sweep. Change Close authorization. |
+
 ### MANUAL IMPACT — PKG-T13 / R13 INTEGRITYERROR → CONTRACTOR DOMAIN ERROR (2026-09-23)
 
 | Field | Content |

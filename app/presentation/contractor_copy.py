@@ -268,6 +268,18 @@ PROJECT_REOPEN_CONFIRM_LEDE = (
 PROJECT_CLOSE_CONFIRM_TITLE = "Close this Project?"
 PROJECT_REOPEN_CONFIRM_TITLE = "Reopen this Project?"
 PROJECT_LIFECYCLE_CANCEL = "Cancel"
+PROJECT_CLOSE_OPEN_PUNCH_REQUIRED = (
+    "This Project has open Punch List items. Confirm you intend to close it "
+    "anyway. Closing does not complete or remove those Punch List items."
+)
+PROJECT_CLOSE_OPEN_PUNCH_CONFIRM = (
+    "Close this Project with open Punch List items. They will stay open."
+)
+PROJECT_CLOSE_OPEN_PUNCH_WARNING = (
+    "There are open Punch List items on this Project. Closing will not "
+    "complete or delete them. They stay on the Project record. You can "
+    "still close the Project deliberately."
+)
 PROJECT_LIST_CURRENT_EMPTY = "No current projects."
 PROJECT_LIST_CLOSED_EMPTY = "No closed projects."
 PUNCH_LIST_HEADING = "Punch List"
@@ -322,6 +334,10 @@ WALKTHROUGH_COPY_LINK_HINT = (
 WALKTHROUGH_INVITED_FLASH = "Final Walkthrough invitation is ready."
 WALKTHROUGH_STATE_NOT_SENT = "Final Walkthrough not sent"
 WALKTHROUGH_STATE_SENT = "Final Walkthrough sent"
+WALKTHROUGH_STATE_REVOKED = (
+    "The Final Walkthrough invitation is no longer usable. "
+    "Send a new invitation if the client should respond again."
+)
 WALKTHROUGH_STATE_RESPONDED = "Client responded"
 WALKTHROUGH_STATE_AWAITING = "Client input awaiting review"
 WALKTHROUGH_STATE_NOTHING = "Client had nothing to add"

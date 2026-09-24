@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **2026-09-24 PKG-F07 CLOSED / COMMITTED / PUSHED / SHA-PINNED.** Product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Owner decisions FINAL: **1=B freeze while authorized**; **2=C reverse keeps value / re-approval processes field**; **3=A late Extra link captures on the link action**. Dedicated F07 **14 passed**, 73 warnings, **9.29s**, exit **0**. Focused **159 passed**, 440 warnings, **69.81s**, exit **0**. Full suite **1739 passed**, 5822 warnings, **749.60s**, exit **0**. NO SCHEMA. NO MIGRATION. Live DB UNCHANGED (`3457024` / `1790020245`). Flask 5460 **STOPPED**. Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**. Official V1 **65% / 4 of 11.** Secondary **79% / 22 of 28** (not rescored). Repository Alembic head **`h8c9d0e1f2a3`**. Live Alembic current **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Whole-system Rule 16 **OPEN**. FG-039 remains **CLOSED IN GIT / NOT PUBLISHED / PARKED**. Next **PKG-F15 NEXT / NOT STARTED / NOT AUTHORIZED**. Do **not** start F15 or T16 from this pin. Do **not** deploy. Do **not** live-upgrade. |
+| Status | **2026-09-24 REVIEW TURNOVER PHASE 2 / F07-SEALED / F15-NOT-STARTED.** PKG-F07 **CLOSED.** Product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Pin SHA **`1913354a8ee16a61bf5805cb4cb921b0f842bb6e`**. HEAD / origin/main **`1913354a8ee16a61bf5805cb4cb921b0f842bb6e`**. Ahead **0** / behind **0**. Working tree at F07 pin inspect **CLEAN**. This Phase 2 working tree: **expected dirt = turnover documentation only / not committed**. PKG-F15 **NEXT / NOT STARTED / NOT AUTHORIZED FOR IMPLEMENTATION**. PKG-T16 **later / NOT STARTED**. Whole-system Rule 16 **OPEN**. FG-039 **CLOSED IN GIT / NOT PUBLISHED / PARKED**. Repository Alembic **`h8c9d0e1f2a3`**. Live Alembic **`g7b8c9d0e1f2`**. LIVE S16 **NOT APPLIED**. Live DB UNCHANGED (`3457024` / `1790020245`). Flask 5460 **STOPPED** (office app is **not safe** against live g7 until S16 live-migrates). Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**. Official V1 **65% / 4 of 11.** Secondary **79% / 22 of 28** (not rescored). Next **PKG-F15 DERIVATION ONLY** after this turnover is accepted. Do **not** start F15 or T16 from this record. Do **not** deploy. Do **not** live-upgrade. Do **not** publish FG-039. |
 | Updated | 2026-09-24 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [v1-completion-register.md](v1-completion-register.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
@@ -41,11 +41,11 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 - **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026`
 - **Cursor / IDE workspace chat titles:** must start with `BRAYMAN — <Topic>`
 - **Roles:** Joel = Product Owner. ChatGPT = Architect. Cursor = Executor. Cursor does not choose product law, the next Rule 16 root, or scope.
-- **Current work:** Rule 16 final correction programme remains **OPEN**. **PKG-F07 is CLOSED / COMMITTED / PUSHED / SHA-PINNED.** Product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Owner decisions FINAL: **1=B** freeze while authorized; **2=C** reverse keeps value / re-approval processes field; **3=A** late Extra link captures on the link action. **PKG-F14 is CLOSED.** **FG-039** remains **CLOSED IN GIT / NOT PUBLISHED / PARKED**. Additive **`h8c9d0e1f2a3`**. Repository Alembic head **`h8c9d0e1f2a3`**. Live Alembic current **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Next **PKG-F15 NEXT / NOT STARTED / NOT AUTHORIZED**. Do **not** start F15 or T16 from this pin. Do **not** deploy. Do **not** live-upgrade. HostPapa / production app deploy **does not exist**. People & Access remains separately governed.
+- **Current work:** **REVIEW TURNOVER PHASE 2.** PKG-F07 is **CLOSED.** Product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Pin SHA **`1913354a8ee16a61bf5805cb4cb921b0f842bb6e`**. PKG-F15 is **NEXT / NOT STARTED / NOT AUTHORIZED FOR IMPLEMENTATION**. First governed action after this turnover is accepted: **PKG-F15 DERIVATION ONLY**. Do **not** implement F15. Do **not** infer what “Capture” means in this turnover. **PKG-T16** is later / **NOT STARTED**. Whole-system Rule 16 remains **OPEN**. **FG-039** remains **CLOSED IN GIT / NOT PUBLISHED / PARKED**. Additive **`h8c9d0e1f2a3`**. Live Alembic **`g7b8c9d0e1f2`**. LIVE S16 **NOT APPLIED**. Flask 5460 **STOPPED**. HostPapa / production app deploy **does not exist**. People & Access remains separately governed.
 
 ## 2. VERIFIED BASELINE
 
-**CURRENT SEALED CHECKPOINT (PKG-F07 CLOSED, 2026-09-24):** Branch `main`. PKG-F07 product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Pin SHA recorded after this docs commit. FG-039 remains **CLOSED IN GIT / NOT PUBLISHED / PARKED** at product SHA **`ca11aefade0ad005944b1b3828a28875ea5e98ef`**. PKG-F14 remains **CLOSED** at pin SHA **`3b193949eabd326bbce33043b2b60a1a290c7c6f`** / product SHA **`25a90cd07effb95bcf76bb7e8bc676dea0370b44`**. PKG-S16 **CLOSED** at product SHA **`d84aedee9285dafa26f574cd463d510dd05c8862`**. Additive **`h8c9d0e1f2a3`**. Repository Alembic head **`h8c9d0e1f2a3`**. Live current **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Dedicated F07 **14 passed**, 73 warnings, **9.29s**, exit **0**. Focused **159 passed**, 440 warnings, **69.81s**, exit **0**. Full suite **1739 passed**, 5822 warnings, **749.60s**, exit **0**. Live DB UNCHANGED size `3457024` / mtime `1790020245`. Flask 5460 **STOPPED**. Recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**. Official V1 **65% / 4 of 11**. Secondary Functional V1 Build **79% / 22 of 28**. Whole-system Rule 16 **OPEN**. HostPapa app deploy **does not exist**. Next **PKG-F15 NEXT / NOT STARTED / NOT AUTHORIZED**. Do **not** start F15 or T16. Do **not** deploy.
+**CURRENT SEALED CHECKPOINT (REVIEW TURNOVER / PKG-F07 CLOSED, 2026-09-24):** Branch `main`. HEAD / `origin/main` **`1913354a8ee16a61bf5805cb4cb921b0f842bb6e`**. Ahead **0** / behind **0**. Working tree at F07 pin inspect **CLEAN**. This Phase 2 working tree: **expected dirt = turnover documentation only / not committed**. PKG-F07 product SHA **`79026762decf45082f73325f7056285fe8948eff`**. PKG-F07 pin SHA **`1913354a8ee16a61bf5805cb4cb921b0f842bb6e`**. FG-039 remains **CLOSED IN GIT / NOT PUBLISHED / PARKED** at product SHA **`ca11aefade0ad005944b1b3828a28875ea5e98ef`** / pin SHA **`246fd5e424da27fc7f0551b24c7491c9bc285d33`**. PKG-F14 remains **CLOSED** at pin SHA **`3b193949eabd326bbce33043b2b60a1a290c7c6f`** / product SHA **`25a90cd07effb95bcf76bb7e8bc676dea0370b44`**. PKG-S16 **CLOSED** at product SHA **`d84aedee9285dafa26f574cd463d510dd05c8862`**. Additive **`h8c9d0e1f2a3`**. Repository Alembic head **`h8c9d0e1f2a3`**. Live current **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Dedicated F07 **14 passed**, 73 warnings, **9.29s**, exit **0**. Focused **159 passed**, 440 warnings, **69.81s**, exit **0**. Full suite **1739 passed**, 5822 warnings, **749.60s**, exit **0**. Live DB UNCHANGED size `3457024` / mtime `1790020245`. Flask 5460 **STOPPED**. Recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**. Official V1 **65% / 4 of 11**. Secondary Functional V1 Build **79% / 22 of 28**. Whole-system Rule 16 **OPEN**. HostPapa app deploy **does not exist**. PKG-F15 **NOT STARTED**. PKG-T16 **NOT STARTED**. Next **PKG-F15 DERIVATION ONLY** after this turnover is accepted. Do **not** start F15 or T16. Do **not** deploy. Do **not** live-upgrade. Do **not** publish FG-039.
 
 Historical SHA chain below is **not** current resume authority.
 
@@ -119,13 +119,13 @@ M001, M005, M007, M008 (docs), M009 (`5dc4b09`), M010 (`6b969fe`), M011 (`cb38d9
 
 ## 7. CURRENT MILESTONE
 
-**CURRENT (2026-09-24):** Rule 16 final correction programme is **OPEN**. **PKG-F07 is CLOSED / COMMITTED / PUSHED / SHA-PINNED.** Product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Owner decisions FINAL: **1=B freeze**; **2=C reverse keeps / re-approval processes**; **3=A late-link captures**. Extra Work Approved Internal Direct Cost capture + MONITOR consume. **FG-039** remains **CLOSED IN GIT / NOT PUBLISHED / PARKED**. **PKG-F14** remains **CLOSED** at product SHA **`25a90cd07effb95bcf76bb7e8bc676dea0370b44`**. PKG-S16 remains **CLOSED** at product SHA **`d84aedee9285dafa26f574cd463d510dd05c8862`**. Additive **`h8c9d0e1f2a3`**, `down_revision` **`g7b8c9d0e1f2`**. Repository Alembic head **`h8c9d0e1f2a3`**. Live Alembic current **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Sealed packages remain: R01, R04, R05, R03A, R03B, R02, R10, R13, PKG-L05, PKG-F06, PKG-T03C, PKG-F08, PKG-F09, PKG-S16, PKG-F14, PKG-F07. V1 scores **unchanged**. Next **PKG-F15 NEXT / NOT STARTED / NOT AUTHORIZED**. Do **not** start F15 or T16 from this pin. Do **not** deploy. Do **not** live-upgrade.
+**CURRENT (2026-09-24):** Rule 16 final correction programme is **OPEN**. **PKG-F07 is CLOSED / COMMITTED / PUSHED / SHA-PINNED.** Product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Owner decisions FINAL: **1=B freeze**; **2=C reverse keeps / re-approval processes**; **3=A late-link captures**. Extra Work Approved Internal Direct Cost capture + MONITOR consume. **FG-039** remains **CLOSED IN GIT / NOT PUBLISHED / PARKED**. **PKG-F14** remains **CLOSED** at product SHA **`25a90cd07effb95bcf76bb7e8bc676dea0370b44`**. PKG-S16 remains **CLOSED** at product SHA **`d84aedee9285dafa26f574cd463d510dd05c8862`**. Additive **`h8c9d0e1f2a3`**, `down_revision` **`g7b8c9d0e1f2`**. Repository Alembic head **`h8c9d0e1f2a3`**. Live Alembic current **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Sealed packages remain: R01 / T01, R04 / L01, R05 / L02, R03A / T03A, R03B / T03B, R02 / T02, R10 / T10, R13 / T13, L05, F06 / R06, T03C / R03C, F08 / R08, F09 / R09, S16, F14 / R14, F07 / R07. Remaining (not authorization): **PKG-F15 NEXT / NOT STARTED / NOT AUTHORIZED FOR IMPLEMENTATION**; **PKG-T16 later / NOT STARTED**; R11 / C08 residual owner decision only if included in final seal; whole-system Rule 16 validation + seal; deployment-readiness / live S16; hosted validation; production E2E; V1 rescore only at an authorized point; FG-039 remains PARKED. V1 scores **unchanged**. This Review Turnover is **docs-only / not committed**. Next **STOP for Architect ACCEPT COMMIT of this turnover documentation**, then **PKG-F15 DERIVATION ONLY** after handshake. Do **not** start F15 or T16 from this record. Do **not** deploy. Do **not** live-upgrade.
 
 **[FG-035](feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) OPEN / PARTIAL / TAX/WBS IMPLEMENTED / SCOPE IMPLEMENTED / TIME IMPLEMENTED / SCH-A IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS / SCH-B IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS / SCH-C IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS / SCH-D IMPLEMENTED / TESTED / SERVER-SIDE LIVE UAT PASS / PHYSICAL IPHONE UAT PASS / COMMITTED / SHA-PINNED / PUSHED / PERF-A IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED / PERF-B IMPLEMENTED / TESTED / BOUNDED SYNTHETIC LIVE UAT PASS / COMMITTED / SHA-PINNED / PUSHED / PERF-C IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE UAT PASS / SEALED / CORE CLOSE SLICE A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / CORE CLOSE SLICE B IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NO MIGRATION / FG-038 PA-A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / FIRST OWNER ASSIGNED / LIVE AUTHORITY UAT PASS / SCH OVERALL OPEN / PARTIAL.** [ADR-053](adr/ADR-053-project-work-structure-and-closed-operational-learning-loop.md) **Accepted**. Repository Alembic head **`g7b8c9d0e1f2`**. Live current **`g7b8c9d0e1f2 (head)`**. Historical PA-A/C1 current **`c3d4e5f6a7b8`** is superseded. **[FG-034](feature-gates/FG-034-account-recovery-and-transactional-email.md) CLOSED / OPERATIONAL FOR UAT / MAIL-A IMPLEMENTED / AUTH-A IMPLEMENTED / AUTH-B IMPLEMENTED / AUTH-C IMPLEMENTED / MAIL-B IMPLEMENTED / AUTH-D IMPLEMENTED / PASS.** [ADR-052](adr/ADR-052-account-recovery-and-transactional-email.md) **Accepted**. Live MAIL-A/AUTH-A revision **`f2a3b4c5d6e7`** (superseded as live current). **[FG-033](feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) CLOSED / OPERATIONAL FOR UAT / SIGN-A IMPLEMENTED / SIGN-B IMPLEMENTED / SIGN-C IMPLEMENTED / SIGN-D IMPLEMENTED / SIGN-E IMPLEMENTED.** [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) **SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C CLOSED / OPERATIONAL FOR UAT / TECH-A IMPLEMENTED / TECH-B IMPLEMENTED / TECH-C IMPLEMENTED / TECH-D IMPLEMENTED / OVERALL OPEN / PARTIAL.** [ADR-050](adr/ADR-050-north-american-legal-content-library-ownership.md) **Accepted**. [ADR-051](adr/ADR-051-legal-content-source-and-update-lifecycle.md) **Accepted**. **[FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) CLOSED / OPERATIONAL FOR UAT.** [ADR-049](adr/ADR-049-quickbooks-ready-output-ownership-and-snapshot.md) **Accepted**. Product SHA **`70e571140e12377aa5bd009b598530576401113b`**. Product parent **`010f6d641a756ceb2ab67475a284d3b8426c7b20`**. Canonical UAT project **id 26**. V1-05 **COMPLETE**. **[FG-031](feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) CLOSED / OPERATIONAL FOR UAT.** [ADR-048](adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**. **[FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) CLOSED / OPERATIONAL FOR UAT.** **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / BOUNDED BMR DEMO OFFICE UAT PASS.** [ADR-046](adr/ADR-046-supplier-neutral-material-requirement-and-supplier-mapping-boundary.md) **Accepted**. ADR-008 remains **Proposed**. V1 **65% / 4 of 11**. V1-03 **COMPLETE**. V1-04 **PARTIAL**. V1-05 **COMPLETE**. V1-06 **PARTIAL / 0.40**. V1-07 **PARTIAL / SIGN-A THROUGH SIGN-E IMPLEMENTED / PRODUCTION NOT COMPLETE**. **[FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** [ADR-047](adr/ADR-047-supplier-identity-authentication-and-access-isolation.md) **Accepted** (architecture only). **[FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) CLOSED / OPERATIONAL FOR UAT.** [FG-028](feature-gates/FG-028-calibai-to-calibraytai-product-identity-transition.md) **SLICES 1–3 COMPLETE / CLOSED / OPERATIONAL FOR UAT.** [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) remains **CLOSED / OPERATIONAL FOR UAT.** [FG-023](feature-gates/FG-023-monitor-v1-estimated-versus-actual.md) remains **CLOSED / OPERATIONAL FOR UAT.** [FG-021 CLOSED.]
 
 ## 8. LAST AUTHORIZED DELTA
 
-**Last authorized delta:** **2026-09-24 PKG-F07 CLOSED / COMMITTED / PUSHED / SHA-PINNED.** Product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Extra Work Approved Internal Direct Cost capture + MONITOR consume. Owner law FINAL: **B freeze** while authorized; **C reverse retains / re-approval processes**; **A late Extra link captures**. NULL = Not captured. 0.00 distinct from NULL. MONITOR complete-set law. Sell/revenue identities preserved. ProjectDirectCostActual authority preserved. Dedicated **14 passed**, 73 warnings, **9.29s**, exit **0**. Focused **159 passed**, 440 warnings, **69.81s**, exit **0**. Full suite **1739 passed**, 5822 warnings, **749.60s**, exit **0**. NO SCHEMA. NO MIGRATION. Live DB unchanged (`3457024` / `1790020245`). V1 scores unchanged. Whole-system Rule 16 remains **OPEN**. FG-039 remains **PARKED**. Next **PKG-F15 NEXT / NOT STARTED / NOT AUTHORIZED**. Do **not** start F15 or T16 from this pin. Do **not** deploy. Do **not** live-upgrade.
+**Last authorized delta:** **2026-09-24 REVIEW TURNOVER PHASE 2 (docs-only / not committed).** Rebuild current resume authority to the F07-sealed / F15-not-started checkpoint. Stale §21/§22 T03C/F08 startup material is **historical**, not current resume authority. PKG-F07 remains **CLOSED** at product SHA **`79026762decf45082f73325f7056285fe8948eff`** / pin SHA **`1913354a8ee16a61bf5805cb4cb921b0f842bb6e`**. PKG-F15 **NOT STARTED**. PKG-T16 **NOT STARTED**. FG-039 remains **PARKED**. LIVE S16 **NOT APPLIED**. Flask **STOPPED**. V1 scores unchanged. Next **STOP for Architect ACCEPT COMMIT of this turnover documentation.** Do **not** start F15 from this turnover.
 
 **Prior:** **2026-09-24 FG-039 CLOSED / COMMITTED / PUSHED / SHA-PINNED.** Product SHA **`ca11aefade0ad005944b1b3828a28875ea5e98ef`**. Employment vs Entrepreneurship Decision Tool with What Has to Be True, Startup & Transition Cash, Downside Stress Test, Total Owner Workload, Cash Available to Owner, Download Results PDF. Same `calculate()` authority for screen and PDF. Neutral. No schema. Dedicated **27 passed**, 5 warnings, **2.65s**, exit **0**. Focused **40 passed**, 12 warnings, **4.30s**, exit **0**. Full suite **1725 passed**, 5749 warnings, **792.54s**, exit **0**. Live DB unchanged (`3457024` / `1790020245`). V1 scores unchanged. Whole-system Rule 16 remains **OPEN**. **NOT PUBLISHED.** FG-039 publication is **PARKED**.
 
@@ -605,7 +605,8 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 
 ## 10. TEST / UAT / MIGRATION STATUS
 
-- **CURRENT (FG-039 close, 2026-09-24):** full suite **1725 passed**, 5749 warnings, **792.54s**, exit **0**. Product SHA **`ca11aefade0ad005944b1b3828a28875ea5e98ef`**. Dedicated FG-039 **27 passed**, 5 warnings, **2.65s**, exit **0**. Focused calculator + identity **40 passed**, 12 warnings, **4.30s**, exit **0**. Repository Alembic head **`h8c9d0e1f2a3`**. Live Alembic **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. No FG-039 schema or migration. Live DB UNCHANGED (`3457024` / `1790020245`). FG-039 **CLOSED / COMMITTED / PUSHED / SHA-PINNED / NOT PUBLISHED**.
+- **CURRENT (PKG-F07 close, 2026-09-24):** full suite **1739 passed**, 5822 warnings, **749.60s**, exit **0**. Product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Pin SHA **`1913354a8ee16a61bf5805cb4cb921b0f842bb6e`**. Dedicated F07 **14 passed**, 73 warnings, **9.29s**, exit **0**. Focused F07+T03C+F08+F09+F14+MONITOR+S16+CO+R01+R04+R13 **159 passed**, 440 warnings, **69.81s**, exit **0**. Repository Alembic head **`h8c9d0e1f2a3`**. Live Alembic **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. No F07 schema or migration. Live DB UNCHANGED (`3457024` / `1790020245`). F07 **CLOSED**. This Review Turnover **did not** rerun the suite.
+- Historical FG-039 close: full suite **1725 passed**, 5749 warnings, **792.54s**, exit **0**. Product SHA **`ca11aefade0ad005944b1b3828a28875ea5e98ef`**. Dedicated FG-039 **27 passed**, 5 warnings, **2.65s**, exit **0**. Focused calculator + identity **40 passed**, 12 warnings, **4.30s**, exit **0**. FG-039 **CLOSED / COMMITTED / PUSHED / SHA-PINNED / NOT PUBLISHED / PARKED**.
 - Historical F14 product close: full suite **1698 passed**, 5744 warnings, **756.32s**, exit **0**. Product SHA **`25a90cd07effb95bcf76bb7e8bc676dea0370b44`**. Pin SHA **`3b193949eabd326bbce33043b2b60a1a290c7c6f`**. Focused F14+estimates+proposals+COs+T03C+F09+R01+R13+S16 **103 passed**, 228 warnings, **43.60s**, exit **0**. Repository Alembic head **`h8c9d0e1f2a3`**. Live Alembic **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. No F14 schema or migration. Live DB UNCHANGED (`3457024` / `1790020245.9238403`). F14 **CLOSED**.
 - Historical S16 product close: full suite **1684 passed**, 5726 warnings, **1403.67s**, exit **0**. Dedicated S16 **4 passed**, 12 warnings, **6.99s**. Focused **232 passed**, 477 warnings, **279.36s**. Dedicated R13 **18 passed**, 51 warnings, **16.92s**. Product SHA **`d84aedee9285dafa26f574cd463d510dd05c8862`**. Pin SHA **`4024180592df3e2689a2ee40e5ec83f572c34ccb`**.
 - **CURRENT (F09 product close, 2026-09-23):** full suite **1680 passed**, 5714 warnings, **773.80s**, exit **0**. Dedicated F09 **12 passed**, 53 warnings, **8.37s**. Focused F09+T03C+R01+Time+work_scope+estimates **65 passed**, 347 warnings, **35.09s**. Dedicated T03C+R01 **25 passed**, 77 warnings, **13.27s**. Change Order + Schedule **24 passed**, 37 warnings, **9.53s**. Alembic **`g7b8c9d0e1f2 (head)`**. No F09 schema or migration. Live DB UNCHANGED (`3457024` / `1790020245.9238403`). Product SHA **`e445e641789efd71b44d456b202b560649879c37`**. This pin did **not** rerun the suite.
@@ -664,6 +665,22 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 - **FG-027:** **CLOSED / OPERATIONAL FOR UAT**. **IMPLEMENTED / TESTED / COMMITTED / PUSHED / LIVE-MIGRATED / OFFICE UAT PASS**. Repair SHA **`72949f99da2b56ec06e95e16e29fa194a6730bbd`**. V1-02 **COMPLETE**. [ADR-044](adr/ADR-044-costing-approval-snapshot-ownership-and-pricing-consumption-boundary.md) **Accepted**. Approve All = costing approval only. Additive `a5b6c7d8e9f0` **applied live**. Does **not** accept ADR-008.
 
 ## 15. CHAT → REPOSITORY DELTA LEDGER RESULT
+
+**2026-09-24 REVIEW TURNOVER CURSOR PHASE 2 (docs-only / not committed).** Chat history is not the system of record. Active resume authority is rebuilt to the F07-sealed / F15-not-started checkpoint. Classifications:
+
+| Item | Classification |
+|------|----------------|
+| PKG-F07 product SHA `79026762decf45082f73325f7056285fe8948eff` / pin SHA `1913354a8ee16a61bf5805cb4cb921b0f842bb6e` / owner law B freeze / C reverse retains + re-approval processes / A late-link captures | **ALREADY IN REPOSITORY** (product + pin occupancy) |
+| F07 tests 14 / 159 / 1739 and targeted re-audit PASS | **ALREADY IN REPOSITORY** |
+| Closed Rule 16 packages through F07; F15 NEXT / NOT STARTED; T16 later / NOT STARTED; Rule 16 OPEN | **ALREADY IN REPOSITORY** (current-authority pins this pass) |
+| S16 closed in git / not applied live; repo Alembic `h8c9d0e1f2a3`; live `g7b8c9d0e1f2`; Flask STOPPED; live DB `3457024` / `1790020245` | **ALREADY IN REPOSITORY** (verified this pass) |
+| FG-039 CLOSED IN GIT / PARKED / not published; public naming later | **ALREADY IN REPOSITORY** |
+| Official V1 65% / 4 of 11; secondary 79% / 22 of 28 | **ALREADY IN REPOSITORY** (not rescored) |
+| One governed objective at a time; Architect checklist at milestone CLOSE only | **PARTIALLY MEMORIALIZED** — recorded in this turnover resume |
+| session-handoff §21 expected HEAD and §22 Fresh Chat Startup Prompt still pointing at T03C / F08 | **SUPERSEDED** — rebuilt this pass |
+| Historical T03C / F08 / F14 / FG-039 publication as current resume | **SUPERSEDED** as current; remain historical Prior |
+
+**Completeness test:** Is there any material approved decision, requirement, implementation fact, protected baseline, unresolved decision, or current authorization present in the active Turnover Delta Ledger that is not represented in the repository? **NO — verified through Turnover Delta Ledger reconciliation for this Phase 2 package.** F15 meaning is **not derived** here. F15 remains **NOT STARTED**.
 
 **2026-09-23 REVIEW TURNOVER CURSOR PHASE 2 (working tree / not committed).** Chat history is not the system of record. Active resume authority is rebuilt to the T03C pin. Classifications:
 
@@ -753,7 +770,7 @@ Prior: FG-014 **APPROVED FOR IMPLEMENTATION** (`273803b`). Material Catalogue AD
 
 ## 16. OPEN DECISIONS
 
-- **CURRENT (2026-09-24):** Whole-system Rule 16 remains **OPEN**. **PKG-F07 is CLOSED / COMMITTED / PUSHED / SHA-PINNED.** Product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Owner decisions FINAL: **1=B freeze**; **2=C reverse keeps / re-approval processes**; **3=A late-link captures**. **FG-039** remains **CLOSED IN GIT / NOT PUBLISHED / PARKED**. **PKG-F14** remains **CLOSED**. PKG-S16 remains **CLOSED**. Additive **`h8c9d0e1f2a3`**. Live Alembic remains **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Next **PKG-F15 NEXT / NOT STARTED / NOT AUTHORIZED**. Do **not** start F15 or T16 from this pin. Do **not** deploy. Do **not** live-upgrade. Do **not** silently rewrite F08 origin law here.
+- **CURRENT (2026-09-24 REVIEW TURNOVER):** Whole-system Rule 16 remains **OPEN**. **PKG-F07 is CLOSED.** Product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Pin SHA **`1913354a8ee16a61bf5805cb4cb921b0f842bb6e`**. Owner decisions FINAL: **1=B freeze**; **2=C reverse keeps / re-approval processes**; **3=A late-link captures**. **PKG-F15** is **NEXT / NOT STARTED / NOT AUTHORIZED FOR IMPLEMENTATION**. **PKG-T16** is later / **NOT STARTED**. **FG-039** remains **CLOSED IN GIT / NOT PUBLISHED / PARKED**. **PKG-F14** remains **CLOSED**. PKG-S16 remains **CLOSED**. Additive **`h8c9d0e1f2a3`**. Live Alembic remains **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Flask 5460 **STOPPED**. Next **STOP for Architect ACCEPT COMMIT of this turnover documentation**. After handshake: **PKG-F15 DERIVATION ONLY**. Do **not** implement F15. Do **not** infer F15 “Capture”. Do **not** start T16. Do **not** deploy. Do **not** live-upgrade. Do **not** silently rewrite F08 origin law here. R11 / C08 remain residual owner decisions only if included in the final seal.
 - Real external AI provider / ADR-010 (not authorized)
 - Phase D reviewed quantity → estimate mapping — [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**. V1-02 / [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**.
 - Project Hub UX (roadmap item 8; **CLOSED / OPERATIONAL FOR UAT**)
@@ -803,13 +820,17 @@ PKG-F07 is **CLOSED**. Do **not** reopen F07 except later authorized non-regress
 
 ## 20. NEXT AUTHORIZED ACTION
 
-**Next governed action:** **STOP.** PKG-F07 is **CLOSED / COMMITTED / PUSHED / SHA-PINNED.** Product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Return to ChatGPT Architect for **PKG-F15 DERIVATION ONLY**. PKG-F15 is **NEXT / NOT STARTED / NOT AUTHORIZED**. FG-039 remains **CLOSED IN GIT / NOT PUBLISHED / PARKED**. PKG-F14 remains **CLOSED**. PKG-S16 remains **CLOSED**. Additive **`h8c9d0e1f2a3`**. Live Alembic remains **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Whole-system Rule 16 remains **OPEN**. Do **not** start F15 or T16 from this pin. Do **not** deploy. Do **not** live-upgrade. HostPapa app deploy **does not exist**. Do **not** rescore V1. Official V1 **65% / 4 of 11**. Secondary Functional V1 Build **79% / 22 of 28**.
+**Next governed action:** **STOP.** Review Turnover Phase 2 documentation is in the working tree and is **not committed**. Return to ChatGPT Architect for **ACCEPT COMMIT of this turnover documentation**. PKG-F07 remains **CLOSED**. PKG-F15 is **NEXT / NOT STARTED / NOT AUTHORIZED FOR IMPLEMENTATION**. After this turnover is SHA-pinned and fresh chats are seated, the Architect issues **PKG-F15 DERIVATION ONLY**. Do **not** implement F15 from this turnover. Do **not** start T16. FG-039 remains **PARKED**. LIVE S16 **NOT APPLIED**. Flask 5460 **STOPPED**. Do **not** operate the office app against live g7. Do **not** deploy. Do **not** live-upgrade. HostPapa app deploy **does not exist**. Do **not** rescore V1. Official V1 **65% / 4 of 11**. Secondary Functional V1 Build **79% / 22 of 28**.
+
+**Architect process law (preserve):** one governed objective at a time. Normal sequence: DERIVATION → OWNER DECISION if genuinely required → IMPLEMENT / TEST / TARGETED RE-AUDIT in working tree → STOP → ARCHITECT ACCEPT COMMIT → LOCAL COMMIT → STOP → ARCHITECT ACCEPT PUSH / SHA-PIN → PUSH PRODUCT → DOCS-ONLY PIN → PUSH PIN → VERIFY CLEAN → PACKAGE CLOSED → NEXT PACKAGE. Cursor does not self-authorize the next package.
+
+**Milestone checklist UX law (preserve):** at the END of each CLOSED milestone, the Architect response includes the complete visual Rule 16 correction-program checklist (start, closed items, newly completed, next, remaining through seal/deployment/E2E, and parked Business Decision Tool publication). Do not put the giant historical checklist at the top of ordinary intermediate responses.
 
 **Roadmap direction (not authorization):** Item 12 Field Web is **CLOSED**. Item 13 **CLOSED / OPERATIONAL FOR UAT**. [FG-025](feature-gates/FG-025-contractor-facing-ux-language-and-terminology-standardization.md) is **SLICE 1, SLICE 2, SLICE 3, SLICE 4, SLICE 5, AND SLICE 6 IMPLEMENTED / NOT CLOSED** (remaining surfaces not authorized). [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Item 15 / [FG-024](feature-gates/FG-024-north-american-contract-intelligence-and-legal-content-lifecycle.md) is **FUTURE / RECORDED / SLICE A CLOSED / OPERATIONAL FOR UAT / SLICE B CLOSED / OPERATIONAL FOR UAT / SLICE C CLOSED / OPERATIONAL FOR UAT / TECH-A IMPLEMENTED / TECH-B IMPLEMENTED / TECH-C IMPLEMENTED / TECH-D IMPLEMENTED / OVERALL OPEN / PARTIAL**. Project Closeout remains **FUTURE**. Native Signing is a **parallel** track. **ROADMAP SEQUENCE ≠ IMPLEMENTATION AUTHORIZATION.**
 
 ## 21. EXACT REPOSITORY RESUME COMMANDS
 
-Run in **Cursor Terminal**. These commands are **READ / VERIFY** only. Do **not** reset, pull, merge, rebase, amend, stash pop, clean unexpected dirt, restart Flask, or mutate the live DB.
+Run in **Cursor Terminal**. These commands are **READ / VERIFY** only. Do **not** reset, pull, merge, rebase, amend, stash pop, clean expected turnover-docs dirt, restart Flask, or mutate the live DB.
 
 ```bash
 cd /Users/joelbrayman/Desktop/Brayman-Estimator
@@ -827,42 +848,43 @@ stat -f '%z %m %Sm' -t '%Y-%m-%d %H:%M:%S' instance/brayman_estimator.db
 lsof -nP -iTCP:5460 -sTCP:LISTEN || true
 ./venv/bin/flask db current
 ./venv/bin/flask db heads
+git merge-base --is-ancestor 79026762decf45082f73325f7056285fe8948eff HEAD; echo "f07_product_ancestor_exit=$?"
 ```
 
-Expected at a clean post-pin inspect:
+Expected at the F07-sealed product inspect (HEAD before this turnover-docs commit):
 
 - repository path `/Users/joelbrayman/Desktop/Brayman-Estimator`
 - branch `main`
-- HEAD = `origin/main` = the PKG-F09 SHA-pin commit (`docs: pin PKG-F09 project-child context SHA`)
-- PKG-F09 product SHA **`e445e641789efd71b44d456b202b560649879c37`** is an ancestor of HEAD
-- PKG-F08 product SHA **`94928ab58de232be4e26a129626279f5270a6ef1`** is an ancestor of HEAD
-- T03C pin **`c57cf5f4e1cfa55edb654af4b8599e53176300c8`** is an ancestor of HEAD
+- HEAD = `origin/main` = PKG-F07 pin SHA **`1913354a8ee16a61bf5805cb4cb921b0f842bb6e`** (`docs: pin PKG-F07 approved extra-work internal cost SHA`)
+- PKG-F07 product SHA **`79026762decf45082f73325f7056285fe8948eff`** is an ancestor of HEAD
+- FG-039 product SHA **`ca11aefade0ad005944b1b3828a28875ea5e98ef`** / pin SHA **`246fd5e424da27fc7f0551b24c7491c9bc285d33`** are ancestors of HEAD
 - ahead 0 / behind 0
-- working tree **CLEAN**
-- staging **EMPTY**
-- T03C product SHA **`95659c8432761815cbd9825969cc5b6cc683042d`** is an ancestor of HEAD
-- F06 product **`aedc8ae2058842c3def709a333d407c47c1af089`** / pin **`ceb40bc391aa24d0f2bc06666802fddd190e2984`**
-- L05 product **`4682fc544ccdd3811be9f73488ad6f5a8c0777e6`** / pin **`065649e75f741097064f1de5df5d24200c3fe370`**
-- Alembic live current = graph head **`g7b8c9d0e1f2 (head)`**
-- live DB UNCHANGED size **`3457024`** / mtime **`1790020245.9238403`**
-- Flask 5460 **STOPPED**
+- working tree at F07 pin inspect **CLEAN**; this Phase 2 working tree: **expected dirt = turnover documentation only / not committed**
+- staging **EMPTY** unless this turnover has been staged for ACCEPT COMMIT
+- Repository Alembic head **`h8c9d0e1f2a3`**
+- Live Alembic current **`g7b8c9d0e1f2`** (NOT applied S16; live is not the graph head)
+- LIVE S16 **NOT APPLIED**
+- live DB UNCHANGED size **`3457024`** / mtime **`1790020245`**
+- Flask 5460 **STOPPED** (office app is **not safe** against live g7 until S16 live-migrates)
 - recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**
-- latest governed full suite (F09 product close, not rerun this pin): **1680 passed**, 5714 warnings, **773.80s**, exit **0**
+- latest governed full suite (F07 product close, **not rerun** this turnover): **1739 passed**, 5822 warnings, **749.60s**, exit **0**
+
+After Architect ACCEPT COMMIT / SHA-pin of this turnover documentation: HEAD / `origin/main` will become the turnover docs SHA; **`1913354a8ee16a61bf5805cb4cb921b0f842bb6e`** remains the F07 pin ancestor. That later HEAD is **not** a FAIL if the F07 pin is an ancestor, the tree is CLEAN, and live identity is unchanged.
 
 If identity materially differs: **STOP**. Do not force a match. Do not reset. Do not pull. Do not merge. Do not rebase. Do not amend. Do not stash pop. Do not clean unexpected dirt. Do not restart Flask. Do not mutate live DB.
 
-Do **not** run a full pytest suite from this resume unless a later Architect prompt authorizes it. Historical FG-034 MAIL-A resume commands and expected HEAD `f2a3b4c5d6e7` / full suite **1009** are **not** current resume authority.
+Do **not** run a full pytest suite from this resume unless a later Architect prompt authorizes it. Historical T03C / F08 / F09 / F14 / FG-039 publication / VISUAL-2 / FG-034 / 15 SEP resume commands are **not** current resume authority.
 
 ## 22. FRESH CHAT STARTUP PROMPT
 
-Canonical location for the next conversation. Paste into a **new** ChatGPT Architect chat and a **new** Cursor Executor chat. Do **not** continue from an old prompt without preflight. Do **not** reconstruct state from memory of VISUAL-2 / FG-034 / 15 SEP.
+Canonical location for the next conversation. Paste into a **new** ChatGPT Architect chat and a **new** Cursor Executor chat. Do **not** continue from an old prompt without preflight. Do **not** reconstruct state from memory of T03C / F08 / F14 / FG-039 publication / F07-as-open / 15 SEP.
 
 ```text
 BRAYMAN — RESUME FROM REVIEW TURNOVER
 CONTINUITY / REPOSITORY-FIRST INITIALIZATION
-23 SEP 2026
+24 SEP 2026
 
-You are starting a FRESH conversation on the Brayman-Estimator (CalibraytAI / The Estimator) platform following Cursor Phase 2 Review Turnover against the T03C-sealed Architect checkpoint.
+You are starting a FRESH conversation on the Brayman-Estimator (CalibraytAI / The Estimator) platform following Cursor Phase 2 Review Turnover against the F07-sealed / F15-not-started Architect checkpoint.
 The prior conversation has been discarded. You have ZERO reliable conversation memory.
 Chat history is supplemental only. The repository is the ONE SOURCE OF TRUTH.
 ChatGPT / Cursor memory is never corporate memory.
@@ -870,7 +892,7 @@ ChatGPT / Cursor memory is never corporate memory.
 Conversation titles in this Cursor/IDE workspace must start with: BRAYMAN — <Topic>.
 
 ACTIVE CHAT TITLE (ChatGPT originating development chat):
-BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026
+BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026
 (Record the exact title of the NEW ChatGPT development chat once Joel names it. Until then, keep using this title.)
 
 CONTINUITY DISPLAY RULE:
@@ -888,43 +910,48 @@ Joel = Product Owner
 ChatGPT = Architect
 Cursor = Executor
 Cursor does not choose product law.
-Cursor does not choose the next Rule 16 root.
+Cursor does not choose the next Rule 16 package.
 Cursor does not broaden scope.
+Cursor does not self-authorize the next package.
 
-REPOSITORY IDENTITY (expected starting identity after this turnover is SHA-pinned):
+FIRST AUTHORIZED ACTION:
+READ / PREFLIGHT / VERIFY ONLY.
+Then return to ChatGPT Architect.
+Do not begin F15 implementation merely because F15 is next.
+The fresh Architect will issue PKG-F15 DERIVATION ONLY after accepting the handshake.
+
+REPOSITORY IDENTITY (F07-sealed checkpoint; confirm live):
 Path: /Users/joelbrayman/Desktop/Brayman-Estimator
 Branch: main
-HEAD / origin/main: the Review Turnover SHA-pin commit
-  (docs: pin Review Turnover T03C resume-package SHA)
-Confirm HEAD = origin/main, ahead 0 / behind 0, working tree CLEAN, staging EMPTY.
-TURNOVER DOCS SHA (resume-package content; ancestor of HEAD):
-5b00172e10615f9c0d8d95d10bb636dd310b422d
+Expected HEAD / origin/main:
+1913354a8ee16a61bf5805cb4cb921b0f842bb6e
+(docs: pin PKG-F07 approved extra-work internal cost SHA)
+Divergence: ahead 0 / behind 0
+Working tree at F07 pin inspect: CLEAN
+Staging: EMPTY
+If this turnover documentation has already been committed/pinned, HEAD will be that later SHA.
+That is not a FAIL if 1913354a8ee16a61bf5805cb4cb921b0f842bb6e is an ancestor,
+the tree is CLEAN, and live identity is unchanged.
 
-PKG-T03C PRODUCT SHA:
-95659c8432761815cbd9825969cc5b6cc683042d
-PKG-T03C PIN SHA (product checkpoint; ancestor of HEAD):
-c57cf5f4e1cfa55edb654af4b8599e53176300c8
+PKG-F07 PRODUCT SHA:
+79026762decf45082f73325f7056285fe8948eff
+PKG-F07 PIN SHA:
+1913354a8ee16a61bf5805cb4cb921b0f842bb6e
+Confirm the product SHA is an ancestor of HEAD.
 
-PKG-F06 PRODUCT SHA:
-aedc8ae2058842c3def709a333d407c47c1af089
-PKG-F06 PIN SHA:
-ceb40bc391aa24d0f2bc06666802fddd190e2984
-
-PKG-L05 PRODUCT SHA:
-4682fc544ccdd3811be9f73488ad6f5a8c0777e6
-PKG-L05 PIN SHA:
-065649e75f741097064f1de5df5d24200c3fe370
-
-Alembic current/head: g7b8c9d0e1f2 (head)
-No migration is authorized from this startup.
-
-Live DB: UNCHANGED
+Repository Alembic head: h8c9d0e1f2a3
+Live Alembic current: g7b8c9d0e1f2
+S16: CLOSED IN GIT / NOT APPLIED LIVE
+Live DB fingerprint:
 instance/brayman_estimator.db
-Expected size: 3457024
-Expected mtime: 1790020245.9238403
+size 3457024
+mtime 1790020245
+UNCHANGED
 
 Flask 5460: STOPPED
 Do not restart Flask.
+The complete current Flask office application is NOT safe to operate against
+the live g7 database because current models expect S16 schema.
 
 Recovery stash: 840dba8320b59ff9464410fec390d755a31a56aa
 PRESERVED. Do not pop it. Do not drop it.
@@ -937,33 +964,99 @@ Official V1: 65% / 4 of 11
 Secondary Functional V1 Build: 79% / 22 of 28
 Do not rescore V1.
 
-SEALED PROGRAMME STATE:
-PKG-T03C / R03C is IMPLEMENTED / TESTED / EXTRA→CHANGE ORDER ONE TRANSACTION PROVEN / FAILURE ROLLS CHANGE ORDER BACK / RETRY DOES NOT DUPLICATE CHANGE ORDER / STANDALONE CHANGE ORDER PRESERVED / STANDALONE EXTRA→EXISTING-CO LINK PRESERVED / EXTRA-ONLY PRESERVED / R03A R03B R04 R05 R01 F06 L05 NON-REGRESSION PASS / TARGETED RE-AUDIT PASS / FULL SUITE PASS / COMMITTED / PUSHED / SHA-PINNED / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / CLOSED.
-Do not reopen T03C except for later authorized non-regression testing or a newly proven dependency.
+SEALED PROGRAMME STATE (CLOSED):
+R01 / T01
+R04 / L01
+R05 / L02
+R03A / T03A
+R03B / T03B
+R02 / T02
+R10 / T10
+R13 / T13
+L05
+F06 / R06
+T03C / R03C
+F08 / R08
+F09 / R09
+S16
+F14 / R14
+F07 / R07
+Pointers: docs/session-handoff.md §§1–2, §7, §10, §15, §§19–22;
+docs/current-state.md; docs/platform-roadmap.md; docs/chat-workflow-log.md.
 
-T03C ORIGIN LAW (carried forward; do not silently rewrite):
-A. Draft-linked Extra remains EXTRA_WORK while the Change Order is not authorizing.
-B. Authorizing-linked Extra becomes CHANGE_ORDER and cannot create another Change Order from Extra.
-C. Extra→CO create+link is one transaction.
-Draft-linked Extra remaining EXTRA_WORK is existing law at the T03C pin.
-The possible immutability consequences of that law belong to PKG-F08.
+F07 OWNER LAW (FINAL; do not re-ask):
+B freeze approved_internal_direct_cost while authorized
+C reverse retains stored value; re-approval deliberately processes the field again
+A late Extra link to an already-authorized CO processes cost on the link action
+NULL = Not captured. 0.00 is a captured estimate. MONITOR complete-set law.
+Do not reopen F07 except later authorized non-regression testing.
 
-NEXT PROGRAMME PACKAGE:
-PKG-F08 / R08 — SCOPE_ORIGIN IMMUTABILITY AFTER OPERATIONAL USE
-STATUS: NOT STARTED / NOT AUTHORIZED merely by this startup.
-Do not start F08 until ChatGPT Architect explicitly authorizes the F08 implementation package after this turnover is sealed and fresh chats are seated.
-Do not start F09. Do not generate or execute S16. Do not start F14. Do not start F07. Do not select another Rule 16 root.
+FG-039:
+EMPLOYMENT VS ENTREPRENEURSHIP DECISION TOOL
+CLOSED IN GIT / NOT PUBLISHED / PARKED
+PRODUCT SHA: ca11aefade0ad005944b1b3828a28875ea5e98ef
+PIN SHA: 246fd5e424da27fc7f0551b24c7491c9bc285d33
+Do not publish. Do not act on public naming, website hero, public routes,
+rate limiting, HostPapa, or a static calculator fork.
+
+PKG-F15:
+NEXT / NOT STARTED / NOT AUTHORIZED FOR IMPLEMENTATION
+Do NOT derive F15 from this startup.
+Do NOT implement F15.
+Do NOT create an F15 Feature Gate.
+Do NOT infer what "Capture" means.
+
+PKG-T16:
+later / NOT STARTED
+Do not start T16.
+
+REMAINING RULE 16 PATH (sequence, not authorization):
+PKG-F15 DERIVATION ONLY after Architect handshake
+PKG-T16 later
+R11 / C08 residual owner decision only if included in final seal
+whole-system Rule 16 validation
+Rule 16 final seal
+deployment-readiness / live S16 migration
+hosted validation
+production E2E
+V1 rescore only at an authorized point
+then parked Business Decision Tool publication
+
+ARCHITECT PROCESS LAW:
+ONE governed objective at a time.
+DERIVATION
+→ OWNER DECISION if genuinely required
+→ IMPLEMENT / TEST / TARGETED RE-AUDIT in working tree
+→ STOP
+→ ARCHITECT ACCEPT COMMIT
+→ LOCAL COMMIT
+→ STOP
+→ ARCHITECT ACCEPT PUSH / SHA-PIN
+→ PUSH PRODUCT
+→ DOCS-ONLY PIN
+→ PUSH PIN
+→ VERIFY CLEAN
+→ PACKAGE CLOSED
+→ NEXT PACKAGE
+Do not collapse these gates unless repository governance explicitly permits it.
+
+MILESTONE CHECKLIST UX LAW:
+Full visual Rule 16 correction-program checklist belongs at the BOTTOM of a
+milestone-CLOSE response only. Keep intermediate gates concise.
 
 DO NOT:
 - implement product code from this startup prompt
+- start F15 or T16
+- derive F15
+- publish FG-039
 - alter schema or create a migration
+- flask db upgrade / downgrade / stamp
 - mutate the live DB
-- create live Extra Work, reclassify live Extra Work, create live Change Order, submit live Time, or close a live Project
 - restart Flask 5460
 - deploy
 - pop the recovery stash
 - rescore V1
-- resume from VISUAL-2 / FG-034 / 15 SEP 2026 / FG-026 / any checkpoint older than the T03C pin
+- resume from T03C / F08 / F09 / F14 / FG-039 publication / F07-as-open / VISUAL-2 / FG-034 / 15 SEP 2026
 - reset / pull / merge / rebase / amend / stash pop / clean unexpected dirt
 - force a git identity match
 
@@ -983,15 +1076,17 @@ stat -f '%z %m' instance/brayman_estimator.db
 lsof -nP -iTCP:5460 -sTCP:LISTEN || true
 ./venv/bin/flask db current
 ./venv/bin/flask db heads
+git merge-base --is-ancestor 79026762decf45082f73325f7056285fe8948eff HEAD; echo "f07_product_ancestor_exit=$?"
 
 Confirm:
 - branch = main
-- HEAD = origin/main = the Review Turnover SHA-pin commit
-- TURNOVER DOCS SHA 5b00172e10615f9c0d8d95d10bb636dd310b422d is an ancestor of HEAD
-- T03C pin c57cf5f4e1cfa55edb654af4b8599e53176300c8 is an ancestor of HEAD
-- working tree CLEAN
-- Alembic current = heads = g7b8c9d0e1f2
-- live DB size 3457024 / mtime 1790020245.9238403
+- HEAD = origin/main
+- F07 pin 1913354a8ee16a61bf5805cb4cb921b0f842bb6e is HEAD or an ancestor
+- F07 product 79026762decf45082f73325f7056285fe8948eff is an ancestor of HEAD
+- working tree CLEAN after the turnover pin (expected dirt before ACCEPT COMMIT is turnover docs only)
+- Alembic heads = h8c9d0e1f2a3
+- live current = g7b8c9d0e1f2
+- live DB size 3457024 / mtime 1790020245
 - Flask 5460 STOPPED
 - recovery stash 840dba8320b59ff9464410fec390d755a31a56aa PRESERVED
 
@@ -1008,21 +1103,28 @@ Read and comply with:
 - docs/platform-roadmap.md
 - docs/chat-workflow-log.md
 - docs/architecture-principles.md
+- docs/architecture.md
 - docs/modules/projects.md
+- docs/modules/monitor.md
 
 2. IDENTIFY CURRENT STOP STATE FROM THE REPOSITORY
 Independently reconstruct:
-- Active resume authority is the T03C pin, not FG-034 / VISUAL-2 / 15 SEP
-- R01, R04, R05, R03A, R03B, R02, R10, R13, L05, F06, T03C are CLOSED
+- Active resume authority is the F07-sealed / F15-not-started checkpoint
+- F07 is CLOSED
+- F15 is NEXT / NOT STARTED / NOT AUTHORIZED FOR IMPLEMENTATION
+- T16 is later / NOT STARTED
+- FG-039 is CLOSED IN GIT / PARKED
+- S16 is CLOSED IN GIT / NOT APPLIED LIVE
+- Flask 5460 is STOPPED
 - Whole-system Rule 16 is OPEN
-- Next package is PKG-F08 / R08 and is NOT AUTHORIZED from startup
-- Draft-linked Extra remains EXTRA_WORK under sealed T03C law
-- Latest governed full suite at T03C product close: 1657 passed / 5626 warnings / 789.32s / exit 0
 - Official V1 65% / 4 of 11; secondary 79% / 22 of 28; unchanged
+- Latest governed full suite at F07 product close: 1739 passed / 5822 warnings / 749.60s / exit 0
 
 3. RETURN A CONCISE CURRENT STATE REVIEW
-Then STOP and wait for ChatGPT Architect authorization.
-Do not implement F08 from this startup.
+Then STOP and wait for ChatGPT Architect.
+Do not implement F15 from this startup.
+Do not derive F15 from this startup.
+The fresh Architect will issue PKG-F15 DERIVATION ONLY after accepting the handshake.
 Do not choose the next root.
 Do not invent construction business rules.
 

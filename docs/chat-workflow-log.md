@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-24 — REVIEW TURNOVER CURSOR PHASE 2 (F07-sealed / F15-not-started)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-24 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026 |
+| Objective | Review Turnover Cursor Phase 2. Rebuild repository-backed resume package at the F07-sealed / F15-not-started checkpoint. Not F15. Not T16. Not FG-039 publication. |
+| Business decision | PKG-F07 remains CLOSED. PKG-F15 is NEXT / NOT STARTED / NOT AUTHORIZED FOR IMPLEMENTATION. First governed action after turnover is accepted: PKG-F15 DERIVATION ONLY. PKG-T16 later / NOT STARTED. FG-039 remains PARKED. LIVE S16 NOT APPLIED. Flask STOPPED. V1 scores unchanged. One governed objective at a time. Full Rule 16 checklist only at milestone CLOSE. |
+| Architectural decision | None. Docs/governance only. No product-law change. No schema. No migration. No live DB mutation. |
+| Prompt template used | REVIEW TURNOVER CURSOR PHASE 2 / F07-SEALED / F15-NOT-STARTED CHECKPOINT |
+| Approved Cursor prompt summary | Verify identity. Rebuild session-handoff resume especially §§21–22. Record F07 closed, F15 not started, T16 not started, Rule 16 OPEN, FG-039 parked, S16 not live, Flask STOPPED, stash preserved. Produce Fresh Chat Startup Prompt with first action READ/PREFLIGHT/VERIFY ONLY. STOP for Architect ACCEPT COMMIT unless protocol grants direct commit. |
+| Files expected to change | docs/session-handoff.md, docs/current-state.md, docs/platform-roadmap.md, docs/chat-workflow-log.md |
+| Files prohibited from changing | product code, tests, migrations, live DB, Flask 5460, recovery stash, V1 scores, F15 derivation/implementation, T16, FG-039 product, website |
+| Implementation result | TURNOVER DOCS REBUILT IN WORKING TREE / NOT COMMITTED. Stale T03C/F08 §21–22 resume replaced. Completeness test NO. Next STOP for Architect ACCEPT COMMIT. |
+| Tests | Not rerun. Protocol does not require full suite for turnover. Governing F07 evidence remains dedicated **14 passed**, focused **159 passed**, full suite **1739 passed**. |
+| Project-state-report update | Not a milestone close. Turnover occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. Whole-system Rule 16 remains OPEN. |
+| Unresolved issues | LIVE S16 NOT APPLIED. Live DB still `g7b8c9d0e1f2`. F15 and T16 remain later. FG-039 not published. Turnover docs not yet committed. |
+| Next approved step | STOP. Return to ChatGPT Architect for ACCEPT COMMIT of this turnover documentation. Do not start F15 or T16. Do not live-upgrade. |
+| Next approved prompt | Architect ACCEPT COMMIT REVIEW TURNOVER CURSOR PHASE 2 (docs-only). |
+| Commit hash | Not committed. HEAD remains **`1913354a8ee16a61bf5805cb4cb921b0f842bb6e`**. |
+
 ### 2026-09-24 — PKG-F07 SHA-pin / CLOSE
 
 | Field | Content |

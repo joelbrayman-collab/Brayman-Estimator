@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-24 — REVIEW TURNOVER SHA-pin / F07-sealed / F15-not-started
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-24 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026 |
+| Objective | Push accepted Review Turnover docs commit and SHA-pin occupancy. Classify TURNOVER PASS. |
+| Business decision | PKG-F07 remains CLOSED. PKG-F15 remains NEXT / NOT STARTED / NOT AUTHORIZED FOR IMPLEMENTATION. Fresh-chat first action READ / PREFLIGHT / VERIFY ONLY. Fresh Architect after handshake: PKG-F15 DERIVATION ONLY. FG-039 remains PARKED. LIVE S16 NOT APPLIED. Flask STOPPED. V1 scores unchanged. |
+| Architectural decision | None. Docs-only pin of turnover docs SHA **`f72b569fe74e186a7ac1e1755df7044f11f3a662`**. No schema. No migration. No live DB mutation. |
+| Prompt template used | Architect ACCEPT PUSH / SHA-PIN REVIEW TURNOVER CURSOR PHASE 2 |
+| Approved Cursor prompt summary | Push turnover docs SHA. Record minimum occupancy. Docs-only pin commit. Push pin. Classify TURNOVER PASS. Keep F15 not started. |
+| Files expected to change | Minimum occupancy docs only |
+| Files prohibited from changing | product code, tests, migrations, live DB, Flask 5460, recovery stash, V1 scores, F15, T16, FG-039 product, website |
+| Implementation result | TURNOVER DOCS PUSHED. SHA-PIN OCCUPANCY. TURNOVER PASS. F07 SEALED. F15 NOT STARTED. T16 NOT STARTED. FG-039 PARKED. Whole-system Rule 16 remains OPEN. |
+| Tests | Not rerun. Governing F07 evidence remains dedicated **14 passed**, focused **159 passed**, full suite **1739 passed**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. Whole-system Rule 16 remains OPEN. |
+| Unresolved issues | LIVE S16 NOT APPLIED. Live DB still `g7b8c9d0e1f2`. F15 and T16 remain later. FG-039 not published. |
+| Next approved step | STOP. Seat fresh chats from docs/session-handoff.md §22. Do not start F15 or T16 from this pin. |
+| Next approved prompt | Fresh Chat Startup Prompt in docs/session-handoff.md §22. Then Architect PKG-F15 DERIVATION ONLY after handshake. |
+| Commit hash | Turnover docs SHA **`f72b569fe74e186a7ac1e1755df7044f11f3a662`**. Pin SHA recorded after this docs commit. |
+
 ### 2026-09-24 — REVIEW TURNOVER CURSOR PHASE 2 (F07-sealed / F15-not-started)
 
 | Field | Content |

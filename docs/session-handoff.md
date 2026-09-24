@@ -2,11 +2,11 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **2026-09-24 PKG-F14 COMMITTED / NOT PUSHED.** Product SHA **`25a90cd07effb95bcf76bb7e8bc676dea0370b44`**. Parent / S16 pin **`4024180592df3e2689a2ee40e5ec83f572c34ccb`**. PKG-S16 remains **CLOSED** at product SHA **`d84aedee9285dafa26f574cd463d510dd05c8862`**. Organization-scoped Estimate / Proposal / Change Order generators and EST/PROP duplicate checks. Formats and algorithms preserved. CLASS B FG-035 fixture freeze included. Focused **103 passed**, 228 warnings, **43.60s**, exit **0**. Full suite **1698 passed**, 5744 warnings, **756.32s**, exit **0**. NO MIGRATION. Live DB UNCHANGED (`3457024` / `1790020245.9238403`). Flask 5460 **STOPPED**. Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**. Official V1 **65% / 4 of 11.** Secondary **79% / 22 of 28** (not rescored). Repository Alembic head **`h8c9d0e1f2a3`**. Live Alembic current **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Whole-system Rule 16 **OPEN**. Next **STOP for ChatGPT Architect ACCEPT PUSH / SHA-PIN PKG-F14**. Do **not** live-upgrade. Do **not** start F07 or F15. |
+| Status | **2026-09-24 FG-039 EMPLOYMENT VS ENTREPRENEURSHIP DECISION TOOL + RESULTS PDF IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** Parent / PKG-F14 pin SHA **`3b193949eabd326bbce33043b2b60a1a290c7c6f`**. PKG-F14 remains **CLOSED**. Neutral PLAN calculator plus five practical-completeness layers. Dedicated **27 passed**, 5 warnings, **2.65s**, exit **0**. Focused calculator + identity **40 passed**, 12 warnings, **4.30s**, exit **0**. Full suite **1725 passed**, 5749 warnings, **792.54s**, exit **0**. NO SCHEMA. NO MIGRATION. Live DB UNCHANGED (`3457024` / `1790020245`). Flask 5460 **STOPPED**. Recovery stash **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**. Official V1 **65% / 4 of 11.** Secondary **79% / 22 of 28** (not rescored). Repository Alembic head **`h8c9d0e1f2a3`**. Live Alembic current **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Whole-system Rule 16 **OPEN**. Next **STOP for ChatGPT Architect ACCEPT COMMIT**. Do **not** push. Do **not** live-upgrade. Do **not** start F07 or F15. |
 | Updated | 2026-09-24 |
 | Protocol | [docs/governance/review-turnover-protocol.md](governance/review-turnover-protocol.md) — 22-point package |
 | Complements | [current-state.md](current-state.md) · [v1-completion-register.md](v1-completion-register.md) · [chat-workflow-log.md](chat-workflow-log.md) · [project-state-report.md](project-state-report.md) · [milestones.md](milestones.md) |
-| Active ChatGPT development chat title | **BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026** |
+| Active ChatGPT development chat title | **BRAYMAN — CALIBRAYTAI BUSINESS OWNER ASSESSMENT 24 SEP 2026** |
 
 Authority order for the next session: repository governance → current-state records → accepted ADRs / Feature Gates → implementation/migration/test evidence → conversation memory only as supplementary context.
 
@@ -16,7 +16,7 @@ Authority order for the next session: repository governance → current-state re
 
 ```text
 ACTIVE CHAT TITLE:
-BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026
+BRAYMAN — CALIBRAYTAI BUSINESS OWNER ASSESSMENT 24 SEP 2026
 
 CONTINUITY DISPLAY RULE:
 Every CalibraytAI development response begins with the exact active ChatGPT
@@ -38,14 +38,16 @@ Canonical rule: [governance/continuity-and-anti-drift.md](governance/continuity-
 - **Product:** CalibraytAI / Brayman Estimator (The Estimator). Formerly CalibAi. Do not confuse with office chrome (Brayman Construction Platform) or tenant Brand Profile.
 - **Path:** `/Users/joelbrayman/Desktop/Brayman-Estimator` (`~/Desktop/Brayman-Estimator`)
 - **Environment:** local Flask office app; SQLite development/UAT DB (`sqlite:///brayman_estimator.db` → `instance/brayman_estimator.db`)
-- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026`
+- **ACTIVE CHAT TITLE:** `BRAYMAN — CALIBRAYTAI BUSINESS OWNER ASSESSMENT 24 SEP 2026`
 - **Cursor / IDE workspace chat titles:** must start with `BRAYMAN — <Topic>`
 - **Roles:** Joel = Product Owner. ChatGPT = Architect. Cursor = Executor. Cursor does not choose product law, the next Rule 16 root, or scope.
-- **Current work:** Rule 16 final correction programme. **PKG-F14** is **COMMITTED / NOT PUSHED.** Product SHA **`25a90cd07effb95bcf76bb7e8bc676dea0370b44`**. PKG-S16 remains **CLOSED** at product SHA **`d84aedee9285dafa26f574cd463d510dd05c8862`**. Additive **`h8c9d0e1f2a3`**. Repository Alembic head **`h8c9d0e1f2a3`**. Live Alembic current **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Next **STOP for Architect ACCEPT PUSH / SHA-PIN PKG-F14**. Do **not** live-upgrade. Do **not** start F07 or F15. HostPapa / production app deploy **does not exist**. People & Access remains separately governed. VISUAL-2 Projects V2 register is a **historical** presentation ancestor, not current resume authority.
+- **Current work:** Rule 16 final correction programme remains **OPEN**. **PKG-F14 is CLOSED.** **FG-039 Employment vs Entrepreneurship Decision Tool is IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** Parent pin SHA **`3b193949eabd326bbce33043b2b60a1a290c7c6f`**. Additive **`h8c9d0e1f2a3`**. Repository Alembic head **`h8c9d0e1f2a3`**. Live Alembic current **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Next **STOP for Architect ACCEPT COMMIT**. Do **not** push. Do **not** live-upgrade. Do **not** start F07 or F15. HostPapa / production app deploy **does not exist**. People & Access remains separately governed.
 
 ## 2. VERIFIED BASELINE
 
-**CURRENT SEALED CHECKPOINT (active resume authority, 2026-09-24, local commit not pushed):** Branch `main`. PKG-F14 product SHA **`25a90cd07effb95bcf76bb7e8bc676dea0370b44`**. PKG-S16 **CLOSED** at product SHA **`d84aedee9285dafa26f574cd463d510dd05c8862`**. Additive **`h8c9d0e1f2a3`**. Repository Alembic head **`h8c9d0e1f2a3`**. Live current **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**. Focused **103 passed**, 228 warnings, **43.60s**, exit **0**. Full suite **1698 passed**, 5744 warnings, **756.32s**, exit **0**. Live DB UNCHANGED size `3457024` / mtime `1790020245.9238403`. Flask 5460 **STOPPED**. Recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**. Official V1 **65% / 4 of 11**. Secondary Functional V1 Build **79% / 22 of 28**. Whole-system Rule 16 **OPEN**. HostPapa app deploy **does not exist**.
+**CURRENT SEALED CHECKPOINT (PKG-F14 CLOSED, 2026-09-24):** Branch `main`. PKG-F14 pin SHA / HEAD / `origin/main` **`3b193949eabd326bbce33043b2b60a1a290c7c6f`**. PKG-F14 product SHA **`25a90cd07effb95bcf76bb7e8bc676dea0370b44`**. PKG-S16 **CLOSED** at product SHA **`d84aedee9285dafa26f574cd463d510dd05c8862`**. Additive **`h8c9d0e1f2a3`**. Repository Alembic head **`h8c9d0e1f2a3`**. Live current **`g7b8c9d0e1f2`**. LIVE S16 MIGRATION **NOT APPLIED**.
+
+**CURRENT WORKING TREE (not sealed, 2026-09-24):** FG-039 Employment vs Entrepreneurship Decision Tool + Results PDF **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** Dedicated **27 passed**, 5 warnings, **2.65s**, exit **0**. Focused calculator + identity **40 passed**, 12 warnings, **4.30s**, exit **0**. Full suite **1725 passed**, 5749 warnings, **792.54s**, exit **0**. Live DB UNCHANGED size `3457024` / mtime `1790020245`. Flask 5460 **STOPPED**. Recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**. Official V1 **65% / 4 of 11**. Secondary Functional V1 Build **79% / 22 of 28**. Whole-system Rule 16 **OPEN**. HostPapa app deploy **does not exist**. Next **STOP for Architect ACCEPT COMMIT**. Do **not** push.
 
 Historical SHA chain below is **not** current resume authority.
 

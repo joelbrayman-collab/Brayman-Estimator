@@ -144,6 +144,17 @@ NAV_SECTIONS = (
         ),
     },
     {
+        "title": "Plan",
+        "links": (
+            {
+                "title": "Employment vs Entrepreneurship",
+                "endpoint": "decision_tools.employment_vs_entrepreneurship",
+                "icon": "bi-compass",
+                "enabled": True,
+            },
+        ),
+    },
+    {
         "title": None,
         "links": (
             {

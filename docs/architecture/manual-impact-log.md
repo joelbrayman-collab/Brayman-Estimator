@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — FG-039 EMPLOYMENT VS ENTREPRENEURSHIP DECISION TOOL (2026-09-24)
+
+| Field | Content |
+|-------|---------|
+| Slice | FG-039 Employment vs Entrepreneurship Decision Tool |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** Parent pin SHA **`3b193949eabd326bbce33043b2b60a1a290c7c6f`**. User Guide remains outstanding. |
+| 1. What new contractor capability exists? | A shareable CalibraytAI calculator that compares employment economic value with entrepreneurship economics, transition cash, owner hours, downside cases, and what has to be true. The user can download a Results PDF of the current scenario. It does not tell the user which path to take. |
+| 2. When would the contractor use it? | When comparing a job with running a business, considering leaving employment, or reviewing the economics of self-employment. Download the PDF to keep a point-in-time record. |
+| 3. What workflow will the final Manual need to teach? | Open the tool. Enter Today, Business, Market, and Costs. Review Results. Optionally name the scenario. Download Results PDF. Start over / new scenario resets the form on purpose. The user decides. |
+| 4. What contractor-facing terms must be used? | Employment economic value. Entrepreneurship economic value. Difference. Cash required to make the transition. Cash available to owner before personal income tax. Total owner hours. What has to be true. Download results PDF. Start over / new scenario. Do not say winner, recommended, score, or risk rating. |
+| 5. What screenshots / Print examples will eventually be needed? | Today step. Results hierarchy. What Has to Be True. Downside cases. Results PDF cover and core results. Not from this working tree. |
+| 6. What warnings / validation distinctions need explanation? | Empty or invalid numbers are treated as zero. Existing assets cannot create a negative cash-to-start-up figure. A negative difference is a real result, not an error. Starting trade profiles are assumptions only. Download PDF does not save the scenario in the system. Start over clears the current entries. |
+| 7. Desktop / iPhone / Print relevance | Public branded page and office Plan link. Field unchanged. Results PDF is the print/retain record. |
+| Do not | Final Manual prose. Unstable screenshots. Claim the tool chooses employment or entrepreneurship. Start F07 or F15. |
+
 ### MANUAL IMPACT — PKG-F14 ORGANIZATION-SCOPED NUMBERING (2026-09-24)
 
 | Field | Content |

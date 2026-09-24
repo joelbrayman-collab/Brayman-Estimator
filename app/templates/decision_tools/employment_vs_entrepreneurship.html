@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{{ product_name }} — CalibraytAI</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='branding/calibraytai-logo-v2.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/business-owner-assessment.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body class="boa-body">
+    <main class="boa-shell" id="main-content">
+        <div class="boa-brand">
+            <img
+                src="{{ url_for('static', filename='branding/calibraytai-logo-v2.png') }}"
+                alt="CalibraytAI"
+                width="160"
+                height="58"
+            >
+        </div>
+        <p class="boa-kicker">CalibraytAI · Plan decision tool</p>
+        <h1 class="boa-title">{{ product_name }}</h1>
+        <p class="boa-lede">
+            Compare the economic value of employment with entrepreneurship / business ownership.
+            The tool shows economics, cash, workload, and what has to be true. You decide.
+        </p>
+        <p class="boa-note">Starting assumptions are visible and editable. They are not market research.</p>
+
+        <nav class="boa-steps" aria-label="Calculator steps">
+            <button type="button" class="boa-step-btn is-active" data-step-target="today">Today</button>
+            <button type="button" class="boa-step-btn" data-step-target="business">Business</button>
+            <button type="button" class="boa-step-btn" data-step-target="market">Market</button>
+            <button type="button" class="boa-step-btn" data-step-target="costs">Costs</button>
+            <button type="button" class="boa-step-btn" data-step-target="results">Results</button>
+        </nav>
+
+        <form id="boa-form" novalidate>
+            <section class="boa-panel" data-step="today">
+                <h2>Today — employment baseline</h2>
+                <p class="boa-help">Capture the economic value of employment, including employer-paid value you choose to count.</p>
+                <div class="boa-grid">
+                    <label class="boa-field">
+                        Pay entry
+                        <select name="employment_pay_mode" id="employment_pay_mode">
+                            <option value="annual" selected>Annual salary / wages</option>
+                            <option value="hourly">Hourly wage</option>
+                        </select>
+                    </label>
+                    <label class="boa-field" id="field-annual-wages">
+                        Annual salary / wages
+                        <input name="employment_annual_wages" type="number" min="0" step="0.01" value="{{ defaults.employment_annual_wages }}">
+                    </label>
+                    <label class="boa-field" id="field-hourly-wage" hidden>
+                        Hourly wage
+                        <input name="employment_hourly_wage" type="number" min="0" step="0.01" value="{{ defaults.employment_hourly_wage }}">
+                    </label>
+                    <label class="boa-field">
+                        Normal employment hours / week
+                        <input name="employment_hours_per_week" type="number" min="0" step="0.01" value="{{ defaults.employment_hours_per_week }}">
+                    </label>
+                    <label class="boa-field">
+                        Working weeks / year
+                        <input name="employment_weeks_per_year" type="number" min="0" step="0.01" value="{{ defaults.employment_weeks_per_year }}">
+                    </label>
+                    <label class="boa-field">
+                        Paid vacation / paid time weeks
+                        <input name="employment_paid_time_off_weeks" type="number" min="0" step="0.01" value="{{ defaults.employment_paid_time_off_weeks }}">
+                    </label>
+                    <label class="boa-field">
+                        Employer-paid benefits (annual)
+                        <input name="employment_benefits_annual" type="number" min="0" step="0.01" value="{{ defaults.employment_benefits_annual }}">
+                    </label>
+                    <label class="boa-field">
+                        Employer retirement / pension contribution (annual)
+                        <input name="employment_retirement_annual" type="number" min="0" step="0.01" value="{{ defaults.employment_retirement_annual }}">
+                    </label>
+                    <label class="boa-field boa-field-wide">
+                        Other employer-paid compensation (annual)
+                        <input name="employment_other_compensation_annual" type="number" min="0" step="0.01" value="{{ defaults.employment_other_compensation_annual }}">
+                    </label>
+                </div>
+                <p class="boa-help">In hourly mode, paid time weeks are added to paid weeks. In annual mode, salary is used as entered so vacation already in salary is not counted twice.</p>
+                <div class="boa-actions">
+                    <span></span>
+                    <button type="button" class="boa-btn boa-btn-primary" data-next>Continue to Business</button>
+                </div>
+            </section>
+
+            <section class="boa-panel" data-step="business" hidden>
+                <h2>Business — owner operating model</h2>
+                <p class="boa-help">How the owner actually works. A helper or employee is optional. The calculator works for a solo owner.</p>
+                <div class="boa-grid">
+                    <label class="boa-field">
+                        Starting trade / profile
+                        <select name="trade_profile" id="trade_profile">
+                            {% for key, profile in profiles.items() %}
+                            <option value="{{ key }}"{% if key == defaults.trade_profile %} selected{% endif %}>{{ profile.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label class="boa-field">
+                        Owner available hours / week
+                        <input name="owner_available_hours_per_week" type="number" min="0" step="0.01" value="{{ defaults.owner_available_hours_per_week }}">
+                    </label>
+                    <label class="boa-field">
+                        Business working weeks / year
+                        <input name="business_weeks_per_year" type="number" min="0" step="0.01" value="{{ defaults.business_weeks_per_year }}">
+                    </label>
+                    <label class="boa-field">
+                        Owner administration / non-billable hours / week
+                        <input name="owner_admin_hours_per_week" type="number" min="0" step="0.01" value="{{ defaults.owner_admin_hours_per_week }}">
+                    </label>
+                    <label class="boa-field">
+                        Helper / employee count
+                        <input name="helper_count" type="number" min="0" step="1" value="{{ defaults.helper_count }}">
+                    </label>
+                    <label class="boa-field">
+                        Helper hours / week
+                        <input name="helper_hours_per_week" type="number" min="0" step="0.01" value="{{ defaults.helper_hours_per_week }}">
+                    </label>
+                    <label class="boa-field">
+                        Helper productivity / contribution percent
+                        <input name="helper_productivity_percent" type="number" min="0" step="0.01" value="{{ defaults.helper_productivity_percent }}">
+                    </label>
+                </div>
+                <div class="boa-actions">
+                    <button type="button" class="boa-btn boa-btn-secondary" data-back>Back</button>
+                    <button type="button" class="boa-btn boa-btn-primary" data-next>Continue to Market</button>
+                </div>
+            </section>
+
+            <section class="boa-panel" data-step="market" hidden>
+                <h2>Market — what can realistically be sold?</h2>
+                <p class="boa-help">These are your assumptions for realized selling rate and productive time. Defaults and profiles are starting points only.</p>
+                <div class="boa-grid">
+                    <label class="boa-field">
+                        Realized selling rate ($ / hour)
+                        <input name="realized_hourly_rate" id="realized_hourly_rate" type="number" min="0" step="0.01" value="{{ defaults.realized_hourly_rate }}">
+                    </label>
+                    <label class="boa-field">
+                        Utilization / productive-time percent
+                        <input name="utilization_percent" id="utilization_percent" type="number" min="0" max="100" step="0.01" value="{{ defaults.utilization_percent }}">
+                    </label>
+                </div>
+                <div class="boa-actions">
+                    <button type="button" class="boa-btn boa-btn-secondary" data-back>Back</button>
+                    <button type="button" class="boa-btn boa-btn-primary" data-next>Continue to Costs</button>
+                </div>
+            </section>
+
+            <section class="boa-panel" data-step="costs" hidden>
+                <h2>Costs — operating cash costs</h2>
+                <p class="boa-help">Direct helper labour is separate from operating overhead so costs are not counted twice.</p>
+                <div class="boa-grid">
+                    <label class="boa-field">
+                        Helper / employee wage ($ / hour)
+                        <input name="helper_hourly_wage" type="number" min="0" step="0.01" value="{{ defaults.helper_hourly_wage }}">
+                    </label>
+                    <label class="boa-field">
+                        Payroll burden percent
+                        <input name="payroll_burden_percent" type="number" min="0" step="0.01" value="{{ defaults.payroll_burden_percent }}">
+                    </label>
+                    <label class="boa-field">
+                        Insurance (annual)
+                        <input name="insurance_annual" type="number" min="0" step="0.01" value="{{ defaults.insurance_annual }}">
+                    </label>
+                    <label class="boa-field">
+                        Vehicle (annual)
+                        <input name="vehicle_annual" type="number" min="0" step="0.01" value="{{ defaults.vehicle_annual }}">
+                    </label>
+                    <label class="boa-field">
+                        Tools / equipment operating (annual)
+                        <input name="tools_and_equipment_operating_annual" type="number" min="0" step="0.01" value="{{ defaults.tools_and_equipment_operating_annual }}">
+                    </label>
+                    <label class="boa-field">
+                        Marketing (annual)
+                        <input name="marketing_annual" type="number" min="0" step="0.01" value="{{ defaults.marketing_annual }}">
+                    </label>
+                    <label class="boa-field">
+                        Professional fees (annual)
+                        <input name="professional_fees_annual" type="number" min="0" step="0.01" value="{{ defaults.professional_fees_annual }}">
+                    </label>
+                    <label class="boa-field">
+                        Other operating costs (annual)
+                        <input name="other_operating_costs_annual" type="number" min="0" step="0.01" value="{{ defaults.other_operating_costs_annual }}">
+                    </label>
+                </div>
+
+                <div class="boa-compact">
+                    <h2>Startup &amp; transition cash</h2>
+                    <p class="boa-help">Cash required to make the transition. Existing usable assets reduce the requirement and cannot push it below zero.</p>
+                    <div class="boa-grid">
+                        <label class="boa-field">
+                            Equipment / tools / vehicle startup purchases
+                            <input name="startup_equipment" type="number" min="0" step="0.01" value="{{ defaults.startup_equipment }}">
+                        </label>
+                        <label class="boa-field">
+                            Business setup / licensing / legal / accounting
+                            <input name="startup_setup_licensing" type="number" min="0" step="0.01" value="{{ defaults.startup_setup_licensing }}">
+                        </label>
+                        <label class="boa-field">
+                            Initial insurance / deposits / setup
+                            <input name="startup_insurance_deposits" type="number" min="0" step="0.01" value="{{ defaults.startup_insurance_deposits }}">
+                        </label>
+                        <label class="boa-field">
+                            Initial working capital
+                            <input name="working_capital" type="number" min="0" step="0.01" value="{{ defaults.working_capital }}">
+                        </label>
+                        <label class="boa-field">
+                            Personal income runway
+                            <input name="personal_income_runway" type="number" min="0" step="0.01" value="{{ defaults.personal_income_runway }}">
+                        </label>
+                        <label class="boa-field">
+                            Existing usable assets / equipment already owned
+                            <input name="existing_usable_assets" type="number" min="0" step="0.01" value="{{ defaults.existing_usable_assets }}">
+                        </label>
+                    </div>
+                </div>
+                <div class="boa-actions">
+                    <button type="button" class="boa-btn boa-btn-secondary" data-back>Back</button>
+                    <button type="button" class="boa-btn boa-btn-primary" data-next>See results</button>
+                </div>
+            </section>
+
+            <section class="boa-panel" data-step="results" hidden>
+                <h2>Results</h2>
+                <p class="boa-help">Economics and requirements only. This is not a choice and not a score.</p>
+                <label class="boa-field boa-field-wide">
+                    Scenario name (optional)
+                    <input name="scenario_name" id="scenario_name" type="text" maxlength="80" placeholder="Employment vs Entrepreneurship Analysis" value="{{ defaults.scenario_name }}">
+                </label>
+                <p class="boa-error" id="boa-error" hidden></p>
+                <div id="boa-results"></div>
+                <div class="boa-actions boa-results-actions">
+                    <button type="button" class="boa-btn boa-btn-secondary" data-back>Back</button>
+                    <button type="button" class="boa-btn boa-btn-secondary" id="boa-start-over">Start over / new scenario</button>
+                    <button type="button" class="boa-btn boa-btn-primary" id="boa-recalculate">Recalculate</button>
+                    <button type="button" class="boa-btn boa-btn-primary" id="boa-download-pdf">Download results PDF</button>
+                </div>
+            </section>
+        </form>
+    </main>
+    <script type="application/json" id="boa-profiles">{{ profiles | tojson }}</script>
+    <script src="{{ url_for('static', filename='js/business-owner-assessment.js') }}" defer></script>
+</body>
+</html>

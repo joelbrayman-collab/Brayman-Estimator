@@ -130,7 +130,9 @@ def _register_office_auth(app: Flask) -> None:
         ):
             return None
         if endpoint is not None and (
-            endpoint.startswith("sign.") or endpoint.startswith("walkthrough.")
+            endpoint.startswith("sign.")
+            or endpoint.startswith("walkthrough.")
+            or endpoint.startswith("decision_tools.")
         ):
             return None
         if _is_api_request():
@@ -286,6 +288,7 @@ def create_app(config=None):
     from app.routes.schedule import schedule_bp
     from app.routes.organization_crew import organization_crew_bp
     from app.routes.company_attention import company_attention_bp
+    from app.routes.business_owner_assessment import decision_tools_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(help_bp)
@@ -319,6 +322,7 @@ def create_app(config=None):
     app.register_blueprint(schedule_bp)
     app.register_blueprint(organization_crew_bp)
     app.register_blueprint(company_attention_bp)
+    app.register_blueprint(decision_tools_bp)
 
     @app.route("/favicon.ico")
     def favicon():

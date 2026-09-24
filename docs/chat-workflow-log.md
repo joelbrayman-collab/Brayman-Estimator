@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-24 — FG-039 Results PDF (completeness #5)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-24 |
+| Branch | `main` @ `3b193949eabd326bbce33043b2b60a1a290c7c6f` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI BUSINESS OWNER ASSESSMENT 24 SEP 2026 |
+| Objective | Add Download Results PDF to the Employment vs Entrepreneurship Decision Tool. Same calculation authority as the screen. Working tree only. |
+| Business decision | Point-in-time professional record. Optional scenario name. No cloud save, accounts, or scenario history. |
+| Architectural decision | ReportLab renderer formats the existing `calculate()` result. No second engine. No schema. No DB writes. Start over is a separate action. |
+| Prompt template used | Architect ADDITION #5 — DOWNLOAD RESULTS PDF |
+| Approved Cursor prompt summary | Add branded Results PDF from the current calculator state. Reconcile to screen results. Optional scenario name. Sanitize filename. Tests. Do not commit. |
+| Files expected to change | PDF renderer, route, template, JS, CSS, FG-039/module/occupancy docs, dedicated tests |
+| Files prohibited from changing | Schemas, migrations, live DB, F14, F07/F15, V1 scores, recovery stash, logo assets, calculator economics |
+| Implementation result | IMPLEMENTED IN WORKING TREE / NOT COMMITTED / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / NO SECOND CALCULATION ENGINE |
+| Tests | Dedicated: **27 passed**, 5 warnings, **2.65s**, exit **0**. Focused calculator + identity **40 passed**, 12 warnings, **4.30s**, exit **0**. Full suite **1725 passed**, 5749 warnings, **792.54s**, exit **0**. |
+| Project-state-report update | No. Not a milestone close. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. Whole-system Rule 16 remains OPEN. |
+| Unresolved issues | Not committed. Not pushed. Live DB still `g7b8c9d0e1f2`. LIVE S16 NOT APPLIED. |
+| Next approved step | STOP for ChatGPT Architect ACCEPT COMMIT. Completeness features 1–5 are the authorized set. |
+| Next approved prompt | ARCHITECT ACCEPT COMMIT / PUSH / SHA-PIN (candidate returned; not executed). |
+| Commit hash | None. Working tree only. |
+
+### 2026-09-24 — FG-039 Employment vs Entrepreneurship Decision Tool working-tree install
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-24 |
+| Branch | `main` @ `3b193949eabd326bbce33043b2b60a1a290c7c6f` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI BUSINESS OWNER ASSESSMENT 24 SEP 2026 |
+| Objective | Install the approved Employment vs Entrepreneurship Decision Tool into CalibraytAI and add the four practical-completeness layers. Working tree only. |
+| Business decision | Neutral decision tool. User decides. Not Josh-specific. Not construction-only. Not a business-plan application. |
+| Architectural decision | FG-039. Stateless Decision Tools module. Login-exempt branded route. Calculation engine separate from presentation. No schema. No migration. FG-036 unused. |
+| Prompt template used | Architect INSTALL APPROVED CALCULATOR BASELINE + PRACTICAL COMPLETENESS PASS |
+| Approved Cursor prompt summary | Install the approved calculator from the product specification. Preserve TODAY→BUSINESS→MARKET→COSTS→RESULTS and What Has to Be True. Add startup cash, three 10% stress cases, total owner workload, and cash available to owner. Test and document. Do not commit. |
+| Files expected to change | Engine, route, template, CSS, JS, nav, login exemption, FG-039, module docs, occupancy docs, dedicated tests |
+| Files prohibited from changing | Schemas, migrations, live DB, F14 generators, F07/F15, V1 scores, recovery stash, CalibraytAI logo assets |
+| Implementation result | IMPLEMENTED IN WORKING TREE / NOT COMMITTED / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / NO TAX ENGINE / NO RECOMMENDATION ENGINE |
+| Tests | Dedicated: **22 passed**, 4 warnings, **1.28s**, exit **0**. Full suite recorded after this occupancy close. |
+| Project-state-report update | No. Not a milestone close. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. Whole-system Rule 16 remains OPEN. |
+| Unresolved issues | Not committed. Not pushed. Live DB still `g7b8c9d0e1f2`. LIVE S16 NOT APPLIED. |
+| Next approved step | STOP for ChatGPT Architect ACCEPT COMMIT. |
+| Next approved prompt | ARCHITECT ACCEPT COMMIT / PUSH / SHA-PIN (candidate returned; not executed). |
+| Commit hash | None. Working tree only. |
+
 ### 2026-09-24 — PKG-F14 ACCEPT COMMIT
 
 | Field | Content |

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Ownership map |
-| Updated | 2026-09-16 |
+| Updated | 2026-09-24 |
 
 | Module | Doc | Code evidence (current) |
 |--------|-----|-------------------------|
@@ -13,6 +13,7 @@
 | Projects | [projects.md](projects.md) | Projects entity; change orders under Project Controls package; `/projects/<id>` Project Hub ([FG-011](../feature-gates/FG-011-project-hub-ux.md) **CLOSED / OPERATIONAL FOR UAT**). [FG-015](../feature-gates/FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-016](../feature-gates/FG-016-ontario-ottawa-permit-intelligence-poc.md) **CLOSED / OPERATIONAL FOR UAT**. [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL** (TAX/WBS / SCOPE / TIME **IMPLEMENTED**; SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**; SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**). Change Order document family pin **FUTURE / NOT IMPLEMENTED**. Native Signing overlay: [signing.md](signing.md) ([FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) SIGN-A/B/C/D **IMPLEMENTED**; does **not** own Change Orders). |
 | Signing | [signing.md](signing.md) | [FG-033](../feature-gates/FG-033-native-signing-document-approval-signature-and-executed-artifact.md) **CLOSED / OPERATIONAL FOR UAT**. SIGN-A freeze + request + audit **IMPLEMENTED**. SIGN-B invitation + public ceremony **IMPLEMENTED**. SIGN-C countersign + executed PDF **IMPLEMENTED**. SIGN-D Change Order E2E **IMPLEMENTED** (automated). SIGN-E convert-once + contract ceremony **IMPLEMENTED**. Overlay only. Real iPhone UAT **DEFERRED**. MAIL-B **IMPLEMENTED / PASS** (local/fake). |
 | Account Recovery / transactional email | [FG-034](../feature-gates/FG-034-account-recovery-and-transactional-email.md) · [ADR-052](../adr/ADR-052-account-recovery-and-transactional-email.md) | **CLOSED / OPERATIONAL FOR UAT**. MAIL-A / AUTH-A / AUTH-B / AUTH-C / MAIL-B / AUTH-D **IMPLEMENTED / PASS**. Live Postmark **DEFERRED**. Organization owns reset tokens / `credentials_epoch`. Platform owns `transactional_messages`. |
+| Decision Tools | [decision-tools.md](decision-tools.md) | [FG-039](../feature-gates/FG-039-employment-vs-entrepreneurship-decision-tool.md) Employment vs Entrepreneurship Decision Tool **IMPLEMENTED IN WORKING TREE / NOT COMMITTED**. Stateless PLAN calculator. No schema. |
 | Plan Intelligence | [plan-intelligence.md](plan-intelligence.md) | Phase A upload (M005) + Document Indexing (M007) + Sheets (M009) + Scale/measurement (M010) + **M012 / FG-010 take-off foundation OPERATIONAL FOR UAT** |
 | Labour Engine | [labour-engine.md](labour-engine.md) | FG-008 Phase B foundation (`app/models/labour_engine.py`, `/labour-engine/`) — **CLOSED / OPERATIONAL FOR UAT**; revision `f2c3d4e5f6a7` in chain (**gate-at-close** live head `b4c5d6e7f8a9`; live head today `f1a2b3c4d5e6`) |
 | Pricing Engine | [pricing-engine.md](pricing-engine.md) | FG-009 foundation **CLOSED / OPERATIONAL FOR UAT**: `app/models/pricing_engine.py`, `/pricing-engine/`; revision `a3b4c5d6e7f8` in chain (**gate-at-close** live head `b4c5d6e7f8a9`). Versions without snapshots still use `estimate_builder.py` stack |

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Living architecture map |
-| Updated | 2026-09-19 |
+| Updated | 2026-09-24 |
 | Evidence baseline | `main` @ CAR-001 adoption (see git); Plan Intelligence Current claims evidenced in `app/plan_intelligence/` and migration `a7c8e9f0b1d2` |
 
 **Cite code paths for implemented claims.** Distinctions below are mandatory. CalibraytAI lifecycle architecture: [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md). Current vs former product name: [governance/product-identity.md](governance/product-identity.md).
@@ -50,6 +50,7 @@ From [`app/__init__.py`](../app/__init__.py):
 | `schedule_bp` | `app/routes/schedule.py` — FG-035 SCH-A Company Schedule / form editor (**IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**) plus SCH-B assignment POST routes (**IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**) plus SCH-C dependency POST routes (**IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**) |
 | `organization_crew_bp` | `app/routes/organization_crew.py` — FG-035 SCH-B `/settings/crews` (**IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**) |
 | `company_attention_bp` | `app/routes/company_attention.py` — FG-035 PERF-C Company Attention office surface (**IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE UAT PASS / SEALED**; product SHA **`22fd30cd774fcf155ae69d7dcf99a44123d91409`**) |
+| `decision_tools_bp` | `app/routes/business_owner_assessment.py` — FG-039 Employment vs Entrepreneurship Decision Tool (**IMPLEMENTED IN WORKING TREE / NOT COMMITTED**; login-exempt `/decision-tools/employment-vs-entrepreneurship`; Results PDF `/results.pdf`; no schema) |
 
 Shell context: [`app/shell.py`](../app/shell.py). Navigation SSOT: [`app/navigation.py`](../app/navigation.py).
 
@@ -90,14 +91,14 @@ Notable behaviours evidenced in code/tests:
 
 | Layer | Paths |
 |-------|-------|
-| Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py`, `build.py`, `build_storage.py`, `material_requirements.py`, `supplier_catalogue.py`, `supplier_package_pdf.py`, `estimate_costing.py`, `estimate_scope_delivery.py`, `estimate_quickbooks.py`, `legal_content.py`, `legal_content_update.py`, `contract_generation.py`, `family_05_master.py`, `family_05_contract_merge.py`, `contract_artifact_storage.py`, `work_structure.py`, `work_scope.py`, `time_entry.py`, `schedule.py`, `organization_crew.py`, `project_operating_lifecycle.py`, `project_punch_list.py` |
+| Services | `app/services/estimates.py`, `estimate_builder.py`, `proposals.py`, `proposal_pdf.py`, `build.py`, `build_storage.py`, `material_requirements.py`, `supplier_catalogue.py`, `supplier_package_pdf.py`, `estimate_costing.py`, `estimate_scope_delivery.py`, `estimate_quickbooks.py`, `legal_content.py`, `legal_content_update.py`, `contract_generation.py`, `family_05_master.py`, `family_05_contract_merge.py`, `contract_artifact_storage.py`, `work_structure.py`, `work_scope.py`, `time_entry.py`, `schedule.py`, `organization_crew.py`, `project_operating_lifecycle.py`, `project_punch_list.py`, `business_owner_assessment.py` (FG-039; stateless; **no DB**), `business_owner_assessment_pdf.py` (FG-039 Results PDF; formats the `calculate()` result only) |
 | Project controls | `app/project_controls/services.py`, `repository.py`, `pdf.py` |
 | Plan Intelligence | `app/plan_intelligence/services.py`, `processing.py`, `extraction.py`, `storage.py`, `packages.py`, `audit.py`, `takeoff.py`, `takeoff_extractors.py` |
 | Generic repositories package | `app/repositories/` (present; inspect before assuming usage) |
 
 ### Templates & static assets
 
-- Templates: `app/templates/` (clients, projects including Project Hub `projects/detail.html`, work_structure catalog/project work, schedule company/item form, settings/crews, time review/form/detail, Field today/week/month/company-today/time/my time, Supplier Package `projects/supplier_package.html` / `supplier_package_output.html`, Scope Delivery Review `projects/scope_delivery.html`, estimates, proposals, proposal_templates, assemblies, cost_library, project_controls, plan_intelligence including take-off, labour_engine, pricing_engine, build field observations, dashboard, base, partials including D1 `partials/contextual_help.html`)
+- Templates: `app/templates/` (clients, projects including Project Hub `projects/detail.html`, work_structure catalog/project work, schedule company/item form, settings/crews, time review/form/detail, Field today/week/month/company-today/time/my time, Supplier Package `projects/supplier_package.html` / `supplier_package_output.html`, Scope Delivery Review `projects/scope_delivery.html`, estimates, proposals, proposal_templates, assemblies, cost_library, project_controls, plan_intelligence including take-off, labour_engine, pricing_engine, build field observations, dashboard, base, partials including D1 `partials/contextual_help.html`, decision_tools Employment vs Entrepreneurship)
 - Static: `app/static/` (css, js, branding)
 
 ### Migrations

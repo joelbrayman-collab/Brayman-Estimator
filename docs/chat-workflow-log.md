@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-23 |
+| Updated | 2026-09-24 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-24 — PKG-S16 SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-24 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026 |
+| Objective | SHA-pin PKG-S16 after Architect ACCEPT PUSH. |
+| Business decision | S16 schema foundations closed. Live migration not applied. Generators, MONITOR, and wage-write behaviour remain unchanged. Whole-system Rule 16 remains OPEN. Do not rescore V1. Do not start PKG-F14 from this pin. |
+| Architectural decision | None new. Pin only. Repository Alembic head `h8c9d0e1f2a3`. Live current remains `g7b8c9d0e1f2`. LIVE MIGRATION NOT APPLIED. |
+| Prompt template used | Architect PKG-S16 ACCEPT PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Push accepted S16 product/schema commit, docs-only SHA-pin, push pin. No live DB mutation. No F14/F07/F15. |
+| Files expected to change | Occupancy docs only for this pin commit |
+| Files prohibited from changing | Product code, tests, migrations, live DB, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | PRODUCT SHA **`d84aedee9285dafa26f574cd463d510dd05c8862`**. IMPLEMENTED / TESTED / ONE ALEMBIC REVISION / SINGLE HEAD / R14 ORG-SCOPED COMMERCIAL NUMBER SCHEMA PROVEN / R07 APPROVED DIRECT-COST PERSISTENCE PROVEN / R12 PUNCH ASSOCIATION CHECK PROVEN / R24 WAGE-EVENT PERSISTENCE PROVEN / MIGRATION UPGRADE PASS / MIGRATION DOWNGRADE PASS / MIGRATION RE-UPGRADE PASS / R01 NON-REGRESSION PASS / R03A NON-REGRESSION PASS / T03C NON-REGRESSION PASS / F09 NON-REGRESSION PASS / MONITOR NON-REGRESSION PASS / PERSON NON-REGRESSION PASS / TARGETED RE-AUDIT PASS / FULL SUITE PASS / COMMITTED / PUSHED / NO LIVE DB MUTATION / NO F14 / NO F07 / NO F15 / CLOSED |
+| Tests | Not rerun. Accepted S16 evidence remains dedicated **4** / focused **232** / R13 **18** / full **1684 passed**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Live DB still `g7b8c9d0e1f2`. Whole-system Rule 16 OPEN. Next numbered package PKG-F14 is NOT AUTHORIZED from this pin. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect. Do not start F14. |
+| Next approved prompt | Architect PKG-F14 DERIVATION only (not issued from this pin). |
+| Commit hash | Product SHA **`d84aedee9285dafa26f574cd463d510dd05c8862`**. Pin SHA recorded after this docs commit. |
 
 ### 2026-09-23 — PKG-S16 schema / migration working tree
 

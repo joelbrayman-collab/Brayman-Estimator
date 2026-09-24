@@ -105,7 +105,7 @@ Notable behaviours evidenced in code/tests:
 - Flask-Migrate / Alembic under [`migrations/`](../migrations/)
 - Config: `migrations/alembic.ini`, `migrations/env.py`
 - Version scripts in `migrations/versions/` (clients/projects through change orders, `plan_documents`, Document Intelligence M007)
-- Alembic **repository** graph head (working tree): **`h8c9d0e1f2a3`** (PKG-S16; **not live-migrated**). Live development/UAT `flask db current`: **`g7b8c9d0e1f2 (head)`**. Do **not** apply S16 to the live DB from this working-tree close. Verify `flask db current` per environment before relying on it.
+- Alembic **repository** graph head: **`h8c9d0e1f2a3`** (PKG-S16 product SHA **`d84aedee9285dafa26f574cd463d510dd05c8862`**; **CLOSED**; live migration **NOT APPLIED**). Live development/UAT `flask db current`: **`g7b8c9d0e1f2`**. Repository head and live current are **intentionally different**. Do **not** apply S16 to the live DB from this pin. Verify `flask db current` per environment before relying on it.
 
 ### Tests
 

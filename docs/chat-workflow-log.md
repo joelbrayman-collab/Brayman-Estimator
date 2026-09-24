@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-24 — PKG-F15 SHA-pin / orphaned finding
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-24 |
+| Branch | `main`. Disposition commit **`b2824a598c215113b02e7c419afe228ba90b33b6`** pushed before this pin. Parent **`1d790b2b6d9bd31771c927bf46838fad5f3b9328`**. |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026 |
+| Objective | Push the accepted F15 orphan-disposition commit and record the docs-only SHA pin. |
+| Business decision | F15 — ORPHANED FINDING / NO RECOVERABLE PRODUCT AUTHORITY. DISPOSITIONED. NOT IMPLEMENTED. NOT PRODUCT COMPLETE. NO FEATURE GATE. No informed Owner product decision could be framed. F15 entered as a bare identifier on a remaining-work / do-not-start list during the F09 close. "F15 Capture" later appeared as undefined shorthand. No defensible committed product requirement was recovered. No functionality was invented to satisfy the identifier. Historical F15 references remain historical evidence. |
+| Architectural decision | None. Docs-only pin of disposition SHA **`b2824a598c215113b02e7c419afe228ba90b33b6`**. PKG-T16 is NEXT / NOT STARTED / NOT AUTHORIZED and is not derived or implemented. Whole-system Rule 16 remains OPEN. V1 scores unchanged. FG-039 remains PARKED. |
+| Prompt template used | Architect ACCEPT PUSH / SHA-PIN PKG-F15 ORPHANED-FINDING GOVERNANCE DISPOSITION |
+| Approved Cursor prompt summary | Verify and push disposition SHA. Replace current transitional uncommitted pointers with the permanent disposition SHA. Docs-only pin commit. Push pin. Do not start T16. Do not rescore V1. Do not touch product code, tests, schema, live DB, Flask, or the recovery stash. |
+| Files expected to change | `docs/session-handoff.md`, `docs/current-state.md`, `docs/platform-roadmap.md`, `docs/chat-workflow-log.md` |
+| Files prohibited from changing | product code, tests, migrations, live DB, Flask 5460, recovery stash, V1 scores, T16 product, FG-039 product, website, historical log entries |
+| Implementation result | DISPOSITION PUSHED. SHA-PIN. F15 ORPHANED / NO RECOVERABLE PRODUCT AUTHORITY / NOT IMPLEMENTED / NOT PRODUCT COMPLETE / NO FEATURE GATE / NO LONGER ACTIVE IMPLEMENTATION WORK. T16 NOT STARTED. |
+| Tests | Not run. No product change. Governing F07 evidence remains dedicated **14 passed**, focused **159 passed**, full suite **1739 passed**. |
+| Project-state-report update | No. Not a product milestone. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. Whole-system Rule 16 remains OPEN. |
+| Unresolved issues | LIVE S16 NOT APPLIED. Live DB still `g7b8c9d0e1f2`. PKG-T16 NEXT / NOT STARTED / NOT AUTHORIZED. R11 / C08 residual only if included in final seal. Whole-system Rule 16 validation, final seal, deployment readiness, hosted validation, production E2E, and authorized V1 rescore remain ahead. FG-039 not published. |
+| Next approved step | STOP. Do not start T16. Return to ChatGPT Architect. |
+| Next approved prompt | Architect close review of the F15 pin. T16 is not authorized from this pin. |
+| Commit hash | Disposition SHA **`b2824a598c215113b02e7c419afe228ba90b33b6`**. Pin SHA recorded after this docs commit. |
+
 ### 2026-09-24 — PKG-F15 orphaned finding / no recoverable product authority (working tree)
 
 | Field | Content |

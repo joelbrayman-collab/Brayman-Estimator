@@ -28,7 +28,7 @@ Represent construction projects tied to clients; host estimating work; begin pro
 - `project_locations` (1:1 civic location; FG-015)
 - `permit_profiles` (versioned preliminary snapshots; FG-015)
 - `permit_analyses`, `permit_findings`, `project_permit_facts` (FG-016 project-tied Pass 2; organization-scoped)
-- `change_orders`, `change_order_items` (package-owned tables). PKG-S16 `organization_id` + `uq_change_orders_org_number` + nullable `approved_internal_direct_cost` (not live-migrated). PKG-F14 organization-scoped `next_change_order_number()`. **PKG-F07 (working tree)** Extra Work Approve / late-link capture of `approved_internal_direct_cost`; MONITOR consume; frozen while Approved/Invoiced
+- `change_orders`, `change_order_items` (package-owned tables). PKG-S16 `organization_id` + `uq_change_orders_org_number` + nullable `approved_internal_direct_cost` (not live-migrated). PKG-F14 organization-scoped `next_change_order_number()`. **PKG-F07 CLOSED** at product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Extra Work Approve / late-link capture of `approved_internal_direct_cost`; MONITOR consume; frozen while Approved/Invoiced
 - `work_types`, `work_element_templates`, `work_activity_templates`, `project_work_elements`, `project_work_activities`, `project_work_structure_seeds`, `project_work_scope_deltas`, `project_work_scope_history` (FG-035 TAX/WBS + SCOPE; organization-scoped except baseline `organization_id` NULL)
 - `work_schedule_items`, `work_schedule_history` (FG-035 SCH-A; organization-scoped overlay on Project work)
 - `work_schedule_assignments` (FG-035 SCH-B; current USER XOR Crew booking on an ACTIVE SCH-A item; not historical SoR)

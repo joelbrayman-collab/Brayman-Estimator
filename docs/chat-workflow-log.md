@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-24 — PKG-F07 SHA-pin / CLOSE
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-24 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026 |
+| Objective | Push accepted F07 product commit and record SHA-pin occupancy. Classify F07 CLOSED. |
+| Business decision | Owner law remains FINAL: **B freeze**; **C reverse retains / re-approval processes**; **A late-link captures**. FG-039 remains parked. Do not start F15 or T16 from this pin. |
+| Architectural decision | None new. Docs-only pin of product SHA **`79026762decf45082f73325f7056285fe8948eff`**. No schema. No migration. No live DB mutation. |
+| Prompt template used | Architect PKG-F07 ACCEPT PUSH / SHA-PIN / CLOSE |
+| Approved Cursor prompt summary | Push product SHA. Record minimum occupancy. Docs-only pin commit. Push pin. Classify F07 CLOSED. Identify F15 as NEXT / NOT AUTHORIZED. |
+| Files expected to change | Minimum occupancy docs only |
+| Files prohibited from changing | product code, tests, migrations, live DB, Flask 5460, recovery stash, V1 scores, F15, T16, FG-039 product, website |
+| Implementation result | PRODUCT PUSHED. SHA-PIN OCCUPANCY. F07 CLOSED. F15 NEXT / NOT STARTED / NOT AUTHORIZED. Whole-system Rule 16 remains OPEN. |
+| Tests | Not rerun. Governing evidence remains dedicated **14 passed**, focused **159 passed**, full suite **1739 passed**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. Whole-system Rule 16 remains OPEN. |
+| Unresolved issues | LIVE S16 NOT APPLIED. Live DB still `g7b8c9d0e1f2`. F15 and T16 remain later. FG-039 not published. |
+| Next approved step | STOP. Return to ChatGPT Architect for PKG-F15 DERIVATION ONLY. Do not start F15 or T16 from this pin. |
+| Next approved prompt | Architect PKG-F15 DERIVATION ONLY (not executed from this pin). |
+| Commit hash | Product SHA **`79026762decf45082f73325f7056285fe8948eff`**. Pin SHA recorded after this docs commit. |
+
 ### 2026-09-24 — PKG-F07 owner decisions recorded FINAL
 
 | Field | Content |

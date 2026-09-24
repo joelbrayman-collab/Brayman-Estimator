@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-24 — FG-039 SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-24 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI BUSINESS OWNER ASSESSMENT 24 SEP 2026 |
+| Objective | SHA-pin FG-039 after Architect ACCEPT PUSH / SHA-PIN / FINAL SEAL. |
+| Business decision | Employment vs Entrepreneurship Decision Tool closed in git. Not published. Completeness 1–5 is the authorized set. Whole-system Rule 16 remains OPEN. Do not rescore V1. Do not start F07 or F15. |
+| Architectural decision | None new. Pin only. Product SHA **`ca11aefade0ad005944b1b3828a28875ea5e98ef`**. No schema. No migration. No live DB mutation. |
+| Prompt template used | Architect FG-039 ACCEPT PUSH / SHA-PIN / FINAL SEAL |
+| Approved Cursor prompt summary | Push accepted FG-039 product commit, docs-only SHA-pin, push pin. No deploy. No live migrate. No F07/F15. |
+| Files expected to change | Occupancy docs only for this pin commit. Product already pushed. |
+| Files prohibited from changing | Product code, templates, JS/CSS, PDF service, tests, migrations, live DB, recovery stash, V1 scores, Flask 5460 |
+| Implementation result | PRODUCT SHA **`ca11aefade0ad005944b1b3828a28875ea5e98ef`**. IMPLEMENTED / EMPLOYMENT VS ENTREPRENEURSHIP DECISION TOOL / WHAT HAS TO BE TRUE / STARTUP & TRANSITION CASH / DOWNSIDE STRESS TEST / TOTAL OWNER WORKLOAD / CASH AVAILABLE TO OWNER / DOWNLOAD RESULTS PDF / SCREEN/PDF CALCULATION RECONCILIATION PROVEN / NEUTRALITY PROVEN / TESTED / 1725 FULL-SUITE PASS / COMMITTED / PUSHED / SHA-PINNED / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / CLOSED |
+| Tests | Not rerun. Governing FG-039 close remains dedicated **27** / focused **40** / full **1725 passed**, 5749 warnings, **792.54s**, exit **0**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. Whole-system Rule 16 remains OPEN. |
+| Unresolved issues | Not published. Not deployed. Live DB still `g7b8c9d0e1f2`. LIVE S16 NOT APPLIED. HostPapa deploy does not exist. |
+| Next approved step | STOP. Return to ChatGPT Architect for FG-039 publication / development-site activation. Do not deploy from this pin. |
+| Next approved prompt | FG-039 PUBLICATION / DEVELOPMENT-SITE ACTIVATION DERIVATION ONLY (not executed from this pin). |
+| Commit hash | Product SHA **`ca11aefade0ad005944b1b3828a28875ea5e98ef`**. Pin SHA recorded after this docs commit. |
+
 ### 2026-09-24 — FG-039 Results PDF (completeness #5)
 
 | Field | Content |

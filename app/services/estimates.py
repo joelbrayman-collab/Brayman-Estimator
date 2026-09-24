@@ -71,6 +71,7 @@ def create_estimate(
     )
 
     estimate = Estimate(
+        organization_id=project.organization_id,
         project_id=project.id,
         estimate_number=estimate_number,
         title=title,

@@ -438,7 +438,7 @@ def test_alembic_fg035_tax_wbs_upgrade_downgrade_and_fresh(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["g7b8c9d0e1f2"]
+        assert script.get_heads() == ["h8c9d0e1f2a3"]
 
         command.upgrade(alembic_cfg, "f2a3b4c5d6e7")
         engine = db.engine
@@ -509,7 +509,7 @@ def test_alembic_fg035_tax_wbs_upgrade_downgrade_and_fresh(tmp_path):
         command.upgrade(alembic_cfg, "head")
         with engine.begin() as conn:
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
-            assert [row[0] for row in heads] == ["g7b8c9d0e1f2"]
+            assert [row[0] for row in heads] == ["h8c9d0e1f2a3"]
             gen = conn.execute(
                 sa.text(
                     "SELECT COUNT(*) FROM work_types "

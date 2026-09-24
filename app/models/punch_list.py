@@ -53,6 +53,19 @@ class ProjectPunchListItem(db.Model):
             "origin_type IN ('CONTRACTOR', 'CLIENT_WALKTHROUGH')",
             name="ck_project_punch_list_items_origin_type",
         ),
+        db.CheckConstraint(
+            "("
+            "(work_source_type = 'ORIGINAL_SCOPE' "
+            "AND source_change_order_id IS NULL) OR "
+            "(work_source_type = 'CHANGE_ORDER' "
+            "AND source_project_work_id IS NULL "
+            "AND source_change_order_id IS NOT NULL) OR "
+            "(work_source_type = 'OTHER' "
+            "AND source_project_work_id IS NULL "
+            "AND source_change_order_id IS NULL)"
+            ")",
+            name="ck_project_punch_list_items_source_association",
+        ),
         db.Index(
             "ix_project_punch_list_items_org_project",
             "organization_id",

@@ -48,15 +48,31 @@ class Estimate(db.Model):
             name="fk_estimates_current_version_id",
             use_alter=True,
         ),
+        db.ForeignKeyConstraint(
+            ["organization_id"],
+            ["organizations.id"],
+            name="fk_estimates_organization_id",
+            ondelete="RESTRICT",
+        ),
+        db.UniqueConstraint(
+            "organization_id",
+            "estimate_number",
+            name="uq_estimates_org_estimate_number",
+        ),
     )
 
     id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50),
+        nullable=False,
+        index=True,
+    )
     project_id = db.Column(
         db.Integer,
         db.ForeignKey("projects.id"),
         nullable=False,
     )
-    estimate_number = db.Column(db.String(50), unique=True, nullable=False)
+    estimate_number = db.Column(db.String(50), nullable=False)
     title = db.Column(db.String(180), nullable=False)
     status = db.Column(db.String(50), nullable=False, default="Draft")
     current_version_id = db.Column(db.Integer, nullable=True)
@@ -68,6 +84,7 @@ class Estimate(db.Model):
         nullable=False,
     )
 
+    organization = db.relationship("Organization", foreign_keys=[organization_id])
     project = db.relationship("Project", back_populates="estimates")
     versions = db.relationship(
         "EstimateVersion",

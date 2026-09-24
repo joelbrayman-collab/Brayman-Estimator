@@ -142,6 +142,7 @@ def create_change_order(
             )
 
     change_order = ChangeOrder(
+        organization_id=project.organization_id,
         project_id=project.id,
         estimate_version_id=estimate_version.id if estimate_version else None,
         number=number or repo.next_change_order_number(),

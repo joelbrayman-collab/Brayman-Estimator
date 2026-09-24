@@ -75,9 +75,27 @@ class ProposalTemplate(db.Model):
 
 class Proposal(db.Model):
     __tablename__ = "proposals"
+    __table_args__ = (
+        db.ForeignKeyConstraint(
+            ["organization_id"],
+            ["organizations.id"],
+            name="fk_proposals_organization_id",
+            ondelete="RESTRICT",
+        ),
+        db.UniqueConstraint(
+            "organization_id",
+            "proposal_number",
+            name="uq_proposals_org_proposal_number",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
-    proposal_number = db.Column(db.String(50), unique=True, nullable=False)
+    organization_id = db.Column(
+        db.String(50),
+        nullable=False,
+        index=True,
+    )
+    proposal_number = db.Column(db.String(50), nullable=False)
     estimate_id = db.Column(
         db.Integer,
         db.ForeignKey("estimates.id", ondelete="SET NULL"),
@@ -162,6 +180,7 @@ class Proposal(db.Model):
     )
     issued_at = db.Column(db.DateTime)
 
+    organization = db.relationship("Organization", foreign_keys=[organization_id])
     estimate = db.relationship("Estimate", backref="proposals")
     estimate_version = db.relationship("EstimateVersion", backref="proposals")
     proposal_template = db.relationship(

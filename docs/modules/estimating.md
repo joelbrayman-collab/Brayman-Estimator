@@ -17,7 +17,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 - Cost item library (org costing; Material-category items may later link to a canonical material). **R01 (PKG-T01):** `add_cost_item_line` / `add_assembly_line` reload the destination Estimate's Project and the library row against the acting organization before copying commercial identity.
 - Assemblies and assembly items (commercial composition; may remain one rolled-up estimate line)
-- Estimates and estimate versions
+- Estimates and estimate versions. PKG-S16 **working-tree** denormalized `organization_id` + org-scoped unique `uq_estimates_org_estimate_number`. `suggest_next_estimate_number()` remains global pending F14.
 - Sections and line items
 - Version status / locking for issued-like statuses
 

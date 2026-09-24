@@ -22,8 +22,31 @@ OPEN_CHANGE_ORDER_STATUSES = frozenset(
 
 class ChangeOrder(db.Model):
     __tablename__ = "change_orders"
+    __table_args__ = (
+        db.ForeignKeyConstraint(
+            ["organization_id"],
+            ["organizations.id"],
+            name="fk_change_orders_organization_id",
+            ondelete="RESTRICT",
+        ),
+        db.UniqueConstraint(
+            "organization_id",
+            "number",
+            name="uq_change_orders_org_number",
+        ),
+        db.CheckConstraint(
+            "approved_internal_direct_cost IS NULL OR "
+            "approved_internal_direct_cost >= 0",
+            name="ck_change_orders_approved_internal_direct_cost_non_negative",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(
+        db.String(50),
+        nullable=False,
+        index=True,
+    )
     project_id = db.Column(
         db.Integer,
         db.ForeignKey("projects.id"),
@@ -34,7 +57,7 @@ class ChangeOrder(db.Model):
         db.ForeignKey("estimate_versions.id", ondelete="SET NULL"),
         nullable=True,
     )
-    number = db.Column(db.String(50), unique=True, nullable=False)
+    number = db.Column(db.String(50), nullable=False)
     title = db.Column(db.String(180), nullable=False)
     description = db.Column(db.Text)
     reason = db.Column(db.Text)
@@ -63,6 +86,10 @@ class ChangeOrder(db.Model):
     )
     tax = db.Column(db.Numeric(14, 2), nullable=False, default=Decimal("0"))
     total = db.Column(db.Numeric(14, 2), nullable=False, default=Decimal("0"))
+    approved_internal_direct_cost = db.Column(
+        db.Numeric(14, 2),
+        nullable=True,
+    )
     notes = db.Column(db.Text)
     pricing_snapshot_id = db.Column(
         db.Integer,
@@ -73,6 +100,7 @@ class ChangeOrder(db.Model):
     pricing_override_reason = db.Column(db.Text, nullable=True)
     pricing_override_by = db.Column(db.String(150), nullable=True)
 
+    organization = db.relationship("Organization", foreign_keys=[organization_id])
     project = db.relationship("Project", back_populates="change_orders")
     estimate_version = db.relationship("EstimateVersion", backref="change_orders")
     pricing_snapshot = db.relationship("EstimatePricingSnapshot")

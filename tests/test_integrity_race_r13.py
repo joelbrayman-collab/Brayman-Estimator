@@ -1,7 +1,8 @@
 """R13 INTEGRITY-RACE — expected unique collisions become contractor domain errors.
 
 Synthetic sqlite only. No live DB. No schema. No migration.
-R11 duplicate-Time policy is not invented. R14 numbering scope is not decided.
+R11 duplicate-Time policy is not invented. R14 schema uniqueness is
+organization-scoped; numbering generators remain global pending F14.
 """
 
 from __future__ import annotations
@@ -579,13 +580,22 @@ def test_r11_policy_not_invented(app):
     assert names == ["supersedes_id"]
 
 
-def test_r14_numbering_scope_not_decided(app):
-    assert Estimate.estimate_number.unique is True
+def test_r14_commercial_number_collision_is_not_a_schedule_story(app):
+    assert Estimate.estimate_number.unique is not True
+    unique_args = [
+        (arg.name, tuple(arg.columns.keys()))
+        for arg in Estimate.__table_args__
+        if isinstance(arg, UniqueConstraint)
+    ]
+    assert (
+        "uq_estimates_org_estimate_number",
+        ("organization_id", "estimate_number"),
+    ) in unique_args
     # R13 must not recast a commercial-number collision as a Schedule story.
-    fabricated = IntegrityError(
-        "INSERT",
-        {},
-        Exception("UNIQUE constraint failed: estimates.estimate_number"),
-    )
-    with pytest.raises(IntegrityError):
-        _raise_if_expected_schedule_integrity(fabricated)
+    for message in (
+        "UNIQUE constraint failed: estimates.estimate_number",
+        "UNIQUE constraint failed: uq_estimates_org_estimate_number",
+    ):
+        fabricated = IntegrityError("INSERT", {}, Exception(message))
+        with pytest.raises(IntegrityError):
+            _raise_if_expected_schedule_integrity(fabricated)

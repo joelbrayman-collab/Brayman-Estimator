@@ -531,6 +531,7 @@ def create_proposal(
         raise ProposalServiceError("Select a valid proposal status.")
 
     proposal = Proposal(
+        organization_id=estimate.project.organization_id,
         proposal_number=proposal_number,
         estimate_id=estimate.id,
         estimate_version_id=version.id,

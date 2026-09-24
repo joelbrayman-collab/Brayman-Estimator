@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PKG-S16 SCHEMA FOUNDATION (2026-09-23)
+
+| Field | Content |
+|-------|---------|
+| Slice | PKG-S16 Rule 16 consolidated schema / migration (R14 / R07 / R12 / R24) |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED / NOT LIVE-MIGRATED.** Additive **`h8c9d0e1f2a3`**. Live Alembic remains **`g7b8c9d0e1f2`**. User Guide remains outstanding. |
+| 1. What new contractor capability exists? | None yet. This is persistence foundation only. Estimate / Proposal / Change Order numbers can later be unique per company, but the app still suggests the next number globally. Approved extra-work cost is not captured on Approve. Person wage history is not shown. |
+| 2. When would the contractor use it? | Not yet. Later F14 when creating documents in a second company. Later F07 when Approving extra work. Later People work when wage changes are recorded. |
+| 3. What workflow will the final Manual need to teach? | Do not teach S16 itself. Later teach that each company has its own Estimate / Proposal / Change Order numbers, that extra-work internal cost is captured on Approve, and that Person wage history exists. |
+| 4. What contractor-facing terms must be used? | Company. Estimate number. Proposal number. Change Order number. Extra work. Approved internal cost. Person. Hourly wage. Do not say organization_id, unique constraint, CHECK, or Alembic. |
+| 5. What screenshots / Print examples will eventually be needed? | None from S16. Later F14 numbering, F07 Approve extra work, and People wage history. |
+| 6. What warnings / validation distinctions need explanation? | Later: the same Estimate number may exist in another company. A duplicate number inside one company is refused. Extra-work approved internal cost is not the customer sell amount. |
+| 7. Desktop / iPhone / Print relevance | No contractor-facing screen change in S16. Office forms, Field, and Print are unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim whole-system Rule 16 PASS. Start F14, F07, or F15. Live-upgrade. Teach wage history as if it is written today. |
+
 ### MANUAL IMPACT — PKG-F09 PROJECT-CHILD CONTEXT (2026-09-23)
 
 | Field | Content |

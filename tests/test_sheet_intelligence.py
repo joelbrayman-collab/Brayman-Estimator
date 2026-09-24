@@ -423,6 +423,7 @@ def test_estimating_proposals_change_orders_unaffected(app, project_with_doc):
 
     # Create estimate
     estimate = Estimate(
+        organization_id=project.organization_id,
         project_id=project.id,
         estimate_number="EST-001",
         title="Test Estimate",
@@ -439,6 +440,7 @@ def test_estimating_proposals_change_orders_unaffected(app, project_with_doc):
     db.session.flush()
 
     prop = Proposal(
+        organization_id=project.organization_id,
         proposal_number="PROP-001",
         estimate_id=estimate.id,
         estimate_number=estimate.estimate_number,
@@ -454,6 +456,7 @@ def test_estimating_proposals_change_orders_unaffected(app, project_with_doc):
 
     # Create change order
     co = ChangeOrder(
+        organization_id=project.organization_id,
         project_id=project.id,
         number="CO-001",
         title="Extra Scope",

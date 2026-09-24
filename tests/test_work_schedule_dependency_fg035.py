@@ -478,7 +478,7 @@ def test_alembic_fg035_sch_c_upgrade_downgrade(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["g7b8c9d0e1f2"]
+        assert script.get_heads() == ["h8c9d0e1f2a3"]
         command.upgrade(alembic_cfg, "f7f8a9b0c1d2")
         engine = db.engine
         with engine.begin() as conn:
@@ -516,4 +516,4 @@ def test_alembic_fg035_sch_c_upgrade_downgrade(tmp_path):
         command.upgrade(alembic_cfg, "head")
         with engine.begin() as conn:
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
-            assert [row[0] for row in heads] == ["g7b8c9d0e1f2"]
+            assert [row[0] for row in heads] == ["h8c9d0e1f2a3"]

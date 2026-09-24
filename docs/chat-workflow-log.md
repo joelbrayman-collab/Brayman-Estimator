@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-23 — PKG-S16 schema / migration working tree
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-23 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 23 SEP 2026 |
+| Objective | Implement PKG-S16 schema foundation only: one Alembic revision, models, disposable migration tests, targeted non-regression, full suite, occupancy. Working tree only. |
+| Business decision | Human-facing Estimate / Proposal / Change Order numbers are organization-scoped at the database. approved_internal_direct_cost NULL means unknown. Punch association CHECK matches existing service law. Wage events are append-only persistence with no synthetic history. Generators, MONITOR, and wage-write behaviour remain unchanged. |
+| Architectural decision | One revision `h8c9d0e1f2a3` down_revision `g7b8c9d0e1f2`. Denormalized `organization_id` NOT NULL FK organizations.id ON DELETE RESTRICT. Org-scoped uniques replace global uniques. Create paths stamp organization_id from Project (schema-required, not F14). actor_user_id NOT NULL following Punch events / Person created_by. Organization FK ON DELETE RESTRICT matching Person. |
+| Prompt template used | Architect PKG-S16 IMPLEMENT SCHEMA / MIGRATION / TEST WORKING TREE ONLY |
+| Approved Cursor prompt summary | One Alembic revision; R14/R07/R12/R24 schema; disposable migration tests A–AK; targeted non-regression; full suite; occupancy. No commit, push, live DB mutation, F14, F07, F15, generator changes, MONITOR changes, or wage-write wiring. |
+| Files expected to change | Estimate/Proposal/CO/Punch/Person models; create-path organization_id; one migration; dedicated S16 tests; narrow graph-head and R13 uniqueness truth; occupancy docs |
+| Files prohibited from changing | Live DB; generators; MONITOR behaviour; wage-write services; F14/F07/F15 product; V1 scores |
+| Implementation result | IMPLEMENTED IN WORKING TREE / ONE ALEMBIC REVISION / SINGLE HEAD / R14 ORG-SCOPED COMMERCIAL NUMBER SCHEMA PROVEN / R07 APPROVED DIRECT-COST PERSISTENCE PROVEN / R12 PUNCH ASSOCIATION CHECK PROVEN / R24 WAGE-EVENT PERSISTENCE PROVEN / MIGRATION UPGRADE PASS / MIGRATION DOWNGRADE PASS / MIGRATION RE-UPGRADE PASS / TARGETED RE-AUDIT PASS / FULL SUITE PASS / NO LIVE DB MUTATION / NOT COMMITTED / NOT PUSHED |
+| Tests | Dedicated S16 `./venv/bin/python -m pytest -q tests/test_schema_migration_s16.py` **4 passed**, 12 warnings, **6.99s**. Focused S16+R01+R03A+C1+T03C+F09+L05+MONITOR+Person+Estimate/Proposal/CO **232 passed**, 477 warnings, **279.36s**. Dedicated R13 **18 passed**, 51 warnings, **16.92s**. Full suite `./venv/bin/python -m pytest -q` **1684 passed**, 5726 warnings, **1403.67s**, exit **0**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Live DB still `g7b8c9d0e1f2`. Whole-system Rule 16 OPEN. F14 generators, F07 capture+MONITOR, F15 Capture remain later. |
+| Next approved step | STOP for ChatGPT Architect ACCEPT COMMIT PKG-S16. Do not live-upgrade. Do not start F14/F07/F15. |
+| Next approved prompt | Architect ACCEPT COMMIT PKG-S16 (not issued from this working-tree close). |
+| Commit hash | Not committed. |
+
 ### 2026-09-23 — PKG-F09 SHA-pin
 
 | Field | Content |

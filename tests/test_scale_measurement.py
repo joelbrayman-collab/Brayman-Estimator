@@ -726,6 +726,7 @@ def test_estimating_proposals_change_orders_unaffected(app, base_setup):
         p = Project.query.get(base_setup["project_id"])
 
         est = Estimate(
+            organization_id=p.organization_id,
             project_id=p.id,
             estimate_number="EST-SCALE-001",
             title="Scale Test Estimate",
@@ -738,6 +739,7 @@ def test_estimating_proposals_change_orders_unaffected(app, base_setup):
         db.session.commit()
 
         prop = Proposal(
+            organization_id=p.organization_id,
             proposal_number="PROP-SCALE-001",
             estimate_id=est.id,
             estimate_number=est.estimate_number,
@@ -753,6 +755,7 @@ def test_estimating_proposals_change_orders_unaffected(app, base_setup):
         db.session.commit()
 
         co = ChangeOrder(
+            organization_id=p.organization_id,
             project_id=p.id,
             number="CO-SCALE-001",
             title="Scale Calibration Scope",

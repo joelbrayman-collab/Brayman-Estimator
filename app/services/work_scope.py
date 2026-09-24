@@ -43,6 +43,7 @@ class WorkScopeError(WorkStructureError):
 ORIGIN_REWRITE_BLOCKED_AFTER_TIME = (
     "This work can no longer be reclassified because time has already been recorded against it."
 )
+_LATE_LINK_COST_UNSET = object()
 
 
 def _as_hours(value) -> Decimal:
@@ -62,6 +63,68 @@ def _hours_or_none(value):
 
 def change_order_is_scope_authorizing(change_order: ChangeOrder) -> bool:
     return change_order.status in SCOPE_AUTHORIZING_CHANGE_ORDER_STATUSES
+
+
+def _work_has_extra_history_for_change_order(
+    *,
+    organization_id: str,
+    work_kind: str,
+    work_id: int,
+    change_order_id: int,
+) -> bool:
+    return (
+        ProjectWorkScopeHistory.query.filter_by(
+            organization_id=organization_id,
+            work_kind=work_kind,
+            work_id=work_id,
+            prior_scope_origin=SCOPE_EXTRA_WORK,
+            new_change_order_id=change_order_id,
+        ).first()
+        is not None
+    )
+
+
+def change_order_is_extra_work(
+    change_order: ChangeOrder, *, organization_id: Optional[str] = None
+) -> bool:
+    """True when this Change Order is Additional / Extra Work.
+
+    Uses existing work-scope links. Does not invent a CO type, enum, or flag.
+    """
+    if change_order is None or getattr(change_order, "id", None) is None:
+        return False
+    org_id = organization_id or change_order.organization_id
+    if not org_id:
+        return False
+    activities = ProjectWorkActivity.query.filter_by(
+        change_order_id=change_order.id,
+        organization_id=org_id,
+    ).all()
+    elements = ProjectWorkElement.query.filter_by(
+        change_order_id=change_order.id,
+        organization_id=org_id,
+    ).all()
+    for activity in activities:
+        if activity.scope_origin == SCOPE_EXTRA_WORK:
+            return True
+        if activity.scope_origin == SCOPE_CHANGE_ORDER and _work_has_extra_history_for_change_order(
+            organization_id=org_id,
+            work_kind=SCOPE_HISTORY_ACTIVITY,
+            work_id=activity.id,
+            change_order_id=change_order.id,
+        ):
+            return True
+    for element in elements:
+        if element.scope_origin == SCOPE_EXTRA_WORK:
+            return True
+        if element.scope_origin == SCOPE_CHANGE_ORDER and _work_has_extra_history_for_change_order(
+            organization_id=org_id,
+            work_kind=SCOPE_HISTORY_ELEMENT,
+            work_id=element.id,
+            change_order_id=change_order.id,
+        ):
+            return True
+    return False
 
 
 def require_project_change_order(
@@ -694,6 +757,7 @@ def link_extra_work_to_change_order(
     reason: Optional[str] = None,
     organization_id: Optional[str] = None,
     commit: bool = True,
+    approved_internal_direct_cost=_LATE_LINK_COST_UNSET,
 ) -> ProjectWorkActivity:
     org_id = _org_id(organization_id)
     activity = ProjectWorkActivity.query.filter_by(
@@ -711,6 +775,25 @@ def link_extra_work_to_change_order(
         organization_id=org_id,
         for_authorized_scope=False,
     )
+    was_extra = change_order_is_extra_work(change_order, organization_id=org_id)
+    from app.project_controls.services import (
+        APPROVED_INTERNAL_DIRECT_COST_UNSET,
+        ChangeOrderServiceError,
+        capture_approved_internal_direct_cost_on_late_extra_link,
+    )
+
+    cost = approved_internal_direct_cost
+    if cost is _LATE_LINK_COST_UNSET:
+        cost = APPROVED_INTERNAL_DIRECT_COST_UNSET
+    try:
+        capture_approved_internal_direct_cost_on_late_extra_link(
+            change_order,
+            was_extra_work=was_extra,
+            approved_internal_direct_cost=cost,
+            organization_id=org_id,
+        )
+    except ChangeOrderServiceError as exc:
+        raise WorkScopeError(str(exc)) from exc
     prior_origin = activity.scope_origin
     prior_co = activity.change_order_id
     activity.change_order_id = change_order.id
@@ -795,6 +878,7 @@ def create_change_order_from_extra_work(
     notes=None,
     status="Draft",
     link_reason: Optional[str] = None,
+    approved_internal_direct_cost=_LATE_LINK_COST_UNSET,
 ) -> tuple[ChangeOrder, ProjectWorkActivity]:
     """Create a Change Order and link Extra Work in one transaction."""
     from app.project_controls.services import ChangeOrderServiceError, create_change_order
@@ -840,6 +924,7 @@ def create_change_order_from_extra_work(
             reason=link_reason or "Extra work used to create a change order.",
             organization_id=org_id,
             commit=False,
+            approved_internal_direct_cost=approved_internal_direct_cost,
         )
         db.session.commit()
     except ChangeOrderServiceError as exc:

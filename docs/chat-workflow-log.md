@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-24 — PKG-F07 owner decisions recorded FINAL
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-24 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026 |
+| Objective | Record F07 owner decisions as authoritative Product Owner law and re-audit the already-implemented working tree. Do not derive F07 again. |
+| Business decision | **1=B** freeze `approved_internal_direct_cost` while authorized. **2=C** reverse keeps stored value; MONITOR excludes unauthorized COs; re-approval must process the field again (blank=NULL / Not captured; 0.00=captured zero; positive=amount; negative=fail). **3=A** Extra linked to already Approved/Invoiced CO captures on the link action. **OWNER DECISION REQUIRED: NO.** |
+| Architectural decision | Existing Extra-work identification (stored EXTRA_WORK or CHANGE_ORDER with prior EXTRA_WORK history). Capture + MONITOR remain one package. No new schema. No migration. No new cost-variance engine. |
+| Prompt template used | Architect PKG-F07 OWNER DECISIONS FINAL / IMPLEMENT / TEST / TARGETED RE-AUDIT WORKING TREE ONLY |
+| Approved Cursor prompt summary | Record B/C/A as final. Implement/test/re-audit already-derived F07 law. Dedicated F07 + focused + full suite. Occupancy. No commit, push, live migrate, F15, T16, FG-039. |
+| Files expected to change | Occupancy docs; product/tests already present in working tree |
+| Files prohibited from changing | migrations, live DB, Flask 5460, recovery stash, V1 scores, F15, T16, FG-039 product, website |
+| Implementation result | OWNER DECISIONS RECORDED FINAL. Working tree already held F07 product from prior implement pass (HEAD `246fd5e` dirty vs expected CLEAN; not reset). No re-derivation. No product rewrite required against locked B/C/A law. Re-audit PASS. NOT COMMITTED. |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_approved_internal_direct_cost_f07.py` **14 passed**, 73 warnings, **9.29s**, exit **0**. Focused F07+T03C+F08+F09+F14+MONITOR+S16+CO+R01+R04+R13 **159 passed**, 440 warnings, **69.81s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` **1739 passed**, 5822 warnings, **749.60s**, exit **0**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. Whole-system Rule 16 remains OPEN. |
+| Unresolved issues | F07 not committed. Live DB still `g7b8c9d0e1f2`. LIVE S16 NOT APPLIED. F15 and T16 remain later. FG-039 not published. |
+| Next approved step | STOP for ChatGPT Architect ACCEPT COMMIT PKG-F07. Do not live-upgrade. Do not start F15 or T16. |
+| Next approved prompt | Architect ACCEPT COMMIT PKG-F07 (not executed from this working-tree close). |
+| Commit hash | Not committed. Parent / HEAD **`246fd5e424da27fc7f0551b24c7491c9bc285d33`**. |
+
+### 2026-09-24 — PKG-F07 Extra Work approved internal direct cost
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-24 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026 |
+| Objective | Implement PKG-F07 capture + MONITOR consume for Extra Work approved internal direct cost. Working tree only. |
+| Business decision | Capture + MONITOR are one package. Extra Work COs only. Contractor-entered. Not sell-derived. NULL = Not captured. 0.00 distinct from NULL. Frozen while authorizing. Reverse retains value. Re-approval processes the field again. Late Extra link to already-authorizing CO captures. No new cost-variance card. FG-039 remains parked. |
+| Architectural decision | Identify Extra Work from existing work-scope links (stored EXTRA_WORK origin or CHANGE_ORDER origin with prior EXTRA_WORK history). No new CO type, enum, flag, or schema. MONITOR complete-set law. Actuals remain ProjectDirectCostActual. |
+| Prompt template used | Architect PKG-F07 IMPLEMENT / TEST / TARGETED RE-AUDIT WORKING TREE ONLY |
+| Approved Cursor prompt summary | Implement Extra Work approved internal direct cost capture, freeze, reverse/re-approval, late-link capture, MONITOR consume. Dedicated F07 tests. Targeted re-audit. Full suite. Occupancy. No commit, push, live migrate, F15, T16, FG-039. |
+| Files expected to change | project_controls services/routes/templates, work_scope, work_structure route/template, monitor service/template, contractor_copy, F07 tests, occupancy docs |
+| Files prohibited from changing | migrations, live DB, Flask 5460, recovery stash, V1 scores, F15, T16, FG-039 product, website |
+| Implementation result | IMPLEMENTED IN WORKING TREE / EXTRA WORK APPROVE CAPTURE PROVEN / NULL NOT CAPTURED PROVEN / ZERO DISTINCT FROM NULL / SELL NOT COPIED / FREEZE WHILE AUTHORIZED / REVERSE RETAINS VALUE / RE-APPROVAL PROCESSES FIELD / LATE-LINK CAPTURE PROVEN / MONITOR COMPLETE-SET LAW PROVEN / NO NEW VARIANCE CARD / T03C F08 F09 F14 R01 R04 NON-REGRESSION PASS / FULL SUITE PASS / NO SCHEMA / NO MIGRATION / NO LIVE DB MUTATION / NOT COMMITTED |
+| Tests | Dedicated `./venv/bin/python -m pytest -q tests/test_approved_internal_direct_cost_f07.py` **14 passed**, 73 warnings, **9.66s**, exit **0**. Focused F07+T03C+F08+F09+F14+MONITOR+S16+CO+R04+R13 **148 passed**, 426 warnings, **71.34s**, exit **0**. Full suite `./venv/bin/python -m pytest -q` **1739 passed**, 5822 warnings, **741.57s**, exit **0**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. Whole-system Rule 16 remains OPEN. |
+| Unresolved issues | F07 not committed. Live DB still `g7b8c9d0e1f2`. LIVE S16 NOT APPLIED. F15 and T16 remain later. FG-039 not published. |
+| Next approved step | STOP for ChatGPT Architect ACCEPT COMMIT PKG-F07. Do not live-upgrade. Do not start F15 or T16. |
+| Next approved prompt | Architect ACCEPT COMMIT PKG-F07 (not executed from this working-tree close). |
+| Commit hash | Not committed. Parent / HEAD **`246fd5e424da27fc7f0551b24c7491c9bc285d33`**. |
+
 ### 2026-09-24 — FG-039 SHA-pin
 
 | Field | Content |

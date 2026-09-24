@@ -57,8 +57,23 @@
                 {% endfor %}
             </select>
         </label>
+        {% if extra_work and not approved_internal_cost_frozen %}
+        <label>
+            Approved Internal Direct Cost
+            <input type="number" name="approved_internal_direct_cost" min="0" step="0.01" value="{% if change_order.approved_internal_direct_cost is not none %}{{ "%.2f"|format(change_order.approved_internal_direct_cost) }}{% endif %}">
+            <span class="muted-copy">Your estimated direct cost to perform this extra work. Leave blank if not captured.</span>
+        </label>
+        {% endif %}
         <button type="submit">Save Status</button>
     </form>
+    {% if extra_work %}
+    <div class="form-grid" style="margin-top: 12px;">
+        <div>
+            <p class="eyebrow">Approved Internal Direct Cost</p>
+            <p>{% if change_order.approved_internal_direct_cost is none %}Not captured{% else %}${{ "%.2f"|format(change_order.approved_internal_direct_cost) }}{% endif %}</p>
+        </div>
+    </div>
+    {% endif %}
 </section>
 
 <section class="form-panel" style="margin-bottom: 20px;" data-signing-overlay="true" data-signing-label="{{ signing_overlay.hub_label }}" data-signing-status="{{ signing_overlay.request_status or '' }}">

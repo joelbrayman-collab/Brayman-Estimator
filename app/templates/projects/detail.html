@@ -1017,6 +1017,10 @@
             <p class="muted-copy">{{ contractor_copy.co_cost_delta_label(monitor.co_cost_delta_copy) }}</p>
         </div>
         <div>
+            <p class="eyebrow">Approved Internal Direct Cost</p>
+            <p>{% if monitor.extra_work_internal_cost_state == "NOT_CAPTURED" %}{{ contractor_copy.NOT_CAPTURED_LABEL }}{% elif monitor.extra_work_approved_internal_direct_cost is not none %}${{ "%.2f"|format(monitor.extra_work_approved_internal_direct_cost) }}{% else %}—{% endif %}</p>
+        </div>
+        <div>
             <p class="eyebrow">Actual Direct Cost to Date</p>
             <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif monitor.actual_direct_cost_to_date is not none %}${{ "%.2f"|format(monitor.actual_direct_cost_to_date) }}{% else %}not calculated{% endif %}</p>
         </div>

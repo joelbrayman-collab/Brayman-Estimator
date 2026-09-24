@@ -30,6 +30,11 @@ CO_COST_DELTA_INTERNAL = "CO cost delta not stored"
 CO_COST_DELTA_LABEL = (
     "Change Order estimated cost is not stored on the Change Order"
 )
+CO_COST_DELTA_NOT_CAPTURED = "Not captured"
+CO_COST_DELTA_INCLUDED = (
+    "Extra-work approved internal direct cost is included"
+)
+NOT_CAPTURED_LABEL = "Not captured"
 
 CURRENT_ACTUALS_HEADING = "Current actual costs"
 CURRENT_ACTUALS_EMPTY = "No current actual-cost entries"
@@ -149,6 +154,10 @@ def cost_class_label(cost_class: str | None) -> str:
 def co_cost_delta_label(internal_copy: str | None) -> str:
     if internal_copy == CO_COST_DELTA_INTERNAL:
         return CO_COST_DELTA_LABEL
+    if internal_copy == CO_COST_DELTA_NOT_CAPTURED:
+        return NOT_CAPTURED_LABEL
+    if internal_copy == CO_COST_DELTA_INCLUDED:
+        return CO_COST_DELTA_INCLUDED
     return internal_copy or ""
 
 

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
-| Updated | 2026-09-23 |
+| Updated | 2026-09-24 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — PKG-F07 EXTRA WORK APPROVED INTERNAL DIRECT COST (2026-09-24)
+
+| Field | Content |
+|-------|---------|
+| Slice | PKG-F07 Extra Work Approved Internal Direct Cost capture + MONITOR truth |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** Parent pin SHA **`246fd5e424da27fc7f0551b24c7491c9bc285d33`**. User Guide remains outstanding. |
+| 1. What new contractor capability exists? | When Extra Work becomes Approved, the contractor can enter Approved Internal Direct Cost — the estimated direct cost to perform that extra work. MONITOR then uses that stored cost, not customer sell value, on the authorized estimated-cost side. |
+| 2. When would the contractor use it? | When approving extra-work Change Orders, when linking extra work to an already-approved Change Order, and when reviewing project estimated vs actual direct cost on the Hub MONITOR panel. |
+| 3. What workflow will the final Manual need to teach? | Open the Extra Work Change Order. Set status to Approved. Enter Approved Internal Direct Cost or leave blank if not captured. If the amount was wrong, reverse approval, confirm/re-enter the amount, and approve again. Linking extra work to an already-approved Change Order asks for the same amount. |
+| 4. What contractor-facing terms must be used? | Approved Internal Direct Cost. Extra work. Not captured. Actual Direct Cost. Do not call customer sell, subtotal, markup, or Change Order total the internal direct cost. |
+| 5. What screenshots / Print examples will eventually be needed? | Change Order status form with Approved Internal Direct Cost. Hub MONITOR Approved Internal Direct Cost vs Actual Direct Cost, including Not captured. Not from this working tree. |
+| 6. What warnings / validation distinctions need explanation? | Blank means Not captured, not $0.00. Zero is a real captured estimate. Negative amounts fail and do not approve. The amount cannot be casually edited after approval. Reversing approval keeps the stored amount but MONITOR ignores it until re-approved. |
+| 7. Desktop / iPhone / Print relevance | Office Change Order and Project Hub MONITOR. Field unchanged. Print unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Claim whole-system Rule 16 PASS. Start F15 or T16. Live-upgrade. Teach sell value as internal cost. |
 
 ### MANUAL IMPACT — FG-039 EMPLOYMENT VS ENTREPRENEURSHIP DECISION TOOL (2026-09-24)
 

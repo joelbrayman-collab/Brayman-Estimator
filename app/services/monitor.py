@@ -20,9 +20,17 @@ from app.services.direct_cost_actuals import (
 )
 from app.services.estimate_output import version_direct_cost
 from app.services.pricing_engine import as_money
+from app.services.work_scope import change_order_is_extra_work
+from app.presentation.contractor_copy import (
+    CO_COST_DELTA_INCLUDED,
+    CO_COST_DELTA_NOT_CAPTURED,
+)
 
 AUTHORIZED_CO_STATUSES = ("Approved", "Invoiced")
 CO_COST_DELTA_COPY = "CO cost delta not stored"
+EXTRA_WORK_COST_NONE = "NONE"
+EXTRA_WORK_COST_COMPLETE = "COMPLETE"
+EXTRA_WORK_COST_NOT_CAPTURED = "NOT_CAPTURED"
 
 BASELINE_COMPLETE = "COMPLETE"
 BASELINE_MISSING_CUSTOMER_COMMITMENT = "MISSING_CUSTOMER_COMMITMENT"
@@ -106,6 +114,8 @@ def _empty_monitor(*, actuals_state=ACTUALS_MISSING, baseline_state=BASELINE_MIS
         "current_actuals": [],
         "co_cost_delta_stored": False,
         "co_cost_delta_copy": CO_COST_DELTA_COPY,
+        "extra_work_internal_cost_state": EXTRA_WORK_COST_NONE,
+        "extra_work_approved_internal_direct_cost": None,
     }
 
 
@@ -116,6 +126,32 @@ def assemble_monitor_v1(project, organization_id: str) -> dict:
     authorized = _authorized_change_orders(project)
     authorized_ids = [change_order.id for change_order in authorized]
     co_delta = _approved_co_revenue_delta(authorized)
+    extra_work_cos = [
+        change_order
+        for change_order in authorized
+        if change_order_is_extra_work(
+            change_order, organization_id=organization_id
+        )
+    ]
+    extra_work_internal_cost_state = EXTRA_WORK_COST_NONE
+    extra_work_approved_internal_direct_cost = None
+    extra_copy = CO_COST_DELTA_COPY
+    extra_stored = False
+    if extra_work_cos:
+        if any(
+            change_order.approved_internal_direct_cost is None
+            for change_order in extra_work_cos
+        ):
+            extra_work_internal_cost_state = EXTRA_WORK_COST_NOT_CAPTURED
+            extra_copy = CO_COST_DELTA_NOT_CAPTURED
+        else:
+            extra_work_internal_cost_state = EXTRA_WORK_COST_COMPLETE
+            extra_total = Decimal("0")
+            for change_order in extra_work_cos:
+                extra_total += Decimal(change_order.approved_internal_direct_cost)
+            extra_work_approved_internal_direct_cost = as_money(extra_total)
+            extra_copy = CO_COST_DELTA_INCLUDED
+            extra_stored = True
 
     accepted = _accepted_proposals(project)
     baseline_state = BASELINE_COMPLETE
@@ -156,6 +192,14 @@ def assemble_monitor_v1(project, organization_id: str) -> dict:
 
     estimated_gm = _gross_margin(original_dc, original_selling)
     current_authorized_estimated_cost = original_dc
+    if (
+        extra_work_internal_cost_state == EXTRA_WORK_COST_COMPLETE
+        and original_dc is not None
+        and extra_work_approved_internal_direct_cost is not None
+    ):
+        current_authorized_estimated_cost = as_money(
+            original_dc + extra_work_approved_internal_direct_cost
+        )
     current_authorized_pre_tax_revenue = None
     if original_selling is not None:
         current_authorized_pre_tax_revenue = as_money(original_selling + co_delta)
@@ -205,6 +249,8 @@ def assemble_monitor_v1(project, organization_id: str) -> dict:
             ),
         },
         "current_actuals": current_actuals,
-        "co_cost_delta_stored": False,
-        "co_cost_delta_copy": CO_COST_DELTA_COPY,
+        "co_cost_delta_stored": extra_stored,
+        "co_cost_delta_copy": extra_copy,
+        "extra_work_internal_cost_state": extra_work_internal_cost_state,
+        "extra_work_approved_internal_direct_cost": extra_work_approved_internal_direct_cost,
     }

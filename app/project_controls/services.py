@@ -17,10 +17,12 @@ from app.services.organization_records import (
     require_organization_estimate_version,
     require_organization_project,
 )
+from app.models.work_structure import SCOPE_AUTHORIZING_CHANGE_ORDER_STATUSES
 from app.services.project_operating_lifecycle import (
     project_is_closed,
     raise_if_project_closed,
 )
+from app.services.work_scope import change_order_is_extra_work
 from app.presentation.contractor_copy import PROJECT_CLOSED_NEW_WORK
 
 MONEY = Decimal("0.01")
@@ -32,6 +34,14 @@ class ChangeOrderServiceError(Exception):
 
 
 CHANGE_ORDER_CANNOT_MOVE = "That change order cannot be moved to another project."
+APPROVED_INTERNAL_DIRECT_COST_UNSET = object()
+APPROVED_INTERNAL_COST_FROZEN = (
+    "Approved internal direct cost cannot be changed while this change order is approved."
+)
+APPROVED_INTERNAL_COST_REQUIRED = (
+    "Confirm the approved internal direct cost for this extra work."
+)
+APPROVED_INTERNAL_COST_NEGATIVE = "Approved internal direct cost cannot be negative."
 
 
 ADMINISTRATIVE_CO_FIELDS = frozenset({"status", "notes"})
@@ -48,6 +58,30 @@ def as_decimal(value, default="0"):
 
 def as_money(value):
     return as_decimal(value).quantize(MONEY, rounding=ROUND_HALF_UP)
+
+
+def parse_approved_internal_direct_cost(raw):
+    """Blank → NULL. 0.00 is a captured estimate. Negative fails."""
+    if raw is APPROVED_INTERNAL_DIRECT_COST_UNSET:
+        return APPROVED_INTERNAL_DIRECT_COST_UNSET
+    if raw is None:
+        return None
+    if isinstance(raw, str) and not str(raw).strip():
+        return None
+    amount = as_money(raw)
+    if amount < 0:
+        raise ChangeOrderServiceError(APPROVED_INTERNAL_COST_NEGATIVE)
+    return amount
+
+
+def form_approved_internal_direct_cost(form):
+    if "approved_internal_direct_cost" not in form:
+        return APPROVED_INTERNAL_DIRECT_COST_UNSET
+    return form.get("approved_internal_direct_cost")
+
+
+def _status_is_authorizing(status) -> bool:
+    return status in SCOPE_AUTHORIZING_CHANGE_ORDER_STATUSES
 
 
 def apply_item_calculations(item):
@@ -153,6 +187,7 @@ def create_change_order(
         status=status,
         requested_by=(requested_by or "").strip() or None,
         requested_date=requested_date or date.today(),
+        approved_date=date.today() if status == "Approved" else None,
         markup_percent=as_decimal(markup_percent),
         tax_percent=as_decimal(tax_percent),
         notes=(notes or "").strip() or None,
@@ -261,15 +296,39 @@ def update_change_order(change_order, **fields):
     if "tax_percent" in fields:
         change_order.tax_percent = as_decimal(fields["tax_percent"])
 
+    if (
+        "approved_internal_direct_cost" in fields
+        and fields["approved_internal_direct_cost"]
+        is not APPROVED_INTERNAL_DIRECT_COST_UNSET
+        and _status_is_authorizing(change_order.status)
+    ):
+        raise ChangeOrderServiceError(APPROVED_INTERNAL_COST_FROZEN)
+
     if "status" in fields:
-        update_change_order_status(change_order, fields["status"], commit=False)
+        update_change_order_status(
+            change_order,
+            fields["status"],
+            commit=False,
+            organization_id=org_id,
+            approved_internal_direct_cost=fields.get(
+                "approved_internal_direct_cost",
+                APPROVED_INTERNAL_DIRECT_COST_UNSET,
+            ),
+        )
 
     recalculate_change_order(change_order)
     db.session.commit()
     return change_order
 
 
-def update_change_order_status(change_order, status, *, commit=True, organization_id=None):
+def update_change_order_status(
+    change_order,
+    status,
+    *,
+    commit=True,
+    organization_id=None,
+    approved_internal_direct_cost=APPROVED_INTERNAL_DIRECT_COST_UNSET,
+):
     change_order = require_organization_change_order(
         change_order,
         organization_id=acting_organization_id(organization_id),
@@ -279,8 +338,25 @@ def update_change_order_status(change_order, status, *, commit=True, organizatio
     if status not in CHANGE_ORDER_STATUSES:
         raise ChangeOrderServiceError("Select a valid status.")
     previous = change_order.status
+    entering_approved = status == "Approved" and previous != "Approved"
+    is_extra = change_order_is_extra_work(
+        change_order, organization_id=change_order.organization_id
+    )
+
+    parsed_cost = parse_approved_internal_direct_cost(approved_internal_direct_cost)
+    if (
+        _status_is_authorizing(previous)
+        and parsed_cost is not APPROVED_INTERNAL_DIRECT_COST_UNSET
+        and not entering_approved
+    ):
+        raise ChangeOrderServiceError(APPROVED_INTERNAL_COST_FROZEN)
+    if is_extra and entering_approved:
+        if parsed_cost is APPROVED_INTERNAL_DIRECT_COST_UNSET:
+            raise ChangeOrderServiceError(APPROVED_INTERNAL_COST_REQUIRED)
+        change_order.approved_internal_direct_cost = parsed_cost
+
     change_order.status = status
-    if status == "Approved" and previous != "Approved":
+    if entering_approved:
         change_order.approved_date = date.today()
     if status != "Approved" and previous == "Approved" and status in (
         "Draft",
@@ -292,6 +368,39 @@ def update_change_order_status(change_order, status, *, commit=True, organizatio
     change_order.updated_at = datetime.utcnow()
     if commit:
         db.session.commit()
+    return change_order
+
+
+def capture_approved_internal_direct_cost_on_late_extra_link(
+    change_order,
+    *,
+    was_extra_work: bool,
+    approved_internal_direct_cost=APPROVED_INTERNAL_DIRECT_COST_UNSET,
+    organization_id=None,
+):
+    """Capture on Extra→already-authorizing CO. Freeze if already Extra Work."""
+    change_order = require_organization_change_order(
+        change_order,
+        organization_id=acting_organization_id(organization_id),
+        error_class=ChangeOrderServiceError,
+        message="Not found.",
+    )
+    if not _status_is_authorizing(change_order.status):
+        return change_order
+    parsed_cost = parse_approved_internal_direct_cost(approved_internal_direct_cost)
+    if was_extra_work:
+        if (
+            parsed_cost is not APPROVED_INTERNAL_DIRECT_COST_UNSET
+            and parsed_cost is not None
+        ):
+            raise ChangeOrderServiceError(APPROVED_INTERNAL_COST_FROZEN)
+        return change_order
+    if parsed_cost is APPROVED_INTERNAL_DIRECT_COST_UNSET:
+        parsed_cost = None
+    change_order.approved_internal_direct_cost = parsed_cost
+    if change_order.status == "Approved" and change_order.approved_date is None:
+        change_order.approved_date = date.today()
+    change_order.updated_at = datetime.utcnow()
     return change_order
 
 

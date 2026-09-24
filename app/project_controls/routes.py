@@ -29,10 +29,12 @@ from app.project_controls.services import (
     add_change_order_item,
     create_change_order,
     delete_change_order_item,
+    form_approved_internal_direct_cost,
     update_change_order,
     update_change_order_item,
     update_change_order_status,
 )
+from app.services.work_scope import change_order_is_extra_work
 
 CHANGE_ORDER_PROJECT_MISMATCH = "That project is not the project for this change order."
 
@@ -99,6 +101,11 @@ def _form_from_change_order(change_order):
         "markup_percent": f"{change_order.markup_percent:.2f}",
         "tax_percent": f"{change_order.tax_percent:.2f}",
         "notes": change_order.notes or "",
+        "approved_internal_direct_cost": (
+            ""
+            if change_order.approved_internal_direct_cost is None
+            else f"{change_order.approved_internal_direct_cost:.2f}"
+        ),
     }
 
 
@@ -162,6 +169,17 @@ def _render_change_order_form(
         operating_project_id=operating_project_id,
         lock_project=lock_project,
         next_view=next_view,
+        is_extra_work=(
+            extra_work_activity_id is not None
+            or (
+                change_order is not None
+                and change_order_is_extra_work(change_order)
+            )
+        ),
+        approved_internal_cost_frozen=(
+            change_order is not None
+            and change_order.status in ("Approved", "Invoiced")
+        ),
         cancel_url=_change_order_cancel_url(
             operating_project_id=operating_project_id,
             next_view=next_view,
@@ -225,6 +243,9 @@ def create_change_order_route():
                     organization_id=org_id,
                     project=project,
                     link_reason="Extra work linked when the change order was created.",
+                    approved_internal_direct_cost=form_approved_internal_direct_cost(
+                        request.form
+                    ),
                 )
             else:
                 change_order = create_change_order(
@@ -413,6 +434,8 @@ def view_change_order(id):
         item_edit_form=item_edit_form,
         signing_overlay=signing_overlay,
         invitation_url=invitation_url,
+        extra_work=change_order_is_extra_work(change_order),
+        approved_internal_cost_frozen=change_order.status in ("Approved", "Invoiced"),
         next_view=next_view,
         back_url=(
             url_for("projects.view_project", id=change_order.project_id)
@@ -443,6 +466,9 @@ def edit_change_order(id):
                 tax_percent=request.form.get("tax_percent") or 0,
                 notes=request.form.get("notes", ""),
                 status=request.form.get("status") or change_order.status,
+                approved_internal_direct_cost=form_approved_internal_direct_cost(
+                    request.form
+                ),
             )
         except (ChangeOrderServiceError, ValueError) as exc:
             flash(str(exc), "error")
@@ -471,7 +497,13 @@ def update_status(id):
     if change_order is None:
         abort(404)
     try:
-        update_change_order_status(change_order, request.form.get("status", "").strip())
+        update_change_order_status(
+            change_order,
+            request.form.get("status", "").strip(),
+            approved_internal_direct_cost=form_approved_internal_direct_cost(
+                request.form
+            ),
+        )
     except ChangeOrderServiceError as exc:
         flash(str(exc), "error")
     else:

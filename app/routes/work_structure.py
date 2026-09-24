@@ -400,13 +400,18 @@ def link_extra_work(activity_id):
     activity = ProjectWorkActivity.query.filter_by(id=activity_id, organization_id=org_id).first_or_404()
     display, user_id = _scope_actor()
     try:
-        link_extra_work_to_change_order(
+        link_kwargs = dict(
             project_work_activity_id=activity.id,
             change_order_id=int(request.form.get("change_order_id") or 0),
             actor_user_id=user_id,
             actor_display_name=display,
             reason=request.form.get("reason") or None,
         )
+        if "approved_internal_direct_cost" in request.form:
+            link_kwargs["approved_internal_direct_cost"] = request.form.get(
+                "approved_internal_direct_cost"
+            )
+        link_extra_work_to_change_order(**link_kwargs)
         flash("Extra work linked to the change order.", "success")
     except (WorkScopeError, ValueError) as exc:
         flash(str(exc) if isinstance(exc, WorkScopeError) else "Could not link extra work.", "error")

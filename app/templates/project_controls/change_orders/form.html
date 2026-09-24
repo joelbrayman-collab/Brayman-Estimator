@@ -79,6 +79,13 @@
             Tax %
             <input type="number" name="tax_percent" value="{{ form.tax_percent }}" step="0.01" min="0">
         </label>
+        {% if is_extra_work and not approved_internal_cost_frozen %}
+        <label>
+            Approved Internal Direct Cost
+            <input type="number" name="approved_internal_direct_cost" min="0" step="0.01" value="{{ form.get('approved_internal_direct_cost', '') }}">
+            <span class="muted-copy">Your estimated direct cost to perform this extra work. Leave blank if not captured.</span>
+        </label>
+        {% endif %}
     </div>
 
     <label>

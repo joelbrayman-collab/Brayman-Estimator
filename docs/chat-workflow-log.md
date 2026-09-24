@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-24 — PKG-F14 ACCEPT COMMIT
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-24 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026 |
+| Objective | Commit authorized PKG-F14 product, tests, CLASS B FG-035 fixture freeze, and occupancy. Do not push. |
+| Business decision | Joel directed Close F14. Commit the ready working tree. Push remains separately governed. |
+| Architectural decision | None new. Record product SHA only. |
+| Prompt template used | Owner Close F14 / ACCEPT COMMIT |
+| Approved Cursor prompt summary | Commit authorized F14 package. No push. No live migrate. No F07/F15. |
+| Files expected to change | Occupancy docs for this pin commit. Product already committed. |
+| Files prohibited from changing | F14 product code, live DB, Flask 5460, recovery stash, V1 scores |
+| Implementation result | PRODUCT SHA **`25a90cd07effb95bcf76bb7e8bc676dea0370b44`**. COMMITTED / NOT PUSHED / TESTED / ESTIMATE NUMBERING ORGANIZATION-SCOPED / PROPOSAL NUMBERING ORGANIZATION-SCOPED / CHANGE ORDER NUMBERING ORGANIZATION-SCOPED / CLASS B FG-035 FIXTURE FREEZE INCLUDED / FULL SUITE PASS / NO MIGRATION / NO LIVE DB MUTATION / FLASK STOPPED |
+| Tests | Not rerun. Accepted evidence remains focused **103** / full **1698 passed**. |
+| Project-state-report update | Not a milestone close. Occupancy only. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. Whole-system Rule 16 remains OPEN. |
+| Unresolved issues | Not pushed. Live DB still `g7b8c9d0e1f2`. LIVE S16 NOT APPLIED. |
+| Next approved step | STOP for Architect ACCEPT PUSH / SHA-PIN PKG-F14. |
+| Next approved prompt | PKG-F14 ACCEPT PUSH / SHA-PIN |
+| Commit hash | Product SHA **`25a90cd07effb95bcf76bb7e8bc676dea0370b44`**. Pin SHA recorded after this docs commit. |
+
 ### 2026-09-24 — PKG-F14 CLASS B FG-035 fixture freeze + full suite green
 
 | Field | Content |

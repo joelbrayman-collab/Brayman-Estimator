@@ -902,7 +902,7 @@ def test_s16_unresolved_proposal_fails_upgrade(tmp_path):
             command.upgrade(alembic_cfg, "head")
 
 
-def test_s16_generators_still_global():
+def test_s16_generators_are_organization_scoped():
     import inspect
 
     from app.project_controls import repository as co_repo
@@ -912,8 +912,10 @@ def test_s16_generators_still_global():
     estimate_src = inspect.getsource(estimates_mod.suggest_next_estimate_number)
     proposal_src = inspect.getsource(proposals_mod.suggest_next_proposal_number)
     co_src = inspect.getsource(co_repo.next_change_order_number)
-    assert "organization_id" not in estimate_src
-    assert "organization_id" not in proposal_src
-    assert "organization_id" not in co_src
-    assert "Estimate.query.filter" in estimate_src
-    assert "Proposal.query.filter" in proposal_src
+    assert "organization_id" in estimate_src
+    assert "Estimate.organization_id" in estimate_src
+    assert "organization_id" in proposal_src
+    assert "Proposal.organization_id" in proposal_src
+    assert "organization_id" in co_src
+    assert "filter_by(organization_id=org_id)" in co_src
+    assert "order_by(ChangeOrder.id.desc())" in co_src

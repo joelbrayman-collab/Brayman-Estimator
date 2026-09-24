@@ -276,7 +276,9 @@ def create_proposal_route(estimate_id, version_id):
         estimate,
         version,
         template,
-        suggest_next_proposal_number(),
+        suggest_next_proposal_number(
+            organization_id=estimate.project.organization_id
+        ),
     )
     return render_template(
         "proposals/form.html",

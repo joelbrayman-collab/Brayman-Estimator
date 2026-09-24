@@ -48,15 +48,27 @@ def ensure_proposal_mutable(proposal):
     return proposal
 
 
-def suggest_next_proposal_number(year=None):
-    """Return the next suggested proposal number in PROP-YYYY-NNNN format."""
+def _require_proposal_numbering_organization_id(organization_id=None):
+    """Resolve numbering organization; never guess from unrelated rows."""
+    if organization_id is not None and not str(organization_id).strip():
+        raise ProposalServiceError("Organization is required.")
+    org_id = acting_organization_id(organization_id)
+    if not org_id:
+        raise ProposalServiceError("Organization is required.")
+    return org_id
+
+
+def suggest_next_proposal_number(year=None, organization_id=None):
+    """Return the next org-scoped proposal number in PROP-YYYY-NNNN format."""
+    org_id = _require_proposal_numbering_organization_id(organization_id)
     year = year or datetime.utcnow().year
     prefix = f"PROP-{year}-"
     pattern = re.compile(rf"^PROP-{year}-(\d+)$", re.IGNORECASE)
 
     max_sequence = 0
     proposals = Proposal.query.filter(
-        Proposal.proposal_number.ilike(f"{prefix}%")
+        Proposal.organization_id == org_id,
+        Proposal.proposal_number.ilike(f"{prefix}%"),
     ).all()
 
     for proposal in proposals:
@@ -511,10 +523,17 @@ def create_proposal(
             "Inactive proposal templates cannot be used for new proposals."
         )
 
-    proposal_number = (proposal_number or suggest_next_proposal_number()).strip()
+    proposal_org_id = estimate.project.organization_id
+    proposal_number = (
+        proposal_number
+        or suggest_next_proposal_number(organization_id=proposal_org_id)
+    ).strip()
     if not proposal_number:
         raise ProposalServiceError("Proposal number is required.")
-    if Proposal.query.filter_by(proposal_number=proposal_number).first():
+    if Proposal.query.filter_by(
+        organization_id=proposal_org_id,
+        proposal_number=proposal_number,
+    ).first():
         raise ProposalServiceError(
             f'A proposal with number "{proposal_number}" already exists.'
         )
@@ -657,6 +676,7 @@ def update_proposal(proposal, **fields):
         if not number:
             raise ProposalServiceError("Proposal number is required.")
         duplicate = Proposal.query.filter(
+            Proposal.organization_id == proposal.organization_id,
             Proposal.proposal_number == number,
             Proposal.id != proposal.id,
         ).first()

@@ -52,7 +52,7 @@ from tests.auth_fixtures import (
     logout_office_user,
 )
 
-TODAY = date(2026, 9, 15)
+TODAY = date.today()
 
 
 @pytest.fixture

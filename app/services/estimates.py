@@ -16,15 +16,29 @@ class EstimateServiceError(Exception):
     """Raised when an estimate operation cannot be completed."""
 
 
-def suggest_next_estimate_number(year=None):
-    """Return the next suggested estimate number in EST-YYYY-NNNN format."""
+def _require_numbering_organization_id(organization_id=None):
+    """Resolve numbering organization; never guess from unrelated rows."""
+    from app.services.organization_records import acting_organization_id
+
+    if organization_id is not None and not str(organization_id).strip():
+        raise EstimateServiceError("Organization is required.")
+    org_id = acting_organization_id(organization_id)
+    if not org_id:
+        raise EstimateServiceError("Organization is required.")
+    return org_id
+
+
+def suggest_next_estimate_number(year=None, organization_id=None):
+    """Return the next org-scoped estimate number in EST-YYYY-NNNN format."""
+    org_id = _require_numbering_organization_id(organization_id)
     year = year or datetime.utcnow().year
     prefix = f"EST-{year}-"
     pattern = re.compile(rf"^EST-{year}-(\d+)$", re.IGNORECASE)
 
     max_sequence = 0
     estimates = Estimate.query.filter(
-        Estimate.estimate_number.ilike(f"{prefix}%")
+        Estimate.organization_id == org_id,
+        Estimate.estimate_number.ilike(f"{prefix}%"),
     ).all()
 
     for estimate in estimates:
@@ -59,7 +73,10 @@ def create_estimate(
     if not project:
         raise EstimateServiceError(f"Project {project_id} not found in current organization.")
 
-    if Estimate.query.filter_by(estimate_number=estimate_number).first():
+    if Estimate.query.filter_by(
+        organization_id=project.organization_id,
+        estimate_number=estimate_number,
+    ).first():
         raise EstimateServiceError(
             f'An estimate with number "{estimate_number}" already exists.'
         )

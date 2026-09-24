@@ -18,7 +18,7 @@ Joel decision ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) 
 ## Responsibilities
 
 - Proposal templates (branding, default clauses, display flags)
-- Proposal records and status lifecycle (`Draft` … `Accepted` …). PKG-S16 **working-tree** denormalized `organization_id` + org-scoped unique `uq_proposals_org_proposal_number`. `suggest_next_proposal_number()` remains global pending F14.
+- Proposal records and status lifecycle (`Draft` … `Accepted` …). PKG-S16 denormalized `organization_id` + org-scoped unique `uq_proposals_org_proposal_number`. PKG-F14 **working-tree** `suggest_next_proposal_number()` is organization-scoped; format remains `PROP-YYYY-NNNN`; max+1 gap-skip preserved.
 - Snapshot sections/lines at creation (`build_proposal_snapshot`, `snapshot_estimate_version_content`)
 - Browser preview and PDF generation from **proposal snapshot** (not live estimate lines)
 

@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PKG-F14 ORGANIZATION-SCOPED NUMBERING (2026-09-24)
+
+| Field | Content |
+|-------|---------|
+| Slice | PKG-F14 organization-scoped Estimate / Proposal / Change Order numbering |
+| Product status at capture | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED / FULL SUITE NOT GREEN.** HEAD **`4024180592df3e2689a2ee40e5ec83f572c34ccb`**. Live S16 migration **NOT APPLIED**. User Guide remains outstanding. |
+| 1. What new contractor capability exists? | Each company has its own Estimate, Proposal, and Change Order number sequence. A second company can use the same human-facing number. A duplicate number inside one company is refused. |
+| 2. When would the contractor use it? | When creating or editing an Estimate or Proposal, or when creating a Change Order (including Extra Work → Change Order), especially if more than one company will use the platform. |
+| 3. What workflow will the final Manual need to teach? | New Estimate / Proposal / Change Order numbers are next for this company only. Another company’s documents do not consume this company’s numbers. Do not reuse a number already used in this company. |
+| 4. What contractor-facing terms must be used? | Company. Estimate number. Proposal number. Change Order number. Do not say organization_id, unique constraint, generator, or TOCTOU. |
+| 5. What screenshots / Print examples will eventually be needed? | New Estimate suggested number. Duplicate-number refusal on Estimate and Proposal. New Change Order number. Not from this working tree. |
+| 6. What warnings / validation distinctions need explanation? | The same Estimate or Proposal number may exist in another company. A duplicate number inside one company is refused. Change Order collisions are refused by the database unique rule for that company. |
+| 7. Desktop / iPhone / Print relevance | Office Estimate, Proposal, and Change Order forms. Field unchanged. Print number formats unchanged (`EST-YYYY-NNNN`, `PROP-YYYY-NNNN`, `CO-NNNNNN`). |
+| Do not | Final Manual prose. Unstable screenshots. Claim whole-system Rule 16 PASS. Start F07 or F15. Live-upgrade. Teach numbers as globally unique. |
+
 ### MANUAL IMPACT — PKG-S16 SCHEMA FOUNDATION (2026-09-23)
 
 | Field | Content |

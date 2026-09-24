@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-24 — PKG-F14 CLASS B FG-035 fixture freeze + full suite green
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-24 |
+| Branch | `main` @ `4024180592df3e2689a2ee40e5ec83f572c34ccb` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026 |
+| Objective | Bounded T01-pattern freeze of pre-existing FG-035 date-window test defect, then full-suite re-run. Preserve F14 working tree. Do not commit. |
+| Business decision | CLASS B accepted. Failure is not an F14 regression. Do not waive a red full suite. Correct the fixture only. |
+| Architectural decision | `TODAY = date.today()` in `tests/test_work_schedule_fg035.py` only. Schedule product and F14 product unchanged. Company Hub window remains `date.today()` → `today+41`. |
+| Prompt template used | Architect PKG-F14 BOUNDED FG-035 DATE-WINDOW TEST FIXTURE CORRECTION THEN FULL-SUITE RE-RUN |
+| Approved Cursor prompt summary | One-line TODAY freeze matching assignment T01 file. Re-run single test then full suite. Min occupancy. No commit/push/live migrate/Flask restart. |
+| Files expected to change | `tests/test_work_schedule_fg035.py` plus min occupancy docs |
+| Files prohibited from changing | Schedule product, Project Hub product, F14 product, migrations, live DB, Flask 5460, recovery stash, V1 scores |
+| Implementation result | Fixture freeze applied. Single test PASS. Full suite **1698 passed**. PKG-F14 working tree READY for Architect ACCEPT COMMIT. NOT COMMITTED. |
+| Tests | Single: **1 passed**, 12 warnings, **1.72s**, exit **0**. Full: **1698 passed**, 5744 warnings, **756.32s**, exit **0**. Focused F14 carried forward: **103 passed**, 228 warnings, **43.60s**, exit **0**. |
+| Project-state-report update | No. Not a milestone close. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. Whole-system Rule 16 remains OPEN. |
+| Unresolved issues | Live DB still `g7b8c9d0e1f2`. LIVE S16 NOT APPLIED. HostPapa deploy does not exist. |
+| Next approved step | STOP for ChatGPT Architect ACCEPT COMMIT PKG-F14. |
+| Next approved prompt | PKG-F14 ARCHITECT ACCEPT COMMIT (candidate returned; not executed). |
+| Commit hash | None. Working tree only. Parent HEAD **`4024180592df3e2689a2ee40e5ec83f572c34ccb`**. |
+
+### 2026-09-24 — PKG-F14 organization-scoped numbering (working tree / STOP)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-24 |
+| Branch | `main` @ `4024180592df3e2689a2ee40e5ec83f572c34ccb` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026 |
+| Objective | Implement PKG-F14 organization-scoped Estimate / Proposal / Change Order generators and EST/PROP duplicate checks. Working tree only. |
+| Business decision | Human-facing commercial numbers are organization-scoped. Same number is legal across companies. Same-org duplicate is refused. Formats and sequence algorithms preserved except query domain narrowed to one organization. CO DB unique remains the final collision guard. Existing generator TOCTOU is not solved. |
+| Architectural decision | Fail closed if organization cannot be resolved. Use Project.organization_id / acting organization / get_current_organization_id. No new global resolver. No new CO pre-insert duplicate service check. No locking/retry. No migration. S16 generator-freeze replaced with F14 org-scoped truth. |
+| Prompt template used | Architect PKG-F14 IMPLEMENT ORGANIZATION-SCOPED GENERATORS / SERVICE UNIQUENESS WORKING TREE ONLY |
+| Approved Cursor prompt summary | Org-scope EST/PROP/CO generators; EST/PROP create/edit duplicate checks; caller updates; dedicated F14 tests; dependency non-regression; full suite; targeted re-audit; min occupancy. No commit/push/deploy/live migrate/Flask restart. |
+| Files expected to change | `app/services/estimates.py`, `app/services/proposals.py`, `app/project_controls/repository.py`, `app/project_controls/services.py`, `app/routes/estimates.py`, `app/routes/proposals.py`, dedicated F14 tests, S16 freeze test, min occupancy docs |
+| Files prohibited from changing | migrations, live DB, Flask 5460, recovery stash, V1 scores, F07/F15/T16, number formats, algorithm redesign, concurrency package |
+| Implementation result | IMPLEMENTED IN WORKING TREE / TESTED / ESTIMATE NUMBERING ORGANIZATION-SCOPED / PROPOSAL NUMBERING ORGANIZATION-SCOPED / CHANGE ORDER NUMBERING ORGANIZATION-SCOPED / ESTIMATE ALGORITHM PRESERVED / PROPOSAL ALGORITHM PRESERVED / CO LATEST-ID ALGORITHM PRESERVED / NUMBER FORMATS PRESERVED / CROSS-ORG SAME NUMBERS LEGAL / SAME-ORG DUPLICATES REFUSED / EST/PROP DUPLICATE CHECKS ORGANIZATION-SCOPED / S16 SCHEMA NON-REGRESSION PASS / T03C NON-REGRESSION PASS / F09 NON-REGRESSION PASS / R01 NON-REGRESSION PASS / TARGETED NUMBERING RE-AUDIT PASS / FULL SUITE FAIL (1 unrelated FG035 Class A date-window) / NO MIGRATION / NO LIVE DB MUTATION / FLASK STOPPED / NOT COMMITTED / NOT PUSHED / STOP |
+| Tests | Dedicated F14+S16 freeze: **15 passed**, 18 warnings, **2.77s**. Focused F14+estimates+proposals+COs+T03C+F09+R01+R13+S16: **103 passed**, 228 warnings, **43.60s**, exit **0**. Full suite `./venv/bin/python -m pytest -q`: **1 failed**, **1697 passed**, 5741 warnings, **739.37s**, exit **1**. Failure: `tests/test_work_schedule_fg035.py::test_assemble_and_office_surfaces` — `TODAY=2026-09-15` item ends 2026-09-23; hub window starts 2026-09-24. Not patched. |
+| Project-state-report update | No. Not a milestone close. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. Whole-system Rule 16 remains OPEN. |
+| Unresolved issues | Full suite blocked by unrelated FG-035 date-window fixture. Architect decision required before ACCEPT COMMIT. Live DB still `g7b8c9d0e1f2`. HostPapa deploy does not exist. |
+| Next approved step | STOP for ChatGPT Architect. Authorize Class A `TODAY = date.today()` freeze in `tests/test_work_schedule_fg035.py` (T01 precedent) then re-run full suite, or decide ACCEPT COMMIT exception. |
+| Next approved prompt | Architect decision. Do not ACCEPT COMMIT PKG-F14 from this stop. |
+| Commit hash | None. Working tree only. Parent HEAD **`4024180592df3e2689a2ee40e5ec83f572c34ccb`**. |
+
 ### 2026-09-24 — PKG-S16 SHA-pin
 
 | Field | Content |

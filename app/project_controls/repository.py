@@ -107,9 +107,19 @@ def sum_change_order_value(statuses=None):
     return query.scalar() or 0
 
 
-def next_change_order_number():
+def next_change_order_number(organization_id=None):
+    """Return the next org-scoped Change Order number in CO-NNNNNN format.
+
+    Preserves latest-id suffix +1. Does not max-scan all numbers.
+    """
+    if organization_id is not None and not str(organization_id).strip():
+        raise ValueError("Organization is required.")
+    org_id = acting_organization_id(organization_id)
+    if not org_id:
+        raise ValueError("Organization is required.")
     latest = (
-        ChangeOrder.query.order_by(ChangeOrder.id.desc())
+        ChangeOrder.query.filter_by(organization_id=org_id)
+        .order_by(ChangeOrder.id.desc())
         .with_entities(ChangeOrder.number)
         .first()
     )
@@ -119,7 +129,7 @@ def next_change_order_number():
     try:
         seq = int(str(number).split("-")[-1])
     except (TypeError, ValueError):
-        seq = ChangeOrder.query.count()
+        seq = ChangeOrder.query.filter_by(organization_id=org_id).count()
     return f"CO-{seq + 1:06d}"
 
 

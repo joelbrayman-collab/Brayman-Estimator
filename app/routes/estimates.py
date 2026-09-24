@@ -164,7 +164,10 @@ def _estimate_form_values(estimate=None, suggested_number=None):
     if estimate is None:
         return {
             "project_id": "",
-            "estimate_number": suggested_number or suggest_next_estimate_number(),
+            "estimate_number": suggested_number
+            or suggest_next_estimate_number(
+                organization_id=get_current_organization_id()
+            ),
             "title": "",
             "status": "Draft",
         }
@@ -358,6 +361,7 @@ def edit_estimate(id):
             errors.append("Project is required.")
 
         duplicate = Estimate.query.filter(
+            Estimate.organization_id == estimate.organization_id,
             Estimate.estimate_number == form["estimate_number"],
             Estimate.id != estimate.id,
         ).first()

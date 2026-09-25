@@ -43,6 +43,38 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Cursor-to-Cursor turnover
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CURRENT CURSOR → FRESH CURSOR TURNOVER 25 SEP 2026 |
+| Objective | Seal the outgoing Cursor conversation in the existing occupancy records so a fresh Cursor can reconstruct current state from the repository. |
+| Business decision | This is not a Review Turnover. The exact trigger `Review Turnover` was not invoked. The 2026-09-24 Review Turnover package remains historical. ChatGPT Review Turnover remains **NOT STARTED**. Mac office remains **PRIMARY**. The hosted database remains a validation copy. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED / NOT PUBLISHED**. The next governed action is **NOT AUTOMATICALLY AUTHORIZED**. |
+| Architectural decision | Use the existing session-handoff, current-state, roadmap, and chat-workflow-log occupancy. Do not create a second turnover system. Do not rebuild the 22-point Review Turnover package. Pre-turnover HEAD **`e302d5ab175be1eba4c792114bb0975998e25056`**. Turnover record SHA **`CURSOR_TURNOVER_RECORD_SHA_PENDING`**. Pin SHA recorded after this docs commit. |
+| Prompt template used | Architect CURRENT CURSOR → FRESH CURSOR TURNOVER |
+| Approved Cursor prompt summary | Verify the accepted synchronization. Record the Cursor turnover in existing occupancy. Commit, push, and pin. Do not change product, database, Render, authentication, scores, or FG-039. |
+| Files expected to change | `docs/chat-workflow-log.md`, `docs/current-state.md`, `docs/platform-roadmap.md`, `docs/session-handoff.md` |
+| Files prohibited from changing | Application code, tests, requirements, `.python-version`, migrations, both databases, Flask, Render, secrets, FG-039, historical log entries, the 2026-09-24 §22 fence |
+| Implementation result | **CURSOR-TO-CURSOR TURNOVER RECORDED.** Turnover record SHA **`CURSOR_TURNOVER_RECORD_SHA_PENDING`**. Pin SHA recorded after this docs commit. Review Turnover **NOT STARTED**. |
+| Governance precedence | Constitution Article 1: the repository is authority. Continuity protocol: Review Turnover runs only on the exact phrase `Review Turnover`. Development workflow: ordinary resume uses `docs/session-handoff.md`. This seal updates that resume. Later current pointers supersede the 2026-09-24 handoff header, the roadmap CURRENT row, the README catalog percentage, and the FG-039 gate-file opening status. |
+| Programme | Rule 16 **SEALED**. S16 **APPLIED LIVE** at Alembic `h8c9d0e1f2a3`. FG-040 **CLOSED**. FG-039 **PARKED / NOT PUBLISHED**. Official V1 **65% / 4 of 11**. Secondary **79% / 22 of 28**. Not rescored. Phase: V1 hosted office / hosted validation. |
+| Mac | Primary database `instance/brayman_estimator.db` size `3485696` / mtime `1790334394.3628652` / integrity **ok** / Alembic `h8c9d0e1f2a3`. Flask **5460** **NOT LISTENING**. PID **62523** absent. Stash **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**. |
+| Hosted | Render hosts the CalibraytAI application. HostPapa remains the public website host. Service `Calibryatai` / `srv-dar95mh42hec73df4rug` / `https://calibryatai.onrender.com` / Virginia / auto-deploy **OFF**. Disk 1 GB at `/opt/render/project/src/instance`. Hosted file is a **VALIDATION COPY**. Application **LIVE**. `/login` reachable. Running command `gunicorn -w 1 --bind 0.0.0.0:$PORT 'app:create_app()'`. Running Render SHA **NOT INDEPENDENTLY VERIFIED**. |
+| Identity | User 1 / Membership 1 / Joel Brayman / `uat@example.invalid` / active / ORG-001 / Instance Owner / `COMPANY_MANAGEMENT`. Password hash present and not recorded. Mac user count 14. `/login`, `/forgot-password`, token reset, and CLI `flask auth reset-password` exist. No Create Account route was found. No separate logged-in Change Password route was found. |
+| Distinctions | Mac **PRIMARY**. Hosted database **VALIDATION COPY**. Hosted application **LIVE**. Hosted authentication **NOT COMPLETE**. Controlled E2E **NOT STARTED**. Cutover **NOT STARTED**. V1 **NOT RESCORED**. |
+| V1 checklist | [x] Rule 16 correction programme. [x] Whole-system Rule 16 validation. [x] Rule 16 final seal. [x] S16 applied live. [x] FG-040 hosted-office configuration. [x] Render selected / runtime pinned. [x] Render service specification. [x] Render creation readiness. [x] Safe first-deploy bootstrap. [x] Render service created. [x] 1 GB persistent disk created / verified. [x] Hosted DB transferred. [x] Hosted DB SHA / integrity / Alembic verified. [x] Hosted environment configured. [x] Correct Gunicorn factory deployed. [x] CalibraytAI application LIVE on Render. [x] `/login` reachable. [~] Hosted authentication / read-only validation. [ ] Controlled hosted V1 E2E. [ ] Cutover / rollback. [ ] V1 rescore. [ ] BRAYMAN real-life UAT readiness. [ ] FG-039 Business Decision Tool publication. |
+| Stale surfaces | `docs/session-handoff.md` header still says the hosted application does not exist and Flask PID 62523 is running. `docs/platform-roadmap.md` CURRENT row still says Flask PID 62523 is running. `docs/project-state-report.md` remains dated 2026-09-20. `docs/README.md` catalog still shows 60%. The FG-039 gate-file opening status is stale. Historical “Render NOT CREATED” sentences remain prior records. Current pointers are this entry, current-state, roadmap NEXT AUTHORIZED ACTION, and session-handoff §7, §8, §20, §21, and the §22 current block. |
+| Tests | Not run. This record changes no application code, dependencies, or tests. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Hosted authentication / read-only validation is not authorized. Running Render commit SHA is not independently verified. Controlled hosted E2E is not started. Cutover is not started. FG-039 remains parked. |
+| Next approved step | STOP FOR CHATGPT ARCHITECT. Not automatically authorized. Do not execute authentication. |
+| Next approved prompt | The fresh Cursor bootstrap is read-only synchronization. It does not authorize the next product action. |
+| Commit hash | TURNOVER RECORD `CURSOR_TURNOVER_RECORD_SHA_PENDING`; PIN hash recorded after this docs commit |
+
 ### 2026-09-25 — Render operational-state reconciliation SHA-pin
 
 | Field | Content |

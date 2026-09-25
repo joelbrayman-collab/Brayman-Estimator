@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Render safe first-deploy bootstrap SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Docs-only SHA-pin of the pushed safe first-deploy bootstrap record. Close the milestone. Do not create Render. |
+| Business decision | Mac office remains **PRIMARY**. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED**. No Review Turnover until V1. Closing this milestone does not authorize Render creation. |
+| Architectural decision | Docs-only pin of bootstrap SHA **`ff97365dc1f5105e1fd04c440eda5099848391e5`**. Pin SHA recorded after this docs commit. The temporary start command, mount `/opt/render/project/src/instance`, later URI `sqlite:////opt/render/project/src/instance/brayman_estimator.db`, bootstrap environment `CALIBRAYTAI_HOSTED=1` only, omitted `CALIBRAYTAI_DATABASE_URI` and `SECRET_KEY`, seed-transfer gate, hosted verification gate, and later Gunicorn-switch gate remain as recorded. Render **NOT CREATED**. Seed **NOT UPLOADED**. Hosted deployment **NOT STARTED**. |
+| Prompt template used | Architect RENDER SAFE FIRST-DEPLOY BOOTSTRAP ACCEPT PUSH / SHA-PIN / CLOSE |
+| Approved Cursor prompt summary | Push the accepted bootstrap occupancy commit. Minimum current-pointer pin. Commit and push the pin. Do not create Render. Do not rewrite the historical working-tree log entry. |
+| Files expected to change | Current occupancy docs whose pointers still said the bootstrap record was uncommitted |
+| Files prohibited from changing | Application code, tests, requirements, `.python-version`, migrations, live DB, Flask 5460, the local seed, secrets, the bootstrap command, FG-039, the historical bootstrap working-tree log entry |
+| Implementation result | **DERIVED / LOCALLY PROVEN / RECORDED / COMMITTED / PUSHED / SHA-PINNED / CLOSED.** Bootstrap SHA **`ff97365dc1f5105e1fd04c440eda5099848391e5`**. Pin SHA recorded after this docs commit. Render **NOT CREATED**. Seed **NOT UPLOADED**. |
+| Tests | Not rerun. Accepted local proof remains the closed port 8765 result. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Render **NOT CREATED**. Seed **NOT UPLOADED**. Hosted validation **NOT PERFORMED**. Production E2E **NOT PERFORMED**. |
+| Next approved step | STOP FOR CHATGPT ARCHITECT. Do not create Render from this pin. |
+| Next approved prompt | Not authorized from this pin. |
+| Commit hash | PRODUCT `ff97365dc1f5105e1fd04c440eda5099848391e5`; PIN hash recorded after this docs commit |
+
 ### 2026-09-25 — Render safe first-deploy bootstrap (working tree)
 
 | Field | Content |

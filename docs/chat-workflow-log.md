@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Whole-system Rule 16 final seal (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` @ `b8f90031fcc7c90abcc4496b2bb904278388019a` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Record the Architect final seal of whole-system Rule 16 in the working tree. Do not commit. Do not start deployment readiness. |
+| Business decision | Whole-system Rule 16 **SEALED**. Validation **PASS**. No remaining Rule 16 blocker. Closed correction law remains closed. F15 and T16 remain orphaned dispositions, not implementations. R11 **DISPOSED / NOT REQUIRED FOR RULE 16 V1**. No duplicate-Time identity law. C08 **RETIRED / UNDEFINED RESIDUAL / NOT A RULE 16 V1 BLOCKER**. No C08 product law. FG-039 remains PARKED and is not part of this seal. |
+| Architectural decision | Governance record only. The seal does not apply S16 live, deploy, run hosted validation, run production E2E, or rescore V1. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. |
+| Prompt template used | Architect RULE 16 FINAL SEAL working tree only |
+| Approved Cursor prompt summary | Update current authority to SEALED. Preserve historical OPEN / NOT SEALED records. No product, tests, schema, live DB, commit, or push. Do not start the post-seal path. |
+| Files expected to change | Current occupancy docs that still said Rule 16 was open or not sealed |
+| Files prohibited from changing | Product code, tests, migrations, live DB, Flask 5460, recovery stash, V1 scores, FG-039 product, historical log entries, historical Prior paragraphs, the turnover startup fence, project-state-report, milestones |
+| Implementation result | WORKING TREE ONLY. WHOLE-SYSTEM RULE 16 SEALED. NOT COMMITTED. Deployment readiness NOT STARTED. |
+| Tests | Not re-run. Accepted dedicated regression **194 passed**, 721 warnings, **115.67s**, exit **0**. Accepted full suite **1739 passed**, 5822 warnings, **783.41s**, exit **0**. Live DB unchanged (`3457024` / mtime `1790020245.9238403`). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Seal not committed. LIVE S16 NOT APPLIED. FG-039 PARKED. V1 not rescored. Post-seal path not started. |
+| Next approved step | STOP for ChatGPT Architect ACCEPT COMMIT. Do not start deployment readiness. |
+| Next approved prompt | Architect ACCEPT COMMIT of the Rule 16 seal. Not authorized from this working tree. |
+| Commit hash | NOT COMMITTED |
+
+
 ### 2026-09-25 — Rule 16 validation-record SHA-pin
 
 | Field | Content |

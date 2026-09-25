@@ -21,8 +21,53 @@ class SecretKeyConfigError(RuntimeError):
     """Non-development SECRET_KEY is missing or is the committed development value."""
 
 
+class HostedDatabaseConfigError(RuntimeError):
+    """Hosted mode was requested without an explicit database URI."""
+
+
+_TRUTHY_FLAGS = {"1", "true", "yes", "on"}
+LOCAL_DATABASE_URI = "sqlite:///brayman_estimator.db"
+
+
 def _env_flag(name: str) -> bool:
-    return str(os.environ.get(name, "")).strip().lower() in {"1", "true", "yes", "on"}
+    return str(os.environ.get(name, "")).strip().lower() in _TRUTHY_FLAGS
+
+
+def _flag_value(value) -> bool:
+    if isinstance(value, str):
+        return value.strip().lower() in _TRUTHY_FLAGS
+    return bool(value)
+
+
+def _is_hosted(app: Flask) -> bool:
+    """Hosted mode is explicit. Debug off is not this signal."""
+    if "CALIBRAYTAI_HOSTED" in app.config:
+        return _flag_value(app.config.get("CALIBRAYTAI_HOSTED"))
+    return _env_flag("CALIBRAYTAI_HOSTED")
+
+
+def _apply_hosted_database(app: Flask) -> None:
+    """Require an explicit URI only in hosted mode. Local mode ignores it."""
+    if not _is_hosted(app):
+        return
+    if "CALIBRAYTAI_DATABASE_URI" in app.config:
+        raw = app.config.get("CALIBRAYTAI_DATABASE_URI")
+    else:
+        raw = os.environ.get("CALIBRAYTAI_DATABASE_URI")
+    uri = "" if raw is None else str(raw).strip()
+    if not uri:
+        raise HostedDatabaseConfigError(
+            "CALIBRAYTAI_DATABASE_URI must be supplied for hosted operation."
+        )
+    app.config["SQLALCHEMY_DATABASE_URI"] = uri
+
+
+def _apply_hosted_session_cookies(app: Flask) -> None:
+    if not _is_hosted(app):
+        return
+    app.config["SESSION_COOKIE_SECURE"] = True
+    app.config["SESSION_COOKIE_HTTPONLY"] = True
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
 
 def _apply_secret_key(app: Flask) -> None:
@@ -32,6 +77,19 @@ def _apply_secret_key(app: Flask) -> None:
     if secret is None or secret == "":
         env_secret = os.environ.get("SECRET_KEY")
         secret = env_secret if env_secret else None
+
+    if _is_hosted(app):
+        if not secret:
+            raise SecretKeyConfigError(
+                "SECRET_KEY must be supplied for hosted operation."
+            )
+        if secret == DEVELOPMENT_SECRET_KEY:
+            raise SecretKeyConfigError(
+                "SECRET_KEY must not be the committed development secret "
+                "in hosted operation."
+            )
+        app.config["SECRET_KEY"] = secret
+        return
 
     if testing:
         app.config["SECRET_KEY"] = secret or TESTING_FALLBACK_SECRET_KEY
@@ -175,7 +233,7 @@ def _register_office_auth(app: Flask) -> None:
 def create_app(config=None):
     app = Flask(__name__)
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///brayman_estimator.db"
+    app.config["SQLALCHEMY_DATABASE_URI"] = LOCAL_DATABASE_URI
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["PLAN_UPLOAD_MAX_BYTES"] = 25 * 1024 * 1024
     app.config["HISTORICAL_UPLOAD_MAX_BYTES"] = 25 * 1024 * 1024
@@ -189,7 +247,9 @@ def create_app(config=None):
     if config:
         app.config.update(config)
 
+    _apply_hosted_database(app)
     _apply_secret_key(app)
+    _apply_hosted_session_cookies(app)
 
     if app.config.get("TESTING"):
         app.config.setdefault("WTF_CSRF_ENABLED", False)

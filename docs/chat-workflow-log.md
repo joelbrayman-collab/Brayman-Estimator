@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — FG-040 hosted office production configuration (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` @ `52e46cc4fef0d2f3a6dca25fa0f7d60b676584a7` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Implement the accepted production-readiness configuration so a later host can be configured safely. Do not deploy. |
+| Business decision | Hosted office is wanted. It is not online. Mac office remains the running office. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED / NOT PUBLISHED**. |
+| Architectural decision | Local mode stays the default. Hosted mode is only `CALIBRAYTAI_HOSTED=1`. Hosted startup requires `CALIBRAYTAI_DATABASE_URI` and a non-development `SECRET_KEY`, sets HTTPS session cookies, and does not use the Mac Family 05 path. Gunicorn entry stays `app:app`. No new worker, Procfile, or host file. |
+| Prompt template used | Architect HOSTED OFFICE — PRODUCTION READINESS CONFIGURATION IMPLEMENTATION AUTHORIZATION |
+| Approved Cursor prompt summary | Implement hosted-mode configuration, fail-closed database URI, hosted secret law, secure cookies, Family 05 hosted-path protection, and bounded tests. Working tree only. Do not commit, push, or deploy. |
+| Files expected to change | `app/__init__.py`, `app/services/family_05_master.py`, `tests/test_hosted_production_config.py`, FG-040 gate, feature-gate index, current occupancy docs |
+| Files prohibited from changing | Routes, models, migrations, templates, business modules, live DB, Flask 5460, backup, recovery stash, V1 scores, FG-039 product |
+| Implementation result | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** Local Flask **RUNNING** PID **62523** at **127.0.0.1:5460**. Live DB size `3485696` / mtime `1790334394.3628652` / revision **`h8c9d0e1f2a3`** / integrity **ok**. Hosted deployment **NOT PERFORMED**. |
+| Tests | Cursor Terminal. New `./venv/bin/python -m pytest -q tests/test_hosted_production_config.py` — **18 passed**, 0 warnings, **0.67s**, exit **0**. Auth `tests/test_auth_fg018.py` — **37 passed**, 58 warnings, **17.30s**, exit **0**. Family 05 `tests/test_synthetic_ontario_contract_uat_fg024.py` — **5 passed**, 18 warnings, **1.08s**, exit **0**. Focused startup/mail/Family 05 — **126 passed**, 204 warnings, **43.66s**, exit **0**. Full `./venv/bin/python -m pytest -q` — **1757 passed**, 5822 warnings, **778.04s**, exit **0**. |
+| Project-state-report update | No. Not a milestone close. |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Not committed. Hosted application **DOES NOT EXIST**. Hosted validation **NOT PERFORMED**. Production E2E **NOT PERFORMED**. V1 not rescored. FG-039 parked. |
+| Next approved step | STOP for Architect commit review. Do not commit from this implementation prompt. |
+| Next approved prompt | Architect commit review. Not authorized from this implementation. |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-25 — Governed live h8 state SHA-pin
 
 | Field | Content |

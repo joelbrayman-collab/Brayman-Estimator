@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-09-24 |
+| Updated | 2026-09-25 |
 
 Feature Gate documents answer the twelve governance questions in [platform-governance.md](../platform-governance.md) for a specific module or milestone **before** Cursor implementation.
 
@@ -59,6 +59,7 @@ Do not rewrite historical gate-at-close facts. Do not treat a gate-at-close head
 | [FG-037](FG-037-company-management-access-domain-authorization.md) | Company / Management Access-Domain Authorization | **CLOSED / OPERATIONAL FOR COMPANY_MANAGEMENT AUTHORIZATION** (2026-09-17). Product SHA **`1649b6fab6d362c19088290a6f3cb52f2a0b3d92`**. Additive **`a0b1c2d3e4f5`** applied live. First live grant: ORG-001 Membership **1** / Joel Brayman / `COMPANY_MANAGEMENT`. Grant rows **1**. Does **not** implement PERF-C, Company Attention, Field change, or Sensitive Financial. Does **not** rescore V1. |
 | [FG-038](FG-038-instance-owner-authority-foundation.md) | Instance Owner Authority Foundation (PA-A) | **OPEN / PARTIAL / PA-A IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / NOT LIVE-MIGRATED / NO OWNER ASSIGNED** (2026-09-18). Product SHA **`01e7463082b84b2fcd9d61ff7125a5012b7f8043`**. Additive **`c3d4e5f6a7b8`** revises **`b2c3d4e5f6a7`**. Live Alembic remains **`b2c3d4e5f6a7`**. All organizations ownerless. Sys Admin **NOT IMPLEMENTED**. People & Access UI **NOT IMPLEMENTED**. Close/Reopen **NOT IMPLEMENTED**. Does **not** rescore V1. |
 | [FG-039](FG-039-employment-vs-entrepreneurship-decision-tool.md) | Employment vs Entrepreneurship Decision Tool (Business Owner Assessment) | **OPEN / AUTHORIZED / IMPLEMENTED IN WORKING TREE / NOT COMMITTED** (2026-09-24). Neutral PLAN decision tool. No schema. No migration. No live DB. Does **not** invent FG-036. Does **not** rescore V1. Does **not** start F07 or F15. |
+| [FG-040](FG-040-hosted-office-production-configuration.md) | Hosted Office Production Configuration | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED** (2026-09-25). Hosted mode requires an explicit database URI and a non-development secret, enables HTTPS session cookies, and does not fall back to the Mac Family 05 path. Local office behaviour unchanged. No schema. No migration. Hosted deployment **NOT PERFORMED**. Does **not** rescore V1. FG-039 remains **PARKED**. |
 
 [FG-015](FG-015-permit-foundation-v1-project-location-jurisdiction-preliminary-permit-profile.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-016](FG-016-ontario-ottawa-permit-intelligence-poc.md) is **CLOSED / OPERATIONAL FOR UAT**. Pratt office UAT **PASSED** on port **5009** (project id 9). [FG-017](FG-017-organization-brand-profile-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. [FG-018](FG-018-organization-authentication-actor-identity-and-membership-v1.md) is **CLOSED / OPERATIONAL FOR UAT**. Live current today `d3e4f5a6b7c8 (head)`. Office authentication UAT **PASSED** on port **5011**.
 

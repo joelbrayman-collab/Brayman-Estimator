@@ -50,12 +50,21 @@ def governed_presentation_master() -> dict:
 
 
 def family_05_master_path() -> Path:
+    hosted = False
     try:
         configured = current_app.config.get("FAMILY_05_MASTER_PATH")
+        from app import _is_hosted
+
+        hosted = _is_hosted(current_app)
     except RuntimeError:
         configured = None
     if configured:
         return Path(configured)
+    if hosted:
+        raise Family05MasterError(
+            BLOCK_MISSING_PRESENTATION_MASTER,
+            "Family 05 presentation master is not available.",
+        )
     return DEFAULT_FAMILY_05_MASTER_PATH
 
 

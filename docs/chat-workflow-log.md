@@ -43,6 +43,37 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Render service creation specification (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` @ `4997a542a6f5161f3711136c6b4bbd029031dfd0` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Write the reviewed Render service-creation specification. Working tree only. Do not create Render. |
+| Business decision | Render remains the sole V1 hosting target. Railway remains fallback only if a later hard Render incompatibility is proven. Mac office remains **PRIMARY**. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED**. No Review Turnover until V1. That process preference is not a new governance edit beyond this occupancy record. |
+| Architectural decision | One future web service. One instance. One Gunicorn worker. Auto-deploy **OFF**. Manual deploy. First candidate SHA **`4997a542a6f5161f3711136c6b4bbd029031dfd0`** is not deployed by this package. Build `pip install -r requirements.txt`. Start `gunicorn -w 1 --bind 0.0.0.0:$PORT app:app`. No `flask run`. No `python app.py`. No automatic `flask db upgrade`. Python **3.9.6** from `.python-version`. No Procfile, `render.yaml`, or `runtime.txt`. One persistent disk at `<source root>/instance`, confirmed in the Render dashboard when the service is later created. Database file `<source root>/instance/brayman_estimator.db`. URI shape `sqlite:////<source root>/instance/brayman_estimator.db`. Do not start the web process if that file is absent. Do not let an empty disk create a blank office database. Occupied office instance data excluding backups and UAT scratch is approximately **26.8 MB**. Use the smallest Render disk that holds that seed plus upload growth. Confirm the provider minimum in the dashboard at creation time. Do not record an unverified disk-plan size. |
+| Prompt template used | Architect RENDER SERVICE CREATION SPECIFICATION, working tree only |
+| Approved Cursor prompt summary | Record the service, build, start, disk, environment, copy, validation, and later cutover sheet. Do not create Render. Do not commit. |
+| Files expected to change | `docs/chat-workflow-log.md`, `docs/current-state.md`, `docs/platform-roadmap.md`, `docs/session-handoff.md` |
+| Files prohibited from changing | Application code, tests, requirements, `.python-version`, migrations, live DB, Flask 5460, secrets, Procfile, `render.yaml`, `runtime.txt`, FG-039, FG-040 product |
+| Implementation result | **WRITTEN IN WORKING TREE / NOT COMMITTED / NOT PUSHED.** Render service **NOT CREATED**. |
+| Environment | Required before first start: `CALIBRAYTAI_HOSTED=1`; `CALIBRAYTAI_DATABASE_URI` as the absolute SQLite URI; `SECRET_KEY` a new hosted value, not `development-secret-key` and not a copy of the Mac value. `FLASK_DEBUG` unset or off. `PORT` is supplied by Render and used only in the Gunicorn bind. Not required for first boot: `PUBLIC_BASE_URL`, `FAMILY_05_MASTER_PATH`, `TRANSACTIONAL_EMAIL_PROVIDER`, `POSTMARK_SERVER_TOKEN`, `TRANSACTIONAL_FROM_EMAIL`, `SIGNING_SOFFICE_PATH` / `SOFFICE_PATH`. No secret values recorded. |
+| Database bootstrap | First hosted database is a copy of the occupied Mac office DB, not a blank office. Mac stays authoritative during validation. Copy by SQLite online backup to a new file outside the live database path. Verify the copy: `alembic_version` `h8c9d0e1f2a3` and `PRAGMA integrity_check` ok. Do not migrate automatically. Do not mutate the Mac database. No two-writer architecture. |
+| First validation | Infrastructure and read-only checks only: process, disk, file present, Alembic h8, integrity, `GET /login` 200, `GET /forgot-password` 200, login without a following write, open an existing Project, Estimate, and Proposal, tenant read checks. Mutating checks require a later prompt and a disposable copy that will be discarded. |
+| Later cutover | Mac sole writer; final Mac backup; Mac write freeze; fresh SQLite online backup; verify h8 and integrity; hosted process stopped while the hosted file is replaced; start one worker; production E2E; go/no-go; no-go leaves Mac primary; go makes hosted primary and keeps the Mac frozen; then a post-cutover hosted backup. Not executed. |
+| GitHub / deploy | `joelbrayman-collab/Brayman-Estimator`, branch `main`, auto-deploy off, manual deploy, candidate SHA `4997a542a6f5161f3711136c6b4bbd029031dfd0`. Running release SHA must equal the authorized SHA. GitHub is not connected by this package. |
+| Public exposure | Future pre-exposure note only. Login-exempt routes exist, including parked FG-039. A reachable office URL also reaches those routes unless a later exposure control says otherwise. No FG-039 edit. No new rate limit. No ProxyFix. |
+| Owner boundary | No Joel action in this package. Later, Joel creates the Render account, authorizes GitHub, selects the plan, creates the service and disk, enters `SECRET_KEY` and required env values, and presses manual deploy only when authorized. |
+| Tests | Not run. This package changes no application code, dependencies, or tests. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Not committed. Render service **NOT CREATED**. Disk **NOT CREATED**. Environment **NOT CONFIGURED**. Data copied **NO**. |
+| Next approved step | STOP for Architect review of this specification. Do not create Render. Do not deploy. Do not copy the database. |
+| Next approved prompt | Architect ACCEPT COMMIT of this specification. Not authorized from this implementation. |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-25 — Render Python runtime SHA-pin
 
 | Field | Content |

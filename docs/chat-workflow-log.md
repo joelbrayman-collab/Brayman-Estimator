@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Render service creation specification SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Docs-only SHA-pin of the pushed Render service-creation specification. Close the specification milestone. Do not create Render. |
+| Business decision | Render remains the sole V1 hosting target. Railway remains fallback only if a later hard Render incompatibility is proven. Mac office remains **PRIMARY**. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED**. No Review Turnover until V1. |
+| Architectural decision | Docs-only pin of specification SHA **`60255c7e814a2e411e62f66a6c11595f13a9cdcb`**. Pin SHA recorded after this docs commit. One service. One instance. One Gunicorn worker. Auto-deploy **OFF**. Manual deploy. Python **3.9.6**. Build `pip install -r requirements.txt`. Start `gunicorn -w 1 --bind 0.0.0.0:$PORT app:app`. Persistent disk `<source root>/instance`. Occupied database required before start. Render service **NOT CREATED**. Hosted deployment **NOT STARTED**. Hosted validation **NOT PERFORMED**. Production E2E **NOT PERFORMED**. Closing this specification does not authorize Render creation. |
+| Prompt template used | Architect RENDER SERVICE CREATION SPECIFICATION ACCEPT PUSH / SHA-PIN / CLOSE |
+| Approved Cursor prompt summary | Push the accepted specification commit. Minimum current-pointer pin. Commit and push the pin. Do not create Render. Do not rewrite the historical working-tree log entry. |
+| Files expected to change | Current occupancy docs whose pointers still said the specification was uncommitted |
+| Files prohibited from changing | Application code, tests, requirements, `.python-version`, migrations, live DB, Flask 5460, recovery stash, backup, V1 scores, FG-039, Procfile, `render.yaml`, `runtime.txt`, the historical specification working-tree log entry |
+| Implementation result | **COMMITTED / PUSHED / SHA-PINNED / CLOSED.** Specification SHA **`60255c7e814a2e411e62f66a6c11595f13a9cdcb`**. Pin SHA recorded after this docs commit. Render service **NOT CREATED**. |
+| Tests | Not run. This pin changes no application code, dependencies, or tests. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Render service **NOT CREATED**. Disk **NOT CREATED**. Environment **NOT CONFIGURED**. Data copied **NO**. Hosted validation **NOT PERFORMED**. Production E2E **NOT PERFORMED**. |
+| Next approved step | STOP FOR CHATGPT ARCHITECT. Do not create Render from this pin. |
+| Next approved prompt | Not authorized from this pin. |
+| Commit hash | PRODUCT `60255c7e814a2e411e62f66a6c11595f13a9cdcb`; PIN hash recorded after this docs commit |
+
 ### 2026-09-25 — Render service creation specification (working tree)
 
 | Field | Content |

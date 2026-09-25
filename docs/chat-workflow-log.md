@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Rule 16 seal SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Docs-only SHA-pin of the accepted whole-system Rule 16 seal. |
+| Business decision | Whole-system Rule 16 **SEALED / COMMITTED / PUSHED / PINNED**. Validation **PASS**. No remaining Rule 16 blocker. F15 and T16 remain orphaned dispositions. R11 **DISPOSED / NOT REQUIRED FOR RULE 16 V1**. C08 **RETIRED / UNDEFINED RESIDUAL / NOT A RULE 16 V1 BLOCKER**. FG-039 remains PARKED. |
+| Architectural decision | None. Docs-only pin of seal SHA **`13e9ede628febb39cfd0f522dcc0b89e2166e67d`**. The seal does not apply S16 live, deploy, run hosted validation, run production E2E, or rescore V1. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. |
+| Prompt template used | Architect RULE 16 FINAL SEAL ACCEPT PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Push the accepted seal commit. Minimum current-pointer pin. Do not start deployment readiness. Do not rewrite historical entries or the turnover fence. |
+| Files expected to change | Current occupancy docs whose pointers still said the seal was uncommitted |
+| Files prohibited from changing | Product code, tests, migrations, live DB, Flask 5460, recovery stash, V1 scores, FG-039 product, historical log entries, historical Prior paragraphs, the turnover startup fence |
+| Implementation result | SEAL PUSHED. SHA-PIN. RULE 16 SEALED / COMMITTED / PUSHED / PINNED. DEPLOYMENT READINESS NOT STARTED. |
+| Tests | Not re-run for pin. Accepted dedicated regression **194 passed**, 721 warnings, **115.67s**, exit **0**. Accepted full suite **1739 passed**, 5822 warnings, **783.41s**, exit **0**. Live DB unchanged (`3457024` / mtime `1790020245.9238403`). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | LIVE S16 NOT APPLIED. FG-039 PARKED. V1 not rescored. Post-seal path not started. |
+| Next approved step | STOP. Do not start deployment readiness. Return to ChatGPT Architect. |
+| Next approved prompt | Architect authorization of deployment readiness. Not authorized from this pin. |
+| Commit hash | SEAL `13e9ede628febb39cfd0f522dcc0b89e2166e67d`; PIN hash filled after this commit |
+
+
 ### 2026-09-25 — Whole-system Rule 16 final seal (working tree)
 
 | Field | Content |

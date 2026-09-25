@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — FG-040 hosted office production configuration SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Docs-only SHA-pin of the pushed FG-040 product commit. |
+| Business decision | FG-040 **CLOSED IN GIT / IMPLEMENTED / TESTED / PUSHED / PINNED**. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED / NOT PUBLISHED**. Mac office remains **PRIMARY**. |
+| Architectural decision | Docs-only pin of product SHA **`457816899a6e4e6c80f15bf37db5ee5415716de7`**. Pin SHA recorded after this docs commit. Hosted application **DOES NOT EXIST**. Hosting platform **NOT YET CONFIRMED**. Production hostname **NOT YET CHOSEN**. |
+| Prompt template used | Architect FG-040 ACCEPT PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Push the accepted FG-040 product commit. Minimum current-pointer pin. Do not start hosting. Do not rewrite the historical working-tree log entry. |
+| Files expected to change | Current occupancy docs whose pointers still said FG-040 was uncommitted |
+| Files prohibited from changing | Product code, tests, migrations, live DB, Flask 5460, recovery stash, backup, V1 scores, FG-039 product, the historical FG-040 working-tree log entry |
+| Implementation result | PRODUCT PUSHED. SHA-PIN. Product SHA **`457816899a6e4e6c80f15bf37db5ee5415716de7`**. Local Flask **RUNNING** PID **62523** at **127.0.0.1:5460**. Live DB unchanged. Hosted deployment **NOT PERFORMED**. |
+| Tests | Not re-run. Accepted evidence: hosted config **18 passed**, auth **37 passed**, Family 05 **5 passed**, focused **126 passed**, full suite **1757 passed**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Hosted application **DOES NOT EXIST**. Hosting platform **NOT YET CONFIRMED**. Production hostname **NOT YET CHOSEN**. Hosted validation **NOT PERFORMED**. Production E2E **NOT PERFORMED**. V1 not rescored. FG-039 parked. |
+| Next approved step | STOP. Do not start hosting-platform confirmation. |
+| Next approved prompt | Architect authorization of hosting platform confirmation. Not authorized from this pin. |
+| Commit hash | PRODUCT `457816899a6e4e6c80f15bf37db5ee5415716de7`; PIN hash recorded after this docs commit |
+
 ### 2026-09-25 — FG-040 hosted office production configuration (working tree)
 
 | Field | Content |

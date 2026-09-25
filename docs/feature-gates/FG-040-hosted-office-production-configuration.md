@@ -7,7 +7,7 @@
 | Target Milestone | **None.** FG-040 is the governing identifier. Do not assign a new M0xx number. |
 | Module | **Application factory / startup configuration** (`app/__init__.py`). No business module owns new records. |
 | Date | 2026-09-25 |
-| Status | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED** |
+| Status | **CLOSED IN GIT / IMPLEMENTED / TESTED / PUSHED / PINNED.** Product SHA **`457816899a6e4e6c80f15bf37db5ee5415716de7`**. Pin SHA recorded after this docs commit. |
 | Architecture | Hosted SQLite for V1. One Gunicorn worker is a later host command. This gate does not deploy. |
 | Related ADRs | **None.** |
 | Prerequisites | Whole-system Rule 16 **SEALED**. S16 **APPLIED LIVE** at `h8c9d0e1f2a3`. Production architecture accepted: hosted SQLite, one worker, persistent disk, HTTPS, environment secrets. |
@@ -19,8 +19,8 @@
 
 | Layer | State |
 |-------|--------|
-| Feature Gate (this document) | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED** |
-| Implementation | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED** |
+| Feature Gate (this document) | **CLOSED IN GIT / IMPLEMENTED / TESTED / PUSHED / PINNED.** Product SHA **`457816899a6e4e6c80f15bf37db5ee5415716de7`**. Pin SHA recorded after this docs commit. |
+| Implementation | **CLOSED IN GIT / IMPLEMENTED / TESTED / PUSHED / PINNED.** Product SHA **`457816899a6e4e6c80f15bf37db5ee5415716de7`**. Pin SHA recorded after this docs commit. |
 | Schema / Alembic | **NO** change. Repository head remains **`h8c9d0e1f2a3`**. Live remains **`h8c9d0e1f2a3`**. |
 | New ADR | **None** |
 | Hosted deployment | **NOT PERFORMED.** Hosted application **DOES NOT EXIST**. |

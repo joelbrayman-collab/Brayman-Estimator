@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Governed live h8 state record (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` @ `2fea3c65987f3bd1e06aba00e9277d2afe2a1f90` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Record the accepted live h8 transition in current occupancy. Working tree only. Do not commit. |
+| Business decision | Whole-system Rule 16 remains **SEALED / COMMITTED / PUSHED / PINNED**. S16 **CLOSED IN GIT / APPLIED LIVE**. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED / NOT PUBLISHED**. |
+| Architectural decision | Governance record only. Local office application is running against the migrated live database. Local startup/smoke is not hosted validation and not production E2E. Hosted application deployment does not exist. |
+| Prompt template used | Architect POST-RULE-16 GOVERNED LIVE H8 STATE RECORD, working tree only |
+| Approved Cursor prompt summary | Record accepted live h8 facts on current occupancy surfaces. Preserve historical g7 / Flask-stopped records and the turnover fence. Do not commit or push. |
+| Files expected to change | `docs/session-handoff.md`, `docs/current-state.md`, `docs/platform-roadmap.md`, `docs/chat-workflow-log.md` |
+| Files prohibited from changing | Product code, tests, migrations, live DB, backup, Flask process, recovery stash, V1 scores, FG-039 product, historical Prior paragraphs, the turnover startup fence |
+| Implementation result | WORKING TREE. S16 **APPLIED LIVE**. Live Alembic **`h8c9d0e1f2a3`**. Live DB size `3485696` / mtime `1790334394.3628652` / integrity **ok**. Estimates **37** / Proposals **17** / Change Orders **24**. Organization resolution complete. Organization-scoped collisions none. `approved_internal_direct_cost` present; existing non-NULL **0**. Wage-event rows **0**. Punch rows **0**. Backup `instance/brayman_estimator-backup-before-s16-h8c9d0e1f2a3.db` size `3457024` / mtime `1790334388.8151984` revision **`g7b8c9d0e1f2`** **PRESERVED**. Local Flask **RUNNING** PID **62523** at **127.0.0.1:5460**, debug off, reloader off. `GET /login` **200**. `GET /forgot-password` **200**. No application-data mutation. Stash **`840dba8320b59ff9464410fec390d755a31a56aa`** **PRESERVED**. |
+| Tests | Not re-run. This package is a documentation record of the accepted migration and smoke. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Hosted application deployment does not exist. Hosted validation **NOT PERFORMED**. Production E2E **NOT PERFORMED**. V1 not rescored. FG-039 parked. |
+| Next approved step | STOP. Return to ChatGPT Architect for explicit ACCEPT COMMIT. |
+| Next approved prompt | Architect ACCEPT COMMIT of this live-state record. Not authorized from this working tree. |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-25 — Rule 16 seal SHA-pin
 
 | Field | Content |

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Render Python runtime SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Docs-only SHA-pin of the pushed Render Python 3.9.6 runtime commit. |
+| Business decision | Render remains the sole V1 hosting target. Railway remains fallback only if a later hard Render incompatibility is proven. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED**. |
+| Architectural decision | Docs-only pin of product SHA **`3459008659f7fb2d9096fe2ae1dfb61a0abfc015`**. Pin SHA recorded after this docs commit. `.python-version` is `3.9.6`. Render service **NOT CREATED**. |
+| Prompt template used | Architect RENDER PYTHON RUNTIME PIN ACCEPT PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Push the accepted runtime commit. Minimum current-pointer pin. Do not create Render. Do not rewrite the historical working-tree log entry. |
+| Files expected to change | Current occupancy docs whose pointers still said the runtime pin was uncommitted |
+| Files prohibited from changing | `.python-version`, application code, tests, requirements, migrations, live DB, Flask 5460, recovery stash, backup, V1 scores, FG-039 product, the historical runtime working-tree log entry |
+| Implementation result | PRODUCT PUSHED. SHA-PIN. Product SHA **`3459008659f7fb2d9096fe2ae1dfb61a0abfc015`**. Render service **NOT CREATED**. |
+| Tests | Not re-run. Accepted evidence: hosted config **18 passed**, 0 warnings, **0.65s**, exit **0**. `pip check` No broken requirements found, exit **0**. Full suite **1757 passed**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Render service **NOT CREATED**. Hostname **NOT YET CHOSEN**. Data copied **NO**. Hosted validation **NOT PERFORMED**. Production E2E **NOT PERFORMED**. |
+| Next approved step | STOP. Do not create Render. |
+| Next approved prompt | Not authorized from this pin. |
+| Commit hash | PRODUCT `3459008659f7fb2d9096fe2ae1dfb61a0abfc015`; PIN hash recorded after this docs commit |
+
 ### 2026-09-25 — Render Python runtime pin (working tree)
 
 | Field | Content |

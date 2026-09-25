@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Render Python runtime pin (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` @ `cd899432f3c844f0520733313a4736f2e567369c` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Pin the Render V1 Python runtime to 3.9.6. Working tree only. Do not create Render. |
+| Business decision | Render is the sole V1 hosting target. Railway is fallback only if a later hard Render incompatibility is proven. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED**. |
+| Architectural decision | Post-FG-040 Render-readiness configuration. Not a new Feature Gate. Not a reopen of closed FG-040. Mechanism is repository-root `.python-version` with `3.9.6`. No `runtime.txt`. No application code change. |
+| Prompt template used | Architect RENDER HOSTING — PYTHON RUNTIME PIN, working tree only |
+| Approved Cursor prompt summary | Verify local CPython 3.9.6. Add the minimum runtime pin. Do not deploy. Do not commit. |
+| Files expected to change | `.python-version` and current occupancy docs |
+| Files prohibited from changing | Application code, requirements, tests, migrations, live DB, Flask 5460, secrets, Render account |
+| Implementation result | **IMPLEMENTED IN WORKING TREE / NOT COMMITTED.** Local `./venv/bin/python --version` is **Python 3.9.6**. Declared dependencies import on that interpreter. `pip check`: No broken requirements found. Exit 0. Render service **NOT CREATED**. |
+| Tests | Cursor Terminal. `./venv/bin/python -m pytest -q tests/test_hosted_production_config.py` — **18 passed**, 0 warnings, **0.65s**, exit **0**. `./venv/bin/pip check` — No broken requirements found. Exit **0**. Full suite not rerun. This package changes no application code, dependencies, or tests. Accepted FG-040 full suite on this interpreter remains **1757 passed**. |
+| Project-state-report update | No. Not a milestone close. |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Not committed. Render service does not exist. Hostname not chosen. Data not copied. |
+| Next approved step | STOP for Architect commit review. Do not create Render. |
+| Next approved prompt | Architect commit review of the runtime pin. Not authorized from this implementation. |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-25 — FG-040 hosted office production configuration SHA-pin
 
 | Field | Content |

@@ -43,6 +43,39 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Render safe first-deploy bootstrap (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` @ `4a86f87f86edd2d9b02f5788b85bcd9ad6d62d15` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Record the accepted safe first-deploy bootstrap. Working tree only. Do not create Render. |
+| Business decision | Render creation readiness remains **CLOSED**. Mac office remains **PRIMARY**. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED**. No Review Turnover until V1. This record does not authorize Render creation. |
+| Architectural decision | Creating a Render Web Service triggers the first build and deploy. CalibraytAI must not start against an empty disk, because a SQLite URI pointing at a missing file can create a blank database. The first deployment uses a temporary stdlib HTTP process so the service can run, the disk can mount, and later shell or SSH can reach that disk. It is not CalibraytAI. |
+| Temporary start command | `python -c 'import os;from http.server import BaseHTTPRequestHandler as B,ThreadingHTTPServer as T;exec("class H(B):\n def _r(s):\n  b=b\"CalibraytAI bootstrap. Application not started.\\n\";s.send_response(200);s.send_header(\"Content-Type\",\"text/plain; charset=utf-8\");s.send_header(\"Content-Length\",str(len(b)));s.end_headers();\n  if s.command!=\"HEAD\":s.wfile.write(b)\n def do_GET(s):s._r()\n def do_POST(s):s._r()\n def do_HEAD(s):s._r()\n def do_PUT(s):s._r()\n def do_DELETE(s):s._r()\n def log_message(s,*a):return\n");T(("0.0.0.0",int(os.environ["PORT"])),H).serve_forever()'` |
+| Why the command is safe | Imports only `os` and Python `http.server`. Does not import CalibraytAI, Flask, SQLAlchemy, or `sqlite3`. Does not call `create_app()` or Gunicorn. Does not open a file. Therefore it cannot create or touch `brayman_estimator.db`. |
+| Local proof | Python **3.9.6**. Test bind `127.0.0.1:8765`. `GET /any/path` HTTP **200**, `text/plain; charset=utf-8`, Content-Length **48**, body `CalibraytAI bootstrap. Application not started.` POST returned the same sentence. No HTML links. Listener stopped. Port **8765 CLOSED**. The Render form uses `0.0.0.0:$PORT`, not the local test bind. |
+| Service shape | One paid Python web service. One instance. Auto-deploy **OFF**. Repository `https://github.com/joelbrayman-collab/Brayman-Estimator.git`. Branch `main`. First bootstrap SHA **`4a86f87f86edd2d9b02f5788b85bcd9ad6d62d15`**. Build `pip install -r requirements.txt`. No pre-deploy command. Preview toggles off unless later authorized. Smallest paid plan on the form that includes a persistent disk and dashboard shell. |
+| Disk | Source root `/opt/render/project/src`. Mount `/opt/render/project/src/instance`. Later file `/opt/render/project/src/instance/brayman_estimator.db`. Later URI `sqlite:////opt/render/project/src/instance/brayman_estimator.db`. Smallest current dashboard disk size that holds the seed and growth. Size may increase later and is not assumed reducible. No numeric minimum invented. |
+| Bootstrap environment | `CALIBRAYTAI_HOSTED=1` only. Omit `CALIBRAYTAI_DATABASE_URI` and `SECRET_KEY`. `FLASK_DEBUG` unset or off. Do not generate `SECRET_KEY`. The bootstrap process reads none of these. `CALIBRAYTAI_HOSTED=1` is a fail-closed guard if the start command is changed to CalibraytAI before the URI is set. |
+| Later gates | Seed transfer is not part of service creation. Later method is Render SSH/SCP to the mount path. Do not record a service hostname. Before CalibraytAI starts, the hosted file must exist, be size `3485696`, SHA-256 `37fad858157d5b88d3a6e60553cfe97b7761dcdd32cc97234876fb338ecf2b08`, integrity **ok**, Alembic `h8c9d0e1f2a3`. Only then, a separate prompt may set the URI, a new `SECRET_KEY`, and replace the start command with `gunicorn -w 1 --bind 0.0.0.0:$PORT app:app`. |
+| Public exposure | During bootstrap the public URL serves only `CalibraytAI bootstrap. Application not started.` No office data. No repository listing. No application functionality. No FG-039 route. FG-039 remains **PARKED**. |
+| Future owner action | Recorded and not authorized. Joel later creates the service with the values above and returns service name, URL, service ID if shown, region, plan, disk name or ID, disk size, mount path, auto-deploy state, build command, start command, environment names only, and latest status. He does not enter `SECRET_KEY` or `CALIBRAYTAI_DATABASE_URI`, upload the seed, copy instance files, or switch to Gunicorn in that action. Next gate after that action: verify the actual Render service and disk identity. |
+| Prompt template used | Architect RENDER SAFE FIRST-DEPLOY BOOTSTRAP, working tree occupancy only |
+| Approved Cursor prompt summary | Write the accepted derivation into the four occupancy docs. Do not commit. Do not create Render. |
+| Files expected to change | `docs/chat-workflow-log.md`, `docs/current-state.md`, `docs/platform-roadmap.md`, `docs/session-handoff.md` |
+| Files prohibited from changing | Application code, tests, requirements, `.python-version`, migrations, live DB, Flask, the local seed, secrets, Procfile, `render.yaml`, `runtime.txt`, Render resources |
+| Implementation result | **DERIVED / LOCALLY PROVEN / RECORDED IN WORKING TREE / NOT COMMITTED / NOT PUSHED.** Render **NOT CREATED**. Seed **NOT UPLOADED**. |
+| Tests | Not rerun. Accepted local proof is the port 8765 result above. The listener was not restarted for this documentation step. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Not committed. Render **NOT CREATED**. Seed **NOT UPLOADED**. Disk size confirmed only at creation time. |
+| Next approved step | ARCHITECT REVIEW OF SAFE-BOOTSTRAP OCCUPANCY. Do not create Render. |
+| Next approved prompt | Architect ACCEPT COMMIT of this occupancy record. Not authorized from this implementation. |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-25 — Render creation readiness SHA-pin
 
 | Field | Content |

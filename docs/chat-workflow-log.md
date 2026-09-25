@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — PKG-T16 orphaned finding / no recoverable product authority (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` @ `bd448947f1fb686a10ecc01a8cb3299bda27e780` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 24 SEP 2026 |
+| Objective | Record the governance disposition of PKG-T16. Documentation only. Working tree only. |
+| Business decision | T16 — ORPHANED FINDING / NO RECOVERABLE PRODUCT AUTHORITY. Bare T16 first appeared as an undefined prohibited-action identifier at S16 product SHA `d84aedee9285dafa26f574cd463d510dd05c8862`. PKG-T16 later appeared in turnover material at `f72b569fe74e186a7ac1e1755df7044f11f3a662` without a product definition. Repository derivation and git-history reconstruction did not recover a defensible business/product requirement. No informed Owner Decision can be framed. No product behaviour is authorized merely to satisfy the identifier. No Feature Gate was created. No implementation was performed. Historical T16 references remain historical evidence. T16 is dispositioned from the active Rule 16 implementation path on governance grounds. This is not T16 IMPLEMENTED and not T16 PRODUCT COMPLETE. |
+| Architectural decision | None. No product law invented. No new numbered package invented. R11 / C08 remain a residual Owner Decision only if included in the final seal, and are not begun. Whole-system Rule 16 remains OPEN and is not validated in this package. V1 scores unchanged. FG-039 remains PARKED. |
+| Prompt template used | Architect PKG-T16 ORPHANED-FINDING GOVERNANCE DISPOSITION / WORKING TREE ONLY |
+| Approved Cursor prompt summary | Minimum current-state correction. Preserve historical T16 labels. Record orphan disposition. Do not implement, commit, push, begin R11/C08, begin whole-system Rule 16 validation, create a Feature Gate, rescore V1, or touch product code, tests, schema, live DB, Flask, or the recovery stash. |
+| Files expected to change | `docs/session-handoff.md`, `docs/current-state.md`, `docs/platform-roadmap.md`, `docs/chat-workflow-log.md` |
+| Files prohibited from changing | product code, tests, migrations, live DB, Flask 5460, recovery stash, V1 scores, R11/C08 product, Rule 16 validation, FG-039 product, website, historical log entries |
+| Implementation result | WORKING TREE ONLY. T16 DISPOSITIONED AS ORPHANED / NO RECOVERABLE PRODUCT AUTHORITY. NOT IMPLEMENTED. NOT PRODUCT COMPLETE. NO FEATURE GATE. R11/C08 NOT STARTED. RULE 16 VALIDATION NOT STARTED. NOT COMMITTED. |
+| Tests | Not run. No product change. Governing F07 evidence remains dedicated **14 passed**, focused **159 passed**, full suite **1739 passed**. |
+| Project-state-report update | No. Not a product milestone. |
+| Milestone entry update | No. |
+| Constitutional issue raised | None. Whole-system Rule 16 remains OPEN. |
+| Unresolved issues | Disposition not committed. LIVE S16 NOT APPLIED. Live DB still `g7b8c9d0e1f2`. R11 / C08 residual only if included in final seal. Whole-system Rule 16 validation, final seal, deployment readiness, hosted validation, production E2E, and authorized V1 rescore remain ahead. FG-039 not published. |
+| Next approved step | STOP for ChatGPT Architect ACCEPT COMMIT. Do not begin R11 / C08. Do not begin whole-system Rule 16 validation. |
+| Next approved prompt | Architect ACCEPT COMMIT of the T16 orphan disposition (not issued from this working tree). |
+| Commit hash | NONE |
+
 ### 2026-09-24 — PKG-F15 SHA-pin / orphaned finding
 
 | Field | Content |

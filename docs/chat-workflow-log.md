@@ -43,6 +43,36 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Render creation readiness (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` @ `a9ef2c5aeda5b59b13c34239b6af5b9bbd3870c5` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Prepare Render creation readiness. Local seed and dashboard sheet only. Do not create Render. |
+| Business decision | The service specification remains **CLOSED**. Mac office remains **PRIMARY**. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED**. No Review Turnover until V1. This package does not authorize Render creation. |
+| Architectural decision | Dashboard sheet prepared from the closed specification. Service type: one Python web service; exact dashboard label **CONFIRM IN CURRENT RENDER DASHBOARD**. Repository `https://github.com/joelbrayman-collab/Brayman-Estimator.git`. Branch `main`. Auto-deploy **OFF**. Python authority `.python-version` = `3.9.6`; confirm the dashboard reads that file. Build `pip install -r requirements.txt`. Start `gunicorn -w 1 --bind 0.0.0.0:$PORT app:app`. One instance. One worker. Plan names and prices are not invented. Persistent disk mount `<source root>/instance`. Absolute Render source root is **not proven**; confirm it in the dashboard, then build `CALIBRAYTAI_DATABASE_URI` as `sqlite:////<confirmed source root>/instance/brayman_estimator.db`. Do not start the web process if that file is absent. First deploy SHA is **not authorized**. Closed-spec candidate `4997a542a6f5161f3711136c6b4bbd029031dfd0` remains **NOT DEPLOYED**. |
+| Local seed | SQLite online backup via `Connection.backup()` from a read-only URI. Not `cp`. Flask was not stopped. Path `/Users/joelbrayman/Desktop/calibraytai-render-transfer/brayman_estimator-render-seed-h8c9d0e1f2a3.db`. Size `3485696`. SHA-256 `37fad858157d5b88d3a6e60553cfe97b7761dcdd32cc97234876fb338ecf2b08`. Integrity **ok**. Alembic `h8c9d0e1f2a3`. Table set matches the source (`143` tables), including `users`, `organizations`, `projects`, `estimates`, `proposals`, and `change_orders`. Not in Git. Not uploaded. |
+| Source fingerprint | Before and after: size `3485696` / mtime `1790334394.3628652`. Unchanged. |
+| Instance inventory | Required before cutover, not for first read-only validation: `plan_uploads` 3 files / `7062161`; `build_originals` 16 / `14163757`; `signing_artifacts` 19 / `1194727`; `build_renditions` 3 / `443861`; `generated_contracts` 3 / `374186`; `brand_logos` 1 / `80007`; `quickbooks_packages` 4 / `12227`; `historical_uploads` 4 / `6550`. Those directories were not copied. `mail_capture` 12 / `6824` is local-mail output, not hosted seed. Backups, UAT scratch, and other non-storage instance files are excluded. Occupied DB is the only file required for first read-only validation. |
+| First-start firewall | Authorized SHA named later; auto-deploy off; one instance; one worker; disk attached at the confirmed instance directory; occupied seed present; filename and URI match that file; Alembic h8; integrity ok; `CALIBRAYTAI_HOSTED=1`; new `SECRET_KEY`; debug off; no automatic migration. First start remains unauthorized. |
+| First read-only validation | Prepared, not executed: process, running SHA, file on disk, Alembic h8, integrity, `GET /login` 200, `GET /forgot-password` 200, existing-user login, read Project / Estimate / Proposal, tenant read. No uploads, saves, approvals, mail, stored artifacts, or cutover. |
+| Exposure firewall | Before the hosted office is made generally public or cut over, the Architect must explicitly review FG-039 and other login-exempt routes. No FG-039 edit. No publication. No new rate limit. |
+| Prompt template used | Architect RENDER CREATION READINESS, working tree and local transfer artifact only |
+| Approved Cursor prompt summary | Prepare the dashboard sheet, local online-backup seed, instance inventory, and firewalls. Write occupancy docs. Do not commit. Do not create Render. |
+| Files expected to change | `docs/chat-workflow-log.md`, `docs/current-state.md`, `docs/platform-roadmap.md`, `docs/session-handoff.md`, plus the local seed outside the repository |
+| Files prohibited from changing | Application code, tests, requirements, `.python-version`, migrations, live DB, Flask 5460, secrets, Render resources |
+| Implementation result | **WRITTEN IN WORKING TREE / NOT COMMITTED / NOT PUSHED.** Local seed **PREPARED / VERIFIED / NOT UPLOADED**. Render service **NOT CREATED**. |
+| Tests | Not run. No application code, dependencies, or tests changed. Seed verification: integrity **ok**, Alembic `h8c9d0e1f2a3`, table set match. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Not committed. Render **NOT CREATED**. Seed **NOT UPLOADED**. Source root **NOT CONFIRMED**. Deploy SHA **NOT AUTHORIZED**. |
+| Next approved step | ARCHITECT REVIEW. Do not create Render. Do not upload the seed. Do not deploy. |
+| Next approved prompt | Architect ACCEPT COMMIT of this readiness record. Not authorized from this implementation. |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-25 — Render service creation specification SHA-pin
 
 | Field | Content |

@@ -43,6 +43,35 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Render operational-state reconciliation (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` @ `9e33a682f925ac9092fb2266e675425f896e2ef0` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Reconcile owner-reported Render operational state into current occupancy. Working tree only. This is not a ChatGPT turnover. |
+| Business decision | Render hosts the CalibraytAI application. HostPapa remains the public website host. Mac office remains **PRIMARY**. The hosted database remains a validation copy. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED**. ChatGPT turnover **NOT STARTED**. |
+| Architectural decision | No product, schema, or environment change. The sealed bootstrap remains historical. The running dashboard command is the existing factory `gunicorn -w 1 --bind 0.0.0.0:$PORT 'app:create_app()'`. The earlier `app:app` string failed because the `app` package exposes `create_app` and has no package attribute `app`. One Gunicorn worker remains the SQLite configuration. A hosted `SECRET_KEY` is configured and is not recorded. Running Render commit SHA is **NOT INDEPENDENTLY VERIFIED** by this package. Login-exempt FG-039 exposure review remains required before general publication or cutover. |
+| Prompt template used | Architect V1 HOSTED OFFICE RENDER OPERATIONAL-STATE RECONCILIATION, working tree only |
+| Approved Cursor prompt summary | Read current authority. Verify identity. Record external Render facts in current occupancy. Do not commit, push, mutate either database, change Render, or start turnover. |
+| Files expected to change | `docs/chat-workflow-log.md`, `docs/current-state.md`, `docs/platform-roadmap.md`, `docs/session-handoff.md` |
+| Files prohibited from changing | Application code, tests, requirements, `.python-version`, migrations, both databases, Render, FG-039, turnover documents, historical log entries |
+| Implementation result | **RECORDED IN WORKING TREE / NOT COMMITTED / NOT PUSHED.** Classification: service created; 1 GB disk created; safe bootstrap proven; verified database copy transferred; hosted database verified; hosted environment configured; correct Gunicorn factory running; CalibraytAI **LIVE**; `/login` reachable; authenticated validation **NOT COMPLETE**; controlled hosted E2E **NOT STARTED**; cutover **NOT STARTED**; Mac **PRIMARY**. Stop point: **HOSTED AUTHENTICATION / READ-ONLY VALIDATION**. |
+| Owner-reported service | Displayed name `Calibryatai`. Service id `srv-dar95mh42hec73df4rug`. URL `https://calibryatai.onrender.com`. Region Virginia. Repository `joelbrayman-collab/Brayman-Estimator`. Branch `main`. Auto-deploy **OFF**. Pre-deploy blank. Displayed plan $7/month, 0.5 CPU, 512 MB RAM. One instance. |
+| Owner-reported disk and database | Mount `/opt/render/project/src/instance`. Configured size 1 GB. Observed usable capacity about 974 MB. Seed source `/Users/joelbrayman/Desktop/calibraytai-render-transfer/brayman_estimator-render-seed-h8c9d0e1f2a3.db`, size `3485696`, SHA-256 `37fad858157d5b88d3a6e60553cfe97b7761dcdd32cc97234876fb338ecf2b08`. Owner reports hosted size, SHA-256, integrity **ok**, and Alembic `h8c9d0e1f2a3` before rename to `/opt/render/project/src/instance/brayman_estimator.db`. Transfer tool was Magic-Wormhole on the owner Mac. It is not an application requirement. SSH was not required to finish deployment. |
+| Owner-reported application | `CALIBRAYTAI_HOSTED=1`. URI `sqlite:////opt/render/project/src/instance/brayman_estimator.db`. `FLASK_DEBUG` unset. `GET /login` loads. No controlled authenticated hosted session. No controlled hosted write. Existing identity remains User 1 / Membership 1 / Joel Brayman / `uat@example.invalid` / Instance Owner / `COMPANY_MANAGEMENT`. This record does not create a user, change email, reset a password, or move ownership. |
+| Mac inspect this package | DB size `3485696` / mtime `1790334394.3628652` / integrity **ok** / Alembic `h8c9d0e1f2a3`. Unchanged from the prior fingerprint. Local Flask **5460** was **NOT LISTENING**. PID **62523** absent. Do not start it from this record. Recovery stash `stash@{0}` **`840dba8320b59ff9464410fec390d755a31a56aa` PRESERVED**. |
+| V1 checklist | [x] Rule 16 correction programme. [x] Whole-system Rule 16 validation. [x] Rule 16 final seal. [x] S16 applied live. [x] FG-040 hosted-office configuration. [x] Render selected / runtime pinned. [x] Render service specification. [x] Render creation readiness. [x] Safe first-deploy bootstrap. [x] Render service created. [x] 1 GB persistent disk created / verified. [x] Hosted DB transferred. [x] Hosted DB SHA / integrity / Alembic verified. [x] Hosted environment configured. [x] Correct Gunicorn factory deployed. [x] CalibraytAI application LIVE on Render. [x] `/login` reachable. [~] Hosted authentication / read-only validation. [ ] Controlled hosted V1 E2E. [ ] Cutover / rollback. [ ] V1 rescore. [ ] BRAYMAN real-life UAT readiness. [ ] FG-039 Business Decision Tool publication. |
+| Tests | Not run. This package changes no application code, dependencies, or tests. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None. The failed `app:app` start string is recorded as an operational correction to the existing factory. It does not change FG-040 product code. |
+| Unresolved issues | Hosted authentication path for the existing owner identity. Authenticated hosted validation. Controlled hosted E2E. Cutover. Running Render commit SHA not independently verified here. FG-039 exposure review before general publication or cutover. |
+| Next approved step | CHATGPT ARCHITECT REVIEW. Do not execute authentication. Do not start turnover. |
+| Next approved prompt | Not authorized from this working tree. |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-25 — Render safe first-deploy bootstrap SHA-pin
 
 | Field | Content |

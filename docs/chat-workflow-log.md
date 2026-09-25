@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-24 |
+| Updated | 2026-09-25 |
 
 ## Purpose
 
@@ -42,6 +42,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-25 — R11 / C08 Architect scope disposition + whole-system Rule 16 validation (working tree)
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` @ `e3c98715342f456b1ae5aa47cede00dad953676d` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Record the Architect scope disposition of R11 and C08, then run whole-system Rule 16 validation. Do not seal Rule 16. |
+| Business decision | R11 is the historical duplicate-Time identity question. No duplicate identity law was ever established. R11 **DISPOSED / NOT REQUIRED FOR RULE 16 V1**. No duplicate-Time uniqueness rule is required for V1. Existing Time law remains governing: multiple Time rows remain allowed; SUBMITTED + APPROVED daily hours remain capped at 24.00; R10 governs one existing Time row; `supersedes_id` governs correction succession. C08 **RETIRED / UNDEFINED RESIDUAL / NOT A RULE 16 V1 BLOCKER**. Identifier-to-requirement chain fails. No copy sweep. No product implementation. This does not prohibit a later Owner-defined duplicate-Time enhancement. |
+| Architectural decision | Scope disposition only. No schema, no uniqueness constraint, no presentation correction. Whole-system Rule 16 validation **PERFORMED / NOT SEALED**. Rule 16 remains OPEN. |
+| Prompt template used | Architect RULE 16 RESIDUAL DISPOSITION R11 / C08 + WHOLE-SYSTEM VALIDATION AUTHORIZATION |
+| Approved Cursor prompt summary | Record the 25 Sep 2026 Architect disposition in current occupancy docs. Do not rewrite historical records. Validate every defined closed Rule 16 root on disposable tests only. No live migration. No R11 implementation. No C08 copy sweep. No FG-039. No V1 rescore. No seal. No commit. No push. |
+| Files expected to change | Occupancy docs and the Time module note only |
+| Files prohibited from changing | Product code, tests, migrations, live DB, Flask 5460, recovery stash, V1 scores, FG-039, historical log entries, the turnover startup fence |
+| Implementation result | WORKING TREE ONLY. R11 DISPOSED / NOT REQUIRED FOR RULE 16 V1. C08 RETIRED / UNDEFINED RESIDUAL. VALIDATION PERFORMED / NOT SEALED. NOT COMMITTED. |
+| Tests | Cursor Terminal. Dedicated closed-package regression plus `tests/test_work_time_fg035.py`: **194 passed**, 721 warnings, **115.67s**, exit **0**. Full suite `./venv/bin/python -m pytest -q`: **1739 passed**, 5822 warnings, **783.41s**, exit **0**. Disposable S16 migration tests included in the dedicated run. Live DB unchanged (`3457024` / mtime `1790020245.9238403`). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Rule 16 remains OPEN pending Architect seal decision. LIVE S16 NOT APPLIED. FG-039 PARKED. V1 not rescored. Deployment readiness, hosted validation, and production E2E not started. |
+| Next approved step | STOP. Return to ChatGPT Architect for the seal decision. Do not seal. Do not commit. |
+| Next approved prompt | Architect seal decision after review of this validation. Not authorized from this working tree. |
+| Commit hash | NOT COMMITTED |
+
 
 ### 2026-09-25 — PKG-T16 SHA-pin / orphaned finding
 

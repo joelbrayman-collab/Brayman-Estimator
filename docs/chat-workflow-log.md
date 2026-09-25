@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Rule 16 validation-record SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Docs-only SHA-pin of the accepted Rule 16 validation record. |
+| Business decision | R11 remains **DISPOSED / NOT REQUIRED FOR RULE 16 V1**. C08 remains **RETIRED / UNDEFINED RESIDUAL / NOT A RULE 16 V1 BLOCKER**. No duplicate-Time identity law. No C08 product law. |
+| Architectural decision | None. Docs-only pin of validation-record SHA **`dd6a350da949401a7011f189f4878debde7e8fc8`**. Rule 16 validation **PASS**. Rule 16 remains **OPEN / NOT SEALED**. V1 scores unchanged. FG-039 remains PARKED. S16 remains CLOSED IN GIT / NOT APPLIED LIVE. |
+| Prompt template used | Architect RULE 16 VALIDATION RECORD ACCEPT PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Push the accepted validation record. Minimum current-pointer pin. Do not seal Rule 16. Do not rescore V1. Do not apply S16 live. Do not rewrite historical entries or the turnover fence. |
+| Files expected to change | Current occupancy docs whose pointers still said the validation record was uncommitted |
+| Files prohibited from changing | Product code, tests, migrations, live DB, Flask 5460, recovery stash, V1 scores, FG-039 product, historical log entries, the turnover startup fence |
+| Implementation result | VALIDATION RECORD PUSHED. SHA-PIN. RULE 16 VALIDATION PASS. RULE 16 OPEN / NOT SEALED. |
+| Tests | Not re-run for pin. Accepted dedicated regression **194 passed**, 721 warnings, **115.67s**, exit **0**. Accepted full suite **1739 passed**, 5822 warnings, **783.41s**, exit **0**. Live DB unchanged (`3457024` / mtime `1790020245.9238403`). |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Rule 16 remains OPEN pending Architect seal decision. LIVE S16 NOT APPLIED. FG-039 PARKED. V1 not rescored. |
+| Next approved step | STOP. Return to ChatGPT Architect for the separate Rule 16 final-seal decision. Do not seal. Do not apply S16 live. |
+| Next approved prompt | Architect Rule 16 final-seal decision. Not authorized from this pin. |
+| Commit hash | VALIDATION RECORD `dd6a350da949401a7011f189f4878debde7e8fc8`; PIN hash filled after this commit |
+
+
 ### 2026-09-25 — R11 / C08 Architect scope disposition + whole-system Rule 16 validation (working tree)
 
 | Field | Content |

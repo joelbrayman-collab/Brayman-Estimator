@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Render operational-state reconciliation SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Docs-only SHA-pin of the pushed Render operational-state reconciliation. Close the reconciliation. Do not start ChatGPT turnover. |
+| Business decision | Mac office remains **PRIMARY**. The hosted database remains a validation copy. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED**. ChatGPT turnover remains **NOT STARTED**. |
+| Architectural decision | Docs-only pin of reconciliation SHA **`7859387be0676fb3740d7f8bd088248cbeee37b4`**. Pin SHA recorded after this docs commit. Classification **RECONCILED / COMMITTED / PUSHED / SHA-PINNED / CLOSED**. Render application remains **LIVE**. `/login` remains reachable. Stop point remains **HOSTED AUTHENTICATION / READ-ONLY VALIDATION**. Authenticated hosted validation **NOT COMPLETE**. Controlled hosted E2E **NOT STARTED**. Cutover **NOT STARTED**. Running Render SHA remains **NOT INDEPENDENTLY VERIFIED**. |
+| Prompt template used | Architect RENDER OPERATIONAL-STATE RECONCILIATION ACCEPT PUSH / SHA-PIN / CLOSE |
+| Approved Cursor prompt summary | Push the accepted reconciliation commit. Minimum current-pointer pin. Commit and push the pin. Do not start turnover. Do not rewrite the historical working-tree log entry. |
+| Files expected to change | Current occupancy docs whose pointers still said the reconciliation was uncommitted |
+| Files prohibited from changing | Application code, tests, requirements, `.python-version`, migrations, both databases, Flask, Render, secrets, FG-039, turnover documents, the historical reconciliation working-tree log entry |
+| Implementation result | **RECONCILED / COMMITTED / PUSHED / SHA-PINNED / CLOSED.** Reconciliation SHA **`7859387be0676fb3740d7f8bd088248cbeee37b4`**. Pin SHA recorded after this docs commit. ChatGPT turnover **NOT STARTED**. |
+| Tests | Not run. This pin changes no application code, dependencies, or tests. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Hosted authentication / read-only validation. Running Render commit SHA not independently verified. Controlled hosted E2E not started. Cutover not started. FG-039 remains parked. |
+| Next approved step | STOP FOR CHATGPT ARCHITECT. Do not start ChatGPT turnover. Do not resume authentication work. |
+| Next approved prompt | Not authorized from this pin. |
+| Commit hash | PRODUCT `7859387be0676fb3740d7f8bd088248cbeee37b4`; PIN hash recorded after this docs commit |
+
 ### 2026-09-25 — Render operational-state reconciliation (working tree)
 
 | Field | Content |

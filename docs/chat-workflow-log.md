@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-25 — Governed live h8 state SHA-pin
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-25 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT 25 SEP 2026 |
+| Objective | Docs-only SHA-pin of the accepted governed live h8 state record. |
+| Business decision | Live h8 state record **COMMITTED / PUSHED / PINNED**. Whole-system Rule 16 remains **SEALED**. S16 **CLOSED IN GIT / APPLIED LIVE**. Official V1 remains **65% / 4 of 11**. Secondary Functional V1 Build remains **79% / 22 of 28**. FG-039 remains **PARKED / NOT PUBLISHED**. |
+| Architectural decision | None. Docs-only pin of live-state record SHA **`0b955cfd75f692a0f57d43a3736082af57f12eab`**. Local office remains running. This pin does not deploy, run hosted validation, run production E2E, or rescore V1. |
+| Prompt template used | Architect GOVERNED LIVE H8 STATE RECORD ACCEPT PUSH / SHA-PIN |
+| Approved Cursor prompt summary | Push the accepted live-state record. Minimum current-pointer pin. Do not start hosted deployment. Do not rewrite historical entries or the turnover fence. |
+| Files expected to change | Current occupancy docs whose pointers still said the live-state record was uncommitted |
+| Files prohibited from changing | Product code, tests, migrations, live DB, Flask 5460, recovery stash, backup, V1 scores, FG-039 product, historical log entries, historical Prior paragraphs, the turnover startup fence |
+| Implementation result | LIVE-STATE RECORD PUSHED. SHA-PIN. S16 **APPLIED LIVE**. Live Alembic **`h8c9d0e1f2a3`**. Local Flask **RUNNING** PID **62523** at **127.0.0.1:5460**. Local startup/smoke **PASS**. Backup **PRESERVED**. Stash **PRESERVED**. Hosted application **DOES NOT EXIST**. HOSTED DEPLOYMENT NOT STARTED. |
+| Tests | Not re-run for pin. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Hosted application deployment does not exist. Hosted validation **NOT PERFORMED**. Production E2E **NOT PERFORMED**. V1 not rescored. FG-039 parked. |
+| Next approved step | STOP. Do not start hosted deployment. Return to ChatGPT Architect. |
+| Next approved prompt | Architect authorization of hosted deployment definition/readiness. Not authorized from this pin. |
+| Commit hash | LIVE-STATE RECORD `0b955cfd75f692a0f57d43a3736082af57f12eab`; PIN hash recorded after this docs commit |
+
 ### 2026-09-25 — Governed live h8 state record (working tree)
 
 | Field | Content |

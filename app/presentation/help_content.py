@@ -315,7 +315,7 @@ OFFICE_SETTINGS_BRAND_PROFILE = HelpTopic(
     key="settings_brand_profile",
     title="Brand Profile",
     what=(
-        "Settings currently opens Brand Profile: the names, contact details, "
+        "Brand Profile holds the names, contact details, "
         "colours, and logo used on customer documents."
     ),
     do=(

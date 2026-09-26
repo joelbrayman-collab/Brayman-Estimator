@@ -6,19 +6,18 @@
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
-<div class="page-heading">
+<section class="page-header">
     <div>
-        <p class="eyebrow">CRM</p>
-        <h1>Clients</h1>
+        <h2 class="page-title">Clients</h2>
+        <p class="page-purpose">{{ contractor_copy.CLIENTS_LEDE }}</p>
     </div>
-
-    <a class="button" href="{{ url_for('clients.create_client') }}">New Client</a>
-</div>
+    <a class="button-primary" href="{{ url_for('clients.create_client') }}">New Client</a>
+</section>
 
 {{ contextual_help(help_content.office_topic("clients")) }}
 
 {% if clients %}
-<table class="data-table">
+<table class="register-table">
     <thead>
         <tr>
             <th>Name</th>
@@ -41,9 +40,7 @@
     </tbody>
 </table>
 {% else %}
-<div class="empty-state">
-    <h2>No clients yet</h2>
-    <p>Create the first client before setting up a construction project.</p>
-</div>
+<p class="projects-empty-title">No clients yet</p>
+<p class="page-purpose">Create the first client before setting up a construction project.</p>
 {% endif %}
 {% endblock %}

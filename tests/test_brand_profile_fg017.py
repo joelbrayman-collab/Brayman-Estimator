@@ -365,7 +365,8 @@ def test_settings_nav_enabled_header_settings_unchanged(client):
     home = client.get("/")
     assert home.status_code == 200
     assert b'href="/settings/brand-profile"' in home.data
-    assert b'aria-label="Settings"' in home.data
+    assert b'class="header-company"' in home.data
+    assert b'aria-label="Settings"' not in home.data
     assert b"Settings (coming soon)" not in home.data
     assert b"Search (coming soon)" in home.data
     assert b"/static/branding/brayman-construction-logo.png" in home.data

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-26 — UAT 3 shared polish foundation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI UAT 3 — SHARED POLISH FOUNDATION 26 SEP 2026 |
+| Objective | Establish the reusable office presentation and apply it to Clients and Crews. Remove Brand from the daily menu. |
+| Business decision | Joel authorized an estimate-specific margin later, self-perform versus subcontract at project work, and an email RFQ with no portal. None of those are in this slice. |
+| Architectural decision | Reuse Home and Projects presentation. One header, one primary action, a register list or a restrained table. Brand stays on the existing upper-right control. |
+| Prompt template used | Architect UAT 3 — SHARED POLISH FOUNDATION |
+| Approved Cursor prompt summary | Shared polish foundation only. Do not implement documents, costs, labour, commercial settings, subcontractors, or RFQ. Commit the audit first. Test, commit, push, deploy. |
+| Files expected to change | Presentation CSS, Clients list, Crews list, navigation, header, focused tests, occupancy |
+| Files prohibited from changing | Pricing, labour, schema, migrations, authentication, bypass, document generation |
+| Implementation result | **IMPLEMENTED / TESTED.** Full suite **1776 passed**, 6416 warnings, **856.42s**, exit **0**. |
+| Tests | `./venv/bin/python -m pytest -q` — 1776 passed, 6416 warnings, 856.42s, exit 0 |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Documents register not authorized. Password unresolved. Dark logo absent. Remaining Polish C/D pages not recomposed. |
+| Next approved step | Joel visual UAT. Do not start the documents slice. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | This implementation checkpoint |
+
 ### 2026-09-26 — Human UAT 3 product and polish audit
 
 | Field | Content |

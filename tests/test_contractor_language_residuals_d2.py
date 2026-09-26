@@ -156,13 +156,11 @@ def test_nav_uses_contractor_cost_library_and_previous_estimates():
     historical = next(
         item for item in NAV_ITEMS if item["endpoint"] == "historical_estimates.index"
     )
-    settings = next(item for item in NAV_ITEMS if item["endpoint"] == "settings.brand_profile")
     library = next(section for section in NAV_SECTIONS if section["title"] == COSTS_AND_PRICING_NAV_TITLE)
     assert cost["title"] == WHAT_WE_PAY_NAV_TITLE
     assert any(item["title"] == REUSABLE_WORK_NAV_TITLE for item in library["links"])
     assert historical["title"] == PAST_JOBS_NAV_TITLE
-    assert settings["title"] == "Brand"
-    assert settings["enabled"] is True
+    assert "settings.brand_profile" not in {item["endpoint"] for item in NAV_ITEMS}
 
 
 def test_hub_price_hides_internal_pricing_identifiers(client, project):
@@ -189,7 +187,8 @@ def test_header_settings_uses_live_settings(client, project):
     home = _html(client.get("/"))
     hub = _html(client.get(f"/projects/{project.id}"))
     for html in (home, hub):
-        assert 'aria-label="Settings"' in html
+        assert 'class="header-company"' in html
+        assert 'aria-label="Settings"' not in html
         assert "Settings (coming soon)" not in html
         assert 'href="/settings/brand-profile"' in html
         assert "Search (coming soon)" in html

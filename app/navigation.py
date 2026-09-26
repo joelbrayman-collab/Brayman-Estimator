@@ -2,7 +2,6 @@
 
 from app.presentation.contractor_copy import (
     ATTENTION_NAV_TITLE,
-    BRAND_NAV_TITLE,
     COMPANY_CALENDAR_HEADING,
     COMPANY_LIBRARY_NAV_TITLE,
     COSTS_AND_PRICING_NAV_TITLE,
@@ -107,12 +106,6 @@ NAV_SECTIONS = (
                 "title": "Crews",
                 "endpoint": "organization_crew.index",
                 "icon": "bi-people-fill",
-                "enabled": True,
-            },
-            {
-                "title": BRAND_NAV_TITLE,
-                "endpoint": "settings.brand_profile",
-                "icon": "bi-gear",
                 "enabled": True,
             },
             {

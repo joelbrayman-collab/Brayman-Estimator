@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — UAT 3 SHARED POLISH FOUNDATION (2026-09-26)
+
+| Field | Content |
+|-------|---------|
+| Slice | Shared office presentation. Clients list. Crews list. Brand leaves the daily menu. |
+| Product status at capture | IMPLEMENTED / TESTED. Documents, costs, labour, commercial settings, subcontractors, and RFQ are not in this slice. |
+| 1. What new contractor capability exists? | Clients and Crews use the same calm header and list as Home and Projects. Brand profile opens from the company name at the upper right. |
+| 2. When would the contractor use it? | When adding a client, reviewing crews, or changing the name and logo used on customer documents. |
+| 3. What workflow will the final Manual need to teach? | Open Clients or Crews from the menu. Use the one action at the top of the page. Open Brand profile from the company name, not from the side menu. |
+| 4. What contractor-facing terms must be used? | Clients. Crews. Company profile. Brand profile. Active. Retired. |
+| 5. What screenshots / Print examples will eventually be needed? | Clients list, Crews list, and the upper-right company control. Do not capture them until Joel accepts the look. |
+| 6. What warnings / validation distinctions need explanation? | Brand profile still only changes customer-document identity. It does not change prices or access. |
+| 7. Desktop / iPhone / Print relevance | Desktop office. The header company control should remain readable on a narrow screen. Print is unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — UAT 2 WAVES A AND B (2026-09-26)
 
 | Field | Content |

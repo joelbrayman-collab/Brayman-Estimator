@@ -16,6 +16,7 @@ REMOVED_FROM_DAILY_NAV = (
     "Labour rates",
     "Cost items",
     "Settings",
+    "Brand",
 )
 
 
@@ -67,10 +68,11 @@ def test_past_jobs_and_templates_leave_costs_and_pricing():
 def test_company_group_is_setup_not_a_second_calendar():
     company = next(row for row in NAV_SECTIONS if row["title"] == "Company")
     by_title = {item["title"]: item["endpoint"] for item in company["links"]}
+    assert list(by_title) == ["Attention", "Crews", "Work catalog"]
     assert by_title["Attention"] == "company_attention.index"
     assert by_title["Crews"] == "organization_crew.index"
-    assert by_title["Brand"] == "settings.brand_profile"
     assert by_title["Work catalog"] == "work_structure.catalog_index"
+    assert "settings.brand_profile" not in _endpoints()
     assert "schedule.company" not in {item["endpoint"] for item in company["links"]}
 
 

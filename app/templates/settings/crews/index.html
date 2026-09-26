@@ -4,36 +4,31 @@
 {% block page_title %}{{ contractor_copy.SCHEDULE_CREWS_HEADING }}{% endblock %}
 
 {% block content %}
-<div class="page-heading">
+<section class="page-header">
     <div>
-        <p class="eyebrow">Settings</p>
-        <h1>{{ contractor_copy.SCHEDULE_CREWS_HEADING }}</h1>
-        <p>{{ contractor_copy.SCHEDULE_CREWS_LEDE }}</p>
+        <h2 class="page-title">{{ contractor_copy.SCHEDULE_CREWS_HEADING }}</h2>
+        <p class="page-purpose">{{ contractor_copy.SCHEDULE_CREWS_LEDE }}</p>
     </div>
-    <a class="button" href="{{ url_for('organization_crew.new') }}">{{ contractor_copy.SCHEDULE_ADD_CREW }}</a>
-</div>
+    <a class="button-primary" href="{{ url_for('organization_crew.new') }}">{{ contractor_copy.SCHEDULE_ADD_CREW }}</a>
+</section>
 
 {% if crews %}
-<table class="data-table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for crew in crews %}
-        <tr>
-            <td>{{ crew.name }}{% if crew.status != 'ACTIVE' %} · Retired{% endif %}</td>
-            <td><a href="{{ url_for('organization_crew.detail', crew_id=crew.id) }}">Open</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<div class="empty-state">
-    <h3>No crews yet</h3>
-    <p>{{ contractor_copy.SCHEDULE_CREWS_LEDE }}</p>
+<div class="projects-workspace">
+    <div class="register-head">
+        <span>Crew</span>
+        <span>Status</span>
+    </div>
+    {% for crew in crews %}
+    <a class="register-row" href="{{ url_for('organization_crew.detail', crew_id=crew.id) }}">
+        <span class="projects-row-identity">
+            <span class="projects-row-name">{{ crew.name }}</span>
+        </span>
+        <span class="projects-row-stage">{% if crew.status != 'ACTIVE' %}Retired{% else %}Active{% endif %}</span>
+    </a>
+    {% endfor %}
 </div>
+{% else %}
+<p class="projects-empty-title">No crews yet</p>
+<p class="page-purpose">{{ contractor_copy.SCHEDULE_CREWS_LEDE }}</p>
 {% endif %}
 {% endblock %}

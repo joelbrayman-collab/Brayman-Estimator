@@ -376,6 +376,22 @@ OFFICE_TIME_REVIEW = HelpTopic(
     surface=SURFACE_OFFICE,
 )
 
+OFFICE_WORKFLOW_DOCUMENTS = HelpTopic(
+    key="workflow_documents",
+    title="Workflow documents",
+    what=(
+        "Workflow documents are the papers this job can produce as the "
+        "estimate becomes a customer document. A commercial draft is not a "
+        "contract you can sign."
+    ),
+    do=(
+        "Open a document when this job has one. A document that is not yet "
+        "available has no action."
+    ),
+    next="Return to the project when you are done.",
+    surface=SURFACE_OFFICE,
+)
+
 OFFICE_CHANGE_ORDERS = HelpTopic(
     key="change_orders",
     title="Change Orders",
@@ -409,6 +425,7 @@ OFFICE_TOPICS: dict[str, HelpTopic] = {
         OFFICE_JOB_LOCATION,
         OFFICE_TIME_REVIEW,
         OFFICE_CHANGE_ORDERS,
+        OFFICE_WORKFLOW_DOCUMENTS,
     )
 }
 

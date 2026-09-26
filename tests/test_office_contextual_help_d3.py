@@ -56,6 +56,7 @@ OFFICE_HELP_KEYS = (
     "job_location",
     "time_review",
     "change_orders",
+    "workflow_documents",
 )
 
 

@@ -2067,6 +2067,20 @@ body.login-page {
     color: var(--gold);
 }
 
+.register-row.is-static {
+    cursor: default;
+}
+
+.register-row.is-static:hover .projects-row-name {
+    color: inherit;
+}
+
+.document-warning {
+    color: #8a3b32;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
 .projects-row:hover .projects-row-go {
     color: var(--text);
 }

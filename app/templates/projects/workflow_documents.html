@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Workflow documents | Brayman Construction Platform{% endblock %}
+{% block page_title %}Workflow documents{% endblock %}
+
+{% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+<section class="page-header">
+    <div>
+        <h2 class="page-title">Workflow documents</h2>
+        <p class="page-purpose">The documents this job uses as the work moves from the estimate to the customer.</p>
+    </div>
+</section>
+
+{{ contextual_help(help_content.office_topic("workflow_documents")) }}
+
+{% for group in document_groups %}
+<section class="page-section">
+    <h2>{{ group.title }}</h2>
+    <div class="projects-workspace">
+        {% for document in group.documents %}
+        {% if document.href %}
+        <a class="register-row" href="{{ document.href }}">
+        {% else %}
+        <div class="register-row is-static">
+        {% endif %}
+            <span class="projects-row-identity">
+                <span class="projects-row-name">{{ document.name }}</span>
+                <span class="projects-row-client">{{ document.audience }} · {{ document.purpose }}</span>
+                {% if document.warning %}
+                <span class="document-warning">{{ document.warning }}</span>
+                {% endif %}
+            </span>
+            <span class="projects-row-stage">{{ document.availability_label }}</span>
+        {% if document.href %}
+        </a>
+        {% else %}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</section>
+{% endfor %}
+{% endblock %}

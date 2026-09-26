@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-26 — UAT 3 seven workflow documents
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI UAT 3 — SEVEN WORKFLOW DOCUMENTS REGISTER 26 SEP 2026 |
+| Objective | One runtime register for the seven governed document families, and one project page that lists them. |
+| Business decision | Show every current family. Connect an action only where the product already has that document’s job. Do not build the missing generators. |
+| Architectural decision | The page iterates the register. Family 05 remains a commercial draft, not for execution and not for signature. The office breakdown and the QuickBooks entry are current views, not the approved document files. |
+| Prompt template used | Architect UAT 3 — SEVEN WORKFLOW DOCUMENTS REGISTER |
+| Approved Cursor prompt summary | Register and contractor-facing documents experience only. Do not generate missing masters. Do not start Costs & pricing. Test, commit, push, deploy. |
+| Files expected to change | Document register, project documents page, one project link, help, tests, occupancy |
+| Files prohibited from changing | Pricing, labour, schema, migrations, authentication, bypass, document generation |
+| Implementation result | **IMPLEMENTED / TESTED.** Full suite **1781 passed**, 6427 warnings, **902.20s**, exit **0**. |
+| Tests | `./venv/bin/python -m pytest -q` — 1781 passed, 6427 warnings, 902.20s, exit 0 |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Five families have no generator. Password unresolved. Dark logo absent. Costs & pricing not authorized. |
+| Next approved step | Joel visual UAT. Do not start Costs & pricing. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | This implementation checkpoint |
+
 ### 2026-09-26 — UAT 3 shared polish foundation
 
 | Field | Content |

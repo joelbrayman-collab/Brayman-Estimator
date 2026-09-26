@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — UAT 3 WORKFLOW DOCUMENTS (2026-09-26)
+
+| Field | Content |
+|-------|---------|
+| Slice | Workflow documents on a project, from the seven-family register. |
+| Product status at capture | IMPLEMENTED / TESTED. Missing document generators were not built. |
+| 1. What new contractor capability exists? | A project has a Workflow documents list. It shows each paper the job can use, whether it is internal or for the customer, and whether it can be opened. |
+| 2. When would the contractor use it? | When they want to see which documents belong to a job, open the office cost breakdown, or open the QuickBooks entry sheet. |
+| 3. What workflow will the final Manual need to teach? | From the project, open Workflow documents. Open a row only when it has a current view. Leave a row that says not yet available. Read the contract row as a draft that is not for signature. |
+| 4. What contractor-facing terms must be used? | Workflow documents. Internal working documents. Customer documents. Current office view. Current office entry. Not yet available. Commercial draft. Not for execution. Not for signature. |
+| 5. What screenshots / Print examples will eventually be needed? | The workflow documents list on a project, including the contract warning. Do not capture them until Joel accepts the look. |
+| 6. What warnings / validation distinctions need explanation? | The Ontario construction contract row is a commercial draft. It is not a contract to sign or use. The office breakdown and the QuickBooks sheet are current working views, not finished customer documents. |
+| 7. Desktop / iPhone / Print relevance | Desktop office, from the project. Print is unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — UAT 3 SHARED POLISH FOUNDATION (2026-09-26)
 
 | Field | Content |

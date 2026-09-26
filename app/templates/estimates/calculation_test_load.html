@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Test load | Brayman Construction Platform{% endblock %}
+{% block page_title %}Test load{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Testing only · {{ estimate.estimate_number }}</p>
+        <h1>Test load</h1>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('estimates.calculation_list', id=estimate.id, version_id=version.id) }}">Back to Add from calculation</a>
+    </div>
+</div>
+
+<section class="form-panel">
+    <p>This page is for testing a calculation file. It is not part of normal estimating.</p>
+    {% if not version.is_locked %}
+    <form method="post" action="{{ url_for('estimates.calculation_load', id=estimate.id, version_id=version.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>
+            Test calculation
+            <textarea name="calculation_text" rows="8" required></textarea>
+        </label>
+        <div class="form-actions">
+            <button type="submit">Load test calculation</button>
+        </div>
+    </form>
+    {% else %}
+    <p>This estimate version is locked.</p>
+    {% endif %}
+</section>
+{% endblock %}

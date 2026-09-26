@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-26 — Calculation mapper contractor entry experience
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CALCULATION MAPPER — HUMAN UAT ENTRY EXPERIENCE CORRECTION 26 SEP 2026 |
+| Objective | Make Add from calculation understandable before any mapping, and keep test-file ingestion off that page. |
+| Business decision | Joel stopped because the page did not explain itself. That is a product finding. He is not asked to paste a test calculation to continue. |
+| Architectural decision | No schema change. No calculator. The ordinary page explains the job. Test ingestion remains available on an unlinked page. |
+| Prompt template used | Architect CALCULATION MAPPER — HUMAN UAT ENTRY EXPERIENCE CORRECTION |
+| Approved Cursor prompt summary | Correct contractor entry, review, unresolved, and provenance language. Separate test ingestion. Focused tests and full suite. Commit, push, and deploy if presentation-only and tests pass. Do not migrate the Mac primary. Do not implement formulas, Labour, or Website work. |
+| Files expected to change | Mapper templates, test-load route, view-model labels, tests, occupancy |
+| Files prohibited from changing | Contract V1, schema, Mac primary, calculator formulas, Website |
+| Implementation result | Ordinary Add from calculation explains the job and has no file box. Test load is separate and unlinked. Review says what was calculated and what will be added. An unmatched quantity explains that no company item uses that unit yet. |
+| Tests | Focused mapper and contract **22 passed**. Full suite **1808 passed**, 6493 warnings, **795.09s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Joel has not reviewed the corrected page. Real engines are not connected. Labour not started. |
+| Next approved step | Stop for Joel to read Add from calculation again. Do not ask him to paste a test file. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | This entry-experience checkpoint |
+
+### 2026-09-26 — Calculation mapper hosted validation migration and deploy
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CALCULATION MAPPER — HOSTED VALIDATION MIGRATION + DEPLOY 26 SEP 2026 |
+| Objective | Migrate only the hosted validation database to `j0e1f2a3b4c5`, deploy `bde4e6479e0c318194a0cb6cb5814791faadf3b6`, and leave the mapper ready for Joel to try. |
+| Business decision | The hosted office is the validation copy. The Mac office stays the primary and stays on the pre-mapper schema. |
+| Architectural decision | Apply the existing mapper revision through Alembic on the hosted disk. Do not create tables by hand. Do not migrate the Mac primary. |
+| Prompt template used | Architect CALCULATION MAPPER — HOSTED VALIDATION MIGRATION + DEPLOY |
+| Approved Cursor prompt summary | Verify the hosted validation database, back it up, upgrade only `j0e1f2a3b4c5`, confirm the Mac primary is unchanged, deploy the mapper commit, and check that Home, Projects, Costs & pricing, Estimates, and Add from calculation load. Do not confirm a mapping. Do not start Labour, formulas, or Website work. |
+| Files expected to change | Occupancy docs only. The hosted validation database. |
+| Files prohibited from changing | Mac primary database. Contract V1. Pricing. Labour. Website. |
+| Implementation result | **HOSTED VALIDATION DB: MAPPER SCHEMA APPLIED.** Alembic `j0e1f2a3b4c5`. Integrity ok. **MAC PRIMARY: UNCHANGED / PRE-MAPPER SCHEMA** at `h8c9d0e1f2a3`. **MAPPER: LIVE / READY FOR HUMAN UAT.** Deploy `dep-das15inlk1mc73du0g90` is Live at `bde4e6479e0c318194a0cb6cb5814791faadf3b6`. |
+| Tests | This turn did not rerun the suite. The mapper commit remains **1804 passed**, 6487 warnings, **788.26s**, exit **0**. Live pages loaded: Home, Projects, Costs & pricing, Estimates, and Add from calculation on synthetic estimate version 33. No mapping was confirmed. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Joel human UAT not done. Password authentication unresolved. Bypass remains active. Labour not started. Calculator formulas not started. |
+| Next approved step | Stop for Joel human UAT. Do not migrate the Mac primary. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | Deployed `bde4e6479e0c318194a0cb6cb5814791faadf3b6`. Occupancy docs for this turn are not committed. |
+
 ### 2026-09-26 — Calculation result to estimate mapping foundation
 
 | Field | Content |

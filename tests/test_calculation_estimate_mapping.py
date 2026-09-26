@@ -32,6 +32,7 @@ from app.services.calculation_estimate_mapping import (
     defer_labour_quantity,
     get_intake,
     ingest_contract_result,
+    record_page,
     review_page,
 )
 from app.services.estimate_builder import create_section
@@ -526,5 +527,99 @@ def test_review_screen_hides_contract_machinery(app):
         )
     assert "contract_version" not in html
     assert "fingerprint" not in html
-    assert "Add to estimate" in html or "Unresolved" in html
+    assert "What was calculated" in html
+    assert "Add to this estimate" in html
+    assert "does not yet know which company cost" in html
+    assert "Map to" not in html
     assert "Concrete slab" in html
+    assert "9.45" in html
+    assert "m³" in html
+
+
+def test_normal_entry_explains_the_job_without_a_calculation_file(app):
+    project = _project()
+    estimate, _section = _estimate(project)
+    version = estimate.current_version
+    with app.test_request_context():
+        html = render_template(
+            "estimates/calculation_list.html",
+            estimate=estimate,
+            version=version,
+            cards=[],
+        )
+    assert "Use a CalibraytAI calculation to work out project quantities" in html
+    assert "Nothing is added until you confirm it." in html
+    assert "No calculation can be run from this estimate yet." in html
+    assert "calculation_text" not in html
+    assert "<textarea" not in html
+    assert "Calculation file" not in html
+    assert "JSON" not in html
+    assert "test-load" not in html
+    assert "ICF wall" not in html
+    assert "Concrete slab" not in html
+
+
+def test_test_load_stays_off_the_normal_page(app):
+    project = _project()
+    estimate, _section = _estimate(project)
+    version = estimate.current_version
+    with app.test_request_context():
+        html = render_template(
+            "estimates/calculation_test_load.html",
+            estimate=estimate,
+            version=version,
+        )
+    assert "This page is for testing a calculation file." in html
+    assert "not part of normal estimating" in html
+    assert 'name="calculation_text"' in html
+    assert "Load test calculation" in html
+
+
+def test_confirmation_stays_on_the_review_until_the_person_adds_it(app):
+    project = _project()
+    estimate, section = _estimate(project)
+    _cost_item(code="ready_mix", unit="m3", name="Ready mix")
+    intake = ingest_contract_result(
+        organization_id=DEFAULT_ORGANIZATION_ID,
+        estimate_version_id=estimate.current_version.id,
+        payload=_load("thickened-edge-slab.example.json"),
+        actor="Joel Brayman",
+    )
+    with app.test_request_context():
+        html = render_template(
+            "estimates/calculation_review.html",
+            estimate=estimate,
+            version=estimate.current_version,
+            intake=intake,
+            page=review_page(intake),
+        )
+    assert "Add as" in html
+    assert "Add to estimate" in html
+    assert "Ready mix" in html
+    assert EstimateLineItem.query.count() == 0
+    assert section.id
+
+
+def test_calculation_details_keep_the_source_check(app):
+    project = _project()
+    estimate, _section = _estimate(project)
+    intake = ingest_contract_result(
+        organization_id=DEFAULT_ORGANIZATION_ID,
+        estimate_version_id=estimate.current_version.id,
+        payload=_load("thickened-edge-slab.example.json"),
+        actor="Joel Brayman",
+    )
+    page = record_page(intake)
+    with app.test_request_context():
+        html = render_template(
+            "estimates/calculation_record.html",
+            estimate=estimate,
+            version=estimate.current_version,
+            intake=intake,
+            page=page,
+        )
+    assert "Calculation details" in html
+    assert "Where these quantities came from" in html
+    assert "Source check" in html
+    assert page["fingerprint"] in html
+    assert "contract_version" not in html

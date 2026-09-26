@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Calculation result | Brayman Construction Platform{% endblock %}
-{% block page_title %}Calculation result{% endblock %}
+{% block title %}{{ page.engine_name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ page.engine_name }}{% endblock %}
 
 {% block content %}
 <div class="page-heading">
@@ -10,23 +10,20 @@
         <h1>{{ page.engine_name }}{% if page.variant_name %} — {{ page.variant_name }}{% endif %}</h1>
     </div>
     <div>
-        <a class="button-link" href="{{ url_for('estimates.calculation_list', id=estimate.id, version_id=version.id) }}">All calculations</a>
-        <a class="button-link" href="{{ url_for('estimates.calculation_record', id=estimate.id, version_id=version.id, intake_id=intake.id) }}">Calculation record</a>
+        <a class="button-link" href="{{ url_for('estimates.calculation_list', id=estimate.id, version_id=version.id) }}">Back to Add from calculation</a>
+        <a class="button-link" href="{{ url_for('estimates.calculation_record', id=estimate.id, version_id=version.id, intake_id=intake.id) }}">Calculation details</a>
     </div>
 </div>
 
-<section class="form-panel">
-    <p class="muted-copy">{{ page.mapped_count }} added · {{ page.unresolved_count }} still open. Review every quantity. The estimate changes only when you add one.</p>
-    {% if version.sections|length == 0 %}
-    <p>Add a section on the estimate before adding a quantity.</p>
-    {% endif %}
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>What was calculated</h2>
+    <p class="muted-copy">{{ page.mapped_count }} added to this estimate. {{ page.unresolved_count }} still to match. The estimate changes only when you add one.</p>
     <table class="data-table">
         <thead>
             <tr>
+                <th>Calculated item</th>
                 <th>Quantity</th>
-                <th>Amount</th>
                 <th>Unit</th>
-                <th>Estimate mapping</th>
             </tr>
         </thead>
         <tbody>
@@ -34,25 +31,60 @@
             <tr>
                 <td>{{ row.description }}</td>
                 <td>{{ row.quantity }}</td>
-                <td>{{ row.unit }}</td>
+                <td>{{ row.unit_label }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section class="form-panel">
+    <h2>Add to this estimate</h2>
+    <p>Choose the company cost or reusable work for each quantity you want on this estimate. Confirm it before it is added.</p>
+    {% if version.sections|length == 0 %}
+    <p>Add a section on the estimate before adding a quantity.</p>
+    {% endif %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Calculated item</th>
+                <th>Quantity</th>
+                <th>Add as</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in page.rows %}
+            <tr>
+                <td>{{ row.description }}</td>
+                <td>{{ row.quantity }} {{ row.unit_label }}</td>
                 <td>
                     {% if row.status == "confirmed" %}
-                    <p>Added · {{ row.target_name }}</p>
-                    {% elif row.status == "labour_deferred" %}
-                    <p>Labour mapping needs a labour rule.</p>
-                    {% elif row.labour %}
-                    <p>Labour mapping needs a labour rule.</p>
-                    {% if not version.is_locked %}
+                    {{ row.target_name }}
+                    {% elif row.labour or row.status == "labour_deferred" %}
+                    Labour, later
+                    {% elif not row.choices %}
+                    No company item uses this unit yet
+                    {% else %}
+                    Choose below
+                    {% endif %}
+                </td>
+                <td>
+                    {% if row.status == "confirmed" %}
+                    <p>Added to this estimate.</p>
+                    {% elif row.status == "labour_deferred" or row.labour %}
+                    <p>This quantity is labour. It stays off the estimate until labour has a rule. Labour mapping needs a labour rule.</p>
+                    {% if row.status != "labour_deferred" and not version.is_locked %}
                     <form method="post" action="{{ url_for('estimates.calculation_defer_labour', id=estimate.id, version_id=version.id, review_id=row.id) }}">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="intake_id" value="{{ intake.id }}">
-                        <button type="submit">Keep for labour</button>
+                        <button type="submit">Leave for labour</button>
                     </form>
                     {% endif %}
                     {% elif not row.choices %}
-                    <p>Unresolved. No compatible item uses this unit.</p>
+                    <p>CalibraytAI calculated this quantity but does not yet know which company cost or reusable work item to use. Leave it for now. The estimate is unchanged.</p>
                     {% elif version.is_locked %}
-                    <p>Unresolved. This estimate version is locked.</p>
+                    <p>This estimate is locked, so this quantity stays off it.</p>
                     {% else %}
                     <form method="post" action="{{ url_for('estimates.calculation_confirm', id=estimate.id, version_id=version.id, review_id=row.id) }}">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -67,7 +99,7 @@
                             </select>
                         </label>
                         <label>
-                            Map to
+                            Add as
                             <select name="target" required>
                                 <option value="">Choose</option>
                                 {% for choice in row.choices %}

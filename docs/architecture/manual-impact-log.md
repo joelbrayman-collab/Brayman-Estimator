@@ -51,6 +51,36 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — ADD FROM CALCULATION ENTRY (2026-09-26)
+
+| Field | Content |
+|-------|---------|
+| Slice | Add from calculation, on an estimate version. |
+| Product status at capture | Entry copy corrected after Joel stopped, confused, before any mapping. Human review of the correction is not done. |
+| 1. What new contractor capability exists? | The estimate explains that a calculation works out quantities and that only confirmed quantities are added. It does not ask the contractor to paste a file. |
+| 2. When would the contractor use it? | When they want calculated quantities on an estimate, once a calculation can be run from that page. |
+| 3. What workflow will the final Manual need to teach? | Open the estimate. Add from calculation. Read what the step is for. When a calculation is available, run it, review the quantities, choose the company item, and confirm. |
+| 4. What contractor-facing terms must be used? | Add from calculation. What was calculated. Add to this estimate. Add as. Still to match. Calculation details. |
+| 5. What screenshots / Print examples will eventually be needed? | The explained entry page, one confirmed quantity, and one quantity still to match. Do not capture them until Joel accepts the look. |
+| 6. What warnings / validation distinctions need explanation? | No calculation can be run from the estimate until a real one exists. A quantity with no company item can be left waiting. That wait is not a failure. |
+| 7. Desktop / iPhone / Print relevance | Desktop office. Not a customer document. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
+### MANUAL IMPACT — CALCULATION RESULT MAPPING LIVE FOR UAT (2026-09-26)
+
+| Field | Content |
+|-------|---------|
+| Slice | Add from calculation, on an estimate version. |
+| Product status at capture | Live on the hosted validation office. Ready for Joel to try. Human UAT is not done. Mac primary was not migrated. |
+| 1. What new contractor capability exists? | From an unlocked estimate version, load a calculation file, see each quantity, and add one confirmed quantity to a company cost. |
+| 2. When would the contractor use it? | After a calculation file exists and they want a confirmed quantity on an estimate. |
+| 3. What workflow will the final Manual need to teach? | Open an unlocked draft. Add from calculation. Paste the calculation file. Review each quantity. Add one. Leave another unresolved. Open the calculation record. |
+| 4. What contractor-facing terms must be used? | Add from calculation. Calculation result. Unresolved. Add to estimate. Calculation record. |
+| 5. What screenshots / Print examples will eventually be needed? | The review list, one added line with waste at zero, and one unresolved quantity. Do not capture them until Joel accepts the look. |
+| 6. What warnings / validation distinctions need explanation? | The sample file is a mapper test, not an approved formula. A quantity whose unit has no company item stays unresolved. The estimate line does not add waste again. |
+| 7. Desktop / iPhone / Print relevance | Desktop office. Not a customer document. Not one of the seven workflow document families. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — CALCULATION RESULT MAPPING (2026-09-26)
 
 | Field | Content |

@@ -27,7 +27,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - `assemblies`, `assembly_items`
 - `estimates`, `estimate_versions`, `estimate_sections`, `estimate_line_items`
 - `takeoff_estimate_insertions`, `takeoff_estimate_insertion_citations` (FG-026; Estimating-owned frozen provenance)
-- `calculation_result_intakes`, `calculation_quantity_reviews`, `calculation_mapping_acceptances` (calculation review; Estimating-owned; migration **`j0e1f2a3b4c5` not live-migrated**). A valid Contract V1 result can be reviewed. A person confirms a compatible Cost Item or Assembly. Labour stays deferred. The calculation file is not changed.
+- `calculation_result_intakes`, `calculation_quantity_reviews`, `calculation_mapping_acceptances` (calculation review; Estimating-owned; migration **`j0e1f2a3b4c5` applied on the hosted validation database**). Mac primary remains **`h8c9d0e1f2a3`**. A valid Contract V1 result can be reviewed. A person confirms a compatible Cost Item or Assembly. Labour stays deferred. The calculation file is not changed.
 - `estimate_costing_snapshots`, `estimate_costing_snapshot_lines` (FG-027; Estimating-owned; additive `a5b6c7d8e9f0` **applied live**)
 - `estimate_scope_deliveries` ([FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) Slice A; [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**; 1:1 with `EstimateLineItem`; migration **`c7d8e9f0a1b2` applied live**)
 - `subcontractors`, `subcontract_quote_evidence` ([FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) Slice B; Estimating-owned; migration **`d8e9f0a1b2c3` applied live**)
@@ -61,6 +61,16 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - Internal Detailed Cost Breakdown — **implemented / operational for UAT** ([FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT**). Office view at `GET /estimates/<id>/versions/<version_id>/internal-breakdown`. Direct Cost = Σ `extended_cost`. Labour snapshots display-only, labeled not in selling-price basis.
 - Governed pricing policy application — **implemented / operational for UAT** ([pricing-policy.md](../pricing-policy.md); [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted**; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; versions without a snapshot still use markup/overhead/profit stack)
 - Deeper productivity tooling — [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) Labour Engine Phase B **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (operational for UAT); Estimating does not own canonical tasks or production standards
+
+## Add from calculation
+
+The ordinary path is Project → Estimate → **Add from calculation**.
+
+That page tells the contractor what the step is for: use a CalibraytAI calculation to work out project quantities, review them, and add only the confirmed quantities to the estimate. No calculator button is shown until a real engine exists and can return Contract V1. Concrete slab, ICF wall, stair, wall framing, drywall, roofing, and flooring are Website / engine work. They are not implemented here.
+
+When a real engine exists, it appears on this same page. The contractor runs it, reviews what was calculated, chooses the company cost or reusable work, and confirms. Nothing is added before that confirmation. Project, Plans, and Takeoff do not grow a second calculator path. Takeoff remains plan measurement. A later measurement that feeds a calculator must arrive at this same review.
+
+A test page at `/estimates/<id>/versions/<version_id>/calculations/test-load` can still accept a Contract V1 file. It is labeled as testing and is not linked from Add from calculation. It is not the normal way to build an estimate.
 
 ## Planned capabilities
 

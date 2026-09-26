@@ -95,6 +95,13 @@ _VARIANT_LABELS = {
     "standard": "Standard",
     "thickened_edge": "Thickened edge",
 }
+_UNIT_DISPLAY = {
+    "m2": "m²",
+    "ft2": "ft²",
+    "m3": "m³",
+    "ft3": "ft³",
+    "yd3": "yd³",
+}
 
 
 class CalculationEstimateMappingError(EstimateServiceError):
@@ -122,6 +129,11 @@ def variant_label(variant):
     if not variant:
         return None
     return _VARIANT_LABELS.get(variant, variant.replace("_", " ").capitalize())
+
+
+def contractor_unit_label(unit_code):
+    """Presentation spelling only. This does not convert a unit."""
+    return _UNIT_DISPLAY.get(unit_code, unit_code)
 
 
 def _require_actor(actor):
@@ -390,6 +402,7 @@ def review_page(intake):
                 "description": _quantity_description(review),
                 "quantity": review.quantity_text,
                 "unit": review.unit_code,
+                "unit_label": contractor_unit_label(review.unit_code),
                 "status": review.status,
                 "labour": _is_labour_code(review.quantity_code),
                 "choices": _compatible_choices(
@@ -423,14 +436,21 @@ def record_page(intake):
         .order_by(CalculationMappingAcceptance.id.asc())
         .all()
     )
+    reviews_by_code = {review.quantity_code: review for review in intake.reviews}
     page["fingerprint"] = intake.fingerprint
     page["acceptances"] = [
         {
             "quantity_code": row.quantity_code,
+            "description": (
+                _quantity_description(reviews_by_code[row.quantity_code])
+                if row.quantity_code in reviews_by_code
+                else row.quantity_code.replace("_", " ").capitalize()
+            ),
             "actor": row.actor_display_name,
             "accepted_at": row.accepted_at,
             "quantity": row.confirmed_quantity,
             "unit": row.confirmed_unit_code,
+            "unit_label": contractor_unit_label(row.confirmed_unit_code),
         }
         for row in acceptances
     ]

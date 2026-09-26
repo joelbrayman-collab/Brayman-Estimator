@@ -15,8 +15,13 @@
 </div>
 
 <section class="form-panel" style="margin-bottom: 24px;">
-    <h2>Calculation support</h2>
-    <p class="muted-copy">Load a calculation, review each quantity, then add the ones you confirm. Nothing is added until you confirm it.</p>
+    <p>Use a CalibraytAI calculation to work out project quantities and add the confirmed quantities to this estimate.</p>
+    <p>You review what was calculated. You choose the company cost or reusable work each quantity should use. Nothing is added until you confirm it.</p>
+    <p class="muted-copy">No calculation can be run from this estimate yet. When a calculation is available, it will appear here for you to run, review, and add.</p>
+</section>
+
+<section class="form-panel">
+    <h2>Calculations on this estimate</h2>
     {% if cards %}
     <div class="register-list">
         {% for card in cards %}
@@ -24,28 +29,12 @@
             <a href="{{ url_for('estimates.calculation_review', id=estimate.id, version_id=version.id, intake_id=card.intake.id) }}">
                 {{ card.page.engine_name }}{% if card.page.variant_name %} — {{ card.page.variant_name }}{% endif %}
             </a>
-            <span class="muted-copy">{{ card.page.mapped_count }} added · {{ card.page.unresolved_count }} still open · loaded by {{ card.page.loaded_by }}</span>
+            <span class="muted-copy">{{ card.page.mapped_count }} added to the estimate · {{ card.page.unresolved_count }} still to match</span>
         </p>
         {% endfor %}
     </div>
     {% else %}
-    <p>No calculation is on this estimate version yet.</p>
+    <p>No calculation is on this estimate yet.</p>
     {% endif %}
 </section>
-
-{% if not version.is_locked %}
-<section class="form-panel">
-    <h2>Load a calculation</h2>
-    <form method="post" action="{{ url_for('estimates.calculation_load', id=estimate.id, version_id=version.id) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <label>
-            Calculation file
-            <textarea name="calculation_text" rows="8" required></textarea>
-        </label>
-        <div class="form-actions">
-            <button type="submit">Load calculation</button>
-        </div>
-    </form>
-</section>
-{% endif %}
 {% endblock %}

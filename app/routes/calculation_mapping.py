@@ -46,6 +46,20 @@ def calculation_list(id, version_id):
 
 
 @estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/calculations/test-load",
+    methods=["GET"],
+)
+def calculation_test_load(id, version_id):
+    """Controlled test ingestion. Not linked from the contractor page."""
+    estimate, version = _version_or_404(id, version_id)
+    return render_template(
+        "estimates/calculation_test_load.html",
+        estimate=estimate,
+        version=version,
+    )
+
+
+@estimates_bp.route(
     "/<int:id>/versions/<int:version_id>/calculations/load",
     methods=["POST"],
 )

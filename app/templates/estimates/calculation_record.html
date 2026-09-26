@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Calculation record | Brayman Construction Platform{% endblock %}
-{% block page_title %}Calculation record{% endblock %}
+{% block title %}Calculation details | Brayman Construction Platform{% endblock %}
+{% block page_title %}Calculation details{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">Calculation support</p>
+        <p class="eyebrow">Where these quantities came from</p>
         <h1>{{ page.engine_name }}{% if page.variant_name %} — {{ page.variant_name }}{% endif %}</h1>
     </div>
     <div>
@@ -15,26 +15,27 @@
 </div>
 
 <section class="form-panel">
+    <p>This calculation produced the quantities you reviewed. The ones you confirmed are on the estimate. The others are still waiting for a company item.</p>
     <div class="form-grid">
         <div>
-            <p class="eyebrow">Result date</p>
+            <p class="eyebrow">Calculation date</p>
             <p>{{ page.result_date }}</p>
         </div>
         <div>
-            <p class="eyebrow">Loaded by</p>
+            <p class="eyebrow">Opened by</p>
             <p>{{ page.loaded_by }}</p>
         </div>
         <div>
-            <p class="eyebrow">Added</p>
+            <p class="eyebrow">Added to the estimate</p>
             <p>{{ page.mapped_count }}</p>
         </div>
         <div>
-            <p class="eyebrow">Still open</p>
+            <p class="eyebrow">Still to match</p>
             <p>{{ page.unresolved_count }}</p>
         </div>
     </div>
-    <p class="muted-copy">Record check {{ page.fingerprint }}</p>
-    <h2>Accepted quantities</h2>
+    <p class="muted-copy">Source check {{ page.fingerprint }}. This check shows the calculation has not been changed since it was opened. You do not type it.</p>
+    <h2>Quantities added to the estimate</h2>
     {% if page.acceptances %}
     <table class="data-table">
         <thead>
@@ -42,16 +43,16 @@
                 <th>Quantity</th>
                 <th>Amount</th>
                 <th>Unit</th>
-                <th>Accepted by</th>
+                <th>Confirmed by</th>
                 <th>When</th>
             </tr>
         </thead>
         <tbody>
             {% for row in page.acceptances %}
             <tr>
-                <td>{{ row.quantity_code }}</td>
+                <td>{{ row.description }}</td>
                 <td>{{ row.quantity }}</td>
-                <td>{{ row.unit }}</td>
+                <td>{{ row.unit_label }}</td>
                 <td>{{ row.actor }}</td>
                 <td>{{ row.accepted_at }}</td>
             </tr>

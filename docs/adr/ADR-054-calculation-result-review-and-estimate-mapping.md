@@ -7,6 +7,8 @@
 | Date | 2026-09-26 |
 | Related | [calculation-engine-result-contract-v1.md](../architecture/calculation-engine-result-contract-v1.md) · [ADR-006](ADR-006-human-approval-before-estimate-insertion.md) |
 
+**Subsequent status (2026-09-26 entry experience):** The decision is unchanged. The ordinary estimate page explains Add from calculation and does not ask for a calculation file. Test ingestion stays on a separate page. Hosted validation Alembic is `j0e1f2a3b4c5`. The Mac primary remains `h8c9d0e1f2a3`. No calculator formula was added.
+
 ## Context
 
 Contract V1 is pinned. A calculated quantity must not become an estimate line by itself. Takeoff insertion is the closest confirmation pattern, and it cannot hold an unreviewed quantity: it requires a takeoff package and an estimate line.

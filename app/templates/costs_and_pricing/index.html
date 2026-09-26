@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{ contractor_copy.COSTS_AND_PRICING_NAV_TITLE }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.COSTS_AND_PRICING_NAV_TITLE }}{% endblock %}
+
+{% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+<section class="page-header">
+    <div>
+        <h2 class="page-title">{{ contractor_copy.COSTS_AND_PRICING_NAV_TITLE }}</h2>
+        <p class="page-purpose">{{ contractor_copy.COSTS_AND_PRICING_LEDE }}</p>
+    </div>
+</section>
+
+{{ contextual_help(help_content.office_topic("costs_and_pricing")) }}
+
+<section class="page-section">
+    <div class="projects-workspace">
+        <a class="register-row" href="{{ url_for('cost_library.list_cost_items') }}">
+            <span class="projects-row-identity">
+                <span class="projects-row-name">{{ contractor_copy.WHAT_WE_PAY_NAV_TITLE }}</span>
+                <span class="projects-row-client">Current costs used in estimates.</span>
+            </span>
+        </a>
+        <a class="register-row" href="{{ url_for('assemblies.list_assemblies') }}">
+            <span class="projects-row-identity">
+                <span class="projects-row-name">{{ contractor_copy.REUSABLE_WORK_NAV_TITLE }}</span>
+                <span class="projects-row-client">Groups of costs used repeatedly.</span>
+            </span>
+        </a>
+        <a class="register-row" href="{{ url_for('pricing_engine.index') }}">
+            <span class="projects-row-identity">
+                <span class="projects-row-name">{{ contractor_copy.HOW_WE_PRICE_NAV_TITLE }}</span>
+                <span class="projects-row-client">How your company turns cost into the customer price.</span>
+            </span>
+        </a>
+    </div>
+</section>
+{% endblock %}

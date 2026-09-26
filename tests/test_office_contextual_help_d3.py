@@ -50,7 +50,10 @@ OFFICE_HELP_KEYS = (
     "company_attention",
     "estimating",
     "previous_estimates",
+    "costs_and_pricing",
     "cost_library",
+    "reusable_work",
+    "how_we_price",
     "settings_brand_profile",
     "permit_report",
     "job_location",
@@ -262,7 +265,7 @@ def test_office_help_renders_on_high_value_screens(client, project):
     assert "Excel" in previous.what
     assert "Workbook A–E" in previous.what
     cost = help_content.office_topic("cost_library")
-    assert "Cost library" in cost.title
+    assert "What we pay" in cost.title
     attention = help_content.office_topic("company_attention")
     assert "where does my business need attention" in attention.what
     assert FINANCIAL_HELP_TERMS.search(

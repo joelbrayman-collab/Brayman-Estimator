@@ -1,22 +1,28 @@
 {% extends "base.html" %}
 
 {% block title %}{{ policy.policy_code }} | Brayman Construction Platform{% endblock %}
-{% block page_title %}Pricing Policy{% endblock %}
+{% block page_title %}{{ contractor_copy.HOW_WE_PRICE_NAV_TITLE }}{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">{{ contractor_copy.PRICING_HEADING }}</p>
-        <h1>{{ policy.policy_code }} v{{ policy.version_number }}</h1>
-        <p>{{ contractor_copy.pricing_method_label(policy.method) }} · {{ contractor_copy.office_status_label(policy.approval_status) }}{% if policy.is_default %} · Organization default{% endif %}</p>
+        <h1>{{ contractor_copy.pricing_method_label(policy.method) }}</h1>
+        <p class="page-purpose">
+            {% if policy.approval_status == "ORG_APPROVED" %}Approved{% elif policy.approval_status == "DRAFT" %}Draft{% elif policy.approval_status == "SUPERSEDED" %}Replaced{% elif policy.approval_status == "WITHDRAWN" %}Withdrawn{% else %}{{ contractor_copy.office_status_label(policy.approval_status) }}{% endif %}
+            {% if policy.is_default %} · Company default{% endif %}
+            {% if policy.method == "TRUE_GROSS_MARGIN" and policy.target_gross_margin is not none %}
+            · {{ contractor_copy.stored_rate_percent(policy.target_gross_margin) }} of the customer price is margin
+            {% endif %}
+        </p>
     </div>
-    <a class="button-link" href="{{ url_for('pricing_engine.index') }}">All policies</a>
+    <a class="button-quiet" href="{{ url_for('pricing_engine.index') }}">How we price</a>
 </div>
 
 <table class="data-table">
     <tbody>
         <tr><th>Method</th><td>{{ contractor_copy.pricing_method_label(policy.method) }}</td></tr>
-        <tr><th>Target gross margin</th><td>{{ policy.target_gross_margin if policy.target_gross_margin is not none else "—" }}</td></tr>
+        <tr><th>Target gross margin</th><td>{{ contractor_copy.stored_rate_percent(policy.target_gross_margin) if policy.target_gross_margin is not none else "—" }}</td></tr>
         <tr><th>Markup rate</th><td>{{ policy.markup_rate if policy.markup_rate is not none else "—" }}</td></tr>
         <tr><th>Stack overhead %</th><td>{{ policy.stack_overhead_percent if policy.stack_overhead_percent is not none else "—" }}</td></tr>
         <tr><th>Stack profit %</th><td>{{ policy.stack_profit_percent if policy.stack_profit_percent is not none else "—" }}</td></tr>
@@ -45,11 +51,11 @@
         <button type="submit" formaction="{{ url_for('pricing_engine.approve_policy', policy_id=policy.id) }}">Approve (human)</button>
         {% endif %}
         {% if policy.approval_status == "ORG_APPROVED" %}
-        <button type="submit" formaction="{{ url_for('pricing_engine.set_default', policy_id=policy.id) }}">Set as org default</button>
-        <button type="submit" formaction="{{ url_for('pricing_engine.supersede_policy', policy_id=policy.id) }}">Save as a new draft version</button>
+        <button class="button-primary" type="submit" formaction="{{ url_for('pricing_engine.set_default', policy_id=policy.id) }}">Use for this company</button>
+        <button class="button-quiet" type="submit" formaction="{{ url_for('pricing_engine.supersede_policy', policy_id=policy.id) }}">Save as a new draft version</button>
         {% endif %}
         {% if policy.approval_status != "SUPERSEDED" %}
-        <button type="submit" formaction="{{ url_for('pricing_engine.withdraw_policy', policy_id=policy.id) }}">Withdraw</button>
+        <button class="button-destructive" type="submit" formaction="{{ url_for('pricing_engine.withdraw_policy', policy_id=policy.id) }}">Withdraw</button>
         {% endif %}
     </div>
 </form>

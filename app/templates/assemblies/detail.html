@@ -2,7 +2,7 @@
 
 {% block title %}{{ assembly.code }} | Brayman Construction Platform{% endblock %}
 
-{% block page_title %}Assembly{% endblock %}
+{% block page_title %}{{ contractor_copy.REUSABLE_WORK_NAV_TITLE }}{% endblock %}
 
 {% block content %}
 <div class="page-heading">
@@ -12,10 +12,13 @@
     </div>
 
     <div>
-        <a class="button" href="{{ url_for('assemblies.edit_assembly', id=assembly.id) }}">Edit Assembly</a>
-        <a class="button-link" href="{{ url_for('assemblies.list_assemblies') }}">Back to list</a>
+        <a class="button-primary" href="{{ url_for('assemblies.edit_assembly', id=assembly.id) }}">Edit</a>
+        <a class="button-quiet" href="{{ url_for('assemblies.list_assemblies') }}">Back to reusable work</a>
     </div>
 </div>
+<form method="post" action="{{ url_for('assemblies.toggle_assembly_active', id=assembly.id) }}" class="form-actions">
+    <button class="button-destructive" type="submit">{{ "Deactivate" if assembly.is_active else "Activate" }}</button>
+</form>
 
 <section class="form-panel" style="margin-bottom: 24px;">
     <div class="form-grid">
@@ -44,8 +47,9 @@
             <p><strong>${{ "%.2f"|format(assembly.base_unit_cost) }}</strong></p>
         </div>
         <div>
-            <p class="eyebrow">Sell Unit Price</p>
+            <p class="eyebrow">Sell unit price from this markup</p>
             <p><strong>${{ "%.2f"|format(assembly.sell_unit_price) }}</strong></p>
+            <p class="page-purpose">{{ contractor_copy.REUSABLE_WORK_PRICE_NOTE }}</p>
         </div>
     </div>
 

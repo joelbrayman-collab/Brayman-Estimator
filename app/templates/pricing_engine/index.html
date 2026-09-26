@@ -4,43 +4,43 @@
 {% block page_title %}{{ contractor_copy.HOW_WE_PRICE_NAV_TITLE }}{% endblock %}
 
 {% block content %}
-<div class="page-heading">
+{% from "partials/contextual_help.html" import contextual_help with context %}
+<section class="page-header">
     <div>
-        <p class="eyebrow">Estimating</p>
-        <h1>{{ contractor_copy.HOW_WE_PRICE_NAV_TITLE }}</h1>
-        <p>Organization pricing policies. Methods stay platform-owned; this organization owns rates.</p>
+        <h2 class="page-title">{{ contractor_copy.HOW_WE_PRICE_NAV_TITLE }}</h2>
+        <p class="page-purpose">{{ contractor_copy.HOW_WE_PRICE_LEDE }}</p>
     </div>
-    <a class="button" href="{{ url_for('pricing_engine.create_policy') }}">New draft policy</a>
-</div>
+    <a class="button-primary" href="{{ url_for('pricing_engine.create_policy') }}">New pricing draft</a>
+</section>
+
+{{ contextual_help(help_content.office_topic("how_we_price")) }}
 
 {% if policies %}
-<table class="data-table">
-    <thead>
-        <tr>
-            <th>Code</th>
-            <th>Version</th>
-            <th>Method</th>
-            <th>Status</th>
-            <th>Default</th>
-            <th>Tax %</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for policy in policies %}
-        <tr>
-            <td>{{ policy.policy_code }}</td>
-            <td>v{{ policy.version_number }}</td>
-            <td>{{ contractor_copy.pricing_method_label(policy.method) }}</td>
-            <td>{{ contractor_copy.office_status_label(policy.approval_status) }}</td>
-            <td>{% if policy.is_default %}Yes{% else %}—{% endif %}</td>
-            <td>{% if policy.tax_percent is not none %}{{ "%.2f"|format(policy.tax_percent) }}{% else %}—{% endif %}</td>
-            <td><a class="button-link" href="{{ url_for('pricing_engine.policy_detail', policy_id=policy.id) }}">Open</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="projects-workspace">
+    {% for policy in policies %}
+    <a class="register-row" href="{{ url_for('pricing_engine.policy_detail', policy_id=policy.id) }}">
+        <span class="projects-row-identity">
+            <span class="projects-row-name">{{ contractor_copy.pricing_method_label(policy.method) }}</span>
+            <span class="projects-row-client">
+                {% if policy.method == "TRUE_GROSS_MARGIN" and policy.target_gross_margin is not none %}
+                {{ contractor_copy.stored_rate_percent(policy.target_gross_margin) }} of the customer price is margin.
+                {% elif policy.method == "COST_PLUS_MARKUP" and policy.markup_rate is not none %}
+                Markup {{ contractor_copy.stored_rate_percent(policy.markup_rate) }}.
+                {% elif policy.method == "COST_PLUS_MARKUP_STACK" %}
+                Older cost-plus method.
+                {% endif %}
+                {% if policy.tax_percent is not none %}Tax {{ "%.2f"|format(policy.tax_percent) }}%.{% endif %}
+            </span>
+        </span>
+        <span class="projects-row-stage">
+            {% if policy.approval_status == "ORG_APPROVED" %}Approved{% elif policy.approval_status == "DRAFT" %}Draft{% elif policy.approval_status == "SUPERSEDED" %}Replaced{% elif policy.approval_status == "WITHDRAWN" %}Withdrawn{% else %}{{ contractor_copy.office_status_label(policy.approval_status) }}{% endif %}
+            {% if policy.is_default %} · Company default{% endif %}
+        </span>
+    </a>
+    {% endfor %}
+</div>
 {% else %}
-<p>No pricing policies for this organization.</p>
+<p class="projects-empty-title">No company pricing yet</p>
+<p class="page-purpose">Add how this company turns cost into the customer price.</p>
 {% endif %}
 {% endblock %}

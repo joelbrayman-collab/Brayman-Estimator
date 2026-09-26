@@ -1,72 +1,53 @@
 {% extends "base.html" %}
 
 {% block title %}{{ contractor_copy.WHAT_WE_PAY_NAV_TITLE }} | Brayman Construction Platform{% endblock %}
-
 {% block page_title %}{{ contractor_copy.WHAT_WE_PAY_NAV_TITLE }}{% endblock %}
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
-<div class="page-heading">
+<section class="page-header">
     <div>
-        <p class="eyebrow">Estimating</p>
-        <h1>{{ contractor_copy.WHAT_WE_PAY_NAV_TITLE }}</h1>
+        <h2 class="page-title">{{ contractor_copy.WHAT_WE_PAY_NAV_TITLE }}</h2>
+        <p class="page-purpose">{{ contractor_copy.WHAT_WE_PAY_LEDE }}</p>
     </div>
-
-    <a class="button" href="{{ url_for('cost_library.create_cost_item') }}">New Cost Item</a>
-</div>
+    <a class="button-primary" href="{{ url_for('cost_library.create_cost_item') }}">New cost item</a>
+</section>
 
 {{ contextual_help(help_content.office_topic("cost_library")) }}
 
+<p class="page-purpose">{{ contractor_copy.WHAT_WE_PAY_LABOUR_NOTE }} <a href="{{ url_for('labour_engine.index') }}">Labour rates</a></p>
+
+<nav class="projects-view" aria-label="Cost category">
+    <a class="{% if not selected_category %}is-current{% endif %}" href="{{ url_for('cost_library.list_cost_items') }}">All</a>
+    {% for category in categories %}
+    <a class="{% if selected_category == category %}is-current{% endif %}" href="{{ url_for('cost_library.list_cost_items', category=category) }}">{{ contractor_copy.cost_category_label(category) }}</a>
+    {% endfor %}
+</nav>
+
 {% if cost_items %}
-<table class="data-table">
-    <thead>
-        <tr>
-            <th>Code</th>
-            <th>Item Name</th>
-            <th>Category</th>
-            <th>Unit</th>
-            <th>Unit Cost</th>
-            <th>Markup</th>
-            <th>Supplier</th>
-            <th>{{ contractor_copy.CATALOGUE_COLUMN_LABEL }}</th>
-            <th>Active</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in cost_items %}
-        <tr>
-            <td>{{ item.code }}</td>
-            <td>{{ item.name }}</td>
-            <td>{{ item.category }}</td>
-            <td>{{ item.unit }}</td>
-            <td>${{ "%.2f"|format(item.unit_cost) }}</td>
-            <td>{{ "%.2f"|format(item.default_markup_percent) }}%</td>
-            <td>{{ item.supplier or "—" }}</td>
-            <td>
-                {% if item.canonical_material %}
-                <a class="button-link" href="{{ url_for('material_catalogue.material_detail', material_id=item.canonical_material.id) }}">{{ item.canonical_material.code }}</a>
-                {% else %}
-                —
-                {% endif %}
-            </td>
-            <td>
-                <span class="status">{{ "Active" if item.is_active else "Inactive" }}</span>
-            </td>
-            <td>
-                <a class="button-link" href="{{ url_for('cost_library.edit_cost_item', id=item.id) }}">Edit</a>
-                <form method="post" action="{{ url_for('cost_library.toggle_cost_item_active', id=item.id) }}" style="display: inline;">
-                    <button type="submit">{{ "Deactivate" if item.is_active else "Activate" }}</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<div class="empty-state">
-    <h2>No cost items yet</h2>
-    <p>Add labour, material, equipment, and subcontractor pricing to the cost library.</p>
+<div class="projects-workspace">
+    <div class="register-head cost-row">
+        <span>Item</span>
+        <span>Category</span>
+        <span>Unit</span>
+        <span>What we pay</span>
+        <span>Status</span>
+    </div>
+    {% for item in cost_items %}
+    <a class="register-row cost-row" href="{{ url_for('cost_library.edit_cost_item', id=item.id) }}">
+        <span class="projects-row-identity">
+            <span class="projects-row-name">{{ item.name }}</span>
+            <span class="projects-row-client">{{ item.code }}{% if item.canonical_material %} · {{ item.canonical_material.code }}{% endif %}</span>
+        </span>
+        <span>{{ contractor_copy.cost_category_label(item.category) }}</span>
+        <span>{{ item.unit }}</span>
+        <span>${{ "%.2f"|format(item.unit_cost) }}</span>
+        <span class="projects-row-stage">{% if item.is_active %}Active{% else %}Inactive{% endif %}</span>
+    </a>
+    {% endfor %}
 </div>
+{% else %}
+<p class="projects-empty-title">No cost items yet</p>
+<p class="page-purpose">Add the unit costs this company pays. A material name is not a price.</p>
 {% endif %}
 {% endblock %}

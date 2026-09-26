@@ -30,7 +30,11 @@
         {% for section in nav_sections %}
         <div class="sidebar-section">
             {% if section.title %}
+            {% if section.endpoint %}
+            <a class="sidebar-section-label" href="{{ url_for(section.endpoint) }}">{{ section.title }}</a>
+            {% else %}
             <p class="sidebar-section-label">{{ section.title }}</p>
+            {% endif %}
             {% endif %}
             <ul class="sidebar-nav-list">
                 {% for item in section.links %}

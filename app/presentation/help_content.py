@@ -295,19 +295,54 @@ OFFICE_PREVIOUS_ESTIMATES = HelpTopic(
     surface=SURFACE_OFFICE,
 )
 
+OFFICE_COSTS_AND_PRICING = HelpTopic(
+    key="costs_and_pricing",
+    title="Costs & pricing",
+    what=(
+        "These are the costs and rates CalibraytAI uses to build your "
+        "estimates. You keep them. A supplier feed is not connected."
+    ),
+    do="Open what we pay, reusable work, or how we price.",
+    next="Use them when you build an estimate.",
+    surface=SURFACE_OFFICE,
+)
+
 OFFICE_COST_LIBRARY = HelpTopic(
     key="cost_library",
-    title="Cost library",
+    title="What we pay",
     what=(
-        "Cost library stores reusable unit costs for estimating. Stored costs "
-        "are not estimate line items, not actual Project costs, and not "
-        "accounting."
+        "These are the unit costs this company uses to build estimates. "
+        "A material name tells you what the product is. It is not the price."
     ),
     do=(
-        "Add or update stored costs, then use them when you build an estimate. "
-        "This screen does not create an estimate."
+        "Add or update a cost. Open the row to change it. A labour item here "
+        "is a unit cost, not the hourly rate used to work out hours."
     ),
-    next="Open Estimates or a Project Hub PRICE section to apply costs on a live job.",
+    next="Customer price is set in How we price, then applied on an estimate.",
+    surface=SURFACE_OFFICE,
+)
+
+OFFICE_REUSABLE_WORK = HelpTopic(
+    key="reusable_work",
+    title="Reusable work",
+    what=(
+        "Reusable work is a group of costs you use again on estimates. "
+        "CalibraytAI also calls these assemblies. It is not another price list."
+    ),
+    do="Open a group to see the costs inside it.",
+    next="The customer price is set in How we price.",
+    surface=SURFACE_OFFICE,
+)
+
+OFFICE_HOW_WE_PRICE = HelpTopic(
+    key="how_we_price",
+    title="How we price",
+    what="This is how your company turns cost into the customer price.",
+    do=(
+        "Keep the current company method here. This screen does not set a "
+        "different price for one estimate."
+    ),
+    next="Apply the company method when you price an estimate.",
     surface=SURFACE_OFFICE,
 )
 
@@ -419,7 +454,10 @@ OFFICE_TOPICS: dict[str, HelpTopic] = {
         OFFICE_COMPANY_ATTENTION,
         OFFICE_ESTIMATING,
         OFFICE_PREVIOUS_ESTIMATES,
+        OFFICE_COSTS_AND_PRICING,
         OFFICE_COST_LIBRARY,
+        OFFICE_REUSABLE_WORK,
+        OFFICE_HOW_WE_PRICE,
         OFFICE_SETTINGS_BRAND_PROFILE,
         OFFICE_PERMIT_REPORT,
         OFFICE_JOB_LOCATION,

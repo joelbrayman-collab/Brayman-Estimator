@@ -7,6 +7,7 @@ commercial calculations, or mutation. Internal domain keys stay authoritative.
 from __future__ import annotations
 
 from datetime import datetime
+from decimal import Decimal
 
 MONITOR_STATE_LABELS = {
     "MISSING_ACTUALS": "No actual costs entered yet",
@@ -75,9 +76,35 @@ PERMIT_PDF_BANNER = "Advisory only — this is not municipal permit approval"
 
 COST_LIBRARY_NAV_TITLE = "Cost library"
 COSTS_AND_PRICING_NAV_TITLE = "Costs & pricing"
+COSTS_AND_PRICING_LEDE = (
+    "These are the costs and rates CalibraytAI uses to build your estimates."
+)
 WHAT_WE_PAY_NAV_TITLE = "What we pay"
+WHAT_WE_PAY_LEDE = "The unit costs this company uses to build estimates."
+WHAT_WE_PAY_LABOUR_NOTE = (
+    "A labour item here is a unit cost. It is not the hourly rate, "
+    "or the speed used to work out hours."
+)
+WHAT_WE_PAY_MARKUP_NOTE = (
+    "This starting markup is copied onto an estimate line. "
+    "It does not set the customer price. That is How we price."
+)
 REUSABLE_WORK_NAV_TITLE = "Reusable work"
+REUSABLE_WORK_LEDE = "A group of those costs you use again on estimates."
+REUSABLE_WORK_PRICE_NOTE = (
+    "The bundle cost is what the included items add up to. "
+    "The customer price is set in How we price."
+)
 HOW_WE_PRICE_NAV_TITLE = "How we price"
+HOW_WE_PRICE_LEDE = "How this company turns cost into the customer price."
+COST_CATEGORY_LABELS = {
+    "Labour": "Labour",
+    "Material": "Material",
+    "Equipment": "Equipment",
+    "Subcontractor": "Subcontract",
+    "Allowance": "Allowance",
+    "Other": "Other",
+}
 COMPANY_LIBRARY_NAV_TITLE = "Company library"
 PAST_JOBS_NAV_TITLE = "Past jobs"
 PAST_JOBS_NOTE = (
@@ -699,6 +726,21 @@ def pricing_method_label(method: str | None) -> str:
     if mapped:
         return mapped
     return office_status_label(method)
+
+
+def cost_category_label(category: str | None) -> str:
+    if not category:
+        return ""
+    return COST_CATEGORY_LABELS.get(category, category)
+
+
+def stored_rate_percent(rate) -> str:
+    """Show a stored 0–1 rate as a percent. Display only."""
+    if rate is None:
+        return ""
+    points = (Decimal(str(rate)) * Decimal("100")).quantize(Decimal("0.01"))
+    text = format(points, "f").rstrip("0").rstrip(".")
+    return f"{text}%"
 
 
 def historical_family_label(family: str | None) -> str:

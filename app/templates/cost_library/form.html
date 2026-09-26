@@ -2,7 +2,7 @@
 
 {% block title %}{{ "Edit Cost Item" if cost_item else "New Cost Item" }} | Brayman Construction Platform{% endblock %}
 
-{% block page_title %}Cost Item{% endblock %}
+{% block page_title %}{{ contractor_copy.WHAT_WE_PAY_NAV_TITLE }}{% endblock %}
 
 {% block content %}
 <div class="page-heading">
@@ -29,7 +29,7 @@
             <select name="category" required>
                 <option value="">Select a category</option>
                 {% for category in categories %}
-                <option value="{{ category }}" {% if form.category == category %}selected{% endif %}>{{ category }}</option>
+                <option value="{{ category }}" {% if form.category == category %}selected{% endif %}>{{ contractor_copy.cost_category_label(category) }}</option>
                 {% endfor %}
             </select>
         </label>
@@ -47,6 +47,7 @@
         <label>
             Default markup %
             <input type="number" name="default_markup_percent" value="{{ form.default_markup_percent }}" step="0.01" min="0">
+            <span class="field-hint">{{ contractor_copy.WHAT_WE_PAY_MARKUP_NOTE }}</span>
         </label>
 
         <label>
@@ -75,12 +76,20 @@
             </option>
             {% endif %}
         </select>
-        <span>Shared catalogue name. Link or unlink only. Catalogue names are not edited here.</span>
+        <span>The product this cost is for. The product does not store the price. Link or unlink only.</span>
     </label>
 
     <div class="form-actions">
-        <button type="submit">{{ "Update Cost Item" if cost_item else "Save Cost Item" }}</button>
+        <button class="button-primary" type="submit">{{ "Update cost item" if cost_item else "Save cost item" }}</button>
         <a href="{{ url_for('cost_library.list_cost_items') }}">Cancel</a>
     </div>
 </form>
+{% if cost_item %}
+<form method="post" action="{{ url_for('cost_library.toggle_cost_item_active', id=cost_item.id) }}" class="form-actions">
+    <button class="button-destructive" type="submit">{{ "Deactivate" if cost_item.is_active else "Activate" }}</button>
+</form>
+{% if cost_item.canonical_material %}
+<p class="page-purpose"><a href="{{ url_for('material_catalogue.material_detail', material_id=cost_item.canonical_material.id) }}">What this product is</a></p>
+{% endif %}
+{% endif %}
 {% endblock %}

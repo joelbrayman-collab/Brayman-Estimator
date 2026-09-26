@@ -209,6 +209,15 @@ body[data-sidebar-collapsed="true"] .sidebar-company {
     color: #8b919c;
 }
 
+a.sidebar-section-label {
+    display: block;
+    text-decoration: none;
+}
+
+a.sidebar-section-label:hover {
+    color: #d7dbe2;
+}
+
 body[data-sidebar-collapsed="true"] .sidebar-section-label {
     opacity: 0;
     height: 0;
@@ -2079,6 +2088,16 @@ body.login-page {
     color: #8a3b32;
     font-size: 0.9rem;
     font-weight: 600;
+}
+
+.register-row.cost-row {
+    grid-template-columns: minmax(0, 1.8fr) 8.5rem 5.5rem 7.5rem 6.5rem;
+}
+
+@media (max-width: 720px) {
+    .register-row.cost-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
 }
 
 .projects-row:hover .projects-row-go {

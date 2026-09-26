@@ -1,62 +1,38 @@
 {% extends "base.html" %}
 
 {% block title %}{{ contractor_copy.REUSABLE_WORK_NAV_TITLE }} | Brayman Construction Platform{% endblock %}
-
 {% block page_title %}{{ contractor_copy.REUSABLE_WORK_NAV_TITLE }}{% endblock %}
 
 {% block content %}
-<div class="page-heading">
+{% from "partials/contextual_help.html" import contextual_help with context %}
+<section class="page-header">
     <div>
-        <p class="eyebrow">Estimating</p>
-        <h1>{{ contractor_copy.REUSABLE_WORK_NAV_TITLE }}</h1>
+        <h2 class="page-title">{{ contractor_copy.REUSABLE_WORK_NAV_TITLE }}</h2>
+        <p class="page-purpose">{{ contractor_copy.REUSABLE_WORK_LEDE }}</p>
     </div>
+    <a class="button-primary" href="{{ url_for('assemblies.create_assembly') }}">New reusable work</a>
+</section>
 
-    <a class="button" href="{{ url_for('assemblies.create_assembly') }}">New Assembly</a>
-</div>
+{{ contextual_help(help_content.office_topic("reusable_work")) }}
 
 {% if assemblies %}
-<table class="data-table">
-    <thead>
-        <tr>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Unit</th>
-            <th>Base Unit Cost</th>
-            <th>Sell Unit Price</th>
-            <th>Active</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for assembly in assemblies %}
-        <tr>
-            <td>
-                <a href="{{ url_for('assemblies.view_assembly', id=assembly.id) }}">{{ assembly.code }}</a>
-            </td>
-            <td>{{ assembly.name }}</td>
-            <td>{{ assembly.category }}</td>
-            <td>{{ assembly.unit }}</td>
-            <td>${{ "%.2f"|format(assembly.base_unit_cost) }}</td>
-            <td>${{ "%.2f"|format(assembly.sell_unit_price) }}</td>
-            <td>
-                <span class="status">{{ "Active" if assembly.is_active else "Inactive" }}</span>
-            </td>
-            <td>
-                <a class="button-link" href="{{ url_for('assemblies.view_assembly', id=assembly.id) }}">View</a>
-                <a class="button-link" href="{{ url_for('assemblies.edit_assembly', id=assembly.id) }}">Edit</a>
-                <form method="post" action="{{ url_for('assemblies.toggle_assembly_active', id=assembly.id) }}" style="display: inline;">
-                    <button type="submit">{{ "Deactivate" if assembly.is_active else "Activate" }}</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<div class="empty-state">
-    <h2>No assemblies yet</h2>
-    <p>Create assemblies from cost library items to speed up estimating.</p>
+<div class="projects-workspace">
+    <div class="register-head">
+        <span>Reusable work</span>
+        <span>Bundle cost</span>
+    </div>
+    {% for assembly in assemblies %}
+    <a class="register-row" href="{{ url_for('assemblies.view_assembly', id=assembly.id) }}">
+        <span class="projects-row-identity">
+            <span class="projects-row-name">{{ assembly.name }}</span>
+            <span class="projects-row-client">{{ assembly.code }} · {{ assembly.unit }}{% if not assembly.is_active %} · Inactive{% endif %}</span>
+        </span>
+        <span class="projects-row-stage">${{ "%.2f"|format(assembly.base_unit_cost) }}</span>
+    </a>
+    {% endfor %}
 </div>
+{% else %}
+<p class="projects-empty-title">No reusable work yet</p>
+<p class="page-purpose">Group cost items you use together. This is not a second price list.</p>
 {% endif %}
 {% endblock %}

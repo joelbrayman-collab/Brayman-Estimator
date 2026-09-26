@@ -326,6 +326,7 @@ def create_app(config=None):
     from app.routes.assemblies import assemblies_bp
     from app.routes.clients import clients_bp
     from app.routes.cost_library import cost_library_bp
+    from app.routes.costs_and_pricing import costs_and_pricing_bp
     from app.routes.estimates import estimates_bp
     from app.routes.main import main_bp
     from app.routes.help import help_bp
@@ -365,6 +366,7 @@ def create_app(config=None):
     app.register_blueprint(final_walkthrough_bp)
     app.register_blueprint(walkthrough_bp)
     app.register_blueprint(cost_library_bp)
+    app.register_blueprint(costs_and_pricing_bp)
     app.register_blueprint(assemblies_bp)
     app.register_blueprint(estimates_bp)
     app.register_blueprint(proposal_templates_bp)

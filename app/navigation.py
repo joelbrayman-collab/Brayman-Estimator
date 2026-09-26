@@ -49,6 +49,7 @@ NAV_SECTIONS = (
     },
     {
         "title": COSTS_AND_PRICING_NAV_TITLE,
+        "endpoint": "costs_and_pricing.index",
         "links": (
             {
                 "title": WHAT_WE_PAY_NAV_TITLE,

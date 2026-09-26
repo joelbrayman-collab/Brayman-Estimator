@@ -400,7 +400,7 @@ def test_slice3_labour_and_pricing_office_copy(client, project):
 
     db.session.commit()
     pricing = _html(client.get("/pricing-engine/"))
-    assert "<h1>How we price</h1>" in pricing
+    assert ">How we price</h1>" in pricing
     assert "TRUE_GROSS_MARGIN" not in pricing
     assert "Gross Margin Pricing" in pricing
     assert "Markup Pricing" not in pricing
@@ -412,10 +412,11 @@ def test_slice3_labour_and_pricing_office_copy(client, project):
     assert ">GENERIC<" not in catalogue
     assert ">ACTIVE<" not in catalogue
     library = _html(client.get("/cost-library/"))
-    assert "Cost library" in library
+    assert "What we pay" in library
+    assert "Cost library" not in library
     assemblies = _html(client.get("/assemblies/"))
     assert "Reusable work" in assemblies
-    assert "New Assembly" in assemblies
+    assert "New reusable work" in assemblies
     hub = _html(client.get(f"/projects/{project.id}"))
     method_block = hub.split("Organization methodology:", 1)[1][:500]
     assert "Labour rates" in method_block

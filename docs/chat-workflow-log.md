@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-26 — UAT 3 costs and pricing
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI COSTS & PRICING — COMPLETE CURRENT SLICE 26 SEP 2026 |
+| Objective | Finish the contractor-facing Costs & pricing experience already in the working tree. |
+| Business decision | What we pay, reusable work, and how we price are the three company inputs. The first pricing view shows commercial meaning. It does not show internal policy codes. |
+| Architectural decision | Existing cost items, assemblies, and pricing policies stay the records. Cost-item markup stays a starting markup on an estimate line. Customer price after company pricing is applied still comes from the pricing snapshot. No formula change. |
+| Prompt template used | Architect UAT 3 — COSTS & PRICING CONTRACTOR EXPERIENCE, then COMPLETE CURRENT SLICE |
+| Approved Cursor prompt summary | Presentation and information architecture only. Resolve the policy-code page test from product authority. Do not restart the slice. Do not start Labour or calculation-result mapping. Test, commit, push, deploy. |
+| Files expected to change | Costs & pricing landing, cost list, assembly list, pricing list, help, tests, occupancy |
+| Files prohibited from changing | Schema, migrations, pricing formulas, labour, estimate commercial settings, authentication, bypass, website |
+| Implementation result | **IMPLEMENTED / TESTED.** Full suite **1786 passed**, 6454 warnings, **850.84s**, exit **0**. |
+| Tests | `./venv/bin/python -m pytest -q` — 1786 passed, 6454 warnings, 850.84s, exit 0 |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | Cost-item markup and TRUE_GROSS_MARGIN both exist. Markup is the starting line markup. The snapshot sets customer price after company pricing is applied. No formula change. |
+| Unresolved issues | Password unresolved. Dark logo absent. Labour contractor experience not authorized. Calculation result to estimate mapping not authorized. |
+| Next approved step | Joel visual UAT of Costs & pricing. Do not start Labour. Do not start calculation-result mapping. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | This implementation checkpoint |
+
 ### 2026-09-26 — UAT 3 seven workflow documents
 
 | Field | Content |

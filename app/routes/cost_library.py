@@ -134,8 +134,19 @@ def _apply_canonical_link(cost_item, form):
 @cost_library_bp.route("/")
 def list_cost_items():
     org_id = get_current_organization_id()
-    cost_items = CostItem.query.filter_by(organization_id=org_id).order_by(CostItem.code.asc()).all()
-    return render_template("cost_library/list.html", cost_items=cost_items)
+    selected = request.args.get("category", "").strip()
+    if selected not in COST_ITEM_CATEGORIES:
+        selected = ""
+    query = CostItem.query.filter_by(organization_id=org_id)
+    if selected:
+        query = query.filter_by(category=selected)
+    cost_items = query.order_by(CostItem.code.asc()).all()
+    return render_template(
+        "cost_library/list.html",
+        cost_items=cost_items,
+        categories=COST_ITEM_CATEGORIES,
+        selected_category=selected,
+    )
 
 
 @cost_library_bp.route("/new", methods=["GET", "POST"])

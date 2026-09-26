@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — UAT 3 COSTS AND PRICING (2026-09-26)
+
+| Field | Content |
+|-------|---------|
+| Slice | Costs & pricing. What we pay. Reusable work. How we price. |
+| Product status at capture | IMPLEMENTED / TESTED. Labour rates were not redesigned. Estimate-specific margin was not added. |
+| 1. What new contractor capability exists? | The contractor can open Costs & pricing and see the unit costs used in estimates, groups of those costs used again, and how the company turns cost into the customer price. |
+| 2. When would the contractor use it? | When checking or updating the costs and the company pricing method before building an estimate. |
+| 3. What workflow will the final Manual need to teach? | Open Costs & pricing. Open What we pay and choose a category. Open a row to change a cost. Open Reusable work for a repeated group of costs. Open How we price to see the company method. A labour cost here is a unit cost, not the hourly rate screen. |
+| 4. What contractor-facing terms must be used? | Costs & pricing. What we pay. Reusable work. How we price. Gross Margin Pricing. Company default. Subcontract. |
+| 5. What screenshots / Print examples will eventually be needed? | The Costs & pricing list, What we pay, Reusable work, and How we price. Do not capture them until Joel accepts the look. |
+| 6. What warnings / validation distinctions need explanation? | A material name identifies the product. It is not the price. The starting markup on a cost is not the company method for the customer price. Supplier pricing is not connected. |
+| 7. Desktop / iPhone / Print relevance | Desktop office. Print is unchanged. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — UAT 3 WORKFLOW DOCUMENTS (2026-09-26)
 
 | Field | Content |

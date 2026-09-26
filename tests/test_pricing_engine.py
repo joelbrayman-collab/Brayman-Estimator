@@ -998,12 +998,27 @@ def test_ai_cannot_create_or_approve_policy(app):
 
 
 def test_office_pricing_policy_ui(client, app):
-    _true_gm_policy()
+    """First view shows company pricing meaning. The policy code stays on the record."""
+    policy = _true_gm_policy()
     resp = client.get("/pricing-engine/")
     assert resp.status_code == 200
-    assert b"ORG-001-TRUE-GM-15" in resp.data
-    assert b"TRUE_GROSS_MARGIN" not in resp.data
-    assert b"Gross Margin Pricing" in resp.data
+    html = resp.get_data(as_text=True)
+    view = html.split('id="main-content"', 1)[1]
+    assert "ORG-001-TRUE-GM-15" not in view
+    assert "TRUE_GROSS_MARGIN" not in view
+    assert "Gross Margin Pricing" in view
+    assert "15%" in view
+    assert "Company default" in view
+    assert "How this company turns cost into the customer price." in view
+    assert f'href="/pricing-engine/policies/{policy.id}"' in view
+    detail = client.get(f"/pricing-engine/policies/{policy.id}")
+    assert detail.status_code == 200
+    assert b"ORG-001-TRUE-GM-15" in detail.data
+    assert b"Gross Margin Pricing" in detail.data
+    assert policy.method == "TRUE_GROSS_MARGIN"
+    assert policy.policy_code == "ORG-001-TRUE-GM-15"
+    assert policy.target_gross_margin == Decimal("0.15")
+    assert policy.is_default is True
 
 
 def test_alembic_fg009_upgrade_and_downgrade_preserves_legacy_totals(tmp_path):

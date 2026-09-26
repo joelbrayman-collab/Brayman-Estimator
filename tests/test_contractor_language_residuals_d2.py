@@ -17,7 +17,7 @@ from app.models.pricing_engine import EstimatePricingSnapshot
 from app.navigation import NAV_ITEMS, NAV_SECTIONS
 from app.presentation import help_content
 from app.presentation.contractor_copy import (
-    COST_LIBRARY_NAV_TITLE,
+    WHAT_WE_PAY_NAV_TITLE,
     HISTORICAL_NAV_TITLE,
     HUB_LABOUR_RECORDED_HEADING,
     HUB_PRICING_RECORDED_HEADING,
@@ -205,7 +205,7 @@ def test_historical_and_cost_library_and_permit_remain_operational(client, proje
     cost = client.get("/cost-library/")
     assert cost.status_code == 200
     library = _html(cost)
-    assert COST_LIBRARY_NAV_TITLE in library
+    assert WHAT_WE_PAY_NAV_TITLE in library
     assert ">Cost Items<" not in library
     location = client.get(f"/projects/{project.id}/location/edit")
     assert location.status_code == 200

@@ -237,19 +237,27 @@ def test_estimate_list_and_detail_render(client, project):
 
     list_response = client.get("/estimates/")
     assert list_response.status_code == 200
-    assert b"EST-2026-0600" in list_response.data
-    assert b"Render Test" in list_response.data
-    assert b"Downtown Renovation" in list_response.data
-    assert b"Acme Builders" in list_response.data
-    assert b"Initial Estimate" in list_response.data
+    listing = list_response.get_data(as_text=True)
+    assert "EST-2026-0600" in listing
+    assert "Render Test" in listing
+    assert "Downtown Renovation" in listing
+    assert "Estimate number" in listing
+    assert ">Stage<" in listing or "Stage" in listing
+    assert f'href="/estimates/{estimate.id}"' in listing
+    assert "toggle-archive" not in listing
+    assert ">View<" not in listing
+    assert ">Edit<" not in listing
 
     detail_response = client.get(f"/estimates/{estimate.id}")
     assert detail_response.status_code == 200
-    assert b"Current Version" in detail_response.data
-    assert b"v1" in detail_response.data
-    assert b"Initial Estimate" in detail_response.data
-    assert b"Create New Version" in detail_response.data
-    assert b"Edit Estimate" in detail_response.data
+    detail = detail_response.get_data(as_text=True)
+    assert "Current Version" in detail
+    assert "v1" in detail
+    assert "Initial Estimate" in detail
+    assert "Create New Version" in detail
+    assert "Edit Estimate" in detail
+    assert "toggle-archive" in detail
+    assert ">Archive<" in detail
 
 
 def test_create_version_via_route(client, project):

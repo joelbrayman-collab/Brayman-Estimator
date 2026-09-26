@@ -33,6 +33,10 @@
 
 {% if projects %}
 <div class="projects-workspace{% if list_view == 'closed' %} is-closed-view{% endif %}">
+    <div class="projects-head">
+        <span>Project</span>
+        <span>Project stage</span>
+    </div>
     {% for project in projects %}
     <a class="projects-row" href="{{ url_for('projects.view_project', id=project.id) }}">
         <span class="projects-row-identity">
@@ -42,12 +46,7 @@
             <span class="projects-row-location">{{ project.address }}</span>
             {% endif %}
         </span>
-        {% if project.status %}
-        <span class="projects-row-stage">{{ project.status }}</span>
-        {% else %}
-        <span class="projects-row-stage"></span>
-        {% endif %}
-        <span class="projects-row-go">{{ contractor_copy.PROJECTS_OPEN }}</span>
+        <span class="projects-row-stage">{{ project.status or "—" }}</span>
     </a>
     {% endfor %}
 </div>

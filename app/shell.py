@@ -25,12 +25,13 @@ def register_shell_context(app):
                         "active": is_nav_item_active(item, endpoint),
                     }
                 )
-            nav_sections.append(
-                {
-                    "title": section["title"],
-                    "links": links,
-                }
-            )
+            if links:
+                nav_sections.append(
+                    {
+                        "title": section["title"],
+                        "links": links,
+                    }
+                )
 
         recent_estimates = []
         recent_proposals = []

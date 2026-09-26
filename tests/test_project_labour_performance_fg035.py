@@ -539,7 +539,7 @@ def test_hub_labour_copy_and_monitor_firewall(client, app):
     assert html.find(contractor_copy.LABOUR_NEEDS_ATTENTION_HEADING) < html.find(
         contractor_copy.LABOUR_AUTHORIZED_HEADING
     )
-    labour_html = html[html.find('id="hub-labour"') : html.find('id="hub-monitor"')]
+    labour_html = html[html.find('id="hub-labour"') : html.find('id="hub-learn"')]
     assert contractor_copy.LABOUR_EXTRA_NEEDS_REVIEW not in labour_html
     assert 'id="hub-monitor"' in html
     assert "current_authorized_hours" not in html
@@ -547,8 +547,7 @@ def test_hub_labour_copy_and_monitor_firewall(client, app):
     assert "assemble_project_performance" not in html
     labour_idx = html.find('id="hub-labour"')
     time_idx = html.find('id="hub-time"')
-    monitor_idx = html.find('id="hub-monitor"')
-    assert time_idx < labour_idx < monitor_idx
+    assert time_idx < labour_idx
     hub = assemble_project_hub(project, DEFAULT_ORGANIZATION_ID)
     assert "labour" in hub
     assert hub["monitor"] is not None

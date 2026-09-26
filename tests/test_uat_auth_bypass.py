@@ -127,7 +127,7 @@ def test_bypass_on_establishes_existing_user_one_and_company_management():
         before = (user.password_hash, user.credentials_epoch, user.email)
         office = _get(client, "/", follow_redirects=True)
         assert office.status_code == 200
-        assert b"Office home" in office.data
+        assert b"Home | Brayman Construction Platform" in office.data
         assert b"Joel Brayman" in office.data
         company = _get(client, "/company-attention")
         assert company.status_code == 200
@@ -162,7 +162,7 @@ def test_turning_bypass_off_restores_login_wall():
         client = application.test_client()
         _seed_user_one()
         opened = _get(client, "/", follow_redirects=True)
-        assert b"Office home" in opened.data
+        assert b"Home | Brayman Construction Platform" in opened.data
         application.config[UAT_AUTH_BYPASS_ENV] = "0"
         closed = _get(client, "/")
         assert closed.status_code == 302

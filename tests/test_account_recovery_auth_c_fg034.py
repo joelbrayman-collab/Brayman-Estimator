@@ -209,7 +209,7 @@ def test_complete_known_user_e2e_login_through_office_home(app):
     _reload_login_user()
     home = anon.get("/")
     assert home.status_code == 200
-    assert "Office home" in _html(home)
+    assert "Home | Brayman Construction Platform" in _html(home)
 
 
 @pytest.mark.no_office_auth

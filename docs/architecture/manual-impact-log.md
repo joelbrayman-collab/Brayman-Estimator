@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
-| Updated | 2026-09-24 |
+| Updated | 2026-09-26 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — UAT 1 OFFICE PRESENTATION (2026-09-26)
+
+| Field | Content |
+|-------|---------|
+| Slice | UAT 1 office presentation cleanup |
+| Product status at capture | IMPLEMENTED / TESTED. Presentation only. No new calculation or permission. |
+| 1. What new contractor capability exists? | The office is easier to scan. No new business capability. |
+| 2. When would the contractor use it? | Opening the office, choosing a project, and opening an estimate. |
+| 3. What workflow will the final Manual need to teach? | Home shows where work stands and starts a project. The calendar is on Schedule. A project row opens the project. Project stage is the project's own stage. Estimate work happens on the estimate page. Archive is on that page. Assemblies remain under Cost library. |
+| 4. What contractor-facing terms must be used? | Home. Projects. Estimates. Proposals. Schedule. Cost library. Assemblies. Project stage. Estimate Stage stays on the project, separate from Project stage. |
+| 5. What screenshots / Print examples will eventually be needed? | Home, Projects list, one Project, Estimates list, one Estimate. Not captured now. |
+| 6. What warnings / validation distinctions need explanation? | Project stage is not Estimate Stage. The sidebar mark is still the Brayman logo until the approved dark CalibraytAI mark is installed. |
+| 7. Desktop / iPhone / Print relevance | Desktop office. Field, iPhone, and Print were not changed. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
 
 ### MANUAL IMPACT — PKG-F07 EXTRA WORK APPROVED INTERNAL DIRECT COST (2026-09-24)
 

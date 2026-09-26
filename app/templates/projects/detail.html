@@ -23,23 +23,23 @@
         {% if can_manage_operating_lifecycle and project_is_closed %}
         <a class="button" href="{{ url_for('projects.reopen_project', id=project.id) }}">{{ contractor_copy.PROJECT_REOPEN_ACTION }}</a>
         {% endif %}
-        <a class="button-link" href="{{ url_for('projects.list_projects') }}">Back to projects</a>
     </div>
 </div>
 
 <nav class="hub-lifecycle" aria-label="CalibraytAI lifecycle">
-    <a class="hub-lifecycle-step" href="#hub-plan">PLAN</a>
-    <a class="hub-lifecycle-step" href="#hub-price">PRICE</a>
-    <a class="hub-lifecycle-step" href="#hub-contract">CONTRACT</a>
-    <a class="hub-lifecycle-step" href="#hub-build">BUILD</a>
-    <a class="hub-lifecycle-step" href="#hub-monitor">MONITOR</a>
+    <a class="hub-lifecycle-step" href="#hub-identity">Project</a>
+    <a class="hub-lifecycle-step" href="#hub-commercial">Settings</a>
+    <a class="hub-lifecycle-step" href="#hub-monitor">Money</a>
+    <a class="hub-lifecycle-step" href="#hub-plan">Documents</a>
+    <a class="hub-lifecycle-step" href="#hub-build">Project work</a>
     <span class="hub-lifecycle-step is-future">LEARN · Future</span>
 </nav>
 <p class="muted-copy hub-lifecycle-note">Operational sections use stored records from owning modules. LEARN remains Future. The four-output package remains Future. Ontario contract and warranty generation remain Future. Fail-closed production-contract status is shown under CONTRACT.</p>
 
-<section class="form-panel" style="margin-bottom: 20px;">
+<section class="form-panel" id="hub-identity" style="margin-bottom: 20px;">
+    <p class="hub-section-label">Project</p>
     <div class="form-grid">
-        <div><p class="eyebrow">Status</p><p><span class="status">{{ project.status }}</span></p></div>
+        <div><p class="eyebrow">Project stage</p><p><span class="status">{{ project.status }}</span></p></div>
         <div><p class="eyebrow">Address</p><p>{{ project.address or "—" }}</p></div>
         <div><p class="eyebrow">Client</p><p>{{ project.client.name }}</p></div>
         <div><p class="eyebrow">Created</p><p>{{ project.created_at.strftime("%Y-%m-%d") }}</p></div>
@@ -49,6 +49,7 @@
     {% endif %}
 </section>
 
+<p class="hub-section-label" id="hub-commercial">Commercial settings</p>
 {% set ctx = project.current_commercial_context %}
 <section class="form-panel" style="margin-bottom: 20px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -86,7 +87,208 @@
     {% endif %}
 </section>
 
-<p class="hub-section-label" id="hub-plan">PLAN</p>
+<p class="hub-section-label" id="hub-monitor">Money</p>
+{{ contextual_help(help_content.hub_topic("monitor")) }}
+{% set monitor = hub.monitor %}
+{% set gm_percent = hub.monitor_gm_percent %}
+{% set actuals_form = actuals_form if actuals_form is defined else {"cost_class": "", "amount": "", "incurred_on": "", "note": ""} %}
+<section class="form-panel" style="margin-bottom: 20px;">
+    <p class="eyebrow">Estimated versus actual</p>
+    <p class="muted-copy">Project Gross Margin comparison from frozen commercial records and office Direct Cost actuals. This is not a net-profit figure. Field Observations remain evidence only.</p>
+    {% if monitor.baseline_state in ("MISSING_CUSTOMER_COMMITMENT", "AMBIGUOUS_COMMITMENT", "MISSING_ORIGINAL_BASELINE") %}
+    {% set baseline_copy = contractor_copy.monitor_empty_copy(monitor.baseline_state) %}
+    <p><strong>{{ baseline_copy.what }}</strong></p>
+    <p>{{ baseline_copy.why }}</p>
+    <p>{{ baseline_copy.next }}</p>
+    {% endif %}
+    {% if monitor.actuals_state == "MISSING_ACTUALS" %}
+    {% set actuals_copy = contractor_copy.monitor_empty_copy("MISSING_ACTUALS") %}
+    <p><strong>{{ actuals_copy.what }}</strong></p>
+    <p>{{ actuals_copy.why }}</p>
+    <p>{{ actuals_copy.next }}</p>
+    {% endif %}
+    <div class="form-grid" style="margin-top: 12px;">
+        <div>
+            <p class="eyebrow">Original Estimated Direct Cost</p>
+            <p>{% if monitor.original_estimated_direct_cost is not none %}${{ "%.2f"|format(monitor.original_estimated_direct_cost) }}{% else %}—{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Original Estimated Pre-Tax Selling Price</p>
+            <p>{% if monitor.original_estimated_pre_tax_selling_price is not none %}${{ "%.2f"|format(monitor.original_estimated_pre_tax_selling_price) }}{% else %}—{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Original Estimated GM</p>
+            <p>{% if gm_percent.estimated is not none %}{{ "%.2f"|format(gm_percent.estimated) }}%{% else %}not calculated{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Approved/Invoiced CO Revenue Delta</p>
+            <p>${{ "%.2f"|format(monitor.approved_co_revenue_delta) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Current Authorized Pre-Tax Revenue</p>
+            <p>{% if monitor.current_authorized_pre_tax_revenue is not none %}${{ "%.2f"|format(monitor.current_authorized_pre_tax_revenue) }}{% else %}—{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Current Authorized Estimated Cost</p>
+            <p>{% if monitor.current_authorized_estimated_cost is not none %}${{ "%.2f"|format(monitor.current_authorized_estimated_cost) }}{% else %}—{% endif %}</p>
+            <p class="muted-copy">{{ contractor_copy.co_cost_delta_label(monitor.co_cost_delta_copy) }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Approved Internal Direct Cost</p>
+            <p>{% if monitor.extra_work_internal_cost_state == "NOT_CAPTURED" %}{{ contractor_copy.NOT_CAPTURED_LABEL }}{% elif monitor.extra_work_approved_internal_direct_cost is not none %}${{ "%.2f"|format(monitor.extra_work_approved_internal_direct_cost) }}{% else %}—{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Actual Direct Cost to Date</p>
+            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif monitor.actual_direct_cost_to_date is not none %}${{ "%.2f"|format(monitor.actual_direct_cost_to_date) }}{% else %}not calculated{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Actual Direct Cost — {{ contractor_copy.cost_class_label("labour") }}</p>
+            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif monitor.actual_cost_by_class %} ${{ "%.2f"|format(monitor.actual_cost_by_class.labour) }}{% else %}not calculated{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Actual Direct Cost — {{ contractor_copy.cost_class_label("material") }}</p>
+            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif monitor.actual_cost_by_class %} ${{ "%.2f"|format(monitor.actual_cost_by_class.material) }}{% else %}not calculated{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Actual Direct Cost — {{ contractor_copy.cost_class_label("subcontract") }}</p>
+            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif monitor.actual_cost_by_class %} ${{ "%.2f"|format(monitor.actual_cost_by_class.subcontract) }}{% else %}not calculated{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Actual Direct Cost — {{ contractor_copy.cost_class_label("other_direct") }}</p>
+            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif monitor.actual_cost_by_class %} ${{ "%.2f"|format(monitor.actual_cost_by_class.other_direct) }}{% else %}not calculated{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Actual-to-Date Project Gross Margin</p>
+            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif gm_percent.actual_to_date is not none %}{{ "%.2f"|format(gm_percent.actual_to_date) }}%{% else %}not calculated{% endif %}</p>
+        </div>
+        <div>
+            <p class="eyebrow">GM Variance</p>
+            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif gm_percent.variance is not none %}{{ "%.2f"|format(gm_percent.variance) }}%{% else %}not calculated{% endif %}</p>
+        </div>
+    </div>
+    <p class="eyebrow" style="margin-top: 12px;">{{ contractor_copy.monitor_source_headline() }}</p>
+    <p class="muted-copy">{{ contractor_copy.monitor_source_detail(monitor.provenance, monitor.authorized_co_count) }}</p>
+</section>
+
+<section class="form-panel" style="margin-bottom: 20px;">
+    <h3 style="margin-top: 0;">Record actual direct cost</h3>
+    <form method="post" action="{{ url_for('build.create_project_direct_cost_actual', project_id=project.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-grid">
+            <label>
+                Cost class
+                <select name="cost_class" required>
+                    <option value="">Select</option>
+                    {% for cost_class in hub.direct_cost_classes %}
+                    <option value="{{ cost_class }}" {% if actuals_form.cost_class == cost_class %}selected{% endif %}>{{ contractor_copy.cost_class_label(cost_class) }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Amount
+                <input type="text" name="amount" value="{{ actuals_form.amount }}" required>
+            </label>
+            <label>
+                Incurred on
+                <input type="date" name="incurred_on" value="{{ actuals_form.incurred_on }}" required>
+            </label>
+        </div>
+        <label>
+            Note
+            <textarea name="note" rows="3">{{ actuals_form.note }}</textarea>
+        </label>
+        <div class="form-actions">
+            <button type="submit">Save actual</button>
+        </div>
+    </form>
+</section>
+
+<section class="form-panel" style="margin-bottom: 20px;">
+    <h3 style="margin-top: 0;">{{ contractor_copy.CURRENT_ACTUALS_HEADING }}</h3>
+    {% set active_rows = hub.direct_cost_actual_rows | selectattr("active") | list %}
+    {% if active_rows %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Class</th>
+                <th>Amount</th>
+                <th>Incurred</th>
+                <th>Actor</th>
+                <th>Note</th>
+                <th>Correct</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in active_rows %}
+            <tr>
+                <td>{{ contractor_copy.cost_class_label(row.actual.cost_class) }}</td>
+                <td>${{ "%.2f"|format(row.actual.amount) }}</td>
+                <td>{{ row.actual.incurred_on.isoformat() }}</td>
+                <td>{{ row.actual.actor_display_name }}</td>
+                <td>{{ row.actual.note or "—" }}</td>
+                <td>
+                    <form method="post" action="{{ url_for('build.supersede_project_direct_cost_actual', project_id=project.id, actual_id=row.actual.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <select name="cost_class" required>
+                            {% for cost_class in hub.direct_cost_classes %}
+                            <option value="{{ cost_class }}" {% if row.actual.cost_class == cost_class %}selected{% endif %}>{{ contractor_copy.cost_class_label(cost_class) }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" name="amount" value="{{ "%.2f"|format(row.actual.amount) }}" required>
+                        <input type="date" name="incurred_on" value="{{ row.actual.incurred_on.isoformat() }}" required>
+                        <input type="text" name="note" value="{{ row.actual.note or "" }}" placeholder="Note">
+                        <button type="submit">Record correction</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="muted-copy">{{ contractor_copy.CURRENT_ACTUALS_EMPTY }}</p>
+    {% endif %}
+</section>
+
+<section class="form-panel" style="margin-bottom: 20px;">
+    <h3 style="margin-top: 0;">{{ contractor_copy.PREVIOUS_ENTRIES_HEADING }}</h3>
+    {% set superseded_rows = hub.direct_cost_actual_rows | rejectattr("active") | list %}
+    {% if superseded_rows %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Class</th>
+                <th>Amount</th>
+                <th>Incurred</th>
+                <th>Actor</th>
+                <th>Recorded</th>
+                <th>{{ contractor_copy.CORRECTED_BY_HEADING }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in superseded_rows %}
+            <tr>
+                <td>{{ contractor_copy.cost_class_label(row.actual.cost_class) }}</td>
+                <td>${{ "%.2f"|format(row.actual.amount) }}</td>
+                <td>{{ row.actual.incurred_on.isoformat() }}</td>
+                <td>{{ row.actual.actor_display_name }}</td>
+                <td>{{ row.actual.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                <td>
+                    <span class="status">{{ contractor_copy.CORRECTED_ITEM_LABEL }}</span>
+                    {% if row.successor %}
+                    <p class="muted-copy" style="margin: 4px 0 0 0;">{{ contractor_copy.entry_reference(row.successor.id) }}</p>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="muted-copy">{{ contractor_copy.PREVIOUS_ENTRIES_EMPTY }}</p>
+    {% endif %}
+</section>
+
+
+<p class="hub-section-label" id="hub-plan">Documents</p>
 {{ contextual_help(help_content.hub_topic("plan")) }}
 <section class="dash-panels">
     <article class="panel">
@@ -259,7 +461,7 @@
     </article>
 </section>
 
-<p class="hub-section-label" id="hub-price">PRICE</p>
+<p class="hub-section-label" id="hub-price">Estimates and proposals</p>
 {{ contextual_help(help_content.hub_topic("price")) }}
 <section class="dash-panels">
     <article class="panel panel-wide">
@@ -330,7 +532,7 @@
     </article>
 </section>
 
-<p class="hub-section-label" id="hub-contract">CONTRACT</p>
+<p class="hub-section-label" id="hub-contract">Contract</p>
 {{ contextual_help(help_content.hub_topic("contract")) }}
 {% set contract_copy = contractor_copy.contract_selection_copy(hub.legal_content_selection) %}
 <section class="dash-panels">
@@ -382,7 +584,7 @@
     </article>
 </section>
 
-<p class="hub-section-label" id="hub-build">BUILD</p>
+<p class="hub-section-label" id="hub-build">Project work</p>
 {{ contextual_help(help_content.hub_topic("build")) }}
 <section class="dash-panels">
     <article class="panel panel-wide" id="hub-project-work">
@@ -968,206 +1170,6 @@
         </div>
         {% endif %}
     </article>
-</section>
-
-<p class="hub-section-label" id="hub-monitor">MONITOR</p>
-{{ contextual_help(help_content.hub_topic("monitor")) }}
-{% set monitor = hub.monitor %}
-{% set gm_percent = hub.monitor_gm_percent %}
-{% set actuals_form = actuals_form if actuals_form is defined else {"cost_class": "", "amount": "", "incurred_on": "", "note": ""} %}
-<section class="form-panel" style="margin-bottom: 20px;">
-    <p class="eyebrow">Estimated versus actual</p>
-    <p class="muted-copy">Project Gross Margin comparison from frozen commercial records and office Direct Cost actuals. This is not a net-profit figure. Field Observations remain evidence only.</p>
-    {% if monitor.baseline_state in ("MISSING_CUSTOMER_COMMITMENT", "AMBIGUOUS_COMMITMENT", "MISSING_ORIGINAL_BASELINE") %}
-    {% set baseline_copy = contractor_copy.monitor_empty_copy(monitor.baseline_state) %}
-    <p><strong>{{ baseline_copy.what }}</strong></p>
-    <p>{{ baseline_copy.why }}</p>
-    <p>{{ baseline_copy.next }}</p>
-    {% endif %}
-    {% if monitor.actuals_state == "MISSING_ACTUALS" %}
-    {% set actuals_copy = contractor_copy.monitor_empty_copy("MISSING_ACTUALS") %}
-    <p><strong>{{ actuals_copy.what }}</strong></p>
-    <p>{{ actuals_copy.why }}</p>
-    <p>{{ actuals_copy.next }}</p>
-    {% endif %}
-    <div class="form-grid" style="margin-top: 12px;">
-        <div>
-            <p class="eyebrow">Original Estimated Direct Cost</p>
-            <p>{% if monitor.original_estimated_direct_cost is not none %}${{ "%.2f"|format(monitor.original_estimated_direct_cost) }}{% else %}—{% endif %}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Original Estimated Pre-Tax Selling Price</p>
-            <p>{% if monitor.original_estimated_pre_tax_selling_price is not none %}${{ "%.2f"|format(monitor.original_estimated_pre_tax_selling_price) }}{% else %}—{% endif %}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Original Estimated GM</p>
-            <p>{% if gm_percent.estimated is not none %}{{ "%.2f"|format(gm_percent.estimated) }}%{% else %}not calculated{% endif %}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Approved/Invoiced CO Revenue Delta</p>
-            <p>${{ "%.2f"|format(monitor.approved_co_revenue_delta) }}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Current Authorized Pre-Tax Revenue</p>
-            <p>{% if monitor.current_authorized_pre_tax_revenue is not none %}${{ "%.2f"|format(monitor.current_authorized_pre_tax_revenue) }}{% else %}—{% endif %}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Current Authorized Estimated Cost</p>
-            <p>{% if monitor.current_authorized_estimated_cost is not none %}${{ "%.2f"|format(monitor.current_authorized_estimated_cost) }}{% else %}—{% endif %}</p>
-            <p class="muted-copy">{{ contractor_copy.co_cost_delta_label(monitor.co_cost_delta_copy) }}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Approved Internal Direct Cost</p>
-            <p>{% if monitor.extra_work_internal_cost_state == "NOT_CAPTURED" %}{{ contractor_copy.NOT_CAPTURED_LABEL }}{% elif monitor.extra_work_approved_internal_direct_cost is not none %}${{ "%.2f"|format(monitor.extra_work_approved_internal_direct_cost) }}{% else %}—{% endif %}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Actual Direct Cost to Date</p>
-            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif monitor.actual_direct_cost_to_date is not none %}${{ "%.2f"|format(monitor.actual_direct_cost_to_date) }}{% else %}not calculated{% endif %}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Actual Direct Cost — {{ contractor_copy.cost_class_label("labour") }}</p>
-            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif monitor.actual_cost_by_class %} ${{ "%.2f"|format(monitor.actual_cost_by_class.labour) }}{% else %}not calculated{% endif %}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Actual Direct Cost — {{ contractor_copy.cost_class_label("material") }}</p>
-            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif monitor.actual_cost_by_class %} ${{ "%.2f"|format(monitor.actual_cost_by_class.material) }}{% else %}not calculated{% endif %}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Actual Direct Cost — {{ contractor_copy.cost_class_label("subcontract") }}</p>
-            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif monitor.actual_cost_by_class %} ${{ "%.2f"|format(monitor.actual_cost_by_class.subcontract) }}{% else %}not calculated{% endif %}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Actual Direct Cost — {{ contractor_copy.cost_class_label("other_direct") }}</p>
-            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif monitor.actual_cost_by_class %} ${{ "%.2f"|format(monitor.actual_cost_by_class.other_direct) }}{% else %}not calculated{% endif %}</p>
-        </div>
-        <div>
-            <p class="eyebrow">Actual-to-Date Project Gross Margin</p>
-            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif gm_percent.actual_to_date is not none %}{{ "%.2f"|format(gm_percent.actual_to_date) }}%{% else %}not calculated{% endif %}</p>
-        </div>
-        <div>
-            <p class="eyebrow">GM Variance</p>
-            <p>{% if monitor.actuals_state == "MISSING_ACTUALS" %}{{ contractor_copy.monitor_state_label("MISSING_ACTUALS") }}{% elif gm_percent.variance is not none %}{{ "%.2f"|format(gm_percent.variance) }}%{% else %}not calculated{% endif %}</p>
-        </div>
-    </div>
-    <p class="eyebrow" style="margin-top: 12px;">{{ contractor_copy.monitor_source_headline() }}</p>
-    <p class="muted-copy">{{ contractor_copy.monitor_source_detail(monitor.provenance, monitor.authorized_co_count) }}</p>
-</section>
-
-<section class="form-panel" style="margin-bottom: 20px;">
-    <h3 style="margin-top: 0;">Record actual direct cost</h3>
-    <form method="post" action="{{ url_for('build.create_project_direct_cost_actual', project_id=project.id) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <div class="form-grid">
-            <label>
-                Cost class
-                <select name="cost_class" required>
-                    <option value="">Select</option>
-                    {% for cost_class in hub.direct_cost_classes %}
-                    <option value="{{ cost_class }}" {% if actuals_form.cost_class == cost_class %}selected{% endif %}>{{ contractor_copy.cost_class_label(cost_class) }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            <label>
-                Amount
-                <input type="text" name="amount" value="{{ actuals_form.amount }}" required>
-            </label>
-            <label>
-                Incurred on
-                <input type="date" name="incurred_on" value="{{ actuals_form.incurred_on }}" required>
-            </label>
-        </div>
-        <label>
-            Note
-            <textarea name="note" rows="3">{{ actuals_form.note }}</textarea>
-        </label>
-        <div class="form-actions">
-            <button type="submit">Save actual</button>
-        </div>
-    </form>
-</section>
-
-<section class="form-panel" style="margin-bottom: 20px;">
-    <h3 style="margin-top: 0;">{{ contractor_copy.CURRENT_ACTUALS_HEADING }}</h3>
-    {% set active_rows = hub.direct_cost_actual_rows | selectattr("active") | list %}
-    {% if active_rows %}
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Class</th>
-                <th>Amount</th>
-                <th>Incurred</th>
-                <th>Actor</th>
-                <th>Note</th>
-                <th>Correct</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in active_rows %}
-            <tr>
-                <td>{{ contractor_copy.cost_class_label(row.actual.cost_class) }}</td>
-                <td>${{ "%.2f"|format(row.actual.amount) }}</td>
-                <td>{{ row.actual.incurred_on.isoformat() }}</td>
-                <td>{{ row.actual.actor_display_name }}</td>
-                <td>{{ row.actual.note or "—" }}</td>
-                <td>
-                    <form method="post" action="{{ url_for('build.supersede_project_direct_cost_actual', project_id=project.id, actual_id=row.actual.id) }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <select name="cost_class" required>
-                            {% for cost_class in hub.direct_cost_classes %}
-                            <option value="{{ cost_class }}" {% if row.actual.cost_class == cost_class %}selected{% endif %}>{{ contractor_copy.cost_class_label(cost_class) }}</option>
-                            {% endfor %}
-                        </select>
-                        <input type="text" name="amount" value="{{ "%.2f"|format(row.actual.amount) }}" required>
-                        <input type="date" name="incurred_on" value="{{ row.actual.incurred_on.isoformat() }}" required>
-                        <input type="text" name="note" value="{{ row.actual.note or "" }}" placeholder="Note">
-                        <button type="submit">Record correction</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p class="muted-copy">{{ contractor_copy.CURRENT_ACTUALS_EMPTY }}</p>
-    {% endif %}
-</section>
-
-<section class="form-panel" style="margin-bottom: 20px;">
-    <h3 style="margin-top: 0;">{{ contractor_copy.PREVIOUS_ENTRIES_HEADING }}</h3>
-    {% set superseded_rows = hub.direct_cost_actual_rows | rejectattr("active") | list %}
-    {% if superseded_rows %}
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Class</th>
-                <th>Amount</th>
-                <th>Incurred</th>
-                <th>Actor</th>
-                <th>Recorded</th>
-                <th>{{ contractor_copy.CORRECTED_BY_HEADING }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in superseded_rows %}
-            <tr>
-                <td>{{ contractor_copy.cost_class_label(row.actual.cost_class) }}</td>
-                <td>${{ "%.2f"|format(row.actual.amount) }}</td>
-                <td>{{ row.actual.incurred_on.isoformat() }}</td>
-                <td>{{ row.actual.actor_display_name }}</td>
-                <td>{{ row.actual.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
-                <td>
-                    <span class="status">{{ contractor_copy.CORRECTED_ITEM_LABEL }}</span>
-                    {% if row.successor %}
-                    <p class="muted-copy" style="margin: 4px 0 0 0;">{{ contractor_copy.entry_reference(row.successor.id) }}</p>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p class="muted-copy">{{ contractor_copy.PREVIOUS_ENTRIES_EMPTY }}</p>
-    {% endif %}
 </section>
 
 <p class="hub-section-label" id="hub-learn">LEARN</p>

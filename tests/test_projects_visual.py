@@ -97,13 +97,24 @@ def test_projects_workspace_matches_home_action_language(client, app):
     assert "projects-row-client" in html
     assert "projects-row-location" in html
     assert "projects-row-stage" in html
-    assert "projects-row-go" in html
-    assert contractor_copy.PROJECTS_OPEN in html
+    assert "projects-head" in html
+    assert "Project stage" in html
+    assert "projects-row-go" not in html
+    assert ">Open</span>" not in html
     assert "projects-view-count" in html
     assert "Visual Oak Street Client ·" not in html
     assert "projects-row-meta" not in html
     assert html.count('class="projects-view-count"') == 2
     assert f'href="/projects/{current_id}"' in html
+    detail = client.get(f"/projects/{current_id}").get_data(as_text=True)
+    assert 'aria-label="Breadcrumb"' in detail
+    assert 'href="/projects/">Projects</a>' in detail
+    assert "Project stage" in detail
+    assert "Commercial settings" in detail
+    assert ">Money<" in detail
+    assert ">Documents<" in detail
+    assert "Project work" in detail
+    assert "Back to projects" not in detail
     assert "Visual Closed Barn" not in html
     assert "data-table" not in html
     assert "project-lifecycle-view" not in html

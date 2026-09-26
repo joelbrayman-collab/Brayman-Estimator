@@ -356,12 +356,15 @@ def test_public_index_redirects_and_calculate_works_without_login(client):
     assert "recommendation" not in payload
 
 
-def test_office_nav_includes_decision_tool(client):
+def test_parked_decision_tool_stays_reachable_and_off_daily_nav(client):
     dashboard = client.get("/")
     html = dashboard.get_data(as_text=True)
     assert dashboard.status_code == 200
-    assert "Employment vs Entrepreneurship" in html
-    assert PAGE in html
+    assert "Employment vs Entrepreneurship" not in html
+    assert PAGE not in html
+    page = client.get(PAGE)
+    assert page.status_code == 200
+    assert "Employment vs Entrepreneurship" in page.get_data(as_text=True)
 
 
 def test_presentation_files_stay_neutral_and_use_v2_logo():

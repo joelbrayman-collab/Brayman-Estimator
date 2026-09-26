@@ -742,7 +742,7 @@ def _html(response):
 
 
 def _monitor_html(html):
-    return html.split('id="hub-monitor"', 1)[-1].split('id="hub-learn"', 1)[0]
+    return html.split('id="hub-monitor"', 1)[-1].split('id="hub-plan"', 1)[0]
 
 
 def _csrf_token(response):

@@ -856,7 +856,7 @@ def test_hub_needs_attention_above_summary_and_links(client, app):
     response = client.get(f"/projects/{project.id}")
     html = response.get_data(as_text=True)
     assert response.status_code == 200
-    labour_html = html[html.find('id="hub-labour"') : html.find('id="hub-monitor"')]
+    labour_html = html[html.find('id="hub-labour"') : html.find('id="hub-learn"')]
     assert contractor_copy.LABOUR_NEEDS_ATTENTION_HEADING in labour_html
     assert contractor_copy.LABOUR_EXTRA_WORK_NEEDS_REVIEW in labour_html
     assert contractor_copy.LABOUR_EXTRA_NEEDS_REVIEW not in labour_html

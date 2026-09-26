@@ -91,7 +91,7 @@ def test_home_requires_login(client):
     assert "/login" in response.headers["Location"]
 
 
-def test_home_renders_planning_desk_without_prototype_sample_facts(client, app):
+def test_home_renders_orientation_without_the_month_calendar(client, app):
     with app.app_context():
         project = _project()
         element = _element(project, "Framing")
@@ -102,34 +102,33 @@ def test_home_renders_planning_desk_without_prototype_sample_facts(client, app):
     assert contractor_copy.DASHBOARD_HEADING in html
     assert contractor_copy.HOME_START_PROJECT in html
     assert 'href="/projects/new"' in html
-    assert "Home V22 Oak Street" in html
-    assert "Framing" in html
     assert 'id="help-dashboard"' in html
+    assert "home-month" not in html
+    assert "home-week-rail" not in html
+    assert contractor_copy.SCHEDULE_UNSCHEDULED not in html
+    assert "Framing" not in html
+    assert "Purchase Orders" not in html
+    assert "Job Costing" not in html
+    assert "AI Assistant" not in html
+    assert "Employment vs Entrepreneurship" not in html
+    assert 'href="/assemblies/"' in html
+    assert 'href="/proposals/"' in html or 'href="/proposals"' in html
+    assert "brayman-construction-logo.png" in html
+    assert "calibraytai-logo-v2.png" not in html
     assert "Miller Addition" not in html
     assert "Pratt Coach House" not in html
     assert "$1.42M" not in html
     assert "$386K" not in html
     assert "65%" not in html
     assert "94%" not in html
-    assert "payday" not in html.lower() or "Payday tints" not in html
-    assert "class=\"home-day payday" not in html
     assert "Change Order Value" not in html
     assert "metric-card" not in html
-    assert contractor_copy.SCHEDULE_UNSCHEDULED in html
-    assert "100%" not in html
-    assert "65%" not in html
-    assert "94%" not in html
-    assert "40%" not in html
-    assert "hol-cue" not in html
-    assert "is-holiday" not in html
-    assert ">Hol<" not in html
-    assert "class=\"grip\"" not in html
-    assert "draggable" not in html.lower()
-    assert "home-week-rail" in html
-    assert "Wk 1" in html
+    schedule = client.get("/schedule").get_data(as_text=True)
+    assert contractor_copy.SCHEDULE_HEADING in schedule
+    assert 'href="/schedule"' in html
 
 
-def test_home_hides_closed_project_schedule(client, app):
+def test_home_does_not_list_schedule_work(client, app):
     with app.app_context():
         live = _project("Home V22 Live Job")
         closed = _project("Home V22 Closed Job")
@@ -140,18 +139,19 @@ def test_home_hides_closed_project_schedule(client, app):
     html = client.get(
         f"/?year={TODAY.year}&month={TODAY.month}&day={TODAY.day}"
     ).get_data(as_text=True)
-    assert "Home V22 Live Job" in html
+    assert "Home V22 Live Job" not in html
     assert "Home V22 Closed Job" not in html
+    assert "home-month" not in html
 
 
-def test_home_lists_unscheduled_work_without_readiness_labels(client, app):
+def test_home_does_not_present_unscheduled_work(client, app):
     with app.app_context():
         project = _project("Home V22 Waiting Job")
         _element(project, "Footings")
     html = client.get("/").get_data(as_text=True)
-    assert "Home V22 Waiting Job" in html
-    assert "Footings" in html
-    assert contractor_copy.SCHEDULE_UNSCHEDULED in html
+    assert "Home V22 Waiting Job" not in html
+    assert "Footings" not in html
+    assert contractor_copy.SCHEDULE_UNSCHEDULED not in html
     assert "Ready to Schedule" not in html
     assert "Permit outstanding" not in html
 

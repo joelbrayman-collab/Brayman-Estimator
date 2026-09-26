@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-25 |
+| Updated | 2026-09-26 |
 
 ## Purpose
 
@@ -42,6 +42,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-26 — UAT 1 office presentation cleanup
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI UAT 1 UX CLEANUP — IMPLEMENTATION 26 SEP 2026 |
+| Objective | Make the hosted office calmer and easier to read without changing product or business logic. |
+| Business decision | One presentation slice from the accepted UAT 1 plan. Daily navigation is Home, Projects, Estimates, Proposals, and Schedule. Assemblies stay named Assemblies under Cost library. FG-039 stays parked and off the daily navigation. Proposals are not redesigned. The sidebar logo stays the Brayman mark until the approved dark-background CalibraytAI asset is supplied. V1 is not rescored. |
+| Architectural decision | Presentation and information architecture only. No pricing, estimate, proposal, stage-rule, schema, migration, permission, authentication, or bypass change. Archive still uses the existing estimate archive action, now from the estimate page. Project detail breadcrumb is presentation context only. |
+| Prompt template used | Architect UAT 1 UX CLEANUP — IMPLEMENTATION |
+| Approved Cursor prompt summary | Commit the UAT record first, then implement the accepted navigation, Home, Projects, Project detail, and Estimates cleanup. Leave proposals, Assemblies terminology, and the logo asset unchanged. Test, record, commit, push, and deploy without disabling the hosted UAT bypass. |
+| Files expected to change | Navigation, shell, Home, Projects list and detail, Estimates list and detail, related CSS and copy, presentation tests, occupancy docs |
+| Files prohibited from changing | Pricing and estimate calculation, schema, migrations, authentication, UAT bypass behaviour, Render environment, logo files, FG-039 product logic |
+| Implementation result | **IMPLEMENTED / TESTED.** |
+| Tests | Cursor Terminal: `./venv/bin/python -m pytest -q` → **1769 passed**, 5832 warnings, **797.07s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Normal hosted password authentication remains unresolved. Approved dark-background CalibraytAI logo is not in the repository. Joel has not yet visually retested this slice. |
+| Next approved step | Joel visually retests the hosted office. Do not disable the UAT bypass. Do not rescore V1. Do not publish FG-039. |
+| Next approved prompt | Not authorized from this record. Joel's visual UAT comes first. |
+| Commit hash | NOT COMMITTED |
 
 ### 2026-09-26 — Hosted read-only UAT 1
 

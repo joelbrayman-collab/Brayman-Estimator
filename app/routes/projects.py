@@ -114,6 +114,10 @@ def view_project(id):
         estimates=hub["estimates"],
         proposals=hub["proposals"],
         change_orders=hub["change_orders"],
+        breadcrumb_items=[
+            {"label": "Projects", "url": url_for("projects.list_projects")},
+            {"label": project.name, "url": None},
+        ],
         **hub_operating_template_vars(project, org_id, current_user),
         **hub_punch_list_template_vars(project, org_id, current_user),
         **hub_walkthrough_template_vars(project, org_id, current_user),

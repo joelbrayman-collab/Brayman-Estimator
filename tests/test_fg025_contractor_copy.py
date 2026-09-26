@@ -434,7 +434,7 @@ def test_slice4_office_shell_labels_are_pinned():
     assert PRICING_HEADING == "Pricing"
     assert LOGIN_LEDE == "Sign in with your email and password."
     assert SIGN_OUT_LABEL == "Sign out"
-    assert DASHBOARD_HEADING == "Office home"
+    assert DASHBOARD_HEADING == "Home"
     assert DASHBOARD_LEDE == "Open a project, start an estimate, or issue a proposal."
     assert BRAND_PROFILE_HEADING == "Brand profile"
 

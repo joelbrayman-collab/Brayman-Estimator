@@ -10,22 +10,16 @@ from app.presentation.contractor_copy import (
 )
 from app.services.access_domains import ACCESS_DOMAIN_COMPANY_MANAGEMENT
 
-# Navigation is grouped into platform modules.
-# Each item: title, endpoint (or None), icon (Bootstrap Icons class), enabled
+# Daily work is the first group. Libraries and company setup stay reachable
+# underneath it. Unfinished routes stay in the application; they are not peers here.
 NAV_SECTIONS = (
     {
         "title": None,
         "links": (
             {
-                "title": "Dashboard",
+                "title": "Home",
                 "endpoint": "main.dashboard",
                 "icon": "bi-speedometer2",
-                "enabled": True,
-            },
-            {
-                "title": "Clients",
-                "endpoint": "clients.list_clients",
-                "icon": "bi-people",
                 "enabled": True,
             },
             {
@@ -35,23 +29,34 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
+                "title": "Estimates",
+                "endpoint": "estimates.list_estimates",
+                "icon": "bi-calculator",
+                "enabled": True,
+            },
+            {
+                "title": "Proposals",
+                "endpoint": "proposals.list_proposals",
+                "icon": "bi-file-earmark-text",
+                "enabled": True,
+            },
+            {
                 "title": "Schedule",
                 "endpoint": "schedule.company",
                 "icon": "bi-calendar3",
                 "enabled": True,
             },
-            {
-                "title": COMPANY_ATTENTION_HEADING,
-                "endpoint": "company_attention.index",
-                "icon": "bi-exclamation-circle",
-                "enabled": True,
-                "requires_access_domain": ACCESS_DOMAIN_COMPANY_MANAGEMENT,
-            },
         ),
     },
     {
-        "title": "Estimating",
+        "title": COST_LIBRARY_NAV_TITLE,
         "links": (
+            {
+                "title": "Cost items",
+                "endpoint": "cost_library.list_cost_items",
+                "icon": "bi-box-seam",
+                "enabled": True,
+            },
             {
                 "title": "Assemblies",
                 "endpoint": "assemblies.list_assemblies",
@@ -59,27 +64,9 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
-                "title": COST_LIBRARY_NAV_TITLE,
-                "endpoint": "cost_library.list_cost_items",
-                "icon": "bi-box-seam",
-                "enabled": True,
-            },
-            {
-                "title": "Material Catalogue",
+                "title": "Materials",
                 "endpoint": "material_catalogue.list_materials",
                 "icon": "bi-grid-3x3-gap",
-                "enabled": True,
-            },
-            {
-                "title": "Estimates",
-                "endpoint": "estimates.list_estimates",
-                "icon": "bi-calculator",
-                "enabled": True,
-            },
-            {
-                "title": HISTORICAL_NAV_TITLE,
-                "endpoint": "historical_estimates.index",
-                "icon": "bi-archive",
                 "enabled": True,
             },
             {
@@ -95,9 +82,9 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
-                "title": "Proposals",
-                "endpoint": "proposals.list_proposals",
-                "icon": "bi-file-earmark-text",
+                "title": HISTORICAL_NAV_TITLE,
+                "endpoint": "historical_estimates.index",
+                "icon": "bi-archive",
                 "enabled": True,
             },
             {
@@ -109,18 +96,12 @@ NAV_SECTIONS = (
         ),
     },
     {
-        "title": "Project Controls",
+        "title": "Project work",
         "links": (
             {
-                "title": "Change Orders",
+                "title": "Change orders",
                 "endpoint": "project_controls.list_change_orders",
                 "icon": "bi-arrow-left-right",
-                "enabled": True,
-            },
-            {
-                "title": WORK_TYPES_HEADING,
-                "endpoint": "work_structure.catalog_index",
-                "icon": "bi-diagram-3",
                 "enabled": True,
             },
             {
@@ -130,49 +111,9 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
-                "title": "Purchase Orders",
-                "endpoint": None,
-                "icon": "bi-cart3",
-                "enabled": False,
-            },
-            {
-                "title": "Job Costing",
-                "endpoint": None,
-                "icon": "bi-cash-stack",
-                "enabled": False,
-            },
-        ),
-    },
-    {
-        "title": "Plan",
-        "links": (
-            {
-                "title": "Employment vs Entrepreneurship",
-                "endpoint": "decision_tools.employment_vs_entrepreneurship",
-                "icon": "bi-compass",
-                "enabled": True,
-            },
-        ),
-    },
-    {
-        "title": None,
-        "links": (
-            {
-                "title": "Reports",
-                "endpoint": None,
-                "icon": "bi-bar-chart-line",
-                "enabled": False,
-            },
-            {
-                "title": "AI Assistant",
-                "endpoint": None,
-                "icon": "bi-stars",
-                "enabled": False,
-            },
-            {
-                "title": "Settings",
-                "endpoint": "settings.brand_profile",
-                "icon": "bi-gear",
+                "title": WORK_TYPES_HEADING,
+                "endpoint": "work_structure.catalog_index",
+                "icon": "bi-diagram-3",
                 "enabled": True,
             },
             {
@@ -183,12 +124,34 @@ NAV_SECTIONS = (
             },
         ),
     },
+    {
+        "title": "Company",
+        "links": (
+            {
+                "title": COMPANY_ATTENTION_HEADING,
+                "endpoint": "company_attention.index",
+                "icon": "bi-exclamation-circle",
+                "enabled": True,
+                "requires_access_domain": ACCESS_DOMAIN_COMPANY_MANAGEMENT,
+            },
+            {
+                "title": "Clients",
+                "endpoint": "clients.list_clients",
+                "icon": "bi-people",
+                "enabled": True,
+            },
+            {
+                "title": "Settings",
+                "endpoint": "settings.brand_profile",
+                "icon": "bi-gear",
+                "enabled": True,
+            },
+        ),
+    },
 )
 
 # Flat list retained for callers that only need items.
-NAV_ITEMS = tuple(
-    item for section in NAV_SECTIONS for item in section["links"]
-)
+NAV_ITEMS = tuple(item for section in NAV_SECTIONS for item in section["links"])
 
 
 def is_nav_item_active(item, endpoint):

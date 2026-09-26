@@ -508,7 +508,7 @@ SIGNING_COMPLETE_CUSTOMER_BODY = (
     "completed document."
 )
 SIGN_OUT_LABEL = "Sign out"
-DASHBOARD_HEADING = "Office home"
+DASHBOARD_HEADING = "Home"
 DASHBOARD_LEDE = "Open a project, start an estimate, or issue a proposal."
 HOME_START_PROJECT = "+ Start New Project"
 PROJECTS_LEDE = "Your current and completed work."

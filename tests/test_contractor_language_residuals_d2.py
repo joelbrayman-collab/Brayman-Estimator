@@ -14,7 +14,7 @@ from app import create_app, db
 from app.models import Client, Project
 from app.models.labour_engine import EstimateLabourSnapshot, LabourTask
 from app.models.pricing_engine import EstimatePricingSnapshot
-from app.navigation import NAV_ITEMS
+from app.navigation import NAV_ITEMS, NAV_SECTIONS
 from app.presentation import help_content
 from app.presentation.contractor_copy import (
     COST_LIBRARY_NAV_TITLE,
@@ -150,7 +150,9 @@ def test_nav_uses_contractor_cost_library_and_previous_estimates():
         item for item in NAV_ITEMS if item["endpoint"] == "historical_estimates.index"
     )
     settings = next(item for item in NAV_ITEMS if item["endpoint"] == "settings.brand_profile")
-    assert cost["title"] == COST_LIBRARY_NAV_TITLE
+    library = next(section for section in NAV_SECTIONS if section["title"] == COST_LIBRARY_NAV_TITLE)
+    assert cost["title"] == "Cost items"
+    assert any(item["title"] == "Assemblies" for item in library["links"])
     assert historical["title"] == HISTORICAL_NAV_TITLE
     assert settings["title"] == "Settings"
     assert settings["enabled"] is True

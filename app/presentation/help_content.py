@@ -166,15 +166,15 @@ HUB_TOPICS: dict[str, HelpTopic] = {
 
 OFFICE_DASHBOARD = HelpTopic(
     key="dashboard",
-    title="Dashboard",
+    title="Home",
     what=(
-        "You are on the office home. It is the business planning desk: "
-        "current work counts, work waiting for dates, and the schedule "
-        "for this month. It is not a report and not a score."
+        "You are on Home. It shows where current projects, estimates, and "
+        "proposals stand, and it is the place to start a project. "
+        "The month schedule lives on Schedule. This is not a report and not a score."
     ),
     do=(
-        "Start a new Project, open a day on the calendar, or continue from "
-        "Clients and Projects. Side-menu items marked coming soon are not available."
+        "Start a project, or open Projects, Estimates, or Proposals. "
+        "Open Schedule when you need the calendar."
     ),
     next="Open a current Project to plan, price, and run the job from the Project Hub.",
     surface=SURFACE_OFFICE,

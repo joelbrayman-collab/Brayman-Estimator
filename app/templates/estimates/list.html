@@ -18,64 +18,30 @@
 {{ contextual_help(help_content.office_topic("estimating")) }}
 
 {% if estimates %}
-<table class="data-table">
-    <thead>
-        <tr>
-            <th>Estimate #</th>
-            <th>Title</th>
-            <th>Project</th>
-            <th>Client</th>
-            <th>Status</th>
-            <th>Current Version</th>
-            <th>Version Label</th>
-            <th>Total</th>
-            <th>Updated</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for estimate in estimates %}
-        <tr>
-            <td>
-                <a href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">{{ estimate.estimate_number }}</a>
-            </td>
-            <td>{{ estimate.title }}</td>
-            <td>{{ estimate.project.name }}</td>
-            <td>{{ estimate.project.client.name }}</td>
-            <td><span class="status">{{ estimate.status }}</span></td>
-            <td>
-                {% if estimate.current_version %}
-                v{{ estimate.current_version.version_number }}
-                {% else %}
-                —
-                {% endif %}
-            </td>
-            <td>
-                {% if estimate.current_version %}
-                {{ estimate.current_version.version_label or "—" }}
-                {% else %}
-                —
-                {% endif %}
-            </td>
-            <td>
-                {% if estimate.current_version %}
-                ${{ "%.2f"|format(estimate.current_version.total) }}
-                {% else %}
-                —
-                {% endif %}
-            </td>
-            <td>{{ estimate.updated_at.strftime("%Y-%m-%d") }}</td>
-            <td>
-                <a class="button-link" href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">View</a>
-                <a class="button-link" href="{{ url_for('estimates.edit_estimate', id=estimate.id) }}">Edit</a>
-                <form method="post" action="{{ url_for('estimates.toggle_archive', id=estimate.id) }}" style="display: inline;">
-                    <button type="submit">{{ "Restore" if estimate.status == "Archived" else "Archive" }}</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="estimate-index">
+    <div class="estimate-index-head">
+        <span>Estimate number</span>
+        <span>Title</span>
+        <span>Project</span>
+        <span>Stage</span>
+        <span>Total</span>
+    </div>
+    {% for estimate in estimates %}
+    <a class="estimate-index-row" href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">
+        <span class="estimate-index-number">{{ estimate.estimate_number }}</span>
+        <span class="estimate-index-title">{{ estimate.title }}</span>
+        <span class="estimate-index-project">{{ estimate.project.name }}</span>
+        <span class="estimate-index-stage">{{ estimate.status }}</span>
+        <span class="estimate-index-total">
+            {% if estimate.current_version %}
+            ${{ "%.2f"|format(estimate.current_version.total) }}
+            {% else %}
+            —
+            {% endif %}
+        </span>
+    </a>
+    {% endfor %}
+</div>
 {% else %}
 <div class="empty-state">
     <h2>No estimates yet</h2>

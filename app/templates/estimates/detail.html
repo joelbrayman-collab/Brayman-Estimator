@@ -13,7 +13,11 @@
 
     <div>
         <a class="button" href="{{ url_for('estimates.edit_estimate', id=estimate.id) }}">Edit Estimate</a>
-        <a class="button-link" href="{{ url_for('estimates.list_estimates') }}">Back to list</a>
+        <form method="post" action="{{ url_for('estimates.toggle_archive', id=estimate.id) }}" style="display: inline;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="button-link" type="submit">{{ "Restore" if estimate.status == "Archived" else "Archive" }}</button>
+        </form>
+        <a class="button-link" href="{{ url_for('estimates.list_estimates') }}">Estimates</a>
     </div>
 </div>
 

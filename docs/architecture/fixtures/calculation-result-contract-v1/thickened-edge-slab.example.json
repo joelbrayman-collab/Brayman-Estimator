@@ -1,0 +1,27 @@
+{
+  "contract_version": "1",
+  "result_id": "example-tes-001",
+  "engine_id": "concrete_slab",
+  "engine_version": "0",
+  "variant": "thickened_edge",
+  "measurement_system": "metric",
+  "inputs": [
+    {"code": "length", "value": "10", "unit_code": "m"},
+    {"code": "width", "value": "8", "unit_code": "m"},
+    {"code": "slab_thickness", "value": "0.1", "unit_code": "m"},
+    {"code": "edge_width", "value": "0.6", "unit_code": "m"},
+    {"code": "edge_depth_below_slab", "value": "0.3", "unit_code": "m"}
+  ],
+  "assumptions": [
+    {"code": "waste_percent", "value": "5", "unit_code": "percent"}
+  ],
+  "product_specification": null,
+  "components": [
+    {"code": "base_slab_concrete", "quantity": "8", "unit_code": "m3"},
+    {"code": "thickened_edge_concrete", "quantity": "1", "unit_code": "m3"},
+    {"code": "waste", "quantity": "0.45", "unit_code": "m3"}
+  ],
+  "quantities": [
+    {"code": "total_concrete", "quantity": "9.45", "unit_code": "m3"}
+  ]
+}

@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-26 — Calculation Engine Result Contract V1 accepted
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CALCULATION ENGINE RESULT CONTRACT V1 — ACCEPT / PIN / HANDOFF 26 SEP 2026 |
+| Objective | Accept and pin Contract V1, and record that an optional project name sits outside the engine result. |
+| Business decision | A public visitor can calculate, see the full result, save it on the device, and download it without an account. A project or reference name is a label for that copy. It is not part of the calculation. |
+| Architectural decision | Contract V1 envelope is unchanged. Consumer metadata is outside the deterministic result. No mapper and no calculator. |
+| Prompt template used | Architect CALCULATION ENGINE RESULT CONTRACT V1 — ACCEPT / PIN / HANDOFF |
+| Approved Cursor prompt summary | Verify the pending record, record the consumer-metadata boundary without a schema change, pin the contract, commit, and push. Do not deploy. Do not implement the mapper. |
+| Files expected to change | Contract record, indexes, occupancy |
+| Files prohibited from changing | Schema, migrations, pricing, labour, estimate mapping, website, runtime product |
+| Implementation result | **ACCEPTED / PINNED.** |
+| Tests | Focused `tests/test_calculation_result_contract_v1.py`: **7 passed**. Full suite **1793 passed**, 6454 warnings, **805.31s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Calculation result → estimate mapping not authorized. Labour not authorized. Password unresolved. |
+| Next approved step | Stop. Do not implement the mapper. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | This acceptance checkpoint |
+
+### 2026-09-26 — Calculation Engine Result Contract V1
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CALCULATION ENGINE RESULT CONTRACT V1 26 SEP 2026 |
+| Objective | Record the quantity-result contract shared in concept by the Website and the Platform. |
+| Business decision | A calculation result carries quantities and their source. It does not carry company prices or company record ids. A person confirms any later mapping. |
+| Architectural decision | Contract V1 keeps the proposed envelope and adds `contract_version` and `result_id`. Units are coded. ICF carries the selected system. No mapper and no calculator. |
+| Prompt template used | Architect CALCULATION ENGINE RESULT CONTRACT V1 |
+| Approved Cursor prompt summary | Architecture record and fixture checks only. Do not implement the mapper, a calculator, website work, or Labour. |
+| Files expected to change | Architecture record, example payloads, fixture tests, occupancy |
+| Files prohibited from changing | Schema, migrations, pricing, labour, estimate mapping, website |
+| Implementation result | **RECORDED / NOT IMPLEMENTATION-AUTHORIZED.** |
+| Tests | `./venv/bin/python -m pytest -q tests/test_calculation_result_contract_v1.py` — 7 passed. `./venv/bin/python -m pytest -q` — 1793 passed, 6454 warnings, 860.41s, exit 0. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Mapper not authorized. Calculators not authorized. Labour not authorized. Password unresolved. |
+| Next approved step | Stop. Do not implement the mapper. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | Included in the acceptance checkpoint of the same day. |
+
 ### 2026-09-26 — UAT 3 costs and pricing
 
 | Field | Content |

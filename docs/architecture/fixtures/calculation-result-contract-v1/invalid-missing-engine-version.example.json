@@ -1,0 +1,14 @@
+{
+  "contract_version": "1",
+  "result_id": "example-missing-version",
+  "engine_id": "concrete_slab",
+  "variant": "standard",
+  "measurement_system": "metric",
+  "inputs": [],
+  "assumptions": [],
+  "product_specification": null,
+  "components": [],
+  "quantities": [
+    {"code": "total_concrete", "quantity": "1", "unit_code": "m3"}
+  ]
+}

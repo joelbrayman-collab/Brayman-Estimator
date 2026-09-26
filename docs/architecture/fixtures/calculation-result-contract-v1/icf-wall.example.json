@@ -1,0 +1,34 @@
+{
+  "contract_version": "1",
+  "result_id": "example-icf-001",
+  "engine_id": "icf_wall",
+  "engine_version": "0",
+  "variant": null,
+  "measurement_system": "imperial",
+  "inputs": [
+    {"code": "wall_length", "value": "40", "unit_code": "ft"},
+    {"code": "wall_height", "value": "8", "unit_code": "ft"},
+    {"code": "opening_count", "value": "2", "unit_code": "ea"},
+    {"code": "opening_width", "value": "3", "unit_code": "ft"},
+    {"code": "opening_height", "value": "4", "unit_code": "ft"}
+  ],
+  "assumptions": [
+    {"code": "outside_corner_count", "value": "4", "unit_code": "ea"},
+    {"code": "brick_ledge_included", "value": "1", "unit_code": "ea"},
+    {"code": "waste_percent", "value": "5", "unit_code": "percent"}
+  ],
+  "product_specification": {
+    "system_name": "Selected system, not a universal geometry",
+    "nominal_core_thickness_in": "8",
+    "geometry_note": "Block size used by the engine is recorded here for the selected system. It is not a manufacturer default in this contract."
+  },
+  "components": [
+    {"code": "waste", "quantity": "4", "unit_code": "ea"}
+  ],
+  "quantities": [
+    {"code": "standard_blocks", "quantity": "80", "unit_code": "ea"},
+    {"code": "corner_blocks", "quantity": "16", "unit_code": "ea"},
+    {"code": "brick_ledge_blocks", "quantity": "20", "unit_code": "ea"},
+    {"code": "concrete_core", "quantity": "6.5", "unit_code": "yd3"}
+  ]
+}

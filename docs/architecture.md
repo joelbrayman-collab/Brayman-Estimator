@@ -168,6 +168,8 @@ Aligns with [platform-vision.md](platform-vision.md), [CAR-001](architecture/CAR
 
 Planned only when approved (see [platform-roadmap.md](platform-roadmap.md)):
 
+- [Calculation Engine Result Contract V1](architecture/calculation-engine-result-contract-v1.md) — **ACCEPTED / PINNED**. A public engine may later return a versioned quantity result. Optional project labels stay outside that result. The Platform mapper is not built. No shared runtime with the Website.
+
 ### Differentiating pillars
 
 - [Plan Intelligence and Automated Take-Off](architecture/plan-intelligence-and-automated-takeoff.md) — Phases A–M010 **Current**; Phase **C** AI take-off foundation **operational for UAT** ([FG-010](feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**); Phase D [FG-026](feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT**; Phases E–G future

@@ -202,6 +202,12 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 |-----|-------|--------|
 | [ADR-053](ADR-053-project-work-structure-and-closed-operational-learning-loop.md) | Project Work Structure and Closed Operational / Learning Loop | **Accepted** (2026-09-15; Joel / ChatGPT Architect; [FG-035](../feature-gates/FG-035-project-work-structure-time-schedule-performance-learn.md) **OPEN / PARTIAL**; TAX/WBS / SCOPE / TIME **IMPLEMENTED**; SCH-A **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**; SCH-B **IMPLEMENTED / TESTED / LIVE-MIGRATED / BOUNDED SYNTHETIC UAT PASS**; later slices **NOT AUTHORIZED**) |
 
+### Calculation result review (Accepted; not live-migrated)
+
+| ADR | Title | Status |
+|-----|-------|--------|
+| [ADR-054](ADR-054-calculation-result-review-and-estimate-mapping.md) | Calculation Result Review and Estimate Mapping | **Accepted** (2026-09-26; ChatGPT Architect prompt). Migration **`j0e1f2a3b4c5` not live-migrated**. Labour mapping **DEFERRED**. |
+
 ### Field Web capture reliability (Accepted; FG-021 CLOSED)
 
 | ADR | Title | Status |

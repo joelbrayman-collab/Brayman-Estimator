@@ -3,8 +3,8 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Current** (core implemented) |
-| Updated | 2026-09-11 |
-| Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`, `estimate_scope_delivery.py`, `subcontractor.py`, `estimate_quickbooks.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`, `scope_delivery.py`, `estimate_quickbooks.py`; `app/services/estimates.py`, `estimate_builder.py`, `estimate_output.py`, `estimate_scope_delivery.py`, `subcontract_quote.py`, `estimate_quickbooks.py` |
+| Updated | 2026-09-26 |
+| Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`, `calculation_estimate_mapping.py`, `estimate_scope_delivery.py`, `subcontractor.py`, `estimate_quickbooks.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`, `calculation_mapping.py`, `scope_delivery.py`, `estimate_quickbooks.py`; `app/services/estimates.py`, `estimate_builder.py`, `calculation_estimate_mapping.py`, `calculation_result_contract.py`, `estimate_output.py`, `estimate_scope_delivery.py`, `subcontract_quote.py`, `estimate_quickbooks.py` |
 | Feature Gate | [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (internal breakdown + customer consistency). [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** (Estimating-owned insertion/citation). [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** (costing approval). [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** (scope-delivery routing + quote evidence). [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT** (QuickBooks-ready package). |
 
 ## Purpose
@@ -27,6 +27,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - `assemblies`, `assembly_items`
 - `estimates`, `estimate_versions`, `estimate_sections`, `estimate_line_items`
 - `takeoff_estimate_insertions`, `takeoff_estimate_insertion_citations` (FG-026; Estimating-owned frozen provenance)
+- `calculation_result_intakes`, `calculation_quantity_reviews`, `calculation_mapping_acceptances` (calculation review; Estimating-owned; migration **`j0e1f2a3b4c5` not live-migrated**). A valid Contract V1 result can be reviewed. A person confirms a compatible Cost Item or Assembly. Labour stays deferred. The calculation file is not changed.
 - `estimate_costing_snapshots`, `estimate_costing_snapshot_lines` (FG-027; Estimating-owned; additive `a5b6c7d8e9f0` **applied live**)
 - `estimate_scope_deliveries` ([FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) Slice A; [ADR-048](../adr/ADR-048-scope-delivery-make-buy-and-procurement-routing-ownership-boundary.md) **Accepted**; 1:1 with `EstimateLineItem`; migration **`c7d8e9f0a1b2` applied live**)
 - `subcontractors`, `subcontract_quote_evidence` ([FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) Slice B; Estimating-owned; migration **`d8e9f0a1b2c3` applied live**)

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-26 — Calculation result to estimate mapping foundation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CALCULATION RESULT → ESTIMATE MAPPING V1 FOUNDATION 26 SEP 2026 |
+| Objective | Let a person review a valid Contract V1 result and confirm quantities onto an estimate. |
+| Business decision | A calculated quantity does not become an estimate line until a person confirms it. Labour mapping waits for a labour rule. |
+| Architectural decision | [ADR-054](adr/ADR-054-calculation-result-review-and-estimate-mapping.md) **Accepted**. Estimating owns the review. Takeoff insertion was not extended. Contract V1 was not redefined. |
+| Prompt template used | Architect CALCULATION RESULT → ESTIMATE MAPPING V1 FOUNDATION |
+| Approved Cursor prompt summary | Build the platform mapping foundation from Contract V1 fixtures. Human confirmation required. No calculator formulas, no Website work, no Labour implementation. |
+| Files expected to change | Mapping model, service, routes, templates, migration, tests, occupancy |
+| Files prohibited from changing | Contract envelope, pricing formula, labour engine, website |
+| Implementation result | **IMPLEMENTED / TESTED / NOT LIVE-MIGRATED**. |
+| Tests | Focused contract **7 passed**. Focused mapping **11 passed**. Full suite **1804 passed**, 6487 warnings, **788.26s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Migration `j0e1f2a3b4c5` not applied to Mac primary or hosted validation. Labour not started. |
+| Next approved step | Stop. Do not live-migrate or deploy from this prompt. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | This mapping checkpoint |
+
 ### 2026-09-26 — Calculation Engine Result Contract V1 accepted
 
 | Field | Content |

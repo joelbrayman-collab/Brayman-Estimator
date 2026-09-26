@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Add from calculation | Brayman Construction Platform{% endblock %}
+{% block page_title %}Add from calculation{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">{{ estimate.estimate_number }} · {{ version.display_label }}</p>
+        <h1>Add from calculation</h1>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('estimates.view_version', id=estimate.id, version_id=version.id) }}">Back to estimate</a>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Calculation support</h2>
+    <p class="muted-copy">Load a calculation, review each quantity, then add the ones you confirm. Nothing is added until you confirm it.</p>
+    {% if cards %}
+    <div class="register-list">
+        {% for card in cards %}
+        <p>
+            <a href="{{ url_for('estimates.calculation_review', id=estimate.id, version_id=version.id, intake_id=card.intake.id) }}">
+                {{ card.page.engine_name }}{% if card.page.variant_name %} — {{ card.page.variant_name }}{% endif %}
+            </a>
+            <span class="muted-copy">{{ card.page.mapped_count }} added · {{ card.page.unresolved_count }} still open · loaded by {{ card.page.loaded_by }}</span>
+        </p>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No calculation is on this estimate version yet.</p>
+    {% endif %}
+</section>
+
+{% if not version.is_locked %}
+<section class="form-panel">
+    <h2>Load a calculation</h2>
+    <form method="post" action="{{ url_for('estimates.calculation_load', id=estimate.id, version_id=version.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>
+            Calculation file
+            <textarea name="calculation_text" rows="8" required></textarea>
+        </label>
+        <div class="form-actions">
+            <button type="submit">Load calculation</button>
+        </div>
+    </form>
+</section>
+{% endif %}
+{% endblock %}

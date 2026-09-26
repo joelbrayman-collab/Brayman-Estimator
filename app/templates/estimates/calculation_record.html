@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Calculation record | Brayman Construction Platform{% endblock %}
+{% block page_title %}Calculation record{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Calculation support</p>
+        <h1>{{ page.engine_name }}{% if page.variant_name %} — {{ page.variant_name }}{% endif %}</h1>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('estimates.calculation_review', id=estimate.id, version_id=version.id, intake_id=intake.id) }}">Back to quantities</a>
+    </div>
+</div>
+
+<section class="form-panel">
+    <div class="form-grid">
+        <div>
+            <p class="eyebrow">Result date</p>
+            <p>{{ page.result_date }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Loaded by</p>
+            <p>{{ page.loaded_by }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Added</p>
+            <p>{{ page.mapped_count }}</p>
+        </div>
+        <div>
+            <p class="eyebrow">Still open</p>
+            <p>{{ page.unresolved_count }}</p>
+        </div>
+    </div>
+    <p class="muted-copy">Record check {{ page.fingerprint }}</p>
+    <h2>Accepted quantities</h2>
+    {% if page.acceptances %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Quantity</th>
+                <th>Amount</th>
+                <th>Unit</th>
+                <th>Accepted by</th>
+                <th>When</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in page.acceptances %}
+            <tr>
+                <td>{{ row.quantity_code }}</td>
+                <td>{{ row.quantity }}</td>
+                <td>{{ row.unit }}</td>
+                <td>{{ row.actor }}</td>
+                <td>{{ row.accepted_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Nothing from this calculation has been added yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

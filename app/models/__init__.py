@@ -99,6 +99,11 @@ from app.models.takeoff_estimate_insertion import (
     TakeoffEstimateInsertion,
     TakeoffEstimateInsertionCitation,
 )
+from app.models.calculation_estimate_mapping import (
+    CalculationMappingAcceptance,
+    CalculationQuantityReview,
+    CalculationResultIntake,
+)
 from app.models.proposal import Proposal, ProposalLineItem, ProposalSection, ProposalTemplate
 from app.models.pricing_engine import (
     EstimatePricingSnapshot,

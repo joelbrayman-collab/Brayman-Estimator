@@ -8,6 +8,8 @@
 | Website | Separate repository, separate deployment. No runtime call. |
 | Platform | May later consume a result. Does not own the public calculator. |
 
+**Subsequent status (2026-09-26):** This envelope remains **ACCEPTED / PINNED**. Estimating can review a valid result and confirm a quantity onto an estimate (`app/services/calculation_estimate_mapping.py`). That step does not calculate, and it does not change this envelope. Migration `j0e1f2a3b4c5` is in the repository and is **not live-migrated**.
+
 This record is the handshake between a public calculation engine and a future Platform estimate mapping step. It does not authorize either implementation.
 
 ## Purpose

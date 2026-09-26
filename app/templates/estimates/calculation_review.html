@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Calculation result | Brayman Construction Platform{% endblock %}
+{% block page_title %}Calculation result{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">{{ estimate.estimate_number }}</p>
+        <h1>{{ page.engine_name }}{% if page.variant_name %} — {{ page.variant_name }}{% endif %}</h1>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('estimates.calculation_list', id=estimate.id, version_id=version.id) }}">All calculations</a>
+        <a class="button-link" href="{{ url_for('estimates.calculation_record', id=estimate.id, version_id=version.id, intake_id=intake.id) }}">Calculation record</a>
+    </div>
+</div>
+
+<section class="form-panel">
+    <p class="muted-copy">{{ page.mapped_count }} added · {{ page.unresolved_count }} still open. Review every quantity. The estimate changes only when you add one.</p>
+    {% if version.sections|length == 0 %}
+    <p>Add a section on the estimate before adding a quantity.</p>
+    {% endif %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Quantity</th>
+                <th>Amount</th>
+                <th>Unit</th>
+                <th>Estimate mapping</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in page.rows %}
+            <tr>
+                <td>{{ row.description }}</td>
+                <td>{{ row.quantity }}</td>
+                <td>{{ row.unit }}</td>
+                <td>
+                    {% if row.status == "confirmed" %}
+                    <p>Added · {{ row.target_name }}</p>
+                    {% elif row.status == "labour_deferred" %}
+                    <p>Labour mapping needs a labour rule.</p>
+                    {% elif row.labour %}
+                    <p>Labour mapping needs a labour rule.</p>
+                    {% if not version.is_locked %}
+                    <form method="post" action="{{ url_for('estimates.calculation_defer_labour', id=estimate.id, version_id=version.id, review_id=row.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="intake_id" value="{{ intake.id }}">
+                        <button type="submit">Keep for labour</button>
+                    </form>
+                    {% endif %}
+                    {% elif not row.choices %}
+                    <p>Unresolved. No compatible item uses this unit.</p>
+                    {% elif version.is_locked %}
+                    <p>Unresolved. This estimate version is locked.</p>
+                    {% else %}
+                    <form method="post" action="{{ url_for('estimates.calculation_confirm', id=estimate.id, version_id=version.id, review_id=row.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="intake_id" value="{{ intake.id }}">
+                        <input type="hidden" name="confirmed_quantity" value="{{ row.quantity }}">
+                        <label>
+                            Section
+                            <select name="section_id" required>
+                                {% for section in version.sections %}
+                                <option value="{{ section.id }}">{{ section.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label>
+                            Map to
+                            <select name="target" required>
+                                <option value="">Choose</option>
+                                {% for choice in row.choices %}
+                                <option value="{{ choice.value }}" {% if choice.value == row.suggestion %}selected{% endif %}>{{ choice.label }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <button type="submit">Add to estimate</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — CALCULATION RESULT MAPPING (2026-09-26)
+
+| Field | Content |
+|-------|---------|
+| Slice | Add from calculation, on an estimate version. |
+| Product status at capture | Implemented and tested. Not on the hosted office. Migration `j0e1f2a3b4c5` is not live-migrated. |
+| 1. What new contractor capability exists? | From an estimate version, load a calculation, see each quantity, and add a confirmed quantity to a company cost item or reusable work. |
+| 2. When would the contractor use it? | After a calculation exists and they want those quantities on an estimate. |
+| 3. What workflow will the final Manual need to teach? | Open the estimate. Add from calculation. Review each quantity. Choose a matching item. Add to estimate. Leave unmatched quantities unresolved. |
+| 4. What contractor-facing terms must be used? | Add from calculation. Calculation result. Unresolved. Reusable work. Labour mapping needs a labour rule. |
+| 5. What screenshots / Print examples will eventually be needed? | The review list on an unlocked estimate, one added quantity, and one unresolved quantity. Do not capture them until the hosted migration exists. |
+| 6. What warnings / validation distinctions need explanation? | A bad calculation file is refused. Units that are not the same measure are refused. Nothing is converted. Waste on the estimate line is not added again. A locked estimate cannot take a new quantity. |
+| 7. Desktop / iPhone / Print relevance | Desktop office. Not a customer document. Not one of the seven workflow document families. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — UAT 3 COSTS AND PRICING (2026-09-26)
 
 | Field | Content |

@@ -70,6 +70,7 @@
         <a class="button" href="{{ url_for('proposals.create_proposal_route', estimate_id=estimate.id, version_id=version.id) }}">Create Proposal</a>
         <a class="button" href="{{ url_for('project_controls.create_from_estimate_version', estimate_id=estimate.id, version_id=version.id) }}">Create Change Order</a>
         <a class="button" href="{{ url_for('estimates.edit_estimate', id=estimate.id) }}">Edit Estimate</a>
+        <a class="button" href="{{ url_for('estimates.calculation_list', id=estimate.id, version_id=version.id) }}">Add from calculation</a>
     </div>
 </section>
 

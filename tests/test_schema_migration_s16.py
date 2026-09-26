@@ -20,6 +20,7 @@ from app import create_app, db
 
 PREV_HEAD = "g7b8c9d0e1f2"
 S16_REVISION = "h8c9d0e1f2a3"
+GRAPH_HEAD = "j0e1f2a3b4c5"
 NOW = "2026-09-23 12:00:00"
 
 
@@ -342,7 +343,7 @@ def test_s16_revision_down_revision_and_single_head():
     assert down_revision == PREV_HEAD
     cfg = _alembic_cfg("sqlite:///:memory:")
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == [S16_REVISION]
+    assert script.get_heads() == [GRAPH_HEAD]
     assert script.get_revision(S16_REVISION).down_revision == PREV_HEAD
 
 
@@ -352,7 +353,7 @@ def test_s16_upgrade_downgrade_reupgrade_and_schema_law(tmp_path):
     with test_app.app_context():
         alembic_cfg = _alembic_cfg(db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == [S16_REVISION]
+        assert script.get_heads() == [GRAPH_HEAD]
 
         command.upgrade(alembic_cfg, PREV_HEAD)
         engine = db.engine
@@ -369,7 +370,7 @@ def test_s16_upgrade_downgrade_reupgrade_and_schema_law(tmp_path):
             heads = conn.execute(
                 sa.text("SELECT version_num FROM alembic_version")
             ).fetchall()
-            assert [row[0] for row in heads] == [S16_REVISION]
+            assert [row[0] for row in heads] == [GRAPH_HEAD]
             assert _has_table(conn, "organization_person_wage_events")
             wage_count = conn.execute(
                 sa.text("SELECT COUNT(*) FROM organization_person_wage_events")
@@ -842,7 +843,7 @@ def test_s16_upgrade_downgrade_reupgrade_and_schema_law(tmp_path):
             heads = conn.execute(
                 sa.text("SELECT version_num FROM alembic_version")
             ).fetchall()
-            assert [row[0] for row in heads] == [S16_REVISION]
+            assert [row[0] for row in heads] == [GRAPH_HEAD]
             assert _has_table(conn, "organization_person_wage_events")
             wage_count = conn.execute(
                 sa.text("SELECT COUNT(*) FROM organization_person_wage_events")

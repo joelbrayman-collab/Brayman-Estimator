@@ -328,6 +328,7 @@ def create_app(config=None):
     from app.routes.cost_library import cost_library_bp
     from app.routes.costs_and_pricing import costs_and_pricing_bp
     from app.routes.estimates import estimates_bp
+    from app.routes import calculation_mapping as calculation_mapping_routes  # noqa: F401
     from app.routes.main import main_bp
     from app.routes.help import help_bp
     from app.routes.projects import projects_bp

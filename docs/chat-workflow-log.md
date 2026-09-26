@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-26 — Hosted read-only UAT 1
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI HOSTED READ-ONLY UAT 1 — JOEL UX FINDINGS 26 SEP 2026 |
+| Objective | Record Joel's hosted read-only office access and his first UX findings. Do not redesign. |
+| Business decision | **TEMPORARY HOSTED UAT AUTHENTICATION BYPASS: ACTIVE / VERIFIED.** **NORMAL HOSTED PASSWORD AUTHENTICATION: UNRESOLVED.** **HOSTED READ-ONLY ACCESS: PASS.** Mac remains **PRIMARY**. Hosted database remains a **VALIDATION COPY**. V1 not rescored. FG-039 remains **PARKED**. Proposals accepted for now. |
+| Architectural decision | No product change. Office Home is `app/templates/dashboard.html` plus the month calendar. Sidebar logo is `app/static/branding/brayman-construction-logo.png` on `--sidebar: #17191d`. Approved dark-background CalibraytAI logo (V1) is **not in the repository**. V2 `calibraytai-logo-v2.png` is the light/cream Field asset and must not be substituted. Projects index middle value is `project.status` (live counts: Estimating 25, Lead 13, Active 12), unlabeled. Estimate Stage is a separate commercial field. Assemblies are cost-item bundles owned by Estimating, not a daily destination. Navigation source is `app/navigation.py`. |
+| Prompt template used | Architect HOSTED READ-ONLY UAT 1 — JOEL UX FINDINGS |
+| Approved Cursor prompt summary | Record the bypass UAT pass and Joel's findings. Inspect Home, navigation, Projects, Project detail, Estimates, Proposals, and Assemblies. Return a remediation plan. Do not implement. |
+| Files expected to change | Occupancy docs only |
+| Files prohibited from changing | Templates, CSS, routes, navigation, terminology, logo files, database, Render |
+| Implementation result | **RECORDED / NOT IMPLEMENTED.** |
+| Tests | Not run. No application code changed. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Password authentication unresolved. UX remediation not authorized. Dark-background logo asset absent. |
+| Next approved step | STOP. Next implementation slice is not authorized. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-26 — Temporary hosted UAT authentication bypass
 
 | Field | Content |

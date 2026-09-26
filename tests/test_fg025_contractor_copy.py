@@ -400,7 +400,7 @@ def test_slice3_labour_and_pricing_office_copy(client, project):
 
     db.session.commit()
     pricing = _html(client.get("/pricing-engine/"))
-    assert "<h1>Pricing</h1>" in pricing
+    assert "<h1>How we price</h1>" in pricing
     assert "TRUE_GROSS_MARGIN" not in pricing
     assert "Gross Margin Pricing" in pricing
     assert "Markup Pricing" not in pricing
@@ -414,7 +414,8 @@ def test_slice3_labour_and_pricing_office_copy(client, project):
     library = _html(client.get("/cost-library/"))
     assert "Cost library" in library
     assemblies = _html(client.get("/assemblies/"))
-    assert "Assemblies" in assemblies
+    assert "Reusable work" in assemblies
+    assert "New Assembly" in assemblies
     hub = _html(client.get(f"/projects/{project.id}"))
     method_block = hub.split("Organization methodology:", 1)[1][:500]
     assert "Labour rates" in method_block
@@ -442,15 +443,16 @@ def test_slice4_office_shell_labels_are_pinned():
 def test_slice4_nav_routes_and_engine_labels(client, project):
     from app.navigation import NAV_ITEMS
 
-    labour = next(item for item in NAV_ITEMS if item["endpoint"] == "labour_engine.index")
+    assert all(item["endpoint"] != "labour_engine.index" for item in NAV_ITEMS)
     pricing = next(item for item in NAV_ITEMS if item["endpoint"] == "pricing_engine.index")
-    assert labour["title"] == LABOUR_RATES_HEADING
-    assert pricing["title"] == PRICING_HEADING
+    assert pricing["title"] == "How we price"
     home = _html(client.get("/"))
-    assert 'href="/labour-engine/"' in home
+    assert 'href="/labour-engine/"' not in home
+    labour_page = _html(client.get("/labour-engine/"))
+    assert f"<h1>{LABOUR_RATES_HEADING}</h1>" in labour_page
     assert 'href="/pricing-engine/"' in home
-    assert ">Labour rates<" in home
-    assert ">Pricing<" in home
+    assert ">How we price<" in home
+    assert ">Pricing<" not in home
     assert "Labour Engine" not in home
     assert "Pricing Engine" not in home
     assert DASHBOARD_HEADING in home

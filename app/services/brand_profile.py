@@ -103,6 +103,17 @@ def _optional_limited(value, length: int) -> str | None:
     return text[:length]
 
 
+def office_company_name(organization_id: str) -> str:
+    """Customer-facing company name for the office. Read only. Does not create a profile."""
+    profile = get_current_brand_profile(organization_id)
+    if profile is not None and (profile.customer_facing_name or "").strip():
+        return profile.customer_facing_name.strip()
+    org = Organization.query.get(organization_id)
+    if org is None:
+        return ""
+    return (org.display_name or "").strip()
+
+
 def get_current_brand_profile(organization_id: str) -> OrganizationBrandProfile | None:
     return (
         OrganizationBrandProfile.query.filter_by(

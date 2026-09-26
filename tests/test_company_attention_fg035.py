@@ -283,7 +283,7 @@ def test_navigation_visible_with_b(app, client):
     _grant_b()
     html = client.get("/projects/").get_data(as_text=True)
     assert 'href="/company-attention"' in html
-    assert contractor_copy.COMPANY_ATTENTION_HEADING in html
+    assert contractor_copy.ATTENTION_NAV_TITLE in html
 
 
 def test_navigation_hidden_without_b(app, client):

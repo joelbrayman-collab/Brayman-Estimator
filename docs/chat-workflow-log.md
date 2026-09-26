@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-26 — Human UAT 2 Waves A and B
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI HUMAN UAT 2 — WAVES A+B IMPLEMENTATION 26 SEP 2026 |
+| Objective | Put the accepted information architecture into the office navigation, Home, and Company Calendar. |
+| Business decision | Estimates and Proposals leave the permanent menu. Projects stays. The cost area is Costs & pricing. Company Calendar replaces Schedule as a destination. |
+| Architectural decision | Presentation only. Same schedule records. Same cost-item, assembly, and pricing routes. No schema, calculation, permission, or authentication change. |
+| Prompt template used | Architect HUMAN UAT 2 — WAVES A+B IMPLEMENTATION |
+| Approved Cursor prompt summary | Implement Waves A and B together, test, commit, push, and deploy without changing the bypass or starting Wave C. |
+| Files expected to change | Navigation, Home, Company Calendar presentation, related copy, tests, and occupancy records |
+| Files prohibited from changing | Schema, migrations, pricing math, estimate math, schedule meaning, authentication, Render environment variables |
+| Implementation result | **IMPLEMENTED / TESTED.** Wave C not started. |
+| Tests | Cursor Terminal. `./venv/bin/python -m pytest -q` — **1772 passed**, 6405 warnings, **815.75s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Password unresolved. Dark logo absent. Wave C not started. Joel has not yet reviewed this office. |
+| Next approved step | Joel visual UAT of Home and Company Calendar. Do not start Wave C. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | Recorded by this implementation commit. |
+
 ### 2026-09-26 — Human Experience UAT 2 plan accepted
 
 | Field | Content |

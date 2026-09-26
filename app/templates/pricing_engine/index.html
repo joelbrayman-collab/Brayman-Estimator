@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}{{ contractor_copy.PRICING_HEADING }} | Brayman Construction Platform{% endblock %}
-{% block page_title %}{{ contractor_copy.PRICING_HEADING }}{% endblock %}
+{% block title %}{{ contractor_copy.HOW_WE_PRICE_NAV_TITLE }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.HOW_WE_PRICE_NAV_TITLE }}{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">Estimating</p>
-        <h1>{{ contractor_copy.PRICING_HEADING }}</h1>
+        <h1>{{ contractor_copy.HOW_WE_PRICE_NAV_TITLE }}</h1>
         <p>Organization pricing policies. Methods stay platform-owned; this organization owns rates.</p>
     </div>
     <a class="button" href="{{ url_for('pricing_engine.create_policy') }}">New draft policy</a>

@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}{{ contractor_copy.HISTORICAL_PAGE_TITLE }} — Brayman Construction Platform{% endblock %}
-{% block page_title %}{{ contractor_copy.HISTORICAL_PAGE_TITLE }}{% endblock %}
+{% block title %}{{ contractor_copy.PAST_JOBS_NAV_TITLE }} — Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.PAST_JOBS_NAV_TITLE }}{% endblock %}
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="content-container" style="max-width: 1200px; margin: 0 auto; padding: 24px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <div>
-            <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">{{ contractor_copy.HISTORICAL_HEADING }}</h2>
+            <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">{{ contractor_copy.PAST_JOBS_NAV_TITLE }}</h2>
+            <p class="muted-copy" style="margin: 4px 0 0 0; font-size: 0.95rem;">{{ contractor_copy.PAST_JOBS_NOTE }}</p>
             <p class="muted-copy" style="margin: 4px 0 0 0; font-size: 0.95rem;">
                 Load about 20–25 representative recent estimates in one action. Upload success is previous-job evidence loaded — not a completed cost model.
             </p>

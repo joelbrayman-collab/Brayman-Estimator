@@ -123,8 +123,16 @@ def test_home_renders_orientation_without_the_month_calendar(client, app):
     assert "94%" not in html
     assert "Change Order Value" not in html
     assert "metric-card" not in html
+    assert "home-counts" in html
+    assert contractor_copy.COMPANY_CALENDAR_HEADING in html
+    assert "Brayman Construction Home" in html
+    assert 'id="office-company-name"' in html
     schedule = client.get("/schedule").get_data(as_text=True)
-    assert contractor_copy.SCHEDULE_HEADING in schedule
+    assert "<h1>Company Calendar</h1>" in schedule
+    assert "<h1>Schedule</h1>" not in schedule
+    assert "home-month" in schedule
+    assert contractor_copy.COMPANY_CALENDAR_WAITING in schedule
+    assert contractor_copy.COMPANY_CALENDAR_DAY in schedule
     assert 'href="/schedule"' in html
 
 
@@ -198,6 +206,46 @@ def test_home_attention_pulse_requires_company_management(client, app):
     html = client.get("/").get_data(as_text=True)
     assert contractor_copy.HOME_PULSE_ATTENTION in html
     assert 'href="/company-attention"' in html
+
+
+def test_company_calendar_shows_the_month_the_day_and_work_waiting_for_dates(client, app):
+    with app.app_context():
+        project = _project("Calendar Job")
+        _schedule(project, _element(project, "Framing"), TODAY, TODAY)
+        _element(project, "Footings")
+    html = client.get(
+        f"/schedule?year={TODAY.year}&month={TODAY.month}&day={TODAY.day}"
+        f"&from={TODAY.isoformat()}&to={TODAY.isoformat()}"
+    ).get_data(as_text=True)
+    assert "home-month" in html
+    assert "is-selected" in html
+    assert "Framing" in html
+    assert "Footings" in html
+    assert contractor_copy.COMPANY_CALENDAR_WAITING in html
+    assert "Move this project by days" in html
+    assert "Edit dates" in html
+    assert "<h1>Schedule</h1>" not in html
+
+
+def test_home_uses_brand_customer_facing_name_when_present(client, app):
+    from app.models.brand_profile import OrganizationBrandProfile
+
+    with app.app_context():
+        db.session.add(
+            OrganizationBrandProfile(
+                organization_id=DEFAULT_ORGANIZATION_ID,
+                version_number=1,
+                status="CURRENT",
+                legal_name="Oak Street Builders Inc.",
+                customer_facing_name="Oak Street Builders",
+                created_by="test",
+            )
+        )
+        db.session.commit()
+    html = client.get("/").get_data(as_text=True)
+    assert "Oak Street Builders Home" in html
+    assert 'id="office-company-name">Oak Street Builders' in html
+    assert "Brayman Construction Home" not in html
 
 
 def test_home_start_project_uses_existing_create_route(client):

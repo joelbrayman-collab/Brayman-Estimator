@@ -435,9 +435,10 @@ def test_assemble_and_office_surfaces(client, app, org_b):
     page = client.get("/schedule")
     html = page.get_data(as_text=True)
     assert page.status_code == 200
-    assert "Schedule" in html
+    assert "Company Calendar" in html
+    assert "<h1>Schedule</h1>" not in html
     assert 'href="/schedule"' in html
-    assert "Not scheduled yet" in html
+    assert "Waiting for dates" in html
     assert "Foundation" in html
     assert "drag and drop" not in html.lower()
     created = client.post(

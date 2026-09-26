@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — UAT 2 WAVES A AND B (2026-09-26)
+
+| Field | Content |
+|-------|---------|
+| Slice | Home, Company Calendar, and company-first navigation |
+| Product status at capture | IMPLEMENTED / TESTED. Presentation only. No new calculation or permission. |
+| 1. What new contractor capability exists? | The office names the company and opens the month calendar from Home. No new business capability. |
+| 2. When would the contractor use it? | Opening the office, checking counts, and looking at the month of work. |
+| 3. What workflow will the final Manual need to teach? | Home lists current work and starts a project. Company Calendar is the month, the day, work waiting for dates, and this period. Projects stays in the menu. Estimates and proposals are opened from Home or from a project. Costs & pricing is what the company pays, reusable work, and how a cost becomes a price. Past jobs are reference, not current estimates. |
+| 4. What contractor-facing terms must be used? | Company Calendar. Costs & pricing. What we pay. Reusable work. How we price. Past jobs. Templates. Attention. Crews. Brand. Work catalog. |
+| 5. What screenshots / Print examples will eventually be needed? | Home and Company Calendar after Joel’s visual pass. Not captured now. |
+| 6. What warnings / validation distinctions need explanation? | Past jobs are not current estimates. The month is not back on Home. Crews are company setup used when assigning dated work. The sidebar mark is still the Brayman logo. |
+| 7. Desktop / iPhone / Print relevance | Desktop office. Field, iPhone, and Print were not changed. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — UAT 1 OFFICE PRESENTATION (2026-09-26)
 
 | Field | Content |

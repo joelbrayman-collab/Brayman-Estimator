@@ -145,16 +145,23 @@ def _priced_estimate(project):
 
 
 def test_nav_uses_contractor_cost_library_and_previous_estimates():
+    from app.presentation.contractor_copy import (
+        COSTS_AND_PRICING_NAV_TITLE,
+        PAST_JOBS_NAV_TITLE,
+        REUSABLE_WORK_NAV_TITLE,
+        WHAT_WE_PAY_NAV_TITLE,
+    )
+
     cost = next(item for item in NAV_ITEMS if item["endpoint"] == "cost_library.list_cost_items")
     historical = next(
         item for item in NAV_ITEMS if item["endpoint"] == "historical_estimates.index"
     )
     settings = next(item for item in NAV_ITEMS if item["endpoint"] == "settings.brand_profile")
-    library = next(section for section in NAV_SECTIONS if section["title"] == COST_LIBRARY_NAV_TITLE)
-    assert cost["title"] == "Cost items"
-    assert any(item["title"] == "Assemblies" for item in library["links"])
-    assert historical["title"] == HISTORICAL_NAV_TITLE
-    assert settings["title"] == "Settings"
+    library = next(section for section in NAV_SECTIONS if section["title"] == COSTS_AND_PRICING_NAV_TITLE)
+    assert cost["title"] == WHAT_WE_PAY_NAV_TITLE
+    assert any(item["title"] == REUSABLE_WORK_NAV_TITLE for item in library["links"])
+    assert historical["title"] == PAST_JOBS_NAV_TITLE
+    assert settings["title"] == "Brand"
     assert settings["enabled"] is True
 
 

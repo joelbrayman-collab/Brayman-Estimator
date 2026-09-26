@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Assemblies | Brayman Construction Platform{% endblock %}
+{% block title %}{{ contractor_copy.REUSABLE_WORK_NAV_TITLE }} | Brayman Construction Platform{% endblock %}
 
-{% block page_title %}Assemblies{% endblock %}
+{% block page_title %}{{ contractor_copy.REUSABLE_WORK_NAV_TITLE }}{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <div>
         <p class="eyebrow">Estimating</p>
-        <h1>Assemblies</h1>
+        <h1>{{ contractor_copy.REUSABLE_WORK_NAV_TITLE }}</h1>
     </div>
 
     <a class="button" href="{{ url_for('assemblies.create_assembly') }}">New Assembly</a>

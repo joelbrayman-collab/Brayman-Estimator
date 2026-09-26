@@ -1,16 +1,22 @@
 """Single source of truth for application shell navigation."""
 
 from app.presentation.contractor_copy import (
-    COMPANY_ATTENTION_HEADING,
-    COST_LIBRARY_NAV_TITLE,
-    HISTORICAL_NAV_TITLE,
-    LABOUR_RATES_HEADING,
-    PRICING_HEADING,
-    WORK_TYPES_HEADING,
+    ATTENTION_NAV_TITLE,
+    BRAND_NAV_TITLE,
+    COMPANY_CALENDAR_HEADING,
+    COMPANY_LIBRARY_NAV_TITLE,
+    COSTS_AND_PRICING_NAV_TITLE,
+    HOW_WE_PRICE_NAV_TITLE,
+    PAST_JOBS_NAV_TITLE,
+    PROPOSALS_NAV_TITLE,
+    REUSABLE_WORK_NAV_TITLE,
+    TEMPLATES_NAV_TITLE,
+    WHAT_WE_PAY_NAV_TITLE,
+    WORK_CATALOG_NAV_TITLE,
 )
 from app.services.access_domains import ACCESS_DOMAIN_COMPANY_MANAGEMENT
 
-# Daily work is the first group. Libraries and company setup stay reachable
+# Daily work is the first group. Estimating inputs and company setup stay
 # underneath it. Unfinished routes stay in the application; they are not peers here.
 NAV_SECTIONS = (
     {
@@ -23,72 +29,53 @@ NAV_SECTIONS = (
                 "enabled": True,
             },
             {
+                "title": COMPANY_CALENDAR_HEADING,
+                "endpoint": "schedule.company",
+                "icon": "bi-calendar3",
+                "enabled": True,
+            },
+            {
                 "title": "Projects",
                 "endpoint": "projects.list_projects",
                 "icon": "bi-building",
                 "enabled": True,
             },
             {
-                "title": "Estimates",
-                "endpoint": "estimates.list_estimates",
-                "icon": "bi-calculator",
-                "enabled": True,
-            },
-            {
-                "title": "Proposals",
-                "endpoint": "proposals.list_proposals",
-                "icon": "bi-file-earmark-text",
-                "enabled": True,
-            },
-            {
-                "title": "Schedule",
-                "endpoint": "schedule.company",
-                "icon": "bi-calendar3",
+                "title": "Clients",
+                "endpoint": "clients.list_clients",
+                "icon": "bi-people",
                 "enabled": True,
             },
         ),
     },
     {
-        "title": COST_LIBRARY_NAV_TITLE,
+        "title": COSTS_AND_PRICING_NAV_TITLE,
         "links": (
             {
-                "title": "Cost items",
+                "title": WHAT_WE_PAY_NAV_TITLE,
                 "endpoint": "cost_library.list_cost_items",
                 "icon": "bi-box-seam",
                 "enabled": True,
             },
             {
-                "title": "Assemblies",
+                "title": REUSABLE_WORK_NAV_TITLE,
                 "endpoint": "assemblies.list_assemblies",
                 "icon": "bi-layers",
                 "enabled": True,
             },
             {
-                "title": "Materials",
-                "endpoint": "material_catalogue.list_materials",
-                "icon": "bi-grid-3x3-gap",
-                "enabled": True,
-            },
-            {
-                "title": LABOUR_RATES_HEADING,
-                "endpoint": "labour_engine.index",
-                "icon": "bi-stopwatch",
-                "enabled": True,
-            },
-            {
-                "title": PRICING_HEADING,
+                "title": HOW_WE_PRICE_NAV_TITLE,
                 "endpoint": "pricing_engine.index",
                 "icon": "bi-percent",
                 "enabled": True,
             },
+        ),
+    },
+    {
+        "title": PROPOSALS_NAV_TITLE,
+        "links": (
             {
-                "title": HISTORICAL_NAV_TITLE,
-                "endpoint": "historical_estimates.index",
-                "icon": "bi-archive",
-                "enabled": True,
-            },
-            {
-                "title": "Proposal Templates",
+                "title": TEMPLATES_NAV_TITLE,
                 "endpoint": "proposal_templates.list_templates",
                 "icon": "bi-file-earmark-richtext",
                 "enabled": True,
@@ -96,30 +83,12 @@ NAV_SECTIONS = (
         ),
     },
     {
-        "title": "Project work",
+        "title": COMPANY_LIBRARY_NAV_TITLE,
         "links": (
             {
-                "title": "Change orders",
-                "endpoint": "project_controls.list_change_orders",
-                "icon": "bi-arrow-left-right",
-                "enabled": True,
-            },
-            {
-                "title": "Time",
-                "endpoint": "time_entry.review",
-                "icon": "bi-clock-history",
-                "enabled": True,
-            },
-            {
-                "title": WORK_TYPES_HEADING,
-                "endpoint": "work_structure.catalog_index",
-                "icon": "bi-diagram-3",
-                "enabled": True,
-            },
-            {
-                "title": "Crews",
-                "endpoint": "organization_crew.index",
-                "icon": "bi-people-fill",
+                "title": PAST_JOBS_NAV_TITLE,
+                "endpoint": "historical_estimates.index",
+                "icon": "bi-archive",
                 "enabled": True,
             },
         ),
@@ -128,22 +97,28 @@ NAV_SECTIONS = (
         "title": "Company",
         "links": (
             {
-                "title": COMPANY_ATTENTION_HEADING,
+                "title": ATTENTION_NAV_TITLE,
                 "endpoint": "company_attention.index",
                 "icon": "bi-exclamation-circle",
                 "enabled": True,
                 "requires_access_domain": ACCESS_DOMAIN_COMPANY_MANAGEMENT,
             },
             {
-                "title": "Clients",
-                "endpoint": "clients.list_clients",
-                "icon": "bi-people",
+                "title": "Crews",
+                "endpoint": "organization_crew.index",
+                "icon": "bi-people-fill",
                 "enabled": True,
             },
             {
-                "title": "Settings",
+                "title": BRAND_NAV_TITLE,
                 "endpoint": "settings.brand_profile",
                 "icon": "bi-gear",
+                "enabled": True,
+            },
+            {
+                "title": WORK_CATALOG_NAV_TITLE,
+                "endpoint": "work_structure.catalog_index",
+                "icon": "bi-diagram-3",
                 "enabled": True,
             },
         ),

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}{{ contractor_copy.DASHBOARD_HEADING }} | Brayman Construction Platform{% endblock %}
-{% block page_title %}{{ contractor_copy.DASHBOARD_HEADING }}{% endblock %}
+{% block title %}{% if company_name %}{{ company_name }} {% endif %}Home | Brayman Construction Platform{% endblock %}
+{% block page_title %}{% if company_name %}{{ company_name }} {% endif %}Home{% endblock %}
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
@@ -19,10 +19,19 @@
     <a class="home-start" href="{{ url_for('projects.create_project') }}">{{ contractor_copy.HOME_START_PROJECT }}</a>
 </section>
 
-<div class="home-pulse" aria-label="Current work">
+<ul class="home-counts" aria-label="Current work">
     {% for item in view.pulse %}
-    {% if not loop.first %}<span class="home-pulse-sep" aria-hidden="true">·</span>{% endif %}
-    <a href="{{ item.href }}"><b>{{ item.value }}</b> {{ item.label }}</a>
+    <li>
+        <a href="{{ item.href }}">
+            <span>{{ item.label }}</span>
+            <b>{{ item.value }}</b>
+        </a>
+    </li>
     {% endfor %}
-</div>
+</ul>
+
+<a class="home-calendar" href="{{ url_for('schedule.company') }}">
+    <i class="bi bi-calendar3" aria-hidden="true"></i>
+    <span>{{ contractor_copy.COMPANY_CALENDAR_HEADING }}</span>
+</a>
 {% endblock %}

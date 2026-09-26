@@ -69,10 +69,21 @@ def register_shell_context(app):
                 # Tables may not exist yet, or membership cannot resolve.
                 pass
 
+        company_name = ""
+        if authenticated:
+            try:
+                from app.services.brand_profile import office_company_name
+                from app.services.organizations import get_current_organization_id
+
+                company_name = office_company_name(get_current_organization_id())
+            except Exception:
+                company_name = ""
+
         return {
             "nav_sections": nav_sections,
             "shell_recent_estimates": recent_estimates,
             "shell_recent_proposals": recent_proposals,
+            "company_name": company_name,
             "product_name": "Brayman Construction Platform",
             "contractor_copy": contractor_copy,
             "help_content": help_content,

@@ -22,6 +22,10 @@
         </button>
     </div>
 
+    {% if company_name %}
+    <p class="sidebar-company" id="office-company-name">{{ company_name }}</p>
+    {% endif %}
+
     <nav class="sidebar-nav" aria-label="Application">
         {% for section in nav_sections %}
         <div class="sidebar-section">

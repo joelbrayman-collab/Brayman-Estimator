@@ -170,11 +170,11 @@ OFFICE_DASHBOARD = HelpTopic(
     what=(
         "You are on Home. It shows where current projects, estimates, and "
         "proposals stand, and it is the place to start a project. "
-        "The month schedule lives on Schedule. This is not a report and not a score."
+        "The month calendar lives on Company Calendar. This is not a report and not a score."
     ),
     do=(
-        "Start a project, or open Projects, Estimates, or Proposals. "
-        "Open Schedule when you need the calendar."
+        "Start a project, or open a count. "
+        "Open Company Calendar when you need the month."
     ),
     next="Open a current Project to plan, price, and run the job from the Project Hub.",
     surface=SURFACE_OFFICE,
@@ -227,11 +227,15 @@ OFFICE_PROJECTS_CLOSED = HelpTopic(
 
 OFFICE_SCHEDULE = HelpTopic(
     key="schedule",
-    title="Schedule",
-    what="Schedule is the company view of planned work dates across Projects.",
+    title="Company Calendar",
+    what=(
+        "Company Calendar is the month of planned work, the selected day, "
+        "and the work that still needs dates."
+    ),
     do=(
-        "Filter by date or Project, add dates, and open a Project Hub schedule "
-        "when you need the job view. Schedule does not move work automatically."
+        "Choose a day, set dates on work that is waiting, and review this period "
+        "by project. Moving a project changes its dates together. It does not "
+        "change what a date means."
     ),
     next="Keep dates current, then record time against the work.",
     surface=SURFACE_OFFICE,

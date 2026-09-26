@@ -6,7 +6,9 @@ Projects owns Schedule. Hub is a project-filtered view of the same service.
 from datetime import date, timedelta
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask_login import current_user
 
+from app.services.home_planning import assemble_home_planning
 from app.services.organizations import get_current_organization
 from app.services.schedule import (
     ScheduleError,
@@ -90,9 +92,25 @@ def company():
     except (ScheduleError, ScheduleNotFoundError) as exc:
         flash(str(exc), "error")
         return redirect(url_for("schedule.company"))
+    calendar = assemble_home_planning(
+        organization.id,
+        year=request.args.get("year", type=int),
+        month=request.args.get("month", type=int),
+        selected_day=request.args.get("day", type=int),
+        today=today,
+        viewer=current_user,
+    )
+    calendar_keep = {
+        "from": view["window_start"].isoformat(),
+        "to": view["window_end"].isoformat(),
+    }
+    if project_id is not None:
+        calendar_keep["project_id"] = project_id
     return render_template(
         "schedule/company.html",
         view=view,
+        calendar=calendar,
+        calendar_keep=calendar_keep,
         projects=list_current_operating_projects(organization.id),
         selected_project_id=project_id,
     )

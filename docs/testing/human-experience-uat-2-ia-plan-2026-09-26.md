@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Date | 2026-09-26 |
-| Status | **ACCEPTED / NOT YET IMPLEMENTED** at this checkpoint |
+| Status | **ACCEPTED.** Waves A and B **IMPLEMENTED / TESTED**. Wave C **NOT STARTED**. |
 | Baseline | `ae37c0fa52b986ebc5a628f19bc8ccc3de2bb2bb` live as `dep-darrc4jncjis73eqcr5g` |
 | Prior audit | [contractor-ux-e2e-audit-2026-09-26.md](contractor-ux-e2e-audit-2026-09-26.md) |
 | Prior Wave 1 | **NOT AUTHORIZED.** Superseded by this plan. |

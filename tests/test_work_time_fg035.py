@@ -472,8 +472,9 @@ def test_field_and_office_time_surfaces(client, app):
     assert "Approved hours" in hub_html
     assert "Waiting for approval" in hub_html
     assert "hub-time" in hub_html
-    sidebar = client.get("/")
-    assert 'href="/time"' in sidebar.get_data(as_text=True)
+    sidebar = client.get("/").get_data(as_text=True)
+    assert 'href="/time"' not in sidebar
+    assert review.status_code == 200
 
 
 def test_alembic_fg035_time_upgrade_downgrade(tmp_path):

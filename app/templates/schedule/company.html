@@ -1,23 +1,48 @@
 {% extends "base.html" %}
 
-{% block title %}{{ contractor_copy.SCHEDULE_HEADING }} | Brayman Construction Platform{% endblock %}
-{% block page_title %}{{ contractor_copy.SCHEDULE_HEADING }}{% endblock %}
+{% block title %}{{ contractor_copy.COMPANY_CALENDAR_HEADING }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ contractor_copy.COMPANY_CALENDAR_HEADING }}{% endblock %}
 
 {% block content %}
 {% from "partials/contextual_help.html" import contextual_help with context %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">BUILD</p>
-        <h1>{{ contractor_copy.SCHEDULE_HEADING }}</h1>
-        <p>{{ contractor_copy.SCHEDULE_LEDE }}</p>
+        <h1>{{ contractor_copy.COMPANY_CALENDAR_HEADING }}</h1>
+        <p>{{ contractor_copy.COMPANY_CALENDAR_LEDE }}</p>
     </div>
     <a class="button" href="{{ url_for('schedule.new_item', project_id=selected_project_id) }}">{{ contractor_copy.SCHEDULE_ADD }}</a>
 </div>
 
 {{ contextual_help(help_content.office_topic("schedule")) }}
 
+{% include "partials/company_month.html" %}
+
+<section class="panel" style="margin: 28px 0 20px;">
+    <div class="panel-header">
+        <h2>{{ contractor_copy.COMPANY_CALENDAR_WAITING }}</h2>
+    </div>
+    {% if view.unscheduled_elements %}
+    <p class="muted-copy">{{ contractor_copy.SCHEDULE_UNSCHEDULED_HELP }}</p>
+    <ul class="schedule-unscheduled-list">
+        {% for element in view.unscheduled_elements %}
+        <li>
+            {{ element.project.name }} — {{ element.display_name }}
+            <a href="{{ url_for('schedule.new_item', project_id=element.project_id) }}">Set dates</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="muted-copy">{{ contractor_copy.HOME_NO_UNSCHEDULED }}</p>
+    {% endif %}
+</section>
+
+<h2 class="home-period-heading">{{ contractor_copy.COMPANY_CALENDAR_PERIOD }}</h2>
+
 <section class="form-panel" style="margin-bottom: 20px;">
     <form method="get" class="form-grid">
+        <input type="hidden" name="year" value="{{ calendar.year }}">
+        <input type="hidden" name="month" value="{{ calendar.month }}">
+        <input type="hidden" name="day" value="{{ calendar.selected.day }}">
         <label>
             From
             <input type="date" name="from" value="{{ view.window_start.isoformat() }}">
@@ -40,23 +65,6 @@
         </div>
     </form>
 </section>
-
-{% if view.unscheduled_elements %}
-<section class="panel" style="margin-bottom: 20px;">
-    <div class="panel-header">
-        <h2>{{ contractor_copy.SCHEDULE_UNSCHEDULED }}</h2>
-    </div>
-    <p class="muted-copy">{{ contractor_copy.SCHEDULE_UNSCHEDULED_HELP }}</p>
-    <ul class="schedule-unscheduled-list">
-        {% for element in view.unscheduled_elements %}
-        <li>
-            {{ element.project.name }} — {{ element.display_name }}
-            <a href="{{ url_for('schedule.new_item', project_id=element.project_id) }}">Set dates</a>
-        </li>
-        {% endfor %}
-    </ul>
-</section>
-{% endif %}
 
 {% if view.projects %}
 {% for row in view.projects %}

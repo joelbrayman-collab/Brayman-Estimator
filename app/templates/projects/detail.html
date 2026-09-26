@@ -873,7 +873,7 @@
     <article class="panel panel-wide" id="hub-schedule">
         <div class="panel-header">
             <h2>{{ contractor_copy.SCHEDULE_HUB_HEADING }}</h2>
-            <a href="{{ url_for('schedule.company', project_id=project.id) }}">Open schedule</a>
+            <a href="{{ url_for('schedule.company', project_id=project.id) }}">Company Calendar</a>
         </div>
         {% set schedule = hub.schedule %}
         <p class="muted-copy">

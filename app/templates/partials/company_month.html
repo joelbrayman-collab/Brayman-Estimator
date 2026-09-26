@@ -1,0 +1,85 @@
+<section class="home-planning" aria-label="{{ contractor_copy.COMPANY_CALENDAR_HEADING }}">
+    <div>
+        <div class="home-cal-head">
+            <h2>{{ calendar.month_label }}</h2>
+            <nav class="home-cal-nav" aria-label="Month">
+                <a href="{{ url_for('schedule.company', year=calendar.prev.year, month=calendar.prev.month, **calendar_keep) }}">‹</a>
+                <a class="home-cal-today" href="{{ url_for('schedule.company', year=calendar.today.year, month=calendar.today.month, day=calendar.today.day, **calendar_keep) }}">Today</a>
+                <a href="{{ url_for('schedule.company', year=calendar.next.year, month=calendar.next.month, **calendar_keep) }}">›</a>
+            </nav>
+        </div>
+
+        <div class="home-month" id="home-month">
+            <div class="home-dow">
+                <span></span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            </div>
+            {% for week in calendar.weeks %}
+            <div class="home-week">
+                <div class="home-week-rail">{{ week.label }}</div>
+                <div class="home-week-grid">
+                    {% for day in week.days %}
+                    <a
+                        class="home-day{% if not day.in_month %} is-out{% endif %}{% if day.weekend %} is-weekend{% endif %}{% if day.selected %} is-selected{% endif %}{% if day.today %} is-today{% endif %}"
+                        href="{{ url_for('schedule.company', year=day.date.year, month=day.date.month, day=day.date.day, **calendar_keep) }}"
+                    >
+                        <span class="home-day-num">{{ day.number }}</span>
+                        {% if day.overflow %}
+                        <span class="home-overflow">+{{ day.overflow }} {{ contractor_copy.HOME_OVERFLOW_MORE }}</span>
+                        {% endif %}
+                    </a>
+                    {% endfor %}
+                    <div class="home-bands">
+                        {% for band in week.bands %}
+                        <a
+                            class="home-band accent-{{ band.accent }}{% if band.conflict %} is-conflict{% endif %}"
+                            style="grid-column: {{ band.col_start }} / {{ band.col_end }}; grid-row: {{ band.lane + 1 }};"
+                            href="{{ url_for('projects.view_project', id=band.project_id) }}#hub-schedule"
+                        >
+                            {% if band.crew_letter %}<span class="home-band-crew">{{ band.crew_letter }}</span>{% endif %}
+                            <span class="home-band-ttl">{{ band.label }}</span>
+                            {% if band.conflict %}<span class="home-band-mark" title="{{ contractor_copy.SCHEDULE_CONFLICT }}"></span>{% endif %}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% if not calendar.has_scheduled_work %}
+        <p class="muted-copy home-cal-empty">{{ contractor_copy.HOME_CALENDAR_EMPTY }}</p>
+        {% endif %}
+    </div>
+
+    <aside class="home-aside">
+        <div class="home-detail">
+            <h3>{{ contractor_copy.COMPANY_CALENDAR_DAY }}</h3>
+            <p class="home-detail-date">{{ calendar.detail.title }}</p>
+            <div class="home-block">
+                <h4>{{ contractor_copy.COMPANY_CALENDAR_DAY_WORK }}</h4>
+                {% if calendar.detail.work %}
+                {% for row in calendar.detail.work %}
+                <p><a href="{{ url_for('projects.view_project', id=row.project_id) }}#hub-schedule">{{ row.label }}</a></p>
+                {% endfor %}
+                {% else %}
+                <p>{{ contractor_copy.HOME_NO_SCHEDULED_WORK }}</p>
+                {% endif %}
+            </div>
+            {% if calendar.detail.people %}
+            <div class="home-block">
+                <h4>{{ contractor_copy.SCHEDULE_ASSIGNED }}</h4>
+                {% for name in calendar.detail.people %}
+                <p>{{ name }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if calendar.detail.attention %}
+            <div class="home-block">
+                <h4>{{ contractor_copy.SCHEDULE_CONFLICT }}</h4>
+                {% for line in calendar.detail.attention %}
+                <p class="home-attn">{{ line }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </aside>
+</section>

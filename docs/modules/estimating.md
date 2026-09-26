@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | **Current** (core implemented) |
 | Updated | 2026-09-26 |
-| Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`, `calculation_estimate_mapping.py`, `estimate_scope_delivery.py`, `subcontractor.py`, `estimate_quickbooks.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`, `calculation_mapping.py`, `scope_delivery.py`, `estimate_quickbooks.py`; `app/services/estimates.py`, `estimate_builder.py`, `calculation_estimate_mapping.py`, `calculation_result_contract.py`, `estimate_output.py`, `estimate_scope_delivery.py`, `subcontract_quote.py`, `estimate_quickbooks.py` |
+| Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`, `project_work_package.py`, `calculation_estimate_mapping.py`, `estimate_scope_delivery.py`, `subcontractor.py`, `estimate_quickbooks.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`, `project_scope.py`, `calculation_mapping.py`, `scope_delivery.py`, `estimate_quickbooks.py`; `app/services/estimates.py`, `estimate_builder.py`, `project_work_package.py`, `calculation_estimate_mapping.py`, `calculation_result_contract.py`, `estimate_output.py`, `estimate_scope_delivery.py`, `subcontract_quote.py`, `estimate_quickbooks.py` |
 | Feature Gate | [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (internal breakdown + customer consistency). [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** (Estimating-owned insertion/citation). [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** (costing approval). [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** (scope-delivery routing + quote evidence). [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT** (QuickBooks-ready package). |
 
 ## Purpose
@@ -23,6 +23,7 @@ Build and version construction estimates from cost libraries and assemblies, sco
 
 ## Owned data
 
+- `project_work_packages` ([ADR-055](../adr/ADR-055-project-work-package-ownership.md) **Accepted**; confirmed project scope before an estimate; migration **`k1f2a3b4c5d6` in git only**). Mac primary remains **`h8c9d0e1f2a3`**. Hosted validation remains **`j0e1f2a3b4c5`**.
 - `cost_items`
 - `assemblies`, `assembly_items`
 - `estimates`, `estimate_versions`, `estimate_sections`, `estimate_line_items`
@@ -62,9 +63,17 @@ Build and version construction estimates from cost libraries and assemblies, sco
 - Governed pricing policy application — **implemented / operational for UAT** ([pricing-policy.md](../pricing-policy.md); [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted**; [FG-009](../feature-gates/FG-009-organization-calibrated-pricing-engine.md) **IMPLEMENTED / VERIFIED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED**; versions without a snapshot still use markup/overhead/profit stack)
 - Deeper productivity tooling — [FG-008](../feature-gates/FG-008-labour-engine-phase-b.md) Labour Engine Phase B **IMPLEMENTED / VERIFIED / LIVE-MIGRATED** (operational for UAT); Estimating does not own canonical tasks or production standards
 
+## Scope of work
+
+The ordinary path is Project → Plans → **Scope of work**.
+
+Scope of work answers what work this project requires and who is doing it. Each row uses a work-catalog element. Delivery is Our crew or Subcontractor. A plan already on the project may be cited. A person confirms the row. The page does not calculate quantities, create estimate lines, choose an engine, or send a quote.
+
+A later internal package may use a calculation engine, Contract V1, and the existing mapper. A later subcontracted package may use My Subcontractors and an RFQ. Those links are not stored yet. `SUGGESTED` is a legal status so a later suggestion can be confirmed by a person. This slice only writes `CONFIRMED`.
+
 ## Add from calculation
 
-The ordinary path is Project → Estimate → **Add from calculation**.
+Add from calculation remains available on an estimate. It is not the normal way to start an estimate.
 
 That page tells the contractor what the step is for: use a CalibraytAI calculation to work out project quantities, review them, and add only the confirmed quantities to the estimate. No calculator button is shown until a real engine exists and can return Contract V1. Concrete slab, ICF wall, stair, wall framing, drywall, roofing, and flooring are Website / engine work. They are not implemented here.
 
@@ -100,6 +109,7 @@ A test page at `/estimates/<id>/versions/<version_id>/calculations/test-load` ca
 
 ## Relevant tests
 
+- `tests/test_project_work_packages.py`
 - `tests/test_estimates.py`
 - `tests/test_estimate_builder.py`
 - `tests/test_service_tenancy_invariant_r01.py` (R01 library attach)
@@ -108,6 +118,7 @@ A test page at `/estimates/<id>/versions/<version_id>/calculations/test-load` ca
 
 ## Relevant ADRs
 
+- [ADR-055](../adr/ADR-055-project-work-package-ownership.md) **Accepted**: Estimating owns confirmed project scope before an estimate exists. Migration `k1f2a3b4c5d6` is not live-migrated.
 - [ADR-025](../adr/ADR-025-pricing-policy-versus-estimate-markup-stack.md) **Accepted**
 - [ADR-030](../adr/ADR-030-organization-owned-pricing-policy-and-estimate-pricing-snapshot.md) **Accepted**
 - [ADR-021](../adr/ADR-021-monitor-commercial-baseline.md) **Accepted** (MONITOR V1 **CLOSED / OPERATIONAL FOR UAT** under [FG-023](../feature-gates/FG-023-monitor-v1-estimated-versus-actual.md); forecast-final GM / cost-to-complete remain out of V1)

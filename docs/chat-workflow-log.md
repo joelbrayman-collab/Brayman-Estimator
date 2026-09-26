@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-26 — Project scope work package foundation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PROJECT SCOPE — WORK PACKAGE FOUNDATION 26 SEP 2026 |
+| Objective | Let a person, on a project with plans, confirm what work is required and whether our crew or a subcontractor will do it. |
+| Business decision | The normal path is project, plans, confirmed scope, then an estimate underneath. Add from calculation is not that path. |
+| Architectural decision | Estimating owns `ProjectWorkPackage`. It is not `ProjectWorkElement`, not an estimate section, and not `EstimateScopeDelivery`. Work identity comes from the existing work catalog. No engine field. No estimate-line link yet. Status may later be suggested; this slice only confirms. The office page calls the service. The same operation can be reused later. No API and no phone app were added. Standing note: `docs/architecture/future-interface-guardrail.md`. |
+| Prompt template used | Architect PROJECT SCOPE — WORK PACKAGE FOUNDATION |
+| Approved Cursor prompt summary | Minimum confirmed project scope. Internal or subcontracted. Optional plan. Contractor Scope of work page. Migration from repository head only. Do not migrate Mac or hosted. Do not deploy. Do not calculate, estimate, or send RFQs. Commit and push if tests pass. |
+| Files expected to change | Model, service, route, template, project and plan links, migration, head pins, ADR-055, occupancy |
+| Files prohibited from changing | Mac primary, hosted database, engines, labour, RFQ, commercial settings, website |
+| Implementation result | Scope of work confirms catalog work as Our crew or Subcontractor. Optional plan citation. Retire keeps the row. No estimate line, intake, or quote is created. |
+| Tests | Focused **12 passed**, 28 warnings, **4.61s**, exit **0**. Full suite **1820 passed**, 6521 warnings, **813.44s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Revision `k1f2a3b4c5d6` is not applied on Mac or hosted. Joel cannot open the page on the hosted office until a later migration and deploy. |
+| Next approved step | STOP. Next slice is not authorized. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | Recorded with the commit |
+
 ### 2026-09-26 — Calculation mapper contractor entry experience
 
 | Field | Content |

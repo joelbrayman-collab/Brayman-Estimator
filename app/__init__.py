@@ -332,6 +332,7 @@ def create_app(config=None):
     from app.routes.main import main_bp
     from app.routes.help import help_bp
     from app.routes.projects import projects_bp
+    from app.routes import project_scope as project_scope_routes  # noqa: F401
     from app.routes.punch_list import punch_list_bp
     from app.routes.final_walkthrough import final_walkthrough_bp
     from app.routes.walkthrough import walkthrough_bp

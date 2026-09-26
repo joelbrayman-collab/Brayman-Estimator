@@ -119,6 +119,7 @@ from app.models.labour_engine import (
     LabourTaskMapping,
     ProductionRateStandard,
 )
+from app.models.project_work_package import ProjectWorkPackage
 from app.models.work_structure import (
     ProjectWorkActivity,
     ProjectWorkElement,
@@ -238,6 +239,7 @@ __all__ = [
     "LabourTask",
     "LabourTaskMapping",
     "ProductionRateStandard",
+    "ProjectWorkPackage",
     "ProjectWorkActivity",
     "ProjectWorkElement",
     "ProjectWorkScopeDelta",

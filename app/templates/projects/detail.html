@@ -14,6 +14,7 @@
     </div>
     <div class="hub-heading-actions">
         <a class="button" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Plan Documents</a>
+        <a class="button" href="{{ url_for('projects.scope_of_work', id=project.id) }}">Scope of work</a>
         {% if not project_is_closed %}
         <a class="button" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id, next='hub') }}">New Change Order</a>
         {% endif %}

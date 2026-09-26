@@ -206,7 +206,8 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-054](ADR-054-calculation-result-review-and-estimate-mapping.md) | Calculation Result Review and Estimate Mapping | **Accepted** (2026-09-26; ChatGPT Architect prompt). Migration **`j0e1f2a3b4c5` not live-migrated**. Labour mapping **DEFERRED**. |
+| [ADR-054](ADR-054-calculation-result-review-and-estimate-mapping.md) | Calculation Result Review and Estimate Mapping | **Accepted** (2026-09-26; ChatGPT Architect prompt). Migration **`j0e1f2a3b4c5` applied on the hosted validation database**. Mac primary remains **`h8c9d0e1f2a3`**. Labour mapping **DEFERRED**. |
+| [ADR-055](ADR-055-project-work-package-ownership.md) | Project Work Package Ownership | **Accepted** (2026-09-26). Migration **`k1f2a3b4c5d6` in git only**. Not applied on the Mac primary. Not applied on hosted validation. |
 
 ### Field Web capture reliability (Accepted; FG-021 CLOSED)
 

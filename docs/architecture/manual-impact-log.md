@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — SCOPE OF WORK (2026-09-26)
+
+| Field | Content |
+|-------|---------|
+| Slice | Scope of work, on a project. |
+| Product status at capture | Implemented and tested in git. Not on the hosted office. Not on the Mac primary schema. |
+| 1. What new contractor capability exists? | On a project, name the work and say whether our crew or a subcontractor will do it. A plan already on the project can be attached. Nothing is priced from this page. |
+| 2. When would the contractor use it? | After plans are on the project, and before building the estimate. |
+| 3. What workflow will the final Manual need to teach? | Open the project, open the plans, open Scope of work, add each piece of work, and choose who is doing it. |
+| 4. What contractor-facing terms must be used? | Scope of work. What work? Who is doing it? Our crew. Subcontractor. Plan documents. Add project work. Confirmed. |
+| 5. What screenshots / Print examples will eventually be needed? | Project with the Scope of work action. Scope of work with one crew item and one subcontractor item. Do not capture until the page is on the office Joel uses. |
+| 6. What warnings / validation distinctions need explanation? | Work must already exist in the work catalog. A plan from another project cannot be used. Removing work from scope keeps the record. This page does not create the estimate. |
+| 7. Desktop / iPhone / Print relevance | Desktop office. iPhone not required for this foundation. No print. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — ADD FROM CALCULATION ENTRY (2026-09-26)
 
 | Field | Content |

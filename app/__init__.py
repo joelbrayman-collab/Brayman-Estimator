@@ -164,6 +164,13 @@ def _register_office_auth(app: Flask) -> None:
     app.cli.add_command(signing_cli)
 
     @app.before_request
+    def retire_disabled_uat_bypass_session():
+        from app.services.uat_auth_bypass import retire_uat_bypass_session_if_disabled
+
+        retire_uat_bypass_session_if_disabled()
+        return None
+
+    @app.before_request
     def protect_office_routes():
         from app.services.organizations import (
             OrganizationAccessError,

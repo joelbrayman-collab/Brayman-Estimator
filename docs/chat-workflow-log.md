@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-26 — Temporary hosted UAT authentication bypass
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI TEMPORARY HOSTED UAT AUTHENTICATION BYPASS 26 SEP 2026 |
+| Objective | Let Joel view the hosted office for UAT without repairing the unresolved password. |
+| Business decision | **TEMPORARY HOSTED UAT AUTHENTICATION BYPASS. NOT FOR PRODUCTION / CUTOVER.** Normal hosted password authentication remains **UNRESOLVED**. Mac remains **PRIMARY**. Hosted database remains a **VALIDATION COPY**. Official V1 remains **65% / 4 of 11**. Secondary remains **79% / 22 of 28**. Not rescored. FG-039 remains **PARKED / NOT PUBLISHED**. Controlled hosted E2E and cutover remain **NOT AUTHORIZED**. |
+| Architectural decision | Server switch `CALIBRAYTAI_UAT_AUTH_BYPASS`, default off. It acts only when `CALIBRAYTAI_HOSTED` is also on. It signs in existing User 1 only when email `uat@example.invalid`, display name Joel Brayman, active Membership 1, ORG-001, instance-owner membership 1, and `COMPANY_MANAGEMENT` all match. Otherwise it fails closed. A query string, cookie, or URL cannot turn it on. Turning the switch off ends a bypass session on the next request. Forgot-password and password reset are unchanged. No new user. No password, hash, epoch, email, membership, ownership, or grant change. No ADR. No migration. Remove `app/services/uat_auth_bypass.py` and its call sites before cutover or production-primary. |
+| Feature Gate answers | 1. Joel cannot pass the hosted password check and needs to view the office. 2. Joel. 3. Office authentication, existing FG-018 identity. 4. No new stored data. A bypass session marker only. 5. Existing User 1, Membership 1, ORG-001, and the Company/Management grant. 6. The signed session, only while the switch is on. 7. Password, hash, epoch, email, membership, ownership, grants, organization, Mac database, business records. 8. Tests A–H in the approved prompt. 9. `tests/test_uat_auth_bypass.py` plus existing auth and hosted-config tests. 10. current-state, session-handoff, roadmap, this log. 11. No ADR. 12. No migration. |
+| Prompt template used | Architect TEMPORARY HOSTED UAT AUTHENTICATION BYPASS |
+| Approved Cursor prompt summary | Implement the minimum fail-closed hosted UAT bypass for existing User 1. Do not repair the password. Test, record, commit, and push. Deploy only with the explicit server switch. |
+| Files expected to change | `app/services/uat_auth_bypass.py`, `app/routes/auth.py`, `app/__init__.py`, `tests/test_uat_auth_bypass.py`, `docs/chat-workflow-log.md`, `docs/current-state.md`, `docs/platform-roadmap.md`, `docs/session-handoff.md` |
+| Files prohibited from changing | Migrations, Mac database, hosted database, password storage, FG-039, V1 scores |
+| Implementation result | **IMPLEMENTED / DEFAULT OFF.** Live activation depends on the hosted environment switch and a deploy of this commit. |
+| Tests | Cursor Terminal. `./venv/bin/python -m pytest -q tests/test_uat_auth_bypass.py tests/test_auth_fg018.py tests/test_hosted_production_config.py` — **63 passed**, 74 warnings, **22.36s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Normal hosted password authentication remains unresolved. Bypass is not active until the hosted switch is set and this commit is deployed. Prior hosted credential repair was not confirmed. Hosted password fingerprint versus Mac was not re-measured. |
+| Next approved step | Set `CALIBRAYTAI_UAT_AUTH_BYPASS=1` on the hosted service and deploy this commit. Joel then opens the hosted office. Do not start controlled E2E. |
+| Next approved prompt | Not authorized from this record beyond that activation. |
+| Commit hash | Recorded after this docs commit |
+
 ### 2026-09-25 — Cursor-to-Cursor turnover
 
 | Field | Content |

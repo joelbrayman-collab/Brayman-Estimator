@@ -7,6 +7,10 @@ from flask_login import current_user, login_user, logout_user
 
 from app.presentation import contractor_copy
 from app.services.auth import GENERIC_LOGIN_FAILURE, authenticate
+from app.services.uat_auth_bypass import (
+    established_uat_bypass_user,
+    mark_uat_bypass_session,
+)
 from app.services.opening_v1 import opening_v1_config
 from app.services.password_reset import (
     BLOCK_PASSWORD_MISMATCH,
@@ -51,6 +55,13 @@ def _password_form_error(exc: PasswordResetServiceError):
 def login():
     if current_user.is_authenticated:
         return redirect(safe_next_url(request.args.get("next")))
+
+    if request.method == "GET":
+        bypass_user = established_uat_bypass_user()
+        if bypass_user is not None:
+            login_user(bypass_user, remember=False)
+            mark_uat_bypass_session()
+            return redirect(safe_next_url(request.args.get("next")))
 
     if request.method == "POST":
         user = authenticate(

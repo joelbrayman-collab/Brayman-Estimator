@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-26 — Human UAT 3 product and polish audit
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI HUMAN UAT 3 — PRODUCT + POLISH RECONCILIATION AUDIT 26 SEP 2026 |
+| Objective | Audit polish, the seven workflow documents, estimate commercial control, brand placement, and subcontract RFQ. Do not implement. |
+| Business decision | Waves C–F are paused. Joel’s live pass asks for a finished visual system, registered documents, estimate-specific commercial control, Brand off the daily menu, My Subcontractors, and a quote request for subcontracted work. |
+| Architectural decision | No product change. The seven documents are the FG-022 masters. Only family 05 is generated from that master. Estimate pricing override selects another approved policy. Subcontractor already exists and is not a directory. |
+| Prompt template used | Architect HUMAN UAT 3 — PRODUCT + POLISH RECONCILIATION AUDIT |
+| Approved Cursor prompt summary | Inspect, trace, audit, and design. Do not start Wave C. Do not implement. |
+| Files expected to change | Audit record and occupancy pointers only |
+| Files prohibited from changing | Application code, templates, CSS, navigation, database, authentication, Render |
+| Implementation result | **AUDIT ONLY / NOT IMPLEMENTED.** [testing/human-uat-3-product-polish-audit-2026-09-26.md](testing/human-uat-3-product-polish-audit-2026-09-26.md) |
+| Tests | Not run. No application code changed. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Typed one-off margin is not current law. Subcontractor has no email. RFQ is not implemented. Password unresolved. Dark logo absent. |
+| Next approved step | Architect has accepted the audit. Shared polish foundation is the next authorized slice. |
+| Next approved prompt | UAT 3 — SHARED POLISH FOUNDATION |
+| Commit hash | This docs checkpoint |
+
 ### 2026-09-26 — Human UAT 2 Waves A and B
 
 | Field | Content |

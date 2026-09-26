@@ -43,6 +43,78 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-26 — Human Experience UAT 2 plan accepted
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI HUMAN UAT 2 — WAVES A+B IMPLEMENTATION 26 SEP 2026 |
+| Objective | Checkpoint the accepted information-architecture plan before Waves A and B. |
+| Business decision | Estimates and Proposals leave the permanent left navigation. Projects stays. The cost area is Costs & pricing. |
+| Architectural decision | Documentation only. Waves A and B are the next product change, together. Wave C is not started. Prior Wave 1 stays superseded. |
+| Prompt template used | Architect HUMAN UAT 2 — WAVES A+B IMPLEMENTATION |
+| Approved Cursor prompt summary | Commit the accepted plan, then implement navigation, Home, and Company Calendar together. |
+| Files expected to change | The UAT 2 plan, the audit it cites, and occupancy pointers |
+| Files prohibited from changing | Application code in this checkpoint |
+| Implementation result | **ACCEPTED PLAN CHECKPOINT.** Product code not changed in this commit. |
+| Tests | Not run. No application code changed. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Password unresolved. Dark logo absent. Wave C not started. |
+| Next approved step | Implement Waves A and B. |
+| Next approved prompt | The Waves A+B implementation prompt that authorized this checkpoint. |
+| Commit hash | Recorded by this documentation commit. |
+
+### 2026-09-26 — Human Experience UAT 2 information architecture
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI HUMAN EXPERIENCE UAT 2 — INFORMATION ARCHITECTURE RESET 26 SEP 2026 |
+| Objective | Turn Joel’s live pass into an information-architecture plan. Do not implement. |
+| Business decision | Joel’s live experience overrides the earlier Wave 1. Home should name the company, keep the counts, and point obviously at the calendar. Schedule as a separate idea failed comprehension. Costs should read as company inputs, not five internal tables. |
+| Architectural decision | No product change. The month calendar and the Schedule page are different presentations of the same scheduled work. A cost item holds the company’s price. A material row does not. An assembly bundles cost items. |
+| Prompt template used | Architect HUMAN EXPERIENCE UAT 2 — INFORMATION ARCHITECTURE RESET |
+| Approved Cursor prompt summary | Inspect Schedule, costs, labour, past estimates, and templates. Propose the contractor-facing structure. Do not implement. |
+| Files expected to change | Design record and occupancy pointers only |
+| Files prohibited from changing | Application code, templates, CSS, navigation, database, authentication, Render |
+| Implementation result | **DESIGN ONLY / NOT IMPLEMENTED.** [testing/human-experience-uat-2-ia-plan-2026-09-26.md](testing/human-experience-uat-2-ia-plan-2026-09-26.md) |
+| Tests | Not run. No application code changed. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Joel still to confirm whether Projects, Estimates, and Proposals stay in the side menu. Password unresolved. Dark logo absent. Wave A not authorized. This note is not committed. |
+| Next approved step | Architect accepts or adjusts the plan. Do not implement. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | NOT COMMITTED |
+
+### 2026-09-26 — Contractor UX E2E audit after UAT 1 cleanup
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-26 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONTRACTOR UX E2E AUDIT — POST UAT 1 CLEANUP 26 SEP 2026 |
+| Objective | Audit the live post-cleanup office as a contractor would use it. Do not implement. |
+| Business decision | Baseline remains the UAT 1 cleanup. No P0 on Home, Projects, Estimates, Proposals, or Schedule. Further UX work is not authorized. Joel looks at the live office first. |
+| Architectural decision | No product change. Record only. |
+| Prompt template used | Architect CONTRACTOR UX E2E AUDIT — POST UAT 1 CLEANUP |
+| Approved Cursor prompt summary | Inventory current surfaces and audit terminology, navigation, pages, lists, details, actions, workflow, forms, and help. Return findings and waves. Do not implement. |
+| Files expected to change | Audit record and occupancy pointers only |
+| Files prohibited from changing | Application code, templates, CSS, navigation, database, authentication, Render |
+| Implementation result | **RECORDED / NOT IMPLEMENTED.** [testing/contractor-ux-e2e-audit-2026-09-26.md](testing/contractor-ux-e2e-audit-2026-09-26.md) |
+| Tests | Not run. No application code changed. Baseline suite remains 1769 passed. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Password authentication unresolved. Dark logo absent. Wave 1 not authorized. Audit docs are in the working tree and not committed. |
+| Next approved step | Joel visual UAT of the live office. Do not start Wave 1. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | NOT COMMITTED |
+
 ### 2026-09-26 — UAT 1 office presentation cleanup
 
 | Field | Content |

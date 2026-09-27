@@ -91,7 +91,7 @@ The Mac primary and the hosted validation database are schema-divergent on purpo
 
 ## Subsequent status (2026-09-27 hosted alignment)
 
-The estimate version no longer shows Add from calculation. The estimating module no longer says a future engine appears on that page. Footing, ICF wall, and concrete slab / thickened-edge slab remain separate engines. No formula was added. Hosted migration and deploy are recorded in current-state when this alignment is live. The findings above stay as the review that authorized the correction.
+The estimate version no longer shows Add from calculation. The estimating module no longer says a future engine appears on that page. Footing, ICF wall, and concrete slab / thickened-edge slab remain separate engines. No formula was added. Hosted validation is Alembic `k1f2a3b4c5d6`. Deploy `dep-dasmtgp7lnhs739t87g0` is commit `ad4b912a7532de61e0b994237d61f8d71a7f2149`. The Mac primary remains `h8c9d0e1f2a3`. The findings above stay as the review that authorized the correction.
 
 ## E. Conflicts with the settled model
 

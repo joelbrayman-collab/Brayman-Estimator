@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Joel has not re-walked Drawings and Scope. Contractor-facing work names are a separate decision. |
 | Next approved step | Stop for Joel’s next walk after deploy. |
 | Next approved prompt | CONTRACTOR-FACING SCOPE / WORK CATALOG TAXONOMY is not authorized. |
-| Commit hash | This presentation commit |
+| Commit hash | `6aa574bda2a57968bc3d746ad4488bcb7b4b8e2d` deployed as `dep-dasnht0473hc7394e65g` |
 
 ### 2026-09-27 — Estimating path hosted alignment
 

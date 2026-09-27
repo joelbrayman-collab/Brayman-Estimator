@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-27 — Estimating path alignment review
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-27 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ESTIMATING PATH — ALIGNMENT REVIEW 27 SEP 2026 |
+| Objective | Write the settled plan → scope → estimate model against the code and the hosted office. |
+| Business decision | Calculation engines are infrastructure. Add from calculation is not how an estimate starts. |
+| Architectural decision | Record only. Scope of work is the contractor front door and is not live. The mapper remains underneath. The estimate-version button that opens Add from calculation is a recorded conflict, not a change. |
+| Prompt template used | Architect ESTIMATING PATH — ALIGNMENT REVIEW |
+| Approved Cursor prompt summary | Write `docs/architecture/estimating-path-alignment-2026-09-27.md`. Update occupancy pointers. Do not implement, migrate, deploy, or start ICF. |
+| Files expected to change | The review record, current-state, session-handoff, chat-workflow-log |
+| Files prohibited from changing | Product code, schema, Website, either database |
+| Implementation result | Review recorded. Three conflicts left in place: the estimate button, the module sentence that puts future engines on that page, and the hosted office having no Scope of work yet. |
+| Tests | None. Documentation only. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | ICF specification file not read. Scope of work not deployed. Add from calculation still reachable from an estimate version. |
+| Next approved step | STOP. ICF estimator is not authorized. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | This review commit |
+
 ### 2026-09-26 — Project scope work package foundation
 
 | Field | Content |

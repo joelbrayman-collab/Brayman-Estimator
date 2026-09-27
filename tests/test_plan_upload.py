@@ -223,7 +223,7 @@ def test_delete_archives_document(client, project):
 def test_project_detail_links_plans(client, project):
     resp = client.get(f"/projects/{project.id}")
     assert resp.status_code == 200
-    assert b"Plan Documents" in resp.data
+    assert b"Drawings" in resp.data
     assert f"/projects/{project.id}/plans".encode() in resp.data
 
 

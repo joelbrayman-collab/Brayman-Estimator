@@ -13,7 +13,7 @@
         <p class="hub-operating-identity">{{ operating_identity }}</p>
     </div>
     <div class="hub-heading-actions">
-        <a class="button" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Plan Documents</a>
+        <a class="button" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Drawings</a>
         <a class="button" href="{{ url_for('projects.scope_of_work', id=project.id) }}">Scope of work</a>
         {% if not project_is_closed %}
         <a class="button" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id, next='hub') }}">New Change Order</a>
@@ -372,8 +372,8 @@
 
     <article class="panel">
         <div class="panel-header">
-            <h2>Plan Documents</h2>
-            <a href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">All plans</a>
+            <h2>Drawings</h2>
+            <a href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">All drawings</a>
         </div>
         {% if hub.plan_documents %}
         <ul class="activity-list">
@@ -388,8 +388,8 @@
         </ul>
         {% else %}
         <div class="empty-state empty-state-compact">
-            <h3>No plan documents</h3>
-            <p>Upload searchable PDF plan sets for this project.</p>
+            <h3>No drawings yet</h3>
+            <p>Upload a PDF drawing for this project.</p>
             <a class="button-link" href="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}">Upload PDF</a>
         </div>
         {% endif %}
@@ -416,7 +416,7 @@
         <div class="empty-state empty-state-compact">
             <h3>No sheets recorded</h3>
             <p>Sheet classification lives in Plan Intelligence. This hub does not create a drawing package.</p>
-            <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Open plan documents</a>
+            <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Open drawings</a>
         </div>
         {% endif %}
     </article>

@@ -7,29 +7,27 @@
 <div class="page-heading">
     <div>
         <p class="eyebrow">{{ project.name }}</p>
-        <h1>Scope of work</h1>
+        <h1>What work needs to be done?</h1>
     </div>
     <div>
-        <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Plan documents</a>
+        <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Drawings</a>
         <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
     </div>
 </div>
 
 <section class="form-panel" style="margin-bottom: 24px;">
-    <p>What work are we doing on this project?</p>
-    <p>For each piece of work, say who is doing it. Our crew, or a subcontractor. Nothing is estimated from this page.</p>
+    <p>What work needs to be done on this project?</p>
+    <p>For each piece of work, say who is doing it. Our crew, or a subcontractor. This does not price the work or send anything.</p>
 </section>
 
 <section class="form-panel" style="margin-bottom: 24px;">
-    <h2>Project work</h2>
+    <h2>Work on this project</h2>
     {% if packages %}
     <table class="data-table">
         <thead>
             <tr>
                 <th>Work</th>
                 <th>Who is doing it</th>
-                <th>Plans</th>
-                <th>Status</th>
                 <th></th>
             </tr>
         </thead>
@@ -38,14 +36,6 @@
             <tr>
                 <td>{{ package.work_name }}</td>
                 <td>{{ package.delivery_label }}</td>
-                <td>
-                    {% if package.plan_document %}
-                    {{ package.plan_document.original_filename }}
-                    {% else %}
-                    Not from a plan
-                    {% endif %}
-                </td>
-                <td>Confirmed</td>
                 <td>
                     <form method="post" action="{{ url_for('projects.retire_scope_of_work', id=project.id, package_id=package.id) }}">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -57,12 +47,12 @@
         </tbody>
     </table>
     {% else %}
-    <p>No project work is confirmed yet.</p>
+    <p>Nothing has been added yet.</p>
     {% endif %}
 </section>
 
 <section class="form-panel">
-    <h2>Add project work</h2>
+    <h2>Add work</h2>
     {% if choices %}
     <form method="post" action="{{ url_for('projects.add_scope_of_work', id=project.id) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -71,7 +61,7 @@
             <select name="work_element_template_id" required>
                 <option value="">Choose</option>
                 {% for choice in choices %}
-                <option value="{{ choice.id }}">{{ choice.display_name }}{% if choice.work_type %} · {{ choice.work_type.display_name }}{% endif %}</option>
+                <option value="{{ choice.id }}">{{ choice.display_name }}</option>
                 {% endfor %}
             </select>
         </label>
@@ -83,21 +73,8 @@
                 <option value="SUBCONTRACT">Subcontractor</option>
             </select>
         </label>
-        <label>
-            Plan, if this came from one
-            <select name="plan_document_id">
-                <option value="">Not from a plan</option>
-                {% for plan in plans %}
-                <option value="{{ plan.id }}">{{ plan.original_filename }}</option>
-                {% endfor %}
-            </select>
-        </label>
-        <label>
-            Confirmed by
-            <input type="text" name="actor" required>
-        </label>
         <div class="form-actions">
-            <button type="submit">Add project work</button>
+            <button type="submit">Add work</button>
         </div>
     </form>
     {% else %}

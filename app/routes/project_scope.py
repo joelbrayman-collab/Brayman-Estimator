@@ -44,7 +44,6 @@ def scope_of_work(id):
 @projects_bp.route("/<int:id>/scope", methods=["POST"])
 def add_scope_of_work(id):
     project = _project_or_404(id)
-    plan_id = request.form.get("plan_document_id", type=int) or None
     try:
         confirm_package(
             organization_id=project.organization_id,
@@ -52,7 +51,6 @@ def add_scope_of_work(id):
             work_element_template_id=request.form.get("work_element_template_id", type=int),
             delivery=(request.form.get("delivery") or "").strip(),
             actor=form_actor("actor", fallback=""),
-            plan_document_id=plan_id,
             user_id=_session_user_id(),
         )
     except ProjectWorkPackageError as exc:

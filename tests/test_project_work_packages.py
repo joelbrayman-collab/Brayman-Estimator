@@ -288,11 +288,15 @@ def test_scope_page_uses_contractor_language(app, client):
     assert response.status_code == 200
     page = response.get_data(as_text=True)
     assert "Scope of work" in page
-    assert "What work are we doing on this project?" in page
+    assert "What work needs to be done on this project?" in page
     assert "Who is doing it?" in page
     assert "Our crew" in page
     assert "Subcontractor" in page
-    assert "Add project work" in page
+    assert "Add work" in page
+    assert "General construction" not in page
+    assert "Confirmed by" not in page
+    assert "plan_document_id" not in page
+    assert "Confirmed" not in page
     for forbidden in (
         "Contract V1",
         "contract_version",
@@ -313,13 +317,25 @@ def test_project_and_plans_still_open_and_link_to_scope(app, client):
     project_page = client.get(f"/projects/{project.id}")
     assert project_page.status_code == 200
     project_html = project_page.get_data(as_text=True)
-    assert "Plan Documents" in project_html
+    assert "Drawings" in project_html
+    assert "Plan Documents" not in project_html
     assert f"/projects/{project.id}/scope" in project_html
     plans_page = client.get(f"/projects/{project.id}/plans")
     assert plans_page.status_code == 200
     plans_html = plans_page.get_data(as_text=True)
+    assert "Drawings" in plans_html
+    assert "These are the drawings uploaded for this project." in plans_html
     assert "Upload PDF" in plans_html
     assert "Scope of work" in plans_html
+    for hidden in (
+        "Plan Intelligence",
+        "Sheet Index",
+        "AI Take-off",
+        "Embedded text",
+        "succeeded",
+        "Document Intelligence",
+    ):
+        assert hidden not in plans_html
 
 
 def test_estimate_version_does_not_offer_add_from_calculation(app, client):
@@ -358,8 +374,6 @@ def test_add_from_the_page_confirms_work_without_an_estimate_line(app, client):
         data={
             "work_element_template_id": foundation.id,
             "delivery": DELIVERY_SUBCONTRACT,
-            "actor": "Joel Brayman",
-            "plan_document_id": "",
         },
         follow_redirects=True,
     )
@@ -370,8 +384,9 @@ def test_add_from_the_page_confirms_work_without_an_estimate_line(app, client):
     assert EstimateLineItem.query.count() == 0
     stored = ProjectWorkPackage.query.one()
     assert stored.status == STATUS_CONFIRMED
-    assert stored.actor_display_name == "Joel Brayman"
+    assert stored.actor_display_name == "Office Test User"
     assert stored.user_id == user.id
+    assert stored.plan_document_id is None
 
 
 def test_migration_revises_the_mapper_head_on_an_isolated_database(tmp_path):

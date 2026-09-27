@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — DRAWINGS AND SCOPE (2026-09-27)
+
+| Field | Content |
+|-------|---------|
+| Slice | Drawings list and Scope of work, after Joel’s first walk. |
+| Product status at capture | Presentation corrected in git. Joel has not re-walked the live pages. |
+| 1. What new contractor capability exists? | The project opens Drawings, which are the uploaded PDFs. Scope asks what work needs to be done and whether our crew or a subcontractor is doing it. |
+| 2. When would the contractor use it? | After opening a project, before building the estimate. |
+| 3. What workflow will the final Manual need to teach? | Open the project. Open Drawings. Open Scope of work. Choose the work. Choose Our crew or Subcontractor. |
+| 4. What contractor-facing terms must be used? | Drawings. Scope of work. What work needs to be done? Who is doing it? Our crew. Subcontractor. |
+| 5. What screenshots / Print examples will eventually be needed? | Drawings with the test files labeled. Scope with one crew item and one subcontractor item. Capture after Joel accepts the live pages. |
+| 6. What warnings / validation distinctions need explanation? | Adding work does not price it or send anything. The two FG-010 files are test drawings. Sheet lists and the door-count trial are not on this page. |
+| 7. Desktop / iPhone / Print relevance | Desktop office. The same two questions fit a later phone view. No print. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — ESTIMATING PATH LIVE ALIGNMENT (2026-09-27)
 
 | Field | Content |

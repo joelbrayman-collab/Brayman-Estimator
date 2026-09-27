@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-27 — Drawings and Scope presentation cleanup
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-27 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI HUMAN UAT — DRAWINGS + SCOPE PRESENTATION CLEANUP 27 SEP 2026 |
+| Objective | Make the drawing list and the scope page readable after Joel said the live journey was not natural. |
+| Business decision | The PDF list is Drawings. Scope asks what work needs to be done and who is doing it. The work catalog stays Site work, Foundation, and Structure. |
+| Architectural decision | Presentation only. Sheet Index and the mock takeoff stay in the product and off the first drawings view. A later Project Documents page may gather drawings, permits, and workflow documents. Empty categories are not created. |
+| Prompt template used | Architect HUMAN UAT — DRAWINGS + SCOPE PRESENTATION CLEANUP |
+| Approved Cursor prompt summary | Hide indexing, Sheet Index, and AI Take-off from the drawings list. Simplify scope. Keep provenance on the signed-in person. Do not expand the catalog, migrate, or start ICF. Deploy if tests pass. |
+| Files expected to change | Drawings and scope templates, project navigation labels, tests, occupancy |
+| Files prohibited from changing | Schema, work catalog rows, Contract V1, mapper, Mac primary, Website |
+| Implementation result | Drawings page and scope form recomposed. Provenance still stores the signed-in person. |
+| Tests | Focused **39 passed**. Full suite **1821 passed**, 6528 warnings, **813.43s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Joel has not re-walked Drawings and Scope. Contractor-facing work names are a separate decision. |
+| Next approved step | Stop for Joel’s next walk after deploy. |
+| Next approved prompt | CONTRACTOR-FACING SCOPE / WORK CATALOG TAXONOMY is not authorized. |
+| Commit hash | This presentation commit |
+
 ### 2026-09-27 — Estimating path hosted alignment
 
 | Field | Content |

@@ -550,6 +550,8 @@ def test_normal_entry_explains_the_job_without_a_calculation_file(app):
     assert "Use a CalibraytAI calculation to work out project quantities" in html
     assert "Nothing is added until you confirm it." in html
     assert "No calculation can be run from this estimate yet." in html
+    assert "will appear here" not in html
+    assert "Project work is chosen on Scope of work." in html
     assert "calculation_text" not in html
     assert "<textarea" not in html
     assert "Calculation file" not in html

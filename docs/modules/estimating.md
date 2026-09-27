@@ -73,13 +73,11 @@ A later internal package may use a calculation engine, Contract V1, and the exis
 
 ## Add from calculation
 
-Add from calculation remains available on an estimate. It is not the normal way to start an estimate.
+The estimate version does not offer Add from calculation. Scope of work is where the contractor names the work. The calculation route remains infrastructure. It can still review a Contract V1 result and confirm a quantity onto a cost item or assembly. A person still confirms before a line is added.
 
-That page tells the contractor what the step is for: use a CalibraytAI calculation to work out project quantities, review them, and add only the confirmed quantities to the estimate. No calculator button is shown until a real engine exists and can return Contract V1. Concrete slab, ICF wall, stair, wall framing, drywall, roofing, and flooring are Website / engine work. They are not implemented here.
+A later confirmed internal package may use an engine. Footing, ICF wall, and concrete slab / thickened-edge slab are separate engines. A later private Brayman ICF workflow may call those engines for the packages the project needs. No formula and no orchestration are implemented. They do not become a destination on the estimate page.
 
-When a real engine exists, it appears on this same page. The contractor runs it, reviews what was calculated, chooses the company cost or reusable work, and confirms. Nothing is added before that confirmation. Project, Plans, and Takeoff do not grow a second calculator path. Takeoff remains plan measurement. A later measurement that feeds a calculator must arrive at this same review.
-
-A test page at `/estimates/<id>/versions/<version_id>/calculations/test-load` can still accept a Contract V1 file. It is labeled as testing and is not linked from Add from calculation. It is not the normal way to build an estimate.
+A test page at `/estimates/<id>/versions/<version_id>/calculations/test-load` can still accept a Contract V1 file. It is labeled as testing and is not linked from the estimate version. It is not the normal way to build an estimate.
 
 ## Planned capabilities
 

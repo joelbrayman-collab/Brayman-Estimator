@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-27 — Estimating path hosted alignment
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-27 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ESTIMATING PATH — LIVE ALIGNMENT 27 SEP 2026 |
+| Objective | Make the hosted contractor path project, plans, scope of work, then the estimate. |
+| Business decision | Add from calculation is not the primary estimating action. |
+| Architectural decision | Hide the estimate-version button. Keep Contract V1 and the mapper. Migrate hosted validation from `j0e1f2a3b4c5` to `k1f2a3b4c5d6` only. Leave the Mac primary on `h8c9d0e1f2a3`. |
+| Prompt template used | Architect ESTIMATING PATH — LIVE ALIGNMENT |
+| Approved Cursor prompt summary | Verify Scope of work, correct the estimate button and engine-on-that-page copy, back up and migrate hosted validation only, deploy, and prepare Joel’s scope UAT. No ICF formulas, no Mac migration, no Website work. |
+| Files expected to change | Estimate version template, calculation entry copy, estimating module, tests, occupancy |
+| Files prohibited from changing | Contract V1, mapper behavior, Mac primary, Website, engine formulas |
+| Implementation result | Estimate version no longer offers Add from calculation. Scope of work was already the project step. Hosted backup, migration, and deploy are recorded when complete. |
+| Tests | Focused **35 passed**. Full suite **1821 passed**, 6528 warnings, **817.39s**, exit **0**. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Joel has not walked Project → Plans → Scope of work. ICF specification not read. |
+| Next approved step | Stop for Joel’s scope-of-work UAT. |
+| Next approved prompt | BRAYMAN ICF ESTIMATOR V1 — DESIGN / TDD PLAN RECONCILIATION is not authorized. |
+| Commit hash | This alignment commit |
+
 ### 2026-09-27 — Estimating path alignment review
 
 | Field | Content |

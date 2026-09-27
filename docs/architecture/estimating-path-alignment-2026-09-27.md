@@ -89,9 +89,13 @@ Scope of work does not call an engine, create an estimate line, or send a quote.
 
 The Mac primary and the hosted validation database are schema-divergent on purpose.
 
+## Subsequent status (2026-09-27 hosted alignment)
+
+The estimate version no longer shows Add from calculation. The estimating module no longer says a future engine appears on that page. Footing, ICF wall, and concrete slab / thickened-edge slab remain separate engines. No formula was added. Hosted migration and deploy are recorded in current-state when this alignment is live. The findings above stay as the review that authorized the correction.
+
 ## E. Conflicts with the settled model
 
-These are recorded. They were not changed in this review.
+These were the conflicts at the time of the review. They were not changed in that review.
 
 1. The estimate version page still shows **Add from calculation** as a button next to Create Proposal (`app/templates/estimates/version_detail.html`). On the hosted office a contractor can open that page as if it were a normal estimate action. The page itself says no calculation can be run yet. The settled model says this is not how an estimate starts.
 

@@ -19,6 +19,7 @@ from app.models.project_work_package import (
 from app.models.subcontractor import SubcontractQuoteEvidence
 from app.models.work_structure import WorkElementTemplate, WorkType
 from app.plan_intelligence.models import PlanDocument
+from app.services.estimates import create_estimate
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
 from app.services.project_work_package import (
     ProjectWorkPackageError,
@@ -319,6 +320,32 @@ def test_project_and_plans_still_open_and_link_to_scope(app, client):
     plans_html = plans_page.get_data(as_text=True)
     assert "Upload PDF" in plans_html
     assert "Scope of work" in plans_html
+
+
+def test_estimate_version_does_not_offer_add_from_calculation(app, client):
+    ensure_office_user()
+    project = _project(name="Estimate path project")
+    estimate = create_estimate(
+        project_id=project.id,
+        estimate_number="EST-2026-4199",
+        title="Scope first",
+        organization_id=project.organization_id,
+    )
+    version = estimate.current_version
+    login_office_user(client)
+    response = client.get(f"/estimates/{estimate.id}/versions/{version.id}")
+    assert response.status_code == 200
+    page = response.get_data(as_text=True)
+    assert "Add from calculation" not in page
+    assert "Create Proposal" in page
+    assert "will appear here" not in page
+    infrastructure = client.get(
+        f"/estimates/{estimate.id}/versions/{version.id}/calculations"
+    )
+    assert infrastructure.status_code == 200
+    infra_page = infrastructure.get_data(as_text=True)
+    assert "No calculation can be run from this estimate yet." in infra_page
+    assert "will appear here" not in infra_page
 
 
 def test_add_from_the_page_confirms_work_without_an_estimate_line(app, client):

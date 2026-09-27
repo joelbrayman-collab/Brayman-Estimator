@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — ESTIMATING PATH LIVE ALIGNMENT (2026-09-27)
+
+| Field | Content |
+|-------|---------|
+| Slice | Project, plans, and Scope of work as the way an estimate starts. |
+| Product status at capture | Estimate version no longer offers Add from calculation. Scope of work is the project step. Hosted office follows the deploy of this slice. |
+| 1. What new contractor capability exists? | From a project, open the plans, then open Scope of work and say who is doing each piece of work. The estimate page no longer asks the contractor to add from a calculation. |
+| 2. When would the contractor use it? | After plans are on the project, before building the estimate. |
+| 3. What workflow will the final Manual need to teach? | Open the project. Open Plan documents. Open Scope of work. Add the work. Choose Our crew or Subcontractor. |
+| 4. What contractor-facing terms must be used? | Plan documents. Scope of work. What work? Who is doing it? Our crew. Subcontractor. |
+| 5. What screenshots / Print examples will eventually be needed? | Project heading with Plan documents and Scope of work. Scope of work with one crew item and one subcontractor item. An estimate version without a calculation action. Capture after Joel has seen the live page. |
+| 6. What warnings / validation distinctions need explanation? | Confirming scope does not price the work, create an estimate line, or send a quote. |
+| 7. Desktop / iPhone / Print relevance | Desktop office. iPhone not required. No print. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — SCOPE OF WORK (2026-09-26)
 
 | Field | Content |

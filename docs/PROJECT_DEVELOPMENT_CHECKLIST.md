@@ -3,11 +3,11 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Project governance. Not an implementation authorization. |
-| Date | 2026-09-29 |
+| Date | 2026-09-29. Confirmed unchanged on 30 Sep 2026. |
 | Repository | `/Users/joelbrayman/Desktop/Brayman-Estimator` |
 | Resume | [session-handoff.md](session-handoff.md) |
 
-This checklist is the development sequence. Chat memory is not.
+This checklist is the development sequence. Chat memory is not. The 30 Sep 2026 governance pass confirmed this sequence and did not advance the active slice.
 
 ## Status law
 
@@ -36,14 +36,14 @@ Proving case. Not final. Not sent.
 
 Present: design brief, framing comparison, issue P1, CT-1, CT-2, CT-2 R2, take-off, unsent Darcy request, difference notes, unpriced Ben cost sheet.
 
-Open conflicts, so the package is not complete:
+Open conflicts, so the package is not complete. A 29 Sep 2026 trace measured both layouts and did not select either one. Record: [estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md](estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md).
 
-| Item | P1 | Proving drawing |
-|------|----|-----------------|
-| Piers | 12 | CT-1 has 15 |
-| Joist lines | 16 | CT-1 has 15 |
-| Stringers | 10 | CT-2 R2 has 9 |
-| Stringer throat | — | 5.00 in. Not structurally verified. |
+| Item | P1 | Proving drawing | 29 Sep trace |
+|------|----|-----------------|--------------|
+| Piers | 12 | CT-1 has 15 | Unresolved. The brief does not set the count, and no cited span table chooses the bays. |
+| Joist lines | 16 | CT-1 has 15 | Unresolved. Both keep bays at or under 16 in. 216 in is not a whole number of 16 in spaces. |
+| Stringers | 10 | CT-2 R2 has 9 | Unresolved. Both keep bays at or under 16 in. 120 in is not a whole number of 16 in spaces. |
+| Stringer throat | — | 5.00 in. Not structurally verified. | Unresolved. Calculated 4.997 in. No throat rule is in the repository. |
 
 Case path: [estimating-cases/2026/linda-bushel-pool-deck/](estimating-cases/2026/linda-bushel-pool-deck/).
 

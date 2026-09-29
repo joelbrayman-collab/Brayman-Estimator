@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative documentation map |
-| Updated | 2026-09-18 |
+| Updated | 2026-09-30 |
 | Product | The Estimator (Brayman Estimator) |
 
 ## Purpose
@@ -39,13 +39,15 @@ This folder is the **system of record** for platform vision, architecture, gover
 
 Also read [`platform-governance.md`](platform-governance.md), [`governance/product-identity.md`](governance/product-identity.md), [`governance/continuity-and-anti-drift.md`](governance/continuity-and-anti-drift.md), [`governance/review-turnover-protocol.md`](governance/review-turnover-protocol.md), and [`definition-of-done.md`](definition-of-done.md) before starting any feature.
 
+For immediate resume, [session-handoff.md](session-handoff.md) section 0 and [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md) outrank older occupancy inside the 2026-09-20 project-state report, the historical baseline table in current-state, and the historical programme rows in the roadmap.
+
 ## Document catalog
 
 | Document | Purpose | Authority |
 |----------|---------|-----------|
 | [platform-constitution.md](platform-constitution.md) | Highest-order platform law (Articles 1–12) | **Constitutional** |
 | [project-state-report.md](project-state-report.md) | Milestone-level state + template | Operational (mandatory at milestones) |
-| [v1-completion-register.md](v1-completion-register.md) | CalibraytAI V1 definition, 11-package register, BMR / Brayman real-life UAT readiness | **Governing product-completion instrument** — V1-01, V1-02, V1-03, and V1-05 **COMPLETE**. Readiness **60%**. [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**. V1-03 [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT**. V1-05 [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Product identity: [governance/product-identity.md](governance/product-identity.md). |
+| [v1-completion-register.md](v1-completion-register.md) | CalibraytAI V1 definition, 11-package register, BMR / Brayman real-life UAT readiness | **Governing product-completion instrument** — V1-01, V1-02, V1-03, and V1-05 **COMPLETE**. Readiness last recorded **65% / 4 of 11**. Not rescored on 30 Sep 2026. The older catalog figure of 60% is withdrawn. [FG-027](feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT**. V1-03 [FG-029](feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT**. V1-05 [FG-032](feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT**. Product identity: [governance/product-identity.md](governance/product-identity.md). |
 | [milestones.md](milestones.md) | Append-only milestone history | Historical |
 | [prompts/](prompts/) | Reusable Cursor prompt templates | Templates |
 | [platform-vision.md](platform-vision.md) | CalibraytAI (formerly CalibAi) vision + current Estimator core | Product intent (Joel-approved CAR-001 / ADR-045) |

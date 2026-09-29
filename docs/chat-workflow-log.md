@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-26 |
+| Updated | 2026-09-30 |
 
 ## Purpose
 
@@ -42,6 +42,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-09-30 — Post-turnover governance cleanup
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI POST-TURNOVER RECONCILIATION / GOVERNANCE CLEANUP 30 SEP 2026 |
+| Objective | Reconcile documentation to the measured post-turnover checkpoint. Do not continue Bushel geometry. |
+| Business decision | No count was selected. Nothing was sent. V1 was not rescored. |
+| Architectural decision | Section 0 of the session handoff and the current-state occupancy block are the resume. Older handoff sections, the current-state baseline table, the roadmap programme rows, and project-state PART B stay historical. Repository Alembic head `k1f2a3b4c5d6` and Mac primary `h8c9d0e1f2a3` are the intentional divergence. |
+| Prompt template used | The 30 Sep 2026 post-turnover reconciliation prompt. No file in docs/prompts/ covers this cleanup. |
+| Approved Cursor prompt summary | Read and verify the checkpoint. Correct stale current claims. Do not change product code, Bushel geometry, Contract V1, the Website, or databases. Commit only if governance permits. Push only if governance permits without a separate gate. |
+| Files expected to change | Session handoff, current-state, checklist, roadmap, project-state report, docs index, this log, plus the already uncommitted 29 Sep geometry-trace paths. |
+| Files prohibited from changing | Application code, migrations, Bushel generators, PDFs, take-off quantities, supplier files, Ben’s sheet, Contract V1, Website source. |
+| Implementation result | Current occupancy recorded. Stale current labels corrected. Geometry trace preserved and not advanced. |
+| Tests | No suite re-run. Governance does not require a full suite for this documentation pass. Latest recorded full suite at the unchanged count remains 1821 passed, 6528 warnings, 809.17s, exit 0. Cursor Terminal: `flask db heads` = `k1f2a3b4c5d6`; `flask db current` = `h8c9d0e1f2a3`. |
+| Project-state-report update | Pointer only. PART B remains the 2026-09-20 snapshot. Not a new milestone report. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None in this cleanup. |
+| Unresolved issues | Pier layout. Joist closing bay. Stringer closing bay. Stringer throat. Commit and push are not done. |
+| Next approved step | Architect review of this documentation diff. Then commit only on acceptance. |
+| Next approved prompt | None from this entry. |
+| Commit hash | Not committed. Development workflow requires Architect review before commit, and Joel’s direction before push. |
+
+### 2026-09-29 — Bushel geometry reconciliation stop
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-29 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI — FRESH ARCHITECT → FRESH EXECUTOR TURNOVER — LINDA BUSHEL GOVERNED GEOMETRY RECONCILIATION — 29 SEP 2026 |
+| Objective | Fresh executor turnover, then reconcile Linda Bushel construction geometry where the repository supports one layout. |
+| Business decision | Do not send the package. Do not price it. Do not treat this case as a platform default. |
+| Architectural decision | P1 and CT-1 both keep joist and stringer bays at or under 16 in. The brief does not choose the closing bay, and it does not cite a span table for the pier bays. No count was selected. Throat stays unverified. |
+| Prompt template used | The 29 Sep 2026 fresh-executor prompt. No file in docs/prompts/ covers this case-geometry slice. |
+| Approved Cursor prompt summary | Verify the checkpoint, then reconcile Bushel geometry from repository authority. Stop any sub-issue that lacks a structural or owner decision. Do not build later engines, migrate, deploy, price, or send. |
+| Files expected to change | The geometry trace, the checklist, the session handoff, current-state, the case index, the case record, and this log. |
+| Files prohibited from changing | Drawing generators, PDFs, take-off quantities, supplier requests, Ben’s sheet, Contract V1, Website source, application code, databases. |
+| Implementation result | Trace recorded. Drawings and quantities unchanged. |
+| Tests | Layout print from the existing generators, without writing a PDF. P1 joist bays max 16 in, count 16. CT joist bays max 16 in, count 15. P1 stringer bays max 16 in, count 10. CT stringer bays max 16 in, count 9. Piers 12 and 15. Throat 4.997 in. Application suite not re-run. Recorded product result remains 1821 passed, 6528 warnings, exit 0. |
+| Project-state-report update | Not a platform milestone. |
+| Milestone entry update | None. |
+| Constitutional issue raised | Article 2. Pier locations and the closing bay are construction decisions. The repository does not contain the span authority for them. |
+| Unresolved issues | Pier layout. Joist closing bay. Stringer closing bay. Stringer throat. |
+| Next approved step | None. Return this stop to the fresh ChatGPT Architect. |
+| Next approved prompt | None from this entry. |
+| Commit hash | Not committed in this turn. |
 
 ### 2026-09-29 — Clean chat refresh handoff
 

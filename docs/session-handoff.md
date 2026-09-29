@@ -1,20 +1,21 @@
 # Session Handoff & Review Turnover Package — The Estimator
 
-## 0. Fresh chat resume — 29 Sep 2026
+## 0. Fresh chat resume — 30 Sep 2026
 
-Read this section first. The sections below it are older turnover history.
+Read this section first. The sections below it are older turnover history. They are not the git checkpoint, the Alembic occupancy, the hosted occupancy, or the active slice.
 
 | Item | Value |
 |------|--------|
 | Repository | `/Users/joelbrayman/Desktop/Brayman-Estimator` |
 | Branch | `main` |
-| HEAD and `origin/main` | `7b3e64278e04362cfc2231381305ee2030a60408` at the 29 Sep checkpoint. A later docs commit may move HEAD. Confirm with `git rev-parse HEAD` and `git rev-parse origin/main`. |
-| Worktree at that checkpoint | Clean. Ahead 0. Behind 0. |
+| HEAD and `origin/main` | **VERIFIED** 30 Sep 2026 in Cursor Terminal: `053b790d287a9144858e9e038d6d83c36c8efd0b`. Ahead 0. Behind 0. |
+| Bushel package ancestor | `7b3e64278e04362cfc2231381305ee2030a60408`. Historical. Not HEAD. |
+| Worktree at this inspect | Dirty. The 29 Sep geometry trace and this 30 Sep reconciliation are uncommitted. Staging was empty at the start of the inspect. Do not discard them. Commit waits for Architect review. Push waits for Joel. |
 | Active milestone | Linda Bushel proving case. Not final. Not sent. |
 | Checklist | [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md) |
-| Next slice | **LINDA BUSHEL — GOVERNED GEOMETRY RECONCILIATION.** |
+| Active slice | **LINDA BUSHEL — GOVERNED GEOMETRY RECONCILIATION.** In progress. Not complete. |
 
-Bushel conflicts, still open: piers 12 on P1 against 15 on CT-1; joist lines 16 against 15; stringers 10 against 9 on CT-2 R2; stringer throat 5.00 in, not structurally verified.
+Bushel conflicts, traced 29 Sep 2026 and still open: piers 12 on P1 against 15 on CT-1; joist lines 16 against 15; stringers 10 against 9 on CT-2 R2; stringer throat 4.997 in, labeled 5.00 in, not structurally verified. Both member grids keep bays at or under 16 in. The 18 ft deck and the 10 ft stair are not whole numbers of 16 in spaces, and the brief does not choose the closing bay. No cited span table chooses the pier bays. Record: [estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md](estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md). Do not pick a count from this resume.
 
 Plan Generation Engine: queued. Bushel proved vector drawings from calculated geometry. The scripts are project-specific. The engine is not built. Drawing completeness: geometry, dimensions, member callouts, connections, guard information where a guard applies, and field-verification items.
 
@@ -24,7 +25,9 @@ Calculation engines are reusable mathematics. They do not own price, margin, or 
 
 Website Version 27 is external. Live `https://calibai.joel-brayman.chatgpt.site/`. Source `f4b7f2119c603ee20e3b343114c262bfd4c012d4`. Do not copy it into this repository.
 
-Last recorded office state, not re-inspected in the refresh: Mac primary Alembic `h8c9d0e1f2a3`. Hosted validation Alembic `k1f2a3b4c5d6`. Hosted UAT bypass remains on. Hosted password remains unresolved. V1 remains **65% / 4 of 11**. Secondary **79% / 22 of 28**. The 29 Sep checkpoint did not deploy. Do not migrate the Mac primary.
+**VERIFIED** 30 Sep 2026 in Cursor Terminal: repository Alembic head `k1f2a3b4c5d6`. Mac primary `flask db current` is `h8c9d0e1f2a3`. Script chain `h8c9d0e1f2a3` → `j0e1f2a3b4c5` → `k1f2a3b4c5d6`. That divergence is the current occupancy. The Mac database was not migrated. Stash `stash@{0}` remains: WIP FG-037 interrupted before V1 rescore. Not applied.
+
+**LAST RECORDED / NOT RE-PROVED** this pass: hosted service `Calibryatai`, id `srv-dar95mh42hec73df4rug`, deploy `dep-dasnht0473hc7394e65g`, running commit `6aa574bda2a57968bc3d746ad4488bcb7b4b8e2d`, finished 2026-09-27T20:14:48Z. Hosted database revision `k1f2a3b4c5d6`. Hosted UAT bypass ON. Hosted password unresolved. Do not claim the hosted service runs repository HEAD. V1 remains **65% / 4 of 11**. Secondary **79% / 22 of 28**. Not rescored. The latest recorded full suite with that unchanged count is **1821 passed**, 6528 warnings, **809.17s**, exit 0, from the 29 Sep platform reconciliation. It was not re-run.
 
 Do not send Ben. Do not send Darcy. Do not start the Plan Generation Engine, the wizard, or ICF from this resume.
 

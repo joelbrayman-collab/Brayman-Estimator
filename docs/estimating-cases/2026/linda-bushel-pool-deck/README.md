@@ -49,5 +49,6 @@ Not final. Not sent. Does not replace issue P1 and does not change the take-off.
 | `drawings/stair_detail.py` | Generator for the first CT-2 proof. |
 | `drawings/stair_detail_r2.py` | Generator for CT-2 R2. Project proving geometry. Not the Stair Engine. |
 | `takeoff/2026-09-29-drawing-vs-p1-differences.md` | Difference report. P1 quantities were not changed. |
+| `geometry/2026-09-29-governed-geometry-reconciliation.md` | Layout trace. Piers, joists, stringers, and throat stay unresolved. No quantity was changed. |
 | `costing/2026-09-29-ben-internal-cost.md` | Internal cost sheet for Ben. Every line is PRICE REQUIRED. Not sent. |
 | `supplier/bmr-winchester/2026-09-29-darcy-quantity-differences.md` | Differences from the unsent Darcy request. Not sent. |

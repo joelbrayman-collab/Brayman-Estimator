@@ -16,7 +16,7 @@ This folder is the **system of record** for platform vision, architecture, gover
 |-------|-----------|------|
 | **Constitutional** | [platform-constitution.md](platform-constitution.md) | Highest-order, rarely changed platform law |
 | **Architectural** | [architecture-principles.md](architecture-principles.md), [architecture.md](architecture.md), [adr/](adr/), [modules/](modules/) | Durable rules, structure, decisions, ownership |
-| **Operational status** | [project-state-report.md](project-state-report.md), [current-state.md](current-state.md), [session-handoff.md](session-handoff.md), [v1-completion-register.md](v1-completion-register.md) | Milestone state, detailed snapshot, immediate resume, **CalibraytAI V1 product-completion** |
+| **Operational status** | [project-state-report.md](project-state-report.md), [current-state.md](current-state.md), [session-handoff.md](session-handoff.md), [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md), [v1-completion-register.md](v1-completion-register.md) | Milestone state, detailed snapshot, immediate resume, development sequence, **CalibraytAI V1 product-completion** |
 | **Historical records** | [milestones.md](milestones.md), [chat-workflow-log.md](chat-workflow-log.md) | Append-only milestone and decision history |
 | **Reusable templates** | [prompts/](prompts/), [adr/ADR-000-template.md](adr/ADR-000-template.md) | Starting points for Cursor work and ADRs |
 
@@ -34,7 +34,7 @@ This folder is the **system of record** for platform vision, architecture, gover
 10. Relevant module document under [`modules/`](modules/)
 11. Relevant ADRs under [`adr/`](adr/)
 12. Relevant Feature Gate under [`feature-gates/`](feature-gates/)
-13. [`session-handoff.md`](session-handoff.md)
+13. [`PROJECT_DEVELOPMENT_CHECKLIST.md`](PROJECT_DEVELOPMENT_CHECKLIST.md) and [`session-handoff.md`](session-handoff.md) section 0
 14. Relevant prompt template under [`prompts/`](prompts/)
 
 Also read [`platform-governance.md`](platform-governance.md), [`governance/product-identity.md`](governance/product-identity.md), [`governance/continuity-and-anti-drift.md`](governance/continuity-and-anti-drift.md), [`governance/review-turnover-protocol.md`](governance/review-turnover-protocol.md), and [`definition-of-done.md`](definition-of-done.md) before starting any feature.

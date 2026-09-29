@@ -2,20 +2,13 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | Recorded development checklist. Not an implementation authorization for the later phases. |
+| Status | Bushel lessons and stair-source note. The master sequence is [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md). |
 | Date | 2026-09-29 |
 | Current work | Linda Bushel pool deck proving case |
 
 ## Order
 
-| Order | Phase | Status |
-|-------|--------|--------|
-| 1 | Bushel construction package | **IN PROGRESS.** Proving sheets are CT-1 and CT-2 R2. Issue P1 remains the preliminary quantity set. Not committed. Not sent. Not final. |
-| 2 | Plan Generation Engine | **NEXT ARCHITECTURE PHASE AFTER BUSHEL IS APPROVED.** Record only. Not built. |
-| 3 | Start New Project wizard | **RECORDED / NOT IMPLEMENTATION-AUTHORIZED / NOT IMPLEMENTED.** [start-project-guided-wizard-product-direction.md](start-project-guided-wizard-product-direction.md). |
-| 4 | Estimating intelligence | **LATER.** Not this slice. |
-| 5 | Real-world learning | **LATER.** Not this slice. |
-| 6 | Field app / PWA | **LATER.** Not this slice. |
+The sequence and the status marks live in [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md). This file does not keep a second copy.
 
 ## Stair Engine
 

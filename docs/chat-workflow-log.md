@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-29 — Clean chat refresh handoff
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-29 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CLEAN CHAT REFRESH — GOVERNANCE + HANDOFF |
+| Objective | Record the master development checklist and a short resume for a new Architect chat. |
+| Business decision | Bushel stays the proving case and is not final. The next slice is governed geometry reconciliation. |
+| Architectural decision | One checklist at docs/PROJECT_DEVELOPMENT_CHECKLIST.md. Session handoff section 0 is the fresh-chat resume. Contract V1 and Website Version 27 were not changed. |
+| Prompt template used | Joel’s 29 Sep 2026 clean chat refresh. |
+| Approved Cursor prompt summary | Documentation only. Do not change product code, Bushel geometry, take-off, pricing, Website, databases, or deploy. |
+| Files expected to change | Checklist, session handoff, docs index, architecture index, current-state pointer, this log. |
+| Files prohibited from changing | Application code, Bushel drawings and quantities, Contract V1, Website source. |
+| Implementation result | Checklist created. Handoff section 0 added. No product change. |
+| Tests | Not re-run. Checkpoint suite remains 1821 passed, 6528 warnings, 809.17s, exit 0. |
+| Project-state-report update | Not a platform milestone. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Bushel pier, joist, and stringer counts. Stringer throat. |
+| Next approved step | Linda Bushel — governed geometry reconciliation. |
+| Next approved prompt | None from this entry. |
+| Commit hash | Recorded by the commit that contains this entry. |
+
 ### 2026-09-29 — Platform reconciliation checkpoint
 
 | Field | Content |

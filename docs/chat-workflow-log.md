@@ -65,7 +65,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Unresolved issues | Construction drawing, take-off, supplier package, and estimates are not in the repository. |
 | Next approved step | Stop. Do not treat this case as a default. |
 | Next approved prompt | Not authorized from this record. |
-| Commit hash | This case commit |
+| Commit hash | `b3fd503e98cef96bb7d651827db16f417470cd06` |
 
 ### 2026-09-27 — Drawings and Scope presentation cleanup
 

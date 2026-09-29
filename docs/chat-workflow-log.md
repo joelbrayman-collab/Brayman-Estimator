@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-29 — Linda Bushel pool deck case record
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-29 |
+| Branch | `main` |
+| Active ChatGPT development chat title | CALIBRAYTAI PLATFORM BUSCHEL DECK PROJECT — PERMANENT PROJECT RECORD 29 SEP 2026 |
+| Objective | Preserve the located Bushel deck files as a project learning record. |
+| Business decision | The client name on the documents is Linda Bushel. Missing drawings, quantities, and prices stay missing. |
+| Architectural decision | One case under `docs/estimating-cases/2026/linda-bushel-pool-deck/`. It does not change estimating logic or the work catalog. |
+| Prompt template used | Architect permanent project record |
+| Approved Cursor prompt summary | Save located Buschel/Bushel deck artifacts. Use the document spelling. Do not invent prices or drawings. Do not deploy. Commit. |
+| Files expected to change | The case folder and occupancy notes |
+| Files prohibited from changing | Production estimating logic, engines, website, schema |
+| Implementation result | Design brief and framing comparison copied unaltered. Learning record states the gaps. |
+| Tests | File hashes match the Downloads originals. PNG opens at 1800×1100. No PDF was available to print-check. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Construction drawing, take-off, supplier package, and estimates are not in the repository. |
+| Next approved step | Stop. Do not treat this case as a default. |
+| Next approved prompt | Not authorized from this record. |
+| Commit hash | This case commit |
+
 ### 2026-09-27 — Drawings and Scope presentation cleanup
 
 | Field | Content |

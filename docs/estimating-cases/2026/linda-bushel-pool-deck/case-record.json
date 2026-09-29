@@ -1,0 +1,53 @@
+{
+  "case_id": "2026-linda-bushel-pool-deck",
+  "client_name_on_documents": "Linda Bushel",
+  "client_name_spellings_not_on_documents": ["Buschel"],
+  "location": {
+    "street": "D'Arcy's Way",
+    "place": "Kemptville",
+    "province": "Ontario",
+    "postal_code": "K0G 1J0"
+  },
+  "project": "Freestanding pressure-treated deck and stairs at an above-ground pool",
+  "permit_approval": false,
+  "engineering_seal": false,
+  "platform_default": false,
+  "preserved_on": "2026-09-29",
+  "artifacts": [
+    {
+      "role": "source_design_brief",
+      "path": "source/2026-09-29-linda-bushel-pool-deck-design.md",
+      "sha256": "9b27bc790481592e20239c9948c36a64863b0b52d12c1ca70f3ddf5b3cfc3f2f",
+      "altered": false
+    },
+    {
+      "role": "framing_comparison",
+      "path": "drawings/framing-and-pier-layout-comparison.png",
+      "sha256": "08744e739682f6bc31569730c3549a34a59b7f4a375be7dd850db25c6ba43a05",
+      "pixel_size": "1800x1100",
+      "altered": false,
+      "construction_drawing": false
+    }
+  ],
+  "absent": [
+    "client_sketch",
+    "construction_drawing",
+    "printable_11x17_pdf",
+    "material_takeoff",
+    "internal_estimate",
+    "customer_estimate",
+    "supplier_request",
+    "supplier_quote",
+    "actuals"
+  ],
+  "stages": {
+    "estimated": null,
+    "supplier_quoted": null,
+    "purchased": null,
+    "installed": null,
+    "returned": null,
+    "actual": null
+  },
+  "quantities_calculated_in_this_record": false,
+  "prices_recorded_in_this_record": false
+}

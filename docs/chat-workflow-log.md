@@ -43,6 +43,222 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-29 — Platform reconciliation checkpoint
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-29 |
+| Branch | main |
+| Active ChatGPT development chat title | CALIBRAYTAI PLATFORM — FINAL RECONCILIATION AND CURSOR SYNC REPORT |
+| Objective | Record hanging Platform work, keep Website source out of this repository, verify, commit, and push. |
+| Business decision | Public Website Version 27 is live in the Website workstream. It is an external reference only. |
+| Architectural decision | Plan creation stays a recorded requirement: intake asks whether plans exist, existing plans can be uploaded, controlled drawings are limited to bounded projects, and review comes before estimating. It is not a seal. The Stair and Concrete calculators stay on the Website. Contract V1 was not edited. |
+| Prompt template used | Joel’s 29 Sep 2026 final repository reconciliation. |
+| Approved Cursor prompt summary | Inventory hanging work. Do not copy Website source. Do not implement engines. Do not change Contract V1. Do not invent missing Bushel deliverables. Commit and push if verification passes. |
+| Files expected to change | Bushel case records, drawing standard, critical path, wizard direction, current-state, session-handoff, this log. |
+| Files prohibited from changing | Website source, Contract V1 text, Lockwood workbook, calculator formulas. |
+| Implementation result | Recorded in the commit for this entry. The deleted framing-comparison PNG was restored before commit. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_calculation_result_contract_v1.py tests/test_calculation_estimate_mapping.py` — 22 passed, 39 warnings, 2.67s, exit 0. `./venv/bin/python -m pytest -q` — 1821 passed, 6528 warnings, 809.17s, exit 0. Bushel scripts compiled. Case JSON parsed. |
+| Project-state-report update | Not a platform milestone. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Bushel layout disagreement. Stringer throat. Customer estimate absent. Client sketch absent. Lockwood workbook remains on the Desktop and was not copied. |
+| Next approved step | Joel reviews the Bushel package. |
+| Next approved prompt | None from this entry. |
+| Commit hash | Recorded when the commit exists. |
+
+### 2026-09-29 — Useful Tools source recovery recorded
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-29 |
+| Branch | main, working tree, not committed |
+| Active ChatGPT development chat title | CALIBRAYTAI — CONCRETE + STAIR CALCULATOR — SOURCE RECOVERY REPORT |
+| Objective | Record that the Concrete and Stair calculators were recovered, and correct the “source unavailable” note. |
+| Business decision | Nothing is published. Public Version 26 stays unchanged. Preview Version 6 stays owner-only. |
+| Architectural decision | Authoritative Useful Tools HEAD is `59e1979e735ec606af341e97e46e112136fbdfa0` on the Site repository. It is not on this Mac. It is not copied into Documents/CalibAi/Website or into Brayman-Estimator. Bushel `stair_detail_r2.py` stays proving geometry. |
+| Prompt template used | The 29 Sep 2026 source recovery report. |
+| Approved Cursor prompt summary | Do not rebuild. Do not change formulas. Do not publish. |
+| Files expected to change | Critical-path record, drawing standard, current-state, session-handoff, this log. |
+| Files prohibited from changing | Calculator formulas, Bushel drawings, P1 quantities, website public site. |
+| Implementation result | Remote asked for a username and was not cloned. Sandbox path and ZIP are absent on this Mac. The unavailable-source sentence was replaced with the recovered HEAD. |
+| Tests | No calculator tests run. The reported 15/15 stair tests and 14/14 conformance cases were not re-run here. |
+| Project-state-report update | Not a platform milestone. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Clone needs Site credentials. Bushel pier/joist/stringer layout still open. Throat still unverified. |
+| Next approved step | A separate approval to clone the Site repository into a permanent workspace that is not Documents/CalibAi/Website. |
+| Next approved prompt | None from this entry. |
+| Commit hash | Not committed. |
+
+### 2026-09-29 — Linda Bushel critical path, geometry stop
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-29 |
+| Branch | main, working tree, not committed |
+| Active ChatGPT development chat title | BRAYMAN — LINDA BUSHEL POOL DECK — COMPLETE BEN PACKAGE — JOEL REVIEW |
+| Objective | Return to the Bushel package. Record the critical path. Do not rebuild the Stair Engine. |
+| Business decision | The 26 September Stair Calculator is not on this workstation and is not current authority. Bushel proving work continues. The package is not sent. |
+| Architectural decision | stair_detail_r2.py stays project proving geometry. Stair Engine is BLOCKED. Plan Generation and the Start New Project wizard stay recorded and unbuilt. CT-1 and P1 disagree, so new sheets were not drawn and P1 quantities were not changed. |
+| Prompt template used | Joel’s 29 Sep 2026 return to the Bushel critical path. |
+| Approved Cursor prompt summary | Update the checklist. Verify the stringer throat if a project standard exists. Do not certify it. Do not reconcile quantities in silence. Do not invent prices. Do not send, commit, deploy, or build the later engines. |
+| Files expected to change | Critical-path record, drawing standard, case difference report, Ben cost sheet, Darcy difference note, current-state, session-handoff, this log. |
+| Files prohibited from changing | P1 PDF, P1 take-off quantities, the original Darcy request quantities, website, Stair Engine formulas. |
+| Implementation result | Checklist recorded. Throat left unverified. Difference report, unpriced Ben sheet, and unsent Darcy difference note written. Drawing set not expanded. |
+| Tests | No application suite. Geometry counts were read from capability_test_plan.py and p1_calculation.py. |
+| Project-state-report update | Not a platform milestone. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Stringer throat. Pier, joist, and stringer layout. Joel review. Prices. |
+| Next approved step | Joel reviews the stop and the existing CT-1 and CT-2 R2 sheets. |
+| Next approved prompt | None from this entry. |
+| Commit hash | Not committed. |
+
+### 2026-09-29 — Linda Bushel stair sheet, imperial labels
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-29 |
+| Branch | main, working tree, not committed |
+| Active ChatGPT development chat title | BRAYMAN — LINDA BUSHEL POOL DECK — STAIR DETAIL REFINEMENT — JOEL REVIEW |
+| Objective | Stop the dual-unit clutter on CT-2 R2. Decide whether a second stair calculator is required. |
+| Business decision | Joel said the sheet is still messy, and that the existing stair calculator selects imperial or metric so a diagram stays clean. |
+| Architectural decision | Do not build a second stair calculator in the PDF script. This repository still has no stair engine. This sheet is imperial. Millimetre twins come off the geometry. Tread-under-riser dimensions stay in the note: 12.50 in tread, 6.60 in riser board. |
+| Prompt template used | Joel’s note that the tread runs under the riser, then his unit-selection question. |
+| Approved Cursor prompt summary | Make the tread-under-riser assembly right. Do not add another calculator. Do not change the take-off. |
+| Files expected to change | R2 generator, R2 PDF, drawing standard, case readme, current-state, session-handoff, this log. |
+| Files prohibited from changing | P1, take-off, supplier request, website. |
+| Implementation result | CT-2 R2 regenerated in inches only. Going labeled once. Rise chain is 7.60 in with no millimetre line. First CT-2 proof was absent and was rewritten from stair_detail.py. |
+| Tests | Generator print: riser 7.6 in, tread overall 12.5 in, riser board 6.6 in, throat 4.997 in, stringer length 57.13 in. No application suite. |
+| Project-state-report update | Not a platform milestone. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Joel visual review. The stair calculator Joel means is not in this repository. Stringer throat not certified. P1 still says 10 stringers. |
+| Next approved step | Joel reviews CT-2 R2. |
+| Next approved prompt | None from this entry. |
+| Commit hash | Not committed. |
+
+### 2026-09-29 — Linda Bushel stair detail refinement
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-29 |
+| Branch | main, working tree, not committed |
+| Active ChatGPT development chat title | BRAYMAN — LINDA BUSHEL POOL DECK — STAIR DETAIL REFINEMENT — JOEL REVIEW |
+| Objective | Refine CT-2 drafting. Keep the accepted stair geometry. Add risers and a nosing reveal. |
+| Business decision | Joel passed the basic geometry and required a crew-readable sheet. Treads must show a riser and a 1/2 to 1 in reveal. |
+| Architectural decision | Nosing-to-nosing stays 11 in. The reveal is 3/4 in past the riser. Stringer length is the slope from the top plumb cut to the heel, 57.13 in. Throat is not certified. A drawing-completeness profile is recorded and not built. |
+| Prompt template used | Joel’s 29 Sep 2026 stair-detail refinement, plus his riser and reveal note. |
+| Approved Cursor prompt summary | New sheet. Do not overwrite the first CT-2. Do not change the take-off. Do not commit or send. |
+| Files expected to change | R2 generator, R2 PDF, drawing standard, case readme, current-state, session-handoff, this log. |
+| Files prohibited from changing | First CT-2 PDF, P1, take-off, supplier request, website. |
+| Implementation result | CT-2 R2 written. First proof kept. 3/4 in nosing. Risers drawn. Stringer count left open. |
+| Tests | Generator print: riser 7.6 in, 193.04 mm, tread 279.4 mm, throat 4.997 in, stringer length 57.13 in, prior proof kept. No application suite. |
+| Project-state-report update | Not a platform milestone. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Joel visual review. Stringer throat not certified. Stair-rail product not confirmed. P1 still says 10 stringers. |
+| Next approved step | Joel reviews CT-2 R2. |
+| Next approved prompt | None from this entry. |
+| Commit hash | Not committed. |
+
+### 2026-09-29 — Linda Bushel stair construction detail
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-29 |
+| Branch | main, working tree, not committed |
+| Active ChatGPT development chat title | BRAYMAN — LINDA BUSHEL POOL DECK — STAIR CONSTRUCTION DETAIL — JOEL REVIEW |
+| Objective | Draw the Bushel stair from the accepted geometry. Do not build a stair engine. |
+| Business decision | The stair must be drawn geometry, not a note. |
+| Architectural decision | CT-2 imports the CT-1 rise, run, and stringer spacing. No second formula. The future boundary is stair engine, then geometry, then the drawing. |
+| Prompt template used | Joel’s 29 Sep 2026 stair construction detail standard. |
+| Approved Cursor prompt summary | One stair sheet: side profile, stringer plan, landing connection. Same geometry as the framing plan. No commit, no supplier send, no pricing, no deploy. |
+| Files expected to change | Stair generator, stair PDF, CT-1 cross-reference, drawing standard, case readme, current-state, session-handoff, this log. |
+| Files prohibited from changing | P1 PDF, take-off, supplier request, website, application schema. |
+| Implementation result | CT-2 written. Five risers at 7.6 in, four treads at 11 in, nine stringers. Hardware not selected. |
+| Tests | Generator print: riser 7.6 in, 193.04 mm, run 44 in, throat 4.997 in, nine stringers. No application suite. |
+| Project-state-report update | Not a platform milestone. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Joel visual review. P1 still says ten stringers. No reusable stair engine. |
+| Next approved step | Joel reviews CT-2 and CT-1. |
+| Next approved prompt | None from this entry. |
+| Commit hash | Not committed. |
+
+### 2026-09-29 — Start-project guided wizard recorded
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-29 |
+| Branch | main, working tree, not committed |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI — START NEW PROJECT — GUIDED WIZARD ARCHITECTURE RECORDED |
+| Objective | Record the guided-wizard product direction. Do not implement it. Do not interrupt the Bushel drawing test. |
+| Business decision | Starting a project must walk the contractor through required information. The contractor should not have to know the module map. |
+| Architectural decision | The wizard orchestrates Client, Project, plans, ProjectWorkPackage, and Estimate. It does not copy them. No schema. No page. Drawing generation, engines, labour, and RFQ stay future hooks. |
+| Prompt template used | Joel’s 29 Sep 2026 guided-wizard product-direction prompt. |
+| Approved Cursor prompt summary | Architecture record only. Audit reuse, extend, and missing. Do not change Start Project, scope, navigation, or databases. |
+| Files expected to change | Architecture note, architecture index, current-state, session-handoff, this log. |
+| Files prohibited from changing | Application code, schema, Bushel drawing PDF and generator, take-off, website. |
+| Implementation result | Direction recorded. No product change. Bushel proof sheet left as the active review. |
+| Tests | None. No code change. |
+| Project-state-report update | Not a platform milestone. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Implementation plan is not authorized. Wizard cursor shape is not designed in code. |
+| Next approved step | Joel’s visual review of the Bushel framing plan remains the stop. Do not build the wizard. |
+| Next approved prompt | None from this entry. |
+| Commit hash | Not committed. |
+
+### 2026-09-29 — Linda Bushel framing-plan capability test
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-29 |
+| Branch | main, working tree, not committed |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI — CONSTRUCTION DRAWING CAPABILITY TEST |
+| Objective | One Bushel foundation and framing plan at the construction-plan standard, plus the recorded drawing law. |
+| Business decision | Lower landing stays 12 in above grade on its own flush 2×6 frame. Upper deck members stay 6×6, double 2×10, 2×8 at 16 in, 5/4×6. Not final. Not sent. |
+| Architectural decision | A construction drawing is dimensioned geometry of the actual structure. Elevations and a drawing-to-take-off link are recorded and not built. No CAD engine in this turn. |
+| Prompt template used | Joel’s 29 Sep 2026 construction drawing output standard prompt. |
+| Approved Cursor prompt summary | Produce one 11×17 Bushel framing plan to the reference framing-plan standard. Record the drawing law and the drawing-to-take-off law. Do not commit, send, change quantities, or build an engine. |
+| Files expected to change | Capability-test PDF and generator, drawing-standard note, case index, occupancy docs. |
+| Files prohibited from changing | P1 PDF, take-off, supplier request, source brief, framing PNG, platform code, website. |
+| Implementation result | Vector sheet written. Geometry checks passed in the generator. P1 files were not overwritten. |
+| Tests | `./venv/bin/python docs/estimating-cases/2026/linda-bushel-pool-deck/drawings/capability_test_plan.py` printed OK: 15 joists, 9 stringers, 15 piers, longest joist 7.0 ft, wing 5'-4 7/8", riser 193.0 mm. No application suite. |
+| Project-state-report update | Not a platform milestone. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Joel’s visual review. Field pool position, grade, and bearing. Elevations not drawn. Take-off not linked to this sheet. |
+| Next approved step | Joel reviews the proof sheet. Do not send it and do not commit until asked. |
+| Next approved prompt | None from this entry. |
+| Commit hash | Not committed. |
+
+### 2026-09-29 — Linda Bushel pool deck preliminary issue P1
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-29 |
+| Branch | main, working tree, not committed |
+| Active ChatGPT development chat title | BRAYMAN — LINDA BUSHEL POOL DECK PACKAGE |
+| Objective | Preliminary 11×17 drawing basis, material take-off, and BMR Winchester request for the preserved Linda Bushel case. |
+| Business decision | Option A only. Client spelling Linda Bushel. No cost, customer price, or margin. Not sent to Darcy. |
+| Architectural decision | One case folder. No platform default, calculation engine, schema, or website change. |
+| Prompt template used | Joel’s 29 Sep 2026 package prompt in this chat. |
+| Approved Cursor prompt summary | Produce the preliminary drawing basis, take-off, and Darcy request in the existing case. Do not commit. Do not send. Stop for Joel’s review. |
+| Files expected to change | Case drawings, takeoff, supplier request, case index, occupancy docs. |
+| Files prohibited from changing | Source design brief, framing comparison PNG, platform code, website. |
+| Implementation result | Issue P1 written. Eight 11×17 sheets. Take-off and supplier request share one calculation. Lower-deck height conflict left open. |
+| Tests | No application tests. Geometry checks in `takeoff/p1_calculation.py` passed when the files were written. Page size 1224×792 pt, 8 pages. |
+| Project-state-report update | Not a platform milestone. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Pool size, grades, setbacks, pier bearing, stair rise and run, guard height, lower-deck stack, delivery street number, BMR prices. |
+| Next approved step | Joel reviews the package. Do not send it to Darcy and do not commit until asked. |
+| Next approved prompt | None from this entry. |
+| Commit hash | Not committed. |
+
 ### 2026-09-29 — Linda Bushel pool deck case record
 
 | Field | Content |

@@ -49,5 +49,49 @@
     "actual": null
   },
   "quantities_calculated_in_this_record": false,
-  "prices_recorded_in_this_record": false
+  "prices_recorded_in_this_record": false,
+  "absent_list_is": "Preservation snapshot on 2026-09-29, before issue P1. Those source files were not found and were not invented.",
+  "issue_p1": {
+    "id": "P1",
+    "date": "2026-09-29",
+    "title": "Preliminary Construction and Supplier Pricing Basis - Subject to Permit Review and Field Verification",
+    "sent_to_darcy": false,
+    "permit_approval": false,
+    "engineering_seal": false,
+    "brayman_cost_calculated": false,
+    "customer_price_calculated": false,
+    "internal_estimate": false,
+    "customer_estimate": false,
+    "committed": false,
+    "files": [
+      "drawings/2026-09-29-p1-preliminary-11x17.pdf",
+      "takeoff/2026-09-29-p1-material-takeoff.md",
+      "takeoff/p1_calculation.py",
+      "supplier/bmr-winchester/2026-09-29-p1-darcy-supplier-request.md"
+    ]
+  },
+  "later_records": {
+    "date": "2026-09-29",
+    "not_final": true,
+    "not_sent": true,
+    "files": [
+      "drawings/2026-09-29-capability-test-foundation-framing-11x17.pdf",
+      "drawings/2026-09-29-capability-test-stair-detail-11x17.pdf",
+      "drawings/2026-09-29-capability-test-stair-detail-r2-11x17.pdf",
+      "drawings/capability_test_plan.py",
+      "drawings/stair_detail.py",
+      "drawings/stair_detail_r2.py",
+      "takeoff/2026-09-29-drawing-vs-p1-differences.md",
+      "costing/2026-09-29-ben-internal-cost.md",
+      "supplier/bmr-winchester/2026-09-29-darcy-quantity-differences.md"
+    ]
+  },
+  "still_absent": [
+    "client_sketch",
+    "client_approval_drawing",
+    "customer_facing_estimate",
+    "priced_internal_estimate",
+    "supplier_quote",
+    "street_number"
+  ]
 }

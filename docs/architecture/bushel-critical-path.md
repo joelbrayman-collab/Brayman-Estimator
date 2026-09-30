@@ -2,27 +2,25 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | Bushel lessons and stair-source note. The master sequence is [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md). |
-| Date | 2026-09-29 |
-| Current work | Linda Bushel pool deck proving case |
+| Status | Bushel lessons. Not the master programme. The sequence is [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md). |
+| Date | 2026-09-29. Owner direction 30 Sep 2026: this case does not gate other development. |
+| Current work | Incomplete proving case. Preserved. Not a blocker. |
 
 ## Order
 
-The sequence and the status marks live in [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md). This file does not keep a second copy.
+The sequence and the status marks live in [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md). This file does not keep a second sequence. Website access recovery and the Platform Start New Project plan do not wait on this case.
 
 ## Stair Engine
 
-**RECOVERED OFF THIS MAC. NOT CLONED HERE. NOT WIRED TO BUSHEL.**
+**PUBLIC SOURCE NOT READABLE FROM THIS MAC. NOT CLONED HERE. NOT WIRED TO BUSHEL.**
 
-The Useful Tools source was recovered on 29 Sep 2026. Authoritative remote: Site project `appgprj_6ab7f4ce8450819198398ba2cd4b43f4`, branch `main`, HEAD `59e1979e735ec606af341e97e46e112136fbdfa0` (`preserve stair geometry across unit toggles`). Stair core is `lib/useful-tools/stairs.mjs` with Ontario Residential V1 in `lib/useful-tools/profiles/ontario-residential-v1.json`. The illustration is `components/useful-tools/StairDiagram.tsx`. That tree is not on this Mac. `git ls-remote` against the Site remote asked for a username and did not return the commit. The sandbox path and the recovered ZIP are not on this Mac. `/Users/joelbrayman/Desktop/CalibAi-Website` is still absent.
+On 29 Sep 2026 a private recovery/review checkout was identified: Site project `appgprj_6ab7f4ce8450819198398ba2cd4b43f4`, exposed source version 6, branch `main`, commit `59e1979e735ec606af341e97e46e112136fbdfa0` (`preserve stair geometry across unit toggles`). That project is not the public Website and it is not Version 27. Do not substitute it, deploy from it, or copy it into this repository.
 
-Do not copy that source into `/Users/joelbrayman/Documents/CalibAi/Website`. Do not copy it into this repository as a second formula. Public Version 26 was not changed. Preview Version 6 is owner-only.
+The public Website project is `appgprj_6a9095543b74819186183f9a522890e5`. The recorded public SHA is `f4b7f2119c603ee20e3b343114c262bfd4c012d4`. The recorded baseline is Version 27. Live `https://calibai.joel-brayman.chatgpt.site/`. That source is not readable from Cursor. Restoring access is a continuity task. It is not permission to rebuild the Website.
 
-`docs/estimating-cases/2026/linda-bushel-pool-deck/drawings/stair_detail_r2.py` remains project-specific proving geometry. It is not the Stair Engine. Bushel quantities stay open until the recovered engine is checked out under a separate approval and its result is the geometry the drawing uses.
+The recovered file names from the private checkout, not re-verified against the public tree, were `lib/useful-tools/stairs.mjs`, `lib/useful-tools/profiles/ontario-residential-v1.json`, and `components/useful-tools/StairDiagram.tsx`. They are not on this Mac.
 
-This does not stop the Bushel proving case.
-
-The later order stays: Stair Engine, then a governed stair result, then the Plan Generation Engine, then the construction drawing.
+`docs/estimating-cases/2026/linda-bushel-pool-deck/drawings/stair_detail_r2.py` remains project-specific proving geometry. It is not the Stair Calculator. Bushel quantities stay open because the case layout is unresolved. They do not gate the Website calculator or the Platform.
 
 ## Plan Generation lessons from Bushel
 

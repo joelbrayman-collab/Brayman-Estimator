@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — Master development reconciliation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI MASTER DEVELOPMENT RECONCILIATION — GET DEVELOPMENT BACK ON RAILS 30 SEP 2026 |
+| Objective | Put the product sequence back on the checklist. Stop treating the Linda Bushel case as the master programme. |
+| Business decision | Joel: the Bushel deck is not important enough to govern or block CalibraytAI. Keep the case. Do not finish it here. |
+| Architectural decision | The checklist remains the one sequence. Next Platform objective is the Start New Project implementation plan, not Plan Generation and not Bushel. Plan Generation stays the documents-step hook. PUBLIC WEBSITE SOURCE CONTINUITY: BLOCKED ON PROJECT ACCESS. Public project `appgprj_6a9095543b74819186183f9a522890e5`, recorded SHA `f4b7f2119c603ee20e3b343114c262bfd4c012d4`, Version 27. Private project `appgprj_6ab7f4ce8450819198398ba2cd4b43f4` source version 6 is not public authority. |
+| Prompt template used | Joel’s 30 Sep 2026 master development reconciliation. No file in docs/prompts/ covers this pass. |
+| Approved Cursor prompt summary | Documentation only. Verify the checkpoint. Reclassify Bushel. Record Website continuity and the three-calculator workstream. Do not change product code, calculators, Website source, Bushel geometry, Contract V1, or databases. Do not migrate, deploy, or rescore. Do not commit. |
+| Files expected to change | Checklist, session handoff section 0, current-state occupancy, roadmap pointer, Bushel critical-path pointer, project-state pointer, the wizard timing note, this log. |
+| Files prohibited from changing | Application code, calculator code, Website source, Bushel drawings and quantities, Contract V1, migrations. |
+| Implementation result | Checklist completed. Bushel remains an incomplete case. Website access is a Website blocker only. Next Platform objective is the Start New Project implementation plan. Wizard timing no longer names Bushel as the stop. No product change. |
+| Tests | Not re-run. Latest recorded full suite remains 1821 passed, 6528 warnings, 809.17s, exit 0. |
+| Project-state-report update | Pointer only. PART B remains the 2026-09-20 snapshot. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Public Website source continuity is blocked on project access. Calculator closure waits on that access. Bushel geometry stays unresolved and is not a blocker. |
+| Next approved step | Architect review before commit. |
+| Next approved prompt | None from this entry. Do not start the Platform or Website objective from this pass. |
+| Commit hash | Not committed. |
+
 ### 2026-09-30 — Post-turnover governance cleanup
 
 | Field | Content |

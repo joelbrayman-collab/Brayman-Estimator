@@ -3,77 +3,93 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Project governance. Not an implementation authorization. |
-| Date | 2026-09-29. Confirmed unchanged on 30 Sep 2026. |
+| Date | 2026-09-30 |
 | Repository | `/Users/joelbrayman/Desktop/Brayman-Estimator` |
 | Resume | [session-handoff.md](session-handoff.md) |
 
-This checklist is the development sequence. Chat memory is not. The 30 Sep 2026 governance pass confirmed this sequence and did not advance the active slice.
+This checklist is the development sequence. Chat memory is not. The 30 Sep 2026 owner direction removed the Linda Bushel case as the master programme. Bushel stays an incomplete proving case. It does not gate Website work, calculator work, or Platform work.
+
+This checklist does not authorize implementation, a Website rebuild, a migration, or a deploy.
 
 ## Status law
 
 | Mark | Meaning |
 |------|---------|
-| ✅ COMPLETE | Implementation and evidence are complete, and Human UAT has occurred where it is required. |
-| 🟡 IN PROGRESS | The single current development slice. |
+| ✅ COMPLETE / STABLE | Implementation and evidence are complete, and Human UAT has occurred where it is required. |
+| 🟡 CURRENT | The current objective inside a workstream. More than one workstream may be current. |
 | ⬜ QUEUED | Sequenced. Not started. |
-| ⛔ BLOCKED | A real dependency is unresolved. |
+| ⛔ BLOCKED | Work cannot proceed until a real dependency is resolved. A case conflict is not a blocker unless a workstream actually depends on it. |
 
-## Sequence
+## Complete / stable
+
+| Item | Status |
+|------|--------|
+| Private Platform office through the recorded V1 build | ✅ COMPLETE / STABLE as far as the register goes. Official V1 remains **65% / 4 of 11**. Secondary **79% / 22 of 28**. Not rescored. |
+| Contract V1 | ✅ COMPLETE / STABLE. **ACCEPTED / PINNED** at `2903a45074df21b1c99390cb9aab68638970a2ff`. |
+| Field Web v1 | ✅ COMPLETE / STABLE as its own closed programme. It is not the later field app / PWA phase. |
+| Public Website Version 27 | Recorded live at `https://calibai.joel-brayman.chatgpt.site/`. Source commit recorded as `f4b7f2119c603ee20e3b343114c262bfd4c012d4`. The source tree is not readable from this workspace, so this row is not re-certified here. |
+
+## Current product-level work
+
+Two workstreams are current. Neither waits on the Bushel case.
+
+| Workstream | Current objective | Status |
+|------------|-------------------|--------|
+| Website / Useful Tools | Recover access to the public Site. Calculator edits wait on that access. | 🟡 CURRENT. ⛔ BLOCKED on project access. |
+| Platform | Start New Project guided-workflow implementation plan. Recorded. Not started. | 🟡 CURRENT objective. Not implementation-authorized by this checklist. |
+
+## Website / Useful Tools
+
+Public Site project `appgprj_6a9095543b74819186183f9a522890e5`. Recorded public SHA `f4b7f2119c603ee20e3b343114c262bfd4c012d4`. Recorded baseline Version 27. Live `https://calibai.joel-brayman.chatgpt.site/`.
+
+PUBLIC WEBSITE SOURCE CONTINUITY: BLOCKED ON PROJECT ACCESS.
+
+Cursor and the currently accessible ChatGPT Website conversation cannot open that public project. This blocks Website source changes and deployment. It does not block Platform development. It is not permission to rebuild the Website, merge the repositories, or copy Website formulas into the Platform.
+
+The accessible Website conversation exposes a different project, `appgprj_6ab7f4ce8450819198398ba2cd4b43f4`, private source version 6, including commit `59e1979e735ec606af341e97e46e112136fbdfa0`. That project is not the public Website, not Version 27, and not a substitute. Do not deploy it and do not copy it here.
+
+| Step | Status |
+|------|--------|
+| Recover access to the public project | ⛔ BLOCKED. This is the next Website objective. It is access recovery, not a calculator change. |
+| Employment vs. Entrepreneurship | ⬜ QUEUED. After public source is open: confirm the formula and which displayed inputs participate, then tests and a live check. |
+| Concrete Calculator | ⬜ QUEUED. After public source is open: verify the modes the engine implements, reconcile the Useful Tools description, then tests and a live check. |
+| Stair Calculator | ⬜ QUEUED. After public source is open: verify the reusable calculation, correct the diagram so the drawing matches the calculated geometry, pin that accepted drawing, then tests and a live check. Do not create a second stair calculator. |
+
+The reusable stair result and the Bushel finished stair agree on total rise 38 in, 5 risers, 7.60 in rise, 4 treads, 11 in going, and 44 in total run. Bushel stair scripts remain project proving evidence. The diagram defect and the missing pin stay open.
+
+This workstream does not block Platform development. There is no technical dependency the other way.
+
+## Platform
+
+Independent of the Bushel case. Existing architecture stays. Nothing here is authorized by this checklist.
+
+The settled office path is project, plans, confirmed scope, internal or subcontracted, then the estimate. [architecture/estimating-path-alignment-2026-09-27.md](architecture/estimating-path-alignment-2026-09-27.md). Those pieces exist as separate pages. Start New Project is still one form. It does not resume into drawings, scope, or an estimate. [architecture/start-project-guided-wizard-product-direction.md](architecture/start-project-guided-wizard-product-direction.md).
+
+Plan generation is the documents-step hook for a job that requires drawings and does not have them. It is not the daily path, and it is not part of the wizard. The Bushel sheets showed that hook. They do not set the next office objective.
 
 | Order | Phase | Status |
 |-------|--------|--------|
-| 1 | Bushel proving case | 🟡 IN PROGRESS. Not final. Not sent. |
-| 1a | Linda Bushel — governed geometry reconciliation | 🟡 IN PROGRESS. This is the active slice. |
-| 2 | Plan Generation Engine | ⬜ QUEUED. Recorded. Not built. |
-| 3 | Start New Project wizard | ⬜ QUEUED. Recorded. Not implemented. |
-| 4 | Estimating intelligence | ⬜ QUEUED. |
-| 5 | Real-world learning | ⬜ QUEUED. The law below is recorded. The product is not built. |
-| 6 | Field app / PWA | ⬜ QUEUED in this sequence. Field Web v1 is a separate, already closed programme. It is not this phase. |
+| 1 | Start New Project guided workflow | 🟡 CURRENT objective. Next work is the recorded implementation plan: map each stage to the existing service and define the thin resume cursor. Do not build it from this checklist. |
+| 2 | Plan Generation Engine | ⬜ QUEUED. Used only when drawings are required and absent. Drawing completeness stays geometry, dimensions, member callouts, connections, guard information where a guard applies, and field-verification items. [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). |
+| 3 | Estimating intelligence | ⬜ QUEUED. A confirmed Our-crew package does not yet call a calculation engine. Contract V1 and the mapper already exist. |
+| 4 | Real-world learning | ⬜ QUEUED. The law below is recorded. The product is not built. |
+| 5 | Field app / PWA | ⬜ QUEUED. Field Web v1 is already closed and is not this phase. |
 
-## Bushel
+## Real-world cases
 
-Proving case. Not final. Not sent.
+Evidence and learning material. Not the master programme.
 
-Present: design brief, framing comparison, issue P1, CT-1, CT-2, CT-2 R2, take-off, unsent Darcy request, difference notes, unpriced Ben cost sheet.
+| Case | Status |
+|------|--------|
+| Linda Bushel pool deck | Incomplete case. Preserved. Not final. Not sent. Geometry conflicts stay unresolved: piers 12 against 15, joist lines 16 against 15, stringers 10 against 9, throat 4.997 in labeled 5.00 in and not structurally verified. Resume when Plan Generation or real-world learning needs this case. It does not block other work. Record: [estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md](estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md). |
 
-Open conflicts, so the package is not complete. A 29 Sep 2026 trace measured both layouts and did not select either one. Record: [estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md](estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md).
+## Later
 
-| Item | P1 | Proving drawing | 29 Sep trace |
-|------|----|-----------------|--------------|
-| Piers | 12 | CT-1 has 15 | Unresolved. The brief does not set the count, and no cited span table chooses the bays. |
-| Joist lines | 16 | CT-1 has 15 | Unresolved. Both keep bays at or under 16 in. 216 in is not a whole number of 16 in spaces. |
-| Stringers | 10 | CT-2 R2 has 9 | Unresolved. Both keep bays at or under 16 in. 120 in is not a whole number of 16 in spaces. |
-| Stringer throat | — | 5.00 in. Not structurally verified. | Unresolved. Calculated 4.997 in. No throat rule is in the repository. |
+Already governed. Not the current objective.
 
-Case path: [estimating-cases/2026/linda-bushel-pool-deck/](estimating-cases/2026/linda-bushel-pool-deck/).
+Hosted password authentication remains unresolved. The temporary hosted UAT bypass remains last recorded ON. Controlled hosted end-to-end, cutover, an authorized V1 rescore, and parked FG-039 publication stay later. ICF is not authorized. People & Access UI is not implemented. CORE CLOSE remains partial.
 
-## Plan Generation Engine
-
-Bushel showed that project geometry can be calculated and drawn as a vector construction plan. The scripts that do that are project-specific. The later engine is reusable. It is not built.
-
-That engine owns governed construction geometry for construction drawings, foundation and pier plans, framing plans, elevations, sections and details, scope intelligence, calculation-engine inputs, material take-off, estimating, and build information. The construction geometry is the source of truth.
-
-A drawing is not complete because the geometry exists. The output needs geometry, dimensions, member callouts, connection information, safety and guard information where a guard applies, and field-verification items. Text supplements the geometry. Text does not replace it.
-
-Detail: [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). Lessons from the proving sheets: [architecture/bushel-critical-path.md](architecture/bushel-critical-path.md).
-
-## Start New Project wizard
-
-Start New Project becomes a guided, resumable walk. The contractor does not have to know which internal module to open.
-
-Project and client, then location and project type, then documents and source information, then whether adequate plans exist, then plan generation only if it is required and authorized, then what work is required, then Our crew or Subcontractor, then the estimating inputs, then missing information, then project setup review, then build the estimate.
-
-Detail: [architecture/start-project-guided-wizard-product-direction.md](architecture/start-project-guided-wizard-product-direction.md). Not implemented.
-
-## Calculation engines
-
-A calculation engine is reusable construction mathematics. It may later serve the public Website Useful Tools, a private Platform or Field tool, and Platform workflows under the hood. It does not own company pricing, company margin, or the private estimate workflow.
-
-Contract V1 is **ACCEPTED / PINNED** at `2903a45074df21b1c99390cb9aab68638970a2ff`. Record: [architecture/calculation-engine-result-contract-v1.md](architecture/calculation-engine-result-contract-v1.md).
-
-Website Version 27 is external. Live site `https://calibai.joel-brayman.chatgpt.site/`. Website source commit `f4b7f2119c603ee20e3b343114c262bfd4c012d4`. Do not copy that source into this repository.
-
-## Real-world learning
+## Real-world learning law
 
 Real project evidence is compared and accumulated. CalibraytAI proposes a calibration. A person reviews it. A person approves it. Only then may a governed default change.
 
@@ -81,4 +97,4 @@ One project does not silently change a formula, a cost, labour productivity, a l
 
 ## What this checklist does not authorize
 
-It does not authorize drawing changes, a take-off change, a price, a send, the Plan Generation Engine, the wizard, ICF, a Website change, a migration, or a deploy.
+It does not authorize drawing changes, a take-off change, a price, a send, the Plan Generation Engine, the wizard, ICF, a Website change or rebuild, a calculator change, a migration, a deploy, or a V1 rescore.

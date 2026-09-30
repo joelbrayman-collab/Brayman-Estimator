@@ -6,7 +6,7 @@
 | Date | 2026-09-29 |
 | Authority | Joel, from real estimating with Ben |
 | This record | Architecture only. No page, schema, navigation, engine, drawing generator, labour flow, or RFQ. |
-| Does not interrupt | Linda Bushel construction-drawing capability test |
+| Does not finish | The Linda Bushel case. That case is preserved and is not a gate for this direction. |
 
 Exact screen labels are not authorized. The sequence and the ownership rules are.
 
@@ -132,7 +132,7 @@ At the documents step, the wizard records one of:
 - the job may proceed without drawings;
 - drawings are required and do not exist yet.
 
-The third case is the hook for a later authorized plan-generation capability. The Linda Bushel proof shows that some project classes may need CalibraytAI to produce contractor construction drawings. That capability is not part of this wizard. The Bushel test continues on its own stop. See [construction-drawing-standard.md](construction-drawing-standard.md).
+The third case is the hook for a later authorized plan-generation capability. The Linda Bushel proof shows that some project classes may need CalibraytAI to produce contractor construction drawings. That capability is not part of this wizard. The Bushel case stays preserved and incomplete. See [construction-drawing-standard.md](construction-drawing-standard.md).
 
 ## Desktop and Field
 
@@ -145,11 +145,11 @@ The same setup cursor must be readable later from the office and from a Field or
 - Hiding a missing wall height, subcontractor, or quote by inventing a default.
 - Calling an engine or sending an RFQ from the wizard before those capabilities are authorized.
 - A desktop-only step list that a later phone client cannot resume.
-- Starting wizard implementation while the Bushel drawing review is still the active stop.
+- Treating the Linda Bushel case as a gate for this walk. The 30 Sep 2026 checklist removed that gate.
 - A migration for wizard state against the Mac primary or the hosted validation database without a separate authorization.
 
 ## Timing
 
-Not now. The active stop remains Joel’s visual review of the Bushel framing-plan capability test.
+The 30 Sep 2026 owner direction removed the Linda Bushel case as the active stop. The sequence is [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md).
 
-The next authorized step, when Joel and the Architect allow it, is an implementation plan only: map each stage above to the existing service, define the thin cursor without building it, and name what must stay derived from real records. That plan is not authorized by this file. No Feature Gate is opened here.
+The next step, when Joel and the Architect allow it, is still an implementation plan only: map each stage above to the existing service, define the thin cursor without building it, and name what must stay derived from real records. That plan is not authorized by this file. No Feature Gate is opened here.

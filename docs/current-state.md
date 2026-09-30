@@ -23,6 +23,7 @@ This block is the current snapshot. The baseline table, the migrations history, 
 | Hosted database | **NOT RE-PROVED**. Last recorded value remains `k1f2a3b4c5d6`. Not migrated. |
 | Hosted UAT auto-entry | **VERIFIED NOW** effective ON. Anonymous `GET /login` returned 302 to `/`. No environment change. |
 | Live acceptance | Office smoke PASS. PLAT-CLIENT-01 PASS on synthetic client 2. PLAT-UX-01 PASS at 390, 520, and 1280. Scope smoke PASS. Mapper smoke PASS. Source/deploy parity PASS. |
+| Hosted password check | **BLOCKED — AUTHORIZED CREDENTIAL NOT AVAILABLE.** Bypass was not changed. No password was reset. Auto-entry remains ON. |
 | Full suite | **LAST VERIFIED** after PLAT-UX-01: `./venv/bin/python -m pytest -q` — **1827 passed**, 6548 warnings, **864.35s**, exit 0. This documentation pass did not re-run it. |
 | Scope | Objective verification PASS. Owner/human UAT CLOSED — PASS WITH NON-BLOCKING POLISH. Existing-row inline edit is NON-BLOCKING POLISH / FUTURE IMPROVEMENT. |
 | Mapper | Objective verification PASS. Human UAT CLOSED — PASS. Contract evidence PASS. |

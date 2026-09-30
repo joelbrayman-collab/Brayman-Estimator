@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — Hosted password check blocked before any change
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI FINAL OPERATIONAL GATE REVERSIBLE HOSTED PASSWORD AUTHENTICATION VERIFICATION 30 SEP 2026 |
+| Objective | Verify normal password login on the live hosted office, then restore UAT auto-entry. |
+| Business decision | Do not reset a password. Do not remove the bypass. If no authorized hosted credential is available, stop before changing the environment. |
+| Architectural decision | Live deploy remained `dep-daukqvg473hc73bkouug` at `45ab150aa724f4fa50eb7d496f886bd1a5f2e4e0`. Auto-deploy stayed off. Anonymous `GET /login` still returned 302 to `/`. The hosted password is not in the repository and was not recorded. No credential file was available. `CALIBRAYTAI_UAT_AUTH_BYPASS` was not changed. |
+| Prompt template used | Joel’s 30 Sep 2026 reversible hosted password prompt. No file in docs/prompts/ covers this pass. |
+| Approved Cursor prompt summary | Turn the bypass off only long enough to test the hosted password, then turn it back on. Stop if no authorized credential exists. Do not print secrets. Do not redeploy documentation. |
+| Files expected to change | Session handoff, current occupancy, and this log. |
+| Files prohibited from changing | Application code, authentication, environment variables, database, Website. |
+| Implementation result | HOSTED PASSWORD CHECK BLOCKED — AUTHORIZED CREDENTIAL NOT AVAILABLE. Bypass remains ON. |
+| Tests | Not run. The hosted form was not submitted. |
+| Project-state-report update | None. The programme state did not change. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Hosted password verification remains open until an authorized credential is supplied without a reset. Bypass removal remains a later cutover action. Hosted database revision NOT RE-PROVED. |
+| Next approved step | None from this entry. Do not turn the bypass off until a credential is authorized. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — Stabilized Platform deployed and live-verified
 
 | Field | Content |

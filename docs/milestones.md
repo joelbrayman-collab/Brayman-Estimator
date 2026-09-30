@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-30 |
+| Updated | 2026-10-01 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -31,6 +31,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 ---
 
 ## Entries
+
+### 2026-10-01 — PGE-2 dimensioned plan render
+
+| Field | Content |
+|-------|---------|
+| Milestone | PGE-2 dimensioned plan render |
+| Status | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** |
+| Branch | `main` |
+| Base commit | `70d7ab2ffc60ae7ac83cbef6d234b8ab389f8fae` |
+| Objective | Draw an accepted dimensioned plan without storing it on a project. |
+| Deliverables | `app/services/plan_generation/render.py`. `tests/test_plan_generation_render.py`. |
+| Validation | Focused tests 27 passed, 2 warnings, 0.58s, exit 0. Full suite 1882 passed, 6602 warnings, 818.58s, exit 0. No migration. |
+| Architectural findings | The renderer calls PGE-1. Length labels come from the supplied coordinates. Bushel scripts are not imported. |
+| Open decisions | PGE-3 stair detail is not authorized by this milestone. |
+| Next milestone | PGE-3, when a later prompt authorizes it. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
 
 ### 2026-10-01 — PGE-1 Plan Generation request validation
 

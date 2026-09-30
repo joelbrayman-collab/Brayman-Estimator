@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-09-30 |
+| Updated | 2026-10-01 |
 
 ## Purpose
 
@@ -42,6 +42,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-10-01 — PGE-2 dimensioned plan render
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLAN GENERATION ENGINE PGE-2 — DIMENSIONED PLAN RENDER 1 OCT 2026 |
+| Objective | Draw an accepted dimensioned-plan request to a PDF and a manifest. |
+| Business decision | The drawing consumes supplied geometry. It does not calculate a trade result, and it is not yet a project plan. |
+| Architectural decision | `render_dimensioned_plan` calls PGE-1 first. An unaccepted request produces no PDF. The sheet states the request scale and labels lengths from the supplied coordinates. |
+| Prompt template used | Joel’s 1 Oct 2026 PGE-2 prompt. No file in docs/prompts/ covers this slice. |
+| Approved Cursor prompt summary | Render `dimensioned_plan` only. Two fixtures. No PlanDocument, route, migration, stair detail, or trade calculator. Full suite. One commit. Do not deploy. |
+| Feature Gate | Answered in that prompt. Problem: a valid request could not yet be drawn. User: a later contractor. Owner: `app/services/plan_generation/`. Data owned: none persisted. Data referenced: the accepted request. May change: the renderer and its tests. Must not change: PlanDocument, Contract V1, SNP-1, calculators, Website. Acceptance: both fixtures render and differ. Tests: `tests/test_plan_generation_render.py`. ADR: no. Migration: no. |
+| Files expected to change | The renderer, its tests, and the central status lines. |
+| Files prohibited from changing | Plan models, migrations, SNP, Website, Contract V1, Bushel scripts. |
+| Implementation result | PGE-2 closed as a slice. The PDF is not project evidence. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_plan_generation_render.py tests/test_plan_generation_request.py` — 27 passed, 2 warnings, 0.58s, exit 0. Full suite `./venv/bin/python -m pytest -q` — 1882 passed, 6602 warnings, 818.58s, exit 0. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | No project-document integration. No Build Drawings page. PGE-3 not started. |
+| Next approved step | None from this entry. Do not start PGE-3 until a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
 
 ### 2026-10-01 — PGE-1 Plan Generation request validation
 

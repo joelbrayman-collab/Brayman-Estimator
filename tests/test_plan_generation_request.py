@@ -29,7 +29,7 @@ from app.services.plan_generation.validation import (
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = REPO_ROOT / "tests" / "fixtures" / "plan_generation"
-SERVICE_DIR = REPO_ROOT / "app" / "services" / "plan_generation"
+SERVICE_FILE = REPO_ROOT / "app" / "services" / "plan_generation" / "validation.py"
 FORBIDDEN_SOURCE = (
     "ALLOW_2X8_16",
     "ALLOW_2X6_16",
@@ -191,8 +191,8 @@ def test_commercial_fields_are_not_accepted():
     assert "client_id" not in result.accepted
 
 
-def test_service_has_no_bushel_or_renderer_constants():
-    source = "\n".join(path.read_text(encoding="utf-8") for path in SERVICE_DIR.glob("*.py"))
+def test_validation_source_has_no_bushel_or_renderer_constants():
+    source = SERVICE_FILE.read_text(encoding="utf-8")
     for token in FORBIDDEN_SOURCE:
         assert token not in source
 

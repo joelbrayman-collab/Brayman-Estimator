@@ -13,19 +13,19 @@ This block is the current snapshot. The baseline table, the migrations history, 
 | Fact | Measured or recorded |
 |------|----------------------|
 | Branch | `main` |
-| HEAD and `origin/main` before this reconciliation | **VERIFIED** `336011f2c1d9e6e4fe04c5e735dd2b6c1e5478b1`. Ahead 0. Behind 0. |
+| Published reconciliation | `c027b605b247dd231bfae8fd96a735c35ea4db41` is `origin/main` at the start of this architecture pass. |
 | Bushel package | Ancestor `7b3e64278e04362cfc2231381305ee2030a60408`. Not HEAD. Incomplete case. Not a development gate. |
-| Worktree | This 30 Sep master-development reconciliation is uncommitted. |
+| This pass | One local documentation commit on that parent. Not pushed. |
 | Repository Alembic head | **VERIFIED** `k1f2a3b4c5d6` |
 | Mac primary | **VERIFIED** `h8c9d0e1f2a3`. Not migrated. |
 | Script chain | `h8c9d0e1f2a3` → `j0e1f2a3b4c5` → `k1f2a3b4c5d6` |
 | Hosted running commit | **LAST RECORDED / NOT RE-PROVED** `6aa574bda2a57968bc3d746ad4488bcb7b4b8e2d`, deploy `dep-dasnht0473hc7394e65g`, finished 2026-09-27T20:14:48Z. Not repository HEAD. |
 | Hosted database | **LAST RECORDED / NOT RE-PROVED** `k1f2a3b4c5d6`. UAT bypass **LAST RECORDED / NOT RE-PROVED** ON. |
 | Full suite | Not re-run. Latest recorded result at this count: **1821 passed**, 6528 warnings, **809.17s**, exit 0. |
-| Current work | Website access recovery, and the Start New Project implementation plan. Neither waits on Bushel. |
-| Sequence | [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md). Bushel is an incomplete case, not the first phase. |
+| Current product objective | Start New Project implementation plan. One roadmap. The Website is a surface, not a second roadmap. |
+| Sequence | [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md). |
 | Contract V1 | **ACCEPTED / PINNED** `2903a45074df21b1c99390cb9aab68638970a2ff`. Not edited. |
-| Website | External. Public project `appgprj_6a9095543b74819186183f9a522890e5`. Recorded SHA `f4b7f2119c603ee20e3b343114c262bfd4c012d4`. Version 27. PUBLIC WEBSITE SOURCE CONTINUITY: BLOCKED ON PROJECT ACCESS. Not a Platform blocker. Private project `appgprj_6ab7f4ce8450819198398ba2cd4b43f4` source version 6 is not this site. |
+| Website | Consumer surface. Public project `appgprj_6a9095543b74819186183f9a522890e5`. Recorded SHA `f4b7f2119c603ee20e3b343114c262bfd4c012d4`. Version 27. PUBLIC WEBSITE SOURCE CONTINUITY: BLOCKED ON PROJECT ACCESS. Operational access issue. Not a second roadmap. Private project `appgprj_6ab7f4ce8450819198398ba2cd4b43f4` source version 6 is not this site. |
 
 Resume: [session-handoff.md](session-handoff.md) section 0. Sequence: [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md).
 

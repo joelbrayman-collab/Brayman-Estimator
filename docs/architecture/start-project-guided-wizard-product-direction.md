@@ -114,7 +114,7 @@ For Our crew work, the later orchestration is:
 
 work item → required geometry or input → measurements already on the plans → calculation engine where one exists → physical quantities → Costs & Pricing → labour → estimate detail.
 
-The contractor should not have to open the engine. This record does not implement engines, Contract V1 changes, or the mapper.
+The contractor should not have to open the engine. A public Useful Tool is another consumer of the same mathematics, not a second formula. This record does not implement engines, Contract V1 changes, the mapper, or a choice of where the engine source lives. The one sequence is [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md).
 
 ## Subcontract and RFQ boundary
 
@@ -132,7 +132,7 @@ At the documents step, the wizard records one of:
 - the job may proceed without drawings;
 - drawings are required and do not exist yet.
 
-The third case is the hook for a later authorized plan-generation capability. The Linda Bushel proof shows that some project classes may need CalibraytAI to produce contractor construction drawings. That capability is not part of this wizard. The Bushel case stays preserved and incomplete. See [construction-drawing-standard.md](construction-drawing-standard.md).
+The third case is the hook for a later authorized plan-generation capability. Where a governed result already exists, Plan Generation draws that geometry. It does not calculate the element again. The Linda Bushel proof shows that some project classes may need CalibraytAI to produce contractor construction drawings. That capability is not part of this wizard. The Bushel case stays preserved and incomplete. See [construction-drawing-standard.md](construction-drawing-standard.md).
 
 ## Desktop and Field
 

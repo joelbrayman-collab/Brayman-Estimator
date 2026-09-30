@@ -8,7 +8,7 @@
 
 ## Order
 
-The sequence and the status marks live in [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md). This file does not keep a second sequence. Website access recovery and the Platform Start New Project plan do not wait on this case.
+The sequence and the status marks live in [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md). This file does not keep a second sequence. The case does not gate the Start New Project plan or Website access recovery.
 
 ## Stair Engine
 
@@ -20,7 +20,7 @@ The public Website project is `appgprj_6a9095543b74819186183f9a522890e5`. The re
 
 The recovered file names from the private checkout, not re-verified against the public tree, were `lib/useful-tools/stairs.mjs`, `lib/useful-tools/profiles/ontario-residential-v1.json`, and `components/useful-tools/StairDiagram.tsx`. They are not on this Mac.
 
-`docs/estimating-cases/2026/linda-bushel-pool-deck/drawings/stair_detail_r2.py` remains project-specific proving geometry. It is not the Stair Calculator. Bushel quantities stay open because the case layout is unresolved. They do not gate the Website calculator or the Platform.
+`docs/estimating-cases/2026/linda-bushel-pool-deck/drawings/stair_detail_r2.py` remains project-specific proving geometry. It is not the Stair Calculator. Project-specific proving code must not become a second domain engine. Bushel quantities stay open because the case layout is unresolved. They do not gate other development.
 
 ## Plan Generation lessons from Bushel
 

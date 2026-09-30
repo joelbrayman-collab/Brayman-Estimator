@@ -8,22 +8,22 @@ Read this section first. The sections below it are older turnover history. They 
 |------|--------|
 | Repository | `/Users/joelbrayman/Desktop/Brayman-Estimator` |
 | Branch | `main` |
-| HEAD and `origin/main` before this reconciliation | **VERIFIED** 30 Sep 2026 in Cursor Terminal: `336011f2c1d9e6e4fe04c5e735dd2b6c1e5478b1`. Ahead 0. Behind 0. |
+| Published reconciliation | `c027b605b247dd231bfae8fd96a735c35ea4db41`. That commit is `origin/main` at the start of this architecture pass. |
+| This pass | One local documentation commit on that parent. Not pushed. |
 | Bushel package ancestor | `7b3e64278e04362cfc2231381305ee2030a60408`. Historical. Not HEAD. |
-| Worktree | This master-development reconciliation is uncommitted. Commit waits for Architect review. Push waits for Joel. |
-| Checklist | [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md) |
-| Current work | Website: recover public Site access. Platform: Start New Project implementation plan. Neither waits on Bushel. |
+| Checklist | [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md). One product roadmap. |
+| Current product objective | Start New Project implementation plan. Planning only. Not a build. |
 | Bushel | Incomplete proving case. Preserved. Not the master programme. Not a blocker. |
 
 Joel’s 30 Sep 2026 direction: the Linda Bushel deck is evidence, not the development programme. Do not discard it. Do not resolve its construction questions from this resume. Piers 12 against 15, joist lines 16 against 15, stringers 10 against 9, and throat 4.997 in labeled 5.00 in stay unresolved. Record: [estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md](estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md).
 
-Next Platform objective: the recorded Start New Project implementation plan. Map the guided stages onto the existing project, plans, scope, and estimate services, and define the thin resume cursor. Do not build it from this resume. [architecture/start-project-guided-wizard-product-direction.md](architecture/start-project-guided-wizard-product-direction.md).
+Current product objective: the Start New Project implementation plan. Map the guided stages onto the existing project, plans, scope, and estimate services. Define the thin resume cursor. Name where a governed engine enters. Do not build it from this resume. [architecture/start-project-guided-wizard-product-direction.md](architecture/start-project-guided-wizard-product-direction.md).
 
-Plan Generation stays queued. It is the documents-step hook when drawings are required and absent. It is not the daily office path.
+Plan Generation stays queued. It draws governed geometry when drawings are required and absent. It does not keep a second calculation.
 
-Calculation engines are reusable mathematics. They do not own price, margin, or the private estimate. Contract V1 is **ACCEPTED / PINNED** at `2903a45074df21b1c99390cb9aab68638970a2ff`. Do not edit that contract in a refresh.
+Calculation engines own construction mathematics. A Website page does not own that mathematics, and the Platform does not keep a second copy. Contract V1 is **ACCEPTED / PINNED** at `2903a45074df21b1c99390cb9aab68638970a2ff`. Pricing, margin, and the private estimate stay outside the engine. Do not edit that contract in a refresh. Do not add a runtime call between the two repositories.
 
-Public Website is a separate product. Project `appgprj_6a9095543b74819186183f9a522890e5`. Recorded SHA `f4b7f2119c603ee20e3b343114c262bfd4c012d4`. Recorded baseline Version 27. Live `https://calibai.joel-brayman.chatgpt.site/`. PUBLIC WEBSITE SOURCE CONTINUITY: BLOCKED ON PROJECT ACCESS. That blocks Website changes. It does not block the Platform. Do not rebuild the site or copy formulas here. The accessible Website conversation is private project `appgprj_6ab7f4ce8450819198398ba2cd4b43f4`, source version 6. That project is not Version 27.
+The public Website is a consumer surface, not a second roadmap. Project `appgprj_6a9095543b74819186183f9a522890e5`. Recorded SHA `f4b7f2119c603ee20e3b343114c262bfd4c012d4`. Recorded baseline Version 27. Live `https://calibai.joel-brayman.chatgpt.site/`. PUBLIC WEBSITE SOURCE CONTINUITY: BLOCKED ON PROJECT ACCESS. That is an operational access issue. It blocks Website edits and deployment. It does not block the Start New Project plan. Do not rebuild the site or copy formulas here. The accessible Website conversation is private project `appgprj_6ab7f4ce8450819198398ba2cd4b43f4`, source version 6. That project is not Version 27.
 
 **VERIFIED** 30 Sep 2026 in Cursor Terminal: repository Alembic head `k1f2a3b4c5d6`. Mac primary `flask db current` is `h8c9d0e1f2a3`. Script chain `h8c9d0e1f2a3` → `j0e1f2a3b4c5` → `k1f2a3b4c5d6`. That divergence is the current occupancy. The Mac database was not migrated. Stash `stash@{0}` remains: WIP FG-037 interrupted before V1 rescore. Not applied.
 

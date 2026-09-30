@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — Unified master development architecture
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI UNIFIED MASTER DEVELOPMENT ARCHITECTURE NEW DOCUMENTATION COMMIT FROM PUBLISHED BASELINE 30 SEP 2026 |
+| Objective | Record one CalibraytAI product roadmap. Stop treating the Website and the Platform as independent product sequences. |
+| Business decision | Joel: CalibraytAI has one coordinated development path. Separate surfaces may remain. Reusable mathematics has one authority. |
+| Architectural decision | One product, one roadmap, one governed implementation of reusable domain logic, multiple consumers. Contract V1 stays pinned and is not edited. It already forbids a runtime call and keeps pricing outside the engine. Physical package placement is not decided. Start New Project implementation plan is the current product objective. PUBLIC WEBSITE SOURCE CONTINUITY: BLOCKED ON PROJECT ACCESS is an operational issue. Bushel proving code must not become a second stair engine. |
+| Prompt template used | Joel’s 30 Sep 2026 unified architecture prompt. No file in docs/prompts/ covers this pass. |
+| Approved Cursor prompt summary | Documentation only, on top of published `c027b605`. Do not amend. Do not push. Do not change product code, Website code, calculator code, Contract V1, or Bushel geometry. |
+| Files expected to change | Checklist, session handoff section 0, current-state occupancy, roadmap pointer, architecture index pointer, wizard engine note, Bushel lesson line, project-state pointer, this log. |
+| Files prohibited from changing | Application code, calculator code, Website source, Contract V1, Bushel geometry, migrations. |
+| Implementation result | Checklist rewritten as one sequence. Website access demoted to an operational block. No product change. |
+| Tests | Not re-run. Latest recorded full suite remains 1821 passed, 6528 warnings, 809.17s, exit 0. |
+| Project-state-report update | Pointer only. PART B remains the 2026-09-20 snapshot. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Public Website source continuity remains blocked on project access. Calculator closure waits on that access. Engine package placement is not decided. Bushel geometry stays unresolved and is not a blocker. |
+| Next approved step | Architect review before push. |
+| Next approved prompt | None from this entry. Do not start the implementation plan or Website access recovery from this commit. |
+| Commit hash | The documentation commit that contains this entry. Not pushed. |
+
 ### 2026-09-30 — Master development reconciliation
 
 | Field | Content |

@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-30 — SNP-1 read-only project walk resolver
+
+| Field | Content |
+|-------|---------|
+| Milestone | SNP-1 read-only Start New Project resolver |
+| Status | **IMPLEMENTED / TESTED.** Wizard **NOT BUILT**. SNP-2 **NOT STARTED**. |
+| Branch | `main` |
+| Base commit | `4423cdcae540162fbd4ea6189029975dc4a705f6` |
+| Objective | Name the next guided stage from existing project records without writing them. |
+| Deliverables | `app/services/start_project_walk.py`. `tests/test_start_project_walk.py`. |
+| Validation | Focused resolver tests 18 passed. Existing project, scope, hub, and estimate tests 41 passed. Full suite 1846 passed, 6586 warnings, 868.68s, exit 0. No migration. |
+| Architectural findings | Drawing required-versus-not-required cannot be derived. More than one estimate is reported as ambiguous. Our-crew scope does not select a calculator. |
+| Open decisions | SNP-2 resume entry is the next slice and is not authorized by this milestone. |
+| Next milestone | SNP-2. Not started. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-09-30 |
+
 ### 2026-09-30 — Start New Project implementation plan
 
 | Field | Content |

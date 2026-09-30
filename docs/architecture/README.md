@@ -12,7 +12,7 @@ One CalibraytAI product and one development sequence: [../PROJECT_DEVELOPMENT_CH
 | Document | Status |
 |----------|--------|
 | [bushel-critical-path.md](bushel-critical-path.md) | **RECORDED** (2026-09-29). Bushel lessons only. The sequence lives in [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md). |
-| [start-project-guided-wizard-product-direction.md](start-project-guided-wizard-product-direction.md) | **RECORDED.** Implementation plan [start-project-implementation-plan.md](start-project-implementation-plan.md) **RECORDED / IMPLEMENTATION NOT STARTED** (2026-09-30). No wizard page. No schema. Bushel is not a gate. |
+| [start-project-guided-wizard-product-direction.md](start-project-guided-wizard-product-direction.md) | **RECORDED.** Implementation plan [start-project-implementation-plan.md](start-project-implementation-plan.md). SNP-1 **IMPLEMENTED / TESTED**. SNP-2 **NOT STARTED**. No wizard page. No schema. Bushel is not a gate. |
 | [CAR-001-calibai-product-architecture-reconciliation.md](CAR-001-calibai-product-architecture-reconciliation.md) | **Approved architectural direction** (2026-08-28); implementation not authorized |
 | [plan-intelligence-and-automated-takeoff.md](plan-intelligence-and-automated-takeoff.md) | Future + Phase A / M007 page indexing current |
 | [document-intelligence.md](document-intelligence.md) | Architecture (M006); upload/pages/processing **Current** (M007) |

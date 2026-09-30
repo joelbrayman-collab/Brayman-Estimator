@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **PLAN RECORDED / IMPLEMENTATION NOT STARTED** |
+| Status | **IN IMPLEMENTATION.** SNP-1 read-only resolver **IMPLEMENTED / TESTED**. SNP-2 **NOT STARTED**. Wizard **NOT BUILT**. |
 | Date | 2026-09-30 |
 | Product direction | [start-project-guided-wizard-product-direction.md](start-project-guided-wizard-product-direction.md) |
 | Sequence | [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md) |
@@ -162,7 +162,23 @@ No other table is proposed.
 
 ## 14. Route and service plan
 
-Not implemented.
+SNP-1 is the resolver only: `resolve_start_project_walk` in `app/services/start_project_walk.py`. It does not add a route. The resume entry below is still not implemented.
+
+SNP-1 reads the organization-scoped project, client, `ProjectLocation.completeness`, non-archived plans through `project_plans`, confirmed packages through `list_confirmed`, and estimate rows. It writes nothing. The first gap wins:
+
+| Condition | Stage | Waiting |
+|-----------|-------|---------|
+| Client is not in this organization | `PROJECT_CLIENT` | `CLIENT` |
+| Location is absent or incomplete | `LOCATION` | `SITE` |
+| No non-archived plan | `DOCUMENTS_DRAWINGS` | `DRAWINGS` |
+| No confirmed package | `WORK` | None |
+| Exactly one estimate, and the gaps above are clear | `ESTIMATE` | None. Destination `ESTIMATE_RESUME`. |
+| More than one estimate, and the gaps above are clear | `ESTIMATE` | None. Destination `ESTIMATE_AMBIGUOUS`. No estimate is chosen. |
+| Those gaps are clear and there is no estimate | `SETUP_REVIEW` | None. Destination `ESTIMATE_CREATE`. |
+
+A project address is not a complete location. Archived plans are not present drawings. Suggested and retired packages are not scope. An existing estimate does not skip an earlier gap. Its id is returned only when the project has exactly one estimate.
+
+Absence of a plan cannot mean drawings are not required, and it cannot mean they are required. That stored decision remains SNP-3. Our-crew scope does not by itself mean an engine is required, because the package does not say which element must be calculated. The evidence token is `ENGINE_REQUIREMENT_NOT_DERIVABLE`. Subcontract-only scope uses `ENGINE_NOT_APPLICABLE`. SNP-1 does not call an engine or Plan Generation.
 
 | Piece | Proposal |
 |-------|----------|
@@ -176,7 +192,7 @@ Not implemented.
 
 | ID | Purpose | Likely change | Reused | New data | Acceptance | Human UAT | Depends on | Stop |
 |----|---------|---------------|--------|----------|------------|-----------|------------|------|
-| SNP-1 | Resolver only | New service and tests | Project, client, location, packages, plans, estimates | None | Given an existing project, the next gap is named and no row is written | Not required | None | Resolver merged. No UI. |
+| SNP-1 | Resolver only | `app/services/start_project_walk.py` and `tests/test_start_project_walk.py` | Project, client, location, packages, plans, estimates | None | **IMPLEMENTED / TESTED.** Given an existing project, the next gap is named and no row is written. No UI. | Not required | None | No schema. No resume route. |
 | SNP-2 | Resume entry | One project link and a read-only next-step page | SNP-1 and existing pages | None | Open an existing project and land on the existing page for the next gap | Contractor can leave and return | SNP-1 | No schema. |
 | SNP-3 | Thin cursor | Model, migration file, decision save | SNP-1 | The orchestration row in section 13 | Drawing decision and waiting token round-trip without copying project facts | Contractor can mark drawings not required, or waiting | Separate migration approval | Migration not applied in the plan. |
 | SNP-4 | Scope handoff | Return hint on the existing scope page | `confirm_package` | None | Confirm Our crew or Subcontractor and return to the walk | Scope page still reads as it does today | SNP-2 | No second scope model. Inline edit not included. |
@@ -213,4 +229,4 @@ Stop a slice if it needs a second scope model, a wizard estimate, a copied Websi
 
 ## 21. Recommended first implementation slice
 
-SNP-1. A read-only resolver over existing project records. No page, no schema, and no migration.
+SNP-1 is implemented. The next slice, if a later prompt authorizes it, is SNP-2. SNP-2 is not started. No page, no schema, and no migration were added with SNP-1.

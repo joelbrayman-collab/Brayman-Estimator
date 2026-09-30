@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **RECORDED PRODUCT DIRECTION.** Implementation plan recorded 2026-09-30. Implementation **NOT STARTED**. |
+| Status | **RECORDED PRODUCT DIRECTION.** SNP-1 read-only resolver **IMPLEMENTED / TESTED**. SNP-2 **NOT STARTED**. The wizard is not built. |
 | Date | 2026-09-29 |
 | Authority | Joel, from real estimating with Ben |
 | This record | Architecture only. No page, schema, navigation, engine, drawing generator, labour flow, or RFQ. |
@@ -152,4 +152,4 @@ The same setup cursor must be readable later from the office and from a Field or
 
 The 30 Sep 2026 owner direction removed the Linda Bushel case as the active stop. The sequence is [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md).
 
-The implementation plan is recorded in [start-project-implementation-plan.md](start-project-implementation-plan.md). It maps the stages above to existing services and defines the thin cursor. No slice is started. No Feature Gate is opened here.
+The implementation plan is recorded in [start-project-implementation-plan.md](start-project-implementation-plan.md). It maps the stages above to existing services and defines the thin cursor. SNP-1 is implemented. SNP-2 is not started. No Feature Gate is opened in this direction record.

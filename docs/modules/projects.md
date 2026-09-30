@@ -11,6 +11,8 @@
 
 Represent construction projects tied to clients; host estimating work; begin project controls (change orders). Long-term home for budgets, scheduling, purchasing, and job cost—**only when Feature-Gated**.
 
+Start New Project SNP-1 is orchestration only. `app/services/start_project_walk.py` reads Project, Client, location, confirmed scope, non-archived plans, and estimates. It owns none of those records and writes none. The wizard, resume route, and thin cursor are not built.
+
 ## Responsibilities (current)
 
 - Project CRUD (name, number, address, status, description, client). Field SCH-D presents the same `Project.address` (no Field duplicate) plus a Directions phone-maps handoff.

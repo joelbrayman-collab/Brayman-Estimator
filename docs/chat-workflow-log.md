@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — SNP-1 read-only project walk resolver
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI START NEW PROJECT SNP-1 — READ-ONLY PROJECT WALK RESOLVER 30 SEP 2026 |
+| Objective | Add a read-only resolver that names the next Start New Project stage from existing records. |
+| Business decision | SNP-1 is authorized. The wizard, resume route, cursor, and Plan Generation are not. |
+| Architectural decision | `resolve_start_project_walk` derives the first gap from the client, location completeness, non-archived plans, confirmed packages, and estimates. It does not store that result. Drawing required-versus-not-required stays unresolved until SNP-3. An engine requirement is not inferred from Our-crew scope. |
+| Prompt template used | Joel’s 30 Sep 2026 SNP-1 prompt. No file in docs/prompts/ covers this slice. |
+| Approved Cursor prompt summary | Implement SNP-1 only. Test-first. No schema, route, wizard, calculator, or Plan Generation. One commit. Do not deploy. |
+| Feature Gate | Answered in that prompt. Problem: name the next stage without a second project record. User: contractor, later. Owner: orchestration under Projects; it owns no rows. Data owned: none. Data referenced: Project, Client, ProjectLocation, ProjectWorkPackage, PlanDocument, Estimate. May change: nothing in those records. Must not change: pricing, Contract V1, Website, authentication. Acceptance: deterministic read-only result. Tests: `tests/test_start_project_walk.py`. Docs: this entry and the central records. ADR: no. Migration: no. |
+| Files expected to change | `app/services/start_project_walk.py`, `tests/test_start_project_walk.py`, the implementation plan, and the central occupancy records. |
+| Files prohibited from changing | Routes, templates, migrations, Website, Contract V1, authentication. |
+| Implementation result | Resolver implemented. No user-facing change. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_start_project_walk.py` — 18 passed, 38 warnings, 8.27s, exit 0. Existing project, scope, hub, and estimate tests — 41 passed, 107 warnings, 33.40s, exit 0. Full suite `./venv/bin/python -m pytest -q` — 1846 passed, 6586 warnings, 868.68s, exit 0. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | SNP-2 is not started. Drawing decision storage is not started. Plan Generation is queued. |
+| Next approved step | None from this entry. Do not start SNP-2 until a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — Start New Project implementation plan
 
 | Field | Content |

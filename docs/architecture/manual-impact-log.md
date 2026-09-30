@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PLAT-CLIENT-01 (2026-09-30)
+
+| Field | Content |
+|-------|---------|
+| Slice | PLAT-CLIENT-01. Open and correct an existing Client. |
+| Product status at capture | Development freeze ACTIVE. Platform stabilization IN PROGRESS. This defect CLOSED. |
+| 1. What new contractor capability exists? | From Clients, open an existing Client by the name and correct the same information used when the Client was added. |
+| 2. When would the contractor use it? | When a Client name, company, email, phone, address, or note was entered wrong and the job should stay on that Client. |
+| 3. What workflow will the final Manual need to teach? | Clients → click the Client name → correct the field → Save Client → the list shows the correction. |
+| 4. What contractor-facing terms must be used? | Client. Clients. Save Client. |
+| 5. What screenshots / Print examples will eventually be needed? | Clients list with the name as the way in, and the Client form with stored values. Not captured here. |
+| 6. What warnings / validation distinctions need explanation? | Client name is required. Clearing the name does not save. |
+| 7. Desktop / iPhone / Print relevance | Desktop and phone-width office browser. Not Print. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — DRAWINGS AND SCOPE (2026-09-27)
 
 | Field | Content |

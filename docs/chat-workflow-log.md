@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — PLAT-CLIENT-01 open and correct an existing Client
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLATFORM EXISTING-PROBLEM CLOSURE PLAT-CLIENT-01 — OPEN + CORRECT EXISTING CLIENT 30 SEP 2026 |
+| Objective | Let an existing Client be opened and corrected without creating a replacement record. |
+| Business decision | Development freeze stays ACTIVE. This is an existing-product defect, not a new Client feature. |
+| Architectural decision | Same Client row, same fields as create, same name-required rule. Organization-scoped. Project and historical proposal snapshots stay attached. No migration. |
+| Prompt template used | Joel’s 30 Sep 2026 PLAT-CLIENT-01 remediation prompt. No file in docs/prompts/ covers this pass. |
+| Approved Cursor prompt summary | Open and correct an existing Client. Keep create. Do not add CRM, delete, new fields, auth, logo, Website, Bushel, or a migration. Focused tests, then the full suite. Browser QA. One commit if the gates pass. Do not deploy. |
+| Files expected to change | Client route, Client form, Client list, focused tests, and the central records named in the prompt. |
+| Files prohibited from changing | Auth, logo, Website, Bushel, calculators, Contract V1, migrations, Render. |
+| Implementation result | PLAT-CLIENT-01 CLOSED. Client behaviour: CREATE / OPEN / CORRECT. Platform stabilization IN PROGRESS. Freeze ACTIVE. |
+| Tests | Focused: `./venv/bin/python -m pytest -q tests/test_plat_client_01.py tests/test_uat3_shared_polish.py::test_clients_use_the_shared_header_and_register_table tests/test_auth_fg018.py::test_csrf_mutating_browser_post_enforcement` — 7 passed, 22 warnings, 5.25s, exit 0. Complete: `./venv/bin/python -m pytest -q` — 1826 passed, 6543 warnings, 906.64s, exit 0. |
+| Project-state-report update | Pointer only. PART B remains the 2026-09-20 snapshot. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Remaining register: PLAT-AUTH-01 intentional UAT auto-entry; PLAT-AUTH-02 password login not verified; PLAT-LOGO-01 blocked on the approved asset. Hosted code and the Mac database difference are not defects in this package. |
+| Next approved step | None from this entry. Do not begin the next stabilization item. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — Website Version 31 central record
 
 | Field | Content |

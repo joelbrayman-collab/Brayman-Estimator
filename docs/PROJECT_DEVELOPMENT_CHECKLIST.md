@@ -63,13 +63,13 @@ The reusable stair result and the Bushel finished stair agree on total rise 38 i
 
 ## One sequence
 
-Development freeze: **ACTIVE**. No implementation is current.
+Development freeze: **ACTIVE**. Platform existing-problem stabilization is in progress. No new feature work is current.
 
 | Order | Step | Kind | Status |
 |-------|------|------|--------|
 | 1 | This unified architecture | Governance | Recorded by this checklist. Not an implementation authorization. |
 | 2 | Website Useful Tools stabilization | Website surface | ✅ CLOSED at Version 31. |
-| 3 | Platform existing-problem stabilization | Next phase | Not started. This checklist does not begin it. |
+| 3 | Platform existing-problem stabilization | In progress | 🟡 IN PROGRESS. PLAT-CLIENT-01 CLOSED: an existing Client can be created, opened, and corrected. Freeze remains ACTIVE. Do not start the next item from this row. |
 | 4 | Start New Project implementation plan | Product | ⬜ QUEUED behind the freeze. Map stages, define the thin cursor, and name where a governed engine enters. Do not build it. |
 | 5 | Approved Start New Project slices | Product | ⬜ QUEUED behind an accepted plan. |
 | 6 | Use the governed engine where the project walk requires it | Product | ⬜ QUEUED. No second formula. |

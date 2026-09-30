@@ -1,48 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}New Client | Brayman Construction Platform{% endblock %}
+{% block title %}{% if client %}{{ client.name }}{% else %}New Client{% endif %} | Brayman Construction Platform{% endblock %}
 
 {% block page_title %}Client{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <div>
-        <p class="eyebrow">CRM</p>
-        <h1>New Client</h1>
+        <p class="eyebrow">Clients</p>
+        <h1>{% if client %}{{ client.name }}{% else %}New Client{% endif %}</h1>
     </div>
 </div>
 
 <form method="post" class="form-panel">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="form-grid">
         <label>
             Client name *
-            <input type="text" name="name" required>
+            <input type="text" name="name" value="{{ form.name if form else '' }}" required>
         </label>
 
         <label>
             Company
-            <input type="text" name="company">
+            <input type="text" name="company" value="{{ form.company if form else '' }}">
         </label>
 
         <label>
             Email
-            <input type="email" name="email">
+            <input type="email" name="email" value="{{ form.email if form else '' }}">
         </label>
 
         <label>
             Phone
-            <input type="text" name="phone">
+            <input type="text" name="phone" value="{{ form.phone if form else '' }}">
         </label>
     </div>
 
     <label>
         Address
-        <input type="text" name="address">
+        <input type="text" name="address" value="{{ form.address if form else '' }}">
     </label>
 
     <label>
         Notes
-        <textarea name="notes" rows="5"></textarea>
+        <textarea name="notes" rows="5">{{ form.notes if form else '' }}</textarea>
     </label>
 
     <div class="form-actions">

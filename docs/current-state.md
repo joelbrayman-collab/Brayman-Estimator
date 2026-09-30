@@ -13,16 +13,16 @@ This block is the current snapshot. The baseline table, the migrations history, 
 | Fact | Measured or recorded |
 |------|----------------------|
 | Branch | `main` |
-| Parent of this record | `41dda9ba4e6b7d421481d279fd84c1ac10aa0acb`. This occupancy is the Version 31 synchronization on that parent. |
+| Parent of this record | `a1fe675ad0016f89b73d30a9a12c891aef3c9a07`. This occupancy records PLAT-CLIENT-01 on that published baseline. |
 | Bushel package | Ancestor `7b3e64278e04362cfc2231381305ee2030a60408`. Not HEAD. Incomplete case. Not a development gate. |
-| Development freeze | **ACTIVE**. Website stabilization CLOSED. Platform existing-problem stabilization not started. |
+| Development freeze | **ACTIVE**. Website stabilization CLOSED. Platform existing-problem stabilization IN PROGRESS. PLAT-CLIENT-01 CLOSED. Client behaviour: CREATE / OPEN / CORRECT. |
 | Repository Alembic head | **VERIFIED** `k1f2a3b4c5d6` |
 | Mac primary | **VERIFIED** `h8c9d0e1f2a3`. Not migrated. |
 | Script chain | `h8c9d0e1f2a3` → `j0e1f2a3b4c5` → `k1f2a3b4c5d6` |
 | Hosted running commit | **LAST RECORDED / NOT RE-PROVED** `6aa574bda2a57968bc3d746ad4488bcb7b4b8e2d`, deploy `dep-dasnht0473hc7394e65g`, finished 2026-09-27T20:14:48Z. Not repository HEAD. |
 | Hosted database | **LAST RECORDED / NOT RE-PROVED** `k1f2a3b4c5d6`. UAT bypass **LAST RECORDED / NOT RE-PROVED** ON. |
-| Full suite | Not re-run. Latest recorded result at this count: **1821 passed**, 6528 warnings, **809.17s**, exit 0. |
-| Current condition | Development freeze ACTIVE. Next objective, not started: Platform existing-problem stabilization. |
+| Full suite | **VERIFIED** this pass: `./venv/bin/python -m pytest -q` — **1826 passed**, 6543 warnings, **906.64s**, exit 0. |
+| Current condition | Development freeze ACTIVE. Platform existing-problem stabilization IN PROGRESS. PLAT-CLIENT-01 CLOSED. Do not start the next item. |
 | Sequence | [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md). |
 | Contract V1 | **ACCEPTED / PINNED** `2903a45074df21b1c99390cb9aab68638970a2ff`. Not edited. |
 | Website | Consumer surface. PUBLIC WEBSITE SOURCE CONTINUITY: RESTORED / VERIFIED. Version 31. SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`. Project `appgprj_6a9095543b74819186183f9a522890e5`. Deployment `appgdep_6abd379bbb8081918aae3b170706263b` SUCCEEDED. Parity PASS. Employment, Concrete, and Stair CLOSED. Tests 56/56 PASS. Not a second roadmap. |

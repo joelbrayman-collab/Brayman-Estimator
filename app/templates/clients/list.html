@@ -30,7 +30,7 @@
     <tbody>
         {% for client in clients %}
         <tr>
-            <td>{{ client.name }}</td>
+            <td><a href="{{ url_for('clients.edit_client', client_id=client.id) }}">{{ client.name }}</a></td>
             <td>{{ client.company or "—" }}</td>
             <td>{{ client.email or "—" }}</td>
             <td>{{ client.phone or "—" }}</td>

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — PLAT-LOGO-01 approved office logo
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLAT-LOGO-01 — APPROVED OFFICE LOGO ASSET AVAILABLE ON DESKTOP — EXECUTE REMEDIATION 30 SEP 2026 |
+| Objective | Install the governed dark office logo. |
+| Business decision | Use the exact Library PNG. Do not redraw it. Do not deploy from this package. |
+| Architectural decision | Office sidebar only. Login, favicon, Field V2, Brand Profile custody, and proposal marks stay as they were. Size with CSS. |
+| Prompt template used | Approved Platform Architect prompt in chat. |
+| Approved Cursor prompt summary | Copy `CalibAi_Logo_Baseline_2026-08-27.png` unchanged into the office sidebar, prove hash parity, test, QA at 1280/520/390, one commit, push, no deploy. |
+| Files expected to change | Office sidebar, sidebar CSS, the new static PNG, branding tests, central records. |
+| Files prohibited from changing | Website, authentication, calculators, Contract V1, migrations, Field logo, proposal logo path. |
+| Implementation result | Installed `app/static/branding/calibraytai-logo-office.png`. SHA-256 `16d3b5b17e98c4bb2e2fa030677989657d5eb93f3744b74e06015fe1f0e833b8`. Hash parity PASS. |
+| Tests | Focused branding/shell/navigation: 82 passed, 168 warnings, 33.98s, exit 0. Full suite: `./venv/bin/python -m pytest -q` — 1828 passed, 6548 warnings, 867.97s, exit 0. |
+| Project-state-report update | Yes. Live deploy remains the prior product checkpoint. |
+| Milestone entry update | Yes. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Logo commit not deployed. Hosted password check remains blocked. Freeze remains active. |
+| Next approved step | Architect review. A later deploy of this commit is separate and not authorized here. |
+| Next approved prompt | Architect acceptance, then a separate deploy prompt only if the Architect authorizes it. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — Hosted password check blocked before any change
 
 | Field | Content |

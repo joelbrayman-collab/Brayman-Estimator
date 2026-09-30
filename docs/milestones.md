@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-30 — Approved office logo installed
+
+| Field | Content |
+|-------|---------|
+| Milestone | PLAT-LOGO-01 |
+| Status | **CLOSED**. Development freeze **ACTIVE**. Not deployed. |
+| Branch | `main` |
+| Base commit | `88468206f817efe88077a712bce83a24b2d356e8` |
+| Objective | Install the governed dark CalibraytAI office logo. |
+| Deliverables | `app/static/branding/calibraytai-logo-office.png` from `CalibAi_Logo_Baseline_2026-08-27.png`. SHA-256 `16d3b5b17e98c4bb2e2fa030677989657d5eb93f3744b74e06015fe1f0e833b8`. Office sidebar only. |
+| Validation | Hash parity PASS. Focused 82 passed. Full suite 1828 passed, 6548 warnings, 867.97s, exit 0. Temporary office QA PASS at 1280, 520, and 390. |
+| Architectural findings | Login, favicon, Field, Brand Profile custody, and proposal marks were left unchanged. |
+| Open decisions | Separate deployment of this commit. Not authorized in this package. |
+| Next milestone | Final operational and cutover gates. Not started. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-09-30 |
+
 ### 2026-09-30 — Stabilized Platform deployment live
 
 | Field | Content |

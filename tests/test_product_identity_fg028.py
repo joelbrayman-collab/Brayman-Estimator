@@ -25,6 +25,8 @@ from tests.test_permit_intelligence_fg016 import (
 
 PRODUCT_LOGO_V2 = "branding/calibraytai-logo-v2.png"
 TENANT_LOGO = "branding/brayman-construction-logo.png"
+OFFICE_LOGO = "branding/calibraytai-logo-office.png"
+OFFICE_LOGO_SHA256 = "16d3b5b17e98c4bb2e2fa030677989657d5eb93f3744b74e06015fe1f0e833b8"
 
 
 @pytest.fixture
@@ -117,20 +119,36 @@ def test_field_header_uses_v2_on_light_background():
     assert "calibraytai-logo-v1" not in base
 
 
-def test_office_login_sidebar_keep_tenant_logo():
+def test_office_sidebar_uses_approved_dark_logo():
+    import hashlib
+
+    sidebar = Path("app/templates/partials/sidebar.html").read_text()
+    assert OFFICE_LOGO in sidebar
+    assert 'class="sidebar-logo"' in sidebar
+    assert 'alt="CalibraytAI"' in sidebar
+    assert TENANT_LOGO not in sidebar
+    assert PRODUCT_LOGO_V2 not in sidebar
+    css = Path("app/static/css/app.css").read_text()
+    assert ".sidebar-logo" in css
+    assert "object-fit: contain" in css
+    assert "aspect-ratio: 1678 / 937" in css
+    path = Path("app/static") / OFFICE_LOGO
+    assert path.is_file()
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == OFFICE_LOGO_SHA256
+
+
+def test_office_login_and_favicon_keep_tenant_logo():
     login = Path("app/templates/auth/login.html").read_text()
     layout = Path("app/templates/auth/layout.html").read_text()
-    sidebar = Path("app/templates/partials/sidebar.html").read_text()
     office = Path("app/templates/base.html").read_text()
     assert TENANT_LOGO in layout
     assert 'alt="Brayman Construction"' in layout
     assert PRODUCT_LOGO_V2 not in login
     assert PRODUCT_LOGO_V2 not in layout
-    assert TENANT_LOGO in sidebar
-    assert 'alt="Brayman Construction"' in sidebar
-    assert PRODUCT_LOGO_V2 not in sidebar
+    assert OFFICE_LOGO not in layout
     assert TENANT_LOGO in office
     assert PRODUCT_LOGO_V2 not in office
+    assert OFFICE_LOGO not in office
 
 
 def test_project_hub_lifecycle_aria_and_office_chrome(client, project):

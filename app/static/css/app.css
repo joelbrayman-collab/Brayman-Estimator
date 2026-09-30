@@ -100,9 +100,12 @@ body[data-sidebar-collapsed="true"] .sidebar-brand-link {
 
 body[data-sidebar-collapsed="true"] .sidebar-logo {
     width: 36px;
+    max-width: 36px;
     height: 36px;
+    aspect-ratio: auto;
+    flex: 0 0 36px;
     object-fit: contain;
-    object-position: left center;
+    object-position: center center;
 }
 
 body[data-sidebar-collapsed="true"] .sidebar-link {
@@ -142,8 +145,9 @@ body[data-sidebar-collapsed="true"] .sidebar-link i {
 .sidebar-logo {
     display: block;
     width: auto;
-    max-width: 158px;
-    height: 40px;
+    max-width: min(168px, 100%);
+    height: auto;
+    aspect-ratio: 1678 / 937;
     object-fit: contain;
     object-position: left center;
 }
@@ -1165,8 +1169,8 @@ textarea {
 
     body[data-sidebar-collapsed="true"] .sidebar-logo {
         width: auto;
-        max-width: 158px;
-        height: 40px;
+        max-width: min(168px, 100%);
+        height: auto;
     }
 
     body[data-sidebar-collapsed="true"] .sidebar-link {

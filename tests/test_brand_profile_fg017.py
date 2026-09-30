@@ -369,8 +369,9 @@ def test_settings_nav_enabled_header_settings_unchanged(client):
     assert b'aria-label="Settings"' not in home.data
     assert b"Settings (coming soon)" not in home.data
     assert b"Search (coming soon)" in home.data
-    assert b"/static/branding/brayman-construction-logo.png" in home.data
     assert b'sidebar-logo' in home.data
+    assert b"/static/branding/calibraytai-logo-office.png" in home.data
+    assert b"/static/branding/brayman-construction-logo.png" in home.data
 
 
 def test_draft_and_ready_use_current_brand_not_template(client, app):

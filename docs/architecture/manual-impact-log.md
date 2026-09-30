@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PLAT-LOGO-01 (2026-09-30)
+
+| Field | Content |
+|-------|---------|
+| Slice | PLAT-LOGO-01. Approved office logo. |
+| Product status at capture | Development freeze ACTIVE. Platform stabilization CLOSED. This logo CLOSED in git and not yet on the live office. |
+| 1. What new contractor capability exists? | The office sidebar shows the approved dark CalibraytAI mark. |
+| 2. When would the contractor use it? | Whenever the office sidebar is open, including Home, Projects, Clients, and What we pay. |
+| 3. What workflow will the final Manual need to teach? | None. The mark identifies the office. It does not change a task. |
+| 4. What contractor-facing terms must be used? | CalibraytAI. The company name under the mark stays the company name. |
+| 5. What screenshots / Print examples will eventually be needed? | Office sidebar on a desktop and on a phone, after this commit is the live office. Not captured here. |
+| 6. What warnings / validation distinctions need explanation? | None. Customer documents still use Brand Profile. |
+| 7. Desktop / iPhone / Print relevance | Desktop office and the phone-width office drawer. Not Print. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — PLAT-UX-01 (2026-09-30)
 
 | Field | Content |

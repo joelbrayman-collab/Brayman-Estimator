@@ -1,0 +1,31 @@
+{
+  "fixture_role": "A different supplied stair. It proves the profile is not fixed to one flight.",
+  "drawing_type": "stair_detail",
+  "measurement_system": "metric",
+  "paper": {"width": 420, "height": 297, "unit": "mm"},
+  "scale": {"statement": "1:5", "unit": "m"},
+  "origin": "bottom of flight",
+  "title": "Alternate stair profile",
+  "stair_geometry": {
+    "unit": "m",
+    "total_rise": 0.63,
+    "total_run": 0.56,
+    "rise": 0.21,
+    "going": 0.28,
+    "riser_count": 3,
+    "tread_count": 2,
+    "angle_degrees": 48.3664606634298,
+    "profile": [
+      {"x": 0, "y": 0},
+      {"x": 0, "y": 0.21},
+      {"x": 0.28, "y": 0.21},
+      {"x": 0.28, "y": 0.42},
+      {"x": 0.56, "y": 0.42},
+      {"x": 0.56, "y": 0.63}
+    ],
+    "stringer": [
+      {"x": 0, "y": 0},
+      {"x": 0.56, "y": 0.63}
+    ]
+  }
+}

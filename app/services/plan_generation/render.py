@@ -16,6 +16,7 @@ from typing import Any, Mapping, Optional, Sequence
 from reportlab.pdfgen import canvas
 
 from app.services.plan_generation.validation import (
+    DRAWING_TYPE_STAIR_DETAIL,
     ENGINE_VERSION,
     RESOLUTION_CORRECT_GEOMETRY,
     RESOLUTION_SUPPLY_REQUEST_FIELD,
@@ -23,6 +24,7 @@ from app.services.plan_generation.validation import (
 )
 
 RENDERER_VERSION = "pge-2"
+STAIR_RENDERER_VERSION = "pge-3"
 DISCLAIMER = "Not a permit. Not a seal."
 
 CODE_SCALE_STATEMENT_NOT_DRAWABLE = "SCALE_STATEMENT_NOT_DRAWABLE"
@@ -30,6 +32,7 @@ CODE_GEOMETRY_DOES_NOT_FIT_SHEET = "GEOMETRY_DOES_NOT_FIT_SHEET"
 
 _MARGIN = 16.0
 _TITLE_BAND = 58.0
+_STAIR_NOTE_BAND = 132.0
 _FRACTIONAL_INCH_SCALE = re.compile(
     r"^\s*(\d+)\s*/\s*(\d+)\s*in\s*=\s*(\d+(?:\.\d+)?)\s*ft(?:-|\s|$)",
     re.IGNORECASE,
@@ -71,8 +74,13 @@ class PlanRenderResult:
         }
 
 
+def render_plan_generation(request: Any) -> PlanRenderResult:
+    """Render a validated drawing request. Invalid requests produce no PDF."""
+    return render_dimensioned_plan(request)
+
+
 def render_dimensioned_plan(request: Any) -> PlanRenderResult:
-    """Render only after PGE-1 accepts the request. Invalid requests produce no PDF."""
+    """Render only after validation accepts the request. Invalid requests produce no PDF."""
     validation = validate_plan_generation_request(request)
     if not validation.valid or validation.accepted is None:
         return PlanRenderResult(
@@ -85,6 +93,8 @@ def render_dimensioned_plan(request: Any) -> PlanRenderResult:
 
 
 def _render_accepted(accepted: Mapping, fingerprint: Optional[str]) -> PlanRenderResult:
+    if accepted["drawing_type"] == DRAWING_TYPE_STAIR_DETAIL:
+        return _render_stair(accepted, fingerprint)
     points_per_unit = _points_per_world_unit(accepted["scale"])
     if points_per_unit is None:
         return _failed(
@@ -363,6 +373,208 @@ def _manifest(accepted, fingerprint, pdf_bytes, points_per_unit) -> dict:
         "disclaimer": DISCLAIMER,
         "pdf_sha256": _sha256(pdf_bytes),
     }
+
+
+def _render_stair(accepted: Mapping, fingerprint: Optional[str]) -> PlanRenderResult:
+    points_per_unit = _points_per_world_unit(accepted["scale"])
+    if points_per_unit is None:
+        return _failed(
+            PlanRenderIssue(
+                CODE_SCALE_STATEMENT_NOT_DRAWABLE,
+                "The scale statement cannot be drawn as a length on this sheet.",
+                RESOLUTION_SUPPLY_REQUEST_FIELD,
+                "scale",
+            )
+        )
+    geometry = accepted["stair_geometry"]
+    world_points = _stair_world_points(geometry)
+    bounds = _point_bounds(world_points)
+    page_width, page_height = _page_points(accepted["paper"])
+    world_width = max(bounds[2] - bounds[0], 1e-6)
+    world_height = max(bounds[3] - bounds[1], 1e-6)
+    drawn_width = world_width * points_per_unit
+    drawn_height = world_height * points_per_unit
+    draw_left = _MARGIN
+    draw_bottom = _MARGIN + _TITLE_BAND
+    draw_right = page_width - _MARGIN
+    draw_top = page_height - _MARGIN - _STAIR_NOTE_BAND
+    if drawn_width > draw_right - draw_left or drawn_height > draw_top - draw_bottom:
+        return _failed(
+            PlanRenderIssue(
+                CODE_GEOMETRY_DOES_NOT_FIT_SHEET,
+                "The members do not fit this sheet at the stated scale.",
+                RESOLUTION_CORRECT_GEOMETRY,
+                "paper",
+            )
+        )
+    offset_x = draw_left + ((draw_right - draw_left) - drawn_width) / 2.0
+    offset_y = draw_bottom + ((draw_top - draw_bottom) - drawn_height) / 2.0
+
+    def place(x: float, y: float) -> tuple:
+        return (
+            offset_x + (x - bounds[0]) * points_per_unit,
+            offset_y + (y - bounds[1]) * points_per_unit,
+        )
+
+    buffer = BytesIO()
+    sheet = canvas.Canvas(
+        buffer,
+        pagesize=(page_width, page_height),
+        invariant=1,
+        pageCompression=0,
+    )
+    sheet.setTitle(accepted["title"])
+    sheet.setAuthor("")
+    _draw_stair_sheet(sheet, accepted, place, page_width, page_height)
+    sheet.showPage()
+    sheet.save()
+    pdf_bytes = buffer.getvalue()
+    manifest = _stair_manifest(accepted, fingerprint, pdf_bytes, points_per_unit, place)
+    return PlanRenderResult(
+        rendered=True,
+        pdf_bytes=pdf_bytes,
+        manifest=manifest,
+        issues=(),
+    )
+
+
+def _stair_world_points(geometry: Mapping) -> list:
+    points = [(point["x"], point["y"]) for point in geometry["profile"]]
+    points.extend((point["x"], point["y"]) for point in geometry["stringer"])
+    throat = geometry["throat"]
+    if throat is not None and "segment" in throat:
+        segment = throat["segment"]
+        points.append((segment["x1"], segment["y1"]))
+        points.append((segment["x2"], segment["y2"]))
+    return points
+
+
+def _point_bounds(points: Sequence[tuple]) -> tuple:
+    xs = [point[0] for point in points]
+    ys = [point[1] for point in points]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def _draw_stair_sheet(sheet, accepted, place, page_width, page_height) -> None:
+    geometry = accepted["stair_geometry"]
+    sheet.setStrokeColorRGB(0, 0, 0)
+    sheet.setFillColorRGB(0, 0, 0)
+    sheet.setLineWidth(1)
+    sheet.rect(_MARGIN / 2, _MARGIN / 2, page_width - _MARGIN, page_height - _MARGIN, stroke=1, fill=0)
+    _draw_stair_notes(sheet, geometry, page_height)
+    sheet.setLineWidth(1.35)
+    _draw_polyline(sheet, geometry["stringer"], place)
+    end_x, end_y = place(geometry["stringer"][-1]["x"], geometry["stringer"][-1]["y"])
+    sheet.setFont("Times-Roman", 8)
+    sheet.drawString(end_x + 6, end_y + 4, "stringer")
+    sheet.setLineWidth(1)
+    _draw_polyline(sheet, geometry["profile"], place)
+    throat = geometry["throat"]
+    if throat is not None and "segment" in throat:
+        segment = throat["segment"]
+        x1, y1 = place(segment["x1"], segment["y1"])
+        x2, y2 = place(segment["x2"], segment["y2"])
+        sheet.saveState()
+        sheet.setDash(2, 2)
+        sheet.line(x1, y1, x2, y2)
+        sheet.restoreState()
+        sheet.setFont("Times-Roman", 7)
+        sheet.drawString(min(x1, x2), min(y1, y2) - 10, "throat")
+    origin_x, origin_y = place(0.0, 0.0)
+    if _MARGIN < origin_x < page_width - _MARGIN and _MARGIN + _TITLE_BAND < origin_y < page_height - _MARGIN:
+        sheet.setLineWidth(0.6)
+        sheet.line(origin_x - 6, origin_y, origin_x + 6, origin_y)
+        sheet.line(origin_x, origin_y - 6, origin_x, origin_y + 6)
+        sheet.setFont("Times-Italic", 8)
+        sheet.drawString(origin_x + 10, origin_y - 14, accepted["origin"])
+    _draw_title_block(sheet, accepted, page_width)
+
+
+def _draw_polyline(sheet, points, place) -> None:
+    path = sheet.beginPath()
+    first_x, first_y = place(points[0]["x"], points[0]["y"])
+    path.moveTo(first_x, first_y)
+    for point in points[1:]:
+        x, y = place(point["x"], point["y"])
+        path.lineTo(x, y)
+    sheet.drawPath(path, stroke=1, fill=0)
+
+
+def _draw_stair_notes(sheet, geometry, page_height) -> None:
+    unit = geometry["unit"]
+    rows = [
+        f"Total rise {_format_supplied_length(geometry['total_rise'], unit)}",
+        f"Total run {_format_supplied_length(geometry['total_run'], unit)}",
+        f"Risers {geometry['riser_count']}",
+        f"Treads {geometry['tread_count']}",
+        f"Rise {_format_supplied_length(geometry['rise'], unit)}",
+        f"Going {_format_supplied_length(geometry['going'], unit)}",
+        f"Angle {_format_angle(geometry['angle_degrees'])}",
+    ]
+    if geometry["throat"] is not None:
+        throat = geometry["throat"]
+        rows.append(f"Throat {_format_supplied_length(throat['value'], throat['unit'])}")
+    if geometry["nosing"] is not None:
+        nosing = geometry["nosing"]
+        rows.append(f"Nosing {_format_supplied_length(nosing['value'], nosing['unit'])}")
+    sheet.setFont("Times-Roman", 8)
+    cursor = page_height - 28
+    for row in rows:
+        sheet.drawString(24, cursor, row)
+        cursor -= 11
+
+
+def _format_supplied_length(length: float, unit: str) -> str:
+    text = f"{length:.6f}".rstrip("0").rstrip(".")
+    return f"{text} {unit}"
+
+
+def _format_angle(angle: float) -> str:
+    return f"{angle:.2f} deg"
+
+
+def _stair_manifest(accepted, fingerprint, pdf_bytes, points_per_unit, place) -> dict:
+    geometry = accepted["stair_geometry"]
+    provenance = geometry["provenance"]
+    digest = fingerprint or ""
+    throat = geometry["throat"]
+    return {
+        "drawing_type": accepted["drawing_type"],
+        "engine_version": STAIR_RENDERER_VERSION,
+        "validation_engine_version": ENGINE_VERSION,
+        "request_fingerprint": fingerprint,
+        "sheet_id": f"stair-detail-{digest[:12]}",
+        "paper": dict(accepted["paper"]),
+        "scale": dict(accepted["scale"]),
+        "points_per_world_unit": points_per_unit,
+        "measurement_system": accepted["measurement_system"],
+        "title": accepted["title"],
+        "origin": accepted["origin"],
+        "disclaimer": DISCLAIMER,
+        "page_count": 1,
+        "pdf_sha256": _sha256(pdf_bytes),
+        "uncertainty_flags": list(accepted["uncertainty_flags"]),
+        "total_rise": geometry["total_rise"],
+        "total_run": geometry["total_run"],
+        "rise": geometry["rise"],
+        "going": geometry["going"],
+        "riser_count": geometry["riser_count"],
+        "tread_count": geometry["tread_count"],
+        "angle_degrees": geometry["angle_degrees"],
+        "throat": None if throat is None else dict(throat),
+        "nosing": None if geometry["nosing"] is None else dict(geometry["nosing"]),
+        "calculation_provenance": None if provenance is None else dict(provenance),
+        "calculation_fingerprint": None
+        if provenance is None
+        else provenance["calculation_fingerprint"],
+        "placed_profile": [_placed(place, point) for point in geometry["profile"]],
+        "placed_stringer": [_placed(place, point) for point in geometry["stringer"]],
+    }
+
+
+def _placed(place, point) -> list:
+    x, y = place(point["x"], point["y"])
+    return [x, y]
 
 
 def _sha256(payload: bytes) -> str:

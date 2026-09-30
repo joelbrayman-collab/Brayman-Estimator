@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — PGE-3 stair detail profile
+
+| Field | Content |
+|-------|---------|
+| Milestone | PGE-3 stair detail profile |
+| Status | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** |
+| Branch | `main` |
+| Base commit | `d9d8540b3440abc6ef6319df5737ba2b0677571d` |
+| Objective | Draw a supplied stair result without calculating it and without storing it on a project. |
+| Deliverables | Stair validation and rendering in `app/services/plan_generation/`. `tests/test_plan_generation_stair.py`. Two stair fixtures. |
+| Validation | Focused tests 36 passed, 3 warnings, 0.73s, exit 0. Full suite 1891 passed, 6603 warnings, 858.45s, exit 0. No migration. |
+| Architectural findings | The renderer places supplied profile and stringer points. Throat text is absent unless the result includes it. Contract V1 was not extended. |
+| Open decisions | PGE-4 candidate storage is not authorized by this milestone. |
+| Next milestone | PGE-4, when a later prompt authorizes it, including a separate migration approval. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — PGE-2 dimensioned plan render
 
 | Field | Content |

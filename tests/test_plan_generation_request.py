@@ -36,7 +36,8 @@ FORBIDDEN_SOURCE = (
     "ALLOW_DBL_2X10",
     "ALLOW_DBL_2X6",
     "capability_test_plan",
-    "stair_detail",
+    "stair_detail.py",
+    "stair_detail_r2",
     "reportlab",
     "PlanDocument",
     "10.5",
@@ -102,7 +103,7 @@ def test_missing_geometry_code():
 
 def test_unsupported_drawing_type():
     payload = _base()
-    payload["drawing_type"] = "stair_detail"
+    payload["drawing_type"] = "elevation"
     result = validate_plan_generation_request(payload)
     assert _codes(result) == [CODE_UNSUPPORTED_DRAWING_TYPE]
     assert result.issues[0].resolution_kind == RESOLUTION_EXISTING_PLAN_UPLOAD

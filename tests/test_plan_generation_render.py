@@ -26,11 +26,14 @@ FORBIDDEN_SOURCE = (
     "ALLOW_DBL_2X10",
     "ALLOW_DBL_2X6",
     "capability_test_plan",
-    "stair_detail",
+    "stair_detail.py",
+    "stair_detail_r2",
     "Linda",
     "Bushel",
     "10.5",
-    "stringer",
+    "StairDiagram",
+    "stairs.mjs",
+    "calculation_result_contract",
     "PlanDocument",
 )
 
@@ -130,7 +133,7 @@ def test_same_request_is_byte_stable():
 
 def test_unsupported_type_produces_no_pdf():
     payload = _load("rectangle_platform.json")
-    payload["drawing_type"] = "stair_detail"
+    payload["drawing_type"] = "elevation"
     result = render_dimensioned_plan(payload)
     assert result.rendered is False
     assert result.pdf_bytes is None

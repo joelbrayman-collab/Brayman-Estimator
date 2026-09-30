@@ -1,0 +1,53 @@
+{
+  "fixture_role": "Recorded stair agreement used as supplied drawing input. Not a calculation and not a project.",
+  "drawing_type": "stair_detail",
+  "measurement_system": "imperial",
+  "paper": {"width": 17, "height": 11, "unit": "in"},
+  "scale": {"statement": "1:8", "unit": "in"},
+  "origin": "bottom of flight",
+  "title": "Recorded stair profile",
+  "stair_geometry": {
+    "unit": "in",
+    "total_rise": 38,
+    "total_run": 44,
+    "rise": 7.6,
+    "going": 11,
+    "riser_count": 5,
+    "tread_count": 4,
+    "angle_degrees": 40.81508387488159,
+    "profile": [
+      {"x": 0, "y": 0},
+      {"x": 0, "y": 7.6},
+      {"x": 11, "y": 7.6},
+      {"x": 11, "y": 15.2},
+      {"x": 22, "y": 15.2},
+      {"x": 22, "y": 22.8},
+      {"x": 33, "y": 22.8},
+      {"x": 33, "y": 30.4},
+      {"x": 44, "y": 30.4},
+      {"x": 44, "y": 38}
+    ],
+    "stringer": [
+      {"x": 0, "y": 0},
+      {"x": 44, "y": 38}
+    ],
+    "throat": {
+      "value": 4.997,
+      "unit": "in",
+      "segment": {"x1": 0, "y1": -6, "x2": 4.997, "y2": -6}
+    },
+    "nosing": {"value": 0.75, "unit": "in"},
+    "provenance": {
+      "result_id": "fixture-recorded-stair",
+      "engine_id": "stair",
+      "engine_version": "external-result"
+    }
+  },
+  "uncertainty_flags": ["STRUCTURAL_VERIFICATION_REQUIRED"],
+  "assumptions": [
+    {
+      "code": "supplied-result",
+      "note": "Rise and run are supplied. This sheet does not calculate them."
+    }
+  ]
+}

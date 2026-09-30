@@ -15,7 +15,10 @@ from typing import Any, Mapping, Optional, Sequence
 ENGINE_VERSION = "pge-1"
 
 DRAWING_TYPE_DIMENSIONED_PLAN = "dimensioned_plan"
-SUPPORTED_DRAWING_TYPES = frozenset({DRAWING_TYPE_DIMENSIONED_PLAN})
+DRAWING_TYPE_STAIR_DETAIL = "stair_detail"
+SUPPORTED_DRAWING_TYPES = frozenset(
+    {DRAWING_TYPE_DIMENSIONED_PLAN, DRAWING_TYPE_STAIR_DETAIL}
+)
 
 CODE_UNSUPPORTED_DRAWING_TYPE = "UNSUPPORTED_DRAWING_TYPE"
 CODE_MISSING_MEASUREMENT_SYSTEM = "MISSING_MEASUREMENT_SYSTEM"
@@ -24,6 +27,7 @@ CODE_MISSING_SCALE = "MISSING_SCALE"
 CODE_MISSING_ORIGIN = "MISSING_ORIGIN"
 CODE_MISSING_TITLE = "MISSING_TITLE"
 CODE_MISSING_GEOMETRY = "MISSING_GEOMETRY"
+CODE_MISSING_STAIR_GEOMETRY = "MISSING_STAIR_GEOMETRY"
 CODE_MEMBER_IN_EXCLUSION = "MEMBER_IN_EXCLUSION"
 CODE_INVALID_EXCLUSION = "INVALID_EXCLUSION"
 CODE_INVALID_REQUEST = "INVALID_REQUEST"
@@ -102,6 +106,9 @@ def validate_plan_generation_request(request: Any) -> PlanGenerationValidation:
                 ),
             ),
         )
+
+    if drawing_type == DRAWING_TYPE_STAIR_DETAIL:
+        return _validate_stair_detail(request)
 
     issues = []
     measurement_system = request.get("measurement_system")
@@ -200,6 +207,293 @@ def validate_plan_generation_request(request: Any) -> PlanGenerationValidation:
         accepted=accepted,
         request_fingerprint=_fingerprint(accepted),
     )
+
+
+def _validate_stair_detail(request: Mapping) -> PlanGenerationValidation:
+    """Accept a supplied stair result. This does not calculate a stair."""
+    issues = []
+    measurement_system = request.get("measurement_system")
+    if measurement_system not in _MEASUREMENT_SYSTEMS:
+        issues.append(
+            PlanGenerationIssue(
+                CODE_MISSING_MEASUREMENT_SYSTEM,
+                "Choose imperial or metric.",
+                RESOLUTION_SUPPLY_REQUEST_FIELD,
+                "measurement_system",
+            )
+        )
+
+    paper = _paper(request.get("paper"))
+    if paper is None:
+        issues.append(
+            PlanGenerationIssue(
+                CODE_MISSING_PAPER,
+                "Choose the sheet size.",
+                RESOLUTION_SUPPLY_REQUEST_FIELD,
+                "paper",
+            )
+        )
+
+    scale = _scale(request.get("scale"))
+    if scale is None:
+        issues.append(
+            PlanGenerationIssue(
+                CODE_MISSING_SCALE,
+                "State the scale.",
+                RESOLUTION_SUPPLY_REQUEST_FIELD,
+                "scale",
+            )
+        )
+
+    origin = _plain_text(request.get("origin"))
+    if origin is None:
+        issues.append(
+            PlanGenerationIssue(
+                CODE_MISSING_ORIGIN,
+                "Name the origin.",
+                RESOLUTION_SUPPLY_REQUEST_FIELD,
+                "origin",
+            )
+        )
+
+    title = _plain_text(request.get("title"))
+    if title is None:
+        issues.append(
+            PlanGenerationIssue(
+                CODE_MISSING_TITLE,
+                "Name the sheet.",
+                RESOLUTION_SUPPLY_REQUEST_FIELD,
+                "title",
+            )
+        )
+
+    geometry, geometry_issue = _stair_geometry(
+        request.get("stair_geometry"),
+        None if scale is None else scale["unit"],
+    )
+    if geometry_issue is not None:
+        issues.append(geometry_issue)
+
+    assumptions, assumption_issue = _assumptions(request.get("assumptions", []))
+    if assumption_issue is not None:
+        issues.append(assumption_issue)
+
+    flags, flag_issue = _flags(request.get("uncertainty_flags", []))
+    if flag_issue is not None:
+        issues.append(flag_issue)
+
+    if (
+        issues
+        or geometry is None
+        or paper is None
+        or scale is None
+        or origin is None
+        or title is None
+        or measurement_system not in _MEASUREMENT_SYSTEMS
+        or assumptions is None
+        or flags is None
+    ):
+        return _invalid(DRAWING_TYPE_STAIR_DETAIL, tuple(issues))
+
+    accepted = {
+        "drawing_type": DRAWING_TYPE_STAIR_DETAIL,
+        "measurement_system": measurement_system,
+        "paper": paper,
+        "scale": scale,
+        "origin": origin,
+        "title": title,
+        "stair_geometry": geometry,
+        "assumptions": assumptions,
+        "uncertainty_flags": flags,
+    }
+    return PlanGenerationValidation(
+        valid=True,
+        engine_version=ENGINE_VERSION,
+        drawing_type=DRAWING_TYPE_STAIR_DETAIL,
+        issues=(),
+        accepted=accepted,
+        request_fingerprint=_fingerprint(accepted),
+    )
+
+
+def _stair_geometry(value: Any, scale_unit: Optional[str]):
+    if not isinstance(value, Mapping):
+        return None, PlanGenerationIssue(
+            CODE_MISSING_STAIR_GEOMETRY,
+            "The stair detail needs a stair geometry result.",
+            RESOLUTION_SUPPLY_GEOMETRY,
+            "stair_geometry",
+        )
+    unit = _plain_text(value.get("unit"))
+    total_rise = _positive(value.get("total_rise"))
+    total_run = _positive(value.get("total_run"))
+    rise = _positive(value.get("rise"))
+    going = _positive(value.get("going"))
+    riser_count = _count(value.get("riser_count"))
+    tread_count = _count(value.get("tread_count"))
+    angle = _number(value.get("angle_degrees"))
+    profile = _point_list(value.get("profile"))
+    stringer = _point_list(value.get("stringer"))
+    incomplete = (
+        unit is None
+        or total_rise is None
+        or total_run is None
+        or rise is None
+        or going is None
+        or riser_count is None
+        or tread_count is None
+        or angle is None
+        or profile is None
+        or stringer is None
+    )
+    if incomplete:
+        return None, PlanGenerationIssue(
+            CODE_MISSING_STAIR_GEOMETRY,
+            "The stair detail needs a stair geometry result.",
+            RESOLUTION_SUPPLY_GEOMETRY,
+            "stair_geometry",
+        )
+    if scale_unit is not None and unit != scale_unit:
+        return None, PlanGenerationIssue(
+            CODE_INVALID_REQUEST,
+            "The stair geometry unit must match the sheet scale unit.",
+            RESOLUTION_CORRECT_GEOMETRY,
+            "stair_geometry",
+        )
+    throat, throat_issue = _optional_measure(value, "throat", unit)
+    if throat_issue is not None:
+        return None, throat_issue
+    nosing, nosing_issue = _optional_measure(value, "nosing", unit)
+    if nosing_issue is not None:
+        return None, nosing_issue
+    provenance, provenance_issue = _stair_provenance(value.get("provenance", None))
+    if provenance_issue is not None:
+        return None, provenance_issue
+    return (
+        {
+            "unit": unit,
+            "total_rise": total_rise,
+            "total_run": total_run,
+            "rise": rise,
+            "going": going,
+            "riser_count": riser_count,
+            "tread_count": tread_count,
+            "angle_degrees": angle,
+            "profile": profile,
+            "stringer": stringer,
+            "throat": throat,
+            "nosing": nosing,
+            "provenance": provenance,
+        },
+        None,
+    )
+
+
+def _optional_measure(source: Mapping, key: str, unit: str):
+    if key not in source or source.get(key) is None:
+        return None, None
+    measure = source.get(key)
+    if not isinstance(measure, Mapping):
+        return None, _bad_stair_measure(key)
+    value = _positive(measure.get("value"))
+    measure_unit = _plain_text(measure.get("unit"))
+    if value is None or measure_unit != unit:
+        return None, _bad_stair_measure(key)
+    parsed = {"value": value, "unit": measure_unit}
+    if "segment" in measure and measure.get("segment") is not None:
+        segment = _segment(measure.get("segment"))
+        if segment is None:
+            return None, _bad_stair_measure(key)
+        parsed["segment"] = segment
+    return parsed, None
+
+
+def _bad_stair_measure(key: str) -> PlanGenerationIssue:
+    return PlanGenerationIssue(
+        CODE_MISSING_STAIR_GEOMETRY,
+        "The stair detail needs a stair geometry result.",
+        RESOLUTION_SUPPLY_GEOMETRY,
+        key,
+    )
+
+
+def _segment(value: Any) -> Optional[dict]:
+    if not isinstance(value, Mapping):
+        return None
+    coords = [_number(value.get(key)) for key in ("x1", "y1", "x2", "y2")]
+    if any(item is None for item in coords):
+        return None
+    x1, y1, x2, y2 = coords
+    return {"x1": x1, "y1": y1, "x2": x2, "y2": y2}
+
+
+def _stair_provenance(value: Any):
+    if value is None:
+        return None, None
+    if not isinstance(value, Mapping):
+        return None, PlanGenerationIssue(
+            CODE_INVALID_REQUEST,
+            "Stair result provenance must name the result, the engine, and the engine version.",
+            RESOLUTION_SUPPLY_REQUEST_FIELD,
+            "provenance",
+        )
+    result_id = _plain_text(value.get("result_id"))
+    engine_id = _plain_text(value.get("engine_id"))
+    engine_version = _plain_text(value.get("engine_version"))
+    if result_id is None or engine_id is None or engine_version is None:
+        return None, PlanGenerationIssue(
+            CODE_INVALID_REQUEST,
+            "Stair result provenance must name the result, the engine, and the engine version.",
+            RESOLUTION_SUPPLY_REQUEST_FIELD,
+            "provenance",
+        )
+    provenance = {
+        "result_id": result_id,
+        "engine_id": engine_id,
+        "engine_version": engine_version,
+        "calculation_fingerprint": None,
+    }
+    if "calculation_fingerprint" in value and value.get("calculation_fingerprint") is not None:
+        fingerprint = _plain_text(value.get("calculation_fingerprint"))
+        if fingerprint is None:
+            return None, PlanGenerationIssue(
+                CODE_INVALID_REQUEST,
+                "Stair result provenance must name the result, the engine, and the engine version.",
+                RESOLUTION_SUPPLY_REQUEST_FIELD,
+                "provenance",
+            )
+        provenance["calculation_fingerprint"] = fingerprint
+    return provenance, None
+
+
+def _positive(value: Any) -> Optional[float]:
+    number = _number(value)
+    if number is None or number <= 0:
+        return None
+    return number
+
+
+def _count(value: Any) -> Optional[int]:
+    if isinstance(value, bool) or not isinstance(value, int):
+        return None
+    if value < 1:
+        return None
+    return value
+
+
+def _point_list(value: Any) -> Optional[list]:
+    if not isinstance(value, list) or len(value) < 2:
+        return None
+    points = []
+    for item in value:
+        if not isinstance(item, Mapping):
+            return None
+        x = _number(item.get("x"))
+        y = _number(item.get("y"))
+        if x is None or y is None:
+            return None
+        points.append({"x": x, "y": y})
+    return points
 
 
 def _invalid(drawing_type: Optional[str], issues: Sequence[PlanGenerationIssue]) -> PlanGenerationValidation:

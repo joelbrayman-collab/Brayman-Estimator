@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — PGE-3 stair detail profile
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLAN GENERATION ENGINE PGE-3 — STAIR DETAIL PROFILE 1 OCT 2026 |
+| Objective | Draw a supplied stair result. Do not calculate the stair. |
+| Business decision | The stair sheet is a drawing profile. The stair capability remains the calculation authority. That capability is not in this repository. |
+| Architectural decision | `stair_detail` is accepted only with a supplied profile and stringer. Throat and nosing are printed only when supplied. Contract V1 identity fields are copied when present. `calculation_fingerprint` is not computed here. |
+| Prompt template used | Joel’s 1 Oct 2026 PGE-3 prompt. No file in docs/prompts/ covers this slice. |
+| Approved Cursor prompt summary | Add `stair_detail` beside `dimensioned_plan`. Two stair fixtures. No PlanDocument, route, migration, Website stair code, or Bushel script import. Full suite. One commit. Do not deploy. |
+| Feature Gate | Answered in that prompt. Problem: a supplied stair result could not yet be drawn. User: a later contractor. Owner: `app/services/plan_generation/`. Data owned: none persisted. Data referenced: the supplied stair geometry. May change: validation, the renderer, and tests. Must not change: Contract V1, PlanDocument, SNP, Website, calculators. Acceptance: two flights render and differ, and a missing result produces no PDF. Tests: `tests/test_plan_generation_stair.py`. ADR: no. Migration: no. |
+| Files expected to change | The plan-generation package, stair fixtures, tests, and the central status lines. |
+| Files prohibited from changing | Plan models, migrations, SNP, Website, Contract V1, Bushel scripts. |
+| Implementation result | PGE-3 closed as a slice. The PDF is not project evidence. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_plan_generation_stair.py tests/test_plan_generation_render.py tests/test_plan_generation_request.py` — 36 passed, 3 warnings, 0.73s, exit 0. Full suite `./venv/bin/python -m pytest -q` — 1891 passed, 6603 warnings, 858.45s, exit 0. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Contract V1 still has no stair profile. No project-document integration. No Build Drawings page. PGE-4 not started. |
+| Next approved step | None from this entry. Do not start PGE-4 until a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — PGE-2 dimensioned plan render
 
 | Field | Content |

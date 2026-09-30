@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — PLAT-LOGO-01 live verification
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLAT-LOGO-01 AUTHORIZED DEPLOYMENT + LIVE VERIFICATION 30 SEP 2026 |
+| Objective | Deploy the accepted office-logo commit and verify the live office. |
+| Business decision | Deploy exactly `ca37d8b6939f6494b6ff415bad17953886366728`. Do not redeploy the documentation commit. |
+| Architectural decision | No environment change. No authentication change. No migration. |
+| Prompt template used | Approved Platform Architect prompt in chat. |
+| Approved Cursor prompt summary | Deploy that SHA, verify the live sidebar logo at 1280, 520, and 390, smoke Home, Projects, Clients, What we pay, and Brand Profile, then record it. |
+| Files expected to change | Central records only, after live verification. |
+| Files prohibited from changing | Product code, Website, authentication, migrations. |
+| Implementation result | Deploy `dep-daulf9u0tbcc73bomdgg` live. Finished 2026-09-30T18:41:57Z. Hosted logo SHA-256 matches. |
+| Tests | Live smoke PASS. No new product suite. Prior full suite remains 1828 passed. |
+| Project-state-report update | Yes. |
+| Milestone entry update | Yes. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Hosted database revision NOT RE-PROVED. Hosted password check remains deferred. Freeze remains active. |
+| Next approved step | Stop. Do not start the next feature. |
+| Next approved prompt | None until the Architect names the next gate. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — PLAT-LOGO-01 approved office logo
 
 | Field | Content |

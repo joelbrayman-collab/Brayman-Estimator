@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-30 — Approved office logo live
+
+| Field | Content |
+|-------|---------|
+| Milestone | PLAT-LOGO-01 live verification |
+| Status | **CLOSED / LIVE VERIFIED**. Development freeze **ACTIVE**. |
+| Branch | `main` |
+| Base commit | `ca37d8b6939f6494b6ff415bad17953886366728` |
+| Objective | Deploy that SHA and confirm the live office sidebar. |
+| Deliverables | Render deploy `dep-daulf9u0tbcc73bomdgg`. No product change in this record. |
+| Validation | Live logo PASS at 1280, 520, and 390. Home, Projects, Clients, What we pay, and Brand Profile entry PASS. Synthetic client 2 still opens. What we pay categories still contained. Hosted asset SHA-256 `16d3b5b17e98c4bb2e2fa030677989657d5eb93f3744b74e06015fe1f0e833b8`. Auto-entry still ON. |
+| Architectural findings | No migration. Hosted database revision NOT RE-PROVED. Last recorded `k1f2a3b4c5d6`. |
+| Open decisions | Hosted password check remains a later cutover gate. |
+| Next milestone | Final operational and cutover gates. Not started. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-09-30 |
+
 ### 2026-09-30 — Approved office logo installed
 
 | Field | Content |

@@ -56,7 +56,7 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 | Field | Content |
 |-------|---------|
 | Slice | PLAT-LOGO-01. Approved office logo. |
-| Product status at capture | Development freeze ACTIVE. Platform stabilization CLOSED. This logo CLOSED in git and not yet on the live office. |
+| Product status at capture | Development freeze ACTIVE. Platform stabilization CLOSED. This logo CLOSED in git. Factual correction 30 Sep 2026: it is now live at deploy `dep-daulf9u0tbcc73bomdgg`. |
 | 1. What new contractor capability exists? | The office sidebar shows the approved dark CalibraytAI mark. |
 | 2. When would the contractor use it? | Whenever the office sidebar is open, including Home, Projects, Clients, and What we pay. |
 | 3. What workflow will the final Manual need to teach? | None. The mark identifies the office. It does not change a task. |

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — Final stabilization seal
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI FINAL STABILIZATION SEAL DEVELOPMENT-FREEZE RELEASE + MASTER ROADMAP RESUMPTION DECISION 30 SEP 2026 |
+| Objective | Decide whether controlled development can resume. Do not start it. |
+| Business decision | FINAL STABILIZATION SEAL PASS. Development freeze READY TO LIFT. This seal does not lift it and does not start the next objective. |
+| Architectural decision | Product stability and production cutover are different gates. Hosted password verification, bypass removal, and cutover stay later. They do not block the next planning objective. The next objective remains the Start New Project implementation plan. |
+| Prompt template used | Joel’s 30 Sep 2026 final stabilization seal. No file in docs/prompts/ covers this pass. |
+| Approved Cursor prompt summary | Read the governed sequence. Re-measure the live Platform. Record the freeze decision and the next objective. One documentation commit. Do not deploy. Do not start the plan. |
+| Files expected to change | Session handoff, current occupancy, checklist, roadmap pointer, project-state pointer, milestone history, and this log. |
+| Files prohibited from changing | Application code, Website, authentication, migrations, the wizard. |
+| Implementation result | Seal PASS. Freeze READY TO LIFT. Next objective recorded and not started. |
+| Tests | Not re-run. Definition of Done does not require a new full suite for this documentation decision. Accepted baseline remains 1828 passed, 6548 warnings, 867.97s, exit 0. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Hosted password verification remains deferred. Hosted database revision NOT RE-PROVED. Bypass removal remains a cutover action. |
+| Next approved step | A later prompt may authorize the Start New Project implementation plan. Do not build the wizard. |
+| Next approved prompt | None from this entry. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — PLAT-LOGO-01 live verification
 
 | Field | Content |

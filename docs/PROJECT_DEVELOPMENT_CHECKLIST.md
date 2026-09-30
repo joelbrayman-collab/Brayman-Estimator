@@ -63,7 +63,7 @@ The reusable stair result and the Bushel finished stair agree on total rise 38 i
 
 ## One sequence
 
-Development freeze: **LIFTED FOR CONTROLLED START NEW PROJECT DEVELOPMENT.** SNP-1 is **IMPLEMENTED / TESTED**. SNP-2 is **NOT STARTED**. The wizard is not built. Website stabilization is CLOSED. Platform stabilization is CLOSED and LIVE / VERIFIED. Hosted password verification, bypass removal, and production cutover stay in Later.
+Development freeze: **LIFTED FOR CONTROLLED START NEW PROJECT DEVELOPMENT.** Rule 16 — no dead ends — is recorded. SNP-1 is **CLOSED AS A SLICE**. SNP-2A is **IMPLEMENTED / TESTED**. SNP-2 is **BLOCKED** on the drawings gap. The wizard is not built. Website stabilization is CLOSED. Platform stabilization is CLOSED and LIVE / VERIFIED. Hosted password verification, bypass removal, and production cutover stay in Later.
 
 | Order | Step | Kind | Status |
 |-------|------|------|--------|
@@ -71,7 +71,7 @@ Development freeze: **LIFTED FOR CONTROLLED START NEW PROJECT DEVELOPMENT.** SNP
 | 2 | Website Useful Tools stabilization | Website surface | ✅ CLOSED at Version 31. |
 | 3 | Platform existing-problem stabilization | Closed | ✅ CLOSED and LIVE / VERIFIED. Current deploy `dep-daulf9u0tbcc73bomdgg` at `ca37d8b6939f6494b6ff415bad17953886366728`, finished 2026-09-30T18:41:57Z. PLAT-LOGO-01 CLOSED / LIVE VERIFIED. Prior deploy `dep-daukqvg473hc73bkouug` at `45ab150aa724f4fa50eb7d496f886bd1a5f2e4e0` is superseded. |
 | 4 | Start New Project implementation plan | Product | Plan accepted. SNP-1 **IMPLEMENTED / TESTED**. [architecture/start-project-implementation-plan.md](architecture/start-project-implementation-plan.md). Do not build the wizard from this row. |
-| 5 | Approved Start New Project slices | Product | SNP-2 **NEXT / NOT STARTED**. SNP-3 **NOT STARTED**. |
+| 5 | Approved Start New Project slices | Product | SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **BLOCKED** until drawings can be marked not required. SNP-3 **NOT STARTED**. |
 | 6 | Use the governed engine where the project walk requires it | Product | ⬜ QUEUED. No second formula. |
 | 7 | Plan Generation | Product | ⬜ QUEUED. Only when drawings are required and absent. Governed engine → governed geometry → drawing → quantity evidence. [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). |
 | 8 | Estimating consumes the governed result | Product | ⬜ QUEUED. The mapper exists. A confirmed Our-crew package does not yet call an engine. |

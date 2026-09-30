@@ -39,6 +39,7 @@ from app.services.project_punch_list import (
     hub_punch_list_template_vars,
     list_open_punch_list_items,
 )
+from app.services.project_client import ProjectClientError, correct_project_client
 from app.services.permit_foundation import (
     PermitFoundationError,
     establish_project_location_and_profile,
@@ -341,6 +342,41 @@ def edit_commercial_context(id):
         project=project,
         current_context=current_context,
         **options,
+    )
+
+
+@projects_bp.route("/<int:id>/client", methods=["GET", "POST"])
+def correct_project_client_page(id):
+    org_id = get_current_organization_id()
+    project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
+    clients = (
+        Client.query.filter_by(organization_id=org_id)
+        .order_by(Client.name.asc())
+        .all()
+    )
+    client_in_company = any(row.id == project.client_id for row in clients)
+    if request.method == "POST":
+        try:
+            correct_project_client(
+                organization_id=org_id,
+                project_id=project.id,
+                client_id=request.form.get("client_id", type=int),
+            )
+        except ProjectClientError as exc:
+            flash(str(exc), "error")
+            return render_template(
+                "projects/correct_client.html",
+                project=project,
+                clients=clients,
+                client_in_company=client_in_company,
+            ), 400
+        flash("This project now uses the selected client.", "success")
+        return redirect(url_for("projects.view_project", id=project.id))
+    return render_template(
+        "projects/correct_client.html",
+        project=project,
+        clients=clients,
+        client_in_company=client_in_company,
     )
 
 

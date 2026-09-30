@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — Rule 16 and SNP-2A project client correction
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI START NEW PROJECT RULE 16 — NO DEAD ENDS SNP-2A — PROJECT CLIENT RELATIONSHIP CORRECTION 30 SEP 2026 |
+| Objective | Record Rule 16 and let an existing project change which client it uses. |
+| Business decision | A resolver state with no way to resolve it is a dead end. SNP-2 stays blocked while drawings cannot be marked not required. |
+| Architectural decision | `correct_project_client` changes only `Project.client_id`, and only to a client in the same organization. Proposal `client_name` stays the stored snapshot. |
+| Prompt template used | Joel’s 30 Sep 2026 Rule 16 / SNP-2A prompt. No file in docs/prompts/ covers this slice. |
+| Approved Cursor prompt summary | Record Rule 16. Audit every SNP-1 destination. Implement the project-client correction. Do not build SNP-2, a cursor, or Plan Generation. One commit. Do not deploy. |
+| Feature Gate | Answered in that prompt. Problem: PROJECT_CLIENT had no correction path. User: contractor. Owner: Projects. Data owned: the project’s client reference only. Data referenced: Client. May change: `Project.client_id`. Must not change: client details, proposal snapshots, pricing, Contract V1. Acceptance: SNP-1 leaves PROJECT_CLIENT after correction. Tests: `tests/test_project_client_relationship.py`. Docs: this entry and the plan. ADR: no. Migration: no. |
+| Files expected to change | The client service, the project route and page, the project detail link, the tests, and the central records. |
+| Files prohibited from changing | Resolver rules, migrations, Website, Contract V1, authentication. |
+| Implementation result | Correction page implemented. DRAWINGS remains a Rule 16 gap. SNP-2 not started. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_project_client_relationship.py tests/test_start_project_walk.py tests/test_projects_visual.py tests/test_project_work_packages.py` — 45 passed, 100 warnings, 20.13s, exit 0. Full suite `./venv/bin/python -m pytest -q` — 1855 passed, 6600 warnings, 1056.09s, exit 0. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | DRAWINGS cannot record “not required.” That is SNP-3. SNP-2 stays blocked. |
+| Next approved step | None from this entry. Do not start SNP-2 or SNP-3 until a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — SNP-1 read-only project walk resolver
 
 | Field | Content |

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Correct client | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Correct client{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">{{ project.name }}</p>
+        <h1>Who is the client?</h1>
+        <p class="muted-copy">Choose a client from this company. This project keeps the same project record. The client’s own details stay on the client.</p>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
+    </div>
+</div>
+
+<section class="form-panel" style="margin-bottom: 16px;">
+    {% if client_in_company %}
+    <p>This project currently uses <strong>{{ project.client.name }}</strong>.</p>
+    {% else %}
+    <p>The client on this project is not in this company. Choose a client from this company.</p>
+    {% endif %}
+</section>
+
+{% if clients %}
+<form method="post" class="form-panel" action="{{ url_for('projects.correct_project_client_page', id=project.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>
+        Client
+        <select name="client_id" required>
+            <option value="">Choose</option>
+            {% for row in clients %}
+            <option value="{{ row.id }}" {% if project.client_id == row.id %}selected{% endif %}>{{ row.name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <p style="margin-top: 16px;">
+        <button type="submit">Save client</button>
+    </p>
+</form>
+{% else %}
+<section class="form-panel">
+    <p>This company has no clients yet.</p>
+    <p><a href="{{ url_for('clients.create_client') }}">Add a client</a></p>
+</section>
+{% endif %}
+{% endblock %}

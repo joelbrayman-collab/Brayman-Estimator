@@ -11,7 +11,7 @@
 
 Represent construction projects tied to clients; host estimating work; begin project controls (change orders). Long-term home for budgets, scheduling, purchasing, and job cost—**only when Feature-Gated**.
 
-Start New Project SNP-1 is orchestration only. `app/services/start_project_walk.py` reads Project, Client, location, confirmed scope, non-archived plans, and estimates. It owns none of those records and writes none. The wizard, resume route, and thin cursor are not built.
+Start New Project SNP-1 is orchestration only. `app/services/start_project_walk.py` reads Project, Client, location, confirmed scope, non-archived plans, and estimates. It owns none of those records and writes none. SNP-2A lets an existing project change `Project.client_id` to another client in the same company at `/projects/<id>/client`. Client details stay on the Client. Proposal `client_name` stays the stored snapshot. The wizard, resume route, and thin cursor are not built.
 
 ## Responsibilities (current)
 

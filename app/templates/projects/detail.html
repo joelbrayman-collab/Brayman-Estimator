@@ -42,7 +42,7 @@
     <div class="form-grid">
         <div><p class="eyebrow">Project stage</p><p><span class="status">{{ project.status }}</span></p></div>
         <div><p class="eyebrow">Address</p><p>{{ project.address or "—" }}</p></div>
-        <div><p class="eyebrow">Client</p><p>{{ project.client.name }}</p></div>
+        <div><p class="eyebrow">Client</p><p>{{ project.client.name }} · <a href="{{ url_for('projects.correct_project_client_page', id=project.id) }}">Correct client</a></p></div>
         <div><p class="eyebrow">Created</p><p>{{ project.created_at.strftime("%Y-%m-%d") }}</p></div>
     </div>
     {% if project.description %}

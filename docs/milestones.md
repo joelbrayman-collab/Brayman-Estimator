@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-30 — Rule 16 and SNP-2A project client correction
+
+| Field | Content |
+|-------|---------|
+| Milestone | Rule 16 and SNP-2A project client correction |
+| Status | **IMPLEMENTED / TESTED.** SNP-2 **BLOCKED**. |
+| Branch | `main` |
+| Base commit | `5d87e2e7ba0231bb40168f639ab5ac05583be7c9` |
+| Objective | Close the project-client dead end and record Rule 16. |
+| Deliverables | `app/services/project_client.py`. `/projects/<id>/client`. Rule 16 audit in the implementation plan. |
+| Validation | Focused project, scope, and resolver tests 45 passed. Full suite 1855 passed, 6600 warnings, 1056.09s, exit 0. Temporary office UAT. No migration. |
+| Architectural findings | `PROJECT_CLIENT` passes after this slice. `DRAWINGS` remains a gap because “not required” cannot be recorded. |
+| Open decisions | SNP-3 is the drawings decision. SNP-2 waits for it. |
+| Next milestone | SNP-3, or an explicit authorization that accepts the drawings gap. Not started. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-09-30 |
+
 ### 2026-09-30 — SNP-1 read-only project walk resolver
 
 | Field | Content |

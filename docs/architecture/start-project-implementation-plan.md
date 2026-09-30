@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IN IMPLEMENTATION.** SNP-1 read-only resolver **IMPLEMENTED / TESTED**. SNP-2 **NOT STARTED**. Wizard **NOT BUILT**. |
+| Status | **IN IMPLEMENTATION.** SNP-1 **CLOSED AS A SLICE**. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **BLOCKED**. Wizard **NOT BUILT**. |
 | Date | 2026-09-30 |
 | Product direction | [start-project-guided-wizard-product-direction.md](start-project-guided-wizard-product-direction.md) |
 | Sequence | [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md) |
@@ -193,7 +193,8 @@ Absence of a plan cannot mean drawings are not required, and it cannot mean they
 | ID | Purpose | Likely change | Reused | New data | Acceptance | Human UAT | Depends on | Stop |
 |----|---------|---------------|--------|----------|------------|-----------|------------|------|
 | SNP-1 | Resolver only | `app/services/start_project_walk.py` and `tests/test_start_project_walk.py` | Project, client, location, packages, plans, estimates | None | **IMPLEMENTED / TESTED.** Given an existing project, the next gap is named and no row is written. No UI. | Not required | None | No schema. No resume route. |
-| SNP-2 | Resume entry | One project link and a read-only next-step page | SNP-1 and existing pages | None | Open an existing project and land on the existing page for the next gap | Contractor can leave and return | SNP-1 | No schema. |
+| SNP-2A | Correct the project’s client | `app/services/project_client.py`, `/projects/<id>/client` | Client and Project | None. Uses `Project.client_id`. | **IMPLEMENTED / TESTED.** Same project id. Same-organization client only. Proposal client name stays a snapshot. | Contractor corrects the client and SNP-1 leaves `PROJECT_CLIENT`. | SNP-1 | No schema. No second client editor. |
+| SNP-2 | Resume entry | One project link and a read-only next-step page | SNP-1 and existing pages | None | **BLOCKED.** `DRAWINGS` has no governed “not required” path. | Contractor can leave and return | Rule 16 pass for every destination, including SNP-3 for drawings | No schema. Do not ship a known dead end. |
 | SNP-3 | Thin cursor | Model, migration file, decision save | SNP-1 | The orchestration row in section 13 | Drawing decision and waiting token round-trip without copying project facts | Contractor can mark drawings not required, or waiting | Separate migration approval | Migration not applied in the plan. |
 | SNP-4 | Scope handoff | Return hint on the existing scope page | `confirm_package` | None | Confirm Our crew or Subcontractor and return to the walk | Scope page still reads as it does today | SNP-2 | No second scope model. Inline edit not included. |
 | SNP-5 | Drawing decision | Uses SNP-3 | Plan upload | Cursor only | Present, not required, and required-missing are distinct | Missing required drawings wait, and do not invent a sheet | SNP-3 | Plan Generation is not called. |
@@ -229,4 +230,22 @@ Stop a slice if it needs a second scope model, a wizard estimate, a copied Websi
 
 ## 21. Recommended first implementation slice
 
-SNP-1 is implemented. The next slice, if a later prompt authorizes it, is SNP-2. SNP-2 is not started. No page, no schema, and no migration were added with SNP-1.
+SNP-1 is closed as a slice. SNP-2A closes the client-relationship dead end. SNP-2 stays blocked until the drawings gap in section 22 is closed. No schema was added.
+
+## 22. Rule 16 — no dead ends
+
+Every workflow state that can be emitted must have a condition a contractor can understand, a governed action that can resolve it, an authoritative page for that action, a correction path, a re-run of the resolver after the authoritative record changes, and a continuation to the next real condition.
+
+Detecting a condition is not enough. Detection without a way to resolve it is a dead end. A workflow must not tell the contractor to go somewhere else without a governed path, skip a required state, or pick an arbitrary default to escape the condition.
+
+| Destination | Condition | Existing surface | Can the contractor resolve it there? | After the record changes | Rule 16 |
+|-------------|---------|------------------|--------------------------------------|--------------------------|---------|
+| `PROJECT_CLIENT` | The project’s client is not in this company. | `GET/POST /projects/<id>/client` | Yes. Choose a client from this company. The same project id remains. | SNP-1 no longer returns `PROJECT_CLIENT`. | **PASS** after SNP-2A. |
+| `LOCATION` | Structured location is missing or incomplete. | `GET/POST /projects/<id>/location/edit` | Yes. Street, municipality, province, and country complete the existing location record. | SNP-1 leaves `LOCATION`. | **PASS** |
+| `DRAWINGS` | No non-archived plan. The resolver cannot tell “not required” from “required and missing.” | `GET /projects/<id>/plans` | Upload can make drawings present. There is no governed way to say drawings are not required. | Upload moves the resolver on. “Not required” cannot be recorded. | **GAP.** SNP-3. Not fixed here. |
+| `SCOPE` | No confirmed package. | `GET/POST /projects/<id>/scope` | Yes. Confirm Our crew or Subcontractor. | SNP-1 leaves `WORK` once a confirmed package exists and earlier gaps are clear. | **PASS** |
+| `ESTIMATE_RESUME` | Earlier gaps are clear and the project has one estimate. | `GET /estimates/<id>` | Yes. The ordinary estimate is the continuation. | The resolver keeps returning that estimate. | **PASS** |
+| `ESTIMATE_AMBIGUOUS` | Earlier gaps are clear and the project has more than one estimate. | Project detail estimates table, `/projects/<id>#hub-price` | Yes. Each estimate is its own link. No estimate is chosen for the contractor. | The resolver stays ambiguous while more than one estimate exists. The contractor continues on the estimate they open. | **PASS** |
+| `ESTIMATE_CREATE` | Earlier gaps are clear and the project has no estimate. | `GET/POST /estimates/new?project_id=<id>` | Yes. Saving creates the ordinary estimate. The form does not create it on open. | One estimate, then `ESTIMATE_RESUME`. | **PASS** |
+
+SNP-2 must not ship while a resolver destination fails this rule. The remaining gap is `DRAWINGS`.

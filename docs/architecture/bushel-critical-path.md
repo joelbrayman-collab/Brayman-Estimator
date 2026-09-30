@@ -8,15 +8,13 @@
 
 ## Order
 
-The sequence and the status marks live in [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md). This file does not keep a second sequence. The case does not gate the Start New Project plan or Website access recovery.
+The sequence and the status marks live in [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md). This file does not keep a second sequence. The case is not the active development gate. Website stabilization is closed. This case does not block it.
 
 ## Stair Engine
 
-**PUBLIC SOURCE NOT READABLE FROM THIS MAC. NOT CLONED HERE. NOT WIRED TO BUSHEL.**
+**NOT CLONED ON THIS MAC. NOT WIRED TO BUSHEL.**
 
-On 29 Sep 2026 a private recovery/review checkout was identified: Site project `appgprj_6ab7f4ce8450819198398ba2cd4b43f4`, exposed source version 6, branch `main`, commit `59e1979e735ec606af341e97e46e112136fbdfa0` (`preserve stair geometry across unit toggles`). That project is not the public Website and it is not Version 27. Do not substitute it, deploy from it, or copy it into this repository.
-
-The public Website project is `appgprj_6a9095543b74819186183f9a522890e5`. The recorded public SHA is `f4b7f2119c603ee20e3b343114c262bfd4c012d4`. The recorded baseline is Version 27. Live `https://calibai.joel-brayman.chatgpt.site/`. That source is not readable from Cursor. Restoring access is a continuity task. It is not permission to rebuild the Website.
+The current public Stair Calculator is Website Version 31, SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`. Calculation PASS. Visual PASS. Pin PRESENT / PASS. The diagram uses the calculated geometry. An earlier same-day publish was Version 27, SHA `f4b7f2119c603ee20e3b343114c262bfd4c012d4`, and at that moment the diagram did not match the slope. That defect is closed. Do not copy the Website tree into this repository.
 
 The recovered file names from the private checkout, not re-verified against the public tree, were `lib/useful-tools/stairs.mjs`, `lib/useful-tools/profiles/ontario-residential-v1.json`, and `components/useful-tools/StairDiagram.tsx`. They are not on this Mac.
 

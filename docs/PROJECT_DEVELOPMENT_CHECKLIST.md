@@ -46,9 +46,9 @@ Consumers. Not roadmaps.
 
 | Capability | Role | Consumers | Status |
 |------------|------|-----------|--------|
-| Employment vs. Entrepreneurship | Public decision support. Stays in the product inventory. Not forced into the private project walk without a real use case. Parked FG-039 is a separate Platform record and is not this public tool. | Public Website | ⬜ QUEUED verification after public source is open. |
-| Concrete Calculator | Construction mathematics. One formula. Not a Website-only engine and not a second Platform formula. | Useful Tool; project workflow; Plan Generation where concrete geometry or quantity is required | ⬜ QUEUED. Verify implemented modes, then reconcile the Useful Tools description. |
-| Stair Calculator | Construction mathematics. One formula. Bushel stair scripts are proving evidence, not another calculator. | Useful Tool; project workflow; Plan Generation; stair detail; take-off | ⬜ QUEUED. Verify the calculation. The diagram is a presentation defect: correct it and pin it after public source is open. |
+| Employment vs. Entrepreneurship | Public decision support. Not forced into the private project walk. Parked FG-039 is a separate Platform record and is not this public tool. | Public Website | ✅ CLOSED at Website Version 31. Quote Win Rate, Seasonality, Slower-Season Approach, and Small Contracting Business are removed. Working Weeks and Winter Protection / Heat remain active. Solo and Owner + Labourer / Helper remain. Helper Wage is an owner estimate. |
+| Concrete Calculator | One public formula: `lib/calculation-engine/concrete-slab.ts`. | Useful Tool; later project workflow and Plan Generation only when authorized | ✅ CLOSED. Public modes are Standard Slab and Thickened Edge. The dormant broad implementation is historical compatibility only. Footings, walls, columns, post holes, curbs, and concrete stairs are not current public capabilities. |
+| Stair Calculator | One formula. Bushel stair scripts are proving evidence, not another calculator. | Useful Tool; later project workflow, Plan Generation, stair detail, and take-off only when authorized | ✅ CLOSED. Calculation PASS. Visual PASS. Pin PRESENT / PASS. The diagram uses the calculated geometry. |
 
 The reusable stair result and the Bushel finished stair agree on total rise 38 in, 5 risers, 7.60 in rise, 4 treads, 11 in going, and 44 in total run. That agreement is evidence. It does not settle Bushel stringer count or throat.
 
@@ -59,37 +59,46 @@ The reusable stair result and the Bushel finished stair agree on total rise 38 i
 | Private Platform office through the recorded V1 build | ✅ COMPLETE / STABLE as far as the register goes. Official V1 remains **65% / 4 of 11**. Secondary **79% / 22 of 28**. Not rescored. |
 | Contract V1 | ✅ COMPLETE / STABLE. **ACCEPTED / PINNED**. Engine owns the mathematics and the structured result. Pricing, margin, and the private estimate stay outside it. |
 | Field Web v1 | ✅ COMPLETE / STABLE as its own closed programme. |
-| Public Website Version 27 | Recorded live at `https://calibai.joel-brayman.chatgpt.site/`. Source commit recorded as `f4b7f2119c603ee20e3b343114c262bfd4c012d4`. Not re-certified here. |
+| Public Website Version 31 | ✅ CLOSED stabilization. Live `https://calibai.joel-brayman.chatgpt.site/`. Project `appgprj_6a9095543b74819186183f9a522890e5`. SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`. Version id `appgprj_6a9095543b74819186183f9a522890e5~appgver_ed1a760941b48191badc6ac0c2d5f347`. Deployment `appgdep_6abd379bbb8081918aae3b170706263b`, SUCCEEDED. Source/live parity PASS. |
 
 ## One sequence
+
+Development freeze: **ACTIVE**. No implementation is current.
 
 | Order | Step | Kind | Status |
 |-------|------|------|--------|
 | 1 | This unified architecture | Governance | Recorded by this checklist. Not an implementation authorization. |
-| 2 | Start New Project implementation plan | Product | 🟡 CURRENT. Map each stage to the existing service. Define the thin resume cursor. Name where a governed engine enters, what the plans already supply, what the contractor must still enter, and whether that cursor needs persisted state. Do not build the wizard. |
-| 3 | Calculator closure on the public surface | Product, after source access | ⬜ QUEUED. Employment input check. Concrete mode check. Stair calculation check, diagram correction, and a durable visual pin. Tests and a live check. |
-| 4 | Approved Start New Project slices | Product | ⬜ QUEUED behind an accepted plan. |
-| 5 | Use the governed engine where the project walk requires it | Product | ⬜ QUEUED. No second formula. |
-| 6 | Plan Generation | Product | ⬜ QUEUED. Only when drawings are required and absent. Governed engine → governed geometry → drawing → quantity evidence. [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). |
-| 7 | Estimating consumes the governed result | Product | ⬜ QUEUED. The mapper exists. A confirmed Our-crew package does not yet call an engine. |
-| 8 | Real-world learning | Product | ⬜ QUEUED. The law below is recorded. The product is not built. |
-| 9 | Field app / PWA | Product | ⬜ QUEUED. Same project state. Not Field Web v1. |
+| 2 | Website Useful Tools stabilization | Website surface | ✅ CLOSED at Version 31. |
+| 3 | Platform existing-problem stabilization | Next phase | Not started. This checklist does not begin it. |
+| 4 | Start New Project implementation plan | Product | ⬜ QUEUED behind the freeze. Map stages, define the thin cursor, and name where a governed engine enters. Do not build it. |
+| 5 | Approved Start New Project slices | Product | ⬜ QUEUED behind an accepted plan. |
+| 6 | Use the governed engine where the project walk requires it | Product | ⬜ QUEUED. No second formula. |
+| 7 | Plan Generation | Product | ⬜ QUEUED. Only when drawings are required and absent. Governed engine → governed geometry → drawing → quantity evidence. [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). |
+| 8 | Estimating consumes the governed result | Product | ⬜ QUEUED. The mapper exists. A confirmed Our-crew package does not yet call an engine. |
+| 9 | Real-world learning | Product | ⬜ QUEUED. The law below is recorded. The product is not built. |
+| 10 | Field app / PWA | Product | ⬜ QUEUED. Same project state. Not Field Web v1. |
 
 Physical placement of a shared engine package is not a step in this sequence. Contract V1 already says the Website and the Platform do not call each other at runtime. A later authorization would have to choose a package. This checklist does not.
 
-## Operational access
+## Website checkpoint
 
-PUBLIC WEBSITE SOURCE CONTINUITY: BLOCKED ON PROJECT ACCESS.
+PUBLIC WEBSITE SOURCE CONTINUITY: RESTORED / VERIFIED.
 
-This is an operational development-access issue. It is not a product roadmap.
+Current public checkpoint: project `appgprj_6a9095543b74819186183f9a522890e5`, SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`, Version 31, version id `appgprj_6a9095543b74819186183f9a522890e5~appgver_ed1a760941b48191badc6ac0c2d5f347`, deployment `appgdep_6abd379bbb8081918aae3b170706263b`, SUCCEEDED, live `https://calibai.joel-brayman.chatgpt.site/`, source/live parity PASS.
 
-Public project `appgprj_6a9095543b74819186183f9a522890e5`. Recorded SHA `f4b7f2119c603ee20e3b343114c262bfd4c012d4`. Recorded baseline Version 27. Live `https://calibai.joel-brayman.chatgpt.site/`.
+Website existing-problem stabilization is **CLOSED**. Employment, Concrete, and Stair are closed. Full Website tests **56/56 PASS**. Production build PASS. Desktop QA PASS. Mobile responsive QA PASS. Known open Website problems inside that stabilization scope: none.
 
-⛔ BLOCKED for Website source edits, Website presentation fixes, and Website deployment. It does not block the Start New Project implementation plan or any other governed capability whose source is already in this repository.
+The Website project remains the source and deploy authority. This repository does not hold that source. Do not copy it here.
 
-The accessible Website conversation is private project `appgprj_6ab7f4ce8450819198398ba2cd4b43f4`, source version 6, including commit `59e1979e735ec606af341e97e46e112136fbdfa0`. That project is not the public Website and it is not Version 27. Do not deploy it and do not copy it here.
+Earlier on 30 Sep 2026 a fresh Website chat missed the public project. That was project selection. The Site was not deleted, and the owning chat still had owner, source, edit, and publish authority. The published baseline at that moment was Version 27, SHA `f4b7f2119c603ee20e3b343114c262bfd4c012d4`, deployment `appgdep_6abc1248f5508191b40fe485302168ef`. Private review project `appgprj_6ab7f4ce8450819198398ba2cd4b43f4`, version 6, SHA `59e1979e735ec606af341e97e46e112136fbdfa0`, was not the public deploy target. The same-day audit then found employment inputs that did not participate, two concrete formula files, a stair diagram that did not follow the calculated slope, and a Website test baseline of 41/43. Version 31 closed that set. Those facts are history. They are not the current Website state.
 
-Restoring that public access may proceed beside step 2. It is not a second current product objective.
+Employment, closed: Quote Win Rate, Seasonality, and Slower-Season Approach removed. Working Weeks remains the annual-work assumption. Winter Protection / Heat remains an operating cost. Solo Business Owner remains. Owner + Labourer / Helper remains. Small Contracting Business was removed. Helper Wage is classified OWNER ESTIMATE. The framing stays neutral decision support. Regression tests cover the inputs that participate.
+
+Concrete, closed: governed authority `lib/calculation-engine/concrete-slab.ts`. Public modes are Standard Slab and Thickened Edge. Contract V1 stays **ACCEPTED / PINNED** and was not changed. The dormant broad implementation is a superseded prototype for historical compatibility only. It is not the public authority.
+
+Stair, closed: calculation PASS, visual PASS, pin PRESENT / PASS. The diagram is drawn from the governed result. The old fixed visual slope is closed. Regression protection covers rise/run, slope, riser and tread counts, stringer alignment, and unit-toggle geometry. Bushel stair scripts remain proving evidence, not a second engine.
+
+Website tests, closed: the development-preview expectation and the catalog animation/scroll expectation were obsolete starter expectations. Full `npm test` is 56/56 PASS. Production build PASS. The final stabilization package changed test and governance expectations and did not change production Website behaviour beyond the closed remediations already recorded.
 
 ## Real-world cases
 

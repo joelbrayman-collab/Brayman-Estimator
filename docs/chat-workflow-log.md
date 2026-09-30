@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — Website Version 31 central record
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI RECONCILE EXISTING WEBSITE DRAFT FORWARD TO FINAL VERSION 31 CENTRAL PRODUCT RECORD SYNCHRONIZATION 30 SEP 2026 |
+| Objective | Record Website Version 31 as the current public checkpoint and close the Useful Tools stabilization gate in the central record. |
+| Business decision | The public Website stabilization programme is closed. The development freeze stays active. Platform stabilization is not started. |
+| Architectural decision | One product, one roadmap. PUBLIC WEBSITE SOURCE CONTINUITY: RESTORED / VERIFIED. Version 31 SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`. Deployment `appgdep_6abd379bbb8081918aae3b170706263b` SUCCEEDED. Employment, Concrete, and Stair CLOSED. Concrete authority remains `lib/calculation-engine/concrete-slab.ts`. Contract V1 unchanged. Bushel is not a second stair engine. |
+| Prompt template used | Joel’s 30 Sep 2026 Version 31 reconciliation from the known dirty draft. No file in docs/prompts/ covers this pass. |
+| Approved Cursor prompt summary | Continue from the six-file draft. Supersede open-defect current claims with Version 31. Preserve the access incident as history. One documentation commit. Push. Do not copy Website source. Do not start Platform stabilization. |
+| Files expected to change | Checklist, session handoff section 0, current-state occupancy and the Website implemented bullet, roadmap pointer, Bushel stair identity, project-state pointer, this log. |
+| Files prohibited from changing | Application code, Website source, calculator code, Contract V1, Bushel geometry, migrations. |
+| Implementation result | Central record synchronized to Version 31. No product change. |
+| Tests | Not re-run in this repository. Recorded Website baseline: 56/56 PASS, production build PASS, desktop QA PASS, mobile responsive QA PASS, source/live parity PASS. |
+| Project-state-report update | Pointer only. PART B remains the 2026-09-20 snapshot. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Platform existing-problem stabilization is not started. Bushel geometry stays unresolved and is not a blocker. |
+| Next approved step | None from this entry. Do not begin Platform existing-problem stabilization. |
+| Next approved prompt | None. |
+| Commit hash | The documentation commit that contains this entry. |
+
+### 2026-09-30 — Website access recovered; Useful Tools closure gate — historical audit, superseded the same day
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI WEBSITE ACCESS RECOVERED — SYNCHRONIZATION FINDINGS 30 SEP 2026 |
+| Objective | Record that public Website access was recovered in the owning chat, and list the live Useful Tools defects as the closure gate. |
+| Business decision | Historical. The fresh Website-chat miss was project selection. The Site was not deleted. Version 27 was the published baseline at that hour. Version 31 superseded it the same day. |
+| Architectural decision | Historical audit. The defects named here were closed at Version 31. They are not the current Website state. |
+| Prompt template used | Joel’s 30 Sep 2026 Website synchronization findings. No file in docs/prompts/ covers this pass. |
+| Approved Cursor prompt summary | Reconcile the owning-chat audit into the checklist. Do not implement. Do not change Platform or Website source. Do not commit in this prompt. |
+| Files expected to change | Checklist, session handoff section 0, current-state occupancy, roadmap pointer, Bushel stair identity, this log. |
+| Files prohibited from changing | Application code, Website source, calculator code, Contract V1, Bushel geometry, migrations. |
+| Implementation result | Closure gate recorded. Findings were not re-run here. |
+| Tests | Not re-run. Website chat recorded production build PASS, calculator suite 38/38, conformance 14/14, Ontario stair profile 4/4, full npm test 41/43. Platform suite not re-run. |
+| Project-state-report update | None. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | None remaining from this audit. Closed the same day at Website Version 31. |
+| Next approved step | Superseded by the Version 31 central-record entry above. |
+| Next approved prompt | None. Do not run the stair-visual prompt from this historical entry. |
+| Commit hash | Included in the Version 31 synchronization commit. Not a separate checkpoint. |
+
 ### 2026-09-30 — Unified master development architecture
 
 | Field | Content |

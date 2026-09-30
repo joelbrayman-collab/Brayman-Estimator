@@ -12,7 +12,7 @@ Distinguish from:
 - [milestones.md](milestones.md) — historical milestone record
 - [current-state.md](current-state.md) — detailed verified product/repo snapshot
 
-Immediate resume is [session-handoff.md](session-handoff.md) section 0. The development sequence is [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md). That checklist is one CalibraytAI roadmap. Website Useful Tools stabilization is closed at Version 31. Platform existing-problem stabilization is CLOSED. The development freeze remains ACTIVE pending stabilized deployment and live verification. Deployment is NOT YET AUTHORIZED. The Linda Bushel case is evidence, not that sequence. PART B below is the 2026-09-20 milestone snapshot. It is not the 30 Sep 2026 git checkpoint or the Alembic occupancy. Current occupancy is the 30 Sep 2026 block in [current-state.md](current-state.md).
+Immediate resume is [session-handoff.md](session-handoff.md) section 0. The development sequence is [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md). That checklist is one CalibraytAI roadmap. Website Useful Tools stabilization is closed at Version 31. Platform existing-problem stabilization is CLOSED. Stabilized deployment `dep-daukqvg473hc73bkouug` is LIVE / VERIFIED at `45ab150aa724f4fa50eb7d496f886bd1a5f2e4e0`. The development freeze remains ACTIVE for final operational and cutover gates. The Linda Bushel case is evidence, not that sequence. PART B below is the 2026-09-20 milestone snapshot. It is not the 30 Sep 2026 git checkpoint or the Alembic occupancy. Current occupancy is the 30 Sep 2026 block in [current-state.md](current-state.md).
 
 ---
 

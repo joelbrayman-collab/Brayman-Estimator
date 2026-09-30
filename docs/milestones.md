@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-30 — Stabilized Platform deployment live
+
+| Field | Content |
+|-------|---------|
+| Milestone | Stabilized Platform deployment |
+| Status | **LIVE / VERIFIED**. Development freeze **ACTIVE — PENDING FINAL OPERATIONAL/CUTOVER GATES**. |
+| Branch | `main` |
+| Base commit | `45ab150aa724f4fa50eb7d496f886bd1a5f2e4e0` |
+| Objective | Deploy that SHA and accept the live office. |
+| Deliverables | Render deploy `dep-daukqvg473hc73bkouug`. No product change in the follow-up record. |
+| Validation | Office smoke PASS. Synthetic client 2 corrected on the same id. Project 2 still shows that client. What we pay contained at 390, 520, and 1280. Seven categories functional. Scope and mapper smoke PASS. Auto-entry still ON. |
+| Architectural findings | Hosted database revision NOT RE-PROVED. No migration was authorized or run. |
+| Open decisions | Later reversible hosted password check. Permanent bypass removal stays a cutover action. |
+| Next milestone | Final operational and cutover gates. Not started. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-09-30 |
+
 ### 2026-09-30 — Platform existing-problem stabilization closed
 
 | Field | Content |

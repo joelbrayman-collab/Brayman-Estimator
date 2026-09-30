@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — Stabilized Platform deployed and live-verified
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI STABILIZED PLATFORM DEPLOYMENT + LIVE ACCEPTANCE 30 SEP 2026 |
+| Objective | Manually deploy the authorized main SHA and complete bounded live acceptance. |
+| Business decision | Deploy `45ab150aa724f4fa50eb7d496f886bd1a5f2e4e0` only. Leave UAT auto-entry on. Do not migrate. Do not lift the freeze. |
+| Architectural decision | Live deploy `dep-daukqvg473hc73bkouug`, status live, finished 2026-09-30T17:58:37Z. Auto-deploy stayed off. Product delta was the client correction and the What we pay containment. Hosted database revision NOT RE-PROVED. |
+| Prompt template used | Joel’s 30 Sep 2026 stabilized deployment prompt. No file in docs/prompts/ covers this pass. |
+| Approved Cursor prompt summary | Deploy the exact SHA, verify office smoke, synthetic client correction, What we pay at 390/520/desktop, Scope and mapper smoke, then record the result. Do not change authentication. |
+| Files expected to change | Session handoff, current occupancy, checklist, roadmap, project-state pointer, milestone history, and this log. |
+| Files prohibited from changing | Application code, tests, migrations, environment variables, Website, authentication. |
+| Implementation result | PLATFORM STABILIZED DEPLOYMENT LIVE / VERIFIED. PLAT-CLIENT-01 live PASS. PLAT-UX-01 live PASS. Scope smoke PASS. Mapper smoke PASS. Parity PASS at the deployed SHA. |
+| Tests | Not re-run. Live acceptance was the hosted office. Accepted suite remains 1827 passed. |
+| Project-state-report update | Pointer only. PART B remains the 2026-09-20 snapshot. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Hosted database revision NOT RE-PROVED. Reversible hosted password check and bypass removal remain later gates. PLAT-LOGO-01 remains blocked. |
+| Next approved step | None from this entry. Do not redeploy this documentation commit. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — Platform stabilization closed; deployment not authorized
 
 | Field | Content |

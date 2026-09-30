@@ -63,7 +63,7 @@ The reusable stair result and the Bushel finished stair agree on total rise 38 i
 
 ## One sequence
 
-Development freeze: **LIFTED FOR CONTROLLED START NEW PROJECT DEVELOPMENT.** The current planning objective is the reusable Plan Generation Engine. It is **PLANNED / NOT IMPLEMENTED**. PGE-1 is the next implementation slice. Rule 16 — no dead ends — is recorded. SNP-1 is **CLOSED AS A SLICE**. SNP-2A is **IMPLEMENTED / TESTED**. SNP-2 is **BLOCKED** on the drawings gap. SNP-3 is **BLOCKED** on that engine. Guided Project Setup is not built. Website stabilization is CLOSED. Platform stabilization is CLOSED and LIVE / VERIFIED. Hosted password verification, bypass removal, and production cutover stay in Later.
+Development freeze: **LIFTED FOR CONTROLLED START NEW PROJECT DEVELOPMENT.** The current objective is Plan Generation Engine productization. PGE-1 is **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. PGE-2 is **NEXT / NOT STARTED**. Rule 16 — no dead ends — is recorded. SNP-1 is **CLOSED AS A SLICE**. SNP-2A is **IMPLEMENTED / TESTED**. SNP-2 is **BLOCKED** on the drawings gap. SNP-3 is **BLOCKED** on a finished drawing capability. Guided Project Setup is recorded and not built. Website stabilization is CLOSED. Platform stabilization is CLOSED and LIVE / VERIFIED. Hosted password verification, bypass removal, and production cutover stay in Later.
 
 | Order | Step | Kind | Status |
 |-------|------|------|--------|
@@ -73,7 +73,7 @@ Development freeze: **LIFTED FOR CONTROLLED START NEW PROJECT DEVELOPMENT.** The
 | 4 | Start New Project — Guided Project Setup | Product | Plan accepted. SNP-1 **IMPLEMENTED / TESTED**. [architecture/start-project-implementation-plan.md](architecture/start-project-implementation-plan.md). Product direction uses Project Readiness. Do not build the resume entry from this row. |
 | 5 | Approved Start New Project slices | Product | SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **BLOCKED**. SNP-3 **BLOCKED** on the reusable Plan Generation Engine. |
 | 6 | Use the governed engine where the project walk requires it | Product | ⬜ QUEUED. No second formula. |
-| 7 | Plan Generation Engine productization | Product | 🟡 **CURRENT.** **PLANNED / NOT IMPLEMENTED.** PGE-1 is the next implementation slice. Reusable capability. Guided Project Setup is a later consumer. [architecture/plan-generation-engine-productization.md](architecture/plan-generation-engine-productization.md). Drawing law: [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). |
+| 7 | Plan Generation Engine productization | Product | 🟡 **CURRENT.** **IN PRODUCTIZATION.** PGE-1 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. PGE-2 **NEXT / NOT STARTED**. No renderer yet. Guided Project Setup remains a later consumer. [architecture/plan-generation-engine-productization.md](architecture/plan-generation-engine-productization.md). Drawing law: [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). |
 | 8 | Estimating consumes the governed result | Product | ⬜ QUEUED. The mapper exists. A confirmed Our-crew package does not yet call an engine. |
 | 9 | Real-world learning | Product | ⬜ QUEUED. The law below is recorded. The product is not built. |
 | 10 | Field app / PWA | Product | ⬜ QUEUED. Same project state. Not Field Web v1. |

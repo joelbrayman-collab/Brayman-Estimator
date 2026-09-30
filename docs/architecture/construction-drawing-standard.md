@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | Recorded product requirement. Not an implemented drawing engine. Productization plan: [plan-generation-engine-productization.md](plan-generation-engine-productization.md). **PLANNED / NOT IMPLEMENTED.** |
+| Status | Recorded product requirement. The reusable drawing engine is in productization. PGE-1 validates a request and does not draw. Productization plan: [plan-generation-engine-productization.md](plan-generation-engine-productization.md). |
 | Date | 2026-09-29 |
 | Authority | Joel’s visual standard for CalibraytAI construction drawings |
 

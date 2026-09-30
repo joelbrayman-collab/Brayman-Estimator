@@ -1,0 +1,23 @@
+{
+  "fixture_role": "second_geometry",
+  "drawing_type": "dimensioned_plan",
+  "measurement_system": "metric",
+  "paper": {"width": 420, "height": 297, "unit": "mm"},
+  "scale": {"statement": "1:50", "unit": "m"},
+  "origin": "southwest corner",
+  "title": "Rectangle platform",
+  "members": [
+    {
+      "id": "south-sill",
+      "role": "sill",
+      "geometry": {"kind": "segment", "x1": 0, "y1": 0, "x2": 10, "y2": 0}
+    },
+    {
+      "id": "north-sill",
+      "role": "sill",
+      "geometry": {"kind": "segment", "x1": 0, "y1": 8, "x2": 10, "y2": 8}
+    }
+  ],
+  "assumptions": [],
+  "uncertainty_flags": []
+}

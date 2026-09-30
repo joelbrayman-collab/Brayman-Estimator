@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — PGE-1 Plan Generation request validation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLAN GENERATION ENGINE PGE-1 — GOVERNED REQUEST + VALIDATION FOUNDATION 1 OCT 2026 |
+| Objective | Validate a dimensioned-plan request without drawing it. |
+| Business decision | Plan Generation is a reusable capability. Guided Project Setup does not own it. |
+| Architectural decision | `validate_plan_generation_request` returns stable codes and a resolution kind. It does not render, persist, or read Contract V1 geometry that the contract does not have. |
+| Prompt template used | Joel’s 1 Oct 2026 PGE-1 prompt. No file in docs/prompts/ covers this slice. |
+| Approved Cursor prompt summary | Implement request validation for `dimensioned_plan` only. Two fixtures. No PDF, no PlanDocument, no migration, no SNP work. Full suite. One commit. Do not deploy. |
+| Feature Gate | Answered in that prompt. Problem: Build Drawings had no request contract. User: a later contractor. Owner: `app/services/plan_generation/`. Data owned: none persisted. Data referenced: none. May change: the validation service and its tests. Must not change: PlanDocument, Contract V1, SNP-1, calculators, Website. Acceptance: valid requests pass and missing inputs return codes. Tests: `tests/test_plan_generation_request.py`. ADR: no. Migration: no. |
+| Files expected to change | The validation package, fixtures, tests, and the central status lines. |
+| Files prohibited from changing | Renderers, migrations, SNP resolver, Website, Contract V1, Bushel scripts. |
+| Implementation result | PGE-1 closed as a slice. PGE-2 not started. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_plan_generation_request.py` — 18 passed, 1 warning, 0.55s, exit 0. Full suite `./venv/bin/python -m pytest -q` — 1873 passed, 6601 warnings, 891.94s, exit 0. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | No PDF. No project drawing integration. SNP-2 and SNP-3 remain blocked. |
+| Next approved step | None from this entry. Do not start PGE-2 until a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — Guided Project Setup and Project Readiness
 
 | Field | Content |

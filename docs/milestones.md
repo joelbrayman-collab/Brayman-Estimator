@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — PGE-1 Plan Generation request validation
+
+| Field | Content |
+|-------|---------|
+| Milestone | PGE-1 Plan Generation request validation |
+| Status | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** |
+| Branch | `main` |
+| Base commit | `bcc924a4c09069fe63696dbadd7f93e75726ade5` |
+| Objective | Accept or reject a dimensioned-plan request with stable codes. |
+| Deliverables | `app/services/plan_generation/validation.py`. Two geometry fixtures. `tests/test_plan_generation_request.py`. |
+| Validation | Focused tests 18 passed, 1 warning, 0.55s, exit 0. Full suite 1873 passed, 6601 warnings, 891.94s, exit 0. No migration. |
+| Architectural findings | Member coordinates are a drawing-request field. Contract V1 was not extended. Uncertainty flags are echoed and do not draw a sheet. |
+| Open decisions | PGE-2 rendering is not authorized by this milestone. |
+| Next milestone | PGE-2, when a later prompt authorizes it. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-09-30 — Guided Project Setup and Project Readiness
 
 | Field | Content |

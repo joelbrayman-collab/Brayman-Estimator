@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IN IMPLEMENTATION.** SNP-1 **CLOSED AS A SLICE**. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **BLOCKED**. Wizard **NOT BUILT**. |
+| Status | **IN IMPLEMENTATION.** SNP-1 **CLOSED AS A SLICE**. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **BLOCKED**. SNP-3 **BLOCKED** on the reusable Plan Generation Engine. Wizard **NOT BUILT**. |
 | Date | 2026-09-30 |
 | Product direction | [start-project-guided-wizard-product-direction.md](start-project-guided-wizard-product-direction.md) |
 | Sequence | [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md) |
@@ -107,9 +107,9 @@ If a required element has no Platform engine yet, the cursor records `waiting_co
 
 ## 7. Plan Generation entry
 
-Plan Generation is queued and is not built here.
+The reusable Plan Generation Engine is planned and not built. The plan is [plan-generation-engine-productization.md](plan-generation-engine-productization.md). Start New Project does not own it. SNP-3 stays blocked until that engine can finish a supported drawing type.
 
-Invoke it only when drawings are required and acceptable drawings are not already on the project. Acceptable means a non-archived `PlanDocument` the contractor has accepted as current for this setup. Presence alone can set `drawing_decision` to `PRESENT` when the contractor says those drawings are the ones to use.
+Invoke it only when drawings are required and no current drawing is on the project. A current drawing is a non-archived `PlanDocument`. SNP-1 already treats that row as drawings satisfied.
 
 | Derived or recorded fact | Walk |
 |--------------------------|------|
@@ -118,7 +118,7 @@ Invoke it only when drawings are required and acceptable drawings are not alread
 | Drawings are required and missing | `REQUIRED_MISSING`. Wait. |
 | Plan Generation does not exist yet | Stay in `REQUIRED_MISSING`. Do not invent sheets. |
 
-When Plan Generation later exists, that waiting stage is the only call site. It draws governed geometry. It does not recalculate the element. This plan does not design the drawing engine.
+When the reusable engine later exists, drawings missing can call it from the project plans page. That page remains a direct entry. The engine draws governed geometry. It does not recalculate the element. The engine design lives in the productization plan, not in this walk.
 
 ## 8. Scope relationship
 
@@ -156,9 +156,7 @@ A stale calculation is an estimate concern. Accepted mapper lines are not rewrit
 
 No new table is required for the derived next step.
 
-One thin orchestration record is required for the two decisions existing rows cannot store: drawing decision, and an explicit waiting token. It is orchestration state, not authoritative project data. Tests must prove it does not duplicate client, scope, plan, or estimate fields, and that a project with no cursor still resolves.
-
-No other table is proposed.
+30 Sep 2026 correction: the drawing requirement is a project fact, `UNKNOWN`, `REQUIRED`, or `NOT_REQUIRED`, on `Project` when a later migration is approved. It is not a workflow-state table. Presence stays a non-archived `PlanDocument`. That delta is specified in [plan-generation-engine-productization.md](plan-generation-engine-productization.md) and is not migrated here. A general waiting-token table is not part of that correction.
 
 ## 14. Route and service plan
 
@@ -194,17 +192,15 @@ Absence of a plan cannot mean drawings are not required, and it cannot mean they
 |----|---------|---------------|--------|----------|------------|-----------|------------|------|
 | SNP-1 | Resolver only | `app/services/start_project_walk.py` and `tests/test_start_project_walk.py` | Project, client, location, packages, plans, estimates | None | **IMPLEMENTED / TESTED.** Given an existing project, the next gap is named and no row is written. No UI. | Not required | None | No schema. No resume route. |
 | SNP-2A | Correct the project’s client | `app/services/project_client.py`, `/projects/<id>/client` | Client and Project | None. Uses `Project.client_id`. | **IMPLEMENTED / TESTED.** Same project id. Same-organization client only. Proposal client name stays a snapshot. | Contractor corrects the client and SNP-1 leaves `PROJECT_CLIENT`. | SNP-1 | No schema. No second client editor. |
-| SNP-2 | Resume entry | One project link and a read-only next-step page | SNP-1 and existing pages | None | **BLOCKED.** `DRAWINGS` has no governed “not required” path. | Contractor can leave and return | Rule 16 pass for every destination, including SNP-3 for drawings | No schema. Do not ship a known dead end. |
-| SNP-3 | Thin cursor | Model, migration file, decision save | SNP-1 | The orchestration row in section 13 | Drawing decision and waiting token round-trip without copying project facts | Contractor can mark drawings not required, or waiting | Separate migration approval | Migration not applied in the plan. |
+| SNP-2 | Resume entry | One project link and a read-only next-step page | SNP-1 and existing pages | None | **BLOCKED.** `DRAWINGS` has no governed “not required” path and no reusable Build Drawings action. | Contractor can leave and return | Rule 16 pass for every destination, including SNP-3 for drawings | No schema. Do not ship a known dead end. |
+| SNP-3 | Drawings branch | Resolver states and the project drawings decision, calling the reusable engine for Build Drawings | SNP-1, plan upload, Plan Generation Engine | `projects.drawing_requirement` when separately approved | **BLOCKED** until the Plan Generation Engine can complete a supported type. | Present, not required, upload, and build each continue | The engine productization plan. Separate migration approval for the decision column. | Do not build a second drawing engine. Do not implement SNP-2 in that slice. |
 | SNP-4 | Scope handoff | Return hint on the existing scope page | `confirm_package` | None | Confirm Our crew or Subcontractor and return to the walk | Scope page still reads as it does today | SNP-2 | No second scope model. Inline edit not included. |
 | SNP-5 | Drawing decision | Uses SNP-3 | Plan upload | Cursor only | Present, not required, and required-missing are distinct | Missing required drawings wait, and do not invent a sheet | SNP-3 | Plan Generation is not called. |
 | SNP-6 | Estimate and mapper handoff | Link to existing estimate and calculation review | Estimate create and mapper | None | Existing estimate is resumed; a new one uses the existing form; confirmation stays manual | Contractor reaches the ordinary estimate | SNP-2 | No wizard estimate. No silent import. |
 
 ## 16. Dependencies
 
-SNP-1, SNP-2, SNP-4, and SNP-6 can be built before Plan Generation. SNP-5 can record `REQUIRED_MISSING` and wait before Plan Generation exists.
-
-The only later slice that depends on Plan Generation is the call that would start it from `REQUIRED_MISSING`. That slice is not in the table above and is not authorized.
+SNP-2 and SNP-3 stay blocked until the drawings branch can pass Rule 16. Build Drawings is part of that branch and waits for the reusable engine. SNP-4 and SNP-6 still depend on SNP-2.
 
 Website stabilization, hosted password verification, bypass removal, production cutover, hosted database re-proof, PLAT-UX-02, PLAT-UX-03, PLAT-UX-04, and scope inline edit are outside these slices.
 
@@ -216,7 +212,7 @@ When a slice is later authorized: service tests for the resolver; route tests fo
 
 ## 18. Migration strategy
 
-SNP-3 would add one table. It must be a separate approved migration. Existing projects resolve with a null cursor. Mac primary stays `h8c9d0e1f2a3` until a migration is explicitly applied there. Hosted revision stays last recorded `k1f2a3b4c5d6` and was not re-proved. Rollback drops only the orchestration table. No project, client, scope, plan, or estimate column is rewritten.
+The drawing-requirement column is a later migration with its own approval. It is not created here. Mac primary stays `h8c9d0e1f2a3`. Hosted revision stays last recorded `k1f2a3b4c5d6` and was not re-proved. Existing projects remain `UNKNOWN` until that column exists. No plan file is rewritten by the decision.
 
 This plan does not create or run that migration.
 
@@ -230,7 +226,7 @@ Stop a slice if it needs a second scope model, a wizard estimate, a copied Websi
 
 ## 21. Recommended first implementation slice
 
-SNP-1 is closed as a slice. SNP-2A closes the client-relationship dead end. SNP-2 stays blocked until the drawings gap in section 22 is closed. No schema was added.
+SNP-1 is closed as a slice. SNP-2A closes the client-relationship dead end. SNP-2 stays blocked until the drawings gap in section 22 is closed. SNP-3 stays blocked on the reusable Plan Generation Engine. That engine is planned and not implemented. No schema was added.
 
 ## 22. Rule 16 — no dead ends
 
@@ -242,7 +238,7 @@ Detecting a condition is not enough. Detection without a way to resolve it is a 
 |-------------|---------|------------------|--------------------------------------|--------------------------|---------|
 | `PROJECT_CLIENT` | The project’s client is not in this company. | `GET/POST /projects/<id>/client` | Yes. Choose a client from this company. The same project id remains. | SNP-1 no longer returns `PROJECT_CLIENT`. | **PASS** after SNP-2A. |
 | `LOCATION` | Structured location is missing or incomplete. | `GET/POST /projects/<id>/location/edit` | Yes. Street, municipality, province, and country complete the existing location record. | SNP-1 leaves `LOCATION`. | **PASS** |
-| `DRAWINGS` | No non-archived plan. The resolver cannot tell “not required” from “required and missing.” | `GET /projects/<id>/plans` | Upload can make drawings present. There is no governed way to say drawings are not required. | Upload moves the resolver on. “Not required” cannot be recorded. | **GAP.** SNP-3. Not fixed here. |
+| `DRAWINGS` | No non-archived plan. The resolver cannot tell “not required” from “required and missing.” Build Drawings has no reusable engine to call. | `GET /projects/<id>/plans` | Upload can make drawings present. There is no governed way to say drawings are not required. Build Drawings cannot be offered without inventing an engine. | Upload moves the resolver on. “Not required” cannot be recorded. A generated sheet cannot become current evidence. | **GAP.** SNP-3 is blocked on [plan-generation-engine-productization.md](plan-generation-engine-productization.md). |
 | `SCOPE` | No confirmed package. | `GET/POST /projects/<id>/scope` | Yes. Confirm Our crew or Subcontractor. | SNP-1 leaves `WORK` once a confirmed package exists and earlier gaps are clear. | **PASS** |
 | `ESTIMATE_RESUME` | Earlier gaps are clear and the project has one estimate. | `GET /estimates/<id>` | Yes. The ordinary estimate is the continuation. | The resolver keeps returning that estimate. | **PASS** |
 | `ESTIMATE_AMBIGUOUS` | Earlier gaps are clear and the project has more than one estimate. | Project detail estimates table, `/projects/<id>#hub-price` | Yes. Each estimate is its own link. No estimate is chosen for the contractor. | The resolver stays ambiguous while more than one estimate exists. The contractor continues on the estimate they open. | **PASS** |

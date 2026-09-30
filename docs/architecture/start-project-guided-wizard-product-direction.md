@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **RECORDED PRODUCT DIRECTION.** Rule 16 recorded. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **BLOCKED** on drawings. The wizard is not built. |
+| Status | **RECORDED PRODUCT DIRECTION.** Rule 16 recorded. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **BLOCKED**. SNP-3 **BLOCKED** on the reusable Plan Generation Engine, which is planned and not implemented. The wizard is not built. |
 | Date | 2026-09-29 |
 | Authority | Joel, from real estimating with Ben |
 | This record | Architecture only. No page, schema, navigation, engine, drawing generator, labour flow, or RFQ. |
@@ -132,7 +132,7 @@ At the documents step, the wizard records one of:
 - the job may proceed without drawings;
 - drawings are required and do not exist yet.
 
-The third case is the hook for a later authorized plan-generation capability. Where a governed result already exists, Plan Generation draws that geometry. It does not calculate the element again. The Linda Bushel proof shows that some project classes may need CalibraytAI to produce contractor construction drawings. That capability is not part of this wizard. The Bushel case stays preserved and incomplete. See [construction-drawing-standard.md](construction-drawing-standard.md).
+The third case is the hook for the reusable Plan Generation capability. Where a governed result already exists, Plan Generation draws that geometry. It does not calculate the element again. The Linda Bushel proof shows that some project classes may need CalibraytAI to produce contractor construction drawings. That capability is not part of this wizard. The productization plan is [plan-generation-engine-productization.md](plan-generation-engine-productization.md). It is planned and not implemented. The Bushel case stays preserved and incomplete. See [construction-drawing-standard.md](construction-drawing-standard.md).
 
 ## Desktop and Field
 

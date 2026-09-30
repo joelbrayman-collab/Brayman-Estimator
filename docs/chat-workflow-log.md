@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — Plan Generation Engine productization plan
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLAN GENERATION ENGINE PRODUCTIZATION ARCHITECTURE + IMPLEMENTATION PLAN RULE 16 PREREQUISITE TO SNP-3 30 SEP 2026 |
+| Objective | Record the reusable Plan Generation Engine plan. Do not build it. |
+| Business decision | SNP-3 cannot offer Build Drawings until a reusable engine exists. Bushel scripts stay case proofs. |
+| Architectural decision | The engine is a platform capability. Start New Project is a later consumer. First supported type is a dimensioned plan from supplied geometry. Stair detail waits for a supplied stair result. Contract V1 is not extended. |
+| Prompt template used | Joel’s 30 Sep 2026 Plan Generation productization prompt. No file in docs/prompts/ covers this slice. |
+| Approved Cursor prompt summary | Architecture and implementation plan only. Inspect Bushel and current plan authority. Define input, output, provenance, slices, and tests. Update the central sequence. One documentation commit. Do not deploy. |
+| Feature Gate | Answered in that prompt. Problem: Build Drawings has no reusable engine. User: contractor, later. Owner: a new plan-generation service, not Projects and not Start New Project. Data owned: future generation request and candidate. Data referenced: Project, PlanDocument, Contract V1. May change: docs only in this pass. Must not change: product code, Contract V1, Website, Bushel scripts. Acceptance: the plan distinguishes proof from engine. Tests: none in this pass. ADR: no. Migration: identified, not created. |
+| Files expected to change | The productization plan and the central records that still said Plan Generation was only queued. |
+| Files prohibited from changing | Application code, migrations, Website, Contract V1, Bushel drawing scripts. |
+| Implementation result | Plan recorded. Engine not implemented. SNP-2 and SNP-3 remain blocked. |
+| Tests | Not run. Documentation only. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | PGE-1 is not started. Drawings Rule 16 gap remains. Contract V1 has no member-coordinate field. |
+| Next approved step | None from this entry. Do not start PGE-1 until a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — Rule 16 and SNP-2A project client correction
 
 | Field | Content |

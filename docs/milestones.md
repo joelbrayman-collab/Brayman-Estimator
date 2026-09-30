@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-30 — Plan Generation Engine productization plan
+
+| Field | Content |
+|-------|---------|
+| Milestone | Plan Generation Engine productization plan |
+| Status | **PLANNED / NOT IMPLEMENTED.** |
+| Branch | `main` |
+| Base commit | `f85ea0a8366af1f64a6f0d64619d4d2d6d1d7841` |
+| Objective | Define the reusable engine from the Bushel proof without building it. |
+| Deliverables | `docs/architecture/plan-generation-engine-productization.md`. Central sequence updated. |
+| Validation | Documentation review against the Bushel case, the drawing standard, `PlanDocument`, and Contract V1. No tests. No migration. |
+| Architectural findings | Bushel scripts are case proofs. `PlanDocument` has no generated origin. `Project` has no drawing-requirement column. Contract V1 has no placed-member geometry. |
+| Open decisions | PGE-1 is the first implementation slice and is not authorized by this record. |
+| Next milestone | PGE-1, when a later prompt authorizes it. SNP-2 and SNP-3 stay blocked. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-09-30 |
+
 ### 2026-09-30 — Rule 16 and SNP-2A project client correction
 
 | Field | Content |

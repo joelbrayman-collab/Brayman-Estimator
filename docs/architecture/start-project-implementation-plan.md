@@ -2,15 +2,15 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IN IMPLEMENTATION.** SNP-1 **CLOSED AS A SLICE**. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **BLOCKED**. SNP-3 **BLOCKED** on the reusable Plan Generation Engine. Wizard **NOT BUILT**. |
+| Status | **IN IMPLEMENTATION.** SNP-1 **CLOSED AS A SLICE**. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **BLOCKED**. SNP-3 **BLOCKED** on the reusable Plan Generation Engine. Guided Project Setup **NOT BUILT**. |
 | Date | 2026-09-30 |
 | Product direction | [start-project-guided-wizard-product-direction.md](start-project-guided-wizard-product-direction.md) |
 | Sequence | [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md) |
-| This record | Planning only. No route, schema, migration, or wizard page is created by this file. |
+| This record | Planning only. No route, schema, migration, or Guided Project Setup page is created by this file. |
 
 ## 1. Purpose
 
-Start New Project is an orchestration layer. A contractor starts or resumes a project and is guided through capabilities that already exist, toward an ordinary estimate.
+Start New Project — Guided Project Setup is an orchestration layer. The product concept is Project Readiness. A contractor starts or resumes a project and is guided to capabilities that already exist, toward an ordinary estimate. The 30 Sep 2026 contractor experience is in [start-project-guided-wizard-product-direction.md](start-project-guided-wizard-product-direction.md). This plan does not rewrite SNP-1.
 
 It does not replace Clients, Projects, Scope, drawings, calculation engines, Contract V1, the mapper, Estimates, Proposals, Change Orders, Company Calendar, Costs & Pricing, or Company Library.
 
@@ -30,7 +30,7 @@ Tests for creation live with the project and commercial-context suites. This pla
 
 ## 3. Guided stages
 
-Stage names follow the recorded product direction. Contractor questions sit under those stages. Exact screen labels are still not authorized.
+Stage names are internal. They are not a contractor step counter. Exact screen labels are still not authorized. The opening experience is project name, client, and location or address. Permit class, commercial posture, project stage, and drawings stay off that opening. The current `/projects/new` form still shows those extra fields. This plan does not change that form. Creating a project still requires only a name and an in-organization client.
 
 | Stage | Contractor question | Existing authority |
 |-------|---------------------|--------------------|
@@ -38,7 +38,7 @@ Stage names follow the recorded product direction. Contractor questions sit unde
 | Location | Where is it? | `ProjectLocation` through `establish_project_location_and_profile` |
 | Documents and drawings | Do we have drawings? | `PlanDocument` through `/projects/<id>/plans/upload` |
 | Work | What work are we doing? Who is doing each part? | `ProjectWorkPackage` through `GET/POST /projects/<id>/scope` |
-| Estimating inputs | What needs to be calculated? | A governed engine and Contract V1, only where one exists. Not a wizard formula. |
+| Estimating inputs | What needs to be calculated? | A governed engine and Contract V1, only where one exists. |
 | Missing information | What is still missing? | Derived from the records above, plus the thin cursor where a decision cannot be derived. |
 | Setup review | Is this ready to estimate? | Read-only view of the same records. |
 | Estimate | What needs to be estimated? | Existing `Estimate` and the calculation mapper. |
@@ -85,7 +85,7 @@ Back and forward movement opens the existing page for that stage. It does not re
 | Contract V1 | [calculation-engine-result-contract-v1.md](calculation-engine-result-contract-v1.md) | Pinned envelope | The result shape | Unchanged. |
 | Mapper | `/estimates/<id>/versions/<version_id>/calculations` | `app/services/calculation_estimate_mapping.py` | Confirmed estimate quantities | Send the contractor to that existing gate. |
 | Estimate | `/estimates/new` | `Estimate`, `EstimateVersion` | The estimate | Create or resume the project’s estimate. |
-| Proposal | `/proposals/` | Existing proposal services | Proposal records | After the estimate. Not a wizard document. |
+| Proposal | `/proposals/` | Existing proposal services | Proposal records | After the estimate. |
 | Change order | Existing change-order routes | `ChangeOrder` | Change orders | Later project work. Not part of setup. |
 | Costs and pricing | `/costs-and-pricing/`, `/cost-library/`, `/pricing-engine/` | Cost library and pricing | Company cost and price | Applied on the estimate. Not copied into the cursor. |
 | Reusable work | `/assemblies/` | Assemblies | Assembly definitions | Selected on the estimate. |
@@ -128,7 +128,7 @@ An existing row is removed and added again. Inline edit is non-blocking polish a
 
 ## 9. Estimate and mapper relationship
 
-The walk ends on the ordinary estimate. `POST /estimates/new` already accepts a project id. If the project has an estimate, resume it. If not, open the existing create form with that project. Do not create a wizard estimate table.
+Ready to price is a review of authoritative client, project, location, our work, subcontracted work, drawings, governed results, and remaining blocking items. Build Estimate then enters the ordinary estimate. `POST /estimates/new` already accepts a project id. If the project has an estimate, resume it. If not, open the existing create form with that project. Do not create a Guided Project Setup estimate.
 
 Sections and lines stay estimate records. Calculation results enter only through the mapper confirmation gate. Company cost, reusable work, and custom lines stay on that estimate. True gross margin and pricing authority stay where they are. The contractor is ready to review when the derived gaps for client, location, drawing decision, and at least one confirmed package are clear, and any `waiting_code` is null. An estimate may still be opened earlier; the walk must not block the existing estimate screens.
 
@@ -162,7 +162,7 @@ No new table is required for the derived next step.
 
 SNP-1 is the resolver only: `resolve_start_project_walk` in `app/services/start_project_walk.py`. It does not add a route. The resume entry below is still not implemented.
 
-SNP-1 reads the organization-scoped project, client, `ProjectLocation.completeness`, non-archived plans through `project_plans`, confirmed packages through `list_confirmed`, and estimate rows. It writes nothing. The first gap wins:
+SNP-1 reads the organization-scoped project, client, `ProjectLocation.completeness`, non-archived plans through `project_plans`, confirmed packages through `list_confirmed`, and estimate rows. It writes nothing. The first gap wins. That first-gap result is the current foundation. It is not the final Project Readiness model. A later result may also return completed facts, unresolved items, blocking items, waiting items, and available next actions, still without writing project records.
 
 | Condition | Stage | Waiting |
 |-----------|-------|---------|
@@ -196,7 +196,7 @@ Absence of a plan cannot mean drawings are not required, and it cannot mean they
 | SNP-3 | Drawings branch | Resolver states and the project drawings decision, calling the reusable engine for Build Drawings | SNP-1, plan upload, Plan Generation Engine | `projects.drawing_requirement` when separately approved | **BLOCKED** until the Plan Generation Engine can complete a supported type. | Present, not required, upload, and build each continue | The engine productization plan. Separate migration approval for the decision column. | Do not build a second drawing engine. Do not implement SNP-2 in that slice. |
 | SNP-4 | Scope handoff | Return hint on the existing scope page | `confirm_package` | None | Confirm Our crew or Subcontractor and return to the walk | Scope page still reads as it does today | SNP-2 | No second scope model. Inline edit not included. |
 | SNP-5 | Drawing decision | Uses SNP-3 | Plan upload | Cursor only | Present, not required, and required-missing are distinct | Missing required drawings wait, and do not invent a sheet | SNP-3 | Plan Generation is not called. |
-| SNP-6 | Estimate and mapper handoff | Link to existing estimate and calculation review | Estimate create and mapper | None | Existing estimate is resumed; a new one uses the existing form; confirmation stays manual | Contractor reaches the ordinary estimate | SNP-2 | No wizard estimate. No silent import. |
+| SNP-6 | Estimate and mapper handoff | Link to existing estimate and calculation review | Estimate create and mapper | None | Existing estimate is resumed; a new one uses the existing form; confirmation stays manual | Contractor reaches the ordinary estimate | SNP-2 | No second estimate. No silent import. |
 
 ## 16. Dependencies
 
@@ -222,17 +222,19 @@ After SNP-2, a contractor starts from an existing project and from a new project
 
 ## 20. Stop conditions
 
-Stop a slice if it needs a second scope model, a wizard estimate, a copied Website formula, a runtime Website call, a Plan Generation build, an RFQ send, a change to Contract V1, a change to pricing mathematics, or a migration that was not separately approved.
+Stop a slice if it needs a second scope model, a second estimate, a copied Website formula, a runtime Website call, a Plan Generation build inside this plan, an RFQ send, a change to Contract V1, a change to pricing mathematics, or a migration that was not separately approved.
 
 ## 21. Recommended first implementation slice
 
-SNP-1 is closed as a slice. SNP-2A closes the client-relationship dead end. SNP-2 stays blocked until the drawings gap in section 22 is closed. SNP-3 stays blocked on the reusable Plan Generation Engine. That engine is planned and not implemented. No schema was added.
+SNP-1 is closed as a slice. SNP-2A closes the client-relationship dead end. SNP-2 stays blocked until the drawings gap in section 22 is closed. SNP-3 stays blocked on the reusable Plan Generation Engine. The next implementation slice is PGE-1 in [plan-generation-engine-productization.md](plan-generation-engine-productization.md). This clarification does not change PGE-1. No schema was added.
 
 ## 22. Rule 16 — no dead ends
 
 Every workflow state that can be emitted must have a condition a contractor can understand, a governed action that can resolve it, an authoritative page for that action, a correction path, a re-run of the resolver after the authoritative record changes, and a continuation to the next real condition.
 
 Detecting a condition is not enough. Detection without a way to resolve it is a dead end. A workflow must not tell the contractor to go somewhere else without a governed path, skip a required state, or pick an arbitrary default to escape the condition.
+
+Rule 16 governs resolution. Project Readiness governs whether a missing fact blocks a particular action. A waiting fact still needs a path. It does not have to stop every other useful action. SNP-1’s first gap is stricter than that readiness model, and it stays as implemented.
 
 | Destination | Condition | Existing surface | Can the contractor resolve it there? | After the record changes | Rule 16 |
 |-------------|---------|------------------|--------------------------------------|--------------------------|---------|
@@ -245,3 +247,17 @@ Detecting a condition is not enough. Detection without a way to resolve it is a 
 | `ESTIMATE_CREATE` | Earlier gaps are clear and the project has no estimate. | `GET/POST /estimates/new?project_id=<id>` | Yes. Saving creates the ordinary estimate. The form does not create it on open. | One estimate, then `ESTIMATE_RESUME`. | **PASS** |
 
 SNP-2 must not ship while a resolver destination fails this rule. The remaining gap is `DRAWINGS`.
+
+## 23. 30 Sep 2026 readiness reconciliation
+
+Guided Project Setup and Project Readiness are recorded in the product direction. Conflicts with the behaviour already in the repository:
+
+| Topic | Repository today | Intended experience |
+|-------|------------------|---------------------|
+| Opening form | `/projects/new` shows permit class, commercial posture, and project stage beside name and client. Save requires name and client only. | Start the job collects name, client, and location or address. The extra fields stay off that opening. The form is unchanged. |
+| Scope delivery | `INTERNAL` and `SUBCONTRACT` only. | Our crew and Subcontractor. “Not part of our work” has no delivery value. Do not add one here. |
+| Resolver | SNP-1 returns one first gap and writes nothing. | That remains the foundation. Readiness later returns completed, unresolved, blocking, waiting, and available actions. SNP-1 is not rewritten. |
+| Resume copy | SNP-2 is not built. | Continue setup, and what is still needed. Not “step 4 of 9.” |
+| Drawings | Upload exists. Not-required cannot be stored. Build Drawings has no engine. | Present, Not required, Missing. Missing offers Upload and Build Drawings once the engine exists. |
+| Estimate | Ordinary estimate create and resume exist. | Ready to price, then that same estimate. No second estimate. |
+| Sequence | PGE-1 is the next implementation slice. | Unchanged. Then SNP-3 closes the drawings branch. Then SNP-2 is the resume entry. |

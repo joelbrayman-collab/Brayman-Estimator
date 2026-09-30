@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — Guided Project Setup and Project Readiness
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI START NEW PROJECT GUIDED PROJECT SETUP — PROJECT READINESS PRODUCT DIRECTION 30 SEP 2026 |
+| Objective | Reconcile the contractor experience with the existing Start New Project direction. |
+| Business decision | The capability is Guided Project Setup. The concept is Project Readiness. It is not a numbered wizard. |
+| Architectural decision | SNP-1’s first gap stays the foundation and is not the final readiness model. Rule 16 still forbids dead ends and does not make every missing fact block all other work. PGE-1 is unchanged. |
+| Prompt template used | Joel’s 30 Sep 2026 Guided Project Setup prompt. No file in docs/prompts/ covers this slice. |
+| Approved Cursor prompt summary | Documentation only. Record the opening, scope, drawings, readiness, blocking versus waiting, resume, ready-to-price, and ordinary estimate handoff. Do not change product code or PGE-1. |
+| Feature Gate | Answered in that prompt. Problem: the recorded direction still read as a wizard. User: contractor. Owner: orchestration, not the capabilities it calls. Data owned: none in this pass. Data referenced: Project, Client, Scope, PlanDocument, Estimate. May change: docs only. Must not change: product code, PGE-1 scope, Contract V1. Acceptance: current experience is unambiguous. Tests: none. ADR: no. Migration: no. |
+| Files expected to change | The existing product direction, the implementation plan, and central sequence pointers. |
+| Files prohibited from changing | Application code, migrations, the Plan Generation slice definitions, Website, Contract V1. |
+| Implementation result | Direction reconciled. No product code. |
+| Tests | Not run. Documentation only. |
+| Project-state-report update | Pointer only if the sequence sentence changed. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Opening form still shows permit and commercial fields. Scope has no “not part of our work” delivery. SNP-1 still returns one first gap. |
+| Next approved step | PGE-1, when a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — Plan Generation Engine productization plan
 
 | Field | Content |

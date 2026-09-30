@@ -28,7 +28,7 @@ A separate screen does not justify a second copy of the mathematics. A separate 
 
 USER / PROJECT INTENT → REQUIRED CAPABILITY → GOVERNED DOMAIN / CALCULATION ENGINE → GOVERNED RESULT / GEOMETRY → DRAWING / TAKE-OFF / ESTIMATE → BUILD / MONITOR → ACTUALS → LEARNING.
 
-On the private Platform, Start New Project is the guided walk of that spine. The contractor states the construction task. CalibraytAI chooses the internal capability. The contractor does not leave the walk to find a calculator. [architecture/start-project-guided-wizard-product-direction.md](architecture/start-project-guided-wizard-product-direction.md). [architecture/estimating-path-alignment-2026-09-27.md](architecture/estimating-path-alignment-2026-09-27.md).
+On the private Platform, Start New Project — Guided Project Setup is the readiness walk of that spine. The product concept is Project Readiness. The contractor states the construction task. CalibraytAI chooses the internal capability. The contractor does not leave the walk to find a calculator. [architecture/start-project-guided-wizard-product-direction.md](architecture/start-project-guided-wizard-product-direction.md). [architecture/estimating-path-alignment-2026-09-27.md](architecture/estimating-path-alignment-2026-09-27.md).
 
 ## Surfaces
 
@@ -63,17 +63,17 @@ The reusable stair result and the Bushel finished stair agree on total rise 38 i
 
 ## One sequence
 
-Development freeze: **LIFTED FOR CONTROLLED START NEW PROJECT DEVELOPMENT.** The current planning objective is the reusable Plan Generation Engine. It is **PLANNED / NOT IMPLEMENTED**. Rule 16 — no dead ends — is recorded. SNP-1 is **CLOSED AS A SLICE**. SNP-2A is **IMPLEMENTED / TESTED**. SNP-2 is **BLOCKED** on the drawings gap. SNP-3 is **BLOCKED** on that engine. The wizard is not built. Website stabilization is CLOSED. Platform stabilization is CLOSED and LIVE / VERIFIED. Hosted password verification, bypass removal, and production cutover stay in Later.
+Development freeze: **LIFTED FOR CONTROLLED START NEW PROJECT DEVELOPMENT.** The current planning objective is the reusable Plan Generation Engine. It is **PLANNED / NOT IMPLEMENTED**. PGE-1 is the next implementation slice. Rule 16 — no dead ends — is recorded. SNP-1 is **CLOSED AS A SLICE**. SNP-2A is **IMPLEMENTED / TESTED**. SNP-2 is **BLOCKED** on the drawings gap. SNP-3 is **BLOCKED** on that engine. Guided Project Setup is not built. Website stabilization is CLOSED. Platform stabilization is CLOSED and LIVE / VERIFIED. Hosted password verification, bypass removal, and production cutover stay in Later.
 
 | Order | Step | Kind | Status |
 |-------|------|------|--------|
 | 1 | This unified architecture | Governance | Recorded by this checklist. Not an implementation authorization. |
 | 2 | Website Useful Tools stabilization | Website surface | ✅ CLOSED at Version 31. |
 | 3 | Platform existing-problem stabilization | Closed | ✅ CLOSED and LIVE / VERIFIED. Current deploy `dep-daulf9u0tbcc73bomdgg` at `ca37d8b6939f6494b6ff415bad17953886366728`, finished 2026-09-30T18:41:57Z. PLAT-LOGO-01 CLOSED / LIVE VERIFIED. Prior deploy `dep-daukqvg473hc73bkouug` at `45ab150aa724f4fa50eb7d496f886bd1a5f2e4e0` is superseded. |
-| 4 | Start New Project implementation plan | Product | Plan accepted. SNP-1 **IMPLEMENTED / TESTED**. [architecture/start-project-implementation-plan.md](architecture/start-project-implementation-plan.md). Do not build the wizard from this row. |
+| 4 | Start New Project — Guided Project Setup | Product | Plan accepted. SNP-1 **IMPLEMENTED / TESTED**. [architecture/start-project-implementation-plan.md](architecture/start-project-implementation-plan.md). Product direction uses Project Readiness. Do not build the resume entry from this row. |
 | 5 | Approved Start New Project slices | Product | SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **BLOCKED**. SNP-3 **BLOCKED** on the reusable Plan Generation Engine. |
 | 6 | Use the governed engine where the project walk requires it | Product | ⬜ QUEUED. No second formula. |
-| 7 | Plan Generation Engine productization | Product | 🟡 **CURRENT PLANNING OBJECTIVE.** **PLANNED / NOT IMPLEMENTED.** Reusable capability. Start New Project is a later consumer. [architecture/plan-generation-engine-productization.md](architecture/plan-generation-engine-productization.md). Drawing law: [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). |
+| 7 | Plan Generation Engine productization | Product | 🟡 **CURRENT.** **PLANNED / NOT IMPLEMENTED.** PGE-1 is the next implementation slice. Reusable capability. Guided Project Setup is a later consumer. [architecture/plan-generation-engine-productization.md](architecture/plan-generation-engine-productization.md). Drawing law: [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). |
 | 8 | Estimating consumes the governed result | Product | ⬜ QUEUED. The mapper exists. A confirmed Our-crew package does not yet call an engine. |
 | 9 | Real-world learning | Product | ⬜ QUEUED. The law below is recorded. The product is not built. |
 | 10 | Field app / PWA | Product | ⬜ QUEUED. Same project state. Not Field Web v1. |
@@ -122,4 +122,4 @@ One project does not silently change a formula, a cost, labour productivity, a l
 
 ## What this checklist does not authorize
 
-It does not authorize drawing changes, a take-off change, a price, a send, building the wizard, the Plan Generation Engine, a second calculator, a shared-package decision, ICF, a Website change or rebuild, a migration, a deploy, or a V1 rescore.
+It does not authorize drawing changes, a take-off change, a price, a send, building Guided Project Setup, the Plan Generation Engine, a second calculator, a shared-package decision, ICF, a Website change or rebuild, a migration, a deploy, or a V1 rescore.

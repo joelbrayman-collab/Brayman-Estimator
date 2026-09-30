@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-30 — Guided Project Setup and Project Readiness
+
+| Field | Content |
+|-------|---------|
+| Milestone | Guided Project Setup product direction |
+| Status | **RECORDED.** Not built. |
+| Branch | `main` |
+| Base commit | `0ed76d9c3842823de3958cb834c584be58e92c5f` |
+| Objective | Replace wizard shorthand with Guided Project Setup and Project Readiness. |
+| Deliverables | Updated product direction and implementation plan. PGE-1 unchanged. |
+| Validation | Documentation review against `create_project`, `ProjectWorkPackage` delivery values, and SNP-1. No tests. No migration. |
+| Architectural findings | Create requires name and client. The form also shows permit and commercial fields. Delivery is Our crew or Subcontractor only. SNP-1 returns one first gap. |
+| Open decisions | PGE-1 remains the next implementation slice and is not started. |
+| Next milestone | PGE-1, when authorized. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-09-30 |
+
 ### 2026-09-30 — Plan Generation Engine productization plan
 
 | Field | Content |

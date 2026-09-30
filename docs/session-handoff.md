@@ -8,15 +8,15 @@ Read this section first. The sections below it are older turnover history. They 
 |------|--------|
 | Repository | `/Users/joelbrayman/Desktop/Brayman-Estimator` |
 | Branch | `main` |
-| Parent of this record | `a1fe675ad0016f89b73d30a9a12c891aef3c9a07`. This section records PLAT-CLIENT-01 on that published baseline. |
+| Parent of this record | `3e1a01ddbe39034cc266dbbdf165e273c30ce9cb`. This section records PLAT-UX-01 on that published baseline. |
 | Bushel package ancestor | `7b3e64278e04362cfc2231381305ee2030a60408`. Historical. Not HEAD. |
 | Checklist | [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md). One product roadmap. |
-| Development freeze | **ACTIVE**. Website stabilization is CLOSED. Platform existing-problem stabilization is IN PROGRESS. PLAT-CLIENT-01 is CLOSED: Clients can be created, opened, and corrected. |
+| Development freeze | **ACTIVE**. Website stabilization is CLOSED. Platform existing-problem stabilization is IN PROGRESS. PLAT-CLIENT-01 is CLOSED. PLAT-UX-01 is CLOSED: the What we pay category row no longer widens a 390px page. |
 | Bushel | Incomplete proving case. Preserved. Not the master programme. Not a blocker. |
 
 Joel’s 30 Sep 2026 direction: the Linda Bushel deck is evidence, not the development programme. Do not discard it. Do not resolve its construction questions from this resume. Piers 12 against 15, joist lines 16 against 15, stringers 10 against 9, and throat 4.997 in labeled 5.00 in stay unresolved. Record: [estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md](estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md).
 
-Development freeze is active. Platform existing-problem stabilization is in progress. PLAT-CLIENT-01 is closed. Do not start the next stabilization item from this resume. Start New Project stays recorded and queued. [architecture/start-project-guided-wizard-product-direction.md](architecture/start-project-guided-wizard-product-direction.md).
+Development freeze is active. Platform existing-problem stabilization is in progress. PLAT-CLIENT-01 and PLAT-UX-01 are closed. PLAT-UX-02, PLAT-UX-03, and PLAT-UX-04 stay unaddressed. Scope owner UAT and mapper human UAT remain verification gates. PLAT-LOGO-01 stays blocked on the approved asset. Do not start the next item from this resume. Start New Project stays recorded and queued. [architecture/start-project-guided-wizard-product-direction.md](architecture/start-project-guided-wizard-product-direction.md).
 
 Plan Generation stays queued. It draws governed geometry when drawings are required and absent. It does not keep a second calculation.
 
@@ -26,7 +26,7 @@ The public Website is a consumer surface, not a second roadmap. PUBLIC WEBSITE S
 
 **VERIFIED** 30 Sep 2026 in Cursor Terminal: repository Alembic head `k1f2a3b4c5d6`. Mac primary `flask db current` is `h8c9d0e1f2a3`. Script chain `h8c9d0e1f2a3` → `j0e1f2a3b4c5` → `k1f2a3b4c5d6`. That divergence is the current occupancy. The Mac database was not migrated. Stash `stash@{0}` remains: WIP FG-037 interrupted before V1 rescore. Not applied.
 
-**LAST RECORDED / NOT RE-PROVED** this pass: hosted service `Calibryatai`, id `srv-dar95mh42hec73df4rug`, deploy `dep-dasnht0473hc7394e65g`, running commit `6aa574bda2a57968bc3d746ad4488bcb7b4b8e2d`, finished 2026-09-27T20:14:48Z. Hosted database revision `k1f2a3b4c5d6`. Hosted UAT bypass ON. Hosted password unresolved. Do not claim the hosted service runs repository HEAD. V1 remains **65% / 4 of 11**. Secondary **79% / 22 of 28**. Not rescored. Full suite after PLAT-CLIENT-01, Cursor Terminal: `./venv/bin/python -m pytest -q` — **1826 passed**, 6543 warnings, **906.64s**, exit 0.
+**LAST RECORDED / NOT RE-PROVED** this pass: hosted service `Calibryatai`, id `srv-dar95mh42hec73df4rug`, deploy `dep-dasnht0473hc7394e65g`, running commit `6aa574bda2a57968bc3d746ad4488bcb7b4b8e2d`, finished 2026-09-27T20:14:48Z. Hosted database revision `k1f2a3b4c5d6`. Hosted UAT bypass ON. Hosted password unresolved. Do not claim the hosted service runs repository HEAD. V1 remains **65% / 4 of 11**. Secondary **79% / 22 of 28**. Not rescored. Full suite after PLAT-UX-01, Cursor Terminal: `./venv/bin/python -m pytest -q` — **1827 passed**, 6548 warnings, **864.35s**, exit 0.
 
 Do not send Ben. Do not send Darcy. Do not start the Plan Generation Engine, the wizard, ICF, a Website rebuild, or a calculator change from this resume. Those wait for a later accepted prompt.
 

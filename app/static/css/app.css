@@ -2016,6 +2016,13 @@ body.login-page {
     border-bottom: 1px solid var(--border);
 }
 
+.cost-category-view {
+    flex-wrap: wrap;
+    max-width: 100%;
+    min-width: 0;
+    row-gap: 4px;
+}
+
 .projects-view a {
     display: inline-flex;
     align-items: baseline;

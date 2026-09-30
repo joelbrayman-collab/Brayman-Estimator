@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PLAT-UX-01 (2026-09-30)
+
+| Field | Content |
+|-------|---------|
+| Slice | PLAT-UX-01. What we pay categories on a narrow screen. |
+| Product status at capture | Development freeze ACTIVE. Platform stabilization IN PROGRESS. This defect CLOSED. |
+| 1. What new contractor capability exists? | On a phone, the cost categories stay on the What we pay page instead of pushing the page sideways. |
+| 2. When would the contractor use it? | When choosing All, Labour, Material, Equipment, Subcontract, Allowance, or Other on a narrow screen. |
+| 3. What workflow will the final Manual need to teach? | Costs & pricing → What we pay → choose a category. The names did not change. |
+| 4. What contractor-facing terms must be used? | What we pay. Labour. Material. Equipment. Subcontract. Allowance. Other. |
+| 5. What screenshots / Print examples will eventually be needed? | What we pay on a phone, with the categories on more than one line. Not captured here. |
+| 6. What warnings / validation distinctions need explanation? | None. A category still only filters the list. |
+| 7. Desktop / iPhone / Print relevance | Phone-width office browser, and the same page on a desktop where the categories stay on one line. Not Print. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — PLAT-CLIENT-01 (2026-09-30)
 
 | Field | Content |

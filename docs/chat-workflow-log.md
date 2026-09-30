@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — PLAT-UX-01 What we pay category row on a phone
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLATFORM EXISTING-PROBLEM CLOSURE PLAT-UX-01 — WHAT WE PAY MOBILE CATEGORY OVERFLOW 30 SEP 2026 |
+| Objective | Keep the What we pay category row from widening the page at 390px. |
+| Business decision | Development freeze stays ACTIVE. This is one presentation defect. PLAT-UX-02, PLAT-UX-03, and PLAT-UX-04 stay unaddressed. |
+| Architectural decision | The category nav wraps inside its own width. The shared Projects tab row is unchanged. No route, category, or pricing change. No migration. |
+| Prompt template used | Joel’s 30 Sep 2026 PLAT-UX-01 remediation prompt. No file in docs/prompts/ covers this pass. |
+| Approved Cursor prompt summary | Wrap or contain the What we pay categories so a 390px page does not grow. Keep filtering. Focused tests, browser QA at 390, 520, and desktop, then the full suite. One commit if the gates pass. Do not deploy. |
+| Files expected to change | Cost library list markup, the category-row style, the costs presentation test, and the central records for this close. |
+| Files prohibited from changing | Auth, logo, Website, Bushel, calculators, Contract V1, migrations, Past jobs copy, Labour rates, Project Hub. |
+| Implementation result | PLAT-UX-01 CLOSED. Platform stabilization IN PROGRESS. Freeze ACTIVE. |
+| Tests | Focused: `./venv/bin/python -m pytest -q tests/test_uat3_costs_and_pricing.py tests/test_projects_visual.py::test_projects_list_requires_login tests/test_uat1_office_presentation.py` — 12 passed, 32 warnings, 4.58s, exit 0. Complete: `./venv/bin/python -m pytest -q` — 1827 passed, 6548 warnings, 864.35s, exit 0. |
+| Project-state-report update | Pointer only. PART B remains the 2026-09-20 snapshot. |
+| Milestone entry update | None. |
+| Constitutional issue raised | None. |
+| Unresolved issues | PLAT-UX-02 copy residual. PLAT-UX-03 specialist pages behind daily navigation. PLAT-UX-04 paused project-hub polish. Scope owner UAT and mapper human UAT remain verification gates. PLAT-LOGO-01 blocked on the approved asset. |
+| Next approved step | None from this entry. Do not begin the next item. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — PLAT-CLIENT-01 open and correct an existing Client
 
 | Field | Content |

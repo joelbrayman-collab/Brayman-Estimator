@@ -17,7 +17,7 @@
 
 <p class="page-purpose">{{ contractor_copy.WHAT_WE_PAY_LABOUR_NOTE }} <a href="{{ url_for('labour_engine.index') }}">Labour rates</a></p>
 
-<nav class="projects-view" aria-label="Cost category">
+<nav class="projects-view cost-category-view" aria-label="Cost category">
     <a class="{% if not selected_category %}is-current{% endif %}" href="{{ url_for('cost_library.list_cost_items') }}">All</a>
     {% for category in categories %}
     <a class="{% if selected_category == category %}is-current{% endif %}" href="{{ url_for('cost_library.list_cost_items', category=category) }}">{{ contractor_copy.cost_category_label(category) }}</a>

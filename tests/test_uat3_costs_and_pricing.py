@@ -148,6 +148,38 @@ def test_what_we_pay_uses_cost_items_and_hides_list_actions(client):
     assert catalogue.status_code == 200
 
 
+def test_what_we_pay_categories_wrap_inside_the_page(client):
+    html = _html(client.get("/cost-library/"))
+    assert 'class="projects-view cost-category-view"' in html
+    nav = html.split('aria-label="Cost category"', 1)[1].split("</nav>", 1)[0]
+    for label in (
+        "All",
+        "Labour",
+        "Material",
+        "Equipment",
+        "Subcontract",
+        "Allowance",
+        "Other",
+    ):
+        assert f">{label}</a>" in nav
+    assert 'class="is-current"' in nav
+    assert "category=" not in nav.split('class="is-current"', 1)[0].split("<a", 1)[-1]
+
+    material = _html(client.get("/cost-library/?category=Material"))
+    material_nav = material.split('aria-label="Cost category"', 1)[1].split("</nav>", 1)[0]
+    assert 'class="is-current" href="/cost-library/?category=Material"' in material_nav
+    assert 'class="is-current" href="/cost-library/"' not in material_nav
+
+    rule = Path("app/static/css/app.css").read_text(encoding="utf-8")
+    block = rule.split(".cost-category-view", 1)[1].split("}", 1)[0]
+    assert "flex-wrap: wrap" in block
+    assert "max-width: 100%" in block
+
+    projects = _html(client.get("/projects/"))
+    assert "cost-category-view" not in projects
+    assert 'class="projects-view"' in projects
+
+
 def test_reusable_work_row_opens_the_assembly(client):
     assembly = Assembly(
         organization_id=DEFAULT_ORGANIZATION_ID,

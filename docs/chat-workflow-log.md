@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — Start New Project implementation plan
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DEVELOPMENT RESUMPTION START NEW PROJECT — IMPLEMENTATION PLAN 30 SEP 2026 |
+| Objective | Record the Start New Project implementation plan. Do not build it. |
+| Business decision | The stabilization freeze is lifted only for this plan. Implementation is not started. |
+| Architectural decision | The walk orchestrates existing Client, Project, Scope, drawings, estimate, and mapper services. One thin cursor stores only a drawing decision and a waiting token. Completion is derived. Website formulas are not copied. Plan Generation is invoked only later, when drawings are required and missing. |
+| Prompt template used | Joel’s 30 Sep 2026 implementation-plan prompt. No file in docs/prompts/ covers this pass. |
+| Approved Cursor prompt summary | Map the current project path and write the plan into the architecture record. Update central occupancy. One documentation commit. Do not change product code, migrate, or deploy. |
+| Files expected to change | The implementation plan, the product-direction pointer, the architecture index, checklist, session handoff, current-state, roadmap, project-state, milestones, and this log. |
+| Files prohibited from changing | Application code, migrations, Website, Contract V1, authentication. |
+| Implementation result | Plan recorded. SNP-1 through SNP-6 defined. None started. First later slice is the read-only resolver. |
+| Tests | Not run. This pass does not change product behaviour. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Hosted password verification, bypass removal, cutover, and hosted database re-proof stay outside this plan. |
+| Next approved step | None from this entry. Do not start SNP-1 until a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — Final stabilization seal
 
 | Field | Content |

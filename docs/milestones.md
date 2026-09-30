@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-09-30 — Start New Project implementation plan
+
+| Field | Content |
+|-------|---------|
+| Milestone | Start New Project implementation plan |
+| Status | **RECORDED.** Implementation **NOT STARTED**. |
+| Branch | `main` |
+| Base commit | `b53cba9c20fe286b3b5ede407f30d510cba66c7b` |
+| Objective | Define the guided project walk without building it. |
+| Deliverables | [architecture/start-project-implementation-plan.md](architecture/start-project-implementation-plan.md). |
+| Validation | Documentation only. No product suite. No migration. |
+| Architectural findings | One thin orchestration record is proposed and not created. Existing project creation, scope, plans, and estimates stay the authority. |
+| Open decisions | A later prompt may authorize SNP-1, the read-only resolver. |
+| Next milestone | SNP-1. Not started. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-09-30 |
+
 ### 2026-09-30 — Final stabilization seal
 
 | Field | Content |

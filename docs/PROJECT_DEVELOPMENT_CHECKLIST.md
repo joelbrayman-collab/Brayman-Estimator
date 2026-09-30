@@ -63,14 +63,14 @@ The reusable stair result and the Bushel finished stair agree on total rise 38 i
 
 ## One sequence
 
-Development freeze: **READY TO LIFT**. This seal does not lift it and does not start the next row. Platform existing-problem stabilization is CLOSED and the stabilized deployment is LIVE / VERIFIED. Hosted password verification, bypass removal, and production cutover stay in Later. They are operational readiness, not the next product objective.
+Development freeze: **LIFTED FOR THE START NEW PROJECT IMPLEMENTATION PLAN.** That plan is recorded. Implementation is **NOT STARTED**. Website stabilization is CLOSED. Platform stabilization is CLOSED and LIVE / VERIFIED. Hosted password verification, bypass removal, and production cutover stay in Later.
 
 | Order | Step | Kind | Status |
 |-------|------|------|--------|
 | 1 | This unified architecture | Governance | Recorded by this checklist. Not an implementation authorization. |
 | 2 | Website Useful Tools stabilization | Website surface | ✅ CLOSED at Version 31. |
 | 3 | Platform existing-problem stabilization | Closed | ✅ CLOSED and LIVE / VERIFIED. Current deploy `dep-daulf9u0tbcc73bomdgg` at `ca37d8b6939f6494b6ff415bad17953886366728`, finished 2026-09-30T18:41:57Z. PLAT-LOGO-01 CLOSED / LIVE VERIFIED. Prior deploy `dep-daukqvg473hc73bkouug` at `45ab150aa724f4fa50eb7d496f886bd1a5f2e4e0` is superseded. |
-| 4 | Start New Project implementation plan | Product | ⬜ QUEUED. This is the next governed objective once a later prompt authorizes it. Map stages, define the thin cursor, and name where a governed engine enters and where Plan Generation is invoked when drawings are required and absent. Do not build the wizard. |
+| 4 | Start New Project implementation plan | Product | Plan recorded. Implementation **NOT STARTED**. [architecture/start-project-implementation-plan.md](architecture/start-project-implementation-plan.md). First later slice, if authorized, is the read-only resolver SNP-1. Do not build the wizard from this row. |
 | 5 | Approved Start New Project slices | Product | ⬜ QUEUED behind an accepted plan. |
 | 6 | Use the governed engine where the project walk requires it | Product | ⬜ QUEUED. No second formula. |
 | 7 | Plan Generation | Product | ⬜ QUEUED. Only when drawings are required and absent. Governed engine → governed geometry → drawing → quantity evidence. [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). |

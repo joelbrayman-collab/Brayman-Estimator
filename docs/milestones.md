@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative historical record |
-| Updated | 2026-09-20 |
+| Updated | 2026-09-30 |
 | Policy | **Append-only** |
 
 ## Purpose
@@ -31,6 +31,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 ---
 
 ## Entries
+
+### 2026-09-30 — Platform existing-problem stabilization closed
+
+| Field | Content |
+|-------|---------|
+| Milestone | Platform existing-problem stabilization |
+| Status | **CLOSED** at the product-remediation level. Deployment **NOT YET AUTHORIZED**. Development freeze **ACTIVE — PENDING STABILIZED PLATFORM DEPLOYMENT / LIVE VERIFICATION**. |
+| Branch | `main` |
+| Base commit | `302d75eafdbf6636e2d09ab32ca559416640ace7` |
+| Objective | Close the existing-problem programme and record hosted readiness without deploying. |
+| Deliverables | Central records. No product change. |
+| Validation | Hosted service re-measured. Live deploy `dep-dasnht0473hc7394e65g` at `6aa574bda2a57968bc3d746ad4488bcb7b4b8e2d`. Product delta has no migration. Accepted suite 1827 passed remains the product evidence. Not re-run for this documentation close. |
+| Architectural findings | Remaining P0 none. Remaining P1 none. Remaining material P2 none. Non-blocking polish and the blocked logo stay preserved. |
+| Open decisions | Authorize the later manual deploy. Hosted database revision `k1f2a3b4c5d6` was not re-proved. |
+| Next milestone | Stabilized Platform deployment and live verification. Not started. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-09-30 |
 
 ### 2026-09-20 — FG-038 PA-C bounded live Person UAT
 

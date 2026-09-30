@@ -13,18 +13,20 @@ This block is the current snapshot. The baseline table, the migrations history, 
 | Fact | Measured or recorded |
 |------|----------------------|
 | Branch | `main` |
-| Parent of this record | `7e1e419ebe45190aec45867dcd32ac0f284d8b1d`. This occupancy records the Scope and mapper owner UAT on that published baseline. |
+| Parent of this record | `302d75eafdbf6636e2d09ab32ca559416640ace7`. This occupancy records Platform stabilization closure and deployment readiness on that published baseline. |
 | Bushel package | Ancestor `7b3e64278e04362cfc2231381305ee2030a60408`. Not HEAD. Incomplete case. Not a development gate. |
-| Development freeze | **ACTIVE**. Website stabilization CLOSED. Scope owner/human UAT CLOSED — PASS WITH NON-BLOCKING POLISH. Mapper human UAT CLOSED — PASS. PLAT-CLIENT-01 CLOSED. PLAT-UX-01 CLOSED. |
+| Development freeze | **ACTIVE — PENDING STABILIZED PLATFORM DEPLOYMENT / LIVE VERIFICATION**. Website stabilization CLOSED. Platform existing-problem stabilization CLOSED. Freeze not lifted. |
 | Repository Alembic head | **VERIFIED** `k1f2a3b4c5d6` |
 | Mac primary | **VERIFIED** `h8c9d0e1f2a3`. Not migrated. |
 | Script chain | `h8c9d0e1f2a3` → `j0e1f2a3b4c5` → `k1f2a3b4c5d6` |
-| Hosted running commit | **LAST RECORDED / NOT RE-PROVED** `6aa574bda2a57968bc3d746ad4488bcb7b4b8e2d`, deploy `dep-dasnht0473hc7394e65g`, finished 2026-09-27T20:14:48Z. Not repository HEAD. |
-| Hosted database | **LAST RECORDED / NOT RE-PROVED** `k1f2a3b4c5d6`. UAT bypass **LAST RECORDED / NOT RE-PROVED** ON. |
+| Stabilized checkpoint | `302d75eafdbf6636e2d09ab32ca559416640ace7`. Deployment NOT YET AUTHORIZED. |
+| Hosted running commit | **VERIFIED NOW** `6aa574bda2a57968bc3d746ad4488bcb7b4b8e2d`, deploy `dep-dasnht0473hc7394e65g`, status `live`, finished 2026-09-27T20:14:48Z. Service `srv-dar95mh42hec73df4rug`. Branch `main`. Auto-deploy off. Not repository HEAD. |
+| Hosted database | **LAST RECORDED / NOT RE-PROVED** `k1f2a3b4c5d6`. |
+| Hosted UAT auto-entry | **VERIFIED NOW** effective ON. Anonymous `GET /login` returned 302 to `/`. No environment change. |
 | Full suite | **LAST VERIFIED** after PLAT-UX-01: `./venv/bin/python -m pytest -q` — **1827 passed**, 6548 warnings, **864.35s**, exit 0. This documentation pass did not re-run it. |
 | Scope | Objective verification PASS. Owner/human UAT CLOSED — PASS WITH NON-BLOCKING POLISH. Existing-row inline edit is NON-BLOCKING POLISH / FUTURE IMPROVEMENT. |
 | Mapper | Objective verification PASS. Human UAT CLOSED — PASS. Contract evidence PASS. |
-| Current condition | Development freeze ACTIVE. Scope and mapper owner gates are closed. PLAT-CLIENT-01 CLOSED. PLAT-UX-01 CLOSED. PLAT-AUTH-01 remains intentional UAT auto-entry. PLAT-AUTH-02 remains verified. PLAT-UX-02, PLAT-UX-03, and PLAT-UX-04 remain non-blocking or specialist. PLAT-LOGO-01 remains blocked on the approved asset. Do not start the next item. |
+| Current condition | Platform existing-problem stabilization CLOSED. Remaining P0 none. Remaining P1 none. Remaining material P2 none. PLAT-UX-02, PLAT-UX-03, PLAT-UX-04, scope inline edit, PLAT-LOGO-01, and PLAT-AUTH-01 remain preserved and are not stabilization blockers. Deployment NOT YET AUTHORIZED. Do not start the next item. |
 | Sequence | [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md). |
 | Contract V1 | **ACCEPTED / PINNED** `2903a45074df21b1c99390cb9aab68638970a2ff`. Not edited. |
 | Website | Consumer surface. PUBLIC WEBSITE SOURCE CONTINUITY: RESTORED / VERIFIED. Version 31. SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`. Project `appgprj_6a9095543b74819186183f9a522890e5`. Deployment `appgdep_6abd379bbb8081918aae3b170706263b` SUCCEEDED. Parity PASS. Employment, Concrete, and Stair CLOSED. Tests 56/56 PASS. Not a second roadmap. |

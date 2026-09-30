@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — Platform stabilization closed; deployment not authorized
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLATFORM EXISTING-PROBLEM STABILIZATION ARCHITECT CLOSURE + STABILIZED DEPLOYMENT READINESS 30 SEP 2026 |
+| Objective | Record Platform existing-problem stabilization as closed and measure hosted readiness. Do not deploy. |
+| Business decision | The programme is CLOSED at the product-remediation level. The development freeze stays ACTIVE pending stabilized deployment and live verification. Non-blocking polish, the blocked logo, and temporary UAT auto-entry are not stabilization blockers. |
+| Architectural decision | Stabilized checkpoint `302d75eafdbf6636e2d09ab32ca559416640ace7`. Hosted live deploy remains `dep-dasnht0473hc7394e65g` at `6aa574bda2a57968bc3d746ad4488bcb7b4b8e2d`. Product delta is the client open/correct change and the What we pay category containment. No migration. No configuration change. Effective UAT auto-entry verified ON. Deployment NOT YET AUTHORIZED. |
+| Prompt template used | Joel’s 30 Sep 2026 architect closure and readiness prompt. No file in docs/prompts/ covers this pass. |
+| Approved Cursor prompt summary | Record the programme closed. Re-measure Render read-only. Prove the deploy delta and that no new migration is required. Keep the freeze. One documentation commit and push if no blocker. Do not deploy. |
+| Files expected to change | Session handoff section 0, current occupancy, the development checklist, the roadmap pointer, the project-state pointer, the milestone history, and this log. |
+| Files prohibited from changing | Application code, tests, migrations, authentication, environment variables, Website, logo, Bushel. |
+| Implementation result | Programme recorded CLOSED. Deployment NOT PERFORMED. Freeze ACTIVE. |
+| Tests | Not re-run. Definition of Done does not require a new full suite for a documentation-only close. Accepted product suite after PLAT-UX-01: 1827 passed, 6548 warnings, 864.35s, exit 0. |
+| Project-state-report update | Pointer only. PART B remains the 2026-09-20 snapshot. |
+| Milestone entry update | Appended. Programme closed. Deployment not authorized. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Hosted database revision last recorded `k1f2a3b4c5d6`, not re-proved. Live verification of the stabilized checkpoint has not started. PLAT-LOGO-01 blocked. PLAT-AUTH-01 remains intentional. Later reversible hosted password check is separate from the deploy. |
+| Next approved step | None from this entry. Do not deploy until a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — Scope and mapper owner UAT closed
 
 | Field | Content |

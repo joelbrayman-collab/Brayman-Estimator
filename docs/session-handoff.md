@@ -8,15 +8,15 @@ Read this section first. The sections below it are older turnover history. They 
 |------|--------|
 | Repository | `/Users/joelbrayman/Desktop/Brayman-Estimator` |
 | Branch | `main` |
-| Parent of this record | `3e1a01ddbe39034cc266dbbdf165e273c30ce9cb`. This section records PLAT-UX-01 on that published baseline. |
+| Parent of this record | `7e1e419ebe45190aec45867dcd32ac0f284d8b1d`. This section records the Scope and mapper owner UAT on that published baseline. |
 | Bushel package ancestor | `7b3e64278e04362cfc2231381305ee2030a60408`. Historical. Not HEAD. |
 | Checklist | [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md). One product roadmap. |
-| Development freeze | **ACTIVE**. Website stabilization is CLOSED. Platform existing-problem stabilization is IN PROGRESS. PLAT-CLIENT-01 is CLOSED. PLAT-UX-01 is CLOSED: the What we pay category row no longer widens a 390px page. |
+| Development freeze | **ACTIVE**. Website stabilization is CLOSED. Platform existing-problem stabilization remains under the freeze. PLAT-CLIENT-01 is CLOSED. PLAT-UX-01 is CLOSED. Scope owner/human UAT is CLOSED — PASS WITH NON-BLOCKING POLISH. Mapper human UAT is CLOSED — PASS. |
 | Bushel | Incomplete proving case. Preserved. Not the master programme. Not a blocker. |
 
 Joel’s 30 Sep 2026 direction: the Linda Bushel deck is evidence, not the development programme. Do not discard it. Do not resolve its construction questions from this resume. Piers 12 against 15, joist lines 16 against 15, stringers 10 against 9, and throat 4.997 in labeled 5.00 in stay unresolved. Record: [estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md](estimating-cases/2026/linda-bushel-pool-deck/geometry/2026-09-29-governed-geometry-reconciliation.md).
 
-Development freeze is active. Platform existing-problem stabilization is in progress. PLAT-CLIENT-01 and PLAT-UX-01 are closed. PLAT-UX-02, PLAT-UX-03, and PLAT-UX-04 stay unaddressed. Scope owner UAT and mapper human UAT remain verification gates. PLAT-LOGO-01 stays blocked on the approved asset. Do not start the next item from this resume. Start New Project stays recorded and queued. [architecture/start-project-guided-wizard-product-direction.md](architecture/start-project-guided-wizard-product-direction.md).
+Development freeze is active. Scope objective verification is PASS. Scope owner/human UAT is CLOSED — PASS WITH NON-BLOCKING POLISH. Changing an existing scope row by remove then add again is NON-BLOCKING POLISH / FUTURE IMPROVEMENT. It is not a stabilization defect. Mapper objective verification is PASS. Mapper human UAT is CLOSED — PASS. Mapper contract evidence is PASS. PLAT-CLIENT-01 and PLAT-UX-01 stay closed. PLAT-AUTH-01 stays intentional UAT auto-entry. PLAT-AUTH-02 stays verified with no application defect. PLAT-HOST-01 stays closed as a product defect. PLAT-DB-01 stays closed as intentional occupancy. PLAT-UX-02 stays a non-blocking presentation and copy residual. PLAT-UX-03 stays specialist functionality and is not a daily-navigation defect. PLAT-UX-04 stays paused project-hub polish. PLAT-LOGO-01 stays blocked on the approved asset. Website stabilization stays closed. Do not start the next item from this resume. Start New Project stays recorded and queued. [architecture/start-project-guided-wizard-product-direction.md](architecture/start-project-guided-wizard-product-direction.md).
 
 Plan Generation stays queued. It draws governed geometry when drawings are required and absent. It does not keep a second calculation.
 

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-09-30 — Scope and mapper owner UAT closed
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-09-30 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLATFORM EXISTING-PROBLEM STABILIZATION SCOPE + MAPPER OWNER UAT — OWNER DECISIONS + CENTRAL RECORD CLOSURE 30 SEP 2026 |
+| Objective | Record Joel’s owner decisions for the already-built Scope page and the Calculation to Estimate mapper. |
+| Business decision | Scope owner/human UAT is CLOSED — PASS WITH NON-BLOCKING POLISH. Mapper human UAT is CLOSED — PASS. Removing a scope row and adding it again, instead of editing it in place, is NON-BLOCKING POLISH / FUTURE IMPROVEMENT. It is not a stabilization defect. Development freeze stays ACTIVE. |
+| Architectural decision | Documentation only. Scope objective verification PASS. Mapper objective verification PASS. Mapper contract evidence PASS. The engine supplies the governed quantity. Company cost and margin stay a company responsibility. No product code, migration, or deploy. |
+| Prompt template used | Joel’s 30 Sep 2026 owner-decision closure prompt. No file in docs/prompts/ covers this pass. |
+| Approved Cursor prompt summary | Record the two owner decisions in the existing central records. One documentation commit. Push `main`. Do not change product code. Do not deploy. Do not lift the freeze. |
+| Files expected to change | Session handoff section 0, current occupancy, the development checklist, the roadmap pointer, the project-state pointer, and this log. |
+| Files prohibited from changing | Scope, mapper, estimates, engines, Contract V1, authentication, database, migrations, Website, logo, Bushel. |
+| Implementation result | Both verification gates recorded closed. Product code unchanged. Freeze ACTIVE. |
+| Tests | Not re-run. This pass records owner decisions against the already-tested product state. Prior focused evidence, Cursor Terminal: `./venv/bin/python -m pytest -q tests/test_project_work_packages.py::test_scope_page_uses_contractor_language tests/test_calculation_estimate_mapping.py` — 16 passed, 43 warnings, 3.39s, exit 0. |
+| Project-state-report update | Pointer only. PART B remains the 2026-09-20 snapshot. |
+| Milestone entry update | None. This pass does not close the stabilization programme. |
+| Constitutional issue raised | None. |
+| Unresolved issues | PLAT-LOGO-01 blocked on the approved asset. PLAT-AUTH-01 intentional UAT auto-entry. Later hosted password and cutover gate. PLAT-UX-02 non-blocking copy residual. PLAT-UX-03 specialist pages. PLAT-UX-04 paused project-hub polish. Scope inline edit is future polish. |
+| Next approved step | None from this entry. Do not begin the next item. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-09-30 — PLAT-UX-01 What we pay category row on a phone
 
 | Field | Content |

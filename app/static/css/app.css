@@ -2376,3 +2376,34 @@ body.login-page {
     }
 }
 
+.project-setup {
+    max-width: 42rem;
+}
+
+.project-setup h2 {
+    margin: 0 0 8px;
+    font-size: 1.05rem;
+}
+
+.project-setup ul {
+    margin: 0 0 16px;
+    padding-left: 1.2rem;
+}
+
+.project-setup-action {
+    margin: 16px 0;
+}
+
+.project-setup-action .button {
+    max-width: 100%;
+}
+
+@media (max-width: 520px) {
+    .project-setup-action .button {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+}
+

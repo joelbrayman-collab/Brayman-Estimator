@@ -267,7 +267,7 @@ Later SNP-3, after the engine can complete a supported type:
 
 On drawings missing, the plans page offers Upload Drawings and, for a supported type only, Build Drawings. Build Drawings calls this engine. After the contractor uses the sheet, the resolver runs again and drawings are present.
 
-SNP-1 does not generate a drawing. SNP-2 stays blocked until every resolver destination passes Rule 16, including this drawings branch.
+SNP-1 does not generate a drawing. SNP-2 is implemented. When drawings are required and missing, it opens the existing plans page. It does not call this engine itself.
 
 ## 15. Drawing requirement authority
 
@@ -353,4 +353,4 @@ No workflow-state table is added for this decision. Rollback of either revision 
 
 ## 21. Recommended next implementation slice
 
-PGE-1, PGE-2, PGE-3, PGE-4, PGE-5, and PGE-6 are closed as slices. Build Drawings on the existing plans page supports `dimensioned_plan`. `stair_detail` remains an engine profile and is not selectable there. `projects.drawing_requirement` is implemented. Present is derived. Build Drawings remains an action. The programme is not complete. SNP-3 is closed as a slice. SNP-2 is ready for implementation after the 1 Oct 2026 Rule 16 re-audit, 7 / 7 PASS, and is not started. Guided Project Setup stays recorded and not built.
+PGE-1, PGE-2, PGE-3, PGE-4, PGE-5, and PGE-6 are closed as slices. Build Drawings on the existing plans page supports `dimensioned_plan`. `stair_detail` remains an engine profile and is not selectable there. `projects.drawing_requirement` is implemented. Present is derived. Build Drawings remains an action. The programme is not complete. SNP-3 is closed as a slice. SNP-2 is implemented, tested, and closed as a slice after the 1 Oct 2026 Rule 16 re-audit, 7 / 7 PASS. Guided Project Setup is implemented. It routes a required missing drawing to the existing plans page and does not integrate this engine further.

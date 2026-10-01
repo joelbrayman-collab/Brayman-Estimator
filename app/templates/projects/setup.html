@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Continue setup | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}{{ project.name }}{% endblock %}
+
+{% block content %}
+<section class="page-heading project-setup" id="project-setup">
+    <div>
+        <p class="eyebrow">Continue setup</p>
+        <h1>{{ project.name }}</h1>
+        <p>{{ client_name or "Client still needed" }}</p>
+        <p class="muted-copy">Project stage <span class="status">{{ project.status }}</span></p>
+    </div>
+</section>
+
+<section class="form-panel project-setup" aria-labelledby="setup-ready">
+    <h2 id="setup-ready">What's ready</h2>
+    {% if ready %}
+    <ul>
+        {% for item in ready %}
+        <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Nothing checked here is ready yet.</p>
+    {% endif %}
+
+    <h2 id="setup-needed">What's still needed</h2>
+    <p>{{ needed }}</p>
+
+    <p class="project-setup-action">
+        <a class="button" href="{{ action_url }}">{{ action_label }}</a>
+    </p>
+    <p><a href="{{ url_for('projects.view_project', id=project.id) }}">Project page</a></p>
+</section>
+{% endblock %}

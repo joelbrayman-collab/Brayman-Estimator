@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — SNP-2 guided project setup resume
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI START NEW PROJECT — GUIDED PROJECT SETUP SNP-2 — THIN GUIDED PROJECT SETUP ENTRY + RESUME 1 OCT 2026 |
+| Objective | Give a new or existing project one resume page that re-runs the first-gap resolver and opens the existing next page. |
+| Business decision | The contractor sees Continue setup, what is ready, what is still needed, and the next action. The experience is not a numbered wizard. |
+| Architectural decision | Setup owns no client, location, drawing, scope, or estimate record. It does not store a step. The resolver stays read-only. A new project still uses `/projects/new`. |
+| Prompt template used | Joel’s 1 Oct 2026 SNP-2 implementation prompt. No file in docs/prompts/ covers this slice. |
+| Approved Cursor prompt summary | One resume route. Existing destinations only. Post-create redirect into setup. Continue setup on the project page. No schema. No resolver rewrite. No PGE-5 or PGE-6 change. No calculators. No Contract V1. No Website. No authentication change. No deploy. Full suite. One commit and push if the gates pass. |
+| Feature Gate | Problem: after the Rule 16 audit there was no resume entry, so a new or existing project did not open the next existing page. User: a contractor starting or returning to a project. Owner: orchestration only; existing modules own client, location, drawings, scope, and estimates. Data owned: none. Data referenced: resolver output and existing records. May change: one resume page, the post-create redirect, a Continue setup link. Must not change: schema, resolver logic, PGE-5, PGE-6, calculators, Contract V1, Website, authentication. Acceptance: each of the seven destinations opens its existing page, return re-runs the resolver, and no second project or client is created. Tests: `tests/test_project_setup.py`. ADR: no. Migration: no. |
+| Files expected to change | Setup service, route, template, a small style, the create redirect, the Continue setup link, tests, and status lines. |
+| Files prohibited from changing | Schema, resolver branching, PGE-5, PGE-6, Plan Generation, calculators, trade engines, Contract V1, Website, authentication. |
+| Implementation result | SNP-2 closed as a slice. Guided Project Setup is implemented. Project Readiness remains the first-gap foundation. The future readiness model is not implemented. |
+| Tests | Focused `./venv/bin/python -m pytest -q tests/test_project_setup.py tests/test_start_project_walk.py tests/test_project_drawing_requirement.py tests/test_project_client_relationship.py tests/test_project_work_packages.py tests/test_permit_foundation_fg015.py tests/test_organization_foundation.py tests/test_projects_visual.py tests/test_plan_upload.py tests/test_plan_generation_build_drawings.py tests/test_plan_generation_candidate.py tests/test_plan_generation_stair.py tests/test_plan_generation_render.py tests/test_plan_generation_request.py tests/test_estimates.py tests/test_auth_fg018.py` — 179 passed, 355 warnings, 89.00s, exit 0. Full suite `./venv/bin/python -m pytest -q` — 1921 passed, 6709 warnings, 887.53s, exit 0. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The future readiness model is not implemented. SNP-4 is not started. The prompt’s live SHA was not re-proved. Mac primary and the hosted database were not migrated. Deployment was not performed. |
+| Next approved step | None from this entry. Do not start SNP-4 or the future readiness model until a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — SNP-2 Rule 16 destination re-audit
 
 | Field | Content |

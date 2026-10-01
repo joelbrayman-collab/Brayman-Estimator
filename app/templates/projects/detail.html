@@ -13,6 +13,7 @@
         <p class="hub-operating-identity">{{ operating_identity }}</p>
     </div>
     <div class="hub-heading-actions">
+        <a class="button" href="{{ url_for('projects.project_setup', id=project.id) }}">Continue setup</a>
         <a class="button" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Drawings</a>
         <a class="button" href="{{ url_for('projects.scope_of_work', id=project.id) }}">Scope of work</a>
         {% if not project_is_closed %}

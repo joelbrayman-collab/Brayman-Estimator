@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **RECORDED PRODUCT DIRECTION.** 30 Sep 2026 readiness clarification. Rule 16 recorded. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **READY FOR IMPLEMENTATION**. Rule 16 re-audit 1 Oct 2026: 7 / 7 PASS. Not built. SNP-3 **CLOSED AS A SLICE**. Plan Generation is in productization. Guided Project Setup is not built. |
+| Status | **RECORDED PRODUCT DIRECTION.** 30 Sep 2026 readiness clarification. Rule 16 recorded. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. Rule 16 re-audit 1 Oct 2026: 7 / 7 PASS. SNP-3 **CLOSED AS A SLICE**. Plan Generation is in productization. Guided Project Setup **IMPLEMENTED**. Project Readiness is the first-gap foundation. The future readiness model is not implemented. |
 | Date | 2026-09-29. Clarified 2026-09-30. |
 | Authority | Joel, from real estimating with Ben. 30 Sep 2026 contractor-experience clarification. |
 | This record | Architecture only. No page, schema, navigation, engine, drawing generator, labour flow, or RFQ. |
@@ -126,7 +126,7 @@ Settled path already recorded in [estimating-path-alignment-2026-09-27.md](estim
 |-----|-----------------------------|
 | Orchestration | Nothing chooses the next question from prior answers. |
 | Progressive disclosure | Start Project is one form. |
-| Resume | Nothing yet says continue setup, or names what is still needed. SNP-2 is blocked. |
+| Resume | Continue setup names what is ready, what is still needed, and the next existing page. SNP-2 is implemented. Each visit re-runs the resolver. No step is stored. |
 | One setup cursor | Completeness is not derived and stored as workflow state over the real records. |
 | Missing-information register | Nothing distinguishes READY from NEEDS INFORMATION without filling a default. |
 | Setup review | Nothing shows client, project, documents, work, delivery, gaps, and what is ready to estimate on one gate. |
@@ -212,4 +212,4 @@ The same setup cursor must be readable later from the office and from a Field or
 
 The 30 Sep 2026 owner direction removed the Linda Bushel case as the active stop. The sequence is [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md).
 
-The implementation plan is recorded in [start-project-implementation-plan.md](start-project-implementation-plan.md). It maps internal stages to existing services. SNP-1 is the first-gap foundation and is not the final readiness model. Rule 16 prohibits a detected state with no way to resolve it, and it does not make every missing fact a stop to all other work. SNP-2A is implemented. SNP-3 is closed as a slice. SNP-2 is ready for implementation after the 1 Oct 2026 Rule 16 re-audit, 7 / 7 PASS, and is not built. Guided Project Setup is not built. No Feature Gate is opened in this direction record.
+The implementation plan is recorded in [start-project-implementation-plan.md](start-project-implementation-plan.md). It maps internal stages to existing services. SNP-1 is the first-gap foundation and is not the final readiness model. Rule 16 prohibits a detected state with no way to resolve it, and it does not make every missing fact a stop to all other work. SNP-2A is implemented. SNP-3 is closed as a slice. SNP-2 is implemented after the 1 Oct 2026 Rule 16 re-audit, 7 / 7 PASS. Guided Project Setup is that thin resume. The future readiness model is not implemented. No Feature Gate is opened in this direction record.

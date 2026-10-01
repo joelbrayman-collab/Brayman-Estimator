@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — SNP-2 guided project setup resume
+
+| Field | Content |
+|-------|---------|
+| Milestone | SNP-2 thin Guided Project Setup entry and resume |
+| Status | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** START NEW PROJECT **IMPLEMENTED**. GUIDED PROJECT SETUP **IMPLEMENTED**. PROJECT READINESS **CURRENTLY FIRST-GAP FOUNDATION**. Future readiness model **NOT YET IMPLEMENTED**. |
+| Branch | `main` |
+| Base commit | `6ea55a4f383c86071f5b7a4e698c62e6ce29b053` |
+| Objective | Open the existing next page for a new or returning project without storing a wizard step. |
+| Deliverables | `GET /projects/<id>/setup`. Continue setup on the project page. New projects from `/projects/new` open setup. |
+| Validation | Focused setup and neighbouring tests 179 passed, 355 warnings, 89.00s, exit 0. Full suite 1921 passed, 6709 warnings, 887.53s, exit 0. Temporary office paths A–H. Setup page at 1280 and 520 has no page overflow. At 390 the setup block fits. The existing office header is 11px wider than the viewport. |
+| Architectural findings | The resolver stays the first-gap authority and writes nothing. Setup does not own client, location, drawings, scope, or estimates. No workflow table was added. |
+| Open decisions | The future readiness model is not implemented. SNP-4 is recorded and not started. |
+| Next milestone | SNP-4 scope return hint, when a later prompt authorizes it. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — SNP-2 Rule 16 destination re-audit
 
 | Field | Content |

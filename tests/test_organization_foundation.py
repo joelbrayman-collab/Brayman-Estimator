@@ -514,13 +514,17 @@ def test_ui_project_creation_with_commercial_context(client, app):
             "delivery_model": "Self-Perform",
             "justification_reason": "",
         },
-        follow_redirects=True,
+        follow_redirects=False,
     )
 
-    assert resp.status_code == 200
-    assert b"Commercial Context Project" in resp.data
-    assert b"Addition" in resp.data
-    assert b"Competitive" in resp.data
+    p = Project.query.filter_by(name="Commercial Context Project").first()
+    assert resp.status_code == 302
+    assert resp.headers["Location"].endswith(f"/projects/{p.id}/setup")
+    hub = client.get(f"/projects/{p.id}")
+    assert hub.status_code == 200
+    assert b"Commercial Context Project" in hub.data
+    assert b"Addition" in hub.data
+    assert b"Competitive" in hub.data
 
     p = Project.query.filter_by(name="Commercial Context Project").first()
     assert p is not None

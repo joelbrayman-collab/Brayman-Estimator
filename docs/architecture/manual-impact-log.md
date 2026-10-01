@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — SNP-2 (2026-10-01)
+
+| Field | Content |
+|-------|---------|
+| Slice | SNP-2. Guided Project Setup resume. |
+| Product status at capture | START NEW PROJECT **IMPLEMENTED**. This slice **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. Not deployed. |
+| 1. What new contractor capability exists? | After starting a project, or from Continue setup on a project, the office shows what is ready, what is still needed, and one next action that opens the existing page. |
+| 2. When would the contractor use it? | When starting a job, or when coming back to a job that is not ready to price. |
+| 3. What workflow will the final Manual need to teach? | Start New Project still uses the existing project form. Saving opens Continue setup. The next action opens the existing client, location, drawings, scope, or estimate page. After that work, Continue setup reads the job again. Leaving and coming back does the same. More than one estimate asks the contractor to choose. |
+| 4. What contractor-facing terms must be used? | Continue setup. What's ready. What's still needed. Next action. Correct the client. Review location. Choose about drawings. Open drawings. Open scope of work. Open the estimate. Choose an estimate. Create the estimate. |
+| 5. What screenshots / Print examples will eventually be needed? | Continue setup on a desktop and on a phone, with the next action visible. Not captured here. |
+| 6. What warnings / validation distinctions need explanation? | The page does not complete the job. It opens the existing page. It does not pick one estimate when several exist. A client from another company is not shown. |
+| 7. Desktop / iPhone / Print relevance | Desktop and phone-width Continue setup. No print sheet is created. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — PGE-6 (2026-10-01)
 
 | Field | Content |

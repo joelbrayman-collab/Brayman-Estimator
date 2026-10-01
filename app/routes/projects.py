@@ -331,7 +331,7 @@ def create_project():
 
             db.session.commit()
             flash("Project created successfully with commercial decision context.", "success")
-            return redirect(url_for("projects.view_project", id=project.id))
+            return redirect(url_for("projects.project_setup", id=project.id))
 
         except (CommercialContextValidationError, PermitFoundationError) as e:
             db.session.rollback()

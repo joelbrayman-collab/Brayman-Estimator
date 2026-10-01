@@ -338,10 +338,12 @@ def test_new_project_auto_creates_location_and_preliminary_profile(client, app):
             "permit_context_class": "New dwelling",
             **COMMERCIAL_CREATE,
         },
-        follow_redirects=True,
+        follow_redirects=False,
     )
-    assert resp.status_code == 200
+    assert resp.status_code == 302
     project = Project.query.filter_by(name="FG015 New Civic Project").first()
+    assert resp.headers["Location"].endswith(f"/projects/{project.id}/setup")
+    resp = client.get(f"/projects/{project.id}")
     assert project is not None
     assert project.address == "Keep this free text"
     assert project.location is not None
@@ -370,10 +372,12 @@ def test_incomplete_new_project_creates_unresolved_preliminary_profile(client, a
             "status": "Lead",
             **COMMERCIAL_CREATE,
         },
-        follow_redirects=True,
+        follow_redirects=False,
     )
-    assert resp.status_code == 200
+    assert resp.status_code == 302
     project = Project.query.filter_by(name="FG015 Incomplete Project").first()
+    assert resp.headers["Location"].endswith(f"/projects/{project.id}/setup")
+    resp = client.get(f"/projects/{project.id}")
     assert project.location is not None
     assert project.location.completeness == LOCATION_INCOMPLETE
     profile = project.current_permit_profile
@@ -507,9 +511,12 @@ def test_project_hub_displays_foundation_states_and_no_substantive_findings(
             "permit_context_class": "Additional dwelling/coach house",
             **COMMERCIAL_CREATE,
         },
-        follow_redirects=True,
+        follow_redirects=False,
     )
-    html = _html(created)
+    project = Project.query.filter_by(name="Hub Preliminary Project").first()
+    assert created.status_code == 302
+    assert created.headers["Location"].endswith(f"/projects/{project.id}/setup")
+    html = _html(client.get(f"/projects/{project.id}"))
     assert "complete" in html
     assert "resolved" in html
     assert "preliminary" in html

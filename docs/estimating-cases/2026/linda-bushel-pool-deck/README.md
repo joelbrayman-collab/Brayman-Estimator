@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|--------|
-| Status | Source package preserved. Issued drawings, take-off, supplier quote, and estimates were not on this Mac. |
+| Status | Issue J1, 1 Oct 2026, is the current preliminary package. Supplier quotation and selling price are not in the case. |
 | Date preserved | 2026-09-29 |
 | Client spelling on the located documents | **Linda Bushel** |
-| Location stated in the design brief | D'Arcy's Way, Kemptville, Ontario, K0G 1J0 |
+| Location | 12 D'Arcy's Way, Kemptville, Ontario, K0G 1J0 |
 | This case is | One project record. It is not a platform estimating default. |
 
 The preservation instruction also used the spelling “Buschel.” That spelling does not appear on the located files. Those files say **Bushel**. Nothing was renamed.
@@ -64,3 +64,16 @@ Does not replace issue P1. Does not choose the open pier, joist, or stringer cou
 | `supplier/bmr-winchester/2026-10-01-supplier-package-status.md` | Current unsent supplier package. Prices stay blank. |
 | `estimates/internal/2026-10-01-ben-internal-cost.md` | Internal sheet for Ben. Every dollar is PRICE REQUIRED. |
 | `estimates/customer/2026-10-01-preliminary-customer-estimate.md` | Customer scope. Selling price is not issued. |
+
+## Issue J1 — 1 Oct 2026
+
+Current preliminary issue. Joel's decisions of 1 Oct 2026: 15 piers from the CT-1 layout, 16 joist lines from P1, 10 stringers, a 5.00 in working throat, a 12 in lower-deck walking surface, and street number 12. The throat is not a structural certification. Issue P1, CT-1, CT-2, and CT-2 R2 stay as historical evidence. The Darcy request is ready to send and has not been sent. No supplier price was invented.
+
+| Path | What it is |
+|------|------------|
+| `drawings/2026-10-01-j1-preliminary-11x17.pdf` | Eight-sheet 11×17 basis. Produced by `takeoff/issue_j1.py`. |
+| `takeoff/2026-10-01-j1-material-takeoff.md` | Quantities reconciled to that drawing. |
+| `takeoff/issue_j1.py` | Generator for the J1 drawing, take-off, and supplier request. It does not write the 29 Sep files. |
+| `supplier/bmr-winchester/2026-10-01-j1-darcy-request-for-quotation.md` | Request for quotation for Darcy at BMR Winchester. Not a quotation received. |
+| `estimates/internal/2026-10-01-j1-ben-internal-cost.md` | Internal sheet for Ben. Supplier-dependent dollars are PRICE REQUIRED. |
+| `estimates/customer/2026-10-01-j1-preliminary-customer-estimate.md` | Customer preliminary estimate. Selling price is not issued. |

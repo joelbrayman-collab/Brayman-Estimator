@@ -131,3 +131,28 @@ New files from that pass:
 - `supplier/bmr-winchester/2026-10-01-supplier-package-status.md`
 - `estimates/internal/2026-10-01-ben-internal-cost.md`
 - `estimates/customer/2026-10-01-preliminary-customer-estimate.md`
+
+## 1 Oct 2026 issue J1
+
+The 29 Sep rows and the earlier 1 Oct package stay. They are not rewritten.
+
+Joel, 1 Oct 2026, case-production continuation:
+
+- Piers: 15, using the CT-1 pier coordinates.
+- Joist lines: 16, using the P1 joist positions.
+- Stringers: 10, using the P1 stringer positions.
+- Stringer throat: 5.00 in working basis, calculated 4.997 in. Not an engineering certification.
+- Lower-deck finished walking surface: 12 in. Post cut length stays a field reconciliation. Lower posts are ordered uncut.
+- Address: 12 D'Arcy's Way, Kemptville, ON K0G 1J0.
+- Pricing: request a quotation from Darcy at BMR Winchester. Do not invent supplier prices.
+
+Previously confirmed and kept: two 5/4×6 boards per tread, the named 37 in Veranda kit, and a 42 in clear gate.
+
+Issue J1 is the current preliminary package. It is not a final construction drawing. The Darcy request is ready to send and is awaiting Darcy. Selling price is not issued.
+
+- `drawings/2026-10-01-j1-preliminary-11x17.pdf`
+- `takeoff/2026-10-01-j1-material-takeoff.md`
+- `takeoff/issue_j1.py`
+- `supplier/bmr-winchester/2026-10-01-j1-darcy-request-for-quotation.md`
+- `estimates/internal/2026-10-01-j1-ben-internal-cost.md`
+- `estimates/customer/2026-10-01-j1-preliminary-customer-estimate.md`

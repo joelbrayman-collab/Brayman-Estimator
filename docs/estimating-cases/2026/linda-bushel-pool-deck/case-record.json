@@ -3,10 +3,13 @@
   "client_name_on_documents": "Linda Bushel",
   "client_name_spellings_not_on_documents": ["Buschel"],
   "location": {
+    "street_number": "12",
     "street": "D'Arcy's Way",
     "place": "Kemptville",
     "province": "Ontario",
-    "postal_code": "K0G 1J0"
+    "postal_code": "K0G 1J0",
+    "full_address": "12 D'Arcy's Way, Kemptville, ON K0G 1J0",
+    "street_number_source": "Joel, 2026-10-01, case-production continuation"
   },
   "project": "Freestanding pressure-treated deck and stairs at an above-ground pool",
   "permit_approval": false,
@@ -92,9 +95,46 @@
     "client_approval_drawing",
     "priced_internal_estimate",
     "issued_selling_price",
-    "supplier_quote",
-    "street_number"
+    "supplier_quote"
   ],
+  "governed_decisions_2026_10_01": {
+    "date": "2026-10-01",
+    "source": "Joel, case-production continuation",
+    "piers": 15,
+    "pier_layout": "CT-1 coordinates",
+    "joist_lines": 16,
+    "joist_layout": "P1 joist positions",
+    "stringers": 10,
+    "stringer_layout": "P1 stringer positions",
+    "stringer_throat_in": 5.0,
+    "stringer_throat_status": "Working design basis. Not engineered or structurally certified.",
+    "lower_deck_walking_surface_in": 12,
+    "lower_post_cut": "Field reconciliation before construction. Posts ordered uncut.",
+    "treads": "Two 5/4 x 6 boards per tread",
+    "guard": "37 in Veranda rail kit",
+    "gate_clear_in": 42,
+    "pricing": "Request a BMR Winchester quotation from Darcy. Do not invent supplier prices."
+  },
+  "issue_j1": {
+    "id": "J1",
+    "date": "2026-10-01",
+    "title": "Preliminary Construction and Supplier Pricing Basis - Subject to Permit Review and Field Verification",
+    "generator": "takeoff/issue_j1.py",
+    "sent_to_darcy": false,
+    "awaiting": "Darcy / BMR Winchester quotation",
+    "permit_approval": false,
+    "engineering_seal": false,
+    "structural_certification": false,
+    "selling_price_issued": false,
+    "files": [
+      "drawings/2026-10-01-j1-preliminary-11x17.pdf",
+      "takeoff/2026-10-01-j1-material-takeoff.md",
+      "takeoff/issue_j1.py",
+      "supplier/bmr-winchester/2026-10-01-j1-darcy-request-for-quotation.md",
+      "estimates/internal/2026-10-01-j1-ben-internal-cost.md",
+      "estimates/customer/2026-10-01-j1-preliminary-customer-estimate.md"
+    ]
+  },
   "issue_2026_10_01": {
     "date": "2026-10-01",
     "role": "Case package index. Does not replace issue P1. Does not select a pier, joist, or stringer count. Does not price.",

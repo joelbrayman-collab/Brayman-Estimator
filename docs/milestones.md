@@ -32,20 +32,37 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — ICF 8-inch form and concrete quantities
+
+| Field | Content |
+|-------|---------|
+| Milestone | ICF 8-inch form and concrete quantities |
+| Status | **CLOSED — LIVE VERIFIED** for the internal service. Project workflow use remains **NOT STARTED**. |
+| Branch | `main` |
+| Base commit | `c30760f95113a8aabc4173cbfaae5bb4f5dc372f` |
+| Objective | Calculate 8-inch form and concrete quantities from verified profile methods. |
+| Deliverables | `app/services/icf_quantity.py`. No public route. No production-rate seed. |
+| Validation | Focused tests 16 passed. Full suite 1947 passed, 6759 warnings, 919.72s, exit 0. Live Logix example rounded to 37.6 cubic yards. |
+| Architectural findings | Labour hours are a runtime allowance. Missing package and reinforcement values do not block form and concrete quantities. |
+| Open decisions | The project workflow that collects those inputs and offers the result to the mapper. |
+| Next milestone | That internal workflow. Framing and the other unnamed trades stay blocked on a missing formula. |
+| Commit | `1ca26d99c1d95a297bfdf42ad6f07dbb6b0c749e` |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — ICF manufacturer profile data completion
 
 | Field | Content |
 |-------|---------|
 | Milestone | ICF manufacturer profile data completion |
-| Status | Profile facts and the 8-inch form and concrete service are in this revision. Labour hours are a runtime allowance. Closure waits on the quality gate. |
+| Status | Source facts recorded with the quantity revision. |
 | Branch | `main` |
 | Base commit | `c30760f95113a8aabc4173cbfaae5bb4f5dc372f` |
 | Objective | Record newly identified official 8-inch facts without a calculator. |
 | Deliverables | Updated version-1 profiles. Logix cavity-width factor 0.667 ft. Nudura 8-inch volume 0.306 cubic yards. |
 | Validation | Focused profile tests. Full suite result is in the implementation report. |
 | Architectural findings | A per-form yardage was not calculated for Logix. The stated wall-area factor is the concrete method. |
-| Open decisions | Reinforcement defaults, membrane order units, Fox packaging, and an approved ICF production-hours standard. |
-| Next milestone | ICF quantity engine. |
+| Open decisions | Reinforcement defaults, membrane order units, and Fox packaging stay unestablished. |
+| Next milestone | Recorded above as the 8-inch quantity service. |
 | Commit | The commit that contains this entry. |
 | Date | 2026-10-01 |
 

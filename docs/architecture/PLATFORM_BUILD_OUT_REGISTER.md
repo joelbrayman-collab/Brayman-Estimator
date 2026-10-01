@@ -270,15 +270,15 @@ The same engine serves independent use and workflow use. Do not build a second e
 |-------|--------|
 | Diagram location | Construction intelligence — ICF |
 | Purpose | Internal governed ICF takeoff: materials, labour inputs, and direct-cost inputs. Final selling price stays with estimating. |
-| Independent use | NOT STARTED |
+| Independent use | CLOSED — LIVE VERIFIED for the internal 8-inch form and concrete service. There is no public page. |
 | Workflow use | NOT STARTED |
-| Dependency class | RUNTIME INPUT for wall area, corner counts, the reinforcement schedule, and the labour-hour allowance. INSTANCE-OWNER INPUT for the existing $65 CAD man-hour rate and for any later ICF production standard. TRUE PLATFORM DEPENDENCY does not apply to those values. |
+| Dependency class | RUNTIME INPUT for wall area, corner counts, the reinforcement schedule, and the labour-hour allowance. INSTANCE-OWNER INPUT for the existing $65 CAD man-hour rate and for any later ICF production standard. |
 | Required dependencies | Design specification present at commit `c1ab362`. Eight-inch standard form and concrete methods are source-backed. Dollar labour uses ORG-001 at $65 CAD per man-hour. Labour hours are a confirmed allowance. Pratt stays evidence and is not seeded. |
-| Existing implementation | `app/services/icf_quantity.py` applies the verified profile methods for 8-inch form count and concrete. It has no route. It does not price and does not write a project or an estimate. Closure waits on the quality gate. |
-| What is missing | Live verification of that quantity slice. Rebar, membrane rolls, packaging, and labour hours stay named inputs. Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESISTO membrane except Nudura, ICFVL at 16 inches on centre, anchors at 36 inches on centre, 50 anchors per box, and 10-foot 2×4 plates with a 50 percent purchase allowance. |
+| Existing implementation | `app/services/icf_quantity.py` applies the verified profile methods for 8-inch form count and concrete. It has no route. It does not price and does not write a project or an estimate. |
+| What is missing | A project workflow that asks for the runtime inputs and offers the result to the mapper. Rebar, membrane rolls, packaging, and labour hours stay named inputs. |
 | Build acceptance criteria | After the specification is in the repository: one internal engine, two fixtures, no public page, no second estimate, no silent price, no project or estimate mutation during calculation. |
-| Live verification requirement | After implementation, deploy, and a live internal walk. Not available while the specification is missing. |
-| Commit / deployed SHA when closed | Not closed. The profile registry is a separate closed row. This engine has no quantity commit. |
+| Live verification requirement | Met for the internal service on deploy `dep-dav7o7p42hec73dbraag`. Authenticated `/icf` and `/calculators/icf` returned 404. |
+| Commit / deployed SHA when closed | `1ca26d99c1d95a297bfdf42ad6f07dbb6b0c749e`. Deploy `dep-dav7o7p42hec73dbraag`, status live. The project workflow is a separate row status and is not this closure. |
 
 Missing manufacturer-profile fields, for StyroRail, Logix, Nudura, and Fox Blocks, each source-attributed and versioned:
 
@@ -803,7 +803,7 @@ Future engines
 
 ## Ready components
 
-The 8-inch ICF form and concrete quantity slice is build-ready. Wall area and corner counts are runtime inputs. The dollar rate already exists. Labour hours are a confirmed allowance. The result uses Contract V1 and stays internal.
+The 8-inch ICF form and concrete service is closed on the live office. Wall area and corner counts are runtime inputs. The dollar rate already exists. Labour hours are a confirmed allowance. The result uses Contract V1 and stays internal. The project workflow that asks for those inputs is the next component.
 
 Framing, Roofing, Siding, Drywall, and Flooring are not build-ready. No accepted formula exists. Concrete and Stair are not rebuilt here.
 
@@ -811,7 +811,7 @@ Framing, Roofing, Siding, Drywall, and Flooring are not build-ready. No accepted
 
 | Component | Exact dependency |
 |-----------|------------------|
-| ICF quantities | Not a development blocker. Eight-inch form and concrete methods are source-backed. Closure waits on the quality gate. |
+| ICF quantities | CLOSED — LIVE VERIFIED for the internal 8-inch form and concrete service. Deploy `dep-dav7o7p42hec73dbraag`. |
 | ICF hours | RUNTIME INPUT. The estimator confirms the allowance. No ICF production standard is seeded. |
 | Framing | Governed V1 specification: formula authority, assumptions, inputs, outputs, test vectors, Contract V1 compatibility, public/private classification, Platform workflow boundary. |
 | Roofing | The same missing set as Framing. |
@@ -848,7 +848,7 @@ No formulas were written.
 
 ICF PROFILE REGISTRY: CLOSED — LIVE VERIFIED. Deploy `dep-dav6kt8jo6nc73fpglg0`. SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Hosted revision `m3f4a5b6c7d8`.
 
-ICF ESTIMATOR: the 8-inch form and concrete service is in this revision. It is not closed until the quality gate, including live verification, is recorded.
+ICF ESTIMATOR: the internal 8-inch form and concrete service is CLOSED — LIVE VERIFIED. Deploy `dep-dav7o7p42hec73dbraag`. SHA `1ca26d99c1d95a297bfdf42ad6f07dbb6b0c749e`. Project workflow use remains NOT STARTED.
 
 ICF LABOUR: RUNTIME INPUT for hours. INSTANCE-OWNER INPUT for the existing ORG-001 dollar rate. No second rate is created.
 

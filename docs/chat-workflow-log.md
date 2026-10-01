@@ -63,7 +63,7 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Milestone entry update | The profile milestone note was corrected. |
 | Constitutional issue raised | None. |
 | Unresolved issues | Framing, roofing, siding, drywall, and flooring have no accepted formula. Contract signing, the finished build stage, completion sign-off, the learning product, and reporting have no accepted specification. |
-| Next approved step | Finish the quality gate for the quantity slice. |
+| Next approved step | The internal project workflow that collects wall area and corner counts and offers the Contract V1 result to the mapper. Do not add a public route. |
 | Next approved prompt | None. |
 | Commit hash | The commit that contains this entry. |
 

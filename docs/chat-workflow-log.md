@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Darcy / BMR meeting readiness
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DARCY / BMR WINCHESTER MEETING READINESS PACKAGE 1 OCT 2026 |
+| Objective | Record the 30–45 minute Darcy meeting package. |
+| Business decision | Show one thickened-edge story, then use Darcy’s own numbers. Do not tour the platform. |
+| Architectural decision | The package points at existing surfaces. It does not create a second model or claim a live BMR connection. |
+| Prompt template used | Joel’s 1 Oct 2026 meeting-readiness prompt. |
+| Approved Cursor prompt summary | Write the meeting record, update the resume notes, commit documentation only, push, and do not deploy. |
+| Files expected to change | The meeting record, the index, current-state, handoff, roadmap, checklist, and this log. |
+| Files prohibited from changing | Product code, the economic model, Website, and supplier integrations. |
+| Implementation result | Meeting package recorded. Backup media are not captured. The freeze is not started. |
+| Tests | Not run. Documentation only. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a completed milestone. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Meeting date is unset. Backup screenshots or a recording are not in the repository. |
+| Next approved step | Capture the backup of the three surfaces this record allows, before the 48-hour freeze. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — Live supplier economic model
 
 | Field | Content |

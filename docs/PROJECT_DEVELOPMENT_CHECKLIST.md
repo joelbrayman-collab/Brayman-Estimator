@@ -7,6 +7,8 @@
 | Repository | `/Users/joelbrayman/Desktop/Brayman-Estimator` |
 | Resume | [session-handoff.md](session-handoff.md) |
 
+The Darcy / BMR meeting package is recorded at [architecture/darcy-bmr-meeting-readiness-2026-10.md](architecture/darcy-bmr-meeting-readiness-2026-10.md). It does not change this sequence and it does not authorize a build.
+
 This checklist is the one CalibraytAI development sequence. Chat memory is not. The public Website and the private Platform are separate source and deployment surfaces. They are not separate products and they do not have separate roadmaps.
 
 ## One product

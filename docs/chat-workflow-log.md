@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — SNP-6 estimate and mapper handoff
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI START NEW PROJECT — GUIDED PROJECT SETUP SNP-6 — ESTIMATE + MAPPER HANDOFF 1 OCT 2026 |
+| Objective | Hand Continue setup into the ordinary estimate, and prove the existing mapper still requires confirmation. |
+| Business decision | One estimate continues on that estimate. Several estimates are chosen from the existing project list. No estimate uses the ordinary create form. A calculation becomes an estimate line only after the contractor confirms it. |
+| Architectural decision | Guided Project Setup stays an orchestrator. It does not price, choose margin, copy the mapper, or store that an estimate was created. The estimate that exists is the state. |
+| Prompt template used | Joel’s 1 Oct 2026 SNP-6 prompt. No file in docs/prompts/ covers this slice. |
+| Approved Cursor prompt summary | Three estimate destinations on the existing setup page. Ordinary estimate, existing project list, and ordinary create form. Re-entry re-runs the resolver. Mapper confirmation stays required. No schema. No resolver rewrite. No calculator change. No deploy. Full suite. One commit and push if the gates pass. |
+| Feature Gate | Problem: after setup reaches pricing, the contractor needs a governed handoff into the ordinary estimate, and the mapper confirmation boundary must stay. User: a contractor continuing, choosing, or creating an estimate from Continue setup. Owner: orchestration only. Estimates own the estimate. The mapper owns confirmation. Data owned: none. Data referenced: resolver output, existing estimates, and existing calculation intakes. May change: the setup wording for the three estimate destinations, and tests that prove re-entry and that confirmation is still required. Must not change: schema, resolver logic, estimate routes, mapper mathematics, calculators, PGE, Scope, Client, Location, Drawings, Contract V1, Website, authentication. Acceptance: one estimate opens that estimate, many estimates open the existing list without choosing, creating one estimate then reopening setup returns to that estimate, and an unconfirmed calculation adds no line. Tests: `tests/test_estimate_setup_handoff.py`. ADR: no. Migration: no. |
+| Files expected to change | Setup labels, handoff tests, and status lines. |
+| Files prohibited from changing | Schema, resolver, estimate routes and templates, mapper service, calculators, trade engines, PGE-1 through PGE-6, Scope, Client, Location, Drawings, Contract V1, Website, authentication, Proposal, Change Orders, Calendar. |
+| Implementation result | SNP-6 closed as a slice. Estimate handoff is implemented. Mapper handoff is verified and preserved. Guided Project Setup remains implemented. Project Readiness remains the first-gap foundation. The future readiness model is not implemented. |
+| Tests | Focused `./venv/bin/python -m pytest -q tests/test_estimate_setup_handoff.py tests/test_project_setup.py tests/test_calculation_estimate_mapping.py tests/test_start_project_walk.py` — 43 passed, 135 warnings, 18.66s, exit 0. Full suite `./venv/bin/python -m pytest -q` — 1931 passed, 6759 warnings, 984.33s, exit 0. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The future readiness model is not implemented. Mac primary and the hosted database were not migrated. Deployment was not performed. |
+| Next approved step | None from this entry. Do not start the future readiness model. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — SNP-4 scope return continuity
 
 | Field | Content |

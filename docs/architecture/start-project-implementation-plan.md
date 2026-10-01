@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IN IMPLEMENTATION.** SNP-1 **CLOSED AS A SLICE**. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. Rule 16 re-audit 1 Oct 2026: 7 / 7 PASS. SNP-3 **CLOSED AS A SLICE**. Build Drawings for `dimensioned_plan` is on the plans page. Project drawing requirement is implemented. Guided Project Setup **IMPLEMENTED**. Project Readiness remains the first-gap foundation. The future readiness model is not implemented. SNP-4 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. SNP-6 is not started. |
+| Status | **IN IMPLEMENTATION.** SNP-1 **CLOSED AS A SLICE**. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. Rule 16 re-audit 1 Oct 2026: 7 / 7 PASS. SNP-3 **CLOSED AS A SLICE**. Build Drawings for `dimensioned_plan` is on the plans page. Project drawing requirement is implemented. Guided Project Setup **IMPLEMENTED**. Project Readiness remains the first-gap foundation. The future readiness model is not implemented. SNP-4 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. SNP-6 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. ESTIMATE HANDOFF **IMPLEMENTED**. MAPPER HANDOFF **VERIFIED / PRESERVED**. The future readiness model is not implemented. |
 | Date | 2026-09-30 |
 | Product direction | [start-project-guided-wizard-product-direction.md](start-project-guided-wizard-product-direction.md) |
 | Sequence | [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md) |
@@ -196,11 +196,11 @@ Absence of a plan cannot mean drawings are not required, and it cannot mean they
 | SNP-3 | Drawings branch | Resolver states and the project drawings decision, calling the reusable engine for Build Drawings | SNP-1, plan upload, Plan Generation Engine | `projects.drawing_requirement` | **CLOSED AS A SLICE.** Stored choice is unknown, required, or not required. Present is derived from a current plan. Required and missing uses the existing plans page. | Present, not required, upload, and build each continue | PGE-6. | Do not build a second drawing engine. Do not implement SNP-2 in that slice. |
 | SNP-4 | Scope handoff | Return hint on the existing scope page | `confirm_package` | None | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** Return to setup opens the same project. Saving work stays on Scope. The resolver names the next page. | Scope page still reads as it does today | SNP-2 | No second scope model. Inline edit not included. |
 | SNP-5 | Drawing decision | Uses SNP-3 | Plan upload | Cursor only | Present, not required, and required-missing are distinct | Missing required drawings wait, and do not invent a sheet | SNP-3 | Plan Generation is not called. |
-| SNP-6 | Estimate and mapper handoff | Link to existing estimate and calculation review | Estimate create and mapper | None | Existing estimate is resumed; a new one uses the existing form; confirmation stays manual | Contractor reaches the ordinary estimate | SNP-2 | No second estimate. No silent import. |
+| SNP-6 | Estimate and mapper handoff | Link to existing estimate and calculation review | Estimate create and mapper | None | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** One estimate opens that estimate. Several estimates open the existing project list. None opens the ordinary create form. Saving it and returning to setup reads the project again. Mapper confirmation stays required. | Contractor reaches the ordinary estimate. Temporary office 1 Oct 2026: one estimate, several estimates, create then return, confirm, no silent line, and another organization rejected. | SNP-2 | No second estimate. No silent import. |
 
 ## 16. Dependencies
 
-SNP-3 is closed as a slice. SNP-2 is implemented, tested, and closed as a slice after the 1 Oct 2026 Rule 16 re-audit, 7 / 7 PASS. SNP-4 is implemented, tested, and closed as a slice. Build Drawings for `dimensioned_plan` is on the plans page. The drawing-requirement decision is recorded. SNP-6 is not started.
+SNP-3 is closed as a slice. SNP-2 is implemented, tested, and closed as a slice after the 1 Oct 2026 Rule 16 re-audit, 7 / 7 PASS. SNP-4 is implemented, tested, and closed as a slice. SNP-6 is implemented, tested, and closed as a slice. Build Drawings for `dimensioned_plan` is on the plans page. The drawing-requirement decision is recorded. The future readiness model is not implemented.
 
 Website stabilization, hosted password verification, bypass removal, production cutover, hosted database re-proof, PLAT-UX-02, PLAT-UX-03, PLAT-UX-04, and scope inline edit are outside these slices.
 
@@ -224,7 +224,7 @@ Stop a slice if it needs a second scope model, a second estimate, a copied Websi
 
 ## 21. Recommended first implementation slice
 
-SNP-1 is closed as a slice. SNP-2A closes the client-relationship dead end. SNP-3 is closed as a slice. The drawings gap in section 22 is closed for the requirement decision. As of PGE-5, the earlier PGE-1 recommendation is history. As of PGE-6, the drawing-requirement decision is implemented. The 1 Oct 2026 Rule 16 re-audit passed all seven destinations. SNP-2 is implemented, tested, and closed as a slice. SNP-4 is implemented, tested, and closed as a slice. Guided Project Setup is that resume. The future readiness model is not implemented. SNP-6 is the next recorded slice and is not started.
+SNP-1 is closed as a slice. SNP-2A closes the client-relationship dead end. SNP-3 is closed as a slice. The drawings gap in section 22 is closed for the requirement decision. As of PGE-5, the earlier PGE-1 recommendation is history. As of PGE-6, the drawing-requirement decision is implemented. The 1 Oct 2026 Rule 16 re-audit passed all seven destinations. SNP-2 is implemented, tested, and closed as a slice. SNP-4 is implemented, tested, and closed as a slice. Guided Project Setup is that resume. SNP-6 is implemented, tested, and closed as a slice. The estimate handoff is implemented. The mapper handoff is verified and preserved. The future readiness model is not implemented. No later slice is authorized by this record.
 
 ## 22. Rule 16 — no dead ends
 
@@ -258,4 +258,4 @@ Guided Project Setup and Project Readiness are recorded in the product direction
 | Resume copy | SNP-2 is implemented. The page says Continue setup, What's ready, What's still needed, and names the next action. | Continue setup, and what is still needed. Not “step 4 of 9.” |
 | Drawings | The project stores unknown, required, or not required. A current plan is present. Required and missing uses the existing plans page. | Present, Not required, Missing. Missing offers Upload and Build Drawings. |
 | Estimate | Ordinary estimate create and resume exist. | Ready to price, then that same estimate. No second estimate. |
-| Sequence | PGE-6, SNP-2, and SNP-4 are closed as slices. | SNP-6, the estimate and mapper handoff, is recorded and not started. |
+| Sequence | PGE-6, SNP-2, SNP-4, and SNP-6 are closed as slices. | The recorded Start New Project slices through the estimate handoff are implemented. The future readiness model is not implemented. |

@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — SNP-6 (2026-10-01)
+
+| Field | Content |
+|-------|---------|
+| Slice | SNP-6. Continue setup into the ordinary estimate. |
+| Product status at capture | GUIDED PROJECT SETUP **IMPLEMENTED**. ESTIMATE HANDOFF **IMPLEMENTED**. MAPPER HANDOFF **VERIFIED / PRESERVED**. This slice **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. Not deployed. |
+| 1. What new contractor capability exists? | Continue setup opens the estimate when there is one, the project's estimate list when there are several, and Create estimate when there is none. |
+| 2. When would the contractor use it? | After the client, location, drawings, and scope are in place, and the next fact is the estimate. |
+| 3. What workflow will the final Manual need to teach? | From Continue setup, open the estimate, choose one from the project list, or create one and come back. A calculated quantity is added only after the contractor chooses a company cost or reusable work and confirms it. |
+| 4. What contractor-facing terms must be used? | Continue to the estimate. Choose an estimate. Create estimate. Add to estimate. |
+| 5. What screenshots / Print examples will eventually be needed? | Continue setup for one estimate, several estimates, and no estimate, on a desktop and on a phone. The existing calculation review after a quantity is added. Not captured here. |
+| 6. What warnings / validation distinctions need explanation? | Continue setup does not price the job and does not pick an estimate when several exist. A loaded calculation does not add a line until it is confirmed. |
+| 7. Desktop / iPhone / Print relevance | Desktop and phone-width Continue setup. The estimate and the mapper keep their own layout. No print sheet is created. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — SNP-4 (2026-10-01)
 
 | Field | Content |

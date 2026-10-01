@@ -104,7 +104,7 @@ def describe_setup(resolution) -> ProjectSetupView:
         if resolution.estimate_id is None:
             raise ProjectSetupError("The estimate to open was not named.")
         needed = "Continue the estimate."
-        label = "Open the estimate"
+        label = "Continue to the estimate"
         endpoint = "estimates.view_estimate"
         values = {"id": resolution.estimate_id}
         anchor = None
@@ -116,7 +116,7 @@ def describe_setup(resolution) -> ProjectSetupView:
         anchor = "hub-price"
     elif destination == DEST_ESTIMATE_CREATE:
         needed = "Create the estimate."
-        label = "Create the estimate"
+        label = "Create estimate"
         endpoint = "estimates.create_estimate_route"
         values = {"project_id": project_id}
         anchor = None

@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — SNP-6 estimate and mapper handoff
+
+| Field | Content |
+|-------|---------|
+| Milestone | SNP-6 estimate and mapper handoff |
+| Status | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** START NEW PROJECT **IMPLEMENTED**. GUIDED PROJECT SETUP **IMPLEMENTED**. PROJECT READINESS **CURRENTLY FIRST-GAP FOUNDATION**. Future readiness model **NOT IMPLEMENTED**. ESTIMATE HANDOFF **IMPLEMENTED**. MAPPER HANDOFF **VERIFIED / PRESERVED**. |
+| Branch | `main` |
+| Base commit | `b93df4946f5a6413631e77d4d29d23a9887c6657` |
+| Objective | Hand the contractor from Continue setup into the ordinary estimate, and leave mapper confirmation where it already is. |
+| Deliverables | Continue to the estimate, Choose an estimate, and Create estimate on the existing setup page. No new estimate type. No mapper copy. No schema. |
+| Validation | Focused handoff, setup, mapper, and walk tests 43 passed, 135 warnings, 18.66s, exit 0. Full suite 1931 passed, 6759 warnings, 984.33s, exit 0. Temporary office: one estimate, the existing list, create then return, confirm after a loaded result, no line before confirm, and another organization rejected. 1280 and 520 have no page overflow. At 390 the setup actions fit. The existing office header is 11px wider than the viewport. |
+| Architectural findings | Setup does not own the estimate or the mapper. The resolver stays first-gap. A saved estimate is the state. Confirmation still inserts the only line. |
+| Open decisions | The future readiness model is not implemented. No later Start New Project slice is authorized by this close. |
+| Next milestone | None from this entry. Do not start the future readiness model. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — SNP-4 scope return continuity
 
 | Field | Content |

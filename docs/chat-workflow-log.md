@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Governed document and drawing branding
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI GLOBAL DOCUMENT + DRAWING BRANDING STANDARD ARCHITECTURE RECORD 1 OCT 2026 |
+| Objective | Record one branding standard for governed documents and drawings, and apply it to the Linda Bushel J1 package. |
+| Business decision | No ad-hoc document branding. Content boundaries stay document-specific. |
+| Architectural decision | FG-012, FG-017, the proposal preview and PDF, and the internal breakdown remain the authorities. No new branding engine and no second customer PDF generator. |
+| Prompt template used | Joel’s 1 Oct 2026 architecture record, then the instruction to apply it to Bushel. |
+| Approved Cursor prompt summary | Record the global rule, point the build-out register at it, and brand the Bushel J1 delivery from the existing identity. Do not deploy. |
+| Feature Gate | FG-012 and FG-017 are referenced. Neither gate is reopened. |
+| Files expected to change | The architecture record, the register, status pointers, and the Bushel J1 drawing and delivery PDFs. |
+| Files prohibited from changing | Platform product code, schema, Contract V1, Website, calculators. |
+| Implementation result | Recorded. Bushel J1 drawings and delivery PDFs consume the ORG-001 logo and the proposal colour fallbacks. Geometry was not moved. |
+| Tests | Case generation only. Full suite not run. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | A shared platform renderer for every document type is not built. |
+| Next approved step | Replace the interim Bushel PDF writer when that renderer exists. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — ICF estimate quantity path
 
 | Field | Content |

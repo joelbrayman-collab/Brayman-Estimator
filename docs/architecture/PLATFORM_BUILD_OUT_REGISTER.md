@@ -901,6 +901,19 @@ No formulas were written.
 | Drywall | The full V1 specification set. |
 | Flooring | The full V1 specification set. |
 
+## Cross-cutting constraint — governed document and drawing output
+
+| Field | Record |
+|-------|--------|
+| Name | GOVERNED DOCUMENT + DRAWING OUTPUT STANDARD |
+| Purpose | Every governed issued document and drawing uses the Organization Brand Profile and the existing customer, internal, and supplier information boundaries. |
+| Current status | NOT STARTED as a general renderer. The constraint is in force. |
+| Dependency class | TRUE PLATFORM DEPENDENCY for a shared renderer. A case may issue an interim file that consumes the existing identity. |
+| Existing authority | [governed-document-and-drawing-output-standard.md](governed-document-and-drawing-output-standard.md). [FG-012](../feature-gates/FG-012-estimate-output-consistency.md). [FG-017](../feature-gates/FG-017-organization-brand-profile-v1.md). `app/services/proposal_pdf.py`. `app/templates/proposals/preview.html`. `app/templates/estimates/internal_breakdown.html`. |
+| What this row is not | A new branding engine, a new database model, or a second customer-estimate PDF generator. |
+| Closure rule | No future document-generation component is closed until it meets the standard. |
+| Linda Bushel | The generic 1 Oct Markdown-to-PDF package is superseded. Historical case records stay. The replacement J1 files consume the governed identity and remain replaceable. |
+
 ## Current build
 
 ICF PROFILE REGISTRY: CLOSED — LIVE VERIFIED. Deploy `dep-dav6kt8jo6nc73fpglg0`. SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Hosted revision `m3f4a5b6c7d8`.

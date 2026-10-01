@@ -6,7 +6,7 @@
 | Updated | 2026-09-24 |
 | Evidence baseline | `main` @ CAR-001 adoption (see git); Plan Intelligence Current claims evidenced in `app/plan_intelligence/` and migration `a7c8e9f0b1d2` |
 
-**Cite code paths for implemented claims.** Distinctions below are mandatory. CalibraytAI lifecycle architecture: [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md). Current vs former product name: [governance/product-identity.md](governance/product-identity.md).
+**Cite code paths for implemented claims.** Distinctions below are mandatory. CalibraytAI lifecycle architecture: [architecture/CAR-001-calibai-product-architecture-reconciliation.md](architecture/CAR-001-calibai-product-architecture-reconciliation.md). Current vs former product name: [governance/product-identity.md](governance/product-identity.md). Governed document and drawing identity: [architecture/governed-document-and-drawing-output-standard.md](architecture/governed-document-and-drawing-output-standard.md).
 
 ---
 

@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — SNP-2 Rule 16 destination re-audit
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI START NEW PROJECT SNP-2 — COMPLETE RULE 16 DESTINATION RE-AUDIT 1 OCT 2026 |
+| Objective | Re-audit the seven SNP-1 destinations against the repository after PGE-6. |
+| Business decision | A missing fact is not a dead end when a governed page can resolve it. SNP-2 stays unbuilt until a later prompt. |
+| Architectural decision | No product code changed. The first-gap resolver stays as implemented. It is not the final Project Readiness model. |
+| Prompt template used | Joel’s 1 Oct 2026 SNP-2 Rule 16 re-audit prompt. No file in docs/prompts/ covers this audit. |
+| Approved Cursor prompt summary | Audit only. Seven destinations. Temporary data. No product change. No SNP-2 page. No Guided Project Setup. No deploy. Record the result if governance requires it. |
+| Feature Gate | Not a feature. No new data, route, or schema. |
+| Files expected to change | Status lines only, if the audit result must be recorded. |
+| Files prohibited from changing | Product code, schema, PGE-5, PGE-6, calculators, Contract V1, Website, authentication. |
+| Implementation result | Audit only. 7 / 7 PASS. SNP-2 is ready for implementation and was not built. Guided Project Setup remains recorded and not built. |
+| Tests | Temporary office script on `sqlite:////tmp/snp2-audit/audit.db`. 49 checks passed. Mac primary and hosted databases were not used. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | SNP-2 is not built. Guided Project Setup is not built. The prompt’s live SHA was not re-proved and does not match the last recorded live SHA. |
+| Next approved step | None from this entry. Do not start SNP-2 or Guided Project Setup until a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The documentation commit that contains this entry. |
+
 ### 2026-10-01 — PGE-6 governed project drawing requirement
 
 | Field | Content |

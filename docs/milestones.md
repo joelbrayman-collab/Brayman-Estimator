@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — SNP-2 Rule 16 destination re-audit
+
+| Field | Content |
+|-------|---------|
+| Milestone | SNP-2 Rule 16 destination re-audit |
+| Status | **AUDIT COMPLETE.** 7 / 7 PASS. SNP-2 **READY FOR IMPLEMENTATION**. Not built. |
+| Branch | `main` |
+| Base commit | `5c27b098728f29874329bb43906595abe0a94cf6` |
+| Objective | Prove each SNP-1 destination has a governed resolution path after PGE-6. |
+| Deliverables | Audit record only. No route, schema, or resolver change. |
+| Validation | Temporary database. 49 checks passed, including client correction, location completeness, all drawing states, scope confirmation, estimate resume, ambiguous selection, and estimate create. |
+| Architectural findings | First-gap order remains client, location, drawings, scope, then estimate. Opening one of several estimates does not invent a single estimate. A current plan is present even when the stored drawing choice is unknown. |
+| Open decisions | Guided Project Setup is the next product objective and is not authorized by this audit. |
+| Next milestone | Start New Project — Guided Project Setup, when a later prompt authorizes it. |
+| Commit | The documentation commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — PGE-6 governed project drawing requirement
 
 | Field | Content |

@@ -1,0 +1,207 @@
+html,
+body {
+    margin: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.sem-body {
+    font-family: "IBM Plex Sans", sans-serif;
+    color: #1c2430;
+    background: #f4f6f8;
+}
+
+.sem-shell {
+    box-sizing: border-box;
+    width: min(1120px, 100%);
+    margin: 0 auto;
+    padding: 20px 16px 48px;
+}
+
+.sem-brand img {
+    display: block;
+    width: 140px;
+    height: auto;
+}
+
+.sem-kicker,
+.sem-note,
+.sem-help {
+    color: #526072;
+}
+
+.sem-kicker {
+    margin: 16px 0 0;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.sem-title {
+    margin: 6px 0 0;
+    font-size: 1.7rem;
+    line-height: 1.2;
+}
+
+.sem-lede,
+.sem-note {
+    max-width: 42rem;
+    line-height: 1.45;
+}
+
+.sem-layout {
+    display: grid;
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.sem-panel {
+    box-sizing: border-box;
+    min-width: 0;
+    background: #fff;
+    border: 1px solid #d5dde6;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.sem-panel h2 {
+    margin: 0 0 12px;
+    font-size: 1.05rem;
+}
+
+.sem-field {
+    display: grid;
+    gap: 6px;
+    margin: 0 0 14px;
+}
+
+.sem-field label {
+    font-weight: 600;
+}
+
+.sem-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 9.5rem;
+    gap: 8px;
+}
+
+.sem-field input,
+.sem-field select {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px 10px;
+    border: 1px solid #b7c3d0;
+    border-radius: 8px;
+    font: inherit;
+    background: #fff;
+}
+
+.sem-field input:focus,
+.sem-field select:focus {
+    outline: 2px solid #1f6b4a;
+    outline-offset: 1px;
+}
+
+.sem-help {
+    margin: 0;
+    font-size: 0.85rem;
+}
+
+.sem-summary {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.sem-summary div {
+    min-width: 0;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: #f7f9fb;
+}
+
+.sem-summary strong {
+    display: block;
+}
+
+.sem-results {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+}
+
+.sem-result {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e6edf3;
+}
+
+.sem-result dt {
+    font-size: 0.82rem;
+    color: #526072;
+}
+
+.sem-result dd {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+}
+
+.sem-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    vertical-align: 1px;
+}
+
+.sem-badge-known {
+    background: #e5f4ec;
+    color: #0f5a38;
+}
+
+.sem-badge-estimated {
+    background: #fff4df;
+    color: #7a4b00;
+    border: 1px solid #e2c48a;
+}
+
+.sem-badge-unestablished {
+    background: #eef2f6;
+    color: #526072;
+}
+
+.sem-formula {
+    margin: 12px 0 0;
+    font-size: 0.85rem;
+    color: #526072;
+}
+
+@media (max-width: 720px) {
+    .sem-controls {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sem-title {
+        font-size: 1.4rem;
+    }
+}
+
+@media (min-width: 960px) {
+    .sem-layout {
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+        align-items: start;
+    }
+
+    .sem-results-panel {
+        position: sticky;
+        top: 12px;
+    }
+}

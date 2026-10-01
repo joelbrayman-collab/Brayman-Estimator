@@ -22,7 +22,9 @@ The existing governed model is [supplier-channel-and-launch-partner.md](supplier
 
 Darcy’s originated-value participation in that specification is a different subject. It has categories and no amounts. This addendum does not set those terms.
 
-A page where Darcy’s operating numbers are entered and results render immediately was not found in this repository, in `Documents/CalibAi/Website`, or on the live Website. `for-suppliers.html`, `/supplier-integration`, and `/contractor-connection` are narrative pages. Useful tools remain Employment, Concrete, and Stair. This addendum does not invent that missing page and does not invent the commercial formulas the specification withheld.
+A page where Darcy’s operating numbers are entered and results render immediately is the office route `/supplier-program/economic-model`. It was not on the Website. `for-suppliers.html`, `/supplier-integration`, and `/contractor-connection` remain narrative pages. Useful tools remain Employment, Concrete, and Stair.
+
+The office page is the first live use of this extension. It does not create a second model. It does not read contractor records and it does not store a result.
 
 ---
 
@@ -156,6 +158,12 @@ Material demand → supplier opportunity → supplier quote → supplier order �
 Do not create a separate commercial model.
 
 Where material gross profit or material gross margin is an input, the supplier provides it. Do not hard-code an illustrative margin.
+
+The live meeting page estimates commercial gross profit only when the supplier supplies average material value, quote-to-order conversion, and material gross margin:
+
+annual takeoff volume × average material value × quote-to-order conversion × material gross margin.
+
+That uses annual takeoff volume as the opportunity count. It is a scenario, not actual sales. A missing input leaves commercial value unestablished.
 
 ---
 

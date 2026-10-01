@@ -360,6 +360,7 @@ def create_app(config=None):
     from app.routes.organization_crew import organization_crew_bp
     from app.routes.company_attention import company_attention_bp
     from app.routes.business_owner_assessment import decision_tools_bp
+    from app.routes.supplier_economic_model import supplier_program_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(help_bp)
@@ -395,6 +396,7 @@ def create_app(config=None):
     app.register_blueprint(organization_crew_bp)
     app.register_blueprint(company_attention_bp)
     app.register_blueprint(decision_tools_bp)
+    app.register_blueprint(supplier_program_bp)
 
     @app.route("/favicon.ico")
     def favicon():

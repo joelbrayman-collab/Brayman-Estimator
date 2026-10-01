@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Live supplier economic model
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI SUPPLIER PRO PLATFORM PARTNERSHIP DARCY / BMR SUPPLIER ECONOMIC MODEL LIVE OPERATIONAL ROI MODELLING SURFACE — V1 1 OCT 2026 |
+| Objective | Build the first live meeting surface for the existing supplier economic model. |
+| Business decision | The supplier’s entered numbers drive the result. Estimated inputs stay visibly estimated. No BMR figures are stored as defaults. |
+| Architectural decision | One office page on the existing operational extension. No second model, no dashboard, no contractor data, and no stored ROI. |
+| Prompt template used | Joel’s 1 Oct 2026 live operational ROI modelling surface prompt. |
+| Approved Cursor prompt summary | Build the live-entry surface, test it, document it, commit, push, deploy the product SHA, and live-verify. |
+| Files expected to change | The model service, the office route and page, tests, and the Supplier Pro records. |
+| Files prohibited from changing | Website, Useful Tools, contractor projects and estimates, authentication policy, and the dashboard. |
+| Implementation result | Office page `/supplier-program/economic-model` calculates from typed assumptions. |
+| Tests | Focused `tests/test_supplier_economic_model.py`: 15 passed. Full suite: 1962 passed, 6761 warnings, 1127.70s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a completed milestone. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Supplier Pro identity and the ROI dashboard remain not started. |
+| Next approved step | Hosted check of this product commit, then close the meeting surface. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — Darcy / BMR economic model located
 
 | Field | Content |

@@ -358,3 +358,19 @@ The immediate use is a live discussion with Darcy. He should be able to supply a
 The future Supplier ROI & Opportunity Dashboard uses the same definitions for active contractors, projects, takeoffs and calculations, takeoff hours, validation hours, hours released, material demand, supplier opportunity, pricing requests, quotes, orders, captured material value, verified value, and potential value. The dashboard is not built here.
 
 The formula record for this extension is also [supplier-pro-operational-roi-addendum-v1.md](supplier-pro-operational-roi-addendum-v1.md). That file is the same extension, not a second model.
+
+### Implemented live meeting surface
+
+The first live surface is the office page `/supplier-program/economic-model`.
+
+It accepts supplier-entered assumptions and recalculates immediately. It does not read contractor projects, estimates, margins, or labour rates. It does not store a result. It is not a public Website page and it is not a Useful Tool. It is not the Supplier ROI & Opportunity Dashboard.
+
+Commercial gross profit on that page, when the supplier supplies the inputs, is:
+
+annual takeoff volume × average material value × quote-to-order conversion × material gross margin.
+
+Annual takeoff volume is the opportunity count. The result is a scenario. It is not actual supplier sales. If any of those inputs is missing, commercial value is not established.
+
+Program cost on that page is the base supplier platform cost entered for the year plus the active contractor cost entered for the year. The page does not multiply the active contractor cost by the contractor count and it does not set a price.
+
+Eligible contractor accounts are shown and are not used in the formulas. Takeoff volume is entered on its own.

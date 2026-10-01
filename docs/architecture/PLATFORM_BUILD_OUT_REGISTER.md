@@ -775,11 +775,25 @@ Implementation sequence:
 5. Contractor-authorized transaction. Depends on item 4. The contractor starts the share.
 6. Supplier ROI & Opportunity Dashboard. Depends on items 3 and 4. It can measure adoption and submitted opportunity before an external integration. It is not a second economic model. It must use the 30 Aug 2026 supplier-channel specification and the operational ROI extension.
 
-Operational ROI / Takeoff Capacity Extension. Subcomponent of this partnership. **RECORDED / NOT IMPLEMENTED.** It adds takeoff labour value and capacity value to the existing channel model. It is not a new calculator and it is not a new register row. The live data-entry page was not found.
+Operational ROI / Takeoff Capacity Extension. Subcomponent of this partnership. The formulas are in the architecture. The live meeting surface is the separate row below. It is not a second model and it is not the dashboard.
 7. Dealer / store reporting. Depends on items 1 and 6. One dealer does not see another dealer’s private commercial information.
 8. POS / ERP / order integrations. Depends on item 5. Later capability.
 
 BMR Winchester is the first pilot context. The row stays supplier-neutral.
+
+## Supplier economic model — live meeting surface
+
+| | |
+|---|---|
+| Current status | Built. Closure waits on the hosted check of this product commit. |
+| Dependency class | None. Office login already exists. |
+| Required dependencies | The supplier-channel specification, ADR-033, and the operational ROI extension. |
+| Existing implementation | `/supplier-program/economic-model`. Typed assumptions. Immediate results. No stored supplier ROI. No contractor project, estimate, margin, or labour-rate read. |
+| What is missing | Hosted confirmation of this commit. The Supplier ROI & Opportunity Dashboard remains unbuilt. Supplier Pro identity and sponsorship remain not started. |
+| Live verification requirement | Office login required. Anonymous request redirects to login. The page calculates from entered numbers only. |
+| Commit / deployed SHA when closed | Not closed until the hosted check. |
+
+Supplier Pro as a partnership remains **NOT STARTED**.
 
 ---
 

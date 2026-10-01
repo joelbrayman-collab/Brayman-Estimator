@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Supplier economic model — CalibraytAI</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='branding/calibraytai-logo-v2.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/supplier-economic-model.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body class="sem-body">
+    <main class="sem-shell" id="main-content">
+        <div class="sem-brand">
+            <img src="{{ url_for('static', filename='branding/calibraytai-logo-v2.png') }}" alt="CalibraytAI" width="140" height="51">
+        </div>
+        <p class="sem-kicker">Supplier program · live discussion</p>
+        <h1 class="sem-title">Supplier economic model</h1>
+        <p class="sem-lede">Enter the supplier’s own operating assumptions. Results update as the numbers change. Estimated assumptions stay marked as estimates. This page does not read contractor projects, estimates, margins, or labour rates, and it does not store a supplier result.</p>
+        <p class="sem-note">Takeoff labour value, capacity value, and commercial material value stay separate. The same released hours are not counted twice.</p>
+
+        <div class="sem-layout">
+            <form id="sem-form" class="sem-panel" novalidate>
+                <h2>Supplier assumptions</h2>
+                {% set fields = [
+                    ("active_contractor_accounts", "Shown as the eligible population. Takeoff volume is entered separately."),
+                    ("takeoff_share_percent", "Percent of takeoff requests that would start from CalibraytAI. 0 to 100."),
+                    ("takeoff_requests_per_month", "Requests the supplier handles in a month."),
+                    ("manual_hours_per_takeoff", "Hours to review drawings and build the material list today."),
+                    ("estimator_cost_per_hour", "Fully loaded supplier estimator cost. Not a contractor labour rate."),
+                    ("validation_hours_per_takeoff", "Hours to check a CalibraytAI takeoff. Enter this separately from manual hours."),
+                    ("hours_per_quote", "Supplier estimate of estimator hours in one quote."),
+                    ("contribution_per_quote", "Leave blank if the supplier does not have this. No dollar capacity value is invented."),
+                    ("average_material_value", "Material value of one opportunity, as the supplier states it."),
+                    ("quote_to_order_percent", "Percent of quotes that become orders. 0 to 100."),
+                    ("material_gross_margin_percent", "Supplier gross margin percent. Sales revenue is not profit."),
+                    ("base_platform_cost", "Annual amount the supplier enters. This page does not set the price."),
+                    ("active_contractor_cost", "Annual amount the supplier enters. It is not multiplied by the contractor count.")
+                ] %}
+                {% for key, help in fields %}
+                <div class="sem-field">
+                    <label for="{{ key }}">{{ field_labels[key] }}</label>
+                    <div class="sem-controls">
+                        <input id="{{ key }}" name="{{ key }}" inputmode="decimal" autocomplete="off" value="">
+                        <select id="{{ key }}-class" aria-label="{{ field_labels[key] }} classification">
+                            <option value="estimated" selected>Estimated</option>
+                            <option value="known">Known</option>
+                        </select>
+                    </div>
+                    <p class="sem-help">{{ help }}</p>
+                </div>
+                {% endfor %}
+            </form>
+
+            <section class="sem-panel sem-results-panel" aria-live="polite">
+                <h2>Results</h2>
+                <div class="sem-summary" id="sem-summary"></div>
+                <dl class="sem-results" id="sem-results"></dl>
+                <p class="sem-formula" id="sem-formula"></p>
+                <p class="sem-note">A result from known inputs is still a calculation, not a verified measurement. Verified and attributed results belong to later program measurement.</p>
+            </section>
+        </div>
+    </main>
+    <script>
+    (function () {
+        var form = document.getElementById("sem-form");
+        var summary = document.getElementById("sem-summary");
+        var results = document.getElementById("sem-results");
+        var formula = document.getElementById("sem-formula");
+        var tokenMeta = document.querySelector('meta[name="csrf-token"]');
+        var timer = null;
+        var labels = {
+            annual_takeoff_volume: "Annual takeoff volume",
+            manual_takeoff_hours: "Manual takeoff hours",
+            validation_hours: "CalibraytAI validation hours",
+            hours_released: "Hours released",
+            takeoff_labour_value: "Direct takeoff labour value",
+            additional_quote_capacity: "Additional quote capacity",
+            capacity_value: "Capacity value",
+            commercial_value: "Commercial value",
+            program_cost: "Program cost",
+            net_supplier_value: "Net supplier value",
+            roi_multiple: "ROI multiple",
+            additional_material_sales: "Additional material sales required"
+        };
+        var money = {
+            takeoff_labour_value: true,
+            capacity_value: true,
+            commercial_value: true,
+            program_cost: true,
+            net_supplier_value: true,
+            additional_material_sales: true
+        };
+
+        function badge(classification) {
+            if (classification === "known") {
+                return '<span class="sem-badge sem-badge-known">Known</span>';
+            }
+            if (classification === "estimated") {
+                return '<span class="sem-badge sem-badge-estimated">Estimated</span>';
+            }
+            return '<span class="sem-badge sem-badge-unestablished">Not established</span>';
+        }
+
+        function payload() {
+            var body = {};
+            Array.prototype.forEach.call(form.querySelectorAll("input"), function (input) {
+                var select = document.getElementById(input.id + "-class");
+                body[input.name] = {
+                    value: input.value,
+                    classification: select ? select.value : "estimated"
+                };
+            });
+            return body;
+        }
+
+        function textList(items) {
+            if (!items.length) {
+                return "None";
+            }
+            return items.join(", ");
+        }
+
+        function render(data) {
+            var groups = data.summary;
+            summary.innerHTML =
+                "<div><strong>Known inputs</strong>" + textList(groups.known) + "</div>" +
+                "<div><strong>Estimated inputs</strong>" + textList(groups.estimated) + "</div>" +
+                "<div><strong>Unestablished inputs</strong>" + textList(groups.unestablished) + "</div>";
+            var html = "";
+            Object.keys(labels).forEach(function (key) {
+                if (key === "roi_multiple") {
+                    return;
+                }
+                var item = data.results[key];
+                var shown = "Not established";
+                if (item.status === "established" && item.value !== null) {
+                    shown = money[key] ? item.value : item.value;
+                }
+                html += "<div class=\"sem-result\"><dt>" + labels[key] + badge(item.classification) + "</dt><dd>" + shown + "</dd></div>";
+            });
+            var breakEven = data.results.break_even;
+            var breakText = "Not established";
+            if (breakEven.status === "achieved") {
+                breakText = "Break-even achieved";
+            } else if (breakEven.status === "remaining") {
+                breakText = "Remaining value required";
+            }
+            html += "<div class=\"sem-result\"><dt>Break-even status" + badge(breakEven.classification) + "</dt><dd>" + breakText + "</dd></div>";
+            if (breakEven.status === "remaining") {
+                html += "<div class=\"sem-result\"><dt>Remaining value required" + badge(breakEven.classification) + "</dt><dd>" + breakEven.remaining_value + "</dd></div>";
+            }
+            var roi = data.results.roi_multiple;
+            html += "<div class=\"sem-result\"><dt>" + labels.roi_multiple + badge(roi.classification) + "</dt><dd>" + (roi.status === "established" ? roi.value : "Not established") + "</dd></div>";
+            results.innerHTML = html;
+            var commercial = data.results.commercial_value;
+            formula.textContent = commercial.formula
+                ? "Commercial value uses " + commercial.formula + ". It is a scenario, not actual supplier sales."
+                : "Commercial value is not established until material value, conversion, margin, and takeoff volume are entered.";
+        }
+
+        function refresh() {
+            fetch("{{ url_for('supplier_program.economic_model_calculate') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": tokenMeta ? tokenMeta.getAttribute("content") : ""
+                },
+                body: JSON.stringify(payload())
+            }).then(function (response) {
+                return response.json();
+            }).then(render);
+        }
+
+        form.addEventListener("input", function () {
+            window.clearTimeout(timer);
+            timer = window.setTimeout(refresh, 150);
+        });
+        form.addEventListener("change", function () {
+            window.clearTimeout(timer);
+            timer = window.setTimeout(refresh, 150);
+        });
+        refresh();
+    }());
+    </script>
+</body>
+</html>

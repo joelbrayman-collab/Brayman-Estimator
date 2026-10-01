@@ -43,6 +43,32 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Governed 11×17 construction sheet
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 3 — GOVERNED 11×17 SHEET COMPOSITION 1 OCT 2026 |
+| Objective | Compose the plan, front elevation, and side elevation on one governed 11×17 sheet. |
+| Business decision | The sheet uses the stated scale. It does not scale the drawing to fill the paper. A scale that does not fit refuses the sheet. |
+| Architectural decision | The sheet consumes Slice 2 projections. It does not own members. Project status comes from the Construction Model. The generic PGE disclaimer is not printed on that sheet. Paper stays 11×17 landscape. |
+| Prompt template used | Joel’s 1 Oct 2026 slice 3 prompt. |
+| Approved Cursor prompt summary | Sheet composition of the three existing projections. No red-box UI, take-off, external CAD, Bushel edits, PGE edits, or deploy. Focused tests, projection tests, PGE regression, and the full suite. One commit. Push. |
+| Feature Gate | None. Authorized slice beside closed PGE. |
+| Files expected to change | `app/services/construction_model/sheet.py`, the package init, sheet tests, the two source-scan tests, the drawing standard, the build register, architecture, current-state, session handoff, roadmap, and this log. |
+| Files prohibited from changing | Plan Generation, Bushel case files, Contract V1, Website, schema, migrations. |
+| Implementation result | One 11×17 sheet at the stated scale. Incomplete models and geometry that does not fit produce no PDF. |
+| Tests | Focused construction-model tests 34 passed, 3 warnings, 1.21s, exit 0. PGE regression 49 passed, 48 warnings, 10.56s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2001 passed, 6782 warnings, 881.16s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Stair, section, and detail sheets are not built. The register row stays open. The generic fixture at 1/4 in = 1 ft draws true to scale and does not fill the sheet. |
+| Next approved step | A later slice may add the remaining Bushel-class views from the same model. |
+| Next approved prompt | None in this slice. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. Live product SHA remains `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`. |
+
 ### 2026-10-01 — Construction Model view projection
 
 | Field | Content |

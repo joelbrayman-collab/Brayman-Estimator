@@ -2,8 +2,8 @@
 
 Slice 1 assesses the model and refuses an incomplete one.
 Slice 2 projects plan, front elevation, and side elevation from that model.
-This package does not compose sheets or write a PDF.
-It does not read or write a project, a plan record, or an estimate.
+Slice 3 composes those projections on one governed 11×17 sheet.
+This package does not read or write a project, a plan record, or an estimate.
 Plan Generation stays a separate contract.
 """
 
@@ -29,6 +29,7 @@ from app.services.construction_model.projection import (
     project_construction_view,
     project_model_views,
 )
+from app.services.construction_model.sheet import compose_construction_sheet
 
 __all__ = [
     "DOCUMENT_STATUS_ISSUED_FOR_PERMIT",
@@ -44,6 +45,7 @@ __all__ = [
     "VIEW_PLAN",
     "VIEW_SIDE_ELEVATION",
     "assess_construction_model",
+    "compose_construction_sheet",
     "element_store",
     "project_construction_view",
     "project_model_views",

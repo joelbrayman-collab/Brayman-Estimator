@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | Recorded product requirement. PGE-1 through PGE-6 remain closed and unchanged. Construction Model completeness refusal and view projection are **IMPLEMENTED / TESTED** as slices. Construction Model and Drawing Set remains **NOT COMPLETE**. Productization plan: [plan-generation-engine-productization.md](plan-generation-engine-productization.md). Register: [PLATFORM_BUILD_OUT_REGISTER.md](PLATFORM_BUILD_OUT_REGISTER.md). |
+| Status | Recorded product requirement. PGE-1 through PGE-6 remain closed and unchanged. Construction Model completeness, view projection, and the governed 11×17 sheet are **IMPLEMENTED / TESTED** as slices. Construction Model and Drawing Set remains **NOT COMPLETE**. Productization plan: [plan-generation-engine-productization.md](plan-generation-engine-productization.md). Register: [PLATFORM_BUILD_OUT_REGISTER.md](PLATFORM_BUILD_OUT_REGISTER.md). |
 | Date | 2026-09-29. Architecture accepted 1 Oct 2026. This file remains the drawing authority. |
 | Authority | Joel’s visual standard for CalibraytAI construction drawings. The 1 Oct 2026 Construction Drawing Engine investigation is accepted. Presentation identity is [governed-document-and-drawing-output-standard.md](governed-document-and-drawing-output-standard.md). Engine slices are [plan-generation-engine-productization.md](plan-generation-engine-productization.md). |
 
@@ -18,7 +18,7 @@ An explanatory member view, of the kind that names a joist, beam, post, and foot
 
 ## Accepted architecture — 1 Oct 2026
 
-The Construction Drawing Engine investigation of 1 Oct 2026 is accepted. This file remains the single drawing authority. Construction Model completeness refusal and view projection are **IMPLEMENTED / TESTED**. Code: `app/services/construction_model/`. Plan, front elevation, and side elevation are projections of that one model. The assessment and the projection write no project, plan, or estimate, and they emit no sheet. Construction Model and Drawing Set remains **NOT COMPLETE** until a Bushel-class set is generated from one model and passes the printed-sheet acceptance test.
+The Construction Drawing Engine investigation of 1 Oct 2026 is accepted. This file remains the single drawing authority. Construction Model completeness, view projection, and the governed 11×17 sheet are **IMPLEMENTED / TESTED**. Code: `app/services/construction_model/`. Plan, front elevation, and side elevation are projections of that one model, composed at the stated scale. The sheet does not scale the drawing to fill the paper. Geometry that does not fit at that scale is refused. The assessment, the projection, and the sheet write no project, plan, or estimate. Construction Model and Drawing Set remains **NOT COMPLETE** until a Bushel-class set is generated from one model and passes the printed-sheet acceptance test.
 
 ```text
 Calibrayt Construction Model
@@ -69,7 +69,7 @@ The path is fixed:
 
 A generic Plan Generation artifact may keep “Not a permit. Not a seal.” A project construction drawing uses its governed document status instead of treating that generic line as the project status. The project status does not certify engineering, represent a professional seal, claim municipal approval, or claim that a permit has been issued. Supplied uncertainty stays visible. Using the sheet does not clear it.
 
-Construction Model completeness refusal and view projection are **IMPLEMENTED / TESTED**. PGE-2 and PGE-3 render the validated request they are given. They do not project this construction model. Sheet composition and PDF generation for the construction set are not implemented.
+Construction Model completeness, view projection, and the governed 11×17 sheet are **IMPLEMENTED / TESTED**. The sheet uses the stated scale and does not scale the drawing to fill the paper. PGE-2 and PGE-3 render the validated request they are given. They do not project this construction model. Stair, section, and detail sheets for the construction set are not implemented.
 
 The stair side profile is drawn. It uses the same rise, run, stringer spacing, and landing as the framing plan. The first proof is CT-2. The refinement is CT-2 R2. R2 draws the tread running under the riser, with a 3/4 in nosing past the riser face. The finished 11 in going and 7.60 in rise stay. The sheet shows one measurement system, imperial. It does not add a second stair calculator. Neither sheet is a general elevation generator.
 
@@ -138,7 +138,7 @@ Customer, internal, supplier, and field documents keep their own information bou
 
 ## Drawing engine
 
-Plan Generation, PGE-1 through PGE-6, remains the closed request renderer. Those slices are unchanged. Construction Model completeness refusal and view projection are **IMPLEMENTED / TESTED** in `app/services/construction_model/`. The drawing set beside those slices is **NOT COMPLETE**. These rules are the cross-cutting authority. The implementation slices do not replace them.
+Plan Generation, PGE-1 through PGE-6, remains the closed request renderer. Those slices are unchanged. Construction Model completeness, view projection, and the governed 11×17 sheet are **IMPLEMENTED / TESTED** in `app/services/construction_model/`. The drawing set beside those slices is **NOT COMPLETE**. These rules are the cross-cutting authority. The implementation slices do not replace them.
 
 1. Geometry is the source of truth. The engine renders governed geometry. It does not invent geometry.
 2. Validation comes before rendering. Only an accepted drawing request is rendered. Invalid geometry produces no governed drawing.

@@ -920,9 +920,10 @@ No formulas were written.
 |-------|--------|
 | Name | CONSTRUCTION MODEL AND DRAWING SET |
 | Purpose | One governed Construction Model projects every construction view, and the sheet layer composes those views onto a print-ready 11×17 set. |
-| Current status | **OPEN / NOT COMPLETE**. Slice 1, Construction Model + completeness refusal, and slice 2, view projection, are **IMPLEMENTED / TESTED** in `app/services/construction_model/`. Sheet composition and PDF are not implemented. The drawing set is not closed. Not deployed. |
+| Current status | **OPEN / NOT COMPLETE**. Slice 1, completeness refusal, slice 2, view projection, and slice 3, the governed 11×17 sheet, are **IMPLEMENTED / TESTED** in `app/services/construction_model/`. The sheet uses the stated scale and does not scale to fit. Stair, section, and detail sheets are not implemented. The drawing set is not closed. Not deployed. |
 | Slice 1 | A deck-class model is one element store. A missing required fact returns a stable field and “You need to provide this information.” Uncertainty stays on the model. Optional collections do not block completeness. No project, plan, or estimate write. |
 | Slice 2 | Plan, front elevation, and side elevation are projections of that model. A view definition is a camera. It does not own members. An incomplete model returns the slice 1 refusal and no projected elements. |
+| Slice 3 | Those three projections are composed on one 11×17 sheet at the stated scale. A scale that does not fit is refused. The project status comes from the model. The generic PGE disclaimer is not printed on that sheet. |
 | Dependency class | PGE-1 through PGE-6 remain **CLOSED** and unchanged. |
 | Existing authority | [construction-drawing-standard.md](construction-drawing-standard.md). Branding remains [governed-document-and-drawing-output-standard.md](governed-document-and-drawing-output-standard.md). |
 | What this row is not | A change to `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, or the drawing requirement. Not FreeCAD. Not Blender. Not OCCT, CadQuery, or build123d. Not a Bushel script. Not a red-box screen. Not drawing-driven take-off. |
@@ -939,7 +940,7 @@ ICF LABOUR: RUNTIME INPUT for hours. INSTANCE-OWNER INPUT for the existing ORG-0
 
 SUPPLIER PRO PLATFORM PARTNERSHIP: NOT STARTED. Architecture only. Not deployed. It does not change the contractor platform.
 
-Start Project, Guided Project Setup, and Plan Generation are CLOSED — LIVE VERIFIED. CONSTRUCTION MODEL AND DRAWING SET is **OPEN / NOT COMPLETE**. Slice 1, the Construction Model and completeness refusal, and slice 2, view projection, are **IMPLEMENTED / TESTED** and not deployed. The 1 Oct live walk also recorded non-blocking table overflow on the project hub at 520 and 390, and on the estimate versions table at 1280 with the sidebar open. That overflow is NON-BLOCKING UX/POLISH and is left for the later UX stitching phase.
+Start Project, Guided Project Setup, and Plan Generation are CLOSED — LIVE VERIFIED. CONSTRUCTION MODEL AND DRAWING SET is **OPEN / NOT COMPLETE**. Slices 1 through 3, completeness, view projection, and the governed 11×17 sheet, are **IMPLEMENTED / TESTED** and not deployed. The sheet does not scale to fit. The 1 Oct live walk also recorded non-blocking table overflow on the project hub at 520 and 390, and on the estimate versions table at 1280 with the sidebar open. That overflow is NON-BLOCKING UX/POLISH and is left for the later UX stitching phase.
 
 Remaining profile gaps that do not block the 8-inch standard quantity start:
 

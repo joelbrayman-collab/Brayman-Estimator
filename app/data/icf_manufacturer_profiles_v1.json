@@ -1,0 +1,647 @@
+{
+  "registry_version": "1",
+  "effective_date": "2026-10-01",
+  "scope": "platform_reference",
+  "profiles": {
+    "1": {
+      "fox_blocks": {
+        "manufacturer_id": "fox_blocks",
+        "product_system_name": "Fox Blocks",
+        "profile_version": "1",
+        "effective_date": "2026-10-01",
+        "record_status": "ACTIVE",
+        "core_sizes_offered_in": ["4", "6", "8", "10", "12"],
+        "membrane_default": {
+          "status": "VERIFIED_FROM_SOURCE",
+          "value": "RESISTO ICF Foundation Membrane",
+          "source_document": "Brayman ICF Estimator V1 — Design Specification, section 4.2",
+          "source_url": "docs/architecture/Brayman_ICF_Estimator_V1_Design_Specification.md",
+          "source_date": "2026-09-26"
+        },
+        "order_rounding": {
+          "status": "NOT_ESTABLISHED",
+          "value": null,
+          "source_document": null,
+          "source_url": null,
+          "source_date": null
+        },
+        "reinforcement_guidance": {
+          "status": "VERIFIED_FROM_SOURCE",
+          "value": "Guidebook states rebar spacing is consistently 16 inches on centre. The Brayman specification still requires a project schedule before Fox Blocks reinforcement is used as an engine default.",
+          "source_document": "Fox Blocks Technical Information and Training Guide; Brayman ICF Estimator V1 — Design Specification, section 4.2",
+          "source_url": "https://www.foxblocksny.com/wp-content/uploads/2020/03/Guidebook-031817.pdf",
+          "source_date": "2017-03-18"
+        },
+        "approved_reinforcement_default": {
+          "status": "NOT_ESTABLISHED",
+          "value": null,
+          "source_document": "Brayman ICF Estimator V1 — Design Specification, section 4.2",
+          "source_url": "docs/architecture/Brayman_ICF_Estimator_V1_Design_Specification.md",
+          "source_date": "2026-09-26"
+        },
+        "units": {
+          "standard_8": {
+            "product_identifier": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "FOX-S800",
+              "source_document": "Fox Blocks Technical Information and Training Guide",
+              "source_url": "https://www.foxblocksny.com/wp-content/uploads/2020/03/Guidebook-031817.pdf",
+              "source_date": "2017-03-18"
+            },
+            "length_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "48",
+              "source_document": "Fox Blocks Series",
+              "source_url": "https://www.foxblocks.com/products/series",
+              "source_date": null
+            },
+            "height_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "16",
+              "source_document": "Fox Blocks Series",
+              "source_url": "https://www.foxblocks.com/products/series",
+              "source_date": null
+            },
+            "form_width_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "13.25",
+              "source_document": "Fox Blocks Series",
+              "source_url": "https://www.foxblocks.com/products/series",
+              "source_date": null
+            },
+            "wall_coverage_ft2": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "5.33",
+              "source_document": "Fox Blocks Series",
+              "source_url": "https://www.foxblocks.com/products/series",
+              "source_date": null
+            },
+            "concrete_volume_yd3": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "0.132",
+              "source_document": "Fox Blocks Series",
+              "source_url": "https://www.foxblocks.com/products/series",
+              "source_date": null
+            },
+            "packaging_quantity": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "tie_count": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            }
+          },
+          "corner_90_8": {
+            "outside_dimensions_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "42 x 26",
+              "source_document": "Fox Blocks Technical Information and Training Guide",
+              "source_url": "https://www.foxblocksny.com/wp-content/uploads/2020/03/Guidebook-031817.pdf",
+              "source_date": "2017-03-18"
+            },
+            "wall_coverage_ft2": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "concrete_volume_yd3": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            }
+          },
+          "brick_ledge_8": {
+            "availability": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "Corbel ledge is a listed 8-inch form family.",
+              "source_document": "Fox Blocks block measurements",
+              "source_url": "https://www.foxblocksny.com/wp-content/uploads/2018/05/Fox-Blocks-Block-Measurements-End-View-Sizing.pdf",
+              "source_date": null
+            },
+            "wall_coverage_ft2": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "concrete_volume_yd3": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            }
+          }
+        }
+      },
+      "logix": {
+        "manufacturer_id": "logix",
+        "product_system_name": "Logix",
+        "profile_version": "1",
+        "effective_date": "2026-10-01",
+        "record_status": "ACTIVE",
+        "core_sizes_offered_in": ["4", "6.25", "8", "10", "12"],
+        "membrane_default": {
+          "status": "VERIFIED_FROM_SOURCE",
+          "value": "RESISTO ICF Foundation Membrane",
+          "source_document": "Brayman ICF Estimator V1 — Design Specification, section 4.2",
+          "source_url": "docs/architecture/Brayman_ICF_Estimator_V1_Design_Specification.md",
+          "source_date": "2026-09-26"
+        },
+        "order_rounding": {
+          "status": "NOT_ESTABLISHED",
+          "value": null,
+          "source_document": null,
+          "source_url": null,
+          "source_date": null
+        },
+        "reinforcement_guidance": {
+          "status": "NOT_ESTABLISHED",
+          "value": null,
+          "source_document": null,
+          "source_url": null,
+          "source_date": null
+        },
+        "approved_reinforcement_default": {
+          "status": "NOT_ESTABLISHED",
+          "value": null,
+          "source_document": null,
+          "source_url": null,
+          "source_date": null
+        },
+        "brick_ledge_behaviour": {
+          "status": "VERIFIED_FROM_SOURCE",
+          "value": "Brick ledge forms are supplied as straight units. Corners are cut on site.",
+          "source_document": "Logix Field Manual, section 2.7.4",
+          "source_url": "https://logixicf.com/wp-content/uploads/technical_library/Field-Manual.pdf",
+          "source_date": null
+        },
+        "units": {
+          "standard_8": {
+            "product_identifier": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "length_in": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "height_in": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "form_width_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "13.5",
+              "source_document": "Logix Field Manual, section 1.2 product specification table, 8 inch concrete core, outside face to outside face",
+              "source_url": "https://logixicf.com/wp-content/uploads/technical_library/Field-Manual.pdf",
+              "source_date": null
+            },
+            "wall_coverage_ft2": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "concrete_volume_yd3": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "packaging_quantity": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "web_spacing_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "8",
+              "source_document": "Logix specification package: webs spaced a minimum of 8 inches on centre horizontally",
+              "source_url": "https://logixicf.com/wp-content/uploads/Logix-ICF-Documents-for-Specifications-USA_090823.pdf",
+              "source_date": "2023-09-08"
+            }
+          },
+          "corner_90_8": {
+            "wall_coverage_ft2": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "concrete_volume_yd3": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            }
+          },
+          "brick_ledge_8": {
+            "availability": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "An 8 inch concrete-core brick ledge is in the product specification table.",
+              "source_document": "Logix Field Manual, section 1.2",
+              "source_url": "https://logixicf.com/wp-content/uploads/technical_library/Field-Manual.pdf",
+              "source_date": null
+            },
+            "form_width_top_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "17.375",
+              "source_document": "Logix Field Manual, section 1.2, brick ledge, 8 inch core, width at top",
+              "source_url": "https://logixicf.com/wp-content/uploads/technical_library/Field-Manual.pdf",
+              "source_date": null
+            },
+            "form_width_bottom_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "13.5",
+              "source_document": "Logix Field Manual, section 1.2, brick ledge, 8 inch core, width at bottom",
+              "source_url": "https://logixicf.com/wp-content/uploads/technical_library/Field-Manual.pdf",
+              "source_date": null
+            },
+            "wall_coverage_ft2": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "concrete_volume_yd3": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            }
+          }
+        }
+      },
+      "nudura": {
+        "manufacturer_id": "nudura",
+        "product_system_name": "Nudura",
+        "profile_version": "1",
+        "effective_date": "2026-10-01",
+        "record_status": "ACTIVE",
+        "core_sizes_offered_in": ["4", "6", "8", "10", "12"],
+        "membrane_default": {
+          "status": "VERIFIED_FROM_SOURCE",
+          "value": "NUDURA waterproofing membrane",
+          "source_document": "Brayman ICF Estimator V1 — Design Specification, section 4.2",
+          "source_url": "docs/architecture/Brayman_ICF_Estimator_V1_Design_Specification.md",
+          "source_date": "2026-09-26"
+        },
+        "order_rounding": {
+          "status": "NOT_ESTABLISHED",
+          "value": null,
+          "source_document": null,
+          "source_url": null,
+          "source_date": null
+        },
+        "reinforcement_guidance": {
+          "status": "VERIFIED_FROM_SOURCE",
+          "value": "For optimal placement, horizontal reinforcement at 18 inches on centre and vertical reinforcement at multiples of 8 inches on centre.",
+          "source_document": "Nudura Engineering Parameters — 8 Inch",
+          "source_url": "https://www.nudura.com/resource/download/Engineering%20Parameters%20-%208%20Inch.pdf",
+          "source_date": null
+        },
+        "approved_reinforcement_default": {
+          "status": "NOT_ESTABLISHED",
+          "value": null,
+          "source_document": null,
+          "source_url": null,
+          "source_date": null
+        },
+        "specialty_families": {
+          "status": "VERIFIED_FROM_SOURCE",
+          "value": "standard, 90-degree, 45-degree, taper top, brick ledge, end cap, height adjuster",
+          "source_document": "Nudura Installation Manual, introduction and Appendix A",
+          "source_url": "https://www.nudura.com/resources/installation-manuals",
+          "source_date": null
+        },
+        "units": {
+          "standard_8": {
+            "product_identifier": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "length_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "96",
+              "source_document": "Nudura 10-part specification: standard length 96 inches",
+              "source_url": "https://www.nudura.com/resource/download/nudura_10_part_specification.pdf",
+              "source_date": null
+            },
+            "height_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "18",
+              "source_document": "Nudura 10-part specification: standard height 18 inches",
+              "source_url": "https://www.nudura.com/resource/download/nudura_10_part_specification.pdf",
+              "source_date": null
+            },
+            "form_width_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "13.25",
+              "source_document": "Nudura 10-part specification: 13 1/4 inch form width for an 8 inch core",
+              "source_url": "https://www.nudura.com/resource/download/nudura_10_part_specification.pdf",
+              "source_date": null
+            },
+            "wall_coverage_ft2": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "12",
+              "source_document": "Nudura Installation Manual introduction: 12 square feet per form",
+              "source_url": "https://www.nudura.com/resource/download/Nudura_Installation_Manual-compressed-compressed.pdf",
+              "source_date": null
+            },
+            "concrete_volume_yd3": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "packaging_quantity": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "tie_count": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            }
+          },
+          "corner_90_8": {
+            "availability": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "90-degree form is reversible. No separate left and right corner.",
+              "source_document": "Nudura ICF Series product page",
+              "source_url": "https://www.nudura.com/products/icf-series",
+              "source_date": null
+            },
+            "wall_coverage_ft2": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "concrete_volume_yd3": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            }
+          },
+          "brick_ledge_8": {
+            "availability": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "8 inch brick ledge form unit is in the design library.",
+              "source_document": "Nudura Design Library, 8 inch form models",
+              "source_url": "https://www.nudura.com/resources/design-library",
+              "source_date": null
+            },
+            "wall_coverage_ft2": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            },
+            "concrete_volume_yd3": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            }
+          }
+        }
+      },
+      "styrorail_buildblock": {
+        "manufacturer_id": "styrorail_buildblock",
+        "product_system_name": "StyroRail / BuildBlock",
+        "profile_version": "1",
+        "effective_date": "2026-10-01",
+        "record_status": "ACTIVE",
+        "core_sizes_offered_in": ["4", "6", "8"],
+        "membrane_default": {
+          "status": "VERIFIED_FROM_SOURCE",
+          "value": "RESISTO ICF Foundation Membrane",
+          "source_document": "Brayman ICF Estimator V1 — Design Specification, section 4.2",
+          "source_url": "docs/architecture/Brayman_ICF_Estimator_V1_Design_Specification.md",
+          "source_date": "2026-09-26"
+        },
+        "order_rounding": {
+          "status": "NOT_ESTABLISHED",
+          "value": null,
+          "source_document": null,
+          "source_url": null,
+          "source_date": null
+        },
+        "reinforcement_guidance": {
+          "status": "NOT_ESTABLISHED",
+          "value": null,
+          "source_document": null,
+          "source_url": null,
+          "source_date": null
+        },
+        "approved_reinforcement_default": {
+          "status": "NOT_ESTABLISHED",
+          "value": null,
+          "source_document": null,
+          "source_url": null,
+          "source_date": null
+        },
+        "specialty_families": {
+          "status": "VERIFIED_FROM_SOURCE",
+          "value": "8 inch straight, 90-degree corner, 45-degree corner, 8 inch ledge, and BuildBuck 8 inch are listed drawings. Unrelated StyroRail insulation is not included.",
+          "source_document": "StyroRail BuildBlock technical drawings",
+          "source_url": "https://styrorail.ca/en/buildblock/technical-drawings/",
+          "source_date": null
+        },
+        "units": {
+          "standard_8": {
+            "product_identifier": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "BB-800",
+              "source_document": "BuildBlock product specifications, imperial, published by StyroRail",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "length_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "48",
+              "source_document": "BuildBlock product specifications, imperial, published by StyroRail",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "height_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "16",
+              "source_document": "BuildBlock product specifications, imperial, published by StyroRail",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "form_width_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "13",
+              "source_document": "BuildBlock product specifications, imperial, 8 inch straight width",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "wall_coverage_ft2": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "5.33",
+              "source_document": "BuildBlock product specifications, imperial, 8 inch straight surface area",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "concrete_volume_yd3": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "0.131687",
+              "source_document": "BuildBlock product specifications, imperial, 8 inch straight concrete volume",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "packaging_quantity": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "12",
+              "source_document": "BuildBlock product specifications, imperial, 8 inch straight quantity per bundle",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "eps_panel_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "2.5",
+              "source_document": "BuildBlock product specifications, imperial, 2 1/2 inch each panel",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            }
+          },
+          "corner_90_8": {
+            "product_identifier": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "BB-890",
+              "source_document": "BuildBlock product specifications, imperial, 8 inch 90 degree corner",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "length_ext_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "35",
+              "source_document": "BuildBlock product specifications, imperial, 8 inch 90 degree corner exterior length",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "length_int_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "22",
+              "source_document": "BuildBlock product specifications, imperial, 8 inch 90 degree corner interior length",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "return_ext_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "23",
+              "source_document": "BuildBlock product specifications, imperial, 8 inch 90 degree corner exterior return",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "wall_coverage_ft2": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "6.44",
+              "source_document": "BuildBlock product specifications, imperial, 8 inch 90 degree corner surface area",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "concrete_volume_yd3": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "0.121517",
+              "source_document": "BuildBlock product specifications, imperial, 8 inch 90 degree corner concrete volume",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            }
+          },
+          "brick_ledge_8": {
+            "availability": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "8 inch ledge block drawing is listed.",
+              "source_document": "StyroRail BuildBlock technical drawings, item 05a",
+              "source_url": "https://styrorail.ca/en/buildblock/technical-drawings/",
+              "source_date": null
+            },
+            "length_mm": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "1219",
+              "source_document": "BuildBlock product specifications, metric, 8 inch brick ledge length",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "height_mm": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "406",
+              "source_document": "BuildBlock product specifications, metric, 8 inch brick ledge height",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "bottom_width_mm": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "330",
+              "source_document": "BuildBlock product specifications, metric, 8 inch brick ledge bottom width",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "top_width_mm": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "457",
+              "source_document": "BuildBlock product specifications, metric, 8 inch brick ledge top width",
+              "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
+              "source_date": "2022-06"
+            },
+            "concrete_volume_yd3": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": null,
+              "source_url": null,
+              "source_date": null
+            }
+          }
+        }
+      }
+    }
+  }
+}

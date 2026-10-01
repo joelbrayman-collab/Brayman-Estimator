@@ -4,7 +4,7 @@
 
 Read this section first. The 30 Sep occupancy below it remains the live deploy record. It is not a claim that Start New Project is on the live SHA.
 
-Tactical build status is [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). ICF quantities remain **BLOCKED — DEPENDENCY IDENTIFIED** on the manufacturer-profile fields in that register. ORG-001 direct labour is the existing $65 CAD per man-hour standard. ICF hours remain **BLOCKED — LABOUR AUTHORITY DEPENDENCY** because no approved ICF production standard exists. Framing, Roofing, Siding, Drywall, and Flooring have no specification. No lifecycle component was ready to build. No formula was invented. Live product SHA remains last recorded `ca37d8b6939f6494b6ff415bad17953886366728`. Hosted database remains last recorded `k1f2a3b4c5d6`. Deployment was not performed. Stash `stash@{0}` was not applied.
+Tactical build status is [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). The ICF manufacturer profile registry is in git and is **BLOCKED — DEPENDENCY IDENTIFIED** until the hosted database is migrated and this SHA is deployed. ICF quantities remain blocked where a profile field is `NOT_ESTABLISHED`, and on the missing approved production-hours standard. ORG-001 direct labour remains the existing $65 CAD per man-hour standard. No production-rate standard was created. Live product SHA remains last recorded `ca37d8b6939f6494b6ff415bad17953886366728`. Hosted database remains last recorded `k1f2a3b4c5d6`. Deployment was not performed. Stash `stash@{0}` was not applied.
 
 ## 0a. Prior fresh chat resume — 30 Sep 2026
 

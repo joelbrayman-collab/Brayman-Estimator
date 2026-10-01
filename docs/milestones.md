@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — ICF manufacturer profile registry
+
+| Field | Content |
+|-------|---------|
+| Milestone | ICF manufacturer profile registry |
+| Status | **BLOCKED — DEPENDENCY IDENTIFIED.** Data is in git. Live verification was not performed. The ICF estimator is not closed. |
+| Branch | `main` |
+| Base commit | `cd846c08dfe75cf5882d9d694d39785860dc23ea` |
+| Objective | Store source-attributed 8-inch manufacturer facts without a quantity engine. |
+| Deliverables | Four version-1 profiles and a loader that names missing engine fields. |
+| Validation | Full suite: 1940 passed, 6759 warnings, 962.51s, exit 0. |
+| Architectural findings | Fox Blocks and StyroRail / BuildBlock have verified standard coverage and concrete volume. Nudura has coverage and no concrete volume. Logix has form width and no standard coverage. |
+| Open decisions | The remaining `NOT_ESTABLISHED` fields, and an approved ICF production-hours standard. |
+| Next milestone | None until a dependency-ready component exists. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — Resume wave after ICF dependency
 
 | Field | Content |

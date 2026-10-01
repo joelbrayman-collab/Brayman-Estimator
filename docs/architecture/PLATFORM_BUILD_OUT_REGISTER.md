@@ -237,6 +237,20 @@ The same engine serves independent use and workflow use. Do not build a second e
 | Live verification requirement | Independent use: Website calculation PASS, visual PASS, pin PASS at Version 31. |
 | Commit / deployed SHA when closed | Independent use: Website SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`. |
 
+### ICF MANUFACTURER PROFILE REGISTRY
+
+| Field | Record |
+|-------|--------|
+| Diagram location | Construction intelligence — ICF profiles |
+| Purpose | Versioned, source-attributed manufacturer facts for a later ICF engine. |
+| Current status | BLOCKED — DEPENDENCY IDENTIFIED |
+| Required dependencies | Governed deploy of this product SHA, which first requires the hosted database to move from last recorded `k1f2a3b4c5d6` through `m3f4a5b6c7d8`. That migration was not run. |
+| Existing implementation | `app/data/icf_manufacturer_profiles_v1.json` and `app/services/icf_manufacturer_profiles.py`. Four profiles, version 1. Missing facts stay `NOT_ESTABLISHED`. No route. No quantity formula. |
+| What is missing | Live verification. Logix standard coverage and concrete volume, and Nudura concrete volume, remain `NOT_ESTABLISHED`. |
+| Build acceptance criteria | Profiles load, sources stay attached, and a missing fact is named for a future engine. |
+| Live verification requirement | The deployed office must contain this registry. Not verified. |
+| Commit / deployed SHA when closed | Not closed. |
+
 ### ICF
 
 | Field | Record |
@@ -717,9 +731,13 @@ Architecture or stored rows are not a finished learning product.
 ## Dependency graph
 
 ```text
+ICF manufacturer profile registry
+  data is in the repository
+  live closure blocked on hosted migration and deploy
 ICF quantities
   design specification present at c1ab362
-  blocked on the manufacturer-profile fields in the ICF row
+  still blocked where a profile field is NOT_ESTABLISHED
+  and on the approved production-hours standard
 ICF dollar labour
   not blocked
   ORG-001 DirectLabourCostRateStandard is $65 CAD per man-hour
@@ -784,7 +802,8 @@ Contract Signing, Build / Manage, Actuals, Complete / Close, Learn & Improve, an
 
 | Component | Exact dependency |
 |-----------|------------------|
-| ICF quantities | The manufacturer-profile fields listed on the ICF row. |
+| ICF Manufacturer Profile Registry | Hosted migration through `m3f4a5b6c7d8`, then deploy and live verification. The registry code is in git and is not closed. |
+| ICF quantities | Profile fields that remain `NOT_ESTABLISHED`, including Logix standard coverage and concrete volume, and Nudura concrete volume. |
 | ICF hours | BLOCKED — LABOUR AUTHORITY DEPENDENCY. No approved ICF `ProductionRateStandard`. The $65 CAD man-hour rate is already governed and is not this dependency. |
 | Framing | Governed V1 specification: formula authority, assumptions, inputs, outputs, test vectors, Contract V1 compatibility, public/private classification, Platform workflow boundary. |
 | Roofing | The same missing set as Framing. |
@@ -819,8 +838,10 @@ No formulas were written.
 
 ## Current build
 
-ICF quantities remain BLOCKED — DEPENDENCY IDENTIFIED.
+ICF PROFILE REGISTRY: BLOCKED — DEPENDENCY IDENTIFIED. The data is in git. Live closure waits on hosted migration and deploy.
 
-ICF dollar labour is the existing ORG-001 rate. ICF hours remain BLOCKED — LABOUR AUTHORITY DEPENDENCY.
+ICF ESTIMATOR: BLOCKED — DEPENDENCY IDENTIFIED. Remaining profile gaps stay `NOT_ESTABLISHED`.
 
-No other engine or lifecycle component was dependency-ready. No engine code was written. No migration. No deploy.
+ICF LABOUR: BLOCKED — APPROVED PRODUCTION STANDARD REQUIRED. The ORG-001 dollar rate is unchanged.
+
+No other component was dependency-ready. No migration. No deploy.

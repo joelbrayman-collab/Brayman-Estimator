@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — ICF manufacturer profile registry
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI TACTICAL PLATFORM BUILD-OUT ICF MANUFACTURER PROFILE REGISTRY 1 OCT 2026 |
+| Objective | Record versioned manufacturer profiles without building the quantity engine. |
+| Business decision | Official source or an explicit gap. No guessed block coverage, concrete volume, or packaging. No ICF production-hour standard. |
+| Architectural decision | Profiles are platform reference data, not organization records and not calculator code. A future engine reads verified facts and the named gaps. |
+| Prompt template used | Joel’s 1 Oct 2026 ICF manufacturer profile registry prompt. |
+| Approved Cursor prompt summary | Build the profile registry for StyroRail / BuildBlock, Logix, Nudura, and Fox Blocks. Keep missing fields explicit. Do not calculate, price, map, or create a labour standard. |
+| Feature Gate | Problem: the ICF engine cannot start without source-attributed manufacturer facts. User: a later internal engine. Owner: platform reference data. Data owned: the profile registry. Data referenced: official manufacturer documents and the ICF design specification. May change: the registry and its tests. Must not change: quantity formulas, labour standards, estimates, projects, Contract V1, Website, schema. Acceptance: four profiles load, sources stay attached, gaps stay empty, and nothing is written to a project or estimate. Tests: `tests/test_icf_manufacturer_profiles.py`. ADR: no. Migration: no. |
+| Files expected to change | Profile data, loader, tests, and the register. |
+| Files prohibited from changing | Calculators, mapper, estimates, labour standards, Website, schema. |
+| Implementation result | Registry is in git. Live closure is blocked on hosted migration and deploy. The estimator is not closed. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_icf_manufacturer_profiles.py` then `./venv/bin/python -m pytest -q`: 1940 passed, 6759 warnings, 962.51s, exit 0. |
+| Project-state-report update | Pointer already present. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Logix coverage and concrete volume. Nudura concrete volume. Approved ICF production-hours standard. Hosted migration. |
+| Next approved step | None from this entry until those dependencies exist. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — Resume wave after ICF dependency
 
 | Field | Content |

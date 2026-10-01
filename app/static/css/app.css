@@ -2282,3 +2282,66 @@ body.login-page {
     }
 }
 
+.build-drawings {
+    padding: 18px 20px 8px;
+    margin: 24px 0;
+    max-width: 100%;
+}
+
+.build-drawings-note {
+    margin: 0 0 16px;
+    max-width: 42rem;
+    line-height: 1.5;
+}
+
+.build-drawings .warning-copy {
+    margin: 0 0 20px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    background: #fff8e8;
+    line-height: 1.5;
+    max-width: 42rem;
+}
+
+.build-drawings .warning-copy p {
+    margin: 0 0 8px;
+    font-weight: 700;
+}
+
+.build-member-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0 0 16px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    min-width: 0;
+}
+
+.build-member-row legend {
+    padding: 0 6px;
+    font-weight: 700;
+}
+
+.build-candidate-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.build-candidate-list li {
+    margin: 0 0 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+@media (max-width: 720px) {
+    .build-drawings {
+        padding: 16px 14px 4px;
+    }
+
+    .build-member-row {
+        grid-template-columns: 1fr;
+    }
+}
+

@@ -8,62 +8,212 @@
     <div>
         <p class="eyebrow">{{ project.name }}</p>
         <h1>Drawings</h1>
-        <p>These are the drawings uploaded for this project.</p>
+        <p>Current drawings are the sheets on this project. Build Drawings makes a candidate first.</p>
     </div>
     <div>
+        <a class="button" href="#build-drawings">Build Drawings</a>
         <a class="button" href="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}">Upload PDF</a>
         <a class="button" href="{{ url_for('projects.scope_of_work', id=project.id) }}">Scope of work</a>
         <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
     </div>
 </div>
 
-<section class="form-panel" style="margin-bottom: 20px;">
-    <form method="get">
-        <label>
-            Find a drawing
-            <input type="text" name="q" value="{{ q or '' }}" placeholder="File name">
-        </label>
-        <div class="form-actions">
-            <button type="submit">Search</button>
-        </div>
-    </form>
+<section id="current-drawings">
+    <h2>Current drawings</h2>
+    <p class="build-drawings-note">These are the drawings on this project. Uploading a PDF, or using a generated candidate, adds a drawing here.</p>
+
+    <section class="form-panel" style="margin-bottom: 20px;">
+        <form method="get">
+            <label>
+                Find a drawing
+                <input type="text" name="q" value="{{ q or '' }}" placeholder="File name">
+            </label>
+            <div class="form-actions">
+                <button type="submit">Search</button>
+            </div>
+        </form>
+    </section>
+
+    {% if documents %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Drawing</th>
+                <th>Pages</th>
+                <th>Uploaded</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for document in documents %}
+            <tr>
+                <td>
+                    <a href="{{ url_for('plan_intelligence.view_plan', project_id=project.id, document_id=document.id) }}">
+                        {{ document.original_filename }}
+                    </a>
+                    {% if document.origin == "generated" %}
+                    <span class="muted-copy">Generated</span>
+                    {% else %}
+                    <span class="muted-copy">Uploaded</span>
+                    {% endif %}
+                    {% if "UAT" in document.original_filename.upper() %}
+                    <span class="muted-copy">Test drawing</span>
+                    {% endif %}
+                </td>
+                <td>{{ document.page_count if document.page_count is not none else "—" }}</td>
+                <td>{{ document.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                <td>
+                    <a class="button-link" href="{{ url_for('plan_intelligence.download_plan', project_id=project.id, document_id=document.id) }}">Download</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <h2>No drawings yet</h2>
+        <p>Upload a PDF drawing for this project, or use a generated candidate.</p>
+        <a class="button" href="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}">Upload PDF</a>
+    </div>
+    {% endif %}
 </section>
 
-{% if documents %}
-<table class="data-table">
-    <thead>
-        <tr>
-            <th>Drawing</th>
-            <th>Pages</th>
-            <th>Uploaded</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for document in documents %}
-        <tr>
-            <td>
-                <a href="{{ url_for('plan_intelligence.view_plan', project_id=project.id, document_id=document.id) }}">
-                    {{ document.original_filename }}
-                </a>
-                {% if "UAT" in document.original_filename.upper() %}
-                <span class="muted-copy">Test drawing</span>
-                {% endif %}
-            </td>
-            <td>{{ document.page_count if document.page_count is not none else "—" }}</td>
-            <td>{{ document.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
-            <td>
-                <a class="button-link" href="{{ url_for('plan_intelligence.download_plan', project_id=project.id, document_id=document.id) }}">Download</a>
-            </td>
-        </tr>
+<section id="build-drawings" class="form-panel build-drawings">
+    <h2>Build Drawings</h2>
+    <p class="build-drawings-note">Build Drawings creates a dimensioned-plan candidate. Generate does not add it to Current drawings. Review the candidate, then use it when it should become a project drawing.</p>
+    <p class="build-drawings-note">This project has no placed members to copy. Enter each member you want drawn. Sheet title starts from the project name. Change it if this sheet needs another name.</p>
+
+    {% if build_issues %}
+    <div class="warning-copy" role="status">
+        <p>This drawing was not generated.</p>
+        <ul>
+            {% for issue in build_issues %}
+            <li>{{ issue }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('plan_intelligence.build_drawings', project_id=project.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="drawing_type" value="dimensioned_plan">
+        <div class="form-grid">
+            <label>
+                Measurement system
+                <select name="measurement_system">
+                    <option value="" {% if not build_form.measurement_system %}selected{% endif %}>Choose</option>
+                    <option value="imperial" {% if build_form.measurement_system == "imperial" %}selected{% endif %}>Imperial</option>
+                    <option value="metric" {% if build_form.measurement_system == "metric" %}selected{% endif %}>Metric</option>
+                </select>
+            </label>
+            <label>
+                Sheet title
+                <input type="text" name="title" value="{{ build_form.title }}">
+            </label>
+            <label>
+                Sheet width
+                <input type="text" name="paper_width" inputmode="decimal" value="{{ build_form.paper_width }}">
+            </label>
+            <label>
+                Sheet height
+                <input type="text" name="paper_height" inputmode="decimal" value="{{ build_form.paper_height }}">
+            </label>
+            <label>
+                Sheet unit
+                <select name="paper_unit">
+                    <option value="" {% if not build_form.paper_unit %}selected{% endif %}>Choose</option>
+                    <option value="in" {% if build_form.paper_unit == "in" %}selected{% endif %}>in</option>
+                    <option value="mm" {% if build_form.paper_unit == "mm" %}selected{% endif %}>mm</option>
+                </select>
+            </label>
+            <label>
+                Scale
+                <input type="text" name="scale_statement" value="{{ build_form.scale_statement }}">
+            </label>
+            <label>
+                Scale unit
+                <input type="text" name="scale_unit" value="{{ build_form.scale_unit }}">
+            </label>
+            <label>
+                Origin
+                <input type="text" name="origin" value="{{ build_form.origin }}">
+            </label>
+        </div>
+        <h3>Members</h3>
+        <p class="build-drawings-note">A segment needs a start and an end. A point needs one position. Coordinates use the scale unit. Leave a row blank if you are not using it.</p>
+        {% for member in build_form.members %}
+        <fieldset class="build-member-row">
+            <legend>Member {{ loop.index }}</legend>
+            <label>
+                Id
+                <input type="text" name="member_id_{{ loop.index0 }}" value="{{ member.id }}">
+            </label>
+            <label>
+                Role
+                <input type="text" name="member_role_{{ loop.index0 }}" value="{{ member.role }}">
+            </label>
+            <label>
+                Shape
+                <select name="member_kind_{{ loop.index0 }}">
+                    <option value="" {% if not member.kind %}selected{% endif %}>Choose</option>
+                    <option value="segment" {% if member.kind == "segment" %}selected{% endif %}>Segment</option>
+                    <option value="point" {% if member.kind == "point" %}selected{% endif %}>Point</option>
+                </select>
+            </label>
+            <label>
+                Start X
+                <input type="text" name="member_x1_{{ loop.index0 }}" inputmode="decimal" value="{{ member.x1 }}">
+            </label>
+            <label>
+                Start Y
+                <input type="text" name="member_y1_{{ loop.index0 }}" inputmode="decimal" value="{{ member.y1 }}">
+            </label>
+            <label>
+                End X
+                <input type="text" name="member_x2_{{ loop.index0 }}" inputmode="decimal" value="{{ member.x2 }}">
+            </label>
+            <label>
+                End Y
+                <input type="text" name="member_y2_{{ loop.index0 }}" inputmode="decimal" value="{{ member.y2 }}">
+            </label>
+            <label>
+                Point X
+                <input type="text" name="member_x_{{ loop.index0 }}" inputmode="decimal" value="{{ member.x }}">
+            </label>
+            <label>
+                Point Y
+                <input type="text" name="member_y_{{ loop.index0 }}" inputmode="decimal" value="{{ member.y }}">
+            </label>
+        </fieldset>
         {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<div class="empty-state">
-    <h2>No drawings yet</h2>
-    <p>Upload a PDF drawing for this project.</p>
-    <a class="button" href="{{ url_for('plan_intelligence.upload_plan', project_id=project.id) }}">Upload PDF</a>
-</div>
-{% endif %}
+        <div class="form-actions">
+            <button type="submit">Generate</button>
+        </div>
+    </form>
+
+    {% if candidates %}
+    <h3>Candidates</h3>
+    <p class="build-drawings-note">A candidate stays here until you use it. Using one does not remove the others.</p>
+    <ul class="build-candidate-list">
+        {% for candidate in candidates %}
+        <li>
+            <p>Dimensioned plan · {{ candidate.created_at.strftime("%Y-%m-%d %H:%M") }}</p>
+            <p>
+                <a href="{{ url_for('plan_intelligence.review_built_drawing', project_id=project.id, candidate_id=candidate.id) }}">Review candidate</a>
+            </p>
+            {% if candidate.plan_document_id %}
+            <p>Used as a project drawing.
+                <a href="{{ url_for('plan_intelligence.view_plan', project_id=project.id, document_id=candidate.plan_document_id) }}">Open drawing</a>
+            </p>
+            {% else %}
+            <form method="post" action="{{ url_for('plan_intelligence.use_built_drawing', project_id=project.id, candidate_id=candidate.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit">Use</button>
+            </form>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</section>
 {% endblock %}

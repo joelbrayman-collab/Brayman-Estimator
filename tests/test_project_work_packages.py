@@ -324,7 +324,7 @@ def test_project_and_plans_still_open_and_link_to_scope(app, client):
     assert plans_page.status_code == 200
     plans_html = plans_page.get_data(as_text=True)
     assert "Drawings" in plans_html
-    assert "These are the drawings uploaded for this project." in plans_html
+    assert "These are the drawings on this project." in plans_html
     assert "Upload PDF" in plans_html
     assert "Scope of work" in plans_html
     for hidden in (

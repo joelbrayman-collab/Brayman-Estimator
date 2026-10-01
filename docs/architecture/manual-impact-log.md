@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
-| Updated | 2026-09-26 |
+| Updated | 2026-10-01 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — PGE-5 (2026-10-01)
+
+| Field | Content |
+|-------|---------|
+| Slice | PGE-5. Build Drawings on the existing project plans page. |
+| Product status at capture | Plan Generation Engine **IN PRODUCTIZATION**. This slice **IMPLEMENTED / TESTED / CLOSED AS A SLICE** for `dimensioned_plan`. Not deployed. |
+| 1. What new contractor capability exists? | On a project’s drawings page, Build Drawings can make a dimensioned-plan candidate. The contractor reviews it and uses it when it should become a project drawing. |
+| 2. When would the contractor use it? | When the project needs a dimensioned plan and the members, sheet size, scale, and origin are known. |
+| 3. What workflow will the final Manual need to teach? | Drawings → Build Drawings → enter the sheet facts and members → Generate → review the candidate → Use. Upload PDF stays the path for a drawing the contractor already has. |
+| 4. What contractor-facing terms must be used? | Current drawings. Build Drawings. Candidate. Generate. Review candidate. Use. Uploaded. Generated. |
+| 5. What screenshots / Print examples will eventually be needed? | The drawings page on a desktop and on a phone, showing Current drawings and Build Drawings, a candidate before Use, and the same sheet after Use. Not captured here. |
+| 6. What warnings / validation distinctions need explanation? | Generate does not add a project drawing. A missing measurement system, sheet size, scale, origin, or member list is explained and nothing is generated. This project has no placed members to copy. |
+| 7. Desktop / iPhone / Print relevance | Desktop and phone-width drawings page. The candidate PDF is the print sheet. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
 
 ### MANUAL IMPACT — PLAT-LOGO-01 (2026-09-30)
 

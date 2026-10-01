@@ -4,6 +4,7 @@ import uuid
 
 from flask import (
     Blueprint,
+    Response,
     abort,
     flash,
     jsonify,
@@ -15,6 +16,18 @@ from flask import (
 )
 
 from app.models import Project
+from app.models.plan_generation_candidate import PlanGenerationCandidate
+from app.services.plan_generation.build_drawings import (
+    UNSUPPORTED_DRAWING_MESSAGE,
+    build_form_from_post,
+    candidates_for_project,
+    dimensioned_plan_request_from_form,
+    empty_build_form,
+)
+from app.services.plan_generation.candidates import (
+    persist_generated_candidate,
+    use_generated_candidate,
+)
 from app.plan_intelligence.models import (
     DrawingRevision,
     PlanAuditEvent,
@@ -104,6 +117,99 @@ def _get_project_or_404(project_id):
 @plan_intelligence_bp.route("/projects/<int:project_id>/plans")
 def list_plans(project_id):
     project = _get_project_or_404(project_id)
+    return _render_plans_page(project)
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/build",
+    methods=["POST"],
+)
+def build_drawings(project_id):
+    """Generate a dimensioned-plan candidate. This does not register a drawing."""
+    project = _get_project_or_404(project_id)
+    allowed, payload = dimensioned_plan_request_from_form(request.form)
+    posted = build_form_from_post(request.form, project.name)
+    if not allowed or payload is None:
+        return _render_plans_page(
+            project,
+            build_issues=(UNSUPPORTED_DRAWING_MESSAGE,),
+            build_form=posted,
+            status_code=400,
+        )
+    result = persist_generated_candidate(
+        get_current_organization_id(),
+        project.id,
+        payload,
+    )
+    if not result.persisted:
+        messages = tuple(issue.message for issue in result.issues) or (
+            "This drawing could not be generated.",
+        )
+        return _render_plans_page(
+            project,
+            build_issues=messages,
+            build_form=posted,
+            status_code=400,
+        )
+    flash(
+        "A candidate was generated. It is not a project drawing until you use it.",
+        "success",
+    )
+    return redirect(
+        url_for("plan_intelligence.list_plans", project_id=project.id) + "#build-drawings"
+    )
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/build/<int:candidate_id>"
+)
+def review_built_drawing(project_id, candidate_id):
+    project = _get_project_or_404(project_id)
+    candidate = _candidate_for_project_or_404(project, candidate_id)
+    return Response(
+        candidate.pdf_bytes,
+        mimetype="application/pdf",
+        headers={"Content-Disposition": "inline; filename=dimensioned-plan.pdf"},
+    )
+
+
+@plan_intelligence_bp.route(
+    "/projects/<int:project_id>/plans/build/<int:candidate_id>/use",
+    methods=["POST"],
+)
+def use_built_drawing(project_id, candidate_id):
+    project = _get_project_or_404(project_id)
+    result = use_generated_candidate(
+        get_current_organization_id(),
+        project.id,
+        candidate_id,
+    )
+    if not result.used:
+        if result.code in ("CANDIDATE_NOT_FOUND", "CANDIDATE_NOT_IN_PROJECT", "PROJECT_NOT_FOUND"):
+            abort(404)
+        flash("This candidate cannot be used.", "error")
+        return redirect(
+            url_for("plan_intelligence.list_plans", project_id=project.id) + "#build-drawings"
+        )
+    if result.created:
+        flash("This sheet is now a project drawing.", "success")
+    else:
+        flash("This sheet is already a project drawing.", "success")
+    return redirect(url_for("plan_intelligence.list_plans", project_id=project.id))
+
+
+def _candidate_for_project_or_404(project, candidate_id):
+    candidate = PlanGenerationCandidate.query.filter_by(
+        id=candidate_id,
+        organization_id=get_current_organization_id(),
+        project_id=project.id,
+    ).one_or_none()
+    if candidate is None or not candidate.pdf_bytes:
+        abort(404)
+    return candidate
+
+
+def _render_plans_page(project, *, build_issues=(), build_form=None, status_code=200):
     include_archived = request.args.get("show_archived") == "1"
     q = request.args.get("q", "").strip()
     processing_status = request.args.get("processing_status", "").strip() or None
@@ -128,8 +234,10 @@ def list_plans(project_id):
         )
 
     revision = ensure_default_revision(project)
-
-    return render_template(
+    if build_form is None:
+        build_form = empty_build_form(project.name)
+    candidates = candidates_for_project(get_current_organization_id(), project.id)
+    body = render_template(
         "plan_intelligence/list.html",
         project=project,
         documents=documents,
@@ -138,7 +246,11 @@ def list_plans(project_id):
         processing_status=processing_status or "",
         has_text=has_text_raw,
         show_archived=include_archived,
+        build_form=build_form,
+        build_issues=build_issues,
+        candidates=candidates,
     )
+    return body, status_code
 
 
 @plan_intelligence_bp.route(

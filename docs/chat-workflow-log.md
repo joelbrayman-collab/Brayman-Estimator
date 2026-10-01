@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — PGE-5 Build Drawings on the existing plans page
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLAN GENERATION ENGINE PGE-5 — BUILD DRAWINGS ON THE EXISTING PLANS PAGE 1 OCT 2026 |
+| Objective | Let a contractor build a dimensioned-plan candidate from the existing project plans page, then use it explicitly. |
+| Business decision | Generate does not add a project drawing. Use does. Upload stays an uploaded drawing. |
+| Architectural decision | The plans page calls PGE-1, PGE-2, and PGE-4. It does not add a candidate store, a PlanDocument store, or a separate Build Drawings application. `stair_detail` stays an engine profile and is refused by this page. |
+| Prompt template used | Joel’s 1 Oct 2026 PGE-5 prompt. No file in docs/prompts/ covers this slice. |
+| Approved Cursor prompt summary | Build Drawings for `dimensioned_plan` on `list_plans`. Missing geometry is explained and stores nothing. Explicit Use. No new migration. No SNP-2, SNP-3, Guided Project Setup, or `drawing_requirement`. Full suite. One commit. Push if governance permits. Do not deploy. |
+| Feature Gate | Answered in that prompt. Problem: the engine could persist a candidate, and the contractor had no plans-page way to build one. User: a contractor on an existing project. Owner: plan generation for the request and candidate; existing plan store for the used sheet. Data owned: none new. Data referenced: Project name for the sheet title, organization, and project. May change: the plans page, a form assembler, and tests. Must not change: upload semantics, Contract V1, SNP-2, SNP-3, Website, calculators, or schema. Acceptance: a complete dimensioned plan becomes a candidate, then one generated plan on Use. Tests: `tests/test_plan_generation_build_drawings.py`. ADR: no. Migration: no. |
+| Files expected to change | Plans route and template, form assembler, narrow page CSS, tests, and status lines. |
+| Files prohibited from changing | Alembic revisions, SNP, Website, Contract V1, calculators, authentication, and `projects.drawing_requirement`. |
+| Implementation result | PGE-5 closed as a slice. Build Drawings is implemented for `dimensioned_plan`. |
+| Tests | Focused `./venv/bin/python -m pytest -q tests/test_plan_generation_build_drawings.py tests/test_plan_upload.py tests/test_plan_generation_candidate.py tests/test_plan_generation_stair.py tests/test_plan_generation_render.py tests/test_plan_generation_request.py` — 57 passed, 63 warnings, 15.56s, exit 0. Full suite `./venv/bin/python -m pytest -q` — 1904 passed, 6648 warnings, 964.17s, exit 0. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Drawing requirement is not implemented. SNP-2 and SNP-3 remain blocked. Guided Project Setup remains recorded and not built. Mac primary and hosted databases were not migrated. |
+| Next approved step | None from this entry. Do not start PGE-6 until a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — PGE-4 generated candidate and explicit use
 
 | Field | Content |

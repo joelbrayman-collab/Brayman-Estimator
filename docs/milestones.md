@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — PGE-5 Build Drawings on the existing plans page
+
+| Field | Content |
+|-------|---------|
+| Milestone | PGE-5 Build Drawings on the existing plans page |
+| Status | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** |
+| Branch | `main` |
+| Base commit | `07a98b1c829848873fb68aa90e396701466e3f2d` |
+| Objective | Offer Build Drawings for `dimensioned_plan` on the existing project plans page. |
+| Deliverables | Plans-page form, candidate review, and explicit Use. `app/services/plan_generation/build_drawings.py`. No new table. |
+| Validation | Focused tests 57 passed, 63 warnings, 15.56s, exit 0. Full suite 1904 passed, 6648 warnings, 964.17s, exit 0. Temporary-office paths: missing geometry, generate, use, upload, second candidate, and cross-organization rejection. |
+| Architectural findings | The page consumes PGE-1, PGE-2, and PGE-4. Sheet title is the only project fact copied onto the request. Missing members are named and no candidate is stored. A second use keeps both plans on the active revision. |
+| Open decisions | PGE-6, the drawing-requirement decision, is not authorized by this milestone. |
+| Next milestone | PGE-6, when a later prompt authorizes it, including a separate migration approval. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — PGE-4 generated candidate and explicit use
 
 | Field | Content |

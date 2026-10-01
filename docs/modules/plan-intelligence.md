@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Phase A + M007 indexing + M009 Sheet classification + M010 scale/measurement implemented**; **M012 / FG-010 IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** |
-| Updated | 2026-09-08 |
+| Updated | 2026-10-01 |
 | Code | `app/plan_intelligence/` |
 | Feature Gates | [FG-002](../feature-gates/FG-002-plan-intelligence-phase-a.md) · [FG-003](../feature-gates/FG-003-document-intelligence-readiness.md) · [FG-004](../feature-gates/FG-004-m009-sheet-classification.md) · [FG-005](../feature-gates/FG-005-m010-scale-calibration.md) · [FG-010](../feature-gates/FG-010-ai-takeoff-quantity-extraction-foundation.md) **IMPLEMENTED / VERIFIED / COMMITTED / PUSHED / LIVE-MIGRATED / UAT-SMOKE-VERIFIED** · [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
 | Architecture | [../architecture/plan-intelligence-and-automated-takeoff.md](../architecture/plan-intelligence-and-automated-takeoff.md) · [../architecture/document-intelligence.md](../architecture/document-intelligence.md) · [../architecture/sheet-intelligence.md](../architecture/sheet-intelligence.md) · [../architecture/ai-takeoff-quantity-extraction-foundation.md](../architecture/ai-takeoff-quantity-extraction-foundation.md) · [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) (Phase D sequencing; take-off stays quantity-only) |
@@ -37,7 +37,8 @@ Proposal generation already exists. Plan Intelligence is the next major platform
 
 | Capability | Status |
 |------------|--------|
-| Project-scoped PDF upload | **Done** (M005) |
+| Project-scoped PDF upload | **Done** (M005). Origin stays `uploaded`. |
+| Build Drawings | **Done for `dimensioned_plan` (PGE-5).** On `/projects/<id>/plans`. Generate stores a candidate. Use writes `PlanDocument.origin = generated`. `stair_detail` is not offered on this page. |
 | Private filesystem storage | **Done** (M005) |
 | Metadata register (`plan_documents`) | **Done** (M005) |
 | List / detail / download | **Done** |

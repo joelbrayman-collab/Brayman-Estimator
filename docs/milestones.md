@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — PGE-4 generated candidate and explicit use
+
+| Field | Content |
+|-------|---------|
+| Milestone | PGE-4 generated candidate and explicit use |
+| Status | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** |
+| Branch | `main` |
+| Base commit | `3105249d16e3e7f62df915f83400d9c83938e3d8` |
+| Objective | Separate a generated candidate from current project drawing evidence. |
+| Deliverables | `plan_generation_candidates`. `PlanDocument.origin`. `persist_generated_candidate` and `use_generated_candidate`. Revision `l2f3a4b5c6d7`. |
+| Validation | Focused tests 68 passed, 70 warnings, 16.28s, exit 0. Full suite 1897 passed, 6617 warnings, 822.96s, exit 0. Migration proved on a temporary database, including an existing plan row and downgrade. |
+| Architectural findings | Use appends the plan to the active revision. It does not archive the previous plan. Another organization cannot use the candidate. |
+| Open decisions | PGE-5 Build Drawings is not authorized by this milestone. |
+| Next milestone | PGE-5, when a later prompt authorizes it. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — PGE-3 stair detail profile
 
 | Field | Content |

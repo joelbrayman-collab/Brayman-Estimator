@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-09-30 |
+| Updated | 2026-10-01 |
 | Evidence | Local repository inspection |
 
 ## Current occupancy — 30 Sep 2026
@@ -15,22 +15,22 @@ This block is the current snapshot. The baseline table, the migrations history, 
 | Branch | `main` |
 | Parent of this record | `ca37d8b6939f6494b6ff415bad17953886366728`. This occupancy records the approved office-logo deployment. A later documentation commit may move repository HEAD past that deployed SHA. |
 | Bushel package | Ancestor `7b3e64278e04362cfc2231381305ee2030a60408`. Not HEAD. Incomplete case. Not a development gate. |
-| Development freeze | **LIFTED FOR CONTROLLED START NEW PROJECT DEVELOPMENT.** Current objective: Plan Generation Engine **IN PRODUCTIZATION**. PGE-1 **CLOSED**. PGE-2 **CLOSED**. PGE-3 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. PGE-4 **NEXT / NOT STARTED**. SNP-1 **CLOSED AS A SLICE**. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **BLOCKED**. SNP-3 **BLOCKED**. Website CLOSED. Platform CLOSED / LIVE / VERIFIED. Cutover gates remain later. |
-| Repository Alembic head | **VERIFIED** `k1f2a3b4c5d6` |
+| Development freeze | **LIFTED FOR CONTROLLED START NEW PROJECT DEVELOPMENT.** Current objective: Plan Generation Engine **IN PRODUCTIZATION**. PGE-1 **CLOSED**. PGE-2 **CLOSED**. PGE-3 **CLOSED**. PGE-4 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. PGE-5 **NEXT / NOT STARTED**. SNP-1 **CLOSED AS A SLICE**. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **BLOCKED**. SNP-3 **BLOCKED**. Website CLOSED. Platform CLOSED / LIVE / VERIFIED. Cutover gates remain later. |
+| Repository Alembic head | **VERIFIED** `l2f3a4b5c6d7` in the repository script chain. Mac primary and the hosted database were not migrated in this slice. |
 | Mac primary | **VERIFIED** `h8c9d0e1f2a3`. Not migrated. |
-| Script chain | `h8c9d0e1f2a3` → `j0e1f2a3b4c5` → `k1f2a3b4c5d6` |
+| Script chain | `h8c9d0e1f2a3` → `j0e1f2a3b4c5` → `k1f2a3b4c5d6` → `l2f3a4b5c6d7` |
 | Deployed product SHA | **VERIFIED NOW** `ca37d8b6939f6494b6ff415bad17953886366728`. Deploy `dep-daulf9u0tbcc73bomdgg`, status `live`, finished 2026-09-30T18:41:57Z. Service `srv-dar95mh42hec73df4rug`. Branch `main`. Auto-deploy off. Prior live deploy `dep-daukqvg473hc73bkouug` at `45ab150aa724f4fa50eb7d496f886bd1a5f2e4e0` is superseded. |
 | Hosted database | **NOT RE-PROVED**. Last recorded value remains `k1f2a3b4c5d6`. Not migrated. |
 | Hosted UAT auto-entry | **VERIFIED NOW** effective ON. Anonymous `GET /login` returned 302 to `/`. No environment change. |
 | Live acceptance | Office logo PASS. Home, Projects, Clients, What we pay, and Brand Profile entry PASS. Logo QA PASS at 1280, 520, and 390. PLAT-CLIENT-01 still opens synthetic client 2. PLAT-UX-01 categories still contained. Hosted logo SHA-256 matches the governed asset. |
 | Hosted password check | **BLOCKED — AUTHORIZED CREDENTIAL NOT AVAILABLE.** Bypass was not changed. No password was reset. Auto-entry remains ON. |
-| Full suite | **VERIFIED** after PGE-3: `./venv/bin/python -m pytest -q` — **1891 passed**, 6603 warnings, **858.45s**, exit 0. Prior accepted baseline after PGE-2 was 1882 passed. |
+| Full suite | **VERIFIED** after PGE-4. `./venv/bin/python -m pytest -q` — 1897 passed, 6617 warnings, 822.96s, exit 0. Prior accepted baseline after PGE-3 was 1891 passed, 6603 warnings, 858.45s. |
 | Scope | Objective verification PASS. Owner/human UAT CLOSED — PASS WITH NON-BLOCKING POLISH. Existing-row inline edit is NON-BLOCKING POLISH / FUTURE IMPROVEMENT. |
 | Mapper | Objective verification PASS. Human UAT CLOSED — PASS. Contract evidence PASS. |
 | Approved office logo | **LIVE.** Source `CalibAi_Logo_Baseline_2026-08-27.png`. Repository `app/static/branding/calibraytai-logo-office.png`. SHA-256 `16d3b5b17e98c4bb2e2fa030677989657d5eb93f3744b74e06015fe1f0e833b8`. Hash parity PASS. Office sidebar only. |
 | Final stabilization seal | **PASS**. Website stabilization CLOSED. Platform stabilization CLOSED and LIVE / VERIFIED. Approved office logo LIVE / VERIFIED. |
-| Next objective | Plan Generation Engine is **IN PRODUCTIZATION**. PGE-3 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. Supported profiles `dimensioned_plan` and `stair_detail`. Project-document integration **NOT STARTED**. Build Drawings UI **NOT STARTED**. PGE-4 **NEXT / NOT STARTED**. SNP-2 **BLOCKED**. SNP-3 **BLOCKED**. Guided Project Setup **RECORDED / NOT BUILT**. |
-| Current condition | Platform stabilization CLOSED. Platform stabilized deployment LIVE / VERIFIED at `ca37d8b6939f6494b6ff415bad17953886366728`. PLAT-LOGO-01 CLOSED / LIVE VERIFIED. Remaining P0 none. Remaining P1 none. Remaining material P2 none. PLAT-UX-02, PLAT-UX-03, PLAT-UX-04, scope inline edit, and PLAT-AUTH-01 remain preserved. Hosted password verification and production cutover remain later operational gates. Plan Generation can draw an accepted dimensioned plan and an accepted stair detail. Those PDFs are not project plans. The stair sheet uses supplied geometry. Bushel drawing scripts remain case proofs. Guided Project Setup is recorded and not built. |
+| Next objective | Plan Generation Engine is **IN PRODUCTIZATION**. PGE-4 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. Candidate persistence **IMPLEMENTED**. Explicit use to `PlanDocument` **IMPLEMENTED**. Supported profiles `dimensioned_plan` and `stair_detail`. Project-document integration **PARTIALLY IMPLEMENTED**. Build Drawings UI **NOT STARTED**. Drawing requirement **NOT STARTED**. PGE-5 **NEXT / NOT STARTED**. SNP-2 **BLOCKED**. SNP-3 **BLOCKED**. Guided Project Setup **RECORDED / NOT BUILT**. |
+| Current condition | Platform stabilization CLOSED. Platform stabilized deployment LIVE / VERIFIED at `ca37d8b6939f6494b6ff415bad17953886366728`. PLAT-LOGO-01 CLOSED / LIVE VERIFIED. Remaining P0 none. Remaining P1 none. Remaining material P2 none. PLAT-UX-02, PLAT-UX-03, PLAT-UX-04, scope inline edit, and PLAT-AUTH-01 remain preserved. Hosted password verification and production cutover remain later operational gates. Plan Generation can draw an accepted dimensioned plan and an accepted stair detail. Those sheets stay candidates until an explicit use writes one project plan. Bushel drawing scripts remain case proofs. Guided Project Setup is recorded and not built. |
 | Sequence | [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md). |
 | Contract V1 | **ACCEPTED / PINNED** `2903a45074df21b1c99390cb9aab68638970a2ff`. Not edited. |
 | Website | Consumer surface. PUBLIC WEBSITE SOURCE CONTINUITY: RESTORED / VERIFIED. Version 31. SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf`. Project `appgprj_6a9095543b74819186183f9a522890e5`. Deployment `appgdep_6abd379bbb8081918aae3b170706263b` SUCCEEDED. Parity PASS. Employment, Concrete, and Stair CLOSED. Tests 56/56 PASS. Not a second roadmap. |
@@ -202,7 +202,7 @@ Resume: [session-handoff.md](session-handoff.md) section 0. Sequence: [PROJECT_D
 
 ## Migrations
 
-Current Alembic occupancy is the 30 Sep 2026 block at the top of this file. Repository head `k1f2a3b4c5d6`. Mac primary `h8c9d0e1f2a3`.
+Current Alembic occupancy is the block at the top of this file. Repository head `l2f3a4b5c6d7`. Mac primary remains `h8c9d0e1f2a3`. Hosted database was not migrated.
 
 - **HISTORICAL (2026-09-23):** Alembic **graph** head was recorded as **`g7b8c9d0e1f2`**. Live development/UAT `flask db current` was recorded as **`g7b8c9d0e1f2 (head)`**. No T03C/F06/L05 migration. No migration authorized from this turnover. Live DB UNCHANGED size `3457024` / mtime `1790020245.9238403`.
 - Historical Alembic **graph** head (superseded as current authority): `f6a7b8c9d0e1` (FG-038 PA-B System Administrator; **applied live**)

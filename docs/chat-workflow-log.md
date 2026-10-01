@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — PGE-4 generated candidate and explicit use
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLAN GENERATION ENGINE PGE-4 — GENERATED CANDIDATE + PROJECT PLAN ON EXPLICIT USE 1 OCT 2026 |
+| Objective | Keep a generated sheet as a candidate until an explicit use writes one project plan. |
+| Business decision | Rendering is not current drawing evidence. The contractor’s use action is. |
+| Architectural decision | One candidate table and `PlanDocument.origin`. Existing plans stay `uploaded`. Use writes through the existing plan store and the active revision. A second use adds a plan and does not archive the first. |
+| Prompt template used | Joel’s 1 Oct 2026 PGE-4 prompt. No file in docs/prompts/ covers this slice. |
+| Approved Cursor prompt summary | MIGRATION APPROVED for the candidate record and `PlanDocument.origin` only. Explicit use. No Build Drawings page, SNP-2, SNP-3, or `drawing_requirement`. Full suite. One commit. Do not deploy. |
+| Feature Gate | Answered in that prompt. Problem: a rendered PDF could not yet become a project plan without also becoming evidence too early. User: a later contractor. Owner: plan generation for the candidate, existing plan store for the used sheet. Data owned: candidate row and one `PlanDocument` on use. Data referenced: Project and organization. May change: the candidate service, plan origin, and one migration. Must not change: Contract V1, SNP-3, Website, calculators, unrelated project fields. Acceptance: use creates one generated plan and a second candidate does not delete the first. Tests: `tests/test_plan_generation_candidate.py`. ADR: no. Migration: yes, `l2f3a4b5c6d7`. |
+| Files expected to change | Candidate model and service, plan origin, one revision, tests, and central status lines. |
+| Files prohibited from changing | Build Drawings UI, SNP, Website, Contract V1, Bushel scripts, `projects.drawing_requirement`. |
+| Implementation result | PGE-4 closed as a slice. Unaccepted candidates are not current drawings. |
+| Tests | Focused `./venv/bin/python -m pytest -q tests/test_plan_generation_candidate.py tests/test_plan_generation_stair.py tests/test_plan_generation_render.py tests/test_plan_generation_request.py tests/test_plan_upload.py tests/test_start_project_walk.py` — 68 passed, 70 warnings, 16.28s, exit 0. Graph-head pins retargeted to `l2f3a4b5c6d7`; those 29 tests — 29 passed, 174 warnings, 22.70s, exit 0. Full suite `./venv/bin/python -m pytest -q` — 1897 passed, 6617 warnings, 822.96s, exit 0. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | No Build Drawings page. No drawing-requirement column. SNP-2 and SNP-3 remain blocked. Mac primary and hosted databases were not migrated. |
+| Next approved step | None from this entry. Do not start PGE-5 until a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — PGE-3 stair detail profile
 
 | Field | Content |

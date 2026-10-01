@@ -5,6 +5,10 @@ from datetime import datetime
 from app import db
 
 
+PLAN_ORIGIN_UPLOADED = "uploaded"
+PLAN_ORIGIN_GENERATED = "generated"
+
+
 # Association: Revision <-> PlanDocument
 drawing_revision_documents = db.Table(
     "drawing_revision_documents",
@@ -82,9 +86,15 @@ class DrawingRevision(db.Model):
 
 
 class PlanDocument(db.Model):
-    """Project-scoped uploaded plan PDF (Phase A + M007 indexing fields)."""
+    """Project-scoped plan PDF. Origin says whether it was uploaded or generated."""
 
     __tablename__ = "plan_documents"
+    __table_args__ = (
+        db.CheckConstraint(
+            "origin IN ('uploaded', 'generated')",
+            name="ck_plan_documents_origin",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(
@@ -101,6 +111,12 @@ class PlanDocument(db.Model):
     has_text_layer = db.Column(db.Boolean, nullable=False, default=False)
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    origin = db.Column(
+        db.String(20),
+        nullable=False,
+        default=PLAN_ORIGIN_UPLOADED,
+        server_default=PLAN_ORIGIN_UPLOADED,
+    )
 
     # Milestone 007
     archived_at = db.Column(db.DateTime)

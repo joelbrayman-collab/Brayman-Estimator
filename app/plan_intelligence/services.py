@@ -16,7 +16,12 @@ from werkzeug.utils import secure_filename
 from app import db
 from app.models import Project
 from app.plan_intelligence.audit import record_plan_audit
-from app.plan_intelligence.models import PlanDocument, PlanPage
+from app.plan_intelligence.models import (
+    PLAN_ORIGIN_GENERATED,
+    PLAN_ORIGIN_UPLOADED,
+    PlanDocument,
+    PlanPage,
+)
 from app.plan_intelligence.packages import attach_document_to_default_revision
 from app.plan_intelligence.processing import (
     ProcessingServiceError,
@@ -128,6 +133,7 @@ def upload_plan_pdf(
         has_text_layer=has_text_layer,
         notes=(notes or "").strip() or None,
         processing_status="pending",
+        origin=PLAN_ORIGIN_UPLOADED,
     )
     db.session.add(document)
     db.session.flush()
@@ -152,6 +158,48 @@ def upload_plan_pdf(
         pass
 
     db.session.refresh(document)
+    return document
+
+
+def store_generated_plan_pdf(project: Project, pdf_bytes: bytes, filename: str):
+    """Store one generated PDF as a project plan. Does not commit."""
+    if not pdf_bytes:
+        raise PlanIntelligenceServiceError("Generated PDF is empty.")
+    _validate_pdf_magic(pdf_bytes)
+    page_count, has_text_layer = _detect_pdf_properties(pdf_bytes)
+    digest = hashlib.sha256(pdf_bytes).hexdigest()
+    original = secure_filename(filename) or "plan.pdf"
+    if not original.lower().endswith(".pdf"):
+        original = f"{original}.pdf"
+    stored_name = f"{uuid.uuid4().hex}.pdf"
+    dest = project_upload_dir(project.id) / stored_name
+    dest.write_bytes(pdf_bytes)
+    document = PlanDocument(
+        project_id=project.id,
+        original_filename=original,
+        stored_filename=stored_name,
+        content_type="application/pdf",
+        byte_size=len(pdf_bytes),
+        sha256_hex=digest,
+        page_count=page_count,
+        has_text_layer=has_text_layer,
+        processing_status="pending",
+        origin=PLAN_ORIGIN_GENERATED,
+    )
+    db.session.add(document)
+    db.session.flush()
+    attach_document_to_default_revision(document)
+    record_plan_audit(
+        project_id=project.id,
+        plan_document_id=document.id,
+        event_type="generated_use",
+        detail={
+            "original_filename": original,
+            "sha256_hex": digest,
+            "byte_size": len(pdf_bytes),
+            "origin": PLAN_ORIGIN_GENERATED,
+        },
+    )
     return document
 
 

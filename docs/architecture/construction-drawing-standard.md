@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | Recorded product requirement. PGE-2 draws an accepted `dimensioned_plan`. PGE-3 draws an accepted `stair_detail` from supplied geometry. Neither PDF is a project plan. Productization plan: [plan-generation-engine-productization.md](plan-generation-engine-productization.md). |
+| Status | Recorded product requirement. PGE-4 can register a generated `dimensioned_plan` or `stair_detail` as a project plan on explicit use. Build Drawings is not a page. Productization plan: [plan-generation-engine-productization.md](plan-generation-engine-productization.md). |
 | Date | 2026-09-29 |
 | Authority | Joel’s visual standard for CalibraytAI construction drawings |
 

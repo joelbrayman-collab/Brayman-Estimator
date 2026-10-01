@@ -120,6 +120,7 @@ from app.models.labour_engine import (
     ProductionRateStandard,
 )
 from app.models.project_work_package import ProjectWorkPackage
+from app.models.plan_generation_candidate import PlanGenerationCandidate
 from app.models.work_structure import (
     ProjectWorkActivity,
     ProjectWorkElement,
@@ -266,6 +267,7 @@ __all__ = [
     "PricingAuditEvent",
     "PlanAuditEvent",
     "PlanDocument",
+    "PlanGenerationCandidate",
     "PlanPage",
     "ProcessingAttempt",
     "ProcessingResult",

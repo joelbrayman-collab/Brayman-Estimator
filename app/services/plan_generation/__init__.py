@@ -1,10 +1,12 @@
 """Reusable Plan Generation.
 
-PGE-1 validates a request. PGE-2 draws a dimensioned plan. PGE-3 draws a
-supplied stair result. None of these steps writes a project record. Contract
-V1 does not carry a stair profile.
+Validation and rendering do not register a project plan. Explicit use does.
 """
 
+from app.services.plan_generation.candidates import (
+    persist_generated_candidate,
+    use_generated_candidate,
+)
 from app.services.plan_generation.render import render_dimensioned_plan, render_plan_generation
 from app.services.plan_generation.validation import (
     ENGINE_VERSION,
@@ -15,7 +17,9 @@ from app.services.plan_generation.validation import (
 __all__ = [
     "ENGINE_VERSION",
     "SUPPORTED_DRAWING_TYPES",
+    "persist_generated_candidate",
     "render_dimensioned_plan",
     "render_plan_generation",
+    "use_generated_candidate",
     "validate_plan_generation_request",
 ]

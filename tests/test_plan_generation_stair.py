@@ -176,7 +176,11 @@ def test_same_stair_request_is_byte_stable():
 
 
 def test_stair_package_does_not_import_foreign_stair_code():
-    source = "\n".join(path.read_text(encoding="utf-8") for path in PACKAGE.glob("*.py"))
+    drawing_source = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in PACKAGE.glob("*.py")
+        if path.name != "candidates.py"
+    )
     for token in (
         "stair_detail.py",
         "stair_detail_r2",
@@ -187,7 +191,7 @@ def test_stair_package_does_not_import_foreign_stair_code():
         "atan",
         "PlanDocument",
     ):
-        assert token not in source
+        assert token not in drawing_source
 
 
 def test_stair_render_does_not_write_business_records():

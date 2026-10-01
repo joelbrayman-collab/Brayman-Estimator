@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — ICF profile registry live
+
+| Field | Content |
+|-------|---------|
+| Milestone | ICF manufacturer profile registry live |
+| Status | **CLOSED — LIVE VERIFIED.** The ICF estimator is not closed. |
+| Branch | `main` |
+| Base commit | `ae115059d96028d0e3adf11d20c6ab7d5731901d` |
+| Objective | Apply the governed hosted upgrade and deploy that SHA. |
+| Deliverables | Hosted revision `m3f4a5b6c7d8`. Deploy `dep-dav6kt8jo6nc73fpglg0`. |
+| Validation | Hosted integrity ok. Projects 50 and estimates 37 unchanged. Production-rate standards remained 1. Four profiles loaded. Office smoke and public Concrete and Stair pages returned 200. Full suite was not rerun. |
+| Architectural findings | Mac primary was not modified. Auto-deploy remained off. |
+| Open decisions | Remaining `NOT_ESTABLISHED` profile fields, and an approved ICF production-hours standard. |
+| Next milestone | None until a dependency-ready component exists. |
+| Commit | The documentation commit that contains this entry. Deployed product SHA remains `ae115059d96028d0e3adf11d20c6ab7d5731901d`. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — ICF manufacturer profile registry
 
 | Field | Content |

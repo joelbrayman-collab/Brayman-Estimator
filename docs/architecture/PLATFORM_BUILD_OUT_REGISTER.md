@@ -40,9 +40,9 @@ Concrete and Stair are closed on the public Website, not in this repository. Web
 | Diagram location | Project lifecycle — start |
 | Purpose | Open a project for a client in this company and land on setup. |
 | Current status | BLOCKED — DEPENDENCY IDENTIFIED |
-| Required dependencies | Deploy the accepted product SHA that contains Start New Project, and migrate the hosted database from last recorded `k1f2a3b4c5d6` through `l2f3a4b5c6d7` and `m3f4a5b6c7d8` under the governed sequence. Auto-deploy is off. |
+| Required dependencies | Live acceptance walk on the office that is already at `ae115059d96028d0e3adf11d20c6ab7d5731901d` and hosted revision `m3f4a5b6c7d8`. The migration and deploy dependency is cleared. Auto-deploy stays off. |
 | Existing implementation | `/projects/new` redirects to Continue setup. Code is on `origin/main` at `f82641b81c7c5d8eae96156f0540e410f4073a6a`. Local suite after SNP-6: 1931 passed. |
-| What is missing | Live verification. The live SHA is still `ca37d8b6939f6494b6ff415bad17953886366728`. |
+| What is missing | The live acceptance walk. Deploy `dep-dav6kt8jo6nc73fpglg0` of `ae115059d96028d0e3adf11d20c6ab7d5731901d` is live, and the hosted database is `m3f4a5b6c7d8`. A new project was not created in that deploy check. |
 | Build acceptance criteria | A new project in the live office opens Continue setup for that project. |
 | Live verification requirement | Walk new project on `https://calibryatai.onrender.com` after the deploy of the accepted SHA. |
 | Commit / deployed SHA when closed | Not closed. |
@@ -56,7 +56,7 @@ Concrete and Stair are closed on the public Website, not in this repository. Web
 | Current status | BLOCKED — DEPENDENCY IDENTIFIED |
 | Required dependencies | Same deploy and hosted-database dependency as Start Project. |
 | Existing implementation | `GET /projects/<id>/setup` in `app/routes/project_setup.py`. First gap in `app/services/start_project_walk.py`. Local end-to-end review on 1 Oct 2026 held through location, drawings, scope, estimate, and mapper confirmation. |
-| What is missing | That experience is not on the live SHA. |
+| What is missing | The live acceptance walk. The setup code is on the live SHA. The 1 Oct local review is not a live close. |
 | Build acceptance criteria | Continue setup on the live office names the current project and one next existing page. |
 | Live verification requirement | Walk an existing project and a new project on the live office after deploy. |
 | Commit / deployed SHA when closed | Not closed. |
@@ -243,13 +243,13 @@ The same engine serves independent use and workflow use. Do not build a second e
 |-------|--------|
 | Diagram location | Construction intelligence — ICF profiles |
 | Purpose | Versioned, source-attributed manufacturer facts for a later ICF engine. |
-| Current status | BLOCKED — DEPENDENCY IDENTIFIED |
-| Required dependencies | Governed deploy of this product SHA, which first requires the hosted database to move from last recorded `k1f2a3b4c5d6` through `m3f4a5b6c7d8`. That migration was not run. |
+| Current status | CLOSED — LIVE VERIFIED |
+| Required dependencies | None for the registry. Quantity use still waits on the ICF estimator row. |
 | Existing implementation | `app/data/icf_manufacturer_profiles_v1.json` and `app/services/icf_manufacturer_profiles.py`. Four profiles, version 1. Missing facts stay `NOT_ESTABLISHED`. No route. No quantity formula. |
-| What is missing | Live verification. Logix standard coverage and concrete volume, and Nudura concrete volume, remain `NOT_ESTABLISHED`. |
-| Build acceptance criteria | Profiles load, sources stay attached, and a missing fact is named for a future engine. |
-| Live verification requirement | The deployed office must contain this registry. Not verified. |
-| Commit / deployed SHA when closed | Not closed. |
+| What is missing | Nothing for this registry. Logix standard coverage and concrete volume, and Nudura concrete volume, remain `NOT_ESTABLISHED` for the later engine. |
+| Build acceptance criteria | Met. Profiles load on the deployed office, sources stay attached, and a missing fact is named. |
+| Live verification requirement | Met on deploy `dep-dav6kt8jo6nc73fpglg0`. Hosted revision `m3f4a5b6c7d8`. Four 8-inch profiles loaded. No public ICF route. |
+| Commit / deployed SHA when closed | Implementation and deployed SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Deploy `dep-dav6kt8jo6nc73fpglg0`, status live, finished 2026-10-01T14:14:45Z. |
 
 ### ICF
 
@@ -264,7 +264,7 @@ The same engine serves independent use and workflow use. Do not build a second e
 | What is missing | The profile numbers and the engine. Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESISTO membrane except Nudura, ICFVL at 16 inches on centre, anchors at 36 inches on centre, 50 anchors per box, and 10-foot 2×4 plates with a 50 percent purchase allowance. |
 | Build acceptance criteria | After the specification is in the repository: one internal engine, two fixtures, no public page, no second estimate, no silent price, no project or estimate mutation during calculation. |
 | Live verification requirement | After implementation, deploy, and a live internal walk. Not available while the specification is missing. |
-| Commit / deployed SHA when closed | Not closed. No ICF commit. |
+| Commit / deployed SHA when closed | Not closed. The profile registry is a separate closed row. This engine has no quantity commit. |
 
 Missing manufacturer-profile fields, for StyroRail, Logix, Nudura, and Fox Blocks, each source-attributed and versioned:
 
@@ -284,7 +284,7 @@ Fox Blocks reinforcement is not missing a default. The specification requires a 
 
 Dollar labour authority, inspected 1 Oct 2026: `app/services/labour_engine.py` seeds ORG-001 `DirectLabourCostRateStandard` at $65 CAD per man-hour from `docs/pricing-policy.md`. That rate is organization policy, not an ICF rate, and not a platform default. ICF must use it. It must not create a second dollar rate.
 
-ICF hours: **BLOCKED — LABOUR AUTHORITY DEPENDENCY**. `ProductionRateStandard` exists and no ICF standard is seeded. The Pratt record is not that standard.
+ICF hours: **BLOCKED — APPROVED PRODUCTION STANDARD REQUIRED**. `ProductionRateStandard` exists and no ICF standard is seeded. The Pratt record is not that standard.
 
 Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESISTO except Nudura, ICFVL at 16 inches on centre, anchors at 36 inches on centre, 50 anchors per box, and 10-foot 2×4 plates with a 50 percent purchase allowance.
 
@@ -433,7 +433,7 @@ A route is not a complete capability. Status uses the same four values.
 | Diagram location | Core — plan generation |
 | Purpose | Build a dimensioned-plan candidate and register it only when the contractor uses it. |
 | Current status | BLOCKED — DEPENDENCY IDENTIFIED |
-| Required dependencies | Deploy the product SHA that contains PGE-4 through PGE-6, and migrate the hosted database through `l2f3a4b5c6d7` and `m3f4a5b6c7d8`. Those revisions are not on the hosted database. |
+| Required dependencies | Live walk that generates a candidate and registers a drawing only on Use. Hosted revision is `m3f4a5b6c7d8`. Live SHA is `ae115059d96028d0e3adf11d20c6ab7d5731901d`. The migration and deploy dependency is cleared. |
 | Existing implementation | In git: Build Drawings for `dimensioned_plan`, candidate, explicit use, and `projects.drawing_requirement`. `stair_detail` is an engine profile and is not on the plans page. |
 | What is missing | Live verification. |
 | Build acceptance criteria | Live plans page can generate a candidate and register a drawing only on Use. |
@@ -802,17 +802,16 @@ Contract Signing, Build / Manage, Actuals, Complete / Close, Learn & Improve, an
 
 | Component | Exact dependency |
 |-----------|------------------|
-| ICF Manufacturer Profile Registry | Hosted migration through `m3f4a5b6c7d8`, then deploy and live verification. The registry code is in git and is not closed. |
-| ICF quantities | Profile fields that remain `NOT_ESTABLISHED`, including Logix standard coverage and concrete volume, and Nudura concrete volume. |
-| ICF hours | BLOCKED — LABOUR AUTHORITY DEPENDENCY. No approved ICF `ProductionRateStandard`. The $65 CAD man-hour rate is already governed and is not this dependency. |
+| ICF quantities | Profile fields that remain `NOT_ESTABLISHED`, including Logix standard coverage and concrete volume, and Nudura concrete volume. Corner coverage and packaging factors that are still `NOT_ESTABLISHED` are the same class of gap. |
+| ICF hours | BLOCKED — APPROVED PRODUCTION STANDARD REQUIRED. No approved ICF `ProductionRateStandard`. The $65 CAD man-hour rate is already governed and is not this dependency. |
 | Framing | Governed V1 specification: formula authority, assumptions, inputs, outputs, test vectors, Contract V1 compatibility, public/private classification, Platform workflow boundary. |
 | Roofing | The same missing set as Framing. |
 | Siding | The same missing set as Framing. |
 | Drywall | The same missing set as Framing. |
 | Flooring | The same missing set as Framing. |
-| Start Project | Governed deploy plus hosted migration through `m3f4a5b6c7d8`. Live SHA remains `ca37d8b6939f6494b6ff415bad17953886366728`. |
-| Guided Project Setup | Same deploy and hosted-migration dependency. |
-| Plan Generation | Same dependency. Revisions `l2f3a4b5c6d7` and `m3f4a5b6c7d8` are not on the hosted database. |
+| Start Project | Live acceptance walk. The code is on live SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Hosted revision is `m3f4a5b6c7d8`. |
+| Guided Project Setup | Same live acceptance walk. |
+| Plan Generation | Live walk that generates a candidate and registers a drawing only on Use. Migration `m3f4a5b6c7d8` is applied. |
 | Contract Signing | Legal Content Gate is empty. Production legal packages are 0. Family 05 is not legally approved. |
 | Build / Manage | No governed specification for execution, progress, labour, materials, equipment, issues, and task execution. |
 | Actuals | No governed capture of actual labour, materials, equipment, and subcontract cost against the estimate, contract, and change orders. |
@@ -838,10 +837,10 @@ No formulas were written.
 
 ## Current build
 
-ICF PROFILE REGISTRY: BLOCKED — DEPENDENCY IDENTIFIED. The data is in git. Live closure waits on hosted migration and deploy.
+ICF PROFILE REGISTRY: CLOSED — LIVE VERIFIED. Deploy `dep-dav6kt8jo6nc73fpglg0`. SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Hosted revision `m3f4a5b6c7d8`.
 
 ICF ESTIMATOR: BLOCKED — DEPENDENCY IDENTIFIED. Remaining profile gaps stay `NOT_ESTABLISHED`.
 
 ICF LABOUR: BLOCKED — APPROVED PRODUCTION STANDARD REQUIRED. The ORG-001 dollar rate is unchanged.
 
-No other component was dependency-ready. No migration. No deploy.
+Start Project, Guided Project Setup, and Plan Generation are on that live SHA. Their remaining dependency is a live acceptance walk. No quantity engine was started.

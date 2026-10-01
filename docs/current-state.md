@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | Operational snapshot |
 | Updated | 2026-10-01 |
-| Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). ICF is **BLOCKED — DEPENDENCY IDENTIFIED**. The Brayman ICF Estimator V1 design specification is not in this repository. |
+| Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). ICF profile registry is **CLOSED — LIVE VERIFIED**. ICF estimator remains **BLOCKED — DEPENDENCY IDENTIFIED**. ICF labour remains **BLOCKED — APPROVED PRODUCTION STANDARD REQUIRED**. |
 | Evidence | Local repository inspection |
 
 ## Current occupancy — 30 Sep 2026
@@ -20,8 +20,8 @@ This block is the current snapshot. The baseline table, the migrations history, 
 | Repository Alembic head | **VERIFIED** `m3f4a5b6c7d8` in the repository script chain. Mac primary and the hosted database were not migrated in this slice. |
 | Mac primary | **VERIFIED** `h8c9d0e1f2a3`. Not migrated. |
 | Script chain | `h8c9d0e1f2a3` → `j0e1f2a3b4c5` → `k1f2a3b4c5d6` → `l2f3a4b5c6d7` → `m3f4a5b6c7d8` |
-| Deployed product SHA | **VERIFIED NOW** `ca37d8b6939f6494b6ff415bad17953886366728`. Deploy `dep-daulf9u0tbcc73bomdgg`, status `live`, finished 2026-09-30T18:41:57Z. Service `srv-dar95mh42hec73df4rug`. Branch `main`. Auto-deploy off. Prior live deploy `dep-daukqvg473hc73bkouug` at `45ab150aa724f4fa50eb7d496f886bd1a5f2e4e0` is superseded. |
-| Hosted database | **NOT RE-PROVED**. Last recorded value remains `k1f2a3b4c5d6`. Not migrated. |
+| Deployed product SHA | **VERIFIED NOW** `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Deploy `dep-dav6kt8jo6nc73fpglg0`, status `live`, finished 2026-10-01T14:14:45Z. Service `srv-dar95mh42hec73df4rug`. Branch `main`. Auto-deploy off. Prior live deploy `dep-daulf9u0tbcc73bomdgg` at `ca37d8b6939f6494b6ff415bad17953886366728` is superseded. |
+| Hosted database | **VERIFIED** `m3f4a5b6c7d8` on 1 Oct 2026 after the governed upgrade from verified `k1f2a3b4c5d6`. Mac primary was not migrated. |
 | Hosted UAT auto-entry | **VERIFIED NOW** effective ON. Anonymous `GET /login` returned 302 to `/`. No environment change. |
 | Live acceptance | Office logo PASS. Home, Projects, Clients, What we pay, and Brand Profile entry PASS. Logo QA PASS at 1280, 520, and 390. PLAT-CLIENT-01 still opens synthetic client 2. PLAT-UX-01 categories still contained. Hosted logo SHA-256 matches the governed asset. |
 | Hosted password check | **BLOCKED — AUTHORIZED CREDENTIAL NOT AVAILABLE.** Bypass was not changed. No password was reset. Auto-entry remains ON. |
@@ -59,7 +59,7 @@ Resume: [session-handoff.md](session-handoff.md) section 0. Sequence: [PROJECT_D
 
 ## Implemented (evidenced in code)
 
-- **ICF manufacturer profile registry** — **IN GIT / NOT LIVE** (2026-10-01). Versioned profiles for Fox Blocks, Logix, Nudura, and StyroRail / BuildBlock. A fact without an official source stays `NOT_ESTABLISHED`. No quantity formula, no route, no production-rate standard, no schema. Live closure is **BLOCKED — DEPENDENCY IDENTIFIED** on hosted migration and deploy. The ICF estimator remains blocked.
+- **ICF manufacturer profile registry** — **CLOSED — LIVE VERIFIED** (2026-10-01). Deploy `dep-dav6kt8jo6nc73fpglg0` of `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Hosted revision `m3f4a5b6c7d8`. Four 8-inch profiles load on the office. No public ICF route. No production-rate standard was added. The ICF estimator remains blocked.
 - **Tactical build-out register** — **RECORDED** (2026-10-01). [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). ORG-001 labour dollars are the existing $65 CAD man-hour standard. ICF hours remain **BLOCKED — APPROVED PRODUCTION STANDARD REQUIRED**. No deploy.
 - **Estimate handoff (SNP-6)** — **IMPLEMENTED / TESTED / CLOSED AS A SLICE** (2026-10-01). Continue setup opens the ordinary estimate when the project has one, the existing project estimate list when it has more than one, and `/estimates/new?project_id=<id>` when it has none. Saving that form still opens the estimate. Opening setup again reads the estimates that exist. The calculation mapper is unchanged. A loaded result adds no line until the contractor confirms a company cost or reusable work. No schema. Deployment was not performed. Full suite 1931 passed, 6759 warnings, 984.33s, exit 0.
 - **Scope return (SNP-4)** — **IMPLEMENTED / TESTED / CLOSED AS A SLICE** (2026-10-01). The existing Scope page offers Return to setup for the same project. Saving work still stays on Scope. The next page is chosen when setup runs the existing resolver again. No schema. Deployment was not performed.

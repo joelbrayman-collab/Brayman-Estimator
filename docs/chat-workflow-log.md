@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — ICF profile registry governed migration and live deploy
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI TACTICAL PLATFORM BUILD-OUT ICF MANUFACTURER PROFILE REGISTRY GOVERNED MIGRATION + LIVE DEPLOYMENT 1 OCT 2026 |
+| Objective | Migrate the hosted database to `m3f4a5b6c7d8` and deploy the profile-registry SHA. |
+| Business decision | Use the existing hosted upgrade and manual deploy path. Do not invent a migration. Do not turn auto-deploy on. |
+| Architectural decision | Hosted revision was verified at `k1f2a3b4c5d6` before upgrade. The upgrade target was `m3f4a5b6c7d8`, which applies `l2f3a4b5c6d7` and then `m3f4a5b6c7d8`. Mac primary was not touched. |
+| Prompt template used | Joel’s 1 Oct 2026 governed migration and live deployment prompt. |
+| Approved Cursor prompt summary | Clear only the hosted migration and deploy dependency for the profile registry. Deploy exactly `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Do not start the quantity engine or create a labour standard. |
+| Feature Gate | No new product gate. This pass applies the already approved revisions and deploys the already accepted SHA. |
+| Files expected to change | Register, handoff, current-state, workflow log, and milestones. |
+| Files prohibited from changing | Migration files, calculators, Website, Contract V1, authentication, and the Mac primary database. |
+| Implementation result | Hosted database `m3f4a5b6c7d8`. Deploy `dep-dav6kt8jo6nc73fpglg0` live. Profile registry **CLOSED — LIVE VERIFIED**. Estimator and labour remain blocked. |
+| Tests | Pre-deployment suite was not rerun. Accepted result remains 1940 passed, 6759 warnings, 962.51s, exit 0. Post-deploy smoke is in the implementation report. |
+| Project-state-report update | Not a milestone-score change. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Logix coverage and concrete volume. Nudura concrete volume. Approved ICF production-hours standard. Live acceptance walks for Start Project, Guided Project Setup, and Plan Generation. |
+| Next approved step | None from this entry. Do not start the quantity engine. |
+| Next approved prompt | None. |
+| Commit hash | The documentation commit that contains this entry. The deployed product SHA remains `ae115059d96028d0e3adf11d20c6ab7d5731901d`. |
+
 ### 2026-10-01 — ICF manufacturer profile registry
 
 | Field | Content |

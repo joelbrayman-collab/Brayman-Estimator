@@ -43,6 +43,32 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Construction Model view projection
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 2 — VIEW PROJECTION 1 OCT 2026 |
+| Objective | Project plan, front elevation, and side elevation from the Construction Model. |
+| Business decision | The three views are cameras on one model. A missing required fact refuses every view. |
+| Architectural decision | View definitions carry view type, viewing direction, and visible classes. They do not carry members. Projection version `cm-2`. No sheet and no PDF. |
+| Prompt template used | Joel’s 1 Oct 2026 slice 2 prompt. |
+| Approved Cursor prompt summary | View projection only. No PDF, sheet composer, red-box UI, take-off, external CAD, Bushel edits, PGE edits, or deploy. Focused tests, PGE regression, and the full suite. One commit. Push. |
+| Feature Gate | None. Authorized slice beside closed PGE. |
+| Files expected to change | `app/services/construction_model/projection.py`, the package init, projection tests, the drawing standard, the build register, architecture, current-state, session handoff, roadmap, and this log. |
+| Files prohibited from changing | Plan Generation, Bushel case files, Contract V1, Website, schema, migrations. |
+| Implementation result | Plan, front elevation, and side elevation project the accepted model. An incomplete model returns the slice 1 refusal and no elements. |
+| Tests | Focused `./venv/bin/python -m pytest -q tests/test_construction_model_completeness.py tests/test_construction_model_projection.py`: 25 passed, 2 warnings, 0.64s, exit 0. PGE regression: 49 passed, 48 warnings, 13.51s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 1992 passed, 6781 warnings, 961.89s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Sheet composition and PDF are not built. The register row stays open. |
+| Next approved step | A later slice may compose the projected views onto a governed 11×17 sheet. |
+| Next approved prompt | None in this slice. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. Live product SHA remains `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`. |
+
 ### 2026-10-01 — Construction Model completeness refusal
 
 | Field | Content |

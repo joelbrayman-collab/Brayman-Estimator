@@ -152,6 +152,8 @@ It may measure:
 
 Dashboard visibility must respect dealer and store ownership boundaries.
 
+The dashboard is not a second economics calculator. When it is built, it must use the same definitions as the existing supplier/OEM economics calculator, including the operational addendum in [supplier-pro-operational-roi-addendum-v1.md](supplier-pro-operational-roi-addendum-v1.md). That addendum is not implemented.
+
 ---
 
 ## Dealer and store hierarchy

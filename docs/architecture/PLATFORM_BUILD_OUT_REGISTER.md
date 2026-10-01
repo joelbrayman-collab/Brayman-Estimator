@@ -773,7 +773,7 @@ Implementation sequence:
 3. Supplier permission / privacy foundation. Depends on item 2. Default visibility is aggregated and anonymized.
 4. Material Opportunity / attribution. Depends on item 3 and on a project material requirement. Classes are POTENTIAL, ATTRIBUTED, and VERIFIED.
 5. Contractor-authorized transaction. Depends on item 4. The contractor starts the share.
-6. Supplier ROI & Opportunity Dashboard. Depends on items 3 and 4. It can measure adoption and submitted opportunity before an external integration.
+6. Supplier ROI & Opportunity Dashboard. Depends on items 3 and 4. It can measure adoption and submitted opportunity before an external integration. It is not a second calculator. It must use the existing supplier/OEM economics calculator and the operational addendum. That calculator is not in this repository.
 7. Dealer / store reporting. Depends on items 1 and 6. One dealer does not see another dealer’s private commercial information.
 8. POS / ERP / order integrations. Depends on item 5. Later capability.
 

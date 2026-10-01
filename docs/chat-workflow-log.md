@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Supplier operational ROI addendum
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI SUPPLIER PRO PLATFORM PARTNERSHIP EXISTING SUPPLIER/OEM ECONOMICS CALCULATOR OPERATIONAL ROI ENHANCEMENT — ARCHITECTURE ADDENDUM 1 OCT 2026 |
+| Objective | Record takeoff-labour value and capacity value as an addendum to the existing supplier economics calculator. |
+| Business decision | Those two values stay separate. A missing incremental contribution per quote is not invented. |
+| Architectural decision | No second calculator. The existing calculator was not found in this repository or on the public useful-tools list. Persistent ROI measurement stays with future Supplier Pro. |
+| Prompt template used | Joel’s 1 Oct 2026 operational ROI addendum prompt. |
+| Approved Cursor prompt summary | Locate the existing calculator, record the formulas, commit documentation only, push, and do not deploy. |
+| Files expected to change | The addendum, the Supplier Pro architecture pointer, the build-out register sentence, the index, handoff, current-state, and this log. |
+| Files prohibited from changing | Calculator UI, Website, supplier tables, dashboards, authentication, organizations, projects, and estimates. |
+| Implementation result | Addendum recorded. Calculator not implemented. |
+| Tests | Not run. Documentation only. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a completed milestone. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The existing calculator source is outside this repository and was not available to map field by field. |
+| Next approved step | When implementation is authorized, open that existing calculator and add only the missing operational inputs. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — Supplier Pro Platform Partnership architecture
 
 | Field | Content |

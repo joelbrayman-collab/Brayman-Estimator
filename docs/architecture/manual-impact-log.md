@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — ICF wall quantities (2026-10-01)
+
+| Field | Content |
+|-------|---------|
+| Slice | Estimate path for 8-inch ICF form count and concrete. |
+| Product status at capture | **CLOSED — LIVE VERIFIED**. Product SHA `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`. Deploy `dep-dav9uk97lnhs73bj35pg`. |
+| 1. What new contractor capability exists? | From Add from calculation, ICF wall quantities accepts the measured wall and shows form count and concrete. Review opens the existing confirmation. Nothing is added until that confirmation. |
+| 2. When would the contractor use it? | When an estimate needs 8-inch ICF forms and concrete from a net wall area and corner counts. |
+| 3. What workflow will the final Manual need to teach? | Open the estimate’s Add from calculation, choose ICF wall quantities, enter the manufacturer, area, and corners, calculate, then review and confirm only the quantities that have a company cost. |
+| 4. What contractor-facing terms must be used? | ICF wall quantities. Net wall area. Enter 0 when the wall has none. Labour-hour allowance. Review on this estimate. |
+| 5. What screenshots / Print examples will eventually be needed? | The input page and the review that still says nothing is added. Not captured here. |
+| 6. What warnings / validation distinctions need explanation? | Corner counts are required, including zero. A corner the profile does not describe is not calculated. Labour hours are an allowance and are not priced. Package quantity is not invented. |
+| 7. Desktop / iPhone / Print relevance | Checked in the office shell on a temporary local database. The known 11px overflow at 390px was not repaired. No print sheet was created. |
+| Do not | Final Manual prose. Unstable screenshots. A public ICF calculator. A second labour rate. |
+
 ### MANUAL IMPACT — Live acceptance walk (2026-10-01)
 
 | Field | Content |

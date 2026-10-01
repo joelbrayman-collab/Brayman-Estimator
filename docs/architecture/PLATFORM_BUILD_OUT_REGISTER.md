@@ -271,14 +271,14 @@ The same engine serves independent use and workflow use. Do not build a second e
 | Diagram location | Construction intelligence — ICF |
 | Purpose | Internal governed ICF takeoff: materials, labour inputs, and direct-cost inputs. Final selling price stays with estimating. |
 | Independent use | CLOSED — LIVE VERIFIED for the internal 8-inch form and concrete service. There is no public page. |
-| Workflow use | NOT STARTED |
-| Dependency class | RUNTIME INPUT for wall area, corner counts, the reinforcement schedule, and the labour-hour allowance. INSTANCE-OWNER INPUT for the existing $65 CAD man-hour rate and for any later ICF production standard. |
+| Workflow use | CLOSED — LIVE VERIFIED |
+| Dependency class | RUNTIME INPUT for wall area, corner counts, the reinforcement schedule, and the labour-hour allowance. INSTANCE-OWNER INPUT for the existing $65 CAD man-hour rate and for any later ICF production standard. A requested corner whose coverage is absent from the profile stays a TRUE PLATFORM DEPENDENCY for that configuration only. |
 | Required dependencies | Design specification present at commit `c1ab362`. Eight-inch standard form and concrete methods are source-backed. Dollar labour uses ORG-001 at $65 CAD per man-hour. Labour hours are a confirmed allowance. Pratt stays evidence and is not seeded. |
-| Existing implementation | `app/services/icf_quantity.py` applies the verified profile methods for 8-inch form count and concrete. It has no route. It does not price and does not write a project or an estimate. |
-| What is missing | A project workflow that asks for the runtime inputs and offers the result to the mapper. Rebar, membrane rolls, packaging, and labour hours stay named inputs. |
-| Build acceptance criteria | After the specification is in the repository: one internal engine, two fixtures, no public page, no second estimate, no silent price, no project or estimate mutation during calculation. |
-| Live verification requirement | Met for the internal service on deploy `dep-dav7o7p42hec73dbraag`. Authenticated `/icf` and `/calculators/icf` returned 404. |
-| Commit / deployed SHA when closed | `1ca26d99c1d95a297bfdf42ad6f07dbb6b0c749e`. Deploy `dep-dav7o7p42hec73dbraag`, status live. The project workflow is a separate row status and is not this closure. |
+| Existing implementation | `app/services/icf_quantity.py` applies the verified profile methods for 8-inch form count and concrete. `estimates.wall_form_quantities` at `/estimates/<id>/versions/<version_id>/wall-form-quantities` asks for the manufacturer, net wall area, and corner counts, and can offer the result to the existing calculation review. Calculate does not ingest. Review does not confirm a line. Labour hours stay an allowance and are not priced. |
+| What is missing | Nothing for the 8-inch form and concrete path. Rebar remains a project schedule. An unestablished package quantity is not invented. A StyroRail / BuildBlock 45-degree corner still has no coverage in the profile, so that one request is not offered for review. |
+| Build acceptance criteria | Met. One internal engine, no public page, no second estimate, no silent price, and no line until the existing confirmation. |
+| Live verification requirement | Met. Host HEAD `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`. Deploy `dep-dav9uk97lnhs73bj35pg`. Anonymous requests for the estimate path, `/icf`, and `/calculators/icf` returned 302 to `/login`. |
+| Commit / deployed SHA when closed | Quantity service `1ca26d99c1d95a297bfdf42ad6f07dbb6b0c749e`, deploy `dep-dav7o7p42hec73dbraag`. Workflow product SHA `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`, deploy `dep-dav9uk97lnhs73bj35pg`. |
 
 Missing manufacturer-profile fields, for StyroRail, Logix, Nudura, and Fox Blocks, each source-attributed and versioned:
 
@@ -905,7 +905,7 @@ No formulas were written.
 
 ICF PROFILE REGISTRY: CLOSED — LIVE VERIFIED. Deploy `dep-dav6kt8jo6nc73fpglg0`. SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Hosted revision `m3f4a5b6c7d8`.
 
-ICF ESTIMATOR: the internal 8-inch form and concrete service is CLOSED — LIVE VERIFIED. Deploy `dep-dav7o7p42hec73dbraag`. SHA `1ca26d99c1d95a297bfdf42ad6f07dbb6b0c749e`. Project workflow use remains NOT STARTED.
+ICF ESTIMATOR: the internal 8-inch form and concrete service and its estimate workflow are CLOSED — LIVE VERIFIED. Workflow product SHA `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`. Deploy `dep-dav9uk97lnhs73bj35pg`. The earlier quantity-service deploy `dep-dav7o7p42hec73dbraag` remains the calculation ancestor.
 
 ICF LABOUR: RUNTIME INPUT for hours. INSTANCE-OWNER INPUT for the existing ORG-001 dollar rate. No second rate is created.
 

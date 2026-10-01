@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — ICF estimate quantity path
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI TACTICAL PLATFORM BUILD-OUT GLOBAL DEPENDENCY RE-AUDIT + CONTINUOUS BUILD RESUME 1 OCT 2026 |
+| Objective | Re-audit remaining ICF gaps and build the estimate path when runtime inputs are enough. |
+| Business decision | Missing measured values and the labour-hour allowance are not development blockers. The $65 CAD rate stays the existing ORG-001 standard. Pratt is not a production standard. |
+| Architectural decision | The closed 8-inch quantity service is reused. The estimate page asks for the wall and offers the result to the existing review. It does not confirm a line, invent a package quantity, or open a public calculator. |
+| Prompt template used | Joel’s 1 Oct 2026 tactical build resume. |
+| Approved Cursor prompt summary | Classify dependencies, build every ready component, test, document, commit, push, deploy the product SHA, and live-verify. Do not implement Supplier Pro. Do not touch the stashes. |
+| Files expected to change | The estimate route and page, the calculation list link, tests, and the build-out record. |
+| Files prohibited from changing | Closed live components, Website formulas, Supplier Pro, and both stashes. |
+| Implementation result | Workflow use CLOSED — LIVE VERIFIED. Product SHA `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`. Deploy `dep-dav9uk97lnhs73bj35pg`. |
+| Tests | `./venv/bin/python -m pytest -q` — 1967 passed, 6779 warnings, 1335.43s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a completed milestone. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Framing, roofing, siding, drywall, and flooring still have no governed formula. A StyroRail / BuildBlock 45-degree corner still has no coverage. |
+| Next approved step | None from this pass. The next ready work waits on a true platform dependency or a later prompt. |
+| Next approved prompt | None. |
+| Commit hash | Product `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`. This documentation commit follows it and is not deployed. |
+
 ### 2026-10-01 — Darcy / BMR meeting readiness
 
 | Field | Content |

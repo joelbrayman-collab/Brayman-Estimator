@@ -4,7 +4,7 @@
 |-----------|--------|
 | Status | Operational snapshot |
 | Updated | 2026-10-01 |
-| Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). ICF profile registry and the internal 8-inch form and concrete service are **CLOSED — LIVE VERIFIED**. Project workflow use remains **NOT STARTED**. Labour hours are a runtime allowance. |
+| Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). ICF profile registry, the internal 8-inch form and concrete service, and the estimate workflow are **CLOSED — LIVE VERIFIED**. Live product SHA `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`, deploy `dep-dav9uk97lnhs73bj35pg`. Labour hours are a runtime allowance. |
 | Evidence | Local repository inspection |
 
 ## Current occupancy — 30 Sep 2026

@@ -73,9 +73,9 @@ A later internal package may use a calculation engine, Contract V1, and the exis
 
 ## Add from calculation
 
-The estimate version does not offer Add from calculation. Scope of work is where the contractor names the work. The calculation route remains infrastructure. It can still review a Contract V1 result and confirm a quantity onto a cost item or assembly. A person still confirms before a line is added.
+The estimate version does not offer Add from calculation. Scope of work is where the contractor names the work. The calculation route remains infrastructure. It can still review a Contract V1 result and confirm a quantity onto a cost item or assembly. A person still confirms before a line is added. Add from calculation now opens ICF wall quantities for the 8-inch form count and concrete. That page does not add a line.
 
-A later confirmed internal package may use an engine. Footing, ICF wall, and concrete slab / thickened-edge slab are separate engines. A later private Brayman ICF workflow may call those engines for the packages the project needs. No formula and no orchestration are implemented. They do not become a destination on the estimate page.
+Footing and concrete slab / thickened-edge slab remain separate. They are not offered from this page. A StyroRail / BuildBlock 45-degree corner that has no stored coverage is not calculated.
 
 A test page at `/estimates/<id>/versions/<version_id>/calculations/test-load` can still accept a Contract V1 file. It is labeled as testing and is not linked from the estimate version. It is not the normal way to build an estimate.
 

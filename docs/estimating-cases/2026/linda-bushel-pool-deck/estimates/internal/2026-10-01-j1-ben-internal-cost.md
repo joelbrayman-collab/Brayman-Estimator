@@ -6,7 +6,7 @@ INTERNAL / FOR BEN
 
 Not a customer document. Not sent. No dollar on this sheet is a supplier price. A blank is not zero.
 
-Quantities are issue J1. Joel's 1 Oct 2026 decisions are the geometry: 15 piers, 16 joist lines, 10 stringers, 5.00 in working throat, 12 in lower-deck walking surface, street number 12.
+Quantities are issue J1. Joel's 1 Oct 2026 decisions are the geometry: 15 piers, 16 joist lines, 10 stringers, 5.00 in working throat, 12 in lower-deck walking surface, street number 12. The client has selected helical piers. Sonotubes and concrete are not in this issue.
 
 The 29 Sep sheet `costing/2026-09-29-ben-internal-cost.md` and `estimates/internal/2026-10-01-ben-internal-cost.md` stay as earlier records. Those earlier sheets still show the unresolved P1 counts.
 
@@ -16,10 +16,9 @@ No labour hours, equipment list, or Darcy quotation is in the case. None was inv
 
 | Item | J1 quantity | Material cost |
 |---|---|---|
-| 10 in sonotube, 4 ft buried | 15 | PRICE REQUIRED |
-| Concrete, net, no waste percent | 1.212 cu yd | PRICE REQUIRED |
+| Helical pier | 15 | PRICE REQUIRED |
+| Helical-pier bracket, unless included | 15 | PRICE REQUIRED |
 | PT 6×6 × 8 ft | 11 | PRICE REQUIRED |
-| Adjustable post saddle | 15 | PRICE REQUIRED |
 | Post-to-beam connector | 15 | PRICE REQUIRED |
 | PT 2×10 × 10 ft | 4 | PRICE REQUIRED |
 | PT 2×10 × 12 ft | 7 | PRICE REQUIRED |
@@ -60,7 +59,7 @@ PRICE REQUIRED. Permit fees, disposal, and delivery are not priced. Delivery add
 
 The 76 stitch bolts are a pricing allowance, not an engineered schedule. They are not priced.
 
-No percentage waste allowance was added. Offcut waste is the unused length on the J1 cut lists. Offcuts were not deducted from the purchase count. Above-grade sonotube reveal is not in the concrete quantity.
+No percentage waste allowance was added. Offcut waste is the unused length on the J1 cut lists. Offcuts were not deducted from the purchase count. There is no concrete quantity. Helical pier length is not specified.
 
 ## Direct cost
 

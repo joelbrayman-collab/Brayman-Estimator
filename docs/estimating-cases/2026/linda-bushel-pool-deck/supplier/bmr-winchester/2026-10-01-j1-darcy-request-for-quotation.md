@@ -27,10 +27,9 @@ Those blanks are not zeroes and they are not a quotation.
 
 | Group | Description | Preferred stock | Qty | Unit | BMR SKU | Public price | Contractor price | Availability | Substitution | Delivery timing | Flag |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Concrete | 10 in sonotube, 4 ft buried length | 4 ft | 15 | ea |  |  |  |  |  |  | REQUESTED QUANTITY. Above-grade reveal not recorded |
-| Concrete | Concrete for 15 piers, 1.212 cu yd net | supplier mix | 1.212 | cu yd |  |  |  |  |  |  | REQUESTED QUANTITY. No waste percent. SUPPLIER CONFIRMATION REQUIRED for price |
+| Piers | Helical pier, one at each drawn location | product not specified | 15 | ea |  |  |  |  |  |  | REQUESTED QUANTITY. Shaft, helix, length, and torque are SUPPLIER CONFIRMATION REQUIRED. Not a sonotube. No concrete. |
+| Piers | Helical pier post bracket | each | 15 | ea |  |  |  |  |  |  | REQUESTED QUANTITY unless the pier includes the bracket. SUPPLIER CONFIRMATION REQUIRED. |
 | Posts | PT 6×6 × 8 ft | 8 ft | 11 | ea |  |  |  |  |  |  | REQUESTED QUANTITY. 5 sticks for 9 upper posts; 6 uncut for lower posts |
-| Posts | Galvanized adjustable post saddle | each | 15 | ea |  |  |  |  |  |  | REQUESTED QUANTITY. SUPPLIER CONFIRMATION REQUIRED for the model |
 | Posts | Post-to-beam connector, PT compatible | each | 15 | ea |  |  |  |  |  |  | REQUESTED QUANTITY. SUPPLIER CONFIRMATION REQUIRED for the product |
 | Beams | PT 2×10 × 10 ft | 10 ft | 4 | ea |  |  |  |  |  |  | REQUESTED QUANTITY. Lower beams used full |
 | Beams | PT 2×10 × 12 ft | 12 ft | 7 | ea |  |  |  |  |  |  | REQUESTED QUANTITY. Front plies cut to 6 ft; main beam full; wings cut to 5.41 ft |
@@ -54,5 +53,6 @@ Those blanks are not zeroes and they are not a quotation.
 - Actual stock lengths at Winchester may replace the preferred lengths.
 - Veranda HDDR2022005 / SKU 1001900458 is a Home Depot identity, not a confirmed BMR SKU.
 - Lower-deck walking surface is 12 in. Post cut length is still a field item. The dressed stack is 17.5 in.
-- Saddle model, connector brand, bolt diameter, and gate hinges are not specified.
+- Helical pier shaft, helix, length, torque, and bracket are not specified. There is no concrete quantity.
+- Connector brand, bolt diameter, and gate hinges are not specified.
 - Do not read a blank price as zero.

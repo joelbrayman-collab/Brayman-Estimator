@@ -25,7 +25,7 @@ That set is a preliminary construction and supplier pricing basis. It is not a f
 - Above-ground pool about 21 ft in diameter and about 50 in high. Field verify.
 - Upper deck 18 ft wide. Pool edge curved and left open. Other three edges straight. 5 ft clear at the centreline.
 - Option A framing: one straight main beam and two wing beams.
-- 15 concrete piers, 10 in sonotubes, 48 in below finished grade. Bearing not confirmed.
+- 15 helical piers at the drawn locations. No sonotubes and no concrete. Shaft, helix, length, and capacity are not specified.
 - 16 joist lines. 2×8 joists. Segmented curved header.
 - Stairs 10 ft wide, about 38 in between surfaces, five risers about 7.6 in, four treads about 11 in. The upper deck is the top landing.
 - 10 stair stringers. Each tread is two 5/4×6 boards.
@@ -56,8 +56,8 @@ That set is a preliminary construction and supplier pricing basis. It is not a f
 
 ## Field verification
 
-Pool size and height, finished grades, setbacks, property limits, pier bearing, the 48 in depth rule, above-grade pier reveal, stair rise and run after both deck surfaces are measured, lower-deck post cut length, and pool-enclosure height.
+Pool size and height, finished grades, setbacks, property limits, helical pier product, depth, torque, and bearing, stair rise and run after both deck surfaces are measured, lower-deck post cut length, and pool-enclosure height.
 
 ## Supplier confirmation
 
-The BMR Winchester request is ready to send. It has not been sent from this record, and no quotation has been returned. Rail-kit match, gate hinge count, connector brands, bolt diameter, availability, substitution, and delivery timing stay open. Those items are confirmed by the supplier. They are not filled in on this estimate.
+The BMR Winchester request is ready to send. It has not been sent from this record, and no quotation has been returned. The helical pier product, bracket, rail-kit match, gate hinge count, connector brands, bolt diameter, availability, substitution, and delivery timing stay open. Those items are confirmed by the supplier. They are not filled in on this estimate.

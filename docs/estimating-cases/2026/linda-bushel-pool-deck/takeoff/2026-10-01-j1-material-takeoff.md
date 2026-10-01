@@ -151,7 +151,8 @@ Separate from that pack: 11 pieces of 5/4×6 × 20 ft for the full-width upper r
 
 | Item | Count | Basis |
 |---|---|---|
-| Adjustable saddles | 15 | One per pier |
+| Helical piers | 15 | One at each drawn location. Not a sonotube. |
+| Helical-pier brackets | 15 | One per pier unless the pier includes the bracket |
 | Post-to-beam connectors | 15 | One per post |
 | Header connectors | 16 | One per upper joist |
 | Stringer connectors | 10 | One per stringer |
@@ -162,16 +163,16 @@ Separate from that pack: 11 pieces of 5/4×6 × 20 ft for the full-width upper r
 
 Guard-post blocking, hinge count, bolt diameter, and connector brand are not quantified beyond the flags in the supplier request.
 
-## Concrete
+## Helical piers
 
-15 × π × (5/12)² × 4 = 32.725 cu ft = 1.212 cu yd. No waste percent. 15 sonotubes, 10 in × 4 ft, for the buried length only.
+15 helical piers, one at each drawn location. Sonotubes and concrete are not in this issue. Shaft, helix, length, torque, and capacity are not specified and are not certified.
 
 ## Category waste
 
 | Category | What the waste is |
 |---|---|
-| Concrete and tubes | No waste percent applied. Above-grade tube length not issued. |
-| Posts and saddles | A paired upper stick has about 31 in left after two 32.5 in cuts. The ninth post uses one stick. Do not precut. |
+| Helical piers | No waste percent. Shaft, helix, and length are not specified. |
+| Posts and brackets | A paired upper stick has about 31 in left after two 32.5 in cuts. The ninth post uses one stick. Do not precut. |
 | Beams | Front offcut none on a 6 ft + 6 ft cut. Wing offcut about 1.18 ft × 2. Main and lower offcut none. |
 | Joists, header, blocking | Upper joist stock 132 ft against net 112.766 ft. Header, blocking, and lower offcuts are on the cut list below. Offcuts are not reused to reduce the purchase. |
 | Stringers | About 35 in left on each 8 ft piece after a 3 in end-cut allowance. Plumb-cut drawing is not included. |

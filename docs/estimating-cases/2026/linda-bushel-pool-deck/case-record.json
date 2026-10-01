@@ -113,7 +113,9 @@
     "treads": "Two 5/4 x 6 boards per tread",
     "guard": "37 in Veranda rail kit",
     "gate_clear_in": 42,
-    "pricing": "Request a BMR Winchester quotation from Darcy. Do not invent supplier prices."
+    "pricing": "Request a BMR Winchester quotation from Darcy. Do not invent supplier prices.",
+    "foundation": "Helical piers. Not sonotubes. No concrete.",
+    "foundation_source": "Joel, 2026-10-01, relaying the client's decision. Shaft, helix, length, torque, and capacity are not specified."
   },
   "issue_j1": {
     "id": "J1",
@@ -132,8 +134,11 @@
       "takeoff/issue_j1.py",
       "supplier/bmr-winchester/2026-10-01-j1-darcy-request-for-quotation.md",
       "estimates/internal/2026-10-01-j1-ben-internal-cost.md",
-      "estimates/customer/2026-10-01-j1-preliminary-customer-estimate.md"
-    ]
+      "estimates/customer/2026-10-01-j1-preliminary-customer-estimate.md",
+      "drawings/review/2026-10-01-j1/J1-VISUAL-REVIEW.md",
+      "delivery/LINDA_BUSHEL_POOL_DECK_J1_BEN_PACKAGE.zip"
+    ],
+    "visual_review": "PASS after two presentation corrections. Geometry and quantities unchanged."
   },
   "issue_2026_10_01": {
     "date": "2026-10-01",

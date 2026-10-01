@@ -67,7 +67,7 @@ Does not replace issue P1. Does not choose the open pier, joist, or stringer cou
 
 ## Issue J1 — 1 Oct 2026
 
-Current preliminary issue. Joel's decisions of 1 Oct 2026: 15 piers from the CT-1 layout, 16 joist lines from P1, 10 stringers, a 5.00 in working throat, a 12 in lower-deck walking surface, and street number 12. The throat is not a structural certification. Issue P1, CT-1, CT-2, and CT-2 R2 stay as historical evidence. The Darcy request is ready to send and has not been sent. No supplier price was invented.
+Current preliminary issue. Joel's decisions of 1 Oct 2026: 15 piers from the CT-1 layout, 16 joist lines from P1, 10 stringers, a 5.00 in working throat, a 12 in lower-deck walking surface, and street number 12. The client selected helical piers. Sonotubes and concrete are not in this issue. The throat is not a structural certification. Issue P1, CT-1, CT-2, and CT-2 R2 stay as historical evidence. The Darcy request is ready to send and has not been sent. No supplier price was invented.
 
 | Path | What it is |
 |------|------------|
@@ -77,3 +77,5 @@ Current preliminary issue. Joel's decisions of 1 Oct 2026: 15 piers from the CT-
 | `supplier/bmr-winchester/2026-10-01-j1-darcy-request-for-quotation.md` | Request for quotation for Darcy at BMR Winchester. Not a quotation received. |
 | `estimates/internal/2026-10-01-j1-ben-internal-cost.md` | Internal sheet for Ben. Supplier-dependent dollars are PRICE REQUIRED. |
 | `estimates/customer/2026-10-01-j1-preliminary-customer-estimate.md` | Customer preliminary estimate. Selling price is not issued. |
+| `drawings/review/2026-10-01-j1/J1-VISUAL-REVIEW.md` | Visual review of all eight sheets. Two presentation defects were corrected. Final result is pass. |
+| `delivery/LINDA_BUSHEL_POOL_DECK_J1_BEN_PACKAGE.zip` | Package for Ben. Drawing, take-off, internal cost, supplier request, and customer draft. |

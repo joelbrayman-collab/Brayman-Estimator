@@ -5,7 +5,8 @@ Does not price. Does not overwrite the 29 Sep 2026 P1 or capability-test files.
 
 Governed on 1 Oct 2026: 15 piers from the CT-1 layout, 16 joist lines from P1,
 10 stringers, a 5.00 in working throat that is not a certification, and a
-12 in lower-deck walking surface. Post cut length stays a field item.
+12 in lower-deck walking surface. Foundations are helical piers.
+Sonotubes and concrete are not in this issue. Post cut length stays a field item.
 """
 
 from __future__ import annotations
@@ -299,10 +300,8 @@ def lumber_schedule() -> dict:
     }
 
 
-def concrete() -> dict:
-    count = len(upper_piers()) + len(lower_piers())
-    cubic_feet = count * math.pi * (5 / 12) ** 2 * 4
-    return {"piers": count, "cubic_feet": cubic_feet, "cubic_yards": cubic_feet / 27}
+def pier_count() -> int:
+    return len(upper_piers()) + len(lower_piers())
 
 
 def guard_segments() -> list[tuple[str, float, str]]:
@@ -432,7 +431,8 @@ def sheet_1(c: canvas.Canvas) -> None:
     y = body(
         c, 28, y,
         "Issue J1, 1 Oct 2026. Joel selected 15 piers, 16 joist lines, 10 stringers, "
-        "a 5.00 in working stringer throat, a 12 in lower-deck walking surface, and street number 12. "
+        "a 5.00 in working stringer throat, a 12 in lower-deck walking surface, street number 12, "
+        "and helical piers in place of sonotubes and concrete. "
         "It is a pricing and permit-review basis. It is not a North Grenville approval "
         "and it is not a professional-engineering seal. The 5.00 in throat is not a certification. "
         "Issue P1 and the capability-test sheets remain historical.",
@@ -450,7 +450,7 @@ def sheet_1(c: canvas.Canvas) -> None:
         ("Stair", "10 ft wide, centred. About 38 in between surfaces. Five risers about 7.6 in."),
         ("Lower deck", "10 ft wide by 3 ft deep, about 12 in above grade."),
         ("Gate", "42 in clear, centred, outward, self-closing and self-latching."),
-        ("Piers", "15 piers. 10 in sonotubes, 48 in below finished grade. Bearing not confirmed."),
+        ("Piers", "15 helical piers. No sonotubes. No concrete. Product not specified."),
     ]
     for label, value in rows:
         c.setFillColor(NAVY)
@@ -459,7 +459,7 @@ def sheet_1(c: canvas.Canvas) -> None:
         c.setFillColor(black)
         c.setFont("Times-Roman", 13)
         c.drawString(210, y, value)
-        y -= 18
+        y -= 16
     y -= 8
     y = section_label(c, 28, y, "Preliminary layout dimensions — not client measurements")
     y = body(
@@ -478,12 +478,12 @@ def sheet_1(c: canvas.Canvas) -> None:
         "The dressed double 2x10, 2x8, and decking stack is 17.5 in. "
         "Post cut length is reconciled to the field before construction. "
         "Lower 6x6 posts are ordered uncut. This issue does not certify that cut.",
-    ) - 12
+    ) - 8
     y = flag_box(
         c, 28, y, 1168,
         "CODE AND PERMIT BASIS",
         CODE_NOTE + " This note is not a statement that approval has been granted.",
-    ) - 16
+    ) - 10
     c.setFillColor(NAVY)
     c.setFont("Times-Bold", 14)
     c.drawString(28, y, "Sheet index")
@@ -505,7 +505,7 @@ def sheet_1(c: canvas.Canvas) -> None:
         yy = y_index
         for line in lines:
             c.drawString(column, yy, line)
-            yy -= 18
+            yy -= 16
 
 
 def world_mapper(origin_x, top_y, scale, x0, y_at_top):
@@ -630,9 +630,20 @@ def draw_site(c: canvas.Canvas, xy, show_joists: bool, show_guards: bool) -> Non
         c.setStrokeColor(NAVY)
         c.setLineWidth(0.8)
         c.circle(px, py, 8, fill=1, stroke=1)
-        c.setFillColor(NAVY)
         c.setFont("Times-Bold", 11)
-        c.drawCentredString(px, py + 11, name)
+        label_w = pdfmetrics.stringWidth(name, "Times-Bold", 11)
+        # The deck edge runs through these piers and was hiding the "1" in P10–P15.
+        on_vertical_edge = abs(abs(x) - 5.0) < 0.05
+        if on_vertical_edge and x < 0:
+            tx, ty = px - 14 - label_w, py - 3
+        elif on_vertical_edge and x > 0:
+            tx, ty = px + 14, py - 3
+        else:
+            tx, ty = px - label_w / 2, py + 12
+        c.setFillColor(white)
+        c.rect(tx - 1.5, ty - 1.5, label_w + 3, 13, fill=1, stroke=0)
+        c.setFillColor(NAVY)
+        c.drawString(tx, ty, name)
 
     if show_guards:
         c.setStrokeColor(FLAG)
@@ -700,7 +711,7 @@ def sheet_plan(c, number, title, heading, notes, show_joists, show_guards, xmin,
 def sheet_2(c: canvas.Canvas) -> None:
     notes = [
         "P1–P9 are the nine upper-deck piers. P10–P15 are the six lower-deck piers. Total 15. This is the CT-1 pier layout.",
-        "Each pier is a 10 in diameter sonotube, 48 in below finished grade. Above-grade reveal is not recorded. Do not add a reveal that was not measured.",
+        "Each pier is a helical pier. Shaft, helix, length, and installation torque are not specified. Sonotubes and concrete are not in this issue. This sheet does not certify capacity.",
         f"P6 clearance to the pool wall at the centreline is {ftin(Y_MAIN - R)}. P8 and P9 clearance to the pool centre is {ftin(math.hypot(9, 8.5) - R)} outside the wall.",
         "No pier is inside the pool. Bearing, frost depth, and municipal pier rules are field and permit items. This sheet does not certify them.",
         "Front beam piers are 6 ft apart. Main-beam piers are 6 ft apart. Each lower rim is two 5 ft bays. Spans are not checked against a span table on this issue.",
@@ -923,14 +934,21 @@ def sheet_6(c: canvas.Canvas) -> None:
 
 def sheet_7(c: canvas.Canvas) -> None:
     new_page(c, 7, "Typical details")
-    y = section_label(c, 28, PAGE_H - 84, "7  Typical pier, saddle, post, beam, joist, and connectors")
+    y = section_label(c, 28, PAGE_H - 84, "7  Typical helical pier, bracket, post, beam, and joist")
     # stack diagram
     ox, oy = 48, 455
-    c.setFillColor(HexColor("#C5CCD0"))
     c.setStrokeColor(NAVY)
-    c.rect(ox, oy, 70, 48, fill=1, stroke=1)  # pier stub
+    c.setLineWidth(1)
+    c.line(ox - 16, oy + 48, ox + 86, oy + 48)
+    c.setLineWidth(3)
+    c.line(ox + 35, oy + 48, ox + 35, oy + 4)
+    c.setLineWidth(1.4)
+    c.line(ox + 16, oy + 28, ox + 54, oy + 16)
+    c.line(ox + 16, oy + 14, ox + 54, oy + 2)
     c.setFillColor(GOLD)
-    c.rect(ox + 22, oy + 48, 26, 10, fill=1, stroke=1)  # saddle
+    c.setStrokeColor(NAVY)
+    c.setLineWidth(0.8)
+    c.rect(ox + 22, oy + 48, 26, 10, fill=1, stroke=1)  # bracket
     c.setFillColor(HexColor("#C4A574"))
     c.rect(ox + 18, oy + 58, 34, 54, fill=1, stroke=1)  # post
     c.setFillColor(BEAM_C)
@@ -942,8 +960,8 @@ def sheet_7(c: canvas.Canvas) -> None:
     c.setFillColor(black)
     c.setFont("Times-Bold", 13)
     labels = [
-        (ox + 130, oy + 16, "10 in sonotube, 48 in below grade"),
-        (ox + 130, oy + 48, "Adjustable saddle — model not specified"),
+        (ox + 130, oy + 16, "Helical pier. Product not specified."),
+        (ox + 130, oy + 48, "Post bracket. Confirm it is included."),
         (ox + 130, oy + 78, "6×6 post. Do not precut."),
         (ox + 130, oy + 118, "Double 2×10 beam"),
         (ox + 130, oy + 146, "2×8 joist"),
@@ -953,7 +971,7 @@ def sheet_7(c: canvas.Canvas) -> None:
         c.drawString(x, yy, text)
     c.setFont("Times-Roman", 13)
     c.drawString(ox, oy - 20, "50 − 1 − 7.25 − 9.25 = 32.5 in to the underside of the beam.")
-    c.drawString(ox, oy - 38, "Saddle thickness is not recorded. Do not precut the posts.")
+    c.drawString(ox, oy - 38, "Bracket height is not recorded. Do not precut the posts. No concrete.")
     flag_box(
         c, 28, 390, 560,
         "LOWER DECK 12 in",
@@ -967,7 +985,7 @@ def sheet_7(c: canvas.Canvas) -> None:
     c.setFont("Times-Roman", 13)
     lines = [
         "These counts follow the drawn members. They are not a manufacturer’s specified system.",
-        "15 adjustable post saddles, one per pier.",
+        "15 helical-pier brackets, one per pier. Confirm the pier does not already include the bracket.",
         "15 post-to-beam connectors, one per post. Product not specified.",
         "16 angled connectors where upper joists meet the segmented header.",
         "10 stringer connectors at the upper rim.",
@@ -993,7 +1011,7 @@ def sheet_8(c: canvas.Canvas) -> None:
     items = [
         "Pool diameter and height. The 21 ft and 50 in figures are approximate.",
         "Finished grades, installed pool elevation, setbacks, and property limits.",
-        "Pier bearing and the municipal rule for the 48 in depth. Above-grade pier reveal is not recorded.",
+        "Helical pier product, depth, torque, and bearing. The 48 in sonotube depth is not this issue. Capacity is not certified.",
         "Structural separation from the pool. No attachment is specified. No clearance dimension was recorded. Header segments touch the arc at mid-span and stand off about 1.04 in at the joints.",
         "Stair rise and run after the two deck surfaces are measured.",
         "Guard height. The specified product is 37 in. A separate preservation note said about 42 in. The brief also estimates about 49 in from grade to the top of the lower rail and leaves the 1.2 m pool-enclosure rule for municipal confirmation. Those figures are not averaged.",
@@ -1038,7 +1056,6 @@ def write_pdf(path: Path) -> None:
 def stock_lines() -> list[dict]:
     sched = lumber_schedule()
     boards = deck_boards()
-    conc = concrete()
     guards = guard_segments()
     straight = [g for g in guards if g[2] == "straight kit run"]
     kit_count = sum(kits_for(length) for _, length, _ in straight)
@@ -1047,22 +1064,22 @@ def stock_lines() -> list[dict]:
     joist_purchase = len(sched["joist_sticks"]) * 12
     lines = [
         {
-            "group": "Concrete and tubes",
-            "description": "10 in diameter concrete pier, 48 in below finished grade. No above-grade reveal included.",
-            "stock": "48 in buried length",
-            "qty": f"{conc['piers']} piers; {conc['cubic_feet']:.2f} cu ft; {conc['cubic_yards']:.3f} cu yd",
-            "net": f"{conc['cubic_feet']:.2f} cu ft",
-            "purchase": f"{conc['piers']} tubes and {conc['cubic_yards']:.3f} cu yd",
-            "offcut": "No waste percent applied. Above-grade tube length not issued.",
-            "flag": "Bearing and reveal are field items.",
+            "group": "Helical piers",
+            "description": "Helical pier at each drawn location. Not a sonotube. No concrete.",
+            "stock": "Product not specified",
+            "qty": f"{pier_count()} piers",
+            "net": f"{pier_count()} locations",
+            "purchase": f"{pier_count()} helical piers. Bracket only if it is not included.",
+            "offcut": "No waste percent. Shaft, helix, and length are not specified.",
+            "flag": "Capacity, depth, and torque are not certified.",
         },
         {
-            "group": "Posts and saddles",
-            "description": "Brown pressure-treated 6×6 posts and galvanized adjustable saddles.",
+            "group": "Posts and brackets",
+            "description": "Brown pressure-treated 6×6 posts. Helical-pier bracket if the pier does not include one.",
             "stock": "6×6 × 8 ft",
             "qty": "11 sticks for 15 post locations: 5 sticks hold the 9 upper posts; 6 sticks held uncut for the lower posts",
-            "net": "Upper wood basis 9 × 32.5 in if the saddle height is zero and the pier is at grade",
-            "purchase": "11 pieces of 6×6 × 8 ft; 15 saddles; 15 post-to-beam connectors",
+            "net": "Upper wood basis 9 × 32.5 in if the bracket height is zero and the pier head is at grade",
+            "purchase": "11 pieces of 6×6 × 8 ft; 15 brackets unless included; 15 post-to-beam connectors",
             "offcut": "A paired upper stick has about 31 in left after two 32.5 in cuts. The ninth post uses one stick. Do not precut.",
             "flag": "Lower post cut length is reconciled in the field before construction.",
         },
@@ -1219,7 +1236,6 @@ def screw_count() -> dict:
 def write_takeoff(path: Path) -> None:
     sched = lumber_schedule()
     boards = deck_boards()
-    conc = concrete()
     screws = screw_count()
     bins = pack_decking()
     guards = guard_segments()
@@ -1337,7 +1353,8 @@ def write_takeoff(path: Path) -> None:
     lines.append("| Item | Count | Basis |")
     lines.append("|---|---|---|")
     bolts = stitch_bolt_count()
-    lines.append("| Adjustable saddles | 15 | One per pier |")
+    lines.append("| Helical piers | 15 | One at each drawn location. Not a sonotube. |")
+    lines.append("| Helical-pier brackets | 15 | One per pier unless the pier includes the bracket |")
     lines.append("| Post-to-beam connectors | 15 | One per post |")
     lines.append("| Header connectors | 16 | One per upper joist |")
     lines.append("| Stringer connectors | 10 | One per stringer |")
@@ -1348,11 +1365,12 @@ def write_takeoff(path: Path) -> None:
     lines.append("")
     lines.append("Guard-post blocking, hinge count, bolt diameter, and connector brand are not quantified beyond the flags in the supplier request.")
     lines.append("")
-    lines.append("## Concrete")
+    lines.append("## Helical piers")
     lines.append("")
     lines.append(
-        f"{conc['piers']} × π × (5/12)² × 4 = {conc['cubic_feet']:.3f} cu ft = {conc['cubic_yards']:.3f} cu yd. "
-        f"No waste percent. {conc['piers']} sonotubes, 10 in × 4 ft, for the buried length only."
+        f"{pier_count()} helical piers, one at each drawn location. "
+        "Sonotubes and concrete are not in this issue. "
+        "Shaft, helix, length, torque, and capacity are not specified and are not certified."
     )
     lines.append("")
     lines.append("## Category waste")
@@ -1369,7 +1387,6 @@ def write_takeoff(path: Path) -> None:
 
 def write_supplier(path: Path) -> None:
     boards = deck_boards()
-    conc = concrete()
     sched = lumber_schedule()
     screws = screw_count()
     bins = pack_decking()
@@ -1377,10 +1394,9 @@ def write_supplier(path: Path) -> None:
     pack_count = Counter(stock for stock, _cuts in bins)
     straight_kits = sum(kits_for(length) for _n, length, kind in guard_segments() if kind == "straight kit run")
     rows = [
-        ("Concrete", "10 in sonotube, 4 ft buried length", "4 ft", str(conc["piers"]), "ea", "REQUESTED QUANTITY. Above-grade reveal not recorded"),
-        ("Concrete", f"Concrete for {conc['piers']} piers, {conc['cubic_yards']:.3f} cu yd net", "supplier mix", f"{conc['cubic_yards']:.3f}", "cu yd", "REQUESTED QUANTITY. No waste percent. SUPPLIER CONFIRMATION REQUIRED for price"),
+        ("Piers", "Helical pier, one at each drawn location", "product not specified", str(pier_count()), "ea", "REQUESTED QUANTITY. Shaft, helix, length, and torque are SUPPLIER CONFIRMATION REQUIRED. Not a sonotube. No concrete."),
+        ("Piers", "Helical pier post bracket", "each", str(pier_count()), "ea", "REQUESTED QUANTITY unless the pier includes the bracket. SUPPLIER CONFIRMATION REQUIRED."),
         ("Posts", "PT 6×6 × 8 ft", "8 ft", "11", "ea", "REQUESTED QUANTITY. 5 sticks for 9 upper posts; 6 uncut for lower posts"),
-        ("Posts", "Galvanized adjustable post saddle", "each", "15", "ea", "REQUESTED QUANTITY. SUPPLIER CONFIRMATION REQUIRED for the model"),
         ("Posts", "Post-to-beam connector, PT compatible", "each", "15", "ea", "REQUESTED QUANTITY. SUPPLIER CONFIRMATION REQUIRED for the product"),
         ("Beams", "PT 2×10 × 10 ft", "10 ft", "4", "ea", "REQUESTED QUANTITY. Lower beams used full"),
         ("Beams", "PT 2×10 × 12 ft", "12 ft", "7", "ea", "REQUESTED QUANTITY. Front plies cut to 6 ft; main beam full; wings cut to 5.41 ft"),
@@ -1442,7 +1458,8 @@ def write_supplier(path: Path) -> None:
     out.append("- Actual stock lengths at Winchester may replace the preferred lengths.")
     out.append("- Veranda HDDR2022005 / SKU 1001900458 is a Home Depot identity, not a confirmed BMR SKU.")
     out.append("- Lower-deck walking surface is 12 in. Post cut length is still a field item. The dressed stack is 17.5 in.")
-    out.append("- Saddle model, connector brand, bolt diameter, and gate hinges are not specified.")
+    out.append("- Helical pier shaft, helix, length, torque, and bracket are not specified. There is no concrete quantity.")
+    out.append("- Connector brand, bolt diameter, and gate hinges are not specified.")
     out.append("- Do not read a blank price as zero.")
     out.append("")
     path.write_text("\n".join(out), encoding="utf-8")
@@ -1460,9 +1477,8 @@ def main() -> None:
     print(f"piers {len(upper_piers()) + len(lower_piers())}")
     print(f"joists {len(JOISTS)} stringers {len(STRINGERS)}")
     print(f"bolts {stitch_bolt_count()}")
-    conc = concrete()
     print(f"area {DECK_AREA:.3f}")
-    print(f"concrete {conc['cubic_yards']:.3f} cu yd")
+    print("foundation helical piers, no concrete")
     print(f"2x8 sticks {lumber_schedule()['two_by_eight_12']}")
     print(f"screws {screw_count()}")
     print(f"wrote {pdf_path}")

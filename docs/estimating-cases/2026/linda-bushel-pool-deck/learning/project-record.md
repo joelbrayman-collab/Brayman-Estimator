@@ -156,3 +156,5 @@ Issue J1 is the current preliminary package. It is not a final construction draw
 - `supplier/bmr-winchester/2026-10-01-j1-darcy-request-for-quotation.md`
 - `estimates/internal/2026-10-01-j1-ben-internal-cost.md`
 - `estimates/customer/2026-10-01-j1-preliminary-customer-estimate.md`
+
+Later the same day, Joel relayed the client's decision to use helical piers instead of sonotubes and concrete. Issue J1 was revised. The 15 pier locations stay. Shaft, helix, length, torque, and capacity are not specified. The 29 Sep brief still records the earlier sonotube wording. That sentence was not rewritten.

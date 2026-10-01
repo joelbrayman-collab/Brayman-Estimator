@@ -9,7 +9,8 @@
         <p class="eyebrow">{{ project.name }}</p>
         <h1>What work needs to be done?</h1>
     </div>
-    <div>
+    <div class="scope-heading-actions">
+        <a class="button-link" href="{{ url_for('projects.project_setup', id=project.id) }}">Return to setup</a>
         <a class="button-link" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Drawings</a>
         <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
     </div>

@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — SNP-4 scope return continuity
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI START NEW PROJECT — GUIDED PROJECT SETUP SNP-4 — SCOPE RETURN CONTINUITY 1 OCT 2026 |
+| Objective | Give the existing Scope page a return to the same project's Guided Project Setup. |
+| Business decision | After reviewing or confirming scope, the contractor returns to setup. Setup, not Scope, names what is needed next. |
+| Architectural decision | Scope stays independently usable. Confirming work still stays on Scope. Return opens `GET /projects/<id>/setup`, which re-runs the existing resolver. No stored step. No second scope model. |
+| Prompt template used | Joel’s 1 Oct 2026 SNP-4 prompt. No file in docs/prompts/ covers this slice. |
+| Approved Cursor prompt summary | One return action on the existing Scope page. Same project. Resolver remains the authority. Direct Scope use stays. No schema. No readiness rewrite. No other product changes. No deploy. Full suite. One commit and push if the gates pass. |
+| Feature Gate | Problem: after setup opened Scope, there was no governed return that re-ran the resolver. User: a contractor confirming or reviewing scope during setup. Owner: Projects already owns Scope. Data owned: none. Data referenced: the existing project and its confirmed packages. May change: a return link on the Scope page. Must not change: package semantics, resolver logic, schema, PGE, calculators, Contract V1, Website, authentication. Acceptance: confirming scope can advance the next setup page, leaving scope unchanged keeps Scope as the gap, and direct Scope use still saves on Scope. Tests: `tests/test_scope_setup_return.py`. ADR: no. Migration: no. |
+| Files expected to change | Scope template, a small style, tests, and status lines. |
+| Files prohibited from changing | Schema, resolver, PGE-1 through PGE-6, calculators, trade engines, Contract V1, Website, authentication, clients, location, estimates, proposals, change orders, calendar. |
+| Implementation result | SNP-4 closed as a slice. Guided Project Setup remains implemented. Project Readiness remains the first-gap foundation. The future readiness model is not implemented. |
+| Tests | Focused `./venv/bin/python -m pytest -q tests/test_scope_setup_return.py tests/test_project_setup.py tests/test_project_work_packages.py tests/test_start_project_walk.py` — 41 passed, 127 warnings, 21.76s, exit 0. Full suite `./venv/bin/python -m pytest -q` — 1926 passed, 6732 warnings, 1002.26s, exit 0. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | SNP-6 is not started. The future readiness model is not implemented. Mac primary and the hosted database were not migrated. Deployment was not performed. |
+| Next approved step | None from this entry. Do not start SNP-6 until a later prompt authorizes it. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — SNP-2 guided project setup resume
 
 | Field | Content |

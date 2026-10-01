@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — SNP-4 (2026-10-01)
+
+| Field | Content |
+|-------|---------|
+| Slice | SNP-4. Return from Scope to Continue setup. |
+| Product status at capture | GUIDED PROJECT SETUP **IMPLEMENTED**. This slice **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. Not deployed. |
+| 1. What new contractor capability exists? | On Scope of work, Return to setup opens Continue setup for the same project. |
+| 2. When would the contractor use it? | After adding work, or after looking at scope and leaving it unchanged, while setting up a project. |
+| 3. What workflow will the final Manual need to teach? | From Continue setup, open Scope of work. Add the work and say Our crew or Subcontractor, or leave it unchanged. Return to setup. Continue setup then shows the current next action. Opening Scope directly still adds work on that page. |
+| 4. What contractor-facing terms must be used? | Return to setup. Scope of work. Our crew. Subcontractor. Add work. |
+| 5. What screenshots / Print examples will eventually be needed? | Scope of work on a desktop and on a phone, with Return to setup visible. Not captured here. |
+| 6. What warnings / validation distinctions need explanation? | Adding work does not price it and does not leave Scope by itself. Return to setup reads the project again. It does not skip a missing fact. |
+| 7. Desktop / iPhone / Print relevance | Desktop and phone-width Scope of work. No print sheet is created. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — SNP-2 (2026-10-01)
 
 | Field | Content |

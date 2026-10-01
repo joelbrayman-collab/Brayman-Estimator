@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — SNP-4 scope return continuity
+
+| Field | Content |
+|-------|---------|
+| Milestone | SNP-4 scope return continuity |
+| Status | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** START NEW PROJECT **IMPLEMENTED**. GUIDED PROJECT SETUP **IMPLEMENTED**. PROJECT READINESS **CURRENTLY FIRST-GAP FOUNDATION**. Future readiness model **NOT IMPLEMENTED**. |
+| Branch | `main` |
+| Base commit | `10562afab3fe92177e65401d9fe2fb57efb1aea6` |
+| Objective | Let Scope return to the same project's setup so the existing resolver names the current first gap. |
+| Deliverables | Return to setup on the existing Scope page. No new scope record. No stored step. |
+| Validation | Focused setup, scope, and walk tests 41 passed, 127 warnings, 21.76s, exit 0. Full suite 1926 passed, 6732 warnings, 1002.26s, exit 0. Temporary office: confirm Our crew then return advances to the estimate; no change keeps Scope; direct Scope stays on Scope; another organization is 404. 1280 and 520 have no page overflow. At 390 Return to setup fits. The existing office header is 11px wider than the viewport. |
+| Architectural findings | Scope does not decide the next page. Confirming work still returns to Scope. Setup re-runs the first-gap resolver. |
+| Open decisions | SNP-6 is recorded and not started. The future readiness model is not implemented. |
+| Next milestone | SNP-6 estimate and mapper handoff, when a later prompt authorizes it. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — SNP-2 guided project setup resume
 
 | Field | Content |

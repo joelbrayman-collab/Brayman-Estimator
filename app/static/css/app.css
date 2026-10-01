@@ -2376,6 +2376,26 @@ body.login-page {
     }
 }
 
+.scope-heading-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 100%;
+}
+
+@media (max-width: 520px) {
+    .scope-heading-actions {
+        width: 100%;
+    }
+
+    .scope-heading-actions .button-link {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+}
+
 .project-setup {
     max-width: 42rem;
 }

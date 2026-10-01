@@ -5,7 +5,7 @@
 | Status | Tactical construction register |
 | Date | 2026-10-01 |
 | Repository | `/Users/joelbrayman/Desktop/Brayman-Estimator` |
-| Inspected HEAD | `f82641b81c7c5d8eae96156f0540e410f4073a6a` |
+| Inspected HEAD | `c1ab362` plus this register update. Prior register commit `8b1d883`. |
 | Live product SHA | Last recorded `ca37d8b6939f6494b6ff415bad17953886366728`. Deploy `dep-daulf9u0tbcc73bomdgg`. Not re-proved in this recording. |
 | Hosted database | Last recorded `k1f2a3b4c5d6`. Not re-proved. Not migrated to repository head `m3f4a5b6c7d8`. |
 | Mac primary | Last verified `h8c9d0e1f2a3`. Not migrated. |
@@ -245,14 +245,14 @@ The same engine serves independent use and workflow use. Do not build a second e
 | Purpose | Internal governed ICF takeoff: materials, labour inputs, and direct-cost inputs. Final selling price stays with estimating. |
 | Independent use | BLOCKED — DEPENDENCY IDENTIFIED |
 | Workflow use | BLOCKED — DEPENDENCY IDENTIFIED |
-| Required dependencies | The governing file **Brayman ICF Estimator V1 — Design Specification** is not in this repository. It is not in the Website calculation-engine library. The Website engine register lists `icf_wall` as NOT STARTED and says the formula record is none. Contract V1 example `docs/architecture/fixtures/calculation-result-contract-v1/icf-wall.example.json` is an envelope example with `engine_version` `"0"`. It is not the design specification and it is not a formula. |
-| Existing implementation | None. No ICF calculator, route, or formula in this repository. |
-| What is missing | The specification, then the engine. |
+| Required dependencies | The design specification is present: `docs/architecture/Brayman_ICF_Estimator_V1_Design_Specification.md`, commit `c1ab362`. The quantity engine remains blocked. Missing from that file: versioned manufacturer profiles with block dimensions, wall coverage, concrete-volume factors, and packaging, each tied to approved primary documentation; approved reinforcement defaults for StyroRail, Logix, and Nudura when no engineered schedule is supplied; a governed labour rate. The Mike Pratt note, 200 hours for about 1,680 square feet and a planning range of 220–240 hours, is evidence, not a rate. Fox Blocks already requires a project schedule. Contract V1 can carry `icf_wall`. It does not supply these numbers. |
+| Existing implementation | The design specification only. No ICF calculator, route, or formula. |
+| What is missing | The profile numbers and the engine. Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESISTO membrane except Nudura, ICFVL at 16 inches on centre, anchors at 36 inches on centre, 50 anchors per box, and 10-foot 2×4 plates with a 50 percent purchase allowance. |
 | Build acceptance criteria | After the specification is in the repository: one internal engine, two fixtures, no public page, no second estimate, no silent price, no project or estimate mutation during calculation. |
 | Live verification requirement | After implementation, deploy, and a live internal walk. Not available while the specification is missing. |
 | Commit / deployed SHA when closed | Not closed. No ICF commit. |
 
-ICF was the first build named for 1 Oct 2026. It stopped before code because inventing block counts, labour, waterproofing, ledger, anchor spacing, or reuse from the prompt summary would invent construction rules. The prompt says the repository specification remains authoritative.
+The 1 Oct 2026 continuous wave read the design specification. It authorizes no public calculator and no second estimate. It does not contain block geometry or a labour formula. Those numbers were not invented. Anchor spacing, the 2×4 allowance, and the membrane names are in the specification and are not sufficient for the required take-off.
 
 ### FRAMING
 
@@ -694,10 +694,103 @@ Architecture or stored rows are not a finished learning product.
 
 ---
 
+## Dependency graph
+
+```text
+ICF engine
+  design specification present at c1ab362
+  blocked on versioned manufacturer profile numbers
+  and a governed labour rate
+  Pratt hours in the specification are evidence, not a rate
+
+Framing, Roofing, Siding, Drywall, Flooring
+  blocked on a governed V1 specification
+  (formula authority, assumptions, inputs, outputs, test vectors,
+   Contract V1 compatibility, public/private classification,
+   Platform workflow boundary)
+
+Start Project, Guided Project Setup, Plan Generation
+  blocked on governed deploy of the accepted product SHA
+  and hosted migration from last recorded k1f2a3b4c5d6
+  through l2f3a4b5c6d7 and m3f4a5b6c7d8
+
+Contract Signing
+  blocked on an empty Legal Content Gate and the absence of
+  counsel-approved production contract content
+  Family 05 is a commercial draft
+  an accepted proposal is not a contract
+
+Build / Manage
+  blocked on a governed production-management specification
+  Field Web, observations, and the calendar are not that specification
+
+Actuals
+  blocked on a governed actuals authority for labour, materials,
+  equipment, and subcontract cost
+  FG-023 direct-cost actuals are not that authority
+
+Complete / Close
+  blocked on a governed closeout decision
+  no migration from this row
+
+Learn & Improve
+  blocked on Actuals
+
+Ready to Price
+  not started
+  the first-gap foundation is not the full capability
+
+Analytics / Reporting
+  not started
+
+Future engines
+  deferred
+```
+
+## Ready components
+
+None on 1 Oct 2026. The design specification is present. The manufacturer profile numbers and the labour rate are not.
+
+## Blocked components
+
+| Component | Exact dependency |
+|-----------|------------------|
+| ICF | Versioned manufacturer block dimensions, wall coverage, concrete-volume factors, packaging, StyroRail/Logix/Nudura reinforcement defaults, and a governed labour rate. |
+| Framing | Governed V1 specification: formula authority, assumptions, inputs, outputs, test vectors, Contract V1 compatibility, public/private classification, Platform workflow boundary. |
+| Roofing | The same missing set as Framing. |
+| Siding | The same missing set as Framing. |
+| Drywall | The same missing set as Framing. |
+| Flooring | The same missing set as Framing. |
+| Start Project | Governed deploy plus hosted migration through `m3f4a5b6c7d8`. Live SHA remains `ca37d8b6939f6494b6ff415bad17953886366728`. |
+| Guided Project Setup | Same deploy and hosted-migration dependency. |
+| Plan Generation | Same dependency. Revisions `l2f3a4b5c6d7` and `m3f4a5b6c7d8` are not on the hosted database. |
+| Contract Signing | Legal Content Gate is empty. Production legal packages are 0. Family 05 is not legally approved. |
+| Build / Manage | No governed specification for execution, progress, labour, materials, equipment, issues, and task execution. |
+| Actuals | No governed capture of actual labour, materials, equipment, and subcontract cost against the estimate, contract, and change orders. |
+| Complete / Close | No accepted decision to extend the existing project lifecycle through completion sign-off. |
+| Learn & Improve | Actuals. |
+
+## Deferred components
+
+Future engines.
+
+## Specification factory
+
+No formulas were written.
+
+| Engine | Missing dependency |
+|--------|-------------------|
+| ICF | Profile numbers and a labour rate, as named above. The design specification is present. Classification is internal Platform only. |
+| Framing | The full V1 specification set. |
+| Roofing | The full V1 specification set. |
+| Siding | The full V1 specification set. |
+| Drywall | The full V1 specification set. |
+| Flooring | The full V1 specification set. |
+
 ## Current build
 
-ICF is BLOCKED — DEPENDENCY IDENTIFIED.
+ICF remains BLOCKED — DEPENDENCY IDENTIFIED.
 
-Dependency: place **Brayman ICF Estimator V1 — Design Specification** in this repository, then authorize the engine again. Do not invent the formula from the 1 Oct prompt summary.
+The design specification is in the repository. The manufacturer profile numbers and the labour rate are not. No engine code was written.
 
-No product code was changed for this record. No migration. No deploy.
+No other component was dependency-ready. No migration. No deploy.

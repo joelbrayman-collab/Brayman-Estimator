@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — Continuous build wave
+
+| Field | Content |
+|-------|---------|
+| Milestone | Continuous dependency-aware build wave |
+| Status | **STOPPED.** No dependency-ready component. ICF remains **BLOCKED — DEPENDENCY IDENTIFIED.** |
+| Branch | `main` |
+| Base commit | `c1ab362` |
+| Objective | Build ICF from the design specification now in the repository. |
+| Deliverables | Register update. The specification was read. No engine. |
+| Validation | The specification contains workflow, manufacturers, membrane names, ICFVL at 16 inches, anchors at 36 inches, 50 anchors per box, and a 50 percent 2×4 purchase allowance. It does not contain block geometry or a labour rate. |
+| Architectural findings | A partial calculator limited to the stated defaults would not be the required take-off. It was not written. |
+| Open decisions | Manufacturer profile numbers and a governed labour rate. |
+| Next milestone | None until those records exist. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — Tactical build-out register
 
 | Field | Content |

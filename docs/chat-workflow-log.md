@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Continuous build wave; ICF profile numbers missing
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI TACTICAL PLATFORM BUILD-OUT CONTINUOUS DEPENDENCY-AWARE BUILD PROGRAM 1 OCT 2026 |
+| Objective | Build ICF from the design specification and continue to the next ready component. |
+| Business decision | Do not invent manufacturer geometry or a labour rate. Do not expose ICF on the Website. |
+| Architectural decision | The design specification is the authority. It names the workflow, the manufacturers, and a few defaults. It does not give block coverage, concrete volume, packaging, reinforcement spacing for StyroRail, Logix, or Nudura, or a production rate. Pratt hours stay evidence. |
+| Prompt template used | Joel’s 1 Oct 2026 continuous build prompt. |
+| Approved Cursor prompt summary | Read the complete ICF specification and build the internal engine. If a dependency is missing, record it and continue. Do not invent formulas. |
+| Feature Gate | No product code. No new gate. |
+| Files expected to change | The register and status pointers. |
+| Files prohibited from changing | Product code, schema, Contract V1, Website, calculators. |
+| Implementation result | ICF remains blocked. No other component was dependency-ready. |
+| Tests | No product code. Full suite not re-run. Last recorded suite remains 1931 passed, 6759 warnings, 984.33s, exit 0. |
+| Project-state-report update | Pointer already present. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. Missing profile numbers are not permission to invent them. |
+| Unresolved issues | Manufacturer profiles and a governed labour rate. Hosted migration and deploy of Start New Project. |
+| Next approved step | Add the versioned manufacturer profiles and a governed labour rate to the repository. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — Tactical build-out register; ICF blocked
 
 | Field | Content |

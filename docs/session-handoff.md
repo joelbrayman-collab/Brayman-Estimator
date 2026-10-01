@@ -4,7 +4,7 @@
 
 Read this section first. The 30 Sep occupancy below it remains the live deploy record. It is not a claim that Start New Project is on the live SHA.
 
-Tactical build status is [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). ICF is **BLOCKED — DEPENDENCY IDENTIFIED**. The governing file Brayman ICF Estimator V1 — Design Specification is not in this repository and is not in the Website calculation-engine library. No ICF formula was written. Do not invent one from a prompt summary. Live product SHA remains last recorded `ca37d8b6939f6494b6ff415bad17953886366728`. Hosted database remains last recorded `k1f2a3b4c5d6`. Deployment of this register was not performed.
+Tactical build status is [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). The ICF design specification is present at [architecture/Brayman_ICF_Estimator_V1_Design_Specification.md](architecture/Brayman_ICF_Estimator_V1_Design_Specification.md), commit `c1ab362`. ICF remains **BLOCKED — DEPENDENCY IDENTIFIED** because that file does not contain manufacturer block geometry, concrete-volume factors, packaging counts, StyroRail/Logix/Nudura reinforcement defaults, or a governed labour rate. The Pratt hours in the specification are evidence, not a rate. No formula was invented. No other component was dependency-ready. Live product SHA remains last recorded `ca37d8b6939f6494b6ff415bad17953886366728`. Hosted database remains last recorded `k1f2a3b4c5d6`. Deployment was not performed.
 
 ## 0a. Prior fresh chat resume — 30 Sep 2026
 

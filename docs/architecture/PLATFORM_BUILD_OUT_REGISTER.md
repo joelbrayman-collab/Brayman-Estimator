@@ -785,13 +785,13 @@ BMR Winchester is the first pilot context. The row stays supplier-neutral.
 
 | | |
 |---|---|
-| Current status | Built. Closure waits on the hosted check of this product commit. |
+| Current status | **CLOSED — LIVE VERIFIED** |
 | Dependency class | None. Office login already exists. |
 | Required dependencies | The supplier-channel specification, ADR-033, and the operational ROI extension. |
 | Existing implementation | `/supplier-program/economic-model`. Typed assumptions. Immediate results. No stored supplier ROI. No contractor project, estimate, margin, or labour-rate read. |
-| What is missing | Hosted confirmation of this commit. The Supplier ROI & Opportunity Dashboard remains unbuilt. Supplier Pro identity and sponsorship remain not started. |
-| Live verification requirement | Office login required. Anonymous request redirects to login. The page calculates from entered numbers only. |
-| Commit / deployed SHA when closed | Not closed until the hosted check. |
+| What is missing | The Supplier ROI & Opportunity Dashboard remains unbuilt. Supplier Pro identity and sponsorship remain not started. |
+| Live verification requirement | Met. Anonymous request redirects to login. Hosted file returns labour value 12000.00 for the recorded partial scenario. |
+| Commit / deployed SHA when closed | Product SHA `c6aa88a05ed91492160664b2ba110ba6c07adba0`. Deploy `dep-dav8ul7pn0mc739lhfmg`. |
 
 Supplier Pro as a partnership remains **NOT STARTED**.
 

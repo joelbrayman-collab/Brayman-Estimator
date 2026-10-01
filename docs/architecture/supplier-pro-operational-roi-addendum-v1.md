@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **RECORDED / NOT IMPLEMENTED** |
+| Status | **CLOSED — LIVE VERIFIED** for the meeting surface. The dashboard is not built. |
 | Date | 2026-10-01 |
 | Amends | [supplier-pro-platform-partnership-v1.md](supplier-pro-platform-partnership-v1.md) |
 | Effect | Adds takeoff-labour value and estimating-capacity value to the existing supplier/OEM economic model. |

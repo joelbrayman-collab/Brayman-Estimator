@@ -5,28 +5,30 @@
 | Status | **RECORDED / NOT IMPLEMENTED** |
 | Date | 2026-10-01 |
 | Amends | [supplier-pro-platform-partnership-v1.md](supplier-pro-platform-partnership-v1.md) |
-| Effect | Adds takeoff-labour value and estimating-capacity value to the existing supplier/OEM economics calculator. |
+| Effect | Adds takeoff-labour value and estimating-capacity value to the existing supplier/OEM economic model. |
 | Not this record | A second calculator, a second ROI model, a dashboard, a table, or a price. |
 
-This is an addendum. It does not create a supplier calculator. It does not replace the existing commercial model.
+This is an addendum. It does not create a supplier economic model. It does not replace the existing commercial direction.
+
+The same extension is recorded in [supplier-pro-platform-partnership-v1.md](supplier-pro-platform-partnership-v1.md) under EXISTING SUPPLIER / OEM ECONOMIC MODEL — OPERATIONAL ROI EXTENSION. The two writings are one extension.
 
 ---
 
-## Existing calculator location
+## Existing model location
 
-Searched this repository for supplier economics, OEM economics, supplier ROI, sponsorship economics, supplier licence, an active-contractor component, material gross profit, a supplier calculator, BMR economics, and supplier-connection economics.
+Primary search terms, 1 Oct 2026: Darcy, BMR Winchester, BMR, supplier economics, supplier partnership, supplier OEM, supplier ROI, supplier program, supplier sponsorship, supplier licence, active contractor, material gross profit, material opportunity, supplier opportunity, supplier value, supplier assumptions, supplier model, partnership economics, economic model, takeoff economics, estimating capacity, takeoff labour, supplier connection, supplier integration, Winchester, and OEM economics. Calculator, ROI calculator, economics calculator, and supplier calculator were secondary terms only.
 
-No supplier/OEM economics calculator, specification, or formula set is in this repository.
+The existing governed model is [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md), updated 2026-08-30, with [ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md), accepted the same day. It is an architecture specification. It is not a live data-entry page. It has no numeric inputs, no calculated outputs, and no commercial formulas. It lists later measurement families, including supplier take-off hours avoided, supplier review time, quote preparation time, captured material spend, and contractor adoption, and it says not to invent those formulas in that pass.
 
-The public Website useful-tools inventory in [PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md) lists Employment, Concrete, and Stair. On 1 Oct 2026 the live page `https://calibai.joel-brayman.chatgpt.site/useful-tools/` linked those three tools and did not link a supplier economics calculator. The live page `https://calibai.joel-brayman.chatgpt.site/supplier-integration` describes the contractor-to-supplier workflow. It does not collect a licence, an active-contractor fee, or a material gross margin. Website source is not in this repository and was not available here to inspect.
+Darcy’s originated-value participation in that specification is a different subject. It has categories and no amounts. This addendum does not set those terms.
 
-Because the calculator source was not found, this addendum does not restate its commercial formulas and does not invent replacement inputs. Implementation must open that existing calculator and map the definitions below onto fields that already exist.
+A page where Darcy’s operating numbers are entered and results render immediately was not found in this repository, in `Documents/CalibAi/Website`, or on the live Website. `for-suppliers.html`, `/supplier-integration`, and `/contractor-connection` are narrative pages. Useful tools remain Employment, Concrete, and Stair. This addendum does not invent that missing page and does not invent the commercial formulas the specification withheld.
 
 ---
 
-## Existing calculator purpose
+## Existing model purpose
 
-The existing supplier/OEM economics calculator remains the pre-partnership commercial modelling surface. A supplier can enter its own assumptions and see program economics before a sponsorship partnership is operating.
+The existing specification is the pre-partnership supplier-channel model. BMR Winchester is the launch and reference context. The supplier is not exclusive. A later live meeting can use Darcy’s own numbers once a modelling surface is authorized.
 
 This addendum adds one more source of supplier value to that surface:
 

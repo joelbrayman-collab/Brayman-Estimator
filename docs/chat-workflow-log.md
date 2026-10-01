@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Darcy / BMR economic model located
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI SUPPLIER PRO PLATFORM PARTNERSHIP DARCY / BMR SUPPLIER ECONOMICS MODEL EXISTING LIVE-MEETING ECONOMIC MODEL — LOCATE + PROTECT 1 OCT 2026 |
+| Objective | Locate the existing Darcy/BMR supplier economic model and protect the operational ROI extension against it. |
+| Business decision | Takeoff labour value and capacity value stay separate. Darcy participation terms stay unset. |
+| Architectural decision | The existing model is the 30 Aug 2026 supplier-channel specification. No live data-entry page was found. No second model was created. |
+| Prompt template used | Joel’s 1 Oct 2026 locate-and-protect prompt. |
+| Approved Cursor prompt summary | Search beyond the word calculator, record the existing model, attach the operational extension, commit documentation only, push, and do not deploy. |
+| Files expected to change | The Supplier Pro architecture section, the operational addendum location record, the build-out register subcomponent, and this log. |
+| Files prohibited from changing | Product code, Website, routes, authentication, Project, Estimate, Contract V1, and supplier tables. |
+| Implementation result | Location and extension recorded. Not implemented. |
+| Tests | Not run. Documentation only. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a completed milestone. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The intended live-entry page was not found. Commercial formulas remain the ones the channel specification withheld. |
+| Next approved step | When implementation is authorized, build the live-entry surface on the existing channel definitions and this extension only. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — Supplier operational ROI addendum
 
 | Field | Content |

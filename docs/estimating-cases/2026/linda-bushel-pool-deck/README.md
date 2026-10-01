@@ -79,3 +79,6 @@ Current preliminary issue. Joel's decisions of 1 Oct 2026: 15 piers from the CT-
 | `estimates/customer/2026-10-01-j1-preliminary-customer-estimate.md` | Customer preliminary estimate. Selling price is not issued. |
 | `drawings/review/2026-10-01-j1/J1-VISUAL-REVIEW.md` | Visual review of all eight sheets. Two presentation defects were corrected. Final result is pass. |
 | `delivery/LINDA_BUSHEL_POOL_DECK_J1_BEN_PACKAGE.zip` | Package for Ben. Drawing, take-off, internal cost, supplier request, and customer draft. |
+| `takeoff/branded_issue_pdf.py` | Interim PDF writer for the J1 narrative sheets. It uses the ORG-001 logo and the proposal colour fallbacks. It is not a second platform renderer. |
+
+The generic Markdown-to-PDF package written earlier on 1 Oct 2026 is superseded. The replacement PDFs use the governed Brayman identity. Historical 29 Sep records stay.

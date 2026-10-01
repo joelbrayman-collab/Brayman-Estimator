@@ -158,3 +158,5 @@ Issue J1 is the current preliminary package. It is not a final construction draw
 - `estimates/customer/2026-10-01-j1-preliminary-customer-estimate.md`
 
 Later the same day, Joel relayed the client's decision to use helical piers instead of sonotubes and concrete. Issue J1 was revised. The 15 pier locations stay. Shaft, helix, length, torque, and capacity are not specified. The 29 Sep brief still records the earlier sonotube wording. That sentence was not rewritten.
+
+The same day, the generic unbranded PDF package was superseded. The J1 drawing title block and the delivery PDFs use the ORG-001 logo and the proposal PDF colour fallbacks. Geometry was not moved. `takeoff/branded_issue_pdf.py` is an interim case writer, not a platform renderer.

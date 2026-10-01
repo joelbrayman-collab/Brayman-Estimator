@@ -66,8 +66,10 @@ BEAM_D = 9.25
 STACK_IN = DECK_T + JOIST_D + BEAM_D
 
 PAGE_W, PAGE_H = 17 * 72, 11 * 72
-NAVY = HexColor("#1B3A4B")
-GOLD = HexColor("#B0893E")
+# Same fallback colours as app/services/proposal_pdf.py and app/services/brand_profile.py.
+# ORG-001 CURRENT profile leaves colour blank, so those fallbacks apply.
+NAVY = HexColor("#1f3a5f")
+GOLD = HexColor("#c79a2b")
 POOL = HexColor("#D5E6F2")
 DECK = HexColor("#F4E7D4")
 BEAM_C = HexColor("#7A4E24")
@@ -349,20 +351,38 @@ HEADER_BOTTOM = PAGE_H - 64
 FOOTER_TOP = 112
 
 
+def brand_logo_path() -> Path | None:
+    """ORG-001 CURRENT logo, then the static file named by proposal_pdf.py."""
+    repo = Path(__file__).resolve()
+    for parent in repo.parents:
+        current = parent / "instance/brand_logos/ORG-001/948f96e08827f18d77b47538f65c8b98b45caaf9c981adccba0189976948efe9.png"
+        fallback = parent / "app/static/branding/brayman-construction-logo.png"
+        if current.is_file():
+            return current
+        if fallback.is_file():
+            return fallback
+    return None
+
+
 def draw_frame(c: canvas.Canvas, number: int, title: str) -> None:
+    logo = brand_logo_path()
+    text_x = 28
+    if logo is not None:
+        c.drawImage(str(logo), 24, PAGE_H - 52, width=90, height=36, mask="auto", preserveAspectRatio=True, anchor="sw")
+        text_x = 122
     c.setFillColor(NAVY)
-    c.rect(0, PAGE_H - 56, PAGE_W, 56, fill=1, stroke=0)
-    c.setFillColor(white)
-    c.setFont("Times-Bold", 16)
-    c.drawString(28, PAGE_H - 24, "BRAYMAN CONSTRUCTION INC.")
-    c.setFont("Times-Roman", 12)
-    c.drawString(28, PAGE_H - 42, "411 St. John Street, Merrickville, ON K0G 1N0")
-    c.setFont("Times-Bold", 16)
-    c.drawRightString(PAGE_W - 28, PAGE_H - 24, f"Sheet {number} of 8")
-    c.setFont("Times-Roman", 12)
-    c.drawRightString(PAGE_W - 28, PAGE_H - 42, title)
-    c.setFillColor(GOLD)
-    c.rect(0, PAGE_H - 60, PAGE_W, 4, fill=1, stroke=0)
+    c.setFont("Times-Bold", 13)
+    c.drawString(text_x, PAGE_H - 22, "Brayman Construction")
+    c.setFont("Times-Roman", 9)
+    c.drawString(text_x, PAGE_H - 34, "Brayman Construction Inc.")
+    c.drawString(text_x, PAGE_H - 46, "411 St. John Street, Merrickville, Ontario K0G 1N0")
+    c.setFont("Times-Bold", 12)
+    c.drawRightString(PAGE_W - 28, PAGE_H - 22, f"Sheet {number} of 8")
+    c.setFont("Times-Roman", 10)
+    c.drawRightString(PAGE_W - 28, PAGE_H - 40, title)
+    c.setStrokeColor(GOLD)
+    c.setLineWidth(2.5)
+    c.line(28, PAGE_H - 58, PAGE_W - 28, PAGE_H - 58)
 
     c.setFillColor(NAVY)
     c.rect(0, 0, PAGE_W, FOOTER_TOP, fill=1, stroke=0)
@@ -376,7 +396,7 @@ def draw_frame(c: canvas.Canvas, number: int, title: str) -> None:
     c.setFont("Times-Bold", 13)
     c.drawRightString(PAGE_W - 28, 46, "Option A")
     c.setFont("Times-Roman", 11)
-    c.drawRightString(PAGE_W - 28, 26, "Wordmark only — no Brayman logo file is in this case")
+    c.drawRightString(PAGE_W - 28, 26, "Brayman document identity")
 
 
 def section_label(c: canvas.Canvas, x: float, y: float, text: str) -> float:

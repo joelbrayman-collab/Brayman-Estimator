@@ -131,14 +131,28 @@
     "files": [
       "drawings/2026-10-01-j1-preliminary-11x17.pdf",
       "takeoff/2026-10-01-j1-material-takeoff.md",
+      "takeoff/2026-10-01-j1-material-takeoff.pdf",
       "takeoff/issue_j1.py",
+      "takeoff/branded_issue_pdf.py",
       "supplier/bmr-winchester/2026-10-01-j1-darcy-request-for-quotation.md",
+      "supplier/bmr-winchester/2026-10-01-j1-darcy-request-for-quotation.pdf",
       "estimates/internal/2026-10-01-j1-ben-internal-cost.md",
+      "estimates/internal/2026-10-01-j1-ben-internal-cost.pdf",
       "estimates/customer/2026-10-01-j1-preliminary-customer-estimate.md",
+      "estimates/customer/2026-10-01-j1-preliminary-customer-estimate.pdf",
       "drawings/review/2026-10-01-j1/J1-VISUAL-REVIEW.md",
       "delivery/LINDA_BUSHEL_POOL_DECK_J1_BEN_PACKAGE.zip"
     ],
-    "visual_review": "PASS after two presentation corrections. Geometry and quantities unchanged."
+    "visual_review": "PASS after two presentation corrections. Geometry and quantities unchanged. Title block later branded from ORG-001.",
+    "branding": {
+      "date": "2026-10-01",
+      "identity": "Organization Brand Profile ORG-001 CURRENT",
+      "logo": "instance/brand_logos/ORG-001 current file, with app/static/branding/brayman-construction-logo.png as the named fallback",
+      "colours": "Proposal PDF fallbacks #1f3a5f and #c79a2b because the current profile leaves colour blank",
+      "generic_markdown_pdf_superseded": true,
+      "platform_renderer": false,
+      "interim_writer": "takeoff/branded_issue_pdf.py"
+    }
   },
   "issue_2026_10_01": {
     "date": "2026-10-01",

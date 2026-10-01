@@ -61,3 +61,7 @@ Sheets 1, 2, 7, and 8 were rendered again and inspected.
 | 8 | PASS | Field note 3 asks for product, depth, torque, and bearing, and says the 48 in sonotube depth is not this issue. |
 
 Sheets 3, 4, 5, and 6 were not given a new foundation note. Their geometry is unchanged. The review images in this folder were rendered again from the revised PDF.
+
+## Governed identity — same day
+
+The title block now uses the ORG-001 logo, Brayman Construction, Brayman Construction Inc., 411 St. John Street, Merrickville, Ontario K0G 1N0, and the proposal colour fallbacks. Geometry and quantities were not changed. Sheet 1 was inspected as an image. The logo, names, address, sheet number, gold rule, sheet index, and footer are clear of one another. Line 4 of the index remains above the footer. The review images were rendered again from that PDF.

@@ -91,10 +91,10 @@
               "source_date": null
             },
             "tie_count": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "6",
+              "source_document": "Fox Blocks Series: the straight block has six full-length ties",
+              "source_url": "https://www.foxblocks.com/products/series",
               "source_date": null
             }
           },
@@ -107,17 +107,47 @@
               "source_date": "2017-03-18"
             },
             "wall_coverage_ft2": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "7.56",
+              "source_document": "Fox Blocks Series, 8 inch corner block surface area",
+              "source_url": "https://www.foxblocks.com/products/series",
               "source_date": null
             },
             "concrete_volume_yd3": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "0.145",
+              "source_document": "Fox Blocks Series, 8 inch corner block concrete volume",
+              "source_url": "https://www.foxblocks.com/products/series",
+              "source_date": null
+            }
+          },
+          "corner_45_8": {
+            "length_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "28",
+              "source_document": "Fox Blocks Series, 8 inch 45 degree block length",
+              "source_url": "https://www.foxblocks.com/products/series",
+              "source_date": null
+            },
+            "return_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "20",
+              "source_document": "Fox Blocks Series, 8 inch 45 degree block return",
+              "source_url": "https://www.foxblocks.com/products/series",
+              "source_date": null
+            },
+            "wall_coverage_ft2": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "5.33",
+              "source_document": "Fox Blocks Series, 8 inch 45 degree block surface area",
+              "source_url": "https://www.foxblocks.com/products/series",
+              "source_date": null
+            },
+            "concrete_volume_yd3": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "0.117",
+              "source_document": "Fox Blocks Series, 8 inch 45 degree block concrete volume",
+              "source_url": "https://www.foxblocks.com/products/series",
               "source_date": null
             }
           },
@@ -129,18 +159,32 @@
               "source_url": "https://www.foxblocksny.com/wp-content/uploads/2018/05/Fox-Blocks-Block-Measurements-End-View-Sizing.pdf",
               "source_date": null
             },
+            "length_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "48",
+              "source_document": "Fox Blocks Series, 8 inch corbel ledge block length",
+              "source_url": "https://www.foxblocks.com/products/series",
+              "source_date": null
+            },
+            "form_width_in": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "17.75",
+              "source_document": "Fox Blocks Series, 8 inch corbel ledge block form width",
+              "source_url": "https://www.foxblocks.com/products/series",
+              "source_date": null
+            },
             "wall_coverage_ft2": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "5.61",
+              "source_document": "Fox Blocks Series, 8 inch corbel ledge block surface area",
+              "source_url": "https://www.foxblocks.com/products/series",
               "source_date": null
             },
             "concrete_volume_yd3": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "0.162",
+              "source_document": "Fox Blocks Series, 8 inch corbel ledge block concrete volume",
+              "source_url": "https://www.foxblocks.com/products/series",
               "source_date": null
             }
           }
@@ -198,17 +242,17 @@
               "source_date": null
             },
             "length_in": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "48",
+              "source_document": "Logix Design Manual (USA), section 4.3.1: standard forms are 48 inches long",
+              "source_url": "https://logixicf.com/wp-content/uploads/technical_library/USA-Design-Manual.pdf",
               "source_date": null
             },
             "height_in": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "16",
+              "source_document": "Logix Design Manual (USA), section 4.3.1: standard forms are 16 inches tall",
+              "source_url": "https://logixicf.com/wp-content/uploads/technical_library/USA-Design-Manual.pdf",
               "source_date": null
             },
             "form_width_in": {
@@ -219,10 +263,17 @@
               "source_date": null
             },
             "wall_coverage_ft2": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "5.33",
+              "source_document": "Logix Design Manual (USA), section 4.3.1: standard forms have a wall area of 5.33 square feet each",
+              "source_url": "https://logixicf.com/wp-content/uploads/technical_library/USA-Design-Manual.pdf",
+              "source_date": null
+            },
+            "concrete_cavity_width_ft": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "0.667",
+              "source_document": "Logix Design Manual (USA), section 4.4.3: for an 8 inch wall, multiply net wall area by 0.667 ft cavity width to get cubic feet of concrete",
+              "source_url": "https://logixicf.com/wp-content/uploads/technical_library/USA-Design-Manual.pdf",
               "source_date": null
             },
             "concrete_volume_yd3": {
@@ -249,10 +300,26 @@
           },
           "corner_90_8": {
             "wall_coverage_ft2": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "5.36",
+              "source_document": "Logix Design Manual (USA), section 4.3.1: 4, 6.25 and 8 inch ninety-degree corner forms cover 5.36 square feet",
+              "source_url": "https://logixicf.com/wp-content/uploads/technical_library/USA-Design-Manual.pdf",
+              "source_date": null
+            },
+            "concrete_volume_yd3": {
               "status": "NOT_ESTABLISHED",
               "value": null,
               "source_document": null,
               "source_url": null,
+              "source_date": null
+            }
+          },
+          "corner_45_8": {
+            "wall_coverage_ft2": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "3.89",
+              "source_document": "Logix Design Manual (USA), section 4.3.1: multiply the number of 45 degree forms by 3.89 square feet per form",
+              "source_url": "https://logixicf.com/wp-content/uploads/technical_library/USA-Design-Manual.pdf",
               "source_date": null
             },
             "concrete_volume_yd3": {
@@ -382,17 +449,24 @@
               "source_date": null
             },
             "concrete_volume_yd3": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "0.306",
+              "source_document": "Nudura Installation Manual, section 2.2.3, standard form unit, 8 inch core concrete volume",
+              "source_url": "https://www.nudura.com/resource/download/Nudura_Installation_Manual-compressed-compressed.pdf",
+              "source_date": null
+            },
+            "concrete_volume_m3": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "0.234",
+              "source_document": "Nudura Installation Manual, section 2.2.3, standard form unit, 8 inch core metric concrete volume",
+              "source_url": "https://www.nudura.com/resource/download/Nudura_Installation_Manual-compressed-compressed.pdf",
               "source_date": null
             },
             "packaging_quantity": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "3",
+              "source_document": "Nudura Installation Manual: forms arrive shrink-wrapped in bundles of 3 forms per bundle",
+              "source_url": "https://www.nudura.com/resource/download/Nudura_Installation_Manual-compressed-compressed.pdf",
               "source_date": null
             },
             "tie_count": {
@@ -412,17 +486,33 @@
               "source_date": null
             },
             "wall_coverage_ft2": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "6.0",
+              "source_document": "Nudura Installation Manual, section 2.2.3, 90 degree form unit wall coverage",
+              "source_url": "https://www.nudura.com/resource/download/Nudura_Installation_Manual-compressed-compressed.pdf",
               "source_date": null
             },
             "concrete_volume_yd3": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "0.122",
+              "source_document": "Nudura Installation Manual, section 2.2.3, 90 degree form unit, 8 inch core concrete volume",
+              "source_url": "https://www.nudura.com/resource/download/Nudura_Installation_Manual-compressed-compressed.pdf",
+              "source_date": null
+            }
+          },
+          "corner_45_8": {
+            "wall_coverage_ft2": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "4.6",
+              "source_document": "Nudura Installation Manual, section 2.2.3, 45 degree form unit wall coverage",
+              "source_url": "https://www.nudura.com/resource/download/Nudura_Installation_Manual-compressed-compressed.pdf",
+              "source_date": null
+            },
+            "concrete_volume_yd3": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "0.102",
+              "source_document": "Nudura Installation Manual, section 2.2.3, 45 degree form unit, 8 inch core concrete volume",
+              "source_url": "https://www.nudura.com/resource/download/Nudura_Installation_Manual-compressed-compressed.pdf",
               "source_date": null
             }
           },
@@ -435,17 +525,17 @@
               "source_date": null
             },
             "wall_coverage_ft2": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "12",
+              "source_document": "Nudura Installation Manual, section 2.2.3, brick ledge form unit wall coverage",
+              "source_url": "https://www.nudura.com/resource/download/Nudura_Installation_Manual-compressed-compressed.pdf",
               "source_date": null
             },
             "concrete_volume_yd3": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "0.399",
+              "source_document": "Nudura Installation Manual, section 2.2.3, brick ledge form unit, 8 inch core concrete volume",
+              "source_url": "https://www.nudura.com/resource/download/Nudura_Installation_Manual-compressed-compressed.pdf",
               "source_date": null
             }
           }
@@ -632,11 +722,25 @@
               "source_url": "https://styrorail.ca/wp-content/uploads/2022/06/Buildblock-Product-Specifications.pdf",
               "source_date": "2022-06"
             },
+            "wall_coverage_ft2": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "5.33",
+              "source_document": "BuildBlock 8 inch brickledge block specifications, surface area",
+              "source_url": "https://store.buildblock.com/buildblock-icfs/8-inch-forms/00bb8bl-8-brickledge-block--6bundle",
+              "source_date": null
+            },
             "concrete_volume_yd3": {
-              "status": "NOT_ESTABLISHED",
-              "value": null,
-              "source_document": null,
-              "source_url": null,
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "0.167074",
+              "source_document": "BuildBlock 8 inch brickledge block specifications, entire-block concrete volume",
+              "source_url": "https://store.buildblock.com/buildblock-icfs/8-inch-forms/00bb8bl-8-brickledge-block--6bundle",
+              "source_date": null
+            },
+            "packaging_quantity": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "6",
+              "source_document": "BuildBlock 8 inch brickledge block specifications, quantity per bundle",
+              "source_url": "https://store.buildblock.com/buildblock-icfs/8-inch-forms/00bb8bl-8-brickledge-block--6bundle",
               "source_date": null
             }
           }

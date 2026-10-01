@@ -68,16 +68,17 @@ def test_repeat_load_is_deterministic_and_keeps_the_source():
 
 def test_missing_fields_stay_explicit_and_empty():
     logix = get_profile("logix")
-    coverage = logix["units"]["standard_8"]["wall_coverage_ft2"]
-    assert coverage["status"] == "NOT_ESTABLISHED"
-    assert coverage["value"] is None
-    nudura = get_profile("nudura")
-    assert (
-        nudura["units"]["standard_8"]["concrete_volume_yd3"]["status"]
-        == "NOT_ESTABLISHED"
-    )
-    assert "standard_8.wall_coverage_ft2" in missing_engine_fields(logix)
+    per_form = logix["units"]["standard_8"]["concrete_volume_yd3"]
+    assert per_form["status"] == "NOT_ESTABLISHED"
+    assert per_form["value"] is None
+    factor = logix["units"]["standard_8"]["concrete_cavity_width_ft"]
+    assert factor["status"] == "VERIFIED_FROM_SOURCE"
+    assert factor["value"] == "0.667"
+    assert factor["source_url"].endswith("USA-Design-Manual.pdf")
+    assert "standard_8.concrete_volume_yd3" in missing_engine_fields(logix)
+    assert "standard_8.length_in" not in missing_engine_fields(logix)
     assert missing_engine_fields(get_profile("fox_blocks")) == ()
+    assert missing_engine_fields(get_profile("nudura")) == ()
 
 
 def test_verified_numbers_are_not_copied_between_manufacturers():
@@ -89,7 +90,14 @@ def test_verified_numbers_are_not_copied_between_manufacturers():
     assert buildblock == "0.131687"
     assert fox != buildblock
     assert get_profile("nudura")["units"]["standard_8"]["length_in"]["value"] == "96"
+    assert get_profile("nudura")["units"]["standard_8"]["concrete_volume_yd3"]["value"] == "0.306"
+    assert get_profile("logix")["units"]["standard_8"]["wall_coverage_ft2"]["value"] == "5.33"
     assert get_profile("fox_blocks")["units"]["standard_8"]["length_in"]["value"] == "48"
+    assert get_profile("fox_blocks")["units"]["corner_90_8"]["concrete_volume_yd3"]["value"] == "0.145"
+    assert (
+        get_profile("logix")["units"]["corner_90_8"]["concrete_volume_yd3"]["value"]
+        is None
+    )
 
 
 def test_unknown_version_and_unknown_manufacturer_fail():
@@ -142,5 +150,9 @@ def test_future_engine_can_read_verified_facts_and_the_gaps():
     assert fox["verified"]["standard_8.wall_coverage_ft2"] == "5.33"
     assert buildblock["verified"]["standard_8.concrete_volume_yd3"] == "0.131687"
     assert fox["missing"] == ()
-    assert "standard_8.concrete_volume_yd3" in engine_profile_view("nudura")["missing"]
-    assert "standard_8.length_in" in engine_profile_view("logix")["missing"]
+    assert engine_profile_view("nudura")["missing"] == ()
+    assert engine_profile_view("nudura")["verified"]["standard_8.concrete_volume_yd3"] == "0.306"
+    logix = engine_profile_view("logix")
+    assert logix["verified"]["standard_8.wall_coverage_ft2"] == "5.33"
+    assert logix["verified"]["standard_8.concrete_cavity_width_ft"] == "0.667"
+    assert logix["missing"] == ("standard_8.concrete_volume_yd3",)

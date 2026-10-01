@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — ICF manufacturer profile data completion
+
+| Field | Content |
+|-------|---------|
+| Milestone | ICF manufacturer profile data completion |
+| Status | Profile facts and the 8-inch form and concrete service are in this revision. Labour hours are a runtime allowance. Closure waits on the quality gate. |
+| Branch | `main` |
+| Base commit | `c30760f95113a8aabc4173cbfaae5bb4f5dc372f` |
+| Objective | Record newly identified official 8-inch facts without a calculator. |
+| Deliverables | Updated version-1 profiles. Logix cavity-width factor 0.667 ft. Nudura 8-inch volume 0.306 cubic yards. |
+| Validation | Focused profile tests. Full suite result is in the implementation report. |
+| Architectural findings | A per-form yardage was not calculated for Logix. The stated wall-area factor is the concrete method. |
+| Open decisions | Reinforcement defaults, membrane order units, Fox packaging, and an approved ICF production-hours standard. |
+| Next milestone | ICF quantity engine. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — Start Project, Guided Setup, and Plan Generation live acceptance
 
 | Field | Content |

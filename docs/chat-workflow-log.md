@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Global dependency re-audit and 8-inch ICF quantities
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI TACTICAL PLATFORM BUILD-OUT GLOBAL DEPENDENCY RE-AUDIT RUNTIME INPUT vs INSTANCE-OWNER INPUT vs TRUE PLATFORM DEPENDENCY 1 OCT 2026 |
+| Objective | Reclassify alleged blockers, then build the 8-inch ICF form and concrete slice if it is dependency-ready. |
+| Business decision | A missing value is not a development blocker when the contractor or the instance owner can supply it. |
+| Architectural decision | Labour hours stay a confirmed allowance. The dollar rate stays ORG-001. Framing and the other unnamed trades stay blocked because they have no formula. |
+| Prompt template used | Joel’s 1 Oct 2026 global dependency re-audit prompt. |
+| Approved Cursor prompt summary | Classify every missing input, update the register, and build every dependency-ready component through live verification. |
+| Files expected to change | Register, handoff, current-state, workflow log, milestones, the ICF quantity service, and its tests. |
+| Files prohibited from changing | Invented formulas, production-rate seeds, Contract V1, Website, migrations, and public ICF routes. |
+| Implementation result | The register carries the three classes. The 8-inch quantity service applies verified profile methods only. |
+| Tests | Focused `./venv/bin/python -m pytest -q tests/test_icf_quantity.py tests/test_icf_manufacturer_profiles.py` — 16 passed, 1.24s, exit 0. Full suite `./venv/bin/python -m pytest -q` — 1947 passed, 6759 warnings, 919.72s, exit 0. |
+| Project-state-report update | Not a milestone-score change until live closure. |
+| Milestone entry update | The profile milestone note was corrected. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Framing, roofing, siding, drywall, and flooring have no accepted formula. Contract signing, the finished build stage, completion sign-off, the learning product, and reporting have no accepted specification. |
+| Next approved step | Finish the quality gate for the quantity slice. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
+### 2026-10-01 — ICF manufacturer profile data completion
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI TACTICAL PLATFORM BUILD-OUT ICF MANUFACTURER PROFILE DATA COMPLETION 1 OCT 2026 |
+| Objective | Fill source-backed 8-inch profile gaps without building the quantity engine in the same commit. |
+| Business decision | Use official manufacturer documents only. Do not reconstruct a Logix per-form concrete volume. Do not create an ICF production rate. |
+| Architectural decision | Keep the existing registry file and loader. Add a Logix cavity-width factor beside the still-empty per-form volume field. |
+| Prompt template used | Joel’s 1 Oct 2026 ICF manufacturer profile data completion prompt. |
+| Approved Cursor prompt summary | Update Logix, Nudura, Fox Blocks, and StyroRail / BuildBlock from official sources. Audit which gaps still block the quantity engine. Test, commit, push, and deploy the data revision. |
+| Files expected to change | Profile JSON, profile tests, register, handoff, current-state, workflow log, and milestones. |
+| Files prohibited from changing | Quantity formulas, labour standards, migrations, Contract V1, Website, and authentication. |
+| Implementation result | Source facts recorded in the profile registry. |
+| Tests | Focused profile tests passed. Full suite result is in the implementation report. |
+| Project-state-report update | Not a milestone-score change. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Logix per-form concrete yards stay empty because the manual states a cavity factor. Fox packaging stays empty. |
+| Next approved step | Deploy this data revision, then build the ICF quantity engine from the verified facts. |
+| Next approved prompt | None. The quantity engine is the next dependency-ready component. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — Live acceptance walk for Start Project, Guided Setup, and Plan Generation
 
 | Field | Content |

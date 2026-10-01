@@ -21,6 +21,14 @@ Allowed statuses:
 | NOT STARTED | The complete capability is not built. An earlier partial foundation may be named in the row. |
 | DEFERRED | Intentionally later. Not the current build. |
 
+A missing value is not a development blocker when an authorized contractor or instance owner can supply it. Classify each missing input as exactly one of:
+
+| Class | Meaning |
+|-------|---------|
+| RUNTIME INPUT | The contractor supplies it in the workflow. The status is input required, not blocked. |
+| INSTANCE-OWNER INPUT | The company owner sets it in governed configuration. Absence does not block the engine. |
+| TRUE PLATFORM DEPENDENCY | The platform lacks the formula, contract, service, or safe architecture. Only this class uses BLOCKED — DEPENDENCY IDENTIFIED. |
+
 ## Occupancy used for this record
 
 The 1 Oct 2026 live acceptance walk used deploy `dep-dav6kt8jo6nc73fpglg0` at `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Hosted revision was `m3f4a5b6c7d8`. Auto-deploy stayed off. The walk used synthetic project 51 and synthetic client 46. It did not change product code and it did not deploy the later documentation commit.
@@ -107,8 +115,9 @@ Concrete and Stair are closed on the public Website, not in this repository. Web
 |-------|--------|
 | Diagram location | Project lifecycle — contract signing |
 | Purpose | Produce and sign the contract the contractor will build from. |
-| Current status | NOT STARTED |
-| Required dependencies | A complete signing path. Partial library and native-signing slices are not that path. |
+| Current status | BLOCKED — DEPENDENCY IDENTIFIED |
+| Dependency class | TRUE PLATFORM DEPENDENCY |
+| Required dependencies | A counsel-approved production contract package. A contractor cannot type that package into existence. |
 | Existing implementation | FG-024 slices and FG-033 native signing exist in the repository. Production customer signing is not complete. Real iPhone signing UAT was deferred. |
 | What is missing | The finished contract-signing capability. |
 | Build acceptance criteria | A later accepted slice that a contractor can sign on the live office. |
@@ -121,8 +130,9 @@ Concrete and Stair are closed on the public Website, not in this repository. Web
 |-------|--------|
 | Diagram location | Project lifecycle — build and manage |
 | Purpose | Run the job after the contract: field, schedule, and production. |
-| Current status | NOT STARTED |
-| Required dependencies | None named for a later production-management capability. |
+| Current status | BLOCKED — DEPENDENCY IDENTIFIED |
+| Dependency class | TRUE PLATFORM DEPENDENCY |
+| Required dependencies | An accepted specification for the finished build-and-manage stage. Field, calendar, and schedule pieces already exist and are not this gap. |
 | Existing implementation | Field Web v1, field observations, company calendar, and schedule hubs are operational pieces. They are not this lifecycle stage closed. |
 | What is missing | The complete build-and-manage capability. |
 | Build acceptance criteria | A later accepted production slice, then a live job walk. |
@@ -149,8 +159,9 @@ Concrete and Stair are closed on the public Website, not in this repository. Web
 |-------|--------|
 | Diagram location | Project lifecycle — complete and close |
 | Purpose | Close the job, including sign-off. |
-| Current status | NOT STARTED |
-| Required dependencies | Completion sign-off, which is not implemented. |
+| Current status | BLOCKED — DEPENDENCY IDENTIFIED |
+| Dependency class | TRUE PLATFORM DEPENDENCY |
+| Required dependencies | An accepted completion sign-off. Closing a project record already exists. The missing piece is the sign-off capability, not a company setting. |
 | Existing implementation | Project lifecycle ACTIVE / CLOSED and a punch list exist. Core close remains partial. Client walkthrough has an empty live baseline and was not live-tested with client data. |
 | What is missing | The complete close capability, including completion sign-off. |
 | Build acceptance criteria | A later accepted close slice and a live close walk. |
@@ -164,7 +175,7 @@ Concrete and Stair are closed on the public Website, not in this repository. Web
 | Diagram location | Project lifecycle — actuals |
 | Purpose | Record what the job actually cost and used. |
 | Current status | NOT STARTED |
-| Required dependencies | None named beyond the monitor foundation. |
+| Dependency class | RUNTIME INPUT for a direct-cost amount on the existing project screen. TRUE PLATFORM DEPENDENCY for a finished quantity-actuals product, because that specification is not accepted. |
 | Existing implementation | FG-023 direct-cost actuals and Monitor v1 are operational for an earlier office UAT. That is not the complete actuals capability. |
 | What is missing | Quantities and costs as a finished learning input for the live job. |
 | Build acceptance criteria | A later accepted actuals slice. |
@@ -177,8 +188,9 @@ Concrete and Stair are closed on the public Website, not in this repository. Web
 |-------|--------|
 | Diagram location | Project lifecycle — learn and improve |
 | Purpose | Compare actuals with the estimate and propose a calibration a person can approve. |
-| Current status | NOT STARTED |
-| Required dependencies | Actuals as a finished input. The learning law is recorded. The product is not built. |
+| Current status | BLOCKED — DEPENDENCY IDENTIFIED |
+| Dependency class | TRUE PLATFORM DEPENDENCY |
+| Required dependencies | The learning product itself. A company rate is not the missing piece. One project must not silently change a formula. |
 | Existing implementation | Checklist learning law only. One project must not silently change a formula, cost, rate, or margin. |
 | What is missing | The learning product. |
 | Build acceptance criteria | A person reviews and approves a proposed calibration. |
@@ -191,8 +203,9 @@ Concrete and Stair are closed on the public Website, not in this repository. Web
 |-------|--------|
 | Diagram location | Project lifecycle — analytics and reporting |
 | Purpose | Report across jobs. |
-| Current status | NOT STARTED |
-| Required dependencies | None named. Reports were removed from daily navigation. Routes that remain are not this capability. |
+| Current status | BLOCKED — DEPENDENCY IDENTIFIED |
+| Dependency class | TRUE PLATFORM DEPENDENCY |
+| Required dependencies | An accepted reporting specification. Missing report numbers are not the gap. |
 | Existing implementation | No cross-job analytics product was found. |
 | What is missing | The reporting capability. |
 | Build acceptance criteria | A later accepted report a contractor can open on the live office. |
@@ -212,8 +225,9 @@ The same engine serves independent use and workflow use. Do not build a second e
 | Diagram location | Construction intelligence — concrete |
 | Purpose | Governed slab quantities. Standard slab and thickened edge. |
 | Independent use | CLOSED — LIVE VERIFIED |
-| Workflow use | NOT STARTED |
-| Required dependencies | Workflow use waits for an accepted project-consumption slice. Checklist row 8. |
+| Workflow use | BLOCKED — DEPENDENCY IDENTIFIED |
+| Dependency class | TRUE PLATFORM DEPENDENCY for a platform copy. The public formula stays on the Website. |
+| Required dependencies | An accepted project-consumption slice that uses the Website result through the mapper. Do not copy the formula into this repository. |
 | Existing implementation | Public authority `lib/calculation-engine/concrete-slab.ts` in the Website repository. Not copied here. |
 | What is missing | Platform workflow consumption. Footings, walls, columns, and concrete stairs are not current public modes. |
 | Build acceptance criteria | Independent use is already closed on the Website. Workflow use needs a later slice that consumes the same result through the mapper. |
@@ -227,8 +241,9 @@ The same engine serves independent use and workflow use. Do not build a second e
 | Diagram location | Construction intelligence — stair |
 | Purpose | Governed stair geometry and quantities. |
 | Independent use | CLOSED — LIVE VERIFIED |
-| Workflow use | NOT STARTED |
-| Required dependencies | Workflow use waits for an accepted project-consumption slice. |
+| Workflow use | BLOCKED — DEPENDENCY IDENTIFIED |
+| Dependency class | TRUE PLATFORM DEPENDENCY for a second stair formula. |
+| Required dependencies | An accepted project-consumption slice. Bushel scripts are not that formula. |
 | Existing implementation | One public stair formula on the Website. Bushel scripts are case evidence, not a second engine. No stair engine is in this repository. |
 | What is missing | Platform workflow consumption. |
 | Build acceptance criteria | Independent use is already closed. Workflow use must not create a second stair formula. |
@@ -244,7 +259,7 @@ The same engine serves independent use and workflow use. Do not build a second e
 | Current status | CLOSED — LIVE VERIFIED |
 | Required dependencies | None for the registry. Quantity use still waits on the ICF estimator row. |
 | Existing implementation | `app/data/icf_manufacturer_profiles_v1.json` and `app/services/icf_manufacturer_profiles.py`. Four profiles, version 1. Missing facts stay `NOT_ESTABLISHED`. No route. No quantity formula. |
-| What is missing | Nothing for this registry. Logix standard coverage and concrete volume, and Nudura concrete volume, remain `NOT_ESTABLISHED` for the later engine. |
+| What is missing | Nothing for the registry. Logix still has no per-form concrete volume. The source states an 8-inch cavity width of 0.667 ft instead, and that factor is stored. |
 | Build acceptance criteria | Met. Profiles load on the deployed office, sources stay attached, and a missing fact is named. |
 | Live verification requirement | Met on deploy `dep-dav6kt8jo6nc73fpglg0` and reconfirmed on that same SHA during the 1 Oct acceptance walk. Four 8-inch profiles loaded. Sources stayed attached. Missing engine fields stayed unnamed as facts. Authenticated `/icf` returned 404. |
 | Commit / deployed SHA when closed | Implementation and deployed SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Deploy `dep-dav6kt8jo6nc73fpglg0`, status live, finished 2026-10-01T14:14:45Z. |
@@ -255,11 +270,12 @@ The same engine serves independent use and workflow use. Do not build a second e
 |-------|--------|
 | Diagram location | Construction intelligence — ICF |
 | Purpose | Internal governed ICF takeoff: materials, labour inputs, and direct-cost inputs. Final selling price stays with estimating. |
-| Independent use | BLOCKED — DEPENDENCY IDENTIFIED |
-| Workflow use | BLOCKED — DEPENDENCY IDENTIFIED |
-| Required dependencies | Design specification present at commit `c1ab362`. Quantity engine blocked on the profile fields listed below. Dollar labour is not blocked: ORG-001 `DirectLabourCostRateStandard` is $65 CAD per man-hour and approved. ICF hours are blocked: no approved `ProductionRateStandard` for ICF exists. Pratt 200 hours, planning range 220–240, midpoint 230, stays evidence. |
-| Existing implementation | The design specification only. No ICF calculator, route, or formula. |
-| What is missing | The profile numbers and the engine. Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESISTO membrane except Nudura, ICFVL at 16 inches on centre, anchors at 36 inches on centre, 50 anchors per box, and 10-foot 2×4 plates with a 50 percent purchase allowance. |
+| Independent use | NOT STARTED |
+| Workflow use | NOT STARTED |
+| Dependency class | RUNTIME INPUT for wall area, corner counts, the reinforcement schedule, and the labour-hour allowance. INSTANCE-OWNER INPUT for the existing $65 CAD man-hour rate and for any later ICF production standard. TRUE PLATFORM DEPENDENCY does not apply to those values. |
+| Required dependencies | Design specification present at commit `c1ab362`. Eight-inch standard form and concrete methods are source-backed. Dollar labour uses ORG-001 at $65 CAD per man-hour. Labour hours are a confirmed allowance. Pratt stays evidence and is not seeded. |
+| Existing implementation | `app/services/icf_quantity.py` applies the verified profile methods for 8-inch form count and concrete. It has no route. It does not price and does not write a project or an estimate. Closure waits on the quality gate. |
+| What is missing | Live verification of that quantity slice. Rebar, membrane rolls, packaging, and labour hours stay named inputs. Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESISTO membrane except Nudura, ICFVL at 16 inches on centre, anchors at 36 inches on centre, 50 anchors per box, and 10-foot 2×4 plates with a 50 percent purchase allowance. |
 | Build acceptance criteria | After the specification is in the repository: one internal engine, two fixtures, no public page, no second estimate, no silent price, no project or estimate mutation during calculation. |
 | Live verification requirement | After implementation, deploy, and a live internal walk. Not available while the specification is missing. |
 | Commit / deployed SHA when closed | Not closed. The profile registry is a separate closed row. This engine has no quantity commit. |
@@ -282,7 +298,7 @@ Fox Blocks reinforcement is not missing a default. The specification requires a 
 
 Dollar labour authority, inspected 1 Oct 2026: `app/services/labour_engine.py` seeds ORG-001 `DirectLabourCostRateStandard` at $65 CAD per man-hour from `docs/pricing-policy.md`. That rate is organization policy, not an ICF rate, and not a platform default. ICF must use it. It must not create a second dollar rate.
 
-ICF hours: **BLOCKED — APPROVED PRODUCTION STANDARD REQUIRED**. `ProductionRateStandard` exists and no ICF standard is seeded. The Pratt record is not that standard.
+ICF hours: RUNTIME INPUT. The estimator confirms a labour-hour allowance. `ProductionRateStandard` exists and no ICF standard is seeded. The Pratt record is not that standard. An absent production standard does not block the form and concrete quantities.
 
 Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESISTO except Nudura, ICFVL at 16 inches on centre, anchors at 36 inches on centre, 50 anchors per box, and 10-foot 2×4 plates with a 50 percent purchase allowance.
 
@@ -292,9 +308,10 @@ Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESIS
 |-------|--------|
 | Diagram location | Construction intelligence — framing |
 | Purpose | Governed framing quantities. |
-| Independent use | NOT STARTED |
-| Workflow use | NOT STARTED |
-| Required dependencies | An accepted framing specification. |
+| Independent use | BLOCKED — DEPENDENCY IDENTIFIED |
+| Workflow use | BLOCKED — DEPENDENCY IDENTIFIED |
+| Dependency class | TRUE PLATFORM DEPENDENCY |
+| Required dependencies | An accepted framing formula. Dimensions would be runtime inputs after that formula exists. |
 | Existing implementation | None in this repository. Bushel framing sheets are case proofs. |
 | What is missing | The engine. |
 | Build acceptance criteria | One governed engine, independent and workflow use, no second formula. |
@@ -307,9 +324,10 @@ Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESIS
 |-------|--------|
 | Diagram location | Construction intelligence — roofing |
 | Purpose | Governed roofing quantities. |
-| Independent use | NOT STARTED |
-| Workflow use | NOT STARTED |
-| Required dependencies | An accepted roofing specification. |
+| Independent use | BLOCKED — DEPENDENCY IDENTIFIED |
+| Workflow use | BLOCKED — DEPENDENCY IDENTIFIED |
+| Dependency class | TRUE PLATFORM DEPENDENCY |
+| Required dependencies | An accepted roofing formula. |
 | Existing implementation | None. |
 | What is missing | The engine. |
 | Build acceptance criteria | One governed engine. |
@@ -322,9 +340,10 @@ Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESIS
 |-------|--------|
 | Diagram location | Construction intelligence — siding |
 | Purpose | Governed siding quantities. |
-| Independent use | NOT STARTED |
-| Workflow use | NOT STARTED |
-| Required dependencies | An accepted siding specification. |
+| Independent use | BLOCKED — DEPENDENCY IDENTIFIED |
+| Workflow use | BLOCKED — DEPENDENCY IDENTIFIED |
+| Dependency class | TRUE PLATFORM DEPENDENCY |
+| Required dependencies | An accepted siding formula. |
 | Existing implementation | None. |
 | What is missing | The engine. |
 | Build acceptance criteria | One governed engine. |
@@ -337,9 +356,10 @@ Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESIS
 |-------|--------|
 | Diagram location | Construction intelligence — drywall |
 | Purpose | Governed drywall quantities. |
-| Independent use | NOT STARTED |
-| Workflow use | NOT STARTED |
-| Required dependencies | An accepted drywall specification. |
+| Independent use | BLOCKED — DEPENDENCY IDENTIFIED |
+| Workflow use | BLOCKED — DEPENDENCY IDENTIFIED |
+| Dependency class | TRUE PLATFORM DEPENDENCY |
+| Required dependencies | An accepted drywall formula. |
 | Existing implementation | None. |
 | What is missing | The engine. |
 | Build acceptance criteria | One governed engine. |
@@ -352,9 +372,10 @@ Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESIS
 |-------|--------|
 | Diagram location | Construction intelligence — flooring |
 | Purpose | Governed flooring quantities. |
-| Independent use | NOT STARTED |
-| Workflow use | NOT STARTED |
-| Required dependencies | An accepted flooring specification. |
+| Independent use | BLOCKED — DEPENDENCY IDENTIFIED |
+| Workflow use | BLOCKED — DEPENDENCY IDENTIFIED |
+| Dependency class | TRUE PLATFORM DEPENDENCY |
+| Required dependencies | An accepted flooring formula. |
 | Existing implementation | None. |
 | What is missing | The engine. |
 | Build acceptance criteria | One governed engine. |
@@ -730,86 +751,76 @@ Architecture or stored rows are not a finished learning product.
 
 ```text
 ICF manufacturer profile registry
-  data is in the repository
-  live closure blocked on hosted migration and deploy
-ICF quantities
-  design specification present at c1ab362
-  still blocked where a profile field is NOT_ESTABLISHED
-  and on the approved production-hours standard
+  CLOSED — LIVE VERIFIED
+ICF 8-inch form and concrete quantities
+  RUNTIME INPUT for area and corner counts
+  manufacturer method is already in the profile
+  not a development blocker
 ICF dollar labour
-  not blocked
-  ORG-001 DirectLabourCostRateStandard is $65 CAD per man-hour
-ICF hours
-  BLOCKED — LABOUR AUTHORITY DEPENDENCY
-  no approved ProductionRateStandard for ICF
-  Pratt hours are evidence, not a rate
+  INSTANCE-OWNER INPUT
+  ORG-001 is $65 CAD per man-hour
+ICF labour hours
+  RUNTIME INPUT
+  confirmed allowance
+  Pratt hours stay evidence
 
 Framing, Roofing, Siding, Drywall, Flooring
-  blocked on a governed V1 specification
-  (formula authority, assumptions, inputs, outputs, test vectors,
-   Contract V1 compatibility, public/private classification,
-   Platform workflow boundary)
+  TRUE PLATFORM DEPENDENCY
+  no accepted formula
 
-Start Project, Guided Project Setup, Plan Generation
-  blocked on governed deploy of the accepted product SHA
-  and hosted migration from last recorded k1f2a3b4c5d6
-  through l2f3a4b5c6d7 and m3f4a5b6c7d8
+Concrete and Stair workflow use
+  TRUE PLATFORM DEPENDENCY
+  public formulas stay on the Website
+  this repository does not copy them
 
 Contract Signing
-  blocked on an empty Legal Content Gate and the absence of
-  counsel-approved production contract content
-  Family 05 is a commercial draft
-  an accepted proposal is not a contract
+  TRUE PLATFORM DEPENDENCY
+  no counsel-approved production package
 
 Build / Manage
-  blocked on a governed production-management specification
-  Field Web, observations, and the calendar are not that specification
+  TRUE PLATFORM DEPENDENCY
+  no accepted finished-stage specification
 
 Actuals
-  blocked on a governed actuals authority for labour, materials,
-  equipment, and subcontract cost
-  FG-023 direct-cost actuals are not that authority
+  RUNTIME INPUT for a direct-cost amount
+  TRUE PLATFORM DEPENDENCY for a finished quantity-actuals product
 
 Complete / Close
-  blocked on a governed closeout decision
-  no migration from this row
+  TRUE PLATFORM DEPENDENCY
+  no completion sign-off
 
 Learn & Improve
-  blocked on Actuals
-
-Ready to Price
-  not started
-  the first-gap foundation is not the full capability
+  TRUE PLATFORM DEPENDENCY
+  the learning product is not built
 
 Analytics / Reporting
-  not started
+  TRUE PLATFORM DEPENDENCY
+  no accepted reporting specification
 
 Future engines
-  deferred
+  DEFERRED
 ```
 
 ## Ready components
 
-None on the resume wave of 1 Oct 2026.
+The 8-inch ICF form and concrete quantity slice is build-ready. Wall area and corner counts are runtime inputs. The dollar rate already exists. Labour hours are a confirmed allowance. The result uses Contract V1 and stays internal.
 
-This repository and the Website calculation-engine library were searched for Framing, Roofing, Siding, Drywall, and Flooring specifications. None exist. No source file was sufficient to write those formulas without inventing them. No specification was drafted.
-
-Contract Signing, Build / Manage, Actuals, Complete / Close, Learn & Improve, and Analytics / Reporting were inspected. None can be built now. Reasons are in the blocked table. Start Project, Guided Project Setup, and Plan Generation remain blocked on hosted migration and deploy. That migration was not run.
+Framing, Roofing, Siding, Drywall, and Flooring are not build-ready. No accepted formula exists. Concrete and Stair are not rebuilt here.
 
 ## Blocked components
 
 | Component | Exact dependency |
 |-----------|------------------|
-| ICF quantities | Profile fields that remain `NOT_ESTABLISHED`, including Logix standard coverage and concrete volume, and Nudura concrete volume. Corner coverage and packaging factors that are still `NOT_ESTABLISHED` are the same class of gap. |
-| ICF hours | BLOCKED — APPROVED PRODUCTION STANDARD REQUIRED. No approved ICF `ProductionRateStandard`. The $65 CAD man-hour rate is already governed and is not this dependency. |
+| ICF quantities | Not a development blocker. Eight-inch form and concrete methods are source-backed. Closure waits on the quality gate. |
+| ICF hours | RUNTIME INPUT. The estimator confirms the allowance. No ICF production standard is seeded. |
 | Framing | Governed V1 specification: formula authority, assumptions, inputs, outputs, test vectors, Contract V1 compatibility, public/private classification, Platform workflow boundary. |
 | Roofing | The same missing set as Framing. |
 | Siding | The same missing set as Framing. |
 | Drywall | The same missing set as Framing. |
 | Flooring | The same missing set as Framing. |
-| Start Project | Live acceptance walk. The code is on live SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Hosted revision is `m3f4a5b6c7d8`. |
-| Guided Project Setup | Same live acceptance walk. |
-| Plan Generation | Live walk that generates a candidate and registers a drawing only on Use. Migration `m3f4a5b6c7d8` is applied. |
+| Start Project | None. CLOSED — LIVE VERIFIED on deploy `dep-dav6kt8jo6nc73fpglg0`. |
+| Guided Project Setup | None. CLOSED — LIVE VERIFIED on that same deploy. |
+| Plan Generation | None. CLOSED — LIVE VERIFIED on that same deploy. |
 | Contract Signing | Legal Content Gate is empty. Production legal packages are 0. Family 05 is not legally approved. |
 | Build / Manage | No governed specification for execution, progress, labour, materials, equipment, issues, and task execution. |
 | Actuals | No governed capture of actual labour, materials, equipment, and subcontract cost against the estimate, contract, and change orders. |
@@ -826,7 +837,7 @@ No formulas were written.
 
 | Engine | Missing dependency |
 |--------|-------------------|
-| ICF | Profile fields listed on the ICF row. Dollar rate is governed. Hours need an approved production standard. Classification is internal Platform only. |
+| ICF | Eight-inch form and concrete methods are in the profile. Hours are a runtime allowance. Classification is internal Platform only. |
 | Framing | The full V1 specification set. |
 | Roofing | The full V1 specification set. |
 | Siding | The full V1 specification set. |
@@ -837,8 +848,21 @@ No formulas were written.
 
 ICF PROFILE REGISTRY: CLOSED — LIVE VERIFIED. Deploy `dep-dav6kt8jo6nc73fpglg0`. SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Hosted revision `m3f4a5b6c7d8`.
 
-ICF ESTIMATOR: BLOCKED — DEPENDENCY IDENTIFIED. Remaining profile gaps stay `NOT_ESTABLISHED`.
+ICF ESTIMATOR: the 8-inch form and concrete service is in this revision. It is not closed until the quality gate, including live verification, is recorded.
 
-ICF LABOUR: BLOCKED — APPROVED PRODUCTION STANDARD REQUIRED. The ORG-001 dollar rate is unchanged.
+ICF LABOUR: RUNTIME INPUT for hours. INSTANCE-OWNER INPUT for the existing ORG-001 dollar rate. No second rate is created.
 
-Start Project, Guided Project Setup, and Plan Generation are on that live SHA. Their remaining dependency is a live acceptance walk. No quantity engine was started.
+Start Project, Guided Project Setup, and Plan Generation are CLOSED — LIVE VERIFIED. The 1 Oct live walk also recorded non-blocking table overflow on the project hub at 520 and 390, and on the estimate versions table at 1280 with the sidebar open. That overflow is NON-BLOCKING UX/POLISH and is left for the later UX stitching phase.
+
+Remaining profile gaps that do not block the 8-inch standard quantity start:
+
+| Field | Current value | Required for 8-inch form and concrete? | Classification | Governed path | Blocks the engine? |
+|-------|---------------|------------------------------------------|----------------|---------------|---------------------|
+| Logix standard coverage | 5.33 sf, verified | Yes | Approved manufacturer source | USA Design Manual | No |
+| Logix per-form concrete | NOT_ESTABLISHED | No. The 0.667 ft cavity factor is the stated method | Approved manufacturer source | Use the stored factor | No |
+| Nudura standard concrete | 0.306 yd3, verified | Yes | Approved manufacturer source | Installation Manual 2.2.3 | No |
+| Corner counts | Supplied per wall | Yes | RUNTIME INPUT | Enter the count, including zero | No |
+| Fox packaging | NOT_ESTABLISHED | No for the form count | INSTANCE-OWNER INPUT | Enter a supplier-confirmed bundle quantity | No |
+| Approved reinforcement default | NOT_ESTABLISHED | No for form and concrete | RUNTIME INPUT | The project schedule | No |
+| ICF labour hours | No production standard | No for form and concrete | RUNTIME INPUT | Confirm a labour-hour allowance | No |
+| ICF labour dollar rate | $65 CAD per man-hour | When a price is formed later | INSTANCE-OWNER INPUT | Existing ORG-001 standard | No |

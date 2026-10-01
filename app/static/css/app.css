@@ -2345,3 +2345,34 @@ body.login-page {
     }
 }
 
+.drawing-requirement {
+    margin: 0 0 16px;
+    max-width: 42rem;
+}
+
+.drawing-requirement p {
+    margin: 0 0 12px;
+    line-height: 1.5;
+}
+
+.drawing-requirement-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 100%;
+}
+
+.drawing-requirement-actions button {
+    max-width: 100%;
+}
+
+@media (max-width: 520px) {
+    .drawing-requirement-actions {
+        flex-direction: column;
+    }
+
+    .drawing-requirement-actions button {
+        width: 100%;
+    }
+}
+

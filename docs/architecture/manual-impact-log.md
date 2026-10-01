@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — PGE-6 (2026-10-01)
+
+| Field | Content |
+|-------|---------|
+| Slice | PGE-6. Project drawing requirement. |
+| Product status at capture | Plan Generation Engine **IN PRODUCTIZATION**. This slice **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. Not deployed. |
+| 1. What new contractor capability exists? | On the project page, the contractor can say drawings are required or drawings are not required. |
+| 2. When would the contractor use it? | When a project has no current drawing and the office has not yet said whether drawings are needed. |
+| 3. What workflow will the final Manual need to teach? | Open the project. If a drawing decision is required, choose Drawings are required or Drawings are not required. Required with no drawing opens the existing drawings page, where Upload PDF and Build Drawings already exist. A project that already has a current drawing does not have to answer that question. Changing the choice later does not remove the drawing. |
+| 4. What contractor-facing terms must be used? | Drawing decision required. Drawings are required. Drawings are not required. Current drawing. Open drawings. |
+| 5. What screenshots / Print examples will eventually be needed? | The project drawings panel on a desktop and on a phone, for a decision still required, for not required, and for a project that already has a current drawing. Not captured here. |
+| 6. What warnings / validation distinctions need explanation? | The choice is not made for the contractor. Not required does not create a drawing. An archived drawing does not count as a current drawing. |
+| 7. Desktop / iPhone / Print relevance | Desktop and phone-width project page. No print sheet is created by the choice. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — PGE-5 (2026-10-01)
 
 | Field | Content |

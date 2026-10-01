@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — PGE-6 governed project drawing requirement
+
+| Field | Content |
+|-------|---------|
+| Milestone | PGE-6 governed project drawing requirement |
+| Status | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** SNP-3 **CLOSED AS A SLICE**. SNP-2 **READY FOR RULE 16 RE-AUDIT**. |
+| Branch | `main` |
+| Base commit | `d9e38cebbefa7d92df46916ee96b4118e77049fc` |
+| Objective | Record whether drawings are required, and derive present from a current plan. |
+| Deliverables | `projects.drawing_requirement`. Revision `m3f4a5b6c7d8`. Project-page choice. Read-only walk states `UNKNOWN`, `NOT_REQUIRED`, `REQUIRED_MISSING`, and `PRESENT`. |
+| Validation | Focused plan, project, and walk tests 100 passed, 167 warnings, 38.07s, exit 0. Full suite 1916 passed, 6679 warnings, 1017.33s, exit 0. Temporary office: unknown, not required, required and missing, generate then use, upload, decision change with drawings kept, and archived plans. 1280 and 520 have no page overflow. At 390 the decision block fits. The existing office header is 11px wider than the viewport. |
+| Architectural findings | Present is not stored. A current plan satisfies the drawing stage while the stored choice can remain unknown. Required and missing uses the existing plans page. Changing the choice does not delete plans. |
+| Open decisions | SNP-2 still needs a Rule 16 re-audit before it is built. Guided Project Setup remains recorded and not built. |
+| Next milestone | SNP-2 Rule 16 re-audit. Not started. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — PGE-5 Build Drawings on the existing plans page
 
 | Field | Content |

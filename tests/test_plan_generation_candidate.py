@@ -31,7 +31,6 @@ from app.services.plan_generation.candidates import (
 )
 from app.services.project_work_package import project_plans
 from app.services.start_project_walk import (
-    EVIDENCE_DRAWING_DECISION_NOT_DERIVABLE,
     EVIDENCE_DRAWINGS_PRESENT,
     resolve_start_project_walk,
 )
@@ -117,7 +116,7 @@ def test_candidate_is_not_current_until_explicit_use(tmp_path):
         assert project_plans(DEFAULT_ORGANIZATION_ID, project.id) == []
         walk = resolve_start_project_walk(DEFAULT_ORGANIZATION_ID, project.id)
         assert EVIDENCE_DRAWINGS_PRESENT not in walk.evidence
-        assert EVIDENCE_DRAWING_DECISION_NOT_DERIVABLE in walk.evidence
+        assert walk.drawing_state == "UNKNOWN"
 
         used = use_generated_candidate(
             DEFAULT_ORGANIZATION_ID,
@@ -323,7 +322,30 @@ def test_existing_plan_rows_upgrade_as_uploaded(tmp_path):
     with application.app_context():
         upgrade(revision="k1f2a3b4c5d6")
         ensure_default_organization()
-        project = _project(DEFAULT_ORGANIZATION_ID, "Legacy")
+        client_row = Client(name="Legacy client", organization_id=DEFAULT_ORGANIZATION_ID)
+        db.session.add(client_row)
+        db.session.commit()
+        created = datetime.utcnow().isoformat(sep=" ")
+        db.session.execute(
+            text(
+                """
+                INSERT INTO projects (
+                    organization_id, name, status, client_id, address, created_at,
+                    operating_state, operating_state_changed_at
+                ) VALUES (
+                    :organization_id, 'Legacy', 'Lead', :client_id, '12 Oak Street',
+                    :created_at, 'ACTIVE', :created_at
+                )
+                """
+            ),
+            {
+                "organization_id": DEFAULT_ORGANIZATION_ID,
+                "client_id": client_row.id,
+                "created_at": created,
+            },
+        )
+        db.session.commit()
+        project_id = db.session.execute(text("SELECT id FROM projects")).scalar()
         db.session.execute(
             text(
                 """
@@ -337,7 +359,7 @@ def test_existing_plan_rows_upgrade_as_uploaded(tmp_path):
                 """
             ),
             {
-                "project_id": project.id,
+                "project_id": project_id,
                 "sha": "d" * 64,
                 "created_at": datetime.utcnow().isoformat(sep=" "),
             },

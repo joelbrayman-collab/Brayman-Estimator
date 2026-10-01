@@ -18,6 +18,8 @@ from flask import (
 from flask_login import current_user
 
 from app.models.project import Project
+from app.services.project_drawing_requirement import derive_drawing_state
+from app.services.project_work_package import project_plans
 from app.services.build import (
     BuildConflictError,
     BuildNotFoundError,
@@ -99,11 +101,16 @@ def _hub_monitor_redirect(project):
 def _render_hub_with_actuals_form(project, form, *, supersede_actual_id=None, status=400):
     org_id = get_current_organization_id()
     hub = assemble_project_hub(project, org_id)
+    drawing_state = derive_drawing_state(
+        project.drawing_requirement,
+        bool(project_plans(org_id, project.id)),
+    )
     return (
         render_template(
             "projects/detail.html",
             project=project,
             hub=hub,
+            drawing_state=drawing_state,
             estimates=hub["estimates"],
             proposals=hub["proposals"],
             change_orders=hub["change_orders"],

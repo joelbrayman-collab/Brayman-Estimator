@@ -28,6 +28,15 @@ DEFAULT_PERMIT_CONTEXT_CLASS = "Other/unspecified"
 
 OPERATING_STATE_ACTIVE = "ACTIVE"
 OPERATING_STATE_CLOSED = "CLOSED"
+
+DRAWING_REQUIREMENT_UNKNOWN = "UNKNOWN"
+DRAWING_REQUIREMENT_REQUIRED = "REQUIRED"
+DRAWING_REQUIREMENT_NOT_REQUIRED = "NOT_REQUIRED"
+DRAWING_REQUIREMENTS = (
+    DRAWING_REQUIREMENT_UNKNOWN,
+    DRAWING_REQUIREMENT_REQUIRED,
+    DRAWING_REQUIREMENT_NOT_REQUIRED,
+)
 OPERATING_STATES = (OPERATING_STATE_ACTIVE, OPERATING_STATE_CLOSED)
 
 OPERATING_EVENT_CLOSE = "CLOSE"
@@ -100,6 +109,10 @@ class Project(db.Model):
             "operating_state IN ('ACTIVE', 'CLOSED')",
             name="ck_projects_operating_state",
         ),
+        db.CheckConstraint(
+            "drawing_requirement IN ('UNKNOWN', 'REQUIRED', 'NOT_REQUIRED')",
+            name="ck_projects_drawing_requirement",
+        ),
         db.Index(
             "ix_projects_organization_id_operating_state",
             "organization_id",
@@ -142,6 +155,12 @@ class Project(db.Model):
         db.ForeignKey("users.id", ondelete="RESTRICT"),
         nullable=True,
         index=True,
+    )
+    drawing_requirement = db.Column(
+        db.String(20),
+        nullable=False,
+        default=DRAWING_REQUIREMENT_UNKNOWN,
+        server_default=DRAWING_REQUIREMENT_UNKNOWN,
     )
 
     organization = db.relationship("Organization", back_populates="projects")

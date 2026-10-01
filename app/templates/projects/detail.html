@@ -375,6 +375,25 @@
             <h2>Drawings</h2>
             <a href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">All drawings</a>
         </div>
+        <div id="drawing-requirement" class="drawing-requirement">
+            {% if drawing_state == "UNKNOWN" %}
+            <p>Drawing decision required. Choose whether this project needs drawings. That choice is not made for you.</p>
+            {% elif drawing_state == "NOT_REQUIRED" %}
+            <p>Drawings are not required for this project. No drawing was created.</p>
+            {% elif drawing_state == "REQUIRED_MISSING" %}
+            <p>Drawings are required. None are on this project yet. Open drawings to upload a PDF or build a drawing.</p>
+            <p><a class="button" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Open drawings</a></p>
+            {% else %}
+            <p>This project has a current drawing, so the drawing stage is satisfied. You do not have to answer whether drawings were required. Changing that choice does not remove the drawing.</p>
+            {% endif %}
+            <form method="post" action="{{ url_for('projects.set_project_drawing_requirement_choice', id=project.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="drawing-requirement-actions">
+                    <button type="submit" name="drawing_requirement" value="REQUIRED">Drawings are required</button>
+                    <button type="submit" name="drawing_requirement" value="NOT_REQUIRED">Drawings are not required</button>
+                </div>
+            </form>
+        </div>
         {% if hub.plan_documents %}
         <ul class="activity-list">
             {% for document in hub.plan_documents %}

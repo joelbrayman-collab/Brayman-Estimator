@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — PGE-6 governed project drawing requirement
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLAN GENERATION ENGINE PGE-6 — GOVERNED PROJECT DRAWING REQUIREMENT DECISION 1 OCT 2026 |
+| Objective | Store whether a project requires drawings, and let the existing resolver derive present, not required, required and missing, or a decision still needed. |
+| Business decision | Existing projects start unknown. Unknown never becomes not required by itself. A current drawing satisfies the drawing stage without forcing that question. Required and missing uses the existing plans page. |
+| Architectural decision | `projects.drawing_requirement` stores only `UNKNOWN`, `REQUIRED`, and `NOT_REQUIRED`. Present, missing, and Build Drawings stay derived or actions. SNP-1 stays read-only. PGE-5 is not changed. |
+| Prompt template used | Joel’s 1 Oct 2026 PGE-6 prompt. No file in docs/prompts/ covers this slice. |
+| Approved Cursor prompt summary | One column. Existing rows `UNKNOWN`. Decision on the project page. Required and missing opens the existing plans page. Resolver derives four states. No SNP-2. No Guided Project Setup. No second Build Drawings page. Migration approved for this column only. Do not migrate Mac primary or hosted Render. Full suite. One commit. Do not deploy. |
+| Feature Gate | Answered in that prompt. Problem: the drawings branch could not record not required, and unknown could not stay unknown. User: a contractor on an existing project. Owner: Projects for the stored choice; Plan Intelligence for the current plan. Data owned: `projects.drawing_requirement`. Data referenced: non-archived `PlanDocument` rows. May change: the project page, the read-only walk, and one migration. Must not change: PGE-5, calculators, trade engines, Contract V1, Website, authentication, plan origin, or other schema. Acceptance: the four drawing paths continue, archived plans do not satisfy present, and a decision change leaves existing plans in place. Tests: `tests/test_project_drawing_requirement.py`. ADR: no. Migration: yes, `m3f4a5b6c7d8`. |
+| Files expected to change | Project model, one migration, drawing-requirement service, project page, read-only walk, tests, and status lines. |
+| Files prohibited from changing | PGE-5 Build Drawings behaviour, SNP-2, Guided Project Setup, Website, Contract V1, calculators, authentication, and Mac or hosted migration. |
+| Implementation result | PGE-6 closed as a slice. Project drawing requirement is implemented. Present is derived. SNP-3 is closed as a slice. SNP-2 is ready for a Rule 16 re-audit. Guided Project Setup remains recorded and not built. |
+| Tests | Focused plan, project, and walk set `./venv/bin/python -m pytest -q tests/test_project_drawing_requirement.py tests/test_start_project_walk.py tests/test_plan_generation_build_drawings.py tests/test_plan_generation_candidate.py tests/test_plan_generation_stair.py tests/test_plan_generation_render.py tests/test_plan_generation_request.py tests/test_plan_upload.py tests/test_project_work_packages.py` — 100 passed, 167 warnings, 38.07s, exit 0. Full suite `./venv/bin/python -m pytest -q` — 1916 passed, 6679 warnings, 1017.33s, exit 0. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | SNP-2 is not built. Its Rule 16 re-audit is the next action and was not performed here. Guided Project Setup remains recorded and not built. Mac primary and hosted databases were not migrated. Deployment was not performed. |
+| Next approved step | None from this entry. Do not start SNP-2 until a later prompt authorizes the Rule 16 re-audit, and do not implement SNP-2 inside that audit. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — PGE-5 Build Drawings on the existing plans page
 
 | Field | Content |

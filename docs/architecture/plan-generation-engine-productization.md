@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **IN PRODUCTIZATION.** PGE-1 **CLOSED**. PGE-2 **CLOSED**. PGE-3 **CLOSED**. PGE-4 **CLOSED**. PGE-5 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. Build Drawings on the existing plans page supports `dimensioned_plan`. A generated sheet is a candidate until explicit use creates one `PlanDocument`. |
+| Status | **IN PRODUCTIZATION.** PGE-1 **CLOSED**. PGE-2 **CLOSED**. PGE-3 **CLOSED**. PGE-4 **CLOSED**. PGE-5 **CLOSED**. PGE-6 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. Build Drawings on the existing plans page supports `dimensioned_plan`. A generated sheet is a candidate until explicit use creates one `PlanDocument`. `projects.drawing_requirement` stores unknown, required, or not required. Present is derived. |
 | Date | 2026-09-30 |
 | Drawing law | [construction-drawing-standard.md](construction-drawing-standard.md) |
 | Proof | [../estimating-cases/2026/linda-bushel-pool-deck/](../estimating-cases/2026/linda-bushel-pool-deck/) |
@@ -306,7 +306,7 @@ No `start_project_walk` drawing code. No service named for Linda Bushel.
 | PGE-3 | `stair_detail` profile | Stair sheet from supplied stair geometry. | Recorded rise, run, and counts are fixture data. A second fixture uses other geometry. | `app/services/plan_generation/render.py` and `tests/test_plan_generation_stair.py` | None | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** Throat and nosing text appear only when the geometry result includes them. The PDF is not a project plan. | Both stair sheets were read. The flights differ. Title, scale, origin, and the disclaimer are readable. | `MISSING_STAIR_GEOMETRY` produces no PDF. | Stop if the profile recalculates rise, run, or throat, or copies Website stair code. |
 | PGE-4 | Candidate, review, and `PlanDocument` on use | Accepted output is a normal project plan. | The product test keeps the prior `PlanDocument`. | `app/services/plan_generation/candidates.py`, `app/models/plan_generation_candidate.py`, revision `l2f3a4b5c6d7` | Candidate record and `PlanDocument.origin`. | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** Use creates one non-archived plan. A second generation does not delete it. Another organization cannot use it. An unaccepted candidate is not current drawing evidence. | Service walk on a temporary database. No page. | Unaccepted candidates do not satisfy SNP-1. | Stop if acceptance needs a second document product. |
 | PGE-5 | Build Drawings on the existing plans page | Direct project entry. | None as a layout. | `app/plan_intelligence/routes.py` `list_plans`, `build_drawings`, `review_built_drawing`, `use_built_drawing`. `app/templates/plan_intelligence/list.html`. `app/services/plan_generation/build_drawings.py`. | None | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** The plans page offers Build Drawings for `dimensioned_plan` only. Upload stays available and stays `origin=uploaded`. Missing geometry explains the requirement and stores nothing. Generate persists a candidate through PGE-4. Use creates one `PlanDocument` with `origin=generated`. A second candidate does not delete the first. | Temporary office: missing geometry, generate, explicit use, upload, second candidate, and cross-organization rejection. 1280 and 520 have no page overflow. At 390 the Build Drawings block fits. The existing office header is 11px wider than the viewport. | No dead end on a missing input. No control for `stair_detail`. | Stop if the page is a Start New Project wizard. |
-| PGE-6 | SNP-3 drawings decision | Resolver names unknown, not required, required-missing, and present. | None | `start_project_walk.py`, project field, tests | `drawing_requirement` column. Separate migration approval. | Tests A–F from the SNP-3 stop. Build path uses PGE-5. | Present, not required, upload, and build each continue the walk. | All seven SNP destinations pass, or SNP-2 stays blocked. | Stop if the slice builds another engine or implements SNP-2. |
+| PGE-6 | SNP-3 drawings decision | Resolver names unknown, not required, required-missing, and present. | None | `app/services/project_drawing_requirement.py`, `app/services/start_project_walk.py`, `app/routes/projects.py`, `app/templates/projects/detail.html`, revision `m3f4a5b6c7d8` | `projects.drawing_requirement`. | **IMPLEMENTED / TESTED / CLOSED AS A SLICE.** Stored values are `UNKNOWN`, `REQUIRED`, and `NOT_REQUIRED`. A current non-archived plan derives `PRESENT` even when the stored choice is `UNKNOWN`. `NOT_REQUIRED` with no current plan clears the gate and creates no plan. `REQUIRED` with no current plan is `REQUIRED_MISSING` and uses the existing plans page. Archived plans do not count. Changing the choice does not delete plans. | Temporary office: unknown, not required, required and missing, generate then use, upload, decision change, and archived plans. 1280 and 520 have no page overflow. At 390 the decision block fits. The existing office header is 11px wider than the viewport. | Four drawing paths continue. SNP-2 was not implemented. | Stop if the slice builds another engine or implements SNP-2. |
 
 ## 18. Proving strategy
 
@@ -340,17 +340,17 @@ PGE-1 needs no browser pass. PGE-5 does.
 
 ## 20. Migration strategy
 
-No migration in the original planning pass. PGE-4 adds repository revision `l2f3a4b5c6d7`. Mac primary stays `h8c9d0e1f2a3`. Hosted revision stays last recorded `k1f2a3b4c5d6`. Neither database was migrated by this slice.
+No migration in the original planning pass. PGE-4 adds repository revision `l2f3a4b5c6d7`. PGE-6 adds repository revision `m3f4a5b6c7d8`. Mac primary stays `h8c9d0e1f2a3`. Hosted revision stays last recorded `k1f2a3b4c5d6`. Neither database was migrated by this slice.
 
 Later, each revision needs its own approval:
 
 | Delta | When | Why existing tables are not enough |
 |-------|------|-------------------------------------|
 | Generation candidate, plus `plan_documents.origin` | PGE-4 | An unaccepted PDF cannot be a non-archived `PlanDocument`, because that row already means current drawings. |
-| `projects.drawing_requirement` | PGE-6 | No project column stores `UNKNOWN`, `REQUIRED`, and `NOT_REQUIRED`. |
+| `projects.drawing_requirement` | PGE-6 | **ADDED** as repository revision `m3f4a5b6c7d8`. Existing rows are `UNKNOWN`. Mac primary and the hosted database were not migrated. |
 
 No workflow-state table is added for this decision. Rollback of either revision removes only that addition. Plan history is not deleted.
 
 ## 21. Recommended next implementation slice
 
-PGE-1, PGE-2, PGE-3, PGE-4, and PGE-5 are closed as slices. Build Drawings on the existing plans page supports `dimensioned_plan`. `stair_detail` remains an engine profile and is not selectable there. `projects.drawing_requirement` is not migrated. The programme is not complete. PGE-6, the SNP-3 drawings decision, is next and is not started. It needs a separate migration approval. SNP-2 and SNP-3 stay blocked. Guided Project Setup stays recorded and not built.
+PGE-1, PGE-2, PGE-3, PGE-4, PGE-5, and PGE-6 are closed as slices. Build Drawings on the existing plans page supports `dimensioned_plan`. `stair_detail` remains an engine profile and is not selectable there. `projects.drawing_requirement` is implemented. Present is derived. Build Drawings remains an action. The programme is not complete. SNP-3 is closed as a slice. SNP-2 is ready for a Rule 16 re-audit and is not started. Guided Project Setup stays recorded and not built.

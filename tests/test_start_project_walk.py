@@ -215,7 +215,8 @@ def test_client_and_location_without_drawings_stay_on_drawings(app):
     assert result.stage == STAGE_DOCUMENTS_DRAWINGS
     assert result.destination == "DRAWINGS"
     assert result.waiting == WAITING_DRAWINGS
-    assert "DRAWING_DECISION_NOT_DERIVABLE" in result.evidence
+    assert result.drawing_state == "UNKNOWN"
+    assert "UNKNOWN" in result.evidence
     assert "REQUIRED_MISSING" not in result.evidence
     assert "NOT_REQUIRED" not in result.evidence
 

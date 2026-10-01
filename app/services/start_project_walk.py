@@ -2,6 +2,10 @@
 
 The resolver names the next governed stage from existing project records.
 It does not store a cursor, calculate, price, or generate drawings.
+
+A current non-archived plan is PRESENT even when drawing_requirement is
+UNKNOWN. The contractor is not asked to decide merely because drawings
+already exist. UNKNOWN without a current plan stays UNKNOWN.
 """
 
 from __future__ import annotations
@@ -12,6 +16,13 @@ from app.models.client import Client
 from app.models.estimate import Estimate
 from app.models.project import LOCATION_COMPLETE, Project, ProjectLocation
 from app.models.project_work_package import DELIVERY_INTERNAL
+from app.services.project_drawing_requirement import (
+    DRAWING_STATE_NOT_REQUIRED,
+    DRAWING_STATE_PRESENT,
+    DRAWING_STATE_REQUIRED_MISSING,
+    DRAWING_STATE_UNKNOWN,
+    derive_drawing_state,
+)
 from app.services.project_work_package import list_confirmed, project_plans
 
 STAGE_PROJECT_CLIENT = "PROJECT_CLIENT"
@@ -51,7 +62,10 @@ EVIDENCE_CLIENT_MISSING = "CLIENT_MISSING"
 EVIDENCE_LOCATION_COMPLETE = "LOCATION_COMPLETE"
 EVIDENCE_LOCATION_INCOMPLETE = "LOCATION_INCOMPLETE"
 EVIDENCE_DRAWINGS_PRESENT = "DRAWINGS_PRESENT"
-EVIDENCE_DRAWING_DECISION_NOT_DERIVABLE = "DRAWING_DECISION_NOT_DERIVABLE"
+EVIDENCE_DRAWING_STATE_PRESENT = DRAWING_STATE_PRESENT
+EVIDENCE_DRAWING_STATE_NOT_REQUIRED = DRAWING_STATE_NOT_REQUIRED
+EVIDENCE_DRAWING_STATE_REQUIRED_MISSING = DRAWING_STATE_REQUIRED_MISSING
+EVIDENCE_DRAWING_STATE_UNKNOWN = DRAWING_STATE_UNKNOWN
 EVIDENCE_SCOPE_CONFIRMED = "SCOPE_CONFIRMED"
 EVIDENCE_SCOPE_ABSENT = "SCOPE_ABSENT"
 EVIDENCE_ENGINE_NOT_APPLICABLE = "ENGINE_NOT_APPLICABLE"
@@ -74,6 +88,7 @@ class StartProjectWalkResolution:
     destination: str
     waiting: str | None
     evidence: tuple[str, ...]
+    drawing_state: str
     estimate_id: int | None = None
 
 
@@ -104,6 +119,10 @@ def resolve_start_project_walk(organization_id, project_id) -> StartProjectWalkR
         location is not None and location.completeness == LOCATION_COMPLETE
     )
     drawings_present = bool(project_plans(organization_id, project.id))
+    drawing_state = derive_drawing_state(
+        project.drawing_requirement,
+        drawings_present,
+    )
     packages = list_confirmed(organization_id, project.id)
     estimates = (
         Estimate.query.filter_by(
@@ -124,11 +143,11 @@ def resolve_start_project_walk(organization_id, project_id) -> StartProjectWalkR
         if location_complete
         else EVIDENCE_LOCATION_INCOMPLETE
     )
-    evidence.append(
-        EVIDENCE_DRAWINGS_PRESENT
-        if drawings_present
-        else EVIDENCE_DRAWING_DECISION_NOT_DERIVABLE
-    )
+    if drawing_state == DRAWING_STATE_PRESENT:
+        evidence.append(EVIDENCE_DRAWINGS_PRESENT)
+        evidence.append(EVIDENCE_DRAWING_STATE_PRESENT)
+    else:
+        evidence.append(drawing_state)
     if packages:
         evidence.append(EVIDENCE_SCOPE_CONFIRMED)
         if any(package.delivery == DELIVERY_INTERNAL for package in packages):
@@ -154,7 +173,10 @@ def resolve_start_project_walk(organization_id, project_id) -> StartProjectWalkR
         stage = STAGE_LOCATION
         destination = DEST_LOCATION
         waiting = WAITING_SITE
-    elif not drawings_present:
+    elif drawing_state not in (
+        DRAWING_STATE_PRESENT,
+        DRAWING_STATE_NOT_REQUIRED,
+    ):
         stage = STAGE_DOCUMENTS_DRAWINGS
         destination = DEST_DRAWINGS
         waiting = WAITING_DRAWINGS
@@ -181,5 +203,6 @@ def resolve_start_project_walk(organization_id, project_id) -> StartProjectWalkR
         destination=destination,
         waiting=waiting,
         evidence=tuple(evidence),
+        drawing_state=drawing_state,
         estimate_id=estimate_id,
     )

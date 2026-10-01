@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | Recorded product requirement. PGE-5 Build Drawings on the existing plans page supports `dimensioned_plan`. Explicit use registers a generated plan. `stair_detail` remains an engine profile and is not on that page. Productization plan: [plan-generation-engine-productization.md](plan-generation-engine-productization.md). |
+| Status | Recorded product requirement. PGE-5 Build Drawings on the existing plans page supports `dimensioned_plan`. Explicit use registers a generated plan. `stair_detail` remains an engine profile and is not on that page. A project stores whether drawings are required. A current plan is present. Productization plan: [plan-generation-engine-productization.md](plan-generation-engine-productization.md). |
 | Date | 2026-09-29 |
 | Authority | Joel’s visual standard for CalibraytAI construction drawings |
 

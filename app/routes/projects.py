@@ -40,6 +40,14 @@ from app.services.project_punch_list import (
     list_open_punch_list_items,
 )
 from app.services.project_client import ProjectClientError, correct_project_client
+from app.services.project_drawing_requirement import (
+    DRAWING_STATE_PRESENT,
+    DRAWING_STATE_REQUIRED_MISSING,
+    ProjectDrawingRequirementError,
+    derive_drawing_state,
+    set_project_drawing_requirement,
+)
+from app.services.project_work_package import project_plans
 from app.services.permit_foundation import (
     PermitFoundationError,
     establish_project_location_and_profile,
@@ -109,10 +117,15 @@ def view_project(id):
     org_id = get_current_organization_id()
     project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
     hub = assemble_project_hub(project, org_id)
+    drawing_state = derive_drawing_state(
+        project.drawing_requirement,
+        bool(project_plans(org_id, project.id)),
+    )
     return render_template(
         "projects/detail.html",
         project=project,
         hub=hub,
+        drawing_state=drawing_state,
         estimates=hub["estimates"],
         proposals=hub["proposals"],
         change_orders=hub["change_orders"],
@@ -124,6 +137,41 @@ def view_project(id):
         **hub_punch_list_template_vars(project, org_id, current_user),
         **hub_walkthrough_template_vars(project, org_id, current_user),
     )
+
+
+@projects_bp.route("/<int:id>/drawing-requirement", methods=["POST"])
+def set_project_drawing_requirement_choice(id):
+    org_id = get_current_organization_id()
+    project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
+    try:
+        set_project_drawing_requirement(
+            organization_id=org_id,
+            project_id=project.id,
+            requirement=request.form.get("drawing_requirement", ""),
+        )
+    except ProjectDrawingRequirementError as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("projects.view_project", id=project.id))
+    drawing_state = derive_drawing_state(
+        project.drawing_requirement,
+        bool(project_plans(org_id, project.id)),
+    )
+    if drawing_state == DRAWING_STATE_REQUIRED_MISSING:
+        flash("Drawings are required. None are on this project yet.", "success")
+        return redirect(
+            url_for("plan_intelligence.list_plans", project_id=project.id)
+        )
+    if drawing_state == DRAWING_STATE_PRESENT:
+        flash(
+            "The drawing choice is recorded. Current drawings stay on the project.",
+            "success",
+        )
+    else:
+        flash(
+            "Drawings are not required for this project. No drawing was added.",
+            "success",
+        )
+    return redirect(url_for("projects.view_project", id=project.id))
 
 
 @projects_bp.route("/<int:id>/workflow-documents")

@@ -38,7 +38,7 @@ Proposal generation already exists. Plan Intelligence is the next major platform
 | Capability | Status |
 |------------|--------|
 | Project-scoped PDF upload | **Done** (M005). Origin stays `uploaded`. |
-| Build Drawings | **Done for `dimensioned_plan` (PGE-5).** On `/projects/<id>/plans`. Generate stores a candidate. Use writes `PlanDocument.origin = generated`. `stair_detail` is not offered on this page. |
+| Build Drawings | **Done for `dimensioned_plan` (PGE-5).** On `/projects/<id>/plans`. Generate stores a candidate. Use writes `PlanDocument.origin = generated`. `stair_detail` is not offered on this page. A required project with no current plan uses this same page. |
 | Private filesystem storage | **Done** (M005) |
 | Metadata register (`plan_documents`) | **Done** (M005) |
 | List / detail / download | **Done** |

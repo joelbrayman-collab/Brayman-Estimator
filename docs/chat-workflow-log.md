@@ -43,6 +43,32 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Construction Model completeness refusal
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 1 — CONSTRUCTION MODEL + COMPLETENESS REFUSAL 1 OCT 2026 |
+| Objective | Implement the deck-class Construction Model and the completeness refusal. No drawing output. |
+| Business decision | A missing required construction fact blocks a future construction set. The message names the fact. Optional facts do not block. Uncertainty stays. |
+| Architectural decision | One element store in `app/services/construction_model/`. No per-view geometry. No schema. PGE-1 through PGE-6 unchanged. The overall drawing set stays open. |
+| Prompt template used | Joel’s 1 Oct 2026 slice 1 prompt. |
+| Approved Cursor prompt summary | Construction Model plus completeness refusal only. No views, PDF, red-box UI, take-off, external CAD, Bushel edits, PGE edits, Contract V1, Website, or deploy. Focused tests, PGE regression, and the full suite. One commit. Push. Do not deploy. |
+| Feature Gate | None. Authorized slice beside closed PGE. |
+| Files expected to change | `app/services/construction_model/`, `tests/test_construction_model_completeness.py`, the drawing standard, the build register, architecture, current-state, session handoff, roadmap, and this log. |
+| Files prohibited from changing | Plan Generation, Bushel case files, Contract V1, Website, schema, migrations. |
+| Implementation result | Deck-class model and refusal implemented. Generation stays closed while a required fact is missing. No drawing artifact. |
+| Tests | Focused `./venv/bin/python -m pytest -q tests/test_construction_model_completeness.py`: 13 passed, 1 warning, 0.45s, exit 0. PGE regression `tests/test_plan_generation_request.py tests/test_plan_generation_render.py tests/test_plan_generation_stair.py tests/test_plan_generation_candidate.py tests/test_plan_generation_build_drawings.py`: 49 passed, 48 warnings, 14.01s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 1980 passed, 6780 warnings, 3326.71s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Views, sheets, and PDF are not built. The register row stays open. |
+| Next approved step | A later slice may project views from this model. |
+| Next approved prompt | None in this slice. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. Live product SHA remains `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`. |
+
 ### 2026-10-01 — Construction Model and Drawing Set architecture close
 
 | Field | Content |

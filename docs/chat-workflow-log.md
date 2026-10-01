@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Live acceptance walk for Start Project, Guided Setup, and Plan Generation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI TACTICAL PLATFORM BUILD-OUT LIVE ACCEPTANCE WALK START PROJECT + GUIDED PROJECT SETUP + PLAN GENERATION 1 OCT 2026 |
+| Objective | Live-accept Start Project, Guided Project Setup, and Plan Generation on the already deployed office. |
+| Business decision | Use a labeled synthetic project and client. Do not alter production customer records. Do not delete rows outside the application. |
+| Architectural decision | No product change, no migration, and no deploy. Closure requires the workflow, not a 200 response. |
+| Prompt template used | Joel’s 1 Oct 2026 live acceptance walk prompt. |
+| Approved Cursor prompt summary | Walk Start Project, Guided Setup, drawing decision, Build Drawings, explicit Use, Scope, the three estimate cases, mapper confirmation, the ICF registry, organization isolation, responsive widths, and office smoke. Record defects. Do not repair them. |
+| Files expected to change | Register, handoff, current-state, workflow log, milestones, and the manual impact log. |
+| Files prohibited from changing | Application code, CSS, templates, calculators, migrations, Contract V1, Website, and authentication. |
+| Implementation result | Start Project, Guided Project Setup, and Plan Generation are **CLOSED — LIVE VERIFIED**. The ICF registry remains closed. The ICF quantity engine and ICF labour remain blocked. Synthetic project 51 and client 46 remain. |
+| Tests | No suite was run. This was a live walk. |
+| Project-state-report update | Not a milestone-score change. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Logix standard coverage and concrete volume. Nudura concrete volume. Approved ICF production-hours standard. Known 11px office-shell overflow at 390px. |
+| Next approved step | None. Do not start the quantity engine. |
+| Next approved prompt | None. |
+| Commit hash | The documentation commit that contains this entry. The deployed product SHA remains `ae115059d96028d0e3adf11d20c6ab7d5731901d`. |
+
 ### 2026-10-01 — ICF profile registry governed migration and live deploy
 
 | Field | Content |

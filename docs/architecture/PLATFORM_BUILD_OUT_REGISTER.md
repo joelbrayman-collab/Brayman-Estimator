@@ -5,10 +5,10 @@
 | Status | Tactical construction register |
 | Date | 2026-10-01 |
 | Repository | `/Users/joelbrayman/Desktop/Brayman-Estimator` |
-| Inspected HEAD | `c1ab362` plus this register update. Prior register commit `8b1d883`. |
-| Live product SHA | Last recorded `ca37d8b6939f6494b6ff415bad17953886366728`. Deploy `dep-daulf9u0tbcc73bomdgg`. Not re-proved in this recording. |
-| Hosted database | Last recorded `k1f2a3b4c5d6`. Not re-proved. Not migrated to repository head `m3f4a5b6c7d8`. |
-| Mac primary | Last verified `h8c9d0e1f2a3`. Not migrated. |
+| Inspected HEAD | This documentation commit. Deployed product SHA remains `ae115059d96028d0e3adf11d20c6ab7d5731901d`. |
+| Live product SHA | **VERIFIED** `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Deploy `dep-dav6kt8jo6nc73fpglg0`, status live, finished 2026-10-01T14:14:45Z. Auto-deploy off. |
+| Hosted database | **VERIFIED** `m3f4a5b6c7d8`. Not migrated in the 1 Oct acceptance walk. |
+| Mac primary | Last verified `h8c9d0e1f2a3`. Not migrated. Not used for this walk. |
 
 This register is the tactical source of truth for what gets built next. The lifecycle blueprint remains the strategic reference. A row is not closed because a route, an architecture note, or a local test exists.
 
@@ -23,9 +23,7 @@ Allowed statuses:
 
 ## Occupancy used for this record
 
-Live office verification already on record is the 30 Sep 2026 deploy of `ca37d8b6939f6494b6ff415bad17953886366728`. That walk covered the office logo, Home, Projects, Clients, What we pay, and Brand Profile. Hosted read-only UAT on 26 Sep 2026 opened Estimates, one Estimate, and Proposals. This 1 Oct recording did not open the live office again.
-
-Start New Project and Guided Project Setup are on `origin/main` and are not in that live SHA. Deployment of those commits was not performed. This register therefore does not mark them CLOSED — LIVE VERIFIED.
+The 1 Oct 2026 live acceptance walk used deploy `dep-dav6kt8jo6nc73fpglg0` at `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Hosted revision was `m3f4a5b6c7d8`. Auto-deploy stayed off. The walk used synthetic project 51 and synthetic client 46. It did not change product code and it did not deploy the later documentation commit.
 
 Concrete and Stair are closed on the public Website, not in this repository. Website Version 31 SHA `5dcb4f2b9cc0a291a16375f06ce89f09a02262cf` is the recorded live public checkpoint.
 
@@ -39,13 +37,13 @@ Concrete and Stair are closed on the public Website, not in this repository. Web
 |-------|--------|
 | Diagram location | Project lifecycle — start |
 | Purpose | Open a project for a client in this company and land on setup. |
-| Current status | BLOCKED — DEPENDENCY IDENTIFIED |
-| Required dependencies | Live acceptance walk on the office that is already at `ae115059d96028d0e3adf11d20c6ab7d5731901d` and hosted revision `m3f4a5b6c7d8`. The migration and deploy dependency is cleared. Auto-deploy stays off. |
-| Existing implementation | `/projects/new` redirects to Continue setup. Code is on `origin/main` at `f82641b81c7c5d8eae96156f0540e410f4073a6a`. Local suite after SNP-6: 1931 passed. |
-| What is missing | The live acceptance walk. Deploy `dep-dav6kt8jo6nc73fpglg0` of `ae115059d96028d0e3adf11d20c6ab7d5731901d` is live, and the hosted database is `m3f4a5b6c7d8`. A new project was not created in that deploy check. |
-| Build acceptance criteria | A new project in the live office opens Continue setup for that project. |
-| Live verification requirement | Walk new project on `https://calibryatai.onrender.com` after the deploy of the accepted SHA. |
-| Commit / deployed SHA when closed | Not closed. |
+| Current status | CLOSED — LIVE VERIFIED |
+| Required dependencies | None for opening a project and landing on Continue setup. |
+| Existing implementation | `/projects/new` redirects to Continue setup. SNP-1 resolver, SNP-2 entry, and the new-client then existing-client path are on the live SHA. |
+| What is missing | Nothing for this start. The future readiness model is a separate row. |
+| Build acceptance criteria | Met. A synthetic project opened Continue setup for that same project. |
+| Live verification requirement | Met on 1 Oct 2026. Project 51, client 46, number `UAT-2026-1001-WALK`, stage Lead. One project row. One client row. |
+| Commit / deployed SHA when closed | Deployed SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Deploy `dep-dav6kt8jo6nc73fpglg0`. Hosted revision `m3f4a5b6c7d8`. |
 
 ### GUIDED PROJECT SETUP
 
@@ -53,13 +51,13 @@ Concrete and Stair are closed on the public Website, not in this repository. Web
 |-------|--------|
 | Diagram location | Project lifecycle — guided setup |
 | Purpose | Read the project and open the existing page for the first gap. |
-| Current status | BLOCKED — DEPENDENCY IDENTIFIED |
-| Required dependencies | Same deploy and hosted-database dependency as Start Project. |
-| Existing implementation | `GET /projects/<id>/setup` in `app/routes/project_setup.py`. First gap in `app/services/start_project_walk.py`. Local end-to-end review on 1 Oct 2026 held through location, drawings, scope, estimate, and mapper confirmation. |
-| What is missing | The live acceptance walk. The setup code is on the live SHA. The 1 Oct local review is not a live close. |
-| Build acceptance criteria | Continue setup on the live office names the current project and one next existing page. |
-| Live verification requirement | Walk an existing project and a new project on the live office after deploy. |
-| Commit / deployed SHA when closed | Not closed. |
+| Current status | CLOSED — LIVE VERIFIED |
+| Required dependencies | None for the first-gap resume. |
+| Existing implementation | `GET /projects/<id>/setup` in `app/routes/project_setup.py`. First gap in `app/services/start_project_walk.py`. SNP-2 re-entry, SNP-4 Return to setup, and SNP-6 estimate handoff are on the live SHA. No stored wizard step. |
+| What is missing | Nothing for this first-gap resume. The future readiness model is a separate row. |
+| Build acceptance criteria | Met. Continue setup named project 51 and the current next page after each saved record. |
+| Live verification requirement | Met on 1 Oct 2026. Leaving and reopening setup recalculated location, drawings, scope, one estimate, and then two estimates. |
+| Commit / deployed SHA when closed | Deployed SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Deploy `dep-dav6kt8jo6nc73fpglg0`. Hosted revision `m3f4a5b6c7d8`. |
 
 ### READY TO PRICE
 
@@ -84,9 +82,9 @@ Concrete and Stair are closed on the public Website, not in this repository. Web
 | Current status | CLOSED — LIVE VERIFIED |
 | Required dependencies | None for the ordinary estimate already on the live office. |
 | Existing implementation | Estimates, versions, sections, and lines. Hosted read-only UAT on 26 Sep 2026 opened Estimates and one Estimate. Later deploys through `ca37d8b6939f6494b6ff415bad17953886366728` kept that office. |
-| What is missing | The guided setup handoff is not in the live SHA. That gap is recorded on Guided Project Setup, not as a second estimate. |
+| What is missing | Nothing for the ordinary estimate or the guided handoff. Workflow consumption of an engine is not this row. |
 | Build acceptance criteria | Already met for the ordinary estimate on the live office. |
-| Live verification requirement | Met by the recorded hosted UAT and the live deploy that still contains it. Not re-walked on 1 Oct 2026. |
+| Live verification requirement | Ordinary estimate remains on the live office. The 1 Oct 2026 walk also created synthetic estimates 38 and 39 and returned to them from Continue setup. |
 | Commit / deployed SHA when closed | Live SHA `ca37d8b6939f6494b6ff415bad17953886366728`. |
 
 ### PROPOSAL
@@ -248,7 +246,7 @@ The same engine serves independent use and workflow use. Do not build a second e
 | Existing implementation | `app/data/icf_manufacturer_profiles_v1.json` and `app/services/icf_manufacturer_profiles.py`. Four profiles, version 1. Missing facts stay `NOT_ESTABLISHED`. No route. No quantity formula. |
 | What is missing | Nothing for this registry. Logix standard coverage and concrete volume, and Nudura concrete volume, remain `NOT_ESTABLISHED` for the later engine. |
 | Build acceptance criteria | Met. Profiles load on the deployed office, sources stay attached, and a missing fact is named. |
-| Live verification requirement | Met on deploy `dep-dav6kt8jo6nc73fpglg0`. Hosted revision `m3f4a5b6c7d8`. Four 8-inch profiles loaded. No public ICF route. |
+| Live verification requirement | Met on deploy `dep-dav6kt8jo6nc73fpglg0` and reconfirmed on that same SHA during the 1 Oct acceptance walk. Four 8-inch profiles loaded. Sources stayed attached. Missing engine fields stayed unnamed as facts. Authenticated `/icf` returned 404. |
 | Commit / deployed SHA when closed | Implementation and deployed SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Deploy `dep-dav6kt8jo6nc73fpglg0`, status live, finished 2026-10-01T14:14:45Z. |
 
 ### ICF
@@ -409,7 +407,7 @@ A route is not a complete capability. Status uses the same four values.
 | Existing implementation | Scope of work is on the hosted office. Catalog remains Site work, Foundation, and Structure. Confirming work does not price it. |
 | What is missing | A confirmed package does not call an engine. |
 | Build acceptance criteria | Met for confirming work on the live office. |
-| Live verification requirement | Scope was included in the hosted office before the 30 Sep deploy. Not re-walked on 1 Oct 2026. |
+| Live verification requirement | Re-walked 1 Oct 2026 on synthetic project 51. Foundation / Subcontractor confirmed. Return to setup recalculated. Direct Scope remained available. |
 | Commit / deployed SHA when closed | Live SHA `ca37d8b6939f6494b6ff415bad17953886366728`. |
 
 ### Drawings & Documents
@@ -421,7 +419,7 @@ A route is not a complete capability. Status uses the same four values.
 | Current status | CLOSED — LIVE VERIFIED |
 | Required dependencies | None for upload and the drawings list already live. |
 | Existing implementation | Drawings list and upload are on the live office. Seven document families are registered. Most families are not yet available. |
-| What is missing | Build Drawings and the drawing-requirement decision are not on the live SHA. See Plan Generation. |
+| What is missing | Nothing for the drawings list, the drawing decision, or Build Drawings. See Plan Generation for the candidate and Use result. |
 | Build acceptance criteria | Met for the live drawings list. |
 | Live verification requirement | Drawings presentation deploy is inside the current live line. |
 | Commit / deployed SHA when closed | Live SHA `ca37d8b6939f6494b6ff415bad17953886366728`. |
@@ -432,13 +430,13 @@ A route is not a complete capability. Status uses the same four values.
 |-------|--------|
 | Diagram location | Core — plan generation |
 | Purpose | Build a dimensioned-plan candidate and register it only when the contractor uses it. |
-| Current status | BLOCKED — DEPENDENCY IDENTIFIED |
-| Required dependencies | Live walk that generates a candidate and registers a drawing only on Use. Hosted revision is `m3f4a5b6c7d8`. Live SHA is `ae115059d96028d0e3adf11d20c6ab7d5731901d`. The migration and deploy dependency is cleared. |
-| Existing implementation | In git: Build Drawings for `dimensioned_plan`, candidate, explicit use, and `projects.drawing_requirement`. `stair_detail` is an engine profile and is not on the plans page. |
-| What is missing | Live verification. |
-| Build acceptance criteria | Live plans page can generate a candidate and register a drawing only on Use. |
-| Live verification requirement | Live walk after the governed migration and deploy. |
-| Commit / deployed SHA when closed | Not closed. |
+| Current status | CLOSED — LIVE VERIFIED |
+| Required dependencies | None for dimensioned-plan Build Drawings. PGE-1 through PGE-6 are on this live SHA. |
+| Existing implementation | Build Drawings for `dimensioned_plan`, candidate, explicit use, and `projects.drawing_requirement`. `stair_detail` is refused on the plans page. |
+| What is missing | Nothing for this dimensioned-plan path. Other drawing types are not this row. |
+| Build acceptance criteria | Met. A candidate was generated and became a project drawing only after explicit Use. |
+| Live verification requirement | Met on 1 Oct 2026. Candidate 1 was not a drawing until Use. Plan document 4 has origin `generated`. Unsupported and incomplete requests were rejected. |
+| Commit / deployed SHA when closed | Deployed SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Deploy `dep-dav6kt8jo6nc73fpglg0`. Hosted revision `m3f4a5b6c7d8`. |
 
 ### Cost Management
 
@@ -463,7 +461,7 @@ A route is not a complete capability. Status uses the same four values.
 | Current status | CLOSED — LIVE VERIFIED |
 | Required dependencies | None for the ordinary estimate. |
 | Existing implementation | See lifecycle Estimate. |
-| What is missing | Guided handoff is not live. Workflow consumption of an engine is not built. |
+| What is missing | Workflow consumption of an engine is not built. The guided handoff was live-verified on 1 Oct 2026. |
 | Build acceptance criteria | Met for the ordinary estimate. |
 | Live verification requirement | Hosted UAT 26 Sep 2026, still in the live SHA. |
 | Commit / deployed SHA when closed | `ca37d8b6939f6494b6ff415bad17953886366728`. |
@@ -563,7 +561,7 @@ A route is not a complete capability. Status uses the same four values.
 | Existing implementation | `app/services/calculation_estimate_mapping.py`. Mapper human UAT is recorded PASS. A 30 Sep live smoke passed on the prior deploy, and the current live SHA still contains that office. |
 | What is missing | Setup does not start the mapper. A confirmed scope package does not call an engine. |
 | Build acceptance criteria | Met: nothing is added until confirmation. |
-| Live verification requirement | Recorded mapper UAT and live smoke. Not re-walked on 1 Oct 2026. |
+| Live verification requirement | Re-walked 1 Oct 2026. A thickened-edge result showed 0 added before confirmation. After an explicit confirm, line 135 held 9.45 m3. |
 | Commit / deployed SHA when closed | `ca37d8b6939f6494b6ff415bad17953886366728`. |
 
 ### Company Library
@@ -623,7 +621,7 @@ Architecture or stored rows are not a finished learning product.
 | Current status | CLOSED — LIVE VERIFIED |
 | Required dependencies | None. |
 | Existing implementation | Clients, projects, and project location are on the live office. |
-| What is missing | Guided setup’s location step is not on the live SHA. |
+| What is missing | Nothing for the live client, project, and location records. The 1 Oct walk completed location on project 51 and setup advanced from that record. |
 | Build acceptance criteria | Met for the live records. |
 | Live verification requirement | Clients checked 30 Sep 2026. |
 | Commit / deployed SHA when closed | `ca37d8b6939f6494b6ff415bad17953886366728`. |
@@ -637,7 +635,7 @@ Architecture or stored rows are not a finished learning product.
 | Current status | CLOSED — LIVE VERIFIED |
 | Required dependencies | Plan-generation tables are a separate blocked row. |
 | Existing implementation | Plan upload and the drawings list are live. |
-| What is missing | Hosted database does not have the PGE-4 candidate revision or the PGE-6 drawing-requirement revision. |
+| What is missing | Nothing for stored plans or the hosted candidate and drawing-requirement revisions. Hosted revision is `m3f4a5b6c7d8`. |
 | Build acceptance criteria | Met for documents already on the hosted database. |
 | Live verification requirement | Live drawings list is in the current deploy. |
 | Commit / deployed SHA when closed | `ca37d8b6939f6494b6ff415bad17953886366728`. |
@@ -665,7 +663,7 @@ Architecture or stored rows are not a finished learning product.
 | Current status | CLOSED — LIVE VERIFIED |
 | Required dependencies | None. |
 | Existing implementation | See Estimate and Proposal. |
-| What is missing | Guided handoff not live. |
+| What is missing | Nothing for the commercial records already live. The 1 Oct walk used synthetic estimates only. |
 | Build acceptance criteria | Met. |
 | Live verification requirement | Hosted UAT 26 Sep 2026. |
 | Commit / deployed SHA when closed | `ca37d8b6939f6494b6ff415bad17953886366728`. |

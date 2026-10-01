@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Live acceptance walk (2026-10-01)
+
+| Field | Content |
+|-------|---------|
+| Slice | Start Project, Guided Project Setup, and Plan Generation live acceptance. |
+| Product status at capture | **CLOSED — LIVE VERIFIED** on deploy `dep-dav6kt8jo6nc73fpglg0`. |
+| 1. What new contractor capability exists? | Start New Project opens Continue setup. Continue setup names the next existing page. Build Drawings can make a dimensioned-plan candidate, and Use adds it as a project drawing. |
+| 2. When would the contractor use it? | When opening a job, filling the first missing fact, or making a dimensioned plan from entered members. |
+| 3. What workflow will the final Manual need to teach? | Start the project, complete location, choose whether drawings are required, upload or build a drawing, confirm scope, then open or create the estimate. A generated sheet is not a project drawing until Use. A calculated quantity is not an estimate line until it is confirmed. |
+| 4. What contractor-facing terms must be used? | Start New Project. Continue setup. Build Drawings. Use. Return to setup. Choose an estimate. |
+| 5. What screenshots / Print examples will eventually be needed? | Continue setup, the drawing choice, Build Drawings, and the estimate handoff on a desktop and a phone. Not captured here. |
+| 6. What warnings / validation distinctions need explanation? | An unsupported drawing type is refused. An incomplete sheet is refused. A candidate is not a current drawing. Several estimates are not chosen automatically. |
+| 7. Desktop / iPhone / Print relevance | Checked at 1280, 520, and 390. The known 11px office-shell overflow at 390px remains. No print sheet was created. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — SNP-6 (2026-10-01)
 
 | Field | Content |

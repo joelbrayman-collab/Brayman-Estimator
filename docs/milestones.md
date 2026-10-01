@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — Start Project, Guided Setup, and Plan Generation live acceptance
+
+| Field | Content |
+|-------|---------|
+| Milestone | Live acceptance of Start Project, Guided Project Setup, and Plan Generation |
+| Status | **CLOSED — LIVE VERIFIED.** The ICF estimator and ICF labour are not closed. |
+| Branch | `main` |
+| Base commit | `ae115059d96028d0e3adf11d20c6ab7d5731901d` |
+| Objective | Prove the deployed workflow on the live office without a product change. |
+| Deliverables | Register close for those three components. Synthetic project 51 remains as the evidence record. |
+| Validation | Live walk on deploy `dep-dav6kt8jo6nc73fpglg0`. Hosted revision `m3f4a5b6c7d8`. No suite was run. |
+| Architectural findings | The resolver followed stored records. A candidate became a drawing only on explicit Use. A calculation line appeared only after confirmation. |
+| Open decisions | Remaining `NOT_ESTABLISHED` profile fields, and an approved ICF production-hours standard. |
+| Next milestone | None until a dependency-ready component exists. |
+| Commit | The documentation commit that contains this entry. Deployed product SHA remains `ae115059d96028d0e3adf11d20c6ab7d5731901d`. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — ICF profile registry live
 
 | Field | Content |

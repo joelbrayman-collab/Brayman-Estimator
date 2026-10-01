@@ -4,7 +4,7 @@
 
 Read this section first. The 30 Sep occupancy below it remains the live deploy record. It is not a claim that Start New Project is on the live SHA.
 
-Tactical build status is [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). The ICF manufacturer profile registry is **CLOSED — LIVE VERIFIED**. Live product SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Deploy `dep-dav6kt8jo6nc73fpglg0`, status live, finished 2026-10-01T14:14:45Z. Hosted database revision **VERIFIED** `m3f4a5b6c7d8` after the governed upgrade from verified `k1f2a3b4c5d6`. Mac primary was not modified. ICF quantities remain **BLOCKED — DEPENDENCY IDENTIFIED** where a profile field is `NOT_ESTABLISHED`. ICF hours remain **BLOCKED — APPROVED PRODUCTION STANDARD REQUIRED**. Auto-deploy remains off. Stash `stash@{0}` was not applied.
+Tactical build status is [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). Start Project, Guided Project Setup, and Plan Generation are **CLOSED — LIVE VERIFIED** on the 1 Oct 2026 acceptance walk. The ICF manufacturer profile registry remains **CLOSED — LIVE VERIFIED**. Live product SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Deploy `dep-dav6kt8jo6nc73fpglg0`, status live, finished 2026-10-01T14:14:45Z. Auto-deploy off. Hosted database revision **VERIFIED** `m3f4a5b6c7d8`. Mac primary was not modified. Synthetic UAT project 51 and client 46 remain on the hosted database. ICF quantities remain **BLOCKED — DEPENDENCY IDENTIFIED** where a profile field is `NOT_ESTABLISHED`. ICF hours remain **BLOCKED — APPROVED PRODUCTION STANDARD REQUIRED**. Stash `stash@{0}` was not applied. This documentation commit is not deployed.
 
 ## 0a. Prior fresh chat resume — 30 Sep 2026
 

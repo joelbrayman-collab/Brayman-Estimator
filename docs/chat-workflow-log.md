@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Supplier Pro Platform Partnership architecture
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI SUPPLIER PRO PLATFORM PARTNERSHIP V1 ARCHITECTURE RECORD + BUILD-OUT REGISTRATION 1 OCT 2026 |
+| Objective | Record the approved supplier sponsorship architecture and register it as not started. |
+| Business decision | Sponsorship provides entitlement. It does not own the contractor account or the contractor’s private data. |
+| Architectural decision | The layer is additive and supplier-neutral. BMR Winchester is the first pilot context. The contractor organization is not supplier-owned. |
+| Prompt template used | Joel’s 1 Oct 2026 Supplier Pro Platform Partnership record prompt. |
+| Approved Cursor prompt summary | Write the architecture record, register the eight-step queue as NOT STARTED, update the index and resume notes, commit documentation only, push, and do not deploy. |
+| Files expected to change | The new architecture record, the build-out register, the architecture index, the roadmap, the checklist, handoff, current-state, and this log. |
+| Files prohibited from changing | Product code, schema, routes, authentication, organizations, projects, estimates, and the Website. |
+| Implementation result | Architecture recorded. No product code. |
+| Tests | Not run. Documentation only. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a completed milestone. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The eight queued capabilities remain unbuilt. |
+| Next approved step | Do not implement from this record. The next component, when a later prompt authorizes it, is supplier identity / hierarchy and the sponsorship foundation. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — Global dependency re-audit and 8-inch ICF quantities
 
 | Field | Content |

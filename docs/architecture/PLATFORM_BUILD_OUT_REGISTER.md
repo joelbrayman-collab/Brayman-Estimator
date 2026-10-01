@@ -5,8 +5,8 @@
 | Status | Tactical construction register |
 | Date | 2026-10-01 |
 | Repository | `/Users/joelbrayman/Desktop/Brayman-Estimator` |
-| Inspected HEAD | This documentation commit. Deployed product SHA remains `ae115059d96028d0e3adf11d20c6ab7d5731901d`. |
-| Live product SHA | **VERIFIED** `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Deploy `dep-dav6kt8jo6nc73fpglg0`, status live, finished 2026-10-01T14:14:45Z. Auto-deploy off. |
+| Inspected HEAD | This documentation commit. It is not deployed. |
+| Live product SHA | **VERIFIED** `8fa27f4d2b176bb21d770a0dfd339749ca140b01`. Deploy `dep-dav7umm0tbcc73e2fneg`. Auto-deploy off. The 8-inch ICF quantity service was first deployed as `dep-dav7o7p42hec73dbraag` at `1ca26d99c1d95a297bfdf42ad6f07dbb6b0c749e`. |
 | Hosted database | **VERIFIED** `m3f4a5b6c7d8`. Not migrated in the 1 Oct acceptance walk. |
 | Mac primary | Last verified `h8c9d0e1f2a3`. Not migrated. Not used for this walk. |
 
@@ -747,6 +747,40 @@ Architecture or stored rows are not a finished learning product.
 
 ---
 
+## Supplier commercial layer
+
+This layer does not change the contractor platform. It is not implemented.
+
+### SUPPLIER PRO PLATFORM PARTNERSHIP
+
+| Field | Record |
+|-------|--------|
+| Diagram location | Around the contractor platform. Not inside organization ownership. |
+| Purpose | Supplier sponsorship and entitlement around an existing contractor organization. |
+| Current status | NOT STARTED |
+| Dependency class | Sequencing only. No item below is BLOCKED. |
+| Required dependencies | The contractor organization, project, estimate, and privacy boundary already exist and stay in place. Each later item depends on the item before it. External POS, ERP, and order integration is last and is not required for earlier measurement. |
+| Existing implementation | Organization isolation, membership, projects, clients, locations, calculation engines, Contract V1, the mapper, Cost Library, estimates, proposals, and change orders. Supplier Connection direction is already recorded. FG-029 is the closed office package workflow. FG-030 supplier login remains recorded and not authorized. None of that is this partnership. |
+| What is missing | The eight queued capabilities below. |
+| Build acceptance criteria | A later authorized slice for item 1 only, reusing the contractor organization and granting no unrestricted supplier membership. |
+| Live verification requirement | Not available. This row is architecture only. |
+| Commit / deployed SHA when closed | Not closed. This recording is not deployed. |
+
+Implementation sequence:
+
+1. Supplier identity / hierarchy. Depends on the existing organization boundary. Does not create a second contractor account.
+2. Sponsorship / entitlement. Depends on item 1. Ending sponsorship does not end or transfer the contractor account.
+3. Supplier permission / privacy foundation. Depends on item 2. Default visibility is aggregated and anonymized.
+4. Material Opportunity / attribution. Depends on item 3 and on a project material requirement. Classes are POTENTIAL, ATTRIBUTED, and VERIFIED.
+5. Contractor-authorized transaction. Depends on item 4. The contractor starts the share.
+6. Supplier ROI & Opportunity Dashboard. Depends on items 3 and 4. It can measure adoption and submitted opportunity before an external integration.
+7. Dealer / store reporting. Depends on items 1 and 6. One dealer does not see another dealer’s private commercial information.
+8. POS / ERP / order integrations. Depends on item 5. Later capability.
+
+BMR Winchester is the first pilot context. The row stays supplier-neutral.
+
+---
+
 ## Dependency graph
 
 ```text
@@ -799,6 +833,13 @@ Analytics / Reporting
 
 Future engines
   DEFERRED
+
+Supplier Pro Platform Partnership
+  NOT STARTED
+  additive sponsorship layer
+  sequence is identity, sponsorship, privacy, opportunity,
+  authorized transaction, ROI dashboard, dealer reporting,
+  then POS/ERP integration
 ```
 
 ## Ready components
@@ -851,6 +892,8 @@ ICF PROFILE REGISTRY: CLOSED — LIVE VERIFIED. Deploy `dep-dav6kt8jo6nc73fpglg0
 ICF ESTIMATOR: the internal 8-inch form and concrete service is CLOSED — LIVE VERIFIED. Deploy `dep-dav7o7p42hec73dbraag`. SHA `1ca26d99c1d95a297bfdf42ad6f07dbb6b0c749e`. Project workflow use remains NOT STARTED.
 
 ICF LABOUR: RUNTIME INPUT for hours. INSTANCE-OWNER INPUT for the existing ORG-001 dollar rate. No second rate is created.
+
+SUPPLIER PRO PLATFORM PARTNERSHIP: NOT STARTED. Architecture only. Not deployed. It does not change the contractor platform.
 
 Start Project, Guided Project Setup, and Plan Generation are CLOSED — LIVE VERIFIED. The 1 Oct live walk also recorded non-blocking table overflow on the project hub at 520 and 390, and on the estimate versions table at 1280 with the sidebar open. That overflow is NON-BLOCKING UX/POLISH and is left for the later UX stitching phase.
 

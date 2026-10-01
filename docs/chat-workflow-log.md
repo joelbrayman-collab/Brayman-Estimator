@@ -43,6 +43,57 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Construction Model and Drawing Set architecture close
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET ARCHITECTURE CLOSE + BUILD REGISTRATION 1 OCT 2026 |
+| Objective | Record the accepted Construction Model and drawing-set architecture. Register the component as not started. |
+| Business decision | The printed 11×17 construction set is the acceptance standard. A project drawing carries its governed status. A generic Plan Generation artifact may keep “Not a permit. Not a seal.” |
+| Architectural decision | Construction Model, then view definitions, then drawing engine, then the governed 11×17 sheet layer, then the print-ready set. The model is the geometry record. PGE-1 through PGE-6 stay closed and unchanged. FreeCAD, Blender, and OCCT are not the first implementation. Bushel sheet 5 is rejected. The component is NOT STARTED. |
+| Prompt template used | Joel’s 1 Oct 2026 architecture-close prompt. |
+| Approved Cursor prompt summary | Documentation only. Update the existing drawing standard, restore the false Sheet 5 sentence in the Plan Generation productization plan, add the register row, and update current-state, session handoff, roadmap, and this log. One commit. Push origin/main. Do not deploy. Do not modify Bushel. Do not implement product code. |
+| Feature Gate | None. Architecture record only. |
+| Files expected to change | `docs/architecture/construction-drawing-standard.md`, `docs/architecture/plan-generation-engine-productization.md`, `docs/architecture/PLATFORM_BUILD_OUT_REGISTER.md`, `docs/architecture.md`, `docs/current-state.md`, `docs/session-handoff.md`, `docs/platform-roadmap.md`, `docs/chat-workflow-log.md`. |
+| Files prohibited from changing | Product code, Bushel case files, Contract V1, Website, migrations, Render. |
+| Implementation result | Architecture recorded. Register row added as NOT STARTED. The uncommitted sentence that called J1 sheet 5 the graphic proof was restored to the committed wording. |
+| Tests | Documentation only. Suite not run. No product code changed. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Construction Model and Drawing Set is not built. The Bushel language pass and the rejected sheet 5 remain uncommitted case files and are outside this commit. |
+| Next approved step | A later prompt may authorize the Construction Model and the completeness refusal. No PDF while a required fact is missing. |
+| Next approved prompt | None in this close. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. Live product SHA remains `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`. |
+
+### 2026-10-01 — Bushel package job language
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI GLOBAL DOCUMENT + DRAWING BRANDING STANDARD ARCHITECTURE RECORD 1 OCT 2026 |
+| Objective | Remove case-file wording from the current Linda Bushel package. |
+| Business decision | A person in the field, the customer, Darcy, and Ben should not have to read internal trial names. |
+| Architectural decision | Historical 29 Sep case records stay as written. Only the current J1 package was rewritten. |
+| Prompt template used | Joel’s 1 Oct 2026 instruction to audit the package for prose. |
+| Approved Cursor prompt summary | Audit the current Bushel package and remove internal language such as approved geometry. |
+| Feature Gate | None reopened. |
+| Files expected to change | The J1 drawing generator, the current take-off, estimates, supplier request, and the Desktop package. |
+| Files prohibited from changing | Platform product code, 29 Sep historical case files, schema. |
+| Implementation result | Current J1 prose rewritten. Counts unchanged: 15 piers, 16 joists, 10 stringers, 76 bolts. Not committed in this note. |
+| Tests | Case generation only. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Repository changes from this language pass are not committed. |
+| Next approved step | Review, then commit if accepted. |
+| Next approved prompt | None. |
+| Commit hash | Not committed. |
+
 ### 2026-10-01 — Governed document and drawing branding
 
 | Field | Content |

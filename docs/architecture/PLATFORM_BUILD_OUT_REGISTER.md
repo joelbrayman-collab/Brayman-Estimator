@@ -914,6 +914,19 @@ No formulas were written.
 | Closure rule | No future document-generation component is closed until it meets the standard. |
 | Linda Bushel | The generic 1 Oct Markdown-to-PDF package is superseded. Historical case records stay. The replacement J1 files consume the governed identity and remain replaceable. |
 
+## Cross-cutting component — construction model and drawing set
+
+| Field | Record |
+|-------|--------|
+| Name | CONSTRUCTION MODEL AND DRAWING SET |
+| Purpose | One governed Construction Model projects every construction view, and the sheet layer composes those views onto a print-ready 11×17 set. |
+| Current status | **NOT STARTED**. The 1 Oct 2026 architecture investigation is accepted. Recording that decision does not start the component. |
+| Dependency class | PGE-1 through PGE-6 remain **CLOSED** and unchanged. |
+| Existing authority | [construction-drawing-standard.md](construction-drawing-standard.md). Branding remains [governed-document-and-drawing-output-standard.md](governed-document-and-drawing-output-standard.md). |
+| What this row is not | A change to `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, or the drawing requirement. Not FreeCAD. Not Blender. Not OCCT, CadQuery, or build123d. Not a Bushel script. Not a red-box screen. Not drawing-driven take-off. |
+| Closure rule | A Bushel-class construction set is generated from one governed model. A missing required fact causes refusal. Printed output is 11×17. No view invents geometry. Every view agrees with the model. |
+| First kernel rule | A geometric kernel may be evaluated later only when a real native projection cannot be satisfied. If introduced, it stays replaceable, runs out of process, and is not the model of record. |
+
 ## Current build
 
 ICF PROFILE REGISTRY: CLOSED — LIVE VERIFIED. Deploy `dep-dav6kt8jo6nc73fpglg0`. SHA `ae115059d96028d0e3adf11d20c6ab7d5731901d`. Hosted revision `m3f4a5b6c7d8`.
@@ -924,7 +937,7 @@ ICF LABOUR: RUNTIME INPUT for hours. INSTANCE-OWNER INPUT for the existing ORG-0
 
 SUPPLIER PRO PLATFORM PARTNERSHIP: NOT STARTED. Architecture only. Not deployed. It does not change the contractor platform.
 
-Start Project, Guided Project Setup, and Plan Generation are CLOSED — LIVE VERIFIED. The 1 Oct live walk also recorded non-blocking table overflow on the project hub at 520 and 390, and on the estimate versions table at 1280 with the sidebar open. That overflow is NON-BLOCKING UX/POLISH and is left for the later UX stitching phase.
+Start Project, Guided Project Setup, and Plan Generation are CLOSED — LIVE VERIFIED. CONSTRUCTION MODEL AND DRAWING SET is **NOT STARTED**. Acceptance of its architecture does not start it. The 1 Oct live walk also recorded non-blocking table overflow on the project hub at 520 and 390, and on the estimate versions table at 1280 with the sidebar open. That overflow is NON-BLOCKING UX/POLISH and is left for the later UX stitching phase.
 
 Remaining profile gaps that do not block the 8-inch standard quantity start:
 

@@ -52,3 +52,15 @@ Not final. Not sent. Does not replace issue P1 and does not change the take-off.
 | `geometry/2026-09-29-governed-geometry-reconciliation.md` | Layout trace. Piers, joists, stringers, and throat stay unresolved. No quantity was changed. |
 | `costing/2026-09-29-ben-internal-cost.md` | Internal cost sheet for Ben. Every line is PRICE REQUIRED. Not sent. |
 | `supplier/bmr-winchester/2026-09-29-darcy-quantity-differences.md` | Differences from the unsent Darcy request. Not sent. |
+
+## Case package — 1 Oct 2026
+
+Does not replace issue P1. Does not choose the open pier, joist, or stringer counts. Does not add a price. Not sent to Darcy. Not a permit approval and not an engineering seal.
+
+| Path | What it is |
+|------|------------|
+| `drawings/2026-10-01-issue-status.md` | Names the P1 PDF as the 11×17 package and records the visual check. |
+| `takeoff/2026-10-01-quantity-reconciliation.md` | Arithmetic check and the lines that stay unresolved. |
+| `supplier/bmr-winchester/2026-10-01-supplier-package-status.md` | Current unsent supplier package. Prices stay blank. |
+| `estimates/internal/2026-10-01-ben-internal-cost.md` | Internal sheet for Ben. Every dollar is PRICE REQUIRED. |
+| `estimates/customer/2026-10-01-preliminary-customer-estimate.md` | Customer scope. Selling price is not issued. |

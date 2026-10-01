@@ -117,3 +117,17 @@ Only after a governed learning review, and only as evidence:
 - Skirt boards were specified tight, without a designed ventilation slot.
 
 Those points describe this job. They do not reset the work catalog, a calculation engine, or a cost default.
+
+## 1 Oct 2026 case package
+
+The 29 Sep 2026 rows above stay as the preservation record. They are not rewritten.
+
+On 1 Oct 2026 the issued P1 PDF remained the drawing package. CT-1 and CT-2 R2 remained comparison sheets. No pier count, joist count, or stringer count was selected. No price was added. The customer sheet is a preliminary scope with the selling price not issued. The internal sheet for Ben keeps every dollar as PRICE REQUIRED. The Darcy request remains unsent.
+
+New files from that pass:
+
+- `drawings/2026-10-01-issue-status.md`
+- `takeoff/2026-10-01-quantity-reconciliation.md`
+- `supplier/bmr-winchester/2026-10-01-supplier-package-status.md`
+- `estimates/internal/2026-10-01-ben-internal-cost.md`
+- `estimates/customer/2026-10-01-preliminary-customer-estimate.md`

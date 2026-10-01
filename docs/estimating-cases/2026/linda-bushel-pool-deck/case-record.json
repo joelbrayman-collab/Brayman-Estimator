@@ -90,9 +90,26 @@
   "still_absent": [
     "client_sketch",
     "client_approval_drawing",
-    "customer_facing_estimate",
     "priced_internal_estimate",
+    "issued_selling_price",
     "supplier_quote",
     "street_number"
-  ]
+  ],
+  "issue_2026_10_01": {
+    "date": "2026-10-01",
+    "role": "Case package index. Does not replace issue P1. Does not select a pier, joist, or stringer count. Does not price.",
+    "drawing_package": "drawings/2026-09-29-p1-preliminary-11x17.pdf",
+    "drawing_status": "PRELIMINARY CONSTRUCTION AND SUPPLIER PRICING BASIS SUBJECT TO PERMIT REVIEW AND FIELD VERIFICATION",
+    "sent_to_darcy": false,
+    "permit_approval": false,
+    "engineering_seal": false,
+    "selling_price_issued": false,
+    "files": [
+      "drawings/2026-10-01-issue-status.md",
+      "takeoff/2026-10-01-quantity-reconciliation.md",
+      "supplier/bmr-winchester/2026-10-01-supplier-package-status.md",
+      "estimates/internal/2026-10-01-ben-internal-cost.md",
+      "estimates/customer/2026-10-01-preliminary-customer-estimate.md"
+    ]
+  }
 }

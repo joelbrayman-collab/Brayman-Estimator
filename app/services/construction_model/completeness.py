@@ -129,6 +129,8 @@ def assess_construction_model(payload: Any) -> ConstructionModelAssessment:
     level_ids = {item["id"] for item in levels}
     optional, optional_issues = _optional(payload, known_ids, level_ids)
     issues.extend(optional_issues)
+    stairs, stair_issues = _stair_results(payload.get("stair_results", []))
+    issues.extend(stair_issues)
     uncertainty, uncertainty_issue = _uncertainty(payload.get("uncertainty", []))
     if uncertainty_issue is not None:
         issues.append(uncertainty_issue)
@@ -148,6 +150,7 @@ def assess_construction_model(payload: Any) -> ConstructionModelAssessment:
         "uncertainty": list(uncertainty),
     }
     accepted.update(optional)
+    accepted["stair_results"] = stairs
     return ConstructionModelAssessment(
         complete=True,
         generation_permitted=True,
@@ -461,6 +464,18 @@ def _optional_item(collection: str, index: int, item: Any, known_ids: set, level
         if name is None:
             return None, [_need(CODE_MISSING_FACT, f"materials[{identifier}].name", f"A name for material {identifier}")]
         recorded["name"] = name
+        subject = item.get("subject_id", None)
+        if subject is not None:
+            subject_id = plain_text(subject)
+            if subject_id is None or (subject_id not in known_ids and subject_id not in level_ids):
+                return None, [
+                    _need(
+                        CODE_MISSING_FACT,
+                        f"materials[{identifier}].subject_id",
+                        f"A member, support, or level for material {identifier}",
+                    )
+                ]
+            recorded["subject_id"] = subject_id
         return recorded, []
     if collection == "dimensions":
         value = item.get("value")
@@ -495,6 +510,98 @@ def _optional_item(collection: str, index: int, item: Any, known_ids: set, level
     recorded["code"] = code
     recorded["note"] = statement
     return recorded, []
+
+
+_STAIR_FACT_KEYS = (
+    "rise",
+    "run",
+    "throat",
+    "nosing",
+    "stringer_count",
+    "tread_count",
+    "stair_width",
+)
+
+
+def _stair_results(value: Any):
+    """Keep a supplied stair result. Do not calculate or fill its facts."""
+    if value is None:
+        value = []
+    if not isinstance(value, list):
+        return [], [_need(CODE_INVALID_FACT, "stair_results", "A list of stair results")]
+    parsed = []
+    issues = []
+    seen = set()
+    for index, item in enumerate(value):
+        field = f"stair_results[{index}]"
+        if not isinstance(item, Mapping):
+            issues.append(_need(CODE_INVALID_FACT, field, f"A stair result at position {index + 1}"))
+            continue
+        identifier = plain_text(item.get("id"))
+        if identifier is None:
+            issues.append(_need(CODE_MISSING_FACT, f"{field}.id", f"An id for stair result {index + 1}"))
+            continue
+        if identifier in seen:
+            issues.append(
+                _need(CODE_INVALID_FACT, f"{field}.id", f"A distinct id for stair result {identifier}")
+            )
+            continue
+        seen.add(identifier)
+        provenance, provenance_issue = _provenance(
+            item.get("provenance"),
+            f"stair_results[{identifier}].provenance",
+            f"stair result {identifier}",
+        )
+        if provenance_issue is not None:
+            issues.append(provenance_issue)
+            continue
+        member_ids = []
+        raw_ids = item.get("member_ids", [])
+        if raw_ids is None:
+            raw_ids = []
+        if not isinstance(raw_ids, list):
+            issues.append(
+                _need(
+                    CODE_INVALID_FACT,
+                    f"stair_results[{identifier}].member_ids",
+                    f"The members named by stair result {identifier}",
+                )
+            )
+            continue
+        member_ok = True
+        for member_id in raw_ids:
+            text = plain_text(member_id)
+            if text is None:
+                issues.append(
+                    _need(
+                        CODE_MISSING_FACT,
+                        f"stair_results[{identifier}].member_ids",
+                        f"A member id for stair result {identifier}",
+                    )
+                )
+                member_ok = False
+                break
+            member_ids.append(text)
+        if not member_ok:
+            continue
+        recorded = {"id": identifier, "provenance": provenance, "member_ids": member_ids}
+        for key in _STAIR_FACT_KEYS:
+            if key not in item:
+                continue
+            if not is_number(item.get(key)):
+                issues.append(
+                    _need(
+                        CODE_INVALID_FACT,
+                        f"stair_results[{identifier}].{key}",
+                        f"A numeric {key.replace('_', ' ')} for stair result {identifier}",
+                    )
+                )
+                recorded = None
+                break
+            recorded[key] = item[key]
+        if recorded is not None:
+            parsed.append(recorded)
+    return parsed, issues
 
 
 def _uncertainty(value: Any):

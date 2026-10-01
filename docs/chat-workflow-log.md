@@ -43,6 +43,32 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Stair, section, detail, and schedule views
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 4 — STAIR / SECTION / DETAIL / SCHEDULE VIEW WAVE 1 OCT 2026 |
+| Objective | Project stair, section, detail, and schedule views from the Construction Model and compose them on governed 11×17 sheets. |
+| Business decision | A stair view uses a supplied result. It does not calculate rise, run, throat, nosing, stringer count, tread count, or stair width. A missing fact refuses that view. The sheet does not scale to fit. |
+| Architectural decision | One model remains the geometry store. Section and detail definitions name a cut or an element. They do not carry geometry. Schedules read members, supports, materials, and governed dimensions. Extra views use further 11×17 sheets. |
+| Prompt template used | Joel’s 1 Oct 2026 slice 4 prompt. |
+| Approved Cursor prompt summary | One view wave from the existing model. No red-box UI, take-off, external CAD, Bushel edits, PGE edits, or deploy. Focused tests, PGE regression, and the full suite. One commit. Push. |
+| Feature Gate | None. Authorized slice beside closed PGE. |
+| Files expected to change | `app/services/construction_model/views.py`, completeness, the element store, the sheet composer, the package init, view tests, the drawing standard, the build register, architecture, current-state, session handoff, roadmap, and this log. |
+| Files prohibited from changing | Plan Generation, Bushel case files, Contract V1, Website, schema, migrations. |
+| Implementation result | Stair, section, detail, and schedule views read one model. A missing required fact refuses the affected view. Sheets stay at the stated scale. |
+| Tests | Focused construction-model tests 48 passed, 4 warnings, 1.65s, exit 0. PGE regression 49 passed, 48 warnings, 10.93s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2015 passed, 6783 warnings, 894.56s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The Bushel-class printed set is not generated. The register row stays open. |
+| Next approved step | A later slice may run the Bushel proving set from this model, still without redrawing the rejected sheet. |
+| Next approved prompt | None in this slice. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. Live product SHA remains `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`. |
+
 ### 2026-10-01 — Governed 11×17 construction sheet
 
 | Field | Content |

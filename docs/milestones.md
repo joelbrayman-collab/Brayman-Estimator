@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — Resume wave after ICF dependency
+
+| Field | Content |
+|-------|---------|
+| Milestone | Resume after the ICF dependency |
+| Status | **STOPPED.** No dependency-ready component. ICF quantities remain blocked. ICF hours are a separate labour-authority block. The dollar rate is not. |
+| Branch | `main` |
+| Base commit | `de59fc7a43ec17dd64afe41390809ba4713f1c9f` |
+| Objective | Continue the build wave past ICF. |
+| Deliverables | Register update only. |
+| Validation | Labour service inspected. Engine library searched. Lifecycle gates read. Stash `stash@{0}` not applied. |
+| Architectural findings | ORG-001 $65 CAD per man-hour is the governed dollar rate. No ICF production standard exists. No Framing, Roofing, Siding, Drywall, or Flooring specification exists. |
+| Open decisions | Manufacturer profile numbers. An approved ICF production standard, if one is later accepted. It is not the Pratt record. |
+| Next milestone | None until a dependency-ready specification exists. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — Continuous build wave
 
 | Field | Content |

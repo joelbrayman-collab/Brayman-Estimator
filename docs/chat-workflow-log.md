@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Resume wave after ICF dependency
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI TACTICAL PLATFORM BUILD-OUT CONTINUOUS BUILD WAVE — RESUME AFTER ICF DEPENDENCY 1 OCT 2026 |
+| Objective | Keep building after ICF. Inspect labour, the other engines, and the lifecycle. |
+| Business decision | Use the existing ORG-001 $65 CAD man-hour rate. Do not invent an ICF production rate or another engine’s formula. |
+| Architectural decision | Dollar labour is `DirectLabourCostRateStandard`. ICF hours need an approved `ProductionRateStandard`, which is not seeded. Framing, Roofing, Siding, Drywall, and Flooring have no specification in this repository or the Website calculation-engine library. Lifecycle rows inspected are not buildable without a missing authority or an unsafe migration. |
+| Prompt template used | Joel’s 1 Oct 2026 resume-after-ICF prompt. |
+| Approved Cursor prompt summary | Record exact ICF profile fields. Inspect labour before calling it blocked. Audit the other engines and lifecycle. Build every dependency-ready component. Do not invent formulas. Do not stop the wave only because ICF is blocked. |
+| Feature Gate | No product code. No new gate. |
+| Files expected to change | The register and status pointers. |
+| Files prohibited from changing | Product code, schema, Contract V1, Website, calculators, stash. |
+| Implementation result | No component was dependency-ready. Nothing was built. |
+| Tests | No product code. Full suite not re-run. Last recorded suite remains 1931 passed, 6759 warnings, 984.33s, exit 0. |
+| Project-state-report update | Unchanged beyond the existing pointer. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. |
+| Unresolved issues | ICF profile fields. ICF production-rate standard. Hosted migration. |
+| Next approved step | Add the versioned manufacturer profiles. Do not seed an ICF hour rate from the Pratt record. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — Continuous build wave; ICF profile numbers missing
 
 | Field | Content |

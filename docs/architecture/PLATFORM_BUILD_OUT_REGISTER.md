@@ -245,14 +245,34 @@ The same engine serves independent use and workflow use. Do not build a second e
 | Purpose | Internal governed ICF takeoff: materials, labour inputs, and direct-cost inputs. Final selling price stays with estimating. |
 | Independent use | BLOCKED — DEPENDENCY IDENTIFIED |
 | Workflow use | BLOCKED — DEPENDENCY IDENTIFIED |
-| Required dependencies | The design specification is present: `docs/architecture/Brayman_ICF_Estimator_V1_Design_Specification.md`, commit `c1ab362`. The quantity engine remains blocked. Missing from that file: versioned manufacturer profiles with block dimensions, wall coverage, concrete-volume factors, and packaging, each tied to approved primary documentation; approved reinforcement defaults for StyroRail, Logix, and Nudura when no engineered schedule is supplied; a governed labour rate. The Mike Pratt note, 200 hours for about 1,680 square feet and a planning range of 220–240 hours, is evidence, not a rate. Fox Blocks already requires a project schedule. Contract V1 can carry `icf_wall`. It does not supply these numbers. |
+| Required dependencies | Design specification present at commit `c1ab362`. Quantity engine blocked on the profile fields listed below. Dollar labour is not blocked: ORG-001 `DirectLabourCostRateStandard` is $65 CAD per man-hour and approved. ICF hours are blocked: no approved `ProductionRateStandard` for ICF exists. Pratt 200 hours, planning range 220–240, midpoint 230, stays evidence. |
 | Existing implementation | The design specification only. No ICF calculator, route, or formula. |
 | What is missing | The profile numbers and the engine. Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESISTO membrane except Nudura, ICFVL at 16 inches on centre, anchors at 36 inches on centre, 50 anchors per box, and 10-foot 2×4 plates with a 50 percent purchase allowance. |
 | Build acceptance criteria | After the specification is in the repository: one internal engine, two fixtures, no public page, no second estimate, no silent price, no project or estimate mutation during calculation. |
 | Live verification requirement | After implementation, deploy, and a live internal walk. Not available while the specification is missing. |
 | Commit / deployed SHA when closed | Not closed. No ICF commit. |
 
-The 1 Oct 2026 continuous wave read the design specification. It authorizes no public calculator and no second estimate. It does not contain block geometry or a labour formula. Those numbers were not invented. Anchor spacing, the 2×4 allowance, and the membrane names are in the specification and are not sufficient for the required take-off.
+Missing manufacturer-profile fields, for StyroRail, Logix, Nudura, and Fox Blocks, each source-attributed and versioned:
+
+- product identifiers
+- core sizes actually offered
+- standard-unit length, height, and wall coverage
+- corner-unit coverage
+- brick-ledge unit coverage, and which standard units it replaces
+- specialty-unit list
+- tie, web, clip, and connector count
+- concrete-volume factor
+- membrane order-unit size and coverage (the membrane name is already stated)
+- packaging quantity and order rounding
+- reinforcement bar size and spacing for StyroRail, Logix, and Nudura when no engineered schedule is supplied
+
+Fox Blocks reinforcement is not missing a default. The specification requires a project schedule.
+
+Dollar labour authority, inspected 1 Oct 2026: `app/services/labour_engine.py` seeds ORG-001 `DirectLabourCostRateStandard` at $65 CAD per man-hour from `docs/pricing-policy.md`. That rate is organization policy, not an ICF rate, and not a platform default. ICF must use it. It must not create a second dollar rate.
+
+ICF hours: **BLOCKED — LABOUR AUTHORITY DEPENDENCY**. `ProductionRateStandard` exists and no ICF standard is seeded. The Pratt record is not that standard.
+
+Stated defaults that are not a full take-off: 8-inch core, 25 MPa ICF mix, RESISTO except Nudura, ICFVL at 16 inches on centre, anchors at 36 inches on centre, 50 anchors per box, and 10-foot 2×4 plates with a 50 percent purchase allowance.
 
 ### FRAMING
 
@@ -697,11 +717,16 @@ Architecture or stored rows are not a finished learning product.
 ## Dependency graph
 
 ```text
-ICF engine
+ICF quantities
   design specification present at c1ab362
-  blocked on versioned manufacturer profile numbers
-  and a governed labour rate
-  Pratt hours in the specification are evidence, not a rate
+  blocked on the manufacturer-profile fields in the ICF row
+ICF dollar labour
+  not blocked
+  ORG-001 DirectLabourCostRateStandard is $65 CAD per man-hour
+ICF hours
+  BLOCKED — LABOUR AUTHORITY DEPENDENCY
+  no approved ProductionRateStandard for ICF
+  Pratt hours are evidence, not a rate
 
 Framing, Roofing, Siding, Drywall, Flooring
   blocked on a governed V1 specification
@@ -749,13 +774,18 @@ Future engines
 
 ## Ready components
 
-None on 1 Oct 2026. The design specification is present. The manufacturer profile numbers and the labour rate are not.
+None on the resume wave of 1 Oct 2026.
+
+This repository and the Website calculation-engine library were searched for Framing, Roofing, Siding, Drywall, and Flooring specifications. None exist. No source file was sufficient to write those formulas without inventing them. No specification was drafted.
+
+Contract Signing, Build / Manage, Actuals, Complete / Close, Learn & Improve, and Analytics / Reporting were inspected. None can be built now. Reasons are in the blocked table. Start Project, Guided Project Setup, and Plan Generation remain blocked on hosted migration and deploy. That migration was not run.
 
 ## Blocked components
 
 | Component | Exact dependency |
 |-----------|------------------|
-| ICF | Versioned manufacturer block dimensions, wall coverage, concrete-volume factors, packaging, StyroRail/Logix/Nudura reinforcement defaults, and a governed labour rate. |
+| ICF quantities | The manufacturer-profile fields listed on the ICF row. |
+| ICF hours | BLOCKED — LABOUR AUTHORITY DEPENDENCY. No approved ICF `ProductionRateStandard`. The $65 CAD man-hour rate is already governed and is not this dependency. |
 | Framing | Governed V1 specification: formula authority, assumptions, inputs, outputs, test vectors, Contract V1 compatibility, public/private classification, Platform workflow boundary. |
 | Roofing | The same missing set as Framing. |
 | Siding | The same missing set as Framing. |
@@ -780,7 +810,7 @@ No formulas were written.
 
 | Engine | Missing dependency |
 |--------|-------------------|
-| ICF | Profile numbers and a labour rate, as named above. The design specification is present. Classification is internal Platform only. |
+| ICF | Profile fields listed on the ICF row. Dollar rate is governed. Hours need an approved production standard. Classification is internal Platform only. |
 | Framing | The full V1 specification set. |
 | Roofing | The full V1 specification set. |
 | Siding | The full V1 specification set. |
@@ -789,8 +819,8 @@ No formulas were written.
 
 ## Current build
 
-ICF remains BLOCKED — DEPENDENCY IDENTIFIED.
+ICF quantities remain BLOCKED — DEPENDENCY IDENTIFIED.
 
-The design specification is in the repository. The manufacturer profile numbers and the labour rate are not. No engine code was written.
+ICF dollar labour is the existing ORG-001 rate. ICF hours remain BLOCKED — LABOUR AUTHORITY DEPENDENCY.
 
-No other component was dependency-ready. No migration. No deploy.
+No other engine or lifecycle component was dependency-ready. No engine code was written. No migration. No deploy.

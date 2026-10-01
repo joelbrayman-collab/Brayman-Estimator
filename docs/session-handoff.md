@@ -1,8 +1,14 @@
 # Session Handoff & Review Turnover Package — The Estimator
 
-## 0. Fresh chat resume — 30 Sep 2026
+## 0. Fresh chat resume — 1 Oct 2026
 
-Read this section first. The sections below it are older turnover history. They are not the git checkpoint, the Alembic occupancy, the hosted occupancy, or the current work.
+Read this section first. The 30 Sep occupancy below it remains the live deploy record. It is not a claim that Start New Project is on the live SHA.
+
+Tactical build status is [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). ICF is **BLOCKED — DEPENDENCY IDENTIFIED**. The governing file Brayman ICF Estimator V1 — Design Specification is not in this repository and is not in the Website calculation-engine library. No ICF formula was written. Do not invent one from a prompt summary. Live product SHA remains last recorded `ca37d8b6939f6494b6ff415bad17953886366728`. Hosted database remains last recorded `k1f2a3b4c5d6`. Deployment of this register was not performed.
+
+## 0a. Prior fresh chat resume — 30 Sep 2026
+
+Read the 1 Oct note above first. The sections below it are older turnover history. They are not the git checkpoint, the Alembic occupancy, the hosted occupancy, or the current work.
 
 | Item | Value |
 |------|--------|

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Active |
-| Updated | 2026-09-18 |
+| Updated | 2026-10-01 |
 
 Domain architecture documents describe **intended** systems. They are not claims of current implementation unless explicitly marked Current.
 
@@ -11,6 +11,7 @@ One CalibraytAI product and one development sequence: [../PROJECT_DEVELOPMENT_CH
 
 | Document | Status |
 |----------|--------|
+| [PLATFORM_BUILD_OUT_REGISTER.md](PLATFORM_BUILD_OUT_REGISTER.md) | **TACTICAL REGISTER** (2026-10-01). Build status uses CLOSED — LIVE VERIFIED, BLOCKED — DEPENDENCY IDENTIFIED, NOT STARTED, or DEFERRED. ICF is blocked: the design specification is not in the repository. |
 | [bushel-critical-path.md](bushel-critical-path.md) | **RECORDED** (2026-09-29). Bushel lessons only. The sequence lives in [../PROJECT_DEVELOPMENT_CHECKLIST.md](../PROJECT_DEVELOPMENT_CHECKLIST.md). |
 | [start-project-guided-wizard-product-direction.md](start-project-guided-wizard-product-direction.md) | **RECORDED.** Guided Project Setup and Project Readiness. Historical filename kept. Implementation plan [start-project-implementation-plan.md](start-project-implementation-plan.md). Rule 16 recorded. SNP-2A **IMPLEMENTED / TESTED**. SNP-2 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. Rule 16 re-audit 1 Oct 2026: 7 / 7 PASS. SNP-3 **CLOSED AS A SLICE**. Guided Project Setup **IMPLEMENTED**. SNP-4 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. SNP-6 **IMPLEMENTED / TESTED / CLOSED AS A SLICE**. ESTIMATE HANDOFF **IMPLEMENTED**. MAPPER HANDOFF **VERIFIED / PRESERVED**. Project Readiness is the first-gap foundation. The future readiness model is not implemented. Bushel is not a gate. |
 | [plan-generation-engine-productization.md](plan-generation-engine-productization.md) | **IN PRODUCTIZATION.** PGE-1 through PGE-6 **CLOSED AS SLICES**. Build Drawings supports `dimensioned_plan` on the plans page. Project drawing requirement is implemented. Present is derived. Drawing law: [construction-drawing-standard.md](construction-drawing-standard.md). |

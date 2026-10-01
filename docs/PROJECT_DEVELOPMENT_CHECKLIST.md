@@ -112,7 +112,7 @@ Evidence. Not a gate.
 
 Already governed. Not the current objective.
 
-Hosted password authentication remains unresolved. The temporary hosted UAT bypass remains last recorded ON. Controlled hosted end-to-end, cutover, an authorized V1 rescore, and parked FG-039 publication stay later. ICF is not authorized. People & Access UI is not implemented. CORE CLOSE remains partial.
+Hosted password authentication remains unresolved. The temporary hosted UAT bypass remains last recorded ON. Controlled hosted end-to-end, cutover, an authorized V1 rescore, and parked FG-039 publication stay later. People & Access UI is not implemented. CORE CLOSE remains partial. Tactical build status is [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). ICF is **BLOCKED — DEPENDENCY IDENTIFIED** because the design specification is not in the repository. This checklist still does not itself authorize an ICF formula.
 
 ## Real-world learning law
 

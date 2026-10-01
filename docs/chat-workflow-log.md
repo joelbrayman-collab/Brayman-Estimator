@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-01 — Tactical build-out register; ICF blocked
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-01 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI TACTICAL PLATFORM BUILD-OUT MASTER BUILD REGISTER + FIRST COMPONENT 1 OCT 2026 |
+| Objective | Create the tactical build register and start the internal ICF engine. |
+| Business decision | No component is closed without live verification. ICF stays internal. The Website is not an ICF surface. |
+| Architectural decision | The register is the tactical source of truth. ICF was not implemented. The design specification is not in the repository, and the Contract V1 example is not a formula. |
+| Prompt template used | Joel’s 1 Oct 2026 tactical build-out prompt. |
+| Approved Cursor prompt summary | Write `docs/architecture/PLATFORM_BUILD_OUT_REGISTER.md`. Then build internal ICF from the repository specification. Do not invent construction rules. Do not modify the Website, Contract V1, or Plan Generation. One commit and live verification if the engine can be finished. If a dependency blocks that, record BLOCKED — DEPENDENCY IDENTIFIED and stop. |
+| Feature Gate | No product code. No new gate. The ICF engine was not started. |
+| Files expected to change | The register and the status pointers. |
+| Files prohibited from changing | Product code, schema, calculators, Website, Contract V1, authentication. |
+| Implementation result | Register recorded. ICF **BLOCKED — DEPENDENCY IDENTIFIED**. Dependency: Brayman ICF Estimator V1 — Design Specification is absent. |
+| Tests | No product code. Full suite not re-run. Last recorded suite remains 1931 passed, 6759 warnings, 984.33s, exit 0. |
+| Project-state-report update | Pointer only. |
+| Milestone entry update | Appended. |
+| Constitutional issue raised | None. A missing specification is not permission to invent a formula. |
+| Unresolved issues | ICF specification file. Live deploy of Start New Project. Hosted database still last recorded `k1f2a3b4c5d6`. |
+| Next approved step | Place the ICF design specification in the repository. Do not start another engine from this entry. |
+| Next approved prompt | None. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-01 — SNP-6 estimate and mapper handoff
 
 | Field | Content |

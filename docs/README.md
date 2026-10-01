@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Authoritative documentation map |
-| Updated | 2026-09-30 |
+| Updated | 2026-10-01 |
 | Product | The Estimator (Brayman Estimator) |
 
 ## Purpose
@@ -58,6 +58,7 @@ For immediate resume, [session-handoff.md](session-handoff.md) section 0 and [PR
 | [architecture-principles.md](architecture-principles.md) | Numbered durable platform rules | **Architectural** — changes require ADR + Joel |
 | [architecture.md](architecture.md) | Current vs intended vs future architecture | Factual for *current*; aspirational elsewhere |
 | [architecture/](architecture/) | Domain architecture (Plan Intelligence, Supplier, …) | Future unless marked Current |
+| [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) | Tactical construction register | **GOVERNING FOR BUILD STATUS** (2026-10-01). ICF is blocked on the missing design specification. |
 | [architecture/calculation-engine-result-contract-v1.md](architecture/calculation-engine-result-contract-v1.md) | Calculation engine result contract V1 | **ACCEPTED / PINNED** |
 | [architecture/material-catalogue-architecture.md](architecture/material-catalogue-architecture.md) | CalibAi Material Catalogue (what the project requires; CostItem is not identity) | **Partial Current** — [FG-014](feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) **CLOSED / OPERATIONAL FOR UAT**; ADR-034/035/036 **Accepted** |
 | [adr/ADR-034-canonical-material-identity-and-ownership.md](adr/ADR-034-canonical-material-identity-and-ownership.md) | CalibAi canonical material identity and ownership | **Accepted** (architecture only) |

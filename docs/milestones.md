@@ -32,6 +32,23 @@ Milestone · Status · Branch · Base commit · Objective · Deliverables · Val
 
 ## Entries
 
+### 2026-10-01 — Tactical build-out register
+
+| Field | Content |
+|-------|---------|
+| Milestone | Tactical platform build-out register |
+| Status | **RECORDED.** ICF **BLOCKED — DEPENDENCY IDENTIFIED.** No ICF engine. |
+| Branch | `main` |
+| Base commit | `f82641b81c7c5d8eae96156f0540e410f4073a6a` |
+| Objective | Record tactical build status and start ICF only from the governing specification. |
+| Deliverables | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). |
+| Validation | Specification search of this repository and the Website calculation-engine library. The design specification was not found. No product tests were run. |
+| Architectural findings | Start New Project is on `origin/main` and is not on the live SHA, so it is not CLOSED — LIVE VERIFIED. ICF cannot be coded from the prompt summary. |
+| Open decisions | The ICF specification must be placed in the repository before any engine work. |
+| Next milestone | None until that file exists. |
+| Commit | The commit that contains this entry. |
+| Date | 2026-10-01 |
+
 ### 2026-10-01 — SNP-6 estimate and mapper handoff
 
 | Field | Content |

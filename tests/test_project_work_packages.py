@@ -360,7 +360,7 @@ def test_estimate_version_does_not_offer_add_from_calculation(app, client):
     )
     assert infrastructure.status_code == 200
     infra_page = infrastructure.get_data(as_text=True)
-    assert "No calculation can be run from this estimate yet." in infra_page
+    assert "ICF wall quantities" in infra_page
     assert "will appear here" not in infra_page
 
 

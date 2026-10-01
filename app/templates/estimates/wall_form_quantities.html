@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}ICF wall quantities | Brayman Construction Platform{% endblock %}
+{% block page_title %}ICF wall quantities{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">{{ estimate.estimate_number }} · {{ version.display_label }}</p>
+        <h1>ICF wall quantities</h1>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('estimates.calculation_list', id=estimate.id, version_id=version.id) }}">Back</a>
+    </div>
+</div>
+
+<section class="form-panel">
+    <p>Enter the wall the contractor measured. This page calculates 8-inch form count and concrete from the stored manufacturer profile. It does not price the wall and it does not add a line.</p>
+    <p>Labour hours, if you enter them, are an allowance. The company rate stays $65 CAD per man-hour. This page does not multiply that rate and does not create a production standard.</p>
+    {% if error %}
+    <p class="form-error">{{ error }}</p>
+    {% endif %}
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="calculate">
+        <label for="manufacturer_id">Manufacturer</label>
+        <select id="manufacturer_id" name="manufacturer_id" required>
+            <option value="">Choose</option>
+            {% for profile in profiles %}
+            <option value="{{ profile.manufacturer_id }}" {% if values.manufacturer_id == profile.manufacturer_id %}selected{% endif %}>{{ profile.product_system_name }}</option>
+            {% endfor %}
+        </select>
+        <label for="net_wall_area">Net wall area (square feet)</label>
+        <input id="net_wall_area" name="net_wall_area" inputmode="decimal" value="{{ values.net_wall_area }}" required>
+        <label for="corner_90">90-degree corners</label>
+        <input id="corner_90" name="corner_90" inputmode="numeric" value="{{ values.corner_90 }}" required>
+        <p class="muted-copy">Enter 0 when the wall has none.</p>
+        <label for="corner_45">45-degree corners</label>
+        <input id="corner_45" name="corner_45" inputmode="numeric" value="{{ values.corner_45 }}" required>
+        <label for="labour_hours">Labour-hour allowance (optional)</label>
+        <input id="labour_hours" name="labour_hours" inputmode="numeric" value="{{ values.labour_hours }}">
+        <button type="submit">Calculate</button>
+    </form>
+</section>
+
+{% if result %}
+<section class="form-panel">
+    <h2>Result</h2>
+    {% if result.payload %}
+    <p>These quantities are not on the estimate until you review them and confirm a line.</p>
+    <table>
+        <thead>
+            <tr><th>Quantity</th><th>Amount</th><th>Unit</th></tr>
+        </thead>
+        <tbody>
+            {% for row in result.payload.quantities %}
+            <tr>
+                <td>{{ row.code }}</td>
+                <td>{{ row.quantity }}</td>
+                <td>{{ row.unit_code }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No quantity was produced. The missing fact is listed below.</p>
+    {% endif %}
+    {% if result.labour_allowance_hours is defined %}
+    <p>Labour allowance entered: {{ result.labour_allowance_hours }} hours. It is not a quantity on this result.</p>
+    {% endif %}
+    {% if result.inputs_required %}
+    <h3>Still required</h3>
+    <ul>
+        {% for item in result.inputs_required %}
+        <li>{{ item.field }} — {{ item.reason }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <p class="muted-copy">An unestablished package quantity is not filled in here.</p>
+    {% if result.payload and not result.blocked %}
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="review">
+        <input type="hidden" name="manufacturer_id" value="{{ values.manufacturer_id }}">
+        <input type="hidden" name="net_wall_area" value="{{ values.net_wall_area }}">
+        <input type="hidden" name="corner_90" value="{{ values.corner_90 }}">
+        <input type="hidden" name="corner_45" value="{{ values.corner_45 }}">
+        <input type="hidden" name="labour_hours" value="{{ values.labour_hours }}">
+        <button type="submit">Review on this estimate</button>
+    </form>
+    {% endif %}
+</section>
+{% endif %}
+{% endblock %}

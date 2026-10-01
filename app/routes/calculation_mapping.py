@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import json
+import uuid
 
 from flask import flash, redirect, render_template, request, url_for
+from flask_login import current_user
 
 from app.routes.estimates import _get_estimate_version, estimates_bp
 from app.services.auth import form_actor
@@ -18,6 +20,8 @@ from app.services.calculation_estimate_mapping import (
     record_page,
     review_page,
 )
+from app.services.icf_manufacturer_profiles import IcfProfileError, list_profiles
+from app.services.icf_quantity import IcfQuantityInputError, build_icf_standard_quantities
 from app.services.organizations import get_current_organization_id
 
 
@@ -253,4 +257,106 @@ def calculation_defer_labour(id, version_id, review_id):
             version_id=version.id,
             intake_id=intake_id,
         )
+    )
+
+
+def _whole_number(text):
+    cleaned = (text or "").strip()
+    if cleaned == "":
+        return None
+    if not cleaned.isdigit():
+        raise IcfQuantityInputError("Enter a whole number, including 0.")
+    return int(cleaned)
+
+
+def _wall_form_values():
+    if request.method != "POST":
+        return {
+            "manufacturer_id": "",
+            "net_wall_area": "",
+            "corner_90": "",
+            "corner_45": "",
+            "labour_hours": "",
+        }
+    return {
+        "manufacturer_id": (request.form.get("manufacturer_id") or "").strip(),
+        "net_wall_area": (request.form.get("net_wall_area") or "").strip(),
+        "corner_90": (request.form.get("corner_90") or "").strip(),
+        "corner_45": (request.form.get("corner_45") or "").strip(),
+        "labour_hours": (request.form.get("labour_hours") or "").strip(),
+    }
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/wall-form-quantities",
+    methods=["GET", "POST"],
+)
+def wall_form_quantities(id, version_id):
+    """Ask for 8-inch wall inputs and offer the existing review. No public calculator."""
+    estimate, version = _version_or_404(id, version_id)
+    profiles = list_profiles()
+    values = _wall_form_values()
+    error = None
+    result = None
+    if request.method == "POST":
+        try:
+            corner_90 = _whole_number(values["corner_90"])
+            corner_45 = _whole_number(values["corner_45"])
+            if corner_90 is None or corner_45 is None:
+                raise IcfQuantityInputError(
+                    "Corner counts are required. Enter 0 when the wall has none."
+                )
+            if not values["net_wall_area"]:
+                raise IcfQuantityInputError("Enter the net wall area.")
+            labour = _whole_number(values["labour_hours"])
+            result = build_icf_standard_quantities(
+                manufacturer_id=values["manufacturer_id"],
+                net_wall_area_ft2=values["net_wall_area"],
+                corner_90_count=corner_90,
+                corner_45_count=corner_45,
+                result_id="wall-form-{0}".format(uuid.uuid4().hex),
+            )
+            if labour is not None:
+                result["labour_allowance_hours"] = labour
+                result["inputs_required"] = [
+                    item
+                    for item in result["inputs_required"]
+                    if item.get("field") != "labour_hours"
+                ]
+            blocked = any(
+                item.get("classification") == "TRUE PLATFORM DEPENDENCY"
+                for item in result["inputs_required"]
+            )
+            result["blocked"] = blocked
+            if (
+                request.form.get("action") == "review"
+                and result.get("payload")
+                and not blocked
+            ):
+                intake = ingest_contract_result(
+                    organization_id=get_current_organization_id(),
+                    estimate_version_id=version.id,
+                    payload=result["payload"],
+                    actor=form_actor("actor", fallback="Office"),
+                    user_id=current_user.id,
+                )
+                return redirect(
+                    url_for(
+                        "estimates.calculation_review",
+                        id=estimate.id,
+                        version_id=version.id,
+                        intake_id=intake.id,
+                    )
+                )
+        except (IcfQuantityInputError, IcfProfileError, CalculationEstimateMappingError) as exc:
+            error = str(exc)
+            result = None
+    return render_template(
+        "estimates/wall_form_quantities.html",
+        estimate=estimate,
+        version=version,
+        profiles=profiles,
+        values=values,
+        error=error,
+        result=result,
     )

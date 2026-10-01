@@ -17,7 +17,8 @@
 <section class="form-panel" style="margin-bottom: 24px;">
     <p>Use a CalibraytAI calculation to work out project quantities and add the confirmed quantities to this estimate.</p>
     <p>You review what was calculated. You choose the company cost or reusable work each quantity should use. Nothing is added until you confirm it.</p>
-    <p class="muted-copy">No calculation can be run from this estimate yet. Project work is chosen on Scope of work.</p>
+    <p class="muted-copy">Project work is chosen on Scope of work.</p>
+    <p><a href="{{ url_for('estimates.wall_form_quantities', id=estimate.id, version_id=version.id) }}">ICF wall quantities</a></p>
 </section>
 
 <section class="form-panel">

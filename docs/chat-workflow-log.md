@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-02 — Complete generic construction drawing fixture
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-02 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 15 — COMPLETE GENERIC FIXTURE DATA + REMAINING MODEL FIELD 2 OCT 2026 |
+| Objective | Complete the generic deck fixture with facts the Construction Model can already store, and store a stair riser count on the stair result. |
+| Business decision | Fixture values stay fixture input. They are not defaults and they are not Bushel. The printed set was inspected. It is still not handed to the crew. |
+| Architectural decision | The riser count is a supplied stair fact. The drawing reads it and does not calculate it. Dimension chains name members already in the model. A chain the sheet cannot place stays on the schedule. Connector metadata stays distinct from supplied geometry. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Recall section 2.1. Add explicit generic fixture data for Class A facts the model can already represent. Add the minimum riser-count field. Do not calculate it in the renderer. Do not modify Bushel. Inspect every sheet. Do not close the drawing set unless visual acceptance passes. Do not rescore V1 unless the recorded criteria are met. One commit if the gates pass. Push. Do not deploy. |
+| Files expected to change | Construction Model completeness and views; the complete deck fixture; fixture-completion tests; the acceptance audit; drawing standard; build-out register; current-state; session handoff; roadmap; architecture index; this log; and the manual impact log. |
+| Files prohibited from changing | Bushel case files, PGE, Contract V1, schema, and deployment. |
+| Implementation result | Implemented and tested. The fixture stores riser count 6, bearings for posts 1–4 and piers 1–4, and metadata-only guard, joist, and stair connections. Front-to-back pier spacing, the stair opening, the guard height, and the section height print from those chains. Pier depth and baluster spacing print on the schedule. Removing the riser count refuses the stair view. The drawing set stays OPEN / NOT COMPLETE. V1 is not rescored. |
+| Tests | Construction Model regression: 150 passed, 13 warnings, 19.75s, exit 0. PGE regression: 61 passed, 79 warnings, 18.75s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2117 passed, 6792 warnings, 921.91s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Blocking, a ledger, a landing, a stair guard, and connector shapes for the latch, the hanger, and the tread clip remain absent. Pier depth and baluster spacing are not on the elevation or the plan. One-model and no-guessing stay PARTIAL. The set is not a crew set. |
+| Next approved step | Not written here. Do not invent a ledger, a landing, or a commercial connector. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-02 — Governed connector geometry
 
 | Field | Content |

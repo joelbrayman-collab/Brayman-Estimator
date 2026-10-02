@@ -66,6 +66,8 @@ Slice 13 presents facts that model and those view definitions already hold. A ca
 
 Slice 14 draws a connector only from geometry the model supplies. The geometry stays on the connection and names the relationship it serves. A connector name, a fastener, and a quantity do not create a shape, a bolt circle, or a spacing. Where a plate, a thickness, a bolt diameter, or fastener locations are supplied, the detail and the section project those same coordinates. The schedule says geometry supplied or metadata only. It is not a price. The fixture post cap is generic test geometry. The fixture tread clip remains metadata only. The set is not a crew set.
 
+Slice 15 stores a supplied stair riser count on the stair result. The drawing prints that count. It does not calculate it from the rise, the run, or the treads. The complete deck fixture supplies the remaining post and pier bearings, a metadata-only guard connection, a metadata-only joist hanger, a metadata-only stair hanger, and dimension chains that name members already in the model. A chain that the sheet cannot place stays on the schedule and is not typed into the PDF. The fixture values stay fixture input. The set is not a crew set.
+
 The proving sheets are still not acceptable construction drawings.
 
 Remaining deficiencies:

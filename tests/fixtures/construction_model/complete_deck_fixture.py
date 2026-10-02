@@ -211,6 +211,33 @@ def deck_model() -> dict:
                 "quantity": 2,
                 "provenance": dict(_PROVENANCE),
             },
+            {
+                "id": "connection-guard-gate",
+                "participant_ids": ["guard-left-a", "gate-1", "guard-left-b"],
+                "connection_type": "gate",
+                "connector": "fixture gate latch",
+                "fastener": "fixture screw",
+                "quantity": 2,
+                "provenance": dict(_PROVENANCE),
+            },
+            {
+                "id": "connection-beam-joist",
+                "participant_ids": ["beam-front", "joist-1"],
+                "connection_type": "bearing",
+                "connector": "fixture joist hanger",
+                "fastener": "fixture nail",
+                "quantity": 4,
+                "provenance": dict(_PROVENANCE),
+            },
+            {
+                "id": "connection-stair-header",
+                "participant_ids": ["header-stair", "stringer-2"],
+                "connection_type": "bearing",
+                "connector": "fixture stair hanger",
+                "fastener": "fixture nail",
+                "quantity": 4,
+                "provenance": dict(_PROVENANCE),
+            },
         ],
         "stair_results": [
             {
@@ -221,6 +248,7 @@ def deck_model() -> dict:
                 "nosing": 1,
                 "stringer_count": 3,
                 "tread_count": 5,
+                "riser_count": 6,
                 "stair_width": 36,
                 "member_ids": [
                     "stringer-1",
@@ -435,17 +463,24 @@ def _relationships(joist_xs):
 
 def _bearing_relationships():
     records = [
+        _bearing("rel-bear-post-1-beam-front", "post-1", "beam-front", 12, 12, 23),
+        _bearing("rel-bear-post-2-beam-front", "post-2", "beam-front", 129, 12, 23),
+        _bearing("rel-bear-post-3-beam-back", "post-3", "beam-back", 12, 108, 23),
+        _bearing("rel-bear-post-4-beam-back", "post-4", "beam-back", 129, 108, 23),
+        _bearing("rel-bear-pier-1-post-1", "pier-1", "post-1", 12, 12, 0),
+        _bearing("rel-bear-pier-2-post-2", "pier-2", "post-2", 129, 12, 0),
+        _bearing("rel-bear-pier-3-post-3", "pier-3", "post-3", 12, 108, 0),
+        _bearing("rel-bear-pier-4-post-4", "pier-4", "post-4", 129, 108, 0),
+    ]
+    records.append(
         {
-            "id": "rel-bear-post-1-beam-front",
-            "kind": "bears_on",
-            "from_id": "post-1",
-            "to_id": "beam-front",
-            "bearing_surface": _segment(_point(12, 12, 23), _point(15, 12, 23)),
-            "bearing_location": {"kind": "point", "coordinates": [_point(13.5, 12, 23)]},
-            "bearing_depth": 0,
+            "id": "rel-fasten-header-stringer-2",
+            "kind": "fastened_to",
+            "from_id": "header-stair",
+            "to_id": "stringer-2",
             "provenance": dict(_PROVENANCE),
         }
-    ]
+    )
     for stringer_index, x_in in enumerate((54, 72, 90), start=1):
         for tread in range(1, 6):
             y_front, y_back, z_seat = _tread_seat(tread)
@@ -470,6 +505,19 @@ def _bearing_relationships():
     return records
 
 
+def _bearing(identifier, source, target, x_in, y_in, z_in):
+    return {
+        "id": identifier,
+        "kind": "bears_on",
+        "from_id": source,
+        "to_id": target,
+        "bearing_surface": _segment(_point(x_in, y_in, z_in), _point(x_in + 3, y_in, z_in)),
+        "bearing_location": {"kind": "point", "coordinates": [_point(x_in + 1.5, y_in, z_in)]},
+        "bearing_depth": 0,
+        "provenance": dict(_PROVENANCE),
+    }
+
+
 def _chains():
     provenance = dict(_PROVENANCE)
     joists = [f"joist-{index}" for index in range(1, 9)]
@@ -483,6 +531,12 @@ def _chains():
         _chain("walking", "z", "level", ["walking-surface"], None, provenance, "front_elevation"),
         _chain("stair-rise", "z", "member_length", ["stringer-1"], "RISE", provenance, "stair"),
         _chain("stair-run", "y", "member_length", ["stringer-1"], "RUN", provenance, "stair"),
+        _chain("pier-depth", "z", "member_length", ["pier-1"], "PIER DEPTH", provenance, "detail"),
+        _chain("pier-spacing-y", "y", "point_to_point", ["pier-1", "pier-3"], "PIER SPACING", provenance, "plan"),
+        _chain("section-height", "z", "point_to_point", ["pier-1", "deck-3"], "SECTION HEIGHT", provenance, "section"),
+        _chain("guard-height", "z", "member_length", ["baluster-1"], "GUARD HEIGHT", provenance, "side_elevation"),
+        _chain("baluster-spacing", "x", "point_to_point", ["baluster-1", "baluster-2"], "BALUSTER SPACING", provenance, "detail"),
+        _chain("stair-opening", "x", "member_length", ["header-stair"], "STAIR OPENING", provenance, "plan"),
     ]
 
 

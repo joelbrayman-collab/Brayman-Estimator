@@ -139,3 +139,22 @@ Slice 14 draws connector geometry only when the model supplies it. V1 is not res
 Would we hand this to the crew? No. Would the post-and-beam drawing tell a carpenter what that connector is? Yes, for the supplied plate and the two bolt locations. Would the stringer drawing tell a carpenter what the tread clip is? No — geometry not supplied. That is the correct result.
 
 The inspected set is 14 sheets. The fourteenth is the drawing index. Guard and gate is NOT ISSUED. The other sheets are GENERATED. Would we hand this to the crew? No.
+
+## Slice 15 disposition — 2 Oct 2026
+
+Slice 15 puts explicit fixture facts on the same complete-deck model and stores a stair riser count on the stair result. The values are fixture input. They are not Calibrayt defaults, organization defaults, Bushel values, or construction rules. Provenance stays `instance_configuration` with reference `COMPLETE DECK DRAWING ENGINE FIXTURE`, except the stair result, which stays `governed_calculation_result` with reference `COMPLETE DECK DRAWING ENGINE FIXTURE stair result`. V1 is not rescored. One-model and no-guessing stay **PARTIAL**. Bearing fidelity stays **COMPLETE** for its recorded criteria. The drawing set stays **OPEN / NOT COMPLETE**.
+
+| ID | Slice 15 result |
+|----|-----------------|
+| D1 | Partly satisfied by fixture data. Front-to-back pier spacing is the chain `pier-spacing-y`, pier-1 to pier-3, and the foundation plan prints PIER SPACING 8'-0". Pier depth is the chain `pier-depth`, the length of pier-1, 4'-0". That chain is on the schedule. The front elevation and the section have no clear place for a second height chain, so the sheet refuses to draw it there. The depth was not typed into the PDF. |
+| D2 | Partly satisfied by fixture data. Section A prints SECTION HEIGHT 3'-6", the chain from pier-1 at grade to deck-3. The section also shows the pier, the post, the beam, the joist, and the decking in that cut. Pier depth is not on this sheet. |
+| D3 | Partly satisfied by fixture data. The side elevation prints GUARD HEIGHT 3'-0", the length of baluster-1. The framing plan prints STAIR OPENING 3'-0", the length of header-stair. Baluster spacing is the chain from baluster-1 to baluster-2, 0'-5", on the schedule. The decking plan and the front elevation have no clear place for that chain. |
+| D4 | Partly satisfied by fixture data. Posts 1 through 4 and piers 1 through 4 each have an explicit `bears_on` record, a 3 inch contact, bearing depth 0, and fixture provenance. The beam-to-joist connection is metadata only: fixture joist hanger, fixture nail, quantity 4. No hanger shape was invented. |
+| D5 | Partly satisfied by fixture data. The header-to-stringer connection is metadata only: fixture stair hanger. A `fastened_to` record names header-stair and stringer-2. No landing, no stair guard, and no lower bearing member were added. |
+| D6 | Partly satisfied by fixture data. The guard-and-gate connection is metadata only: fixture gate latch, fixture screw, quantity 2. The sheet is GENERATED and says GEOMETRY NOT SUPPLIED. No hinge shape, no bottom rail, and no guard posts were added. |
+| D7 | Open. Blocking and a ledger are not in the fixture. A ledger would require a wall this fixture does not have. |
+| D8 | Unchanged from Slice 14. The post cap still has geometry. The tread clip stays metadata only. |
+| D9 | Implemented. A stair result can store `riser_count`. The fixture stores 6. The stair sheet and the stringer detail print `riser count 6`. The drawing does not calculate the count. Removing the field refuses the stair view. Restoring it generates the view again. |
+| D15 | The guard sheet is no longer NOT ISSUED, because the connection is now supplied as metadata. The set no longer contains the refusal sentence. That does not make the set a crew set. |
+
+The inspected set is 15 sheets. The fifteenth is the drawing index. Every sheet is GENERATED. Front-to-back pier spacing, the stair opening, the guard height, and the section height are on the drawings. Pier depth and baluster spacing are on the schedule. Connector notes still collide with the framing and the elevations. The post-and-beam detail shows the supplied plate. The guard detail shows rails and balusters and names the latch without drawing one. The stair note says riser count 6 and the picture shows the five supplied treads on the stringer. Would we hand this to the crew? No.

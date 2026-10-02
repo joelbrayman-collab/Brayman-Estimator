@@ -182,8 +182,21 @@ def test_relationship_schedule_has_one_state_per_pair():
 
 
 def test_unresolved_required_content_is_marked_not_issued():
-    result = _set()
-    text = _text(result)
+    intact = _text(_set())
+    assert "NOT ISSUED" not in intact
+    assert "GENERATED" in intact
+    model = deck_model()
+    model["connections"] = [
+        item for item in model["connections"] if item["id"] != "connection-guard-gate"
+    ]
+    refused = compose_construction_wave(
+        model,
+        sheet_definition(),
+        sections=section_requests(),
+        details=detail_requests(),
+        sheet_program=sheet_program(),
+    )
+    text = _text(refused)
     assert "NOT ISSUED" in text
     assert "You need to provide this information." in text
     assert "GENERATED" in text

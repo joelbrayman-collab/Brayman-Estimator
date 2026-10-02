@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Complete generic construction drawing fixture (2026-10-02)
+
+| Field | Content |
+|-------|---------|
+| Slice | Construction Model slice 15. Complete generic fixture data and a stair riser-count field. |
+| Product status at capture | **IMPLEMENTED / TESTED**. Not deployed. The drawing set stays **OPEN / NOT COMPLETE**. The generic fixture set is still not a crew set. |
+| 1. What new contractor capability exists? | A stair sheet can print a riser count that was supplied with the stair. A foundation plan can print front-to-back pier spacing. A side elevation can print guard height. A section can print the height from grade to the decking. A guard detail can name a latch without drawing one. |
+| 2. When would the contractor use it? | When reading the generic deck set: the foundation plan, the framing plan, the side elevation, the stair, section A, the guard detail, and the schedule. |
+| 3. What workflow will the final Manual need to teach? | The count, the bearings, and the dimensions come from the construction model. If a connector was named and no shape was supplied, the sheet says geometry not supplied. A dimension that has no clear place on the sheet stays on the schedule. |
+| 4. What contractor-facing terms must be used? | Riser count. Pier spacing. Guard height. Section height. Stair opening. Geometry not supplied. Fixture data. You need to provide this information. |
+| 5. What screenshots / Print examples will eventually be needed? | An 11×17 foundation plan with the pier spacing, a side elevation with the guard height, a section with the section height, and a guard detail that says geometry not supplied. Not captured here as a finished example. |
+| 6. What warnings / validation distinctions need explanation? | The drawing does not calculate the riser count. A latch name is not a hinge. Pier depth and baluster spacing on the schedule are not the same as a dimension on the elevation. The schedule is not an estimate. |
+| 7. Desktop / iPhone / Print relevance | Print on 11×17. No screen was added. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Governed connector geometry (2026-10-02)
 
 | Field | Content |

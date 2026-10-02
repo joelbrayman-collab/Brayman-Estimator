@@ -146,7 +146,7 @@ def test_section_consumes_relationships_already_in_the_cut():
     assert {"pier-1", "post-1", "beam-front", "joist-1", "deck-3"} <= identifiers
     assert "stringer-2" not in identifiers
     note = _relationship_note(accepted, section.elements)
-    assert "pier supports post" in note
+    assert "pier bears on post" in note
     assert "post bears on beam" in note
     assert "beam supports joist" in note
     assert "joist supports decking" in note

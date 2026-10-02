@@ -102,6 +102,7 @@ def _model(**overrides):
                 "nosing": 1,
                 "stringer_count": 2,
                 "tread_count": 3,
+                "riser_count": 4,
                 "stair_width": 3,
             }
         ],
@@ -163,6 +164,7 @@ def test_stair_view_reads_supplied_facts_and_member_geometry():
         ("nosing", 1),
         ("stringer_count", 2),
         ("tread_count", 3),
+        ("riser_count", 4),
         ("stair_width", 3),
     )
     assert _ids(stair) == ["stringer-a"]

@@ -1141,6 +1141,7 @@ _STAIR_FACT_KEYS = (
     "nosing",
     "stringer_count",
     "tread_count",
+    "riser_count",
     "stair_width",
 )
 

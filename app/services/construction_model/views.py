@@ -48,6 +48,7 @@ STAIR_FACTS = (
     ("nosing", "The stair nosing"),
     ("stringer_count", "The stringer count"),
     ("tread_count", "The tread count"),
+    ("riser_count", "The stair riser count"),
     ("stair_width", "The stair width"),
 )
 SECTION_DIRECTIONS = frozenset({"x", "y", "z"})

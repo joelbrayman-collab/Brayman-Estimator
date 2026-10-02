@@ -64,6 +64,8 @@ def test_relationship_requires_explicit_participants():
 def test_relationship_does_not_arise_from_proximity():
     payload = deck_model()
     payload["relationships"] = []
+    for item in payload["connections"]:
+        item.pop("connector_geometry", None)
     assessment = assess_construction_model(payload)
     assert assessment.complete is True
     assert assessment.accepted["relationships"] == []
@@ -111,8 +113,10 @@ def test_post_beam_detail_reads_the_relationship_and_does_not_invent_a_connector
     assert len(post["bearing_lines"][0]) == 2
     connection = next(item for item in _accepted()["connections"] if item["id"] == "connection-post-beam")
     assert connection["connector"] == "fixture post cap"
-    assert "geometry" not in connection
-    assert "bolt_diameter" not in connection
+    assert connection["connector_geometry"]["geometry_type"] == "plate"
+    clip = next(item for item in _accepted()["connections"] if item["id"] == "connection-stringer-tread")
+    assert "connector_geometry" not in clip
+    assert "geometry" not in clip
     assert all(element["id"] in {"post-1", "beam-front"} for element in detail.elements)
 
 
@@ -157,7 +161,7 @@ def test_schedule_consumes_relationships_without_becoming_a_takeoff():
     assert "bearing supplied" in lines
     assert "bearing not supplied" in lines
     assert "metadata only" in lines
-    assert "geometry supplied" not in lines
+    assert "geometry supplied" in lines
     assert "$" not in lines
     lowered = lines.lower()
     assert "price" not in lowered

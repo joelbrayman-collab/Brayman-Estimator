@@ -678,7 +678,9 @@ def _optional(payload: Mapping, known_ids: set, level_ids: set):
             continue
         parsed = []
         for index, item in enumerate(raw):
-            element, element_issues = _optional_item(name, index, item, known_ids, level_ids)
+            element, element_issues = _optional_item(
+                name, index, item, known_ids, level_ids, stored.get("relationships") or []
+            )
             issues.extend(element_issues)
             if element is not None:
                 parsed.append(element)
@@ -768,7 +770,132 @@ def _bearing_conflicts(members: list, supports: list, relationships: list) -> li
     return issues
 
 
-def _optional_item(collection: str, index: int, item: Any, known_ids: set, level_ids: set):
+def _read_connector_geometry(item, identifier, known_ids, relationships, participants, connector):
+    """Store supplied connector geometry on its connection. A name is not geometry."""
+    raw = item.get("connector_geometry")
+    if raw is None:
+        return None, []
+    field = f"connections[{identifier}].connector_geometry"
+    if not isinstance(raw, Mapping):
+        return None, [_need(CODE_MISSING_FACT, field, f"The connector geometry of connection {identifier}")]
+    geometry_type = plain_text(raw.get("geometry_type"))
+    if geometry_type is None:
+        return None, [_need(CODE_MISSING_FACT, f"{field}.geometry_type", f"A geometry type for connection {identifier}")]
+    relationship_id = plain_text(raw.get("relationship_id"))
+    relationship = next((record for record in relationships if record.get("id") == relationship_id), None)
+    if relationship is None:
+        return None, [
+            _need(
+                CODE_MISSING_FACT,
+                f"{field}.relationship_id",
+                f"The relationship served by connection {identifier}",
+            )
+        ]
+    references = raw.get("reference_ids")
+    if not isinstance(references, list) or not references:
+        return None, [
+            _need(
+                CODE_MISSING_FACT,
+                f"{field}.reference_ids",
+                f"The members the connector for connection {identifier} serves",
+            )
+        ]
+    cleaned_refs = []
+    for reference in references:
+        text = plain_text(reference)
+        if text not in known_ids:
+            return None, [
+                _need(
+                    CODE_MISSING_FACT,
+                    f"{field}.reference_ids",
+                    f"A member or support for the connector on connection {identifier}",
+                )
+            ]
+        cleaned_refs.append(text)
+    ends = {relationship.get("from_id"), relationship.get("to_id")}
+    if not ends <= set(cleaned_refs) or not ends <= set(participants):
+        return None, [
+            _need(
+                CODE_MISSING_FACT,
+                f"{field}.relationship_id",
+                f"A relationship between the members joined by connection {identifier}",
+            )
+        ]
+    geometry, geometry_issue = _geometry(
+        raw.get("geometry"),
+        f"{field}.geometry",
+        f"the connector geometry of connection {identifier}",
+    )
+    if geometry_issue is not None:
+        return None, [geometry_issue]
+    recorded = {
+        "connection_id": identifier,
+        "geometry_type": geometry_type,
+        "relationship_id": relationship_id,
+        "reference_ids": cleaned_refs,
+        "geometry": geometry,
+    }
+    if connector:
+        recorded["connector"] = connector
+    for key in ("width", "height", "thickness", "bolt_diameter"):
+        if raw.get(key) is None:
+            continue
+        if not is_number(raw.get(key)) or raw.get(key) < 0:
+            return None, [
+                _need(
+                    CODE_MISSING_FACT,
+                    f"{field}.{key}",
+                    f"A {key.replace('_', ' ')} for connection {identifier}",
+                )
+            ]
+        recorded[key] = raw[key]
+    if raw.get("fastener_locations") is not None:
+        fasteners, fastener_issue = _geometry(
+            raw.get("fastener_locations"),
+            f"{field}.fastener_locations",
+            f"the fastener locations of connection {identifier}",
+        )
+        if fastener_issue is not None:
+            return None, [fastener_issue]
+        recorded["fastener_locations"] = fasteners
+    if raw.get("orientation") is not None:
+        orientation = plain_text(raw.get("orientation"))
+        if orientation is None:
+            return None, [
+                _need(CODE_MISSING_FACT, f"{field}.orientation", f"An orientation for connection {identifier}")
+            ]
+        recorded["orientation"] = orientation
+    if raw.get("offsets") is not None:
+        offsets = raw.get("offsets")
+        if not isinstance(offsets, Mapping):
+            return None, [_need(CODE_MISSING_FACT, f"{field}.offsets", f"Offsets for connection {identifier}")]
+        cleaned_offsets = {}
+        for key, value in offsets.items():
+            name = plain_text(key)
+            if name is None or not is_number(value):
+                return None, [_need(CODE_MISSING_FACT, f"{field}.offsets", f"Offsets for connection {identifier}")]
+            cleaned_offsets[name] = value
+        recorded["offsets"] = cleaned_offsets
+    if raw.get("uncertainty") is not None:
+        text = plain_text(raw.get("uncertainty"))
+        if text is None:
+            return None, [
+                _need(CODE_MISSING_FACT, f"{field}.uncertainty", f"The uncertainty of connection {identifier}")
+            ]
+        recorded["uncertainty"] = text
+    if raw.get("provenance") is not None:
+        provenance, provenance_issue = _provenance(
+            raw.get("provenance"),
+            f"{field}.provenance",
+            f"the connector geometry of connection {identifier}",
+        )
+        if provenance_issue is not None:
+            return None, [provenance_issue]
+        recorded["provenance"] = provenance
+    return recorded, []
+
+
+def _optional_item(collection: str, index: int, item: Any, known_ids: set, level_ids: set, relationships=()):
     field = f"{collection}[{index}]"
     if not isinstance(item, Mapping):
         return None, [_need(CODE_INVALID_FACT, field, f"A {collection[:-1]} record")]
@@ -909,6 +1036,18 @@ def _optional_item(collection: str, index: int, item: Any, known_ids: set, level
             if provenance_issue is not None:
                 return None, [provenance_issue]
             recorded["provenance"] = recorded_provenance
+        geometry_record, geometry_issues = _read_connector_geometry(
+            item,
+            identifier,
+            known_ids,
+            relationships,
+            recorded.get("participant_ids") or [],
+            recorded.get("connector"),
+        )
+        if geometry_issues:
+            return None, geometry_issues
+        if geometry_record is not None:
+            recorded["connector_geometry"] = geometry_record
         return recorded, []
     if collection == "openings":
         geometry, geometry_issue = _geometry(item.get("geometry"), f"openings[{identifier}].geometry", f"opening {identifier}")

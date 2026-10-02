@@ -173,6 +173,34 @@ def deck_model() -> dict:
                 "fastener": "fixture bolt",
                 "quantity": 2,
                 "provenance": dict(_PROVENANCE),
+                "connector_geometry": {
+                    "geometry_type": "plate",
+                    "relationship_id": "rel-bear-post-1-beam-front",
+                    "reference_ids": ["post-1", "beam-front"],
+                    "orientation": "x",
+                    "width": _inch(3),
+                    "thickness": _inch(0.25),
+                    "bolt_diameter": _inch(0.5),
+                    "geometry": {
+                        "kind": "polyline",
+                        "coordinates": [
+                            _point(12, 12, 23),
+                            _point(15, 12, 23),
+                            _point(15, 12, 23.25),
+                            _point(12, 12, 23.25),
+                            _point(12, 12, 23),
+                        ],
+                    },
+                    "fastener_locations": {
+                        "kind": "polyline",
+                        "coordinates": [
+                            _point(12.75, 12, 23.125),
+                            _point(14.25, 12, 23.125),
+                        ],
+                    },
+                    "uncertainty": "Fixture plate thickness is nominal.",
+                    "provenance": dict(_PROVENANCE),
+                },
             },
             {
                 "id": "connection-stringer-tread",

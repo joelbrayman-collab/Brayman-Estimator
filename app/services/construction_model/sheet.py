@@ -36,18 +36,20 @@ from app.services.construction_model.completeness import (
     assess_construction_model,
 )
 from app.services.construction_model.dimensions import refusal_callouts, resolve_dimension_chains
-from app.services.construction_model.model import plain_text
 from app.services.construction_model.projection import (
     VIEW_FRONT_ELEVATION,
     VIEW_PLAN,
     VIEW_SIDE_ELEVATION,
     project_model_views,
 )
+from app.services.construction_model.model import format_measure, plain_text
 from app.services.construction_model.views import (
+    _connection_has_geometry,
     group_connection_rows,
     group_member_rows,
     group_relationship_rows,
     group_support_rows,
+    project_connector_geometry,
     project_construction_wave,
 )
 
@@ -372,6 +374,19 @@ def _draw_view(
         _draw_element(
             sheet,
             element,
+            origin_u,
+            origin_v,
+            points_per_unit,
+            place_x,
+            place_y,
+        )
+    if model is not None:
+        _draw_connector_overlays(
+            sheet,
+            model,
+            projection.elements,
+            projection.horizontal_axis,
+            projection.vertical_axis,
             origin_u,
             origin_v,
             points_per_unit,
@@ -914,6 +929,87 @@ def _draw_bearing(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, s
         sheet.drawString(placed[0][0], placed[0][1] + 4, label)
 
 
+def _draw_connector_overlays(
+    sheet, model, elements, horizontal, vertical, origin_u, origin_v, points_per_unit, place_x, place_y
+) -> None:
+    """Draw supplied connector geometry. A product name adds no outline."""
+    present = [element["id"] for element in elements]
+    overlays = project_connector_geometry(model, present, horizontal, vertical)
+    system = model.get("measurement_system") or "imperial"
+    for overlay in overlays:
+        placed = [
+            (
+                place_x + (point[0] - origin_u) * points_per_unit,
+                place_y + (point[1] - origin_v) * points_per_unit,
+            )
+            for point in overlay["line"]
+        ]
+        if len(placed) >= 2:
+            sheet.setStrokeColor(_NAVY)
+            sheet.setFillColor(white)
+            sheet.setLineWidth(1.4)
+            path = sheet.beginPath()
+            path.moveTo(placed[0][0], placed[0][1])
+            for px, py in placed[1:]:
+                path.lineTo(px, py)
+            closed = abs(placed[0][0] - placed[-1][0]) < 0.5 and abs(placed[0][1] - placed[-1][1]) < 0.5
+            sheet.drawPath(path, stroke=1, fill=1 if closed else 0)
+            sheet.setFillColor(_NAVY)
+        diameter = overlay["dimensions"].get("bolt_diameter")
+        for point in overlay["fasteners"]:
+            px = place_x + (point[0] - origin_u) * points_per_unit
+            py = place_y + (point[1] - origin_v) * points_per_unit
+            if isinstance(diameter, (int, float)):
+                radius = max((float(diameter) * points_per_unit) / 2.0, 0.8)
+                sheet.setStrokeColor(_NAVY)
+                sheet.setFillColor(white)
+                sheet.circle(px, py, radius, stroke=1, fill=1)
+            else:
+                sheet.setStrokeColor(_NAVY)
+                sheet.line(px - 2, py, px + 2, py)
+                sheet.line(px, py - 2, px, py + 2)
+        if placed:
+            sheet.setFillColor(_NAVY)
+            sheet.setFont("Helvetica", 6)
+            label = _connector_label(overlay, system)
+            sheet.drawString(placed[0][0], placed[0][1] + 8, label[:140])
+
+
+def _connector_label(overlay, system: str) -> str:
+    parts = ["GEOMETRY SUPPLIED", overlay.get("geometry_type") or "", overlay.get("connector") or ""]
+    names = (("width", "WIDTH"), ("height", "HEIGHT"), ("thickness", "THICKNESS"), ("bolt_diameter", "BOLT"))
+    for key, title in names:
+        value = overlay["dimensions"].get(key)
+        if isinstance(value, (int, float)):
+            parts.append(f"{title} {_connector_measure(value, system)}")
+    fasteners = overlay["fasteners"]
+    if len(fasteners) >= 2:
+        span = sum((fasteners[-1][axis] - fasteners[0][axis]) ** 2 for axis in (0, 1)) ** 0.5
+        parts.append(f"BOLT SPACING {_connector_measure(span, system)}")
+    if overlay.get("uncertainty"):
+        parts.append(str(overlay["uncertainty"]))
+    return "  ".join(part for part in parts if part)
+
+
+def _connector_measure(value: float, system: str) -> str:
+    if system != "imperial":
+        return format_measure(value, system, "m")
+    inches = abs(float(value) * 12.0)
+    whole = int(inches + 1e-6)
+    eighths = int(round((inches - whole) * 8.0))
+    if eighths == 8:
+        whole += 1
+        eighths = 0
+    fraction = ("", "1/8", "1/4", "3/8", "1/2", "5/8", "3/4", "7/8")[eighths]
+    if whole and fraction:
+        text = f"{whole} {fraction}\""
+    elif fraction:
+        text = f"{fraction}\""
+    else:
+        text = format_measure(value, system, "ft")
+    return f"-{text}" if value < 0 else text
+
+
 def _manifest(model, views, sheet_definition, points_per_unit: float, pdf_bytes: bytes) -> dict:
     return {
         "sheet_version": SHEET_VERSION,
@@ -1370,6 +1466,8 @@ def _connection_note(model, elements) -> str:
         text = " / ".join(part for part in parts if part)
         if item.get("quantity") is not None:
             text = f"{text} / {item['quantity']}"
+        status = "GEOMETRY SUPPLIED" if _connection_has_geometry(item) else "GEOMETRY NOT SUPPLIED"
+        text = f"{status} / {text}" if text else status
         if text:
             notes.append(text)
     if not notes:
@@ -1818,6 +1916,19 @@ def _paint_read_view(
     seen_bearings = set()
     for element in view.elements:
         _draw_element(sheet, element, origin_u, origin_v, points_per_unit, place_x, place_y, seen_bearings)
+    if view.horizontal_axis and view.vertical_axis:
+        _draw_connector_overlays(
+            sheet,
+            model,
+            view.elements,
+            view.horizontal_axis,
+            view.vertical_axis,
+            origin_u,
+            origin_v,
+            points_per_unit,
+            place_x,
+            place_y,
+        )
     if view.uncertainty:
         sheet.setFont("Helvetica", 8)
         note = "; ".join(item["note"] for item in view.uncertainty)

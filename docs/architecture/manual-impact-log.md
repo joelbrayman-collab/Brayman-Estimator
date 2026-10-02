@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Governed connector geometry (2026-10-02)
+
+| Field | Content |
+|-------|---------|
+| Slice | Construction Model slice 14. Governed connector geometry. |
+| Product status at capture | **IMPLEMENTED / TESTED**. Not deployed. The drawing set stays **OPEN / NOT COMPLETE**. The generic fixture set is still not a crew set. |
+| 1. What new contractor capability exists? | A connection detail can show a plate, a thickness, a bolt diameter, and fastener locations when those were supplied. A connector name with a fastener and a quantity stays a note. |
+| 2. When would the contractor use it? | When reading a post-and-beam detail, a section through that connection, or the connection schedule. |
+| 3. What workflow will the final Manual need to teach? | The connector shape comes from the construction model and stays on the relationship it serves. If the geometry was not supplied, the sheet says geometry not supplied. It does not draw a typical connector. |
+| 4. What contractor-facing terms must be used? | Geometry supplied. Geometry not supplied. Plate. Bolt. You need to provide this information. |
+| 5. What screenshots / Print examples will eventually be needed? | An 11×17 post-and-beam detail with the supplied plate, and a stringer detail that says geometry not supplied. Not captured here as a finished example. |
+| 6. What warnings / validation distinctions need explanation? | Fastener quantity does not place bolts. A product name does not become a shape. Uncertainty on the connector stays uncertainty. The schedule is not an estimate. |
+| 7. Desktop / iPhone / Print relevance | Print on 11×17. No screen was added. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Drawing references and schedule presentation (2026-10-02)
 
 | Field | Content |

@@ -125,6 +125,17 @@ Slice 13 presents facts the model and the view definitions already held. It does
 | D13 | Addressed. Each member pair has one bearing state. Post-1 to beam-front is supplied, with the 3 inch contact. Other pairs that have no bearing surface say bearing not supplied. |
 | D14 | Addressed for column alignment and repeated headings. Schedule columns are drawn at fixed positions. A continued section repeats its heading. The schedule is not a price. |
 | D15 | Distinguished, not hidden. The guard-and-gate sheet still names the missing connection and is marked NOT ISSUED. The set is still produced. The drawing law’s “no PDF” sentence is not met. |
-| D1–D9, D11 | Open. No new fixture facts. No connector drawing. No new stair field. |
+| D1–D9, D11 | Open at the close of Slice 13. No new fixture facts then. No connector drawing then. No new stair field. |
+
+## Slice 14 disposition — 2 Oct 2026
+
+Slice 14 draws connector geometry only when the model supplies it. V1 is not rescored. One-model and no-guessing stay **PARTIAL**. Bearing fidelity stays **COMPLETE** for its recorded criteria.
+
+| ID | Slice 14 result |
+|----|-----------------|
+| D11 | Addressed for supplied geometry. The fixture post cap is a generic plate on `rel-bear-post-1-beam-front`, with a 3 inch width, a 1/4 inch thickness, a 1/2 inch bolt diameter, and two fastener locations. The post-and-beam detail and section A project those same coordinates. The fixture tread clip remains metadata only and gains no shape. A product name does not become a connector. |
+| D1–D9, D15 | Open. Missing dimension chains, missing members and connections, and the missing guard connection stay unnamed facts. The guard sheet stays NOT ISSUED. The set is still produced. |
+
+Would we hand this to the crew? No. Would the post-and-beam drawing tell a carpenter what that connector is? Yes, for the supplied plate and the two bolt locations. Would the stringer drawing tell a carpenter what the tread clip is? No — geometry not supplied. That is the correct result.
 
 The inspected set is 14 sheets. The fourteenth is the drawing index. Guard and gate is NOT ISSUED. The other sheets are GENERATED. Would we hand this to the crew? No.

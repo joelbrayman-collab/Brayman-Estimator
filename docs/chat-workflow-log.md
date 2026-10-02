@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-02 — Governed connector geometry
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-02 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 14 — GOVERNED CONNECTOR GEOMETRY 2 OCT 2026 |
+| Objective | Draw connector geometry only when the Construction Model supplies it. |
+| Business decision | A connector name is not a shape. The fixture post cap is generic test geometry. The fixture tread clip stays a note. The set is still not handed to the crew. |
+| Architectural decision | Connector geometry stays on the connection and names the relationship it serves. Detail and section project those same coordinates. No second connector drawing store. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Recall section 2.1. Draw geometry only when supplied. Do not invent a shape from a product name or bolt locations from a quantity. Add one generic fixture connector and keep one metadata-only connector. Do not modify Bushel. Do not deploy. One commit if the gates pass. Push. |
+| Files expected to change | Construction Model completeness, views, and sheet drawing; the complete deck fixture; connector tests; the acceptance audit; drawing standard; build-out register; current-state; session handoff; roadmap; architecture index; this log; and the manual impact log. |
+| Files prohibited from changing | Bushel case files, PGE, Contract V1, schema, and deployment. |
+| Implementation result | Implemented and tested. The post cap plate, thickness, bolt diameter, and two fastener locations draw on the post-to-beam relationship. The tread clip prints GEOMETRY NOT SUPPLIED and has no outline. The drawing set stays OPEN / NOT COMPLETE. V1 is not rescored. |
+| Tests | Construction Model regression: 139 passed, 12 warnings, 13.68s, exit 0. PGE regression: 61 passed, 79 warnings, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2106 passed, 6791 warnings, 896.82s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | D1 through D9 and D15 remain. The guard connection is not supplied. One-model and no-guessing stay PARTIAL. The stringer clip has no geometry, which is the correct refusal. |
+| Next approved step | Not written here. Do not invent the missing guard connection. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. |
+
 ### 2026-10-02 — Drawing references and schedule presentation
 
 | Field | Content |

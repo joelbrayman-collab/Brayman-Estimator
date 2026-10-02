@@ -845,6 +845,7 @@ def group_connection_rows(connections, members_by_id):
             tuple(sorted(roles)),
             "" if quantity is None else quantity,
             item.get("construction_status") or "",
+            "geometry supplied" if _connection_has_geometry(item) else "metadata only",
         )
         if key not in groups:
             groups[key] = []
@@ -982,17 +983,63 @@ def _relationship_connection_status(relationship, connections) -> str:
 
 
 def _connection_has_geometry(item) -> bool:
-    return any(
-        item.get(key) is not None
-        for key in (
-            "geometry",
-            "fastener_locations",
-            "bolt_diameter",
-            "bolt_count",
-            "bracket_width",
-            "bracket_depth",
+    """A connector name, fastener, quantity, or bare diameter is not a shape."""
+    block = item.get("connector_geometry") or {}
+    return _has_coordinates(block.get("geometry")) or _has_coordinates(block.get("fastener_locations")) or _has_coordinates(
+        item.get("geometry")
+    ) or _has_coordinates(item.get("fastener_locations"))
+
+
+def _has_coordinates(geometry) -> bool:
+    coordinates = (geometry or {}).get("coordinates") or []
+    return len(coordinates) >= 1 and all(isinstance(point, Mapping) for point in coordinates)
+
+
+def project_connector_geometry(model, present_ids, horizontal, vertical):
+    """Project one connector shape into a view. Missing geometry projects nothing."""
+    present = set(present_ids)
+    overlays = []
+    for connection in model.get("connections") or []:
+        if not _connection_has_geometry(connection):
+            continue
+        block = connection.get("connector_geometry") or {}
+        refs = set(block.get("reference_ids") or connection.get("participant_ids") or ())
+        if not refs or not refs <= present:
+            continue
+        geometry = block.get("geometry") or connection.get("geometry")
+        fasteners = block.get("fastener_locations") or connection.get("fastener_locations")
+        line = _axis_points(geometry, horizontal, vertical)
+        points = _axis_points(fasteners, horizontal, vertical)
+        if len(line) < 2 and not points:
+            continue
+        dimensions = {}
+        for key in ("width", "height", "thickness", "bolt_diameter"):
+            if is_number(block.get(key)):
+                dimensions[key] = block[key]
+            elif is_number(connection.get(key)):
+                dimensions[key] = connection[key]
+        overlays.append(
+            {
+                "connection_id": connection.get("id"),
+                "relationship_id": block.get("relationship_id"),
+                "connector": block.get("connector") or connection.get("connector"),
+                "geometry_type": block.get("geometry_type"),
+                "line": tuple(line),
+                "fasteners": tuple(points),
+                "dimensions": dimensions,
+                "uncertainty": block.get("uncertainty") or connection.get("uncertainty"),
+                "provenance": block.get("provenance") or connection.get("provenance"),
+            }
         )
-    )
+    return tuple(overlays)
+
+
+def _axis_points(geometry, horizontal, vertical):
+    located = []
+    for point in (geometry or {}).get("coordinates") or []:
+        if is_number(point.get(horizontal)) and is_number(point.get(vertical)):
+            located.append((float(point[horizontal]), float(point[vertical])))
+    return located
 
 
 def _length_label(row, measurement_system) -> str:

@@ -4,7 +4,7 @@
 |-------|--------|
 | Label | BUSHEL PROVING FIXTURE |
 | Date | 2026-10-02 |
-| Slice | 7, after callouts, dimension chains, and required-view placement |
+| Slice | 8, after the deck component model |
 | Scale on the generated sheets | 1/4 in = 1 ft |
 | Paper | 11×17 landscape, 1224 × 792 pt |
 | Sheet count | 6 |
@@ -32,6 +32,10 @@ At 3/8 in = 1 ft the front elevation moves to its own sheet. The scale stays 27 
 ## One-model check
 
 Plan stations, the elevations, the callouts, and the pier chain read the same model. Moving a pier changes the plan and the elevations that include it. Changing a level changes the datum text. Joist elevation is not invented, so those members stay off the elevations and the joist elevation chain refuses.
+
+## Component slots
+
+Post, beam, guard, and gate are in the fixture as unsupplied members. They have no location, size, or length. The plan names them in one missing-position note. It does not draw them. Piers still have no shaft length, depth, or capacity. Joist and stringer stations are unchanged.
 
 ## Still not a crew set
 

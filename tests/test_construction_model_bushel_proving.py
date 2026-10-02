@@ -235,13 +235,21 @@ def test_schedule_reads_the_model():
 def test_missing_facts_do_not_become_geometry():
     model = proving_model()
     roles = {item["role"] for item in model["members"]}
-    assert "post" not in roles
+    assert {"post", "beam", "guard", "gate", "joist", "stringer", "decking"}.issubset(roles)
     assert "baluster" not in roles
     for support in model["supports"]:
         point = support["geometry"]["coordinates"][0]
         assert point["z"] == 0
         assert support["geometry"]["kind"] == "point"
+        assert "shaft_length" not in support
+        assert "depth" not in support
+        assert "capacity" not in support
     for member in model["members"]:
+        if "geometry" not in member:
+            assert member["role"] in {"post", "beam", "guard", "gate"}
+            assert "member_size" not in member
+            assert "length" not in member
+            continue
         if member["role"] in {"joist", "stringer"}:
             assert "z" not in member["geometry"]["coordinates"][0]
             continue

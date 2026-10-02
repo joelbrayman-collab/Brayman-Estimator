@@ -24,6 +24,16 @@ from app.services.construction_model.projection import (
 
 WAVE_VERSION = "cm-5"
 
+VIEW_REQUIREMENTS = (
+    {"view": "plan", "axes": ("x", "y"), "does_not_require": ("z", "length", "shaft_length", "member_size")},
+    {"view": "front_elevation", "axes": ("x", "z"), "does_not_require": ("y", "length", "shaft_length")},
+    {"view": "side_elevation", "axes": ("y", "z"), "does_not_require": ("x", "length", "shaft_length")},
+    {"view": "section", "axes": ("x", "y", "z"), "does_not_require": ("member_size",)},
+    {"view": "stair", "axes": ("y", "z"), "does_not_require": ("calculated rise", "calculated run")},
+    {"view": "detail", "axes": ("the detail camera",), "does_not_require": ("facts the detail does not request",)},
+    {"view": "schedule", "axes": (), "does_not_require": ("an invented length",)},
+)
+
 STAIR_FACTS = (
     ("rise", "The stair rise"),
     ("run", "The stair run"),
@@ -173,7 +183,7 @@ def _stair_view(model: Mapping[str, Any], result: Mapping[str, Any]) -> ReadView
                 )
             )
             continue
-        missing = missing_axes(found[0]["geometry"], ("y", "z"))
+        missing = missing_axes(found[0].get("geometry"), ("y", "z"))
         if missing:
             issues.append(
                 _need(
@@ -276,7 +286,7 @@ def _section_view(model: Mapping[str, Any], definition: Any) -> ReadView:
         if element_class not in classes:
             continue
         for item in model.get(element_class) or []:
-            missing = missing_axes(item["geometry"], required)
+            missing = missing_axes(item.get("geometry"), required)
             if missing:
                 noun = "support" if element_class == "supports" else "member"
                 issues.append(
@@ -354,7 +364,7 @@ def _detail_view(model: Mapping[str, Any], definition: Any) -> ReadView:
     horizontal, vertical = _camera(view_type)
     projected = []
     for item, element_class in elements:
-        missing = missing_axes(item["geometry"], (horizontal, vertical))
+        missing = missing_axes(item.get("geometry"), (horizontal, vertical))
         if missing:
             noun = "support" if element_class == "supports" else "member"
             issues.append(
@@ -381,6 +391,10 @@ def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
     for item in model.get("members") or []:
         records = tuple(by_subject.get(item["id"], []))
         lengths = tuple(record["value"] for record in records)
+        displays = tuple(record["display"] for record in records)
+        if not lengths and item.get("length"):
+            lengths = (item["length"]["value"],)
+            displays = (item["length"].get("display") or "",)
         if not lengths:
             issues.append(
                 _need(
@@ -394,7 +408,7 @@ def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
                 "id": item["id"],
                 "role": item["role"],
                 "lengths": lengths,
-                "length_displays": tuple(record["display"] for record in records),
+                "length_displays": displays,
                 "uncertainty": _notes(model, [item["id"]]),
             }
         )

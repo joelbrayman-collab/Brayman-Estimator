@@ -43,6 +43,32 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-02 — Deck component model
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-02 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 8 — CONSTRUCTION COMPONENT MODEL ENRICHMENT 2 OCT 2026 |
+| Objective | Let the Construction Model store the deck components a complete project will supply, without inventing the missing Bushel values. |
+| Business decision | Missing Bushel values stay project inputs. The model must be able to receive them. Guessing stays closed. The component stays open. |
+| Architectural decision | Member roles and support kinds are a closed deck vocabulary. Geometry, size, length, orientation, material, and status are optional. A segment length is derived from two known endpoints and marked as derived. A conflicting supplied length refuses the model. A length does not create an endpoint. Relationships are supports or protects and are never inferred from proximity. A connection stores type, connector, fastener, and quantity only when supplied. A pier does not need shaft data for the plan. The stair view still reads a supplied result and does not calculate it. |
+| Prompt template used | Joel’s 2 Oct 2026 slice 8 prompt. |
+| Approved Cursor prompt summary | Generic model capability only. No Bushel value invention, no case-folder edits, no sheet redesign, no PGE edits, no deploy. Focused tests, construction-model regression, PGE regression, and the full suite. One commit. Push. |
+| Feature Gate | None. Authorized slice beside closed PGE. |
+| Files expected to change | Construction Model completeness, views, projection, and dimensions; the proving fixture and tests; the review note; the drawing standard, register, architecture, current-state, session handoff, roadmap, and this log. |
+| Files prohibited from changing | The Linda Bushel case folder, Plan Generation, Contract V1, Website, schema, and migrations. |
+| Implementation result | A partly known member can be stored. Endpoint length is derived. A conflict is refused. The proving fixture records post, beam, guard, and gate without locations or sizes. The proving set is still not a crew set. The component stays open. |
+| Tests | Construction-model regression 92 passed, 7 warnings, 2.45s, exit 0. PGE regression 49 passed, 48 warnings, 11.51s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2059 passed, 6786 warnings, 1115.95s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Joist and stringer lengths and elevations, post cuts, pier shaft data, baluster layout, and stair rise, run, nosing, and tread count are still not supplied. |
+| Next approved step | Supply those facts as project inputs when they exist. Do not invent them to finish the drawing set. |
+| Next approved prompt | None in this slice. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. |
+
 ### 2026-10-02 — Callouts, dimension chains, and required-view placement
 
 | Field | Content |

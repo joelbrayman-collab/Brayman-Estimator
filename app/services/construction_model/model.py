@@ -37,6 +37,26 @@ PROVENANCE_SOURCES = frozenset(
 MEASUREMENT_SYSTEMS = frozenset({"imperial", "metric"})
 GEOMETRY_KINDS = frozenset({"point", "segment", "polyline"})
 
+MEMBER_ROLES = frozenset(
+    {
+        "joist",
+        "beam",
+        "rim",
+        "header",
+        "stringer",
+        "tread",
+        "decking",
+        "guard",
+        "baluster",
+        "gate",
+        "post",
+    }
+)
+SUPPORT_KINDS = frozenset({"pier", "footing"})
+RELATIONSHIP_KINDS = frozenset({"supports", "protects"})
+CONSTRUCTION_STATUSES = frozenset({"preliminary", "field_verification_required"})
+LENGTH_CONFLICT_TOLERANCE = 0.001
+
 OPTIONAL_COLLECTIONS = (
     "relationships",
     "connections",
@@ -99,6 +119,8 @@ def coordinate_axis(point: Mapping[str, Any], axis: str):
 
 def missing_axes(geometry: Mapping[str, Any], axes) -> list:
     """Axes a view needs that are unknown on at least one point."""
+    if not isinstance(geometry, Mapping):
+        return list(axes)
     missing = []
     for axis in axes:
         for point in geometry.get("coordinates") or []:

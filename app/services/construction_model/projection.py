@@ -257,7 +257,7 @@ def _project_accepted(model: Mapping[str, Any], view_definition: Mapping[str, An
         if element_class not in visible:
             continue
         for item in model.get(element_class) or []:
-            missing = missing_axes(item["geometry"], (horizontal, vertical))
+            missing = missing_axes(item.get("geometry"), (horizontal, vertical))
             if missing:
                 issues.append(_spatial_issue(item, element_class, view_type, missing))
                 continue

@@ -95,7 +95,8 @@ def _chain(chain, segments, overall) -> dict:
 
 
 def _member_length(chain, element, axis, system, notes) -> dict:
-    coordinates = element["geometry"]["coordinates"]
+    geometry = element.get("geometry") or {}
+    coordinates = geometry.get("coordinates") or []
     start = coordinate_axis(coordinates[0], axis) if coordinates else None
     end = coordinate_axis(coordinates[-1], axis) if coordinates else None
     if start is None or end is None:
@@ -114,7 +115,8 @@ def _between(chain, elements, start_id, end_id, axis, system, notes) -> dict:
 
 
 def _station(element, axis) -> Optional[float]:
-    coordinates = element["geometry"]["coordinates"]
+    geometry = element.get("geometry") or {}
+    coordinates = geometry.get("coordinates") or []
     if not coordinates:
         return None
     for point in coordinates:

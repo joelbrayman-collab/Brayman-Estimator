@@ -165,15 +165,13 @@ def test_incomplete_model_fails_and_names_the_missing_fact():
     assert issue.message == "You need to provide this information. At least one support."
 
 
-def test_missing_member_geometry_names_that_member():
+def test_member_without_geometry_is_stored():
     payload = _deck()
     del payload["members"][0]["geometry"]
     result = assess_construction_model(payload)
-    assert result.generation_permitted is False
-    issue = result.issues[0]
-    assert issue.field == "members[beam-a].geometry"
-    assert issue.message.startswith("You need to provide this information.")
-    assert "beam-a" in issue.fact
+    assert result.complete is True
+    beam = next(item for item in result.accepted["members"] if item["id"] == "beam-a")
+    assert "geometry" not in beam
 
 
 def test_uncertainty_stays_on_a_complete_model():

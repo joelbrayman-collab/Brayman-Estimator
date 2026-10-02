@@ -192,12 +192,12 @@ def test_schedule_reads_model_rows_and_refuses_missing_lengths():
     rows = {row["id"]: row for row in wave.schedule.members}
     assert rows["beam-a"]["role"] == "beam"
     assert rows["beam-a"]["lengths"] == (8,)
-    assert rows["joist-a"]["lengths"] == ()
+    assert rows["joist-a"]["lengths"] == (5.0,)
+    assert rows["joist-a"]["length_displays"] == ("5'-0\"",)
     assert wave.schedule.supports[0]["id"] == "support-a"
     assert wave.schedule.supports[0]["kind"] == "pier"
     messages = [issue.message for issue in wave.schedule.issues]
-    assert any(message.startswith("You need to provide this information. The length of member joist-a") for message in messages)
-    assert all("8" != row["lengths"] for row in wave.schedule.members if row["id"] == "joist-a")
+    assert not any("joist-a" in message for message in messages)
 
 
 def test_missing_stair_fact_refuses_only_the_stair_view():
@@ -272,7 +272,7 @@ def test_uncertainty_reaches_the_stair_section_and_schedule():
     assert note in wave.sections[0].uncertainty
     stringer = next(row for row in wave.schedule.members if row["id"] == "stringer-a")
     assert stringer["uncertainty"] == [note]
-    assert stringer["lengths"] == ()
+    assert abs(stringer["lengths"][0] - (13 ** 0.5)) < 0.001
 
 
 def test_wave_composes_separate_11x17_sheets_at_the_stated_scale():
@@ -294,7 +294,8 @@ def test_wave_composes_separate_11x17_sheets_at_the_stated_scale():
     assert "PRELIMINARY CONSTRUCTION DRAWING" in text
     assert "Scale 1/4 in = 1 ft" in text
     assert "Stringer bearing is not confirmed." in text
-    assert "The length of member joist-a" in text
+    assert "5'-0\"" in text
+    assert "The length of member joist-a" not in text
     assert "Not a permit" not in text
     assert "Not a seal" not in text
     assert result.manifest["pages"][0]["kind"] == "orthographic"

@@ -148,6 +148,23 @@ def proving_model():
                 ),
             }
         )
+    for role, identifier in (
+        ("post", "post-unsupplied"),
+        ("beam", "beam-unsupplied"),
+        ("guard", "guard-unsupplied"),
+        ("gate", "gate-unsupplied"),
+    ):
+        members.append(
+            {
+                "id": identifier,
+                "role": role,
+                "construction_status": "field_verification_required",
+                "provenance": _provenance(
+                    "project_input",
+                    "Component slot. Location, size, and length are not supplied.",
+                ),
+            }
+        )
     supports = []
     for identifier, x_coord, y_coord in PIER_COORDINATES:
         supports.append(

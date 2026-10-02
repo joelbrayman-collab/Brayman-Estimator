@@ -14,11 +14,17 @@ from app.services.construction_model.model import (
     DOCUMENT_STATUS_TEXT,
     GEOMETRY_KINDS,
     IMPERIAL_UNITS,
+    CONSTRUCTION_STATUSES,
+    LENGTH_CONFLICT_TOLERANCE,
     MEASUREMENT_SYSTEMS,
+    MEMBER_ROLES,
     METRIC_UNITS,
     OPTIONAL_COLLECTIONS,
     PROVENANCE_SOURCES,
+    RELATIONSHIP_KINDS,
     STRUCTURE_CLASS_DECK,
+    SUPPORT_KINDS,
+    coordinate_axis,
     format_measure,
     is_number,
     plain_text,
@@ -36,6 +42,7 @@ CODE_MISSING_MEMBER = "MISSING_MEMBER"
 CODE_MISSING_SUPPORT = "MISSING_SUPPORT"
 CODE_MISSING_FACT = "MISSING_CONSTRUCTION_FACT"
 CODE_INVALID_FACT = "INVALID_CONSTRUCTION_FACT"
+CODE_CONFLICTING_GEOMETRY = "CONFLICTING_GEOMETRY"
 
 _YOU_NEED = "You need to provide this information."
 
@@ -135,6 +142,8 @@ def assess_construction_model(payload: Any) -> ConstructionModelAssessment:
     issues.extend(optional_issues)
     if measurement_system is not None:
         issues.extend(_unit_issues(optional.get("dimensions") or [], measurement_system))
+        issues.extend(_apply_member_lengths(members, measurement_system))
+        issues.extend(_material_links(members, supports, optional.get("materials") or []))
     stairs, stair_issues = _stair_results(payload.get("stair_results", []))
     issues.extend(stair_issues)
     chains, chain_issues = _dimension_chains(payload.get("dimension_chains"), known_ids, level_ids)
@@ -176,7 +185,12 @@ def _annotate_measures(model: dict) -> None:
     system = model["measurement_system"]
     default_unit = "ft" if system == "imperial" else "m"
     for level in model["levels"]:
+        level["measurement_system"] = system
         level["display"] = format_measure(level["elevation"], system, default_unit)
+    for member in model.get("members") or []:
+        length = member.get("length")
+        if length:
+            length["display"] = format_measure(length["value"], system, length.get("unit"))
     for item in model.get("dimensions") or []:
         item["measurement_system"] = system
         item["display"] = format_measure(item["value"], system, item.get("unit"))
@@ -334,11 +348,21 @@ def _members_or_supports(value: Any, collection: str, empty_fact: str, empty_cod
             continue
         seen.add(identifier)
         role = plain_text(item.get(role_key))
-        if role is None:
+        allowed_roles = MEMBER_ROLES if collection == "members" else SUPPORT_KINDS
+        if role is None or role not in allowed_roles:
             issues.append(
                 _need(CODE_MISSING_FACT, f"{collection}[{identifier}].{role_key}", f"{role_fact} {identifier}")
             )
-        geometry, geometry_issue = _geometry(item.get("geometry"), f"{collection}[{identifier}].geometry", f"{noun} {identifier}")
+            role = None
+        if "geometry" not in item or item.get("geometry") is None:
+            geometry = None
+            geometry_issue = None
+        else:
+            geometry, geometry_issue = _geometry(
+                item.get("geometry"),
+                f"{collection}[{identifier}].geometry",
+                f"{noun} {identifier}",
+            )
         if geometry_issue is not None:
             issues.append(geometry_issue)
         provenance, provenance_issue = _provenance(
@@ -348,17 +372,191 @@ def _members_or_supports(value: Any, collection: str, empty_fact: str, empty_cod
         )
         if provenance_issue is not None:
             issues.append(provenance_issue)
-        if role is None or geometry is None or provenance is None:
+        extras, extra_issues = _component_fields(item, collection, identifier, noun)
+        issues.extend(extra_issues)
+        if role is None or provenance is None or geometry_issue is not None or extra_issues:
             continue
-        parsed.append(
-            {
-                "id": identifier,
-                "geometry": geometry,
-                "provenance": provenance,
-                role_key: role,
-            }
-        )
+        recorded = {
+            "id": identifier,
+            "provenance": provenance,
+            role_key: role,
+        }
+        if geometry is not None:
+            recorded["geometry"] = geometry
+        recorded.update(extras)
+        parsed.append(recorded)
     return parsed, issues
+
+
+def _component_fields(item: Mapping, collection: str, identifier: str, noun: str):
+    recorded = {}
+    issues = []
+    size = item.get("member_size", None)
+    if size is not None:
+        text = plain_text(size)
+        if text is None:
+            issues.append(
+                _need(CODE_MISSING_FACT, f"{collection}[{identifier}].member_size", f"A member size for {noun} {identifier}")
+            )
+        else:
+            recorded["member_size"] = text
+    orientation = item.get("orientation", None)
+    if orientation is not None:
+        text = plain_text(orientation)
+        if text is None:
+            issues.append(
+                _need(
+                    CODE_MISSING_FACT,
+                    f"{collection}[{identifier}].orientation",
+                    f"An orientation for {noun} {identifier}",
+                )
+            )
+        else:
+            recorded["orientation"] = text
+    status = item.get("construction_status", None)
+    if status is not None:
+        text = plain_text(status)
+        if text not in CONSTRUCTION_STATUSES:
+            issues.append(
+                _need(
+                    CODE_MISSING_FACT,
+                    f"{collection}[{identifier}].construction_status",
+                    f"A construction status for {noun} {identifier}",
+                )
+            )
+        else:
+            recorded["construction_status"] = text
+    material_id = item.get("material_id", None)
+    if material_id is not None:
+        text = plain_text(material_id)
+        if text is None:
+            issues.append(
+                _need(
+                    CODE_MISSING_FACT,
+                    f"{collection}[{identifier}].material_id",
+                    f"A material for {noun} {identifier}",
+                )
+            )
+        else:
+            recorded["material_id"] = text
+    if "length" in item and item.get("length") is not None:
+        raw = item.get("length")
+        if isinstance(raw, Mapping) and is_number(raw.get("value")):
+            length = {"value": raw["value"], "derived": bool(raw.get("derived"))}
+            if plain_text(raw.get("unit")) is not None:
+                length["unit"] = plain_text(raw.get("unit"))
+            if isinstance(raw.get("provenance"), Mapping):
+                length["provenance"] = dict(raw["provenance"])
+            recorded["length"] = length
+        elif is_number(raw):
+            length = {"value": raw, "derived": False}
+            unit = plain_text(item.get("length_unit"))
+            if unit is not None:
+                length["unit"] = unit
+            recorded["length"] = length
+        else:
+            issues.append(
+                _need(CODE_MISSING_FACT, f"{collection}[{identifier}].length", f"A numeric length for {noun} {identifier}")
+            )
+    if collection == "supports":
+        for key in ("depth", "shaft_length", "capacity"):
+            if key not in item or item.get(key) is None:
+                continue
+            if not is_number(item.get(key)):
+                issues.append(
+                    _need(
+                        CODE_MISSING_FACT,
+                        f"supports[{identifier}].{key}",
+                        f"A numeric {key.replace('_', ' ')} for support {identifier}",
+                    )
+                )
+            else:
+                recorded[key] = item[key]
+    return recorded, issues
+
+
+def _apply_member_lengths(members: list, measurement_system: str) -> list:
+    """Derive a segment length from two known endpoints. Do not invent an endpoint."""
+    issues = []
+    default_unit = "ft" if measurement_system == "imperial" else "m"
+    allowed = IMPERIAL_UNITS if measurement_system == "imperial" else METRIC_UNITS
+    for member in members:
+        supplied = member.get("length")
+        if supplied is not None and supplied.get("unit") not in (None, *allowed):
+            issues.append(
+                _need(
+                    CODE_INVALID_FACT,
+                    f"members[{member['id']}].length_unit",
+                    f"A {measurement_system} unit for member {member['id']}",
+                )
+            )
+            continue
+        derived = _endpoint_distance(member.get("geometry"))
+        if derived is None:
+            continue
+        if supplied is None:
+            member["length"] = {
+                "value": derived,
+                "unit": default_unit,
+                "derived": True,
+                "provenance": {
+                    "source": member["provenance"]["source"],
+                    "reference": "Derived from the member endpoints",
+                },
+            }
+            continue
+        if abs(supplied["value"] - derived) > LENGTH_CONFLICT_TOLERANCE:
+            issues.append(
+                _need(
+                    CODE_CONFLICTING_GEOMETRY,
+                    f"members[{member['id']}].length",
+                    f"A length for member {member['id']} that agrees with its endpoints",
+                )
+            )
+    return issues
+
+
+def _endpoint_distance(geometry):
+    if not isinstance(geometry, Mapping) or geometry.get("kind") != "segment":
+        return None
+    coordinates = geometry.get("coordinates") or []
+    if len(coordinates) != 2:
+        return None
+    start, end = coordinates
+    for axis in AXES:
+        if coordinate_axis(start, axis) is None or coordinate_axis(end, axis) is None:
+            return None
+    return (
+        (end["x"] - start["x"]) ** 2
+        + (end["y"] - start["y"]) ** 2
+        + (end["z"] - start["z"]) ** 2
+    ) ** 0.5
+
+
+def _material_links(members: list, supports: list, materials: list) -> list:
+    known = {item["id"] for item in materials}
+    issues = []
+    for item, collection in ((member, "members") for member in members):
+        material_id = item.get("material_id")
+        if material_id is not None and material_id not in known:
+            issues.append(
+                _need(
+                    CODE_MISSING_FACT,
+                    f"{collection}[{item['id']}].material_id",
+                    f"A material for member {item['id']}",
+                )
+            )
+    for item in supports:
+        material_id = item.get("material_id")
+        if material_id is not None and material_id not in known:
+            issues.append(
+                _need(
+                    CODE_MISSING_FACT,
+                    f"supports[{item['id']}].material_id",
+                    f"A material for support {item['id']}",
+                )
+            )
+    return issues
 
 
 def _geometry(value: Any, field: str, fact_subject: str):
@@ -470,7 +668,7 @@ def _optional_item(collection: str, index: int, item: Any, known_ids: set, level
         kind = plain_text(item.get("kind"))
         from_id = plain_text(item.get("from_id"))
         to_id = plain_text(item.get("to_id"))
-        if kind is None:
+        if kind not in RELATIONSHIP_KINDS:
             issues.append(_need(CODE_MISSING_FACT, f"relationships[{identifier}].kind", f"A kind for relationship {identifier}"))
         if from_id not in known_ids:
             issues.append(
@@ -515,6 +713,39 @@ def _optional_item(collection: str, index: int, item: Any, known_ids: set, level
                 ]
             cleaned.append(text)
         recorded["participant_ids"] = cleaned
+        for key in ("connection_type", "connector", "fastener"):
+            if item.get(key) is None:
+                continue
+            text = plain_text(item.get(key))
+            if text is None:
+                return None, [
+                    _need(
+                        CODE_MISSING_FACT,
+                        f"connections[{identifier}].{key}",
+                        f"A {key.replace('_', ' ')} for connection {identifier}",
+                    )
+                ]
+            recorded[key] = text
+        if item.get("quantity") is not None:
+            if not is_number(item.get("quantity")):
+                return None, [
+                    _need(
+                        CODE_MISSING_FACT,
+                        f"connections[{identifier}].quantity",
+                        f"A quantity for connection {identifier}",
+                    )
+                ]
+            recorded["quantity"] = item["quantity"]
+        provenance = item.get("provenance", None)
+        if provenance is not None:
+            recorded_provenance, provenance_issue = _provenance(
+                provenance,
+                f"connections[{identifier}].provenance",
+                f"connection {identifier}",
+            )
+            if provenance_issue is not None:
+                return None, [provenance_issue]
+            recorded["provenance"] = recorded_provenance
         return recorded, []
     if collection == "openings":
         geometry, geometry_issue = _geometry(item.get("geometry"), f"openings[{identifier}].geometry", f"opening {identifier}")

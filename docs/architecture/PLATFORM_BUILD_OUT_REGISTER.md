@@ -761,7 +761,7 @@ This layer does not change the contractor platform. It is not implemented.
 | Dependency class | Sequencing only. No item below is BLOCKED. |
 | Required dependencies | The contractor organization, project, estimate, and privacy boundary already exist and stay in place. Each later item depends on the item before it. External POS, ERP, and order integration is last and is not required for earlier measurement. |
 | Existing implementation | Organization isolation, membership, projects, clients, locations, calculation engines, Contract V1, the mapper, Cost Library, estimates, proposals, and change orders. Supplier Connection direction is already recorded. FG-029 is the closed office package workflow. FG-030 supplier login remains recorded and not authorized. None of that is this partnership. |
-| What is missing | The eight queued capabilities below. |
+| What is missing | The eight queued capabilities below. The BMR PRO Hub is recorded under this row and is also not started. |
 | Build acceptance criteria | A later authorized slice for item 1 only, reusing the contractor organization and granting no unrestricted supplier membership. |
 | Live verification requirement | Not available. This row is architecture only. |
 | Commit / deployed SHA when closed | Not closed. This recording is not deployed. |
@@ -780,6 +780,33 @@ Operational ROI / Takeoff Capacity Extension. Subcomponent of this partnership. 
 8. POS / ERP / order integrations. Depends on item 5. Later capability.
 
 BMR Winchester is the first pilot context. The row stays supplier-neutral.
+
+### BMR PRO HUB
+
+| Field | Record |
+|-------|--------|
+| Diagram location | Supplier-side operating surface around the same contractor platform. Not inside the contractor organization. |
+| Purpose | The daily environment for an authorized supplier user. Two initial surfaces: OPERATE (Supplier Console / Transaction Workspace) and SELL / SERVE (PRO Tools / Calculator Hub). UNDERSTAND and MEASURE are conceptual only. |
+| Current status | **RECORDED / NOT STARTED**. Architecture only. Not implementation-authorized. |
+| Dependency class | Sequencing only. This row does not start the eight-item partnership sequence and does not block it. |
+| Required dependencies | The eight-item partnership sequence above. The calculator hub reuses existing governed calculation engines. It does not create a BMR calculator. |
+| Existing implementation | None. The live meeting page `/supplier-program/economic-model` is the operational ROI surface. It is not the hub, not the console, and not the ROI dashboard. |
+| What is missing | All seven components below. |
+| Build acceptance criteria | Not available. A later prompt must authorize one component. This row does not. |
+| Live verification requirement | Not available. |
+| Commit / deployed SHA when closed | Not closed. Not deployed. |
+
+Components, none implemented:
+
+1. Supplier Console / Transaction Workspace. Transaction-centric queues. No uncontrolled feed of contractor activity.
+2. PRO Tools / Calculator Hub. The same governed engines in a public, BMR-staff, or contractor context. One engine. No contractor-private access merely because the calculator is open.
+3. Supplier permissions / hierarchy. Supplier / Banner → Dealer / Ownership Group → Store → Authorized Supplier User → Sponsored / Authorized Contractor. A store user does not gain network visibility.
+4. Authorized transaction firewall. The contractor keeps customers, projects, labour rates, costs, margins, profitability, other suppliers, private estimates, internal notes, and unrelated activity.
+5. Acknowledgement / status workflow. Change requested, notified, acknowledged, accepted or rejected, status returned. Text may notify. The transaction system holds the acknowledgement.
+6. Material Opportunity integration. Project → material requirement → supplier opportunity → quote → order. Classes remain POTENTIAL, ATTRIBUTED, and VERIFIED.
+7. Supplier ROI / measurement integration. Console events may later evidence the existing economic model. No second model. The ROI dashboard stays future.
+
+The hub does not change contractor ownership, sponsorship-as-entitlement, non-exclusivity, or supplier neutrality.
 
 ## Supplier economic model — live meeting surface
 
@@ -856,6 +883,10 @@ Supplier Pro Platform Partnership
   sequence is identity, sponsorship, privacy, opportunity,
   authorized transaction, ROI dashboard, dealer reporting,
   then POS/ERP integration
+BMR PRO Hub
+  RECORDED / NOT STARTED
+  supplier-side console and calculator hub
+  not implementation-authorized
 ```
 
 ## Ready components
@@ -945,7 +976,7 @@ ICF ESTIMATOR: the internal 8-inch form and concrete service and its estimate wo
 
 ICF LABOUR: RUNTIME INPUT for hours. INSTANCE-OWNER INPUT for the existing ORG-001 dollar rate. No second rate is created.
 
-SUPPLIER PRO PLATFORM PARTNERSHIP: NOT STARTED. Architecture only. Not deployed. It does not change the contractor platform.
+SUPPLIER PRO PLATFORM PARTNERSHIP: NOT STARTED. Architecture only. Not deployed. It does not change the contractor platform. BMR PRO HUB: RECORDED / NOT STARTED (2026-10-02). Not implementation-authorized. Not deployed.
 
 Start Project, Guided Project Setup, and Plan Generation are CLOSED — LIVE VERIFIED. CONSTRUCTION MODEL AND DRAWING SET is **OPEN / NOT COMPLETE**. Slices 1 through 10 are **IMPLEMENTED / TESTED** and not deployed. The sheet does not scale to fit. The proving set does not meet the printed-sheet standard. Visual acceptance for the complete deck fixture is not passed. The 1 Oct live walk also recorded non-blocking table overflow on the project hub at 520 and 390, and on the estimate versions table at 1280 with the sidebar open. That overflow is NON-BLOCKING UX/POLISH and is left for the later UX stitching phase.
 

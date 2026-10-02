@@ -256,3 +256,5 @@ Assumptions → pilot → measurement → proven economics → expansion.
 The future Supplier ROI & Opportunity Dashboard must use compatible definitions for active contractors, projects, calculations and takeoffs, material demand, supplier opportunities, pricing requests, quotes, orders, captured material value, verified value, takeoff hours, validation hours, and hours released.
 
 The dashboard is not built by this addendum.
+
+The BMR PRO Hub, recorded in [supplier-pro-platform-partnership-v1.md](supplier-pro-platform-partnership-v1.md), may later send operational evidence from its Supplier Console into this same model: takeoff activity, pricing requests, quotes, orders, deliveries, captured material value, supplier activity, and contractor adoption. That evidence uses these definitions. It does not create a second economic model. The console and this meeting surface stay separate. The ROI dashboard remains a future measurement surface. Sales are not automatically attributed to CalibraytAI. POTENTIAL, ATTRIBUTED, and VERIFIED stay as recorded.

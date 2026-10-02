@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **RECORDED / NOT STARTED / NOT IMPLEMENTATION-AUTHORIZED** |
-| Date | 2026-10-01 |
+| Date | 2026-10-01. Additive BMR PRO Hub record 2026-10-02. Still not implementation-authorized. |
 | Product | CalibraytAI |
 | Effect on the contractor platform | None. This layer is additive. |
 | First pilot context | BMR Winchester. The architecture stays supplier-neutral. BMR is not hard-coded. |
@@ -21,7 +21,8 @@ FG-029 remains the closed contractor-office supplier-package workflow. FG-030 re
 SUPPLIER / BANNER
 → DEALER / OWNERSHIP GROUP
 → STORE
-→ SPONSORED CONTRACTOR
+→ AUTHORIZED SUPPLIER USER
+→ SPONSORED / AUTHORIZED CONTRACTOR
 → CONTRACTOR CALIBRAYTAI ORGANIZATION
 → PROJECT
 ```
@@ -76,6 +77,192 @@ These are architecture and roadmap requirements. This record does not implement 
 
 The sequence is also the build-out register row. None of these items is closed.
 
+The BMR PRO Hub, recorded below, is the supplier-side operating surface for that same queue. It does not replace the queue and it does not authorize a build.
+
+---
+
+## BMR PRO Hub
+
+Status: **RECORDED / NOT STARTED / NOT IMPLEMENTATION-AUTHORIZED** (2026-10-02).
+
+Supplier Pro evolves into a BMR PRO Hub. The hub is the daily digital operating environment for Darcy, store owners, and authorized BMR staff who participate in the CalibraytAI supplier program. It is not a feed of contractor transactions. It has to give authorized BMR staff a reason to use CalibraytAI on a day when no contractor has sent a new transaction.
+
+The hub is an additive supplier-side layer. It does not merge the contractor business and the supplier business. BMR Winchester remains the first pilot context. BMR is not hard-coded as the only future supplier.
+
+Two initial surfaces sit inside the same hub:
+
+| Surface | Name | Role |
+|---------|------|------|
+| OPERATE | Supplier Console / Transaction Workspace | The authorized work queue. |
+| SELL / SERVE | PRO Tools / Calculator Hub | The same governed calculation engines, used as a sales and service tool. |
+
+Two further surfaces are conceptual only. They are not permission to build a dashboard.
+
+| Surface | Role |
+|---------|------|
+| UNDERSTAND | Permitted contractor activity, material opportunities, and open opportunities. |
+| MEASURE | Program activity, captured value, and supplier ROI. |
+
+### Supplier Console / Transaction Workspace
+
+The console is the BMR operational work queue. It is transaction-centric. BMR staff do not receive an uncontrolled feed of contractor activity.
+
+When it is built, it organizes only the activity the user’s role permits, in queues such as:
+
+- Needs attention
+- Today’s work
+- Open transactions
+- Deliveries
+- Orders
+- Pricing requests
+- Quotes
+- Contractor activity
+
+The activity that can appear there, still only when authorized, includes pricing requests, quotes, orders, delivery schedules, delivery changes, order changes, acknowledgements, acceptance and rejection, contractor questions, transaction status, transaction history, notifications, and store activity.
+
+This console is not built.
+
+### PRO Tools / Calculator Hub
+
+Authorized BMR staff can use governed CalibraytAI calculation tools with walk-in customers and with contractors. Examples, as those engines become available, include Concrete, Stairs, ICF, and other governed construction calculators.
+
+These are not separate BMR calculators. They are the same governed calculation engines used in the other authorized contexts below. This record does not modify those engines and does not build the hub.
+
+### Three calculator contexts
+
+One calculation engine. Three authorized contexts. Do not duplicate the engine.
+
+| Context | What it may see |
+|---------|-----------------|
+| PUBLIC | A standalone individual calculation. No contractor private data. |
+| BMR STAFF | An authorized BMR employee uses the calculation as a sales or service tool. Availability of the calculator does not grant access to a contractor’s private business. |
+| CONTRACTOR | The calculation runs inside the contractor’s authorized project or workflow. A result or material requirement reaches BMR only when the contractor deliberately sends it. That send becomes an authorized supplier transaction. |
+
+### Contractor data firewall
+
+The hub is not a window into the contractor’s private CalibraytAI organization. The contractor remains the owner of its business data.
+
+BMR may receive only the information the contractor deliberately authorizes through a supplier transaction. BMR does not automatically receive:
+
+- contractor customer lists
+- complete project lists
+- labour rates
+- internal costs
+- margins
+- profitability
+- other supplier relationships
+- private estimates
+- internal notes
+- projects that do not involve BMR
+- unrelated contractor activity
+
+Store-level access uses the same firewall. A store employee does not gain network-level visibility by using the hub.
+
+### Authorized supplier transaction
+
+The boundary stays:
+
+```text
+CONTRACTOR
+→ AUTHORIZED MATERIAL REQUIREMENT / TRANSACTION
+→ BMR PRO HUB
+→ BMR ACTION
+→ ACKNOWLEDGEMENT / ACCEPTANCE / REJECTION
+→ CONTRACTOR
+```
+
+The transaction contains only the information the supplier needs for the authorized action.
+
+### Acknowledgement
+
+Supplier acknowledgement is a first-class transaction state. It is not a text message.
+
+```text
+CHANGE REQUESTED
+→ BMR NOTIFIED
+→ BMR ACKNOWLEDGED
+→ BMR ACCEPTED / REJECTED
+→ STATUS RETURNED TO CONTRACTOR
+```
+
+SMS or text may notify someone. The authoritative acknowledgement lives in the transaction system. This applies to delivery changes, order changes, schedule changes, and any other supplier action whose receipt must be confirmed.
+
+This workflow is not built.
+
+### Supplier hierarchy
+
+The hub uses the hierarchy already recorded for Supplier Pro, with the authorized supplier user named as its own node:
+
+```text
+Supplier / Banner
+→ Dealer / Ownership Group
+→ Store
+→ Authorized Supplier User
+→ Sponsored / Authorized Contractor
+→ Contractor CalibraytAI Organization
+→ Project
+```
+
+A user sees only the stores, contractors, transactions, and reporting that role permits. A store employee does not automatically see the dealer network or another store. One dealer does not see another dealer’s private commercial information. Sponsorship remains entitlement and access. It is not ownership, and it is not exclusivity. Multiple suppliers remain permitted.
+
+### Daily value
+
+The hub has to be useful on a day with no new contractor submission.
+
+OPERATE covers the work queue, deliveries, orders, changes, and acknowledgements.
+
+SELL / SERVE covers construction calculators, walk-in customer assistance, contractor assistance, and material planning.
+
+UNDERSTAND covers permitted contractor activity, material opportunities, and open opportunities.
+
+MEASURE covers program activity, captured value, and supplier ROI.
+
+Those four names are conceptual surfaces. They do not authorize the Supplier ROI dashboard.
+
+### Material Opportunity
+
+The existing chain remains the commercial chain:
+
+```text
+PROJECT
+→ MATERIAL REQUIREMENT
+→ SUPPLIER OPPORTUNITY
+→ QUOTE
+→ ORDER
+```
+
+The hub is the operational surface on which an authorized supplier-side transaction may later be acted on. It does not replace that chain. Supplier sales are not automatically attributed to CalibraytAI. The classes stay POTENTIAL, ATTRIBUTED, and VERIFIED.
+
+### ROI
+
+The existing supplier economic model, including the operational ROI extension, and the future Supplier ROI & Opportunity Dashboard stay separate from the operational console. They use compatible definitions. This record does not create a second economic model.
+
+Operational events from the Supplier Console may later provide evidence for takeoff activity, pricing requests, quotes, orders, deliveries, captured material value, supplier activity, and contractor adoption. The ROI dashboard remains a future measurement surface.
+
+### Store owner and staff
+
+The hub is for Darcy at the dealer level and for an individual store owner, manager, and authorized store staff. A store may later use it to manage supplier-side contractor activity, respond to pricing requests, manage orders and deliveries, acknowledge changes, help a walk-in customer with a construction calculation, help a PRO contractor, and see the store-level activity that role permits. Store-level access still respects the contractor data firewall.
+
+### Product positioning
+
+The contractor side remains construction intelligence, estimating, project workflow, and a supplier connection.
+
+The BMR / store side is the BMR PRO Hub: an operating console, sales and service tools, authorized material demand, and measurable supplier value.
+
+The hub connects the two sides. It does not merge the two businesses.
+
+### Hub components in the build-out register
+
+These are architecture components. None is implemented. This record does not authorize a build.
+
+1. Supplier Console / Transaction Workspace
+2. PRO Tools / Calculator Hub
+3. Supplier permissions / hierarchy
+4. Authorized transaction firewall
+5. Acknowledgement / status workflow
+6. Material Opportunity integration
+7. Supplier ROI / measurement integration
+
 ---
 
 ## Supplier visibility
@@ -104,6 +291,8 @@ REQUEST PRICING
 ```
 
 The contractor deliberately starts the move from private platform data to supplier-facing transactional data.
+
+Supplier acknowledgement is a first-class state on that transaction, as recorded under BMR PRO Hub. A text message can notify. It is not the acknowledgement. The transaction carries only what the supplier needs for the authorized action.
 
 ---
 
@@ -152,7 +341,7 @@ It may measure:
 
 Dashboard visibility must respect dealer and store ownership boundaries.
 
-The dashboard is not a second economics calculator. When it is built, it must use the same definitions as the existing supplier/OEM economics calculator, including the operational addendum in [supplier-pro-operational-roi-addendum-v1.md](supplier-pro-operational-roi-addendum-v1.md). That addendum is not implemented.
+The dashboard is not a second economics calculator. When it is built, it must use the same definitions as the existing supplier/OEM economics calculator, including the operational addendum in [supplier-pro-operational-roi-addendum-v1.md](supplier-pro-operational-roi-addendum-v1.md). That addendum is not implemented. The BMR PRO Hub MEASURE surface is this same future dashboard. Console events may later supply evidence. They do not create a second model, and they do not attribute a supplier sale to CalibraytAI by themselves.
 
 ---
 
@@ -160,11 +349,15 @@ The dashboard is not a second economics calculator. When it is built, it must us
 
 ```text
 Supplier / Banner
-→ Independent Dealer / Ownership Group
+→ Dealer / Ownership Group
 → Store
-→ Sponsored Contractor
-→ Contractor Project
+→ Authorized Supplier User
+→ Sponsored / Authorized Contractor
+→ Contractor CalibraytAI Organization
+→ Project
 ```
+
+The authorized supplier user is the person acting for a store or dealer. That node does not own the contractor organization.
 
 A dealer that controls more than one store may see consolidated results, each store, comparisons, and the drill-down its permission allows.
 

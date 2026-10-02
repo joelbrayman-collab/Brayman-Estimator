@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-02 — BMR PRO Hub architecture record
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-02 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI SUPPLIER PRO PLATFORM BMR PRO HUB — ARCHITECTURE ADDITION 2 OCT 2026 |
+| Objective | Record the BMR PRO Hub as an additive Supplier Pro V1 decision. |
+| Business decision | The hub is the daily supplier-side environment for Darcy, store owners, and authorized BMR staff. It is not a feed of contractor activity. The contractor keeps its business data. |
+| Architectural decision | One Supplier Pro authority gains two initial hub surfaces: Supplier Console / Transaction Workspace, and PRO Tools / Calculator Hub. One calculation engine has public, BMR-staff, and contractor contexts. Acknowledgement is a transaction state. The existing material-opportunity chain and the existing economic model stay in place. No second model. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Architecture record only. Update the existing Supplier Pro authority, the ROI addendum, the build-out register, the architecture index, current-state, roadmap, session handoff, and this log. Do not implement product code. Do not deploy. |
+| Files expected to change | Supplier Pro architecture, ROI addendum, build-out register, architecture index, current-state, roadmap, session handoff, and this log. |
+| Files prohibited from changing | Product code, calculators, contractor workflow, schema, Website, and deployment. |
+| Implementation result | Recorded. Not implemented. Supplier Pro remains NOT STARTED. |
+| Tests | Not run. No product code changed. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The hub is not implementation-authorized. The seven hub components are not built. |
+| Next approved step | Leave the hub unbuilt until a separate prompt authorizes one component. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. |
+
 ### 2026-10-02 — Buildable details and construction schedules
 
 | Field | Content |

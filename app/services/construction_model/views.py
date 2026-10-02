@@ -14,7 +14,7 @@ from app.services.construction_model.completeness import (
     assess_construction_model,
 )
 from app.services.construction_model.dimensions import resolve_dimension_chains
-from app.services.construction_model.model import is_number, missing_axes, plain_text, view_profile
+from app.services.construction_model.model import AXES, is_number, missing_axes, plain_text, view_profile
 from app.services.construction_model.projection import (
     VIEW_FRONT_ELEVATION,
     VIEW_PLAN,
@@ -89,6 +89,8 @@ class ScheduleRead:
     dimensions: tuple
     levels: tuple = ()
     dimension_chains: tuple = ()
+    connections: tuple = ()
+    measurement_system: str = "imperial"
 
     def to_dict(self) -> dict:
         return {
@@ -101,6 +103,8 @@ class ScheduleRead:
             "dimensions": list(self.dimensions),
             "levels": list(self.levels),
             "dimension_chains": list(self.dimension_chains),
+            "connections": list(self.connections),
+            "measurement_system": self.measurement_system,
         }
 
 
@@ -303,6 +307,10 @@ def _section_view(model: Mapping[str, Any], definition: Any) -> ReadView:
                 continue
             if _cut_hits(item["geometry"], direction, location, depth, elevation):
                 elements.append(_decorate(item, element_class, horizontal, vertical, model))
+                if element_class in {"members", "supports"} and elements[-1].get("profile_geometry") is None:
+                    missing_profile = _missing_profile_fact(item, element_class, identifier)
+                    if missing_profile is not None:
+                        issues.append(missing_profile)
     if issues and not elements:
         return _empty("section", identifier, tuple(issues), model)
     uncertainty = _notes(model, [element["id"] for element in elements])
@@ -384,6 +392,31 @@ def _detail_view(model: Mapping[str, Any], definition: Any) -> ReadView:
         projected.append(_decorate(item, element_class, horizontal, vertical, model))
     if issues and not projected:
         return _empty("detail", identifier, tuple(issues), model)
+    if "extent" in definition:
+        extent = definition.get("extent")
+        if not is_number(extent) or extent <= 0:
+            return _empty(
+                "detail",
+                identifier,
+                (_need("INVALID_DETAIL", "detail.extent", f"A detail extent for detail {identifier}"),),
+                model,
+            )
+        projected = _clip_detail(projected, float(extent))
+        if not projected:
+            return _empty(
+                "detail",
+                identifier,
+                (
+                    _need(
+                        "MISSING_DETAIL_FACT",
+                        "detail.extent",
+                        f"A detail extent that includes the members of detail {identifier}",
+                    ),
+                ),
+                model,
+            )
+    for element in projected:
+        element["annotate_material"] = True
     uncertainty = _notes(model, [element["id"] for element in projected])
     return ReadView(
         True,
@@ -392,7 +425,7 @@ def _detail_view(model: Mapping[str, Any], definition: Any) -> ReadView:
         tuple(issues),
         tuple(uncertainty),
         tuple(projected),
-        (),
+        _matching_stair_facts(model, [element["id"] for element in projected]),
         "DETAIL",
         horizontal,
         vertical,
@@ -427,6 +460,10 @@ def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
                 "member_size": item.get("member_size"),
                 "material_id": item.get("material_id"),
                 "construction_status": item.get("construction_status"),
+                "section_width": item.get("section_width"),
+                "section_depth": item.get("section_depth"),
+                "profile_type": item.get("profile_type"),
+                "orientation": item.get("orientation"),
                 "lengths": lengths,
                 "length_displays": displays,
                 "uncertainty": _notes(model, [item["id"]]),
@@ -436,6 +473,9 @@ def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
         {
             "id": item["id"],
             "kind": item["kind"],
+            "section_width": item.get("section_width"),
+            "section_depth": item.get("section_depth"),
+            "construction_status": item.get("construction_status"),
             "uncertainty": _notes(model, [item["id"]]),
         }
         for item in model.get("supports") or []
@@ -461,6 +501,8 @@ def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
         dimensions,
         levels,
         tuple(resolve_dimension_chains(model)),
+        tuple(dict(item) for item in model.get("connections") or []),
+        model.get("measurement_system") or "imperial",
     )
 
 
@@ -533,6 +575,12 @@ def _decorate(item: Mapping[str, Any], element_class: str, horizontal: str, vert
         record["profile_geometry"] = profile
     if item.get("member_size"):
         record["member_size"] = item["member_size"]
+    if item.get("material_id"):
+        record["material_id"] = item["material_id"]
+        for material in model.get("materials") or []:
+            if material.get("id") == item["material_id"]:
+                record["material_name"] = material.get("name") or item["material_id"]
+                break
     return record
 
 
@@ -624,3 +672,369 @@ def _need(code: str, field: str, fact: str) -> ConstructionModelIssue:
         fact=fact,
         message=f"{_YOU_NEED} {fact}.",
     )
+
+
+def _missing_profile_fact(item, element_class, identifier):
+    geometry = item.get("geometry") or {}
+    if geometry.get("kind") != "segment":
+        return None
+    missing = []
+    if not is_number(item.get("section_width")) or item.get("section_width") <= 0:
+        missing.append("section width")
+    if not is_number(item.get("section_depth")) or item.get("section_depth") <= 0:
+        missing.append("section depth")
+    if not missing:
+        return None
+    noun = "support" if element_class == "supports" else "member"
+    fact = " and ".join(missing)
+    return _need(
+        "MISSING_SECTION_FACT",
+        f"section.{identifier}.{item['id']}",
+        f"The {fact} of {noun} {item['id']} for section {identifier}",
+    )
+
+
+def _matching_stair_facts(model, element_ids):
+    ids = set(element_ids)
+    for result in model.get("stair_results") or []:
+        if not ids.intersection(result.get("member_ids") or []):
+            continue
+        return tuple((key, result[key]) for key, _fact in STAIR_FACTS if is_number(result.get(key)))
+    return ()
+
+
+def group_member_rows(rows, measurement_system="imperial"):
+    """Group members that share construction attributes. Lengths are not averaged."""
+    groups = {}
+    order = []
+    for row in rows:
+        label = _length_label(row, measurement_system)
+        key = (
+            row.get("role") or "",
+            row.get("member_size") or "",
+            row.get("material_id") or "",
+            row.get("profile_type") or "",
+            row.get("orientation") or "",
+            _profile_key(row.get("section_width")),
+            _profile_key(row.get("section_depth")),
+            row.get("construction_status") or "",
+            label,
+        )
+        if key not in groups:
+            groups[key] = []
+            order.append(key)
+        groups[key].append(row)
+    grouped = []
+    for key in order:
+        items = groups[key]
+        first = items[0]
+        grouped.append(
+            {
+                "role": first.get("role") or "",
+                "member_size": first.get("member_size") or "",
+                "material_id": first.get("material_id") or "",
+                "construction_status": first.get("construction_status") or "",
+                "quantity": len(items),
+                "length_display": key[-1],
+                "member_ids": tuple(item["id"] for item in items),
+            }
+        )
+    return tuple(grouped)
+
+
+def group_support_rows(rows):
+    groups = {}
+    order = []
+    for row in rows:
+        key = (
+            row.get("kind") or "",
+            _profile_key(row.get("section_width")),
+            _profile_key(row.get("section_depth")),
+            row.get("construction_status") or "",
+        )
+        if key not in groups:
+            groups[key] = []
+            order.append(key)
+        groups[key].append(row)
+    grouped = []
+    for key in order:
+        items = groups[key]
+        grouped.append(
+            {
+                "kind": items[0].get("kind") or "",
+                "construction_status": items[0].get("construction_status") or "",
+                "quantity": len(items),
+                "support_ids": tuple(item["id"] for item in items),
+            }
+        )
+    return tuple(grouped)
+
+
+def group_connection_rows(connections, members_by_id):
+    """Group supplied connections. Quantity stays the supplied quantity."""
+    groups = {}
+    order = []
+    for item in connections:
+        roles = []
+        for participant in item.get("participant_ids") or []:
+            member = members_by_id.get(participant) or {}
+            roles.append(member.get("role") or member.get("kind") or participant)
+        quantity = item.get("quantity")
+        key = (
+            item.get("connection_type") or "",
+            item.get("connector") or "",
+            item.get("fastener") or "",
+            tuple(sorted(roles)),
+            "" if quantity is None else quantity,
+            item.get("construction_status") or "",
+        )
+        if key not in groups:
+            groups[key] = []
+            order.append(key)
+        groups[key].append(item)
+    grouped = []
+    for key in order:
+        items = groups[key]
+        first = items[0]
+        grouped.append(
+            {
+                "connection_type": first.get("connection_type") or "",
+                "members": " / ".join(key[3]),
+                "connector": first.get("connector") or "",
+                "fastener": first.get("fastener") or "",
+                "quantity": len(items),
+                "supplied_quantity": first.get("quantity"),
+                "construction_status": first.get("construction_status") or "",
+                "connection_ids": tuple(item.get("id") for item in items),
+            }
+        )
+    return tuple(grouped)
+
+
+def _length_label(row, measurement_system) -> str:
+    from app.services.construction_model.model import format_measure
+
+    displays = [display for display in (row.get("length_displays") or ()) if display]
+    if displays:
+        return displays[0]
+    lengths = row.get("lengths") or ()
+    if not lengths or not is_number(lengths[0]):
+        return ""
+    unit = "ft" if measurement_system == "imperial" else "m"
+    return format_measure(lengths[0], measurement_system, unit)
+
+
+def _profile_key(value):
+    if not is_number(value):
+        return ""
+    return round(float(value), 6)
+
+
+def _clip_detail(elements, extent):
+    if not elements:
+        return []
+    focus_u, focus_v = _focus_uv(elements)
+    u0, v0 = focus_u - extent, focus_v - extent
+    u1, v1 = focus_u + extent, focus_v + extent
+    clipped = []
+    for element in elements:
+        geometry = element.get("profile_geometry") or element["projected_geometry"]
+        cut = _clip_geometry(geometry["coordinates"], u0, v0, u1, v1)
+        if cut is None:
+            continue
+        updated = dict(element)
+        updated["projected_geometry"] = {"kind": "polyline", "coordinates": cut}
+        if element.get("profile_geometry") is not None:
+            updated["profile_geometry"] = updated["projected_geometry"]
+        clipped.append(updated)
+    return clipped
+
+
+def _focus_uv(elements):
+    horizontal, vertical = _view_axes(elements[0])
+    if horizontal is None or vertical is None:
+        point = elements[0]["projected_geometry"]["coordinates"][0]
+        return point["u"], point["v"]
+    if len(elements) == 1:
+        samples = _sample_source(elements[0]["source_geometry"]["coordinates"])
+        point = samples[len(samples) // 2]
+        return point[horizontal], point[vertical]
+    first = _sample_source(elements[0]["source_geometry"]["coordinates"])
+    second = _sample_source(elements[1]["source_geometry"]["coordinates"])
+    best = None
+    best_distance = None
+    for left in first:
+        for right in second:
+            distance = sum((left[axis] - right[axis]) ** 2 for axis in AXES)
+            if best_distance is None or distance < best_distance:
+                best_distance = distance
+                best = (left, right)
+    midpoint = {axis: (best[0][axis] + best[1][axis]) / 2.0 for axis in AXES}
+    return midpoint[horizontal], midpoint[vertical]
+
+
+def _view_axes(element):
+    point = element["projected_geometry"]["coordinates"][0]
+    source = point.get("source") or {}
+    horizontal = None
+    vertical = None
+    for axis in AXES:
+        if is_number(source.get(axis)) and abs(point["u"] - source[axis]) < 1e-6:
+            horizontal = axis
+        if is_number(source.get(axis)) and abs(point["v"] - source[axis]) < 1e-6:
+            vertical = axis
+    return horizontal, vertical
+
+
+def _sample_source(coordinates, count=32):
+    if not coordinates:
+        return []
+    if len(coordinates) == 1:
+        return [dict(coordinates[0])]
+    samples = []
+    pairs = list(zip(coordinates, coordinates[1:]))
+    if pairs and _same_point(pairs[-1][0], pairs[-1][1]) and len(pairs) > 1:
+        pairs = pairs[:-1]
+    for start, end in pairs:
+        for step in range(count):
+            fraction = step / float(count)
+            samples.append(
+                {
+                    axis: start[axis] + (end[axis] - start[axis]) * fraction
+                    for axis in AXES
+                }
+            )
+    samples.append({axis: coordinates[-1][axis] for axis in AXES})
+    return samples
+
+
+def _same_point(first, second) -> bool:
+    return all(abs(first[axis] - second[axis]) < 1e-9 for axis in AXES)
+
+
+def _clip_geometry(coordinates, u0, v0, u1, v1):
+    points = [(point["u"], point["v"]) for point in coordinates]
+    if len(points) >= 4 and _same_uv(points[0], points[-1]):
+        clipped = _clip_polygon(points[:-1], u0, v0, u1, v1)
+        if len(clipped) < 3:
+            return None
+        clipped.append(clipped[0])
+    else:
+        clipped = _clip_open(points, u0, v0, u1, v1)
+        if len(clipped) < 2:
+            return None
+    return [{"u": point[0], "v": point[1]} for point in clipped]
+
+
+def _same_uv(first, second) -> bool:
+    return abs(first[0] - second[0]) < 1e-9 and abs(first[1] - second[1]) < 1e-9
+
+
+def _clip_open(points, u0, v0, u1, v1):
+    clipped = []
+    for start, end in zip(points, points[1:]):
+        segment = _clip_segment(start, end, u0, v0, u1, v1)
+        if segment is None:
+            continue
+        if not clipped or not _same_uv(clipped[-1], segment[0]):
+            clipped.append(segment[0])
+        clipped.append(segment[1])
+    return clipped
+
+
+def _clip_segment(start, end, u0, v0, u1, v1):
+    x0, y0 = start
+    x1, y1 = end
+    code0 = _out_code(x0, y0, u0, v0, u1, v1)
+    code1 = _out_code(x1, y1, u0, v0, u1, v1)
+    for _ in range(12):
+        if code0 == 0 and code1 == 0:
+            return (x0, y0), (x1, y1)
+        if code0 & code1:
+            return None
+        code = code0 or code1
+        if code & 8:
+            x = x0 + (x1 - x0) * (v1 - y0) / (y1 - y0)
+            y = v1
+        elif code & 4:
+            x = x0 + (x1 - x0) * (v0 - y0) / (y1 - y0)
+            y = v0
+        elif code & 2:
+            y = y0 + (y1 - y0) * (u1 - x0) / (x1 - x0)
+            x = u1
+        else:
+            y = y0 + (y1 - y0) * (u0 - x0) / (x1 - x0)
+            x = u0
+        if code == code0:
+            x0, y0 = x, y
+            code0 = _out_code(x0, y0, u0, v0, u1, v1)
+        else:
+            x1, y1 = x, y
+            code1 = _out_code(x1, y1, u0, v0, u1, v1)
+    return None
+
+
+def _out_code(x, y, u0, v0, u1, v1) -> int:
+    code = 0
+    if x < u0:
+        code |= 1
+    elif x > u1:
+        code |= 2
+    if y < v0:
+        code |= 4
+    elif y > v1:
+        code |= 8
+    return code
+
+
+def _clip_polygon(points, u0, v0, u1, v1):
+    def clip_edge(source, inside, intersection):
+        if not source:
+            return []
+        output = []
+        previous = source[-1]
+        previous_inside = inside(previous)
+        for current in source:
+            current_inside = inside(current)
+            if current_inside:
+                if not previous_inside:
+                    output.append(intersection(previous, current))
+                output.append(current)
+            elif previous_inside:
+                output.append(intersection(previous, current))
+            previous = current
+            previous_inside = current_inside
+        return output
+
+    def lerp(start, end, fraction):
+        return (
+            start[0] + (end[0] - start[0]) * fraction,
+            start[1] + (end[1] - start[1]) * fraction,
+        )
+
+    def vertical(source, edge, keep_greater):
+        def inside(point):
+            return point[0] >= edge if keep_greater else point[0] <= edge
+
+        def intersection(start, end):
+            delta = end[0] - start[0]
+            fraction = 0.0 if abs(delta) < 1e-12 else (edge - start[0]) / delta
+            return lerp(start, end, fraction)
+
+        return clip_edge(source, inside, intersection)
+
+    def horizontal(source, edge, keep_greater):
+        def inside(point):
+            return point[1] >= edge if keep_greater else point[1] <= edge
+
+        def intersection(start, end):
+            delta = end[1] - start[1]
+            fraction = 0.0 if abs(delta) < 1e-12 else (edge - start[1]) / delta
+            return lerp(start, end, fraction)
+
+        return clip_edge(source, inside, intersection)
+
+    clipped = vertical(list(points), u0, True)
+    clipped = vertical(clipped, u1, False)
+    clipped = horizontal(clipped, v0, True)
+    return horizontal(clipped, v1, False)

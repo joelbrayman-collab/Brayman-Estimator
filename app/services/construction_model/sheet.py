@@ -41,7 +41,12 @@ from app.services.construction_model.projection import (
     VIEW_SIDE_ELEVATION,
     project_model_views,
 )
-from app.services.construction_model.views import project_construction_wave
+from app.services.construction_model.views import (
+    group_connection_rows,
+    group_member_rows,
+    group_support_rows,
+    project_construction_wave,
+)
 
 SHEET_VERSION = "cm-3"
 PAPER_11X17 = "11x17"
@@ -249,7 +254,7 @@ def _span(elements) -> tuple:
     us = []
     vs = []
     for element in elements:
-        for point in element["projected_geometry"]["coordinates"]:
+        for point in _element_points(element):
             us.append(point["u"])
             vs.append(point["v"])
     if not us:
@@ -730,11 +735,21 @@ def _paint_chain(sheet, labels, horizontal: bool) -> None:
             y += 8
 
 
+def _element_points(element):
+    geometries = [element["projected_geometry"]]
+    profile = element.get("profile_geometry")
+    if profile is not None and profile is not element["projected_geometry"]:
+        geometries.append(profile)
+    for geometry in geometries:
+        for point in geometry["coordinates"]:
+            yield point
+
+
 def _origin(elements) -> tuple:
     us = []
     vs = []
     for element in elements:
-        for point in element["projected_geometry"]["coordinates"]:
+        for point in _element_points(element):
             us.append(point["u"])
             vs.append(point["v"])
     if not us:
@@ -757,7 +772,21 @@ _LINE_WEIGHT = {
     "pier": 1.5,
     "footing": 1.5,
 }
-_FILLED = {"post", "beam", "rim", "header", "pier", "footing", "stringer", "tread"}
+_FILLED = {
+    "post",
+    "beam",
+    "rim",
+    "header",
+    "pier",
+    "footing",
+    "stringer",
+    "tread",
+    "joist",
+    "decking",
+    "guard",
+    "gate",
+    "baluster",
+}
 
 
 def _draw_element(sheet, element, origin_u, origin_v, points_per_unit, x0, y0) -> None:
@@ -1015,6 +1044,13 @@ def _program_page(wave, model, kind, title, roles, scale, view_id):
             f"The {title} at the stated scale",
         )
     tag_roles = ("post", "beam", "pier", "footing", "gate", "header", "stringer")
+    if kind == "detail":
+        present = {element.get("role") or element.get("kind") for element in elements}
+        tag_roles = tuple(
+            role
+            for role in ("post", "beam", "stringer", "tread", "gate", "guard", "header", "pier", "footing")
+            if role in present
+        )
     return {
         "kind": kind,
         "title": title,
@@ -1129,7 +1165,7 @@ def _projection_span(projection) -> tuple:
     us = []
     vs = []
     for element in projection.elements:
-        for point in element["projected_geometry"]["coordinates"]:
+        for point in _element_points(element):
             us.append(point["u"])
             vs.append(point["v"])
     if projection.view_type != VIEW_PLAN:
@@ -1197,27 +1233,58 @@ def _fact_text(key, value, model) -> str:
 
 def _schedule_lines(schedule) -> list:
     material_names = {item["id"]: item.get("name") or item["id"] for item in schedule.materials}
-    lines = [("Helvetica-Bold", "MEMBER SCHEDULE"), ("Helvetica-Bold", "Id    Role    Size    Material    Length    Status")]
-    for row in schedule.members:
-        shown = ", ".join(row.get("length_displays") or [])
-        material = material_names.get(row.get("material_id") or "", "")
+    measurement = getattr(schedule, "measurement_system", None) or "imperial"
+    lines = [
+        ("Helvetica-Bold", "MEMBER SCHEDULE"),
+        ("Helvetica-Bold", "Item    Role    Size    Material    Quantity    Length    Status"),
+    ]
+    member_groups = group_member_rows(schedule.members, measurement)
+    for group in member_groups:
+        material = material_names.get(group.get("material_id") or "", "")
+        item = " ".join(part for part in (group.get("member_size") or "", group.get("role") or "") if part)
         lines.append(
             (
                 "Helvetica",
-                f"{row['id']}    {row['role']}    {row.get('member_size') or ''}    {material}    {shown}    {row.get('construction_status') or ''}",
+                f"{item}    {group['role']}    {group.get('member_size') or ''}    {material}    {group['quantity']}    {group.get('length_display') or ''}    {group.get('construction_status') or ''}",
             )
         )
-    counts = {}
-    for row in schedule.members:
-        key = (row["role"], row.get("member_size") or "", material_names.get(row.get("material_id") or "", ""))
-        counts[key] = counts.get(key, 0) + 1
+    lines.append(("Helvetica-Bold", "CONNECTION / HARDWARE SCHEDULE"))
+    lines.append(("Helvetica-Bold", "Type    Members    Connector    Fastener    Quantity    Status"))
+    members_by_id = {row["id"]: row for row in schedule.members}
+    members_by_id.update({row["id"]: row for row in schedule.supports})
+    for group in group_connection_rows(getattr(schedule, "connections", ()) or (), members_by_id):
+        fastener = group.get("fastener") or ""
+        if group.get("supplied_quantity") is not None:
+            fastener = f"{fastener} x {group['supplied_quantity']}".strip()
+        lines.append(
+            (
+                "Helvetica",
+                f"{group.get('connection_type') or ''}    {group.get('members') or ''}    {group.get('connector') or ''}    {fastener}    {group['quantity']}    {group.get('construction_status') or ''}",
+            )
+        )
     lines.append(("Helvetica-Bold", "MATERIAL / COMPONENT SCHEDULE"))
-    lines.append(("Helvetica-Bold", "Role    Size    Material    Quantity"))
-    for role, size, material in sorted(counts):
-        lines.append(("Helvetica", f"{role}    {size}    {material}    {counts[(role, size, material)]}"))
-    lines.append(("Helvetica-Bold", "Support    Kind"))
-    for row in schedule.supports:
-        lines.append(("Helvetica", f"{row['id']}    {row['kind']}"))
+    lines.append(("Helvetica-Bold", "Material    Description    Quantity    Unit    Status"))
+    components = {}
+    order = []
+    for group in member_groups:
+        material = material_names.get(group.get("material_id") or "", "") or group.get("material_id") or ""
+        description = " ".join(part for part in (group.get("role") or "", group.get("member_size") or "") if part)
+        key = (material, description, group.get("construction_status") or "")
+        if key not in components:
+            components[key] = 0
+            order.append(key)
+        components[key] += group["quantity"]
+    for key in order:
+        material, description, status = key
+        lines.append(("Helvetica", f"{material}    {description}    {components[key]}    each    {status}"))
+    lines.append(("Helvetica-Bold", "Support    Kind    Quantity    Status"))
+    for group in group_support_rows(schedule.supports):
+        lines.append(
+            (
+                "Helvetica",
+                f"{group['kind']}    {group['kind']}    {group['quantity']}    {group.get('construction_status') or ''}",
+            )
+        )
     if schedule.levels:
         lines.append(("Helvetica-Bold", "Level"))
         for level in schedule.levels:
@@ -1390,10 +1457,19 @@ def _paint_read_view(
     if connection:
         sheet.setFont("Helvetica", 8)
         sheet.drawString(x0, y0 + 8, connection[:180])
-    if view.facts:
+    elif view.view_kind == "detail":
+        sheet.setFont("Helvetica", 8)
+        sheet.drawString(x0, y0 + 8, "You need to provide this information. The connection for this detail.")
+    if view.facts and view.view_kind != "detail":
         sheet.setFont("Helvetica", 8)
         fact_line = "  ".join(_fact_text(key, value, model) for key, value in view.facts)
         sheet.drawString(x0 + 180, y1 + 6, fact_line[:140])
+    if view.view_kind == "detail" and view.facts:
+        sheet.setFont("Helvetica", 7)
+        fact_y = y1 - 14
+        for key, value in view.facts:
+            sheet.drawString(x1 - 150, fact_y, _fact_text(key, value, model)[:28])
+            fact_y -= 9
     origin_u, origin_v = _origin(view.elements)
     span_u, span_v = _span(view.elements)
     inner_w = (x1 - x0) - (2.0 * _VIEW_PAD)

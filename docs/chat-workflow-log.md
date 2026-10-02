@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-02 — Buildable details and construction schedules
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-02 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 10 — BUILDABLE DETAILS + CONSTRUCTION SCHEDULES 2 OCT 2026 |
+| Objective | Make generic construction details and schedules usable on the complete deck fixture. |
+| Business decision | Do not modify Bushel. Do not deploy. Do not invent profile sizes, fastener counts, or prices. |
+| Architectural decision | The model owns a rectangular profile when section width and depth are supplied, including a sloped prism. A detail extent is a camera window. Schedules group equivalent members from the same model. There is no second schedule store. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Slice 10. Physical profiles, sloped members, stair and post/beam details, section profiles, larger detail scale, grouped member, connection, and material schedules. Tests A–P. One commit if tests pass. Push. Do not deploy. |
+| Files expected to change | Construction model profile, detail window, schedule grouping, the complete deck fixture, tests, and the drawing-set docs. |
+| Files prohibited from changing | Linda Bushel case files, PGE-1 through PGE-6, Contract V1, Website formulas, schema. |
+| Implementation result | Implemented and tested. Visual acceptance not passed. The stringer bearing is not a clear seat. The gate connection is not supplied. |
+| Tests | Construction-model regression 108 passed, 9 warnings, 5.34s, exit 0. PGE regression 49 passed, 48 warnings, 17.04s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2075 passed, 6788 warnings, 953.19s, exit 0. | |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Visual acceptance remains open. Bushel is still not the proving case. |
+| Next approved step | Keep the generic fixture until the stringer bearing and the gate connection are buildable. Do not open Bushel for this gap. |
+| Next approved prompt | Not written. The next slice waits for the visual gate. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. | |
+
 ### 2026-10-02 — Complete deck fixture and drawing quality
 
 | Field | Content |

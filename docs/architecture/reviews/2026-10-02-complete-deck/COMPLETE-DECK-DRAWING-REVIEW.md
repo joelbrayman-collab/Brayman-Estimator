@@ -5,15 +5,23 @@
 | Fixture | COMPLETE DECK DRAWING ENGINE FIXTURE |
 | Source | `tests/fixtures/construction_model/complete_deck_fixture.py` |
 | Bushel | Not used. Not modified. Not the acceptance fixture. |
-| Scale | 1/2 in = 1 ft on the plans, elevations, and section. 1 in = 1 ft on the stair and the details. |
-| Sheets | 14. Three plans, two elevations, stair, section, two details, and schedule pages. |
+| Scale | 1/2 in = 1 ft on the plans, elevations, and section. 1 in = 1 ft on the stair. 3 in = 1 ft on the post/beam and stringer details. 3/2 in = 1 ft on the guard and gate detail. |
+| Sheets | 12. Three plans, two elevations, stair, section, three details, and two schedule pages. |
 | Would we hand this to the boys? | No. |
+
+## Slice 10 inspection
+
+The stringer on the stair sheet is a board. The treads and risers sit on that slope. Rise, run, stringer count, and stair width are the supplied stair result. The post-and-beam detail is the post under the beam at 3 in = 1 ft, with the 6×6, the 2×10, and the supplied post cap and two bolts. The section shows piers, posts, the beam, the joists, and the decking as profiles. The member schedule groups the eight 2×8 joists at 10'-0", the twenty deck boards, the eighty-two balusters, and the three stringers. Different rim lengths stay on different rows. The connection schedule names the post cap and the tread clip. There is no price.
+
+Visual acceptance is still not passed. The stringer detail shows the tread crossing the stringer face, so the bearing is not a clear seat. The connector is a note, not a drawn part. The guard and gate sheet shows the rails and balusters, and it says the connection is not supplied. The second schedule sheet is the dimension-chain listing and is sparse.
+
+## Prior inspection
 
 The framing plan shows posts, beams, joists, rims, the stair header, and model dimensions: width 12'-0", depth 10'-0", joist spacing 1'-4", beam 10'-0". The decking plan shows the boards, the guard, the balusters, and the gate. The elevations show the deck, the guard, the posts, and the piers, with grade and the walking surface. The stair sheet shows the stringer, five treads, rise 3'-6", run 4'-7", and the supplied stair facts. The section shows piers, posts, the beam, and the joists sitting on the beam. The schedules name size, material, length, and a quantity rollup. Every sheet uses the Brayman title block.
 
-## Visual acceptance
+## Prior visual acceptance
 
-Not passed.
+Not passed at the Slice 9 inspection.
 
 - The stringer detail is the stringer centerline and one tread. It names the connection. It is not a connection a carpenter would build from.
 - The section's end rims read as separate marks above the frame.

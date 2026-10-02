@@ -162,16 +162,22 @@ def _trim_number(value: float) -> str:
 
 
 def view_profile(item: Mapping[str, Any], horizontal: str, vertical: str) -> Optional[dict]:
-    """A view rectangle from a supplied section size.
+    """Project a supplied rectangular section.
 
-    The rectangle uses section_width and section_depth already stored on
-    the member. A sloped member keeps its centerline. A missing size
-    keeps the centerline.
+    Axis-aligned members use the stored width and depth. A sloped segment
+    with those sizes becomes the silhouette of a rectangular prism. A
+    polyline with a supplied thickness and top-edge orientation becomes a
+    ribbon. A missing size keeps the centerline.
     """
-    width = item.get("section_width")
-    depth = item.get("section_depth")
+    profile_type = item.get("profile_type")
+    if profile_type not in (None, "rectangular"):
+        return None
     geometry = item.get("geometry") or {}
     coordinates = geometry.get("coordinates") or []
+    if geometry.get("kind") == "polyline":
+        return _polyline_ribbon(item, coordinates, horizontal, vertical)
+    width = item.get("section_width")
+    depth = item.get("section_depth")
     if geometry.get("kind") != "segment" or len(coordinates) != 2:
         return None
     if not is_number(width) or not is_number(depth) or width <= 0 or depth <= 0:
@@ -180,7 +186,7 @@ def view_profile(item: Mapping[str, Any], horizontal: str, vertical: str) -> Opt
     deltas = {axis: end[axis] - start[axis] for axis in AXES}
     dominant = [axis for axis in AXES if abs(deltas[axis]) > 0.001]
     if len(dominant) != 1:
-        return None
+        return _prism_profile(start, end, horizontal, vertical, width, depth, item.get("orientation"))
     length_axis = dominant[0]
     if vertical == "z":
         return _elevation_profile(start, end, deltas, length_axis, horizontal, width, depth)
@@ -240,4 +246,101 @@ def _profile_rect(u0: float, v0: float, u1: float, v1: float) -> dict:
         {"u": u0, "v": v1},
         {"u": u0, "v": v0},
     ]
+    return {"kind": "polyline", "coordinates": coordinates}
+
+
+def _prism_profile(start, end, horizontal, vertical, width, depth, orientation):
+    """Silhouette of a rectangular member. The section sizes are already stored."""
+    sx, sy, sz = float(start["x"]), float(start["y"]), float(start["z"])
+    ex, ey, ez = float(end["x"]), float(end["y"]), float(end["z"])
+    ux, uy, uz = ex - sx, ey - sy, ez - sz
+    length = (ux * ux + uy * uy + uz * uz) ** 0.5
+    if length <= 0.001:
+        return None
+    ux, uy, uz = ux / length, uy / length, uz / length
+    plan = ((ex - sx) ** 2 + (ey - sy) ** 2) ** 0.5
+    if plan <= 0.001:
+        wx, wy, wz = 1.0, 0.0, 0.0
+    else:
+        wx, wy, wz = -(ey - sy) / plan, (ex - sx) / plan, 0.0
+    dx = (uy * wz) - (uz * wy)
+    dy = (uz * wx) - (ux * wz)
+    dz = (ux * wy) - (uy * wx)
+    depth_length = (dx * dx + dy * dy + dz * dz) ** 0.5
+    if depth_length <= 0.001:
+        return None
+    dx, dy, dz = dx / depth_length, dy / depth_length, dz / depth_length
+    if dz > 0:
+        dx, dy, dz = -dx, -dy, -dz
+    half_w = width / 2.0
+    shifts = (0.0, depth) if orientation == "top_edge" else (-depth / 2.0, depth / 2.0)
+    axes = {"x": 0, "y": 1, "z": 2}
+    projected = []
+    for along in (0.0, 1.0):
+        ox = sx + (ex - sx) * along
+        oy = sy + (ey - sy) * along
+        oz = sz + (ez - sz) * along
+        for sign in (-1.0, 1.0):
+            for shift in shifts:
+                corner = (
+                    ox + (sign * half_w * wx) + (shift * dx),
+                    oy + (sign * half_w * wy) + (shift * dy),
+                    oz + (sign * half_w * wz) + (shift * dz),
+                )
+                projected.append((corner[axes[horizontal]], corner[axes[vertical]]))
+    return _hull_profile(projected)
+
+
+def _polyline_ribbon(item, coordinates, horizontal, vertical):
+    """A supplied thickness below a top edge. No thickness, no ribbon."""
+    thickness = item.get("thickness")
+    if item.get("orientation") != "top_edge" or vertical != "z":
+        return None
+    if not is_number(thickness) or thickness <= 0:
+        return None
+    points = []
+    for point in coordinates:
+        if not is_number(point.get(horizontal)) or not is_number(point.get(vertical)):
+            return None
+        candidate = (point[horizontal], point[vertical])
+        if points and abs(points[-1][0] - candidate[0]) < 1e-9 and abs(points[-1][1] - candidate[1]) < 1e-9:
+            continue
+        points.append(candidate)
+    if len(points) < 2:
+        return None
+    offset = [(point[0], point[1] - thickness) for point in points]
+    ring = points + list(reversed(offset))
+    ring.append(ring[0])
+    return {"kind": "polyline", "coordinates": [{"u": point[0], "v": point[1]} for point in ring]}
+
+
+def _hull_profile(points) -> Optional[dict]:
+    unique = []
+    seen = set()
+    for u, v in points:
+        key = (round(u, 6), round(v, 6))
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(key)
+    unique.sort()
+    if len(unique) < 3:
+        return None
+
+    def cross(origin, first, second):
+        return ((first[0] - origin[0]) * (second[1] - origin[1])) - ((first[1] - origin[1]) * (second[0] - origin[0]))
+
+    def chain(ordered):
+        built = []
+        for point in ordered:
+            while len(built) >= 2 and cross(built[-2], built[-1], point) <= 0:
+                built.pop()
+            built.append(point)
+        return built
+
+    hull = chain(unique)[:-1] + chain(reversed(unique))[:-1]
+    if len(hull) < 3:
+        return None
+    coordinates = [{"u": point[0], "v": point[1]} for point in hull]
+    coordinates.append(dict(coordinates[0]))
     return {"kind": "polyline", "coordinates": coordinates}

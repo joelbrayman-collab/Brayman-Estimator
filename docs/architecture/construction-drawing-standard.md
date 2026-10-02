@@ -52,9 +52,11 @@ Slice 8 is the deck component model. A member can be a joist, beam, rim, header,
 
 Plan needs x and y. Front elevation needs x and z. Side elevation needs y and z. A section needs the cut axis and the projected axes. The stair view needs y and z for its named members and uses the supplied stair result without calculating rise, run, nosing, tread count, throat, stringer count, or width. The schedule shows a supplied or endpoint-derived length and does not invent one. A detail asks only for the requirement it names.
 
-Slice 9 draws a complete generic deck from one model. The fixture is named COMPLETE DECK DRAWING ENGINE FIXTURE. Its values are fixture input. They are not Calibrayt defaults and they are not Bushel. A sheet program asks for a foundation plan, a framing plan, a decking plan, elevations, a stair, a section, two details, and schedules. Each sheet filters that same model. A supplied section size becomes the drawn profile of an axis-aligned member. A sloped stringer stays its centerline. The scale is the scale named for that sheet. It is not fitted to the paper.
+Slice 9 draws a complete generic deck from one model. The fixture is named COMPLETE DECK DRAWING ENGINE FIXTURE. Its values are fixture input. They are not Calibrayt defaults and they are not Bushel. A sheet program asks for a foundation plan, a framing plan, a decking plan, elevations, a stair, a section, details, and schedules. Each sheet filters that same model. The scale is the scale named for that sheet. It is not fitted to the paper.
 
-The complete-fixture sheets were inspected at 11×17. The framing plan, decking plan, elevations, section stack, and stair steps are construction drawings of the fixture. The detail sheets are the named members and the supplied connection text. They are sparse. The member schedule lists every board and baluster. Visual acceptance for handing the set to a carpenter is not passed. Bushel is not the acceptance fixture.
+Slice 10 draws a supplied rectangular profile, including a sloped member, and groups construction schedules from that same model. A 2×12 stringer with a top edge and a section depth is the board, not only its centerline. A tread with a supplied thickness is a ribbon. A detail may name an extent, which is the camera window around the members. It is not new geometry. If the window cannot fit at the named scale, the detail is refused. Equivalent members group by role, size, material, profile, length class, and status. Different lengths stay different rows. Connections and materials are schedules of the model. They are not a price.
+
+The complete-fixture sheets were inspected again at 11×17. The framing plan, the stair board, the section stack, the post-and-beam joint, and the grouped schedules read as construction drawings of the fixture. The stringer detail still shows the supplied step crossing the stringer face. The gate has no connection in the model. Visual acceptance for handing the set to a carpenter is not passed. Bushel is not the acceptance fixture.
 
 The proving sheets are still not acceptable construction drawings.
 
@@ -65,7 +67,11 @@ Remaining deficiencies:
 - Pier shaft length, helix, torque, bracket height, and baluster layout are still absent.
 - The stair result still has no rise, run, nosing, or tread count.
 - Some front-elevation leaders still reach the pier line.
-- On the complete fixture, the stringer detail is one tread on the stringer centerline. The section shows the beam, joists, posts, and piers, and the end rims read as separate marks. The schedule runs for several pages because every piece is listed.
+- On the complete fixture, the stringer detail shows the 2×12 board and the tread thickness. The supplied step line crosses the stringer face, so the bearing is not a clear seat.
+- The post cap and the tread clip are notes. The model has no connector shape.
+- The guard and gate sheet shows the rails, the gate, and the balusters. The model has no gate connection. The sheet says that connection is not supplied.
+- The section end rims are the end view of the rim at the deck edge. The section has no height dimension.
+- The second schedule sheet is the dimension-chain listing and is sparse.
 
 The printed sheet is judged for geometric consistency, structural consistency, dimensional consistency, quantity consistency, revision consistency, and print consistency.
 

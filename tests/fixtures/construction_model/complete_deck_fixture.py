@@ -27,7 +27,19 @@ def _segment(start: dict, end: dict) -> dict:
     return {"kind": "segment", "coordinates": [start, end]}
 
 
-def _member(identifier, role, geometry, size, material_id, width_in, depth_in, length=None):
+def _member(
+    identifier,
+    role,
+    geometry,
+    size,
+    material_id,
+    width_in,
+    depth_in,
+    length=None,
+    orientation=None,
+    profile_type=None,
+    thickness_in=None,
+):
     record = {
         "id": identifier,
         "role": role,
@@ -41,6 +53,12 @@ def _member(identifier, role, geometry, size, material_id, width_in, depth_in, l
     }
     if length is not None:
         record["length"] = length
+    if orientation is not None:
+        record["orientation"] = orientation
+    if profile_type is not None:
+        record["profile_type"] = profile_type
+    if thickness_in is not None:
+        record["thickness"] = _inch(thickness_in)
     return record
 
 
@@ -287,6 +305,8 @@ def _stairs():
                 "stair-stock",
                 2,
                 12,
+                orientation="top_edge",
+                profile_type="rectangular",
             )
         )
     for index in range(1, 6):
@@ -313,6 +333,8 @@ def _stairs():
                 2,
                 6,
                 length=3,
+                orientation="top_edge",
+                thickness_in=2,
             )
         )
     return members
@@ -425,8 +447,9 @@ def sheet_program() -> list:
         {"title": "Side elevation", "view": "side_elevation", "roles": side, "scale": half},
         {"title": "Stair", "view": "stair", "view_id": "stair-1", "scale": "1 in = 1 ft"},
         {"title": "Section A", "view": "section", "view_id": "A", "scale": "1/2 in = 1 ft"},
-        {"title": "Post and beam", "view": "detail", "view_id": "post-beam", "scale": "1 in = 1 ft"},
-        {"title": "Stringer and tread", "view": "detail", "view_id": "stringer-tread", "scale": "1 in = 1 ft"},
+        {"title": "Post and beam", "view": "detail", "view_id": "post-beam", "scale": "3 in = 1 ft"},
+        {"title": "Stringer and tread", "view": "detail", "view_id": "stringer-tread", "scale": "3 in = 1 ft"},
+        {"title": "Guard and gate", "view": "detail", "view_id": "guard-gate", "scale": "3/2 in = 1 ft"},
         {"title": "Schedules", "view": "schedule"},
     ]
 
@@ -444,17 +467,34 @@ def section_requests() -> list:
 
 
 def detail_requests() -> list:
+    neighbors = []
+    for member in deck_model()["members"]:
+        if member["role"] != "baluster":
+            continue
+        point = member["geometry"]["coordinates"][0]
+        if abs(point["x"]) > 0.01:
+            continue
+        if 2.5 <= point["y"] <= 7.2:
+            neighbors.append(member["id"])
     return [
         {
             "id": "post-beam",
             "view_type": "front_elevation",
             "element_ids": ["post-1", "beam-front"],
             "requires": ["connection"],
+            "extent": 1,
         },
         {
             "id": "stringer-tread",
             "view_type": "side_elevation",
             "element_ids": ["stringer-2", "tread-3"],
             "requires": ["connection"],
+            "extent": 1,
+        },
+        {
+            "id": "guard-gate",
+            "view_type": "side_elevation",
+            "element_ids": ["guard-left-a", "gate-1", "guard-left-b", *neighbors],
+            "extent": 3.5,
         },
     ]

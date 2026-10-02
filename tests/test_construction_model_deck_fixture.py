@@ -105,7 +105,7 @@ def test_sheet_program_is_deterministic_and_does_not_scale_to_fit():
     assert first.view_issues == ()
     assert first.manifest["pdf_sha256"] == second.manifest["pdf_sha256"]
     titles = [page["kind"] for page in first.manifest["pages"]]
-    assert titles[:9] == [
+    assert titles[:10] == [
         "plan",
         "plan",
         "plan",
@@ -115,13 +115,16 @@ def test_sheet_program_is_deterministic_and_does_not_scale_to_fit():
         "section",
         "detail",
         "detail",
+        "detail",
     ]
     assert titles[-1] == "schedule"
+    assert all(kind == "schedule" for kind in titles[10:])
     assert first.manifest["sheet_count"] == len(titles)
     scales = {page.get("scale") for page in sheet_program() if page.get("scale")}
     assert "1/2 in = 1 ft" in scales
     assert "1 in = 1 ft" in scales
-    assert scales == {"1/2 in = 1 ft", "1 in = 1 ft"}
+    assert "3 in = 1 ft" in scales
+    assert scales == {"1/2 in = 1 ft", "1 in = 1 ft", "3 in = 1 ft", "3/2 in = 1 ft"}
 
 
 def test_filtered_sheets_share_ids_and_omit_no_requested_view():

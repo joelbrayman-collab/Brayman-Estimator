@@ -413,6 +413,19 @@ def _component_fields(item: Mapping, collection: str, identifier: str, noun: str
             )
         else:
             recorded["orientation"] = text
+    profile_type = item.get("profile_type", None)
+    if profile_type is not None:
+        text = plain_text(profile_type)
+        if text != "rectangular":
+            issues.append(
+                _need(
+                    CODE_MISSING_FACT,
+                    f"{collection}[{identifier}].profile_type",
+                    f"A rectangular profile for {noun} {identifier}",
+                )
+            )
+        else:
+            recorded["profile_type"] = text
     status = item.get("construction_status", None)
     if status is not None:
         text = plain_text(status)
@@ -472,7 +485,7 @@ def _component_fields(item: Mapping, collection: str, identifier: str, noun: str
                 )
             else:
                 recorded[key] = item[key]
-    for key in ("section_width", "section_depth"):
+    for key in ("section_width", "section_depth", "thickness"):
         if key not in item or item.get(key) is None:
             continue
         if not is_number(item.get(key)) or item.get(key) <= 0:

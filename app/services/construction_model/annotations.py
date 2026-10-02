@@ -76,6 +76,8 @@ def build_member_callouts(elements, roles, origin_u, origin_v, points_per_unit, 
         text = role.replace("_", " ").upper() + " " + element["id"]
         if size:
             text = f"{text}\n{size}"
+        if element.get("annotate_material") and element.get("material_name"):
+            text = f"{text}\n{element['material_name']}"
         callouts.append(
             {
                 "id": f"member-{element['id']}",

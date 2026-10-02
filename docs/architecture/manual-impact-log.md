@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Construction details and schedules (2026-10-02)
+
+| Field | Content |
+|-------|---------|
+| Slice | Construction Model slice 10. Buildable details and construction schedules. |
+| Product status at capture | **IMPLEMENTED / TESTED**. Not deployed. The drawing set stays **OPEN / NOT COMPLETE**. Visual acceptance is not passed. |
+| 1. What new contractor capability exists? | A supplied member section, including a sloped board, can be drawn. Equivalent boards group on a construction schedule with a quantity and a length. Connections that are in the model appear on a hardware schedule. |
+| 2. When would the contractor use it? | When reading a deck plan set: the stair, the post and beam, the section, and the schedules. |
+| 3. What workflow will the final Manual need to teach? | The drawing comes from the construction model. A missing section size or a missing connection is named. The schedule counts like members. It does not price them. |
+| 4. What contractor-facing terms must be used? | Member schedule. Connection schedule. Material schedule. Detail. Section. You need to provide this information. |
+| 5. What screenshots / Print examples will eventually be needed? | An 11×17 stair, a post-and-beam detail, a section, and a grouped schedule. Not captured here as a finished example. The fixture set is not a crew set. |
+| 6. What warnings / validation distinctions need explanation? | A missing profile is named and is not replaced with a generic shape. A missing connection is named. Different lengths are not averaged. The schedule is not an estimate. |
+| 7. Desktop / iPhone / Print relevance | Print on 11×17. No screen was added. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — ICF wall quantities (2026-10-01)
 
 | Field | Content |

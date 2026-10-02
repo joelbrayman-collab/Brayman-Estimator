@@ -60,6 +60,8 @@ Slice 11 stores construction relationships on that same model. A relationship is
 
 The complete-fixture sheets were inspected again at 11×17. The stair shows the stringer notched for the supplied seats, with the treads sitting on those seats. The stringer detail shows one seat and the tread on it, labeled with the supplied 11 inch bearing. The post-and-beam detail shows the beam on the post and the supplied 3 inch bearing. The connector remains the supplied note, because no connector geometry was supplied. Section A names the same chain for the members in that cut: pier supports post, post bears on beam, beam supports joist, joist supports decking. The stair is not in that cut, so the stringer and tread stay on the stair and the stringer detail. The gate connection is still absent. Visual acceptance of the whole set for handing it to a carpenter is not passed. The stringer/tread and post/beam assemblies on this fixture are readable. Bushel is not the acceptance fixture.
 
+Slice 12 audits that same fixture and does not change the drawings. The deficiency list is [reviews/2026-10-02-complete-deck-acceptance/COMPLETE-DECK-ACCEPTANCE-AUDIT.md](reviews/2026-10-02-complete-deck-acceptance/COMPLETE-DECK-ACCEPTANCE-AUDIT.md). The set is not a crew set.
+
 The proving sheets are still not acceptable construction drawings.
 
 Remaining deficiencies:
@@ -69,7 +71,7 @@ Remaining deficiencies:
 - Pier shaft length, helix, torque, bracket height, and baluster layout are still absent.
 - The stair result still has no rise, run, nosing, or tread count.
 - Some front-elevation leaders still reach the pier line.
-- On the complete fixture, the stringer detail shows the 2×12 board and the tread thickness. The supplied step line crosses the stringer face, so the bearing is not a clear seat.
+- On the complete fixture, the stringer detail shows the tread on the supplied seat. The slice 12 audit is the current deficiency list. The set is still not a crew set.
 - The post cap and the tread clip are notes. The model has no connector shape.
 - The guard and gate sheet shows the rails, the gate, and the balusters. The model has no gate connection. The sheet says that connection is not supplied.
 - The section end rims are the end view of the rim at the deck edge. The section has no height dimension.

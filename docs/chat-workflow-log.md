@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-02 — Construction drawing acceptance audit
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-02 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 12 — COMPLETE CONSTRUCTION DRAWING ACCEPTANCE AUDIT 2 OCT 2026 |
+| Objective | Audit the complete deck fixture set against the drawing standard and the recalled V1 requirements, and record every deficiency. |
+| Business decision | The set is not handed to the crew. The audit names what is missing. It does not improve the drawings. |
+| Architectural decision | Each deficiency is fixture data, model capability, drawing-engine capability, or sheet output. None is a new architectural dependency. V1 is not rescored. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Audit only. Recall section 2.1. Inspect the generic 11×17 set. Classify every deficiency. Do not patch. Do not touch Bushel. Do not deploy. One documentation commit. Push. |
+| Files expected to change | The acceptance-audit review, the drawing standard pointer, the build-out register, current-state, session handoff, roadmap, architecture index, the earlier complete-deck review pointer, and this log. |
+| Files prohibited from changing | Product code, the complete deck fixture, Bushel, Supplier Pro, schema, and deployment. |
+| Implementation result | Audit recorded. Fifteen deficiencies, D1 through D15. Classes A through D. No class E. The set stays OPEN / NOT COMPLETE. Bearing fidelity stays COMPLETE. One-model and no-guessing stay PARTIAL. V1 stays 65% / 4 of 11. |
+| Tests | Construction Model regression: 120 passed, 10 warnings, 3.39s. PGE regression: 61 passed, 79 warnings, 19.01s. Full suite `./venv/bin/python -m pytest -q`: 2087 passed, 6789 warnings, 889.20s, exit 0. No product code changed. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The deficiency register in the acceptance audit. The next build is sheet presentation of facts already in the model. |
+| Next approved step | Not written here. Do not add fixture geometry until the sheet layer can present the facts it already has. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. |
+
 ### 2026-10-02 — Construction relationships and bearing
 
 | Field | Content |

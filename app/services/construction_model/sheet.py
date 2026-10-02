@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from io import BytesIO
 from pathlib import Path
 from typing import Any, Mapping, Optional
@@ -22,6 +22,7 @@ from app.services.brand_profile import (
     DEFAULT_PRIMARY_COLOR,
 )
 from app.services.construction_model.annotations import (
+    build_member_callouts,
     build_refusal_callouts,
     build_station_callouts,
     place_callouts,
@@ -328,7 +329,9 @@ def _draw_title_block(sheet, model, sheet_definition, points_per_unit: float) ->
         sheet.drawString(420, 42, note)
 
 
-def _draw_view(sheet, projection, points_per_unit: float, box=None, model=None, layout_issues=None) -> None:
+def _draw_view(
+    sheet, projection, points_per_unit: float, box=None, model=None, layout_issues=None, tag_roles=None
+) -> None:
     spec = _VIEWPORTS[projection.view_type]
     x0, y0, x1, y1 = box or spec["box"]
     sheet.setStrokeColor(_NAVY)
@@ -383,6 +386,8 @@ def _draw_view(sheet, projection, points_per_unit: float, box=None, model=None, 
         model,
         (projection.horizontal_axis, projection.vertical_axis),
         layout_issues,
+        tag_roles,
+        projection.view_type,
     )
 
 
@@ -435,6 +440,8 @@ def _annotate_frame(
     model,
     axes,
     layout_issues,
+    tag_roles=None,
+    view_name=None,
 ) -> None:
     occupied = list(obstacles)
     if model is not None and axes is not None:
@@ -452,12 +459,23 @@ def _annotate_frame(
                 axes,
                 occupied,
                 layout_issues,
+                view_name,
             )
         )
     callouts = build_refusal_callouts(issues)
     if model is not None and axes is not None:
         callouts.extend(refusal_callouts(model, axes))
-    callouts.extend(build_station_callouts(elements, origin_u, origin_v, points_per_unit, place_x, place_y))
+    stations = build_station_callouts(elements, origin_u, origin_v, points_per_unit, place_x, place_y)
+    callouts.extend(stations)
+    if tag_roles:
+        grouped = set()
+        for item in stations:
+            grouped.update(item["element_ids"])
+        callouts.extend(
+            build_member_callouts(
+                elements, tag_roles, origin_u, origin_v, points_per_unit, place_x, place_y, grouped
+            )
+        )
     placed, refused = place_callouts(callouts, occupied, frame)
     _paint_callouts(sheet, placed)
     if layout_issues is None:
@@ -497,7 +515,8 @@ def _geometry_obstacles(elements, origin_u, origin_v, points_per_unit, place_x, 
     for element in elements:
         xs = []
         ys = []
-        for point in element["projected_geometry"]["coordinates"]:
+        geometry = element.get("profile_geometry") or element["projected_geometry"]
+        for point in geometry["coordinates"]:
             xs.append(place_x + (point["u"] - origin_u) * points_per_unit)
             ys.append(place_y + (point["v"] - origin_v) * points_per_unit)
         if not xs:
@@ -516,15 +535,18 @@ def _draw_dimension_chains(
     points_per_unit,
     place_x,
     place_y,
-    axes,
-    occupied,
-    layout_issues,
-) -> list:
+        axes,
+        occupied,
+        layout_issues,
+        view_name=None,
+    ) -> list:
     by_id = {element["id"]: element for element in elements}
     horizontal = axes[0]
     drawn = []
     lane = 0
     for chain in resolve_dimension_chains(model):
+        if chain.get("view") and chain.get("view") != view_name:
+            continue
         if chain["kind"] == "level" or chain["axis"] not in axes:
             continue
         if not _chain_is_in_view(chain, by_id):
@@ -629,8 +651,8 @@ def _chain_labels(
         else:
             start_xy = paper(by_id[segment["start_id"]], "start")
             end_xy = paper(by_id[segment["end_id"]], "start")
-        add(_dimension_text(segment), start_xy, end_xy)
-    if overall is not None and chain["kind"] in {"station", "overall"}:
+        add(_dimension_text(segment, chain.get("label") if len(segments) == 1 else None), start_xy, end_xy)
+    if overall is not None and chain["kind"] in {"station", "overall"} and len(segments) > 1:
         if chain["kind"] == "member_length":
             element = by_id[chain["references"][0]]
             start_xy = paper(element, "start")
@@ -638,12 +660,17 @@ def _chain_labels(
         else:
             start_xy = paper(by_id[chain["references"][0]], "start")
             end_xy = paper(by_id[chain["references"][-1]], "start")
-        add(f"OVERALL {_dimension_text(overall)}", start_xy, end_xy, extra=14)
+        overall_text = _dimension_text(overall)
+        label = chain.get("label")
+        prefix = label if label else "OVERALL"
+        add(f"{prefix} {overall_text}", start_xy, end_xy, extra=14)
     return labels
 
 
-def _dimension_text(segment) -> str:
+def _dimension_text(segment, label=None) -> str:
     text = segment["display"]
+    if label:
+        text = f"{label} {text}"
     notes = [note.get("note") for note in segment.get("uncertainty") or [] if note.get("note")]
     if notes:
         text = f"{text}\n{notes[0]}"
@@ -715,8 +742,28 @@ def _origin(elements) -> tuple:
     return min(us), min(vs)
 
 
+_LINE_WEIGHT = {
+    "beam": 1.7,
+    "rim": 1.4,
+    "header": 1.5,
+    "joist": 0.9,
+    "post": 1.5,
+    "stringer": 1.4,
+    "guard": 1.2,
+    "decking": 0.4,
+    "baluster": 0.35,
+    "tread": 1.1,
+    "gate": 1.4,
+    "pier": 1.5,
+    "footing": 1.5,
+}
+_FILLED = {"post", "beam", "rim", "header", "pier", "footing", "stringer", "tread"}
+
+
 def _draw_element(sheet, element, origin_u, origin_v, points_per_unit, x0, y0) -> None:
-    geometry = element["projected_geometry"]
+    geometry = element.get("profile_geometry") or element["projected_geometry"]
+    role = element.get("role") or element.get("kind") or ""
+    sheet.setLineWidth(_LINE_WEIGHT.get(role, 0.9))
     placed = [
         (
             x0 + (point["u"] - origin_u) * points_per_unit,
@@ -724,7 +771,9 @@ def _draw_element(sheet, element, origin_u, origin_v, points_per_unit, x0, y0) -
         )
         for point in geometry["coordinates"]
     ]
-    if geometry["kind"] == "point":
+    if geometry["kind"] == "point" or not placed:
+        if not placed:
+            return
         px, py = placed[0]
         sheet.line(px - 3, py - 3, px + 3, py + 3)
         sheet.line(px - 3, py + 3, px + 3, py - 3)
@@ -735,7 +784,11 @@ def _draw_element(sheet, element, origin_u, origin_v, points_per_unit, x0, y0) -
     path.moveTo(placed[0][0], placed[0][1])
     for px, py in placed[1:]:
         path.lineTo(px, py)
-    sheet.drawPath(path, stroke=1, fill=0)
+    filled = element.get("profile_geometry") is not None and role in _FILLED
+    if filled:
+        sheet.setFillColor(white)
+    sheet.drawPath(path, stroke=1, fill=1 if filled else 0)
+    sheet.setFillColor(_NAVY)
 
 
 def _manifest(model, views, sheet_definition, points_per_unit: float, pdf_bytes: bytes) -> dict:
@@ -787,7 +840,13 @@ class ConstructionWaveSheet:
         }
 
 
-def compose_construction_wave(model: Any, sheet_definition: Any, sections: Any = (), details: Any = ()) -> ConstructionWaveSheet:
+def compose_construction_wave(
+    model: Any,
+    sheet_definition: Any,
+    sections: Any = (),
+    details: Any = (),
+    sheet_program: Any = None,
+) -> ConstructionWaveSheet:
     """Compose a sheet set from one model at the stated scale.
 
     A view that fits the principal sheet stays there. A view that does not
@@ -814,7 +873,12 @@ def compose_construction_wave(model: Any, sheet_definition: Any, sections: Any =
             (),
             wave.uncertainty,
         )
-    pages, fit_issues = _assemble_set(wave, points_per_unit)
+    if sheet_program is None:
+        pages, fit_issues = _assemble_set(wave, points_per_unit)
+    else:
+        pages, fit_issues = _assemble_program(wave, sheet_program, accepted)
+    if fit_issues and any(issue.code != CODE_GEOMETRY_DOES_NOT_FIT_SHEET for issue in fit_issues):
+        return ConstructionWaveSheet(False, SHEET_VERSION, None, None, tuple(fit_issues), (), wave.uncertainty)
     if fit_issues:
         refusal = ConstructionModelIssue(
             code=CODE_VIEW_CANNOT_BE_PLACED,
@@ -839,6 +903,16 @@ def compose_construction_wave(model: Any, sheet_definition: Any, sections: Any =
     pdf_bytes, layout_issues = _draw_wave(accepted, wave, sheet_definition, points_per_unit, pages)
     view_issues = _view_issues(wave) + layout_issues
     manifest = _wave_manifest(accepted, wave, sheet_definition, points_per_unit, pdf_bytes, pages)
+    if sheet_program is not None and layout_issues:
+        return ConstructionWaveSheet(
+            False,
+            SHEET_VERSION,
+            pdf_bytes,
+            manifest,
+            tuple(layout_issues),
+            tuple(layout_issues),
+            wave.uncertainty,
+        )
     return ConstructionWaveSheet(
         True,
         SHEET_VERSION,
@@ -863,6 +937,129 @@ def _view_issues(wave) -> tuple:
         issues.extend(view.issues)
     issues.extend(wave.schedule.issues)
     return tuple(issues)
+
+
+def _assemble_program(wave, program, model) -> tuple:
+    """One governed sheet for each requested view. The model stays the source."""
+    if not isinstance(program, list) or not program:
+        return [], (_need(CODE_INVALID_SHEET, "sheet_program", "A sheet program"),)
+    pages = []
+    issues = []
+    for index, request in enumerate(program):
+        if not isinstance(request, Mapping):
+            issues.append(_need(CODE_INVALID_SHEET, f"sheet_program[{index}]", "A sheet request"))
+            continue
+        title = plain_text(request.get("title")) or "Drawing"
+        kind = plain_text(request.get("view"))
+        scale = plain_text(request.get("scale")) or None
+        roles = request.get("roles") or []
+        if roles and (not isinstance(roles, list) or any(plain_text(role) is None for role in roles)):
+            issues.append(_need(CODE_INVALID_SHEET, f"sheet_program[{index}].roles", "View roles from the model"))
+            continue
+        role_set = {plain_text(role) for role in roles}
+        if kind == "schedule":
+            for schedule_page in _schedule_pages(wave.schedule):
+                schedule_page["title"] = title
+                schedule_page["scale"] = "Not a scaled view"
+                schedule_page["points_per_unit"] = None
+                schedule_page["tag_roles"] = ()
+                pages.append(schedule_page)
+            continue
+        page, issue = _program_page(wave, model, kind, title, role_set, scale, plain_text(request.get("view_id")))
+        if issue is not None:
+            issues.append(issue)
+            continue
+        pages.append(page)
+    return pages, tuple(issues)
+
+
+def _program_page(wave, model, kind, title, roles, scale, view_id):
+    if kind == "schedule":
+        lines = _schedule_lines(wave.schedule)
+        return {
+            "kind": "schedule",
+            "title": title,
+            "view": wave.schedule,
+            "projections": (),
+            "lines": lines,
+            "scale": scale or "Not a scaled view",
+            "points_per_unit": None,
+            "tag_roles": (),
+        }, None
+    view = _program_view(wave, kind, roles, view_id)
+    if view is None:
+        return None, _need(CODE_INVALID_SHEET, "sheet_program", f"A {kind or 'view'} in the sheet program")
+    if not getattr(view, "projected", False):
+        found = view.issues[0] if getattr(view, "issues", ()) else _need(
+            CODE_MISSING_SHEET_FACT, kind or "view", f"The {title}"
+        )
+        return None, found
+    elements = getattr(view, "elements", ())
+    if roles and not elements:
+        return None, _need(CODE_MISSING_SHEET_FACT, kind, f"Model elements for {title}")
+    measurement = model.get("measurement_system")
+    chosen_scale = scale
+    if kind != "schedule" and chosen_scale is None:
+        return None, _need(CODE_MISSING_SHEET_FACT, "scale", f"The scale for {title}")
+    points_per_unit = _points_per_unit(chosen_scale, measurement)
+    if points_per_unit is None:
+        return None, _need(CODE_INVALID_SHEET, "scale", f"A scale that can be drawn for {title}")
+    if hasattr(view, "view_type"):
+        fits = _projection_fits(view, points_per_unit, _FULL_VIEW)
+    else:
+        fits = _view_span_fits(view, points_per_unit)
+    if not fits:
+        return None, _need(
+            CODE_GEOMETRY_DOES_NOT_FIT_SHEET,
+            kind,
+            f"The {title} at the stated scale",
+        )
+    tag_roles = ("post", "beam", "pier", "footing", "gate", "header", "stringer")
+    return {
+        "kind": kind,
+        "title": title,
+        "view": view,
+        "projections": (view,) if hasattr(view, "view_type") else (),
+        "scale": chosen_scale,
+        "points_per_unit": points_per_unit,
+        "tag_roles": tag_roles,
+    }, None
+
+
+def _program_view(wave, kind, roles, view_id):
+    if kind == VIEW_PLAN:
+        return _filter_projection(wave.plan, roles)
+    if kind == VIEW_FRONT_ELEVATION:
+        return _filter_projection(wave.front_elevation, roles)
+    if kind == VIEW_SIDE_ELEVATION:
+        return _filter_projection(wave.side_elevation, roles)
+    if kind == "section":
+        return _named_view(wave.sections, view_id)
+    if kind == "stair":
+        return _named_view(wave.stairs, view_id)
+    if kind == "detail":
+        return _named_view(wave.details, view_id)
+    return None
+
+
+def _filter_projection(projection, roles):
+    if not roles:
+        return projection
+    elements = tuple(
+        element
+        for element in projection.elements
+        if (element.get("role") or element.get("kind")) in roles
+    )
+    return replace(projection, elements=elements, projected=bool(elements))
+
+
+def _named_view(views, view_id):
+    if view_id is None:
+        return views[0] if views else None
+    for view in views:
+        if view.view_id == view_id:
+            return view
+    return None
 
 
 def _assemble_set(wave, points_per_unit: float):
@@ -965,11 +1162,59 @@ def _schedule_pages(schedule) -> list:
     return pages
 
 
+_INCH_FACTS = {"rise", "run", "throat", "nosing", "stair_width"}
+
+
+def _connection_note(model, elements) -> str:
+    identifiers = {element["id"] for element in elements}
+    notes = []
+    for item in model.get("connections") or []:
+        if not identifiers.intersection(item.get("participant_ids") or []):
+            continue
+        parts = [
+            item.get("connection_type"),
+            item.get("connector"),
+            item.get("fastener"),
+        ]
+        text = " / ".join(part for part in parts if part)
+        if item.get("quantity") is not None:
+            text = f"{text} / {item['quantity']}"
+        if text:
+            notes.append(text)
+    if not notes:
+        return ""
+    return "CONNECTION " + "; ".join(notes)
+
+
+def _fact_text(key, value, model) -> str:
+    label = key.replace("_", " ")
+    if key in _INCH_FACTS and model.get("measurement_system") == "imperial" and isinstance(value, (int, float)):
+        from app.services.construction_model.model import format_measure
+
+        return f"{label} {format_measure(value, 'imperial', 'in')}"
+    return f"{label} {value}"
+
+
 def _schedule_lines(schedule) -> list:
-    lines = [("Helvetica-Bold", "SCHEDULE"), ("Helvetica-Bold", "Member    Role    Length")]
+    material_names = {item["id"]: item.get("name") or item["id"] for item in schedule.materials}
+    lines = [("Helvetica-Bold", "MEMBER SCHEDULE"), ("Helvetica-Bold", "Id    Role    Size    Material    Length    Status")]
     for row in schedule.members:
         shown = ", ".join(row.get("length_displays") or [])
-        lines.append(("Helvetica", f"{row['id']}    {row['role']}    {shown}"))
+        material = material_names.get(row.get("material_id") or "", "")
+        lines.append(
+            (
+                "Helvetica",
+                f"{row['id']}    {row['role']}    {row.get('member_size') or ''}    {material}    {shown}    {row.get('construction_status') or ''}",
+            )
+        )
+    counts = {}
+    for row in schedule.members:
+        key = (row["role"], row.get("member_size") or "", material_names.get(row.get("material_id") or "", ""))
+        counts[key] = counts.get(key, 0) + 1
+    lines.append(("Helvetica-Bold", "MATERIAL / COMPONENT SCHEDULE"))
+    lines.append(("Helvetica-Bold", "Role    Size    Material    Quantity"))
+    for role, size, material in sorted(counts):
+        lines.append(("Helvetica", f"{role}    {size}    {material}    {counts[(role, size, material)]}"))
     lines.append(("Helvetica-Bold", "Support    Kind"))
     for row in schedule.supports:
         lines.append(("Helvetica", f"{row['id']}    {row['kind']}"))
@@ -1029,6 +1274,10 @@ def _sheet_numbers(sheet_definition, count: int) -> list:
     return [base] + [f"{base}-{index}" for index in range(2, count + 1)]
 
 
+def _page_scale(page, sheet_definition, points_per_unit: float):
+    return page.get("points_per_unit") or points_per_unit, page.get("scale")
+
+
 def _draw_wave(model, wave, sheet_definition, points_per_unit: float, pages: list):
     buffer = BytesIO()
     sheet = canvas.Canvas(
@@ -1041,22 +1290,45 @@ def _draw_wave(model, wave, sheet_definition, points_per_unit: float, pages: lis
     total = len(pages)
     layout_issues = []
     for index, page in enumerate(pages):
+        page_points, page_scale = _page_scale(page, sheet_definition, points_per_unit)
         if page["kind"] == "orthographic":
             definition = _sheet_copy(sheet_definition, numbers[index], plain_text(sheet_definition["drawing_title"]))
             definition["sheet_count"] = total
             _paint_plan_page(sheet, model, definition, points_per_unit, page["projections"], layout_issues)
         elif page["kind"] == "schedule":
-            definition = _sheet_copy(sheet_definition, numbers[index], "Schedules")
+            definition = _sheet_copy(sheet_definition, numbers[index], page.get("title") or "Schedules")
             definition["sheet_count"] = total
+            if page_scale:
+                definition["scale"] = page_scale
             _paint_schedule_page(sheet, model, definition, page.get("lines") or [])
         elif page["kind"] in {VIEW_PLAN, VIEW_FRONT_ELEVATION, VIEW_SIDE_ELEVATION}:
             definition = _sheet_copy(sheet_definition, numbers[index], page["title"].title())
             definition["sheet_count"] = total
-            _paint_projection_page(sheet, model, definition, points_per_unit, page["view"], layout_issues)
+            if page_scale:
+                definition["scale"] = page_scale
+            _paint_projection_page(
+                sheet,
+                model,
+                definition,
+                page_points,
+                page["view"],
+                layout_issues,
+                page.get("tag_roles"),
+            )
         else:
             definition = _sheet_copy(sheet_definition, numbers[index], page["title"].title())
             definition["sheet_count"] = total
-            _paint_read_view(sheet, model, definition, points_per_unit, page["view"], layout_issues)
+            if page_scale:
+                definition["scale"] = page_scale
+            _paint_read_view(
+                sheet,
+                model,
+                definition,
+                page_points,
+                page["view"],
+                layout_issues,
+                page.get("tag_roles"),
+            )
         sheet.showPage()
     sheet.save()
     return buffer.getvalue(), tuple(layout_issues)
@@ -1074,7 +1346,9 @@ def _paint_plan_page(sheet, model, sheet_definition, points_per_unit: float, pro
         _draw_view(sheet, projection, points_per_unit, model=model, layout_issues=layout_issues)
 
 
-def _paint_projection_page(sheet, model, sheet_definition, points_per_unit: float, projection, layout_issues=None) -> None:
+def _paint_projection_page(
+    sheet, model, sheet_definition, points_per_unit: float, projection, layout_issues=None, tag_roles=None
+) -> None:
     sheet.setTitle(plain_text(sheet_definition["drawing_title"]) or "")
     sheet.setAuthor("")
     sheet.setStrokeColor(_NAVY)
@@ -1082,10 +1356,20 @@ def _paint_projection_page(sheet, model, sheet_definition, points_per_unit: floa
     sheet.setLineWidth(1.5)
     sheet.rect(28, 28, PAGE_WIDTH - 56, PAGE_HEIGHT - 56, stroke=1, fill=0)
     _draw_title_block(sheet, model, sheet_definition, points_per_unit)
-    _draw_view(sheet, projection, points_per_unit, box=_FULL_VIEW, model=model, layout_issues=layout_issues)
+    _draw_view(
+        sheet,
+        projection,
+        points_per_unit,
+        box=_FULL_VIEW,
+        model=model,
+        layout_issues=layout_issues,
+        tag_roles=tag_roles,
+    )
 
 
-def _paint_read_view(sheet, model, sheet_definition, points_per_unit: float, view, layout_issues=None) -> None:
+def _paint_read_view(
+    sheet, model, sheet_definition, points_per_unit: float, view, layout_issues=None, tag_roles=None
+) -> None:
     sheet.setTitle(plain_text(sheet_definition["drawing_title"]) or "")
     sheet.setAuthor("")
     sheet.setStrokeColor(_NAVY)
@@ -1102,9 +1386,13 @@ def _paint_read_view(sheet, model, sheet_definition, points_per_unit: float, vie
     sheet.setFont("Helvetica-Bold", 10)
     label = view.label if view.view_id is None else f"{view.label} {view.view_id}"
     sheet.drawString(x0, y1 + 6, label)
+    connection = _connection_note(model, view.elements)
+    if connection:
+        sheet.setFont("Helvetica", 8)
+        sheet.drawString(x0, y0 + 8, connection[:180])
     if view.facts:
         sheet.setFont("Helvetica", 8)
-        fact_line = "  ".join(f"{key.replace('_', ' ')} {value}" for key, value in view.facts)
+        fact_line = "  ".join(_fact_text(key, value, model) for key, value in view.facts)
         sheet.drawString(x0 + 180, y1 + 6, fact_line[:140])
     origin_u, origin_v = _origin(view.elements)
     span_u, span_v = _span(view.elements)
@@ -1116,7 +1404,6 @@ def _paint_read_view(sheet, model, sheet_definition, points_per_unit: float, vie
     place_y = y0 + _VIEW_PAD + (inner_h - drawn_h) / 2.0
     sheet.setStrokeColor(_NAVY)
     for element in view.elements:
-        sheet.setLineWidth(1.2)
         _draw_element(sheet, element, origin_u, origin_v, points_per_unit, place_x, place_y)
     if view.uncertainty:
         sheet.setFont("Helvetica", 8)
@@ -1133,9 +1420,11 @@ def _paint_read_view(sheet, model, sheet_definition, points_per_unit: float, vie
         place_x,
         place_y,
         _geometry_obstacles(view.elements, origin_u, origin_v, points_per_unit, place_x, place_y),
-        None,
-        None,
+        model,
+        (view.horizontal_axis, view.vertical_axis) if view.horizontal_axis and view.vertical_axis else None,
         layout_issues,
+        tag_roles,
+        view.view_kind,
     )
 
 

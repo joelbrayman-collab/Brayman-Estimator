@@ -472,6 +472,19 @@ def _component_fields(item: Mapping, collection: str, identifier: str, noun: str
                 )
             else:
                 recorded[key] = item[key]
+    for key in ("section_width", "section_depth"):
+        if key not in item or item.get(key) is None:
+            continue
+        if not is_number(item.get(key)) or item.get(key) <= 0:
+            issues.append(
+                _need(
+                    CODE_MISSING_FACT,
+                    f"{collection}[{identifier}].{key}",
+                    f"A {key.replace('_', ' ')} for {noun} {identifier}",
+                )
+            )
+        else:
+            recorded[key] = item[key]
     return recorded, issues
 
 
@@ -1042,13 +1055,27 @@ def _dimension_chains(value, known_ids: set, level_ids: set):
         if provenance_issue is not None:
             issues.append(provenance_issue)
             continue
-        parsed.append(
-            {
-                "id": identifier,
-                "axis": axis,
-                "kind": kind,
-                "references": cleaned,
-                "provenance": provenance,
-            }
-        )
+        recorded_chain = {
+            "id": identifier,
+            "axis": axis,
+            "kind": kind,
+            "references": cleaned,
+            "provenance": provenance,
+        }
+        label = plain_text(item.get("label"))
+        if label is not None:
+            recorded_chain["label"] = label
+        view_name = plain_text(item.get("view"))
+        if view_name is not None:
+            if view_name not in {"plan", "front_elevation", "side_elevation", "section", "stair", "detail"}:
+                issues.append(
+                    _need(
+                        CODE_INVALID_FACT,
+                        f"dimension_chains[{identifier}].view",
+                        f"A drawing view for dimension chain {identifier}",
+                    )
+                )
+                continue
+            recorded_chain["view"] = view_name
+        parsed.append(recorded_chain)
     return parsed, issues

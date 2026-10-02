@@ -14,7 +14,7 @@ from app.services.construction_model.completeness import (
     assess_construction_model,
 )
 from app.services.construction_model.dimensions import resolve_dimension_chains
-from app.services.construction_model.model import is_number, missing_axes, plain_text
+from app.services.construction_model.model import is_number, missing_axes, plain_text, view_profile
 from app.services.construction_model.projection import (
     VIEW_FRONT_ELEVATION,
     VIEW_PLAN,
@@ -62,6 +62,8 @@ class ReadView:
     elements: tuple
     facts: tuple
     label: str
+    horizontal_axis: Optional[str] = None
+    vertical_axis: Optional[str] = None
 
     def to_dict(self) -> dict:
         return {
@@ -193,7 +195,7 @@ def _stair_view(model: Mapping[str, Any], result: Mapping[str, Any]) -> ReadView
                 )
             )
             continue
-        elements.append(_project_record(found[0], found[1], "y", "z", model))
+        elements.append(_decorate(found[0], found[1], "y", "z", model))
     uncertainty = _notes(model, [result["id"], *member_ids])
     if issues:
         return ReadView(False, "stair", result["id"], tuple(issues), tuple(uncertainty), (), (), "STAIR")
@@ -207,6 +209,8 @@ def _stair_view(model: Mapping[str, Any], result: Mapping[str, Any]) -> ReadView
         tuple(elements),
         facts,
         "STAIR",
+        "y",
+        "z",
     )
 
 
@@ -298,7 +302,7 @@ def _section_view(model: Mapping[str, Any], definition: Any) -> ReadView:
                 )
                 continue
             if _cut_hits(item["geometry"], direction, location, depth, elevation):
-                elements.append(_project_record(item, element_class, horizontal, vertical, model))
+                elements.append(_decorate(item, element_class, horizontal, vertical, model))
     if issues and not elements:
         return _empty("section", identifier, tuple(issues), model)
     uncertainty = _notes(model, [element["id"] for element in elements])
@@ -311,6 +315,8 @@ def _section_view(model: Mapping[str, Any], definition: Any) -> ReadView:
         tuple(elements),
         (("section_direction", direction), ("section_location", location)),
         "SECTION",
+        horizontal,
+        vertical,
     )
 
 
@@ -375,11 +381,22 @@ def _detail_view(model: Mapping[str, Any], definition: Any) -> ReadView:
                 )
             )
             continue
-        projected.append(_project_record(item, element_class, horizontal, vertical, model))
+        projected.append(_decorate(item, element_class, horizontal, vertical, model))
     if issues and not projected:
         return _empty("detail", identifier, tuple(issues), model)
     uncertainty = _notes(model, [element["id"] for element in projected])
-    return ReadView(True, "detail", identifier, tuple(issues), tuple(uncertainty), tuple(projected), (), "DETAIL")
+    return ReadView(
+        True,
+        "detail",
+        identifier,
+        tuple(issues),
+        tuple(uncertainty),
+        tuple(projected),
+        (),
+        "DETAIL",
+        horizontal,
+        vertical,
+    )
 
 
 def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
@@ -407,6 +424,9 @@ def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
             {
                 "id": item["id"],
                 "role": item["role"],
+                "member_size": item.get("member_size"),
+                "material_id": item.get("material_id"),
+                "construction_status": item.get("construction_status"),
                 "lengths": lengths,
                 "length_displays": displays,
                 "uncertainty": _notes(model, [item["id"]]),
@@ -504,6 +524,16 @@ def _cut_hits(geometry: Mapping[str, Any], axis: str, location: float, depth: Op
         if not (min(heights) <= elevation <= max(heights)):
             return False
     return True
+
+
+def _decorate(item: Mapping[str, Any], element_class: str, horizontal: str, vertical: str, model: Mapping[str, Any]) -> dict:
+    record = _project_record(item, element_class, horizontal, vertical, model)
+    profile = view_profile(item, horizontal, vertical)
+    if profile is not None:
+        record["profile_geometry"] = profile
+    if item.get("member_size"):
+        record["member_size"] = item["member_size"]
+    return record
 
 
 def _project_record(item: Mapping[str, Any], element_class: str, horizontal: str, vertical: str, model: Mapping[str, Any]) -> dict:

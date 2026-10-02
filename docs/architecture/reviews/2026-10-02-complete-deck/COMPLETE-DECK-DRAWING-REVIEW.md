@@ -1,0 +1,26 @@
+# Complete deck drawing review — 2 Oct 2026
+
+| Field | Record |
+|-------|--------|
+| Fixture | COMPLETE DECK DRAWING ENGINE FIXTURE |
+| Source | `tests/fixtures/construction_model/complete_deck_fixture.py` |
+| Bushel | Not used. Not modified. Not the acceptance fixture. |
+| Scale | 1/2 in = 1 ft on the plans, elevations, and section. 1 in = 1 ft on the stair and the details. |
+| Sheets | 14. Three plans, two elevations, stair, section, two details, and schedule pages. |
+| Would we hand this to the boys? | No. |
+
+The framing plan shows posts, beams, joists, rims, the stair header, and model dimensions: width 12'-0", depth 10'-0", joist spacing 1'-4", beam 10'-0". The decking plan shows the boards, the guard, the balusters, and the gate. The elevations show the deck, the guard, the posts, and the piers, with grade and the walking surface. The stair sheet shows the stringer, five treads, rise 3'-6", run 4'-7", and the supplied stair facts. The section shows piers, posts, the beam, and the joists sitting on the beam. The schedules name size, material, length, and a quantity rollup. Every sheet uses the Brayman title block.
+
+## Visual acceptance
+
+Not passed.
+
+- The stringer detail is the stringer centerline and one tread. It names the connection. It is not a connection a carpenter would build from.
+- The section's end rims read as separate marks above the frame.
+- The member schedule lists every deck board and every baluster, so the schedule runs for several pages.
+- The foundation plan dimensions the pier spacing along the width. The depth dimension is on the framing plan.
+- The sheets have large margins at the stated scale. The scale was not changed to fill the paper.
+
+## Clip-art check
+
+Posts, beams, joists, piers, guards, and treads are profiles or centerlines of the fixture geometry. The pier plan is a square from the supplied pier size. Dimensions are chain values from the model. No sheet keeps its own member store.

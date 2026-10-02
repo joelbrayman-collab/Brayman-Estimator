@@ -60,6 +60,39 @@ def build_station_callouts(elements, origin_u, origin_v, points_per_unit, place_
     return callouts
 
 
+def build_member_callouts(elements, roles, origin_u, origin_v, points_per_unit, place_x, place_y, grouped_ids) -> list:
+    """Name an isolated member. Grouped stations keep their group note."""
+    wanted = set(roles or ())
+    callouts = []
+    for element in elements:
+        role = element.get("role") or element.get("kind")
+        if role not in wanted or element["id"] in grouped_ids:
+            continue
+        coordinates = element["projected_geometry"]["coordinates"]
+        if not coordinates:
+            continue
+        point = coordinates[0]
+        size = element.get("member_size")
+        text = role.replace("_", " ").upper() + " " + element["id"]
+        if size:
+            text = f"{text}\n{size}"
+        callouts.append(
+            {
+                "id": f"member-{element['id']}",
+                "element_ids": (element["id"],),
+                "text": text,
+                "geometry_reference": {"u": point["u"], "v": point["v"]},
+                "anchor_x": place_x + (point["u"] - origin_u) * points_per_unit,
+                "anchor_y": place_y + (point["v"] - origin_v) * points_per_unit,
+                "kind": "member",
+                "justification": "left",
+                "provenance": element.get("provenance"),
+                "uncertainty": element.get("uncertainty") or (),
+            }
+        )
+    return callouts
+
+
 def build_refusal_callouts(issues) -> list:
     """One readable note for each missing fact, keeping every element id."""
     groups = {}
@@ -291,6 +324,8 @@ def _span(identifiers) -> str:
         numbers = [item[1] for item in parsed]
         if len(prefixes) == 1 and numbers == list(range(numbers[0], numbers[0] + len(numbers))):
             return f"{identifiers[0]} to {identifiers[-1]}"
+    if len(identifiers) > 6:
+        return f"{identifiers[0]} to {identifiers[-1]}"
     return ", ".join(identifiers)
 
 

@@ -13,7 +13,7 @@ from app.services.construction_model.completeness import (
     ConstructionModelIssue,
     assess_construction_model,
 )
-from app.services.construction_model.model import is_number, missing_axes, plain_text
+from app.services.construction_model.model import is_number, missing_axes, plain_text, view_profile
 
 PROJECTION_VERSION = "cm-2"
 
@@ -302,7 +302,20 @@ def _project_element(item: Mapping[str, Any], element_class: str, view_type: str
         record["role"] = item["role"]
     elif element_class == "supports":
         record["kind"] = item["kind"]
+        record["role"] = item["kind"]
+    elif element_class == "openings":
+        record["role"] = "opening"
+    profile = view_profile(item, *_profile_axes(view_type))
+    if profile is not None:
+        record["profile_geometry"] = profile
+    if item.get("member_size"):
+        record["member_size"] = item["member_size"]
     return record
+
+
+def _profile_axes(view_type: str) -> tuple:
+    camera = _CAMERAS[view_type]
+    return camera["horizontal_axis"], camera["vertical_axis"]
 
 
 def _spatial_issue(item: Mapping[str, Any], element_class: str, view_type: str, missing: list) -> ConstructionModelIssue:

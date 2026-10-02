@@ -52,6 +52,10 @@ Slice 8 is the deck component model. A member can be a joist, beam, rim, header,
 
 Plan needs x and y. Front elevation needs x and z. Side elevation needs y and z. A section needs the cut axis and the projected axes. The stair view needs y and z for its named members and uses the supplied stair result without calculating rise, run, nosing, tread count, throat, stringer count, or width. The schedule shows a supplied or endpoint-derived length and does not invent one. A detail asks only for the requirement it names.
 
+Slice 9 draws a complete generic deck from one model. The fixture is named COMPLETE DECK DRAWING ENGINE FIXTURE. Its values are fixture input. They are not Calibrayt defaults and they are not Bushel. A sheet program asks for a foundation plan, a framing plan, a decking plan, elevations, a stair, a section, two details, and schedules. Each sheet filters that same model. A supplied section size becomes the drawn profile of an axis-aligned member. A sloped stringer stays its centerline. The scale is the scale named for that sheet. It is not fitted to the paper.
+
+The complete-fixture sheets were inspected at 11×17. The framing plan, decking plan, elevations, section stack, and stair steps are construction drawings of the fixture. The detail sheets are the named members and the supplied connection text. They are sparse. The member schedule lists every board and baluster. Visual acceptance for handing the set to a carpenter is not passed. Bushel is not the acceptance fixture.
+
 The proving sheets are still not acceptable construction drawings.
 
 Remaining deficiencies:
@@ -61,6 +65,7 @@ Remaining deficiencies:
 - Pier shaft length, helix, torque, bracket height, and baluster layout are still absent.
 - The stair result still has no rise, run, nosing, or tread count.
 - Some front-elevation leaders still reach the pier line.
+- On the complete fixture, the stringer detail is one tread on the stringer centerline. The section shows the beam, joists, posts, and piers, and the end rims read as separate marks. The schedule runs for several pages because every piece is listed.
 
 The printed sheet is judged for geometric consistency, structural consistency, dimensional consistency, quantity consistency, revision consistency, and print consistency.
 
@@ -93,7 +98,7 @@ The path is fixed:
 
 A generic Plan Generation artifact may keep “Not a permit. Not a seal.” A project construction drawing uses its governed document status instead of treating that generic line as the project status. The project status does not certify engineering, represent a professional seal, claim municipal approval, or claim that a permit has been issued. Supplied uncertainty stays visible. Using the sheet does not clear it.
 
-Construction Model completeness, view projection, the governed 11×17 sheet, partial spatial facts, sheet sets, paper-space callouts, dimension chains, required-view placement, the deck component model, stair, section, detail, and schedule views, and the Bushel proving slice are **IMPLEMENTED / TESTED**. The sheet uses the stated scale and does not scale the drawing to fill the paper. A view that misses the principal viewport moves to another 11×17 sheet. A required view that misses a full sheet is refused. It is not omitted. PGE-2 and PGE-3 render the validated request they are given. They do not project this construction model. The stair view consumes a supplied stair result. It does not calculate rise, run, throat, nosing, stringer count, tread count, or stair width. The Bushel proving review is [reviews/2026-10-02-bushel-proving/BUSHEL-CONSTRUCTION-MODEL-REVIEW.md](reviews/2026-10-02-bushel-proving/BUSHEL-CONSTRUCTION-MODEL-REVIEW.md).
+Construction Model completeness, view projection, the governed 11×17 sheet, partial spatial facts, sheet sets, paper-space callouts, dimension chains, required-view placement, the deck component model, the complete deck fixture, stair, section, detail, and schedule views, and the Bushel proving slice are **IMPLEMENTED / TESTED**. Visual acceptance of a crew set is not passed. The complete-fixture review is [reviews/2026-10-02-complete-deck/COMPLETE-DECK-DRAWING-REVIEW.md](reviews/2026-10-02-complete-deck/COMPLETE-DECK-DRAWING-REVIEW.md). The sheet uses the stated scale and does not scale the drawing to fill the paper. A view that misses the principal viewport moves to another 11×17 sheet. A required view that misses a full sheet is refused. It is not omitted. PGE-2 and PGE-3 render the validated request they are given. They do not project this construction model. The stair view consumes a supplied stair result. It does not calculate rise, run, throat, nosing, stringer count, tread count, or stair width. The Bushel proving review is [reviews/2026-10-02-bushel-proving/BUSHEL-CONSTRUCTION-MODEL-REVIEW.md](reviews/2026-10-02-bushel-proving/BUSHEL-CONSTRUCTION-MODEL-REVIEW.md).
 
 The stair side profile is drawn. It uses the same rise, run, stringer spacing, and landing as the framing plan. The first proof is CT-2. The refinement is CT-2 R2. R2 draws the tread running under the riser, with a 3/4 in nosing past the riser face. The finished 11 in going and 7.60 in rise stay. The sheet shows one measurement system, imperial. It does not add a second stair calculator. Neither sheet is a general elevation generator.
 

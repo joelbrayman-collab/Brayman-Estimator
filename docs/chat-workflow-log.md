@@ -43,6 +43,32 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-02 — Complete deck fixture and drawing quality
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-02 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 9 — COMPLETE DECK FIXTURE + CONSTRUCTION DRAWING QUALITY 2 OCT 2026 |
+| Objective | Prove whether the drawing engine can produce a construction set when a generic deck model is complete. |
+| Business decision | Do not wait for the missing Bushel facts. Judge the printed sheets. Do not hand the fixture set to the crew. |
+| Architectural decision | One complete fixture feeds a sheet program. Each sheet is a filtered query of that model. An axis-aligned member with a supplied section size is drawn as that profile. A sloped member stays its centerline. A dimension chain can name the view that should carry it. The scale on each sheet is the named scale. |
+| Prompt template used | Joel’s 2 Oct 2026 slice 9 prompt. |
+| Approved Cursor prompt summary | Generic complete deck fixture only. No Bushel edits, no Bushel geometry, no PGE edits, no deploy. Inspect the printed sheets. Focused tests, construction-model regression, PGE regression, and the full suite. One commit. Push. |
+| Feature Gate | None. Authorized slice beside closed PGE. |
+| Files expected to change | Construction Model sheet, views, projection, completeness, dimensions, annotations, and model profile; the complete deck fixture and tests; the review note; the drawing standard, register, architecture, current-state, session handoff, roadmap, and this log. |
+| Files prohibited from changing | The Linda Bushel case folder, Plan Generation, Contract V1, Website, schema, and migrations. |
+| Implementation result | The fixture set is 14 sheets from one model. Framing, decking, elevations, the section stack, and the stair steps read as construction drawings. The detail sheets are sparse. Visual acceptance for a crew set is not passed. The component stays open. Bushel was not changed. |
+| Tests | Construction-model regression 99 passed, 8 warnings, 2.71s, exit 0. PGE regression 49 passed, 48 warnings, 10.93s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2066 passed, 6787 warnings, 993.41s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Detail sheets, section rim marks, and the long member schedule. Bushel facts remain unsupplied. |
+| Next approved step | Improve detail and schedule presentation on this fixture before using Bushel as the proving case. |
+| Next approved prompt | None in this slice. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. |
+
 ### 2026-10-02 — Deck component model
 
 | Field | Content |

@@ -159,3 +159,85 @@ def _trim_number(value: float) -> str:
     if float(value) == int(value):
         return str(int(value))
     return str(value)
+
+
+def view_profile(item: Mapping[str, Any], horizontal: str, vertical: str) -> Optional[dict]:
+    """A view rectangle from a supplied section size.
+
+    The rectangle uses section_width and section_depth already stored on
+    the member. A sloped member keeps its centerline. A missing size
+    keeps the centerline.
+    """
+    width = item.get("section_width")
+    depth = item.get("section_depth")
+    geometry = item.get("geometry") or {}
+    coordinates = geometry.get("coordinates") or []
+    if geometry.get("kind") != "segment" or len(coordinates) != 2:
+        return None
+    if not is_number(width) or not is_number(depth) or width <= 0 or depth <= 0:
+        return None
+    start, end = coordinates[0], coordinates[-1]
+    deltas = {axis: end[axis] - start[axis] for axis in AXES}
+    dominant = [axis for axis in AXES if abs(deltas[axis]) > 0.001]
+    if len(dominant) != 1:
+        return None
+    length_axis = dominant[0]
+    if vertical == "z":
+        return _elevation_profile(start, end, deltas, length_axis, horizontal, width, depth)
+    if horizontal == "z":
+        return None
+    return _plan_profile(start, end, deltas, width)
+
+
+def _elevation_profile(start, end, deltas, length_axis, horizontal, width, depth):
+    if length_axis == "z":
+        half = width / 2.0
+        center = start[horizontal]
+        low = min(start["z"], end["z"])
+        high = max(start["z"], end["z"])
+        return _profile_rect(center - half, low, center + half, high)
+    if length_axis == horizontal:
+        half = depth / 2.0
+        low = min(start[horizontal], end[horizontal])
+        high = max(start[horizontal], end[horizontal])
+        center = (start["z"] + end["z"]) / 2.0
+        return _profile_rect(low, center - half, high, center + half)
+    half_w = width / 2.0
+    half_d = depth / 2.0
+    return _profile_rect(
+        start[horizontal] - half_w,
+        start["z"] - half_d,
+        start[horizontal] + half_w,
+        start["z"] + half_d,
+    )
+
+
+def _plan_profile(start, end, deltas, width):
+    half = width / 2.0
+    dx = deltas["x"]
+    dy = deltas["y"]
+    span = (dx * dx + dy * dy) ** 0.5
+    if span <= 0.001:
+        return _profile_rect(start["x"] - half, start["y"] - half, start["x"] + half, start["y"] + half)
+    px = -dy / span * half
+    py = dx / span * half
+    corners = (
+        (start["x"] + px, start["y"] + py),
+        (end["x"] + px, end["y"] + py),
+        (end["x"] - px, end["y"] - py),
+        (start["x"] - px, start["y"] - py),
+    )
+    coordinates = [{"u": point[0], "v": point[1]} for point in corners]
+    coordinates.append(dict(coordinates[0]))
+    return {"kind": "polyline", "coordinates": coordinates}
+
+
+def _profile_rect(u0: float, v0: float, u1: float, v1: float) -> dict:
+    coordinates = [
+        {"u": u0, "v": v0},
+        {"u": u1, "v": v0},
+        {"u": u1, "v": v1},
+        {"u": u0, "v": v1},
+        {"u": u0, "v": v0},
+    ]
+    return {"kind": "polyline", "coordinates": coordinates}

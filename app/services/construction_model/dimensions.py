@@ -91,6 +91,8 @@ def _chain(chain, segments, overall) -> dict:
         "overall": overall,
         "provenance": chain.get("provenance"),
         "measurement_system": overall.get("measurement_system"),
+        "label": chain.get("label"),
+        "view": chain.get("view"),
     }
 
 

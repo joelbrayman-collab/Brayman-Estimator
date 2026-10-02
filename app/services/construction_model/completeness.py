@@ -137,6 +137,8 @@ def assess_construction_model(payload: Any) -> ConstructionModelAssessment:
         issues.extend(_unit_issues(optional.get("dimensions") or [], measurement_system))
     stairs, stair_issues = _stair_results(payload.get("stair_results", []))
     issues.extend(stair_issues)
+    chains, chain_issues = _dimension_chains(payload.get("dimension_chains"), known_ids, level_ids)
+    issues.extend(chain_issues)
     uncertainty, uncertainty_issue = _uncertainty(payload.get("uncertainty", []))
     if uncertainty_issue is not None:
         issues.append(uncertainty_issue)
@@ -157,6 +159,7 @@ def assess_construction_model(payload: Any) -> ConstructionModelAssessment:
     }
     accepted.update(optional)
     accepted["stair_results"] = stairs
+    accepted["dimension_chains"] = chains
     _annotate_measures(accepted)
     return ConstructionModelAssessment(
         complete=True,
@@ -720,3 +723,101 @@ def _uncertainty(value: Any):
             recorded["subject_id"] = text
         parsed.append(recorded)
     return tuple(parsed), None
+
+
+_CHAIN_KINDS = frozenset({"station", "point_to_point", "member_length", "overall", "level"})
+
+
+def _dimension_chains(value, known_ids: set, level_ids: set):
+    if value is None:
+        return [], []
+    if not isinstance(value, list):
+        return [], [_need(CODE_INVALID_FACT, "dimension_chains", "A list of dimension chains")]
+    parsed = []
+    issues = []
+    seen = set()
+    for index, item in enumerate(value):
+        field = f"dimension_chains[{index}]"
+        if not isinstance(item, Mapping):
+            issues.append(_need(CODE_INVALID_FACT, field, f"Dimension chain {index + 1}"))
+            continue
+        identifier = plain_text(item.get("id"))
+        axis = plain_text(item.get("axis"))
+        kind = plain_text(item.get("kind"))
+        if identifier is None:
+            issues.append(_need(CODE_MISSING_FACT, f"{field}.id", f"An id for dimension chain {index + 1}"))
+            continue
+        if identifier in seen:
+            issues.append(_need(CODE_INVALID_FACT, f"dimension_chains[{identifier}].id", f"A unique id for dimension chain {identifier}"))
+            continue
+        seen.add(identifier)
+        if axis not in AXES:
+            issues.append(_need(CODE_MISSING_FACT, f"dimension_chains[{identifier}].axis", f"The axis of dimension chain {identifier}"))
+            continue
+        if kind not in _CHAIN_KINDS:
+            issues.append(_need(CODE_MISSING_FACT, f"dimension_chains[{identifier}].kind", f"The kind of dimension chain {identifier}"))
+            continue
+        references = item.get("references")
+        if not isinstance(references, list) or not references:
+            issues.append(
+                _need(
+                    CODE_MISSING_FACT,
+                    f"dimension_chains[{identifier}].references",
+                    f"The model references for dimension chain {identifier}",
+                )
+            )
+            continue
+        cleaned = []
+        reference_issue = None
+        allowed = level_ids if kind == "level" else known_ids
+        for reference in references:
+            text = plain_text(reference)
+            if text is None or text not in allowed or text in cleaned:
+                reference_issue = _need(
+                    CODE_MISSING_FACT,
+                    f"dimension_chains[{identifier}].references",
+                    f"A model reference for dimension chain {identifier}",
+                )
+                break
+            cleaned.append(text)
+        if reference_issue is not None:
+            issues.append(reference_issue)
+            continue
+        minimum = 1 if kind in {"member_length", "level"} else 2
+        exact = kind in {"member_length", "level", "point_to_point"}
+        if len(cleaned) < minimum or (exact and len(cleaned) != minimum):
+            issues.append(
+                _need(
+                    CODE_MISSING_FACT,
+                    f"dimension_chains[{identifier}].references",
+                    f"The model references for dimension chain {identifier}",
+                )
+            )
+            continue
+        if kind == "level" and axis != "z":
+            issues.append(
+                _need(
+                    CODE_MISSING_FACT,
+                    f"dimension_chains[{identifier}].axis",
+                    f"The level axis of dimension chain {identifier}",
+                )
+            )
+            continue
+        provenance, provenance_issue = _provenance(
+            item.get("provenance"),
+            f"dimension_chains[{identifier}].provenance",
+            f"dimension chain {identifier}",
+        )
+        if provenance_issue is not None:
+            issues.append(provenance_issue)
+            continue
+        parsed.append(
+            {
+                "id": identifier,
+                "axis": axis,
+                "kind": kind,
+                "references": cleaned,
+                "provenance": provenance,
+            }
+        )
+    return parsed, issues

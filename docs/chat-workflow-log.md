@@ -43,6 +43,32 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-02 — Callouts, dimension chains, and required-view placement
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-02 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 7 — CALLOUTS + DIMENSION CHAINS + REQUIRED-VIEW PLACEMENT 2 OCT 2026 |
+| Objective | Add paper-space callouts, model-derived dimension chains, and a refusal when a required view cannot be placed. |
+| Business decision | Guessing stays closed. A missing elevation or station is asked for by name. The Bushel proving fixture is still not an engine default. The component stays open. |
+| Architectural decision | Callouts name model elements and move only in paper space. Members that project together keep their coordinates and share one callout. A dimension chain is the difference of model coordinates. A missing station refuses that dimension. A level dimension reads the model level. A required view that fits another 11×17 sheet is placed there. A required view that fits no sheet returns `VIEW_CANNOT_BE_PLACED_AT_REQUESTED_SCALE`. The scale is not changed. |
+| Prompt template used | Joel’s 2 Oct 2026 slice 7 prompt. |
+| Approved Cursor prompt summary | Generic architecture only. Re-run the Bushel proving fixture. No case-folder edits, no J1 script, no PGE edits, no external CAD, no deploy. Focused tests, construction-model regression, PGE regression, and the full suite. One commit. Push. |
+| Feature Gate | None. Authorized slice beside closed PGE. |
+| Files expected to change | Construction Model annotations, dimensions, completeness, views, and sheet composition; the proving fixture and tests; the review note; the drawing standard, register, architecture, current-state, session handoff, roadmap, and this log. |
+| Files prohibited from changing | The Linda Bushel case folder, Plan Generation, Contract V1, Website, schema, and migrations. |
+| Implementation result | Crowded stations share a paper-space callout. The front pier chain prints `6'-0"` and `OVERALL 18'-0"`. The joist elevation chain refuses. A view that cannot fit an 11×17 sheet is refused. The proving set is still not a crew set. The component stays open. |
+| Tests | Construction-model regression 84 passed, 6 warnings, 1.98s, exit 0. PGE regression 49 passed, 48 warnings, 15.04s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2051 passed, 6785 warnings, 964.12s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Joist and stringer lengths, cuts, posts, shafts, guards, and the stair profile are still missing. Some front-elevation leaders still reach the pier line. |
+| Next approved step | A later slice may supply the missing member lengths and elevations once those facts exist. Do not invent them. |
+| Next approved prompt | None in this slice. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. |
+
 ### 2026-10-02 — Partial geometry and sheet sets
 
 | Field | Content |

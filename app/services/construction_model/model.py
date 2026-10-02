@@ -63,6 +63,7 @@ def element_store(model: Mapping[str, Any]) -> dict:
         "uncertainty": list(model.get("uncertainty") or []),
         "assumptions": list(model.get("assumptions") or []),
         "stair_results": list(model.get("stair_results") or []),
+        "dimension_chains": list(model.get("dimension_chains") or []),
     }
 
 

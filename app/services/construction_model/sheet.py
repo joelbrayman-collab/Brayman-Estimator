@@ -21,10 +21,18 @@ from app.services.brand_profile import (
     DEFAULT_BRAYMAN_STATIC_LOGO,
     DEFAULT_PRIMARY_COLOR,
 )
+from app.services.construction_model.annotations import (
+    build_refusal_callouts,
+    build_station_callouts,
+    place_callouts,
+    rectangles_overlap,
+    text_size,
+)
 from app.services.construction_model.completeness import (
     ConstructionModelIssue,
     assess_construction_model,
 )
+from app.services.construction_model.dimensions import refusal_callouts, resolve_dimension_chains
 from app.services.construction_model.model import plain_text
 from app.services.construction_model.projection import (
     VIEW_FRONT_ELEVATION,
@@ -40,6 +48,8 @@ PAGE_WIDTH = 17.0 * 72.0
 PAGE_HEIGHT = 11.0 * 72.0
 
 CODE_GEOMETRY_DOES_NOT_FIT_SHEET = "GEOMETRY_DOES_NOT_FIT_SHEET"
+CODE_VIEW_CANNOT_BE_PLACED = "VIEW_CANNOT_BE_PLACED_AT_REQUESTED_SCALE"
+CODE_CALLOUT_CANNOT_BE_PLACED = "CALLOUT_CANNOT_BE_PLACED"
 CODE_INVALID_SHEET = "INVALID_SHEET_DEFINITION"
 CODE_MISSING_SHEET_FACT = "MISSING_SHEET_FACT"
 
@@ -262,7 +272,7 @@ def _draw(model, views, sheet_definition, points_per_unit: float) -> bytes:
     sheet.rect(28, 28, PAGE_WIDTH - 56, PAGE_HEIGHT - 56, stroke=1, fill=0)
     _draw_title_block(sheet, model, sheet_definition, points_per_unit)
     for projection in (views.plan, views.front_elevation, views.side_elevation):
-        _draw_view(sheet, projection, points_per_unit)
+        _draw_view(sheet, projection, points_per_unit, model=model, layout_issues=[])
     sheet.showPage()
     sheet.save()
     return buffer.getvalue()
@@ -318,7 +328,7 @@ def _draw_title_block(sheet, model, sheet_definition, points_per_unit: float) ->
         sheet.drawString(420, 42, note)
 
 
-def _draw_view(sheet, projection, points_per_unit: float, box=None) -> None:
+def _draw_view(sheet, projection, points_per_unit: float, box=None, model=None, layout_issues=None) -> None:
     spec = _VIEWPORTS[projection.view_type]
     x0, y0, x1, y1 = box or spec["box"]
     sheet.setStrokeColor(_NAVY)
@@ -350,20 +360,30 @@ def _draw_view(sheet, projection, points_per_unit: float, box=None) -> None:
             place_x,
             place_y,
         )
-    _draw_overlap_tags(sheet, projection.elements, origin_u, origin_v, points_per_unit, place_x, place_y)
+    obstacles = _geometry_obstacles(
+        projection.elements, origin_u, origin_v, points_per_unit, place_x, place_y
+    )
     if projection.view_type != VIEW_PLAN:
-        _draw_level_datums(sheet, projection, origin_u, origin_v, points_per_unit, place_x, place_y, x0)
-    if projection.issues:
-        sheet.setFillColor(_NAVY)
-        sheet.setFont("Helvetica", 6)
-        note_y = y0 + 8
-        shown = projection.issues[:4]
-        for issue in shown:
-            sheet.drawString(x0 + 4, note_y, issue.message[:110])
-            note_y += 8
-        remaining = len(projection.issues) - len(shown)
-        if remaining:
-            sheet.drawString(x0 + 4, note_y, f"and {remaining} more omitted members")
+        obstacles.extend(
+            _draw_level_datums(
+                sheet, projection, origin_u, origin_v, points_per_unit, place_x, place_y, x0
+            )
+        )
+    _annotate_frame(
+        sheet,
+        projection.elements,
+        projection.issues,
+        (x0, y0, x1, y1),
+        origin_u,
+        origin_v,
+        points_per_unit,
+        place_x,
+        place_y,
+        obstacles,
+        model,
+        (projection.horizontal_axis, projection.vertical_axis),
+        layout_issues,
+    )
 
 
 def _placed_origin(projection) -> tuple:
@@ -382,7 +402,8 @@ def _placed_origin(projection) -> tuple:
     return (min(us) if us else 0.0), (min(vs) if vs else 0.0)
 
 
-def _draw_level_datums(sheet, projection, origin_u, origin_v, points_per_unit, place_x, place_y, x0) -> None:
+def _draw_level_datums(sheet, projection, origin_u, origin_v, points_per_unit, place_x, place_y, x0) -> list:
+    occupied = []
     for level in projection.levels:
         elevation = level.get("elevation")
         if not isinstance(elevation, (int, float)):
@@ -393,29 +414,293 @@ def _draw_level_datums(sheet, projection, origin_u, origin_v, points_per_unit, p
         sheet.line(x0 + 8, py, x0 + 22, py)
         sheet.setFillColor(_NAVY)
         sheet.setFont("Helvetica", 7)
-        label = level.get("display") or ""
-        sheet.drawString(x0 + 26, py + 2, f"{label}  {level['name']}"[:80])
+        label = f"{level.get('display') or ''}  {level['name']}"
+        sheet.drawString(x0 + 26, py + 2, label[:80])
+        width, height = text_size(label[:80])
+        occupied.append((x0 + 26, py + 2, x0 + 26 + width, py + 2 + height))
+    return occupied
 
 
-def _draw_overlap_tags(sheet, elements, origin_u, origin_v, points_per_unit, place_x, place_y) -> None:
-    """Paper-space identity for elements that share a projected location.
+def _annotate_frame(
+    sheet,
+    elements,
+    issues,
+    frame,
+    origin_u,
+    origin_v,
+    points_per_unit,
+    place_x,
+    place_y,
+    obstacles,
+    model,
+    axes,
+    layout_issues,
+) -> None:
+    occupied = list(obstacles)
+    if model is not None and axes is not None:
+        occupied.extend(
+            _draw_dimension_chains(
+                sheet,
+                model,
+                elements,
+                frame,
+                origin_u,
+                origin_v,
+                points_per_unit,
+                place_x,
+                place_y,
+                axes,
+                occupied,
+                layout_issues,
+            )
+        )
+    callouts = build_refusal_callouts(issues)
+    if model is not None and axes is not None:
+        callouts.extend(refusal_callouts(model, axes))
+    callouts.extend(build_station_callouts(elements, origin_u, origin_v, points_per_unit, place_x, place_y))
+    placed, refused = place_callouts(callouts, occupied, frame)
+    _paint_callouts(sheet, placed)
+    if layout_issues is None:
+        return
+    for item in refused:
+        layout_issues.append(
+            _need(
+                CODE_CALLOUT_CANNOT_BE_PLACED,
+                item["id"],
+                f"A clear place for annotation {item['id']}",
+            )
+        )
 
-    The tag is offset on the sheet. Model coordinates are not moved.
-    """
-    groups = {}
+
+def _paint_callouts(sheet, placed) -> None:
+    for item in placed:
+        if item.get("anchor_x") is not None and _leader_is_short(item):
+            sheet.setStrokeColor(_GOLD)
+            sheet.setLineWidth(0.4)
+            sheet.line(item["anchor_x"], item["anchor_y"], item["paper_x"], item["paper_y"] + 4)
+        sheet.setFillColor(_NAVY)
+        sheet.setFont("Helvetica", 7)
+        y = item["paper_y"] + item["height"] - 8
+        for line in item["text"].split("\n"):
+            sheet.drawString(item["paper_x"], y, line)
+            y -= 8
+
+
+def _leader_is_short(item) -> bool:
+    dx = item["anchor_x"] - item["paper_x"]
+    dy = item["anchor_y"] - (item["paper_y"] + 4)
+    return (dx * dx) + (dy * dy) <= 140 * 140
+
+
+def _geometry_obstacles(elements, origin_u, origin_v, points_per_unit, place_x, place_y) -> list:
+    rectangles = []
     for element in elements:
-        coords = element["projected_geometry"]["coordinates"]
-        key = tuple((round(point["u"], 4), round(point["v"], 4)) for point in coords)
-        groups.setdefault(key, []).append(element)
-    sheet.setFillColor(_NAVY)
-    sheet.setFont("Helvetica", 6)
-    for key, group in groups.items():
-        if len(group) < 2 or not key:
+        xs = []
+        ys = []
+        for point in element["projected_geometry"]["coordinates"]:
+            xs.append(place_x + (point["u"] - origin_u) * points_per_unit)
+            ys.append(place_y + (point["v"] - origin_v) * points_per_unit)
+        if not xs:
             continue
-        px = place_x + (key[0][0] - origin_u) * points_per_unit
-        py = place_y + (key[0][1] - origin_v) * points_per_unit
-        names = " ".join(item["id"] for item in group)
-        sheet.drawString(px + 7, py + 7, f"{len(group)} at this point: {names}"[:90])
+        rectangles.append((min(xs) - 10, min(ys) - 10, max(xs) + 10, max(ys) + 10))
+    return rectangles
+
+
+def _draw_dimension_chains(
+    sheet,
+    model,
+    elements,
+    frame,
+    origin_u,
+    origin_v,
+    points_per_unit,
+    place_x,
+    place_y,
+    axes,
+    occupied,
+    layout_issues,
+) -> list:
+    by_id = {element["id"]: element for element in elements}
+    horizontal = axes[0]
+    drawn = []
+    lane = 0
+    for chain in resolve_dimension_chains(model):
+        if chain["kind"] == "level" or chain["axis"] not in axes:
+            continue
+        if not _chain_is_in_view(chain, by_id):
+            continue
+        segments = [segment for segment in chain["segments"] if not segment["refused"]]
+        overall = chain.get("overall")
+        if overall and overall.get("refused"):
+            overall = None
+        if not segments and overall is None:
+            continue
+        labels = None
+        for direction in ("below", "above"):
+            candidate = _chain_labels(
+                chain,
+                segments,
+                overall,
+                by_id,
+                horizontal,
+                origin_u,
+                origin_v,
+                points_per_unit,
+                place_x,
+                place_y,
+                lane,
+                direction,
+            )
+            if candidate and _labels_fit(candidate, frame, occupied + drawn):
+                labels = candidate
+                break
+        lane += 1
+        if not labels:
+            if layout_issues is not None:
+                layout_issues.append(
+                    _need(
+                        CODE_CALLOUT_CANNOT_BE_PLACED,
+                        chain["id"],
+                        f"A clear place for dimension chain {chain['id']}",
+                    )
+                )
+            continue
+        _paint_chain(sheet, labels, chain["axis"] == horizontal)
+        drawn.extend(item["rect"] for item in labels)
+        drawn.extend(_chain_line_rects(labels, chain["axis"] == horizontal))
+    return drawn
+
+
+def _chain_is_in_view(chain, by_id) -> bool:
+    if chain["kind"] == "member_length":
+        return chain["references"][0] in by_id
+    return all(reference in by_id for reference in chain["references"])
+
+
+def _chain_labels(
+    chain,
+    segments,
+    overall,
+    by_id,
+    horizontal,
+    origin_u,
+    origin_v,
+    points_per_unit,
+    place_x,
+    place_y,
+    lane,
+    direction,
+):
+    labels = []
+    offset = 18 + (lane * 16)
+
+    def paper(element, endpoint):
+        coordinates = element["projected_geometry"]["coordinates"]
+        point = coordinates[0] if endpoint == "start" else coordinates[-1]
+        return (
+            place_x + (point["u"] - origin_u) * points_per_unit,
+            place_y + (point["v"] - origin_v) * points_per_unit,
+        )
+
+    def add(text, start_xy, end_xy, extra=0):
+        width, height = text_size(text)
+        if chain["axis"] == horizontal:
+            x = ((start_xy[0] + end_xy[0]) / 2.0) - (width / 2.0)
+            base = min(start_xy[1], end_xy[1]) if direction == "below" else max(start_xy[1], end_xy[1])
+            y = (base - offset - extra - height) if direction == "below" else (base + offset + extra)
+        else:
+            base = min(start_xy[0], end_xy[0]) if direction == "below" else max(start_xy[0], end_xy[0])
+            x = (base - offset - extra - width) if direction == "below" else (base + offset + extra)
+            y = ((start_xy[1] + end_xy[1]) / 2.0) - (height / 2.0)
+        labels.append(
+            {
+                "text": text,
+                "start": start_xy,
+                "end": end_xy,
+                "rect": (x, y, x + width, y + height),
+            }
+        )
+
+    for segment in segments:
+        if chain["kind"] == "member_length":
+            element = by_id[segment["start_id"]]
+            start_xy = paper(element, "start")
+            end_xy = paper(element, "end")
+        else:
+            start_xy = paper(by_id[segment["start_id"]], "start")
+            end_xy = paper(by_id[segment["end_id"]], "start")
+        add(_dimension_text(segment), start_xy, end_xy)
+    if overall is not None and chain["kind"] in {"station", "overall"}:
+        if chain["kind"] == "member_length":
+            element = by_id[chain["references"][0]]
+            start_xy = paper(element, "start")
+            end_xy = paper(element, "end")
+        else:
+            start_xy = paper(by_id[chain["references"][0]], "start")
+            end_xy = paper(by_id[chain["references"][-1]], "start")
+        add(f"OVERALL {_dimension_text(overall)}", start_xy, end_xy, extra=14)
+    return labels
+
+
+def _dimension_text(segment) -> str:
+    text = segment["display"]
+    notes = [note.get("note") for note in segment.get("uncertainty") or [] if note.get("note")]
+    if notes:
+        text = f"{text}\n{notes[0]}"
+    return text
+
+
+def _chain_line_rects(labels, horizontal: bool) -> list:
+    rects = []
+    for item in labels:
+        start = item["start"]
+        end = item["end"]
+        rect = item["rect"]
+        if horizontal:
+            y = rect[3] + 3
+            rects.append((min(start[0], end[0]) - 2, y - 5, max(start[0], end[0]) + 2, y + 5))
+        else:
+            x = rect[2] + 3
+            rects.append((x - 5, min(start[1], end[1]) - 2, x + 5, max(start[1], end[1]) + 2))
+    return rects
+
+
+def _labels_fit(labels, frame, occupied) -> bool:
+    x0, y0, x1, y1 = frame
+    for item in labels:
+        rect = item["rect"]
+        if rect[0] < x0 + 2 or rect[1] < y0 + 2 or rect[2] > x1 - 2 or rect[3] > y1 - 2:
+            return False
+        if any(rectangles_overlap(rect, other) for other in occupied):
+            return False
+        if any(rectangles_overlap(rect, other["rect"]) for other in labels if other is not item):
+            return False
+    return True
+
+
+def _paint_chain(sheet, labels, horizontal: bool) -> None:
+    sheet.setStrokeColor(_NAVY)
+    sheet.setLineWidth(0.5)
+    for item in labels:
+        start = item["start"]
+        end = item["end"]
+        rect = item["rect"]
+        if horizontal:
+            y = rect[3] + 3
+            sheet.line(start[0], y, end[0], y)
+            sheet.line(start[0], y - 3, start[0], y + 3)
+            sheet.line(end[0], y - 3, end[0], y + 3)
+        else:
+            x = rect[2] + 3
+            sheet.line(x, start[1], x, end[1])
+            sheet.line(x - 3, start[1], x + 3, start[1])
+            sheet.line(x - 3, end[1], x + 3, end[1])
+        sheet.setFillColor(_NAVY)
+        sheet.setFont("Helvetica", 7)
+        y = rect[1] + 2
+        for line in item["text"].split("\n"):
+            sheet.drawString(rect[0], y, line)
+            y += 8
 
 
 def _origin(elements) -> tuple:
@@ -506,9 +791,8 @@ def compose_construction_wave(model: Any, sheet_definition: Any, sections: Any =
     """Compose a sheet set from one model at the stated scale.
 
     A view that fits the principal sheet stays there. A view that does not
-    fit that viewport moves to its own 11×17 sheet. A view that does not fit
-    a full sheet is omitted and reported. The rest of the set is still drawn.
-    Scale is never changed to make a view fit.
+    fit that viewport moves to its own 11×17 sheet. A required view that
+    fits neither is refused. It is not omitted and the scale is not changed.
     """
     wave = project_construction_wave(model, sections=sections or (), details=details or ())
     if not wave.projected:
@@ -531,8 +815,29 @@ def compose_construction_wave(model: Any, sheet_definition: Any, sections: Any =
             wave.uncertainty,
         )
     pages, fit_issues = _assemble_set(wave, points_per_unit)
-    view_issues = _view_issues(wave) + fit_issues
-    pdf_bytes = _draw_wave(accepted, wave, sheet_definition, points_per_unit, pages)
+    if fit_issues:
+        refusal = ConstructionModelIssue(
+            code=CODE_VIEW_CANNOT_BE_PLACED,
+            field=fit_issues[0].field,
+            fact="A different sheet arrangement or scale",
+            message="You need to provide a different sheet arrangement or scale.",
+        )
+        return ConstructionWaveSheet(
+            False,
+            SHEET_VERSION,
+            None,
+            {
+                "scale": plain_text(sheet_definition.get("scale")),
+                "points_per_unit": points_per_unit,
+                "pages": [],
+                "sheet_count": 0,
+            },
+            (refusal, *fit_issues),
+            (),
+            wave.uncertainty,
+        )
+    pdf_bytes, layout_issues = _draw_wave(accepted, wave, sheet_definition, points_per_unit, pages)
+    view_issues = _view_issues(wave) + layout_issues
     manifest = _wave_manifest(accepted, wave, sheet_definition, points_per_unit, pdf_bytes, pages)
     return ConstructionWaveSheet(
         True,
@@ -683,6 +988,20 @@ def _schedule_lines(schedule) -> list:
             if item.get("start_id") or item.get("end_id"):
                 ends = f"  from {item.get('start_id') or ''} to {item.get('end_id') or ''}"
             lines.append(("Helvetica", f"{item['id']}  {item.get('display') or item['value']}{ends}"))
+    for chain in getattr(schedule, "dimension_chains", ()) or ():
+        lines.append(("Helvetica-Bold", f"Chain {chain['id']}"))
+        for segment in chain["segments"]:
+            if segment["refused"]:
+                lines.append(("Helvetica", segment["message"]))
+            else:
+                lines.append(("Helvetica", f"{segment['start_id']} to {segment['end_id']}  {segment['display']}"))
+        overall = chain.get("overall")
+        segments_refused = any(segment["refused"] for segment in chain["segments"])
+        if overall and chain["kind"] in {"station", "overall"} and not (overall["refused"] and segments_refused):
+            if overall["refused"]:
+                lines.append(("Helvetica", overall["message"]))
+            else:
+                lines.append(("Helvetica", f"OVERALL  {overall['display']}"))
     for issue in schedule.issues:
         lines.append(("Helvetica", issue.message))
     return lines
@@ -710,7 +1029,7 @@ def _sheet_numbers(sheet_definition, count: int) -> list:
     return [base] + [f"{base}-{index}" for index in range(2, count + 1)]
 
 
-def _draw_wave(model, wave, sheet_definition, points_per_unit: float, pages: list) -> bytes:
+def _draw_wave(model, wave, sheet_definition, points_per_unit: float, pages: list):
     buffer = BytesIO()
     sheet = canvas.Canvas(
         buffer,
@@ -720,11 +1039,12 @@ def _draw_wave(model, wave, sheet_definition, points_per_unit: float, pages: lis
     )
     numbers = _sheet_numbers(sheet_definition, len(pages))
     total = len(pages)
+    layout_issues = []
     for index, page in enumerate(pages):
         if page["kind"] == "orthographic":
             definition = _sheet_copy(sheet_definition, numbers[index], plain_text(sheet_definition["drawing_title"]))
             definition["sheet_count"] = total
-            _paint_plan_page(sheet, model, definition, points_per_unit, page["projections"])
+            _paint_plan_page(sheet, model, definition, points_per_unit, page["projections"], layout_issues)
         elif page["kind"] == "schedule":
             definition = _sheet_copy(sheet_definition, numbers[index], "Schedules")
             definition["sheet_count"] = total
@@ -732,17 +1052,17 @@ def _draw_wave(model, wave, sheet_definition, points_per_unit: float, pages: lis
         elif page["kind"] in {VIEW_PLAN, VIEW_FRONT_ELEVATION, VIEW_SIDE_ELEVATION}:
             definition = _sheet_copy(sheet_definition, numbers[index], page["title"].title())
             definition["sheet_count"] = total
-            _paint_projection_page(sheet, model, definition, points_per_unit, page["view"])
+            _paint_projection_page(sheet, model, definition, points_per_unit, page["view"], layout_issues)
         else:
             definition = _sheet_copy(sheet_definition, numbers[index], page["title"].title())
             definition["sheet_count"] = total
-            _paint_read_view(sheet, model, definition, points_per_unit, page["view"])
+            _paint_read_view(sheet, model, definition, points_per_unit, page["view"], layout_issues)
         sheet.showPage()
     sheet.save()
-    return buffer.getvalue()
+    return buffer.getvalue(), tuple(layout_issues)
 
 
-def _paint_plan_page(sheet, model, sheet_definition, points_per_unit: float, projections) -> None:
+def _paint_plan_page(sheet, model, sheet_definition, points_per_unit: float, projections, layout_issues=None) -> None:
     sheet.setTitle(plain_text(sheet_definition["drawing_title"]) or "")
     sheet.setAuthor("")
     sheet.setStrokeColor(_NAVY)
@@ -751,10 +1071,10 @@ def _paint_plan_page(sheet, model, sheet_definition, points_per_unit: float, pro
     sheet.rect(28, 28, PAGE_WIDTH - 56, PAGE_HEIGHT - 56, stroke=1, fill=0)
     _draw_title_block(sheet, model, sheet_definition, points_per_unit)
     for projection in projections:
-        _draw_view(sheet, projection, points_per_unit)
+        _draw_view(sheet, projection, points_per_unit, model=model, layout_issues=layout_issues)
 
 
-def _paint_projection_page(sheet, model, sheet_definition, points_per_unit: float, projection) -> None:
+def _paint_projection_page(sheet, model, sheet_definition, points_per_unit: float, projection, layout_issues=None) -> None:
     sheet.setTitle(plain_text(sheet_definition["drawing_title"]) or "")
     sheet.setAuthor("")
     sheet.setStrokeColor(_NAVY)
@@ -762,10 +1082,10 @@ def _paint_projection_page(sheet, model, sheet_definition, points_per_unit: floa
     sheet.setLineWidth(1.5)
     sheet.rect(28, 28, PAGE_WIDTH - 56, PAGE_HEIGHT - 56, stroke=1, fill=0)
     _draw_title_block(sheet, model, sheet_definition, points_per_unit)
-    _draw_view(sheet, projection, points_per_unit, box=_FULL_VIEW)
+    _draw_view(sheet, projection, points_per_unit, box=_FULL_VIEW, model=model, layout_issues=layout_issues)
 
 
-def _paint_read_view(sheet, model, sheet_definition, points_per_unit: float, view) -> None:
+def _paint_read_view(sheet, model, sheet_definition, points_per_unit: float, view, layout_issues=None) -> None:
     sheet.setTitle(plain_text(sheet_definition["drawing_title"]) or "")
     sheet.setAuthor("")
     sheet.setStrokeColor(_NAVY)
@@ -798,21 +1118,25 @@ def _paint_read_view(sheet, model, sheet_definition, points_per_unit: float, vie
     for element in view.elements:
         sheet.setLineWidth(1.2)
         _draw_element(sheet, element, origin_u, origin_v, points_per_unit, place_x, place_y)
-    _draw_overlap_tags(sheet, view.elements, origin_u, origin_v, points_per_unit, place_x, place_y)
     if view.uncertainty:
         sheet.setFont("Helvetica", 8)
         note = "; ".join(item["note"] for item in view.uncertainty)
         sheet.drawString(x0, y0 - 14, note[:160])
-    if view.issues:
-        sheet.setFont("Helvetica", 6)
-        note_y = y0 + 8
-        shown = view.issues[:6]
-        for issue in shown:
-            sheet.drawString(x0 + 4, note_y, issue.message[:140])
-            note_y += 8
-        remaining = len(view.issues) - len(shown)
-        if remaining:
-            sheet.drawString(x0 + 4, note_y, f"and {remaining} more omitted members")
+    _annotate_frame(
+        sheet,
+        view.elements,
+        view.issues,
+        (x0, y0, x1, y1),
+        origin_u,
+        origin_v,
+        points_per_unit,
+        place_x,
+        place_y,
+        _geometry_obstacles(view.elements, origin_u, origin_v, points_per_unit, place_x, place_y),
+        None,
+        None,
+        layout_issues,
+    )
 
 
 def _paint_schedule_page(sheet, model, sheet_definition, lines) -> None:

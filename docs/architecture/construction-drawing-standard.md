@@ -44,7 +44,9 @@ The proving slice is **IMPLEMENTED / TESTED**. It is not a close of this compone
 
 The fixture uses the 1 Oct 2026 decisions: 15 helical pier locations from the CT-1 coordinates, 16 joist stations and 10 stringer stations from the selected layouts, a 5.00 in stringer throat, a 12 in lower-deck walking surface, 12 D'Arcy's Way, two 5/4 × 6 boards per tread, the 37 in Veranda kit, and a 42 in clear gate. Shaft length, helix, torque, bracket height, lower post cut, baluster layout, stringer plumb cuts, upper-deck elevation, stair rise, stair run, nosing, and tread count are withheld. The fixture does not invent them.
 
-Slice 6 stores a known plan station without an elevation. The plan can draw that station. An elevation, section, or stair that needs the missing elevation refuses that member and names it. A view that does not fit the principal viewport moves to another 11×17 sheet at the same scale. Dimensions print in construction notation. A level is a datum. Elements that share a projected point stay on that point and carry a count tag.
+Slice 6 stores a known plan station without an elevation. The plan can draw that station. An elevation, section, or stair that needs the missing elevation refuses that member and names it. A view that does not fit the principal viewport moves to another 11×17 sheet at the same scale. Dimensions print in construction notation. A level is a datum.
+
+Slice 7 adds paper-space callouts, dimension chains, and required-view placement. A callout names the model elements it refers to. Moving it does not move those elements. Members that land on the same or a nearby paper point stay on their coordinates and share one callout. The same missing fact is one note, and the note keeps the member ids. A dimension chain reads coordinates from the model. A missing station refuses that dimension. A level dimension uses the model level, so the displayed value changes when the level changes. A required view that fits another 11×17 sheet is placed there. A required view that fits no sheet returns `VIEW_CANNOT_BE_PLACED_AT_REQUESTED_SCALE` and “You need to provide a different sheet arrangement or scale.” The scale is not changed.
 
 The proving sheets are still not acceptable construction drawings.
 
@@ -52,8 +54,8 @@ Remaining deficiencies:
 
 - Joist and stringer stations are points on the front edge. Their lengths, cuts, and elevations are still unknown.
 - Guard, gate, stair profile, posts, and helical shafts remain refused.
-- Overlap tags and elevation refusal notes collide when many members share a small area of the sheet.
-- Callout placement is paper-space annotation. It is not yet a governed dimension chain on the plan.
+- Elevation callouts name the missing members, and some front-elevation leaders still cross the pier line.
+- The proving chain covers the four front piers. It is not a full joist station chain, because the joist elevations are unknown.
 
 The printed sheet is judged for geometric consistency, structural consistency, dimensional consistency, quantity consistency, revision consistency, and print consistency.
 
@@ -86,7 +88,7 @@ The path is fixed:
 
 A generic Plan Generation artifact may keep “Not a permit. Not a seal.” A project construction drawing uses its governed document status instead of treating that generic line as the project status. The project status does not certify engineering, represent a professional seal, claim municipal approval, or claim that a permit has been issued. Supplied uncertainty stays visible. Using the sheet does not clear it.
 
-Construction Model completeness, view projection, the governed 11×17 sheet, partial spatial facts, sheet sets, stair, section, detail, and schedule views, and the Bushel proving slice are **IMPLEMENTED / TESTED**. The sheet uses the stated scale and does not scale the drawing to fill the paper. A view that misses the principal viewport moves to another 11×17 sheet. A view that misses a full sheet is omitted and the rest of the set is still drawn. PGE-2 and PGE-3 render the validated request they are given. They do not project this construction model. The stair view consumes a supplied stair result. It does not calculate rise, run, throat, nosing, stringer count, tread count, or stair width. The Bushel proving review is [reviews/2026-10-02-bushel-proving/BUSHEL-CONSTRUCTION-MODEL-REVIEW.md](reviews/2026-10-02-bushel-proving/BUSHEL-CONSTRUCTION-MODEL-REVIEW.md).
+Construction Model completeness, view projection, the governed 11×17 sheet, partial spatial facts, sheet sets, paper-space callouts, dimension chains, required-view placement, stair, section, detail, and schedule views, and the Bushel proving slice are **IMPLEMENTED / TESTED**. The sheet uses the stated scale and does not scale the drawing to fill the paper. A view that misses the principal viewport moves to another 11×17 sheet. A required view that misses a full sheet is refused. It is not omitted. PGE-2 and PGE-3 render the validated request they are given. They do not project this construction model. The stair view consumes a supplied stair result. It does not calculate rise, run, throat, nosing, stringer count, tread count, or stair width. The Bushel proving review is [reviews/2026-10-02-bushel-proving/BUSHEL-CONSTRUCTION-MODEL-REVIEW.md](reviews/2026-10-02-bushel-proving/BUSHEL-CONSTRUCTION-MODEL-REVIEW.md).
 
 The stair side profile is drawn. It uses the same rise, run, stringer spacing, and landing as the framing plan. The first proof is CT-2. The refinement is CT-2 R2. R2 draws the tread running under the riser, with a 3/4 in nosing past the riser face. The finished 11 in going and 7.60 in rise stay. The sheet shows one measurement system, imperial. It does not add a second stair calculator. Neither sheet is a general elevation generator.
 

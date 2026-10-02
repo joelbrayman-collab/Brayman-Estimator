@@ -209,6 +209,22 @@ def proving_model():
                 "subject_id": "lower-walk",
             },
         ],
+        "dimension_chains": [
+            {
+                "id": "front-pier-stations",
+                "axis": "x",
+                "kind": "station",
+                "references": ["P1", "P2", "P3", "P4"],
+                "provenance": _provenance("governed_calculation_result", "CT-1 front pier stations"),
+            },
+            {
+                "id": "joist-elevations",
+                "axis": "z",
+                "kind": "station",
+                "references": ["joist-1", "joist-2"],
+                "provenance": _provenance("project_input", "Joist elevations are not a governed decision"),
+            },
+        ],
         "stair_results": [
             {
                 "id": "stair-1",

@@ -15,7 +15,7 @@ from app.services.construction_model import (
     project_construction_wave,
 )
 from app.services.construction_model.model import format_measure
-from app.services.construction_model.sheet import CODE_GEOMETRY_DOES_NOT_FIT_SHEET
+from app.services.construction_model.sheet import CODE_VIEW_CANNOT_BE_PLACED
 from app.services.organizations import ensure_default_organization
 
 
@@ -180,7 +180,8 @@ def test_sheet_set_moves_an_oversized_elevation_and_keeps_the_scale():
     assert "10'-0\"" in text
     assert "1'-0\"" in text
     assert '12"' in text
-    assert "2 at this point: pier-a pier-b" in text
+    assert "2 PIERS" in text
+    assert "pier-a" in text and "pier-b" in text
 
 
 def test_metric_dimension_uses_metric_notation():
@@ -202,12 +203,16 @@ def test_level_change_moves_elevations_and_leaves_the_plan_station():
     assert "joist-1" not in _ids(updated.front_elevation)
 
 
-def test_oversized_view_does_not_refuse_the_schedule():
+def test_required_view_is_refused_when_it_cannot_be_placed():
     result = compose_construction_wave(_model(), _sheet(scale="4/1 in = 1 ft"))
-    assert result.composed is True
+    assert result.composed is False
+    assert result.pdf_bytes is None
+    assert result.manifest["points_per_unit"] == 288
     assert result.manifest["scale"] == "4/1 in = 1 ft"
-    assert any(issue.code == CODE_GEOMETRY_DOES_NOT_FIT_SHEET for issue in result.view_issues)
-    assert result.manifest["pages"][-1]["kind"] == "schedule"
+    assert result.manifest["pages"] == []
+    assert result.issues[0].code == CODE_VIEW_CANNOT_BE_PLACED
+    assert result.issues[0].message == "You need to provide a different sheet arrangement or scale."
+    assert any(issue.field == "plan" for issue in result.issues)
 
 
 def test_spatial_sheet_does_not_write_project_plan_or_estimate():

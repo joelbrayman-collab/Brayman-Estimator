@@ -13,6 +13,7 @@ from app.services.construction_model.completeness import (
     ConstructionModelIssue,
     assess_construction_model,
 )
+from app.services.construction_model.dimensions import resolve_dimension_chains
 from app.services.construction_model.model import is_number, missing_axes, plain_text
 from app.services.construction_model.projection import (
     VIEW_FRONT_ELEVATION,
@@ -21,7 +22,7 @@ from app.services.construction_model.projection import (
     project_model_views,
 )
 
-WAVE_VERSION = "cm-4"
+WAVE_VERSION = "cm-5"
 
 STAIR_FACTS = (
     ("rise", "The stair rise"),
@@ -75,6 +76,7 @@ class ScheduleRead:
     materials: tuple
     dimensions: tuple
     levels: tuple = ()
+    dimension_chains: tuple = ()
 
     def to_dict(self) -> dict:
         return {
@@ -86,6 +88,7 @@ class ScheduleRead:
             "materials": list(self.materials),
             "dimensions": list(self.dimensions),
             "levels": list(self.levels),
+            "dimension_chains": list(self.dimension_chains),
         }
 
 
@@ -423,6 +426,7 @@ def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
         materials,
         dimensions,
         levels,
+        tuple(resolve_dimension_chains(model)),
     )
 
 

@@ -15,7 +15,7 @@ from app.services.construction_model import (
     compose_construction_wave,
     project_construction_wave,
 )
-from app.services.construction_model.sheet import CODE_GEOMETRY_DOES_NOT_FIT_SHEET
+from app.services.construction_model.sheet import CODE_VIEW_CANNOT_BE_PLACED
 from app.services.organizations import ensure_default_organization
 
 
@@ -308,12 +308,14 @@ def test_wave_does_not_scale_to_fit():
         sections=[_section()],
         details=[_detail()],
     )
-    assert result.composed is True
+    assert result.composed is False
+    assert result.pdf_bytes is None
     assert result.manifest["points_per_unit"] == 288
     assert result.manifest["scale"] == "4/1 in = 1 ft"
-    assert "orthographic" not in [page["kind"] for page in result.manifest["pages"]]
-    assert result.manifest["pages"][-1]["kind"] == "schedule"
-    assert any(issue.code == CODE_GEOMETRY_DOES_NOT_FIT_SHEET for issue in result.view_issues)
+    assert result.manifest["pages"] == []
+    assert result.issues[0].code == CODE_VIEW_CANNOT_BE_PLACED
+    assert "different sheet arrangement or scale" in result.issues[0].message
+    assert any(issue.field == "plan" for issue in result.issues)
 
 
 def test_incomplete_model_produces_no_wave_sheet():

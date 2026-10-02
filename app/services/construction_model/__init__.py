@@ -5,6 +5,7 @@ Slice 2 projects plan, front elevation, and side elevation from that model.
 Slice 3 composes those projections on one governed 11×17 sheet.
 Slice 4 reads stair, section, detail, and schedule views from that same model.
 Slice 6 stores a known coordinate without inventing the missing ones, and a view that does not fit moves to another sheet.
+Slice 7 places paper-space callouts and dimension chains, and refuses a required view that cannot be placed.
 This package does not read or write a project, a plan record, or an estimate.
 Plan Generation stays a separate contract.
 """

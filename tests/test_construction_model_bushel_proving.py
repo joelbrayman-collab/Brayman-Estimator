@@ -292,6 +292,13 @@ def test_multiple_sheets_are_deterministic_and_11x17():
     assert STATED_SCALE in text
     assert "Revision P" in text
     assert "PRELIMINARY CONSTRUCTION DRAWING" in text
+    assert "6'-0\"" in text
+    assert "18'-0\"" in text
+    assert "OVERALL" in text
+    assert "joist-1 to joist-16" in text
+    assert "You need to provide this information." in text
+    assert "at this point" not in text
+    assert "omitted members" not in text
     moved = _composed(sheet=sheet_definition(scale=SCALE_THAT_DOES_NOT_FIT))
     assert moved.composed is True
     assert moved.pdf_bytes is not None

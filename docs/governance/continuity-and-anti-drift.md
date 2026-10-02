@@ -6,7 +6,7 @@
 | Status | **APPROVED / GOVERNING** |
 | Approved by | Joel Brayman |
 | Adopted | 2026-08-28 |
-| Updated | 2026-09-04 |
+| Updated | 2026-10-02 |
 | Applies to | ChatGPT, Cursor, Codex, and future AI development agents |
 
 ## Repository application
@@ -65,6 +65,9 @@ The repository is the system of record. Chat history, model memory, summaries, a
 
 8. **Tests and repository evidence before completion claims.**  
    Never infer success from intent or partial execution.
+
+9. **Recall before a new component build.**  
+   When a V1 component becomes the active build, retrieve every requirement assigned to it in [v1-completion-register.md](../v1-completion-register.md) section 2.1 before implementation begins. The implementation prompt must contain `RECALL ALL RECORDED V1 REQUIREMENTS FOR THIS COMPONENT`. A recorded requirement does not disappear because time has passed. A discovered idea does not interrupt the active build unless it is a genuine dependency of that build.
 
 ---
 

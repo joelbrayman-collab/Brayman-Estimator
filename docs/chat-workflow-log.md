@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-02 — V1 requirement recall
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-02 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 COMPLETION — REQUIREMENT RECALL MECHANISM ARCHITECTURE / GOVERNANCE RULE 2 OCT 2026 |
+| Objective | Make the V1 completion register the master recall list for material requirements. |
+| Business decision | A discovered requirement is classified onto an existing V1 component. It does not interrupt the active build unless it is a genuine dependency of that build. |
+| Architectural decision | No second backlog. Section 2.1 of the V1 completion register stores the requirement, rationale, component, stage, acceptance criteria, authority, source, dependencies, recall point, and a section 3.1 status. The implementation prompt must recall that component’s rows. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Governance only. Inspect the V1 completion architecture. Extend it if recall is missing. Classify the named BMR and Construction Model requirements. Do not implement product code. Do not deploy. Do not touch the Construction Model build. |
+| Files expected to change | V1 completion register, project checklist, development workflow, continuity protocol, current-state, session handoff, roadmap, docs index, and this log. |
+| Files prohibited from changing | Product code, Construction Model, drawings, Supplier Pro implementation, schema, and deployment. |
+| Implementation result | Recorded. V1 readiness remains 65% / 4 of 11. Not rescored. |
+| Tests | Not run. No product code changed. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Supplier Pro rows remain architecture only. Construction Model bearing fidelity remains open with the drawing set. |
+| Next approved step | Continue the authorized Construction Model slice. Recall its three section 2.1 rows in that prompt. Do not start Supplier Pro. |
+| Next approved prompt | Not written. The active Construction Model authorization already stands. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. |
+
 ### 2026-10-02 — BMR PRO Hub architecture record
 
 | Field | Content |

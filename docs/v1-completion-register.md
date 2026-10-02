@@ -8,6 +8,8 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-10-02 requirement recall):** This register is the master recall list for material requirements discovered during development. The list is [section 2.1](#21-requirement-recall). It does **not** rescore V1. Official readiness remains **65% / 4 of 11**. It does **not** authorize Supplier Pro, the BMR PRO Hub, or a Construction Model change.
+
 **Subsequent status (2026-09-20 FG-038 PA-C LIVE PERSON UAT):** PA-C **LIVE / OPERATIONAL / LIVE PERSON UAT PASS.** Product SHA **`0698f9d2a4ccabcef53ebcef9cb1415bfcd470f7`**. Live Alembic **`g7b8c9d0e1f2 (head)`**. Live Person rows **1** (INACTIVE synthetic UAT Person retained). People UI **NOT IMPLEMENTED**. Sensitive Financial **NOT IMPLEMENTED**. This record **does not rescore** V1.
 
 **Subsequent status (2026-09-20 FG-038 PA-C STAGE 1 LIVE MIGRATION):** PA-C **IMPLEMENTED / TESTED / COMMITTED / PUSHED / SHA-PINNED / LIVE-MIGRATED / EMPTY-PERSON CHECKPOINT PASS / NO LIVE PERSON DATA.** Product SHA **`0698f9d2a4ccabcef53ebcef9cb1415bfcd470f7`**. Pin SHA **`bc0ce7f541728262df0573a6096b5948d7abe6ed`**. Additive **`g7b8c9d0e1f2` applied live**. Live Alembic **`g7b8c9d0e1f2 (head)`**. Live Person rows **0**. People UI **NOT IMPLEMENTED**. Sensitive Financial **NOT IMPLEMENTED**. This record **does not rescore** V1.
@@ -138,7 +140,7 @@ Do not rename the lifecycle.
 
 | Instrument | Role |
 |------------|------|
-| This register | Top-level **product-completion** definition, package status, weighting, BMR/UAT readiness |
+| This register | Top-level **product-completion** definition, package status, weighting, BMR/UAT readiness, and the **requirement recall list** in section 2.1 |
 | [platform-roadmap.md](platform-roadmap.md) | Sequence / program direction (**not** implementation authorization) |
 | Feature Gates | Implementation authorization, ownership, acceptance |
 | ADRs | Durable architecture decisions |
@@ -147,6 +149,65 @@ Do not rename the lifecycle.
 | [milestones.md](milestones.md) / [chat-workflow-log.md](chat-workflow-log.md) | History |
 
 If this register and a Feature Gate disagree on **implementation authorization**, the Feature Gate wins. If they disagree on **whether a capability is in V1**, this register wins until Joel revises it.
+
+### 2.1 Requirement recall
+
+NEW MATERIAL REQUIREMENTS ARE CLASSIFIED AND ASSIGNED TO THE APPROPRIATE V1 COMPLETION COMPONENT SO THEY ARE RECALLABLE AT THE CORRECT DEVELOPMENT STAGE.
+
+This section is the master recall mechanism. It is not a second roadmap, an ideas backlog, a Darcy list, a pilot list, or a meeting backlog. A discovered requirement is classified here and the current build continues. Recording a row does not authorize implementation and does not rescore the eleven packages.
+
+Lifecycle, using the status labels in section 3.1:
+
+```text
+DISCOVERED
+→ ARCHITECT CLASSIFIES
+→ ASSIGNED TO V1 COMPONENT
+→ ACCEPTANCE CRITERIA RECORDED
+→ THIS REGISTER
+→ CURRENT BUILD CONTINUES
+→ COMPONENT REACHES ITS BUILD POINT
+→ REQUIREMENT RECALLED
+→ IMPLEMENT
+→ TEST
+→ VERIFY
+→ CLOSE
+```
+
+The Architect classifies every material requirement as one of:
+
+1. part of the current active slice;
+2. a requirement of an existing V1 component;
+3. a cross-cutting V1 requirement;
+4. a runtime input;
+5. an instance-owner input;
+6. a true platform dependency;
+7. a future / non-V1 item.
+
+A user-discovered idea does not interrupt the active build. Only a genuine dependency of the active work may interrupt it. Class 7 stays out of the V1 rows. Classes 4, 5, and 6 use the same dependency classes as [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). They are not a new status list.
+
+When a component becomes the active build, the handoff and the implementation prompt must retrieve every row in this section assigned to that component before implementation begins. The prompt must contain:
+
+```text
+RECALL ALL RECORDED V1 REQUIREMENTS FOR THIS COMPONENT
+```
+
+and must incorporate those acceptance criteria. A row does not expire because it was recorded earlier.
+
+Status in the table below uses section 3.1 only. **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** means the authority exists and the product does not. **PARTIAL** means the component is open and the acceptance criteria are not met. **COMPLETE** is used only when those criteria are met. None of these rows changes a package factor.
+
+| Requirement | Rationale | V1 component | Development stage | Acceptance criteria | Architecture authority | Source / date | Dependencies | Recall point | Status |
+|-------------|-----------|--------------|-------------------|---------------------|------------------------|---------------|--------------|--------------|--------|
+| BMR PRO Hub | Authorized BMR staff need a daily supplier-side environment, not a feed of contractor activity. | Supplier Pro Platform Partnership. Not a 12th major package. | Later. Checklist ⬜ QUEUED. | Two surfaces exist only when separately authorized: Supplier Console, and PRO Tools using the same governed engines. Store access stays inside the contractor data firewall. | [architecture/supplier-pro-platform-partnership-v1.md](architecture/supplier-pro-platform-partnership-v1.md) | Architecture record, 2026-10-02 | Existing eight-item Supplier Pro sequence. Does not depend on the Construction Model slice. | When Supplier Pro is the authorized build component. | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** |
+| Supplier Console / Transaction Workspace | BMR work must be a transaction queue limited to the user’s role. | Supplier Pro. Hub surface OPERATE. | Later. Checklist ⬜ QUEUED. | Queues are needs attention, today’s work, open transactions, deliveries, orders, pricing requests, quotes, and contractor activity. No uncontrolled contractor feed. | Same partnership record, BMR PRO Hub. | Architecture record, 2026-10-02 | Supplier identity / hierarchy. The firewall row. | When Supplier Pro is the authorized build component. | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** |
+| PRO Tools / Calculator Hub | BMR staff assist walk-in customers and contractors with governed calculations. | Supplier Pro. Hub surface SELL / SERVE. | Later. Checklist ⬜ QUEUED. | One calculation engine. Contexts are public, BMR staff, and contractor. A BMR calculator session does not open contractor-private data. No second engine. | Same partnership record, BMR PRO Hub. | Architecture record, 2026-10-02 | Existing governed calculation engines. The firewall row. | When Supplier Pro is the authorized build component. | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** |
+| Contractor data firewall | The hub must not become a window into the contractor organization. | Supplier Pro. Cross-cutting privacy requirement, stored on this component so it is recalled with it. | Later. Checklist ⬜ QUEUED. | BMR receives only a deliberately authorized transaction. Customers, full project lists, labour rates, internal costs, margins, profitability, other suppliers, private estimates, internal notes, and unrelated activity stay with the contractor. | Same partnership record, contractor data firewall. [ADR-033](adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md). | Architecture record, 2026-10-02 | None that interrupt the current build. | When Supplier Pro, or any supplier-visibility work, is the authorized build component. | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** |
+| Supplier acknowledgement | Receipt of a delivery, order, or schedule change must be a transaction state. | Supplier Pro. Supplier Console / order and delivery workflow. | Later. Checklist ⬜ QUEUED. | Change requested, BMR notified, BMR acknowledged, accepted or rejected, status returned to the contractor. Text may notify. The transaction system holds the acknowledgement. | Same partnership record, Acknowledgement. | Architecture record, 2026-10-02 | Supplier Console. | When Supplier Pro transaction workflow is the authorized build component. | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** |
+| BMR Winchester live contractor → supplier demonstration | V1 includes a credible end-to-end BMR demonstration. This is that pilot acceptance scenario. | Supplier Pro pilot. The existing BMR DEMO READY outcome. Not a new package. | Later. Checklist ⬜ QUEUED. BMR DEMO READY remains **NO**. | A contractor deliberately sends an authorized material requirement. BMR acts inside the firewall. Acknowledgement returns to the contractor. The demonstration does not show contractor-private data. | Same partnership record. [architecture/darcy-bmr-meeting-readiness-2026-10.md](architecture/darcy-bmr-meeting-readiness-2026-10.md). | Pilot preparation, 2026-10-02 | The hub rows above. The meeting package stays parked. | When the Supplier Pro pilot demonstration is the authorized build point. Not during Construction Model work. | **ARCHITECTURE COMPLETE / NOT IMPLEMENTED** |
+| Construction Model one-model rule | Every construction view must be a projection of one model. | Construction Model and Drawing Set. Not a 12th major package. | Current build. Checklist step 7, Plan Generation productization. | A view definition is a camera. It does not own members. Sheet composition does not invent geometry. Missing facts refuse. No second geometry store. | [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). | Drawing-set architecture, recalled 2026-10-02 | PGE-1 through PGE-6 stay closed. | Every Construction Model implementation prompt, before the slice starts. | **PARTIAL** |
+| Construction drawing no-guessing / refusal | A missing construction fact must be named, not drawn as if it were known. | Construction Model and Drawing Set. | Current build. Checklist step 7. | The governed result is “You need to provide this information.” plus the missing fact. The renderer does not invent a seat, a connector, a dimension, or a price. | Same drawing standard. | Drawing-set architecture, recalled 2026-10-02 | The one-model rule. | Every Construction Model implementation prompt, before the slice starts. | **PARTIAL** |
+| Construction detail bearing / relationship fidelity | A stringer/tread or post/beam detail must show a supplied physical relationship. | Construction Model and Drawing Set. Current active slice. | Current build. Checklist step 7. | A relationship is explicit. Proximity does not create one. Contradictory bearing is refused and members are not moved. A tread line crossing a board face is not bearing. Connector geometry appears only when supplied. | Same drawing standard and the Construction Model service. | Visual review of the complete deck fixture, 2026-10-02 | The one-model rule and the no-guessing rule. | The authorized Construction Model slice that is already the active build. Supplier Pro does not interrupt it. | **PARTIAL** |
+
+The three Construction Model rows are acceptance criteria of the open drawing set. They are not a new slice and they are not closed. The six Supplier Pro rows stay queued. They do not interrupt the Construction Model build.
 
 ---
 
@@ -213,6 +274,8 @@ Joel’s eleven packages are accepted as the V1 major-work set after repository 
 | Historical ingestion (FG-006 / FG-013) | Closed. Serves LEARN/calibration capture, not a separate V1 outcome. |
 | Organization Brand Profile (FG-017) | Closed. Serves customer-document presentation. |
 | Project Hub (FG-011) | Closed. Lifecycle shell, not a remaining V1 outcome. |
+| Supplier Pro / BMR PRO Hub | Supplier-side requirements in section 2.1. Not a 12th major package. Not started. |
+| Construction Model and Drawing Set | Current drawing capability under checklist step 7. Requirements in section 2.1. Not a 12th major package. The set remains open. |
 
 **Overlaps (do not build twice):**
 

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Governing** |
-| Updated | 2026-09-16 |
+| Updated | 2026-10-02 |
 
 ## Lifecycle
 
@@ -11,7 +11,7 @@
 2. **Joel and ChatGPT** clarify workflow and business rules.
 3. **ChatGPT** documents architecture and ownership (module docs / ADR / Feature Gate).
 4. **Before Cursor implementation:** choose the correct template from [prompts/](prompts/); complete it using the approved Feature Gate; record the **approved prompt summary** in [chat-workflow-log.md](chat-workflow-log.md).
-5. **ChatGPT** prepares / finalizes the **bounded** Cursor implementation prompt.
+5. **ChatGPT** prepares / finalizes the **bounded** Cursor implementation prompt. Before that prompt is issued, retrieve every row in [v1-completion-register.md](v1-completion-register.md) section 2.1 for the component being built. The prompt must contain `RECALL ALL RECORDED V1 REQUIREMENTS FOR THIS COMPONENT` and must include those acceptance criteria.
 6. **Cursor** inspects the repository before editing.
 7. **Cursor** implements **only** the approved scope.
 8. **Cursor** runs focused and full tests.

@@ -11,6 +11,10 @@ The Darcy / BMR meeting package is recorded at [architecture/darcy-bmr-meeting-r
 
 This checklist is the one CalibraytAI development sequence. Chat memory is not. The public Website and the private Platform are separate source and deployment surfaces. They are not separate products and they do not have separate roadmaps.
 
+NEW MATERIAL REQUIREMENTS ARE CLASSIFIED AND ASSIGNED TO THE APPROPRIATE V1 COMPLETION COMPONENT SO THEY ARE RECALLABLE AT THE CORRECT DEVELOPMENT STAGE.
+
+The recall list is [v1-completion-register.md](v1-completion-register.md) section 2.1. This checklist does not keep a second ideas list. A new requirement does not change the current step unless it is a genuine dependency of that step. When a step becomes the authorized build, its prompt recalls every register row for that component.
+
 ## One product
 
 ONE CALIBRAYTAI PRODUCT. ONE MASTER DEVELOPMENT ROADMAP. ONE GOVERNED IMPLEMENTATION OF REUSABLE DOMAIN LOGIC. MULTIPLE CONSUMING SURFACES.

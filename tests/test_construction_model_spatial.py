@@ -169,7 +169,8 @@ def test_sheet_set_moves_an_oversized_elevation_and_keeps_the_scale():
     kinds = [page["kind"] for page in result.manifest["pages"]]
     assert kinds[0] == "orthographic"
     assert "front_elevation" in kinds
-    assert kinds[-1] == "schedule"
+    assert kinds[-1] == "index"
+    assert "schedule" in kinds
     assert result.manifest["points_per_unit"] == 18
     assert result.manifest["sheet_count"] == len(result.manifest["pages"])
     assert result.manifest["sheet_count"] == len(PdfReader(BytesIO(result.pdf_bytes)).pages)

@@ -22,9 +22,11 @@ from app.services.brand_profile import (
     DEFAULT_PRIMARY_COLOR,
 )
 from app.services.construction_model.annotations import (
+    build_attribute_callouts,
     build_member_callouts,
     build_refusal_callouts,
-    build_station_callouts,
+    _id_key,
+    _span as _identifier_span,
     place_callouts,
     rectangles_overlap,
     text_size,
@@ -336,7 +338,14 @@ def _draw_title_block(sheet, model, sheet_definition, points_per_unit: float) ->
 
 
 def _draw_view(
-    sheet, projection, points_per_unit: float, box=None, model=None, layout_issues=None, tag_roles=None
+    sheet,
+    projection,
+    points_per_unit: float,
+    box=None,
+    model=None,
+    layout_issues=None,
+    tag_roles=None,
+    references=None,
 ) -> None:
     spec = _VIEWPORTS[projection.view_type]
     x0, y0, x1, y1 = box or spec["box"]
@@ -394,6 +403,16 @@ def _draw_view(
         layout_issues,
         tag_roles,
         projection.view_type,
+    )
+    _draw_sheet_references(
+        sheet,
+        projection,
+        references or [],
+        origin_u,
+        origin_v,
+        points_per_unit,
+        place_x,
+        place_y,
     )
 
 
@@ -471,12 +490,15 @@ def _annotate_frame(
     callouts = build_refusal_callouts(issues)
     if model is not None and axes is not None:
         callouts.extend(refusal_callouts(model, axes))
-    stations = build_station_callouts(elements, origin_u, origin_v, points_per_unit, place_x, place_y)
-    callouts.extend(stations)
+    callouts.extend(
+        build_attribute_callouts(
+            elements, origin_u, origin_v, points_per_unit, place_x, place_y, model
+        )
+    )
     if tag_roles:
         grouped = set()
-        for item in stations:
-            grouped.update(item["element_ids"])
+        for item in callouts:
+            grouped.update(item.get("element_ids") or ())
         callouts.extend(
             build_member_callouts(
                 elements, tag_roles, origin_u, origin_v, points_per_unit, place_x, place_y, grouped
@@ -497,11 +519,20 @@ def _annotate_frame(
 
 
 def _paint_callouts(sheet, placed) -> None:
+    drawn_leaders = []
     for item in placed:
-        if item.get("anchor_x") is not None and _leader_is_short(item):
-            sheet.setStrokeColor(_GOLD)
-            sheet.setLineWidth(0.4)
-            sheet.line(item["anchor_x"], item["anchor_y"], item["paper_x"], item["paper_y"] + 4)
+        target = _leader_target(item)
+        if item.get("leader") and target is not None:
+            attach = _label_attach(item, target)
+            dx = target[0] - attach[0]
+            dy = target[1] - attach[1]
+            segment = (target, attach)
+            crosses = any(_segments_cross(segment[0], segment[1], other[0], other[1]) for other in drawn_leaders)
+            if (dx * dx) + (dy * dy) <= 220 * 220 and (dx or dy) and not crosses:
+                sheet.setStrokeColor(_GOLD)
+                sheet.setLineWidth(0.4)
+                sheet.line(target[0], target[1], attach[0], attach[1])
+                drawn_leaders.append(segment)
         sheet.setFillColor(_NAVY)
         sheet.setFont("Helvetica", 7)
         y = item["paper_y"] + item["height"] - 8
@@ -510,10 +541,40 @@ def _paint_callouts(sheet, placed) -> None:
             y -= 8
 
 
-def _leader_is_short(item) -> bool:
-    dx = item["anchor_x"] - item["paper_x"]
-    dy = item["anchor_y"] - (item["paper_y"] + 4)
-    return (dx * dx) + (dy * dy) <= 140 * 140
+def _segments_cross(a, b, c, d) -> bool:
+    def orient(p, q, r):
+        return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])
+
+    left = orient(a, b, c)
+    right = orient(a, b, d)
+    across = orient(c, d, a)
+    back = orient(c, d, b)
+    return left * right < 0 and across * back < 0
+
+
+def _leader_target(item):
+    points = item.get("member_points") or ()
+    if not points and item.get("anchor_x") is not None:
+        points = ((item["anchor_x"], item["anchor_y"]),)
+    if not points:
+        return None
+    center_x = item["paper_x"] + item["width"] / 2.0
+    center_y = item["paper_y"] + item["height"] / 2.0
+    return min(
+        points,
+        key=lambda point: (point[0] - center_x) ** 2 + (point[1] - center_y) ** 2,
+    )
+
+
+def _label_attach(item, target):
+    left = item["paper_x"]
+    right = left + item["width"]
+    bottom = item["paper_y"]
+    top = bottom + item["height"]
+    return (
+        min(max(target[0], left), right),
+        min(max(target[1], bottom), top),
+    )
 
 
 def _geometry_obstacles(elements, origin_u, origin_v, points_per_unit, place_x, place_y) -> list:
@@ -1032,6 +1093,7 @@ def _assemble_program(wave, program, model) -> tuple:
             issues.append(issue)
             continue
         pages.append(page)
+    pages.append(_index_page())
     return pages, tuple(issues)
 
 
@@ -1169,6 +1231,7 @@ def _assemble_set(wave, points_per_unit: float):
     for view in (*wave.stairs, *wave.details):
         _append_read_view(pages, fit_issues, view, points_per_unit)
     pages.extend(_schedule_pages(wave.schedule))
+    pages.append(_index_page())
     return pages, tuple(fit_issues)
 
 
@@ -1212,20 +1275,79 @@ def _projection_span(projection) -> tuple:
     return span_u, span_v
 
 
+def _id_span(identifiers) -> str:
+    ordered = sorted((item for item in identifiers if item), key=_id_key)
+    if not ordered:
+        return ""
+    return _identifier_span(ordered)
+
+
+def _connection_relationship_label(group, relationships, members_by_id) -> str:
+    del members_by_id
+    identifiers = set(group.get("participant_ids") or ())
+    kinds = []
+    for item in relationships:
+        ends = {item.get("from_id"), item.get("to_id")}
+        kind = item.get("kind")
+        if identifiers and ends <= identifiers and kind and kind not in kinds:
+            kinds.append(kind)
+    return " / ".join(kinds)
+
+
 def _schedule_pages(schedule) -> list:
     lines = _schedule_lines(schedule)
-    capacity = 42
+    capacity = 34
     if not lines:
         lines = [("Helvetica", "SCHEDULE")]
+    sections = []
+    headers = []
+    rows = []
+    for line in lines:
+        if line[0] == "Helvetica-Bold":
+            if rows:
+                sections.append((headers, rows))
+                headers = []
+                rows = []
+            headers.append(line)
+        else:
+            rows.append(line)
+    if headers or rows:
+        sections.append((headers, rows))
+    packed = []
+    current = []
+    for headers, section_rows in sections:
+        block = list(headers)
+        if not section_rows:
+            if len(current) + len(block) > capacity and current:
+                packed.append(current)
+                current = []
+            current.extend(block)
+            continue
+        start = 0
+        while start < len(section_rows):
+            if current and len(current) + len(headers) + 1 > capacity:
+                packed.append(current)
+                current = []
+            take = max(1, capacity - len(current) - len(headers))
+            current.extend(headers)
+            current.extend(section_rows[start : start + take])
+            start += take
+            if start < len(section_rows):
+                packed.append(current)
+                current = []
+    if current:
+        packed.append(current)
+    if not packed:
+        packed = [lines]
     pages = []
-    for start in range(0, len(lines), capacity):
+    for chunk in packed:
         pages.append(
             {
                 "kind": "schedule",
                 "title": "SCHEDULE",
                 "view": schedule,
                 "projections": (),
-                "lines": lines[start : start + capacity],
+                "lines": chunk,
             }
         )
     return pages
@@ -1308,47 +1430,51 @@ def _schedule_lines(schedule) -> list:
     measurement = getattr(schedule, "measurement_system", None) or "imperial"
     lines = [
         ("Helvetica-Bold", "MEMBER SCHEDULE"),
-        ("Helvetica-Bold", "Item    Role    Size    Material    Quantity    Length    Status"),
+        ("Helvetica-Bold", "Item    Role    Size    Material    Quantity    Length    Status    Reference"),
     ]
     member_groups = group_member_rows(schedule.members, measurement)
     for group in member_groups:
         material = material_names.get(group.get("material_id") or "", "")
         item = " ".join(part for part in (group.get("member_size") or "", group.get("role") or "") if part)
+        reference = _id_span(group.get("member_ids") or ())
         lines.append(
             (
                 "Helvetica",
-                f"{item}    {group['role']}    {group.get('member_size') or ''}    {material}    {group['quantity']}    {group.get('length_display') or ''}    {group.get('construction_status') or ''}",
+                f"{item}    {group['role']}    {group.get('member_size') or ''}    {material}    {group['quantity']}    {group.get('length_display') or ''}    {group.get('construction_status') or ''}    {reference}",
             )
         )
     lines.append(("Helvetica-Bold", "CONNECTION / HARDWARE SCHEDULE"))
-    lines.append(("Helvetica-Bold", "Type    Members    Connector    Fastener    Quantity    Status"))
+    lines.append(("Helvetica-Bold", "Connection    Members    Relationship    Connector    Fastener    Quantity    Geometry    Reference"))
     members_by_id = {row["id"]: row for row in schedule.members}
     members_by_id.update({row["id"]: row for row in schedule.supports})
     for group in group_connection_rows(getattr(schedule, "connections", ()) or (), members_by_id):
         fastener = group.get("fastener") or ""
         if group.get("supplied_quantity") is not None:
             fastener = f"{fastener} x {group['supplied_quantity']}".strip()
+        reference = _id_span(group.get("connection_ids") or ())
+        relationship = _connection_relationship_label(group, getattr(schedule, "relationships", ()) or (), members_by_id)
         lines.append(
             (
                 "Helvetica",
-                f"{group.get('connection_type') or ''}    {group.get('members') or ''}    {group.get('connector') or ''}    {fastener}    {group['quantity']}    {group.get('construction_status') or ''}    {group.get('geometry') or 'metadata only'}",
+                f"{group.get('connection_type') or ''}    {group.get('members') or ''}    {relationship}    {group.get('connector') or ''}    {fastener}    {group['quantity']}    {group.get('geometry') or 'metadata only'}    {reference}",
             )
         )
     lines.append(("Helvetica-Bold", "RELATIONSHIP"))
-    lines.append(("Helvetica-Bold", "Kind    From    To    Bearing    Connection    Quantity"))
+    lines.append(("Helvetica-Bold", "Kind    From    To    Bearing    Contact    Connection    Quantity    Reference"))
     for group in group_relationship_rows(
         getattr(schedule, "relationships", ()) or (),
         members_by_id,
         getattr(schedule, "connections", ()) or (),
     ):
+        reference = _id_span(group.get("relationship_ids") or ())
         lines.append(
             (
                 "Helvetica",
-                f"{group['kind']}    {group['from_role']}    {group['to_role']}    bearing {group['bearing']}    {group['connection']}    {group['quantity']}",
+                f"{group['kind']}    {group['from_role']}    {group['to_role']}    bearing {group['bearing']}    {group.get('contact') or group.get('missing') or ''}    {group['connection']}    {group['quantity']}    {reference}",
             )
         )
     lines.append(("Helvetica-Bold", "MATERIAL / COMPONENT SCHEDULE"))
-    lines.append(("Helvetica-Bold", "Material    Description    Quantity    Unit    Status"))
+    lines.append(("Helvetica-Bold", "Item    Description    Material    Quantity    Unit    Status    Reference"))
     components = {}
     order = []
     for group in member_groups:
@@ -1361,7 +1487,7 @@ def _schedule_lines(schedule) -> list:
         components[key] += group["quantity"]
     for key in order:
         material, description, status = key
-        lines.append(("Helvetica", f"{material}    {description}    {components[key]}    each    {status}"))
+        lines.append(("Helvetica", f"{description}    {description}    {material}    {components[key]}    each    {status}    {description}"))
     lines.append(("Helvetica-Bold", "Support    Kind    Quantity    Status"))
     for group in group_support_rows(schedule.supports):
         lines.append(
@@ -1394,7 +1520,7 @@ def _schedule_lines(schedule) -> list:
                 lines.append(("Helvetica", f"{segment['start_id']} to {segment['end_id']}  {segment['display']}"))
         overall = chain.get("overall")
         segments_refused = any(segment["refused"] for segment in chain["segments"])
-        if overall and chain["kind"] in {"station", "overall"} and not (overall["refused"] and segments_refused):
+        if overall and chain["kind"] in {"station", "overall", "level"} and not (overall["refused"] and segments_refused):
             if overall["refused"]:
                 lines.append(("Helvetica", overall["message"]))
             else:
@@ -1430,6 +1556,89 @@ def _page_scale(page, sheet_definition, points_per_unit: float):
     return page.get("points_per_unit") or points_per_unit, page.get("scale")
 
 
+def _index_page() -> dict:
+    return {
+        "kind": "index",
+        "title": "Drawing index",
+        "view": None,
+        "projections": (),
+        "scale": "Not a scaled view",
+        "points_per_unit": None,
+        "tag_roles": (),
+    }
+
+
+def build_sheet_references(pages, numbers) -> list:
+    """Link a source view to a destination sheet. Numbers come from the set."""
+    references = []
+    for index, page in enumerate(pages):
+        view = page.get("view")
+        if page["kind"] == "section" and view is not None:
+            facts = dict(getattr(view, "facts", ()) or ())
+            references.append(
+                {
+                    "kind": "section",
+                    "source_kinds": (VIEW_PLAN,),
+                    "target_id": view.view_id,
+                    "target_title": page.get("title") or view.label,
+                    "sheet_number": numbers[index],
+                    "section_direction": facts.get("section_direction"),
+                    "section_location": facts.get("section_location"),
+                    "cut_depth": facts.get("cut_depth"),
+                    "element_ids": tuple(element["id"] for element in view.elements),
+                }
+            )
+        if page["kind"] == "detail" and view is not None:
+            references.append(
+                {
+                    "kind": "detail",
+                    "source_kinds": (VIEW_PLAN, VIEW_FRONT_ELEVATION, VIEW_SIDE_ELEVATION),
+                    "target_id": view.view_id,
+                    "target_title": page.get("title") or view.label,
+                    "sheet_number": numbers[index],
+                    "element_ids": tuple(element["id"] for element in view.elements),
+                }
+            )
+    return references
+
+
+def sheet_index_lines(pages, numbers, model) -> list:
+    lines = [
+        ("Helvetica-Bold", "DRAWING INDEX"),
+        ("Helvetica-Bold", "Sheet    Title    Status    Scale"),
+    ]
+    for index, page in enumerate(pages):
+        title = page.get("title") or page["kind"].replace("_", " ")
+        scale = page.get("scale") or ""
+        lines.append(
+            (
+                "Helvetica",
+                f"{numbers[index]}    {title}    {_page_status(page, model)}    {scale}",
+            )
+        )
+    return lines
+
+
+def _page_status(page, model) -> str:
+    if page["kind"] == "index":
+        return "GENERATED"
+    view = page.get("view")
+    if page["kind"] == "detail" and view is not None:
+        if getattr(view, "issues", ()):
+            return "NOT ISSUED"
+        identifiers = {element["id"] for element in getattr(view, "elements", ())}
+        if model is not None and not _detail_has_connection(model, identifiers):
+            return "NOT ISSUED"
+    return "GENERATED"
+
+
+def _detail_has_connection(model, identifiers) -> bool:
+    for item in model.get("connections") or []:
+        if identifiers.intersection(item.get("participant_ids") or []):
+            return True
+    return False
+
+
 def _draw_wave(model, wave, sheet_definition, points_per_unit: float, pages: list):
     buffer = BytesIO()
     sheet = canvas.Canvas(
@@ -1440,13 +1649,22 @@ def _draw_wave(model, wave, sheet_definition, points_per_unit: float, pages: lis
     )
     numbers = _sheet_numbers(sheet_definition, len(pages))
     total = len(pages)
+    references = build_sheet_references(pages, numbers)
     layout_issues = []
     for index, page in enumerate(pages):
         page_points, page_scale = _page_scale(page, sheet_definition, points_per_unit)
         if page["kind"] == "orthographic":
             definition = _sheet_copy(sheet_definition, numbers[index], plain_text(sheet_definition["drawing_title"]))
             definition["sheet_count"] = total
-            _paint_plan_page(sheet, model, definition, points_per_unit, page["projections"], layout_issues)
+            definition["issue_status"] = _page_status(page, model)
+            _paint_plan_page(
+                sheet, model, definition, points_per_unit, page["projections"], layout_issues, references
+            )
+        elif page["kind"] == "index":
+            definition = _sheet_copy(sheet_definition, numbers[index], "Drawing index")
+            definition["sheet_count"] = total
+            definition["scale"] = "Not a scaled view"
+            _paint_schedule_page(sheet, model, definition, sheet_index_lines(pages, numbers, model))
         elif page["kind"] == "schedule":
             definition = _sheet_copy(sheet_definition, numbers[index], page.get("title") or "Schedules")
             definition["sheet_count"] = total
@@ -1456,6 +1674,7 @@ def _draw_wave(model, wave, sheet_definition, points_per_unit: float, pages: lis
         elif page["kind"] in {VIEW_PLAN, VIEW_FRONT_ELEVATION, VIEW_SIDE_ELEVATION}:
             definition = _sheet_copy(sheet_definition, numbers[index], page["title"].title())
             definition["sheet_count"] = total
+            definition["issue_status"] = _page_status(page, model)
             if page_scale:
                 definition["scale"] = page_scale
             _paint_projection_page(
@@ -1466,10 +1685,12 @@ def _draw_wave(model, wave, sheet_definition, points_per_unit: float, pages: lis
                 page["view"],
                 layout_issues,
                 page.get("tag_roles"),
+                references,
             )
         else:
             definition = _sheet_copy(sheet_definition, numbers[index], page["title"].title())
             definition["sheet_count"] = total
+            definition["issue_status"] = _page_status(page, model)
             if page_scale:
                 definition["scale"] = page_scale
             _paint_read_view(
@@ -1486,7 +1707,9 @@ def _draw_wave(model, wave, sheet_definition, points_per_unit: float, pages: lis
     return buffer.getvalue(), tuple(layout_issues)
 
 
-def _paint_plan_page(sheet, model, sheet_definition, points_per_unit: float, projections, layout_issues=None) -> None:
+def _paint_plan_page(
+    sheet, model, sheet_definition, points_per_unit: float, projections, layout_issues=None, references=None
+) -> None:
     sheet.setTitle(plain_text(sheet_definition["drawing_title"]) or "")
     sheet.setAuthor("")
     sheet.setStrokeColor(_NAVY)
@@ -1495,11 +1718,25 @@ def _paint_plan_page(sheet, model, sheet_definition, points_per_unit: float, pro
     sheet.rect(28, 28, PAGE_WIDTH - 56, PAGE_HEIGHT - 56, stroke=1, fill=0)
     _draw_title_block(sheet, model, sheet_definition, points_per_unit)
     for projection in projections:
-        _draw_view(sheet, projection, points_per_unit, model=model, layout_issues=layout_issues)
+        _draw_view(
+            sheet,
+            projection,
+            points_per_unit,
+            model=model,
+            layout_issues=layout_issues,
+            references=references,
+        )
 
 
 def _paint_projection_page(
-    sheet, model, sheet_definition, points_per_unit: float, projection, layout_issues=None, tag_roles=None
+    sheet,
+    model,
+    sheet_definition,
+    points_per_unit: float,
+    projection,
+    layout_issues=None,
+    tag_roles=None,
+    references=None,
 ) -> None:
     sheet.setTitle(plain_text(sheet_definition["drawing_title"]) or "")
     sheet.setAuthor("")
@@ -1516,7 +1753,12 @@ def _paint_projection_page(
         model=model,
         layout_issues=layout_issues,
         tag_roles=tag_roles,
+        references=references,
     )
+    if sheet_definition.get("issue_status") == "NOT ISSUED":
+        sheet.setFillColor(_GOLD)
+        sheet.setFont("Helvetica-Bold", 9)
+        sheet.drawString(_FULL_VIEW[0], _FULL_VIEW[3] - 14, "NOT ISSUED — UNRESOLVED")
 
 
 def _paint_read_view(
@@ -1538,6 +1780,11 @@ def _paint_read_view(
     sheet.setFont("Helvetica-Bold", 10)
     label = view.label if view.view_id is None else f"{view.label} {view.view_id}"
     sheet.drawString(x0, y1 + 6, label)
+    if sheet_definition.get("issue_status") == "NOT ISSUED":
+        sheet.setFillColor(_GOLD)
+        sheet.setFont("Helvetica-Bold", 9)
+        sheet.drawString(x0, y1 - 14, "NOT ISSUED — UNRESOLVED")
+        sheet.setFillColor(_NAVY)
     connection = _connection_note(model, view.elements)
     if connection:
         sheet.setFont("Helvetica", 8)
@@ -1594,6 +1841,100 @@ def _paint_read_view(
     )
 
 
+def _draw_sheet_references(
+    sheet, projection, references, origin_u, origin_v, points_per_unit, place_x, place_y
+) -> None:
+    present = {element["id"] for element in projection.elements}
+    detail_index = 0
+    for reference in references:
+        if projection.view_type not in reference["source_kinds"]:
+            continue
+        if reference["kind"] == "section":
+            _draw_section_marker(
+                sheet, projection, reference, origin_u, origin_v, points_per_unit, place_x, place_y
+            )
+        elif reference["kind"] == "detail" and present.intersection(reference["element_ids"]):
+            _draw_detail_marker(
+                sheet,
+                projection,
+                reference,
+                origin_u,
+                origin_v,
+                points_per_unit,
+                place_x,
+                place_y,
+                detail_index,
+            )
+            detail_index += 1
+
+
+def _paper_point(value_u, value_v, origin_u, origin_v, points_per_unit, place_x, place_y):
+    return (
+        place_x + (value_u - origin_u) * points_per_unit,
+        place_y + (value_v - origin_v) * points_per_unit,
+    )
+
+
+def _draw_section_marker(sheet, projection, reference, origin_u, origin_v, points_per_unit, place_x, place_y) -> None:
+    direction = reference.get("section_direction")
+    location = reference.get("section_location")
+    if direction not in {"x", "y"} or not isinstance(location, (int, float)):
+        return
+    us = []
+    vs = []
+    for element in projection.elements:
+        for point in element["projected_geometry"]["coordinates"]:
+            us.append(point["u"])
+            vs.append(point["v"])
+    if not us or not vs:
+        return
+    if direction == "y":
+        start = _paper_point(min(us), location, origin_u, origin_v, points_per_unit, place_x, place_y)
+        end = _paper_point(max(us), location, origin_u, origin_v, points_per_unit, place_x, place_y)
+    else:
+        start = _paper_point(location, min(vs), origin_u, origin_v, points_per_unit, place_x, place_y)
+        end = _paper_point(location, max(vs), origin_u, origin_v, points_per_unit, place_x, place_y)
+    sheet.setStrokeColor(_GOLD)
+    sheet.setDash(4, 3)
+    sheet.setLineWidth(1.2)
+    sheet.line(start[0], start[1], end[0], end[1])
+    sheet.setDash()
+    sheet.setFillColor(_NAVY)
+    sheet.setFont("Helvetica-Bold", 8)
+    marker = str(reference.get("target_id") or "")
+    sheet.drawString(start[0] - 16, start[1] + 6, marker)
+    sheet.drawString(end[0] + 6, end[1] + 6, marker)
+    sheet.setFont("Helvetica", 7)
+    sheet.drawString(end[0] + 6, end[1] - 8, f"SEE SHEET {reference['sheet_number']}")
+
+
+def _draw_detail_marker(
+    sheet, projection, reference, origin_u, origin_v, points_per_unit, place_x, place_y, index
+) -> None:
+    wanted = set(reference["element_ids"])
+    points = []
+    for element in projection.elements:
+        if element["id"] not in wanted:
+            continue
+        points.extend(element["projected_geometry"]["coordinates"])
+    if not points:
+        return
+    anchor_u = sum(point["u"] for point in points) / len(points)
+    anchor_v = sum(point["v"] for point in points) / len(points)
+    px, py = _paper_point(anchor_u, anchor_v, origin_u, origin_v, points_per_unit, place_x, place_y)
+    py += 16 + (index * 22)
+    sheet.setStrokeColor(_NAVY)
+    sheet.setFillColor(white)
+    sheet.setLineWidth(1)
+    sheet.circle(px, py, 9, stroke=1, fill=1)
+    sheet.setFillColor(_NAVY)
+    sheet.setFont("Helvetica-Bold", 7)
+    sheet.drawCentredString(px, py - 2, str(reference.get("target_id") or "")[:8])
+    sheet.setFont("Helvetica", 6)
+    sheet.drawString(px + 12, py + 2, str(reference.get("target_title") or "")[:28])
+    sheet.drawString(px + 12, py - 8, f"SHEET {reference['sheet_number']}")
+
+
 def _paint_schedule_page(sheet, model, sheet_definition, lines) -> None:
     sheet.setTitle(plain_text(sheet_definition["drawing_title"]) or "")
     sheet.setAuthor("")
@@ -1602,14 +1943,25 @@ def _paint_schedule_page(sheet, model, sheet_definition, lines) -> None:
     sheet.setLineWidth(1.5)
     sheet.rect(28, 28, PAGE_WIDTH - 56, PAGE_HEIGHT - 56, stroke=1, fill=0)
     _draw_title_block(sheet, model, sheet_definition, None)
-    y = 748
+    y = 730
     for font_name, text in lines:
-        if y < 160:
+        if y < 150:
             break
+        cells = text.split("    ")
         sheet.setFillColor(_NAVY)
-        sheet.setFont(font_name, 8)
-        sheet.drawString(44, y, text[:160])
-        y -= 12
+        sheet.setFont(font_name, 8 if font_name == "Helvetica-Bold" else 7)
+        if len(cells) > 1:
+            width = min(150.0, (PAGE_WIDTH - 88) / len(cells))
+            limit = max(8, int(width / 3.4))
+            for index, cell in enumerate(cells):
+                sheet.drawString(44 + (index * width), y, cell[:limit])
+            if font_name == "Helvetica-Bold":
+                sheet.setStrokeColor(_GOLD)
+                sheet.setLineWidth(0.4)
+                sheet.line(44, y - 2, 44 + (width * len(cells)), y - 2)
+        else:
+            sheet.drawString(44, y, text[:150])
+        y -= 11
 
 
 def _wave_manifest(model, wave, sheet_definition, points_per_unit: float, pdf_bytes: bytes, pages: list) -> dict:

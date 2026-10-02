@@ -113,3 +113,18 @@ Do these in order. Do not add fixture geometry in the same slice as a sheet-engi
 ## Tests at this audit
 
 No product code changed. Construction Model regression: 120 passed, 10 warnings, 3.39s. PGE regression: 61 passed, 79 warnings, 19.01s. Full suite `./venv/bin/python -m pytest -q`: 2087 passed, 6789 warnings, 889.20s, exit 0.
+
+## Slice 13 disposition — 2 Oct 2026
+
+Slice 13 presents facts the model and the view definitions already held. It does not add fixture geometry. It does not close this drawing set. V1 is not rescored. One-model and no-guessing stay **PARTIAL**. Bearing fidelity stays **COMPLETE** for its recorded criteria.
+
+| ID | Slice 13 result |
+|----|-----------------|
+| D10 | Addressed for the views that exist. Plans draw the section cut from the section request and name that section’s sheet. Plans and elevations draw a detail reference when the detail’s members are in the view. The sheet number comes from the composed set. |
+| D12 | Addressed for grouped members. One callout per construction class names the member ids, and a paper-space leader goes to a point on those members. A leader that would cross another leader is omitted. Elevations remain crowded. |
+| D13 | Addressed. Each member pair has one bearing state. Post-1 to beam-front is supplied, with the 3 inch contact. Other pairs that have no bearing surface say bearing not supplied. |
+| D14 | Addressed for column alignment and repeated headings. Schedule columns are drawn at fixed positions. A continued section repeats its heading. The schedule is not a price. |
+| D15 | Distinguished, not hidden. The guard-and-gate sheet still names the missing connection and is marked NOT ISSUED. The set is still produced. The drawing law’s “no PDF” sentence is not met. |
+| D1–D9, D11 | Open. No new fixture facts. No connector drawing. No new stair field. |
+
+The inspected set is 14 sheets. The fourteenth is the drawing index. Guard and gate is NOT ISSUED. The other sheets are GENERATED. Would we hand this to the crew? No.

@@ -286,7 +286,8 @@ def test_multiple_sheets_are_deterministic_and_11x17():
     kinds = [page["kind"] for page in first.manifest["pages"]]
     assert kinds[0] == "orthographic"
     assert "section" in kinds
-    assert kinds[-1] == "schedule"
+    assert kinds[-1] == "index"
+    assert "schedule" in kinds
     reader = PdfReader(BytesIO(first.pdf_bytes))
     assert first.manifest["sheet_count"] == len(reader.pages)
     assert all(page["sheet_count"] == first.manifest["sheet_count"] for page in first.manifest["pages"])

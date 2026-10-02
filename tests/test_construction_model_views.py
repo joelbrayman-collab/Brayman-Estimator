@@ -299,7 +299,8 @@ def test_wave_composes_separate_11x17_sheets_at_the_stated_scale():
     assert "Not a permit" not in text
     assert "Not a seal" not in text
     assert result.manifest["pages"][0]["kind"] == "orthographic"
-    assert result.manifest["pages"][-1]["kind"] == "schedule"
+    assert result.manifest["pages"][-1]["kind"] == "index"
+    assert any(page["kind"] == "schedule" for page in result.manifest["pages"])
 
 
 def test_wave_does_not_scale_to_fit():

@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-02 — Drawing references and schedule presentation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-02 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 13 — DRAWING REFERENCES + SCHEDULE / CALLOUT PRESENTATION 2 OCT 2026 |
+| Objective | Present callouts, section and detail references, the drawing index, and construction schedules from facts already in the Construction Model. |
+| Business decision | The set is still not handed to the crew. A missing connection stays missing and is marked NOT ISSUED. No new fixture geometry is added. |
+| Architectural decision | Callouts, markers, schedules, and cross-sheet references are derived from the one model and the composed sheet set. There is no second annotation, schedule, or reference store. One member pair has one bearing state. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Recall section 2.1. Implement only deficiencies solvable from facts already in the model. Do not modify Bushel. Do not add fixture facts, connector geometry, or stair fields. Do not deploy. One commit if the gates pass. Push. |
+| Files expected to change | Construction Model annotations, views, and sheet composition; reference tests; the acceptance audit; drawing standard; build-out register; current-state; session handoff; roadmap; architecture index; this log; and the manual impact log. |
+| Files prohibited from changing | Bushel case files, the complete deck fixture facts, PGE, Contract V1, schema, and deployment. |
+| Implementation result | Implemented and tested. Grouped callouts name model ids. Section and detail references use the composed sheet numbers. The index lists every sheet. Schedule columns are fixed and headings repeat. A relationship pair has one bearing. The guard detail is NOT ISSUED. The drawing set stays OPEN / NOT COMPLETE. V1 is not rescored. |
+| Tests | Construction Model regression: 133 passed, 11 warnings, 14.21s, exit 0. PGE regression: 61 passed, 79 warnings, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2100 passed, 6790 warnings, 950.23s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | D1 through D9 and D11 remain. Elevations are still crowded. The guard connection is not supplied. The set is still issued, with that sheet marked NOT ISSUED. One-model and no-guessing stay PARTIAL. |
+| Next approved step | Not written here. Do not add fixture geometry until a later slice is authorized. Do not draw connector geometry until the model supplies it. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. |
+
 ### 2026-10-02 — Construction drawing acceptance audit
 
 | Field | Content |

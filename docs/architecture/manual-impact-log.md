@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Drawing references and schedule presentation (2026-10-02)
+
+| Field | Content |
+|-------|---------|
+| Slice | Construction Model slice 13. Drawing references and schedule / callout presentation. |
+| Product status at capture | **IMPLEMENTED / TESTED**. Not deployed. The drawing set stays **OPEN / NOT COMPLETE**. The generic fixture set is still not a crew set. |
+| 1. What new contractor capability exists? | A plan can show a section cut and a detail reference that name the sheet they go to. Grouped members can share one callout that still names those members. The schedule columns line up, and a relationship names one bearing. A sheet that is missing a required connection is marked NOT ISSUED. The set includes a drawing index. |
+| 2. When would the contractor use it? | When reading a deck plan set: the plans, the elevations, the schedules, and the index. |
+| 3. What workflow will the final Manual need to teach? | The marks and the schedule come from the construction model and the sheet set. A missing connection stays missing. NOT ISSUED means that sheet is not a finished detail. The schedule does not price the work. |
+| 4. What contractor-facing terms must be used? | See sheet. Detail. Section. Member schedule. Bearing supplied. Bearing not supplied. Not issued. You need to provide this information. |
+| 5. What screenshots / Print examples will eventually be needed? | An 11×17 framing plan with a section cut and a detail bubble, a schedule page, an index, and a detail marked NOT ISSUED. Not captured here as a finished example. |
+| 6. What warnings / validation distinctions need explanation? | A callout that cannot be given a clear leader is not given a crossing leader. A missing bearing is named for that pair. A missing connection is not invented. Generated sheets and unresolved sheets are marked differently. |
+| 7. Desktop / iPhone / Print relevance | Print on 11×17. No screen was added. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Construction relationships and bearing (2026-10-02)
 
 | Field | Content |

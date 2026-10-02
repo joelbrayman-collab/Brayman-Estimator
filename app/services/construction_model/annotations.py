@@ -60,6 +60,62 @@ def build_station_callouts(elements, origin_u, origin_v, points_per_unit, place_
     return callouts
 
 
+def build_attribute_callouts(
+    elements, origin_u, origin_v, points_per_unit, place_x, place_y, model=None
+) -> list:
+    """One paper callout per construction class. The ids stay on the callout."""
+    buckets = {}
+    order = []
+    for element in elements:
+        coordinates = (element.get("projected_geometry") or {}).get("coordinates") or []
+        if not coordinates or not element.get("id"):
+            continue
+        key = _callout_class(element, model)
+        if key not in buckets:
+            buckets[key] = []
+            order.append(key)
+        buckets[key].append(element)
+    callouts = []
+    for index, key in enumerate(order):
+        grouped = buckets[key]
+        points = []
+        for element in grouped:
+            for point in element["projected_geometry"]["coordinates"]:
+                points.append(point)
+        anchor_u = sum(point["u"] for point in points) / len(points)
+        anchor_v = sum(point["v"] for point in points) / len(points)
+        text = describe_group(grouped)
+        size = grouped[0].get("member_size")
+        if size and size not in text:
+            text = f"{text}\n{size}"
+        material_name = grouped[0].get("material_name")
+        if material_name and material_name not in text:
+            text = f"{text}\n{material_name}"
+        callouts.append(
+            {
+                "id": f"class-{index + 1}",
+                "element_ids": tuple(sorted((item["id"] for item in grouped), key=_id_key)),
+                "text": text,
+                "geometry_reference": {"u": anchor_u, "v": anchor_v},
+                "anchor_x": place_x + (anchor_u - origin_u) * points_per_unit,
+                "anchor_y": place_y + (anchor_v - origin_v) * points_per_unit,
+                "kind": "group" if len(grouped) > 1 else "member",
+                "justification": "left",
+                "provenance": _provenance(grouped),
+                "uncertainty": _uncertainty(grouped),
+                "leader": True,
+                "member_points": tuple(
+                    (
+                        place_x + (point["u"] - origin_u) * points_per_unit,
+                        place_y + (point["v"] - origin_v) * points_per_unit,
+                    )
+                    for point in points
+                ),
+            }
+        )
+    return callouts
+
+
 def build_member_callouts(elements, roles, origin_u, origin_v, points_per_unit, place_x, place_y, grouped_ids) -> list:
     """Name an isolated member. Grouped stations keep their group note."""
     wanted = set(roles or ())
@@ -228,12 +284,31 @@ def rectangles_overlap(left, right) -> bool:
     )
 
 
+def _callout_class(element, model=None):
+    connections = []
+    if isinstance(model, dict) or hasattr(model, "get"):
+        for item in (model.get("connections") or []) if model is not None else []:
+            if element.get("id") in (item.get("participant_ids") or []):
+                connections.append(item.get("connection_type") or "")
+    length = element.get("length_display") or element.get("length") or ""
+    return (
+        element.get("role") or element.get("kind") or "",
+        element.get("member_size") or "",
+        element.get("material_id") or element.get("material_name") or "",
+        "" if length == "" else str(length),
+        tuple(sorted(connections)),
+    )
+
+
 def _clusters(located) -> list:
     ordered = sorted(located, key=lambda item: (round(item["py"], 2), round(item["px"], 2), item["element"]["id"]))
     clusters = []
     for item in ordered:
         merged = False
+        item_class = _callout_class(item["element"])
         for cluster in clusters:
+            if item_class != _callout_class(cluster[0]["element"]):
+                continue
             if any(_near(item, other) for other in cluster):
                 cluster.append(item)
                 merged = True
@@ -265,28 +340,42 @@ def _near(left, right) -> bool:
 
 
 def _slot(width, height, frame, occupied, anchor):
-    candidates = []
-    if anchor[0] is not None and anchor[1] is not None:
-        ax, ay = anchor
-        for dx, dy in (
-            (8, 12),
-            (8, -height - 10),
-            (-width - 8, 12),
-            (-width - 8, -height - 10),
-        ):
-            candidates.append((ax + dx, ay + dy))
+    """Place a label at the nearest clear paper position to its member."""
     x0, y0, x1, y1 = frame
+    ax = anchor[0] if anchor[0] is not None else (x0 + x1) / 2.0
+    ay = anchor[1] if anchor[1] is not None else (y0 + y1) / 2.0
+    best = None
+    best_key = None
+
+    def consider(px, py):
+        nonlocal best, best_key
+        if not _fits(px, py, width, height, frame, occupied):
+            return
+        dx = (px + width / 2.0) - ax
+        dy = (py + height / 2.0) - ay
+        key = ((dx * dx) + (dy * dy), -py, px)
+        if best_key is None or key < best_key:
+            best = (px, py)
+            best_key = key
+
+    if anchor[0] is not None and anchor[1] is not None:
+        for radius in (16, 36, 64, 96, 140, 200, 260, 320):
+            consider(ax + radius, ay + radius)
+            consider(ax + radius, ay - height - radius)
+            consider(ax - width - radius, ay + radius)
+            consider(ax - width - radius, ay - height - radius)
+            consider(ax + radius, ay - height / 2.0)
+            consider(ax - width - radius, ay - height / 2.0)
+            consider(ax - width / 2.0, ay + radius)
+            consider(ax - width / 2.0, ay - height - radius)
     y = y1 - height - 4
     while y >= y0 + 2:
         x = x0 + 4
         while x + width <= x1 - 2:
-            candidates.append((x, y))
-            x += 16
-        y -= 12
-    for px, py in candidates:
-        if _fits(px, py, width, height, frame, occupied):
-            return px, py
-    return None
+            consider(x, y)
+            x += 24
+        y -= 18
+    return best
 
 
 def _fits(px, py, width, height, frame, occupied) -> bool:

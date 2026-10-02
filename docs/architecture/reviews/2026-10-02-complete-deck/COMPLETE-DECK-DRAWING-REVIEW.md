@@ -8,7 +8,7 @@
 | Scale | 1/2 in = 1 ft on the plans, elevations, and section. 1 in = 1 ft on the stair. 3 in = 1 ft on the post/beam and stringer details. 3/2 in = 1 ft on the guard and gate detail. |
 | Sheets | 13 at the Slice 11 inspection. Three plans, two elevations, stair, section, three details, and schedule pages. |
 | Would we hand this to the boys? | No. The stringer/tread and post/beam assemblies on this fixture are readable. The whole set is not. |
-| Later audit | Slice 12 acceptance audit: [../2026-10-02-complete-deck-acceptance/COMPLETE-DECK-ACCEPTANCE-AUDIT.md](../2026-10-02-complete-deck-acceptance/COMPLETE-DECK-ACCEPTANCE-AUDIT.md). That audit does not replace the inspections below. |
+| Later audit | Slice 12 acceptance audit, updated by Slice 13 presentation: [../2026-10-02-complete-deck-acceptance/COMPLETE-DECK-ACCEPTANCE-AUDIT.md](../2026-10-02-complete-deck-acceptance/COMPLETE-DECK-ACCEPTANCE-AUDIT.md). That audit does not replace the inspections below. |
 
 ## Slice 11 inspection
 

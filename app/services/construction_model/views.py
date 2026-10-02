@@ -332,7 +332,16 @@ def _section_view(model: Mapping[str, Any], definition: Any) -> ReadView:
         tuple(issues),
         tuple(uncertainty),
         tuple(elements),
-        (("section_direction", direction), ("section_location", location)),
+        tuple(
+            fact
+            for fact in (
+                ("section_direction", direction),
+                ("section_location", float(location)),
+                ("cut_depth", None if depth is None else float(depth)),
+                ("cut_elevation", None if elevation is None else float(elevation)),
+            )
+            if fact[1] is not None
+        ),
         "SECTION",
         horizontal,
         vertical,
@@ -856,43 +865,106 @@ def group_connection_rows(connections, members_by_id):
                 "construction_status": first.get("construction_status") or "",
                 "geometry": "geometry supplied" if _connection_has_geometry(first) else "metadata only",
                 "connection_ids": tuple(item.get("id") for item in items),
+                "participant_ids": tuple(first.get("participant_ids") or ()),
             }
         )
     return tuple(grouped)
 
 
 def group_relationship_rows(relationships, members_by_id, connections):
-    """Group supplied relationships. Bearing and connection stay as supplied."""
-    groups = {}
+    """One authoritative state for each member pair.
+
+    A supports row and a bears_on row for the same two members become the
+    row that carries the bearing. A pair without a bearing surface keeps
+    that missing property on its own row.
+    """
+    pairs = {}
     order = []
     for item in relationships:
-        source = members_by_id.get(item.get("from_id")) or {}
-        target = members_by_id.get(item.get("to_id")) or {}
-        bearing = "supplied" if item.get("bearing_surface") else "not supplied"
+        pair = (item.get("from_id"), item.get("to_id"))
+        if pair not in pairs:
+            pairs[pair] = []
+            order.append(pair)
+        pairs[pair].append(item)
+    authoritative = []
+    for pair in order:
+        chosen = _authoritative_relationship(pairs[pair])
+        source = members_by_id.get(pair[0]) or {}
+        target = members_by_id.get(pair[1]) or {}
+        bearing = "supplied" if chosen.get("bearing_surface") else "not supplied"
+        authoritative.append(
+            {
+                "kind": chosen.get("kind") or "",
+                "from_id": pair[0],
+                "to_id": pair[1],
+                "from_role": source.get("role") or source.get("kind") or pair[0] or "",
+                "to_role": target.get("role") or target.get("kind") or pair[1] or "",
+                "bearing": bearing,
+                "contact": _bearing_contact_label(chosen) if bearing == "supplied" else "",
+                "connection": _relationship_connection_status(chosen, connections),
+                "missing": "" if bearing == "supplied" else "bearing not supplied",
+                "relationship_ids": tuple(item.get("id") for item in pairs[pair] if item.get("id")),
+            }
+        )
+    groups = {}
+    grouped_order = []
+    for row in authoritative:
         key = (
-            item.get("kind") or "",
-            source.get("role") or source.get("kind") or item.get("from_id") or "",
-            target.get("role") or target.get("kind") or item.get("to_id") or "",
-            bearing,
-            _relationship_connection_status(item, connections),
+            row["kind"],
+            row["from_role"],
+            row["to_role"],
+            row["bearing"],
+            row["contact"],
+            row["connection"],
+            row["missing"],
         )
         if key not in groups:
-            groups[key] = 0
-            order.append(key)
-        groups[key] += 1
+            groups[key] = []
+            grouped_order.append(key)
+        groups[key].append(row)
     grouped = []
-    for key in order:
+    for key in grouped_order:
+        items = groups[key]
         grouped.append(
             {
                 "kind": key[0],
                 "from_role": key[1],
                 "to_role": key[2],
                 "bearing": key[3],
-                "connection": key[4],
-                "quantity": groups[key],
+                "contact": key[4],
+                "connection": key[5],
+                "missing": key[6],
+                "quantity": len(items),
+                "from_ids": tuple(item["from_id"] for item in items if item["from_id"]),
+                "to_ids": tuple(item["to_id"] for item in items if item["to_id"]),
+                "relationship_ids": tuple(
+                    identifier for item in items for identifier in item["relationship_ids"]
+                ),
             }
         )
     return tuple(grouped)
+
+
+def _authoritative_relationship(items):
+    with_surface = [item for item in items if item.get("bearing_surface")]
+    if with_surface:
+        bears = [item for item in with_surface if item.get("kind") == "bears_on"]
+        return bears[0] if bears else with_surface[0]
+    bears = [item for item in items if item.get("kind") == "bears_on"]
+    return bears[0] if bears else items[0]
+
+
+def _bearing_contact_label(item) -> str:
+    from app.services.construction_model.model import format_measure
+
+    coordinates = (item.get("bearing_surface") or {}).get("coordinates") or []
+    if len(coordinates) < 2:
+        return ""
+    start, end = coordinates[0], coordinates[-1]
+    if not all(is_number(start.get(axis)) and is_number(end.get(axis)) for axis in ("x", "y", "z")):
+        return ""
+    span = sum((float(end[axis]) - float(start[axis])) ** 2 for axis in ("x", "y", "z")) ** 0.5
+    return format_measure(span, "imperial", "ft")
 
 
 def _relationship_connection_status(relationship, connections) -> str:
@@ -903,7 +975,7 @@ def _relationship_connection_status(relationship, connections) -> str:
         if ends <= set(item.get("participant_ids") or [])
     ]
     if not matched:
-        return "none"
+        return "connection not supplied"
     if any(_connection_has_geometry(item) for item in matched):
         return "geometry supplied"
     return "metadata only"

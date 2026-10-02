@@ -77,3 +77,62 @@ def plain_text(value: Any) -> Optional[str]:
 
 def is_number(value: Any) -> bool:
     return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
+AXES = ("x", "y", "z")
+IMPERIAL_UNITS = frozenset({"ft", "in"})
+METRIC_UNITS = frozenset({"m", "mm"})
+
+
+def coordinate_axis(point: Mapping[str, Any], axis: str):
+    """Return a known coordinate, or None when that axis was not supplied."""
+    if not isinstance(point, Mapping) or axis not in point:
+        return None
+    value = point.get(axis)
+    if value is None:
+        return None
+    if is_number(value):
+        return value
+    return None
+
+
+def missing_axes(geometry: Mapping[str, Any], axes) -> list:
+    """Axes a view needs that are unknown on at least one point."""
+    missing = []
+    for axis in axes:
+        for point in geometry.get("coordinates") or []:
+            if coordinate_axis(point, axis) is None:
+                missing.append(axis)
+                break
+    return missing
+
+
+def format_measure(value: float, measurement_system: str, unit: Optional[str] = None) -> str:
+    """Construction notation for a supplied measure. Does not infer a new value."""
+    if measurement_system == "metric":
+        chosen = unit or "m"
+        number = _trim_number(value)
+        return f"{number} {chosen}"
+    chosen = unit or "ft"
+    if chosen == "in":
+        return _format_inches(value)
+    return _format_feet(value)
+
+
+def _format_feet(value: float) -> str:
+    sign = "-" if value < 0 else ""
+    total = int(round(abs(value) * 12.0))
+    feet, inches = divmod(total, 12)
+    return f"{sign}{feet}'-{inches}\""
+
+
+def _format_inches(value: float) -> str:
+    sign = "-" if value < 0 else ""
+    inches = int(round(abs(value)))
+    return f"{sign}{inches}\""
+
+
+def _trim_number(value: float) -> str:
+    if float(value) == int(value):
+        return str(int(value))
+    return str(value)

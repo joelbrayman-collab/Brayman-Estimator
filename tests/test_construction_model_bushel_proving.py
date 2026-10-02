@@ -140,23 +140,31 @@ def test_pier_plan_reads_the_model():
     )
 
 
-def test_framing_plan_is_refused_without_joist_members():
-    model = proving_model()
-    assert not any(item["role"] == "joist" for item in model["members"])
-    assert not any(item["role"] == "beam" for item in model["members"])
-    framing = next(view for view in _wave().details if view.view_id == "framing-plan")
-    assert framing.projected is False
-    assert framing.elements == ()
+def test_framing_plan_uses_known_stations_and_elevations_refuse_them():
+    accepted = assess_construction_model(proving_model()).accepted
+    joists = [item for item in accepted["members"] if item["role"] == "joist"]
+    assert len(joists) == 16
+    assert joists[0]["geometry"]["unknown"] == ["z"]
+    assert joists[0]["geometry"]["known"] == ["x", "y"]
+    wave = _wave()
+    assert "joist-1" in _ids(wave.plan)
+    assert "joist-1" not in _ids(wave.front_elevation)
+    assert "joist-1" not in _ids(wave.side_elevation)
+    framing = next(view for view in wave.details if view.view_id == "framing-plan")
+    assert framing.projected is True
+    assert _ids(framing) == ["joist-1"]
     assert any(
-        message.startswith("You need to provide this information. A model element for detail framing-plan")
-        for message in _messages(framing.issues)
+        "The elevation of member joist-1 for the front elevation" in message
+        for message in _messages(wave.front_elevation.issues)
     )
 
 
-def test_elevations_read_the_same_model():
+def test_elevations_read_the_same_complete_geometry():
     wave = _wave()
-    assert _ids(wave.plan) == _ids(wave.front_elevation) == _ids(wave.side_elevation)
-    assert len([element for element in wave.front_elevation.elements if element["element_class"] == "supports"]) == 15
+    complete = {"lower-walking-surface", *(item[0] for item in PIER_COORDINATES)}
+    assert complete <= set(_ids(wave.plan))
+    assert set(_ids(wave.front_elevation)) == complete
+    assert set(_ids(wave.side_elevation)) == complete
     surface = next(element for element in wave.front_elevation.elements if element["id"] == "lower-walking-surface")
     assert {point["v"] for point in surface["projected_geometry"]["coordinates"]} == {1}
 
@@ -167,7 +175,13 @@ def test_stair_view_refuses_missing_facts():
     assert stair.elements == ()
     text = " ".join(_messages(stair.issues))
     assert "You need to provide this information." in text
-    for fact in ("The stair rise", "The stair run", "The stair nosing", "The tread count", "The stair members"):
+    for fact in (
+        "The stair rise",
+        "The stair run",
+        "The stair nosing",
+        "The tread count",
+        "The elevation of member stringer-1 for the stair",
+    ):
         assert fact in text
     assert "The stair throat" not in text
     assert "The stringer count" not in text
@@ -200,17 +214,22 @@ def test_details_read_the_model_and_refuse_missing_facts():
 def test_schedule_reads_the_model():
     schedule = _wave().schedule
     assert schedule.produced is True
-    assert [row["id"] for row in schedule.members] == ["lower-walking-surface"]
-    assert schedule.members[0]["role"] == "decking"
-    assert schedule.members[0]["lengths"] == (10, 3)
+    rows = {row["id"]: row for row in schedule.members}
+    assert rows["lower-walking-surface"]["role"] == "decking"
+    assert rows["lower-walking-surface"]["lengths"] == (10, 3)
+    assert rows["lower-walking-surface"]["length_displays"] == ("10'-0\"", "3'-0\"")
+    assert rows["joist-1"]["lengths"] == ()
+    assert rows["stringer-1"]["role"] == "stringer"
     assert [row["id"] for row in schedule.supports] == [item[0] for item in PIER_COORDINATES]
     assert all(row["kind"] == "pier" for row in schedule.supports)
     names = [item["name"] for item in schedule.materials]
     assert TREAD_BOARDS in names
     assert VERANDA_KIT in names
-    values = {item["id"]: item["value"] for item in schedule.dimensions}
-    assert values["gate-clear"] == 42
-    assert values["lower-walking-surface-height"] == 12
+    values = {item["id"]: item for item in schedule.dimensions}
+    assert values["gate-clear"]["value"] == 42
+    assert values["gate-clear"]["display"] == '42"'
+    assert values["lower-walking-surface-height"]["display"] == '12"'
+    assert schedule.levels[0]["display"] == "1'-0\""
 
 
 def test_missing_facts_do_not_become_geometry():
@@ -218,21 +237,23 @@ def test_missing_facts_do_not_become_geometry():
     roles = {item["role"] for item in model["members"]}
     assert "post" not in roles
     assert "baluster" not in roles
-    assert "stringer" not in roles
-    assert "joist" not in roles
     for support in model["supports"]:
         point = support["geometry"]["coordinates"][0]
         assert point["z"] == 0
         assert support["geometry"]["kind"] == "point"
     for member in model["members"]:
+        if member["role"] in {"joist", "stringer"}:
+            assert "z" not in member["geometry"]["coordinates"][0]
+            continue
         for point in member["geometry"]["coordinates"]:
             assert point["z"] >= 0
     for fact in WITHHELD:
         assert fact
     wave = _wave()
-    drawn = set(_ids(wave.plan))
-    assert set(joist_stations_ft()).isdisjoint(drawn)
-    assert "stringer-1" not in drawn
+    assert "joist-1" in _ids(wave.plan)
+    assert "stringer-1" in _ids(wave.plan)
+    assert "stringer-1" not in _ids(wave.front_elevation)
+    assert "joist-1" not in _ids(wave.side_elevation)
 
 
 def test_model_revision_propagates_to_every_view():
@@ -243,7 +264,9 @@ def test_model_revision_propagates_to_every_view():
     assert _element_u(original.plan, "P8") == -9
     assert _element_u(updated.plan, "P8") == -8
     assert _element_u(updated.front_elevation, "P8") == -8
-    assert _ids(updated.plan) == _ids(updated.front_elevation) == _ids(updated.side_elevation)
+    assert _ids(updated.front_elevation) == _ids(updated.side_elevation)
+    assert "joist-1" in _ids(updated.plan)
+    assert "joist-1" not in _ids(updated.front_elevation)
 
 
 def test_multiple_sheets_are_deterministic_and_11x17():
@@ -252,13 +275,13 @@ def test_multiple_sheets_are_deterministic_and_11x17():
     assert first.composed is True
     assert first.pdf_bytes == second.pdf_bytes
     assert first.manifest["pdf_sha256"] == second.manifest["pdf_sha256"]
-    assert [page["kind"] for page in first.manifest["pages"]] == [
-        "orthographic",
-        "section",
-        "schedule",
-    ]
+    kinds = [page["kind"] for page in first.manifest["pages"]]
+    assert kinds[0] == "orthographic"
+    assert "section" in kinds
+    assert kinds[-1] == "schedule"
     reader = PdfReader(BytesIO(first.pdf_bytes))
-    assert len(reader.pages) == 3
+    assert first.manifest["sheet_count"] == len(reader.pages)
+    assert all(page["sheet_count"] == first.manifest["sheet_count"] for page in first.manifest["pages"])
     for page in reader.pages:
         box = page.mediabox
         assert float(box.width) == 1224
@@ -269,10 +292,15 @@ def test_multiple_sheets_are_deterministic_and_11x17():
     assert STATED_SCALE in text
     assert "Revision P" in text
     assert "PRELIMINARY CONSTRUCTION DRAWING" in text
-    refused = _composed(sheet=sheet_definition(scale=SCALE_THAT_DOES_NOT_FIT))
-    assert refused.composed is False
-    assert refused.pdf_bytes is None
-    assert refused.issues[0].code == CODE_GEOMETRY_DOES_NOT_FIT_SHEET
+    moved = _composed(sheet=sheet_definition(scale=SCALE_THAT_DOES_NOT_FIT))
+    assert moved.composed is True
+    assert moved.pdf_bytes is not None
+    assert moved.manifest["scale"] == SCALE_THAT_DOES_NOT_FIT
+    assert moved.manifest["points_per_unit"] == 27
+    assert "front_elevation" in [page["kind"] for page in moved.manifest["pages"]]
+    assert "Sheet 1 of" in "\n".join(
+        page.extract_text() or "" for page in PdfReader(BytesIO(moved.pdf_bytes)).pages
+    )
 
 
 def test_proving_set_does_not_write_project_plan_or_estimate():

@@ -43,6 +43,32 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-02 — Partial geometry and sheet sets
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-02 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 6 — SPATIAL PARTIALS + MULTI-SHEET + DIMENSION REPRESENTATION 2 OCT 2026 |
+| Objective | Let a member keep a known coordinate without inventing the missing one, refuse only the views that need the missing fact, and place a view that does not fit on another 11×17 sheet. |
+| Business decision | Guessing stays closed. A missing elevation, length, bracket, or pier depth is asked for by name. The Bushel proving fixture is still not an engine default. |
+| Architectural decision | Known and unknown axes are stored apart from provenance and uncertainty. Plan, elevations, sections, stairs, and details each require only the axes they draw. Sheet order is plan and fitting elevations, overflow elevations, sections, stairs and details, then schedules. Dimensions carry a unit and a construction-notation display. Overlapping projections stay on their coordinates and receive a count tag. |
+| Prompt template used | Joel’s 2 Oct 2026 slice 6 prompt. |
+| Approved Cursor prompt summary | Generic architecture only. Re-run the Bushel proving fixture. No case-folder edits, no J1 script, no PGE edits, no external CAD, no deploy. Focused tests, construction-model regression, PGE regression, and the full suite. One commit. Push. |
+| Feature Gate | None. Authorized slice beside closed PGE. |
+| Files expected to change | Construction Model geometry, projection, views, and sheet composition; the proving fixture and tests; the review note; the drawing standard, register, architecture, current-state, session handoff, roadmap, and this log. |
+| Files prohibited from changing | The Linda Bushel case folder, Plan Generation, Contract V1, Website, schema, and migrations. |
+| Implementation result | Partial stations draw on the plan and are refused on elevations that need a height. At 3/8 in = 1 ft the Bushel front elevation moves to its own sheet. Schedule lengths print as `10'-0"` and `12"`. The proving set is still not a crew set. The component stays open. |
+| Tests | Construction-model regression 71 passed, 6 warnings, 2.08s, exit 0. PGE regression 49 passed, 48 warnings, 15.83s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2038 passed, 6785 warnings, 1290.09s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Joist and stringer lengths, cuts, posts, shafts, guards, and the stair profile are still missing. Overlap tags and refusal notes collide on the small elevation frames. |
+| Next approved step | A later slice may place readable callouts for crowded stations without moving the model. |
+| Next approved prompt | None in this slice. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. Live product SHA remains `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`. |
+
 ### 2026-10-02 — Bushel proving slice
 
 | Field | Content |

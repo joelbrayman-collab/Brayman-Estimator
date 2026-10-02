@@ -9,8 +9,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping, Optional
 
-from app.services.construction_model.completeness import assess_construction_model
-from app.services.construction_model.model import is_number, plain_text
+from app.services.construction_model.completeness import (
+    ConstructionModelIssue,
+    assess_construction_model,
+)
+from app.services.construction_model.model import is_number, missing_axes, plain_text
 
 PROJECTION_VERSION = "cm-2"
 
@@ -247,10 +250,17 @@ def _project_accepted(model: Mapping[str, Any], view_definition: Mapping[str, An
     )
     uncertainty = tuple(model.get("uncertainty") or [])
     elements = []
+    issues = []
+    horizontal = camera["horizontal_axis"]
+    vertical = camera["vertical_axis"]
     for element_class in ("members", "supports", "openings"):
         if element_class not in visible:
             continue
         for item in model.get(element_class) or []:
+            missing = missing_axes(item["geometry"], (horizontal, vertical))
+            if missing:
+                issues.append(_spatial_issue(item, element_class, view_type, missing))
+                continue
             elements.append(_project_element(item, element_class, view_type, uncertainty))
     levels = ()
     if "levels" in visible:
@@ -262,7 +272,7 @@ def _project_accepted(model: Mapping[str, Any], view_definition: Mapping[str, An
         viewing_direction=dict(camera["viewing_direction"]),
         horizontal_axis=camera["horizontal_axis"],
         vertical_axis=camera["vertical_axis"],
-        issues=(),
+        issues=tuple(issues),
         uncertainty=uncertainty,
         elements=tuple(elements),
         levels=levels,
@@ -295,6 +305,27 @@ def _project_element(item: Mapping[str, Any], element_class: str, view_type: str
     return record
 
 
+def _spatial_issue(item: Mapping[str, Any], element_class: str, view_type: str, missing: list) -> ConstructionModelIssue:
+    noun = "support" if element_class == "supports" else "member"
+    fact = _spatial_fact(missing)
+    view_name = view_type.replace("_", " ")
+    return ConstructionModelIssue(
+        code="MISSING_VIEW_FACT",
+        field=f"{view_type}.{item['id']}",
+        fact=fact,
+        message=f"{_YOU_NEED} The {fact} of {noun} {item['id']} for the {view_name}.",
+    )
+
+
+def _spatial_fact(missing: list) -> str:
+    names = []
+    if "x" in missing or "y" in missing:
+        names.append("plan position")
+    if "z" in missing:
+        names.append("elevation")
+    return " and ".join(names)
+
+
 def _project_point(point: Mapping[str, Any], view_type: str) -> dict:
     source = {"x": point["x"], "y": point["y"], "z": point["z"]}
     if view_type == VIEW_PLAN:
@@ -309,6 +340,8 @@ def _project_point(point: Mapping[str, Any], view_type: str) -> dict:
 def _copy_geometry(geometry: Mapping[str, Any]) -> dict:
     return {
         "kind": geometry["kind"],
+        "known": list(geometry.get("known") or []),
+        "unknown": list(geometry.get("unknown") or []),
         "coordinates": [
             {"x": point["x"], "y": point["y"], "z": point["z"]}
             for point in geometry["coordinates"]
@@ -317,9 +350,12 @@ def _copy_geometry(geometry: Mapping[str, Any]) -> dict:
 
 
 def _copy_level(level: Mapping[str, Any]) -> dict:
-    return {
+    copied = {
         "id": level["id"],
         "name": level["name"],
         "elevation": level["elevation"],
         "provenance": dict(level["provenance"]),
     }
+    if level.get("display") is not None:
+        copied["display"] = level["display"]
+    return copied

@@ -4,8 +4,10 @@
 |-------|--------|
 | Label | BUSHEL PROVING FIXTURE |
 | Date | 2026-10-02 |
+| Slice | 6, after partial coordinates and sheet sets |
 | Scale on the generated sheets | 1/4 in = 1 ft |
 | Paper | 11×17 landscape, 1224 × 792 pt |
+| Sheet count | 5 |
 | Would we hand this to the boys? | No |
 
 The fixture is test data. It is not an engine default. The Linda Bushel case folder was not modified. Raster pages and the preview PDF in this directory are inspection copies and are not the product record.
@@ -14,21 +16,17 @@ The fixture is test data. It is not an engine default. The Linda Bushel case fol
 
 | Sheet | Status | Generated / refused | Missing fact if refused | Visual review result |
 |-------|--------|---------------------|-------------------------|----------------------|
-| Pier / foundation plan | Generated on sheet 1, plan view | Generated | Shaft length, helix, torque, and bracket height are not drawn. The marks are plan locations at grade. | 15 pier marks and the lower outline agree with the model. No shaft is drawn. Not a foundation plan a crew can build from. |
-| Framing plan | Refused | Refused | Upper-deck elevation. The 16 joist stations and the beam layout are recorded and were not given a vertical coordinate. | No framing sheet. |
-| Decking / guard / gate plan | Refused | Refused | Veranda baluster layout. The 42 in clear gate is a model dimension and is not drawn. | No guard or gate sheet. |
-| Front elevation | Generated on sheet 1 | Generated | Lower post cut. Helical shaft length. | Pier marks at grade and the 12 in lower outline. No posts. The 12 in separation is a quarter inch on the sheet. Not acceptable. |
-| Side elevation | Generated on sheet 1 | Generated | Lower post cut. Helical shaft length. | Piers that share a Y coordinate stack on one mark. The count is not readable from this view alone. Not acceptable. |
-| Stair view | Refused | Refused | Stair rise, stair run, stair nosing, tread count, and the stringer members. Throat 5.00 in, 10 stringers, and the 10 ft stair width stay on the model and are not drawn. Stringer plumb cuts are not confirmed. | No stair sheet. |
-| Section | Generated on sheet 2 | Generated | Joists, posts, helical shafts, and stringer cuts are not in the model, so the cut cannot show them. | One line, the lower walking-surface outline. Not a construction section. |
-| Detail | Refused | Refused | Bracket for the pier detail. Baluster layout for the guard detail. Stringer member for the cut detail. | No detail sheet. |
-| Dimensions | Partial, on the schedule | Generated for the lower outline only | Gate clear and the 12 in height are model dimensions on the level. The schedule does not print level dimensions or units. | No dimension lines on the plan. |
-| Schedule | Generated on sheet 3 | Generated | Joist lengths and stringer lengths. Those members were not created. | One decking row, lengths 10.0 and 3.0, fifteen piers, the tread boards, and the Veranda kit name. Readable. Not a build schedule. |
+| 1 of 5, plan | Generated | Generated | Joist and stringer lengths are not drawn. The marks are front-edge stations. | 15 pier marks, 16 joist stations, 10 stringer stations, and the lower outline. Stations that share a point keep that point and carry a count tag. The tags collide along the front edge and are hard to read. |
+| 1 of 5, front elevation | Generated for complete geometry | Joist and stringer elevations refused | The elevation of each joist and stringer | Pier marks, the 12 in outline, and the `1'-0"` lower-deck datum. Refusal notes are packed into the frame and overlap one another. Not acceptable. |
+| 1 of 5, side elevation | Generated for complete geometry | Joist and stringer elevations refused | The elevation of each joist and stringer | Piers that share a Y stay on that point. A count tag names them. The tag and the refusal notes are crowded. Not acceptable. |
+| 2 of 5, section | Generated for the lower outline | Joists and stringers refused | Elevation of those members for the section | One line, the lower walking surface, plus the refusal notes. Not a construction section. |
+| 3 of 5, framing detail | Generated | Generated | The detail is one plan station, not a framing plan. | A single station mark. Not a framing plan. |
+| Stair | Refused | Refused | Rise, run, nosing, tread count, and the stringer elevation | No stair sheet. |
+| Guard, gate, bracket, stringer cut | Refused | Refused | Baluster layout, bracket, and stringer elevation | No sheet. |
+| 4 of 5 and 5 of 5, schedule | Generated | Lengths refused where none were supplied | The length of each joist and stringer | Deck outline prints `10'-0", 3'-0"`. Level prints `1'-0" Lower-deck finished walking surface`. Height prints `12"`. Gate prints `42"`. Joist and stringer length cells are blank, and the missing-length lines name each member. |
 
-## Stated scale that does not fit
-
-At 3/8 in = 1 ft the front elevation of the 18 ft pier span does not fit its viewport. The composer refuses the whole PDF, including the schedule. It does not move the front elevation onto another sheet.
+At 3/8 in = 1 ft the front elevation moves to its own sheet. The scale stays 27 points per foot. The rest of the set is still drawn.
 
 ## One-model check
 
-The plan, the front elevation, and the side elevation list the same element ids. Moving pier P8 changes those views together. The section shows only the lower walking surface. Refused views add no geometry.
+Plan stations and the elevations read the same model. Moving a pier changes the plan and the elevations that include it. Changing a level changes the datum text. Joist elevation is not invented, so those members stay off the elevations.

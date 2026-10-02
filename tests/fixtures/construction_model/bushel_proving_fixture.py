@@ -51,6 +51,7 @@ LOWER_BACK_Y = 19.166666666666668
 LOWER_FRONT_Y = 22.166666666666668
 LOWER_HALF_WIDTH_FT = 5.0
 LOWER_DEPTH_FT = 3.0
+FRONT_EDGE_Y = 15.5
 
 WITHHELD = (
     "Helical pier shaft length",
@@ -84,6 +85,11 @@ def _point(x, y, z):
     return {"kind": "point", "coordinates": [{"x": x, "y": y, "z": z}]}
 
 
+def _station(x_coord, y_coord):
+    """Plan station. Elevation is omitted because it is not known."""
+    return {"kind": "point", "coordinates": [{"x": x_coord, "y": y_coord}]}
+
+
 def _polyline(points):
     return {
         "kind": "polyline",
@@ -107,6 +113,41 @@ def proving_model():
             (-LOWER_HALF_WIDTH_FT, LOWER_BACK_Y, walking_z),
         )
     )
+    members = [
+        {
+            "id": "lower-walking-surface",
+            "role": "decking",
+            "geometry": lower_outline,
+            "provenance": _provenance(
+                "source_document",
+                "12 in lower walking surface on the selected lower pier coordinates",
+            ),
+        }
+    ]
+    for index, station in enumerate(joist_stations_ft(), start=1):
+        members.append(
+            {
+                "id": f"joist-{index}",
+                "role": "joist",
+                "geometry": _station(station, FRONT_EDGE_Y),
+                "provenance": _provenance(
+                    "source_document",
+                    "P1 joist station selected by Joel on 2026-10-01",
+                ),
+            }
+        )
+    for index, station in enumerate(stringer_stations_ft(), start=1):
+        members.append(
+            {
+                "id": f"stringer-{index}",
+                "role": "stringer",
+                "geometry": _station(station, FRONT_EDGE_Y),
+                "provenance": _provenance(
+                    "source_document",
+                    "P1 stringer station selected by Joel on 2026-10-01",
+                ),
+            }
+        )
     supports = []
     for identifier, x_coord, y_coord in PIER_COORDINATES:
         supports.append(
@@ -136,17 +177,7 @@ def proving_model():
                 ),
             }
         ],
-        "members": [
-            {
-                "id": "lower-walking-surface",
-                "role": "decking",
-                "geometry": lower_outline,
-                "provenance": _provenance(
-                    "source_document",
-                    "12 in lower walking surface on the selected lower pier coordinates",
-                ),
-            }
-        ],
+        "members": members,
         "supports": supports,
         "materials": [
             {"id": "tread-boards", "name": TREAD_BOARDS},
@@ -156,21 +187,25 @@ def proving_model():
             {
                 "id": "lower-width",
                 "value": LOWER_HALF_WIDTH_FT * 2,
+                "unit": "ft",
                 "subject_id": "lower-walking-surface",
             },
             {
                 "id": "lower-depth",
                 "value": LOWER_DEPTH_FT,
+                "unit": "ft",
                 "subject_id": "lower-walking-surface",
             },
             {
                 "id": "lower-walking-surface-height",
                 "value": LOWER_WALKING_SURFACE_IN,
+                "unit": "in",
                 "subject_id": "lower-walk",
             },
             {
                 "id": "gate-clear",
                 "value": GATE_CLEAR_IN,
+                "unit": "in",
                 "subject_id": "lower-walk",
             },
         ],
@@ -180,7 +215,7 @@ def proving_model():
                 "throat": STRINGER_THROAT_IN,
                 "stringer_count": STRINGER_COUNT,
                 "stair_width": STAIR_WIDTH_FT,
-                "member_ids": [],
+                "member_ids": [f"stringer-{index}" for index in range(1, STRINGER_COUNT + 1)],
                 "provenance": _provenance(
                     "project_input",
                     "Joel 2026-10-01 throat and stringer count; design brief stair width",
@@ -192,7 +227,7 @@ def proving_model():
                 "code": "field_confirmation",
                 "note": (
                     "Shaft length, helix, torque, bracket height, post cut, "
-                    "baluster layout, and stringer plumb cuts are not confirmed."
+                    "baluster layout, stringer plumb cuts, and joist elevation are not confirmed."
                 ),
             }
         ],

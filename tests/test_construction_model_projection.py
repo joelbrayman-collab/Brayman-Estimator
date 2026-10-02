@@ -171,7 +171,7 @@ def test_member_is_consistent_and_cannot_be_invented():
         assert set(_ids(view)) <= model_ids
         assert "invented-post" not in _ids(view)
         beam = _element(view, "beam-a")
-        assert beam["source_geometry"] == model["members"][0]["geometry"]
+        assert beam["source_geometry"]["coordinates"] == model["members"][0]["geometry"]["coordinates"]
         assert beam["provenance"] == model["members"][0]["provenance"]
 
 

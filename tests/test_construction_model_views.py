@@ -222,7 +222,7 @@ def test_one_model_drives_every_view():
     model_ids = {item["id"] for item in model["members"]} | {item["id"] for item in model["supports"]}
     for view in (wave.plan, wave.front_elevation, wave.side_elevation, wave.stairs[0], wave.sections[0], wave.details[0]):
         assert set(_ids(view)) <= model_ids
-    assert _element(wave.plan, "beam-a")["source_geometry"] == model["members"][0]["geometry"]
+    assert _element(wave.plan, "beam-a")["source_geometry"]["coordinates"] == model["members"][0]["geometry"]["coordinates"]
     assert {row["id"] for row in wave.schedule.members} <= model_ids
 
 
@@ -308,9 +308,12 @@ def test_wave_does_not_scale_to_fit():
         sections=[_section()],
         details=[_detail()],
     )
-    assert result.composed is False
-    assert result.pdf_bytes is None
-    assert result.issues[0].code == CODE_GEOMETRY_DOES_NOT_FIT_SHEET
+    assert result.composed is True
+    assert result.manifest["points_per_unit"] == 288
+    assert result.manifest["scale"] == "4/1 in = 1 ft"
+    assert "orthographic" not in [page["kind"] for page in result.manifest["pages"]]
+    assert result.manifest["pages"][-1]["kind"] == "schedule"
+    assert any(issue.code == CODE_GEOMETRY_DOES_NOT_FIT_SHEET for issue in result.view_issues)
 
 
 def test_incomplete_model_produces_no_wave_sheet():

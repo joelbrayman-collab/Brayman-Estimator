@@ -10,12 +10,16 @@ from dataclasses import dataclass
 from typing import Any, Mapping, Optional
 
 from app.services.construction_model.model import (
+    AXES,
     DOCUMENT_STATUS_TEXT,
     GEOMETRY_KINDS,
+    IMPERIAL_UNITS,
     MEASUREMENT_SYSTEMS,
+    METRIC_UNITS,
     OPTIONAL_COLLECTIONS,
     PROVENANCE_SOURCES,
     STRUCTURE_CLASS_DECK,
+    format_measure,
     is_number,
     plain_text,
 )
@@ -129,6 +133,8 @@ def assess_construction_model(payload: Any) -> ConstructionModelAssessment:
     level_ids = {item["id"] for item in levels}
     optional, optional_issues = _optional(payload, known_ids, level_ids)
     issues.extend(optional_issues)
+    if measurement_system is not None:
+        issues.extend(_unit_issues(optional.get("dimensions") or [], measurement_system))
     stairs, stair_issues = _stair_results(payload.get("stair_results", []))
     issues.extend(stair_issues)
     uncertainty, uncertainty_issue = _uncertainty(payload.get("uncertainty", []))
@@ -151,6 +157,7 @@ def assess_construction_model(payload: Any) -> ConstructionModelAssessment:
     }
     accepted.update(optional)
     accepted["stair_results"] = stairs
+    _annotate_measures(accepted)
     return ConstructionModelAssessment(
         complete=True,
         generation_permitted=True,
@@ -160,6 +167,32 @@ def assess_construction_model(payload: Any) -> ConstructionModelAssessment:
         accepted=accepted,
         drawing_artifact=None,
     )
+
+
+def _annotate_measures(model: dict) -> None:
+    system = model["measurement_system"]
+    default_unit = "ft" if system == "imperial" else "m"
+    for level in model["levels"]:
+        level["display"] = format_measure(level["elevation"], system, default_unit)
+    for item in model.get("dimensions") or []:
+        item["measurement_system"] = system
+        item["display"] = format_measure(item["value"], system, item.get("unit"))
+
+
+def _unit_issues(dimensions: list, measurement_system: str) -> list:
+    allowed = IMPERIAL_UNITS if measurement_system == "imperial" else METRIC_UNITS
+    issues = []
+    for item in dimensions:
+        unit = item.get("unit")
+        if unit is not None and unit not in allowed:
+            issues.append(
+                _need(
+                    CODE_INVALID_FACT,
+                    f"dimensions[{item['id']}].unit",
+                    f"A {measurement_system} unit for dimension {item['id']}",
+                )
+            )
+    return issues
 
 
 def _refused(issues: tuple, uncertainty: tuple) -> ConstructionModelAssessment:
@@ -340,13 +373,33 @@ def _geometry(value: Any, field: str, fact_subject: str):
         )
     parsed = []
     for index, point in enumerate(coordinates):
-        if not isinstance(point, Mapping) or not all(is_number(point.get(axis)) for axis in ("x", "y", "z")):
+        if not isinstance(point, Mapping):
             return None, _need(
                 CODE_MISSING_FACT,
                 f"{field}.coordinates[{index}]",
                 f"A coordinate for {fact_subject}",
             )
-        parsed.append({"x": point["x"], "y": point["y"], "z": point["z"]})
+        recorded = {}
+        known_here = []
+        for axis in AXES:
+            if axis not in point or point.get(axis) is None:
+                recorded[axis] = None
+                continue
+            if not is_number(point.get(axis)):
+                return None, _need(
+                    CODE_MISSING_FACT,
+                    f"{field}.coordinates[{index}].{axis}",
+                    f"A numeric {axis} coordinate for {fact_subject}",
+                )
+            recorded[axis] = point[axis]
+            known_here.append(axis)
+        if not known_here:
+            return None, _need(
+                CODE_MISSING_FACT,
+                f"{field}.coordinates[{index}]",
+                f"A known coordinate for {fact_subject}",
+            )
+        parsed.append(recorded)
     minimum = 1 if kind == "point" else 2
     if len(parsed) < minimum:
         return None, _need(
@@ -354,7 +407,14 @@ def _geometry(value: Any, field: str, fact_subject: str):
             f"{field}.coordinates",
             f"Enough coordinates for {fact_subject}",
         )
-    return {"kind": kind, "coordinates": parsed}, None
+    known = [axis for axis in AXES if all(point[axis] is not None for point in parsed)]
+    unknown = [axis for axis in AXES if axis not in known]
+    return {
+        "kind": kind,
+        "coordinates": parsed,
+        "known": known,
+        "unknown": unknown,
+    }, None
 
 
 def _provenance(value: Any, field: str, fact_subject: str):
@@ -492,6 +552,32 @@ def _optional_item(collection: str, index: int, item: Any, known_ids: set, level
             ]
         recorded["value"] = value
         recorded["subject_id"] = subject_id
+        unit = plain_text(item.get("unit"))
+        if unit is not None:
+            recorded["unit"] = unit
+        for endpoint in ("start_id", "end_id"):
+            if item.get(endpoint) is None:
+                continue
+            endpoint_id = plain_text(item.get(endpoint))
+            if endpoint_id is None or (endpoint_id not in known_ids and endpoint_id not in level_ids):
+                return None, [
+                    _need(
+                        CODE_MISSING_FACT,
+                        f"dimensions[{identifier}].{endpoint}",
+                        f"A member, support, or level for dimension {identifier}",
+                    )
+                ]
+            recorded[endpoint] = endpoint_id
+        provenance = item.get("provenance", None)
+        if provenance is not None:
+            recorded_provenance, provenance_issue = _provenance(
+                provenance,
+                f"dimensions[{identifier}].provenance",
+                f"dimension {identifier}",
+            )
+            if provenance_issue is not None:
+                return None, [provenance_issue]
+            recorded["provenance"] = recorded_provenance
         return recorded, []
     if collection == "constraints":
         statement = plain_text(item.get("statement"))

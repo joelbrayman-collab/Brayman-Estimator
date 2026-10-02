@@ -13,7 +13,7 @@ from app.services.construction_model.completeness import (
     ConstructionModelIssue,
     assess_construction_model,
 )
-from app.services.construction_model.model import is_number, plain_text
+from app.services.construction_model.model import is_number, missing_axes, plain_text
 from app.services.construction_model.projection import (
     VIEW_FRONT_ELEVATION,
     VIEW_PLAN,
@@ -74,6 +74,7 @@ class ScheduleRead:
     supports: tuple
     materials: tuple
     dimensions: tuple
+    levels: tuple = ()
 
     def to_dict(self) -> dict:
         return {
@@ -84,6 +85,7 @@ class ScheduleRead:
             "supports": list(self.supports),
             "materials": list(self.materials),
             "dimensions": list(self.dimensions),
+            "levels": list(self.levels),
         }
 
 
@@ -165,6 +167,16 @@ def _stair_view(model: Mapping[str, Any], result: Mapping[str, Any]) -> ReadView
                     "MISSING_STAIR_FACT",
                     f"stair_results[{result['id']}].member_ids",
                     f"A model member for stair {result['id']}",
+                )
+            )
+            continue
+        missing = missing_axes(found[0]["geometry"], ("y", "z"))
+        if missing:
+            issues.append(
+                _need(
+                    "MISSING_STAIR_FACT",
+                    f"stair_results[{result['id']}].{found[0]['id']}",
+                    f"The {_fact_name(missing)} of member {found[0]['id']} for the stair",
                 )
             )
             continue
@@ -252,19 +264,36 @@ def _section_view(model: Mapping[str, Any], definition: Any) -> ReadView:
         )
     horizontal, vertical = _AXES[direction]
     elements = []
+    issues = []
     classes = {plain_text(item) for item in visible}
+    required = [direction, horizontal, vertical]
+    if elevation is not None:
+        required.append("z")
     for element_class in ("members", "supports", "openings"):
         if element_class not in classes:
             continue
         for item in model.get(element_class) or []:
+            missing = missing_axes(item["geometry"], required)
+            if missing:
+                noun = "support" if element_class == "supports" else "member"
+                issues.append(
+                    _need(
+                        "MISSING_SECTION_FACT",
+                        f"section.{identifier}.{item['id']}",
+                        f"The {_fact_name(missing)} of {noun} {item['id']} for section {identifier}",
+                    )
+                )
+                continue
             if _cut_hits(item["geometry"], direction, location, depth, elevation):
                 elements.append(_project_record(item, element_class, horizontal, vertical, model))
+    if issues and not elements:
+        return _empty("section", identifier, tuple(issues), model)
     uncertainty = _notes(model, [element["id"] for element in elements])
     return ReadView(
         True,
         "section",
         identifier,
-        (),
+        tuple(issues),
         tuple(uncertainty),
         tuple(elements),
         (("section_direction", direction), ("section_location", location)),
@@ -320,21 +349,35 @@ def _detail_view(model: Mapping[str, Any], definition: Any) -> ReadView:
     if issues:
         return _empty("detail", identifier, tuple(issues), model)
     horizontal, vertical = _camera(view_type)
-    projected = tuple(
-        _project_record(item, element_class, horizontal, vertical, model) for item, element_class in elements
-    )
+    projected = []
+    for item, element_class in elements:
+        missing = missing_axes(item["geometry"], (horizontal, vertical))
+        if missing:
+            noun = "support" if element_class == "supports" else "member"
+            issues.append(
+                _need(
+                    "MISSING_DETAIL_FACT",
+                    f"detail.{identifier}.{item['id']}",
+                    f"The {_fact_name(missing)} of {noun} {item['id']} for detail {identifier}",
+                )
+            )
+            continue
+        projected.append(_project_record(item, element_class, horizontal, vertical, model))
+    if issues and not projected:
+        return _empty("detail", identifier, tuple(issues), model)
     uncertainty = _notes(model, [element["id"] for element in projected])
-    return ReadView(True, "detail", identifier, (), tuple(uncertainty), projected, (), "DETAIL")
+    return ReadView(True, "detail", identifier, tuple(issues), tuple(uncertainty), tuple(projected), (), "DETAIL")
 
 
 def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
     by_subject = {}
     for item in model.get("dimensions") or []:
-        by_subject.setdefault(item["subject_id"], []).append(item["value"])
+        by_subject.setdefault(item["subject_id"], []).append(item)
     issues = []
     members = []
     for item in model.get("members") or []:
-        lengths = tuple(by_subject.get(item["id"], []))
+        records = tuple(by_subject.get(item["id"], []))
+        lengths = tuple(record["value"] for record in records)
         if not lengths:
             issues.append(
                 _need(
@@ -348,6 +391,7 @@ def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
                 "id": item["id"],
                 "role": item["role"],
                 "lengths": lengths,
+                "length_displays": tuple(record["display"] for record in records),
                 "uncertainty": _notes(model, [item["id"]]),
             }
         )
@@ -361,6 +405,15 @@ def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
     )
     materials = tuple(dict(item) for item in model.get("materials") or [])
     dimensions = tuple(dict(item) for item in model.get("dimensions") or [])
+    levels = tuple(
+        {
+            "id": item["id"],
+            "name": item["name"],
+            "elevation": item["elevation"],
+            "display": item.get("display"),
+        }
+        for item in model.get("levels") or []
+    )
     return ScheduleRead(
         True,
         tuple(issues),
@@ -369,6 +422,7 @@ def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
         supports,
         materials,
         dimensions,
+        levels,
     )
 
 
@@ -504,6 +558,15 @@ def _owned(definition: Any, kind: str):
 
 def _empty(kind: str, view_id: Optional[str], issues: tuple, model: Mapping[str, Any]) -> ReadView:
     return ReadView(False, kind, view_id, tuple(issues), tuple(model.get("uncertainty") or []), (), (), kind.upper())
+
+
+def _fact_name(missing: list) -> str:
+    names = []
+    if "x" in missing or "y" in missing:
+        names.append("plan position")
+    if "z" in missing:
+        names.append("elevation")
+    return " and ".join(names)
 
 
 def _need(code: str, field: str, fact: str) -> ConstructionModelIssue:

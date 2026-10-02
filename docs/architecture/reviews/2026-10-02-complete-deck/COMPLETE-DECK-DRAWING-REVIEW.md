@@ -6,8 +6,14 @@
 | Source | `tests/fixtures/construction_model/complete_deck_fixture.py` |
 | Bushel | Not used. Not modified. Not the acceptance fixture. |
 | Scale | 1/2 in = 1 ft on the plans, elevations, and section. 1 in = 1 ft on the stair. 3 in = 1 ft on the post/beam and stringer details. 3/2 in = 1 ft on the guard and gate detail. |
-| Sheets | 12. Three plans, two elevations, stair, section, three details, and two schedule pages. |
-| Would we hand this to the boys? | No. |
+| Sheets | 13 at the Slice 11 inspection. Three plans, two elevations, stair, section, three details, and schedule pages. |
+| Would we hand this to the boys? | No. The stringer/tread and post/beam assemblies on this fixture are readable. The whole set is not. |
+
+## Slice 11 inspection
+
+The stair shows five seats cut into the stringer. Each seat is the supplied bearing, labeled 0'-11" once where the three stringers coincide in the side view. The treads sit on those seats. The stringer detail is one of those seats with the tread on it, the 1 inch nosing past the front of the seat, and the riser at the back. The post-and-beam detail shows the beam on the post and the supplied 3 inch bearing. The post cap and the two bolts stay in the connection note. No cap shape was drawn, because no connector geometry was supplied. Section A states the chain for the members in that cut: pier supports post; post bears on beam; beam supports joist; joist supports decking. The stair is outside that cut.
+
+A competent carpenter can read the stringer/tread assembly and the post/beam stack from these sheets. The carpenter cannot build the connector from a drawn shape, because the fixture did not supply one. The guard and gate connection is still absent. The whole set is still not a crew set.
 
 ## Slice 10 inspection
 

@@ -53,7 +53,9 @@ MEMBER_ROLES = frozenset(
     }
 )
 SUPPORT_KINDS = frozenset({"pier", "footing"})
-RELATIONSHIP_KINDS = frozenset({"supports", "protects"})
+RELATIONSHIP_KINDS = frozenset({"supports", "protects", "bears_on", "connects_to", "fastened_to"})
+BEARING_KINDS = frozenset({"supports", "bears_on"})
+BEARING_TOLERANCE = 0.03
 CONSTRUCTION_STATUSES = frozenset({"preliminary", "field_verification_required"})
 LENGTH_CONFLICT_TOLERANCE = 0.001
 
@@ -294,7 +296,8 @@ def _prism_profile(start, end, horizontal, vertical, width, depth, orientation):
 def _polyline_ribbon(item, coordinates, horizontal, vertical):
     """A supplied thickness below a top edge. No thickness, no ribbon."""
     thickness = item.get("thickness")
-    if item.get("orientation") != "top_edge" or vertical != "z":
+    orientation = item.get("orientation")
+    if orientation not in {"top_edge", "bottom_edge"} or vertical != "z":
         return None
     if not is_number(thickness) or thickness <= 0:
         return None
@@ -308,7 +311,8 @@ def _polyline_ribbon(item, coordinates, horizontal, vertical):
         points.append(candidate)
     if len(points) < 2:
         return None
-    offset = [(point[0], point[1] - thickness) for point in points]
+    direction = -1.0 if orientation == "top_edge" else 1.0
+    offset = [(point[0], point[1] + (direction * thickness)) for point in points]
     ring = points + list(reversed(offset))
     ring.append(ring[0])
     return {"kind": "polyline", "coordinates": [{"u": point[0], "v": point[1]} for point in ring]}
@@ -344,3 +348,158 @@ def _hull_profile(points) -> Optional[dict]:
     coordinates = [{"u": point[0], "v": point[1]} for point in hull]
     coordinates.append(dict(coordinates[0]))
     return {"kind": "polyline", "coordinates": coordinates}
+
+
+def _xyz(point) -> Optional[tuple]:
+    if not isinstance(point, Mapping):
+        return None
+    if not all(is_number(point.get(axis)) for axis in AXES):
+        return None
+    return (float(point["x"]), float(point["y"]), float(point["z"]))
+
+
+def _distance_to_segment(point, start, end) -> float:
+    px, py, pz = point
+    sx, sy, sz = start
+    ex, ey, ez = end
+    vx, vy, vz = ex - sx, ey - sy, ez - sz
+    length2 = (vx * vx) + (vy * vy) + (vz * vz)
+    if length2 <= 1e-12:
+        return ((px - sx) ** 2 + (py - sy) ** 2 + (pz - sz) ** 2) ** 0.5
+    scale = (((px - sx) * vx) + ((py - sy) * vy) + ((pz - sz) * vz)) / length2
+    scale = min(1.0, max(0.0, scale))
+    cx, cy, cz = sx + (vx * scale), sy + (vy * scale), sz + (vz * scale)
+    return ((px - cx) ** 2 + (py - cy) ** 2 + (pz - cz) ** 2) ** 0.5
+
+
+def _member_frame(start, end):
+    sx, sy, sz = start
+    ex, ey, ez = end
+    ux, uy, uz = ex - sx, ey - sy, ez - sz
+    length = (ux * ux + uy * uy + uz * uz) ** 0.5
+    if length <= 0.001:
+        return None
+    ux, uy, uz = ux / length, uy / length, uz / length
+    plan = ((ex - sx) ** 2 + (ey - sy) ** 2) ** 0.5
+    if plan <= 0.001:
+        wx, wy, wz = 1.0, 0.0, 0.0
+    else:
+        wx, wy, wz = -(ey - sy) / plan, (ex - sx) / plan, 0.0
+    dx = (uy * wz) - (uz * wy)
+    dy = (uz * wx) - (ux * wz)
+    dz = (ux * wy) - (uy * wx)
+    depth_length = (dx * dx + dy * dy + dz * dz) ** 0.5
+    if depth_length <= 0.001:
+        return None
+    dx, dy, dz = dx / depth_length, dy / depth_length, dz / depth_length
+    if dz > 0:
+        dx, dy, dz = -dx, -dy, -dz
+    return (sx, sy, sz), (ux, uy, uz), (wx, wy, wz), (dx, dy, dz), length
+
+
+def _local_offsets(point, member) -> Optional[tuple]:
+    geometry = member.get("geometry") or {}
+    coordinates = [_xyz(item) for item in geometry.get("coordinates") or []]
+    coordinates = [item for item in coordinates if item is not None]
+    if geometry.get("kind") != "segment" or len(coordinates) != 2:
+        return None
+    frame = _member_frame(coordinates[0], coordinates[1])
+    if frame is None:
+        return None
+    origin, along, across, depth, length = frame
+    rx, ry, rz = point[0] - origin[0], point[1] - origin[1], point[2] - origin[2]
+    return (
+        (rx * along[0]) + (ry * along[1]) + (rz * along[2]),
+        (rx * across[0]) + (ry * across[1]) + (rz * across[2]),
+        (rx * depth[0]) + (ry * depth[1]) + (rz * depth[2]),
+        length,
+    )
+
+
+def point_in_member(point, member, tolerance: float = BEARING_TOLERANCE) -> bool:
+    """True when a supplied point lies in the member's supplied envelope."""
+    located = _xyz(point)
+    if located is None or not isinstance(member, Mapping):
+        return False
+    geometry = member.get("geometry") or {}
+    coordinates = [_xyz(item) for item in geometry.get("coordinates") or []]
+    coordinates = [item for item in coordinates if item is not None]
+    if len(coordinates) < 2:
+        return False
+    if geometry.get("kind") != "segment" or len(coordinates) != 2:
+        return _point_in_polyline_member(located, coordinates, member, tolerance)
+    local = _local_offsets(located, member)
+    if local is None:
+        return False
+    along, across, into, length = local
+    width = member.get("section_width")
+    depth = member.get("section_depth")
+    if not is_number(width) or not is_number(depth) or width <= 0 or depth <= 0:
+        return _distance_to_segment(located, coordinates[0], coordinates[1]) <= tolerance
+    if along < -tolerance or along > length + tolerance:
+        return False
+    if abs(across) > (float(width) / 2.0) + tolerance:
+        return False
+    if member.get("orientation") == "top_edge":
+        return -tolerance <= into <= float(depth) + tolerance
+    return abs(into) <= (float(depth) / 2.0) + tolerance
+
+
+def bearing_depth_exceeded(point, member, bearing_depth, tolerance: float = BEARING_TOLERANCE) -> bool:
+    """True when a supplied point is deeper into the supporter than the supplied depth."""
+    if not is_number(bearing_depth) or bearing_depth <= 0:
+        return False
+    located = _xyz(point)
+    local = _local_offsets(located, member) if located is not None else None
+    if local is None:
+        return False
+    into = local[2]
+    used = into if member.get("orientation") == "top_edge" else abs(into)
+    return used > float(bearing_depth) + tolerance
+
+
+def _point_in_polyline_member(point, coordinates, member, tolerance: float) -> bool:
+    nearest = min(
+        _distance_to_segment(point, start, end)
+        for start, end in zip(coordinates, coordinates[1:])
+    )
+    thickness = float(member["thickness"]) if is_number(member.get("thickness")) else 0.0
+    if nearest <= max(tolerance, thickness + tolerance):
+        return True
+    orientation = member.get("orientation")
+    if thickness <= 0 or orientation not in {"top_edge", "bottom_edge"}:
+        return False
+    heights = [item[2] for item in coordinates]
+    if orientation == "bottom_edge":
+        plane = min(heights)
+        if not (plane - tolerance <= point[2] <= plane + thickness + tolerance):
+            return False
+    else:
+        plane = max(heights)
+        if not (plane - thickness - tolerance <= point[2] <= plane + tolerance):
+            return False
+    ring = [item for item in coordinates if abs(item[2] - plane) <= tolerance]
+    return _point_in_polygon(point[0], point[1], ring)
+
+
+def _point_in_polygon(x_value: float, y_value: float, ring) -> bool:
+    if len(ring) < 3:
+        return False
+    inside = False
+    previous = ring[-1]
+    for current in ring:
+        if abs(current[0] - previous[0]) < 1e-9 and abs(current[1] - previous[1]) < 1e-9:
+            previous = current
+            continue
+        crosses = (current[1] > y_value) != (previous[1] > y_value)
+        if crosses:
+            edge = (previous[0] - current[0]) * (y_value - current[1]) / (previous[1] - current[1]) + current[0]
+            if x_value < edge:
+                inside = not inside
+        previous = current
+    return inside
+
+
+def bearing_surface_points(relationship) -> list:
+    surface = (relationship or {}).get("bearing_surface") or {}
+    return [point for point in surface.get("coordinates") or [] if _xyz(point) is not None]

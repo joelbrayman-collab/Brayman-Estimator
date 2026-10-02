@@ -11,6 +11,7 @@ from typing import Any, Mapping, Optional
 
 from app.services.construction_model.model import (
     AXES,
+    BEARING_KINDS,
     DOCUMENT_STATUS_TEXT,
     GEOMETRY_KINDS,
     IMPERIAL_UNITS,
@@ -24,10 +25,13 @@ from app.services.construction_model.model import (
     RELATIONSHIP_KINDS,
     STRUCTURE_CLASS_DECK,
     SUPPORT_KINDS,
+    bearing_depth_exceeded,
+    bearing_surface_points,
     coordinate_axis,
     format_measure,
     is_number,
     plain_text,
+    point_in_member,
 )
 
 ENGINE_VERSION = "cm-1"
@@ -140,6 +144,7 @@ def assess_construction_model(payload: Any) -> ConstructionModelAssessment:
     level_ids = {item["id"] for item in levels}
     optional, optional_issues = _optional(payload, known_ids, level_ids)
     issues.extend(optional_issues)
+    issues.extend(_bearing_conflicts(members, supports, optional.get("relationships") or []))
     if measurement_system is not None:
         issues.extend(_unit_issues(optional.get("dimensions") or [], measurement_system))
         issues.extend(_apply_member_lengths(members, measurement_system))
@@ -681,6 +686,88 @@ def _optional(payload: Mapping, known_ids: set, level_ids: set):
     return stored, issues
 
 
+def _relationship_facts(item: Mapping, identifier: str):
+    recorded = {}
+    issues = []
+    provenance = item.get("provenance", None)
+    if provenance is not None:
+        recorded_provenance, provenance_issue = _provenance(
+            provenance,
+            f"relationships[{identifier}].provenance",
+            f"relationship {identifier}",
+        )
+        if provenance_issue is not None:
+            issues.append(provenance_issue)
+        else:
+            recorded["provenance"] = recorded_provenance
+    if item.get("uncertainty") is not None:
+        text = plain_text(item.get("uncertainty"))
+        if text is None:
+            issues.append(
+                _need(
+                    CODE_MISSING_FACT,
+                    f"relationships[{identifier}].uncertainty",
+                    f"The uncertainty of relationship {identifier}",
+                )
+            )
+        else:
+            recorded["uncertainty"] = text
+    for key in ("bearing_surface", "bearing_location", "relative_geometry"):
+        if item.get(key) is None:
+            continue
+        geometry, geometry_issue = _geometry(
+            item.get(key),
+            f"relationships[{identifier}].{key}",
+            f"the {key.replace('_', ' ')} of relationship {identifier}",
+        )
+        if geometry_issue is not None:
+            issues.append(geometry_issue)
+            continue
+        recorded[key] = geometry
+    if item.get("bearing_depth") is not None:
+        depth = item.get("bearing_depth")
+        if not is_number(depth) or depth < 0:
+            issues.append(
+                _need(
+                    CODE_MISSING_FACT,
+                    f"relationships[{identifier}].bearing_depth",
+                    f"The bearing depth of relationship {identifier}",
+                )
+            )
+        else:
+            recorded["bearing_depth"] = depth
+    return recorded, issues
+
+
+def _bearing_conflicts(members: list, supports: list, relationships: list) -> list:
+    catalog = {item["id"]: item for item in members}
+    catalog.update({item["id"]: item for item in supports})
+    issues = []
+    for item in relationships:
+        points = list(bearing_surface_points(item))
+        location = item.get("bearing_location") or {}
+        points.extend(point for point in location.get("coordinates") or [] if point)
+        if not points:
+            continue
+        if item.get("kind") not in BEARING_KINDS and item.get("kind") not in RELATIONSHIP_KINDS:
+            continue
+        source = catalog.get(item.get("from_id"))
+        target = catalog.get(item.get("to_id"))
+        if source is None or target is None:
+            continue
+        field = f"relationships[{item['id']}].bearing_surface"
+        fact = f"Bearing geometry that lies on both {item['from_id']} and {item['to_id']}"
+        for point in points:
+            on_source = point_in_member(point, source)
+            on_target = point_in_member(point, target)
+            too_deep = bearing_depth_exceeded(point, source, item.get("bearing_depth"))
+            if on_source and on_target and not too_deep:
+                continue
+            issues.append(_need(CODE_CONFLICTING_GEOMETRY, field, fact))
+            break
+    return issues
+
+
 def _optional_item(collection: str, index: int, item: Any, known_ids: set, level_ids: set):
     field = f"{collection}[{index}]"
     if not isinstance(item, Mapping):
@@ -715,6 +802,11 @@ def _optional_item(collection: str, index: int, item: Any, known_ids: set, level
         if issues:
             return None, issues
         recorded.update({"kind": kind, "from_id": from_id, "to_id": to_id})
+        extra, extra_issues = _relationship_facts(item, identifier)
+        issues.extend(extra_issues)
+        if issues:
+            return None, issues
+        recorded.update(extra)
         return recorded, []
     if collection == "connections":
         participants = item.get("participant_ids")
@@ -762,6 +854,51 @@ def _optional_item(collection: str, index: int, item: Any, known_ids: set, level
                     )
                 ]
             recorded["quantity"] = item["quantity"]
+        for key in ("geometry", "fastener_locations"):
+            if item.get(key) is None:
+                continue
+            geometry, geometry_issue = _geometry(
+                item.get(key),
+                f"connections[{identifier}].{key}",
+                f"the {key.replace('_', ' ')} of connection {identifier}",
+            )
+            if geometry_issue is not None:
+                return None, [geometry_issue]
+            recorded[key] = geometry
+        for key in ("bolt_diameter", "bolt_count", "bracket_width", "bracket_depth"):
+            if item.get(key) is None:
+                continue
+            if not is_number(item.get(key)) or item.get(key) < 0:
+                return None, [
+                    _need(
+                        CODE_MISSING_FACT,
+                        f"connections[{identifier}].{key}",
+                        f"A {key.replace('_', ' ')} for connection {identifier}",
+                    )
+                ]
+            recorded[key] = item[key]
+        if item.get("orientation") is not None:
+            orientation = plain_text(item.get("orientation"))
+            if orientation is None:
+                return None, [
+                    _need(
+                        CODE_MISSING_FACT,
+                        f"connections[{identifier}].orientation",
+                        f"An orientation for connection {identifier}",
+                    )
+                ]
+            recorded["orientation"] = orientation
+        if item.get("uncertainty") is not None:
+            text = plain_text(item.get("uncertainty"))
+            if text is None:
+                return None, [
+                    _need(
+                        CODE_MISSING_FACT,
+                        f"connections[{identifier}].uncertainty",
+                        f"The uncertainty of connection {identifier}",
+                    )
+                ]
+            recorded["uncertainty"] = text
         provenance = item.get("provenance", None)
         if provenance is not None:
             recorded_provenance, provenance_issue = _provenance(

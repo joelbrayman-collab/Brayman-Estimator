@@ -310,9 +310,7 @@ def _stairs():
             )
         )
     for index in range(1, 6):
-        nose = -11 * index
-        back = nose + 11
-        z_in = 42 - (7 * index)
+        y_front, y_back, z_seat = _tread_seat(index)
         members.append(
             _member(
                 f"tread-{index}",
@@ -320,12 +318,12 @@ def _stairs():
                 {
                     "kind": "polyline",
                     "coordinates": [
-                        _point(54, nose, z_in),
-                        _point(90, nose, z_in),
-                        _point(90, back, z_in),
-                        _point(54, back, z_in),
-                        _point(54, back, z_in - 7),
-                        _point(90, back, z_in - 7),
+                        _point(54, y_front - 1, z_seat),
+                        _point(90, y_front - 1, z_seat),
+                        _point(90, y_back, z_seat),
+                        _point(54, y_back, z_seat),
+                        _point(54, y_back, z_seat + 7),
+                        _point(90, y_back, z_seat + 7),
                     ],
                 },
                 "2x6",
@@ -333,11 +331,18 @@ def _stairs():
                 2,
                 6,
                 length=3,
-                orientation="top_edge",
+                orientation="bottom_edge",
                 thickness_in=2,
             )
         )
     return members
+
+
+def _tread_seat(index: int):
+    """Fixture-supplied seat. The drawing engine does not calculate this."""
+    y_front = -11 * index
+    z_seat = 42.0 * (55.0 + y_front) / 55.0
+    return y_front, y_front + 11, z_seat
 
 
 def _relationships(joist_xs):
@@ -375,6 +380,16 @@ def _relationships(joist_xs):
             }
         )
         next_id += 1
+        if joist_index == 1:
+            records.append(
+                {
+                    "id": f"rel-{next_id}",
+                    "kind": "supports",
+                    "from_id": "joist-1",
+                    "to_id": "deck-3",
+                }
+            )
+        next_id += 1
     for tread in range(1, 6):
         records.append(
             {
@@ -386,6 +401,44 @@ def _relationships(joist_xs):
         )
         next_id += 1
     records.append({"id": f"rel-{next_id}", "kind": "protects", "from_id": "guard-front-a", "to_id": "deck-1"})
+    records.extend(_bearing_relationships())
+    return records
+
+
+def _bearing_relationships():
+    records = [
+        {
+            "id": "rel-bear-post-1-beam-front",
+            "kind": "bears_on",
+            "from_id": "post-1",
+            "to_id": "beam-front",
+            "bearing_surface": _segment(_point(12, 12, 23), _point(15, 12, 23)),
+            "bearing_location": {"kind": "point", "coordinates": [_point(13.5, 12, 23)]},
+            "bearing_depth": 0,
+            "provenance": dict(_PROVENANCE),
+        }
+    ]
+    for stringer_index, x_in in enumerate((54, 72, 90), start=1):
+        for tread in range(1, 6):
+            y_front, y_back, z_seat = _tread_seat(tread)
+            records.append(
+                {
+                    "id": f"rel-bear-stringer-{stringer_index}-tread-{tread}",
+                    "kind": "bears_on",
+                    "from_id": f"stringer-{stringer_index}",
+                    "to_id": f"tread-{tread}",
+                    "bearing_surface": _segment(
+                        _point(x_in, y_front, z_seat),
+                        _point(x_in, y_back, z_seat),
+                    ),
+                    "bearing_location": {
+                        "kind": "point",
+                        "coordinates": [_point(x_in, (y_front + y_back) / 2.0, z_seat)],
+                    },
+                    "bearing_depth": _inch(8.4),
+                    "provenance": dict(_PROVENANCE),
+                }
+            )
     return records
 
 
@@ -480,15 +533,15 @@ def detail_requests() -> list:
         {
             "id": "post-beam",
             "view_type": "front_elevation",
-            "element_ids": ["post-1", "beam-front"],
-            "requires": ["connection"],
+            "relationship_id": "rel-bear-post-1-beam-front",
+            "requires": ["connection", "bearing"],
             "extent": 1,
         },
         {
             "id": "stringer-tread",
             "view_type": "side_elevation",
-            "element_ids": ["stringer-2", "tread-3"],
-            "requires": ["connection"],
+            "relationship_id": "rel-bear-stringer-2-tread-3",
+            "requires": ["connection", "bearing"],
             "extent": 1,
         },
         {

@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
-| Updated | 2026-10-01 |
+| Updated | 2026-10-02 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — Construction relationships and bearing (2026-10-02)
+
+| Field | Content |
+|-------|---------|
+| Slice | Construction Model slice 11. Construction relationships and connection geometry. |
+| Product status at capture | **IMPLEMENTED / TESTED**. Not deployed. The drawing set stays **OPEN / NOT COMPLETE**. The stringer/tread and post/beam details on the generic fixture show the supplied bearing. The whole set is not a crew set. |
+| 1. What new contractor capability exists? | A drawing can show a supplied bearing between two members, such as a stringer and a tread or a post and a beam. A connection stays a note when only the connector name and fasteners were supplied. |
+| 2. When would the contractor use it? | When reading a stair, a post-and-beam detail, a section, or a relationship line on the construction schedule. |
+| 3. What workflow will the final Manual need to teach? | The bearing comes from the construction model. If the stated bearing does not sit on both members, the drawing is refused. A missing bearing or a missing connector shape is named. It is not drawn as a guess. |
+| 4. What contractor-facing terms must be used? | Bears on. Supports. Bearing. Connection. You need to provide this information. |
+| 5. What screenshots / Print examples will eventually be needed? | An 11×17 stair with the seats, a stringer-and-tread detail, and a post-and-beam detail. Not captured here as a finished example. |
+| 6. What warnings / validation distinctions need explanation? | A relationship is stored only when it is supplied. Members that happen to be near each other are not joined. A product name does not become a connector shape. Uncertainty on a relationship stays uncertainty. The schedule is not an estimate. |
+| 7. Desktop / iPhone / Print relevance | Print on 11×17. No screen was added. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
 
 ### MANUAL IMPACT — Construction details and schedules (2026-10-02)
 

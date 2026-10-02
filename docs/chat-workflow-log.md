@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-02 — Construction relationships and bearing
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-02 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 11 — CONSTRUCTION RELATIONSHIPS + CONNECTION GEOMETRY 2 OCT 2026 |
+| Objective | Store explicit construction relationships and supplied bearing on the Construction Model, and project them on the stair, section, detail, and schedule. |
+| Business decision | A carpenter must be able to see a stringer bearing a tread and a post bearing a beam from the model. A missing or contradictory fact is named. It is not repaired. |
+| Architectural decision | Relationships stay on the one model. Kinds are supports, protects, bears_on, connects_to, and fastened_to. Proximity does not create one. A contradictory bearing refuses the model and does not move the members. Connection geometry is separate from connector metadata. A product name does not become a shape. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Recall the three Construction Model rows in the V1 completion register. Implement generic relationships and bearing on the complete deck fixture. Do not patch Bushel. Do not invent a seat or a connector. Run focused tests, Construction Model regression, PGE regression, then the full suite. One commit if the gates pass. Push. Do not deploy. |
+| Files expected to change | Construction Model service, the complete deck fixture, relationship tests, drawing standard, build-out register, V1 completion register bearing row, current-state, session handoff, roadmap, architecture index, this log, and the manual impact log. |
+| Files prohibited from changing | Bushel case files, Supplier Pro implementation, PGE, schema, and deployment. |
+| Implementation result | Implemented. The fixture stair and stringer detail show the supplied seat. The post-and-beam detail shows the supplied contact and leaves the connector as metadata. Section A uses the relationships already in that cut. The bearing row in section 2.1 is COMPLETE for its stated criteria. The drawing set stays OPEN. |
+| Tests | Focused relationship, deck fixture, and buildable-detail tests: 28 passed, 3 warnings, 1.76s. Construction Model regression: 120 passed, 10 warnings, 3.56s. PGE regression: 61 passed, 79 warnings, 18.56s. Full suite `./venv/bin/python -m pytest -q`: 2087 passed, 6789 warnings, 910.86s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The whole drawing set is not a crew set. The gate connection is not supplied. Section A does not cut the stair. Connector geometry is absent on the fixture, so none is drawn. One-model and no-guessing stay PARTIAL. |
+| Next approved step | Not written here. The drawing set remains open. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. |
+
 ### 2026-10-02 — V1 requirement recall
 
 | Field | Content |

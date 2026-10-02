@@ -44,6 +44,7 @@ from app.services.construction_model.projection import (
 from app.services.construction_model.views import (
     group_connection_rows,
     group_member_rows,
+    group_relationship_rows,
     group_support_rows,
     project_construction_wave,
 )
@@ -789,7 +790,7 @@ _FILLED = {
 }
 
 
-def _draw_element(sheet, element, origin_u, origin_v, points_per_unit, x0, y0) -> None:
+def _draw_element(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, seen_bearings=None) -> None:
     geometry = element.get("profile_geometry") or element["projected_geometry"]
     role = element.get("role") or element.get("kind") or ""
     sheet.setLineWidth(_LINE_WEIGHT.get(role, 0.9))
@@ -818,6 +819,38 @@ def _draw_element(sheet, element, origin_u, origin_v, points_per_unit, x0, y0) -
         sheet.setFillColor(white)
     sheet.drawPath(path, stroke=1, fill=1 if filled else 0)
     sheet.setFillColor(_NAVY)
+    _draw_bearing(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, seen_bearings)
+
+
+def _draw_bearing(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, seen_labels=None) -> None:
+    lines = element.get("bearing_lines") or []
+    labels = element.get("bearing_labels") or []
+    if not lines:
+        return
+    sheet.setStrokeColor(_NAVY)
+    sheet.setFillColor(_NAVY)
+    sheet.setLineWidth(1.8)
+    for index, line in enumerate(lines):
+        placed = [
+            (
+                x0 + (point[0] - origin_u) * points_per_unit,
+                y0 + (point[1] - origin_v) * points_per_unit,
+            )
+            for point in line
+        ]
+        if len(placed) < 2:
+            continue
+        sheet.line(placed[0][0], placed[0][1], placed[-1][0], placed[-1][1])
+        if index >= len(labels):
+            continue
+        label = f"BEARING {labels[index]}"
+        key = (round(placed[0][0], 0), round(placed[0][1], 0), label)
+        if seen_labels is not None and key in seen_labels:
+            continue
+        if seen_labels is not None:
+            seen_labels.add(key)
+        sheet.setFont("Helvetica", 7)
+        sheet.drawString(placed[0][0], placed[0][1] + 4, label)
 
 
 def _manifest(model, views, sheet_definition, points_per_unit: float, pdf_bytes: bytes) -> dict:
@@ -1222,6 +1255,45 @@ def _connection_note(model, elements) -> str:
     return "CONNECTION " + "; ".join(notes)
 
 
+def _relationship_note(model, elements) -> str:
+    identifiers = {element["id"] for element in elements}
+    roles = {}
+    for collection in ("members", "supports"):
+        for item in model.get(collection) or []:
+            roles[item["id"]] = item.get("role") or item.get("kind")
+    seen = []
+    bearing_pairs = set()
+    for item in model.get("relationships") or []:
+        if item.get("from_id") not in identifiers or item.get("to_id") not in identifiers:
+            continue
+        kind = item.get("kind")
+        if kind not in {"supports", "bears_on", "connects_to", "fastened_to"}:
+            continue
+        pair = (roles.get(item["from_id"]), kind, roles.get(item["to_id"]))
+        if None in pair or pair in seen:
+            continue
+        seen.append(pair)
+        if kind == "bears_on" and item.get("bearing_surface"):
+            bearing_pairs.add((pair[0], pair[2]))
+    kept = [
+        pair
+        for pair in seen
+        if not (pair[1] == "supports" and (pair[0], pair[2]) in bearing_pairs)
+    ]
+    order = ["pier", "footing", "post", "beam", "joist", "rim", "decking", "stringer", "tread"]
+
+    def rank(pair):
+        return (
+            order.index(pair[0]) if pair[0] in order else 99,
+            order.index(pair[2]) if pair[2] in order else 99,
+        )
+
+    kept.sort(key=rank)
+    if not kept:
+        return ""
+    return "RELATIONSHIP " + "; ".join(f"{source} {kind.replace('_', ' ')} {target}" for source, kind, target in kept)
+
+
 def _fact_text(key, value, model) -> str:
     label = key.replace("_", " ")
     if key in _INCH_FACTS and model.get("measurement_system") == "imperial" and isinstance(value, (int, float)):
@@ -1259,7 +1331,20 @@ def _schedule_lines(schedule) -> list:
         lines.append(
             (
                 "Helvetica",
-                f"{group.get('connection_type') or ''}    {group.get('members') or ''}    {group.get('connector') or ''}    {fastener}    {group['quantity']}    {group.get('construction_status') or ''}",
+                f"{group.get('connection_type') or ''}    {group.get('members') or ''}    {group.get('connector') or ''}    {fastener}    {group['quantity']}    {group.get('construction_status') or ''}    {group.get('geometry') or 'metadata only'}",
+            )
+        )
+    lines.append(("Helvetica-Bold", "RELATIONSHIP"))
+    lines.append(("Helvetica-Bold", "Kind    From    To    Bearing    Connection    Quantity"))
+    for group in group_relationship_rows(
+        getattr(schedule, "relationships", ()) or (),
+        members_by_id,
+        getattr(schedule, "connections", ()) or (),
+    ):
+        lines.append(
+            (
+                "Helvetica",
+                f"{group['kind']}    {group['from_role']}    {group['to_role']}    bearing {group['bearing']}    {group['connection']}    {group['quantity']}",
             )
         )
     lines.append(("Helvetica-Bold", "MATERIAL / COMPONENT SCHEDULE"))
@@ -1460,6 +1545,10 @@ def _paint_read_view(
     elif view.view_kind == "detail":
         sheet.setFont("Helvetica", 8)
         sheet.drawString(x0, y0 + 8, "You need to provide this information. The connection for this detail.")
+    relationship = _relationship_note(model, view.elements)
+    if relationship:
+        sheet.setFont("Helvetica", 8)
+        sheet.drawString(x0, y0 + 20, relationship[:220])
     if view.facts and view.view_kind != "detail":
         sheet.setFont("Helvetica", 8)
         fact_line = "  ".join(_fact_text(key, value, model) for key, value in view.facts)
@@ -1479,8 +1568,9 @@ def _paint_read_view(
     place_x = x0 + _VIEW_PAD + (inner_w - drawn_w) / 2.0
     place_y = y0 + _VIEW_PAD + (inner_h - drawn_h) / 2.0
     sheet.setStrokeColor(_NAVY)
+    seen_bearings = set()
     for element in view.elements:
-        _draw_element(sheet, element, origin_u, origin_v, points_per_unit, place_x, place_y)
+        _draw_element(sheet, element, origin_u, origin_v, points_per_unit, place_x, place_y, seen_bearings)
     if view.uncertainty:
         sheet.setFont("Helvetica", 8)
         note = "; ".join(item["note"] for item in view.uncertainty)

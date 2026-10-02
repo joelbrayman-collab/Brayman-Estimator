@@ -14,7 +14,14 @@ from app.services.construction_model.completeness import (
     assess_construction_model,
 )
 from app.services.construction_model.dimensions import resolve_dimension_chains
-from app.services.construction_model.model import AXES, is_number, missing_axes, plain_text, view_profile
+from app.services.construction_model.model import (
+    AXES,
+    format_measure,
+    is_number,
+    missing_axes,
+    plain_text,
+    view_profile,
+)
 from app.services.construction_model.projection import (
     VIEW_FRONT_ELEVATION,
     VIEW_PLAN,
@@ -91,6 +98,7 @@ class ScheduleRead:
     dimension_chains: tuple = ()
     connections: tuple = ()
     measurement_system: str = "imperial"
+    relationships: tuple = ()
 
     def to_dict(self) -> dict:
         return {
@@ -105,6 +113,7 @@ class ScheduleRead:
             "dimension_chains": list(self.dimension_chains),
             "connections": list(self.connections),
             "measurement_system": self.measurement_system,
+            "relationships": list(self.relationships),
         }
 
 
@@ -204,6 +213,7 @@ def _stair_view(model: Mapping[str, Any], result: Mapping[str, Any]) -> ReadView
     if issues:
         return ReadView(False, "stair", result["id"], tuple(issues), tuple(uncertainty), (), (), "STAIR")
     facts = tuple((key, result[key]) for key, _fact in STAIR_FACTS)
+    _apply_bearings(model, elements, "y", "z")
     return ReadView(
         True,
         "stair",
@@ -314,6 +324,7 @@ def _section_view(model: Mapping[str, Any], definition: Any) -> ReadView:
     if issues and not elements:
         return _empty("section", identifier, tuple(issues), model)
     uncertainty = _notes(model, [element["id"] for element in elements])
+    _apply_bearings(model, elements, horizontal, vertical)
     return ReadView(
         True,
         "section",
@@ -335,7 +346,22 @@ def _detail_view(model: Mapping[str, Any], definition: Any) -> ReadView:
     identifier = plain_text(definition.get("id")) if isinstance(definition, Mapping) else None
     if not isinstance(definition, Mapping) or identifier is None:
         return _empty("detail", identifier, (_need("MISSING_DETAIL_FACT", "detail.id", "The detail id"),), model)
-    raw_ids = definition.get("element_ids")
+    relationship_id = plain_text(definition.get("relationship_id"))
+    if relationship_id:
+        relationship = next(
+            (item for item in model.get("relationships") or [] if item.get("id") == relationship_id),
+            None,
+        )
+        if relationship is None:
+            return _empty(
+                "detail",
+                identifier,
+                (_need("MISSING_DETAIL_FACT", "detail.relationship_id", f"A relationship for detail {identifier}"),),
+                model,
+            )
+        raw_ids = [relationship.get("from_id"), relationship.get("to_id")]
+    else:
+        raw_ids = definition.get("element_ids")
     if not isinstance(raw_ids, list) or not raw_ids:
         return _empty(
             "detail",
@@ -402,6 +428,7 @@ def _detail_view(model: Mapping[str, Any], definition: Any) -> ReadView:
                 model,
             )
         projected = _clip_detail(projected, float(extent))
+        _apply_bearings(model, projected, horizontal, vertical)
         if not projected:
             return _empty(
                 "detail",
@@ -415,6 +442,8 @@ def _detail_view(model: Mapping[str, Any], definition: Any) -> ReadView:
                 ),
                 model,
             )
+    if "extent" not in definition:
+        _apply_bearings(model, projected, horizontal, vertical)
     for element in projected:
         element["annotate_material"] = True
     uncertainty = _notes(model, [element["id"] for element in projected])
@@ -503,11 +532,18 @@ def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
         tuple(resolve_dimension_chains(model)),
         tuple(dict(item) for item in model.get("connections") or []),
         model.get("measurement_system") or "imperial",
+        tuple(dict(item) for item in model.get("relationships") or []),
     )
 
 
 def _missing_requirement(model: Mapping[str, Any], requirement: Optional[str], element_ids: Sequence[str]) -> Optional[str]:
     ids = set(element_ids)
+    if requirement == "bearing":
+        for item in model.get("relationships") or []:
+            ends = {item.get("from_id"), item.get("to_id")}
+            if ends <= ids and item.get("bearing_surface"):
+                return None
+        return "The bearing surface for this detail"
     if requirement == "connection":
         if _connection_hits(model, ids):
             return None
@@ -636,7 +672,20 @@ def _index(model: Mapping[str, Any]) -> dict:
 
 def _notes(model: Mapping[str, Any], subject_ids: Sequence[str]) -> list:
     wanted = set(subject_ids)
-    return [dict(note) for note in model.get("uncertainty") or [] if note.get("subject_id") in wanted]
+    notes = [dict(note) for note in model.get("uncertainty") or [] if note.get("subject_id") in wanted]
+    for item in model.get("relationships") or []:
+        if item.get("from_id") not in wanted or item.get("to_id") not in wanted:
+            continue
+        text = plain_text(item.get("uncertainty"))
+        if text:
+            notes.append({"code": "RELATIONSHIP", "subject_id": item["id"], "note": text})
+    for item in model.get("connections") or []:
+        if not wanted.intersection(item.get("participant_ids") or []):
+            continue
+        text = plain_text(item.get("uncertainty"))
+        if text:
+            notes.append({"code": "CONNECTION", "subject_id": item["id"], "note": text})
+    return notes
 
 
 def _owned(definition: Any, kind: str):
@@ -805,10 +854,73 @@ def group_connection_rows(connections, members_by_id):
                 "quantity": len(items),
                 "supplied_quantity": first.get("quantity"),
                 "construction_status": first.get("construction_status") or "",
+                "geometry": "geometry supplied" if _connection_has_geometry(first) else "metadata only",
                 "connection_ids": tuple(item.get("id") for item in items),
             }
         )
     return tuple(grouped)
+
+
+def group_relationship_rows(relationships, members_by_id, connections):
+    """Group supplied relationships. Bearing and connection stay as supplied."""
+    groups = {}
+    order = []
+    for item in relationships:
+        source = members_by_id.get(item.get("from_id")) or {}
+        target = members_by_id.get(item.get("to_id")) or {}
+        bearing = "supplied" if item.get("bearing_surface") else "not supplied"
+        key = (
+            item.get("kind") or "",
+            source.get("role") or source.get("kind") or item.get("from_id") or "",
+            target.get("role") or target.get("kind") or item.get("to_id") or "",
+            bearing,
+            _relationship_connection_status(item, connections),
+        )
+        if key not in groups:
+            groups[key] = 0
+            order.append(key)
+        groups[key] += 1
+    grouped = []
+    for key in order:
+        grouped.append(
+            {
+                "kind": key[0],
+                "from_role": key[1],
+                "to_role": key[2],
+                "bearing": key[3],
+                "connection": key[4],
+                "quantity": groups[key],
+            }
+        )
+    return tuple(grouped)
+
+
+def _relationship_connection_status(relationship, connections) -> str:
+    ends = {relationship.get("from_id"), relationship.get("to_id")}
+    matched = [
+        item
+        for item in connections or []
+        if ends <= set(item.get("participant_ids") or [])
+    ]
+    if not matched:
+        return "none"
+    if any(_connection_has_geometry(item) for item in matched):
+        return "geometry supplied"
+    return "metadata only"
+
+
+def _connection_has_geometry(item) -> bool:
+    return any(
+        item.get(key) is not None
+        for key in (
+            "geometry",
+            "fastener_locations",
+            "bolt_diameter",
+            "bolt_count",
+            "bracket_width",
+            "bracket_depth",
+        )
+    )
 
 
 def _length_label(row, measurement_system) -> str:
@@ -1038,3 +1150,141 @@ def _clip_polygon(points, u0, v0, u1, v1):
     clipped = vertical(clipped, u1, False)
     clipped = horizontal(clipped, v0, True)
     return horizontal(clipped, v1, False)
+
+
+def _apply_bearings(model, elements, horizontal, vertical) -> None:
+    """Project a supplied bearing onto the supporter. Missing geometry draws nothing."""
+    by_id = {element["id"]: element for element in elements}
+    system = model.get("measurement_system") or "imperial"
+    for relationship in model.get("relationships") or []:
+        surface = relationship.get("bearing_surface")
+        if not surface or relationship.get("kind") not in {"bears_on", "supports"}:
+            continue
+        if relationship.get("from_id") not in by_id or relationship.get("to_id") not in by_id:
+            continue
+        supporter = by_id.get(relationship.get("from_id"))
+        if supporter is None:
+            continue
+        located = []
+        for point in surface.get("coordinates") or []:
+            if is_number(point.get(horizontal)) and is_number(point.get(vertical)):
+                located.append((float(point[horizontal]), float(point[vertical])))
+        if len(located) < 2:
+            continue
+        supporter.setdefault("bearing_lines", []).append(located)
+        span = _supplied_span(surface.get("coordinates") or [])
+        if span is not None:
+            supporter.setdefault("bearing_labels", []).append(format_measure(span, system, "ft" if system == "imperial" else "m"))
+        heights = [point[1] for point in located]
+        if max(heights) - min(heights) > 0.05:
+            continue
+        profile = supporter.get("profile_geometry")
+        if profile is None:
+            continue
+        ring = [(point["u"], point["v"]) for point in profile.get("coordinates") or []]
+        if len(ring) >= 2 and abs(ring[0][0] - ring[-1][0]) < 1e-8 and abs(ring[0][1] - ring[-1][1]) < 1e-8:
+            ring = ring[:-1]
+        notched = _notch_ring(ring, min(point[0] for point in located), max(point[0] for point in located), sum(heights) / len(heights))
+        if notched is None:
+            continue
+        closed = notched + [notched[0]]
+        supporter["profile_geometry"] = {
+            "kind": "polyline",
+            "coordinates": [{"u": point[0], "v": point[1]} for point in closed],
+        }
+
+
+def _supplied_span(coordinates) -> Optional[float]:
+    if len(coordinates) < 2:
+        return None
+    start, end = coordinates[0], coordinates[-1]
+    if not all(is_number(start.get(axis)) and is_number(end.get(axis)) for axis in AXES):
+        return None
+    return sum((float(end[axis]) - float(start[axis])) ** 2 for axis in AXES) ** 0.5
+
+
+def _notch_ring(ring, u0, u1, v_seat):
+    """Remove the profile above a supplied horizontal bearing. No bearing, no cut."""
+    if u1 - u0 < 1e-6 or len(ring) < 3:
+        return None
+
+    def inside(point) -> bool:
+        return (u0 + 1e-7) < point[0] < (u1 - 1e-7) and point[1] > v_seat + 1e-7
+
+    def hits_on(start, end):
+        found = []
+        across = end[0] - start[0]
+        rise = end[1] - start[1]
+        if abs(across) > 1e-12:
+            for edge in (u0, u1):
+                fraction = (edge - start[0]) / across
+                if 1e-8 < fraction < 1.0 - 1e-8:
+                    height = start[1] + (fraction * rise)
+                    if height >= v_seat - 1e-7:
+                        found.append((fraction, (edge, height)))
+        if abs(rise) > 1e-12:
+            fraction = (v_seat - start[1]) / rise
+            if 1e-8 < fraction < 1.0 - 1e-8:
+                position = start[0] + (fraction * across)
+                if u0 - 1e-7 <= position <= u1 + 1e-7:
+                    found.append((fraction, (position, v_seat)))
+        found.sort(key=lambda item: item[0])
+        unique = []
+        for fraction, point in found:
+            if unique and abs(fraction - unique[-1][0]) < 1e-8:
+                continue
+            unique.append((fraction, point))
+        return unique
+
+    def station(point):
+        if abs(point[0] - u0) <= 1e-5 and point[1] >= v_seat - 1e-5:
+            return (0, -point[1])
+        if abs(point[1] - v_seat) <= 1e-5:
+            return (1, point[0])
+        if abs(point[0] - u1) <= 1e-5 and point[1] >= v_seat - 1e-5:
+            return (2, point[1])
+        return (1, point[0])
+
+    def seat_between(entry, exit):
+        path = [entry]
+        forward = station(entry) <= station(exit)
+        corners = [(u0, v_seat), (u1, v_seat)]
+        ordered = corners if forward else list(reversed(corners))
+        low, high = (station(entry), station(exit)) if forward else (station(exit), station(entry))
+        for corner in ordered:
+            if low < station(corner) < high and path[-1] != corner:
+                path.append(corner)
+        if path[-1] != exit:
+            path.append(exit)
+        return path
+
+    output = []
+    changed = False
+    count = len(ring)
+    for index in range(count):
+        start = ring[index]
+        end = ring[(index + 1) % count]
+        segment_hits = [point for _, point in hits_on(start, end)]
+        if not inside(start):
+            output.append(start)
+        if not inside(start) and not inside(end) and len(segment_hits) >= 2:
+            output.extend(seat_between(segment_hits[0], segment_hits[-1])[1:])
+            changed = True
+        elif not inside(start) and inside(end) and segment_hits:
+            output.append(segment_hits[0])
+            changed = True
+        elif inside(start) and not inside(end) and segment_hits:
+            output.append(segment_hits[-1])
+            changed = True
+        elif inside(start):
+            changed = True
+    cleaned = []
+    for point in output:
+        if cleaned and abs(cleaned[-1][0] - point[0]) < 1e-7 and abs(cleaned[-1][1] - point[1]) < 1e-7:
+            continue
+        cleaned.append(point)
+    if len(cleaned) >= 2 and abs(cleaned[0][0] - cleaned[-1][0]) < 1e-7 and abs(cleaned[0][1] - cleaned[-1][1]) < 1e-7:
+        cleaned.pop()
+    if not changed or len(cleaned) < 3:
+        return None
+    return cleaned

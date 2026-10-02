@@ -9,6 +9,7 @@ Slice 7 places paper-space callouts and dimension chains, and refuses a required
 Slice 8 stores deck components, including a member that is only partly known.
 Slice 9 draws a complete generic deck from that same model, one filtered view per sheet.
 Slice 10 draws a supplied rectangular profile, including a sloped member, and groups construction schedules from that same model.
+Slice 11 stores an explicit construction relationship and projects only the bearing geometry that relationship supplies.
 This package does not read or write a project, a plan record, or an estimate.
 Plan Generation stays a separate contract.
 """

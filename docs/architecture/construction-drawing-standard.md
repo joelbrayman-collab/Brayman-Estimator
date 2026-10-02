@@ -2,7 +2,7 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | Recorded product requirement. PGE-1 through PGE-6 remain closed and unchanged. Construction Model completeness, view projection, the governed 11×17 sheet, and stair, section, detail, and schedule views are **IMPLEMENTED / TESTED** as slices. Construction Model and Drawing Set remains **NOT COMPLETE**. Productization plan: [plan-generation-engine-productization.md](plan-generation-engine-productization.md). Register: [PLATFORM_BUILD_OUT_REGISTER.md](PLATFORM_BUILD_OUT_REGISTER.md). |
+| Status | Recorded product requirement. PGE-1 through PGE-6 remain closed and unchanged. Construction Model completeness, view projection, the governed 11×17 sheet, stair, section, detail, and schedule views, and the Bushel proving slice are **IMPLEMENTED / TESTED**. Construction Model and Drawing Set remains **NOT COMPLETE**. Productization plan: [plan-generation-engine-productization.md](plan-generation-engine-productization.md). Register: [PLATFORM_BUILD_OUT_REGISTER.md](PLATFORM_BUILD_OUT_REGISTER.md). |
 | Date | 2026-09-29. Architecture accepted 1 Oct 2026. This file remains the drawing authority. |
 | Authority | Joel’s visual standard for CalibraytAI construction drawings. The 1 Oct 2026 Construction Drawing Engine investigation is accepted. Presentation identity is [governed-document-and-drawing-output-standard.md](governed-document-and-drawing-output-standard.md). Engine slices are [plan-generation-engine-productization.md](plan-generation-engine-productization.md). |
 
@@ -18,7 +18,7 @@ An explanatory member view, of the kind that names a joist, beam, post, and foot
 
 ## Accepted architecture — 1 Oct 2026
 
-The Construction Drawing Engine investigation of 1 Oct 2026 is accepted. This file remains the single drawing authority. Construction Model completeness, view projection, the governed 11×17 sheet, and stair, section, detail, and schedule views are **IMPLEMENTED / TESTED**. Code: `app/services/construction_model/`. Plan, front elevation, side elevation, stair, section, and detail are projections of that one model. Schedules read the same model. The sheet layer composes them at the stated scale and adds a sheet when one page cannot hold the next view. The sheet does not scale the drawing to fill the paper. Geometry that does not fit at that scale is refused. A stair fact that is not already supplied is refused. The assessment, the projection, and the sheet write no project, plan, or estimate. Construction Model and Drawing Set remains **NOT COMPLETE** until a Bushel-class set is generated from one model and passes the printed-sheet acceptance test.
+The Construction Drawing Engine investigation of 1 Oct 2026 is accepted. This file remains the single drawing authority. Construction Model completeness, view projection, the governed 11×17 sheet, stair, section, detail, and schedule views, and the Bushel proving slice are **IMPLEMENTED / TESTED**. Code: `app/services/construction_model/`. The proving fixture is `tests/fixtures/construction_model/bushel_proving_fixture.py`. It is labeled BUSHEL PROVING FIXTURE and is not an engine default. Plan, front elevation, side elevation, stair, section, and detail are projections of that one model. Schedules read the same model. The sheet layer composes them at the stated scale and adds a sheet when one page cannot hold the next extra view. The sheet does not scale the drawing to fill the paper. Geometry that does not fit at that scale is refused. A stair fact that is not already supplied is refused. The assessment, the projection, and the sheet write no project, plan, or estimate. The 2 Oct 2026 proving slice did not pass the printed-sheet acceptance test. Construction Model and Drawing Set remains **NOT COMPLETE**.
 
 ```text
 Calibrayt Construction Model
@@ -37,6 +37,21 @@ One model produces the plan, the front elevation, the side elevation, sections, 
 A missing required construction fact is asked for in plain language: “You need to provide this information.” The person supplies the fact. The model validates. Drawing generation stays closed while a required fact is unresolved. The system does not issue a partial set that looks complete. Supplied uncertainty stays visible. Using a drawing does not clear it.
 
 The first proving set, from one model, is the foundation and pier plan, the framing plan, the decking, guard, and gate plan, the front elevation, the side elevation, the stair detail, the typical details, the dimensions, and the schedules. Pier count, joist count, stringer count, levels, and stair geometry agree in every view that shows them.
+
+## Bushel proving slice — 2 Oct 2026
+
+The proving slice is **IMPLEMENTED / TESTED**. It is not a close of this component.
+
+The fixture uses the 1 Oct 2026 decisions: 15 helical pier locations from the CT-1 coordinates, 16 joist stations and 10 stringer stations from the selected layouts, a 5.00 in stringer throat, a 12 in lower-deck walking surface, 12 D'Arcy's Way, two 5/4 × 6 boards per tread, the 37 in Veranda kit, and a 42 in clear gate. Shaft length, helix, torque, bracket height, lower post cut, baluster layout, stringer plumb cuts, upper-deck elevation, stair rise, stair run, nosing, and tread count are withheld. The fixture does not invent them.
+
+What the model can draw is the pier locations, the lower walking-surface outline, one section of that outline, and a schedule of those records. Framing, the guard and gate, the stair, and the details are refused. The generated sheets are not acceptable construction drawings.
+
+Recorded deficiencies:
+
+- A member still needs x, y, and z together. A known plan station cannot be stored while its elevation is unknown, so the joist and stringer stations stay outside the model.
+- Plan, front elevation, and side elevation remain one sheet. At 3/8 in = 1 ft the front elevation of this deck does not fit, and the whole PDF is refused.
+- The schedule prints member lengths without units, and it does not print a dimension whose subject is a level.
+- Side elevation stacks supports that share a coordinate, so the pier count is not readable there.
 
 The printed sheet is judged for geometric consistency, structural consistency, dimensional consistency, quantity consistency, revision consistency, and print consistency.
 
@@ -69,7 +84,7 @@ The path is fixed:
 
 A generic Plan Generation artifact may keep “Not a permit. Not a seal.” A project construction drawing uses its governed document status instead of treating that generic line as the project status. The project status does not certify engineering, represent a professional seal, claim municipal approval, or claim that a permit has been issued. Supplied uncertainty stays visible. Using the sheet does not clear it.
 
-Construction Model completeness, view projection, the governed 11×17 sheet, and stair, section, detail, and schedule views are **IMPLEMENTED / TESTED**. The sheet uses the stated scale and does not scale the drawing to fill the paper. A view that does not fit moves to another 11×17 sheet or is refused. PGE-2 and PGE-3 render the validated request they are given. They do not project this construction model. The stair view consumes a supplied stair result. It does not calculate rise, run, throat, nosing, stringer count, tread count, or stair width.
+Construction Model completeness, view projection, the governed 11×17 sheet, stair, section, detail, and schedule views, and the Bushel proving slice are **IMPLEMENTED / TESTED**. The sheet uses the stated scale and does not scale the drawing to fill the paper. An extra view that does not fit is refused. Plan, front elevation, and side elevation still share one sheet. A scale that misses one of those viewports refuses the whole PDF, including a schedule that would otherwise fit. PGE-2 and PGE-3 render the validated request they are given. They do not project this construction model. The stair view consumes a supplied stair result. It does not calculate rise, run, throat, nosing, stringer count, tread count, or stair width. The Bushel proving review is [reviews/2026-10-02-bushel-proving/BUSHEL-CONSTRUCTION-MODEL-REVIEW.md](reviews/2026-10-02-bushel-proving/BUSHEL-CONSTRUCTION-MODEL-REVIEW.md).
 
 The stair side profile is drawn. It uses the same rise, run, stringer spacing, and landing as the framing plan. The first proof is CT-2. The refinement is CT-2 R2. R2 draws the tread running under the riser, with a 3/4 in nosing past the riser face. The finished 11 in going and 7.60 in rise stay. The sheet shows one measurement system, imperial. It does not add a second stair calculator. Neither sheet is a general elevation generator.
 

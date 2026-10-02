@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-10-01 |
+| Updated | 2026-10-02 |
 
 ## Purpose
 
@@ -42,6 +42,32 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-10-02 — Bushel proving slice
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-02 |
+| Branch | `main` |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 5 — BUSHEL PROVING SET 2 OCT 2026 |
+| Objective | Prove the Construction Model against the governed Linda Bushel decisions. Generate a view only when the model has the facts. Refuse the rest. |
+| Business decision | The proving fixture is not an engine default and does not edit the case folder. Missing shaft length, helix, torque, bracket height, post cut, baluster layout, stringer plumb cuts, upper elevation, rise, run, nosing, and tread count are not invented. |
+| Architectural decision | One model remains the geometry store. A member still needs x, y, and z, so joist and stringer stations without an elevation stay out of the model. Plan, front elevation, and side elevation stay on one sheet. At 3/8 in = 1 ft that sheet refuses the whole PDF. |
+| Prompt template used | Joel’s 2 Oct 2026 slice 5 prompt. |
+| Approved Cursor prompt summary | Bushel proving fixture and review. No case-folder edits, no rejected J1 scripts, no take-off, no PGE edits, no external CAD, no deploy. Focused tests, construction-model regression, PGE regression, and the full suite. One commit. Push. |
+| Feature Gate | None. Authorized slice beside closed PGE. |
+| Files expected to change | The proving fixture, the proving tests, the review note, the drawing standard, the build register, architecture, current-state, session handoff, roadmap, and this log. |
+| Files prohibited from changing | The Linda Bushel case folder, Plan Generation, Contract V1, Website, schema, migrations, and generic Construction Model geometry. |
+| Implementation result | The fixture loads the governed decisions. Pier locations, the lower walking surface, one section, and a schedule are generated. Framing, guard and gate, stair, and details are refused. The sheets are not acceptable construction drawings. The component stays open. |
+| Tests | Focused proving tests 14 passed, 1 warning, 0.65s, exit 0. Construction-model regression 62 passed, 5 warnings, 1.59s, exit 0. PGE regression 49 passed, 48 warnings, 10.54s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2029 passed, 6784 warnings, 964.22s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The printed set does not meet the construction-drawing standard. A plan station cannot be stored without an elevation. The three orthographic views cannot split across sheets. |
+| Next approved step | A later slice may let a member keep a known plan station while its elevation is still missing, without inventing that elevation. |
+| Next approved prompt | None in this slice. |
+| Commit hash | The commit that contains this entry. |
+| Deployment | NOT PERFORMED. Live product SHA remains `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`. |
 
 ### 2026-10-01 — Stair, section, detail, and schedule views
 

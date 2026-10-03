@@ -531,11 +531,11 @@ def _chains():
         _chain("walking", "z", "level", ["walking-surface"], None, provenance, "front_elevation"),
         _chain("stair-rise", "z", "member_length", ["stringer-1"], "RISE", provenance, "stair"),
         _chain("stair-run", "y", "member_length", ["stringer-1"], "RUN", provenance, "stair"),
-        _chain("pier-depth", "z", "member_length", ["pier-1"], "PIER DEPTH", provenance, "detail"),
+        _chain("pier-depth", "z", "member_length", ["pier-1"], "PIER DEPTH", provenance, "side_elevation"),
         _chain("pier-spacing-y", "y", "point_to_point", ["pier-1", "pier-3"], "PIER SPACING", provenance, "plan"),
         _chain("section-height", "z", "point_to_point", ["pier-1", "deck-3"], "SECTION HEIGHT", provenance, "section"),
         _chain("guard-height", "z", "member_length", ["baluster-1"], "GUARD HEIGHT", provenance, "side_elevation"),
-        _chain("baluster-spacing", "x", "point_to_point", ["baluster-1", "baluster-2"], "BALUSTER SPACING", provenance, "detail"),
+        _chain("baluster-spacing", "x", "point_to_point", ["baluster-1", "baluster-2"], "BALUSTER SPACING", provenance, "front_elevation"),
         _chain("stair-opening", "x", "member_length", ["header-stair"], "STAIR OPENING", provenance, "plan"),
     ]
 

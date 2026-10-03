@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-03 — Construction drawing annotation layout
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-03 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 16 — DRAWING ANNOTATION LAYOUT + CONSTRUCTION READABILITY 3 OCT 2026 |
+| Objective | Move connector notes and leaders in paper space so they do not cover the construction. |
+| Business decision | No new construction facts. The notes that were sitting on the framing and the elevations move beside the members. The set is still not handed to the crew. |
+| Architectural decision | Annotations move in paper space. Coordinates, relationships, dimension values, and levels stay. A leader that would cut through another member is not drawn. GEOMETRY NOT SUPPLIED stays a note. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Recall section 2.1. Fix connector-note collisions and crowded annotation placement. Do not add members, dimensions, connections, or connector geometry. Do not modify Bushel. Do not close the drawing set unless the sheets can be read. Do not rescore V1. One commit if the gates pass. Push. Do not deploy. |
+| Files expected to change | Construction Model annotation routing and sheet drawing; the complete deck fixture dimension-chain views; annotation-layout tests; the acceptance audit; drawing standard; build-out register; current-state; session handoff; roadmap; architecture index; this log; and the manual impact log. |
+| Files prohibited from changing | Bushel case files, PGE, Contract V1, schema, and deployment. |
+| Implementation result | Implemented and tested. Connector notes sit off the members. Supplied plate geometry still draws. Metadata stays GEOMETRY NOT SUPPLIED. Pier depth and baluster spacing print from the existing chains. The drawing set stays OPEN / NOT COMPLETE. V1 is not rescored. |
+| Tests | Focused Slice 16: 6 passed, 1 warning, 30.79s, exit 0. Construction Model regression: 156 passed, 14 warnings, 174.45s, exit 0. PGE regression: 61 passed, 79 warnings, 18.21s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2123 passed, 6793 warnings, 1067.71s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Bearing words still sit at the post-to-beam joint. Blocking, a ledger, a landing, a stair guard, and connector shapes for the latch, the hanger, and the tread clip remain absent. One-model and no-guessing stay PARTIAL. The set is not a crew set. |
+| Next approved step | Not written here. Do not invent a ledger, a landing, or a commercial connector. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-02 — Complete generic construction drawing fixture
 
 | Field | Content |

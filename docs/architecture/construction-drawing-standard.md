@@ -68,6 +68,8 @@ Slice 14 draws a connector only from geometry the model supplies. The geometry s
 
 Slice 15 stores a supplied stair riser count on the stair result. The drawing prints that count. It does not calculate it from the rise, the run, or the treads. The complete deck fixture supplies the remaining post and pier bearings, a metadata-only guard connection, a metadata-only joist hanger, a metadata-only stair hanger, and dimension chains that name members already in the model. A chain that the sheet cannot place stays on the schedule and is not typed into the PDF. The fixture values stay fixture input. The set is not a crew set.
 
+Slice 16 moves annotations in paper space. It does not move a member, a relationship, a dimension value, or a level. Connector metadata sits off the member it names. Supplied connector geometry stays on the connection. A leader does not cut through another member to take a shorter path. GEOMETRY NOT SUPPLIED stays visible and does not become a shape. The set is not a crew set.
+
 The proving sheets are still not acceptable construction drawings.
 
 Remaining deficiencies:

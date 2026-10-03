@@ -27,9 +27,13 @@ from app.services.construction_model.annotations import (
     build_refusal_callouts,
     _id_key,
     _span as _identifier_span,
+    group_connector_notes,
     place_callouts,
+    place_margin_callouts,
     rectangles_overlap,
+    route_leader,
     text_size,
+    wrap_text,
 )
 from app.services.construction_model.completeness import (
     ConstructionModelIssue,
@@ -368,20 +372,24 @@ def _draw_view(
     place_y = y0 + _VIEW_PAD + (inner_h - drawn_h) / 2.0
     sheet.setStrokeColor(_NAVY)
     sheet.setLineWidth(1.1)
+    bearing_rects = []
     for element in projection.elements:
         width = 1.6 if element["element_class"] == "supports" else 1.0
         sheet.setLineWidth(width)
-        _draw_element(
-            sheet,
-            element,
-            origin_u,
-            origin_v,
-            points_per_unit,
-            place_x,
-            place_y,
+        bearing_rects.extend(
+            _draw_element(
+                sheet,
+                element,
+                origin_u,
+                origin_v,
+                points_per_unit,
+                place_x,
+                place_y,
+            )
         )
+    connector_notes = []
     if model is not None:
-        _draw_connector_overlays(
+        connector_notes = _draw_connector_overlays(
             sheet,
             model,
             projection.elements,
@@ -396,13 +404,27 @@ def _draw_view(
     obstacles = _geometry_obstacles(
         projection.elements, origin_u, origin_v, points_per_unit, place_x, place_y
     )
+    obstacles.extend(bearing_rects)
     if projection.view_type != VIEW_PLAN:
         obstacles.extend(
             _draw_level_datums(
                 sheet, projection, origin_u, origin_v, points_per_unit, place_x, place_y, x0
             )
         )
-    _annotate_frame(
+    def _plan_references(occupied):
+        return _reference_placements(
+            projection,
+            references or [],
+            origin_u,
+            origin_v,
+            points_per_unit,
+            place_x,
+            place_y,
+            (x0, y0, x1, y1),
+            occupied,
+        )
+
+    reference_marks = _annotate_frame(
         sheet,
         projection.elements,
         projection.issues,
@@ -418,17 +440,10 @@ def _draw_view(
         layout_issues,
         tag_roles,
         projection.view_type,
+        connector_notes,
+        reference_plan=_plan_references,
     )
-    _draw_sheet_references(
-        sheet,
-        projection,
-        references or [],
-        origin_u,
-        origin_v,
-        points_per_unit,
-        place_x,
-        place_y,
-    )
+    _draw_reference_marks(sheet, reference_marks or ())
 
 
 def _placed_origin(projection) -> tuple:
@@ -482,7 +497,10 @@ def _annotate_frame(
     layout_issues,
     tag_roles=None,
     view_name=None,
-) -> None:
+    connector_notes=None,
+    margin_notes=None,
+    reference_plan=None,
+) -> list:
     occupied = list(obstacles)
     if model is not None and axes is not None:
         occupied.extend(
@@ -502,6 +520,10 @@ def _annotate_frame(
                 view_name,
             )
         )
+    marks = []
+    if reference_plan is not None:
+        marks = reference_plan(occupied)
+        occupied.extend(rect for mark in marks for rect in mark["rects"])
     callouts = build_refusal_callouts(issues)
     if model is not None and axes is not None:
         callouts.extend(refusal_callouts(model, axes))
@@ -519,41 +541,122 @@ def _annotate_frame(
                 elements, tag_roles, origin_u, origin_v, points_per_unit, place_x, place_y, grouped
             )
         )
-    placed, refused = place_callouts(callouts, occupied, frame)
-    _paint_callouts(sheet, placed)
-    if layout_issues is None:
-        return
-    for item in refused:
-        layout_issues.append(
-            _need(
-                CODE_CALLOUT_CANNOT_BE_PLACED,
-                item["id"],
-                f"A clear place for annotation {item['id']}",
-            )
+    for index, text in enumerate(margin_notes or ()):
+        callouts.append(
+            {
+                "id": f"margin-{index + 1}",
+                "element_ids": (),
+                "text": wrap_text(text, 42),
+                "geometry_reference": None,
+                "anchor_x": frame[0] + 8,
+                "anchor_y": frame[1] + 28,
+                "kind": "note",
+                "justification": "left",
+                "provenance": None,
+                "uncertainty": (),
+                "leader": False,
+            }
         )
+    callouts.extend(_connector_callouts(connector_notes or ()))
+    members = _member_rects(elements, origin_u, origin_v, points_per_unit, place_x, place_y)
+    content = _union_rect([rect for rect, _identifier in members])
+    primary = [item for item in callouts if item.get("kind") not in {"connector", "note", "refusal"}]
+    secondary = [item for item in callouts if item.get("kind") in {"connector", "note", "refusal"}]
+    placed_primary, refused_primary = place_callouts(primary, occupied, frame)
+    occupied_secondary = list(occupied) + [
+        (item["paper_x"], item["paper_y"], item["paper_x"] + item["width"], item["paper_y"] + item["height"])
+        for item in placed_primary
+    ]
+    placed_secondary, refused_secondary = place_margin_callouts(
+        secondary, occupied_secondary, frame, content
+    )
+    placed = placed_primary + placed_secondary
+    refused = refused_primary + refused_secondary
+    _paint_callouts(sheet, placed, occupied, members, frame)
+    if layout_issues is not None:
+        for item in refused:
+            layout_issues.append(
+                _need(
+                    CODE_CALLOUT_CANNOT_BE_PLACED,
+                    item["id"],
+                    f"A clear place for annotation {item['id']}",
+                )
+            )
+    return marks
 
 
-def _paint_callouts(sheet, placed) -> None:
+def _paint_callouts(sheet, placed, reserved, members, frame) -> None:
+    """Draw notes. A leader is drawn only when it stays off unrelated members."""
     drawn_leaders = []
+    note_rects = []
     for item in placed:
-        target = _leader_target(item)
-        if item.get("leader") and target is not None:
-            attach = _label_attach(item, target)
-            dx = target[0] - attach[0]
-            dy = target[1] - attach[1]
-            segment = (target, attach)
-            crosses = any(_segments_cross(segment[0], segment[1], other[0], other[1]) for other in drawn_leaders)
-            if (dx * dx) + (dy * dy) <= 220 * 220 and (dx or dy) and not crosses:
+        if item.get("leader") and frame is not None:
+            route = _clear_leader(item, reserved, note_rects, members, drawn_leaders, frame)
+            if len(route) >= 2:
                 sheet.setStrokeColor(_GOLD)
                 sheet.setLineWidth(0.4)
-                sheet.line(target[0], target[1], attach[0], attach[1])
-                drawn_leaders.append(segment)
+                for start, end in zip(route, route[1:]):
+                    sheet.line(start[0], start[1], end[0], end[1])
+                    drawn_leaders.append((start, end))
         sheet.setFillColor(_NAVY)
         sheet.setFont("Helvetica", 7)
         y = item["paper_y"] + item["height"] - 8
         for line in item["text"].split("\n"):
             sheet.drawString(item["paper_x"], y, line)
             y -= 8
+        note_rects.append(
+            (
+                item["paper_x"],
+                item["paper_y"],
+                item["paper_x"] + item["width"],
+                item["paper_y"] + item["height"],
+            )
+        )
+
+
+def _clear_leader(item, reserved, note_rects, members, drawn_leaders, frame):
+    points = list(item.get("member_points") or ())
+    if not points and item.get("anchor_x") is not None:
+        points = [(item["anchor_x"], item["anchor_y"])]
+    if not points:
+        return ()
+    center_x = item["paper_x"] + item["width"] / 2.0
+    center_y = item["paper_y"] + item["height"] / 2.0
+    ordered = sorted(
+        points,
+        key=lambda point: (
+            (point[0] - center_x) ** 2 + (point[1] - center_y) ** 2,
+            point[0],
+            point[1],
+        ),
+    )
+    named = set(item.get("element_ids") or ())
+
+    def inflate(rect):
+        return (rect[0] - 10, rect[1] - 10, rect[2] + 10, rect[3] + 10)
+
+    arrival = [inflate(rect) for rect, identifier in members if identifier in named]
+    others = [inflate(rect) for rect, identifier in members if identifier not in named]
+    best = None
+    for index, target in enumerate(ordered[:24]):
+        hard = [
+            rect
+            for rect in list(reserved) + list(note_rects)
+            if not (rect[0] <= target[0] <= rect[2] and rect[1] <= target[1] <= rect[3])
+        ]
+        hard.extend(others)
+        attach = _label_attach(item, target)
+        route = route_leader(attach, target, hard, drawn_leaders, frame, arrival)
+        if len(route) < 2:
+            continue
+        length = sum(
+            ((end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2) ** 0.5
+            for start, end in zip(route, route[1:])
+        )
+        key = (length, index)
+        if best is None or key < best[0]:
+            best = (key, route)
+    return () if best is None else best[1]
 
 
 def _segments_cross(a, b, c, d) -> bool:
@@ -640,25 +743,32 @@ def _draw_dimension_chains(
         if not segments and overall is None:
             continue
         labels = None
-        for direction in ("below", "above"):
-            candidate = _chain_labels(
-                chain,
-                segments,
-                overall,
-                by_id,
-                horizontal,
-                origin_u,
-                origin_v,
-                points_per_unit,
-                place_x,
-                place_y,
-                lane,
-                direction,
-            )
-            if candidate and _labels_fit(candidate, frame, occupied + drawn):
-                labels = candidate
+        used_lane = lane
+        for extra in range(12):
+            for direction in ("below", "above"):
+                candidate = _chain_labels(
+                    chain,
+                    segments,
+                    overall,
+                    by_id,
+                    horizontal,
+                    origin_u,
+                    origin_v,
+                    points_per_unit,
+                    place_x,
+                    place_y,
+                    lane + extra,
+                    direction,
+                )
+                if candidate and _labels_fit(
+                    candidate, frame, occupied + drawn, chain["axis"] == horizontal
+                ):
+                    labels = candidate
+                    used_lane = lane + extra
+                    break
+            if labels is not None:
                 break
-        lane += 1
+        lane = used_lane + 1
         if not labels:
             if layout_issues is not None:
                 layout_issues.append(
@@ -774,7 +884,12 @@ def _chain_line_rects(labels, horizontal: bool) -> list:
     return rects
 
 
-def _labels_fit(labels, frame, occupied) -> bool:
+def _labels_fit(labels, frame, occupied, horizontal=True) -> bool:
+    """The dimension text must stay inside the sheet and off other notes.
+
+    The dimension line may sit against the member it measures.
+    """
+    del horizontal
     x0, y0, x1, y1 = frame
     for item in labels:
         rect = item["rect"]
@@ -879,13 +994,13 @@ def _draw_element(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, s
     ]
     if geometry["kind"] == "point" or not placed:
         if not placed:
-            return
+            return []
         px, py = placed[0]
         sheet.line(px - 3, py - 3, px + 3, py + 3)
         sheet.line(px - 3, py + 3, px + 3, py - 3)
-        return
+        return []
     if len(placed) < 2:
-        return
+        return []
     path = sheet.beginPath()
     path.moveTo(placed[0][0], placed[0][1])
     for px, py in placed[1:]:
@@ -895,14 +1010,15 @@ def _draw_element(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, s
         sheet.setFillColor(white)
     sheet.drawPath(path, stroke=1, fill=1 if filled else 0)
     sheet.setFillColor(_NAVY)
-    _draw_bearing(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, seen_bearings)
+    return _draw_bearing(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, seen_bearings)
 
 
-def _draw_bearing(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, seen_labels=None) -> None:
+def _draw_bearing(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, seen_labels=None) -> list:
     lines = element.get("bearing_lines") or []
     labels = element.get("bearing_labels") or []
     if not lines:
-        return
+        return []
+    occupied = []
     sheet.setStrokeColor(_NAVY)
     sheet.setFillColor(_NAVY)
     sheet.setLineWidth(1.8)
@@ -925,17 +1041,23 @@ def _draw_bearing(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, s
             continue
         if seen_labels is not None:
             seen_labels.add(key)
+        width, height = text_size(label)
+        text_x = placed[0][0] - width - 6
+        text_y = placed[0][1] + 2
         sheet.setFont("Helvetica", 7)
-        sheet.drawString(placed[0][0], placed[0][1] + 4, label)
+        sheet.drawString(text_x, text_y, label)
+        occupied.append((text_x, text_y - 2, text_x + width, text_y + 8))
+    return occupied
 
 
 def _draw_connector_overlays(
     sheet, model, elements, horizontal, vertical, origin_u, origin_v, points_per_unit, place_x, place_y
-) -> None:
-    """Draw supplied connector geometry. A product name adds no outline."""
+) -> list:
+    """Draw supplied connector geometry. The note is placed later, off the member."""
     present = [element["id"] for element in elements]
     overlays = project_connector_geometry(model, present, horizontal, vertical)
     system = model.get("measurement_system") or "imperial"
+    notes = []
     for overlay in overlays:
         placed = [
             (
@@ -968,27 +1090,173 @@ def _draw_connector_overlays(
                 sheet.setStrokeColor(_NAVY)
                 sheet.line(px - 2, py, px + 2, py)
                 sheet.line(px, py - 2, px, py + 2)
-        if placed:
-            sheet.setFillColor(_NAVY)
-            sheet.setFont("Helvetica", 6)
-            label = _connector_label(overlay, system)
-            sheet.drawString(placed[0][0], placed[0][1] + 8, label[:140])
+        anchor_points = placed or [
+            (
+                place_x + (point[0] - origin_u) * points_per_unit,
+                place_y + (point[1] - origin_v) * points_per_unit,
+            )
+            for point in overlay["fasteners"]
+        ]
+        if not anchor_points:
+            continue
+        present_ids = {element["id"] for element in elements}
+        connection = next(
+            (
+                item
+                for item in model.get("connections") or []
+                if item.get("id") == overlay.get("connection_id")
+            ),
+            {},
+        )
+        participants = tuple(
+            identifier
+            for identifier in connection.get("participant_ids") or []
+            if identifier in present_ids
+        )
+        notes.append(
+            {
+                "key": (
+                    "GEOMETRY SUPPLIED",
+                    overlay.get("connector") or "",
+                    overlay.get("geometry_type") or "",
+                    tuple(sorted(overlay["dimensions"].items())),
+                ),
+                "element_ids": participants or (overlay.get("connection_id") or "connector",),
+                "lines": _connector_lines(overlay, system),
+                "points": tuple(anchor_points),
+                "anchor": anchor_points[0],
+            }
+        )
+    notes.extend(
+        _metadata_connector_notes(
+            model, elements, horizontal, vertical, origin_u, origin_v, points_per_unit, place_x, place_y
+        )
+    )
+    return notes
 
 
-def _connector_label(overlay, system: str) -> str:
-    parts = ["GEOMETRY SUPPLIED", overlay.get("geometry_type") or "", overlay.get("connector") or ""]
+def _metadata_connector_notes(
+    model, elements, horizontal, vertical, origin_u, origin_v, points_per_unit, place_x, place_y
+) -> list:
+    by_id = {element["id"]: element for element in elements}
+    notes = []
+    for item in model.get("connections") or []:
+        if _connection_has_geometry(item):
+            continue
+        participants = [identifier for identifier in item.get("participant_ids") or [] if identifier in by_id]
+        if not participants:
+            continue
+        points = []
+        for identifier in participants:
+            geometry = by_id[identifier]["projected_geometry"]["coordinates"]
+            if not geometry:
+                continue
+            point = geometry[0]
+            points.append(
+                (
+                    place_x + (point["u"] - origin_u) * points_per_unit,
+                    place_y + (point["v"] - origin_v) * points_per_unit,
+                )
+            )
+        if not points:
+            continue
+        lines = ["GEOMETRY NOT SUPPLIED", item.get("connector") or "connector"]
+        fastener = item.get("fastener")
+        if fastener:
+            lines.append(str(fastener))
+        if item.get("quantity") is not None:
+            lines.append(str(item["quantity"]))
+        notes.append(
+            {
+                "key": (
+                    "GEOMETRY NOT SUPPLIED",
+                    item.get("connector") or "",
+                    item.get("fastener") or "",
+                    item.get("quantity"),
+                ),
+                "element_ids": tuple(participants),
+                "lines": lines,
+                "points": tuple(points),
+                "anchor": points[0],
+            }
+        )
+    return notes
+
+
+def _connector_callouts(notes) -> list:
+    callouts = []
+    for index, note in enumerate(group_connector_notes(notes)):
+        lines = list(note["lines"])
+        lines.append(_identifier_span(note["element_ids"]))
+        callouts.append(
+            {
+                "id": f"connector-{index + 1}",
+                "element_ids": note["element_ids"],
+                "text": wrap_text("\n".join(line for line in lines if line), 32),
+                "geometry_reference": None,
+                "anchor_x": note["anchor"][0],
+                "anchor_y": note["anchor"][1],
+                "kind": "connector",
+                "justification": "left",
+                "provenance": None,
+                "uncertainty": (),
+                "leader": True,
+                "member_points": note["points"],
+            }
+        )
+    return callouts
+
+
+def _member_rects(elements, origin_u, origin_v, points_per_unit, place_x, place_y) -> list:
+    rectangles = []
+    for element in elements:
+        xs = []
+        ys = []
+        geometry = element.get("profile_geometry") or element["projected_geometry"]
+        for point in geometry["coordinates"]:
+            xs.append(place_x + (point["u"] - origin_u) * points_per_unit)
+            ys.append(place_y + (point["v"] - origin_v) * points_per_unit)
+        if not xs:
+            continue
+        rectangles.append(
+            ((min(xs) - 8, min(ys) - 8, max(xs) + 8, max(ys) + 8), element.get("id") or "")
+        )
+    return rectangles
+
+
+def _union_rect(rects):
+    if not rects:
+        return None
+    return (
+        min(rect[0] for rect in rects),
+        min(rect[1] for rect in rects),
+        max(rect[2] for rect in rects),
+        max(rect[3] for rect in rects),
+    )
+
+
+def _connector_lines(overlay, system: str) -> list:
+    lines = ["GEOMETRY SUPPLIED"]
+    if overlay.get("geometry_type"):
+        lines.append(str(overlay["geometry_type"]))
+    if overlay.get("connector"):
+        lines.append(str(overlay["connector"]))
     names = (("width", "WIDTH"), ("height", "HEIGHT"), ("thickness", "THICKNESS"), ("bolt_diameter", "BOLT"))
     for key, title in names:
         value = overlay["dimensions"].get(key)
         if isinstance(value, (int, float)):
-            parts.append(f"{title} {_connector_measure(value, system)}")
+            lines.append(f"{title} {_connector_measure(value, system)}")
     fasteners = overlay["fasteners"]
     if len(fasteners) >= 2:
         span = sum((fasteners[-1][axis] - fasteners[0][axis]) ** 2 for axis in (0, 1)) ** 0.5
-        parts.append(f"BOLT SPACING {_connector_measure(span, system)}")
+        lines.append(f"BOLT SPACING {_connector_measure(span, system)}")
     if overlay.get("uncertainty"):
-        parts.append(str(overlay["uncertainty"]))
-    return "  ".join(part for part in parts if part)
+        lines.append(str(overlay["uncertainty"]))
+    return [line for line in lines if line]
+
+
+def _connector_label(overlay, system: str) -> str:
+    return "  ".join(_connector_lines(overlay, system))
 
 
 def _connector_measure(value: float, system: str) -> str:
@@ -1883,17 +2151,12 @@ def _paint_read_view(
         sheet.setFont("Helvetica-Bold", 9)
         sheet.drawString(x0, y1 - 14, "NOT ISSUED — UNRESOLVED")
         sheet.setFillColor(_NAVY)
-    connection = _connection_note(model, view.elements)
-    if connection:
-        sheet.setFont("Helvetica", 8)
-        sheet.drawString(x0, y0 + 8, connection[:180])
-    elif view.view_kind == "detail":
-        sheet.setFont("Helvetica", 8)
-        sheet.drawString(x0, y0 + 8, "You need to provide this information. The connection for this detail.")
+    margin_notes = []
     relationship = _relationship_note(model, view.elements)
     if relationship:
-        sheet.setFont("Helvetica", 8)
-        sheet.drawString(x0, y0 + 20, relationship[:220])
+        margin_notes.append(relationship)
+    if view.view_kind == "detail" and not _connection_note(model, view.elements):
+        margin_notes.append("You need to provide this information. The connection for this detail.")
     if view.facts and view.view_kind != "detail":
         sheet.setFont("Helvetica", 8)
         fact_line = "  ".join(_fact_text(key, value, model) for key, value in view.facts)
@@ -1914,10 +2177,16 @@ def _paint_read_view(
     place_y = y0 + _VIEW_PAD + (inner_h - drawn_h) / 2.0
     sheet.setStrokeColor(_NAVY)
     seen_bearings = set()
+    bearing_rects = []
     for element in view.elements:
-        _draw_element(sheet, element, origin_u, origin_v, points_per_unit, place_x, place_y, seen_bearings)
+        bearing_rects.extend(
+            _draw_element(
+                sheet, element, origin_u, origin_v, points_per_unit, place_x, place_y, seen_bearings
+            )
+        )
+    connector_notes = []
     if view.horizontal_axis and view.vertical_axis:
-        _draw_connector_overlays(
+        connector_notes = _draw_connector_overlays(
             sheet,
             model,
             view.elements,
@@ -1943,30 +2212,37 @@ def _paint_read_view(
         points_per_unit,
         place_x,
         place_y,
-        _geometry_obstacles(view.elements, origin_u, origin_v, points_per_unit, place_x, place_y),
+        _geometry_obstacles(view.elements, origin_u, origin_v, points_per_unit, place_x, place_y)
+        + bearing_rects,
         model,
         (view.horizontal_axis, view.vertical_axis) if view.horizontal_axis and view.vertical_axis else None,
         layout_issues,
         tag_roles,
         view.view_kind,
+        connector_notes,
+        margin_notes,
     )
 
 
-def _draw_sheet_references(
-    sheet, projection, references, origin_u, origin_v, points_per_unit, place_x, place_y
-) -> None:
+def _reference_placements(
+    projection, references, origin_u, origin_v, points_per_unit, place_x, place_y, frame, occupied
+) -> list:
+    """Paper positions for section labels and detail bubbles, off the members."""
     present = {element["id"] for element in projection.elements}
+    marks = []
     detail_index = 0
     for reference in references:
         if projection.view_type not in reference["source_kinds"]:
             continue
         if reference["kind"] == "section":
-            _draw_section_marker(
-                sheet, projection, reference, origin_u, origin_v, points_per_unit, place_x, place_y
+            mark = _section_mark(
+                projection, reference, origin_u, origin_v, points_per_unit, place_x, place_y, frame, occupied
             )
+            if mark is not None:
+                marks.append(mark)
+                occupied = list(occupied) + list(mark["rects"])
         elif reference["kind"] == "detail" and present.intersection(reference["element_ids"]):
-            _draw_detail_marker(
-                sheet,
+            mark = _detail_mark(
                 projection,
                 reference,
                 origin_u,
@@ -1974,23 +2250,52 @@ def _draw_sheet_references(
                 points_per_unit,
                 place_x,
                 place_y,
+                frame,
+                occupied,
                 detail_index,
             )
             detail_index += 1
+            if mark is not None:
+                marks.append(mark)
+                occupied = list(occupied) + list(mark["rects"])
+    return marks
 
 
-def _paper_point(value_u, value_v, origin_u, origin_v, points_per_unit, place_x, place_y):
-    return (
-        place_x + (value_u - origin_u) * points_per_unit,
-        place_y + (value_v - origin_v) * points_per_unit,
-    )
+def _draw_reference_marks(sheet, marks) -> None:
+    for mark in marks:
+        if mark["kind"] == "section":
+            start = mark["start"]
+            end = mark["end"]
+            sheet.setStrokeColor(_GOLD)
+            sheet.setDash(4, 3)
+            sheet.setLineWidth(1.2)
+            sheet.line(start[0], start[1], end[0], end[1])
+            sheet.setDash()
+            sheet.setFillColor(_NAVY)
+            sheet.setFont("Helvetica-Bold", 8)
+            for text, point in mark["labels"]:
+                sheet.drawString(point[0], point[1], text)
+        else:
+            center = mark["center"]
+            sheet.setStrokeColor(_NAVY)
+            sheet.setFillColor(white)
+            sheet.setLineWidth(1)
+            sheet.circle(center[0], center[1], 9, stroke=1, fill=1)
+            sheet.setFillColor(_NAVY)
+            sheet.setFont("Helvetica-Bold", 7)
+            sheet.drawCentredString(center[0], center[1] - 2, mark["bubble"])
+            sheet.setFont("Helvetica", 6)
+            sheet.drawString(center[0] + 12, center[1] + 2, mark["title"])
+            sheet.drawString(center[0] + 12, center[1] - 8, mark["sheet"])
 
 
-def _draw_section_marker(sheet, projection, reference, origin_u, origin_v, points_per_unit, place_x, place_y) -> None:
+def _section_mark(
+    projection, reference, origin_u, origin_v, points_per_unit, place_x, place_y, frame, occupied
+):
     direction = reference.get("section_direction")
     location = reference.get("section_location")
     if direction not in {"x", "y"} or not isinstance(location, (int, float)):
-        return
+        return None
     us = []
     vs = []
     for element in projection.elements:
@@ -1998,30 +2303,37 @@ def _draw_section_marker(sheet, projection, reference, origin_u, origin_v, point
             us.append(point["u"])
             vs.append(point["v"])
     if not us or not vs:
-        return
+        return None
     if direction == "y":
         start = _paper_point(min(us), location, origin_u, origin_v, points_per_unit, place_x, place_y)
         end = _paper_point(max(us), location, origin_u, origin_v, points_per_unit, place_x, place_y)
     else:
         start = _paper_point(location, min(vs), origin_u, origin_v, points_per_unit, place_x, place_y)
         end = _paper_point(location, max(vs), origin_u, origin_v, points_per_unit, place_x, place_y)
-    sheet.setStrokeColor(_GOLD)
-    sheet.setDash(4, 3)
-    sheet.setLineWidth(1.2)
-    sheet.line(start[0], start[1], end[0], end[1])
-    sheet.setDash()
-    sheet.setFillColor(_NAVY)
-    sheet.setFont("Helvetica-Bold", 8)
     marker = str(reference.get("target_id") or "")
-    sheet.drawString(start[0] - 16, start[1] + 6, marker)
-    sheet.drawString(end[0] + 6, end[1] + 6, marker)
-    sheet.setFont("Helvetica", 7)
-    sheet.drawString(end[0] + 6, end[1] - 8, f"SEE SHEET {reference['sheet_number']}")
+    see = f"SEE SHEET {reference['sheet_number']}"
+    left = _clear_text_slot(marker, frame[0] + 8, start[1] + 14, frame, occupied, bold=True)
+    right = _clear_text_slot(see, end[0] + 8, end[1] + 14, frame, occupied)
+    labels = []
+    rects = []
+    if left is not None:
+        labels.append((marker, (left[0], left[1])))
+        rects.append(left[2])
+    if right is not None:
+        labels.append((see, (right[0], right[1])))
+        rects.append(right[2])
+    return {
+        "kind": "section",
+        "start": start,
+        "end": end,
+        "labels": labels,
+        "rects": rects,
+    }
 
 
-def _draw_detail_marker(
-    sheet, projection, reference, origin_u, origin_v, points_per_unit, place_x, place_y, index
-) -> None:
+def _detail_mark(
+    projection, reference, origin_u, origin_v, points_per_unit, place_x, place_y, frame, occupied, index
+):
     wanted = set(reference["element_ids"])
     points = []
     for element in projection.elements:
@@ -2029,21 +2341,65 @@ def _draw_detail_marker(
             continue
         points.extend(element["projected_geometry"]["coordinates"])
     if not points:
-        return
+        return None
     anchor_u = sum(point["u"] for point in points) / len(points)
     anchor_v = sum(point["v"] for point in points) / len(points)
-    px, py = _paper_point(anchor_u, anchor_v, origin_u, origin_v, points_per_unit, place_x, place_y)
-    py += 16 + (index * 22)
-    sheet.setStrokeColor(_NAVY)
-    sheet.setFillColor(white)
-    sheet.setLineWidth(1)
-    sheet.circle(px, py, 9, stroke=1, fill=1)
-    sheet.setFillColor(_NAVY)
-    sheet.setFont("Helvetica-Bold", 7)
-    sheet.drawCentredString(px, py - 2, str(reference.get("target_id") or "")[:8])
-    sheet.setFont("Helvetica", 6)
-    sheet.drawString(px + 12, py + 2, str(reference.get("target_title") or "")[:28])
-    sheet.drawString(px + 12, py - 8, f"SHEET {reference['sheet_number']}")
+    anchor = _paper_point(anchor_u, anchor_v, origin_u, origin_v, points_per_unit, place_x, place_y)
+    title = str(reference.get("target_title") or "")[:28]
+    sheet_line = f"SHEET {reference['sheet_number']}"
+    bubble = str(reference.get("target_id") or "")[:8]
+    label_width = max(string_width(title, 6), string_width(sheet_line, 6)) + 16
+    found = None
+    for distance in (48 + index * 28, 96 + index * 28, 150, 210, 280):
+        for dx, dy in ((0, distance), (distance, 0), (-distance, 0), (0, -distance)):
+            center = (anchor[0] + dx, anchor[1] + dy)
+            rect = (center[0] - 12, center[1] - 16, center[0] + 12 + label_width, center[1] + 14)
+            if _rect_inside(rect, frame) and not any(rectangles_overlap(rect, other) for other in occupied):
+                found = (center, rect)
+                break
+        if found is not None:
+            break
+    if found is None:
+        center = (frame[2] - 24 - label_width, frame[3] - 28 - (index * 26))
+        rect = (center[0] - 12, center[1] - 16, center[0] + 12 + label_width, center[1] + 14)
+    else:
+        center, rect = found
+    return {
+        "kind": "detail",
+        "center": center,
+        "rects": [rect],
+        "bubble": bubble,
+        "title": title,
+        "sheet": sheet_line,
+        "anchor": anchor,
+    }
+
+
+def _clear_text_slot(text, x, y, frame, occupied, bold=False):
+    width = string_width(text, 8 if bold else 7) + 4
+    height = 12
+    for lift in (0, 16, 32, 48, -16, -32):
+        rect = (x, y + lift, x + width, y + lift + height)
+        if _rect_inside(rect, frame) and not any(rectangles_overlap(rect, other) for other in occupied):
+            return (rect[0], rect[1], rect)
+    return None
+
+
+def _rect_inside(rect, frame) -> bool:
+    return rect[0] >= frame[0] + 2 and rect[1] >= frame[1] + 2 and rect[2] <= frame[2] - 2 and rect[3] <= frame[3] - 2
+
+
+def string_width(text: str, size: float) -> float:
+    from reportlab.pdfbase.pdfmetrics import stringWidth
+
+    return stringWidth(text or "", "Helvetica", size)
+
+
+def _paper_point(value_u, value_v, origin_u, origin_v, points_per_unit, place_x, place_y):
+    return (
+        place_x + (value_u - origin_u) * points_per_unit,
+        place_y + (value_v - origin_v) * points_per_unit,
+    )
 
 
 def _paint_schedule_page(sheet, model, sheet_definition, lines) -> None:

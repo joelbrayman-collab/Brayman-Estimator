@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Construction drawing annotation layout (2026-10-03)
+
+| Field | Content |
+|-------|---------|
+| Slice | Construction Model slice 16. Drawing annotation layout. |
+| Product status at capture | **IMPLEMENTED / TESTED**. Not deployed. The drawing set stays **OPEN / NOT COMPLETE**. The generic fixture set is still not a crew set. |
+| 1. What new contractor capability exists? | Connector notes sit beside the members instead of on top of them. A plate still shows its shape. A connector without a shape still says geometry not supplied. |
+| 2. When would the contractor use it? | When reading the framing plan, the elevations, the section, and the post-and-beam detail. |
+| 3. What workflow will the final Manual need to teach? | The note can move on the sheet. The member does not move. If the connector shape was not supplied, the sheet says so and does not draw one. |
+| 4. What contractor-facing terms must be used? | Geometry supplied. Geometry not supplied. Pier depth. Baluster spacing. You need to provide this information. |
+| 5. What screenshots / Print examples will eventually be needed? | An 11×17 framing plan with the connector note in the margin, and a post-and-beam detail with the plate note beside the plate. Not captured here as a finished example. |
+| 6. What warnings / validation distinctions need explanation? | A leader is omitted when every route would cut through another member. The note stays. Geometry not supplied is not a finished connector. |
+| 7. Desktop / iPhone / Print relevance | Print on 11×17. No screen was added. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Complete generic construction drawing fixture (2026-10-02)
 
 | Field | Content |

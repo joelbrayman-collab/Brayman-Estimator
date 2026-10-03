@@ -8,6 +8,34 @@ from __future__ import annotations
 
 import re
 
+# Helvetica at 7pt, measured once. This module does not import a PDF writer.
+_HELVETICA_7 = {
+    " ": 1.946, "!": 1.946, '"': 2.485, "#": 3.892,
+    "$": 3.892, "%": 6.223, "&": 4.669, "'": 1.337,
+    "(": 2.331, ")": 2.331, "*": 2.723, "+": 4.088,
+    ",": 1.946, "-": 2.331, ".": 1.946, "/": 1.946,
+    "0": 3.892, "1": 3.892, "2": 3.892, "3": 3.892,
+    "4": 3.892, "5": 3.892, "6": 3.892, "7": 3.892,
+    "8": 3.892, "9": 3.892, ":": 1.946, ";": 1.946,
+    "<": 4.088, "=": 4.088, ">": 4.088, "?": 3.892,
+    "@": 7.105, "A": 4.669, "B": 4.669, "C": 5.054,
+    "D": 5.054, "E": 4.669, "F": 4.277, "G": 5.446,
+    "H": 5.054, "I": 1.946, "J": 3.500, "K": 4.669,
+    "L": 3.892, "M": 5.831, "N": 5.054, "O": 5.446,
+    "P": 4.669, "Q": 5.446, "R": 5.054, "S": 4.669,
+    "T": 4.277, "U": 5.054, "V": 4.669, "W": 6.608,
+    "X": 4.669, "Y": 4.669, "Z": 4.277, "[": 1.946,
+    "\\": 1.946, "]": 1.946, "^": 3.283, "_": 3.892,
+    "`": 2.331, "a": 3.892, "b": 3.892, "c": 3.500,
+    "d": 3.892, "e": 3.892, "f": 1.946, "g": 3.892,
+    "h": 3.892, "i": 1.554, "j": 1.554, "k": 3.500,
+    "l": 1.554, "m": 5.831, "n": 3.892, "o": 3.892,
+    "p": 3.892, "q": 3.892, "r": 2.331, "s": 3.500,
+    "t": 1.946, "u": 3.892, "v": 3.500, "w": 5.054,
+    "x": 3.500, "y": 3.500, "z": 3.500, "{": 2.338,
+    "|": 1.820, "}": 2.338, "~": 4.088,
+}
+
 PROXIMITY_POINTS = 36.0
 CODE_CALLOUT_CANNOT_BE_PLACED = "CALLOUT_CANNOT_BE_PLACED"
 
@@ -219,6 +247,130 @@ def describe_group(elements) -> str:
     return "\n".join(lines)
 
 
+def route_leader(origin, target, blocked, existing, frame, arrival=()) -> tuple:
+    """A paper polyline from a note to the member it names.
+
+    A route that crosses another member is refused even when it is shorter.
+    The last short stub may enter the member it names. When every route
+    crosses, the note stays and no leader is drawn.
+    """
+    if origin is None or target is None:
+        return ()
+    if abs(origin[0] - target[0]) < 0.5 and abs(origin[1] - target[1]) < 0.5:
+        return ()
+    x0, y0, x1, y1 = frame
+    through = [
+        (origin, target),
+        (origin, (target[0], origin[1]), target),
+        (origin, (origin[0], target[1]), target),
+        (origin, (x0 + 8, origin[1]), (x0 + 8, target[1]), target),
+        (origin, (x1 - 8, origin[1]), (x1 - 8, target[1]), target),
+        (origin, (origin[0], y1 - 8), (target[0], y1 - 8), target),
+        (origin, (origin[0], y0 + 8), (target[0], y0 + 8), target),
+    ]
+    for rect in arrival:
+        if not _point_in_rect(target, rect):
+            continue
+        through.extend(
+            (
+                (origin, (rect[0] - 8, origin[1]), (rect[0] - 8, target[1]), target),
+                (origin, (rect[2] + 8, origin[1]), (rect[2] + 8, target[1]), target),
+                (origin, (origin[0], rect[3] + 8), (target[0], rect[3] + 8), target),
+                (origin, (origin[0], rect[1] - 8), (target[0], rect[1] - 8), target),
+            )
+        )
+    best = None
+    for index, points in enumerate(through):
+        if any(point[0] < x0 or point[0] > x1 or point[1] < y0 or point[1] > y1 for point in points):
+            continue
+        segments = list(zip(points, points[1:]))
+        if any(
+            not _segment_clear(
+                segment,
+                blocked,
+                existing,
+                arrival,
+                target,
+                last=(offset == len(segments) - 1),
+            )
+            for offset, segment in enumerate(segments)
+        ):
+            continue
+        length = sum(_segment_length(segment) for segment in segments)
+        key = (length, index)
+        if best is None or key < best[0]:
+            best = (key, tuple(points))
+    return () if best is None else best[1]
+
+
+def place_margin_callouts(callouts, obstacles, frame, content) -> tuple:
+    """Stack secondary notes in the open margin, outside the construction.
+
+    A note that fits nowhere in the margin falls back to any clear paper
+    slot. It is not dropped while a clear slot exists.
+    """
+    if content is None:
+        return place_callouts(callouts, obstacles, frame)
+    occupied = [tuple(item) for item in obstacles]
+    placed = []
+    refused = []
+    bands = _margin_bands(frame, content)
+    for callout in callouts:
+        width, height = text_size(callout["text"])
+        anchor = (callout.get("anchor_x"), callout.get("anchor_y"))
+        slot = _margin_slot(width, height, bands, occupied, anchor)
+        if slot is None:
+            slot = _slot(width, height, frame, occupied, anchor)
+        if slot is None:
+            refused.append(dict(callout))
+            continue
+        record = dict(callout)
+        record["paper_x"] = slot[0]
+        record["paper_y"] = slot[1]
+        record["width"] = width
+        record["height"] = height
+        record["justification"] = callout.get("justification") or "left"
+        placed.append(record)
+        occupied.append((slot[0], slot[1], slot[0] + width, slot[1] + height))
+    return placed, refused
+
+
+def group_connector_notes(notes) -> tuple:
+    """Group connector notes that carry the same supplied metadata.
+
+    Different connectors stay apart. Every member id stays on the group.
+    """
+    groups = {}
+    order = []
+    for note in notes:
+        key = note["key"]
+        if key not in groups:
+            groups[key] = []
+            order.append(key)
+        groups[key].append(note)
+    grouped = []
+    for key in order:
+        items = groups[key]
+        identifiers = []
+        points = []
+        for item in items:
+            for identifier in item["element_ids"]:
+                if identifier not in identifiers:
+                    identifiers.append(identifier)
+            points.extend(item["points"])
+        first = items[0]
+        grouped.append(
+            {
+                "key": key,
+                "element_ids": tuple(identifiers),
+                "lines": first["lines"],
+                "points": tuple(points),
+                "anchor": first["anchor"],
+            }
+        )
+    return tuple(grouped)
+
+
 def place_callouts(callouts, obstacles, frame) -> tuple:
     """Deterministic paper positions that avoid occupied rectangles.
 
@@ -269,10 +421,15 @@ def wrap_text(text: str, limit: int = 42) -> str:
 
 
 def text_size(text: str) -> tuple:
+    """Paper size of a Helvetica 7 note. The box matches the ink."""
     lines = text.split("\n") or [""]
-    width = max(len(line) for line in lines) * 3.6 + 4
-    height = len(lines) * 8 + 2
+    width = max((_line_width(line) for line in lines), default=0) + 6
+    height = len(lines) * 8 + 4
     return width, height
+
+
+def _line_width(line: str) -> float:
+    return sum(_HELVETICA_7.get(char, 4.0) for char in line)
 
 
 def rectangles_overlap(left, right) -> bool:
@@ -376,6 +533,122 @@ def _slot(width, height, frame, occupied, anchor):
             x += 24
         y -= 18
     return best
+
+
+def _margin_bands(frame, content):
+    x0, y0, x1, y1 = frame
+    cx0, cy0, cx1, cy1 = content
+    gap = 8
+    bands = []
+    if cx0 - x0 > 56:
+        bands.append(("left", (x0 + 4, y0 + 4, cx0 - gap, y1 - 4)))
+    if x1 - cx1 > 56:
+        bands.append(("right", (cx1 + gap, y0 + 4, x1 - 4, y1 - 4)))
+    if y1 - cy1 > 40:
+        bands.append(("top", (x0 + 4, cy1 + gap, x1 - 4, y1 - 4)))
+    if cy0 - y0 > 40:
+        bands.append(("bottom", (x0 + 4, y0 + 4, x1 - 4, cy0 - gap)))
+    return bands
+
+
+def _margin_slot(width, height, bands, occupied, anchor):
+    ax = anchor[0] if anchor and anchor[0] is not None else None
+
+    def order(item):
+        name, box = item
+        if ax is None or name in {"top", "bottom"}:
+            side = 2
+        elif name == "left":
+            side = 0 if ax <= (box[0] + box[2]) / 2.0 else 1
+        else:
+            side = 0 if ax >= (box[0] + box[2]) / 2.0 else 1
+        area = (box[2] - box[0]) * (box[3] - box[1])
+        return (side, -area, name)
+
+    for name, box in sorted(bands, key=order):
+        if box[2] - box[0] < width + 4 or box[3] - box[1] < height + 4:
+            continue
+        if name == "right":
+            x = box[2] - width - 2
+        else:
+            x = box[0] + 2
+        y = box[3] - height - 2
+        while y >= box[1] + 2:
+            if _fits(x, y, width, height, (box[0], box[1], box[2], box[3]), occupied):
+                return (x, y)
+            y -= 6
+    return None
+
+
+def _segment_clear(segment, blocked, existing, arrival=(), target=None, last=False) -> bool:
+    start, end = segment
+    if _segment_length(segment) < 0.5:
+        return True
+    for rect in blocked:
+        if _segment_hits_rect(start, end, rect):
+            return False
+    for rect in arrival:
+        if last:
+            if _arrival_blocked(start, end, rect, target):
+                return False
+        elif _segment_hits_rect(start, end, rect):
+            return False
+    for other in existing:
+        if _segments_cross(start, end, other[0], other[1]):
+            return False
+    return True
+
+
+def _arrival_blocked(start, end, rect, target) -> bool:
+    """The last stub may enter its own member. It may not run along that member."""
+    if target is None or not _segment_hits_rect(start, end, rect):
+        return False
+    if _segment_length((end, target)) > 4:
+        return True
+    if not _point_in_rect(end, rect):
+        return True
+    length = _segment_length((start, end))
+    if length <= 18:
+        return False
+    scale = (length - 18.0) / length
+    probe = (
+        start[0] + (end[0] - start[0]) * scale,
+        start[1] + (end[1] - start[1]) * scale,
+    )
+    return _point_in_rect(probe, rect)
+
+
+def _segment_length(segment) -> float:
+    start, end = segment
+    return ((end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2) ** 0.5
+
+
+def _segment_hits_rect(start, end, rect) -> bool:
+    if _point_in_rect(start, rect) or _point_in_rect(end, rect):
+        return True
+    left, bottom, right, top = rect
+    edges = (
+        ((left, bottom), (right, bottom)),
+        ((right, bottom), (right, top)),
+        ((right, top), (left, top)),
+        ((left, top), (left, bottom)),
+    )
+    return any(_segments_cross(start, end, edge[0], edge[1]) for edge in edges)
+
+
+def _point_in_rect(point, rect) -> bool:
+    return rect[0] <= point[0] <= rect[2] and rect[1] <= point[1] <= rect[3]
+
+
+def _segments_cross(a, b, c, d) -> bool:
+    def orient(p, q, r):
+        return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])
+
+    left = orient(a, b, c)
+    right = orient(a, b, d)
+    across = orient(c, d, a)
+    back = orient(c, d, b)
+    return left * right < 0 and across * back < 0
 
 
 def _fits(px, py, width, height, frame, occupied) -> bool:

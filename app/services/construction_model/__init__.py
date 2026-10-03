@@ -13,6 +13,7 @@ Slice 11 stores an explicit construction relationship and projects only the bear
 Slice 13 places callouts, section and detail references, and schedule columns from that same model and the sheet set.
 Slice 14 draws connector geometry only when that model supplies the geometry. A connector name does not become a shape.
 Slice 15 stores a supplied stair riser count and does not calculate one.
+Slice 16 moves annotations in paper space. It does not move a member.
 This package does not read or write a project, a plan record, or an estimate.
 Plan Generation stays a separate contract.
 """

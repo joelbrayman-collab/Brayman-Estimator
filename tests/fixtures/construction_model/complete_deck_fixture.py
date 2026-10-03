@@ -109,6 +109,7 @@ def deck_model() -> dict:
     joist_xs = list(range(16, 144, 16))
     for index, x_in in enumerate(joist_xs, start=1):
         members.append(_along_y(f"joist-{index}", "joist", x_in, 37, 0, 120, "2x8", "joist-stock", 2, 8))
+    members.extend(_blocking(joist_xs))
     members.append(_along_y("rim-left", "rim", 0, 37, 0, 120, "2x8", "joist-stock", 2, 8))
     members.append(_along_y("rim-right", "rim", 144, 37, 0, 120, "2x8", "joist-stock", 2, 8))
     members.append(_along_x("rim-front-a", "rim", 0, 37, 0, 54, "2x8", "joist-stock", 2, 8))
@@ -458,6 +459,7 @@ def _relationships(joist_xs):
         next_id += 1
     records.append({"id": f"rel-{next_id}", "kind": "protects", "from_id": "guard-front-a", "to_id": "deck-1"})
     records.extend(_bearing_relationships())
+    records.extend(_blocking_relationships(joist_xs))
     return records
 
 
@@ -502,6 +504,60 @@ def _bearing_relationships():
                     "provenance": dict(_PROVENANCE),
                 }
             )
+    return records
+
+
+def _frame_lines(joist_xs):
+    return [0, *joist_xs, 144]
+
+
+def _blocking(joist_xs):
+    """Blocking between joists and rims this fixture already places.
+
+    Each piece uses a beam station and the joist elevation already in this
+    fixture. A copy of the fixture that omits these members has no blocking.
+    """
+    lines = _frame_lines(joist_xs)
+    members = []
+    number = 1
+    for _row_name, y_in in (("front", 12), ("back", 108)):
+        for index in range(len(lines) - 1):
+            members.append(
+                _along_x(
+                    f"blocking-{number}",
+                    "blocking",
+                    y_in,
+                    37,
+                    lines[index],
+                    lines[index + 1],
+                    "2x8",
+                    "joist-stock",
+                    2,
+                    8,
+                )
+            )
+            number += 1
+    return members
+
+
+def _blocking_relationships(joist_xs):
+    names = ["rim-left", *[f"joist-{index}" for index in range(1, len(joist_xs) + 1)], "rim-right"]
+    records = []
+    number = 1
+    for _row_name in ("front", "back"):
+        for index in range(len(names) - 1):
+            identifier = f"blocking-{number}"
+            for end in (names[index], names[index + 1]):
+                records.append(
+                    {
+                        "id": f"rel-fasten-{identifier}-{end}",
+                        "kind": "fastened_to",
+                        "from_id": identifier,
+                        "to_id": end,
+                        "provenance": dict(_PROVENANCE),
+                    }
+                )
+            number += 1
     return records
 
 
@@ -569,7 +625,7 @@ def sheet_definition() -> dict:
 
 
 def sheet_program() -> list:
-    framing = ["post", "beam", "joist", "rim", "header", "opening"]
+    framing = ["post", "beam", "joist", "blocking", "rim", "header", "opening"]
     finish = ["decking", "guard", "baluster", "gate", "opening"]
     elevation = ["post", "beam", "joist", "rim", "header", "guard", "baluster", "gate", "decking", "pier"]
     side = elevation + ["stringer", "tread"]

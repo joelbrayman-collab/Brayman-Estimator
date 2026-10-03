@@ -41,6 +41,7 @@ MEMBER_ROLES = frozenset(
     {
         "joist",
         "beam",
+        "blocking",
         "rim",
         "header",
         "stringer",

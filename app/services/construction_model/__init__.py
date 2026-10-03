@@ -14,6 +14,7 @@ Slice 13 places callouts, section and detail references, and schedule columns fr
 Slice 14 draws connector geometry only when that model supplies the geometry. A connector name does not become a shape.
 Slice 15 stores a supplied stair riser count and does not calculate one.
 Slice 16 moves annotations in paper space. It does not move a member.
+Slice 17 stores blocking when the fixture supplies it. It does not infer a piece.
 This package does not read or write a project, a plan record, or an estimate.
 Plan Generation stays a separate contract.
 """

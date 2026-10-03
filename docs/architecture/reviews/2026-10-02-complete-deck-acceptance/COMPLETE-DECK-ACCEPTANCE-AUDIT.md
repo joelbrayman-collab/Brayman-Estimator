@@ -168,3 +168,33 @@ Annotations move in paper space. Member coordinates, relationships, dimension va
 Connector text is no longer drawn on the member. A supplied plate keeps its geometry, and the width, thickness, and bolt note sits beside it. A metadata-only connector stays a note that says GEOMETRY NOT SUPPLIED, with the member ids. Equivalent notes group. Different connectors do not. A leader that would cut through another member is not used, even when that path is shorter. When no clean route exists, the note stays and the leader is omitted. Pier depth 4'-0" now prints on the side elevation, and baluster spacing 0'-5" prints on the front elevation. Those values were already in the model. The dimension text was not retyped.
 
 The inspected set is 15 sheets. Connector notes sit in the open margin. The framing plan keeps the joists, the beams, and the dimension chain readable, with the plate note and the hanger notes at the right. The front elevation keeps the baluster spacing and the member labels off the railing. The side elevation keeps pier depth and guard height off the posts, and the level names stay in the gaps between the connector notes. The stair sheet keeps rise, run, and the riser count off the stringer. The post-and-beam detail keeps the supplied plate and the two bolt marks visible, with the plate note beside them. Section A keeps the section height and the connector notes off the posts and the beam. A leader that would run along a member is omitted. The note stays, with the member ids. Bearing words still sit at the post-to-beam joint. Would we hand the whole set to the crew? No. Missing construction is still missing.
+
+## Slice 17 disposition — 3 Oct 2026
+
+CONSTRUCTION MODEL + BLOCKING: **IMPLEMENTED / TESTED**.
+
+The fixture supplies 18 blocking members. Each is a 2x8 of the fixture joist stock, at the joist elevation, between the joist and rim lines this fixture already places, on the two beam stations this fixture already places. Provenance is `instance_configuration` / `COMPLETE DECK DRAWING ENGINE FIXTURE`. Each piece has an explicit `fastened_to` relationship to the two members it spans. The engine does not insert a piece the fixture omits. No blocking dimension was added. No ledger, landing, stair guard, hinge, bottom rail, guard post, or connector shape was added. V1 is not rescored. One-model and no-guessing stay **PARTIAL**. Bearing fidelity stays **COMPLETE** for its recorded criteria. The drawing set stays **OPEN / NOT COMPLETE**.
+
+| ID | Slice 17 result |
+|----|-----------------|
+| D7 | Blocking is in the fixture. The framing plan draws both rows and names blocking-1 through blocking-18. Section A cuts the front beam, so it draws blocking-1 through blocking-9 and does not draw the back row. The member schedule groups the 18 pieces as one 2x8 row, length 1'-4". The relationship schedule records blocking fastened to joist (32) and blocking fastened to rim (4). A ledger remains absent. This fixture has no wall to receive one. |
+| D5, D6, D8 | Unchanged. Landing, stair guard, hinge, bottom rail, guard posts, tread-clip geometry, joist-hanger geometry, stair-hanger geometry, and latch geometry stay unsupplied. The sheets still say GEOMETRY NOT SUPPLIED for those connectors. |
+| Bearing label | Open. The words BEARING 0'-3" still sit on the post-to-beam contact. |
+
+Remaining deficiencies after this slice:
+
+| Item | Class | Disposition |
+|------|-------|-------------|
+| Ledger | E | This deck stands on four posts. A ledger needs a wall the fixture does not have. |
+| Landing | A | The model can store a member. The fixture does not supply a landing. |
+| Stair guard | A | The guard role exists. The fixture does not supply a stair guard. |
+| Hinges | A | No hinge fact is supplied. |
+| Bottom rail | A | No bottom-rail member is supplied. |
+| Guard posts | A | No guard-post member is supplied. |
+| Tread clip geometry | A | The connection is metadata. The shape is not supplied. |
+| Joist hanger geometry | A | The connection is metadata. The shape is not supplied. |
+| Stair hanger geometry | A | The connection is metadata. The shape is not supplied. |
+| Latch geometry | A | The connection is metadata. The shape is not supplied. |
+| Bearing words on the joint | D | The bearing is in the model. The sheet still prints the words on the contact. |
+
+The inspected set is 15 sheets. The framing plan shows the blocking as short marks on the two beam lines, with one note for all 18 pieces. Section A shows the front row as the boards between the joists, above the beam. The back row is on the plan and the schedule, and it is outside this section cut. The member schedule and the relationship schedule name the same pieces. Elevations, the stair, and the three details do not invent blocking. Connector notes stay in the margin. GEOMETRY NOT SUPPLIED stays on the latch, the hangers, and the tread clip. Would we hand this to the crew? No. The blocking is readable. The missing ledger, landing, stair guard, and connector shapes are still missing, and the bearing words still sit on the joint.

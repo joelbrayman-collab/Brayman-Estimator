@@ -954,6 +954,7 @@ _LINE_WEIGHT = {
     "rim": 1.4,
     "header": 1.5,
     "joist": 0.9,
+    "blocking": 0.9,
     "post": 1.5,
     "stringer": 1.4,
     "guard": 1.2,
@@ -974,6 +975,7 @@ _FILLED = {
     "stringer",
     "tread",
     "joist",
+    "blocking",
     "decking",
     "guard",
     "gate",
@@ -1768,7 +1770,7 @@ def _relationship_note(model, elements) -> str:
         for pair in seen
         if not (pair[1] == "supports" and (pair[0], pair[2]) in bearing_pairs)
     ]
-    order = ["pier", "footing", "post", "beam", "joist", "rim", "decking", "stringer", "tread"]
+    order = ["pier", "footing", "post", "beam", "joist", "blocking", "rim", "decking", "stringer", "tread"]
 
     def rank(pair):
         return (

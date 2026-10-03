@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Construction model blocking (2026-10-03)
+
+| Field | Content |
+|-------|---------|
+| Slice | Construction Model slice 17. Blocking. |
+| Product status at capture | **IMPLEMENTED / TESTED**. Not deployed. The drawing set stays **OPEN / NOT COMPLETE**. The generic fixture set is still not a crew set. |
+| 1. What new contractor capability exists? | Blocking is a member on the framing plan, on the section that cuts it, and in the member schedule, with the joist or rim it is fastened to. |
+| 2. When would the contractor use it? | When laying out solid blocking on the two beam lines of this deck. |
+| 3. What workflow will the final Manual need to teach? | Blocking appears only when it was supplied. The section shows the row the cut hits. A missing piece is not filled in. |
+| 4. What contractor-facing terms must be used? | Blocking. Fastened to. 2x8. Geometry not supplied. |
+| 5. What screenshots / Print examples will eventually be needed? | An 11×17 framing plan with the blocking on the beam lines, and section A with the front row between the joists. Not captured here as a finished example. |
+| 6. What warnings / validation distinctions need explanation? | A ledger is not drawn for this freestanding deck. A connector without a shape still says geometry not supplied. |
+| 7. Desktop / iPhone / Print relevance | Print on 11×17. No screen was added. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Construction drawing annotation layout (2026-10-03)
 
 | Field | Content |

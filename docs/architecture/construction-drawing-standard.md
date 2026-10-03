@@ -70,6 +70,8 @@ Slice 15 stores a supplied stair riser count on the stair result. The drawing pr
 
 Slice 16 moves annotations in paper space. It does not move a member, a relationship, a dimension value, or a level. Connector metadata sits off the member it names. Supplied connector geometry stays on the connection. A leader does not cut through another member to take a shorter path. GEOMETRY NOT SUPPLIED stays visible and does not become a shape. The set is not a crew set.
 
+Slice 17 stores blocking as members when the fixture supplies them. Each piece carries its geometry, size, material, and an explicit fastening to the members it spans. The framing plan, the section that cuts those pieces, and the member schedule read that same store. A section does not draw a piece the cut misses. Removing the members removes them from the sheets. The engine does not infer a piece, a ledger, or a connector shape. The set is not a crew set.
+
 The proving sheets are still not acceptable construction drawings.
 
 Remaining deficiencies:

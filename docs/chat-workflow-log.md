@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-03 — Construction model blocking
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-03 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 17 — BLOCKING + CONSTRUCTION FACT COMPLETION PASS 3 OCT 2026 |
+| Objective | Add blocking only where the complete deck fixture already has the lines to place it. |
+| Business decision | Blocking is a member, not a note. A ledger, a landing, a stair guard, and connector shapes stay unsupplied. The set is still not handed to the crew. |
+| Architectural decision | Eighteen 2x8 blocking members sit on the fixture beam stations, between the joists and rims the fixture already places. Each is fastened to those members. The framing plan, the section cut, and the member schedule read that store. Removing the members removes them from the sheets. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Recall section 2.1. Add blocking as construction members with provenance and explicit relationships. Do not infer blocking. Do not add a ledger, landing, stair guard, hinge, bottom rail, guard post, or connector shape. Classify the remaining deficiencies. Do not close the drawing set. Do not rescore V1. One commit if the gates pass. Push. Do not deploy. |
+| Files expected to change | Construction Model role allowlist and sheet weights; the complete deck fixture; blocking tests; the acceptance audit; drawing standard; build-out register; current-state; session handoff; roadmap; architecture index; this log; and the manual impact log. |
+| Files prohibited from changing | Bushel case files, PGE, Contract V1, schema, and deployment. |
+| Implementation result | Implemented and tested. Blocking is on the framing plan, on section A where the cut hits it, and in the member schedule. The drawing set stays OPEN / NOT COMPLETE. V1 is not rescored. |
+| Tests | Focused Slice 17: 6 passed, 1 warning, 33.68s, exit 0. Construction Model regression: 162 passed, 15 warnings, 213.91s, exit 0. PGE regression: 61 passed, 79 warnings, 18.13s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2129 passed, 6794 warnings, 1056.99s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Ledger needs a wall this fixture does not have. Landing, stair guard, hinges, bottom rail, guard posts, and connector shapes for the latch, the hangers, and the tread clip stay unsupplied. Bearing words still sit at the post-to-beam joint. One-model and no-guessing stay PARTIAL. The set is not a crew set. |
+| Next approved step | Move the bearing words off the post-to-beam joint. Do not invent a ledger, a landing, or a connector shape. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-03 — Construction drawing annotation layout
 
 | Field | Content |

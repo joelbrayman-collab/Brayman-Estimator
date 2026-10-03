@@ -247,6 +247,105 @@ def describe_group(elements) -> str:
     return "\n".join(lines)
 
 
+def bearing_annotation(note, paper_points):
+    """A paper note for one supplied bearing. The contact line stays put."""
+    if not isinstance(note, dict):
+        return None
+    label = note.get("label")
+    relationship_id = note.get("relationship_id")
+    source = note.get("from_id")
+    target = note.get("to_id")
+    if not label or not relationship_id or not source or not target:
+        return None
+    if len(paper_points) < 2:
+        return None
+    kind = str(note.get("kind") or "bears_on").replace("_", " ")
+    text = f"BEARING {label}\n{source} {kind} {target}\n{relationship_id}"
+    midpoint = (
+        sum(point[0] for point in paper_points) / len(paper_points),
+        sum(point[1] for point in paper_points) / len(paper_points),
+    )
+    return {
+        "id": f"bearing-{relationship_id}",
+        "element_ids": (source, target),
+        "text": text,
+        "geometry_reference": None,
+        "anchor_x": midpoint[0],
+        "anchor_y": midpoint[1],
+        "kind": "note",
+        "justification": "left",
+        "provenance": None,
+        "uncertainty": (),
+        "leader": True,
+        "member_points": tuple(paper_points),
+    }
+
+
+def group_bearing_annotations(callouts) -> list:
+    """One paper note when the contact and the member kinds match.
+
+    A single bearing keeps its leader. A group names every relationship
+    and does not point at one seat.
+    """
+    order = []
+    buckets = {}
+    for item in callouts:
+        key = _bearing_key(item)
+        if key is None:
+            key = ("solo", item.get("id"))
+        if key not in buckets:
+            order.append(key)
+            buckets[key] = []
+        buckets[key].append(item)
+    grouped = []
+    for key in order:
+        items = buckets[key]
+        grouped.append(items[0] if len(items) == 1 else _merge_bearing_notes(items))
+    return grouped
+
+
+def _bearing_key(item):
+    lines = (item.get("text") or "").split("\n")
+    if len(lines) < 3 or not lines[0].startswith("BEARING "):
+        return None
+    parts = lines[1].split()
+    if len(parts) < 3:
+        return None
+    source, target = parts[0], parts[-1]
+    kind = " ".join(parts[1:-1])
+    return (lines[0], kind, _id_prefix(source), _id_prefix(target))
+
+
+def _id_prefix(value: str) -> str:
+    parsed = _split_id(value)
+    return parsed[0] if parsed else value
+
+
+def _merge_bearing_notes(items) -> dict:
+    first = items[0]
+    lines = first["text"].split("\n")
+    parts = lines[1].split()
+    kind = " ".join(parts[1:-1])
+    sources = []
+    targets = []
+    relationships = []
+    for item in items:
+        row = item["text"].split("\n")
+        bits = row[1].split()
+        if bits[0] not in sources:
+            sources.append(bits[0])
+        if bits[-1] not in targets:
+            targets.append(bits[-1])
+        relationships.append(row[2])
+    merged = dict(first)
+    merged["id"] = f"bearing-{relationships[0]}"
+    merged["element_ids"] = tuple(dict.fromkeys([*sources, *targets]))
+    merged["text"] = f"{lines[0]}\n{_spans(sources)} {kind} {_spans(targets)}\n{_spans(relationships)}"
+    merged["leader"] = False
+    merged["member_points"] = ()
+    return merged
+
+
 def route_leader(origin, target, blocked, existing, frame, arrival=()) -> tuple:
     """A paper polyline from a note to the member it names.
 

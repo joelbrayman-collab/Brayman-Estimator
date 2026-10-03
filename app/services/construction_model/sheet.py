@@ -27,10 +27,12 @@ from app.services.construction_model.annotations import (
     build_refusal_callouts,
     _id_key,
     _span as _identifier_span,
+    group_bearing_annotations,
     group_connector_notes,
     place_callouts,
     place_margin_callouts,
     rectangles_overlap,
+    bearing_annotation,
     route_leader,
     text_size,
     wrap_text,
@@ -373,6 +375,7 @@ def _draw_view(
     sheet.setStrokeColor(_NAVY)
     sheet.setLineWidth(1.1)
     bearing_rects = []
+    bearing_callouts = []
     for element in projection.elements:
         width = 1.6 if element["element_class"] == "supports" else 1.0
         sheet.setLineWidth(width)
@@ -385,6 +388,7 @@ def _draw_view(
                 points_per_unit,
                 place_x,
                 place_y,
+                bearing_notes=bearing_callouts,
             )
         )
     connector_notes = []
@@ -442,6 +446,7 @@ def _draw_view(
         projection.view_type,
         connector_notes,
         reference_plan=_plan_references,
+        bearing_callouts=bearing_callouts,
     )
     _draw_reference_marks(sheet, reference_marks or ())
 
@@ -500,6 +505,7 @@ def _annotate_frame(
     connector_notes=None,
     margin_notes=None,
     reference_plan=None,
+    bearing_callouts=None,
 ) -> list:
     occupied = list(obstacles)
     if model is not None and axes is not None:
@@ -558,6 +564,7 @@ def _annotate_frame(
             }
         )
     callouts.extend(_connector_callouts(connector_notes or ()))
+    callouts.extend(group_bearing_annotations(bearing_callouts or ()))
     members = _member_rects(elements, origin_u, origin_v, points_per_unit, place_x, place_y)
     content = _union_rect([rect for rect, _identifier in members])
     primary = [item for item in callouts if item.get("kind") not in {"connector", "note", "refusal"}]
@@ -983,7 +990,9 @@ _FILLED = {
 }
 
 
-def _draw_element(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, seen_bearings=None) -> None:
+def _draw_element(
+    sheet, element, origin_u, origin_v, points_per_unit, x0, y0, seen_bearings=None, bearing_notes=None
+) -> list:
     geometry = element.get("profile_geometry") or element["projected_geometry"]
     role = element.get("role") or element.get("kind") or ""
     sheet.setLineWidth(_LINE_WEIGHT.get(role, 0.9))
@@ -1012,12 +1021,18 @@ def _draw_element(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, s
         sheet.setFillColor(white)
     sheet.drawPath(path, stroke=1, fill=1 if filled else 0)
     sheet.setFillColor(_NAVY)
-    return _draw_bearing(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, seen_bearings)
+    return _draw_bearing(
+        sheet, element, origin_u, origin_v, points_per_unit, x0, y0, seen_bearings, bearing_notes
+    )
 
 
-def _draw_bearing(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, seen_labels=None) -> list:
+def _draw_bearing(
+    sheet, element, origin_u, origin_v, points_per_unit, x0, y0, seen_labels=None, bearing_notes=None
+) -> list:
+    """Draw the contact line. The words are a paper note, not ink on the joint."""
     lines = element.get("bearing_lines") or []
     labels = element.get("bearing_labels") or []
+    recorded = element.get("bearing_notes") or []
     if not lines:
         return []
     occupied = []
@@ -1035,20 +1050,21 @@ def _draw_bearing(sheet, element, origin_u, origin_v, points_per_unit, x0, y0, s
         if len(placed) < 2:
             continue
         sheet.line(placed[0][0], placed[0][1], placed[-1][0], placed[-1][1])
-        if index >= len(labels):
+        xs = [point[0] for point in placed]
+        ys = [point[1] for point in placed]
+        occupied.append((min(xs) - 1, min(ys) - 1, max(xs) + 1, max(ys) + 1))
+        meta = recorded[index] if index < len(recorded) else None
+        if meta is None and index < len(labels):
+            meta = {"label": labels[index]}
+        note = bearing_annotation(meta, placed)
+        if note is None:
             continue
-        label = f"BEARING {labels[index]}"
-        key = (round(placed[0][0], 0), round(placed[0][1], 0), label)
-        if seen_labels is not None and key in seen_labels:
+        if seen_labels is not None and note["id"] in seen_labels:
             continue
         if seen_labels is not None:
-            seen_labels.add(key)
-        width, height = text_size(label)
-        text_x = placed[0][0] - width - 6
-        text_y = placed[0][1] + 2
-        sheet.setFont("Helvetica", 7)
-        sheet.drawString(text_x, text_y, label)
-        occupied.append((text_x, text_y - 2, text_x + width, text_y + 8))
+            seen_labels.add(note["id"])
+        if bearing_notes is not None:
+            bearing_notes.append(note)
     return occupied
 
 
@@ -2180,10 +2196,19 @@ def _paint_read_view(
     sheet.setStrokeColor(_NAVY)
     seen_bearings = set()
     bearing_rects = []
+    bearing_callouts = []
     for element in view.elements:
         bearing_rects.extend(
             _draw_element(
-                sheet, element, origin_u, origin_v, points_per_unit, place_x, place_y, seen_bearings
+                sheet,
+                element,
+                origin_u,
+                origin_v,
+                points_per_unit,
+                place_x,
+                place_y,
+                seen_bearings,
+                bearing_callouts,
             )
         )
     connector_notes = []
@@ -2223,6 +2248,7 @@ def _paint_read_view(
         view.view_kind,
         connector_notes,
         margin_notes,
+        bearing_callouts=bearing_callouts,
     )
 
 

@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Bearing annotation (2026-10-03)
+
+| Field | Content |
+|-------|---------|
+| Slice | Construction Model slice 18. Bearing annotation. |
+| Product status at capture | **IMPLEMENTED / TESTED**. Not deployed. The drawing set stays **OPEN / NOT COMPLETE**. The generic fixture set is still not a crew set. |
+| 1. What new contractor capability exists? | The bearing length sits beside the joint, with the members and the relationship it names. The contact line stays on the post and the beam. |
+| 2. When would the contractor use it? | When reading the post-and-beam detail, the section, and the stair seats. |
+| 3. What workflow will the final Manual need to teach? | The words can move on the sheet. The contact does not move. Several equal bearings share one note and still name each relationship. |
+| 4. What contractor-facing terms must be used? | Bearing. Bears on. Geometry not supplied. |
+| 5. What screenshots / Print examples will eventually be needed? | An 11×17 post-and-beam detail with the bearing note in the margin and the contact visible. Not captured here as a finished example. |
+| 6. What warnings / validation distinctions need explanation? | A leader is omitted when it would cross an unrelated member. A connector without a shape still says geometry not supplied. |
+| 7. Desktop / iPhone / Print relevance | Print on 11×17. No screen was added. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Construction model blocking (2026-10-03)
 
 | Field | Content |

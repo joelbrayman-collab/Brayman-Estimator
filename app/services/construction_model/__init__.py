@@ -15,6 +15,7 @@ Slice 14 draws connector geometry only when that model supplies the geometry. A 
 Slice 15 stores a supplied stair riser count and does not calculate one.
 Slice 16 moves annotations in paper space. It does not move a member.
 Slice 17 stores blocking when the fixture supplies it. It does not infer a piece.
+Slice 18 moves a bearing note in paper space. It does not move the contact. Equivalent contacts share one note.
 This package does not read or write a project, a plan record, or an estimate.
 Plan Generation stays a separate contract.
 """

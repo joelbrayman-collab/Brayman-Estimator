@@ -1293,8 +1293,19 @@ def _apply_bearings(model, elements, horizontal, vertical) -> None:
             continue
         supporter.setdefault("bearing_lines", []).append(located)
         span = _supplied_span(surface.get("coordinates") or [])
+        label = None
         if span is not None:
-            supporter.setdefault("bearing_labels", []).append(format_measure(span, system, "ft" if system == "imperial" else "m"))
+            label = format_measure(span, system, "ft" if system == "imperial" else "m")
+            supporter.setdefault("bearing_labels", []).append(label)
+        supporter.setdefault("bearing_notes", []).append(
+            {
+                "relationship_id": relationship.get("id"),
+                "kind": relationship.get("kind"),
+                "from_id": relationship.get("from_id"),
+                "to_id": relationship.get("to_id"),
+                "label": label,
+            }
+        )
         heights = [point[1] for point in located]
         if max(heights) - min(heights) > 0.05:
             continue

@@ -198,3 +198,42 @@ Remaining deficiencies after this slice:
 | Bearing words on the joint | D | The bearing is in the model. The sheet still prints the words on the contact. |
 
 The inspected set is 15 sheets. The framing plan shows the blocking as short marks on the two beam lines, with one note for all 18 pieces. Section A shows the front row as the boards between the joists, above the beam. The back row is on the plan and the schedule, and it is outside this section cut. The member schedule and the relationship schedule name the same pieces. Elevations, the stair, and the three details do not invent blocking. Connector notes stay in the margin. GEOMETRY NOT SUPPLIED stays on the latch, the hangers, and the tread clip. Would we hand this to the crew? No. The blocking is readable. The missing ledger, landing, stair guard, and connector shapes are still missing, and the bearing words still sit on the joint.
+
+## Slice 18 disposition — 3 Oct 2026
+
+CONSTRUCTION MODEL + BEARING ANNOTATION: **IMPLEMENTED / TESTED**.
+
+The bearing words moved in paper space. The contact line stayed on the relationship. No fixture construction data was added. V1 is not rescored. One-model and no-guessing stay **PARTIAL**. Bearing fidelity stays **COMPLETE** for its recorded criteria. The drawing set stays **OPEN / NOT COMPLETE**. No new generic capability is required before the real Bushel model is put through this engine.
+
+| Item | Slice 18 result |
+|------|-----------------|
+| Bearing words on the joint | Closed as a sheet defect. The post-and-beam detail prints `BEARING 0'-3"`, `post-1 bears on beam-front`, and `rel-bear-post-1-beam-front` in the margin. The 3 inch contact and the two bolt marks stay on the joint. Section A prints the same value for post-1 and post-2 on beam-front, and for pier-1 and pier-2 on the posts, off the members. The stair seats are clear. One note names the 0'-11" bearings and every relationship id. A single bearing may take a leader. A group does not point at one seat. A leader that would cross an unrelated member is omitted. |
+| Ledger, landing, stair guard, hinges, bottom rail, guard posts, tread-clip geometry, joist-hanger geometry, stair-hanger geometry, latch geometry | Unchanged fixture inputs. The sheets still say GEOMETRY NOT SUPPLIED where a connection exists and the shape does not. |
+
+Visual reassessment of all 15 sheets. This is a quality reading, not a new feature list.
+
+| Sheet | Could a carpenter use it without guessing what the drawing means? |
+|-------|-------------------------------------------------------------------|
+| Foundation plan | Yes, for the four piers and the two spacing chains. The sheet is sparse because the scale is 1/2 in = 1 ft. |
+| Framing plan | Yes, for the frame that is in the model: joists, beams, posts, rims, header, blocking, stair opening, and the dimension chains. Connector notes sit in the margin. Hanger shapes are not supplied. |
+| Decking, guard, and gate | Yes, for the boards, the rails, the balusters, the gate, and the opening. The latch shape is not supplied. |
+| Front elevation | Yes, for the posts, the beams, the guard, grade, the walking surface, and baluster spacing. Member labels sit in the open bay. They do not cover the bearing. |
+| Side elevation | Yes, for the same stack plus the stair, pier depth, and guard height. Connector notes stay in the margin. |
+| Stair | Yes, for the stringers, the treads, the seats, rise, run, and riser count 6. The bearing value is one note. There is no landing and no stair guard in the model. |
+| Section A | Yes, for the cut at the front beam: posts, beam, joists, blocking, decking, piers, and section height. The bearing notes name the relationships. |
+| Post and beam | Yes, for the supplied contact, the plate, and the two bolts. The bearing words are off the joint. The joist hanger on this sheet is metadata only. |
+| Stringer and tread | Yes, for the seat and the 0'-11" bearing. The tread clip stays GEOMETRY NOT SUPPLIED. |
+| Guard and gate | Yes, for the rails and balusters that exist. The latch is named and not drawn. |
+| Schedules and index | The rows match the model. They are not a price. The index lists the 15 sheets. |
+
+Engine deficiencies versus fixture inputs:
+
+| Question | Answer |
+|----------|--------|
+| Genuine engine deficiency left? | No construction-fact gap. Elevation callouts are still dense, and a leader is omitted when every route would cross another member. Those are presentation limits of the paper-space rules already in force. |
+| Missing fixture inputs? | Ledger, landing, stair guard, hinges, bottom rail, guard posts, and the four connector shapes. |
+| Acceptable unresolved content? | Yes. GEOMETRY NOT SUPPLIED is the governed sentence. The renderer does not invent the shape. |
+| What still blocks a crew set? | The missing project facts above. A carpenter cannot build a latch, a landing, or a ledger from a sheet that truthfully says those facts were not supplied. |
+| Another generic engine slice? | No. The engine can store a member, a relationship, a bearing, and connector geometry when a project supplies them. |
+
+Would we hand this generic set to the crew? No. The drawing engine is ready to accept the real Bushel model as a proving pass. Bushel facts that are absent stay refused. They are not filled in from this fixture.

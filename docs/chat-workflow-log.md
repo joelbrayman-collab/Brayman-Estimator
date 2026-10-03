@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-03 — Bearing annotation and generic set reassessment
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-03 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 18 — BEARING ANNOTATION + GENERIC SET VISUAL REASSESSMENT 3 OCT 2026 |
+| Objective | Move the bearing words off the post-to-beam joint, then reread the generic set. |
+| Business decision | No new construction facts. The generic set is still not a crew set. No new generic capability is required before a real project model is read. |
+| Architectural decision | The contact line stays on the relationship. The words are a paper note. Equivalent contacts share one note and keep every relationship id. A leader is omitted when it would cross an unrelated member. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Recall section 2.1. Move the bearing annotation off the joint. Do not add fixture facts. Reassess every generic sheet. Do not run or modify Bushel. Do not close the drawing set. Do not rescore V1. One commit if the gates pass. Push. Do not deploy. |
+| Files expected to change | Bearing note placement in the Construction Model sheet layer; bearing-annotation tests; the acceptance audit; drawing standard; build-out register; current-state; session handoff; roadmap; architecture index; this log; and the manual impact log. |
+| Files prohibited from changing | The complete deck fixture construction data, Bushel case files, PGE, Contract V1, schema, and deployment. |
+| Implementation result | Implemented and tested. The post-and-beam contact is clear. The generic engine needs no new capability before a real project model is read. The drawing set stays OPEN / NOT COMPLETE. V1 is not rescored. |
+| Tests | Focused Slice 18: 4 passed, 13.39s, exit 0. Construction Model regression: 166 passed, 15 warnings, 231.01s, exit 0. PGE regression: 61 passed, 79 warnings, 19.50s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2133 passed, 6794 warnings, 1080.40s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Ledger, landing, stair guard, hinges, bottom rail, guard posts, and connector shapes stay unsupplied fixture inputs. Elevation callouts are still dense. One-model and no-guessing stay PARTIAL. The set is not a crew set. |
+| Next approved step | Put the real Bushel model through this engine as a proving pass. Do not invent a missing fact. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-03 — Construction model blocking
 
 | Field | Content |

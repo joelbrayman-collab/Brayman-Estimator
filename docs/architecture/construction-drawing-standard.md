@@ -72,6 +72,8 @@ Slice 16 moves annotations in paper space. It does not move a member, a relation
 
 Slice 17 stores blocking as members when the fixture supplies them. Each piece carries its geometry, size, material, and an explicit fastening to the members it spans. The framing plan, the section that cuts those pieces, and the member schedule read that same store. A section does not draw a piece the cut misses. Removing the members removes them from the sheets. The engine does not infer a piece, a ledger, or a connector shape. The set is not a crew set.
 
+Slice 18 moves a bearing note in paper space. The contact line stays on the relationship. The note names the relationship and the supplied contact. Equivalent contacts share one note and keep every relationship id. A single bearing may take a leader. A group does not point at one seat. A leader that would cross an unrelated member is omitted. No new generic capability is required before a real project model is read. The set is not a crew set.
+
 The proving sheets are still not acceptable construction drawings.
 
 Remaining deficiencies:

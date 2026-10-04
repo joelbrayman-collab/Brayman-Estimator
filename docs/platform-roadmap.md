@@ -94,7 +94,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-Checklist step 6 shows the existing engine boundary on Continue setup. A Platform engine is still not called. The remaining dependency is a work-element engine binding, which this slice does not add.
+Checklist step 6 shows the existing engine boundary on Continue setup. A Platform engine is still not called. The minimum work-element binding is recorded in the start-project plan, section 6, and is not implemented. Step 8 stays queued.
 
 This subsection is **current authority**, not a historical FG-018 snapshot. Gate-at-close Alembic/test facts for closed gates remain in those gate documents.
 

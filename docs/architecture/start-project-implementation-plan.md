@@ -103,7 +103,23 @@ Website Concrete (`lib/calculation-engine/concrete-slab.ts` in the Website proje
 
 An engine enters the walk only when a Platform-side governed engine can emit a Contract V1 result for a confirmed Our crew package. Today that handoff is the existing calculation intake on an estimate version. The contractor confirms the quantity. The walk does not import it silently.
 
-If a required element has no Platform engine yet, the cursor records `waiting_code` `ENGINE`. No placeholder quantity is written. Subcontracted packages do not call an engine.
+If a required element has no Platform engine yet, the cursor records `waiting_code` `ENGINE`. No placeholder quantity is written. Subcontracted packages do not call an engine. Nothing in the current catalog marks an element as required for calculation, so Our-crew scope stays `ENGINE_REQUIREMENT_NOT_DERIVABLE` and does not set `waiting` to `ENGINE`.
+
+### Binding fact — recorded 2026-10-04, not implemented
+
+Checklist step 8 stays queued until this fact exists. This subsection does not create it, and it does not approve a migration.
+
+The minimum binding is one baseline `WorkElementTemplate` code to one Platform `engine_id`, or no binding. It is present only when the template is a baseline row, the `engine_id` names a producer in this repository, and that producer emits a payload that passes `validate_contract_v1`.
+
+The result already carries `engine_version`, `contract_version`, `result_id`, inputs, and quantities. The work package already carries Our crew or Subcontractor. Those facts stay off the binding.
+
+`WorkElementTemplate` today stores `code`, `display_name`, `work_type_id`, `status`, and `sort_order`. It cannot store this fact. A later approved migration may add a nullable `engine_id` on the baseline template. An empty value is the absence of a binding. An organization template does not acquire an engine by naming a Website calculator.
+
+Current baseline codes are `SITE`, `FOUND`, and `STRUCT`. None is bound. `FOUND` is not an ICF wall. The only Platform producer is `icf_wall` in `app/services/icf_quantity.py`, reached from the estimate wall-form page. `concrete_slab` is a Contract V1 shape and a Website calculator. It has no producer in this repository, so naming it on a template would not be a binding. Plan Generation stair provenance is not a Contract V1 result.
+
+Until a baseline template means the 8-inch ICF wall, every Our-crew package stays `ENGINE_REQUIREMENT_NOT_DERIVABLE` and every subcontract-only package stays `ENGINE_NOT_APPLICABLE`. The walk still does not calculate.
+
+When a valid binding exists, the walk may open that engine’s existing entry. It still writes no quantity. The mapper confirmation gate stays. A missing measurement stays on that entry.
 
 ## 7. Plan Generation entry
 

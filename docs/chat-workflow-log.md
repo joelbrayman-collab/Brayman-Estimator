@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-04 — Work-element engine binding assessment
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-04 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 DEPENDENCY RESOLUTION WORK ELEMENT → PLATFORM ENGINE BINDING ARCHITECTURE ASSESSMENT 4 OCT 2026 |
+| Objective | Define the minimum catalog fact that must exist before checklist step 8 can call an engine. |
+| Business decision | Step 8 stays queued. No engine was added. Website concrete and stair stay on the Website. |
+| Architectural decision | A binding is a baseline work-element code plus a Platform engine id whose producer already emits Contract V1. SITE, FOUND, and STRUCT stay unbound. icf_wall is the only Platform producer and is not tied to those codes. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Read the catalog, Contract V1, the mapper, and the engines. Record the minimum binding on the existing start-project authority and in section 2.1. Do not implement. Do not deploy. |
+| Files expected to change | The start-project plan, the V1 recall row, the checklist, current-state, session handoff, the roadmap, the build-out register, and this log. |
+| Files prohibited from changing | Product code, schema, engines, the mapper, Contract V1, Bushel, Supplier Pro, and the Website. |
+| Implementation result | The binding is architecture only. No schema. No engine. Step 8 remains unauthorized. V1 is not rescored. |
+| Tests | Not run. No product code changed. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | No baseline template means the 8-inch ICF wall. A nullable engine id needs a later approved migration. |
+| Next approved step | Leave the binding unbuilt until a baseline element means the 8-inch ICF wall. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-04 — Engine boundary on Guided Project Setup
 
 | Field | Content |

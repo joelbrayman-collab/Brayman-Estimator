@@ -135,6 +135,7 @@ class WorkElementTemplate(db.Model):
     display_name = db.Column(db.String(180), nullable=False)
     status = db.Column(db.String(20), nullable=False, default=WORK_STATUS_ACTIVE)
     sort_order = db.Column(db.Integer, nullable=False, default=0)
+    platform_engine_id = db.Column(db.String(80), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     work_type = db.relationship("WorkType", back_populates="element_templates")

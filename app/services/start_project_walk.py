@@ -16,6 +16,7 @@ from app.models.client import Client
 from app.models.estimate import Estimate
 from app.models.project import LOCATION_COMPLETE, Project, ProjectLocation
 from app.models.project_work_package import DELIVERY_INTERNAL
+from app.models.work_structure import WorkElementTemplate
 from app.services.project_drawing_requirement import (
     DRAWING_STATE_NOT_REQUIRED,
     DRAWING_STATE_PRESENT,
@@ -24,6 +25,7 @@ from app.services.project_drawing_requirement import (
     derive_drawing_state,
 )
 from app.services.project_work_package import list_confirmed, project_plans
+from app.services.work_structure import bound_platform_engine_id
 
 STAGE_PROJECT_CLIENT = "PROJECT_CLIENT"
 STAGE_LOCATION = "LOCATION"
@@ -70,6 +72,7 @@ EVIDENCE_SCOPE_CONFIRMED = "SCOPE_CONFIRMED"
 EVIDENCE_SCOPE_ABSENT = "SCOPE_ABSENT"
 EVIDENCE_ENGINE_NOT_APPLICABLE = "ENGINE_NOT_APPLICABLE"
 EVIDENCE_ENGINE_REQUIREMENT_NOT_DERIVABLE = "ENGINE_REQUIREMENT_NOT_DERIVABLE"
+EVIDENCE_ENGINE_ELIGIBLE = "ENGINE_ELIGIBLE"
 EVIDENCE_ESTIMATE_PRESENT = "ESTIMATE_PRESENT"
 EVIDENCE_ESTIMATE_ABSENT = "ESTIMATE_ABSENT"
 EVIDENCE_ESTIMATE_SELECTION_AMBIGUOUS = "ESTIMATE_SELECTION_AMBIGUOUS"
@@ -90,6 +93,8 @@ class StartProjectWalkResolution:
     evidence: tuple[str, ...]
     drawing_state: str
     estimate_id: int | None = None
+    estimate_version_id: int | None = None
+    platform_engine_id: str | None = None
 
 
 def resolve_start_project_walk(organization_id, project_id) -> StartProjectWalkResolution:
@@ -148,20 +153,49 @@ def resolve_start_project_walk(organization_id, project_id) -> StartProjectWalkR
         evidence.append(EVIDENCE_DRAWING_STATE_PRESENT)
     else:
         evidence.append(drawing_state)
+    platform_engine_id = None
     if packages:
         evidence.append(EVIDENCE_SCOPE_CONFIRMED)
-        if any(package.delivery == DELIVERY_INTERNAL for package in packages):
-            evidence.append(EVIDENCE_ENGINE_REQUIREMENT_NOT_DERIVABLE)
-        else:
+        internal = [
+            package for package in packages if package.delivery == DELIVERY_INTERNAL
+        ]
+        if not internal:
             evidence.append(EVIDENCE_ENGINE_NOT_APPLICABLE)
+        else:
+            templates = {
+                row.id: row
+                for row in WorkElementTemplate.query.filter(
+                    WorkElementTemplate.id.in_(
+                        [package.work_element_template_id for package in internal]
+                    )
+                )
+            }
+            bound = []
+            unbound = False
+            for package in internal:
+                engine_id = bound_platform_engine_id(
+                    templates.get(package.work_element_template_id)
+                )
+                if engine_id:
+                    bound.append(engine_id)
+                else:
+                    unbound = True
+            if bound:
+                evidence.append(EVIDENCE_ENGINE_ELIGIBLE)
+                platform_engine_id = bound[0]
+            if unbound:
+                evidence.append(EVIDENCE_ENGINE_REQUIREMENT_NOT_DERIVABLE)
     else:
         evidence.append(EVIDENCE_SCOPE_ABSENT)
     estimate_id = None
+    estimate_version_id = None
     if len(estimates) == 0:
         evidence.append(EVIDENCE_ESTIMATE_ABSENT)
     elif len(estimates) == 1:
         evidence.append(EVIDENCE_ESTIMATE_PRESENT)
         estimate_id = estimates[0].id
+        if platform_engine_id:
+            estimate_version_id = estimates[0].current_version_id
     else:
         evidence.append(EVIDENCE_ESTIMATE_SELECTION_AMBIGUOUS)
 
@@ -205,4 +239,6 @@ def resolve_start_project_walk(organization_id, project_id) -> StartProjectWalkR
         evidence=tuple(evidence),
         drawing_state=drawing_state,
         estimate_id=estimate_id,
+        estimate_version_id=estimate_version_id,
+        platform_engine_id=platform_engine_id,
     )

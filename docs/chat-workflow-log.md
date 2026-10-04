@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-04 — ICF wall work-element binding
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-04 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 STEP 8 — ICF WALL WORK-ELEMENT → PLATFORM ENGINE BINDING 4 OCT 2026 |
+| Objective | Bind the first governed work element, ICF wall, to the existing Platform `icf_wall` producer. |
+| Business decision | Our-crew ICF wall can open the existing wall-form page. The contractor still enters the measurements and still confirms the quantity. |
+| Architectural decision | Baseline code `ICF`, display name ICF wall, work type `GEN`, status `ACTIVE`, sort 40, `platform_engine_id` `icf_wall`. `SITE`, `FOUND`, and `STRUCT` stay unbound. An empty binding is no engine. A Website calculator name is not a producer. The walk does not calculate. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Create the ICF wall baseline element, bind only that element to `icf_wall`, and open the existing wall-form entry from Continue setup when Our crew is confirmed and one estimate exists. Keep Contract V1 and the mapper confirmation gate. Do not deploy. |
+| Files expected to change | The work-element model and catalog, the start-project resolver, Guided Project Setup, migration `n4a5b6c7d8e9`, the head pins in existing migration tests, and the governed records named in the prompt. |
+| Files prohibited from changing | Contract V1, mapper semantics, Bushel, Supplier Pro, Construction Model, the Website, and a second ICF calculator. |
+| Implementation result | **IMPLEMENTED / TESTED** for `ICF` → `icf_wall` only. Checklist step 8 stays open for every other element. Migration `n4a5b6c7d8e9` is not applied to the Mac primary or the hosted database. V1 stays **65% / 4 of 11**. Deployment was not performed. |
+| Tests | Focused setup, walk, handoff, scope, ICF, and Contract V1: 51 passed. Plan Generation regression: 49 passed. `./venv/bin/python -m pytest -q`: 2139 passed, 6814 warnings, 1108.94s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | `SITE`, `FOUND`, and `STRUCT` have no producer. `concrete_slab` and stair are not Platform engines. The new revision is not on the Mac primary or the hosted database. |
+| Next approved step | Leave the other elements unbound. Do not start another engine, Supplier Pro, Bushel, or a deploy. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-04 — Work-element engine binding assessment
 
 | Field | Content |

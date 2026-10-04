@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
-| Updated | 2026-10-02 |
+| Updated | 2026-10-04 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — ICF wall work-element binding (2026-10-04)
+
+| Field | Content |
+|-------|---------|
+| Slice | Checklist step 8. First work-element binding. Baseline `ICF` → `icf_wall`. |
+| Product status at capture | **IMPLEMENTED / TESTED**. Not deployed. Migration `n4a5b6c7d8e9` is not applied to the Mac primary or the hosted database. |
+| 1. What new contractor capability exists? | Continue setup can open the existing ICF wall calculation when the confirmed work is ICF wall and Our crew, and the project already has one estimate. |
+| 2. When would the contractor use it? | After confirming ICF wall as Our crew, when the estimate exists and the wall measurements are still to be entered. |
+| 3. What workflow will the final Manual need to teach? | Confirm ICF wall as Our crew. Open the existing ICF wall page. Enter the measured wall. Review the result. Confirm the quantity on the existing estimate gate. Site, foundation, and structure do not open a calculation. Subcontracted ICF wall does not open a crew calculation. |
+| 4. What contractor-facing terms must be used? | ICF wall. Our crew. Subcontractor. A governed ICF wall calculation is available. Open ICF wall calculation. |
+| 5. What screenshots / Print examples will eventually be needed? | Continue setup for Our-crew ICF wall, and the existing ICF wall quantities page. Not captured here as a finished example. |
+| 6. What warnings / validation distinctions need explanation? | Choosing ICF wall does not calculate a quantity. The wall page does not add an estimate line. Foundation is not ICF wall. A subcontracted package requires no crew calculation. |
+| 7. Desktop / iPhone / Print relevance | Office desktop Continue setup and the existing ICF wall page. No print sheet was added. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
 
 ### MANUAL IMPACT — Bearing annotation (2026-10-03)
 

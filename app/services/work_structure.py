@@ -506,10 +506,86 @@ def catalog_layer_label(row) -> str:
     return "This organization"
 
 
+ICF_WALL_CODE = "ICF"
+ICF_WALL_NAME = "ICF wall"
+ICF_WALL_ENGINE_ID = "icf_wall"
+PLATFORM_ENGINE_PRODUCERS = frozenset({ICF_WALL_ENGINE_ID})
+
+BASELINE_ELEMENTS = (
+    ("SITE", "Site work", None, 10),
+    ("FOUND", "Foundation", None, 20),
+    ("STRUCT", "Structure", None, 30),
+    (ICF_WALL_CODE, ICF_WALL_NAME, ICF_WALL_ENGINE_ID, 40),
+)
+
+
+def bound_platform_engine_id(template) -> str | None:
+    """Return a Platform producer id, or None when the template has no binding.
+
+    An organization row cannot name an engine. A Website calculator name is
+    not a producer.
+    """
+    if template is None or template.organization_id is not None:
+        return None
+    engine_id = (template.platform_engine_id or "").strip()
+    if engine_id in PLATFORM_ENGINE_PRODUCERS:
+        return engine_id
+    return None
+
+
+def _ensure_baseline_elements(work_type) -> None:
+    activities = {
+        "SITE": (("CLEAR", "Clearing"),),
+        "FOUND": (
+            ("LAYOUT", "Layout"),
+            ("EXCAV", "Excavation"),
+            ("FORM", "Forms"),
+            ("PLACE", "Placement"),
+        ),
+        "STRUCT": (("FRAME", "Framing"),),
+    }
+    for code, name, engine_id, sort_order in BASELINE_ELEMENTS:
+        element = WorkElementTemplate.query.filter_by(
+            organization_id=None,
+            work_type_id=work_type.id,
+            code=code,
+        ).first()
+        if element is None:
+            element = WorkElementTemplate(
+                organization_id=None,
+                work_type_id=work_type.id,
+                code=code,
+                display_name=name,
+                status=WORK_STATUS_ACTIVE,
+                sort_order=sort_order,
+                platform_engine_id=engine_id,
+            )
+            db.session.add(element)
+            db.session.flush()
+            for act_order, (act_code, act_name) in enumerate(
+                activities.get(code, ()),
+                start=1,
+            ):
+                db.session.add(
+                    WorkActivityTemplate(
+                        organization_id=None,
+                        work_element_template_id=element.id,
+                        code=act_code,
+                        display_name=act_name,
+                        status=WORK_STATUS_ACTIVE,
+                        sort_order=act_order * 10,
+                    )
+                )
+        elif element.platform_engine_id != engine_id:
+            element.platform_engine_id = engine_id
+
+
 def ensure_baseline_work_catalog() -> WorkType:
     """Idempotent baseline for in-memory tests (migration seeds live DBs)."""
     existing = WorkType.query.filter_by(organization_id=None, code="GEN").first()
     if existing:
+        _ensure_baseline_elements(existing)
+        db.session.commit()
         return existing
     work_type = WorkType(
         organization_id=None,
@@ -520,40 +596,6 @@ def ensure_baseline_work_catalog() -> WorkType:
     )
     db.session.add(work_type)
     db.session.flush()
-    for order, (code, name) in enumerate(
-        (("SITE", "Site work"), ("FOUND", "Foundation"), ("STRUCT", "Structure")),
-        start=1,
-    ):
-        element = WorkElementTemplate(
-            organization_id=None,
-            work_type_id=work_type.id,
-            code=code,
-            display_name=name,
-            status=WORK_STATUS_ACTIVE,
-            sort_order=order * 10,
-        )
-        db.session.add(element)
-        db.session.flush()
-        activities = {
-            "SITE": (("CLEAR", "Clearing"),),
-            "FOUND": (
-                ("LAYOUT", "Layout"),
-                ("EXCAV", "Excavation"),
-                ("FORM", "Forms"),
-                ("PLACE", "Placement"),
-            ),
-            "STRUCT": (("FRAME", "Framing"),),
-        }
-        for act_order, (act_code, act_name) in enumerate(activities[code], start=1):
-            db.session.add(
-                WorkActivityTemplate(
-                    organization_id=None,
-                    work_element_template_id=element.id,
-                    code=act_code,
-                    display_name=act_name,
-                    status=WORK_STATUS_ACTIVE,
-                    sort_order=act_order * 10,
-                )
-            )
+    _ensure_baseline_elements(work_type)
     db.session.commit()
     return work_type

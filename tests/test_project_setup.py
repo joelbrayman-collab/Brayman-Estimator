@@ -8,12 +8,20 @@ from app import create_app, db
 from app.models import Client, Organization, Project
 from app.models.project import DRAWING_REQUIREMENT_NOT_REQUIRED, DRAWING_REQUIREMENT_REQUIRED, ProjectLocation
 from app.models.calculation_estimate_mapping import CalculationResultIntake
-from app.models.estimate import Estimate
+from app.models.estimate import Estimate, EstimateLineItem
 from app.models.project_work_package import DELIVERY_INTERNAL, DELIVERY_SUBCONTRACT
+from app.models.work_structure import WorkElementTemplate
 from app.plan_intelligence.models import PlanDocument
 from app.services.estimates import create_estimate
-from app.services.project_setup import NOT_APPLICABLE_COPY, NOT_DERIVABLE_COPY
+from app.services.calculation_result_contract import validate_contract_v1
+from app.services.icf_quantity import build_icf_standard_quantities
+from app.services.project_setup import (
+    ICF_AVAILABLE_COPY,
+    NOT_APPLICABLE_COPY,
+    NOT_DERIVABLE_COPY,
+)
 from app.services.start_project_walk import resolve_start_project_walk
+from app.services.work_structure import ICF_WALL_CODE, ICF_WALL_ENGINE_ID
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
 from app.services.project_work_package import confirm_package
 from app.services.work_structure import ensure_baseline_work_catalog
@@ -368,6 +376,153 @@ def test_setup_names_the_engine_boundary_without_writing(client, app):
         assert "stair" not in walk
         assert "concrete" not in setup_source
         assert "stair" not in setup_source
+
+
+def _baseline(code):
+    return WorkElementTemplate.query.filter_by(code=code, organization_id=None).one()
+
+
+def test_icf_wall_is_the_only_bound_baseline_element(client, app):
+    with app.app_context():
+        icf = _baseline(ICF_WALL_CODE)
+        assert icf.display_name == "ICF wall"
+        assert icf.status == "ACTIVE"
+        assert icf.platform_engine_id == ICF_WALL_ENGINE_ID
+        assert icf.sort_order == 40
+        for code in ("SITE", "FOUND", "STRUCT"):
+            assert _baseline(code).platform_engine_id is None
+        payload = build_icf_standard_quantities(
+            manufacturer_id="logix",
+            net_wall_area_ft2="10",
+            corner_90_count=0,
+            corner_45_count=0,
+            result_id="binding-check",
+        )
+        assert validate_contract_v1(payload["payload"]) == []
+        _baseline("FOUND").platform_engine_id = "concrete_slab"
+        db.session.commit()
+        project = _project(name="Named Website Calculator")
+        _ready_for_scope(project)
+        confirm_package(
+            organization_id=project.organization_id,
+            project_id=project.id,
+            work_element_template_id=_baseline("FOUND").id,
+            delivery=DELIVERY_INTERNAL,
+            actor="Setup Contractor",
+        )
+        named = resolve_start_project_walk(project.organization_id, project.id)
+        assert "ENGINE_REQUIREMENT_NOT_DERIVABLE" in named.evidence
+        assert "ENGINE_ELIGIBLE" not in named.evidence
+        assert named.platform_engine_id is None
+
+    walk = (REPO_ROOT / "app/services/start_project_walk.py").read_text().lower()
+    setup_source = (REPO_ROOT / "app/services/project_setup.py").read_text().lower()
+    assert "concrete" not in walk
+    assert "stair" not in walk
+    assert "icf_quantity" not in walk
+    assert "build_icf" not in walk
+    assert "concrete" not in setup_source
+    assert "stair" not in setup_source
+    assert "calibai.joel" not in walk
+    assert "calibai.joel" not in setup_source
+
+
+def test_our_crew_icf_wall_opens_the_existing_wall_form_without_a_quantity(client, app):
+    with app.app_context():
+        project = _project(name="ICF Crew Job")
+        _ready_for_scope(project)
+        confirm_package(
+            organization_id=project.organization_id,
+            project_id=project.id,
+            work_element_template_id=_baseline(ICF_WALL_CODE).id,
+            delivery=DELIVERY_INTERNAL,
+            actor="Setup Contractor",
+        )
+        before = resolve_start_project_walk(project.organization_id, project.id)
+        project_id = project.id
+        assert before.destination == "ESTIMATE_CREATE"
+        assert before.waiting != "ENGINE"
+        assert "ENGINE_ELIGIBLE" in before.evidence
+        assert before.platform_engine_id == ICF_WALL_ENGINE_ID
+        assert "ENGINE_REQUIREMENT_NOT_DERIVABLE" not in before.evidence
+        counts = (
+            CalculationResultIntake.query.count(),
+            EstimateLineItem.query.count(),
+            Estimate.query.count(),
+        )
+        estimate = create_estimate(
+            project_id=project.id,
+            estimate_number="ICF-0001",
+            title="ICF Estimate",
+            organization_id=project.organization_id,
+        )
+        version_id = estimate.current_version_id
+        estimate_id = estimate.id
+
+    html = _setup(client, project_id).get_data(as_text=True)
+    assert ICF_AVAILABLE_COPY in html
+    assert NOT_DERIVABLE_COPY not in html
+    assert NOT_APPLICABLE_COPY not in html
+    assert _action(html) == (
+        f"/estimates/{estimate_id}/versions/{version_id}/wall-form-quantities"
+    )
+    opened = client.get(_action(html))
+    assert opened.status_code == 200
+    page = opened.get_data(as_text=True)
+    assert "ICF wall quantities" in page
+    assert "does not add a line" in page
+
+    with app.app_context():
+        after = resolve_start_project_walk(DEFAULT_ORGANIZATION_ID, project_id)
+        assert after.stage == "ESTIMATE"
+        assert after.destination == "ESTIMATE_RESUME"
+        assert (
+            CalculationResultIntake.query.count(),
+            EstimateLineItem.query.count(),
+        ) == counts[:2]
+        assert Estimate.query.count() == counts[2] + 1
+
+
+def test_unbound_our_crew_and_subcontract_icf_keep_the_existing_boundary(client, app):
+    with app.app_context():
+        cases = []
+        for code in ("SITE", "FOUND", "STRUCT"):
+            project = _project(name=f"{code} Crew Job")
+            _ready_for_scope(project)
+            confirm_package(
+                organization_id=project.organization_id,
+                project_id=project.id,
+                work_element_template_id=_baseline(code).id,
+                delivery=DELIVERY_INTERNAL,
+                actor="Setup Contractor",
+            )
+            cases.append((project.id, "ENGINE_REQUIREMENT_NOT_DERIVABLE"))
+        subcontract = _project(name="ICF Subcontract Job")
+        _ready_for_scope(subcontract)
+        confirm_package(
+            organization_id=subcontract.organization_id,
+            project_id=subcontract.id,
+            work_element_template_id=_baseline(ICF_WALL_CODE).id,
+            delivery=DELIVERY_SUBCONTRACT,
+            actor="Setup Contractor",
+        )
+        cases.append((subcontract.id, "ENGINE_NOT_APPLICABLE"))
+        org_id = subcontract.organization_id
+
+    for project_id, token in cases:
+        with app.app_context():
+            result = resolve_start_project_walk(org_id, project_id)
+            assert token in result.evidence
+            assert "ENGINE_ELIGIBLE" not in result.evidence
+            assert result.platform_engine_id is None
+            assert result.waiting != "ENGINE"
+        html = _setup(client, project_id).get_data(as_text=True)
+        assert ICF_AVAILABLE_COPY not in html
+        if token == "ENGINE_NOT_APPLICABLE":
+            assert NOT_APPLICABLE_COPY in html
+        else:
+            assert NOT_DERIVABLE_COPY in html
+        assert _action(html) == f"/estimates/new?project_id={project_id}"
 
 
 def test_other_organization_project_is_not_shown(client, app):

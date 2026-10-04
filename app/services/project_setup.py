@@ -22,6 +22,7 @@ from app.services.start_project_walk import (
     DEST_SCOPE,
     EVIDENCE_CLIENT_PRESENT,
     EVIDENCE_DRAWINGS_PRESENT,
+    EVIDENCE_ENGINE_ELIGIBLE,
     EVIDENCE_ENGINE_NOT_APPLICABLE,
     EVIDENCE_ENGINE_REQUIREMENT_NOT_DERIVABLE,
     EVIDENCE_ESTIMATE_PRESENT,
@@ -30,6 +31,7 @@ from app.services.start_project_walk import (
     EVIDENCE_SCOPE_CONFIRMED,
     DRAWING_STATE_NOT_REQUIRED,
 )
+from app.services.work_structure import ICF_WALL_ENGINE_ID
 
 NOT_DERIVABLE_COPY = (
     "The confirmed work does not identify a governed calculation, "
@@ -39,6 +41,7 @@ NOT_APPLICABLE_COPY = (
     "The confirmed work is subcontracted, "
     "so no crew calculation is required."
 )
+ICF_AVAILABLE_COPY = "A governed ICF wall calculation is available."
 
 
 class ProjectSetupError(Exception):
@@ -75,6 +78,8 @@ def describe_setup(resolution) -> ProjectSetupView:
         ready.append(NOT_DERIVABLE_COPY)
     if EVIDENCE_ENGINE_NOT_APPLICABLE in evidence:
         ready.append(NOT_APPLICABLE_COPY)
+    if EVIDENCE_ENGINE_ELIGIBLE in evidence:
+        ready.append(ICF_AVAILABLE_COPY)
     if EVIDENCE_ESTIMATE_PRESENT in evidence:
         ready.append("One estimate is ready to open.")
     if EVIDENCE_ESTIMATE_SELECTION_AMBIGUOUS in evidence:
@@ -118,11 +123,24 @@ def describe_setup(resolution) -> ProjectSetupView:
     elif destination == DEST_ESTIMATE_RESUME:
         if resolution.estimate_id is None:
             raise ProjectSetupError("The estimate to open was not named.")
-        needed = "Continue the estimate."
-        label = "Continue to the estimate"
-        endpoint = "estimates.view_estimate"
-        values = {"id": resolution.estimate_id}
-        anchor = None
+        if (
+            resolution.platform_engine_id == ICF_WALL_ENGINE_ID
+            and resolution.estimate_version_id is not None
+        ):
+            needed = "Open the ICF wall calculation."
+            label = "Open ICF wall calculation"
+            endpoint = "estimates.wall_form_quantities"
+            values = {
+                "id": resolution.estimate_id,
+                "version_id": resolution.estimate_version_id,
+            }
+            anchor = None
+        else:
+            needed = "Continue the estimate."
+            label = "Continue to the estimate"
+            endpoint = "estimates.view_estimate"
+            values = {"id": resolution.estimate_id}
+            anchor = None
     elif destination == DEST_ESTIMATE_AMBIGUOUS:
         needed = "Choose which estimate to continue."
         label = "Choose an estimate"

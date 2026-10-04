@@ -94,7 +94,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-Checklist step 6 shows the existing engine boundary on Continue setup. A Platform engine is still not called. The minimum work-element binding is recorded in the start-project plan, section 6, and is not implemented. Step 8 stays queued.
+Checklist step 6 still shows the unbound and subcontract boundaries on Continue setup. The first work-element binding is implemented: baseline `ICF` opens the existing `icf_wall` wall-form page. `SITE`, `FOUND`, and `STRUCT` stay unbound. Step 8 stays open for every other element. The walk does not calculate. V1 stays **65% / 4 of 11**. Deployment was not performed.
 
 This subsection is **current authority**, not a historical FG-018 snapshot. Gate-at-close Alembic/test facts for closed gates remain in those gate documents.
 

@@ -81,7 +81,7 @@ Back and forward movement opens the existing page for that stage. It does not re
 | Scope | `/projects/<id>/scope` | `confirm_package`, `retire_package` | `ProjectWorkPackage` | Confirm Our crew (`INTERNAL`) or Subcontractor (`SUBCONTRACT`). |
 | Drawings | `/projects/<id>/plans/upload` | `upload_plan_pdf` | `PlanDocument` | Import drawings that exist. |
 | Workflow documents | `/projects/<id>/workflow-documents` | Existing project documents | Project files | Resume that page. Do not replace it. |
-| Calculation engine | Not a Platform route today | Contract V1 envelope | A governed result, when an engine exists | The walk does not calculate. |
+| Calculation engine | `/estimates/<id>/versions/<version_id>/wall-form-quantities` for `icf_wall` only | `build_icf_standard_quantities` | A Contract V1 result after the contractor enters measurements | The walk opens that page for Our-crew ICF wall. It does not calculate. |
 | Contract V1 | [calculation-engine-result-contract-v1.md](calculation-engine-result-contract-v1.md) | Pinned envelope | The result shape | Unchanged. |
 | Mapper | `/estimates/<id>/versions/<version_id>/calculations` | `app/services/calculation_estimate_mapping.py` | Confirmed estimate quantities | Send the contractor to that existing gate. |
 | Estimate | `/estimates/new` | `Estimate`, `EstimateVersion` | The estimate | Create or resume the project’s estimate. |
@@ -101,25 +101,30 @@ Path: project intent and geometry → governed calculation engine → Contract V
 
 Website Concrete (`lib/calculation-engine/concrete-slab.ts` in the Website project) and Website Stair are governed reusable capabilities on the public surface. They are not copied into the Platform, and the Platform does not call the Website at runtime.
 
-An engine enters the walk only when a Platform-side governed engine can emit a Contract V1 result for a confirmed Our crew package. Today that handoff is the existing calculation intake on an estimate version. The contractor confirms the quantity. The walk does not import it silently.
+An engine enters the walk only when a confirmed Our-crew package names a Platform producer that already emits Contract V1. The handoff is that producer’s existing entry, then the existing calculation intake on an estimate version. The contractor confirms the quantity. The walk does not import it silently.
 
-If a required element has no Platform engine yet, the cursor records `waiting_code` `ENGINE`. No placeholder quantity is written. Subcontracted packages do not call an engine. Nothing in the current catalog marks an element as required for calculation, so Our-crew scope stays `ENGINE_REQUIREMENT_NOT_DERIVABLE` and does not set `waiting` to `ENGINE`.
+A package with no valid binding stays `ENGINE_REQUIREMENT_NOT_DERIVABLE`. The walk does not set `waiting` to `ENGINE`. No placeholder quantity is written. Subcontracted packages stay `ENGINE_NOT_APPLICABLE` and do not call an engine.
 
-### Binding fact — recorded 2026-10-04, not implemented
+### Binding — implemented 2026-10-04 for ICF wall only
 
-Checklist step 8 stays queued until this fact exists. This subsection does not create it, and it does not approve a migration.
-
-The minimum binding is one baseline `WorkElementTemplate` code to one Platform `engine_id`, or no binding. It is present only when the template is a baseline row, the `engine_id` names a producer in this repository, and that producer emits a payload that passes `validate_contract_v1`.
+The binding is one baseline `WorkElementTemplate` code to one Platform `engine_id`, or no binding. It is valid only when the template is a baseline row, the `engine_id` names a producer in this repository, and that producer emits a payload that passes `validate_contract_v1`.
 
 The result already carries `engine_version`, `contract_version`, `result_id`, inputs, and quantities. The work package already carries Our crew or Subcontractor. Those facts stay off the binding.
 
-`WorkElementTemplate` today stores `code`, `display_name`, `work_type_id`, `status`, and `sort_order`. It cannot store this fact. A later approved migration may add a nullable `engine_id` on the baseline template. An empty value is the absence of a binding. An organization template does not acquire an engine by naming a Website calculator.
+`WorkElementTemplate.platform_engine_id` is nullable. An empty value means no Platform engine is bound. An organization template does not acquire an engine. A Website calculator name is not a producer.
 
-Current baseline codes are `SITE`, `FOUND`, and `STRUCT`. None is bound. `FOUND` is not an ICF wall. The only Platform producer is `icf_wall` in `app/services/icf_quantity.py`, reached from the estimate wall-form page. `concrete_slab` is a Contract V1 shape and a Website calculator. It has no producer in this repository, so naming it on a template would not be a binding. Plan Generation stair provenance is not a Contract V1 result.
+| Code | Display name | Work type | Meaning | Scope | Status | Order | Binding |
+|------|--------------|-----------|---------|-------|--------|-------|---------|
+| `ICF` | ICF wall | `GEN` | A contractor-confirmed scope element for ICF wall construction. | The existing `icf_wall` producer. It is not every foundation, every concrete foundation, slab, excavation, reinforcement outside that producer, or every ICF accessory. | `ACTIVE` | 40 | `icf_wall` |
+| `SITE` | Site work | `GEN` | Unchanged. | Unchanged. | `ACTIVE` | 10 | none |
+| `FOUND` | Foundation | `GEN` | Unchanged. Not an ICF wall. | Unchanged. | `ACTIVE` | 20 | none |
+| `STRUCT` | Structure | `GEN` | Unchanged. | Unchanged. | `ACTIVE` | 30 | none |
 
-Until a baseline template means the 8-inch ICF wall, every Our-crew package stays `ENGINE_REQUIREMENT_NOT_DERIVABLE` and every subcontract-only package stays `ENGINE_NOT_APPLICABLE`. The walk still does not calculate.
+The only Platform producer remains `icf_wall` in `app/services/icf_quantity.py`. Its existing entry is the estimate wall-form page. `concrete_slab` stays a Contract V1 shape and a Website calculator. It has no producer in this repository, so naming it on a template is not a binding. Plan Generation stair provenance is not a Contract V1 result.
 
-When a valid binding exists, the walk may open that engine’s existing entry. It still writes no quantity. The mapper confirmation gate stays. A missing measurement stays on that entry.
+Our-crew `ICF` records `ENGINE_ELIGIBLE` and, when the project has one estimate, Continue setup opens that existing wall-form page. The walk still writes no quantity and does not calculate. Our-crew `SITE`, `FOUND`, and `STRUCT` stay `ENGINE_REQUIREMENT_NOT_DERIVABLE`. Subcontract-only work, including `ICF`, stays `ENGINE_NOT_APPLICABLE`. The mapper confirmation gate stays. A missing measurement stays on the wall-form page.
+
+Migration `n4a5b6c7d8e9` adds the nullable column and the baseline `ICF` row. It is not applied to the Mac primary database and it is not applied to the hosted database. Checklist step 8 stays open for every work element that still has no producer.
 
 ## 7. Plan Generation entry
 

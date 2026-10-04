@@ -14,6 +14,8 @@
 
 The fixture is test data. It is not an engine default. The Linda Bushel case folder was not modified. Raster pages and the preview PDF in this directory are inspection copies and are not the product record.
 
+Slice 19, 3 Oct 2026, ran this same fixture through the engine after the bearing-annotation slice. The later review is [2026-10-03-bushel-construction-model/BUSHEL-REAL-WORLD-PROVING.md](../2026-10-03-bushel-construction-model/BUSHEL-REAL-WORLD-PROVING.md). The production package was still not modified.
+
 ## Generated and refused
 
 | Sheet | Status | Generated / refused | Missing fact if refused | Visual review result |

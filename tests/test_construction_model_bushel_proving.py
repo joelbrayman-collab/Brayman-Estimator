@@ -180,6 +180,7 @@ def test_stair_view_refuses_missing_facts():
         "The stair run",
         "The stair nosing",
         "The tread count",
+        "The stair riser count",
         "The elevation of member stringer-1 for the stair",
     ):
         assert fact in text
@@ -317,6 +318,36 @@ def test_multiple_sheets_are_deterministic_and_11x17():
     assert "Sheet 1 of" in "\n".join(
         page.extract_text() or "" for page in PdfReader(BytesIO(moved.pdf_bytes)).pages
     )
+
+
+def test_one_model_schedule_and_no_generic_fixture_leak():
+    model = proving_model()
+    wave = _wave()
+    assert {row["id"] for row in wave.schedule.members} == {item["id"] for item in model["members"]}
+    assert {row["id"] for row in wave.schedule.supports} == {item["id"] for item in model["supports"]}
+    plan_piers = [element["id"] for element in wave.plan.elements if element["element_class"] == "supports"]
+    front_piers = [element["id"] for element in wave.front_elevation.elements if element["element_class"] == "supports"]
+    side_piers = [element["id"] for element in wave.side_elevation.elements if element["element_class"] == "supports"]
+    assert plan_piers == front_piers == side_piers
+    assert plan_piers == [item[0] for item in PIER_COORDINATES]
+    result = _composed()
+    messages = " ".join(issue.message for issue in result.view_issues)
+    assert "The stair rise" in messages
+    assert "The bracket for this detail" in messages
+    assert "The baluster_layout for this detail" in messages
+    text = "\n".join(page.extract_text() or "" for page in PdfReader(BytesIO(result.pdf_bytes)).pages)
+    for leaked in (
+        "COMPLETE DECK DRAWING ENGINE FIXTURE",
+        "blocking-1",
+        "post-1",
+        "BEARING",
+        "sonotube",
+        "7.6",
+    ):
+        assert leaked not in text
+    assert "P1 to P15" in text
+    assert "joist-1 to joist-16" in text
+    assert "stringer-1 to stringer-10" in text
 
 
 def test_proving_set_does_not_write_project_plan_or_estimate():

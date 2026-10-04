@@ -237,3 +237,9 @@ Engine deficiencies versus fixture inputs:
 | Another generic engine slice? | No. The engine can store a member, a relationship, a bearing, and connector geometry when a project supplies them. |
 
 Would we hand this generic set to the crew? No. The drawing engine is ready to accept the real Bushel model as a proving pass. Bushel facts that are absent stay refused. They are not filled in from this fixture.
+
+## Slice 19 disposition — 3 Oct 2026
+
+The Bushel proving fixture was read by this engine. No Bushel value was added to the engine. No generic fixture value was copied into the Bushel model. The review is [../2026-10-03-bushel-construction-model/BUSHEL-REAL-WORLD-PROVING.md](../2026-10-03-bushel-construction-model/BUSHEL-REAL-WORLD-PROVING.md).
+
+Missing Bushel elevations, lengths, and stair facts refuse. None of those gaps is an engine deficiency. An unprojected stair is named on the compose result and is not given a drawing-index line. That is a presentation gap. It does not require a Bushel-specific drawing path. The drawing set stays **OPEN / NOT COMPLETE**. V1 is not rescored.

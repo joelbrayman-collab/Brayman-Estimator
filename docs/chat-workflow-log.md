@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-03 — Bushel real-world proving pass
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-03 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 19 — LINDA BUSHEL REAL-WORLD PROVING PASS 3 OCT 2026 |
+| Objective | Put the governed Linda Bushel facts through the generic Construction Model and drawing engine. |
+| Business decision | The proving set is not a crew set. Missing Bushel facts stay missing. The production J1 package was not changed. |
+| Architectural decision | Bushel values stay in the proving fixture. The engine was not patched to draw a fact the case does not establish. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Recall section 2.1. Load governed Bushel facts only. Refuse missing facts. Do not import J1 geometry. Do not change the production case. One commit. Push. Do not deploy. |
+| Files expected to change | The Bushel proving tests, the 3 Oct review, the earlier proving and acceptance reviews, current-state, session handoff, roadmap, architecture index, the build-out register, the V1 paragraph, and this log. |
+| Files prohibited from changing | Generic engine code, generic fixture data, J1, the take-off, Ben's cost, the customer estimate, and the Darcy RFQ. |
+| Implementation result | The existing proving fixture was composed. Seven 11×17 sheets. Stair and three details refused. No class D engine gap. The drawing set stays OPEN / NOT COMPLETE. V1 is not rescored. |
+| Tests | Focused Bushel: 15 passed, 1 warning, 2.06s, exit 0. Construction Model regression: 167 passed, 15 warnings, 226.18s, exit 0. PGE regression: 61 passed, 79 warnings, 18.76s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2134 passed, 6794 warnings, 1085.44s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Joist and stringer elevations, lengths, and the stair facts are project inputs. The upper-deck curve and beam coordinates are not in the governed case. An unprojected stair is not an index line. |
+| Next approved step | Supply the joist elevation, the stringer elevation, and the stair rise, run, nosing, tread count, and riser count as project inputs on this fixture, then regenerate. Do not take those numbers from J1. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-03 — Bearing annotation and generic set reassessment
 
 | Field | Content |

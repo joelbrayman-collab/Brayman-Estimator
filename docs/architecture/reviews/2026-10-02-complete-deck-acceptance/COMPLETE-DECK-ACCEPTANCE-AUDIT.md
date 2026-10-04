@@ -243,3 +243,7 @@ Would we hand this generic set to the crew? No. The drawing engine is ready to a
 The Bushel proving fixture was read by this engine. No Bushel value was added to the engine. No generic fixture value was copied into the Bushel model. The review is [../2026-10-03-bushel-construction-model/BUSHEL-REAL-WORLD-PROVING.md](../2026-10-03-bushel-construction-model/BUSHEL-REAL-WORLD-PROVING.md).
 
 Missing Bushel elevations, lengths, and stair facts refuse. None of those gaps is an engine deficiency. An unprojected stair is named on the compose result and is not given a drawing-index line. That is a presentation gap. It does not require a Bushel-specific drawing path. The drawing set stays **OPEN / NOT COMPLETE**. V1 is not rescored.
+
+## Slice 20 disposition — 4 Oct 2026
+
+No new generic drawing feature. The 1 Oct governed decisions were already in the proving fixture. Nominal sizes, beam coordinates, and the pool curve stay in the 29 Sep brief and were not loaded. Regeneration matched the Slice 19 PDF. The input matrix is in [../2026-10-03-bushel-construction-model/BUSHEL-REAL-WORLD-PROVING.md](../2026-10-03-bushel-construction-model/BUSHEL-REAL-WORLD-PROVING.md).

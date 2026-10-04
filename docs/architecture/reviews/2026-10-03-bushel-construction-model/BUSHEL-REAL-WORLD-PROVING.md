@@ -103,3 +103,57 @@ J1 draws joist lines, a stair profile, guards, a gate, and a schematic helix. Th
 ## V1
 
 One-model and no-guessing stay **PARTIAL**. This pass shows both rules operating on the Bushel model. It does not close them. Bearing stays **COMPLETE** for its recorded criteria. This model has no bearing relationship to draw. No score was changed.
+
+## Slice 20 input completion — 4 Oct 2026
+
+The generic engine was not changed. The proving fixture was not given a new value. Regeneration produced the same seven-page PDF, sha256 `ff6d8bead713eeee5731a031922f1883b2009243366cdc729653fcfc810a3b0e`. Every page was read again. The sheets match the Slice 19 inspection.
+
+Authority for what may be loaded is `governed_decisions_2026_10_01` in the case record, confirmed in `learning/project-record.md` under issue J1. The 29 Sep design brief remains source text. Issue J1 kept three earlier items: two 5/4×6 boards per tread, the 37 in Veranda kit, and the 42 in clear gate. It did not restate nominal lumber sizes, beam coordinates, or the pool curve. Sonotube depth stays superseded.
+
+### Fact status
+
+| Fact | Present? | Source | Required by | Status |
+|------|----------|--------|-------------|--------|
+| 15 pier coordinates, z = 0 | Yes | Joel, 2026-10-01, CT-1 | Foundation plan, elevations | Known / governed |
+| 16 joist plan stations | Yes | Joel, 2026-10-01, P1 | Framing plan | Known / governed. Elevation and length are not in the station |
+| 10 stringer plan stations | Yes | Joel, 2026-10-01, P1 | Framing plan | Known / governed. Elevation and cuts are not in the station |
+| Throat 5.00 in | Yes | Joel, 2026-10-01 | Stair result | Known / governed. Not a certification |
+| Lower surface 12 in, 10 ft × 3 ft | Yes | Joel, 2026-10-01 | Plan, elevations, schedule | Known / governed |
+| Address, tread boards, Veranda kit, 42 in gate, 10 ft stair width | Yes | Joel, 2026-10-01, and the kept brief items | Title block, schedule | Known / governed |
+| Front pier chain 6 ft + 6 ft + 6 ft, overall 18 ft | Yes | CT-1 coordinates P1–P4 | Dimension chain | Known / governed |
+| Joist elevation | No | Not in the 1 Oct selection | Front elevation, side elevation, section, joist-elevation chain | Project input required |
+| Stringer elevation | No | Not in the 1 Oct selection | Elevations, section, stair | Project input required |
+| Stringer cuts | No | Learning record: cuts were still to be reconciled | Stringer-cut detail | Project input required |
+| Member lengths | No | No governed endpoints | Schedule | Project input required. A length is not calculated from a station |
+| Stair rise, run, nosing, tread count, riser count | No | Brief says approximately 38 in, about 7.6 in, and about 11 in, field-adjusted | Stair view | Project input required. The approximate figures were not loaded |
+| Lower and upper stair connections | No | Not recorded | Stair detail | Project input required |
+| Separate landing | No | The case does not establish a landing member | Stair | Not required for the current view. None was added |
+| Post cut | No | J1: posts ordered uncut; cut is a field reconciliation | Post elevation | Project input required |
+| Shaft, helix, torque, capacity | No | J1 says they are not specified | Pier section or detail | Project input required. Not required for the pier plan |
+| Bracket, connector shape, hinge, latch, bottom rail | No | Not supplied | Details | Project input required. Not required for the pier plan |
+| Guard location, gate location, baluster layout, guard posts | No | Kit name and 42 in clear are known. Locations are not | Decking / guard / gate plan | Project input required for location. The 42 in dimension is already on the schedule |
+| Stair guard layout | No | Brief requires guards on both stair edges and gives no layout | Stair | Project input required |
+| No centre stair handrail | Recorded absence | 29 Sep brief | Stair | Known absence. No handrail member was added |
+| Freestanding, no pool attachment | Recorded absence | 29 Sep brief | Framing | Known absence. No ledger was added |
+| Upper-deck curve | No coordinates | Brief says the pool edge follows the curve | Upper deck plan | Source evidence required. The curve was not drawn |
+| Beam coordinates | No coordinates | Brief names a main beam and wing beams in words | Framing plan | Source evidence required. No beam line was drawn |
+| Nominal sizes (2×8, double 2×10, 2×12, 6×6, 4×4, 5/4×6 decking) | In the 29 Sep brief only | Not restated by the 1 Oct selection | Schedule size column | Source evidence required before they become member attributes |
+| Sonotube 48 in | Superseded | 29 Sep brief | Foundation | Not a current fact |
+
+### View status
+
+| View | Can generate? | Missing facts | Status |
+|------|---------------|---------------|--------|
+| Foundation plan | Pier points only | Shaft, helix, torque, capacity for a pier section | Generated as pier locations |
+| Framing plan | Joist and stringer stations only | Elevations, lengths, beam coordinates, adopted sizes | Stations only. Not a framing plan |
+| Decking, guard, gate | Lower outline and the 42 in dimension | Upper curve, guard location, gate location, baluster layout | Lower outline only |
+| Front elevation | Piers and the lower surface | Joist elevation, stringer elevation, post cut | Partial. Frame refused |
+| Side elevation | Same members as the front | Same missing elevations | Partial. Frame refused |
+| Stair | No | Rise, run, nosing, tread count, riser count, stringer elevation | Refused |
+| Section | Lower outline only | Elevations of the frame | Partial |
+| Details | One joist station, marked not issued | Connection, bracket, baluster layout, stringer elevation | Refused or not issued |
+| Dimensions | Lower size, 12 in, 42 in, front pier chain | Joist-elevation chain | Known chains print. The missing chain refuses |
+| Schedules | Counts and the known dimensions | Lengths and unadopted sizes | Generated with blank length cells |
+| Index | The seven drawn sheets | Unprojected stair and details are not index lines | Generated. That omission is a presentation gap |
+
+Would we hand this to the boys? No. The reason is missing project input and missing source evidence. The presentation gaps on the index, the elevation notes, and sheet 3 remain. No engine gap was found. The model can store a point, a polyline, a level, a dimension, and a stair result when those values exist.

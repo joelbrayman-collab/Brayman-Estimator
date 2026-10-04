@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-04 — Bushel input completion
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-04 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 20 — BUSHEL CONSTRUCTION MODEL INPUT COMPLETION 4 OCT 2026 |
+| Objective | Load every governed Bushel fact the case already establishes, and leave the rest unresolved. |
+| Business decision | No new generic drawing feature. The proving set stays incomplete because the project facts are missing. |
+| Architectural decision | The 1 Oct governed decisions were already in the proving fixture. Nominal sizes, beam coordinates, and the pool curve stay in the 29 Sep brief and were not copied onto members. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Recall section 2.1. Do not build an engine feature. Load governed facts only. Refuse the rest. Do not change the production package. One commit. Push. Do not deploy. |
+| Files expected to change | The proving review, the proving test that locks unresolved facts, current-state, session handoff, roadmap, architecture index, the build-out register, the V1 paragraph, the acceptance audit, and this log. |
+| Files prohibited from changing | Generic engine code, J1, the take-off, Ben's cost, the customer estimate, and the Darcy RFQ. |
+| Implementation result | No new fact was loaded. The regenerated PDF matches the Slice 19 sha256. The fact and view matrix is in the proving review. The drawing set stays OPEN / NOT COMPLETE. V1 is not rescored. |
+| Tests | Focused Bushel: 16 passed, 1 warning, 1.93s, exit 0. Construction Model regression: 168 passed, 15 warnings, 233.69s, exit 0. PGE regression: 61 passed, 79 warnings, 18.28s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2135 passed, 6794 warnings, 1095.83s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Joist and stringer elevations, lengths, stair geometry, pier product data, and guard and gate locations are project inputs. The curve, beam coordinates, and nominal sizes are source evidence not adopted by the 1 Oct selection. |
+| Next approved step | Wait for the joist elevation and the stringer elevation as project inputs. Do not invent them. Do not start another engine slice. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-03 — Bushel real-world proving pass
 
 | Field | Content |

@@ -320,6 +320,27 @@ def test_multiple_sheets_are_deterministic_and_11x17():
     )
 
 
+def test_input_completion_keeps_governed_facts_and_leaves_the_rest_unresolved():
+    model = proving_model()
+    stair = model["stair_results"][0]
+    assert stair["throat"] == 5.0
+    assert stair["stringer_count"] == 10
+    assert stair["stair_width"] == 10
+    for key in ("rise", "run", "nosing", "tread_count", "riser_count"):
+        assert key not in stair
+    for member in model["members"]:
+        if member["role"] in {"joist", "stringer"}:
+            assert "member_size" not in member
+            assert "z" not in member["geometry"]["coordinates"][0]
+        if member["role"] in {"post", "beam", "guard", "gate"}:
+            assert "geometry" not in member
+            assert "member_size" not in member
+    assert not any(member["id"].startswith("upper-") for member in model["members"])
+    assert all("shaft_length" not in support and "helix" not in support for support in model["supports"])
+    assert model["levels"][0]["elevation"] == 1
+    assert model["levels"][0]["provenance"]["source"] == "project_input"
+
+
 def test_one_model_schedule_and_no_generic_fixture_leak():
     model = proving_model()
     wave = _wave()

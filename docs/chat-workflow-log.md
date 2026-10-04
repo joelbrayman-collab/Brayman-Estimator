@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-04 — Engine boundary on Guided Project Setup
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-04 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CHECKLIST STEP 6 — ENGINE BOUNDARY ON GUIDED PROJECT SETUP 4 OCT 2026 |
+| Objective | Show the engine boundary the resolver already records on Continue setup. |
+| Business decision | The contractor sees why no quantity is calculated. The walk still does not calculate. |
+| Architectural decision | The two existing evidence tokens stay distinct. No work-element engine binding was added. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Recall section 2.1 and the start-project plan section 6. Name the not-derivable and not-applicable facts on the existing setup page. Do not add an engine, schema, or calculator. One commit. Push. Do not deploy. |
+| Files expected to change | Setup copy, the setup test, the checklist, current-state, session handoff, and this log. |
+| Files prohibited from changing | The resolver stage order, Bushel production files, Supplier Pro, the Construction Model, and Website formulas. |
+| Implementation result | Continue setup states the boundary. Our-crew work does not identify a governed calculation. Subcontract-only work requires no crew calculation. The next action remains the resolver's existing page. V1 is not rescored. |
+| Tests | Focused setup and start-project: 34 passed, 124 warnings, 19.73s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2136 passed, 6799 warnings, 1102.78s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | A work element has a code and no engine binding. That is the remaining dependency before a Platform engine can be called. |
+| Next approved step | Do not invent the binding. The next sequence step stays blocked on that catalog fact. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-04 — Bushel input completion
 
 | Field | Content |

@@ -94,6 +94,8 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
+Checklist step 6 shows the existing engine boundary on Continue setup. A Platform engine is still not called. The remaining dependency is a work-element engine binding, which this slice does not add.
+
 This subsection is **current authority**, not a historical FG-018 snapshot. Gate-at-close Alembic/test facts for closed gates remain in those gate documents.
 
 - **`main` / `origin/main`** — verify `git rev-parse HEAD` and `git rev-parse origin/main`. Live Alembic **current = heads `f4a5b6c7d8e9`**. Last product-changing suite: dedicated FG-026 **20**, full **632**. Live Field Capture **39** Events / **39** Originals.

@@ -7,9 +7,13 @@ from pathlib import Path
 from app import create_app, db
 from app.models import Client, Organization, Project
 from app.models.project import DRAWING_REQUIREMENT_NOT_REQUIRED, DRAWING_REQUIREMENT_REQUIRED, ProjectLocation
-from app.models.project_work_package import DELIVERY_INTERNAL
+from app.models.calculation_estimate_mapping import CalculationResultIntake
+from app.models.estimate import Estimate
+from app.models.project_work_package import DELIVERY_INTERNAL, DELIVERY_SUBCONTRACT
 from app.plan_intelligence.models import PlanDocument
 from app.services.estimates import create_estimate
+from app.services.project_setup import NOT_APPLICABLE_COPY, NOT_DERIVABLE_COPY
+from app.services.start_project_walk import resolve_start_project_walk
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
 from app.services.project_work_package import confirm_package
 from app.services.work_structure import ensure_baseline_work_catalog
@@ -283,6 +287,87 @@ def test_return_reruns_the_resolver_and_does_not_write(client, app):
     walk = (REPO_ROOT / "app/services/start_project_walk.py").read_text().lower()
     assert "concrete" not in walk
     assert "stair" not in walk
+
+
+def _ready_for_scope(project):
+    _location(project)
+    project.drawing_requirement = DRAWING_REQUIREMENT_NOT_REQUIRED
+    db.session.commit()
+
+
+def _confirm_work(project, delivery):
+    from app.models.work_structure import WorkElementTemplate
+
+    foundation = WorkElementTemplate.query.filter_by(code="FOUND", organization_id=None).one()
+    confirm_package(
+        organization_id=project.organization_id,
+        project_id=project.id,
+        work_element_template_id=foundation.id,
+        delivery=delivery,
+        actor="Setup Contractor",
+    )
+
+
+def test_setup_names_the_engine_boundary_without_writing(client, app):
+    with app.app_context():
+        our_crew = _project(name="Our Crew Job")
+        subcontract = _project(name="Subcontract Job")
+        _ready_for_scope(our_crew)
+        _ready_for_scope(subcontract)
+        _confirm_work(our_crew, DELIVERY_INTERNAL)
+        _confirm_work(subcontract, DELIVERY_SUBCONTRACT)
+        our_id = our_crew.id
+        sub_id = subcontract.id
+        before = resolve_start_project_walk(our_crew.organization_id, our_id)
+        sub_before = resolve_start_project_walk(subcontract.organization_id, sub_id)
+        counts = (
+            Project.query.count(),
+            PlanDocument.query.count(),
+            Estimate.query.count(),
+            CalculationResultIntake.query.count(),
+        )
+        assert before.waiting != "ENGINE"
+        assert "ENGINE_REQUIREMENT_NOT_DERIVABLE" in before.evidence
+        assert "ENGINE_NOT_APPLICABLE" in sub_before.evidence
+
+    our_html = _setup(client, our_id).get_data(as_text=True)
+    sub_html = _setup(client, sub_id).get_data(as_text=True)
+    assert NOT_DERIVABLE_COPY in our_html
+    assert NOT_APPLICABLE_COPY not in our_html
+    assert NOT_APPLICABLE_COPY in sub_html
+    assert NOT_DERIVABLE_COPY not in sub_html
+    assert _action(our_html) == f"/estimates/new?project_id={our_id}"
+    assert _action(sub_html) == f"/estimates/new?project_id={sub_id}"
+    assert "calculator" not in our_html.lower()
+    assert "calculator" not in sub_html.lower()
+
+    with app.app_context():
+        after = resolve_start_project_walk(DEFAULT_ORGANIZATION_ID, our_id)
+        sub_after = resolve_start_project_walk(DEFAULT_ORGANIZATION_ID, sub_id)
+        assert (after.stage, after.destination, after.waiting, after.evidence) == (
+            before.stage,
+            before.destination,
+            before.waiting,
+            before.evidence,
+        )
+        assert (sub_after.stage, sub_after.destination, sub_after.waiting, sub_after.evidence) == (
+            sub_before.stage,
+            sub_before.destination,
+            sub_before.waiting,
+            sub_before.evidence,
+        )
+        assert (
+            Project.query.count(),
+            PlanDocument.query.count(),
+            Estimate.query.count(),
+            CalculationResultIntake.query.count(),
+        ) == counts
+        walk = (REPO_ROOT / "app/services/start_project_walk.py").read_text().lower()
+        setup_source = (REPO_ROOT / "app/services/project_setup.py").read_text().lower()
+        assert "concrete" not in walk
+        assert "stair" not in walk
+        assert "concrete" not in setup_source
+        assert "stair" not in setup_source
 
 
 def test_other_organization_project_is_not_shown(client, app):

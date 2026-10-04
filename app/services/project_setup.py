@@ -22,11 +22,22 @@ from app.services.start_project_walk import (
     DEST_SCOPE,
     EVIDENCE_CLIENT_PRESENT,
     EVIDENCE_DRAWINGS_PRESENT,
+    EVIDENCE_ENGINE_NOT_APPLICABLE,
+    EVIDENCE_ENGINE_REQUIREMENT_NOT_DERIVABLE,
     EVIDENCE_ESTIMATE_PRESENT,
     EVIDENCE_ESTIMATE_SELECTION_AMBIGUOUS,
     EVIDENCE_LOCATION_COMPLETE,
     EVIDENCE_SCOPE_CONFIRMED,
     DRAWING_STATE_NOT_REQUIRED,
+)
+
+NOT_DERIVABLE_COPY = (
+    "The confirmed work does not identify a governed calculation, "
+    "so no quantity is calculated from the work name."
+)
+NOT_APPLICABLE_COPY = (
+    "The confirmed work is subcontracted, "
+    "so no crew calculation is required."
 )
 
 
@@ -60,6 +71,10 @@ def describe_setup(resolution) -> ProjectSetupView:
         ready.append("Drawings are not required.")
     if EVIDENCE_SCOPE_CONFIRMED in evidence:
         ready.append("Scope of work is confirmed.")
+    if EVIDENCE_ENGINE_REQUIREMENT_NOT_DERIVABLE in evidence:
+        ready.append(NOT_DERIVABLE_COPY)
+    if EVIDENCE_ENGINE_NOT_APPLICABLE in evidence:
+        ready.append(NOT_APPLICABLE_COPY)
     if EVIDENCE_ESTIMATE_PRESENT in evidence:
         ready.append("One estimate is ready to open.")
     if EVIDENCE_ESTIMATE_SELECTION_AMBIGUOUS in evidence:

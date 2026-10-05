@@ -223,6 +223,18 @@ The proof was run. QCAD Professional 3.33.1 trial, out of process, on `post-1`, 
 
 PGE-1 through PGE-6 stay closed. `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, and the drawing requirement are unchanged. This capability sits beside those slices.
 
+## Slice 25 — Autodesk Platform Services assessment — 5 Oct 2026
+
+No drawing was produced. AutoCAD was not installed. No Autodesk account was created. No adapter was written.
+
+Current Autodesk pages, read 5 Oct 2026, describe AutoCAD Automation as AutoCAD in the cloud. The published workflows are documentation, title blocks, CAD standards, and plotting. The engine runs an activity: AutoLISP, a .NET bundle, or a C++ CRX, through `accoreconsole`. The current engine line includes AutoCAD 2027, alias `Autodesk.AutoCAD+26_0`, released 9 Apr 2026. A work item downloads inputs from signed URLs, runs the activity, and uploads DWG and PDF outputs. Completion is a callback or a status read.
+
+That is a credible downstream drafter. It is not a construction model. Members, dimensions, relationships, bearings, connections, materials, and quantities stay in Calibrayt. The handoff is a governed specification plus a Calibrayt-owned template drawing. The template holds the title block, layers, dimension styles, plot style, and detail blocks. The activity fills attributes and inserts only the geometry the specification names. A missing `bears_on` is a refusal in the specification. Overlap in the DWG is not a relationship.
+
+The published Flex page lists the Automation API at 2 tokens per processing hour. A token at the lowest published band is 3 US dollars, so the list rate is 6 US dollars per processing hour. A job’s duration was not measured. Desktop AutoCAD on that same Flex page is a different meter, 7 tokens per day. Whether a commercial construction-PDF service is inside the Developer Terms is a confirmation for Autodesk, not a conclusion of this record. The terms, last updated 28 Apr 2026, require an application to add significant functionality and not to be mainly a file-translation service.
+
+**AUTODESK PLATFORM SERVICES / AUTOCAD AUTOMATION ESCALATION FOR ARCHITECTURAL ASSESSMENT.** The recommendation is to keep it as the next proof candidate. It is not adopted. The proof, when authorized, is one generic post, beam, and joist, judged by whether the sheet would be handed to the crew. QCAD remains a failed proof.
+
 Linda Bushel remains a proving fixture. Its scripts are not the engine. Its pool radius, pier count, joist count, stringer count, spans, and other job dimensions are not generic constants. Issue J1 sheet 5, drawn 1 Oct 2026, is rejected as a construction drawing. It invented view geometry the model did not contain. It is not redrawn in the case script. The future engine regenerates the required views from one model.
 
 The model may later become the quantity source. The first construction-model slice does not implement drawing-driven take-off. Current Bushel quantities stay as they are.

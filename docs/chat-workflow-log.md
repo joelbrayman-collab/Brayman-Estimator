@@ -43,6 +43,24 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-05 — Autodesk Platform Services drawing assessment
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-05 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 25 — AUTODESK PLATFORM SERVICES / AUTOCAD AUTOMATION ARCHITECTURE ASSESSMENT 5 OCT 2026 |
+| Objective | Decide whether AutoCAD Automation can be the downstream drafting environment after four visual failures. |
+| Business decision | Do not adopt a drafter that has not produced a sheet we would hand to the crew. |
+| Architectural decision | Keep Autodesk Platform Services / AutoCAD Automation as the next proof candidate. Calibrayt stays the model. The handoff is a governed specification plus a template drawing. QCAD stays a failed proof. |
+| Prompt template used | Joel's Slice 25 prompt, 5 Oct 2026. |
+| Approved Cursor prompt summary | Architecture only. Read current Autodesk documentation. No install, no account, no adapter, no DWG, no Bushel, no deploy, no V1 rescore. One recommendation. |
+| Files expected to change | Existing Construction Model + Drawing Set records only. |
+| Files prohibited from changing | Application code, Bushel, Construction Model, ICF binding, Supplier Pro. |
+| Result | Recommendation C. Not adopted. Published Flex rate for the Automation API is 2 tokens per processing hour. A one-sheet proof is defined and was not run. |
+| Tests | Not run. No code changed. |
+| Deployment | Not performed. |
+
 ### 2026-10-05 — QCAD Professional crew-drawing proof
 
 | Field | Content |

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-05 — Post-FreeCAD drawing production reassessment
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-05 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET DRAWING PRODUCTION ARCHITECTURE — POST-FREECAD REASSESSMENT 5 OCT 2026 |
+| Objective | Choose the production architecture after the FreeCAD TechDraw sheet failed visual acceptance. |
+| Business decision | The sheet is judged by whether it would be handed to the crew. |
+| Architectural decision | Hybrid. The Construction Model stays the authority. A headless OpenCASCADE process projects cut, visible, hidden, and hatch curves. Calibrayt composes the 11×17 sheet and the PDF. FreeCAD TechDraw stays a failed proof. ReportLab stays the baseline for diagrams, previews, non-CAD documents, and refusal sheets. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Architecture reassessment only. Evaluate geometry, drafting, and sheet composition separately. Record one recommendation on the existing drawing-set requirement. Do not install an engine, change product code, change Bushel, or deploy. |
+| Files expected to change | The drawing standard, the V1 recall, and the occupancy notes that still named FreeCAD as the sheet engine. |
+| Files prohibited from changing | Product code, the ReportLab renderer, Bushel production files, the ICF binding, Supplier Pro, and the live deploy. |
+| Implementation result | **ARCHITECTURE RECORDED.** Recommendation D, a hybrid. No engine installed. V1 stays **65% / 4 of 11**. |
+| Tests | None. No product code changed. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The hybrid is not installed. The generic post, beam, and joist proof of that hybrid has not been run. Bushel still lacks the post, beam, and joist facts. |
+| Next approved step | When authorized, prove the hybrid on the generic fixture only. Judge the printed sheet. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-05 — FreeCAD TechDraw post/beam/joist proof
 
 | Field | Content |

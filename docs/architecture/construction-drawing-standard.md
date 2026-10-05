@@ -91,7 +91,7 @@ Remaining deficiencies:
 
 The printed sheet is judged for geometric consistency, structural consistency, dimensional consistency, quantity consistency, revision consistency, and print consistency.
 
-Slices 1 through 20 used the in-process ReportLab renderer in `app/services/construction_model/sheet.py`. Those slices did not adopt FreeCAD. Blender is not integrated. CadQuery and build123d are not the sheet engine. The 5 Oct 2026 reassessment below names the professional sheet engine. It does not delete or refactor the ReportLab renderer.
+Slices 1 through 20 used the in-process ReportLab renderer in `app/services/construction_model/sheet.py`. The 5 Oct 2026 records below are the production architecture. The morning record named FreeCAD TechDraw. The proof failed. The post-proof record names a hybrid. Neither record deletes or refactors the ReportLab renderer.
 
 ## Drawing production engine — 5 Oct 2026
 
@@ -107,6 +107,8 @@ Would we hand these drawings to the boys? No.
 
 The Construction Model stays the model of record. The professional sheets are a downstream presentation of a governed drawing specification. The drafting engine does not write construction facts back.
 
+The morning record, superseded the same day by the post-proof section:
+
 ```text
 Calibrayt Construction Model
 → governed drawing specification
@@ -116,19 +118,61 @@ Calibrayt Construction Model
 → PDF
 ```
 
-FreeCAD is the professional sheet engine. It is not installed and not integrated. TechDraw, LGPL-2.0-or-later, projects Part solids to plan, elevation, section (`DrawViewSection`), and detail (`DrawViewDetail`) views, with hidden-line style, cut lines, line-width groups, hatch, dimensions, and an SVG page template. An 11×17 sheet is a custom SVG template sized in millimetres. `TechDrawGui.exportPageAsPdf` writes the PDF and requires the GUI module. Qt offscreen export is demonstrated on Linux. The same `Gui.updateGui()` path has been reported to segfault on macOS. SVG hatch can rasterize on export; geometric hatch exports as vectors. A version pin is required. Output is not guaranteed bit-identical across FreeCAD versions.
+That record named FreeCAD TechDraw as the professional sheet engine. The proof failed visual acceptance. FreeCAD TechDraw is a documented failed proof. TechDraw, LGPL-2.0-or-later, can project Part solids to plan, elevation, section (`DrawViewSection`), and detail (`DrawViewDetail`) views, with hidden-line style, cut lines, line-width groups, hatch, dimensions, and an SVG page template. An 11×17 sheet is a custom SVG template sized in millimetres. `TechDrawGui.exportPageAsPdf` writes the PDF and requires the GUI module. On this Mac, `QT_QPA_PLATFORM=offscreen` exited 139. Two exported PDFs were not byte-identical. SVG hatch can rasterize on export; geometric hatch exports as vectors.
 
 IfcOpenShell `ifcopenshell.draw` was the alternative checked. It can cut an IFC model to SVG without Blender, including an auto section and an auto floor plan. Its own drawing roadmap (IfcOpenShell issue 1153) still treats construction-document quality as unfinished. PDF is a later conversion, commonly through Inkscape. Bonsai, the Blender add-on, is GPL-3.0-or-later and its drafting guide still calls that module early. It is not the professional sheet engine.
 
 The ReportLab renderer stays for simple diagrams, internal previews, governed non-CAD documents, and a refusal sheet. It is not extended with another drawing slice.
 
-The smallest next proof is one post, one beam, and one joist from the Bushel proving fixture, and only from facts that fixture already stores. It attempts a plan, an elevation, a section, a post/beam detail, member profiles, the bearing or support relationship, dimensions, annotation, one 11×17 sheet, and a PDF. The proving fixture has pier plan stations, joist and stringer front-edge stations, and the lower walking surface. It does not have post locations, beam coordinates, joist lengths, joist elevations, or a `bears_on` / `supports` relationship among a post, a beam, and a joist. Those missing facts are named. They are not invented. Overlap is not support. An unresolved member prints “You need to provide this information.” and does not look like a finished detail.
+The pre-proof instruction was one post, one beam, and one joist from the Bushel proving fixture, and only from facts that fixture already stores. Slice 21 ran that proof on the generic fixture instead, because Bushel does not store those facts. The current next proof is in the post-proof section. It attempts a plan, an elevation, a section, a post/beam detail, member profiles, the bearing or support relationship, dimensions, annotation, one 11×17 sheet, and a PDF. The proving fixture has pier plan stations, joist and stringer front-edge stations, and the lower walking surface. It does not have post locations, beam coordinates, joist lengths, joist elevations, or a `bears_on` / `supports` relationship among a post, a beam, and a joist. Those missing facts are named. They are not invented. Overlap is not support. An unresolved member prints “You need to provide this information.” and does not look like a finished detail.
 
 Acceptance is the printed sheet. A sheet that is mostly blank, or that shows only primitive outlines, fails. A function that runs, a PDF that opens, and a passing test do not pass this check.
 
 ## Slice 21 proof — 5 Oct 2026 — not adopted
 
 A FreeCAD 1.0.2 TechDraw sheet was exported out of process from the generic fixture members `post-1`, `beam-front`, and `joist-1`. The page is 17 × 11 inches. The sheet fails visual acceptance. The plan reads as a line. The elevation is two rectangles. The section has no visible hatch. The detail is not a composed connection. The lower half of the sheet is blank. It would not be handed to the crew. The adapter is not part of the product. The record is [reviews/2026-10-05-freecad-proof/FREECAD-TECHDRAW-PROOF.md](reviews/2026-10-05-freecad-proof/FREECAD-TECHDRAW-PROOF.md). Bushel facts that are still missing were not invented.
+
+## Post-FreeCAD reassessment — 5 Oct 2026
+
+**Recommendation: a hybrid.** One package does not hold construction authority, project the views, and compose a contractor sheet.
+
+Three capabilities stay separate.
+
+| Capability | Owner |
+|------------|--------|
+| Construction model | Calibrayt. Members, partial geometry, relationships, bearing, connections, materials, dimensions, levels, provenance, uncertainty, calculations, drawing requirements, and refusal. |
+| View generation | A headless OpenCASCADE process. Solids come only from governed profiles and positions. The process returns cut, visible, hidden, and hatch curves. |
+| Sheet composition | Calibrayt. It places those curves on a true 11×17 sheet: line weights, dimensions, detail bubbles, section markers, keyed notes, callouts, schedules, title block, sheet number, revision, date, scale, and white space. Then PDF. |
+
+```text
+Calibrayt Construction Model
+→ governed drawing specification
+→ headless OpenCASCADE projection, out of process
+→ governed drawing curves (cut, visible, hidden, hatch)
+→ Calibrayt sheet compositor
+→ 11×17 sheet
+→ PDF
+```
+
+The drawing specification remains a rendering instruction. It is not a second model. The projection process does not write construction facts back. The compositor does not move a member to make the picture look right. A missing `bears_on`, `supports`, `connects_to`, `fastened_to`, or cantilever fact refuses the affected detail with “You need to provide this information.” Overlap is not support.
+
+FreeCAD TechDraw stays the failed proof. The geometry kernel under FreeCAD is OpenCASCADE. The hybrid uses that kernel through a headless Python binding, CadQuery or build123d, both Apache-2.0. It does not call TechDraw and it does not put Qt on the sheet path. CadQuery’s SVG export is one projected view with visible and hidden strokes. build123d’s technical-drawing example places orthographic views, extension lines, and a page border in SVG. That example is a mechanical part border. It is not a construction set, and it does not become the model of record. OpenCASCADE `HLRBRep` classifies visible and hidden edges. A section face comes from a Boolean cut. Hatch is drawn on that cut face by the compositor. pythonocc-core exposes the same kernel and is LGPL; the Apache bindings are the preferred process boundary. This is an engineering posture, not a legal opinion.
+
+Checked and left out of the hybrid:
+
+| Candidate | What it can do | Why it is not the sheet engine |
+|-----------|----------------|--------------------------------|
+| ReportLab, in `sheet.py` | Diagrams, previews, non-CAD documents, refusal sheets | Complete-deck sheets 8 and 9 are isolated rectangles on a blank 11×17. It stays the baseline. It is not given another drawing slice. |
+| FreeCAD 1.0.2 TechDraw | Part solids, section views, hatch, dimensions, an SVG template, PDF | The exported sheet failed visual acceptance. Offscreen Qt exited 139 on this Mac. The two PDFs were not byte-identical. |
+| IfcOpenShell `ifcopenshell.draw` | An IFC cut to SVG, including an auto section | Its drawing roadmap still treats construction-document quality as unfinished. |
+| Bonsai / Blender | A drafting add-on inside Blender | GPL-3.0-or-later. The drafting guide still calls that module early. |
+| QCAD | Headless ECMAScript can build a DXF. Community edition is GPL. The professional DWG path is commercial. Qt offscreen is required. | It is a 2D drafter. It does not section a construction model. |
+| LibreCAD | 2D DXF editing | It has no model-driven section and no construction-sheet compositor. |
+| Inkscape or Cairo | SVG to PDF | They have no member, section, or relationship. They can be a converter after the sheet exists. They are not the engine. |
+
+No candidate is installed by this reassessment.
+
+The next proof, when authorized, uses only the generic fixture members `post-1`, `beam-front`, and `joist-1`. It must show a plan, an elevation, a hatched section, a composed post/beam detail, real profiles, the stored bearing, dimensions on the members, a detail reference, and one readable 11×17 PDF. Removing the post/beam relationship must refuse that detail. The proof does not claim Bushel. Acceptance is still whether the sheet would be handed to the crew. A passing test does not pass that check. Deterministic bytes are claimed only after two runs are compared.
 
 PGE-1 through PGE-6 stay closed. `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, and the drawing requirement are unchanged. This capability sits beside those slices.
 

@@ -245,6 +245,14 @@ Visual acceptance was not judged. There is no sheet to hand to the crew, and the
 
 The same proof stays the authorized next drawing action: `post-1`, `beam-front`, and `joist-1` only, through a real Automation work item, judged only by whether the 17 × 11 sheet would be handed to the crew. A missing `bears_on` still refuses before AutoCAD is asked to draw the detail.
 
+## Drawing production deferred — 5 Oct 2026
+
+**PROFESSIONAL CONSTRUCTION DRAWING PRODUCTION DEFERRED / SHELVED / NOT V1-CRITICAL.**
+
+ReportLab, FreeCAD TechDraw, OpenCASCADE plus the compositor, and QCAD Professional failed visual acceptance. AutoCAD Automation was not executed. No further drawing-technology proof is authorized in this V1 cycle. APS credentials are not to be obtained for this investigation. QCAD is not to be purchased. AutoCAD is not to be installed. ReportLab is not to be extended. The compositor is not to be continued.
+
+The Construction Model remains the governed record of members, geometry, relationships, bearings, connections, dimensions, levels, provenance, uncertainty, and material-relevant facts. Bushel drawing production is deferred with the same decision. The Bushel case remains an estimating proving case. Its issued files stay as they are.
+
 Linda Bushel remains a proving fixture. Its scripts are not the engine. Its pool radius, pier count, joist count, stringer count, spans, and other job dimensions are not generic constants. Issue J1 sheet 5, drawn 1 Oct 2026, is rejected as a construction drawing. It invented view geometry the model did not contain. It is not redrawn in the case script. The future engine regenerates the required views from one model.
 
 The model may later become the quantity source. The first construction-model slice does not implement drawing-driven take-off. Current Bushel quantities stay as they are.

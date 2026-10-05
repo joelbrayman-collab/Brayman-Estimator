@@ -124,6 +124,8 @@ The only Platform producer remains `icf_wall` in `app/services/icf_quantity.py`.
 
 Our-crew `ICF` records `ENGINE_ELIGIBLE` and, when the project has one estimate, Continue setup opens that existing wall-form page. The walk still writes no quantity and does not calculate. Our-crew `SITE`, `FOUND`, and `STRUCT` stay `ENGINE_REQUIREMENT_NOT_DERIVABLE`. Subcontract-only work, including `ICF`, stays `ENGINE_NOT_APPLICABLE`. The mapper confirmation gate stays. A missing measurement stays on the wall-form page.
 
+On 5 Oct 2026 that ICF path was proved through to an ordinary estimate line. The contractor enters the wall measurements. `build_icf_standard_quantities` emits Contract V1. `validate_contract_v1` runs before the result is stored for review. Calculate and review add no estimate line. The contractor confirms one quantity onto a company cost item, and that confirmation creates one ordinary line. The path does not create a `PlanDocument` and does not call drawing generation. This is the ICF path. It is not generic estimating. Checklist step 8 stays open for `SITE`, `FOUND`, and `STRUCT`.
+
 Migration `n4a5b6c7d8e9` adds the nullable column and the baseline `ICF` row. It is not applied to the Mac primary database and it is not applied to the hosted database. Checklist step 8 stays open for every work element that still has no producer.
 
 ## 7. Plan Generation entry

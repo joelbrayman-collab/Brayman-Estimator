@@ -43,6 +43,42 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-05 — First governed ICF estimating path
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-05 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 DEVELOPMENT STEP 8 — COMPLETE FIRST GOVERNED ESTIMATING PATH 5 OCT 2026 |
+| Objective | Prove our-crew ICF wall from the existing binding through Contract V1, confirmation, and one ordinary estimate line, with no drawing. |
+| Business decision | Drawing production stays deferred. This slice does not bind SITE, FOUND, or STRUCT, and it does not start Supplier Pro, Field, or Learning. |
+| Architectural decision | The existing chain already supported the path. No product code changed. The joined proof is `tests/test_icf_governed_estimate_path.py`. Calculate and review add no line. Confirmation adds one ordinary line. **ICF PATH COMPLETE. GENERIC ESTIMATING is not complete.** Checklist step 8 stays open. Official V1 stays **65% / 4 of 11**. |
+| Prompt template used | Joel's Step 8 accelerated V1 prompt, 5 Oct 2026. |
+| Approved Cursor prompt summary | Use the existing ICF engine, Contract V1, and mapper. Implement only a real gap. Browser QA on a scratch database. One commit and push if the closure passes. Do not deploy. |
+| Files expected to change | The joined proof test and the existing Step 8 status records. |
+| Files prohibited from changing | ICF formulas, Contract V1, the mapper, drawings, Bushel, the Website, and the Mac office database. |
+| Result | No product gap. The path was already implemented. The proof and the status records were added. Scratch browser walk confirmed the line and the negative setup pages. |
+| Tests | Focused path: 50 passed, 153 warnings, 18.62s, exit 0. Relevant regression: 81 passed, 321 warnings, 32.48s, exit 0. PGE: 49 passed, 48 warnings, 11.15s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2134 passed, 11 skipped, 6829 warnings, 1427.40s, exit 0. |
+| Deployment | Not performed. |
+
+### 2026-10-05 — Drawing production deferred
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-05 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI DRAWING PRODUCTION DEFERMENT + COMMERCIAL ESTIMATING PRIORITY 5 OCT 2026 |
+| Objective | Defer professional drawing production and assess whether a deck estimate can proceed from the Construction Model without a drawing. |
+| Business decision | Professional construction drawing production is deferred, shelved, and not V1-critical. The Construction Model stays. |
+| Architectural decision | Checklist step 8 is the commercial priority. Member grouping already exists without a PDF. No deck framing formula, stock length, waste, price, or labour hour is derived from the model. The estimate path does not read a drawing PDF. Bushel is not modified. |
+| Prompt template used | Joel's deferment and commercial-priority prompt, 5 Oct 2026. |
+| Approved Cursor prompt summary | Assessment only. Record the deferment. Inspect existing quantity and estimate code. No implementation, no Bushel edit, no deploy, no V1 rescore. |
+| Files expected to change | Existing recall and status records only. |
+| Files prohibited from changing | Application code, Bushel, drawing engines, Supplier Pro. |
+| Result | Drawing production deferred. A quantity-to-estimate chain for a deck does not exist yet and does not depend on a PDF. |
+| Tests | Not run. No code changed. |
+| Deployment | Not performed. |
+
 ### 2026-10-05 — AutoCAD Automation proof, not executed
 
 | Field | Content |

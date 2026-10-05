@@ -215,6 +215,12 @@ The governed library, when the proof is authorized, is a QCAD template: title bl
 
 The proof is not executed in this record. It is one generic post, beam, and joist. Plan, elevation, hatched section, a block-based post/beam detail, the stored bearing, dimensions, a detail reference, one 17 × 11 inch layout, and a PDF. The sheet is judged against the ReportLab, FreeCAD, and OpenCASCADE failures. Acceptance is still whether it would be handed to the crew.
 
+## Slice 24 — QCAD Professional proof — 5 Oct 2026
+
+The proof was run. QCAD Professional 3.33.1 trial, out of process, on `post-1`, `beam-front`, and `joist-1` only. The page is a real layout, 17 × 11 inches. The detail block is refused, with the sentence “You need to provide this information.”, when `rel-bear-post-1-beam-front` is removed.
+
+**QCAD PROFESSIONAL PROOF FAILED VISUAL ACCEPTANCE.** The trial stamp covers the sheet. Under it, the plan, elevation, section, and post/beam detail are still rectangles in large empty viewports. Section hatch entities are in the DXF and do not read on the plot. The detail is not a connection the crew can build. QCAD is not adopted. The record is [reviews/2026-10-05-qcad-proof/QCAD-PROFESSIONAL-PROOF.md](reviews/2026-10-05-qcad-proof/QCAD-PROFESSIONAL-PROOF.md). The proof-only adapter is `tools/qcad_proof/`. It is not part of the application. The recorded escalation remains Autodesk Platform Services. That is an architecture decision. It is not another pass on this sheet.
+
 PGE-1 through PGE-6 stay closed. `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, and the drawing requirement are unchanged. This capability sits beside those slices.
 
 Linda Bushel remains a proving fixture. Its scripts are not the engine. Its pool radius, pier count, joist count, stringer count, spans, and other job dimensions are not generic constants. Issue J1 sheet 5, drawn 1 Oct 2026, is rejected as a construction drawing. It invented view geometry the model did not contain. It is not redrawn in the case script. The future engine regenerates the required views from one model.

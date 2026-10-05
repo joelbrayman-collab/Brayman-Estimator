@@ -976,7 +976,7 @@ No formulas were written.
 | Existing authority | [construction-drawing-standard.md](construction-drawing-standard.md). Branding remains [governed-document-and-drawing-output-standard.md](governed-document-and-drawing-output-standard.md). |
 | What this row is not | A change to `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, or the drawing requirement. Not a Bushel script. Not a red-box screen. Not drawing-driven take-off. Slices 1 through 20 are not a FreeCAD integration. |
 | Closure rule | A Bushel-class construction set is generated from one governed model. A missing required fact causes refusal. Printed output is 11×17. No view invents geometry. Every view agrees with the model. The printed sheet is acceptable to hand to the crew. |
-| Professional drafting layer | Recorded 5 Oct 2026, Slice 23. QCAD Professional, out of process, behind a drawing adapter. Not installed. ReportLab, FreeCAD TechDraw, and the OpenCASCADE compositor each failed visual acceptance. The Construction Model stays the authority. QCAD owns drafting, paper space, and PDF. |
+| Professional drafting layer | Recorded 5 Oct 2026, Slice 23, and tested in Slice 24. QCAD Professional trial, out of process. **Proof failed visual acceptance. Not adopted.** ReportLab, FreeCAD TechDraw, and the OpenCASCADE compositor had already failed the same crew test. The Construction Model stays the authority. |
 
 ## Current build
 

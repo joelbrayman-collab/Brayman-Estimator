@@ -43,6 +43,24 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-05 — QCAD Professional crew-drawing proof
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-05 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 24 — QCAD PROFESSIONAL CREW-DRAWING PROOF 5 OCT 2026 |
+| Objective | Prove whether QCAD Professional can produce one crew-ready 11×17 sheet from the generic post, beam, and joist. |
+| Business decision | The sheet is judged by whether it would be handed to the crew. It would not. QCAD is not adopted. |
+| Architectural decision | The Construction Model stays the authority. The QCAD trial ran out of process. The proof failed visual acceptance. The recorded escalation remains Autodesk Platform Services, as an architecture decision, not another pass on this sheet. |
+| Prompt template used | Joel's Slice 24 prompt, 5 Oct 2026. |
+| Approved Cursor prompt summary | One bounded QCAD Professional proof. Generic fixture members post-1, beam-front, and joist-1 only. No Bushel. No platform integration. No deploy. No V1 rescore. If the sheet fails, record why and do not adopt QCAD. |
+| Files expected to change | Proof-only adapter, the proof review, and the existing Construction Model + Drawing Set records. |
+| Files prohibited from changing | Bushel, J1, P1, CT-1, CT-2, Construction Model architecture, Project, Estimate, mapper, Contract V1, ICF binding, Supplier Pro. |
+| Result | Failed visual acceptance. Trial 3.33.1. Layout S-1 is 17×11. Case B prints “You need to provide this information.” and does not create the detail block. Two plots differ only by PDF timestamps. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_qcad_crew_drawing_proof.py`: 4 passed. Then `./venv/bin/python -m pytest -q tests/test_construction_model_*.py tests/test_plan_generation_*.py`: 217 passed, 63 warnings, 366.58s. Full suite not run. |
+| Deployment | Not performed. |
+
 ### 2026-10-05 — Professional drafting architecture assessment
 
 | Field | Content |

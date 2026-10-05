@@ -778,6 +778,67 @@ def read_stored_member_quantities(model):
     return group_member_rows(schedule.members, measurement)
 
 
+def read_construction_material_requirements(model):
+    """State a material requirement from stored member groups.
+
+    The requirement keeps the member count and the supplied length as separate
+    facts. It does not choose a stock length, a board-foot total, a waste
+    allowance, or a price. It does not write a MaterialRequirement row.
+    """
+    groups = read_stored_member_quantities(model)
+    names = _material_names(model)
+    members = _members_by_id(model)
+    requirements = []
+    for group in groups:
+        material_id = group.get("material_id") or ""
+        size = group.get("member_size") or ""
+        missing = []
+        if not material_id:
+            missing.append("MISSING_MATERIAL")
+        if not size:
+            missing.append("MISSING_MEMBER_SIZE")
+        if group.get("missing_fact") == "MISSING_SCHEDULE_FACT":
+            missing.append("MISSING_SCHEDULE_FACT")
+        member_ids = group.get("member_ids") or ()
+        source = members.get(member_ids[0], {}) if member_ids else {}
+        requirements.append(
+            {
+                "material_id": material_id,
+                "material_name": names.get(material_id, "") if material_id else "",
+                "role": group.get("role") or "",
+                "member_size": size,
+                "profile": group.get("profile") or {},
+                "quantity": group.get("quantity"),
+                "supplied_length": group.get("supplied_length"),
+                "length_display": group.get("length_display") or "",
+                "member_ids": member_ids,
+                "provenance": source.get("provenance"),
+                "missing_facts": tuple(missing),
+            }
+        )
+    return tuple(requirements)
+
+
+def _material_names(model):
+    names = {}
+    if not isinstance(model, Mapping):
+        return names
+    for item in model.get("materials") or []:
+        if isinstance(item, Mapping) and item.get("id"):
+            names[item["id"]] = item.get("name") or ""
+    return names
+
+
+def _members_by_id(model):
+    if not isinstance(model, Mapping):
+        return {}
+    return {
+        item.get("id"): item
+        for item in model.get("members") or []
+        if isinstance(item, Mapping) and item.get("id")
+    }
+
+
 def group_member_rows(rows, measurement_system="imperial"):
     """Group members that share construction attributes. Lengths are not averaged."""
     groups = {}

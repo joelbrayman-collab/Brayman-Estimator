@@ -43,6 +43,24 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-05 — Construction Model material-requirement boundary
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-05 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 DEVELOPMENT STEP 8 — CONSTRUCTION MODEL → MATERIAL REQUIREMENT BOUNDARY 5 OCT 2026 |
+| Objective | Establish the boundary from a stored construction quantity to a material requirement without turning it into a purchase, a price, or an estimate line. |
+| Business decision | Stay on checklist step 8. Drawing production stays deferred. Do not bind SITE, FOUND, or STRUCT. Do not start Supplier Pro. |
+| Architectural decision | Persisted `MaterialRequirement` remains the Material Catalogue row: one canonical material, one quantity, one unit, for supplier mapping. It cannot keep a member count and a supplied length as separate facts, and it cannot record a missing material. `read_construction_material_requirements` is the Construction Model read of those separate facts. It writes no row. **CONSTRUCTION MODEL → MATERIAL REQUIREMENT BOUNDARY IMPLEMENTED / TESTED.** **STORED-FACT QUANTITY READ** stays implemented. **ICF PATH COMPLETE** stays separate. **GENERIC ESTIMATING is not complete.** Official V1 stays **65% / 4 of 11**. |
+| Prompt template used | Joel's Step 8 material-requirement boundary prompt, 5 Oct 2026. |
+| Approved Cursor prompt summary | Inspect existing material structures. Implement only the missing boundary. Do not calculate stock, waste, or price. Do not write an estimate or a MaterialRequirement row. Do not modify ICF, Contract V1, drawings, or Bushel. Do not deploy. |
+| Files expected to change | `app/services/construction_model/views.py`, `tests/test_construction_material_requirements.py`, and the existing Step 8 status records. |
+| Files prohibited from changing | ICF engine, Contract V1, the mapper, Guided Project Setup, drawings, Bushel, and the Mac office database. |
+| Result | The read states one requirement per stored member group. Eight joists at 10'-0" stay quantity 8 and supplied length 10. Missing material, size, and length stay missing. |
+| Tests | Focused: 10 passed, 2 warnings, 1.05s, exit 0. Construction Model regression: 168 passed, 15 warnings, 334.18s, exit 0. ICF path, stored-fact read, and estimate/work-structure regression: 98 passed, 341 warnings, 53.69s, exit 0. PGE: 49 passed, 48 warnings, 20.88s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2152 passed, 11 skipped, 6833 warnings, 1276.30s, exit 0. |
+| Deployment | Not performed. |
+
 ### 2026-10-05 — Construction Model stored-fact quantity read
 
 | Field | Content |

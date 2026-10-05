@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**5 Oct 2026 — CONSTRUCTION MODEL → MATERIAL REQUIREMENT BOUNDARY IMPLEMENTED / TESTED.** `read_construction_material_requirements` keeps the stored member count and the supplied length as separate facts. It does not write a `MaterialRequirement` row, choose a stock length, add waste, or set a price. **STORED-FACT QUANTITY READ** stays **IMPLEMENTED / TESTED**. **ICF PATH COMPLETE** stays separate. **GENERIC ESTIMATING is not complete.** Checklist step 8 stays open. Official V1 remains **65% / 4 of 11**. Not deployed.
+
 **5 Oct 2026 — CONSTRUCTION MODEL STORED-FACT QUANTITY READ IMPLEMENTED / TESTED.** `read_stored_member_quantities` groups stored members and returns the count and the supplied length already on those members. A missing length stays `MISSING_SCHEDULE_FACT`. The read does not price, write an estimate line, or compose a sheet. **ICF PATH COMPLETE** remains the separate our-crew ICF wall path. **GENERIC ESTIMATING is not complete.** `SITE`, `FOUND`, and `STRUCT` stay unbound. Checklist step 8 stays open. Official V1 remains **65% / 4 of 11**. This read is not deployed. The live product SHA recorded below was not changed.
 
 **5 Oct 2026 — ICF PATH COMPLETE.** Our-crew ICF wall now runs from Guided Project Setup through the existing ICF engine, Contract V1, explicit confirmation, and one ordinary estimate line. No drawing is required. **GENERIC ESTIMATING is not complete.** `SITE`, `FOUND`, and `STRUCT` stay unbound. Checklist step 8 stays open. Official V1 remains **65% / 4 of 11**. This path is not deployed. The live product SHA recorded below was not changed by this proof.

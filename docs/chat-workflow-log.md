@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-05 — Drawing production architecture reassessment
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-05 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET DRAWING PRODUCTION ARCHITECTURE REASSESSMENT 5 OCT 2026 |
+| Objective | Decide whether the home-grown drawing renderer remains the professional construction-sheet engine. |
+| Business decision | The printed sheet is the test. A sheet we would not hand to the crew fails. |
+| Architectural decision | Keep the ReportLab renderer as the baseline. It is not the professional sheet engine. FreeCAD TechDraw is the downstream professional engine, out of process, behind a replaceable adapter. It is not installed. IfcOpenShell drawing output is not that engine. The Construction Model stays the model of record. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Architecture assessment only. Inspect the renderer against the printed sheets. Evaluate FreeCAD and one open-source alternative from documented capabilities. Record one recommendation in the existing drawing standard and the V1 recall. Do not install FreeCAD, change product code, change Bushel, or deploy. |
+| Files expected to change | The construction drawing standard, the V1 requirement-recall paragraph, the build-out register, the roadmap, current state, session handoff, and this log. |
+| Files prohibited from changing | Product code, the renderer, the Construction Model, Bushel, Step 8, the ICF binding, Supplier Pro, and the Desktop archive. |
+| Implementation result | Assessment recorded. No product change. V1 stays **65% / 4 of 11**. Step 8 stays open. Deployment was not performed. |
+| Tests | Not run. No product code changed. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | FreeCAD is not installed. The Bushel proving fixture still lacks post locations, beam coordinates, joist lengths, joist elevations, and a post-beam-joist relationship. Those facts are not invented. |
+| Next approved step | When Construction Model work is next authorized, start from the 5 Oct decision. Do not add another ReportLab drawing slice. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-04 — ICF wall work-element binding
 
 | Field | Content |

@@ -91,7 +91,40 @@ Remaining deficiencies:
 
 The printed sheet is judged for geometric consistency, structural consistency, dimensional consistency, quantity consistency, revision consistency, and print consistency.
 
-FreeCAD is not adopted for the first implementation. Blender is not integrated. OCCT, CadQuery, and build123d are not the first implementation. A geometric kernel may be evaluated later only when a real native projection cannot be satisfied. If a kernel is introduced, it stays replaceable, it runs out of process, and it is not the Construction Model.
+Slices 1 through 20 used the in-process ReportLab renderer in `app/services/construction_model/sheet.py`. Those slices did not adopt FreeCAD. Blender is not integrated. CadQuery and build123d are not the sheet engine. The 5 Oct 2026 reassessment below names the professional sheet engine. It does not delete or refactor the ReportLab renderer.
+
+## Drawing production engine — 5 Oct 2026
+
+The ReportLab renderer remains the baseline. It is not the professional construction-sheet engine.
+
+Inspected sheets from the complete deck fixture, 2 Oct 2026:
+
+- Sheet 9 of 14, “Stringer And Tread,” is a sloped line, a small seat mark, one member label, and a connection sentence. The rest of the 11×17 sheet is blank. Scale on that sheet reads 1 in = 1 ft.
+- Sheet 8 of 14, “Post And Beam,” is two rectangular outlines, one post label, and a connection sentence. It does not draw a connection. The rest of the sheet is blank.
+- The Bushel proving detail, sheet 3 of 6, is a title block and one station mark. It is not a detail.
+
+Would we hand these drawings to the boys? No.
+
+The Construction Model stays the model of record. The professional sheets are a downstream presentation of a governed drawing specification. The drafting engine does not write construction facts back.
+
+```text
+Calibrayt Construction Model
+→ governed drawing specification
+→ replaceable adapter
+→ FreeCAD TechDraw, out of process
+→ 11×17 sheet
+→ PDF
+```
+
+FreeCAD is the professional sheet engine. It is not installed and not integrated. TechDraw, LGPL-2.0-or-later, projects Part solids to plan, elevation, section (`DrawViewSection`), and detail (`DrawViewDetail`) views, with hidden-line style, cut lines, line-width groups, hatch, dimensions, and an SVG page template. An 11×17 sheet is a custom SVG template sized in millimetres. `TechDrawGui.exportPageAsPdf` writes the PDF and requires the GUI module. Qt offscreen export is demonstrated on Linux. The same `Gui.updateGui()` path has been reported to segfault on macOS. SVG hatch can rasterize on export; geometric hatch exports as vectors. A version pin is required. Output is not guaranteed bit-identical across FreeCAD versions.
+
+IfcOpenShell `ifcopenshell.draw` was the alternative checked. It can cut an IFC model to SVG without Blender, including an auto section and an auto floor plan. Its own drawing roadmap (IfcOpenShell issue 1153) still treats construction-document quality as unfinished. PDF is a later conversion, commonly through Inkscape. Bonsai, the Blender add-on, is GPL-3.0-or-later and its drafting guide still calls that module early. It is not the professional sheet engine.
+
+The ReportLab renderer stays for simple diagrams, internal previews, governed non-CAD documents, and a refusal sheet. It is not extended with another drawing slice.
+
+The smallest next proof is one post, one beam, and one joist from the Bushel proving fixture, and only from facts that fixture already stores. It attempts a plan, an elevation, a section, a post/beam detail, member profiles, the bearing or support relationship, dimensions, annotation, one 11×17 sheet, and a PDF. The proving fixture has pier plan stations, joist and stringer front-edge stations, and the lower walking surface. It does not have post locations, beam coordinates, joist lengths, joist elevations, or a `bears_on` / `supports` relationship among a post, a beam, and a joist. Those missing facts are named. They are not invented. Overlap is not support. An unresolved member prints “You need to provide this information.” and does not look like a finished detail.
+
+Acceptance is the printed sheet. A sheet that is mostly blank, or that shows only primitive outlines, fails. A function that runs, a PDF that opens, and a passing test do not pass this check.
 
 PGE-1 through PGE-6 stay closed. `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, and the drawing requirement are unchanged. This capability sits beside those slices.
 

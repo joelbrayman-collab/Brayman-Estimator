@@ -974,9 +974,9 @@ No formulas were written.
 | Slice 20 | Bushel input completion. No new governed fact was available to load. The 29 Sep sizes, beam coordinates, and pool curve stay unresolved. The regenerated PDF matches Slice 19. No engine change. The set is not a crew set. |
 | Dependency class | PGE-1 through PGE-6 remain **CLOSED** and unchanged. |
 | Existing authority | [construction-drawing-standard.md](construction-drawing-standard.md). Branding remains [governed-document-and-drawing-output-standard.md](governed-document-and-drawing-output-standard.md). |
-| What this row is not | A change to `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, or the drawing requirement. Not FreeCAD. Not Blender. Not OCCT, CadQuery, or build123d. Not a Bushel script. Not a red-box screen. Not drawing-driven take-off. |
-| Closure rule | A Bushel-class construction set is generated from one governed model. A missing required fact causes refusal. Printed output is 11×17. No view invents geometry. Every view agrees with the model. |
-| First kernel rule | A geometric kernel may be evaluated later only when a real native projection cannot be satisfied. If introduced, it stays replaceable, runs out of process, and is not the model of record. |
+| What this row is not | A change to `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, or the drawing requirement. Not a Bushel script. Not a red-box screen. Not drawing-driven take-off. Slices 1 through 20 are not a FreeCAD integration. |
+| Closure rule | A Bushel-class construction set is generated from one governed model. A missing required fact causes refusal. Printed output is 11×17. No view invents geometry. Every view agrees with the model. The printed sheet is acceptable to hand to the crew. |
+| Professional sheet engine | Recorded 5 Oct 2026. FreeCAD TechDraw, out of process, behind a replaceable adapter. Not installed. Not integrated. The ReportLab renderer remains the baseline for diagrams, previews, non-CAD documents, and refusal sheets. It is not the professional sheet engine. IfcOpenShell drawing output is not that engine. Blender, CadQuery, and build123d are not the sheet engine. |
 
 ## Current build
 

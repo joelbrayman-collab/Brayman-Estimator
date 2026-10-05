@@ -174,6 +174,10 @@ No candidate is installed by this reassessment.
 
 The next proof, when authorized, uses only the generic fixture members `post-1`, `beam-front`, and `joist-1`. It must show a plan, an elevation, a hatched section, a composed post/beam detail, real profiles, the stored bearing, dimensions on the members, a detail reference, and one readable 11×17 PDF. Removing the post/beam relationship must refuse that detail. The proof does not claim Bushel. Acceptance is still whether the sheet would be handed to the crew. A passing test does not pass that check. Deterministic bytes are claimed only after two runs are compared.
 
+## Slice 22 proof — 5 Oct 2026 — not proven
+
+A headless OpenCASCADE projection of `post-1`, `beam-front`, and `joist-1` was composed onto one 17 × 11 inch sheet. Section A hatches the cut solids. The post/beam detail does not explain the connection: the plate is a line, the bolts are dots, and the labels sit on the linework. The viewports still carry large empty fields. The sheet would not be handed to the crew. The projection and the compositor are not in the product. The record is [reviews/2026-10-05-hybrid-proof/HYBRID-OPENCASCADE-PROOF.md](reviews/2026-10-05-hybrid-proof/HYBRID-OPENCASCADE-PROOF.md). The hybrid remains the recorded architecture. It is not proven.
+
 PGE-1 through PGE-6 stay closed. `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, and the drawing requirement are unchanged. This capability sits beside those slices.
 
 Linda Bushel remains a proving fixture. Its scripts are not the engine. Its pool radius, pier count, joist count, stringer count, spans, and other job dimensions are not generic constants. Issue J1 sheet 5, drawn 1 Oct 2026, is rejected as a construction drawing. It invented view geometry the model did not contain. It is not redrawn in the case script. The future engine regenerates the required views from one model.

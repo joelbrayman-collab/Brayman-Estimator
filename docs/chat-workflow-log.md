@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-05 — Hybrid OpenCASCADE post/beam/joist proof
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-05 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 22 — HEADLESS OPENCASCADE + CALIBRAYT SHEET COMPOSITOR PROOF 5 OCT 2026 |
+| Objective | Prove the hybrid drawing architecture on the generic post, beam, and joist. |
+| Business decision | The sheet is judged by whether it would be handed to the crew. |
+| Architectural decision | The hybrid stays the recorded architecture. This proof did not prove it. The section hatch is real. The post/beam detail is not a crew detail. The pipeline was not adopted. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | One headless OpenCASCADE proof of `post-1`, `beam-front`, and `joist-1` from the generic fixture. Calibrayt composes one 11×17 PDF. Do not use Bushel. Do not deploy. Commit only if the printed sheet would be handed to the crew. |
+| Files expected to change | The proof record and the existing drawing-set recall, because the sheet failed. |
+| Files prohibited from changing | The ReportLab renderer, Bushel production files, the ICF binding, Supplier Pro, and the live deploy. |
+| Implementation result | **FAILED visual acceptance.** CadQuery 2.8.0 / OCP 7.9.3.1 projected the three members out of process. Section A is hatched. The detail would not be handed to the crew. The pipeline was not committed. V1 stays **65% / 4 of 11**. |
+| Tests | Focused specification and projection checks passed in the session, then the pipeline was removed with the failed sheet. No product suite was run. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The plate and the bolts are not a readable connection. Labels collide with the linework. Viewports still have large empty fields. |
+| Next approved step | Do not treat this PDF as a crew sheet. Do not add a ReportLab drawing slice. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-05 — Post-FreeCAD drawing production reassessment
 
 | Field | Content |

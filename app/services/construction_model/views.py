@@ -762,6 +762,22 @@ def _matching_stair_facts(model, element_ids):
     return ()
 
 
+def read_stored_member_quantities(model):
+    """Read stored member counts and supplied lengths from one Construction Model.
+
+    Equivalent members share role, size, material, profile, and supplied length.
+    A missing length stays MISSING_SCHEDULE_FACT on that group. This read does
+    not price, write an estimate, or compose a sheet.
+    """
+    assessment = assess_construction_model(model)
+    if not assessment.generation_permitted or assessment.accepted is None:
+        return ()
+    accepted = assessment.accepted
+    schedule = _schedule(accepted)
+    measurement = accepted.get("measurement_system") or "imperial"
+    return group_member_rows(schedule.members, measurement)
+
+
 def group_member_rows(rows, measurement_system="imperial"):
     """Group members that share construction attributes. Lengths are not averaged."""
     groups = {}
@@ -787,14 +803,19 @@ def group_member_rows(rows, measurement_system="imperial"):
     for key in order:
         items = groups[key]
         first = items[0]
+        supplied_length = _stored_supplied_length(first)
+        length_missing = supplied_length is None and not key[-1]
         grouped.append(
             {
                 "role": first.get("role") or "",
                 "member_size": first.get("member_size") or "",
                 "material_id": first.get("material_id") or "",
+                "profile": _stored_profile(first),
                 "construction_status": first.get("construction_status") or "",
                 "quantity": len(items),
+                "supplied_length": supplied_length,
                 "length_display": key[-1],
+                "missing_fact": "MISSING_SCHEDULE_FACT" if length_missing else "",
                 "member_ids": tuple(item["id"] for item in items),
             }
         )
@@ -1041,6 +1062,24 @@ def _axis_points(geometry, horizontal, vertical):
         if is_number(point.get(horizontal)) and is_number(point.get(vertical)):
             located.append((float(point[horizontal]), float(point[vertical])))
     return located
+
+
+def _stored_supplied_length(row):
+    """Return the numeric length already stored on the member row."""
+    lengths = row.get("lengths") or ()
+    if lengths and is_number(lengths[0]):
+        return lengths[0]
+    return None
+
+
+def _stored_profile(row):
+    """Return the profile facts already stored on the member. Nothing is derived."""
+    return {
+        "profile_type": row.get("profile_type") or "",
+        "section_width": row.get("section_width"),
+        "section_depth": row.get("section_depth"),
+        "orientation": row.get("orientation") or "",
+    }
 
 
 def _length_label(row, measurement_system) -> str:

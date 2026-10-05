@@ -43,6 +43,24 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-05 — Construction Model stored-fact quantity read
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-05 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 DEVELOPMENT STEP 8 — STORED-FACT QUANTITY READ 5 OCT 2026 |
+| Objective | Make the Construction Model stored-fact quantity read explicit: grouped member counts and supplied lengths, with a missing length named. |
+| Business decision | Stay on checklist step 8. Drawing production stays deferred. This slice does not bind SITE, FOUND, or STRUCT, and it does not start Supplier Pro, Field, or Learning. |
+| Architectural decision | `group_member_rows` already grouped stored members and did not average lengths. The sheet schedule was its production caller. `read_stored_member_quantities` uses that grouping and exposes role, size, material, profile, quantity, and the supplied length already stored. A missing length is `MISSING_SCHEDULE_FACT` and names the member ids. No second grouping service. No price, estimate line, or sheet. **CONSTRUCTION MODEL STORED-FACT QUANTITY READ IMPLEMENTED / TESTED.** **ICF PATH COMPLETE** stays separate. **GENERIC ESTIMATING is not complete.** Checklist step 8 stays open. Official V1 stays **65% / 4 of 11**. |
+| Prompt template used | Joel's Step 8 stored-fact quantity prompt, 5 Oct 2026. |
+| Approved Cursor prompt summary | Use the existing `group_member_rows`. Add only the smallest explicit read. Prove the generic complete-deck fixture. Do not price, write an estimate, compose a sheet, bind SITE/FOUND/STRUCT, modify Bushel, or deploy. |
+| Files expected to change | `app/services/construction_model/views.py`, `tests/test_stored_member_quantities.py`, and the existing Step 8 status records. |
+| Files prohibited from changing | ICF formulas, Contract V1, the mapper, drawings, Bushel, the Website, and the Mac office database. |
+| Result | The read is explicit. Equivalent members share one count and one supplied length. Different lengths stay separate. A missing length is named and is not given a number. No office page was added. |
+| Tests | Focused: 8 passed, 2 warnings, 1.25s, exit 0. Construction Model regression: 168 passed, 15 warnings, 338.98s, exit 0. ICF path plus estimate and work-structure regression: 90 passed, 339 warnings, 53.71s, exit 0. PGE: 49 passed, 48 warnings, 20.26s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2142 passed, 11 skipped, 6831 warnings, 1458.58s, exit 0. |
+| Deployment | Not performed. |
+
 ### 2026-10-05 — First governed ICF estimating path
 
 | Field | Content |

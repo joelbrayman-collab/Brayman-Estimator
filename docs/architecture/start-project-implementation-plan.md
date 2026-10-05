@@ -126,6 +126,8 @@ Our-crew `ICF` records `ENGINE_ELIGIBLE` and, when the project has one estimate,
 
 On 5 Oct 2026 that ICF path was proved through to an ordinary estimate line. The contractor enters the wall measurements. `build_icf_standard_quantities` emits Contract V1. `validate_contract_v1` runs before the result is stored for review. Calculate and review add no estimate line. The contractor confirms one quantity onto a company cost item, and that confirmation creates one ordinary line. The path does not create a `PlanDocument` and does not call drawing generation. This is the ICF path. It is not generic estimating. Checklist step 8 stays open for `SITE`, `FOUND`, and `STRUCT`.
 
+On 5 Oct 2026 the Construction Model stored-fact quantity read was proved. `read_stored_member_quantities` uses the existing `group_member_rows`. It returns a count and the supplied length already stored on equivalent members. A missing length stays a missing schedule fact and names those members. The read does not price, write an estimate line, or compose a sheet. **CONSTRUCTION MODEL STORED-FACT QUANTITY READ IMPLEMENTED / TESTED.** Generic estimating is not complete.
+
 Migration `n4a5b6c7d8e9` adds the nullable column and the baseline `ICF` row. It is not applied to the Mac primary database and it is not applied to the hosted database. Checklist step 8 stays open for every work element that still has no producer.
 
 ## 7. Plan Generation entry

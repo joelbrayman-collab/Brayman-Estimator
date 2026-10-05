@@ -235,6 +235,16 @@ The published Flex page lists the Automation API at 2 tokens per processing hour
 
 **AUTODESK PLATFORM SERVICES / AUTOCAD AUTOMATION ESCALATION FOR ARCHITECTURAL ASSESSMENT.** The recommendation is to keep it as the next proof candidate. It is not adopted. The proof, when authorized, is one generic post, beam, and joist, judged by whether the sheet would be handed to the crew. QCAD remains a failed proof.
 
+## Slice 26 — AutoCAD Automation proof — 5 Oct 2026
+
+The proof was authorized. It was not executed.
+
+This machine has no APS application credentials, no Autodesk account for this repository, and no AutoCAD engine. `accoreconsole` is not installed. Creating an account and buying Flex tokens were outside this authorization. No work item was posted. No template DWG was generated. No PDF was plotted. No token cost was incurred.
+
+Visual acceptance was not judged. There is no sheet to hand to the crew, and there is no sheet to fail. ReportLab, FreeCAD, OpenCASCADE, and QCAD remain the recorded visual failures. Professional drawing production is not marked deferred or shelved on a missing login. AutoCAD is not adopted. No second drafting technology was opened.
+
+The same proof stays the authorized next drawing action: `post-1`, `beam-front`, and `joist-1` only, through a real Automation work item, judged only by whether the 17 × 11 sheet would be handed to the crew. A missing `bears_on` still refuses before AutoCAD is asked to draw the detail.
+
 Linda Bushel remains a proving fixture. Its scripts are not the engine. Its pool radius, pier count, joist count, stringer count, spans, and other job dimensions are not generic constants. Issue J1 sheet 5, drawn 1 Oct 2026, is rejected as a construction drawing. It invented view geometry the model did not contain. It is not redrawn in the case script. The future engine regenerates the required views from one model.
 
 The model may later become the quantity source. The first construction-model slice does not implement drawing-driven take-off. Current Bushel quantities stay as they are.

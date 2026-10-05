@@ -43,6 +43,24 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-05 — AutoCAD Automation proof, not executed
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-05 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 26 — AUTODESK PLATFORM SERVICES / AUTOCAD AUTOMATION PROOF 5 OCT 2026 |
+| Objective | Run one AutoCAD Automation proof of post-1, beam-front, and joist-1 on an 11×17 sheet. |
+| Business decision | Do not buy Flex tokens and do not create an Autodesk account inside this proof. Do not shelve drawing production without a sheet to judge. |
+| Architectural decision | The proof did not run. No credentials and no AutoCAD engine were present. Visual acceptance was not judged. AutoCAD is not adopted. ReportLab, FreeCAD, OpenCASCADE, and QCAD remain the recorded failures. No second drafting technology was opened. |
+| Prompt template used | Joel's Slice 26 prompt, 5 Oct 2026. |
+| Approved Cursor prompt summary | One APS proof. Generic fixture only. No Bushel, no product integration, no deploy, no V1 rescore. Pass only if the sheet would be handed to the crew. |
+| Files expected to change | Existing Construction Model + Drawing Set records only. |
+| Files prohibited from changing | Application code, Bushel, Construction Model, ICF binding, Supplier Pro. |
+| Result | No work item, no DWG, no PDF, no token charge. |
+| Tests | Not run. No proof code was added. |
+| Deployment | Not performed. |
+
 ### 2026-10-05 — Autodesk Platform Services drawing assessment
 
 | Field | Content |

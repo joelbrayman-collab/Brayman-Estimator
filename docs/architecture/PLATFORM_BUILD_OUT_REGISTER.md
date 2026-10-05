@@ -976,7 +976,7 @@ No formulas were written.
 | Existing authority | [construction-drawing-standard.md](construction-drawing-standard.md). Branding remains [governed-document-and-drawing-output-standard.md](governed-document-and-drawing-output-standard.md). |
 | What this row is not | A change to `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, or the drawing requirement. Not a Bushel script. Not a red-box screen. Not drawing-driven take-off. Slices 1 through 20 are not a FreeCAD integration. |
 | Closure rule | A Bushel-class construction set is generated from one governed model. A missing required fact causes refusal. Printed output is 11×17. No view invents geometry. Every view agrees with the model. The printed sheet is acceptable to hand to the crew. |
-| Professional drafting layer | Slice 24: QCAD Professional trial failed visual acceptance and is not adopted. Slice 25, 5 Oct 2026: Autodesk Platform Services / AutoCAD Automation is the next proof candidate, not adopted. No account, no install, no adapter. The Construction Model stays the authority. |
+| Professional drafting layer | Slice 24: QCAD Professional trial failed visual acceptance and is not adopted. Slice 25 named Autodesk Platform Services / AutoCAD Automation as the next proof candidate. Slice 26 authorized that proof. It was not executed: no APS credentials and no AutoCAD engine. Visual acceptance was not judged. Not adopted. Not shelved. The Construction Model stays the authority. |
 
 ## Current build
 

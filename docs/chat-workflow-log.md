@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-05 — Professional drafting architecture assessment
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-05 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 23 — PROFESSIONAL DRAFTING ARCHITECTURE ASSESSMENT 5 OCT 2026 |
+| Objective | Name the downstream professional drafting environment after three sheet engines failed visual acceptance. |
+| Business decision | The sheet is judged by whether it would be handed to the crew. |
+| Architectural decision | QCAD Professional is the drafting layer, out of process. The Construction Model stays the authority. ReportLab stays the baseline for diagrams, previews, non-CAD documents, and refusal sheets. QCAD is not installed. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | Architecture only. Evaluate QCAD Professional, QCAD Community, and two serious alternatives. Record one recommendation on the existing drawing-set requirement. Do not install a CAD system, change product code, change Bushel, or deploy. |
+| Files expected to change | The drawing standard and the occupancy notes that still named the compositor as the sheet engine. |
+| Files prohibited from changing | Product code, the ReportLab renderer, Bushel, the ICF binding, Supplier Pro, and the live deploy. |
+| Implementation result | **ARCHITECTURE RECORDED.** Recommendation D. Drafting environment: QCAD Professional. V1 stays **65% / 4 of 11**. |
+| Tests | None. No product code changed. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | The QCAD proof has not been run. Server-license coverage for customer PDF delivery still needs RibbonSoft confirmation. |
+| Next approved step | When authorized, one QCAD Professional proof of the generic post, beam, and joist. Judge the printed sheet. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-05 — Hybrid OpenCASCADE post/beam/joist proof
 
 | Field | Content |

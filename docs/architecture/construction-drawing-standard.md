@@ -176,7 +176,44 @@ The next proof, when authorized, uses only the generic fixture members `post-1`,
 
 ## Slice 22 proof — 5 Oct 2026 — not proven
 
-A headless OpenCASCADE projection of `post-1`, `beam-front`, and `joist-1` was composed onto one 17 × 11 inch sheet. Section A hatches the cut solids. The post/beam detail does not explain the connection: the plate is a line, the bolts are dots, and the labels sit on the linework. The viewports still carry large empty fields. The sheet would not be handed to the crew. The projection and the compositor are not in the product. The record is [reviews/2026-10-05-hybrid-proof/HYBRID-OPENCASCADE-PROOF.md](reviews/2026-10-05-hybrid-proof/HYBRID-OPENCASCADE-PROOF.md). The hybrid remains the recorded architecture. It is not proven.
+A headless OpenCASCADE projection of `post-1`, `beam-front`, and `joist-1` was composed onto one 17 × 11 inch sheet. Section A hatches the cut solids. The post/beam detail does not explain the connection: the plate is a line, the bolts are dots, and the labels sit on the linework. The viewports still carry large empty fields. The sheet would not be handed to the crew. The projection and the compositor are not in the product. The record is [reviews/2026-10-05-hybrid-proof/HYBRID-OPENCASCADE-PROOF.md](reviews/2026-10-05-hybrid-proof/HYBRID-OPENCASCADE-PROOF.md). That compositor is not the drafting layer.
+
+## Slice 23 — professional drafting — 5 Oct 2026
+
+ReportLab, FreeCAD TechDraw, and the OpenCASCADE compositor each failed visual acceptance. The repeated failure is professional drafting: line hierarchy, dimension styles, blocks, leaders, paper space, and sheet composition. Another adjustment of the post cap, the bolts, the labels, or the detail scale is not the next build.
+
+```text
+Calibrayt Construction Model
+→ governed drawing specification
+→ drawing adapter, out of process
+→ QCAD Professional
+→ 11×17 drawing set
+→ PDF
+```
+
+| Layer | Owner |
+|-------|--------|
+| Geometry | Calibrayt Construction Model. |
+| View projection | The drawing specification. It names the view, the cut, and the profiles the model already stores. It does not compose the sheet. |
+| Drafting | QCAD Professional. Layers, line weights, dimension styles, leaders, hatches, and blocks. |
+| Sheet composition | QCAD layouts and viewports. Title block, sheet number, revision, and detail references live in the template. |
+| PDF | QCAD Professional `dwg2pdf`, from the layout. |
+
+QCAD does not become the construction model. It does not invent a `bears_on`, `supports`, `connects_to`, or `fastened_to` relationship. A missing relationship is a refusal note in the specification. The adapter does not insert a bearing block for it. QCAD does not write facts back.
+
+QCAD Professional is published by RibbonSoft with ECMAScript creation of drawings, layouts and viewports, blocks, and command-line tools including `dwg2pdf`. Headless Linux use is documented as `qcad -platform offscreen -no-gui -allow-multiple-instances`. The published server license is a perpetual license per server for a web service that generates data, including those command-line tools. The published shop price on 5 Oct 2026 is 524 US dollars. A scalable server license is also published, at 1,756.44 euro. The application must not be offered for download or direct use. Whether one server license covers the hosted service, and whether customer delivery of the PDF is inside that offer, is a vendor confirmation. This is not a legal opinion. QCAD is not installed.
+
+QCAD Community Edition is the GPL base. It does not include the professional DWG tools or `dwg2pdf`. It is not the drafting layer.
+
+LibreCAD edits DXF. It has no published paper-space plot pipeline and no server license for this job.
+
+Autodesk Platform Services can run AutoCAD in the cloud, including title-block updates and PDF plotting of layouts. Payment since December 2025 is Flex or pay as you go, with a free tier that has monthly limits. The price of one plot is not recorded here. A desktop AutoCAD seat is not a server license. This is the escalation if a QCAD sheet fails the crew test. It is not the recorded layer.
+
+BricsCAD publishes paper-space layouts and PDF publish, plus LISP and BRX. Its network license is a LAN seat license. No web-service plot license was found. That gap requires Bricsys confirmation before BricsCAD can be the server path.
+
+The governed library, when the proof is authorized, is a QCAD template: title block, dimension style, section mark, detail bubble, standard notes, and detail blocks for the connections the model can name. The model fills the attributes. The block supplies the graphic.
+
+The proof is not executed in this record. It is one generic post, beam, and joist. Plan, elevation, hatched section, a block-based post/beam detail, the stored bearing, dimensions, a detail reference, one 17 × 11 inch layout, and a PDF. The sheet is judged against the ReportLab, FreeCAD, and OpenCASCADE failures. Acceptance is still whether it would be handed to the crew.
 
 PGE-1 through PGE-6 stay closed. `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, and the drawing requirement are unchanged. This capability sits beside those slices.
 

@@ -976,7 +976,7 @@ No formulas were written.
 | Existing authority | [construction-drawing-standard.md](construction-drawing-standard.md). Branding remains [governed-document-and-drawing-output-standard.md](governed-document-and-drawing-output-standard.md). |
 | What this row is not | A change to `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, or the drawing requirement. Not a Bushel script. Not a red-box screen. Not drawing-driven take-off. Slices 1 through 20 are not a FreeCAD integration. |
 | Closure rule | A Bushel-class construction set is generated from one governed model. A missing required fact causes refusal. Printed output is 11×17. No view invents geometry. Every view agrees with the model. The printed sheet is acceptable to hand to the crew. |
-| Professional sheet engine | Recorded 5 Oct 2026. FreeCAD TechDraw, out of process, behind a replaceable adapter. Not installed. Not integrated. The ReportLab renderer remains the baseline for diagrams, previews, non-CAD documents, and refusal sheets. It is not the professional sheet engine. IfcOpenShell drawing output is not that engine. Blender, CadQuery, and build123d are not the sheet engine. |
+| Professional sheet engine | Recorded 5 Oct 2026. FreeCAD TechDraw, out of process, behind a replaceable adapter. A same-day proof exported one 11×17 page and failed visual acceptance. The adapter was not adopted. The ReportLab renderer remains the baseline for diagrams, previews, non-CAD documents, and refusal sheets. It is not the professional sheet engine. IfcOpenShell drawing output is not that engine. Blender, CadQuery, and build123d are not the sheet engine. |
 
 ## Current build
 

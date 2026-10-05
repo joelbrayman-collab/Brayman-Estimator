@@ -126,6 +126,10 @@ The smallest next proof is one post, one beam, and one joist from the Bushel pro
 
 Acceptance is the printed sheet. A sheet that is mostly blank, or that shows only primitive outlines, fails. A function that runs, a PDF that opens, and a passing test do not pass this check.
 
+## Slice 21 proof — 5 Oct 2026 — not adopted
+
+A FreeCAD 1.0.2 TechDraw sheet was exported out of process from the generic fixture members `post-1`, `beam-front`, and `joist-1`. The page is 17 × 11 inches. The sheet fails visual acceptance. The plan reads as a line. The elevation is two rectangles. The section has no visible hatch. The detail is not a composed connection. The lower half of the sheet is blank. It would not be handed to the crew. The adapter is not part of the product. The record is [reviews/2026-10-05-freecad-proof/FREECAD-TECHDRAW-PROOF.md](reviews/2026-10-05-freecad-proof/FREECAD-TECHDRAW-PROOF.md). Bushel facts that are still missing were not invented.
+
 PGE-1 through PGE-6 stay closed. `dimensioned_plan`, `stair_detail`, Contract V1, the candidate and use boundary, Build Drawings, and the drawing requirement are unchanged. This capability sits beside those slices.
 
 Linda Bushel remains a proving fixture. Its scripts are not the engine. Its pool radius, pier count, joist count, stringer count, spans, and other job dimensions are not generic constants. Issue J1 sheet 5, drawn 1 Oct 2026, is rejected as a construction drawing. It invented view geometry the model did not contain. It is not redrawn in the case script. The future engine regenerates the required views from one model.

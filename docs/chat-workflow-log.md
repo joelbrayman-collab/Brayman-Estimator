@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-05 — FreeCAD TechDraw post/beam/joist proof
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-05 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI CONSTRUCTION MODEL + DRAWING SET SLICE 21 — FREECAD TECHDRAW POST / BEAM / JOIST PROOF 5 OCT 2026 |
+| Objective | Prove whether FreeCAD TechDraw can produce one professional 11×17 post, beam, and joist sheet from governed geometry. |
+| Business decision | The sheet is judged by whether it would be handed to the crew. |
+| Architectural decision | The proof failed visual acceptance. FreeCAD stays the recorded downstream engine. The adapter was not adopted. The ReportLab renderer was not changed. |
+| Prompt template used | Approved Cursor prompt in the chat. |
+| Approved Cursor prompt summary | One out-of-process FreeCAD proof of a post, beam, and joist. Use only governed fixture facts. Do not invent Bushel facts. Do not deploy. Commit only if the printed sheet passes. |
+| Files expected to change | A proof record and the existing drawing-set recall, if the sheet fails. The adapter, only if the sheet passes. |
+| Files prohibited from changing | The ReportLab renderer, Bushel production files, the ICF binding, Supplier Pro, and the live deploy. |
+| Implementation result | **FAILED visual acceptance.** One 17×11 inch PDF was exported from generic fixture members `post-1`, `beam-front`, and `joist-1`. The plan is a line, the elevation is two rectangles, and the section has no visible hatch. The adapter was not committed. V1 stays **65% / 4 of 11**. |
+| Tests | The sheet was inspected. No product suite was run, because the adapter was not adopted. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Offscreen Qt on this Mac exits 139. PDF bytes from two runs are not identical. Bushel still lacks the post, beam, and joist facts. |
+| Next approved step | Do not add another ReportLab drawing slice. Do not treat this PDF as a crew sheet. |
+| Next approved prompt | Not written. |
+| Commit hash | The commit that contains this entry. |
+
 ### 2026-10-05 — Drawing production architecture reassessment
 
 | Field | Content |

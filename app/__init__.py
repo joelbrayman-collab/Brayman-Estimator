@@ -323,6 +323,7 @@ def create_app(config=None):
     migrate.init_app(app, db)
 
     from app import models
+    from app.services import contractor_cost_approval as _contractor_cost_approval  # noqa: F401
     from app.routes.assemblies import assemblies_bp
     from app.routes.clients import clients_bp
     from app.routes.cost_library import cost_library_bp

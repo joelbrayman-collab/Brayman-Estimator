@@ -69,6 +69,7 @@ from app.models.estimate_costing import (
     EstimateCostingSnapshot,
     EstimateCostingSnapshotLine,
 )
+from app.models.contractor_cost_approval import ContractorCostApproval
 from app.models.estimate_quickbooks import (
     EstimateQuickBooksCostClassLine,
     EstimateQuickBooksEntryEvent,

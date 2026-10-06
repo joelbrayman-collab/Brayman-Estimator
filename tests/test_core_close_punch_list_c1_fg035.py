@@ -747,7 +747,7 @@ def test_additive_migration_is_new_graph_head(tmp_path):
         alembic_cfg.set_main_option("script_location", "migrations")
         alembic_cfg.set_main_option("sqlalchemy.url", db_uri)
         script = ScriptDirectory.from_config(alembic_cfg)
-        assert script.get_heads() == ["o5b6c7d8e9f0"]
+        assert script.get_heads() == ["p6c7d8e9f0a1"]
         revision = script.get_revision("d4e5f6a7b8c9")
         assert revision.down_revision == "c3d4e5f6a7b8"
 
@@ -777,7 +777,7 @@ def test_additive_migration_is_new_graph_head(tmp_path):
             heads = conn.execute(
                 sa.text("SELECT version_num FROM alembic_version")
             ).fetchall()
-            assert [row[0] for row in heads] == ["o5b6c7d8e9f0"]
+            assert [row[0] for row in heads] == ["p6c7d8e9f0a1"]
             assert "project_punch_list_items" in tables
             assert "project_punch_list_item_events" in tables
             item_count = conn.execute(

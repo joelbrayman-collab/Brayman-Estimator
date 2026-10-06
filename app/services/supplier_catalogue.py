@@ -529,6 +529,7 @@ def read_supplier_price_evidence_window(
                 "supplier_code": supplier.code,
                 "supplier_product_id": product.id,
                 "sku": product.sku,
+                "price_evidence_id": row.id,
                 "price_class": row.price_class,
                 "amount": row.amount,
                 "currency": row.currency,

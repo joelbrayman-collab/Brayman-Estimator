@@ -101,6 +101,7 @@ def test_two_suppliers_keep_public_and_contractor_prices_apart(app):
         amount=Decimal("10.00"),
         currency="CAD",
         unit="EA",
+        price_class="PUBLIC_LIST_PRICE",
         actor_display_name=ACTOR,
         source="MANUAL",
         demo_synthetic=True,
@@ -110,6 +111,7 @@ def test_two_suppliers_keep_public_and_contractor_prices_apart(app):
         amount=Decimal("12.00"),
         currency="CAD",
         unit="EA",
+        price_class="PUBLIC_LIST_PRICE",
         actor_display_name=ACTOR,
         source="MANUAL",
         demo_synthetic=True,
@@ -119,6 +121,7 @@ def test_two_suppliers_keep_public_and_contractor_prices_apart(app):
         amount=Decimal("8.00"),
         currency="CAD",
         unit="EA",
+        price_class="CONTRACTOR_CONFIRMED_PRICE",
         actor_display_name=ACTOR,
         contractor_supplier_account_id=account_a.id,
         source="MANUAL",
@@ -129,6 +132,7 @@ def test_two_suppliers_keep_public_and_contractor_prices_apart(app):
         amount=Decimal("9.50"),
         currency="CAD",
         unit="EA",
+        price_class="CONTRACTOR_CONFIRMED_PRICE",
         actor_display_name=ACTOR,
         contractor_supplier_account_id=account_b.id,
         source="MANUAL",
@@ -139,6 +143,10 @@ def test_two_suppliers_keep_public_and_contractor_prices_apart(app):
     db.session.refresh(public_b)
     assert public_a.amount == Decimal("10.0000") or public_a.amount == Decimal("10.00")
     assert public_b.amount == Decimal("12.0000") or public_b.amount == Decimal("12.00")
+    assert public_a.price_class == "PUBLIC_LIST_PRICE"
+    assert public_b.price_class == "PUBLIC_LIST_PRICE"
+    assert contractor_a.price_class == "CONTRACTOR_CONFIRMED_PRICE"
+    assert contractor_b.price_class == "CONTRACTOR_CONFIRMED_PRICE"
     assert public_a.contractor_supplier_account_id is None
     assert public_b.contractor_supplier_account_id is None
     assert contractor_a.contractor_supplier_account_id == account_a.id

@@ -19,6 +19,7 @@ MAPPING_STATUSES = ("UNRESOLVED", "REVIEW_REQUIRED", "MAPPED")
 AVAILABILITY_STATUSES = ("IN_STOCK", "LIMITED", "UNKNOWN")
 SUPPLIER_PACKAGE_STATUSES = ("DRAFT", "ISSUED")
 PRICE_EVIDENCE_SOURCES = ("DEMO_SYNTHETIC", "MANUAL")
+PRICE_EVIDENCE_CLASSES = ("PUBLIC_LIST_PRICE", "CONTRACTOR_CONFIRMED_PRICE")
 PACKAGE_EVIDENCE_SOURCES = ("DEMO_SYNTHETIC", "MANUAL")
 
 
@@ -208,9 +209,26 @@ class SupplierProduct(db.Model):
 
 
 class SupplierProductPriceEvidence(db.Model):
-    """Living supplier price evidence. Inform only. Not EstimateLineItem cost."""
+    """Living supplier price evidence. Inform only. Not EstimateLineItem cost.
+
+    price_class is stored. It is not inferred from the contractor account.
+    captured_at, effective_from, and effective_to stay separate.
+    effective_to is the validity end (valid_until). A null end is open-ended.
+    """
 
     __tablename__ = "supplier_product_price_evidence"
+    __table_args__ = (
+        db.CheckConstraint(
+            "price_class IN ('PUBLIC_LIST_PRICE', 'CONTRACTOR_CONFIRMED_PRICE') "
+            "AND ("
+            "(price_class = 'PUBLIC_LIST_PRICE' "
+            "AND contractor_supplier_account_id IS NULL) "
+            "OR (price_class = 'CONTRACTOR_CONFIRMED_PRICE' "
+            "AND contractor_supplier_account_id IS NOT NULL)"
+            ")",
+            name="ck_supplier_product_price_evidence_price_class",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     supplier_product_id = db.Column(
@@ -224,10 +242,12 @@ class SupplierProductPriceEvidence(db.Model):
         db.ForeignKey("contractor_supplier_accounts.id", ondelete="RESTRICT"),
         nullable=True,
     )
+    price_class = db.Column(db.String(40), nullable=False)
     amount = db.Column(db.Numeric(12, 4), nullable=False)
     currency = db.Column(db.String(8), nullable=False)
     unit = db.Column(db.String(20), nullable=False)
     effective_from = db.Column(db.DateTime, nullable=True)
+    effective_to = db.Column(db.DateTime, nullable=True)
     captured_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     source = db.Column(db.String(40), nullable=False)
     actor_display_name = db.Column(db.String(150), nullable=False)
@@ -236,6 +256,14 @@ class SupplierProductPriceEvidence(db.Model):
 
     supplier_product = db.relationship("SupplierProduct")
     contractor_supplier_account = db.relationship("ContractorSupplierAccount")
+
+    @validates("price_class")
+    def _validate_price_class(self, key, value):
+        if value not in PRICE_EVIDENCE_CLASSES:
+            raise ValueError(
+                "Price class must be PUBLIC_LIST_PRICE or CONTRACTOR_CONFIRMED_PRICE."
+            )
+        return value
 
     def __repr__(self):
         return f"<SupplierProductPriceEvidence {self.id} product={self.supplier_product_id}>"

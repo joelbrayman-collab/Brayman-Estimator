@@ -224,6 +224,7 @@ def _mapped_requirement(project, graph, *, qty="10", estimate_line_item_id=None)
         amount=Decimal("12.50"),
         currency="CAD",
         unit="EA",
+        price_class="CONTRACTOR_CONFIRMED_PRICE",
         actor_display_name="office-reviewer",
         contractor_supplier_account_id=graph["account"].id,
         source="DEMO_SYNTHETIC",
@@ -549,6 +550,7 @@ def test_frozen_package_html_pdf_delivery_and_no_order(app, client):
         amount=Decimal("99.99"),
         currency="CAD",
         unit="EA",
+        price_class="PUBLIC_LIST_PRICE",
         actor_display_name="office-reviewer",
         demo_synthetic=True,
     )

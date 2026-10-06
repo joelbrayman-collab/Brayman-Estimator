@@ -29,6 +29,7 @@ from app.models.supplier_catalogue import (
     SupplierPackageLine,
     SupplierProduct,
     SupplierProductAvailabilityEvidence,
+    PRICE_EVIDENCE_CLASSES,
     SupplierProductPriceEvidence,
     SupplierRequirementMap,
 )
@@ -230,24 +231,48 @@ def record_price_evidence(
     amount,
     currency: str,
     unit: str,
+    price_class: str,
     actor_display_name: Optional[str] = None,
     contractor_supplier_account_id: Optional[int] = None,
     source: str = "DEMO_SYNTHETIC",
     demo_synthetic: bool = True,
     effective_from: Optional[datetime] = None,
+    effective_to: Optional[datetime] = None,
 ) -> SupplierProductPriceEvidence:
+    """Append one price-evidence row. Does not update an earlier row."""
     actor = _require_human_actor(actor_display_name)
     product = db.session.get(SupplierProduct, supplier_product_id)
     if product is None:
         raise SupplierCatalogueError("Supplier product not found.")
+    klass = (price_class or "").strip()
+    if klass not in PRICE_EVIDENCE_CLASSES:
+        raise SupplierCatalogueError(
+            "Price class must be PUBLIC_LIST_PRICE or CONTRACTOR_CONFIRMED_PRICE."
+        )
+    if klass == "PUBLIC_LIST_PRICE" and contractor_supplier_account_id is not None:
+        raise SupplierCatalogueError(
+            "A public list price does not carry a contractor supplier account."
+        )
+    if klass == "CONTRACTOR_CONFIRMED_PRICE" and contractor_supplier_account_id is None:
+        raise SupplierCatalogueError(
+            "A contractor-confirmed price requires a contractor supplier account."
+        )
+    if (
+        effective_from is not None
+        and effective_to is not None
+        and effective_to < effective_from
+    ):
+        raise SupplierCatalogueError("effective_to is before effective_from.")
     now = datetime.utcnow()
     row = SupplierProductPriceEvidence(
         supplier_product_id=product.id,
         contractor_supplier_account_id=contractor_supplier_account_id,
+        price_class=klass,
         amount=Decimal(str(amount)),
         currency=(currency or "").strip() or "CAD",
         unit=(unit or "").strip(),
         effective_from=effective_from,
+        effective_to=effective_to,
         captured_at=now,
         source=(source or "").strip() or "DEMO_SYNTHETIC",
         actor_display_name=actor,

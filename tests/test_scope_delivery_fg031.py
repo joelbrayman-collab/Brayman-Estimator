@@ -847,6 +847,7 @@ def test_supplier_price_inform_only_and_no_pricing_mutation(app):
         amount=Decimal("99.99"),
         currency="CAD",
         unit="EA",
+        price_class="CONTRACTOR_CONFIRMED_PRICE",
         actor_display_name="Joel Brayman",
         contractor_supplier_account_id=account.id,
         source="DEMO_SYNTHETIC",

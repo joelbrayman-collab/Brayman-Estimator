@@ -11,7 +11,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from sqlalchemy import event, inspect as sa_inspect
+from sqlalchemy import event, inspect as sa_inspect, or_
 from sqlalchemy.orm import object_session
 
 from app import db
@@ -452,6 +452,95 @@ def get_supplier_package_or_404(
     if row is None:
         raise SupplierCatalogueError("Supplier package not found.")
     return row
+
+
+def _price_evidence_contains(as_of: datetime):
+    """Inclusive window. Null effective_from or effective_to is open on that side.
+
+    Matches the schedule rule: effective_from <= T and T <= effective_to.
+    captured_at is not a validity bound.
+    """
+    return (
+        or_(
+            SupplierProductPriceEvidence.effective_from.is_(None),
+            SupplierProductPriceEvidence.effective_from <= as_of,
+        ),
+        or_(
+            SupplierProductPriceEvidence.effective_to.is_(None),
+            as_of <= SupplierProductPriceEvidence.effective_to,
+        ),
+    )
+
+
+def read_supplier_price_evidence_window(
+    *,
+    canonical_material_id: int,
+    contractor_supplier_account_id: int,
+    as_of: datetime,
+):
+    """Return price evidence valid at as_of for one material and one account.
+
+    Public list rows come from every active supplier-product map.
+    Contractor-confirmed rows come only from this contractor supplier account.
+    The list is not a chosen price, a discount, or an effective cost.
+    """
+    material = db.session.get(CanonicalMaterial, canonical_material_id)
+    account = db.session.get(ContractorSupplierAccount, contractor_supplier_account_id)
+    if material is None or account is None:
+        raise SupplierCatalogueError(
+            "Canonical material or contractor supplier account not found."
+        )
+    if as_of is None:
+        raise SupplierCatalogueError("An as-of time is required.")
+    maps = CanonicalMaterialSupplierMap.query.filter_by(
+        canonical_material_id=material.id,
+        status="ACTIVE",
+    ).all()
+    product_ids = [row.supplier_product_id for row in maps]
+    if not product_ids:
+        return []
+    rows = (
+        SupplierProductPriceEvidence.query.filter(
+            SupplierProductPriceEvidence.supplier_product_id.in_(product_ids),
+            *_price_evidence_contains(as_of),
+            or_(
+                SupplierProductPriceEvidence.price_class == "PUBLIC_LIST_PRICE",
+                (
+                    (SupplierProductPriceEvidence.price_class == "CONTRACTOR_CONFIRMED_PRICE")
+                    & (
+                        SupplierProductPriceEvidence.contractor_supplier_account_id
+                        == account.id
+                    )
+                ),
+            ),
+        )
+        .order_by(SupplierProductPriceEvidence.id.asc())
+        .all()
+    )
+    window = []
+    for row in rows:
+        product = row.supplier_product
+        supplier = product.supplier
+        window.append(
+            {
+                "canonical_material_id": material.id,
+                "canonical_material_code": material.code,
+                "supplier_id": supplier.id,
+                "supplier_code": supplier.code,
+                "supplier_product_id": product.id,
+                "sku": product.sku,
+                "price_class": row.price_class,
+                "amount": row.amount,
+                "currency": row.currency,
+                "unit": row.unit,
+                "source": row.source,
+                "captured_at": row.captured_at,
+                "effective_from": row.effective_from,
+                "effective_to": row.effective_to,
+                "contractor_supplier_account_id": row.contractor_supplier_account_id,
+            }
+        )
+    return window
 
 
 def _latest_price(product_id: int, account_id: Optional[int]):

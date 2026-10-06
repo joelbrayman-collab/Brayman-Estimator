@@ -2,12 +2,16 @@
 
 | Attribute | Value |
 |-----------|--------|
-| Status | **Future architecture** (not implemented) |
-| Updated | 2026-07-25 |
+| Status | **Partial Current.** FG-029 supplier identity, product, mapping, and inform-only price evidence are **CLOSED / OPERATIONAL FOR UAT**. Effective contractor-cost resolution, discount precedence, bulk ingest, and live supplier feeds remain **not implemented**. |
+| Updated | 2026-10-06 |
 | Module (proposed) | Supplier Catalogue / Procurement Pricing |
 | Related | [platform-roadmap.md](../platform-roadmap.md) · [architecture.md](../architecture.md) · [material-catalogue-architecture.md](material-catalogue-architecture.md) · [supplier-channel-and-launch-partner.md](supplier-channel-and-launch-partner.md) · ADR-008 · **ADR-033** · ADR-010 · [FG-014](../feature-gates/FG-014-material-catalogue-v1-dimensional-lumber-sheet-goods.md) (Material Catalogue identity only; **does not** authorize this module) |
 
-**Current vs future:** Today the app has only an optional free-text `supplier` string on `CostItem` (`app/models/cost_item.py`). There is **no** supplier entity, catalogue, inventory API, EDI, price file import, or purchase-order module (Purchase Orders remain a **disabled nav placeholder**). Nothing below is claimed as implemented.
+**Current (6 Oct 2026):** `Supplier`, `SupplierLocation`, `ContractorSupplierAccount`, `SupplierProduct`, `CanonicalMaterialSupplierMap`, and `SupplierProductPriceEvidence` exist in `app/models/supplier_catalogue.py`. One canonical material can map to many supplier products. A price row with no contractor account is public/list evidence. A price row with `contractor_supplier_account_id` is that contractor’s evidence at that branch. A later row does not replace an earlier row. `CostItem.supplier` remains an optional free-text note and is not this catalogue. There is still no inventory API, EDI, price-file import, purchase-order module, or effective-cost resolver. [ADR-008](../adr/ADR-008-supplier-price-snapshotting.md) remains **Proposed**. Supplier evidence does not write an estimate line.
+
+**CalibraytAI multi-supplier cost engine:** this catalogue is the supplier side. It is not a second pricing engine and not a BMR engine. BMR Winchester is the first proving supplier because Brayman buys there. BMR is not the architecture. ICF manufacturers (`logix`, `nudura`, `fox_blocks`, `styrorail_buildblock`) are product-system profiles in `app/services/icf_manufacturer_profiles.py`. They are not suppliers. Proof: `tests/test_multi_supplier_cost_architecture.py`.
+
+The sections below this note remain the future catalogue design. They are not a claim that discount stacks, bulk ingest, or estimate consumption are built.
 
 ---
 

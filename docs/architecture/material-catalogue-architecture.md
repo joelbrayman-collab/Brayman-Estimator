@@ -46,8 +46,8 @@ PLAN
 | **Canonical material identity** | Relatively stable definition of **what the material is** | **CalibAi platform** (seeded vocabulary) |
 | **Living commercial / supplier evidence** | Time-sensitive fulfillment facts (price, promotion, SKU, pack, inventory, quote, timestamps) | Future Supplier / Quote / Snapshot records — **not** the identity row |
 | **CostItem / Assembly** | How this organization costs and composes it | **Organization** (Estimating module) |
-| **Supplier Catalogue** (future) | What a supplier sells (SKU, pack, price, stock, promotions) | **Supplier module** (proposed; not implemented) |
-| **Mapping** (future) | How one requirement may be fulfilled by one or more supplier products | Mapping records; not the material definition |
+| **Supplier Catalogue** | What a supplier sells (SKU, pack, inform-only price evidence) | **FG-029** `Supplier` and `SupplierProduct`. Stock, promotions, and bulk ingest remain future. BMR is the first proving supplier, not the module. |
+| **Mapping** | How one canonical material may be fulfilled by more than one supplier product | `CanonicalMaterialSupplierMap`. A map is not the material definition. ICF manufacturer profiles are not suppliers. |
 | **Project commercial snapshot** | Exact evidence consumed on a locked estimate, accepted proposal, accepted quote, or approved order | Project / Estimating / future Procurement |
 
 **Material Catalogue as user capability** is the office surface that may present identity, mappings, current prices, promotions, inventory, quotes, and history together.

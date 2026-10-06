@@ -130,6 +130,8 @@ On 5 Oct 2026 the Construction Model stored-fact quantity read was proved. `read
 
 On 5 Oct 2026 the material-requirement boundary was proved. `read_construction_material_requirements` states one requirement for each stored member group. The requirement carries the stored material id, the member count, and the supplied length as separate facts. The persisted `MaterialRequirement` row stays a catalogue quantity in one unit for supplier mapping. This read does not write that row, because one unit would collapse the member count and the supplied length. No stock length, waste, or price is added. **CONSTRUCTION MODEL → MATERIAL REQUIREMENT BOUNDARY IMPLEMENTED / TESTED.**
 
+On 6 Oct 2026 the multi-supplier cost side was proved on the existing FG-029 catalogue. Two supplier products can map to one canonical material. Public price evidence and contractor-account price evidence stay separate and do not write an estimate line. BMR Winchester is the first proving supplier, not a separate engine. ICF manufacturer profiles stay product-system knowledge. Effective contractor cost is not resolved. ADR-008 stays Proposed. **CALIBRAYTAI MULTI-SUPPLIER COST ENGINE** is this existing chain, not a new module. Checklist step 8 stays open. Official V1 remains **65% / 4 of 11**.
+
 Migration `n4a5b6c7d8e9` adds the nullable column and the baseline `ICF` row. It is not applied to the Mac primary database and it is not applied to the hosted database. Checklist step 8 stays open for every work element that still has no producer.
 
 ## 7. Plan Generation entry

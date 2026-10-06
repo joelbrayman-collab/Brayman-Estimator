@@ -27,6 +27,8 @@ Transport is replaceable. The existing Supplier Package HTML and PDF remain the 
 
 **Real-project proof, 6 Oct 2026: NO-GO.** The Mac office database, Alembic `h8c9d0e1f2a3`, holds material requirements only on synthetic UAT projects. `read_construction_material_requirements` reads a Construction Model and does not write a `MaterialRequirement`. EST-2026-0019, the 40x80 thickened-edge slab, has custom and allowance lines. Those units are not the canonical requirement units, and the lines are not canonical material requirements. No request was generated. The cost engine was not changed.
 
+**REAL PROJECT → MATERIAL REQUIREMENT SET: MATERIAL REQUIREMENT CAPABILITY GAP.** Linda Bushel was assessed and not modified. Its Construction Model does not store the material, size, and supplied length a canonical requirement needs. The J1 purchasing sheet was not imported. The supplier pricing request still waits on that requirement set.
+
 ---
 
 ## Purpose

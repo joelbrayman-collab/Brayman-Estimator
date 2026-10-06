@@ -420,6 +420,58 @@ def evaluate_costing(version):
     }
 
 
+def frozen_snapshot_provenance(snapshot):
+    """Read the cost frozen on a snapshot. Does not resolve a supplier price."""
+    if snapshot is None:
+        return []
+    rows = []
+    for line in snapshot.lines:
+        item = line.estimate_line_item
+        row = {
+            "line_description": item.description if item is not None else "",
+            "source_kind": line.source_kind,
+            "source_label": line.source_kind,
+            "frozen_unit_cost": line.unit_cost,
+            "unit": line.unit,
+            "is_approved_contractor_cost": False,
+            "supplier_name": None,
+            "supplier_product": None,
+            "sku": None,
+            "price_class": None,
+            "evidence_id": None,
+            "approval_id": None,
+            "approved_by": None,
+            "approved_at": None,
+            "effective_from": None,
+            "effective_to": None,
+            "currency": None,
+        }
+        approval = line.contractor_cost_approval
+        if (
+            line.source_kind == SOURCE_APPROVED_CONTRACTOR_COST
+            and approval is not None
+        ):
+            product = approval.supplier_product
+            evidence = approval.supplier_product_price_evidence
+            row.update(
+                source_label="SOURCE: APPROVED CONTRACTOR COST",
+                is_approved_contractor_cost=True,
+                supplier_name=approval.supplier.legal_name,
+                supplier_product=product.description,
+                sku=product.sku,
+                price_class=approval.price_class,
+                evidence_id=evidence.id,
+                approval_id=approval.id,
+                approved_by=approval.approved_by,
+                approved_at=approval.approved_at,
+                effective_from=approval.effective_from,
+                effective_to=approval.effective_to,
+                currency=approval.currency,
+            )
+        rows.append(row)
+    return rows
+
+
 def costing_review_context(version):
     evaluation = evaluate_costing(version)
     current = evaluation["current_snapshot"]
@@ -434,6 +486,7 @@ def costing_review_context(version):
         "costing_ready_for_pricing": costing_ready,
         "pricing_is_stale": pricing_status == PRICING_STATUS_STALE_REQUIRES_REAPPLY,
         "has_current_costing": current is not None,
+        "frozen_lines": frozen_snapshot_provenance(current),
     }
 
 

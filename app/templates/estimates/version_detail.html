@@ -177,6 +177,20 @@
     </ul>
     {% endif %}
 
+    {% if costing_review.frozen_lines %}
+    <p><strong>Frozen snapshot provenance</strong></p>
+    {% for row in costing_review.frozen_lines %}
+    <p>{{ row.line_description }} — {{ row.source_label }} — frozen ${{ "%.4f"|format(row.frozen_unit_cost) }} {{ row.unit }}</p>
+    {% if row.is_approved_contractor_cost %}
+    <p>SOURCE: APPROVED CONTRACTOR COST</p>
+    <p>Supplier {{ row.supplier_name }}. Product {{ row.supplier_product }}. SKU {{ row.sku }}.</p>
+    <p>Price class {{ row.price_class }}. Evidence {{ row.evidence_id }}. Approval {{ row.approval_id }}.</p>
+    <p>Approved by {{ row.approved_by }} on {{ row.approved_at }}. Amount {{ row.currency }} {{ "%.4f"|format(row.frozen_unit_cost) }} per {{ row.unit }}.</p>
+    <p>Effective {{ row.effective_from }} to {{ row.effective_to or "open" }}.</p>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
     {% if costing_review.line_results %}
     <table>
         <thead>

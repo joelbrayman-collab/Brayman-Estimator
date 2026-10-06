@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
-| Updated | 2026-10-04 |
+| Updated | 2026-10-06 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — Costing review contractor-cost provenance (2026-10-06)
+
+| Field | Content |
+|-------|---------|
+| Slice | Checklist step 8. Existing costing review. Frozen contractor-cost citation. |
+| Product status at capture | **IMPLEMENTED / TESTED**. Not deployed. No migration. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | An approved costing review can show why a frozen cost is there: the supplier, product, SKU, price class, evidence, and Brayman's approval, with the amount frozen on that snapshot. |
+| 2. When would the contractor use it? | When reviewing an estimate version whose costing already froze an approved contractor cost. |
+| 3. What workflow will the final Manual need to teach? | Open the estimate version. Read Frozen snapshot provenance. The supplier names where the price came from. Brayman is the approver. A later supplier price does not replace the frozen amount. |
+| 4. What contractor-facing terms must be used? | Source: approved contractor cost. Supplier. Product. SKU. Price class. Evidence. Approval. Approved by. Effective dates. Frozen amount. |
+| 5. What screenshots / Print examples will eventually be needed? | The existing Costing review section with one approved contractor cost and one ordinary custom line. Not captured here as a finished example. |
+| 6. What warnings / validation distinctions need explanation? | A library cost, assembly, custom line, allowance, or override does not show supplier provenance. A public list price is not an approved contractor cost. Viewing the review does not change the estimate. |
+| 7. Desktop / iPhone / Print relevance | Office desktop estimate version. No new page. No print sheet was added. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
 
 ### MANUAL IMPACT — ICF wall work-element binding (2026-10-04)
 

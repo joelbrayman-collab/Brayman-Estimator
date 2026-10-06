@@ -17,12 +17,14 @@ SOURCE_LIBRARY_ASSEMBLY = "LIBRARY_ASSEMBLY"
 SOURCE_MANUAL_CUSTOM = "MANUAL_CUSTOM"
 SOURCE_MANUAL_ALLOWANCE = "MANUAL_ALLOWANCE"
 SOURCE_MANUAL_OVERRIDE = "MANUAL_OVERRIDE"
+SOURCE_APPROVED_CONTRACTOR_COST = "APPROVED_CONTRACTOR_COST"
 COSTING_SOURCE_KINDS = (
     SOURCE_LIBRARY_COST_ITEM,
     SOURCE_LIBRARY_ASSEMBLY,
     SOURCE_MANUAL_CUSTOM,
     SOURCE_MANUAL_ALLOWANCE,
     SOURCE_MANUAL_OVERRIDE,
+    SOURCE_APPROVED_CONTRACTOR_COST,
 )
 
 
@@ -183,6 +185,12 @@ class EstimateCostingSnapshotLine(db.Model):
     )
     subcontract_subcontractor_code = db.Column(db.String(80), nullable=True)
     subcontract_subcontractor_legal_name = db.Column(db.String(220), nullable=True)
+    contractor_cost_approval_id = db.Column(
+        db.Integer,
+        db.ForeignKey("contractor_cost_approvals.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
     sort_order = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
@@ -195,6 +203,7 @@ class EstimateCostingSnapshotLine(db.Model):
     assembly = db.relationship("Assembly")
     subcontract_quote_evidence = db.relationship("SubcontractQuoteEvidence")
     subcontractor = db.relationship("Subcontractor")
+    contractor_cost_approval = db.relationship("ContractorCostApproval")
 
     def __repr__(self):
         return (

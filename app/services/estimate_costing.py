@@ -16,6 +16,7 @@ from app.models.estimate_costing import (
     SOURCE_LIBRARY_COST_ITEM,
     SOURCE_MANUAL_ALLOWANCE,
     SOURCE_MANUAL_CUSTOM,
+    SOURCE_APPROVED_CONTRACTOR_COST,
     SOURCE_MANUAL_OVERRIDE,
     EstimateCostingSnapshot,
     EstimateCostingSnapshotLine,
@@ -131,7 +132,22 @@ def establish_legacy_library_unit_cost_reference(line_item):
     return line_item.library_unit_cost_reference
 
 
+def _same_unit_token(left, right):
+    return (left or "").strip().casefold() == (right or "").strip().casefold() and bool(
+        (left or "").strip()
+    )
+
+
 def classify_working_source_kind(line_item):
+    approval = line_item.contractor_cost_approval
+    if (
+        approval is not None
+        and approval.status == "APPROVED"
+        and approval.price_class == "CONTRACTOR_CONFIRMED_PRICE"
+        and _q4(line_item.unit_cost) == _q4(approval.resolved_amount)
+        and _same_unit_token(line_item.unit, approval.unit)
+    ):
+        return SOURCE_APPROVED_CONTRACTOR_COST, False
     line_type = line_item.line_type or ""
     if line_type == "Custom":
         return SOURCE_MANUAL_CUSTOM, False
@@ -520,6 +536,11 @@ def approve_all_costing(version, *, actor, user_id=None, commit=True):
                     subcontract_subcontractor_legal_name=quote_freeze[
                         "subcontract_subcontractor_legal_name"
                     ],
+                    contractor_cost_approval_id=(
+                        item.contractor_cost_approval_id
+                        if kind == SOURCE_APPROVED_CONTRACTOR_COST
+                        else None
+                    ),
                     sort_order=sort_order,
                     created_at=approved_at,
                 )
@@ -552,6 +573,83 @@ def approve_all_costing(version, *, actor, user_id=None, commit=True):
     except Exception:
         db.session.rollback()
         raise
+
+
+def consume_approved_contractor_cost(
+    version,
+    *,
+    estimate_line_item_id,
+    contractor_cost_approval_id,
+    actor,
+    commit=True,
+):
+    """Freeze one already-approved contractor cost onto an existing estimate line.
+
+    The line must already exist. The approval must already be APPROVED.
+    The existing version-level costing snapshot is the freeze. This does not
+    choose a supplier, create an approval, or create an estimate line.
+    """
+    from app.models.contractor_cost_approval import (
+        CONTRACTOR_COST_APPROVAL_APPROVED,
+        ContractorCostApproval,
+    )
+
+    actor_name = assert_human_costing_actor(actor)
+    try:
+        ensure_version_editable(version)
+    except EstimateServiceError as exc:
+        raise EstimateCostingError(str(exc), block_codes=[BLOCK_VERSION_NOT_EDITABLE]) from exc
+
+    line = next(
+        (item for item in iter_version_line_items(version) if item.id == estimate_line_item_id),
+        None,
+    )
+    if line is None:
+        raise EstimateCostingError("The estimate line was not found on this estimate version.")
+    approval = db.session.get(ContractorCostApproval, contractor_cost_approval_id)
+    if approval is None:
+        raise EstimateCostingError("Approved contractor cost was not found.")
+    if approval.status != CONTRACTOR_COST_APPROVAL_APPROVED:
+        raise EstimateCostingError("Only an approved contractor cost can be consumed.")
+    if approval.price_class != "CONTRACTOR_CONFIRMED_PRICE":
+        raise EstimateCostingError("A public list price cannot enter estimate costing.")
+
+    project = version.estimate.project
+    if approval.organization_id != project.organization_id:
+        raise EstimateCostingError(
+            "The approved contractor cost belongs to another organization."
+        )
+    organization = project.organization
+    if not _same_unit_token(approval.currency, organization.currency):
+        raise EstimateCostingError(
+            "The approved contractor cost currency does not match the organization."
+        )
+    if (line.line_type or "") != "Cost Item" or line.cost_item_id is None:
+        raise EstimateCostingError("The estimate line has no governed canonical material.")
+    cost_item = line.cost_item or db.session.get(CostItem, line.cost_item_id)
+    if (
+        cost_item is None
+        or cost_item.canonical_material_id is None
+        or cost_item.canonical_material_id != approval.canonical_material_id
+        or cost_item.organization_id != approval.organization_id
+    ):
+        raise EstimateCostingError(
+            "The approved contractor cost does not match this estimate line's canonical material."
+        )
+    if not _same_unit_token(line.unit, approval.unit):
+        raise EstimateCostingError(
+            "The approved contractor cost unit does not match the estimate line."
+        )
+
+    line.unit_cost = approval.resolved_amount
+    line.contractor_cost_approval_id = approval.id
+    apply_line_item_calculations(line)
+    line.costing_source_kind = SOURCE_APPROVED_CONTRACTOR_COST
+    line.costing_override_reason = None
+    line.costing_override_by = None
+    line.costing_override_at = None
+    db.session.flush()
+    return approve_all_costing(version, actor=actor_name, commit=commit)
 
 
 def _changed_column_keys(target):

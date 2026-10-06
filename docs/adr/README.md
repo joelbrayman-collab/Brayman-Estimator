@@ -73,7 +73,8 @@ See [platform-governance.md](../platform-governance.md). In short: principles ch
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [ADR-008](ADR-008-supplier-price-snapshotting.md) | Supplier Price Snapshotting | Proposed |
+| [ADR-008](ADR-008-supplier-price-snapshotting.md) | Supplier Price Snapshotting | **Proposed** (unchanged). [ADR-056](ADR-056-approved-contractor-cost-estimate-costing-snapshot.md) is the accepted narrow successor. |
+| [ADR-056](ADR-056-approved-contractor-cost-estimate-costing-snapshot.md) | Approved Contractor Cost into the Estimate Costing Snapshot | **Accepted** (2026-10-06). Migration **`q7d8e9f0a1b2` in git only**. Not applied on the Mac primary. Not applied on hosted. |
 | [ADR-033](ADR-033-supplier-neutrality-and-launch-partner-channel.md) | Supplier Neutrality, Dual Relationships, and Winchester Launch-Partner Channel | **Accepted** (2026-08-30; architecture only; supplier integration **not implemented**) |
 | [ADR-047](ADR-047-supplier-identity-authentication-and-access-isolation.md) | Supplier Named-User Login, Membership, Sharing, and Cross-Supplier Isolation | **Accepted** (2026-09-09; architecture only; [FG-030](../feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) **NOT IMPLEMENTATION-AUTHORIZED**) |
 

@@ -308,6 +308,12 @@ class EstimateLineItem(db.Model):
     costing_override_reason = db.Column(db.Text, nullable=True)
     costing_override_by = db.Column(db.String(150), nullable=True)
     costing_override_at = db.Column(db.DateTime, nullable=True)
+    contractor_cost_approval_id = db.Column(
+        db.Integer,
+        db.ForeignKey("contractor_cost_approvals.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
     sort_order = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(
@@ -320,6 +326,7 @@ class EstimateLineItem(db.Model):
     section = db.relationship("EstimateSection", back_populates="line_items")
     cost_item = db.relationship("CostItem", backref="estimate_line_items")
     assembly = db.relationship("Assembly", backref="estimate_line_items")
+    contractor_cost_approval = db.relationship("ContractorCostApproval")
 
     def __repr__(self):
         return f"<EstimateLineItem {self.description}>"

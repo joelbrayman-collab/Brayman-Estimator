@@ -156,7 +156,7 @@ Deferred to FG-027 implementation. Required cases are listed in the Feature Gate
 
 FG-027; costing-approval preflight; ADR index; Estimating and Pricing Engine module docs; V1 completion register; current-state / session-handoff / roadmap.
 
-**Subsequent status (2026-10-06):** Contractor cost approval is a separate Estimating record, `contractor_cost_approvals`. `EstimateCostingSnapshot` was not changed and still requires an estimate line. This note does not require supplier evidence inside FG-027.
+**Subsequent status (2026-10-06):** Contractor cost approval is a separate Estimating record, `contractor_cost_approvals`. `EstimateCostingSnapshot` was not changed and still requires an estimate line. This note does not require supplier evidence inside FG-027. [ADR-056](ADR-056-approved-contractor-cost-estimate-costing-snapshot.md) adds an optional citation on the existing snapshot line. Ordinary approve-all still does not require supplier evidence.
 
 ## Approval
 

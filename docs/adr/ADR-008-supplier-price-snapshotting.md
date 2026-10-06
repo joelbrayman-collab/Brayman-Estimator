@@ -4,6 +4,8 @@
 |-------|--------|
 | Title | ADR-008: Supplier Price Snapshotting |
 | Status | **Proposed** |
+
+**Subsequent status (2026-10-06):** This ADR remains **Proposed**. [ADR-056](ADR-056-approved-contractor-cost-estimate-costing-snapshot.md) is the accepted successor for one path: an already approved contractor cost may be frozen into the existing estimate costing snapshot. ADR-056 does not accept the decision below and does not extend it to purchase orders or a general catalogue snapshot.
 | Date | 2026-07-25 |
 | Related | [supplier architecture](../architecture/supplier-catalogue-inventory-pricing.md) · [supplier channel](../architecture/supplier-channel-and-launch-partner.md) · [ADR-033](ADR-033-supplier-neutrality-and-launch-partner-channel.md) · [ADR-036](ADR-036-material-commercial-evidence-and-supplier-mapping.md) **Accepted** (evidence classes; does **not** accept this ADR) · Rules 3 & 5 |
 

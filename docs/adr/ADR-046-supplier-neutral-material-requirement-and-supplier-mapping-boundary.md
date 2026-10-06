@@ -166,7 +166,7 @@ Dedicated FG-029 tests in `tests/test_supplier_workflow_fg029.py`. Governed Mate
 
 [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md); V1-03 preflight; V1 register (status text only; **do not rescore**); current-state; session-handoff; module docs; supplier-channel architecture current pointers. Do not rewrite closed Feature Gate narratives.
 
-**Subsequent status (2026-10-06):** Contractor cost approval is an Estimating record that cites supplier price evidence. It does not write `EstimateLineItem`, an FG-027 costing snapshot, or an FG-009 pricing snapshot. Decisions J, K, L, and R are unchanged. [ADR-008](ADR-008-supplier-price-snapshotting.md) remains **Proposed**. A public list price stays unapproved.
+**Subsequent status (2026-10-06):** Contractor cost approval is an Estimating record that cites supplier price evidence. It does not write `EstimateLineItem`, an FG-027 costing snapshot, or an FG-009 pricing snapshot. Decisions J, K, L, and R are unchanged. [ADR-008](ADR-008-supplier-price-snapshotting.md) remains **Proposed**. A public list price stays unapproved. [ADR-056](ADR-056-approved-contractor-cost-estimate-costing-snapshot.md) is the later authorization Decision L required, limited to an already approved contractor cost and the existing costing snapshot.
 
 ## Approval
 

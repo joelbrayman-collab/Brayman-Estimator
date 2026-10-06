@@ -19,7 +19,7 @@ This ADR does **not** authorize product code, schema, a Feature Gate, Winchester
 
 **Subsequent status (2026-09-14 docs reconciliation):** Primary acceptance remains **Accepted**. [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) inform-only supplier evidence is **CLOSED / OPERATIONAL FOR UAT**. [ADR-008](ADR-008-supplier-price-snapshotting.md) remains **Proposed**. Living supplier API / bulk catalogue onboarding remain **not implemented**. This note does **not** accept ADR-008.
 
-**Subsequent status (2026-10-06):** `contractor_cost_approvals` stores a Brayman decision about a resolved `CONTRACTOR_CONFIRMED_PRICE`. It cites supplier evidence and does not consume that price into an estimate, a costing snapshot, or a pricing snapshot. A `PUBLIC_LIST_PRICE` stays unapproved. Decision 8 is unchanged. [ADR-008](ADR-008-supplier-price-snapshotting.md) remains **Proposed**.
+**Subsequent status (2026-10-06):** `contractor_cost_approvals` stores a Brayman decision about a resolved `CONTRACTOR_CONFIRMED_PRICE`. It cites supplier evidence and does not consume that price into an estimate, a costing snapshot, or a pricing snapshot. A `PUBLIC_LIST_PRICE` stays unapproved. Decision 8 is unchanged. [ADR-008](ADR-008-supplier-price-snapshotting.md) remains **Proposed**. [ADR-056](ADR-056-approved-contractor-cost-estimate-costing-snapshot.md) is the accepted successor for freezing an already approved contractor cost into the existing estimate costing snapshot.
 
 ## Decision
 

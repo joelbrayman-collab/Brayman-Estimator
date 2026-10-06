@@ -3,9 +3,13 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-10-05 |
+| Updated | 2026-10-06 |
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). Document and drawing identity is [architecture/governed-document-and-drawing-output-standard.md](architecture/governed-document-and-drawing-output-standard.md). Drawing authority is [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). | ICF profile registry, the internal 8-inch form and concrete service, and the estimate workflow are **CLOSED — LIVE VERIFIED**. Live product SHA `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`, deploy `dep-dav9uk97lnhs73bj35pg`. Labour hours are a runtime allowance. Construction Model slices 1 through 11 are **IMPLEMENTED / TESTED**. Slice 12 is the acceptance audit of the complete deck fixture. Slice 13 presents callouts, section and detail references, the drawing index, and construction schedules from that same model. Slice 14 draws connector geometry only when the model supplies it. Slice 15 supplies the remaining generic fixture facts the model can already store, and a stair result can carry a riser count. Slice 16 moves annotations in paper space and does not move the model. Slice 17 stores blocking as fixture members with explicit fastenings. Slice 18 moves bearing notes off the contact. No new generic capability is required before a real project model is read. Slice 19 reads the Bushel proving fixture through that engine. Missing Bushel facts refuse. Slice 20 loads no further governed fact. Visual acceptance for a crew set is not passed. The drawing set is **NOT COMPLETE** and not deployed. |
 | Evidence | Local repository inspection |
+
+## 6 Oct 2026 — Bushel governed member fact completion
+
+**BUSHEL GOVERNED MEMBER FACT COMPLETION IMPLEMENTED / TESTED.** The 1 Oct tread name "Two 5/4 x 6 boards per tread" is the supplier-neutral canonical identity `CAL-LUM-5-4X6`. It carries no stock length, species, treatment, supplier, SKU, or price. Joist, stringer, post, beam, and decking members still have no material, member size, or supplied length. The 29 Sep nominal sizes stay ungoverned. The 37 in Veranda rail kit stays a named material and is not a catalogue row. **KNOWN PROJECT FACT ≠ COMPLETE PURCHASE REQUIREMENT.** **NO-GUESSING ≠ NO-PROGRESS.** No purchase quantity, `MaterialRequirement`, estimate line, costing snapshot, or drawing was created. No Darcy request was sent. Official V1 remains **65% / 4 of 11**. Not deployed.
 
 ## Current occupancy — 30 Sep 2026
 

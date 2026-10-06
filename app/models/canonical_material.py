@@ -279,6 +279,23 @@ CANONICAL_MATERIAL_SEED = (
         description="Generic dimensional lumber. 4×4, 8 ft length class.",
     ),
     _seed_row(
+        code="CAL-LUM-5-4X6",
+        display_name="Two 5/4 x 6 boards per tread",
+        kind="GENERIC",
+        category="DIMENSIONAL_LUMBER",
+        trade="Decking",
+        canonical_uom="EA",
+        substitution_policy="ALLOWED",
+        nominal_thickness_in=Decimal("1.25"),
+        nominal_width_in=Decimal("6"),
+        specification_text="Nominal 5/4 x 6. Stock length is not part of this identity.",
+        description=(
+            "Nominal 5/4 x 6 board. The name states two boards per tread. "
+            "It does not state a tread count, a stock length, a species, a treatment, "
+            "a supplier, a SKU, or a price."
+        ),
+    ),
+    _seed_row(
         code="CAL-LUM-2X4-LF",
         display_name="2×4 SPF No.2 or better — per linear foot",
         kind="GENERIC",

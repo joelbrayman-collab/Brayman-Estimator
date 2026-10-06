@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-10-02 |
+| Updated | 2026-10-06 |
 
 ## Purpose
 
@@ -42,6 +42,24 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-10-06 — Bushel governed member fact completion
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 — BUSHEL GOVERNED MEMBER FACT COMPLETION 6 OCT 2026 |
+| Objective | Store Bushel member material, size, and supplied length only where the 1 Oct record already establishes them. |
+| Business decision | No-guessing does not mean no progress. A known fact is stored. An unknown fact stays missing. A known fact is not a purchase quantity. |
+| Architectural decision | The tread name "Two 5/4 x 6 boards per tread" becomes supplier-neutral canonical identity `CAL-LUM-5-4X6`. Joist, stringer, post, beam, and decking members are unchanged. The 29 Sep nominal sizes are not member attributes. The Veranda kit is not forced into the lumber catalogue. No `MaterialRequirement` is written. |
+| Prompt template used | Joel's Bushel governed member fact completion prompt, 6 Oct 2026. |
+| Approved Cursor prompt summary | Store only governed member facts. Leave unknowns missing. Add a canonical identity only when the record establishes it. Do not invent purchase quantities, SKUs, or prices. Do not build the Darcy request. One commit if it passes. Do not deploy. |
+| Files expected to change | The canonical seed, the Bushel member-fact proof, the readiness proof, and existing authorities. |
+| Files prohibited from changing | Bushel production files, Geleynse, review dumps, the StyroRail cost-library test, ICF, the cost engine, and a supplier request. |
+| Result | **IMPLEMENTED / TESTED.** Official V1 remains **65% / 4 of 11**. |
+| Tests | Focused member facts **3 passed**. Related Construction Model, catalogue, readiness, supplier, cost, contractor approval, estimate costing, ICF, and PGE **364 passed**, 442 warnings, 272.29s, exit 0. Full suite **2186 passed**, 11 skipped, 6893 warnings, 1114.61s, exit 0. That run includes the untracked StyroRail cost-library test, which stays out of the commit. |
+| Deployment | Not performed. |
 
 ### 2026-10-05 — Construction Model material-requirement boundary
 

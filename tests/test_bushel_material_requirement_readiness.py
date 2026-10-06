@@ -74,8 +74,9 @@ def test_bushel_keeps_known_counts_and_does_not_invent_the_rest():
     tread = _by_subject(report, "tread-boards")
     assert tread["material_name"] == TREAD_BOARDS
     assert tread["quantity"] is None
-    assert tread["canonical_material_code"] is None
-    assert tread["vocabulary_gap"] == MATERIAL_VOCABULARY_GAP
+    assert tread["canonical_material_code"] == "CAL-LUM-5-4X6"
+    assert tread["vocabulary_gap"] is None
+    assert tread["requirement_status"] == CONTRACTOR_INPUT
 
     veranda = _by_subject(report, "veranda-kit")
     assert veranda["material_name"] == VERANDA_KIT
@@ -88,7 +89,8 @@ def test_bushel_keeps_known_counts_and_does_not_invent_the_rest():
     assert report["contractor_input"]
     assert report["supplier_input"]
     assert report["pricing_input"]
-    assert any(TREAD_BOARDS in note for note in report["vocabulary_gaps"])
+    assert any(TREAD_BOARDS in note for note in report["vocabulary_gaps"]) is False
+    assert any(VERANDA_KIT in note for note in report["vocabulary_gaps"])
     assert any("2×8" in (item["canonical_material_code"] or "") for item in report["items"]) is False
 
 

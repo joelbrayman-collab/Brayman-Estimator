@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Bushel governed member fact completion (2026-10-06)
+
+| Field | Content |
+|-------|---------|
+| Slice | Checklist step 8. Bushel proving model and the canonical material seed. |
+| Product status at capture | **IMPLEMENTED / TESTED**. Not deployed. No migration. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | The governed tread name "Two 5/4 x 6 boards per tread" is a supplier-neutral canonical identity, `CAL-LUM-5-4X6`. The readiness read can name it. It still has no quantity, stock length, supplier product, or price. |
+| 2. When would the contractor use it? | When reading what Bushel already decided, before asking a supplier for a product and a price. |
+| 3. What workflow will the final Manual need to teach? | A known material name is not a purchase quantity. Missing member size and length stay missing and do not hide the known name. |
+| 4. What contractor-facing terms must be used? | Known project fact. Complete purchase requirement. Canonical material. Contractor input. Supplier product. Supplier pricing. |
+| 5. What screenshots / Print examples will eventually be needed? | None yet. This slice does not add a screen or a supplier request. |
+| 6. What warnings / validation distinctions need explanation? | 29 Sep lumber sizes are not member facts. "Two boards per tread" is not a counted purchase. The Veranda kit is named and is not in the lumber catalogue. |
+| 7. Desktop / iPhone / Print relevance | No new desktop, iPhone, or print surface. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Costing review contractor-cost provenance (2026-10-06)
 
 | Field | Content |

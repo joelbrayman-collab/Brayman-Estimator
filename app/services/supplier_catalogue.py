@@ -543,6 +543,149 @@ def read_supplier_price_evidence_window(
     return window
 
 
+CONFIRMED_CONTRACTOR_COST = "CONFIRMED_CONTRACTOR_COST"
+PUBLIC_LIST_FALLBACK = "PUBLIC_LIST_FALLBACK"
+MISSING_CONTRACTOR_PRICE = "MISSING_CONTRACTOR_PRICE"
+UNRESOLVED_SUPPLIER_PRODUCT = "UNRESOLVED_SUPPLIER_PRODUCT"
+
+
+def _later_evidence(rows):
+    """Later effective_from wins. A null start does not outrank a known start.
+
+    Equal starts keep the later recorded row. Amount is not a sort key.
+    """
+    ranked = list(enumerate(rows))
+
+    def _key(item):
+        index, row = item
+        start = row["effective_from"] or datetime.min
+        return (start, index)
+
+    return max(ranked, key=_key)[1]
+
+
+def _one_product(rows):
+    product_ids = {row["supplier_product_id"] for row in rows}
+    if len(product_ids) != 1:
+        return None
+    return _later_evidence(rows)
+
+
+def resolve_effective_contractor_cost(
+    *,
+    canonical_material_id: int,
+    contractor_supplier_account_id: int,
+    as_of: datetime,
+):
+    """Applicable price evidence for one material, one supplier account, and one time.
+
+    The contractor supplier account is the supplier context. Other suppliers
+    are not compared. A public list price is returned only when no valid
+    contractor-confirmed price exists, and it keeps its own class.
+    Nothing is written to an estimate or a costing snapshot.
+    """
+    account = db.session.get(ContractorSupplierAccount, contractor_supplier_account_id)
+    material = db.session.get(CanonicalMaterial, canonical_material_id)
+    if material is None or account is None:
+        raise SupplierCatalogueError(
+            "Canonical material or contractor supplier account not found."
+        )
+    window = read_supplier_price_evidence_window(
+        canonical_material_id=material.id,
+        contractor_supplier_account_id=account.id,
+        as_of=as_of,
+    )
+    scoped = [row for row in window if row["supplier_id"] == account.supplier_id]
+    confirmed = [
+        row for row in scoped if row["price_class"] == "CONTRACTOR_CONFIRMED_PRICE"
+    ]
+    public = [row for row in scoped if row["price_class"] == "PUBLIC_LIST_PRICE"]
+    base = {
+        "canonical_material_id": material.id,
+        "canonical_material_code": material.code,
+        "supplier_id": account.supplier_id,
+        "supplier_code": account.supplier.code,
+        "contractor_supplier_account_id": account.id,
+        "as_of": as_of,
+    }
+    if len({row["supplier_product_id"] for row in confirmed}) > 1:
+        return {
+            **base,
+            "resolution": UNRESOLVED_SUPPLIER_PRODUCT,
+            "resolution_reason": (
+                "More than one supplier product has a valid contractor-confirmed "
+                "price. No product was chosen."
+            ),
+            "supplier_product_id": None,
+            "sku": None,
+            "price_class": None,
+            "amount": None,
+            "currency": None,
+            "unit": None,
+            "source": None,
+            "captured_at": None,
+            "effective_from": None,
+            "effective_to": None,
+        }
+    selected = _one_product(confirmed)
+    if selected is not None:
+        return {
+            **selected,
+            "resolution": CONFIRMED_CONTRACTOR_COST,
+            "resolution_reason": (
+                "Valid contractor-confirmed price for this contractor supplier account."
+            ),
+            "as_of": as_of,
+        }
+    if len({row["supplier_product_id"] for row in public}) > 1:
+        return {
+            **base,
+            "resolution": UNRESOLVED_SUPPLIER_PRODUCT,
+            "resolution_reason": (
+                "More than one supplier product has a valid public list price. "
+                "No product was chosen."
+            ),
+            "supplier_product_id": None,
+            "sku": None,
+            "price_class": None,
+            "amount": None,
+            "currency": None,
+            "unit": None,
+            "source": None,
+            "captured_at": None,
+            "effective_from": None,
+            "effective_to": None,
+        }
+    selected = _one_product(public)
+    if selected is not None:
+        return {
+            **selected,
+            "resolution": PUBLIC_LIST_FALLBACK,
+            "resolution_reason": (
+                "No valid contractor-confirmed price. The public list price is "
+                "provisional evidence and is not a confirmed contractor cost."
+            ),
+            "as_of": as_of,
+        }
+    return {
+        **base,
+        "resolution": MISSING_CONTRACTOR_PRICE,
+        "resolution_reason": (
+            "No valid price evidence for this supplier and material at the as-of time."
+        ),
+        "supplier_product_id": None,
+        "sku": None,
+        "price_class": None,
+        "amount": None,
+        "currency": None,
+        "unit": None,
+        "source": None,
+        "captured_at": None,
+        "effective_from": None,
+        "effective_to": None,
+    }
+
+
 def _latest_price(product_id: int, account_id: Optional[int]):
     query = SupplierProductPriceEvidence.query.filter_by(supplier_product_id=product_id)
     if account_id is not None:

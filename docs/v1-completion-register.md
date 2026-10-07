@@ -8,6 +8,8 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-10-07 V1-10 operating pack):** The Mac-office operator and recovery pack is written at [operations/v1-operator-recovery-guide.md](operations/v1-operator-recovery-guide.md), with the first-day sheet, the backup sheet, the backup log, and the issue log. Joel runs the first backup before a real project is typed in. This pack **does not rescore** V1. Official readiness remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**.
+
 **Subsequent status (2026-10-02 requirement recall):** This register is the master recall list for material requirements discovered during development. The list is [section 2.1](#21-requirement-recall). It does **not** rescore V1. Official readiness remains **65% / 4 of 11**. It does **not** authorize Supplier Pro, the BMR PRO Hub, or a Construction Model change.
 
 **Subsequent status (2026-09-20 FG-038 PA-C LIVE PERSON UAT):** PA-C **LIVE / OPERATIONAL / LIVE PERSON UAT PASS.** Product SHA **`0698f9d2a4ccabcef53ebcef9cb1415bfcd470f7`**. Live Alembic **`g7b8c9d0e1f2 (head)`**. Live Person rows **1** (INACTIVE synthetic UAT Person retained). People UI **NOT IMPLEMENTED**. Sensitive Financial **NOT IMPLEMENTED**. This record **does not rescore** V1.
@@ -575,7 +577,9 @@ Remaining unauthorized candidates: Historical Evidence nav/screens; standalone P
 
 **Exists:** office login/membership/CSRF; org isolation; SECRET_KEY fail-closed in non-dev; ad-hoc gitignored SQLite copies before some live migrations (not a product backup service); testing standards; MAIL-A local/fake transactional engine; AUTH-A reset-token / epoch foundation; AUTH-B responsive Forgot Password / Reset UX; AUTH-C complete local Account Recovery E2E (local/fake mail only); MAIL-B Native Signing invitation/resend/complete through that engine (local/fake).
 
-**Missing for real-project V1:** governed backup/restore runbook; production hosting/secrets; user onboarding/training pack; issue/feedback process; SESSION-EXPIRY / session revocation (explicitly **NOT FG-021**); office RBAC (**POST-V1**). Supplier named-user isolation is [FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) **RECORDED** (principal class, not office RBAC) and is **not** implementation-authorized from this register.
+**Missing for real-project V1:** governed backup/restore runbook; production hosting/secrets; user onboarding/training pack; issue/feedback process; SESSION-EXPIRY / session revocation (explicitly **NOT FG-021**); office RBAC (**POST-V1**).
+
+**Subsequent status (2026-10-07):** The runbook, the training sheet, and the named issue path are written. They are manual. There is still no automatic backup service. Hosted password sign-in remains unresolved. Session-expiry recovery stays deferred. Office RBAC stays **POST-V1**. Factor remains **0.35**. **Do not rescore.** Supplier named-user isolation is [FG-030](feature-gates/FG-030-supplier-identity-authentication-and-access-isolation.md) **RECORDED** (principal class, not office RBAC) and is **not** implementation-authorized from this register.
 
 **Subsequent status (2026-09-15):** Interactive Help, Voice assistance, and a professional CalibraytAI User Guide are recorded as **mandatory PRE-UAT V1** before opening the platform to Ben, Ben’s father-in-law, and Kevin ([architecture/interactive-help-voice-and-user-manual-future-record.md](architecture/interactive-help-voice-and-user-manual-future-record.md)). **Not implemented.** **Do not rescore** (factor remains **0.35**).
 
@@ -734,9 +738,9 @@ Real-life UAT means V1 is complete and controlled enough to operate **real Braym
 |-----------|--------|---------|
 | Data safety / tenant integrity | Org isolation; no cross-org writes | **PARTIAL** (UAT-operational; not production-certified) |
 | Migration state | Live current = heads; known residue labeled | **YES** (`f9b0c1d2e3f4 (head)`; labeled synthetics remain including `FG029-UAT-BMR-DEMO`, `FG031-UAT-SCOPE-ROUTING`, Slice B project **id 25**, FG-032 project **id 26**, FG-024 reuse of projects **9** / **13**, and FG-024 Slice B UAT source `FG024B-UAT-SRC-001`) |
-| Backups | Governed backup/restore before real projects | **NO** (ad-hoc gitignored copies only) |
+| Backups | Governed backup/restore before real projects | **RUNBOOK WRITTEN** (2026-10-07). Manual copy. First backup not yet made. Not an automatic service. |
 | Authentication | Office login; SECRET_KEY not the committed dev secret | **UAT YES / production not certified** |
-| User onboarding + Ben/Brayman training | Written operating/training pack | **NO** |
+| User onboarding + Ben/Brayman training | Written operating/training pack | **PACK WRITTEN** (2026-10-07). Mac office. Not the finished User Guide. |
 | Real project creation | CRM + Hub + location | **YES** |
 | Estimate workflow | V1-01 + V1-02 + FG-009 | **YES** (V1-01 **COMPLETE**; V1-02 **COMPLETE**; FG-009 **CLOSED**). Real-life UAT still **NO** pending V1-10 / legal / V1-11 |
 | Customer-document workflow | Output 2; branded Proposal | **YES** (FG-012/017). Remaining PDF language = V1-09 decision |
@@ -745,11 +749,11 @@ Real-life UAT means V1 is complete and controlled enough to operate **real Braym
 | Actual costs + MONITOR | FG-023 | **YES** |
 | Recovery / error handling | Documented; session-expiry still deferred | **PARTIAL** |
 | Known limitations | Published to operators | **THIS REGISTER** (initial) |
-| Feedback / issue process | Named path to Joel/ChatGPT | **NO** (needs V1-10) |
+| Feedback / issue process | Named path to Joel/ChatGPT | **NAMED** (2026-10-07). Ben calls Joel Brayman. Joel writes `docs/operations/v1-issue-log.md`. |
 
 **BRAYMAN REAL-LIFE UAT READY = NO.**
 
-Do not enter real Brayman commercial projects until V1-10 backup/onboarding, V1-01, legal fail-closed (or Ontario 06D), and V1-11 certification pass.
+The 7 October 2026 operating pack writes the backup, onboarding, and issue path. Entry still waits on Joel making that first backup, on the fail-closed contract rule, and on V1-11. Do not enter real Brayman commercial projects until those are done. V1-01 is already complete. Legal generation is already fail-closed.
 
 Labeled synthetic UAT residue (FG-008 through FG-023) must remain labeled and must not be confused with real projects.
 

@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**7 Oct 2026 — V1-10 OPERATING PACK.** The Mac-office guide, first-day sheet, and backup sheet are in `docs/operations/`. Joel runs the backup before a real project is typed in. The contract stays fail-closed. Official V1 remains **65% / 4 of 11**. Not deployed.
+
 **7 Oct 2026 — SUPPLIER ESTIMATE REQUEST IS IN THE SUPPLIER REVIEW.** `/projects/<id>/supplier-package` downloads the approved Brayman page. The open job fills the name, address, and material lines. Price and supplier code stay blank. Official V1 remains **65% / 4 of 11**. Not deployed.
 
 **7 Oct 2026 — SUPPLIER ESTIMATE REQUEST ON THE APPROVED BRAYMAN PAGE.** The sendable sheet is `docs/supplier-requests/2026-10-07-linda-bushel-supplier-estimate-request.pdf`. It uses the Geleynse cost-request header, gold rule, table, and footer. The earlier pricing-request PDF was visually rejected and was not patched. Known Bushel facts stay on the lines. Purchase quantities, SKUs, and prices stay unfilled. Qty is TBD where the purchase quantity is not known. Official V1 remains **65% / 4 of 11**. Not deployed.

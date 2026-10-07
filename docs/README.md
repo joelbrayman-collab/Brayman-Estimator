@@ -16,7 +16,7 @@ This folder is the **system of record** for platform vision, architecture, gover
 |-------|-----------|------|
 | **Constitutional** | [platform-constitution.md](platform-constitution.md) | Highest-order, rarely changed platform law |
 | **Architectural** | [architecture-principles.md](architecture-principles.md), [architecture.md](architecture.md), [adr/](adr/), [modules/](modules/) | Durable rules, structure, decisions, ownership |
-| **Operational status** | [project-state-report.md](project-state-report.md), [current-state.md](current-state.md), [session-handoff.md](session-handoff.md), [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md), [v1-completion-register.md](v1-completion-register.md) | Milestone state, detailed snapshot, immediate resume, development sequence, **CalibraytAI V1 product-completion** |
+| **Operational status** | [project-state-report.md](project-state-report.md), [current-state.md](current-state.md), [session-handoff.md](session-handoff.md), [PROJECT_DEVELOPMENT_CHECKLIST.md](PROJECT_DEVELOPMENT_CHECKLIST.md), [v1-completion-register.md](v1-completion-register.md), [operations/v1-operator-recovery-guide.md](operations/v1-operator-recovery-guide.md) | Milestone state, detailed snapshot, immediate resume, development sequence, **CalibraytAI V1 product-completion**, Mac-office operator pack |
 | **Historical records** | [milestones.md](milestones.md), [chat-workflow-log.md](chat-workflow-log.md) | Append-only milestone and decision history |
 | **Reusable templates** | [prompts/](prompts/), [adr/ADR-000-template.md](adr/ADR-000-template.md) | Starting points for Cursor work and ADRs |
 

@@ -7,6 +7,8 @@
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
+**7 Oct 2026.** The V1-10 operating pack is written for the Mac office. It does not rescore V1. Official readiness remains **65% / 4 of 11**. The hosted office stays a validation copy.
+
 ---
 
 ## Platform pillars (strategic)

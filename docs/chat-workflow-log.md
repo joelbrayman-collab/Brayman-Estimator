@@ -43,6 +43,24 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-07 — V1-10 operating pack
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 ACCELERATED COMPLETION — V1-10 OPERATING PACK 7 OCT 2026 |
+| Objective | Write the minimum Mac-office operating and recovery pack. |
+| Business decision | The first real project stays on the Mac office. The website is not that office. Contracts stay fail-closed. |
+| Architectural decision | Documentation only. No product change, no migration, no deploy. |
+| Prompt template used | Joel's V1-10 operating pack prompt. |
+| Approved Cursor prompt summary | One operator guide, a one-page first day, and a backup sheet Joel runs. |
+| Files expected to change | `docs/operations/` and the continuity notes that point at it. |
+| Files prohibited from changing | Product code, schema, legal content, drawings, and unrelated case files. |
+| Result | The pack is written. The Mac office file was read and was intact at revision `h8c9d0e1f2a3`. The first backup is still Joel's to make. Official V1 remains **65% / 4 of 11**. |
+| Tests | `./venv/bin/python -m pytest tests/test_v1_operator_pack.py -q` — 2 passed. |
+| Deployment | Not performed. |
+
 ### 2026-10-07 — Supplier estimate request in the supplier review
 
 | Field | Content |

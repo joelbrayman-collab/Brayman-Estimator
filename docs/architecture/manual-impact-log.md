@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
-| Updated | 2026-10-06 |
+| Updated | 2026-10-07 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — V1-10 operating pack (2026-10-07)
+
+| Field | Content |
+|-------|---------|
+| Slice | V1-10 operator and recovery pack. Documentation only. |
+| Product status at capture | Written. Not a product change. Not deployed. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | A written Mac-office guide, a one-page first day, and a backup sheet Joel runs. |
+| 2. When would the contractor use it? | Before the first real project is typed in, and when the office misbehaves. |
+| 3. What workflow will the final Manual need to teach? | Sign in on the Mac office, start a project, price, leave the contract blocked, capture field notes, and call Joel. |
+| 4. What contractor-facing terms must be used? | Office sign in. Approve all costing. CONSTRUCTION ESTIMATE. Production contract unavailable. Supplier Estimate Request. |
+| 5. What screenshots / Print examples will eventually be needed? | None in this pack. The pages are the print. |
+| 6. What warnings / validation distinctions need explanation? | Family 05 is not a contract. The website is not the Mac office. The supplier does not approve cost. |
+| 7. Desktop / iPhone / Print relevance | Desktop office. Field capture is described. The first-day sheet and the backup sheet print on their own. |
+| Do not | Final Manual prose in this log. A rescore. A deploy. |
 
 ### MANUAL IMPACT — Supplier estimate request from the supplier review (2026-10-07)
 

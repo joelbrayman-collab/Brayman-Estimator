@@ -215,7 +215,7 @@
                 <td>${{ "%.4f"|format(row.line_item.unit_cost) }}</td>
                 <td>${{ "%.2f"|format(row.line_item.extended_cost) }}</td>
                 <td>
-                    {% if row.block_codes %}{{ row.block_codes|join(", ") }}{% endif %}
+                    {% if row.block_codes %}{% for code in row.block_codes %}{{ contractor_copy.costing_block_copy(code) }}{% if not loop.last %}; {% endif %}{% endfor %}{% endif %}
                     {% if row.warning_codes %}{{ row.warning_codes|join(", ") }}{% endif %}
                     {% if not row.block_codes and not row.warning_codes %}—{% endif %}
                 </td>

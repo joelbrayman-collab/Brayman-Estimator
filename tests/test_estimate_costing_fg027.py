@@ -572,8 +572,10 @@ def test_office_costing_review_and_approve_all_route(client, app):
         unit_cost=100,
     )
     blocked = client.get(f"/estimates/{estimate.id}/versions/{version.id}")
-    assert b"Scope Delivery Review" in blocked.data
+    assert b"Confirm who provides the material and who does the work on Scope Delivery Review" in blocked.data
     assert b"Open Scope Delivery Review" in blocked.data
+    assert b"SCOPE_DELIVERY_UNRESOLVED" not in blocked.data
+    assert b"disabled>Approve all costing" in blocked.data
     ensure_confirmed_scope_routing(version, actor="Joel Brayman")
     response = client.get(f"/estimates/{estimate.id}/versions/{version.id}")
     assert response.status_code == 200

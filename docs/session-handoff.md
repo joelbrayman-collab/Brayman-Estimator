@@ -2,6 +2,10 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**7 Oct 2026 — PRE-UAT CLOSURE.** The costing line uses the Scope Delivery sentence. Approve all costing stays disabled until that review is confirmed. The Mac office guide says `flask run --port 5001` and `http://127.0.0.1:5001`. Official V1 remains **65% / 4 of 11**. The Mac office file was not changed.
+
+**7 Oct 2026 — UX/UI AUDIT #2.** The hub, costing, and proposal sentences from the first audit still match the screens. The costing line now uses the same Scope Delivery sentence. Approve all costing stays disabled until that review is confirmed. Scratch supplier request returned a PDF and wrote no package, price, or estimate line. UX/UI baseline is frozen. Official V1 remains **65% / 4 of 11**. Not deployed. The Mac office file was not changed.
+
 **7 Oct 2026 — UX BASELINE BEFORE THE FIRST REAL PROJECT.** The hub no longer says quantity mapping is not started. Costing names Scope Delivery Review when approval is blocked. Proposal acceptance remains Update status on the proposal. Contract stays fail-closed. Mac office file unchanged. Official V1 remains **65% / 4 of 11**. Not deployed.
 
 **7 Oct 2026 — MAC OFFICE CURRENT AND RECOVERABLE.** Backup `instance/backups/brayman-office-2026-10-07-1105.db` and the Desktop second copy are integrity `ok` at revision `h8c9d0e1f2a3`. The live Mac office is now revision `q7d8e9f0a1b2`, integrity `ok`. Existing organizations, projects, and users remain. Login, Projects, Start New Project, the existing estimate costing screen, and the Supplier Package screen opened. The supplier account stays DEMO / SYNTHETIC. Official V1 remains **65% / 4 of 11**. Not deployed.

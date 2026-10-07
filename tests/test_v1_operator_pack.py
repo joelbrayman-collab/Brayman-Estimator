@@ -23,8 +23,9 @@ def test_operator_pack_states_the_office_rules():
     guide = GUIDE.read_text(encoding="utf-8")
     first = FIRST.read_text(encoding="utf-8")
     backup = BACKUP.read_text(encoding="utf-8")
+    assert "flask run --port 5001" in guide
     for text in (guide, first):
-        assert "127.0.0.1:5000" in text
+        assert "127.0.0.1:5001" in text
         assert "Family 05" in text
         assert "Production contract unavailable" in text
     assert "does not approve" in guide
@@ -46,7 +47,7 @@ def test_operator_pack_pdfs_keep_those_rules(tmp_path):
     assert len(first.pages) == 1
     first_text = first.pages[0].extract_text()
     assert "Family 05" in first_text
-    assert "127.0.0.1:5000" in first_text
+    assert "127.0.0.1:5001" in first_text
     guide = PdfReader(str(by_name["v1-operator-recovery-guide.pdf"]))
     guide_text = "\n".join(page.extract_text() or "" for page in guide.pages)
     assert "Production contract unavailable" in guide_text

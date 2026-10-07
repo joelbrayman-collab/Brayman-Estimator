@@ -7,6 +7,14 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). Document and drawing identity is [architecture/governed-document-and-drawing-output-standard.md](architecture/governed-document-and-drawing-output-standard.md). Drawing authority is [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). | ICF profile registry, the internal 8-inch form and concrete service, and the estimate workflow are **CLOSED — LIVE VERIFIED**. Live product SHA `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`, deploy `dep-dav9uk97lnhs73bj35pg`. Labour hours are a runtime allowance. Construction Model slices 1 through 11 are **IMPLEMENTED / TESTED**. Slice 12 is the acceptance audit of the complete deck fixture. Slice 13 presents callouts, section and detail references, the drawing index, and construction schedules from that same model. Slice 14 draws connector geometry only when the model supplies it. Slice 15 supplies the remaining generic fixture facts the model can already store, and a stair result can carry a riser count. Slice 16 moves annotations in paper space and does not move the model. Slice 17 stores blocking as fixture members with explicit fastenings. Slice 18 moves bearing notes off the contact. No new generic capability is required before a real project model is read. Slice 19 reads the Bushel proving fixture through that engine. Missing Bushel facts refuse. Slice 20 loads no further governed fact. Visual acceptance for a crew set is not passed. The drawing set is **NOT COMPLETE** and not deployed. |
 | Evidence | Local repository inspection |
 
+## 7 Oct 2026 — Pre-UAT closure
+
+The costing line uses the Scope Delivery sentence. The raw block code is absent from that page. Approve all costing stays disabled until Scope Delivery Review is confirmed. The Mac office guide now says `flask run --port 5001` and `http://127.0.0.1:5001`. Official V1 remains **65% / 4 of 11**. The Mac office file was not changed.
+
+## 7 Oct 2026 — UX/UI audit #2
+
+The three wording corrections still hold on a scratch office. The costing line no longer prints the raw scope-delivery block code. Contract stays fail-closed. The supplier request still downloads for the open project. Official V1 remains **65% / 4 of 11**. Not deployed. The Mac office file was not changed.
+
 ## 7 Oct 2026 — UX baseline before the first real project
 
 The contractor path was checked against PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN. The project page now points to Map to estimate. A costing block names Scope Delivery Review before Approve all costing. Proposal acceptance stays on the proposal under Update status. The contract remains fail-closed. Official V1 remains **65% / 4 of 11**. Not deployed. The Mac office file was not changed.

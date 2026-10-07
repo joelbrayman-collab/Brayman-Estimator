@@ -18,8 +18,8 @@ You cannot produce an executable construction contract from Calibrayt until coun
 
 Use only the office Joel has opened on the Brayman Mac.
 
-1. Joel starts it from the Brayman-Estimator folder with `flask run`.
-2. On that Mac, open `http://127.0.0.1:5000`.
+1. Joel starts it from the Brayman-Estimator folder with `flask run --port 5001`. On this Mac, port 5000 is already used by the system, so the office does not use 5000.
+2. On that Mac, open `http://127.0.0.1:5001`.
 3. If Joel gives you a different address, use that address. Do not guess another one.
 
 The program in the development folder and the program on the website are not the same thing. A newer folder does not change the office you are signed into.

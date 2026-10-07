@@ -43,6 +43,44 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-07 — Pre-UAT closure
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 PRE-UAT FINAL CLOSURE — COMMIT, PUSH, DEPLOY, LIVE VERIFY 7 OCT 2026 |
+| Objective | Commit the costing-line sentence and point the Mac office guide at port 5001. |
+| Business decision | No real project. No V1-11. No navigation redesign. |
+| Architectural decision | Presentation copy and operator documentation only. No schema, no migration, no Mac office write. |
+| Prompt template used | Joel's pre-UAT final closure prompt, 7 Oct 2026. |
+| Approved Cursor prompt summary | Finish the uncommitted costing sentence. Correct the operating pack from port 5000 to `flask run --port 5001`. Test, commit, push, and deploy only if the live path is safe. |
+| Files expected to change | Costing line copy, its test, the operating pack, and continuity notes. |
+| Files prohibited from changing | The Mac office database, Bushel, Geleynse, drawing reviews, and the StyroRail price test. |
+| Result | The costing line names Scope Delivery Review. The operator pack opens `http://127.0.0.1:5001`. Official V1 remains **65% / 4 of 11**. |
+| Tests | Focused costing, hub, scope, and operator-pack tests: 63 passed. `./venv/bin/python -m pytest -q` — 2196 passed, 11 skipped, 6901 warnings, 1203.32s, exit 0. Scratch browser on port 5002 confirmed the sentence, the link, and the disabled approval. |
+| Deployment | Attempted after this commit. Result is recorded in the return, not assumed here. |
+| Commit hash | This commit. |
+
+### 2026-10-07 — UX/UI audit #2
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 ACCELERATED COMPLETION — UX/UI AUDIT #2 / POST-REMEDIATION REGRESSION 7 OCT 2026 |
+| Objective | Re-check the contractor flow after the three wording corrections. |
+| Business decision | No real project. No V1-11. No new feature. |
+| Architectural decision | One costing-line sentence. No schema, no migration, no Mac office write. |
+| Prompt template used | Joel's UX/UI audit #2 prompt, 7 Oct 2026. |
+| Approved Cursor prompt summary | Repeat the full UX audit on scratch data. Fix only a small leftover defect. Do not deploy. |
+| Files expected to change | The costing line exception text and its test, plus continuity notes. |
+| Files prohibited from changing | The Mac office database, legal content, the supplier PDF design, and new engines. |
+| Result | The three corrections hold. The leftover block code on the costing line is now the same sentence. UX/UI baseline is frozen. Official V1 remains **65% / 4 of 11**. |
+| Tests | Focused costing tests passed in that turn. The full suite for the line correction is recorded on the pre-UAT closure entry. |
+| Deployment | Not performed in that turn. |
+| Commit hash | Included in the pre-UAT closure commit. |
+
 ### 2026-10-07 — UX baseline before the first real project
 
 | Field | Content |

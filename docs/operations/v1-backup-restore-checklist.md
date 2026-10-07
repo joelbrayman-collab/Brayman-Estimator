@@ -33,7 +33,7 @@ sqlite3 instance/backups/brayman-office-YYYY-MM-DD-HHMM.db "PRAGMA integrity_che
 2. Rename the current file. Do not delete it. Example: `instance/brayman_estimator.unusable-YYYY-MM-DD-HHMM.db`. Move `brayman_estimator.db-wal` and `brayman_estimator.db-shm` aside too, if they are there.
 3. Copy the chosen backup onto `instance/brayman_estimator.db`.
 4. Run the same integrity check. It must print `ok` and a revision line.
-5. Start the office the same way: from the Brayman-Estimator folder, `flask run`.
+5. Start the office the same way: from the Brayman-Estimator folder, `flask run --port 5001`. Open `http://127.0.0.1:5001`.
 6. Sign in and open the project. If it is missing, stop. Do not type it in again on a blank office.
 7. Write the restore in the backup log.
 

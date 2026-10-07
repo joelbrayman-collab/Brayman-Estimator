@@ -163,7 +163,12 @@
     <p><strong>Blocking exceptions</strong></p>
     <ul>
         {% for code in costing_review.block_codes %}
-        <li>{{ code }}</li>
+        <li>
+            {{ contractor_copy.costing_block_copy(code) }}
+            {% if code == "SCOPE_DELIVERY_UNRESOLVED" %}
+            <a href="{{ url_for('scope_delivery.review', project_id=estimate.project.id) }}">Open Scope Delivery Review</a>
+            {% endif %}
+        </li>
         {% endfor %}
     </ul>
     {% endif %}

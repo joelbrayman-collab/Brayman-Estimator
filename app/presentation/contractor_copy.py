@@ -248,6 +248,12 @@ def sentence_label(value: str | None) -> str:
     return str(value).replace("_", " ").replace("-", " ")
 
 
+def costing_block_copy(code: str | None) -> str:
+    if not code:
+        return ""
+    return COSTING_BLOCK_COPY.get(code) or sentence_label(code)
+
+
 LABOUR_RATES_HEADING = "Labour rates"
 PRICING_HEADING = "Pricing"
 WORK_TYPES_HEADING = "Work types"
@@ -515,6 +521,19 @@ FIELD_SCHEDULE_WARNING_HELP = "This is information only. You can keep working."
 FIELD_COMPANY_TODAY_HELP = "What the company has scheduled today. This does not change dates."
 COSTING_REVIEW_HEADING = "Costing review"
 APPROVE_ALL_COSTING_BUTTON = "Approve all costing"
+COSTING_BLOCK_COPY = {
+    "SCOPE_DELIVERY_UNRESOLVED": (
+        "Confirm who provides the material and who does the work on "
+        "Scope Delivery Review before Approve all costing."
+    ),
+    "MISSING_COST_ITEM_COST": "A cost item on this estimate has no cost.",
+    "MISSING_ASSEMBLY_COST": "Reusable work on this estimate has no cost.",
+    "MISSING_EXTENDED_COST_FACTS": "A line is missing the facts needed for its cost.",
+    "VERSION_NOT_EDITABLE": "This estimate version cannot be edited.",
+    "OVERRIDE_REASON_REQUIRED": "A changed cost needs a reason before it can be approved.",
+    "INCOMPLETE_DIRECT_COST_TOTAL": "The direct cost total is incomplete.",
+    "INACTIVE_LIBRARY_REFRESH": "A library item used here is inactive.",
+}
 COSTING_NOT_APPROVED = "Costing is not approved yet."
 PRICING_NEEDS_APPROVED_COSTING = "Apply pricing after costing is approved."
 PRICING_STALE_REQUIRES_REAPPLY = "STALE / REQUIRES RE-APPLY"

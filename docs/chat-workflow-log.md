@@ -43,6 +43,25 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-07 — UX baseline before the first real project
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 ACCELERATED COMPLETION — COMPLETE UX/UI AUDIT BEFORE REAL-PROJECT UAT 7 OCT 2026 |
+| Objective | Audit the contractor flow and correct the obvious V1 wording defects. |
+| Business decision | No new feature. No real project. No V1-11. |
+| Architectural decision | Presentation copy only. No schema, no migration, no Mac office write. |
+| Prompt template used | Joel's complete UX/UI audit prompt, 7 Oct 2026. |
+| Approved Cursor prompt summary | Audit the governed lifecycle, fix only obvious V1 wording, re-check the flow, do not deploy. |
+| Files expected to change | Hub and costing copy, the matching tests, and the operator sentence that described the old hub line. |
+| Files prohibited from changing | The Mac office database, legal content, the supplier PDF, and new engines. |
+| Result | Two sentences corrected. Full suite passed. Official V1 remains **65% / 4 of 11**. |
+| Tests | `./venv/bin/python -m pytest -q` — 2196 passed, 11 skipped, 6901 warnings, 1274.47s, exit 0. The count includes the untracked StyroRail price test, which stays out of this commit. Scratch browser check passed for Home, the project hub, and costing review. |
+| Deployment | Not performed. |
+| Commit hash | This commit. |
+
 ### 2026-10-07 — Mac office current and recoverable
 
 | Field | Content |

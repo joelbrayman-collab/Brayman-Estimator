@@ -322,8 +322,9 @@ def test_takeoff_status_without_estimate_insertion(client, project):
     assert "interior door" in html
     assert "approved" in html
     assert "7.0" in html
-    assert "do not insert estimate lines" in html
-    assert "Quantity mapping into estimates is not started" in html
+    assert "This page does not add estimate lines" in html
+    assert "Map to estimate" in html
+    assert "Quantity mapping into estimates is not started" not in html
     assert "Phase D" not in html
     assert f"/projects/{project.id}/plans/takeoff" in html
     assert EstimateLineItem.query.count() == line_count_before == 0
@@ -617,8 +618,8 @@ def test_no_phase_d_path_on_hub(client, project):
     response = client.get(f"/projects/{project.id}")
     html = _html(response)
     assert response.status_code == 200
-    assert "do not insert estimate lines" in html
-    assert "map into estimate" not in html.lower()
+    assert "This page does not add estimate lines" in html
+    assert "Map to estimate" in html
     assert "Create Assembly from take-off" not in html
     assert "Create CostItem from take-off" not in html
     assert "Create LabourTask from take-off" not in html

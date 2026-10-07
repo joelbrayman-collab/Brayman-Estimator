@@ -73,7 +73,7 @@ Planning on the project is the Documents section.
 
 Calibrayt does not produce the crew drawing set. If you do not have a drawing, say so. Do not ask the office to invent one.
 
-An approved take-off package can be mapped into an estimate. Open that package and choose Map to estimate. Review the line. Choose Insert into estimate. Nothing is added until you do that. The project page may still say quantity mapping is not started. Use Map to estimate on the approved package anyway. Do not type a quantity the package does not show.
+An approved take-off package can be mapped into an estimate. Open that package and choose Map to estimate. Review the line. Choose Insert into estimate. Nothing is added until you do that. The project page points to that same action. It does not add the line itself. Do not type a quantity the package does not show.
 
 If there is no approved package, go to Price and enter the lines you actually know.
 

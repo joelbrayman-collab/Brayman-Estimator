@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**7 Oct 2026 — UX BASELINE BEFORE THE FIRST REAL PROJECT.** The hub no longer says quantity mapping is not started. Costing names Scope Delivery Review when approval is blocked. Proposal acceptance remains Update status on the proposal. Contract stays fail-closed. Mac office file unchanged. Official V1 remains **65% / 4 of 11**. Not deployed.
+
 **7 Oct 2026 — MAC OFFICE CURRENT AND RECOVERABLE.** Backup `instance/backups/brayman-office-2026-10-07-1105.db` and the Desktop second copy are integrity `ok` at revision `h8c9d0e1f2a3`. The live Mac office is now revision `q7d8e9f0a1b2`, integrity `ok`. Existing organizations, projects, and users remain. Login, Projects, Start New Project, the existing estimate costing screen, and the Supplier Package screen opened. The supplier account stays DEMO / SYNTHETIC. Official V1 remains **65% / 4 of 11**. Not deployed.
 
 **7 Oct 2026 — V1-10 OPERATING PACK.** The Mac-office guide, first-day sheet, and backup sheet are in `docs/operations/`. Joel runs the backup before a real project is typed in. The contract stays fail-closed. Official V1 remains **65% / 4 of 11**. Not deployed.

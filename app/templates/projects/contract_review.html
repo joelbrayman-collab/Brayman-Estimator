@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Contract | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Contract{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Contract</p>
+        <h1>{{ project.name }}</h1>
+        <p class="muted-copy"><a href="{{ url_for('projects.view_project', id=project.id) }}">Back to the project</a></p>
+    </div>
+</div>
+
+<section class="dash-panels">
+    <article class="panel panel-wide" id="contract-package">
+        <div class="panel-header">
+            <h2>{{ contract_copy.heading }}</h2>
+        </div>
+        <p>{{ contract_copy.lede }}</p>
+        <p>{{ contract_copy.next }}</p>
+        {% if contract_copy.show_package %}
+        {% if contract_copy.ontario %}<p>Ontario</p>{% endif %}
+        <p id="contract-package-title">{{ contract_copy.package_title }}</p>
+        <p>Version {{ contract_copy.package_version }}</p>
+        <p>Effective date {{ contract_copy.effective_from }}</p>
+        <p>Status {{ contract_copy.package_status }}</p>
+        {% if contract_copy.package_code %}<p class="muted-copy">Package {{ contract_copy.package_code }}</p>{% endif %}
+        {% if contract_copy.counsel_approved %}<p>Counsel approved</p>{% endif %}
+        {% endif %}
+        {% if contract_copy.blocked %}
+        <p class="muted-copy">{{ contract_copy.lede }}</p>
+        {% endif %}
+    </article>
+
+    <article class="panel panel-wide" id="contract-generate">
+        <div class="panel-header">
+            <h2>Generate for review</h2>
+        </div>
+        <p>{{ generated_note }}</p>
+        {% if pairs %}
+        {% for pair in pairs %}
+        <form method="post" action="{{ url_for('projects.generate_contract', id=project.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="estimate_version_id" value="{{ pair.estimate_version_id }}">
+            <input type="hidden" name="proposal_id" value="{{ pair.proposal_id }}">
+            <p>{{ pair.estimate_number }} · {{ pair.proposal_number }} · {{ pair.proposal_status }} · {{ pair.total }}</p>
+            <button type="submit">Generate contract</button>
+        </form>
+        {% endfor %}
+        {% else %}
+        <p>A contract can be generated when the estimate is issued and locked and the proposal is issued or accepted.</p>
+        {% endif %}
+    </article>
+
+    <article class="panel panel-wide" id="contract-snapshots">
+        <div class="panel-header">
+            <h2>Contract snapshot</h2>
+        </div>
+        {% if contracts %}
+        {% for contract in contracts %}
+        {% set snapshot = contract.snapshot %}
+        <section id="contract-snapshot-{{ contract.id }}">
+            <p>Contract {{ contract.contract_number }}</p>
+            <p>Contract status Generated — not signed</p>
+            {% if snapshot %}
+            <p>Ontario</p>
+            {% if snapshot.package_code == "CA-ON-BRAYMAN-V1-INTERIM" %}
+            <p>Brayman V1 Interim Contract</p>
+            {% endif %}
+            <p>Package {{ snapshot.package_code }}</p>
+            <p>Effective date {{ snapshot.package_effective_from }}</p>
+            <p>Status {% if snapshot.package_library_state == "ACTIVE" %}Active{% else %}{{ snapshot.package_library_state }}{% endif %}</p>
+            <p>Generated {{ snapshot.generated_at }}</p>
+            <p>Customer {{ snapshot.client_name }}</p>
+            <p>Project {{ snapshot.project_name }}</p>
+            <p>Contract amount {{ snapshot.commercial_variables_json.total }}</p>
+            {% for item in snapshot.content_objects %}
+            {% if item.object_kind == "contract_provision" %}
+            <p>Version {{ item.object_version_number }}</p>
+            {% endif %}
+            <h3>{{ item.object_kind }}</h3>
+            <pre class="contract-review-body">{{ item.object_body }}</pre>
+            {% endfor %}
+            <p><a href="{{ url_for('projects.download_generated_contract', id=project.id, contract_id=contract.id) }}">Download contract</a></p>
+            {% endif %}
+        </section>
+        {% endfor %}
+        {% else %}
+        <p>No contract snapshot yet.</p>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

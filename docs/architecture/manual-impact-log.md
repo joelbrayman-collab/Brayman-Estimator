@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Brayman V1 interim Ontario contract (2026-10-07)
+
+| Field | Content |
+|-------|---------|
+| Slice | Ontario contract path. Existing contract engine. |
+| Product status at capture | Implemented and tested on scratch data. Not deployed. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | An Ontario project can use the active Brayman V1 interim contract package and generate a contract for review. |
+| 2. When would the contractor use it? | After the estimate is issued and locked and the proposal is issued or accepted. |
+| 3. What workflow will the final Manual need to teach? | Open the project, read the package, version, effective date, and status, open Review contract, generate, and read the snapshot. |
+| 4. What contractor-facing terms must be used? | Ontario. Brayman V1 Interim Contract. Version. Effective date. Status Active. Contract snapshot. Generated — not signed. |
+| 5. What screenshots / Print examples will eventually be needed? | The project Contract section and the Review contract page after generation. Do not capture them as counsel-approved. |
+| 6. What warnings / validation distinctions need explanation? | Generating does not sign the contract and does not send a signing link. Counsel approved appears only when that approval exists. No active package, an unresolved location, or missing contract data still blocks generation. |
+| 7. Desktop / iPhone / Print relevance | Desktop review. The generated file can be downloaded. It is not a signed contract. |
+| Do not | Call the package counsel-approved. Bypass the block. Send a signing link from generation. |
+
 ### MANUAL IMPACT — V1-10 operating pack (2026-10-07)
 
 | Field | Content |

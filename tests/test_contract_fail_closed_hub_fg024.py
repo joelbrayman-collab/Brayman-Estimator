@@ -185,12 +185,19 @@ def test_copy_maps_selector_result_without_jurisdiction_rules():
     assert unresolved["lede"] == CONTRACT_LOCATION_INCOMPLETE
 
     available = contract_selection_copy(
-        SimpleNamespace(available=True, block_code=None, jurisdiction_code="CA-ON")
+        SimpleNamespace(
+            available=True,
+            block_code=None,
+            jurisdiction_code="CA-ON",
+            counsel_approved=True,
+            library_state="ACTIVE",
+        )
     )
     assert available["blocked"] is False
     assert available["warned"] is False
     assert available["heading"] == CONTRACT_PRODUCTION_AVAILABLE
     assert available["lede"] == CONTRACT_ACTIVE_PACKAGE_SELECTED
+    assert available["counsel_approved"] is True
 
     warned = contract_selection_copy(
         SimpleNamespace(

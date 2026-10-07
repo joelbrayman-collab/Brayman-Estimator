@@ -808,7 +808,7 @@ CONTRACT_STATUS_HEADING = "Production contract"
 CONTRACT_PRODUCTION_UNAVAILABLE = "Production contract unavailable"
 CONTRACT_PRODUCTION_AVAILABLE = "Production contract package available"
 CONTRACT_NO_ACTIVE_PACKAGE = (
-    "No active counsel-approved contract package is available for this jurisdiction."
+    "No active contract package is available for this jurisdiction."
 )
 CONTRACT_LOCATION_INCOMPLETE = (
     "Project location is not complete, so a production contract cannot be generated."
@@ -820,10 +820,27 @@ CONTRACT_STATUS_UNDETERMINED = (
     "Production contract status could not be determined. Contract generation is blocked."
 )
 CONTRACT_GENERATION_BLOCKED = (
-    "Contract generation is blocked until approved legal content is activated."
+    "Contract generation is blocked until an active contract package is in force "
+    "for this jurisdiction."
 )
 CONTRACT_ACTIVE_PACKAGE_SELECTED = (
     "An active counsel-approved package is selected for this jurisdiction."
+)
+CONTRACT_ACTIVE_PACKAGE_NEUTRAL = (
+    "An active contract package is selected for this jurisdiction."
+)
+CONTRACT_INTERIM_OPERATING_RULE = (
+    "Calibrayt uses the active Brayman V1 Ontario contract package. "
+    "The contract package/version used for the project is recorded in the "
+    "contract snapshot."
+)
+CONTRACT_REVIEW_FROM_HUB = (
+    "Open Review contract. Generating a contract does not sign it and does not "
+    "send a signing link."
+)
+CONTRACT_GENERATED_NOT_SIGNED = (
+    "This contract is generated for review. It is not signed. Generating it "
+    "does not send a signing link."
 )
 CONTRACT_PENDING_UPDATE_WARN = (
     "An approved active contract package is available and remains the current "
@@ -858,10 +875,47 @@ CONTRACT_BLOCK_LEDES = {
 }
 
 
+def _contract_package_fields(selection, *, show_package: bool) -> dict:
+    counsel = bool(getattr(selection, "counsel_approved", False)) if selection else False
+    interim = bool(getattr(selection, "interim", False)) if selection else False
+    code = (getattr(selection, "jurisdiction_code", None) or "") if selection else ""
+    library_state = (getattr(selection, "library_state", None) or "") if selection else ""
+    status_labels = {
+        "ACTIVE": "Active",
+        "APPROVED": "Approved",
+        "SUPERSEDED": "Superseded",
+        "PROPOSED": "Proposed",
+        "COUNSEL_REVIEW": "Counsel review",
+    }
+    effective = getattr(selection, "effective_from", None) if selection else None
+    if hasattr(effective, "isoformat"):
+        effective = effective.isoformat()
+    version = getattr(selection, "package_version", None) if selection else None
+    if interim:
+        title = "Brayman V1 Interim Contract"
+    elif counsel:
+        title = "Counsel-reviewed contract"
+    else:
+        title = getattr(selection, "package_code", None) if selection else None
+        title = title or "Active contract package"
+    return {
+        "show_package": show_package,
+        "ontario": code == "CA-ON" or code.startswith("CA-ON-"),
+        "package_title": title if show_package else "",
+        "package_version": version if show_package and version is not None else "",
+        "effective_from": effective or "",
+        "package_status": status_labels.get(library_state, library_state) if show_package else "",
+        "counsel_approved": counsel if show_package else False,
+        "interim": interim if show_package else False,
+        "package_code": getattr(selection, "package_code", None) if selection else None,
+    }
+
+
 def contract_selection_copy(selection) -> dict:
     """Map a Slice A LegalContentSelection to office CONTRACT copy.
 
     Presentation only. Does not resolve jurisdiction or select packages.
+    Counsel approved is shown only when the selection says that approval exists.
     """
     if selection is None or getattr(selection, "selection_error", False):
         return {
@@ -873,30 +927,39 @@ def contract_selection_copy(selection) -> dict:
             "block_code": None,
             "warn_code": None,
             "jurisdiction_code": None,
+            **_contract_package_fields(None, show_package=False),
         }
+    jurisdiction_code = getattr(selection, "jurisdiction_code", None)
     if getattr(selection, "available", False):
         status = getattr(selection, "status", None)
         warn_code = getattr(selection, "warn_code", None)
+        interim = bool(getattr(selection, "interim", False))
+        counsel = bool(getattr(selection, "counsel_approved", False))
+        if interim:
+            lede = CONTRACT_INTERIM_OPERATING_RULE
+            next_line = CONTRACT_REVIEW_FROM_HUB
+        elif counsel:
+            lede = CONTRACT_ACTIVE_PACKAGE_SELECTED
+            next_line = CONTRACT_GENERATION_NOT_FROM_HUB
+        else:
+            lede = CONTRACT_ACTIVE_PACKAGE_NEUTRAL
+            next_line = CONTRACT_GENERATION_NOT_FROM_HUB
         if status == "WARN" or warn_code:
-            return {
-                "blocked": False,
-                "warned": True,
-                "heading": CONTRACT_PRODUCTION_AVAILABLE,
-                "lede": CONTRACT_PENDING_UPDATE_WARN,
-                "next": CONTRACT_ACTIVE_REMAINS_AUTHORITY,
-                "block_code": None,
-                "warn_code": warn_code or "PENDING_CANDIDATE",
-                "jurisdiction_code": getattr(selection, "jurisdiction_code", None),
-            }
+            lede = CONTRACT_PENDING_UPDATE_WARN
+            next_line = CONTRACT_ACTIVE_REMAINS_AUTHORITY
+            warn_code = warn_code or "PENDING_CANDIDATE"
+        else:
+            warn_code = None
         return {
             "blocked": False,
-            "warned": False,
+            "warned": bool(status == "WARN" or warn_code),
             "heading": CONTRACT_PRODUCTION_AVAILABLE,
-            "lede": CONTRACT_ACTIVE_PACKAGE_SELECTED,
-            "next": CONTRACT_GENERATION_NOT_FROM_HUB,
+            "lede": lede,
+            "next": next_line,
             "block_code": None,
-            "warn_code": None,
-            "jurisdiction_code": getattr(selection, "jurisdiction_code", None),
+            "warn_code": warn_code,
+            "jurisdiction_code": jurisdiction_code,
+            **_contract_package_fields(selection, show_package=True),
         }
     code = getattr(selection, "block_code", None)
     return {
@@ -907,7 +970,8 @@ def contract_selection_copy(selection) -> dict:
         "next": CONTRACT_GENERATION_BLOCKED,
         "block_code": code,
         "warn_code": None,
-        "jurisdiction_code": getattr(selection, "jurisdiction_code", None),
+        "jurisdiction_code": jurisdiction_code,
+        **_contract_package_fields(selection, show_package=False),
     }
 
 

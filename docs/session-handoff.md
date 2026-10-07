@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**7 Oct 2026 — BRAYMAN V1 INTERIM ONTARIO CONTRACT.** The existing engine selects package `CA-ON-BRAYMAN-V1-INTERIM`, version 1, effective 2026-10-07. Counsel approval is not a generation gate. Review contract generates a snapshot and does not send a signing link. Official V1 remains **65% / 4 of 11**. Not deployed. Mac office unchanged. Do not start UAT or V1-11. Next action is the hosted Shell read of `alembic_version`.
+
 **7 Oct 2026 — MINIMUM HOME, PRINT, AND SUPPLIER HELP.** Home shows today, attention, and the coming days. Print uses the screen facts on the project, estimate, proposal, supplier request, and Field Today. Supplier Estimate Request Help matches the user manual. Installation guide and user manual are drafted. Official V1 remains **65% / 4 of 11**. Hosted revision unknown. Not deployed. iPhone microphone test not performed. PRE-UAT READY is NO. The Mac office file was not changed. Do not start UAT or V1-11.
 
 **7 Oct 2026 — FINITE V1 REMAINING-WORK PLAN.** Reconciliation stands. Ben does not create crew logins. Print and the wider Home Office stay required and unauthorized. Next work is the setup guide. Official V1 remains **65% / 4 of 11**. No code. No deploy. No UAT. No V1-11.

@@ -43,6 +43,21 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-07 — Brayman V1 interim Ontario contract
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 CONTRACT PATH — REMOVE COUNSEL AS DEVELOPMENT BLOCKER 7 OCT 2026 |
+| Objective | Generate a usable Brayman V1 Ontario contract on the existing contract engine without waiting for external counsel. |
+| Business decision | The interim package is the V1 package. It is not counsel-approved. A later counsel-reviewed package can replace it. Official V1 stays **65% / 4 of 11**. |
+| Architectural decision | No new library state and no migration. The package is ACTIVE PRODUCTION on CA-ON with counsel fields empty. Generation stays separate from signing. |
+| Approved Cursor prompt summary | Install the Ontario Brayman V1 interim package, show package, version, effective date, and status, generate a snapshot, and do not send a signing link. |
+| Implementation result | Package `CA-ON-BRAYMAN-V1-INTERIM`, version 1, effective 2026-10-07. Scratch browser generated contract CTR-2026-0001 and recorded the snapshot. No signing request. Not deployed. Mac office unchanged. |
+| Tests | `./venv/bin/python -u -m pytest -q --tb=line` — 2211 passed, 11 skipped, 6950 warnings, 1087.05s, exit 0. That count includes the untracked StyroRail price test, which stays out of this commit. |
+| Next approved step | Read the hosted Alembic revision from the Render dashboard Shell before any deploy. |
+
 ### 2026-10-07 — Authorize final V1 functional gaps
 
 | Field | Content |

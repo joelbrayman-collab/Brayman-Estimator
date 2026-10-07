@@ -91,17 +91,19 @@ HUB_CONTRACT = HelpTopic(
     key="contract",
     title="CONTRACT",
     what=(
-        "Contract is where you see customer proposals and whether a production "
-        "contract can be used for this Project."
+        "Contract shows the active Brayman V1 Ontario contract package for this "
+        "project, and the proposals related to it."
     ),
     do=(
-        "Review related proposals. Production contract generation is not available "
-        "yet. This Hub shows whether a production contract can be used, or why it "
-        "cannot yet. It does not create a contract."
+        "Read the package, the version, the effective date, and the status. "
+        "Open Review contract when the estimate is locked and the proposal is "
+        "issued or accepted. Generating a contract does not sign it and does "
+        "not send a signing link. If no active package is in force, stop. "
+        "Do not look for a way around the block."
     ),
     next=(
-        "After the customer has committed, run the job from BUILD and compare "
-        "estimated versus actual under MONITOR."
+        "The package and version used for the project are recorded on the "
+        "contract snapshot."
     ),
 )
 

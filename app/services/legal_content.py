@@ -49,6 +49,11 @@ class LegalContentSelection:
     support_status: Optional[str]
     warn_code: Optional[str] = None
     pending_candidate_id: Optional[int] = None
+    package_code: Optional[str] = None
+    package_version: Optional[int] = None
+    effective_from: Optional[date] = None
+    counsel_approved: bool = False
+    interim: bool = False
 
 
 def _block(
@@ -74,6 +79,23 @@ def _block(
     )
 
 
+def _package_facts(package: LegalContentJurisdictionPackage) -> dict:
+    from app.services.brayman_v1_interim_contract import INTERIM_PACKAGE_CODE
+
+    version = None
+    for obj in package.content_objects or []:
+        if obj.kind == "contract_provision" and obj.version_number is not None:
+            version = obj.version_number
+            break
+    return {
+        "package_code": package.package_code,
+        "package_version": version,
+        "effective_from": package.effective_from,
+        "counsel_approved": package.counsel_approved_at is not None,
+        "interim": package.package_code == INTERIM_PACKAGE_CODE,
+    }
+
+
 def _allow(package: LegalContentJurisdictionPackage) -> LegalContentSelection:
     return LegalContentSelection(
         available=True,
@@ -85,6 +107,7 @@ def _allow(package: LegalContentJurisdictionPackage) -> LegalContentSelection:
         support_status=package.support_status,
         warn_code=None,
         pending_candidate_id=None,
+        **_package_facts(package),
     )
 
 
@@ -104,6 +127,7 @@ def _warn(
         support_status=package.support_status,
         warn_code=warn_code,
         pending_candidate_id=pending_candidate_id,
+        **_package_facts(package),
     )
 
 

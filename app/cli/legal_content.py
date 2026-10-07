@@ -60,3 +60,32 @@ def activate_command(
         f"state={package.library_state} authority_class={package.authority_class} "
         f"actor={package.activated_by}."
     )
+
+
+@legal_content_cli.command("install-brayman-v1-interim")
+@with_appcontext
+def install_brayman_v1_interim_command():
+    """Install the Ontario Brayman V1 interim package when none is active.
+
+    Does not mark the package counsel-approved. Does not replace an active package.
+    """
+    from app.services.brayman_v1_interim_contract import (
+        INTERIM_PACKAGE_CODE,
+        ensure_brayman_v1_interim_ontario_package,
+    )
+
+    result = ensure_brayman_v1_interim_ontario_package()
+    package = result.package
+    if result.blocked_by_active_package and package is not None:
+        raise click.ClickException(
+            f"Ontario already has active package {package.id} {package.package_code}. "
+            "The interim package was not installed."
+        )
+    if package is None:
+        raise click.ClickException("The interim package was not installed.")
+    click.echo(
+        f"package_code={package.package_code} id={package.id} "
+        f"state={package.library_state} effective_from={package.effective_from} "
+        f"counsel_approved_at={package.counsel_approved_at} "
+        f"created={result.created} expected_code={INTERIM_PACKAGE_CODE}."
+    )

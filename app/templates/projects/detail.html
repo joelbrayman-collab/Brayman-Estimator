@@ -37,7 +37,7 @@
     <a class="hub-lifecycle-step" href="#hub-build">Project work</a>
     <span class="hub-lifecycle-step is-future">LEARN · Future</span>
 </nav>
-<p class="muted-copy hub-lifecycle-note">Operational sections use stored records from owning modules. LEARN remains Future. The four-output package remains Future. Ontario contract and warranty generation remain Future. Fail-closed production-contract status is shown under CONTRACT.</p>
+<p class="muted-copy hub-lifecycle-note">Operational sections use stored records from owning modules. LEARN remains Future. The four-output package remains Future. The active contract package is shown under Contract. A contract is generated from Review contract. That does not sign it.</p>
 
 <section class="form-panel" id="hub-identity" style="margin-bottom: 20px;">
     <p class="hub-section-label">Project</p>
@@ -566,6 +566,15 @@
         <p class="eyebrow">{{ contract_copy.heading }}</p>
         <p>{{ contract_copy.lede }}</p>
         <p>{{ contract_copy.next }}</p>
+        {% if contract_copy.show_package %}
+        {% if contract_copy.ontario %}<p>Ontario</p>{% endif %}
+        <p>{{ contract_copy.package_title }}</p>
+        <p>Version {{ contract_copy.package_version }}</p>
+        <p>Effective date {{ contract_copy.effective_from }}</p>
+        <p>Status {{ contract_copy.package_status }}</p>
+        {% if contract_copy.counsel_approved %}<p>Counsel approved</p>{% endif %}
+        <p><a href="{{ url_for('projects.review_contract', id=project.id) }}">Review contract</a></p>
+        {% endif %}
         {% if contract_copy.warned %}
         <p class="muted-copy">{{ contractor_copy.CONTRACT_PENDING_UPDATE_WARN }}</p>
         <p class="muted-copy">{{ contractor_copy.CONTRACT_ACTIVE_REMAINS_AUTHORITY }}</p>
@@ -1204,6 +1213,6 @@
 
 <div class="hub-future-note" style="margin-top: 16px;">
     <p class="eyebrow">Future — not operational on this hub</p>
-    <p>QuickBooks export, the four-output document package, Ontario contract and warranty generation, and real external AI are Future. They are not available as generate controls here. Fail-closed production-contract status is shown under CONTRACT.</p>
+    <p>QuickBooks export, the four-output document package, and real external AI are Future. They are not available as generate controls here. The active contract package is shown under Contract.</p>
 </div>
 {% endblock %}

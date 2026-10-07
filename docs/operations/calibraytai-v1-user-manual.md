@@ -82,13 +82,15 @@ On the project, QuickBooks-ready entry is the sheet a person types into QuickBoo
 
 ## Contract
 
-Calibrayt does not generate an executable contract when an approved Ontario legal package is unavailable.
+Calibrayt uses the active Brayman V1 Ontario contract package. The contract package/version used for the project is recorded in the contract snapshot.
 
-The Contract section may say Production contract unavailable. Contract generation is blocked. No production contract has been generated. A commercial presentation draft is not the Brayman contract.
+On the project, Contract shows Ontario, Brayman V1 Interim Contract, the version, the effective date, and the status. Open Review contract to generate the contract after the estimate is issued and locked and the proposal is issued or accepted.
 
-Stop. Do not look for a way around it. Do not email a signing link.
+Generating a contract does not sign it and does not send a signing link. A generated contract is not a signed contract.
 
-The estimate and the proposal are still usable.
+If no active package is in force, or the project location cannot be resolved, or required contract data is missing, the contract stays blocked. Do not look for a way around that block.
+
+This package is the Brayman V1 interim package. It is not marked counsel-approved. A later counsel-reviewed package can replace it. The snapshot for a project keeps the package that was used.
 
 ## Build, field, and change orders
 

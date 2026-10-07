@@ -1774,6 +1774,12 @@ body.login-page {
     color: inherit;
 }
 
+.contract-review-body {
+    white-space: pre-wrap;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.95rem;
+}
+
 .desk-print {
     letter-spacing: 0.04em;
 }

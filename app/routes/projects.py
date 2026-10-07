@@ -580,3 +580,6 @@ def download_permit_report_pdf(id):
         as_attachment=True,
         download_name=f"permit-approvals-report-v{analysis.version_number}.pdf",
     )
+
+
+import app.routes.project_contract  # noqa: E402,F401 — registers contract review routes

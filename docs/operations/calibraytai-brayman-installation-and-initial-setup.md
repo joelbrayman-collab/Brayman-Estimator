@@ -89,11 +89,11 @@ The supplier does not approve Brayman's cost.
 
 ## 11. Contract
 
-There is no approved Ontario legal package.
+Calibrayt uses the active Brayman V1 Ontario contract package. The contract package/version used for the project is recorded in the contract snapshot.
 
-Until that package exists, Calibrayt does not produce an executable contract. The Contract section stays blocked. That block is doing its job.
+The package is Brayman V1 Interim. It is not marked counsel-approved. Generating a contract does not sign it and does not send a signing link.
 
-Do not download a draft and call it the Brayman contract. Do not email a signing link.
+If no active package is in force, the contract stays blocked. Do not look for a way around that block. Do not email a signing link.
 
 ## 12. Backup
 

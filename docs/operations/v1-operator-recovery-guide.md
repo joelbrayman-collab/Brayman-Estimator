@@ -12,7 +12,7 @@ Calibrayt is the Brayman office for a job.
 
 You keep the customer, the project, the location, the estimate, the customer price, the field notes, and the actual costs in one place. You can ask a supplier for a price. You can give the customer a construction estimate.
 
-You cannot produce an executable construction contract from Calibrayt until counsel has approved the Ontario package. Until then the Contract section stays blocked. That block is doing its job.
+Calibrayt uses the active Brayman V1 Ontario contract package. The contract package/version used for the project is recorded in the contract snapshot. The package is Brayman V1 Interim. It is not marked counsel-approved. Generating a contract does not sign it and does not send a signing link.
 
 ## 2. Which office
 
@@ -135,22 +135,24 @@ Warranty words typed into a proposal are not an approved Ontario warranty.
 
 This is the rule.
 
-Calibrayt does not generate an executable contract when an approved jurisdictional legal package is unavailable.
+Calibrayt uses the active Brayman V1 Ontario contract package. The contract package/version used for the project is recorded in the contract snapshot.
 
-On the project, Contract may say Production contract unavailable. The usual line is: no active counsel-approved contract package is available for this jurisdiction. It also says contract generation is blocked, no production contract has been generated, a commercial presentation draft is not used as a substitute contract, and this screen does not override the legal-content gate.
+On the project, Contract shows Ontario, Brayman V1 Interim Contract, the version, the effective date, and the status. Open Review contract to generate it when the estimate is issued and locked and the proposal is issued or accepted.
 
-A complete street address can still show this block. The office currently knows City of Ottawa. An address outside that municipality may say the location is not complete, or that no approved package is available. The block is intentional. Do not bypass it.
+Generating a contract does not sign it and does not send a signing link. Do not tell the customer a generated contract is signed.
 
-When you see that:
+The package is not marked counsel-approved. A later counsel-reviewed package can replace it. A project snapshot keeps the package that was used for that contract.
+
+The contract stays blocked when no active package is in force, when the project location cannot be resolved, or when required contract data is missing. That screen says Production contract unavailable. A complete street address outside the known municipality can still show that block. Do not bypass it.
+
+Family 05 is the presentation page around the package text. It is not a different contract and it is not a signing step.
+
+When you see that block:
 
 1. Stop.
 2. Do not look for a way around it.
-3. Do not download a draft and call it the Brayman contract.
-4. Do not tell the customer that Calibrayt produced the contract.
-5. The estimate and the proposal are still usable. The block does not break them.
-6. The paper contract, if there is one, stays with counsel and with Joel.
-
-Family 05 is a presentation master. It is not an approved Ontario contract. Do not use it as one.
+3. Do not email a signing link.
+4. The estimate and the proposal are still usable. The block does not break them.
 
 ## 10. Build and field
 
@@ -201,7 +203,7 @@ If the office will not open, or the project you just saved is gone:
 
 ## 13. Known limits
 
-- The contract block is intentional. Do not bypass it. It stays until counsel approves the Ontario package. A complete address outside City of Ottawa can still show the block. Family 05 is not that package.
+- The contract uses the active Brayman V1 Ontario contract package. The package and version are recorded on the contract snapshot. Do not bypass the block when no active package is in force or the location cannot be resolved. A complete address outside City of Ottawa can still show that block. Generating a contract does not send a signing link.
 - The Mac supplier account is labelled DEMO / SYNTHETIC.
 - If a field session ends before the note appears under Field Observations, the note may not have been saved. Sign in, look, and enter it again if it is missing. Do not delete other notes to fix it.
 - Calibrayt does not produce professional construction drawings.

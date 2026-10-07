@@ -207,6 +207,9 @@
     <div class="form-actions">
         <button type="submit" formaction="{{ url_for('supplier_package.generate_package_route', project_id=project.id) }}">Generate Supplier Package</button>
         <button type="submit" formaction="{{ url_for('supplier_package.issue_package_route', project_id=project.id) }}">Issue Supplier Package</button>
+        {% if review.requirements %}
+        <a class="button-link" href="{{ url_for('supplier_package.download_estimate_request', project_id=project.id, supplier_id=review.account.supplier_id, supplier_location_id=review.account.supplier_location_id) }}">Supplier Estimate Request</a>
+        {% endif %}
     </div>
 </form>
 {% endif %}

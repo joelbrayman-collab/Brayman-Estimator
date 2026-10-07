@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Supplier estimate request from the supplier review (2026-10-07)
+
+| Field | Content |
+|-------|---------|
+| Slice | Supplier Package review download. |
+| Product status at capture | **IMPLEMENTED / TESTED** in the working tree. Not committed. Not deployed. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | From a project's supplier review, download the Brayman supplier estimate request for that job and that supplier. |
+| 2. When would the contractor use it? | When the project has material requirements and a supplier is selected. |
+| 3. What workflow will the final Manual need to teach? | Open the supplier review. Choose the supplier. Download Supplier Estimate Request. The supplier fills price and code. |
+| 4. What contractor-facing terms must be used? | Supplier Estimate Request. The project name and address. Qty. Unit price. Line price. Code. |
+| 5. What screenshots / Print examples will eventually be needed? | The supplier review with the download, and the resulting page for a job other than Bushel. |
+| 6. What warnings / validation distinctions need explanation? | A stored SKU or price is not printed on the request. The supplier fills those boxes. |
+| 7. Desktop / iPhone / Print relevance | Office download, then print or email. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Supplier estimate request on the Brayman page (2026-10-07)
 
 | Field | Content |

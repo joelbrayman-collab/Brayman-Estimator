@@ -4,12 +4,12 @@
 |-----------|--------|
 | Status | **Current (partial)** — [FG-029](../feature-gates/FG-029-bmr-supplier-workflow-v1.md) **CLOSED / OPERATIONAL FOR UAT** |
 | Updated | 2026-09-09 |
-| Code | `app/models/supplier_catalogue.py`, `app/services/supplier_catalogue.py`, `app/services/supplier_package_pdf.py`, `app/routes/supplier_package.py`, Hub PRICE `/projects/<id>/supplier-package` |
+| Code | `app/models/supplier_catalogue.py`, `app/services/supplier_catalogue.py`, `app/services/supplier_package_pdf.py`, `app/services/brayman_supplier_estimate.py`, `app/routes/supplier_package.py`, Hub PRICE `/projects/<id>/supplier-package` |
 | Architecture | [../architecture/supplier-catalogue-inventory-pricing.md](../architecture/supplier-catalogue-inventory-pricing.md) · [../architecture/supplier-channel-and-launch-partner.md](../architecture/supplier-channel-and-launch-partner.md) · [../architecture/material-catalogue-architecture.md](../architecture/material-catalogue-architecture.md) · [../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md](../architecture/fg-029-bmr-supplier-workflow-v1-preflight.md) · [../architecture/fg-030-supplier-identity-and-access-isolation.md](../architecture/fg-030-supplier-identity-and-access-isolation.md) · [../architecture/fg-031-scope-delivery-make-buy-procurement-routing-preflight.md](../architecture/fg-031-scope-delivery-make-buy-procurement-routing-preflight.md) |
 
 ## Purpose
 
-Own supplier identity, dealer SKUs, human-reviewed mapping, living inform-only price/availability evidence, and frozen Supplier Package HTML/PDF. Remain **supplier-neutral**: multiple competing suppliers are required; BMR Winchester is a contemplated **launch/reference** partner, not an exclusive supplier and not the CalibraytAI vocabulary ([ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md)).
+Own supplier identity, dealer SKUs, human-reviewed mapping, living inform-only price/availability evidence, and frozen Supplier Package HTML/PDF. The same review downloads a Supplier Estimate Request on the approved Brayman page. The open project, the selected supplier, and that project's material requirements fill the sheet. Unit price, line price, and supplier code stay blank. The download does not write a package and does not copy a stored SKU or price. Remain **supplier-neutral**: multiple competing suppliers are required; BMR Winchester is a contemplated **launch/reference** partner, not an exclusive supplier and not the CalibraytAI vocabulary ([ADR-033](../adr/ADR-033-supplier-neutrality-and-launch-partner-channel.md)).
 
 ## Owned data (FG-029)
 

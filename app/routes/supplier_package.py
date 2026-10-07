@@ -1,5 +1,8 @@
 """Project Hub PRICE — Supplier Package / mapping review (FG-029)."""
 
+from datetime import datetime
+from io import BytesIO
+
 from flask import Blueprint, abort, flash, redirect, render_template, request, send_file, url_for
 
 from app.models import Project
@@ -21,6 +24,11 @@ from app.services.supplier_catalogue import (
     issue_supplier_package_from_review,
     package_readiness_label,
     upsert_supplier_requirement_map,
+)
+from app.services.brayman_supplier_estimate import (
+    job_supplier_estimate_request,
+    lines_from_material_requirements,
+    render_supplier_estimate_request,
 )
 from app.services.supplier_package_pdf import generate_supplier_package_pdf
 
@@ -217,6 +225,40 @@ def view_package(project_id, package_id):
         package=package,
         contractor=contractor_identity(org_id),
         readiness=package_readiness_label(package),
+    )
+
+
+@supplier_package_bp.route("/<int:project_id>/supplier-package/estimate-request.pdf")
+def download_estimate_request(project_id):
+    project, org_id = _project(project_id)
+    review = assemble_mapping_review(
+        project_id=project.id,
+        supplier_id=request.args.get("supplier_id", type=int),
+        supplier_location_id=request.args.get("supplier_location_id", type=int),
+        organization_id=org_id,
+    )
+    account = review["account"]
+    if account is None:
+        flash("Choose a supplier before the estimate request.", "error")
+        return redirect(url_for("supplier_package.mapping_review", project_id=project.id))
+    if not review["requirements"]:
+        flash("Add a material requirement before the estimate request.", "error")
+        return redirect(url_for("supplier_package.mapping_review", project_id=project.id))
+    issued_on = datetime.now().strftime("%d %B %Y").lstrip("0")
+    document = job_supplier_estimate_request(
+        project_name=project.name,
+        project_address=project.address or "",
+        supplier_name=account.supplier.legal_name,
+        issued_on=issued_on,
+        lines=lines_from_material_requirements(review["requirements"]),
+    )
+    payload = render_supplier_estimate_request(**document)
+    filename = f"supplier-estimate-request-{project.id}.pdf"
+    return send_file(
+        BytesIO(payload),
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=filename,
     )
 
 

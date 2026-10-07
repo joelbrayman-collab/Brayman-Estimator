@@ -625,6 +625,49 @@ def test_tenant_http_isolation(app, client):
     assert response.status_code == 404
 
 
+def test_supplier_estimate_request_is_filled_by_the_job(app, client):
+    from io import BytesIO
+
+    from pypdf import PdfReader
+
+    from app.services.supplier_catalogue import record_price_evidence
+
+    project = _project(name="Harbour Shed")
+    project.address = "9 Mill Street, Merrickville, ON"
+    db.session.commit()
+    graph = _graph(supplier_code="YARD-EAST", sku="DO-NOT-PRINT")
+    _mapped_requirement(project, graph, qty="10")
+    record_price_evidence(
+        supplier_product_id=graph["product"].id,
+        amount=Decimal("77.77"),
+        currency="CAD",
+        unit="EA",
+        price_class="PUBLIC_LIST_PRICE",
+        actor_display_name="office-reviewer",
+        demo_synthetic=True,
+    )
+    response = client.get(
+        f"/projects/{project.id}/supplier-package/estimate-request.pdf"
+        f"?supplier_id={graph['supplier'].id}"
+        f"&supplier_location_id={graph['location'].id}"
+    )
+    assert response.status_code == 200
+    assert response.mimetype == "application/pdf"
+    reader = PdfReader(BytesIO(response.data))
+    text = "\n".join(page.extract_text() or "" for page in reader.pages)
+    assert "Harbour Shed" in text
+    assert "9 Mill Street, Merrickville, ON" in text
+    assert "YARD-EAST Lumber" in text
+    assert "Linda Bushel" not in text
+    assert "DO-NOT-PRINT" not in text
+    assert "77.77" not in text
+    fields = reader.get_fields()
+    assert fields["unit_price_01"].get("/V") in (None, "")
+    assert fields["sku_01"].get("/V") in (None, "")
+    page = client.get(f"/projects/{project.id}/supplier-package")
+    assert "Supplier Estimate Request" in page.get_data(as_text=True)
+
+
 def test_office_ui_mapping_review(app, client):
     project = _project()
     graph = _graph()

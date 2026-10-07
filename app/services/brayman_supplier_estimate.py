@@ -7,6 +7,7 @@ and the navy footer. The project and the rows change. The page does not.
 
 from __future__ import annotations
 
+from decimal import Decimal
 from io import BytesIO
 from pathlib import Path
 from typing import Mapping, Optional, Sequence
@@ -38,6 +39,8 @@ def render_supplier_estimate_request(
     issued_on: str,
     intro: Sequence[str],
     rows: Sequence[Mapping],
+    sku_label: str = "BMR Code / SKU",
+    contact_label: str = "BMR contact",
 ) -> bytes:
     """Draw one supplier estimate request. Prices and SKUs stay empty."""
     from reportlab.platypus import Paragraph
@@ -67,7 +70,7 @@ def render_supplier_estimate_request(
             ("qty", "Qty"),
             ("unit", "Unit Price"),
             ("line", "Line Price"),
-            ("sku", "BMR Code / SKU"),
+            ("sku", sku_label),
             ("note", "Note"),
         )
         for key, label in labels:
@@ -144,7 +147,7 @@ def render_supplier_estimate_request(
     cursor -= 14
     form.setFillColor(PRIMARY)
     form.setFont("Times-Roman", 9)
-    form.drawString(left, cursor - 12, "BMR contact")
+    form.drawString(left, cursor - 12, contact_label)
     form.drawString(left + 3.5 * inch, cursor - 12, "Date")
     _closing_field(form, "bmr_contact", "BMR contact", left + 1.05 * inch, cursor - 16, 2.2 * inch)
     _closing_field(form, "response_date", "Date", left + 3.95 * inch, cursor - 16, 1.5 * inch)
@@ -155,6 +158,78 @@ def render_supplier_estimate_request(
     _closing_field(form, "general_notes", "General notes", left + 1.05 * inch, cursor - 16, content_w - 1.05 * inch, height=16)
     form.save()
     return buffer.getvalue()
+
+
+def _plain_quantity(value) -> str:
+    number = Decimal(str(value))
+    text = format(number, "f")
+    if "." in text:
+        text = text.rstrip("0").rstrip(".")
+    return text
+
+
+def lines_from_material_requirements(requirements: Sequence) -> tuple:
+    """Supplier lines from stored project requirements. Prices and SKUs stay off the sheet."""
+    lines = []
+    for requirement in requirements:
+        material = requirement.canonical_material
+        item = f"{material.code} — {material.display_name}. Unit {requirement.canonical_uom}."
+        note = str(requirement.note or "").strip()
+        if note:
+            item = f"{item} {note}"
+        lines.append(
+            {
+                "item": item,
+                "qty": _plain_quantity(requirement.quantity),
+                "note": "",
+            }
+        )
+    return tuple(lines)
+
+
+def job_supplier_estimate_request(
+    *,
+    project_name: str,
+    project_address: str,
+    supplier_name: str,
+    issued_on: str,
+    lines: Sequence[Mapping],
+) -> dict:
+    """One job fills the approved page. The page does not keep another job's address."""
+    supplier = str(supplier_name or "").strip()
+    rows = []
+    for line in lines:
+        qty = str(line.get("qty") or "").strip()
+        note = str(line.get("note") or "").strip()
+        if not qty:
+            qty = "TBD"
+            if "BRAYMAN TO CONFIRM QTY" not in note:
+                note = "BRAYMAN TO CONFIRM QTY" if not note else f"{note}. BRAYMAN TO CONFIRM QTY"
+        rows.append(
+            {
+                "number": len(rows) + 1,
+                "item": str(line["item"]).strip(),
+                "qty": qty,
+                "note": note,
+            }
+        )
+    return {
+        "project_name": str(project_name or "").strip(),
+        "project_address": str(project_address or "").strip(),
+        "supplier_name": supplier,
+        "issued_on": issued_on,
+        "sku_label": "Code / SKU",
+        "contact_label": "Supplier contact",
+        "intro": (
+            "Please provide your current contractor pricing for the materials listed below. "
+            "Where a product or specification is not identified, please confirm the appropriate "
+            f"{supplier} product. Quantities shown are based on the project information "
+            "currently available to Brayman Construction.",
+            "Please return this completed estimate request to Brayman Construction. "
+            "A blank is not zero. No price on this sheet was filled in.",
+        ),
+        "rows": tuple(rows),
+    }
 
 
 def bushel_supplier_estimate_request(readiness: Mapping, model: Optional[Mapping] = None) -> dict:
@@ -341,7 +416,11 @@ def _chrome(form, page_w, page_h, page_no, project_name, project_address, suppli
     form.drawString(
         0.45 * inch,
         0.16 * inch,
-        f"{project_name}  ·  {project_address}  ·  {issued_on}",
+        "  ·  ".join(
+            part
+            for part in (project_name, project_address, issued_on)
+            if str(part or "").strip()
+        ),
     )
     form.drawRightString(page_w - 0.45 * inch, 0.16 * inch, f"Page {page_no}")
 

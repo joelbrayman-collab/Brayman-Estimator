@@ -18,6 +18,7 @@ from app.services.brayman_supplier_estimate import (
     OFFICE,
     TITLE,
     bushel_supplier_estimate_request,
+    job_supplier_estimate_request,
     render_supplier_estimate_request,
 )
 from tests.fixtures.construction_model.bushel_proving_fixture import (
@@ -123,3 +124,25 @@ def test_the_page_can_carry_another_project():
     assert "Sample Project" in text
     assert "Linda Bushel" not in text
     assert TITLE in text
+
+
+def test_a_job_fills_the_footer_and_leaves_price_blank():
+    document = job_supplier_estimate_request(
+        project_name="Harbour Shed",
+        project_address="9 Mill Street, Merrickville, ON",
+        supplier_name="East Yard Lumber",
+        issued_on="7 October 2026",
+        lines=({"item": "CAL-LUM-2X6-12 — 2x6 board. Unit EA.", "qty": "10", "note": ""},),
+    )
+    payload = render_supplier_estimate_request(**document)
+    reader = PdfReader(BytesIO(payload))
+    text = "\n".join(page.extract_text() or "" for page in reader.pages)
+    assert "Harbour Shed" in text
+    assert "9 Mill Street, Merrickville, ON" in text
+    assert "East Yard Lumber" in text
+    assert "Linda Bushel" not in text
+    assert "12 D'Arcy" not in text
+    assert "Supplier contact" in text
+    fields = reader.get_fields()
+    assert fields["unit_price_01"].get("/V") in (None, "")
+    assert fields["sku_01"].get("/V") in (None, "")

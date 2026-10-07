@@ -43,6 +43,24 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-07 — Supplier estimate request in the supplier review
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI SUPPLIER ESTIMATE REQUEST — CLOSE CURRENT WORKFLOW SLICE 7 OCT 2026 |
+| Objective | Use the approved Brayman page from the existing supplier review. |
+| Business decision | The job fills the sheet. Bushel's address stays on the Bushel job only. |
+| Architectural decision | Download from `/projects/<id>/supplier-package`. No new record, no migration, no copied SKU or price. |
+| Prompt template used | Joel's close-current-workflow-slice prompt, 7 Oct 2026. |
+| Approved Cursor prompt summary | Close the download slice. Run the full suite. Verify in a scratch database. One commit. Do not deploy. Do not start the supplier-response workflow. |
+| Files expected to change | The page call, the supplier review route and screen, the proof, and the authorities. |
+| Files prohibited from changing | The rejected portrait PDF, Geleynse case files, Bushel production files, the StyroRail price test, and the cost engine. |
+| Result | The review downloads the sheet for the open job. Official V1 remains **65% / 4 of 11**. |
+| Tests | `./venv/bin/python -m pytest -q` — 2194 passed, 11 skipped, 6899 warnings, 1144.20s, exit 0. The count includes the untracked StyroRail price test, which stays out of this commit. Scratch-database browser check passed for Linda Bushel and Harbour Shed. |
+| Deployment | Not performed. |
+
 ### 2026-10-07 — Supplier estimate request on the approved Brayman page
 
 | Field | Content |

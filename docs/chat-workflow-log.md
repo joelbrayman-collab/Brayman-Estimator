@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-10-06 |
+| Updated | 2026-10-07 |
 
 ## Purpose
 
@@ -42,6 +42,24 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 ---
 
 ## Entries
+
+### 2026-10-07 — Bushel job-specific supplier pricing request
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 — BUSHEL JOB-SPECIFIC SUPPLIER PRICING REQUEST 7 OCT 2026 |
+| Objective | Build the sendable Bushel supplier pricing request from the best-available readiness read. |
+| Business decision | No-guessing does not mean no progress. Darcy receives what is known and what is still TBD. Brayman answers project facts. BMR answers product, SKU, availability, and contractor price. |
+| Architectural decision | A fillable PDF is the manual transport. It does not write a MaterialRequirement, an estimate line, a costing snapshot, a SKU, or a price. A later BMR API replaces the PDF only. |
+| Prompt template used | Joel's Bushel job-specific supplier pricing request prompt, 7 Oct 2026. |
+| Approved Cursor prompt summary | Use the Bushel readiness result. Do not invent quantities, stock, SKUs, or prices. Separate contractor questions from supplier fields. One commit if the PDF passes. Do not deploy. |
+| Files expected to change | The request builder, the fillable PDF, its proof, the generated PDF, and existing authorities. |
+| Files prohibited from changing | Bushel production files, Geleynse, review dumps, the StyroRail cost-library test, ICF, Contract V1, and the cost engine. |
+| Result | **IMPLEMENTED / TESTED.** Official V1 remains **65% / 4 of 11**. |
+| Tests | Focused request **3 passed**. Full suite **2189 passed**, 11 skipped, 6893 warnings, 1092.89s, exit 0. That run includes the untracked StyroRail cost-library test, which stays out of the commit. |
+| Deployment | Not performed. |
 
 ### 2026-10-06 — Bushel governed member fact completion
 

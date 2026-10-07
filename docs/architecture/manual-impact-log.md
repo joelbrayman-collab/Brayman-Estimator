@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Bushel supplier pricing request (2026-10-07)
+
+| Field | Content |
+|-------|---------|
+| Slice | Checklist step 8. Manual supplier pricing request for Linda Bushel. |
+| Product status at capture | **IMPLEMENTED / TESTED**. Not deployed. No migration. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | A fillable PDF Darcy can complete for BMR Winchester. It shows what is known, what is TBD, what BMR must price, and what Brayman must still confirm. |
+| 2. When would the contractor use it? | Before a supplier price exists, when the project is still incomplete. |
+| 3. What workflow will the final Manual need to teach? | Send the PDF. Darcy fills product, SKU, availability, and contractor price. Brayman answers the separate project questions. Brayman later approves cost. |
+| 4. What contractor-facing terms must be used? | Known count. Purchase quantity. TBD. Public / list price. Contractor price. Brayman information required. |
+| 5. What screenshots / Print examples will eventually be needed? | The five-page Bushel request, after the wording is stable. |
+| 6. What warnings / validation distinctions need explanation? | A member count is not a purchase quantity. A public price is not the contractor price. Darcy does not answer Brayman's questions and does not approve Brayman's cost. |
+| 7. Desktop / iPhone / Print relevance | Print and email PDF. No new screen. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Bushel governed member fact completion (2026-10-06)
 
 | Field | Content |

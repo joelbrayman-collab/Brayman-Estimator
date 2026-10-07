@@ -237,6 +237,8 @@ A project-scoped **MaterialRequirement** is the likely later record that can ser
 
 **Subsequent status (2026-10-06, governed member facts):** **BUSHEL GOVERNED MEMBER FACT COMPLETION IMPLEMENTED / TESTED.** The 1 Oct tread name "Two 5/4 x 6 boards per tread" is now canonical identity `CAL-LUM-5-4X6` in `CANONICAL_MATERIAL_SEED`. It is generic dimensional lumber, supplier-neutral, with nominal size 5/4 x 6 and no stock length, species, treatment, manufacturer, SKU, or price. Joist, stringer, post, beam, and decking members still have no material, member size, or supplied length. The 29 Sep nominal sizes were not added. The 37 in Veranda rail kit stays outside this catalogue because the categories remain dimensional lumber and sheet goods. **KNOWN PROJECT FACT ≠ COMPLETE PURCHASE REQUIREMENT.** **NO-GUESSING ≠ NO-PROGRESS.** No `MaterialRequirement` row was written. Official V1 remains **65% / 4 of 11**.
 
+**Subsequent status (2026-10-07):** **JOB-SPECIFIC SUPPLIER PRICING REQUEST IMPLEMENTED / TESTED.** The Bushel fillable PDF reads the best-available set, including `CAL-LUM-5-4X6`, and does not write a `MaterialRequirement`. Official V1 remains **65% / 4 of 11**.
+
 ---
 
 ## 12. Phase D sequencing

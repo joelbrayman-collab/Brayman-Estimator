@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Supplier estimate request on the Brayman page (2026-10-07)
+
+| Field | Content |
+|-------|---------|
+| Slice | Checklist step 8. Linda Bushel supplier estimate request. |
+| Product status at capture | **IMPLEMENTED / TESTED**. Not deployed. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | A one-page Brayman Construction sheet Darcy can price. It matches the approved cost-request documents. |
+| 2. When would the contractor use it? | When asking BMR Winchester for a price before the purchase quantities are complete. |
+| 3. What workflow will the final Manual need to teach? | Send the sheet. Darcy fills unit price, line price, BMR code, and a note. Brayman still confirms any quantity marked TBD. |
+| 4. What contractor-facing terms must be used? | Supplier estimate request. Qty. Unit price. Line price. BMR code. TBD. A blank is not zero. |
+| 5. What screenshots / Print examples will eventually be needed? | This sheet beside the approved Geleynse cost request. |
+| 6. What warnings / validation distinctions need explanation? | TBD is not a purchase quantity and not zero. No price or SKU is filled in by Brayman. |
+| 7. Desktop / iPhone / Print relevance | Print and email. No new screen. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Bushel supplier pricing request (2026-10-07)
 
 | Field | Content |

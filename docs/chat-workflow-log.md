@@ -43,6 +43,24 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-07 — Supplier estimate request on the approved Brayman page
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI SUPPLIER ESTIMATE REQUEST — APPROVED BRAYMAN CONSTRUCTION DOCUMENT STANDARD 7 OCT 2026 |
+| Objective | Draw the Linda Bushel supplier estimate request on the approved Brayman cost-request page. |
+| Business decision | The previous supplier-request PDF is visually rejected. The Geleynse cost-request sheet is the visual master. The supplier sees the materials, the known facts, and blank price and SKU fields. |
+| Architectural decision | A new reusable page. It is not a patch of the rejected PDF. It does not expose internal cost-engine terms. A blank quantity is not zero. |
+| Prompt template used | Joel's approved Brayman Construction document standard prompt, 7 Oct 2026. |
+| Approved Cursor prompt summary | Start the template again from the Geleynse cost-request PDF. Do not invent quantities, SKUs, or prices. Keep the supplier sheet clean. Commit and push if it passes. Do not deploy. |
+| Files expected to change | The new page template, its proof, the generated PDF, and existing authorities. |
+| Files prohibited from changing | Geleynse case files, Bushel production files, the rejected PDF renderer, ICF, and the cost engine. |
+| Result | The sheet is one landscape page in the approved Brayman form. Official V1 remains **65% / 4 of 11**. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_brayman_supplier_estimate.py` — 3 passed. Full suite `./venv/bin/python -m pytest -q` — 2192 passed, 11 skipped, 6893 warnings, exit 0. The full count includes the untracked StyroRail price test, which stays out of this commit. |
+| Deployment | Not performed. |
+
 ### 2026-10-07 — Bushel job-specific supplier pricing request
 
 | Field | Content |

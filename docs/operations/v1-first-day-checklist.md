@@ -10,14 +10,14 @@ Use the Mac office Joel has started. Open http://127.0.0.1:5000 and sign in. Do 
 4. Documents. Upload the plan PDF you already have. The permit report is not a permit.
 5. New estimate. Add the lines you know. Do not invent the rest.
 6. On an approved take-off package, Map to estimate, then Insert into estimate.
-7. Costing review. Clear any block. Type your own name. Approve all costing.
+7. Scope Delivery Review. Confirm material and labour. Then costing review. Type your own name. Approve all costing.
 8. Apply org pricing policy.
-9. Create Proposal. Download PDF. Title is CONSTRUCTION ESTIMATE. Read it before it leaves the office.
-10. Contract. If it says Production contract unavailable, stop. Family 05 is not the contract.
-11. Supplier Estimate Request only when the material list and the supplier are selected. Prices stay blank. The supplier does not approve Brayman's cost.
+9. Create Proposal. Download PDF. Title is CONSTRUCTION ESTIMATE. Read it before it leaves the office. Acceptance is Update status, then Accepted.
+10. Contract. If it says Production contract unavailable, stop. A complete address can still show that block. Do not bypass it. Family 05 is not the contract.
+11. Supplier Estimate Request only when the material list and the supplier are selected. This Mac supplier account is labelled DEMO / SYNTHETIC. Prices stay blank.
 12. Field. Confirm the project, then Capture. Check Field Observations.
-13. Money. Enter an actual cost only when you know the amount.
+13. Lock the estimate version. Then Money shows the committed baseline. Enter an actual cost only when you know the amount.
 
 If something looks wrong, stop and call Joel Brayman. Do not delete the project. Do not rename the office file.
 
-Joel runs the backup sheet before this project is typed in.
+Joel made the 7 October 2026 backup. He runs the backup sheet again after a day a real project changed.

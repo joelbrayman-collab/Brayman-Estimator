@@ -21,7 +21,7 @@ sqlite3 instance/brayman_estimator.db ".backup 'instance/backups/brayman-office-
 sqlite3 instance/backups/brayman-office-YYYY-MM-DD-HHMM.db "PRAGMA integrity_check; SELECT version_num FROM alembic_version;"
 ```
 
-5. The check must print `ok`, then one revision line. On 7 October 2026 the live file's revision was `h8c9d0e1f2a3`.
+5. The check must print `ok`, then one revision line. The backup made on 7 October 2026 before the office structure update is revision `h8c9d0e1f2a3`. After that update the live office revision is `q7d8e9f0a1b2`. A backup keeps the revision of the file that was copied.
 6. Copy that same backup file to a second place that is not the live office file and not only `instance/backups`. Write that place in the backup log the first time you use it.
 7. Add one line to `docs/operations/v1-backup-log.md`: date, file name, `ok`, the revision line, the second-copy place, and your name.
 

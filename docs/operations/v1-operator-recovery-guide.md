@@ -27,11 +27,12 @@ The program in the development folder and the program on the website are not the
 Office identity checked 7 October 2026:
 
 - Mac office file: `instance/brayman_estimator.db`
-- That file is intact. Its office revision is `h8c9d0e1f2a3`. Size 3,485,696 bytes. Last changed 2026-10-06 10:20:23.
+- That file is intact. Its office revision is `q7d8e9f0a1b2`. Size 3,645,440 bytes. Last changed 2026-10-07 11:06:09.
+- The backup taken immediately before that structure update is revision `h8c9d0e1f2a3`. It is recorded in the backup log.
 - This is the office for the first real project.
 - Website: `https://calibryatai.onrender.com`. Last recorded live program `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`, deploy `dep-dav9uk97lnhs73bj35pg`. Auto-deploy is off.
 - The website is a separate copy. Password sign-in there is not settled. A temporary bypass was last left on. Do not enter a real job there.
-- Development folder `29e9bf27e88e407422aacd2ffbf22a48866d7163` is not what the website is running.
+- Development folder `0db938d6bdbd9d5d8a54b60900f26b088c8ee3b2` is not what the website is running.
 
 Some older practice jobs are already in the Mac office. Do not delete them. Do not use one as the real customer job. Ask Joel which project is the real one.
 
@@ -84,11 +85,12 @@ An our-crew ICF wall can use the existing wall-form path. A line is added only a
 2. Open the current version.
 3. Add a section, then add the lines you know. Leave unknown lines off the estimate.
 4. Read Costing review.
-5. If a line is blocked, fix that line or take it off. Do not approve over a block.
-6. The Human actor box may show Joel Brayman. If you are the person approving, replace that with your own name.
-7. Choose Approve all costing.
-8. Choose Apply org pricing policy. That button stays off until costing is approved.
-9. If the screen says working costs changed, approve costing again before you apply pricing again.
+5. Open Scope Delivery Review. Confirm who provides the material and who does the work. Approve all costing requires that confirmation. An unconfirmed line blocks approval. Confirming the review does not approve the cost.
+6. If a line is still blocked, fix that line or take it off. Do not approve over a block.
+7. The Human actor box may show Joel Brayman. If you are the person approving, replace that with your own name.
+8. Choose Approve all costing.
+9. Choose Apply org pricing policy. That button stays off until costing is approved.
+10. If the screen says working costs changed, approve costing again before you apply pricing again.
 
 Approve all costing approves the cost. It does not approve the customer price by itself, and it does not approve a supplier's price.
 
@@ -107,6 +109,8 @@ The path is:
 
 Unit price, line price, and the supplier code stay blank on the way out. A blank is not zero. Where the purchase quantity is not known, the quantity stays TBD. Do not invent a quantity, a code, or a price.
 
+The supplier account on this Mac office is labelled DEMO / SYNTHETIC. That label stays on the request. It does not fill in a price.
+
 The supplier does not approve Brayman's cost. Brayman decides the cost after the supplier has answered.
 
 The Linda Bushel sheet for BMR Winchester is a real-world proving exercise. It is not a reason to change this office. Darcy's reply comes back as a document. The office does not read that reply in by itself.
@@ -123,6 +127,8 @@ Generate Supplier Package and Issue Supplier Package are a different record. The
 
 The customer document title is CONSTRUCTION ESTIMATE. It is the price you are showing the customer. It is not the construction contract. Do not put internal cost or margin on it.
 
+When the customer has committed, open that proposal. Set Update status to Accepted. That is the acceptance record. It is not the construction contract.
+
 Warranty words typed into a proposal are not an approved Ontario warranty.
 
 ## 9. Contract
@@ -132,6 +138,8 @@ This is the rule.
 Calibrayt does not generate an executable contract when an approved jurisdictional legal package is unavailable.
 
 On the project, Contract may say Production contract unavailable. The usual line is: no active counsel-approved contract package is available for this jurisdiction. It also says contract generation is blocked, no production contract has been generated, a commercial presentation draft is not used as a substitute contract, and this screen does not override the legal-content gate.
+
+A complete street address can still show this block. The office currently knows City of Ottawa. An address outside that municipality may say the location is not complete, or that no approved package is available. The block is intentional. Do not bypass it.
 
 When you see that:
 
@@ -169,6 +177,8 @@ On the project, Money is Estimated versus actual.
 
 It compares the committed estimate with actual direct costs entered in the office. It is not a profit figure.
 
+Money shows the committed baseline after the estimate version is locked. On the estimate version, choose Lock. Accepting the proposal does not lock the version by itself. Until the version is locked, do not type a number to force the comparison.
+
 1. Read the What, Why, and Next lines already on that section.
 2. If it says the comparison cannot be made yet, do not type a number to force one.
 3. When you know a labour, material, subcontract, or other direct cost, enter that actual.
@@ -178,7 +188,7 @@ It compares the committed estimate with actual direct costs entered in the offic
 
 Ben does not back up the office and Ben does not restore it.
 
-Before the first real project is typed in, Joel follows the printed backup sheet: `v1-backup-restore-checklist.md`. He does it again at the end of any day a real project changed, and again before any change to the office file's structure.
+Joel follows the printed backup sheet: `v1-backup-restore-checklist.md`. The backup made on 7 October 2026, before the office structure update, is in the backup log. He does it again at the end of any day a real project changed, and again before any change to the office file's structure.
 
 There is no automatic backup service. The procedure is a controlled copy. Joel makes it. The copy is checked. A second copy is kept outside the live file. The backup log records the file name.
 
@@ -191,7 +201,8 @@ If the office will not open, or the project you just saved is gone:
 
 ## 13. Known limits
 
-- The contract stays blocked until counsel approves the Ontario package. Family 05 is not that package.
+- The contract block is intentional. Do not bypass it. It stays until counsel approves the Ontario package. A complete address outside City of Ottawa can still show the block. Family 05 is not that package.
+- The Mac supplier account is labelled DEMO / SYNTHETIC.
 - If a field session ends before the note appears under Field Observations, the note may not have been saved. Sign in, look, and enter it again if it is missing. Do not delete other notes to fix it.
 - Calibrayt does not produce professional construction drawings.
 - The office will not calculate a deck, a roof, siding, drywall, or flooring for you. Enter the lines you know. An our-crew ICF wall is the path that already confirms a quantity onto an estimate line.

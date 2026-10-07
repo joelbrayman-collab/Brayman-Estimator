@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-07 — Mac office current and recoverable
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 ACCELERATED COMPLETION — MAKE MAC OFFICE CURRENT AND RECOVERABLE 7 OCT 2026 |
+| Objective | Back up the Mac office, apply the existing revisions, and correct the operating pack. |
+| Business decision | The Mac office is the office for a real project. The first verified backup comes before the structure update. |
+| Architectural decision | No new product code, no new migration, no deploy. Existing revisions only. |
+| Prompt template used | Joel's make-Mac-office-current prompt, 7 Oct 2026. |
+| Approved Cursor prompt summary | Backup first. Apply h8 through q7. Verify the office. Correct the operating pack. Commit the documentation. Do not deploy. |
+| Files expected to change | `docs/operations/` and the continuity notes that record the office revision. |
+| Files prohibited from changing | Product code, migration files, the hosted copy, and unrelated case files. |
+| Result | Backup integrity `ok` at `h8c9d0e1f2a3`. Live Mac office revision `q7d8e9f0a1b2`, integrity `ok`. Organizations 3, projects 50, users 14 remain. Official V1 remains **65% / 4 of 11**. |
+| Tests | `./venv/bin/python -m pytest tests/test_v1_operator_pack.py -q` — 2 passed. Office screens opened against the updated Mac file. The full suite was not run. |
+| Project-state-report update | No |
+| Milestone entry update | No |
+| Constitutional issue raised | None |
+| Unresolved issues | Hosted copy was not touched. The first real project is not entered. |
+| Next approved step | Use this Mac office. Do not start V1-11. |
+| Next approved prompt | Not created. |
+| Deployment | Not performed. |
+| Commit hash | This commit. |
+
 ### 2026-10-07 — V1-10 operating pack
 
 | Field | Content |

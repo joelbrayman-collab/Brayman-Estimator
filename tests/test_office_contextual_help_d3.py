@@ -60,6 +60,7 @@ OFFICE_HELP_KEYS = (
     "time_review",
     "change_orders",
     "workflow_documents",
+    "supplier_estimate_request",
 )
 
 

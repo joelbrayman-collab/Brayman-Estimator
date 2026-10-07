@@ -12,6 +12,7 @@
     </div>
 
     <div>
+        <a class="button desk-print" href="{{ url_for('estimates.print_version', id=estimate.id, version_id=version.id) }}">{{ contractor_copy.PRINT_LABEL }}</a>
         <a class="button-link" href="{{ url_for('estimates.view_estimate', id=estimate.id) }}">Back to estimate</a>
     </div>
 </div>

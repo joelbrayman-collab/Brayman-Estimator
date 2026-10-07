@@ -7,6 +7,22 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). Document and drawing identity is [architecture/governed-document-and-drawing-output-standard.md](architecture/governed-document-and-drawing-output-standard.md). Drawing authority is [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). | ICF profile registry, the internal 8-inch form and concrete service, and the estimate workflow are **CLOSED — LIVE VERIFIED**. Live product SHA `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`, deploy `dep-dav9uk97lnhs73bj35pg`. Labour hours are a runtime allowance. Construction Model slices 1 through 11 are **IMPLEMENTED / TESTED**. Slice 12 is the acceptance audit of the complete deck fixture. Slice 13 presents callouts, section and detail references, the drawing index, and construction schedules from that same model. Slice 14 draws connector geometry only when the model supplies it. Slice 15 supplies the remaining generic fixture facts the model can already store, and a stair result can carry a riser count. Slice 16 moves annotations in paper space and does not move the model. Slice 17 stores blocking as fixture members with explicit fastenings. Slice 18 moves bearing notes off the contact. No new generic capability is required before a real project model is read. Slice 19 reads the Bushel proving fixture through that engine. Missing Bushel facts refuse. Slice 20 loads no further governed fact. Visual acceptance for a crew set is not passed. The drawing set is **NOT COMPLETE** and not deployed. |
 | Evidence | Local repository inspection |
 
+## 7 Oct 2026 — Minimum Home, Print, and Supplier Help
+
+Home answers today, what needs attention, and the coming days from schedule and company-attention facts already stored. Print is on the project, the estimate, the proposal PDF, the supplier estimate request, and Field Today. Supplier Estimate Request Help uses the same words as the V1 user manual. The installation guide and the user manual are in `docs/operations/`. Official V1 remains **65% / 4 of 11**. The hosted revision is still unknown. Not deployed. The real iPhone microphone test was not performed. PRE-UAT READY is NO. The Mac office file was not changed.
+
+## 7 Oct 2026 — Finite V1 remaining-work plan
+
+The product-scope reconciliation stands. Ben cannot operate complete V1 from guides that do not exist. Crew logins stay a Joel-assisted workaround. Desktop Print and the wider Home Office stay required and not authorized to build. Official V1 remains **65% / 4 of 11**. No code, no deploy, no UAT, no V1-11.
+
+## 7 Oct 2026 — V1 product-scope audit, hosted access held
+
+The hosted revision stays unknown. SSH was refused and was not retried. Official V1 remains **65% / 4 of 11**. Product scope and hosted deployment stay separate. The Mac office file was not changed. No feature was built.
+
+## 7 Oct 2026 — V1 product-scope audit
+
+The governing register stays **65% / 4 of 11**. Live program is `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`, deploy `dep-db381g9a4tcc738r94bg`. Repository HEAD is `d72a745`. Home Help answered a typed question on the live site. Voice controls are on that page. The approved application is not the live program. The Mac office file was not changed. No feature was built.
+
 ## 7 Oct 2026 — Pre-UAT closure
 
 The costing line uses the Scope Delivery sentence. The raw block code is absent from that page. Approve all costing stays disabled until Scope Delivery Review is confirmed. The Mac office guide now says `flask run --port 5001` and `http://127.0.0.1:5001`. Official V1 remains **65% / 4 of 11**. The Mac office file was not changed.

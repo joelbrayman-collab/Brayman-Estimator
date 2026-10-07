@@ -177,6 +177,59 @@ def _selected_detail(selected: date, items: list[dict], conflicts: list[dict]) -
     }
 
 
+def _home_briefing(today: date, item_rows: list[dict], attention_items: list[dict], can_attention: bool) -> dict:
+    """Project Today, attention, and the next seven days from rows already read."""
+
+    def covering(day: date) -> list[dict]:
+        return [
+            row
+            for row in item_rows
+            if row["scheduled_start"] <= day <= row["scheduled_end"]
+        ]
+
+    def work_line(row: dict) -> dict:
+        return {
+            "label": f"{row['project_name']} — {row['element_name']}",
+            "project_id": row["project_id"],
+        }
+
+    today_work = [work_line(row) for row in covering(today)]
+    coming = []
+    for offset in range(1, 8):
+        day = today + timedelta(days=offset)
+        rows = covering(day)
+        if not rows:
+            continue
+        coming.append(
+            {
+                "label": day.strftime("%A") + " " + str(day.day) + " " + day.strftime("%B"),
+                "work": [work_line(row) for row in rows],
+            }
+        )
+    attention = []
+    if can_attention:
+        for item in attention_items[:8]:
+            project = item.get("project") or {}
+            destination = item.get("destination") or {}
+            attention.append(
+                {
+                    "title": item.get("title") or "",
+                    "project_name": project.get("name") or "",
+                    "href": destination.get("href") or f"/projects/{item.get('project_id')}",
+                }
+            )
+    return {
+        "today_label": today.strftime("%A") + " " + str(today.day) + " " + today.strftime("%B"),
+        "today_work": today_work,
+        "today_empty": not today_work,
+        "attention": attention,
+        "attention_empty": can_attention and not attention,
+        "attention_hidden": not can_attention,
+        "coming": coming,
+        "coming_empty": not coming,
+    }
+
+
 def assemble_home_planning(
     organization_id: str,
     *,
@@ -316,11 +369,12 @@ def assemble_home_planning(
         can_attention = membership_has_access_domain(
             user, organization_id, ACCESS_DOMAIN_COMPANY_MANAGEMENT
         )
+    attention_items = []
     if can_attention:
-        attention_count = len(
-            assemble_company_attention(organization_id, today=today).get("items")
-            or []
+        attention_items = (
+            assemble_company_attention(organization_id, today=today).get("items") or []
         )
+        attention_count = len(attention_items)
 
     pulse = [
         {
@@ -370,8 +424,17 @@ def assemble_home_planning(
         display_name = getattr(user, "display_name", "") or ""
     first_name = display_name.split()[0] if display_name else ""
 
+    current_ids = {project.id for project in projects}
+    briefing = _home_briefing(
+        today,
+        [row for row in item_rows if row["project_id"] in current_ids],
+        attention_items,
+        can_attention,
+    )
+
     return {
         "today": today,
+        "briefing": briefing,
         "year": year,
         "month": month,
         "month_label": month_start.strftime("%B %Y"),

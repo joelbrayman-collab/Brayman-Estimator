@@ -1,6 +1,17 @@
 from decimal import Decimal, InvalidOperation
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from io import BytesIO
+
+from flask import (
+    Blueprint,
+    abort,
+    flash,
+    redirect,
+    render_template,
+    request,
+    send_file,
+    url_for,
+)
 
 from app import db
 from app.models import (
@@ -502,6 +513,37 @@ def internal_cost_breakdown(id, version_id):
     estimate, version = _get_estimate_version(id, version_id)
     view = assemble_internal_cost_breakdown(estimate, version)
     return render_template("estimates/internal_breakdown.html", **view)
+
+
+@estimates_bp.route("/<int:id>/versions/<int:version_id>/print.pdf")
+def print_version(id, version_id):
+    from app.services.desk_print import render_fact_sheet
+
+    estimate, version = _get_estimate_version(id, version_id)
+    lines = []
+    for section in version.sections:
+        for item in section.line_items:
+            lines.append(f"{item.description} — {item.quantity} {item.unit}")
+    payload = render_fact_sheet(
+        version.display_label,
+        [
+            (
+                "Estimate",
+                [
+                    estimate.estimate_number,
+                    estimate.project.name,
+                    estimate.project.client.name,
+                ],
+            ),
+            ("Lines", lines),
+        ],
+    )
+    return send_file(
+        BytesIO(payload),
+        mimetype="application/pdf",
+        as_attachment=False,
+        download_name=f"estimate-{estimate.id}-v{version.id}.pdf",
+    )
 
 
 @estimates_bp.route("/<int:id>/versions/<int:version_id>")

@@ -586,6 +586,8 @@ DO NOT BEGIN SCH-C OR SCH-D FROM THIS RECORD.
 DO NOT RESCORE V1 FROM THIS RECORD.
 ```
 
+Subsequent status, 7 October 2026: the authorized V1 completion prompt allows the minimum print action on screens a contractor would carry. The sheet uses the facts already on that screen. Login, password reset, and simple settings stay without Print. This note does not rescore V1.
+
 ### Product rule
 
 CalibraytAI desktop should provide a clearly visible contractor-facing **PRINT** action on nearly every **information-bearing / operational** surface where the information has practical value away from the screen.

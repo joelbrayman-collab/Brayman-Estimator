@@ -168,12 +168,12 @@ OFFICE_DASHBOARD = HelpTopic(
     key="dashboard",
     title="Home",
     what=(
-        "You are on Home. It shows where current projects, estimates, and "
-        "proposals stand, and it is the place to start a project. "
-        "The month calendar lives on Company Calendar. This is not a report and not a score."
+        "You are on Home. It shows the work scheduled today, what needs "
+        "attention, and the coming days. The month calendar lives on "
+        "Company Calendar. This is not a report and not a score."
     ),
     do=(
-        "Start a project, or open a count. "
+        "Read today, then open a job. "
         "Open Company Calendar when you need the month."
     ),
     next="Open a current Project to plan, price, and run the job from the Project Hub.",
@@ -443,10 +443,30 @@ OFFICE_CHANGE_ORDERS = HelpTopic(
     surface=SURFACE_OFFICE,
 )
 
+OFFICE_SUPPLIER_ESTIMATE_REQUEST = HelpTopic(
+    key="supplier_estimate_request",
+    title="Supplier Estimate Request",
+    what=(
+        "This sheet asks the supplier you selected for a price on this job. "
+        "It is for this project only. It is not a standing price list."
+    ),
+    do=(
+        "Open the project, open Supplier Package, select the supplier, "
+        "and download Supplier Estimate Request. The supplier fills in the "
+        "product and the price. The supplier does not approve Brayman's cost."
+    ),
+    next=(
+        "When the sheet comes back, give it to Joel. "
+        "Joel records the cost Brayman will use."
+    ),
+    surface=SURFACE_OFFICE,
+)
+
 OFFICE_TOPICS: dict[str, HelpTopic] = {
     topic.key: topic
     for topic in (
         OFFICE_DASHBOARD,
+        OFFICE_SUPPLIER_ESTIMATE_REQUEST,
         OFFICE_CLIENTS,
         OFFICE_PROJECTS_CURRENT,
         OFFICE_PROJECTS_CLOSED,

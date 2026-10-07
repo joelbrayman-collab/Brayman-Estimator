@@ -95,8 +95,9 @@ def test_home_renders_orientation_without_the_month_calendar(client, app):
     with app.app_context():
         project = _project()
         element = _element(project, "Framing")
-        _schedule(project, element, TODAY, TODAY + timedelta(days=3))
-    response = client.get(f"/?year={TODAY.year}&month={TODAY.month}&day={TODAY.day}")
+        office_today = date.today()
+        _schedule(project, element, office_today, office_today + timedelta(days=3))
+    response = client.get("/")
     assert response.status_code == 200
     html = response.get_data(as_text=True)
     assert contractor_copy.DASHBOARD_HEADING in html
@@ -106,7 +107,9 @@ def test_home_renders_orientation_without_the_month_calendar(client, app):
     assert "home-month" not in html
     assert "home-week-rail" not in html
     assert contractor_copy.SCHEDULE_UNSCHEDULED not in html
-    assert "Framing" not in html
+    assert "Framing" in html
+    assert contractor_copy.HOME_TODAY in html
+    assert contractor_copy.HOME_COMING in html
     assert "Purchase Orders" not in html
     assert "Job Costing" not in html
     assert "AI Assistant" not in html
@@ -141,14 +144,13 @@ def test_home_does_not_list_schedule_work(client, app):
     with app.app_context():
         live = _project("Home V22 Live Job")
         closed = _project("Home V22 Closed Job")
-        _schedule(live, _element(live, "Slab"), TODAY, TODAY)
-        _schedule(closed, _element(closed, "Roofing"), TODAY, TODAY)
+        office_today = date.today()
+        _schedule(live, _element(live, "Slab"), office_today, office_today)
+        _schedule(closed, _element(closed, "Roofing"), office_today, office_today)
         closed.operating_state = OPERATING_STATE_CLOSED
         db.session.commit()
-    html = client.get(
-        f"/?year={TODAY.year}&month={TODAY.month}&day={TODAY.day}"
-    ).get_data(as_text=True)
-    assert "Home V22 Live Job" not in html
+    html = client.get("/").get_data(as_text=True)
+    assert "Home V22 Live Job" in html
     assert "Home V22 Closed Job" not in html
     assert "home-month" not in html
 

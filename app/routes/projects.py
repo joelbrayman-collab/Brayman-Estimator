@@ -1,3 +1,5 @@
+from io import BytesIO
+
 from flask import Blueprint, abort, flash, redirect, render_template, request, send_file, url_for
 from flask_login import current_user
 
@@ -136,6 +138,33 @@ def view_project(id):
         **hub_operating_template_vars(project, org_id, current_user),
         **hub_punch_list_template_vars(project, org_id, current_user),
         **hub_walkthrough_template_vars(project, org_id, current_user),
+    )
+
+
+@projects_bp.route("/<int:id>/print.pdf")
+def print_project(id):
+    org_id = get_current_organization_id()
+    project = Project.query.filter_by(id=id, organization_id=org_id).first_or_404()
+    from app.services.desk_print import render_fact_sheet
+
+    payload = render_fact_sheet(
+        project.name,
+        [
+            (
+                "Project",
+                [
+                    project.name,
+                    project.project_number or "No project number",
+                    project.client.name,
+                ],
+            )
+        ],
+    )
+    return send_file(
+        BytesIO(payload),
+        mimetype="application/pdf",
+        as_attachment=False,
+        download_name=f"project-{project.id}.pdf",
     )
 
 

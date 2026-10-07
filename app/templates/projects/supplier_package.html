@@ -4,6 +4,8 @@
 {% block page_title %}Supplier Package{% endblock %}
 
 {% block content %}
+{% from "partials/contextual_help.html" import contextual_help with context %}
+{{ contextual_help(help_content.office_topic("supplier_estimate_request")) }}
 <div class="page-heading">
     <div>
         <p class="eyebrow">PRICE</p>
@@ -209,6 +211,7 @@
         <button type="submit" formaction="{{ url_for('supplier_package.issue_package_route', project_id=project.id) }}">Issue Supplier Package</button>
         {% if review.requirements %}
         <a class="button-link" href="{{ url_for('supplier_package.download_estimate_request', project_id=project.id, supplier_id=review.account.supplier_id, supplier_location_id=review.account.supplier_location_id) }}">Supplier Estimate Request</a>
+        <a class="button-link desk-print" href="{{ url_for('supplier_package.download_estimate_request', project_id=project.id, supplier_id=review.account.supplier_id, supplier_location_id=review.account.supplier_location_id) }}">{{ contractor_copy.PRINT_LABEL }}</a>
         {% endif %}
     </div>
 </form>

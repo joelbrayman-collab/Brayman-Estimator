@@ -43,6 +43,64 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-07 — Authorize final V1 functional gaps
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 ACCELERATED COMPLETION — AUTHORIZE FINAL V1 FUNCTIONAL GAPS 7 OCT 2026 |
+| Objective | Build the minimum Home briefing, desktop print, and Supplier Estimate Request Help, and write the installation guide and V1 user manual. |
+| Business decision | Crew logins stay Joel-created. QuickBooks stays a typed sheet. Supplier replies go to Joel. Contract stays fail-closed. Official V1 stays **65% / 4 of 11**. |
+| Implementation result | Home, print, and the supplier Help topic are in the office. Guides are in `docs/operations/`. Hosted database was not read. Not deployed. PRE-UAT READY is NO. |
+| Tests | Focused Home, print, and Help tests passed. The first full suite was 2200 passed, 11 skipped, and 1 failed on the previous Home sentence pin. That pin was updated. The second full suite was 2201 passed, 11 skipped. Scratch browser walk passed. Real iPhone microphone test was not performed. |
+| Next approved step | Add the Render SSH public key, open the service Shell, and read `alembic_version` before any hosted migration or deploy. |
+| Commit hash | Included in the functional-baseline commit. |
+
+### 2026-10-07 — Finite V1 remaining-work plan
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 FINAL SCOPE → FINITE REMAINING WORK PLAN 7 OCT 2026 |
+| Objective | Turn the completed reconciliation into one finite V1 plan. |
+| Business decision | Crew logins are a Joel-assisted workaround. Print and the wider Home Office stay V1-required and not authorized to build. Official V1 stays **65% / 4 of 11**. |
+| Implementation result | Plan only. No code. No deploy. No UAT. No V1-11. |
+| Tests | Not run. |
+| Next approved step | Write the Installation and Initial Setup Guide to the Joel-starts-the-office sequence. |
+| Commit hash | Not committed. |
+
+### 2026-10-07 — V1 product-scope reconciliation continued without hosted access
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 FINAL PRODUCT-SCOPE RECONCILIATION — CONTINUE WITHOUT HOSTED DATABASE ACCESS 7 OCT 2026 |
+| Objective | Finish the product-scope reconciliation without reading or changing the hosted database. |
+| Business decision | Hosted access is an external blocker. It is not a product-scope failure. Official V1 stays **65% / 4 of 11**. |
+| Implementation result | Audit only. SSH was not retried. No deploy. No migration. Mac office file unchanged. |
+| Tests | Not run. |
+| Unresolved issues | Hosted revision unknown. User Guide unwritten. Ontario production contract empty. People & Access UI not implemented. |
+| Next approved step | Supported later access is a Render account SSH public key, then the dashboard Shell. Do not start a real project. Do not start V1-11. |
+| Commit hash | Not committed. |
+
+### 2026-10-07 — V1 product-scope reconciliation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 FINAL PRODUCT-SCOPE RECONCILIATION 7 OCT 2026 |
+| Objective | Reconcile pinned V1 capabilities against the governing records and the live site. |
+| Business decision | Official V1 stays **65% / 4 of 11**. QuickBooks V1 is Option A manual entry. Live API is POST-V1. |
+| Implementation result | Audit only. No product code. Live Home Help answered one typed question. Live SHA `ff9d6791`, deploy `dep-db381g9a4tcc738r94bg`. HEAD `d72a745` is not live. |
+| Tests | Not run. |
+| Unresolved issues | Hosted database still not advanced. User Guide not written. Ontario production contract empty. People & Access UI not implemented. |
+| Next approved step | Hosted database reconciliation remains the unfinished deployment step. Do not start a real project. Do not start V1-11. |
+| Commit hash | Not committed. |
+
 ### 2026-10-07 — Pre-UAT closure
 
 | Field | Content |

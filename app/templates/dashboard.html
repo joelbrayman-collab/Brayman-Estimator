@@ -19,6 +19,51 @@
     <a class="home-start" href="{{ url_for('projects.create_project') }}">{{ contractor_copy.HOME_START_PROJECT }}</a>
 </section>
 
+<section class="home-briefing" aria-label="Today, attention, and coming days">
+    <div>
+        <h2>{{ contractor_copy.HOME_TODAY }}</h2>
+        <p class="muted-copy">{{ view.briefing.today_label }}</p>
+        {% if view.briefing.today_empty %}
+        <p>{{ contractor_copy.HOME_TODAY_EMPTY }}</p>
+        {% else %}
+        <ul>
+            {% for row in view.briefing.today_work %}
+            <li><a href="{{ url_for('projects.view_project', id=row.project_id) }}">{{ row.label }}</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    <div>
+        <h2>{{ contractor_copy.HOME_ATTENTION_HEADING }}</h2>
+        {% if view.briefing.attention_hidden %}
+        <p>{{ contractor_copy.HOME_ATTENTION_OFFICE }}</p>
+        {% elif view.briefing.attention_empty %}
+        <p>{{ contractor_copy.HOME_ATTENTION_EMPTY }}</p>
+        {% else %}
+        <ul>
+            {% for row in view.briefing.attention %}
+            <li><a href="{{ row.href }}">{{ row.project_name }} — {{ row.title }}</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    <div>
+        <h2>{{ contractor_copy.HOME_COMING }}</h2>
+        {% if view.briefing.coming_empty %}
+        <p>{{ contractor_copy.HOME_COMING_EMPTY }}</p>
+        {% else %}
+        {% for day in view.briefing.coming %}
+        <h3>{{ day.label }}</h3>
+        <ul>
+            {% for row in day.work %}
+            <li><a href="{{ url_for('projects.view_project', id=row.project_id) }}">{{ row.label }}</a></li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+        {% endif %}
+    </div>
+</section>
+
 <ul class="home-counts" aria-label="Current work">
     {% for item in view.pulse %}
     <li>

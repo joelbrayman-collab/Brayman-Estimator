@@ -485,6 +485,8 @@ DO NOT RESCORE V1.
 RETURN TO CHATGPT ARCHITECT.
 ```
 
+Subsequent status, 7 October 2026: the authorized V1 completion prompt allows the minimum Home briefing only. Home answers today, what needs attention, and the coming days from facts already stored. Payroll, a cash engine, notification delivery, a readiness engine, and an enterprise dashboard stay out. This note does not rescore V1.
+
 ## 28. Desktop shell law (2026-09-21)
 
 Calibrayt desktop is:

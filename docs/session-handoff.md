@@ -2,6 +2,14 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**7 Oct 2026 — MINIMUM HOME, PRINT, AND SUPPLIER HELP.** Home shows today, attention, and the coming days. Print uses the screen facts on the project, estimate, proposal, supplier request, and Field Today. Supplier Estimate Request Help matches the user manual. Installation guide and user manual are drafted. Official V1 remains **65% / 4 of 11**. Hosted revision unknown. Not deployed. iPhone microphone test not performed. PRE-UAT READY is NO. The Mac office file was not changed. Do not start UAT or V1-11.
+
+**7 Oct 2026 — FINITE V1 REMAINING-WORK PLAN.** Reconciliation stands. Ben does not create crew logins. Print and the wider Home Office stay required and unauthorized. Next work is the setup guide. Official V1 remains **65% / 4 of 11**. No code. No deploy. No UAT. No V1-11.
+
+**7 Oct 2026 — V1 PRODUCT-SCOPE AUDIT, HOSTED ACCESS HELD.** Hosted Alembic revision remains unknown. SSH public-key refusal was not retried. Product scope is separate from that access block. Official V1 remains **65% / 4 of 11**. The Mac office file was not changed.
+
+**7 Oct 2026 — V1 PRODUCT-SCOPE AUDIT.** Official V1 remains **65% / 4 of 11**. Live SHA `ff9d6791`, deploy `dep-db381g9a4tcc738r94bg`. Repository HEAD `d72a745` is not live. Typed Help on Home answered. The Mac office file was not changed. No feature was built. Hosted schema reconciliation remains unfinished.
+
 **7 Oct 2026 — PRE-UAT CLOSURE.** The costing line uses the Scope Delivery sentence. Approve all costing stays disabled until that review is confirmed. The Mac office guide says `flask run --port 5001` and `http://127.0.0.1:5001`. Official V1 remains **65% / 4 of 11**. The Mac office file was not changed.
 
 **7 Oct 2026 — UX/UI AUDIT #2.** The hub, costing, and proposal sentences from the first audit still match the screens. The costing line now uses the same Scope Delivery sentence. Approve all costing stays disabled until that review is confirmed. Scratch supplier request returned a PDF and wrote no package, price, or estimate line. UX/UI baseline is frozen. Official V1 remains **65% / 4 of 11**. Not deployed. The Mac office file was not changed.

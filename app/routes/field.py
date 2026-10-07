@@ -5,6 +5,7 @@ No office sidebar. Same FG-018 session. No PWA.
 """
 
 from datetime import date
+from io import BytesIO
 
 from flask import (
     Blueprint,
@@ -12,6 +13,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    send_file,
     session,
     url_for,
 )
@@ -181,6 +183,38 @@ def today():
         today_natural_date=field_today_natural_date(),
         my_work_heading=field_my_work_heading(current_user.display_name),
         actor_name=current_user.display_name,
+    )
+
+
+@field_bp.route("/today/print.pdf")
+def print_today():
+    from app.services.desk_print import render_fact_sheet
+
+    organization = _organization()
+    schedule = assemble_field_schedule(
+        organization.id,
+        worker_user_id=current_user.id,
+        window_start=date.today(),
+        window_end=date.today(),
+        scope=FIELD_SCOPE_WORKER,
+        today=date.today(),
+    )
+    lines = []
+    for group in schedule.get("groups") or []:
+        for card in group.get("cards") or []:
+            work = card.get("element_name") or ""
+            if card.get("activity_name"):
+                work = f"{work} — {card['activity_name']}"
+            lines.append(f"{group.get('project_label') or group.get('project_name')} — {work}")
+    payload = render_fact_sheet(
+        field_today_heading(),
+        [("Today", lines)],
+    )
+    return send_file(
+        BytesIO(payload),
+        mimetype="application/pdf",
+        as_attachment=False,
+        download_name="field-today.pdf",
     )
 
 

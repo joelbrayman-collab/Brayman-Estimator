@@ -1746,6 +1746,44 @@ body.login-page {
     font-size: 1.15rem;
 }
 
+.home-briefing {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+    margin: 8px 0 22px;
+}
+
+.home-briefing h2 {
+    margin: 0 0 6px;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.home-briefing h3 {
+    margin: 12px 0 4px;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.home-briefing ul {
+    margin: 0;
+    padding-left: 1.1rem;
+}
+
+.home-briefing a {
+    color: inherit;
+}
+
+.desk-print {
+    letter-spacing: 0.04em;
+}
+
+@media (max-width: 800px) {
+    .home-briefing {
+        grid-template-columns: 1fr;
+    }
+}
+
 .home-period-heading {
     margin: 8px 0 14px;
     font-size: 1.35rem;

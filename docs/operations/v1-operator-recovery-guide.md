@@ -145,7 +145,7 @@ The package is not marked counsel-approved. A later counsel-reviewed package can
 
 The contract stays blocked when no active package is in force, when the project location cannot be resolved, or when required contract data is missing. That screen says Production contract unavailable. A complete street address outside the known municipality can still show that block. Do not bypass it.
 
-Family 05 is the presentation page around the package text. It is not a different contract and it is not a signing step.
+The generated file is the Brayman V1 interim contract. Family 05 draft labels are not on that file. Generating it does not sign it.
 
 When you see that block:
 

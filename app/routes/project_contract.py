@@ -20,7 +20,10 @@ from app.services.contract_generation import (
     generate_project_contract,
     retrieve_generated_contract_docx,
 )
-from app.services.family_05_master import governed_presentation_master
+from app.services.brayman_v1_contract_presentation import (
+    BRAYMAN_V1_PRESENTATION_MEDIA_TYPE,
+    brayman_v1_presentation_master,
+)
 from app.services.legal_content import select_legal_content_package_for_project
 from app.services.organizations import get_current_organization_id
 
@@ -115,7 +118,7 @@ def generate_contract(id):
         project.id,
         version_id or 0,
         organization_id=org_id,
-        presentation_master=governed_presentation_master(),
+        presentation_master=brayman_v1_presentation_master(),
         actor_identifier=actor,
         actor_kind="HUMAN",
         proposal_id=proposal_id,
@@ -148,10 +151,16 @@ def download_generated_contract(id, contract_id):
     if not data:
         flash("The generated contract file is not available.", "error")
         return redirect(url_for("projects.review_contract", id=project.id))
+    media_type = contract.artifact_media_type or ""
+    pdf = media_type == BRAYMAN_V1_PRESENTATION_MEDIA_TYPE
     return send_file(
         BytesIO(data),
-        mimetype=contract.artifact_media_type
+        mimetype=media_type
         or "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        as_attachment=True,
-        download_name=f"{contract.contract_number}.docx",
+        as_attachment=not pdf,
+        download_name=(
+            f"{contract.contract_number}.pdf"
+            if pdf
+            else f"{contract.contract_number}.docx"
+        ),
     )

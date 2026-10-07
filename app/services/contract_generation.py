@@ -33,7 +33,16 @@ from app.services.contract_artifact_storage import (
     read_retained_docx,
     store_immutable_docx,
 )
-from app.services.family_05_contract_merge import merge_family_05_from_frozen
+from app.services.brayman_v1_contract_presentation import (
+    BRAYMAN_V1_PRESENTATION_MEDIA_TYPE,
+    BRAYMAN_V1_PRESENTATION_SHA256,
+    BRAYMAN_V1_PRESENTATION_STATUS,
+    render_brayman_v1_contract_pdf,
+)
+from app.services.family_05_contract_merge import (
+    Family05MergeResult,
+    merge_family_05_from_frozen,
+)
 from app.services.family_05_master import (
     FAMILY_05_MEDIA_TYPE,
 )
@@ -132,12 +141,15 @@ def _normalize_master(raw) -> Optional[dict]:
         return None
     if len(sha) != SHA256_HEX_LENGTH or any(ch not in "0123456789abcdef" for ch in sha):
         return None
+    legal_status = PRESENTATION_LEGAL_STATUS
+    if sha == BRAYMAN_V1_PRESENTATION_SHA256:
+        legal_status = BRAYMAN_V1_PRESENTATION_STATUS
     return {
         "family_code": family,
         "version": version,
         "filename": filename,
         "sha256": sha,
-        "legal_status": PRESENTATION_LEGAL_STATUS,
+        "legal_status": legal_status,
     }
 
 
@@ -322,11 +334,36 @@ def generate_project_contract(
     legal_content_sha256 = _sha256_text(_canonical_json(legal_payload))
     commercial_sha256 = _sha256_text(_canonical_json(commercial))
 
-    merged = merge_family_05_from_frozen(
-        presentation_master=master,
-        commercial=commercial,
-        legal_objects=legal_payload,
-    )
+    media_type = FAMILY_05_MEDIA_TYPE
+    if master["sha256"] == BRAYMAN_V1_PRESENTATION_SHA256:
+        provision_version = 1
+        for item in legal_payload:
+            if item["kind"] == "contract_provision":
+                provision_version = item["version_number"]
+                break
+        pdf_bytes = render_brayman_v1_contract_pdf(
+            commercial=commercial,
+            legal_objects=legal_payload,
+            package_code=package.package_code,
+            package_version=provision_version,
+            effective_from=(
+                package.effective_from.isoformat() if package.effective_from else ""
+            ),
+            contract_number=_suggest_contract_number(organization_id),
+        )
+        merged = Family05MergeResult(
+            merged=True,
+            block_code=None,
+            docx_bytes=pdf_bytes,
+            artifact_sha256=None,
+        )
+        media_type = BRAYMAN_V1_PRESENTATION_MEDIA_TYPE
+    else:
+        merged = merge_family_05_from_frozen(
+            presentation_master=master,
+            commercial=commercial,
+            legal_objects=legal_payload,
+        )
     if not merged.merged or not merged.docx_bytes:
         return _block(merged.block_code or BLOCK_MISSING_PRESENTATION_MASTER)
     storage_key, docx_sha256 = store_immutable_docx(
@@ -387,7 +424,7 @@ def generate_project_contract(
         status=STATUS_GENERATED,
         artifact_sha256=artifact_sha256,
         artifact_storage_key=storage_key,
-        artifact_media_type=FAMILY_05_MEDIA_TYPE,
+        artifact_media_type=media_type,
         generated_at=generated_at,
         generated_by_identifier=actor,
         generation_process=GENERATION_PROCESS_SLICE_C,
@@ -433,7 +470,7 @@ def generate_project_contract(
         artifact_text=artifact_text,
         artifact_sha256=artifact_sha256,
         artifact_storage_key=storage_key,
-        artifact_media_type=FAMILY_05_MEDIA_TYPE,
+        artifact_media_type=media_type,
         generated_at=generated_at,
         generated_by_identifier=actor,
         generation_process=GENERATION_PROCESS_SLICE_C,

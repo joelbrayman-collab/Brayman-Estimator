@@ -79,10 +79,14 @@
             {% if item.object_kind == "contract_provision" %}
             <p>Version {{ item.object_version_number }}</p>
             {% endif %}
-            <h3>{{ item.object_kind }}</h3>
+            {% if item.object_kind == "contract_provision" %}
+            <h3>Agreement</h3>
+            {% elif item.object_kind == "warranty" %}
+            <h3>Warranty</h3>
+            {% endif %}
             <pre class="contract-review-body">{{ item.object_body }}</pre>
             {% endfor %}
-            <p><a href="{{ url_for('projects.download_generated_contract', id=project.id, contract_id=contract.id) }}">Download contract</a></p>
+            <p><a href="{{ url_for('projects.download_generated_contract', id=project.id, contract_id=contract.id) }}">Open contract</a></p>
             {% endif %}
         </section>
         {% endfor %}

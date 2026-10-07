@@ -43,6 +43,21 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-07 — Brayman V1 interim contract presentation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 INTERIM ONTARIO CONTRACT — FINAL PRESENTATION CLEANUP 7 OCT 2026 |
+| Objective | Present the active Brayman V1 interim Ontario contract without Family 05 draft labels. |
+| Business decision | The generated file is the Brayman V1 interim contract. It is not a draft page and it is not counsel-approved. Official V1 stays **65% / 4 of 11**. |
+| Architectural decision | The existing contract engine stays authoritative. The office presentation renders a PDF. Family 05 remains the historical merge path. Generation does not sign. |
+| Approved Cursor prompt summary | Clean the presentation of CA-ON-BRAYMAN-V1-INTERIM, keep the approved agreement text, prove replaceability, and do not deploy. |
+| Implementation result | Scratch contract CTR-2026-0001 opened as a three-page PDF. Package, version 1, and effective date 2026-10-07 stay on the snapshot. Signing requests stayed at zero. Not deployed. Mac office unchanged. |
+| Tests | `./venv/bin/python -u -m pytest -q --tb=line` — 2211 passed, 11 skipped, 6950 warnings, 1224.54s, exit 0. That count includes the untracked StyroRail price test, which stays out of this commit. |
+| Next approved step | Read the hosted Alembic revision from the Render dashboard Shell before any deploy. |
+
 ### 2026-10-07 — Brayman V1 interim Ontario contract
 
 | Field | Content |

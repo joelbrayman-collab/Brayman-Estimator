@@ -8,7 +8,7 @@ from decimal import Decimal
 from io import BytesIO
 
 import pytest
-from docx import Document
+from pypdf import PdfReader
 
 from app import create_app, db
 from app.models import Client, Project
@@ -39,7 +39,11 @@ from app.services.contract_generation import (
     retrieve_generated_contract_docx,
 )
 from app.services.estimates import create_estimate
-from app.services.family_05_master import governed_presentation_master
+from app.services.brayman_v1_contract_presentation import (
+    BRAYMAN_V1_PRESENTATION_MEDIA_TYPE,
+    BRAYMAN_V1_PRESENTATION_STATUS,
+    brayman_v1_presentation_master,
+)
 from app.services.jurisdiction import ensure_jurisdiction_seed
 from app.services.legal_content import (
     BLOCK_JURISDICTION_UNRESOLVED,
@@ -170,12 +174,76 @@ def _issued(project, *, number):
     return version, proposal
 
 
+def _pdf_text(data: bytes) -> str:
+    reader = PdfReader(BytesIO(data))
+    return "\n".join(page.extract_text() or "" for page in reader.pages)
+
+
+def _assert_clean_contract(rendered: str):
+    folded = rendered.lower()
+    for phrase in (
+        "draft",
+        "presentation master",
+        "family 05 draft",
+        "demonstration contract",
+        "counsel approved",
+        "legally reviewed",
+        "lawyer approved",
+    ):
+        assert phrase not in folded
+    for section in (
+        "Parties",
+        "Project",
+        "Scope",
+        "Contract documents",
+        "Price",
+        "Payment",
+        "Changes",
+        "Allowances",
+        "Schedule",
+        "Delays",
+        "Site conditions",
+        "Owner responsibilities",
+        "Contractor responsibilities",
+        "Subcontractors",
+        "Materials",
+        "Permits",
+        "Inspections",
+        "Insurance",
+        "Warranty",
+        "Deficiencies",
+        "Substantial completion",
+        "Termination",
+        "Suspension",
+        "Disputes",
+        "Responsibility",
+        "Notices",
+        "Governing law",
+        "Entire agreement",
+        "Amendments",
+        "Assignment",
+        "Signatures",
+        "Document hierarchy",
+        "Electronic execution",
+    ):
+        assert section in rendered
+    assert "BRAYMAN V1 INTERIM CONTRACT" in rendered
+    assert "Brayman Construction" in rendered
+    assert "Contract / Agreement" in rendered
+    assert INTERIM_PACKAGE_CODE in rendered
+    assert "Version 1" in rendered
+    assert "2026-10-07" in rendered
+    assert "1130.00" in rendered
+    assert "Signature ________________________________" in rendered
+    assert "This contract is generated. It is not signed." in rendered
+
+
 def _generate(project, version, proposal):
     return generate_project_contract(
         project.id,
         version.id,
         organization_id=project.organization_id,
-        presentation_master=governed_presentation_master(),
+        presentation_master=brayman_v1_presentation_master(),
         actor_identifier="Office Test User",
         actor_kind="HUMAN",
         proposal_id=proposal.id,
@@ -232,20 +300,18 @@ def test_contract_generates_and_snapshot_records_package(app, monkeypatch):
     assert SigningRequest.query.count() == before
     assert "send_signing_invitation_message" not in generation_service_source()
     assert send_signing_invitation_message is not None
-    docx_bytes = retrieve_generated_contract_docx(snapshot)
-    document = Document(BytesIO(docx_bytes))
-    chunks = [p.text for p in document.paragraphs]
-    for table in document.tables:
-        for row in table.rows:
-            for cell in row.cells:
-                chunks.append(cell.text)
-    rendered = "\n".join(chunks)
-    assert "COMMERCIAL DRAFT — NOT FOR EXECUTION" in rendered
-    assert "NOT FOR SIGNATURE" in rendered
-    assert "BRAYMAN V1 INTERIM" in rendered
-    assert "Counsel approved" not in rendered
-    assert "Parties" in rendered
-    assert "Governing law" in rendered
+    assert snapshot.presentation_legal_status == BRAYMAN_V1_PRESENTATION_STATUS
+    assert snapshot.artifact_media_type == BRAYMAN_V1_PRESENTATION_MEDIA_TYPE
+    frozen_sha = snapshot.artifact_sha256
+    frozen_code = snapshot.package_code
+    pdf_bytes = retrieve_generated_contract_docx(snapshot)
+    rendered = _pdf_text(pdf_bytes)
+    _assert_clean_contract(rendered)
+    db.session.expire_all()
+    again = db.session.get(ProjectContractSnapshot, snapshot.id)
+    assert again.artifact_sha256 == frozen_sha
+    assert again.package_code == frozen_code
+    assert retrieve_generated_contract_docx(again) == pdf_bytes
 
 
 def test_package_status_and_effective_date_are_respected(app):

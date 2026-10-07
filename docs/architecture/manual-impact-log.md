@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Brayman V1 interim contract presentation (2026-10-07)
+
+| Field | Content |
+|-------|---------|
+| Slice | Contract presentation for the existing Ontario interim package. |
+| Product status at capture | Implemented and tested on scratch data. Not deployed. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | Open contract shows the Brayman V1 interim contract, with the parties, project, amount, package, version, effective date, and signature lines. |
+| 2. When would the contractor use it? | After Review contract generates the contract. |
+| 3. What workflow will the final Manual need to teach? | Generate, open the contract, and read it as generated. A signature is a later step. |
+| 4. What contractor-facing terms must be used? | Brayman V1 Interim Contract. Contract / Agreement. Generated. Owner. Contractor. |
+| 5. What screenshots / Print examples will eventually be needed? | The opened contract. Do not capture it as a draft or as counsel-approved. |
+| 6. What warnings / validation distinctions need explanation? | The contract says it is generated and not signed. It says external counsel has not reviewed the package. |
+| 7. Desktop / iPhone / Print relevance | Desktop review. The contract opens as a PDF. |
+| Do not | Call it a draft, a presentation master, or counsel-approved. Send a signing link from generation. |
+
 ### MANUAL IMPACT — Brayman V1 interim Ontario contract (2026-10-07)
 
 | Field | Content |

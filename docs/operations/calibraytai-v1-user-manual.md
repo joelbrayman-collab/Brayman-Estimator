@@ -86,7 +86,7 @@ Calibrayt uses the active Brayman V1 Ontario contract package. The contract pack
 
 On the project, Contract shows Ontario, Brayman V1 Interim Contract, the version, the effective date, and the status. Open Review contract to generate the contract after the estimate is issued and locked and the proposal is issued or accepted.
 
-Generating a contract does not sign it and does not send a signing link. A generated contract is not a signed contract.
+Open the generated contract. It is the Brayman V1 interim contract. It has the parties, the project, the contract amount, and signature lines. Generating a contract does not sign it and does not send a signing link. A generated contract is not a signed contract.
 
 If no active package is in force, or the project location cannot be resolved, or required contract data is missing, the contract stays blocked. Do not look for a way around that block.
 

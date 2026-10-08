@@ -30,6 +30,8 @@ Mac lag behind `r8e9f0a1b2c3` and `s9f0a1b2c3d4` is explained. The 8 Oct estimat
 
 Checklist step 8 stays open. `estimate_project` has no office route. `SITE`, `FOUND`, and `STRUCT` stay unbound.
 
+Deploy `dep-db406oo473hc73c61h5g` served commit `8de505a62810cab572132d446e60594c8147fb9f` and finished 2026-10-08T20:57:22Z. Cookie-following `GET /login` then `GET /` returned 200. Application routes are unchanged from `234a4eb7e9ddcfab07bf795fd7bfc23c61237ca7`. The commit that contains this paragraph is the git record of that deploy. After that record is deployed, it is the served revision and it still does not change routes. Confirm the served SHA with Render rather than an older sentence in this file.
+
 ## 8 Oct 2026 — Contractor onboarding proposal
 
 A cost-library spreadsheet import was audited and proposed. It is **PROPOSED — NOT YET AUTHORIZED**. The V1 register was not revised. Historical Excel ingestion for the Brayman workbook families remains the closed LEARN capture and does not rewrite the cost library. No importer was built. Official V1 remains **65% / 4 of 11**.

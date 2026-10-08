@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 8 Oct 2026 — Member-count slice accepted
+
+The member-count integration slice is **PRODUCT ACCEPTED**. Implementation `557f1ee87aea9affffe73c04eea86621713ef486`. One stored known member count reaches one ordinary estimate line only after explicit mapper confirmation. Evidence: focused 34 passed; full regression 2255 passed, 11 skipped. That evidence is repository integration and tests. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Not deployed. Not live-verified. Not contractor UAT. Occupancy, the live SHA, and both database revisions stay in the pre-turnover closure block below. This acceptance does not replace those measurements.
+
 ## 8 Oct 2026 — Stored member count confirmation
 
 One stored member count from `read_stored_member_quantities` can be offered into the existing calculation review. Explicit confirmation through the existing route creates one ordinary estimate line with that count. An unconfirmed review creates no line. A repeated confirmation does not create a second line. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. The Mac office file was not changed. Product acceptance is pending review.

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-08 — Checklist step 8 member-count slice acceptance
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Record product acceptance of the member-count integration slice. |
+| Business decision | PRODUCT ACCEPTED for that slice only. Checklist step 8 stays OPEN. Official V1 stays 65% / 4 of 11. BMR DEMO READY NO. BRAYMAN REAL-LIFE UAT READY NO. |
+| Architectural decision | Accepted path: `read_stored_member_quantities`, `offer_stored_member_count`, `ingest_contract_result`, explicit `confirm_quantity_mapping`, one ordinary estimate line. No new formula. |
+| Prompt template used | Governance-update prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Record slice acceptance in governance. Do not change product code, tests, the roadmap, V1 score, or Step 8’s open status. Do not deploy. Leave case files unstaged. Commit and push the documentation. |
+| Files expected to change | Checklist, V1 register, current-state, session-handoff, this journal. |
+| Files prohibited from changing | Product code, tests, platform roadmap, case records, databases, live services. |
+| Implementation result | Governance record only. Implementation remains `557f1ee87aea9affffe73c04eea86621713ef486`. |
+| Tests | Not rerun. Accepted evidence from that commit: focused 34 passed; full regression 2255 passed, 11 skipped. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Step 8 remains open. Contractor-facing initiation, unbound SITE, FOUND, and STRUCT, generic estimating, deployment, and live verification stay outside this acceptance. |
+| Next approved step | ChatGPT names the next authorized action. Do not start Step 9 from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this governance commit. |
+
 ### 2026-10-08 — Checklist step 8 member-count confirmation
 
 | Field | Content |

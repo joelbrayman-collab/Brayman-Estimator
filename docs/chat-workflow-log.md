@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-08 — ICF manufacturer-specific core selection
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Record the approved product decisions for manufacturer-specific ICF core selection. Do not implement them. |
+| Business decision | The contractor selects manufacturer, then that manufacturer’s core size, then wall geometry, then calculated quantities. A listed size is not automatically calculable. Logix 6.25 inches is not 6 inches. Multi-core support does not complete reinforcement, openings, specialty forms, waterproofing, accessories, labour, waste, or purchasing quantities. Those items are not added to the V1 register. Checklist step 8 stays OPEN. Official V1 stays 65% / 4 of 11. BMR DEMO READY NO. BRAYMAN REAL-LIFE UAT READY NO. |
+| Architectural decision | One ICF quantity engine. Manufacturer behavior comes from verified profiles. A core calculates only when that core has its own verified standard-form coverage and either a cavity width or a per-form concrete volume, plus coverage for any corner the contractor requests. Missing facts block the affected calculation. Another core’s factors are not substituted. The intended experience distinguishes offered, verified for calculation, and not yet calculable. Pinned Contract V1 accepts nominal core thickness 6, 8, 10, or 12 only, so it cannot store 6.25. That schema change is identified and is not authorized here. The 26 September 2026 design specification stays approved in principle and still does not authorize implementation. |
+| Prompt template used | Governance-update prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Record Decisions A through F in governance. Do not change product code, tests, manufacturer profiles, Contract V1, routes, the roadmap, the V1 score, or Step 8’s open status. Do not deploy. Leave case files unstaged. Commit and push the documentation. |
+| Files expected to change | Checklist, V1 register subsequent status, current-state, session-handoff, the ICF design specification status note, and this journal. |
+| Files prohibited from changing | Product code, tests, manufacturer profiles, Contract V1 schema, routes, platform roadmap, case records, databases, live services. |
+| Implementation result | Governance record only. No calculator change. The implemented engine remains 8-inch only. |
+| Tests | Not rerun. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. The pinned contract cannot represent Logix 6.25. This record does not edit that pin. |
+| Unresolved issues | Non-8 cores have no verified unit records. StyroRail 8-inch 45-degree coverage is still missing. StyroRail does not list 10 or 12. Logix does not list 6. Contract V1 still cannot store 6.25. Implementation is not authorized. |
+| Next approved step | ChatGPT names the next authorized action. Do not build the core dropdown or widen Contract V1 from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this governance commit. |
+
 ### 2026-10-08 — Checklist step 8 member-count slice acceptance
 
 | Field | Content |

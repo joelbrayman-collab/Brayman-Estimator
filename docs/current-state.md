@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 8 Oct 2026 — ICF manufacturer-specific core selection
+
+Product direction is recorded. It is not implemented. The contractor selects a manufacturer, then that manufacturer’s core size, then wall geometry. A listed size calculates only when that core has its own verified standard-form coverage and either a cavity width or a per-form concrete volume, plus coverage for a requested corner. Another core’s factors are not used. Logix 6.25 inches stays 6.25 inches. Pinned Contract V1 still accepts only 6, 8, 10, and 12, so it cannot store 6.25. That schema change is not authorized. One ICF engine remains. Multi-core support does not complete reinforcement, openings, specialty forms, waterproofing, accessories, labour, waste, or purchasing quantities. The running calculator remains 8-inch only. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Not deployed. Not live-verified.
+
 ## 8 Oct 2026 — Member-count slice accepted
 
 The member-count integration slice is **PRODUCT ACCEPTED**. Implementation `557f1ee87aea9affffe73c04eea86621713ef486`. One stored known member count reaches one ordinary estimate line only after explicit mapper confirmation. Evidence: focused 34 passed; full regression 2255 passed, 11 skipped. That evidence is repository integration and tests. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Not deployed. Not live-verified. Not contractor UAT. Occupancy, the live SHA, and both database revisions stay in the pre-turnover closure block below. This acceptance does not replace those measurements.

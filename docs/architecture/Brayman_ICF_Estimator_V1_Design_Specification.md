@@ -5,6 +5,8 @@
 **Classification:** Brayman Construction confidential — internal platform capability  
 **Status:** Design approved in principle; implementation not authorized by this document
 
+**Subsequent status (2026-10-08):** Product direction now requires manufacturer-specific core selection on the one ICF engine. A listed core calculates only from that core’s own verified facts. Logix 6.25 inches is not 6 inches. The body of this specification is unchanged. This note does not authorize implementation, a core dropdown, or a Contract V1 edit. Pinned Contract V1 still cannot store 6.25.
+
 ## 1. Purpose
 
 Brayman ICF Estimator V1 will replace the ICF spreadsheet estimating work Joel currently performs for Ben. It will turn reviewed plan geometry or manual measurements into a complete, priced Brayman ICF estimate and preserve the evidence required to improve future estimates.

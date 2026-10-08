@@ -1,8 +1,8 @@
 # CalibraytAI — Brayman Installation & Initial Setup Guide
 
-Brayman Construction. 7 October 2026.
+Brayman Construction. 8 October 2026.
 
-This is how the Brayman office is opened and how Ben and the crew start using it. Joel opens the office. Ben does not install the program.
+This is how the Brayman office is opened and how Ben and the crew start using it. Joel opens the office. Ben and the crew do not install the program, and they do not start the Mac.
 
 ## 1. Joel starts the Mac office
 
@@ -38,21 +38,35 @@ A crew member does not create their own login. Ben does not create crew logins.
 
 Forgot Password may mention email. Do not wait on that email. Ask Joel to set the password.
 
-## 6. Ben and the crew set up the iPhone browser
+## 6. Set up Calibrayt on your iPhone
 
-The phone uses the office website in the browser. It is not a separate app from the App Store.
+You only do this once. Calibrayt on the phone is the office, opened from an icon. It is not an app from the App Store.
 
-1. Joel gives the person the office address and the login he created.
-2. On the iPhone, open that address in Safari.
-3. Sign in.
-4. To keep it on the home screen: Share, then Add to Home Screen. The name can stay Calibrayt.
-5. Open it from that icon the next time. Sign in if the phone asks.
+1. Open Safari.
+2. Open the Calibrayt address supplied by Joel.
+3. Sign in using your Calibrayt account.
+4. Tap the Share button.
+5. Tap Add to Home Screen.
+6. Make sure the name says Calibrayt.
+7. Tap Add.
+8. Find the Calibrayt icon on your Home Screen.
+9. Tap the icon to open Calibrayt.
 
-## 7. Camera and microphone
+From then on, just tap the Calibrayt icon. You do not need to type the website address again.
 
-When the phone asks for the camera or the microphone, allow them if this person captures photos or speaks a Help question.
+The icon opens today's work. Open the job, then Field.
 
-Help can be asked by speaking. Speaking a Help question does not change the project, the estimate, or the schedule.
+The first time you tap the icon, sign in if Calibrayt asks. After that, sign in only when Calibrayt asks. Sign in while the phone has a connection. Calibrayt does not store the password on the phone.
+
+## 7. Phone permissions
+
+Allow Camera when Field asks for it.
+
+Allow Microphone when Help asks for it, including Ask by speaking.
+
+Do not deny the camera or the microphone if this person captures photos or speaks a Help question.
+
+Help can be asked by speaking. Choose Ask by speaking, then Speak answer when you want the answer read out. Speaking a Help question does not change the project, the estimate, the costing, the schedule, the supplier, or the contract.
 
 If the phone will not allow the microphone, the person can still type the Help question.
 
@@ -69,7 +83,25 @@ A field note is evidence. It is not an actual cost.
 
 Today on Field can be printed. That sheet is the same work already on the screen.
 
-## 9. QuickBooks
+From Field, go back to Home when you need the rest of the office. Field is not a separate program.
+
+If the phone loses connection, your work can still be saved on this phone. You will see Pending on this phone. The screen says Saved on this phone — will sync when connected.
+
+When the connection comes back, Calibrayt will send your saved work to the office automatically while the app is open. The screen then says Saved.
+
+Help needs a connection. If the phone is offline, Help says so. It does not pretend the question was answered.
+
+## 9. Signing in and problems
+
+Joel provides the Calibrayt email and password. Do not share the password. If you cannot sign in, contact Joel.
+
+A wrong email or password stays rejected. The screen says the sign-in did not work. Do not create another account.
+
+If Calibrayt sends you back to sign in, sign in again with the same account. Do not delete the Calibrayt icon.
+
+Contact Joel if the icon, the login, Field, the camera, or the microphone does not work.
+
+## 10. QuickBooks
 
 Calibrayt produces the QuickBooks-ready sheet.
 
@@ -77,7 +109,7 @@ A person types the required information into QuickBooks.
 
 Calibrayt does not send the job to QuickBooks.
 
-## 10. Supplier
+## 11. Supplier
 
 Calibrayt generates a job-specific Supplier Estimate Request.
 
@@ -87,7 +119,7 @@ The sheet comes back to Joel. Joel records the cost Brayman will use.
 
 The supplier does not approve Brayman's cost.
 
-## 11. Contract
+## 12. Contract
 
 Calibrayt uses the active Brayman V1 Ontario contract package. The contract package/version used for the project is recorded in the contract snapshot.
 
@@ -95,13 +127,13 @@ The package is Brayman V1 Interim. It is not marked counsel-approved. Generating
 
 If no active package is in force, the contract stays blocked. Do not look for a way around that block. Do not email a signing link.
 
-## 12. Backup
+## 13. Backup
 
 Joel owns backup and recovery.
 
 Ben does not copy the office file, rename it, or restore it. If the office will not open, Ben stops and calls Joel.
 
-## 13. Start the first project
+## 14. Start the first project
 
 Only after Joel says which job is the real one.
 

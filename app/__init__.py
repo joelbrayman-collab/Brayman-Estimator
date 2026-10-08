@@ -1,6 +1,9 @@
+import mimetypes
 import os
 import re
 import tempfile
+
+mimetypes.add_type("application/manifest+json", ".webmanifest")
 
 from flask import Flask, abort, g, request, send_from_directory
 from flask_login import LoginManager, current_user
@@ -185,6 +188,7 @@ def _register_office_auth(app: Flask) -> None:
         endpoint = request.endpoint
         if request.path == "/favicon.ico" or endpoint in (
             "static",
+            "field_service_worker",
             "auth.login",
             "auth.logout",
             "auth.forgot_password",
@@ -398,6 +402,13 @@ def create_app(config=None):
     app.register_blueprint(company_attention_bp)
     app.register_blueprint(decision_tools_bp)
     app.register_blueprint(supplier_program_bp)
+
+    @app.route("/field-sw.js")
+    def field_service_worker():
+        response = send_from_directory(app.static_folder, "field-sw.js")
+        response.headers["Cache-Control"] = "no-cache"
+        response.headers["Service-Worker-Allowed"] = "/"
+        return response
 
     @app.route("/favicon.ico")
     def favicon():

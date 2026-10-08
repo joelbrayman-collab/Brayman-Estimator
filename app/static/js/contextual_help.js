@@ -28,12 +28,18 @@
     }
   }
 
+  var HELP_OFFLINE = "Help needs a connection.";
+
   function ask(form) {
     var details = form.closest(".contextual-help");
     var input = form.querySelector(".contextual-help-question");
     var question = input ? String(input.value || "").trim() : "";
     var url = form.getAttribute("action");
     if (!details || !url) {
+      return;
+    }
+    if (!navigator.onLine) {
+      setAnswer(form, HELP_OFFLINE);
       return;
     }
     window.fetch(url, {
@@ -61,7 +67,9 @@
       .catch(function () {
         setAnswer(
           form,
-          message(form, "data-help-ask-unavailable", "Help couldn't answer right now.")
+          navigator.onLine
+            ? message(form, "data-help-ask-unavailable", "Help couldn't answer right now.")
+            : HELP_OFFLINE
         );
       });
   }
@@ -69,6 +77,10 @@
   function startVoice(form) {
     var Recognition = speechRecognition();
     var input = form.querySelector(".contextual-help-question");
+    if (!navigator.onLine) {
+      setAnswer(form, HELP_OFFLINE);
+      return;
+    }
     if (!Recognition) {
       setAnswer(
         form,

@@ -19,21 +19,23 @@
   var recordedMime = "";
   var photos = [];
   var persistenceReady = false;
+  var syncing = false;
   var FIELD_COPY = {
     signOut: "Sign out",
     saved: "Saved",
-    saving: "Saving…",
-    needsRetry: "Could not send",
+    saving: "Syncing…",
+    savedOnPhone: "Saved on this phone — will sync when connected",
+    needsRetry: "Sync needs attention — your work is still on this phone",
     eventSaveFailed: "This observation could not be saved.",
     originalSaveFailed: "The original photo or file could not be saved.",
     captureStartFailed: "This phone could not start a capture. Try again.",
     addBeforeSave: "Add a photo, recording, or note before saving.",
-    logoutConfirm: "Unsent captures will be removed from this phone. Sign out?",
+    logoutConfirm: "Work on this phone has not reached the office. Signing out removes it from this phone. Sign out?",
     otherProjectPending:
       "A capture is still waiting on another project. Open that project to send it, or discard it?",
     discardOtherPending: "Discard the waiting capture for the other project?",
-    retryOne: "1 capture did not send.",
-    retryManySuffix: " captures did not send.",
+    retryOne: "1 pending on this phone.",
+    retryManySuffix: " pending on this phone.",
   };
 
   function csrfToken() {
@@ -54,14 +56,7 @@
   }
 
   function visibleError(err, fallback) {
-    var message = String((err && err.message) || "");
-    if (
-      !message ||
-      /IndexedDB|Pending |Binary byte|QuotaExceeded|NS_ERROR_DOM/i.test(message)
-    ) {
-      return fallback;
-    }
-    return message;
+    return fallback;
   }
 
   function refreshCsrfFromHtml(html) {
@@ -351,13 +346,32 @@
     });
   }
 
+  function clearFieldCache() {
+    if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
+      return Promise.resolve();
+    }
+    return new Promise(function (resolve) {
+      var timer = window.setTimeout(resolve, 1500);
+      function onMessage(event) {
+        if (!event.data || event.data.type !== "field-cache-cleared") return;
+        window.clearTimeout(timer);
+        navigator.serviceWorker.removeEventListener("message", onMessage);
+        resolve();
+      }
+      navigator.serviceWorker.addEventListener("message", onMessage);
+      navigator.serviceWorker.controller.postMessage({ type: "clear-field-cache" });
+    });
+  }
+
   function bindLogout() {
     var form = document.getElementById("field-logout-form");
     if (!form) return;
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       var proceed = function () {
-        form.submit();
+        clearFieldCache().then(function () {
+          form.submit();
+        });
       };
       getAllStore("pending_captures")
         .then(function (captures) {
@@ -370,6 +384,56 @@
     });
   }
 
+  function formatWhen(value) {
+    if (!value) return "";
+    var parsed = new Date(value);
+    if (isNaN(parsed.getTime())) return "";
+    return parsed.toLocaleString();
+  }
+
+  function renderPending(captures, originals) {
+    var list = document.getElementById("field-pending-list");
+    if (!list) return;
+    list.textContent = "";
+    captures.forEach(function (capture) {
+      var item = document.createElement("li");
+      item.className = "field-recent-item";
+      var meta = document.createElement("p");
+      meta.className = "field-recent-meta";
+      meta.textContent = "Unsent · " + formatWhen(capture.capture_started_at);
+      item.appendChild(meta);
+      var rows = originals.filter(function (row) {
+        return row.client_capture_uuid === capture.client_capture_uuid;
+      });
+      var note = capture.text || "";
+      rows.forEach(function (row) {
+        if (row.kind === "text" && row.text_body) note = note || row.text_body;
+      });
+      if (note) {
+        var body = document.createElement("p");
+        body.textContent = note;
+        item.appendChild(body);
+      }
+      rows.forEach(function (row) {
+        if (row.kind !== "image" || !row.bytes) return;
+        var img = document.createElement("img");
+        img.className = "field-thumb";
+        img.alt = "Unsent photo";
+        try {
+          img.src = URL.createObjectURL(new Blob([row.bytes], { type: row.mime || "image/jpeg" }));
+        } catch (err) {
+          return;
+        }
+        item.appendChild(img);
+      });
+      var mark = document.createElement("p");
+      mark.className = "field-muted";
+      mark.textContent = "Unsent";
+      item.appendChild(mark);
+      list.appendChild(item);
+    });
+  }
+
   function updateRetryPanel() {
     var panel = document.getElementById("field-retry-panel");
     var count = document.getElementById("field-retry-count");
@@ -377,24 +441,24 @@
     if (!panel || !count) return Promise.resolve();
     return getAllStore("pending_captures")
       .then(function (captures) {
-        var retry = captures.filter(function (row) {
-          return row.state === "needs_retry" || row.state === "saving";
-        });
-        if (!retry.length) {
+        if (!captures.length) {
           panel.hidden = true;
           rememberPending(false);
           return;
         }
-        rememberPending(true);
-        panel.hidden = false;
-        count.textContent =
-          retry.length === 1
-            ? FIELD_COPY.retryOne
-            : retry.length + FIELD_COPY.retryManySuffix;
-        if (link) {
-          var first = retry[0];
-          link.href = "/field/projects/" + first.project_id + "/capture";
-        }
+        return getAllStore("pending_originals").then(function (originals) {
+          rememberPending(true);
+          panel.hidden = false;
+          count.textContent =
+            captures.length === 1
+              ? FIELD_COPY.retryOne
+              : captures.length + FIELD_COPY.retryManySuffix;
+          renderPending(captures, originals || []);
+          if (link) {
+            var first = captures[0];
+            link.href = "/field/projects/" + first.project_id + "/capture";
+          }
+        });
       })
       .catch(function () {
         panel.hidden = true;
@@ -640,8 +704,9 @@
     });
     if (pending.length) {
       return markNeedsRetry(capture, pending).then(function () {
-        setFeedback(FIELD_COPY.needsRetry, "needs_retry");
-        setStatus(FIELD_COPY.needsRetry);
+        var text = failureStatus();
+        setFeedback(text, navigator.onLine ? "needs_retry" : "saved_local");
+        setStatus(text);
       });
     }
     return deleteStore("pending_captures", capture.client_capture_uuid).then(function () {
@@ -650,9 +715,18 @@
     });
   }
 
+  function failureStatus() {
+    return navigator.onLine ? FIELD_COPY.needsRetry : FIELD_COPY.savedOnPhone;
+  }
+
   function uploadCapture(capture, originals) {
-    setFeedback(FIELD_COPY.saving, "saving");
-    setStatus(FIELD_COPY.saving);
+    if (navigator.onLine) {
+      setFeedback(FIELD_COPY.saving, "saving");
+      setStatus(FIELD_COPY.saving);
+    } else {
+      setFeedback(FIELD_COPY.savedOnPhone, "saved_local");
+      setStatus(FIELD_COPY.savedOnPhone);
+    }
     capture.state = "saving";
     return putStore("pending_captures", capture)
       .then(function () {
@@ -674,33 +748,46 @@
       .then(function () {
         return finishCapture(capture, originals);
       })
-      .catch(function (err) {
+      .catch(function () {
         return markNeedsRetry(capture, originals).then(function () {
-          setFeedback(visibleError(err, FIELD_COPY.needsRetry), "needs_retry");
-          setStatus(FIELD_COPY.needsRetry);
+          var text = failureStatus();
+          setFeedback(text, navigator.onLine ? "needs_retry" : "saved_local");
+          setStatus(text);
         });
       });
   }
 
-  function retryExisting(projectId) {
-    return getAllStore("pending_captures").then(function (captures) {
-      var mine = captures.filter(function (row) {
-        return String(row.project_id) === String(projectId);
-      });
-      if (!mine.length) return;
-      return getAllStore("pending_originals").then(function (originals) {
-        var chain = Promise.resolve();
-        mine.forEach(function (capture) {
-          chain = chain.then(function () {
-            var rows = originals.filter(function (row) {
-              return row.client_capture_uuid === capture.client_capture_uuid;
+  function syncAllPending() {
+    if (syncing || !navigator.onLine) return Promise.resolve();
+    syncing = true;
+    return openDb()
+      .then(function () {
+        persistenceReady = true;
+        return getAllStore("pending_captures");
+      })
+      .then(function (captures) {
+        if (!captures.length) return;
+        return getAllStore("pending_originals").then(function (originals) {
+          var chain = Promise.resolve();
+          captures.forEach(function (capture) {
+            chain = chain.then(function () {
+              var rows = originals.filter(function (row) {
+                return row.client_capture_uuid === capture.client_capture_uuid;
+              });
+              return uploadCapture(capture, rows);
             });
-            return uploadCapture(capture, rows);
           });
+          return chain;
         });
-        return chain;
+      })
+      .then(function () {
+        syncing = false;
+        return updateRetryPanel();
+      })
+      .catch(function () {
+        syncing = false;
+        return updateRetryPanel();
       });
-    });
   }
 
   function saveNew(projectId) {
@@ -767,6 +854,10 @@
         return persistCapture(capture, originals);
       })
       .then(function () {
+        rememberPending(true);
+        return updateRetryPanel();
+      })
+      .then(function () {
         return uploadCapture(capture, originals);
       })
       .then(function () {
@@ -825,7 +916,7 @@
         saveNew(projectId);
       });
     }
-    retryExisting(projectId);
+    syncAllPending();
   }
 
   function initTimeForm() {
@@ -886,6 +977,9 @@
   function init() {
     bindLogout();
     initTimeForm();
+    window.addEventListener("online", function () {
+      syncAllPending();
+    });
     if (document.querySelector(".field-capture")) {
       openDb()
         .then(function () {
@@ -919,7 +1013,9 @@
       openDb()
         .then(function () {
           persistenceReady = true;
-          updateRetryPanel();
+          return updateRetryPanel().then(function () {
+            return syncAllPending();
+          });
         })
         .catch(function () {
           retryPanel.hidden = true;

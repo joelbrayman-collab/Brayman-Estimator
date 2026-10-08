@@ -1,6 +1,6 @@
 # CalibraytAI — V1 User Manual
 
-Brayman Construction. 7 October 2026.
+Brayman Construction. 8 October 2026.
 
 This is the manual for the person running a Brayman job in the office Joel has opened. Help on each screen uses these same words. Help does not change the job.
 
@@ -16,9 +16,25 @@ If nothing is scheduled today, Home says so. If nothing needs attention, Home sa
 
 ## Sign in
 
-Open the address Joel gave you. Use the email and password Joel set. Choose Sign in.
+Set up Calibrayt on your iPhone once.
 
-There is no Create Account button. If you cannot sign in, ask Joel. Do not wait on a password email.
+1. Open Safari.
+2. Open the Calibrayt address supplied by Joel.
+3. Sign in using your Calibrayt account.
+4. Tap the Share button.
+5. Tap Add to Home Screen.
+6. Make sure the name says Calibrayt.
+7. Tap Add.
+8. Find the Calibrayt icon on your Home Screen.
+9. Tap the icon to open Calibrayt.
+
+From then on, just tap the Calibrayt icon. You do not need to type the website address again. Sign in only if Calibrayt asks. Sign in while the phone has a connection.
+
+The icon opens today's work. Open the job, then Field.
+
+Joel provides the email and password. Do not share the password. There is no Create Account button. If you cannot sign in, contact Joel. Do not wait on a password email. Do not create another account. Do not delete the Calibrayt icon.
+
+A wrong email or password stays rejected. If the session has ended, Calibrayt returns you to sign in. Sign in again with the same account.
 
 ## Project
 
@@ -104,6 +120,8 @@ A change order records what changed. On the project, choose New Change Order. Do
 
 A field note is evidence. It is not an actual cost.
 
+If the phone loses connection, your work can still be saved on this phone. When the connection comes back, Calibrayt will send your saved work to the office automatically while the app is open.
+
 ## Actuals and Money
 
 Money is Estimated versus actual. It compares the committed estimate with actual direct costs entered in the office. It is not a profit figure.
@@ -120,7 +138,9 @@ Each main screen has Help. Open it and read What, Do, and Next.
 
 You can type a question. On a phone that can listen, you can choose Ask by speaking. On a phone that can speak, you can choose Speak answer.
 
-The answer comes from Help. Speaking does not change the project, the estimate, or the schedule.
+The answer comes from Help. Speaking does not change the project, the estimate, the costing, the pricing, the schedule, the supplier, or the contract.
+
+Help needs a connection. If the phone is offline, Help says so.
 
 ## Print
 
@@ -136,4 +156,6 @@ Joel owns backup and recovery. If the office will not open, stop and call Joel. 
 
 Call Joel Brayman. Tell him the date, the project name, what you clicked, and the words on the screen.
 
-Do not delete the project. Do not rewrite an accepted proposal. Do not type a contract.
+Do not delete the project. Do not rewrite an accepted proposal. Do not type a contract. Do not create another account. Do not delete the Calibrayt icon.
+
+Contact Joel if the icon, the login, Field, the camera, or the microphone does not work.

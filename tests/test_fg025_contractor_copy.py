@@ -49,11 +49,11 @@ from app.presentation.contractor_copy import (
     FIELD_CONFIRM_BEFORE_CAPTURE,
     FIELD_NO_PROJECTS,
     FIELD_RETRY_HEADING,
-    FIELD_RETRY_LINK,
     FIELD_RETRY_ONE,
     FIELD_RETRY_MANY_SUFFIX,
     FIELD_SAVED,
     FIELD_SAVING,
+    FIELD_SAVED_ON_PHONE,
     FIELD_NEEDS_RETRY,
     FIELD_EVENT_SAVE_FAILED,
     FIELD_ORIGINAL_SAVE_FAILED,
@@ -503,13 +503,13 @@ def test_slice5_field_copy_constants_are_pinned():
     assert FIELD_CHANGE_PROJECT == "Change project"
     assert FIELD_CONFIRM_BEFORE_CAPTURE == "Confirm the project before capturing."
     assert FIELD_NO_PROJECTS == "No projects are available."
-    assert FIELD_RETRY_HEADING == "Not sent yet"
-    assert FIELD_RETRY_LINK == "Try sending again"
-    assert FIELD_RETRY_ONE == "1 capture did not send."
-    assert FIELD_RETRY_MANY_SUFFIX == " captures did not send."
+    assert FIELD_RETRY_HEADING == "Pending on this phone"
+    assert FIELD_RETRY_ONE == "1 pending on this phone."
+    assert FIELD_RETRY_MANY_SUFFIX == " pending on this phone."
     assert FIELD_SAVED == "Saved"
-    assert FIELD_SAVING == "Saving…"
-    assert FIELD_NEEDS_RETRY == "Could not send"
+    assert FIELD_SAVING == "Syncing…"
+    assert FIELD_SAVED_ON_PHONE == "Saved on this phone — will sync when connected"
+    assert FIELD_NEEDS_RETRY == "Sync needs attention — your work is still on this phone"
     assert FIELD_EVENT_SAVE_FAILED == "This observation could not be saved."
     assert FIELD_ORIGINAL_SAVE_FAILED == (
         "The original photo or file could not be saved."
@@ -519,7 +519,8 @@ def test_slice5_field_copy_constants_are_pinned():
     )
     assert FIELD_ADD_BEFORE_SAVE == "Add a photo, recording, or note before saving."
     assert FIELD_LOGOUT_CONFIRM == (
-        "Unsent captures will be removed from this phone. Sign out?"
+        "Work on this phone has not reached the office. "
+        "Signing out removes it from this phone. Sign out?"
     )
     assert FIELD_OTHER_PROJECT_PENDING == (
         "A capture is still waiting on another project. "
@@ -571,7 +572,8 @@ def test_slice5_field_web_surfaces_hide_raw_internal_copy(client, project):
     today_confirmed = _html(client.get("/field/today"))
     assert FIELD_CHANGE_PROJECT in today_confirmed
     assert FIELD_RETRY_HEADING in today_confirmed
-    assert FIELD_RETRY_LINK in today_confirmed
+    assert 'id="field-pending-list"' in today_confirmed
+    assert "Try sending again" not in today_confirmed
     assert "Capture" in today_confirmed
     assert "Switch Project" not in today_confirmed
     assert "Needs Retry" not in today_confirmed
@@ -585,6 +587,7 @@ def test_slice5_field_js_pins_python_copy_and_internal_keys():
     assert f'signOut: "{SIGN_OUT_LABEL}"' in source
     assert f'saved: "{FIELD_SAVED}"' in source
     assert f'saving: "{FIELD_SAVING}"' in source
+    assert f'savedOnPhone: "{FIELD_SAVED_ON_PHONE}"' in source
     assert f'needsRetry: "{FIELD_NEEDS_RETRY}"' in source
     assert f'eventSaveFailed: "{FIELD_EVENT_SAVE_FAILED}"' in source
     assert f'originalSaveFailed: "{FIELD_ORIGINAL_SAVE_FAILED}"' in source

@@ -1,0 +1,17 @@
+{
+  "name": "Calibrayt",
+  "short_name": "Calibrayt",
+  "start_url": "/field/today",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#000510",
+  "theme_color": "#000510",
+  "icons": [
+    {
+      "src": "/static/branding/calibrayt-home-icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

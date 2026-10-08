@@ -39,6 +39,11 @@
 
     <button type="button" class="field-btn field-btn-primary field-save" id="field-save">{{ contractor_copy.FIELD_SAVE_ORIGINAL }}</button>
     <p class="field-feedback" id="field-feedback" aria-live="polite"></p>
+    <section class="field-panel" id="field-retry-panel" hidden>
+        <h2>{{ contractor_copy.FIELD_RETRY_HEADING }}</h2>
+        <p id="field-retry-count" class="field-muted"></p>
+        <ul class="field-recent" id="field-pending-list"></ul>
+    </section>
     <a class="field-btn field-btn-ghost" href="{{ url_for('field.today') }}">Back to Today</a>
 </section>
 {% endblock %}

@@ -613,13 +613,13 @@ FIELD_NOTES_LABEL = "Notes"
 FIELD_CHANGE_PROJECT = "Change project"
 FIELD_CONFIRM_BEFORE_CAPTURE = "Confirm the project before capturing."
 FIELD_NO_PROJECTS = "No projects are available."
-FIELD_RETRY_HEADING = "Not sent yet"
-FIELD_RETRY_LINK = "Try sending again"
-FIELD_RETRY_ONE = "1 capture did not send."
-FIELD_RETRY_MANY_SUFFIX = " captures did not send."
+FIELD_RETRY_HEADING = "Pending on this phone"
+FIELD_RETRY_ONE = "1 pending on this phone."
+FIELD_RETRY_MANY_SUFFIX = " pending on this phone."
 FIELD_SAVED = "Saved"
-FIELD_SAVING = "Saving…"
-FIELD_NEEDS_RETRY = "Could not send"
+FIELD_SAVING = "Syncing…"
+FIELD_SAVED_ON_PHONE = "Saved on this phone — will sync when connected"
+FIELD_NEEDS_RETRY = "Sync needs attention — your work is still on this phone"
 FIELD_EVENT_SAVE_FAILED = "This observation could not be saved."
 FIELD_ORIGINAL_SAVE_FAILED = (
     "The original photo or file could not be saved."
@@ -631,7 +631,8 @@ FIELD_ADD_BEFORE_SAVE = (
     "Add a photo, recording, or note before saving."
 )
 FIELD_LOGOUT_CONFIRM = (
-    "Unsent captures will be removed from this phone. Sign out?"
+    "Work on this phone has not reached the office. "
+    "Signing out removes it from this phone. Sign out?"
 )
 FIELD_OTHER_PROJECT_PENDING = (
     "A capture is still waiting on another project. "

@@ -3,17 +3,26 @@
 Material requirements stay supplier-neutral. The supplier request, the
 contractor cost approval, and the costing snapshot stay on the services
 that already own those records.
+
+One stored member count enters the existing calculation review through
+offer_stored_member_count. That offer does not create an estimate line.
 """
 
 from __future__ import annotations
 
+import hashlib
+
 from app.models.canonical_material import CanonicalMaterial
 from app.models.material_requirement import MaterialRequirement
 from app.services.brayman_supplier_estimate import job_supplier_estimate_request
+from app.services.calculation_estimate_mapping import ingest_contract_result
+from app.services.construction_model.views import read_stored_member_quantities
 from app.services.deck_framing_quantity import ENGINE_ID, ENGINE_VERSION
 from app.services.estimate_builder import add_cost_item_line
 from app.services.material_catalogue import get_canonical_material_by_code
 from app.services.material_requirements import create_material_requirement
+
+_MEMBER_COUNT_CODE = "member_count"
 
 _MEMBER_COUNT_NOTE = (
     "Member count. This is not a purchase quantity. "
@@ -149,6 +158,120 @@ def add_estimate_line_from_requirement(section, requirement, *, cost_item_id):
         quantity=requirement.quantity,
         waste_percent=0,
         notes=requirement.note,
+    )
+
+
+class StoredMemberCountError(ValueError):
+    """A stored member count cannot enter the existing mapper review."""
+
+
+def stored_member_group(model, member_ids):
+    """Return the one stored group whose member ids match.
+
+    The count stays the count already on that group. This does not
+    recount the model and it does not invent a missing fact.
+    """
+    wanted = tuple(member_ids or ())
+    if not wanted or any(not isinstance(item, str) or not item.strip() for item in wanted):
+        raise StoredMemberCountError("Name the stored members.")
+    matches = [
+        row
+        for row in read_stored_member_quantities(model)
+        if tuple(row.get("member_ids") or ()) == wanted
+    ]
+    if len(matches) != 1:
+        raise StoredMemberCountError("That stored member count was not found.")
+    return matches[0]
+
+
+def stored_member_count_result_id(group):
+    """Stable identity for one stored group. This is not a quantity."""
+    role = (group.get("role") or "member").strip() or "member"
+    ids = ",".join(group.get("member_ids") or ())
+    digest = hashlib.sha256(f"{role}|{ids}".encode("utf-8")).hexdigest()[:20]
+    return f"mc-{digest}"
+
+
+def contract_for_stored_member_count(group, *, measurement_system, result_id):
+    """Copy one stored member count into Contract V1.
+
+    The quantity string is the stored count. No stock length, waste,
+    labour, or price is added.
+    """
+    quantity = group.get("quantity")
+    member_ids = tuple(group.get("member_ids") or ())
+    if type(quantity) is not int or quantity < 1 or len(member_ids) != quantity:
+        raise StoredMemberCountError("The stored member count is not usable.")
+    if group.get("missing_fact"):
+        raise StoredMemberCountError("A stored fact is missing on this member count.")
+    if measurement_system not in ("metric", "imperial"):
+        raise StoredMemberCountError("The model measurement system is not stored.")
+    identity = (result_id or "").strip()
+    if not identity:
+        raise StoredMemberCountError("The stored member count needs a result id.")
+    text = str(quantity)
+    role = (group.get("role") or "member").strip() or "member"
+    size = (group.get("member_size") or "").strip()
+    label = f"{role} {size}".strip()
+    label = f"{label}. Stored member count. {', '.join(member_ids)}"
+    label = label[:255]
+    return {
+        "contract_version": "1",
+        "result_id": identity,
+        "engine_id": ENGINE_ID,
+        "engine_version": ENGINE_VERSION,
+        "variant": None,
+        "measurement_system": measurement_system,
+        "inputs": [
+            {
+                "code": "stored_member_count",
+                "value": text,
+                "unit_code": "ea",
+                "label": label,
+            }
+        ],
+        "assumptions": [],
+        "product_specification": None,
+        "components": [],
+        "quantities": [
+            {
+                "code": _MEMBER_COUNT_CODE,
+                "quantity": text,
+                "unit_code": "ea",
+                "label": label,
+            }
+        ],
+    }
+
+
+def offer_stored_member_count(
+    *,
+    organization_id,
+    estimate_version_id,
+    model,
+    member_ids,
+    actor,
+    user_id=None,
+):
+    """Place one stored member count on the existing mapper review.
+
+    Confirmation stays on confirm_quantity_mapping. This function does
+    not create an estimate line.
+    """
+    if not isinstance(model, dict):
+        raise StoredMemberCountError("A construction model is required.")
+    group = stored_member_group(model, member_ids)
+    payload = contract_for_stored_member_count(
+        group,
+        measurement_system=model.get("measurement_system"),
+        result_id=stored_member_count_result_id(group),
+    )
+    return ingest_contract_result(
+        organization_id=organization_id,
+        estimate_version_id=estimate_version_id,
+        payload=payload,
+        actor=actor,
+        user_id=user_id,
     )
 
 

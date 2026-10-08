@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 8 Oct 2026 — Stored member count confirmation
+
+One stored member count from `read_stored_member_quantities` can be offered into the existing calculation review. Explicit confirmation through the existing route creates one ordinary estimate line with that count. An unconfirmed review creates no line. A repeated confirmation does not create a second line. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. The Mac office file was not changed. Product acceptance is pending review.
+
 ## 8 Oct 2026 — Pre-turnover closure
 
 This block is the current operational checkpoint. Older sections in this file stay as history. Where they disagree with this block, this block wins until a later direct measurement replaces it.

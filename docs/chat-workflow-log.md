@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-08 — Checklist step 8 member-count confirmation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Take one already-stored known member count through the existing mapper confirmation onto one ordinary estimate line. |
+| Business decision | Checklist step 8 stays open. Official V1 stays 65% / 4 of 11. This slice is not product acceptance. |
+| Architectural decision | `offer_stored_member_count` copies the stored count into Contract V1 and calls `ingest_contract_result`. The existing confirm route remains the only insertion. `add_estimate_line_from_requirement` stays the earlier direct path and is not this acceptance. |
+| Prompt template used | Approved Cursor implementation prompt, 9 October 2026 header. |
+| Approved Cursor prompt summary | Implement checklist step 8 only. One stored member count, existing mapper confirmation, one ordinary estimate line. No new formula, route, migration, deploy, or V1 rescore. Commit and push the slice. Leave unrelated case files unstaged. |
+| Files expected to change | `app/services/deck_framing_handoff.py`, `tests/test_member_count_mapper_confirmation.py`, checklist, register, current-state, session-handoff, roadmap, architecture, estimating module, this journal. |
+| Files prohibited from changing | Case records, review images, Mac office database, migrations, live services. |
+| Implementation result | Implemented and tested. Not deployed. Not product-accepted. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_member_count_mapper_confirmation.py tests/test_stored_member_quantities.py tests/test_deck_framing_vertical_slice.py tests/test_icf_governed_estimate_path.py tests/test_calculation_estimate_mapping.py` — 34 passed, 83 warnings, 6.39s, exit 0. `./venv/bin/python -m pytest -q` — 2255 passed, 11 skipped, 7048 warnings, 1114.52s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Step 8 remains open for the unbound elements and for product review of this slice. |
+| Next approved step | ChatGPT review of this slice. Do not start checklist step 9. |
+| Next approved prompt | None from this implementation. |
+| Commit hash | Recorded after commit. |
+
 ### 2026-10-08 — Pre-turnover closure
 
 | Field | Content |

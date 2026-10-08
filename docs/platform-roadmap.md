@@ -7,6 +7,8 @@
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
+**8 Oct 2026 member-count confirmation slice.** Checklist step 8 stays **OPEN**. One stored member count can be reviewed through the existing mapper and confirmed onto one ordinary estimate line. Official V1 remains **65% / 4 of 11**. Not rescored. Not deployed. The Mac office was not migrated.
+
 **8 Oct 2026 closure.** Official V1 remains **65% / 4 of 11**. Repository Alembic head and the hosted database are both `s9f0a1b2c3d4`. Hosted integrity is `ok`. The Mac office remains `q7d8e9f0a1b2` on purpose. QuickBooks Option A remains the V1 estimate handoff. QuickBooks API remains post-V1. Approved crew hours do not yet become labour dollars or a payroll record; that gap is identified and is not a new roadmap item. Cost-library spreadsheet import is **PROPOSED — NOT YET AUTHORIZED**. Specialized products for roofing, electrical, plumbing, masonry, concrete, framing, drywall, flooring, siding, and HVAC are a later direction. They are not V1 packages and they do not replace the one lifecycle. Older occupancy sentences below are historical.
 
 **7 Oct 2026.** The V1-10 operating pack is written for the Mac office. It does not rescore V1. Official readiness remains **65% / 4 of 11**. The hosted office stays a validation copy.

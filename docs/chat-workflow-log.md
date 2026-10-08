@@ -43,6 +43,31 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-08 — Pre-turnover closure
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI — PRE-TURNOVER SYNCHRONIZATION — GOVERNANCE + WORK COMPLETION — FINAL CLOSURE — 8 OCTOBER 2026 |
+| Objective | Record the verified technical state and the approved product decisions, then close synchronization. |
+| Authority | Joel approved this closure prompt. The V1 register remains the product-completion instrument. Feature Gates remain implementation authorization. |
+| Evidence | HEAD and origin/main `18b183773eb5d3597ee702d1b2bf66230f3267a5` at measurement. Live deploy `dep-db407rajnfac73b2agag`. Repository Alembic head `s9f0a1b2c3d4`. Hosted Alembic `s9f0a1b2c3d4`, integrity `ok`, 3,657,728 bytes, WAL absent, SHM absent, 149 tables. Mac office `q7d8e9f0a1b2`, integrity `ok`, 3,645,440 bytes, modified 2026-10-07 11:06:09. Hosted database was not read again in this closure. |
+| Decision — lifecycle | PREVIOUS: PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN. NEW: the same lifecycle. The product objective is one working contractor platform on it. WHY: the 8 Oct discussions named the business flow inside that lifecycle and did not replace it. STATUS: current. IMPLEMENTATION IMPACT: none. |
+| Decision — estimating | PREVIOUS: estimating is a core V1 concern; checklist step 8 is open. NEW: the same. Construction intelligence sits inside PLAN → PRICE and is not a twelfth package. WHY: the shipped quantity work is implementation of estimating, not a new V1 definition. STATUS: current. IMPLEMENTATION IMPACT: step 8 stays the next development action. |
+| Decision — quantity order | PREVIOUS: a subcontract-only element could be `ENGINE_NOT_APPLICABLE` and carry no quantity. NEW: quantity first, responsibility second, cost path third. A subcontract does not erase a quantity the plan can determine. WHY: Joel approved that order in the 8 Oct construction-intelligence work, and that work is on `main`. STATUS: current. The old subcontract-only label remains in the historical register rows. IMPLEMENTATION IMPACT: no new formula in this closure. |
+| Decision — QuickBooks | PREVIOUS: V1-05 Option A is complete; live API is post-V1. NEW: Option A remains the complete V1 estimate handoff. It does not satisfy crew time → approved hours → actual labour → Suzanne payroll → QuickBooks. The exact gap is that approved hours stay hours. They do not become labour dollars or a payroll record. API is not promoted to V1. WHY: the end-to-end payroll chain was clarified and was not a reversal of Joel’s 10 Sep 2026 Option A selection. STATUS: gap identified, not authorized to build. IMPLEMENTATION IMPACT: none. |
+| Decision — cost knowledge | PREVIOUS: `CostItem`, historical Excel capture, supplier evidence, project quotes, and actual costs already exist. NEW: the same architecture. Spreadsheet cost-library import stays **PROPOSED — NOT YET AUTHORIZED**. WHY: the 8 Oct audit did not revise the V1 register. STATUS: parked. IMPLEMENTATION IMPACT: do not build an importer. |
+| Decision — Field | PREVIOUS: Field Web V1 is closed, with session-expiry recovery deferred. NEW: the same. The later offline Field shell is already deployed and is frozen pending real Ben onboarding. It is not a new crew app. WHY: crew-app work was closed by the 8 Oct freeze. STATUS: current. IMPLEMENTATION IMPACT: do not reopen crew-app implementation. |
+| Decision — trade products | PREVIOUS: CAR-001 later list has no specialized trade-product family. NEW: roofing, electrical, plumbing, masonry, concrete, framing, drywall, flooring, siding, and HVAC may become later products. They are not V1 packages. WHY: they were discussed as a future direction and were not approved as V1. STATUS: later / parked. IMPLEMENTATION IMPACT: none. |
+| Work preserved | `tests/test_confirmed_icf_block_prices.py` is on `main`. `stash@{0}` superseded by the wall-form route. `stash@{1}` duplicates FG-037. Neither dropped. `cursor/sidebar-navigation-refinement` and `cursor/constructos-branding-engine` remain unmerged and are abandoned July 2026 experiments. Linda Bushel, Geleynse, and the October review images remain local case records outside this commit. |
+| Affected documents | `docs/current-state.md`, `docs/session-handoff.md`, `docs/v1-completion-register.md`, `docs/PROJECT_DEVELOPMENT_CHECKLIST.md`, `docs/platform-vision.md`, `docs/platform-roadmap.md`, `docs/architecture.md`, `docs/operations/v1-operator-recovery-guide.md`, this journal. |
+| Implementation impact | Documentation only. No migration. No runtime deploy. Mac office unchanged. |
+| Status | Closure recorded. Official V1 remains 65% / 4 of 11. |
+| Approved Cursor prompt summary | Reconcile governance to the verified state and the approved decisions. Do not reread the hosted database. Do not migrate. Do not start a feature. Commit and push the documentation. Deploy only if runtime code changes. |
+| Tests | Operator-pack test after the guide update. Full suite not required: no application source changed. |
+| Next approved step | Checklist step 8. One already-stored known member count through the existing mapper confirmation onto one ordinary estimate line. No new formula. |
+
 ### 2026-10-08 — Pre-turnover synchronization gate
 
 | Field | Content |

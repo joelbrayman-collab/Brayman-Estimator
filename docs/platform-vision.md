@@ -3,9 +3,11 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **Joel-approved CalibraytAI direction** (product identity 2026-09-09; lifecycle direction 2026-08-28); repository product name remains The Estimator |
-| Updated | 2026-09-09 |
+| Updated | 2026-10-08 |
 | Approval | CalibraytAI (formerly CalibAi) vision and lifecycle: Joel Brayman via CAR-001 and [ADR-045](adr/ADR-045-calibraytai-product-identity-and-former-name-preservation.md). Repository rename remains a **separate** future approval. |
 | Record | [CAR-001](architecture/CAR-001-calibai-product-architecture-reconciliation.md) · [product-identity.md](governance/product-identity.md) |
+
+**Subsequent status (2026-10-08):** The lifecycle below is unchanged. The product objective is one working contractor platform on that lifecycle. Estimating remains inside PLAN → PRICE: plan, then construction intelligence, then quantities, then cost, then the estimate. Quantity is read before who performs the work, and who performs the work is read before the cost path. A subcontract does not remove a quantity the plan can determine. Specialized trade products are a later direction. They are not a second lifecycle and they are not V1 packages. QuickBooks stays external. The V1 accounting handoff remains the governed estimate entry. A live QuickBooks API is not approved.
 
 ## CalibraytAI (formerly CalibAi)
 

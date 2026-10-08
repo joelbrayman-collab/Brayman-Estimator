@@ -30,9 +30,9 @@ Office identity checked 7 October 2026:
 - That file is intact. Its office revision is `q7d8e9f0a1b2`. Size 3,645,440 bytes. Last changed 2026-10-07 11:06:09.
 - The backup taken immediately before that structure update is revision `h8c9d0e1f2a3`. It is recorded in the backup log.
 - This is the office for the first real project.
-- Website: `https://calibryatai.onrender.com`. Product behavior checked 8 October 2026 is `234a4eb7e9ddcfab07bf795fd7bfc23c61237ca7`. Synchronization commit `8de505a62810cab572132d446e60594c8147fb9f` was deployed as `dep-db406oo473hc73c61h5g`. Auto-deploy is off. Confirm the served revision with Render before relying on an older note.
+- Website: `https://calibryatai.onrender.com`. Product behavior checked 8 October 2026 is `234a4eb7e9ddcfab07bf795fd7bfc23c61237ca7`. The served revision at the 8 October closure is `18b183773eb5d3597ee702d1b2bf66230f3267a5`, deploy `dep-db407rajnfac73b2agag`. Auto-deploy is off.
 - The website is a separate copy. Password sign-in there is not settled. Do not enter a real job there.
-- The hosted database revision was not re-read on 8 October 2026. Do not guess it from an older note.
+- The hosted database revision read on 8 October 2026 is `s9f0a1b2c3d4`. Integrity is ok. The Mac office was not brought to that revision.
 
 Some older practice jobs are already in the Mac office. Do not delete them. Do not use one as the real customer job. Ask Joel which project is the real one.
 

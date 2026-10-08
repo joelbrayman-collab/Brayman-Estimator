@@ -7,9 +7,38 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
-## 8 Oct 2026 — Pre-turnover synchronization gate
+## 8 Oct 2026 — Pre-turnover closure
 
 This block is the current operational checkpoint. Older sections in this file stay as history. Where they disagree with this block, this block wins until a later direct measurement replaces it.
+
+| Fact | Verified |
+|---|---|
+| Branch | `main` |
+| HEAD | `18b183773eb5d3597ee702d1b2bf66230f3267a5` at the start of this closure. The governance commit that contains this paragraph is documentation. It does not change application routes. |
+| origin/main | Same SHA as HEAD after this closure is pushed. Ahead/behind 0/0. |
+| Live application | `18b183773eb5d3597ee702d1b2bf66230f3267a5`, deploy `dep-db407rajnfac73b2agag`. Product behavior remains `234a4eb7e9ddcfab07bf795fd7bfc23c61237ca7`. This closure is not deployed, because it does not change runtime code. |
+| Repository Alembic head | `s9f0a1b2c3d4` |
+| Hosted Alembic | `s9f0a1b2c3d4` |
+| Hosted integrity | `ok` |
+| Hosted database | 3,657,728 bytes. WAL absent. SHM absent. 149 tables. Readable. |
+| Mac office | `instance/brayman_estimator.db`, 3,645,440 bytes, modified 2026-10-07 11:06:09, integrity `ok`, revision `q7d8e9f0a1b2` |
+| Official V1 | **65% / 4 of 11**. Not rescored. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+
+Mac lag behind `r8e9f0a1b2c3` and `s9f0a1b2c3d4` is intentional. This closure did not migrate the Mac office.
+
+Hosted and repository revisions match. The earlier “hosted revision not read” sentence is historical.
+
+Lifecycle remains PLAN → PRICE → CONTRACT → BUILD → MONITOR → LEARN. Estimating stays a core V1 concern. Quantity is read before responsibility, and responsibility is read before the cost path. That order does not add a twelfth V1 package. Checklist step 8 stays open. `estimate_project` has no office route. `SITE`, `FOUND`, and `STRUCT` stay unbound.
+
+V1-05 Option A remains the complete QuickBooks estimate handoff. It does not turn approved crew hours into labour dollars or a payroll record. QuickBooks API stays post-V1. The payroll gap is identified and is not authorized to build from this closure.
+
+Cost-library spreadsheet import stays **PROPOSED — NOT YET AUTHORIZED**. Specialized trade products stay a later direction and are not V1 packages.
+
+`stash@{0}` is superseded by the wall-form route on `main`. `stash@{1}` duplicates FG-037 already on `main`. Neither stash was dropped. `cursor/sidebar-navigation-refinement` and `cursor/constructos-branding-engine` stay unmerged July 2026 branches. Linda Bushel, Geleynse, and the October review images stay local case records and are not part of this commit.
+
+## 8 Oct 2026 — Pre-turnover synchronization gate
+
+This block is the earlier gate record. The closure checkpoint above wins.
 
 | Fact | Measured this gate |
 |---|---|

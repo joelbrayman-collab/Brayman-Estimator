@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Deck and framing vertical slice (2026-10-08)
+
+| Field | Content |
+|-------|---------|
+| Slice | First deck and framing quantity handoff into the existing estimate chain. |
+| Product status at capture | Implemented and tested on scratch data. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | A stored deck member count can become a material requirement, a supplier request line, and an estimate line. A missing length stays marked and the other members continue. |
+| 2. When would the contractor use it? | While turning a deck model into an internal estimate, before asking a supplier for a price. |
+| 3. What workflow will the final Manual need to teach? | Confirm the member facts, review the count, send the supplier request, approve the contractor cost, and keep the line. Leave labour hours blank until a production assumption is confirmed. |
+| 4. What contractor-facing terms must be used? | Member count. Supplied length. Unresolved. Contractor-confirmed price. Framing. |
+| 5. What screenshots / Print examples will eventually be needed? | The supplier request with one known count and one unresolved member. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | A member count is not a purchase quantity. No stock length or waste is added. Labour hours wait for a contractor production assumption. |
+| 7. Desktop / iPhone / Print relevance | Office estimate and the printed supplier request. Not a Field or iPhone change. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Brayman V1 interim contract presentation (2026-10-07)
 
 | Field | Content |

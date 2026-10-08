@@ -51,6 +51,36 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Construction intelligence (2026-10-08)
+
+| Field | Content |
+|-------|---------|
+| Slice | Stored area, sheet size, coverage, and service counts become quantities. The cost path stays separate. |
+| Product status at capture | Implemented and tested on scratch data. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | A known wall or roof rectangle can become a square-foot quantity, and a named sheet size can become an exact sheet count. A stored fixture count can go to a subcontractor with the price still blank. |
+| 2. When would the contractor use it? | When the plan already stores the length and width, the sheet size or coverage, or the fixture, device, or equipment count. |
+| 3. What workflow will the final Manual need to teach? | Read the square feet first. Read sheets or bundles only when the product size is stored. Send plumbing, electrical, and HVAC as a quote with the count visible and the allowance blank. |
+| 4. What contractor-facing terms must be used? | Area. Sheet. Coverage. Fixture count. Quote. Allowance. Unresolved. |
+| 5. What screenshots / Print examples will eventually be needed? | A supplier request with an exact OSB sheet count, and a separate subcontract request with a fixture count and a blank allowance. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | Pitch is not applied. Openings are not deducted. A missing sheet size does not become a sheet count. A subcontract count is not a material order. |
+| 7. Desktop / iPhone / Print relevance | Office quantity result, the printed supplier request, and the printed subcontract request. Not a Field or iPhone change. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
+### MANUAL IMPACT — Governed footing volume (2026-10-08)
+
+| Field | Content |
+|-------|---------|
+| Slice | A footing with stored length, width, and thickness becomes a concrete volume. |
+| Product status at capture | Implemented and tested on scratch data. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | A complete footing can be requested as concrete in cubic metres. The cubic yards stay in the note. An incomplete footing stays marked unresolved. |
+| 2. When would the contractor use it? | When the footing length, width, and thickness are already stored, on the same pass as a slab or an ICF wall. |
+| 3. What workflow will the final Manual need to teach? | Read each footing separately. Leave a missing thickness unresolved. Confirm the concrete price is per cubic metre. Leave mix design and labour hours open. |
+| 4. What contractor-facing terms must be used? | Footing. Concrete. Cubic yards. Cubic metres. Unresolved. |
+| 5. What screenshots / Print examples will eventually be needed? | A supplier request with a complete footing in cubic metres and an unresolved footing beside it. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | A pier or footing location is not a footing size. No waste or truck count is added. Two footings are not combined. |
+| 7. Desktop / iPhone / Print relevance | Office quantity result and the printed supplier request. Not a Field or iPhone change. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Canonical concrete material (2026-10-08)
 
 | Field | Content |

@@ -10,6 +10,16 @@ from decimal import Decimal
 from app.services.unit_conversion import convert
 
 
+def rectangular_area_square_feet(length_ft, width_ft):
+    """Return square feet for two stored imperial measures.
+
+    Pitch is not applied. Openings are not deducted.
+    """
+    if length_ft in (None, "") or width_ft in (None, ""):
+        return None
+    return Decimal(str(length_ft)) * Decimal(str(width_ft))
+
+
 def rectangular_prism_cubic_yards(length_ft, width_ft, thickness_in):
     """Return cubic feet and cubic yards for three stored imperial measures.
 

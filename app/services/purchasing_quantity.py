@@ -28,6 +28,8 @@ def annotate_purchasing(line):
     if line.get("status") != "KNOWN" or line.get("quantity") is None:
         return annotated
     basis = PURCHASING_BASIS.get(line.get("quantity_meaning"))
+    if line.get("quantity_meaning") == "area":
+        return _annotate_area(annotated, line)
     if basis is None:
         annotated["purchasing_quantity"] = line.get("quantity")
         annotated["purchasing_unit"] = line.get("unit")
@@ -82,5 +84,80 @@ def sheet_purchasing(area_sf, sheet_width_in=None, sheet_length_in=None):
         "rule": "square feet to sheets from the stored sheet size",
         "from_unit": "SF",
         "to_unit": "EA",
+        "factor": sheet_sf,
     }
     return result
+
+
+def coverage_purchasing(area_sf, coverage_sf_per_unit):
+    """Square feet stay square feet until a stored coverage exists.
+
+    The unit count is the exact area quotient. It is not rounded up.
+    """
+    area = Decimal(str(area_sf))
+    result = {
+        "construction_quantity": area,
+        "construction_unit": "SF",
+        "purchasing_quantity": None,
+        "purchasing_unit": None,
+        "purchasing_status": "TBD",
+        "conversion": None,
+        "waste": None,
+    }
+    if coverage_sf_per_unit in (None, ""):
+        return result
+    coverage = Decimal(str(coverage_sf_per_unit))
+    if coverage <= 0:
+        return result
+    result["purchasing_quantity"] = area / coverage
+    result["purchasing_unit"] = "EA"
+    result["purchasing_status"] = "KNOWN"
+    result["conversion"] = {
+        "rule": "square feet to units from the stored product coverage",
+        "from_unit": "SF",
+        "to_unit": "EA",
+        "factor": coverage,
+    }
+    return result
+
+
+def _annotate_area(annotated, line):
+    """Keep the square-foot quantity. Purchase units need a stored size."""
+    if line.get("sheet_size_conflict"):
+        annotated["purchasing_status"] = "TBD"
+        annotated["missing_facts"] = tuple(line.get("missing_facts") or ()) + (
+            line["sheet_size_conflict"],
+        )
+        return annotated
+    sheets = sheet_purchasing(
+        line.get("quantity"),
+        sheet_width_in=line.get("sheet_width_in"),
+        sheet_length_in=line.get("sheet_length_in"),
+    )
+    if sheets["purchasing_status"] == "KNOWN":
+        annotated["purchasing_quantity"] = sheets["purchasing_quantity"]
+        annotated["purchasing_unit"] = sheets["purchasing_unit"]
+        annotated["purchasing_status"] = "KNOWN"
+        annotated["conversion"] = sheets["conversion"]
+        return annotated
+    if line.get("canonical_uom") == "SF":
+        annotated["purchasing_quantity"] = line.get("quantity")
+        annotated["purchasing_unit"] = "SF"
+        annotated["purchasing_status"] = "KNOWN"
+        return annotated
+    if line.get("coverage_sf_per_unit") not in (None, ""):
+        covered = coverage_purchasing(
+            line.get("quantity"),
+            line.get("coverage_sf_per_unit"),
+        )
+        if covered["purchasing_status"] == "KNOWN":
+            annotated["purchasing_quantity"] = covered["purchasing_quantity"]
+            annotated["purchasing_unit"] = covered["purchasing_unit"]
+            annotated["purchasing_status"] = "KNOWN"
+            annotated["conversion"] = covered["conversion"]
+            return annotated
+    annotated["purchasing_status"] = "TBD"
+    annotated["missing_facts"] = tuple(line.get("missing_facts") or ()) + (
+        "sheet size or product coverage",
+    )
+    return annotated

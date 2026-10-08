@@ -79,17 +79,19 @@ def create_requirements_from_project(
 def requirement_note(line, project_id, quantity=None, unit=None):
     provenance = line.get("provenance") or {}
     members = ",".join(provenance.get("member_ids") or ())
+    source_id = provenance.get("source_element_id") or ""
     stored_quantity = line.get("quantity") if quantity is None else quantity
     stored_unit = line.get("unit") if unit is None else unit
     note = (
-        "{0} {1}; project {2}; scope {3}; element {4}; members {5}; "
-        "rule {6}; quantity {7} {8}; canonical {9}"
+        "{0} {1}; project {2}; scope {3}; element {4}; source {5}; "
+        "members {6}; rule {7}; quantity {8} {9}; canonical {10}"
     ).format(
         CONTRACT,
         CONTRACT_VERSION,
         project_id,
         line.get("scope"),
         line.get("element"),
+        source_id,
         members,
         provenance.get("rule"),
         stored_quantity,
@@ -210,10 +212,75 @@ def _unresolved_purchasing_note(line):
     ).format(quantity, unit)
 
 
+def subcontract_request_from_project(
+    result,
+    *,
+    project_name,
+    project_address,
+    issued_on,
+):
+    """Quote sheet for plumbing, electrical, and HVAC.
+
+    Stored counts and areas stay visible. Quote and allowance stay blank.
+    """
+    rows = []
+    for line in result.get("lines") or ():
+        if line.get("kind") != "subcontract":
+            continue
+        intelligence = line.get("intelligence") or (
+            {
+                "status": "CONTRACTOR_INPUT",
+                "quantity": None,
+                "unit": None,
+                "meaning": line.get("scope"),
+                "missing_facts": ("subcontractor quote or allowance",),
+            },
+        )
+        for item in intelligence:
+            quantity = item.get("quantity")
+            rows.append(
+                {
+                    "scope": line.get("scope"),
+                    "meaning": item.get("meaning"),
+                    "qty": "" if quantity is None else str(quantity),
+                    "unit": item.get("unit") or "",
+                    "status": item.get("status"),
+                    "quote": None,
+                    "allowance": None,
+                    "note": (
+                        "Construction intelligence. "
+                        "The cost enters as a quote or allowance. "
+                        "No allowance amount is stored."
+                    ),
+                }
+            )
+    return {
+        "project_name": project_name,
+        "project_address": project_address,
+        "issued_on": issued_on,
+        "rows": tuple(rows),
+        "response_fields": ("quote", "allowance"),
+    }
+
+
 def _construction_note(line):
+    rule = (line.get("conversion") or {}).get("rule") or ""
+    if line.get("construction_unit") != "YD3" and "cubic" not in rule:
+        return (
+            "Construction quantity: {0} {1}. "
+            "Purchasing quantity: {2} {3}. "
+            "Conversion: {4}. "
+            "The purchasing count is the exact quotient. "
+            "It is not rounded up. No waste rule is applied."
+        ).format(
+            line.get("construction_quantity"),
+            line.get("construction_unit"),
+            line.get("purchasing_quantity"),
+            line.get("purchasing_unit"),
+            rule,
+        )
     yards = three_decimal_display(line.get("construction_quantity"))
     metres = three_decimal_display(line.get("purchasing_quantity"))
-    rule = (line.get("conversion") or {}).get("rule")
     return (
         "Calculated construction volume: {0} yd³. "
         "Purchasing quantity: {1} m³. "

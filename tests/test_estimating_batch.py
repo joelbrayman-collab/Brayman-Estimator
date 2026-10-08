@@ -229,7 +229,9 @@ def test_known_scopes_continue_when_other_scopes_stay_unresolved():
     assert open_slab["quantity"] is None
     assert "slab thickness" in open_slab["missing_facts"]
     assert footing["status"] == "CONTRACTOR_INPUT"
-    assert "no governed footing quantity rule" in footing["missing_facts"]
+    assert footing["quantity"] is None
+    assert "footing width in feet" in footing["missing_facts"]
+    assert "footing thickness in inches" in footing["missing_facts"]
     assert roof["status"] == "CONTRACTOR_INPUT"
     assert "Pitch is not assumed" in roof["provenance"]["missing_rule"]
     assert "opening kind" in windows["provenance"]["missing_rule"]

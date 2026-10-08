@@ -1,8 +1,9 @@
 """Foundation quantity result.
 
 ICF form and concrete quantities come from the existing ICF engine.
-A slab volume uses the stored rectangular-prism measurement when length,
-width, and thickness are all stored. A footing still has no volume rule.
+A slab volume and a footing volume use the stored rectangular-prism
+measurement when length in feet, width in feet, and thickness in inches
+are all stored. A support location is not a footing size.
 A missing wall fact stays on that wall. Stock packages, truck counts,
 waste, and labour hours are not invented.
 """
@@ -79,14 +80,7 @@ def _element_lines(element):
     if kind == "concrete_slab":
         return _slab_lines(element)
     if kind == "footing":
-        missing = []
-        if element.get("width") in (None, ""):
-            missing.append("footing width")
-        if element.get("depth") in (None, ""):
-            missing.append("footing depth")
-        if not missing:
-            missing.append("no governed footing quantity rule")
-        return (_open_line(element, "footing", "Footing", tuple(missing)),)
+        return _footing_lines(element)
     return (
         _open_line(
             element,
@@ -181,6 +175,109 @@ def _quantity_line(element, quantity, calculated):
         "item_text": _known_text(element, code, unit, meaning),
         "provenance": _provenance(element, code, rule, calculated),
     }
+
+
+_CONCRETE_SPEC_KEYS = (
+    "mpa",
+    "slump",
+    "air_entrainment",
+    "exposure_class",
+    "aggregate",
+    "admixture",
+    "reinforcing",
+)
+
+
+def _footing_lines(element):
+    """Volume from stored length, width, and thickness. No standard size."""
+    length = _positive_measure(element.get("length_ft"))
+    width = _positive_measure(element.get("width_ft"))
+    thickness = _positive_measure(element.get("thickness_in"))
+    depth = _positive_measure(element.get("depth_in"))
+    missing = []
+    if length is None:
+        missing.append("footing length")
+    if width is None:
+        missing.append("footing width in feet")
+    if thickness is None and depth is None:
+        missing.append("footing thickness in inches")
+    elif thickness is not None and depth is not None and thickness != depth:
+        missing.append("footing thickness and depth disagree")
+    specs = _stored_specs(element)
+    inch = thickness if thickness is not None else depth
+    if missing or inch is None:
+        line = _open_line(element, "footing", "Footing", tuple(missing))
+        line["concrete_specification"] = "TBD"
+        line["retained_facts"] = specs
+        line["provenance"]["source_facts"] = _footing_source(element, None, None)
+        return (line,)
+    measured = rectangular_prism_cubic_yards(length, width, inch)
+    identifier = element.get("id") or "footing"
+    return (
+        {
+            "element": "footing",
+            "source_element_id": element.get("id"),
+            "kind": "foundation_fact",
+            "status": _KNOWN,
+            "quantity": measured["cubic_yards"],
+            "unit": "YD3",
+            "quantity_meaning": "concrete_volume",
+            "purchase_quantity": None,
+            "stock_length": None,
+            "waste": None,
+            "truck_count": None,
+            "canonical_material_code": CONCRETE_CANONICAL_CODE,
+            "concrete_specification": "TBD" if _missing_specs(element) else "stored",
+            "retained_facts": specs,
+            "missing_facts": (),
+            "item_text": (
+                "Concrete. Footing {0}. Volume is not a truck count."
+            ).format(identifier),
+            "provenance": {
+                "project_id": element.get("project_id"),
+                "source_element_id": element.get("id"),
+                "source_facts": _footing_source(element, measured, inch),
+                "quantity_code": "footing",
+                "rule": "rectangular footing volume",
+                "measurement_rule": measured["rule"],
+                "engine_id": "construction_measurement",
+                "engine_version": "1",
+                "wrapper_engine_id": ENGINE_ID,
+                "wrapper_engine_version": ENGINE_VERSION,
+            },
+        },
+    )
+
+
+def _footing_source(element, measured, inch):
+    facts = {
+        "kind": "footing",
+        "length_ft": element.get("length_ft"),
+        "width_ft": element.get("width_ft"),
+        "thickness_in": element.get("thickness_in"),
+        "depth_in": element.get("depth_in"),
+    }
+    if inch is not None:
+        facts["thickness_used_in"] = str(inch)
+    if measured is not None:
+        facts["cubic_feet"] = str(measured["cubic_feet"])
+    for key in _CONCRETE_SPEC_KEYS:
+        if element.get(key) not in (None, ""):
+            facts[key] = element.get(key)
+    return facts
+
+
+def _stored_specs(element):
+    retained = []
+    for key in _CONCRETE_SPEC_KEYS:
+        value = element.get(key)
+        if value not in (None, ""):
+            retained.append("{0}={1}".format(key, value))
+    return tuple(retained)
+
+
+def _missing_specs(element):
+    return any(element.get(key) in (None, "") for key in _CONCRETE_SPEC_KEYS)
 
 
 def _slab_lines(element):

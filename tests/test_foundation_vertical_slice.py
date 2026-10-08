@@ -1,8 +1,8 @@
 """Foundation quantities through the existing commercial chain.
 
 Synthetic facts only. The ICF engine supplies the wall numbers. A slab
-without length, width, and thickness stays unresolved. A footing stays
-unresolved because no footing volume rule is stored.
+without length, width, and thickness stays unresolved. A footing
+without width in feet and thickness in inches stays unresolved.
 """
 
 from datetime import datetime
@@ -153,7 +153,9 @@ def test_icf_facts_stay_separate_from_a_missing_wall_and_an_unruled_slab():
     assert missing_wall["status"] == "CONTRACTOR_INPUT"
     assert "net wall area" in missing_wall["missing_facts"]
     assert footing["status"] == "CONTRACTOR_INPUT"
-    assert "footing width" in footing["missing_facts"]
+    assert "footing width in feet" in footing["missing_facts"]
+    assert "footing thickness in inches" in footing["missing_facts"]
+    assert footing["quantity"] is None
     assert slab["quantity"] is None
     assert "slab length" in slab["missing_facts"]
     assert "slab width" in slab["missing_facts"]

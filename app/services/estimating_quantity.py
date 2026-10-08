@@ -1,13 +1,16 @@
 """Common V1 estimating quantity contract.
 
-Existing engines keep their formulas. A scope with no stored rule stays
-unresolved. Plumbing, electrical, and HVAC stay quote or allowance scopes.
+Existing engines keep their formulas. Stored area, volume, length, and
+count facts use the common measurement rules. A missing fact stays on
+that result. Plumbing, electrical, and HVAC keep a quote or allowance
+cost path and still carry stored construction facts.
 """
 
 from __future__ import annotations
 
 from decimal import Decimal, InvalidOperation
 
+from app.services.construction_intelligence import interpret_scope, service_intelligence
 from app.services.deck_framing_quantity import quantity_result_from_model
 from app.services.foundation_quantity import quantity_result_from_facts
 from app.services.purchasing_quantity import annotate_purchasing
@@ -56,6 +59,17 @@ _TASKS = {
     "site": ("SITE", "CLEAR", "Clearing"),
     "flatwork": ("FOUND", None, "Foundation"),
     "stairs": ("STRUCT", "FRAME", "Framing"),
+    "sheathing": ("STRUCT", "FRAME", "Framing"),
+    "roofing": (None, None, "Roofing"),
+    "siding": (None, None, "Cladding"),
+    "insulation": (None, None, "Insulation"),
+    "drywall": (None, None, "Drywall"),
+    "flooring": (None, None, "Flooring"),
+    "trim": (None, None, "Trim"),
+    "windows": (None, None, "Windows"),
+    "exterior_doors": (None, None, "Exterior doors"),
+    "interior_doors": (None, None, "Interior doors"),
+    "waterproofing": (None, None, "Waterproofing"),
 }
 
 _ROLE_SCOPES = {
@@ -84,8 +98,8 @@ _STAIR_KEYS = (
 def estimate_project(plan, catalogue=()):
     """Read one plan and return one quantity result.
 
-    A missing fact or a missing rule flags that scope. Other scopes stay
-    in the result. Subcontract trades are not treated as unknown work.
+    A missing fact or a missing rule flags that result. Other results stay
+    in the project. Subcontract trades stay on the quote path.
     """
     project_id = plan.get("project_id")
     lines = []
@@ -101,9 +115,16 @@ def estimate_project(plan, catalogue=()):
         lines.extend(_adapt_foundation(foundation, project_id))
     for scope in plan.get("scopes") or ():
         name = scope.get("scope")
+        facts = scope.get("facts") or {}
         if name in SUBCONTRACT_SCOPES:
-            lines.append(_subcontract(project_id, name, scope.get("facts") or {}))
-        elif name in MISSING_RULES and not _already_calculated(lines, name):
+            lines.append(_subcontract(project_id, name, facts))
+            continue
+        interpreted = interpret_scope(name, facts, catalogue)
+        if interpreted is not None:
+            for source in interpreted:
+                lines.append(_copy_line(source, project_id, name, _labour(name)))
+            continue
+        if name in MISSING_RULES and not _already_calculated(lines, name):
             if name == "stairs" and any(
                 line.get("element") == "stair_result" for line in lines
             ):
@@ -206,6 +227,7 @@ def _stair_fact_lines(model, project_id):
                 }
             )
         )
+        lines[-1]["learning"] = _learning_record(lines[-1])
     return lines
 
 
@@ -254,6 +276,12 @@ def _adapt_foundation(result, project_id):
         else:
             scope = "foundations"
         labour = _labour(scope)
+        if scope == "footings":
+            labour["existing_activity_codes"] = ("LAYOUT", "EXCAV", "FORM", "PLACE")
+            labour["note"] = (
+                "Foundation activities exist. "
+                "No production rate is stored for a footing, so hours stay open."
+            )
         if scope == "foundations":
             labour["element_code"] = ICF_WALL_CODE
             labour["activity_name"] = "ICF wall"
@@ -274,7 +302,9 @@ def _copy_line(source, project_id, scope, labour):
     provenance = dict(line.get("provenance") or {})
     provenance["project_id"] = project_id
     line["provenance"] = provenance
-    return annotate_purchasing(line)
+    finished = annotate_purchasing(line)
+    finished["learning"] = _learning_record(finished)
+    return finished
 
 
 def _missing(project_id, scope, facts, rule=None):
@@ -288,7 +318,7 @@ def _missing(project_id, scope, facts, rule=None):
     for key, value in facts.items():
         if value in (None, ""):
             missing.append(key)
-    return {
+    line = {
         "project_id": project_id,
         "scope": scope,
         "element": scope,
@@ -315,10 +345,12 @@ def _missing(project_id, scope, facts, rule=None):
             "missing_rule": text,
         },
     }
+    line["learning"] = _learning_record(line)
+    return line
 
 
 def _subcontract(project_id, scope, facts):
-    return {
+    line = {
         "project_id": project_id,
         "scope": scope,
         "element": scope,
@@ -360,6 +392,30 @@ def _subcontract(project_id, scope, facts):
             "engine_version": CONTRACT_VERSION,
             "rule": "subcontract_quote_or_allowance",
         },
+        "intelligence": service_intelligence(scope, facts),
+        "quote": None,
+        "allowance": None,
+    }
+    line["learning"] = _learning_record(line)
+    return line
+
+
+def _learning_record(line):
+    task = line.get("task") or {}
+    labour = line.get("labour") if isinstance(line.get("labour"), dict) else {}
+    return {
+        "project_id": line.get("project_id"),
+        "scope": line.get("scope"),
+        "task": task.get("activity_name"),
+        "element_code": task.get("element_code"),
+        "activity_code": task.get("activity_code"),
+        "material": line.get("canonical_material_code"),
+        "quantity": line.get("quantity"),
+        "unit": line.get("unit"),
+        "labour": labour.get("hours"),
+        "material_cost": None,
+        "subcontract_cost": None,
+        "cost_path": "subcontract" if line.get("kind") == "subcontract" else "material",
     }
 
 

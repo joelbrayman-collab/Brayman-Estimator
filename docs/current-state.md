@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 8 Oct 2026 — Contract V1 core identity
+
+`nominal_core_thickness_in` is an exact positive decimal inch token. `6.25` is valid and is not rewritten as `6`. The universal size list is removed. `contract_version` stays `"1"`. New ICF results copy `manufacturer_id` and `profile_version` from the profile that already stores them. Older results without those fields stay valid. The 8-inch quantity formulas are unchanged. No core dropdown was added. No profile fact was invented. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified.
+
 ## 8 Oct 2026 — ICF manufacturer-specific core selection
 
 Product direction is recorded. It is not implemented. The contractor selects a manufacturer, then that manufacturer’s core size, then wall geometry. A listed size calculates only when that core has its own verified standard-form coverage and either a cavity width or a per-form concrete volume, plus coverage for a requested corner. Another core’s factors are not used. Logix 6.25 inches stays 6.25 inches. Pinned Contract V1 still accepts only 6, 8, 10, and 12, so it cannot store 6.25. That schema change is not authorized. One ICF engine remains. Multi-core support does not complete reinforcement, openings, specialty forms, waterproofing, accessories, labour, waste, or purchasing quantities. The running calculator remains 8-inch only. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Not deployed. Not live-verified.

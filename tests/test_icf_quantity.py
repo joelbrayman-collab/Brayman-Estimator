@@ -45,6 +45,11 @@ def test_logix_concrete_follows_the_manual_example_and_not_a_per_form_volume():
     assert concrete.quantize(Decimal("0.1")) == Decimal("37.6")
     assert "cavity width" in " ".join(result["methods"])
     assert validate_contract_v1(result["payload"]) == []
+    specification = result["payload"]["product_specification"]
+    assert specification["nominal_core_thickness_in"] == "8"
+    assert specification["system_name"] == "Logix"
+    assert specification["manufacturer_id"] == "logix"
+    assert specification["profile_version"] == "1"
     assert not any(item["code"] == "labour_hours" for item in result["payload"]["quantities"])
 
 
@@ -124,6 +129,20 @@ def test_quantity_does_not_write_records_or_rates(app):
         assert Project.query.count() == 0
         assert Estimate.query.count() == 0
         assert ProductionRateStandard.query.count() == 0
+
+
+def test_eight_inch_facts_are_not_extended_to_an_unverified_core():
+    from app.services.icf_manufacturer_profiles import get_profile
+
+    units = get_profile("logix")["units"]
+    assert set(units) == {
+        "standard_8",
+        "corner_90_8",
+        "corner_45_8",
+        "brick_ledge_8",
+    }
+    assert "6.25" in get_profile("logix")["core_sizes_offered_in"]
+    assert "standard_6_25" not in units
 
 
 def test_no_new_public_icf_route(app):

@@ -43,6 +43,21 @@ def _input(code, value, unit_code):
     return {"code": code, "value": str(value), "unit_code": unit_code}
 
 
+def _product_specification(profile):
+    """Record the selected system. Copy profile identity only when it exists."""
+    specification = {
+        "system_name": profile["product_system_name"],
+        "nominal_core_thickness_in": _CORE,
+    }
+    manufacturer_id = profile.get("manufacturer_id")
+    profile_version = profile.get("profile_version")
+    if isinstance(manufacturer_id, str) and manufacturer_id.strip():
+        specification["manufacturer_id"] = manufacturer_id
+    if isinstance(profile_version, str) and profile_version.strip():
+        specification["profile_version"] = profile_version
+    return specification
+
+
 def build_icf_standard_quantities(
     *,
     manufacturer_id,
@@ -203,10 +218,7 @@ def build_icf_standard_quantities(
         "assumptions": [
             _input("nominal_core_thickness", _CORE, "in"),
         ],
-        "product_specification": {
-            "system_name": profile["product_system_name"],
-            "nominal_core_thickness_in": _CORE,
-        },
+        "product_specification": _product_specification(profile),
         "components": [],
         "quantities": quantities,
     }

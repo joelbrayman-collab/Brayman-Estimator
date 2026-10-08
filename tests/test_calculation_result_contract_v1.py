@@ -33,6 +33,11 @@ def test_thickened_edge_slab_example_is_valid():
     assert payload["quantities"][0]["unit_code"] == "m3"
 
 
+HISTORICAL_ICF_FINGERPRINT = (
+    "f0141efc2a13a41f37a1c369a4b84366cfbd7e15408925855cd572f367d48643"
+)
+
+
 def test_icf_example_carries_the_selected_system():
     payload = _load("icf-wall.example.json")
     assert validate_contract_v1(payload) == []
@@ -76,6 +81,39 @@ def test_fingerprint_ignores_run_identity_and_changes_with_inputs():
     changed = json.loads(json.dumps(payload))
     changed["inputs"][0]["value"] = "11"
     assert calculation_fingerprint(changed) != original
+
+
+def test_exact_manufacturer_core_is_a_decimal_token():
+    payload = _load("icf-wall.example.json")
+    payload["product_specification"]["nominal_core_thickness_in"] = "6.25"
+    assert validate_contract_v1(payload) == []
+    for token in ("", "0", "0.0", "-1", "6.25 in", "6.25in", "six", "08", "6.250"):
+        payload["product_specification"]["nominal_core_thickness_in"] = token
+        errors = validate_contract_v1(payload)
+        assert errors, token
+        assert any("core thickness" in error for error in errors)
+
+
+def test_contract_accepts_a_core_the_catalog_does_not_list():
+    payload = _load("icf-wall.example.json")
+    payload["product_specification"]["nominal_core_thickness_in"] = "14"
+    assert validate_contract_v1(payload) == []
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "app"
+        / "services"
+        / "calculation_result_contract.py"
+    ).read_text(encoding="utf-8")
+    assert "icf_manufacturer_profiles" not in source
+    assert "core_sizes_offered" not in source
+
+
+def test_historical_icf_fingerprint_is_unchanged():
+    payload = _load("icf-wall.example.json")
+    assert calculation_fingerprint(payload) == HISTORICAL_ICF_FINGERPRINT
+    changed = json.loads(json.dumps(payload))
+    changed["product_specification"]["nominal_core_thickness_in"] = "6.25"
+    assert calculation_fingerprint(changed) != HISTORICAL_ICF_FINGERPRINT
 
 
 def test_company_identity_is_rejected():

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from decimal import Decimal, InvalidOperation
 
 UNIT_CODES = {"m", "mm", "ft", "in", "m2", "ft2", "m3", "ft3", "yd3", "ea", "percent"}
@@ -28,6 +29,9 @@ FORBIDDEN_KEYS = {
     "margin",
     "proposal_id",
 }
+# Exact manufacturer core token. No unit word, no exponent, no leading
+# zero, and no trailing fractional zero. 6.25 stays 6.25.
+_CORE_DIMENSION = re.compile(r"^(?:0|[1-9][0-9]*)(?:\.[0-9]*[1-9])?$")
 REQUIRED_KEYS = {
     "contract_version",
     "result_id",
@@ -41,6 +45,17 @@ REQUIRED_KEYS = {
     "components",
     "quantities",
 }
+
+
+def _exact_positive_core_inches(value):
+    """True when the token is a positive inch dimension written exactly."""
+    if not isinstance(value, str) or _CORE_DIMENSION.fullmatch(value) is None:
+        return False
+    try:
+        number = Decimal(value)
+    except InvalidOperation:
+        return False
+    return number > 0
 
 
 def _decimal_string(value):
@@ -137,8 +152,10 @@ def validate_contract_v1(payload):
         else:
             if not isinstance(spec.get("system_name"), str) or not spec["system_name"].strip():
                 errors.append("icf_wall requires system_name")
-            if spec.get("nominal_core_thickness_in") not in ("6", "8", "10", "12"):
-                errors.append("icf_wall core thickness must be 6, 8, 10, or 12")
+            if not _exact_positive_core_inches(spec.get("nominal_core_thickness_in")):
+                errors.append(
+                    "icf_wall core thickness must be a positive decimal in inches"
+                )
     found = set(_walk_keys(payload)) & FORBIDDEN_KEYS
     for key in sorted(found):
         errors.append(f"forbidden {key}")

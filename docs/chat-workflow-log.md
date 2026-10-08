@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-08 — Contract V1 manufacturer core identity
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Let Contract V1 store an actual manufacturer core dimension, including Logix 6.25, without a universal size list. |
+| Business decision | A real core size is an exact decimal token. 6.25 is not 6. The contract does not decide which sizes a manufacturer offers, and it does not calculate a quantity. Checklist step 8 stays OPEN. Official V1 stays 65% / 4 of 11. |
+| Architectural decision | `contract_version` stays `"1"`. `nominal_core_thickness_in` must be a positive exact decimal string. Previously valid tokens `6`, `8`, `10`, and `12` still pass. New ICF results copy `manufacturer_id` and `profile_version` from the existing profile. Older results without those fields stay valid. The fingerprint function is unchanged. The 8-inch quantity formulas are unchanged. No core dropdown. No new profile facts. |
+| Prompt template used | Authorized focused implementation prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Change core-dimension validation, record profile identity on new ICF results, update the contract note and tests, and record governance. Do not calculate other cores, add a dropdown, edit profiles, migrate, or deploy. |
+| Files expected to change | Contract validator, ICF result specification, contract tests, ICF quantity tests, the contract document, and the status records. |
+| Files prohibited from changing | Quantity formulas, manufacturer profile data, routes, work-element bindings, case files, databases, and the live service. |
+| Implementation result | Implemented in this commit. Not deployed. Not live-verified. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_calculation_result_contract_v1.py tests/test_icf_quantity.py tests/test_icf_manufacturer_profiles.py tests/test_icf_governed_estimate_path.py tests/test_calculation_estimate_mapping.py tests/test_member_count_mapper_confirmation.py tests/test_project_setup.py` — 57 passed, 119 warnings, 15.49s, exit 0. Full suite not run. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. The pinned envelope stays version 1 because every previously valid payload remains valid. |
+| Unresolved issues | Logix 6.25 can be named and still has no verified calculation facts. Multi-core quantities and the core dropdown are not built. |
+| Next approved step | ChatGPT reviews this correction. Do not calculate a non-8 core from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-08 — ICF manufacturer-specific core selection
 
 | Field | Content |

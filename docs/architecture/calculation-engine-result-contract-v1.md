@@ -8,6 +8,8 @@
 | Website | Separate repository, separate deployment. No runtime call. |
 | Platform | May later consume a result. Does not own the public calculator. |
 
+**Subsequent status (2026-10-08):** `nominal_core_thickness_in` is the manufacturer’s exact positive decimal inch token. `8` and `6.25` are both valid. A universal list of core sizes is not the rule. `manufacturer_id` and `profile_version` may appear on a new ICF result when the profile already has them. They are not required, so an older result that lacks them stays valid. `contract_version` stays `"1"`. The manufacturer catalog and the calculation stay outside this validator. This note does not add a core dropdown or a quantity for a core that has no verified facts.
+
 **Subsequent status (2026-09-26 hosted validation):** This envelope remains **ACCEPTED / PINNED**. It was not rescored. Migration `j0e1f2a3b4c5` is applied on the hosted validation database. The Mac primary remains `h8c9d0e1f2a3`.
 
 **Subsequent status (2026-09-26):** This envelope remains **ACCEPTED / PINNED**. Estimating can review a valid result and confirm a quantity onto an estimate (`app/services/calculation_estimate_mapping.py`). That step does not calculate, and it does not change this envelope. Migration `j0e1f2a3b4c5` is in the repository. The hosted validation database now has that revision. The Mac primary does not.
@@ -143,7 +145,7 @@ A result is valid enough for the Platform to consider mapping when all of the fo
 - `quantities` has at least one quantity line.
 - Every quantity line has a `code`, a non-negative decimal `quantity`, and a V1 unit code other than `percent`.
 - `product_specification` is an object or null.
-- When `engine_id` is `icf_wall`, `product_specification` includes a non-empty `system_name` and a `nominal_core_thickness_in` of `6`, `8`, `10`, or `12`.
+- When `engine_id` is `icf_wall`, `product_specification` includes a non-empty `system_name` and a `nominal_core_thickness_in` that is an exact positive decimal inch token, such as `8` or `6.25`. A unit word, a blank, zero, and a rewritten value are not valid. The contract does not keep the manufacturer’s offered-size list.
 - When `engine_id` is `concrete_slab`, `variant` is `standard` or `thickened_edge`.
 - The payload contains none of these keys at any depth: `organization_id`, `cost_item_id`, `assembly_id`, `labour_task_id`, `labour_rate_id`, `estimate_id`, `estimate_version_id`, `pricing_policy_id`, `policy_code`, `sell_price`, `unit_cost`, `markup_percent`, `margin`, `proposal_id`.
 

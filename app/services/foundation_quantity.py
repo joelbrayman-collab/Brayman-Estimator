@@ -1,13 +1,17 @@
 """Foundation quantity result.
 
 ICF form and concrete quantities come from the existing ICF engine.
-A slab has no quantity producer here, so a slab fact stays unresolved.
+A slab volume uses the stored rectangular-prism measurement when length,
+width, and thickness are all stored. A footing still has no volume rule.
 A missing wall fact stays on that wall. Stock packages, truck counts,
 waste, and labour hours are not invented.
 """
 
 from __future__ import annotations
 
+from decimal import Decimal, InvalidOperation
+
+from app.services.construction_measurement import rectangular_prism_cubic_yards
 from app.services.icf_manufacturer_profiles import IcfProfileError
 from app.services.icf_quantity import (
     ENGINE_VERSION as ICF_ENGINE_VERSION,
@@ -54,7 +58,7 @@ def quantity_result_from_facts(facts):
             "engine_version": ENGINE_VERSION,
             "delegated_engine_id": ICF_WALL_ENGINE_ID,
             "delegated_engine_version": ICF_ENGINE_VERSION,
-            "concrete_slab_producer": None,
+            "concrete_slab_producer": "construction_measurement",
             "element_codes": (ICF_WALL_CODE, "FOUND"),
             "estimated_quantity": "governed_quantity",
             "estimated_labour": None,
@@ -72,14 +76,7 @@ def _element_lines(element):
     if kind == "icf_wall":
         return _icf_wall(element)
     if kind == "concrete_slab":
-        return (
-            _open_line(
-                element,
-                "concrete_slab",
-                "Concrete slab",
-                ("no governed concrete slab quantity rule",),
-            ),
-        )
+        return _slab_lines(element)
     if kind == "footing":
         missing = []
         if element.get("width") in (None, ""):
@@ -178,6 +175,80 @@ def _quantity_line(element, quantity, calculated):
         "item_text": _known_text(element, code, unit, meaning),
         "provenance": _provenance(element, code, rule, calculated),
     }
+
+
+def _slab_lines(element):
+    labels = (
+        ("length_ft", "slab length"),
+        ("width_ft", "slab width"),
+        ("thickness_in", "slab thickness"),
+    )
+    missing = []
+    measures = {}
+    for key, label in labels:
+        number = _positive_measure(element.get(key))
+        if number is None:
+            missing.append(label)
+        else:
+            measures[key] = number
+    if missing:
+        return (_open_line(element, "concrete_slab", "Concrete slab", tuple(missing)),)
+    measured = rectangular_prism_cubic_yards(
+        measures["length_ft"],
+        measures["width_ft"],
+        measures["thickness_in"],
+    )
+    identifier = element.get("id") or "slab"
+    return (
+        {
+            "element": "concrete_slab",
+            "source_element_id": element.get("id"),
+            "kind": "foundation_fact",
+            "status": _KNOWN,
+            "quantity": measured["cubic_yards"],
+            "unit": "YD3",
+            "quantity_meaning": "concrete_volume",
+            "purchase_quantity": None,
+            "stock_length": None,
+            "waste": None,
+            "truck_count": None,
+            "canonical_material_code": None,
+            "vocabulary_gap": "No canonical concrete identity is stored.",
+            "missing_facts": (),
+            "item_text": (
+                "Concrete slab. {0}. Volume is not a truck count."
+            ).format(identifier),
+            "provenance": {
+                "project_id": element.get("project_id"),
+                "source_element_id": element.get("id"),
+                "source_facts": {
+                    "kind": "concrete_slab",
+                    "length_ft": str(measures["length_ft"]),
+                    "width_ft": str(measures["width_ft"]),
+                    "thickness_in": str(measures["thickness_in"]),
+                    "cubic_feet": str(measured["cubic_feet"]),
+                },
+                "quantity_code": "concrete_slab",
+                "rule": measured["rule"],
+                "engine_id": "construction_measurement",
+                "engine_version": "1",
+                "wrapper_engine_id": ENGINE_ID,
+                "wrapper_engine_version": ENGINE_VERSION,
+            },
+        },
+    )
+
+
+def _positive_measure(value):
+    if value in (None, ""):
+        return None
+    try:
+        number = Decimal(str(value))
+    except (InvalidOperation, ValueError):
+        return None
+    if not number.is_finite() or number <= 0:
+        return None
+    return number
 
 
 def _open_line(element, code, label, missing):

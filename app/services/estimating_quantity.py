@@ -6,6 +6,8 @@ unresolved. Plumbing, electrical, and HVAC stay quote or allowance scopes.
 
 from __future__ import annotations
 
+from decimal import Decimal, InvalidOperation
+
 from app.services.deck_framing_quantity import quantity_result_from_model
 from app.services.foundation_quantity import quantity_result_from_facts
 from app.services.purchasing_quantity import annotate_purchasing
@@ -23,8 +25,8 @@ MISSING_RULES = {
     "sheathing": "No governed sheathing area rule. Area is not a sheet count.",
     "roofing": "No governed roofing coverage rule. Pitch is not assumed.",
     "siding": "No governed cladding area rule. Openings are not deducted by assumption.",
-    "windows": "No governed window quantity rule.",
-    "exterior_doors": "No governed exterior-door quantity rule.",
+    "windows": "No governed opening kind is stored. A drawing opening is not a window count.",
+    "exterior_doors": "No governed opening kind is stored. A drawing opening is not a door count.",
     "interior_framing": "No governed interior-framing rule beyond a stored member count.",
     "insulation": "No governed insulation quantity rule. Area is not a package count.",
     "drywall": "No governed drywall quantity rule. Area is not a sheet count.",
@@ -34,7 +36,10 @@ MISSING_RULES = {
     "stairs": "No governed stair material quantity rule. A stored riser count is not a lumber quantity.",
     "porches": "No governed porch rule beyond a stored member count.",
     "site": "No governed site-work quantity rule.",
-    "flatwork": "No governed flatwork quantity rule. concrete_slab has no producer.",
+    "flatwork": (
+        "Stored slab length, width, and thickness are required before a volume "
+        "can be calculated. A stored area is not a volume."
+    ),
     "equipment": "No governed equipment quantity.",
     "general_conditions": "No governed general-conditions quantity.",
     "allowances": "An allowance is a contractor amount, not a calculated quantity.",
@@ -50,7 +55,30 @@ _TASKS = {
     "excavation": ("FOUND", "EXCAV", "Excavation"),
     "site": ("SITE", "CLEAR", "Clearing"),
     "flatwork": ("FOUND", None, "Foundation"),
+    "stairs": ("STRUCT", "FRAME", "Framing"),
 }
+
+_ROLE_SCOPES = {
+    "decking": "decks",
+    "guard": "decks",
+    "baluster": "decks",
+    "gate": "decks",
+    "stringer": "stairs",
+    "tread": "stairs",
+    "pier": "foundations",
+    "footing": "footings",
+}
+
+_STAIR_KEYS = (
+    "rise",
+    "run",
+    "throat",
+    "nosing",
+    "stringer_count",
+    "tread_count",
+    "riser_count",
+    "stair_width",
+)
 
 
 def estimate_project(plan, catalogue=()):
@@ -64,6 +92,7 @@ def estimate_project(plan, catalogue=()):
     if plan.get("construction_model") is not None:
         deck = quantity_result_from_model(plan["construction_model"], catalogue)
         lines.extend(_adapt_deck(deck, project_id))
+        lines.extend(_stair_fact_lines(plan.get("construction_model"), project_id))
     foundation_elements = plan.get("foundation_elements") or ()
     if foundation_elements:
         foundation = quantity_result_from_facts(
@@ -75,6 +104,10 @@ def estimate_project(plan, catalogue=()):
         if name in SUBCONTRACT_SCOPES:
             lines.append(_subcontract(project_id, name, scope.get("facts") or {}))
         elif name in MISSING_RULES and not _already_calculated(lines, name):
+            if name == "stairs" and any(
+                line.get("element") == "stair_result" for line in lines
+            ):
+                continue
             lines.append(_missing(project_id, name, scope.get("facts") or {}))
         elif name not in ("framing", "decks", "foundations", "footings", "flatwork"):
             lines.append(
@@ -113,6 +146,81 @@ def estimate_project(plan, catalogue=()):
     }
 
 
+def _stair_fact_lines(model, project_id):
+    """Keep stored stair facts visible without turning them into lumber."""
+    if not isinstance(model, dict):
+        return []
+    lines = []
+    for result in model.get("stair_results") or ():
+        if not isinstance(result, dict):
+            continue
+        retained = []
+        source = {}
+        for key in _STAIR_KEYS:
+            value = result.get(key)
+            number = _stored_number(value)
+            if number is None:
+                continue
+            source[key] = str(number)
+            retained.append("{0}={1}".format(key, number))
+        if not retained:
+            continue
+        labour = _labour("stairs")
+        labour["note"] = (
+            "Stair members use the framing task. No stair activity code "
+            "and no production rate are stored, so hours stay open."
+        )
+        lines.append(
+            annotate_purchasing(
+                {
+                    "project_id": project_id,
+                    "scope": "stairs",
+                    "element": "stair_result",
+                    "kind": "stored_stair_fact",
+                    "status": "CONTRACTOR_INPUT",
+                    "quantity": None,
+                    "unit": None,
+                    "quantity_meaning": None,
+                    "purchase_quantity": None,
+                    "stock_length": None,
+                    "waste": None,
+                    "canonical_material_code": None,
+                    "missing_facts": (
+                        "A stored riser count is not a lumber quantity.",
+                    ),
+                    "retained_facts": tuple(retained),
+                    "item_text": (
+                        "Stair result {0}. Stored stair facts are not a lumber quantity."
+                    ).format(result.get("id") or "stair"),
+                    "task": _task("stairs"),
+                    "labour": labour,
+                    "provenance": {
+                        "project_id": project_id,
+                        "source_facts": source,
+                        "engine_id": CONTRACT,
+                        "engine_version": CONTRACT_VERSION,
+                        "rule": (
+                            "stored stair facts are retained and are not a lumber quantity"
+                        ),
+                    },
+                }
+            )
+        )
+    return lines
+
+
+def _stored_number(value):
+    if isinstance(value, bool) or value in (None, ""):
+        return None
+    try:
+        number = Decimal(str(value))
+    except (InvalidOperation, ValueError):
+        return None
+    if not number.is_finite():
+        return None
+    return number
+
+
 def _already_calculated(lines, scope):
     return any(line.get("scope") == scope and line.get("status") == "KNOWN" for line in lines)
 
@@ -120,8 +228,18 @@ def _already_calculated(lines, scope):
 def _adapt_deck(result, project_id):
     adapted = []
     for line in result.get("lines") or ():
-        scope = "decks" if line.get("element") in ("decking", "guard") else "framing"
-        adapted.append(_copy_line(line, project_id, scope, result.get("labour")))
+        scope = _ROLE_SCOPES.get(line.get("element"), "framing")
+        if scope == "stairs":
+            labour = _labour(scope)
+            labour["note"] = (
+                "Stair members use the framing task. No stair activity code "
+                "and no production rate are stored, so hours stay open."
+            )
+        elif scope in ("foundations", "footings"):
+            labour = _labour(scope)
+        else:
+            labour = result.get("labour")
+        adapted.append(_copy_line(line, project_id, scope, labour))
     return adapted
 
 

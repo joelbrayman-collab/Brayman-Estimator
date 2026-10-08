@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Next coherent quantity batch (2026-10-08)
+
+| Field | Content |
+|-------|---------|
+| Slice | Use stored member counts, support locations, and a fully dimensioned slab in the common quantity result. |
+| Product status at capture | Implemented and tested on scratch data. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | A stored stair member can be counted. A stored pier location can be seen without becoming an order. A slab with length, width, and thickness can be requested in cubic metres. A riser count stays a stair fact. |
+| 2. When would the contractor use it? | On the first quantity pass, when the construction model already stores those members or the slab dimensions are already entered. |
+| 3. What workflow will the final Manual need to teach? | Read the known counts. Leave a pier as locations until the pier itself is known. Read the slab in cubic metres and keep the cubic yards. Leave roofing, windows, and a footing volume marked unresolved. |
+| 4. What contractor-facing terms must be used? | Member count. Locations. Cubic yards. Cubic metres. Unresolved. Quote or allowance. |
+| 5. What screenshots / Print examples will eventually be needed? | A supplier request that shows a stair member count, a slab in cubic metres, and an unresolved roofing line. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | A riser count is not a lumber order. A pier location count is not a pier order. A slab has no concrete catalogue identity yet. A footing still has no volume. No waste or labour rate is added. |
+| 7. Desktop / iPhone / Print relevance | Office quantity result and the printed supplier request. Not a Field or iPhone change. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Construction unit and purchasing unit (2026-10-08)
 
 | Field | Content |

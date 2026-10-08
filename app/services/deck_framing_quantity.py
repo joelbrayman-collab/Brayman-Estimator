@@ -73,7 +73,7 @@ def quantity_result_from_model(model, catalogue):
 def _line(item, group):
     status = _STATUS_FROM_READINESS.get(item.get("requirement_status"), _MISSING)
     kind = _kind(item.get("provenance"))
-    quantity = item.get("quantity") if kind == "member" else None
+    quantity = item.get("quantity") if kind in ("member", "support") else None
     if kind == "member" and quantity is None and status == _KNOWN:
         status = _MISSING
     missing = tuple((group or {}).get("missing_facts") or ())
@@ -81,13 +81,28 @@ def _line(item, group):
         note = (item.get("requirement_note") or "").strip()
         missing = (note,) if note else ("A required fact is missing",)
     supplied_length = None if group is None else group.get("supplied_length")
+    if kind == "support" and quantity is not None:
+        unit = "locations"
+        meaning = "support_count"
+        rule = "stored support location count"
+    elif quantity is not None:
+        unit = "EA"
+        meaning = "member_count"
+        rule = RULE_COUNT_LIKE_MEMBERS
+    else:
+        unit = None
+        meaning = None
+        rule = RULE_COUNT_LIKE_MEMBERS
+    text = _item_text(item, group)
+    if kind == "support" and quantity is not None:
+        text = "{0}. {1} locations stored".format(text, quantity)
     return {
         "element": item.get("subject"),
         "kind": kind,
         "status": status,
         "quantity": quantity,
-        "unit": "EA" if quantity is not None else None,
-        "quantity_meaning": "member_count" if quantity is not None else None,
+        "unit": unit,
+        "quantity_meaning": meaning,
         "purchase_quantity": None,
         "stock_length": None,
         "waste": None,
@@ -95,10 +110,10 @@ def _line(item, group):
         "member_size": None if group is None else group.get("member_size") or None,
         "supplied_length": supplied_length,
         "missing_facts": missing,
-        "item_text": _item_text(item, group),
+        "item_text": text,
         "provenance": {
             "source": item.get("provenance") or "construction_model_member",
-            "rule": RULE_COUNT_LIKE_MEMBERS,
+            "rule": rule,
             "engine_id": ENGINE_ID,
             "engine_version": ENGINE_VERSION,
             "member_ids": tuple((group or {}).get("member_ids") or ()),

@@ -43,7 +43,29 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
-### 2026-10-08 — Contract V1 manufacturer core identity
+### 2026-10-08 — Fox Blocks product records
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Store five Fox Blocks product records as unselected evidence beside the existing calculation units. |
+| Business decision | Conflicting published figures stay on file. No figure is chosen as the calculation factor. Checklist step 8 stays OPEN. Official V1 stays 65% / 4 of 11. |
+| Architectural decision | `product_records` sits beside `units` on profile version 1. Publication status stays the existing three statuses. Calculation selection is a separate field and is `not_selected` on every new observation. The quantity engine keeps reading the existing unit keys. `units.corner_90_8.concrete_volume_yd3` stays 0.145. Profile version stays 1 because this addition does not replace a calculation factor. The 1 October 2026 profile data completion already added source facts to version 1. A version increment would change new Contract V1 fingerprints without changing the quantities. Contract V1 `variant` is not used. |
+| Prompt template used | Authorized focused implementation prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Add the five Fox product records and the evidence validation. Do not change calculation units, formulas, Contract V1, the core dropdown, or deployment. Test that the engine ignores the records. Commit and push the authorized files. Leave case files unstaged. |
+| Files expected to change | Fox profile data, the profile loader, ICF profile tests, ICF quantity tests, and the status records. |
+| Files prohibited from changing | Quantity formulas, Contract V1, routes, work-element bindings, other manufacturer cores, case files, databases, and the live service. |
+| Implementation result | Five Fox records are stored and unselected. The 8-inch calculation units are unchanged. Not deployed. Not live-verified. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_calculation_result_contract_v1.py tests/test_icf_quantity.py tests/test_icf_manufacturer_profiles.py tests/test_icf_governed_estimate_path.py tests/test_calculation_estimate_mapping.py tests/test_member_count_mapper_confirmation.py tests/test_project_setup.py` — 60 passed, 119 warnings, 13.08s, exit 0. `./venv/bin/python -m pytest -q` — 2262 passed, 11 skipped, 7048 warnings, 1130.93s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. Additive evidence on profile version 1 does not replace the stored calculation factor. |
+| Unresolved issues | The series-page corner still has no product code. FOX-EC890 at 0.153 cubic yards and the series-page corner at 0.145 cubic yards are both stored and neither is selected. FOX-BL800 width and surface are not treated as the series-page corbel width and surface. Source revision is empty because the profile registry does not record one. A later selection must name the record and the observation. That selection is not built. |
+| Next approved step | ChatGPT reviews the stored evidence. Do not select a Fox calculation factor from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
 
 | Field | Content |
 |-------|---------|

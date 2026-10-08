@@ -188,6 +188,225 @@
               "source_date": null
             }
           }
+        },
+        "product_records": {
+          "fox_ec890": {
+            "record_id": "fox_ec890",
+            "manufacturer_id": "fox_blocks",
+            "product_family": "fox_blocks",
+            "product_code": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "FOX-EC890",
+              "source_document": "Fox Blocks block measurements",
+              "source_url": "https://www.foxblocksny.com/wp-content/uploads/2018/05/Fox-Blocks-Block-Measurements-End-View-Sizing.pdf",
+              "source_date": null
+            },
+            "core_size_in": "8",
+            "component_type": "corner_90",
+            "variant": "standard_corner",
+            "observations": {
+              "fox_ec890_concrete_volume_yd3": {
+                "observation_id": "fox_ec890_concrete_volume_yd3",
+                "measurement_type": "concrete_volume",
+                "unit": "yd3",
+                "status": "VERIFIED_FROM_SOURCE",
+                "value": "0.153",
+                "source_document": "Fox Blocks block measurements",
+                "source_url": "https://www.foxblocksny.com/wp-content/uploads/2018/05/Fox-Blocks-Block-Measurements-End-View-Sizing.pdf",
+                "source_date": null,
+                "source_revision": null,
+                "calculation_selection": "not_selected"
+              }
+            }
+          },
+          "fox_ec890cb": {
+            "record_id": "fox_ec890cb",
+            "manufacturer_id": "fox_blocks",
+            "product_family": "fox_blocks",
+            "product_code": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "FOX-EC890CB",
+              "source_document": "Fox Blocks block measurements",
+              "source_url": "https://www.foxblocksny.com/wp-content/uploads/2018/05/Fox-Blocks-Block-Measurements-End-View-Sizing.pdf",
+              "source_date": null
+            },
+            "core_size_in": "8",
+            "component_type": "curb_corner",
+            "variant": "curb_90_corner",
+            "observations": {
+              "fox_ec890cb_concrete_volume_yd3": {
+                "observation_id": "fox_ec890cb_concrete_volume_yd3",
+                "measurement_type": "concrete_volume",
+                "unit": "yd3",
+                "status": "VERIFIED_FROM_SOURCE",
+                "value": "0.145",
+                "source_document": "Fox Blocks block measurements",
+                "source_url": "https://www.foxblocksny.com/wp-content/uploads/2018/05/Fox-Blocks-Block-Measurements-End-View-Sizing.pdf",
+                "source_date": null,
+                "source_revision": null,
+                "calculation_selection": "not_selected"
+              }
+            }
+          },
+          "fox_series_corner_8": {
+            "record_id": "fox_series_corner_8",
+            "manufacturer_id": "fox_blocks",
+            "product_family": "fox_blocks",
+            "product_code": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": "Fox Blocks Series, 8 inch corner block",
+              "source_url": "https://www.foxblocks.com/products/series",
+              "source_date": null
+            },
+            "core_size_in": "8",
+            "component_type": "corner_90",
+            "variant": "series_page_corner",
+            "observations": {
+              "fox_series_corner_8_outside_dimensions_in": {
+                "observation_id": "fox_series_corner_8_outside_dimensions_in",
+                "measurement_type": "outside_dimensions",
+                "unit": "in",
+                "status": "VERIFIED_FROM_SOURCE",
+                "value": "42 x 26",
+                "source_document": "Fox Blocks Series, 8 inch corner block outside dimensions",
+                "source_url": "https://www.foxblocks.com/products/series",
+                "source_date": null,
+                "source_revision": null,
+                "calculation_selection": "not_selected"
+              },
+              "fox_series_corner_8_surface_area_ft2": {
+                "observation_id": "fox_series_corner_8_surface_area_ft2",
+                "measurement_type": "surface_area",
+                "unit": "ft2",
+                "status": "VERIFIED_FROM_SOURCE",
+                "value": "7.56",
+                "source_document": "Fox Blocks Series, 8 inch corner block surface area",
+                "source_url": "https://www.foxblocks.com/products/series",
+                "source_date": null,
+                "source_revision": null,
+                "calculation_selection": "not_selected"
+              },
+              "fox_series_corner_8_concrete_volume_yd3": {
+                "observation_id": "fox_series_corner_8_concrete_volume_yd3",
+                "measurement_type": "concrete_volume",
+                "unit": "yd3",
+                "status": "VERIFIED_FROM_SOURCE",
+                "value": "0.145",
+                "source_document": "Fox Blocks Series, 8 inch corner block concrete volume",
+                "source_url": "https://www.foxblocks.com/products/series",
+                "source_date": null,
+                "source_revision": null,
+                "calculation_selection": "not_selected"
+              }
+            }
+          },
+          "fox_bl800": {
+            "record_id": "fox_bl800",
+            "manufacturer_id": "fox_blocks",
+            "product_family": "fox_blocks",
+            "product_code": {
+              "status": "VERIFIED_FROM_SOURCE",
+              "value": "FOX-BL800",
+              "source_document": "Fox Blocks block measurements",
+              "source_url": "https://www.foxblocksny.com/wp-content/uploads/2018/05/Fox-Blocks-Block-Measurements-End-View-Sizing.pdf",
+              "source_date": null
+            },
+            "core_size_in": "8",
+            "component_type": "corbel",
+            "variant": "measurements_pdf_corbel",
+            "observations": {
+              "fox_bl800_total_width_in": {
+                "observation_id": "fox_bl800_total_width_in",
+                "measurement_type": "total_width",
+                "unit": "in",
+                "status": "VERIFIED_FROM_SOURCE",
+                "value": "13.25",
+                "source_document": "Fox Blocks block measurements",
+                "source_url": "https://www.foxblocksny.com/wp-content/uploads/2018/05/Fox-Blocks-Block-Measurements-End-View-Sizing.pdf",
+                "source_date": null,
+                "source_revision": null,
+                "calculation_selection": "not_selected"
+              },
+              "fox_bl800_outside_surface_ft2": {
+                "observation_id": "fox_bl800_outside_surface_ft2",
+                "measurement_type": "outside_surface",
+                "unit": "ft2",
+                "status": "VERIFIED_FROM_SOURCE",
+                "value": "5.33",
+                "source_document": "Fox Blocks block measurements",
+                "source_url": "https://www.foxblocksny.com/wp-content/uploads/2018/05/Fox-Blocks-Block-Measurements-End-View-Sizing.pdf",
+                "source_date": null,
+                "source_revision": null,
+                "calculation_selection": "not_selected"
+              },
+              "fox_bl800_concrete_volume_yd3": {
+                "observation_id": "fox_bl800_concrete_volume_yd3",
+                "measurement_type": "concrete_volume",
+                "unit": "yd3",
+                "status": "VERIFIED_FROM_SOURCE",
+                "value": "0.162",
+                "source_document": "Fox Blocks block measurements",
+                "source_url": "https://www.foxblocksny.com/wp-content/uploads/2018/05/Fox-Blocks-Block-Measurements-End-View-Sizing.pdf",
+                "source_date": null,
+                "source_revision": null,
+                "calculation_selection": "not_selected"
+              }
+            }
+          },
+          "fox_series_corbel_8": {
+            "record_id": "fox_series_corbel_8",
+            "manufacturer_id": "fox_blocks",
+            "product_family": "fox_blocks",
+            "product_code": {
+              "status": "NOT_ESTABLISHED",
+              "value": null,
+              "source_document": "Fox Blocks Series, 8 inch corbel ledge block",
+              "source_url": "https://www.foxblocks.com/products/series",
+              "source_date": null
+            },
+            "core_size_in": "8",
+            "component_type": "corbel",
+            "variant": "series_page_corbel",
+            "observations": {
+              "fox_series_corbel_8_form_width_in": {
+                "observation_id": "fox_series_corbel_8_form_width_in",
+                "measurement_type": "form_width",
+                "unit": "in",
+                "status": "VERIFIED_FROM_SOURCE",
+                "value": "17.75",
+                "source_document": "Fox Blocks Series, 8 inch corbel ledge block form width",
+                "source_url": "https://www.foxblocks.com/products/series",
+                "source_date": null,
+                "source_revision": null,
+                "calculation_selection": "not_selected"
+              },
+              "fox_series_corbel_8_surface_area_ft2": {
+                "observation_id": "fox_series_corbel_8_surface_area_ft2",
+                "measurement_type": "surface_area",
+                "unit": "ft2",
+                "status": "VERIFIED_FROM_SOURCE",
+                "value": "5.61",
+                "source_document": "Fox Blocks Series, 8 inch corbel ledge block surface area",
+                "source_url": "https://www.foxblocks.com/products/series",
+                "source_date": null,
+                "source_revision": null,
+                "calculation_selection": "not_selected"
+              },
+              "fox_series_corbel_8_concrete_volume_yd3": {
+                "observation_id": "fox_series_corbel_8_concrete_volume_yd3",
+                "measurement_type": "concrete_volume",
+                "unit": "yd3",
+                "status": "VERIFIED_FROM_SOURCE",
+                "value": "0.162",
+                "source_document": "Fox Blocks Series, 8 inch corbel ledge block concrete volume",
+                "source_url": "https://www.foxblocks.com/products/series",
+                "source_date": null,
+                "source_revision": null,
+                "calculation_selection": "not_selected"
+              }
+            }
+          }
         }
       },
       "logix": {

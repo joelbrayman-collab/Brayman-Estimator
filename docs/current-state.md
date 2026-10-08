@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 8 Oct 2026 — Fox product records
+
+Fox Blocks profile version 1 stores five product records beside `units`. They are evidence, and every observation is `not_selected`. FOX-EC890 remains 0.153 cubic yards. FOX-EC890CB remains 0.145 cubic yards. The series-page 8-inch corner remains 0.145 cubic yards with no product code. FOX-BL800 remains 13.25 inches wide and 5.33 square feet. The series-page corbel remains 17.75 inches wide and 5.61 square feet. The calculation unit `corner_90_8.concrete_volume_yd3` remains 0.145. The quantity engine does not read the records. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified.
+
 ## 8 Oct 2026 — Contract V1 core identity
 
 `nominal_core_thickness_in` is an exact positive decimal inch token. `6.25` is valid and is not rewritten as `6`. The universal size list is removed. `contract_version` stays `"1"`. New ICF results copy `manufacturer_id` and `profile_version` from the profile that already stores them. Older results without those fields stay valid. The 8-inch quantity formulas are unchanged. No core dropdown was added. No profile fact was invented. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified.

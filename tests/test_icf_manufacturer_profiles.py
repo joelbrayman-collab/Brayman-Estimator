@@ -11,7 +11,9 @@ from app import create_app, db
 from app.models import Estimate, Project
 from app.models.labour_engine import ProductionRateStandard
 from app.services.icf_manufacturer_profiles import (
+    CALCULATION_NOT_SELECTED,
     IcfProfileError,
+    _validate_registry,
     engine_profile_view,
     get_profile,
     list_profiles,
@@ -140,7 +142,7 @@ def test_no_public_icf_route_and_no_production_rate_in_the_registry(app):
             imported.extend(alias.name for alias in node.names)
         elif isinstance(node, ast.ImportFrom) and node.module:
             imported.append(node.module)
-    assert imported == ["__future__", "json", "pathlib"]
+    assert imported == ["__future__", "json", "re", "pathlib"]
     assert "app.models" not in source
 
 
@@ -156,3 +158,81 @@ def test_future_engine_can_read_verified_facts_and_the_gaps():
     assert logix["verified"]["standard_8.wall_coverage_ft2"] == "5.33"
     assert logix["verified"]["standard_8.concrete_cavity_width_ft"] == "0.667"
     assert logix["missing"] == ("standard_8.concrete_volume_yd3",)
+
+
+def _observations(profile):
+    found = []
+    for record in profile["product_records"].values():
+        found.extend(record["observations"].values())
+    return found
+
+
+def test_fox_product_records_keep_distinct_identities_and_conflicts():
+    fox = get_profile("fox_blocks")
+    records = fox["product_records"]
+    assert set(records) == {
+        "fox_ec890",
+        "fox_ec890cb",
+        "fox_series_corner_8",
+        "fox_bl800",
+        "fox_series_corbel_8",
+    }
+    assert records["fox_ec890"]["product_code"]["value"] == "FOX-EC890"
+    assert records["fox_ec890"]["variant"] == "standard_corner"
+    assert records["fox_ec890cb"]["product_code"]["value"] == "FOX-EC890CB"
+    assert records["fox_ec890cb"]["component_type"] == "curb_corner"
+    assert records["fox_bl800"]["product_code"]["value"] == "FOX-BL800"
+    assert records["fox_bl800"]["component_type"] == "corbel"
+    series_corner = records["fox_series_corner_8"]["product_code"]
+    series_corbel = records["fox_series_corbel_8"]["product_code"]
+    assert series_corner["status"] == "NOT_ESTABLISHED"
+    assert series_corner["value"] is None
+    assert series_corbel["status"] == "NOT_ESTABLISHED"
+    assert series_corbel["value"] is None
+    volumes = {
+        item["observation_id"]: item["value"]
+        for item in _observations(fox)
+        if item["measurement_type"] == "concrete_volume"
+    }
+    assert volumes["fox_ec890_concrete_volume_yd3"] == "0.153"
+    assert volumes["fox_ec890cb_concrete_volume_yd3"] == "0.145"
+    assert volumes["fox_series_corner_8_concrete_volume_yd3"] == "0.145"
+    assert volumes["fox_bl800_concrete_volume_yd3"] == "0.162"
+    assert volumes["fox_series_corbel_8_concrete_volume_yd3"] == "0.162"
+    widths = {
+        item["measurement_type"]: item["value"]
+        for item in _observations(fox)
+        if item["unit"] == "in" and item["measurement_type"] in ("total_width", "form_width")
+    }
+    assert widths == {"total_width": "13.25", "form_width": "17.75"}
+    surfaces = {
+        item["observation_id"]: item["value"]
+        for item in _observations(fox)
+        if item["unit"] == "ft2"
+    }
+    assert surfaces["fox_bl800_outside_surface_ft2"] == "5.33"
+    assert surfaces["fox_series_corbel_8_surface_area_ft2"] == "5.61"
+    assert all(item["source_revision"] is None for item in _observations(fox))
+    assert all(
+        item["calculation_selection"] == CALCULATION_NOT_SELECTED
+        for item in _observations(fox)
+    )
+    assert fox["profile_version"] == "1"
+    assert "product_records" not in get_profile("logix")
+    assert fox["units"]["corner_90_8"]["concrete_volume_yd3"]["value"] == "0.145"
+    ledge = fox["units"]["brick_ledge_8"]
+    assert ledge["form_width_in"]["value"] == "17.75"
+    assert ledge["wall_coverage_ft2"]["value"] == "5.61"
+    assert ledge["concrete_volume_yd3"]["value"] == "0.162"
+    verified = engine_profile_view("fox_blocks")["verified"].values()
+    assert "0.153" not in verified
+
+
+def test_a_selected_observation_is_refused():
+    registry = load_registry()
+    observation = registry["profiles"]["1"]["fox_blocks"]["product_records"]["fox_ec890"][
+        "observations"
+    ]["fox_ec890_concrete_volume_yd3"]
+    observation["calculation_selection"] = "selected"
+    with pytest.raises(IcfProfileError):
+        _validate_registry(registry)

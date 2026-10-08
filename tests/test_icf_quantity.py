@@ -3,13 +3,17 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
 from app import create_app, db
 from app.models import Estimate, Project
 from app.models.labour_engine import ProductionRateStandard
-from app.services.calculation_result_contract import validate_contract_v1
+from app.services.calculation_result_contract import (
+    calculation_fingerprint,
+    validate_contract_v1,
+)
 from app.services.icf_quantity import IcfQuantityInputError, build_icf_standard_quantities
 
 
@@ -143,6 +147,32 @@ def test_eight_inch_facts_are_not_extended_to_an_unverified_core():
     }
     assert "6.25" in get_profile("logix")["core_sizes_offered_in"]
     assert "standard_6_25" not in units
+
+
+def test_fox_corner_concrete_stays_on_the_stored_unit():
+    source = (
+        Path(__file__).resolve().parents[1] / "app" / "services" / "icf_quantity.py"
+    ).read_text(encoding="utf-8")
+    assert "product_records" not in source
+    result = build_icf_standard_quantities(
+        manufacturer_id="fox_blocks",
+        net_wall_area_ft2="12.89",
+        corner_90_count=1,
+        corner_45_count=0,
+        result_id="fox-corner-unchanged",
+    )
+    payload = result["payload"]
+    assert _quantity(result, "concrete")["quantity"] == "0.277"
+    assert _quantity(result, "standard_forms")["quantity"] == "1.0"
+    assert _quantity(result, "corner_90_8_forms")["quantity"] == "1.0"
+    assert payload["variant"] is None
+    assert payload["contract_version"] == "1"
+    assert payload["product_specification"]["profile_version"] == "1"
+    assert payload["product_specification"]["manufacturer_id"] == "fox_blocks"
+    assert "product_records" not in payload
+    assert all("0.153" not in item["quantity"] for item in payload["quantities"])
+    assert validate_contract_v1(payload) == []
+    assert len(calculation_fingerprint(payload)) == 64
 
 
 def test_no_new_public_icf_route(app):

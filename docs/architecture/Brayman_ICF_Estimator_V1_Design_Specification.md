@@ -5,6 +5,8 @@
 **Classification:** Brayman Construction confidential — internal platform capability  
 **Status:** Design approved in principle; implementation not authorized by this document
 
+**Subsequent status (2026-10-08 Fox product records):** Fox Blocks profile version 1 now keeps five product records beside the calculation units. The records store FOX-EC890, FOX-EC890CB, the series-page 8-inch corner, FOX-BL800, and the series-page 8-inch corbel, each with its own published measurements. Every observation is unselected. The 8-inch calculation units are unchanged, including the 0.145 cubic yard corner volume. The disagreements stay unresolved. A later selection must name the product record and the observation. This note does not select a factor, add a core dropdown, or change the quantity engine.
+
 **Subsequent status (2026-10-08 contract identity):** Contract V1 accepts an exact positive decimal core token, including 6.25. The 8-inch quantity engine is unchanged. This note does not authorize a core dropdown or a quantity for a core whose facts are missing.
 
 **Subsequent status (2026-10-08):** Product direction now requires manufacturer-specific core selection on the one ICF engine. A listed core calculates only from that core’s own verified facts. Logix 6.25 inches is not 6 inches. The body of this specification is unchanged. This note does not authorize implementation, a core dropdown, or a Contract V1 edit. Pinned Contract V1 still cannot store 6.25.

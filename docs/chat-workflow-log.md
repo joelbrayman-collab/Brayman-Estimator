@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Continuity log (append-only) |
-| Updated | 2026-10-07 |
+| Updated | 2026-10-08 |
 
 ## Purpose
 
@@ -43,6 +43,259 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-08 — Pre-turnover synchronization gate
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PRE-TURNOVER REPOSITORY SYNCHRONIZATION GATE 8 OCTOBER 2026 |
+| Objective | Bring decisions, implementation, current documents, Git, deployment, and database state into agreement before any turnover. |
+| Business decision | No V1 definition change. Official readiness remains 65% / 4 of 11. |
+| Architectural decision | Cost-library spreadsheet import stays **PROPOSED — NOT YET AUTHORIZED**. The 8 Oct audit recommendation to build an import envelope is **SUPERSEDED** as an authorization. The V1 register is unchanged. QuickBooks remains Option A. Checklist step 8 remains the open commercial step. |
+| Previous decision | V1 register, 2026-09-17 score and 2026-10-07 operating-pack note: eleven packages, manual `CostItem`, Brayman historical workbooks as LEARN capture, live QuickBooks API post-V1. |
+| Reason | The import proposal was an audit in chat. The register was not revised. A later reconciliation found no Feature Gate for the importer. |
+| Affected documents | `docs/v1-completion-register.md`, `docs/current-state.md`, `docs/session-handoff.md`, `docs/PROJECT_DEVELOPMENT_CHECKLIST.md`, `docs/operations/v1-operator-recovery-guide.md` |
+| Implementation impact | Recover `tests/test_confirmed_icf_block_prices.py` onto main. Do not build an importer. Do not migrate the Mac office. Do not apply `stash@{0}` or `stash@{1}`. |
+| Status | Gate **FAIL**. Hosted Alembic was not read. `render ssh` refuses non-interactive use. Entries below that name a hosted head were not re-proved in this gate. `instance/backups/pre-s9-2026-10-08.db` is absent. |
+| Approved Cursor prompt summary | Synchronize what can be proved. Do not start a new feature. Do not declare turnover while the hosted revision is unread. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_confirmed_icf_block_prices.py` — 1 passed, 0.57s, exit 0. Full suite not re-run. |
+| Next approved step | Read the hosted Alembic revision on the live web instance. Do not migrate. Do not start checklist step 8 in that read. |
+
+### 2026-10-08 — Contractor onboarding audit
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 CONTRACTOR ONBOARDING — COST LIBRARY + HISTORICAL KNOWLEDGE IMPORT 8 OCTOBER 2026 |
+| Objective | Audit where contractor cost, historical jobs, and supplier prices already live. |
+| Architectural decision | The audit found existing tables. It did not revise the V1 register. The import envelope suggested at the end of that audit is **PROPOSED — NOT YET AUTHORIZED**, superseded as an authorization by the synchronization entry above. |
+| Approved Cursor prompt summary | Audit only. Do not build the importer. Do not deploy. Do not change either database. |
+| Implementation result | Audit only. No importer. No deploy in that turn. |
+| Tests | Not run. No product change. |
+| Next approved step | See the synchronization entry. Do not build the importer from this audit. |
+
+### 2026-10-08 — Construction intelligence
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 ESTIMATING ENGINE — CONSTRUCTION INTELLIGENCE, NOT JUST INTERNAL COSTING 8 OCTOBER 2026 |
+| Objective | Quantify the project before deciding who performs the work and how the cost enters the estimate. |
+| Architectural decision | Common area, volume, length, count, sheet-size, and coverage rules run only from stored facts. Plumbing, electrical, and HVAC keep a separate quote path and still carry stored counts. |
+| Approved Cursor prompt summary | Inventory governed facts. Implement every common quantity the facts support. Leave pitch, sheet size, coverage, and opening kind unresolved when they are absent. Prove one scratch project through the material chain and the subcontract chain. Deploy that commit only. |
+| Implementation result | Commit `234a4eb7e9ddcfab07bf795fd7bfc23c61237ca7` is live as deploy `dep-db3uur8473hc73c25cjg`. Login returned 200. No migration. Mac office unchanged. |
+| Tests | `./venv/bin/python -m pytest -q` — 2251 passed, 11 skipped, exit 0, 1116.22s. |
+| Next approved step | Store an opening kind or a roof-plane size as a governed fact. Do not invent a slope factor, a sheet size, or a labour rate. Do not reopen Crew App work. Do not start UAT or V1-11. |
+
+### 2026-10-08 — Canonical concrete material
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 ESTIMATING ENGINE — CANONICAL CONCRETE MATERIAL + SLAB COMMERCIAL HANDOFF 8 OCTOBER 2026 |
+| Objective | Give every governed concrete volume one supplier-neutral material identity. |
+| Architectural decision | `CAL-CONC` is concrete, not a slab, an ICF wall, a footing, or a supplier product. The construction quantity stays cubic yards. The requirement stores cubic metres. |
+| Approved Cursor prompt summary | Add one canonical concrete material. A dimensioned slab becomes a material requirement. The supplier request, cost approval, estimate line, and costing snapshot use the existing chain. ICF concrete uses the same identity. |
+| Implementation result | Revision `s9f0a1b2c3d4` inserted `CAL-CONC`. Hosted integrity `ok`. Materials 28 to 29. Requirements stayed 29. Live SHA `4e60c253d03fd298578658b048b05029efcf1fe7`, deploy `dep-db3ucl7f3r2c73dkikf0`. Mac office unchanged. |
+| Tests | `./venv/bin/python -m pytest -q` — 2249 passed, 11 skipped, exit 0, 1115.29s. |
+| Next approved step | A governed footing volume rule. Do not invent one. Do not reopen Crew App work. Do not start UAT or V1-11. |
+
+### 2026-10-08 — Next coherent quantity batch
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 ACCELERATED WHOLE ESTIMATING ENGINE — NEXT COHERENT BATCH 8 OCTOBER 2026 |
+| Objective | Extend the common quantity result across every scope that already has a governed fact. |
+| Architectural decision | Member counts, support location counts, and the existing rectangular-prism measurement are reused. No new trade result and no new formula are added. |
+| Approved Cursor prompt summary | Inventory governed facts. Implement only the scopes those facts can calculate. Leave every other scope unresolved with the missing fact named. Prove one scratch plan through the supplier and costing chain. Deploy that commit only. |
+| Implementation result | Commit `3d9e580c109d04b398cd8f1a177b6cf1ccf192de` is live as deploy `dep-db3tb2o473hc73bstka0`. Login returned 200. No migration. Mac office unchanged. A slab with no canonical identity is requested in cubic metres and is not written as a requirement. |
+| Tests | `./venv/bin/python -m pytest -q` — 2246 passed, 11 skipped, exit 0, 1175.30s. |
+| Next approved step | Add a canonical concrete identity before a slab can become a material requirement. Do not invent a footing volume, a coverage rule, or a labour rate. Do not reopen Crew App work. Do not start UAT or V1-11. |
+
+### 2026-10-08 — Hosted cubic-metre unit check
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 HOSTED M3 RELEASE — ESTIMATING UNIT ARCHITECTURE 8 OCTOBER 2026 |
+| Objective | Let the hosted database store the purchasing unit M3 and deploy the tested application. |
+| Architectural decision | One new revision widens the existing checks. Existing rows are copied unchanged. No earlier migration is edited. |
+| Approved Cursor prompt summary | Add the smallest migration that allows M3 beside EA, LF, SF, and BF. Verify the hosted recovery copy. Apply only the new revision. Deploy the tested application. Prove the scratch concrete chain on the live database. |
+| Implementation result | Revision `r8e9f0a1b2c3` is the hosted head. Integrity `ok`. Existing requirement rows matched before and after. Scratch project 52 stores 45.3070 m³. Live SHA `d6f6b62faf64f8a521ba8573c30ee68f0e9eab83`, deploy `dep-db3smbbtqb8s73f87bn0`. Mac office unchanged. |
+| Tests | `./venv/bin/python -m pytest -q` — 2244 passed, 11 skipped, exit 0, 1101.33s. |
+| Next approved step | Return to the estimating engine. Do not add another unit conversion. Do not reopen Crew App work. Do not start UAT or V1-11. |
+
+### 2026-10-08 — Construction unit and purchasing unit
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 ESTIMATING ENGINE — CONSTRUCTION UNITS vs PURCHASING UNITS 8 OCTOBER 2026 |
+| Objective | Keep the imperial construction quantity and convert to the purchasing unit only when a governed rule exists. |
+| Business decision | Brayman measures in imperial units. Concrete is purchased in cubic metres. The yard quantity is not discarded. |
+| Architectural decision | The requirement still has one stored quantity. For concrete that quantity is the cubic-metre purchasing quantity. The note keeps the cubic-yard construction quantity and the conversion rule. No new conversion is invented for lumber or for an unknown sheet size. |
+| Approved Cursor prompt summary | Do not implement a cubic-yard-only material requirement. Distinguish the construction unit from the purchasing unit. Prove 40 ft × 80 ft × 6 in as 59.259 yd³ and 45.307 m³ through the supplier request, the price per cubic metre, and the costing snapshot. Do not add waste, a truck count, or a migration. |
+| Implementation result | Scratch proof stores 45.3070 m³ on the existing four-decimal quantity column and keeps the unrounded yards and metres in the note. The supplier request shows 45.307 m³. EA, LF, SF, and BF requirements are unchanged. Not deployed. Hosted check still rejects M3. |
+| Tests | `./venv/bin/python -m pytest -q` — 2243 passed, 11 skipped, exit 0, 1226.17s. |
+| Next approved step | Approve a migration that allows M3 on the hosted material-requirement check. Do not reopen Crew App work. Do not start UAT or V1-11. |
+
+### 2026-10-08 — Common V1 estimating quantity contract
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 — ACCELERATED WHOLE ESTIMATING ENGINE COMPLETION 8 OCTOBER 2026 |
+| Objective | One quantity contract for the V1 scopes, using stored rules only. |
+| Approved Cursor prompt summary | Stop proving the commercial chain once per trade. Reuse the deck and ICF engines. Name every missing rule. Keep plumbing, electrical, and HVAC as quote or allowance. Do not invent formulas, stock, waste, or labour rates. |
+| Implementation result | `estimating_quantity` returns one project result. Known member counts and the ICF standard-form count can become requirements, a supplier request, an approved cost, an estimate line, and a costing snapshot. Other scopes stay unresolved. The Bushel model is read only. |
+| Tests | `./venv/bin/python -m pytest -q` — 2239 passed, 11 skipped, exit 0. |
+| Next approved step | Add one governed quantity rule for a scope that already has stored facts. Do not invent a coverage formula. Do not reopen Crew App work. Do not start UAT or V1-11. |
+
+### 2026-10-08 — Foundation vertical estimating slice
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 PLAN → ESTIMATE — SECOND VERTICAL ESTIMATING SLICE: FOUNDATIONS 8 OCTOBER 2026 |
+| Objective | Extend the deck/framing path to foundation quantities that already have a governed rule. |
+| Approved Cursor prompt summary | Second core V1 estimating slice. Reuse the ICF engine and the existing commercial chain. Do not invent a slab formula, a package, waste, or a labour rate. |
+| Implementation result | `foundation_quantity` calls the existing ICF engine. A known standard-form count becomes a supplier-neutral requirement and can reach a costing snapshot. Concrete volume, a missing wall, a footing, a slab, reinforcement, and membrane coverage stay separate and unresolved where no rule exists. |
+| Tests | Full suite result is recorded after the run. |
+| Next approved step | Governed concrete placement for a slab or footing. Do not reopen Crew App work. Do not start UAT or V1-11. |
+
+### 2026-10-08 — Deck and framing vertical estimating slice
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 PLAN → ESTIMATE — FIRST VERTICAL ESTIMATING SLICE 8 OCTOBER 2026 |
+| Objective | Prove plan facts to quantity to material requirement to supplier request to contractor cost to estimate line to costing snapshot for deck and framing. |
+| Approved Cursor prompt summary | First core V1 estimating slice. Deck and framing only. Reuse the construction model and the existing commercial chain. Do not copy a project, invent stock or waste, or start the other engines. |
+| Implementation result | `deck_framing_quantity` reads the construction model. Known member counts become supplier-neutral requirements. The existing supplier request, cost approval, estimate line, and costing snapshot consume that result. A missing length stays open. Labour hours stay uncalculated on Structure / Framing. |
+| Tests | `./venv/bin/python -m pytest -q` — 2231 passed, 11 skipped, exit 0. Focused file `tests/test_deck_framing_vertical_slice.py` — 5 passed. |
+| Next approved step | Foundation quantity slice. Do not reopen Crew App work. Do not start UAT or V1-11. |
+
+### 2026-10-08 — Whole-product end-to-end capability audit
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 WHOLE-PRODUCT END-TO-END CAPABILITY AUDIT 8 OCTOBER 2026 |
+| Objective | Judge whether Ben can run a real project from plan through a better next estimate. Audit only. |
+| Implementation result | No code, deploy, migration, or office-file change. Answer NO. Crew offline remains frozen, awaiting real UAT after onboarding. Official checklist score stays 65% / 4 of 11 and was not used as the product answer. |
+| Next approved step | Authorize the deck and framing quantity slice. Do not reopen Crew App work. Do not start UAT or V1-11. |
+
+### 2026-10-08 — Crew offline freeze and Plan → Estimate audit
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 — FREEZE CREW OFFLINE WORK AND COMPLETE PLAN → ESTIMATE AUDIT 8 OCTOBER 2026 |
+| Objective | Freeze the deployed Crew offline loop. Audit Plan → Estimate. Do not implement. |
+| Implementation result | No code, deploy, migration, or office-file change. Crew connectivity test is reserved for Ben’s onboarding and the first real project. Official V1 remains 65% / 4 of 11. The platform calculates 8-inch ICF quantities from entered wall facts and does not calculate the other internal scopes from a plan. |
+| Next approved step | Authorize the first missing internal quantity engine. Do not reopen Crew App work. Do not start UAT or V1-11. |
+
+### 2026-10-08 — Field offline crew loop
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 CREW APP OFFLINE FIELD — IMPLEMENTATION 8 OCTOBER 2026 |
+| Objective | One Field-only offline loop: reopen today's work and the job, keep unsent notes and photos on the phone, and send them when Calibrayt is open and the connection returns. |
+| Implementation result | Field service worker caches Field pages only. Existing IndexedDB queue and client-id replay stay. Crew status words replace the old send wording. Help stays online. Calculators unchanged. Full suite passed. Physical iPhone test was not run. PRE-UAT READY is NO. Mac office unchanged. |
+| Next approved step | Physical iPhone crew-loop test. Do not start UAT or V1-11. |
+
+### 2026-10-08 — Final pre-UAT voice and UX gate
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 FINAL PRE-UAT GATE — REAL IPHONE VOICE + FINAL UX REGRESSION 8 OCT 2026 |
+| Objective | Real iPhone Voice test and final live UX regression. No new features. |
+| Implementation result | UX regression found no V1 blocker. Voice was not run on a physical iPhone. PRE-UAT READY is NO. Live SHA `49fc956`. Mac office unchanged. |
+| Next approved step | Physical iPhone Voice test. Do not start UAT or V1-11. |
+
+### 2026-10-08 — Governed Ontario interim package staging
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-08 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 PRE-UAT — GOVERNED ONTARIO INTERIM PACKAGE STAGING 8 OCT 2026 |
+| Objective | Stage `CA-ON-BRAYMAN-V1-INTERIM` as APPROVED, then activate it through `activate_legal_content` with `supersede_package_id` 1. |
+| Implementation result | Commit `49fc956` deployed as `dep-db3np8gm7kps73fdve9g`. Hosted package 3 is ACTIVE. Package 1 is SUPERSEDED. Scratch contract `CTR-2026-0006` is Generated. Signing requests remain 14. PRE-UAT READY is NO. Mac office unchanged. |
+| Next approved step | Real iPhone Voice test. Do not start UAT or V1-11. |
+
+### 2026-10-07 — Interim Ontario activation refused
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 PRE-UAT — ACTIVATE BRAYMAN INTERIM ONTARIO PACKAGE 7 OCT 2026 |
+| Objective | Supersede `FG024D-UAT-ON-001` with `CA-ON-BRAYMAN-V1-INTERIM` through `activate_legal_content`. |
+| Implementation result | Refused with `PACKAGE_NOT_FOUND`. The interim package does not exist as APPROVED. Package 1 remains ACTIVE. No contract generated. PRE-UAT READY is NO. Mac office unchanged. |
+| Next approved step | Make the governed path stage the interim package as APPROVED, then supersede package 1. Do not insert a second active package by hand. |
+
+### 2026-10-07 — Interim Ontario package install refused
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 PRE-UAT — INSTALL BRAYMAN V1 INTERIM ONTARIO CONTRACT PACKAGE 7 OCT 2026 |
+| Objective | Install `CA-ON-BRAYMAN-V1-INTERIM` on the hosted database with the governed installer. Do not migrate. Do not deploy. |
+| Implementation result | Installer refused. Active package `FG024D-UAT-ON-001` remains. Interim package was not created. No contract was generated. PRE-UAT READY is NO. Mac office unchanged. |
+| Next approved step | Authorize superseding the synthetic active Ontario package through the existing activation path, then run the same installer. Do not insert a second active package by hand. |
+
+### 2026-10-07 — Deploy b5618f9 and live verification
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 PRE-UAT — DEPLOY APPROVED BASELINE + COMPLETE LIVE VERIFICATION 7 OCT 2026 |
+| Objective | Deploy `b5618f9` only and verify the live office. Do not migrate. |
+| Implementation result | Deploy `dep-db3d6gvavr4c7399l040` is live at `b5618f9`. Hosted Alembic remains `q7d8e9f0a1b2`. Ontario interim contract is not in the hosted library. PRE-UAT READY is NO. Voice real-device test pending. Mac office unchanged. |
+| Next approved step | Install the Brayman V1 interim Ontario package on the hosted database and re-check contract generation. Do not migrate again. Do not start UAT. |
+
+### 2026-10-07 — Hosted migration to q7d8e9f0a1b2
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI HOSTED DATABASE — AUTHORIZE MIGRATION TO CURRENT V1 SCHEMA 7 OCT 2026 |
+| Objective | Migrate the hosted database from `m3f4a5b6c7d8` to `q7d8e9f0a1b2` and do not deploy. |
+| Implementation result | `flask db upgrade q7d8e9f0a1b2` on the host. Current revision `q7d8e9f0a1b2`. Integrity `ok`. Recovery copy remains `m3f4a5b6c7d8`. Not deployed. Mac office unchanged. |
+| Next approved step | Authorize deploy of `b5618f9` only. Do not migrate again in that step. |
+
+### 2026-10-07 — Hosted pre-migration recovery
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI HOSTED DATABASE — PRE-MIGRATION RECOVERY AND SCHEMA RECONCILIATION 7 OCT 2026 |
+| Objective | Make a hosted recovery copy and prove the path from `m3f4a5b6c7d8` to `q7d8e9f0a1b2` without migrating. |
+| Implementation result | Hosted revision confirmed `m3f4a5b6c7d8`. Recovery file `/opt/render/project/src/instance/backups/pre-migration-2026-10-07-m3f4a5b6c7d8.db`. On-demand snapshot POST still HTTP 405. Migration not run. Not deployed. Mac office unchanged. |
+| Next approved step | Authorize the hosted upgrade to `q7d8e9f0a1b2` only after accepting this recovery copy. Do not deploy in that step. |
+
 ### 2026-10-07 — Brayman V1 interim contract presentation
 
 | Field | Content |
@@ -72,6 +325,46 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Implementation result | Package `CA-ON-BRAYMAN-V1-INTERIM`, version 1, effective 2026-10-07. Scratch browser generated contract CTR-2026-0001 and recorded the snapshot. No signing request. Not deployed. Mac office unchanged. |
 | Tests | `./venv/bin/python -u -m pytest -q --tb=line` — 2211 passed, 11 skipped, 6950 warnings, 1087.05s, exit 0. That count includes the untracked StyroRail price test, which stays out of this commit. |
 | Next approved step | Read the hosted Alembic revision from the Render dashboard Shell before any deploy. |
+
+### 2026-10-07 — Hosted access only
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 RELEASE BLOCKER — HOSTED ACCESS ONLY 7 OCT 2026 |
+| Objective | Read the hosted `alembic_version` from the Calibryatai service Shell. |
+| Implementation result | Stopped. Dashboard Shell requires sign-in. Public API has no SSH or Shell path. CLI SSH was not retried. Revision unread. No migration. No deploy. |
+| Next approved step | Sign in to the Render dashboard, add the SSH public key, open the Calibryatai service Shell, and read `alembic_version`. |
+| Commit hash | Not committed. |
+
+### 2026-10-07 — Continue the finite V1 plan
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 FINAL RELEASE RECONCILIATION — CONTINUE FROM FINITE V1 PLAN 7 OCT 2026 |
+| Objective | Continue from hosted reconciliation. Do not reopen V1 scope. |
+| Business decision | The finite plan stands. Official V1 stays **65% / 4 of 11**. No UAT. No V1-11. |
+| Implementation result | Stopped again before a hosted read. HEAD and origin/main are `c5dd246`. Live remains `ff9d6791`. Snapshot creation still HTTP 405. PRE-UAT READY is NO. |
+| Tests | Not run. The real iPhone microphone test was not performed. |
+| Next approved step | Add an SSH public key on the Render account, open the Calibryatai service Shell, and read `alembic_version`. |
+| Commit hash | Not committed. |
+
+### 2026-10-07 — Pre-UAT final release reconciliation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-07 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI V1 PRE-UAT FINAL RELEASE RECONCILIATION 7 OCT 2026 |
+| Objective | Read the hosted revision, take a recovery copy, migrate, deploy `c5dd246`, and smoke-test the live office. |
+| Business decision | No new product features. No real project. No V1-11. Official V1 stays **65% / 4 of 11**. |
+| Implementation result | Stopped before migration. Hosted revision unread. Dashboard Shell requires sign-in. Snapshot creation returned 405. Latest automatic snapshot `2026-10-07T00:26:11.573Z`. Live remains `ff9d6791`, deploy `dep-db381g9a4tcc738r94bg`. PRE-UAT READY is NO. |
+| Tests | Not run. The real iPhone microphone test was not performed. |
+| Next approved step | Add an SSH public key on the Render account, open the Calibryatai service Shell, and read `alembic_version`. |
+| Commit hash | Not committed. |
 
 ### 2026-10-07 — Authorize final V1 functional gaps
 
@@ -237,14 +530,14 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 |-------|---------|
 | Date | 2026-10-07 |
 | Branch | main |
-| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI SUPPLIER ESTIMATE REQUEST — CLOSE CURRENT WORKFLOW SLICE 7 OCT 2026 |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI SUPPLIER ESTIMATE REQUEST — APPROVED BRAYMAN CONSTRUCTION DOCUMENT STANDARD 7 OCT 2026 |
 | Objective | Use the approved Brayman page from the existing supplier review. |
 | Business decision | The job fills the sheet. Bushel's address stays on the Bushel job only. |
 | Architectural decision | Download from `/projects/<id>/supplier-package`. No new record, no migration, no copied SKU or price. |
-| Prompt template used | Joel's close-current-workflow-slice prompt, 7 Oct 2026. |
-| Approved Cursor prompt summary | Close the download slice. Run the full suite. Verify in a scratch database. One commit. Do not deploy. Do not start the supplier-response workflow. |
-| Files expected to change | The page call, the supplier review route and screen, the proof, and the authorities. |
-| Files prohibited from changing | The rejected portrait PDF, Geleynse case files, Bushel production files, the StyroRail price test, and the cost engine. |
+| Prompt template used | Joel's direction to integrate the saved template into the workflow. |
+| Approved Cursor prompt summary | Project, supplier, and the project's material list fill the existing page. |
+| Files expected to change | The page call, the supplier review route and screen, and the proof. |
+| Files prohibited from changing | The rejected portrait PDF, Geleynse case files, prices, and the cost engine. |
 | Result | The review downloads the sheet for the open job. Official V1 remains **65% / 4 of 11**. |
 | Tests | `./venv/bin/python -m pytest -q` — 2194 passed, 11 skipped, 6899 warnings, 1144.20s, exit 0. The count includes the untracked StyroRail price test, which stays out of this commit. Scratch-database browser check passed for Linda Bushel and Harbour Shed. |
 | Deployment | Not performed. |
@@ -301,6 +594,276 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 | Files prohibited from changing | Bushel production files, Geleynse, review dumps, the StyroRail cost-library test, ICF, the cost engine, and a supplier request. |
 | Result | **IMPLEMENTED / TESTED.** Official V1 remains **65% / 4 of 11**. |
 | Tests | Focused member facts **3 passed**. Related Construction Model, catalogue, readiness, supplier, cost, contractor approval, estimate costing, ICF, and PGE **364 passed**, 442 warnings, 272.29s, exit 0. Full suite **2186 passed**, 11 skipped, 6893 warnings, 1114.61s, exit 0. That run includes the untracked StyroRail cost-library test, which stays out of the commit. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — Best available material requirement set
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 — PROJECT MATERIAL REQUIREMENT + EXCEPTION FLOW 6 OCT 2026 |
+| Objective | Keep Bushel's known material facts moving, and flag what is unresolved. |
+| Business decision | No-guessing does not mean no progress. A missing fact flags that item and does not block the others. |
+| Architectural decision | A read-only readiness pass over the Construction Model. Existing unresolved-product and missing-price codes are reused. No new requirement table and no Darcy transport. |
+| Prompt template used | Joel's project material requirement and exception-flow prompt, 6 Oct 2026. |
+| Approved Cursor prompt summary | Use Linda Bushel. Do not invent quantities, stock, prices, or SKUs. Do not write requirement rows. One commit if the read passes. Do not deploy. |
+| Files expected to change | The readiness read, its Bushel proof, and existing authorities. |
+| Files prohibited from changing | Bushel production files, Geleynse, the cost engine, ICF, and a sent supplier request. |
+| Result | The read is tested. Official V1 remains **65% / 4 of 11**. |
+| Tests | Focused readiness **2 passed**. Related regressions **121 passed**. Full suite **2183 passed**, 11 skipped, 6893 warnings, 1091.63s, exit 0. That run includes the untracked StyroRail cost-library test, which stays out of the commit. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — Real project material-requirement set
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 — REAL PROJECT → COMPLETE MATERIAL REQUIREMENT SET 6 OCT 2026 |
+| Objective | Produce a complete supplier-neutral MaterialRequirement set from one real project, or record the gap. |
+| Business decision | Calibrayt generates the requirement. The supplier does not take the project off. Missing facts stay missing. |
+| Architectural decision | Linda Bushel is the acceptance project. The Construction Model read refuses a canonical requirement. The J1 purchasing sheet is not that requirement. No product code. |
+| Prompt template used | Joel's real-project material-requirement prompt, 6 Oct 2026. |
+| Approved Cursor prompt summary | Assess real projects. Do not invent quantities or canonical materials. Do not build the Darcy request. Commit only a justified implementation. Do not deploy. |
+| Files expected to change | Existing architecture authorities if the result is a capability gap. |
+| Files prohibited from changing | Bushel production files, Geleynse files, the cost engine, ICF, and a supplier request. |
+| Result | **MATERIAL REQUIREMENT CAPABILITY GAP.** Official V1 remains **65% / 4 of 11**. |
+| Tests | No product code. The proving-model read was executed in memory. The suite was not re-run. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — Job-specific supplier pricing request
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 — JOB-SPECIFIC SUPPLIER PRICING REQUEST 6 OCT 2026 |
+| Objective | Decide whether a job-specific supplier pricing request can be generated from a real project's complete material requirements. |
+| Business decision | Calibrayt generates the requirement and the quantity. The supplier confirms product, price, and availability. Brayman approves cost. The 20–30-item synthetic list is withdrawn. |
+| Architectural decision | The request is a replaceable transport over the existing chain. It is not a second cost engine. It was not implemented because no real project currently holds a complete canonical material-requirement list. |
+| Prompt template used | Joel's job-specific supplier pricing request prompt, 6 Oct 2026. |
+| Approved Cursor prompt summary | Inspect the live chain. Implement only if a real project can supply the requirements. Do not invent a list. One commit only if that implementation passes. Do not deploy. |
+| Files expected to change | Existing architecture authorities. |
+| Files prohibited from changing | Bushel, Geleynse, the StyroRail cost-library test, ICF, Contract V1, the cost engine, and a new supplier portal or API. |
+| Result | **NO-GO.** No request was generated. Official V1 remains **65% / 4 of 11**. |
+| Tests | No product code changed. The suite was not re-run. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — Costing review contractor-cost provenance
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 DEVELOPMENT STEP 8 — COSTING REVIEW: SHOW CONTRACTOR COST PROVENANCE 6 OCT 2026 |
+| Objective | Show the frozen contractor-cost citation on the existing costing review. |
+| Business decision | The estimator should see why a frozen cost is there. The supplier is provenance. Brayman is the approver. |
+| Architectural decision | Read `EstimateCostingSnapshotLine` and its cited approval. Do not resolve a new price. Do not change the commercial chain. |
+| Prompt template used | Joel's costing-review provenance prompt, 6 Oct 2026. |
+| Approved Cursor prompt summary | Smallest presentation change on the existing review. One commit and push. Do not deploy. Stop abstract cost-engine work after this. |
+| Files expected to change | Costing review context, version detail template, proof test, existing authorities. |
+| Files prohibited from changing | Bushel, Geleynse, the StyroRail cost-library test, snapshot semantics, pricing, ICF, supplier evidence writes. |
+| Result | Provenance shown from the frozen citation. Official V1 remains **65% / 4 of 11**. |
+| Tests | Focused review tests **2 passed**. Grouped regressions **127 passed**. Full suite **2181 passed**, 11 skipped, 6893 warnings, 1120.42s, exit 0. That run includes the untracked StyroRail cost-library test, which stays out of the commit. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — Approved contractor cost into the estimate costing snapshot
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 DEVELOPMENT STEP 8 — APPROVED CONTRACTOR COST → ESTIMATE COSTING SNAPSHOT 6 OCT 2026 |
+| Objective | Let an existing estimate line freeze an already approved contractor cost into the existing costing snapshot. |
+| Business decision | Brayman's approved cost can be used by an estimate. The supplier still does not approve it. |
+| Architectural decision | ADR-056 is the accepted successor. ADR-008 stays Proposed. The snapshot cites `contractor_cost_approvals`. Match is canonical material on the cost item. No unit conversion. No cheapest supplier. No new estimate line. |
+| Prompt template used | Joel's approved-contractor-cost snapshot prompt, 6 Oct 2026. |
+| Approved Cursor prompt summary | Write the narrow ADR-008 successor, then the smallest bridge into the existing snapshot. One commit and push. Do not deploy. |
+| Files expected to change | ADR-056, snapshot citation columns, consume service, proof tests, graph-head pins, existing authorities. |
+| Files prohibited from changing | Bushel, Geleynse, the StyroRail cost-library test, ICF engine, MaterialRequirement, CanonicalMaterial ownership, pricing snapshot creation. |
+| Result | Bridge implemented and tested. Migration `q7d8e9f0a1b2` is not applied to the Mac primary or the hosted database. Official V1 remains **65% / 4 of 11**. |
+| Tests | Cursor Terminal, repo root. Focused snapshot, approval, and FG-027: 32 passed. Grouped supplier, catalogue, material-requirement, ICF, pricing, and schema: 114 passed. Full `./venv/bin/python -m pytest -q`: 2179 passed, 11 skipped, 6873 warnings, 1094.66s, exit 0. That count includes the uncommitted StyroRail cost-library test. Committed suite without that file is 2178. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — Contractor cost approval record
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 DEVELOPMENT STEP 8 — CONTRACTOR COST APPROVAL RECORD 6 OCT 2026 |
+| Objective | Store Brayman's acceptance of a resolved contractor-confirmed cost before an estimate line exists. |
+| Business decision | The supplier offers a price. Brayman approves the cost used for estimating. |
+| Architectural decision | `contractor_cost_approvals` is Estimating-owned. It cites `SupplierProductPriceEvidence`. Status is PENDING, APPROVED, or REJECTED. A new price is a new row. A public list price stays unapproved. ADR-008 stays Proposed. The estimate costing snapshot is unchanged. |
+| Prompt template used | Joel's contractor cost approval record prompt, 6 Oct 2026. |
+| Approved Cursor prompt summary | Implement the smallest historical approval record. Do not write an estimate line. Do not approve a public list price. One commit and push. Do not deploy. |
+| Files expected to change | Estimating model and service, one Alembic revision, proof tests, graph-head pins, existing authorities. |
+| Files prohibited from changing | Bushel, Geleynse, the StyroRail cost-library test, EstimateCostingSnapshot, ICF engine, MaterialRequirement, CanonicalMaterial ownership. |
+| Result | Record implemented and tested. Migration `p6c7d8e9f0a1` is not applied to the Mac primary or the hosted database. Official V1 remains **65% / 4 of 11**. |
+| Tests | Cursor Terminal, repo root. Focused `tests/test_contractor_cost_approval.py` plus supplier-cost files: 20 passed. Grouped catalogue, FG-027, material-requirement, ICF, pricing, and schema: 120 passed. Full `./venv/bin/python -m pytest -q`: 2173 passed, 11 skipped, 6848 warnings, 1139.17s, exit 0. That count includes the uncommitted StyroRail cost-library test. Committed suite without that file is 2172. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — Contractor cost approval terminology
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ARCHITECTURAL CORRECTION — CONTRACTOR COST APPROVAL TERMINOLOGY 6 OCT 2026 |
+| Objective | Place contractor cost approval before an estimate line, and stop calling it supplier approval. |
+| Business decision | BMR offers a price. Brayman accepts a cost for estimating. Those are different acts. |
+| Architectural decision | No existing record is that approval. `SupplierProductPriceEvidence` is supplier evidence. `resolve_effective_contractor_cost` is the resolution. `CostItem` is one mutable organization planning cost. `EstimateCostingSnapshot` freezes one estimate version. A public list price has no governed approval rule and stays unapproved. Not implemented. |
+| Prompt template used | Joel's terminology correction, 6 Oct 2026. |
+| Approved Cursor prompt summary | Reassess the owner. Do not implement unless the repository already authorizes the smallest record. Do not invent a public-price rule. |
+| Files expected to change | Existing supplier and costing authorities only. |
+| Files prohibited from changing | Product models, Bushel, Geleynse, the StyroRail cost-library test. |
+| Result | Gap recorded. No product code. Official V1 remains **65% / 4 of 11**. |
+| Tests | No product change. Suite not run. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — FG-027 cannot approve a resolved supplier cost
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 DEVELOPMENT STEP 8 — HUMAN REVIEW → FG-027 COSTING APPROVAL 6 OCT 2026 |
+| Objective | Approve a resolved supplier cost into the existing FG-027 snapshot without an estimate line. |
+| Business decision | A confirmed contractor price may be approved only when FG-027 already allows it. A public list price must stay provisional. |
+| Architectural decision | FG-027 `approve_all_costing` freezes `EstimateLineItem` rows. `EstimateCostingSnapshotLine.estimate_line_item_id` is required. Source kinds are library and manual costs, not supplier evidence. ADR-044 rejected requiring supplier evidence for that approval. ADR-008 stays Proposed. No second snapshot was created. |
+| Prompt template used | Joel's Step 8 FG-027 review prompt, 6 Oct 2026. |
+| Approved Cursor prompt summary | Reuse FG-027. Do not write an estimate line. If the existing approval cannot hold supplier provenance, stop and record the gap. |
+| Files expected to change | Existing supplier and costing authorities only. |
+| Files prohibited from changing | Product approval code, Bushel, Geleynse, the StyroRail cost-library test, ICF profiles, Contract V1. |
+| Result | ARCHITECTURAL GAP IDENTIFIED. No product code change. Official V1 remains **65% / 4 of 11**. Checklist step 8 stays open. |
+| Tests | No new product behavior. Full suite not run. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — Effective contractor cost resolver
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 DEVELOPMENT STEP 8 — EFFECTIVE CONTRACTOR COST RESOLVER 6 OCT 2026 |
+| Objective | Resolve one applicable price evidence row for a named supplier account and time. |
+| Business decision | BMR Winchester remains the first proving supplier. A public list price is not a confirmed contractor cost. |
+| Architectural decision | FG-009 prices a selling total from approved direct cost. It does not select supplier evidence. `resolve_effective_contractor_cost` uses the contractor supplier account as supplier context. Confirmed evidence wins when valid. Public evidence is a labeled fallback. A later valid row is used for that time. Earlier rows stay stored. ADR-008 stays Proposed. No costing snapshot is written. |
+| Prompt template used | Joel's Step 8 effective-cost prompt, 6 Oct 2026. |
+| Approved Cursor prompt summary | Resolve one evidence row from the window. Do not choose the cheaper supplier. Do not write an estimate line. Do not deploy. Exclude Bushel, Geleynse, and the StyroRail cost-library test. |
+| Files expected to change | `app/services/supplier_catalogue.py`, `tests/test_effective_contractor_cost.py`, and the existing supplier authorities. |
+| Files prohibited from changing | Bushel, Geleynse, `tests/test_confirmed_icf_block_prices.py`, ICF calculation, Contract V1, MaterialRequirement, CanonicalMaterial ownership. |
+| Result | GO. Resolver implemented. Official V1 remains **65% / 4 of 11**. Checklist step 8 stays open. |
+| Tests | Focused `tests/test_effective_contractor_cost.py`: 5 passed, 4 warnings, 0.95s, exit 0. Grouped regression: 146 passed, 375 warnings, 34.15s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2167 passed, 11 skipped, 6843 warnings, 1100.64s, exit 0. One pass is the excluded StyroRail cost-library test, which stays uncommitted. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — Supplier price evidence window
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 DEVELOPMENT STEP 8 — SUPPLIER PRICE EVIDENCE WINDOW 6 OCT 2026 |
+| Objective | Return the supplier price evidence valid at an as-of time. |
+| Business decision | BMR Winchester remains the first proving supplier. One contractor’s confirmed price does not apply to another contractor. |
+| Architectural decision | `read_supplier_price_evidence_window` reads active `CanonicalMaterialSupplierMap` rows and inclusive `effective_from` / `effective_to`. `captured_at` stays provenance. The list is not an effective cost. |
+| Prompt template used | Joel's Step 8 evidence-window prompt, 6 Oct 2026. |
+| Approved Cursor prompt summary | Add the smallest read. Do not choose a price. Do not write an estimate line. Do not deploy. Exclude Bushel, Geleynse, and the StyroRail cost-library test. |
+| Files expected to change | `app/services/supplier_catalogue.py`, `tests/test_supplier_price_evidence_window.py`, and the existing supplier authorities. |
+| Files prohibited from changing | Bushel, Geleynse, `tests/test_confirmed_icf_block_prices.py`, ICF calculation, Contract V1, MaterialRequirement, CanonicalMaterial ownership. |
+| Result | Window implemented. Official V1 remains **65% / 4 of 11**. Checklist step 8 stays open. |
+| Tests | Focused `tests/test_supplier_price_evidence_window.py`: 3 passed, 2 warnings, 0.68s, exit 0. Grouped regression: 141 passed, 371 warnings, 35.22s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2162 passed, 11 skipped, 6839 warnings, 1112.61s, exit 0. One pass is the excluded StyroRail cost-library test, which stays uncommitted. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — Supplier price evidence class and validity
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 DEVELOPMENT STEP 8 — SUPPLIER PRICE EVIDENCE CLASS + VALIDITY 6 OCT 2026 |
+| Objective | Name public list price and contractor-confirmed price on the existing evidence row, and store a validity end. |
+| Business decision | BMR Winchester remains the first proving supplier. A confirmed Brayman price does not replace the public price. |
+| Architectural decision | `price_class` is `PUBLIC_LIST_PRICE` or `CONTRACTOR_CONFIRMED_PRICE`. The contractor account stays provenance. `captured_at`, `effective_from`, and `effective_to` stay separate. Rows stay append-only. Effective contractor cost is not resolved. ADR-008 stays Proposed. |
+| Prompt template used | Joel's Step 8 price-evidence prompt, 6 Oct 2026. |
+| Approved Cursor prompt summary | Add the class and the validity end on `SupplierProductPriceEvidence`. Do not resolve effective cost. Do not write an estimate line. Do not deploy. Do not commit Bushel, Geleynse, or the StyroRail cost-library test. |
+| Files expected to change | Supplier catalogue model and service, migration `o5b6c7d8e9f0`, price-evidence tests, and the existing supplier authorities. |
+| Files prohibited from changing | Bushel, Geleynse, `tests/test_confirmed_icf_block_prices.py`, ICF calculation, Contract V1, MaterialRequirement, CanonicalMaterial ownership, costing and pricing snapshots. |
+| Result | Class and validity end are stored. A later contractor price leaves the earlier row unchanged. Official V1 remains **65% / 4 of 11**. Checklist step 8 stays open. Migration not applied to the Mac primary or the hosted database. |
+| Tests | Focused `tests/test_supplier_price_evidence_class.py`: 4 passed. With the multi-supplier proof: 6 passed, 4 warnings, 1.13s, exit 0. Grouped regression including FG-029, material catalogue, FG-027, construction material requirements, ICF path, PGE, and FG-031: 164 passed, 501 warnings, 39.84s, exit 0. Alembic head pins: 29 passed, 174 warnings, 25.17s, exit 0. Full suite `./venv/bin/python -m pytest -q`: 2159 passed, 11 skipped, 6837 warnings, 1108.07s, exit 0. One pass is the excluded StyroRail cost-library test, which stays uncommitted. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — Multi-supplier cost engine on the existing catalogue
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI ACCELERATED V1 DEVELOPMENT STEP 8 — MULTI-SUPPLIER COST ENGINE ARCHITECTURE 6 OCT 2026 |
+| Objective | Prove that more than one supplier can price the same canonical material on the existing catalogue. |
+| Business decision | BMR Winchester is the first proving supplier. BMR is not the architecture. |
+| Architectural decision | FG-029 `Supplier`, `SupplierProduct`, `CanonicalMaterialSupplierMap`, and `SupplierProductPriceEvidence` are the cost-engine supplier side. Public evidence has no contractor account. Contractor evidence names that account. A later row does not replace an earlier row. ICF manufacturer profiles are product-system knowledge, not suppliers. Effective contractor cost is not resolved. ADR-008 stays Proposed. No estimate line is written. |
+| Prompt template used | Joel's Step 8 multi-supplier prompt, 6 Oct 2026. |
+| Approved Cursor prompt summary | Inspect the uncommitted StyroRail cost-library test and exclude it. Reuse the existing catalogue. Do not build a BMR engine. Do not rescore V1. Do not deploy. |
+| Files expected to change | `tests/test_multi_supplier_cost_architecture.py` and the existing supplier, material, checklist, roadmap, and V1 authorities. |
+| Files prohibited from changing | Bushel, Geleynse, `tests/test_confirmed_icf_block_prices.py`, ICF calculation, Contract V1, MaterialRequirement semantics, drawings. |
+| Result | Proof A–J passed on the existing models. No product code change. Official V1 remains **65% / 4 of 11**. Checklist step 8 stays open. |
+| Tests | Focused 2 passed. Grouped regression 134 passed. Full suite `./venv/bin/python -m pytest -q` — 2155 passed, 11 skipped, 6834 warnings, 1075.66s, exit 0. One of those passes is the excluded StyroRail cost-library test, which stays uncommitted. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — StyroRail ICF block prices on the cost library
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI PLATFORM PRICING CATALOGUE — INITIAL POPULATION + CONFIRMED ICF PRICES |
+| Objective | Record two Joel-confirmed StyroRail 8-inch block prices in the existing cost library. |
+| Business decision | 29.64 CAD per regular block and 35.78 CAD per corner block. Supplier, tax, freight, discount, and SKU stay unconfirmed. |
+| Architectural decision | `CostItem` is the organization price. Supplier price evidence cannot store these rows because a supplier product requires a SKU. Canonical material identity has no ICF block. Estimate lines keep the unit cost copied at insert. |
+| Prompt template used | Joel's pricing-catalogue prompt, 6 Oct 2026. |
+| Approved Cursor prompt summary | Save the two confirmed prices on the existing pricing path. Do not invent supplier facts. Do not overwrite historical estimate prices. Do not deploy. |
+| Files expected to change | `tests/test_confirmed_icf_block_prices.py` and the local ORG-001 cost library. |
+| Files prohibited from changing | Website source, Alembic revisions, historical estimate lines, Geleynse quantities. |
+| Result | Cost items 12 and 13 saved. 134 estimate lines unchanged. Focused test 1 passed. |
+| Tests | `./venv/bin/python -m pytest tests/test_confirmed_icf_block_prices.py -q` — 1 passed, 0.52s, exit 0. Full suite not run. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — Geleynse garage and suite cost request for Ben
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI GELEYNSE GARAGE ESTIMATE FOR BEN |
+| Objective | Start the full estimate for the Geleynse building from the 17 Sept 2026 drawings, excluding the foundation and concrete already estimated. |
+| Business decision | No price is invented. A blank quantity means the sheets do not state one. The completed foundation estimate is not in the case. |
+| Architectural decision | Case documents only. Official V1 stays **65% / 4 of 11**. |
+| Prompt template used | Joel's direction, 6 Oct 2026, with the Desktop plan `Geleynse - 09-17-2026 copy.pdf`. |
+| Approved Cursor prompt summary | Read the plan. Exclude foundation and concrete. Produce the cost request for the rest of the building. |
+| Files expected to change | `docs/estimating-cases/2026/geleynse-2042-abbott/` |
+| Files prohibited from changing | Product code, the Bushel drawing generator, and historical Bushel prices. |
+| Result | Fillable PDF, 35 lines. Openings are counted from the sheets. Framing, finishes, and mechanical work have no quantity because the sheets do not state one. Line 35 is the excluded foundation. |
+| Tests | Not a product change. No suite run. |
+| Deployment | Not performed. |
+
+### 2026-10-06 — Bushel Trex decking and fascia for Ben
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-06 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN — CALIBRAYTAI BUSHEL ESTIMATE FOR BEN |
+| Objective | Replace the wood walking surface with Trex and add Trex fascia on the price request for Ben. |
+| Business decision | Development stays paused. Bushel is priced before the garage. No price is invented. |
+| Architectural decision | Case documents only. The 1 Oct drawing was not reissued. Official V1 stays **65% / 4 of 11**. |
+| Prompt template used | Joel's direction, 6 Oct 2026. |
+| Approved Cursor prompt summary | Replace wood decking with Trex composite, then add fascia boards, and regenerate the fillable cost PDF. |
+| Files expected to change | Bushel cost request, internal cost sheet, customer estimate scope, and the case index. |
+| Files prohibited from changing | Product code, the 1 Oct drawing generator, and historical 29 Sep records. |
+| Result | Fillable PDF regenerated. Items 9–11 are Trex deck boards. Item 12 is 44.184 ft of Trex fascia. The lower-deck PT skirt stays. Desktop copy overwritten. |
+| Tests | Not a product change. No suite run. |
 | Deployment | Not performed. |
 
 ### 2026-10-05 — Construction Model material-requirement boundary

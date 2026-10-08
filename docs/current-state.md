@@ -3,9 +3,108 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Operational snapshot |
-| Updated | 2026-10-07 |
-| Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md). Document and drawing identity is [architecture/governed-document-and-drawing-output-standard.md](architecture/governed-document-and-drawing-output-standard.md). Drawing authority is [architecture/construction-drawing-standard.md](architecture/construction-drawing-standard.md). | ICF profile registry, the internal 8-inch form and concrete service, and the estimate workflow are **CLOSED — LIVE VERIFIED**. Live product SHA `ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b`, deploy `dep-dav9uk97lnhs73bj35pg`. Labour hours are a runtime allowance. Construction Model slices 1 through 11 are **IMPLEMENTED / TESTED**. Slice 12 is the acceptance audit of the complete deck fixture. Slice 13 presents callouts, section and detail references, the drawing index, and construction schedules from that same model. Slice 14 draws connector geometry only when the model supplies it. Slice 15 supplies the remaining generic fixture facts the model can already store, and a stair result can carry a riser count. Slice 16 moves annotations in paper space and does not move the model. Slice 17 stores blocking as fixture members with explicit fastenings. Slice 18 moves bearing notes off the contact. No new generic capability is required before a real project model is read. Slice 19 reads the Bushel proving fixture through that engine. Missing Bushel facts refuse. Slice 20 loads no further governed fact. Visual acceptance for a crew set is not passed. The drawing set is **NOT COMPLETE** and not deployed. |
+| Updated | 2026-10-08 |
+| Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
+
+## 8 Oct 2026 — Pre-turnover synchronization gate
+
+This block is the current operational checkpoint. Older sections in this file stay as history. Where they disagree with this block, this block wins until a later direct measurement replaces it.
+
+| Fact | Measured this gate |
+|---|---|
+| Branch | `main` |
+| Application code before this checkpoint | `234a4eb7e9ddcfab07bf795fd7bfc23c61237ca7` |
+| Live deploy of that code | `dep-db3uur8473hc73c25cjg`, status `live`, finished 2026-10-08T19:32:13Z |
+| `origin/main` at measurement | same SHA, ahead/behind 0/0 |
+| Repository Alembic head | `s9f0a1b2c3d4` |
+| Mac office | `instance/brayman_estimator.db`, 3,645,440 bytes, modified 2026-10-07 11:06:09, integrity `ok`, revision `q7d8e9f0a1b2` |
+| Hosted revision | **NOT READ.** `render ssh` refuses a non-interactive session. `instance/backups/pre-s9-2026-10-08.db` is not on this Mac. Sentences below that name a hosted head were not re-proved. |
+| Official V1 | **65% / 4 of 11**. Not rescored. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. |
+
+Mac lag behind `r8e9f0a1b2c3` and `s9f0a1b2c3d4` is explained. The 8 Oct estimating work recorded that the Mac office file was not to be migrated. This gate did not migrate it.
+
+`tests/test_confirmed_icf_block_prices.py` is recovered onto `main`. One test passed: `./venv/bin/python -m pytest -q tests/test_confirmed_icf_block_prices.py` — 1 passed. The Mac cost items `ICF-SR8-REG` 29.64 and `ICF-SR8-COR` 35.78 remain in the Mac file only.
+
+`stash@{0}` (1 Oct, ICF quantity route) is superseded by the wall-form route already on `main`. `stash@{1}` duplicates the FG-037 grant model already on `main`. Neither stash was dropped. `cursor/sidebar-navigation-refinement` and `cursor/constructos-branding-engine` are July 2026 branches outside `main`. They were not merged.
+
+Checklist step 8 stays open. `estimate_project` has no office route. `SITE`, `FOUND`, and `STRUCT` stay unbound.
+
+## 8 Oct 2026 — Contractor onboarding proposal
+
+A cost-library spreadsheet import was audited and proposed. It is **PROPOSED — NOT YET AUTHORIZED**. The V1 register was not revised. Historical Excel ingestion for the Brayman workbook families remains the closed LEARN capture and does not rewrite the cost library. No importer was built. Official V1 remains **65% / 4 of 11**.
+
+## 8 Oct 2026 — Construction intelligence
+
+Stored length and width become square feet. A named sheet size becomes an exact sheet count and is not rounded up. A stored coverage becomes an exact unit count. A stored fixture, device, equipment, window, or door count stays a count. Pitch is not applied. Openings are not deducted. Plumbing, electrical, and HVAC stay on a quote or allowance, and the count is visible with the allowance blank. A complete footing is concrete in cubic metres. Excavation is a volume only when length, width, and depth are stored, and it is not concrete. Labour hours stay open. No migration. Live SHA `234a4eb7e9ddcfab07bf795fd7bfc23c61237ca7`, deploy `dep-db3uur8473hc73c25cjg`. Login returned 200. The Mac office file was not changed. Official V1 remains **65% / 4 of 11**.
+
+## 8 Oct 2026 — Canonical concrete material
+
+`CAL-CONC` is the one supplier-neutral concrete identity. Category `CONCRETE`. Purchasing unit `M3`. A 10 ft by 10 ft by 12 in slab stays 100/27 cubic yards and becomes a requirement of 2.8317 m³. The supplier request shows 2.832 m³. ICF concrete uses the same identity. Revision `s9f0a1b2c3d4` is the hosted head. The backup `instance/backups/pre-s9-2026-10-08.db` checked `ok` at `r8e9f0a1b2c3`. Integrity after the upgrade is `ok`. Canonical materials went from 28 to 29. Material requirements stayed 29. Live SHA `4e60c253d03fd298578658b048b05029efcf1fe7`, deploy `dep-db3ucl7f3r2c73dkikf0`. The Mac office file was not changed. Official V1 remains **65% / 4 of 11**.
+
+## 8 Oct 2026 — Next coherent quantity batch
+
+Stored stringer and tread counts are stair member counts. Stored baluster and gate counts stay on decks. A pier location count is kept and is not an order. A slab with length, width, and thickness is a cubic-yard volume purchased in cubic metres. No canonical concrete identity exists, so that slab does not become a material requirement. A stored riser count is not lumber. A footing still has no volume rule. Roofing, windows, sheathing, insulation, drywall, and the other unnamed producers stay unresolved. Plumbing, electrical, and HVAC stay quotes or allowances. Labour hours stay open. No migration. Live SHA `3d9e580c109d04b398cd8f1a177b6cf1ccf192de`, deploy `dep-db3tb2o473hc73bstka0`. Login returned 200. The Mac office file was not changed. Official V1 remains **65% / 4 of 11**.
+
+## 8 Oct 2026 — Hosted cubic-metre unit check
+
+Revision `r8e9f0a1b2c3` is the hosted head. It allows `M3` on a material requirement and on a canonical material, and it allows the concrete category. Existing requirement rows were not rewritten. Integrity is `ok`. Live SHA `d6f6b62faf64f8a521ba8573c30ee68f0e9eab83`, deploy `dep-db3smbbtqb8s73f87bn0`. A scratch project stored 45.3070 m³, requested 45.307 m³, and froze that quantity on a costing snapshot at $200 per m³. The construction quantity remains in the note. The Mac office file was not changed. Official V1 remains **65% / 4 of 11**.
+
+## 8 Oct 2026 — Construction unit and purchasing unit
+
+A 40 ft by 80 ft by 6 in volume is 1,600 cubic feet, 1600/27 cubic yards, and that yard quantity times 0.9144 cubed cubic metres. The construction quantity stays 59.25925925925925925925925926 cubic yards. The purchasing quantity is 45.3069545472 cubic metres. The supplier request shows 45.307 m³ and keeps 59.259 yd³ in the note. The requirement, estimate line, and costing snapshot store 45.3070 m³ because the existing quantity columns keep four decimal places. The note keeps the unrounded conversion. The price is per cubic metre. No waste and no truck count are added. EA, LF, SF, and BF requirements are unchanged. A sheet area with no sheet size does not become a sheet count. No migration was added. Live remains `3e657a46c1b71281cbba04b531ecd7448e7b2213`, deploy `dep-db3q646gekts73fpg6r0`. The hosted unit check still rejects M3, so this slice is not deployed. The Mac office file was not changed. Official V1 remains **65% / 4 of 11**.
+
+## 8 Oct 2026 — Common estimating quantity contract
+
+One quantity contract now reads a plan that can contain a construction model, ICF wall facts, and named scopes. Stored deck members still use the member-count rule. An ICF wall still uses the existing ICF engine. Concrete volume stays a volume. Plumbing, electrical, and HVAC stay quote or allowance scopes. Every other named scope stays unresolved with the missing rule named, and does not stop the known quantities. A known post count and a known ICF form count can become supplier-neutral requirements, a job supplier request, an approved contractor cost, an estimate line, and a costing snapshot. No stock length, waste, package, truck count, or labour rate is invented. The Bushel proving model can be read without copying its dimensions into the engine. The Mac office file was not changed. Official V1 remains **65% / 4 of 11**.
+
+## 8 Oct 2026 — Foundation vertical slice
+
+The same estimate path now accepts a second domain. An ICF wall with a net area and corner counts uses the existing ICF engine. The standard-form count can become a supplier-neutral material requirement, a job supplier request, an approved contractor cost, an estimate line, and a costing snapshot. Concrete volume stays a volume and is not a truck count. A wall with no area, a footing with no width, a slab, reinforcement, and membrane coverage stay unresolved and do not stop the known form count. No package quantity, waste, or labour hours are invented. Labour stays open on the existing ICF wall element and on Foundation. The proof uses scratch data. The Mac office file was not changed. Official V1 remains **65% / 4 of 11**.
+
+## 8 Oct 2026 — Deck and framing vertical slice
+
+A stored deck member with a material, a size, and a supplied length becomes a member count. That count can become a supplier-neutral material requirement, a job supplier request line, an approved contractor cost, an estimate line, and a costing snapshot. A joist with no supplied length stays unresolved and does not stop the posts or the beam. No stock length, waste, purchase quantity, or labour hours are invented. Labour stays on the existing Structure / Framing task until a contractor confirms a production assumption. The proof uses scratch data. The Mac office file was not changed. Official V1 remains **65% / 4 of 11**.
+
+## 8 Oct 2026 — Whole-product cycle audit
+
+Ben cannot run a real job from the plan through a better next estimate. The estimate shell, price approval, interim Ontario contract, Field, time hours, manual dollar actuals, project-level Monitor, and the QuickBooks estimate sheet exist. Quantity engines for ordinary Brayman work do not, except 8-inch ICF from entered wall facts. Approved time stays hours and does not become labour dollars or a payroll record for Suzanne. Learn does not propose a new default from a finished job. Crew offline stays frozen at `01ab4b6` / `dep-db3opqc9v7es73dtl4p0`, awaiting real UAT after onboarding. No code change. Official checklist score remains **65% / 4 of 11** and is not the product answer.
+
+## 8 Oct 2026 — Crew offline frozen; Plan → Estimate audit
+
+Crew offline development is frozen. Live SHA `01ab4b66017c57de9f59edd1067c2c52faae0dd6`, deploy `dep-db3opqc9v7es73dtl4p0`. The connectivity test waits for Ben’s onboarding and the first real project. It is not a pre-onboarding acceptance test. This audit does not change code, the Mac office, or the live database. Official V1 remains **65% / 4 of 11**. The only platform quantity producer bound to work is `icf_wall`. It does not insert an estimate line. Plan reading does not calculate Brayman’s ordinary internal scopes.
+
+## 8 Oct 2026 — Field offline crew loop
+
+Field can reopen today's work, the opened job, and Capture from the phone after those pages were loaded online. Unsent notes and photos stay on the phone and show as Pending on this phone. When Calibrayt is open and the connection returns, the existing client id is sent again. Logout asks before removing that unsent work and clears the Field cache. Help stays online. Calculators were not changed. The Home Screen icon opens `/field/today`. Physical iPhone verification was not run. PRE-UAT READY is NO. The Mac office file was not changed.
+
+## 8 Oct 2026 — Final pre-UAT gate
+
+The live office walk completed on `49fc9565dee1e01680491eefc81cdfac0814dc53`, deploy `dep-db3np8gm7kps73fdve9g`. No V1 UX blocker was found. The real iPhone Voice test was not performed. No iPhone was available to this session, and a desktop browser was not used as a substitute. PRE-UAT READY is NO. Hosted Alembic remains `q7d8e9f0a1b2`. The Mac office file was not changed.
+
+## 8 Oct 2026 — Ontario interim package staged and activated
+
+`stage_brayman_v1_interim_ontario_package` creates `CA-ON-BRAYMAN-V1-INTERIM` as APPROVED with empty counsel fields. `activate_legal_content` then supersedes package 1. Live SHA `49fc9565dee1e01680491eefc81cdfac0814dc53`, deploy `dep-db3np8gm7kps73fdve9g`. Hosted package 3 is ACTIVE PRODUCTION, effective 2026-10-07. Package 1 is SUPERSEDED. Scratch contract `CTR-2026-0006` is Generated on project 29. Signing requests remain 14. Alembic remains `q7d8e9f0a1b2`. PRE-UAT READY is NO. The Mac office file was not changed.
+
+## 7 Oct 2026 — Interim activation refused
+
+`activate_legal_content` refused with `PACKAGE_NOT_FOUND`. `CA-ON-BRAYMAN-V1-INTERIM` is not an existing APPROVED package, and that function does not create one. Package 1 `FG024D-UAT-ON-001` remains ACTIVE. No contract was generated. Hosted Alembic remains `q7d8e9f0a1b2`. Live SHA remains `b5618f9ee6d9ce6c90b942baf509ac2759c127d6`. PRE-UAT READY is NO. The Mac office file was not changed.
+
+## 7 Oct 2026 — Interim Ontario package not installed
+
+`flask legal-content install-brayman-v1-interim` on the live host refused. Ontario already has active package 1 `FG024D-UAT-ON-001` (`SYNTHETIC_UAT`). `CA-ON-BRAYMAN-V1-INTERIM` was not inserted. No contract was generated. Hosted Alembic remains `q7d8e9f0a1b2`. Live SHA remains `b5618f9ee6d9ce6c90b942baf509ac2759c127d6`, deploy `dep-db3d6gvavr4c7399l040`. PRE-UAT READY is NO. The Mac office file was not changed.
+
+## 7 Oct 2026 — Live deploy of b5618f9
+
+Deploy `dep-db3d6gvavr4c7399l040` is live at `b5618f9ee6d9ce6c90b942baf509ac2759c127d6`. Hosted Alembic remains `q7d8e9f0a1b2`. No migration was run. Ontario still has no active production contract package, so the Brayman V1 interim contract is not available on the live office. PRE-UAT READY is NO. The Mac office file was not changed.
+
+## 7 Oct 2026 — Hosted schema migrated to q7d8e9f0a1b2
+
+The hosted database is Alembic `q7d8e9f0a1b2`, integrity `ok`, 149 tables, 3,645,440 bytes, SHA-256 `a82d54427459581688c4ebb953da1f235011db2baaf2891996e3d114dcb20a23`. The command was `flask db upgrade q7d8e9f0a1b2` on the existing host process environment. The recovery copy remains `m3f4a5b6c7d8`. The application was not deployed. The Mac office file was not changed.
+
+## 7 Oct 2026 — Hosted pre-migration recovery
+
+Hosted Alembic is `m3f4a5b6c7d8`. The live file is `/opt/render/project/src/instance/brayman_estimator.db`, 3,596,288 bytes, SHA-256 `eb682ce23f612f74c28003e10cb6a57bee17574ef25b3f505d1933b6824d384d`, integrity `ok`. A SQLite backup is on the same disk at `/opt/render/project/src/instance/backups/pre-migration-2026-10-07-m3f4a5b6c7d8.db`, SHA-256 `81fa96a642404631616991487a11b753b4aad94e204654df7d7bcdea0df44bb1`, integrity `ok`, revision `m3f4a5b6c7d8`. The logical dump of the live file and the backup match. On-demand snapshot creation still returns HTTP 405. The automatic snapshot `2026-10-07T00:26:11.573Z` is not this recovery copy. Migration was not run. Not deployed. The Mac office file was not changed.
 
 ## 7 Oct 2026 — Brayman V1 interim contract presentation
 
@@ -14,6 +113,18 @@ The generated Ontario contract is the Brayman V1 interim contract. It names Bray
 ## 7 Oct 2026 — Brayman V1 interim Ontario contract
 
 Ontario uses the active Brayman V1 interim contract package on the existing contract engine. The package is `CA-ON-BRAYMAN-V1-INTERIM`, version 1, effective 2026-10-07, status Active. Counsel approval is not recorded and is not a generation gate. A later package replaces it through the existing activation path. Generating a contract does not send a signing link. Official V1 remains **65% / 4 of 11**. Full suite 2211 passed, 11 skipped, including the untracked StyroRail price test that stays out of this commit. Not deployed. The Mac office file was not changed. PRE-UAT READY is NO.
+
+## 7 Oct 2026 — Hosted Shell access missing
+
+The Calibryatai service Shell URL opens the Render sign-in page. The public API has no SSH or Shell path, so the account SSH public key cannot be added from here. The refused CLI SSH method was not retried. `alembic_version` was not read. No migration and no deploy. The Mac office file was not changed.
+
+## 7 Oct 2026 — Release path held at the hosted revision
+
+A second pass did not reopen V1 scope. HEAD and origin/main are `c5dd246`. The hosted revision is still unread. Snapshot creation still returns HTTP 405. The latest automatic snapshot remains `2026-10-07T00:26:11.573Z`. Live remains `ff9d6791`, deploy `dep-db381g9a4tcc738r94bg`. The iPhone microphone test was not performed. PRE-UAT READY is NO. The Mac office file was not changed.
+
+## 7 Oct 2026 — Pre-UAT release hold
+
+The approved baseline `c5dd246` is on origin/main. The hosted revision was not read. The Render dashboard Shell asked for a sign-in, and an on-demand disk snapshot is not available. The latest automatic snapshot is `2026-10-07T00:26:11.573Z`. Migration and deploy did not start. Live remains `ff9d6791`, deploy `dep-db381g9a4tcc738r94bg`. The real iPhone microphone test was not performed. PRE-UAT READY is NO. The Mac office file was not changed.
 
 ## 7 Oct 2026 — Minimum Home, Print, and Supplier Help
 
@@ -66,6 +177,62 @@ The Supplier Package review at `/projects/<id>/supplier-package` downloads the a
 ## 6 Oct 2026 — Bushel governed member fact completion
 
 **BUSHEL GOVERNED MEMBER FACT COMPLETION IMPLEMENTED / TESTED.** The 1 Oct tread name "Two 5/4 x 6 boards per tread" is the supplier-neutral canonical identity `CAL-LUM-5-4X6`. It carries no stock length, species, treatment, supplier, SKU, or price. Joist, stringer, post, beam, and decking members still have no material, member size, or supplied length. The 29 Sep nominal sizes stay ungoverned. The 37 in Veranda rail kit stays a named material and is not a catalogue row. **KNOWN PROJECT FACT ≠ COMPLETE PURCHASE REQUIREMENT.** **NO-GUESSING ≠ NO-PROGRESS.** No purchase quantity, `MaterialRequirement`, estimate line, costing snapshot, or drawing was created. No Darcy request was sent. Official V1 remains **65% / 4 of 11**. Not deployed.
+
+## 6 Oct 2026 — Best available material requirement set
+
+**NO-GUESSING ≠ NO-PROGRESS.** The Bushel Construction Model read keeps 16 joist members, 10 stringers, and 15 pier locations, names the tread boards and the Veranda kit, and flags size, length, supplier product, and price where they are not stored. A gap does not drop the other items. No requirement row is written and no Darcy request is sent. Official V1 remains **65% / 4 of 11**. Not deployed.
+
+## 6 Oct 2026 — Real project material-requirement set
+
+**MATERIAL REQUIREMENT CAPABILITY GAP.** Linda Bushel is the most mature real project. Its Construction Model read does not establish a canonical material, a member size, or a supplied board length. The J1 take-off was not copied into `MaterialRequirement`. Geleynse does not state framing. EST-2026-0019 was not used. No supplier pricing request was sent. **NO-GUESSING ≠ NO-PROGRESS.** **BEST AVAILABLE MATERIAL REQUIREMENT SET** keeps the known Bushel counts and named materials, flags each unresolved fact, and does not block the other items. The read writes no `MaterialRequirement`. Official V1 remains **65% / 4 of 11**. Not deployed.
+
+## 6 Oct 2026 — Job-specific supplier pricing request
+
+The 20–30-item synthetic proving list is withdrawn. The manual workflow is a job-specific supplier pricing request built from a project's complete canonical material requirements. Calibrayt supplies the quantity. The supplier confirms product, price, and availability. Brayman approves cost. A later supplier integration replaces the response transport only. **NOT IMPLEMENTED.** The Mac office has no real project with that requirement list. EST-2026-0019 was not converted. Official V1 remains **65% / 4 of 11**. Not deployed.
+
+## 6 Oct 2026 — Costing review contractor-cost provenance
+
+The existing costing review shows the frozen snapshot citation: supplier, product, SKU, price class, evidence, approval, Brayman actor, dates, and the frozen amount. A later approval is not substituted. Other cost sources stay unlabeled as supplier provenance. Official V1 remains **65% / 4 of 11**. Not deployed. Abstract cost-engine work stops here pending a real-world BMR proving set.
+
+## 6 Oct 2026 — Approved contractor cost into the estimate costing snapshot
+
+ADR-056 accepts one path. An existing estimate line whose cost item shares the approval's canonical material can freeze that APPROVED amount into `EstimateCostingSnapshotLine`. The snapshot cites the approval. Pending, rejected, public, unmatched, and different-unit costs are refused. Migration `q7d8e9f0a1b2` is not applied to the Mac primary or the hosted database. Official V1 remains **65% / 4 of 11**. Not deployed.
+
+## 6 Oct 2026 — Contractor cost approval record
+
+`record_contractor_cost_approval` appends `contractor_cost_approvals`. Brayman is the actor. The row cites supplier price evidence and keeps the accepted amount, currency, unit, class, and effective dates. A later price is a new row. A public list price is refused. No estimate line, costing snapshot, or pricing snapshot is written. Migration `p6c7d8e9f0a1` is not applied to the Mac primary or the hosted database. Official V1 remains **65% / 4 of 11**. Not deployed.
+
+## 6 Oct 2026 — Contractor cost approval terminology
+
+The supplier provides price evidence. Brayman would approve the resolved cost for estimating. That approval record does not exist. It is not `CostItem` and it is not `EstimateCostingSnapshot`. A public list price stays unapproved. Not implemented. Official V1 remains **65% / 4 of 11**. Not deployed.
+
+## 6 Oct 2026 — FG-027 supplier-cost approval gap
+
+The existing costing snapshot freezes estimate-line direct cost. It cannot approve `resolve_effective_contractor_cost` without an estimate line, and it cannot keep supplier-evidence provenance. A public fallback has no provisional-approval rule there. No product code was added. Official V1 remains **65% / 4 of 11**. Not deployed.
+
+## 6 Oct 2026 — Effective contractor cost resolver
+
+`resolve_effective_contractor_cost` keeps one evidence row for the supplier on the contractor account. Supplier A at 15 Oct 2026 resolves 8.00 confirmed. Supplier B resolves 9.50 confirmed. A public list price stays labeled public. A missing price stays missing. Official V1 remains **65% / 4 of 11**. Not deployed.
+
+## 6 Oct 2026 — Supplier price evidence window
+
+`read_supplier_price_evidence_window` returns the rows valid at an as-of time for one canonical material and one contractor supplier account. Public rows stay visible. Another contractor’s confirmed price stays out. The read does not choose a price. Official V1 remains **65% / 4 of 11**. Not deployed.
+
+## 6 Oct 2026 — Supplier price evidence class and validity
+
+`price_class` on `SupplierProductPriceEvidence` is `PUBLIC_LIST_PRICE` or `CONTRACTOR_CONFIRMED_PRICE`. `captured_at`, `effective_from`, and `effective_to` stay separate. Rows stay append-only. Migration `o5b6c7d8e9f0` is not applied to the Mac primary or the hosted database. Effective contractor cost is not resolved. Official V1 remains **65% / 4 of 11**. Not deployed.
+
+## 6 Oct 2026 — Multi-supplier cost engine
+
+The existing FG-029 catalogue is the CalibraytAI multi-supplier cost side. Two supplier products can map to one canonical material. Public price evidence and contractor-account price evidence stay separate. Neither writes an estimate line. BMR Winchester is the first proving supplier, not the architecture. ICF manufacturer profiles stay product-system knowledge. Effective contractor cost is not resolved. ADR-008 stays Proposed. Checklist step 8 stays open. Official V1 remains **65% / 4 of 11**. Not deployed.
+
+## 6 Oct 2026 — StyroRail block prices
+
+ORG-001 cost library, local database `instance/brayman_estimator.db`: `ICF-SR8-REG` 29.64 CAD per block and `ICF-SR8-COR` 35.78 CAD per block. Joel-confirmed 6 October 2026. Supplier, tax, freight, discount, and SKU are unconfirmed. Existing estimate line prices were not changed. Not deployed. Official V1 remains **65% / 4 of 11**.
+
+## 6 Oct 2026 — Ben jobs, development paused
+
+Bushel remains unpriced until Ben returns the Trex sheet on the Desktop, `Linda-Bushel-items-that-need-a-cost.pdf`. The Geleynse building at 2042 Abbott Rd, Kemptville, now has its own fillable sheet, `Geleynse-items-that-need-a-cost.pdf`. Foundation and concrete are excluded from that sheet. No price is filled on either sheet. Official V1 remains **65% / 4 of 11**. Not deployed.
 
 ## Current occupancy — 30 Sep 2026
 

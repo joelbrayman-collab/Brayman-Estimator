@@ -30,7 +30,7 @@ def test_operator_pack_states_the_office_rules():
         assert "Production contract unavailable" in text
     assert "does not approve" in guide
     assert "h8c9d0e1f2a3" in guide
-    assert "ff9d6791c4bb16ef50d42a9ca71af2a1d6bc051b" in guide
+    assert "234a4eb7e9ddcfab07bf795fd7bfc23c61237ca7" in guide
     assert "https://calibryatai.onrender.com" in guide
     assert "Joel Brayman" in guide
     assert "v1-issue-log.md" in guide

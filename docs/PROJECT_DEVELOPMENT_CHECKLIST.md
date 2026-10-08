@@ -15,6 +15,8 @@ NEW MATERIAL REQUIREMENTS ARE CLASSIFIED AND ASSIGNED TO THE APPROPRIATE V1 COMP
 
 The recall list is [v1-completion-register.md](v1-completion-register.md) section 2.1. This checklist does not keep a second ideas list. A new requirement does not change the current step unless it is a genuine dependency of that step. When a step becomes the authorized build, its prompt recalls every register row for that component.
 
+**Current status (2026-10-08 synchronization gate):** Step 8 remains **OPEN**. Quantity services through `234a4eb7e9ddcfab07bf795fd7bfc23c61237ca7` are on `main` and were live as deploy `dep-db3uur8473hc73c25cjg`. `estimate_project` has no office route. `SITE`, `FOUND`, and `STRUCT` stay unbound. The Mac office is still `q7d8e9f0a1b2` because that file was not migrated. Hosted Alembic was not re-read in this gate. The September 30 deploy id in step 3 is historical. A cost-library spreadsheet import is not a step on this checklist.
+
 ## One product
 
 ONE CALIBRAYTAI PRODUCT. ONE MASTER DEVELOPMENT ROADMAP. ONE GOVERNED IMPLEMENTATION OF REUSABLE DOMAIN LOGIC. MULTIPLE CONSUMING SURFACES.

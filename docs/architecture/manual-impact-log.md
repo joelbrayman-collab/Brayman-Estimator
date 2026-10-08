@@ -51,6 +51,36 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Common estimating quantity contract (2026-10-08)
+
+| Field | Content |
+|-------|---------|
+| Slice | One quantity result for a plan that can contain more than one scope. |
+| Product status at capture | Implemented and tested on scratch data. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | A plan can produce member counts and an ICF form count together, mark unresolved scopes, and keep plumbing, electrical, and HVAC as quotes or allowances. |
+| 2. When would the contractor use it? | While reviewing the first quantity pass for a project that is more than one trade. |
+| 3. What workflow will the final Manual need to teach? | Review the known counts. Leave unresolved scopes marked. Send the material request. Treat plumbing, electrical, and HVAC as quotes or allowances. |
+| 4. What contractor-facing terms must be used? | Member count. Form count. Concrete volume. Unresolved. Quote or allowance. |
+| 5. What screenshots / Print examples will eventually be needed? | A supplier request that includes a known count and an unresolved scope, with subcontract trades absent from that sheet. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | A missing rule does not stop the known quantities. A member count is not a purchase quantity. A concrete volume is not a truck count. Labour hours wait for a production assumption. |
+| 7. Desktop / iPhone / Print relevance | Office estimate and the printed supplier request. Not a Field or iPhone change. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
+### MANUAL IMPACT — Foundation vertical slice (2026-10-08)
+
+| Field | Content |
+|-------|---------|
+| Slice | Foundation quantities on the existing estimate path. |
+| Product status at capture | Implemented and tested on scratch data. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | An ICF wall with a net area and corner counts can produce a standard-form count, a concrete volume, and a supplier request. The form count can become an estimate line after a contractor-confirmed price. |
+| 2. When would the contractor use it? | While estimating an ICF foundation, before asking a supplier for a form price. |
+| 3. What workflow will the final Manual need to teach? | Enter the wall area and both corner counts. Review the form count and the concrete volume separately. Leave reinforcement, membrane coverage, footings, and slabs marked until those facts or rules exist. Approve the form price before it reaches the estimate. |
+| 4. What contractor-facing terms must be used? | Net wall area. Corner count. Form count. Concrete volume. Unresolved. |
+| 5. What screenshots / Print examples will eventually be needed? | The supplier request with the form count, the concrete volume, and one unresolved wall. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | A form count is not a package. A concrete volume is not a truck count. Labour hours wait for a contractor production assumption. |
+| 7. Desktop / iPhone / Print relevance | Office estimate and the printed supplier request. Not a Field or iPhone change. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Deck and framing vertical slice (2026-10-08)
 
 | Field | Content |

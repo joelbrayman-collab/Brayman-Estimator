@@ -478,6 +478,26 @@ CANONICAL_MATERIAL_SEED = (
         specification_text="ZIP System Sheathing, 1/2 in, 48×96 in. Manufacturer/product identity. Not a dealer SKU.",
         description="Specified proprietary sheathing panel. Identity is the named product, not a supplier catalogue SKU.",
     ),
+    _seed_row(
+        code="CAL-ICF-8-STD",
+        display_name="8-inch ICF standard form",
+        kind="GENERIC",
+        category="SHEET_GOODS",
+        trade="Foundation",
+        canonical_uom="EA",
+        substitution_policy="ALLOWED",
+        specification_text=(
+            "Generic 8-inch ICF standard form. "
+            "The count is the governed form count. "
+            "It is not a package, a manufacturer SKU, or a stock-length purchase."
+        ),
+        description=(
+            "Supplier-neutral 8-inch ICF standard form. "
+            "Stored with the sheet-goods category because that is the current "
+            "counted-unit category. It is not OSB or plywood. "
+            "No manufacturer, supplier, SKU, package count, or price."
+        ),
+    ),
 )
 
 

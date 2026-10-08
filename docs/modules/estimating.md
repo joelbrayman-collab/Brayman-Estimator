@@ -7,6 +7,14 @@
 | Code | `app/models/cost_item.py`, `assembly.py`, `estimate.py`, `project_work_package.py`, `calculation_estimate_mapping.py`, `estimate_scope_delivery.py`, `subcontractor.py`, `estimate_quickbooks.py`; `app/routes/cost_library.py`, `assemblies.py`, `estimates.py`, `project_scope.py`, `calculation_mapping.py`, `scope_delivery.py`, `estimate_quickbooks.py`; `app/services/estimates.py`, `estimate_builder.py`, `project_work_package.py`, `calculation_estimate_mapping.py`, `calculation_result_contract.py`, `estimate_output.py`, `estimate_scope_delivery.py`, `subcontract_quote.py`, `estimate_quickbooks.py` |
 | Feature Gate | [FG-012](../feature-gates/FG-012-estimate-output-consistency.md) **CLOSED / OPERATIONAL FOR UAT** (internal breakdown + customer consistency). [FG-026](../feature-gates/FG-026-plan-price-phase-d-takeoff-to-estimate-mapping-v1.md) **CLOSED / OPERATIONAL FOR UAT** (Estimating-owned insertion/citation). [FG-027](../feature-gates/FG-027-automated-costing-and-human-cost-approval-v1.md) **CLOSED / OPERATIONAL FOR UAT** (costing approval). [FG-031](../feature-gates/FG-031-scope-delivery-make-buy-procurement-routing-v1.md) **CLOSED / OPERATIONAL FOR UAT** (scope-delivery routing + quote evidence). [FG-032](../feature-gates/FG-032-quickbooks-ready-output-entry-v1.md) **CLOSED / OPERATIONAL FOR UAT** (QuickBooks-ready package). |
 
+## 8 Oct 2026 — Common estimating quantity contract
+
+`app/services/estimating_quantity.py` is the project quantity result. It calls the deck member-count rule and the existing ICF engine. `app/services/estimating_handoff.py` writes supplier-neutral requirements and the existing job supplier request. Plumbing, electrical, and HVAC are quote or allowance scopes. A scope with no stored rule stays unresolved. Official V1 remains **65% / 4 of 11**.
+
+## 8 Oct 2026 — Foundation vertical slice
+
+`app/services/foundation_quantity.py` reads foundation facts and calls `build_icf_standard_quantities` for an ICF wall. `app/services/foundation_handoff.py` writes a supplier-neutral requirement for the 8-inch standard-form count `CAL-ICF-8-STD` and fills the existing job supplier request. Concrete volume stays in cubic yards and does not become a material requirement. A missing wall area, a footing, and a slab stay open. Official V1 remains **65% / 4 of 11**.
+
 ## 8 Oct 2026 — Deck and framing vertical slice
 
 `app/services/deck_framing_quantity.py` reads a construction model and returns member counts. A missing fact stays on that member. `app/services/deck_framing_handoff.py` writes a supplier-neutral `MaterialRequirement` for a known count, fills the existing job supplier request, and places that count on an estimate line. Stock length, waste, purchase quantity, and labour hours are not invented. The labour placeholder uses the existing Structure / Framing task. Official V1 remains **65% / 4 of 11**.

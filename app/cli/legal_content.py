@@ -62,6 +62,34 @@ def activate_command(
     )
 
 
+@legal_content_cli.command("stage-brayman-v1-interim")
+@with_appcontext
+def stage_brayman_v1_interim_command():
+    """Stage the Ontario Brayman V1 interim package as APPROVED.
+
+    Does not activate it and does not supersede another package.
+    """
+    from app.services.brayman_v1_interim_contract import (
+        INTERIM_AUTHORIZATION,
+        INTERIM_PACKAGE_CODE,
+        stage_brayman_v1_interim_ontario_package,
+    )
+
+    result = stage_brayman_v1_interim_ontario_package()
+    package = result.package
+    if package is None:
+        raise click.ClickException("The interim package was not staged.")
+    click.echo(
+        f"package_code={package.package_code} id={package.id} "
+        f"state={package.library_state} authority_class={package.authority_class} "
+        f"effective_from={package.effective_from} "
+        f"counsel_approved_at={package.counsel_approved_at} "
+        f"counsel_approved_by={package.counsel_approved_by} "
+        f"created={result.created} expected_code={INTERIM_PACKAGE_CODE} "
+        f"authorization={INTERIM_AUTHORIZATION}."
+    )
+
+
 @legal_content_cli.command("install-brayman-v1-interim")
 @with_appcontext
 def install_brayman_v1_interim_command():

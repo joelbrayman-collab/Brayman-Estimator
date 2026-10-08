@@ -27,11 +27,13 @@ INTERIM_EFFECTIVE_FROM = date(2026, 10, 7)
 INTERIM_OBJECT_VERSION = 1
 ONTARIO_JURISDICTION_CODE = "CA-ON"
 INTERIM_ACTOR = "Brayman Construction"
+INTERIM_AUTHORIZATION = "Brayman V1 Interim Authorization"
 INTERIM_PROVENANCE = (
     "BRAYMAN V1 INTERIM. Internal Brayman Construction Ontario package. "
     "External counsel has not reviewed this package. "
     "Replaceable by a later counsel-reviewed production package through "
-    "the existing activation path. This row is not a counsel approval."
+    "the existing activation path. This row is not a counsel approval. "
+    f"Authorization: {INTERIM_AUTHORIZATION}."
 )
 
 CONTRACT_PROVISION_BODY = """\
@@ -120,6 +122,12 @@ class InterimInstallResult:
     package: LegalContentJurisdictionPackage | None
     created: bool
     blocked_by_active_package: bool
+
+
+@dataclass(frozen=True)
+class InterimStageResult:
+    package: LegalContentJurisdictionPackage | None
+    created: bool
 
 
 def ensure_brayman_v1_interim_ontario_package(
@@ -218,3 +226,69 @@ def ensure_brayman_v1_interim_ontario_package(
         created=True,
         blocked_by_active_package=False,
     )
+
+
+def stage_brayman_v1_interim_ontario_package(
+    *,
+    commit: bool = True,
+) -> InterimStageResult:
+    """Create the interim package as APPROVED. Does not activate or supersede.
+
+    Counsel fields stay empty. Brayman internal authorization is recorded in
+    provenance. Activation remains activate_legal_content.
+    """
+    ensure_jurisdiction_seed(commit=False)
+    node = JurisdictionDefinition.query.filter_by(code=ONTARIO_JURISDICTION_CODE).one()
+    existing = LegalContentJurisdictionPackage.query.filter_by(
+        package_code=INTERIM_PACKAGE_CODE
+    ).one_or_none()
+    if existing is not None:
+        return InterimStageResult(package=existing, created=False)
+
+    now = datetime.utcnow()
+    package = LegalContentJurisdictionPackage(
+        package_code=INTERIM_PACKAGE_CODE,
+        jurisdiction_definition_id=node.id,
+        country_code="CA",
+        province_or_state_code="CA-ON",
+        support_status="SUPPORTED",
+        library_state="APPROVED",
+        authority_class="PRODUCTION",
+        effective_from=INTERIM_EFFECTIVE_FROM,
+        effective_to=None,
+        counsel_approved_at=None,
+        counsel_approved_by=None,
+        activated_at=None,
+        activated_by=None,
+        provenance=INTERIM_PROVENANCE,
+        created_at=now,
+    )
+    db.session.add(package)
+    db.session.flush()
+    db.session.add(
+        LegalContentObject(
+            package_id=package.id,
+            kind="contract_provision",
+            version_number=INTERIM_OBJECT_VERSION,
+            library_state="APPROVED",
+            source_citation=INTERIM_PROVENANCE,
+            body=CONTRACT_PROVISION_BODY.strip(),
+            created_at=now,
+        )
+    )
+    db.session.add(
+        LegalContentObject(
+            package_id=package.id,
+            kind="warranty",
+            version_number=INTERIM_OBJECT_VERSION,
+            library_state="APPROVED",
+            source_citation=INTERIM_PROVENANCE,
+            body=WARRANTY_BODY.strip(),
+            created_at=now,
+        )
+    )
+    if commit:
+        db.session.commit()
+    else:
+        db.session.flush()
+    return InterimStageResult(package=package, created=True)

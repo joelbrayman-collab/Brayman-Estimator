@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import inspect
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from io import BytesIO
 
@@ -25,10 +25,12 @@ from app.presentation.contractor_copy import (
     contract_selection_copy,
 )
 from app.services.brayman_v1_interim_contract import (
+    INTERIM_AUTHORIZATION,
     INTERIM_EFFECTIVE_FROM,
     INTERIM_PACKAGE_CODE,
     CONTRACT_PROVISION_BODY,
     ensure_brayman_v1_interim_ontario_package,
+    stage_brayman_v1_interim_ontario_package,
 )
 from app.services.commercial_context import create_initial_commercial_context
 from app.services.contract_generation import (
@@ -49,8 +51,16 @@ from app.services.legal_content import (
     BLOCK_JURISDICTION_UNRESOLVED,
     BLOCK_PACKAGE_NOT_EFFECTIVE,
     select_legal_content_package_for_project,
+    select_synthetic_uat_legal_content_package_for_project,
 )
-from app.services.legal_content_update import activate_legal_content
+from app.services.legal_content_update import (
+    ACTOR_AI,
+    ACTOR_HUMAN,
+    BLOCK_ACTIVE_PACKAGE_EXISTS,
+    BLOCK_AI_CANNOT_ACTIVATE,
+    LegalContentUpdateError,
+    activate_legal_content,
+)
 from app.services.organizations import DEFAULT_ORGANIZATION_ID, ensure_default_organization
 from app.services.permit_foundation import establish_project_location_and_profile
 from app.services.project_hub import assemble_project_hub
@@ -536,3 +546,226 @@ def test_review_generate_does_not_send_a_signing_link(client, app, monkeypatch):
     assert "Counsel approved" not in reviewed
     assert SigningRequest.query.count() == 0
     assert GeneratedProjectContract.query.count() == 1
+
+
+def _active_synthetic_ontario_package():
+    node = JurisdictionDefinition.query.filter_by(code="CA-ON").one()
+    counsel_at = datetime(2026, 9, 14, 20, 29, 39)
+    package = LegalContentJurisdictionPackage(
+        package_code="FG024D-UAT-ON-001",
+        jurisdiction_definition_id=node.id,
+        country_code="CA",
+        province_or_state_code="CA-ON",
+        support_status="SUPPORTED",
+        library_state="ACTIVE",
+        authority_class="SYNTHETIC_UAT",
+        effective_from=date(2026, 1, 1),
+        counsel_approved_at=counsel_at,
+        counsel_approved_by="Counsel Test — SYNTHETIC UAT ONLY",
+        activated_at=counsel_at,
+        activated_by="Synthetic UAT",
+        provenance="SYNTHETIC_UAT TEST DATA ONLY",
+        created_at=counsel_at,
+    )
+    db.session.add(package)
+    db.session.flush()
+    db.session.add(
+        LegalContentObject(
+            package_id=package.id,
+            kind="contract_provision",
+            version_number=1,
+            library_state="ACTIVE",
+            source_citation="SYNTHETIC_UAT TEST DATA ONLY",
+            body="SYNTHETIC TEST BODY — NOT THE V1 INTERIM CONTRACT",
+            created_at=counsel_at,
+        )
+    )
+    db.session.commit()
+    return package
+
+
+def test_stage_creates_approved_interim_package_with_empty_counsel(app):
+    staged = stage_brayman_v1_interim_ontario_package()
+    package = staged.package
+    assert staged.created is True
+    assert package.package_code == INTERIM_PACKAGE_CODE
+    assert package.library_state == "APPROVED"
+    assert package.library_state != "ACTIVE"
+    assert package.authority_class == "PRODUCTION"
+    assert package.effective_from == INTERIM_EFFECTIVE_FROM
+    assert package.counsel_approved_at is None
+    assert package.counsel_approved_by is None
+    assert package.activated_at is None
+    assert INTERIM_AUTHORIZATION in package.provenance
+    assert "Counsel Approved" not in package.provenance
+    kinds = {row.kind: row for row in package.content_objects}
+    assert kinds["contract_provision"].library_state == "APPROVED"
+    assert kinds["contract_provision"].version_number == 1
+    assert kinds["warranty"].library_state == "APPROVED"
+    assert kinds["warranty"].version_number == 1
+    again = stage_brayman_v1_interim_ontario_package()
+    assert again.created is False
+    assert again.package.id == package.id
+    assert (
+        LegalContentJurisdictionPackage.query.filter_by(
+            package_code=INTERIM_PACKAGE_CODE
+        ).count()
+        == 1
+    )
+
+
+def test_stage_leaves_active_synthetic_package_unchanged(app):
+    synthetic = _active_synthetic_ontario_package()
+    counsel_at = synthetic.counsel_approved_at
+    counsel_by = synthetic.counsel_approved_by
+    project = _ottawa_project()
+    staged = stage_brayman_v1_interim_ontario_package()
+    db.session.refresh(synthetic)
+    assert staged.package.library_state == "APPROVED"
+    assert synthetic.library_state == "ACTIVE"
+    assert synthetic.authority_class == "SYNTHETIC_UAT"
+    assert synthetic.counsel_approved_at == counsel_at
+    assert synthetic.counsel_approved_by == counsel_by
+    assert synthetic.superseded_by_id is None
+    synthetic_selection = select_synthetic_uat_legal_content_package_for_project(
+        project.id, as_of=date(2026, 10, 7)
+    )
+    assert synthetic_selection.available is True
+    assert synthetic_selection.package_code == "FG024D-UAT-ON-001"
+    production = select_legal_content_package_for_project(
+        project.id, as_of=date(2026, 10, 7)
+    )
+    assert production.available is False
+    installed = ensure_brayman_v1_interim_ontario_package()
+    assert installed.created is False
+    assert installed.package.library_state == "APPROVED"
+    db.session.refresh(synthetic)
+    assert synthetic.library_state == "ACTIVE"
+
+
+def test_activation_supersedes_synthetic_and_leaves_one_active_package(app):
+    synthetic = _active_synthetic_ontario_package()
+    assert synthetic.id == 1
+    counsel_at = synthetic.counsel_approved_at
+    counsel_by = synthetic.counsel_approved_by
+    staged = stage_brayman_v1_interim_ontario_package()
+    with pytest.raises(LegalContentUpdateError) as ai_exc:
+        activate_legal_content(
+            staged.package.id,
+            actor_kind=ACTOR_AI,
+            actor_identifier="model",
+            effective_from=INTERIM_EFFECTIVE_FROM,
+            supersede_package_id=synthetic.id,
+        )
+    assert ai_exc.value.code == BLOCK_AI_CANNOT_ACTIVATE
+    db.session.refresh(synthetic)
+    db.session.refresh(staged.package)
+    assert synthetic.library_state == "ACTIVE"
+    assert staged.package.library_state == "APPROVED"
+    activated = activate_legal_content(
+        staged.package.id,
+        actor_kind=ACTOR_HUMAN,
+        actor_identifier="Brayman Construction",
+        effective_from=INTERIM_EFFECTIVE_FROM,
+        supersede_package_id=1,
+    )
+    db.session.refresh(synthetic)
+    db.session.refresh(activated)
+    node_id = synthetic.jurisdiction_definition_id
+    assert synthetic.library_state == "SUPERSEDED"
+    assert synthetic.superseded_by_id == activated.id
+    assert synthetic.counsel_approved_at == counsel_at
+    assert synthetic.counsel_approved_by == counsel_by
+    assert activated.package_code == INTERIM_PACKAGE_CODE
+    assert activated.library_state == "ACTIVE"
+    assert activated.authority_class == "PRODUCTION"
+    assert activated.effective_from == INTERIM_EFFECTIVE_FROM
+    assert activated.counsel_approved_at is None
+    assert activated.counsel_approved_by is None
+    assert INTERIM_AUTHORIZATION in activated.provenance
+    active = LegalContentJurisdictionPackage.query.filter_by(
+        jurisdiction_definition_id=node_id,
+        library_state="ACTIVE",
+    ).all()
+    assert [row.package_code for row in active] == [INTERIM_PACKAGE_CODE]
+    extra = LegalContentJurisdictionPackage(
+        package_code="CA-ON-SECOND-ACTIVE-BLOCKED",
+        jurisdiction_definition_id=node_id,
+        country_code="CA",
+        province_or_state_code="CA-ON",
+        support_status="SUPPORTED",
+        library_state="APPROVED",
+        authority_class="PRODUCTION",
+        effective_from=date(2026, 10, 8),
+        provenance="Second package must not become active without supersede.",
+        created_at=datetime.utcnow(),
+    )
+    db.session.add(extra)
+    db.session.flush()
+    db.session.add(
+        LegalContentObject(
+            package_id=extra.id,
+            kind="contract_provision",
+            version_number=1,
+            library_state="APPROVED",
+            body="SECOND PACKAGE",
+            created_at=datetime.utcnow(),
+        )
+    )
+    db.session.commit()
+    with pytest.raises(LegalContentUpdateError) as blocked:
+        activate_legal_content(
+            extra.id,
+            actor_kind=ACTOR_HUMAN,
+            actor_identifier="Brayman Construction",
+            effective_from=date(2026, 10, 8),
+        )
+    assert blocked.value.code == BLOCK_ACTIVE_PACKAGE_EXISTS
+    db.session.refresh(activated)
+    assert activated.library_state == "ACTIVE"
+    assert (
+        LegalContentJurisdictionPackage.query.filter_by(
+            jurisdiction_definition_id=node_id,
+            library_state="ACTIVE",
+        ).count()
+        == 1
+    )
+
+
+def test_generation_after_staging_and_activation_records_interim_snapshot(app, monkeypatch):
+    def _boom(*args, **kwargs):
+        raise AssertionError("signing link sent")
+
+    monkeypatch.setattr(
+        "app.services.signing_mail.send_signing_invitation_message",
+        _boom,
+    )
+    synthetic = _active_synthetic_ontario_package()
+    project = _ottawa_project()
+    staged = stage_brayman_v1_interim_ontario_package()
+    activate_legal_content(
+        staged.package.id,
+        actor_kind=ACTOR_HUMAN,
+        actor_identifier="Brayman Construction",
+        effective_from=INTERIM_EFFECTIVE_FROM,
+        supersede_package_id=synthetic.id,
+    )
+    version, proposal = _issued(project, number="EST-INTERIM-STAGED")
+    before = SigningRequest.query.count()
+    result = _generate(project, version, proposal)
+    assert result.generated is True
+    assert result.status == STATUS_GENERATED
+    selection = select_legal_content_package_for_project(
+        project.id, as_of=date(2026, 10, 7)
+    )
+    assert selection.package_code == INTERIM_PACKAGE_CODE
+    assert selection.package_version == 1
+    assert selection.effective_from == INTERIM_EFFECTIVE_FROM
+    assert selection.counsel_approved is False
+    snapshot = db.session.get(ProjectContractSnapshot, result.snapshot_id)
+    assert snapshot.package_code == INTERIM_PACKAGE_CODE
+    assert snapshot.package_effective_from == INTERIM_EFFECTIVE_FROM
+    kinds = {row.object_kind: row for row in snapshot.content_objects}
+    assert kinds["contract_provision"].object_version_number == 1
+    assert SigningRequest.query.count() == before
+    assert "Counsel approved" not in _pdf_text(retrieve_generated_contract_docx(snapshot))

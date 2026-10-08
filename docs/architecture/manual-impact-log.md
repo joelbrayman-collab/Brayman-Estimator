@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
-| Updated | 2026-10-07 |
+| Updated | 2026-10-08 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — Construction unit and purchasing unit (2026-10-08)
+
+| Field | Content |
+|-------|---------|
+| Slice | Keep the construction measurement and show the purchasing quantity when a conversion exists. |
+| Product status at capture | Implemented and tested on scratch data. Official V1 remains **65% / 4 of 11**. Not deployed. |
+| 1. What new contractor capability exists? | A concrete volume calculated in cubic yards can be requested and costed in cubic metres. The yard quantity stays visible. A sheet area with no sheet size stays unresolved. |
+| 2. When would the contractor use it? | When a supplier orders concrete in cubic metres and the plan was measured in feet and inches. |
+| 3. What workflow will the final Manual need to teach? | Read the construction volume. Read the purchasing quantity. Confirm the supplier price is per cubic metre. Leave an unknown package size unresolved. |
+| 4. What contractor-facing terms must be used? | Construction quantity. Purchasing quantity. Cubic yards. Cubic metres. Unresolved. |
+| 5. What screenshots / Print examples will eventually be needed? | A supplier request that shows 45.307 m³ and the construction volume 59.259 yd³. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | The two quantities are different numbers. The request does not add waste or a truck count. An unknown sheet size does not become a sheet count. |
+| 7. Desktop / iPhone / Print relevance | Office estimate and the printed supplier request. Not a Field or iPhone change. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
 
 ### MANUAL IMPACT — Common estimating quantity contract (2026-10-08)
 

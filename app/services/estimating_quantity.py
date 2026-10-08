@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from app.services.deck_framing_quantity import quantity_result_from_model
 from app.services.foundation_quantity import quantity_result_from_facts
+from app.services.purchasing_quantity import annotate_purchasing
 from app.services.work_structure import ICF_WALL_CODE
 
 CONTRACT = "estimating_quantity"
@@ -155,7 +156,7 @@ def _copy_line(source, project_id, scope, labour):
     provenance = dict(line.get("provenance") or {})
     provenance["project_id"] = project_id
     line["provenance"] = provenance
-    return line
+    return annotate_purchasing(line)
 
 
 def _missing(project_id, scope, facts, rule=None):

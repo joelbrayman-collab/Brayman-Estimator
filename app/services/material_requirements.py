@@ -86,7 +86,7 @@ def create_material_requirement(
         raise MaterialRequirementError("Canonical material not found.")
     uom = (canonical_uom or "").strip()
     if uom not in MATERIAL_REQUIREMENT_UOMS:
-        raise MaterialRequirementError("Canonical UOM must be one of EA, LF, SF, BF.")
+        raise MaterialRequirementError("Canonical UOM must be one of EA, LF, SF, BF, or M3.")
     kind = (source_kind or "").strip()
     if kind not in MATERIAL_REQUIREMENT_SOURCE_KINDS:
         raise MaterialRequirementError("Invalid material requirement source.")

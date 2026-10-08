@@ -173,7 +173,8 @@ def lines_from_material_requirements(requirements: Sequence) -> tuple:
     lines = []
     for requirement in requirements:
         material = requirement.canonical_material
-        item = f"{material.code} — {material.display_name}. Unit {requirement.canonical_uom}."
+        unit = "m³" if requirement.canonical_uom == "M3" else requirement.canonical_uom
+        item = f"{material.code} — {material.display_name}. Unit {unit}."
         note = str(requirement.note or "").strip()
         if note:
             item = f"{item} {note}"

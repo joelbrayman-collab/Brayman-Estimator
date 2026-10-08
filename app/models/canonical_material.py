@@ -10,8 +10,8 @@ from app import db
 
 CANONICAL_MATERIAL_STATUSES = ("ACTIVE", "DISCONTINUED")
 CANONICAL_MATERIAL_KINDS = ("GENERIC", "SPECIFIED")
-CANONICAL_MATERIAL_UOMS = ("EA", "LF", "SF", "BF")
-CANONICAL_MATERIAL_CATEGORIES = ("DIMENSIONAL_LUMBER", "SHEET_GOODS")
+CANONICAL_MATERIAL_UOMS = ("EA", "LF", "SF", "BF", "M3")
+CANONICAL_MATERIAL_CATEGORIES = ("DIMENSIONAL_LUMBER", "SHEET_GOODS", "CONCRETE")
 CANONICAL_MATERIAL_SUBSTITUTION_POLICIES = ("ALLOWED", "RESTRICTED", "PROHIBITED")
 
 FORBIDDEN_CANONICAL_IDENTITY_FIELDS = (
@@ -514,11 +514,11 @@ class CanonicalMaterial(db.Model):
             name="ck_canonical_materials_kind",
         ),
         db.CheckConstraint(
-            "canonical_uom IN ('EA', 'LF', 'SF', 'BF')",
+            "canonical_uom IN ('EA', 'LF', 'SF', 'BF', 'M3')",
             name="ck_canonical_materials_uom",
         ),
         db.CheckConstraint(
-            "category IN ('DIMENSIONAL_LUMBER', 'SHEET_GOODS')",
+            "category IN ('DIMENSIONAL_LUMBER', 'SHEET_GOODS', 'CONCRETE')",
             name="ck_canonical_materials_category",
         ),
         db.CheckConstraint(
@@ -569,14 +569,14 @@ class CanonicalMaterial(db.Model):
     @validates("canonical_uom")
     def _validate_uom(self, key, value):
         if value not in CANONICAL_MATERIAL_UOMS:
-            raise ValueError("Canonical UOM must be one of EA, LF, SF, BF.")
+            raise ValueError("Canonical UOM must be one of EA, LF, SF, BF, or M3.")
         return value
 
     @validates("category")
     def _validate_category(self, key, value):
         if value not in CANONICAL_MATERIAL_CATEGORIES:
             raise ValueError(
-                "Canonical material category must be DIMENSIONAL_LUMBER or SHEET_GOODS."
+                "Canonical material category must be DIMENSIONAL_LUMBER, SHEET_GOODS, or CONCRETE."
             )
         return value
 

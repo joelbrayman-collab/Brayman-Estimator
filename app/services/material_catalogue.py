@@ -11,6 +11,7 @@ from app.models.canonical_material import (
     CANONICAL_MATERIAL_CATEGORIES,
     CANONICAL_MATERIAL_KINDS,
     CANONICAL_MATERIAL_SEED,
+    CONCRETE_CANONICAL_SEED,
     CANONICAL_MATERIAL_STATUSES,
     CanonicalMaterial,
 )
@@ -33,7 +34,7 @@ def ensure_canonical_material_seed() -> int:
     }
     added = 0
     now = datetime.utcnow()
-    for item in CANONICAL_MATERIAL_SEED:
+    for item in CANONICAL_MATERIAL_SEED + CONCRETE_CANONICAL_SEED:
         if item["code"] in existing:
             continue
         row = CanonicalMaterial(

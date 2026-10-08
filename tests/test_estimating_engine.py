@@ -232,11 +232,11 @@ def test_whole_project_reaches_a_supplier_request_and_a_costing_snapshot(app):
         actor=ACTOR,
         organization_id=DEFAULT_ORGANIZATION_ID,
     )
-    assert len(first["created"]) == 2
+    assert len(first["created"]) == 3
     assert len(second["created"]) == 0
-    assert MaterialRequirement.query.filter_by(project_id=project.id).count() == 2
+    assert MaterialRequirement.query.filter_by(project_id=project.id).count() == 3
     codes = {row.canonical_material.code for row in first["created"]}
-    assert codes == {MATERIAL, "CAL-ICF-8-STD"}
+    assert codes == {MATERIAL, "CAL-ICF-8-STD", "CAL-CONC"}
     for requirement in first["created"]:
         note = requirement.note.lower()
         assert "supplier" not in note

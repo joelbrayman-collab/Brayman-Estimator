@@ -149,7 +149,7 @@ def test_icf_facts_stay_separate_from_a_missing_wall_and_an_unruled_slab():
     assert concrete["unit"] == "YD3"
     assert concrete["quantity_meaning"] == "concrete_volume"
     assert concrete["truck_count"] is None
-    assert concrete["canonical_material_code"] is None
+    assert concrete["canonical_material_code"] == "CAL-CONC"
     assert missing_wall["status"] == "CONTRACTOR_INPUT"
     assert "net wall area" in missing_wall["missing_facts"]
     assert footing["status"] == "CONTRACTOR_INPUT"

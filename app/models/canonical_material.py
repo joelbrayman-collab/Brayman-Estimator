@@ -82,6 +82,8 @@ def _seed_row(
 
 
 # Platform-owned V1 vocabulary. Tens of rows. Not ORG-001. Not BMR/SKU/price.
+# Concrete is a later row. The d6 catalogue migration cannot store M3.
+CONCRETE_CANONICAL_CODE = "CAL-CONC"
 CANONICAL_MATERIAL_SEED = (
     _seed_row(
         code="CAL-LUM-2X4-8",
@@ -496,6 +498,27 @@ CANONICAL_MATERIAL_SEED = (
             "Stored with the sheet-goods category because that is the current "
             "counted-unit category. It is not OSB or plywood. "
             "No manufacturer, supplier, SKU, package count, or price."
+        ),
+    ),
+)
+
+CONCRETE_CANONICAL_SEED = (
+    _seed_row(
+        code=CONCRETE_CANONICAL_CODE,
+        display_name="Concrete",
+        kind="GENERIC",
+        category="CONCRETE",
+        trade="Concrete",
+        canonical_uom="M3",
+        substitution_policy="ALLOWED",
+        specification_text=(
+            "Generic concrete. The purchasing unit is cubic metres. "
+            "The same identity serves a slab, ICF concrete, flatwork, "
+            "and a future footing volume."
+        ),
+        description=(
+            "Supplier-neutral concrete. No mix design, manufacturer, "
+            "package, truck count, waste, or price."
         ),
     ),
 )

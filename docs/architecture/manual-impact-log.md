@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Canonical concrete material (2026-10-08)
+
+| Field | Content |
+|-------|---------|
+| Slice | One concrete material identity so a known concrete volume can be requested. |
+| Product status at capture | Implemented and tested on scratch data. Official V1 remains **65% / 4 of 11**. |
+| 1. What new contractor capability exists? | A dimensioned slab can become a concrete requirement in cubic metres. The cubic yards stay in the note. The same concrete identity can be used for ICF concrete. |
+| 2. When would the contractor use it? | When asking a supplier to price concrete for a slab whose length, width, and thickness are already stored. |
+| 3. What workflow will the final Manual need to teach? | Read the cubic yards. Read the cubic metres. Send the request with product, SKU, and price blank. Approve the supplier price per cubic metre before it reaches the estimate. |
+| 4. What contractor-facing terms must be used? | Concrete. Cubic yards. Cubic metres. |
+| 5. What screenshots / Print examples will eventually be needed? | A supplier request that shows concrete at 2.832 m³ and keeps the cubic yards in the note. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | The requirement is 2.8317 cubic metres. The request shows 2.832. Neither number is a truck count. The concrete identity is not a mix design or a supplier product. |
+| 7. Desktop / iPhone / Print relevance | Office material catalogue, the supplier request, and the estimate. Not a Field or iPhone change. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Next coherent quantity batch (2026-10-08)
 
 | Field | Content |

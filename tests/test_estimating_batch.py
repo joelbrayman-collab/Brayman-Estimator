@@ -224,8 +224,7 @@ def test_known_scopes_continue_when_other_scopes_stay_unresolved():
     assert slab["quantity"] == measured["cubic_yards"]
     assert slab["purchasing_unit"] == "M3"
     assert slab["purchasing_quantity"] == purchasing["quantity"]
-    assert slab["canonical_material_code"] is None
-    assert slab["vocabulary_gap"] == "No canonical concrete identity is stored."
+    assert slab["canonical_material_code"] == "CAL-CONC"
     assert slab["truck_count"] is None
     assert open_slab["quantity"] is None
     assert "slab thickness" in open_slab["missing_facts"]
@@ -265,7 +264,7 @@ def test_batch_reaches_a_supplier_request_and_a_costing_snapshot(app):
         organization_id=DEFAULT_ORGANIZATION_ID,
     )
     codes = {row.canonical_material.code for row in first["created"]}
-    assert codes == {LUMBER, "CAL-ICF-8-STD"}
+    assert codes == {LUMBER, "CAL-ICF-8-STD", "CAL-CONC"}
     assert len(second["created"]) == 0
     assert MaterialRequirement.query.filter_by(project_id=project.id).count() == len(first["created"])
     unresolved_elements = {line["element"] for line in first["unresolved"]}

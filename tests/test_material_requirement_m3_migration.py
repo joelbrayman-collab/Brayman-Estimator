@@ -12,7 +12,8 @@ from app import create_app, db
 
 
 PRIOR = "q7d8e9f0a1b2"
-HEAD = "r8e9f0a1b2c3"
+M3_REVISION = "r8e9f0a1b2c3"
+HEAD = "s9f0a1b2c3d4"
 PRESERVED = (
     "organizations",
     "projects",
@@ -136,7 +137,7 @@ def test_m3_check_keeps_existing_requirements(tmp_path):
                 )
             ).fetchall()
 
-        command.upgrade(alembic_cfg, HEAD)
+        command.upgrade(alembic_cfg, M3_REVISION)
         with engine.begin() as conn:
             assert _counts(conn) == before_counts
             after_rows = conn.execute(
@@ -194,7 +195,7 @@ def test_m3_check_keeps_existing_requirements(tmp_path):
             assert Decimal(str(stored[0])) == Decimal("45.3070")
             assert stored[1] == "M3"
             heads = conn.execute(sa.text("SELECT version_num FROM alembic_version")).fetchall()
-            assert [row[0] for row in heads] == [HEAD]
+            assert [row[0] for row in heads] == [M3_REVISION]
 
         with engine.begin() as conn:
             conn.execute(

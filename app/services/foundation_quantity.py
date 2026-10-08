@@ -12,6 +12,7 @@ from __future__ import annotations
 from decimal import Decimal, InvalidOperation
 
 from app.services.construction_measurement import rectangular_prism_cubic_yards
+from app.models.canonical_material import CONCRETE_CANONICAL_CODE
 from app.services.icf_manufacturer_profiles import IcfProfileError
 from app.services.icf_quantity import (
     ENGINE_VERSION as ICF_ENGINE_VERSION,
@@ -156,7 +157,12 @@ def _quantity_line(element, quantity, calculated):
     code = quantity["code"]
     unit = _UNIT.get(quantity["unit_code"], quantity["unit_code"])
     meaning = "concrete_volume" if code == CONCRETE_CODE else "form_count"
-    canonical = STANDARD_FORM_CANONICAL if code == STANDARD_FORM_CODE else None
+    if code == CONCRETE_CODE:
+        canonical = CONCRETE_CANONICAL_CODE
+    elif code == STANDARD_FORM_CODE:
+        canonical = STANDARD_FORM_CANONICAL
+    else:
+        canonical = None
     rule = _rule(calculated, code)
     return {
         "element": code,
@@ -212,8 +218,7 @@ def _slab_lines(element):
             "stock_length": None,
             "waste": None,
             "truck_count": None,
-            "canonical_material_code": None,
-            "vocabulary_gap": "No canonical concrete identity is stored.",
+            "canonical_material_code": CONCRETE_CANONICAL_CODE,
             "missing_facts": (),
             "item_text": (
                 "Concrete slab. {0}. Volume is not a truck count."

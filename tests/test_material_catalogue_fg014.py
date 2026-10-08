@@ -16,6 +16,7 @@ from app.models import Assembly, AssemblyItem, CanonicalMaterial, CostItem, Orga
 from app.models.assembly import AssemblyItem as AssemblyItemModel
 from app.models.canonical_material import (
     CANONICAL_MATERIAL_SEED,
+    CONCRETE_CANONICAL_SEED,
     FORBIDDEN_CANONICAL_IDENTITY_FIELDS,
 )
 from app.plan_intelligence.models import TakeoffPackageItem
@@ -175,11 +176,12 @@ def test_active_discontinued_validation(app):
 
 def test_seed_catalogue_bounded_and_expected_kinds(app):
     rows = CanonicalMaterial.query.all()
+    expected = CANONICAL_MATERIAL_SEED + CONCRETE_CANONICAL_SEED
     assert 10 <= len(rows) <= 80
-    assert len(rows) == len(CANONICAL_MATERIAL_SEED)
-    assert {r.code for r in rows} == {item["code"] for item in CANONICAL_MATERIAL_SEED}
+    assert len(rows) == len(expected)
+    assert {r.code for r in rows} == {item["code"] for item in expected}
     categories = {r.category for r in rows}
-    assert categories == {"DIMENSIONAL_LUMBER", "SHEET_GOODS"}
+    assert categories == {"DIMENSIONAL_LUMBER", "SHEET_GOODS", "CONCRETE"}
 
 
 def test_canonical_identity_has_no_commercial_or_supplier_fields(app):

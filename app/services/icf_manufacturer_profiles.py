@@ -13,6 +13,30 @@ from pathlib import Path
 FIELD_STATUSES = ("VERIFIED_FROM_SOURCE", "NOT_ESTABLISHED", "NOT_APPLICABLE")
 CALCULATION_NOT_SELECTED = "not_selected"
 _CORE_TOKEN = re.compile(r"^(?:0|[1-9][0-9]*)(?:\.[0-9]*[1-9])?$")
+_APPROVAL_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+_APPROVAL_FIELDS = (
+    "manufacturer_id",
+    "product_family",
+    "record_id",
+    "observation_id",
+    "core_size_in",
+    "component_type",
+    "measurement_type",
+    "value",
+    "unit",
+    "source_document",
+    "source_url",
+    "decision",
+    "approver",
+    "approval_date",
+    "destination_unit",
+)
+# A published measurement may fill one engine field only when the meaning matches.
+_FACTOR_DESTINATIONS = {
+    ("concrete_volume", "yd3"): "concrete_volume_yd3",
+    ("concrete_cavity_width", "ft"): "concrete_cavity_width_ft",
+    ("wall_coverage", "ft2"): "wall_coverage_ft2",
+}
 ENGINE_STANDARD_FIELDS = (
     "length_in",
     "height_in",
@@ -171,6 +195,99 @@ def _validate_observation(observation_id, observation):
 
 def _text(value):
     return isinstance(value, str) and bool(value.strip())
+
+
+def validate_factor_approval(profile, approval):
+    """Check one candidate approval. Do not select an observation or write a unit."""
+    if not isinstance(profile, dict) or not isinstance(approval, dict):
+        raise IcfProfileError("A factor approval must name a profile and an approval.")
+    for key in _APPROVAL_FIELDS:
+        if not _text(approval.get(key)):
+            raise IcfProfileError("A factor approval is missing {0}.".format(key))
+    if approval["decision"] != "approved":
+        raise IcfProfileError("A factor approval has no explicit approval decision.")
+    if _APPROVAL_DATE.fullmatch(approval["approval_date"]) is None:
+        raise IcfProfileError("A factor approval date must be YYYY-MM-DD.")
+    if not _text(approval.get("approver")):
+        raise IcfProfileError("A factor approval has no authority.")
+    if profile.get("manufacturer_id") != approval["manufacturer_id"]:
+        raise IcfProfileError("A factor approval does not match its manufacturer.")
+    record = (profile.get("product_records") or {}).get(approval["record_id"])
+    if not isinstance(record, dict):
+        raise IcfProfileError("A factor approval names a missing product record.")
+    if record.get("manufacturer_id") != approval["manufacturer_id"]:
+        raise IcfProfileError("A factor approval does not match its manufacturer.")
+    if record.get("product_family") != approval["product_family"]:
+        raise IcfProfileError("A factor approval does not match its product family.")
+    if record.get("core_size_in") != approval["core_size_in"]:
+        raise IcfProfileError("A factor approval does not match its core.")
+    if record.get("component_type") != approval["component_type"]:
+        raise IcfProfileError("A factor approval does not match its component.")
+    code = record.get("product_code") or {}
+    if code.get("status") != "VERIFIED_FROM_SOURCE" or not _text(code.get("value")):
+        raise IcfProfileError("Ambiguous product identity blocks factor approval.")
+    observation = (record.get("observations") or {}).get(approval["observation_id"])
+    if not isinstance(observation, dict):
+        raise IcfProfileError("A factor approval names a missing observation.")
+    if observation.get("measurement_type") != approval["measurement_type"]:
+        raise IcfProfileError("A factor approval does not match its measurement.")
+    if observation.get("unit") != approval["unit"]:
+        raise IcfProfileError("A factor approval does not match its unit.")
+    if observation.get("value") != approval["value"]:
+        raise IcfProfileError("A factor approval does not match the published value.")
+    if observation.get("status") != "VERIFIED_FROM_SOURCE":
+        raise IcfProfileError("Publication status alone is not a factor approval.")
+    if not _text(observation.get("source_document")) or not _text(observation.get("source_url")):
+        raise IcfProfileError("A factor approval is missing source provenance.")
+    if (
+        approval["source_document"] != observation["source_document"]
+        or approval["source_url"] != observation["source_url"]
+    ):
+        raise IcfProfileError("A factor approval does not match its source.")
+    expected = _FACTOR_DESTINATIONS.get((approval["measurement_type"], approval["unit"]))
+    if expected is None or approval["destination_unit"] != expected:
+        raise IcfProfileError("A factor approval destination does not match its measurement.")
+    if _conflicting_observations(profile, record, observation):
+        raise IcfProfileError("A factor approval is blocked by a conflicting observation.")
+    return {key: approval[key] for key in _APPROVAL_FIELDS}
+
+
+def _established_product_code(record):
+    code = record.get("product_code") or {}
+    if code.get("status") != "VERIFIED_FROM_SOURCE" or not _text(code.get("value")):
+        return None
+    return code["value"]
+
+
+def _conflicting_observations(profile, record, observation):
+    """Different values conflict only for the same established product and measurement."""
+    product_code = _established_product_code(record)
+    if product_code is None:
+        return ()
+    found = []
+    for other in (profile.get("product_records") or {}).values():
+        if not isinstance(other, dict):
+            continue
+        if _established_product_code(other) != product_code:
+            continue
+        if other.get("product_family") != record.get("product_family"):
+            continue
+        if other.get("core_size_in") != record.get("core_size_in"):
+            continue
+        if other.get("component_type") != record.get("component_type"):
+            continue
+        for item in (other.get("observations") or {}).values():
+            if not isinstance(item, dict):
+                continue
+            if item.get("observation_id") == observation.get("observation_id"):
+                continue
+            if item.get("measurement_type") != observation.get("measurement_type"):
+                continue
+            if item.get("unit") != observation.get("unit"):
+                continue
+            if item.get("value") != observation.get("value"):
+                found.append(item.get("observation_id"))
+    return tuple(found)
 
 
 def _validate_fields(value):

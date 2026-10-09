@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
@@ -10,6 +11,10 @@ import pytest
 from app import create_app, db
 from app.models import Estimate, Project
 from app.models.labour_engine import ProductionRateStandard
+from app.services.calculation_result_contract import (
+    calculation_fingerprint,
+    validate_contract_v1,
+)
 from app.services.icf_manufacturer_profiles import (
     CALCULATION_NOT_SELECTED,
     IcfProfileError,
@@ -20,7 +25,9 @@ from app.services.icf_manufacturer_profiles import (
     load_registry,
     missing_engine_fields,
     profiles_are_organization_scoped,
+    validate_factor_approval,
 )
+from app.services.icf_quantity import build_icf_standard_quantities
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SERVICE_PATH = REPO_ROOT / "app" / "services" / "icf_manufacturer_profiles.py"
@@ -282,3 +289,181 @@ def test_a_selected_observation_is_refused():
     observation["calculation_selection"] = "selected"
     with pytest.raises(IcfProfileError):
         _validate_registry(registry)
+
+
+def _candidate_approval(**overrides):
+    approval = {
+        "manufacturer_id": "fox_blocks",
+        "product_family": "fox_blocks",
+        "record_id": "fox_s400",
+        "observation_id": "fox_s400_concrete_volume_yd3",
+        "core_size_in": "4",
+        "component_type": "standard",
+        "measurement_type": "concrete_volume",
+        "value": "0.066",
+        "unit": "yd3",
+        "source_document": "Fox Blocks block measurements, FOX-S400 straight block",
+        "source_url": (
+            "https://www.foxblocksny.com/wp-content/uploads/2018/05/"
+            "Fox-Blocks-Block-Measurements-End-View-Sizing.pdf"
+        ),
+        "decision": "approved",
+        "approver": "test-authority",
+        "approval_date": "2026-10-09",
+        "destination_unit": "concrete_volume_yd3",
+    }
+    approval.update(overrides)
+    return approval
+
+
+def test_valid_approval_structure_does_not_activate_the_observation():
+    profile = get_profile("fox_blocks")
+    checked = validate_factor_approval(profile, _candidate_approval())
+    assert checked["record_id"] == "fox_s400"
+    assert checked["observation_id"] == "fox_s400_concrete_volume_yd3"
+    observation = profile["product_records"]["fox_s400"]["observations"][
+        "fox_s400_concrete_volume_yd3"
+    ]
+    assert observation["calculation_selection"] == CALCULATION_NOT_SELECTED
+    assert "factor_approvals" not in profile
+    assert profile["units"]["standard_8"]["concrete_volume_yd3"]["value"] == "0.132"
+    assert profile["profile_version"] == "1"
+
+
+def test_missing_product_or_observation_fails():
+    profile = get_profile("fox_blocks")
+    with pytest.raises(IcfProfileError, match="missing product"):
+        validate_factor_approval(profile, _candidate_approval(record_id="missing"))
+    with pytest.raises(IcfProfileError, match="missing observation"):
+        validate_factor_approval(
+            profile, _candidate_approval(observation_id="missing")
+        )
+
+
+def test_incorrect_manufacturer_or_core_fails():
+    profile = get_profile("fox_blocks")
+    with pytest.raises(IcfProfileError, match="manufacturer"):
+        validate_factor_approval(
+            profile, _candidate_approval(manufacturer_id="logix")
+        )
+    with pytest.raises(IcfProfileError, match="core"):
+        validate_factor_approval(profile, _candidate_approval(core_size_in="8"))
+
+
+def test_incorrect_measurement_type_or_unit_fails():
+    profile = get_profile("fox_blocks")
+    with pytest.raises(IcfProfileError, match="measurement"):
+        validate_factor_approval(
+            profile,
+            _candidate_approval(
+                measurement_type="surface_area",
+                unit="ft2",
+                destination_unit="wall_coverage_ft2",
+            ),
+        )
+    with pytest.raises(IcfProfileError, match="unit"):
+        validate_factor_approval(profile, _candidate_approval(unit="ft2"))
+
+
+def test_missing_source_provenance_fails():
+    profile = get_profile("fox_blocks")
+    with pytest.raises(IcfProfileError, match="source"):
+        validate_factor_approval(profile, _candidate_approval(source_url=""))
+    with pytest.raises(IcfProfileError, match="source"):
+        validate_factor_approval(
+            profile, _candidate_approval(source_document="A different sheet")
+        )
+
+
+def test_missing_approval_authority_fails():
+    profile = get_profile("fox_blocks")
+    with pytest.raises(IcfProfileError, match="approver"):
+        validate_factor_approval(profile, _candidate_approval(approver=""))
+    with pytest.raises(IcfProfileError, match="decision"):
+        validate_factor_approval(profile, _candidate_approval(decision="published"))
+
+
+def test_distinct_product_variants_are_not_conflicts():
+    profile = get_profile("fox_blocks")
+    approval = _candidate_approval(
+        record_id="fox_ec890",
+        observation_id="fox_ec890_concrete_volume_yd3",
+        core_size_in="8",
+        component_type="corner_90",
+        value="0.153",
+        source_document="Fox Blocks block measurements",
+    )
+    checked = validate_factor_approval(profile, approval)
+    assert checked["value"] == "0.153"
+    curb = profile["product_records"]["fox_ec890cb"]["observations"][
+        "fox_ec890cb_concrete_volume_yd3"
+    ]
+    assert curb["value"] == "0.145"
+    assert curb["calculation_selection"] == CALCULATION_NOT_SELECTED
+    assert profile["units"]["corner_90_8"]["concrete_volume_yd3"]["value"] == "0.145"
+
+
+def test_same_product_and_measurement_with_two_values_conflicts():
+    profile = get_profile("fox_blocks")
+    record = profile["product_records"]["fox_s400"]
+    extra = dict(record["observations"]["fox_s400_concrete_volume_yd3"])
+    extra["observation_id"] = "fox_s400_concrete_volume_yd3_other"
+    extra["value"] = "0.099"
+    record["observations"][extra["observation_id"]] = extra
+    with pytest.raises(IcfProfileError, match="conflicting observation"):
+        validate_factor_approval(profile, _candidate_approval())
+
+
+def test_ambiguous_product_identity_blocks_approval():
+    profile = get_profile("fox_blocks")
+    observation = profile["product_records"]["fox_series_corner_8"]["observations"][
+        "fox_series_corner_8_concrete_volume_yd3"
+    ]
+    approval = _candidate_approval(
+        record_id="fox_series_corner_8",
+        observation_id="fox_series_corner_8_concrete_volume_yd3",
+        core_size_in="8",
+        component_type="corner_90",
+        value=observation["value"],
+        source_document=observation["source_document"],
+        source_url=observation["source_url"],
+    )
+    with pytest.raises(IcfProfileError, match="Ambiguous product identity"):
+        validate_factor_approval(profile, approval)
+
+
+def test_approval_check_leaves_quantities_and_contract_unchanged():
+    profile = get_profile("fox_blocks")
+    validate_factor_approval(profile, _candidate_approval())
+    fox = build_icf_standard_quantities(
+        manufacturer_id="fox_blocks",
+        net_wall_area_ft2="12.89",
+        corner_90_count=1,
+        corner_45_count=0,
+        result_id="approval-gate-fox-8",
+    )
+    fox_payload = fox["payload"]
+    fox_concrete = next(
+        item for item in fox_payload["quantities"] if item["code"] == "concrete"
+    )
+    assert fox_concrete["quantity"] == "0.277"
+    assert fox_payload["product_specification"]["nominal_core_thickness_in"] == "8"
+    assert fox_payload["product_specification"]["profile_version"] == "1"
+    assert validate_contract_v1(fox_payload) == []
+    assert len(calculation_fingerprint(fox_payload)) == 64
+    logix = build_icf_standard_quantities(
+        manufacturer_id="logix",
+        net_wall_area_ft2="1523",
+        corner_90_count=0,
+        corner_45_count=0,
+        result_id="approval-gate-logix-8",
+    )
+    logix_concrete = next(
+        item for item in logix["payload"]["quantities"] if item["code"] == "concrete"
+    )
+    assert Decimal(logix_concrete["quantity"]).quantize(Decimal("0.1")) == Decimal("37.6")
+    quantity_source = (REPO_ROOT / "app/services/icf_quantity.py").read_text(
+        encoding="utf-8"
+    )
+    assert "validate_factor_approval" not in quantity_source
+    assert "product_records" not in quantity_source

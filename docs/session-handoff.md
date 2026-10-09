@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**9 Oct 2026 — FACTOR APPROVAL GATE.** `validate_factor_approval` can check a candidate approval and does not store it. No observation is approved. No unit is written. An uncoded product cannot be approved. FOX-EC890 and FOX-EC890CB are not treated as the same product. The 8-inch engine is unchanged. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified. Do not approve a factor from this note.
+
 **9 Oct 2026 — MANUFACTURER EVIDENCE.** Unselected product records now cover Fox Blocks 4/6/8/10/12, Logix 4/6.25/8/10/12, Nudura 4/6/8/10/12, and BuildBlock straight 4/6/8. BuildLock is a separate family. Logix 6.25 stays 6.25. The five Fox conflict records and every calculation unit are unchanged. No observation is selected. The engine still calculates 8-inch units only. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified. Do not turn these records into quantities from this note.
 
 **8 Oct 2026 — FOX PRODUCT RECORDS.** Five Fox Blocks records sit beside profile version 1 and are not calculation factors. Every observation is unselected. FOX-EC890 is 0.153 cubic yards from the measurements PDF. FOX-EC890CB is 0.145 cubic yards from that PDF. The series-page corner is 0.145 cubic yards and has no product code. FOX-BL800 is 13.25 inches and 5.33 square feet. The series-page corbel is 17.75 inches and 5.61 square feet. `units.corner_90_8.concrete_volume_yd3` stays 0.145. The engine does not read `product_records`. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified. Do not select a Fox factor from this note.

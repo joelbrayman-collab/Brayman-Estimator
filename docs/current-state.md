@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Factor approval gate
+
+A candidate manufacturer factor can be checked by `validate_factor_approval` without being stored or used. The check requires the product record, the observation, the exact core, the component, the measurement, the unit, the source, an explicit decision, an approver, a date, and a matching destination field. It does not change `calculation_selection` and does not write a calculation unit. FOX-EC890 and FOX-EC890CB are different products. The series-page corner has no product code, so it cannot be approved. No observation is approved. The 8-inch engine is unchanged. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified.
+
 ## 9 Oct 2026 — Manufacturer evidence expansion
 
 Profile version 1 stores unselected product records for the published standard and corner forms named above the existing 8-inch units. Fox Blocks covers 4, 6, 8, 10, and 12. Logix covers 4, 6.25, 8, 10, and 12. Nudura covers 4, 6, 8, 10, and 12. BuildBlock straight forms cover 4, 6, and 8. BuildLock is a separate family. The five earlier Fox conflict records are unchanged. The quantity engine still calculates the existing 8-inch units only. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified.

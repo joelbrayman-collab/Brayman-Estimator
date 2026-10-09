@@ -8,6 +8,8 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-10-09 factor approval gate):** No package was added or closed. Official readiness remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Checklist step 8 stays open. The approval gate does not approve an observation and does not change a calculation. This note does not rescore V1.
+
 **Subsequent status (2026-10-09 manufacturer evidence):** No package was added or closed. Official readiness remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Checklist step 8 stays open. Additional manufacturer product records are unselected evidence. No calculation factor was selected and no new core is calculable. This note does not rescore V1.
 
 **Subsequent status (2026-10-08 Fox product records):** No package was added or closed. Official readiness remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Checklist step 8 stays open. Five Fox Blocks product records are stored as unselected evidence beside profile version 1. The 8-inch calculation units are unchanged. No calculation factor was selected. This note does not rescore V1.

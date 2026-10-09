@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — ICF factor approval gate
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Add a validation gate that can check a manufacturer factor approval without approving any observation. |
+| Business decision | Publication is not approval. FOX-EC890 and FOX-EC890CB stay distinct products. The uncoded series-page corner stays unresolved. No observation is approved. Checklist step 8 stays OPEN. Official V1 stays 65% / 4 of 11. |
+| Architectural decision | `validate_factor_approval` checks manufacturer, family, product record, observation, exact core, component, measurement, unit, source, decision, approver, date, and destination. It does not write a unit and does not change `calculation_selection`. A conflict is two different values for the same established product code, component, core, measurement type, and unit. An unestablished product code blocks approval. Profile version stays 1. |
+| Prompt template used | Authorized focused implementation prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Implement the approval mechanism and conflict gate only. Do not select a factor, change calculations, add a dropdown, or deploy. Test, then commit and push the code, tests, and governance. Leave case files unstaged. |
+| Files expected to change | The profile service, profile tests, and the status records. |
+| Files prohibited from changing | The quantity engine, Contract V1, the profile JSON, calculation units, case files, databases, and the live service. |
+| Implementation result | The gate exists. No observation is approved. No factor is promoted. No new core is calculable. Not deployed. Not live-verified. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_icf_manufacturer_profiles.py tests/test_icf_quantity.py tests/test_calculation_result_contract_v1.py tests/test_calculation_estimate_mapping.py` — 56 passed, 39 warnings, 3.39s, exit 0. `./venv/bin/python -m pytest -q` — 2273 passed, 11 skipped, 7048 warnings, 1139.89s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | No stored approval exists. Fox 8-inch corner volumes 0.153 and 0.145 remain unselected. The series-page corner still has no product code. The two corbel measurements remain unselected. |
+| Next approved step | ChatGPT reviews the gate. Do not approve a manufacturer factor from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — ICF manufacturer evidence expansion
 
 | Field | Content |

@@ -13,7 +13,7 @@ Use the live hosted platform, `https://calibryatai.onrender.com`, and sign in. T
 7. Scope Delivery Review. Confirm material and labour. Then costing review. Type your own name. Approve all costing.
 8. Apply org pricing policy.
 9. Create Proposal. Download PDF. Title is CONSTRUCTION ESTIMATE. Read it before it leaves the office. Acceptance is Update status, then Accepted.
-10. Contract. Calibrayt uses the active Brayman V1 Ontario contract package. The package and version are on the contract snapshot. If it says Production contract unavailable, stop. Do not bypass it. Family 05 draft labels are not on the generated contract. Generating a contract does not send a signing link.
+10. Contract. Calibrayt uses the active Brayman V1 Ontario contract package. The package and version are saved with the generated contract and stay as they were when it was generated. If it says Production contract unavailable, stop. Do not bypass it. Family 05 draft labels are not on the generated contract. Generating a contract does not send a signing link.
 11. Supplier Estimate Request only when the material list and the supplier are selected. If that supplier account is labelled DEMO / SYNTHETIC, the label stays. Prices stay blank.
 12. Field. Confirm the project, then Capture. Check Field Observations.
 13. Lock the estimate version. Then Money shows the committed baseline. Enter an actual cost only when you know the amount.

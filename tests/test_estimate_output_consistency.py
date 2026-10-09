@@ -529,7 +529,8 @@ def test_named_method_estimate_totals_not_legacy_stack_labels(client, app):
     html = resp.data
     assert b"TRUE_GROSS_MARGIN" not in html
     assert b"Gross Margin Pricing" in html
-    assert b"Authoritative method" in html
+    assert b"Authoritative method" not in html
+    assert b"Pricing method" in html
     assert b"Overhead (0.00%)" not in html
     assert b"Profit (0.00%)" not in html
     assert b"Customer total" in html

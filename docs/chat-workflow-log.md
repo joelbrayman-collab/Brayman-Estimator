@@ -43,6 +43,54 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Contractor language accepted and operator-pack tests corrected
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Accept the wording, correct the obsolete Mac-office test expectations, and release after the full suite passes. |
+| Business decision | ChatGPT accepted the hub and commercial-screen wording. The hosted platform remains the working office. The Mac remains the mirror. |
+| Architectural decision | Change only the operator-pack assertions that still required `flask run --port 5001` and `127.0.0.1:5001` on the guides Ben uses. Keep those commands on the backup sheet, labeled as the mirror. Do not change product behavior again. |
+| Prompt template used | Authorized regression correction and release prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Fix the operator-pack tests to the hosted office. Re-run focused tests and the full suite. Commit authorized files. Release the exact SHA if the gates pass. |
+| Files expected to change | Operator-pack test, accepted wording files, audit, current-state, handoff, roadmap, manual-impact log, and this log. |
+| Files prohibited from changing | Navigation, formulas, contract body, legal gate, QuickBooks, supplier behavior, Help architecture, schema, and case files. |
+| Implementation result | Wording unchanged from the accepted working tree. Operator-pack tests updated. |
+| Tests | Operator pack: `./venv/bin/python -m pytest -q tests/test_v1_operator_pack.py` — 2 passed, 0.22s, exit 0. Focused language plus operator pack: 100 passed, 503 warnings, 41.91s, exit 0. Full: `./venv/bin/python -m pytest -q` — 2298 passed, 11 skipped, 7148 warnings, 1179.82s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Hub stage names still differ from the diagram. The generated contract body still uses its existing legal wording. Real contractor UAT is not open. |
+| Next approved step | Deploy the accepted SHA after the release gates, then verify the live wording. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
+### 2026-10-09 — Contractor language correction
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Correct the stale hub package sentence and the contractor-facing snapshot and authoritative-method labels. |
+| Business decision | Outputs 1–3 are described as available. Output 4 stays gated. Production Ontario contracts are not described as available. Frozen records and issue rules stay. |
+| Architectural decision | Change presentation copy and the matching Help sentence. Do not edit the contract body, navigation, formulas, or internal model names. |
+| Prompt template used | Authorized bounded language prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Correct hub, commercial office screens, and directly affected Help. Test. Stop for acceptance before deploy. |
+| Files expected to change | Hub, contract review, supplier package, proposal, estimate screens, contractor copy, Help, focused tests, audit, and operating notes that repeated the old sentence. |
+| Files prohibited from changing | Contract generator body, legal content, calculations, QuickBooks, case files, and migrations. |
+| Implementation result | Wording changed in the working tree. Acceptance and deploy were not done in this step. |
+| Tests | Focused: `./venv/bin/python -m pytest -q` on hub, estimate output, interim contract, supplier workflow, and Help/Voice tests. 98 passed, 503 warnings, 47.79s, exit 0. Full: `./venv/bin/python -m pytest -q`. 2 failed, 2296 passed, 11 skipped, 7148 warnings, 1172.72s, exit 1. Both failures are `tests/test_v1_operator_pack.py` still requiring `flask run --port 5001` and `127.0.0.1:5001`. Those strings were already absent at HEAD before this wording change. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | ChatGPT acceptance is required before commit, push, and deploy. Hub stage names still differ from the diagram. |
+| Next approved step | ChatGPT accepts or returns the wording. Do not deploy before that acceptance. |
+| Next approved prompt | None from this update. |
+| Commit hash | Not committed. Acceptance comes first. |
+
 ### 2026-10-09 — Lifecycle blueprint preserved and audited
 
 | Field | Content |

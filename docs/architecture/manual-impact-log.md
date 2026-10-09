@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Contractor language on the hub and commercial screens (2026-10-09)
+
+| Field | Content |
+|-------|---------|
+| Slice | Accepted wording on the Project Hub, contract review, supplier package, proposal, estimate pricing, and the matching Help sentence. |
+| Product status at capture | Accepted in the repository after the full suite passed. Live verification follows the release. Contractor UAT is not accepted. Checklist step 8 stays open. The V1 register was not rescored. |
+| 1. What new contractor capability exists? | The same screens use ordinary words. No new action was added. |
+| 2. When would the contractor use it? | When reading the project, a generated contract, a supplier package, a proposal section, or the pricing method. |
+| 3. What workflow will the final Manual need to teach? | The internal cost breakdown, the customer estimate, and QuickBooks entry are available. QuickBooks is typed by hand. A production Ontario contract is not available. A generated contract is not signed. An issued supplier package stays as issued. |
+| 4. What contractor-facing terms must be used? | Internal cost breakdown. Customer estimate. QuickBooks entry. Generated contract. Package code. Supplier package. Proposal section. Pricing method. |
+| 5. What screenshots / Print examples will eventually be needed? | The project hub note and the contract review heading, after the release is live. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | Generating a contract does not sign it. Issuing a supplier package does not submit a purchase order. Older overhead and profit percentages do not set a named pricing method. |
+| 7. Desktop / iPhone / Print relevance | Office screens in a desktop browser. This slice was not checked on a phone. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Construction information is on the website office (2026-10-09)
 
 | Field | Content |

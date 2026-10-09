@@ -482,8 +482,10 @@ def test_future_lifecycle_not_operational(client, project):
     assert "Related Change Orders" in html
     assert "Field BUILD" not in html
     assert "QuickBooks" in html
-    assert "four-output" in html
-    assert "Ontario contract" in html
+    assert "four-output" not in html
+    assert "The four-output package remains Future" not in html
+    assert "production Ontario contract is not available" in html
+    assert "internal cost breakdown" in html
     assert "LEARN · Future" in html
     assert "MONITOR · Future" not in html
     assert "Estimated versus actual" in html

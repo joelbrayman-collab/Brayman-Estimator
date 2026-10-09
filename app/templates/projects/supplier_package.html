@@ -205,7 +205,7 @@
     <input type="hidden" name="supplier_id" value="{{ review.account.supplier_id }}">
     <input type="hidden" name="supplier_location_id" value="{{ review.account.supplier_location_id }}">
     <p class="eyebrow">Supplier Package</p>
-    <p class="muted-copy">Frozen supplier-facing snapshot. Generate a draft, or issue as order-ready / review-ready. Issuing does not submit a purchase order.</p>
+    <p class="muted-copy">This supplier package saves the quantities and prices from the review. Generate a draft, or issue as order-ready / review-ready. An issued package stays as issued. Issuing does not submit a purchase order.</p>
     <div class="form-actions">
         <button type="submit" formaction="{{ url_for('supplier_package.generate_package_route', project_id=project.id) }}">Generate Supplier Package</button>
         <button type="submit" formaction="{{ url_for('supplier_package.issue_package_route', project_id=project.id) }}">Issue Supplier Package</button>

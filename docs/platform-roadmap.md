@@ -124,7 +124,7 @@ Use repository evidence for **Completed**. Strategic pillars and Phases A–G ar
 
 ## Current (near-term product governance)
 
-The approved lifecycle picture is preserved at [v1-workflow-diagram/2026-10-09-v1-workflow-acceptance-audit.md](architecture/v1-workflow-diagram/2026-10-09-v1-workflow-acceptance-audit.md). That audit does not add engines, close checklist step 8, or authorize the User Guide.
+The approved lifecycle picture is preserved at [v1-workflow-diagram/2026-10-09-v1-workflow-acceptance-audit.md](architecture/v1-workflow-diagram/2026-10-09-v1-workflow-acceptance-audit.md). ChatGPT accepted the 9 October contractor-language correction. That audit does not add engines, close checklist step 8, or authorize the User Guide.
 
 Checklist step 6 still shows the unbound and subcontract boundaries on Continue setup. The first work-element binding is implemented: baseline `ICF` opens the existing `icf_wall` wall-form page. `SITE`, `FOUND`, and `STRUCT` stay unbound. Step 8 stays open for every other element. The walk does not calculate. V1 stays **65% / 4 of 11**. Deployment was not performed.
 

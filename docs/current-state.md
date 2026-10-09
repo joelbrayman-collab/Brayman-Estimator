@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Contractor language correction accepted
+
+ChatGPT accepted the hub and office wording. The internal cost breakdown, the customer estimate, and QuickBooks entry are described as available. A production Ontario contract is described as not available. Help matches. The operator-pack tests follow the hosted office. Focused tests: 100 passed, exit 0. Full suite: `./venv/bin/python -m pytest -q` — 2298 passed, 11 skipped, 7148 warnings, 1179.82s, exit 0. Checklist step 8 stays **OPEN**. The V1 register was not rescored. Real contractor UAT is not accepted.
+
 ## 9 Oct 2026 — Approved lifecycle blueprint preserved
 
 Joel approved `CalibraytAI Construction Platform Lifecycle Blueprint(1).png` as the V1 workflow picture. The Desktop original was copied unchanged to `docs/architecture/v1-workflow-diagram/`. SHA-256 `0476f6f14dfc6f1eb73da3b30f1a6714c5ed0d7c0911aaf2900591ec2ecf6390`. The read-only audit is `docs/architecture/v1-workflow-diagram/2026-10-09-v1-workflow-acceptance-audit.md`. The two other ChatGPT diagram names were not on this Mac and were not reconstructed. Checklist step 8 stays **OPEN**. The V1 register was not rescored. No product code changed. This is not real contractor UAT.

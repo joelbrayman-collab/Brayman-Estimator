@@ -12,7 +12,7 @@ Calibrayt is the Brayman office for a job.
 
 You keep the customer, the project, the location, the estimate, the customer price, the field notes, and the actual costs in one place. You can ask a supplier for a price. You can give the customer a construction estimate.
 
-Calibrayt uses the active Brayman V1 Ontario contract package. The contract package/version used for the project is recorded in the contract snapshot. The package is Brayman V1 Interim. It is not marked counsel-approved. Generating a contract does not sign it and does not send a signing link.
+Calibrayt uses the active Brayman V1 Ontario contract package. The package and version used for this project are saved with the generated contract and stay as they were when it was generated. The package is Brayman V1 Interim. It is not marked counsel-approved. Generating a contract does not sign it and does not send a signing link.
 
 ## 2. Which office
 
@@ -129,7 +129,7 @@ Warranty words typed into a proposal are not an approved Ontario warranty.
 
 This is the rule.
 
-Calibrayt uses the active Brayman V1 Ontario contract package. The contract package/version used for the project is recorded in the contract snapshot.
+Calibrayt uses the active Brayman V1 Ontario contract package. The package and version used for this project are saved with the generated contract and stay as they were when it was generated.
 
 On the project, Contract shows Ontario, Brayman V1 Interim Contract, the version, the effective date, and the status. Open Review contract to generate it when the estimate is issued and locked and the proposal is issued or accepted.
 
@@ -197,7 +197,7 @@ If the office will not open, or the project you just saved is gone:
 
 ## 13. Known limits
 
-- The contract uses the active Brayman V1 Ontario contract package. The package and version are recorded on the contract snapshot. Do not bypass the block when no active package is in force or the location cannot be resolved. A complete address outside City of Ottawa can still show that block. Generating a contract does not send a signing link.
+- The contract uses the active Brayman V1 Ontario contract package. The package and version are saved with the generated contract and stay as they were when it was generated. Do not bypass the block when no active package is in force or the location cannot be resolved. A complete address outside City of Ottawa can still show that block. Generating a contract does not send a signing link.
 - The Mac supplier account is labelled DEMO / SYNTHETIC.
 - If a field session ends before the note appears under Field Observations, the note may not have been saved. Sign in, look, and enter it again if it is missing. Do not delete other notes to fix it.
 - Calibrayt does not produce professional construction drawings.

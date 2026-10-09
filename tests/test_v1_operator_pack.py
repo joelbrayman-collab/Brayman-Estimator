@@ -23,21 +23,27 @@ def test_operator_pack_states_the_office_rules():
     guide = GUIDE.read_text(encoding="utf-8")
     first = FIRST.read_text(encoding="utf-8")
     backup = BACKUP.read_text(encoding="utf-8")
-    assert "flask run --port 5001" in guide
+    office = "https://calibryatai.onrender.com"
     for text in (guide, first):
-        assert "127.0.0.1:5001" in text
+        assert office in text
+        assert "Mac is a mirror" in text
+        assert "flask run --port 5001" not in text
+        assert "127.0.0.1:5001" not in text
         assert "Family 05" in text
         assert "Production contract unavailable" in text
     assert "does not approve" in guide
     assert "h8c9d0e1f2a3" in guide
-    assert "234a4eb7e9ddcfab07bf795fd7bfc23c61237ca7" in guide
-    assert "https://calibryatai.onrender.com" in guide
     assert "Joel Brayman" in guide
     assert "v1-issue-log.md" in guide
+    assert "empty office" in guide
+    assert "flask run --port 5001" in backup
+    assert "127.0.0.1:5001" in backup
+    assert "not the working office" in backup
+    assert "do not replace the hosted office" in backup
     assert ".backup" in backup
     assert "PRAGMA integrity_check" in backup
     assert "Ben does not" in backup
-    assert "empty office" in backup
+    assert "empty file" in backup
 
 
 def test_operator_pack_pdfs_keep_those_rules(tmp_path):
@@ -47,13 +53,17 @@ def test_operator_pack_pdfs_keep_those_rules(tmp_path):
     assert len(first.pages) == 1
     first_text = first.pages[0].extract_text()
     assert "Family 05" in first_text
-    assert "127.0.0.1:5001" in first_text
+    assert "calibryatai.onrender.com" in first_text
+    assert "127.0.0.1:5001" not in first_text
     guide = PdfReader(str(by_name["v1-operator-recovery-guide.pdf"]))
     guide_text = "\n".join(page.extract_text() or "" for page in guide.pages)
+    assert "calibryatai.onrender.com" in guide_text
     assert "Production contract unavailable" in guide_text
     assert "does not approve" in guide_text
     assert "h8c9d0e1f2a3" in guide_text
+    assert "127.0.0.1:5001" not in guide_text
     backup = PdfReader(str(by_name["v1-backup-restore-checklist.pdf"]))
     backup_text = "\n".join(page.extract_text() or "" for page in backup.pages)
     assert "integrity_check" in backup_text
     assert "Ben does not" in backup_text
+    assert "not the working office" in backup_text

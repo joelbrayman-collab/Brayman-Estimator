@@ -145,7 +145,10 @@ def download_generated_contract(id, contract_id):
     ).first_or_404()
     snapshot = contract.snapshot
     if snapshot is None:
-        flash("The contract snapshot is missing.", "error")
+        flash(
+            "The saved contract record is missing, so the file cannot be opened.",
+            "error",
+        )
         return redirect(url_for("projects.review_contract", id=project.id))
     data = retrieve_generated_contract_docx(snapshot)
     if not data:

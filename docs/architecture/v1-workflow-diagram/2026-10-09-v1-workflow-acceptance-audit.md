@@ -1,5 +1,11 @@
 # V1 workflow acceptance audit — 9 October 2026
 
+## 9 Oct 2026 — contractor language correction accepted
+
+ChatGPT accepted the wording. The hub names the internal cost breakdown, the customer estimate, and QuickBooks entry as available. QuickBooks stays hand-typed. A production Ontario contract is stated as not available. Generated contract, supplier package, proposal section, and pricing method replace the contractor-facing labels. Help uses the same generated-contract sentence. The contract document body was not edited. The operator-pack tests now require the hosted office and keep the Mac address only on the backup sheet, where it is the mirror. Focused tests: 100 passed, exit 0. Full suite: 2298 passed, 11 skipped, exit 0. Checklist Step 8 stays open. The register was not rescored.
+
+
+
 | Attribute | Value |
 |-----------|--------|
 | Status | Read-only audit. Product implementation is not authorized. |

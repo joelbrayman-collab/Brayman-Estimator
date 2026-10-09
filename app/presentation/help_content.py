@@ -102,8 +102,9 @@ HUB_CONTRACT = HelpTopic(
         "Do not look for a way around the block."
     ),
     next=(
-        "The package and version used for the project are recorded on the "
-        "contract snapshot."
+        "The package and version used for the project are saved with the "
+        "generated contract. They stay as they were when the contract was "
+        "generated."
     ),
 )
 

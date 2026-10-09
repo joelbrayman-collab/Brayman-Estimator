@@ -98,7 +98,7 @@ On the project, QuickBooks-ready entry is the sheet a person types into QuickBoo
 
 ## Contract
 
-Calibrayt uses the active Brayman V1 Ontario contract package. The contract package/version used for the project is recorded in the contract snapshot.
+Calibrayt uses the active Brayman V1 Ontario contract package. The package and version used for this project are saved with the generated contract and stay as they were when it was generated.
 
 On the project, Contract shows Ontario, Brayman V1 Interim Contract, the version, the effective date, and the status. Open Review contract to generate the contract after the estimate is issued and locked and the proposal is issued or accepted.
 

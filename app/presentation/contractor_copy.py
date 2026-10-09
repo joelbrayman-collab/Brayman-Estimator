@@ -832,8 +832,8 @@ CONTRACT_ACTIVE_PACKAGE_NEUTRAL = (
 )
 CONTRACT_INTERIM_OPERATING_RULE = (
     "Calibrayt uses the active Brayman V1 Ontario contract package. "
-    "The contract package/version used for the project is recorded in the "
-    "contract snapshot."
+    "The package and version used for this project are saved with the "
+    "generated contract and stay as they were when it was generated."
 )
 CONTRACT_REVIEW_FROM_HUB = (
     "Open Review contract. Generating a contract does not sign it and does not "

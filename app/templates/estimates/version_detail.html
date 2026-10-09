@@ -77,7 +77,7 @@
 <section class="form-panel pricing-summary" style="margin-bottom: 24px;">
     <h2>Estimate Totals</h2>
     {% if named_method_governs %}
-    <p>Authoritative method: <strong>{{ contractor_copy.pricing_method_label(pricing_snapshot.method) }}</strong>. Legacy Overhead / Profit percentage labels do not govern this calculation.</p>
+    <p>Pricing method: <strong>{{ contractor_copy.pricing_method_label(pricing_snapshot.method) }}</strong>. The older overhead and profit percentages do not set this price.</p>
     <p class="muted-copy">{{ contractor_copy.entry_reference(pricing_snapshot.id) }}</p>
     {% if pricing_snapshot.method == "TRUE_GROSS_MARGIN" %}
     <p>Gross Margin Pricing — not markup. Target gross margin: {{ pricing_snapshot.target_gross_margin if pricing_snapshot.target_gross_margin is not none else "—" }}</p>

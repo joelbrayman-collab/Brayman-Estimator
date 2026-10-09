@@ -55,7 +55,7 @@
 
     <article class="panel panel-wide" id="contract-snapshots">
         <div class="panel-header">
-            <h2>Contract snapshot</h2>
+            <h2>Generated contract</h2>
         </div>
         {% if contracts %}
         {% for contract in contracts %}
@@ -68,7 +68,7 @@
             {% if snapshot.package_code == "CA-ON-BRAYMAN-V1-INTERIM" %}
             <p>Brayman V1 Interim Contract</p>
             {% endif %}
-            <p>Package {{ snapshot.package_code }}</p>
+            <p>Package code {{ snapshot.package_code }}</p>
             <p>Effective date {{ snapshot.package_effective_from }}</p>
             <p>Status {% if snapshot.package_library_state == "ACTIVE" %}Active{% else %}{{ snapshot.package_library_state }}{% endif %}</p>
             <p>Generated {{ snapshot.generated_at }}</p>
@@ -91,7 +91,7 @@
         </section>
         {% endfor %}
         {% else %}
-        <p>No contract snapshot yet.</p>
+        <p>No contract has been generated yet.</p>
         {% endif %}
     </article>
 </section>

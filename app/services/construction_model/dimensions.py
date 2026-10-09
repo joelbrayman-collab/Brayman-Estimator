@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Any, Mapping, Optional
 
 from app.services.construction_model.annotations import wrap_text
-from app.services.construction_model.model import coordinate_axis, format_measure
+from app.services.construction_model.model import coordinate_axis, format_measure, is_number
 
 _YOU_NEED = "You need to provide this information."
 CHAIN_KINDS = frozenset({"station", "point_to_point", "member_length", "overall", "level"})
@@ -55,13 +55,26 @@ def _resolve(chain, elements, levels, system, notes) -> dict:
     references = list(chain["references"])
     if kind == "level":
         level = levels[references[0]]
+        elevation = level.get("elevation")
+        if not is_number(elevation):
+            refused = {
+                "refused": True,
+                "value": None,
+                "units": None,
+                "measurement_system": None,
+                "display": None,
+                "source_id": level["id"],
+                "uncertainty": (),
+                "message": f"{_YOU_NEED} The elevation of level {level['id']}.",
+            }
+            return _chain(chain, (), refused)
         unit = "ft" if system == "imperial" else "m"
         measured = {
             "refused": False,
-            "value": level["elevation"],
+            "value": elevation,
             "units": unit,
             "measurement_system": system,
-            "display": format_measure(level["elevation"], system, unit),
+            "display": format_measure(elevation, system, unit),
             "source_id": level["id"],
             "uncertainty": _notes_for(notes, [level["id"]]),
         }

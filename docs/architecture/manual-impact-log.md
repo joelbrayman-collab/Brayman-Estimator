@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Unknown level elevation (2026-10-09)
+
+| Field | Content |
+|-------|---------|
+| Slice | A named deck level can be saved when the elevation is not known. |
+| Product status at capture | Implemented and tested on isolated data. Not deployed. Checklist step 8 stays open. The V1 register was not rescored. |
+| 1. What new contractor capability exists? | The contractor can name a level, leave the elevation blank, save, and see that the elevation is still unknown. A later save can enter the number. |
+| 2. When would the contractor use it? | When the deck has an upper and a lower level and the height above a known datum is not yet established. |
+| 3. What workflow will the final Manual need to teach? | Add the level. Leave the elevation blank when it is unknown. Save. Reopen and confirm the elevation is still blank. Enter the elevation only when it is known, then save a new revision. |
+| 4. What contractor-facing terms must be used? | Level name. Elevation. Missing facts. Unknown. Zero is a known elevation. |
+| 5. What screenshots / Print examples will eventually be needed? | Two levels with blank elevations, then the same levels after one elevation has been entered on a later revision. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | Blank is unknown. Zero is a real elevation. A member count can still be offered. A height that depends on the elevation cannot. A height above grade is not automatically the stored elevation. |
+| 7. Desktop / iPhone / Print relevance | Office project page on desktop. Not a Field or iPhone change. Print is unchanged because this page does not create an estimate line. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Add a member group and a level (2026-10-09)
 
 | Field | Content |

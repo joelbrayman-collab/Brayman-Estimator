@@ -245,10 +245,11 @@ def _provenance_is_office(value):
 
 
 def _level_row(level):
+    elevation = level.get("elevation") if "elevation" in level else None
     return {
         "id": level.get("id") or "",
         "name": level.get("name") or "",
-        "elevation": _show_number(level.get("elevation")),
+        "elevation": "" if elevation is None else _show_number(elevation),
     }
 
 
@@ -319,18 +320,15 @@ def _levels(rows, provenance):
             errors.append("Enter the level name.")
             continue
         elevation_text = _text(row.get("elevation"))
-        if not elevation_text:
-            errors.append(
-                f"Enter the elevation for {name}. A missing elevation is not saved."
+        elevation = None
+        if elevation_text:
+            elevation, elevation_error = _required_number(
+                elevation_text,
+                f"Enter a numeric elevation for {name}.",
             )
-            continue
-        elevation, elevation_error = _required_number(
-            elevation_text,
-            f"Enter a numeric elevation for {name}.",
-        )
-        if elevation_error:
-            errors.append(elevation_error)
-            continue
+            if elevation_error:
+                errors.append(elevation_error)
+                continue
         level_id = _text(row.get("id"))
         if not _LEVEL_ID.match(level_id):
             level_id = "level-" + secrets.token_hex(4)
@@ -338,14 +336,14 @@ def _levels(rows, provenance):
             errors.append("Each level needs its own identity.")
             continue
         seen.add(level_id)
-        built.append(
-            {
-                "id": level_id,
-                "name": name,
-                "elevation": elevation,
-                "provenance": dict(provenance),
-            }
-        )
+        recorded = {
+            "id": level_id,
+            "name": name,
+            "provenance": dict(provenance),
+        }
+        if elevation is not None:
+            recorded["elevation"] = elevation
+        built.append(recorded)
     return built, errors
 
 

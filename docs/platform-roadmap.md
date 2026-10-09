@@ -7,6 +7,8 @@
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
+**9 Oct 2026 unknown level elevation.** Checklist step 8 stays **OPEN**. A named level can be saved without an elevation. The missing number is not zero. The V1 register was not rescored. Not deployed.
+
 **9 Oct 2026 member groups and deck levels.** Checklist step 8 stays **OPEN**. The construction page can add member groups and levels. The V1 register was not rescored. Not deployed.
 
 **9 Oct 2026 contractor construction information.** Checklist step 8 stays **OPEN**. The project page can save a deck as the next project-owned revision. A blank length stays missing. Add from calculation and confirmation are unchanged. Official V1 remains **65% / 4 of 11**. Not rescored. Not deployed.

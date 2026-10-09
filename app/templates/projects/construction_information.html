@@ -15,7 +15,7 @@
 </div>
 
 <section class="form-panel">
-    <p>This page records a deck. Enter the facts you know. Add a level for each deck level, and add a member group for each role, size, and length. A blank length stays missing. A blank elevation is not saved as zero. A member group is not assigned to a level on this page. This page does not add an estimate line, and it does not price the work.</p>
+    <p>This page records a deck. Enter the facts you know. Add a level for each deck level, and add a member group for each role, size, and length. A blank length stays missing. A blank elevation stays unknown and is not saved as zero. A member group is not assigned to a level on this page. This page does not add an estimate line, and it does not price the work.</p>
     {% if revision %}
     <p>Model revision {{ revision.revision_number }}</p>
     {% endif %}
@@ -53,7 +53,7 @@
             {% endfor %}
         </select>
         <h2>Levels</h2>
-        <p class="muted-copy">Elevation is in feet on an imperial deck and in metres on a metric deck. Leave it blank when you do not know it.</p>
+        <p class="muted-copy">Elevation is in feet on an imperial deck and in metres on a metric deck. Leave it blank when you do not know it. Blank is unknown. Zero is a known elevation.</p>
         {% for row in form.levels %}
         <input type="hidden" name="level_id_{{ loop.index0 }}" value="{{ row.id }}">
         <label for="level_name_{{ loop.index0 }}">Level name</label>

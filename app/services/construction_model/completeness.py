@@ -191,7 +191,8 @@ def _annotate_measures(model: dict) -> None:
     default_unit = "ft" if system == "imperial" else "m"
     for level in model["levels"]:
         level["measurement_system"] = system
-        level["display"] = format_measure(level["elevation"], system, default_unit)
+        if is_number(level.get("elevation")):
+            level["display"] = format_measure(level["elevation"], system, default_unit)
     for member in model.get("members") or []:
         length = member.get("length")
         if length:
@@ -283,28 +284,33 @@ def _levels(value: Any):
         seen.add(identifier)
         if name is None:
             issues.append(_need(CODE_MISSING_FACT, f"levels[{identifier}].name", f"A name for level {identifier}"))
-        elevation = item.get("elevation")
-        if not is_number(elevation):
+        elevation = item.get("elevation") if "elevation" in item else None
+        if elevation is None:
+            known_elevation = None
+        elif is_number(elevation):
+            known_elevation = elevation
+        else:
+            known_elevation = None
             issues.append(
                 _need(
-                    CODE_MISSING_FACT,
+                    CODE_INVALID_FACT,
                     f"levels[{identifier}].elevation",
-                    f"The elevation of level {identifier}",
+                    f"A numeric elevation for level {identifier}",
                 )
             )
         provenance, provenance_issue = _provenance(item.get("provenance"), f"levels[{identifier}].provenance", f"level {identifier}")
         if provenance_issue is not None:
             issues.append(provenance_issue)
-        if name is None or not is_number(elevation) or provenance is None:
+        if name is None or provenance is None or ("elevation" in item and not is_number(elevation) and elevation is not None):
             continue
-        parsed.append(
-            {
-                "id": identifier,
-                "name": name,
-                "elevation": elevation,
-                "provenance": provenance,
-            }
-        )
+        recorded = {
+            "id": identifier,
+            "name": name,
+            "provenance": provenance,
+        }
+        if known_elevation is not None:
+            recorded["elevation"] = known_elevation
+        parsed.append(recorded)
     return parsed, issues
 
 

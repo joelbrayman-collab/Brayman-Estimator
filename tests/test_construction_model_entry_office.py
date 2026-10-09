@@ -388,10 +388,12 @@ def _joist_groups():
     form["member_length_8"] = "3"
     form["member_length_unit_8"] = "ft"
     form["member_count_8"] = "9"
+    form["level_id_0"] = "level-upper"
     form["level_name_0"] = "Upper deck"
-    form["level_elevation_0"] = "3"
+    form["level_elevation_0"] = ""
+    form["level_id_1"] = "level-lower"
     form["level_name_1"] = "Lower deck"
-    form["level_elevation_1"] = "1"
+    form["level_elevation_1"] = ""
     return form
 
 
@@ -427,7 +429,7 @@ def test_nine_joist_groups_and_two_levels_reopen_without_truncation(client, app)
             "Upper deck",
             "Lower deck",
         ]
-        assert row.content_json["levels"][1]["elevation"] == 1
+        assert all("elevation" not in level for level in row.content_json["levels"])
         joists = [item for item in row.content_json["members"] if item["role"] == "joist"]
         assert len(joists) == 25
         groups = read_stored_member_quantities(copy.deepcopy(row.content_json))
@@ -440,20 +442,142 @@ def test_nine_joist_groups_and_two_levels_reopen_without_truncation(client, app)
     assert listed.data.count(b"Offer this count") == 9
 
 
-def test_a_blank_elevation_is_not_saved_as_zero(client, app):
+def test_unknown_elevation_is_saved_reopened_and_supplied_later(client, app):
     with app.app_context():
-        project = _project("Missing elevation")
+        project = _project("Unknown elevation")
         project_id = project.id
+    saved = client.post(
+        f"/projects/{project_id}/construction",
+        data=_entry(level_name="Upper deck", level_elevation=""),
+        follow_redirects=True,
+    )
+    assert saved.status_code == 200
+    assert b"Missing facts: Elevation" in saved.data
+    with app.app_context():
+        first = ProjectConstructionModelRevision.query.one()
+        assert "elevation" not in first.content_json["levels"][0]
+        assert first.content_json["levels"][0].get("elevation") != 0
+        from app.services.construction_model_entry import entry_from_model
+
+        entry = entry_from_model(first.content_json)
+        assert entry["levels"][0]["elevation"] == ""
+        again = {
+            "project_document_status": entry["project_document_status"],
+            "measurement_system": entry["measurement_system"],
+            "level_id_0": entry["levels"][0]["id"],
+            "level_name_0": entry["levels"][0]["name"],
+            "level_elevation_0": "4",
+            "support_kind_0": entry["supports"][0]["kind"],
+            "support_count_0": entry["supports"][0]["count"],
+        }
+        for index, member in enumerate(entry["members"]):
+            again[f"member_token_{index}"] = member["token"]
+            again[f"member_role_{index}"] = member["role"]
+            again[f"member_size_{index}"] = member["member_size"]
+            again[f"member_length_{index}"] = member["length"]
+            again[f"member_length_unit_{index}"] = member["length_unit"]
+            again[f"member_count_{index}"] = member["count"]
+        first_id = first.id
+        first_hash = first.content_sha256
+    client.post(f"/projects/{project_id}/construction", data=again, follow_redirects=True)
+    with app.app_context():
+        assert ProjectConstructionModelRevision.query.count() == 2
+        kept = load_revision(
+            organization_id=DEFAULT_ORGANIZATION_ID,
+            project_id=project_id,
+            revision_id=first_id,
+        )
+        assert "elevation" not in kept.content_json["levels"][0]
+        assert kept.content_sha256 == first_hash
+        current = ProjectConstructionModelRevision.query.filter_by(revision_number=2).one()
+        assert current.content_json["levels"][0]["elevation"] == 4
+
+
+def test_zero_is_a_known_elevation_and_bad_text_is_refused(client, app):
+    with app.app_context():
+        project = _project("Known zero")
+        project_id = project.id
+    client.post(f"/projects/{project_id}/construction", data=_entry(), follow_redirects=True)
+    with app.app_context():
+        stored = ProjectConstructionModelRevision.query.one().content_json["levels"][0]
+        assert stored["elevation"] == 0
+        metric = _project("Metric elevation")
+        metric_id = metric.id
+    metric_page = client.post(
+        f"/projects/{metric_id}/construction",
+        data=_entry(
+            measurement_system="metric",
+            level_elevation="2.5",
+            member_length_0="3",
+            member_length_unit_0="m",
+        ),
+        follow_redirects=True,
+    )
+    assert b"(m)" in metric_page.data
+    assert b'value="2.5"' in metric_page.data
+    with app.app_context():
+        metric_level = ProjectConstructionModelRevision.query.filter_by(project_id=metric_id).one()
+        assert metric_level.content_json["levels"][0]["elevation"] == 2.5
+        assert metric_level.content_json["measurement_system"] == "metric"
     refused = client.post(
         f"/projects/{project_id}/construction",
-        data=_entry(level_name_0="Upper deck", level_elevation_0="", level_id_0=""),
+        data=_entry(level_elevation="12 in"),
         follow_redirects=False,
     )
     assert refused.status_code == 400
-    assert b"missing elevation is not saved" in refused.data
-    assert b'name="level_elevation_0"' in refused.data
+    assert b"numeric elevation" in refused.data
     with app.app_context():
-        assert ProjectConstructionModelRevision.query.count() == 0
+        assert ProjectConstructionModelRevision.query.filter_by(project_id=project_id).count() == 1
+
+
+def test_a_level_height_chain_refuses_an_unknown_elevation():
+    from app.services.construction_model.completeness import assess_construction_model
+    from app.services.construction_model.dimensions import resolve_dimension_chains
+    from app.services.construction_model.projection import project_model_views
+
+    provenance = {"source": "project_input", "reference": "Office construction information"}
+    model = {
+        "structure_class": "deck",
+        "project_document_status": "preliminary_construction_drawing",
+        "measurement_system": "imperial",
+        "levels": [{"id": "level-upper", "name": "Upper deck", "provenance": dict(provenance)}],
+        "members": [
+            {
+                "id": "gabcdef12-1",
+                "role": "joist",
+                "member_size": "2x8",
+                "length": {"value": 12, "unit": "ft", "derived": False, "provenance": dict(provenance)},
+                "provenance": dict(provenance),
+            }
+        ],
+        "supports": [{"id": "support-pier-1", "kind": "pier", "provenance": dict(provenance)}],
+        "dimension_chains": [
+            {
+                "id": "upper-height",
+                "axis": "z",
+                "kind": "level",
+                "references": ["level-upper"],
+                "provenance": dict(provenance),
+            }
+        ],
+    }
+    assessment = assess_construction_model(copy.deepcopy(model))
+    assert assessment.generation_permitted is True
+    assert "elevation" not in assessment.accepted["levels"][0]
+    groups = read_stored_member_quantities(copy.deepcopy(model))
+    assert groups[0]["quantity"] == 1
+    assert groups[0]["missing_fact"] == ""
+    resolved = resolve_dimension_chains(assessment.accepted)
+    assert resolved[0]["overall"]["refused"] is True
+    assert resolved[0]["overall"]["value"] is None
+    projected = project_model_views(model)
+    assert "elevation" not in projected.plan.levels[0]
+    known = copy.deepcopy(model)
+    known["levels"][0]["elevation"] = 0
+    known_assessment = assess_construction_model(known)
+    known_chain = resolve_dimension_chains(known_assessment.accepted)
+    assert known_chain[0]["overall"]["refused"] is False
+    assert known_chain[0]["overall"]["value"] == 0
 
 
 def test_distinct_groups_keep_their_own_identity(client, app):

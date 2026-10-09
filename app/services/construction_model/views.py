@@ -525,7 +525,7 @@ def _schedule(model: Mapping[str, Any]) -> ScheduleRead:
         {
             "id": item["id"],
             "name": item["name"],
-            "elevation": item["elevation"],
+            "elevation": item.get("elevation") if is_number(item.get("elevation")) else None,
             "display": item.get("display"),
         }
         for item in model.get("levels") or []

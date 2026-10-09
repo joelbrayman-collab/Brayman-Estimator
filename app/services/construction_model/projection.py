@@ -366,9 +366,10 @@ def _copy_level(level: Mapping[str, Any]) -> dict:
     copied = {
         "id": level["id"],
         "name": level["name"],
-        "elevation": level["elevation"],
         "provenance": dict(level["provenance"]),
     }
+    if is_number(level.get("elevation")):
+        copied["elevation"] = level["elevation"]
     if level.get("display") is not None:
         copied["display"] = level["display"]
     return copied

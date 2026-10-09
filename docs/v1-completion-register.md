@@ -8,6 +8,8 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-10-09 unknown level elevation):** No package was added or closed. The register was not rescored. Checklist step 8 stays open. The dynamic member and level entry is accepted as a repository slice. A level elevation may be unknown. It is not stored as zero.
+
 **Subsequent status (2026-10-09 member groups and deck levels):** No package was added or closed. The register was not rescored. Checklist step 8 stays open. The construction page can save more than one level and more than eight member groups through the existing model lists.
 
 **Subsequent status (2026-10-09 contractor construction information):** No package was added or closed. Official readiness remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Checklist step 8 stays open. A contractor can save the first project-owned deck model from the project page. A later save adds a revision. The existing confirmation still creates one ordinary line. This note does not rescore V1 and does not authorize a hosted or Mac migration.

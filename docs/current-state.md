@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Unknown level elevation
+
+The dynamic member-group and multiple-level entry is accepted as a repository slice. A named level can now be saved with no elevation. The missing number stays missing and is not stored as zero. Reopening the level still shows the elevation as unknown. A later revision can supply the number and leaves the earlier revision unchanged. A member count is still offered when the member facts are complete. A level-height chain refuses the level until the elevation is known. The Linda Bushel upper deck is saved without an invented elevation. The stated 12 in lower walking surface is above grade; grade is not a stored datum, and the dressed stack is 17.50 in, so that 12 in is not stored as the level elevation either. Checklist step 8 stays **OPEN**. The V1 register was not rescored. Not deployed. Not live-verified. Not product-accepted.
+
 ## 9 Oct 2026 — Member groups and deck levels
 
 The construction-information page can add a member group and add a level. Each group keeps its own identity when it is saved again. A blank elevation is refused and is not stored as zero. A blank member length stays missing. The page does not assign a member to a level. Nine joist groups from the Linda Bushel J1 lengths, including the 3 ft lower joists, can be saved and reopened with two named levels. The quantity path is unchanged. Checklist step 8 stays **OPEN**. The V1 register was not rescored. Not deployed. Not live-verified. Not product-accepted.

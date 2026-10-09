@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Unknown level elevation
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Let a named deck level be saved when its elevation is not yet known. |
+| Business decision | ChatGPT accepted the dynamic member-group and multiple-level slice as a repository slice. A blank elevation stays unknown. It is not stored as zero. A later revision can supply the number. The 12 in lower walking surface is above grade and is not stored as the level elevation, because grade is not a stored datum and the dressed stack is 17.50 in. Checklist step 8 stays OPEN. The V1 register was not rescored. |
+| Architectural decision | An unknown elevation is an omitted number, the same way an unknown member length is omitted. The model still stores the level id and name. A level-height chain refuses that level. A member count does not. No new field and no new table. |
+| Prompt template used | Authorized focused implementation prompt dated 9 October 2026. Migration and deployment were not authorized. |
+| Approved Cursor prompt summary | Save a level with an unknown elevation. Do not use 3 ft for the Linda Bushel upper deck. Do not invent the lower elevation. Keep member counts available. Refuse a height calculation that needs the missing elevation. Do not close Step 8, start Step 9, or deploy. |
+| Files expected to change | The construction-model assessment, the level-height chain, the office entry, tests, and the status records. |
+| Files prohibited from changing | Linda Bushel, Geleynse, and review case files. Hosted and Mac databases. |
+| Implementation result | IMPLEMENTED and TESTED on isolated databases. Unknown elevation reopens as unknown. Revision 1 stays unchanged when revision 2 supplies a number. Not deployed. Not live-verified. Not product-accepted. |
+| Tests | Focused: `./venv/bin/python -m pytest -q tests/test_construction_model_entry_office.py tests/test_project_construction_model_office.py tests/test_member_count_mapper_confirmation.py tests/test_icf_governed_estimate_path.py tests/test_estimate_costing_fg027.py tests/test_project_work_packages.py` — 57 passed, 306 warnings, 24.97s, exit 0. Full regression: `./venv/bin/python -m pytest -q` — 2298 passed, 11 skipped, 7148 warnings, 1205.57s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Checklist step 8 stays open. Geometry, helical piers, and which level a member belongs to remain outside this page. The 12 in walking surface is not an absolute elevation. |
+| Next approved step | ChatGPT reviews this correction. Do not migrate a real database and do not deploy from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Dynamic member groups and deck levels
 
 | Field | Content |

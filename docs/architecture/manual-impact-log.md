@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Add a member group and a level (2026-10-09)
+
+| Field | Content |
+|-------|---------|
+| Slice | The construction page can add member groups and deck levels. |
+| Product status at capture | Implemented and tested on isolated data. Not deployed. Checklist step 8 stays open. The V1 register was not rescored. |
+| 1. What new contractor capability exists? | The contractor can add a member group, remove an unsaved group, add a deck level, and save those facts as the next revision. |
+| 2. When would the contractor use it? | When one deck has more than one level, or more member groups than the first form could hold, such as the separate joist lengths on a real deck. |
+| 3. What workflow will the final Manual need to teach? | Add a level for the upper deck and the lower deck. Enter an elevation only when it is known. Add a member group for each different length. Save, reopen, and check that each group is still there. |
+| 4. What contractor-facing terms must be used? | Add a level. Remove this level. Level name. Elevation. Add a member group. Remove this group. Member role. Member size. Length. Known count. Missing facts. |
+| 5. What screenshots / Print examples will eventually be needed? | A page with two levels and more than eight member groups, including one blank elevation that was not saved. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | A blank elevation is not stored as zero. A blank length stays missing and cannot be offered. Two groups with the same role and length stay separate on this page. Add from calculation still shows one count when those members match. A member is not assigned to a level here. |
+| 7. Desktop / iPhone / Print relevance | Office project page on desktop. Not a Field or iPhone change. Print is unchanged because this page does not create an estimate line. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Enter construction information (2026-10-09)
 
 | Field | Content |

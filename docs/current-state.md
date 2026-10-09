@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Member groups and deck levels
+
+The construction-information page can add a member group and add a level. Each group keeps its own identity when it is saved again. A blank elevation is refused and is not stored as zero. A blank member length stays missing. The page does not assign a member to a level. Nine joist groups from the Linda Bushel J1 lengths, including the 3 ft lower joists, can be saved and reopened with two named levels. The quantity path is unchanged. Checklist step 8 stays **OPEN**. The V1 register was not rescored. Not deployed. Not live-verified. Not product-accepted.
+
 ## 9 Oct 2026 — Contractor construction information
 
 From the project, Enter construction information records a deck: drawing status, measurement system, one level, members, and supports. A blank length stays missing. The first save stores revision 1 through `save_construction_model_revision`. A later save stores the next revision and leaves the earlier revision unchanged. A stored model that already has geometry or other facts this page does not edit stays read-only. Saving does not create an estimate line. Add from calculation still reads the current revision, and one eligible group can be offered and confirmed onto one ordinary line. A later revision does not change a confirmed line. The form holds eight member rows and four support rows. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Not deployed. Not live-verified. Not product-accepted.

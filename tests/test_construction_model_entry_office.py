@@ -361,3 +361,199 @@ def test_confirmation_creates_one_line_and_a_later_revision_leaves_it(client, ap
         kept = EstimateLineItem.query.get(line_id)
         assert kept.quantity == line_quantity
         assert EstimateLineItem.query.count() == 1
+
+
+J1_UPPER_JOIST_LENGTHS = (
+    "10.092",
+    "9.572",
+    "7.985",
+    "6.883",
+    "6.094",
+    "5.543",
+    "5.192",
+    "5.021",
+)
+
+
+def _joist_groups():
+    form = _entry(member_role_1="", member_size_1="", member_length_1="", member_count_1="")
+    for index, length in enumerate(J1_UPPER_JOIST_LENGTHS):
+        form[f"member_role_{index}"] = "joist"
+        form[f"member_size_{index}"] = "2x8"
+        form[f"member_length_{index}"] = length
+        form[f"member_length_unit_{index}"] = "ft"
+        form[f"member_count_{index}"] = "2"
+    form["member_role_8"] = "joist"
+    form["member_size_8"] = "2x8"
+    form["member_length_8"] = "3"
+    form["member_length_unit_8"] = "ft"
+    form["member_count_8"] = "9"
+    form["level_name_0"] = "Upper deck"
+    form["level_elevation_0"] = "3"
+    form["level_name_1"] = "Lower deck"
+    form["level_elevation_1"] = "1"
+    return form
+
+
+def test_nine_joist_groups_and_two_levels_reopen_without_truncation(client, app):
+    with app.app_context():
+        project = _project("J1 joists")
+        project_id = project.id
+        estimate = create_estimate(
+            project_id=project.id,
+            estimate_number="J1-JOISTS",
+            title="J1 joists",
+            organization_id=project.organization_id,
+        )
+        estimate_id = estimate.id
+        version_id = estimate.current_version_id
+
+    saved = client.post(
+        f"/projects/{project_id}/construction",
+        data=_joist_groups(),
+        follow_redirects=True,
+    )
+    assert saved.status_code == 200
+    assert b"Upper deck" in saved.data
+    assert b"Lower deck" in saved.data
+    for length in J1_UPPER_JOIST_LENGTHS:
+        assert length.encode() in saved.data
+    assert b'value="3"' in saved.data
+    assert b'value="9"' in saved.data
+    with app.app_context():
+        row = ProjectConstructionModelRevision.query.one()
+        assert row.revision_number == 1
+        assert [level["name"] for level in row.content_json["levels"]] == [
+            "Upper deck",
+            "Lower deck",
+        ]
+        assert row.content_json["levels"][1]["elevation"] == 1
+        joists = [item for item in row.content_json["members"] if item["role"] == "joist"]
+        assert len(joists) == 25
+        groups = read_stored_member_quantities(copy.deepcopy(row.content_json))
+        joist_groups = [group for group in groups if group["role"] == "joist"]
+        assert len(joist_groups) == 9
+        for member in joists:
+            assert "level" not in member
+
+    listed = client.get(f"/estimates/{estimate_id}/versions/{version_id}/calculations")
+    assert listed.data.count(b"Offer this count") == 9
+
+
+def test_a_blank_elevation_is_not_saved_as_zero(client, app):
+    with app.app_context():
+        project = _project("Missing elevation")
+        project_id = project.id
+    refused = client.post(
+        f"/projects/{project_id}/construction",
+        data=_entry(level_name_0="Upper deck", level_elevation_0="", level_id_0=""),
+        follow_redirects=False,
+    )
+    assert refused.status_code == 400
+    assert b"missing elevation is not saved" in refused.data
+    assert b'name="level_elevation_0"' in refused.data
+    with app.app_context():
+        assert ProjectConstructionModelRevision.query.count() == 0
+
+
+def test_distinct_groups_keep_their_own_identity(client, app):
+    with app.app_context():
+        project = _project("Distinct groups")
+        project_id = project.id
+    form = _entry(
+        member_role_1="joist",
+        member_size_1="2x8",
+        member_length_1="12",
+        member_length_unit_1="ft",
+        member_count_1="1",
+        member_count_0="1",
+    )
+    client.post(f"/projects/{project_id}/construction", data=form, follow_redirects=True)
+    with app.app_context():
+        content = ProjectConstructionModelRevision.query.one().content_json
+        from app.services.construction_model_entry import entry_from_model
+
+        entry = entry_from_model(content)
+        assert len(entry["members"]) == 2
+        assert entry["members"][0]["count"] == "1"
+        assert entry["members"][1]["count"] == "1"
+        assert entry["members"][0]["token"] != entry["members"][1]["token"]
+        assert len(content["members"]) == 2
+        grouped = read_stored_member_quantities(copy.deepcopy(content))
+        assert len(grouped) == 1
+        assert grouped[0]["quantity"] == 2
+
+
+def test_the_same_group_keeps_its_member_ids_on_the_next_revision(client, app):
+    with app.app_context():
+        project = _project("Stable members")
+        project_id = project.id
+    client.post(f"/projects/{project_id}/construction", data=_entry(), follow_redirects=True)
+    with app.app_context():
+        first = ProjectConstructionModelRevision.query.one()
+        first_ids = [item["id"] for item in first.content_json["members"]]
+        from app.services.construction_model_entry import entry_from_model
+
+        entry = entry_from_model(first.content_json)
+        again = {
+            "project_document_status": entry["project_document_status"],
+            "measurement_system": entry["measurement_system"],
+            "support_kind_0": entry["supports"][0]["kind"],
+            "support_count_0": entry["supports"][0]["count"],
+        }
+        for index, level in enumerate(entry["levels"]):
+            again[f"level_id_{index}"] = level["id"]
+            again[f"level_name_{index}"] = level["name"]
+            again[f"level_elevation_{index}"] = level["elevation"]
+        for index, member in enumerate(entry["members"]):
+            again[f"member_token_{index}"] = member["token"]
+            again[f"member_role_{index}"] = member["role"]
+            again[f"member_size_{index}"] = member["member_size"]
+            again[f"member_length_{index}"] = member["length"]
+            again[f"member_length_unit_{index}"] = member["length_unit"]
+            again[f"member_count_{index}"] = member["count"]
+        first_hash = first.content_sha256
+        first_id = first.id
+    client.post(f"/projects/{project_id}/construction", data=again, follow_redirects=True)
+    with app.app_context():
+        assert ProjectConstructionModelRevision.query.count() == 2
+        kept = load_revision(
+            organization_id=DEFAULT_ORGANIZATION_ID,
+            project_id=project_id,
+            revision_id=first_id,
+        )
+        assert [item["id"] for item in kept.content_json["members"]] == first_ids
+        assert kept.content_sha256 == first_hash
+        current = ProjectConstructionModelRevision.query.filter_by(revision_number=2).one()
+        assert [item["id"] for item in current.content_json["members"]] == first_ids
+
+
+def test_adding_a_group_does_not_save_and_a_huge_request_is_refused(client, app):
+    with app.app_context():
+        project = _project("Row actions")
+        project_id = project.id
+    added = client.post(
+        f"/projects/{project_id}/construction",
+        data={**_entry(), "form_action": "add_member"},
+        follow_redirects=False,
+    )
+    assert added.status_code == 200
+    assert b'name="member_role_2"' in added.data
+    removed = client.post(
+        f"/projects/{project_id}/construction",
+        data={**_entry(), "form_action": "remove_member_1"},
+        follow_redirects=False,
+    )
+    assert removed.status_code == 200
+    assert b'name="member_role_1"' not in removed.data
+    with app.app_context():
+        assert ProjectConstructionModelRevision.query.count() == 0
+    refused = client.post(
+        f"/projects/{project_id}/construction",
+        data={**_entry(), "member_role_200": "joist"},
+        follow_redirects=False,
+    )
+    assert refused.status_code == 400
+    assert b"cannot be read in one request" in refused.data
+    with app.app_context():
+        assert ProjectConstructionModelRevision.query.count() == 0

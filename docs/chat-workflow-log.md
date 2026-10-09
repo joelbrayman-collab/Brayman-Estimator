@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Dynamic member groups and deck levels
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Let the contractor add member groups and deck levels on the existing construction-information page. |
+| Business decision | A member group is one role, size, length, and count. A second group stays separate. A level stores its name and a known elevation. A blank elevation is not saved as zero. Members are not assigned to a level. Checklist step 8 stays OPEN. The V1 register was not rescored. |
+| Architectural decision | The form writes the existing member list and level list. A group token in the member id keeps that group stable across a later revision. Older office ids stay grouped by role, size, and length. The quantity reader still combines equivalent members. No new schema and no new table. |
+| Prompt template used | Authorized focused implementation prompt dated 9 October 2026. Migration and deployment were not authorized. |
+| Approved Cursor prompt summary | Replace the eight-row member limit and the single-level limit. Keep server validation. Do not invent an elevation. Do not merge distinct groups. Prove the nine J1 joist lengths and two deck levels. Do not close Step 8, start Step 9, or deploy. |
+| Files expected to change | The office entry service, the project route and template, tests, and the status records. |
+| Files prohibited from changing | Linda Bushel, Geleynse, and review case files. The construction-model schema. The mapper. Hosted and Mac databases. |
+| Implementation result | IMPLEMENTED and TESTED on isolated databases. Nine joist groups and two levels reopen. A blank elevation creates no revision. Not deployed. Not live-verified. Not product-accepted. |
+| Tests | Focused: `./venv/bin/python -m pytest -q tests/test_construction_model_entry_office.py tests/test_project_construction_model_office.py tests/test_member_count_mapper_confirmation.py tests/test_icf_governed_estimate_path.py tests/test_estimate_costing_fg027.py tests/test_project_work_packages.py` — 55 passed, 300 warnings, 23.05s, exit 0. Full regression: `./venv/bin/python -m pytest -q` — 2296 passed, 11 skipped, 7142 warnings, 1190.67s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. A level cannot store a missing elevation. The existing assessment requires a number, so the page refuses the save. |
+| Unresolved issues | Checklist step 8 stays open. Geometry, helical piers, and the decking cut list are still outside this page. The estimate version page still does not link to Add from calculation. A request of more than 200 rows is refused. That is a request guard, not a construction maximum. |
+| Next approved step | ChatGPT reviews this correction. Do not migrate a real database and do not deploy from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Contractor construction-model entry
 
 | Field | Content |

@@ -1,6 +1,7 @@
 """Office entry for project-owned construction information."""
 
 import copy
+import re
 
 from flask import flash, redirect, render_template, request, url_for
 
@@ -12,13 +13,16 @@ from app.services.construction_model.views import read_stored_member_quantities
 from app.services.construction_model_entry import (
     DOCUMENT_STATUS_CHOICES,
     MEASUREMENT_CHOICES,
-    MEMBER_ROW_COUNT,
+    REQUEST_ROW_GUARD,
     ROLE_CHOICES,
     SUPPORT_CHOICES,
     SUPPORT_ROW_COUNT,
     current_revision_for_project,
+    elevation_unit_label,
     empty_entry,
     entry_from_model,
+    new_level_row,
+    new_member_row,
     save_office_revision,
 )
 from app.services.organizations import get_current_organization_id
@@ -30,27 +34,105 @@ def _project_or_404(project_id):
     return org_id, project
 
 
+def _indexes(*patterns):
+    found = set()
+    compiled = [re.compile(pattern) for pattern in patterns]
+    for key in request.form:
+        for pattern in compiled:
+            match = pattern.match(key)
+            if match:
+                found.add(int(match.group(1)))
+    return sorted(found)
+
+
+def _over_request_guard(indexes):
+    return len(indexes) > REQUEST_ROW_GUARD or any(index >= REQUEST_ROW_GUARD for index in indexes)
+
+
 def _posted_entry():
+    """Read the posted rows. Return the form, or None when the request is too large."""
     form = empty_entry()
     form["project_document_status"] = request.form.get("project_document_status") or ""
     form["measurement_system"] = request.form.get("measurement_system") or ""
-    form["level_id"] = request.form.get("level_id") or "level-1"
-    form["level_name"] = request.form.get("level_name") or ""
-    form["level_elevation"] = request.form.get("level_elevation") or ""
-    for index in range(MEMBER_ROW_COUNT):
-        form["members"][index] = {
-            "role": request.form.get(f"member_role_{index}") or "",
-            "member_size": request.form.get(f"member_size_{index}") or "",
-            "length": request.form.get(f"member_length_{index}") or "",
-            "length_unit": request.form.get(f"member_length_unit_{index}") or "",
-            "count": request.form.get(f"member_count_{index}") or "",
-        }
+    level_indexes = _indexes(
+        r"^level_id_(\d+)$",
+        r"^level_name_(\d+)$",
+        r"^level_elevation_(\d+)$",
+    )
+    member_indexes = _indexes(
+        r"^member_token_(\d+)$",
+        r"^member_role_(\d+)$",
+        r"^member_size_(\d+)$",
+        r"^member_length_(\d+)$",
+        r"^member_length_unit_(\d+)$",
+        r"^member_count_(\d+)$",
+    )
+    if _over_request_guard(level_indexes) or _over_request_guard(member_indexes):
+        return None
+    if level_indexes:
+        form["levels"] = [
+            {
+                "id": request.form.get(f"level_id_{index}") or "",
+                "name": request.form.get(f"level_name_{index}") or "",
+                "elevation": request.form.get(f"level_elevation_{index}") or "",
+            }
+            for index in level_indexes
+        ]
+    elif any(key in request.form for key in ("level_id", "level_name", "level_elevation")):
+        form["levels"] = [
+            {
+                "id": request.form.get("level_id") or "level-1",
+                "name": request.form.get("level_name") or "",
+                "elevation": request.form.get("level_elevation") or "",
+            }
+        ]
+    if member_indexes:
+        form["members"] = [
+            {
+                "token": request.form.get(f"member_token_{index}") or "",
+                "role": request.form.get(f"member_role_{index}") or "",
+                "member_size": request.form.get(f"member_size_{index}") or "",
+                "length": request.form.get(f"member_length_{index}") or "",
+                "length_unit": request.form.get(f"member_length_unit_{index}") or "",
+                "count": request.form.get(f"member_count_{index}") or "",
+            }
+            for index in member_indexes
+        ]
     for index in range(SUPPORT_ROW_COUNT):
         form["supports"][index] = {
             "kind": request.form.get(f"support_kind_{index}") or "",
             "count": request.form.get(f"support_count_{index}") or "",
         }
     return form
+
+
+def _apply_row_action(form):
+    """Add or remove a row without saving a revision."""
+    action = request.form.get("form_action") or "save"
+    if action == "add_level":
+        form["levels"].append(new_level_row())
+        return True
+    if action == "add_member":
+        form["members"].append(new_member_row())
+        return True
+    if action.startswith("remove_level_"):
+        _drop_row(form["levels"], action, "remove_level_", new_level_row())
+        return True
+    if action.startswith("remove_member_"):
+        _drop_row(form["members"], action, "remove_member_", new_member_row())
+        return True
+    return False
+
+
+def _drop_row(rows, action, prefix, blank):
+    suffix = action[len(prefix):]
+    if not suffix.isdigit():
+        return
+    index = int(suffix)
+    if 0 <= index < len(rows):
+        del rows[index]
+    if not rows:
+        rows.append(blank)
 
 
 def _calculation_links(organization_id, project_id):
@@ -104,18 +186,24 @@ def construction_information(id):
             form = empty_entry()
         else:
             form = _posted_entry()
-            saved, errors = save_office_revision(
-                organization_id=org_id,
-                project_id=project.id,
-                form=form,
-                actor_display_name=form_actor("actor"),
-            )
-            if saved is not None:
-                flash(
-                    f"Construction information was saved as revision {saved.revision_number}.",
-                    "success",
+            if form is None:
+                errors = ["That many rows cannot be read in one request."]
+                form = stored_entry or empty_entry()
+            elif _apply_row_action(form):
+                errors = []
+            else:
+                saved, errors = save_office_revision(
+                    organization_id=org_id,
+                    project_id=project.id,
+                    form=form,
+                    actor_display_name=form_actor("actor"),
                 )
-                return redirect(url_for("projects.construction_information", id=project.id))
+                if saved is not None:
+                    flash(
+                        f"Construction information was saved as revision {saved.revision_number}.",
+                        "success",
+                    )
+                    return redirect(url_for("projects.construction_information", id=project.id))
     return render_template(
         "projects/construction_information.html",
         project=project,
@@ -129,6 +217,7 @@ def construction_information(id):
         measurement_systems=MEASUREMENT_CHOICES,
         roles=ROLE_CHOICES,
         support_kinds=SUPPORT_CHOICES,
+        elevation_unit=elevation_unit_label(form.get("measurement_system")),
         create_estimate_url=url_for(
             "estimates.create_estimate_route",
             project_id=project.id,

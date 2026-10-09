@@ -1,10 +1,14 @@
 """Turn contractor-entered deck facts into one construction-model revision.
 
 The page collects the fields the existing model already requires.
-It does not invent a length, a size, or a second model store.
+It does not invent a length, a size, an elevation, or a second model store.
+A member is not assigned to a level. The model has no field for that.
 """
 
 from __future__ import annotations
+
+import re
+import secrets
 
 from app.services.construction_model.completeness import assess_construction_model
 from app.services.construction_model.model import (
@@ -24,10 +28,13 @@ from app.services.project_construction_model import (
     save_construction_model_revision,
 )
 
-MEMBER_ROW_COUNT = 8
 SUPPORT_ROW_COUNT = 4
 MAX_GROUP_COUNT = 200
+REQUEST_ROW_GUARD = 200
 OFFICE_REFERENCE = "Office construction information"
+_LEVEL_ID = re.compile(r"^level-[a-z0-9]{1,40}$")
+_TOKEN = re.compile(r"^[a-f0-9]{8}$")
+_GROUP_ID = re.compile(r"^g([a-f0-9]{8})-([1-9][0-9]*)$")
 
 DOCUMENT_STATUS_CHOICES = (
     (DOCUMENT_STATUS_PRELIMINARY, "Preliminary construction drawing"),
@@ -50,12 +57,30 @@ def empty_entry():
     return {
         "project_document_status": "",
         "measurement_system": "",
-        "level_id": "level-1",
-        "level_name": "",
-        "level_elevation": "",
-        "members": [_blank_member() for _ in range(MEMBER_ROW_COUNT)],
+        "levels": [_blank_level()],
+        "members": [_blank_member()],
         "supports": [_blank_support() for _ in range(SUPPORT_ROW_COUNT)],
     }
+
+
+def new_level_row():
+    return _blank_level()
+
+
+def new_member_row():
+    return _blank_member()
+
+
+def elevation_unit_label(measurement_system):
+    """The unit already implied by the model measurement system.
+
+    A level stores the elevation number. It does not store a second unit.
+    """
+    if measurement_system == "imperial":
+        return "ft"
+    if measurement_system == "metric":
+        return "m"
+    return ""
 
 
 def current_revision_for_project(*, organization_id, project_id):
@@ -75,14 +100,12 @@ def entry_from_model(content):
     form = empty_entry()
     form["project_document_status"] = content.get("project_document_status") or ""
     form["measurement_system"] = content.get("measurement_system") or ""
-    level = content["levels"][0]
-    form["level_id"] = level["id"]
-    form["level_name"] = level["name"]
-    form["level_elevation"] = _show_number(level.get("elevation"))
-    for index, group in enumerate(_member_groups(content.get("members") or [])):
-        if index >= MEMBER_ROW_COUNT:
-            return None
-        form["members"][index] = group
+    levels = [_level_row(level) for level in content["levels"]]
+    members = _member_groups(content.get("members") or [])
+    if len(levels) > REQUEST_ROW_GUARD or len(members) > REQUEST_ROW_GUARD:
+        return None
+    form["levels"] = levels
+    form["members"] = members
     for index, group in enumerate(_support_groups(content.get("supports") or [])):
         if index >= SUPPORT_ROW_COUNT:
             return None
@@ -100,26 +123,20 @@ def model_from_entry(form):
     if system not in ("imperial", "metric"):
         errors.append("Choose imperial or metric.")
         system = None
-    level_name = _text(form.get("level_name"))
-    if not level_name:
-        errors.append("Enter the level name.")
-    elevation, elevation_error = _required_number(
-        form.get("level_elevation"),
-        "Enter the level elevation.",
-    )
-    if elevation_error:
-        errors.append(elevation_error)
-    level_id = _text(form.get("level_id")) or "level-1"
     provenance = {
         "source": SOURCE_PROJECT_INPUT,
         "reference": OFFICE_REFERENCE,
     }
+    levels, level_errors = _levels(form.get("levels") or [], provenance)
+    errors.extend(level_errors)
     members, member_errors = _members(form.get("members") or [], system, provenance)
     errors.extend(member_errors)
     supports, support_errors = _supports(form.get("supports") or [], provenance)
     errors.extend(support_errors)
     if errors:
         return None, errors
+    if not levels:
+        errors.append("Enter at least one level.")
     if not members:
         errors.append("Enter at least one member.")
     if not supports:
@@ -130,14 +147,7 @@ def model_from_entry(form):
         "structure_class": STRUCTURE_CLASS_DECK,
         "project_document_status": status,
         "measurement_system": system,
-        "levels": [
-            {
-                "id": level_id,
-                "name": level_name,
-                "elevation": elevation,
-                "provenance": dict(provenance),
-            }
-        ],
+        "levels": levels,
         "members": members,
         "supports": supports,
     }
@@ -175,12 +185,13 @@ def _office_shape(content):
     levels = content.get("levels") or []
     members = content.get("members") or []
     supports = content.get("supports") or []
-    if len(levels) != 1 or not members or not supports:
+    if not levels or not members or not supports:
         return False
-    if not _only_keys(levels[0], _LEVEL_KEYS):
-        return False
-    if not _provenance_is_office(levels[0].get("provenance")):
-        return False
+    for level in levels:
+        if not _only_keys(level, _LEVEL_KEYS):
+            return False
+        if not _provenance_is_office(level.get("provenance")):
+            return False
     for member in members:
         if not _only_keys(member, _MEMBER_KEYS):
             return False
@@ -233,27 +244,50 @@ def _provenance_is_office(value):
     )
 
 
+def _level_row(level):
+    return {
+        "id": level.get("id") or "",
+        "name": level.get("name") or "",
+        "elevation": _show_number(level.get("elevation")),
+    }
+
+
 def _member_groups(members):
+    """Restore one row per saved group.
+
+    A group id keeps that row separate from another row with the same
+    role, size, and length. Older office ids have no group id. Those
+    rows stay grouped by role, size, and length, which is how they
+    were saved.
+    """
     groups = []
     index = {}
     for member in members:
         length = member.get("length") or {}
-        key = (
-            member.get("role") or "",
-            member.get("member_size") or "",
-            length.get("value"),
-            length.get("unit") or "",
-        )
+        match = _GROUP_ID.match(str(member.get("id") or ""))
+        if match:
+            key = ("group", match.group(1))
+            token = match.group(1)
+        else:
+            key = (
+                "legacy",
+                member.get("role") or "",
+                member.get("member_size") or "",
+                length.get("value"),
+                length.get("unit") or "",
+            )
+            token = ""
         if key in index:
             groups[index[key]]["count"] = str(int(groups[index[key]]["count"]) + 1)
             continue
         index[key] = len(groups)
         groups.append(
             {
-                "role": key[0],
-                "member_size": key[1],
+                "token": token,
+                "role": member.get("role") or "",
+                "member_size": member.get("member_size") or "",
                 "length": "" if length.get("value") is None else _show_number(length.get("value")),
-                "length_unit": key[3],
+                "length_unit": length.get("unit") or "",
                 "count": "1",
             }
         )
@@ -273,10 +307,52 @@ def _support_groups(supports):
     return groups
 
 
+def _levels(rows, provenance):
+    built = []
+    errors = []
+    seen = set()
+    for row in rows:
+        if not _level_row_used(row):
+            continue
+        name = _text(row.get("name"))
+        if not name:
+            errors.append("Enter the level name.")
+            continue
+        elevation_text = _text(row.get("elevation"))
+        if not elevation_text:
+            errors.append(
+                f"Enter the elevation for {name}. A missing elevation is not saved."
+            )
+            continue
+        elevation, elevation_error = _required_number(
+            elevation_text,
+            f"Enter a numeric elevation for {name}.",
+        )
+        if elevation_error:
+            errors.append(elevation_error)
+            continue
+        level_id = _text(row.get("id"))
+        if not _LEVEL_ID.match(level_id):
+            level_id = "level-" + secrets.token_hex(4)
+        if level_id in seen:
+            errors.append("Each level needs its own identity.")
+            continue
+        seen.add(level_id)
+        built.append(
+            {
+                "id": level_id,
+                "name": name,
+                "elevation": elevation,
+                "provenance": dict(provenance),
+            }
+        )
+    return built, errors
+
+
 def _members(rows, system, provenance):
     built = []
     errors = []
-    sequence = 0
+    seen_tokens = set()
     allowed_units = IMPERIAL_UNITS if system == "imperial" else METRIC_UNITS
     for row in rows:
         if not _member_row_used(row):
@@ -310,10 +386,16 @@ def _members(rows, system, provenance):
         elif unit:
             errors.append("Enter the length, or clear the length unit.")
             continue
-        for _ in range(count):
-            sequence += 1
+        token = _text(row.get("token"))
+        if not _TOKEN.match(token) or token in seen_tokens:
+            if token and token in seen_tokens:
+                errors.append("Each member group needs its own identity.")
+                continue
+            token = secrets.token_hex(4)
+        seen_tokens.add(token)
+        for number in range(1, count + 1):
             item = {
-                "id": f"member-{role}-{sequence}",
+                "id": f"g{token}-{number}",
                 "role": role,
                 "provenance": dict(provenance),
             }
@@ -355,6 +437,10 @@ def _supports(rows, provenance):
                 }
             )
     return built, errors
+
+
+def _level_row_used(row):
+    return any(_text(row.get(key)) for key in ("id", "name", "elevation"))
 
 
 def _member_row_used(row):
@@ -403,8 +489,13 @@ def _text(value):
     return str(value).strip()
 
 
+def _blank_level():
+    return {"id": "", "name": "", "elevation": ""}
+
+
 def _blank_member():
     return {
+        "token": "",
         "role": "",
         "member_size": "",
         "length": "",

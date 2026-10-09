@@ -15,7 +15,7 @@
 </div>
 
 <section class="form-panel">
-    <p>This page records a deck. Enter the facts you know. A blank length stays missing. This page does not add an estimate line, and it does not price the work.</p>
+    <p>This page records a deck. Enter the facts you know. Add a level for each deck level, and add a member group for each role, size, and length. A blank length stays missing. A blank elevation is not saved as zero. A member group is not assigned to a level on this page. This page does not add an estimate line, and it does not price the work.</p>
     {% if revision %}
     <p>Model revision {{ revision.revision_number }}</p>
     {% endif %}
@@ -38,7 +38,6 @@
 <section class="form-panel">
     <form method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <input type="hidden" name="level_id" value="{{ form.level_id }}">
         <label for="project_document_status">Drawing status</label>
         <select id="project_document_status" name="project_document_status" required>
             <option value="">Choose</option>
@@ -53,13 +52,20 @@
             <option value="{{ value }}" {% if form.measurement_system == value %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
-        <h2>Level</h2>
-        <label for="level_name">Level name</label>
-        <input id="level_name" name="level_name" value="{{ form.level_name }}" required>
-        <label for="level_elevation">Elevation</label>
-        <input id="level_elevation" name="level_elevation" inputmode="decimal" value="{{ form.level_elevation }}" required>
+        <h2>Levels</h2>
+        <p class="muted-copy">Elevation is in feet on an imperial deck and in metres on a metric deck. Leave it blank when you do not know it.</p>
+        {% for row in form.levels %}
+        <input type="hidden" name="level_id_{{ loop.index0 }}" value="{{ row.id }}">
+        <label for="level_name_{{ loop.index0 }}">Level name</label>
+        <input id="level_name_{{ loop.index0 }}" name="level_name_{{ loop.index0 }}" value="{{ row.name }}">
+        <label for="level_elevation_{{ loop.index0 }}">Elevation{% if elevation_unit %} ({{ elevation_unit }}){% endif %}</label>
+        <input id="level_elevation_{{ loop.index0 }}" name="level_elevation_{{ loop.index0 }}" inputmode="decimal" value="{{ row.elevation }}">
+        <p>{% if row.name and not row.elevation %}Missing facts: Elevation{% else %}Missing facts: None{% endif %}</p>
+        <button type="submit" name="form_action" value="remove_level_{{ loop.index0 }}">Remove this level</button>
+        {% endfor %}
+        <p><button type="submit" name="form_action" value="add_level">Add a level</button></p>
         <h2>Members</h2>
-        <p class="muted-copy">Leave a row blank when you have nothing to enter. A count is the number of members that share the same role, size, and length.</p>
+        <p class="muted-copy">Add a group for each different role, size, or length. A second group stays separate even when those facts match. A count is the number of members in that group.</p>
         <table>
             <thead>
                 <tr>
@@ -69,12 +75,14 @@
                     <th>Length unit</th>
                     <th>Known count</th>
                     <th>Missing facts</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for row in form.members %}
                 <tr>
                     <td>
+                        <input type="hidden" name="member_token_{{ loop.index0 }}" value="{{ row.token }}">
                         <select name="member_role_{{ loop.index0 }}">
                             <option value="">Choose</option>
                             {% for role in roles %}
@@ -95,10 +103,12 @@
                     </td>
                     <td><input name="member_count_{{ loop.index0 }}" inputmode="numeric" value="{{ row.count }}"></td>
                     <td>{% if row.role and not row.length %}Length{% else %}None{% endif %}</td>
+                    <td><button type="submit" name="form_action" value="remove_member_{{ loop.index0 }}">Remove this group</button></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <p><button type="submit" name="form_action" value="add_member">Add a member group</button></p>
         <h2>Supports</h2>
         <table>
             <thead>
@@ -123,7 +133,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        <button type="submit">{% if revision %}Save a new revision{% else %}Save construction information{% endif %}</button>
+        <button type="submit" name="form_action" value="save">{% if revision %}Save a new revision{% else %}Save construction information{% endif %}</button>
     </form>
 </section>
 {% endif %}
@@ -153,7 +163,7 @@
             {% endfor %}
         </tbody>
     </table>
-    <p class="muted-copy">A member count is not a material takeoff. A group with a missing fact cannot be added until that fact is entered.</p>
+    <p class="muted-copy">A member count is not a material takeoff. This list combines members that share a role, size, and length. The groups above stay separate. A group with a missing fact cannot be added until that fact is entered.</p>
 </section>
 {% endif %}
 

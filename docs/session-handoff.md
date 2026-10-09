@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**9 Oct 2026 — FACTOR APPROVAL PERSISTENCE.** Each profile has an empty `factor_approvals` list. A later approval must name its product record, observation, source, approver, date, and destination. Supersession keeps the earlier approval and names it. An unpublished product code can pass when that manufacturer, family, core, and component have one record. The uncoded Fox series-page corner stays blocked. Logix 6.25 is not approved. No unit was written. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified. Do not approve a factor from this note.
+
 **9 Oct 2026 — FACTOR APPROVAL GATE.** `validate_factor_approval` can check a candidate approval and does not store it. No observation is approved. No unit is written. An uncoded product cannot be approved. FOX-EC890 and FOX-EC890CB are not treated as the same product. The 8-inch engine is unchanged. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified. Do not approve a factor from this note.
 
 **9 Oct 2026 — MANUFACTURER EVIDENCE.** Unselected product records now cover Fox Blocks 4/6/8/10/12, Logix 4/6.25/8/10/12, Nudura 4/6/8/10/12, and BuildBlock straight 4/6/8. BuildLock is a separate family. Logix 6.25 stays 6.25. The five Fox conflict records and every calculation unit are unchanged. No observation is selected. The engine still calculates 8-inch units only. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified. Do not turn these records into quantities from this note.

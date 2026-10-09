@@ -311,6 +311,7 @@ def _candidate_approval(**overrides):
         "approver": "test-authority",
         "approval_date": "2026-10-09",
         "destination_unit": "concrete_volume_yd3",
+        "approval_id": "fixture-fox-s400-volume",
     }
     approval.update(overrides)
     return approval
@@ -325,7 +326,7 @@ def test_valid_approval_structure_does_not_activate_the_observation():
         "fox_s400_concrete_volume_yd3"
     ]
     assert observation["calculation_selection"] == CALCULATION_NOT_SELECTED
-    assert "factor_approvals" not in profile
+    assert profile["factor_approvals"] == []
     assert profile["units"]["standard_8"]["concrete_volume_yd3"]["value"] == "0.132"
     assert profile["profile_version"] == "1"
 
@@ -467,3 +468,124 @@ def test_approval_check_leaves_quantities_and_contract_unchanged():
     )
     assert "validate_factor_approval" not in quantity_source
     assert "product_records" not in quantity_source
+    assert "factor_approvals" not in quantity_source
+
+
+def test_empty_factor_approvals_load_and_observations_stay_unselected():
+    for manufacturer_id in ("fox_blocks", "logix", "nudura", "styrorail_buildblock"):
+        profile = get_profile(manufacturer_id)
+        assert profile["factor_approvals"] == []
+        assert profile["profile_version"] == "1"
+        for record in profile["product_records"].values():
+            for observation in record["observations"].values():
+                assert observation["calculation_selection"] == CALCULATION_NOT_SELECTED
+    fox = get_profile("fox_blocks")
+    assert fox["units"]["corner_90_8"]["concrete_volume_yd3"]["value"] == "0.145"
+    assert "standard_6_25" not in get_profile("logix")["units"]
+
+
+def test_valid_approval_is_accepted_only_in_an_isolated_fixture():
+    registry = load_registry()
+    profile = registry["profiles"]["1"]["fox_blocks"]
+    profile["factor_approvals"] = [
+        _candidate_approval(approval_id="fixture-only")
+    ]
+    _validate_registry(registry)
+    assert profile["factor_approvals"][0]["approval_id"] == "fixture-only"
+    assert get_profile("fox_blocks")["factor_approvals"] == []
+    assert (
+        profile["product_records"]["fox_s400"]["observations"][
+            "fox_s400_concrete_volume_yd3"
+        ]["calculation_selection"]
+        == CALCULATION_NOT_SELECTED
+    )
+
+
+def test_duplicate_approval_identity_fails():
+    registry = load_registry()
+    profile = registry["profiles"]["1"]["fox_blocks"]
+    profile["factor_approvals"] = [
+        _candidate_approval(approval_id="same-id"),
+        _candidate_approval(approval_id="same-id"),
+    ]
+    with pytest.raises(IcfProfileError, match="duplicated"):
+        _validate_registry(registry)
+
+
+def test_supersession_keeps_the_earlier_approval():
+    registry = load_registry()
+    profile = registry["profiles"]["1"]["fox_blocks"]
+    profile["factor_approvals"] = [
+        _candidate_approval(approval_id="later", supersedes="missing"),
+    ]
+    with pytest.raises(IcfProfileError, match="earlier approval"):
+        _validate_registry(registry)
+    profile["factor_approvals"] = [
+        _candidate_approval(approval_id="earlier"),
+        _candidate_approval(approval_id="later", supersedes="earlier"),
+    ]
+    _validate_registry(registry)
+    assert [item["approval_id"] for item in profile["factor_approvals"]] == [
+        "earlier",
+        "later",
+    ]
+    assert get_profile("fox_blocks")["factor_approvals"] == []
+
+
+def test_missing_approval_date_fails():
+    profile = get_profile("fox_blocks")
+    with pytest.raises(IcfProfileError, match="approval_date"):
+        validate_factor_approval(profile, _candidate_approval(approval_date=""))
+
+
+def test_logix_6_25_unpublished_code_passes_identity_without_approval():
+    profile = get_profile("logix")
+    record = profile["product_records"]["logix_standard_6_25"]
+    assert record["product_code"]["status"] == "NOT_ESTABLISHED"
+    assert record["product_code"]["value"] is None
+    coverage = validate_factor_approval(
+        profile,
+        _candidate_approval(
+            approval_id="fixture-logix-6-25-coverage",
+            manufacturer_id="logix",
+            product_family="logix",
+            record_id="logix_standard_6_25",
+            observation_id="logix_standard_6_25_wall_coverage_ft2",
+            core_size_in="6.25",
+            component_type="standard",
+            measurement_type="wall_coverage",
+            value="5.33",
+            unit="ft2",
+            source_document="Logix USA Design Manual, section 4.3.1, standard forms",
+            source_url="https://logixicf.com/wp-content/uploads/technical_library/USA-Design-Manual.pdf",
+            destination_unit="wall_coverage_ft2",
+        ),
+    )
+    cavity = validate_factor_approval(
+        profile,
+        _candidate_approval(
+            approval_id="fixture-logix-6-25-cavity",
+            manufacturer_id="logix",
+            product_family="logix",
+            record_id="logix_standard_6_25",
+            observation_id="logix_standard_6_25_cavity_width_ft",
+            core_size_in="6.25",
+            component_type="standard",
+            measurement_type="concrete_cavity_width",
+            value="0.521",
+            unit="ft",
+            source_document="Logix USA Design Manual, section 4.4.2, cavity width",
+            source_url="https://logixicf.com/wp-content/uploads/technical_library/USA-Design-Manual.pdf",
+            destination_unit="concrete_cavity_width_ft",
+        ),
+    )
+    assert coverage["value"] == "5.33"
+    assert cavity["value"] == "0.521"
+    assert profile["factor_approvals"] == []
+    assert "standard_6_25" not in profile["units"]
+    assert (
+        record["observations"]["logix_standard_6_25_wall_coverage_ft2"][
+            "calculation_selection"
+        ]
+        == CALCULATION_NOT_SELECTED
+    )

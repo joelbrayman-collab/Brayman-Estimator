@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Factor approval persistence
+
+Each manufacturer profile now has an empty `factor_approvals` list. The loader rejects a stored approval that does not match its product record, observation, core, measurement, unit, source, approver, date, or destination. A verified product code identifies that product. An unpublished code can pass the identity gate when one record matches the manufacturer, family, exact core, and component. The uncoded Fox series-page corner stays blocked. Logix 6.25 is not approved. No calculation unit was added. The 8-inch engine is unchanged. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified.
+
 ## 9 Oct 2026 — Factor approval gate
 
 A candidate manufacturer factor can be checked by `validate_factor_approval` without being stored or used. The check requires the product record, the observation, the exact core, the component, the measurement, the unit, the source, an explicit decision, an approver, a date, and a matching destination field. It does not change `calculation_selection` and does not write a calculation unit. FOX-EC890 and FOX-EC890CB are different products. The series-page corner has no product code, so it cannot be approved. No observation is approved. The 8-inch engine is unchanged. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified.

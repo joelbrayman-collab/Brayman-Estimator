@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — ICF factor approval persistence
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Store the ability to keep manufacturer factor approvals in the profile, and allow an unpublished product code when the product record is unambiguous. |
+| Business decision | No observation is approved. An empty approval list is valid. A verified product code identifies that product. An unpublished code can pass only when one record matches the manufacturer, family, exact core, and component, and the source identifies that record. The uncoded Fox series-page corner stays blocked. Checklist step 8 stays OPEN. Official V1 stays 65% / 4 of 11. |
+| Architectural decision | `factor_approvals` is a list on each profile in the existing platform-reference JSON. The loader validates every item with `validate_factor_approval`. A later approval names the earlier approval in `supersedes` and both records stay. Profile version stays 1. The quantity engine does not read the list. |
+| Prompt template used | Authorized focused implementation prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Add empty approval lists and the unpublished-code identity rule. Do not approve a factor, write a unit, change the engine, or deploy. Test, then commit and push the code, tests, profile data, and governance. Leave case files unstaged. |
+| Files expected to change | The profile service, the profile JSON, profile tests, and the status records. |
+| Files prohibited from changing | The quantity engine, Contract V1, calculation units, case files, databases, and the live service. |
+| Implementation result | Approval storage exists and every list is empty. No observation is approved. No factor is promoted. No new core is calculable. Not deployed. Not live-verified. |
+| Tests | `./venv/bin/python -m pytest -q tests/test_icf_manufacturer_profiles.py tests/test_icf_quantity.py tests/test_calculation_result_contract_v1.py tests/test_calculation_estimate_mapping.py` — 62 passed, 39 warnings, 3.67s, exit 0. `./venv/bin/python -m pytest -q` — 2279 passed, 11 skipped, 7048 warnings, 1186.14s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | No stored approval exists. Fox 8-inch corner volumes 0.153 and 0.145 remain unselected. The series-page corner still has no product code. Logix 6.25 coverage 5.33 and cavity 0.521 can pass the identity gate and are not approved. |
+| Next approved step | ChatGPT reviews the empty approval store. Do not approve a manufacturer factor from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — ICF factor approval gate
 
 | Field | Content |

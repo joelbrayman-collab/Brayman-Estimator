@@ -15,6 +15,7 @@ CALCULATION_NOT_SELECTED = "not_selected"
 _CORE_TOKEN = re.compile(r"^(?:0|[1-9][0-9]*)(?:\.[0-9]*[1-9])?$")
 _APPROVAL_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _APPROVAL_FIELDS = (
+    "approval_id",
     "manufacturer_id",
     "product_family",
     "record_id",
@@ -134,6 +135,7 @@ def _validate_registry(registry):
                 raise IcfProfileError("ICF profiles are not organization records.")
             _validate_fields(profile)
             _validate_product_records(profile)
+            _validate_factor_approvals(profile)
 
 
 def _exact_core_token(value):
@@ -223,9 +225,12 @@ def validate_factor_approval(profile, approval):
         raise IcfProfileError("A factor approval does not match its core.")
     if record.get("component_type") != approval["component_type"]:
         raise IcfProfileError("A factor approval does not match its component.")
-    code = record.get("product_code") or {}
-    if code.get("status") != "VERIFIED_FROM_SOURCE" or not _text(code.get("value")):
-        raise IcfProfileError("Ambiguous product identity blocks factor approval.")
+    _require_product_identity(profile, record)
+    supersedes = approval.get("supersedes")
+    if supersedes is not None and not _text(supersedes):
+        raise IcfProfileError("A factor approval must name the earlier approval it supersedes.")
+    if _text(supersedes) and supersedes == approval["approval_id"]:
+        raise IcfProfileError("A factor approval cannot supersede itself.")
     observation = (record.get("observations") or {}).get(approval["observation_id"])
     if not isinstance(observation, dict):
         raise IcfProfileError("A factor approval names a missing observation.")
@@ -249,7 +254,77 @@ def validate_factor_approval(profile, approval):
         raise IcfProfileError("A factor approval destination does not match its measurement.")
     if _conflicting_observations(profile, record, observation):
         raise IcfProfileError("A factor approval is blocked by a conflicting observation.")
-    return {key: approval[key] for key in _APPROVAL_FIELDS}
+    checked = {key: approval[key] for key in _APPROVAL_FIELDS}
+    checked["supersedes"] = supersedes if _text(supersedes) else None
+    return checked
+
+
+def _validate_factor_approvals(profile):
+    """An empty list is valid. A stored approval must still pass the gate."""
+    approvals = profile.get("factor_approvals", "missing")
+    if not isinstance(approvals, list):
+        raise IcfProfileError("Factor approvals must be a list.")
+    seen = []
+    for approval in approvals:
+        checked = validate_factor_approval(profile, approval)
+        if checked["approval_id"] in seen:
+            raise IcfProfileError("A factor approval identity is duplicated.")
+        seen.append(checked["approval_id"])
+    known = set(seen)
+    superseded = set()
+    for approval in approvals:
+        prior = approval.get("supersedes")
+        if prior is None:
+            continue
+        if prior not in known:
+            raise IcfProfileError(
+                "A factor approval must keep the earlier approval it supersedes."
+            )
+        superseded.add(prior)
+    current = []
+    for approval in approvals:
+        if approval.get("approval_id") in superseded:
+            continue
+        current.append((approval.get("record_id"), approval.get("observation_id")))
+    if len(current) != len(set(current)):
+        raise IcfProfileError(
+            "A current factor approval already exists for that observation."
+        )
+
+
+def _require_product_identity(profile, record):
+    """A verified code identifies a product. An unpublished code needs one clear record."""
+    if _established_product_code(record) is not None:
+        return
+    code = record.get("product_code") or {}
+    identified = (
+        _text(record.get("manufacturer_id"))
+        and _text(record.get("product_family"))
+        and _exact_core_token(record.get("core_size_in"))
+        and _text(record.get("component_type"))
+        and _text(code.get("source_document"))
+        and _text(code.get("source_url"))
+    )
+    matches = _records_for_same_component(profile, record)
+    if not identified or len(matches) != 1:
+        raise IcfProfileError("Ambiguous product identity blocks factor approval.")
+
+
+def _records_for_same_component(profile, record):
+    found = []
+    for other in (profile.get("product_records") or {}).values():
+        if not isinstance(other, dict):
+            continue
+        if other.get("manufacturer_id") != record.get("manufacturer_id"):
+            continue
+        if other.get("product_family") != record.get("product_family"):
+            continue
+        if other.get("core_size_in") != record.get("core_size_in"):
+            continue
+        if other.get("component_type") != record.get("component_type"):
+            continue
+        found.append(other.get("record_id"))
+    return tuple(found)
 
 
 def _established_product_code(record):
@@ -259,22 +334,25 @@ def _established_product_code(record):
     return code["value"]
 
 
+def _same_product(left, right):
+    """Verified codes must match. Unpublished records match only their own component slot."""
+    left_code = _established_product_code(left)
+    right_code = _established_product_code(right)
+    if left_code is not None or right_code is not None:
+        if left_code != right_code:
+            return False
+    return (
+        left.get("product_family") == right.get("product_family")
+        and left.get("core_size_in") == right.get("core_size_in")
+        and left.get("component_type") == right.get("component_type")
+    )
+
+
 def _conflicting_observations(profile, record, observation):
-    """Different values conflict only for the same established product and measurement."""
-    product_code = _established_product_code(record)
-    if product_code is None:
-        return ()
+    """Different values conflict only for the same product and measurement."""
     found = []
     for other in (profile.get("product_records") or {}).values():
-        if not isinstance(other, dict):
-            continue
-        if _established_product_code(other) != product_code:
-            continue
-        if other.get("product_family") != record.get("product_family"):
-            continue
-        if other.get("core_size_in") != record.get("core_size_in"):
-            continue
-        if other.get("component_type") != record.get("component_type"):
+        if not isinstance(other, dict) or not _same_product(record, other):
             continue
         for item in (other.get("observations") or {}).values():
             if not isinstance(item, dict):

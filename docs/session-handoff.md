@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**9 Oct 2026 — PROPOSAL HEADINGS LIVE.** Deploy `dep-db4lh9mi0phs73d511n0` is live at `1885ecf4537b133d8ef1fe58def5d2e1c3976856`. Integrity `ok`. Revision `t0a1b2c3d4e5`. Proposal 18 stayed Draft at 49.86. Checklist step 8 stays **OPEN**. Real contractor UAT is not accepted.
+
 **9 Oct 2026 — PROPOSAL HEADINGS NOT DEPLOYED.** `1885ecf4537b133d8ef1fe58def5d2e1c3976856` is pushed and not live. Hosted SSH failed twice, so revision and integrity were not read. Live remains `13544f29ee25402d9bf4059556c7b5d0a40909ab`. Do not deploy until that read succeeds. Checklist step 8 stays **OPEN**.
 
 **9 Oct 2026 — DIAGRAM INTERPRETATION ACCEPTED.** The blueprint is a functional completeness reference. The hub stays as it is. Proposal headings “Copied from estimate version” and “Source estimate” are accepted. Full suite 2298 passed, 11 skipped, exit 0. Checklist step 8 stays **OPEN**.

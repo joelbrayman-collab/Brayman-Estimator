@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Proposal headings live
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Finish the accepted proposal-heading release after a current hosted database read. |
+| Business decision | Deploy only `1885ecf4537b133d8ef1fe58def5d2e1c3976856`. Do not migrate. Do not replace the Mac mirror. |
+| Architectural decision | The earlier SSH failure was the retired instance. The running instance was read before deploy. Rollback remains redeploy of `13544f29ee25402d9bf4059556c7b5d0a40909ab`. |
+| Prompt template used | Controlled release completion prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Read the current hosted database. Deploy the accepted SHA only if integrity and revision match. Verify Proposal 18. |
+| Files expected to change | Current-state, session handoff, and this log. |
+| Files prohibited from changing | Application source, the hosted database, and case files. |
+| Implementation result | Deploy `dep-db4lh9mi0phs73d511n0` is live. Proposal 18 shows the new headings and stayed Draft at 49.86. |
+| Tests | No new suite. The accepted suite remains 2298 passed, 11 skipped, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Checklist step 8 stays open. Real contractor UAT is not open. |
+| Next approved step | None from this release. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Proposal heading release stopped
 
 | Field | Content |

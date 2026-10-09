@@ -1,5 +1,9 @@
 # V1 workflow acceptance audit — 9 October 2026
 
+## 9 Oct 2026 — proposal headings live
+
+The accepted headings are live on deploy `dep-db4lh9mi0phs73d511n0` at `1885ecf4537b133d8ef1fe58def5d2e1c3976856`. Proposal 18 stayed Draft. Total stayed 49.86. No migration. The register was not rescored.
+
 ## 9 Oct 2026 — diagram interpretation
 
 Joel clarified the approved Construction Platform Lifecycle Blueprint. It is a functional completeness reference. It is not a screen design, a navigation specification, or a literal flowchart of pages.

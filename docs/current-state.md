@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Proposal headings live
+
+`1885ecf4537b133d8ef1fe58def5d2e1c3976856` is live as deploy `dep-db4lh9mi0phs73d511n0`. No migration. Hosted integrity `ok`. Revision stayed `t0a1b2c3d4e5`. Proposal 18, `PROP-2026-0007`, stayed Draft. Subtotal stayed 44.12 and total stayed 49.86. The page says Copied from estimate version and Source estimate. It was not sent and not signed. The Mac mirror was not replaced. Checklist step 8 stays **OPEN**. The V1 register was not rescored. This is not real contractor UAT.
+
 ## 9 Oct 2026 — Proposal headings not deployed
 
 `1885ecf4537b133d8ef1fe58def5d2e1c3976856` is on `origin/main` and is not deployed. Hosted SSH failed twice before the release, so the database revision and integrity were not read. The live application remains `13544f29ee25402d9bf4059556c7b5d0a40909ab`, deploy `dep-db4kubmi0phs73d30nb0`. Auto-deploy stayed off. Proposal 18 was still Draft, total 49.86, and still showed Estimate Snapshot. Checklist step 8 stays **OPEN**. The V1 register was not rescored.

@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Live platform is the working office
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Record that the hosted platform is the working office and the Mac is a mirror. |
+| Business decision | Joel superseded the earlier instruction that a real job goes on the Mac and must not be entered on the website. Real contractor UAT stays closed. Ben’s hosted sign-in is not verified. Checklist step 8 stays OPEN. The V1 register was not rescored. |
+| Architectural decision | GitHub remains the product source. The hosted database remains the operational record. The Mac file at revision `q7d8e9f0a1b2` is not a verified mirror of hosted revision `t0a1b2c3d4e5`. No database was copied. |
+| Prompt template used | Authorized operating-authority prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Correct the current operating instructions. Preserve historical evidence. Do not migrate, deploy, or copy a database. Do not open real contractor UAT by the documentation change. |
+| Files expected to change | The operating guides and the status records. |
+| Files prohibited from changing | Application source, case files, and both databases. |
+| Implementation result | The current office instructions now point Ben to `https://calibryatai.onrender.com`. The 7 October Mac backup and the hosted pre-change backup stay in the record as the copies they were. Neither is a current hosted backup. |
+| Tests | Not run. Documentation only. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | A current hosted backup, taken after the synthetic work, is not logged. Ben’s sign-in is not verified. The Mac mirror is not synchronized. |
+| Next approved step | Joel verifies Ben’s sign-in on the hosted platform and makes a current hosted backup before a real project is typed in. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Synthetic customer proposal
 
 | Field | Content |

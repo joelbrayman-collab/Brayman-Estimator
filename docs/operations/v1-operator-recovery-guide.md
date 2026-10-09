@@ -4,7 +4,7 @@ Brayman Construction. 7 October 2026.
 
 This is the operating and recovery pack for the first controlled Brayman project. It is the guide Ben uses. It is not a contract, and it is not the finished User Guide.
 
-The first real project goes on the Mac office. Joel starts that office. Ben does not start a second one, and Ben does not use the website for a real job.
+On 9 October 2026 Joel decided the live hosted platform is the working office. The Mac is a mirror. The earlier instruction in this guide, that a real job goes on the Mac and not on the website, is superseded. The decision is [operating-authority-2026-10-09.md](operating-authority-2026-10-09.md). This change does not open real contractor UAT.
 
 ## 1. What Calibrayt does
 
@@ -16,29 +16,23 @@ Calibrayt uses the active Brayman V1 Ontario contract package. The contract pack
 
 ## 2. Which office
 
-Use only the office Joel has opened on the Brayman Mac.
+Use the live hosted platform: `https://calibryatai.onrender.com`.
 
-1. Joel starts it from the Brayman-Estimator folder with `flask run --port 5001`. On this Mac, port 5000 is already used by the system, so the office does not use 5000.
-2. On that Mac, open `http://127.0.0.1:5001`.
+1. Open that address.
+2. Sign in with the email and password Joel gave you.
 3. If Joel gives you a different address, use that address. Do not guess another one.
 
-The program in the development folder and the program on the website are not the same thing. A newer folder does not change the office you are signed into.
+A real project is entered on that platform only after Joel has met the readiness gates already required. This guide does not open that work by itself.
 
-Office identity checked 7 October 2026:
+The Mac is a mirror. It is not a second office. Its file was last read on 7 October 2026 at revision `q7d8e9f0a1b2`, 3,645,440 bytes, last changed 2026-10-07 11:06:09. The hosted revision read on 9 October 2026 is `t0a1b2c3d4e5`, integrity `ok`. The served application is `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b`, deploy `dep-db4h3dks728c73aohka0`. The Mac file was not brought to that hosted revision. It is not a current mirror.
 
-- Mac office file: `instance/brayman_estimator.db`
-- That file is intact. Its office revision is `q7d8e9f0a1b2`. Size 3,645,440 bytes. Last changed 2026-10-07 11:06:09.
-- The backup taken immediately before that structure update is revision `h8c9d0e1f2a3`. It is recorded in the backup log.
-- This is the office for the first real project.
-- Website: `https://calibryatai.onrender.com`. The served revision on 9 October 2026 is `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b`, deploy `dep-db4h3dks728c73aohka0`. Auto-deploy is off.
-- The website is a separate copy. Do not enter a real job there.
-- The hosted database revision read on 9 October 2026 is `t0a1b2c3d4e5`. Integrity is ok. The backup taken before that change is `pre-t0-2026-10-09-1202.db`, revision `s9f0a1b2c3d4`. The Mac office was not brought to the hosted revision.
+The hosted backup taken before that revision change is `pre-t0-2026-10-09-1202.db`, revision `s9f0a1b2c3d4`. The Mac backup in the log is revision `h8c9d0e1f2a3`. Neither is a current copy of the hosted office after the later synthetic work.
 
-Some older practice jobs are already in the Mac office. Do not delete them. Do not use one as the real customer job. Ask Joel which project is the real one.
+Some older practice jobs are already stored. Do not delete them. Do not use a synthetic project as the real customer job. Ask Joel which project is the real one.
 
 ## 3. Sign in
 
-1. Open the Mac office address.
+1. Open `https://calibryatai.onrender.com`.
 2. The screen says Office sign in.
 3. Use the email and password Joel gave you.
 4. Choose Sign in.
@@ -190,7 +184,7 @@ Money shows the committed baseline after the estimate version is locked. On the 
 
 Ben does not back up the office and Ben does not restore it.
 
-Joel follows the printed backup sheet: `v1-backup-restore-checklist.md`. The backup made on 7 October 2026, before the office structure update, is in the backup log. He does it again at the end of any day a real project changed, and again before any change to the office file's structure.
+Joel follows the printed backup sheet: `v1-backup-restore-checklist.md`. That sheet’s copy steps are for the Mac mirror. The working database is the hosted file. A Mac copy does not, by itself, back up the hosted office. The 7 October 2026 backup in the log is revision `h8c9d0e1f2a3`. Joel still makes a checked backup of the hosted file before a real project is typed in, and again at the end of a day a real project changed.
 
 There is no automatic backup service. The procedure is a controlled copy. Joel makes it. The copy is checked. A second copy is kept outside the live file. The backup log records the file name.
 

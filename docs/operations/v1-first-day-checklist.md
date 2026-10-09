@@ -2,7 +2,7 @@
 
 Brayman Construction. Calibrayt. 7 October 2026.
 
-Use the Mac office Joel has started. Open http://127.0.0.1:5001 and sign in. Do not use the website.
+Use the live hosted platform, `https://calibryatai.onrender.com`, and sign in. The Mac is a mirror, not the office. See [operating-authority-2026-10-09.md](operating-authority-2026-10-09.md). This sheet does not open real contractor UAT.
 
 1. Add the customer under Clients if they are not there yet.
 2. Home. + Start New Project. Name and client are required.
@@ -14,7 +14,7 @@ Use the Mac office Joel has started. Open http://127.0.0.1:5001 and sign in. Do 
 8. Apply org pricing policy.
 9. Create Proposal. Download PDF. Title is CONSTRUCTION ESTIMATE. Read it before it leaves the office. Acceptance is Update status, then Accepted.
 10. Contract. Calibrayt uses the active Brayman V1 Ontario contract package. The package and version are on the contract snapshot. If it says Production contract unavailable, stop. Do not bypass it. Family 05 draft labels are not on the generated contract. Generating a contract does not send a signing link.
-11. Supplier Estimate Request only when the material list and the supplier are selected. This Mac supplier account is labelled DEMO / SYNTHETIC. Prices stay blank.
+11. Supplier Estimate Request only when the material list and the supplier are selected. If that supplier account is labelled DEMO / SYNTHETIC, the label stays. Prices stay blank.
 12. Field. Confirm the project, then Capture. Check Field Observations.
 13. Lock the estimate version. Then Money shows the committed baseline. Enter an actual cost only when you know the amount.
 

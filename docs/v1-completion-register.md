@@ -8,6 +8,8 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-10-09 operating authority):** No package was added or closed. The register was not rescored. Checklist step 8 stays open. Joel decided the hosted platform is the working office and the Mac is a mirror. That decision does not open real contractor UAT.
+
 **Subsequent status (2026-10-09 synthetic proposal):** No package was added or closed. The register was not rescored. Checklist step 8 stays open. A synthetic proposal PDF shows the frozen customer total. That is not real contractor UAT.
 
 **Subsequent status (2026-10-09 customer document):** No package was added or closed. The register was not rescored. Checklist step 8 stays open. The desk print was not turned into a second customer estimate.

@@ -1,10 +1,14 @@
 # Backup and restore
 
-Brayman Construction. Mac office. 7 October 2026.
+Brayman Construction. 7 October 2026. Authority corrected 9 October 2026.
 
 Joel does this. Ben does not.
 
-The office is one file: `instance/brayman_estimator.db` in the Brayman-Estimator folder. There is no automatic backup. A copy is not finished until the check says ok and a second copy exists outside that live file.
+The working office is the hosted platform. Its database is the operational file. The Mac file is a mirror. See [operating-authority-2026-10-09.md](operating-authority-2026-10-09.md).
+
+The steps below copy the Mac file `instance/brayman_estimator.db`. They remain the steps for that mirror. Completing them does not back up the hosted office. The Mac file last read on 7 October 2026 is revision `q7d8e9f0a1b2`. It is not a verified current mirror of hosted revision `t0a1b2c3d4e5`.
+
+There is no automatic backup. A copy is not finished until the check says ok and a second copy exists outside that live file. Before a real project is typed on the hosted platform, Joel needs that same evidence for the hosted file: integrity `ok`, one revision line, a second copy, and one new line in the backup log. The hosted backup already on record, `pre-t0-2026-10-09-1202.db`, is revision `s9f0a1b2c3d4`. It is not a copy of the hosted file after the later synthetic work.
 
 Do this before the first real project is typed in, at the end of any day a real project changed, and before any change to the office file's structure. Ben never makes that structure change.
 
@@ -29,11 +33,13 @@ sqlite3 instance/backups/brayman-office-YYYY-MM-DD-HHMM.db "PRAGMA integrity_che
 
 ## Restore
 
-1. Stop the office. Do not start it if `instance/brayman_estimator.db` is missing. Starting it can create an empty office.
+These steps restore the Mac mirror. They do not replace the hosted office.
+
+1. Stop the Mac copy. Do not start it if `instance/brayman_estimator.db` is missing. Starting it can create an empty file.
 2. Rename the current file. Do not delete it. Example: `instance/brayman_estimator.unusable-YYYY-MM-DD-HHMM.db`. Move `brayman_estimator.db-wal` and `brayman_estimator.db-shm` aside too, if they are there.
 3. Copy the chosen backup onto `instance/brayman_estimator.db`.
 4. Run the same integrity check. It must print `ok` and a revision line.
-5. Start the office the same way: from the Brayman-Estimator folder, `flask run --port 5001`. Open `http://127.0.0.1:5001`.
+5. To check the mirror, start it from the Brayman-Estimator folder with `flask run --port 5001` and open `http://127.0.0.1:5001`. That address is the mirror, not the working office.
 6. Sign in and open the project. If it is missing, stop. Do not type it in again on a blank office.
 7. Write the restore in the backup log.
 

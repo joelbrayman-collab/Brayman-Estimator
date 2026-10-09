@@ -4,21 +4,17 @@ Brayman Construction. 8 October 2026.
 
 This is how the Brayman office is opened and how Ben and the crew start using it. Joel opens the office. Ben and the crew do not install the program, and they do not start the Mac.
 
-## 1. Joel starts the Mac office
+## 1. The working office
 
-Joel starts the office from the Brayman-Estimator folder:
-
-`flask run --port 5001`
-
-On this Mac, port 5000 is already used by the system. The office uses 5001.
+On 9 October 2026 Joel decided the live hosted platform is the working office. The Mac is a mirror. See [operating-authority-2026-10-09.md](operating-authority-2026-10-09.md). The earlier instruction to open the Mac at `http://127.0.0.1:5001`, and not to use the website for a real job, is superseded. This guide does not open real contractor UAT.
 
 ## 2. Ben opens the office
 
-On that same Mac, Ben opens:
+Ben opens:
 
-`http://127.0.0.1:5001`
+`https://calibryatai.onrender.com`
 
-If Joel gives a different address, use that address. Do not guess another one. Do not use the website for a real job.
+If Joel gives a different address, use that address. Do not guess another one. Ben does not start the Mac, and Ben does not install the program.
 
 ## 3. Ben signs in
 

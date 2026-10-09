@@ -7,6 +7,8 @@
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
+**9 Oct 2026 operating authority.** Checklist step 8 stays **OPEN**. The hosted platform is the working office. The Mac is a mirror and is not a verified current copy. The V1 register was not rescored. Real contractor UAT is not accepted.
+
 **9 Oct 2026 synthetic proposal.** Checklist step 8 stays **OPEN**. Proposal 18 shows the frozen customer total 49.86. The V1 register was not rescored. Real contractor UAT is not accepted.
 
 **9 Oct 2026 customer document.** Checklist step 8 stays **OPEN**. The version print stays an unpriced fact sheet. The Proposal remains the priced customer estimate. The V1 register was not rescored.

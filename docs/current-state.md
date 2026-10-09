@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Live platform is the working office
+
+Joel decided the hosted platform is the working office. The Mac is a mirror. The Mac file last read on 7 October 2026 is revision `q7d8e9f0a1b2` and is not verified against hosted revision `t0a1b2c3d4e5`. The hosted backup `pre-t0-2026-10-09-1202.db` is revision `s9f0a1b2c3d4` and is not a current copy of the hosted file. This decision does not open real contractor UAT. Ben’s sign-in on the hosted platform is not verified. Checklist step 8 stays **OPEN**. The V1 register was not rescored.
+
 ## 9 Oct 2026 — Synthetic customer proposal
 
 Proposal 18, `PROP-2026-0007`, is a Draft for estimate 41 version 47. It copies pricing snapshot 15. The preview and the customer PDF show subtotal 44.12 and grand total 49.86. The PDF lists quantity 3 ea. Stored tax is 5.74 and is inside the grand total. The template does not print a separate tax row. Overhead and profit on the proposal are zero. Direct cost 37.50 is not on the PDF. Costing snapshot 23 and pricing snapshot 15 are unchanged. Line 137 remains the only line at quantity 3. Construction revisions remain three joists and five joists. The proposal was not sent. Checklist step 8 stays **OPEN**. The V1 register was not rescored. This is synthetic acceptance, not real contractor UAT.

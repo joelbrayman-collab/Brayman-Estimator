@@ -15,6 +15,8 @@ NEW MATERIAL REQUIREMENTS ARE CLASSIFIED AND ASSIGNED TO THE APPROPRIATE V1 COMP
 
 The recall list is [v1-completion-register.md](v1-completion-register.md) section 2.1. This checklist does not keep a second ideas list. A new requirement does not change the current step unless it is a genuine dependency of that step. When a step becomes the authorized build, its prompt recalls every register row for that component.
 
+**Current status (2026-10-09 customer document):** Checklist Step 8 remains **OPEN**. The version print is an unpriced desk fact sheet. The Proposal remains the priced customer estimate. The V1 register was not rescored. This note does not close Step 8 or start Step 9.
+
 **Current status (2026-10-09 synthetic priced total):** Checklist Step 8 remains **OPEN**. The confirmed synthetic line now has an approved costing snapshot and a priced customer total on the version. The print PDF does not carry that total. The V1 register was not rescored. This note does not close Step 8 or start Step 9.
 
 **Current status (2026-10-09 synthetic live acceptance):** Checklist Step 8 remains **OPEN**. The deployed construction path was walked on synthetic project 46 through one confirmed estimate line. The V1 register was not rescored. This note does not close Step 8, start Step 9, or accept a real contractor project.

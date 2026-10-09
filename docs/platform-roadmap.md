@@ -7,6 +7,8 @@
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
+**9 Oct 2026 customer document.** Checklist step 8 stays **OPEN**. The version print stays an unpriced fact sheet. The Proposal remains the priced customer estimate. The V1 register was not rescored.
+
 **9 Oct 2026 synthetic priced total.** Checklist step 8 stays **OPEN**. Synthetic version 47 has costing snapshot 23 and pricing snapshot 15. The V1 register was not rescored. Real contractor UAT is not accepted.
 
 **9 Oct 2026 synthetic live acceptance.** Checklist step 8 stays **OPEN**. Synthetic project 46 saved two construction revisions and confirmed one estimate line. The V1 register was not rescored. Real contractor UAT is not accepted.

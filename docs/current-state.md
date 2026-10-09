@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Customer print is not the priced estimate
+
+The version print at `/estimates/<id>/versions/<id>/print.pdf` is the desk fact sheet. It lists quantities and does not read the pricing snapshot. The customer-facing estimate remains the existing Proposal preview and PDF. A named-method proposal copies the frozen snapshot customer total. Estimate 41 version 47 has no proposal yet. The desk print was not changed. Checklist step 8 stays **OPEN**. The V1 register was not rescored.
+
 ## 9 Oct 2026 — Synthetic priced customer total
 
 The quantity walk on project 46 stays accepted. Line 137 still uses cost item `FG014-UAT-MAT`. Scope delivery for that line is confirmed as Brayman purchases the material and the line has no labour. Costing snapshot 23 is current, direct cost 37.50, one line. Pricing snapshot 15 applied the active organization gross-margin policy. The version customer total is 49.86. Line 137 remains quantity 3 ea. Construction revision 1 remains three joists and revision 2 remains five. The customer print PDF opens and does not contain 49.86. Live SHA remains `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b`. Hosted revision remains `t0a1b2c3d4e5`, integrity `ok`. Checklist step 8 stays **OPEN**. The V1 register was not rescored. This is not real contractor UAT.

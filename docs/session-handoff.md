@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**9 Oct 2026 — CUSTOMER PRINT IS NOT THE PRICED ESTIMATE.** The version print PDF is an unpriced desk fact sheet. The Proposal PDF is the customer-facing estimate and copies the frozen snapshot total. Version 47 has no proposal yet. The desk print was not changed. Checklist step 8 stays **OPEN**.
+
 **9 Oct 2026 — SYNTHETIC PRICED CUSTOMER TOTAL.** Project 46, estimate 41, version 47. Costing snapshot 23 is current at direct cost 37.50. Pricing snapshot 15 customer total is 49.86 under the active organization gross-margin policy. Line 137 remains 3 ea. Revisions remain 3 joists and 5 joists. The customer print PDF does not contain 49.86. Checklist step 8 stays **OPEN**. The V1 register was not rescored. Not real contractor UAT.
 
 **9 Oct 2026 — SYNTHETIC LIVE CONSTRUCTION ACCEPTANCE.** Project 46, estimate 41, version 47. Model revisions 1 and 2. Intake 2 stays on revision 1. Review 2 confirmed quantity 3 onto line 137. Revision 2 stores five joists and does not change that line. Costing and the customer print opened. No pricing snapshot. Hosted revision remains `t0a1b2c3d4e5`, integrity `ok`. Live SHA remains `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b`. Checklist step 8 stays **OPEN**. The V1 register was not rescored. End-to-end accepted on this synthetic project. Real contractor UAT is not accepted.

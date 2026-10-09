@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Customer print is not the priced estimate
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Put the approved customer total on the governed customer estimate document. |
+| Business decision | The desk print at `/estimates/<id>/versions/<id>/print.pdf` is an unpriced fact sheet. The existing Proposal preview and PDF is the customer-facing estimate. That print was not changed. Checklist step 8 stays OPEN. The V1 register was not rescored. |
+| Architectural decision | FG-012 keeps the Proposal as the customer estimate. A named-method proposal copies the frozen pricing snapshot total and does not restack it. No second customer document was created. |
+| Prompt template used | Authorized customer-document prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | If the opened PDF is intentionally unpriced, name the authoritative priced document and stop. Do not change the wrong document. |
+| Files expected to change | This finding only. |
+| Files prohibited from changing | The desk print, pricing snapshots, application pricing formulas, and case files. |
+| Implementation result | STOP. No product change. The authoritative priced customer document is the Proposal PDF. Estimate 41 version 47 has no proposal yet. |
+| Tests | Not run. No product change. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | A proposal has not been created from version 47, so its PDF has not been checked for 49.86. Checklist step 8 stays open. |
+| Next approved step | ChatGPT decides whether to create the existing Proposal from version 47 and read its PDF. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Synthetic priced customer total
 
 | Field | Content |

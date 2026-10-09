@@ -7,6 +7,8 @@
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
 
+**9 Oct 2026 synthetic live acceptance.** Checklist step 8 stays **OPEN**. Synthetic project 46 saved two construction revisions and confirmed one estimate line. The V1 register was not rescored. Real contractor UAT is not accepted.
+
 **9 Oct 2026 live construction release.** Checklist step 8 stays **OPEN**. `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b` is deployed. Hosted revision `t0a1b2c3d4e5`. The V1 register was not rescored. Contractor UAT is not accepted.
 
 **9 Oct 2026 unknown level elevation.** Checklist step 8 stays **OPEN**. A named level can be saved without an elevation. The missing number is not zero. The V1 register was not rescored. Not deployed.

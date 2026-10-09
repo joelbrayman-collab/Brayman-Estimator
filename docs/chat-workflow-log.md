@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Synthetic live construction acceptance
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Walk the deployed construction workflow from a saved model through one confirmed estimate line. |
+| Business decision | The live SHA and hosted revision were already the approved release. This walk used synthetic project 46 only. It does not accept a real contractor project. Checklist step 8 stays OPEN. The V1 register was not rescored. |
+| Architectural decision | No source, schema, or deployment change. The confirmed line stays tied to the review taken from revision 1. A later model revision does not rewrite that line. |
+| Prompt template used | Authorized live acceptance prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Confirm the live SHA, deploy, and revision, then save a synthetic deck, offer one member count, confirm one line, open costing and the customer print, and save revision 2. Do not change a customer project, deploy, migrate, or close Step 8. |
+| Files expected to change | Acceptance records only. |
+| Files prohibited from changing | Application source, case files, the Mac office database, and the hosted schema. |
+| Implementation result | END-TO-END ACCEPTED on synthetic project 46. Estimate 41, version 47, section 37. Model revisions 1 and 2. Intake 2 is tied to revision 1. Review 2 is confirmed at quantity 3 and points at line 137. Line 137 is one Cost Item line, quantity 3 ea. Revision 2 stores five joists and leaves line 137 at 3. Costing and the customer print opened. No pricing snapshot was applied. REAL CONTRACTOR UAT ACCEPTED: no. |
+| Tests | Live office walk and hosted read-back named above. No new repository test run. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Checklist step 8 stays open. No real contractor project was used. Costing was opened, not approved. The priced customer total needs a pricing snapshot, which was not created. |
+| Next approved step | ChatGPT reviews this synthetic acceptance. Do not start Step 9 from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Live construction release
 
 | Field | Content |

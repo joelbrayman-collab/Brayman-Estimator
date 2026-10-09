@@ -15,6 +15,8 @@ NEW MATERIAL REQUIREMENTS ARE CLASSIFIED AND ASSIGNED TO THE APPROPRIATE V1 COMP
 
 The recall list is [v1-completion-register.md](v1-completion-register.md) section 2.1. This checklist does not keep a second ideas list. A new requirement does not change the current step unless it is a genuine dependency of that step. When a step becomes the authorized build, its prompt recalls every register row for that component.
 
+**Current status (2026-10-09 synthetic live acceptance):** Checklist Step 8 remains **OPEN**. The deployed construction path was walked on synthetic project 46 through one confirmed estimate line. The V1 register was not rescored. This note does not close Step 8, start Step 9, or accept a real contractor project.
+
 **Current status (2026-10-09 live construction release):** Checklist Step 8 remains **OPEN**. Approved SHA `dccd5cac6f7c8c281a312e252fe3aacb15ad3e6b` is deployed as `dep-db4h3dks728c73aohka0`. Hosted revision `t0a1b2c3d4e5`. The V1 register was not rescored. This note does not close Step 8 or start Step 9.
 
 **Current status (2026-10-09 unknown level elevation):** Checklist Step 8 remains **OPEN**. The dynamic member and level entry is accepted as a repository slice. A level can be saved with an unknown elevation. That elevation is not zero. A later revision can supply it. The V1 register was not rescored. This note does not close Step 8, start Step 9, or authorize a deploy.

@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Approved lifecycle blueprint preserved
+
+Joel approved `CalibraytAI Construction Platform Lifecycle Blueprint(1).png` as the V1 workflow picture. The Desktop original was copied unchanged to `docs/architecture/v1-workflow-diagram/`. SHA-256 `0476f6f14dfc6f1eb73da3b30f1a6714c5ed0d7c0911aaf2900591ec2ecf6390`. The read-only audit is `docs/architecture/v1-workflow-diagram/2026-10-09-v1-workflow-acceptance-audit.md`. The two other ChatGPT diagram names were not on this Mac and were not reconstructed. Checklist step 8 stays **OPEN**. The V1 register was not rescored. No product code changed. This is not real contractor UAT.
+
 ## 9 Oct 2026 — Commercial integration accepted
 
 ChatGPT accepted the live synthetic commercial path. Project 46, estimate 41, version 47, line quantity 3, customer total 49.86, Proposal 18. The path is a saved construction revision, a confirmed member count, approved costing, frozen pricing, and the customer PDF. Checklist step 8 stays **OPEN** because generic estimating is incomplete and `SITE`, `FOUND`, and `STRUCT` stay unbound. The V1 register was not rescored. This is not real contractor UAT. Step 9 was not started.

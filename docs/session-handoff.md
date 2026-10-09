@@ -2,6 +2,8 @@
 
 ## 0. Fresh chat resume — 2 Oct 2026
 
+**9 Oct 2026 — LIFECYCLE BLUEPRINT AUDIT.** The approved image is preserved at `docs/architecture/v1-workflow-diagram/CalibraytAI Construction Platform Lifecycle Blueprint(1).png`, SHA-256 `0476f6f14dfc6f1eb73da3b30f1a6714c5ed0d7c0911aaf2900591ec2ecf6390`. The audit is `docs/architecture/v1-workflow-diagram/2026-10-09-v1-workflow-acceptance-audit.md`. Product implementation is not authorized. The User Guide is not ready to write. Checklist step 8 stays **OPEN**.
+
 **9 Oct 2026 — COMMERCIAL INTEGRATION ACCEPTED.** ChatGPT accepted the live synthetic path on project 46 through Proposal 18, quantity 3, total 49.86. Checklist step 8 stays **OPEN**. `SITE`, `FOUND`, and `STRUCT` stay unbound. Generic estimating stays incomplete. Real contractor UAT is not accepted. Step 9 was not started.
 
 **9 Oct 2026 — HOSTED BACKUP AND MAC MIRROR.** Backup `hosted-current-2026-10-09-1258.db` is integrity `ok` at revision `t0a1b2c3d4e5`. The Desktop second copy and the Mac mirror match its checksum. The previous Mac file stays revision `q7d8e9f0a1b2`. The pre-t0 backup was kept. Checklist step 8 stays **OPEN**. Real contractor UAT is not opened.

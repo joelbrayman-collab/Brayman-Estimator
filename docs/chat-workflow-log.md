@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Lifecycle blueprint preserved and audited
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Preserve Joel’s approved lifecycle blueprint and audit the existing platform against that picture. |
+| Business decision | The primary PNG is the V1 workflow reference. Missing engines that governance already left for later stay deferred. The User Guide is not written from this audit. |
+| Architectural decision | Copy the original PNG unchanged. Map stages to existing routes. Do not reconstruct the two supporting diagram names that were not on the Mac. Do not change product code. |
+| Prompt template used | Authorized diagram preservation and read-only audit prompt dated 9 October 2026. |
+| Approved Cursor prompt summary | Locate the Desktop original, preserve it, audit three perspectives, store the audit, commit documentation only. |
+| Files expected to change | The diagram folder, current-state, session handoff, roadmap, and this log. |
+| Files prohibited from changing | Application source, case files, Website, and both databases. |
+| Implementation result | Original PNG preserved. Audit written. Product code unchanged. |
+| Tests | Not run. No product change. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Hub wording is behind the product. Office snapshot labels remain. Public Useful Tools were not opened. Step 8 stays open. |
+| Next approved step | ChatGPT reviews the audit and decides whether the stale hub sentence and the office labels are one bounded copy correction. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Commercial integration accepted
 
 | Field | Content |

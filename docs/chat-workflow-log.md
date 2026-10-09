@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Contractor construction-model entry
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Let a contractor enter known deck construction information on the project and save it as the next project-owned revision. |
+| Business decision | The first save is revision 1. A later save adds the next revision and does not change an earlier one. A blank member length stays missing. That group is stored and is not offered. Saving does not create an estimate line. Checklist step 8 stays OPEN. Official V1 stays 65% / 4 of 11. |
+| Architectural decision | The project page builds the existing deck shape and calls `save_construction_model_revision`. There is no new table and no new formula. The mapper is unchanged. A stored model this page cannot show without dropping facts stays read-only. |
+| Prompt template used | Authorized focused implementation prompt dated 9 October 2026. Deployment and real-database migration were not authorized. |
+| Approved Cursor prompt summary | Add Enter / Update construction information on the existing project. Save through the existing revision service. Continue to the existing Add from calculation page. Do not invent dimensions, lengths, sizes, stock, waste, labour, or prices. Do not close Step 8, start Step 9, rescore V1, or deploy. |
+| Files expected to change | The office entry service, the project route and template, the project hub action, tests, and the status records. |
+| Files prohibited from changing | Linda Bushel, Geleynse, and review case files. The construction-model schema. The mapper. Contract V1. Hosted and Mac databases. |
+| Implementation result | IMPLEMENTED and TESTED on isolated databases. Not deployed. Not live-verified. Not product-accepted. |
+| Tests | Focused: `./venv/bin/python -m pytest -q tests/test_construction_model_entry_office.py tests/test_project_construction_model_office.py tests/test_member_count_mapper_confirmation.py tests/test_icf_governed_estimate_path.py tests/test_estimate_costing_fg027.py tests/test_project_work_packages.py` — 50 passed, 280 warnings, 18.65s, exit 0. Full regression: `./venv/bin/python -m pytest -q` — 2291 passed, 11 skipped, 7122 warnings, 1202.59s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Checklist step 8 stays open. The office form records a deck with one level, up to eight member rows, and up to four support rows. A richer stored model is not replaced by this page. SITE, FOUND, and STRUCT stay unbound. The revision table is not on the hosted database or the Mac office. |
+| Next approved step | ChatGPT reviews this slice. Do not apply a migration to a real database and do not deploy from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — Project construction-model revisions and office handoff
 
 | Field | Content |

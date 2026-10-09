@@ -18,6 +18,7 @@ from flask import (
 from flask_login import current_user
 
 from app.models.project import Project
+from app.services.construction_model_entry import current_revision_for_project
 from app.services.project_drawing_requirement import derive_drawing_state
 from app.services.project_work_package import project_plans
 from app.services.build import (
@@ -116,6 +117,10 @@ def _render_hub_with_actuals_form(project, form, *, supersede_actual_id=None, st
             change_orders=hub["change_orders"],
             actuals_form=form,
             supersede_actual_id=supersede_actual_id,
+            construction_revision=current_revision_for_project(
+                organization_id=org_id,
+                project_id=project.id,
+            ),
             **hub_operating_template_vars(project, org_id, current_user),
             **hub_punch_list_template_vars(project, org_id, current_user),
             **hub_walkthrough_template_vars(project, org_id, current_user),

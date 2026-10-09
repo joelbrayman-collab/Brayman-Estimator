@@ -17,6 +17,7 @@
         <a class="button" href="{{ url_for('projects.project_setup', id=project.id) }}">Continue setup</a>
         <a class="button" href="{{ url_for('plan_intelligence.list_plans', project_id=project.id) }}">Drawings</a>
         <a class="button" href="{{ url_for('projects.scope_of_work', id=project.id) }}">Scope of work</a>
+        <a class="button" href="{{ url_for('projects.construction_information', id=project.id) }}">{% if construction_revision is defined and construction_revision %}Update construction information{% else %}Enter construction information{% endif %}</a>
         {% if not project_is_closed %}
         <a class="button" href="{{ url_for('project_controls.create_change_order_route', project_id=project.id, next='hub') }}">New Change Order</a>
         {% endif %}

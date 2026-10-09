@@ -51,6 +51,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 
 ## Entries
 
+### MANUAL IMPACT — Enter construction information (2026-10-09)
+
+| Field | Content |
+|-------|---------|
+| Slice | The project page can save deck construction information as the next project-owned revision. |
+| Product status at capture | Implemented and tested on isolated data. Not deployed. Official V1 remains **65% / 4 of 11**. Checklist step 8 stays open. |
+| 1. What new contractor capability exists? | From the project, the contractor can enter the deck facts already known, see a blank length as missing, save revision 1, reopen it, correct it, and save the next revision. |
+| 2. When would the contractor use it? | When the project does not yet have a construction model, or when a model saved from this page needs a correction, before using Add from calculation. |
+| 3. What workflow will the final Manual need to teach? | Open the project, choose Enter construction information, enter the drawing status, measurement system, level, members, and supports, save, then open Add from calculation for a group that has no missing fact. |
+| 4. What contractor-facing terms must be used? | Enter construction information. Update construction information. Drawing status. Measurement system. Level. Elevation. Member role. Member size. Length. Known count. Missing facts. Model revision. Save construction information. Save a new revision. Add from calculation. |
+| 5. What screenshots / Print examples will eventually be needed? | The project action, the entry page with one complete member and one member missing a length, and the saved revision. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | A saved model is not a calculation-ready group. A blank length stays missing and cannot be offered. This page does not add an estimate line or a price. A model that already contains facts this page does not edit cannot be replaced here. |
+| 7. Desktop / iPhone / Print relevance | Office project page on desktop. Not a Field or iPhone change. Print is unchanged because this page does not create an estimate line. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
+
 ### MANUAL IMPACT — Stored member count from a project model (2026-10-09)
 
 | Field | Content |

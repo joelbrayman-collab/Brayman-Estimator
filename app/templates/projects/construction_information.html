@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Construction information | {{ project.name }} | Brayman Construction Platform{% endblock %}
+{% block page_title %}Construction information{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">{{ project.name }}</p>
+        <h1>{% if revision %}Update construction information{% else %}Enter construction information{% endif %}</h1>
+    </div>
+    <div>
+        <a class="button-link" href="{{ url_for('projects.view_project', id=project.id) }}">Back to project</a>
+    </div>
+</div>
+
+<section class="form-panel">
+    <p>This page records a deck. Enter the facts you know. A blank length stays missing. This page does not add an estimate line, and it does not price the work.</p>
+    {% if revision %}
+    <p>Model revision {{ revision.revision_number }}</p>
+    {% endif %}
+    {% if not editable %}
+    <p>This construction model has information this page does not change. The stored member counts can still be used from Add from calculation.</p>
+    {% endif %}
+    {% if errors %}
+    <div class="warning-copy" role="status">
+        <p>Construction information was not saved.</p>
+        <ul>
+            {% for error in errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</section>
+
+{% if editable %}
+<section class="form-panel">
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="level_id" value="{{ form.level_id }}">
+        <label for="project_document_status">Drawing status</label>
+        <select id="project_document_status" name="project_document_status" required>
+            <option value="">Choose</option>
+            {% for value, label in document_statuses %}
+            <option value="{{ value }}" {% if form.project_document_status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <label for="measurement_system">Measurement system</label>
+        <select id="measurement_system" name="measurement_system" required>
+            <option value="">Choose</option>
+            {% for value, label in measurement_systems %}
+            <option value="{{ value }}" {% if form.measurement_system == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <h2>Level</h2>
+        <label for="level_name">Level name</label>
+        <input id="level_name" name="level_name" value="{{ form.level_name }}" required>
+        <label for="level_elevation">Elevation</label>
+        <input id="level_elevation" name="level_elevation" inputmode="decimal" value="{{ form.level_elevation }}" required>
+        <h2>Members</h2>
+        <p class="muted-copy">Leave a row blank when you have nothing to enter. A count is the number of members that share the same role, size, and length.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Member role</th>
+                    <th>Member size</th>
+                    <th>Length</th>
+                    <th>Length unit</th>
+                    <th>Known count</th>
+                    <th>Missing facts</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in form.members %}
+                <tr>
+                    <td>
+                        <select name="member_role_{{ loop.index0 }}">
+                            <option value="">Choose</option>
+                            {% for role in roles %}
+                            <option value="{{ role }}" {% if row.role == role %}selected{% endif %}>{{ role }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td><input name="member_size_{{ loop.index0 }}" value="{{ row.member_size }}"></td>
+                    <td><input name="member_length_{{ loop.index0 }}" inputmode="decimal" value="{{ row.length }}"></td>
+                    <td>
+                        <select name="member_length_unit_{{ loop.index0 }}">
+                            <option value="">Choose</option>
+                            <option value="ft" {% if row.length_unit == "ft" %}selected{% endif %}>ft</option>
+                            <option value="in" {% if row.length_unit == "in" %}selected{% endif %}>in</option>
+                            <option value="m" {% if row.length_unit == "m" %}selected{% endif %}>m</option>
+                            <option value="mm" {% if row.length_unit == "mm" %}selected{% endif %}>mm</option>
+                        </select>
+                    </td>
+                    <td><input name="member_count_{{ loop.index0 }}" inputmode="numeric" value="{{ row.count }}"></td>
+                    <td>{% if row.role and not row.length %}Length{% else %}None{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h2>Supports</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Support</th>
+                    <th>Known count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in form.supports %}
+                <tr>
+                    <td>
+                        <select name="support_kind_{{ loop.index0 }}">
+                            <option value="">Choose</option>
+                            {% for kind in support_kinds %}
+                            <option value="{{ kind }}" {% if row.kind == kind %}selected{% endif %}>{{ kind }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td><input name="support_count_{{ loop.index0 }}" inputmode="numeric" value="{{ row.count }}"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit">{% if revision %}Save a new revision{% else %}Save construction information{% endif %}</button>
+    </form>
+</section>
+{% endif %}
+
+{% if groups %}
+<section class="form-panel">
+    <h2>Stored member counts</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Member role</th>
+                <th>Member size</th>
+                <th>Known count</th>
+                <th>Missing facts</th>
+                <th>Model revision</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in groups %}
+            <tr>
+                <td>{{ group.role }}</td>
+                <td>{{ group.member_size }}</td>
+                <td>{{ group.quantity }}</td>
+                <td>{% if group.missing_fact %}{{ group.missing_fact }}{% else %}None{% endif %}</td>
+                <td>{{ revision.revision_number }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p class="muted-copy">A member count is not a material takeoff. A group with a missing fact cannot be added until that fact is entered.</p>
+</section>
+{% endif %}
+
+<section class="form-panel">
+    <h2>Add from calculation</h2>
+    {% if calculation_links %}
+    <ul>
+        {% for link in calculation_links %}
+        <li><a href="{{ link.url }}">Add from calculation — {{ link.label }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Create an estimate before adding a member count to an estimate.</p>
+    <p><a href="{{ create_estimate_url }}">New estimate</a></p>
+    {% endif %}
+</section>
+{% endblock %}

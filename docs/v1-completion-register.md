@@ -8,6 +8,8 @@
 | Parent SHA | `73253c46b5fcb54a96345107ac49fe1162063369` (`docs: establish CalibAi V1 completion register`) |
 | Authority | Completeness of **CalibraytAI V1** as a product outcome. Feature Gates / ADRs remain the implementation-governance mechanism underneath this register. Does **not** replace [platform-roadmap.md](platform-roadmap.md), [current-state.md](current-state.md), Feature Gates, milestones, or module ownership. Current vs former product name: [governance/product-identity.md](governance/product-identity.md). |
 
+**Subsequent status (2026-10-09 project construction-model revisions):** No package was added or closed. Official readiness remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Checklist step 8 stays open. A project-owned construction-model revision can be offered, one group at a time, through the existing calculation review onto one ordinary estimate line after confirmation. This note does not rescore V1 and does not authorize a hosted or Mac migration.
+
 **Subsequent status (2026-10-09 factor approval persistence):** No package was added or closed. Official readiness remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Checklist step 8 stays open. Approval lists exist and are empty. No factor was selected or promoted. This note does not rescore V1.
 
 **Subsequent status (2026-10-09 factor approval gate):** No package was added or closed. Official readiness remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Checklist step 8 stays open. The approval gate does not approve an observation and does not change a calculation. This note does not rescore V1.

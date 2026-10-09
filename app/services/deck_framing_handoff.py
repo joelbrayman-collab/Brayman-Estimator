@@ -10,6 +10,7 @@ offer_stored_member_count. That offer does not create an estimate line.
 
 from __future__ import annotations
 
+import copy
 import hashlib
 
 from app.models.canonical_material import CanonicalMaterial
@@ -184,11 +185,22 @@ def stored_member_group(model, member_ids):
     return matches[0]
 
 
-def stored_member_count_result_id(group):
-    """Stable identity for one stored group. This is not a quantity."""
+def stored_member_count_result_id(group, *, revision_id=None):
+    """Stable identity for one stored group. This is not a quantity.
+
+    A call without a revision id keeps the original identity. A persisted
+    revision includes that revision so a later model can be offered again.
+    """
     role = (group.get("role") or "member").strip() or "member"
     ids = ",".join(group.get("member_ids") or ())
-    digest = hashlib.sha256(f"{role}|{ids}".encode("utf-8")).hexdigest()[:20]
+    basis = f"{role}|{ids}"
+    if revision_id is not None:
+        if isinstance(revision_id, bool) or not isinstance(revision_id, int):
+            raise StoredMemberCountError(
+                "That construction model revision is not on this project."
+            )
+        basis = f"{basis}|revision:{revision_id}"
+    digest = hashlib.sha256(basis.encode("utf-8")).hexdigest()[:20]
     return f"mc-{digest}"
 
 
@@ -252,19 +264,51 @@ def offer_stored_member_count(
     member_ids,
     actor,
     user_id=None,
+    construction_model_revision_id=None,
 ):
     """Place one stored member count on the existing mapper review.
 
     Confirmation stays on confirm_quantity_mapping. This function does
-    not create an estimate line.
+    not create an estimate line. A persisted revision is recorded on the
+    intake and included in the result identity. Omitting the revision id
+    keeps the earlier dict-based identity.
     """
     if not isinstance(model, dict):
         raise StoredMemberCountError("A construction model is required.")
-    group = stored_member_group(model, member_ids)
+    revision_id = construction_model_revision_id
+    if revision_id is not None:
+        from app.services.project_construction_model import (
+            ProjectConstructionModelError,
+            load_revision,
+            canonical_content,
+        )
+        from app.models.estimate import EstimateVersion
+
+        if isinstance(revision_id, bool) or not isinstance(revision_id, int):
+            raise StoredMemberCountError(
+                "That construction model revision is not on this project."
+            )
+        version = EstimateVersion.query.get(estimate_version_id)
+        project_id = version.estimate.project_id if version is not None else None
+        try:
+            revision = load_revision(
+                organization_id=organization_id,
+                project_id=project_id,
+                revision_id=revision_id,
+            )
+        except ProjectConstructionModelError as exc:
+            raise StoredMemberCountError(str(exc)) from exc
+        _parsed, digest = canonical_content(model)
+        if digest != revision.content_sha256:
+            raise StoredMemberCountError(
+                "The construction model does not match the stored revision."
+            )
+    working = copy.deepcopy(model)
+    group = stored_member_group(working, member_ids)
     payload = contract_for_stored_member_count(
         group,
         measurement_system=model.get("measurement_system"),
-        result_id=stored_member_count_result_id(group),
+        result_id=stored_member_count_result_id(group, revision_id=revision_id),
     )
     return ingest_contract_result(
         organization_id=organization_id,
@@ -272,6 +316,7 @@ def offer_stored_member_count(
         payload=payload,
         actor=actor,
         user_id=user_id,
+        construction_model_revision_id=revision_id,
     )
 
 

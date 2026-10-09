@@ -20,6 +20,7 @@ from app.services.calculation_estimate_mapping import (
     record_page,
     review_page,
 )
+from app.services.estimate_member_counts import groups_on_project, offer_project_member_count
 from app.services.icf_manufacturer_profiles import IcfProfileError, list_profiles
 from app.services.icf_quantity import IcfQuantityInputError, build_icf_standard_quantities
 from app.services.organizations import get_current_organization_id
@@ -41,11 +42,62 @@ def calculation_list(id, version_id):
     for intake in intakes:
         page = review_page(intake)
         cards.append({"intake": intake, "page": page})
+    member_revision, member_groups = groups_on_project(
+        organization_id=org_id,
+        project_id=estimate.project_id,
+    )
     return render_template(
         "estimates/calculation_list.html",
         estimate=estimate,
         version=version,
         cards=cards,
+        member_revision=member_revision,
+        member_groups=member_groups,
+    )
+
+
+@estimates_bp.route(
+    "/<int:id>/versions/<int:version_id>/calculations/stored-member-count",
+    methods=["POST"],
+)
+def stored_member_count_offer(id, version_id):
+    """Offer one stored member group into the existing calculation review."""
+    estimate, version = _version_or_404(id, version_id)
+    org_id = get_current_organization_id()
+    list_url = url_for(
+        "estimates.calculation_list",
+        id=estimate.id,
+        version_id=version.id,
+    )
+    try:
+        revision_id = int(request.form.get("revision_id") or "")
+    except (TypeError, ValueError):
+        flash("That stored member count is not on this project.", "error")
+        return redirect(list_url)
+    member_ids = tuple(
+        item.strip() for item in request.form.getlist("member_ids") if item.strip()
+    )
+    if not member_ids:
+        flash("That stored member count was not found.", "error")
+        return redirect(list_url)
+    intake_id, error = offer_project_member_count(
+        organization_id=org_id,
+        project_id=estimate.project_id,
+        estimate_version_id=version.id,
+        revision_id=revision_id,
+        member_ids=member_ids,
+        actor=form_actor("actor"),
+    )
+    if error or intake_id is None:
+        flash(error or "That stored member count was not found.", "error")
+        return redirect(list_url)
+    return redirect(
+        url_for(
+            "estimates.calculation_review",
+            id=estimate.id,
+            version_id=version.id,
+            intake_id=intake_id,
+        )
     )
 
 

@@ -7,6 +7,10 @@
 | Tactical register | [architecture/PLATFORM_BUILD_OUT_REGISTER.md](architecture/PLATFORM_BUILD_OUT_REGISTER.md) |
 | Evidence | Local repository inspection |
 
+## 9 Oct 2026 — Project construction-model revisions
+
+A project can store its construction model as numbered revisions in `project_construction_model_revisions`. The current model is the highest revision number. A later save inserts a new revision and leaves the earlier content unchanged. The estimate page Add from calculation lists the current revision’s member groups: role, size, known count, missing facts, and revision. One eligible group can be offered into the existing calculation review. Confirmation still creates one ordinary estimate line. A repeated offer of the same group and revision opens the same review. A later revision can be offered again and does not change a line that was already confirmed. An intake from a persisted offer records `construction_model_revision_id`. Older intakes stay valid with that field empty. Dict-only offers keep their previous result identity. Repository Alembic script head is `t0a1b2c3d4e5`. This slice did not read or change the hosted database or the Mac office database. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. BMR DEMO READY **NO**. BRAYMAN REAL-LIFE UAT READY **NO**. Not deployed. Not live-verified. Not product-accepted.
+
 ## 9 Oct 2026 — Factor approval persistence
 
 Each manufacturer profile now has an empty `factor_approvals` list. The loader rejects a stored approval that does not match its product record, observation, core, measurement, unit, source, approver, date, or destination. A verified product code identifies that product. An unpublished code can pass the identity gate when one record matches the manufacturer, family, exact core, and component. The uncoded Fox series-page corner stays blocked. Logix 6.25 is not approved. No calculation unit was added. The 8-inch engine is unchanged. Checklist step 8 stays **OPEN**. Official V1 remains **65% / 4 of 11**. Not deployed. Not live-verified.

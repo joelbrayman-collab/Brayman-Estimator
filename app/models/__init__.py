@@ -122,6 +122,7 @@ from app.models.labour_engine import (
 )
 from app.models.project_work_package import ProjectWorkPackage
 from app.models.plan_generation_candidate import PlanGenerationCandidate
+from app.models.project_construction_model import ProjectConstructionModelRevision
 from app.models.work_structure import (
     ProjectWorkActivity,
     ProjectWorkElement,
@@ -269,6 +270,7 @@ __all__ = [
     "PlanAuditEvent",
     "PlanDocument",
     "PlanGenerationCandidate",
+    "ProjectConstructionModelRevision",
     "PlanPage",
     "ProcessingAttempt",
     "ProcessingResult",

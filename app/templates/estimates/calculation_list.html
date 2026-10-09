@@ -21,6 +21,55 @@
     <p><a href="{{ url_for('estimates.wall_form_quantities', id=estimate.id, version_id=version.id) }}">ICF wall quantities</a></p>
 </section>
 
+<section class="form-panel" style="margin-bottom: 24px;">
+    <h2>Stored member counts</h2>
+    {% if member_revision %}
+    <p>Model revision {{ member_revision.revision_number }}</p>
+    {% if member_groups %}
+    <table>
+        <thead>
+            <tr>
+                <th>Member role</th>
+                <th>Member size</th>
+                <th>Known count</th>
+                <th>Missing facts</th>
+                <th>Model revision</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in member_groups %}
+            <tr>
+                <td>{{ group.role }}</td>
+                <td>{{ group.member_size }}</td>
+                <td>{{ group.quantity }}</td>
+                <td>{% if group.missing_fact %}{{ group.missing_fact }}{% else %}None{% endif %}</td>
+                <td>{{ member_revision.revision_number }}</td>
+                <td>
+                    {% if not group.missing_fact %}
+                    <form method="post" action="{{ url_for('estimates.stored_member_count_offer', id=estimate.id, version_id=version.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="revision_id" value="{{ member_revision.id }}">
+                        {% for member_id in group.member_ids %}
+                        <input type="hidden" name="member_ids" value="{{ member_id }}">
+                        {% endfor %}
+                        <button type="submit">Offer this count</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p class="muted-copy">A member count is not a material takeoff. Nothing is added until you confirm it.</p>
+    {% else %}
+    <p>This construction model has no stored member groups.</p>
+    {% endif %}
+    {% else %}
+    <p>No construction model is stored for this project.</p>
+    {% endif %}
+</section>
+
 <section class="form-panel">
     <h2>Calculations on this estimate</h2>
     {% if cards %}

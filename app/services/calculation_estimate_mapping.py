@@ -225,6 +225,7 @@ def ingest_contract_result(
     payload,
     actor,
     user_id=None,
+    construction_model_revision_id=None,
 ):
     """Store a valid result for review. Does not create an estimate line."""
     name = _require_actor(actor)
@@ -239,6 +240,20 @@ def ingest_contract_result(
             "Each quantity in this calculation must have its own code."
         )
     version = _require_editable(_load_version(organization_id, estimate_version_id))
+    if construction_model_revision_id is not None:
+        from app.models.project_construction_model import (
+            ProjectConstructionModelRevision,
+        )
+
+        revision = ProjectConstructionModelRevision.query.filter_by(
+            id=construction_model_revision_id,
+            organization_id=organization_id,
+            project_id=version.estimate.project_id,
+        ).first()
+        if revision is None:
+            raise CalculationEstimateMappingError(
+                "That construction model revision is not on this project."
+            )
     existing = CalculationResultIntake.query.filter_by(
         organization_id=organization_id,
         estimate_version_id=version.id,
@@ -266,6 +281,7 @@ def ingest_contract_result(
         user_id=user_id,
         actor_display_name=name,
         ingested_at=datetime.utcnow(),
+        construction_model_revision_id=construction_model_revision_id,
     )
     db.session.add(intake)
     db.session.flush()

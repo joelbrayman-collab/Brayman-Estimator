@@ -3,7 +3,7 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | **FRAMEWORK / IMPACT CAPTURE.** Not the User Guide. D1 Hub Help, D3 office Help, D4 Field Help, and D5 Voice-with-Help are **IMPLEMENTED**; this log remains Manual Impact only. |
-| Updated | 2026-10-08 |
+| Updated | 2026-10-09 |
 | Governing record | [interactive-help-voice-and-user-manual-future-record.md](interactive-help-voice-and-user-manual-future-record.md) **OPEN / PARTIAL** — D1 Hub Help **IMPLEMENTED**; D3 office Help **IMPLEMENTED**; D4 Field Help **IMPLEMENTED**; D5 Voice-with-Help **IMPLEMENTED IN WORKING TREE**; User Guide **NOT IMPLEMENTED** |
 | Framework | [calibraytai-v1-user-guide-framework.md](calibraytai-v1-user-guide-framework.md) **MANUAL FRAMEWORK: START NOW.** **Manual Audience Law** controlling. |
 | Policy | **Append-only.** Newest entry first under Entries. Do not rewrite historical entries except to correct factual error (note the correction). |
@@ -50,6 +50,21 @@ Do not backfill earlier slices from this recording. Capture begins with current 
 ---
 
 ## Entries
+
+### MANUAL IMPACT — Stored member count from a project model (2026-10-09)
+
+| Field | Content |
+|-------|---------|
+| Slice | Add from calculation can offer one stored member group from the project’s current construction-model revision. |
+| Product status at capture | Implemented and tested on isolated data. Not deployed. Official V1 remains **65% / 4 of 11**. Checklist step 8 stays open. |
+| 1. What new contractor capability exists? | On an estimate, the contractor can see the stored member groups for the project’s current model and send one complete group to the existing calculation review. Confirming that review adds one ordinary estimate line for the stored count. |
+| 2. When would the contractor use it? | After a construction model has been saved on the project, while building the estimate, and only for a group whose required facts are already stored. |
+| 3. What workflow will the final Manual need to teach? | Open the estimate, open Add from calculation, read the role, size, count, missing facts, and model revision, offer one eligible group, then confirm the line. A later model revision does not change a line already confirmed. |
+| 4. What contractor-facing terms must be used? | Member role. Member size. Known count. Missing facts. Model revision. Add to estimate. |
+| 5. What screenshots / Print examples will eventually be needed? | The Add from calculation page with one eligible group and one group that has a missing fact, then the estimate line after confirmation. Do not capture a screenshot in this slice. |
+| 6. What warnings / validation distinctions need explanation? | A member count is not a material takeoff. No length, stock length, waste, labour, or price is invented. A missing fact cannot be offered. Offering the same group again does not add a second line. |
+| 7. Desktop / iPhone / Print relevance | Office estimate page on desktop. Not a Field or iPhone change. The printed customer estimate is unchanged until a line is confirmed. |
+| Do not | Final Manual prose. Unstable screenshots. Help / Voice / Manual product. |
 
 ### MANUAL IMPACT — Construction intelligence (2026-10-08)
 

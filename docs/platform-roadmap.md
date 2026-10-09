@@ -3,9 +3,11 @@
 | Attribute | Value |
 |-----------|--------|
 | Status | Planning |
-| Updated | 2026-10-08 |
+| Updated | 2026-10-09 |
 
 Use repository evidence for **Completed**. Strategic pillars and Phases A–G are **Future** unless marked otherwise. Do not describe unimplemented integrations as existing.
+
+**9 Oct 2026 project construction-model revisions.** Checklist step 8 stays **OPEN**. A project stores its construction model as immutable revisions. Add from calculation can offer one stored member group from the current revision into the existing review. Confirmation still creates one ordinary line. Official V1 remains **65% / 4 of 11**. Not rescored. Not deployed. Repository script head is `t0a1b2c3d4e5`. The hosted database and the Mac office were not migrated.
 
 **8 Oct 2026 member-count confirmation slice.** Checklist step 8 stays **OPEN**. One stored member count can be reviewed through the existing mapper and confirmed onto one ordinary estimate line. Official V1 remains **65% / 4 of 11**. Not rescored. Not deployed. The Mac office was not migrated.
 

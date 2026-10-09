@@ -71,8 +71,18 @@ class CalculationResultIntake(db.Model):
     )
     actor_display_name = db.Column(db.String(150), nullable=False)
     ingested_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    construction_model_revision_id = db.Column(
+        db.Integer,
+        db.ForeignKey(
+            "project_construction_model_revisions.id",
+            ondelete="RESTRICT",
+        ),
+        nullable=True,
+        index=True,
+    )
 
     estimate_version = db.relationship("EstimateVersion")
+    construction_model_revision = db.relationship("ProjectConstructionModelRevision")
     reviews = db.relationship(
         "CalculationQuantityReview",
         back_populates="intake",

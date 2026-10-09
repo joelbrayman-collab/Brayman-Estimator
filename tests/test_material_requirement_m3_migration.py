@@ -13,7 +13,7 @@ from app import create_app, db
 
 PRIOR = "q7d8e9f0a1b2"
 M3_REVISION = "r8e9f0a1b2c3"
-HEAD = "s9f0a1b2c3d4"
+HEAD = "t0a1b2c3d4e5"
 PRESERVED = (
     "organizations",
     "projects",

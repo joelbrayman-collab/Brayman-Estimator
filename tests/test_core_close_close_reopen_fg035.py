@@ -797,7 +797,7 @@ def test_no_punch_list_sign_off_sys_admin_or_migration():
     alembic_cfg = Config(cfg_path)
     alembic_cfg.set_main_option("script_location", "migrations")
     script = ScriptDirectory.from_config(alembic_cfg)
-    assert script.get_current_head() == "s9f0a1b2c3d4"
+    assert script.get_current_head() == "t0a1b2c3d4e5"
 
 
 def test_sys_admin_remains_unimplemented(app):

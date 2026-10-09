@@ -43,6 +43,30 @@ Memorializes important ChatGPT / Cursor work. This is **not** a verbatim transcr
 
 ## Entries
 
+### 2026-10-09 — Project construction-model revisions and office handoff
+
+| Field | Content |
+|-------|---------|
+| Date | 2026-10-09 |
+| Branch | main |
+| Active ChatGPT development chat title | BRAYMAN Calibrayt 9 Oct 2026 |
+| Objective | Store a construction model as project-owned revisions, and let the existing estimate page offer one stored member group into the existing review. |
+| Business decision | The current model is the highest revision for that project. A new save adds a revision and does not change an earlier one. A confirmed estimate line stays as it was. Checklist step 8 stays OPEN. Official V1 stays 65% / 4 of 11. |
+| Architectural decision | One table, `project_construction_model_revisions`, owns the model. `calculation_result_intakes.construction_model_revision_id` is nullable. A persisted offer includes the revision in the result identity. A dict-only offer keeps the earlier identity. Contract V1 is unchanged. Repository migration `t0a1b2c3d4e5` revises `s9f0a1b2c3d4`. It was not applied to the hosted database or the Mac office. |
+| Prompt template used | Authorized focused implementation prompt dated 9 October 2026. Schema migration creation was authorized. Production migration and deployment were not. |
+| Approved Cursor prompt summary | Persist project-owned revisions, link an intake when a stored member count is offered, and use the existing calculation list, review, and confirmation. Do not bind SITE, FOUND, or STRUCT. Do not close Step 8, start Step 9, rescore V1, or deploy. |
+| Files expected to change | The revision model, the Alembic revision, the save and load service, the intake link, the member-count offer, the estimate calculation page, tests, and the status records. |
+| Files prohibited from changing | Linda Bushel, Geleynse, and review case files. Contract V1. ICF manufacturer profiles. Hosted and Mac databases. |
+| Implementation result | IMPLEMENTED and TESTED on isolated databases. A revision is immutable. The estimate page can offer one eligible group. Confirmation still creates one ordinary line. Not deployed. Not live-verified. Not product-accepted. |
+| Tests | Focused: `./venv/bin/python -m pytest -q tests/test_project_construction_model_office.py tests/test_project_construction_model_migration.py tests/test_member_count_mapper_confirmation.py tests/test_icf_governed_estimate_path.py` — 14 passed, 74 warnings, 6.90s, exit 0. Costing file `tests/test_estimate_costing_fg027.py` passed in the preceding focused run. Full regression: `./venv/bin/python -m pytest -q` — 2287 passed, 11 skipped, 7093 warnings, 1251.97s, exit 0. |
+| Project-state-report update | Not a milestone close. |
+| Milestone entry update | Not a milestone close. |
+| Constitutional issue raised | None. |
+| Unresolved issues | Checklist step 8 stays open. The new revision is not on the hosted database or the Mac office. A member count is not a material takeoff. SITE, FOUND, and STRUCT stay unbound. |
+| Next approved step | ChatGPT reviews this slice. Do not apply the migration to a real database and do not deploy from this record. |
+| Next approved prompt | None from this update. |
+| Commit hash | Recorded after this commit. |
+
 ### 2026-10-09 — ICF factor approval persistence
 
 | Field | Content |

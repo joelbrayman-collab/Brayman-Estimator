@@ -56,7 +56,7 @@ from app.services.unit_conversion import convert, three_decimal_display
 from tests.scope_delivery_support import ensure_confirmed_scope_routing
 
 ACTOR = "Joel Brayman"
-HEAD = "s9f0a1b2c3d4"
+HEAD = "t0a1b2c3d4e5"
 PRIOR = "r8e9f0a1b2c3"
 
 
